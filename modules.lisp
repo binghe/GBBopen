@@ -1,0 +1,213 @@
+;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
+;;;; *-* File: /home/gbbopen/current/modules.lisp *-*
+;;;; *-* Edited-By: cork *-*
+;;;; *-* Last-Edit: Wed Nov 15 03:48:06 2006 *-*
+;;;; *-* Machine: ruby.corkills.org *-*
+
+;;;; **************************************************************************
+;;;; **************************************************************************
+;;;; *
+;;;; *                      GBBopen Module Definitions
+;;;; *
+;;;; **************************************************************************
+;;;; **************************************************************************
+;;;
+;;; Written by: Dan Corkill
+;;;
+;;; Copyright (C) 2002-2006, Dan Corkill <corkill@GBBopen.org>
+;;; Part of the GBBopen Project (see LICENSE for license information).
+;;;
+;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+;;;
+;;;  07-17-02 File Created.  (Corkill)
+;;;  03-07-04 Added :queue module.  (Corkill)
+;;;  03-21-04 Added :agenda-shell-test module.  (Corkill)
+;;;  06-17-05 Added :os-interface module.  (Corkill)
+;;;  08-03-05 Added :sockets module.  (Corkill)
+;;;  08-20-05 Added :agenda-shell-user module.  (Corkill)
+;;;  08-21-05 Added :multiprocessing-test module.  (Corkill)
+;;;  10-08-05 Added :tutorial-example module.  (Corkill)
+;;;  01-05-06 Changed :sockets module to :portable-sockets to be consistent
+;;;           with the :portable-threads module renaming.  (Corkill)
+;;;  03-31-06 Added :multinode module.  (Corkill)
+;;;  04-06-06 Added gbbopen-instance class.  (Corkill)
+;;;  11-13-06 Added :abort-ks-execution-example module.  (Corkill)
+;;;
+;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+(in-package :gbbopen-tools)
+
+;;; ===========================================================================
+;;;  GBBopen Tools Modules
+
+(define-relative-directory :gbbopen-tools :gbbopen-root "tools")
+
+(define-module :gbbopen-tools
+  (:requires :mini-module) 		; required only for brief-date-and-time
+  (:directory :gbbopen-tools)
+  (:files "preamble"
+          ("declarations" :forces-recompile)
+          ("declared-numerics" :forces-recompile)
+          ("defflags" :forces-recompile)
+          ("tools" :forces-recompile)
+          ("define-class" :forces-recompile)
+	  "gbbopen-instance"
+          "epilogue"))
+
+(define-module :portable-threads
+  (:requires :mini-module)		; not really required, but we want 
+                                        ; :mini-module compiled/loaded first
+  (:directory :gbbopen-tools)
+  (:files ("portable-threads" :forces-recompile)))
+
+(define-module :polling-functions
+  (:requires :portable-threads :gbbopen-tools)
+  (:directory :gbbopen-tools)
+  (:files "polling-functions"))
+
+(define-module :os-interface
+  (:requires :gbbopen-tools)
+  (:directory :gbbopen-tools)
+  (:files ("os-interface")))
+
+(define-module :portable-sockets
+  (:requires :portable-threads)
+  (:directory :gbbopen-tools)
+  (:files ("portable-sockets")))
+
+(define-module :queue
+  (:requires :portable-threads :gbbopen-tools)
+  (:directory :gbbopen-tools)
+  (:files ("queue" :forces-recompile)))
+
+;;; ===========================================================================
+;;;  GBBopen Core Modules
+
+(define-relative-directory :gbbopen :gbbopen-root "gbbopen")
+
+(define-module :gbbopen
+  (:requires :portable-threads :gbbopen-tools)
+  (:directory :gbbopen)
+  (:files "preamble"
+	  #+ecl
+	  ("ecl-mop-patches" :forces-recompile)
+          "mop-interface"
+          "utilities"                   
+          ("unit-metaclasses" :forces-recompile)
+          ("units" :forces-recompile)
+          ("event-metaclasses" :forces-recompile)
+          ("events" :forces-recompile)
+          "system-events"
+          ("links" :forces-recompile)
+          ("instances" :forces-recompile)
+          "spaces"
+          "storage"
+	  "unstructured-storage"
+	  "boolean-storage"
+	  "hashed-storage"
+	  "1d-uniform-storage"
+	  "2d-uniform-storage"
+          ("find" :forces-recompile)
+          "epilogue"))
+
+(define-module :gbbopen-user
+  (:requires :gbbopen :os-interface)
+  (:directory :gbbopen)
+  (:files "gbbopen-user"))
+
+;;; ===========================================================================
+;;;  Agenda Shell Modules
+
+(define-module :agenda-shell
+  (:requires :gbbopen :queue :polling-functions)
+  (:directory :gbbopen "control-shells")
+  (:files "agenda-shell-metaclasses"
+	  ("agenda-shell-metering" :forces-recompile)
+	  "agenda-shell"))
+
+(define-module :agenda-shell-user
+  (:requires :agenda-shell :gbbopen-user)
+  (:directory :gbbopen "control-shells")
+  (:files "agenda-shell-user"))
+
+;;; ===========================================================================
+;;;  Extensions
+
+(define-module :multinode 
+  (:requires :gbbopen)
+  (:directory :gbbopen "extensions")
+  (:files "multinode"))
+
+(define-module :web-inspector 
+  (:requires :portable-sockets :gbbopen)
+  (:directory :gbbopen "extensions")
+  (:files "web-inspector"))
+
+;;; ===========================================================================
+;;;  Graphics Modules (very preliminary)
+
+(define-module :gbbopen-graphics
+  (:requires :gbbopen :os-interface)
+  (:directory :gbbopen "graphics")
+  (:files "gbbopen-tk-graphics"))
+
+;;; ===========================================================================
+;;;  Test Modules
+
+(define-module :gbbopen-test
+  (:requires :gbbopen-user)
+  (:directory :gbbopen "test")
+  (:files ("basic-tests" :reload)))
+
+;;; ---------------------------------------------------------------------------
+
+(define-module :agenda-shell-test
+  (:requires :agenda-shell-user)
+  (:directory :gbbopen "control-shells" "test")
+  (:files ("agenda-shell-test" :reload)))
+
+;;; ---------------------------------------------------------------------------
+
+(define-module :http-test
+  (:requires :portable-sockets)
+  (:directory :gbbopen-tools "test")
+  (:files ("http-test" :reload)))
+
+;;; ---------------------------------------------------------------------------
+
+(define-module :portable-threads-test
+  (:requires :portable-threads)
+  (:directory :gbbopen-tools "test")
+  (:files ("portable-threads-test" :reload)))
+
+;;; ---------------------------------------------------------------------------
+
+(define-module :timing-test
+  (:requires :gbbopen-user)
+  (:directory :gbbopen "test")
+  (:files ("timing-tests" :reload)))
+
+;;; ===========================================================================
+;;;  Example Modules
+
+(define-module :tutorial-example
+  (:requires :agenda-shell-user)
+  (:directory :gbbopen "examples")
+  (:files "tutorial"))
+
+(define-module :abort-ks-execution-example
+  (:requires :agenda-shell-user)
+  (:directory :gbbopen "control-shells" "examples")
+  (:files "abort-ks-execution"))
+
+;;; ===========================================================================
+;;;  Compile All of GBBopen
+
+(define-module :compile-gbbopen
+  (:requires :mini-module)
+  (:directory :gbbopen-root)
+  (:files ("compile-all" :source)))
+
+;;; ===========================================================================
+;;;				  End of File
+;;; ===========================================================================

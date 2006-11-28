@@ -1,0 +1,248 @@
+;;;; -*- Mode:COMMON-LISP; Package:GBBOPEN-USER; Base:10 -*-
+;;;; *-* File: /home/gbbopen/current/source/gbbopen/examples/tutorial.lisp *-*
+;;;; *-* Edited-By: cork *-*
+;;;; *-* Last-Edit: Thu Oct 12 06:49:12 2006 *-*
+;;;; *-* Machine: ruby.corkills.org *-*
+
+;;;; **************************************************************************
+;;;; **************************************************************************
+;;;; *
+;;;; *              GBBopen Tutorial "Random Walk" Application
+;;;; *
+;;;; **************************************************************************
+;;;; **************************************************************************
+;;;
+;;; Part of the GBBopen Project (see LICENSE for license information).
+;;;
+;;; To run:
+;;;   1. Compile and load the :tutorial-example module
+;;;   2. Set the current package to :gbbopen-user
+;;;   3. Evaluate: (take-a-walk)
+;;;
+;;; Use (show-important-events) [default] and (hide-important-events) to
+;;; toggle event printing.
+;;;
+;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+;;;
+;;;  10-08-05 Adapted from the `Getting Started with GBB' example.  (Corkill)
+;;;  09-22-06 Converted to GBBopen 0.9.5.  (Corkill)
+;;;
+;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+(in-package :gbbopen-user)
+
+;;; ------------------------------------------------------------------------
+
+(defvar *the-random-walk* nil
+  "Stores the random-walk unit instance.")
+
+(defparameter *center-quadrant-pattern* 
+    '(within (x y) ((-25 25) (-25 25))))
+
+;;; ===========================================================================
+;;;   Unit Class Definitions
+
+(define-unit-class location ()
+  (time
+   x
+   y
+   (next-location
+    :link (location previous-location :singular t) 
+    :singular t)
+   (previous-location
+    :link (location next-location :singular t)  
+    :singular t)
+   (path
+    :link (path locations)
+    :singular t))
+  (:dimensional-values
+   (time :point time)
+   (x :point x)
+   (y :point y))
+  (:initial-space-instances (known-world)))
+
+(defmethod print-instance-slots ((location location) stream)
+  (call-next-method)
+  (when (and (slot-boundp location 'x)
+             (slot-boundp location 'y))
+    (format stream " (~s ~s)"
+            (x-of location)
+            (y-of location))))
+
+;;; ------------------------------------------------------------------------
+
+(define-unit-class path ()
+  (time
+   x
+   y
+   (locations
+    :link (location path :singular t)
+    :sort-function #'<
+    :sort-key #'time-of))
+  (:dimensional-values
+   (time :point locations)
+   (x :point locations)
+   (y :point locations))
+  (:initial-space-instances (known-world)))
+
+;;; ===========================================================================
+;;;   Initial-location-event
+
+(define-event-class initial-location-event (single-instance-event)
+  ())
+
+;;; ===========================================================================
+;;;   Create-instance event function
+
+(defun add-location-to-path (event-name &key instance &allow-other-keys)
+  (declare (ignore event-name))
+  ;; Link the newly created location instance to the path:
+  (linkf (path-of instance) *the-random-walk*))
+
+(add-event-function 'add-location-to-path 'create-instance-event 'location)
+
+;;; ===========================================================================
+;;;   Startup KS
+
+(defun startup-ks-function (ksa)
+  (declare (ignore ksa))
+  ;; Create the initial (empty) path instance:
+  (setf *the-random-walk* (make-instance 'path))
+  ;; Create an initial location instance at (0,0) at time 0:
+  (let ((instance (make-instance 'location
+                    :time 0
+                    :x 0 :y 0)))
+    (signal-event 'initial-location-event :instance instance)))
+
+(define-ks startup-ks
+    :trigger-events ((start-control-shell-event))
+    :rating 100
+    :execution-function 'startup-ks-function)
+
+;;; ===========================================================================
+;;;   Random-walk KS
+
+(defun add-linear-variance (value max-variance)
+  ;;; Returns a new random value in the interval
+  ;;; [(- value max-variance), (+ value max-variance)]
+  (+ value (- (random (1+ (* max-variance 2))) max-variance)))
+
+;;; ---------------------------------------------------------------------------
+
+(defun random-walk-ks-function (ksa)
+  ;;; Move to the next (random) location in the world
+  (let* ((trigger-instance (sole-trigger-instance-of ksa))
+         ;; The new time is one greater than the stimulus instance's time:
+         (time (1+ (time-of trigger-instance))))
+    (cond
+     ;; If the maximum time value (75) is reached, tell the user we've
+     ;; walked too long:
+     ((>= time 75) (format t "~2&Walked too long.~%"))
+     (t ;; The new location is +/- 10 of the stimulus instance's location:
+      (let ((x (add-linear-variance (x-of trigger-instance) 10))
+            (y (add-linear-variance (y-of trigger-instance) 10)))
+        (cond
+         ;; Check that the new location is within the known-world
+         ;; boundaries.  If so, create the new location instance:
+         ((and (<= -50 x 50) (<= -50 y 50))
+          (make-instance 'location 
+            :time time 
+            :x x 
+            :y y
+            :previous-location trigger-instance))
+         ;; Otherwise, tell the user that we've walked too far away:
+         (t (format t "~2&Walked off the world: (~d, ~d).~%" x y))))))))
+
+(define-ks random-walk-ks
+    :trigger-events ((create-instance-event location))
+    :rating 100
+    :execution-function 'random-walk-ks-function)
+
+;;; ===========================================================================
+;;;   Count-center-locations KS
+
+(defun count-center-locations (ksa)
+  ;;; Count the location unit instances within the center quadrant
+  ;;; ((-25,-25)(25,25)) of the known world
+  (declare (ignore ksa))
+  (let ((unit-instances (find-instances 'location '(known-world)
+                                        *center-quadrant-pattern*)))
+    (format t "~2&~d locations in the center quadrant. ~%"
+            (length unit-instances))))
+
+(define-ks count-center-locations-ks
+    :trigger-events ((start-control-shell-event))
+    ;; The rating of this KS must be lower than the rating of the 
+    ;; startup-ks and random-walk-ks:
+    :rating 90
+    :execution-function 'count-center-locations)
+
+;;; ===========================================================================
+;;;   Print-walk KS
+
+(defun print-walk-ks-function (ksa)
+  ;;; Starting with the initial location instance, print the
+  ;l; instance name and location of the walk
+  (format t "~2&The random path:~%")
+  (let ((instance (sole-trigger-instance-of ksa)))
+    (while instance
+      (format t "~6:<~:[~;* ~]~a~> (~s ~s)~%"
+              (filter-instances (list instance) *center-quadrant-pattern*)
+              (instance-name-of instance)
+              (x-of instance)
+              (y-of instance))
+      (setf instance (next-location-of instance)))))
+
+(define-ks print-walk-ks
+    :trigger-events ((initial-location-event location))
+    :rating 80
+    :execution-function 'print-walk-ks-function)
+
+;;; ===========================================================================
+;;;   Initializations (run at Agenda Shell startup)
+
+(defun initializations (event-name &key &allow-other-keys)
+  (declare (ignore event-name))
+  ;; Clean up any previous run:
+  (reset-gbbopen :retain-classes '((ks :plus-subclasses))
+                 :retain-event-functions 't
+                 :retain-event-printing 't)
+  ;; Make a new known-world space instance:
+  (make-space-instance 
+   '(known-world)
+   :allowed-unit-classes '(location path)
+   :dimensions (unit-class-dimensions 'location)
+   :storage '((location (x y) uniform-buckets :layout ((0 100 5)
+                                                       (0 100 5))))))
+
+(add-event-function 'initializations 'start-control-shell-event
+                    ;; Initializations should be done first!
+                    :priority 100)
+
+;;; ===========================================================================
+;;;   The main, take-a-walk, function (simply starts the Agenda Shell)
+
+(defun take-a-walk (&rest initargs)
+  (declare (dynamic-extent initargs))
+  ;; Take-a-walk is equivalent to calling start-control-shell:
+  (apply #'start-control-shell initargs))
+
+;;; ===========================================================================
+;;;   Event printing control:
+
+(defun show-important-events ()
+  (enable-event-printing 'initial-location-event 'location)
+  (enable-event-printing '(control-shell-event :plus-subevents)))
+
+(defun hide-important-events ()
+  (disable-event-printing 'initial-location-event 'location)
+  (disable-event-printing '(control-shell-event :plus-subevents)))
+
+;;; ---------------------------------------------------------------------------
+;;; Initally enable printing of all control shell events:
+
+(show-important-events)
+
+;;; ===========================================================================
+;;;                               End of File
+;;; ===========================================================================

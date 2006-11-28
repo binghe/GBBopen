@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<!-- XML file produced from file: reference.tex
+     using Hyperlatex v 2.9-in-waiting-rk (oct06) (c) Otfried Cheong -->
+<head>
+<title>GBBopen 0.9.5 Reference -- Mini-Module System</title>
+</p>
+<link rel="SHORTCUT ICON" href="favicon.ico"><link rel=stylesheet
+        href="gbbopen.css" type="text/css" />
+</head>
+<body>
+<table width="100%" cellpadding="0" cellspacing="2"><tr>
+<td bgcolor="#99ccff"><a href="ref-tools-entities.html"><img border="0" alt="Tools" src="next.png"/></a></td><td bgcolor="#99ccff"><a href="reference_0.html"><img border="0" alt="Top" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-starting-up.html"><img border="0" alt="Starting Up" src="previous.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b>Mini-Module System</b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table>
+<h1>Mini-Module System</h1>
+<p>The mini-module facility provides a lightweight and easy to use mechanism
+for compiling and loading module files.  The facility keeps track of the
+dependencies between modules and the modules that have been compiled and
+loaded. The mini-module facility was designed for simplicity and
+portability, yet it is powerful enough to manage substantial software
+projects, each operating on multiple hardware platforms and Common Lisp
+implementations.
+</p>
+<p>The mini-module facility is sufficient for many situations, and if not,
+there are more complex open-source <b>defsystem</b> packages, such as ASDF
+(<a target="_top" href="http://www.weitz.de/asdf-install/">http://www.weitz.de/asdf-install/</a>), that are available.
+</p>
+<p><a name="id1">The</a> <code>:mini-module</code> module is automatically loaded by the GBBopen
+<var><i>&lt;</i>install-directory<i>&gt;</i></var><code>startup.lisp</code> file (via the
+<code>mini-module-loader.lisp</code> file located in the <code>mini-module</code>
+subdirectory). If a <code>gbbopen-init.lisp</code> file (source or compiled)
+is present in the user's &#8220;home&#8221; directory, it is loaded immediately
+following the loading of the mini-module facility by the
+<code>startup.lisp</code> file.  A personal <code>gbbopen-init.lisp</code> file is
+very useful for defining user-specific modules, application modules,
+GBBopen parameters, and other personalizations
+(see the the GBBopen <a href="ref-starting-up.html">start-up description</a>).
+</p>
+<p><b><font size="+1">Entities</font></b>
+</p>
+<ul>
+<li><a href="ref-compile-module.html"><font color="#000000">compile-module</font></a></li>
+<li><a href="ref-define-module.html"><font color="#000000">define-module</font></a></li>
+<li><a href="ref-define-relative-directory.html"><font color="#000000">define-relative-directory</font></a></li>
+<li><a href="ref-define-root-directory.html"><font color="#000000">define-root-directory</font></a></li>
+<li><a href="ref-describe-module.html"><font color="#000000">describe-module</font></a></li>
+<li><a href="ref-load-module.html"><font color="#000000">load-module</font></a></li>
+<li><a href="ref-load-module-file.html"><font color="#000000">load-module-file</font></a></li>
+<li><a href="ref-module-directories.html"><font color="#000000">module-directories</font></a></li>
+<li><a href="ref-module-loaded-p.html"><font color="#000000">module-loaded-p</font></a></li>
+<li><a href="ref-show-defined-directories.html"><font color="#000000">show-defined-directories</font></a></li>
+</ul>
+<hr /><address><a target="_top" class="address"
+    href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
+<table width="100%" cellpadding="0" cellspacing="2"><tr>
+<td bgcolor="#99ccff"><a href="ref-tools-entities.html"><img border="0" alt="Tools" src="next.png"/></a></td><td bgcolor="#99ccff"><a href="reference_0.html"><img border="0" alt="Top" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-starting-up.html"><img border="0" alt="Starting Up" src="previous.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b>Mini-Module System</b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table></body></html>

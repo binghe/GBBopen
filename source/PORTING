@@ -1,0 +1,90 @@
+
+Porting Instructions
+====================
+
+The following GBBopen files require implementation-specific attention when 
+porting GBBopen to a new CL implementation.  
+
+If you building GBBopen for a new CL implementation, please e-mail the
+modifications to the GBBopen Project for inclusion in future releases.
+
+==============================================================================
+../gbbopen-init.lisp
+  - implementation-specific define-tll-command semantics (optional)
+------------------------------------------------------------------------------
+mini-module/mini-module-loader.lisp
+  - The parameters *compiled-directory-name* and *compiled-file-type* must be
+    extended
+  - Lisp-implementation-version may need to be augmented with something
+    more appropriate for naming the compiled directory tree
+------------------------------------------------------------------------------
+mini-module/mini-module.lisp
+  - probe-directory must be defined
+  - implementation-specific package/feature modifications, if appropriate
+  - top-level mini-module commands (optional)
+------------------------------------------------------------------------------
+tools/declarations.lisp
+  - allow-redefinition (optional)
+------------------------------------------------------------------------------
+tools/tools.lisp
+  - create CLOS package nickname, where needed
+  - import MOP finalization functions for ensure-finalized-class
+  - import MOP specialization extraction and eql handling for undefmethod
+  - import specialized MEMQ, DELQ, UNTIL, and WHILE, where available
+  - import EXTRACT-DECLARATIONS, where available
+  - print-pretty-function-object can be customized for each CL implementation
+------------------------------------------------------------------------------
+tools/declared-numerics.lisp
+  - fixnump, single-float-p, and double-float-p
+  - infinity and negative-infinity values, reading, and printing
+------------------------------------------------------------------------------
+tools/os-interface.lisp
+  - implementation-specific OS process entities
+------------------------------------------------------------------------------
+tools/portable-sockets.lisp
+  - implementation-specific socket entities
+------------------------------------------------------------------------------
+tools/portable-threads.lisp
+  - implementation-specific multiprocessing entities
+------------------------------------------------------------------------------
+tools/queue.lisp
+  - CLISP and ECL require integer nth-queue-element method (rather than 
+    fixnum), as they don't include fixnum as a built-in-class
+------------------------------------------------------------------------------
+tools/system.lisp
+  - implementation-specific OS-interface entities
+------------------------------------------------------------------------------
+gbbopen/mop-interface.lisp
+  - import required MOP symbols
+------------------------------------------------------------------------------
+gbbopen/unit-metaclasses.lisp
+  - Lispworks MOP deviations
+  - Hash-table-test standardization (CLISP doesn't return standard test names)
+------------------------------------------------------------------------------
+gbbopen/units.lisp
+  - handling MOP deviations
+ **** Note: Porting this file involves substantial AMOP-like capabilities ****
+------------------------------------------------------------------------------
+gbbopen/event-metaclassess.lisp
+  - some MOP deviations (parallels those in unit-metaclasses.lisp)
+------------------------------------------------------------------------------
+gbbopen/events.lisp
+  - some MOP deviations (parallels those in units.lisp)
+------------------------------------------------------------------------------
+gbbopen/find.lisp
+  - CLISP and ECL require non-overflow checking (due to lack of infinite 
+    values)
+  - CMUCL and SBCL require notinline typep declarations within 
+    with-full-optimization to suppress open-code failure warning
+------------------------------------------------------------------------------
+gbbopen/instances.lisp
+  - Lispworks xxx-using-class MOP deviations 
+------------------------------------------------------------------------------
+gbbopen/links.lisp
+  - Lispworks xxx-using-class MOP deviations 
+------------------------------------------------------------------------------
+gbbopen/instance.lisp
+  - CMUCL and SBCL require notinline typep declarations within 
+    with-full-optimization to suppress open-code failure warning
+==============================================================================
+End of File

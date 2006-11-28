@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<!-- XML file produced from file: reference.tex
+     using Hyperlatex v 2.9-in-waiting-rk (oct06) (c) Otfried Cheong -->
+<head>
+<title>GBBopen 0.9.5 Reference -- space-instance-children</title>
+</p>
+<link rel="SHORTCUT ICON" href="favicon.ico"><link rel=stylesheet
+        href="gbbopen.css" type="text/css" />
+</head>
+<body>
+<table width="100%" cellpadding="0" cellspacing="2"><tr>
+<td bgcolor="#99ccff"><a href="ref-space-instance-dimensions.html"><img border="0" alt="space-instance-dimensions" src="next.png"/></a></td><td bgcolor="#99ccff"><a href="ref-GBBopen-core-entities.html"><img border="0" alt="GBBopen Core" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-signal-event.html"><img border="0" alt="signal-event" src="previous.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">space-instance-children</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table>
+
+<p><table class="tight" width="100%">
+<tr valign="top"><td valign="baseline" align="left"%>
+<nobr><b><font color="#000000">space-instance-children</font></b></nobr></td><td valign="baseline"> &nbsp; </td><td valign="baseline" align="left" width="99%"><var>space-instance</var>
+<i> =&gt; </i> <var>space-instances</var></td><td valign="baseline" align="right">[<i>Generic&nbsp;Function</i>]
+</td></tr></table></p>
+<p><span class="fndoclabel">Purpose</span> <br />Return the child space instances of a <a href="ref-glossary.html#id144">space&nbsp;instance</a>.
+</p>
+<p><span class="fndoclabel">Method signatures</span></p>
+<p><table class="tight" width="100%">
+<tr valign="top">
+<td valign="baseline" align="left">
+<nobr>space-instance-children</nobr>
+</td>
+<td valign="baseline">&nbsp; </td>
+<td valign="baseline" align="left" width="99%">
+<code>(</code><var>space-instance</var> <code>root-space-instance)</code>
+<i> =&gt; </i> <var>space-instances</var>
+</td>
+</tr>
+</table>
+</p>
+<p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen</code>
+</p>
+<p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen</code>
+</p>
+<p><span class="fndoclabel">Arguments</span><table class="tight">
+<tr valign="top"><td valign="baseline"><i>space-instance</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id144">space&nbsp;instance</a>
+</td></tr></table>
+</p>
+<p><span class="fndoclabel">Returns</span> <br />A list of the child space instances.
+</p>
+<p><span class="fndoclabel">See also</span>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-make-space-instance.html"><b>make-space-instance</b></a>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-space-instance-parent.html"><b>space-instance-parent</b></a>
+</p>
+<p><span class="fndoclabel">Example</span> <br /><a name="id1">Return</a> the child space instances  of the <code>(bb)</code> <a href="ref-glossary.html#id144">space&nbsp;instance</a>:
+</p>
+<pre>
+&gt; (space-instance-children (<a href="ref-find-space-instance-by-path.html">find-space-instance-by-path</a> '(bb))
+(#&lt;standard-space-instance (bb hyps)&gt;
+ #&lt;standard-space-instance (bb probable-hyps)&gt;
+ #&lt;standard-space-instance (bb rejected-hyps)&gt;)
+</pre>
+<hr /><address><a target="_top" class="address"
+    href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
+<table width="100%" cellpadding="0" cellspacing="2"><tr>
+<td bgcolor="#99ccff"><a href="ref-space-instance-dimensions.html"><img border="0" alt="space-instance-dimensions" src="next.png"/></a></td><td bgcolor="#99ccff"><a href="ref-GBBopen-core-entities.html"><img border="0" alt="GBBopen Core" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-signal-event.html"><img border="0" alt="signal-event" src="previous.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">space-instance-children</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table></body></html>

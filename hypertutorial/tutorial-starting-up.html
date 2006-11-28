@@ -1,0 +1,426 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<!-- XML file produced from file: tutorial.tex
+     using Hyperlatex v 2.9-in-waiting-rk (oct06) (c) Otfried Cheong -->
+<head>
+<title>GBBopen 0.9.5 Tutorial -- Starting GBBopen</title>
+</p>
+<link rel="SHORTCUT ICON" href="favicon.ico"><link rel=stylesheet
+        href="gbbopen.css" type="text/css" />
+</head>
+<body>
+<table width="100%" cellpadding="0" cellspacing="2"><tr>
+<td bgcolor="#99ccff"><a href="tutorial-creating-a-unit-instance.html"><img border="0" alt="Creating a Unit Instance" src="next.png"/></a></td><td bgcolor="#99ccff"><a href="tutorial_0.html"><img border="0" alt="Top" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="tutorial-acknowledgments.html"><img border="0" alt="Acknowledgments" src="previous.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b>Starting GBBopen</b></td><td bgcolor="#99ccff"><a target="_top" href="tutorial.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table>
+<h1>Starting GBBopen</h1>
+<p>This initial exercise requires that you:
+</p>
+<p><ul class="tight"><li>Obtain and install Common Lisp
+<li>Obtain and install GBBopen
+<li>Interact with Common Lisp's read-eval-print loop (REPL)
+<li>Recover from errors
+<li>Prepare to use GBBopen in the next exercises by loading the
+<code>:gbbopen-user</code> module and changing to the <code>:gbbopen-user</code>
+package
+</ul>
+</p>
+<hr color="99CCCC">
+
+<h2><a name="id1">Step 1: Obtain and install Common Lisp</a></h2><p>
+GBBopen requires a supported Common Lisp implementation.  If one has already
+been installed on your system, then this step is finished.  (That was easy!)
+If not, then you will need to choose, obtain, and install a Common Lisp
+implementation before moving on to the next step.
+</p>
+<p>The list of Common Lisp implementations, with version numbers, on which
+GBBopen is supported is maintained on the &#8220;<a target="_top" href="http://GBBopen.org/ports.html">Current
+ports</a>&#8221; page of the GBBopen Project
+<a target="_top" href="http://GBBopen.org/">web site</a>.  The list includes commercial
+products and open-source implementations made available under varying license
+arrangements.  The vendors of commercial Common Lisp products offer no-cost
+&#8220;Trial&#8221; or &#8220;Personal&#8221; editions that can support the tutorial exercises and
+allow you to become familiar with their products before making a purchase
+decision.
+</p>
+<p>Choosing a particular implementation is a subjective decision.  Some Common
+Lisp implementations run on only a single platform.  Some implementations do
+not provide multiprocessing (thread) support on some or all of the platforms
+that they run on.  Some implementations come with their own integrated
+development environment (IDE), interactive graphics facilities, and supported
+libraries and extensions.  When it comes to selecting an implementation, there
+is no &#8220;best&#8221; answer (but there is also no wrong answer, if the
+implementation meets your current needs).  All these Common Lisp
+implementations strive to conform to the ANSI (American National Standards
+Institute) standard for the Common Lisp language.  By writing GBBopen
+applications to remain consistent with the ANSI standard (including portable
+extensions to the standard that are provided by GBBopen), we can easily run
+our code on any Common Lisp implementation that provides similar capabilities
+(such as threads, for example).
+</p>
+<p>If you would rather not explore the space of Common Lisp implementations for
+your platform, Peter Seibel (the author of <a target="_top" href="http://www.gigamonkeys.com/book/"><i>Practical Common
+Lisp</i></a>) provides
+<a target="_top" href="http://www.gigamonkeys.com/book/lispbox/">Lispbox</a>.  Lispbox
+(&#8220;Lisp in a Box&#8221;) offers an easy to install, no-cost, Common Lisp
+environment for Linux/86, Macintosh OS X, and Windows.  Lispbox packages
+together a Common Lisp implementation,
+<a target="_top" href="http://www.gnu.org/software/emacs/emacs.html">Emacs</a>, and the
+<a target="_top" href="http://common-lisp.net/project/slime/">SLIME</a> Common Lisp
+development environment for Emacs.  For the less adventurous, installing
+Lispbox can be an appealing way to get started.
+</p>
+<p>However you choose to obtain Common Lisp, you must have an installed and
+operating implementation for your system before proceeding to the next step.
+</p>
+
+<h2><a name="id2">Step 2: Obtain and install GBBopen</a></h2><p>
+GBBopen is available in source form from
+<a target="_top" href="http://GBBopen.org/">http://GBBopen.org/</a>.  A snapshot archive of
+the GBBopen source-code repository can be downloaded from
+<a target="_top" href="http://gbbopen.org/downloads/GBBopen.tar.gz">http://gbbopen.org/downloads/GBBopen.tar.gz</a>.
+Extract the archive into a directory of your choosing, and follow the
+&#8220;Compiling/Loading GBBopen&#8221; instructions that are contained in the
+<code>README</code> file of the installation.
+</p>
+<p><a name="id3">Alternatively,</a> if you are familiar with
+<a target="_top" href="http://subversion.tigris.org">Subversion</a> and have a subversion
+client installed on your computer, you can checkout the latest files directly
+from the GBBopen repository.  For example, the shell command:
+</p>
+<pre><font color="#8c8c8c">  [~]$ <font color="#000000">svn checkout http://GBBopen.org/svn/GBBopen/trunk/ GBBopen</font>
+</pre></font>
+<p>will create a GBBopen repository tree rooted at the directory named
+<code>GBBopen</code> in your current working directory.  As above, follow the
+&#8220;Compiling/Loading GBBopen&#8221; instructions that are contained in the
+<code>README</code> file of the installation.
+</p>
+<p><a name="id4">GBBopen</a> development is ongoing, and you should update your GBBopen repository
+files regularly in order to obtain the latest capabilities and enhancements.
+Using subversion is the easiest way to keep current, and you are strongly
+encouraged to install a subversion client and use it perform frequent updates.
+Simply issue the command:
+</p>
+<pre><font color="#8c8c8c">  [~]$ <font color="#000000">svn update</font>
+</pre></font>
+<p>from the root directory of your GBBopen repository tree.  
+The <a target="_top" href="http://tortoisesvn.tigris.org/">TortoiseSVN</a> subversion
+client is highly recommended for Windows users.  TortoiseSVN is
+smoothly integrated with the Windows Shell (Explorer) and is as easy
+to use as <a target="_top" href="http://www.tortoisecvs.org/">TortoiseCVS</a> (also
+highly recommended if aren't already using it as your CVS client on
+Windows).
+</p>
+<p>Subversion <code>.svn</code> administrative directories are included in the
+GBBopen snapshot archive, so a subversion <code>update</code> command can be
+used to freshen a GBBopen installation that was originally installed
+from a snapshot archive.
+</p>
+
+<h2><a name="id5">Step 3: Interact with the REPL</a></h2><p>
+This tutorial assumes that you have a basic understanding of Common Lisp and,
+in particular, how to interact with the Common Lisp implementation that you
+are using.  Thus, you should be able to start up your Common Lisp system and
+enter forms into the &#8220;Lisp Listener&#8221; (also called the read-eval-print-loop
+or simply the REPL) that it provides.  
+</p>
+<p>When you start your Common Lisp system, it may first display some informational
+messages and then you should see a prompt for input that looks something like:
+</p>
+<pre><font color="#8c8c8c">  &gt; 
+</pre></font>
+<p>The specific format of the prompt differs depending on your Common Lisp
+implementation.  The prompt character may vary, such as:
+</p>
+<pre><font color="#8c8c8c">  * 
+</pre></font>
+<p>or
+</p>
+<pre><font color="#8c8c8c">  ? 
+</pre></font>
+<p>The prompt might include a entry number that is incremented each time an
+expression is entered, such as:
+</p>
+<pre><font color="#8c8c8c">  [1]&gt; 
+</pre></font>
+<p>Or it might also include the name of the current package (symbol namespace)
+being used by the REPL:
+</p>
+<pre><font color="#8c8c8c">  gbbopen-user(1): 
+</pre></font>
+<p>The REPL prompt indicates that it is awaiting a Common Lisp expression to
+evaluate and then display the evaluation results. For example, enter the
+expression:
+</p>
+<pre><font color="#8c8c8c">  &gt; <font color="#000000">(+ 1 2)</font>
+  3
+  &gt;
+</pre></font>
+<p>Note that what you need to enter is shown in black and other items, such as
+the REPL prompt and displayed result, <code>3</code>, are shown in gray.  We will
+follow this convention throughout the tutorial to help make it clear what you
+must provide in the context of other information.
+</p>
+<p><a name="id6">While</a> we are on the subject of what is displayed, enter the following expression:
+</p>
+<pre><font color="#8c8c8c">  &gt; <font color="#000000">'symbol</font>
+  symbol
+  &gt;
+</pre></font>
+<p>The displayed result that you see might be in lower case, as shown, or upper
+case, or even capitalized.  In this tutorial, results are shown with Common
+Lisp symbols displayed in lower case, which I prefer as being slightly easier
+to read.  If you wish, you can duplicate this behavior in your REPL by
+entering the following form:
+</p>
+<pre><font color="#8c8c8c">  &gt; <font color="#000000">(setf *print-case* ':downcase)</font>
+  :downcase
+  &gt;
+</pre></font>
+<p><a name="id7">Your</a> Common Lisp implementation may also differ slightly on how it displays
+multiple returned values.  For example:
+</p>
+<pre><font color="#8c8c8c">  &gt; <font color="#000000">(values 1 2 3)</font>
+  1
+  2
+  3
+  &gt;
+</pre></font>
+<p>In this tutorial, we show multiple returned values as displayed on separate
+lines.  Your Common Lisp implementation may show them differently, such as
+with semicolon value-separation characters:
+</p>
+<pre><font color="#8c8c8c">  &gt; <font color="#000000">(values 1 2 3)</font>
+  1 ;
+  2 ;
+  3
+  &gt;
+</pre></font>
+
+<h2><a name="id8">Step 4: Recover from an error</a></h2><p>
+Even you are a very careful typist, sooner or later you will enter a Common
+Lisp expression that signals an error.  Therefore, it is important that you
+know how to get back on track when the inevitable occurs.  Let's intentionally
+generate an error.  Enter:
+</p>
+<pre><font color="#8c8c8c">  &gt; <font color="#000000">(/ 1 0)</font>
+  Error: Attempt to divide 1 by zero.
+  &gt;&gt;
+</pre></font>
+<p>The behavior of your Common Lisp environment should look similar, and you
+should now be in your implementation's debugger or &#8220;break loop.&#8221;  The
+debugger prompt may differ from the standard REPL prompt to help remind you
+that you are in the break loop.  Alternatively, your implementation may open
+another window or buffer in response to the error.  Your implementation may
+allow you to continue entering Common Lisp expressions at the break prompt
+that are evaluated and the results displayed just as if you were in the normal
+REPL (opening the possibility of causing another error and triggering another
+instance of the debugger).  You can use the debugger to inspect the nesting,
+or &#8220;backtrace,&#8221; of function calls that led to the error, view and edit local
+variable bindings, and so forth, and you can often correct the cause of the
+error and resume the broken evaluation directly from the debugger.
+</p>
+<p>For tutorial purposes, you only need to know how to abort out of the
+evaluation and return back to the REPL if you trigger an error.  The details
+for aborting the computation and exiting the debugger are implementation
+dependent, so you may need to investigate how to abort out of an error on your
+Common Lisp implementation.  For example, it might be as easy as entering an
+abort debugger command:
+</p>
+<pre><font color="#8c8c8c">  &gt; (/ 1 0)
+  Error: Attempt to divide 1 by zero.
+  &gt;&gt; <font color="#000000">:a</font>
+  &gt;
+</pre></font>
+<p>Consult your Common Lisp documentation or a knowledgeable friend if
+you need assistance with the debugger in your Common Lisp
+implementation (<code>:a</code> or <code>q</code> are typical abort commands).
+</p>
+
+<h3><a name="id9">Breaking a computation</a></h3><p>
+There are other mistakes that don't signal an error.  Suppose I
+foolishly evaluate this expression:
+</p>
+<pre><font color="#8c8c8c">  &gt; <font color="#000000">(loop (print "This is repetitive...") (sleep 1))</font>
+
+  "This is repetitive." 
+  "This is repetitive." 
+       ...
+</pre></font>
+<p>Once I grow tired of watching this phrase repeat, it would be good to
+terminate the evaluation without having to kill the entire Common Lisp
+program.
+</p>
+<p>Again, the specifics depend on your Common Lisp environment, but all that is
+needed is to interrupt, or &#8220;break,&#8221; the computation.  Often this is
+associated with typing one or more Control-c (<code>^c</code>) characters:
+</p>
+<pre><font color="#8c8c8c">  &gt; (loop (print "This is repetitive...") (sleep 1))
+
+  "This is repetitive." 
+  "This is repetitive." 
+       ...
+  "This is repetitive." 
+  "This is repetitive." 
+  "This is rep<font color="#000000">^C</font>
+  Error: Received keyboard interrupt ^C
+  &gt;&gt;
+</pre></font>
+<p>Typically a keyboard interrupt invokes the debugger where the computation
+can be resumed or aborted:
+</p>
+<pre><font color="#8c8c8c">  &gt; (loop (print "This is repetitive...") (sleep 1))
+
+  "This is repetitive." 
+  "This is repetitive." 
+       ...
+  "This is repetitive." 
+  "This is repetitive." 
+  "This is rep^C
+  Error: Received keyboard interrupt ^C
+  &gt;&gt; <font color="#000000">:a</font>
+  &gt;
+</pre></font>
+
+<h3><a name="id10">Help! My REPL is broken!</a></h3><p>
+Here is one last difficulty.  Suppose I enter:
+</p>
+<pre><font color="#8c8c8c">  &gt; <font color="#000000">(list "This" "is "also" "a" "problem!")</font>
+  &gt;
+  &gt;
+  &gt;
+</pre></font>
+<p>My REPL seems dead: no result is displayed and I continue to be prompted again
+and again for input.  I suppose I should try the entering the expression
+again:
+</p>
+<pre><font color="#8c8c8c">  &gt; (list "This" "is "also" "a" "problem!")
+  &gt;
+  &gt;
+  &gt;
+  &gt; <font color="#000000">(list "This" "is" "also" "a" "problem!")</font>
+  &gt;
+  &gt;
+</pre></font>
+<p>Nope, my REPL is still broken.
+</p>
+<p>Of course the cause of the problem is that I forgot the closing double-quote
+character on <code>"is"</code> when I entered the first expression.  The REPL is
+still patiently waiting for me to finish that first Common Lisp expression.
+(I didn't break it after all!)
+</p>
+<p>So how do I get out of this?  I could try entering a sequence of double-quote
+and close parentheses and hope I that I get lucky:
+</p>
+<pre><font color="#8c8c8c">  &gt; (list "This" "is "also" "a" "problem!")
+  &gt;
+  &gt;
+  &gt;
+  &gt; (list "This" "is" "also" "a" "problem!")
+  &gt;
+  &gt;
+  &gt; <font color="#000000">"</font>
+  &gt; <font color="#000000">)</font>
+  Error: Attempt to take the value of the unbound variable `also'.
+  &gt;&gt;
+</pre></font>
+<p>or I could interrupt the REPL read operation, just as I did with the infinite
+loop situation above, and abort back from the debugger to the REPL and try
+again:
+</p>
+<pre><font color="#8c8c8c">  &gt; (list "This" "is "also" "a" "problem!")
+  &gt;
+  &gt;
+  &gt;
+  &gt; (list "This" "is" "also" "a" "problem!")
+  &gt;
+  &gt;
+  &gt; <font color="#000000">^C</font>
+  Error: Received keyboard interrupt ^C
+  &gt;&gt; <font color="#000000">:a</font>
+  &gt; <font color="#000000">(list "This" "is" "also" "a" "problem!")</font>
+  ("This" "is" "also" "a" "problem!")
+  &gt;
+</pre></font>
+<p>You may discover even more creative ways to get into problems, but these
+example situations should give you enough experience to get through the rest
+of the tutorial.
+</p>
+
+<h2><a name="id11">Step 5: Load the <code>:gbbopen-user</code> module</a></h2><p>
+GBBopen is packaged with its own module system
+that supports compiling and loading GBBopen components.
+</p>
+<p>To compile and load the <code>:gbbopen-user</code> module and all the GBBopen
+modules it requires, you need to evaluate the following forms within your
+Common Lisp environment.  First, load GBBopen's <code>startup.lisp</code> file from
+wherever GBBopen has been installed:
+</p>
+<pre><font color="#8c8c8c">  &gt; <font color="#000000">(load "<var>&lt;install-directory&gt;</var>startup.lisp")</font>
+  ;; Loading <var>&lt;install-directory&gt;</var>/startup.lisp
+  ;;  Loading <var>&lt;install-directory&gt;</var>/source/mini-module/mini-module-loader.lisp
+  ;;   Loading <var>&lt;install-directory&gt;</var>/source/mini-module/mini-module.lisp
+  ;;  Loading <var>&lt;install-directory&gt;</var>/source/modules.lisp
+  t
+  &gt;
+</pre></font>
+<p><a name="id12">Then</a> compile and load the <code>:gbbopen-user</code> module and all the
+GBBopen modules it requires by evaluating:
+</p>
+<pre><font color="#8c8c8c">  &gt; <font color="#000000">(mini-module:compile-module :gbbopen-user :propagate :create-dirs)</font>
+  ;; Compiling <var>&lt;install-directory&gt;</var>/source/mini-module/mini-module.lisp
+  ;; Loading <var>&lt;install-directory&gt;</var>/<var>platform-directory</var>/gbbopen/gbbopen-user.fasl
+       ...
+  ;; Compiling <var>&lt;install-directory&gt;</var>/source/gbbopen/gbbopen-user.lisp
+  ;; Loading <var>&lt;install-directory&gt;</var>/<var>platform-directory</var>/gbbopen/gbbopen-user.fasl
+  &gt;
+</pre></font>
+<p>GBBopen should compile (if necessary) and load all the files needed for the
+next exercise without error.  The output on your Common Lisp implementation
+may vary somewhat from that shown above.
+</p>
+
+<h3><a name="id13">File protection problems?</a></h3><p>
+If one or more GBBopen files needs to be compiled, you must have write
+permission for those files and directories on your file system.  If you do not
+have write permission and someone else is maintaining your GBBopen
+installation, they must start up Common Lisp and evaluate the following
+expressions:
+</p>
+<pre><font color="#8c8c8c">  &gt; <font color="#000000">(load "<var>&lt;install-directory&gt;</var>gbbopen-init.lisp")</font>
+  ;; Loading <var>&lt;install-directory&gt;</var>/gbbopen-init.lisp
+  ;;  Loading <var>&lt;install-directory&gt;</var>/extended-repl.lisp
+  ;;  Loading <var>&lt;install-directory&gt;</var>/commands.lisp
+  t
+  &gt; <font color="#000000">(compile-gbbopen)</font>
+  ;; Loading <var>&lt;install-directory&gt;</var>/startup.lisp
+     ...
+  ;;; GBBopen module compilation completed.
+  &gt;
+</pre></font>
+<p>every time they update GBBopen to ensure that all GBBopen modules have
+been compiled.
+</p>
+
+<h2><a name="id14">Step 6: Change to the <code>:gbbopen-user</code> package</a></h2><p>
+Now that the <code>:gbbopen-user</code> module is loaded, change the current
+package to the <code>:gbbopen-user</code> package:
+</p>
+<pre><font color="#8c8c8c">  &gt; <font color="#000000">(in-package :gbbopen-user)</font>
+  #&lt;The gbbopen-user package&gt;
+  &gt;
+</pre></font>
+<p>In Common Lisp, a <i>package</i> is a namespace that maps names to
+symbols.  One package is always designated as the &#8220;current&#8221; package, and it
+is this package that is used by default for creating and finding symbols by
+their names.  Initially, the current package is set to the
+<code>:common-lisp-user</code> package.  The <code>:gbbopen-user</code> module creates a
+new package, named <code>:gbbopen-user</code>, that includes GBBopen Tools and
+GBBopen Core symbols in addition to the standard Common Lisp symbols.  If you
+do not set the current package to the <code>:gbbopen-user</code> package, references
+to GBBopen functions and variables will not map to the proper symbols.
+</p>
+<hr /><address><a target="_top" class="address"
+    href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
+<table width="100%" cellpadding="0" cellspacing="2"><tr>
+<td bgcolor="#99ccff"><a href="tutorial-creating-a-unit-instance.html"><img border="0" alt="Creating a Unit Instance" src="next.png"/></a></td><td bgcolor="#99ccff"><a href="tutorial_0.html"><img border="0" alt="Top" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="tutorial-acknowledgments.html"><img border="0" alt="Acknowledgments" src="previous.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b>Starting GBBopen</b></td><td bgcolor="#99ccff"><a target="_top" href="tutorial.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table></body></html>

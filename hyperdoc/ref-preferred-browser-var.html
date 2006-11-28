@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<!-- XML file produced from file: reference.tex
+     using Hyperlatex v 2.9-in-waiting-rk (oct06) (c) Otfried Cheong -->
+<head>
+<title>GBBopen 0.9.5 Reference -- *preferred-browser*</title>
+</p>
+<link rel="SHORTCUT ICON" href="favicon.ico"><link rel=stylesheet
+        href="gbbopen.css" type="text/css" />
+</head>
+<body>
+<table width="100%" cellpadding="0" cellspacing="2"><tr>
+<td bgcolor="#99ccff"><a href="ref-define-tll-command.html"><img border="0" alt="define-tll-command" src="next.png"/></a></td><td bgcolor="#99ccff"><a href="ref-starting-up.html"><img border="0" alt="Starting Up" src="up.png"/></a></td><td bgcolor="#99ccff"><img alt="" src="blank.png"/></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">*preferred-browser*</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table>
+<p><table class="tight" width="100%">
+<tr valign="top"><td valign="baseline" align="left"%>
+<nobr><b><font color="#000000">*preferred-browser*</font></b></nobr></td><td valign="baseline"> &nbsp; </td><td valign="baseline" align="left" width="99%"></td><td valign="baseline" align="right">[<i>Variable</i>]
+</td></tr></table></p>
+<p><span class="fndoclabel">Purpose</span> <br />Specify the preferred browser program.
+</p>
+<p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:common-lisp-user</code>
+</p>
+<p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;Defined in <code>startup.lisp</code>
+</p>
+<p><span class="fndoclabel">Value type</span>&nbsp;&nbsp;&nbsp;A string
+</p>
+<p><span class="fndoclabel">Initial value</span>&nbsp;&nbsp;&nbsp;(see the first example below)
+</p>
+<p><span class="fndoclabel">Description</span> <br />To change the preferred browser, set the value of
+<code>*preferred-browser*</code> in either your Common Lisp initialization
+file or your personal <code>gbbopen-init.lisp</code> file.  Because
+<code>startup.lisp</code> is under Subversion source control, changing
+<code>startup.lisp</code> directly is not recommended.
+</p>
+<p><span class="fndoclabel">See also</span>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-browse-hyperdoc.html"><b>browse-hyperdoc</b></a>
+</p>
+<p><span class="fndoclabel">Examples</span> <br />Here is the setting that is made in <code>startup.lisp</code>:
+</p>
+<pre>
+  (defvar *preferred-browser* 
+      ;; On Mac OSX we defer to the OS default browser:
+      #+(or macosx darwin)
+      "open"
+      ;; Lispworks (non-Windows) and SBCL do not search PATH for programs, so
+      ;; the path must be explicitly included in the preferred browser setting:
+      #+(or (and lispworks (not win32)) sbcl) "/usr/bin/firefox"
+      #-(or macosx darwin (and lispworks (not win32)) sbcl) "firefox")
+</pre>
+<p>Specify a different browser (in a personal <code>gbbopen-init.lisp</code>
+file) on Linux machines:
+</p>
+<pre>
+  (in-package :common-lisp-user)
+
+  #+linux
+  (setf *preferred-browser* 
+    ;; Lispworks (non-Windows) and SBCL do not search PATH for programs, so
+    ;; the path must be explicitly included in the preferred browser setting:
+     #+(or lispworks sbcl) "/usr/bin/opera"
+     #-(or lispworks sbcl) "opera")
+</pre>
+<p><span class="fndoclabel">Notes</span> <br /><a target="_top" href="http://www.lispworks.com">LispWorks</a> (non-Windows
+platforms) and <a target="_top" href="http://sbcl.sourceforge.net">SBCL</a> do not perform a
+<code>PATH</code> search for programs, so the browser-program path must be explicitly
+included in the preferred browser setting.
+</p>
+<hr /><address><a target="_top" class="address"
+    href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
+<table width="100%" cellpadding="0" cellspacing="2"><tr>
+<td bgcolor="#99ccff"><a href="ref-define-tll-command.html"><img border="0" alt="define-tll-command" src="next.png"/></a></td><td bgcolor="#99ccff"><a href="ref-starting-up.html"><img border="0" alt="Starting Up" src="up.png"/></a></td><td bgcolor="#99ccff"><img alt="" src="blank.png"/></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">*preferred-browser*</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table></body></html>

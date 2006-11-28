@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<!-- XML file produced from file: reference.tex
+     using Hyperlatex v 2.9-in-waiting-rk (oct06) (c) Otfried Cheong -->
+<head>
+<title>GBBopen 0.9.5 Reference -- find-instances</title>
+</p>
+<link rel="SHORTCUT ICON" href="favicon.ico"><link rel=stylesheet
+        href="gbbopen.css" type="text/css" />
+</head>
+<body>
+<table width="100%" cellpadding="0" cellspacing="2"><tr>
+<td bgcolor="#99ccff"><a href="ref-find-space-instance-by-path.html"><img border="0" alt="find-space-instance-by-path" src="next.png"/></a></td><td bgcolor="#99ccff"><a href="ref-GBBopen-core-entities.html"><img border="0" alt="GBBopen Core" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-find-instance-by-name.html"><img border="0" alt="find-instance-by-name" src="previous.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">find-instances</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table>
+
+<p><table class="tight" width="100%">
+<tr valign="top"><td valign="baseline" align="left"%>
+<nobr><b><font color="#000000">find-instances</font></b></nobr></td><td valign="baseline"> &nbsp; </td><td valign="baseline" align="left" width="99%"><var>unit-classes-specifier
+space-instances pattern</var> <br /><code>&#38;key</code> <var>filter-before filter-after</var> <i> =&gt; </i> 
+<var>unit-instances</var></td><td valign="baseline" align="right">[<i>Function</i>]
+</td></tr></table></p>
+<p><span class="fndoclabel">Purpose</span> <br />Retrieve <a href="ref-glossary.html#id160">unit&nbsp;instance</a>s from
+<a href="ref-glossary.html#id144">space&nbsp;instance</a>s based on a <a href="ref-glossary.html#id136">retrieval&nbsp;pattern</a>.
+</p>
+<p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen</code>
+</p>
+<p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen</code>
+</p>
+<p><span class="fndoclabel">Arguments</span><table class="tight">
+<tr valign="top"><td valign="baseline"><i>unit-classes-specifier</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An <a href="ref-glossary.html#id56">extended&nbsp;unit-classes&nbsp;specification</a>
+(see below)
+</td></tr><tr valign="top"><td valign="baseline"><i>space-instances</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id144">space&nbsp;instance</a>, a list of
+<a href="ref-glossary.html#id144">space&nbsp;instance</a>s, a <a href="ref-glossary.html#id148">space-instance&nbsp;path</a> regular expression,
+or <code>t</code> (indicating all <a href="ref-glossary.html#id144">space&nbsp;instance</a>s)
+</p>
+</td></tr><tr valign="top"><td valign="baseline"><i><p>pattern</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id136">retrieval&nbsp;pattern</a> (see below)
+</p>
+</td></tr><tr valign="top"><td valign="baseline"><i><p>filter-before</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A single-argument predicate to be applied before
+pattern-matching tests occur
+</p>
+</td></tr><tr valign="top"><td valign="baseline"><i><p>filter-after</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A single-argument predicate to be applied after
+pattern-matching tests occur
+</td></tr></table>
+</p>
+<p><span class="fndoclabel">Returns</span> <br /><a name="id1">A</a> newly consed list of <a href="ref-glossary.html#id160">unit&nbsp;instance</a>s specified by
+<var>unit-class-specifier</var> that reside on <var>space-instances</var> and
+satisfy the specified <var>pattern</var> and any predicate filters.
+</p>
+<p><span class="fndoclabel">Detailed syntax</span> <br /></p>
+<table class="tight"><tbody><tr><td valign="baseline" colspan="1" align="left">
+<p><var>unit-classes-specifier</var>&nbsp;::= </td><td valign="baseline" colspan="1" align="left"> <code>t</code> | 
+<var>single-unit-class-specifier</var> 
+| <code>(</code><var>single-unit-class-specifier</var><sup>+</sup><code>)</code></td></tr>
+<tr><td valign="baseline" colspan="1" align="left">
+</td></tr></tbody></table>
+</p>
+<table class="tight"><tbody><tr><td valign="baseline" colspan="1" align="left">
+<p><var>single-unit-class-specifier</var>&nbsp;::= 
+</td><td valign="baseline" colspan="1" align="left"> <var>atomic-unit-class</var> |
+<code>(</code><var>atomic-unit-class subclassing-specifier</var><code>)</code></td></tr>
+<tr><td valign="baseline" colspan="1" align="left">
+</td></tr></tbody></table>
+</p>
+<table class="tight"><tbody><tr><td valign="baseline" colspan="1" align="left">
+<p><var>atomic-unit-class</var>&nbsp;::= </td><td valign="baseline" colspan="1" align="left"> <var>unit-class</var> | 
+<var>unit-class-name</var> </td></tr>
+<tr><td valign="baseline" colspan="1" align="left">
+</td></tr></tbody></table>
+</p>
+<table class="tight"><tbody><tr><td valign="baseline" colspan="1" align="left">
+<p><var>subclassing-specifier</var>&nbsp;::= 
+<a name="id2"></a></td><td valign="baseline" colspan="1" align="left"> <code>:plus-subclasses</code> | <code>:no-subclasses</code> </td></tr>
+<tr><td valign="baseline" colspan="1" align="left">
+</td></tr></tbody></table>
+</p>
+<br /><a name="id3"></a><table class="tight"><tbody><tr><td valign="baseline" colspan="1" align="left">
+<p><var>pattern</var>&nbsp;::=
+<a name="id4"></a></td><td valign="baseline" colspan="1" align="left"> <var>subpattern</var> | <code>t</code> | <code>:all</code></td></tr>
+<tr><td valign="baseline" colspan="1" align="left">
+</td></tr></tbody></table>
+</p>
+<table class="tight"><tbody><tr><td valign="baseline" colspan="1" align="left">
+<p><var>subpattern</var>&nbsp;::= 
+<a name="id5"></a></td><td valign="baseline" colspan="1" align="left"> <var>pattern-element</var> |</td></tr>
+<tr><td valign="baseline" colspan="1" align="left">
+</td><td valign="baseline" colspan="1" align="left"> <code>(not</code> <var>subpattern</var><code>)</code> | </td></tr>
+<tr><td valign="baseline" colspan="1" align="left">
+</td><td valign="baseline" colspan="1" align="left"> <code>(and</code> <var>subpattern</var>*<code>)</code> | </td></tr>
+<tr><td valign="baseline" colspan="1" align="left">
+</td><td valign="baseline" colspan="1" align="left"> <code>(or</code> <var>subpattern</var>*<code>)</code></td></tr>
+<tr><td valign="baseline" colspan="1" align="left">
+</td></tr></tbody></table>
+</p>
+<table class="tight"><tbody><tr><td valign="baseline" colspan="1" align="left">
+<p><var>pattern-element</var>&nbsp;::= </td><td valign="baseline" colspan="1" align="left"> <code>(</code><var>pattern-op dimension-names</var>
+<var>pattern-values</var> <var>option</var>*<code>)</code> | </td></tr>
+<tr><td valign="baseline" colspan="1" align="left">
+</td><td valign="baseline" colspan="1" align="left"> <code>(</code><var>boolean-dimension-unary-pattern-op dimension-names</var> 
+<var>option</var>*<code>)</code> </td></tr>
+<tr><td valign="baseline" colspan="1" align="left">
+</td></tr></tbody></table>
+</p>
+<table class="tight"><tbody><tr><td valign="baseline" colspan="1" align="left">
+<p><var>pattern-op</var>&nbsp;::= </td><td valign="baseline" colspan="1" align="left"> <var>ordered-dimension-pattern-op</var> | </td></tr>
+<tr><td valign="baseline" colspan="1" align="left">
+</td><td valign="baseline" colspan="1" align="left"> <var>enumerated-dimension-pattern-op</var> | </td></tr>
+<tr><td valign="baseline" colspan="1" align="left">
+</td><td valign="baseline" colspan="1" align="left"> <var>boolean-dimension-pattern-op</var> </td></tr>
+<tr><td valign="baseline" colspan="1" align="left">
+</td></tr></tbody></table>
+</p>
+<table class="tight"><tbody><tr><td valign="baseline" colspan="1" align="left">
+<p><var>ordered-dimension-pattern-op</var>&nbsp;::=
+<a name="id6"></a></td><td valign="baseline" colspan="1" align="left"> <code><i>&lt;</i></code> | <code><i>&lt;</i>=</code> | <code><i>&gt;</i>=</code> | 
+<code><i>&gt;</i></code> | <code>=</code> | <code>/=</code> | </td></tr>
+<tr><td valign="baseline" colspan="1" align="left">
+</td><td valign="baseline" colspan="1" align="left"> <code>within</code> | <code>covers</code> | <code>overlaps</code> |
+<code>starts</code> | <code>ends</code> </td></tr>
+<tr><td valign="baseline" colspan="1" align="left">
+</td></tr></tbody></table>
+</p>
+<table class="tight"><tbody><tr><td valign="baseline" colspan="1" align="left">
+<p><var>enumerated-dimension-pattern-op</var>&nbsp;::= 
+<a name="id7"></a></td><td valign="baseline" colspan="1" align="left"> <code>eq</code> | <code>eql</code> | <code>equal</code> | <code>equalp</code> </td></tr>
+<tr><td valign="baseline" colspan="1" align="left">
+</td></tr></tbody></table>
+</p>
+<table class="tight"><tbody><tr><td valign="baseline" colspan="1" align="left">
+<p><var>boolean-dimension-pattern-op</var>&nbsp;::= 
+<a name="id8"></a></td><td valign="baseline" colspan="1" align="left"> <code>eqv</code> </td></tr>
+<tr><td valign="baseline" colspan="1" align="left">
+</td></tr></tbody></table>
+</p>
+<table class="tight"><tbody><tr><td valign="baseline" colspan="1" align="left">
+<p><var>boolean-dimension-unary-pattern-op</var>&nbsp;::= 
+<a name="id9"></a></td><td valign="baseline" colspan="1" align="left"> <code>true</code> | <code>false</code> </td></tr>
+<tr><td valign="baseline" colspan="1" align="left">
+</td></tr></tbody></table>
+</p>
+<table class="tight"><tbody><tr><td valign="baseline" colspan="1" align="left">
+<p><var>dimension-names</var>&nbsp;::= </td><td valign="baseline" colspan="1" align="left"> <var>dimension-name</var> | 
+<code>(</code><var>dimension-name</var><sup>+</sup><code>)</code> </td></tr>
+<tr><td valign="baseline" colspan="1" align="left">
+</td></tr></tbody></table>
+</p>
+<table class="tight"><tbody><tr><td valign="baseline" colspan="1" align="left">
+<p><var>pattern-values</var>&nbsp;::= 
+<a name="id10"></a></td><td valign="baseline" colspan="1" align="left"> <var>pattern-value</var> | </td></tr>
+<tr><td valign="baseline" colspan="1" align="left">
+</td><td valign="baseline" colspan="1" align="left"> <code>(</code><var>pattern-value</var><sup>+</sup><code>)</code> | </td></tr>
+<tr><td valign="baseline" colspan="1" align="left">
+</td><td valign="baseline" colspan="1" align="left"> <code>(</code><var>pattern-value</var><sup>+</sup> <code>.</code> 
+<var>pattern-value</var><code>)</code> | </td></tr>
+<tr><td valign="baseline" colspan="1" align="left">
+</td><td valign="baseline" colspan="1" align="left"> <code>&#35;(</code><var>pattern-value</var><sup>+</sup><code>)</code> </td></tr>
+<tr><td valign="baseline" colspan="1" align="left">
+</td></tr></tbody></table>
+</p>
+<table class="tight"><tbody><tr><td valign="baseline" colspan="1" align="left">
+<p><var>pattern-value</var>&nbsp;::= 
+<a name="id11"></a></td><td valign="baseline" colspan="1" align="left"> <var>point</var> | <var>interval</var> |
+<var>element</var> | <var>set</var> </td></tr>
+<tr><td valign="baseline" colspan="1" align="left">
+</td></tr></tbody></table>
+</p>
+<table class="tight"><tbody><tr><td valign="baseline" colspan="1" align="left">
+<p><var>interval</var>&nbsp;::= </td><td valign="baseline" colspan="1" align="left"> <code>(</code><var>start end</var><code>)</code> | 
+<code>(</code><var>start</var> <code>.</code> <var>end</var><code>)</code> | 
+<code>&#35;(</code><var>start end</var><code>)</code> </td></tr>
+<tr><td valign="baseline" colspan="1" align="left">
+</td></tr></tbody></table>
+</p>
+<p><span class="fndoclabel">Terms</span></p>
+<table class="tight"><tbody><tr><td valign="baseline" colspan="1" align="left">
+<p><var>point</var>
+<a name="id12"></a></td><td valign="baseline" colspan="1" align="left"> </td><td valign="baseline" colspan="1" align="left"> A number, <code>infinity</code>, or <code>-infinity</code></td></tr>
+<tr><td valign="baseline" colspan="1" align="left">
+<var>start</var> </td><td valign="baseline" colspan="1" align="left"> </td><td valign="baseline" colspan="1" align="left"> A number or <code>infinity</code></td></tr>
+<tr><td valign="baseline" colspan="1" align="left">
+<var>end</var> </td><td valign="baseline" colspan="1" align="left"> </td><td valign="baseline" colspan="1" align="left"> A number or <code>-infinity</code></td></tr>
+<tr><td valign="baseline" colspan="1" align="left">
+<var>element</var> </td><td valign="baseline" colspan="1" align="left"> &nbsp;&nbsp; </td><td valign="baseline" colspan="1" align="left"> An object</td></tr>
+<tr><td valign="baseline" colspan="1" align="left">
+</td></tr></tbody></table>
+</p>
+<p><span class="fndoclabel">Description</span> <br />The <var>pattern</var> <code>t</code> matches all
+<a href="ref-glossary.html#id160">unit&nbsp;instance</a>s whose <a href="ref-glossary.html#id25">dimension&nbsp;value</a>s overlap the
+<a href="ref-glossary.html#id29">dimensional&nbsp;extent</a> of at least one <a href="ref-glossary.html#id144">space&nbsp;instance</a> in
+<var>space-instances</var>. The <var>pattern</var> <code>:all</code> matches every
+<a href="ref-glossary.html#id160">unit&nbsp;instance</a> on a <a href="ref-glossary.html#id144">space&nbsp;instance</a> in
+<var>space-instances</var>, regardless of dimensional overlap.
+</p>
+<p><a href="ref-declared-numerics.html">Declared numeric</a> pattern operators are also
+supported, for example: <code>=&#38;</code>, <code>=&#36;&#38;</code>, <code>=&#36;</code>, <code>=&#36;&#36;</code>,
+and <code>=&#36;&#36;&#36;</code> and <code>within&#38;</code>, <code>within&#36;&#38;</code>, <code>within&#36;</code>,
+<code>within&#36;&#36;</code>, and <code>within&#36;&#36;&#36;</code>.
+</p>
+<p><span class="fndoclabel">See also</span>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-warn-about-unusual-requests-var.html"><b>*warn-about-unusual-requests*</b></a>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-do-instances-of-class.html"><b>do-instances-of-class</b></a>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-do-sorted-instances-of-class.html"><b>do-sorted-instances-of-class</b></a>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-filter-instances.html"><b>filter-instances</b></a>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-find-instance-by-name.html"><b>find-instance-by-name</b></a>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-map-instances-of-class.html"><b>map-instances-of-class</b></a>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-map-sorted-instances-of-class.html"><b>map-sorted-instances-of-class</b></a>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-declared-numerics.html">Declared numerics</a>
+</p>
+<p><span class="fndoclabel">Examples</span> <br /><a name="id13"></a></p>
+<pre>
+&gt; (find-instances 'hyp (<a href="ref-find-space-instance-by-path.html">find-space-instance-by-path</a> '(bb hyps)) 
+    '(and (= x 1835) (&gt; belief .8)))
+(#&lt;hyp 319 (1835 8419) .91&gt;
+ #&lt;hyp 119 (1835 4791) .85&gt;
+ #&lt;hyp 331 (1835 8419) .88&gt;
+ #&lt;hyp 335 (1835 8419) .92&gt;
+ #&lt;hyp 183 (1835 4791) .82&gt;
+ #&lt;hyp 233 (1835 4791) .89&gt;)
+&gt; (find-instances 'hyp '(bb hyps)
+    `(and (= x 1835) (&gt; belief ,(<a href="ref-find-instance-by-name.html">find-instance-by-name</a> 331 'hyp))))
+(#&lt;hyp 319 (1835 8419) .91&gt;
+ #&lt;hyp 335 (1835 8419) .92&gt;
+ #&lt;hyp 233 (1835 4791) .89&gt;)
+&gt; (find-instances '(hyp :no-subclasses) '(bb hyps)
+    '(= (x y) (1835 8419)))
+(#&lt;hyp 319 (1835 8419) .91&gt;
+ #&lt;hyp 331 (1835 8419) .88&gt;
+ #&lt;hyp 335 (1835 8419) .92&gt;)
+</pre>
+<hr /><address><a target="_top" class="address"
+    href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
+<table width="100%" cellpadding="0" cellspacing="2"><tr>
+<td bgcolor="#99ccff"><a href="ref-find-space-instance-by-path.html"><img border="0" alt="find-space-instance-by-path" src="next.png"/></a></td><td bgcolor="#99ccff"><a href="ref-GBBopen-core-entities.html"><img border="0" alt="GBBopen Core" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-find-instance-by-name.html"><img border="0" alt="find-instance-by-name" src="previous.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">find-instances</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table></body></html>

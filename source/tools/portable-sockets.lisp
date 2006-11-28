@@ -1,0 +1,590 @@
+;;;; -*- Mode:Common-Lisp; Package:PORTABLE-SOCKETS; Syntax:common-lisp -*-
+;;;; *-* File: /home/gbbopen/current/source/tools/portable-sockets.lisp *-*
+;;;; *-* Edited-By: cork *-*
+;;;; *-* Last-Edit: Wed Jul 19 04:45:51 2006 *-*
+;;;; *-* Machine: ruby.corkills.org *-*
+
+;;;; **************************************************************************
+;;;; **************************************************************************
+;;;; *
+;;;; *                       Portable Socket Interface
+;;;; *
+;;;; **************************************************************************
+;;;; **************************************************************************
+;;;
+;;; Written by: Dan Corkill
+;;;
+;;; Copyright (C) 2005-2006, Dan Corkill <corkill@GBBopen.org>
+;;; Part of the GBBopen Project (see LICENSE for license information).
+;;;
+;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+;;;
+;;;  08-02-05 File created.  (Corkill)
+;;;  10-20-05 Make open-connection a generic-function.  (Corkill)
+;;;  01-02-06 Rename :address keyword to :interface.  (Corkill)
+;;;  05-08-06 Added support for the Scieneer CL. (dtc)
+;;;
+;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (unless (find-package :portable-sockets)
+    (defpackage :portable-sockets
+      (:use :common-lisp))))
+
+(in-package :portable-sockets)
+
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (use-package :portable-threads))
+
+;;; ---------------------------------------------------------------------------
+;;; Handle older CLISP versions
+
+#+clisp
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (when (= (length (ext:arglist 'socket:socket-server)) 2)
+    (pushnew :old-clisp-version *features*)))
+
+;;; ---------------------------------------------------------------------------
+;;; Add a single feature to identify sufficiently new Digitool MCL
+;;; implementations (at present, both Digitool MCL and OpenMCL include
+;;; the feature mcl):
+
+#+(and digitool ccl-5.1)
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (pushnew :digitool-mcl *features*))
+
+;;; ===========================================================================
+
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  #+allegro
+  (require :sock)
+  ;; ECL must be built using ./configure --with-tcp --enable-threads:
+  #+ecl
+  (require 'sockets)
+  #+lispworks
+  (require "comm")
+  #+sbcl
+  (require :sb-bsd-sockets))
+
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (export '(*localhost*			; not documented
+	    accept-connection
+	    close-passive-socket
+	    local-hostname-and-port
+	    make-passive-socket
+	    open-connection
+	    remote-hostname-and-port
+	    shutdown-socket-stream
+	    start-connection-server
+	    with-open-connection
+	    write-crlf)))		; not yet documented
+
+;;; ---------------------------------------------------------------------------
+;;;  Occasionally "localhost" isn't configured properly on some machines,
+;;;  so we will use dotted notation as the default value:
+
+(defvar *localhost* "127.0.0.1")
+
+;;; ---------------------------------------------------------------------------
+;;;  Generic functions
+
+(defgeneric open-connection (host port))
+
+;;; ---------------------------------------------------------------------------
+
+(defun port-needed (obj)
+  (error "You must define ~s on ~a~@[ running on ~a~]."
+         obj
+         (lisp-implementation-type) 
+         (machine-type))) 
+
+;;; ---------------------------------------------------------------------------
+;;;  Passive-socket class for CLs without one
+
+#+(or cmu lispworks scl)
+(defclass passive-socket ()
+  ((fd :type fixnum
+       :accessor passive-socket.fd)
+   (element-type :type (member signed-byte unsigned-byte base-char)
+		 :accessor passive-socket.element-type)
+   (port :type fixnum
+	 :accessor passive-socket.port)))
+
+#+(or cmu lispworks scl)
+(defmethod print-object ((passive-socket passive-socket) stream)
+  (print-unreadable-object (passive-socket stream :type nil)
+    (format stream "passive socket at 0.0.0.0/~s"
+	    (passive-socket.port passive-socket)))
+  ;; Print-object must return object:
+  passive-socket)
+
+;;; ---------------------------------------------------------------------------
+;;;   Hack for SBCL to store socket in socket-stream (in name slot)
+
+#+sbcl
+(defmethod sb-bsd-sockets:socket-make-stream 
+    :after ((socket sb-bsd-sockets::socket) &rest args)
+  (declare (ignore args))
+  (setf (sb-impl::fd-stream-name (slot-value socket 'sb-bsd-sockets::stream))
+	socket))
+
+;;; ===========================================================================
+;;;  Utilities
+
+#+(or cmu scl)
+(defun ipaddr-to-dotted (ipaddr)
+  (declare (type (unsigned-byte 32) ipaddr))
+  (format nil "~d.~d.~d.~d"
+	  (ldb (byte 8 24) ipaddr)
+	  (ldb (byte 8 16) ipaddr)
+	  (ldb (byte 8 8) ipaddr)
+	  (ldb (byte 8 0) ipaddr)))
+
+#+(or cmu scl)
+(defun ipaddr-to-hostname (ipaddr)
+  (declare (optimize (ext:inhibit-warnings 3)))
+  (alien:with-alien 
+      ((hostent (* ext::hostent) 
+		(ext::gethostbyaddr (ext:htonl ipaddr) 4 ext::af-inet)))
+    (unless (zerop (sys:sap-int (alien:alien-sap hostent)))
+      (alien:slot hostent 'ext::name))))
+
+#+sbcl
+(defun ipvector-to-dotted (ipvector)
+  (format nil "~d.~d.~d.~d"
+	  (aref ipvector 0)
+	  (aref ipvector 1)
+	  (aref ipvector 2)
+	  (aref ipvector 3)))
+
+#+sbcl
+(defun ipvector-to-hostname (ipvector)
+  (let ((hostent
+	 (handler-case (sb-bsd-sockets:get-host-by-address ipvector)
+	   (sb-bsd-sockets:name-service-error (condition)
+	     (values nil condition)))))
+    (when hostent
+      (sb-bsd-sockets::host-ent-name hostent))))
+
+;;; ===========================================================================
+;;;  Connections
+
+(defun open-connection-to-host (host port &key (timeout nil))
+  ;; The (currently undocumented) :timeout extension is only accepted by CLISP
+  ;; and Lispworks:
+  #+(or allegro cmu digitool-mcl ecl openmcl sbcl scl)
+  (declare (ignore timeout))
+  #+allegro
+  (socket:make-socket :remote-host host :remote-port port)
+  #+clisp
+  (socket:socket-connect port host :external-format ':unix :timeout timeout)
+  #+(or cmu scl)
+  (let ((socket (extensions:connect-to-inet-socket host port)))
+    (system:make-fd-stream 
+     socket
+     :input 't
+     :output 't
+     :element-type 'character
+     :buffering ':full
+     :auto-close 't))
+  #+ecl
+  (si:open-client-stream host port)
+  #+lispworks
+  (comm:open-tcp-stream host port :timeout timeout)
+  #+(or digitool-mcl openmcl)
+  (ccl:make-socket :remote-host host :remote-port port)
+  #+sbcl
+  (let ((socket (make-instance 'sb-bsd-sockets:inet-socket
+		  :protocol ':tcp
+		  :type ':stream)))
+    (sb-bsd-sockets:socket-connect 
+     socket 
+     (sb-bsd-sockets:host-ent-address
+      (sb-bsd-sockets:get-host-by-name host))
+     port)
+    (sb-bsd-sockets:socket-make-stream 
+     socket
+     :input 't :output 't
+     :element-type 'character
+     :buffering ':full))
+  #-(or allegro clisp cmu digitool-mcl ecl lispworks openmcl sbcl scl)
+  (port-needed 'open-connection-to-host))
+
+;;; ---------------------------------------------------------------------------
+
+(defmethod open-connection ((host string) port)
+  (open-connection-to-host host port))
+
+(defmethod open-connection ((host integer) port)
+  (open-connection-to-host host port))
+
+ ;;; ---------------------------------------------------------------------------
+
+(defmacro with-open-connection ((connection host port) &body body)
+  `(let ((,connection (open-connection ,host ,port)))
+     (unwind-protect
+	 (progn ,@body)
+       (when ,connection
+	 (close ,connection)))))
+
+;;; ---------------------------------------------------------------------------
+
+(defun make-passive-socket (port &key (backlog 5)
+				      interface
+				      reuse-address)
+  #+old-clisp-version
+  (declare (ignore backlog interface))
+  #+allegro 
+  (socket:make-socket :connect ':passive 
+		      :local-port port
+		      :local-host interface
+		      :backlog backlog
+		      :reuse-address reuse-address)
+  #+clisp
+  (let ((passive-socket 
+	 #-old-clisp-version
+	 (socket:socket-server port
+			       :interface interface
+			       :backlog backlog)
+	 #+old-clisp-version
+	 (socket:socket-server port)))
+    (socket:socket-options passive-socket
+			   :so-reuseaddr reuse-address)
+    passive-socket)
+  #+(or cmu scl)
+  (make-instance 'passive-socket
+    :fd (ext:create-inet-listener port ':stream 
+				  :backlog backlog
+				  :host (or interface 0)
+				  :reuse-address reuse-address)
+    :element-type 'base-char
+    :port port)    
+  #+ecl
+  (let ((passive-socket (make-instance 'sb-bsd-sockets:inet-socket
+			  :protocol ':tcp
+			  :type ':stream)))
+    (when reuse-address
+      (setf (sb-bsd-sockets:sockopt-reuse-address passive-socket) 't))
+    (sb-bsd-sockets:socket-bind 
+     passive-socket
+     (if interface
+	 (sb-bsd-sockets:host-ent-address
+	  (sb-bsd-sockets:get-host-by-name interface))
+	 #(0 0 0 0))
+     port)
+    (sb-bsd-sockets:socket-listen passive-socket backlog)
+    passive-socket)
+  #+lispworks
+  (let ((comm::*use_so_reuseaddr* reuse-address))
+    (prog1
+      (make-instance 'passive-socket
+	:fd (comm::create-tcp-socket-for-service port 
+						 :address (or interface 0)
+						 :backlog backlog)
+	:element-type 'base-char
+	:port port)
+      ;; Avoid Lispworks race condition on filling in the passive 
+      ;; socket fd value (still exists in LW 4.4.6):
+      (process-yield)))
+  #+(or digitool-mcl openmcl)
+  (ccl:make-socket :connect ':passive
+                   :type ':stream
+		   :backlog backlog
+                   :reuse-address reuse-address
+                   :local-port port
+		   :local-host interface)  
+  #+sbcl
+  (let ((passive-socket (make-instance 'sb-bsd-sockets:inet-socket
+			  :protocol ':tcp
+			  :type ':stream)))
+    (when reuse-address
+      (setf (sb-bsd-sockets:sockopt-reuse-address passive-socket) 't))
+    (sb-bsd-sockets:socket-bind 
+     passive-socket
+     (if interface
+	 (sb-bsd-sockets:host-ent-address
+	  (sb-bsd-sockets:get-host-by-name interface))
+	 #(0 0 0 0))
+     port)
+    (sb-bsd-sockets:socket-listen passive-socket backlog)
+    passive-socket)
+  #-(or allegro clisp cmu digitool-mcl ecl lispworks openmcl sbcl scl)
+  (port-needed 'make-passive-socket))
+
+;;; ---------------------------------------------------------------------------
+
+(defun close-passive-socket (passive-socket)
+  #+clisp
+  (socket:socket-server-close passive-socket)
+  #+(or cmu scl)
+  (unix:unix-close (passive-socket.fd passive-socket))
+  #+ecl
+  (sb-bsd-sockets:socket-close passive-socket)
+  #+sbcl
+  (sb-bsd-sockets:socket-close passive-socket)
+  #-(or clisp cmu ecl sbcl scl)
+  (close passive-socket))
+
+;; Close is a method in Lispworks, so we extend it for passive
+;; sockets:
+#+lispworks
+(defmethod close ((passive-socket passive-socket) &key abort)
+  (declare (ignore abort))
+  (system::unix-close (passive-socket.fd passive-socket)))
+
+;;; ---------------------------------------------------------------------------
+
+(defun shutdown-socket-stream (socket-stream direction)
+  #-(or allegro clisp digitool-mcl openmcl)
+  (declare (ignore socket-stream direction))
+  #+allegro
+  (socket:shutdown socket-stream :direction direction)
+  #+clisp
+  (socket:socket-stream-shutdown socket-stream direction)
+  #+(or digitool-mcl openmcl)
+  (ccl:shutdown socket-stream :direction direction)
+  #-(or allegro clisp digitool-mcl openmcl)
+  (port-needed 'shutdown-socket-stream))
+  
+;;; ---------------------------------------------------------------------------
+
+(defun accept-connection (passive-socket &key (wait 't))
+  #+allegro
+  (socket:accept-connection passive-socket :wait wait)
+  #+clisp
+  (when (cond ((numberp wait)
+	       (socket:socket-wait passive-socket wait))
+	      (wait 
+	       (socket:socket-wait passive-socket))
+	      (t (socket:socket-wait passive-socket 0)))
+    (socket:socket-accept passive-socket :external-format ':unix))
+  #+(or cmu scl)
+  (let ((fd (passive-socket.fd passive-socket)))
+    (when (sys:wait-until-fd-usable 
+	   fd ':input
+	   ;; convert :wait to timeout:
+	   (cond ((eq wait 't) nil)
+		 ((not wait) 0)
+		 (t wait)))
+      (sys:make-fd-stream
+       (ext:accept-tcp-connection fd)
+       :input 't
+       :output 't
+       :element-type (passive-socket.element-type passive-socket)
+       :buffering ':full
+       :auto-close 't)))
+  #+ecl
+  (when (progn ; need something like wait-until-fd-usable 
+	 (sb-bsd-sockets:socket-file-descriptor passive-socket) 
+	 ':input
+	 ;; convert :wait to timeout:
+	 (cond ((eq wait 't) nil)
+	       ((not wait) 0)
+	       (t wait)))
+    (sb-bsd-sockets:socket-make-stream 
+     (sb-bsd-sockets:socket-accept passive-socket)
+     :input 't :output 't
+     :element-type 'character
+     :buffering ':full))
+  #+lispworks
+  (when (or wait (stream-input-available passive-socket))
+    (make-instance 'comm:socket-stream
+      :socket (comm::get-fd-from-socket (passive-socket.fd passive-socket))
+      :direction ':io
+      :element-type (passive-socket.element-type passive-socket)))
+  #+(or digitool-mcl openmcl)
+  (ccl:accept-connection passive-socket :wait wait)
+  #+sbcl
+  (when (sb-sys:wait-until-fd-usable 
+	 (sb-bsd-sockets:socket-file-descriptor passive-socket) 
+	 ':input
+	 ;; convert :wait to timeout:
+	 (cond ((eq wait 't) nil)
+	       ((not wait) 0)
+	       (t wait)))
+    (sb-bsd-sockets:socket-make-stream 
+     (sb-bsd-sockets:socket-accept passive-socket)
+     :input 't :output 't
+     :element-type 'character
+     :buffering ':full))
+  #-(or allegro clisp cmu digitool-mcl ecl lispworks openmcl sbcl scl)
+  (port-needed 'accept-connection))
+
+;;; ===========================================================================
+;;;  Connection Server
+  
+(defun start-connection-server (function port 
+				&key (name "Connection Server") 
+				     (backlog 5)
+				     interface
+				     reuse-address)
+  #+multiprocessing-not-available
+  (declare (ignore function port name backlog interface reuse-address))
+  #-multiprocessing-not-available
+  (spawn-process 
+   name 
+   #'(lambda (function port interface backlog reuse-address)
+       (let ((passive-socket 
+	      (make-passive-socket port 
+				   :backlog backlog
+				   :interface interface
+				   :reuse-address reuse-address)))
+	 (unwind-protect
+	     (loop
+	       (let ((connection (accept-connection passive-socket)))
+		 (funcall function connection)))
+	   (close-passive-socket passive-socket))))
+   function port interface backlog reuse-address)
+  #+multiprocessing-not-available
+  (multiprocessing-not-available 'start-connection-server))
+
+;;; ===========================================================================
+;;;  Socket Attribute Readers
+
+(defun local-hostname-and-port (connection &optional do-not-resolve)
+  #-(or allegro clisp cmu digitool-mcl lispworks openmcl sbcl scl)
+  (declare (ignore connection do-not-resolve))
+  #+allegro
+  (let* ((ipaddr (socket:local-host connection))
+	 (dotted (socket:ipaddr-to-dotted ipaddr)))
+    (values (if do-not-resolve
+		dotted
+		(let ((resolved (socket:ipaddr-to-hostname ipaddr)))
+		  (if resolved
+		      (format nil "~a (~a)" dotted resolved)
+		      dotted)))
+	    (socket:local-port connection)))
+  #+clisp
+  (socket:socket-stream-local connection (not do-not-resolve))
+  #+(or cmu scl)
+  (let ((fd (sys:fd-stream-fd connection)))
+    (multiple-value-bind (ipaddr port)
+	(ext:get-socket-host-and-port fd)
+      (let ((dotted (ipaddr-to-dotted ipaddr)))
+	(values (if do-not-resolve
+		    dotted
+		    (let ((resolved (ipaddr-to-hostname ipaddr)))
+		      (if resolved
+			  (format nil "~a (~a)" dotted resolved)
+			  dotted)))
+		port))))   
+  #+lispworks
+  (multiple-value-bind (ipaddr port)
+      (comm:socket-stream-address connection)
+    (let ((dotted (comm:ip-address-string ipaddr)))
+      (values (if do-not-resolve
+		  dotted
+		  (let ((resolved (comm::get-host-entry ipaddr
+							:fields '(:name))))
+		    (if resolved
+			(format nil "~a (~a)" dotted resolved)
+			dotted)))
+	    port)))
+  #+(or digitool-mcl openmcl)
+  (let* ((ipaddr (ccl:local-host connection))
+	 (dotted (ccl:ipaddr-to-dotted ipaddr)))
+    (values (if do-not-resolve
+		dotted
+		(let ((resolved (ccl:ipaddr-to-hostname ipaddr)))
+		  (if resolved
+		      (format nil "~a (~a)" dotted resolved))))
+	    (ccl:local-port connection)))
+  #+sbcl
+  (let ((socket (sb-impl::fd-stream-name connection)))
+    (multiple-value-bind (ipvector port)
+	(sb-bsd-sockets:socket-name socket)
+      (let ((dotted (ipvector-to-dotted ipvector)))
+	(values (if do-not-resolve
+		    dotted
+		    (let ((resolved (ipvector-to-hostname ipvector)))
+		      (if resolved
+			  (format nil "~a (~a)" dotted resolved)
+			  dotted)))
+		port)))) 	
+  #-(or allegro clisp cmu digitool-mcl lispworks openmcl sbcl scl)
+  (port-needed 'local-hostname-and-port))
+
+;;; ---------------------------------------------------------------------------
+
+(defun remote-hostname-and-port (connection &optional do-not-resolve)
+  #-(or allegro clisp cmu digitool-mcl lispworks openmcl sbcl scl)
+  (declare (ignore connection do-not-resolve))
+  #+allegro
+  (let* ((ipaddr (socket:remote-host connection))
+	 (dotted (socket:ipaddr-to-dotted ipaddr)))
+    (values (if do-not-resolve
+		dotted
+		(let ((resolved (socket:ipaddr-to-hostname ipaddr)))
+		  (if resolved
+		      (format nil "~a (~a)" dotted resolved)
+		      dotted)))
+	    (socket:remote-port connection)))
+  #+clisp
+  (socket:socket-stream-peer connection (not do-not-resolve))
+  #+(or cmu scl)
+  (let ((fd (sys:fd-stream-fd connection)))
+    (multiple-value-bind (ipaddr port)
+	(ext:get-peer-host-and-port fd)
+      (let ((dotted (ipaddr-to-dotted ipaddr)))
+	(values (if do-not-resolve
+		    dotted
+		    (let ((resolved (ipaddr-to-hostname ipaddr)))
+		      (if resolved
+			  (format nil "~a (~a)" dotted resolved)
+			  dotted)))
+		port))))   
+  #+lispworks
+  (multiple-value-bind (ipaddr port)
+      (comm:socket-stream-peer-address connection)
+    (let ((dotted (comm:ip-address-string ipaddr)))
+      (values (if do-not-resolve
+		  dotted
+		  (let ((resolved (comm::get-host-entry ipaddr
+							:fields '(:name))))
+		    (if resolved
+			(format nil "~a (~a)" dotted resolved)
+			dotted)))
+	    port)))
+  #+(or digitool-mcl openmcl)
+  (let* ((ipaddr (ccl:remote-host connection))
+	 (dotted (ccl:ipaddr-to-dotted ipaddr)))
+    (values (if do-not-resolve
+		dotted
+		(let ((resolved (ccl:ipaddr-to-hostname ipaddr)))
+		  (if resolved
+		      (format nil "~a (~a)" dotted resolved)
+		      dotted)))
+	    (ccl:remote-port connection)))
+  #+sbcl
+  (let ((socket (sb-impl::fd-stream-name connection)))
+    (multiple-value-bind (ipvector port)
+	(sb-bsd-sockets:socket-peername socket)
+      (let ((dotted (ipvector-to-dotted ipvector)))
+	(values (if do-not-resolve
+		    dotted
+		    (let ((resolved (ipvector-to-hostname ipvector)))
+		      (if resolved
+			  (format nil "~a (~a)" dotted resolved)
+			  dotted)))
+		port)))) 	
+  #-(or allegro clisp cmu digitool-mcl lispworks openmcl sbcl scl)
+  (port-needed 'remote-hostname-and-port))
+
+;;; ===========================================================================
+;;;  Useful for HTTP line termination:
+
+(defun write-crlf (&optional (stream *standard-output*))
+  ;; HTTP requires CR/LF line termination: 
+  (write-char #\return stream)
+  (write-char #\linefeed stream))
+
+;;; ===========================================================================
+;;;  Portable Sockets are loaded:
+
+(pushnew :portable-sockets *features*)
+
+;;; ===========================================================================
+;;;				  End of File
+;;; ===========================================================================
+
+
