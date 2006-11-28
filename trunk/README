@@ -27,7 +27,7 @@ Requirements:
    See PORTING for information on porting GBBopen to other Common Lisp
    implementations.
 
-Current Status Notes (November 28, 2006):
+Current Status Notes (November 22, 2006):
 
  - Implementation work is progressing on a regular basis.  See the list
    of pending development activities maintained on the "What's New"
