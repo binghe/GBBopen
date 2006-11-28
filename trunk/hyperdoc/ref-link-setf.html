@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<!-- XML file produced from file: reference.tex
+     using Hyperlatex v 2.9-in-waiting-rk (oct06) (c) Otfried Cheong -->
+<head>
+<title>GBBopen 0.9.5 Reference -- link-setf</title>
+</p>
+<link rel="SHORTCUT ICON" href="favicon.ico"><link rel=stylesheet
+        href="gbbopen.css" type="text/css" />
+</head>
+<body>
+<table width="100%" cellpadding="0" cellspacing="2"><tr>
+<td bgcolor="#99ccff"><a href="ref-link-slot-p.html"><img border="0" alt="link-slot-p" src="next.png"/></a></td><td bgcolor="#99ccff"><a href="ref-GBBopen-core-entities.html"><img border="0" alt="GBBopen Core" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-linkf.html"><img border="0" alt="linkf" src="previous.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">link-setf</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table>
+ 
+<p><table class="tight" width="100%">
+<tr valign="top"><td valign="baseline" align="left"%>
+<nobr><b><font color="#000000">link-setf</font></b></nobr></td><td valign="baseline"> &nbsp; </td><td valign="baseline" align="left" width="99%"><var><a href="ref-glossary.html#gl:link-slot-place">link-slot-place</a> unit-instance-or-instances</var>
+<i> =&gt; </i> <var>unit-instance-or-instances</var></td><td valign="baseline" align="right">[<i>Macro</i>]
+</td></tr></table></p>
+<p><span class="fndoclabel">Purpose</span> <br />Set <var><a href="ref-glossary.html#gl:link-slot-place">link-slot-place</a></var> to be precisely
+<var>unit-instance-or-instances</var> <a href="ref-glossary.html#gl:link">link</a>s between
+<a href="ref-glossary.html#id160">unit&nbsp;instance</a> and <var>unit-instance-or-instances</var>.
+</p>
+<p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen</code>
+</p>
+<p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen</code>
+</p>
+<p><span class="fndoclabel">Arguments</span><table class="tight">
+<tr valign="top"><td valign="baseline"><i><a href="ref-glossary.html#gl:link-slot-place">link-slot-place</a></i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A form which is suitable for use as a
+<a href="ref-glossary.html#id72">generalized&nbsp;reference</a> to a <a href="ref-glossary.html#id92">link&nbsp;slot</a>
+</td></tr><tr valign="top"><td valign="baseline"><i>unit-instance-or-instances</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id160">unit&nbsp;instance</a> or a
+list of <a href="ref-glossary.html#id160">unit&nbsp;instance</a>s
+</td></tr></table>
+</p>
+<p><span class="fndoclabel">Returns</span> <br />The supplied <var>unit-instance-or-instances</var>.
+</p>
+<p><span class="fndoclabel">Events</span> <br /><a name="id1">An</a> <code>unlink-event</code> is signaled for:
+</p>
+<p><ul class="tight"><li>all pointers that are removed from the specified
+<a href="ref-glossary.html#gl:link-slot-place">link-slot-place</a>
+<li>each inverse pointer of the <a href="ref-glossary.html#gl:link">link</a> that is removed-from
+another <a href="ref-glossary.html#id160">unit&nbsp;instance</a>
+</ul>
+A <code>link-event</code> is signaled for:
+</p>
+<p><ul class="tight"><li>all pointers that are added to the specified
+<a href="ref-glossary.html#gl:link-slot-place">link-slot-place</a>
+<li>each inverse pointer of the <a href="ref-glossary.html#gl:link">link</a> that is added to
+another <a href="ref-glossary.html#id160">unit&nbsp;instance</a>
+</ul>
+</p>
+<p><span class="fndoclabel">Description</span> <br />Any existing <a href="ref-glossary.html#gl:link">link</a>s in
+<var><a href="ref-glossary.html#gl:link-slot-place">link-slot-place</a></var> that do not involve
+<var>unit-instance-or-instances</var> are unlinked.  Then <a href="ref-glossary.html#gl:link">link</a>s
+to any additional <a href="ref-glossary.html#id160">unit&nbsp;instance</a>s in
+<var>unit-instance-or-instances</var> are added.
+</p>
+<p><span class="fndoclabel">See also</span>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-linkf.html"><b>linkf</b></a>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-unlinkf.html"><b>unlinkf</b></a>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-unlinkf-all.html"><b>unlinkf-all</b></a>
+</p>
+<p><span class="fndoclabel">Example</span> <br />Set the <code>supporting-hyps</code> <a href="ref-glossary.html#id92">link&nbsp;slot</a> of the
+<code>hyp</code> <a href="ref-glossary.html#id160">unit&nbsp;instance</a> to the <a href="ref-glossary.html#id160">unit&nbsp;instance</a>s in
+<code>supporting-hyps</code>:
+</p>
+<pre>
+&gt; (link-setf (supporting-hyps-of unit-instance) supporting-hyps)
+#&lt;hyp 231 (1488 7405) .63&gt;
+</pre>
+<p><span class="fndoclabel">Notes</span> <br /><a name="id2">The</a> form <code>(link-setf</code>&nbsp;<var><a href="ref-glossary.html#gl:link-slot-place">link-slot-place</a></var>&nbsp;<code>nil)</code> is semantically equivalent to
+<code>(<a href="ref-unlinkf-all.html">unlinkf-all</a></code>&nbsp;<var><a href="ref-glossary.html#gl:link-slot-place">link-slot-place</a></var><code>)</code>.  However, using
+<b><a href="ref-unlinkf-all.html">unlinkf-all</a></b> is preferable stylistically and
+slightly faster.
+</p>
+<hr /><address><a target="_top" class="address"
+    href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
+<table width="100%" cellpadding="0" cellspacing="2"><tr>
+<td bgcolor="#99ccff"><a href="ref-link-slot-p.html"><img border="0" alt="link-slot-p" src="next.png"/></a></td><td bgcolor="#99ccff"><a href="ref-GBBopen-core-entities.html"><img border="0" alt="GBBopen Core" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-linkf.html"><img border="0" alt="linkf" src="previous.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">link-setf</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table></body></html>

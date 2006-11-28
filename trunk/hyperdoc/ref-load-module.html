@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<!-- XML file produced from file: reference.tex
+     using Hyperlatex v 2.9-in-waiting-rk (oct06) (c) Otfried Cheong -->
+<head>
+<title>GBBopen 0.9.5 Reference -- load-module</title>
+</p>
+<link rel="SHORTCUT ICON" href="favicon.ico"><link rel=stylesheet
+        href="gbbopen.css" type="text/css" />
+</head>
+<body>
+<table width="100%" cellpadding="0" cellspacing="2"><tr>
+<td bgcolor="#99ccff"><a href="ref-load-module-file.html"><img border="0" alt="load-module-file" src="next.png"/></a></td><td bgcolor="#99ccff"><a href="ref-mini-module-entities.html"><img border="0" alt="Mini-Module System" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-describe-module.html"><img border="0" alt="describe-module" src="previous.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">load-module</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table>
+
+<p><table class="tight" width="100%">
+<tr valign="top"><td valign="baseline" align="left"%>
+<nobr><b><font color="#000000">load-module</font></b></nobr></td><td valign="baseline"> &nbsp; </td><td valign="baseline" align="left" width="99%"><var>module-name</var>
+<code>&#38;rest</code> <var>options</var></td><td valign="baseline" align="right">[<i>Function</i>]
+</td></tr></table></p>
+<p><span class="fndoclabel">Purpose</span> <br />Loads the files in a module.
+</p>
+<p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:mini-module</code>
+</p>
+<p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:mini-module</code>
+</p>
+<p><span class="fndoclabel">Arguments</span><table class="tight">
+<tr valign="top"><td valign="baseline"><i>module-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A keyword symbol naming a module 
+</td></tr><tr valign="top"><td valign="baseline"><i>option</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> Any of the following keywords: 
+<a name="id1"></a></p>
+<table class="tight"><tbody><tr><td valign="baseline" colspan="1" align="left">
+<p><code>:reload</code> </td><td valign="baseline" colspan="1" align="left"> Loads files even if they are already loaded</td></tr>
+<tr><td valign="baseline" colspan="1" align="left">
+</p>
+<p><code>:source</code> </td><td valign="baseline" colspan="1" align="left"> Loads from the source file even if the file is compiled
+(implies <code>:reload</code>)</td></tr>
+<tr><td valign="baseline" colspan="1" align="left">
+</p>
+<p><code>:propagate</code>&nbsp;&nbsp; </td><td valign="baseline" colspan="1" align="left"> Applies the specified options to all required
+modules</td></tr>
+<tr><td valign="baseline" colspan="1" align="left">
+</p>
+</td></tr></tbody></table>
+</td></tr></table>
+<p><span class="fndoclabel">Errors</span> <br />Module <var>module-name</var> has not been defined.
+</p>
+<p><span class="fndoclabel">Description</span> <br />These file options, when specified for individual files in the
+module definition (see <b><a href="ref-define-module.html">define-module</a></b>), have the
+following effects (overriding the behavior of <var>options</var> supplied to
+<b>load-module</b>):
+<a name="id2"></a></p>
+<table class="tight"><tbody><tr><td valign="baseline" colspan="1" align="left">
+<p><code>:noload</code>&nbsp;&nbsp;&nbsp;&nbsp; </td><td valign="baseline" colspan="1" align="left"> Do not load the file </td></tr>
+<tr><td valign="baseline" colspan="1" align="left">
+</p>
+<p><code>:reload</code> </td><td valign="baseline" colspan="1" align="left"> Loads files even if they are already loaded</td></tr>
+<tr><td valign="baseline" colspan="1" align="left">
+</p>
+<p><code>:source</code> </td><td valign="baseline" colspan="1" align="left"> Do not load the compiled file (load the source instead)</td></tr>
+<tr><td valign="baseline" colspan="1" align="left">
+</td></tr></tbody></table>
+</p>
+<p><span class="fndoclabel">See also</span>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-compile-module.html"><b>compile-module</b></a>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-define-module.html"><b>define-module</b></a>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-load-module-file.html"><b>load-module-file</b></a>
+</p>
+<p><span class="fndoclabel">Example</span> <br />Load the GBBopen User module and all its required modules:
+</p>
+<pre>
+  (load-module :gbbopen-user)
+</pre>
+<hr /><address><a target="_top" class="address"
+    href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
+<table width="100%" cellpadding="0" cellspacing="2"><tr>
+<td bgcolor="#99ccff"><a href="ref-load-module-file.html"><img border="0" alt="load-module-file" src="next.png"/></a></td><td bgcolor="#99ccff"><a href="ref-mini-module-entities.html"><img border="0" alt="Mini-Module System" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-describe-module.html"><img border="0" alt="describe-module" src="previous.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">load-module</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table></body></html>

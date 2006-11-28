@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<!-- XML file produced from file: reference.tex
+     using Hyperlatex v 2.9-in-waiting-rk (oct06) (c) Otfried Cheong -->
+<head>
+<title>GBBopen 0.9.5 Reference -- printv</title>
+</p>
+<link rel="SHORTCUT ICON" href="favicon.ico"><link rel=stylesheet
+        href="gbbopen.css" type="text/css" />
+</head>
+<body>
+<table width="100%" cellpadding="0" cellspacing="2"><tr>
+<td bgcolor="#99ccff"><a href="ref-push-acons.html"><img border="0" alt="push-acons" src="next.png"/></a></td><td bgcolor="#99ccff"><a href="ref-tools-entities.html"><img border="0" alt="Tools" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-print-instance-slots.html"><img border="0" alt="print-instance-slots" src="previous.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">printv</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table>
+
+<p><table class="tight" width="100%">
+<tr valign="top"><td valign="baseline" align="left"%>
+<nobr><b><font color="#000000">printv</font></b></nobr></td><td valign="baseline"> &nbsp; </td><td valign="baseline" align="left" width="99%"><var>form</var>* 
+<i> =&gt; </i> <var>result</var>*</td><td valign="baseline" align="right">[<i>Macro</i>]
+</td></tr></table></p>
+<p><span class="fndoclabel">Purpose</span> <br />Assist debugging by printing forms and the results of
+evaluating them to <code>*trace-output*</code>.
+</p>
+<p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-tools</code>
+</p>
+<p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-tools</code>
+</p>
+<p><span class="fndoclabel">Arguments</span><table class="tight">
+<tr valign="top"><td valign="baseline"><i>forms</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An implicit <b>progn</b> of <a href="ref-glossary.html#gl:form">form</a>s to be
+evaluated and printed  
+</td></tr></table>
+</p>
+<p><span class="fndoclabel">Returns</span> <br />The values returned by evaluating the last <var>form</var>.
+</p>
+<p><span class="fndoclabel">Description</span> <br />Evaluates <var>forms</var>, printing the <var>form</var> and the
+result values of each evaluation to <code>*trace-output*</code>.  Any <var>form</var>
+that is a string (before evaluation) is simply printed without enclosing
+double-quote characters.
+</p>
+<p><span class="fndoclabel">Example</span> <br /></p>
+<pre>
+&gt; (printv (list 1 2) (list 3 4) '"A string" 
+          "Return multiple values:" (values 5 6))
+;;  (list 1 2) =&gt; (1 2)
+;;  (list 3 4) =&gt; (3 4)
+;;  '"A string" =&gt; "A string"
+;; Return multiple values:
+;;  (values 5 6) =&gt; 5; 6
+5
+6
+</pre>
+<hr /><address><a target="_top" class="address"
+    href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
+<table width="100%" cellpadding="0" cellspacing="2"><tr>
+<td bgcolor="#99ccff"><a href="ref-push-acons.html"><img border="0" alt="push-acons" src="next.png"/></a></td><td bgcolor="#99ccff"><a href="ref-tools-entities.html"><img border="0" alt="Tools" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-print-instance-slots.html"><img border="0" alt="print-instance-slots" src="previous.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">printv</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table></body></html>

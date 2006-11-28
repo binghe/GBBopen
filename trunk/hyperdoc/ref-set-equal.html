@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<!-- XML file produced from file: reference.tex
+     using Hyperlatex v 2.9-in-waiting-rk (oct06) (c) Otfried Cheong -->
+<head>
+<title>GBBopen 0.9.5 Reference -- set-equal</title>
+</p>
+<link rel="SHORTCUT ICON" href="favicon.ico"><link rel=stylesheet
+        href="gbbopen.css" type="text/css" />
+</head>
+<body>
+<table width="100%" cellpadding="0" cellspacing="2"><tr>
+<td bgcolor="#99ccff"><a href="ref-sets-overlap-p.html"><img border="0" alt="sets-overlap-p" src="next.png"/></a></td><td bgcolor="#99ccff"><a href="ref-tools-entities.html"><img border="0" alt="Tools" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-remove-property.html"><img border="0" alt="remove-property" src="previous.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">set-equal</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table>
+
+<p><table class="tight" width="100%">
+<tr valign="top"><td valign="baseline" align="left"%>
+<nobr><b><font color="#000000">set-equal</font></b></nobr></td><td valign="baseline"> &nbsp; </td><td valign="baseline" align="left" width="99%"><var>list-1 list-2</var>
+<code>&#38;key</code> <var>test test-not key</var> <i> =&gt; </i> <var>boolean</var></td><td valign="baseline" align="right">[<i>Function</i>]
+</td></tr></table></p>
+<p><span class="fndoclabel">Purpose</span> <br />Determine if all elements in two lists are present in both lists.
+</p>
+<p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-tools</code>
+</p>
+<p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-tools</code>
+</p>
+<p><span class="fndoclabel">Arguments</span><table class="tight">
+<tr valign="top"><td valign="baseline"><i>list-1</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A proper list
+</td></tr><tr valign="top"><td valign="baseline"><i>list-2</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A proper list
+</td></tr><tr valign="top"><td valign="baseline"><i>test</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#gl:function">function</a> of two arguments that returns a
+<a href="ref-glossary.html#id70">generalized&nbsp;boolean</a> (default is <code>&#35;'eql</code>) 
+</td></tr><tr valign="top"><td valign="baseline"><i>test-not</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#gl:function">function</a> of two arguments that returns a
+<a href="ref-glossary.html#id70">generalized&nbsp;boolean</a> (use of <code>:test-not</code> is deprecated)
+</td></tr><tr valign="top"><td valign="baseline"><i>key</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#gl:function">function</a> of one argument, or <code>nil</code> (default is <code>nil</code>)
+</td></tr></table>
+</p>
+<p><span class="fndoclabel">Returns</span> <br />True if all elements in <var>list-1</var> are also in
+<var>list-2</var> and vice versa; <code>nil</code> otherwise.
+</p>
+<p><span class="fndoclabel">Description</span> <br />Duplicate elements in either list are permitted, so the
+lengths of <var>list-1</var> and <var>list-2</var> can differ and still return
+true.
+</p>
+<p><span class="fndoclabel">Examples</span> <br /></p>
+<pre>
+&gt; (set-equal '(1 2 3) '(3 2 1))
+t
+&gt; (set-equal '(1 2) '(3 2 1))
+nil
+&gt; (set-equal '(1 2 3) '(3 1))
+nil
+&gt; (set-equal '(1 2 3) '(3 3 3 2 1))
+t
+&gt; (set-equal '(1 2 3) '(4 5 6 7) :test #'/=)
+t
+</pre>
+<hr /><address><a target="_top" class="address"
+    href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
+<table width="100%" cellpadding="0" cellspacing="2"><tr>
+<td bgcolor="#99ccff"><a href="ref-sets-overlap-p.html"><img border="0" alt="sets-overlap-p" src="next.png"/></a></td><td bgcolor="#99ccff"><a href="ref-tools-entities.html"><img border="0" alt="Tools" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-remove-property.html"><img border="0" alt="remove-property" src="previous.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">set-equal</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table></body></html>

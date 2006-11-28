@@ -1,0 +1,5105 @@
+%% -*- Mode:TeX; Fonts:(hl12fb) -*-
+%% *-* File: /home/gbbopen/current/doc-source/tutorial.tex *-*
+%% *-* Last-Edit: Wed Nov 22 18:05:35 2006; Edited-By: cork *-*
+%% *-* Machine: ruby.corkills.org *-*
+
+%% Copyright (C) 2005-2006, Dan Corkill <corkill@GBBopen.org>
+%% Part of the GBBopen Project (see LICENSE for license information).
+%%
+%% ========================================================================
+%%  The LaTeX and hyperlatex code used in producing GBBopen documentation
+%%  is placed under and covered by the GBBopen software license that 
+%%  accompanies each GBBopen distribution and is also available at
+%%  http://GBBopen.org/downloads/LICENSE. 
+%% ========================================================================
+%%
+%%  Note: To keep both LaTeX and hyperlatex happy with indexing, index
+%%        commands must be positioned with care (including the use of
+%%        % after all entries).  Follow the placement used here to
+%%        minimize the creation of anchors by hyperlatex.  Indexes
+%%        should only be placed at locations where an inserted &nbsp; 
+%%        anchor does not visibly affect the html layout.
+%%
+%%        \indexit doesn't play well with @\xxx{} formating, so use
+%%        the basic \index{...|itidx} rather than \indexit shorthand.
+        
+\documentclass[10pt,twoside,english,pdftex]{article} 
+\usepackage{hyperlatex}
+\usepackage{color}
+\usepackage{makeidx}
+\T\usepackage{atbeginend}
+%\T\usepackage{palatino}
+\T\usepackage{newcent}
+% Use smaller TT font throughout
+\W\begin{iftex}
+  \makeatletter
+  \DeclareRobustCommand\smallttfamily
+  {\not@math@alphabet\ttfamily\mathtt
+    \fontfamily\ttdefault\small\selectfont}
+  \makeatother
+\W\end{iftex}
+\T\usepackage{fancyhdr}
+\W\usepackage{frames}
+%% Req'd for pdflatex -- note use epstopdf to convert eps figures;
+%%                       ps2pdf won't create correct bounding boxes
+\T\newif\ifpdf\ifx\pdfoutput\undefined\pdffalse\else\pdfoutput=1\pdftrue\fi
+\T\newcommand{\pdfgraphics}{\ifpdf\DeclareGraphicsExtensions{.pdf,.jpg}\else\fi}
+\T\usepackage{graphicx}
+
+\newcommand{\runningtitle}{GBBopen 0.9.5 Tutorial}
+
+%% Html declarations: output directory and filenames, node title
+\htmltitle{\runningtitle}
+\newcommand{\gbbopenversion}{0.9.5}
+
+%% Timezone & Daylight Savings:
+\newcommand{\timezone}{EST}
+%\newcommand{\timezone}{EDT}
+
+\htmldirectory{../hypertutorial}
+\htmladdress{\xml{a target="_top" class="address"
+    href="http://GBBopen.org/"}The GBBopen Project\xml{/a}}
+\htmlcss{gbbopen.css}
+\newcommand{\homepage}{http://GBBopen.org}
+\setcounter{htmldepth}{2}
+%\setcounter{secnumdepth}{3}
+
+\input{common.tex}
+
+\W\newcommand{\GoToTopTarget}{\xml{a target="_top" href="tutorial.html"}}
+\W\newcommand{\fndocrule}{\xml{hr color="99CCCC"}}
+
+\T\newcommand{\ctrl}[1]{\textasciicircum{}#1}
+\W\newcommand{\ctrl}[1]{^#1}
+
+%% ----------------------------------------------------------------------------
+%%  Titlepage (LaTeX version only)
+
+\W\begin{iftex}
+\makeatletter
+
+%% Add logo to article.cls version
+\def\@maketitle{%
+  \newpage
+  \hfill\includegraphics[scale=0.5]{GBBopen-logo}\\
+  \null
+  \vskip 2em%
+  \begin{center}%
+  \let \footnote \thanks
+    {\LARGE \@title \par}%
+    \vskip 1.5em%
+    {\large
+      \lineskip .5em%
+      \begin{tabular}[t]{c}%
+        \@author
+      \end{tabular}\par}%
+    \vskip 1em%
+    {\large \@date}%
+  \end{center}%
+  \par
+  \vskip 1.5em}
+
+\makeatother
+\W\end{iftex}
+
+%% ----------------------------------------------------------------------------
+
+\title{\vspace{3in}{\LARGE\textbf{GBBopen Tutorial}}\\[14pt] 
+{\Large\textbf{Version \gbbopenversion}}}
+
+\author{\vspace{1in}~\\{\Large\textbf{Dan Corkill}}\\~\\~\\
+  {\Large\textbf{The GBBopen Project}}\\[4pt]
+  {\large\textbf{\xsitelink{http://GBBopen.org}{http://GBBopen.org}}}}
+
+\date{\today\\[4pt] \hhmm~\timezone}
+
+\W\renewcommand{\navigationname}{{\Large Tutorial}}
+
+\newcommand{\inprogress}{\vfill\textcolor{darkergray}{\textsf{\textbf{This
+        tutorial is under construction;\\additional exercises are being added
+        on a regular basis.}}}}
+%\newcommand{\inprogress}{\vfill\textcolor{darkergray}{\textsf{\textbf{This
+%        tutorial is being revised and expanded on a regular basis.}}}}
+  
+\W\begin{iftex}
+\usepackage[bookmarks=true,
+              plainpages=false,
+              linktocpage=true,
+              colorlinks=true,
+              linkcolor=blue,
+              pagecolor=blue,
+              urlcolor=blue,
+              pdfstartview=FitH,
+              pdfpagemode=None]{hyperref}
+\W\end{iftex}
+
+\makeindex
+
+%% ========================================================================
+%%  Global index entries
+
+\index{slot, link|see{link slot}}%
+\index{Common Lisp!REPL|see{REPL}}%
+\index{KS|see{knowledge source}}%
+\index{KSA|see{knowledge-source activation}}%
+\index{read-eval-print loop|see{REPL}}%
+
+%% ========================================================================
+
+\begin{document}
+\T\pagenumbering{roman}
+\T\pagestyle{plain}
+\T\thispagestyle{empty}
+\T\raggedright
+\T\sloppy
+\T\parskip=0.5\baselineskip
+\T\parindent=0pt
+\T\maketitle
+\T\renewcommand{\headrulewidth}{0pt}
+
+\T\begin{ifhtml}
+\xml{img align="left" src="GBBopen-logo.png"}
+\xml{br clear="both"}
+{\LARGE\bf Tutorial}\\
+{\large\bf GBBopen Version \gbbopenversion}
+\T\end{ifhtml}
+
+\begin{center}
+\inprogress\\
+\end{center}
+
+\newcommand{\intro}{%
+
+GBBopen is a high-performance, open source blackboard-system framework.  This
+tutorial shows you how to get started using GBBopen through a series of
+exercises that cover GBBopen's concepts and features in a step-by-step
+sequence.  The exercises guide you in creating a simple ``random walk''
+application that simulates taking a sequence of straight-line excursions, each
+of random length and direction.  Although the application is simple, it
+involves many of GBBopen's features, from very basic to fairly advanced.
+
+\subsection*{GBBopen and Common Lisp}
+
+GBBopen is an extension of \xsitelink{Common
+  Lisp}{http://www.lispworks.com/documentation/HyperSpec/Front/index.htm} and
+uses CLOS (the Common Lisp Object System) and the \xsitelink{Metaobject
+  Protocol}{http://www.lisp.org/mop/index.html} (MOP) to provide
+blackboard-specific object capabilities.  The blending of GBBopen with Common
+Lisp transfers all the advantages of a rich, dynamic, reflective, and
+extensible programming language to blackboard-application developers.  Thus,
+GBBopen's ``programming language'' includes all of Common Lisp in addition to
+the blackboard-system extensions documented in the \textit{GBBopen Reference}
+manual.
+
+
+This tutorial does not attempt to teach Common Lisp programming, and an
+understanding of basic Common Lisp and CLOS concepts is assumed.  Although it
+is possible to read through the tutorial exercises without Common Lisp
+expertise, a much deeper understanding of GBBopen's potential is gained by
+understanding how GBBopen and Common Lisp work smoothly together.  Two
+frequently recommended Common Lisp books are Peter Seibel's
+\xsitelink{\textit{Practical Common Lisp\/}}{http://www.gigamonkeys.com/book/}
+and Paul Graham's \xsitelink{\textit{On
+    Lisp\/}}{http://paulgraham.com/onlisptext.html}.  Both books are available
+on line, as well in traditional book form.  A less programmer-oriented
+introduction to Common Lisp is David Touretzky's \xsitelink{\textit{Common
+    Lisp: A Gentle Introduction to Symbolic
+    Computation\/}}{http://www.cs.cmu.edu/~dst/LispBook/}, also available on
+line. 
+
+Ken Pitman's \xsitelink{\textit{Common Lisp
+    HyperSpec\/}}{http://www.lispworks.com/documentation/HyperSpec/}, an
+easily navigable HTML document derived from the ANSI Common Lisp standard, is
+the customary programmer's reference for Common Lisp.  A
+\xsitelink{downloadable
+  archive}{ftp://ftp.lispworks.com/pub/software_tools/reference/HyperSpec-7-0.tar.gz}
+of the HyperSpec is also available, which is very convenient when working
+without a continuous connection to the Internet.  We will show how to make the
+HyperSpec and the GBBopen Reference HyperDoc directly accessible in your
+Common Lisp development environment in
+\texonly{Exercise~\ref{sec:environment}.}  \htmlonly{the \link{Enhancing Your
+    Development Environment}{sec:environment} exercise.}
+
+\subsection*{Using a Common Lisp/GBBopen development environment}
+
+The tutorial exercises build on one another, and they are intended to be
+performed sequentially.  The initial exercise involves installing GBBopen and
+preparing it for use in your environment.  This is followed by several
+exercises where you interact with GBBopen by entering forms into the ``Lisp
+Listener'' (also called the read-eval-print-loop or simply the REPL) that is
+provided by your Common Lisp implementation.  As the scope of the random-walk
+application grows, however, it is important to set up a working environment
+where your work is done in a file.  So, after these initial GBBopen exercises,
+we will spend an exercise setting up your environment to provide you
+power-user productivity for the remainder of the tutorial (and for future
+GBBopen activities).  This diversion exercise will be worth your time!
+
+}% end of intro
+
+%% ========================================================================
+%%  Introduction (HTML version only)
+
+\T\begin{ifhtml}
+  \label{sec:introduction}%
+  \intro
+  \reflink{Let's get started...}{sec:starting-up}
+  % Turn off the auto Navigation menu:
+  \setcounter{htmlautomenu}{0}
+\T\end{ifhtml}
+
+% This should be redundant, given the one above, but it is needed!
+\T\thispagestyle{empty}
+
+%% ========================================================================
+%%  Copyright page
+
+\T\newpage
+\T~
+\T\vfill
+\W\xname{tutorial-copyright}
+\W\section*{Copyright}
+
+Copyright \copyright{} 2005--2006 by Daniel D. Corkill for the
+GBBopen Project.
+
+This tutorial may be reproduced and distributed in whole or in
+part, subject to the following conditions: 
+
+\begin{tightitemize}
+\item The copyright notice above and this permission notice must be
+  preserved complete on all complete or partial copies.
+\item Any translation or derivative work of this tutorial must be
+  approved by the copyright holder in writing before distribution.
+\item If you distribute this tutorial in part, instructions and a means
+  for obtaining a complete version of this tutorial must be included.
+\item Small portions may be reproduced as illustrations for reviews or
+quotes in other works without this permission notice if proper
+citation is given.
+\item Distribution of this work or a derivative of this work in any
+  standard (hard copy) book form is prohibited without prior written
+  permission from the copyright holder.
+\end{tightitemize}
+
+All source code examples in this work are placed under and covered by
+the GBBopen software license that accompanies each GBBopen
+distribution and is also available at
+\xsitelink{http://GBBopen.org/svn/GBBopen/trunk/LICENSE}%
+{http://GBBopen.org/svn/GBBopen/trunk/LICENSE}.
+
+\T\bigskip 
+This work is licensed and provided ``as is'' without warranty
+of any kind, express or implied, including, but not limited to, the
+implied warranties of merchantability and fitness for a particular
+purpose or a warranty of non-infringement.  GBBopen software and the
+information in this tutorial are subject to change without notice.
+
+\T\bigskip 
+Please help improve this tutorial by reporting any errors, inaccuracies, bugs,
+misleading or confusing statements, missing or unhelpful index entries, and
+typographical errors that you find. E-mail bug reports, comments, and
+suggestions to \xsitelink{bugs@GBBopen.org}{mailto:bugs@GBBopen.org}.  Your
+help is greatly appreciated and will be acknowledged.
+
+\T\bigskip
+GBBopen is a trademark of the GBBopen Project.\\
+Any other brand or product names are trademarks or registered
+trademarks of their respective holders.
+
+\T\bigskip
+\hfill\begin{tabular}{@{}l@{}}
+\textbf{The GBBopen Project}\\
+181 Pondview Drive\\
+Amherst, Massachusetts ~ 01002\\~\\
+\xsitelink{GBBopen@GBBopen.org}{mailto:GBBopen@GBBopen.org}\\
+\xsitelink{http://GBBopen.org}{http://GBBopen.org}\\
+\end{tabular}
+
+\T\vspace{0.5in}
+\W\bigskip
+
+\W\begin{iftex}
+This tutorial was produced using
+\xsitelink{\LaTeX}{http://www.latex-project.org} and PDF\LaTeX.
+\W\end{iftex}
+
+\T\begin{ifhtml}
+This tutorial was produced using
+\xsitelink{\LaTeX}{http://www.latex-project.org}
+and \xsitelink{Hyperlatex}{http://hyperlatex.sourceforge.net/} 2.9a.
+\T\end{ifhtml}
+
+\T\cleardoublepage
+\W\xname{tutorial-contents}
+\T\bgroup
+\T\parskip 0pt
+\tableofcontents
+\T\egroup
+
+%% ========================================================================
+%%  Acknowledgments
+
+\T\clearpage
+\W\xname{tutorial-acknowledgments}
+
+% Turn the auto Navigation menu back on:
+\W\setcounter{htmlautomenu}{1}
+
+\input{acknowledgments.tex}
+
+The random-walk example used in this tutorial is adapted from \textit{Getting
+  Started with GBB\/}, written by Dan Corkill and Suzanne Tromara.
+
+%% ========================================================================
+%%  Introduction (LaTeX version only)
+
+\W\begin{iftex}
+  \markright{}%
+  \cleardoublepage
+  \setcounter{page}{1}
+  \pagenumbering{arabic}
+  \pagestyle{fancy}
+  \thispagestyle{fancybottom}
+  \section*{Introduction}
+  \addcontentsline{toc}{section}{\textbf{Introduction}}%
+  \label{sec:introduction}%
+  \intro
+\W\end{iftex}
+
+%% ========================================================================
+%%  Starting Up
+
+\T\markright{}%
+\T\pagestyle{plain}
+\T\cleardoublepage
+\W\xname{tutorial-starting-up}
+\T\pagestyle{fancy}
+\T\thispagestyle{fancybottom}
+\T\renewcommand{\headrulewidth}{0pt}
+\section{Starting GBBopen}
+\label{sec:starting-up}%
+
+This initial exercise requires that you:
+\begin{tightitemize}
+\item Obtain and install Common Lisp
+\item Obtain and install GBBopen
+\item Interact with Common Lisp's read-eval-print loop (REPL)
+\item Recover from errors
+\item Prepare to use GBBopen in the next exercises by loading the
+  \code{:gbbopen-user} module and changing to the \code{:gbbopen-user}
+  package
+\end{tightitemize}
+
+\fndocrule
+
+\subsection*{Step 1: Obtain and install Common Lisp}
+
+\index{Common Lisp!installing}%
+GBBopen requires a supported Common Lisp implementation.  If one has already
+been installed on your system, then this step is finished.  (That was easy!)
+If not, then you will need to choose, obtain, and install a Common Lisp
+implementation before moving on to the next step.
+
+The list of Common Lisp implementations, with version numbers, on which
+GBBopen is supported is maintained on the ``\xsitelink{Current
+  ports}{http://GBBopen.org/ports.html}'' page of the GBBopen Project
+\xsitelink{web site}{http://GBBopen.org/}.  The list includes commercial
+products and open-source implementations made available under varying license
+arrangements.  The vendors of commercial Common Lisp products offer no-cost
+``Trial'' or ``Personal'' editions that can support the tutorial exercises and
+allow you to become familiar with their products before making a purchase
+decision.
+
+Choosing a particular implementation is a subjective decision.  Some Common
+Lisp implementations run on only a single platform.  Some implementations do
+not provide multiprocessing (thread) support on some or all of the platforms
+that they run on.  Some implementations come with their own integrated
+development environment (IDE), interactive graphics facilities, and supported
+libraries and extensions.  When it comes to selecting an implementation, there
+is no ``best'' answer (but there is also no wrong answer, if the
+implementation meets your current needs).  All these Common Lisp
+implementations strive to conform to the ANSI (American National Standards
+Institute) standard for the Common Lisp language.  By writing GBBopen
+applications to remain consistent with the ANSI standard (including portable
+extensions to the standard that are provided by GBBopen), we can easily run
+our code on any Common Lisp implementation that provides similar capabilities
+(such as threads, for example).
+
+If you would rather not explore the space of Common Lisp implementations for
+your platform, Peter Seibel (the author of \xsitelink{\textit{Practical Common
+    Lisp\/}}{http://www.gigamonkeys.com/book/}) provides
+\xsitelink{Lispbox}{http://www.gigamonkeys.com/book/lispbox/}.  Lispbox
+(``Lisp in a Box'') offers an easy to install, no-cost, Common Lisp
+environment for Linux/86, Macintosh OS X, and Windows.  Lispbox packages
+together a Common Lisp implementation,
+\xsitelink{Emacs}{http://www.gnu.org/software/emacs/emacs.html}, and the
+\xsitelink{SLIME}{http://common-lisp.net/project/slime/} Common Lisp
+development environment for Emacs.  For the less adventurous, installing
+Lispbox can be an appealing way to get started.
+
+However you choose to obtain Common Lisp, you must have an installed and
+operating implementation for your system before proceeding to the next step.
+
+\subsection*{Step 2: Obtain and install GBBopen}
+
+\index{installing GBBopen}%
+\index{GBBopen!installing}%
+GBBopen is available in source form from
+\xsitelink{http://GBBopen.org/}{http://GBBopen.org/}.  A snapshot archive of
+the GBBopen source-code repository can be downloaded from
+\xsitelink{http://gbbopen.org/downloads/GBBopen.tar.gz}{http://gbbopen.org/downloads/GBBopen.tar.gz}.
+Extract the archive into a directory of your choosing, and follow the
+``Compiling/Loading GBBopen'' instructions that are contained in the
+\code{README} file of the installation.
+
+% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
+% formatting of the following paragraph...  I don't understand why:
+%\T\begin{ifhtml}
+%  \endpar\par
+%\T\end{ifhtml}
+\codeindexit{values}%
+\index{subversion client}%
+Alternatively, if you are familiar with
+\xsitelink{Subversion}{http://subversion.tigris.org} and have a subversion
+client installed on your computer, you can checkout the latest files directly
+from the GBBopen repository.  For example, the shell command:
+%
+\begin{example}\color{darkergray}%
+  [~]$ \textcolor{black}{svn checkout http://GBBopen.org/svn/GBBopen/trunk/ GBBopen}
+\end{example}
+%
+will create a GBBopen repository tree rooted at the directory named
+\code{GBBopen} in your current working directory.  As above, follow the
+``Compiling/Loading GBBopen'' instructions that are contained in the
+\code{README} file of the installation.
+
+% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
+% formatting of the following paragraph...  I don't understand why:
+%\T\begin{ifhtml}
+%  \endpar\par
+%\T\end{ifhtml}
+\index{updating GBBopen}%
+\index{GBBopen!updating}%
+\index{subversion client}%
+\index{TortoiseSVN}%
+\index{TortoiseCVS}%
+GBBopen development is ongoing, and you should update your GBBopen repository
+files regularly in order to obtain the latest capabilities and enhancements.
+Using subversion is the easiest way to keep current, and you are strongly
+encouraged to install a subversion client and use it perform frequent updates.
+Simply issue the command:
+%
+\begin{example}\color{darkergray}%
+  [~]$ \textcolor{black}{svn update}
+\end{example}
+%
+from the root directory of your GBBopen repository tree.  
+The \xsitelink{TortoiseSVN}{http://tortoisesvn.tigris.org/} subversion
+client is highly recommended for Windows users.  TortoiseSVN is
+smoothly integrated with the Windows Shell (Explorer) and is as easy
+to use as \xsitelink{TortoiseCVS}{http://www.tortoisecvs.org/} (also
+highly recommended if aren't already using it as your CVS client on
+Windows).
+
+Subversion \code{.svn} administrative directories are included in the
+GBBopen snapshot archive, so a subversion \code{update} command can be
+used to freshen a GBBopen installation that was originally installed
+from a snapshot archive.
+
+\subsection*{Step 3: Interact with the REPL}
+
+\index{REPL}%
+This tutorial assumes that you have a basic understanding of Common Lisp and,
+in particular, how to interact with the Common Lisp implementation that you
+are using.  Thus, you should be able to start up your Common Lisp system and
+enter forms into the ``Lisp Listener'' (also called the read-eval-print-loop
+or simply the REPL) that it provides.  
+
+When you start your Common Lisp system, it may first display some informational
+messages and then you should see a prompt for input that looks something like:
+%
+\begin{example}\color{darkergray}%
+  > 
+\end{example}
+%
+The specific format of the prompt differs depending on your Common Lisp
+implementation.  The prompt character may vary, such as:
+%
+\begin{example}\color{darkergray}%
+  * 
+\end{example}
+%
+or
+%
+\begin{example}\color{darkergray}%
+  ? 
+\end{example}
+%
+The prompt might include a entry number that is incremented each time an
+expression is entered, such as:
+%
+\begin{example}\color{darkergray}%
+  [1]> 
+\end{example}
+%
+Or it might also include the name of the current package (symbol namespace)
+being used by the REPL:
+%
+\begin{example}\color{darkergray}%
+  gbbopen-user(1): 
+\end{example}
+
+The REPL prompt indicates that it is awaiting a Common Lisp expression to
+evaluate and then display the evaluation results. For example, enter the
+expression:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(+ 1 2)}
+  3
+  >
+\end{example}
+%
+Note that what you need to enter is shown in black and other items, such as
+the REPL prompt and displayed result, \code{3}, are shown in gray.  We will
+follow this convention throughout the tutorial to help make it clear what you
+must provide in the context of other information.
+
+\codeindexit{*print-case*}%
+While we are on the subject of what is displayed, enter the following expression:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{'symbol}
+  symbol
+  >
+\end{example}
+%
+The displayed result that you see might be in lower case, as shown, or upper
+case, or even capitalized.  In this tutorial, results are shown with Common
+Lisp symbols displayed in lower case, which I prefer as being slightly easier
+to read.  If you wish, you can duplicate this behavior in your REPL by
+entering the following form:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(setf *print-case* ':downcase)}
+  :downcase
+  >
+\end{example}
+
+% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
+% formatting of the following paragraph...  I don't understand why:
+%\T\begin{ifhtml}
+%  \endpar\par
+%\T\end{ifhtml}
+\codeindexit{values}%
+Your Common Lisp implementation may also differ slightly on how it displays
+multiple returned values.  For example:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(values 1 2 3)}
+  1
+  2
+  3
+  >
+\end{example}
+%
+In this tutorial, we show multiple returned values as displayed on separate
+lines.  Your Common Lisp implementation may show them differently, such as
+with semicolon value-separation characters:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(values 1 2 3)}
+  1 ;
+  2 ;
+  3
+  >
+\end{example}
+
+\subsection*{Step 4: Recover from an error}
+
+\index{error!recovering from}%
+\index{Common Lisp!debugger}%
+Even you are a very careful typist, sooner or later you will enter a Common
+Lisp expression that signals an error.  Therefore, it is important that you
+know how to get back on track when the inevitable occurs.  Let's intentionally
+generate an error.  Enter:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(/ 1 0)}
+  Error: Attempt to divide 1 by zero.
+  >>
+\end{example}
+
+The behavior of your Common Lisp environment should look similar, and you
+should now be in your implementation's debugger or ``break loop.''  The
+debugger prompt may differ from the standard REPL prompt to help remind you
+that you are in the break loop.  Alternatively, your implementation may open
+another window or buffer in response to the error.  Your implementation may
+allow you to continue entering Common Lisp expressions at the break prompt
+that are evaluated and the results displayed just as if you were in the normal
+REPL (opening the possibility of causing another error and triggering another
+instance of the debugger).  You can use the debugger to inspect the nesting,
+or ``backtrace,'' of function calls that led to the error, view and edit local
+variable bindings, and so forth, and you can often correct the cause of the
+error and resume the broken evaluation directly from the debugger.
+
+For tutorial purposes, you only need to know how to abort out of the
+evaluation and return back to the REPL if you trigger an error.  The details
+for aborting the computation and exiting the debugger are implementation
+dependent, so you may need to investigate how to abort out of an error on your
+Common Lisp implementation.  For example, it might be as easy as entering an
+abort debugger command:
+%
+\begin{example}\color{darkergray}%
+  > (/ 1 0)
+  Error: Attempt to divide 1 by zero.
+  >> \textcolor{black}{:a}
+  >
+\end{example}
+%
+Consult your Common Lisp documentation or a knowledgeable friend if
+you need assistance with the debugger in your Common Lisp
+implementation (\code{:a} or \code{q} are typical abort commands).
+
+\subsubsection*{Breaking a computation}
+
+There are other mistakes that don't signal an error.  Suppose I
+foolishly evaluate this expression:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(loop (print "This is repetitive...") (sleep 1))}
+
+  "This is repetitive." 
+  "This is repetitive." 
+       ...
+\end{example}
+%
+Once I grow tired of watching this phrase repeat, it would be good to
+terminate the evaluation without having to kill the entire Common Lisp
+program.
+
+Again, the specifics depend on your Common Lisp environment, but all that is
+needed is to interrupt, or ``break,'' the computation.  Often this is
+associated with typing one or more Control-c (\code{\ctrl{c}}) characters:
+%
+\begin{example}\color{darkergray}%
+  > (loop (print "This is repetitive...") (sleep 1))
+
+  "This is repetitive." 
+  "This is repetitive." 
+       ...
+  "This is repetitive." 
+  "This is repetitive." 
+  "This is rep\textcolor{black}{\ctrl{C}}
+  Error: Received keyboard interrupt \ctrl{C}
+  >>
+\end{example}
+%
+Typically a keyboard interrupt invokes the debugger where the computation
+can be resumed or aborted:
+%
+\begin{example}\color{darkergray}%
+  > (loop (print "This is repetitive...") (sleep 1))
+
+  "This is repetitive." 
+  "This is repetitive." 
+       ...
+  "This is repetitive." 
+  "This is repetitive." 
+  "This is rep\ctrl{C}
+  Error: Received keyboard interrupt \ctrl{C}
+  >> \textcolor{black}{:a}
+  >
+\end{example}
+
+\subsubsection*{Help! My REPL is broken!}
+
+Here is one last difficulty.  Suppose I enter:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(list "This" "is "also" "a" "problem!")}
+  >
+  >
+  >
+\end{example}
+%
+My REPL seems dead: no result is displayed and I continue to be prompted again
+and again for input.  I suppose I should try the entering the expression
+again:
+%
+\begin{example}\color{darkergray}%
+  > (list "This" "is "also" "a" "problem!")
+  >
+  >
+  >
+  > \textcolor{black}{(list "This" "is" "also" "a" "problem!")}
+  >
+  >
+\end{example}
+%
+Nope, my REPL is still broken.
+
+Of course the cause of the problem is that I forgot the closing double-quote
+character on \code{"is"} when I entered the first expression.  The REPL is
+still patiently waiting for me to finish that first Common Lisp expression.
+(I didn't break it after all!)
+
+So how do I get out of this?  I could try entering a sequence of double-quote
+and close parentheses and hope I that I get lucky:
+%
+\begin{example}\color{darkergray}%
+  > (list "This" "is "also" "a" "problem!")
+  >
+  >
+  >
+  > (list "This" "is" "also" "a" "problem!")
+  >
+  >
+  > \textcolor{black}{"}
+  > \textcolor{black}{)}
+  Error: Attempt to take the value of the unbound variable `also'.
+  >>
+\end{example}
+%
+or I could interrupt the REPL read operation, just as I did with the infinite
+loop situation above, and abort back from the debugger to the REPL and try
+again:
+%
+\begin{example}\color{darkergray}%
+  > (list "This" "is "also" "a" "problem!")
+  >
+  >
+  >
+  > (list "This" "is" "also" "a" "problem!")
+  >
+  >
+  > \textcolor{black}{\ctrl{C}}
+  Error: Received keyboard interrupt \ctrl{C}
+  >> \textcolor{black}{:a}
+  > \textcolor{black}{(list "This" "is" "also" "a" "problem!")}
+  ("This" "is" "also" "a" "problem!")
+  >
+\end{example}
+
+You may discover even more creative ways to get into problems, but these
+example situations should give you enough experience to get through the rest
+of the tutorial.
+
+\subsection*{Step 5: Load the \code{:gbbopen-user} module}
+
+\index{error!recovering from}%
+GBBopen is packaged with its own \xreflink{module system}{sec:mini-module}
+that supports compiling and loading GBBopen components.
+
+To compile and load the \code{:gbbopen-user} module and all the GBBopen
+modules it requires, you need to evaluate the following forms within your
+Common Lisp environment.  First, load GBBopen's \code{startup.lisp} file from
+wherever GBBopen has been installed:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(load "\var{<install-directory\/>}startup.lisp")}
+  ;; Loading \var{<install-directory\/>}/startup.lisp
+  ;;  Loading \var{<install-directory\/>}/source/mini-module/mini-module-loader.lisp
+  ;;   Loading \var{<install-directory\/>}/source/mini-module/mini-module.lisp
+  ;;  Loading \var{<install-directory\/>}/source/modules.lisp
+  t
+  >
+\end{example}
+
+% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
+% formatting of the following paragraph...  I don't understand why:
+%\T\begin{ifhtml}
+%  \endpar\par
+%\T\end{ifhtml}
+\bfindexit{compile-module}%
+Then compile and load the \code{:gbbopen-user} module and all the
+GBBopen modules it requires by evaluating:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(mini-module:compile-module :gbbopen-user :propagate :create-dirs)}
+  ;; Compiling \var{<install-directory\/>}/source/mini-module/mini-module.lisp
+  ;; Loading \var{<install-directory\/>}/\var{platform-directory\/}/gbbopen/gbbopen-user.fasl
+       ...
+  ;; Compiling \var{<install-directory\/>}/source/gbbopen/gbbopen-user.lisp
+  ;; Loading \var{<install-directory\/>}/\var{platform-directory\/}/gbbopen/gbbopen-user.fasl
+  >
+\end{example}
+
+GBBopen should compile (if necessary) and load all the files needed for the
+next exercise without error.  The output on your Common Lisp implementation
+may vary somewhat from that shown above.
+
+\subsubsection*{File protection problems?}
+
+\codeindex{compile-gbbopen}%
+If one or more GBBopen files needs to be compiled, you must have write
+permission for those files and directories on your file system.  If you do not
+have write permission and someone else is maintaining your GBBopen
+installation, they must start up Common Lisp and evaluate the following
+expressions:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(load "\var{<install-directory\/>}gbbopen-init.lisp")}
+  ;; Loading \var{<install-directory\/>}/gbbopen-init.lisp
+  ;;  Loading \var{<install-directory\/>}/extended-repl.lisp
+  ;;  Loading \var{<install-directory\/>}/commands.lisp
+  t
+  > \textcolor{black}{(compile-gbbopen)}
+  ;; Loading \var{<install-directory\/>}/startup.lisp
+     ...
+  ;;; GBBopen module compilation completed.
+  >
+\end{example}
+%
+every time they update GBBopen to ensure that all GBBopen modules have
+been compiled.
+
+\subsection*{Step 6: Change to the \code{:gbbopen-user} package}
+
+\codeindexit{in-package}%
+Now that the \code{:gbbopen-user} module is loaded, change the current
+package to the \code{:gbbopen-user} package:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(in-package :gbbopen-user)}
+  #<The gbbopen-user package>
+  >
+\end{example}
+
+In Common Lisp, a \textit{package\/} is a namespace that maps names to
+symbols.  One package is always designated as the ``current'' package, and it
+is this package that is used by default for creating and finding symbols by
+their names.  Initially, the current package is set to the
+\code{:common-lisp-user} package.  The \code{:gbbopen-user} module creates a
+new package, named \code{:gbbopen-user}, that includes GBBopen Tools and
+GBBopen Core symbols in addition to the standard Common Lisp symbols.  If you
+do not set the current package to the \code{:gbbopen-user} package, references
+to GBBopen functions and variables will not map to the proper symbols.
+
+%% ========================================================================
+%%  Creating a Unit Instance
+
+\T\markright{}%
+\T\pagestyle{plain}
+\T\cleardoublepage
+\W\xname{tutorial-creating-a-unit-instance}
+\T\pagestyle{fancy}
+\T\thispagestyle{fancybottom}
+\T\renewcommand{\headrulewidth}{0pt}
+\section{Creating a Unit Instance}
+\label{sec:unit-instance}%
+
+Blackboard objects in GBBopen are called \textit{unit instances}. Each unit
+instance is a member of a \textit{unit class}.  The unit class defines the
+structure of all instances of the unit class, such as the slots in each unit
+instance.  At a more precise Common Lisp level, every GBBopen unit instance is
+member of a (possibly non-direct) subclass of GBBopen's unit class,
+\code{standard-unit-instance}, which is itself a subclass of Common Lisp's
+\code{standard-object} class.  Even more technically, the metaclass of each
+GBBopen unit class is an instance of the GBBopen metaclass,
+\code{standard-unit-class}, which is a subclass of Common Lisp's
+\code{standard-class} metaclass.  In other words, GBBopen unit instances fit
+naturally into the CLOS an MOP hierarchies. Fortunately, understanding such
+details is not required to put GBBopen to use.
+
+The word ``unit'' is used in GBBopen because it has a very neutral meaning
+that is unlikely to be confused with programming terminology, such as
+``object,'' or with application-domain concepts, such as ``location'' or
+``goal''.  When someone refers to ``unit instances,'' it is clear that they
+are talking about GBBopen's blackboard objects.  Thus, ``unit instance''
+always refers to an instance of a particular unit class, and ``unit class''
+refers to a class of unit instances.
+
+So let's start using them$\ldots$
+
+\fndocrule
+
+This exercise shows you how to:
+\begin{tightitemize}
+\item Define a unit class
+\item Create a unit instance
+\item Display a description of a unit instance
+\item Find a unit instance by its name
+\item Read and write slot values
+\end{tightitemize}
+
+\fndocrule
+
+\subsection*{Prerequisites}
+
+\bfindexit{compile-module}%
+\codeindexit{in-package}%
+If you ended the Common Lisp session used in the last exercise, begin a new
+session and evaluate the following forms:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(load "\var{<install-directory\/>}startup.lisp")}
+     ...
+  > \textcolor{black}{(mini-module:compile-module :gbbopen-user :propagate :create-dirs)}
+     ...
+  > \textcolor{black}{(in-package :gbbopen-user)}
+  #<The gbbopen-user package>
+  >
+\end{example}
+
+\subsection*{Step 1: Define the \code{location} unit class}
+
+\index{unit class!defining}%
+\bfindexit{define-unit-class}%
+We begin by defining a unit class \code{location} that has two slots,
+named \code{x} and \code{y}.
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(define-unit-class location ()
+      (x y))}
+  #<location>
+  >
+\end{example}
+
+This unit-class definition instructs GBBopen to:
+%
+\begin{tightitemize}
+\item Define initialization argument \code{:x} for the \code{x} slot
+  and \code{:y} for the \code{y} slot.  You will use these
+  initialization arguments in the next step, to specify initial slot
+  values for an instance.
+\item Define reader and writer methods for the \code{x-of} and
+  \code{y-of} generic slot-accessor functions, used to reading
+  and modifying the \code{x} and \code{y} slot values.
+\end{tightitemize}
+
+\subsection*{Step 2: Create a unit instance}
+
+\index{unit instance!creating}%
+\codeindexit{defvar}%
+Next, you can create a \textit{unit instance\/} for the \code{location}
+unit class.  To simplify access to the unit instance during subsequent
+activities, first define a global variable called \code{ui}
+by entering the following form:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(defvar ui)}
+  ui
+  >
+\end{example}
+
+% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
+% formatting of the following paragraph...  I don't understand why:
+%\T\begin{ifhtml}
+%  \endpar\par
+%\T\end{ifhtml}
+\bfindexit{make-instance}%
+Now, create a unit instance and assign it to the variable \code{ui} by
+entering the form:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(setf ui (make-instance 'location :x 40 :y 60))}
+  #<location 1>
+  >
+\end{example}
+
+This creates a unit instance of the \code{location} class, initializes the
+instance's \code{x} and \code{y} slots with the values specified by the
+\code{:x} and \code{:y} initialization arguments.  The created unit instance
+is then assigned to the variable \code{ui}.
+
+\subsection*{Step 3: Display a description of the unit instance}
+
+\index{unit instance!displaying a description of}%
+\bfindexit{describe-instance}%
+Now, display a description of the unit instance by using GBBopen's
+\textbf{describe-instance} function.  Enter the following form:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(describe-instance ui)}
+  Location #<location 1>
+    Instance name: 1
+    Space instances: None
+    Dimensional values: None
+    Non-link slots:
+      x 40
+      y 60
+    Link slots:
+      [None]
+  >
+\end{example}
+
+Note that you didn't specify a name for the unit instance when you created it.
+In fact, there is often no natural reason to name each unit instance you
+create. By default, GBBopen names unit instances by giving it a sequentially
+increasing number.  (For example, the unit instance you just created is named
+\code{1}.)  GBBopen requires that each instance of a unit class is uniquely
+named within the class.
+
+\subsection*{Step 4: Find a unit instance by its name}
+
+\index{unit instance!finding!by name}%
+\bfindexit{find-instance-by-name}%
+You can look up a particular unit instance by its name. For example, to
+find the \code{location} \code{1} unit instance by name, enter the form:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(find-instance-by-name 1 'location)}
+  #<location 1>
+  >
+\end{example}
+
+Of course, we assigned the \code{location} unit instance to the global
+variable \code{ui}, but it is nice to know that we can always find our unit
+instance using its name.
+
+\subsection*{Step 5: Change the \code{x} slot value}
+
+\index{unit instance!slot!getting value of}%
+\index{unit instance!slot!setting value of}%
+\index{slot!getting value of}%
+\index{slot!setting value of}%
+Use the \code{x-of} reader and writer methods GBBopen defined for the
+\code{x} slot (in Step 3 above) to obtain the value of the \code{x} slot and
+then to change its value to 50:
+%
+\begin{tightenumerate}
+  \index{x-of\code{x-of} slot reader method|itidx}%
+\item Get the value of the \code{x} slot of the unit instance:
+  \begin{example}\color{darkergray}%
+    > \textcolor{black}{(x-of ui)}
+    40
+    >
+  \end{example}
+  \index{(setf x-of)@\code{(setf x-of)} slot writer method|itidx}%
+\codeindexit{(setf x-of)}%
+\item Change the slot value to 50:
+  \begin{example}\color{darkergray}%
+    > \textcolor{black}{(setf (x-of ui) 50)}
+    50
+    >
+  \end{example}
+\item Get the (new) value of the \code{x} slot:
+  \begin{example}\color{darkergray}%
+    > \textcolor{black}{(x-of ui)}
+    50
+    >
+  \end{example}
+\end{tightenumerate}
+
+\subsection*{Step 6: Again display the description of the unit instance}
+
+\bfindexit{describe-instance}%
+Display the description of the \code{location} unit instance again, observing the
+changed \code{x} slot value:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(describe-instance ui)}
+  Location #<location 1>
+    Instance name: 1
+    Space instances: None
+    Dimensional values: None
+    Non-link slots:
+      x 50
+      y 60
+    Link slots:
+      [None]
+  >
+\end{example}
+
+%% ========================================================================
+%%  Creating a Space Instance
+
+\T\markright{}%
+\T\pagestyle{plain}
+\T\cleardoublepage
+\W\xname{tutorial-creating-a-space-instance}
+\T\pagestyle{fancy}
+\T\thispagestyle{fancybottom}
+\T\renewcommand{\headrulewidth}{0pt}
+\section{Creating a Space Instance}
+\label{sec:space-instance}%
+
+In GBBopen, \textit{space instances} serve as containers for unit instances.
+As we saw in the last exercise, unit instances need not be placed in a space
+instance.  They are perfectly useful on their own.  In this exercise we will
+create a space instance and add and remove unit instances from it.  A unit
+instance can also be contained in multiple space instances at the same time.
+Although containment ``in'' a space instance is a more technically correct
+phrase, historically developers talk of unit instances being ``on'' a space
+instance or of adding a unit instance ``to'' a space instance.  Whichever
+preposition is used, the meaning is the same.
+
+As with unit instances, each space instance is a member of a \textit{space
+  class}.  The space class defines the structure of all instances of the space
+class, such as any slots associated with each space instance.  Unlike unit
+instances, however, the standard GBBopen space class,
+\code{standard-space-instance}, is often sufficient for most applications.
+Therefore, space-instance subclasses rarely need to be defined.
+
+Space instances can be organized into hierarchical structures, much like the
+directories in a hierarchical file system.  A useful, but not exact, analogy
+is to think of unit instances as being similar to files and space instances as
+similar to directories.  Stretching this analogy one step further, adding a
+unit instance to a space instance is akin to creating a symbolic link to a
+file in a directory.  Removing the unit instance from the space instance is
+like removing the symbolic link: the unit instance itself, like the file, is
+not deleted by the removal.
+
+\fndocrule
+
+This exercise shows you how to:
+\begin{tightitemize}
+\item Create a space instance
+\item Find a space instance by its path
+\item Add and remove a unit instance from the space instance
+\item Display a description of the blackboard repository
+\item Find unit instances on a space instance
+\end{tightitemize}
+
+\fndocrule
+
+\subsection*{Prerequisites}
+
+\bfindexit{compile-module}%
+\codeindexit{in-package}%
+\codeindexit{defparameter}%
+If you ended the Common Lisp session used in the last exercise, begin a new
+session and evaluate the following forms:
+%
+\begin{example}\color{darkergray}%
+ > \textcolor{black}{(load "\var{<install-directory\/>}startup.lisp")}
+     ...
+  > \textcolor{black}{(mini-module:compile-module :gbbopen-user :propagate :create-dirs)}
+     ...
+  > \textcolor{black}{(in-package :gbbopen-user)}
+  #<The gbbopen-user package>
+  > \textcolor{black}{(define-unit-class location ()
+      (x y))}
+  #<location>
+  > \textcolor{black}{(defparameter ui (make-instance 'location :x 40 :y 60))}
+  ui
+  >
+\end{example}
+
+\subsection*{Step 1: Create a space instance}
+
+\index{space instance!creating}%
+\codeindexit{defvar}%
+Create a \textit{space instance\/} named \code{known-world}.  To simplify
+access to the space instance during subsequent activities, first define a
+global variable called \code{si} by entering the following form:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(defvar si)}
+  si
+  >
+\end{example}
+
+% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
+% formatting of the following paragraph...  I don't understand why:
+%\T\begin{ifhtml}
+%  \endpar\par
+%\T\end{ifhtml}
+\bfindexit{make-space-instance}%
+Now, create the space instance and assign it to the variable \code{si} by
+entering the form:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(setf si (make-space-instance '(known-world)))}
+  #<standard-space-instance (known-world)>
+  >
+\end{example}
+
+The argument to the \textbf{make-space-instance} is the ``path'' to be used
+for the created space instance.  A \textit{space-instance path} is the
+complete list of space-instance names, starting with the name of the most
+distant indirect parent, that uniquely identifies a space instance in the
+blackboard repository.  Our \code{known-world} space does not have a parent,
+so its path is simply \code{(known-world)}.
+
+\subsection*{Step 2: Display a description of the blackboard repository}
+
+\index{blackboard repository, describing}%
+\bfindexit{describe-blackboard-repository}%
+Display a description of the blackboard repository, which now contains the
+\code{known-world} space instance:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(describe-blackboard-repository)}
+  
+  Space Instance                Contents
+  --------------                --------
+  known-world                   Empty
+  >
+\end{example}
+
+The description indicates that:
+\begin{tightitemize}
+\item One space instance, \code{known-world}, exists in the repository
+\item The \code{known-world} space instance is empty; there are no unit
+  instances stored in it
+\end{tightitemize}
+ 
+\subsection*{Step 3: Find a space instance by its path}
+
+\index{space instance!finding by path}%
+\bfindexit{find-space-instance-by-path}%
+You can look up a particular space instance by its space-instance path:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(find-space-instance-by-path '(known-world))}
+  #<standard-space-instance (known-world)>
+  >
+\end{example}
+
+We assigned the \code{known-world} space instance to the global variable
+\code{si}, but it is nice to know that we can always find it again using its
+path.
+
+\subsection*{Step 4: Add the unit instance to the space instance}
+
+\index{unit instance!adding to a space instance}%
+\bfindexit{add-instance-to-space-instance}%
+Now, add the \code{location} unit instance to the space instance.
+Enter the following form:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(add-instance-to-space-instance ui si)}
+  #<location 1>
+  >
+\end{example}
+
+\subsection*{Step 5: Again, display the blackboard-repository description}
+
+\bfindexit{describe-blackboard-repository}%
+Display the description of the blackboard repository again:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(describe-blackboard-repository)}
+  
+  Space Instance                Contents
+  --------------                --------
+  known-world                   1 instance (1 location)
+  >
+\end{example}
+
+This time the description indicates that the \code{known-world} space instance
+has one instance of the \code{location} unit class stored on it.
+
+\subsection*{Step 6: Display the description of the unit instance}
+
+\bfindexit{describe-instance}%
+Display the description of the \code{location} unit instance once again,
+observing the change in the space instances from the last exercise:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(describe-instance ui)}
+  Location #<location 1>
+    Instance name: 1
+    Space instances: ((known-world))
+    Dimensional values: None
+    Non-link slots:
+      x 50
+      y 60
+    Link slots:
+      [None]
+  >
+\end{example}
+
+\subsection*{Step 7: Find the unit instance on the space instance}
+
+\index{unit instance!finding!on a space instance}%
+\bfindexit{find-instances}%
+Now that the \code{location} unit instance is on the \code{known-world} space
+instance, we can find it on the space instance. The form is as follows,
+where \code{:all} is a very basic retrieval pattern specifying that all unit
+instances on the \code{known-world} space instance are to be returned:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(find-instances 'location '(known-world) :all)}
+  (#<location 1>)
+  >
+\end{example}
+
+The list of found unit instances is returned. (In this case, there is only one
+in the list.)
+
+This is a very simple retrieval; however, GBBopen can perform extremely
+complex searches as well.  We will use more complex retrieval patterns in
+upcoming exercises.
+
+\subsection*{Step 8: Add another unit instance to the space instance}
+
+\bfindexit{make-instance}%
+\bfindexit{add-instance-to-space-instance}%
+Create a second instance of the \code{location} unit class, with \code{x} and
+\code{y} slot values 80 and 90, respectively, and add it to the
+\code{known-world} space instance:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(add-instance-to-space-instance 
+       (make-instance 'location :x 80 :y 90)
+       si)}
+  #<location 2>
+  >
+\end{example}
+
+% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
+% formatting of the following paragraph...  I don't understand why:
+%\T\begin{ifhtml}
+%  \endpar\par
+%\T\end{ifhtml}
+\bfindexit{find-instance-by-name}%
+This time we did not assign the new \code{location} unit instance to a global
+variable but, as before, we can find the unit instance by its name:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(find-instance-by-name 2 'location)}
+  #<location 2>
+  >
+\end{example}
+
+% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
+% formatting of the following paragraph...  I don't understand why:
+%\T\begin{ifhtml}
+%  \endpar\par
+%\T\end{ifhtml}
+\bfindexit{find-instance-by-name}%
+\bfindexit{find-instances}%
+As you would expect, we can retrieve both \code{location} unit instances from the
+\code{known-world} space instance using \textbf{find-instances}:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(find-instances 'location '(known-world) :all)}
+  (#<location 2> #<location 1>)
+  >
+\end{example}
+
+\subsection*{Step 9: Again, display the blackboard-repository description}
+
+\bfindexit{describe-blackboard-repository}%
+Display the description of the blackboard repository again:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(describe-blackboard-repository)}
+  
+  Space Instance                Contents
+  --------------                --------
+  known-world                   2 instances (2 location)
+  >
+\end{example}
+
+This time the description indicates that the \code{known-world} space instance
+has both instances of the \code{location} unit class stored on it.
+
+\subsection*{Step 10:  Remove a unit instance from the space instance}
+
+\index{unit instance!removing from a space instance}%
+\bfindexit{remove-instance-from-space-instance}%
+Now, remove the first \code{location} unit instance from the
+\code{known-world} space instance.  Enter the following form:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(remove-instance-from-space-instance ui si)}
+  #<location 1>
+  >
+\end{example}
+
+% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
+% formatting of the following paragraph...  I don't understand why:
+%\T\begin{ifhtml}
+%  \endpar\par
+%\T\end{ifhtml}
+\bfindexit{find-instances}%
+As you would expect, only the second \code{location} unit instance remains on the
+\code{known-world} space instance:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(find-instances 'location '(known-world) :all)}
+  (#<location 2>)
+  >
+\end{example}
+%
+and describing the \code{location} unit instance confirms this:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(describe-instance ui)}
+  Location #<location 1>
+    Instance name: 1
+    Space instances: None
+    Dimensional values: None
+    Non-link slots:
+      x 50
+      y 60
+    Link slots:
+      [None]
+  >
+\end{example}
+
+%% ========================================================================
+%%  Deleting Instances
+
+\T\markright{}%
+\T\pagestyle{plain}
+\T\cleardoublepage
+\W\xname{tutorial-deleting-instances}
+\T\pagestyle{fancy}
+\T\thispagestyle{fancybottom}
+\T\renewcommand{\headrulewidth}{0pt}
+\section{Deleting Instances}
+\label{sec:deleting-instance}%
+
+GBBopen retains created unit and space instances until they are explicitly
+deleted.  This behavior is important to blackboard applications, where shared
+information in the form of unit instances remains available until a decision
+is made to remove them.
+
+In this exercise, we explore some implications of deleting unit and space
+instances.
+
+\fndocrule
+
+This exercise shows you how to:
+\begin{tightitemize}
+\item Delete a unit instance
+\item Create a space-instance hierarchy
+\item Delete a space instance
+\item Reset gbbopen, deleting all unit and space instances (and more)
+\end{tightitemize}
+
+\fndocrule
+
+\subsection*{Prerequisites}
+
+\bfindexit{compile-module}%
+\codeindexit{in-package}%
+\codeindexit{defparameter}%
+If you ended the Common Lisp session used in the last exercise, begin a new
+session and evaluate the following forms:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(load "\var{<install-directory\/>}startup.lisp")}
+     ...
+  > \textcolor{black}{(mini-module:compile-module :gbbopen-user :propagate :create-dirs)}
+     ...
+  > \textcolor{black}{(in-package :gbbopen-user)}
+  #<The gbbopen-user package>
+  > \textcolor{black}{(define-unit-class location ()
+      (x y))}
+  #<standard-unit-class location>
+  > \textcolor{black}{(defparameter ui (make-instance 'location :x 50 :y 60))}
+  ui
+  > \textcolor{black}{(defparameter si (make-space-instance '(known-world)))}
+  si
+  > \textcolor{black}{(add-instance-to-space-instance 
+       (make-instance 'location :x 80 :y 90)
+       si)}
+  #<location 2>
+  >
+\end{example}
+
+\subsection*{Step 1: Create a few more unit instances}
+
+Just to review, we now have created two \code{location} unit instances.  The unit
+instance named \code{1} is no longer on the \code{known-world} space instance, but it is still assigned to the global variable \code{ui}:
+%
+\codeindexit{print}%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{ui}
+  #<location 1> 
+  >
+\end{example}
+
+The \code{location} unit instance named \code{2} is on the \code{known-world}
+space instance:
+%
+\bfindexit{find-instances}%
+As you would expect, only the second \code{location} unit instance remains on the
+\code{known-world} space instance:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(find-instances 'location '(known-world) :all)}
+  (#<location 2>)
+  >
+\end{example}
+
+Let's create five more \code{location} unit instances.  Enter:
+%
+\bfindexit{make-instance}%
+\codeindexit{dotimes}%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(dotimes (i 5) (make-instance 'location))}
+  nil
+  >
+\end{example}
+%
+Note that we did not specify \code{x} and \code{y} slot values for these new
+unit instances.  We will explore the implications of this shortly.
+
+\subsection*{Step 2: Apply a function to all instances of a unit class}
+
+\index{unit class!applying a function to all instances of}%
+\index{unit instance!applying a function to all instances of a class}%
+\index{applying a function to all instances of a class}%
+\bfindexit{find-instance-by-name}%
+We did not assign the new \code{location} unit instances to global variables
+or add them to the \code{known-world} space instance.  Can we still reference
+them?  If we know the names of the new unit instances, we can use the
+\textbf{find-instance-by-name} function that we learned earlier.  For example:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(find-instance-by-name 5 'location)}
+  #<location 5>
+  >
+\end{example}
+
+% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
+% formatting of the following paragraph...  I don't understand why:
+%\T\begin{ifhtml}
+%  \endpar\par
+%\T\end{ifhtml}
+\bfindexit{map-instances-of-class}%
+\codeindexit{print}%
+It is often useful to perform some action on all instances of a unit class.
+GBBopen provides a \textit{mapping function}, or ``iterator,'' that repeatedly
+calls a function with each instance of a unit class as the argument to the
+function.  For example:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(map-instances-of-class #'print 'location)}
+
+  #<location 6> 
+  #<location 3> 
+  #<location 7> 
+  #<location 1> 
+  #<location 2> 
+  #<location 4> 
+  #<location 5> 
+  nil
+  >
+\end{example}
+%
+displays each of our \code{location} unit instances.  Note that the exact
+order that \code{location} unit instances are supplied to the \code{print}
+function may differ from the above example in your Common Lisp implementation.
+
+% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
+% formatting of the following paragraph...  I don't understand why:
+%\T\begin{ifhtml}
+%  \endpar\par
+%\T\end{ifhtml}
+\bfindexit{find-instances}%
+\bfindexit{map-instances-of-class}%
+Currently, there is only one \code{location} unit instance on the
+\code{known-world} space instance:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(find-instances 'location '(known-world) :all)}
+  (#<location 2>)
+  >
+\end{example}
+%
+Let's use \textbf{map-instances-of-class} to add all the \code{location} unit
+instances to the \code{known-world}:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(map-instances-of-class 
+      #'(lambda (instance) (add-instance-to-space-instance instance si))
+      'location)}
+  Warning: In add-instance-to-space-instance: #<location 2> is already on space
+           instance #<standard-space-instance (known-world)>.
+  nil
+  >
+\end{example}
+%
+GBBopen warns us that the \code{location} \code{2} unit instance is already on
+the \code{known-world} and adds all the other \code{location} instances.  We
+can verify this by using \textbf{find-instances}:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(find-instances 'location '(known-world) :all)}
+  (#<location 7> #<location 6> #<location 5> #<location 4> #<location 3>
+   #<location 2> #<location 1>)
+  >
+\end{example}
+
+% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
+% formatting of the following paragraph...  I don't understand why:
+%\T\begin{ifhtml}
+%  \endpar\par
+%\T\end{ifhtml}
+\bfindexit{map-instances-of-class}%
+For those who prefer a more iterative programming style, GBBopen provides a
+\texttt{dolist}-style macro, \textbf{do-instances-of-class}, as an alternative
+to \textbf{map-instances-of-class}.  So, to add all the \code{location} unit
+instances to the \code{known-world}, we could have chosen to use the form:
+%
+\begin{example}\color{darkergray}%
+  (do-instances-of-class (instance 'location)
+    (add-instance-to-space-instance instance si))
+\end{example}
+%
+instead of the \textbf{map-instances-of-class} version.  As with things
+stylistic, the choice is yours.
+
+\subsection*{Step 3: Delete a unit instance}
+
+\index{unit instance!deleting}%
+\bfindexit{delete-instance}%
+Let's delete the first \code{location} unit instance that we created:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(delete-instance ui)}
+  #<location 1 [Deleted]>
+  >
+\end{example}
+%
+Note that the displayed representation of the unit instance now includes
+\code{[Deleted]} to let us know that the unit instance has been deleted.
+
+% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
+% formatting of the following paragraph...  I don't understand why:
+%\T\begin{ifhtml}
+%  \endpar\par
+%\T\end{ifhtml}
+\bfindexit{find-instance-by-name}%
+\bfindexit{map-instances-of-class}%
+\codeindexit{print}%
+We can no longer find the deleted unit instance by its name:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(find-instance-by-name 1 'location)}
+  nil
+  >
+\end{example}
+%
+it is no longer included in a \textbf{map-instances-of-class} iteration:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(map-instances-of-class #'print 'location)}
+
+  #<location 6> 
+  #<location 3> 
+  #<location 7> 
+  #<location 2> 
+  #<location 4> 
+  #<location 5> 
+  nil
+  >
+\end{example}
+%
+and it is no longer on the \code{known-world} space instance:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(find-instances 'location '(known-world) :all)}
+  (#<location 7> #<location 6> #<location 5> #<location 4> #<location 3>
+   #<location 2>)
+  >
+\end{example}
+
+% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
+% formatting of the following paragraph...  I don't understand why:
+%\T\begin{ifhtml}
+%  \endpar\par
+%\T\end{ifhtml}
+\bfindexit{add-instance-to-space-instance}%
+However, the deleted \code{location} unit instance is still assigned to the
+\code{ui} global variable:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{ui}
+  #<location 1 [Deleted]>
+  >
+\end{example}
+%
+and that can lead to problems.  Let's try to place the deleted \code{location}
+unit instance on the \code{known-world} space instance:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(add-instance-to-space-instance ui si)}
+  Error: add-instance-to-space-instance attempted with a deleted instance:
+         #<location 1 [Deleted]>
+  >> \textcolor{black}{:a}
+  >
+\end{example}
+%
+Many of GBBopen's operations signal an error if they are given a deleted unit
+instance.  This is not true of all operations, however:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(x-of ui)}
+  50
+  >
+\end{example}
+
+% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
+% formatting of the following paragraph...  I don't understand why:
+%\T\begin{ifhtml}
+%  \endpar\par
+%\T\end{ifhtml}
+\bfindexit{instance-deleted-p}%
+Typically, blackboard applications obtain unit instances from the blackboard
+repository rather than maintaining references to them in variables.  This
+limits the possibility of obtaining a deleted unit instance and performing
+GBBopen operations on it.  Regular CLOS operations on a deleted unit instance,
+such as reading and writing slot values, function normally.  The deletion
+status of a unit instance can be determined using the
+\textbf{instance-deleted-p} predicate:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(instance-deleted-p ui)}
+  t
+  >
+\end{example}
+
+\subsection*{Step 4: Create a simple space-instance hierarchy}
+
+\index{space instance!hierarchy, creating}%
+\bfindexit{make-space-instance}%
+In the last exercise, we noted that space instances can be organized in
+hierarchical structures.  To illustrate this, let's create a few more space
+instances:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(make-space-instance '(known-world my-town))}
+  #<standard-space-instance (known-world my-town)>
+  > \textcolor{black}{(make-space-instance '(known-world my-town east-side))}
+  #<standard-space-instance (known-world my-town east-side)>
+  > \textcolor{black}{(make-space-instance '(known-world my-town west-side))}
+  #<standard-space-instance (known-world my-town west-side)>
+  >
+\end{example}
+
+% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
+% formatting of the following paragraph...  I don't understand why:
+%\T\begin{ifhtml}
+%  \endpar\par
+%\T\end{ifhtml}
+\bfindexit{describe-blackboard-repository}%
+Recall that the \var{space-instance-path} argument to
+\textbf{make-space-instance} is the complete list of space-instance names,
+starting with the name of the most distant indirect parent.  So, the
+\code{my-town} space instance has the \code{known-world} as it's parent and
+the \code{east-side} and \code{west-side} as children.  We can use
+\textbf{describe-blackboard-repository} to see this organization:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(describe-blackboard-repository)}
+
+  Space Instance                Contents
+  --------------                --------
+  known-world                   6 instances (6 location)
+     my-town                    Empty
+        east-side               Empty
+        west-side               Empty
+  >
+\end{example}
+
+% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
+% formatting of the following paragraph...  I don't understand why:
+%\T\begin{ifhtml}
+%  \endpar\par
+%\T\end{ifhtml}
+\bfindex{standard-space-instance}%
+\index{space instance!is a unit instance}%
+Observe from the above description that child space instances that we created
+are not placed on their parent.  Unlike the directories in a file system in
+the analogy that we presented in the last exercise, in GBBopen a
+space-instance hierarchy is orthogonal to containment.  In fact, space
+instances are actually unit instances (of the class
+\textbf{standard-space-instance}, by default) and a space instance can be
+placed on other space instances---or even on itself.  Typical blackboard
+applications do not involve using space instances as unit instances, but this
+property of space instances is very powerful when it is needed.
+
+% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
+% formatting of the following paragraph...  I don't understand why:
+%\T\begin{ifhtml}
+%  \endpar\par
+%\T\end{ifhtml}
+\bfindex{space-instance-parent}%
+\bfindex{space-instance-children}%
+The functions \textbf{space-instance-parent} and
+\textbf{space-instance-children} are provided to traverse the space-instance
+hierarchy.  For example:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(space-instance-children 
+      (find-space-instance-by-path '(known-world my-town)))}
+  (#<standard-space-instance (known-world my-town west-side)>
+   #<standard-space-instance (known-world my-town east-side)>)
+  >
+\end{example}
+
+\subsection*{Step 5: Add a unit instance to multiple space instances}
+
+\bfindexit{add-instance-to-space-instance}%
+\bfindexit{find-instance-by-name}%
+Now, let's add \code{location} \code{2} to the \code{my-town} and 
+\code{east-side} space instances:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(let ((location-2 (find-instance-by-name 2 'location)))
+      (add-instance-to-space-instance location-2 '(known-world my-town))
+      (add-instance-to-space-instance location-2 '(known-world my-town east-side)))}
+  #<location 2>
+  >
+\end{example}
+
+% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
+% formatting of the following paragraph...  I don't understand why:
+%\T\begin{ifhtml}
+%  \endpar\par
+%\T\end{ifhtml}
+\bfindexit{find-instance-by-name}%
+\bfindexit{describe-blackboard-repository}%
+As we expect, \code{location} \code{2} is now on three space instances:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(describe-instance (find-instance-by-name 2 'location))}
+  Location #<location 2>
+    Instance name: 2
+    Space instances: ((known-world my-town east-side) (known-world my-town)
+                      (known-world))
+    Dimensional values: None
+    Non-link slots:
+      x 80
+      y 90
+    Link slots:
+      [None]
+  >
+\end{example}
+%
+and the description of the blackboard repository is:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(describe-blackboard-repository)}
+
+  Space Instance                Contents
+  --------------                --------
+  known-world                   6 instances (6 location)
+     my-town                    1 instance (1 location)
+        east-side               1 instance (1 location)
+        west-side               Empty
+  >
+\end{example}
+
+Placing a unit instance on multiple space instances is useful when each space
+instance represents a different view of unit instances.  In this case,
+\code{location} \code{2} is in the \code{known-world}, in \code{my-town}, and
+on the \code{east-side}:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(find-instances 'location '(known-world my-town) :all)}
+  (#<location 2>)
+  > \textcolor{black}{(find-instances 'location '(known-world my-town east-side) :all)}
+  (#<location 2>)
+  >
+\end{example}
+
+\subsection*{Step 6: Delete a space instance}
+
+\index{space instance!deleting}%
+\bfindexit{delete-space-instance}%
+Now let's delete some of what we just created.  Let's delete the
+\code{my-town} space instance:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(delete-space-instance '(known-world my-town))}
+  #<standard-space-instance (known-world my-town) [Deleted]>
+  >
+\end{example}
+%
+% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
+% formatting of the following paragraph...  I don't understand why:
+%\T\begin{ifhtml}
+%  \endpar\par
+%\T\end{ifhtml}
+\bfindexit{describe-blackboard-repository}%
+and describe the blackboard repository:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(describe-blackboard-repository)}
+
+  Space Instance                Contents
+  --------------                --------
+  known-world                   6 instances (6 location)
+  >
+\end{example}
+%
+Notice that GBBopen has also deleted all the child space instances of
+\code{my-town}: both \code{east-side} and \code{west-side} were also deleted.
+So, just as with our file-system directory analogy, space-instance deletion is
+recursive over children and should be performed with caution.  
+
+% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
+% formatting of the following paragraph...  I don't understand why:
+%\T\begin{ifhtml}
+%  \endpar\par
+%\T\end{ifhtml}
+\bfindex{map-instances-on-space-instances}%
+\bfindexit{delete-instance}%
+Also note that deleting space instances did not delete any of the unit
+instances that were stored on them.  If we want to delete a space instance
+\textit{and\/} all the unit instances that are stored on it, we must
+explicitly delete the unit instances before deleting the space instance.
+For example, we could do:
+%
+\begin{example}\color{darkergray}%
+  > (map-instances-on-space-instances #'delete-instance 
+      'location '(known-world my-town))
+  nil
+  >
+\end{example}
+%
+to delete the unit instances in \code{my-town}.  However, we must keep in mind
+that a unit instance can reside on multiple space instances; so deleting a
+unit instance that is on other space instances might not be the desired
+action.
+
+% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
+% formatting of the following paragraph...  I don't understand why:
+%\T\begin{ifhtml}
+%  \endpar\par
+%\T\end{ifhtml}
+\bfindexit{do-instances-on-space-instances}%
+As is the case with \textbf{map-instances-of-class}, GBBopen provides a
+\textbf{do-instances-on-space-instances} macro as an alternative to
+\textbf{map-instances-on-space-instances}.  So we could have chosen to use the
+form:
+%
+\begin{example}\color{darkergray}%
+  (do-instances-on-space-instances (instance 'location '(known-world my-town))
+    (delete-instance instance))
+\end{example}
+%
+to explicitly delete the \code{location} unit instances in \code{my-town}.
+
+\subsection*{Step 7: Reset GBBopen}
+
+\bfindex{reset-gbbopen}%
+\bfindexit{describe-blackboard-repository}%
+\bfindexit{map-instances-of-class}%
+If we really want to get rid of all our unit and space instances, we can use
+the \textbf{reset-gbbopen} function:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(reset-gbbopen)}
+  t
+  > \textcolor{black}{(describe-blackboard-repository)}
+  There are no space instances in the blackboard repository.
+  > \textcolor{black}{(map-instances-of-class #'print location)}
+  nil
+  >
+\end{example}
+
+% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
+% formatting of the following paragraph...  I don't understand why:
+%\T\begin{ifhtml}
+%  \endpar\par
+%\T\end{ifhtml}
+\bfindexit{make-instance}%
+\textbf{Reset-gbbopen} has deleted every space and unit instance, but it has
+not eliminated our \code{location} unit class definition.  Let's create
+a \code{location} unit instance once again:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(make-instance 'location)}
+  #<location 1>
+  >
+\end{example}
+
+Note that resetting GBBopen also reset the counter for \code{location}
+instance names, so the created unit instance is again named \code{1}.
+
+%% ========================================================================
+%%  Enhancing Your Development Environment
+
+\T\markright{}%
+\T\pagestyle{plain}
+\T\cleardoublepage
+\W\xname{tutorial-development-environment}
+\T\pagestyle{fancy}
+\T\thispagestyle{fancybottom}
+\T\renewcommand{\headrulewidth}{0pt}
+\section{Enhancing Your Development Environment}
+\label{sec:environment}%
+
+Now that you are experienced creating and deleting unit and space instances in
+GBBopen, we will take a short break before working further on our random-walk
+application.  In the exercises thus far, we have been working directly in
+Common Lisp's REPL.  As our application develops, we want to save our code in
+files. In this exercise, we will provide recommendations for making your
+GBBopen and Common Lisp environment more productive.  Even if you have already
+customized your Common Lisp setup, I recommend surveying this exercise for
+useful GBBopen tips.
+
+\fndocrule
+
+This exercise shows you how to:
+\begin{tightitemize}
+\item Add GBBopen keyword commands to your Common Lisp implementation
+\item Customize your Common Lisp initialization file
+\item Set up GBBopen HyperDoc and Common Lisp HyperSpec access
+\end{tightitemize}
+
+\fndocrule
+
+\subsection*{Step 1: Autoloading GBBopen}
+
+Thus far, we have entered the forms:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(load "\var{<install-directory\/>}startup.lisp")}
+     ...
+  > \textcolor{black}{(mini-module:compile-module :gbbopen-user :propagate :create-dirs)}
+     ...
+  > \textcolor{black}{(in-package :gbbopen-user)}
+  #<The gbbopen-user package>
+  >
+\end{example}
+%
+to compile and load needed GBBopen components and to set the current package
+to \code{:gbbopen-user}.  We can set up our Common Lisp environment so that we
+can do this (and eventually compile and load our random-walk application) by
+issuing only a single command.
+
+The file\var{$<$install-directory\/$>$}\code{gbbopen-init.lisp} is an
+alternative for \var{$<$install-directory\/$>$}\code{startup.lisp} that adds
+handy GBBopen keyword commands to the top-level REPL listener for
+\xsitelink{Allegro CL}{http://www.franz.com},
+\xsitelink{CLISP}{http://clisp.cons.org/},
+\xsitelink{CMUCL}{http://www.cons.org/cmucl/},
+\xsitelink{ECL}{http://common-lisp.net/project/ecl/},
+\xsitelink{LispWorks}{http://www.lispworks.com},
+\xsitelink{OpenMCL}{http://openmcl.clozure.com/},
+\xsitelink{SBCL}{http://sbcl.sourceforge.net} and
+\xsitelink{Scieneer CL}{http://www.scieneer.com/scl/}
+users.  GBBopen keyword commands
+are also supported in
+\xsitelink{SLIME}{http://common-lisp.net/project/slime/}'s Emacs-based REPL.
+Other interaction interfaces that use their own REPL, rather than the one
+provided by Common Lisp, may not support keyword top-level command processing
+(see below).
+
+To make these GBBopen keyword commands available, simply load the file
+\var{$<$install-directory\/$>$}\code{gbbopen-init.lisp} rather
+than\var{$<$install-directory\/$>$}\code{startup.lisp}.  Let's try it.  Start
+up a fresh Common Lisp session and enter the following form in the REPL:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(load "\var{<install-directory\/>}gbbopen-init.lisp")}
+  ;; Loading \var{<install-directory\/>}/gbbopen-init.lisp
+  ;;  Loading \var{<install-directory\/>}/extended-repl.lisp
+  ;;  Loading \var{<install-directory\/>}/commands.lisp
+  t
+  >
+\end{example}
+
+% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
+% formatting of the following paragraph...  I don't understand why:
+%\T\begin{ifhtml}
+%  \endpar\par
+%\T\end{ifhtml}
+\index{:gbbopen-user@\textbf{:gbbopen-user} REPL command|itidx}%
+Note that the \xreflink{mini-module system}{sec:mini-module} and GBBopen
+module definitions have not been loaded.  Now enter the REPL
+command, \textbf{:gbbopen-user}:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{:gbbopen-user}
+  ;; Loading \var{<install-directory\/>}/startup.lisp
+     ...
+  ;; Loading \var{<install-directory\/>}/\var{platform-directory\/}/gbbopen/gbbopen-user.fasl
+  >
+\end{example}
+%
+The \code{:gbbopen-user} module (and supporting modules) are loaded, and the
+current package is set to \code{:gbbopen-user}:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{*package*}
+  #<The gbbopen-user package>
+  >
+\end{example}
+
+Module-compilation REPL commands, such as \code{:gbbopen-user},
+always include the \code{:propagate} option when they call the Mini Module
+\textbf{compile-module} function.  We don't need to specify it as a command
+option.
+
+\subsubsection*{If it didn't work$\ldots$}
+
+If you are running GBBopen in a Common Lisp environment that doesn't support
+top-level REPL commands and the \textbf{:gbbopen-user} REPL command didn't
+work, all is not lost.  Loading \code{gbbopen-init.lisp} also defines
+functions in the \code{:common-lisp-user} package with the same name as the
+REPL command:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(gbbopen-user)}
+  ;; Loading \var{<install-directory\/>}/startup.lisp
+     ...
+  ;; Loading \var{<install-directory\/>}/\var{platform-directory\/}/gbbopen/gbbopen-user.fasl
+  >
+\end{example}
+
+\subsubsection*{REPL command syntax}
+
+GBBopen's REPL commands are defined to mimic the syntax of existing REPL
+commands in your Common Lisp environment.  On many Common Lisp
+implementations, REPL commands with arguments can be specified in either list
+or ``spread'' notation.  For example:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(:gbbopen-user :create-dirs)}
+  ;; Loading \var{<install-directory\/>}/startup.lisp
+     ...
+  ;; Loading \var{<install-directory\/>}/\var{platform-directory\/}/gbbopen/gbbopen-user.fasl
+  >
+\end{example}
+%
+or
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{:gbbopen-user :create-dirs}
+  ;; Loading \var{<install-directory\/>}/startup.lisp
+     ...
+  ;; Loading \var{<install-directory\/>}/\var{platform-directory\/}/gbbopen/gbbopen-user.fasl
+  >
+\end{example}
+
+However, \xsitelink{OpenMCL}{http://openmcl.clozure.com/} and the
+\xsitelink{SLIME}{http://common-lisp.net/project/slime/} interface do not
+support the spread notation, and \xsitelink{Allegro CL}{http://www.franz.com}
+and \xsitelink{LispWorks}{http://www.lispworks.com} do not support the list
+notation.  At present, \xsitelink{CLISP}{http://clisp.cons.org/} only supports
+the spread notation---without arguments.  So, CLISP users must use the
+\code{:common-lisp-user} functions rather than a REPL command when the command
+requires arguments:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(cl-user:gbbopen-user :create-dirs)}
+  ;; Loading \var{<install-directory\/>}/startup.lisp
+     ...
+  ;; Loading \var{<install-directory\/>}/\var{platform-directory\/}/gbbopen/gbbopen-user.fasl
+  >
+\end{example}
+
+\subsection*{Step 2: Customizing your Common Lisp initialization file}
+
+I'm lazy and would rather not have to explicitly load the
+\code{gbbopen-init.lisp} file each time I start a new Common Lisp session.
+So, I have my Common Lisp's initialization file load it for me.  To make it
+easy to similarly customize different Common Lisp implementations, I use the
+following strategy:
+
+\begin{enumerate}
+
+\item I create a file, \code{shared-init.lisp}, in my home directory,
+  containing the following:
+
+% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
+% formatting of the following paragraph...  I don't understand why:
+%\T\begin{ifhtml}
+%  \endpar\par
+%\T\end{ifhtml}
+\begin{example}
+  (in-package :common-lisp-user)
+
+  ;; My personal preferences.  Note: Allegro CL requires 
+  ;; tpl:setq-default during initialization to retain changes
+  ;; to these global variables (done in .clinit.cl):
+  (setf *print-case* ':downcase)
+  (setf *compile-verbose* 't)
+  (setf *load-verbose* 't)
+
+  (let ((defaults *load-truename*))
+    (load (make-pathname 
+           ;; where GBBopen is installed:
+           :directory '(:absolute \textcolor{red}{"home" "gbbopen"})
+           :name "gbbopen-init"
+           :type "lisp"
+           :defaults defaults)))
+\end{example}
+
+% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
+% formatting of the following paragraph...  I don't understand why:
+%\T\begin{ifhtml}
+%  \endpar\par
+%\T\end{ifhtml} 
+
+The \code{:directory} argument to \code{make-pathname} is a Common
+Lisp \textit{absolute pathname} that is portable across all operating
+systems.  I installed my GBBopen in \code{/home/gbbopen/}, and I
+specified this with the \code{"home"} and \code{"gbbopen"} elements in
+the \code{:directory} argument.  Change these elements as appropriate
+for the location of your GBBopen installation.
+
+\item For each Common Lisp implementation that I use, I create a personal
+  initialization file that performs any implementation-specific
+  initializations and then loads \code{shared-init.lisp}.  For example, here
+  is the \code{.clisprc} initialization file that I use for
+  \xsitelink{CLISP}{http://clisp.cons.org/}:
+
+% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
+% formatting of the following paragraph...  I don't understand why:
+%\T\begin{ifhtml}
+%  \endpar\par
+%\T\end{ifhtml}
+\begin{example}
+  (in-package :common-lisp-user)
+
+  ;; enable maximum ANSI compliance:
+  (setf custom:*ansi* 't)
+
+  (let ((defaults *load-truename*))
+    (load (make-pathname 
+           :name "shared-init"
+           :type "lisp"
+           :defaults defaults)))
+\end{example}
+
+% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
+% formatting of the following paragraph...  I don't understand why:
+%\T\begin{ifhtml}
+%  \endpar\par
+%\T\end{ifhtml}
+%
+\xsitelink{SBCL}{http://sbcl.sourceforge.net} has a very strict interpretation
+of \code{*load-truename*} semantics, so my \code{.sbclrc} initialization file
+is:
+%
+\begin{example}
+  (in-package :common-lisp-user)
+
+  ;; *load-truename* returns nil when used in SBCL's .sbclrc 
+  ;; initialization file, so use (user-homedir-pathname):
+  (let ((defaults (user-homedir-pathname)))
+    (load (make-pathname 
+           :name "shared-init"
+           :type "lisp"
+           :defaults defaults)))
+\end{example}
+
+% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
+% formatting of the following paragraph...  I don't understand why:
+%\T\begin{ifhtml}
+%  \endpar\par
+%\T\end{ifhtml}
+%
+Here is my \code{.clinit.cl} initialization file for
+\xsitelink{Allegro CL}{http://www.franz.com}:
+
+\begin{example}
+  (in-package :common-lisp-user)
+
+  ;; Allegro CL requires tpl:setq-default during initialization
+  ;; to retain changes to these global variables:
+  (tpl:setq-default *print-case* ':downcase)
+  (tpl:setq-default *compile-verbose* 't)
+  (tpl:setq-default *load-verbose* 't)
+
+  (let ((defaults *load-truename*))
+    (load (make-pathname 
+           :name "shared-init"
+           :type "lisp"
+           :defaults defaults)))
+\end{example}
+
+% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
+% formatting of the following paragraph...  I don't understand why:
+%\T\begin{ifhtml}
+%  \endpar\par
+%\T\end{ifhtml}
+The initialization file names for supported GBBopen ports are:
+
+\begin{tabular}{llll}
+~~~~~~ & \xsitelink{Allegro CL}{http://www.franz.com} &
+~~~~~~ & \code{.clinit.cl} \\
+       & \xsitelink{CLISP}{http://clisp.cons.org/} &
+       & \code{.clisprc} \\
+       & \xsitelink{CMUCL}{http://www.cons.org/cmucl/} &
+       & \code{init.lisp} \\
+       & \xsitelink{Digitool MCL}{http://www.digitool.com} &
+       & (see below) \\
+       & \xsitelink{ECL}{http://common-lisp.net/project/ecl/} &
+       & \code{.eclrc} \\
+       & \xsitelink{LispWorks}{http://www.lispworks.com} &
+       & \code{.lispworks} \\
+       & \xsitelink{OpenMCL}{http://openmcl.clozure.com/} & 
+       & \code{openmcl-init.lisp} \\
+       & \xsitelink{SBCL}{http://sbcl.sourceforge.net} & 
+       & \code{.sbclrc} \\
+       & \xsitelink{Scieneer CL}{http://www.scieneer.com/scl/} &
+       & \code{init.lisp} \\
+\end{tabular}
+
+% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
+% formatting of the following paragraph...  I don't understand why:
+%\T\begin{ifhtml}
+%  \endpar\par
+%\T\end{ifhtml}
+%
+\xsitelink{Digitool MCL}{http://www.digitool.com} does not look for an
+initialization file in the user's home directory.  Instead it loads the file
+\code{init.lisp} in it's installation directory.  One approach is to have that
+file load a personal initialization file, say \code{mcl-init.lisp}, from the
+user's home directory, if a \code{mcl-init.lisp} file is present.
+
+The Personal Edition of \xsitelink{LispWorks}{http://www.lispworks.com} does
+not load initialization files, requiring you to manually load your
+\code{.lispworks} file each time you start up
+\xsitelink{LispWorks}{http://www.lispworks.com}.
+
+% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
+% formatting of the following paragraph...  I don't understand why:
+%\T\begin{ifhtml}
+%  \endpar\par
+%\T\end{ifhtml}
+%
+The interpretation of where a user's ``home'' directory is located is
+inconsistent on Windows.  Ideally, the directly location of the Common Lisp
+implementation's initialization file and the result of the Common Lisp
+function \code{user-homedir-pathname} should be consistent.  By using the
+\code{shared-init.lisp} scheme, you only need to determine where the
+initialization file should be for each Common Lisp implementation that you
+use, and then have those files load your \code{shared-init.lisp} file from
+whichever directory \underline{you} deem as your ``home'' directory.
+
+\item Now all that I need to do to use GBBopen is start up my Common Lisp and
+  type a GBBopen command, such as \code{:gbbopen-user}.  My fingers thank me!
+
+\end{enumerate}
+
+\subsection*{Step 3: Set up  HyperDoc and HyperSpec access}
+
+\codeindex{browse-hyperdoc.el}%
+If you are using
+\xsitelink{Emacs}{http://www.gnu.org/software/emacs/emacs.html} in your Common
+Lisp development environment, you can make it easy to bring up appropriate
+Common Lisp and GBBopen documentation in your browser.  The file
+\var{$<$install-directory\/$>$}\code{/browse-hyperdoc.el} defines an
+interactive Emacs command named \code{browse-hyperdoc} and binds it to
+\code{META-?} (on most keyboards, \code{META-?} means pressing both \code{Alt}
+and \code{?} keys at the same time) .  To enable this Emacs command, add a
+command to load \code{browse-hyperdoc.el} in your \code{.emacs}
+initialization file:
+%
+\begin{example}
+  ;; GBBopen hyperdoc (where GBBopen was installed):
+  (load "\var{<install-directory\/>}/browse-hyperdoc")
+\end{example}
+
+% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
+% formatting of the following paragraph...  I don't understand why:
+%\T\begin{ifhtml}
+%  \endpar\par
+%\T\end{ifhtml}
+%
+If there is no \code{.emacs} file present in your ``home'' directory, simply
+create one containing the above command. Once again, Windows users need to
+worry about where Emacs looks for their ``home'' directory.
+
+While you are editing your \code{.emacs} file, you might also want to add a
+command to load GBBopen's Emacs indentation customizations:
+%
+\begin{example}
+  ;; GBBopen indentations (where GBBopen was installed):
+  (load "\var{<install-directory\/>}/gbbopen-indent")
+\end{example}
+
+If you are using
+\xsitelink{\textit{Lispbox}}{http://www.gigamonkeys.com/book/lispbox/}, you
+will have to enable loading of the \code{.emacs} initialization file, as it is
+disabled in the Lispbox startup file.  Edit the Lispbox startup file
+(\code{lispbox.bat} on Windows, \code{lispbox.sh} on unix, and
+\code{/Applications/Lispbox/Emacs.app/Contents/MacOS/lispbox.sh} on Mac OS)
+and remove the \code{-{}-no-init-file} option from the Emacs invocation line.
+
+\subsubsection*{Adding the Common Lisp HyperSpec}
+
+The
+\xsitelink{hyperspec.el}{http://GBBopen.org/downloads/hyperspec.el}
+utility is included in the
+\xsitelink{SLIME}{http://common-lisp.net/project/slime/} and
+\xsitelink{ILISP}{http://sourceforge.net/projects/ilisp/} distributions.
+However, if \code{hyperspec.el} is not already part of your Emacs, you can
+download it and explicitly load it from your \code{.emacs} initialization file.
+Once \code{hyperspec.el} is present, GBBopen's \code{browse-hyperdoc} Emacs
+command will automatically defer to the \xsitelink{Common Lisp
+  HyperSpec}{http://www.lispworks.com/documentation/HyperSpec/} when given a
+non-GBBopen entity.  
+
+I prefer to download a local copy of the Common Lisp HyperSpec using the
+\xsitelink{downloadable
+  archive}{ftp://ftp.lispworks.com/pub/software_tools/reference/HyperSpec-7-0.tar.gz}
+provided by \xsitelink{LispWorks}{http://www.lispworks.com}, LTD.  This allows
+me to quickly reference the HyperSpec without a network connection.  I set the
+value of \code{common-lisp-hyperspec-root} in my \code{.emacs} initialization
+file to a URL that points to my local copy of the HyperSpec:
+%
+\begin{example}
+  (setf common-lisp-hyperspec-root "file:/home/CLHS/")
+\end{example}
+
+\subsubsection*{Non-Emacs access}
+
+\bfindex{browse-hyperdoc}%
+If you are not using an Emacs-based environment, GBBopen provides a Common
+Lisp function, \textbf{browse-hyperdoc}, that can be used to access GBBopen
+HyperDoc pages from Common Lisp.  GBBopen's \code{:os-interface} module must be loaded to make \textbf{browse-hyperdoc} available.  For example:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{:os-interface}
+  ;; Loading \var{<install-directory\/>}/startup.lisp
+     ...
+  ;; Loading \var{<install-directory\/>}/\var{platform-directory\/}/tools/os-interface.fasl
+  > \textcolor{black}{(gbbopen-tools:browse-hyperdoc 'define-unit-class)}
+  t
+  >
+\end{example}
+%
+will display the GBBopen HyperDoc page for \textbf{define-unit-class} in your
+browser. 
+
+%% ========================================================================
+%%  Working Within a File
+
+\T\markright{}%
+\T\pagestyle{plain}
+\T\cleardoublepage
+\W\xname{tutorial-working-within-a-file}
+\T\pagestyle{fancy}
+\T\thispagestyle{fancybottom}
+\T\renewcommand{\headrulewidth}{0pt}
+\section{Working Within a File}
+\label{sec:file}%
+
+Now that we've enhanced our GBBopen and Common Lisp development environment,
+let's begin developing the random-walk application in earnest.
+
+\fndocrule
+
+This exercise shows you how to:
+\begin{tightitemize}
+\item Begin working with files for application development
+\item Compile and load an application file using the SLIME or ELI
+  environments
+\end{tightitemize}
+
+\fndocrule
+
+\subsection*{Step 1: Create the tutorial-example directories}
+
+Create a directory to hold the random-walk application.  I'm calling mine
+\code{tutorial}.  Next, create a subdirectory in that directory named
+\code{source}.  (The reason for doing this will become clear in an upcoming
+exercise.)  Here are the shell commands that I used to create my directories:
+%
+\begin{example}\color{darkergray}%
+  [~]$ \textcolor{black}{mkdir tutorial}
+  [~]$ \textcolor{black}{cd tutorial}
+  [~/tutorial]$ \textcolor{black}{mkdir source}
+  [~/tutorial]$ 
+\end{example}
+
+\subsection*{Step 2: Create the tutorial-example file}
+
+Start up a fresh Common Lisp session and load the \code{:gbbopen-user}
+module, using the REPL command we set up in the last exercise:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{:gbbopen-user}
+  ;; Loading \var{<install-directory\/>}/startup.lisp
+     ...
+  ;; Loading \var{<install-directory\/>}/\var{platform-directory\/}/gbbopen/gbbopen-user.fasl
+  >
+\end{example}
+
+Next, begin editing a new file named \code{tutorial-example.lisp} in
+the \code{source} subdirectory that you just created.  Even if you are
+more comfortable using another editor, use the editing facilities that
+are provided by your Common Lisp environment.  The development
+features of a quality Common Lisp environment are well worth the price
+of learning a new editor.  In an Emacs-based environment, such as
+\xsitelink{SLIME}{http://common-lisp.net/project/slime/} or
+\xsitelink{Allegro CL}{http://www.franz.com}'s ELI, typing \code{C-x
+  C-f} will prompt you for the name of a file to editor or create.
+(We will use Emacs key-binding notation, where \code{C-x C-f} means
+typing \code{\ctrl{c}} followed by {\ctrl{f}}.)  
+
+Type the following two forms into the \code{tutorial-example.lisp}
+file buffer:
+%
+\begin{example}
+  (in-package :gbbopen-user)
+
+  (define-unit-class location ()
+    (x y))
+\end{example}
+
+The \code{in-package} form specifies the Common Lisp package that is made
+current when the file is compiled or loaded.  The first form in every Common
+Lisp source file that you create should begin with an \code{in-package} form.
+This form is also used by most Common Lisp editing environments to set the
+package associated with development operations.
+
+The \textbf{define-unit-class} definition is the same one we used in
+\texonly{Exercise~\ref{sec:unit-instance}.}  \htmlonly{the \link{Creating a
+    Unit instance}{sec:unit-instance} exercise.}
+
+Now, save the file.  
+
+\subsection*{Step 3: Compile and load the tutorial-example file}
+
+At this point, we have been using Common Lisp's
+development environment, but we have not loaded the forms in our file
+into Common Lisp:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(make-instance 'location)}
+  Error: No class named: location.
+  >> \textcolor{black}{:a}
+  >
+\end{example}
+
+We could use Common Lisp's \code{compile-file} to compile the file and
+then \code{load} to load the resulting compiled file. For example:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(load (compile-file "~/tutorial/source/tutorial-example.lisp"))}
+  ;; Compiling file ~/tutorial/source/tutorial-example.lisp
+  ;; Loading ~/tutorial/source/tutorial-example.fasl
+  t
+  >
+\end{example}
+%
+but you should be able to compile and load the file directly from the
+editor buffer.  In SLIME, the command \code{C-c C-k} will compile and
+load the file currently being edited.  Allegro's ELI interface
+compile-and-load command is \code{C-c C-b}.  Identify and use the
+compile-and-load-file command in your editing environment.
+
+Verify that all is well by creating a \code{location} unit instance in
+the REPL:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(make-instance 'location)}
+  #<location 1>
+  >
+\end{example}
+
+% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
+% formatting of the following paragraph...  I don't understand why:
+%\T\begin{ifhtml}
+%  \endpar\par
+%\T\end{ifhtml}
+\bfindexit{reset-gbbopen}%
+Then reset GBBopen in preparation for the next exercise:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(reset-gbbopen)}
+  t
+  >
+\end{example}
+
+%% ========================================================================
+%%  Adding Dimensions
+
+\T\markright{}%
+\T\pagestyle{plain}
+\T\cleardoublepage
+\W\xname{tutorial-adding-dimensions}
+\T\pagestyle{fancy}
+\T\thispagestyle{fancybottom}
+\T\renewcommand{\headrulewidth}{0pt}
+\section{Adding Dimensions}
+\label{sec:dimensions}%
+
+A central concept in GBBopen is \textit{dimensionality}.  Dimensional
+abstraction of space instances, unit instances, and proximity-based
+retrieval patterns is used to provide a semantically meaningful
+separation of blackboard-repository storage mechanisms from system and
+application code.  This separation provides flexibility in developing
+and evolving complex blackboard applications and allows GBBopen to
+change storage and search strategies and optimizations dynamically.
+
+Each space instance can be created as a conceptual hyperdimensional
+volume.  Unit instances occupy multidimensional extent based on their
+attributes.  The location of a unit instance within the space instance
+is determined by the intersection of the space instance's
+dimensionality and the unit instance's dimension values.
+
+GBBopen supports three types of dimensions:
+\begin{tightitemize}
+\item \textit{ordered}: a real-number line
+\item \textit{boolean}: true and false values
+\item \textit{enumerated}: a set of named elements (the set can be
+  either closed or infinite)
+\end{tightitemize}
+Determining the dimensionality of space and unit instances is an
+important part of designing a blackboard application.
+
+In this exercise, we will redefine the \code{location} unit class to
+have two ordered dimensions, \code{x} and \code{y}, that represent
+Euclidean positions on a two-dimensional plane.  Then we will create a
+two-dimensional \code{known-world} space instance, create some
+\code{location} unit instances on the \code{known-world}, and retrieve
+the instances based on their two-dimensional positions.
+
+\fndocrule
+
+This exercise shows you how to:
+\begin{tightitemize}
+\item Add dimensional values to a unit-class definition
+\item Create a multidimensional space instance
+\item Retrieve unit instances from a space instance based on their
+  dimensional values
+\item Compile and load individual forms directly from an Emacs file
+  buffer using the SLIME or ELI environments
+\end{tightitemize}
+
+\fndocrule
+
+\subsection*{Prerequisites}
+
+\begin{tightitemize}
+\item The \code{tutorial-example.lisp} file created in the last exercise, containing:
+
+% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
+% formatting of the following paragraph...  I don't understand why:
+%\T\begin{ifhtml}
+%  \endpar\par
+%\T\end{ifhtml}
+\begin{example}\color{darkergray}%
+(in-package :gbbopen-user)
+
+(define-unit-class location ()
+  (x y))
+\end{example}
+\W\\
+
+\item The \code{:gbbopen-user} module is loaded
+\end{tightitemize}
+
+\subsection*{Step 1: Add dimensions to the \code{location} unit class}
+
+Edit your \code{tutorial-example.lisp} file, and change the
+\code{location} unit-class definition as follows:
+%
+\begin{example}\color{darkergray}%
+  (define-unit-class location ()
+    (x y)
+    \textcolor{black}{(:dimensional-values
+      (x :point x)
+      (y :point y))})
+\end{example}
+%
+In this tutorial, we will highlight code additions and changes using a
+black font.
+
+The \code{:dimensional-values} unit-class option specifies that
+\code{location} unit instances have two ordered dimensions, \code{x}
+and \code{y}, and that the value of each dimension will be a single
+numeric value obtained from the slots \code{x} and \code{y},
+respectively.
+
+Because we chose to use the same name for each dimension and its
+associated slot value, our \code{:dimensional-values} option might
+appear to be double-talk.  We could have defined our class as:
+%
+\begin{example}\color{darkergray}%
+  (define-unit-class location ()
+    (x-slot y-slot)
+    (:dimensional-values
+      (x :point x-slot)
+      (y :point y-slot)))
+\end{example}
+%
+which clarifies the semantics of the \code{:dimensional-values}
+option.  Often, however, it is most convenient to use the same name
+for a slot and the dimension associated with the slot's value, so we
+will stick with our original definition.
+
+\subsection*{Step 2: Compile and load the new definition}
+
+We could compile and load the entire \code{tutorial-example.lisp} file
+just as we did in the last exercise.  However, as we develop our
+application it can be convenient to compile and load (and debug) each
+form as we write it.  Your Common Lisp development environment should
+provide this capability.  In SLIME, the command to compile the current
+top-level form is \code{C-c C-c}.  In Allegro's ELI, the command is
+\code{C-c C-x}.  Try compiling and loading just the new
+\code{location} unit-class definition.
+
+\subsection*{Step 3: Make  a \code{location} unit instance}
+
+\bfindexit{make-instance}%
+\codeindexit{defparameter}%
+Let's test our new \code{location} unit class definition by making an
+instance.  Enter the following form in the REPL:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(defparameter ui (make-instance 'location :x 40 :y 60))}
+  ui
+  >
+\end{example}
+
+% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
+% formatting of the following paragraph...  I don't understand why:
+%\T\begin{ifhtml}
+%  \endpar\par
+%\T\end{ifhtml}
+\bfindexit{describe-instance}%
+and display its description:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(describe-instance ui)}
+  Location #<location 1>
+    Instance name: 1
+    Space instances: None
+    Dimensional values:
+      x 40
+      y 60
+    Non-link slots:
+      x 40
+      y 60
+    Link slots:
+      [None]
+  >
+\end{example}
+%
+Note the dimensional values for the \code{x} and \code{y} dimensions.
+
+\subsection*{Step 4: Make  the \code{known-world} space instance}
+
+\bfindexit{make-space-instance}%
+Create the \code{known-world} space instance by evaluating:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(defparameter si (make-space-instance '(known-world)))}
+  si
+  >
+\end{example}
+
+\subsection*{Step 5: Add the unit instance to the space instance}
+
+\bfindexit{add-instance-to-space-instance}%
+Now, add the \code{location} unit instance to the space instance:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(add-instance-to-space-instance ui si)}
+  Warning: In add-instance-to-space-instance: #<location 1>
+           does not share any dimensions with space instance 
+           #<standard-space-instance (known-world)>.
+  #<location 1>
+  >
+\end{example}
+
+% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
+% formatting of the following paragraph...  I don't understand why:
+%\T\begin{ifhtml}
+%  \endpar\par
+%\T\end{ifhtml}
+\bfindexit{describe-blackboard-repository}%
+GBBopen has warned us that our \code{location} unit instance does not
+have any dimensions in common with the \code{known-world} space
+instance (because we didn't specify any dimensions for the
+\code{known-world}).  GBBopen dutifully added the unit instance, as
+shown by \textbf{describe-blackboard-repository}:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(describe-blackboard-repository)}
+  
+  Space Instance                Contents
+  --------------                --------
+  known-world                   1 instance (1 location)
+  >
+\end{example}
+%
+but we cannot perform dimension-based retrieval of our \code{location}
+unit instance on the \code{known-world}.
+
+\subsection*{Step 6: Create a dimensioned \code{known-world}}
+
+\bfindexit{delete-space-instance}%
+\bfindexit{make-space-instance}%
+Let's delete the \code{known-world} and create another one---this time
+with \code{x} and \code{y} dimensions:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(delete-space-instance si)}
+  #<standard-space-instance (known-world) [Deleted]>
+  > \textcolor{black}{(setf si (make-space-instance '(known-world)
+              :dimensions '((x :ordered) (y :ordered))))}
+  #<standard-space-instance (known-world)>
+  >
+\end{example}
+%
+We have specified \code{x} and \code{y} as ordered dimensions, making the
+\code{known-world} a two-dimensional Euclidean plane.  (Flatlanders would be
+proud!)
+
+% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
+% formatting of the following paragraph...  I don't understand why:
+%\T\begin{ifhtml}
+%  \endpar\par
+%\T\end{ifhtml}
+\bfindexit{describe-space-instance}%
+Verify the dimensionality of the \code{known-world} space instance by evaluating:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(describe-space-instance si)}
+  Standard-space-instance #<standard-space-instance (known-world)>
+    Allowed unit classes: t
+    Dimensions:
+      (x :ordered)
+      (y :ordered)
+\end{example}
+
+\subsection*{Step 7: Add the \code{location} unit instance to the new
+  \code{known-world}}
+
+\bfindexit{add-instance-to-space-instance}%
+Add the \code{location} unit instance to the new \code{known-world} space instance:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(add-instance-to-space-instance ui si)}
+  #<location 1>
+  >
+\end{example}
+
+The dimension warning is gone.
+
+\subsection*{Step 8: Adding every \code{location} to the \code{known-world}
+  automatically}
+
+Up to this point, we have used \textbf{add-instance-to-space-instance} to add
+each \code{location} unit instance to the \code{known-world} space instance.
+We can tell GBBopen to automatically add new unit instances to one or more
+space instances by using the \code{:initial-space-instances} class option in
+\textbf{define-unit-class}.
+
+% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
+% formatting of the following paragraph...  I don't understand why:
+%\T\begin{ifhtml}
+%  \endpar\par
+%\T\end{ifhtml}
+\bfindexit{define-unit-class}%
+Add the following \code{:initial-space-instances} class option to the
+\code{location} unit-class definition in your \code{tutorial-example.lisp}
+file:
+%
+\begin{example}\color{darkergray}%
+  (define-unit-class location ()
+    (x y)
+    (:dimensional-values
+      (x :point x)
+      (y :point y))
+    \textcolor{black}{(:initial-space-instances (known-world))})
+\end{example}
+
+Compile and load the new \code{location} unit-class definition.
+
+\subsection*{Step 9: Create more \code{location} unit instances}
+
+\bfindexit{make-instance}%
+\codeindexit{defparameter}%
+Let's test our new \code{location} unit class definition by making another
+instance.  Enter the following form in the REPL:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(make-instance 'location :x 70 :y 30)}
+  #<location 2>
+  >
+\end{example}
+%
+% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
+% formatting of the following paragraph...  I don't understand why:
+%\T\begin{ifhtml}
+%  \endpar\par
+%\T\end{ifhtml}
+\bfindexit{:dsbb}%
+and confirm that the new \code{location} is on the \code{known-world}:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{:dsbb}
+  
+  Space Instance                Contents
+  --------------                --------
+  known-world                   2 instances (2 location)
+  >
+\end{example}
+%
+Here we used GBBopen's \code{:dsbb} REPL command, which is equivalent to
+evaluating \code{(describe-blackboard-repository)}.  Describing the repository
+is a useful check that our unit instances and space instances are being
+created and deleted as intended.
+
+% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
+% formatting of the following paragraph...  I don't understand why:
+%\T\begin{ifhtml}
+%  \endpar\par
+%\T\end{ifhtml}
+\bfindexit{make-instance}%
+Now, let's populate the \code{known-world} with a few more \code{locations}s:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(make-instance 'location :x 20 :y 20)}
+  #<location 3>
+  > \textcolor{black}{(make-instance 'location :x 25 :y 25)}
+  #<location 4>
+  > \textcolor{black}{(make-instance 'location :x 20 :y 30)}
+  #<location 5>
+  >
+\end{example}
+%
+and verify that they are all on the \code{known-world}:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{:dsbb}
+  
+  Space Instance                Contents
+  --------------                --------
+  known-world                   5 instances (5 location)
+  >
+\end{example}
+
+\subsection*{Step 10: Dimensional retrieval}
+
+\bfindexit{find-instances}%
+We have seen how we can use \textbf{find-instances} to retrieve all
+\code{location} unit instances from the \code{known-world}:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(find-instances 'location '(known-world) :all)}
+  (#<location 5> #<location 4> #<location 3> #<location 2> #<location 1>)
+  >
+\end{example}
+
+% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
+% formatting of the following paragraph...  I don't understand why:
+%\T\begin{ifhtml}
+%  \endpar\par
+%\T\end{ifhtml}
+\bfindexit{find-instances}%
+Now that we have added \code{x} and \code{y} dimensions to \code{location}s
+and the \code{known-world}, we can retrieve \code{location} unit instances
+using dimensional patterns.  For example, let's retrieve the unit instance
+positioned at (20,20):
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(find-instances 'location '(known-world)
+      '(and (= x 20) (= y 20)))}
+   (#<location 3>)
+  >
+\end{example}
+
+% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
+% formatting of the following paragraph...  I don't understand why:
+%\T\begin{ifhtml}
+%  \endpar\par
+%\T\end{ifhtml}
+\bfindexit{describe-instance}%
+We can use \textbf{describe-instance} to verify that we found the desired
+\code{location} unit instance:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(find-instances 'location '(known-world)
+      '(and (= x 20) (= y 20)))}
+   (#<location 3>)
+  > \textcolor{black}{(describe-instance (first *))}
+  Location #<location 3>
+    Instance name: 3
+    Space instances: ((known-world))
+    Dimensional values:
+      x 20
+      y 20
+    Non-link slots:
+      x 20
+      y 20
+    Link slots:
+      [None]
+  >
+\end{example}
+%
+Note that we used Common Lisp's REPL \code{*} variable that is always set to
+the value returned by evaluating the last REPL expression (in this case, the
+result of \textbf{find-instances}).
+
+\subsection*{Step 11: Customize the display of \code{location} unit instances}
+
+It would be convenient if we could easily see the coordinates of
+\code{location} unit instances without having to describe them.  Fortunately,
+GBBopen makes this is easy to do by providing the
+\textbf{print-instance-slots} generic function that allows us to extend how
+Common Lisp's \code{print-object} displays \code{location} unit instances.
+
+% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
+% formatting of the following paragraph...  I don't understand why:
+%\T\begin{ifhtml}
+%  \endpar\par
+%\T\end{ifhtml}
+\bfindex{print-instance-slots}%
+Add the following \textbf {print-instance-slots} method \underline{after} the
+\code{location} unit-class definition in your \code{tutorial-example.lisp}
+file:
+%
+\begin{example}\color{darkergray}%
+  (define-unit-class location ()
+    (x y)
+    (:dimensional-values
+      (x :point x)
+      (y :point y))
+    (:initial-space-instances (known-world)))
+
+  \textcolor{black}{(defmethod print-instance-slots ((location location) stream)
+    (call-next-method)
+    (when (and (slot-boundp location 'x)
+               (slot-boundp location 'y))
+      (format stream " (~s ~s)"
+              (x-of location)
+              (y-of location))))}
+\end{example}
+%
+The method first performs a \code{(call-next-method)} to produce the initial
+printed representation of the \code{location} unit instance.  It then checks
+that both \code{x} and \code{y} slots are bound and, if so, writes the
+\code{location}'s coordinates to the output stream.  Checking that the slots
+are bound is necessary to avoid generating an error in the
+\textbf{print-instance-slots} if the slots have not been given a value.  You
+should always perform this safety check in any \textbf{print-instance-slots}
+methods.
+
+% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
+% formatting of the following paragraph...  I don't understand why:
+%\T\begin{ifhtml}
+%  \endpar\par
+%\T\end{ifhtml}
+\bfindexit{find-instances}%
+Now, compile and load the \textbf {print-instance-slots} method and try it
+out:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(find-instances 'location '(known-world)
+      '(= (x y) (20 20)))}
+   (#<location 3 (20 20)>)
+  >
+\end{example}
+
+Note that this time we used a two-dimensional (\code{x},\code{y}) retrieval
+pattern rather than the conjunction of two one-dimensional patterns that we
+used previously.  The two patterns are equivalent, but often a
+higher-dimensional pattern may be more convenient than a conjunction.  Also
+note that we can see immediately that we retrieved the desired
+\code{location}.
+
+\subsection*{Step 12: More dimensional retrievals}
+
+\bfindexit{find-instances}%
+Let's try some additional dimensional retrievals.
+
+Find all \code{location}s with an \code{x} position of 20:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(find-instances 'location '(known-world)
+      '(= x 20))}
+   (#<location 5 (20 30)> #<location 3 (20 20)>)
+  >
+\end{example}
+
+Find all \code{location}s with whose \code{x} and \code{y} coordinates
+are less than or equal to 25:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(find-instances 'location '(known-world)
+      '(<= (x y) (25 25)))}
+  (#<location 4 (25 25)> #<location 3 (20 20)>)
+  >
+\end{example}
+
+Find all \code{location}s with whose \code{x} coordinates are between 0 and 40
+(inclusive) and whose \code{y} coordinates are between 60 and 100 (inclusive):
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(find-instances 'location '(known-world)
+      '(within (x y) ((0 40) (60 100))))}
+  (#<location 1 (40 60)>)
+  >
+\end{example}
+
+Find all \code{location}s with whose coordinates are not within the above
+region:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(find-instances 'location '(known-world)
+      '(not (within (x y) ((0 40) (60 100)))))}
+  (#<location 5 (20 30)> #<location 4 (25 25)> #<location 3 (20 20)>
+   #<location 2 (70 30)>)
+  >
+\end{example}
+
+\subsection*{Step 13: Change a dimensional value}
+
+Recall that we assigned \code{location} \code{1} to the global variable
+\code{ui}:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{ui}
+  #<location 1 (40 60)>
+  >
+\end{example}
+  
+% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
+% formatting of the following paragraph...  I don't understand why:
+%\T\begin{ifhtml}
+%  \endpar\par
+%\T\end{ifhtml}
+\bfindexit{find-instances}%
+and we can retrieve it by its \code{x} and \code{y} coordinates:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(find-instances 'location '(known-world)
+      '(= (x y) (40 60)))}
+  (#<location 1 (40 60)>)
+  >
+\end{example}
+
+% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
+% formatting of the following paragraph...  I don't understand why:
+%\T\begin{ifhtml}
+%  \endpar\par
+%\T\end{ifhtml}
+\bfindexit{find-instances}%
+Let's change its \code{x} position to \code{80} and try retrieving it again:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(setf (x-of ui) 80)}
+  80
+  > \textcolor{black}{(find-instances 'location '(known-world)
+      '(= (x y) (40 60)))}
+  nil
+  >
+\end{example}
+
+% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
+% formatting of the following paragraph...  I don't understand why:
+%\T\begin{ifhtml}
+%  \endpar\par
+%\T\end{ifhtml}
+\bfindexit{find-instances}%
+It has moved on the \code{known-world}.  As expected, the \code{location}
+\code{1} unit instance is now at (80, 60):
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(find-instances 'location '(known-world)
+      '(= (x y) (80 60)))}
+  (#<location 1 (80 60)>)
+  >
+\end{example}
+
+Also note that the textual representation of \code{location} \code{1}
+also shows the new \code{x} slot value.
+
+%% ========================================================================
+%%  Using A Control Shell
+
+\T\markright{}%
+\T\pagestyle{plain}
+\T\cleardoublepage
+\W\xname{tutorial-control-shell}
+\T\pagestyle{fancy}
+\T\thispagestyle{fancybottom}
+\T\renewcommand{\headrulewidth}{0pt}
+\section{Using a Control Shell}
+\label{sec:control-shell}%
+
+A control shell is one of the three major components of a blackboard system
+(along with KSs and the blackboard).  The control shell directs the
+problem-solving process by managing how KSs respond to contributions that are
+placed on the blackboard by an executing KS and to other events that may be
+triggered by the application or received from external sources.  In this
+exercise we will use a control shell called the ``Agenda Shell.''
+
+GBBopen's Agenda Shell is a generalization of the priority-based scheduling
+approach that was used in the original Hearsay-II blackboard architecture.
+The Agenda Shell manages KS definitions, and it initiates and terminates KS
+activities by:
+\begin{tightitemize}
+\item Triggering KSs in response to events
+\item Deciding which triggered KSs should be activated and their priority
+  rating
+\item Maintaining a rating-based queue of pending KS activations (KSAs)
+\item Executing the top-rated KSAs, one at a time
+\end{tightitemize}
+
+The Agenda Shell is highly customizable and extensible, and it can be used as
+the foundation for implementing advanced control mechanisms.  We will use only
+the most basic Agenda Shell capabilities in this Tutorial.
+
+\fndocrule
+
+This exercise shows you how to:
+\begin{tightitemize}
+\item Load GBBopen's Agenda Shell control shell
+\item Start the Agenda Shell executing
+\item Define a KS
+\item Display control-shell activities (control-shell events)
+\item Use control-shell stepping
+\end{tightitemize}
+
+\fndocrule
+
+\subsection*{Prerequisites}
+
+The \code{tutorial-example.lisp} file as modified thus far:
+
+\begin{example}
+  (in-package :gbbopen-user)
+
+  (define-unit-class location ()
+    (x y)
+    (:dimensional-values
+      (x :point x)
+      (y :point y))
+    (:initial-space-instances (known-world)))
+
+  (defmethod print-instance-slots ((location location) stream)
+    (call-next-method)
+    (when (and (slot-boundp location 'x)
+               (slot-boundp location 'y))
+      (format stream " (~s ~s)"
+              (x-of location)
+              (y-of location))))
+\end{example}
+
+
+\subsection*{Step 1: Load the Agenda Shell}
+
+Start up a fresh Common Lisp session and load the \code{:agenda-shell-user}
+module, using the \code{:agenda-shell-user} REPL command:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{:agenda-shell-user}
+  ;; Loading \var{<install-directory\/>}/startup.lisp
+     ...
+  ;; Loading \var{<install-directory\/>}/\var{platform-directory\/}/gbbopen/
+  ;;            control-shells/agenda-shell-user.fasl
+  >
+\end{example}
+
+This loads everything that we've been loading with the \code{:gbbopen-user}
+module and, additionally, GBBopen's Agenda Shell control shell. As with the
+\code{:gbbopen-user} REPL command, the current package in the REPL is set to
+the \code{:gbbopen-user} package.
+
+\subsection*{Step 2: Run the control shell}
+
+\bfindex{start-control-shell}%
+Now, start the Agenda Shell:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(start-control-shell)}
+  ;; Control shell started
+  ;; No executable KSAs remain, exiting control shell
+  ;; Control shell exited: 2 cycles completed
+  ;; Run time: 0 seconds
+  ;; Elapsed time: 0 seconds
+  :quiescence
+  >
+\end{example}
+
+What just happened?  The Agenda Shell began executing and looked for something
+to do.  However, we have not yet defined any knowledge sources (KSs), so the
+Agenda Shell indicates that it did not find any executable KSAs in its initial
+KS-execution cycle.  This situation is called \textit{quiescence} and, by
+default, the Agenda Shell signals that quiescence has occured and then
+continues for an additional KS-execution cycle in case any executable KSAs
+resulted from the quiescence signal.  Again, no executable KSAs were found in
+cycle 2, so the Agenda Shell exits due to \code{:quiescence}.
+
+\subsection*{Step 3: Define a KS}
+
+So let's define a KS!
+
+Edit your \code{tutorial-example.lisp} file and add the following function
+and KS definition to the end of the \code{tutorial-example.lisp} file:
+%
+\begin{example}\color{darkergray}%
+  (define-unit-class location ()
+    (x y)
+    (:dimensional-values
+      (x :point x)
+      (y :point y))
+    (:initial-space-instances (known-world)))
+
+  (defmethod print-instance-slots ((location location) stream)
+    (call-next-method)
+    (when (and (slot-boundp location 'x)
+               (slot-boundp location 'y))
+      (format stream " (~s ~s)"
+              (x-of location)
+              (y-of location))))
+
+  \textcolor{black}{;;; ========================================================================
+  ;;;   Startup KS
+
+(defun startup-ks-function (ksa)
+    (declare (ignore ksa))
+    ;; Create an initial location unit instance at (0,0):
+    (make-instance 'location :x 0 :y 0))
+
+  (define-ks startup-ks
+      :trigger-events ((start-control-shell-event))
+      :execution-function 'startup-ks-function)}
+\end{example}
+
+The function \code{startup-ks-function} implements the KS.  The Agenda Shell
+always calls a KS's execution function with a single argument, a \code{ksa}
+unit instance that represents the activation of the KS.  For the present, we
+will ignore the \code{ksa} argument.  Our simple \code{startup-ks-function}
+creates a \code{location} unit instance at the center of the
+\code{known-world}, coordinate (0,0).
+
+The \textbf{define-ks} form defines a KS named \code{startup-ks} to the
+Agenda Shell.  The \code{:trigger-events} value indicates that the KS should
+be triggered when an event called \code{start-control-shell-event} is
+signalled.  The Agenda Shell signals \code{start-control-shell-event} once,
+when the control shell is started.  The \code{:execution-function} names the
+function (that we just defined) that implements the KS.
+
+Compile and load the entire \code{tutorial-example.lisp} file directly from
+the editor buffer (using \code{C-c C-k} in SLIME; \code{C-c C-b} in ELI).
+
+The Agenda Shell creates a \code{ks} unit instance for each KS that we
+define:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(map-instances-of-class #'print 'ks)}
+  #<ks startup-ks> 
+  nil
+  >
+\end{example}
+
+Note that the name of the \code{ks} unit instance is the name of the KS.
+
+\subsection*{Step 4: Make the \code{known-world}}
+
+Before we can run our KS, we must make the \code{known-world} space
+instance:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(make-space-instance '(known-world)
+              :dimensions '((x :ordered) (y :ordered))))}
+  #<standard-space-instance (known-world)>
+  >
+\end{example}
+
+\subsection*{Step 5: Start the control shell}
+
+\bfindex{start-control-shell}%
+Start the Agenda Shell again:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(start-control-shell)}
+  ;; Control shell started
+  ;; No executable KSAs remain, exiting control shell
+  ;; Control shell exited: 3 cycles completed
+  ;; Run time: 0 seconds
+  ;; Elapsed time: 0 seconds
+  :quiescence
+  >
+\end{example}
+
+Did it work?  Let's describe the blackboard repository:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{:dsbb}
+  
+  Space Instance                Contents
+  --------------                --------
+  known-world                   1 instances (1 location)
+  >
+\end{example}
+
+The initial \code{location} unit instance is there!
+
+\subsection*{Step 6: Display control shell activities}
+
+Let's rerun the control shell, but this time we will ask GBBopen to display
+more of what the control shell is doing.  First, reset GBBopen:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(reset-gbbopen :retain-classes '(ks standard-space-instance))}
+  t
+  >
+\end{example}
+%
+Note that we told GBBopen to retain the unit instances of classes \code{ks}
+(our KS definition) and \code{standard-space-instance} (our
+\code{known-world}).  Without the \code{:retain-classes} argument, GBBopen
+would delete all unit instances, and we would have to redefine
+\code{startup-ks} and make another \code{known-world} space instance.
+
+Now, enable display of all control-shell and instance-creation events:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(enable-event-printing '(control-shell-event :plus-subevents))}
+  nil
+  > \textcolor{black}{(enable-event-printing 'create-instance-event)}
+  nil
+  >
+\end{example}
+%
+We will cover events, event printing, and event functions in greater
+detail in a later exercise.
+
+% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
+% formatting of the following paragraph...  I don't understand why:
+%\T\begin{ifhtml}
+%  \endpar\par
+%\T\end{ifhtml}
+\bfindex{start-control-shell}%
+Start the Agenda Shell once again:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(start-control-shell)}
+  ;; Control shell started
+  => Start-control-shell-event
+  => Control-shell-cycle-event
+       :cycle 1
+  => Create-instance-event
+       :instance #<ksa 1 startup-ks 1>
+  => Ksa-activation-event
+       :instance #<ksa 1 startup-ks 1>
+       :cycle 1
+  => Ksa-execution-event
+       :instance #<ksa 1 startup-ks 1>
+       :cycle 1
+  => Create-instance-event
+       :instance #<location 1 (0 0)>
+  => Control-shell-cycle-event
+       :cycle 2
+  => Quiescence-event
+  => Control-shell-cycle-event
+       :cycle 3
+  ;; No executable KSAs remain, exiting control shell
+  ;; Control shell exited: 3 cycles completed
+  ;; Run time: 0 seconds
+  ;; Elapsed time: 0 seconds
+  :quiescence
+  >
+\end{example}
+
+\subsection*{Step 7: Control-shell stepping}
+
+\bfindexit{reset-gbbopen}%
+Let's rerun the control shell once again, but this time we will enable
+control-shell stepping. Again, reset GBBopen:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(reset-gbbopen :retain-classes '(ks standard-space-instance))}
+  t
+  >
+\end{example}
+%
+Note that the event printing that we enabled in the last step is reset
+(disabled) by default by \textbf{reset-gbbopen}.
+
+% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
+% formatting of the following paragraph...  I don't understand why:
+%\T\begin{ifhtml}
+%  \endpar\par
+%\T\end{ifhtml}
+\bfindex{start-control-shell}%
+Now start the Agenda Shell, this time with stepping enabled:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(start-control-shell :stepping 't)}
+  ;; Control shell started
+  >> CS Step (cycle 1):
+     About to process event #<start-control-shell-event>... \entered{?}
+  Stepping commands (follow with <Return>):
+     d       Disable this kind of stepping (:process-event)
+     e       Enable another kind of stepping
+     f       Evaluate a form
+     h or ?  Help (this text)
+     q       Quit (disable all stepping and continue)
+     s       Show enabled stepping kinds
+     x       Exit control shell
+     =       Describe the object of interest (bound to ==)
+     +       Enable all stepping
+     -       Disable all stepping
+     <Space> Continue (resume processing)
+  >> CS Step (cycle 1):
+     About to process event #<start-control-shell-event>...  \entered{<Return>}
+  >> CS Step (cycle 1):
+     About to activate KS startup-ks on
+       start-control-shell-event... \entered{<Return>}
+  >> CS Step (cycle 1):
+     About to execute KSA #<ksa 1 startup-ks 1>... \entered{<Return>}
+  << KSA 1 returned: (#<location 1 (0 0)>)
+  >> CS Step (cycle 2):
+     About to signal quiescence... \entered{<Return>}
+  >> CS Step (cycle 3):
+     About to signal quiescence... \entered{<Return>}
+  ;; No executable KSAs remain, exiting control shell
+  ;; Control shell exited: 3 cycles completed
+  ;; Run time: 0 seconds
+  ;; Elapsed time: 1 minute, 6 seconds
+  :quiescence
+  >
+\end{example}
+
+%% ========================================================================
+%%  Define Another KS
+
+\T\markright{}%
+\T\pagestyle{plain}
+\T\cleardoublepage
+\W\xname{tutorial-application-startup}
+\T\pagestyle{fancy}
+\T\thispagestyle{fancybottom}
+\T\renewcommand{\headrulewidth}{0pt}
+\section{Application Startup and Event Functions}
+\label{sec:application-startup}%
+
+In the last exercise, we needed to create the \code{known-world} space
+instance, with \code{x} and \code{y} dimensions, before we started the
+Agenda Shell.  We also needed to call \textbf{reset-gbbopen},
+retaining the unit instances of classes \code{ks} and
+\code{standard-space-instance}, before calling
+\textbf{start-control-shell} to execute another run of our developing
+application.  It is convenient to have these activities performed
+automatically whenever the control shell is started, so we'll do so in
+this exercise.
+
+\fndocrule
+
+This exercise shows you how to:
+\begin{tightitemize}
+\item Define a function to perform all application-specific
+  initialization and re-execution activities
+\item Automatically invoke the initialization/re-execution function at 
+  control-shell startup using GBBopen's event-function capabilities
+\item Restrict the classes of unit instances that can be stored on a space 
+  instance
+\item Specify the dimensionality of a space instance relative to the
+  dimensional specifications of a unit class
+\end{tightitemize}
+
+\fndocrule
+
+\subsection*{Prerequisites}
+
+\begin{tightitemize}
+\item The \code{tutorial-example.lisp} file as modified thus far:
+\end{tightitemize}
+
+\begin{example}
+  (in-package :gbbopen-user)
+
+  (define-unit-class location ()
+    (x y)
+    (:dimensional-values
+      (x :point x)
+      (y :point y))
+    (:initial-space-instances (known-world)))
+
+  (defmethod print-instance-slots ((location location) stream)
+    (call-next-method)
+    (when (and (slot-boundp location 'x)
+               (slot-boundp location 'y))
+      (format stream " (~s ~s)"
+              (x-of location)
+              (y-of location))))
+
+  ;;; ========================================================================
+  ;;;   Startup KS
+
+  (defun startup-ks-function (ksa)
+    (declare (ignore ksa))
+    ;; Create an initial location unit instance at (0,0):
+    (make-instance 'location :x 0 :y 0))
+
+  (define-ks startup-ks
+      :trigger-events ((start-control-shell-event))
+      :execution-function 'startup-ks-function)
+\end{example}
+
+\begin{tightitemize}
+\item The \code{:agenda-shell-user} module is loaded
+\end{tightitemize}
+
+\subsection*{Step 1: Define an initialization function}
+
+Edit your \code{tutorial-example.lisp} file and add the following function
+definition at the end of the file:
+%
+\begin{example}
+  (defun initializations (event-name &key &allow-other-keys)
+    (declare (ignore event-name))
+    ;; Clean up any previous run:
+    (reset-gbbopen :retain-classes '((ks :plus-subclasses))
+                   :retain-event-functions 't
+                   :retain-event-printing 't)
+    ;; Make a new known-world space instance:
+    (make-space-instance 
+     '(known-world)
+     :dimensions '((x :ordered) (y :ordered))))
+\end{example}
+
+The first thing to note about the function definition is the argument
+signature: \code{initializations} is to be invoked with an event name
+(which is ignored in our function) and possibly other keyword
+arguments (indicated by the \code{\&key} and \code{\&allow-other-keys}
+lambda list keywords).  This argument signature conforms to GBBopen's
+event-function capabilities, which will be introduced in the next step
+in this exercise.
+
+When \code{initializations} executes, it resets GBBopen, retaining
+only \code{ks} unit instances (and instances of any subclasses of
+\code{ks}), event functions, and the current event printing.  Then it
+creates a new \code{(known-world)} space instance with ordered
+dimensions \code{x} and \code{y}.  We could have had
+\textbf{reset-gbbopen} also retain all space instances, as we did in
+the last exercise.  However, I prefer creating all new instances
+(other than KSs) over reuse when re-running an application.
+
+\subsection*{Step 2: Add an event function}
+
+GBBopen allows you to attach functions, called \textit{event
+  functions}, that are called whenever a specific event is signalled.
+Each event function must accept the arguments associated with every
+event class to which it is added. In addition, the function should
+accept additional arguments that are associated with all subevents of
+the specified event classes. This is achieved by specifying
+\code{\&allow-other-keys} in the lambda list of the function.
+
+Here are GBBopen's defined event classes when the Agenda Shell has
+been loaded:
+
+\T\begin{ifhtml}
+\xml{br}
+\xml{img align="center" src="agenda-shell-events.png"}
+\xml{br clear="both"}
+\T\end{ifhtml}
+\W\begin{iftex} 
+\begin{center}
+\includegraphics[scale=0.85]{agenda-shell-events}
+\end{center}
+\W\end{iftex}
+
+\noindent Event classes shown within rectangles are abstract event classes
+that cannot be signalled.  Nevertheless, abstract event classes are
+very convenient if we wish to attach an event function to an entire
+subtree of event classes.  We used abstract event classes to advantage
+earlier when we enabled display of all control-shell events by
+evaluating:
+%
+\begin{example}\color{darkergray}%
+  > (enable-event-printing '(control-shell-event :plus-subevents))
+  nil
+  >
+\end{example}
+
+
+Add the following form at the end of your \code{tutorial-example.lisp} file:
+%
+\begin{example}
+  (add-event-function 'initializations 'start-control-shell-event
+                      ;; Initializations should be done first!
+                      :priority 100)
+\end{example}
+
+(We'll place the \textbf{add-event-function} form immediately after the
+\code{initializations} function definition in our file, but this choice of
+location is purely a code organizational style preference---the form could be
+placed anywhere relative to the function definition.)
+
+\subsection*{Step 3: Run the application}
+
+% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
+% formatting of the following paragraph...  I don't understand why:
+%\T\begin{ifhtml}
+%  \endpar\par
+%\T\end{ifhtml}
+\bfindex{start-control-shell}%
+Start a fresh Common Lisp session, compile and load the
+\code{tutorial-example.lisp} file directly from the editor buffer (using
+\code{C-c C-k} in SLIME; \code{C-c C-b} in ELI) and start the Agenda Shell
+again:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(start-control-shell)}
+  ;; Control shell started
+  ;; No executable KSAs remain, exiting control shell
+  ;; Control shell exited: 3 cycles completed
+  ;; Run time: 0 seconds
+  ;; Elapsed time: 0 seconds
+  :quiescence
+  >
+\end{example}
+
+Note that our developing application performs the same as it did in the last
+exercise, but now our \code{initializations} event function is taking care of
+all the details of starting up our application.  We no longer have to remember
+to create the \code{known-world} space instance or to reset GBBopen before
+running the application another time.
+
+\subsection*{Step 4: Run it Again}
+
+% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
+% formatting of the following paragraph...  I don't understand why:
+%\T\begin{ifhtml}
+%  \endpar\par
+%\T\end{ifhtml}
+\bfindex{start-control-shell}%
+Let's verify that we can re-run our application. Without doing anything else,
+start the Agenda Shell again:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(start-control-shell)}
+  ;; Control shell started
+  ;; No executable KSAs remain, exiting control shell
+  ;; Control shell exited: 3 cycles completed
+  ;; Run time: 0 seconds
+  ;; Elapsed time: 0 seconds
+  :quiescence
+  >
+\end{example}
+
+As before our \code{initializations} event function took care of all the
+details of starting up our application.
+
+\subsection*{Step 5: It's a new world$\ldots$}
+
+% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
+% formatting of the following paragraph...  I don't understand why:
+%\T\begin{ifhtml}
+%  \endpar\par
+%\T\end{ifhtml}
+\bfindexit{make-space-instance}%
+GBBopen allows us to restrict the classes of unit instances that can be stored
+on a space instance.  For example, we can limit the \code{known-world} to
+\code{location} unit instances by specifying an \code{:allowed-unit-classes}
+value to \code{make-space-instance}:
+%
+\begin{example}\color{darkergray}%
+  (defun initializations (event-name &key &allow-other-keys)
+    (declare (ignore event-name))
+    ;; Clean up any previous run:
+    (reset-gbbopen :retain-classes '((ks :plus-subclasses))
+                   :retain-event-functions 't
+                   :retain-event-printing 't)
+    ;; Make a new known-world space instance:
+    (make-space-instance 
+     '(known-world)
+     :dimensions '((x :ordered) (y :ordered))
+     \textcolor{black}{:allowed-unit-classes 'location}))
+\end{example}
+%
+Attempting to add any unit-instance that is not a \code{location} to
+\code{known-world} will now generate an error.
+
+It is often convenient to specify the dimensions of a space-instance relative
+to those of one or more unit classes.  Edit the definition of
+\code{initializations}, removing the \code{x} and \code{y} dimensions
+specification:
+%
+\begin{example}\color{darkergray}%
+  (defun initializations (event-name &key &allow-other-keys)
+    (declare (ignore event-name))
+    ;; Clean up any previous run:
+    (reset-gbbopen :retain-classes '((ks :plus-subclasses))
+                   :retain-event-functions 't
+                   :retain-event-printing 't)
+    ;; Make a new known-world space instance:
+    (make-space-instance 
+     '(known-world)
+     :dimensions \textcolor{red}{'((x :ordered) (y :ordered))}
+     :allowed-unit-classes 'location))
+\end{example}
+%
+and replacing it with a call of \textbf{unit-class-dimensions} to
+obtain the dimensions associated with instances of the \code{location}
+unit class:
+%
+\begin{example}\color{darkergray}%
+  (defun initializations (event-name &key &allow-other-keys)
+    (declare (ignore event-name))
+    ;; Clean up any previous run:
+    (reset-gbbopen :retain-classes '((ks :plus-subclasses))
+                   :retain-event-functions 't
+                   :retain-event-printing 't)
+    ;; Make a new known-world space instance:
+    (make-space-instance 
+     '(known-world)
+     :dimensions \textcolor{black}{(unit-class-dimensions 'location)}
+     :allowed-unit-classes 'location))
+\end{example}
+
+\subsection*{Step 6: Run the application again}
+
+Compile and load the \code{tutorial-example.lisp} file directly from the
+editor buffer (using \code{C-c C-k} in SLIME; \code{C-c C-b} in ELI) and start
+the Agenda Shell again:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(start-control-shell)}
+  ;; Control shell started
+  ;; No executable KSAs remain, exiting control shell
+  ;; Control shell exited: 3 cycles completed
+  ;; Run time: 0 seconds
+  ;; Elapsed time: 0 seconds
+  :quiescence
+  >
+\end{example}
+
+% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
+% formatting of the following paragraph...  I don't understand why:
+%\T\begin{ifhtml}
+%  \endpar\par
+%\T\end{ifhtml}
+\bfindexit{describe-space-instance}%
+Verify the dimensionality of the \code{known-world} space instance by evaluating:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(describe-space-instance '(known-world))}
+  Standard-space-instance #<standard-space-instance (known-world)>
+    Allowed unit classes: t
+    Dimensions:
+      (x :ordered)
+      (y :ordered)
+\end{example}
+
+%% ========================================================================
+%%  Define Another KS
+
+\T\markright{}%
+\T\pagestyle{plain}
+\T\cleardoublepage
+\W\xname{tutorial-another-ks}
+\T\pagestyle{fancy}
+\T\thispagestyle{fancybottom}
+\T\renewcommand{\headrulewidth}{0pt}
+\section{Add Another KS}
+\label{sec:another-ks}%
+
+The last exercise made it easy to initialize and run our application
+repeatedly by simply starting the Agenda Shell.  We also specified the
+dimensionality of our \code{known-world} space instance relative to the
+dimensional specifications of the \code{location} unit class.  With these
+niceties in place, its time to move beyond our initial \code{location} unit
+instance.
+
+\fndocrule
+
+This exercise shows you how to:
+\begin{tightitemize}
+\item Add an additional dimension to a unit class
+\item Define a KS that obtains its execution-context information from its
+  triggering unit instance
+\item Extend the random-walk application to do some walking
+\item Explore the resulting random walk
+\end{tightitemize}
+
+\fndocrule
+
+\subsection*{Prerequisites}
+
+\begin{tightitemize}
+\item The \code{tutorial-example.lisp} file as modified thus far:
+\end{tightitemize}
+
+\begin{example}
+  (in-package :gbbopen-user)
+
+  (define-unit-class location ()
+    (x y)
+    (:dimensional-values
+      (x :point x)
+      (y :point y))
+    (:initial-space-instances (known-world)))
+
+  (defmethod print-instance-slots ((location location) stream)
+    (call-next-method)
+    (when (and (slot-boundp location 'x)
+               (slot-boundp location 'y))
+      (format stream " (~s ~s)"
+              (x-of location)
+              (y-of location))))
+
+  ;;; ========================================================================
+  ;;;   Startup KS
+
+  (defun startup-ks-function (ksa)
+    (declare (ignore ksa))
+    ;; Create an initial location unit instance at (0,0):
+    (make-instance 'location :x 0 :y 0))
+
+  (define-ks startup-ks
+      :trigger-events ((start-control-shell-event))
+      :execution-function 'startup-ks-function)
+
+  (defun initializations (event-name &key &allow-other-keys)
+    (declare (ignore event-name))
+    ;; Clean up any previous run:
+    (reset-gbbopen :retain-classes '((ks :plus-subclasses))
+                   :retain-event-functions 't
+                   :retain-event-printing 't)
+    ;; Make a new known-world space instance:
+    (make-space-instance 
+     '(known-world)
+     :dimensions (unit-class-dimensions 'location)))
+
+  (add-event-function 'initializations 'start-control-shell-event
+                      ;; Initializations should be done first!
+                      :priority 100)
+\end{example}
+
+\begin{tightitemize}
+\item The \code{:agenda-shell-user} module is loaded
+\end{tightitemize}
+
+\subsection*{Step 1: Add  another dimension}
+
+It's time we introduce the notion of time to our application.  Edit the
+\code{location} unit-class definition in \code{tutorial-example.lisp}, adding
+a new slot, \code{time}, to the \code{location} unit class definition and a
+corresponding \code{time} dimensional value:
+%
+\begin{example}\color{darkergray}%
+  (define-unit-class location ()
+    (\textcolor{black}{time} 
+     x y)
+    (:dimensional-values
+      \textcolor{black}{(time :point time)}
+      (x :point x)
+      (y :point y))
+    (:initial-space-instances (known-world)))
+\end{example}
+
+Recall that we specified that the dimensions of the \code{known-world} space
+instance that is created by our \code{initializations} function relative to
+the dimensions of the \code{location} unit class:
+%
+\begin{example}\color{darkergray}%
+    (make-space-instance 
+        '(known-world)
+        :dimensions (unit-class-dimensions 'location)))
+\end{example}
+%
+Therefore, we don't need to modify our call to \code{make-space-instance} in
+order to add \code{time} as a dimension of \code{known-world}.
+
+Next, modify \code{startup-ks-function} in \code{tutorial-example.lisp} so
+that it creates the initial \code{location} unit instance at time 0:
+%
+\begin{example}\color{darkergray}%
+  (defun startup-ks-function (ksa)
+    (declare (ignore ksa))
+    ;; Create an initial location unit instance at (0,0) \textcolor{black}{at time 0}:
+    (make-instance 'location \textcolor{black}{:time 0} :x 0 :y 0))
+\end{example}
+
+\subsection*{Step 2: A test of time}
+
+Let's check our work.  Compile and load the
+\code{tutorial-example.lisp} file directly from the editor buffer (using
+\code{C-c C-k} in SLIME; \code{C-c C-b} in ELI) and start the Agenda Shell
+again:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(start-control-shell)}
+  ;; Control shell started
+  ;; No executable KSAs remain, exiting control shell
+  ;; Control shell exited: 3 cycles completed
+  ;; Run time: 0 seconds
+  ;; Elapsed time: 0 seconds
+  :quiescence
+  >
+\end{example}
+
+% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
+% formatting of the following paragraph...  I don't understand why:
+%\T\begin{ifhtml}
+%  \endpar\par
+%\T\end{ifhtml}
+\bfindexit{describe-instance}%
+\bfindexit{find-instance-by-name}%
+Check that the initial \code{location} unit instance is at \code{time} zero:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(describe-instance (find-instance-by-name 1 'location))}
+  Location #<location 1 (0 0)>
+    Instance name: 1
+    Space instances: ((known-world))
+    Dimensional values:
+      time 0
+      x 40
+      y 60
+    Non-link slots:
+      time 0
+      x 40
+      y 60
+    Link slots:
+      [None]
+  >
+\end{example}
+
+\subsection*{Step 3: Define another KS}
+
+Define a KS called \code{random-walk-ks} that:
+
+\begin{tightitemize}
+\item Is triggered when a \code{location} unit instance is created
+\item Has a constant KSA rating of 100
+\item Has an execution function called \code{random-walk-ks-function}, which:
+\begin{tightitemize}
+\item Checks if we've already walked for 75 locations and prints a message if
+  we have. 
+\item Otherwise:
+\begin{tightitemize}
+\item Determines a random location for which the x and y values are within 10
+  of the x and y values of the triggering unit instance (that is, the
+  \code{location} instance whose creation triggered the \code{random-walk-ks}
+  KS)
+\item If both of the x and y values for the new random location are between
+  -50 and 50, creates a \code{location} unit instance at the random location;
+  otherwise, prints a message indicating that we've walked off the world
+\end{tightitemize}
+\end{tightitemize}
+\end{tightitemize}
+
+\subsubsection*{Step 3a: Define a utility function}
+
+Begin implementing the \code{random-walk-ks} by adding the following
+utility function to the end of your \code{tutorial-example.lisp} file:
+
+\begin{example}
+  ;;; ========================================================================
+  ;;;   Random-walk KS
+
+  (defun add-linear-variance (value max-variance)
+    ;;; Returns a new random value in the interval
+    ;;; [(- value max-variance), (+ value max-variance)]
+    (+ value (- (random (1+ (* max-variance 2))) max-variance)))
+\end{example}
+
+Then compile the definition (using \code{C-c C-c} in SLIME or \code{C-c
+  C-x} in ELI) and evaluate the following test in the REPL:
+
+% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
+% formatting of the following paragraph...  I don't understand why:
+%\T\begin{ifhtml}
+%  \endpar\par
+%\T\end{ifhtml}
+\bfindex{printv}%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(dotimes (i 15) (printv (add-linear-variance 0 10)))}
+  ;;  (add-linear-variance 0 10) => 8
+  ;;  (add-linear-variance 0 10) => 9
+  ;;  (add-linear-variance 0 10) => 4
+  ;;  (add-linear-variance 0 10) => 3
+  ;;  (add-linear-variance 0 10) => -4
+  ;;  (add-linear-variance 0 10) => -10
+  ;;  (add-linear-variance 0 10) => -1
+  ;;  (add-linear-variance 0 10) => 0
+  ;;  (add-linear-variance 0 10) => 4
+  ;;  (add-linear-variance 0 10) => 5
+  ;;  (add-linear-variance 0 10) => 8
+  ;;  (add-linear-variance 0 10) => -5
+  ;;  (add-linear-variance 0 10) => -3
+  ;;  (add-linear-variance 0 10) => 7
+  ;;  (add-linear-variance 0 10) => 6
+  nil
+  >
+\end{example}
+
+Because \code{add-linear-variance} is stochastic, your results will be
+similar but not identical.  Note that we used GBBopen's \textbf{printv}
+macro to display the result of each generated value.  \textbf{Printv} can
+greatly assist debugging by printing forms and the results of evaluating
+them.  \textbf{Printv} can be transparently wrapped around any form in a
+complex function definition, as it evaluates and displays all the forms in
+its body and returns the values resulting from evaluating the last form:
+
+\begin{example}\color{darkergray}%
+  >  (printv "Some multiple values" (values 1 2) "Some more" (values 3 4 5))
+  ;; Some multiple values
+  ;;  (values 1 2) => 1; 2
+  ;; Some more
+  ;;  (values 3 4 5) => 3; 4; 5
+  4
+  5
+  6
+\end{example}
+
+\subsubsection*{Step 3b: Define the \code{random-walk-ks} execution function}
+
+Next add the following KS-execution function to the end of your
+\code{tutorial-example.lisp} file:
+
+\begin{example}
+  (defun random-walk-ks-function (ksa)
+    ;;; Move to the next (random) location in the world
+    (let* ((trigger-instance (sole-trigger-instance-of ksa))
+           ;; The new time is one greater than the stimulus instance's time:
+           (time (1+ (time-of trigger-instance))))
+      (cond
+       ;; If the maximum time value (75) is reached, tell the user we've
+       ;; walked too long:
+       ((>= time 75) (format t "~2&Walked too long.~\%"))
+       (t ;; The new location is +/- 10 of the stimulus instance's location:
+        (let ((x (add-linear-variance (x-of trigger-instance) 10))
+              (y (add-linear-variance (y-of trigger-instance) 10)))
+          (cond
+           ;; Check that the new location is within the known-world
+           ;; boundaries.  If so, create the new location instance:
+           ((and (<= -50 x 50) (<= -50 y 50))
+            (make-instance 'location 
+              :time time 
+              :x x 
+              :y y))
+           ;; Otherwise, tell the user that we've walked too far away:
+           (t (format t "~2&Walked off the world: (~d, ~d).~\%" x y))))))))
+\end{example}
+
+% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
+% formatting of the following paragraph...  I don't understand why:
+%\T\begin{ifhtml}
+%  \endpar\par
+%\T\end{ifhtml}
+\bfindex{sole-trigger-instance-of}%
+Unlike the KS-execution functions that we have defined previously,
+\code{random-walk-ks-function} does not ignore its \code{ksa} argument.
+Instead, it calls \textbf{sole-trigger-instance-of} with the \code{ksa}
+unit-instance argument in order to obtain the \code{location} unit instance
+whose creation triggered the KSA.  This pattern of obtaining the unit instance
+that triggered a KSA and then using that triggering unit instance as the
+context for the KS execution is typical of many KSs. 
+
+\subsubsection*{Step 3c: Add the \code{random-walk-ks} definition}
+
+Finally, add this \code{define-ks} form to the end of your
+\code{tutorial-example.lisp} file to complete the \code{random-walk-ks}
+definition:
+
+% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
+% formatting of the following paragraph...  I don't understand why:
+%\T\begin{ifhtml}
+%  \endpar\par
+%\T\end{ifhtml}
+\bfindexit{define-ks}%
+\codeindex{quiescence-event}%
+\begin{example}
+  (define-ks random-walk-ks
+     :trigger-events ((create-instance-event location))
+     :rating 100
+     :execution-function 'random-walk-ks-function)
+\end{example}
+
+\subsection*{Step 4:  Run the application}
+
+% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
+% formatting of the following paragraph...  I don't understand why:
+%\T\begin{ifhtml}
+%  \endpar\par
+%\T\end{ifhtml}
+\bfindexit{start-control-shell}%
+Compile and load the \code{random-walk-ks} forms, and then start the Agenda Shell:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(start-control-shell)}
+  ;; Control shell started
+
+  Walked off the world: (23, 55).
+  ;; No executable KSAs remain, exiting control shell
+  ;; Control shell exited: 64 cycles completed
+  ;; Run time: 0.01 seconds
+  ;; Elapsed time: 0 seconds
+  :quiescence
+  >
+\end{example}
+
+% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
+% formatting of the following paragraph...  I don't understand why:
+%\T\begin{ifhtml}
+%  \endpar\par
+%\T\end{ifhtml}
+\bfindexit{:dsbb}%
+It looks like something happened! (Again, because \code{add-linear-variance}
+is stochastic, your results will be similar but not identical.)  Let's look at
+the blackboard repository and see how many \code{location} unit instances were
+created:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{:dsbb}
+
+  Space Instance                Contents
+  --------------                --------
+  known-world                   61 instances (61 location)
+\end{example}
+
+The 61 \code{location} instances makes sense.  Previously, it required 3
+control-shell cycles to create the initial \code{location} unit instance (one
+to execute the \code{initial-ks} KSA followed by two additional cycles of
+quiescence before the Agenda Shell exits).  We now create one additional
+\code{location} unit instance with every execution of \code{random-walk-ks},
+so we always create 3 fewer \code{location} instances than the total
+number of control-shell cycles.
+
+\subsection*{Step 5:  Where have we been?}
+
+% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
+% formatting of the following paragraph...  I don't understand why:
+%\T\begin{ifhtml}
+%  \endpar\par
+%\T\end{ifhtml}
+\bfindexit{map-instances-of-class}%
+It would be interesting to see where our random walk has taken us.  We could
+use GBBopen's \textbf{map-instances-of-class} iterator to print each of the
+\code{location} unit instances:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(map-instances-of-class #'print 'location)}
+
+  #<location 58 (5 31)> 
+  #<location 13 (-7 10)> 
+  #<location 26 (-40 35)> 
+  #<location 39 (-4 3)> 
+  #<location 52 (2 23)> 
+  #<location 7 (3 17)> 
+  #<location 20 (2 27)> 
+  #<location 33 (-25 6)> 
+  #<location 46 (-2 32)> 
+       ...
+  #<location 31 (-22 18)> 
+  #<location 44 (-7 14)> 
+  #<location 57 (2 41)> 
+  #<location 12 (-15 15)> 
+  #<location 25 (-32 38)> 
+  #<location 38 (-10 -4)> 
+  #<location 51 (-2 16)> 
+  #<location 6 (10 27)> 
+  #<location 19 (-1 17)> 
+  #<location 32 (-25 12)> 
+  #<location 45 (-7 23)> 
+  nil
+\end{example}
+%
+Unfortunately, the order that unit instances are supplied to the \code{print}
+function is not controllable.  Our walk would be much clearer if we printed
+the \code{location}s in time order.
+
+% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
+% formatting of the following paragraph...  I don't understand why:
+%\T\begin{ifhtml}
+%  \endpar\par
+%\T\end{ifhtml}
+\bfindexit{map-sorted-instances-of-class}%
+We might consider taking advantage of the instance names that GBBopen assigns
+to unit instances.  We could do something like the following:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{red}{(dotimes (i 76)
+      (let ((location (find-instance-by-name i 'location)))
+        (when location
+           (print location))))}
+
+  #<location 1 (0 0)> 
+  #<location 2 (10 4)> 
+  #<location 3 (19 10)> 
+  #<location 4 (14 9)> 
+  #<location 5 (14 18)> 
+  #<location 6 (10 27)> 
+  #<location 7 (3 17)> 
+  #<location 8 (-6 20)> 
+  #<location 9 (4 15)> 
+  #<location 10 (-5 14)> 
+       ...
+  #<location 50 (5 26)> 
+  #<location 51 (-2 16)> 
+  #<location 52 (2 23)> 
+  #<location 53 (9 33)> 
+  #<location 54 (7 43)> 
+  #<location 55 (-2 36)> 
+  #<location 56 (0 46)> 
+  #<location 57 (2 41)> 
+  #<location 58 (5 31)> 
+  #<location 59 (13 39)> 
+  #<location 60 (17 41)> 
+  #<location 61 (21 50)> 
+  nil
+  >
+\end{example}
+
+This is a bad idea for several reasons.  First, we are looking up every
+\code{location} unit instance by its instance name, which is less efficient
+than operating on \code{location} instances directly.  While this isn't an
+significant issue in expressions that we evaluate in the REPL to investigate
+our application, we should seek to avoid such inefficiencies in application
+code.  More importantly, however, the \code{location} instance name just
+happens to mirror the sequencing that we really want to display---the
+\code{time} value of the \code{location}s.  We should find a way to sequence
+\code{location} printing that relies on the \code{time} values directly.
+
+% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
+% formatting of the following paragraph...  I don't understand why:
+%\T\begin{ifhtml}
+%  \endpar\par
+%\T\end{ifhtml}
+\bfindex{map-sorted-instances-of-class}%
+GBBopen provides a variant of \textbf{map-instances-of-class}, called
+\textbf{map-sorted-instances-of-class}, that sorts the unit instances based on
+a comparison predicate and an optional \code{:key} accessor function that
+suits our needs:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(map-sorted-instances-of-class #'print 'location #'< 
+       :key #'time-of)}
+
+  #<location 1 (0 0)> 
+  #<location 2 (10 4)> 
+  #<location 3 (19 10)> 
+  #<location 4 (14 9)> 
+  #<location 5 (14 18)> 
+  #<location 6 (10 27)> 
+  #<location 7 (3 17)> 
+  #<location 8 (-6 20)> 
+  #<location 9 (4 15)> 
+  #<location 10 (-5 14)> 
+       ...
+  #<location 50 (5 26)> 
+  #<location 51 (-2 16)> 
+  #<location 52 (2 23)> 
+  #<location 53 (9 33)> 
+  #<location 54 (7 43)> 
+  #<location 55 (-2 36)> 
+  #<location 56 (0 46)> 
+  #<location 57 (2 41)> 
+  #<location 58 (5 31)> 
+  #<location 59 (13 39)> 
+  #<location 60 (17 41)> 
+  #<location 61 (21 50)> 
+  nil
+  >
+\end{example}
+
+% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
+% formatting of the following paragraph...  I don't understand why:
+%\T\begin{ifhtml}
+%  \endpar\par
+%\T\end{ifhtml}
+\bfindex{do-sorted-instances-of-class}%
+Using \textbf{map-sorted-instances-of-class} involves a sorting operation, so
+this approach still has some efficiency concerns for use in application code.
+However, it suits our REPL-exploration needs just fine.  (There is a
+\textbf{do-sorted-instances-of-class} macro, if an iterative style is
+preferred over a mapper.)  We will explore a more efficient approach to
+displaying the random walk in the next exercise.
+
+\subsection*{Step 6:  Run the application a few more times}
+
+% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
+% formatting of the following paragraph...  I don't understand why:
+%\T\begin{ifhtml}
+%  \endpar\par
+%\T\end{ifhtml}
+\bfindexit{start-control-shell}%
+If we run the application a few more times, we eventually encounter a case
+where we create the allotted 75 \code{location} unit instances without walking
+off the \code{known-world}:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(start-control-shell)}
+  ;; Control shell started
+
+  Walked too long.
+  ;; No executable KSAs remain, exiting control shell
+  ;; Control shell exited: 78 cycles completed
+  ;; Run time: 0.04 seconds
+  ;; Elapsed time: 0 seconds
+  :quiescence
+\end{example}
+
+% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
+% formatting of the following paragraph...  I don't understand why:
+%\T\begin{ifhtml}
+%  \endpar\par
+%\T\end{ifhtml}
+\bfindexit{map-sorted-instances-of-class}%
+Here is one such random walk:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(map-sorted-instances-of-class #'print 'location #'< 
+       :key #'time-of)}
+
+  #<location 1 (0 0)> 
+  #<location 2 (2 7)> 
+  #<location 3 (-1 5)> 
+  #<location 4 (-1 0)> 
+  #<location 5 (3 -2)> 
+  #<location 6 (13 -7)> 
+  #<location 7 (8 -5)> 
+  #<location 8 (1 2)> 
+  #<location 9 (8 0)> 
+  #<location 10 (5 8)> 
+       ...
+  #<location 70 (-13 -11)> 
+  #<location 71 (-13 -6)> 
+  #<location 72 (-9 -6)> 
+  #<location 73 (1 -4)> 
+  #<location 74 (-8 -11)> 
+  #<location 75 (-13 -15)> 
+  nil
+  >
+\end{example}
+
+%% ========================================================================
+%%  Making Connections
+
+\T\markright{}%
+\T\pagestyle{plain}
+\T\cleardoublepage
+\W\xname{tutorial-connections}
+\T\pagestyle{fancy}
+\T\thispagestyle{fancybottom}
+\T\renewcommand{\headrulewidth}{0pt}
+\section{Making Connections}
+\label{sec:connections}%
+
+%\begin{center}
+%\textcolor{caution}{[Construction ahead...]}
+%\end{center}
+
+We finally did some walking in the last exercise and learned how to display
+the \code{location}s in our walk from the REPL.  In this exercise, we learn
+how to use GBBopen's link capabilities to represent relationships among unit
+instances.  Links are an important aspect of almost every GBBopen application,
+so it's time that we started taking advantage of them.
+
+\fndocrule
+
+This exercise shows you how to:
+\begin{tightitemize}
+\item Add link slots to a unit class
+\item Use link slots to traverse and display the resulting random walk
+\end{tightitemize}
+
+\fndocrule
+
+\subsection*{Prerequisites}
+
+\begin{tightitemize}
+\item The \code{tutorial-example.lisp} file as modified thus far:
+\end{tightitemize}
+
+\begin{example}
+  (in-package :gbbopen-user)
+
+  (define-unit-class location ()
+    (time 
+     x y)
+    (:dimensional-values
+      (time :point time)
+      (x :point x)
+      (y :point y))
+    (:initial-space-instances (known-world)))
+
+  (defmethod print-instance-slots ((location location) stream)
+    (call-next-method)
+    (when (and (slot-boundp location 'x)
+               (slot-boundp location 'y))
+      (format stream " (~s ~s)"
+              (x-of location)
+              (y-of location))))
+
+  ;;; ========================================================================
+  ;;;   Startup KS
+
+  (defun startup-ks-function (ksa)
+    (declare (ignore ksa))
+    ;; Create an initial location unit instance at (0,0):
+    (make-instance 'location :time 0 :x 0 :y 0))
+
+  (define-ks startup-ks
+      :trigger-events ((start-control-shell-event))
+      :execution-function 'startup-ks-function)
+
+  (defun initializations (event-name &key &allow-other-keys)
+    (declare (ignore event-name))
+    ;; Clean up any previous run:
+    (reset-gbbopen :retain-classes '((ks :plus-subclasses))
+                   :retain-event-functions 't
+                   :retain-event-printing 't)
+    ;; Make a new known-world space instance:
+    (make-space-instance 
+     '(known-world)
+     :dimensions (unit-class-dimensions 'location)))
+
+  (add-event-function 'initializations 'start-control-shell-event
+                      ;; Initializations should be done first!
+                      :priority 100)
+
+  ;;; ========================================================================
+  ;;;   Random-walk KS
+
+  (defun add-linear-variance (value max-variance)
+    ;;; Returns a new random value in the interval
+    ;;; [(- value max-variance), (+ value max-variance)]
+    (+ value (- (random (1+ (* max-variance 2))) max-variance)))
+
+  (defun random-walk-ks-function (ksa)
+    ;;; Move to the next (random) location in the world
+    (let* ((trigger-instance (sole-trigger-instance-of ksa))
+           ;; The new time is one greater than the stimulus instance's time:
+           (time (1+ (time-of trigger-instance))))
+      (cond
+       ;; If the maximum time value (75) is reached, tell the user we've
+       ;; walked too long:
+       ((>= time 75) (format t "~2&Walked too long.~\%"))
+       (t ;; The new location is +/- 10 of the stimulus instance's location:
+        (let ((x (add-linear-variance (x-of trigger-instance) 10))
+              (y (add-linear-variance (y-of trigger-instance) 10)))
+          (cond
+           ;; Check that the new location is within the known-world
+           ;; boundaries.  If so, create the new location instance:
+           ((and (<= -50 x 50) (<= -50 y 50))
+            (make-instance 'location 
+              :time time 
+              :x x 
+              :y y))
+           ;; Otherwise, tell the user that we've walked too far away:
+           (t (format t "~2&Walked off the world: (~d, ~d).~\%" x y))))))))
+
+  (define-ks random-walk-ks
+      :trigger-events ((create-instance-event location))
+      :rating 100
+      :execution-function 'random-walk-ks-function)
+\end{example}
+
+\begin{tightitemize}
+\item The \code{:agenda-shell-user} module is loaded
+\end{tightitemize}
+
+\subsection*{Step 1: Add  a link}
+
+In the last exercise, we used \textbf{map-sorted-instances-of-class} to
+display the random walk.  Another way that we could represent the walk is by
+connect each newly created \code{location} unit instance to the
+\code{location} unit instance that preceded it in the walk.  We'll use
+GBBopen's link capabilities to do this.
+
+A \textit{link} is a bidirectional relationship between two unit instances
+that is implemented by two pointers. From the perspective of a particular unit
+instance, each link consists of an outgoing, or \textit{direct}, pointer to
+another unit instance and an incoming, or \textit{inverse}, pointer that is
+stored in unit instance pointed to by the direct pointer.  GBBopen
+automatically maintains the bidirectional-link consistency of these pointers
+when creating new links, deleting existing links, or deleting unit instances.
+Links remove the possibility of ``one-sided'' relationships or ``dangling''
+pointers to deleted unit instances.
+
+Edit the \code{location} unit-class definition in your
+\code{tutorial-example.lisp} file, adding two link slots, \code{next-location}
+and \code{previous-location}, to the \code{location} unit class definition:
+%
+\begin{example}\color{darkergray}%
+  (define-unit-class location ()
+    (time 
+     x y
+     \textcolor{black}{(next-location
+      :link (location previous-location :singular t) 
+      :singular t)
+     (previous-location
+      :link (location next-location :singular t)  
+      :singular t)})
+    (:dimensional-values
+      (time :point time)
+      (x :point x)
+      (y :point y))
+    (:initial-space-instances (known-world)))
+\end{example}
+
+Each link-slot specification is a list whose first element is the name of the
+link slot.  This is followed by the link slot option \code{:link} and a
+concise specification of the inverse link slot associated with that link slot.
+In this case, the \code{next-location}/\code{previous-location} link is
+between instances of the same (\code{location}) unit class, but often links
+are between instances of different unit classes. 
+
+Links can be many-to-many, many-to-one, one-to-many, or one-to-one.  In this
+case, the \code{next-location}/\code{previous-location} link is one-to-one,
+which is specified by including the \code{:singular t} slot option in the
+link-slot definition (and the corresponding \code{:singular t} specification
+in the concise inverse-link-slot specification).  To help clarify the
+specification of link slot arity, let's temporarily assume that we want a
+\code{location} instance that can have many next locations, but only a single
+previous location.  This link relation would be specified as follows:
+%
+\begin{example}\color{darkergray}%
+      ...
+   \textcolor{blue}{(next-locations
+    :link (location previous-location :singular t)))
+   (previous-location
+    :link (location next-locations)  
+    :singular t)}
+      ...
+\end{example}
+
+We've followed the natural GBBopen convention of giving singular link
+slots a singular name (such as \code{previous-location}) and link
+slots that can contain multiple links a plural name (such as
+\code{next-locations}).  Note that the \code{:singular} option is
+associated with the \code{previous-location} link slot as both a slot
+option in the \code{previous-location} link-slot definition and in the
+concise inverse-link-slot specification for \code{previous-location}
+in the \code{next-locations} link-slot definition.
+
+\subsection*{Step 2: Break some links}
+
+The concise inverse-link-slot specification supplied by the
+\code{:link} slot option provides a ``double entry'' redundancy that
+is useful when links are between instances of different unit classes,
+as the link can be understood by viewing either class definition.  The
+redundancy also helps GBBopen recognize inconsistencies in link
+specifications.  The function \textbf{check-link-consistency} asks
+GBBopen to validate that all link definitions are consistent.  Let's
+try it on our current random-walk application.  Compile and load the
+latest changes in your \code{tutorial-example.lisp} file (including
+the new \code{next-location} and \code{previous-location} link slots).
+Then check link consistency:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(check-link-consistency)}
+  ;; All link definitions are consistent.
+  t
+\end{example}
+%
+GBBopen reports that all link definitions are consistent.
+
+Suppose that we had forgotten to add the \code{previous-location} end
+of the link in our \code{location} unit-class definition. Edit the
+\code{location} unit-class definition in your
+\code{tutorial-example.lisp} file, adding the line \code{\#+ignore}
+immediately before the \code{previous-location} link-slot definition:
+%
+\begin{example}\color{darkergray}%
+  (define-unit-class location ()
+    (time 
+     x y
+     (next-location
+      :link (location previous-location :singular t) 
+      :singular t)
+      \textcolor{black}{\#+ignore}     
+     (previous-location
+      :link (location next-location :singular t)  
+      :singular t))
+    (:dimensional-values
+      (time :point time)
+      (x :point x)
+      (y :point y))
+    (:initial-space-instances (known-world)))
+\end{example}
+
+The \code{\#+ignore} read-time conditionalization tells Common Lisp to
+skip over the next form if \code{ignore} is not an element of the
+feature list \code{*features*}.  By convention, \code{ignore} is never
+added to \code{*features*}, so \code{\#+ignore} is a handy mechanism
+for temporarily ``commenting out'' a single form.
+
+Compile the now-defective definition (using \code{C-c C-c} in SLIME or
+\code{C-c C-x} in ELI) and then recheck link consistency:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(check-link-consistency)}
+  Warning: The inverse of link slot next-location in unit class location 
+           refers to link slot previous-location which is not present in 
+           unit class location.
+  nil
+\end{example}
+%
+As expected, GBBopen alerts us to the problem.
+
+Remove the \code{\#+ignore} that we just added and comment out the
+\code{:singular t} portion of the inverse link-slot specification in 
+\code{next-location}:
+%
+\begin{example}\color{darkergray}%
+  (define-unit-class location ()
+    (time 
+     x y
+     (next-location
+      :link (location previous-location\textcolor{black}{) ;} :singular t) 
+      :singular t)
+      \textcolor{red}{#+ignore}     
+     (previous-location
+      :link (location next-location :singular t)  
+      :singular t))
+    (:dimensional-values
+      (time :point time)
+      (x :point x)
+      (y :point y))
+    (:initial-space-instances (known-world)))
+\end{example}
+
+Compile the again-defective definition (using \code{C-c C-c} in SLIME or
+\code{C-c C-x} in ELI) and then recheck link consistency:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(check-link-consistency)}
+  Warning: Link slot next-location in unit class location incorrectly 
+           declares its inverse link slot previous-location in unit 
+           class location as not singular.
+nil
+\end{example}
+%
+Once again, GBBopen has alerted us to the problem.
+
+Restore the \code{:singular t} portion of the inverse link-slot
+specification in \code{next-location} that we just commented out:
+%
+\begin{example}\color{darkergray}%
+  (define-unit-class location ()
+    (time 
+     x y
+     (next-location
+      :link (location previous-location\textcolor{red}{) ;} :singular t) 
+      :singular t)
+     (previous-location
+      :link (location next-location :singular t)  
+      :singular t))
+    (:dimensional-values
+      (time :point time)
+      (x :point x)
+      (y :point y))
+    (:initial-space-instances (known-world)))
+\end{example}
+
+Then recompile and recheck link consistency:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(check-link-consistency)}
+  ;; All link definitions are consistent.
+  t
+\end{example}
+
+\subsection*{Step 3: Create some links}
+
+Let's use our newly defined \code{next-location}/\code{previous-location} link
+to connect our \code{location} unit instances.  Edit the
+\code{random-walk-ks-function} definition in your \code{tutorial-example.lisp}
+file, adding the trigger instance as a new \code{:previous-location} argument
+to \code{make-instance}:
+%
+\begin{example}\color{darkergray}%
+  (defun random-walk-ks-function (ksa)
+    ;;; Move to the next (random) location in the world
+    (let* ((trigger-instance (sole-trigger-instance-of ksa))
+           ;; The new time is one greater than the stimulus instance's time:
+           (time (1+ (time-of trigger-instance))))
+      (cond
+       ;; If the maximum time value (75) is reached, tell the user we've
+       ;; walked too long:
+       ((>= time 75) (format t "~2&Walked too long.~\%"))
+       (t ;; The new location is +/- 10 of the stimulus instance's location:
+        (let ((x (add-linear-variance (x-of trigger-instance) 10))
+              (y (add-linear-variance (y-of trigger-instance) 10)))
+          (cond
+           ;; Check that the new location is within the known-world
+           ;; boundaries.  If so, create the new location instance:
+           ((and (<= -50 x 50) (<= -50 y 50))
+            (make-instance 'location 
+              :time time 
+              :x x 
+              :y y
+              \textcolor{black}{:previous-location trigger-instance}))
+           ;; Otherwise, tell the user that we've walked too far away:
+           (t (format t "~2&Walked off the world: (~d, ~d).~\%" x y))))))))
+\end{example}
+
+Compile the \code{random-walk-ks-function} (using \code{C-c C-c} in SLIME or
+\code{C-c C-x} in ELI) and then run the application:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(start-control-shell)}
+  ;; Control shell started
+
+  Walked off the world: (55, 35).
+  ;; No executable KSAs remain, exiting control shell
+  ;; Control shell exited: 66 cycles completed
+  ;; Run time: 0.01 seconds
+  ;; Elapsed time: 0 seconds
+  :quiescence
+\end{example}
+
+Let's describe a couple of \code{location} unit instances to check our work.
+First, the initial \code{location} unit instance:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(describe-instance (find-instance-by-name 1 'location))}
+  Location #<location 1 (0 0)>
+    Instance name: 1
+    Space instances: ((known-world))
+    Dimensional values:
+      time 0
+      x 40
+      y 60
+    Non-link slots:
+      time 0
+      x 40
+      y 60
+    Link slots:
+      next-location #<location 2 (-10 10)>
+      previous-location nil
+  >
+\end{example}
+
+Note that the \code{next-location} link slot points to the next
+\code{location} unit instance in our random walk.  Let's describe that
+unit instance:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(describe-instance (find-instance-by-name 2 'location))}
+  Location #<location 2 (-10 10)>
+    Instance name: 2
+    Space instances: ((known-world))
+    Dimensional values:
+      time 1
+      x -10
+      y 10
+    Non-link slots:
+      time 1
+      x -10
+      y 10
+    Link slots:
+      next-location #<location 3 (-6 19)>
+      previous-location #<location 1 (0 0)>
+  >
+\end{example}
+
+Its \code{next-location} link slot points to the third \code{location} unit
+instance in our random walk and its \code{previous-location} link slot points
+back to the initial \code{location} unit instance.
+
+We can now follow the links to display the random walk:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(loop with location = (find-instance-by-name 1 'location) 
+      do (print location)
+      while (setf location (next-location-of location)))}
+
+  #<location 1 (0 0)> 
+  #<location 2 (-10 10)> 
+  #<location 3 (-6 19)> 
+  #<location 4 (0 14)> 
+  #<location 5 (-1 14)> 
+  #<location 6 (8 10)> 
+  #<location 7 (17 3)> 
+  #<location 8 (7 -6)> 
+  #<location 9 (10 4)> 
+  #<location 10 (5 -5)> 
+       ...
+  #<location 60 (29 17)> 
+  #<location 61 (31 21)> 
+  #<location 62 (40 23)> 
+  #<location 63 (45 28)> 
+  nil
+  >
+\end{example}
+
+\subsection*{Step 4: Define a ``print walk'' KS}
+
+% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
+% formatting of the following paragraph...  I don't understand why:
+%\T\begin{ifhtml}
+%  \endpar\par
+%\T\end{ifhtml}
+\bfindexit{define-ks}%
+\codeindex{:stop}%
+\codeindex{quiescence-event}%
+\bfindexit{find-instance-by-name}%
+Let's add a new KS, \code{print-walk-ks}, that displays the random walk once
+it is completed. Add the following KS to the end of your
+\code{tutorial-example.lisp} file:
+%
+\begin{example}
+  ;;; ========================================================================
+  ;;;   Print-walk KS
+
+  (defun print-walk-ks-function (ksa)
+    ;;; Starting with the initial location instance, print the instance name and
+    ;;; location of the walk
+    (declare (ignore ksa))
+    (format t "~2\&The random walk:~\%")
+      (let ((instance (find-instance-by-name 1 'location)))
+      (while instance
+        (format t "~s (~s ~s)~\%"
+                (instance-name-of instance)
+                (x-of instance)
+                (y-of instance))
+        (setf instance (next-location-of instance))))
+    ;; Tell the Agenda Shell to exit:
+    ':stop)
+
+  (define-ks print-walk-ks
+    :trigger-events ((quiescence-event))
+    :rating 100
+    :execution-function 'print-walk-ks-function)
+\end{example}
+%
+The \code{print-walk-ks} is triggered by a \code{quiescence-event}.  Recall
+that the Agenda Shell signals that quiescence has occured when no
+executable KSAs are available to be executed and then it continues for an
+additional KS-execution cycle in case any executable KSAs resulted from the
+quiescence event.  So, \code{print-walk-ks} will be triggered once no
+\code{random-walk-ks} KSAs are triggered by newly created \code{location} unit
+instances.
+
+The \code{print-walk-ks-function} follows the
+\code{next-location}/\code{previous-location} link to display the walk.  More
+importantly, the function returns the keyword symbol \code{:stop}.  The Agenda
+Shell checks the value returned by a KS execution function for this special
+indicator and, if it is returned, the control shell is exited.  If we did not
+return \code{:stop}, the \code{print-walk-ks} KS would be triggered and
+activated on the first \code{quiescence-event}, the KSA would execute, then
+the Agenda Shell would detect another quiescence condition, signal a new
+\code{quiescence-event}, and our application would print the random walk over
+and over again.
+
+Let's compile our latest changes and then run our application with the new
+\code{print-walk-ks} KS in place:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(start-control-shell)}
+  ;; Control shell started
+
+  Walked off the world: (54, 15).
+
+  The random walk:
+  1 (0 0)
+  2 (-6 9)
+  3 (-14 8)
+  4 (-5 6)
+  5 (-13 5)
+  6 (-11 13)
+  7 (-11 4)
+  8 (-17 8)
+  9 (-21 15)
+  10 (-12 14)
+       ...
+  35 (40 28)
+  36 (50 22)
+  37 (49 12)
+  38 (47 10)
+  ;; Explicit :stop issued by KS print-walk-ks
+  ;; Control shell exited: 41 cycles completed
+  ;; Run time: 0.01 seconds
+  ;; Elapsed time: 0 seconds
+  :stop
+  >
+\end{example}
+
+%% ========================================================================
+%%  Multiple Walkers
+
+\T\markright{}%
+\T\pagestyle{plain}
+\T\cleardoublepage
+\W\xname{tutorial-multiple-walkers}
+\T\pagestyle{fancy}
+\T\thispagestyle{fancybottom}
+\T\renewcommand{\headrulewidth}{0pt}
+\section{Multiple Walkers}
+\label{sec:detour}%
+
+\textcolor{blue}{[Coming soon...]}
+%\textcolor{blue}{[More coming soon...]}
+
+
+%% ========================================================================
+%%  A Dimensional Detour
+
+\T\markright{}%
+\T\pagestyle{plain}
+\T\cleardoublepage
+\W\xname{tutorial-dimensional-detour}
+\T\pagestyle{fancy}
+\T\thispagestyle{fancybottom}
+\T\renewcommand{\headrulewidth}{0pt}
+\section{A Dimensional Detour}
+\label{sec:detour}%
+
+%\begin{center}
+%\textcolor{caution}{[Construction ahead...]}
+%\end{center}
+
+\T\medskip
+\T\fndocrule\\
+\T\begin{center}
+\textcolor{darkergray}{\textsf{\textbf{Coming later, exploration of unbound
+ dimensional values, intersection of unit instance, space instance, and retrieval
+ dimensionality, $\ldots$\\~\\ 
+ Please continue with the next exercise.}}}
+\T\end{center}
+\T\fndocrule
+
+%\subsection*{Step 1: Unbound dimensional values}
+
+%% ========================================================================
+%%  More to come...
+
+\T\markright{}%
+\T\pagestyle{plain}
+\T\cleardoublepage
+\W\xname{tutorial-more-to-come}
+\T\pagestyle{fancy}
+\T\thispagestyle{fancybottom}
+\T\renewcommand{\headrulewidth}{0pt}
+
+\W\section{More to come\ldots}
+\T\section{More to come$\ldots$}
+\T\medskip
+\T\fndocrule\\
+\T\begin{center}
+\textcolor{darkergray}{\textsf{\textbf{Additional exercises will be 
+      added soon.}}}
+\T\end{center}
+\T\fndocrule
+
+%% ========================================================================
+%%  The Completed Application
+
+\T\markright{}%
+\T\pagestyle{plain}
+\T\cleardoublepage
+\W\xname{tutorial-completed-application}
+\T\pagestyle{fancy}
+\T\thispagestyle{fancybottom}
+\T\renewcommand{\headrulewidth}{0pt}
+\section{The Completed Application}
+\label{sec:completed}%
+
+The complete, finished code for the random walk application is in the
+\code{tutorial.lisp} file in the \code{source/gbbopen/examples/}
+directory in the GBBopen distribution and at
+\xsitelink{\code{http://gbbopen.org/svn/GBBopen/trunk/source/gbbopen/examples/tutorial.lisp}}{http://gbbopen.org/svn/GBBopen/trunk/source/gbbopen/examples/tutorial.lisp}.
+
+%% ========================================================================
+%%  Index
+
+\renewcommand{\printindex}{%
+  \htmlonly{\HlxSection{-5}{}*{\indexname}\label{hlxindex}}%
+  \texorhtml{\input{tutorial.ind}}{\htmlprintindex}}
+
+\T\markright{}
+\T\pagestyle{plain}
+\T\cleardoublepage
+\W\xname{tutorial-index}
+\T\pagestyle{fancy}
+\T\thispagestyle{fancybottom}
+\T\fancyhead[er,ol]{}
+\T\small
+\T\addcontentsline{toc}{section}{\textbf{Index}}%
+\printindex
+
+%% ========================================================================
+
+\end{document}

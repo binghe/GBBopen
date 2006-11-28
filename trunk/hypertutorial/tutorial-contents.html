@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<!-- XML file produced from file: tutorial.tex
+     using Hyperlatex v 2.9-in-waiting-rk (oct06) (c) Otfried Cheong -->
+<head>
+<title>GBBopen 0.9.5 Tutorial -- Contents</title>
+</p>
+<link rel="SHORTCUT ICON" href="favicon.ico"><link rel=stylesheet
+        href="gbbopen.css" type="text/css" />
+</head>
+<body>
+<table width="100%" cellpadding="0" cellspacing="2"><tr>
+<td bgcolor="#99ccff"><a href="tutorial-acknowledgments.html"><img border="0" alt="Acknowledgments" src="next.png"/></a></td><td bgcolor="#99ccff"><a href="tutorial_0.html"><img border="0" alt="Top" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="tutorial-copyright.html"><img border="0" alt="Copyright" src="previous.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b>Contents</b></td><td bgcolor="#99ccff"><a target="_top" href="tutorial.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table>
+<h1>Contents</h1>
+<ul>
+<ul>
+<li><a href="tutorial_0.html#id2">GBBopen and Common Lisp</a></li>
+<li><a href="tutorial_0.html#id3">Using a Common Lisp/GBBopen development environment</a></li>
+</ul>
+<li><a href="tutorial-copyright.html">Copyright</a></li>
+<li><a href="tutorial-contents.html">Contents</a></li>
+<li><a href="tutorial-acknowledgments.html">Acknowledgments</a></li>
+<ul>
+<ul>
+<ul>
+<li><a href="tutorial-acknowledgments.html#id1">Organizations</a></li>
+<li><a href="tutorial-acknowledgments.html#id2">Legacy  Contributors</a></li>
+</ul>
+</ul>
+</ul>
+<li><a href="tutorial-starting-up.html">Starting GBBopen</a></li>
+<ul>
+<li><a href="tutorial-starting-up.html#id1">Step 1: Obtain and install Common Lisp</a></li>
+<li><a href="tutorial-starting-up.html#id2">Step 2: Obtain and install GBBopen</a></li>
+<li><a href="tutorial-starting-up.html#id5">Step 3: Interact with the REPL</a></li>
+<li><a href="tutorial-starting-up.html#id8">Step 4: Recover from an error</a></li>
+<ul>
+<li><a href="tutorial-starting-up.html#id9">Breaking a computation</a></li>
+<li><a href="tutorial-starting-up.html#id10">Help! My REPL is broken!</a></li>
+</ul>
+<li><a href="tutorial-starting-up.html#id11">Step 5: Load the <code>:gbbopen-user</code> module</a></li>
+<ul>
+<li><a href="tutorial-starting-up.html#id13">File protection problems?</a></li>
+</ul>
+<li><a href="tutorial-starting-up.html#id14">Step 6: Change to the <code>:gbbopen-user</code> package</a></li>
+</ul>
+<li><a href="tutorial-creating-a-unit-instance.html">Creating a Unit Instance</a></li>
+<ul>
+<li><a href="tutorial-creating-a-unit-instance.html#id1">Prerequisites</a></li>
+<li><a href="tutorial-creating-a-unit-instance.html#id2">Step 1: Define the <code>location</code> unit class</a></li>
+<li><a href="tutorial-creating-a-unit-instance.html#id3">Step 2: Create a unit instance</a></li>
+<li><a href="tutorial-creating-a-unit-instance.html#id5">Step 3: Display a description of the unit instance</a></li>
+<li><a href="tutorial-creating-a-unit-instance.html#id6">Step 4: Find a unit instance by its name</a></li>
+<li><a href="tutorial-creating-a-unit-instance.html#id7">Step 5: Change the <code>x</code> slot value</a></li>
+<li><a href="tutorial-creating-a-unit-instance.html#id10">Step 6: Again display the description of the unit instance</a></li>
+</ul>
+<li><a href="tutorial-creating-a-space-instance.html">Creating a Space Instance</a></li>
+<ul>
+<li><a href="tutorial-creating-a-space-instance.html#id1">Prerequisites</a></li>
+<li><a href="tutorial-creating-a-space-instance.html#id2">Step 1: Create a space instance</a></li>
+<li><a href="tutorial-creating-a-space-instance.html#id4">Step 2: Display a description of the blackboard repository</a></li>
+<li><a href="tutorial-creating-a-space-instance.html#id5">Step 3: Find a space instance by its path</a></li>
+<li><a href="tutorial-creating-a-space-instance.html#id6">Step 4: Add the unit instance to the space instance</a></li>
+<li><a href="tutorial-creating-a-space-instance.html#id7">Step 5: Again, display the blackboard-repository description</a></li>
+<li><a href="tutorial-creating-a-space-instance.html#id8">Step 6: Display the description of the unit instance</a></li>
+<li><a href="tutorial-creating-a-space-instance.html#id9">Step 7: Find the unit instance on the space instance</a></li>
+<li><a href="tutorial-creating-a-space-instance.html#id10">Step 8: Add another unit instance to the space instance</a></li>
+<li><a href="tutorial-creating-a-space-instance.html#id13">Step 9: Again, display the blackboard-repository description</a></li>
+<li><a href="tutorial-creating-a-space-instance.html#id14">Step 10:  Remove a unit instance from the space instance</a></li>
+</ul>
+<li><a href="tutorial-deleting-instances.html">Deleting Instances</a></li>
+<ul>
+<li><a href="tutorial-deleting-instances.html#id1">Prerequisites</a></li>
+<li><a href="tutorial-deleting-instances.html#id2">Step 1: Create a few more unit instances</a></li>
+<li><a href="tutorial-deleting-instances.html#id6">Step 2: Apply a function to all instances of a unit class</a></li>
+<li><a href="tutorial-deleting-instances.html#id10">Step 3: Delete a unit instance</a></li>
+<li><a href="tutorial-deleting-instances.html#id14">Step 4: Create a simple space-instance hierarchy</a></li>
+<li><a href="tutorial-deleting-instances.html#id18">Step 5: Add a unit instance to multiple space instances</a></li>
+<li><a href="tutorial-deleting-instances.html#id20">Step 6: Delete a space instance</a></li>
+<li><a href="tutorial-deleting-instances.html#id24">Step 7: Reset GBBopen</a></li>
+</ul>
+<li><a href="tutorial-development-environment.html">Enhancing Your Development Environment</a></li>
+<ul>
+<li><a href="tutorial-development-environment.html#id1">Step 1: Autoloading GBBopen</a></li>
+<ul>
+<li><a href="tutorial-development-environment.html#id3"><p>If it didn't work<i>...</i></a></li>
+<li><a href="tutorial-development-environment.html#id4">REPL command syntax</a></li>
+</ul>
+<li><a href="tutorial-development-environment.html#id5">Step 2: Customizing your Common Lisp initialization file</a></li>
+<li><a href="tutorial-development-environment.html#id6">Step 3: Set up  HyperDoc and HyperSpec access</a></li>
+<ul>
+<li><a href="tutorial-development-environment.html#id7">Adding the Common Lisp HyperSpec</a></li>
+<li><a href="tutorial-development-environment.html#id8">Non-Emacs access</a></li>
+</ul>
+</ul>
+<li><a href="tutorial-working-within-a-file.html">Working Within a File</a></li>
+<ul>
+<li><a href="tutorial-working-within-a-file.html#id1">Step 1: Create the tutorial-example directories</a></li>
+<li><a href="tutorial-working-within-a-file.html#id2">Step 2: Create the tutorial-example file</a></li>
+<li><a href="tutorial-working-within-a-file.html#id3">Step 3: Compile and load the tutorial-example file</a></li>
+</ul>
+<li><a href="tutorial-adding-dimensions.html">Adding Dimensions</a></li>
+<ul>
+<li><a href="tutorial-adding-dimensions.html#id1">Prerequisites</a></li>
+<li><a href="tutorial-adding-dimensions.html#id2">Step 1: Add dimensions to the <code>location</code> unit class</a></li>
+<li><a href="tutorial-adding-dimensions.html#id3">Step 2: Compile and load the new definition</a></li>
+<li><a href="tutorial-adding-dimensions.html#id4">Step 3: Make  a <code>location</code> unit instance</a></li>
+<li><a href="tutorial-adding-dimensions.html#id6">Step 4: Make  the <code>known-world</code> space instance</a></li>
+<li><a href="tutorial-adding-dimensions.html#id7">Step 5: Add the unit instance to the space instance</a></li>
+<li><a href="tutorial-adding-dimensions.html#id9">Step 6: Create a dimensioned <code>known-world</code></a></li>
+<li><a href="tutorial-adding-dimensions.html#id11">Step 7: Add the <code>location</code> unit instance to the new
+  <code>known-world</code></a></li>
+<li><a href="tutorial-adding-dimensions.html#id12">Step 8: Adding every <code>location</code> to the <code>known-world</code>
+  automatically</a></li>
+<li><a href="tutorial-adding-dimensions.html#id14">Step 9: Create more <code>location</code> unit instances</a></li>
+<li><a href="tutorial-adding-dimensions.html#id17">Step 10: Dimensional retrieval</a></li>
+<li><a href="tutorial-adding-dimensions.html#id20">Step 11: Customize the display of <code>location</code> unit instances</a></li>
+<li><a href="tutorial-adding-dimensions.html#id23">Step 12: More dimensional retrievals</a></li>
+<li><a href="tutorial-adding-dimensions.html#id24">Step 13: Change a dimensional value</a></li>
+</ul>
+<li><a href="tutorial-control-shell.html">Using a Control Shell</a></li>
+<ul>
+<li><a href="tutorial-control-shell.html#id1">Prerequisites</a></li>
+<li><a href="tutorial-control-shell.html#id2">Step 1: Load the Agenda Shell</a></li>
+<li><a href="tutorial-control-shell.html#id3">Step 2: Run the control shell</a></li>
+<li><a href="tutorial-control-shell.html#id4">Step 3: Define a KS</a></li>
+<li><a href="tutorial-control-shell.html#id5">Step 4: Make the <code>known-world</code></a></li>
+<li><a href="tutorial-control-shell.html#id6">Step 5: Start the control shell</a></li>
+<li><a href="tutorial-control-shell.html#id7">Step 6: Display control shell activities</a></li>
+<li><a href="tutorial-control-shell.html#id9">Step 7: Control-shell stepping</a></li>
+</ul>
+<li><a href="tutorial-application-startup.html">Application Startup and Event Functions</a></li>
+<ul>
+<li><a href="tutorial-application-startup.html#id1">Prerequisites</a></li>
+<li><a href="tutorial-application-startup.html#id2">Step 1: Define an initialization function</a></li>
+<li><a href="tutorial-application-startup.html#id3">Step 2: Add an event function</a></li>
+<li><a href="tutorial-application-startup.html#id4">Step 3: Run the application</a></li>
+<li><a href="tutorial-application-startup.html#id5">Step 4: Run it Again</a></li>
+<li><a href="tutorial-application-startup.html#id6"><p>Step 5: It's a new world<i>...</i></a></li>
+<li><a href="tutorial-application-startup.html#id7">Step 6: Run the application again</a></li>
+</ul>
+<li><a href="tutorial-another-ks.html">Add Another KS</a></li>
+<ul>
+<li><a href="tutorial-another-ks.html#id1">Prerequisites</a></li>
+<li><a href="tutorial-another-ks.html#id2">Step 1: Add  another dimension</a></li>
+<li><a href="tutorial-another-ks.html#id3">Step 2: A test of time</a></li>
+<li><a href="tutorial-another-ks.html#id5">Step 3: Define another KS</a></li>
+<ul>
+<li><a href="tutorial-another-ks.html#id6">Step 3a: Define a utility function</a></li>
+<li><a href="tutorial-another-ks.html#id8">Step 3b: Define the <code>random-walk-ks</code> execution function</a></li>
+<li><a href="tutorial-another-ks.html#id10">Step 3c: Add the <code>random-walk-ks</code> definition</a></li>
+</ul>
+<li><a href="tutorial-another-ks.html#id12">Step 4:  Run the application</a></li>
+<li><a href="tutorial-another-ks.html#id14">Step 5:  Where have we been?</a></li>
+<li><a href="tutorial-another-ks.html#id18">Step 6:  Run the application a few more times</a></li>
+</ul>
+<li><a href="tutorial-connections.html">Making Connections</a></li>
+<ul>
+<li><a href="tutorial-connections.html#id1">Prerequisites</a></li>
+<li><a href="tutorial-connections.html#id2">Step 1: Add  a link</a></li>
+<li><a href="tutorial-connections.html#id3">Step 2: Break some links</a></li>
+<li><a href="tutorial-connections.html#id4">Step 3: Create some links</a></li>
+<li><a href="tutorial-connections.html#id5">Step 4: Define a &#8220;print walk&#8221; KS</a></li>
+</ul>
+<li><a href="tutorial-multiple-walkers.html">Multiple Walkers</a></li>
+<li><a href="tutorial-dimensional-detour.html">A Dimensional Detour</a></li>
+<li><a href="tutorial-more-to-come.html">More to come...</a></li>
+<li><a href="tutorial-completed-application.html">The Completed Application</a></li>
+<li><a href="tutorial-index.html">Index</a></li>
+</ul>
+<hr /><address><a target="_top" class="address"
+    href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
+<table width="100%" cellpadding="0" cellspacing="2"><tr>
+<td bgcolor="#99ccff"><a href="tutorial-acknowledgments.html"><img border="0" alt="Acknowledgments" src="next.png"/></a></td><td bgcolor="#99ccff"><a href="tutorial_0.html"><img border="0" alt="Top" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="tutorial-copyright.html"><img border="0" alt="Copyright" src="previous.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b>Contents</b></td><td bgcolor="#99ccff"><a target="_top" href="tutorial.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table></body></html>

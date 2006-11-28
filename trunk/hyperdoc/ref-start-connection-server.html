@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<!-- XML file produced from file: reference.tex
+     using Hyperlatex v 2.9-in-waiting-rk (oct06) (c) Otfried Cheong -->
+<head>
+<title>GBBopen 0.9.5 Reference -- start-connection-server</title>
+</p>
+<link rel="SHORTCUT ICON" href="favicon.ico"><link rel=stylesheet
+        href="gbbopen.css" type="text/css" />
+</head>
+<body>
+<table width="100%" cellpadding="0" cellspacing="2"><tr>
+<td bgcolor="#99ccff"><a href="ref-with-open-connection.html"><img border="0" alt="with-open-connection" src="next.png"/></a></td><td bgcolor="#99ccff"><a href="ref-portable-socket-entities.html"><img border="0" alt="Portable Sockets" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-shutdown-socket-stream.html"><img border="0" alt="shutdown-socket-stream" src="previous.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">start-connection-server</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table>
+
+<p><table class="tight" width="100%">
+<tr valign="top"><td valign="baseline" align="left"%>
+<nobr><b><font color="#000000">start-connection-server</font></b></nobr></td><td valign="baseline"> &nbsp; </td><td valign="baseline" align="left" width="99%"><var>function port</var> <code>&#38;key</code> <var>backlog interface name 
+reuse-address</var>
+<i> =&gt; </i> <var>process</var></td><td valign="baseline" align="right">[<i>Function</i>]
+</td></tr></table></p>
+<p><span class="fndoclabel">Purpose</span> <br />Create a connection-server process that accepts connections
+and processes them according to <var>function</var>.
+</p>
+<p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:portable-sockets</code>
+</p>
+<p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:portable-sockets</code>
+</p>
+<p><span class="fndoclabel">Arguments</span><table class="tight">
+<tr valign="top"><td valign="baseline"><i>function</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#gl:function">function</a> of one argument
+</td></tr><tr valign="top"><td valign="baseline"><i>port</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An integer or a string specifying the service port
+</td></tr><tr valign="top"><td valign="baseline"><i>backlog</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An integer (default is 5)
+</td></tr><tr valign="top"><td valign="baseline"><i>interface</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A 32-bit internet address or a string specifying a network 
+interface on the local machine or <code>nil</code></td></tr><tr valign="top"><td valign="baseline"><i>name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A string (default is <code>"Connection Server"</code>)
+</td></tr><tr valign="top"><td valign="baseline"><i>reuse-address</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id70">generalized&nbsp;boolean</a> (default is <code>nil</code>)
+</td></tr></table>
+</p>
+<p><span class="fndoclabel">Returns</span> <br />The new connection-server <a href="ref-glossary.html#gl:process">process</a>.
+</p>
+<p><span class="fndoclabel">Errors</span> <br />Multiprocessing is not supported on the
+Common Lisp implementation.
+</p>
+<a name="id1"></a><p><span class="fndoclabel">Description</span> <br />The connection server will not accept another
+connection until <var>function</var> returns, so normally
+<var>function</var> should spawn another process to handle the
+connection.  
+</p>
+<p>An <var>interface</var> string can be either a host name, such as
+<code>"localhost"</code> or a &#8220;dotted&#8221; IP address, such as <code>"127.0.0.1"</code>.
+</p>
+<p>The value of <var>backlog</var> tells the operating system
+how many unprocessed connections can be held pending (connected but
+still awaiting an <b><a href="ref-accept-connection.html">accept-connection</a></b>).
+</p>
+<p><span class="fndoclabel">See also</span>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-kill-process.html"><b>kill-process</b></a>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-open-connection.html"><b>open-connection</b></a>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-with-open-connection.html"><b>with-open-connection</b></a>
+</p>
+<p><span class="fndoclabel">Example</span> <br />Start a simple connection server that accepts connections on port
+5555, reads one line of input, and closes the connection:
+</p>
+<pre>
+&gt; (start-connection-server
+     #'(lambda (connection)
+          (let ((line (read-line connection nil)))
+             (format t "~&amp;;; New Connection: ~a~%" line)
+             (close connection)))
+     5555)
+#&lt;process Connection Server&gt;
+</pre>
+<a name="id2"></a><p><span class="fndoclabel">Notes</span> <br />Use <b><a href="ref-kill-process.html">kill-process</a></b> to kill the connection-server process.
+</p>
+<hr /><address><a target="_top" class="address"
+    href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
+<table width="100%" cellpadding="0" cellspacing="2"><tr>
+<td bgcolor="#99ccff"><a href="ref-with-open-connection.html"><img border="0" alt="with-open-connection" src="next.png"/></a></td><td bgcolor="#99ccff"><a href="ref-portable-socket-entities.html"><img border="0" alt="Portable Sockets" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-shutdown-socket-stream.html"><img border="0" alt="shutdown-socket-stream" src="previous.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">start-connection-server</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table></body></html>

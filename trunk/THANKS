@@ -1,0 +1,59 @@
+Organizational Supporters
+=========================
+
+We'd like to thank the following companies and organizations for their
+support:
+
+  * BBTech Corporation (http://BBTech.com/)
+  * Franz, Inc. (http://franz.com/)
+  * DARPA/IXO (http://dtsn.darpa.mil/ixo/)
+  * Lispworks (http://www.lispworks.com/)
+
+
+Individual Contributors
+=======================
+
+  * Dan Corkill
+  * Gary King (initial Digitool MCL and OpenMCL porting)
+  * Christian Lynbech (initial CMUCL porting)
+  * Sam Steingold (initiated CLISP porting)
+  * <Your name could be here!>
+  
+
+Historical Acknowledgments
+==========================
+
+GBBopen is a new design based on concepts that were explored and refined in
+the UMass Generic Blackboard system and the commercial GBB product.  The
+following individuals made significant contributions to those systems:
+
+The UMass Generic Blackboard System
+-----------------------------------
+  * Dan Corkill
+  * Kevin Gallagher
+  * Kelly Murray
+  * Philip Johnson
+
+The GBB Product
+---------------
+  * Tony Carrico
+  * Dan Corkill
+  * Ray deLacaze
+  * Kevin Gallagher
+  * Susan Lander
+  * Zack Rubinstein
+  * Suzanne Tromara
+
+The UMass Generic Blackboard Project received research support from The
+National Science Foundation, the Defense Advanced Research Projects Agency,
+the Office of Naval Research, and Texas Instruments, Inc.
+
+
+Disclaimer
+==========
+
+Acknowledgment here does not necessarily imply an endorsement of GBBopen by
+these organizations or individuals. Disclaimers aside, GBBopen users thank
+each of you!
+
+------------------------------------------------------------------------------

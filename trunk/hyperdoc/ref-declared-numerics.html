@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<!-- XML file produced from file: reference.tex
+     using Hyperlatex v 2.9-in-waiting-rk (oct06) (c) Otfried Cheong -->
+<head>
+<title>GBBopen 0.9.5 Reference -- Declared Numerics</title>
+</p>
+<link rel="SHORTCUT ICON" href="favicon.ico"><link rel=stylesheet
+        href="gbbopen.css" type="text/css" />
+</head>
+<body>
+<table width="100%" cellpadding="0" cellspacing="2"><tr>
+<td bgcolor="#99ccff"><a href="ref-portable-thread-entities.html"><img border="0" alt="Portable Threads" src="next.png"/></a></td><td bgcolor="#99ccff"><a href="ref-tools-entities.html"><img border="0" alt="Tools" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-xor.html"><img border="0" alt="xor" src="previous.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b>Declared Numerics</b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table>
+<h2>Declared Numerics</h2>
+<p>The <code>:gbbopen-tools</code> module contains a set of
+numeric-operation macros that provide convenient shorthands for
+declaring fixnum, short-float, single-float, double-float, and
+long-float numeric operators. If the <a href="ref-glossary.html#gl:feature">feature</a>
+<b><a href="ref-full-safety.html">:full-safety</a></b> is present at compile time, these
+macros do not make their fixnum, single-float, double-float, and long-float
+declarations.
+</p>
+<p>The names of the declared-numeric macros include these &#8220;type-indicator&#8221;
+characters:
+</p>
+<table class="tight"><tbody><tr><td valign="baseline" colspan="1" align="left">
+<p><b>Characters</b> </td><td valign="baseline" colspan="1" align="left"> &nbsp;&nbsp;&nbsp;&nbsp; </td><td valign="baseline" colspan="1" align="left"> <b>Declared Type</b> </td></tr>
+<tr><td valign="baseline" colspan="1" align="left">
+&#38;     </td><td valign="baseline" colspan="1" align="left"> </td><td valign="baseline" colspan="1" align="left"> <code>fixnum</code> </td></tr>
+<tr><td valign="baseline" colspan="1" align="left">
+&#36;&#38;   </td><td valign="baseline" colspan="1" align="left"> </td><td valign="baseline" colspan="1" align="left"> <code>short-float</code> </td></tr>
+<tr><td valign="baseline" colspan="1" align="left">
+&#36;     </td><td valign="baseline" colspan="1" align="left"> </td><td valign="baseline" colspan="1" align="left"> <code>single-float</code> </td></tr>
+<tr><td valign="baseline" colspan="1" align="left">
+&#36;&#36;   </td><td valign="baseline" colspan="1" align="left"> </td><td valign="baseline" colspan="1" align="left"> <code>double-float</code> </td></tr>
+<tr><td valign="baseline" colspan="1" align="left">
+&#36;&#36;&#36; </td><td valign="baseline" colspan="1" align="left"> </td><td valign="baseline" colspan="1" align="left"> <code>long-float</code> </td></tr>
+<tr><td valign="baseline" colspan="1" align="left">
+</td></tr></tbody></table>
+</p>
+<p>Thus, the declared-numeric <code>+</code> macros are:
+</p>
+<table class="tight"><tbody><tr><td valign="baseline" colspan="1" align="left">
+<p>+&#38;     </td><td valign="baseline" colspan="1" align="left"> &nbsp;&nbsp;&nbsp;&nbsp;  </td><td valign="baseline" colspan="1" align="left"> <code>fixnum</code> addition </td></tr>
+<tr><td valign="baseline" colspan="1" align="left">
++&#36;&#38;   </td><td valign="baseline" colspan="1" align="left"> </td><td valign="baseline" colspan="1" align="left"> <code>short-float</code> addition </td></tr>
+<tr><td valign="baseline" colspan="1" align="left">
++&#36;     </td><td valign="baseline" colspan="1" align="left"> </td><td valign="baseline" colspan="1" align="left"> <code>single-float</code> addition </td></tr>
+<tr><td valign="baseline" colspan="1" align="left">
++&#36;&#36;   </td><td valign="baseline" colspan="1" align="left"> </td><td valign="baseline" colspan="1" align="left"> <code>double-float</code> addition </td></tr>
+<tr><td valign="baseline" colspan="1" align="left">
++&#36;&#36;&#36; </td><td valign="baseline" colspan="1" align="left"> </td><td valign="baseline" colspan="1" align="left"> <code>long-float</code> addition</td></tr>
+<tr><td valign="baseline" colspan="1" align="left">
+</td></tr></tbody></table>
+</p>
+<p>Some examples of declared-numeric macros include:
+</p>
+<pre>
+  (&#38; x) $ ==&gt; $ (the fixnum x)
+  (+&#38; x y) $ ==&gt; $ (the fixnum (+ (the fixnum x) (the fixnum y))
+  (&gt;&#36; a b) $ ==&gt; $ (&gt; (the single-float a) (the single-float b))
+  (minusp$$ value) $ ==&gt; $ (minusp (the double-float value))
+  (truncate&#38; x y)) $ ==&gt; $ (the (values fixnum fixnum) (truncate (&amp; x) (&amp; y)))
+</pre>
+<p>The complete set of macros for each declared numeric type are listed in the
+following sections.
+</p>
+<p><span class="fndoclabel">Notes</span> <br /><a name="id1">Most</a> Common Lisp implementations map double-float numbers to the
+64-bit <a target="_top" href="http://www.psc.edu/general/software/packages/ieee/ieee.html">IEEE
+754</a>
+double format and single-float numbers to the 32-bit <a target="_top" href="http://www.psc.edu/general/software/packages/ieee/ieee.html">IEEE
+754</a>
+single format.  Digitool's <a target="_top" href="http://www.digitool.com">Macintosh Common
+Lisp</a> maps both double-float and
+single-float types to the 64-bit <a target="_top" href="http://www.psc.edu/general/software/packages/ieee/ieee.html">IEEE
+754</a>
+double format (<i>only</i> the short-float type maps to the
+<a target="_top" href="http://www.psc.edu/general/software/packages/ieee/ieee.html">IEEE
+754</a>
+single format).  
+</p>
+<ul>
+<li><a href="ref-fixnum-macros.html">Fixnum  numeric-operation macros</a></li>
+<li><a href="ref-short-float-macros.html">Short-float macros</a></li>
+<li><a href="ref-single-float-macros.html">Single-float macros</a></li>
+<li><a href="ref-double-float-macros.html">Double-float macros</a></li>
+<li><a href="ref-long-float-macros.html">Long-float macros</a></li>
+</ul>
+<hr /><address><a target="_top" class="address"
+    href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
+<table width="100%" cellpadding="0" cellspacing="2"><tr>
+<td bgcolor="#99ccff"><a href="ref-portable-thread-entities.html"><img border="0" alt="Portable Threads" src="next.png"/></a></td><td bgcolor="#99ccff"><a href="ref-tools-entities.html"><img border="0" alt="Tools" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-xor.html"><img border="0" alt="xor" src="previous.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b>Declared Numerics</b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table></body></html>

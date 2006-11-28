@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<!-- XML file produced from file: reference.tex
+     using Hyperlatex v 2.9-in-waiting-rk (oct06) (c) Otfried Cheong -->
+<head>
+<title>GBBopen 0.9.5 Reference -- GBBopen Core</title>
+</p>
+<link rel="SHORTCUT ICON" href="favicon.ico"><link rel=stylesheet
+        href="gbbopen.css" type="text/css" />
+</head>
+<body>
+<table width="100%" cellpadding="0" cellspacing="2"><tr>
+<td bgcolor="#99ccff"><a href="ref-agenda-shell-entities.html"><img border="0" alt="Agenda Control Shell" src="next.png"/></a></td><td bgcolor="#99ccff"><a href="reference_0.html"><img border="0" alt="Top" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-tools-entities.html"><img border="0" alt="Tools" src="previous.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b>GBBopen Core</b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table>
+<h1>GBBopen Core</h1>
+<p>The GBBopen Core module, <code>:gbbopen</code>, provides support for the
+blackboard repository, unit and space classes and instances, and event
+signaling.
+</p>
+<p><b><font size="+1">Entities</font></b>
+</p>
+<ul>
+<li><a href="ref-warn-about-unusual-requests-var.html"><font color="#000000">*warn-about-unusual-requests*</font></a></li>
+<li><a href="ref-add-event-function.html"><font color="#000000">add-event-function</font></a></li>
+<li><a href="ref-add-instance-to-space-instance.html"><font color="#000000">add-instance-to-space-instance</font></a></li>
+<li><a href="ref-allowed-unit-classes.html"><font color="#000000">allowed-unit-classes</font></a></li>
+<li><a href="ref-check-link-consistency.html"><font color="#000000">check-link-consistency</font></a></li>
+<li><a href="ref-class-instances-count.html"><font color="#000000">class-instances-count</font></a></li>
+<li><a href="ref-clear-space-instances.html"><font color="#000000">clear-space-instances</font></a></li>
+<li><a href="ref-define-event-class.html"><font color="#000000">define-event-class</font></a></li>
+<li><a href="ref-define-space-class.html"><font color="#000000">define-space-class</font></a></li>
+<li><a href="ref-define-unit-class.html"><font color="#000000">define-unit-class</font></a></li>
+<li><a href="ref-delete-instance.html"><font color="#000000">delete-instance</font></a></li>
+<li><a href="ref-delete-all-space-instances.html"><font color="#000000">delete-all-space-instances</font></a></li>
+<li><a href="ref-delete-space-instance.html"><font color="#000000">delete-space-instance</font></a></li>
+<li><a href="ref-describe-blackboard-repository.html"><font color="#000000">describe-blackboard-repository</font></a></li>
+<li><a href="ref-describe-event-printing.html"><font color="#000000">describe-event-printing</font></a></li>
+<li><a href="ref-describe-instance.html"><font color="#000000">describe-instance</font></a></li>
+<li><a href="ref-describe-space-instance.html"><font color="#000000">describe-space-instance</font></a></li>
+<li><a href="ref-describe-unit-class.html"><font color="#000000">describe-unit-class</font></a></li>
+<li><a href="ref-disable-event-printing.html"><font color="#000000">disable-event-printing</font></a></li>
+<li><a href="ref-do-instances-of-class.html"><font color="#000000">do-instances-of-class</font></a></li>
+<li><a href="ref-do-instances-on-space-instances.html"><font color="#000000">do-instances-on-space-instances</font></a></li>
+<li><a href="ref-do-sorted-instances-of-class.html"><font color="#000000">do-sorted-instances-of-class</font></a></li>
+<li><a href="ref-do-space-instances.html"><font color="#000000">do-space-instances</font></a></li>
+<li><a href="ref-effective-link-definition.html"><font color="#000000">effective-link-definition</font></a></li>
+<li><a href="ref-effective-nonlink-slot-definition.html"><font color="#000000">effective-nonlink-slot-definition</font></a></li>
+<li><a href="ref-enable-event-printing.html"><font color="#000000">enable-event-printing</font></a></li>
+<li><a href="ref-evfn-printv.html"><font color="#000000">evfn-printv</font></a></li>
+<li><a href="ref-expand-interval.html"><font color="#000000">expand-interval</font></a></li>
+<li><a href="ref-filter-instances.html"><font color="#000000">filter-instances</font></a></li>
+<li><a href="ref-find-instance-by-name.html"><font color="#000000">find-instance-by-name</font></a></li>
+<li><a href="ref-find-instances.html"><font color="#000000">find-instances</font></a></li>
+<li><a href="ref-find-space-instance-by-path.html"><font color="#000000">find-space-instance-by-path</font></a></li>
+<li><a href="ref-find-space-instances.html"><font color="#000000">find-space-instances</font></a></li>
+<li><a href="ref-gbbopen-effective-slot-definition.html"><font color="#000000">gbbopen-effective-slot-definition</font></a></li>
+<li><a href="ref-gbbopen-implementation-version.html"><font color="#000000">gbbopen-implementation-version</font></a></li>
+<li><a href="ref-instance-deleted-p.html"><font color="#000000">instance-deleted-p</font></a></li>
+<li><a href="ref-instance-dimension-value.html"><font color="#000000">instance-dimension-value</font></a></li>
+<li><a href="ref-instance-name.html"><font color="#ff0000">instance-name</font></a></li>
+<li><a href="ref-instance-name-of.html"><font color="#000000">instance-name-of</font></a></li>
+<li><a href="ref-instance-space-instances.html"><font color="#ff0000">instance-space-instances</font></a></li>
+<li><a href="ref-interval-end.html"><font color="#000000">interval-end</font></a></li>
+<li><a href="ref-interval-start.html"><font color="#000000">interval-start</font></a></li>
+<li><a href="ref-linkf.html"><font color="#000000">linkf</font></a></li>
+<li><a href="ref-link-setf.html"><font color="#000000">link-setf</font></a></li>
+<li><a href="ref-link-slot-p.html"><font color="#000000">link-slot-p</font></a></li>
+<li><a href="ref-make-instance.html"><font color="#000000">make-instance</font></a></li>
+<li><a href="ref-make-space-instance.html"><font color="#000000">make-space-instance</font></a></li>
+<li><a href="ref-map-instances-of-class.html"><font color="#000000">map-instances-of-class</font></a></li>
+<li><a href="ref-map-instances-on-space-instances.html"><font color="#000000">map-instances-on-space-instances</font></a></li>
+<li><a href="ref-map-sorted-instances-of-class.html"><font color="#000000">map-sorted-instances-of-class</font></a></li>
+<li><a href="ref-map-space-instances.html"><font color="#000000">map-space-instances</font></a></li>
+<li><a href="ref-remove-all-event-functions.html"><font color="#000000">remove-all-event-functions</font></a></li>
+<li><a href="ref-remove-event-function.html"><font color="#000000">remove-event-function</font></a></li>
+<li><a href="ref-remove-instance-from-space-instance.html"><font color="#000000">remove-instance-from-space-instance</font></a></li>
+<li><a href="ref-report-find-stats.html"><font color="#000000">report-find-stats</font></a></li>
+<li><a href="ref-reset-gbbopen.html"><font color="#000000">reset-gbbopen</font></a></li>
+<li><a href="ref-reset-unit-class.html"><font color="#000000">reset-unit-class</font></a></li>
+<li><a href="ref-resume-event-printing.html"><font color="#000000">resume-event-printing</font></a></li>
+<li><a href="ref-shift-interval.html"><font color="#000000">shift-interval</font></a></li>
+<li><a href="ref-signal-event.html"><font color="#000000">signal-event</font></a></li>
+<li><a href="ref-space-instance-children.html"><font color="#000000">space-instance-children</font></a></li>
+<li><a href="ref-space-instance-dimensions.html"><font color="#000000">space-instance-dimensions</font></a></li>
+<li><a href="ref-space-instance-parent.html"><font color="#000000">space-instance-parent</font></a></li>
+<li><a href="ref-space-instances-of.html"><font color="#000000">space-instances-of</font></a></li>
+<li><a href="ref-standard-event-class.html"><font color="#000000">standard-event-class</font></a></li>
+<li><a href="ref-standard-event-instance.html"><font color="#000000">standard-event-instance</font></a></li>
+<li><a href="ref-standard-gbbopen-instance.html"><font color="#000000">standard-gbbopen-instance</font></a></li>
+<li><a href="ref-standard-space-class.html"><font color="#000000">standard-space-class</font></a></li>
+<li><a href="ref-standard-space-instance.html"><font color="#000000">standard-space-instance</font></a></li>
+<li><a href="ref-standard-unit-class.html"><font color="#000000">standard-unit-class</font></a></li>
+<li><a href="ref-standard-unit-instance.html"><font color="#000000">standard-unit-instance</font></a></li>
+<li><a href="ref-suspend-event-printing.html"><font color="#000000">suspend-event-printing</font></a></li>
+<li><a href="ref-unit-class-dimensions.html"><font color="#000000">unit-class-dimensions</font></a></li>
+<li><a href="ref-unlinkf.html"><font color="#000000">unlinkf</font></a></li>
+<li><a href="ref-unlinkf-all.html"><font color="#000000">unlinkf-all</font></a></li>
+<li><a href="ref-with-events-disabled.html"><font color="#000000">with-events-disabled</font></a></li>
+<li><a href="ref-with-events-enabled.html"><font color="#000000">with-events-enabled</font></a></li>
+<li><a href="ref-with-find-stats.html"><font color="#000000">with-find-stats</font></a></li>
+<li><a href="ref-without-find-stats.html"><font color="#000000">without-find-stats</font></a></li>
+</ul>
+<hr /><address><a target="_top" class="address"
+    href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
+<table width="100%" cellpadding="0" cellspacing="2"><tr>
+<td bgcolor="#99ccff"><a href="ref-agenda-shell-entities.html"><img border="0" alt="Agenda Control Shell" src="next.png"/></a></td><td bgcolor="#99ccff"><a href="reference_0.html"><img border="0" alt="Top" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-tools-entities.html"><img border="0" alt="Tools" src="previous.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b>GBBopen Core</b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table></body></html>

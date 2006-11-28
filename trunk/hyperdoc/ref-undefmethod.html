@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<!-- XML file produced from file: reference.tex
+     using Hyperlatex v 2.9-in-waiting-rk (oct06) (c) Otfried Cheong -->
+<head>
+<title>GBBopen 0.9.5 Reference -- undefmethod</title>
+</p>
+<link rel="SHORTCUT ICON" href="favicon.ico"><link rel=stylesheet
+        href="gbbopen.css" type="text/css" />
+</head>
+<body>
+<table width="100%" cellpadding="0" cellspacing="2"><tr>
+<td bgcolor="#99ccff"><a href="ref-until.html"><img border="0" alt="until" src="next.png"/></a></td><td bgcolor="#99ccff"><a href="ref-tools-entities.html"><img border="0" alt="Tools" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-spliting-butlast.html"><img border="0" alt="spliting-butlast" src="previous.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">undefmethod</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table>
+
+<p><table class="tight" width="100%">
+<tr valign="top"><td valign="baseline" align="left"%>
+<nobr><b><font color="#000000">undefmethod</font></b></nobr></td><td valign="baseline"> &nbsp; </td><td valign="baseline" align="left" width="99%"><var>function-name</var>
+&#123;<var>method-qualifier</var>&#125;* <var>specialized-lambda-list</var> 
+[[<var>declaration</var>*&nbsp;|&nbsp;<var>documentation</var>]]
+<var>form</var>*</td><td valign="baseline" align="right">[<i>Macro</i>]
+</td></tr></table></p>
+<p><span class="fndoclabel">Purpose</span> <br />Locate and undefine a method.
+</p>
+<p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-tools</code>
+</p>
+<p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-tools</code>
+</p>
+<p><span class="fndoclabel">Arguments</span><table class="tight">
+<tr valign="top"><td valign="baseline"><i>function-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> Either a symbol or <code>(setf <var>symbol</var>)</code>
+</td></tr><tr valign="top"><td valign="baseline"><i>method-qualifier</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A non-list method qualifier object (such as
+<code>:before</code>, <code>:after</code>, or <code>:around</code>)
+</td></tr><tr valign="top"><td valign="baseline"><i>specialized-lambda-list</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A specialized lambda list (as per
+<b>defmethod</b>) 
+</td></tr><tr valign="top"><td valign="baseline"><i>declarations</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A declare expression (not evaluated)
+</td></tr><tr valign="top"><td valign="baseline"><i>documentation</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A string (not evaluated)
+</td></tr><tr valign="top"><td valign="baseline"><i>forms</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> Zero or more <a href="ref-glossary.html#gl:form">form</a>s
+</td></tr></table>
+</p>
+<p><span class="fndoclabel">Example</span> <br /><a name="id1">After</a> creating an undesired method, use <b>undefmethod</b> to remove it:
+</p>
+<pre>
+&gt; (defmethod instance-name-of :before ((instance standard-unit-instance))
+     (print "Opps"))
+#&lt;standard-method instance-name-of :before (standard-unit-instance)&gt;
+&gt; (<a href="ref-instance-name-of.html">instance-name-of</a> (<a href="ref-find-instance-by-name.html">find-instance-by-name</a> 112 'hyp))
+"Opps" 
+112
+&gt; (undefmethod instance-name-of :before ((instance standard-unit-instance))
+     (print "Opps"))
+#&lt;standard-generic-function instance-name-of&gt;
+&gt; (<a href="ref-instance-name-of.html">instance-name-of</a> (<a href="ref-find-instance-by-name.html">find-instance-by-name</a> 112 'hyp))
+112
+</pre>
+<p><span class="fndoclabel">Notes</span> <br />This macro may not be able to locate and undefine some methods with
+environment-specific eql specializers.
+</p>
+<hr /><address><a target="_top" class="address"
+    href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
+<table width="100%" cellpadding="0" cellspacing="2"><tr>
+<td bgcolor="#99ccff"><a href="ref-until.html"><img border="0" alt="until" src="next.png"/></a></td><td bgcolor="#99ccff"><a href="ref-tools-entities.html"><img border="0" alt="Tools" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-spliting-butlast.html"><img border="0" alt="spliting-butlast" src="previous.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">undefmethod</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table></body></html>
