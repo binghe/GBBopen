@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /home/gbbopen/current/doc-source/reference.tex *-*
-%% *-* Last-Edit: Sun Nov 26 14:44:25 2006; Edited-By: cork *-*
+%% *-* Last-Edit: Wed Dec  6 20:40:58 2006; Edited-By: cork *-*
 %% *-* Machine: ruby.corkills.org *-*
 
 %% Copyright (C) 2003-2006, Dan Corkill <corkill@GBBopen.org>
@@ -9629,36 +9629,6 @@ nil
 
 %% ------------------------------------------------------------------------
 
-\begin{depfunctiondoc}{Generic~Function}{instance-name}%
-  {\var{instance\/}
-    \returns{} \var{name\/}}
-
-\fnsyntax
-
-\fnpurpose
-Return the name of a \glref{unit~instance}.
-
-\fnsetf
-\fnsetfsyntax{instance-name-of}{\var{instance\/}}{\var{name\/}}
-
-\fnpackage \code{:gbbopen}
-
-\fnmodule \code{:gbbopen}
-
-\fnargs
-\begin{args}{instance}
-\arg[instance] A \glref{unit~instance} or an \glref{event~instance}
-\end{args}
-
-\fnreturns The name of the \var{instance}.
-
-\fnnotes This generic function has been renamed 
-\textbf{\entlink{instance-name-of}}.
-
-\end{depfunctiondoc}
-
-%% ------------------------------------------------------------------------
-
 \begin{functiondoc}{Generic~Function}{instance-name-of}{\var{instance\/}
     \returns{} \var{name\/}}
 
@@ -9711,33 +9681,6 @@ Change the name of \code{hyp} \code{180} to \code{"bogus-180"}:
 \end{example}
 
 \end{functiondoc}
-
-%% ------------------------------------------------------------------------
-
-\begin{depfunctiondoc}{Function}{instance-space-instances}%
-  {\var{unit-instance\/} \returns{} \var{space-instances\/}}
-
-\fnsyntax
-
-\fnpurpose Obtain the \glref{space~instance}s on which a
-\glref{unit~instance} resides. 
-
-\fnpackage \code{:gbbopen}
-
-\fnmodule \code{:gbbopen}
-
-\fnargs
-\begin{args}{unit-instance}
-\arg[unit-instance] A \glref{unit~instance}
-\end{args}
-
-\fnreturns The list of \glref{space~instance}s on which
-\var{unit-instance\/} resides.
-
-\fnnotes This function has been renamed 
-\textbf{\entlink{space-instances-of}}.
-
-\end{depfunctiondoc}
 
 %% ------------------------------------------------------------------------
 
@@ -11980,6 +11923,31 @@ agenda-based control shell.
 
 %% ------------------------------------------------------------------------
 
+\begin{functiondoc}{Function}{abort-ks-execution}{\noargs}
+\index{knowledge source execution!aborting}%
+
+\fnsyntax
+
+\fnpurpose Abort the currently executing KSA.
+
+\fnpackage \code{:agenda-shell}
+
+\fnmodule \code{:agenda-shell}
+
+\begin{alsos}{exit-control-shell}
+\also[exit-control-shell]
+\end{alsos}
+
+\fnexample
+Abort the currently executing KSA::
+\begin{example}
+  (abort-ks-execution)
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
 \begin{functiondoc}{Generic~Reader}{activation-cycle-of}{\var{ksa\/} 
     \returns{} \var{cycle-number\/}}
 \index{activation cycle, of a KSA}%
@@ -12939,6 +12907,7 @@ Return the execution cycle of \code{ksa}:
 executing control shell.
 
 \begin{alsos}{restart-control-shell}
+\also[abort-ks-execution]
 \also[restart-control-shell]
 \also[start-control-shell]
 \end{alsos}
@@ -13031,36 +13000,6 @@ The class \textbf{ksa} is the default \glref{class} of
 \end{alsos}
 
 \end{functiondoc}
-
-%% ------------------------------------------------------------------------
-
-\begin{depfunctiondoc}{Generic~Function}{ks.enabled}{\var{ks\/} 
-    \returns{} \var{boolean\/}}
-\index{KS!enabled}%
-
-\fnsyntax
-
-\fnpurpose Determine if the specified \glref{KS} is enabled for
-execution
-
-\fnsetf
-\fnsetfsyntax{ks.enabled}{\var{ks\/}}{\var{boolean\/}}
-
-\fnpackage \code{:agenda-shell}
-
-\fnmodule \code{:agenda-shell}
-
-\fnargs
-\begin{args}{ks}
-\arg[ks] A \glref{KS}
-\end{args}
-
-\fnreturns True if the \glref{KS} is enabled for execution; nil otherwise.
-  
-\fnnotes This generic function has been renamed 
-\textbf{\entlink{ks-enabled-p}}.
-
-\end{depfunctiondoc}
 
 %% ------------------------------------------------------------------------
 
@@ -13172,164 +13111,6 @@ Return the \glref{KS} of a \glref{KSA}:
 \end{example}
 
 \end{functiondoc}
-
-%% ------------------------------------------------------------------------
-
-\begin{depfunctiondoc}{Generic~Reader}{ksa.activation-cycle}{\var{ksa\/} 
-    \returns{} \var{cycle-number\/}}
-
-\fnsyntax
-
-\fnpurpose Returns the cycle number when a \glref{KSA} was activated
-
-\fnpackage \code{:agenda-shell}
-
-\fnmodule \code{:agenda-shell}
-
-\fnargs
-\begin{args}{ksa}
-\arg[ksa] A \glref{KSA}
-\end{args}
-
-\fnreturns The activation cycle number of \var{ksa}
-  
-\fnnotes This generic reader has been renamed 
-\textbf{\entlink{activation-cycle-of}}.
-
-\end{depfunctiondoc}
-
-%% ------------------------------------------------------------------------
-
-\begin{depfunctiondoc}{Generic~Reader}{ksa.execution-cycle}{\var{ksa\/} 
-    \returns{} \var{cycle-number\/}}
-
-\fnsyntax
-
-\fnpurpose Returns the cycle number when a \glref{KSA} was executed
-
-\fnpackage \code{:agenda-shell}
-
-\fnmodule \code{:agenda-shell}
-
-\fnargs
-\begin{args}{ksa}
-\arg[ksa] A \glref{KSA}
-\end{args}
-
-\fnreturns The execution cycle number of \var{ksa} or \nil, if \var{ksa} has
-not been executed
-  
-\fnnotes This generic reader has been renamed 
-\textbf{\entlink{execution-cycle-of}}.
-
-\end{depfunctiondoc}
-
-%% ------------------------------------------------------------------------
-
-\begin{depfunctiondoc}{Generic~Reader}{ksa.ks}{\var{ksa\/} 
-    \returns{} \var{ks\/}}
-
-\fnsyntax
-
-\fnpurpose Returns the ~glref{knowledge~source} (KS) \glref{unit~instance}
-of a \glref{KSA}
-
-\fnpackage \code{:agenda-shell}
-
-\fnmodule \code{:agenda-shell}
-
-\fnargs
-\begin{args}{ksa}
-\arg[ksa] A \glref{KSA}
-\end{args}
-
-\fnreturns The \glref{KS} \glref{unit~instance} of \var{ksa}
-  
-\fnnotes This generic reader has been renamed 
-\textbf{\entlink{ks-of}}.
-
-\end{depfunctiondoc}
-
-%% ------------------------------------------------------------------------
-
-\begin{depfunctiondoc}{Generic~Reader}{ksa.obviation-cycle}{\var{ksa\/} 
-    \returns{} \var{cycle-number\/}}
-
-\fnsyntax
-
-\fnpurpose Returns the cycle number when a \glref{KSA} was \glref{obviated}
-
-\fnpackage \code{:agenda-shell}
-
-\fnmodule \code{:agenda-shell}
-
-\fnargs
-\begin{args}{ksa}
-\arg[ksa] A \glref{KSA}
-\end{args}
-
-\fnreturns The \glref{obviation} cycle number of \var{ksa} or \nil, if \var{ksa} has
-not been \glref{obviated}
-  
-\fnnotes This generic reader has been renamed 
-\textbf{\entlink{obviation-cycle-of}}.
-
-\end{depfunctiondoc}
-
-%% ------------------------------------------------------------------------
-
-\begin{depfunctiondoc}{Generic~Accessor}{ksa.rating}{\var{ksa\/} 
-    \returns{} \var{rating\/}}
-\index{rating!of a KSA}%
-\index{KSA!rating of}%
-
-\fnsyntax
-
-\fnpurpose Accesses the rating of a \glref{KSA}
-
-\fnsetf
-\fnsetfsyntax{ksa.rating}{\var{ksa\/}}{\var{new-rating}}
-
-\fnpackage \code{:agenda-shell}
-
-\fnmodule \code{:agenda-shell}
-
-\fnargs
-\begin{args}{ksa}
-\arg[ksa] A \glref{KSA}
-\end{args}
-
-\fnreturns The rating of \var{ksa}
-  
-\fnnotes This generic accessor has been renamed 
-\textbf{\entlink{rating-of}}.
-
-\end{depfunctiondoc}
-
-%% ------------------------------------------------------------------------
-
-\begin{depfunctiondoc}{Generic~Reader}{ksa.trigger-events}{\var{ksa\/} 
-    \returns{} \var{events\/}}
-
-\fnsyntax
-
-\fnpurpose Returns the list of events that triggered a \glref{KSA}
-
-\fnpackage \code{:agenda-shell}
-
-\fnmodule \code{:agenda-shell}
-
-\fnargs
-\begin{args}{ksa}
-\arg[ksa] A \glref{KSA}
-\end{args}
-
-\fnreturns The list of events that triggered \var{ksa}
-  
-\fnnotes This generic reader has been renamed 
-\textbf{\entlink{trigger-events-of}}.
-
-\end{depfunctiondoc}
 
 %% ------------------------------------------------------------------------
 
@@ -13512,35 +13293,6 @@ Restart the Agenda Shell (in this case, without any \glref{KS}s defined):
 
 %% ------------------------------------------------------------------------
 
-\begin{depfunctiondoc}{Generic~Function}{sole-trigger-event}{\var{ksa\/} 
-    \returns{} \var{event\/}}
-\index{trigger event, of a KSA or event}%
-\index{KSA!trigger event of}%
-\index{event!trigger event of}%
-
-\fnsyntax
-
-\fnpurpose Return the sole trigger \glref{event} of a \glref{KSA}
-
-\fnpackage \code{:agenda-shell}
-
-\fnmodule \code{:agenda-shell}
-
-\fnargs
-\begin{args}{ksa}
-\arg[ksa] A \glref{KSA}
-\end{args}
-
-\fnreturns The trigger \glref{event} or \nil, if one was not found for
-\var{ksa}
-  
-\fnnotes This generic function has been renamed 
-\textbf{\entlink{sole-trigger-event-of}}.
-
-\end{depfunctiondoc}
-
-%% ------------------------------------------------------------------------
-
 \begin{functiondoc}{Generic~Function}{sole-trigger-event-of}{\var{ksa\/} 
     \returns{} \var{event\/}}
 \index{trigger event, of a KSA or event}%
@@ -13583,35 +13335,6 @@ Return the (sole) trigger \glref{event} of a \glref{KSA}:
 \end{example}
 
 \end{functiondoc}
-
-%% ------------------------------------------------------------------------
-
-\begin{depfunctiondoc}{Generic~Function}{sole-trigger-instance}%
-  {\var{source\/} 
-    \returns{} \var{trigger-instance\/}}
-
-\fnsyntax
-
-\fnpurpose Return the trigger \glref{unit~instance} of a \glref{KSA},
-\glref{event}, or a list of \glref{KSA}s or \glref{event}s
-
-\fnpackage \code{:agenda-shell}
-
-\fnmodule \code{:agenda-shell}
-
-\fnargs
-\begin{args}{source}
-\arg[source] A \glref{KSA}, \glref{event},
-or a list of \glref{KSA}s or \glref{event}s
-\end{args}
-
-\fnreturns The trigger \glref{unit~instance} or \nil, if one was not found in
-\var{source}
-  
-\fnnotes This generic function has been renamed 
-\textbf{\entlink{sole-trigger-instance-of}}.
-
-\end{depfunctiondoc}
 
 %% ------------------------------------------------------------------------
 
@@ -13663,7 +13386,7 @@ trigger \glref{unit~instance} is found in \var{source}, an error is signaled.
 
 \begin{alsos}{collect-trigger-instances}
 \also[collect-trigger-instances]
-\also[sole-trigger-event]
+\also[sole-trigger-event-of]
 \end{alsos}
 
 \fnexample
