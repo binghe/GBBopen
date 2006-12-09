@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/mini-module/mini-module.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Nov 21 13:56:05 2006 *-*
+;;;; *-* Last-Edit: Sat Dec  9 13:37:08 2006 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -313,16 +313,29 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun get-directory (name)
+(defun get-directory (name &rest subdirectories)
+  ;; Get-directory is for direct directory specifications; there is no
+  ;; source/compiled subtree handling
   (let ((mm-dir (gethash name *mm-directories*)))
     (typecase mm-dir
-      (mm-root-directory (mm-root-directory.path mm-dir))
+      (mm-root-directory 
+       (let ((path (mm-root-directory.path mm-dir)))
+         (if subdirectories
+             (make-pathname 
+              :directory (append (pathname-directory path)
+                                 subdirectories)
+              :defaults path)
+             path)))
       (mm-relative-directory
-       (let ((root (mm-relative-directory.root mm-dir)))
+       (let ((root-path (mm-root-directory.path
+                         (gethash 
+                          (mm-relative-directory.root mm-dir)
+                          *mm-directories*))))
          (make-pathname 
-          :directory (append root
-                             (mm-relative-directory.sub-directories mm-dir))
-          :defaults root)))
+          :directory (append (pathname-directory root-path)
+                             (mm-relative-directory.sub-directories mm-dir)
+                             subdirectories)
+          :defaults root-path)))
       (otherwise (error "Directory ~s is not defined." name)))))
 
 ;;; ---------------------------------------------------------------------------
