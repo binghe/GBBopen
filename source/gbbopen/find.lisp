@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/find.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Nov 22 14:00:57 2006 *-*
+;;;; *-* Last-Edit: Fri Dec 15 17:40:24 2006 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -1483,15 +1483,16 @@
                                                  (verbose *find-verbose*))
                                            &body body)
    ;;; Do-xxx variant of map-instances-on-space-instances.
-  `(map-instances-on-space-instances 
-    #'(lambda (,var) ,@body) 
-    ,unit-classes-spec
-    ,space-instances
-    ,@(when pattern `(:pattern ,pattern))
-    ,@(when filter-before `(:filter-before ,filter-before))
-    ,@(when filter-after `(:filter-after ,filter-after))
-    ,@(when use-marking `(:use-marking ,use-marking))
-    ,@(when verbose `(:verbose ,verbose))))
+  `(block nil
+     (map-instances-on-space-instances 
+      #'(lambda (,var) ,@body)
+      ,unit-classes-spec
+      ,space-instances
+      ,@(when pattern `(:pattern ,pattern))
+      ,@(when filter-before `(:filter-before ,filter-before))
+      ,@(when filter-after `(:filter-after ,filter-after))
+      ,@(when use-marking `(:use-marking ,use-marking))
+      ,@(when verbose `(:verbose ,verbose)))))
 
 ;;; ===========================================================================
 ;;;   Find Instances
