@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:AGENDA-SHELL; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/control-shells/agenda-shell.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Nov 15 05:13:42 2006 *-*
+;;;; *-* Last-Edit: Fri Dec 15 18:06:12 2006 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -599,13 +599,14 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun abort-ks-execution 
-    (&optional (cs (or *cs*
-                       ;; Look for a control-shell process:
-                       #-multiprocesing-not-available
-                       (some #'(lambda (process)
-                                 (symbol-value-in-process '*cs* process))
-                             *control-shell-processes*)
-                       (error "No control-shell process was found"))))
+    (&optional 
+     #-multiprocesing-not-available
+     (cs (or *cs*
+             ;; Look for a control-shell process:
+             (some #'(lambda (process)
+                       (symbol-value-in-process '*cs* process))
+                   *control-shell-processes*)
+             (error "No control-shell process was found"))))
   (cond 
    ((eq (current-process) *within-abort-ks-execution-catcher*)
     (throw 'abort-ks-execution-catcher *within-abort-ks-execution-catcher*))
