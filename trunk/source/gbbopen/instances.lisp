@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Nov 16 04:14:42 2006 *-*
+;;;; *-* Last-Edit: Fri Dec 15 17:41:06 2006 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -773,9 +773,10 @@
 
 (defmacro do-instances-of-class ((var unit-class-name) &body body)
   ;;; Do-xxx variant of map-instances-of-class.
-  `(map-instances-of-class
-    #'(lambda (,var) ,@body)
-    ,unit-class-name))
+  `(block nil
+     (map-instances-of-class
+      #'(lambda (,var) ,@body)
+      ,unit-class-name)))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -797,11 +798,12 @@
 (defmacro do-sorted-instances-of-class ((var unit-class-name 
                                          predicate &key key) &body body)
   ;;; Do-xxx variant of map-sorted-instances-of-class.
-  `(map-sorted-instances-of-class
-    #'(lambda (,var) ,@body) 
-    ,unit-class-name 
-    ,predicate 
-    ,@(when key `(:key ,key))))
+  `(block nil
+     (map-sorted-instances-of-class
+      #'(lambda (,var) ,@body)
+      ,unit-class-name 
+      ,predicate 
+      ,@(when key `(:key ,key)))))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Dimension-value access
