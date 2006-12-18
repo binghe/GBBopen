@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/gbbopen.asd *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Dec 18 06:21:30 2005 *-*
+;;;; *-* Last-Edit: Mon Dec 18 14:59:39 2006 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -94,7 +94,7 @@
   (eval `(asdf:defsystem ,module-name
 	     :author "The GBBopen Project <gbbopen@GBBopen.org>"
 	     :maintainer "Dan Corkill <corkill@GBBopen.org>"
-	     :version "0.9"
+	     :version "0.9.5"
 	     :components ((:mini-module ,module-name)))))
 
 ;;; ===========================================================================
