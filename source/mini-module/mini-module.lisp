@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/mini-module/mini-module.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Dec  9 13:37:08 2006 *-*
+;;;; *-* Last-Edit: Mon Dec 18 15:21:22 2006 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -131,18 +131,21 @@
 	    describe-module
 	    dotted-conc-name		; part of tools, but placed here
             get-directory               ; not yet documented
+            list-modules                ; not yet documented
 	    load-module
 	    load-module-file
-	    loaded-modules
+            ;; deprecated, remove soon!
+	    loaded-modules              ; never documented
 	    module-directories		; not yet documented
 	    module-loaded-p
 	    need-to-port		; not documented
 	    port-needed			; not documented
 	    brief-date-and-time		; part of tools, but placed here
 	    show-defined-directories
-	    show-modules
-	    undefine-directory
-	    undefine-module)))
+	    show-modules                ; not yet documented
+	    undefine-directory          ; not yet documented
+	    undefine-module             ; not yet documented
+            )))
 
 ;;; ===========================================================================
 ;;;  Dotted-conc-name
@@ -973,14 +976,9 @@
 
 ;;; ---------------------------------------------------------------------------
 
+;; Deprecated, remove soon:
 (defun loaded-modules ()
-  (let ((modules nil))
-    (maphash #'(lambda (key module) 
-                 (declare (ignore key))
-                 (when (module-fully-loaded? module)
-                   (push (mm-module.name module) modules)))
-             *mm-modules*)
-    (sort modules #'string-lessp)))
+  (sort (list-modules) #'string-lessp))
 
 ;;; ---------------------------------------------------------------------------
 ;;;
@@ -1110,6 +1108,14 @@
          (t (format t "~&No modules are loaded.~%"))))))
   (terpri)
   (values))
+
+;;; ---------------------------------------------------------------------------
+
+(defun list-modules (&optional all-modules?)
+  (loop for module being each hash-value in *mm-modules*
+      when (or all-modules?
+                (module-fully-loaded? module))
+      collect (mm-module.name module)))
 
 ;;; ===========================================================================
 ;;;  Define Basic Directories and Modules (as specified in startup.lisp)
