@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /home/gbbopen/current/doc-source/reference.tex *-*
-%% *-* Last-Edit: Wed Dec  6 20:40:58 2006; Edited-By: cork *-*
+%% *-* Last-Edit: Wed Dec 27 10:23:26 2006; Edited-By: cork *-*
 %% *-* Machine: ruby.corkills.org *-*
 
 %% Copyright (C) 2003-2006, Dan Corkill <corkill@GBBopen.org>
@@ -3304,6 +3304,31 @@ elements.
 (a)
 (b . c)
 \end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Class}{standard-gbbopen-instance}{}
+\index{class!standard-gbbopen-instance@\textbf{standard-gbbopen-instance}}%
+  
+\fnsyntax
+
+\fnpackage \code{:gbbopen-tools}
+
+\fnmodule \code{:gbbopen-tools}
+
+\fndescription The class \textbf{standard-gbbopen-instance} is a subclass of
+\code{standard-object}.  It is a superclass of
+\textbf{\entlink{standard-event-instance}} and
+\textbf{\entlink{standard-unit-instance}}.
+%% and gbbopen-node-state, when documented!
+
+\begin{alsos}{standard-event-instance}
+\also[print-instance-slots]
+\also[standard-event-instance]
+\also[standard-unit-instance]
+\end{alsos}
 
 \end{functiondoc}
 
@@ -11320,32 +11345,9 @@ defined and signalled by the Agenda Shell.  Again classes shown within
 rectangles are abstract classes that cannot be signalled.
 
 \begin{alsos}{standard-event-class}
+\also[print-instance-slots]
 \also[standard-gbbopen-instance]
 \also[standard-event-class]
-\end{alsos}
-
-\end{functiondoc}
-
-%% ------------------------------------------------------------------------
-
-\begin{functiondoc}{Class}{standard-gbbopen-instance}{}
-\index{class!standard-gbbopen-instance@\textbf{standard-gbbopen-instance}}%
-  
-\fnsyntax
-
-\fnpackage \code{:gbbopen-tools}
-
-\fnmodule \code{:gbbopen-tools}
-
-\fndescription The class \textbf{standard-gbbopen-instance} is a subclass of
-\code{standard-object}.  It is a superclass of
-\textbf{\entlink{standard-event-instance}} and
-\textbf{\entlink{standard-unit-instance}}.
-%% and gbbopen-node-state, when documented!
-
-\begin{alsos}{standard-event-instance}
-\also[standard-event-instance]
-\also[standard-unit-instance]
 \end{alsos}
 
 \end{functiondoc}
@@ -11396,6 +11398,7 @@ The class \textbf{standard-space-instance} is the default \glref{class} of
 \textbf{\entlinknoex{standard-unit-instance}}.
 
 \begin{alsos}{standard-unit-instance}
+\also[print-instance-slots]
 \also[standard-space-class]
 \also[standard-unit-instance]
 \end{alsos}
@@ -11453,6 +11456,7 @@ A \glref{space~instance} is also a \glref{unit~instance}, so
 \textbf{standard-unit-instance}.
 
 \begin{alsos}{standard-space-instance}
+\also[print-instance-slots]
 \also[standard-gbbopen-instance]
 \also[standard-space-instance]
 \also[standard-unit-class]
@@ -13416,8 +13420,9 @@ The class \textbf{standard-ksa-class} is the default class of
 \glref{ksa~class}es defined by \textbf{\entlinknoex{define-ksa-class}}.
 It is a subclass of \textbf{\entlinknoex{standard-unit-class}}.
 
-\begin{alsos}{standard-unit-class}
+\begin{alsos}{print-instance-slots}
 \also[define-ksa-class]
+\also[print-instance-slots]
 \also[standard-unit-class]
 \end{alsos}
 
