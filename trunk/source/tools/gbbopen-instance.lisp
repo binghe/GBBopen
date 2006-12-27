@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/tools/gbbopen-instance.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Apr 14 11:30:34 2006 *-*
+;;;; *-* Last-Edit: Wed Dec 27 10:16:05 2006 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -26,7 +26,8 @@
 (in-package :gbbopen-tools)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (export '(print-instance-slots)))
+  (export '(print-instance-slots
+            standard-gbbopen-instance)))
 
 (defgeneric print-instance-slots (instance stream))
 
