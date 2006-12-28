@@ -3,7 +3,7 @@
    "DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <!-- XML file produced from file: reference.tex
-     using Hyperlatex v 2.9-in-waiting-rk (oct06) (c) Otfried Cheong -->
+     using Hyperlatex v 2.9-in-waiting-rk (c) Otfried Cheong -->
 <head>
 <title>GBBopen 0.9.5 Reference -- define-module</title>
 </p>
@@ -35,37 +35,37 @@ required-module order that conflicts with the fully expanded required-module
 order in a previously defined module.
 </p>
 <p><span class="fndoclabel">Detailed syntax</span> <br /></p>
-<table class="tight"><tbody><tr><td valign="baseline" colspan="1" align="left">
-<p><var>module-option</var>&nbsp;::=
+<table class="tight"><table><tbody><tr>
+<td valign="baseline" colspan="1" align="left">
+<var>module-option</var>&nbsp;::=
 </td><td valign="baseline" colspan="1" align="left"> <code>(:requires</code> <var>module-name</var>*<code>)</code> | </td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</td><td valign="baseline" colspan="1" align="left"> <code>(:directory</code> <var>directory-specifier</var><code>)</code> | </td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</td><td valign="baseline" colspan="1" align="left"> <code>(:files</code> <var>file-specifier</var>*<code>)</code></td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</td></tr></tbody></table>
-</p>
-<table class="tight"><tbody><tr><td valign="baseline" colspan="1" align="left">
-<p><var>directory-specifier</var>&nbsp;::=
+<tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code>(:directory</code> <var>directory-specifier</var><code>)</code> | </td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code>(:files</code> <var>file-specifier</var>*<code>)</code></td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
+<table class="tight"><table><tbody><tr>
+<td valign="baseline" colspan="1" align="left">
+<var>directory-specifier</var>&nbsp;::=
 </td><td valign="baseline" colspan="1" align="left"> <var>root-or-relative-directory subdirectory</var>* </td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</td></tr></tbody></table>
-</p>
-<table class="tight"><tbody><tr><td valign="baseline" colspan="1" align="left">
-<p><var>file-specifier</var>&nbsp;::= 
+<tr>
+<td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
+<table class="tight"><table><tbody><tr>
+<td valign="baseline" colspan="1" align="left">
+<var>file-specifier</var>&nbsp;::= 
 </td><td valign="baseline" colspan="1" align="left"> <var>file-name</var> | </td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</td><td valign="baseline" colspan="1" align="left"> <code>(</code><var>file-name file-option</var>*<code>)</code> </td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</td></tr></tbody></table>
-</p>
-<table class="tight"><tbody><tr><td valign="baseline" colspan="1" align="left">
-<p><var>file-option</var>&nbsp;::= </td><td valign="baseline" colspan="1" align="left"> <code>:recompile</code> | 
+<tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code>(</code><var>file-name file-option</var>*<code>)</code> </td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
+<table class="tight"><table><tbody><tr>
+<td valign="baseline" colspan="1" align="left">
+<var>file-option</var>&nbsp;::= </td><td valign="baseline" colspan="1" align="left"> <code>:recompile</code> | 
 <code>:reload</code> | <code>:source</code> | 
 <code>:forces-recompile</code> | <code>:noload</code> </td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</td></tr></tbody></table>
-</p>
+<tr>
+<td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
 <p><span class="fndoclabel">Terms</span><table class="tight">
 <tr valign="top"><td valign="baseline"><i>root-or-relative-directory</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A keyword naming a <a href="ref-glossary.html#gl:root">root</a> or
 <a href="ref-glossary.html#id134">relative&nbsp;directory</a> or <code>nil</code>, indicating that the module 
@@ -87,24 +87,24 @@ consistent with all previously defined modules.
 </p>
 <p><var>File-options</var> have the following effects: 
 <a name="id1"></a></p>
-<table class="tight"><tbody><tr><td valign="baseline" colspan="1" align="left">
-<p><code>:forces-recompile</code>&nbsp;&nbsp;&nbsp;&nbsp; </td><td valign="baseline" colspan="1" align="left"> If the file has changed, recompile and
+<table class="tight"><table><tbody><tr>
+<td valign="baseline" colspan="1" align="left">
+<code>:forces-recompile</code>&nbsp;&nbsp;&nbsp;&nbsp; </td><td valign="baseline" colspan="1" align="left"> If the file has changed, recompile and
 reload all subsequent files and modules </td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</p>
-<p><code>:noload</code> </td><td valign="baseline" colspan="1" align="left"> Compile, but do not load the file </td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</p>
-<p><code>:recompile</code> </td><td valign="baseline" colspan="1" align="left"> Always recompile the file </td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</p>
-<p><code>:reload</code> </td><td valign="baseline" colspan="1" align="left"> Always reload the file </td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</p>
-<p><code>:source</code> </td><td valign="baseline" colspan="1" align="left"> Do not compile the file (load the source instead) </td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</td></tr></tbody></table>
-</p>
+<tr>
+<td valign="baseline" colspan="1" align="left">
+<code>:noload</code> </td><td valign="baseline" colspan="1" align="left"> Compile, but do not load the file </td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left">
+<code>:recompile</code> </td><td valign="baseline" colspan="1" align="left"> Always recompile the file </td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left">
+<code>:reload</code> </td><td valign="baseline" colspan="1" align="left"> Always reload the file </td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left">
+<code>:source</code> </td><td valign="baseline" colspan="1" align="left"> Do not compile the file (load the source instead) </td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
 <p><span class="fndoclabel">See also</span>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-define-relative-directory.html"><b>define-relative-directory</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-define-root-directory.html"><b>define-root-directory</b></a>

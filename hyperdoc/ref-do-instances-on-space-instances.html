@@ -3,7 +3,7 @@
    "DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <!-- XML file produced from file: reference.tex
-     using Hyperlatex v 2.9-in-waiting-rk (oct06) (c) Otfried Cheong -->
+     using Hyperlatex v 2.9-in-waiting-rk (c) Otfried Cheong -->
 <head>
 <title>GBBopen 0.9.5 Reference -- do-instances-on-space-instances</title>
 </p>
@@ -45,142 +45,142 @@ applied after pattern-matching tests occur
 </td></tr></table>
 </p>
 <p><span class="fndoclabel">Detailed syntax</span> <br /><a name="id1"></a></p>
-<table class="tight"><tbody><tr><td valign="baseline" colspan="1" align="left">
-<p><var>unit-classes-specifier</var>&nbsp;::= </td><td valign="baseline" colspan="1" align="left"> <code>t</code> | 
+<table class="tight"><table><tbody><tr>
+<td valign="baseline" colspan="1" align="left">
+<var>unit-classes-specifier</var>&nbsp;::= </td><td valign="baseline" colspan="1" align="left"> <code>t</code> | 
 <var>single-unit-class-specifier</var> 
 | <code>(</code><var>single-unit-class-specifier</var><sup>+</sup><code>)</code></td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</td></tr></tbody></table>
-</p>
-<table class="tight"><tbody><tr><td valign="baseline" colspan="1" align="left">
-<p><var>single-unit-class-specifier</var>&nbsp;::= 
+<tr>
+<td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
+<table class="tight"><table><tbody><tr>
+<td valign="baseline" colspan="1" align="left">
+<var>single-unit-class-specifier</var>&nbsp;::= 
 </td><td valign="baseline" colspan="1" align="left"> <var>atomic-unit-class</var> |
 <code>(</code><var>atomic-unit-class subclassing-specifier</var><code>)</code></td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</td></tr></tbody></table>
-</p>
-<table class="tight"><tbody><tr><td valign="baseline" colspan="1" align="left">
-<p><var>atomic-unit-class</var>&nbsp;::= </td><td valign="baseline" colspan="1" align="left"> <var>unit-class</var> | 
+<tr>
+<td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
+<table class="tight"><table><tbody><tr>
+<td valign="baseline" colspan="1" align="left">
+<var>atomic-unit-class</var>&nbsp;::= </td><td valign="baseline" colspan="1" align="left"> <var>unit-class</var> | 
 <var>unit-class-name</var> </td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</td></tr></tbody></table>
-</p>
-<table class="tight"><tbody><tr><td valign="baseline" colspan="1" align="left">
-<p><var>subclassing-specifier</var>&nbsp;::= 
+<tr>
+<td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
+<table class="tight"><table><tbody><tr>
+<td valign="baseline" colspan="1" align="left">
+<var>subclassing-specifier</var>&nbsp;::= 
 <a name="id2"></a></td><td valign="baseline" colspan="1" align="left"> <code>:plus-subclasses</code> | <code>:no-subclasses</code> </td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</td></tr></tbody></table>
-</p>
-<br /><a name="id3"></a><table class="tight"><tbody><tr><td valign="baseline" colspan="1" align="left">
-<p><var>pattern</var>&nbsp;::=
+<tr>
+<td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
+<br /><a name="id3"></a><table class="tight"><table><tbody><tr>
+<td valign="baseline" colspan="1" align="left">
+<var>pattern</var>&nbsp;::=
 <a name="id4"></a></td><td valign="baseline" colspan="1" align="left"> <var>subpattern</var> | <code>t</code> | <code>:all</code></td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</td></tr></tbody></table>
-</p>
-<table class="tight"><tbody><tr><td valign="baseline" colspan="1" align="left">
-<p><var>subpattern</var>&nbsp;::= 
+<tr>
+<td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
+<table class="tight"><table><tbody><tr>
+<td valign="baseline" colspan="1" align="left">
+<var>subpattern</var>&nbsp;::= 
 <a name="id5"></a></td><td valign="baseline" colspan="1" align="left"> <var>pattern-element</var> |</td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</td><td valign="baseline" colspan="1" align="left"> <code>(not</code> <var>subpattern</var><code>)</code> | </td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</td><td valign="baseline" colspan="1" align="left"> <code>(and</code> <var>subpattern</var>*<code>)</code> | </td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</td><td valign="baseline" colspan="1" align="left"> <code>(or</code> <var>subpattern</var>*<code>)</code></td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</td></tr></tbody></table>
-</p>
-<table class="tight"><tbody><tr><td valign="baseline" colspan="1" align="left">
-<p><var>pattern-element</var>&nbsp;::= </td><td valign="baseline" colspan="1" align="left"> <code>(</code><var>pattern-op dimension-names</var>
+<tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code>(not</code> <var>subpattern</var><code>)</code> | </td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code>(and</code> <var>subpattern</var>*<code>)</code> | </td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code>(or</code> <var>subpattern</var>*<code>)</code></td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
+<table class="tight"><table><tbody><tr>
+<td valign="baseline" colspan="1" align="left">
+<var>pattern-element</var>&nbsp;::= </td><td valign="baseline" colspan="1" align="left"> <code>(</code><var>pattern-op dimension-names</var>
 <var>pattern-values</var> <var>option</var>*<code>)</code> | </td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</td><td valign="baseline" colspan="1" align="left"> <code>(</code><var>boolean-dimension-unary-pattern-op dimension-names</var> 
+<tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code>(</code><var>boolean-dimension-unary-pattern-op dimension-names</var> 
 <var>option</var>*<code>)</code> </td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</td></tr></tbody></table>
-</p>
-<table class="tight"><tbody><tr><td valign="baseline" colspan="1" align="left">
-<p><var>pattern-op</var>&nbsp;::= </td><td valign="baseline" colspan="1" align="left"> <var>ordered-dimension-pattern-op</var> | </td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</td><td valign="baseline" colspan="1" align="left"> <var>enumerated-dimension-pattern-op</var> | </td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</td><td valign="baseline" colspan="1" align="left"> <var>boolean-dimension-pattern-op</var> </td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</td></tr></tbody></table>
-</p>
-<table class="tight"><tbody><tr><td valign="baseline" colspan="1" align="left">
-<p><var>ordered-dimension-pattern-op</var>&nbsp;::=
+<tr>
+<td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
+<table class="tight"><table><tbody><tr>
+<td valign="baseline" colspan="1" align="left">
+<var>pattern-op</var>&nbsp;::= </td><td valign="baseline" colspan="1" align="left"> <var>ordered-dimension-pattern-op</var> | </td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <var>enumerated-dimension-pattern-op</var> | </td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <var>boolean-dimension-pattern-op</var> </td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
+<table class="tight"><table><tbody><tr>
+<td valign="baseline" colspan="1" align="left">
+<var>ordered-dimension-pattern-op</var>&nbsp;::=
 <a name="id6"></a></td><td valign="baseline" colspan="1" align="left"> <code><i>&lt;</i></code> | <code><i>&lt;</i>=</code> | <code><i>&gt;</i>=</code> | 
 <code><i>&gt;</i></code> | <code>=</code> | <code>/=</code> | </td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</td><td valign="baseline" colspan="1" align="left"> <code>within</code> | <code>covers</code> | <code>overlaps</code> |
+<tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code>within</code> | <code>covers</code> | <code>overlaps</code> |
 <code>starts</code> | <code>ends</code> </td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</td></tr></tbody></table>
-</p>
-<table class="tight"><tbody><tr><td valign="baseline" colspan="1" align="left">
-<p><var>enumerated-dimension-pattern-op</var>&nbsp;::= 
+<tr>
+<td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
+<table class="tight"><table><tbody><tr>
+<td valign="baseline" colspan="1" align="left">
+<var>enumerated-dimension-pattern-op</var>&nbsp;::= 
 <a name="id7"></a></td><td valign="baseline" colspan="1" align="left"> <code>eq</code> | <code>eql</code> | <code>equal</code> | <code>equalp</code> </td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</td></tr></tbody></table>
-</p>
-<table class="tight"><tbody><tr><td valign="baseline" colspan="1" align="left">
-<p><var>boolean-dimension-pattern-op</var>&nbsp;::= 
+<tr>
+<td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
+<table class="tight"><table><tbody><tr>
+<td valign="baseline" colspan="1" align="left">
+<var>boolean-dimension-pattern-op</var>&nbsp;::= 
 <a name="id8"></a></td><td valign="baseline" colspan="1" align="left"> <code>eqv</code> </td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</td></tr></tbody></table>
-</p>
-<table class="tight"><tbody><tr><td valign="baseline" colspan="1" align="left">
-<p><var>boolean-dimension-unary-pattern-op</var>&nbsp;::= 
+<tr>
+<td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
+<table class="tight"><table><tbody><tr>
+<td valign="baseline" colspan="1" align="left">
+<var>boolean-dimension-unary-pattern-op</var>&nbsp;::= 
 <a name="id9"></a></td><td valign="baseline" colspan="1" align="left"> <code>true</code> | <code>false</code> </td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</td></tr></tbody></table>
-</p>
-<table class="tight"><tbody><tr><td valign="baseline" colspan="1" align="left">
-<p><var>dimension-names</var>&nbsp;::= </td><td valign="baseline" colspan="1" align="left"> <var>dimension-name</var> | 
+<tr>
+<td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
+<table class="tight"><table><tbody><tr>
+<td valign="baseline" colspan="1" align="left">
+<var>dimension-names</var>&nbsp;::= </td><td valign="baseline" colspan="1" align="left"> <var>dimension-name</var> | 
 <code>(</code><var>dimension-name</var><sup>+</sup><code>)</code> </td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</td></tr></tbody></table>
-</p>
-<table class="tight"><tbody><tr><td valign="baseline" colspan="1" align="left">
-<p><var>pattern-values</var>&nbsp;::= 
+<tr>
+<td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
+<table class="tight"><table><tbody><tr>
+<td valign="baseline" colspan="1" align="left">
+<var>pattern-values</var>&nbsp;::= 
 <a name="id10"></a></td><td valign="baseline" colspan="1" align="left"> <var>pattern-value</var> | </td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</td><td valign="baseline" colspan="1" align="left"> <code>(</code><var>pattern-value</var><sup>+</sup><code>)</code> | </td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</td><td valign="baseline" colspan="1" align="left"> <code>(</code><var>pattern-value</var><sup>+</sup> <code>.</code> 
+<tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code>(</code><var>pattern-value</var><sup>+</sup><code>)</code> | </td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code>(</code><var>pattern-value</var><sup>+</sup> <code>.</code> 
 <var>pattern-value</var><code>)</code> | </td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</td><td valign="baseline" colspan="1" align="left"> <code>&#35;(</code><var>pattern-value</var><sup>+</sup><code>)</code> </td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</td></tr></tbody></table>
-</p>
-<table class="tight"><tbody><tr><td valign="baseline" colspan="1" align="left">
-<p><var>pattern-value</var>&nbsp;::= 
+<tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code>&#35;(</code><var>pattern-value</var><sup>+</sup><code>)</code> </td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
+<table class="tight"><table><tbody><tr>
+<td valign="baseline" colspan="1" align="left">
+<var>pattern-value</var>&nbsp;::= 
 <a name="id11"></a></td><td valign="baseline" colspan="1" align="left"> <var>point</var> | <var>interval</var> |
 <var>element</var> | <var>set</var> </td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</td></tr></tbody></table>
-</p>
-<table class="tight"><tbody><tr><td valign="baseline" colspan="1" align="left">
-<p><var>interval</var>&nbsp;::= </td><td valign="baseline" colspan="1" align="left"> <code>(</code><var>start end</var><code>)</code> | 
+<tr>
+<td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
+<table class="tight"><table><tbody><tr>
+<td valign="baseline" colspan="1" align="left">
+<var>interval</var>&nbsp;::= </td><td valign="baseline" colspan="1" align="left"> <code>(</code><var>start end</var><code>)</code> | 
 <code>(</code><var>start</var> <code>.</code> <var>end</var><code>)</code> | 
 <code>&#35;(</code><var>start end</var><code>)</code> </td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</td></tr></tbody></table>
-</p>
+<tr>
+<td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
 <p><span class="fndoclabel">Terms</span></p>
-<table class="tight"><tbody><tr><td valign="baseline" colspan="1" align="left">
-<p><var>point</var>
+<table class="tight"><table><tbody><tr>
+<td valign="baseline" colspan="1" align="left">
+<var>point</var>
 <a name="id12"></a></td><td valign="baseline" colspan="1" align="left"> </td><td valign="baseline" colspan="1" align="left"> A number, <code>infinity</code>, or <code>-infinity</code></td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-<var>start</var> </td><td valign="baseline" colspan="1" align="left"> </td><td valign="baseline" colspan="1" align="left"> A number or <code>infinity</code></td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-<var>end</var> </td><td valign="baseline" colspan="1" align="left"> </td><td valign="baseline" colspan="1" align="left"> A number or <code>-infinity</code></td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-<var>element</var> </td><td valign="baseline" colspan="1" align="left"> &nbsp;&nbsp; </td><td valign="baseline" colspan="1" align="left"> An object</td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</td></tr></tbody></table>
-</p>
+<tr>
+<td valign="baseline" colspan="1" align="left"><var>start</var> </td><td valign="baseline" colspan="1" align="left"> </td><td valign="baseline" colspan="1" align="left"> A number or <code>infinity</code></td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left"><var>end</var> </td><td valign="baseline" colspan="1" align="left"> </td><td valign="baseline" colspan="1" align="left"> A number or <code>-infinity</code></td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left"><var>element</var> </td><td valign="baseline" colspan="1" align="left"> &nbsp;&nbsp; </td><td valign="baseline" colspan="1" align="left"> An object</td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
 <p><span class="fndoclabel">Description</span> <br />The iteration is performed only once for each selected
 <a href="ref-glossary.html#id160">unit&nbsp;instance</a>, even if the <a href="ref-glossary.html#id160">unit&nbsp;instance</a> resides on multiple
 <a href="ref-glossary.html#id144">space&nbsp;instance</a>s.

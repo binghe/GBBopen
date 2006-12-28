@@ -3,7 +3,7 @@
    "DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <!-- XML file produced from file: reference.tex
-     using Hyperlatex v 2.9-in-waiting-rk (oct06) (c) Otfried Cheong -->
+     using Hyperlatex v 2.9-in-waiting-rk (c) Otfried Cheong -->
 <head>
 <title>GBBopen 0.9.5 Reference -- define-class</title>
 </p>
@@ -41,69 +41,69 @@ direct superclass of the <a href="ref-glossary.html#gl:class">class</a> <var>cla
 <p><span class="fndoclabel">Returns</span> <br />The newly defined <a href="ref-glossary.html#gl:class">class</a> object.
 </p>
 <p><span class="fndoclabel">Detailed syntax</span> <br /></p>
-<table class="tight"><tbody><tr><td valign="baseline" colspan="1" align="left">
-<p><var>slot-specifier</var>&nbsp;::=
+<table class="tight"><table><tbody><tr>
+<td valign="baseline" colspan="1" align="left">
+<var>slot-specifier</var>&nbsp;::=
 </td><td valign="baseline" colspan="1" align="left"> <var>slot-name</var> |</td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</td><td valign="baseline" colspan="1" align="left"> <code>(</code><var>slot-name</var> [[<var>slot-option</var>]]<code>)</code> </td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</td></tr></tbody></table>
-</p>
-<table class="tight"><tbody><tr><td valign="baseline" colspan="1" align="left">
-<p><var>slot-option</var>&nbsp;::=
+<tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code>(</code><var>slot-name</var> [[<var>slot-option</var>]]<code>)</code> </td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
+<table class="tight"><table><tbody><tr>
+<td valign="baseline" colspan="1" align="left">
+<var>slot-option</var>&nbsp;::=
 </td><td valign="baseline" colspan="1" align="left"> &#123;<code>:accessor</code> <var>reader-function-name</var>&#125;* |</td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</td><td valign="baseline" colspan="1" align="left"> &#123;<code>:allocation</code> <var>allocation-type</var>&#125; |</td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</td><td valign="baseline" colspan="1" align="left"> &#123;<code>:documentation</code> <var>string</var>&#125; |</td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</td><td valign="baseline" colspan="1" align="left"> &#123;<code>:initarg</code> <var>initarg-name</var>&#125;* |</td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</td><td valign="baseline" colspan="1" align="left"> &#123;<code>:initform</code> <var>form</var>&#125; |</td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</td><td valign="baseline" colspan="1" align="left"> &#123;<code>:reader</code> <var>reader-function-name</var>&#125;* |</td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</td><td valign="baseline" colspan="1" align="left"> &#123;<code>:type</code> <var>type-specifier</var>&#125; |</td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</td><td valign="baseline" colspan="1" align="left"> &#123;<code>:writer</code> <var>writer-function-name</var>&#125;* </td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</td></tr></tbody></table>
-</p>
-<table class="tight"><tbody><tr><td valign="baseline" colspan="1" align="left">
-<p><var>class-option</var>&nbsp;::=
+<tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> &#123;<code>:allocation</code> <var>allocation-type</var>&#125; |</td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> &#123;<code>:documentation</code> <var>string</var>&#125; |</td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> &#123;<code>:initarg</code> <var>initarg-name</var>&#125;* |</td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> &#123;<code>:initform</code> <var>form</var>&#125; |</td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> &#123;<code>:reader</code> <var>reader-function-name</var>&#125;* |</td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> &#123;<code>:type</code> <var>type-specifier</var>&#125; |</td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> &#123;<code>:writer</code> <var>writer-function-name</var>&#125;* </td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
+<table class="tight"><table><tbody><tr>
+<td valign="baseline" colspan="1" align="left">
+<var>class-option</var>&nbsp;::=
 </td><td valign="baseline" colspan="1" align="left"> <code>(:default-initargs .</code> <var>initarg-list</var><code>)</code> |</td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</td><td valign="baseline" colspan="1" align="left"> <code>(:documentation</code> <var>string</var><code>)</code> |</td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</td><td valign="baseline" colspan="1" align="left"> <code>(:export-class-name</code> <var>boolean</var><code>)</code> |</td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</td><td valign="baseline" colspan="1" align="left"> <code>(:export-accessors</code> <var>boolean</var><code>)</code> |</td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</td><td valign="baseline" colspan="1" align="left"> <code>(:generate-accessors</code> <var>slots-specifier</var><code>)</code> |</td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</td><td valign="baseline" colspan="1" align="left"> <code>(:generate-accessors-format</code> 
+<tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code>(:documentation</code> <var>string</var><code>)</code> |</td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code>(:export-class-name</code> <var>boolean</var><code>)</code> |</td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code>(:export-accessors</code> <var>boolean</var><code>)</code> |</td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code>(:generate-accessors</code> <var>slots-specifier</var><code>)</code> |</td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code>(:generate-accessors-format</code> 
 &#123;<code>:prefix</code> | <code>:suffix</code>&#125; |</td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</td><td valign="baseline" colspan="1" align="left"> <code>(:generate-accessors-prefix</code> &#123;<var>string</var> |
+<tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code>(:generate-accessors-prefix</code> &#123;<var>string</var> |
 <var>symbol</var>&#125;<var><code></code></var>) |</td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</td><td valign="baseline" colspan="1" align="left"> <code>(:generate-accessors-suffix</code> &#123;<var>string</var> |
+<tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code>(:generate-accessors-suffix</code> &#123;<var>string</var> |
 <var>symbol</var>&#125;<var><code></code></var>) |</td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</td><td valign="baseline" colspan="1" align="left"> <code>(:generate-initargs</code> <var>slots-specifier</var><code>)</code> |</td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</td><td valign="baseline" colspan="1" align="left"> <code>(:metaclass</code> <var>class-name</var><code>)</code> </td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</td></tr></tbody></table>
-</p>
-<table class="tight"><tbody><tr><td valign="baseline" colspan="1" align="left">
-<p><var>slots-specifier</var>&nbsp;::= </td><td valign="baseline" colspan="1" align="left"> <code>nil</code> | <code>t</code> |
+<tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code>(:generate-initargs</code> <var>slots-specifier</var><code>)</code> |</td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code>(:metaclass</code> <var>class-name</var><code>)</code> </td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
+<table class="tight"><table><tbody><tr>
+<td valign="baseline" colspan="1" align="left">
+<var>slots-specifier</var>&nbsp;::= </td><td valign="baseline" colspan="1" align="left"> <code>nil</code> | <code>t</code> |
 <var>included-slot-name</var>* |</td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</td><td valign="baseline" colspan="1" align="left"> &#123;<code>t :exclude</code> <var>excluded-slot-name</var>*&#125; </td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</td></tr></tbody></table>
-</p>
+<tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> &#123;<code>t :exclude</code> <var>excluded-slot-name</var>*&#125; </td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
 <p><span class="fndoclabel">Terms</span><table class="tight">
 <tr valign="top"><td valign="baseline"><i>class-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A non-<code>nil</code>, non-keyword symbol that names a
 <a href="ref-glossary.html#gl:class">class</a> 
