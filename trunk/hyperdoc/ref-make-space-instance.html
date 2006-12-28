@@ -3,7 +3,7 @@
    "DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <!-- XML file produced from file: reference.tex
-     using Hyperlatex v 2.9-in-waiting-rk (oct06) (c) Otfried Cheong -->
+     using Hyperlatex v 2.9-in-waiting-rk (c) Otfried Cheong -->
 <head>
 <title>GBBopen 0.9.5 Reference -- make-space-instance</title>
 </p>
@@ -62,71 +62,71 @@ for each <a href="ref-glossary.html#id144">space&nbsp;instance</a> on which the 
 </p>
 </ol>
 <p><span class="fndoclabel">Detailed syntax</span> <br /></p>
-<table class="tight"><tbody><tr><td valign="baseline" colspan="1" align="left">
-<p><var>allowed-unit-classes</var>&nbsp;::= <var>unit-classes-specifier</var>
+<table class="tight"><table><tbody><tr>
+<td valign="baseline" colspan="1" align="left">
+<var>allowed-unit-classes</var>&nbsp;::= <var>unit-classes-specifier</var>
 | <code>nil</code></td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</td></tr></tbody></table>
-</p>
-<table class="tight"><tbody><tr><td valign="baseline" colspan="1" align="left">
-<p><var>unit-classes-specifier</var>&nbsp;::= </td><td valign="baseline" colspan="1" align="left"> <code>t</code> | 
+<tr>
+<td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
+<table class="tight"><table><tbody><tr>
+<td valign="baseline" colspan="1" align="left">
+<var>unit-classes-specifier</var>&nbsp;::= </td><td valign="baseline" colspan="1" align="left"> <code>t</code> | 
 <var>single-unit-class-specifier</var> 
 | <code>(</code><var>single-unit-class-specifier</var><sup>+</sup><code>)</code></td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</td></tr></tbody></table>
-</p>
-<table class="tight"><tbody><tr><td valign="baseline" colspan="1" align="left">
-<p><var>single-unit-class-specifier</var>&nbsp;::= 
+<tr>
+<td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
+<table class="tight"><table><tbody><tr>
+<td valign="baseline" colspan="1" align="left">
+<var>single-unit-class-specifier</var>&nbsp;::= 
 </td><td valign="baseline" colspan="1" align="left"> <var>atomic-unit-class</var> |
 <code>(</code><var>atomic-unit-class subclassing-specifier</var><code>)</code></td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</td></tr></tbody></table>
-</p>
-<table class="tight"><tbody><tr><td valign="baseline" colspan="1" align="left">
-<p><var>atomic-unit-class</var>&nbsp;::= </td><td valign="baseline" colspan="1" align="left"> <var>unit-class</var> | 
+<tr>
+<td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
+<table class="tight"><table><tbody><tr>
+<td valign="baseline" colspan="1" align="left">
+<var>atomic-unit-class</var>&nbsp;::= </td><td valign="baseline" colspan="1" align="left"> <var>unit-class</var> | 
 <var>unit-class-name</var> </td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</td></tr></tbody></table>
-</p>
-<br /><table class="tight"><tbody><tr><td valign="baseline" colspan="1" align="left">
-<p><var>storage</var>&nbsp;::= 
+<tr>
+<td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
+<br /><table class="tight"><table><tbody><tr>
+<td valign="baseline" colspan="1" align="left">
+<var>storage</var>&nbsp;::= 
 </td><td valign="baseline" colspan="1" align="left"> <code>(</code><var>unit-class-specifier dimension-names 
 storage-specification</var><code>)</code></td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</td></tr></tbody></table>
-</p>
-<table class="tight"><tbody><tr><td valign="baseline" colspan="1" align="left">
-<p><var>dimension-names</var>&nbsp;::= </td><td valign="baseline" colspan="1" align="left"> <var>dimension-name</var> | 
+<tr>
+<td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
+<table class="tight"><table><tbody><tr>
+<td valign="baseline" colspan="1" align="left">
+<var>dimension-names</var>&nbsp;::= </td><td valign="baseline" colspan="1" align="left"> <var>dimension-name</var> | 
 <code>(</code><var>dimension-name</var><sup>+</sup><code>)</code> | <code>t</code> </td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</td></tr></tbody></table>
-</p>
-<table class="tight"><tbody><tr><td valign="baseline" colspan="1" align="left">
-<p><var>storage-specification</var>&nbsp;::=
+<tr>
+<td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
+<table class="tight"><table><tbody><tr>
+<td valign="baseline" colspan="1" align="left">
+<var>storage-specification</var>&nbsp;::=
 <a name="id2"></a></td><td valign="baseline" colspan="1" align="left"> <code>unstructured</code> |</td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</td><td valign="baseline" colspan="1" align="left"> <code>boolean</code> |</td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</td><td valign="baseline" colspan="1" align="left"> <code>uniform-buckets</code> <code>:layout</code> 
+<tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code>boolean</code> |</td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code>uniform-buckets</code> <code>:layout</code> 
 <var>dimension-buckets-specification</var><sup>+</sup> |</td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</td><td valign="baseline" colspan="1" align="left"> <code>hashed</code> [<code>:test</code> <var>hashed-test</var>]</td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</td></tr></tbody></table>
-</p>
-<table class="tight"><tbody><tr><td valign="baseline" colspan="1" align="left">
-<p><var>dimension-buckets-specification</var>&nbsp;::= 
+<tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code>hashed</code> [<code>:test</code> <var>hashed-test</var>]</td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
+<table class="tight"><table><tbody><tr>
+<td valign="baseline" colspan="1" align="left">
+<var>dimension-buckets-specification</var>&nbsp;::= 
 </td><td valign="baseline" colspan="1" align="left"> <code>(</code><var>start-value end-value bucket-width</var><code>)</code></td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</td></tr></tbody></table>
-</p>
-<table class="tight"><tbody><tr><td valign="baseline" colspan="1" align="left">
-<p><var>hashed-test</var>&nbsp;::= 
+<tr>
+<td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
+<table class="tight"><table><tbody><tr>
+<td valign="baseline" colspan="1" align="left">
+<var>hashed-test</var>&nbsp;::= 
 </td><td valign="baseline" colspan="1" align="left"> <code>eq</code> | <code>eql</code> | 
 <code>equal</code> | <code>equalp</code></td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</td></tr></tbody></table>
-</p>
+<tr>
+<td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
 <a name="id3"></a><p><span class="fndoclabel">Description</span> <br />Specifying a <code>:space-instances</code> initialization argument causes that value
 to be used instead of any <code>:initial-space-instances</code> specification
 associated with the <a href="ref-glossary.html#id146">space&nbsp;class</a>.
