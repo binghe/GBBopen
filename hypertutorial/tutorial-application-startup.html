@@ -3,7 +3,7 @@
    "DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <!-- XML file produced from file: tutorial.tex
-     using Hyperlatex v 2.9-in-waiting-rk (oct06) (c) Otfried Cheong -->
+     using Hyperlatex v 2.9-in-waiting-rk (c) Otfried Cheong -->
 <head>
 <title>GBBopen 0.9.5 Tutorial -- Application Startup and Event Functions</title>
 </p>
@@ -38,7 +38,6 @@ dimensional specifications of a unit class
 </ul>
 </p>
 <hr color="99CCCC">
-
 <h2><a name="id1">Prerequisites</a></h2>
 <p><ul class="tight"><li>The <code>tutorial-example.lisp</code> file as modified thus far:
 </ul>
@@ -76,7 +75,6 @@ dimensional specifications of a unit class
 <p><ul class="tight"><li>The <code>:agenda-shell-user</code> module is loaded
 </ul>
 </p>
-
 <h2><a name="id2">Step 1: Define an initialization function</a></h2><p>
 Edit your <code>tutorial-example.lisp</code> file and add the following function
 definition at the end of the file:
@@ -110,7 +108,6 @@ dimensions <code>x</code> and <code>y</code>.  We could have had
 the last exercise.  However, I prefer creating all new instances
 (other than KSs) over reuse when re-running an application.
 </p>
-
 <h2><a name="id3">Step 2: Add an event function</a></h2><p>
 GBBopen allows you to attach functions, called <i>event
 functions</i>, that are called whenever a specific event is signalled.
@@ -149,7 +146,6 @@ evaluating:
 location is purely a code organizational style preference&mdash;the form could be
 placed anywhere relative to the function definition.)
 </p>
-
 <h2><a name="id4">Step 3: Run the application</a></h2><p>
 Start a fresh Common Lisp session, compile and load the
 <code>tutorial-example.lisp</code> file directly from the editor buffer (using
@@ -171,7 +167,6 @@ all the details of starting up our application.  We no longer have to remember
 to create the <code>known-world</code> space instance or to reset GBBopen before
 running the application another time.
 </p>
-
 <h2><a name="id5">Step 4: Run it Again</a></h2><p>
 Let's verify that we can re-run our application. Without doing anything else,
 start the Agenda Shell again:
@@ -188,8 +183,8 @@ start the Agenda Shell again:
 <p>As before our <code>initializations</code> event function took care of all the
 details of starting up our application.
 </p>
-
-<h2><a name="id6">Step 5: It's a new world<i>...</i></a></h2>
+</p>
+<h2><a name="id6">Step 5: It's a new world<i>...</i></a></h2><p>
 GBBopen allows us to restrict the classes of unit instances that can be stored
 on a space instance.  For example, we can limit the <code>known-world</code> to
 <code>location</code> unit instances by specifying an <code>:allowed-unit-classes</code>
@@ -243,7 +238,6 @@ unit class:
      :dimensions <font color="#000000">(unit-class-dimensions 'location)</font>
      :allowed-unit-classes 'location))
 </pre></font>
-
 <h2><a name="id7">Step 6: Run the application again</a></h2><p>
 Compile and load the <code>tutorial-example.lisp</code> file directly from the
 editor buffer (using <code>C-c C-k</code> in SLIME; <code>C-c C-b</code> in ELI) and start

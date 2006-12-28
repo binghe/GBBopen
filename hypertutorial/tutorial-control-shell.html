@@ -3,7 +3,7 @@
    "DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <!-- XML file produced from file: tutorial.tex
-     using Hyperlatex v 2.9-in-waiting-rk (oct06) (c) Otfried Cheong -->
+     using Hyperlatex v 2.9-in-waiting-rk (c) Otfried Cheong -->
 <head>
 <title>GBBopen 0.9.5 Tutorial -- Using a Control Shell</title>
 </p>
@@ -48,7 +48,6 @@ This exercise shows you how to:
 </ul>
 </p>
 <hr color="99CCCC">
-
 <h2><a name="id1">Prerequisites</a></h2><p>
 The <code>tutorial-example.lisp</code> file as modified thus far:
 </p>
@@ -70,7 +69,6 @@ The <code>tutorial-example.lisp</code> file as modified thus far:
               (x-of location)
               (y-of location))))
 </pre>
-
 <h2><a name="id2">Step 1: Load the Agenda Shell</a></h2><p>
 Start up a fresh Common Lisp session and load the <code>:agenda-shell-user</code>
 module, using the <code>:agenda-shell-user</code> REPL command:
@@ -87,7 +85,6 @@ module and, additionally, GBBopen's Agenda Shell control shell. As with the
 <code>:gbbopen-user</code> REPL command, the current package in the REPL is set to
 the <code>:gbbopen-user</code> package.
 </p>
-
 <h2><a name="id3">Step 2: Run the control shell</a></h2><p>
 Now, start the Agenda Shell:
 </p>
@@ -109,7 +106,6 @@ continues for an additional KS-execution cycle in case any executable KSAs
 resulted from the quiescence signal.  Again, no executable KSAs were found in
 cycle 2, so the Agenda Shell exits due to <code>:quiescence</code>.
 </p>
-
 <h2><a name="id4">Step 3: Define a KS</a></h2><p>
 So let's define a KS!
 </p>
@@ -170,7 +166,6 @@ define:
 </pre></font>
 <p>Note that the name of the <code>ks</code> unit instance is the name of the KS.
 </p>
-
 <h2><a name="id5">Step 4: Make the <code>known-world</code></a></h2><p>
 Before we can run our KS, we must make the <code>known-world</code> space
 instance:
@@ -180,7 +175,6 @@ instance:
   #&lt;standard-space-instance (known-world)&gt;
   &gt;
 </pre></font>
-
 <h2><a name="id6">Step 5: Start the control shell</a></h2><p>
 Start the Agenda Shell again:
 </p>
@@ -204,7 +198,6 @@ Start the Agenda Shell again:
 </pre></font>
 <p>The initial <code>location</code> unit instance is there!
 </p>
-
 <h2><a name="id7">Step 6: Display control shell activities</a></h2><p>
 Let's rerun the control shell, but this time we will ask GBBopen to display
 more of what the control shell is doing.  First, reset GBBopen:
@@ -259,7 +252,6 @@ detail in a later exercise.
   :quiescence
   &gt;
 </pre></font>
-
 <h2><a name="id9">Step 7: Control-shell stepping</a></h2><p>
 Let's rerun the control shell once again, but this time we will enable
 control-shell stepping. Again, reset GBBopen:

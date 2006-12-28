@@ -3,7 +3,7 @@
    "DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <!-- XML file produced from file: tutorial.tex
-     using Hyperlatex v 2.9-in-waiting-rk (oct06) (c) Otfried Cheong -->
+     using Hyperlatex v 2.9-in-waiting-rk (c) Otfried Cheong -->
 <head>
 <title>GBBopen 0.9.5 Tutorial -- Creating a Unit Instance</title>
 </p>
@@ -48,7 +48,6 @@ This exercise shows you how to:
 </ul>
 </p>
 <hr color="99CCCC">
-
 <h2><a name="id1">Prerequisites</a></h2><p>
 If you ended the Common Lisp session used in the last exercise, begin a new
 session and evaluate the following forms:
@@ -61,7 +60,6 @@ session and evaluate the following forms:
   #&lt;The gbbopen-user package&gt;
   &gt;
 </pre></font>
-
 <h2><a name="id2">Step 1: Define the <code>location</code> unit class</a></h2><p>
 We begin by defining a unit class <code>location</code> that has two slots,
 named <code>x</code> and <code>y</code>.
@@ -82,7 +80,6 @@ values for an instance.
 and modifying the <code>x</code> and <code>y</code> slot values.
 </ul>
 </p>
-
 <h2><a name="id3">Step 2: Create a unit instance</a></h2><p>
 Next, you can create a <i>unit instance</i> for the <code>location</code>
 unit class.  To simplify access to the unit instance during subsequent
@@ -105,7 +102,6 @@ instance's <code>x</code> and <code>y</code> slots with the values specified by 
 <code>:x</code> and <code>:y</code> initialization arguments.  The created unit instance
 is then assigned to the variable <code>ui</code>.
 </p>
-
 <h2><a name="id5">Step 3: Display a description of the unit instance</a></h2><p>
 Now, display a description of the unit instance by using GBBopen's
 <b>describe-instance</b> function.  Enter the following form:
@@ -129,7 +125,6 @@ increasing number.  (For example, the unit instance you just created is named
 <code>1</code>.)  GBBopen requires that each instance of a unit class is uniquely
 named within the class.
 </p>
-
 <h2><a name="id6">Step 4: Find a unit instance by its name</a></h2><p>
 You can look up a particular unit instance by its name. For example, to
 find the <code>location</code> <code>1</code> unit instance by name, enter the form:
@@ -142,7 +137,6 @@ find the <code>location</code> <code>1</code> unit instance by name, enter the f
 variable <code>ui</code>, but it is nice to know that we can always find our unit
 instance using its name.
 </p>
-
 <h2><a name="id7">Step 5: Change the <code>x</code> slot value</a></h2><p>
 Use the <code>x-of</code> reader and writer methods GBBopen defined for the
 <code>x</code> slot (in Step 3 above) to obtain the value of the <code>x</code> slot and
@@ -167,7 +161,6 @@ then to change its value to 50:
     &gt;
   </pre></font>
 </ol>
-
 <h2><a name="id10">Step 6: Again display the description of the unit instance</a></h2><p>
 Display the description of the <code>location</code> unit instance again, observing the
 changed <code>x</code> slot value:

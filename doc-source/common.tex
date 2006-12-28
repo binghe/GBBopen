@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
-%% *-* File: /home/gbbopen/current/doc-source/common.tex *-*
-%% *-* Last-Edit: Mon Nov 20 10:07:58 2006; Edited-By: cork *-*
+%% *-* File: /home/gbbopen/current/doc-source/test-common.tex *-*
+%% *-* Last-Edit: Thu Dec 28 06:25:02 2006; Edited-By: cork *-*
 %% *-* Machine: ruby.corkills.org *-*
 
 %% Copyright (C) 2003-2006, Dan Corkill <corkill@GBBopen.org>
@@ -892,21 +892,29 @@
 (defun hyperlatex-format-tabular ()
   (hyperlatex-parse-optional-argument)
   (setq hyperlatex-tabular-column-descr
-    (cons (cons 0 (hyperlatex-tabular-posn
-                   (hyperlatex-parse-required-argument)))
-          hyperlatex-tabular-column-descr))
+	(cons (cons 0 (hyperlatex-tabular-posn
+		       (hyperlatex-parse-required-argument)))
+	      hyperlatex-tabular-column-descr))
   (hyperlatex-format-endpar)
   (hyperlatex-blk)
   ;; Add "tight" class DDC
   (hyperlatex-gen (concat (hyperlatex-get-attributes "table")
                           " class=\"tight\""))
+  (hyperlatex-gen (hyperlatex-get-attributes "table"))
   (hyperlatex-gen (hyperlatex-get-attributes "tbody"))
-  (hyperlatex-gen "tr")
+  (hyperlatex-gen "tr" "\n")
+  ;; Do not put "\n" after <td> because it disturbs paragraph recognition.
+  ;; (A "\n" after <td> may precede one from the input, after \begin{tabular}, 
+  ;; which thus would mean a paragraph ending command.)
+  ;; Introducing a meta-character for "\n" would help for such cases.
   (hyperlatex-gen
    (format (concat "%s colspan=" hyperlatex-meta-dq "1" hyperlatex-meta-dq
 		   " align=" hyperlatex-meta-dq "%s" hyperlatex-meta-dq)
 	   (hyperlatex-get-attributes "td")
-	   (hyperlatex-tabular-cell-align)) "\n")
+	   (hyperlatex-tabular-cell-align)))
+;; RK's
+  (hyperlatex-mode-level-up "format-tabular")
+;; end of RK's
   ;; put cell text into a group to restore attributes like \bf at its end
   (hyperlatex-begin-group)
   ;; put contents of >{...} in front of the cell

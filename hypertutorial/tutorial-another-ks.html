@@ -3,7 +3,7 @@
    "DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <!-- XML file produced from file: tutorial.tex
-     using Hyperlatex v 2.9-in-waiting-rk (oct06) (c) Otfried Cheong -->
+     using Hyperlatex v 2.9-in-waiting-rk (c) Otfried Cheong -->
 <head>
 <title>GBBopen 0.9.5 Tutorial -- Add Another KS</title>
 </p>
@@ -32,7 +32,6 @@ triggering unit instance
 </ul>
 </p>
 <hr color="99CCCC">
-
 <h2><a name="id1">Prerequisites</a></h2>
 <p><ul class="tight"><li>The <code>tutorial-example.lisp</code> file as modified thus far:
 </ul>
@@ -85,7 +84,6 @@ triggering unit instance
 <p><ul class="tight"><li>The <code>:agenda-shell-user</code> module is loaded
 </ul>
 </p>
-
 <h2><a name="id2">Step 1: Add  another dimension</a></h2><p>
 It's time we introduce the notion of time to our application.  Edit the
 <code>location</code> unit-class definition in <code>tutorial-example.lisp</code>, adding
@@ -120,7 +118,6 @@ that it creates the initial <code>location</code> unit instance at time 0:
     ;; Create an initial location unit instance at (0,0) <font color="#000000">at time 0</font>:
     (make-instance 'location <font color="#000000">:time 0</font> :x 0 :y 0))
 </pre></font>
-
 <h2><a name="id3">Step 2: A test of time</a></h2><p>
 Let's check our work.  Compile and load the
 <code>tutorial-example.lisp</code> file directly from the editor buffer (using
@@ -154,7 +151,6 @@ again:
       [None]
   &gt;
 </pre></font>
-
 <h2><a name="id5">Step 3: Define another KS</a></h2><p>
 Define a KS called <code>random-walk-ks</code> that:
 </p>
@@ -177,7 +173,6 @@ otherwise, prints a message indicating that we've walked off the world
 </ul>
 </ul>
 </p>
-
 <h3><a name="id6">Step 3a: Define a utility function</a></h3><p>
 Begin implementing the <code>random-walk-ks</code> by adding the following
 utility function to the end of your <code>tutorial-example.lisp</code> file:
@@ -230,7 +225,6 @@ its body and returns the values resulting from evaluating the last form:
   5
   6
 </pre></font>
-
 <h3><a name="id8">Step 3b: Define the <code>random-walk-ks</code> execution function</a></h3><p>
 Next add the following KS-execution function to the end of your
 <code>tutorial-example.lisp</code> file:
@@ -267,7 +261,6 @@ whose creation triggered the KSA.  This pattern of obtaining the unit instance
 that triggered a KSA and then using that triggering unit instance as the
 context for the KS execution is typical of many KSs. 
 </p>
-
 <h3><a name="id10">Step 3c: Add the <code>random-walk-ks</code> definition</a></h3><p>
 Finally, add this <code>define-ks</code> form to the end of your
 <code>tutorial-example.lisp</code> file to complete the <code>random-walk-ks</code>
@@ -279,7 +272,6 @@ definition:
      :rating 100
      :execution-function 'random-walk-ks-function)
 </pre>
-
 <h2><a name="id12">Step 4:  Run the application</a></h2><p>
 Compile and load the <code>random-walk-ks</code> forms, and then start the Agenda Shell:
 </p>
@@ -313,7 +305,6 @@ quiescence before the Agenda Shell exits).  We now create one additional
 so we always create 3 fewer <code>location</code> instances than the total
 number of control-shell cycles.
 </p>
-
 <h2><a name="id14">Step 5:  Where have we been?</a></h2><p>
 It would be interesting to see where our random walk has taken us.  We could
 use GBBopen's <b>map-instances-of-class</b> iterator to print each of the
@@ -433,7 +424,6 @@ However, it suits our REPL-exploration needs just fine.  (There is a
 preferred over a mapper.)  We will explore a more efficient approach to
 displaying the random walk in the next exercise.
 </p>
-
 <h2><a name="id18">Step 6:  Run the application a few more times</a></h2><p>
 If we run the application a few more times, we eventually encounter a case
 where we create the allotted 75 <code>location</code> unit instances without walking

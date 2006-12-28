@@ -3,7 +3,7 @@
    "DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <!-- XML file produced from file: tutorial.tex
-     using Hyperlatex v 2.9-in-waiting-rk (oct06) (c) Otfried Cheong -->
+     using Hyperlatex v 2.9-in-waiting-rk (c) Otfried Cheong -->
 <head>
 <title>GBBopen 0.9.5 Tutorial -- Making Connections</title>
 </p>
@@ -28,7 +28,6 @@ This exercise shows you how to:
 </ul>
 </p>
 <hr color="99CCCC">
-
 <h2><a name="id1">Prerequisites</a></h2>
 <p><ul class="tight"><li>The <code>tutorial-example.lisp</code> file as modified thus far:
 </ul>
@@ -119,7 +118,6 @@ This exercise shows you how to:
 <p><ul class="tight"><li>The <code>:agenda-shell-user</code> module is loaded
 </ul>
 </p>
-
 <h2><a name="id2">Step 1: Add  a link</a></h2><p>
 In the last exercise, we used <b>map-sorted-instances-of-class</b> to
 display the random walk.  Another way that we could represent the walk is by
@@ -189,7 +187,6 @@ option in the <code>previous-location</code> link-slot definition and in the
 concise inverse-link-slot specification for <code>previous-location</code>
 in the <code>next-locations</code> link-slot definition.
 </p>
-
 <h2><a name="id3">Step 2: Break some links</a></h2><p>
 The concise inverse-link-slot specification supplied by the
 <code>:link</code> slot option provides a &#8220;double entry&#8221; redundancy that
@@ -303,7 +300,6 @@ specification in <code>next-location</code> that we just commented out:
   ;; All link definitions are consistent.
   t
 </pre></font>
-
 <h2><a name="id4">Step 3: Create some links</a></h2><p>
 Let's use our newly defined <code>next-location</code>/<code>previous-location</code> link
 to connect our <code>location</code> unit instances.  Edit the
@@ -417,7 +413,6 @@ back to the initial <code>location</code> unit instance.
   nil
   &gt;
 </pre></font>
-
 <h2><a name="id5">Step 4: Define a &#8220;print walk&#8221; KS</a></h2><p>
 Let's add a new KS, <code>print-walk-ks</code>, that displays the random walk once
 it is completed. Add the following KS to the end of your

@@ -3,7 +3,7 @@
    "DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <!-- XML file produced from file: tutorial.tex
-     using Hyperlatex v 2.9-in-waiting-rk (oct06) (c) Otfried Cheong -->
+     using Hyperlatex v 2.9-in-waiting-rk (c) Otfried Cheong -->
 <head>
 <title>GBBopen 0.9.5 Tutorial -- Deleting Instances</title>
 </p>
@@ -32,7 +32,6 @@ This exercise shows you how to:
 </ul>
 </p>
 <hr color="99CCCC">
-
 <h2><a name="id1">Prerequisites</a></h2><p>
 If you ended the Common Lisp session used in the last exercise, begin a new
 session and evaluate the following forms:
@@ -56,7 +55,6 @@ session and evaluate the following forms:
   #&lt;location 2&gt;
   &gt;
 </pre></font>
-
 <h2><a name="id2">Step 1: Create a few more unit instances</a></h2><p>
 Just to review, we now have created two <code>location</code> unit instances.  The unit
 instance named <code>1</code> is no longer on the <code>known-world</code> space instance, but it is still assigned to the global variable <code>ui</code>:
@@ -83,7 +81,6 @@ space instance:
 <p>Note that we did not specify <code>x</code> and <code>y</code> slot values for these new
 unit instances.  We will explore the implications of this shortly.
 </p>
-
 <h2><a name="id6">Step 2: Apply a function to all instances of a unit class</a></h2><p>
 We did not assign the new <code>location</code> unit instances to global variables
 or add them to the <code>known-world</code> space instance.  Can we still reference
@@ -153,7 +150,6 @@ instances to the <code>known-world</code>, we could have chosen to use the form:
 <p>instead of the <b>map-instances-of-class</b> version.  As with things
 stylistic, the choice is yours.
 </p>
-
 <h2><a name="id10">Step 3: Delete a unit instance</a></h2><p>
 Let's delete the first <code>location</code> unit instance that we created:
 </p>
@@ -225,7 +221,6 @@ status of a unit instance can be determined using the
   t
   &gt;
 </pre></font>
-
 <h2><a name="id14">Step 4: Create a simple space-instance hierarchy</a></h2><p>
 In the last exercise, we noted that space instances can be organized in
 hierarchical structures.  To illustrate this, let's create a few more space
@@ -276,7 +271,6 @@ hierarchy.  For example:
    #&lt;standard-space-instance (known-world my-town east-side)&gt;)
   &gt;
 </pre></font>
-
 <h2><a name="id18">Step 5: Add a unit instance to multiple space instances</a></h2><p>
 Now, let's add <code>location</code> <code>2</code> to the <code>my-town</code> and 
 <code>east-side</code> space instances:
@@ -325,7 +319,6 @@ on the <code>east-side</code>:
   (#&lt;location 2&gt;)
   &gt;
 </pre></font>
-
 <h2><a name="id20">Step 6: Delete a space instance</a></h2><p>
 Now let's delete some of what we just created.  Let's delete the
 <code>my-town</code> space instance:
@@ -374,7 +367,6 @@ form:
 </pre></font>
 <p>to explicitly delete the <code>location</code> unit instances in <code>my-town</code>.
 </p>
-
 <h2><a name="id24">Step 7: Reset GBBopen</a></h2><p>
 If we really want to get rid of all our unit and space instances, we can use
 the <b>reset-gbbopen</b> function:

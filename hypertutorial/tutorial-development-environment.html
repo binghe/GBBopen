@@ -3,7 +3,7 @@
    "DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <!-- XML file produced from file: tutorial.tex
-     using Hyperlatex v 2.9-in-waiting-rk (oct06) (c) Otfried Cheong -->
+     using Hyperlatex v 2.9-in-waiting-rk (c) Otfried Cheong -->
 <head>
 <title>GBBopen 0.9.5 Tutorial -- Enhancing Your Development Environment</title>
 </p>
@@ -32,7 +32,6 @@ This exercise shows you how to:
 </ul>
 </p>
 <hr color="99CCCC">
-
 <h2><a name="id1">Step 1: Autoloading GBBopen</a></h2><p>
 Thus far, we have entered the forms:
 </p>
@@ -101,8 +100,8 @@ always include the <code>:propagate</code> option when they call the Mini Module
 <b>compile-module</b> function.  We don't need to specify it as a command
 option.
 </p>
-
-<h3><a name="id3">If it didn't work<i>...</i></a></h3>
+</p>
+<h3><a name="id3">If it didn't work<i>...</i></a></h3><p>
 If you are running GBBopen in a Common Lisp environment that doesn't support
 top-level REPL commands and the <b>:gbbopen-user</b> REPL command didn't
 work, all is not lost.  Loading <code>gbbopen-init.lisp</code> also defines
@@ -115,7 +114,6 @@ REPL command:
   ;; Loading <var>&lt;install-directory&gt;</var>/<var>platform-directory</var>/gbbopen/gbbopen-user.fasl
   &gt;
 </pre></font>
-
 <h3><a name="id4">REPL command syntax</a></h3><p>
 GBBopen's REPL commands are defined to mimic the syntax of existing REPL
 commands in your Common Lisp environment.  On many Common Lisp
@@ -151,7 +149,6 @@ requires arguments:
   ;; Loading <var>&lt;install-directory&gt;</var>/<var>platform-directory</var>/gbbopen/gbbopen-user.fasl
   &gt;
 </pre></font>
-
 <h2><a name="id5">Step 2: Customizing your Common Lisp initialization file</a></h2><p>
 I'm lazy and would rather not have to explicitly load the
 <code>gbbopen-init.lisp</code> file each time I start a new Common Lisp session.
@@ -239,36 +236,36 @@ is:
 </pre>
 <p>The initialization file names for supported GBBopen ports are:
 </p>
-<table class="tight"><tbody><tr><td valign="baseline" colspan="1" align="left">
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </td><td valign="baseline" colspan="1" align="left"> <a target="_top" href="http://www.franz.com">Allegro CL</a> </td><td valign="baseline" colspan="1" align="left">
+<table class="tight"><table><tbody><tr>
+<td valign="baseline" colspan="1" align="left">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </td><td valign="baseline" colspan="1" align="left"> <a target="_top" href="http://www.franz.com">Allegro CL</a> </td><td valign="baseline" colspan="1" align="left">
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </td><td valign="baseline" colspan="1" align="left"> <code>.clinit.cl</code> </td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</td><td valign="baseline" colspan="1" align="left"> <a target="_top" href="http://clisp.cons.org/">CLISP</a> </td><td valign="baseline" colspan="1" align="left">
+<tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <a target="_top" href="http://clisp.cons.org/">CLISP</a> </td><td valign="baseline" colspan="1" align="left">
 </td><td valign="baseline" colspan="1" align="left"> <code>.clisprc</code> </td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</td><td valign="baseline" colspan="1" align="left"> <a target="_top" href="http://www.cons.org/cmucl/">CMUCL</a> </td><td valign="baseline" colspan="1" align="left">
+<tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <a target="_top" href="http://www.cons.org/cmucl/">CMUCL</a> </td><td valign="baseline" colspan="1" align="left">
 </td><td valign="baseline" colspan="1" align="left"> <code>init.lisp</code> </td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</td><td valign="baseline" colspan="1" align="left"> <a target="_top" href="http://www.digitool.com">Digitool MCL</a> </td><td valign="baseline" colspan="1" align="left">
+<tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <a target="_top" href="http://www.digitool.com">Digitool MCL</a> </td><td valign="baseline" colspan="1" align="left">
 </td><td valign="baseline" colspan="1" align="left"> (see below) </td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</td><td valign="baseline" colspan="1" align="left"> <a target="_top" href="http://common-lisp.net/project/ecl/">ECL</a> </td><td valign="baseline" colspan="1" align="left">
+<tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <a target="_top" href="http://common-lisp.net/project/ecl/">ECL</a> </td><td valign="baseline" colspan="1" align="left">
 </td><td valign="baseline" colspan="1" align="left"> <code>.eclrc</code> </td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</td><td valign="baseline" colspan="1" align="left"> <a target="_top" href="http://www.lispworks.com">LispWorks</a> </td><td valign="baseline" colspan="1" align="left">
+<tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <a target="_top" href="http://www.lispworks.com">LispWorks</a> </td><td valign="baseline" colspan="1" align="left">
 </td><td valign="baseline" colspan="1" align="left"> <code>.lispworks</code> </td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</td><td valign="baseline" colspan="1" align="left"> <a target="_top" href="http://openmcl.clozure.com/">OpenMCL</a> </td><td valign="baseline" colspan="1" align="left"> 
+<tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <a target="_top" href="http://openmcl.clozure.com/">OpenMCL</a> </td><td valign="baseline" colspan="1" align="left"> 
 </td><td valign="baseline" colspan="1" align="left"> <code>openmcl-init.lisp</code> </td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</td><td valign="baseline" colspan="1" align="left"> <a target="_top" href="http://sbcl.sourceforge.net">SBCL</a> </td><td valign="baseline" colspan="1" align="left"> 
+<tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <a target="_top" href="http://sbcl.sourceforge.net">SBCL</a> </td><td valign="baseline" colspan="1" align="left"> 
 </td><td valign="baseline" colspan="1" align="left"> <code>.sbclrc</code> </td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</td><td valign="baseline" colspan="1" align="left"> <a target="_top" href="http://www.scieneer.com/scl/">Scieneer CL</a> </td><td valign="baseline" colspan="1" align="left">
+<tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <a target="_top" href="http://www.scieneer.com/scl/">Scieneer CL</a> </td><td valign="baseline" colspan="1" align="left">
 </td><td valign="baseline" colspan="1" align="left"> <code>init.lisp</code> </td></tr>
-<tr><td valign="baseline" colspan="1" align="left">
-</td></tr></tbody></table>
-</p>
+<tr>
+<td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
 <p><a target="_top" href="http://www.digitool.com">Digitool MCL</a> does not look for an
 initialization file in the user's home directory.  Instead it loads the file
 <code>init.lisp</code> in it's installation directory.  One approach is to have that
@@ -292,7 +289,6 @@ whichever directory <u>you</u> deem as your &#8220;home&#8221; directory.
 </li><li>Now all that I need to do to use GBBopen is start up my Common Lisp and
 type a GBBopen command, such as <code>:gbbopen-user</code>.  My fingers thank me!
 </li></ol>
-
 <h2><a name="id6">Step 3: Set up  HyperDoc and HyperSpec access</a></h2><p>
 If you are using
 <a target="_top" href="http://www.gnu.org/software/emacs/emacs.html">Emacs</a> in your Common
@@ -328,7 +324,6 @@ disabled in the Lispbox startup file.  Edit the Lispbox startup file
 <code>/Applications/Lispbox/Emacs.app/Contents/MacOS/lispbox.sh</code> on Mac OS)
 and remove the <code>--no-init-file</code> option from the Emacs invocation line.
 </p>
-
 <h3><a name="id7">Adding the Common Lisp HyperSpec</a></h3><p>
 The
 <a target="_top" href="http://GBBopen.org/downloads/hyperspec.el">hyperspec.el</a>
@@ -353,7 +348,6 @@ file to a URL that points to my local copy of the HyperSpec:
 <pre>
   (setf common-lisp-hyperspec-root "file:/home/CLHS/")
 </pre>
-
 <h3><a name="id8">Non-Emacs access</a></h3><p>
 If you are not using an Emacs-based environment, GBBopen provides a Common
 Lisp function, <b>browse-hyperdoc</b>, that can be used to access GBBopen
