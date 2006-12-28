@@ -3,7 +3,7 @@
    "DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <!-- XML file produced from file: tutorial.tex
-     using Hyperlatex v 2.9-in-waiting-rk (oct06) (c) Otfried Cheong -->
+     using Hyperlatex v 2.9-in-waiting-rk (c) Otfried Cheong -->
 <head>
 <title>GBBopen 0.9.5 Tutorial -- Creating a Space Instance</title>
 </p>
@@ -51,7 +51,6 @@ This exercise shows you how to:
 </ul>
 </p>
 <hr color="99CCCC">
-
 <h2><a name="id1">Prerequisites</a></h2><p>
 If you ended the Common Lisp session used in the last exercise, begin a new
 session and evaluate the following forms:
@@ -69,7 +68,6 @@ session and evaluate the following forms:
   ui
   &gt;
 </pre></font>
-
 <h2><a name="id2">Step 1: Create a space instance</a></h2><p>
 Create a <i>space instance</i> named <code>known-world</code>.  To simplify
 access to the space instance during subsequent activities, first define a
@@ -93,7 +91,6 @@ distant indirect parent, that uniquely identifies a space instance in the
 blackboard repository.  Our <code>known-world</code> space does not have a parent,
 so its path is simply <code>(known-world)</code>.
 </p>
-
 <h2><a name="id4">Step 2: Display a description of the blackboard repository</a></h2><p>
 Display a description of the blackboard repository, which now contains the
 <code>known-world</code> space instance:
@@ -112,7 +109,6 @@ Display a description of the blackboard repository, which now contains the
 instances stored in it
 </ul>
 </p>
-
 <h2><a name="id5">Step 3: Find a space instance by its path</a></h2><p>
 You can look up a particular space instance by its space-instance path:
 </p>
@@ -124,7 +120,6 @@ You can look up a particular space instance by its space-instance path:
 <code>si</code>, but it is nice to know that we can always find it again using its
 path.
 </p>
-
 <h2><a name="id6">Step 4: Add the unit instance to the space instance</a></h2><p>
 Now, add the <code>location</code> unit instance to the space instance.
 Enter the following form:
@@ -133,7 +128,6 @@ Enter the following form:
   #&lt;location 1&gt;
   &gt;
 </pre></font>
-
 <h2><a name="id7">Step 5: Again, display the blackboard-repository description</a></h2><p>
 Display the description of the blackboard repository again:
 </p>
@@ -147,7 +141,6 @@ Display the description of the blackboard repository again:
 <p>This time the description indicates that the <code>known-world</code> space instance
 has one instance of the <code>location</code> unit class stored on it.
 </p>
-
 <h2><a name="id8">Step 6: Display the description of the unit instance</a></h2><p>
 Display the description of the <code>location</code> unit instance once again,
 observing the change in the space instances from the last exercise:
@@ -164,7 +157,6 @@ observing the change in the space instances from the last exercise:
       [None]
   &gt;
 </pre></font>
-
 <h2><a name="id9">Step 7: Find the unit instance on the space instance</a></h2><p>
 Now that the <code>location</code> unit instance is on the <code>known-world</code> space
 instance, we can find it on the space instance. The form is as follows,
@@ -182,7 +174,6 @@ in the list.)
 complex searches as well.  We will use more complex retrieval patterns in
 upcoming exercises.
 </p>
-
 <h2><a name="id10">Step 8: Add another unit instance to the space instance</a></h2><p>
 Create a second instance of the <code>location</code> unit class, with <code>x</code> and
 <code>y</code> slot values 80 and 90, respectively, and add it to the
@@ -208,7 +199,6 @@ variable but, as before, we can find the unit instance by its name:
   (#&lt;location 2&gt; #&lt;location 1&gt;)
   &gt;
 </pre></font>
-
 <h2><a name="id13">Step 9: Again, display the blackboard-repository description</a></h2><p>
 Display the description of the blackboard repository again:
 </p>
@@ -222,7 +212,6 @@ Display the description of the blackboard repository again:
 <p>This time the description indicates that the <code>known-world</code> space instance
 has both instances of the <code>location</code> unit class stored on it.
 </p>
-
 <h2><a name="id14">Step 10:  Remove a unit instance from the space instance</a></h2><p>
 Now, remove the first <code>location</code> unit instance from the
 <code>known-world</code> space instance.  Enter the following form:

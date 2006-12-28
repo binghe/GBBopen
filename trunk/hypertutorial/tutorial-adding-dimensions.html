@@ -3,7 +3,7 @@
    "DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <!-- XML file produced from file: tutorial.tex
-     using Hyperlatex v 2.9-in-waiting-rk (oct06) (c) Otfried Cheong -->
+     using Hyperlatex v 2.9-in-waiting-rk (c) Otfried Cheong -->
 <head>
 <title>GBBopen 0.9.5 Tutorial -- Adding Dimensions</title>
 </p>
@@ -57,7 +57,6 @@ buffer using the SLIME or ELI environments
 </ul>
 </p>
 <hr color="99CCCC">
-
 <h2><a name="id1">Prerequisites</a></h2>
 <p><ul class="tight"><li>The <code>tutorial-example.lisp</code> file created in the last exercise, containing:
 </p>
@@ -69,7 +68,6 @@ buffer using the SLIME or ELI environments
 <br /><li><p>The <code>:gbbopen-user</code> module is loaded
 </ul>
 </p>
-
 <h2><a name="id2">Step 1: Add dimensions to the <code>location</code> unit class</a></h2><p>
 Edit your <code>tutorial-example.lisp</code> file, and change the
 <code>location</code> unit-class definition as follows:
@@ -104,7 +102,6 @@ option.  Often, however, it is most convenient to use the same name
 for a slot and the dimension associated with the slot's value, so we
 will stick with our original definition.
 </p>
-
 <h2><a name="id3">Step 2: Compile and load the new definition</a></h2><p>
 We could compile and load the entire <code>tutorial-example.lisp</code> file
 just as we did in the last exercise.  However, as we develop our
@@ -115,7 +112,6 @@ top-level form is <code>C-c C-c</code>.  In Allegro's ELI, the command is
 <code>C-c C-x</code>.  Try compiling and loading just the new
 <code>location</code> unit-class definition.
 </p>
-
 <h2><a name="id4">Step 3: Make  a <code>location</code> unit instance</a></h2><p>
 Let's test our new <code>location</code> unit class definition by making an
 instance.  Enter the following form in the REPL:
@@ -142,7 +138,6 @@ instance.  Enter the following form in the REPL:
 </pre></font>
 <p>Note the dimensional values for the <code>x</code> and <code>y</code> dimensions.
 </p>
-
 <h2><a name="id6">Step 4: Make  the <code>known-world</code> space instance</a></h2><p>
 Create the <code>known-world</code> space instance by evaluating:
 </p>
@@ -150,7 +145,6 @@ Create the <code>known-world</code> space instance by evaluating:
   si
   &gt;
 </pre></font>
-
 <h2><a name="id7">Step 5: Add the unit instance to the space instance</a></h2><p>
 Now, add the <code>location</code> unit instance to the space instance:
 </p>
@@ -177,7 +171,6 @@ shown by <b>describe-blackboard-repository</b>:
 <p>but we cannot perform dimension-based retrieval of our <code>location</code>
 unit instance on the <code>known-world</code>.
 </p>
-
 <h2><a name="id9">Step 6: Create a dimensioned <code>known-world</code></a></h2><p>
 Let's delete the <code>known-world</code> and create another one&mdash;this time
 with <code>x</code> and <code>y</code> dimensions:
@@ -202,7 +195,6 @@ proud!)
       (x :ordered)
       (y :ordered)
 </pre></font>
-
 <h2><a name="id11">Step 7: Add the <code>location</code> unit instance to the new
 <code>known-world</code></a></h2><p>
 Add the <code>location</code> unit instance to the new <code>known-world</code> space instance:
@@ -213,7 +205,6 @@ Add the <code>location</code> unit instance to the new <code>known-world</code> 
 </pre></font>
 <p>The dimension warning is gone.
 </p>
-
 <h2><a name="id12">Step 8: Adding every <code>location</code> to the <code>known-world</code>
 automatically</a></h2><p>
 Up to this point, we have used <b>add-instance-to-space-instance</b> to add
@@ -235,7 +226,6 @@ file:
 </pre></font>
 <p>Compile and load the new <code>location</code> unit-class definition.
 </p>
-
 <h2><a name="id14">Step 9: Create more <code>location</code> unit instances</a></h2><p>
 Let's test our new <code>location</code> unit class definition by making another
 instance.  Enter the following form in the REPL:
@@ -277,7 +267,6 @@ created and deleted as intended.
   known-world                   5 instances (5 location)
   &gt;
 </pre></font>
-
 <h2><a name="id17">Step 10: Dimensional retrieval</a></h2><p>
 We have seen how we can use <b>find-instances</b> to retrieve all
 <code>location</code> unit instances from the <code>known-world</code>:
@@ -320,7 +309,6 @@ positioned at (20,20):
 the value returned by evaluating the last REPL expression (in this case, the
 result of <b>find-instances</b>).
 </p>
-
 <h2><a name="id20">Step 11: Customize the display of <code>location</code> unit instances</a></h2><p>
 It would be convenient if we could easily see the coordinates of
 <code>location</code> unit instances without having to describe them.  Fortunately,
@@ -371,7 +359,6 @@ higher-dimensional pattern may be more convenient than a conjunction.  Also
 note that we can see immediately that we retrieved the desired
 <code>location</code>.
 </p>
-
 <h2><a name="id23">Step 12: More dimensional retrievals</a></h2><p>
 Let's try some additional dimensional retrievals.
 </p>
@@ -407,7 +394,6 @@ region:
    #&lt;location 2 (70 30)&gt;)
   &gt;
 </pre></font>
-
 <h2><a name="id24">Step 13: Change a dimensional value</a></h2><p>
 Recall that we assigned <code>location</code> <code>1</code> to the global variable
 <code>ui</code>:

@@ -3,7 +3,7 @@
    "DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <!-- XML file produced from file: tutorial.tex
-     using Hyperlatex v 2.9-in-waiting-rk (oct06) (c) Otfried Cheong -->
+     using Hyperlatex v 2.9-in-waiting-rk (c) Otfried Cheong -->
 <head>
 <title>GBBopen 0.9.5 Tutorial -- Starting GBBopen</title>
 </p>
@@ -26,7 +26,6 @@ package
 </ul>
 </p>
 <hr color="99CCCC">
-
 <h2><a name="id1">Step 1: Obtain and install Common Lisp</a></h2><p>
 GBBopen requires a supported Common Lisp implementation.  If one has already
 been installed on your system, then this step is finished.  (That was easy!)
@@ -73,7 +72,6 @@ Lispbox can be an appealing way to get started.
 <p>However you choose to obtain Common Lisp, you must have an installed and
 operating implementation for your system before proceeding to the next step.
 </p>
-
 <h2><a name="id2">Step 2: Obtain and install GBBopen</a></h2><p>
 GBBopen is available in source form from
 <a target="_top" href="http://GBBopen.org/">http://GBBopen.org/</a>.  A snapshot archive of
@@ -116,7 +114,6 @@ GBBopen snapshot archive, so a subversion <code>update</code> command can be
 used to freshen a GBBopen installation that was originally installed
 from a snapshot archive.
 </p>
-
 <h2><a name="id5">Step 3: Interact with the REPL</a></h2><p>
 This tutorial assumes that you have a basic understanding of Common Lisp and,
 in particular, how to interact with the Common Lisp implementation that you
@@ -196,7 +193,6 @@ with semicolon value-separation characters:
   3
   &gt;
 </pre></font>
-
 <h2><a name="id8">Step 4: Recover from an error</a></h2><p>
 Even you are a very careful typist, sooner or later you will enter a Common
 Lisp expression that signals an error.  Therefore, it is important that you
@@ -236,7 +232,6 @@ abort debugger command:
 you need assistance with the debugger in your Common Lisp
 implementation (<code>:a</code> or <code>q</code> are typical abort commands).
 </p>
-
 <h3><a name="id9">Breaking a computation</a></h3><p>
 There are other mistakes that don't signal an error.  Suppose I
 foolishly evaluate this expression:
@@ -281,7 +276,6 @@ can be resumed or aborted:
   &gt;&gt; <font color="#000000">:a</font>
   &gt;
 </pre></font>
-
 <h3><a name="id10">Help! My REPL is broken!</a></h3><p>
 Here is one last difficulty.  Suppose I enter:
 </p>
@@ -346,7 +340,6 @@ again:
 example situations should give you enough experience to get through the rest
 of the tutorial.
 </p>
-
 <h2><a name="id11">Step 5: Load the <code>:gbbopen-user</code> module</a></h2><p>
 GBBopen is packaged with its own module system
 that supports compiling and loading GBBopen components.
@@ -379,7 +372,6 @@ GBBopen modules it requires by evaluating:
 next exercise without error.  The output on your Common Lisp implementation
 may vary somewhat from that shown above.
 </p>
-
 <h3><a name="id13">File protection problems?</a></h3><p>
 If one or more GBBopen files needs to be compiled, you must have write
 permission for those files and directories on your file system.  If you do not
@@ -401,7 +393,6 @@ expressions:
 <p>every time they update GBBopen to ensure that all GBBopen modules have
 been compiled.
 </p>
-
 <h2><a name="id14">Step 6: Change to the <code>:gbbopen-user</code> package</a></h2><p>
 Now that the <code>:gbbopen-user</code> module is loaded, change the current
 package to the <code>:gbbopen-user</code> package:
