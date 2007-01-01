@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
-%% *-* File: /home/gbbopen/current/doc-source/test-common.tex *-*
-%% *-* Last-Edit: Thu Dec 28 06:25:02 2006; Edited-By: cork *-*
+%% *-* File: /home/gbbopen/current/doc-source/common.tex *-*
+%% *-* Last-Edit: Mon Jan  1 13:13:22 2007; Edited-By: cork *-*
 %% *-* Machine: ruby.corkills.org *-*
 
 %% Copyright (C) 2003-2006, Dan Corkill <corkill@GBBopen.org>
@@ -789,8 +789,7 @@
 	   "\n     using Hyperlatex v "
 	   hyperlatex-version " (c) Otfried Cheong"
            ;; Remove Emacs version & current time string -- DDC
-	   ; "\n     on Emacs " emacs-version 
-           ; ", " (current-time-string) 
+	   ; "\n     on Emacs " emacs-version ", " (current-time-string) 
            " --")
    "\n")
   (if hyperlatex-xml
@@ -835,10 +834,9 @@
 	   "\n     using Hyperlatex v "
 	   hyperlatex-version " (c) Otfried Cheong"
            ;; Remove Emacs version & current time string -- DDC
-	   ; "\n     on Emacs " emacs-version
-           ; ", " (current-time-string) 
+	   ;"\n     on Emacs " emacs-version ", " (current-time-string) 
            " --")
-         "\n")
+   "\n")
   (hyperlatex-gen (hyperlatex-get-attributes "head") "\n")
   (hyperlatex-gen (hyperlatex-get-attributes "title"))
   (insert hyperlatex-title)
@@ -938,6 +936,7 @@
 	    "OS Interface"
 	    "Queue Management")))
 
+
 (defun hyperlatex-insert-menu (secnum depth)
   "Insert a menu for section SECNUM of depth DEPTH."
   (let ((sp hyperlatex-rev-sections))
@@ -948,44 +947,50 @@
     (let* ((lev (hyperlatex-sect-level (car sp)))
 	   (nodenum (hyperlatex-sect-node (car sp)))
 	   (lastlev lev)
-	   ;; DDC added:
+           ;; DDC added:
 	   (node-secname (third (car sp))))
       (setq sp (cdr sp))
       (while (and sp (> (hyperlatex-sect-level (car sp)) lev))
-	;; sp points to a subsection of mine!
+        ;; sp points to a subsection of mine!
+        
         ;; DDC mods ---
+;	(if (<= (hyperlatex-sect-level (car sp)) (+ lev depth))
 	(let* ((secname (third (car sp)))
                ;; The Navigation section starts with "<img":
 	       (nav-string "\274img"))
 	  (unless (or
-		   ;; don't add the Navigation section to the 
-		   ;; navigation menu:
+                   ;; don't add the Navigation section to the 
+                   ;; navigation menu:
 		   (equal (and (>= (length secname) 4)
 			       (substring secname 0 4))
 			  nav-string)
-		   ;; don't add the special section to the Tools
-		   ;; entities:
+                   ;; don't add the special section to the Tools
+                   ;; entities:
 		   (and (string= node-secname "Tools")
 			(special-section-p secname)))
 	    (when (or (<= (hyperlatex-sect-level (car sp)) (+ lev depth))
-		      ;; DDC: This is ugly, but it allows is to increase the 
-		      ;; depth level of these sections on the fly...
+                      ;; DDC: This is ugly, but it allows is to increase the 
+                      ;; depth level of these sections on the fly...
                       (special-section-p secname))
               ;; End DDC mods ----
-              ;; make a menu entry
-              (let ((newlev (hyperlatex-sect-level (car sp))))
-                (hyperlatex-close-menus newlev lastlev)
-                (setq lastlev newlev)
-                (hyperlatex-gen (hyperlatex-get-attributes "li"))
-                (hyperlatex-gen (format hyperlatex-a-href-format
-                                        (hyperlatex-get-attributes "a")
-                                        (hyperlatex-gen-url
-                                         (hyperlatex-sect-node (car sp))
-                                         (hyperlatex-sect-label (car sp)))))
-                ;;nodenum)))
-                (insert (hyperlatex-sect-head (car sp)))
-                (hyperlatex-gen "/a")
-                (hyperlatex-gen "/li" "\n")))))
+
+	    ;; make a menu entry
+	    (let ((newlev (hyperlatex-sect-level (car sp))))
+	      (hyperlatex-close-menus newlev lastlev)
+	      (setq lastlev newlev)
+	      (hyperlatex-gen (hyperlatex-get-attributes "li"))
+	      (hyperlatex-gen (format hyperlatex-a-href-format
+				      (hyperlatex-get-attributes "a")
+				      (hyperlatex-gen-url
+				       (hyperlatex-sect-node (car sp))
+				       (hyperlatex-sect-label (car sp)))))
+	      ;;nodenum)))
+	      (insert (hyperlatex-sect-head (car sp)))
+	      (hyperlatex-gen "/a")
+	      (hyperlatex-gen "/li" "\n")))
+            
+            )) ;; Match DDC mod parens
+            
 	(setq sp (cdr sp)))
       (hyperlatex-close-menus lev lastlev))))
 }
