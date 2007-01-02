@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Sep 25 03:32:35 2006 *-*
+;;;; *-* Last-Edit: Tue Jan  2 10:19:59 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2002-2006, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2007, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; Porting Notice:
@@ -804,11 +804,12 @@
 		    (-2 . "EET")	; Eastern Europe
 		    (-10 . "AEST"))))))	; Australian Eastern
 
-(defun internet-text-date-and-time (&optional (time (get-universal-time)))
+(defun internet-text-date-and-time (&optional (time (get-universal-time))
+                                              time-zone)
   ;;; Returns a string representing time in Internet Text Message format
   (multiple-value-bind (second minute hour date month year 
                         day daylight-savings-p zone)
-      (decode-universal-time time)
+      (decode-universal-time time time-zone)
     (let ((zone-value (*& -100 (if daylight-savings-p
                                    (1-& zone)
                                    zone))))
