@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/mini-module/mini-module.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Dec 18 15:21:22 2006 *-*
+;;;; *-* Last-Edit: Wed Jan 10 22:43:07 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -851,6 +851,9 @@
   ;;;   :create-dirs Creates directories that are missing in the
   ;;;                compiled-file tree
   (declare (dynamic-extent options))
+  #+ecl (progn (print "START")
+               (compile nil (lambda () nil))
+               (print "DONE"))
   (when (keywordp module-names) (setq module-names (list module-names)))
   (dolist (option options)
     (unless (member option *compile/load-module-options* :test #'eq)

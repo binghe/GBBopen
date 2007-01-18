@@ -22,12 +22,15 @@ Requirements:
  
    Ports of GBBopen to Corman Common Lisp (Version 3.0), and GCL
    (Version 2.7.0 with --enable-ansi) are incomplete (due to limitations 
-   in the MOP support in these implementations).
+   in the MOP support in these implementations).  The latest GCL tested was
+   obtained using:
+      # export CVSROOT=:pserver:anonymous@cvs.sv.gnu.org:/sources/gcl
+      # cvs -z9 -q co -d gcl-2.7.0t5 -r Version_2_7_0t5 gcl
 
    See PORTING for information on porting GBBopen to other Common Lisp
    implementations.
 
-Current Status Notes (December 26, 2006):
+Current Status Notes (January 10, 2007):
 
  - Implementation work is progressing on a regular basis.  See the list
    of pending development activities maintained on the "What's New"

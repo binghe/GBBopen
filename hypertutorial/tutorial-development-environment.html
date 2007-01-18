@@ -278,16 +278,19 @@ not load initialization files, requiring you to manually load your
 <a target="_top" href="http://www.lispworks.com">LispWorks</a>.
 </p>
 <p>The interpretation of where a user's &#8220;home&#8221; directory is located is
-inconsistent on Windows.  Ideally, the directly location of the Common Lisp
-implementation's initialization file and the result of the Common Lisp
-function <code>user-homedir-pathname</code> should be consistent.  By using the
-<code>shared-init.lisp</code> scheme, you only need to determine where the
-initialization file should be for each Common Lisp implementation that you
-use, and then have those files load your <code>shared-init.lisp</code> file from
-whichever directory <u>you</u> deem as your &#8220;home&#8221; directory.
+inconsistent on Windows.  Ideally, the &#8220;home directory&#8221; location
+used for the Common Lisp implementation's initialization file and the
+result of the Common Lisp function <code>user-homedir-pathname</code> should
+be consistent.  Then, by using the <code>shared-init.lisp</code> scheme, you
+only need to determine where the initialization file should be for
+each Common Lisp implementation that you use, and then you can have
+those implementation-specific initialization files load your
+<code>shared-init.lisp</code> file from whichever directory <u>you</u>
+deem as your &#8220;home&#8221; directory.
 </p>
-</li><li>Now all that I need to do to use GBBopen is start up my Common Lisp and
-type a GBBopen command, such as <code>:gbbopen-user</code>.  My fingers thank me!
+</li><li>With this setup in place, all that is needed to use GBBopen is
+to start up a Common Lisp and type a GBBopen command, such as
+<code>:gbbopen-user</code>.  My fingers thank me!
 </li></ol>
 <h2><a name="id6">Step 3: Set up  HyperDoc and HyperSpec access</a></h2><p>
 If you are using
