@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Jan  2 10:19:59 2007 *-*
+;;;; *-* Last-Edit: Fri Jan 19 17:07:33 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -809,7 +809,9 @@
   ;;; Returns a string representing time in Internet Text Message format
   (multiple-value-bind (second minute hour date month year 
                         day daylight-savings-p zone)
-      (decode-universal-time time time-zone)
+      (if time-zone
+          (decode-universal-time time time-zone)
+          (decode-universal-time time))
     (let ((zone-value (*& -100 (if daylight-savings-p
                                    (1-& zone)
                                    zone))))
