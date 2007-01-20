@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/mini-module/mini-module.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jan 10 22:43:07 2007 *-*
+;;;; *-* Last-Edit: Sat Jan 20 09:54:29 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -15,7 +15,7 @@
 ;;; Written by: Dan Corkill (incorporating some original ideas by 
 ;;;                          Kevin Gallagher and Zachary Rubinstein)
 ;;;
-;;; Copyright (C) 2002-2006, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2007, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; Porting Notice:
@@ -851,9 +851,6 @@
   ;;;   :create-dirs Creates directories that are missing in the
   ;;;                compiled-file tree
   (declare (dynamic-extent options))
-  #+ecl (progn (print "START")
-               (compile nil (lambda () nil))
-               (print "DONE"))
   (when (keywordp module-names) (setq module-names (list module-names)))
   (dolist (option options)
     (unless (member option *compile/load-module-options* :test #'eq)
