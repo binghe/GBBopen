@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/mini-module/mini-module.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Jan 20 09:54:29 2007 *-*
+;;;; *-* Last-Edit: Sat Jan 20 09:58:03 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -134,8 +134,6 @@
             list-modules                ; not yet documented
 	    load-module
 	    load-module-file
-            ;; deprecated, remove soon!
-	    loaded-modules              ; never documented
 	    module-directories		; not yet documented
 	    module-loaded-p
 	    need-to-port		; not documented
@@ -973,12 +971,6 @@
 
 (defun module-loaded-p (module-name)
   (module-fully-loaded? (get-module module-name)))
-
-;;; ---------------------------------------------------------------------------
-
-;; Deprecated, remove soon:
-(defun loaded-modules ()
-  (sort (list-modules) #'string-lessp))
 
 ;;; ---------------------------------------------------------------------------
 ;;;
