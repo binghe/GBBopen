@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /home/gbbopen/current/doc-source/reference.tex *-*
-%% *-* Last-Edit: Sun Dec 31 05:35:19 2006; Edited-By: cork *-*
+%% *-* Last-Edit: Thu Feb 15 06:12:44 2007; Edited-By: cork *-*
 %% *-* Machine: ruby.corkills.org *-*
 
 %% Copyright (C) 2003-2007, Dan Corkill <corkill@GBBopen.org>
@@ -12118,8 +12118,10 @@ not evaluated)
 \mbox{\var{event-signature\/} ::=}
   & \code{(}\var{event-class-specifier\/} \\
   & ~ ~  [\var{unit-class-or-instance-specifier\/} \\
-  & ~ ~ ~ ~ [\{\code{:slot-names} \var{slot-names\/}\} \vbar{} 
-            \{\code{:paths} \var{paths\/}\}]]\code{)} \\
+  & ~ ~ ~ ~ [\{\code{:slot-name} \var{slot-name\/}\} \vbar{} 
+             \{\code{:slot-names} \var{slot-names\/}\} \vbar{} \\
+  & ~ ~ ~ ~ ~ \{\code{:path} \var{path\/}\} \vbar{} 
+              \{\code{:paths} \var{paths\/}\}]]\code{)} \\
 \end{tabular}
 \syntaxsep
 \eventclassspec
@@ -12806,8 +12808,10 @@ KS: start-control-shell-ks
 \mbox{\var{event-signature\/} ::=}
   & \code{(}\var{event-class-specifier\/} \\
   & ~ ~  [\var{unit-class-or-instance-specifier\/} \\
-  & ~ ~ ~ ~ [\{\code{:slot-names} \var{slot-names\/}\} \vbar{} 
-            \{\code{:paths} \var{paths\/}\}]]\code{)} \\
+  & ~ ~ ~ ~ [\{\code{:slot-name} \var{slot-name\/}\} \vbar{} 
+             \{\code{:slot-names} \var{slot-names\/}\} \vbar{} \\
+  & ~ ~ ~ ~ ~ \{\code{:path} \var{path\/}\} \vbar{} 
+              \{\code{:paths} \var{paths\/}\}]]\code{)} \\
 \end{tabular}
 \syntaxsep
 \eventclassspec
