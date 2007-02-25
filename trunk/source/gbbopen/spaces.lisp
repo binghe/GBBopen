@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/spaces.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Nov 16 04:36:30 2006 *-*
+;;;; *-* Last-Edit: Sun Feb 25 15:35:32 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2003-2006, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2003-2007, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -588,7 +588,7 @@
 (defun setup-space-instance-evfns (instance)
   (flet ((do-event-class (event-class plus-subevents)
            (declare (ignore plus-subevents))
-           (dolist (entry (nreverse 
+           (dolist (entry (reverse 
                            (space-instance-event-class.path-event-functions
                             event-class)))
              (destructuring-bind (path-pattern add/remove-fn-name event-class 
@@ -646,7 +646,20 @@
                         ~%-------------- ~:*~vt--------" 2nd-column-indent)
              (do-instances top-level-space-instances 0))
             (t (format t "~&There are no space instances in the blackboard ~
-                            repository.")))))
+                            repository."))))
+    ;; Now summarize the unit instances:
+    (format t "~2%Unit Class~vtInstances~
+             ~%----------~:*~vt---------" 2nd-column-indent)
+    (map-extended-unit-classes-sorted
+     #'(lambda (unit-class plus-subclasses)
+         (declare (ignore plus-subclasses))
+         (let ((count (class-instances-count unit-class)))
+           (when (plusp& count)
+             (format t "~%~s~vt~9d" 
+                     (class-name unit-class)
+                     2nd-column-indent
+                     count))))
+     't))
   (fresh-line)
   (values))
 
