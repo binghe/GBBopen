@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /home/gbbopen/current/doc-source/reference.tex *-*
-%% *-* Last-Edit: Thu Feb 15 06:12:44 2007; Edited-By: cork *-*
+%% *-* Last-Edit: Sun Feb 25 15:49:44 2007; Edited-By: cork *-*
 %% *-* Machine: ruby.corkills.org *-*
 
 %% Copyright (C) 2003-2007, Dan Corkill <corkill@GBBopen.org>
@@ -8287,8 +8287,10 @@ or simply
 \index{space instance!printing information about}%
 \index{blackboard repository!printing information about}%
 \index{printing!information about!the blackboard repository}%
-Print information about the \glref{space~instance}s in the
-blackboard repository.
+Print information about the \glref{space~instance}s in the blackboard
+repository and their contents.  The total count of the
+\glref{unit~instance}s of each \glref{unit~class} (including ones that
+do not reside on any \glref{space~instance}) is also printed.
 
 \fnpackage \code{:gbbopen}
 
@@ -8305,12 +8307,17 @@ The description is printed to the {\bf *standard-output*} stream.
 Space Instance                Contents
 --------------                --------
 bb                            
-   hyps                       15223 Instances (hyp 1479; sensor-reports 13744)
+   hyps                       15223 Instances (hyp 1479; sensor-report 13744)
    probable-hyps              Empty
    rejected-hyps              216 Instances (hyp 216)
-control-shell                 
-   kss                        13 Instances (ks 13)
-   ksas                       891 Instances (ksa 891)
+
+Unit Class                    Instances
+----------                    ---------
+hyp                                1695
+ks                                   13 
+ksa                                 891
+sensor-report                     13744
+standard-space-instance               3
 \end{example}
 
 \end{functiondoc}

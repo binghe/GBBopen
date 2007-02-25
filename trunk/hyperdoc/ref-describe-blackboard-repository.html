@@ -18,8 +18,10 @@
 <tr valign="top"><td valign="baseline" align="left"%>
 <nobr><b><font color="#000000">describe-blackboard-repository</font></b></nobr></td><td valign="baseline"> &nbsp; </td><td valign="baseline" align="left" width="99%"><i>&lt;</i>no arguments<i>&gt;</i></td><td valign="baseline" align="right">[<i>Function</i>]
 </td></tr></table></p>
-<p><span class="fndoclabel">Purpose</span> <br /><a name="id1">Print</a> information about the <a href="ref-glossary.html#id144">space&nbsp;instance</a>s in the
-blackboard repository.
+<p><span class="fndoclabel">Purpose</span> <br /><a name="id1">Print</a> information about the <a href="ref-glossary.html#id144">space&nbsp;instance</a>s in the blackboard
+repository and their contents.  The total count of the
+<a href="ref-glossary.html#id160">unit&nbsp;instance</a>s of each <a href="ref-glossary.html#id158">unit&nbsp;class</a> (including ones that
+do not reside on any <a href="ref-glossary.html#id144">space&nbsp;instance</a>) is also printed.
 </p>
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen</code>
 </p>
@@ -34,12 +36,17 @@ blackboard repository.
 Space Instance                Contents
 --------------                --------
 bb                            
-   hyps                       15223 Instances (hyp 1479; sensor-reports 13744)
+   hyps                       15223 Instances (hyp 1479; sensor-report 13744)
    probable-hyps              Empty
    rejected-hyps              216 Instances (hyp 216)
-control-shell                 
-   kss                        13 Instances (ks 13)
-   ksas                       891 Instances (ksa 891)
+
+Unit Class                    Instances
+----------                    ---------
+hyp                                1695
+ks                                   13 
+ksa                                 891
+sensor-report                     13744
+standard-space-instance               3
 </pre>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
