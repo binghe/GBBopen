@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/units.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Oct 19 14:26:05 2006 *-*
+;;;; *-* Last-Edit: Sun Feb 25 15:26:22 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2002-2006, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2007, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; Porting Notice:
@@ -50,6 +50,7 @@
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(class-instances-count
+            class-instances-summary     ; not yet documented
             define-unit-class
             describe-unit-class
             effective-link-definition
@@ -576,13 +577,14 @@
   ;;; Applies `fn' to `class' and all its subclasses.  The order is undefined,
   ;;; but `fn' will not be applied more than once to a class.
   (with-full-optimization ()
-    (let ((classes-seen nil))
+    (let ((classes-seen nil)
+          (fn (if (functionp fn) fn (fdefinition fn))))
       (declare (type list classes-seen))
       (labels ((doit (class)
                  (when (and (typep class 'standard-unit-class)
                             (not (memq class classes-seen)))
                    (push class classes-seen)
-                   (funcall (if (functionp fn) fn (fdefinition fn)) class 't)
+                   (funcall fn class 't)
                    (dolist (class (class-direct-subclasses class))
                      (doit class)))))
         (doit class)))))
@@ -590,14 +592,37 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun map-extended-unit-classes (fn unit-class-name)
-  ;;; Handles mapping for functions that accept an extended unit-class-name
+  ;;; Handles mapping for functions that accept an extended unit-class-name.
+  ;;; The order is undefined, but `fn' will not be applied more than once to a
+  ;;; class.
   (with-full-optimization ()
-    (multiple-value-bind (unit-class plus-subclasses)
-        (parse-unit-class-specifier unit-class-name)
-      (if plus-subclasses
-          (map-unit-classes fn unit-class)
-          (funcall (if (functionp fn) fn (fdefinition fn)) 
-                   unit-class nil)))))
+    (let ((fn (if (functionp fn) fn (fdefinition fn))))
+      (multiple-value-bind (unit-class plus-subclasses)
+          (parse-unit-class-specifier unit-class-name)
+        (if plus-subclasses
+            (map-unit-classes fn unit-class)
+            (funcall fn unit-class nil))))))
+
+;;; ---------------------------------------------------------------------------
+
+(defun map-extended-unit-classes-sorted (fn unit-class-name)
+  ;;; Handles mapping for functions that accept an extended unit-class-name.
+  ;;; The `fn' will applied once to each class in lexical order.
+  (with-full-optimization ()
+    (let* ((classes nil)
+           (fn (if (functionp fn) fn (fdefinition fn)))
+           (accumulation-fn #'(lambda (&rest class-spec)
+                                (push class-spec classes))))
+      (multiple-value-bind (unit-class plus-subclasses)
+          (parse-unit-class-specifier unit-class-name)
+        (if plus-subclasses
+            (map-unit-classes accumulation-fn unit-class)
+            (funcall accumulation-fn unit-class nil)))
+      (setf classes (sort classes #'string< 
+                          :key #'(lambda (class-spec)
+                                   (class-name (first class-spec)))))
+      (dolist (class-spec classes)
+        (apply fn class-spec)))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -678,7 +703,7 @@
       (class-instances-summary (find-unit-class unit-class-name))))
 
 (defmethod class-instances-summary ((unit-class-spec cons))
-  (map-extended-unit-classes
+  (map-extended-unit-classes-sorted
    #'(lambda (unit-class plus-subclasses)
        (declare (ignore plus-subclasses))
        (class-instances-summary unit-class))
@@ -688,11 +713,10 @@
   ;;; Prints a descriptive summary of `unit-class-name-or-class'
   (let ((class-name (class-name unit-class)))
     (if (standard-unit-class.abstract unit-class)
-        (format t "~&~s:~%~3tAbstract class~%" class-name)
-        (format t "~&~s:~%~3tInstances:~14t~9d~%~3tCount:~14t~9d~%"
+        (format t "~&~s:~%~2tAbstract~%" class-name)
+        (format t "~&~s:~%~2tInstances: ~d~%~2tCounter: ~d~%"
                 class-name
-                (hash-table-count 
-                 (standard-unit-class.instance-hash-table unit-class))
+                (class-instances-count unit-class)
                 (standard-unit-class.instance-name-counter unit-class)))))
 
 ;;; ---------------------------------------------------------------------------
@@ -714,8 +738,7 @@
   ;;; instance hash table, but only if the class is non-abstract
   ;;; and has no existing instances
   (unless (standard-unit-class.abstract unit-class)
-    (let ((count (hash-table-count
-                  (standard-unit-class.instance-hash-table unit-class))))
+    (let ((count (class-instances-count unit-class)))
       (cond
        ((zerop count)
         (setf (standard-unit-class.instance-name-counter unit-class) 0)
