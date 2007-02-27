@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/spaces.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Feb 25 15:35:32 2007 *-*
+;;;; *-* Last-Edit: Tue Feb 27 05:57:23 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -641,25 +641,35 @@
              (print-space-instance-storage-summary instance)
              (do-instances (space-instance-children instance) 
                (+& 3 indent)))))
-      (cond (top-level-space-instances
-             (format t "~2&Space Instance ~vtContents~
-                        ~%-------------- ~:*~vt--------" 2nd-column-indent)
-             (do-instances top-level-space-instances 0))
-            (t (format t "~&There are no space instances in the blackboard ~
-                            repository."))))
+      (when top-level-space-instances
+        (format t "~2&Space Instance ~vtContents~
+                    ~%-------------- ~:*~vt--------" 2nd-column-indent)
+        (do-instances top-level-space-instances 0)))
     ;; Now summarize the unit instances:
-    (format t "~2%Unit Class~vtInstances~
-             ~%----------~:*~vt---------" 2nd-column-indent)
-    (map-extended-unit-classes-sorted
-     #'(lambda (unit-class plus-subclasses)
-         (declare (ignore plus-subclasses))
-         (let ((count (class-instances-count unit-class)))
-           (when (plusp& count)
-             (format t "~%~s~vt~9d" 
-                     (class-name unit-class)
-                     2nd-column-indent
-                     count))))
-     't))
+    (let ((header-displayed? nil))
+      (map-extended-unit-classes-sorted
+       #'(lambda (unit-class plus-subclasses)
+           (declare (ignore plus-subclasses))
+           ;; Don't show root-space-instance in this summary:
+           (unless (eq (class-name unit-class) 'root-space-instance)
+             (let ((count (class-instances-count unit-class)))
+               (when (plusp& count)
+                 (unless header-displayed?
+                   (setf header-displayed? 't)
+                   (unless top-level-space-instances
+                     (format t "~&There are no space instances in the ~
+                                  blackboard repository.~%"))
+                   (format t "~2&Unit Class~vtInstances~
+                              ~%----------~:*~vt---------~%"
+                           2nd-column-indent))
+                 (format t "~s~vt~9d~%" 
+                         (class-name unit-class)
+                         2nd-column-indent
+                         count)))))
+       't)
+      (unless header-displayed?
+        (format t "~&There are no space or unit instances in the ~
+                     blackboard repository.~%"))))
   (fresh-line)
   (values))
 
