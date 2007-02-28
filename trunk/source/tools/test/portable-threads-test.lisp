@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/tools/test/portable-threads-test.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Mar 22 17:05:03 2006 *-*
+;;;; *-* Last-Edit: Wed Feb 28 14:50:23 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -135,11 +135,13 @@
       ;; Give the contender a chance:
       (sleep 1)
       (with-process-lock (lock :whostate "Second level")
-	(incf counter))
+	(incf counter)
+        (with-process-lock (lock :whostate "Third level")
+          (incf counter)))
       ;; Give the contender another chance:
       (sleep 1)
-      (unless (= counter 2)
-	(error "Incorrect lock-counter value (should be 2): ~s" counter)))
+      (unless (= counter 3)
+	(error "Incorrect lock-counter value (should be 3): ~s" counter)))
     (format t "~&;; Testing with-process-lock returned values...~%")
     (finish-output)
     (let ((returned-values
