@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Dec 15 17:41:06 2006 *-*
+;;;; *-* Last-Edit: Fri Mar  9 15:09:55 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2002-2006, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2007, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -33,6 +33,7 @@
 ;;;  09-09-14 Added instance-name-of and space-instances-of, instance-name and
 ;;;           instance-space-instances will be deprecated soon.  (Corkill)
 ;;;  09-06-06 Completed change-class support.  (Corkill)
+;;;  03-09-07 Added find-instances-of-class (please don't abuse!).  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -49,6 +50,7 @@
             do-instances-of-class
             do-sorted-instances-of-class
             find-instance-by-name
+            find-instances-of-class     ; document soon!
             instance-dimension-value
             instance-deleted-p
             instance-name               ; deprecated
@@ -780,14 +782,20 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun map-sorted-instances-of-class (fn unit-class-name predicate &key key)
-  ;;; This function is convenient for occasional presentation purposes;
-  ;;; it creates and sorts the list of all instances, so it is expensive!
-  (let ((instances nil)
-        (fn (coerce fn 'function)))
+(defun find-instances-of-class (unit-class-name)
+  (let ((instances nil))
     (map-instances-of-class
      #'(lambda (instance) (push instance instances))
      unit-class-name)
+    instances))
+
+;;; ---------------------------------------------------------------------------
+
+(defun map-sorted-instances-of-class (fn unit-class-name predicate &key key)
+  ;;; This function is convenient for occasional presentation purposes;
+  ;;; it creates and sorts the list of all instances, so it is expensive!
+  (let ((instances (find-instances-of-class unit-class-name))
+        (fn (coerce fn 'function)))
     (setf instances
       (sort instances predicate :key key))
     (dolist (instance instances)
