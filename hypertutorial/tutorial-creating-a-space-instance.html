@@ -100,6 +100,11 @@ Display a description of the blackboard repository, which now contains the
   Space Instance                Contents
   --------------                --------
   known-world                   Empty
+
+  Unit Class                    Instances
+  ----------                    ---------
+  location                              1
+  standard-space-instance               1
   &gt;
 </pre></font>
 <p>The description indicates that:
@@ -107,6 +112,11 @@ Display a description of the blackboard repository, which now contains the
 <p><ul class="tight"><li>One space instance, <code>known-world</code>, exists in the repository
 <li>The <code>known-world</code> space instance is empty; there are no unit
 instances stored in it
+<li>The <code>location</code> unit instance exists, but it does not reside
+on any space instance
+<li>There is one <code>standard-space-instance</code>, our
+<code>known-world</code> space instance, which also does not reside
+on any space instance
 </ul>
 </p>
 <h2><a name="id5">Step 3: Find a space instance by its path</a></h2><p>
@@ -136,6 +146,11 @@ Display the description of the blackboard repository again:
   Space Instance                Contents
   --------------                --------
   known-world                   1 instance (1 location)
+
+  Unit Class                    Instances
+  ----------                    ---------
+  location                              1
+  standard-space-instance               1
   &gt;
 </pre></font>
 <p>This time the description indicates that the <code>known-world</code> space instance

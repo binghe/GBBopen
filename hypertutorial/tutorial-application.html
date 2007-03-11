@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<!-- XML file produced from file: tutorial.tex
+     using Hyperlatex v 2.9-in-waiting-rk (c) Otfried Cheong -->
+<head>
+<title>GBBopen 0.9.5 Tutorial -- Creating an Application</title>
+</p>
+<link rel="SHORTCUT ICON" href="favicon.ico"><link rel=stylesheet
+        href="gbbopen.css" type="text/css" />
+</head>
+<body>
+<table width="100%" cellpadding="0" cellspacing="2"><tr>
+<td bgcolor="#99ccff"><a href="tutorial-connections.html"><img border="0" alt="Making Connections" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="tutorial_0.html"><img border="0" alt="Top" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="tutorial-multiple-walkers.html"><img border="0" alt="Multiple Walkers" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b>Creating an Application</b></td><td bgcolor="#99ccff"><a target="_top" href="tutorial.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table>
+<h1>Creating an Application</h1>
+<p>GBBopen's mini-module system provides
+facilities that make it easy to define and use your own application.
+</p>
+<p><hr color="99CCCC">
+This exercise shows you how to:
+</p>
+<p><ul class="tight"><li>Structure an application using the mini-module
+system
+<li>Define a top-level REPL command for your application
+<li>Create and use an application-specific package
+<li>Compile and load your application using your REPL command
+</ul>
+</p>
+<hr color="99CCCC">
+<h2><a name="id1">Prerequisites</a></h2>
+<p><ul class="tight"><li>The <code>tutorial-example.lisp</code> file as modified thus far:
+</p>
+<pre>
+  (in-package :gbbopen-user)
+
+  (define-unit-class location ()
+    (time 
+     x y
+     (next-location
+      :link (location previous-location :singular t) 
+      :singular t)
+     (previous-location
+      :link (location next-location :singular t)  
+      :singular t))
+    (:dimensional-values
+      (time :point time)
+      (x :point x)
+      (y :point y))
+    (:initial-space-instances (known-world)))
+
+  (defmethod print-instance-slots ((location location) stream)
+    (call-next-method)
+    (when (and (slot-boundp location 'x)
+               (slot-boundp location 'y))
+      (format stream " (~s ~s)"
+              (x-of location)
+              (y-of location))))
+
+  ;;; ========================================================================
+  ;;;   Startup KS
+
+  (defun startup-ks-function (ksa)
+    (declare (ignore ksa))
+    ;; Create an initial location unit instance at (0,0):
+    (make-instance 'location :time 0 :x 0 :y 0))
+
+  (define-ks startup-ks
+      :trigger-events ((start-control-shell-event))
+      :execution-function 'startup-ks-function)
+
+  (defun initializations (event-name &amp;key &amp;allow-other-keys)
+    (declare (ignore event-name))
+    ;; Clean up any previous run:
+    (reset-gbbopen :retain-classes '((ks :plus-subclasses))
+                   :retain-event-functions 't
+                   :retain-event-printing 't)
+    ;; Make a new known-world space instance:
+    (make-space-instance 
+     '(known-world)
+     :dimensions (unit-class-dimensions 'location)))
+
+  (add-event-function 'initializations 'start-control-shell-event
+                      ;; Initializations should be done first!
+                      :priority 100)
+
+  ;;; ========================================================================
+  ;;;   Random-walk KS
+
+  (defun add-linear-variance (value max-variance)
+    ;;; Returns a new random value in the interval
+    ;;; [(- value max-variance), (+ value max-variance)]
+    (+ value (- (random (1+ (* max-variance 2))) max-variance)))
+
+  (defun random-walk-ks-function (ksa)
+    ;;; Move to the next (random) location in the world
+    (let* ((trigger-instance (sole-trigger-instance-of ksa))
+           ;; The new time is one greater than the stimulus instance's time:
+           (time (1+ (time-of trigger-instance))))
+      (cond
+       ;; If the maximum time value (75) is reached, tell the user we've
+       ;; walked too long:
+       ((&gt;= time 75) (format t "~2&amp;Walked too long.~&#37;"))
+       (t ;; The new location is +/- 10 of the stimulus instance's location:
+        (let ((x (add-linear-variance (x-of trigger-instance) 10))
+              (y (add-linear-variance (y-of trigger-instance) 10)))
+          (cond
+           ;; Check that the new location is within the known-world
+           ;; boundaries.  If so, create the new location instance:
+           ((and (&lt;= -50 x 50) (&lt;= -50 y 50))
+            (make-instance 'location 
+              :time time 
+              :x x 
+              :y y
+              :previous-location trigger-instance))
+           ;; Otherwise, tell the user that we've walked too far away:
+           (t (format t "~2&amp;Walked off the world: (~d, ~d).~&#37;" x y))))))))
+
+  (define-ks random-walk-ks
+      :trigger-events ((create-instance-event location))
+      :rating 100
+      :execution-function 'random-walk-ks-function)
+
+  ;;; ========================================================================
+  ;;;   Print-walk KS
+
+  (defun print-walk-ks-function (ksa)
+    ;;; Starting with the initial location instance, print the instance name and
+    ;;; location of the walk
+    (declare (ignore ksa))
+    (format t "~2&#38;The random walk:~&#37;")
+      (let ((instance (find-instance-by-name 1 'location)))
+      (while instance
+        (format t "~s (~s ~s)~&#37;"
+                (instance-name-of instance)
+                (x-of instance)
+                (y-of instance))
+        (setf instance (next-location-of instance))))
+    ;; Tell the Agenda Shell to exit:
+    ':stop)
+
+  (define-ks print-walk-ks
+    :trigger-events ((quiescence-event))
+    :rating 100
+    :execution-function 'print-walk-ks-function)
+</pre>
+<p><li>The GBBopen environment setup using <tt>gbbopen-init.lisp</tt>
+as described in Steps 1 and 2 of the Enhancing Your
+Development Environment exercise
+</ul>
+</p>
+<h2><a name="id2">Step 1: Create your personal <code>gbbopen-modules</code> directory</a></h2><p>
+<font color="#8c8c8c"><span 
+    style="font-family: sans-serif; font-style: normal"><b>To be completed soon<i>...</i><br />&nbsp;<br />For now, please continue with the next exercise.</b></span></font>
+</p>
+<hr /><address><a target="_top" class="address"
+    href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
+<table width="100%" cellpadding="0" cellspacing="2"><tr>
+<td bgcolor="#99ccff"><a href="tutorial-connections.html"><img border="0" alt="Making Connections" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="tutorial_0.html"><img border="0" alt="Top" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="tutorial-multiple-walkers.html"><img border="0" alt="Multiple Walkers" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b>Creating an Application</b></td><td bgcolor="#99ccff"><a target="_top" href="tutorial.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table></body></html>
