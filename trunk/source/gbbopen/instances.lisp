@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Mar  9 15:09:55 2007 *-*
+;;;; *-* Last-Edit: Wed Mar 14 01:18:50 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -50,7 +50,7 @@
             do-instances-of-class
             do-sorted-instances-of-class
             find-instance-by-name
-            find-instances-of-class     ; document soon!
+            find-instances-of-class
             instance-dimension-value
             instance-deleted-p
             instance-name               ; deprecated
