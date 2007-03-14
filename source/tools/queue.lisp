@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/tools/queue.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Sep 22 17:00:49 2006 *-*
+;;;; *-* Last-Edit: Wed Mar 14 12:15:04 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2004-2006, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2004-2007, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; These queue mixins are intended for fairly heavy-weight, synchronized
@@ -290,7 +290,7 @@
 (defmethod map-queue (fn (queue queue))
   ;;; Applys `fn' to each element in `queue' queue order.
   (with-process-lock ((queue.lock queue))
-    (let ((ptr (first-queue-element queue))
+    (let ((ptr (queue.next queue))
           element)
       (until (eq ptr queue)
         ;; set pointers before calling `fn', in case the function deletes the
@@ -307,7 +307,7 @@
     (with-once-only-bindings (queue)
       (with-gensyms (elt ptr)
         `(with-process-lock ((queue.lock ,queue))
-           (let ((,ptr (first-queue-element ,queue))
+           (let ((,ptr (queue.next ,queue))
                  ,elt)
              (until (eq ,ptr ,queue)
                ;; set pointers before calling `fn', in case the codebody
