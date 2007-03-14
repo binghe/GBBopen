@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /home/gbbopen/current/doc-source/tutorial.tex *-*
-%% *-* Last-Edit: Thu Jan 18 13:53:46 2007; Edited-By: cork *-*
+%% *-* Last-Edit: Sun Mar 11 12:04:54 2007; Edited-By: cork *-*
 %% *-* Machine: ruby.corkills.org *-*
 
 %% Copyright (C) 2005-2007, Dan Corkill <corkill@GBBopen.org>
@@ -46,15 +46,9 @@
 \T\newcommand{\pdfgraphics}{\ifpdf\DeclareGraphicsExtensions{.pdf,.jpg}\else\fi}
 \T\usepackage{graphicx}
 
-\newcommand{\runningtitle}{GBBopen 0.9.5 Tutorial}
+\newcommand{\docname}{Tutorial}
 
-%% Html declarations: output directory and filenames, node title
-\htmltitle{\runningtitle}
-\newcommand{\gbbopenversion}{0.9.5}
-
-%% Timezone & Daylight Savings:
-\newcommand{\timezone}{EST}
-%\newcommand{\timezone}{EDT}
+\input{common.tex}
 
 \htmldirectory{../hypertutorial}
 \htmladdress{\xml{a target="_top" class="address"
@@ -63,8 +57,6 @@
 \newcommand{\homepage}{http://GBBopen.org}
 \setcounter{htmldepth}{2}
 %\setcounter{secnumdepth}{3}
-
-\input{common.tex}
 
 \W\newcommand{\GoToTopTarget}{\xml{a target="_top" href="tutorial.html"}}
 \W\newcommand{\fndocrule}{\xml{hr color="99CCCC"}}
@@ -1156,6 +1148,11 @@ Display a description of the blackboard repository, which now contains the
   Space Instance                Contents
   --------------                --------
   known-world                   Empty
+
+  Unit Class                    Instances
+  ----------                    ---------
+  location                              1
+  standard-space-instance               1
   >
 \end{example}
 
@@ -1164,6 +1161,11 @@ The description indicates that:
 \item One space instance, \code{known-world}, exists in the repository
 \item The \code{known-world} space instance is empty; there are no unit
   instances stored in it
+\item The \code{location} unit instance exists, but it does not reside
+  on any space instance
+\item There is one \code{standard-space-instance}, our
+  \code{known-world} space instance, which also does not reside
+  on any space instance
 \end{tightitemize}
  
 \subsection*{Step 3: Find a space instance by its path}
@@ -1206,6 +1208,11 @@ Display the description of the blackboard repository again:
   Space Instance                Contents
   --------------                --------
   known-world                   1 instance (1 location)
+
+  Unit Class                    Instances
+  ----------                    ---------
+  location                              1
+  standard-space-instance               1
   >
 \end{example}
 
@@ -2858,6 +2865,11 @@ and confirm that the new \code{location} is on the \code{known-world}:
   Space Instance                Contents
   --------------                --------
   known-world                   2 instances (2 location)
+
+  Unit Class                    Instances
+  ----------                    ---------
+  location                              2
+  standard-space-instance               1
   >
 \end{example}
 %
@@ -2892,6 +2904,11 @@ and verify that they are all on the \code{known-world}:
   Space Instance                Contents
   --------------                --------
   known-world                   5 instances (5 location)
+
+  Unit Class                    Instances
+  ----------                    ---------
+  location                              5
+  standard-space-instance               1
   >
 \end{example}
 
@@ -3349,6 +3366,12 @@ Did it work?  Let's describe the blackboard repository:
   Space Instance                Contents
   --------------                --------
   known-world                   1 instances (1 location)
+
+  Unit Class                    Instances
+  ----------                    ---------
+  ks                                    1
+  location                              1
+  standard-space-instance               1
   >
 \end{example}
 
@@ -4170,6 +4193,12 @@ created:
   Space Instance                Contents
   --------------                --------
   known-world                   61 instances (61 location)
+
+  Unit Class                    Instances
+  ----------                    ---------
+  ks                                    1
+  location                             61
+  standard-space-instance               1
 \end{example}
 
 The 61 \code{location} instances makes sense.  Previously, it required 3
@@ -4931,6 +4960,166 @@ Let's compile our latest changes and then run our application with the new
   :stop
   >
 \end{example}
+
+%% ========================================================================
+%%  Creating an Application
+
+\T\markright{}%
+\T\pagestyle{plain}
+\T\cleardoublepage
+\W\xname{tutorial-application}
+\T\pagestyle{fancy}
+\T\thispagestyle{fancybottom}
+\T\renewcommand{\headrulewidth}{0pt}
+\section{Creating an Application}
+\label{sec:application}%
+
+GBBopen's \xreflink{mini-module system}{sec:mini-module} provides
+facilities that make it easy to define and use your own application.
+
+\fndocrule
+
+This exercise shows you how to:
+\begin{tightitemize}
+\item Structure an application using the \xreflink{mini-module
+    system}{sec:mini-module}
+\item Define a top-level REPL command for your application
+\item Create and use an application-specific package
+\item Compile and load your application using your REPL command
+\end{tightitemize}
+
+\fndocrule
+
+\subsection*{Prerequisites}
+
+\begin{tightitemize}
+\item The \code{tutorial-example.lisp} file as modified thus far:
+
+\begin{example}
+  (in-package :gbbopen-user)
+
+  (define-unit-class location ()
+    (time 
+     x y
+     (next-location
+      :link (location previous-location :singular t) 
+      :singular t)
+     (previous-location
+      :link (location next-location :singular t)  
+      :singular t))
+    (:dimensional-values
+      (time :point time)
+      (x :point x)
+      (y :point y))
+    (:initial-space-instances (known-world)))
+
+  (defmethod print-instance-slots ((location location) stream)
+    (call-next-method)
+    (when (and (slot-boundp location 'x)
+               (slot-boundp location 'y))
+      (format stream " (~s ~s)"
+              (x-of location)
+              (y-of location))))
+
+  ;;; ========================================================================
+  ;;;   Startup KS
+
+  (defun startup-ks-function (ksa)
+    (declare (ignore ksa))
+    ;; Create an initial location unit instance at (0,0):
+    (make-instance 'location :time 0 :x 0 :y 0))
+
+  (define-ks startup-ks
+      :trigger-events ((start-control-shell-event))
+      :execution-function 'startup-ks-function)
+
+  (defun initializations (event-name &key &allow-other-keys)
+    (declare (ignore event-name))
+    ;; Clean up any previous run:
+    (reset-gbbopen :retain-classes '((ks :plus-subclasses))
+                   :retain-event-functions 't
+                   :retain-event-printing 't)
+    ;; Make a new known-world space instance:
+    (make-space-instance 
+     '(known-world)
+     :dimensions (unit-class-dimensions 'location)))
+
+  (add-event-function 'initializations 'start-control-shell-event
+                      ;; Initializations should be done first!
+                      :priority 100)
+
+  ;;; ========================================================================
+  ;;;   Random-walk KS
+
+  (defun add-linear-variance (value max-variance)
+    ;;; Returns a new random value in the interval
+    ;;; [(- value max-variance), (+ value max-variance)]
+    (+ value (- (random (1+ (* max-variance 2))) max-variance)))
+
+  (defun random-walk-ks-function (ksa)
+    ;;; Move to the next (random) location in the world
+    (let* ((trigger-instance (sole-trigger-instance-of ksa))
+           ;; The new time is one greater than the stimulus instance's time:
+           (time (1+ (time-of trigger-instance))))
+      (cond
+       ;; If the maximum time value (75) is reached, tell the user we've
+       ;; walked too long:
+       ((>= time 75) (format t "~2&Walked too long.~\%"))
+       (t ;; The new location is +/- 10 of the stimulus instance's location:
+        (let ((x (add-linear-variance (x-of trigger-instance) 10))
+              (y (add-linear-variance (y-of trigger-instance) 10)))
+          (cond
+           ;; Check that the new location is within the known-world
+           ;; boundaries.  If so, create the new location instance:
+           ((and (<= -50 x 50) (<= -50 y 50))
+            (make-instance 'location 
+              :time time 
+              :x x 
+              :y y
+              :previous-location trigger-instance))
+           ;; Otherwise, tell the user that we've walked too far away:
+           (t (format t "~2&Walked off the world: (~d, ~d).~\%" x y))))))))
+
+  (define-ks random-walk-ks
+      :trigger-events ((create-instance-event location))
+      :rating 100
+      :execution-function 'random-walk-ks-function)
+
+  ;;; ========================================================================
+  ;;;   Print-walk KS
+
+  (defun print-walk-ks-function (ksa)
+    ;;; Starting with the initial location instance, print the instance name and
+    ;;; location of the walk
+    (declare (ignore ksa))
+    (format t "~2\&The random walk:~\%")
+      (let ((instance (find-instance-by-name 1 'location)))
+      (while instance
+        (format t "~s (~s ~s)~\%"
+                (instance-name-of instance)
+                (x-of instance)
+                (y-of instance))
+        (setf instance (next-location-of instance))))
+    ;; Tell the Agenda Shell to exit:
+    ':stop)
+
+  (define-ks print-walk-ks
+    :trigger-events ((quiescence-event))
+    :rating 100
+    :execution-function 'print-walk-ks-function)
+\end{example}
+
+\item The GBBopen environment setup using \texttt{gbbopen-init.lisp}
+  as described in Steps 1 and 2 of the \xreflink{Enhancing Your
+    Development Environment}{sec:environment} exercise
+\end{tightitemize}
+
+\subsection*{Step 1: Create your personal \code{gbbopen-modules} directory}
+
+\T\begin{center}
+\textcolor{darkergray}{\textsf{\textbf{To be completed soon$\ldots$\\~\\ 
+ For now, please continue with the next exercise.}}}
+\T\end{center}
 
 %% ========================================================================
 %%  Multiple Walkers

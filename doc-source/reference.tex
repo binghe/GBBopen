@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /home/gbbopen/current/doc-source/reference.tex *-*
-%% *-* Last-Edit: Sun Feb 25 15:49:44 2007; Edited-By: cork *-*
+%% *-* Last-Edit: Sun Mar 11 20:31:51 2007; Edited-By: cork *-*
 %% *-* Machine: ruby.corkills.org *-*
 
 %% Copyright (C) 2003-2007, Dan Corkill <corkill@GBBopen.org>
@@ -45,15 +45,9 @@
 \T\usepackage{graphicx}
 \T\pdfgraphics
 
-\newcommand{\runningtitle}{GBBopen 0.9.5 Reference}
+\newcommand{\docname}{Reference}
 
-%% Html declarations: output directory and filenames, node title
-\htmltitle{\runningtitle}
-\newcommand{\gbbopenversion}{0.9.5}
-
-%% Timezone & Daylight Savings:
-\newcommand{\timezone}{EST}
-%\newcommand{\timezone}{EDT}
+\input{common.tex}
 
 \htmldirectory{../hyperdoc}
 \htmladdress{\xml{a target="_top" class="address"
@@ -62,8 +56,6 @@
 \newcommand{\homepage}{http://GBBopen.org/}
 \W\setcounter{htmldepth}{4}
 \T\setcounter{secnumdepth}{2}
-
-\input{common.tex}
 
 \W\newcommand{\GoToTopTarget}{\xml{a target="_top" href="reference.html"}}
 
@@ -308,7 +300,9 @@ and \xsitelink{Hyperlatex}{http://hyperlatex.sourceforge.net/} 2.9a.
 \W\xname{ref-contents}
 \T\bgroup
 \T\parskip 0pt
+
 \tableofcontents
+
 \T\egroup
 \T\cleardoublepage
 
@@ -8735,6 +8729,7 @@ or not the instances reside on any \glref{space~instance}s.
 \also[class-instances-count]
 \also[clear-space-instances]
 \also[do-instances-on-space-instances]
+\also[find-instances-of-class]
 \also[map-instances-of-class]
 \also[map-instances-on-space-instances]
 \also[map-sorted-instances-of-class]
@@ -8845,6 +8840,7 @@ and \code{=\$\$\$} and \code{within\&}, \code{within\$\&}, \code{within\$},
 \begin{alsos}{map-instances-of-class}
 \also[do-instances-of-class]
 \also[find-instances]
+\also[find-instances-of-class]
 \also[map-instances-of-class]
 \also[map-instances-on-space-instances]
 \also[with-find-stats]
@@ -8924,6 +8920,7 @@ any \glref{space~instance}s.
 
 \begin{alsos}{map-sorted-instances-of-class}
 \also[do-instances-of-class]
+\also[find-instances-of-class]
 \also[map-instances-of-class]
 \also[map-sorted-instances-of-class]
 \end{alsos}
@@ -9391,6 +9388,7 @@ and \code{=\$\$\$} and \code{within\&}, \code{within\$\&}, \code{within\$},
 \also[do-sorted-instances-of-class]
 \also[filter-instances]
 \also[find-instance-by-name]
+\also[find-instances-of-class]
 \also[map-instances-of-class]
 \also[map-sorted-instances-of-class]
 \secalso[Declared numerics]{sec:declared-numerics}
@@ -9419,6 +9417,67 @@ and \code{=\$\$\$} and \code{within\&}, \code{within\$\&}, \code{within\$},
  #<hyp 331 (1835 8419) .88>
  #<hyp 335 (1835 8419) .92>)
 \end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{find-instances-of-class}%
+{\var{function unit-classes-specifier\/}
+  \returns{} \var{unit-instances\/}}
+\index{unit class!retrieving all instances of}%
+\index{unit instance!of a unit class, retrieving all}%
+\index{retrieval!all unit instances of a unit class}%
+
+\fnsyntax
+
+\fnpurpose Return a list of all \glref{unit~instance}s of the
+specified \glref{unit~class}es.
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:gbbopen}
+
+\fnargs
+\begin{args}{unit-classes-specifier}
+\arg[function] A \glref{function} of one argument
+\arg[unit-classes-specifier] An \glref{extended~unit-classes~specification}
+(see below)
+\end{args}
+
+\fnreturns
+\index{pattern!specification!find-instances@\textbf{find-instances}}%
+\index{find-instances@\textbf{find-instances}!pattern specification}%
+A newly consed list of all \glref{unit~instance}s of the
+\glref{unit~class}es specified by \var{unit-class-specifier\/},
+whether or not they reside on any \glref{space~instance}.
+
+\fndsyntax
+\unitclassesspec
+\subclassingspec
+
+\begin{alsos}{map-instances-on-space-instances}
+\also[class-instances-count]
+\also[do-instances-of-class]
+\also[map-instances-on-space-instances]
+\also[map-sorted-instances-of-class]
+\end{alsos}
+
+\fnexample
+Return the list of all \code{hyp} \glref{unit~instance}s:
+\begin{example}
+> (find-instances-of-class 'hyp)
+(#<hyp 319 (1835 8419) .91>
+ #<hyp 119 (1835 4791) .85>
+ #<hyp 331 (1835 8419) .88>
+   \textrm{\ldots{}}
+ #<hyp 183 (1835 4791) .82>
+ #<hyp 233 (1835 4791) .89>)
+\end{example} 
+
+\fnnotes In general, \textbf{\entlink{do-instances-of-class}} or
+\textbf{\entlink{map-instances-of-class}} is preferred over operating
+on the list created by \textbf{find-instances-of-class}.
 
 \end{functiondoc}
 
@@ -10258,6 +10317,7 @@ or not the instances reside on any \glref{space~instance}s.
 \also[class-instances-count]
 \also[clear-space-instances]
 \also[do-instances-of-class]
+\also[find-instances-of-class]
 \also[map-instances-on-space-instances]
 \also[map-sorted-instances-of-class]
 \end{alsos}
@@ -10363,6 +10423,7 @@ and \code{=\$\$\$} and \code{within\&}, \code{within\$\&}, \code{within\$},
 \also[do-instances-of-class]
 \also[do-instances-on-space-instances]
 \also[find-instances]
+\also[find-instances-of-class]
 \also[map-instances-of-class]
 \also[with-find-stats]
 \secalso[Declared numerics]{sec:declared-numerics}
