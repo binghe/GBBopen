@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/control-shells/test/agenda-shell-test.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Nov 10 06:40:18 2006 *-*
+;;;; *-* Last-Edit: Wed Mar 14 14:54:07 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -195,6 +195,7 @@
   (declare (ignore event-name))
   ;; Clean up any previous run:
   (reset-gbbopen :retain-classes '((ks :plus-subclasses))
+                 :retain-event-printing 't
 		 :retain-event-functions 't)
   ;; Enable all KSs:
   (map-instances-of-class #'(lambda (ks) (setf (ks-enabled-p ks) 't)) 'ks)
