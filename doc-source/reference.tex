@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /home/gbbopen/current/doc-source/reference.tex *-*
-%% *-* Last-Edit: Thu Mar 15 13:32:32 2007; Edited-By: cork *-*
+%% *-* Last-Edit: Thu Mar 29 10:16:11 2007; Edited-By: cork *-*
 %% *-* Machine: ruby.corkills.org *-*
 
 %% Copyright (C) 2003-2007, Dan Corkill <corkill@GBBopen.org>
@@ -6992,18 +6992,17 @@ queue \code{pending-ksas}:
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Generic~Function}{remove-from-queue}%
-  {\var{queue-element queue\/}
-    \returns{} \var{queue-element\/}}
+  {\var{queue-element\/} \returns{} \var{queue-element\/}}
 \index{queue!removing an element from}%
 
 \fnsyntax
 
-\fnpurpose Remove a \glref{queue~element} from \var{queue}.
+\fnpurpose Remove a \glref{queue~element} from its \glref{queue}.
 
 \fnmethods
 \fnalternate{remove-from-queue}%
   {\code{(}\var{queue-element\/} \code{queue-element)}
-  \code{(}\var{queue\/} \code{queue)} \returns{} \var{queue-element}}
+   \returns{} \var{queue-element}}
 
 \fnpackage \code{:gbbopen-tools}
 
@@ -7012,7 +7011,6 @@ queue \code{pending-ksas}:
 \fnargs
 \begin{args}{queue-element}
 \arg[queue-element] A GBBopen \glref{queue~element} object
-\arg[queue] A GBBopen \glref{queue}
 \end{args}
 
 \fnreturns The supplied \var{queue-element}.
@@ -7023,7 +7021,7 @@ queue \code{pending-ksas}:
 
 \fnexample
 \begin{example}
-> (remove-from-queue ksa pending-ksas)
+> (remove-from-queue ksa)
 #<ksa 2372>
 \end{example}
 
@@ -13354,7 +13352,7 @@ A \code{restart-control-shell-event} is signaled.
 \fnexample
 Restart the Agenda Shell (in this case, without any \glref{KS}s defined):
 \begin{example}
-> (restart-control-shell :save-executed-ksas 't)
+> (restart-control-shell)
 ;; Control shell restarting after cycle 2
 ;; No executable KSAs remain, exiting control shell
 ;; Control shell exited: 4 cycles completed
