@@ -20,21 +20,21 @@
 <code>&#38;key</code> <var>pattern filter-before filter-after</var>)
 &#123;<var>tag</var>&nbsp;|&nbsp;<var>form</var>&#125;*</td><td valign="baseline" align="right">[<i>Macro</i>]
 </td></tr></table></p>
-<p><span class="fndoclabel">Purpose</span> <br />Iterate over each <a href="ref-glossary.html#id160">unit&nbsp;instance</a> on <a href="ref-glossary.html#id144">space&nbsp;instance</a>s,
-optionally selected by a <a href="ref-glossary.html#id136">retrieval&nbsp;pattern</a>.
+<p><span class="fndoclabel">Purpose</span> <br />Iterate over each <a href="ref-glossary.html#id162">unit&nbsp;instance</a> on <a href="ref-glossary.html#id146">space&nbsp;instance</a>s,
+optionally selected by a <a href="ref-glossary.html#id138">retrieval&nbsp;pattern</a>.
 </p>
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen</code>
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen</code>
 </p>
 <p><span class="fndoclabel">Arguments</span><table class="tight">
-<tr valign="top"><td valign="baseline"><i>var</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id164">variable&nbsp;symbol</a>
-</td></tr><tr valign="top"><td valign="baseline"><i>unit-classes-specifier</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An <a href="ref-glossary.html#id56">extended&nbsp;unit-classes&nbsp;specification</a>
+<tr valign="top"><td valign="baseline"><i>var</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id166">variable&nbsp;symbol</a>
+</td></tr><tr valign="top"><td valign="baseline"><i>unit-classes-specifier</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An <a href="ref-glossary.html#id58">extended&nbsp;unit-classes&nbsp;specification</a>
 (see below)
-</td></tr><tr valign="top"><td valign="baseline"><i>space-instances</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id144">space&nbsp;instance</a>, a list of
-<a href="ref-glossary.html#id144">space&nbsp;instance</a>s, a <a href="ref-glossary.html#id148">space-instance&nbsp;path</a> regular expression, or
+</td></tr><tr valign="top"><td valign="baseline"><i>space-instances</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id146">space&nbsp;instance</a>, a list of
+<a href="ref-glossary.html#id146">space&nbsp;instance</a>s, a <a href="ref-glossary.html#id150">space-instance&nbsp;path</a> regular expression, or
 <code>t</code> (indicating all space instances)
-</td></tr><tr valign="top"><td valign="baseline"><i>pattern</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id136">retrieval&nbsp;pattern</a> (see below; default is <code>t</code>)
+</td></tr><tr valign="top"><td valign="baseline"><i>pattern</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id138">retrieval&nbsp;pattern</a> (see below; default is <code>t</code>)
 </td></tr><tr valign="top"><td valign="baseline"><i>filter-before</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A single-argument predicate to be applied before
 pattern-matching tests occur
 </td></tr><tr valign="top"><td valign="baseline"><i>filter-after</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A single-argument predicate to be
@@ -182,13 +182,13 @@ applied after pattern-matching tests occur
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
 <p><span class="fndoclabel">Description</span> <br />The iteration is performed only once for each selected
-<a href="ref-glossary.html#id160">unit&nbsp;instance</a>, even if the <a href="ref-glossary.html#id160">unit&nbsp;instance</a> resides on multiple
-<a href="ref-glossary.html#id144">space&nbsp;instance</a>s.
+<a href="ref-glossary.html#id162">unit&nbsp;instance</a>, even if the <a href="ref-glossary.html#id162">unit&nbsp;instance</a> resides on multiple
+<a href="ref-glossary.html#id146">space&nbsp;instance</a>s.
 </p>
-<p>The <var>pattern</var> <code>t</code> matches all <a href="ref-glossary.html#id160">unit&nbsp;instance</a>s whose
+<p>The <var>pattern</var> <code>t</code> matches all <a href="ref-glossary.html#id162">unit&nbsp;instance</a>s whose
 <a href="ref-glossary.html#id25">dimension&nbsp;value</a>s overlap the <a href="ref-glossary.html#id29">dimensional&nbsp;extent</a> of at least
-one <a href="ref-glossary.html#id144">space&nbsp;instance</a> in <var>space-instances</var>. The <var>pattern</var>
-<code>:all</code> matches every <a href="ref-glossary.html#id160">unit&nbsp;instance</a> on a <a href="ref-glossary.html#id144">space&nbsp;instance</a> in
+one <a href="ref-glossary.html#id146">space&nbsp;instance</a> in <var>space-instances</var>. The <var>pattern</var>
+<code>:all</code> matches every <a href="ref-glossary.html#id162">unit&nbsp;instance</a> on a <a href="ref-glossary.html#id146">space&nbsp;instance</a> in
 <var>space-instances</var>, regardless of dimensional overlap.
 </p>
 <p><a href="ref-declared-numerics.html">Declared numeric</a> pattern operators are also
@@ -205,10 +205,10 @@ and <code>=&#36;&#36;&#36;</code> and <code>within&#38;</code>, <code>within&#36
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-with-find-stats.html"><b>with-find-stats</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-declared-numerics.html">Declared numerics</a>
 </p>
-<p><span class="fndoclabel">Examples</span> <br /><a name="id13">Remove</a> all the <code>hyp</code> <a href="ref-glossary.html#id160">unit&nbsp;instance</a>s that
-reside on the <code>(bb probable-hyps)</code> <a href="ref-glossary.html#id144">space&nbsp;instance</a>,
-deleting those <a href="ref-glossary.html#id160">unit&nbsp;instance</a>s that do not reside on any other
-<a href="ref-glossary.html#id144">space&nbsp;instance</a>:
+<p><span class="fndoclabel">Examples</span> <br /><a name="id13">Remove</a> all the <code>hyp</code> <a href="ref-glossary.html#id162">unit&nbsp;instance</a>s that
+reside on the <code>(bb probable-hyps)</code> <a href="ref-glossary.html#id146">space&nbsp;instance</a>,
+deleting those <a href="ref-glossary.html#id162">unit&nbsp;instance</a>s that do not reside on any other
+<a href="ref-glossary.html#id146">space&nbsp;instance</a>:
 </p>
 <pre>
   (let ((space-instance 
@@ -219,8 +219,8 @@ deleting those <a href="ref-glossary.html#id160">unit&nbsp;instance</a>s that do
                   instance space-instance)
                (<a href="ref-delete-instance.html">delete-instance</a> instance))))
 </pre>
-<p><a name="id14">Delete</a> <code>hyp</code> <a href="ref-glossary.html#id160">unit&nbsp;instance</a>s that
-reside on the <code>(bb probable-hyps)</code> <a href="ref-glossary.html#id144">space&nbsp;instance</a> that
+<p><a name="id14">Delete</a> <code>hyp</code> <a href="ref-glossary.html#id162">unit&nbsp;instance</a>s that
+reside on the <code>(bb probable-hyps)</code> <a href="ref-glossary.html#id146">space&nbsp;instance</a> that
 have a belief value of less than 0.5:
 </p>
 <pre>

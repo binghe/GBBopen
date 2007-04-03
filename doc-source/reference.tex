@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /home/gbbopen/current/doc-source/reference.tex *-*
-%% *-* Last-Edit: Thu Mar 29 10:16:11 2007; Edited-By: cork *-*
+%% *-* Last-Edit: Mon Apr  2 22:53:10 2007; Edited-By: cork *-*
 %% *-* Machine: ruby.corkills.org *-*
 
 %% Copyright (C) 2003-2007, Dan Corkill <corkill@GBBopen.org>
@@ -7635,7 +7635,8 @@ The \code{:metaclass} \var{class-name\/}, if specified, must be a subclass of
 the metaclass of the event superclasses of \var{event-class-name} if they all
 have the same metaclass.  If the event superclasses have multiple metaclasses,
 the metaclass of \var{event-class-name} must be provided. The following table
-lists the compatible event-superclass metaclasses for each event metaclass:
+lists the compatible event-superclass metaclasses for each
+\glref{event~metaclass}:
 
 \begin{center}
 \begin{tabular}{@{}l@{}l@{}c@{}l@{}c@{}l@{}c@{}l@{}c@{}l@{}c@{}}
@@ -7644,14 +7645,24 @@ lists the compatible event-superclass metaclasses for each event metaclass:
   \code{nonlink-}&~~&\code{link-}\\
 \multicolumn{1}{c}{\textbf{Metaclass}}&&\code{instance}&&\code{instance}&&
    \code{instance}&&\code{slot}&&\code{slot}\\[4pt]
-\code{non-instance}   &&\textbf{X}&&          &&          &&          &&          \\
-\code{instance}       &&\textbf{X}&&\textbf{X}&&          &&          &&          \\
-\code{space-instance} &&\textbf{X}&&\textbf{X}&&\textbf{X}&&          &&          \\
-\code{nonlink-slot}   &&\textbf{X}&&\textbf{X}&&          &&\textbf{X}&&          \\
-\code{link-slot}      &&\textbf{X}&&\textbf{X}&&          &&          &&\textbf{X}\\
+\code{non-instance-event-class}
+   &&\textbf{X}&&          &&          &&          &&          \\
+\code{instance-event-class}
+   &&\textbf{X}&&\textbf{X}&&          &&          &&          \\
+\code{space-instance-event-class}
+   &&\textbf{X}&&\textbf{X}&&\textbf{X}&&          &&          \\
+\code{nonlink-slot-event-class}
+   &&\textbf{X}&&\textbf{X}&&          &&\textbf{X}&&          \\
+\code{link-slot-event-class}
+   &&\textbf{X}&&\textbf{X}&&          &&          &&\textbf{X}\\
 \end{tabular}
 \end{center}
-\W~
+
+The table in the documentation for \textbf{signal-event}
+lists the \glref{initialization~arguments} that are required when
+signaling an event.  These required \glref{initialization~arguments}
+are based on the \glref{event~metaclass} of the \glref{event~class} of
+the \glref{event} that is being signaled.
 
 \begin{alsos}{with-generate-accessors-format}
 \also[signal-event]
@@ -11106,21 +11117,21 @@ names an \glref{event~class}
 \index{event function!required arguments}%
 \index{function!event!required arguments}%
 The following table lists the \glref{initialization~arguments} that
-are required for specific GBBopen-core event types:
+are required for specific event metaclasses:
 \begin{center}
   \begin{tabular}{@{}l@{}l@{}}
-  \textbf{Event type} & \textbf{Required initargs} \\ \hline
-  \code{:non-instance} 
+  \textbf{Event metaclass} & \textbf{Required initargs} \\ \hline
+  \code{non-instance-event-class} 
   & None \\
-  \code{:instance} 
+  \code{instance-event-class} 
   & \code{:instance} \var{unit-instance\/} \\
-  \code{:space-instance}~~~~~
+  \code{space-instance-event-class}~~~~~
   & \code{:instance} \var{unit-instance\/} \\
   & \code{:space-instance} \var{space-instance\/} \\ 
-  \code{:nonlink-slot}
+  \code{nonlink-slot-event-class}
   & \code{:instance} \var{unit-instance\/} \\
   & \code{:slot} \var{effective-nonlink-slot-definition\/} \\
-  \code{:link-slot}
+  \code{link-slot-event-class}
   & \code{:instance} \var{unit-instance\/} \\
   & \code{:slot} \var{effective-link-slot-definition\/} \\ \hline
 \end{tabular}
@@ -14029,7 +14040,7 @@ An object that is a subclass of \textbf{\entlinknoex{standard-event-class}}.
 A \glref{function} that is associated with one or more event specifications
 and is called whenever such an event occurs.  (See
 \textbf{\entlink{signal-event}} for the required event-function arguments for
-GBBopen-core event types.
+each event metaclass.
 
 %% ------------------------------------------------------------------------
 
@@ -14040,6 +14051,19 @@ GBBopen-core event types.
 \bfindexit{standard-event-instance}%
 An object whose class is a subclass of
 \textbf{\entlinknoex{standard-event-instance}}.
+
+%% ------------------------------------------------------------------------
+
+\glent[event~metaclass]
+\gllabel{event-metaclass}%
+\index{event metaclass}%
+\index{metaclass!event}%
+%
+One of five ``types'' of \glref{event}.  Every \glref{event~class} has
+one of the following event metaclasses:
+\code{non-instance-event-class}, \code{instance-event-class},
+\code{space-instance-event-class}, \code{nonlink-slot-event-class}, or
+\code{link-slot-event-class}.
 
 %% ------------------------------------------------------------------------
 
