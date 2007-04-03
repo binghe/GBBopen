@@ -23,7 +23,7 @@
 <var>form</var>* 
 <i> =&gt; </i> <var>value</var>*</td><td valign="baseline" align="right">[<i>Macro</i>]
 </td></tr></table></p>
-<p><span class="fndoclabel">Purpose</span> <br />After acquiring a <a href="ref-glossary.html#id118">process&nbsp;lock</a>, execute forms and
+<p><span class="fndoclabel">Purpose</span> <br />After acquiring a <a href="ref-glossary.html#id120">process&nbsp;lock</a>, execute forms and
 then release the lock.
 </p>
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:portable-threads</code>
@@ -31,7 +31,7 @@ then release the lock.
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:portable-threads</code>
 </p>
 <p><span class="fndoclabel">Arguments</span><table class="tight">
-<tr valign="top"><td valign="baseline"><i>lock</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id118">process&nbsp;lock</a>
+<tr valign="top"><td valign="baseline"><i>lock</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id120">process&nbsp;lock</a>
 </td></tr><tr valign="top"><td valign="baseline"><i>whostate</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A string (default <code>"With Process Lock"</code>)
 </td></tr><tr valign="top"><td valign="baseline"><i>declaration</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A declare expression
 </td></tr><tr valign="top"><td valign="baseline"><i>forms</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An implicit <b>progn</b> of <a href="ref-glossary.html#gl:form">form</a>s to be evaluated
@@ -41,7 +41,7 @@ then release the lock.
 </p>
 <p><span class="fndoclabel">Description</span> <br />If a <a href="ref-glossary.html#gl:process">process</a> executes a
 <b>with-process-lock</b> that is dynamically inside another
-<b>with-process-lock</b> involving the same <a href="ref-glossary.html#id118">process&nbsp;lock</a>, the
+<b>with-process-lock</b> involving the same <a href="ref-glossary.html#id120">process&nbsp;lock</a>, the
 inner <b>with-process-lock</b> simply executes its <a href="ref-glossary.html#gl:form">form</a>s and
 has no effect on the lock.
 </p>
