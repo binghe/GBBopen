@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/mini-module/mini-module.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Jan 20 09:58:03 2007 *-*
+;;;; *-* Last-Edit: Wed Apr  4 09:34:51 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -106,7 +106,7 @@
 ;; compile/load/compile bootstrap sequence, so we don't use defvar here):
 (declaim (special *automatically-create-missing-directories*))
 (unless (boundp '*automatically-create-missing-directories*)
-  (setq *automatically-create-missing-directories* nil))
+  (setf *automatically-create-missing-directories* nil))
 
 ;;; ===========================================================================
 ;;;  Implementation-Specific Package & Feature Adjustments
@@ -130,7 +130,7 @@
 	    define-module
 	    describe-module
 	    dotted-conc-name		; part of tools, but placed here
-            get-directory               ; not yet documented
+            get-directory
             list-modules                ; not yet documented
 	    load-module
 	    load-module-file
@@ -171,8 +171,8 @@
   (let ((current-time (get-universal-time))
 	time-difference)
     (if time
-	(setq time-difference (abs (- current-time time)))
-	(setq time current-time 
+	(setf time-difference (abs (- current-time time)))
+	(setf time current-time 
 	      time-difference 0))
     (multiple-value-bind (second minute hour date month year)
 	(if time-zone 
@@ -316,7 +316,7 @@
 
 (defun get-directory (name &rest subdirectories)
   ;; Get-directory is for direct directory specifications; there is no
-  ;; source/compiled subtree handling
+  ;; source/compiled subtree handling:
   (let ((mm-dir (gethash name *mm-directories*)))
     (typecase mm-dir
       (mm-root-directory 
@@ -334,10 +334,22 @@
                           *mm-directories*))))
          (make-pathname 
           :directory (append (pathname-directory root-path)
+                             '(#.*source-directory-name*)
                              (mm-relative-directory.sub-directories mm-dir)
                              subdirectories)
           :defaults root-path)))
-      (otherwise (error "Directory ~s is not defined." name)))))
+      (otherwise
+       ;; See if module `name' has been defined:
+       (let ((module (get-module name)))
+         (if module
+             (let ((module-directory (mm-module.directory module)))
+               (typecase module-directory
+                 ;; Implicitly rooted module:
+                 (pathname module-directory)
+                 ;; Use source directory of module:
+                 (otherwise (nth-value 0 (module-source/compiled-directories
+                                          module)))))
+             (error "Directory ~s is not defined." name)))))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -508,9 +520,9 @@
          (when directory-seen?
            (error "Multiple :directory options supplied in module ~s."
                   name))
-         (setq directory-seen? 't)
-         (setq directory (second option))
-         (setq sub-directories (cddr option))
+         (setf directory-seen? 't)
+         (setf directory (second option))
+         (setf sub-directories (cddr option))
          (unless (or (not directory)
 		     (keywordp directory))
            (error "The :directory specification supplied in module ~s ~_~
@@ -522,20 +534,20 @@
          (when files-seen?
            (error "Multiple :files options supplied in module ~s."
                   name))
-         (setq files-seen? 't)
-         (setq files (rest option)))
+         (setf files-seen? 't)
+         (setf files (rest option)))
         (:requires 
          (when requires-seen?
            (error "Multiple :requires options supplied in module ~s."
                   name))
-         (setq requires-seen? 't)
-         (setq requires (rest option)))
+         (setf requires-seen? 't)
+         (setf requires (rest option)))
         (t (error "Unsupported option, ~s, in module ~s."
                   option name))))    
     (when (and files (not directory))
       (let ((truename *load-truename*))
 	(if truename
-	    (setq directory 
+	    (setf directory 
 	      (make-pathname
 	       :name nil
 	       :type nil
@@ -579,7 +591,7 @@
 	    (cond ((< item-pos pos)
 		   (return nil))
 		  ((> item-pos pos)
-		   (setq pos item-pos)))))))))
+		   (setf pos item-pos)))))))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -679,7 +691,7 @@
 
 (defun maybe-update-forces-recompile-date (new-date)
   (when (> new-date *latest-forces-recompile-date*)
-    (setq *latest-forces-recompile-date* new-date)))
+    (setf *latest-forces-recompile-date* new-date)))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -775,7 +787,7 @@
             (compile-file source-path 
                           :print verbose?
                           :output-file compiled-path)
-            (setq compiled-file-date 
+            (setf compiled-file-date 
               (or (and (probe-file compiled-path)
 		       (file-write-date compiled-path))
                   ;; Compiled file can be missing if compilation was
@@ -786,7 +798,7 @@
 	      (setf (mm-module.latest-forces-recompiled-date module)
 		    (max compiled-file-date
 			 (mm-module.latest-forces-recompiled-date module)))
-              (setq recompile? 't propagate? 't)))
+              (setf recompile? 't propagate? 't)))
           (unless (member :noload file-options :test #'eq)
             (if (or source? (> source-file-date compiled-file-date))
                 (load-it source-path source-file-date)
@@ -849,7 +861,7 @@
   ;;;   :create-dirs Creates directories that are missing in the
   ;;;                compiled-file tree
   (declare (dynamic-extent options))
-  (when (keywordp module-names) (setq module-names (list module-names)))
+  (when (keywordp module-names) (setf module-names (list module-names)))
   (dolist (option options)
     (unless (member option *compile/load-module-options* :test #'eq)
       (warn "Unrecognized compile-module option ~s, ignored." option)))
@@ -866,7 +878,7 @@
          (modules-to-load (determine-modules module-names))
 	 (*latest-forces-recompile-date* 0))
     ;; specifying :source implies :reload
-    (when source? (setq reload? 't))        
+    (when source? (setf reload? 't))        
     (dolist (module modules-to-load)
       (let ((specified-module? 
              (member (mm-module.name module) module-names :test #'eq)))
@@ -892,7 +904,7 @@
   ;;;   :source      Loads source (implies :reload)
   ;;;   :propagate   Applies the specified options to all required modules
   (declare (dynamic-extent options))
-  (when (keywordp module-names) (setq module-names (list module-names)))
+  (when (keywordp module-names) (setf module-names (list module-names)))
   (dolist (option options)
     (unless (member option *compile/load-module-options* :test #'eq)
       (warn "Unrecognized compile-module option ~s, ignored." option)))
@@ -902,7 +914,7 @@
         (modules-to-load (determine-modules module-names))
 	(*latest-forces-recompile-date* 0))
   ;; specifying :source implies :reload:
-    (when source? (setq reload? 't))        
+    (when source? (setf reload? 't))        
     (dolist (module modules-to-load)
       (let ((specified-module? 
              (member (mm-module.name module) module-names :test #'eq)))
@@ -1156,13 +1168,13 @@
 (defun do-mini-module-tll-command (cmd fn options save-symbol)
   (let ((recalled-options nil))
     (when (and (null options) *last-lm/cm-module*)
-      (setq recalled-options 't)
-      (setq options (cons *last-lm/cm-module*
+      (setf recalled-options 't)
+      (setf options (cons *last-lm/cm-module*
 			  (symbol-value save-symbol))))
     (cond 
      ;; New module arguments were specified:
      (options
-      (setq *last-lm/cm-module* (first options))
+      (setf *last-lm/cm-module* (first options))
       (setf (symbol-value save-symbol) (rest options))
       (when recalled-options
 	(format *trace-output* "~&;; ~(~s~)~{ ~(~s~)~}~%"
