@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /home/gbbopen/current/doc-source/reference.tex *-*
-%% *-* Last-Edit: Mon Apr  2 22:53:10 2007; Edited-By: cork *-*
+%% *-* Last-Edit: Wed Apr  4 12:39:09 2007; Edited-By: cork *-*
 %% *-* Machine: ruby.corkills.org *-*
 
 %% Copyright (C) 2003-2007, Dan Corkill <corkill@GBBopen.org>
@@ -1434,6 +1434,10 @@ order in a previously defined module.
 \code{:directory}, and \code{:files} can be specified in any order,
 but at most one of each is allowed.
 
+If a \code{:directory} module option is not specified, an implicit
+root directory for the module (at the \code{*load-truename*} of the
+file containing the \textbf{define-module} form) is used.
+
 The \code{:requires} module option specifies, in order, the modules that must
 be loaded before this module.  The fully expanded required-module order
 determined from the specified \code{:requires} module option must be
@@ -1575,10 +1579,17 @@ location of the source root directory is changed.
 \also[show-defined-directories]
 \end{alsos}
 
-\fnexample Define a root directory named \code{:my-app-root}:
+\fnexamples Define a root directory named \code{:my-app-root}:
 \begin{example}
   (define-root-directory :my-app-root 
     (make-pathname :directory "~/my-app"))
+\end{example}
+
+Define a root directory named \code{:my-app-root} to be the directory
+containing the file containing the \textbf{define-root-directory} form:
+\begin{example}
+  (define-root-directory :my-app-root 
+    (make-pathname :directory *load-truename*))
 \end{example}
 
 \end{functiondoc}
@@ -1632,6 +1643,57 @@ Module :gbbopen-tools (loaded)
          Jan 15 17:11 define-class (:forces-recompile)
          Jan 15 17:11 epilogue 
 \end{example} 
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{get-directory}{\var{name\/}
+    \returns{} \var{pathname\/}}
+\index{directory!getting pathname from name}%
+
+\fnsyntax 
+
+\fnpurpose Return the pathname of a root directory, a relative
+directory, or a module.
+
+\fnpackage \code{:mini-module}
+
+\fnmodule \code{:mini-module}
+
+\fnargs
+\begin{args}{directory-specification}
+\arg[name] A keyword symbol naming a root directory, a relative directory, 
+or a module.
+\end{args}
+
+\fnreturns The pathname of the defined directory or module.
+
+\fndescription Root and relative directory definitions are searched
+first.  If no \var{name\/} directory definition is found, module
+definitions are searched.  Root directories specify a fixed anchor
+directory for a tree of relative directory definitions.  The pathname
+returned for relative directories is the source pathname.
+
+\begin{alsos}{show-defined-directories}
+\also[define-relative-directory]
+\also[define-root-directory]
+\also[show-defined-directories]
+\end{alsos}
+
+\fnexamples
+
+Return the pathname of the \code{:my-app-root} root directory:
+\begin{example}
+> (get-directory :my-app-root)
+#P"~/my-app")
+\end{example}
+
+Return the pathname of the \code{:gbbopen-tools} module:
+\begin{example}
+> (get-directory :gbbopen-tools)
+#P"/home/GBBopen/current/source/tools"
+\end{example}
 
 \end{functiondoc}
 
@@ -1845,6 +1907,7 @@ t
 \begin{alsos}{define-relative-directory}
 \also[define-relative-directory]
 \also[define-root-directory]
+\also[get-directory]
 \end{alsos}
 
 \fnexample List the currently defined root and relative directories:

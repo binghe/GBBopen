@@ -80,6 +80,10 @@ definition is loaded
 <code>:directory</code>, and <code>:files</code> can be specified in any order,
 but at most one of each is allowed.
 </p>
+<p>If a <code>:directory</code> module option is not specified, an implicit
+root directory for the module (at the <code>*load-truename*</code> of the
+file containing the <b>define-module</b> form) is used.
+</p>
 <p>The <code>:requires</code> module option specifies, in order, the modules that must
 be loaded before this module.  The fully expanded required-module order
 determined from the specified <code>:requires</code> module option must be

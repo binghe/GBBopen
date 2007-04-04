@@ -50,11 +50,18 @@ location of the source root directory is changed.
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-define-relative-directory.html"><b>define-relative-directory</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-show-defined-directories.html"><b>show-defined-directories</b></a>
 </p>
-<p><span class="fndoclabel">Example</span> <br />Define a root directory named <code>:my-app-root</code>:
+<p><span class="fndoclabel">Examples</span> <br />Define a root directory named <code>:my-app-root</code>:
 </p>
 <pre>
   (define-root-directory :my-app-root 
     (make-pathname :directory "~/my-app"))
+</pre>
+<p>Define a root directory named <code>:my-app-root</code> to be the directory
+containing the file containing the <b>define-root-directory</b> form:
+</p>
+<pre>
+  (define-root-directory :my-app-root 
+    (make-pathname :directory *load-truename*))
 </pre>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
