@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/control-shells/test/agenda-shell-test.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Mar 14 14:54:07 2007 *-*
+;;;; *-* Last-Edit: Mon Apr  9 18:27:13 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -57,10 +57,19 @@
 ;;; ---------------------------------------------------------------------------
 ;;;  A user-defined KS and KSA class for testing purposes:
 
-(define-ks-class obviated-ks ()
+(define-unit-class do-nothing-mixin ()
+  ((do-nothing-slot :initform nil)))
+
+(define-ks-class triggered-ks (ks do-nothing-mixin)
   ((an-unused-slot :initform nil)))
 
-(define-ksa-class retriggered-ksa ()
+(define-ks-class obviated-ks (ks do-nothing-mixin)
+  ((an-unused-slot :initform nil)))
+
+(define-ksa-class triggered-ksa (ksa do-nothing-mixin)
+  ((rating :documentation "Simply shadowing this slot")))
+
+(define-ksa-class retriggered-ksa (ksa do-nothing-mixin)
   ((rating :documentation "Simply shadowing this slot")))
 
 ;;; ===========================================================================
@@ -162,11 +171,17 @@
 
 (define-ks add-uc-one-to-space-instance-event-ks
     :trigger-events ((add-instance-to-space-instance-event uc-one :path (*)))
+    :precondition-function 
+    #'(lambda (ks events)
+        (declare (ignore ks events))
+        most-positive-rating)
     :execution-function 
     #'(lambda (ksa)
 	(declare (ignore ksa))
 	(format t "~&;; Add-uc-one-to-space-instance-event ks executed~%")
-	(values)))
+	(values))
+    :ks-class triggered-ks
+    :ksa-class triggered-ksa)
 		   
 ;;; ---------------------------------------------------------------------------
 
