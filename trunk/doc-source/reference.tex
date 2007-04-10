@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /home/gbbopen/current/doc-source/reference.tex *-*
-%% *-* Last-Edit: Wed Apr  4 12:39:09 2007; Edited-By: cork *-*
+%% *-* Last-Edit: Mon Apr  9 21:03:38 2007; Edited-By: cork *-*
 %% *-* Machine: ruby.corkills.org *-*
 
 %% Copyright (C) 2003-2007, Dan Corkill <corkill@GBBopen.org>
@@ -2368,6 +2368,10 @@ direct superclass of the \glref{class} \var{class-name\/}
 The \code{:metaclass} class option, if specified, must be a subclass
 of \code{standard-class}.  The default metaclass value is
 \code{standard-class}.
+
+Each \var{superclass-name} argument specifies a direct superclass of
+the new class. If the superclass list is empty, then the direct
+superclass defaults to the single class \code{standard-object}.
 
 \begin{alsos}{with-generate-accessors-format}
 \also[define-unit-class]
@@ -7693,6 +7697,11 @@ direct superclass of the \glref{event~class} \var{event-class-name\/}
 
 \fndescription 
 \bfindexit{standard-event-class}%
+Each \var{superclass-name} argument specifies a direct superclass of the new
+class. If the superclass list is empty, then the direct superclass defaults to the
+single class \textbf{\entlink{standard-event-class}}.
+
+\bfindexit{standard-event-class}%
 The \code{:metaclass} \var{class-name\/}, if specified, must be a subclass of
 \textbf{\entlinknoex{standard-event-class}}.  The default metaclass value is
 the metaclass of the event superclasses of \var{event-class-name} if they all
@@ -7909,6 +7918,11 @@ is \code{eql})
 dimension-value types.
 
 \bfindexit{standard-space-class}%
+Each \var{superclass-name} argument specifies a direct superclass of the new
+class. If the superclass list is empty, then the direct superclass defaults to the
+single class \textbf{\entlink{standard-space-class}}.
+
+\bfindexit{standard-space-class}%
 The \code{:metaclass} \var{class-name\/}, if specified, must be a subclass of
 \textbf{\entlinknoex{standard-space-class}}.  The default metaclass value is
 also \textbf{\entlinknoex{standard-space-class}}.
@@ -8098,6 +8112,11 @@ metaclass \textbf{\entlinknoex{standard-unit-class}} is \code{eql})
 \fndescription A \var{dimension-value-place\/} with two
 \var{slot-names\/} can be specified only for \code{:interval}
 dimension-value types.
+
+\bfindexit{standard-unit-class}%
+Each \var{superclass-name} argument specifies a direct superclass of the new
+class. If the superclass list is empty, then the direct superclass defaults to the
+single class \textbf{\entlink{standard-unit-class}}.
 
 \bfindexit{standard-unit-class}%
 The \code{:metaclass} class option, if specified, must be a subclass
@@ -12584,6 +12603,11 @@ is \code{eql})
 \var{slot-names\/} can be specified only for \code{:interval}
 dimension-value types.
 
+\bfindexit{ks}%
+Each \var{superclass-name} argument specifies a direct superclass of the new
+class. If the superclass list is empty, then the direct superclass defaults to the
+single class \textbf{\entlink{ks}}.
+
 \bfindexit{standard-unit-class}%
 The \code{:metaclass} \var{class-name\/}, if specified, must be a subclass of
 \textbf{\entlinknoex{standard-unit-class}}.  The default metaclass value is
@@ -12615,7 +12639,7 @@ default initializtion value associated with the metaclass is used.
 \also[with-generate-accessors-format]
 \end{alsos}
 
-\fnexample 
+\fnexamples
 Define a \glref{ks~class},
 \code{ks-with-lock}, that has an additional \glref{slot}
 containing a \glref{process~lock} that can be used to synchronize
@@ -12623,6 +12647,16 @@ operations on each defined \glref{KS} of that class.
 \begin{example}
 > (define-ks-class ks-with-lock ()
     ((lock :initform (\entlink{make-process-lock} :name "KS Lock"))))
+#<standard-unit-class ks-with-lock>
+\end{example}
+
+Do the same, but with a mixin class:
+\begin{example}
+> (define-unit-class lock-mixin (ks my-mixin)
+    ((lock :initform (\entlink{make-process-lock} :name "KS Lock"))))
+#<standard-unit-class lock-mixin>
+> (define-ks-class ks-with-lock (ks lock-mixin)
+    ())
 #<standard-unit-class ks-with-lock>
 \end{example}
 
@@ -12792,6 +12826,11 @@ is \code{eql})
 \var{slot-names\/} can be specified only for \code{:interval}
 dimension-value types.
 
+\bfindexit{ksa}%
+Each \var{superclass-name} argument specifies a direct superclass of the new
+class. If the superclass list is empty, then the direct superclass defaults to the
+single class \textbf{\entlink{ksa}}.
+
 \bfindexit{standard-unit-class}%
 The \code{:metaclass} \var{class-name\/}, if specified, must be a subclass of
 \textbf{\entlinknoex{standard-ksa-class}}.  The default metaclass value is
@@ -12823,7 +12862,7 @@ default initializtion value associated with the metaclass is used.
 \also[with-generate-accessors-format]
 \end{alsos}
 
-\fnexample 
+\fnexamples
 Define a \glref{ksa~class},
 \code{ksa-with-lock}, that has an additional \glref{slot}
 containing a \glref{process~lock} that can be used to synchronize
@@ -12831,6 +12870,16 @@ operations on each \glref{KSA} of that class.
 \begin{example}
 > (define-ksa-class ksa-with-lock ()
     ((lock :initform (\entlink{make-process-lock} :name "KSA Lock"))))
+#<standard-ksa-class ksa-with-lock>
+\end{example}
+
+Do the same, but with a mixin class:
+\begin{example}
+> (define-unit-class lock-mixin (ks my-mixin)
+    ((lock :initform (\entlink{make-process-lock} :name "KS Lock"))))
+#<standard-unit-class lock-mixin>
+> (define-ksa-class ksa-with-lock (ksa lock-mixin)
+    ())
 #<standard-ksa-class ksa-with-lock>
 \end{example}
 

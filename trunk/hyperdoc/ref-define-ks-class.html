@@ -249,13 +249,17 @@ is <code>eql</code>)
 <var>slot-names</var> can be specified only for <code>:interval</code>
 dimension-value types.
 </p>
-<p><a name="id3">The</a> <code>:metaclass</code> <var>class-name</var>, if specified, must be a subclass of
+<p><a name="id3">Each</a> <var>superclass-name</var> argument specifies a direct superclass of the new
+class. If the superclass list is empty, then the direct superclass defaults to the
+single class <b><a href="ref-ks.html">ks</a></b>.
+</p>
+<p><a name="id4">The</a> <code>:metaclass</code> <var>class-name</var>, if specified, must be a subclass of
 <b><a href="ref-standard-unit-class.html">standard-unit-class</a></b>.  The default metaclass value is
 also <b><a href="ref-standard-unit-class.html">standard-unit-class</a></b>.
 </p>
 <p><p><b>Inheritance of class options</b></p>
 </p>
-<p><a name="id4">The</a> set of <var>dimensional-values</var> for a <a href="ref-glossary.html#id160">unit&nbsp;class</a> is the
+<p><a name="id5">The</a> set of <var>dimensional-values</var> for a <a href="ref-glossary.html#id160">unit&nbsp;class</a> is the
 union of the sets specified in the <var>dimensional-values</var> options
 of the class and its superclasses.  When more than one dimensional
 index is supplied for a given dimension, the one supplied by the most
@@ -275,7 +279,7 @@ default initializtion value associated with the metaclass is used.
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-standard-unit-class.html"><b>standard-unit-class</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-with-generate-accessors-format.html"><b>with-generate-accessors-format</b></a>
 </p>
-<p><span class="fndoclabel">Example</span> <br />Define a <a href="ref-glossary.html#id86">ks&nbsp;class</a>,
+<p><span class="fndoclabel">Examples</span> <br />Define a <a href="ref-glossary.html#id86">ks&nbsp;class</a>,
 <code>ks-with-lock</code>, that has an additional <a href="ref-glossary.html#gl:slot">slot</a>
 containing a <a href="ref-glossary.html#id120">process&nbsp;lock</a> that can be used to synchronize
 operations on each defined <a href="ref-glossary.html#gl:KS">KS</a> of that class.
@@ -283,6 +287,16 @@ operations on each defined <a href="ref-glossary.html#gl:KS">KS</a> of that clas
 <pre>
 &gt; (define-ks-class ks-with-lock ()
     ((lock :initform (<a href="ref-make-process-lock.html">make-process-lock</a> :name "KS Lock"))))
+#&lt;standard-unit-class ks-with-lock&gt;
+</pre>
+<p>Do the same, but with a mixin class:
+</p>
+<pre>
+&gt; (define-unit-class lock-mixin (ks my-mixin)
+    ((lock :initform (<a href="ref-make-process-lock.html">make-process-lock</a> :name "KS Lock"))))
+#&lt;standard-unit-class lock-mixin&gt;
+&gt; (define-ks-class ks-with-lock (ks lock-mixin)
+    ())
 #&lt;standard-unit-class ks-with-lock&gt;
 </pre>
 <hr /><address><a target="_top" class="address"
