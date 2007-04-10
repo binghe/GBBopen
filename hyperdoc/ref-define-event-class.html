@@ -126,7 +126,11 @@ direct superclass of the <a href="ref-glossary.html#id37">event&nbsp;class</a> <
 </td></tr><tr valign="top"><td valign="baseline"><i>slot-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A non-<code>nil</code>, non-keyword symbol
 </td></tr></table>
 </p>
-<p><span class="fndoclabel">Description</span> <br /><a name="id1">The</a> <code>:metaclass</code> <var>class-name</var>, if specified, must be a subclass of
+<p><span class="fndoclabel">Description</span> <br /><a name="id1">Each</a> <var>superclass-name</var> argument specifies a direct superclass of the new
+class. If the superclass list is empty, then the direct superclass defaults to the
+single class <b><a href="ref-standard-event-class.html">standard-event-class</a></b>.
+</p>
+<p><a name="id2">The</a> <code>:metaclass</code> <var>class-name</var>, if specified, must be a subclass of
 <b><a href="ref-standard-event-class.html">standard-event-class</a></b>.  The default metaclass value is
 the metaclass of the event superclasses of <var>event-class-name</var> if they all
 have the same metaclass.  If the event superclasses have multiple metaclasses,
@@ -175,7 +179,7 @@ the <a href="ref-glossary.html#gl:event">event</a> that is being signaled.
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-standard-event-class.html"><b>standard-event-class</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-with-generate-accessors-format.html"><b>with-generate-accessors-format</b></a>
 </p>
-<a name="id2"></a><p><span class="fndoclabel">Example</span> <br /></p>
+<a name="id3"></a><p><span class="fndoclabel">Example</span> <br /></p>
 <pre>
 &gt; (define-event-class my-event (non-instance-event)
     ((my-event-arg1 :initform nil)

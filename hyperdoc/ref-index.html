@@ -312,8 +312,7 @@
 <br /><code>=</code> (path-expression match character), 
 <a href="ref-map-space-instances.html#id1">182</a>, 
 <a href="ref-resume-event-printing.html#id3">189</a>, 
-<a href="ref-suspend-event-printing.html#id3">202</a><br /><b>=&#36;</b>, 
-<a href="ref-single-float-macros.html">63</a><br /><b>=&#38;</b>, 
+<a href="ref-suspend-event-printing.html#id3">202</a><br /><b>=&#38;</b>, 
 <a href="ref-fixnum-macros.html">61</a><br /><code>?</code> (path-expression match character), 
 <a href="ref-add-event-function.html#id3">134</a>, 
 <a href="ref-describe-event-printing.html#id4">147</a>, 
@@ -333,6 +332,7 @@
 <a href="ref-short-float-macros.html">62</a><br /><b>=&#36;&#38;</b>, 
 <a href="ref-short-float-macros.html">62</a><br /><b>1+&#36;</b>, 
 <a href="ref-single-float-macros.html">63</a><br /><b>1-&#36;</b>, 
+<a href="ref-single-float-macros.html">63</a><br /><b>=&#36;</b>, 
 <a href="ref-single-float-macros.html">63</a><br /><b>&#36;&#36;</b>, 
 <a href="ref-double-float-macros.html">64</a><br /><b>1+&#36;&#36;</b>, 
 <a href="ref-double-float-macros.html">64</a><br /><b>1-&#36;&#36;</b>, 
@@ -627,10 +627,10 @@ date, formatted,
 <a href="ref-glossary.html#id28">236</a><br />dimensional extent, of a space instance, 
 <a href="ref-glossary.html#id30">236</a><br />dimensional values
 <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;inheritance, 
-<a href="ref-define-space-class.html#id4">141</a>, 
-<a href="ref-define-unit-class.html#id3">142</a>, 
-<a href="ref-define-ks-class.html#id4">215</a>, 
-<a href="ref-define-ksa-class.html#id4">216</a><br />dimensions
+<a href="ref-define-space-class.html#id5">141</a>, 
+<a href="ref-define-unit-class.html#id4">142</a>, 
+<a href="ref-define-ks-class.html#id5">215</a>, 
+<a href="ref-define-ksa-class.html#id5">216</a><br />dimensions
 <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;inquiring, of a space instance, 
 <a href="ref-space-instance-dimensions.html">193</a><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;inquiring, of a unit class, 
 <a href="ref-unit-class-dimensions.html">203</a><br />directories, of a module, 
@@ -958,15 +958,15 @@ IEEE 754 floating-point formats,
 , <a href="ref-map-instances-on-space-instances.html#id12"><i>180</i></a>
 <br />inheritance
 <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;unit-class options, 
-<a href="ref-define-space-class.html#id4">141</a>, 
-<a href="ref-define-unit-class.html#id3">142</a>, 
-<a href="ref-define-ks-class.html#id4">215</a>, 
-<a href="ref-define-ksa-class.html#id4">216</a><br />initial space instances
+<a href="ref-define-space-class.html#id5">141</a>, 
+<a href="ref-define-unit-class.html#id4">142</a>, 
+<a href="ref-define-ks-class.html#id5">215</a>, 
+<a href="ref-define-ksa-class.html#id5">216</a><br />initial space instances
 <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;inheritance, 
-<a href="ref-define-space-class.html#id4">141</a>, 
-<a href="ref-define-unit-class.html#id3">142</a>, 
-<a href="ref-define-ks-class.html#id4">215</a>, 
-<a href="ref-define-ksa-class.html#id4">216</a><br />initialization argument list, 
+<a href="ref-define-space-class.html#id5">141</a>, 
+<a href="ref-define-unit-class.html#id4">142</a>, 
+<a href="ref-define-ks-class.html#id5">215</a>, 
+<a href="ref-define-ksa-class.html#id5">216</a><br />initialization argument list, 
 <a href="ref-glossary.html#id101">236</a><br /><code>gbbopen-commands.lisp</code> file, 
 <a href="ref-starting-up.html#id5">4</a><br /><code>gbbopen-init.lisp</code> file, 
 <a href="ref-starting-up.html#id3">4</a>, 
@@ -1023,7 +1023,8 @@ keyword symbol,
 <a href="ref-ensure-ks.html">218</a><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;execution, 
 <a href="ref-glossary.html#gl:KS-execution">236</a><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;of a KSA, 
 <a href="ref-ks-of.html">225</a><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;undefining, 
-<a href="ref-undefine-ks.html">235</a><br /><b>ks</b>, 
+<a href="ref-undefine-ks.html">235</a><br /><b>ks</b>, <a href="ref-define-ks-class.html#id3"><i>215</i></a>
+, 
 <a href="ref-ks.html">222</a><br />KS activation
 <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;executable, 
 <a href="ref-glossary.html#id46">236</a><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;executed, 
@@ -1042,7 +1043,8 @@ keyword symbol,
 <a href="ref-ks-of.html">225</a><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;printing information about, 
 <a href="ref-describe-ks.html">217</a><br /><b>ks-enabled-p</b>, 
 <a href="ref-ks-enabled-p.html">224</a><br /><b>ks-of</b>, 
-<a href="ref-ks-of.html">225</a><br /><b>ksa</b>, 
+<a href="ref-ks-of.html">225</a><br /><b>ksa</b>, <a href="ref-define-ksa-class.html#id3"><i>216</i></a>
+, 
 <a href="ref-ksa.html">223</a><br />ksa class, 
 <a href="ref-glossary.html#gl:ksa-class">236</a><br />ksa class
 <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;defining/redefining, 
@@ -1144,7 +1146,7 @@ Macintosh Common Lisp
 , 
 <a href="ref-make-passive-socket.html">105</a><br /><b>make-process-lock</b>, 
 <a href="ref-make-process-lock.html">83</a><br /><b>make-queue</b>, 
-<a href="ref-make-queue.html">120</a><br /><b>make-space-instance</b>, <a href="ref-define-space-class.html#id5"><i>141</i></a>
+<a href="ref-make-queue.html">120</a><br /><b>make-space-instance</b>, <a href="ref-define-space-class.html#id6"><i>141</i></a>
 , <a href="ref-make-instance.html#id3"><i>177</i></a>
 , 
 <a href="ref-make-space-instance.html">178</a>, <a href="ref-standard-space-instance.html#id1"><i>199</i></a>
@@ -1238,7 +1240,7 @@ Macintosh Common Lisp
 <a href="ref-fixnum-macros.html">61</a></dd><dt><a href="#1" name="17">N</a></dt><dd>
 name-based retrieval, 
 <a href="ref-find-instance-by-name.html">162</a><br /><b>next-queue-element</b>, 
-<a href="ref-next-queue-element.html">122</a><br /><b>non-instance-event</b>, <a href="ref-define-event-class.html#id2"><i>140</i></a>
+<a href="ref-next-queue-element.html">122</a><br /><b>non-instance-event</b>, <a href="ref-define-event-class.html#id3"><i>140</i></a>
 <br /><code>not</code> &nbsp;(pattern-negation operator), <a href="ref-do-instances-on-space-instances.html#id5"><i>153</i></a>
 , <a href="ref-filter-instances.html#id3"><i>161</i></a>
 , <a href="ref-find-instances.html#id5"><i>163</i></a>
@@ -1616,7 +1618,8 @@ safety, disabling optimizations,
 <a href="ref-spawn-process.html">92</a><br /><b>spliting-butlast</b>, 
 <a href="ref-spliting-butlast.html">49</a><br />splitting a list, 
 <a href="ref-spliting-butlast.html">49</a><br /><b>standard-class</b>, <a href="ref-define-class.html#id1"><i>27</i></a>
-<br /><b>standard-event-class</b>, <a href="ref-define-event-class.html#id1"><i>140</i></a>
+<br /><b>standard-event-class</b>, <a href="ref-define-event-class.html#id2"><i>140</i></a>
+, <a href="ref-define-event-class.html#id1"><i>140</i></a>
 , 
 <a href="ref-standard-event-class.html">196</a>, <a href="ref-standard-event-instance.html#id1"><i>197</i></a>
 , <a href="ref-glossary.html#gl:event-class"><i>236</i></a>
@@ -1625,7 +1628,8 @@ safety, disabling optimizations,
 <br /><b>standard-gbbopen-instance</b>, 
 <a href="ref-standard-gbbopen-instance.html">50</a>, <a href="ref-glossary.html#id71"><i>236</i></a>
 <br /><b>standard-ksa-class</b>, 
-<a href="ref-standard-ksa-class.html">232</a><br /><b>standard-space-class</b>, <a href="ref-define-space-class.html#id3"><i>141</i></a>
+<a href="ref-standard-ksa-class.html">232</a><br /><b>standard-space-class</b>, <a href="ref-define-space-class.html#id4"><i>141</i></a>
+, <a href="ref-define-space-class.html#id3"><i>141</i></a>
 , 
 <a href="ref-standard-space-class.html">198</a>, <a href="ref-glossary.html#id149"><i>236</i></a>
 <br /><b>standard-space-instance</b>, <a href="ref-do-instances-of-class.html#id2"><i>152</i></a>
@@ -1633,12 +1637,13 @@ safety, disabling optimizations,
 , 
 <a href="ref-standard-space-instance.html">199</a>, <a href="ref-standard-unit-instance.html#id1"><i>201</i></a>
 , <a href="ref-glossary.html#gl:space-instance"><i>236</i></a>
-<br /><b>standard-unit-class</b>, <a href="ref-define-unit-class.html#id2"><i>142</i></a>
+<br /><b>standard-unit-class</b>, <a href="ref-define-unit-class.html#id3"><i>142</i></a>
+, <a href="ref-define-unit-class.html#id2"><i>142</i></a>
 , <a href="ref-standard-space-class.html#id1"><i>198</i></a>
 , 
 <a href="ref-standard-unit-class.html">200</a>, <a href="ref-standard-unit-instance.html#id1"><i>201</i></a>
-, <a href="ref-define-ks-class.html#id3"><i>215</i></a>
-, <a href="ref-define-ksa-class.html#id3"><i>216</i></a>
+, <a href="ref-define-ks-class.html#id4"><i>215</i></a>
+, <a href="ref-define-ksa-class.html#id4"><i>216</i></a>
 , <a href="ref-standard-ksa-class.html#id1"><i>232</i></a>
 , <a href="ref-glossary.html#gl:unit-class"><i>236</i></a>
 <br /><b>standard-unit-instance</b>, <a href="ref-queue-element.html#id1"><i>128</i></a>
