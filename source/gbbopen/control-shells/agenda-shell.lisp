@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:AGENDA-SHELL; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/control-shells/agenda-shell.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Jan 28 09:56:03 2007 *-*
+;;;; *-* Last-Edit: Mon Apr  9 23:38:39 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2004-2006, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2004-2007, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -435,12 +435,19 @@
 
 (defun ensure-ks (class-name name &rest args)
   (declare (dynamic-extent args))
-  (let ((existing-ks (find-instance-by-name name '(ks :plus-subclasses))))
-    (if existing-ks
-	(apply #'reinitialize-instance existing-ks :instance-name name
-	       args)
-	(apply #'make-instance class-name :instance-name name
-               args))))
+  (let* ((existing-ks (find-instance-by-name name '(ks :plus-subclasses)))
+         (ks (cond (existing-ks
+                    (apply #'reinitialize-instance existing-ks 
+                           :instance-name name
+                           args)
+                    ;; Lispworks and CLISP don't return the instance!
+                    #+(or clisp lispworks)
+                    existing-ks)
+                   (t (apply #'make-instance class-name 
+                             :instance-name name
+                             args)))))
+    (check-type ks ks)
+    ks))
           
 ;;; ---------------------------------------------------------------------------
 
@@ -1052,6 +1059,7 @@
 		     :activation-cycle cycle
 		     :trigger-events events
 		     initargs)))
+    (check-type ksa ksa)
     (insert-on-queue ksa (cs.pending-ksas cs))
     (incf (cs.ks-activations-count cs))
     (with-update-stat (agenda-shell-ks-stats.activation ks))
