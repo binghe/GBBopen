@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/mini-module/mini-module-loader.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Apr 23 22:21:45 2007 *-*
+;;;; *-* Last-Edit: Mon Apr 23 22:25:39 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -180,7 +180,7 @@
               #+(and x86 linux) "linux86"
               #+(and x86-64 linux) "linux86-64" ;; Thanks to Eric Menard
               #+(and x86 (not linux)) "windows"
-              #-(or darwin sparc x86)
+              #-(or darwin sparc x86 (and x86-64 linux))
               (must-port '*compiled-directory-name*))
              (lisp-implementation-version))
      ;; The Scieneer CL:
