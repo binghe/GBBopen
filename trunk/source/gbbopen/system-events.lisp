@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/system-events.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Sep 24 07:49:34 2006 *-*
+;;;; *-* Last-Edit: Wed Apr 25 16:21:25 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -32,7 +32,7 @@
 (in-package :gbbopen)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (export '()))
+  (export '(slot-of)))
 
  ;;; ---------------------------------------------------------------------------
   
@@ -189,6 +189,7 @@
   (:abstract t)
   (:metaclass instance-event-class)
   (:export-class-name t)
+  (:export-accessors t)
   (:system-event t))
 
 (defmethod print-instance-slots ((instance link/nonlink-slot-event) stream)
