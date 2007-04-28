@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/system-events.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Apr 25 16:21:25 2007 *-*
+;;;; *-* Last-Edit: Sat Apr 28 14:33:40 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2004-2006, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2004-2007, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -122,7 +122,7 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(define-event-class instance-change-class-event (create/delete-instance-event)
+(define-event-class change-instance-class-event (create/delete-instance-event)
   ((new-class))
   (:metaclass instance-event-class)
   (:export-class-name t)

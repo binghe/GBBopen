@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Mar 14 01:18:50 2007 *-*
+;;;; *-* Last-Edit: Sat Apr 28 14:34:15 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -738,7 +738,7 @@
   (declare (inline class-of))
   (let ((previous-class (class-of instance)))
     (signal-event-using-class
-     (load-time-value (find-class 'instance-change-class-event))
+     (load-time-value (find-class 'change-instance-class-event))
      :instance instance
      :new-class new-class)
     (call-next-method)
