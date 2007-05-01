@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/mini-module/mini-module.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Apr  4 12:56:27 2007 *-*
+;;;; *-* Last-Edit: Tue May  1 15:41:30 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -356,18 +356,7 @@
   (setf (gethash name *mm-directories*)
         (make-mm-relative-directory
          :name name
-         :root (or root
-		   (let ((truename *load-truename*))
-		     (if truename
-			 (make-pathname
-			  :name nil
-			  :type nil
-			  :defaults truename)
-			 (error "A ~s-relative ~s root-directory ~
-                                 specification cannot be evaluated outside ~
-                                 of a load context."
-				'*load-truename*
-				'define-relative-directory))))
+         :root root
          :sub-directories sub-directories)))
 
 ;;; ---------------------------------------------------------------------------
@@ -524,45 +513,6 @@
 (defun get-module (name)
   (or (gethash name *mm-modules*)
       (error "Module ~s is not defined." name)))
-
-;;; ---------------------------------------------------------------------------
-
-(defun get-directory (name &rest subdirectories)
-  ;; Get-directory is for direct directory specifications; there is no
-  ;; source/compiled subtree handling:
-  (let ((mm-dir (gethash name *mm-directories*)))
-    (typecase mm-dir
-      (mm-root-directory 
-       (let ((path (mm-root-directory.path mm-dir)))
-         (if subdirectories
-             (make-pathname 
-              :directory (append (pathname-directory path)
-                                 subdirectories)
-              :defaults path)
-             path)))
-      (mm-relative-directory
-       (let ((root-path (mm-root-directory.path
-                         (gethash 
-                          (mm-relative-directory.root mm-dir)
-                          *mm-directories*))))
-         (make-pathname 
-          :directory (append (pathname-directory root-path)
-                             '(#.*source-directory-name*)
-                             (mm-relative-directory.sub-directories mm-dir)
-                             subdirectories)
-          :defaults root-path)))
-      (otherwise
-       ;; See if module `name' has been defined:
-       (let ((module (get-module name)))
-         (if module
-             (let ((module-directory (mm-module.directory module)))
-               (typecase module-directory
-                 ;; Implicitly rooted module:
-                 (pathname module-directory)
-                 ;; Use source directory of module:
-                 (otherwise (nth-value 0 (module-source/compiled-directories
-                                          module)))))
-             (error "Directory ~s is not defined." name)))))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -1120,6 +1070,54 @@
       when (or all-modules?
                 (module-fully-loaded? module))
       collect (mm-module.name module)))
+
+;;; ===========================================================================
+;;;  Get directory
+
+(defun get-directory (name &rest subdirectories)
+  ;; Get-directory is for direct directory specifications; there is no
+  ;; source/compiled subtree handling:
+  (let ((mm-dir (gethash name *mm-directories*)))
+    (typecase mm-dir
+      (mm-root-directory 
+       (let ((path (mm-root-directory.path mm-dir)))
+         (if subdirectories
+             (make-pathname 
+              :directory (append (pathname-directory path)
+                                 subdirectories)
+              :defaults path)
+             path)))
+      (mm-relative-directory
+       (let ((root-path (mm-root-directory.path
+                         (gethash 
+                          (mm-relative-directory.root mm-dir)
+                          *mm-directories*))))
+         (make-pathname 
+          :directory (append (pathname-directory root-path)
+                             '(#.*source-directory-name*)
+                             (mm-relative-directory.sub-directories mm-dir)
+                             subdirectories)
+          :defaults root-path)))
+      (otherwise
+       ;; See if module `name' has been defined:
+       (let ((module (get-module name)))
+         (if module
+             (let* ((module-directory (mm-module.directory module))
+                    (path
+                     (typecase module-directory
+                       ;; Implicitly rooted module:
+                       (pathname module-directory)
+                       ;; Use source directory of module:
+                       (otherwise 
+                        (nth-value 0 (module-source/compiled-directories
+                                      module))))))
+               (if subdirectories
+                   (make-pathname 
+                    :directory (append (pathname-directory path)
+                                       subdirectories)
+                    :defaults path)
+                   path))
+             (error "Directory ~s is not defined." name)))))))
 
 ;;; ===========================================================================
 ;;;  Define Basic Directories and Modules (as specified in startup.lisp)
