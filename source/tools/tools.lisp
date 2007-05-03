@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Jan 19 17:07:33 2007 *-*
+;;;; *-* Last-Edit: Thu May  3 16:16:12 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -125,16 +125,19 @@
      excl::memq
      excl:until
      excl:while
-     excl::xor)
+     excl::xor
+     sys:copy-file)
    #+clisp
-   '(system::memq)
+   '(posix::copy-file
+     system::memq)
    #+cmu
    '(ext:memq
      ext:delq)
    #+cormanlisp
    '()
    #+digitool-mcl
-   '(ccl:memq
+   '(ccl:copy-file
+     ccl:memq
      ccl:delq)
    ;; Note: ECL's while doesn't include a NIL block, so we can't use it
    #+ecl
@@ -142,10 +145,12 @@
    #+gcl
    '()
    #+lispworks
-   '(system:memq
+   '(system::copy-file
+     system:memq
      system:delq)
    #+openmcl
-   '(ccl:memq
+   '(ccl:copy-file
+     ccl:memq
      ccl:delq)
    #+sbcl
    '(sb-int:memq
@@ -163,6 +168,7 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(bounded-value
 	    brief-date-and-time		; in mini-module, but part of tools
+            copy-file                   ; not yet documented
 	    counted-delete
 	    decf-after			; not yet finished or documented
 	    define-directory		; in mini-module, but part of tools
@@ -262,6 +268,24 @@
   #-full-safety
   (define-compiler-macro delq (item list)
     `(delete ,item (the list ,list) :test #'eq)))
+
+;;; ===========================================================================
+;;;  Copy-file (for CLs that don't provide their own version)
+
+#-(or allegro clisp digitool-mcl lispworks openmcl)
+(defun copy-file (from to)
+  (with-open-file (output to
+                   :element-type 'unsigned-byte
+                   :direction ':output
+                   :if-exists ':supersede)
+    (with-open-file (input from
+                     :element-type 'unsigned-byte
+                     :direction ':input)
+      (with-full-optimization ()
+        (let (byte)
+          (loop (setf byte (read-byte input nil nil))
+            (unless byte (return))
+            (write-byte byte output)))))))
 
 ;;; ===========================================================================
 ;;;  Extract-declarations (for CLs that don't provide their own version)
