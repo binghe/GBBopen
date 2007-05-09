@@ -8,7 +8,7 @@ Requirements:
    extensions.  GBBopen has been ported to following Common Lisp
    implementations:
 
-       Allegro CL   (Version 8.0)
+       Allegro CL   (Version 8.0 and 8.1b)
        CLISP        (Version 2.41)
        CMUCL        (Version 19d)
        Digitool MCL (Version 5.1)
@@ -30,7 +30,7 @@ Requirements:
    See PORTING for information on porting GBBopen to other Common Lisp
    implementations.
 
-Current Status Notes (April 28, 2007):
+Current Status Notes (May 9, 2007):
 
  - Implementation work is progressing on a regular basis.  See the list
    of pending development activities maintained on the "What's New"
