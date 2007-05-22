@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/tools/os-interface.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Sep 22 06:58:56 2006 *-*
+;;;; *-* Last-Edit: Tue May 22 10:57:50 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2005-2006, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2005-2007, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -154,9 +154,10 @@
 			      :output output
 			      :wait wait)))
     (values
-     (make-two-way-stream 
-      (external-process-output-stream process)              
-      (external-process-input-stream process))
+     (when (or input output)
+       (make-two-way-stream 
+        (external-process-output-stream process)              
+        (external-process-input-stream process)))
      process))
   #-(or allegro clisp cmu digitool-mcl ecl lispworks openmcl sbcl scl)
   (port-needed 'run-external-program))
