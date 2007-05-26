@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/control-shells/test/agenda-shell-test.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Apr  9 18:27:13 2007 *-*
+;;;; *-* Last-Edit: Sat May 26 14:48:57 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2004-2006, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2004-2007, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -170,7 +170,8 @@
 ;;; ---------------------------------------------------------------------------
 
 (define-ks add-uc-one-to-space-instance-event-ks
-    :trigger-events ((add-instance-to-space-instance-event uc-one :path (*)))
+    :trigger-events ((add-instance-to-space-instance-event 
+                      uc-one :path (space-1)))
     :precondition-function 
     #'(lambda (ks events)
         (declare (ignore ks events))
@@ -189,9 +190,24 @@
   :trigger-events ((update-nonlink-slot-event uc-one :slot-name value))
   :execution-function 
   #'(lambda (ksa)
-      (declare (ignore ksa))
       (format t "~&;; Update-uc-one-value-slot-event ks executed~%")
+      (format t "~&;; Instantiating ~s...~%" 'space-3)
+      (add-instance-to-space-instance 
+       (sole-trigger-instance-of ksa)
+       (make-space-instance '(space-3) :dimensions '((value :ordered))))
       (values)))
+		   
+;;; ---------------------------------------------------------------------------
+
+(define-ks add-uc-one-to-future-space-instance-event-ks
+    :trigger-events ((add-instance-to-space-instance-event uc-one 
+                                                           :path (space-3)))
+    :execution-function 
+    #'(lambda (ksa)
+	(declare (ignore ksa))
+	(format t "~&;; Add-uc-one-to-future-space-instance-event ks ~
+                        executed~%")
+	(values)))
 		   
 ;;; ---------------------------------------------------------------------------
 

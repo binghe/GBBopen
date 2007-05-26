@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:AGENDA-SHELL; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/control-shells/agenda-shell.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Apr 10 21:19:12 2007 *-*
+;;;; *-* Last-Edit: Sat May 26 14:47:16 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -143,12 +143,10 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defstruct (ks-triggers 
-            (:conc-name #.(dotted-conc-name 'ks-triggers))
-            (:copier nil))
-  (trigger nil)
-  (retrigger nil)
-  (obviation nil))
+(define-class ks-triggers ()
+  ((triggers :initform nil)
+   (retriggers :initform nil)
+   (obviation-triggers :initform nil)))
 
 ;;; ===========================================================================
 ;;;   KST -- KS-trigger descriptor
@@ -191,8 +189,8 @@
 
 (defun make-kst (ks propagate-event-classes propagate-unit-classes)
   (let ((flags 0))
-    (when propagate-event-classes (setq flags (set-flag flags 0)))
-    (when propagate-unit-classes (setq flags (set-flag flags 1)))
+    (when propagate-event-classes (setf flags (set-flag flags 0)))
+    (when propagate-unit-classes (setf flags (set-flag flags 1)))
     (cons ks flags)))
 
 ;;; ===========================================================================
@@ -260,7 +258,7 @@
 
 (defmethod restore-gbbopen-node-state ((node-state agenda-shell-node-state))
   (call-next-method)
-  (setq *cs* (cs-of node-state)))
+  (setf *cs* (cs-of node-state)))
 
 ;;; ===========================================================================
 ;;;   KS Unit-Class
@@ -467,12 +465,11 @@
 		    (some #'(lambda (process)
 			      (symbol-value-in-process '*cs* process))
 			  *control-shell-processes*))))
-        (cond (cs
-	       (with-process-lock ((cs.event-buffer-lock cs))
-		 (push event (cs.event-buffer cs))
-		 (when (and (cs.hibernating cs)
-			    (cs.awaken-on-event cs))
-		   (awaken-control-shell cs))))
+        (cond (cs (with-process-lock ((cs.event-buffer-lock cs))
+                    (push event (cs.event-buffer cs))
+                    (when (and (cs.hibernating cs)
+                               (cs.awaken-on-event cs))
+                      (awaken-control-shell cs))))
 	      (*warn-about-unusual-requests*
 	       (warn "No control shell is servicing event ~s"
 		     event)))))))
@@ -484,9 +481,9 @@
   (when (or (eq fn 't) (eq fn nil))
     (let ((ks-triggers (evfn-blk.ks-triggers evfn-blk)))
       (when ks-triggers
-        (let ((triggers (ks-triggers.trigger ks-triggers))
-              (obviates (ks-triggers.obviation ks-triggers)) 
-              (retriggers (ks-triggers.retrigger ks-triggers)))
+        (let ((triggers (triggers-of ks-triggers))
+              (obviates (obviation-triggers-of ks-triggers)) 
+              (retriggers (retriggers-of ks-triggers)))
           (labels ((describe-it (label ksts)
                      (when ksts
                        (format t "~&~6t~a: ~@<~{~s~^, ~_~}~@:>~%" 
@@ -502,61 +499,59 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun setup-ks-triggers (ks)
-  (macrolet 
-      ((setup (event-accessor trigger-accessor trigger-events)
-         `(flet ((add-trigger (evfn-blk plus-subevents plus-subclasses)
-                   (let ((ks-triggers 
-                          (or (evfn-blk.ks-triggers evfn-blk)
-                              (setf (evfn-blk.ks-triggers evfn-blk)
-                                    (make-ks-triggers)))))
-                     (pushnew (make-kst ks plus-subevents plus-subclasses)
-                              (,trigger-accessor ks-triggers)
-                              :test #'eq
-                              :key #'kst.ks))))
-	    (dolist (trigger-event ,trigger-events)
-	      (apply #'add-event-function nil
-		     (append trigger-event `(:evfn-blk-fn ,#'add-trigger))))
-	    ;; Re-setf the trigger events slot, if all went well with the
-	    ;; add-event-function processing:
-	    (setf (,event-accessor ks) ,trigger-events))))
-    (let ((trigger-events (trigger-events-of ks))
-	  (obviation-events (obviation-events-of ks))
-	  (retrigger-events (retrigger-events-of ks)))
-      ;; Clear all the trigger events slots, just in case
-      ;; an error is generated during add-event-function processing:
-      (setf (trigger-events-of ks) nil)
-      (setf (obviation-events-of ks) nil)
-      (setf (retrigger-events-of ks) nil)
-      ;; trigger events:
-      (setup trigger-events-of ks-triggers.trigger trigger-events)
-      ;; obviation events:
-      (setup obviation-events-of ks-triggers.obviation obviation-events)
-      ;; retrigger events:
-      (setup retrigger-events-of ks-triggers.retrigger retrigger-events))))
+(defun add-ks-trigger-to-evfn-blk (evfn-blk plus-subevents plus-subclasses 
+                                   ks slot-name)
+  (let ((ks-triggers (or (evfn-blk.ks-triggers evfn-blk)
+                         (setf (evfn-blk.ks-triggers evfn-blk)
+                               (make-instance 'ks-triggers)))))
+    (pushnew (make-kst ks plus-subevents plus-subclasses)
+             (slot-value ks-triggers slot-name)
+             :test #'eq
+             :key #'kst.ks)))
+
+;;; ---------------------------------------------------------------------------
+
+(defun add-ks-triggers (ks)
+  (flet ((setup (trigger-events ks-triggers-slot-name)
+           (dolist (trigger-event trigger-events)
+             (apply #'add-event-function nil
+                    (append trigger-event 
+                            `(:evfn-blk-fn add-ks-trigger-to-evfn-blk
+                              :evfn-blk-fn-args 
+                                 (,ks ,ks-triggers-slot-name)))))))
+    ;; trigger events:
+    (setup (trigger-events-of ks) 'triggers)
+    ;; obviation events:
+    (setup (obviation-events-of ks) 'obviation-triggers)
+    ;; retrigger events:
+    (setup (retrigger-events-of ks) 'retriggers)))
+
+;;; ---------------------------------------------------------------------------
+
+(defun remove-ks-trigger-from-evfn-blk (evfn-blk ks slot-name)
+  (let ((ks-triggers (evfn-blk.ks-triggers evfn-blk)))
+    (when ks-triggers
+      (setf (slot-value ks-triggers slot-name)
+            (delete ks (slot-value ks-triggers slot-name)
+                    :test #'eq
+                    :key #'kst.ks)))))
 
 ;;; ---------------------------------------------------------------------------
 
 (defun remove-ks-triggers (ks)
-  (macrolet 
-      ((remove-em (event-accessor trigger-accessor)
-         `(flet ((remove-trigger (evfn-blk)
-                   (let ((ks-triggers (evfn-blk.ks-triggers evfn-blk)))
-                     (when ks-triggers
-                       (setf (,trigger-accessor ks-triggers)
-                             (delete ks (,trigger-accessor ks-triggers)
-                                     :test #'eq
-                                     :key #'kst.ks))))))
-            (dolist (trigger-event (,event-accessor ks))
-              (apply #'remove-event-function nil
-                     (append trigger-event 
-                             `(:evfn-blk-fn ,#'remove-trigger)))))))
+  (flet ((remove-em (trigger-events ks-triggers-slot-name)
+           (dolist (trigger-event trigger-events)
+             (apply #'remove-event-function nil
+                    (append trigger-event 
+                            `(:evfn-blk-fn remove-ks-trigger-from-evfn-blk
+                              :evfn-blk-fn-args 
+                                 (,ks ,ks-triggers-slot-name)))))))
     ;; triggers:
-    (remove-em trigger-events-of ks-triggers.trigger)
-    ;; obviation:
-    (remove-em obviation-events-of ks-triggers.obviation)
+    (remove-em (trigger-events-of ks) 'triggers)
+    ;; obviation triggers:
+    (remove-em (obviation-events-of ks) 'obviation-triggers)
     ;; retriggers:
-    (remove-em retrigger-events-of ks-triggers.retrigger)))
+    (remove-em (retrigger-events-of ks) 'retriggers)))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -573,7 +568,7 @@
   (when (and rating (constantp rating))
     (check-type rating rating))
   (call-next-method)
-  (setup-ks-triggers ks))
+  (add-ks-triggers ks))
 
 ;;; ===========================================================================
 ;;;   Undefine-KS (syntactic sugar for easy deletion of a KS object)
@@ -966,7 +961,7 @@
         (when instance
           (when trigger-instance
             (error "Multiple trigger instances found for KSA ~s" ksa))
-          (setq trigger-instance instance))))
+          (setf trigger-instance instance))))
     trigger-instance))
 
 ;;; --------------------------------------------------------------------------
@@ -1001,7 +996,7 @@
         (when instance
           (when trigger-instance
             (error "Multiple trigger instances found in events ~s" events))
-          (setq trigger-instance instance))))
+          (setf trigger-instance instance))))
     trigger-instance))
 
 ;;; ---------------------------------------------------------------------------
@@ -1122,7 +1117,7 @@
       ;; clear these out, now that we are done with them!
       (setf (standard-event-instance.ks-triggers event) nil)
       ;; process interested trigger KSs:
-      (dolist (kst (ks-triggers.trigger ks-triggers))
+      (dolist (kst (triggers-of ks-triggers))
         (let ((ks (kst.ks kst)))
           (when (and (not (instance-deleted-p ks))
                      (ks-enabled-p ks))
@@ -1159,7 +1154,7 @@
                                           (list* :rating rating initargs)
                                           cs)))))))))
       ;; process interested obviation KSs:
-      (dolist (kst (ks-triggers.obviation ks-triggers))
+      (dolist (kst (obviation-triggers-of ks-triggers))
         (let ((ks (kst.ks kst)))
           (unless (instance-deleted-p ks)
             (let ((obviation-predicate (obviation-predicate-of ks)))
@@ -1173,7 +1168,7 @@
 			       (funcall obviation-predicate ksa event)))))
 		  (obviate-ksa ks ksa cs)))))))
       ;; process interested retrigger KSs:
-      (dolist (kst (ks-triggers.retrigger ks-triggers))
+      (dolist (kst (retriggers-of ks-triggers))
         (let ((ks (kst.ks kst)))
           (unless (instance-deleted-p ks)
             (let ((retrigger-function (retrigger-function-of ks)))
@@ -1275,7 +1270,7 @@
 		      ;; don't indicate that we've handled the event if we are
 		      ;; continuing indefinitely:
 		      (unless (cs.continue-past-quiescence cs)
-			(setq quiescence-handled-p t))
+			(setf quiescence-handled-p t))
 		      (signal-event 'quiescence-event))
 		     ;; if second consecutive time in quiescence state without
 		     ;; finding a KSA to execute, then hibernate or exit:
@@ -1310,7 +1305,7 @@
                              (setf (cs.current-ksa cs) ksa)
 			     (unwind-protect
                                  (with-abort-ks-execution-catcher ()
-                                   (setq result-values
+                                   (setf result-values
                                      (multiple-value-list
                                       (execute-ksa ks ksa cs))))
                                (setf (cs.current-ksa cs) nil)))
@@ -1381,7 +1376,7 @@
   (cond
    ((control-shell-started-p)
     (a-control-shell-is-running 'start-control-shell))
-   (t (setq *cs* (make-control-shell 
+   (t (setf *cs* (make-control-shell 
 		  :awaken-on-event awaken-on-event
 		  :continue-past-quiescence continue-past-quiescence
 		  :hibernate-on-quiescence hibernate-on-quiescence
@@ -1458,7 +1453,7 @@
   (gbbopen-tools::multiprocessing-not-available 'exit-control-shell-process)
   #-multiprocessing-not-available
   (progn
-    (setq *control-shell-processes* 
+    (setf *control-shell-processes* 
       (delq control-shell-process *control-shell-processes*))
     (run-in-process control-shell-process #'exit-control-shell)))
   

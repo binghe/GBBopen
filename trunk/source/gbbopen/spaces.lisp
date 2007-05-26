@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/spaces.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Feb 27 05:57:23 2007 *-*
+;;;; *-* Last-Edit: Sat May 26 15:05:59 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -63,6 +63,7 @@
             parent                      ; standard-space-instance slot name
             remove-instance-from-space-instance
             root-space-instance         ; not documented
+            show-forward-path-event-functions ; debugging only; not documented
             space-instance-children
             space-instance-dimensions
             space-instance-parent
@@ -221,7 +222,13 @@
              (if parent-space-instance
                  parent-space-instance
                  (find-root-space-instance)))))
-  (setup-instance-storage instance storage)
+  (setup-instance-storage instance storage))
+
+;;; ---------------------------------------------------------------------------
+
+(defmethod initialize-instance :after ((instance standard-space-instance) &key)
+  ;; This *must* be done in an :after method, so that the new space-instance has
+  ;; been added to the class hash-table (by the above :around/primary method): 
   (setup-space-instance-evfns instance))
 
 ;;; ---------------------------------------------------------------------------
@@ -586,20 +593,23 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun setup-space-instance-evfns (instance)
-  (flet ((do-event-class (event-class plus-subevents)
-           (declare (ignore plus-subevents))
-           (dolist (entry (reverse 
-                           (space-instance-event-class.path-event-functions
-                            event-class)))
-             (destructuring-bind (path-pattern add/remove-fn-name event-class 
-                                  &rest args)
-                 entry
-               (declare (dynamic-extent args))
-               (when (path-match path-pattern (instance-name instance))
-                 (apply (the function (symbol-function add/remove-fn-name))
-                        event-class
-                        args))))))
-    (map-event-classes #'do-event-class (find-class 'space-instance-event))))
+  ;; We are "re-running" add/remove-event-functions with the new space instance:
+  (let ((*%%doing-path-event-functions%%* 't)) 
+    (flet ((do-event-class (event-class plus-subevents)
+             (declare (ignore plus-subevents))
+             (dolist (entry (reverse 
+                             (space-instance-event-class.path-event-functions
+                              event-class)))
+               (destructuring-bind (path-pattern add/remove-fn-name event-class 
+                                    &rest args)
+                   entry
+                 (declare (dynamic-extent args))
+                 (when (path-match path-pattern (instance-name instance))
+                   (apply (the function (symbol-function add/remove-fn-name))
+                          event-class
+                          args))))))
+      (map-event-classes #'do-event-class 
+                         (find-class 'space-instance-event)))))
 
 ;;; ===========================================================================
 ;;;  Describers
@@ -672,6 +682,16 @@
                      blackboard repository.~%"))))
   (fresh-line)
   (values))
+
+;;; ---------------------------------------------------------------------------
+
+(defun show-forward-path-event-functions
+    (&optional (event-class-name
+                'add-instance-to-space-instance-event))
+  (dolist (entry (reverse 
+                  (space-instance-event-class.path-event-functions
+                   (find-class event-class-name))))
+    (pprint entry)))
 
 ;;; ===========================================================================
 ;;;                               End of File
