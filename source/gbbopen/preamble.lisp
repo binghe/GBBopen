@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/preamble.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Sep 28 12:10:17 2006 *-*
+;;;; *-* Last-Edit: Fri May 25 04:56:55 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2002-2006, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2007, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -108,7 +108,10 @@
 ;;; ===========================================================================
 ;;;  GBBopen Core Generic Functions
 
-(defgeneric addto-evfn-using-class (fn event-class &rest args))
+(defgeneric addto-evfn-using-class (fn event-class plus-subevents 
+                                    unit-class/instance plus-subclasses
+                                    slot-names paths permanent priority printing 
+                                    evfn-blk-fn evfn-blk-fn-args))
 (defgeneric add-instance-to-space-instance (instance space-instance))
 (defgeneric add-instance-to-storage (instance storage verbose))
 (defgeneric class-instances-count (unit-class-name-or-class))
@@ -138,7 +141,10 @@
 (defgeneric remove-instance-from-storage (instance storage dimension-values 
                                           verbose))
 (defgeneric reset-unit-class (unit-class-name-or-class))
-(defgeneric rmfrom-evfn-using-class (fn event-class &rest args))
+(defgeneric rmfrom-evfn-using-class (fn event-class plus-subevents 
+                                     unit-class/instance plus-subclasses
+                                     slot-names paths permanent printing 
+                                     evfn-blk-fn evfn-blk-fn-args))
 (defgeneric setup-instance-storage (space-instance instance-mapping))
 (defgeneric signal-event-using-class (class &rest args))
 (defgeneric validate-event-metaclass (event-metaclass-name

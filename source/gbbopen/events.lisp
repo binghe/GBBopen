@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/events.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Sep 23 14:55:43 2006 *-*
+;;;; *-* Last-Edit: Sat May 26 14:58:51 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2003-2006, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2003-2007, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -60,6 +60,9 @@
 
 (defvar *%%events-enabled%%* 't)
 (defvar *event-print-stream* *trace-output*)
+;; Indicates when add/remove-event-functions are being performed on a new
+;; space instance:
+(defvar *%%doing-path-event-functions%%* nil)
 
 ;;; ===========================================================================
 ;;;   Event disable/enable macros
@@ -590,195 +593,217 @@
 ;;; ---------------------------------------------------------------------------
 
 (defmethod addto-evfn-using-class (fn (event-class non-instance-event-class)
-				   &rest args)
-  (declare (dynamic-extent args))
-  (destructuring-bind (plus-subevents unit-class/instance plus-subclasses
-                       slot-names paths permanent priority
-		       printing evfn-blk-fn)
-      args
-    (declare (ignore unit-class/instance paths))
-    (let ((evfn-blk (non-instance-event-class.evfn-blk event-class)))
-      (cond 
-       ;; non-nil `fn':
-       (fn (evfn-adder evfn-blk fn event-class 
-		       plus-subevents plus-subclasses 
-		       (eq slot-names 't) permanent priority))
-       ;; nil `fn' with `printing':
-       (printing
-	(set-evfn-printing-flags evfn-blk printing 
-				 plus-subevents plus-subclasses))
-       ;; nil `fn' with `evfn-blk-fn':
-       (evfn-blk-fn (funcall (the function evfn-blk-fn) 
-			     evfn-blk plus-subevents plus-subclasses))))))
+                                   plus-subevents
+                                   unit-class/instance plus-subclasses
+                                   slot-names paths permanent priority printing 
+                                   evfn-blk-fn evfn-blk-fn-args)
+  (declare (ignore unit-class/instance paths))
+  (let ((evfn-blk (non-instance-event-class.evfn-blk event-class)))
+    (cond 
+     ;; non-nil `fn':
+     (fn (evfn-adder evfn-blk fn event-class 
+                     plus-subevents plus-subclasses 
+                     (eq slot-names 't) permanent priority))
+     ;; nil `fn' with `printing':
+     (printing
+      (set-evfn-printing-flags evfn-blk printing 
+                               plus-subevents plus-subclasses))
+     ;; nil `fn' with `evfn-blk-fn':
+     (evfn-blk-fn (apply (the function (symbol-function evfn-blk-fn))
+                         evfn-blk plus-subevents plus-subclasses
+                         evfn-blk-fn-args)))))
 
 ;;; ---------------------------------------------------------------------------
 
 (defmethod addto-evfn-using-class (fn (event-class instance-event-class) 
-				   &rest args)
-  (declare (dynamic-extent args))
-  (destructuring-bind (plus-subevents unit-class/instance plus-subclasses
-                       slot-names paths permanent priority 
-		       printing evfn-blk-fn)
-      args
-    (declare (ignore paths))
-    (flet ((add-it (unit-class)
-	     (let* ((evfn-blks (standard-unit-class.evfn-blks unit-class))
-		    (evfn-blk 
-		     (or (cdr (assoc event-class evfn-blks :test #'eq))
-			 (let ((new-evfn-blk
-				(make-evfn-blk :event-class event-class
-					       :unit-class unit-class)))
-			   (push-acons event-class new-evfn-blk
-				       (standard-unit-class.evfn-blks
-					unit-class))
-			   new-evfn-blk))))
-	       (cond 
-		;; non-nil `fn':
-		(fn (evfn-adder evfn-blk fn event-class 
-				plus-subevents plus-subclasses
-				(eq slot-names 't) permanent priority))
-		;; nil `fn' with `printing':
-		(printing
-		 (set-evfn-printing-flags evfn-blk printing
-					  plus-subevents plus-subclasses))
-		;; nil `fn' with `evfn-blk-fn':
-		(evfn-blk-fn
-		 (funcall (the function evfn-blk-fn) 
-			  evfn-blk plus-subevents plus-subclasses))))))
-      (if plus-subclasses
-	  (map-unit-classes 
-	   #'(lambda (unit-class plus-subclasses)
-	       (declare (ignore plus-subclasses))
-	       (add-it unit-class))
-	   unit-class/instance)
-	  (if (typep unit-class/instance '(or standard-unit-instance cons))
-	      (instance-event-functions-nyi)
-	      (add-it unit-class/instance))))))
+                                   plus-subevents 
+                                   unit-class/instance plus-subclasses
+                                   slot-names paths permanent priority printing 
+                                   evfn-blk-fn evfn-blk-fn-args)
+  (declare (ignore paths))
+  (flet ((add-it (unit-class)
+           (let* ((evfn-blks (standard-unit-class.evfn-blks unit-class))
+                  (evfn-blk 
+                   (or (cdr (assoc event-class evfn-blks :test #'eq))
+                       (let ((new-evfn-blk
+                              (make-evfn-blk :event-class event-class
+                                             :unit-class unit-class)))
+                         (push-acons event-class new-evfn-blk
+                                     (standard-unit-class.evfn-blks
+                                      unit-class))
+                         new-evfn-blk))))
+             (cond 
+              ;; non-nil `fn':
+              (fn (evfn-adder evfn-blk fn event-class 
+                              plus-subevents plus-subclasses
+                              (eq slot-names 't) permanent priority))
+              ;; nil `fn' with `printing':
+              (printing
+               (set-evfn-printing-flags evfn-blk printing
+                                        plus-subevents plus-subclasses))
+              ;; nil `fn' with `evfn-blk-fn':
+              (evfn-blk-fn
+               (apply (the function (symbol-function evfn-blk-fn))
+                      evfn-blk plus-subevents plus-subclasses 
+                      evfn-blk-fn-args))))))
+    (if plus-subclasses
+        (map-unit-classes 
+         #'(lambda (unit-class plus-subclasses)
+             (declare (ignore plus-subclasses))
+             (add-it unit-class))
+         unit-class/instance)
+        (if (typep unit-class/instance '(or standard-unit-instance cons))
+            (instance-event-functions-nyi)
+            (add-it unit-class/instance)))))
   
 ;;; ---------------------------------------------------------------------------
 
 (defmethod addto-evfn-using-class (fn (event-class space-instance-event-class)
-				   &rest args)
-  (declare (dynamic-extent args))
-  (destructuring-bind (plus-subevents unit-class/instance plus-subclasses
-                       slot-names paths permanent priority 
-		       printing evfn-blk-fn)
-      args
-    (flet
-	((do-space-instance (space-instance)
-	   (flet
-	       ((add-it (unit-class)
-		  (let* ((evfn-blks 
-			  (gethash 
-			   unit-class
-			   (standard-space-instance.%%evfn-unit-ht%%
-			    space-instance)))
-			 (evfn-blk 
-			  (or (cdr (assoc event-class evfn-blks :test #'eq))
-			      (let ((new-evfn-blk
-				     (make-evfn-blk :event-class event-class
-						    :unit-class unit-class)))
-				(push-acons 
-				 event-class new-evfn-blk
-				 (gethash 
-				  unit-class
-				  (standard-space-instance.%%evfn-unit-ht%%
-				   space-instance)))
-				new-evfn-blk))))
-		    (cond
-		     ;; non-nil `fn':
-		     (fn (evfn-adder evfn-blk fn event-class
-				     plus-subevents plus-subclasses
-				     (eq slot-names 't) permanent priority))
-		     ;; nil `fn' with `printing':
-		     (printing
-		      (set-evfn-printing-flags 
-		       evfn-blk printing
-		       plus-subevents plus-subclasses))
-		     ;; nil `fn' with `evfn-blk-fn':
-		     (evfn-blk-fn
-		      (funcall (the function evfn-blk-fn)
-			       evfn-blk plus-subevents plus-subclasses))))))
-	     (if plus-subclasses
-		 (map-unit-classes 
-		  #'(lambda (unit-class plus-subclasses)
-		      (declare (ignore plus-subclasses))
-		      (add-it unit-class))
-		  unit-class/instance)
-		 (add-it unit-class/instance)))))
-      ;; save information for newly created space instances:
-      (cond ((typep paths 'standard-space-instance)
-	     (do-space-instance paths))
-	    (t (push (list* paths 'addto-evfn-using-class
-			    fn event-class (copy-list args))
-		     (space-instance-event-class.path-event-functions
-		      event-class))
-	       (map-space-instances #'do-space-instance paths))))))
+                                   plus-subevents 
+                                   unit-class/instance plus-subclasses
+                                   slot-names paths permanent priority printing 
+                                   evfn-blk-fn evfn-blk-fn-args)
+  (flet ((do-space-instance (space-instance)
+           (flet
+               ((add-it (unit-class)
+                  (let* ((evfn-blks 
+                          (gethash 
+                           unit-class
+                           (standard-space-instance.%%evfn-unit-ht%%
+                            space-instance)))
+                         (evfn-blk 
+                          (or (cdr (assoc event-class evfn-blks :test #'eq))
+                              (let ((new-evfn-blk
+                                     (make-evfn-blk :event-class event-class
+                                                    :unit-class unit-class)))
+                                (push-acons 
+                                 event-class new-evfn-blk
+                                 (gethash 
+                                  unit-class
+                                  (standard-space-instance.%%evfn-unit-ht%%
+                                   space-instance)))
+                                new-evfn-blk))))
+                    (cond
+                     ;; non-nil `fn':
+                     (fn (evfn-adder evfn-blk fn event-class
+                                     plus-subevents plus-subclasses
+                                     (eq slot-names 't) permanent priority))
+                     ;; nil `fn' with `printing':
+                     (printing
+                      (set-evfn-printing-flags 
+                       evfn-blk printing
+                       plus-subevents plus-subclasses))
+                     ;; nil `fn' with `evfn-blk-fn':
+                     (evfn-blk-fn
+                      (apply (the function (symbol-function evfn-blk-fn))
+                             evfn-blk plus-subevents plus-subclasses
+                             evfn-blk-fn-args))))))
+             (if plus-subclasses
+                 (map-unit-classes 
+                  #'(lambda (unit-class plus-subclasses)
+                      (declare (ignore plus-subclasses))
+                      (add-it unit-class))
+                  unit-class/instance)
+                 (add-it unit-class/instance)))))
+    ;; save information for newly created space instances:
+    (cond ((typep paths 'standard-space-instance)
+           (do-space-instance paths))
+          (t (unless *%%doing-path-event-functions%%*
+               (let ((addto-form
+                      (list paths 'addto-evfn-using-class
+                            fn event-class
+                            plus-subevents 
+                            unit-class/instance plus-subclasses
+                            slot-names paths permanent priority printing 
+                            evfn-blk-fn evfn-blk-fn-args)))
+                 #+this-does-not-work-correctly
+                 (pushnew addto-form
+                          (space-instance-event-class.path-event-functions
+                           event-class)
+                          :test #'equal)
+                 #-so-we-stick-with-this
+                 (push addto-form
+                       (space-instance-event-class.path-event-functions
+                        event-class))))
+             (map-space-instances #'do-space-instance paths)))))
 
 ;;; ---------------------------------------------------------------------------
 
-(defun slot-evfn-adder (fn event-class args)
-  (destructuring-bind (plus-subevents unit-class plus-subclasses
-                       slot-names paths permanent priority 
-		       printing evfn-blk-fn)
-      args
-    (declare (ignore paths))
-    (flet
-	((add-it (unit-class)
-	   (ensure-finalized-class unit-class)
-	   (map-unit-class-slots 
-	    #'(lambda (slot)
-		(when (typep slot 'gbbopen-effective-slot-definition)
-		  (let* ((evfn-blks
-			  (gbbopen-effective-slot-definition.evfn-blks slot))
-			 (evfn-blk 
-			  (or (cdr (assoc event-class evfn-blks :test #'eq))
-			      (let ((new-evfn-blk
-				     (make-evfn-blk :event-class event-class
-						    :unit-class unit-class
-						    :slot-or-space-qualifier
-						    slot)))
-				(push-acons 
-				 event-class new-evfn-blk
-				 (gbbopen-effective-slot-definition.evfn-blks
-				  slot))
-				new-evfn-blk))))
-		    (cond
-		     ;; non-nil `fn':
-		     (fn (evfn-adder evfn-blk fn event-class 
-				     plus-subevents plus-subclasses 
-				     (eq slot-names 't) permanent priority))
-		     ;; nil `fn' with `printing':
-		     (printing
-		      (set-evfn-printing-flags 
-		       evfn-blk printing
-		       plus-subevents plus-subclasses))
-		     ;; nil `fn' with `evfn-blk-fn':
-		     (evfn-blk-fn
-		      (funcall (the function evfn-blk-fn) 
-			       evfn-blk plus-subevents plus-subclasses))))))
-	    unit-class slot-names)))
-      (if plus-subclasses
-	  (map-unit-classes 
-	   #'(lambda (unit-class plus-subclasses)
-	       (declare (ignore plus-subclasses))
-	       (add-it unit-class))
-	   unit-class)
-	  (add-it unit-class)))))
+(defun slot-evfn-adder (fn event-class                  
+                        plus-subevents 
+                        unit-class/instance plus-subclasses
+                        slot-names paths permanent priority printing 
+                        evfn-blk-fn evfn-blk-fn-args)
+  (declare (ignore paths))
+  (flet
+      ((add-it (unit-class)
+         (ensure-finalized-class unit-class)
+         (map-unit-class-slots 
+          #'(lambda (slot)
+              (when (typep slot 'gbbopen-effective-slot-definition)
+                (let* ((evfn-blks
+                        (gbbopen-effective-slot-definition.evfn-blks slot))
+                       (evfn-blk 
+                        (or (cdr (assoc event-class evfn-blks :test #'eq))
+                            (let ((new-evfn-blk
+                                   (make-evfn-blk :event-class event-class
+                                                  :unit-class unit-class
+                                                  :slot-or-space-qualifier
+                                                  slot)))
+                              (push-acons 
+                               event-class new-evfn-blk
+                               (gbbopen-effective-slot-definition.evfn-blks
+                                slot))
+                              new-evfn-blk))))
+                  (cond
+                   ;; non-nil `fn':
+                   (fn (evfn-adder evfn-blk fn event-class 
+                                   plus-subevents plus-subclasses 
+                                   (eq slot-names 't) permanent priority))
+                   ;; nil `fn' with `printing':
+                   (printing
+                    (set-evfn-printing-flags 
+                     evfn-blk printing
+                     plus-subevents plus-subclasses))
+                   ;; nil `fn' with `evfn-blk-fn':
+                   (evfn-blk-fn
+                    (apply (the function (symbol-function evfn-blk-fn))
+                           evfn-blk plus-subevents plus-subclasses
+                           evfn-blk-fn-args))))))
+          unit-class slot-names)))
+    (if plus-subclasses
+        (map-unit-classes 
+         #'(lambda (unit-class plus-subclasses)
+             (declare (ignore plus-subclasses))
+             (add-it unit-class))
+         unit-class/instance)
+        (add-it unit-class/instance))))
   
 ;;; ---------------------------------------------------------------------------
 
 (defmethod addto-evfn-using-class (fn (event-class nonlink-slot-event-class) 
-				   &rest args)
-  (declare (dynamic-extent args))
-  (slot-evfn-adder fn event-class args))
+                                   plus-subevents 
+                                   unit-class/instance plus-subclasses
+                                   slot-names paths permanent priority printing 
+                                   evfn-blk-fn evfn-blk-fn-args)
+  (slot-evfn-adder fn event-class 
+                   plus-subevents 
+                   unit-class/instance plus-subclasses
+                   slot-names paths permanent priority printing 
+                   evfn-blk-fn evfn-blk-fn-args))
 
 ;;; ---------------------------------------------------------------------------
 
 (defmethod addto-evfn-using-class (fn (event-class link-slot-event-class)
-				   &rest args)
-  (declare (dynamic-extent args))
-  (slot-evfn-adder fn event-class args))
+                                   plus-subevents 
+                                   unit-class/instance plus-subclasses
+                                   slot-names paths permanent priority printing 
+                                   evfn-blk-fn evfn-blk-fn-args)
+  (slot-evfn-adder fn event-class 
+                   plus-subevents 
+                   unit-class/instance plus-subclasses
+                   slot-names paths permanent priority printing 
+                   evfn-blk-fn evfn-blk-fn-args))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -791,20 +816,21 @@
   (unless (or (symbolp fn) (functionp fn))
     (error "~s is not a function." fn))
   (multiple-value-bind (unit-class-spec slot-names paths permanent priority
-			printing evfn-blk-fn)
+			printing evfn-blk-fn evfn-blk-fn-args)
       (parse-event-function-args args 
 				 '(:permanent nil) '(:priority 0)
 				 ;; used by enable/resume event printing:
 				 '(:printing nil)
 				 ;; used by control shells:
-				 '(:evfn-blk-fn nil))
+				 '(:evfn-blk-fn nil) '(:evfn-blk-fn-args nil))
     (multiple-value-bind (unit-class/instance plus-subclasses)
         (parse-unit-class/instance-specifier unit-class-spec)
       (map-extended-event-classes
        #'(lambda (event-class plus-subevents) 
            (addto-evfn-using-class 
             fn event-class plus-subevents unit-class/instance plus-subclasses
-            slot-names paths permanent priority printing evfn-blk-fn))
+            slot-names paths permanent priority printing 
+            evfn-blk-fn evfn-blk-fn-args))
        event-classes-spec)))
   fn)
 
@@ -836,172 +862,189 @@
 ;;; ---------------------------------------------------------------------------
 
 (defmethod rmfrom-evfn-using-class (fn (event-class non-instance-event-class)
-				     &rest args)
-  (declare (dynamic-extent args))
-  (destructuring-bind (plus-subevents unit-class plus-subclasses
-                       slot-names paths permanent printing evfn-blk-fn)
-      args
-    (declare (ignore plus-subevents unit-class plus-subclasses
-                     slot-names paths))
-    (let ((evfn-blk (non-instance-event-class.evfn-blk event-class)))
-      (when evfn-blk
-	(cond
-	 ;; non-nil `fn':
-	 (fn (evfn-remover evfn-blk fn event-class permanent))
-	 ;; nil `fn' with `printing':
-	 (printing
-	  (clear-evfn-printing-flags evfn-blk printing))
-	 ;; nil `fn' with `evfn-blk-fn':
-	 (evfn-blk-fn
-	  (funcall (the function evfn-blk-fn) evfn-blk)))))))
+                                    plus-subevents 
+                                    unit-class plus-subclasses
+                                    slot-names paths permanent printing 
+                                    evfn-blk-fn evfn-blk-fn-args)
+  (declare (ignore plus-subevents unit-class plus-subclasses
+                   slot-names paths))
+  (let ((evfn-blk (non-instance-event-class.evfn-blk event-class)))
+    (when evfn-blk
+      (cond
+       ;; non-nil `fn':
+       (fn (evfn-remover evfn-blk fn event-class permanent))
+       ;; nil `fn' with `printing':
+       (printing
+        (clear-evfn-printing-flags evfn-blk printing))
+       ;; nil `fn' with `evfn-blk-fn':
+       (evfn-blk-fn
+        (apply (the function (symbol-function evfn-blk-fn))
+               evfn-blk evfn-blk-fn-args))))))
 
 ;;; ---------------------------------------------------------------------------
 
 (defmethod rmfrom-evfn-using-class (fn (event-class instance-event-class)
-				     &rest args)
-  (declare (dynamic-extent args))
-  (destructuring-bind (plus-subevents unit-class plus-subclasses
-                       slot-names paths permanent printing evfn-blk-fn)
-      args
-    (declare (ignore plus-subevents slot-names paths))
-    (flet ((remove-it (unit-class)
-	     (let* ((evfn-blks (standard-unit-class.evfn-blks unit-class))
-		    (evfn-blk (cdr (assoc event-class evfn-blks :test #'eq))))
-	       (when evfn-blk
-		 (cond
-		  ;; non-nil `fn':
-		  (fn (evfn-remover evfn-blk fn event-class permanent))
-		  ;; nil `fn' with `printing':
-		  (printing
-		   (clear-evfn-printing-flags evfn-blk printing))
-		  ;; nil `fn' with `evfn-blk-fn':
-		  (evfn-blk-fn
-		   (funcall (the function evfn-blk-fn) evfn-blk)))))))
-      (if plus-subclasses
-	  (map-unit-classes 
-	   #'(lambda (unit-class plus-subclasses)
-	       (declare (ignore plus-subclasses))
-	       (remove-it unit-class))
-	   unit-class)
-	  (remove-it unit-class)))))
+                                    plus-subevents 
+                                    unit-class plus-subclasses
+                                    slot-names paths permanent printing 
+                                    evfn-blk-fn evfn-blk-fn-args)
+  (declare (ignore plus-subevents slot-names paths))
+  (flet ((remove-it (unit-class)
+           (let* ((evfn-blks (standard-unit-class.evfn-blks unit-class))
+                  (evfn-blk (cdr (assoc event-class evfn-blks :test #'eq))))
+             (when evfn-blk
+               (cond
+                ;; non-nil `fn':
+                (fn (evfn-remover evfn-blk fn event-class permanent))
+                ;; nil `fn' with `printing':
+                (printing
+                 (clear-evfn-printing-flags evfn-blk printing))
+                ;; nil `fn' with `evfn-blk-fn':
+                (evfn-blk-fn
+                 (apply (the function (symbol-function evfn-blk-fn))
+                        evfn-blk evfn-blk-fn-args)))))))
+    (if plus-subclasses
+        (map-unit-classes 
+         #'(lambda (unit-class plus-subclasses)
+             (declare (ignore plus-subclasses))
+             (remove-it unit-class))
+         unit-class)
+        (remove-it unit-class))))
 
 ;;; ---------------------------------------------------------------------------
 
-(defmethod rmfrom-evfn-using-class (fn 
-				     (event-class space-instance-event-class)
-				     &rest args)
-  (declare (dynamic-extent args))
-  (destructuring-bind (plus-subevents unit-class plus-subclasses
-                       slot-names paths permanent printing evfn-blk-fn)
-      args
-    (declare (ignore plus-subevents slot-names))
-    (flet ((do-space-instance (space-instance)
-	     (flet ((remove-it (unit-class)
-		      (let* ((evfn-blks 
-			      (gethash 
-			       unit-class
-			       (standard-space-instance.%%evfn-unit-ht%%
-				space-instance)))
-			     (evfn-blk (cdr (assoc event-class evfn-blks 
-						   :test #'eq))))
-			(when evfn-blk
-			  (cond
-			   ;; non-nil `fn':
-			   (fn (evfn-remover evfn-blk fn event-class 
-					     permanent))
-			   ;; nil `fn' with `printing':
-			   (printing
-			    (clear-evfn-printing-flags evfn-blk printing))
-			   ;; nil `fn' with `evfn-blk-fn':
-			   (evfn-blk-fn
-			    (funcall (the function evfn-blk-fn) evfn-blk)))))))
-	       (if plus-subclasses
-		   (map-unit-classes 
-		    #'(lambda (unit-class plus-subclasses)
-			(declare (ignore plus-subclasses))
-			(remove-it unit-class))
-		    unit-class)
-		   (remove-it unit-class)))))
-      (cond ((typep paths 'standard-space-instance)
-	     (do-space-instance paths))
-	    (t (map-space-instances #'do-space-instance paths)
-	       ;; delete existing entries when the removal makes them
-	       ;; superflous:
-	       (setf (space-instance-event-class.path-event-functions 
-		      event-class)
-		     (delete-if 
-		      #'(lambda (entry)
-			  (destructuring-bind (path-pattern add/remove-fn 
-					       entry-fn entry-event-class 
-					       &rest entry-args)
-			      entry
-			    (declare (ignore add/remove-fn
-					     entry-event-class
-					     entry-args))
-			    (and (or (and (eq fn 't) entry-fn)
-				     (and fn (eq fn entry-fn)))
-				 (subsumed-path-pattern-p 
-				  path-pattern paths))))
-		      (space-instance-event-class.path-event-functions 
-		       event-class)))
-	       ;; Include this operation, just to be safe:
-	       (when (space-instance-event-class.path-event-functions
-		      event-class)
-		 (push (list* paths 'rmfrom-evfn-using-class
-			      fn event-class (copy-list args))
-		       (space-instance-event-class.path-event-functions
-			event-class))))))))
+(defmethod rmfrom-evfn-using-class (fn (event-class space-instance-event-class)
+                                    plus-subevents 
+                                    unit-class plus-subclasses
+                                    slot-names paths permanent printing 
+                                    evfn-blk-fn evfn-blk-fn-args)
+  (declare (ignore slot-names plus-subevents))
+  (flet ((do-space-instance (space-instance)
+           (flet ((remove-it (unit-class)
+                    (let* ((evfn-blks 
+                            (gethash 
+                             unit-class
+                             (standard-space-instance.%%evfn-unit-ht%%
+                              space-instance)))
+                           (evfn-blk (cdr (assoc event-class evfn-blks 
+                                                 :test #'eq))))
+                      (when evfn-blk
+                        (cond
+                         ;; non-nil `fn':
+                         (fn (evfn-remover evfn-blk fn event-class 
+                                           permanent))
+                         ;; nil `fn' with `printing':
+                         (printing
+                          (clear-evfn-printing-flags evfn-blk printing))
+                         ;; nil `fn' with `evfn-blk-fn':
+                         (evfn-blk-fn
+                          (apply (the function (symbol-function evfn-blk-fn))
+                                 evfn-blk evfn-blk-fn-args)))))))
+             (if plus-subclasses
+                 (map-unit-classes 
+                  #'(lambda (unit-class plus-subclasses)
+                      (declare (ignore plus-subclasses))
+                      (remove-it unit-class))
+                  unit-class)
+                 (remove-it unit-class)))))
+    (cond ((typep paths 'standard-space-instance)
+           (do-space-instance paths))
+          (t (map-space-instances #'do-space-instance paths)
+             ;; Delete existing entries when the removal makes them
+             ;; superflous:
+             (setf (space-instance-event-class.path-event-functions 
+                    event-class)
+                   (delete-if 
+                    #'(lambda (entry)
+                        (destructuring-bind (path-pattern add/remove-fn 
+                                             entry-fn entry-event-class 
+                                             &rest entry-args)
+                            entry
+                          (declare (ignore add/remove-fn entry-event-class))
+                          (and (or (and (eq fn 't) entry-fn)
+                                   (and fn (eq fn entry-fn))
+                                   ;; for ks-trigger processing:
+                                   (and (not fn)
+                                        ;; see if the evfn-blk-fn-args match:
+                                        (equal (tenth entry-args) evfn-blk-fn-args)))
+                               (subsumed-path-pattern-p 
+                                path-pattern paths))))
+                    (space-instance-event-class.path-event-functions 
+                     event-class)))
+             ;; Include this operation, just to be safe:
+             #+should-never-be-needed
+             (when (and (not *%%doing-path-event-functions%%*)
+                        (space-instance-event-class.path-event-functions
+                         event-class))
+               (push (list paths 'rmfrom-evfn-using-class
+                           fn event-class plus-subevents 
+                           unit-class plus-subclasses
+                           slot-names paths permanent printing 
+                           evfn-blk-fn evfn-blk-fn-args)
+                     (space-instance-event-class.path-event-functions
+                      event-class)))))))
 
 ;;; ---------------------------------------------------------------------------
 
-(defun slot-evfn-remover (fn event-class args)
-  (destructuring-bind (plus-subevents unit-class plus-subclasses
-                       slot-names paths permanent printing evfn-blk-fn)
-      args
-    (declare (ignore plus-subevents paths))
-    (flet
-	((remove-it (unit-class)
-	   ;; nothing to remove on non-finalized classes:
-	   (when (class-finalized-p unit-class)
-	     (map-unit-class-slots 
-	      #'(lambda (slot)
-		  (when (typep slot 'gbbopen-effective-slot-definition)
-		    (let* ((evfn-blks
-			    (gbbopen-effective-slot-definition.evfn-blks slot))
-			   (evfn-blk 
-			    (cdr (assoc event-class evfn-blks :test #'eq))))
-		      (when evfn-blk
-			(cond
-			 ;; non-nil `fn':
-			 (fn (evfn-remover evfn-blk fn event-class permanent))
-			 ;; nil `fn' with `printing':
-			 (printing
-			  (clear-evfn-printing-flags evfn-blk printing))
-			 ;; nil `fn' with `evfn-blk-fn':
-			 (evfn-blk-fn
-			  (funcall (the function evfn-blk-fn) evfn-blk)))))))
-	      unit-class slot-names))))
-      (if plus-subclasses
-	  (map-unit-classes 
-	   #'(lambda (unit-class plus-subclasses)
-	       (declare (ignore plus-subclasses))
-	       (remove-it unit-class))
-	   unit-class)
-	  (remove-it unit-class)))))
+(defun slot-evfn-remover (fn event-class plus-subevents
+                          unit-class plus-subclasses
+                          slot-names paths permanent printing 
+                          evfn-blk-fn evfn-blk-fn-args)
+  (declare (ignore plus-subevents paths))
+  (flet
+      ((remove-it (unit-class)
+         ;; nothing to remove on non-finalized classes:
+         (when (class-finalized-p unit-class)
+           (map-unit-class-slots 
+            #'(lambda (slot)
+                (when (typep slot 'gbbopen-effective-slot-definition)
+                  (let* ((evfn-blks
+                          (gbbopen-effective-slot-definition.evfn-blks slot))
+                         (evfn-blk 
+                          (cdr (assoc event-class evfn-blks :test #'eq))))
+                    (when evfn-blk
+                      (cond
+                       ;; non-nil `fn':
+                       (fn (evfn-remover evfn-blk fn event-class permanent))
+                       ;; nil `fn' with `printing':
+                       (printing
+                        (clear-evfn-printing-flags evfn-blk printing))
+                       ;; nil `fn' with `evfn-blk-fn':
+                       (evfn-blk-fn
+                        (apply (the function (symbol-function evfn-blk-fn))
+                               evfn-blk evfn-blk-fn-args)))))))
+            unit-class slot-names))))
+    (if plus-subclasses
+        (map-unit-classes 
+         #'(lambda (unit-class plus-subclasses)
+             (declare (ignore plus-subclasses))
+             (remove-it unit-class))
+         unit-class)
+        (remove-it unit-class))))
   
 ;;; ---------------------------------------------------------------------------
 
 (defmethod rmfrom-evfn-using-class (fn (event-class nonlink-slot-event-class) 
-				     &rest args)
-  (declare (dynamic-extent args))
-  (slot-evfn-remover fn event-class args))
+                                    plus-subevents 
+                                    unit-class plus-subclasses
+                                    slot-names paths permanent printing 
+                                    evfn-blk-fn evfn-blk-fn-args)
+  (slot-evfn-remover fn event-class plus-subevents
+                     unit-class plus-subclasses
+                     slot-names paths permanent printing 
+                     evfn-blk-fn evfn-blk-fn-args))
 
 ;;; ---------------------------------------------------------------------------
 
 (defmethod rmfrom-evfn-using-class (fn (event-class link-slot-event-class) 
-				     &rest args)
-  (declare (dynamic-extent args))
-  (slot-evfn-remover fn event-class args))
+                                    plus-subevents 
+                                    unit-class plus-subclasses
+                                    slot-names paths permanent printing 
+                                    evfn-blk-fn evfn-blk-fn-args)
+  (slot-evfn-remover fn event-class plus-subevents
+                     unit-class plus-subclasses
+                     slot-names paths permanent printing 
+                     evfn-blk-fn evfn-blk-fn-args))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -1014,19 +1057,21 @@
   (unless (or (symbolp fn) (functionp fn))
     (error "~s is not a function." fn))
   (multiple-value-bind (unit-class-spec slot-names paths permanent 
-			printing evfn-blk-fn)
-      (parse-event-function-args args '(:permanent nil)
+			printing evfn-blk-fn evfn-blk-fn-args)
+      (parse-event-function-args args 
+                                 '(:permanent nil)
 				 ;; used by enable/resume event printing:
 				 '(:printing nil)
 				 ;; used by control shells:
-				 '(:evfn-blk-fn nil))
+				 '(:evfn-blk-fn nil) '(:evfn-blk-fn-args nil))
     (multiple-value-bind (unit-class/instance plus-subclasses)
         (parse-unit-class/instance-specifier unit-class-spec)
       (map-extended-event-classes
        #'(lambda (event-class plus-subevents) 
            (rmfrom-evfn-using-class 
             fn event-class plus-subevents unit-class/instance plus-subclasses
-            slot-names paths permanent printing evfn-blk-fn))
+            slot-names paths permanent printing 
+            evfn-blk-fn evfn-blk-fn-args))
        event-classes-spec)))
   fn)
 
