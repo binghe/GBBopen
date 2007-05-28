@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/events.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat May 26 14:58:51 2007 *-*
+;;;; *-* Last-Edit: Mon May 28 11:12:24 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -1447,7 +1447,8 @@
 				  stream &rest args)
   (declare (ignore args))
   ;;; Prints the standard event signature line for all event printing:
-  (format stream "~&;; => ~@(~a~)~%" (type-of event)))
+  (let ((*print-case* ':upcase))
+    (format stream "~&;; => ~a~%" (type-of event))))
 
 ;;; ---------------------------------------------------------------------------
 
