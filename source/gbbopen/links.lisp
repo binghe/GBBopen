@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/links.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Oct 11 06:47:17 2006 *-*
+;;;; *-* Last-Edit: Tue May 29 14:41:32 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2002-2006, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2007, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -195,7 +195,7 @@
                              ,@(when forced '(.forced-removal.)))
          (,fn 
 	  ;; determine the direct-link-definition:
-	  (setq .dslotd.
+	  (setf .dslotd.
 	    ,(if (and (consp reader-form)
 		      (eq (first reader-form) 'slot-value))
 		 `(get-slot-value-dlslotd 
@@ -282,8 +282,9 @@
      ((direct-link-definition.singular dslotd)
       ;; ensure atomic new value:
       (when (consp new)
-        (setq new (sole-element new)))
-      (check-for-deleted-instance new operation)
+        (setf new (sole-element new)))
+      (when new 
+        (check-for-deleted-instance new operation))
       (cond
        ;; no-op if already present:
        ((eq existing new) (values existing nil nil))
@@ -299,8 +300,8 @@
                     existing))
           ;; unlink the existing value
           (%do-iunlinks dslotd instance (list existing))
-          (setq forced-removal t))
-        (let ((change (list new)))
+          (setf forced-removal t))
+        (let ((change (ensure-list new)))
           (%do-ilinks dslotd instance change)
           ;; return the new link value and changes:
           (values new change forced-removal)))))
@@ -310,20 +311,20 @@
               (sort-key (or (direct-link-definition.sort-key dslotd)
                             #'identity)))
           ;; ensure new is a list:
-          (unless (listp new) (setq new (list new)))
+          (unless (listp new) (setf new (list new)))
           ;; unlink any extra links:
           (when force
             (dolist (existing-instance existing)
               (unless (memq existing-instance new)
-                (setq existing (delq existing-instance existing))
+                (setf existing (delq existing-instance existing))
                 (%do-iunlinks dslotd instance (list existing-instance))
-                (setq forced-removal t))))
+                (setf forced-removal t))))
           ;; add in new links:
           (dolist (new-instance new)
             (unless (memq new-instance existing)
               (check-for-deleted-instance new-instance operation)
               (if sort-function
-                  (setq existing
+                  (setf existing
                     (nsorted-insert new-instance existing sort-function sort-key))
                   (push new-instance existing))
               (push new-instance change)))
@@ -356,14 +357,14 @@
    ;; multi-link
    (t (let ((change nil))
         ;; ensure remove is a list
-        (unless (listp remove) (setq remove (list remove)))
+        (unless (listp remove) (setf remove (list remove)))
         (flet ((when-eq-push (a b)
                  (when (eq a b)
                    (push a change))))
           (declare (dynamic-extent #'when-eq-push))
           (dolist (rinstance remove)
             (check-for-deleted-instance rinstance 'unlinkf)
-            (setq existing (delete rinstance existing :test #'when-eq-push))))
+            (setf existing (delete rinstance existing :test #'when-eq-push))))
         (when change
           ;; unlink the inverses
           (%do-iunlinks dslotd instance change))
@@ -581,7 +582,7 @@
           #'(lambda (link) 
               (unless (check-a-link class link silent)
                 (if silent 
-                    (setq result nil)
+                    (setf result nil)
                     (return-from check-link-consistency nil))))
 	  (ensure-finalized-class class)))
      ;; Note: standard-unit-instance isn't defined until after this file is
