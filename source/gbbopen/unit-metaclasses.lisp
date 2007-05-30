@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/unit-metaclasses.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Sep 28 12:13:04 2006 *-*
+;;;; *-* Last-Edit: Wed May 30 12:30:55 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2002-2006, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2007, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; Porting Notice:
@@ -132,7 +132,7 @@
               existing-instance-name
               (type-of instance)
               renaming-instance-name)
-        (setf (instance-name existing-instance)
+        (setf (instance-name-of existing-instance)
               renaming-instance-name)))
     (setf (gethash instance-name hash-table) instance)))
 
