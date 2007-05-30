@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/test/basic-tests.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Sep 29 05:48:49 2006 *-*
+;;;; *-* Last-Edit: Wed May 30 12:28:41 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2002-2006, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2007, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -57,7 +57,7 @@
    (link-2 :link (uc-2 backlink-2))
    (link-3 :link (uc-2 backlink-3)
            :sort-function #'<
-           :sort-key 'instance-name))
+           :sort-key 'instance-name-of))
   (:default-initargs :x 1 :zzz 2)
   (:generate-accessors-format :prefix)
   (:generate-accessors t :exclude slot-3)
@@ -248,7 +248,7 @@
     (when (with-error-handling
               (setf (uc-1.link-1 x) 3))
       (error "Link-slot setf accessor protection failed: ~s" x))
-    (unless (eq x (find-instance-by-name (instance-name x) 'uc-1))
+    (unless (eq x (find-instance-by-name (instance-name-of x) 'uc-1))
       (error "Unable to find instance: ~s" x))
     (add-instance-to-space-instance
      x (find-space-instance-by-path '(bb sub-bb space-2)))
@@ -268,7 +268,7 @@
     (delete-instance x)
     (unless (instance-deleted-p x)
       (error "Deleted unit was not marked as deleted"))
-    (when (eq x (find-instance-by-name (instance-name x) 'uc-1))
+    (when (eq x (find-instance-by-name (instance-name-of x) 'uc-1))
       (error "Deleted unit ~s was retrieved by ~s"
              x 'find-instance-by-name))
     (when (member x (find-instances 'uc-1 (find-space-instances '(bb *)) 't))
@@ -277,13 +277,13 @@
 
   ;;; Renamed instance checks:
   (let ((x (make-instance 'uc-1 :instance-name 0 :x 0 :y 0)))
-    (setf (instance-name x) -1)
+    (setf (instance-name-of x) -1)
     (unless (eq x (find-instance-by-name -1 'uc-1))
-      (error "Renamed instance ~s by (setf instance-name) was not found ~
+      (error "Renamed instance ~s by (setf instance-name-of) was not found ~
               by name."
              x))
     (when (eq x (find-instance-by-name 0 'uc-1))
-      (error "Renamed instance ~s by (setf instance-name) was still found ~
+      (error "Renamed instance ~s by (setf instance-name-of) was still found ~
               by its old name."
              x))
     (setf (slot-value x 'instance-name) -2)
@@ -577,8 +577,8 @@
       (labels
 	  ((space-instance-names (space-instances)
 	     (if (listp space-instances)
-		 (mapcar #'instance-name space-instances)
-		 (instance-name space-instances)))
+		 (mapcar #'instance-name-of space-instances)
+		 (instance-name-of space-instances)))
 	   (do-find-tests (use-marking?)
 	     (flet ((do-map-test (unit-classes space-instances expected-result)
 		      (let ((result nil))
