@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:AGENDA-SHELL; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/control-shells/agenda-shell.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat May 26 14:47:16 2007 *-*
+;;;; *-* Last-Edit: Wed May 30 12:32:44 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -489,7 +489,7 @@
                        (format t "~&~6t~a: ~@<~{~s~^, ~_~}~@:>~%" 
 			       label
 			       (mapcar #'(lambda (kst)
-					   (instance-name (kst.ks kst)))
+					   (instance-name-of (kst.ks kst)))
 				       ksts)))))
             (when (or triggers obviates retriggers)
               (show-evfn-describer-headers)
@@ -732,7 +732,7 @@
 
 (defmethod describe-ks ((ks ks))
   (format t "~2&KS: ~s~@[ [disabled]~]" 
-          (instance-name ks)
+          (instance-name-of ks)
           (not (ks-enabled-p ks)))
   (flet ((show-it (obj title control-string)
            (when obj (format t "~&~2t~a:~25t~@?" 
@@ -812,11 +812,11 @@
         ;;; control-shell-step-result if these supported options change: 
         (:activation-predicate 
          (prompt "About to execute activation predicate for KS ~s~%~3ton ~s"
-                 (instance-name predicate-arg)
+                 (instance-name-of predicate-arg)
                  (type-of ==)))
         (:ks-activation
          (prompt "About to activate KS ~s~%~3ton ~w" 
-                 (instance-name predicate-arg)
+                 (instance-name-of predicate-arg)
                  (if (cddr ==)
                      (mapcar #'type-of ==)
                      (type-of (first ==)))))
@@ -824,11 +824,11 @@
          (prompt "About to execute KSA ~s" ==))
         (:obviation-predicate
          (prompt "About to execute obviation predicate for KS ~s~%~3ton ~s"
-                 (instance-name predicate-arg)
+                 (instance-name-of predicate-arg)
                  (type-of ==)))
         (:precondition-function
          (prompt "About to execute precondition function for KS ~s~%~3ton ~s"
-                 (instance-name predicate-arg)
+                 (instance-name-of predicate-arg)
                  (type-of ==)))
         (:process-event 
          (prompt "About to process event ~s" ==))
@@ -840,7 +840,7 @@
                  (type-of ==)))
         (:revalidation-predicate
          (prompt "About to execute revalidation predicate for KS ~s"
-                 (instance-name predicate-arg))))
+                 (instance-name-of predicate-arg))))
       (case (char-downcase (read-char-immediately stream))
         (#\d 
          (let ((current-stepping (cs.stepping cs)))        
@@ -927,7 +927,7 @@
        (returned "Activation predicate"))
       (:ks-activation)
       (:ksa-execution
-       (returned (format nil "KSA ~s" (instance-name ==))))
+       (returned (format nil "KSA ~s" (instance-name-of ==))))
       (:obviation-predicate
        (returned "Obviation predicate"))
       (:precondition-function
@@ -1144,7 +1144,7 @@
 			(format (cs.output-stream cs)
 				"~&;; Explicit :stop issued by KS ~
                                       ~s precondition function~%"
-				(instance-name ks)))
+				(instance-name-of ks)))
                       (apply #'exit-control-shell ':stop initargs)))
                   (when rating
                     (let ((events (list event)))
@@ -1317,7 +1317,7 @@
 			      (when (cs.print cs)
 				(format (cs.output-stream cs)
 					"~&;; Explicit :stop issued by KS ~s~%"
-					(instance-name ks)))
+					(instance-name-of ks)))
 			      (apply #'exit-control-shell 
 				     ':stop (rest result-values)))))
 			 ;; obviate the KSA, due to a nil result from
