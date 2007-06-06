@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/mini-module/mini-module.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue May  1 15:41:30 2007 *-*
+;;;; *-* Last-Edit: Wed Jun  6 13:18:43 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -76,6 +76,9 @@
 ;;;           define-module.  (Corkill)
 ;;;  05-08-06 Added support for the Scieneer CL. (dtc)
 ;;;  11-21-06 Added get-directory.  (Corkill)
+;;;  06-06-07 Added :after-form support for modules (somewhat reluctantly,
+;;;           as putting forms in a module's files is preferable to having
+;;;           them in the module definition).  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -443,7 +446,9 @@
   (files nil)
   (files-loaded nil)
   (load-completed? nil)
-  (latest-forces-recompiled-date 0))
+  (latest-forces-recompiled-date 0)
+  ;; undocumented (used for compile-gbbopen exit):
+  (after-form nil))
 
 (defvar *mm-modules* (make-hash-table))
 
@@ -458,7 +463,9 @@
         (requires nil)
         (requires-seen? nil)
         (files nil)
-        (files-seen? nil))
+        (files-seen? nil)
+        (after-form nil)
+        (after-form-seen? nil))
     (dolist (option args)
       (unless (and (consp option)
                    (keywordp (first option)))
@@ -492,6 +499,15 @@
                   name))
          (setf requires-seen? 't)
          (setf requires (rest option)))
+        (:after-form
+         (when after-form-seen?
+           (error "Multiple :after-form options supplied in module ~s."
+                  name))
+         (setf after-form-seen? 't)
+         (when (cddr option)
+           (error "Only a single :after-form form can be specified:~{ ~s~}"
+                  option))
+         (setf after-form (second option)))
         (t (error "Unsupported option, ~s, in module ~s."
                   option name))))    
     (when (and files (not directory))
@@ -506,7 +522,9 @@
                     be evaluated outside of a load context."
 		   '*load-truename*
 		   'define-module))))
-    `(ensure-module ',name ',directory ',sub-directories ',files ',requires)))
+    `(ensure-module ',name ',directory ',sub-directories ',requires 
+                    ',files
+                    ',after-form)))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -574,7 +592,7 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun ensure-module (name directory sub-directories files requires)
+(defun ensure-module (name directory sub-directories requires files after-form)
   (let ((existing-module (gethash name *mm-modules*)))
     (check-requires-ordering name requires)
     (setf (gethash name *mm-modules*)
@@ -582,6 +600,7 @@
            :name name 
            :directory directory
            :sub-directories sub-directories
+	   :requires requires
            :files files 
            :files-loaded 
 	     (when (and existing-module
@@ -589,7 +608,7 @@
 			;; reload them all...
 			(equal files (mm-module.files existing-module)))
 	       (mm-module.files-loaded existing-module))
-	   :requires requires)))
+           :after-form after-form)))
   ;; Return the module name (returned by define-module):
   name)
 
@@ -839,7 +858,9 @@
             (load-module-files
              module 
              (and reload? propagate?) 
-             (and source? (or propagate? specified-module?))))))))
+             (and source? (or propagate? specified-module?)))))
+      (let ((after-form (mm-module.after-form module)))
+        (when after-form (eval after-form))))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -873,7 +894,9 @@
          (and reload? 
               (or propagate? specified-module?))
          (and source? 
-              (or propagate? specified-module?)))))))
+              (or propagate? specified-module?))))
+      (let ((after-form (mm-module.after-form module)))
+        (when after-form (eval after-form))))))
 
 ;;; ---------------------------------------------------------------------------
 
