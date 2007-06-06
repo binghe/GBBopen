@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu May  3 16:16:12 2007 *-*
+;;;; *-* Last-Edit: Wed Jun  6 15:52:07 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -58,8 +58,104 @@
 (in-package :gbbopen-tools)
 
 ;;; ---------------------------------------------------------------------------
-;;;  Create CLOS package nickname where needed
+;;;  Create CLOS package nickname (or package!) where needed
 
+#+(or digitool-mcl openmcl)
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (unless (find-package :clos)
+    (defpackage :clos
+      (:use :common-lisp)))
+  
+  (defparameter *clos-symbols*
+      '(ccl:accessor-method-slot-definition
+        ccl:add-dependent
+        ccl:add-direct-method
+        ccl:add-direct-subclass 
+        ccl:class-default-initargs
+        ccl:class-direct-default-initargs 
+        ccl:class-direct-slots 
+        ccl:class-direct-subclasses
+        ccl:class-direct-superclasses
+        ccl:class-finalized-p 
+        ccl:class-precedence-list
+        ccl:class-prototype 
+        ccl:class-slots
+        ccl:compute-applicable-methods-using-classes
+        ccl:compute-class-precedence-list
+        ccl:compute-default-initargs
+        ccl:compute-discriminating-function 
+        ccl:compute-effective-method
+        ccl:compute-effective-slot-definition
+        ccl:compute-slots
+        ccl:direct-slot-definition 
+        ccl:direct-slot-definition-class
+        ccl:effective-slot-definition
+        ccl:effective-slot-definition-class
+        ccl:ensure-class 
+        ccl:ensure-class-using-class
+        ccl:ensure-generic-function-using-class
+        ccl::eql-specializer
+        ccl:eql-specializer-object
+        ccl:extract-lambda-list
+        ccl:extract-specializer-names
+        ccl:finalize-inheritance
+        ccl:find-method-combination
+        ccl:forward-referenced-class
+        ccl:funcallable-standard-class 
+        ccl:funcallable-standard-instance-access
+        ccl::funcallable-standard-object
+        ccl:generic-function-argument-precedence-order
+        ccl:generic-function-declarations
+        ccl:generic-function-lambda-list
+        ccl:generic-function-method-class
+        ccl:generic-function-method-combination
+        ccl:generic-function-methods
+        ccl:generic-function-name
+        ccl:intern-eql-specializer
+        ccl:make-method-lambda
+        ccl:map-dependents
+        ccl:metaobject 
+        ccl:method-function
+        ccl:method-generic-function
+        ccl:method-lambda-list
+        ccl:method-specializers 
+        ccl:reader-method-class
+        ccl:remove-dependent
+        ccl:remove-direct-method
+        ccl:remove-direct-subclass
+        ccl:set-funcallable-instance-function
+        ccl:slot-boundp-using-class
+        ccl:slot-definition
+        ccl:slot-definition-allocation
+        ccl:slot-definition-initargs
+        ccl:slot-definition-initform
+        ccl:slot-definition-initfunction
+        ccl:slot-definition-location
+        ccl:slot-definition-name
+        ccl:slot-definition-readers
+        ccl:slot-definition-type
+        ccl:slot-definition-writers
+        ccl:slot-makunbound-using-class 
+        ccl:slot-value-using-class
+        ccl:specializer
+        ccl:specializer-direct-generic-functions
+        ccl:specializer-direct-methods
+        ccl:standard-accessor-method
+        ccl:standard-direct-slot-definition
+        ccl:standard-effective-slot-definition
+        ccl:standard-instance-access
+        ccl:standard-reader-method
+        ccl:standard-slot-definition
+        ccl:standard-writer-method
+        ccl:update-dependent
+        ccl:validate-superclass
+        ccl:writer-method-class)))
+
+#+(or digitool-mcl openmcl)
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (import *clos-symbols* :clos)
+  (export *clos-symbols* :clos))
+  
 #+cmu
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (ext::without-package-locks
@@ -69,17 +165,9 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (add-package-nickname "CLOS" :common-lisp))
 
-#+digitool-mcl
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (add-package-nickname "CLOS" :ccl))
-
 #+gcl
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (add-package-nickname "CLOS" :pcl))
-
-#+openmcl
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (add-package-nickname "CLOS" :ccl))
 
 #+sbcl
 (eval-when (:compile-toplevel :load-toplevel :execute)
