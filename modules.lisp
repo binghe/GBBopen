@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/modules.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jun  6 13:16:38 2007 *-*
+;;;; *-* Last-Edit: Wed Jun  6 15:00:36 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -214,6 +214,7 @@
   ;; :after-form allows a clean exit.)
   (:after-form (progn 
                  (format t "~2&;;; Exiting Common Lisp...~2%")
+                 (finish-output)
                  (cl-user::quit-lisp))))
 
 ;;; ===========================================================================
