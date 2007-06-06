@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/modules.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Nov 15 03:48:06 2006 *-*
+;;;; *-* Last-Edit: Wed Jun  6 13:16:38 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2002-2006, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2007, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -206,7 +206,15 @@
 (define-module :compile-gbbopen
   (:requires :mini-module)
   (:directory :gbbopen-root)
-  (:files ("compile-all" :source)))
+  (:files ("compile-all" :source))
+  ;; The following undocumented capability is used to cleanly exit Common Lisp
+  ;; after the module has been compiled.  (Forms in the module's :files are
+  ;; preferable to using an :after-form.  However, quitting CL during module
+  ;; compiling/loading aborts the compilation-unit of the module, so the
+  ;; :after-form allows a clean exit.)
+  (:after-form (progn 
+                 (format t "~2&;;; Exiting Common Lisp...~2%")
+                 (cl-user::quit-lisp))))
 
 ;;; ===========================================================================
 ;;;				  End of File
