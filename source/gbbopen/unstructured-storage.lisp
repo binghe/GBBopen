@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/unstructured-storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Sep 23 21:49:06 2006 *-*
+;;;; *-* Last-Edit: Mon Jun 11 12:36:51 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -14,12 +14,14 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2003-2006, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2003-2007, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
 ;;;  04-23-06 Split out from storage.lisp.  (Corkill)
+;;;  06-11-07 Converted unstructured-storage accessors from :prefix to modern
+;;;           "-of" format.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -33,7 +35,6 @@
 
 (define-class unstructured-storage (storage)
   ((instances :initform (make-hash-table :test 'eq)))
-  (:generate-accessors-format :prefix)
   (:generate-initargs nil)
   (:export-class-name t))
 
@@ -43,7 +44,7 @@
   (print-storage-usage-message storage)
   (format *trace-output* 
           "~&;; - ~s: Using unstructured storage (~s instance~:p)~&"
-          't (hash-table-count (unstructured-storage.instances storage))))
+          't (hash-table-count (instances-of storage))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -51,8 +52,7 @@
                                     (storage unstructured-storage)
                                     verbose)
   (when verbose (print-unstructured-storage-usage-message storage))
-  (setf (gethash instance (unstructured-storage.instances storage)) 
-	instance))
+  (setf (gethash instance (instances-of storage)) instance))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -61,7 +61,7 @@
                                          dimension-values verbose)
   (declare (ignore dimension-values))
   (when verbose (print-unstructured-storage-usage-message storage))
-  (remhash instance (unstructured-storage.instances storage)))
+  (remhash instance (instances-of storage)))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -70,7 +70,7 @@
   (declare (ignore disjunctive-dimensional-extents))
   (declare (type function fn))
   (when verbose (print-unstructured-storage-usage-message storage))  
-  (maphash fn (unstructured-storage.instances storage))
+  (maphash fn (instances-of storage))
   ;; record the bucket count:
   (let ((find-stats *find-stats*))
     (when find-stats 

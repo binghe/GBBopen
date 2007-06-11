@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/1d-uniform-storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Sep 23 21:49:38 2006 *-*
+;;;; *-* Last-Edit: Mon Jun 11 12:48:46 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -14,12 +14,14 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2003-2006, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2003-2007, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
 ;;;  04-23-06 Split out from storage.lisp.  (Corkill)
+;;;  06-11-07 Converted 1d-uniform-buckets accessors from :prefix to modern
+;;;           "-of" format.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -42,7 +44,6 @@
    (preceeding-instances :initform (make-hash-table :test 'eq))
    (buckets :type (simple-array t (*)))
    (following-instances :initform (make-hash-table :test 'eq)))
-  (:generate-accessors-format :prefix)
   (:generate-initargs nil)
   (:export-class-name t))
 
@@ -58,20 +59,20 @@
     (destructuring-bind (start end size)
 	(car layout)
       (let ((number-of-buckets (ceiling (- end start) size)))
-	(setf (1d-uniform-buckets.start storage) start)
-	(setf (1d-uniform-buckets.size storage) size)
+	(setf (start-of storage) start)
+	(setf (size-of storage) size)
 	;; note that the effective end value can be larger than the specified 
 	;; `end' value:
-	(setf (1d-uniform-buckets.end storage) 
+	(setf (end-of storage) 
 	      (+ start (* number-of-buckets size)))
 	;; Make the bucket vector:
-	(setf (1d-uniform-buckets.buckets storage)
+	(setf (buckets-of storage)
 	      (make-array (list number-of-buckets) :initial-element nil))))))
 
 ;;; ---------------------------------------------------------------------------
 
 (defun print-1d-uniform-buckets-usage-message (buckets storage)
-  (let ((dimension-name (sole-element (storage.dimension-names storage))))
+  (let ((dimension-name (sole-element (dimension-names-of storage))))
     (format *trace-output* 
 	    "~&;; - ~s: Using 1D-uniform buckets "
 	    dimension-name))
@@ -96,11 +97,11 @@
   (declare (type function unbound-value-action preceeding-action
 		 bucket-action following-action))
   (when verbose (print-storage-usage-message storage))
-  (let* ((buckets (1d-uniform-buckets.buckets storage))
+  (let* ((buckets (buckets-of storage))
 	 (number-of-buckets (length buckets))
-	 (start (1d-uniform-buckets.start storage))
-	 (size (1d-uniform-buckets.size storage))
-	 (dimension-name (sole-element (storage.dimension-names storage))))
+	 (start (start-of storage))
+	 (size (size-of storage))
+	 (dimension-name (sole-element (dimension-names-of storage))))
     (multiple-value-bind (dimension-value dimension-type composite-type
 			  composite-dimension-name)
 	(if dimension-values
@@ -191,15 +192,12 @@
 	instance storage verbose nil
 	;; unbound-value action:
 	#'(lambda (instance storage)
-	    (setf (gethash 
-		   instance
-		   (1d-uniform-buckets.unbound-value-instances storage))
+	    (setf (gethash instance (unbound-value-instances-of storage))
 		  instance)
 	    (incf& excess-count))
 	;; preceeding-action:
 	#'(lambda (instance storage)
-	    (setf (gethash instance
-			   (1d-uniform-buckets.preceeding-instances storage))
+	    (setf (gethash instance (preceeding-instances-of storage))
 		  instance)
 	    (incf& excess-count))
 	;; bucket-action:
@@ -210,12 +208,11 @@
 	    (incf& excess-count))
 	;; following-action:
 	#'(lambda (instance storage)
-	    (setf (gethash instance
-			   (1d-uniform-buckets.following-instances storage))
+	    (setf (gethash instance (following-instances-of storage))
 		  instance)
 	    (incf& excess-count)))
     ;; save the excess count:
-    (incf& (storage.excess-locators storage) 
+    (incf& (excess-locators-of storage) 
 	   ;; remove the non-excess count for this instance:
 	   (1-& excess-count))))
 
@@ -230,13 +227,11 @@
 	instance storage verbose dimension-values
 	;; unbound-value action:
 	#'(lambda (instance storage)
-	    (remhash instance
-		     (1d-uniform-buckets.unbound-value-instances storage))
+	    (remhash instance (unbound-value-instances-of storage))
 	    (decf& excess-count))
 	;; preceeding-action:
 	#'(lambda (instance storage)
-	    (remhash instance
-		     (1d-uniform-buckets.preceeding-instances storage))
+	    (remhash instance (preceeding-instances-of storage))
 	    (decf& excess-count))
 	;; bucket-action:
 	#'(lambda (instance buckets bucket-index)
@@ -247,11 +242,10 @@
 	    (decf& excess-count))
 	;; following-action:
 	#'(lambda (instance storage)
-	    (remhash instance
-		     (1d-uniform-buckets.following-instances storage))
+	    (remhash instance (following-instances-of storage))
 	    (decf& excess-count)))
     ;; save the excess count:
-    (incf& (storage.excess-locators storage) 
+    (incf& (excess-locators-of storage) 
 	   ;; add back in the non-excess count for this instance:
 	   (1+& excess-count))))
   
@@ -259,7 +253,7 @@
 
 (defun determine-1d-uniform-storage-extents (storage 
 					     disjunctive-dimensional-extents)
-  (let ((dimension-name (sole-element (storage.dimension-names storage)))
+  (let ((dimension-name (sole-element (dimension-names-of storage)))
 	(extents nil))
     (unless (eq disjunctive-dimensional-extents 't)
       (dolist (dimensional-extents disjunctive-dimensional-extents)
@@ -286,11 +280,11 @@
   (multiple-value-bind (storage-extents full-map-p)
       (determine-1d-uniform-storage-extents 
        storage disjunctive-dimensional-extents)
-    (let* ((buckets (1d-uniform-buckets.buckets storage))
+    (let* ((buckets (buckets-of storage))
 	   (number-of-buckets (length buckets))
-	   (start (1d-uniform-buckets.start storage))
-	   (size (1d-uniform-buckets.size storage))
-	   (end (1d-uniform-buckets.end storage))
+	   (start (start-of storage))
+	   (size (size-of storage))
+	   (end (end-of storage))
 	   storage-region 
 	   (unfinished-region-p nil)
 	   (bucket-count 0))
@@ -300,7 +294,7 @@
 	(when verbose
 	  (print-1d-uniform-buckets-usage-message ':unbound-value storage))
 	(incf& bucket-count)
-	(maphash fn (1d-uniform-buckets.unbound-value-instances storage)))
+	(maphash fn (unbound-value-instances-of storage)))
       (setq storage-region (pop storage-extents))
       ;; preceeding instances req'd:
       (when (and storage-region
@@ -308,7 +302,7 @@
 	(when verbose
 	  (print-1d-uniform-buckets-usage-message ':preceeding storage))
 	(incf& bucket-count)
-	(maphash fn (1d-uniform-buckets.preceeding-instances storage)))
+	(maphash fn (preceeding-instances-of storage)))
       ;; skip preceeding-bucket extents:
       (while (and storage-region
 		  (< (second storage-region) start))
@@ -346,7 +340,7 @@
 	(when verbose
 	  (print-1d-uniform-buckets-usage-message ':following storage))
 	(incf& bucket-count)
-	(maphash fn (1d-uniform-buckets.following-instances storage)))
+	(maphash fn (following-instances-of storage)))
       ;; record the bucket count:
       (let ((find-stats *find-stats*))
 	(when find-stats 

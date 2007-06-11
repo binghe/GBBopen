@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/units.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Feb 25 15:26:22 2007 *-*
+;;;; *-* Last-Edit: Mon Jun 11 11:12:15 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -166,7 +166,9 @@
 ;;;                      :descending-series <ordering-dimension-name>
 ;;; <dimension-value-type> :==  :point | :interval | :mixed | 
 ;;;                             :element | :boolean
-;;; <dimension-value-place> :== <slot-name> | {<function> [<slot-name>]}
+;;; <dimension-value-place> :== {<slot-name> [<slot-name>]} |
+;;;                             {<function> [<slot-name>]}
+;;;  note that 2 slot-names are only allowed for :interval dimension values
 
 (defun parse-dimensional-value-spec (dv-spec)
   (case (third dv-spec)

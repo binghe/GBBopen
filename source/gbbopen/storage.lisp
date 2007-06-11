@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Sep 23 21:28:07 2006 *-*
+;;;; *-* Last-Edit: Mon Jun 11 12:46:30 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2003-2006, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2003-2007, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -29,6 +29,8 @@
 ;;;           regexps. (Corkill)
 ;;;  02-20-06 Add hashed storage support.  (Corkill)
 ;;;  04-23-06 Split out individual storage mechanisms.  (Corkill)
+;;;  06-11-07 Converted storage accessors from :prefix to modern "-of"
+;;;           format.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -73,18 +75,13 @@
 ;;;   Storage objects
 ;;;
 
-(with-generate-accessors-format (:prefix)
-  
-  (define-class storage ()
-    ((space-instance)
-     (stores-classes)
-     (dimension-names :initform 't)
-     (stores-all-instances :initform 't)   
-     (excess-locators :initform 0)
-     (instance-counts :initform nil)))
-  
-  ;; Close with-generate-accessors-format:
-  )
+(define-class storage ()
+  ((space-instance)
+   (stores-classes)
+   (dimension-names :initform 't)
+   (stores-all-instances :initform 't)   
+   (excess-locators :initform 0)
+   (instance-counts :initform nil)))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -93,7 +90,7 @@
    (*print-readably* (call-next-method))
    (t (print-unreadable-object (storage stream :type nil)
 	(let ((classes (when (slot-boundp storage 'stores-classes)
-			 (storage.stores-classes storage))))
+			 (stores-classes-of storage))))
 	  (format stream "~:(~s~) ~:[???~;(~:*~{~{~s~@[+~*~]~}~})~] ~s"
 		  (type-of storage)
 		  (mapcar 
@@ -103,7 +100,7 @@
 			 `(,(class-name unit-class) ,plus-subclasses)))
 		   classes)
 		  (and (slot-boundp storage 'dimension-names)
-		       (storage.dimension-names storage)))))
+		       (dimension-names-of storage)))))
       ;; Print-object must return object:
       storage)))
 
@@ -114,12 +111,11 @@
 					   verbose)
   (declare (ignore verbose))
   (let* ((unit-class-name (type-of instance))
-	 (count-acons (assoc unit-class-name
-			     (storage.instance-counts storage)
+	 (count-acons (assoc unit-class-name (instance-counts-of storage)
 			     :test #'eq)))
     (if count-acons
 	(incf& (cdr count-acons))
-	(push-acons unit-class-name 1 (storage.instance-counts storage)))))
+	(push-acons unit-class-name 1 (instance-counts-of storage)))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -128,13 +124,12 @@
 	    storage dimension-values verbose)
   (declare (ignore dimension-values verbose))
   (let* ((unit-class-name (type-of instance))
-	 (count-acons (assoc unit-class-name
-			     (storage.instance-counts storage)
+	 (count-acons (assoc unit-class-name (instance-counts-of storage)
 			     :test #'eq)))
     (unless (plusp& (decf& (cdr count-acons)))
-      (setf (storage.instance-counts storage)
+      (setf (instance-counts-of storage)
 	    (delete unit-class-name 
-		    (the list (storage.instance-counts storage))
+		    (the list (instance-counts-of storage))
 		    :test #'eq :key #'car)))))    
 
 ;;; ---------------------------------------------------------------------------
@@ -145,7 +140,7 @@
   (let ((result nil)
 	(plus-subclasses-storage nil))
     (dolist (storage (standard-space-instance.%%storage%% space-instance))
-      (dolist (class-spec (storage.stores-classes storage))
+      (dolist (class-spec (stores-classes-of storage))
 	(destructuring-bind (stores-class . plus-subclasses)
 	    class-spec
 	  (cond 
@@ -193,9 +188,9 @@
   (declare (ignore disjunctive-dimensional-extents))
   (declare (inline class-name))
   (let* ((unit-class-name (class-name unit-class))
-         (stores-classes (storage.stores-classes storage))
+         (stores-classes (stores-classes-of storage))
 	 #+ignore-for-now
-         (dimension-names (storage.dimension-names storage)))
+         (dimension-names (dimension-names-of storage)))
     (and
      ;; `storage' is a candidate if it:
      (member-if 
@@ -238,8 +233,8 @@
 	(subclass-unit-storage nil))
     (when retrieval-dimensions
       (dolist (storage (standard-space-instance.%%storage%% space-instance))
-	(let ((stores-classes (storage.stores-classes storage))
-	      (dimension-names (storage.dimension-names storage)))
+	(let ((stores-classes (stores-classes-of storage))
+	      (dimension-names (dimension-names-of storage)))
 	  ;; exact class match:
 	  (when (eq unit-class stores-class)
 	    (cond
@@ -324,7 +319,7 @@
 (defun print-storage-usage-message (storage)
   (format *trace-output* 
           "~&;; * Space instance: ~s~%"
-          (instance-name (storage.space-instance storage))))
+          (instance-name (space-instance-of storage))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -332,9 +327,9 @@
   (error "Required storage ~s option was not specified ~
                    for dimension~p~:* ~s of unit-class ~s on ~s."
 	 ':layout
-	 (storage.dimension-names storage)
+	 (dimension-names-of storage)
 	 (getf initargs ':stores-classes)
-	 (instance-name (storage.space-instance storage))))
+	 (instance-name (space-instance-of storage))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -342,14 +337,14 @@
   (error "Required storage ~s option was not specified ~
                    for dimension~p~:* ~s of unit-class ~s on ~s."
 	 ':test
-	 (storage.dimension-names storage)
+	 (dimension-names-of storage)
 	 (getf initargs ':stores-classes)
-	 (instance-name (storage.space-instance storage))))
+	 (instance-name (space-instance-of storage))))
 
 ;;; ---------------------------------------------------------------------------
 
 (defun check-storage-dimensions/layout-lengths (storage layout initargs)
-  (let* ((dimension-names (storage.dimension-names storage))
+  (let* ((dimension-names (dimension-names-of storage))
 	 (storage-dimension-length (length dimension-names))
 	 (layout-length (length layout)))
     (flet ((the-error (many/few-string)
@@ -359,7 +354,7 @@
 		    layout
 		    dimension-names
 		    (getf initargs ':stores-classes)
-		    (instance-name (storage.space-instance storage)))))
+		    (instance-name (space-instance-of storage)))))
       (when (>& layout-length storage-dimension-length)
 	(the-error "many"))
       (when (<& layout-length storage-dimension-length)
@@ -406,9 +401,9 @@
 		 (and (member
 		       (load-time-value 
 			`(,(find-class 'standard-unit-instance) . t))
-		       (the list (storage.stores-classes storage))
+		       (the list (stores-classes-of storage))
 		       :test #'equal)
-		      (eq (storage.dimension-names storage) 't)))
+		      (eq (dimension-names-of storage) 't)))
 	     result)
       (push (do-storage space-instance '(t t unstructured))
 	    result))
@@ -452,7 +447,7 @@
 
 (defun describe-space-instance-storage (space-instance)
   (dolist (storage (standard-space-instance.%%storage%% space-instance))
-    (let* ((instance-counts (storage.instance-counts storage))
+    (let* ((instance-counts (instance-counts-of storage))
 	   (sorted-instance-counts 
 	    (and instance-counts
 		 (sort instance-counts #'string< :key #'car)))
@@ -463,11 +458,11 @@
 				0)))
       (format t "~&~s ~s ~s ~s~%~{~4t~s~%~}"
 	      (class-name (class-of storage))
-	      (storage.stores-classes storage)
-	      (storage.dimension-names storage)
+	      (stores-classes-of storage)
+	      (dimension-names-of storage)
 	      (if (zerop total-instances) 
 		  1.0
-		  (/ (+& total-instances (storage.excess-locators storage))
+		  (/ (+& total-instances (excess-locators-of storage))
 		     (float total-instances)))
 	      sorted-instance-counts))))
 
@@ -479,7 +474,7 @@
     (let ((total 0)
 	  (class-counts nil))
       (dolist (storage (standard-space-instance.%%storage%% space-instance))
-        (dolist (class-count (storage.instance-counts storage))
+        (dolist (class-count (instance-counts-of storage))
           (pushnew/incf-acons (car class-count) (cdr class-count)
 			      class-counts)))
       (setq total (if class-counts
