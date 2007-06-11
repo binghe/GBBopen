@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/hashed-storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Sep 23 21:50:53 2006 *-*
+;;;; *-* Last-Edit: Mon Jun 11 12:47:37 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -14,12 +14,14 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2003-2006, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2003-2007, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
 ;;;  04-23-06 Split out from storage.lisp.  (Corkill)
+;;;  06-11-07 Converted hashed-storage accessors from :prefix to modern
+;;;           "-of" format.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -41,7 +43,6 @@
 (define-class hashed-storage (storage)
   ((bound-instances)                    ; initialized in shared-initialize
    (unbound-value-instances :initform (make-hash-table :test 'eq)))
-  (:generate-accessors-format :prefix)
   (:generate-initargs nil)
   (:export-class-name t))
 
@@ -53,14 +54,13 @@
   (declare (ignore slot-names))
   (unless (memq test *hashed-test-functions*)
     (missing-test-option storage initargs))
-  (setf (hashed-storage.bound-instances storage)
-	(make-hash-table :test test)))
+  (setf (bound-instances-of storage) (make-hash-table :test test)))
   
 ;;; ---------------------------------------------------------------------------
 
 (defun print-hashed-storage-usage-message (storage)
   (print-storage-usage-message storage)
-  (let ((hash-table (hashed-storage.bound-instances storage)))
+  (let ((hash-table (bound-instances-of storage)))
     (format *trace-output* 
 	    "~&;; - ~s: Using ~s hashed storage (~s instance~:p)~&"
 	    't 
@@ -77,7 +77,7 @@
   (multiple-value-bind (dimension-value dimension-type composite-type
 			composite-dimension-name)
       (instance-dimension-value 
-       instance (sole-element (storage.dimension-names storage)))
+       instance (sole-element (dimension-names-of storage)))
     (declare (ignore dimension-type composite-dimension-name))
     (flet ((do-a-value (dimension-value)
 	     (funcall bound-value-action instance storage dimension-value)))
@@ -106,14 +106,12 @@
       instance storage verbose
       ;; unbound-value action:
       #'(lambda (instance storage)
-	  (setf (gethash instance 
-			 (hashed-storage.unbound-value-instances storage)) 
+	  (setf (gethash instance (unbound-value-instances-of storage)) 
 		instance))
        ;; bound-value action:
       #'(lambda (instance storage dimension-value)
 	  (pushnew instance
-		   (gethash dimension-value
-			    (hashed-storage.bound-instances storage))
+		   (gethash dimension-value (bound-instances-of storage))
 		   :test #'eq))))
 
 ;;; ---------------------------------------------------------------------------
@@ -126,20 +124,19 @@
       instance storage verbose
       ;; unbound-value action:
       #'(lambda (instance storage)
-	  (remhash instance (hashed-storage.unbound-value-instances storage)))
+	  (remhash instance (unbound-value-instances-of storage)))
       ;; bound-value action:
       #'(lambda (instance storage dimension-value)
-	  (setf (gethash dimension-value
-			 (hashed-storage.bound-instances storage))
+	  (setf (gethash dimension-value (bound-instances-of storage))
 		(delq instance
 		      (gethash dimension-value
-			       (hashed-storage.bound-instances storage)))))))
+                               (bound-instances-of storage)))))))
 
 ;;; ---------------------------------------------------------------------------
 
 (defun determine-hashed-storage-extents (storage 
 					 disjunctive-dimensional-extents)
-  (let ((dimension-name (sole-element (storage.dimension-names storage)))
+  (let ((dimension-name (sole-element (dimension-names-of storage)))
 	(extents nil))
     (cond 
      ((eq disjunctive-dimensional-extents 't)
@@ -166,8 +163,7 @@
   (declare (type function action))
   (when verbose (print-hashed-storage-usage-message storage))
   (let ((bucket-count 0)
-	(bound-instances-hash-table
-	 (hashed-storage.bound-instances storage)))
+	(bound-instances-hash-table (bound-instances-of storage)))
     (multiple-value-bind (storage-extents full-map-p)
 	(determine-hashed-storage-extents 
 	 storage disjunctive-dimensional-extents)
@@ -186,7 +182,7 @@
       (when (or full-map-p
 		(memq unbound-value-indicator storage-extents))
 	(incf& bucket-count)
-	(maphash action (hashed-storage.unbound-value-instances storage)))
+	(maphash action (unbound-value-instances-of storage)))
       ;; record the bucket count:
       (let ((find-stats *find-stats*))
 	(when find-stats 

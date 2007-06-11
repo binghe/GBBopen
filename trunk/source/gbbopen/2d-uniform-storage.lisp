@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/2d-uniform-storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Sep 23 21:50:09 2006 *-*
+;;;; *-* Last-Edit: Mon Jun 11 12:49:17 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -14,12 +14,16 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2003-2006, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2003-2007, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
 ;;;  04-23-06 Split out from storage.lisp.  (Corkill)
+;;;  06-11-07 Change "x" and "y" names to "1st-d" and "2nd-d" to avoid 
+;;;           confusion with application dimension names.  (Corkill)
+;;;  06-11-07 Converted 2d-uniform-buckets accessors from :prefix to modern
+;;;           "-of" format.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -37,15 +41,14 @@
 ;;;    * add support for composite dimensions
 
 (define-class 2d-uniform-buckets (storage)
-  ((x-start)
-   (x-size)
-   (number-of-x-buckets)
-   (y-start)
-   (y-size)
-   (number-of-y-buckets)
+  ((1st-d-start)
+   (1st-d-size)
+   (number-of-1st-d-buckets)
+   (2nd-d-start)
+   (2nd-d-size)
+   (number-of-2nd-d-buckets)
    (buckets :type (simple-array t (* *)))
    (unbound-value-instances :initform (make-hash-table :test 'eq)))
-  (:generate-accessors-format :prefix)
   (:generate-initargs nil)
   (:export-class-name t))
 
@@ -58,28 +61,26 @@
   (unless layout (missing-layout-option storage initargs))
   (let ((layout (ensure-list-of-lists layout)))
     (check-storage-dimensions/layout-lengths storage layout initargs)
-    ;; 1st "X" dimension:
+    ;; 1st dimension:
     (destructuring-bind (start end size)
 	(first layout)
-      (let ((number-of-x-buckets (ceiling (- end start) size)))
-	(setf (2d-uniform-buckets.x-start storage) start)
-	(setf (2d-uniform-buckets.x-size storage) size)
-	(setf (2d-uniform-buckets.number-of-x-buckets storage)
-	      number-of-x-buckets)
-	;; 2nd "Y" dimension:
+      (let ((number-of-1st-d-buckets (ceiling (- end start) size)))
+	(setf (1st-d-start-of storage) start)
+	(setf (1st-d-size-of storage) size)
+	(setf (number-of-1st-d-buckets-of storage) number-of-1st-d-buckets)
+	;; 2nd dimension:
 	(destructuring-bind (start end size)
 	    (second layout)
-	  (let ((number-of-y-buckets (ceiling (- end start) size)))
-	    (setf (2d-uniform-buckets.y-start storage) start)
-	    (setf (2d-uniform-buckets.y-size storage) size)
-	    (setf (2d-uniform-buckets.number-of-y-buckets storage)
-		  number-of-y-buckets)
+	  (let ((number-of-2nd-d-buckets (ceiling (- end start) size)))
+	    (setf (2nd-d-start-of storage) start)
+	    (setf (2nd-d-size-of storage) size)
+	    (setf (number-of-2nd-d-buckets-of storage) number-of-2nd-d-buckets)
 	    ;; make the bucket array, adding two additional buckets in each
 	    ;; dimension for preceeding and following (out-of-bucket-range)
 	    ;; instances:
-	    (setf (2d-uniform-buckets.buckets storage)
-		  (make-array `(,(+& 2 number-of-x-buckets)
-				,(+& 2 number-of-y-buckets))
+	    (setf (buckets-of storage)
+		  (make-array `(,(+& 2 number-of-1st-d-buckets)
+				,(+& 2 number-of-2nd-d-buckets))
 			      :initial-element nil))))))))
 
 ;;; ---------------------------------------------------------------------------
@@ -87,7 +88,7 @@
 (defun print-2d-uniform-buckets-usage-message (buckets storage)
   (format *trace-output* 
 	  "~&;; - ~s: Using 2D-uniform buckets "
-	  (storage.dimension-names storage))
+	  (dimension-names-of storage))
   (case buckets
     (:unbound-value
      (format *trace-output* "(unbound-value instances)~&"))
@@ -102,80 +103,82 @@
 						bucket-action)
   (declare (type function unbound-value-action bucket-action))
   (when verbose (print-storage-usage-message storage))
-  (let* ((buckets (2d-uniform-buckets.buckets storage))
-	 (x-start (2d-uniform-buckets.x-start storage))
-	 (x-size (2d-uniform-buckets.x-size storage))
-	 (number-of-x-buckets (2d-uniform-buckets.number-of-x-buckets storage))
-	 (y-start (2d-uniform-buckets.y-start storage))
-	 (y-size (2d-uniform-buckets.y-size storage))
-	 (number-of-y-buckets (2d-uniform-buckets.number-of-y-buckets storage))
-	 (dimension-names (storage.dimension-names storage))
-	 (x-dimension-name (first dimension-names))
-	 (y-dimension-name (second dimension-names))
-	 (x-dimension-value
+  (let* ((buckets (buckets-of storage))
+	 (1st-d-start (1st-d-start-of storage))
+	 (1st-d-size (1st-d-size-of storage))
+	 (number-of-1st-d-buckets (number-of-1st-d-buckets-of storage))
+	 (2nd-d-start (2nd-d-start-of storage))
+	 (2nd-d-size (2nd-d-size-of storage))
+	 (number-of-2nd-d-buckets (number-of-2nd-d-buckets-of storage))
+	 (dimension-names (dimension-names-of storage))
+	 (1st-d-dimension-name (first dimension-names))
+	 (2nd-d-dimension-name (second dimension-names))
+	 (1st-d-dimension-value
 	  (if dimension-values
-	      (cdr (assoc x-dimension-name dimension-values :test #'eq))
-	      (instance-dimension-value instance x-dimension-name)))
-	 (y-dimension-value
+	      (cdr (assoc 1st-d-dimension-name dimension-values :test #'eq))
+	      (instance-dimension-value instance 1st-d-dimension-name)))
+	 (2nd-d-dimension-value
 	  (if dimension-values
-	      (cdr (assoc y-dimension-name dimension-values :test #'eq))
-	      (instance-dimension-value instance y-dimension-name))))
+	      (cdr (assoc 2nd-d-dimension-name dimension-values :test #'eq))
+	      (instance-dimension-value instance 2nd-d-dimension-name))))
     (cond 
      ;; unbound value in either dimension:
-     ((or (eq x-dimension-value unbound-value-indicator)
-	  (eq x-dimension-value unbound-value-indicator))
+     ((or (eq 1st-d-dimension-value unbound-value-indicator)
+	  (eq 1st-d-dimension-value unbound-value-indicator))
       (when verbose
 	(print-2d-uniform-buckets-usage-message 
 	 ':unbound-value storage))
       (funcall unbound-value-action instance storage))
      ;; both are scalar values (special optimization for 2D points):
-     ((and (numberp x-dimension-value)
-	   (numberp x-dimension-value))
-      (let ((x-bucket-index 
+     ((and (numberp 1st-d-dimension-value)
+	   (numberp 2nd-d-dimension-value))
+      (let ((1st-d-bucket-index 
 	     (bounded-uniform-bucket-index 
-	      x-dimension-value x-start x-size number-of-x-buckets))
-	    (y-bucket-index 
+	      1st-d-dimension-value 1st-d-start 1st-d-size
+              number-of-1st-d-buckets))
+	    (2nd-d-bucket-index 
 	     (bounded-uniform-bucket-index 
-	      y-dimension-value y-start y-size number-of-y-buckets)))
+	      2nd-d-dimension-value 2nd-d-start 2nd-d-size
+              number-of-2nd-d-buckets)))
 	(when verbose
 	  (print-2d-uniform-buckets-usage-message 1 storage))
 	(funcall bucket-action instance buckets 
-		 x-bucket-index y-bucket-index)))
+		 1st-d-bucket-index 2nd-d-bucket-index)))
      ;; at least one is an interval value:
-     (t (multiple-value-bind (x-start-index x-end-index)
+     (t (multiple-value-bind (1st-d-start-index 1st-d-end-index)
 	    (bounded-uniform-bucket-interval-indexes
-	     (if (numberp x-dimension-value)
-		 x-dimension-value
-		 (interval-start x-dimension-value))
-	     (if (numberp x-dimension-value)
-		 x-dimension-value
-		 (interval-end x-dimension-value))
-	     x-start x-size number-of-x-buckets)
-	  (multiple-value-bind (y-start-index y-end-index)
+	     (if (numberp 1st-d-dimension-value)
+		 1st-d-dimension-value
+		 (interval-start 1st-d-dimension-value))
+	     (if (numberp 1st-d-dimension-value)
+		 1st-d-dimension-value
+		 (interval-end 1st-d-dimension-value))
+	     1st-d-start 1st-d-size number-of-1st-d-buckets)
+	  (multiple-value-bind (2nd-d-start-index 2nd-d-end-index)
 	      (bounded-uniform-bucket-interval-indexes
-	       (if (numberp y-dimension-value)
-		   y-dimension-value
-		   (interval-start y-dimension-value))
-	       (if (numberp y-dimension-value)
-		   y-dimension-value
-		   (interval-end y-dimension-value))
-	       y-start y-size number-of-y-buckets)
+	       (if (numberp 2nd-d-dimension-value)
+		   2nd-d-dimension-value
+		   (interval-start 2nd-d-dimension-value))
+	       (if (numberp 2nd-d-dimension-value)
+		   2nd-d-dimension-value
+		   (interval-end 2nd-d-dimension-value))
+	       2nd-d-start 2nd-d-size number-of-2nd-d-buckets)
 	    (when verbose
 	      (print-2d-uniform-buckets-usage-message
-	       (* (max& 1 (-& x-end-index x-start-index))
-		  (max& 1 (-& y-end-index y-start-index)))
+	       (* (max& 1 (-& 1st-d-end-index 1st-d-start-index))
+		  (max& 1 (-& 2nd-d-end-index 2nd-d-start-index)))
 	       storage))
-	      (let ((x-bucket-index x-start-index)
-		    (y-bucket-index y-start-index))
-		(until (>& x-bucket-index x-end-index)
-		  (until (>& y-bucket-index y-end-index)
+	      (let ((1st-d-bucket-index 1st-d-start-index)
+		    (2nd-d-bucket-index 2nd-d-start-index))
+		(until (>& 1st-d-bucket-index 1st-d-end-index)
+		  (until (>& 2nd-d-bucket-index 2nd-d-end-index)
 		    (funcall bucket-action instance buckets 
-			     x-bucket-index y-bucket-index)
-		    (incf& y-bucket-index))
-		  (incf& x-bucket-index)
-		  ;; on each x iteraction, reset y-bucket-index to 
+			     1st-d-bucket-index 2nd-d-bucket-index)
+		    (incf& 2nd-d-bucket-index))
+		  (incf& 1st-d-bucket-index)
+		  ;; on each x iteraction, reset 2nd-d-bucket-index to 
 		  ;; its start index:
-		  (setq y-bucket-index y-start-index)))))))))
+		  (setq 2nd-d-bucket-index 2nd-d-start-index)))))))))
   
 ;;; ---------------------------------------------------------------------------
 
@@ -187,19 +190,17 @@
 	instance storage verbose nil
 	;; unbound-value action:
 	#'(lambda (instance storage)
-	    (setf (gethash 
-		   instance
-		   (2d-uniform-buckets.unbound-value-instances storage))
+	    (setf (gethash instance (unbound-value-instances-of storage))
 		  instance)
 	    (incf& excess-count))
       ;; bucket-action:
-      #'(lambda (instance buckets x-bucket-index y-bucket-index)
+      #'(lambda (instance buckets 1st-d-bucket-index 2nd-d-bucket-index)
 	  (declare (type (simple-array t (* *)) buckets))
-	  (declare (type fixnum x-bucket-index y-bucket-index))
-	  (push instance (aref buckets x-bucket-index y-bucket-index))
+	  (declare (type fixnum 1st-d-bucket-index 2nd-d-bucket-index))
+	  (push instance (aref buckets 1st-d-bucket-index 2nd-d-bucket-index))
 	  (incf& excess-count)))
     ;; save the excess count:
-    (incf& (storage.excess-locators storage) 
+    (incf& (excess-locators-of storage) 
 	   ;; remove the non-excess count for this instance:
 	   (1-& excess-count))))
   
@@ -214,19 +215,18 @@
 	instance storage verbose dimension-values
 	;; unbound-value action:
 	#'(lambda (instance storage)
-	    (remhash instance
-		     (2d-uniform-buckets.unbound-value-instances storage))
+	    (remhash instance (unbound-value-instances-of storage))
 	    (decf& excess-count))
 	;; bucket-action:
-	#'(lambda (instance buckets x-bucket-index y-bucket-index)
+	#'(lambda (instance buckets 1st-d-bucket-index 2nd-d-bucket-index)
 	    (declare (type (simple-array t (* *)) buckets))
-	    (declare (type fixnum x-bucket-index y-bucket-index))
-	    (setf (aref buckets x-bucket-index y-bucket-index)
+	    (declare (type fixnum 1st-d-bucket-index 2nd-d-bucket-index))
+	    (setf (aref buckets 1st-d-bucket-index 2nd-d-bucket-index)
 		  (delq instance
-			(aref buckets x-bucket-index y-bucket-index)))
+			(aref buckets 1st-d-bucket-index 2nd-d-bucket-index)))
 	    (decf& excess-count)))
     ;; save the excess count:
-    (incf& (storage.excess-locators storage) 
+    (incf& (excess-locators-of storage) 
 	   ;; add back in the non-excess count for this instance:
 	   (1+& excess-count))))
 
@@ -235,42 +235,42 @@
 (defun determine-2d-uniform-storage-extents (storage 
 					     disjunctive-dimensional-extents)
   ;;; Returns two values:
-  ;;; 1) a list of disjunctive extents in the "X" and "Y" dimensions
+  ;;; 1) a list of disjunctive extents in the 1st-d and 2nd-d dimensions
   ;;; 2) a boolean indicating if a full-map was requested (via 't)
   (let ((extents nil))
     (unless (eq disjunctive-dimensional-extents 't)
-      (destructuring-bind (x-dimension-name y-dimension-name)
-	  (storage.dimension-names storage)
+      (destructuring-bind (1st-d-dimension-name 2nd-d-dimension-name)
+	  (dimension-names-of storage)
 	(dolist (dimensional-extents disjunctive-dimensional-extents)
-	  (let* ((x-dimensional-extent 
-		  (assoc x-dimension-name dimensional-extents
+	  (let* ((1st-d-dimensional-extent 
+		  (assoc 1st-d-dimension-name dimensional-extents
 			 :test #'eq))
-		 (y-dimensional-extent 
-		  (assoc y-dimension-name dimensional-extents
+		 (2nd-d-dimensional-extent 
+		  (assoc 2nd-d-dimension-name dimensional-extents
 			 :test #'eq))
-		 (x-new-extents
-		  (when x-dimensional-extent 
+		 (1st-d-new-extents
+		  (when 1st-d-dimensional-extent 
 		    (destructuring-bind (extent-dimension-name
 					 dimension-type . new-extents)
-			x-dimensional-extent
+			1st-d-dimensional-extent
 		      (declare (ignore extent-dimension-name
 				       dimension-type))
 		      new-extents)))
-		 (y-new-extents
-		  (when y-dimensional-extent 
+		 (2nd-d-new-extents
+		  (when 2nd-d-dimensional-extent 
 		    (destructuring-bind (extent-dimension-name
 					 dimension-type . new-extents)
-			y-dimensional-extent
+			2nd-d-dimensional-extent
 		      (declare (ignore extent-dimension-name
 				       dimension-type))
 		      new-extents))))
 	    ;; This isn't quite right, we need to remove the clause *AND*
 	    ;; not do a full sweep if it is the only one...
-	    (unless (or (equal x-new-extents '(:infeasible))
-			(equal y-new-extents '(:infeasible)))
-	      (push (list (or x-new-extents 
+	    (unless (or (equal 1st-d-new-extents '(:infeasible))
+			(equal 2nd-d-new-extents '(:infeasible)))
+	      (push (list (or 1st-d-new-extents 
 			      (list infinite-interval))
-			  (or y-new-extents 
+			  (or 2nd-d-new-extents 
 			      (list infinite-interval)))
 		    extents))))))
     (or
@@ -290,15 +290,13 @@
   (multiple-value-bind (disjunctive-storage-extents full-map-p)
       (determine-2d-uniform-storage-extents 
        storage disjunctive-dimensional-extents)
-    (let* ((buckets (2d-uniform-buckets.buckets storage))
-	   (number-of-x-buckets
-	    (2d-uniform-buckets.number-of-x-buckets storage))
-	   (x-start (2d-uniform-buckets.x-start storage))
-	   (x-size (2d-uniform-buckets.x-size storage))
-	   (number-of-y-buckets
-	    (2d-uniform-buckets.number-of-y-buckets storage))
-	   (y-start (2d-uniform-buckets.y-start storage))
-	   (y-size (2d-uniform-buckets.y-size storage))
+    (let* ((buckets (buckets-of storage))
+	   (number-of-1st-d-buckets (number-of-1st-d-buckets-of storage))
+	   (1st-d-start (1st-d-start-of storage))
+	   (1st-d-size (1st-d-size-of storage))
+	   (number-of-2nd-d-buckets (number-of-2nd-d-buckets-of storage))
+	   (2nd-d-start (2nd-d-start-of storage))
+	   (2nd-d-size (2nd-d-size-of storage))
 	   (bucket-count 0))
       (declare (type (simple-array t (* *)) buckets))
       ;; unbound instances req'd:
@@ -306,40 +304,42 @@
 	(when verbose
 	  (print-2d-uniform-buckets-usage-message ':unbound-value storage))
 	(incf& bucket-count)
-	(maphash fn (2d-uniform-buckets.unbound-value-instances storage)))
+	(maphash fn (unbound-value-instances-of storage)))
       (dolist (storage-extents disjunctive-storage-extents)
-	(dolist (x-region (first storage-extents))
-	  (dolist (y-region (second storage-extents))
-	    (multiple-value-bind (x-start-index x-end-index)
+	(dolist (1st-d-region (first storage-extents))
+	  (dolist (2nd-d-region (second storage-extents))
+	    (multiple-value-bind (1st-d-start-index 1st-d-end-index)
 		(bounded-uniform-bucket-interval-indexes
-		 (first x-region)
-		 (second x-region)
-		 x-start x-size number-of-x-buckets)
-	      (multiple-value-bind (y-start-index y-end-index)
+		 (first 1st-d-region)
+		 (second 1st-d-region)
+		 1st-d-start 1st-d-size number-of-1st-d-buckets)
+	      (multiple-value-bind (2nd-d-start-index 2nd-d-end-index)
 		  (bounded-uniform-bucket-interval-indexes
-		   (first y-region)
-		   (second y-region)
-		   y-start y-size number-of-y-buckets)
+		   (first 2nd-d-region)
+		   (second 2nd-d-region)
+		   2nd-d-start 2nd-d-size number-of-2nd-d-buckets)
 		(when verbose
 		  (print-2d-uniform-buckets-usage-message
-		   (* (max& 1 (-& x-end-index x-start-index))
-		      (max& 1 (-& y-end-index y-start-index)))
+		   (* (max& 1 (-& 1st-d-end-index 1st-d-start-index))
+		      (max& 1 (-& 2nd-d-end-index 2nd-d-start-index)))
 		   storage))
-		(let ((x-bucket-index x-start-index)
-		      (y-bucket-index y-start-index))
-		  (declare (type fixnum x-bucket-index y-bucket-index))
-		  (until (>& x-bucket-index x-end-index)
-		    (until (>& y-bucket-index y-end-index)
+		(let ((1st-d-bucket-index 1st-d-start-index)
+		      (2nd-d-bucket-index 2nd-d-start-index))
+		  (declare (type fixnum 1st-d-bucket-index 2nd-d-bucket-index))
+		  (until (>& 1st-d-bucket-index 1st-d-end-index)
+		    (until (>& 2nd-d-bucket-index 2nd-d-end-index)
 		      (incf& bucket-count)
 		      (let ((instances 
-			     (aref buckets x-bucket-index y-bucket-index)))
+			     (aref buckets 
+                                   1st-d-bucket-index 
+                                   2nd-d-bucket-index)))
 			(dolist (instance instances)
 			  (funcall fn instance instance)))
-		      (incf& y-bucket-index))
-		    (incf& x-bucket-index)
-		    ;; on each x iteraction, reset y-bucket-index to 
+		      (incf& 2nd-d-bucket-index))
+		    (incf& 1st-d-bucket-index)
+		    ;; on each 1st-d iteraction, reset 2nd-d-bucket-index to
 		    ;; its start index:
-		    (setq y-bucket-index y-start-index))))))))
+		    (setq 2nd-d-bucket-index 2nd-d-start-index))))))))
       ;; record the bucket count:
       (let ((find-stats *find-stats*))
 	(when find-stats 

@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/boolean-storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Sep 23 21:50:36 2006 *-*
+;;;; *-* Last-Edit: Mon Jun 11 12:47:56 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -14,12 +14,14 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2003-2006, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2003-2007, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
 ;;;  04-23-06 Split out from storage.lisp.  (Corkill)
+;;;  06-11-07 Converted boolean-storage accessors from :prefix to modern
+;;;           "-of" format.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -39,7 +41,6 @@
   ((true-instances :initform (make-hash-table :test 'eq))
    (false-instances :initform (make-hash-table :test 'eq))
    (unbound-value-instances :initform (make-hash-table :test 'eq)))
-  (:generate-accessors-format :prefix)
   (:generate-initargs nil)
   (:export-class-name t))
 
@@ -51,8 +52,8 @@
           "~&;; - ~s: Using boolean storage (~s true instance~:p, ~
            ~s false instance~:p)~&"
           't 
-	  (hash-table-count (boolean-storage.true-instances storage))
-	  (hash-table-count (boolean-storage.false-instances storage))))
+	  (hash-table-count (true-instances-of storage))
+	  (hash-table-count (false-instances-of storage))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -66,7 +67,7 @@
   (multiple-value-bind (dimension-value dimension-type composite-type
 			composite-dimension-name)
       (instance-dimension-value 
-       instance (sole-element (storage.dimension-names storage)))
+       instance (sole-element (dimension-names-of storage)))
     (declare (ignore dimension-type composite-dimension-name))
     (flet ((do-a-value (dimension-value)
 	     (cond
@@ -100,16 +101,15 @@
       instance storage verbose
       ;; unbound-value action:
       #'(lambda (instance storage)
-	  (setf (gethash instance 
-			 (boolean-storage.unbound-value-instances storage)) 
+	  (setf (gethash instance (unbound-value-instances-of storage)) 
 		instance))
       ;; true-value action:
       #'(lambda (instance storage)
-	  (setf (gethash instance (boolean-storage.true-instances storage)) 
+	  (setf (gethash instance (true-instances-of storage)) 
 		instance))
        ;; false-value action:
       #'(lambda (instance storage)
-	  (setf (gethash instance (boolean-storage.false-instances storage)) 
+	  (setf (gethash instance (false-instances-of storage)) 
 		instance))))
 
 ;;; ---------------------------------------------------------------------------
@@ -122,19 +122,19 @@
       instance storage verbose
       ;; unbound-value action:
       #'(lambda (instance storage)
-	  (remhash instance (boolean-storage.unbound-value-instances storage)))
+	  (remhash instance (unbound-value-instances-of storage)))
       ;; true-value action:
       #'(lambda (instance storage)
-	  (remhash instance (boolean-storage.true-instances storage)))
+	  (remhash instance (true-instances-of storage)))
       ;; false-value action:
       #'(lambda (instance storage)
-	  (remhash instance (boolean-storage.false-instances storage)))))
+	  (remhash instance (false-instances-of storage)))))
 
 ;;; ---------------------------------------------------------------------------
 
 (defun determine-boolean-storage-extents (storage 
 					  disjunctive-dimensional-extents)
-  (let ((dimension-name (sole-element (storage.dimension-names storage)))
+  (let ((dimension-name (sole-element (dimension-names-of storage)))
 	(extents nil))
     (unless (eq disjunctive-dimensional-extents 't)
       (dolist (dimensional-extents disjunctive-dimensional-extents)
@@ -168,15 +168,15 @@
       (when (or full-map-p
 		(memq 'true storage-extents))
 	(incf& bucket-count)
-	(maphash action (boolean-storage.true-instances storage)))
+	(maphash action (true-instances-of storage)))
       (when (or full-map-p
 		(memq 'false storage-extents))
 	(incf& bucket-count)
-	(maphash action (boolean-storage.false-instances storage)))
+	(maphash action (false-instances-of storage)))
       (when (or full-map-p
 		(memq unbound-value-indicator storage-extents))
 	(incf& bucket-count)
-	(maphash action (boolean-storage.unbound-value-instances storage)))
+	(maphash action (unbound-value-instances-of storage)))
       ;; record the bucket count:
       (let ((find-stats *find-stats*))
 	(when find-stats 
