@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/test/basic-tests.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Jun 11 13:56:29 2007 *-*
+;;;; *-* Last-Edit: Mon Jun 11 14:20:03 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -240,7 +240,7 @@
     ;; The next test will fail if slot-value-using-class isn't called
     ;; by writer methods:
     (when (with-error-handling
-              (setf (link-of x) 3))
+              (setf (link-1-of x) 3))
       (error "Link-slot setf accessor protection failed: ~s" x))
     (unless (eq x (find-instance-by-name (instance-name-of x) 'uc-1))
       (error "Unable to find instance: ~s" x))
