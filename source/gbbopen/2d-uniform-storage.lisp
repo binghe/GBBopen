@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/2d-uniform-storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Jun 11 12:49:17 2007 *-*
+;;;; *-* Last-Edit: Tue Jun 12 02:52:24 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -115,11 +115,15 @@
 	 (2nd-d-dimension-name (second dimension-names))
 	 (1st-d-dimension-value
 	  (if dimension-values
-	      (cdr (assoc 1st-d-dimension-name dimension-values :test #'eq))
+	      (let ((acons (assoc 1st-d-dimension-name dimension-values
+                                  :test #'eq)))
+                (if acons (cdr acons) unbound-value-indicator))
 	      (instance-dimension-value instance 1st-d-dimension-name)))
 	 (2nd-d-dimension-value
 	  (if dimension-values
-	      (cdr (assoc 2nd-d-dimension-name dimension-values :test #'eq))
+	      (let ((acons (assoc 2nd-d-dimension-name dimension-values
+                                  :test #'eq)))
+                (if acons (cdr acons) unbound-value-indicator))
 	      (instance-dimension-value instance 2nd-d-dimension-name))))
     (cond 
      ;; unbound value in either dimension:
