@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/1d-uniform-storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Jun 11 12:48:46 2007 *-*
+;;;; *-* Last-Edit: Tue Jun 12 03:08:29 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -105,8 +105,10 @@
     (multiple-value-bind (dimension-value dimension-type composite-type
 			  composite-dimension-name)
 	(if dimension-values
-	    (values (cdr (assoc dimension-name dimension-values :test #'eq)))
-	    (instance-dimension-value instance dimension-name))
+            ;; This isn't ready yet for composites!
+            (let ((acons (assoc dimension-name dimension-values :test #'eq)))
+              (if acons (cdr acons) unbound-value-indicator))
+            (instance-dimension-value instance dimension-name))
       (declare (ignore dimension-type composite-dimension-name))
       (flet ((do-a-value (dimension-value)
 	       (cond
