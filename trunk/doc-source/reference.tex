@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /home/gbbopen/current/doc-source/reference.tex *-*
-%% *-* Last-Edit: Sat Apr 28 10:34:10 2007; Edited-By: cork *-*
+%% *-* Last-Edit: Tue Jun 12 12:34:04 2007; Edited-By: cork *-*
 %% *-* Machine: ruby.corkills.org *-*
 
 %% Copyright (C) 2003-2007, Dan Corkill <corkill@GBBopen.org>
@@ -3443,6 +3443,34 @@ After creating an undesired method, use \textbf{undefmethod} to remove it:
 
 \fnnotes This macro may not be able to locate and undefine some methods with
 environment-specific eql specializers.
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Constant}{unbound-value-indicator}{}%
+
+\fnsyntax
+
+\fnpurpose Represent an unbound value.
+
+\fnpackage \code{:gbbopen-tools}
+
+\fnmodule \code{:gbbopen-tools}
+
+\begin{alsos}{define-unit-class}
+\also[define-unit-class]
+\end{alsos}
+
+\fnexample
+Define a slot-reader function that returns the value of \code{my-slot} or 
+\textbf{unbound-value-indicator} if the slot is unbound: 
+\begin{example}
+(defun safe-my-slot-of (instance)
+  (if (slot-bound-p instance 'my-slot)
+      (slot-value instance 'my-slot)
+      unbound-value-indicator))
+\end{example}
 
 \end{functiondoc}
 
@@ -8112,6 +8140,14 @@ metaclass \textbf{\entlinknoex{standard-unit-class}} is \code{eql})
 \fndescription A \var{dimension-value-place\/} with two
 \var{slot-names\/} can be specified only for \code{:interval}
 dimension-value types.
+
+\bfindexit{unbound-value-indicator}%
+If \var{dimension-value-place\/} is specified as a \var{function\/}
+without a qualifying \var{slot-name\/}, \var{function\/} is called
+with the unit instance rather than a slot value.  In this case,
+\var{function\/} is responsible for handling any unbound slots that it
+references, returning \textbf{\entlink{unbound-value-indicator}} when
+appropriate.
 
 \bfindexit{standard-unit-class}%
 Each \var{superclass-name} argument specifies a direct superclass of the new
