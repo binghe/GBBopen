@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/tools/declarations.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Nov 28 23:36:22 2005 *-*
+;;;; *-* Last-Edit: Tue Jun 12 12:20:44 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2002-2005, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2007, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -31,7 +31,7 @@
   (export '(*generate-nyi-errors*	; not documented
 	    allow-redefinition		; not documented
 	    nyi				; not documented
-	    unbound-value-indicator	; not documented
+	    unbound-value-indicator
 	    without-cmu/sbcl-optimization-warnings ; not documented
 	    with-full-optimization)))
 

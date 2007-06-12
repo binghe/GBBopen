@@ -228,15 +228,22 @@ metaclass <b><a href="ref-standard-unit-class.html">standard-unit-class</a></b> 
 <var>slot-names</var> can be specified only for <code>:interval</code>
 dimension-value types.
 </p>
-<p><a name="id2">Each</a> <var>superclass-name</var> argument specifies a direct superclass of the new
+<p><a name="id2">If</a> <var>dimension-value-place</var> is specified as a <var>function</var>
+without a qualifying <var>slot-name</var>, <var>function</var> is called
+with the unit instance rather than a slot value.  In this case,
+<var>function</var> is responsible for handling any unbound slots that it
+references, returning <b><a href="ref-unbound-value-indicator.html">unbound-value-indicator</a></b> when
+appropriate.
+</p>
+<p><a name="id3">Each</a> <var>superclass-name</var> argument specifies a direct superclass of the new
 class. If the superclass list is empty, then the direct superclass defaults to the
 single class <b><a href="ref-standard-unit-class.html">standard-unit-class</a></b>.
 </p>
-<p><a name="id3">The</a> <code>:metaclass</code> class option, if specified, must be a subclass
+<p><a name="id4">The</a> <code>:metaclass</code> class option, if specified, must be a subclass
 of <b><a href="ref-standard-unit-class.html">standard-unit-class</a></b>.  The default metaclass
 value is <b><a href="ref-standard-unit-class.html">standard-unit-class</a></b>.
 </p>
-<p><a name="id4"></a><p><b>Inheritance of class options</b></p>
+<p><a name="id5"></a><p><b>Inheritance of class options</b></p>
 </p>
 <p>The set of <var>dimensional-values</var> for a <a href="ref-glossary.html#id160">unit&nbsp;class</a> is the
 union of the sets specified in the <var>dimensional-values</var> options
