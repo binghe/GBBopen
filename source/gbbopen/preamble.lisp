@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/preamble.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri May 25 04:56:55 2007 *-*
+;;;; *-* Last-Edit: Wed Jun 13 10:12:34 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -48,10 +48,10 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun gbbopen-implementation-version ()
-  "0.9.5")
+  "0.9.6")
 
 ;;; Added to *features* in epilogue.lisp:
-(defparameter *gbbopen-version-keyword* :gbbopen-0.9.5)
+(defparameter *gbbopen-version-keyword* :gbbopen-0.9.6)
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Control warnings when:
@@ -138,8 +138,8 @@
 (defgeneric propagate-event-evfns/printing (event-class
                                             super-event-classes))
 (defgeneric remove-instance-from-space-instance (instance space-instance))
-(defgeneric remove-instance-from-storage (instance storage dimension-values 
-                                          verbose))
+(defgeneric remove-instance-from-storage (instance storage old-dimension-values 
+                                          dimensions-being-changed verbose))
 (defgeneric reset-unit-class (unit-class-name-or-class))
 (defgeneric rmfrom-evfn-using-class (fn event-class plus-subevents 
                                      unit-class/instance plus-subclasses

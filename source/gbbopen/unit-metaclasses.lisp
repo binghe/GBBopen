@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/unit-metaclasses.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed May 30 12:30:55 2007 *-*
+;;;; *-* Last-Edit: Wed Jun 13 13:25:51 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -120,7 +120,7 @@
     (when existing-instance
       ;; A conflict, rename with a renaming-name indicator:
       (let ((counter 0)                 ; we will start with 1...
-            (existing-instance-name (instance-name existing-instance))
+            (existing-instance-name (instance-name-of existing-instance))
             renaming-instance-name)
         (while (gethash (setq renaming-instance-name 
                           (generate-renaming-instance-name 

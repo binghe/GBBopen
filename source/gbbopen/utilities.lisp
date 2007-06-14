@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/utilities.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Sep 29 05:45:22 2006 *-*
+;;;; *-* Last-Edit: Wed Jun 13 10:38:56 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2003-2006, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2003-2007, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -24,6 +24,8 @@
 ;;;  06-07-04 Added bounded-uniform-bucket-index and
 ;;;           bounded-uniform-bucket-interval-indexes.  (Corkill)
 ;;;  11-05-05 Added expand-interval and shift-interval.  (Corkill)
+;;;  06-13-07 Extend bounded-uniform-bucket-interval to handle unbound
+;;;           value indexing.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -199,10 +201,12 @@
   ;;;  - a value that preceeds the buckets returns an index of 0
   ;;;  - a value that follows the buckets returns an index of
   ;;;    (+ 1 number-of-buckets)
+  ;;;  - an "unbound" value returns an index of (+ 2 number-of-buckets)
   ;;;  - other values return the "natural" index incremented by 1
   (case value
     (#.-infinity 0)
     (#.infinity (1+& number-of-buckets))
+    (#.unbound-value-indicator (+& 2 number-of-buckets))
     (otherwise (bounded-bucket-index value start size number-of-buckets))))
 
 ;;; ---------------------------------------------------------------------------

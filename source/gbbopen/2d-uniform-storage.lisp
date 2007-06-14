@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/2d-uniform-storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Jun 12 02:52:24 2007 *-*
+;;;; *-* Last-Edit: Thu Jun 14 04:35:12 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -43,12 +43,9 @@
 (define-class 2d-uniform-buckets (storage)
   ((1st-d-start)
    (1st-d-size)
-   (number-of-1st-d-buckets)
    (2nd-d-start)
    (2nd-d-size)
-   (number-of-2nd-d-buckets)
-   (buckets :type (simple-array t (* *)))
-   (unbound-value-instances :initform (make-hash-table :test 'eq)))
+   (buckets :type (simple-array t (* *))))
   (:generate-initargs nil)
   (:export-class-name t))
 
@@ -67,20 +64,18 @@
       (let ((number-of-1st-d-buckets (ceiling (- end start) size)))
 	(setf (1st-d-start-of storage) start)
 	(setf (1st-d-size-of storage) size)
-	(setf (number-of-1st-d-buckets-of storage) number-of-1st-d-buckets)
 	;; 2nd dimension:
 	(destructuring-bind (start end size)
 	    (second layout)
 	  (let ((number-of-2nd-d-buckets (ceiling (- end start) size)))
 	    (setf (2nd-d-start-of storage) start)
 	    (setf (2nd-d-size-of storage) size)
-	    (setf (number-of-2nd-d-buckets-of storage) number-of-2nd-d-buckets)
-	    ;; make the bucket array, adding two additional buckets in each
+	    ;; make the bucket array, adding three additional buckets in each
 	    ;; dimension for preceeding and following (out-of-bucket-range)
-	    ;; instances:
+	    ;; instances and for unbound-dimension-value:
 	    (setf (buckets-of storage)
-		  (make-array `(,(+& 2 number-of-1st-d-buckets)
-				,(+& 2 number-of-2nd-d-buckets))
+		  (make-array `(,(+& 3 number-of-1st-d-buckets)
+				,(+& 3 number-of-2nd-d-buckets))
 			      :initial-element nil))))))))
 
 ;;; ---------------------------------------------------------------------------
@@ -89,53 +84,43 @@
   (format *trace-output* 
 	  "~&;; - ~s: Using 2D-uniform buckets "
 	  (dimension-names-of storage))
-  (case buckets
-    (:unbound-value
-     (format *trace-output* "(unbound-value instances)~&"))
-    (otherwise 
-     (format *trace-output* "(~s bucket~:p)~&" buckets))))
+  (format *trace-output* "(~s bucket~:p)~&" buckets))
 
 ;;; ---------------------------------------------------------------------------
 
 (defun do-2d-uniform-buckets-add/remove-action (instance storage verbose
-						dimension-values
-						unbound-value-action
+						old-dimension-values
+                                                dimensions-being-changed
 						bucket-action)
-  (declare (type function unbound-value-action bucket-action))
+  (declare (ignore dimensions-being-changed))
+  (declare (type function bucket-action))
   (when verbose (print-storage-usage-message storage))
   (let* ((buckets (buckets-of storage))
 	 (1st-d-start (1st-d-start-of storage))
 	 (1st-d-size (1st-d-size-of storage))
-	 (number-of-1st-d-buckets (number-of-1st-d-buckets-of storage))
+	 (number-of-1st-d-buckets (-& (array-dimension buckets 0) 3))
 	 (2nd-d-start (2nd-d-start-of storage))
 	 (2nd-d-size (2nd-d-size-of storage))
-	 (number-of-2nd-d-buckets (number-of-2nd-d-buckets-of storage))
+	 (number-of-2nd-d-buckets (-& (array-dimension buckets 1) 3))
 	 (dimension-names (dimension-names-of storage))
 	 (1st-d-dimension-name (first dimension-names))
 	 (2nd-d-dimension-name (second dimension-names))
 	 (1st-d-dimension-value
-	  (if dimension-values
-	      (let ((acons (assoc 1st-d-dimension-name dimension-values
-                                  :test #'eq)))
-                (if acons (cdr acons) unbound-value-indicator))
-	      (instance-dimension-value instance 1st-d-dimension-name)))
+	  (if old-dimension-values
+              (cdr (assoc 1st-d-dimension-name old-dimension-values
+                          :test #'eq))
+              (instance-dimension-value instance 1st-d-dimension-name)))
 	 (2nd-d-dimension-value
-	  (if dimension-values
-	      (let ((acons (assoc 2nd-d-dimension-name dimension-values
-                                  :test #'eq)))
-                (if acons (cdr acons) unbound-value-indicator))
-	      (instance-dimension-value instance 2nd-d-dimension-name))))
+	  (if old-dimension-values
+	      (cdr (assoc 2nd-d-dimension-name old-dimension-values
+                          :test #'eq))
+              (instance-dimension-value instance 2nd-d-dimension-name))))
     (cond 
-     ;; unbound value in either dimension:
-     ((or (eq 1st-d-dimension-value unbound-value-indicator)
-	  (eq 1st-d-dimension-value unbound-value-indicator))
-      (when verbose
-	(print-2d-uniform-buckets-usage-message 
-	 ':unbound-value storage))
-      (funcall unbound-value-action instance storage))
      ;; both are scalar values (special optimization for 2D points):
-     ((and (numberp 1st-d-dimension-value)
-	   (numberp 2nd-d-dimension-value))
+     ((and (or (numberp 1st-d-dimension-value)
+               (eq 1st-d-dimension-value unbound-value-indicator))
+           (or (numberp 2nd-d-dimension-value)
+               (eq 2nd-d-dimension-value unbound-value-indicator)))
       (let ((1st-d-bucket-index 
 	     (bounded-uniform-bucket-index 
 	      1st-d-dimension-value 1st-d-start 1st-d-size
@@ -191,12 +176,7 @@
 				    verbose)
   (let ((excess-count 0))
     (do-2d-uniform-buckets-add/remove-action 
-	instance storage verbose nil
-	;; unbound-value action:
-	#'(lambda (instance storage)
-	    (setf (gethash instance (unbound-value-instances-of storage))
-		  instance)
-	    (incf& excess-count))
+	instance storage verbose nil nil
       ;; bucket-action:
       #'(lambda (instance buckets 1st-d-bucket-index 2nd-d-bucket-index)
 	  (declare (type (simple-array t (* *)) buckets))
@@ -212,16 +192,15 @@
 
 (defmethod remove-instance-from-storage ((instance standard-unit-instance)
 					 (storage 2d-uniform-buckets) 
-					 dimension-values
+					 old-dimension-values
+                                         dimensions-being-changed
 					 verbose)
+  ;; `old-dimension-values' and `dimensions-being-changed' are provided only when
+  ;; instance is being repositioned on `storage'
   (let ((excess-count 0))
     (do-2d-uniform-buckets-add/remove-action 
-	instance storage verbose dimension-values
-	;; unbound-value action:
-	#'(lambda (instance storage)
-	    (remhash instance (unbound-value-instances-of storage))
-	    (decf& excess-count))
-	;; bucket-action:
+	instance storage verbose old-dimension-values dimensions-being-changed
+        ;; bucket-action:
 	#'(lambda (instance buckets 1st-d-bucket-index 2nd-d-bucket-index)
 	    (declare (type (simple-array t (* *)) buckets))
 	    (declare (type fixnum 1st-d-bucket-index 2nd-d-bucket-index))
@@ -231,7 +210,7 @@
 	    (decf& excess-count)))
     ;; save the excess count:
     (incf& (excess-locators-of storage) 
-	   ;; add back in the non-excess count for this instance:
+           ;; add back in the non-excess count for this instance:
 	   (1+& excess-count))))
 
 ;;; ---------------------------------------------------------------------------
@@ -295,10 +274,10 @@
       (determine-2d-uniform-storage-extents 
        storage disjunctive-dimensional-extents)
     (let* ((buckets (buckets-of storage))
-	   (number-of-1st-d-buckets (number-of-1st-d-buckets-of storage))
+           (number-of-1st-d-buckets (-& (array-dimension buckets 0) 3))
 	   (1st-d-start (1st-d-start-of storage))
 	   (1st-d-size (1st-d-size-of storage))
-	   (number-of-2nd-d-buckets (number-of-2nd-d-buckets-of storage))
+	   (number-of-2nd-d-buckets (-& (array-dimension buckets 1) 3))
 	   (2nd-d-start (2nd-d-start-of storage))
 	   (2nd-d-size (2nd-d-size-of storage))
 	   (bucket-count 0))
@@ -307,8 +286,8 @@
       (when full-map-p
 	(when verbose
 	  (print-2d-uniform-buckets-usage-message ':unbound-value storage))
-	(incf& bucket-count)
-	(maphash fn (unbound-value-instances-of storage)))
+        ;; NEED TO DO SOMETHING TO THE INDEXES TO CAPTURE THE UNBOUND BUCKETS:
+        ())	
       (dolist (storage-extents disjunctive-storage-extents)
 	(dolist (1st-d-region (first storage-extents))
 	  (dolist (2nd-d-region (second storage-extents))

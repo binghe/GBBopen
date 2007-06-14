@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Jun 11 12:46:30 2007 *-*
+;;;; *-* Last-Edit: Wed Jun 13 13:29:57 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -121,8 +121,8 @@
 
 (defmethod remove-instance-from-storage :after 
 	   ((instance standard-unit-instance)
-	    storage dimension-values verbose)
-  (declare (ignore dimension-values verbose))
+	    storage old-dimension-values dimensions-being-changed verbose)
+  (declare (ignore old-dimension-values dimensions-being-changed verbose))
   (let* ((unit-class-name (type-of instance))
 	 (count-acons (assoc unit-class-name (instance-counts-of storage)
 			     :test #'eq)))
@@ -319,7 +319,7 @@
 (defun print-storage-usage-message (storage)
   (format *trace-output* 
           "~&;; * Space instance: ~s~%"
-          (instance-name (space-instance-of storage))))
+          (instance-name-of (space-instance-of storage))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -329,7 +329,7 @@
 	 ':layout
 	 (dimension-names-of storage)
 	 (getf initargs ':stores-classes)
-	 (instance-name (space-instance-of storage))))
+	 (instance-name-of (space-instance-of storage))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -339,7 +339,7 @@
 	 ':test
 	 (dimension-names-of storage)
 	 (getf initargs ':stores-classes)
-	 (instance-name (space-instance-of storage))))
+	 (instance-name-of (space-instance-of storage))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -354,7 +354,7 @@
 		    layout
 		    dimension-names
 		    (getf initargs ':stores-classes)
-		    (instance-name (space-instance-of storage)))))
+		    (instance-name-of (space-instance-of storage)))))
       (when (>& layout-length storage-dimension-length)
 	(the-error "many"))
       (when (<& layout-length storage-dimension-length)

@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /home/gbbopen/current/doc-source/reference.tex *-*
-%% *-* Last-Edit: Tue Jun 12 12:34:04 2007; Edited-By: cork *-*
+%% *-* Last-Edit: Thu Jun 14 10:48:15 2007; Edited-By: cork *-*
 %% *-* Machine: ruby.corkills.org *-*
 
 %% Copyright (C) 2003-2007, Dan Corkill <corkill@GBBopen.org>
@@ -9808,7 +9808,7 @@ t
 \begin{args}{dimension-name}
 \arg[unit-instance] A \glref{unit~instance}
 \arg[dimension-name] A symbol specifying a \glref{dimension} of
-\var{unit-instance} 
+  \var{unit-instance} 
 \end{args}
 
 \fnreturns Four values: 
@@ -11887,6 +11887,68 @@ Remove all supporting hypothesis \glref{link}s from the
 
 %% ------------------------------------------------------------------------
 
+\begin{functiondoc}{Macro}{with-changing-dimension-values}%
+  {\code{(}\var{unit-instance\/} 
+         \[\var{dimension-name\/}\superstar{}\]\code{)}
+    \var{declaration\/}\superstar{}
+    \var{form\/}\superstar{}
+    \returns{} \var{result\/}\superstar}
+\index{unit instance!storage repositioning}%
+  
+\fnsyntax
+
+\fnpurpose Inform GBBopen that the dimensional values of a
+\glref{unit~instance} will potentially be changed by the evaluation of
+\var{forms}.
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:gbbopen}
+
+\fnargs
+\begin{args}{dimension-name}
+\arg[unit-instance] A \glref{unit~instance}
+\arg[dimension-name] A symbol specifying a \glref{dimension} of
+  \var{unit-instance} 
+\arg[declaration] A declare expression
+\arg[forms] An implicit \textbf{progn} of \glref{form}s to be evaluated
+\end{args}
+
+\fnreturns The values returned by evaluating the last \var{form}.
+
+\fndescription The indexing for \var{unit-instance\/} is updated following the
+evaluation of the last \var{form}.  Any retrieval operations performed during
+the evaluation of \var{forms\/} may operate with indexes as they existed
+before evaluation of the first \var{form}; therefore, retrievals should not be
+included within the scope of \textbf{with-changing-dimension-values}.
+Retrievals performed by separate threads also should be synchronized with
+\textbf{with-changing-dimension-values}.
+
+If \var{dimension-names\/} are specified, only the indexes for those
+\glref{dimension}s of \var{unit-instance\/} will be updated. If no
+\var{dimension-names\/} are specified, the values of any or all
+\glref{dimension}s of \var{unit-instance\/} are assumed to have been
+potentially changed by \var{forms}.
+
+\fnexamples Notify GBBopen that the \code{x}, \code{y}, and \code{belief}
+dimension values of \code{hyp} might be changed:
+\begin{example}
+> (with-changing-dimension-values (hyp x y belief)
+    (setf (location-of hyp) '(30 40))
+    (setf (belief-of hyp) 0.78))
+\end{example}
+
+Notify GBBopen that some dimension values of \code{hyp} might be changed:
+\begin{example}
+> (with-changing-dimension-values (hyp)
+    (setf (location-of hyp) '(36 52))
+    (incf (belief-of hyp) 0.05))
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
 \begin{functiondoc}{Macro}{with-events-disabled}%
   {\code{(}\var{option\/}\superstar{}\code{)}
     \var{declaration\/}\superstar{}
@@ -11899,9 +11961,9 @@ Remove all supporting hypothesis \glref{link}s from the
 
 \fnpurpose Disable event signaling during evaluation of \var{forms}.
 
-\fnpackage \code{:gbbopen-tools}
+\fnpackage \code{:gbbopen}
 
-\fnmodule \code{:gbbopen-tools}
+\fnmodule \code{:gbbopen}
 
 \fnargs
 \begin{args}{options}
@@ -11946,9 +12008,9 @@ Create a \code{hyp} without signaling any events:
 
 \fnpurpose Restore event signaling during evaluation of \var{forms}.
 
-\fnpackage \code{:gbbopen-tools}
+\fnpackage \code{:gbbopen}
 
-\fnmodule \code{:gbbopen-tools}
+\fnmodule \code{:gbbopen}
 
 \fnargs
 \begin{args}{options}

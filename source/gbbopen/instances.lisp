@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Apr 28 14:34:15 2007 *-*
+;;;; *-* Last-Edit: Wed Jun 13 13:28:31 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -34,6 +34,7 @@
 ;;;           instance-space-instances will be deprecated soon.  (Corkill)
 ;;;  09-06-06 Completed change-class support.  (Corkill)
 ;;;  03-09-07 Added find-instances-of-class (please don't abuse!).  (Corkill)
+;;;  09-09-14 Removed instance-name and instance-space-instances.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -53,12 +54,11 @@
             find-instances-of-class
             instance-dimension-value
             instance-deleted-p
-            instance-name               ; deprecated
-	    instance-name-of		; not yet documented
-            instance-space-instances    ; deprecated
+            instance-name               ; export the slot name
+	    instance-name-of
             map-instances-of-class
             map-sorted-instances-of-class
-	    space-instances-of		; not yet documented
+	    space-instances-of
             with-changing-dimension-values ; not documented (yet...)
             )))
 
@@ -75,10 +75,7 @@
 ;; parse-unit-class/instance-specifier (below):
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (define-unit-class standard-unit-instance (%%gbbopen-unit-instance%%)
-    ((instance-name 
-      :accessor instance-name-of
-      ;; soon to be deprecated name:
-      :accessor instance-name)
+    ((instance-name :accessor instance-name-of)
      ;; specific mark bits are allocated dynamically:
      (%%marks%% :initform 0 :type fixnum)
      ;; %%space-instances%% slot also indicates deleted unit instances
@@ -144,19 +141,13 @@
         nil                         ; return nil if `instance' has been deleted
         space-instances)))
 
-(defun instance-space-instances (instance)
-  ;;; Soon to be deprecated name
-  (space-instances-of instance))
-
-(declaim (inline instance-space-instances))
-
 ;;; ---------------------------------------------------------------------------
 
 (defmethod print-instance-slots ((instance standard-unit-instance) stream)
   (call-next-method)
   (format stream " ~s"
           (if (slot-boundp instance 'instance-name)
-              (instance-name instance)
+              (instance-name-of instance)
               "Uninitialized")))
 
 ;;; ---------------------------------------------------------------------------
@@ -385,7 +376,7 @@
                instance."
 		"An instance of ~s named ~s already exists."
 		(type-of existing-instance)
-		(instance-name existing-instance))
+		(instance-name-of existing-instance))
 	(delete-instance existing-instance))
       (setf (gethash instance-name instance-hash-table) instance))))
 
@@ -424,9 +415,9 @@
                          boundp
                          (when boundp
                            (slot-value-using-class class instance eslotd))))))
-        (format t "~2tInstance name: ~s~%" (instance-name instance))
+        (format t "~2tInstance name: ~s~%" (instance-name-of instance))
         (let ((space-instances
-               (mapcar #'instance-name (instance-space-instances instance))))
+               (mapcar #'instance-name-of (space-instances-of instance))))
           (format t "~2tSpace instances: ~:[None~;~:*~s~]~%"
                   space-instances))
         (format t "~2tDimensional values:")
@@ -470,7 +461,7 @@
   (delete-all-incoming-link-pointers instance)
   (let ((unit-class (class-of instance)))
     ;; remove from instance-hash-table:
-    (remhash (instance-name instance)
+    (remhash (instance-name-of instance)
              (standard-unit-class.instance-hash-table unit-class))
     ;; remove from all space instances:
     (dolist (space-instance 
@@ -693,8 +684,8 @@
 	(new-class-slots (class-slots new-class)))
     (with-process-lock (*master-instance-lock*)
       (add-name-to-instance-hash-table 
-       new-class instance (instance-name instance))
-      (remhash (instance-name instance)
+       new-class instance (instance-name-of instance))
+      (remhash (instance-name-of instance)
 	       (standard-unit-class.instance-hash-table unit-class)))
     ;; remove instance from all space instances before changing its class:
     (dolist (space-instance 
@@ -881,23 +872,35 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun update-instance-locators (instance old-dimension-values verbose)
+(defun update-instance-locators (instance old-dimension-values 
+                                 dimensions-being-changed verbose)
   ;;; Updates the locators for `instance' for all dimensions in
-  ;;; `old-dimension-values' on the %%space-instances%% of `instance'
+  ;;; `dimensions-being-changed' on the %%space-instances%% of `instance'
   (declare (inline class-of))
   (let ((unit-class (class-of instance)))
-    (unless (every #'equal 
-                   old-dimension-values
-                   (current-dimension-values 
-                    instance (mapcar #'car old-dimension-values)))
+    ;; Did the instance actually move?
+    (unless 
+        (if (eq 't dimensions-being-changed)
+            (every #'(lambda (old-dimension-value)
+                       (equal (cdr old-dimension-value)
+                              (instance-dimension-value 
+                               instance (car old-dimension-value))))
+                   old-dimension-values)
+            (every #'(lambda (dimension-name)
+                       (equal (cdr (assoc dimension-name old-dimension-values
+                                          :test #'eq))
+                              (instance-dimension-value
+                               instance dimension-name)))
+                   dimensions-being-changed))
       (dolist (space-instance 
                   (standard-unit-instance.%%space-instances%% instance))
         (dolist (storage (storage-objects-for-add/move/remove
                           unit-class space-instance))
           ;; these two are a bit heavy handed, but OK for now... 
-          ;; improve them soon!!!
+          ;; improve/integrate them soon!!!
           (remove-instance-from-storage 
-           instance storage old-dimension-values verbose)
+           instance storage old-dimension-values 
+           dimensions-being-changed verbose)
           (add-instance-to-storage instance storage verbose))
         (signal-event-using-class
          (load-time-value
@@ -907,15 +910,20 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defmacro with-changing-dimension-values ((instance &rest dimensions)
+(defmacro with-changing-dimension-values ((instance 
+                                           &rest dimensions-being-changed)
                                           &body body)
   (with-once-only-bindings (instance)
     (with-gensyms (current-dimension-values)
-      `(let ((,current-dimension-values 
-              (current-dimension-values ,instance ',(or dimensions t))))
+      ;; we must remember all the dimension values, even if we are changing 
+      ;; only a single/small number of them, as the other dimension values 
+      ;; may also be needed to update the storage locators:
+      `(let ((,current-dimension-values
+              (current-dimension-values ,instance t)))
          (multiple-value-prog1 (progn ,@body)
            (update-instance-locators
-            ,instance ,current-dimension-values nil))))))
+            ,instance ,current-dimension-values 
+            ',(or dimensions-being-changed 't) nil))))))
 
 ;;; ---------------------------------------------------------------------------
 ;;;   Parser for unit-class/instance specifiers (placed here rather than next

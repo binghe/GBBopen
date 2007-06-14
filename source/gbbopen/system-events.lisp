@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/system-events.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Apr 28 14:33:40 2007 *-*
+;;;; *-* Last-Edit: Wed Jun 13 13:26:46 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -152,8 +152,7 @@
   (call-next-method)
   (format stream " ~s"
           (if (slot-boundp instance 'space-instance)
-              (instance-name
-               (space-instance-of instance))
+              (instance-name-of (space-instance-of instance))
               :unknown)))
 
 ;;; ---------------------------------------------------------------------------

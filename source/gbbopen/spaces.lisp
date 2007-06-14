@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/spaces.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat May 26 15:05:59 2007 *-*
+;;;; *-* Last-Edit: Wed Jun 13 11:39:46 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -305,7 +305,7 @@
   (declare (dynamic-extent args))
   (map-instances-on-space-instances
    #'(lambda (instance)
-       (dolist (space-instance (instance-space-instances instance))
+       (dolist (space-instance (space-instances-of instance))
          (remove-instance-from-space-instance instance space-instance)))
    't space-instances))
 
@@ -356,7 +356,7 @@
 
 (defun path-relative-match (pattern)
   ;;; A regular-expression-like matcher for paths
-  (let ((reversed-pattern (reverse (instance-name (car pattern))))
+  (let ((reversed-pattern (reverse (instance-name-of (car pattern))))
         (remainder (cdr pattern))
         (no-more-^s nil))
     (while remainder
@@ -582,7 +582,7 @@
                 space-instance)))
        (t (dolist (storage (storage-objects-for-add/move/remove
                             (class-of instance) space-instance))
-            (remove-instance-from-storage instance storage nil nil))
+            (remove-instance-from-storage instance storage nil nil nil))
           (signal-event-using-class
            (load-time-value
             (find-class 'remove-instance-from-space-instance-event))
@@ -604,7 +604,7 @@
                                     &rest args)
                    entry
                  (declare (dynamic-extent args))
-                 (when (path-match path-pattern (instance-name instance))
+                 (when (path-match path-pattern (instance-name-of instance))
                    (apply (the function (symbol-function add/remove-fn-name))
                           event-class
                           args))))))
