@@ -5,7 +5,8 @@ Important changes in GBBopen 0.9.6:
     with with-changing-dimension-values. 
 
   * Removal of all deprecated accessors & functions that were still supported
-    in GBBopen 0.9.5 (including INSTANCE-NAME and INSTANCE-SPACE-INSTANCES).
+    in GBBopen 0.9.5 (including INSTANCE-NAME, SOLE-TRIGGER-INSTANCE,  and 
+    INSTANCE-SPACE-INSTANCES).
 
 
 Important changes in GBBopen 0.9.5:
