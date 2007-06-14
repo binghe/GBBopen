@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:AGENDA-SHELL; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/control-shells/agenda-shell.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed May 30 12:32:44 2007 *-*
+;;;; *-* Last-Edit: Thu Jun 14 11:23:55 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -77,16 +77,9 @@
             exit-control-shell-process	; not yet documented
             find-ks-by-name
             ks
-            ks.enabled                  ; deprecated            
             ks-enabled-p
             ks-of
             ksa
-            ksa.activation-cycle        ; deprecated
-            ksa.execution-cycle         ; deprecated
-            ksa.ks                      ; deprecated
-            ksa.obviation-cycle         ; deprecated
-            ksa.rating                  ; deprecated
-            ksa.trigger-events          ; deprecated
             make-ks-activation          ; not yet documented
             most-positive-rating
             most-negative-rating
@@ -96,9 +89,7 @@
             rating-of
             restart-control-shell
             select-ksa-to-execute       ; not yet documented
-	    sole-trigger-event          ; deprecated
 	    sole-trigger-event-of
-            sole-trigger-instance       ; deprecated
             sole-trigger-instance-of
             spawn-control-shell-process	; not yet documented
             start-control-shell
@@ -202,8 +193,6 @@
 (defgeneric make-ks-activation (ks events initargs cs))
 (defgeneric obviate-ksa (ks ksa cs))
 (defgeneric select-ksa-to-execute (cs))
-;; deprecated:
-(defgeneric sole-trigger-event (ksa))
 (defgeneric sole-trigger-event-of (ksa))
 (defgeneric sole-trigger-instance-of (obj))
 
@@ -270,8 +259,6 @@
     :link (ksa ks :singular t))
    (enabled
     :accessor ks-enabled-p
-    ;; deprecated:
-    :accessor ks.enabled
     :initform t)
    (execution-function
     :initform nil)
@@ -319,35 +306,20 @@
 ;;;   KSA unit-class
 
 (define-unit-class ksa (standard-unit-instance queue-element)
-  ((activation-cycle
-    ;; deprecated;
-    :accessor ksa.activation-cycle
-    :initform nil)
-   (execution-cycle
-    ;; deprecated;
-    :accessor ksa.execution-cycle
-    :initform nil)
-   (obviation-cycle
-    ;; deprecated;
-    :accessor ksa.obviation-cycle
-    :initform nil)
+  ((activation-cycle :initform nil)
+   (execution-cycle :initform nil)
+   (obviation-cycle :initform nil)
    (ks 
-    ;; deprecated;
-    :accessor ksa.ks
     :link (ks activations)
     :singular t)
    (pending-activation
     :singular t
     :link (ks pending-activations))
    (rating
-    ;; deprecated:
-    :accessor ksa.rating
     :initform 1
     :type rating)
    (trigger-events
     :reader trigger-events-of
-    ;; deprecated:
-    :reader ksa.trigger-events
     :initform nil))
   (:metaclass standard-ksa-class)
   (:generate-accessors t :exclude trigger-events)
@@ -945,11 +917,6 @@
   ;;; Return the sole trigger event in the KSA's events:
   (sole-element (trigger-events-of ksa)))
 
-;; deprecated:
-(defmethod sole-trigger-event ((ksa ksa))
-  ;;; Return the sole trigger event in the KSA's events:
-  (sole-element (trigger-events-of ksa)))
-
 ;;; ===========================================================================
 ;;;   Triggering-instance collectors
 
@@ -957,7 +924,7 @@
   ;;; Return the sole trigger instance in the KSA's events:
   (let ((trigger-instance nil))
     (dolist (event (trigger-events-of ksa))
-      (let ((instance (sole-trigger-instance event)))
+      (let ((instance (sole-trigger-instance-of event)))
         (when instance
           (when trigger-instance
             (error "Multiple trigger instances found for KSA ~s" ksa))
@@ -992,18 +959,12 @@
   ;;; Return the sole trigger instance in events:
   (let ((trigger-instance nil))
     (dolist (event events)
-      (let ((instance (sole-trigger-instance event)))
+      (let ((instance (sole-trigger-instance-of event)))
         (when instance
           (when trigger-instance
             (error "Multiple trigger instances found in events ~s" events))
           (setf trigger-instance instance))))
     trigger-instance))
-
-;;; ---------------------------------------------------------------------------
-
-;; deprecated:
-(defun sole-trigger-instance (obj)
-  (sole-trigger-instance-of obj))
 
 ;;; ---------------------------------------------------------------------------
 
