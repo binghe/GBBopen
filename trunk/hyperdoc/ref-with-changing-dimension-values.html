@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<!-- XML file produced from file: reference.tex
+     using Hyperlatex v 2.9-in-waiting-rk (c) Otfried Cheong -->
+<head>
+<title>GBBopen 0.9.6 Reference -- with-changing-dimension-values</title>
+</p>
+<link rel="SHORTCUT ICON" href="favicon.ico"><link rel=stylesheet
+        href="gbbopen.css" type="text/css" />
+</head>
+<body>
+<table width="100%" cellpadding="0" cellspacing="2"><tr>
+<td bgcolor="#99ccff"><a href="ref-unlinkf-all.html"><img border="0" alt="unlinkf-all" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="ref-GBBopen-core-entities.html"><img border="0" alt="GBBopen Core" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-with-events-disabled.html"><img border="0" alt="with-events-disabled" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">with-changing-dimension-values</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table>
+
+<p><table class="tight" width="100%">
+<tr valign="top"><td valign="baseline" align="left"%>
+<nobr><b><font color="#000000">with-changing-dimension-values</font></b></nobr></td><td valign="baseline"> &nbsp; </td><td valign="baseline" align="left" width="99%"><code>(</code><var>unit-instance</var> 
+</p>
+<blockquote><i><var>dimension-name</var>*</i></blockquote><code><p>)</code>
+<var>declaration</var>*
+<var>form</var>*
+<i> =&gt; </i> <var>result</var>*</td><td valign="baseline" align="right">[<i>Macro</i>]
+</td></tr></table></p>
+<p><span class="fndoclabel">Purpose</span> <br />Inform GBBopen that the dimensional values of a
+<a href="ref-glossary.html#id162">unit&nbsp;instance</a> will potentially be changed by the evaluation of
+<var>forms</var>.
+</p>
+<p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen</code>
+</p>
+<p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen</code>
+</p>
+<p><span class="fndoclabel">Arguments</span><table class="tight">
+<tr valign="top"><td valign="baseline"><i>unit-instance</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id162">unit&nbsp;instance</a>
+</td></tr><tr valign="top"><td valign="baseline"><i>dimension-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A symbol specifying a <a href="ref-glossary.html#gl:dimension">dimension</a> of
+<var>unit-instance</var> 
+</td></tr><tr valign="top"><td valign="baseline"><i>declaration</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A declare expression
+</td></tr><tr valign="top"><td valign="baseline"><i>forms</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An implicit <b>progn</b> of <a href="ref-glossary.html#gl:form">form</a>s to be evaluated
+</td></tr></table>
+</p>
+<p><span class="fndoclabel">Returns</span> <br />The values returned by evaluating the last <var>form</var>.
+</p>
+<p><span class="fndoclabel">Description</span> <br />The indexing for <var>unit-instance</var> is updated following the
+evaluation of the last <var>form</var>.  Any retrieval operations performed during
+the evaluation of <var>forms</var> may operate with indexes as they existed
+before evaluation of the first <var>form</var>; therefore, retrievals should not be
+included within the scope of <b>with-changing-dimension-values</b>.
+Retrievals performed by separate threads also should be synchronized with
+<b>with-changing-dimension-values</b>.
+</p>
+<p>If <var>dimension-names</var> are specified, only the indexes for those
+<a href="ref-glossary.html#gl:dimension">dimension</a>s of <var>unit-instance</var> will be updated. If no
+<var>dimension-names</var> are specified, the values of any or all
+<a href="ref-glossary.html#gl:dimension">dimension</a>s of <var>unit-instance</var> are assumed to have been
+potentially changed by <var>forms</var>.
+</p>
+<p><span class="fndoclabel">Examples</span> <br />Notify GBBopen that the <code>x</code>, <code>y</code>, and <code>belief</code>
+dimension values of <code>hyp</code> might be changed:
+</p>
+<pre>
+&gt; (with-changing-dimension-values (hyp x y belief)
+    (setf (location-of hyp) '(30 40))
+    (setf (belief-of hyp) 0.78))
+</pre>
+<p>Notify GBBopen that some dimension values of <code>hyp</code> might be changed:
+</p>
+<pre>
+&gt; (with-changing-dimension-values (hyp)
+    (setf (location-of hyp) '(36 52))
+    (incf (belief-of hyp) 0.05))
+</pre>
+<hr /><address><a target="_top" class="address"
+    href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
+<table width="100%" cellpadding="0" cellspacing="2"><tr>
+<td bgcolor="#99ccff"><a href="ref-unlinkf-all.html"><img border="0" alt="unlinkf-all" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="ref-GBBopen-core-entities.html"><img border="0" alt="GBBopen Core" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-with-events-disabled.html"><img border="0" alt="with-events-disabled" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">with-changing-dimension-values</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table></body></html>

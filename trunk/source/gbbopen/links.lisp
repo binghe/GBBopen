@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/links.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue May 29 14:41:32 2007 *-*
+;;;; *-* Last-Edit: Wed Jun 13 13:27:42 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -296,7 +296,7 @@
                     "Singular link ~s in instance ~s is not empty. ~
                      It contains ~s."
                     (slot-definition-name dslotd)
-                    (instance-name instance)
+                    (instance-name-of instance)
                     existing))
           ;; unlink the existing value
           (%do-iunlinks dslotd instance (list existing))

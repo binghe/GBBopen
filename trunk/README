@@ -1,5 +1,5 @@
 
-                                GBBopen (0.9.5)
+                                GBBopen (0.9.6)
                                 ---------------
 
 Requirements:
@@ -30,7 +30,7 @@ Requirements:
    See PORTING for information on porting GBBopen to other Common Lisp
    implementations.
 
-Current Status Notes (May 27, 2007):
+Current Status Notes (June 13, 2007):
 
  - Implementation work is progressing on a regular basis.  See the list
    of pending development activities maintained on the "What's New"

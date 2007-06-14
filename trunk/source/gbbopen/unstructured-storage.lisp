@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/unstructured-storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Jun 11 12:36:51 2007 *-*
+;;;; *-* Last-Edit: Tue Jun 12 13:19:58 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -58,8 +58,9 @@
 
 (defmethod remove-instance-from-storage ((instance standard-unit-instance)
                                          (storage unstructured-storage)
-                                         dimension-values verbose)
-  (declare (ignore dimension-values))
+                                         old-dimension-values 
+                                         dimensions-being-changed verbose)
+  (declare (ignore old-dimension-values dimensions-being-changed))
   (when verbose (print-unstructured-storage-usage-message storage))
   (remhash instance (instances-of storage)))
 

@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/test/basic-tests.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Jun 11 14:20:03 2007 *-*
+;;;; *-* Last-Edit: Thu Jun 14 02:12:19 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -65,7 +65,10 @@
   (:dimensional-values
    (x :mixed x)
    (y :point #'identity y)
-   (z :point #'z-of)
+   (z :point #'(lambda (instance)
+                 (if (slot-boundp instance 'slot-3) 
+                     (z-of instance)
+                     unbound-value-indicator)))
    (classification :element classification)
    (amphibious :boolean amphibious))
   (:initial-space-instances (bb sub-bb space-1)))
@@ -246,7 +249,7 @@
       (error "Unable to find instance: ~s" x))
     (add-instance-to-space-instance
      x (find-space-instance-by-path '(bb sub-bb space-2)))
-    (let ((instances (instance-space-instances x)))
+    (let ((instances (space-instances-of x)))
       (unless (and (= (length instances) 2)
                    (member
                     (find-space-instance-by-path '(bb sub-bb space-2))
@@ -256,7 +259,7 @@
                     (find-space-instance-by-path '(bb sub-bb space-1))
                     instances
                     :test #'equal))
-        (error "Incorrect instance-space-instances value.")))
+        (error "Incorrect space-instances-of value.")))
     (remove-instance-from-space-instance
      x (find-space-instance-by-path '(bb sub-bb space-1)))
     (delete-instance x)
@@ -898,10 +901,10 @@
 ;;; ===========================================================================
 ;;;   Run the tests
 
-(when *autorun-gbbopen-modules*
+(defun all-tests ()
   (basic-tests)
   (event-function-tests)
-
+  
   (find-tests '((uc-1 x unstructured)))
   (find-tests '((uc-1 amphibious boolean)))
   (find-tests '((uc-1 classification hashed)))
@@ -913,13 +916,13 @@
   (find-tests '((uc-1 x uniform-buckets :layout (0 10 1))))
   (find-tests '((uc-1 classification hashed :test eq)))
   (find-tests '((uc-1 classification hashed 
-		      ;; it's OK to use a more complete :test predicate than
-		      ;; the pattern predicate (but not the other way
-		      ;; round!):
+                      ;; it's OK to use a more complete :test predicate than
+                      ;; the pattern predicate (but not the other way
+                      ;; round!):
 		      :test equalp)))
   (find-tests '((uc-1 (x y) uniform-buckets 
 		      :layout ((0 10 3)
-			       ;; to be different, start y at 1:
+                               ;; to be different, start y at 1:
 			       (1 10 4)))))
   (find-tests '((uc-1 (x y) uniform-buckets 
 		      :layout ((0 10 1)
@@ -935,6 +938,8 @@
   
   ;; Common Lisp capability tests:
   (lisp-capability-tests))
+
+(when *autorun-gbbopen-modules* (all-tests))
 
 ;;; ===========================================================================
 ;;;				  End of File

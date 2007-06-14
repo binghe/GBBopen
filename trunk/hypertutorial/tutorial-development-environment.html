@@ -5,7 +5,7 @@
 <!-- XML file produced from file: tutorial.tex
      using Hyperlatex v 2.9-in-waiting-rk (c) Otfried Cheong -->
 <head>
-<title>GBBopen 0.9.5 Tutorial -- Enhancing Your Development Environment</title>
+<title>GBBopen 0.9.6 Tutorial -- Enhancing Your Development Environment</title>
 </p>
 <link rel="SHORTCUT ICON" href="favicon.ico"><link rel=stylesheet
         href="gbbopen.css" type="text/css" />
@@ -288,7 +288,13 @@ those implementation-specific initialization files load your
 <code>shared-init.lisp</code> file from whichever directory <u>you</u>
 deem as your &#8220;home&#8221; directory.
 </p>
-</li><li>With this setup in place, all that is needed to use GBBopen is
+<p>Here is a quick way to have Common Lisp tell you where it thinks your &#8220;home&#8221;
+directory is located:
+</p>
+<pre><font color="#8c8c8c">  &gt; <font color="#000000">(truename (user-homedir-pathname))</font>
+  "C:\\Documents and Settings\\corkill\\"
+</pre></font>
+<br /></li><li>With this setup in place, all that is needed to use GBBopen is
 to start up a Common Lisp and type a GBBopen command, such as
 <code>:gbbopen-user</code>.  My fingers thank me!
 </li></ol>

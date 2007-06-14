@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/hashed-storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Jun 11 12:47:37 2007 *-*
+;;;; *-* Last-Edit: Tue Jun 12 13:20:30 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -118,8 +118,10 @@
 
 (defmethod remove-instance-from-storage ((instance standard-unit-instance)
                                          (storage hashed-storage)
-                                         dimension-values verbose)
-  (declare (ignore dimension-values))
+                                         old-dimension-values 
+                                         dimensions-being-changed
+                                         verbose)
+  (declare (ignore old-dimension-values dimensions-being-changed))
   (do-hashed-add/remove-action 
       instance storage verbose
       ;; unbound-value action:

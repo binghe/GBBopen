@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/find.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Dec 15 17:40:24 2006 *-*
+;;;; *-* Last-Edit: Wed Jun 13 13:30:39 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -122,7 +122,7 @@
   (format *trace-output* "~&;; Search pattern:  ~:@w~%" pattern)
   (format *trace-output* 
           "~&;; Space instances: ~:[None~%~;~:*~@<~{~w~^~:@_~}~:>~]" 
-          (mapcar #'instance-name (find-space-instances space-instances)))
+          (mapcar #'instance-name-of (find-space-instances space-instances)))
   (let ((disjunctive-dimensional-extents
          (optimized-pattern.disjunctive-dimensional-extents opt-pattern)))
     (format *trace-output* "~&;; Dimensional extents: ~

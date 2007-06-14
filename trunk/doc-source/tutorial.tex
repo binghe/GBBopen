@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /home/gbbopen/current/doc-source/tutorial.tex *-*
-%% *-* Last-Edit: Sun Mar 11 12:04:54 2007; Edited-By: cork *-*
+%% *-* Last-Edit: Wed Jun 13 16:34:53 2007; Edited-By: cork *-*
 %% *-* Machine: ruby.corkills.org *-*
 
 %% Copyright (C) 2005-2007, Dan Corkill <corkill@GBBopen.org>
@@ -306,6 +306,7 @@ This initial exercise requires that you:
 \begin{tightitemize}
 \item Obtain and install Common Lisp
 \item Obtain and install GBBopen
+\item Subscribe to the GBBopen mailing lists
 \item Interact with Common Lisp's read-eval-print loop (REPL)
 \item Recover from errors
 \item Prepare to use GBBopen in the next exercises by loading the
@@ -375,11 +376,6 @@ Extract the archive into a directory of your choosing, and follow the
 ``Compiling/Loading GBBopen'' instructions that are contained in the
 \code{README} file of the installation.
 
-% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
-% formatting of the following paragraph...  I don't understand why:
-%\T\begin{ifhtml}
-%  \endpar\par
-%\T\end{ifhtml}
 \codeindexit{values}%
 \index{subversion client}%
 Alternatively, if you are familiar with
@@ -396,11 +392,6 @@ will create a GBBopen repository tree rooted at the directory named
 ``Compiling/Loading GBBopen'' instructions that are contained in the
 \code{README} file of the installation.
 
-% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
-% formatting of the following paragraph...  I don't understand why:
-%\T\begin{ifhtml}
-%  \endpar\par
-%\T\end{ifhtml}
 \index{updating GBBopen}%
 \index{GBBopen!updating}%
 \index{subversion client}%
@@ -429,7 +420,19 @@ GBBopen snapshot archive, so a subversion \code{update} command can be
 used to freshen a GBBopen installation that was originally installed
 from a snapshot archive.
 
-\subsection*{Step 3: Interact with the REPL}
+\subsection*{Step 3: Subscribe to the GBBopen mailing lists}
+
+\index{GBBopen!mailing lists}%
+I strongly recommend that you subscribe to the GBBopen Announcements
+(\code{gbbopen-announce}) and the GBBopen Users (\code{gbbopen-list})
+mailing lists.  To subscribe, go to the ``Mailing Lists'' page on the
+\xsitelink{GBBopen web site}{http://GBBopen.org/} and click on the
+appropriate \code{subscribe} links.  The traffic is low, and the
+messages and advice will save you time and frustration in the long
+run!  (You might even want to browse some of the archived messages
+that are also accessible from the ``Mailing Lists'' page.
+
+\subsection*{Step 4: Interact with the REPL}
 
 \index{REPL}%
 This tutorial assumes that you have a basic understanding of Common Lisp and,
@@ -508,11 +511,6 @@ entering the following form:
   >
 \end{example}
 
-% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
-% formatting of the following paragraph...  I don't understand why:
-%\T\begin{ifhtml}
-%  \endpar\par
-%\T\end{ifhtml}
 \codeindexit{values}%
 Your Common Lisp implementation may also differ slightly on how it displays
 multiple returned values.  For example:
@@ -537,7 +535,7 @@ with semicolon value-separation characters:
   >
 \end{example}
 
-\subsection*{Step 4: Recover from an error}
+\subsection*{Step 5: Recover from an error}
 
 \index{error!recovering from}%
 \index{Common Lisp!debugger}%
@@ -707,7 +705,7 @@ You may discover even more creative ways to get into problems, but these
 example situations should give you enough experience to get through the rest
 of the tutorial.
 
-\subsection*{Step 5: Load the \code{:gbbopen-user} module}
+\subsection*{Step 6: Load the \code{:gbbopen-user} module}
 
 \index{error!recovering from}%
 GBBopen is packaged with its own \xreflink{module system}{sec:mini-module}
@@ -728,11 +726,6 @@ wherever GBBopen has been installed:
   >
 \end{example}
 
-% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
-% formatting of the following paragraph...  I don't understand why:
-%\T\begin{ifhtml}
-%  \endpar\par
-%\T\end{ifhtml}
 \bfindexit{compile-module}%
 Then compile and load the \code{:gbbopen-user} module and all the
 GBBopen modules it requires by evaluating:
@@ -776,7 +769,7 @@ expressions:
 every time they update GBBopen to ensure that all GBBopen modules have
 been compiled.
 
-\subsection*{Step 6: Change to the \code{:gbbopen-user} package}
+\subsection*{Step 7: Change to the \code{:gbbopen-user} package}
 
 \codeindexit{in-package}%
 Now that the \code{:gbbopen-user} module is loaded, change the current
@@ -905,11 +898,6 @@ by entering the following form:
   >
 \end{example}
 
-% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
-% formatting of the following paragraph...  I don't understand why:
-%\T\begin{ifhtml}
-%  \endpar\par
-%\T\end{ifhtml}
 \bfindexit{make-instance}%
 Now, create a unit instance and assign it to the variable \code{ui} by
 entering the form:
@@ -1113,11 +1101,6 @@ global variable called \code{si} by entering the following form:
   >
 \end{example}
 
-% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
-% formatting of the following paragraph...  I don't understand why:
-%\T\begin{ifhtml}
-%  \endpar\par
-%\T\end{ifhtml}
 \bfindexit{make-space-instance}%
 Now, create the space instance and assign it to the variable \code{si} by
 entering the form:
@@ -1277,11 +1260,6 @@ Create a second instance of the \code{location} unit class, with \code{x} and
   >
 \end{example}
 
-% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
-% formatting of the following paragraph...  I don't understand why:
-%\T\begin{ifhtml}
-%  \endpar\par
-%\T\end{ifhtml}
 \bfindexit{find-instance-by-name}%
 This time we did not assign the new \code{location} unit instance to a global
 variable but, as before, we can find the unit instance by its name:
@@ -1292,11 +1270,6 @@ variable but, as before, we can find the unit instance by its name:
   >
 \end{example}
 
-% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
-% formatting of the following paragraph...  I don't understand why:
-%\T\begin{ifhtml}
-%  \endpar\par
-%\T\end{ifhtml}
 \bfindexit{find-instance-by-name}%
 \bfindexit{find-instances}%
 As you would expect, we can retrieve both \code{location} unit instances from the
@@ -1338,11 +1311,6 @@ Now, remove the first \code{location} unit instance from the
   >
 \end{example}
 
-% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
-% formatting of the following paragraph...  I don't understand why:
-%\T\begin{ifhtml}
-%  \endpar\par
-%\T\end{ifhtml}
 \bfindexit{find-instances}%
 As you would expect, only the second \code{location} unit instance remains on the
 \code{known-world} space instance:
@@ -1486,11 +1454,6 @@ them?  If we know the names of the new unit instances, we can use the
   >
 \end{example}
 
-% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
-% formatting of the following paragraph...  I don't understand why:
-%\T\begin{ifhtml}
-%  \endpar\par
-%\T\end{ifhtml}
 \bfindexit{map-instances-of-class}%
 \codeindexit{print}%
 It is often useful to perform some action on all instances of a unit class.
@@ -1516,11 +1479,6 @@ displays each of our \code{location} unit instances.  Note that the exact
 order that \code{location} unit instances are supplied to the \code{print}
 function may differ from the above example in your Common Lisp implementation.
 
-% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
-% formatting of the following paragraph...  I don't understand why:
-%\T\begin{ifhtml}
-%  \endpar\par
-%\T\end{ifhtml}
 \bfindexit{find-instances}%
 \bfindexit{map-instances-of-class}%
 Currently, there is only one \code{location} unit instance on the
@@ -1556,11 +1514,6 @@ can verify this by using \textbf{find-instances}:
   >
 \end{example}
 
-% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
-% formatting of the following paragraph...  I don't understand why:
-%\T\begin{ifhtml}
-%  \endpar\par
-%\T\end{ifhtml}
 \bfindexit{map-instances-of-class}%
 For those who prefer a more iterative programming style, GBBopen provides a
 \texttt{dolist}-style macro, \textbf{do-instances-of-class}, as an alternative
@@ -1590,11 +1543,6 @@ Let's delete the first \code{location} unit instance that we created:
 Note that the displayed representation of the unit instance now includes
 \code{[Deleted]} to let us know that the unit instance has been deleted.
 
-% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
-% formatting of the following paragraph...  I don't understand why:
-%\T\begin{ifhtml}
-%  \endpar\par
-%\T\end{ifhtml}
 \bfindexit{find-instance-by-name}%
 \bfindexit{map-instances-of-class}%
 \codeindexit{print}%
@@ -1630,11 +1578,6 @@ and it is no longer on the \code{known-world} space instance:
   >
 \end{example}
 
-% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
-% formatting of the following paragraph...  I don't understand why:
-%\T\begin{ifhtml}
-%  \endpar\par
-%\T\end{ifhtml}
 \bfindexit{add-instance-to-space-instance}%
 However, the deleted \code{location} unit instance is still assigned to the
 \code{ui} global variable:
@@ -1665,11 +1608,6 @@ instance.  This is not true of all operations, however:
   >
 \end{example}
 
-% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
-% formatting of the following paragraph...  I don't understand why:
-%\T\begin{ifhtml}
-%  \endpar\par
-%\T\end{ifhtml}
 \bfindexit{instance-deleted-p}%
 Typically, blackboard applications obtain unit instances from the blackboard
 repository rather than maintaining references to them in variables.  This
@@ -1703,11 +1641,6 @@ instances:
   >
 \end{example}
 
-% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
-% formatting of the following paragraph...  I don't understand why:
-%\T\begin{ifhtml}
-%  \endpar\par
-%\T\end{ifhtml}
 \bfindexit{describe-blackboard-repository}%
 Recall that the \var{space-instance-path} argument to
 \textbf{make-space-instance} is the complete list of space-instance names,
@@ -1728,11 +1661,6 @@ the \code{east-side} and \code{west-side} as children.  We can use
   >
 \end{example}
 
-% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
-% formatting of the following paragraph...  I don't understand why:
-%\T\begin{ifhtml}
-%  \endpar\par
-%\T\end{ifhtml}
 \bfindex{standard-space-instance}%
 \index{space instance!is a unit instance}%
 Observe from the above description that child space instances that we created
@@ -1745,11 +1673,6 @@ placed on other space instances---or even on itself.  Typical blackboard
 applications do not involve using space instances as unit instances, but this
 property of space instances is very powerful when it is needed.
 
-% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
-% formatting of the following paragraph...  I don't understand why:
-%\T\begin{ifhtml}
-%  \endpar\par
-%\T\end{ifhtml}
 \bfindex{space-instance-parent}%
 \bfindex{space-instance-children}%
 The functions \textbf{space-instance-parent} and
@@ -1779,11 +1702,6 @@ Now, let's add \code{location} \code{2} to the \code{my-town} and
   >
 \end{example}
 
-% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
-% formatting of the following paragraph...  I don't understand why:
-%\T\begin{ifhtml}
-%  \endpar\par
-%\T\end{ifhtml}
 \bfindexit{find-instance-by-name}%
 \bfindexit{describe-blackboard-repository}%
 As we expect, \code{location} \code{2} is now on three space instances:
@@ -1843,11 +1761,6 @@ Now let's delete some of what we just created.  Let's delete the
   >
 \end{example}
 %
-% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
-% formatting of the following paragraph...  I don't understand why:
-%\T\begin{ifhtml}
-%  \endpar\par
-%\T\end{ifhtml}
 \bfindexit{describe-blackboard-repository}%
 and describe the blackboard repository:
 %
@@ -1865,11 +1778,6 @@ Notice that GBBopen has also deleted all the child space instances of
 So, just as with our file-system directory analogy, space-instance deletion is
 recursive over children and should be performed with caution.  
 
-% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
-% formatting of the following paragraph...  I don't understand why:
-%\T\begin{ifhtml}
-%  \endpar\par
-%\T\end{ifhtml}
 \bfindex{map-instances-on-space-instances}%
 \bfindexit{delete-instance}%
 Also note that deleting space instances did not delete any of the unit
@@ -1890,11 +1798,6 @@ that a unit instance can reside on multiple space instances; so deleting a
 unit instance that is on other space instances might not be the desired
 action.
 
-% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
-% formatting of the following paragraph...  I don't understand why:
-%\T\begin{ifhtml}
-%  \endpar\par
-%\T\end{ifhtml}
 \bfindexit{do-instances-on-space-instances}%
 As is the case with \textbf{map-instances-of-class}, GBBopen provides a
 \textbf{do-instances-on-space-instances} macro as an alternative to
@@ -1926,11 +1829,6 @@ the \textbf{reset-gbbopen} function:
   >
 \end{example}
 
-% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
-% formatting of the following paragraph...  I don't understand why:
-%\T\begin{ifhtml}
-%  \endpar\par
-%\T\end{ifhtml}
 \bfindexit{make-instance}%
 \textbf{Reset-gbbopen} has deleted every space and unit instance, but it has
 not eliminated our \code{location} unit class definition.  Let's create
@@ -2029,11 +1927,6 @@ up a fresh Common Lisp session and enter the following form in the REPL:
   >
 \end{example}
 
-% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
-% formatting of the following paragraph...  I don't understand why:
-%\T\begin{ifhtml}
-%  \endpar\par
-%\T\end{ifhtml}
 \index{:gbbopen-user@\textbf{:gbbopen-user} REPL command|itidx}%
 Note that the \xreflink{mini-module system}{sec:mini-module} and GBBopen
 module definitions have not been loaded.  Now enter the REPL
@@ -2132,11 +2025,6 @@ following strategy:
 \item I create a file, \code{shared-init.lisp}, in my home directory,
   containing the following:
 
-% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
-% formatting of the following paragraph...  I don't understand why:
-%\T\begin{ifhtml}
-%  \endpar\par
-%\T\end{ifhtml}
 \begin{example}
   (in-package :common-lisp-user)
 
@@ -2156,12 +2044,6 @@ following strategy:
            :defaults defaults)))
 \end{example}
 
-% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
-% formatting of the following paragraph...  I don't understand why:
-%\T\begin{ifhtml}
-%  \endpar\par
-%\T\end{ifhtml} 
-
 The \code{:directory} argument to \code{make-pathname} is a Common
 Lisp \textit{absolute pathname} that is portable across all operating
 systems.  I installed my GBBopen in \code{/home/gbbopen/}, and I
@@ -2175,11 +2057,6 @@ for the location of your GBBopen installation.
   is the \code{.clisprc} initialization file that I use for
   \xsitelink{CLISP}{http://clisp.cons.org/}:
 
-% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
-% formatting of the following paragraph...  I don't understand why:
-%\T\begin{ifhtml}
-%  \endpar\par
-%\T\end{ifhtml}
 \begin{example}
   (in-package :common-lisp-user)
 
@@ -2193,12 +2070,6 @@ for the location of your GBBopen installation.
            :defaults defaults)))
 \end{example}
 
-% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
-% formatting of the following paragraph...  I don't understand why:
-%\T\begin{ifhtml}
-%  \endpar\par
-%\T\end{ifhtml}
-%
 \xsitelink{SBCL}{http://sbcl.sourceforge.net} has a very strict interpretation
 of \code{*load-truename*} semantics, so my \code{.sbclrc} initialization file
 is:
@@ -2215,12 +2086,6 @@ is:
            :defaults defaults)))
 \end{example}
 
-% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
-% formatting of the following paragraph...  I don't understand why:
-%\T\begin{ifhtml}
-%  \endpar\par
-%\T\end{ifhtml}
-%
 Here is my \code{.clinit.cl} initialization file for
 \xsitelink{Allegro CL}{http://www.franz.com}:
 
@@ -2240,11 +2105,6 @@ Here is my \code{.clinit.cl} initialization file for
            :defaults defaults)))
 \end{example}
 
-% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
-% formatting of the following paragraph...  I don't understand why:
-%\T\begin{ifhtml}
-%  \endpar\par
-%\T\end{ifhtml}
 The initialization file names for supported GBBopen ports are:
 
 \begin{tabular}{llll}
@@ -2268,12 +2128,6 @@ The initialization file names for supported GBBopen ports are:
        & \code{init.lisp} \\
 \end{tabular}
 
-% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
-% formatting of the following paragraph...  I don't understand why:
-%\T\begin{ifhtml}
-%  \endpar\par
-%\T\end{ifhtml}
-%
 \xsitelink{Digitool MCL}{http://www.digitool.com} does not look for an
 initialization file in the user's home directory.  Instead it loads the file
 \code{init.lisp} in it's installation directory.  One approach is to have that
@@ -2285,12 +2139,6 @@ not load initialization files, requiring you to manually load your
 \code{.lispworks} file each time you start up
 \xsitelink{LispWorks}{http://www.lispworks.com}.
 
-% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
-% formatting of the following paragraph...  I don't understand why:
-%\T\begin{ifhtml}
-%  \endpar\par
-%\T\end{ifhtml}
-%
 The interpretation of where a user's ``home'' directory is located is
 inconsistent on Windows.  Ideally, the ``home directory'' location
 used for the Common Lisp implementation's initialization file and the
@@ -2301,6 +2149,15 @@ each Common Lisp implementation that you use, and then you can have
 those implementation-specific initialization files load your
 \code{shared-init.lisp} file from whichever directory \underline{you}
 deem as your ``home'' directory.
+
+Here is a quick way to have Common Lisp tell you where it thinks your ``home''
+directory is located:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(truename (user-homedir-pathname))}
+  "C:\bkslash\bkslash{}Documents and Settings\bkslash\bkslash{}corkill\bkslash\bkslash"
+\end{example}
+\W\\
 
 \item With this setup in place, all that is needed to use GBBopen is
   to start up a Common Lisp and type a GBBopen command, such as
@@ -2327,12 +2184,6 @@ initialization file:
   (load "\var{<install-directory\/>}/browse-hyperdoc")
 \end{example}
 
-% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
-% formatting of the following paragraph...  I don't understand why:
-%\T\begin{ifhtml}
-%  \endpar\par
-%\T\end{ifhtml}
-%
 If there is no \code{.emacs} file present in your ``home'' directory, simply
 create one containing the above command. Once again, Windows users need to
 worry about where Emacs looks for their ``home'' directory.
@@ -2526,11 +2377,6 @@ the REPL:
   >
 \end{example}
 
-% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
-% formatting of the following paragraph...  I don't understand why:
-%\T\begin{ifhtml}
-%  \endpar\par
-%\T\end{ifhtml}
 \bfindexit{reset-gbbopen}%
 Then reset GBBopen in preparation for the next exercise:
 %
@@ -2603,11 +2449,6 @@ This exercise shows you how to:
 \begin{tightitemize}
 \item The \code{tutorial-example.lisp} file created in the last exercise, containing:
 
-% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
-% formatting of the following paragraph...  I don't understand why:
-%\T\begin{ifhtml}
-%  \endpar\par
-%\T\end{ifhtml}
 \begin{example}\color{darkergray}%
 (in-package :gbbopen-user)
 
@@ -2682,11 +2523,6 @@ instance.  Enter the following form in the REPL:
   >
 \end{example}
 
-% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
-% formatting of the following paragraph...  I don't understand why:
-%\T\begin{ifhtml}
-%  \endpar\par
-%\T\end{ifhtml}
 \bfindexit{describe-instance}%
 and display its description:
 %
@@ -2733,11 +2569,6 @@ Now, add the \code{location} unit instance to the space instance:
   >
 \end{example}
 
-% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
-% formatting of the following paragraph...  I don't understand why:
-%\T\begin{ifhtml}
-%  \endpar\par
-%\T\end{ifhtml}
 \bfindexit{describe-blackboard-repository}%
 GBBopen has warned us that our \code{location} unit instance does not
 have any dimensions in common with the \code{known-world} space
@@ -2777,11 +2608,6 @@ We have specified \code{x} and \code{y} as ordered dimensions, making the
 \code{known-world} a two-dimensional Euclidean plane.  (Flatlanders would be
 proud!)
 
-% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
-% formatting of the following paragraph...  I don't understand why:
-%\T\begin{ifhtml}
-%  \endpar\par
-%\T\end{ifhtml}
 \bfindexit{describe-space-instance}%
 Verify the dimensionality of the \code{known-world} space instance by evaluating:
 %
@@ -2817,11 +2643,6 @@ We can tell GBBopen to automatically add new unit instances to one or more
 space instances by using the \code{:initial-space-instances} class option in
 \textbf{define-unit-class}.
 
-% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
-% formatting of the following paragraph...  I don't understand why:
-%\T\begin{ifhtml}
-%  \endpar\par
-%\T\end{ifhtml}
 \bfindexit{define-unit-class}%
 Add the following \code{:initial-space-instances} class option to the
 \code{location} unit-class definition in your \code{tutorial-example.lisp}
@@ -2851,11 +2672,6 @@ instance.  Enter the following form in the REPL:
   >
 \end{example}
 %
-% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
-% formatting of the following paragraph...  I don't understand why:
-%\T\begin{ifhtml}
-%  \endpar\par
-%\T\end{ifhtml}
 \bfindexit{:dsbb}%
 and confirm that the new \code{location} is on the \code{known-world}:
 %
@@ -2878,11 +2694,6 @@ evaluating \code{(describe-blackboard-repository)}.  Describing the repository
 is a useful check that our unit instances and space instances are being
 created and deleted as intended.
 
-% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
-% formatting of the following paragraph...  I don't understand why:
-%\T\begin{ifhtml}
-%  \endpar\par
-%\T\end{ifhtml}
 \bfindexit{make-instance}%
 Now, let's populate the \code{known-world} with a few more \code{locations}s:
 %
@@ -2924,11 +2735,6 @@ We have seen how we can use \textbf{find-instances} to retrieve all
   >
 \end{example}
 
-% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
-% formatting of the following paragraph...  I don't understand why:
-%\T\begin{ifhtml}
-%  \endpar\par
-%\T\end{ifhtml}
 \bfindexit{find-instances}%
 Now that we have added \code{x} and \code{y} dimensions to \code{location}s
 and the \code{known-world}, we can retrieve \code{location} unit instances
@@ -2942,11 +2748,6 @@ positioned at (20,20):
   >
 \end{example}
 
-% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
-% formatting of the following paragraph...  I don't understand why:
-%\T\begin{ifhtml}
-%  \endpar\par
-%\T\end{ifhtml}
 \bfindexit{describe-instance}%
 We can use \textbf{describe-instance} to verify that we found the desired
 \code{location} unit instance:
@@ -2982,11 +2783,6 @@ GBBopen makes this is easy to do by providing the
 \textbf{print-instance-slots} generic function that allows us to extend how
 Common Lisp's \code{print-object} displays \code{location} unit instances.
 
-% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
-% formatting of the following paragraph...  I don't understand why:
-%\T\begin{ifhtml}
-%  \endpar\par
-%\T\end{ifhtml}
 \bfindex{print-instance-slots}%
 Add the following \textbf {print-instance-slots} method \underline{after} the
 \code{location} unit-class definition in your \code{tutorial-example.lisp}
@@ -3018,11 +2814,6 @@ are bound is necessary to avoid generating an error in the
 should always perform this safety check in any \textbf{print-instance-slots}
 methods.
 
-% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
-% formatting of the following paragraph...  I don't understand why:
-%\T\begin{ifhtml}
-%  \endpar\par
-%\T\end{ifhtml}
 \bfindexit{find-instances}%
 Now, compile and load the \textbf {print-instance-slots} method and try it
 out:
@@ -3097,11 +2888,6 @@ Recall that we assigned \code{location} \code{1} to the global variable
   >
 \end{example}
   
-% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
-% formatting of the following paragraph...  I don't understand why:
-%\T\begin{ifhtml}
-%  \endpar\par
-%\T\end{ifhtml}
 \bfindexit{find-instances}%
 and we can retrieve it by its \code{x} and \code{y} coordinates:
 %
@@ -3112,11 +2898,6 @@ and we can retrieve it by its \code{x} and \code{y} coordinates:
   >
 \end{example}
 
-% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
-% formatting of the following paragraph...  I don't understand why:
-%\T\begin{ifhtml}
-%  \endpar\par
-%\T\end{ifhtml}
 \bfindexit{find-instances}%
 Let's change its \code{x} position to \code{80} and try retrieving it again:
 %
@@ -3129,11 +2910,6 @@ Let's change its \code{x} position to \code{80} and try retrieving it again:
   >
 \end{example}
 
-% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
-% formatting of the following paragraph...  I don't understand why:
-%\T\begin{ifhtml}
-%  \endpar\par
-%\T\end{ifhtml}
 \bfindexit{find-instances}%
 It has moved on the \code{known-world}.  As expected, the \code{location}
 \code{1} unit instance is now at (80, 60):
@@ -3407,11 +3183,6 @@ Now, enable display of all control-shell and instance-creation events:
 We will cover events, event printing, and event functions in greater
 detail in a later exercise.
 
-% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
-% formatting of the following paragraph...  I don't understand why:
-%\T\begin{ifhtml}
-%  \endpar\par
-%\T\end{ifhtml}
 \bfindex{start-control-shell}%
 Start the Agenda Shell once again:
 %
@@ -3459,11 +3230,6 @@ control-shell stepping. Again, reset GBBopen:
 Note that the event printing that we enabled in the last step is reset
 (disabled) by default by \textbf{reset-gbbopen}.
 
-% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
-% formatting of the following paragraph...  I don't understand why:
-%\T\begin{ifhtml}
-%  \endpar\par
-%\T\end{ifhtml}
 \bfindex{start-control-shell}%
 Now start the Agenda Shell, this time with stepping enabled:
 %
@@ -3672,11 +3438,6 @@ placed anywhere relative to the function definition.)
 
 \subsection*{Step 3: Run the application}
 
-% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
-% formatting of the following paragraph...  I don't understand why:
-%\T\begin{ifhtml}
-%  \endpar\par
-%\T\end{ifhtml}
 \bfindex{start-control-shell}%
 Start a fresh Common Lisp session, compile and load the
 \code{tutorial-example.lisp} file directly from the editor buffer (using
@@ -3702,11 +3463,6 @@ running the application another time.
 
 \subsection*{Step 4: Run it Again}
 
-% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
-% formatting of the following paragraph...  I don't understand why:
-%\T\begin{ifhtml}
-%  \endpar\par
-%\T\end{ifhtml}
 \bfindex{start-control-shell}%
 Let's verify that we can re-run our application. Without doing anything else,
 start the Agenda Shell again:
@@ -3727,11 +3483,6 @@ details of starting up our application.
 
 \subsection*{Step 5: It's a new world$\ldots$}
 
-% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
-% formatting of the following paragraph...  I don't understand why:
-%\T\begin{ifhtml}
-%  \endpar\par
-%\T\end{ifhtml}
 \bfindexit{make-space-instance}%
 GBBopen allows us to restrict the classes of unit instances that can be stored
 on a space instance.  For example, we can limit the \code{known-world} to
@@ -3809,11 +3560,6 @@ the Agenda Shell again:
   >
 \end{example}
 
-% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
-% formatting of the following paragraph...  I don't understand why:
-%\T\begin{ifhtml}
-%  \endpar\par
-%\T\end{ifhtml}
 \bfindexit{describe-space-instance}%
 Verify the dimensionality of the \code{known-world} space instance by evaluating:
 %
@@ -3974,11 +3720,6 @@ again:
   >
 \end{example}
 
-% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
-% formatting of the following paragraph...  I don't understand why:
-%\T\begin{ifhtml}
-%  \endpar\par
-%\T\end{ifhtml}
 \bfindexit{describe-instance}%
 \bfindexit{find-instance-by-name}%
 Check that the initial \code{location} unit instance is at \code{time} zero:
@@ -4043,11 +3784,6 @@ utility function to the end of your \code{tutorial-example.lisp} file:
 Then compile the definition (using \code{C-c C-c} in SLIME or \code{C-c
   C-x} in ELI) and evaluate the following test in the REPL:
 
-% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
-% formatting of the following paragraph...  I don't understand why:
-%\T\begin{ifhtml}
-%  \endpar\par
-%\T\end{ifhtml}
 \bfindex{printv}%
 \begin{example}\color{darkergray}%
   > \textcolor{black}{(dotimes (i 15) (printv (add-linear-variance 0 10)))}
@@ -4119,11 +3855,6 @@ Next add the following KS-execution function to the end of your
            (t (format t "~2&Walked off the world: (~d, ~d).~\%" x y))))))))
 \end{example}
 
-% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
-% formatting of the following paragraph...  I don't understand why:
-%\T\begin{ifhtml}
-%  \endpar\par
-%\T\end{ifhtml}
 \bfindex{sole-trigger-instance-of}%
 Unlike the KS-execution functions that we have defined previously,
 \code{random-walk-ks-function} does not ignore its \code{ksa} argument.
@@ -4139,11 +3870,6 @@ Finally, add this \code{define-ks} form to the end of your
 \code{tutorial-example.lisp} file to complete the \code{random-walk-ks}
 definition:
 
-% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
-% formatting of the following paragraph...  I don't understand why:
-%\T\begin{ifhtml}
-%  \endpar\par
-%\T\end{ifhtml}
 \bfindexit{define-ks}%
 \codeindex{quiescence-event}%
 \begin{example}
@@ -4155,11 +3881,6 @@ definition:
 
 \subsection*{Step 4:  Run the application}
 
-% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
-% formatting of the following paragraph...  I don't understand why:
-%\T\begin{ifhtml}
-%  \endpar\par
-%\T\end{ifhtml}
 \bfindexit{start-control-shell}%
 Compile and load the \code{random-walk-ks} forms, and then start the Agenda Shell:
 %
@@ -4176,11 +3897,6 @@ Compile and load the \code{random-walk-ks} forms, and then start the Agenda Shel
   >
 \end{example}
 
-% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
-% formatting of the following paragraph...  I don't understand why:
-%\T\begin{ifhtml}
-%  \endpar\par
-%\T\end{ifhtml}
 \bfindexit{:dsbb}%
 It looks like something happened! (Again, because \code{add-linear-variance}
 is stochastic, your results will be similar but not identical.)  Let's look at
@@ -4211,11 +3927,6 @@ number of control-shell cycles.
 
 \subsection*{Step 5:  Where have we been?}
 
-% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
-% formatting of the following paragraph...  I don't understand why:
-%\T\begin{ifhtml}
-%  \endpar\par
-%\T\end{ifhtml}
 \bfindexit{map-instances-of-class}%
 It would be interesting to see where our random walk has taken us.  We could
 use GBBopen's \textbf{map-instances-of-class} iterator to print each of the
@@ -4252,11 +3963,6 @@ Unfortunately, the order that unit instances are supplied to the \code{print}
 function is not controllable.  Our walk would be much clearer if we printed
 the \code{location}s in time order.
 
-% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
-% formatting of the following paragraph...  I don't understand why:
-%\T\begin{ifhtml}
-%  \endpar\par
-%\T\end{ifhtml}
 \bfindexit{map-sorted-instances-of-class}%
 We might consider taking advantage of the instance names that GBBopen assigns
 to unit instances.  We could do something like the following:
@@ -4304,11 +4010,6 @@ happens to mirror the sequencing that we really want to display---the
 \code{time} value of the \code{location}s.  We should find a way to sequence
 \code{location} printing that relies on the \code{time} values directly.
 
-% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
-% formatting of the following paragraph...  I don't understand why:
-%\T\begin{ifhtml}
-%  \endpar\par
-%\T\end{ifhtml}
 \bfindex{map-sorted-instances-of-class}%
 GBBopen provides a variant of \textbf{map-instances-of-class}, called
 \textbf{map-sorted-instances-of-class}, that sorts the unit instances based on
@@ -4346,11 +4047,6 @@ suits our needs:
   >
 \end{example}
 
-% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
-% formatting of the following paragraph...  I don't understand why:
-%\T\begin{ifhtml}
-%  \endpar\par
-%\T\end{ifhtml}
 \bfindex{do-sorted-instances-of-class}%
 Using \textbf{map-sorted-instances-of-class} involves a sorting operation, so
 this approach still has some efficiency concerns for use in application code.
@@ -4361,11 +4057,6 @@ displaying the random walk in the next exercise.
 
 \subsection*{Step 6:  Run the application a few more times}
 
-% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
-% formatting of the following paragraph...  I don't understand why:
-%\T\begin{ifhtml}
-%  \endpar\par
-%\T\end{ifhtml}
 \bfindexit{start-control-shell}%
 If we run the application a few more times, we eventually encounter a case
 where we create the allotted 75 \code{location} unit instances without walking
@@ -4383,11 +4074,6 @@ off the \code{known-world}:
   :quiescence
 \end{example}
 
-% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
-% formatting of the following paragraph...  I don't understand why:
-%\T\begin{ifhtml}
-%  \endpar\par
-%\T\end{ifhtml}
 \bfindexit{map-sorted-instances-of-class}%
 Here is one such random walk:
 %
@@ -4871,11 +4557,6 @@ We can now follow the links to display the random walk:
 
 \subsection*{Step 4: Define a ``print walk'' KS}
 
-% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
-% formatting of the following paragraph...  I don't understand why:
-%\T\begin{ifhtml}
-%  \endpar\par
-%\T\end{ifhtml}
 \bfindexit{define-ks}%
 \codeindex{:stop}%
 \codeindex{quiescence-event}%

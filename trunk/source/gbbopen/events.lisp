@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/events.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon May 28 11:12:24 2007 *-*
+;;;; *-* Last-Edit: Wed Jun 13 13:24:19 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -1224,7 +1224,7 @@
 		    (when evfn-blk
 		      (evfn-describer evfn-blk fn)))))
 	     (let ((*%%slot-or-space-instance-name%%* 
-		    (instance-name space-instance)))
+		    (instance-name-of space-instance)))
 	       (if plus-subclasses
 		   (map-unit-classes 
 		    #'(lambda (unit-class plus-subclasses)
