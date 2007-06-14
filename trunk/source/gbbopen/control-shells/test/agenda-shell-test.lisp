@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/control-shells/test/agenda-shell-test.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat May 26 14:48:57 2007 *-*
+;;;; *-* Last-Edit: Thu Jun 14 11:25:37 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -163,7 +163,7 @@
   :execution-function 
   #'(lambda (ksa)
       (format t "~&;; Create-uc-one-instance-event ks executed~%")
-      (let ((trigger-instance (sole-trigger-instance ksa)))
+      (let ((trigger-instance (sole-trigger-instance-of ksa)))
 	(make-instance 'uc-two :uc-one trigger-instance))
       (values)))
 		   
