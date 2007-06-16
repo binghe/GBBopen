@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/preamble.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jun 13 10:12:34 2007 *-*
+;;;; *-* Last-Edit: Sat Jun 16 10:55:38 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -31,14 +31,8 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (use-package :portable-threads))
 
-;; Avoid conflicts with :ccl exports (the :ccl package contains CLOS, is
-;; nicknamed :clos by GBBopen, and later used by :gbbopen-user):
-#+(or digitool-mcl openmcl)
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (import '(ccl:false ccl:true)))
-
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (export '(*coerce-interval-rationals-to-floats* ; not documented
+  (export '(*coerce-interval-rationals-to-floats* ; not yet documented
 	    *warn-about-unusual-requests*
     	    draw-instance-on-bb-widget  ; used for bb-widget drawing
 	    gbbopen-graphics-started-p
@@ -70,8 +64,8 @@
 
 ;;; ---------------------------------------------------------------------------
 
-;;; Although a bit heavy-weight, we use one master lock to synchronize
-;;; all unit-instance & space-instance activities:
+;;; Although heavy-weight, we use one master lock to synchronize all
+;;; unit-instance & space-instance activities:
 
 (defvar *master-instance-lock*
     (make-process-lock :name "Master instance lock"))
@@ -82,7 +76,7 @@
   (format t "~%;;; ~72,,,'-<-~>
 ;;;  GBBopen ~a~@
 ;;;
-;;;  GBBopen is open-source (free) software
+;;;  GBBopen is open-source software
 ;;;  (see ~a)
 ;;;
 ;;; ~72,,,'-<-~>~2%"
