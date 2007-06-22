@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:AGENDA-SHELL; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/control-shells/agenda-shell.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Jun 14 11:23:55 2007 *-*
+;;;; *-* Last-Edit: Fri Jun 22 13:01:01 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -1202,6 +1202,7 @@
 	      (loop
 		;; yield at the start of each cycle to allow pending
 		;; processes, I/O, and events to progress:
+                #-thread-scheduling-not-available
 		(process-yield)
 		;; run the polling functions, if so requested:
 		(when (cs.run-polling-functions cs)
