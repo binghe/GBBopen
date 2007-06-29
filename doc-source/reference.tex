@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /home/gbbopen/current/doc-source/reference.tex *-*
-%% *-* Last-Edit: Thu Jun 14 10:48:15 2007; Edited-By: cork *-*
+%% *-* Last-Edit: Fri Jun 29 03:25:44 2007; Edited-By: cork *-*
 %% *-* Machine: ruby.corkills.org *-*
 
 %% Copyright (C) 2003-2007, Dan Corkill <corkill@GBBopen.org>
@@ -1363,7 +1363,7 @@ following effects (overriding the behavior of \var{options\/} supplied to
 required modules, creating new compilation directories if they do not
 exist already:
 \begin{example}
-  (compile-module :gbbopen :propagate :create-dirs)
+  (compile-module :gbbopen-core :propagate :create-dirs)
 \end{example}
 
 \end{functiondoc}
@@ -7187,9 +7187,9 @@ Show the first five \glref{KS~activation}s on the queue \code{pending-ksas}:
 \T\renewcommand{\headrulewidth}{0pt}
 \section{GBBopen Core}
 
-\index{module!:gbbopen@\code{:gbbopen}}%
-\index{:gbbopen@\code{:gbbopen} module}%
-The GBBopen Core module, \code{:gbbopen}, provides support for the
+\index{module!:gbbopen-core@\code{:gbbopen-core}}%
+\index{:gbbopen-core@\code{:gbbopen-core} module}%
+The GBBopen Core module, \code{:gbbopen-core}, provides support for the
 blackboard repository, unit and space classes and instances, and event
 signaling.
 
@@ -7210,7 +7210,7 @@ requests that are likely to be mistakes.
 
 \fnpackage \code{:gbbopen}
 
-\fnmodule \code{:gbbopen}
+\fnmodule \code{:gbbopen-core}
 
 \fnvaluetype A \glref{generalized~boolean}
 
@@ -7252,7 +7252,7 @@ nil
 
 \fnpackage \code{:gbbopen}
 
-\fnmodule \code{:gbbopen}
+\fnmodule \code{:gbbopen-core}
 
 \fnargs
 \begin{args}{unit-class-or-instance-specifier}
@@ -7342,7 +7342,7 @@ to be invoked when \code{create-instance-event} is signalled on a
 
 \fnpackage \code{:gbbopen}
 
-\fnmodule \code{:gbbopen}
+\fnmodule \code{:gbbopen-core}
 
 \fnargs
 \begin{args}{space-instance}
@@ -7405,7 +7405,7 @@ or
 
 \fnpackage \code{:gbbopen}
 
-\fnmodule \code{:gbbopen}
+\fnmodule \code{:gbbopen-core}
 
 \fnargs
 \begin{args}{space-instance}
@@ -7445,7 +7445,7 @@ classes that can have their \glref{unit~instance}s stored on the \code{(bb
 
 \fnpackage \code{:gbbopen}
 
-\fnmodule \code{:gbbopen}
+\fnmodule \code{:gbbopen-core}
 
 \fnargs
 \begin{args}{silent}
@@ -7538,7 +7538,7 @@ t
 
 \fnpackage \code{:gbbopen}
 
-\fnmodule \code{:gbbopen}
+\fnmodule \code{:gbbopen-core}
 
 \fnargs
 \begin{args}{unit-class-or-name}
@@ -7584,7 +7584,7 @@ Return the count of all \glref{space~instance}:
 
 \fnpackage \code{:gbbopen}
 
-\fnmodule \code{:gbbopen}
+\fnmodule \code{:gbbopen-core}
 
 \fnargs
 \begin{args}{space-instances}
@@ -7648,7 +7648,7 @@ or
 
 \fnpackage \code{:gbbopen}
 
-\fnmodule \code{:gbbopen}
+\fnmodule \code{:gbbopen-core}
 
 \fnargs
 \begin{args}{event-class-name}
@@ -7800,7 +7800,7 @@ the \glref{event} that is being signaled.
 
 \fnpackage \code{:gbbopen}
 
-\fnmodule \code{:gbbopen}
+\fnmodule \code{:gbbopen-core}
 
 \fnargs
 \begin{args}{space-class-name}
@@ -8019,7 +8019,7 @@ one \glref{instance} of the \code{space-instance-with-lock}
 
 \fnpackage \code{:gbbopen}
 
-\fnmodule \code{:gbbopen}
+\fnmodule \code{:gbbopen-core}
 
 \fnargs
 \begin{args}{superclass-name}
@@ -8232,7 +8232,7 @@ default initializtion value associated with the metaclass is used.
 
 \fnpackage \code{:gbbopen}
 
-\fnmodule \code{:gbbopen}
+\fnmodule \code{:gbbopen-core}
 
 \fnargs
 \begin{args}{unit-instance}
@@ -8289,7 +8289,7 @@ Create, then delete, a \code{hyp} \glref{unit~instance}:
 
 \fnpackage \code{:gbbopen}
 
-\fnmodule \code{:gbbopen}
+\fnmodule \code{:gbbopen-core}
 
 \fnevents \codeindexit{delete-instance-event}%
 \codeindexit{instance-deleted-event}%
@@ -8345,7 +8345,7 @@ Delete every space instance:
 
 \fnpackage \code{:gbbopen}
 
-\fnmodule \code{:gbbopen}
+\fnmodule \code{:gbbopen-core}
 
 \fnargs
 \begin{args}{space-instance}
@@ -8415,7 +8415,7 @@ do not reside on any \glref{space~instance}) is also printed.
 
 \fnpackage \code{:gbbopen}
 
-\fnmodule \code{:gbbopen}
+\fnmodule \code{:gbbopen-core}
 
 \fndescription
 \bfindexit{*standard-output*}%
@@ -8463,7 +8463,7 @@ standard-space-instance               3
 
 \fnpackage \code{:gbbopen}
 
-\fnmodule \code{:gbbopen}
+\fnmodule \code{:gbbopen-core}
 
 \fnargs
 \begin{args}{unit-class-or-instance-specifier}
@@ -8538,7 +8538,7 @@ instance-event
   {\code{(}\var{instance\/} \code{standard-unit-instance)}}
 \fnpackage \code{:gbbopen}
 
-\fnmodule \code{:gbbopen}
+\fnmodule \code{:gbbopen-core}
 
 \fnargs
 \begin{args}{instance}
@@ -8597,7 +8597,7 @@ Hyp #<hyp 119>
 
 \fnpackage \code{:gbbopen}
 
-\fnmodule \code{:gbbopen}
+\fnmodule \code{:gbbopen-core}
 
 \fnargs
 \begin{args}{space-instance}
@@ -8649,7 +8649,7 @@ Print information about a \glref{unit~class}.
 
 \fnpackage \code{:gbbopen}
 
-\fnmodule \code{:gbbopen}
+\fnmodule \code{:gbbopen-core}
 
 \fnargs
 \begin{args}{unit-class-name}
@@ -8769,7 +8769,7 @@ Standard-unit-class #<standard-unit-class hyp>
 
 \fnpackage \code{:gbbopen}
 
-\fnmodule \code{:gbbopen}
+\fnmodule \code{:gbbopen-core}
 
 \fnargs
 \begin{args}{unit-class-or-instance-specifier}
@@ -8832,7 +8832,7 @@ Disable all event printing:
 
 \fnpackage \code{:gbbopen}
 
-\fnmodule \code{:gbbopen}
+\fnmodule \code{:gbbopen-core}
 
 \fnargs
 \begin{args}{unit-classes-specifier}
@@ -8916,7 +8916,7 @@ optionally selected by a \glref{retrieval~pattern}.
 
 \fnpackage \code{:gbbopen}
 
-\fnmodule \code{:gbbopen}
+\fnmodule \code{:gbbopen-core}
 
 \fnargs
 \begin{args}{unit-classes-specifier}
@@ -9022,7 +9022,7 @@ have a belief value of less than 0.5:
 
 \fnpackage \code{:gbbopen}
 
-\fnmodule \code{:gbbopen}
+\fnmodule \code{:gbbopen-core}
 
 \fnargs
 \begin{args}{unit-classes-specifier}
@@ -9074,7 +9074,7 @@ Print a list of all \code{hyp} instance names, in ascending order:
 
 \fnpackage \code{:gbbopen}
 
-\fnmodule \code{:gbbopen}
+\fnmodule \code{:gbbopen-core}
 
 \fnargs
 \begin{args}{space-instance-regexp}
@@ -9123,7 +9123,7 @@ Remove all \code{hyp} \glref{unit~instance}s from
 
 \fnpackage \code{:gbbopen}
 
-\fnmodule \code{:gbbopen}
+\fnmodule \code{:gbbopen-core}
 
 \fndescription The class \textbf{effective-link-definition} is the default
 effective link-definition \glref{metaobject~class} of \glref{unit~class}es
@@ -9147,7 +9147,7 @@ created by \textbf{\entlinknoex{define-unit-class}}.
 
 \fnpackage \code{:gbbopen}
 
-\fnmodule \code{:gbbopen}
+\fnmodule \code{:gbbopen-core}
 
 \fndescription The class \textbf{effective-nonlink-slot-definition} is the
 default effective nonlink-slot-definition \glref{metaobject~class} of
@@ -9180,7 +9180,7 @@ default effective nonlink-slot-definition \glref{metaobject~class} of
 
 \fnpackage \code{:gbbopen}
 
-\fnmodule \code{:gbbopen}
+\fnmodule \code{:gbbopen-core}
 
 \fnargs
 \begin{args}{unit-class-or-instance-specifier}
@@ -9242,7 +9242,7 @@ evaluating them to \code{*trace-output*}.
 
 \fnpackage \code{:gbbopen}
 
-\fnmodule \code{:gbbopen}
+\fnmodule \code{:gbbopen-core}
 
 \fnargs
 \begin{args}{results}
@@ -9282,7 +9282,7 @@ to be invoked when \code{create-instance-event} is signalled on a
 
 \fnpackage \code{:gbbopen}
 
-\fnmodule \code{:gbbopen}
+\fnmodule \code{:gbbopen-core}
 
 \fnargs
 \begin{args}{interval}
@@ -9336,7 +9336,7 @@ greater than one-half of its width will always result in a zero-width
 
 \fnpackage \code{:gbbopen}
 
-\fnmodule \code{:gbbopen}
+\fnmodule \code{:gbbopen-core}
 
 \fnargs
 \begin{args}{unit-instances}
@@ -9403,7 +9403,7 @@ and \code{=\$\$\$} and \code{within\&}, \code{within\$\&}, \code{within\$},
 
 \fnpackage \code{:gbbopen}
 
-\fnmodule \code{:gbbopen}
+\fnmodule \code{:gbbopen-core}
 
 \fnargs
 \begin{args}{unit-classes-specifier}
@@ -9460,7 +9460,7 @@ Find the \code{hyp} \glref{unit~instance} 119:
 
 \fnpackage \code{:gbbopen}
 
-\fnmodule \code{:gbbopen}
+\fnmodule \code{:gbbopen-core}
 
 \fnargs
 \begin{args}{unit-class-specifier}
@@ -9563,7 +9563,7 @@ specified \glref{unit~class}es.
 
 \fnpackage \code{:gbbopen}
 
-\fnmodule \code{:gbbopen}
+\fnmodule \code{:gbbopen-core}
 
 \fnargs
 \begin{args}{unit-classes-specifier}
@@ -9621,7 +9621,7 @@ on the list created by \textbf{find-instances-of-class}.
 
 \fnpackage \code{:gbbopen}
 
-\fnmodule \code{:gbbopen}
+\fnmodule \code{:gbbopen-core}
 
 \fnargs
 \begin{args}{space-instance-path}
@@ -9657,7 +9657,7 @@ Find the \glref{space~instance} with path \code{(bb hyps)}:
 
 \fnpackage \code{:gbbopen}
 
-\fnmodule \code{:gbbopen}
+\fnmodule \code{:gbbopen-core}
 
 \fnargs
 \begin{args}{space-instance-regexp}
@@ -9714,7 +9714,7 @@ Return all the \glref{space~instance}s \code{(bb)} and below:
 
 \fnpackage \code{:gbbopen}
 
-\fnmodule \code{:gbbopen}
+\fnmodule \code{:gbbopen-core}
 
 \fndescription The class \textbf{gbbopen-effective-slot-definition} is the
 parent \glref{class} of \textbf{\entlinknoex{effective-link-definition}} and
@@ -9740,7 +9740,7 @@ parent \glref{class} of \textbf{\entlinknoex{effective-link-definition}} and
 
 \fnpackage \code{:gbbopen}
 
-\fnmodule \code{:gbbopen}
+\fnmodule \code{:gbbopen-core}
 
 \fnreturns The GBBopen implementation-version string
 
@@ -9764,7 +9764,7 @@ Return the GBBopen implementation-version string:
 
 \fnpackage \code{:gbbopen}
 
-\fnmodule \code{:gbbopen}
+\fnmodule \code{:gbbopen-core}
 
 \fnargs
 \begin{args}{unit-instance}
@@ -9802,7 +9802,7 @@ t
 
 \fnpackage \code{:gbbopen}
 
-\fnmodule \code{:gbbopen}
+\fnmodule \code{:gbbopen-core}
 
 \fnargs
 \begin{args}{dimension-name}
@@ -9869,7 +9869,7 @@ Return the name of a \glref{unit~instance}.
 
 \fnpackage \code{:gbbopen}
 
-\fnmodule \code{:gbbopen}
+\fnmodule \code{:gbbopen-core}
 
 \fnargs
 \begin{args}{instance}
@@ -9917,7 +9917,7 @@ Change the name of \code{hyp} \code{180} to \code{"bogus-180"}:
 
 \fnpackage \code{:gbbopen}
 
-\fnmodule \code{:gbbopen}
+\fnmodule \code{:gbbopen-core}
 
 \fnargs
 \begin{args}{interval}
@@ -9960,7 +9960,7 @@ Change the name of \code{hyp} \code{180} to \code{"bogus-180"}:
 
 \fnpackage \code{:gbbopen}
 
-\fnmodule \code{:gbbopen}
+\fnmodule \code{:gbbopen-core}
 
 \fnargs
 \begin{args}{interval}
@@ -10002,7 +10002,7 @@ or more \glref{unit~instance}s.
 
 \fnpackage \code{:gbbopen}
 
-\fnmodule \code{:gbbopen}
+\fnmodule \code{:gbbopen-core}
 
 \fnargs
 \begin{args}{unit-instance-or-instances}
@@ -10061,7 +10061,7 @@ A \code{link-event} is signaled for:
 
 \fnpackage \code{:gbbopen}
 
-\fnmodule \code{:gbbopen}
+\fnmodule \code{:gbbopen-core}
 
 \fnargs
 \begin{args}{unit-instance-or-instances}
@@ -10144,7 +10144,7 @@ slightly faster.
 
 \fnpackage \code{:gbbopen}
 
-\fnmodule \code{:gbbopen}
+\fnmodule \code{:gbbopen-core}
 
 \fnargs
 \begin{args}{initargs}
@@ -10191,7 +10191,7 @@ Return the names of the link slots of the \code{hyp} \glref{unit~class}:
 
 \fnpackage \code{:gbbopen}
 
-\fnmodule \code{:gbbopen}
+\fnmodule \code{:gbbopen-core}
 
 \fnargs
 \begin{args}{initargs}
@@ -10285,7 +10285,7 @@ convenient shorthand for creating \glref{space~instance}s.
 
 \fnpackage \code{:gbbopen}
 
-\fnmodule \code{:gbbopen}
+\fnmodule \code{:gbbopen-core}
 
 \fnargs
 \begin{args}{allowed-unit-classes}
@@ -10424,7 +10424,7 @@ specified \glref{unit~class}es.
 
 \fnpackage \code{:gbbopen}
 
-\fnmodule \code{:gbbopen}
+\fnmodule \code{:gbbopen-core}
 
 \fnargs
 \begin{args}{unit-classes-specifier}
@@ -10501,7 +10501,7 @@ deleting all \glref{space~instance}s without violating this rule.
 
 \fnpackage \code{:gbbopen}
 
-\fnmodule \code{:gbbopen}
+\fnmodule \code{:gbbopen-core}
 
 \fnargs
 \begin{args}{unit-classes-specifier}
@@ -10606,7 +10606,7 @@ of the specified \glref{unit~class}es, in sorted order.
 
 \fnpackage \code{:gbbopen}
 
-\fnmodule \code{:gbbopen}
+\fnmodule \code{:gbbopen-core}
 
 \fnargs
 \begin{args}{unit-classes-specifier}
@@ -10654,7 +10654,7 @@ Print a list of all \code{hyp} instance names, in ascending order:
 
 \fnpackage \code{:gbbopen}
 
-\fnmodule \code{:gbbopen}
+\fnmodule \code{:gbbopen-core}
 
 \fnargs
 \begin{args}{space-instance-regexp}
@@ -10714,7 +10714,7 @@ Remove all \code{hyp} \glref{unit~instance}s from
 
 \fnpackage \code{:gbbopen}
 
-\fnmodule \code{:gbbopen}
+\fnmodule \code{:gbbopen-core}
 
 \fnargs
 \begin{args}{unit-class-or-instance-specifier}
@@ -10780,7 +10780,7 @@ its subclasses:
 
 \fnpackage \code{:gbbopen}
 
-\fnmodule \code{:gbbopen}
+\fnmodule \code{:gbbopen-core}
 
 \fnargs
 \begin{args}{space-instance}
@@ -10851,7 +10851,7 @@ to be invoked when \code{create-instance-event} is signalled on a
 
 \fnpackage \code{:gbbopen}
 
-\fnmodule \code{:gbbopen}
+\fnmodule \code{:gbbopen-core}
 
 \fnargs
 \begin{args}{space-instance}
@@ -10908,7 +10908,7 @@ Display the retrieval statistics collected for
 
 \fnpackage \code{:gbbopen}
 
-\fnmodule \code{:gbbopen}
+\fnmodule \code{:gbbopen-core}
 
 \fnargs
 \begin{args}{reset}
@@ -10973,7 +10973,7 @@ and more.
 
 \fnpackage \code{:gbbopen}
 
-\fnmodule \code{:gbbopen}
+\fnmodule \code{:gbbopen-core}
 
 \fnargs
 \begin{args}{retain-event-functions}
@@ -11070,7 +11070,7 @@ behavior in almost every reset situation.
 
 \fnpackage \code{:gbbopen}
 
-\fnmodule \code{:gbbopen}
+\fnmodule \code{:gbbopen-core}
 
 \fnargs
 \begin{args}{unit-class}
@@ -11114,7 +11114,7 @@ that class exist.
 
 \fnpackage \code{:gbbopen}
 
-\fnmodule \code{:gbbopen}
+\fnmodule \code{:gbbopen-core}
 
 \fnargs
 \begin{args}{unit-class-or-instance-specifier}
@@ -11176,7 +11176,7 @@ Resuming event printing does not enable event printing that is disabled.
 
 \fnpackage \code{:gbbopen}
 
-\fnmodule \code{:gbbopen}
+\fnmodule \code{:gbbopen-core}
 
 \fnargs
 \begin{args}{interval}
@@ -11221,7 +11221,7 @@ newly allocated, shifted \var{new-interval}.
 
 \fnpackage \code{:gbbopen}
 
-\fnmodule \code{:gbbopen}
+\fnmodule \code{:gbbopen-core}
 
 \fnargs
 \begin{args}{initargs}
@@ -11285,7 +11285,7 @@ are required for specific event metaclasses:
 
 \fnpackage \code{:gbbopen}
 
-\fnmodule \code{:gbbopen}
+\fnmodule \code{:gbbopen-core}
 
 \fnargs
 \begin{args}{space-instance}
@@ -11330,7 +11330,7 @@ Return the child space instances  of the \code{(bb)} \glref{space~instance}:
 
 \fnpackage \code{:gbbopen}
 
-\fnmodule \code{:gbbopen}
+\fnmodule \code{:gbbopen-core}
 
 \fnargs
 \begin{args}{space-instance}
@@ -11372,7 +11372,7 @@ Return the \glref{dimension}s of the \code{(bb hyps)} \glref{space~instance}:
 
 \fnpackage \code{:gbbopen}
 
-\fnmodule \code{:gbbopen}
+\fnmodule \code{:gbbopen-core}
 
 \fnargs
 \begin{args}{space-instance}
@@ -11435,7 +11435,7 @@ Return the siblings of the \code{(bb)} \glref{space~instance}:
 
 \fnpackage \code{:gbbopen}
 
-\fnmodule \code{:gbbopen}
+\fnmodule \code{:gbbopen-core}
 
 \fnargs
 \begin{args}{unit-instance}
@@ -11467,7 +11467,7 @@ destructively altered.
 
 \fnpackage \code{:gbbopen}
 
-\fnmodule \code{:gbbopen}
+\fnmodule \code{:gbbopen-core}
 
 \fndescription 
 \bfindexit{define-event-class}%
@@ -11492,7 +11492,7 @@ by \textbf{\entlinknoex{define-event-class}}.  It is a subclass of
 
 \fnpackage \code{:gbbopen}
 
-\fnmodule \code{:gbbopen}
+\fnmodule \code{:gbbopen-core}
 
 \fndescription 
 \bfindexit{standard-event-class}%
@@ -11504,7 +11504,7 @@ of \textbf{\glref{standard-gbbopen-instance}}.
 
 \index{event classes, graph of}%
 Here are the event subclasses of \textbf{standard-event-instance}
-that are defined in the \code{:gbbopen} 
+that are defined in the \code{:gbbopen-core} 
 module:
 
 \T\begin{ifhtml}
@@ -11524,7 +11524,7 @@ that cannot be signalled.
 \W\xml{p}
 
 Here are the defined event subclasses when both the
-\code{:gbbopen} and \code{:agenda-shell} modules have been loaded:
+\code{:gbbopen-core} and \code{:agenda-shell} modules have been loaded:
 
 \T\begin{ifhtml}
 \xml{br}
@@ -11558,7 +11558,7 @@ rectangles are abstract classes that cannot be signalled.
 
 \fnpackage \code{:gbbopen}
 
-\fnmodule \code{:gbbopen}
+\fnmodule \code{:gbbopen-core}
 
 \fndescription 
 \bfindexit{define-space-class}%
@@ -11584,7 +11584,7 @@ It is a subclass of \textbf{\entlinknoex{standard-unit-class}}.
 
 \fnpackage \code{:gbbopen}
 
-\fnmodule \code{:gbbopen}
+\fnmodule \code{:gbbopen-core}
 
 \fndescription \bfindexit{make-space-instance}%
 \bfindexit{standard-unit-instance}%
@@ -11611,7 +11611,7 @@ The class \textbf{standard-space-instance} is the default \glref{class} of
 
 \fnpackage \code{:gbbopen}
 
-\fnmodule \code{:gbbopen}
+\fnmodule \code{:gbbopen-core}
 
 \fndescription 
 \bfindexit{define-unit-class}%
@@ -11637,7 +11637,7 @@ by \textbf{\entlinknoex{define-unit-class}}.  It is a subclass of
 
 \fnpackage \code{:gbbopen}
 
-\fnmodule \code{:gbbopen}
+\fnmodule \code{:gbbopen-core}
 
 \fndescription 
 \bfindexit{standard-unit-class}%
@@ -11680,7 +11680,7 @@ A \glref{space~instance} is also a \glref{unit~instance}, so
 
 \fnpackage \code{:gbbopen}
 
-\fnmodule \code{:gbbopen}
+\fnmodule \code{:gbbopen-core}
 
 \fnargs
 \begin{args}{unit-class-or-instance-specifier}
@@ -11756,7 +11756,7 @@ of a \glref{unit~class}.
 
 \fnpackage \code{:gbbopen}
 
-\fnmodule \code{:gbbopen}
+\fnmodule \code{:gbbopen-core}
 
 \fnargs
 \begin{args}{unit-classes-specifier}
@@ -11796,7 +11796,7 @@ or more \glref{unit~instance}s.
 
 \fnpackage \code{:gbbopen}
 
-\fnmodule \code{:gbbopen}
+\fnmodule \code{:gbbopen-core}
 
 \fnargs
 \begin{args}{unit-instance-or-instances}
@@ -11849,7 +11849,7 @@ An \code{unlink-event} is signaled for:
 
 \fnpackage \code{:gbbopen}
 
-\fnmodule \code{:gbbopen}
+\fnmodule \code{:gbbopen-core}
 
 \fnargs
 \begin{args}{link-slot-place}
@@ -11903,7 +11903,7 @@ Remove all supporting hypothesis \glref{link}s from the
 
 \fnpackage \code{:gbbopen}
 
-\fnmodule \code{:gbbopen}
+\fnmodule \code{:gbbopen-core}
 
 \fnargs
 \begin{args}{dimension-name}
@@ -11963,7 +11963,7 @@ Notify GBBopen that some dimension values of \code{hyp} might be changed:
 
 \fnpackage \code{:gbbopen}
 
-\fnmodule \code{:gbbopen}
+\fnmodule \code{:gbbopen-core}
 
 \fnargs
 \begin{args}{options}
@@ -12010,7 +12010,7 @@ Create a \code{hyp} without signaling any events:
 
 \fnpackage \code{:gbbopen}
 
-\fnmodule \code{:gbbopen}
+\fnmodule \code{:gbbopen-core}
 
 \fnargs
 \begin{args}{options}
@@ -12067,7 +12067,7 @@ Record and optionally display retrieval statistics for
 
 \fnpackage \code{:gbbopen}
 
-\fnmodule \code{:gbbopen}
+\fnmodule \code{:gbbopen-core}
 
 \fnargs
 \begin{args}{initialize}
@@ -12125,7 +12125,7 @@ Disable the collecting of retrieval statistics while executing \var{forms}.
 
 \fnpackage \code{:gbbopen}
 
-\fnmodule \code{:gbbopen}
+\fnmodule \code{:gbbopen-core}
 
 \fnargs
 \begin{args}{forms}
