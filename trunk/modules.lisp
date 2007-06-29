@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/modules.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jun  6 15:00:36 2007 *-*
+;;;; *-* Last-Edit: Fri Jun 29 03:14:22 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -19,19 +19,20 @@
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
-;;;  07-17-02 File Created.  (Corkill)
-;;;  03-07-04 Added :queue module.  (Corkill)
-;;;  03-21-04 Added :agenda-shell-test module.  (Corkill)
-;;;  06-17-05 Added :os-interface module.  (Corkill)
-;;;  08-03-05 Added :sockets module.  (Corkill)
-;;;  08-20-05 Added :agenda-shell-user module.  (Corkill)
-;;;  08-21-05 Added :multiprocessing-test module.  (Corkill)
-;;;  10-08-05 Added :tutorial-example module.  (Corkill)
+;;;  07-17-02 File Created. (Corkill)
+;;;  03-07-04 Added :queue module. (Corkill)
+;;;  03-21-04 Added :agenda-shell-test module. (Corkill)
+;;;  06-17-05 Added :os-interface module. (Corkill)
+;;;  08-03-05 Added :sockets module. (Corkill)
+;;;  08-20-05 Added :agenda-shell-user module. (Corkill)
+;;;  08-21-05 Added :multiprocessing-test module. (Corkill)
+;;;  10-08-05 Added :tutorial-example module. (Corkill)
 ;;;  01-05-06 Changed :sockets module to :portable-sockets to be consistent
 ;;;           with the :portable-threads module renaming.  (Corkill)
-;;;  03-31-06 Added :multinode module.  (Corkill)
-;;;  04-06-06 Added gbbopen-instance class.  (Corkill)
-;;;  11-13-06 Added :abort-ks-execution-example module.  (Corkill)
+;;;  03-31-06 Added :multinode module. (Corkill)
+;;;  04-06-06 Added gbbopen-instance class. (Corkill)
+;;;  11-13-06 Added :abort-ks-execution-example module. (Corkill)
+;;;  06-28-07 Renamed :gbbopen module to more accurate :gbbopen-core. (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -85,7 +86,7 @@
 
 (define-relative-directory :gbbopen :gbbopen-root "gbbopen")
 
-(define-module :gbbopen
+(define-module :gbbopen-core
   (:requires :portable-threads :gbbopen-tools)
   (:directory :gbbopen)
   (:files "preamble"
@@ -111,7 +112,7 @@
           "epilogue"))
 
 (define-module :gbbopen-user
-  (:requires :gbbopen :os-interface)
+  (:requires :gbbopen-core :os-interface)
   (:directory :gbbopen)
   (:files "gbbopen-user"))
 
@@ -119,7 +120,7 @@
 ;;;  Agenda Shell Modules
 
 (define-module :agenda-shell
-  (:requires :gbbopen :queue :polling-functions)
+  (:requires :gbbopen-core :queue :polling-functions)
   (:directory :gbbopen "control-shells")
   (:files "agenda-shell-metaclasses"
 	  ("agenda-shell-metering" :forces-recompile)
@@ -134,12 +135,12 @@
 ;;;  Extensions
 
 (define-module :multinode 
-  (:requires :gbbopen)
+  (:requires :gbbopen-core)
   (:directory :gbbopen "extensions")
   (:files "multinode"))
 
 (define-module :web-inspector 
-  (:requires :portable-sockets :gbbopen)
+  (:requires :portable-sockets :gbbopen-core)
   (:directory :gbbopen "extensions")
   (:files "web-inspector"))
 
@@ -147,12 +148,19 @@
 ;;;  Graphics Modules (very preliminary)
 
 (define-module :gbbopen-graphics
-  (:requires :gbbopen :os-interface)
+  (:requires :gbbopen-core :os-interface)
   (:directory :gbbopen "graphics")
   (:files "gbbopen-tk-graphics"))
 
 ;;; ===========================================================================
 ;;;  Test Modules
+
+(define-module :test-harness
+  (:requires :gbbopen-tools)
+  (:directory :gbbopen-tools "test")
+  (:files ("test-harness")))
+
+;;; ---------------------------------------------------------------------------
 
 (define-module :gbbopen-test
   (:requires :gbbopen-user)

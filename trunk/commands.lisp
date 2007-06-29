@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/commands.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Nov 13 10:48:19 2006 *-*
+;;;; *-* Last-Edit: Fri Jun 29 03:06:39 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -14,14 +14,14 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2004-2006, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2004-2007, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; Loaded by gbbopen-init.lisp.  After loading, handy top-level-loop keyword
-;;; commands, such as :gbbopen-tools, :gbbopen, :gbbopen-user, :gbbopen-test,
-;;; :agenda-shell-user, and :agenda-shell-test are available on Allegro,
-;;; CLISP, CMUCL, SCL, ECL, Lispworks, OpenMCL, and SBCL.  GBBopen keyword
-;;; commands are also supported in the SLIME REPL. 
+;;; commands, such as :gbbopen-tools, :gbbopen-core, :gbbopen-user,
+;;; :gbbopen-test, :agenda-shell-user, and :agenda-shell-test are available on
+;;; Allegro, CLISP, CMUCL, SCL, ECL, Lispworks, OpenMCL, and SBCL.  GBBopen
+;;; keyword commands are also supported in the SLIME REPL.
 ;;;
 ;;; In many CL implementations, commands with arguments can be specified in
 ;;; either list or spread notation.  However, OpenMCL and the SLIME interface
@@ -35,9 +35,9 @@
 ;;; will compile and load GBBopen and perform a basic trip test.
 ;;;
 ;;; On all CL implementations, functions invoking each top-level command, such
-;;; as gbbopen-tools, gbbopen, gbbopen-user, gbbopen-test, agenda-shell-user
-;;; and agenda-shell-test, are defined in the common-lisp-user package.  For
-;;; example:
+;;; as gbbopen-tools, gbbopen-core, gbbopen-user, gbbopen-test,
+;;; agenda-shell-user and agenda-shell-test, are defined in the
+;;; common-lisp-user package.  For example:
 ;;;
 ;;;    > (gbbopen-test :create-dirs)
 ;;;
@@ -95,9 +95,9 @@
 ;;; ---------------------------------------------------------------------------
 ;;;  GBBopen Core
 
-(define-tll-command :gbbopen (&rest options)
+(define-tll-command :gbbopen-core (&rest options)
   "Compile And Load GBBopen Module"
-  (startup-module :gbbopen options :gbbopen))
+  (startup-module :gbbopen-core options :gbbopen))
 
 (define-tll-command :gbbopen-user (&rest options)
   "Compile And Load GBBopen-User Module"
