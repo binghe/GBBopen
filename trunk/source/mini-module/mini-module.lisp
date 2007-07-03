@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/mini-module/mini-module.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jun  6 13:18:43 2007 *-*
+;;;; *-* Last-Edit: Tue Jul  3 19:27:47 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -104,12 +104,19 @@
 	    common-lisp-user::*mini-module-compile-verbose*
 	    common-lisp-user::*mini-module-load-verbose*)))
 
-;; Not required; default is not to create missing directories automatically
-;; (some CL implementations generate redefinition warnings when performing a
-;; compile/load/compile bootstrap sequence, so we don't use defvar here):
+;;; Ssome CL implementations generate redefinition warnings when performing a
+;;; compile/load/compile bootstrap sequence, so we don't use defvar's here:
 (declaim (special *automatically-create-missing-directories*))
 (unless (boundp '*automatically-create-missing-directories*)
   (setf *automatically-create-missing-directories* nil))
+
+(declaim (special *mini-module-compile-verbose*))
+(unless (boundp '*mini-module-compile-verbose*)
+  (setf *mini-module-compile-verbose* nil))
+
+(declaim (special *mini-module-load-verbose*))
+(unless (boundp '*mini-module-load-verbose*)
+  (setf *mini-module-load-verbose* nil))
 
 ;;; ===========================================================================
 ;;;  Implementation-Specific Package & Feature Adjustments
@@ -137,6 +144,7 @@
             list-modules                ; not yet documented
 	    load-module
 	    load-module-file
+            mini-module-implementation-version ; not documented
 	    module-directories		; not yet documented
 	    module-loaded-p
 	    need-to-port		; not documented
@@ -147,6 +155,28 @@
 	    undefine-directory          ; not yet documented
 	    undefine-module             ; not yet documented
             )))
+
+;;; ===========================================================================
+
+(defun mini-module-implementation-version ()
+  "1.0")
+
+;;; Added to *features* at the end of this file:
+(defparameter *mini-module-version-keyword* :mini-module-1.0)
+
+;;; ---------------------------------------------------------------------------
+
+(defun print-mini-module-herald ()
+  (format t "~%;;; ~72,,,'-<-~>
+;;;  Mini-Module System ~a~@
+;;;
+;;;    Developed and supported by the GBBopen Project (http:/GBBopen.org/)
+;;;    (See http://GBBopen.org/downloads/LICENSE for license details.)
+;;; ~72,,,'-<-~>~2%"
+          (mini-module-implementation-version)))
+  
+(eval-when (:load-toplevel)
+  (print-mini-module-herald))
 
 ;;; ===========================================================================
 ;;;  Dotted-conc-name
@@ -617,17 +647,6 @@
 (defun undefine-module (name)
   (get-module name)                     ; check that it is defined.
   (remhash name *mm-modules*))
-
-;;; ---------------------------------------------------------------------------
-
-(defun unload-modules ()
-  ;; Used by :compile-gbbopen module to indicate no files have been loaded:
-  (maphash 
-   #'(lambda (name module)
-       (declare (ignore name))
-       (setf (mm-module.load-completed? module) nil)
-       (setf (mm-module.files-loaded module) nil))
-   *mm-modules*))
 
 ;;; ===========================================================================
 ;;;   Module compile/load functions
@@ -1213,9 +1232,10 @@
   (do-mini-module-tll-command :cm #'compile-module options '*last-cm-options*))
 
 ;;; ===========================================================================
-;;;   Mini-module is fully loaded
+;;;   Mini-module system is fully loaded:
 
 (pushnew :mini-module *features*)
+(pushnew *mini-module-version-keyword* *features*)
 
 ;;; ===========================================================================
 ;;;				  End of File
