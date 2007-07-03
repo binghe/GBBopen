@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/unstructured-storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Jun 12 13:19:58 2007 *-*
+;;;; *-* Last-Edit: Tue Jul  3 10:21:05 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -81,13 +81,12 @@
 
 (defmethod map-marked-instances-on-storage (fn (storage unstructured-storage)
                                             disjunctive-dimensional-extents
-					    mark-index verbose)
+                                            verbose)
   (do-unstructured-map-actions 
       #'(lambda (key instance)
 	  (declare (ignore key))
-	  (let ((marks (standard-unit-instance.%%marks%% instance)))
-	    (when (flag-set-p marks mark-index)
-	      (funcall (the function fn) instance marks))))
+          (when (mbr-instance-mark-set-p instance)
+            (funcall (the function fn) instance)))
     storage disjunctive-dimensional-extents verbose))
 
 ;;; ---------------------------------------------------------------------------

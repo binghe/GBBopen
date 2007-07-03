@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jun 13 13:29:57 2007 *-*
+;;;; *-* Last-Edit: Tue Jul  3 10:19:42 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -306,13 +306,9 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun set-instance-marks (storage disjunctive-dimensional-extents mark-index)
-  (map-all-instances-on-storage 
-   #'(lambda (instance)
-       (setf (standard-unit-instance.%%marks%% instance)
-             (set-flag (standard-unit-instance.%%marks%% instance)
-		       mark-index)))
-   storage disjunctive-dimensional-extents nil))
+(defun set-all-mbr-instance-marks (storage disjunctive-dimensional-extents)
+  (map-all-instances-on-storage #'set-mbr-instance-mark
+                                storage disjunctive-dimensional-extents nil))
 
 ;;; ---------------------------------------------------------------------------
 

@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jun 13 13:28:31 2007 *-*
+;;;; *-* Last-Edit: Tue Jul  3 10:29:13 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -34,7 +34,9 @@
 ;;;           instance-space-instances will be deprecated soon.  (Corkill)
 ;;;  09-06-06 Completed change-class support.  (Corkill)
 ;;;  03-09-07 Added find-instances-of-class (please don't abuse!).  (Corkill)
-;;;  09-09-14 Removed instance-name and instance-space-instances.  (Corkill)
+;;;  06-14-07 Removed instance-name and instance-space-instances.  (Corkill)
+;;;  07-03-07 Reworked instance-marks and locking to use only a single
+;;;           mark-based-retrieval mark.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -76,7 +78,6 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (define-unit-class standard-unit-instance (%%gbbopen-unit-instance%%)
     ((instance-name :accessor instance-name-of)
-     ;; specific mark bits are allocated dynamically:
      (%%marks%% :initform 0 :type fixnum)
      ;; %%space-instances%% slot also indicates deleted unit instances
      ;; (via :deleted value):
@@ -96,6 +97,8 @@
 ;;; ---------------------------------------------------------------------------
 
 (defmethod hidden-nonlink-slot-names ((instance standard-unit-instance))
+  ;; Returns a list of nonlink-slot-names that should not be shown
+  ;; by describe-instance.
   #+ecl (declare (ignore instance))
   '(%%marks%% %%space-instances%% 
     ;; not really hidden, but we treat this slot specially in describes:
@@ -625,46 +628,30 @@
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Instance Marks (used by mark-based-retrieval)
+;;;
+;;;  For now, we just have one mark bit, so we don't use bit operations
+;;;  (but this can be easly changed to accomodate other marks when needed).
 
-(let ((mark-lock (make-process-lock :name "Instance Mark"))
-      #-thread-condition-variables-not-available
-      (mark-cond-var (make-cond-var "Instance Mark"))      
-      #+thread-condition-variables-not-available
-      (mark-gate (make-gate t))
-      (marks 0))
-  
-  (defun %get-ui-mark ()
-    (loop
-      (with-process-lock (mark-lock)
-        (dotimes (i (load-time-value 
-                     (1+ (integer-length most-positive-fixnum))))
-          (unless (logbitp i marks) 
-            (setf marks (set-flag marks i))
-            (return-from %get-ui-mark i)))
-        #-thread-condition-variables-not-available
-        (cond-var-wait mark-cond-var mark-lock "Waiting for UI mark")
-        #+thread-condition-variables-not-available
-        (close-gate mark-gate))
-      #+thread-condition-variables-not-available
-      (process-wait "Waiting for UI mark"
-                    #'gate-open-p
-                    mark-gate)))
-  
-  (defun %release-ui-mark (index)
-    (with-process-lock (mark-lock)
-      #+full-safety
-      (unless (logbitp index marks)
-        (error "Instance mark ~s is not held." index))
-      (setf marks (clear-flag marks index))
-      #-thread-condition-variables-not-available
-      (cond-var-broadcast mark-cond-var)
-      #+thread-condition-variables-not-available
-      (open-gate mark-gate))))
+(defun set-mbr-instance-mark (instance)
+  (setf (standard-unit-instance.%%marks%% instance) 1))
 
-(defmacro with-instance-mark ((index-var) &body body)
-  `(let ((,index-var (%get-ui-mark)))
-     (unwind-protect (progn ,@body)
-       (%release-ui-mark ,index-var))))
+#-full-safety
+(define-compiler-macro set-mbr-instance-mark (instance)
+  `(setf (standard-unit-instance.%%marks%% ,instance) 1))
+
+(defun clear-mbr-instance-mark (instance)
+  (setf (standard-unit-instance.%%marks%% instance) 0))
+
+#-full-safety
+(define-compiler-macro clear-mbr-instance-mark (instance)
+  `(setf (standard-unit-instance.%%marks%% ,instance) 0))
+
+(defun mbr-instance-mark-set-p (instance)
+  (=& (standard-unit-instance.%%marks%% instance) 1))
+
+#-full-safety
+(define-compiler-macro mbr-instance-mark-set-p (instance)
+  `(=& (standard-unit-instance.%%marks%% ,instance) 1))
 
 ;;; ---------------------------------------------------------------------------
 ;;;   Change-class support
