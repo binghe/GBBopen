@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/preamble.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Jun 16 10:55:38 2007 *-*
+;;;; *-* Last-Edit: Tue Jul  3 10:11:04 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -128,7 +128,7 @@
 					  verbose))
 (defgeneric map-marked-instances-on-storage (fn storage 
 					     disjunctive-dimensional-extents 
-					     mark-index verbose))
+                                             verbose))
 (defgeneric propagate-event-evfns/printing (event-class
                                             super-event-classes))
 (defgeneric remove-instance-from-space-instance (instance space-instance))

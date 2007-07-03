@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/2d-uniform-storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Jun 14 04:35:12 2007 *-*
+;;;; *-* Last-Edit: Tue Jul  3 10:20:46 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -332,13 +332,12 @@
 
 (defmethod map-marked-instances-on-storage (fn (storage 2d-uniform-buckets)
 					    disjunctive-dimensional-extents 
-					    mark-index verbose)
+                                            verbose)
   (do-2d-uniform-map-actions 
       #'(lambda (key instance)
 	  (declare (ignore key))
-	  (let ((marks (standard-unit-instance.%%marks%% instance)))
-	    (when (flag-set-p marks mark-index)
-	      (funcall (the function fn) instance marks))))
+          (when (mbr-instance-mark-set-p instance)
+            (funcall (the function fn) instance)))
     storage disjunctive-dimensional-extents verbose))
 
 ;;; ---------------------------------------------------------------------------
