@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/preamble.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Jul  3 10:11:04 2007 *-*
+;;;; *-* Last-Edit: Tue Jul  3 19:28:17 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -76,9 +76,8 @@
   (format t "~%;;; ~72,,,'-<-~>
 ;;;  GBBopen ~a~@
 ;;;
-;;;  GBBopen is open-source software
-;;;  (see ~a)
-;;;
+;;;    GBBopen is open-source software
+;;;    (see ~a)
 ;;; ~72,,,'-<-~>~2%"
           (gbbopen-implementation-version)
           (let ((this-file *load-truename*))
