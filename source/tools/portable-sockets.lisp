@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-SOCKETS; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/tools/portable-sockets.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jul 19 04:45:51 2006 *-*
+;;;; *-* Last-Edit: Thu Jul  5 23:54:40 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2005-2006, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2005-2007, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -104,10 +104,13 @@
 #+(or cmu lispworks scl)
 (defclass passive-socket ()
   ((fd :type fixnum
+       :initarg :fd
        :accessor passive-socket.fd)
    (element-type :type (member signed-byte unsigned-byte base-char)
+                 :initarg :element-type
 		 :accessor passive-socket.element-type)
    (port :type fixnum
+         :initarg :port
 	 :accessor passive-socket.port)))
 
 #+(or cmu lispworks scl)
