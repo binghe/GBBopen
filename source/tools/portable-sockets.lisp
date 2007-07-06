@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-SOCKETS; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/tools/portable-sockets.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Jul  5 23:54:40 2007 *-*
+;;;; *-* Last-Edit: Fri Jul  6 00:32:05 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -29,12 +29,9 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (unless (find-package :portable-sockets)
     (defpackage :portable-sockets
-      (:use :common-lisp))))
+      (:use :common-lisp :portable-threads))))
 
 (in-package :portable-sockets)
-
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (use-package :portable-threads))
 
 ;;; ---------------------------------------------------------------------------
 ;;; Handle older CLISP versions
@@ -79,7 +76,29 @@
 	    with-open-connection
 	    write-crlf)))		; not yet documented
 
+;;; ===========================================================================
+
+(defun portable-sockets-implementation-version ()
+  "1.0")
+
+;;; Added to *features* at the end of this file:
+(defparameter *portable-sockets-version-keyword* :portable-sockets-1.0)
+
 ;;; ---------------------------------------------------------------------------
+
+(defun print-portable-sockets-herald ()
+  (format t "~%;;; ~72,,,'-<-~>
+;;;  Portable Sockets Interface ~a~@
+;;;
+;;;    Developed and supported by the GBBopen Project (http:/GBBopen.org/)
+;;;    (See http://GBBopen.org/downloads/LICENSE for license details.)
+;;; ~72,,,'-<-~>~2%"
+          (portable-sockets-implementation-version)))
+  
+(eval-when (:load-toplevel)
+  (print-portable-sockets-herald))
+
+;;; ===========================================================================
 ;;;  Occasionally "localhost" isn't configured properly on some machines,
 ;;;  so we will use dotted notation as the default value:
 
@@ -390,11 +409,12 @@
      :element-type 'character
      :buffering ':full))
   #+lispworks
-  (when (or wait (stream-input-available passive-socket))
-    (make-instance 'comm:socket-stream
-      :socket (comm::get-fd-from-socket (passive-socket.fd passive-socket))
-      :direction ':io
-      :element-type (passive-socket.element-type passive-socket)))
+  (let ((socket-fd (passive-socket.fd passive-socket)))
+    (when (or wait (comm::socket-listen socket-fd))
+      (make-instance 'comm:socket-stream
+        :socket (comm::get-fd-from-socket socket-fd)
+        :direction ':io
+        :element-type (passive-socket.element-type passive-socket))))
   #+(or digitool-mcl openmcl)
   (ccl:accept-connection passive-socket :wait wait)
   #+sbcl
@@ -582,9 +602,10 @@
   (write-char #\linefeed stream))
 
 ;;; ===========================================================================
-;;;  Portable Sockets are loaded:
+;;;  Portable sockets interface is fully loaded:
 
 (pushnew :portable-sockets *features*)
+(pushnew *portable-sockets-version-keyword* *features*)
 
 ;;; ===========================================================================
 ;;;				  End of File
