@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /home/gbbopen/current/doc-source/reference.tex *-*
-%% *-* Last-Edit: Fri Jun 29 03:25:44 2007; Edited-By: cork *-*
+%% *-* Last-Edit: Sat Jul 14 05:32:18 2007; Edited-By: cork *-*
 %% *-* Machine: ruby.corkills.org *-*
 
 %% Copyright (C) 2003-2007, Dan Corkill <corkill@GBBopen.org>
@@ -1488,7 +1488,7 @@ containing the \textbf{define-module} form:
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{define-relative-directory}{\var{name
-  directory\/} \code{\&rest} \var{sub-directories\/}} 
+  directory\/} \code{\&rest} \var{subdirectories\/}} 
 \index{directory!defining relative}%
 \index{relative directory!defining}%
 \index{defining!a relative directory}%
@@ -1503,12 +1503,15 @@ containing the \textbf{define-module} form:
 \fnmodule \code{:mini-module}
 
 \fnargs
-\begin{args}{sub-directories}
+\begin{args}{subdirectories}
 \arg[module-name] A keyword symbol naming the relative directory
 \arg[directory] The keyword symbol name of a root or relative directory
 ancestor of the relative directory
-\arg[sub-directories] One or more strings specifying, in order,
-subdirectories from \var{directory\/} to the relative directory
+\arg[subdirectories] One or more strings specifying, in order, subdirectories
+from \var{directory\/} to the relative directory. (The keyword \code{:up} or
+\code{:back} can also be supplied in place of any of these strings, indicating
+to go upward one semantic or syntactic level of directory structure,
+respectively.)
 \end{args}
 
 \fndescription Root and relative directory definitions are used to
@@ -1538,7 +1541,7 @@ Define a relative directory below \code{:my-app-root} named
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{define-root-directory}{\var{name
-      directory-specification\/}} 
+      directory-specification\/} \code{\&rest} \var{subdirectories\/}} 
 \index{directory!defining root}%
 \index{root directory!defining}%
 \index{defining!a directory}%
@@ -1562,6 +1565,11 @@ Define a relative directory below \code{:my-app-root} named
 \item A keyword naming a previously defined root directory
 \item A symbol whose value is one of the above
 \end{tightitemize}
+\arg[subdirectories] One or more strings specifying, in order, subdirectories
+from \var{directory-specification\/} to the root directory. (The keyword
+\code{:up} or \code{:back} can also be supplied in place of any of these
+strings, indicating to go upward one semantic or syntactic level of directory
+structure, respectively.)
 \end{args}
 
 \fndescription Root and relative directory definitions are used to isolate
@@ -1915,16 +1923,13 @@ t
 > (show-defined-directories)
 :gbbopen
     Relative to :gbbopen-root
-    Sub-directories: ("gbbopen")
+    Subdirectories: ("gbbopen")
 :gbbopen-root
     Root: /home/gbbopen/current/
 :gbbopen-tools
     Relative to :gbbopen-root
-    Sub-directories: ("tools")
-:mini-module
-    Relative to :project-root
-    Sub-directories: ("mini-module")
-:project-root
+    Subdirectories: ("tools")
+:mini-module-root
     Root: /home/gbbopen/current/
 \end{example}
 
