@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/gbbopen-init.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Jul 13 23:18:09 2007 *-*
+;;;; *-* Last-Edit: Sat Jul 14 05:44:52 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2002-2006, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2007, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; Useful generic GBBopen initialization definitions.  Load this file from
@@ -143,13 +143,14 @@
       :if-does-not-exist nil)
 
 ;;; ===========================================================================
-;;;  Load gbbopen-modules-directory processing:
+;;;  Load gbbopen-modules-directory processing, if needed:
 
-(let ((truename *load-truename*))
-  (load (make-pathname 
-	 :name "gbbopen-modules-directory"
-	 :type "lisp"
-	 :defaults truename)))
+(unless (fboundp 'process-gbbopen-modules-directory)
+  (let ((truename *load-truename*))
+    (load (make-pathname 
+	   :name "gbbopen-modules-directory"
+	   :type "lisp"
+	   :defaults truename))))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  If there is a gbbopen-modules directory in the users "home" directory,
