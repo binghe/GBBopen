@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-SOCKETS-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/tools/test/http-test.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Mar 22 17:03:39 2006 *-*
+;;;; *-* Last-Edit: Sat Jul 14 11:46:16 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -31,7 +31,7 @@
 (in-package :portable-sockets-user)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (import '(common-lisp-user::*autorun-gbbopen-modules*)))
+  (import '(common-lisp-user::*autorun-mini-modules*)))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -66,7 +66,7 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(when *autorun-gbbopen-modules*
+(when *autorun-mini-modules*
   (http-test "GBBopen.org" 80))
 
 ;;; ===========================================================================
