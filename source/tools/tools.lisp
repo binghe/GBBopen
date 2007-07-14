@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jun  6 15:52:07 2007 *-*
+;;;; *-* Last-Edit: Sat Jul 14 05:03:10 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -418,7 +418,7 @@
 ;;; ===========================================================================
 ;;;  With-error-handling
 ;;;
-;;;  Evaluates body if an error occurs evaluating form
+;;;  Evaluates body if an error occurs while evaluating form
 
 (defmacro with-error-handling (form &body body)
   `(handler-case ,form
@@ -430,6 +430,10 @@
                                (error ()
                                  "<error: unprintable condition>")))))
                      (declare (dynamic-extent error-message))
+                     ;; Heavy handed way to suppress warning of unused
+                     ;; (error-message) in SBCL--find something better
+                     #+sbcl
+                     (error-message)
 		     #-sbcl
                      (declare (ignorable error-message))
                      ,@body))
@@ -1096,8 +1100,7 @@
 (defun find-and-remove-method (generic-function method-qualifiers
                                specialized-lambda-list)
   (flet ((make-qualifier (name)
-           (if (and (consp name)
-                    (eq (first name) 'eql))
+           (if (and (consp name) (eq (first name) 'eql))
                (intern-eql-specializer (eval (second name)))
                (find-class name))))           
     #-gcl
