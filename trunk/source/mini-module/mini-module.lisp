@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/mini-module/mini-module.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Jul  3 19:27:47 2007 *-*
+;;;; *-* Last-Edit: Sat Jul 14 05:36:11 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -31,13 +31,13 @@
 ;;;  are more complex open-source defsystem packages (such as ASDF) that are
 ;;;  available.
 ;;;
-;;;  This file assumes the global variables *compiled-directory-name*,
-;;;  *compiled-file-type*, and *project-root-pathname* have been defined by
-;;;  loading mini-module-loader.lisp.
+;;;  This file assumes the global variables *compiled-directory-name* and
+;;;  *compiled-file-type* have been defined by loading
+;;;  mini-module-loader.lisp.
 ;;;
 ;;;  The mini-module-faclity supports the following directory layout:
 ;;;
-;;;                          *project-root-pathname*
+;;;                             <root-directory>
 ;;;                               /          \
 ;;;                              /            \
 ;;;                           source    <compiled-cl-1>   ...
@@ -48,7 +48,7 @@
 ;;;                        /                        \
 ;;;                mini-module.lisp            mini-module.<fasl>
 ;;;
-;;;  This file can be used as a stand-alone utility (when loaded by its
+;;;  This file can be used as a stand-alone system (when loaded by its
 ;;;  companion file, mini-module-loader.lisp).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -56,8 +56,8 @@
 ;;;  07-13-02 File created.  (Corkill)
 ;;;  01-12-04 Added :create-dirs option to compile-module.  (Corkill)
 ;;;  01-29-04 Exported module-loaded-p.  (Corkill)
-;;;  02-01-04 Support use of existing root-directory in 
-;;;           define-root-directory.  (Corkill)
+;;;  02-01-04 Support use of existing root-directory in define-root-directory.
+;;;           (Corkill)
 ;;;  03-19-04 Added port-needed error function.  (Corkill)
 ;;;  03-19-04 Added top-level mini-module commands for Lispworks.  (Corkill)
 ;;;  03-19-04 Added file-options checking.  (Corkill)
@@ -66,6 +66,8 @@
 ;;;  06-11-04 Moved to separate package (for stand-alone use).  (Corkill)
 ;;;  08-10-04 Removed make-directory in favor of ensure-directories-exist.
 ;;;           (Corkill)
+;;;  08-18-04 Add missing slot-definition documentation method for Digitool
+;;;           MCL.  (Corkill)
 ;;;  02-06-05 Added load-module-file.  (Corkill)
 ;;;  02-08-05 Added describe-module and brief-date-and-time.  (Corkill)
 ;;;  05-22-05 Added ECL support.  (Corkill)
@@ -79,6 +81,7 @@
 ;;;  06-06-07 Added :after-form support for modules (somewhat reluctantly,
 ;;;           as putting forms in a module's files is preferable to having
 ;;;           them in the module definition).  (Corkill)
+;;;  07-14-07 Add subdirectories support to define-root-directory.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -96,8 +99,10 @@
                     mini-module-loader.lisp)"
 		  var))))
   (check-var '*compiled-directory-name*)
-  (check-var '*compiled-file-type*)
-  (check-var '*project-root-pathname*))
+  (check-var '*compiled-file-type*))
+
+;;; ---------------------------------------------------------------------------
+;;;  CL-User Global Variables
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (import '(common-lisp-user::*automatically-create-missing-directories*
@@ -105,7 +110,8 @@
 	    common-lisp-user::*mini-module-load-verbose*)))
 
 ;;; Ssome CL implementations generate redefinition warnings when performing a
-;;; compile/load/compile bootstrap sequence, so we don't use defvar's here:
+;;; compile/load/compile bootstrap sequence, so we don't use defvar's here to 
+;;; set default values:
 (declaim (special *automatically-create-missing-directories*))
 (unless (boundp '*automatically-create-missing-directories*)
   (setf *automatically-create-missing-directories* nil))
@@ -177,6 +183,17 @@
   
 (eval-when (:load-toplevel)
   (print-mini-module-herald))
+
+;;; ===========================================================================
+;;;  Add missing slot-definition documentation method to Digitool MCL:
+
+#+digitool-mcl 
+(defmethod documentation ((object ccl::standard-slot-definition)
+			  &optional doc-type)
+  (declare (ignore doc-type))
+  (when (and (slot-exists-p object 'documentation)
+	     (slot-boundp object 'documentation))
+    (slot-value object 'documentation)))
 
 ;;; ===========================================================================
 ;;;  Dotted-conc-name
@@ -278,7 +295,7 @@
             (:conc-name #.(dotted-conc-name 'mm-relative-directory))
             (:copier nil))
   root
-  sub-directories)
+  subdirectories)
 
 (defvar *mm-directories* (make-hash-table :test 'eq))
 
@@ -355,12 +372,18 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun compute-root-directory (spec)
+(defun compute-root-directory (spec subdirectories)
   (flet ((compute-it (spec)
-           (etypecase spec
-             (pathname (make-pathname :name nil :type nil :defaults spec))
-             (string (pathname spec))
-             (mm-root-directory (mm-root-directory.path spec)))))
+           (let ((root-pathname
+                  (etypecase spec
+                    (pathname
+                     (make-pathname :name nil :type nil :defaults spec))
+                    (string (pathname spec))
+                    (mm-root-directory (mm-root-directory.path spec)))))
+             (make-pathname 
+              :directory (append (pathname-directory root-pathname)
+                                 subdirectories)
+              :defaults root-pathname))))
     (typecase spec
       (symbol (compute-it
                (if (keywordp spec)
@@ -370,10 +393,10 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun define-root-directory (name spec)
+(defun define-root-directory (name spec &rest subdirectories)
   (unless (keywordp name)
     (non-keyword-directory-name-error name))
-  (let ((root-directory-path (compute-root-directory spec)))
+  (let ((root-directory-path (compute-root-directory spec subdirectories)))
     (setf (gethash name *mm-directories*)
           (make-mm-root-directory
            :name name
@@ -381,7 +404,7 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun define-relative-directory (name root &rest sub-directories)
+(defun define-relative-directory (name root &rest subdirectories)
   (unless (keywordp name)
     (non-keyword-directory-name-error name))
   (unless (keywordp root)
@@ -390,11 +413,11 @@
         (make-mm-relative-directory
          :name name
          :root root
-         :sub-directories sub-directories)))
+         :subdirectories subdirectories)))
 
 ;;; ---------------------------------------------------------------------------
 
-(defun compute-relative-directory (name sub-directories compiled?)
+(defun compute-relative-directory (name subdirectories compiled?)
   (cond
    ((null name) nil)
    ;; `Name' can be a pathname if a *load-truename*-relative :directory
@@ -406,15 +429,15 @@
              (list (if compiled?
                        *compiled-directory-name*
                        *source-directory-name*))
-             sub-directories)
+             subdirectories)
      :defaults name))      
    (t (let ((mm-dir (gethash name *mm-directories*)))
         (typecase mm-dir
           (mm-relative-directory
            (compute-relative-directory
             (mm-relative-directory.root mm-dir)
-            (append (mm-relative-directory.sub-directories mm-dir)
-                    sub-directories)
+            (append (mm-relative-directory.subdirectories mm-dir)
+                    subdirectories)
             compiled?))
           (mm-root-directory
            (let ((root-path (mm-root-directory.path mm-dir)))
@@ -424,7 +447,7 @@
                       (list (if compiled?
                                 *compiled-directory-name*
                                 *source-directory-name*))
-                      sub-directories)
+                      subdirectories)
               :defaults root-path)))
           (otherwise
            (error "Directory ~s is not defined." name)))))))
@@ -455,10 +478,10 @@
                      (mm-directory.name directory)
                      (mm-root-directory.path directory)))
             (t (format t "~&~s~%~4tRelative to ~(~s~)~
-                          ~%~4tSub-directories: ~s"
+                          ~%~4tsubdirectories: ~s"
                        (mm-directory.name directory)
                        (mm-relative-directory.root directory)
-                       (mm-relative-directory.sub-directories directory)))))
+                       (mm-relative-directory.subdirectories directory)))))
         (terpri))))
   (terpri)
   (values))
@@ -471,7 +494,7 @@
             (:copier nil))
   name
   (directory nil)
-  (sub-directories)
+  (subdirectories)
   (requires nil)
   (files nil)
   (files-loaded nil)
@@ -489,7 +512,7 @@
     (error "Module name, ~s, must be a keyword." name))
   (let ((directory nil)
         (directory-seen? nil)
-        (sub-directories nil)
+        (subdirectories nil)
         (requires nil)
         (requires-seen? nil)
         (files nil)
@@ -509,7 +532,7 @@
                   name))
          (setf directory-seen? 't)
          (setf directory (second option))
-         (setf sub-directories (cddr option))
+         (setf subdirectories (cddr option))
          (unless (or (not directory)
 		     (keywordp directory))
            (error "The :directory specification supplied in module ~s ~_~
@@ -552,7 +575,7 @@
                     be evaluated outside of a load context."
 		   '*load-truename*
 		   'define-module))))
-    `(ensure-module ',name ',directory ',sub-directories ',requires 
+    `(ensure-module ',name ',directory ',subdirectories ',requires 
                     ',files
                     ',after-form)))
 
@@ -622,14 +645,14 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun ensure-module (name directory sub-directories requires files after-form)
+(defun ensure-module (name directory subdirectories requires files after-form)
   (let ((existing-module (gethash name *mm-modules*)))
     (check-requires-ordering name requires)
     (setf (gethash name *mm-modules*)
           (make-mm-module 
            :name name 
            :directory directory
-           :sub-directories sub-directories
+           :subdirectories subdirectories
 	   :requires requires
            :files files 
            :files-loaded 
@@ -668,11 +691,11 @@
 
 (defun module-source/compiled-directories (module)
   (let* ((directory (mm-module.directory module))
-         (sub-directories (mm-module.sub-directories module))
+         (subdirectories (mm-module.subdirectories module))
          (source-directory
-          (compute-relative-directory directory sub-directories nil))
+          (compute-relative-directory directory subdirectories nil))
          (compiled-directory
-          (compute-relative-directory directory sub-directories 't)))
+          (compute-relative-directory directory subdirectories 't)))
     (values source-directory compiled-directory)))
 
 ;;; ---------------------------------------------------------------------------
@@ -1137,7 +1160,7 @@
          (make-pathname 
           :directory (append (pathname-directory root-path)
                              '(#.*source-directory-name*)
-                             (mm-relative-directory.sub-directories mm-dir)
+                             (mm-relative-directory.subdirectories mm-dir)
                              subdirectories)
           :defaults root-path)))
       (otherwise
@@ -1162,18 +1185,13 @@
              (error "Directory ~s is not defined." name)))))))
 
 ;;; ===========================================================================
-;;;  Define Basic Directories and Modules (as specified in startup.lisp)
+;;;  Define :mini-module-root directory and the :mini-module module
 
-(define-root-directory :project-root *project-root-pathname*)
-
-;;; ---------------------------------------------------------------------------
-
-(define-relative-directory :mini-module :project-root "mini-module")
-
-;;; ---------------------------------------------------------------------------
+(let ((this-file-truename *load-truename*))
+  (define-root-directory :mini-module-root this-file-truename :up :up))
 
 (define-module :mini-module
-  (:directory :mini-module)
+  (:directory :mini-module-root "mini-module")
   (:files "mini-module"))
 
 ;;; ---------------------------------------------------------------------------

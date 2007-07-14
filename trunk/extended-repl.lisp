@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/extended-repl.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Jun  6 16:59:35 2006 *-*
+;;;; *-* Last-Edit: Fri Jul 13 23:17:13 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -16,7 +16,7 @@
 ;;;
 ;;; Written by: Dan Corkill 
 ;;;
-;;; Copyright (C) 2005-2006, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2005-2007, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; Porting Notice:
@@ -40,7 +40,7 @@
 	 
 (in-package :common-lisp-user)
 
-(defvar *tl-commands* nil)
+(defvar *extended-repl-commands* nil)
 
 ;;; ---------------------------------------------------------------------------
 ;;;  In ECL, setup a GBBopen-specific command topic (must be done
@@ -54,20 +54,20 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun get-tl-command (command)
-  (assoc command *tl-commands* :test #'eq))
+(defun get-extended-repl-command (command)
+  (assoc command *extended-repl-commands* :test #'eq))
 
 ;;; ---------------------------------------------------------------------------
 
-(defmacro define-top-loop-command (command lambda-list &body body)
-  (let ((tlc-sym (gensym "TLC"))
+(defmacro define-extended-repl-command (command lambda-list &body body)
+  (let ((tlc-sym (gensym))
 	(maybe-doc (first body)))
     `(progn
        ;; Define the command function:
        (defun ,tlc-sym ,lambda-list ,@body)
-       ;; Always add command to *tl-commands* (for SLIME interface and more):
+       ;; Always add command to *extended-repl-commands* (for SLIME interface and more):
        (pushnew '(,command ,tlc-sym ,(when (stringp maybe-doc) maybe-doc))
-		*tl-commands*
+		*extended-repl-commands*
 		:test #'eq
 		:key #'car)
        ;; Add to the CL implemention's top-level, where possible:
@@ -118,7 +118,7 @@
 	    `(,command-name . ,function)
 	    ;; command documentation:
 	    (format nil "~%~a~20t~a" command-name doc)))))
-   *tl-commands*))
+   *extended-repl-commands*))
 
 #+clisp
 (pushnew #'user-commands custom:*user-commands*)
@@ -136,7 +136,7 @@
 (lisp::without-package-locks  
  (defun ext:interactive-eval (form)
    (let ((in *standard-input*)
-	 (repl-command (get-tl-command form)))
+	 (repl-command (get-extended-repl-command form)))
      (flet ((do-command (symbol-or-fn args)
 	      (apply (the function (if (symbolp symbol-or-fn) 
 				       (fdefinition symbol-or-fn)
@@ -155,7 +155,7 @@
 	      (values))
 	     ;; Support (<command> <arg>*) syntax as well:
 	     ((and (consp form)
-		   (setq repl-command (get-tl-command (car form))))
+		   (setf repl-command (get-extended-repl-command (car form))))
 	      (do-command (second repl-command) (cdr form))
 	      (values))
 	     (t (original-interactive-eval form))))))
@@ -174,7 +174,7 @@
 #+scl
 (defun ext:interactive-eval (form)
   (let ((in *standard-input*)
-	(repl-command (get-tl-command form)))
+	(repl-command (get-extended-repl-command form)))
     (flet ((do-command (symbol-or-fn args)
 	     (apply (the function (if (symbolp symbol-or-fn) 
 				      (fdefinition symbol-or-fn)
@@ -193,7 +193,7 @@
 	     (values))
 	    ;; Support (<command> <arg>*) syntax as well:
 	    ((and (consp form)
-		  (setq repl-command (get-tl-command (car form))))
+		  (setf repl-command (get-extended-repl-command (car form))))
 	     (do-command (second repl-command) (cdr form))
 	     (values))
 	    (t (original-interactive-eval form))))))
@@ -211,30 +211,31 @@
   (declare (type stream in out) (ignore out))
   (let* ((eof-marker (cons nil nil))
 	 (form (read in nil eof-marker)))
-    (if (eq form eof-marker)
-	(quit)
-	(let ((repl-command (get-tl-command form)))
+    (cond 
+     ((eq form eof-marker) (quit))
+     (t (let ((repl-command (get-extended-repl-command form)))
 	  (flet ((do-command (symbol-or-fn args)
 		   (apply (the function (if (symbolp symbol-or-fn) 
 					    (fdefinition symbol-or-fn)
 					    symbol-or-fn))
 			  args)
-		   ;; always return nil
+                   ;; always return nil
 		   nil))
-	    (cond (repl-command
-		   (let ((forms nil))
-		     (loop 
-		       (unless (sb-int:listen-skip-whitespace in)
-			 (return))
-		       (push (read in nil) forms))
-		     (do-command (second repl-command) (nreverse forms)))
-		   '(values))
-		  ;; Support (<command> <arg>*) syntax as well:
-		  ((and (consp form)
-			(setq repl-command (get-tl-command (car form))))
-		   (do-command (second repl-command) (cdr form))
-		   '(values))
-		  (t form)))))))
+	    (cond
+             (repl-command
+              (let ((forms nil))
+                (loop 
+                  (unless (sb-int:listen-skip-whitespace in)
+                    (return))
+                  (push (read in nil) forms))
+                (do-command (second repl-command) (nreverse forms)))
+              '(values))
+             ;; Support (<command> <arg>*) syntax as well:
+             ((and (consp form)
+                   (setf repl-command (get-extended-repl-command (car form))))
+              (do-command (second repl-command) (cdr form))
+              '(values))
+             (t form))))))))
 
   (compile 'gbbopen-repl-read-form-fun)
   
@@ -251,11 +252,11 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun get-tl-command-with-help (command)
-  ;; Used in gbbopen-swank-eval-hook to add SLIME support for :help on CLs that
-  ;; already provide their own REPL help command (and is therefore not in
-  ;; GBBopen's *tl-commands*)
-  (or (assoc command *tl-commands* :test #'eq)
+(defun get-extended-repl-command-with-help (command)
+  ;; Used in gbbopen-swank-eval-hook to add SLIME support for :help on CLs
+  ;; that already provide their own REPL help command (and is therefore not in
+  ;; *extended-repl-commands*)
+  (or (assoc command *extended-repl-commands* :test #'eq)
       #+(or allegro ecl)
       (and (member command '(:help :h))
 	   #+allegro
@@ -268,7 +269,7 @@
 ;;; Emacs->swank connection.
 
 (defun gbbopen-swank-eval-hook (form)
-  (let ((repl-command (get-tl-command-with-help form)))
+  (let ((repl-command (get-extended-repl-command-with-help form)))
     (flet ((do-command (symbol-or-fn args)
 	     (apply (the function (if (symbolp symbol-or-fn) 
 				      (fdefinition symbol-or-fn)
@@ -279,7 +280,7 @@
 	     (do-command (second repl-command) nil))
 	    ;; Support (<command> <arg>*) syntax as well:
 	    ((and (consp form)
-		  (setq repl-command (get-tl-command-with-help (car form))))
+		  (setq repl-command (get-extended-repl-command-with-help (car form))))
 	     (do-command (second repl-command) (cdr form)))
 	    ;; Tell swank that we pass (normal eval):
 	    (t (funcall 'swank::repl-eval-hook-pass))))))

@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/gbbopen-init.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Oct  1 14:24:41 2006 *-*
+;;;; *-* Last-Edit: Fri Jul 13 23:18:09 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -111,13 +111,13 @@
 
 (defmacro define-tll-command (command lambda-list &rest body)
   `(progn
-     (define-top-loop-command 
+     (define-extended-repl-command 
 	 ,command
 	 ,lambda-list
        ,@body)
      ;; Define CL-USER package functions on all CL implementations:
      ,(let ((fn-name (intern (symbol-name command) :common-lisp-user)))
-	;; don't replace an existing function:
+        ;; don't replace an existing function:
 	`(unless (fboundp ',fn-name)
 	   (defun ,fn-name ,lambda-list ,@body)))))
 

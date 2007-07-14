@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/startup.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Sep 19 01:10:36 2006 *-*
+;;;; *-* Last-Edit: Sat Jul 14 04:18:57 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -117,7 +117,7 @@
 ;;;  Define and load the remaining GBBopen module definitions from
 ;;;  modules.lisp:
 
-(mini-module:define-root-directory :gbbopen-root :project-root)
+(mini-module:define-root-directory :gbbopen-root :mini-module-root)
 
 (mini-module:define-module :gbbopen-modules
   (:requires :mini-module)

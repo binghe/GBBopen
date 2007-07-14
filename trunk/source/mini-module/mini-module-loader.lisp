@@ -1,13 +1,13 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/mini-module/mini-module-loader.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Apr 23 22:25:39 2007 *-*
+;;;; *-* Last-Edit: Sat Jul 14 04:12:42 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
 ;;;; *
-;;;; *                Mini-Module Facility Bootstrap Loader
+;;;; *                 Mini-Module System Bootstrap Loader
 ;;;; *
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -15,7 +15,7 @@
 ;;; Written by: Dan Corkill (incorporating some original ideas by 
 ;;;                          Kevin Gallagher and Zack Rubinstein)
 ;;;
-;;; Copyright (C) 2002-2006, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2007, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; Porting Notice:
@@ -25,17 +25,15 @@
 ;;;       *compiled-file-type*
 ;;;    must be extended when porting to a new CL implementation.
 ;;;
-;;;  This file defines the global variables *compiled-directory-name*,
-;;;  *compiled-file-type*, and *project-root-pathname* and then loads either
-;;;  the source or compiled mini-module file (whichever is dated later).
+;;;  This file defines the global variables *compiled-directory-name* and
+;;;  *compiled-file-type* and then loads either the source or compiled
+;;;  mini-module file (whichever is dated later).
 ;;;
 ;;;  This file is used as source only.
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
-;;;  06-11-04 Split from startup.lisp  (Corkill)
-;;;  08-18-04 Add useful slot-definition documentation method for Digitool
-;;;           MCL.  (Corkill)
+;;;  06-11-04 Split from startup.lisp to support stand-alone use.  (Corkill)
 ;;;  05-22-05 Added ECL support.  (Corkill)
 ;;;  06-08-05 Added CLISP support.  (sds)
 ;;;  02-13-06 Added GCL support.  (Corkill)
@@ -46,26 +44,11 @@
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 (unless (find-package :mini-module)
-  (defpackage :mini-module
-    (:use :common-lisp)))
+  (defpackage :mini-module (:use :common-lisp)))
 
 (in-package :mini-module)
 
-;;; ===========================================================================
-;;;  Add missing slot-definition documentation method to Digitool MCL:
-
-#+digitool-mcl 
-(defmethod documentation ((object ccl::standard-slot-definition)
-			  &optional doc-type)
-  (declare (ignore doc-type))
-  (when (and (slot-exists-p object 'documentation)
-	     (slot-boundp object 'documentation))
-    (slot-value object 'documentation)))
-
-;;; ===========================================================================
-;;;  Source/Compiled Directory Names
-
-(defparameter *source-directory-name* "source")
+;;; ---------------------------------------------------------------------------
 
 (defun must-port (entity)
   (error "You must specify ~s for ~a running on ~a."
@@ -73,8 +56,13 @@
          (lisp-implementation-type) 
          (machine-type)))
 
+;;; ===========================================================================
+;;;  Source/Compiled Directory Names
+
+(defparameter *source-directory-name* "source")
+
 ;;; ---------------------------------------------------------------------------
-;;; To facilitate operation on a common file server, the mini-module facility
+;;; To facilitate operation on a common file server, the mini-module system
 ;;; uses a separate compiled directory tree for each CL implementation and
 ;;; version.  The following form creates a unique name for the root of this
 ;;; tree for a number of CL implementations.  If you are using this facility
@@ -192,9 +180,17 @@
 	     #+hpux "hpux"
 	     ext:*case-mode*
              (lisp-implementation-version))
-     ;; Unknown
-     #-(or allegro clisp cmu cormanlisp digitool-mcl ecl lispworks openmcl
-	   sbcl scl)
+     ;; Unknown CL:
+     #-(or allegro 
+           clisp 
+           cmu
+           cormanlisp 
+           digitool-mcl
+           ecl
+           lispworks
+           openmcl
+	   sbcl 
+           scl)
      (must-port '*compiled-directory-name*)))
 
 ;;; ===========================================================================
@@ -241,56 +237,63 @@
      ;; The Scieneer CL:
      #+scl
      (c:backend-fasl-file-type c:*backend*)
-     ;; Unknown
-     #-(or allegro clisp cmu cormanlisp digitool-mcl ecl lispworks openmcl
-	   sbcl scl)
+     ;; Unknown CL:
+     #-(or allegro 
+           clisp
+           cmu
+           cormanlisp
+           digitool-mcl
+           ecl
+           lispworks
+           openmcl
+	   sbcl
+           scl)
      (must-port '*compiled-file-type*)))
 
-;;; ---------------------------------------------------------------------------
-
-(defparameter *project-root-pathname*
-    (let ((this-file-truename *load-truename*))
-      ;; CLISP, CormanLisp, and ECL don't handle :unspecific (support is not
-      ;; required by the ANSI standard, but it does provide desirable "filled"
-      ;; pathname merging behavior)
-      (make-pathname
-       :name #-(or clisp cormanlisp ecl) :unspecific 
-             #+(or clisp cormanlisp ecl) nil
-       :type #-(or clisp cormanlisp ecl) :unspecific 
-	     #+(or clisp cormanlisp ecl) nil
-       :version :newest
-       :directory (butlast (pathname-directory this-file-truename) 2)
-       :defaults this-file-truename)))
-  
 ;;; ===========================================================================
-;;;  Load the mini-module facility (source or compiled file).
+;;;  Load the mini-module facility (source or compiled file)
 
-(flet ((load-source-or-compiled-file (name)
-	 (let* ((source-path 
-		 (make-pathname
-		  :name name
-		  :type "lisp"
-		  :directory `(,@(pathname-directory *project-root-pathname*)
-				 ,*source-directory-name* 
-				 "mini-module")
-		  :version :newest
-		  :defaults *project-root-pathname*))
-		(compiled-path
-		 (make-pathname
-		  :type *compiled-file-type*
-		  :directory `(,@(pathname-directory *project-root-pathname*)
-				 ,*compiled-directory-name* 
-				 "mini-module")
-		  :defaults source-path))
-		(source-file-date (or (file-write-date source-path) 0))
-		(compiled-file-date (or (and (probe-file compiled-path)
-					     (file-write-date compiled-path))
-					0)))
-	   ;; Load the compiled file unless the source file is newer:
-	   (load (if (> compiled-file-date source-file-date)
-		     compiled-path
-		     source-path)))))
-  (load-source-or-compiled-file "mini-module"))
+(let* ((this-file-truename *load-truename*)
+       (root-pathname
+        ;; CLISP, CormanLisp, and ECL don't handle :unspecific (support is not
+        ;; required by the ANSI standard, but it does provide desirable
+        ;; "filled" pathname merging behavior)
+        (make-pathname
+         :name #-(or clisp cormanlisp ecl) :unspecific 
+               #+(or clisp cormanlisp ecl) nil
+         :type #-(or clisp cormanlisp ecl) :unspecific 
+               #+(or clisp cormanlisp ecl) nil
+         :version :newest
+         :directory (butlast (pathname-directory this-file-truename) 2)
+         :defaults this-file-truename)))
+  (flet ((load-source-or-compiled-file (name)
+           (let* ((source-path 
+                   (make-pathname
+                    :name name
+                    :type "lisp"
+                    :directory `(,@(pathname-directory root-pathname)
+                                   ,*source-directory-name* 
+                                   "mini-module")
+                    :version :newest
+                    :defaults root-pathname))
+                  (compiled-path
+                   (make-pathname
+                    :type *compiled-file-type*
+                    :directory `(,@(pathname-directory root-pathname)
+                                   ,*compiled-directory-name* 
+                                   "mini-module")
+                    :defaults source-path))
+                  (source-file-date 
+                   (or (file-write-date source-path) 0))
+                  (compiled-file-date 
+                   (or (and (probe-file compiled-path)
+                            (file-write-date compiled-path))
+                       0)))
+             ;; Load the compiled file unless the source file is newer:
+             (load (if (> compiled-file-date source-file-date)
+                       compiled-path
+                       source-path)))))
+    (load-source-or-compiled-file "mini-module")))
 
 ;;; ===========================================================================
 ;;;				  End of File
