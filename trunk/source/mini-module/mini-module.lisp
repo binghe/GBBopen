@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/mini-module/mini-module.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Jul 14 05:36:11 2007 *-*
+;;;; *-* Last-Edit: Sat Jul 14 10:29:57 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -372,6 +372,21 @@
 
 ;;; ---------------------------------------------------------------------------
 
+(defun append-subdirectories (directory &rest subdirectory-lists)
+  ;; Process pathname-directory :up keywords ourselves, to keep things pretty
+  ;; on CLs that don't normalize aggressively (we'll leave :back
+  ;; keywords--should anyone use them--to CL to deal with):
+  (declare (dynamic-extent subdirectory-lists))
+  (let ((directory (reverse directory)))
+    (dolist (subdirectories subdirectory-lists)
+      (dolist (subdirectory subdirectories)
+        (cond ((and (eq subdirectory ':up) (stringp (first directory)))
+               (pop directory))
+              (t (push subdirectory directory)))))
+    (nreverse directory)))
+
+;;; ---------------------------------------------------------------------------
+
 (defun compute-root-directory (spec subdirectories)
   (flet ((compute-it (spec)
            (let ((root-pathname
@@ -381,8 +396,9 @@
                     (string (pathname spec))
                     (mm-root-directory (mm-root-directory.path spec)))))
              (make-pathname 
-              :directory (append (pathname-directory root-pathname)
-                                 subdirectories)
+              :directory (append-subdirectories
+                          (pathname-directory root-pathname)
+                          subdirectories)
               :defaults root-pathname))))
     (typecase spec
       (symbol (compute-it
@@ -424,30 +440,30 @@
    ;; option was used in define-module:
    ((pathnamep name)
     (make-pathname 
-     :directory
-     (append (pathname-directory name)
-             (list (if compiled?
-                       *compiled-directory-name*
-                       *source-directory-name*))
-             subdirectories)
+     :directory (append-subdirectories (pathname-directory name)
+                                       (list (if compiled?
+                                                 *compiled-directory-name*
+                                                 *source-directory-name*))
+                                       subdirectories)
      :defaults name))      
    (t (let ((mm-dir (gethash name *mm-directories*)))
         (typecase mm-dir
           (mm-relative-directory
            (compute-relative-directory
             (mm-relative-directory.root mm-dir)
-            (append (mm-relative-directory.subdirectories mm-dir)
-                    subdirectories)
+            (append-subdirectories
+             (mm-relative-directory.subdirectories mm-dir)
+             subdirectories)
             compiled?))
           (mm-root-directory
            (let ((root-path (mm-root-directory.path mm-dir)))
              (make-pathname 
-              :directory
-              (append (pathname-directory root-path)
-                      (list (if compiled?
-                                *compiled-directory-name*
-                                *source-directory-name*))
-                      subdirectories)
+              :directory (append-subdirectories
+                          (pathname-directory root-path)
+                          (list (if compiled?
+                                    *compiled-directory-name*
+                                    *source-directory-name*))
+                          subdirectories)
               :defaults root-path)))
           (otherwise
            (error "Directory ~s is not defined." name)))))))
@@ -1148,8 +1164,8 @@
        (let ((path (mm-root-directory.path mm-dir)))
          (if subdirectories
              (make-pathname 
-              :directory (append (pathname-directory path)
-                                 subdirectories)
+              :directory (append-subdirectories (pathname-directory path)
+                                                subdirectories)
               :defaults path)
              path)))
       (mm-relative-directory
@@ -1158,10 +1174,11 @@
                           (mm-relative-directory.root mm-dir)
                           *mm-directories*))))
          (make-pathname 
-          :directory (append (pathname-directory root-path)
-                             '(#.*source-directory-name*)
-                             (mm-relative-directory.subdirectories mm-dir)
-                             subdirectories)
+          :directory (append-subdirectories
+                      (pathname-directory root-path)
+                      '(#.*source-directory-name*)
+                      (mm-relative-directory.subdirectories mm-dir)
+                      subdirectories)
           :defaults root-path)))
       (otherwise
        ;; See if module `name' has been defined:
@@ -1178,8 +1195,8 @@
                                       module))))))
                (if subdirectories
                    (make-pathname 
-                    :directory (append (pathname-directory path)
-                                       subdirectories)
+                    :directory (append-subdirectories (pathname-directory path)
+                                                      subdirectories)
                     :defaults path)
                    path))
              (error "Directory ~s is not defined." name)))))))
