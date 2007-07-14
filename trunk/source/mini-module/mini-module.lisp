@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/mini-module/mini-module.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Jul 14 10:29:57 2007 *-*
+;;;; *-* Last-Edit: Sat Jul 14 11:45:37 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -101,20 +101,31 @@
   (check-var '*compiled-directory-name*)
   (check-var '*compiled-file-type*))
 
-;;; ---------------------------------------------------------------------------
-;;;  CL-User Global Variables
+;;; ===========================================================================
+;;;   CL-User Global Variables
+;;;
+;;; Some CL implementations generate redefinition warnings when performing a
+;;; compile/load/compile bootstrap sequence, so we don't use defvar's here to 
+;;; set default values.
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (import '(common-lisp-user::*automatically-create-missing-directories*
+            common-lisp-user::*autorun-mini-modules*
 	    common-lisp-user::*mini-module-compile-verbose*
 	    common-lisp-user::*mini-module-load-verbose*)))
 
-;;; Ssome CL implementations generate redefinition warnings when performing a
-;;; compile/load/compile bootstrap sequence, so we don't use defvar's here to 
-;;; set default values:
+;;; ---------------------------------------------------------------------------
+;;;  Controls whether the mini-module system automatically creates missing 
+;;;  directories (without asking the user):
+
 (declaim (special *automatically-create-missing-directories*))
 (unless (boundp '*automatically-create-missing-directories*)
   (setf *automatically-create-missing-directories* nil))
+
+;;; ---------------------------------------------------------------------------
+;;;  When true, the mini-module system will generate its own compile & load
+;;;  messages if the corresponding *compile-verbose* or *load-verbose* values
+;;;  are nil.
 
 (declaim (special *mini-module-compile-verbose*))
 (unless (boundp '*mini-module-compile-verbose*)
@@ -123,6 +134,13 @@
 (declaim (special *mini-module-load-verbose*))
 (unless (boundp '*mini-module-load-verbose*)
   (setf *mini-module-load-verbose* nil))
+
+;;; ---------------------------------------------------------------------------
+;;;  Controls whether GBBopen example and test modules autorun themselves.
+
+(declaim (special *autorun-mini-modules*))
+(unless (boundp '*autorun-mini-modules*)
+  (setf *autorun-mini-modules* 't))
 
 ;;; ===========================================================================
 ;;;  Implementation-Specific Package & Feature Adjustments

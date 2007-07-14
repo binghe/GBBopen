@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/tools/test/portable-threads-test.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Feb 28 14:50:23 2007 *-*
+;;;; *-* Last-Edit: Sat Jul 14 11:55:21 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2005-2006, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2005-2007, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -31,7 +31,7 @@
 (in-package :portable-threads-user)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (import '(common-lisp-user::*autorun-gbbopen-modules*)))
+  (import '(common-lisp-user::*autorun-mini-modules*)))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -156,7 +156,7 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(when *autorun-gbbopen-modules*
+(when *autorun-mini-modules*
   (portable-threads-tests))
 
 ;;; ===========================================================================

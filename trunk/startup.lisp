@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/startup.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Jul 14 04:18:57 2007 *-*
+;;;; *-* Last-Edit: Sat Jul 14 11:51:53 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -51,25 +51,6 @@
     ;; the path must be explicitly included in the preferred browser setting:
     #+(or (and lispworks (not win32)) sbcl) "/usr/bin/firefox"
     #-(or macosx darwin (and lispworks (not win32)) sbcl) "firefox")
-
-;;; ---------------------------------------------------------------------------
-;;;  Controls whether the mini-module system automatically creates missing 
-;;;  directories (without asking the user).
-
-(defvar *automatically-create-missing-directories* nil)
-
-;;; ---------------------------------------------------------------------------
-;;;  When true, the mini-module system will generate its own compile & load
-;;;  messages if the corresponding *compile-verbose* or *load-verbose* values
-;;;  are nil.
-
-(defvar *mini-module-compile-verbose* nil)
-(defvar *mini-module-load-verbose* nil)
-
-;;; ---------------------------------------------------------------------------
-;;;  Controls whether GBBopen example and test modules autorun themselves.
-
-(defvar *autorun-gbbopen-modules* 't)
 
 ;;; ===========================================================================
 ;;; Add a single feature to identify sufficiently new Digitool MCL
