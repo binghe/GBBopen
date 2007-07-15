@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/tools/test/portable-threads-test.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Jul 14 11:55:21 2007 *-*
+;;;; *-* Last-Edit: Sat Jul 14 13:36:53 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -31,7 +31,7 @@
 (in-package :portable-threads-user)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (import '(common-lisp-user::*autorun-mini-modules*)))
+  (import '(common-lisp-user::*autorun-modules*)))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -156,7 +156,7 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(when *autorun-mini-modules*
+(when *autorun-modules*
   (portable-threads-tests))
 
 ;;; ===========================================================================

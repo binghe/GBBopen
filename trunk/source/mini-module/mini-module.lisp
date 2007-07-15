@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/mini-module/mini-module.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Jul 15 05:52:07 2007 *-*
+;;;; *-* Last-Edit: Sun Jul 15 05:54:50 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -159,8 +159,8 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(*automatically-create-missing-directories*
             *autorun-modules*
-	    *mini-module-compile-verbose*
-	    *mini-module-load-verbose*
+	    *mini-module-compile-verbose* ; not yet documented
+	    *mini-module-load-verbose*  ; not yet documented
             *month-preceeds-date*
 	    compile-module
 	    compute-relative-directory	; not documented
@@ -188,10 +188,10 @@
 ;;; ===========================================================================
 
 (defun mini-module-implementation-version ()
-  "1.0")
+  "1.1")
 
 ;;; Added to *features* at the end of this file:
-(defparameter *mini-module-version-keyword* :mini-module-1.0)
+(defparameter *mini-module-version-keyword* :mini-module-1.1)
 
 ;;; ---------------------------------------------------------------------------
 

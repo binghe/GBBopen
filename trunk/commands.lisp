@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/commands.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Jul 14 11:51:23 2007 *-*
+;;;; *-* Last-Edit: Sat Jul 14 13:37:27 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -168,9 +168,9 @@
 (define-tll-command :compile-gbbopen (&rest options)
   "Compile All GBBopen Modules"
   (let ((*automatically-create-missing-directories* 't)
-	(*autorun-mini-modules* nil))
+	(*autorun-modules* nil))
     (declare (special *automatically-create-missing-directories*
-		      *autorun-mini-modules*))
+		      *autorun-modules*))
     (startup-module :compile-gbbopen options :gbbopen-user)))
 
 ;;; ===========================================================================

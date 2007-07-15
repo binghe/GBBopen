@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /home/gbbopen/current/doc-source/reference.tex *-*
-%% *-* Last-Edit: Sat Jul 14 05:32:18 2007; Edited-By: cork *-*
+%% *-* Last-Edit: Sun Jul 15 06:15:12 2007; Edited-By: cork *-*
 %% *-* Machine: ruby.corkills.org *-*
 
 %% Copyright (C) 2003-2007, Dan Corkill <corkill@GBBopen.org>
@@ -338,38 +338,96 @@ and \xsitelink{Hyperlatex}{http://hyperlatex.sourceforge.net/} 2.9a.
 %% ========================================================================
 %%  Global syntax specifications
 
-\newcommand{\compilemoduleoptions}{%
-\T\\[4pt]
+\newcommand{\compilemoduleoptions}{\T\\[4pt]
+\codeindexqual{:create-dirs}{compile/load-module option}%
+\codeindexqual{:noautorun}{compile/load-module option}%
+\codeindexqual{:print}{compile/load-module option}%
+\codeindexqual{:propagate}{compile/load-module option}%
 \codeindexsub{:recompile}{compile/load-module option}%
 \codeindexsub{:reload}{compile/load-module option}%
 \codeindexsub{:source}{compile/load-module option}%
-\codeindexqual{:propagate}{compile/load-module option}%
-\codeindexqual{:create-dirs}{compile/load-module option}%
-\begin{tabular}{@{}l@{}l@{}}
-\code{:recompile} & Compiles files even if the compiled file is newer than the
-  source file\\[2pt]
-\code{:reload} & Loads files even if they are already loaded\\[2pt]
-\code{:source} & Loads from the source file even if the file is compiled
-  (implies \code{:reload})\\[2pt]
+%
+\begin{tabular}{@{~~~}l@{}l@{}}
+\code{:create-dirs}~~~ & Creates any needed directories that are missing in the
+  compiled-file tree\\[2pt]
+\code{:noautorun} & Binds \textbf{\entlink{*autorun-modules*}} to nil
+  during compilation and loading\\[2pt]
+\code{:print} & Incrementally prints information during compilation and
+  loading\\[2pt]
 \code{:propagate} & Applies the specified options to all required 
   modules\\[2pt]
-\code{:create-dirs}~~ & Creates directories that are missing in the
-  compiled-file tree\\[2pt]
+\code{:recompile} & Compiles files even if the existing compiled file is newer 
+  than the source file\\[2pt]
+\code{:reload} & Loads files even if they are already loaded\\[2pt]
+\code{:source} & Loads from the source file even if the existing compiled file
+  is newer than the source file (implies \code{:reload})\\[2pt]
 \end{tabular}
 }
 
-\newcommand{\modulefileoptions}{%
-\T\\[4pt] 
+\newcommand{\loadmoduleoptions}{\T\\[4pt]
+\codeindexqual{:noautorun}{compile/load-module option}%
+\codeindexqual{:print}{compile/load-module option}%
+\codeindexqual{:propagate}{compile/load-module option}%
+\codeindexsub{:reload}{compile/load-module option}%
+\codeindexsub{:source}{compile/load-module option}%
+%
+\begin{tabular}{@{~~~}l@{}l@{}}
+\code{:noautorun}~~~ & Binds \textbf{\entlink{*autorun-modules*}} to nil
+  during compilation and loading\\[2pt]
+\code{:print} & Incrementally prints information during compilation and
+  loading\\[2pt]
+\code{:propagate} & Applies the specified options to all required 
+  modules\\[2pt]
+\code{:reload} & Loads files even if they are already loaded\\[2pt]
+\code{:source} & Loads from the source file even if the existing compiled file
+  is newer than the source file (implies \code{:reload})\\[2pt]
+\end{tabular}
+}
+
+\newcommand{\loadonefilemoduleoptions}{\T\\[4pt]
+\codeindexqual{:noautorun}{compile/load-module option}%
+\codeindexqual{:print}{compile/load-module option}%
+\codeindexsub{:source}{compile/load-module option}%
+%
+\begin{tabular}{@{~~~}l@{}l@{}}
+\code{:noautorun}~~~ & Binds \textbf{\entlink{*autorun-modules*}} to nil
+  during compilation and loading\\[2pt]
+\code{:print} & Incrementally prints information during compilation and
+  loading\\[2pt]
+\code{:source} & Loads from the source file even if the existing compiled file
+  is newer than the source file\\[2pt]
+\end{tabular}
+}
+
+\newcommand{\compilemodulefileoptions}{\T\\[4pt] 
 \codeindexqual{:forces-recompile}{define-module file option}%
 \codeindexqual{:noload}{define-module file option}%
 \codeindexsub{:recompile}{define-module file option}%
 \codeindexsub{:reload}{define-module file option}%
 \codeindexsub{:source}{define-module file option}%
-\begin{tabular}{@{~~~~}l@{}l@{}}
-\code{:forces-recompile}~~~~ & If the file has changed, recompile and
+%
+\begin{tabular}{@{~~~}l@{}l@{}}
+\code{:forces-recompile}~~~ & If the file has changed, recompile and
 reload all subsequent files and modules \\[2pt]
 \code{:noload} & Compile, but do not load the file \\[2pt]
 \code{:recompile} & Always recompile the file \\[2pt]
+\code{:reload} & Always reload the file \\[2pt]
+\code{:source} & Do not compile the file (load the source instead) \\
+\end{tabular}
+}
+
+\newcommand{\loadmodulefileoptions}{\T\\[4pt] 
+\codeindexqual{:noautorun}{compile/load-module option}%
+\codeindexqual{:print}{compile/load-module option}%
+\codeindexsub{:reload}{define-module file option}%
+\codeindexsub{:source}{define-module file option}%
+\begin{tabular}{@{~~~}l@{}l@{}}
+\code{:forces-recompile}~~~ & If the file has changed, recompile and
+reload all subsequent files and modules \\[2pt]
+\code{:noautorun}~~~ & Binds \textbf{\entlink{*autorun-modules*}} to nil
+  during compilation and loading\\[2pt]
+\code{:print} & Incrementally prints information during compilation and
+  loading\\[2pt]
 \code{:reload} & Always reload the file \\[2pt]
 \code{:source} & Do not compile the file (load the source instead) \\
 \end{tabular}
@@ -775,11 +833,6 @@ T
 
 GBBopen should compile, load, and run the basic tests file without error.
 
-% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
-% formatting of the following paragraph...  I don't understand why:
-%\T\begin{ifhtml}
-%  \endpar\par
-%\T\end{ifhtml}
 \index{backslash character, in Windows file specifications}%
 \index{Windows file specification, backslash characters}%
 If you are running GBBopen on Windows, note that backslash is the
@@ -800,11 +853,6 @@ file then loads the module system file
 definitions for all GBBopen modules (contained in the file
 \code{source/modules.lisp}).
 
-% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
-% formatting of the following paragraph...  I don't understand why:
-%\T\begin{ifhtml}
-%  \endpar\par
-%\T\end{ifhtml}
 \codeindexqualit{:propagate}{compile/load-module option}%
 \codeindexqualit{:create-dirs}{compile/load-module option}%
 The \code{:propagate} option to \textbf{\entlinknoex{compile-module}} causes
@@ -814,11 +862,6 @@ creates any directories that are missing in the compiled-file directory tree.
 
 \ppar{Personal gbbopen-init.lisp file}
 
-% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
-% formatting of the following paragraph...  I don't understand why:
-%\T\begin{ifhtml}
-%  \endpar\par
-%\T\end{ifhtml}
 \index{initialization, personal
   gbbopen-init.lisp@\code{gbbopen-init.lisp} file}%
 \index{gbbopen-init.lisp@\code{gbbopen-init.lisp}, personal
@@ -866,11 +909,6 @@ your Common Lisp image.
 \ppar{GBBopen top-level commands}
 \index{GBBopen!top-level (keyword) commands}%
 
-% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
-% formatting of the following paragraph...  I don't understand why:
-%\T\begin{ifhtml}
-%  \endpar\par
-%  \T\end{ifhtml} 
 \index{SLIME!top-level keyword commands}%
 The file\var{$<$install-directory\/$>$}\code{gbbopen-init.lisp} is an
 alternative for \var{$<$install-directory\/$>$}\code{startup.lisp} that adds
@@ -898,11 +936,6 @@ Common Lisp initialization file.  (You should not explicitly load the
 \var{$<$install-directory\/$>$}\code{gbbopen-init.lisp}---it will handle the
 \var{$<$install-directory\/$>$}\code{startup.lisp} file loading for you.)
 
-% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
-% formatting of the following paragraph...  I don't understand why:
-%\T\begin{ifhtml}
-%  \endpar\par
-%\T\end{ifhtml} 
 The standard GBBopen top-level commands are defined in the file
 \var{$<$install-directory\/$>$}\code{commands.lisp}. 
 In many Common Lisp implementations, top-level keyword commands that have
@@ -930,11 +963,6 @@ defined for each GBBopen top-level keyword command, and these functions can be
 used when top-level keyword processing is not fully supported.
 
 \ppar{Personal gbbopen-commands.lisp file}
-% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
-% formatting of the following paragraph...  I don't understand why:
-%\T\begin{ifhtml}
-%  \endpar\par
-%\T\end{ifhtml} 
 \index{initialization, personal
   gbbopen-commands.lisp@\code{gbbopen-commands.lisp} file}%
 \index{gbbopen-commands.lisp@\code{gbbopen-commands.lisp}, personal
@@ -976,11 +1004,6 @@ extensions---in the Lisp listener.
 
 \ppar{Personal gbbopen-modules directory}
 
-% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
-% formatting of the following paragraph...  I don't understand why:
-%\T\begin{ifhtml}
-%  \endpar\par
-%\T\end{ifhtml}
 \index{initialization, personal
   gbbopen-modules@\code{gbbopen-modules} directory files}%
 \index{gbbopen-modules@\code{gbbopen-modules}, personal
@@ -988,7 +1011,6 @@ extensions---in the Lisp listener.
 \index{loading!user-specific module definitions}%
 \index{module definitions, loading user-specific}%
 \bfindexit{user-homedir-pathname}%
-
 Earlier, we showed a simple example of using a personal
 \code{gbbopen-init.lisp} file to define the module \code{:my-app}.  If you
 develop or use a number of modules or applications, GBBopen provides an
@@ -1045,11 +1067,6 @@ either your Common Lisp initialization file or in your personal
 \code{gbbopen-init.lisp} file.  Changing the default setting in
 \code{startup.lisp} is not recommended.
 
-% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
-% formatting of the following paragraph...  I don't understand why:
-%\T\begin{ifhtml}
-%  \endpar\par
-%\T\end{ifhtml} 
 \index{SLIME, and top-level keyword commands}%
 \xsitelink{Emacs}{http://www.gnu.org/software/emacs/emacs.html} access to the
 GBBopen Hyperdoc is provided by
@@ -1288,11 +1305,6 @@ there are more complex open-source \textbf{defsystem} packages, such as ASDF
 (\xsitelink{http://www.weitz.de/asdf-install/}%
 {http://www.weitz.de/asdf-install/}), that are available.
 
-% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
-% formatting of the following paragraph...  I don't understand why:
-%\T\begin{ifhtml}
-%  \endpar\par
-%\T\end{ifhtml}
 \index{initialization, personal
   gbbopen-init.lisp@\code{gbbopen-init.lisp} file}%
 \index{gbbopen-init.lisp@\code{gbbopen-init.lisp}, personal
@@ -1319,6 +1331,87 @@ GBBopen parameters, and other personalizations
 \W\entities
 \T\clearpage
 \T\renewcommand{\headrulewidth}{0.01pt}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}[automatically-create-missing-directories]{Variable}%
+  {*automatically-create-missing-directories*}{}%
+
+\fnsyntax
+
+\fnpurpose Controls whether any directories that are missing
+in the compiled-file tree should be created when needed.
+
+\fnpackage \code{:common-lisp-user} 
+(also imported into and exported from \code{:mini-module})
+
+\fnmodule \code{:mini-module}
+
+\fnvaluetype A \glref{generalized~boolean}
+
+\fninitialvalue \code{nil}
+
+\fndescription By default, \textbf{*automatically-create-missing-directories*}
+is set to \code{nil}, but it can be set or bound to true to instruct
+\textbf{\entlink{compile-module}} to create any needed directories in the
+compiled-file tree rather than generating a continuable error. The
+compile-module option \code{:create-dirs} can also be specified to bind
+\textbf{*automatically-create-missing-directories*} to true during module
+compilation.
+
+\begin{alsos}{compile-module}
+\also[compile-module]
+\end{alsos}
+
+\fnexample 
+Automatically create, as needed, any missing directory in the compiled-file
+tree, rather than generating a continuable error:
+\begin{example}
+  (setf common-lisp-user::*automatically-create-missing-directories* 't)
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}[autorun-modules]{Variable}{*autorun-modules*}{}%
+
+\fnsyntax
+
+\fnpurpose Indicates whether a module should evaluate autorun forms when it is
+loaded.
+
+\fnpackage \code{:common-lisp-user}
+(also imported into and exported from \code{:mini-module})
+
+\fnmodule \code{:mini-module}
+
+\fnvaluetype A \glref{generalized~boolean}
+
+\fninitialvalue True
+
+\fndescription The value of \textbf{*autorun-modules*} can be used to
+conditionally evaluate forms when module files are loaded.  By default, the
+value of \textbf{*autorun-modules*} is set to true, but it can be set or bound
+to \code{nil} to disable conditional autorun forms.  The compile-module or
+load-module option \code{:noautorun} can also be specified to bind
+\textbf{*autorun-modules*} to \code{nil} during module compilation and loading.
+
+\begin{alsos}{load-module-file}
+\also[compile-module]
+\also[load-module]
+\also[load-module-file]
+\end{alsos}
+
+\fnexample
+Conditionally evaluate the \code{http-test} function when the file 
+\code{http-test.lisp} that includes the following form is loaded:
+\begin{example}
+  (when common-lisp-user::*autorun-modules*
+    (http-test "GBBopen.org" 80))
+\end{example}
+
+\end{functiondoc}
 
 %% ------------------------------------------------------------------------
 
@@ -1350,9 +1443,11 @@ GBBopen parameters, and other personalizations
 \fndescription These file options, when specified for individual files in the
 module definition (see \textbf{\entlinknoex{define-module}}), have the
 following effects (overriding the behavior of \var{options\/} supplied to
-\textbf{compile-module}): \modulefileoptions
+\textbf{compile-module}): \compilemodulefileoptions
 
-\begin{alsos}{load-module-file}
+\begin{alsos}{*automatically-create-missing-directories-modules*}
+\also[*automatically-create-missing-directories*]
+\also[*autorun-modules*]
 \also[define-module]
 \also[load-module]
 \also[load-module-file]
@@ -1443,8 +1538,7 @@ be loaded before this module.  The fully expanded required-module order
 determined from the specified \code{:requires} module option must be
 consistent with all previously defined modules.
 
-\var{File-options\/} have the following effects: 
-\modulefileoptions
+\var{File-options\/} have the following effects: \compilemodulefileoptions
 
 \begin{alsos}{define-relative-directory}
 \also[define-relative-directory]
@@ -1724,17 +1818,7 @@ Return the pathname of the \code{:gbbopen-tools} module:
 \begin{args}{module-name}
 \arg[module-name] A keyword symbol naming a module 
 \arg[option] Any of the following keywords: 
-\T\\[4pt]
-\codeindexsub{:reload}{compile/load-module option}%
-\codeindexsub{:source}{compile/load-module option}%
-\codeindexqual{:propagate}{compile/load-module option}%
-\begin{tabular}{@{}l@{}l@{}}
-\code{:reload} & Loads files even if they are already loaded\\[2pt]
-\code{:source} & Loads from the source file even if the file is compiled
-  (implies \code{:reload})\\[2pt]
-\code{:propagate}~~ & Applies the specified options to all required
-  modules\\[2pt] 
-\end{tabular}
+\loadmoduleoptions
 \end{args}
 
 \fnerrors Module \var{module-name\/} has not been defined.
@@ -1743,17 +1827,10 @@ Return the pathname of the \code{:gbbopen-tools} module:
 module definition (see \textbf{\entlinknoex{define-module}}), have the
 following effects (overriding the behavior of \var{options\/} supplied to
 \textbf{load-module}):
-\T\\[4pt]
-\codeindexqual{:noload}{define-module file option}%
-\codeindexsub{:reload}{define-module file option}%
-\codeindexsub{:source}{define-module file option}%
-\begin{tabular}{@{~~~~}l@{}l@{}}
-\code{:noload}~~~~ & Do not load the file \\[2pt]
-\code{:reload} & Loads files even if they are already loaded\\[2pt]
-\code{:source} & Do not load the compiled file (load the source instead)\\
-\end{tabular}
+\loadmodulefileoptions
 
-\begin{alsos}{load-module-file}
+\begin{alsos}{*autorun-modules*}
+\also[*autorun-modules*]
 \also[compile-module]
 \also[define-module]
 \also[load-module-file]
@@ -1786,12 +1863,8 @@ following effects (overriding the behavior of \var{options\/} supplied to
 \begin{args}{module-name}
 \arg[module-name] A keyword symbol naming a module 
 \arg[file-name] A string naming a file in the module 
-\arg[option] Only the following keyword option is supported: 
-\T\\[4pt]
-\codeindexsub{:source}{compile/load-module option}%
-\begin{tabular}{@{}l@{}l@{}}
-\code{:source}~~ & Loads from the source file even if the file is compiled
-\end{tabular}
+\arg[option] Any of the following keywords: 
+\loadonefilemoduleoptions
 \end{args}
 
 \fnreturns The pathname of the loaded file.
@@ -1803,7 +1876,8 @@ following effects (overriding the behavior of \var{options\/} supplied to
 definition (see \textbf{\entlinknoex{define-module}}) are ignored by
 \textbf{load-module-file}.
 
-\begin{alsos}{define-module}
+\begin{alsos}{*autorun-modules*}
+\also[*autorun-modules*]
 \also[define-module]
 \also[load-module]
 \end{alsos}
@@ -2006,7 +2080,7 @@ optimizations disabled:
 
 \fnpurpose Control month and date ordering for GBBopen date formatting.
 
-\fnpackage \code{:gbbopen-tools  (home package is \code{:mini-module})}
+\fnpackage \code{:gbbopen-tools} (home package is \code{:mini-module})
 
 \fnmodule \code{:mini-module}
 
@@ -2265,11 +2339,6 @@ as the comparison function.
 \begin{example}
   (delete \var{item\/} (the list \var{list\/}) :test #'eq)
 \end{example}
-% The following \endpar\par shouldn't be needed, but it fixes Hyperlatex
-% formatting of the following paragraph...  I don't understand why:
-%\T\begin{ifhtml}
-%  \endpar\par
-%\T\end{ifhtml}
 As is the case with \code{delete}, \textbf{delq} may modify the top-level
 structure of \var{list\/} in constructing the \var{result-list}.
 
@@ -3922,7 +3991,7 @@ The names of the declared-numeric macros include these ``type-indicator''
 characters:
 
 \begin{tabular}{l@{}l@{}l}
-  \textbf{Characters} & ~~~~ & \textbf{Declared Type} \\
+  \textbf{Characters} & ~~~ & \textbf{Declared Type} \\
   \&     & & \code{fixnum} \\
   \$\&   & & \code{short-float} \\
   \$     & & \code{single-float} \\
@@ -3932,7 +4001,7 @@ characters:
 
 Thus, the declared-numeric \code{+} macros are:
 \begin{tabular}{l@{}l@{}l}
-  +\&     & ~~~~  & \code{fixnum} addition \\
+  +\&     & ~~~  & \code{fixnum} addition \\
   +\$\&   & & \code{short-float} addition \\
   +\$     & & \code{single-float} addition \\
   +\$\$   & & \code{double-float} addition \\
@@ -4013,8 +4082,8 @@ These fixnum numeric-operation macros are defined in the
 
 \code{%
   \begin{tabular}{l@{}l@{}l@{}l@{}l}
-    \textbf{\small Macro} & ~~~~ & \textbf{\small Operator} 
-    & ~~~~ & \textbf{\small Example} \\ \hline
+    \textbf{\small Macro} & ~~~ & \textbf{\small Operator} 
+    & ~~~ & \textbf{\small Example} \\ \hline
     \&       & & the fixnum     & & (\& x)\\
     +\&      & & +              & & (+\& x y z)\\
     -\&      & & -              & & (-\& x y z)\\
@@ -4046,7 +4115,7 @@ These fixnum numeric-operation macros are defined in the
     plusp\&  & & plusp          & & (plusp\& x)\\
     pushnew/incf\&-acons & & \entlink{pushnew/incf-acons}
     & & (pushnew/incf\&-acons\\
-    & & & & ~~~~ 'x delta alist)\\
+    & & & & ~~~ 'x delta alist)\\
     round\&  & & round          & & (round\& x divisor)\\
     truncate\& & & truncate     & & (truncate\& x divisor)\\
     zerop\&  & & zerop          & & (zerop\& x)\\ \hline
@@ -4103,8 +4172,8 @@ These short-float numeric operation macros are defined in the
 
 \code{%
   \begin{tabular}{l@{}l@{}l@{}l@{}l}
-    \textbf{\small Macro} & ~~~~ & \textbf{\small Operator} 
-    & ~~~~ & \textbf{\small Example} \\ \hline
+    \textbf{\small Macro} & ~~~ & \textbf{\small Operator} 
+    & ~~~ & \textbf{\small Example} \\ \hline
     \$\&       & & the short-float & & (\$\& x)\\
     +\$\&      & & +              & & (+\$\& x y z)\\
     -\$\&      & & -              & & (-\$\& x y z)\\
@@ -4136,7 +4205,7 @@ These short-float numeric operation macros are defined in the
     plusp\$\&  & & plusp          & & (plusp\$\& x)\\
     pushnew/incf\$\&-acons & & \entlink{pushnew/incf-acons}
     & & (pushnew/incf\$\&-acons\\
-    & & & & ~~~~ 'x delta alist)\\
+    & & & & ~~~ 'x delta alist)\\
     round\$\&  & & round          & & (round\$\& x divisor)\\
     truncate\$\& & & truncate     & & (truncate\$\& x divisor)\\
     zerop\$\&  & & zerop          & & (zerop\$\& x)\\ \hline
@@ -4193,8 +4262,8 @@ These single-float numeric operation macros are defined in the
 
 \code{%
   \begin{tabular}{l@{}l@{}l@{}l@{}l}
-    \textbf{\small Macro} & ~~~~ & \textbf{\small Operator} 
-    & ~~~~ & \textbf{\small Example} \\ \hline
+    \textbf{\small Macro} & ~~~ & \textbf{\small Operator} 
+    & ~~~ & \textbf{\small Example} \\ \hline
     \$       & & the single-float & & (\$ x)\\
     +\$      & & +              & & (+\$ x y z)\\
     -\$      & & -              & & (-\$ x y z)\\
@@ -4226,7 +4295,7 @@ These single-float numeric operation macros are defined in the
     plusp\$  & & plusp          & & (plusp\$ x)\\
     pushnew/incf\$-acons & & \entlink{pushnew/incf-acons}
     & & (pushnew/incf\$-acons\\
-    & & & & ~~~~ 'x delta alist)\\
+    & & & & ~~~ 'x delta alist)\\
     round\$  & & round          & & (round\$ x divisor)\\
     truncate\$ & & truncate     & & (truncate\$ x divisor)\\
     zerop\$  & & zerop          & & (zerop\$ x)\\ \hline
@@ -4283,8 +4352,8 @@ These double-float numeric operation macros are defined in the
 
 \code{%
   \begin{tabular}{l@{}l@{}l@{}l@{}l}
-    \textbf{\small Macro} & ~~~~ & \textbf{\small Operator} 
-    & ~~~~ & \textbf{\small Example} \\ \hline
+    \textbf{\small Macro} & ~~~ & \textbf{\small Operator} 
+    & ~~~ & \textbf{\small Example} \\ \hline
     \$\$       & & the double-float & & (\$\$ x)\\
     +\$\$      & & +              & & (+\$\$ x y z)\\
     -\$\$      & & -              & & (-\$\$ x y z)\\
@@ -4316,7 +4385,7 @@ These double-float numeric operation macros are defined in the
     plusp\$\$  & & plusp          & & (plusp\$\$ x)\\
     pushnew/incf\$\$-acons & & \entlink{pushnew/incf-acons}
     & & (pushnew/incf\$\$-acons\\
-    & & & & ~~~~ 'x delta alist)\\
+    & & & & ~~~ 'x delta alist)\\
     round\$\$  & & round          & & (round\$\$ x divisor)\\
     truncate\$\$ & & truncate     & & (truncate\$\$ x divisor)\\
     zerop\$\$  & & zerop          & & (zerop\$\$ x)\\ \hline
@@ -4373,8 +4442,8 @@ These long-float numeric operation macros are defined in the
 
 \code{%
   \begin{tabular}{l@{}l@{}l@{}l@{}l}
-    \textbf{\small Macro} & ~~~~ & \textbf{\small Operator} 
-    & ~~~~ & \textbf{\small Example} \\ \hline
+    \textbf{\small Macro} & ~~~ & \textbf{\small Operator} 
+    & ~~~ & \textbf{\small Example} \\ \hline
     \$\$\$       & & the long-float & & (\$\$\$ x)\\
     +\$\$\$      & & +              & & (+\$\$\$ x y z)\\
     -\$\$\$      & & -              & & (-\$\$\$ x y z)\\
@@ -4406,7 +4475,7 @@ These long-float numeric operation macros are defined in the
     plusp\$\$\$  & & plusp          & & (plusp\$\$\$ x)\\
     pushnew/incf\$\$\$-acons & & \entlink{pushnew/incf-acons}
     & & (pushnew/incf\$\$\$-acons\\
-    & & & & ~~~~ 'x delta alist)\\
+    & & & & ~~~ 'x delta alist)\\
     round\$\$\$  & & round          & & (round\$\$\$ x divisor)\\
     truncate\$\$\$ & & truncate     & & (truncate\$\$\$ x divisor)\\
     zerop\$\$\$  & & zerop          & & (zerop\$\$\$ x)\\ \hline

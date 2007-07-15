@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/startup.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Jul 14 11:51:53 2007 *-*
+;;;; *-* Last-Edit: Sun Jul 15 06:01:14 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2002-2006, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2007, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;;  For GBBopen porting information, refer to the file PORTING.
@@ -52,15 +52,6 @@
     #+(or (and lispworks (not win32)) sbcl) "/usr/bin/firefox"
     #-(or macosx darwin (and lispworks (not win32)) sbcl) "firefox")
 
-;;; ===========================================================================
-;;; Add a single feature to identify sufficiently new Digitool MCL
-;;; implementations (at present, both Digitool MCL and OpenMCL include
-;;; the feature mcl):
-
-#+(and digitool ccl-5.1)
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (pushnew :digitool-mcl *features*))
-
 ;;; ---------------------------------------------------------------------------
 ;;;  Load required Corman Common Lisp patches
 
@@ -84,7 +75,8 @@
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Define the :gbbopen-tools and :gbbopen packages here, to allow a user to
-;;;  set GBBopen parameters in their <user-homedir>gbbopen-init file (below).
+;;;  set GBBopen parameters in their <user-homedir>gbbopen-init.lisp file
+;;;  (loaded below):
 
 (unless (find-package :gbbopen-tools)
   (defpackage :gbbopen-tools 
@@ -109,7 +101,7 @@
 
 ;;; ---------------------------------------------------------------------------
 ;;;  If there is a gbbopen-init.lisp file (or compiled version) in the
-;;;  users "home" directory, load it now.
+;;;  users "home" directory, load it now:
 
 (load (namestring (make-pathname :name "gbbopen-init"
 				 :type #-(or clisp ecl) ':unspecific 
@@ -131,7 +123,7 @@
 ;;; ---------------------------------------------------------------------------
 ;;;  If there is a gbbopen-modules directory in the users "home" directory,
 ;;;  load the modules.lisp file (if present) from each module directory
-;;;  that is linked from the gbbopen-modules directory. 
+;;;  that is linked from the gbbopen-modules directory:
 
 (process-gbbopen-modules-directory "modules")
 
