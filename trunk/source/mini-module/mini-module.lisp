@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/mini-module/mini-module.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Jul 14 11:45:37 2007 *-*
+;;;; *-* Last-Edit: Sun Jul 15 05:52:07 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -82,6 +82,7 @@
 ;;;           as putting forms in a module's files is preferable to having
 ;;;           them in the module definition).  (Corkill)
 ;;;  07-14-07 Add subdirectories support to define-root-directory.  (Corkill)
+;;;  07-14-07 Add :noautorun compile/load-module option.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -110,7 +111,7 @@
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (import '(common-lisp-user::*automatically-create-missing-directories*
-            common-lisp-user::*autorun-mini-modules*
+            common-lisp-user::*autorun-modules*
 	    common-lisp-user::*mini-module-compile-verbose*
 	    common-lisp-user::*mini-module-load-verbose*)))
 
@@ -138,9 +139,9 @@
 ;;; ---------------------------------------------------------------------------
 ;;;  Controls whether GBBopen example and test modules autorun themselves.
 
-(declaim (special *autorun-mini-modules*))
-(unless (boundp '*autorun-mini-modules*)
-  (setf *autorun-mini-modules* 't))
+(declaim (special *autorun-modules*))
+(unless (boundp '*autorun-modules*)
+  (setf *autorun-modules* 't))
 
 ;;; ===========================================================================
 ;;;  Implementation-Specific Package & Feature Adjustments
@@ -156,7 +157,11 @@
 ;;;  with similar names in other packages, but we export them anyway.)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (export '(*month-preceeds-date*
+  (export '(*automatically-create-missing-directories*
+            *autorun-modules*
+	    *mini-module-compile-verbose*
+	    *mini-module-load-verbose*
+            *month-preceeds-date*
 	    compile-module
 	    compute-relative-directory	; not documented
 	    define-relative-directory
@@ -713,8 +718,24 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defparameter *compile/load-module-options*
-    '(:create-dirs :propagate :recompile :reload :source))
+(defparameter *compile-module-options*
+    '(:create-dirs
+      :create-directories               ; full-name synonym for :create-dirs
+      :noautorun
+      :print
+      :propagate
+      :recompile
+      :reload 
+      :source))
+
+;;; ---------------------------------------------------------------------------
+
+(defparameter *load-module-options*
+    '(:noautorun
+      :print
+      :propagate
+      :reload 
+      :source))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -740,19 +761,19 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun load-file (path)
+(defun load-file (path print?)
   ;; Generate our own load-verbose message:
   (when (and (not *load-verbose*)
-	     *mini-module-load-verbose*)
+             *mini-module-load-verbose*)
     (format t "~&;;; loading file ~a...~%"
 	    (namestring path)))
-  (load path))
+  (load path :print print?))
 
 ;;; ---------------------------------------------------------------------------
 
 (defun compile/load-module-files-helper (module source-directory
                                          compiled-directory compile?
-                                         recompile? reload? source? verbose?
+                                         recompile? reload? source? print?
                                          propagate?)
   (setf (mm-module.load-completed? module) nil)
   (with-compilation-unit ()
@@ -788,11 +809,11 @@
                 bad-options))           
         (flet ((load-it (path date)
                  (when (or reload?
-			   (member :reload file-options :test #'eq)
+			   (member ':reload file-options :test #'eq)
 			   (not file-loaded-acons)
 			   (> date (cdr file-loaded-acons)))
-                   (load-file path)
-		   (when (member :forces-recompile file-options :test #'eq)
+                   (load-file path print?)
+		   (when (member ':forces-recompile file-options :test #'eq)
 		     (let ((latest-source/compiled-file-date 
 			    (max source-file-date compiled-file-date)))
 		       (maybe-update-forces-recompile-date 
@@ -811,12 +832,12 @@
 		 (when (and (plusp compiled-file-date)
 			    (> *latest-forces-recompile-date*
 			       compiled-file-date)
-			    (not (member :source file-options :test #'eq)))
+			    (not (member ':source file-options :test #'eq)))
 		   (format t "~&; File ~a in ~s needs to be recompiled.~%"
 			   file-name (mm-module.name module)))))
-	  (when (and (not (member :source file-options :test #'eq))
+	  (when (and (not (member ':source file-options :test #'eq))
                      (or recompile? 
-                         (member :recompile file-options :test #'eq)
+                         (member ':recompile file-options :test #'eq)
                          (and compile?
                               (or (> source-file-date compiled-file-date)
 				  (> *latest-forces-recompile-date* 
@@ -830,7 +851,7 @@
 	      (format t "~&;;; Compiling file ~a...~%"
 		      (namestring source-path)))
             (compile-file source-path 
-                          :print verbose?
+                          :print print?
                           :output-file compiled-path)
             (setf compiled-file-date 
               (or (and (probe-file compiled-path)
@@ -838,13 +859,13 @@
                   ;; Compiled file can be missing if compilation was
                   ;; aborted:
                   -1))
-            (when (member :forces-recompile file-options :test #'eq)
+            (when (member ':forces-recompile file-options :test #'eq)
 	      (maybe-update-forces-recompile-date compiled-file-date)
 	      (setf (mm-module.latest-forces-recompiled-date module)
 		    (max compiled-file-date
 			 (mm-module.latest-forces-recompiled-date module)))
               (setf recompile? 't propagate? 't)))
-          (unless (member :noload file-options :test #'eq)
+          (unless (member ':noload file-options :test #'eq)
             (if (or source? (> source-file-date compiled-file-date))
                 (load-it source-path source-file-date)
                 (load-it compiled-path compiled-file-date)))))))
@@ -856,7 +877,7 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun compile-module-files (module recompile? reload? source? verbose? 
+(defun compile-module-files (module recompile? reload? source? print? 
                              propagate?)
   (multiple-value-bind (source-directory compiled-directory)
       (module-source/compiled-directories module)
@@ -875,19 +896,18 @@
                                            any future missing directories.")
                       (setf *automatically-create-missing-directories* 't))))
           (ensure-directories-exist compiled-directory))))
-    ;; Pass through recompile? and propagate? values
     (compile/load-module-files-helper 
      module source-directory compiled-directory
-     t recompile? reload? source? verbose? propagate?)))
+     t recompile? reload? source? print? propagate?)))
 
 ;;; ---------------------------------------------------------------------------
 
-(defun load-module-files (module reload? source?)
+(defun load-module-files (module reload? source? print?)
   (multiple-value-bind (source-directory compiled-directory)
       (module-source/compiled-directories module)
     (compile/load-module-files-helper 
      module source-directory compiled-directory
-     nil nil reload? source? nil nil)))
+     nil nil reload? source? print? nil)))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -897,29 +917,33 @@
   ;;; flags (not keyword-value pairs):
   ;;;
   ;;; Options:
+  ;;;   :create-dirs Creates directories that are missing in the
+  ;;;                compiled-file tree (also full :create-directories)
+  ;;;   :noautorun   Sets *autorun-modules* to nil during loading
+  ;;;   :print       Enables form-level print during compiling/loading
+  ;;;   :propagate   Applies the specified options to all required modules
   ;;;   :recompile   Compiles even if the compiled file is newer than the
   ;;;                source file
   ;;;   :reload      Loads even if already loaded
   ;;;   :source      Loads source even if the file is compiled
   ;;;                (implies :reload)
-  ;;;   :propagate   Applies the specified options to all required modules
-  ;;;   :create-dirs Creates directories that are missing in the
-  ;;;                compiled-file tree
   (declare (dynamic-extent options))
   (when (keywordp module-names) (setf module-names (list module-names)))
   (dolist (option options)
-    (unless (member option *compile/load-module-options* :test #'eq)
+    (unless (member option *compile-module-options* :test #'eq)
       (warn "Unrecognized compile-module option ~s, ignored." option)))
-  (let* ((recompile? (member :recompile options :test #'eq))
-         (reload? (member :reload options :test #'eq))
-         (propagate? (member :propagate options :test #'eq))
-         (source? (member :source options :test #'eq))
-         (verbose? (member :verbose options :test #'eq))
+  (let* ((recompile? (member ':recompile options :test #'eq))
+         (reload? (member ':reload options :test #'eq))
+         (propagate? (member ':propagate options :test #'eq))
+         (source? (member ':source options :test #'eq))
+         (print? (member ':print options :test #'eq))
          (*automatically-create-missing-directories*
           (or *automatically-create-missing-directories*
-              (member :create-dirs options :test #'eq)
+              (member ':create-dirs options :test #'eq)
               ;; For those who hate abbreviations:
-              (member :create-directories options :test #'eq)))
+              (member ':create-directories options :test #'eq)))
+         (*autorun-modules*
+          (if (member ':noautorun options :test #'eq) nil *autorun-modules*))
          (modules-to-load (determine-modules module-names))
 	 (*latest-forces-recompile-date* 0))
     ;; specifying :source implies :reload
@@ -930,11 +954,12 @@
         (if (or propagate? specified-module?)              
             (multiple-value-setq (recompile? propagate?)
               (compile-module-files module recompile? reload? source? 
-                                    verbose? propagate?))
+                                    print? propagate?))
             (load-module-files
              module 
              (and reload? propagate?) 
-             (and source? (or propagate? specified-module?)))))
+             (and source? (or propagate? specified-module?))
+             print?)))
       (let ((after-form (mm-module.after-form module)))
         (when after-form (eval after-form))))))
 
@@ -946,18 +971,23 @@
   ;;; pairs):
   ;;;
   ;;; Options:
+  ;;;   :noautorun   Sets *autorun-modules* to nil during loading
+  ;;;   :print       Enables form-level print during compiling/loading
+  ;;;   :propagate   Applies the specified options to all required modules
   ;;;   :recompile   Ignored by load-module
   ;;;   :reload      Loads even if already loaded
   ;;;   :source      Loads source (implies :reload)
-  ;;;   :propagate   Applies the specified options to all required modules
   (declare (dynamic-extent options))
   (when (keywordp module-names) (setf module-names (list module-names)))
   (dolist (option options)
-    (unless (member option *compile/load-module-options* :test #'eq)
-      (warn "Unrecognized compile-module option ~s, ignored." option)))
-  (let ((reload? (member :reload options :test #'eq))
-        (propagate? (member :propagate options :test #'eq))
-        (source? (member :source options :test #'eq))
+    (unless (member option *load-module-options* :test #'eq)
+      (warn "Unrecognized load-module option ~s, ignored." option)))
+  (let ((reload? (member ':reload options :test #'eq))
+        (propagate? (member ':propagate options :test #'eq))
+        (source? (member ':source options :test #'eq))
+        (print? (member ':print options :test #'eq))
+        (*autorun-modules*
+         (if (member ':noautorun options :test #'eq) nil *autorun-modules*))
         (modules-to-load (determine-modules module-names))
 	(*latest-forces-recompile-date* 0))
   ;; specifying :source implies :reload:
@@ -970,7 +1000,8 @@
          (and reload? 
               (or propagate? specified-module?))
          (and source? 
-              (or propagate? specified-module?))))
+              (or propagate? specified-module?))
+         print?))
       (let ((after-form (mm-module.after-form module)))
         (when after-form (eval after-form))))))
 
@@ -978,8 +1009,13 @@
 
 (defun load-module-file (module-name file-name &rest file-options)
   ;;; Specified loading of a single file in a module.  Always reloads
-  ;;; the latest source/compiled file, but file-options allows :source
-  ;;; only
+  ;;; the latest source/compiled file.
+  ;;;
+  ;;; Options:
+  ;;;   :noautorun   Sets *autorun-modules* to nil during loading
+  ;;;   :print       Enables form-level print during loading
+  ;;;   :source      Loads source
+
   (declare (dynamic-extent file-options))
   (let ((module (get-module module-name)))
     (multiple-value-bind (source-directory compiled-directory)
@@ -999,9 +1035,14 @@
 				     -1))
              (files-loaded (mm-module.files-loaded module))
              (file-loaded-acons (assoc file-name files-loaded
-                                       :test #'string=)))
+                                       :test #'string=))
+             (print? (member ':print file-options :test #'eq))
+             (*autorun-modules*
+              (if (member ':noautorun file-options :test #'eq)
+                  nil
+                  *autorun-modules*)))
 	(flet ((load-it (path date)
-		 (load-file path)
+		 (load-file path print?)
 		 (if file-loaded-acons
 		     ;; update the date in the existing acons:
 		     (setf (cdr file-loaded-acons) date)
@@ -1010,7 +1051,7 @@
 			   (acons file-name date files-loaded)))
 		 ;; Return the file path:
 		 path))
-	  (if (or (member :source file-options :test #'eq)
+	  (if (or (member ':source file-options :test #'eq)
 		  (> source-file-date compiled-file-date))
 	      (load-it source-path source-file-date)
 	      (load-it compiled-path compiled-file-date)))))))
