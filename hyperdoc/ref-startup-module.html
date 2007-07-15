@@ -31,23 +31,31 @@ yet loaded, and set the current package.
 <a name="id1"></a></p>
 <table class="tight"><table><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
-<code>:recompile</code> </td><td valign="baseline" colspan="1" align="left"> Compiles files even if the compiled file is newer than the
-source file</td></tr>
+<code>:create-dirs</code>&nbsp;&nbsp;&nbsp; </td><td valign="baseline" colspan="1" align="left"> Creates any needed directories that are missing in the
+compiled-file tree</td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left">
-<code>:reload</code> </td><td valign="baseline" colspan="1" align="left"> Loads files even if they are already loaded</td></tr>
+<code>:noautorun</code> </td><td valign="baseline" colspan="1" align="left"> Binds <b><a href="ref-autorun-modules.html">*autorun-modules*</a></b> to nil
+during compilation and loading</td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left">
-<code>:source</code> </td><td valign="baseline" colspan="1" align="left"> Loads from the source file even if the file is compiled
-(implies <code>:reload</code>)</td></tr>
+<code>:print</code> </td><td valign="baseline" colspan="1" align="left"> Incrementally prints information during compilation and
+loading</td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left">
 <code>:propagate</code> </td><td valign="baseline" colspan="1" align="left"> Applies the specified options to all required 
 modules</td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left">
-<code>:create-dirs</code>&nbsp;&nbsp; </td><td valign="baseline" colspan="1" align="left"> Creates directories that are missing in the
-compiled-file tree</td></tr>
+<code>:recompile</code> </td><td valign="baseline" colspan="1" align="left"> Compiles files even if the existing compiled file is newer 
+than the source file</td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left">
+<code>:reload</code> </td><td valign="baseline" colspan="1" align="left"> Loads files even if they are already loaded</td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left">
+<code>:source</code> </td><td valign="baseline" colspan="1" align="left"> Loads from the source file even if the existing compiled file
+is newer than the source file (implies <code>:reload</code>)</td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left">
 </td></tr></tbody></table>

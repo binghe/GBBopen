@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/control-shells/test/agenda-shell-test.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Jul 14 11:49:41 2007 *-*
+;;;; *-* Last-Edit: Sat Jul 14 13:39:57 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -30,7 +30,7 @@
   (use-package '(:agenda-shell)))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (import '(common-lisp-user::*autorun-mini-modules*
+  (import '(common-lisp-user::*autorun-modules*
             agenda-shell::*cs*)))
 
 ;;; ===========================================================================
@@ -254,7 +254,7 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(when *autorun-mini-modules*
+(when *autorun-modules*
   (format t "~{~&~s~%~}"
 	  (multiple-value-list 
 	   (agenda-shell-test :save-executed-ksas 't))))

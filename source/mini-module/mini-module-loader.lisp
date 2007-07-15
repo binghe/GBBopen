@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/mini-module/mini-module-loader.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Jul 14 04:12:42 2007 *-*
+;;;; *-* Last-Edit: Sun Jul 15 06:09:36 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -25,9 +25,9 @@
 ;;;       *compiled-file-type*
 ;;;    must be extended when porting to a new CL implementation.
 ;;;
-;;;  This file defines the global variables *compiled-directory-name* and
-;;;  *compiled-file-type* and then loads either the source or compiled
-;;;  mini-module file (whichever is dated later).
+;;;  This file defines the :mini-module package and the global variables
+;;;  *compiled-directory-name* and *compiled-file-type*.  It then loads either
+;;;  the source or compiled mini-module file (whichever is more recent).
 ;;;
 ;;;  This file is used as source only.
 ;;;
@@ -57,16 +57,25 @@
          (machine-type)))
 
 ;;; ===========================================================================
+;;; Add a single feature to identify sufficiently new Digitool MCL
+;;; implementations (at present, both Digitool MCL and OpenMCL include
+;;; the feature mcl):
+
+#+(and digitool ccl-5.1)
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (pushnew :digitool-mcl *features*))
+
+;;; ===========================================================================
 ;;;  Source/Compiled Directory Names
 
 (defparameter *source-directory-name* "source")
 
 ;;; ---------------------------------------------------------------------------
-;;; To facilitate operation on a common file server, the mini-module system
-;;; uses a separate compiled directory tree for each CL implementation and
-;;; version.  The following form creates a unique name for the root of this
-;;; tree for a number of CL implementations.  If you are using this facility
-;;; with another CL implementation, you should add to this form and e-mail the
+;;; The mini-module system uses a separate compiled directory tree for each CL
+;;; implementation and version.  The following form creates a unique name for
+;;; the root of this tree for a number of CL implementations.  If you use the
+;;; mini-module system with another CL implementation, you should add that
+;;; implementation to the *compiled-directory-name* form and e-mail the
 ;;; modified form to the GBBopen Project for inclusion in future releases.
 
 (defparameter *compiled-directory-name*
@@ -196,11 +205,12 @@
 ;;; ===========================================================================
 ;;;  Compiled File Type
 ;;;
-;;; The mini-module facility needs to know the file type of compiled files.
+;;; The mini-module system needs to know the file type of compiled files.
 ;;; The following form specifies the compiled-file type for a number of CL
-;;; implementations. If you are using this facility with another CL
-;;; implementation, you should add to this form and e-mail the modified form
-;;; to the GBBopen Project for inclusion in future releases.
+;;; implementations. If you use the mini-module system with another CL
+;;; implementation, you should add that implementation to the
+;;; *compiled-file-type* form and e-mail the modified form to the GBBopen
+;;; Project for inclusion in future releases.
 
 (defparameter *compiled-file-type*
     (or
@@ -251,7 +261,7 @@
      (must-port '*compiled-file-type*)))
 
 ;;; ===========================================================================
-;;;  Load the mini-module facility (source or compiled file)
+;;;  Load the mini-module system (source or compiled file)
 
 (let* ((this-file-truename *load-truename*)
        (root-pathname

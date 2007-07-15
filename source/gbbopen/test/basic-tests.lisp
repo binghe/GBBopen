@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/test/basic-tests.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Jul 14 11:48:28 2007 *-*
+;;;; *-* Last-Edit: Sat Jul 14 13:43:06 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -28,7 +28,7 @@
 (in-package :gbbopen-user)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (import '(common-lisp-user::*autorun-mini-modules*)))
+  (import '(common-lisp-user::*autorun-modules*)))
 
 ;; Bring in some internal functions for testing purposes...
 (eval-when (:compile-toplevel :load-toplevel :execute)
@@ -941,7 +941,7 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(when *autorun-mini-modules* (all-tests))
+(when *autorun-modules* (all-tests))
 
 ;;; ===========================================================================
 ;;;				  End of File
