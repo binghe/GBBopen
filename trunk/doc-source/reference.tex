@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /home/gbbopen/current/doc-source/reference.tex *-*
-%% *-* Last-Edit: Sun Jul 15 06:15:12 2007; Edited-By: cork *-*
+%% *-* Last-Edit: Wed Jul 18 06:13:20 2007; Edited-By: cork *-*
 %% *-* Machine: ruby.corkills.org *-*
 
 %% Copyright (C) 2003-2007, Dan Corkill <corkill@GBBopen.org>
@@ -4971,10 +4971,6 @@ the same as any element in the list stored in \var{place\/}, prepend
   (awaken-process process)
 \end{example}
 
-\fnnotes \textbf{Hibernate-process} is heavy handed and can lead to deadlocks
-and timing artifacts.  Support for \textbf{\entlink{hibernate-process}} and
-\textbf{awaken-process} may be removed, and their use is not recommended.
-
 \end{functiondoc}
 
 %% ------------------------------------------------------------------------
@@ -5078,9 +5074,8 @@ On Common Lisp implementations without multiprocessing, \nil{} is returned.
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Function}{hibernate-process}{\code{\&optional} \var{process\/}}
+\begin{functiondoc}{Function}{hibernate-process}{\noargs{}}
 \index{process!hibernating}%
-\index{hibernating a process}%
 
 \fnsyntax
 
@@ -5090,19 +5085,10 @@ On Common Lisp implementations without multiprocessing, \nil{} is returned.
 
 \fnmodule \code{:portable-threads}
 
-\fnargs
-\begin{args}{process}
-\arg[process]
-\bfindexit{current-process}%
-A \glref{process} (default is \code{(\entlinknoex{current-process})})
-\end{args}
-
 \fnerrors
 \nomultiprocessing{}
 \\
 \noscheduling{}
-\\
-OpenMCL does not support hibernating the current process.
 
 \begin{alsos}{process-wait-with-timeout}
 \also[awaken-process]
@@ -5111,14 +5097,10 @@ OpenMCL does not support hibernating the current process.
 \end{alsos}
 
 \fnexample
+Hibernate the current \glref{process}:
 \begin{example}
   (hibernate-process)
 \end{example}
-
-\fnnotes \textbf{Hibernate-process} is heavy handed and can lead to deadlocks
-and timing artifacts.  Support for \textbf{hibernate-process} and
-\textbf{\entlink{awaken-process}} may be removed, and their use is not
-recommended.
 
 \end{functiondoc}
 
