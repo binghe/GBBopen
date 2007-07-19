@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/commands.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Jul 14 13:37:27 2007 *-*
+;;;; *-* Last-Edit: Wed Jul 18 10:14:01 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -257,7 +257,7 @@
 
 #+(or clisp cmu scl sbcl)
 (define-tll-command :help ()
-  "Show top-level-loop commands"
+  "Show REPL commands"
   (dolist (command (sort (copy-list *extended-repl-commands*)
 			 #'(lambda (a b)
 			     (string< 
