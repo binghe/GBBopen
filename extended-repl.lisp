@@ -1,15 +1,14 @@
 ;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/extended-repl.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Jul 13 23:17:13 2007 *-*
+;;;; *-* Last-Edit: Wed Jul 18 09:30:04 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
 ;;;; *
-;;;; *     CLISP, CMUCL, SCL, ECL, and SBCL REPL Keyword-Command Extensions
-;;;; * 
-;;;; *                SLIME (Emacs->swank) Command Processing
+;;;; *                    Extended REPL Command Processing
+;;;; * for CLISP, CMUCL, SCL, ECL, and SBCL REPL and for SLIME (Emacs->swank)
 ;;;; *
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -28,8 +27,6 @@
 ;;;    - extend ECL's command repertoire
 ;;;    - add keyword-command support to SLIME's Emacs->swank interface  
 ;;;
-;;; See gbbopen-toplevel-commands.lisp for more details.
-;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
 ;;;  06-04-05 File Created.  (Corkill)
@@ -43,13 +40,12 @@
 (defvar *extended-repl-commands* nil)
 
 ;;; ---------------------------------------------------------------------------
-;;;  In ECL, setup a GBBopen-specific command topic (must be done
-;;;  destructively, as si::*tpl-commands* is already lexically bound in the
-;;;  default TLP)
+;;;  In ECL, setup an Extended REPL command topic (must be done destructively,
+;;;  as si::*tpl-commands* is already lexically bound in the default TLP)
 
 #+ecl
 (setf (rest si::*tpl-commands*)
-      (adjoin (list "GBBopen Commands") (cdr si::*tpl-commands*)
+      (adjoin (list "Extended REPL Commands") (cdr si::*tpl-commands*)
 	      :key #'car :test #'equal))
 
 ;;; ---------------------------------------------------------------------------
@@ -65,7 +61,8 @@
     `(progn
        ;; Define the command function:
        (defun ,tlc-sym ,lambda-list ,@body)
-       ;; Always add command to *extended-repl-commands* (for SLIME interface and more):
+       ;; Always add command to *extended-repl-commands* (for SLIME interface
+       ;; and more):
        (pushnew '(,command ,tlc-sym ,(when (stringp maybe-doc) maybe-doc))
 		*extended-repl-commands*
 		:test #'eq
@@ -93,7 +90,7 @@
 				 maybe-doc)
 			   maybe-doc)
 			  '("" "")))
-		  ;; Place in the GBBopen topic area:
+		  ;; Place in the extended REPL topic area:
 		  (cdr (second si::*tpl-commands*))
 		  :test #'equal
 		  :key #'car)))))
@@ -101,8 +98,8 @@
 ;;; ---------------------------------------------------------------------------
 ;;;  Interface into CLISP's *user-commands* facility
 ;;;
-;;; Currently there is no way to read remaining values from the RELP
-;;; read-line string in CLISP.
+;;; Currently there is no way to read remaining values from the RELP read-line
+;;; string in CLISP.
 
 #+clisp
 (defun user-commands ()
@@ -124,9 +121,9 @@
 (pushnew #'user-commands custom:*user-commands*)
 
 ;;; ---------------------------------------------------------------------------
-;;;  CMUCL doesn't provide an extension hook in either %top-level or
-;;;  interactive-eval.  So, we resort to shadowing the original
-;;;  interactive-eval function:
+;;; CMUCL doesn't provide an extension hook in either %top-level or
+;;; interactive-eval.  So, we resort to shadowing the original
+;;; interactive-eval function:
 
 #+cmu
 (setf (fdefinition 'original-interactive-eval)
@@ -163,9 +160,9 @@
  (compile 'ext:interactive-eval))
 
 ;;; ---------------------------------------------------------------------------
-;;;  The Scieneer CL 1.3 doesn't provide an extension hook in either %top-level
-;;;  or interactive-eval.  So, we resort to shadowing the original
-;;;  interactive-eval function:
+;;; The Scieneer CL 1.3 doesn't provide an extension hook in either %top-level
+;;; or interactive-eval.  So, we resort to shadowing the original
+;;; interactive-eval function:
 
 #+scl
 (setf (fdefinition 'original-interactive-eval)
@@ -207,7 +204,7 @@
 
 #+sbcl
 (progn
-  (defun gbbopen-repl-read-form-fun (in out)
+  (defun extended-repl-read-form-fun (in out)
   (declare (type stream in out) (ignore out))
   (let* ((eof-marker (cons nil nil))
 	 (form (read in nil eof-marker)))
@@ -236,10 +233,8 @@
               (do-command (second repl-command) (cdr form))
               '(values))
              (t form))))))))
-
-  (compile 'gbbopen-repl-read-form-fun)
-  
-  (setq sb-int:*repl-read-form-fun* #'gbbopen-repl-read-form-fun))
+  (compile 'extended-repl-read-form-fun)
+  (setf sb-int:*repl-read-form-fun* #'extended-repl-read-form-fun))
 
 ;;; ===========================================================================
 ;;;  SLIME Interface
@@ -253,9 +248,9 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun get-extended-repl-command-with-help (command)
-  ;; Used in gbbopen-swank-eval-hook to add SLIME support for :help on CLs
-  ;; that already provide their own REPL help command (and is therefore not in
-  ;; *extended-repl-commands*)
+  ;; Used in extended-repl-swank-eval-hook to add SLIME support for :help on
+  ;; CLs that already provide their own REPL help command (and is therefore
+  ;; not in *extended-repl-commands*)
   (or (assoc command *extended-repl-commands* :test #'eq)
       #+(or allegro ecl)
       (and (member command '(:help :h))
@@ -268,7 +263,7 @@
 ;;; We use Swank's eval hook to process command forms coming over the
 ;;; Emacs->swank connection.
 
-(defun gbbopen-swank-eval-hook (form)
+(defun extended-repl-swank-eval-hook (form)
   (let ((repl-command (get-extended-repl-command-with-help form)))
     (flet ((do-command (symbol-or-fn args)
 	     (apply (the function (if (symbolp symbol-or-fn) 
@@ -280,34 +275,35 @@
 	     (do-command (second repl-command) nil))
 	    ;; Support (<command> <arg>*) syntax as well:
 	    ((and (consp form)
-		  (setq repl-command (get-extended-repl-command-with-help (car form))))
+		  (setf repl-command
+                        (get-extended-repl-command-with-help (car form))))
 	     (do-command (second repl-command) (cdr form)))
 	    ;; Tell swank that we pass (normal eval):
 	    (t (funcall 'swank::repl-eval-hook-pass))))))
 
 ;;; ---------------------------------------------------------------------------
-;;; Swank is typically loaded after user-initialization files (such as
-;;; gbbopen-init), so we establish the GBBopen command processing every time
-;;; an Emacs->swank connection is created.
+;;; Swank can be loaded after user-initialization files, so we establish the
+;;; extended REPL command processing every time an Emacs->swank connection is
+;;; created.
 
-(defun gbbopen-new-swank-connection-hook (connection)
+(defun extended-repl-new-swank-connection-hook (connection)
   (declare (ignore connection))
   (when (boundp 'swank::*slime-repl-eval-hooks*)
-    (format t "~&;; Adding GBBopen Command Processing to SLIME...~%")
-    (pushnew 'gbbopen-swank-eval-hook swank::*slime-repl-eval-hooks*)))
+    (format t "~&;; Adding extended REPL command processing to SLIME...~%")
+    (pushnew 'extended-repl-swank-eval-hook swank::*slime-repl-eval-hooks*)))
   
 ;;; ---------------------------------------------------------------------------
 
 (if (and (boundp 'swank::*new-connection-hook*)
 	 swank::*new-connection-hook*)
     ;; We have an existing Emacs->swank connection, so run the hook:
-    (gbbopen-new-swank-connection-hook nil)
+    (extended-repl-new-swank-connection-hook nil)
     ;; Otherwise...
     (if (boundp 'swank::*new-connection-hook*)
-	(pushnew 'gbbopen-new-swank-connection-hook
+	(pushnew 'extended-repl-new-swank-connection-hook
 		 swank::*new-connection-hook*)
-	(setq swank::*new-connection-hook* 
-	  (list 'gbbopen-new-swank-connection-hook))))
+	(setf swank::*new-connection-hook* 
+              (list 'extended-repl-new-swank-connection-hook))))
 
 ;;; ===========================================================================
 ;;;				  End of File
