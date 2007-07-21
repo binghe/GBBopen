@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /home/gbbopen/current/doc-source/reference.tex *-*
-%% *-* Last-Edit: Wed Jul 18 06:13:20 2007; Edited-By: cork *-*
+%% *-* Last-Edit: Sat Jul 21 02:24:50 2007; Edited-By: cork *-*
 %% *-* Machine: ruby.corkills.org *-*
 
 %% Copyright (C) 2003-2007, Dan Corkill <corkill@GBBopen.org>
@@ -4489,6 +4489,241 @@ long-float coercion:
 \begin{example}
   (setf x (coerce\$ x))
 \end{example}
+
+%% ------------------------------------------------------------------------
+
+\T\markright{}%
+\T\pagestyle{plain}
+\T\clearpage
+\W\xname{ref-offset-universal-time-entities}
+\T\pagestyle{fancy}
+\T\thispagestyle{fancybottom}
+\T\global\def\fnlastname{ }%
+
+\subsection{Offset Universal Time}
+\label{sec:offsettime}%
+
+\index{offset universal time}%
+Common Lisp has three time representations: Decoded Time, Universal
+Time, and Internal Time.  Universal Time (UT) allows specific points
+in time from the beginning of 1900 to be represented with one-second
+resolution (ignoring leap seconds).  The disadvantage of absolute
+Universal Time values is that they are bignums in most Common Lisp
+implementations.
+
+To reduce computation and storage requirements, a fourth time
+representation, Offset Universal Time (OT), can be used.  Offset
+Universal Time is Universal Time that is offset by an integer
+time-base value so that the most often used Offset Universal Time
+values in an application are fixnums.
+
+Nearly all Common Lisp implementations provide fixnums of at least 30
+bits (34 years of time range) or more, but CLISP on 32-bit machines
+provides only 25 bits (388 days).  The ANSI standard requires an
+implementation to provide fixnums with at least 16 bits (only 18
+hours), but fortunately Common Lisp implementations are considerably more
+generous!
+
+When developing applications that must represent time values that
+exceed the fixnum range, it is important to choose the best time-base
+offset value to reduce bignum costs.  Of course, existing Offset
+Universal Time values will appear shifted if the time-base offset
+value is changed.
+
+\W\entities
+\T\clearpage
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{check-ot-base}{\code{\&optional}
+    \var{suppress-warning\/}
+    \returns{} \var{boolean\/}}
+
+\index{universal time!setting the time base value}%
+
+\fnsyntax
+
+\fnpurpose Check if the current time can be represented as a fixnum
+given the current Offset Universal Time time-base value.
+
+\fnpackage \code{:gbbopen-tools}
+
+\fnmodule \code{:gbbopen-tools}
+
+\fnargs
+\begin{args}{universal-time}
+\arg[suppress-warning] A \glref{generalized~boolean} (default is \nil)
+\end{args}
+
+\fnreturns True if the current time can be represented as a fixnum
+Offset Universal Time value; nil otherwise.
+
+\fnerrors The Offset Universal Time time-base value has not been set.
+
+\begin{alsos}{set-ot-base}
+\also[ot2ut]
+\also[set-ot-base]
+\also[ut2ot]
+\end{alsos}
+
+\fnexamples
+Set the time base for Offset Universal Time to today and check:
+\begin{example}
+> (\entlink{set-ot-base})
+3410655616
+> (check-ot-base)
+t
+\end{example}
+Set the time base for Offset Universal Time to January 1, 1900 and check:
+\begin{example}
+> (\entlink{set-ot-base} 1 1 1900)
+16777216
+> (check-ot-base)
+Warning: The current time represented as an Offset Universal Time is not a fixnum.
+nil
+> (check-ot-base 't)
+nil
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{ot2ut}{\var{offset-universal-time\/}
+  \returns{} \var{universal-time\/}}
+\index{offset universal time!converting to universal time}%
+
+\fnsyntax
+
+\fnpurpose Convert an Offset Universal Time value to a Universal Time 
+value.
+
+\fnpackage \code{:gbbopen-tools}
+
+\fnmodule \code{:gbbopen-tools}
+
+\fnargs
+\begin{args}{offset-universal-time}
+\arg[offset-univeral-time] An Offset Universal Time value
+\end{args}
+
+\fnreturns The equivalent Universal Time value
+
+\fnerrors The Offset Universal Time time-base value has not been set.
+
+\begin{alsos}{check-ot-base}
+\also[check-ot-base]
+\also[ut2ot]
+\also[set-ot-base]
+\end{alsos}
+
+\fnexample
+\begin{example}
+> (\entlink{set-ot-base} 1 7 2007)
+3409014016
+> (ot2ut -15071348)
+3393942668
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{set-ot-base}{[\var{date month year\/}
+   [\var{time-zone\/}]]
+  \returns{} \var{ot-base\/}}
+\index{universal time!setting the time base value}%
+
+\fnsyntax
+
+\fnpurpose Set the Offset Universal Time time-base value.
+
+\fnpackage \code{:gbbopen-tools}
+
+\fnmodule \code{:gbbopen-tools}
+
+\fnargs
+\begin{args}{universal-time}
+  \arg[date] An integer between 1 and up to 31, inclusive, depending
+  on the month and year
+  \arg[month] An integer between 1 and 12, inclusive
+  \arg[year] An integer indicating the year A.D. However, if this
+  integer is between 0 and 99, the ``obvious'' year is assumed.
+  \arg[time-zone] A time zone: a rational multiple of 1/3600 between
+  -24 and 24 that represents the number of hours offset from GMT 
+  (default is zero)
+\end{args}
+
+\fnreturns The Offset Universal Time time-base value
+
+\fndescription Without any arguments, \textbf{set-ot-base} sets the
+time-base value to the current date.  This can be useful for
+initializing applications that do not need to represent historical
+dates or save or communicate Offset Universal Time values.
+
+\begin{alsos}{check-ot-base}
+\also[check-ot-base]
+\also[ot2ut]
+\also[ut2ot]
+\end{alsos}
+
+\fnexamples
+Set the time base for Offset Universal Time to today:
+\begin{example}
+> (set-ot-base)
+3410655616
+\end{example}
+Set the time base for Offset Universal Time to July 1, 2007:
+\begin{example}
+> (set-ot-base 1 7 2007)
+3409014016
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{ut2ot}{\code{\&optional} 
+    \var{universal-time\/}
+  \returns{} \var{offset-universal-time\/}}
+\index{universal time!converting to offset universal time}%
+
+\fnsyntax
+
+\fnpurpose Convert a Offset Universal Time value to an Offset Universal 
+Time value.
+
+\fnpackage \code{:gbbopen-tools}
+
+\fnmodule \code{:gbbopen-tools}
+
+\fnargs
+\begin{args}{universal-time}
+\arg[univeral-time] A Universal Time value (default is the current
+   Universal Time)
+\end{args}
+
+\fnreturns The equivalent Offset Universal Time value
+
+\fnerrors The Offset Universal Time time-base value has not been set.
+
+\begin{alsos}{check-ot-base}
+\also[check-ot-base]
+\also[ot2ut]
+\also[set-ot-base]
+\end{alsos}
+
+\fnexamples
+\begin{example}
+> (\entlink{set-ot-base} 1 7 2007)
+3409014016
+> (ut2ot)
+-15071348
+> (ut2ot 3393942668)
+-15071348
+\end{example}
+
+\end{functiondoc}
 
 %% ------------------------------------------------------------------------
 

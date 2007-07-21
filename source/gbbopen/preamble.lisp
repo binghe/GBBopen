@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/preamble.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Jul  3 19:28:17 2007 *-*
+;;;; *-* Last-Edit: Thu Jul 19 05:41:36 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -34,7 +34,7 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(*coerce-interval-rationals-to-floats* ; not yet documented
 	    *warn-about-unusual-requests*
-    	    draw-instance-on-bb-widget  ; used for bb-widget drawing
+     	    draw-instance-on-bb-widget  ; used for bb-widget drawing
 	    gbbopen-graphics-started-p
 	    gbbopen-implementation-version
 	    instance-name-comparison-test)))

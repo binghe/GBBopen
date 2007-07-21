@@ -1,20 +1,20 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/tools/preamble.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Mar  4 22:34:30 2006 *-*
+;;;; *-* Last-Edit: Fri Jul 20 18:14:19 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
 ;;;; *
-;;;; *                      GBBopen-Tools Preamble
+;;;; *                        GBBopen-Tools Preamble
 ;;;; *
 ;;;; **************************************************************************
 ;;;; **************************************************************************
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2004-2006, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2004-2007, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -26,7 +26,16 @@
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+(unless (find-package :gbbopen-tools)
+  (defpackage :gbbopen-tools 
+    (:use :common-lisp)))
+
 (in-package :gbbopen-tools)
+
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (let ((mini-module-package (find-package :mini-module)))
+    (when mini-module-package
+      (use-package (list mini-module-package)))))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Import user's preferred browser setting
@@ -36,28 +45,25 @@
 	    common-lisp-user::*inf-reader-escape-hook*)))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (export '(hyperdoc-filename		; not yet documented
+  (export '(add-package-nickname        ; not documented
+            delete-instance             ; needed for :queue module (see below)
+            hyperdoc-filename           ; not yet documented
 	    hyperdoc-url		; not yet documented
+            insert-on-queue             ; needed for :queue module (see below)
 	    printv
 	    with-gensyms
 	    with-once-only-bindings)))	; not yet documented
 
 ;;; ---------------------------------------------------------------------------
-;;;  Export shared :queue and :gbbopen symbols to allow arbitrary
-;;;  module-loading order (less important, now that arbitrary module
-;;;  requires ordering is limited by define-module)
-
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (export '(delete-instance 
-	    insert-on-queue)))
+;;; To allow the :queue module to be used with or without :gbbopen-core, we
+;;; have to export the symbols delete-instance and insert-on-queue (above)
+;;; from :gbbopen-tools.  We define the delete-instance generic function here
+;;; as well:
 
 (defgeneric delete-instance (instance))
 
-;;; ---------------------------------------------------------------------------
+;;; ===========================================================================
 ;;;  Convenient package-nickname adder
-
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (export '(add-package-nickname)))
 
 (defun add-package-nickname (nickname package)
   (check-type nickname string)
@@ -70,7 +76,7 @@
 			(package-name package)
 			(cons nickname (package-nicknames package))))))
 
-;;; ---------------------------------------------------------------------------
+;;; ===========================================================================
 ;;;  With-gensyms
 ;;;
 ;;;  GBBopen-tools version of the widely used gensym binding macro
@@ -84,7 +90,7 @@
 	    symbols)
        ,@body)))
 
-;;; ---------------------------------------------------------------------------
+;;; ===========================================================================
 ;;;  With-once-only-bindings  
 ;;;
 ;;; GBBopen's version of the "once-only" macro-writing macro which 
@@ -108,7 +114,7 @@
 			   gensyms))
 	     ,@body)))))
 
-;;; ---------------------------------------------------------------------------
+;;; ===========================================================================
 ;;;  Printv
 ;;;
 ;;;  A handy debugging macro
@@ -131,7 +137,7 @@
        (force-output *trace-output*)
        (values-list (first (last ,values))))))
 
-;;; ---------------------------------------------------------------------------
+;;; ===========================================================================
 ;;;   Hyperdoc lookup helper
 
 (defun hyperdoc-filename (symbol)
@@ -163,5 +169,3 @@
 ;;; ===========================================================================
 ;;;				  End of File
 ;;; ===========================================================================
-
-

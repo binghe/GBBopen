@@ -1,7 +1,7 @@
-;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
+;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/modules.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Jun 29 03:14:22 2007 *-*
+;;;; *-* Last-Edit: Fri Jul 20 18:01:35 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -36,7 +36,7 @@
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-(in-package :gbbopen-tools)
+(in-package :mini-module)
 
 ;;; ===========================================================================
 ;;;  GBBopen Tools Modules
@@ -53,6 +53,8 @@
           ("tools" :forces-recompile)
           ("define-class" :forces-recompile)
 	  "gbbopen-instance"
+          "offset-universal-time"
+          "print-object-for"
           "epilogue"))
 
 (define-module :portable-threads
