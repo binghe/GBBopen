@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/startup.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Jul 15 06:01:14 2007 *-*
+;;;; *-* Last-Edit: Fri Jul 20 17:49:37 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -74,19 +74,6 @@
          :defaults startup-file-truename)))
 
 ;;; ---------------------------------------------------------------------------
-;;;  Define the :gbbopen-tools and :gbbopen packages here, to allow a user to
-;;;  set GBBopen parameters in their <user-homedir>gbbopen-init.lisp file
-;;;  (loaded below):
-
-(unless (find-package :gbbopen-tools)
-  (defpackage :gbbopen-tools 
-    (:use :common-lisp :mini-module)))
-
-(unless (find-package :gbbopen)
-  (defpackage :gbbopen 
-    (:use :common-lisp :mini-module :gbbopen-tools)))
-
-;;; ---------------------------------------------------------------------------
 ;;;  Define and load the remaining GBBopen module definitions from
 ;;;  modules.lisp:
 
@@ -98,6 +85,19 @@
   (:files ("modules" :source)))
 
 (mini-module:load-module :gbbopen-modules)
+
+;;; ---------------------------------------------------------------------------
+;;;  Define the :gbbopen-tools and :gbbopen packages here, to allow a user to
+;;;  set GBBopen parameters in their <user-homedir>gbbopen-init.lisp file
+;;;  (loaded below):
+
+(unless (find-package :gbbopen-tools)
+  (defpackage :gbbopen-tools 
+    (:use :common-lisp :mini-module)))
+
+(unless (find-package :gbbopen)
+  (defpackage :gbbopen 
+    (:use :common-lisp :mini-module :gbbopen-tools)))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  If there is a gbbopen-init.lisp file (or compiled version) in the
