@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-SOCKETS; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/tools/portable-sockets.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Jul  6 00:32:05 2007 *-*
+;;;; *-* Last-Edit: Wed Jul 25 12:26:54 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -352,7 +352,7 @@
 #+lispworks
 (defmethod close ((passive-socket passive-socket) &key abort)
   (declare (ignore abort))
-  (system::unix-close (passive-socket.fd passive-socket)))
+  (comm::close-socket (passive-socket.fd passive-socket)))
 
 ;;; ---------------------------------------------------------------------------
 
