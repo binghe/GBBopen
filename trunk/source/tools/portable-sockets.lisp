@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-SOCKETS; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/tools/portable-sockets.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jul 25 12:26:54 2007 *-*
+;;;; *-* Last-Edit: Wed Jul 25 17:17:40 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -63,6 +63,8 @@
   #+sbcl
   (require :sb-bsd-sockets))
 
+;;; ---------------------------------------------------------------------------
+
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(*localhost*			; not documented
 	    accept-connection
@@ -120,7 +122,9 @@
 ;;; ---------------------------------------------------------------------------
 ;;;  Passive-socket class for CLs without one
 
-#+(or cmu lispworks scl)
+#+(or cmu
+      lispworks
+      scl)
 (defclass passive-socket ()
   ((fd :type fixnum
        :initarg :fd
@@ -132,7 +136,9 @@
          :initarg :port
 	 :accessor passive-socket.port)))
 
-#+(or cmu lispworks scl)
+#+(or cmu
+      lispworks
+      scl)
 (defmethod print-object ((passive-socket passive-socket) stream)
   (print-unreadable-object (passive-socket stream :type nil)
     (format stream "passive socket at 0.0.0.0/~s"
@@ -150,10 +156,23 @@
   (setf (sb-impl::fd-stream-name (slot-value socket 'sb-bsd-sockets::stream))
 	socket))
 
+;;; ---------------------------------------------------------------------------
+;;;   Add missing shutdown to Lispworks
+;;;
+;;;   how: 0 = SHUT_RD    Disables further receive operations
+;;;        1 = SHUT_WR    Disables further send operations
+;;;        2 = SHUT_RDWR  Disables further send and receive operations
+#+lispworks
+(fli::define-foreign-function (shutdown "shutdown")
+    ((socket :long)
+     (how :long))
+  :result-type :fixnum)
+
 ;;; ===========================================================================
 ;;;  Utilities
 
-#+(or cmu scl)
+#+(or cmu
+      scl)
 (defun ipaddr-to-dotted (ipaddr)
   (declare (type (unsigned-byte 32) ipaddr))
   (format nil "~d.~d.~d.~d"
@@ -162,7 +181,8 @@
 	  (ldb (byte 8 8) ipaddr)
 	  (ldb (byte 8 0) ipaddr)))
 
-#+(or cmu scl)
+#+(or cmu
+      scl)
 (defun ipaddr-to-hostname (ipaddr)
   (declare (optimize (ext:inhibit-warnings 3)))
   (alien:with-alien 
@@ -194,13 +214,20 @@
 (defun open-connection-to-host (host port &key (timeout nil))
   ;; The (currently undocumented) :timeout extension is only accepted by CLISP
   ;; and Lispworks:
-  #+(or allegro cmu digitool-mcl ecl openmcl sbcl scl)
+  #+(or allegro
+        cmu
+        digitool-mcl
+        ecl
+        openmcl
+        sbcl
+        scl)
   (declare (ignore timeout))
   #+allegro
   (socket:make-socket :remote-host host :remote-port port)
   #+clisp
   (socket:socket-connect port host :external-format ':unix :timeout timeout)
-  #+(or cmu scl)
+  #+(or cmu 
+        scl)
   (let ((socket (extensions:connect-to-inet-socket host port)))
     (system:make-fd-stream 
      socket
@@ -213,7 +240,8 @@
   (si:open-client-stream host port)
   #+lispworks
   (comm:open-tcp-stream host port :timeout timeout)
-  #+(or digitool-mcl openmcl)
+  #+(or digitool-mcl
+        openmcl)
   (ccl:make-socket :remote-host host :remote-port port)
   #+sbcl
   (let ((socket (make-instance 'sb-bsd-sockets:inet-socket
@@ -229,7 +257,15 @@
      :input 't :output 't
      :element-type 'character
      :buffering ':full))
-  #-(or allegro clisp cmu digitool-mcl ecl lispworks openmcl sbcl scl)
+  #-(or allegro
+        clisp
+        cmu
+        digitool-mcl
+        ecl
+        lispworks
+        openmcl
+        sbcl
+        scl)
   (port-needed 'open-connection-to-host))
 
 ;;; ---------------------------------------------------------------------------
@@ -273,7 +309,8 @@
     (socket:socket-options passive-socket
 			   :so-reuseaddr reuse-address)
     passive-socket)
-  #+(or cmu scl)
+  #+(or cmu
+        scl)
   (make-instance 'passive-socket
     :fd (ext:create-inet-listener port ':stream 
 				  :backlog backlog
@@ -308,7 +345,8 @@
       ;; Avoid Lispworks race condition on filling in the passive 
       ;; socket fd value (still exists in LW 4.4.6):
       (process-yield)))
-  #+(or digitool-mcl openmcl)
+  #+(or digitool-mcl
+        openmcl)
   (ccl:make-socket :connect ':passive
                    :type ':stream
 		   :backlog backlog
@@ -330,7 +368,15 @@
      port)
     (sb-bsd-sockets:socket-listen passive-socket backlog)
     passive-socket)
-  #-(or allegro clisp cmu digitool-mcl ecl lispworks openmcl sbcl scl)
+  #-(or allegro
+        clisp
+        cmu
+        digitool-mcl
+        ecl
+        lispworks
+        openmcl
+        sbcl
+        scl)
   (port-needed 'make-passive-socket))
 
 ;;; ---------------------------------------------------------------------------
@@ -338,13 +384,18 @@
 (defun close-passive-socket (passive-socket)
   #+clisp
   (socket:socket-server-close passive-socket)
-  #+(or cmu scl)
+  #+(or cmu
+        scl)
   (unix:unix-close (passive-socket.fd passive-socket))
   #+ecl
   (sb-bsd-sockets:socket-close passive-socket)
   #+sbcl
   (sb-bsd-sockets:socket-close passive-socket)
-  #-(or clisp cmu ecl sbcl scl)
+  #-(or clisp
+        cmu
+        ecl
+        sbcl
+        scl)
   (close passive-socket))
 
 ;; Close is a method in Lispworks, so we extend it for passive
@@ -357,7 +408,10 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun shutdown-socket-stream (socket-stream direction)
-  #-(or allegro clisp digitool-mcl openmcl)
+  #-(or allegro
+        clisp
+        digitool-mcl
+        openmcl)
   (declare (ignore socket-stream direction))
   #+allegro
   (socket:shutdown socket-stream :direction direction)
@@ -365,7 +419,17 @@
   (socket:socket-stream-shutdown socket-stream direction)
   #+(or digitool-mcl openmcl)
   (ccl:shutdown socket-stream :direction direction)
-  #-(or allegro clisp digitool-mcl openmcl)
+  #+lispworks
+  (shutdown (comm:socket-stream-socket socket-stream)
+            (ecase direction
+              (:input 0)
+              (:output 1)
+              (:both 2)))
+  #-(or allegro 
+        clisp 
+        digitool-mcl 
+        lispworks
+        openmcl)
   (port-needed 'shutdown-socket-stream))
   
 ;;; ---------------------------------------------------------------------------
@@ -380,7 +444,8 @@
 	       (socket:socket-wait passive-socket))
 	      (t (socket:socket-wait passive-socket 0)))
     (socket:socket-accept passive-socket :external-format ':unix))
-  #+(or cmu scl)
+  #+(or cmu
+        scl)
   (let ((fd (passive-socket.fd passive-socket)))
     (when (sys:wait-until-fd-usable 
 	   fd ':input
@@ -415,7 +480,8 @@
         :socket (comm::get-fd-from-socket socket-fd)
         :direction ':io
         :element-type (passive-socket.element-type passive-socket))))
-  #+(or digitool-mcl openmcl)
+  #+(or digitool-mcl 
+        openmcl)
   (ccl:accept-connection passive-socket :wait wait)
   #+sbcl
   (when (sb-sys:wait-until-fd-usable 
@@ -430,7 +496,15 @@
      :input 't :output 't
      :element-type 'character
      :buffering ':full))
-  #-(or allegro clisp cmu digitool-mcl ecl lispworks openmcl sbcl scl)
+  #-(or allegro 
+        clisp
+        cmu
+        digitool-mcl 
+        ecl 
+        lispworks 
+        openmcl
+        sbcl
+        scl)
   (port-needed 'accept-connection))
 
 ;;; ===========================================================================
@@ -465,7 +539,14 @@
 ;;;  Socket Attribute Readers
 
 (defun local-hostname-and-port (connection &optional do-not-resolve)
-  #-(or allegro clisp cmu digitool-mcl lispworks openmcl sbcl scl)
+  #-(or allegro
+        clisp 
+        cmu
+        digitool-mcl
+        lispworks
+        openmcl
+        sbcl
+        scl)
   (declare (ignore connection do-not-resolve))
   #+allegro
   (let* ((ipaddr (socket:local-host connection))
@@ -479,7 +560,8 @@
 	    (socket:local-port connection)))
   #+clisp
   (socket:socket-stream-local connection (not do-not-resolve))
-  #+(or cmu scl)
+  #+(or cmu
+        scl)
   (let ((fd (sys:fd-stream-fd connection)))
     (multiple-value-bind (ipaddr port)
 	(ext:get-socket-host-and-port fd)
@@ -503,7 +585,8 @@
 			(format nil "~a (~a)" dotted resolved)
 			dotted)))
 	    port)))
-  #+(or digitool-mcl openmcl)
+  #+(or digitool-mcl
+        openmcl)
   (let* ((ipaddr (ccl:local-host connection))
 	 (dotted (ccl:ipaddr-to-dotted ipaddr)))
     (values (if do-not-resolve
@@ -524,13 +607,27 @@
 			  (format nil "~a (~a)" dotted resolved)
 			  dotted)))
 		port)))) 	
-  #-(or allegro clisp cmu digitool-mcl lispworks openmcl sbcl scl)
+  #-(or allegro
+        clisp 
+        cmu
+        digitool-mcl
+        lispworks
+        openmcl
+        sbcl
+        scl)
   (port-needed 'local-hostname-and-port))
 
 ;;; ---------------------------------------------------------------------------
 
 (defun remote-hostname-and-port (connection &optional do-not-resolve)
-  #-(or allegro clisp cmu digitool-mcl lispworks openmcl sbcl scl)
+  #-(or allegro
+        clisp
+        cmu
+        digitool-mcl
+        lispworks
+        openmcl
+        sbcl
+        scl)
   (declare (ignore connection do-not-resolve))
   #+allegro
   (let* ((ipaddr (socket:remote-host connection))
@@ -544,7 +641,8 @@
 	    (socket:remote-port connection)))
   #+clisp
   (socket:socket-stream-peer connection (not do-not-resolve))
-  #+(or cmu scl)
+  #+(or cmu
+        scl)
   (let ((fd (sys:fd-stream-fd connection)))
     (multiple-value-bind (ipaddr port)
 	(ext:get-peer-host-and-port fd)
@@ -568,7 +666,8 @@
 			(format nil "~a (~a)" dotted resolved)
 			dotted)))
 	    port)))
-  #+(or digitool-mcl openmcl)
+  #+(or digitool-mcl
+        openmcl)
   (let* ((ipaddr (ccl:remote-host connection))
 	 (dotted (ccl:ipaddr-to-dotted ipaddr)))
     (values (if do-not-resolve
@@ -590,7 +689,14 @@
 			  (format nil "~a (~a)" dotted resolved)
 			  dotted)))
 		port)))) 	
-  #-(or allegro clisp cmu digitool-mcl lispworks openmcl sbcl scl)
+  #-(or allegro
+        clisp
+        cmu 
+        digitool-mcl
+        lispworks
+        openmcl
+        sbcl
+        scl)
   (port-needed 'remote-hostname-and-port))
 
 ;;; ===========================================================================
