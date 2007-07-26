@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-SOCKETS; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/tools/portable-sockets.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jul 25 17:17:40 2007 *-*
+;;;; *-* Last-Edit: Wed Jul 25 22:00:36 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -167,6 +167,12 @@
     ((socket :long)
      (how :long))
   :result-type :fixnum)
+;;;
+;;;   and for SBCL
+#+sbcl
+(sb-alien:define-alien-routine shutdown sb-alien:int
+    (socket sb-alien:int)
+    (how sb-alien:int))
 
 ;;; ===========================================================================
 ;;;  Utilities
@@ -410,14 +416,24 @@
 (defun shutdown-socket-stream (socket-stream direction)
   #-(or allegro
         clisp
+        cmu
         digitool-mcl
-        openmcl)
+        lispworks
+        openmcl
+        sbcl)
   (declare (ignore socket-stream direction))
   #+allegro
   (socket:shutdown socket-stream :direction direction)
   #+clisp
   (socket:socket-stream-shutdown socket-stream direction)
-  #+(or digitool-mcl openmcl)
+  #+cmu
+  (ext:inet-shutdown (sys:fd-stream-fd socket-stream)
+                     (ecase direction
+                       (:input ext:shut-rd)
+                       (:output ext:shut-wr)
+                       (:both ext:shut-rdwr)))
+  #+(or digitool-mcl 
+        openmcl)
   (ccl:shutdown socket-stream :direction direction)
   #+lispworks
   (shutdown (comm:socket-stream-socket socket-stream)
@@ -425,11 +441,19 @@
               (:input 0)
               (:output 1)
               (:both 2)))
+  #+sbcl
+  (shutdown (sb-sys::fd-stream-fd socket-stream)
+            (ecase direction
+              (:input 0)
+              (:output 1)
+              (:both 2)))
   #-(or allegro 
         clisp 
+        cmu
         digitool-mcl 
         lispworks
-        openmcl)
+        openmcl
+        sbcl)
   (port-needed 'shutdown-socket-stream))
   
 ;;; ---------------------------------------------------------------------------
