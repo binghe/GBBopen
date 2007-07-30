@@ -26,7 +26,7 @@
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-tools</code>
 </p>
 <p><span class="fndoclabel">Arguments</span><table class="tight">
-<tr valign="top"><td valign="baseline"><i>list</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id122">proper&nbsp;list</a>
+<tr valign="top"><td valign="baseline"><i>list</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id119">proper&nbsp;list</a>
 </td></tr></table>
 </p>
 <p><span class="fndoclabel">Returns</span> <br />The sole element of <var>list</var>.
@@ -34,16 +34,16 @@
 <p><span class="fndoclabel">Errors</span> <br /><var>List</var> contains more than one element.
 </p>
 <p><span class="fndoclabel">Description</span> <br />If <var>list</var> is a <a href="ref-glossary.html#gl:cons">cons</a>, <b>sole-element</b>
-returns the <a href="ref-glossary.html#gl:cdr">car</a> of that <a href="ref-glossary.html#gl:cons">cons</a>. If <var>list</var> is <code>nil</code>,
+returns the <a href="ref-glossary.html#gl:conses">car</a> of that <a href="ref-glossary.html#gl:cons">cons</a>. If <var>list</var> is <code>nil</code>,
 <b>sole-element</b> returns <code>nil</code>.  If <var>list</var> is a <a href="ref-glossary.html#gl:cons">cons</a> and the
-<a href="ref-glossary.html#gl:cdr">cdr</a> of that <a href="ref-glossary.html#gl:cons">cons</a> is not <code>nil</code>, a continuable error is
+<a href="ref-glossary.html#gl:conses">cdr</a> of that <a href="ref-glossary.html#gl:cons">cons</a> is not <code>nil</code>, a continuable error is
 signaled.  If you continue from the error, the first element is returned.
 </p>
-<p><a name="id1">This</a> <a href="ref-glossary.html#gl:function">function</a> is preferable to <b><a href="ref-glossary.html#gl:cdr">car</a></b> when you expect a
+<p><a name="id1">This</a> <a href="ref-glossary.html#gl:function">function</a> is preferable to <b><a href="ref-glossary.html#gl:conses">car</a></b> when you expect a
 list of, at most, one element.  For example, this <a href="ref-glossary.html#gl:function">function</a> is often
 used on the results of calling <b><a href="ref-find-instances.html">find-instances</a></b> or
 <b><a href="ref-filter-instances.html">filter-instances</a></b> when only a single
-<a href="ref-glossary.html#id162">unit&nbsp;instance</a> is expected in the result list.
+<a href="ref-glossary.html#id163">unit&nbsp;instance</a> is expected in the result list.
 </p>
 <p><span class="fndoclabel">Examples</span> <br /></p>
 <pre>

@@ -27,7 +27,7 @@ evaluating them to <code>*trace-output*</code>.
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-core</code>
 </p>
 <p><span class="fndoclabel">Arguments</span><table class="tight">
-<tr valign="top"><td valign="baseline"><i>forms</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An implicit <b>progn</b> of <a href="ref-glossary.html#gl:form">form</a>s to be
+<tr valign="top"><td valign="baseline"><i>forms</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An implicit <b>progn</b> of <a href="ref-glossary.html#gl:forms">forms</a> to be
 evaluated and printed  
 </td></tr></table>
 </p>
@@ -40,7 +40,7 @@ double-quote characters.
 </p>
 <p><span class="fndoclabel">Examples</span> <br /><a name="id1">Add</a> the event function <a href="ref-evfn-printv.html">evfn-printv</a> to the set of functions
 to be invoked when <code>create-instance-event</code> is signalled on a
-<code>hyp</code> <a href="ref-glossary.html#id162">unit&nbsp;instance</a>:
+<code>hyp</code> <a href="ref-glossary.html#id163">unit&nbsp;instance</a>:
 </p>
 <pre>
   (add-event-function 'evfn-printv 'create-instance-event 'hyp)

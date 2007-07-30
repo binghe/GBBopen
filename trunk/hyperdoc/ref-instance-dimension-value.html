@@ -19,14 +19,14 @@
 <nobr><b><font color="#000000">instance-dimension-value</font></b></nobr></td><td valign="baseline"> &nbsp; </td><td valign="baseline" align="left" width="99%"><var>unit-instance dimension-name</var> <i> =&gt; </i> 
 <var>dimension-value,&nbsp;dimension-value-type,&nbsp;composite-type</var></td><td valign="baseline" align="right">[<i>Function</i>]
 </td></tr></table></p>
-<p><span class="fndoclabel">Purpose</span> <br />Obtain a <a href="ref-glossary.html#id25">dimension&nbsp;value</a> of a <a href="ref-glossary.html#id162">unit&nbsp;instance</a>.
+<p><span class="fndoclabel">Purpose</span> <br />Obtain a <a href="ref-glossary.html#id28">dimension&nbsp;value</a> of a <a href="ref-glossary.html#id163">unit&nbsp;instance</a>.
 </p>
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen</code>
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-core</code>
 </p>
 <p><span class="fndoclabel">Arguments</span><table class="tight">
-<tr valign="top"><td valign="baseline"><i>unit-instance</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id162">unit&nbsp;instance</a>
+<tr valign="top"><td valign="baseline"><i>unit-instance</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id163">unit&nbsp;instance</a>
 </td></tr><tr valign="top"><td valign="baseline"><i>dimension-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A symbol specifying a <a href="ref-glossary.html#gl:dimension">dimension</a> of
 <var>unit-instance</var> 
 </td></tr></table>
@@ -34,18 +34,18 @@
 <p><span class="fndoclabel">Returns</span> <br />Four values: 
 </p>
 <p><ul class="tight"><li>the value of the specified <a href="ref-glossary.html#gl:dimension">dimension</a>
-<li>the dimension-value type of the returned <a href="ref-glossary.html#id25">dimension&nbsp;value</a>
-<li>the composite type of the returned <a href="ref-glossary.html#id25">dimension&nbsp;value</a> if it is a
+<li>the dimension-value type of the returned <a href="ref-glossary.html#id28">dimension&nbsp;value</a>
+<li>the composite type of the returned <a href="ref-glossary.html#id28">dimension&nbsp;value</a> if it is a
 <a href="ref-glossary.html#id16">composite&nbsp;dimension&nbsp;value</a>; <code>nil</code> if it is a
-<a href="ref-glossary.html#id142">incomposite&nbsp;dimension&nbsp;value</a>
-<li>the name of the ordering dimension if the <a href="ref-glossary.html#id25">dimension&nbsp;value</a> is a
+<a href="ref-glossary.html#id77">incomposite&nbsp;dimension&nbsp;value</a>
+<li>the name of the ordering dimension if the <a href="ref-glossary.html#id28">dimension&nbsp;value</a> is a
 series composite; <code>nil</code> otherwise
 </ul>
 </p>
 <p><span class="fndoclabel">Errors</span> <br />The <a href="ref-glossary.html#gl:dimension">dimension</a> <var>dimension-name</var> is not defined for
 <var>unit-instance</var>. 
 </p>
-<p><span class="fndoclabel">Examples</span> <br />Return the <code>x</code> <a href="ref-glossary.html#id25">dimension&nbsp;value</a> of the <a href="ref-glossary.html#id162">unit&nbsp;instance</a>,
+<p><span class="fndoclabel">Examples</span> <br />Return the <code>x</code> <a href="ref-glossary.html#id28">dimension&nbsp;value</a> of the <a href="ref-glossary.html#id163">unit&nbsp;instance</a>,
 <code>hyp</code>:
 </p>
 <pre>
@@ -55,7 +55,7 @@ series composite; <code>nil</code> otherwise
 nil
 nil
 </pre>
-<p>Return the <code>identity</code> <a href="ref-glossary.html#id25">dimension&nbsp;value</a>:
+<p>Return the <code>identity</code> <a href="ref-glossary.html#id28">dimension&nbsp;value</a>:
 </p>
 <pre>
 &gt; (instance-dimension-value hyp 'identity)

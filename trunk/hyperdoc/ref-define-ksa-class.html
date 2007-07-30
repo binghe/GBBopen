@@ -22,7 +22,7 @@
 &#123;<var>class-option</var>&#125;* <i> =&gt; </i>
 <var>new-ksa-class</var></td><td valign="baseline" align="right">[<i>Macro</i>]
 </td></tr></table></p>
-<p><span class="fndoclabel">Purpose</span> <br />Define or redefine a <a href="ref-glossary.html#id88">ksa&nbsp;class</a>.
+<p><span class="fndoclabel">Purpose</span> <br />Define or redefine a <a href="ref-glossary.html#id94">ksa&nbsp;class</a>.
 </p>
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:agenda-shell</code>
 </p>
@@ -30,18 +30,18 @@
 </p>
 <p><span class="fndoclabel">Arguments</span><table class="tight">
 <tr valign="top"><td valign="baseline"><i>ksa-class-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A non-<code>nil</code>, non-keyword symbol that names the
-<a href="ref-glossary.html#id88">ksa&nbsp;class</a> 
+<a href="ref-glossary.html#id94">ksa&nbsp;class</a> 
 </td></tr><tr valign="top"><td valign="baseline"><i>superclass-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A non-<code>nil</code>, non-keyword symbol that specifies a
-direct superclass of the <a href="ref-glossary.html#id88">ksa&nbsp;class</a> <var>ksa-class-name</var>  
+direct superclass of the <a href="ref-glossary.html#id94">ksa&nbsp;class</a> <var>ksa-class-name</var>  
 </td></tr><tr valign="top"><td valign="baseline"><i>documentation</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A documentation string
 </td></tr><tr valign="top"><td valign="baseline"><i>slot-specifiers</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> See below
 </td></tr><tr valign="top"><td valign="baseline"><i>class-options</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> See below
 </td></tr></table>
 </p>
-<p><span class="fndoclabel">Returns</span> <br />The newly defined <a href="ref-glossary.html#id88">ksa&nbsp;class</a> object.
+<p><span class="fndoclabel">Returns</span> <br />The newly defined <a href="ref-glossary.html#id94">ksa&nbsp;class</a> object.
 </p>
 <p><span class="fndoclabel">Errors</span> <br />The specified <var>superclass-names</var> do not include at least
-one <a href="ref-glossary.html#id88">ksa&nbsp;class</a> name.  This error is signaled on class finalization.
+one <a href="ref-glossary.html#id94">ksa&nbsp;class</a> name.  This error is signaled on class finalization.
 </p>
 <p><span class="fndoclabel">Detailed syntax</span></p>
 <table class="tight"><table><tbody><tr>
@@ -237,7 +237,7 @@ dimension-value-place</var><code>)</code> </td></tr>
 <p><span class="fndoclabel">Terms</span><table class="tight">
 <tr valign="top"><td valign="baseline"><i>class-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A non-<code>nil</code>, non-keyword symbol that names a
 <a href="ref-glossary.html#gl:class">class</a> 
-</td></tr><tr valign="top"><td valign="baseline"><i>initarg-list</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An <a href="ref-glossary.html#id100">initialization&nbsp;argument&nbsp;list</a>
+</td></tr><tr valign="top"><td valign="baseline"><i>initarg-list</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An <a href="ref-glossary.html#id79">initialization&nbsp;argument&nbsp;list</a>
 </td></tr><tr valign="top"><td valign="baseline"><i>slot-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A non-<code>nil</code>, non-keyword symbol
 </td></tr><tr valign="top"><td valign="baseline"><i>instance-name-comparison-test</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> One of the four standardized hash table
 test function names: <code>eq</code>, <code>eql</code>, <code>equal</code>, or <code>equalp</code>
@@ -259,15 +259,15 @@ also <b><a href="ref-standard-ksa-class.html">standard-ksa-class</a></b>.
 </p>
 <p><p><b>Inheritance of class options</b></p>
 </p>
-<p><a name="id5">The</a> set of <var>dimensional-values</var> for a <a href="ref-glossary.html#id160">unit&nbsp;class</a> is the
+<p><a name="id5">The</a> set of <var>dimensional-values</var> for a <a href="ref-glossary.html#id161">unit&nbsp;class</a> is the
 union of the sets specified in the <var>dimensional-values</var> options
 of the class and its superclasses.  When more than one dimensional
 index is supplied for a given dimension, the one supplied by the most
 specific class is used.
 </p>
 <p>The effective <var>initial-space-instances</var> value for a
-<a href="ref-glossary.html#id160">unit&nbsp;class</a> is the value specified in the definition of the
-most specific <a href="ref-glossary.html#id160">unit&nbsp;class</a>. If no definitions specify an
+<a href="ref-glossary.html#id161">unit&nbsp;class</a> is the value specified in the definition of the
+most specific <a href="ref-glossary.html#id161">unit&nbsp;class</a>. If no definitions specify an
 <var>initial-space-instances</var> value, <code>nil</code> is used.
 </p>
 <p>The <var>instance-name-comparison-test</var> value is not inherited.  If
@@ -279,21 +279,21 @@ default initializtion value associated with the metaclass is used.
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-standard-ksa-class.html"><b>standard-ksa-class</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-with-generate-accessors-format.html"><b>with-generate-accessors-format</b></a>
 </p>
-<p><span class="fndoclabel">Examples</span> <br />Define a <a href="ref-glossary.html#id88">ksa&nbsp;class</a>,
+<p><span class="fndoclabel">Examples</span> <br />Define a <a href="ref-glossary.html#id94">ksa&nbsp;class</a>,
 <code>ksa-with-lock</code>, that has an additional <a href="ref-glossary.html#gl:slot">slot</a>
-containing a <a href="ref-glossary.html#id120">process&nbsp;lock</a> that can be used to synchronize
-operations on each <a href="ref-glossary.html#gl:activation">KSA</a> of that class.
+containing a <a href="ref-glossary.html#gl:lock">lock</a> that can be used to synchronize
+operations on each <a href="ref-glossary.html#gl:activations">KSA</a> of that class.
 </p>
 <pre>
 &gt; (define-ksa-class ksa-with-lock ()
-    ((lock :initform (<a href="ref-make-process-lock.html">make-process-lock</a> :name "KSA Lock"))))
+    ((lock :initform (<a href="ref-make-lock.html">make-lock</a> :name "KSA Lock"))))
 #&lt;standard-ksa-class ksa-with-lock&gt;
 </pre>
 <p>Do the same, but with a mixin class:
 </p>
 <pre>
 &gt; (define-unit-class lock-mixin (ks my-mixin)
-    ((lock :initform (<a href="ref-make-process-lock.html">make-process-lock</a> :name "KS Lock"))))
+    ((lock :initform (<a href="ref-make-lock.html">make-lock</a> :name "KS Lock"))))
 #&lt;standard-unit-class lock-mixin&gt;
 &gt; (define-ksa-class ksa-with-lock (ksa lock-mixin)
     ())

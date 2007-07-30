@@ -27,8 +27,8 @@
 <p><span class="fndoclabel">Returns</span> <br />One of the following values: 
 </p>
 <p><ul class="tight"><li><code>:quiescense</code>&mdash;If the control-shell scheduling loop is terminated
-due to <a href="ref-glossary.html#gl:quiescence">quiescence</a> (that is, no more <a href="ref-glossary.html#id46">executable&nbsp;KSA</a>s remain 
-in the queue of <a href="ref-glossary.html#id117">pending&nbsp;KSA</a>s) 
+due to <a href="ref-glossary.html#gl:quiescence">quiescence</a> (that is, no more <a href="ref-glossary.html#id49">executable&nbsp;KSAs</a> remain 
+in the queue of <a href="ref-glossary.html#id118">pending&nbsp;KSAs</a>) 
 <li><code>:stop</code> and (optionally) associated reasons, as multiple
 values&mdash;If one of the following conditions occurs:
 </p>
@@ -48,7 +48,7 @@ calling <b><a href="ref-exit-control-shell.html">exit-control-shell</a></b>.
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-run-polling-functions.html"><b>run-polling-functions</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-start-control-shell.html"><b>start-control-shell</b></a>
 </p>
-<p><span class="fndoclabel">Example</span> <br />Restart the Agenda Shell (in this case, without any <a href="ref-glossary.html#gl:KS">KS</a>s defined):
+<p><span class="fndoclabel">Example</span> <br />Restart the Agenda Shell (in this case, without any <a href="ref-glossary.html#gl:KSs">KSs</a> defined):
 </p>
 <pre>
 &gt; (restart-control-shell)
@@ -61,7 +61,7 @@ calling <b><a href="ref-exit-control-shell.html">exit-control-shell</a></b>.
 </pre>
 <a name="id2"></a><p><span class="fndoclabel">Notes</span> <br />When a non-<code>nil</code> <code>:run-polling-functions</code>
 value is supplied to <b><a href="ref-start-control-shell.html">start-control-shell</a></b> (the default on
-non-multiprocessing Common Lisp implementations),
+Common Lisp implementations without threads),
 <b><a href="ref-run-polling-functions.html">run-polling-functions</a></b> is called at the beginning of every
 control-shell-cycle and at one-half-second intervals when the Agenda Shell
 is hibernating due to <a href="ref-glossary.html#gl:quiescence">quiescence</a>.

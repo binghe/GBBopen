@@ -20,7 +20,7 @@
 retain-event-functions
 retain-event-printing</var></td><td valign="baseline" align="right">[<i>Function</i>]
 </td></tr></table></p>
-<p><span class="fndoclabel">Purpose</span> <br />Delete all <a href="ref-glossary.html#id162">unit&nbsp;instance</a>s, <a href="ref-glossary.html#id146">space&nbsp;instance</a>s,
+<p><span class="fndoclabel">Purpose</span> <br />Delete all <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a>, <a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a>,
 and more.
 </p>
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen</code>
@@ -28,15 +28,15 @@ and more.
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-core</code>
 </p>
 <p><span class="fndoclabel">Arguments</span><table class="tight">
-<tr valign="top"><td valign="baseline"><i>disable-events</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id72">generalized&nbsp;boolean</a> (default is <code>t</code>)
-</td></tr><tr valign="top"><td valign="baseline"><i>retain-classes</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An <a href="ref-glossary.html#id58">extended&nbsp;unit-classes&nbsp;specification</a>
+<tr valign="top"><td valign="baseline"><i>disable-events</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id71">generalized&nbsp;boolean</a> (default is <code>t</code>)
+</td></tr><tr valign="top"><td valign="baseline"><i>retain-classes</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An <a href="ref-glossary.html#id61">extended&nbsp;unit-classes&nbsp;specification</a>
 (see below)
-</td></tr><tr valign="top"><td valign="baseline"><i>retain-event-functions</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id72">generalized&nbsp;boolean</a> (default is <code>nil</code>)
-</td></tr><tr valign="top"><td valign="baseline"><i>retain-event-printing</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id72">generalized&nbsp;boolean</a> (default is <code>nil</code>)
+</td></tr><tr valign="top"><td valign="baseline"><i>retain-event-functions</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id71">generalized&nbsp;boolean</a> (default is <code>nil</code>)
+</td></tr><tr valign="top"><td valign="baseline"><i>retain-event-printing</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id71">generalized&nbsp;boolean</a> (default is <code>nil</code>)
 </td></tr></table>
 </p>
 <p><span class="fndoclabel">Events</span> <br /><a name="id1">If</a> <var>disable-events</var> is <code>nil</code>, the following events may be signaled as
-<a href="ref-glossary.html#id162">unit&nbsp;instance</a>s and <a href="ref-glossary.html#id146">space&nbsp;instance</a>s are deleted:
+<a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a> and <a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a> are deleted:
 </p>
 <p><ul class="tight"><li><code>unlink-event</code>
 <li><code>remove-instance-from-space-instance-event</code>
@@ -66,7 +66,7 @@ and more.
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
 <p><span class="fndoclabel">Description</span> <br />Calling <b>reset-gbbopen</b> deletes all
-<a href="ref-glossary.html#id162">unit&nbsp;instance</a>s and <a href="ref-glossary.html#id146">space&nbsp;instance</a>s, disables all event
+<a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a> and <a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a>, disables all event
 printing, removes all event functions, and resets all
 <a href="ref-glossary.html#gl:unit-class">unit-class</a> instance-name counters to 1.  <b>Reset-gbbopen</b>
 does not undefine any class definitions, functions, methods, etc.
@@ -76,14 +76,14 @@ does not undefine any class definitions, functions, methods, etc.
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-delete-all-space-instances.html"><b>delete-all-space-instances</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-delete-space-instance.html"><b>delete-space-instance</b></a>
 </p>
-<p><span class="fndoclabel">Examples</span> <br />Delete all <a href="ref-glossary.html#id162">unit&nbsp;instance</a>s and <a href="ref-glossary.html#id146">space&nbsp;instance</a>s, with
+<p><span class="fndoclabel">Examples</span> <br />Delete all <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a> and <a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a>, with
 event-signaling disabled:
 </p>
 <pre>
   (reset-gbbopen)
 </pre>
-<p>Delete all <a href="ref-glossary.html#id162">unit&nbsp;instance</a>s and <a href="ref-glossary.html#id146">space&nbsp;instance</a>s, except for
-<a href="ref-glossary.html#gl:KS">KS</a> <a href="ref-glossary.html#id162">unit&nbsp;instance</a>s, with event-signaling disabled:
+<p>Delete all <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a> and <a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a>, except for
+<a href="ref-glossary.html#gl:KSs">KS</a> <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a>, with event-signaling disabled:
 </p>
 <pre>
   (reset-gbbopen :retain-classes '((ks :plus-subclasses)))
@@ -99,7 +99,7 @@ event-signaling disabled:
 signaling by default.  This conflicts with the normal use of
 <b><a href="ref-with-events-disabled.html">with-events-disabled</a></b> and
 <b><a href="ref-with-events-enabled.html">with-events-enabled</a></b> macros for controlling
-<a href="ref-glossary.html#gl:event">event</a> signaling, but having <a href="ref-glossary.html#gl:event">event</a>s disabled is the desired
+<a href="ref-glossary.html#gl:event">event</a> signaling, but having <a href="ref-glossary.html#gl:events">events</a> disabled is the desired
 behavior in almost every reset situation.
 </p>
 <hr /><address><a target="_top" class="address"

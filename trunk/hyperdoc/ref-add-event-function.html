@@ -19,7 +19,7 @@
 <nobr><b><font color="#000000">add-event-function</font></b></nobr></td><td valign="baseline"> &nbsp; </td><td valign="baseline" align="left" width="99%"><var>function</var> [<var>event-class-specifier</var> 
 [<var>unit-class-or-instance-specifier</var>]] <br /><code>&#38;key</code> <var>slot-names paths permanent priority</var></td><td valign="baseline" align="right">[<i>Function</i>]
 </td></tr></table></p>
-<p><span class="fndoclabel">Purpose</span> <br />Add an <a href="ref-glossary.html#id39">event&nbsp;function</a> for one or more <a href="ref-glossary.html#id37">event&nbsp;class</a>es.
+<p><span class="fndoclabel">Purpose</span> <br />Add an <a href="ref-glossary.html#id42">event&nbsp;function</a> for one or more <a href="ref-glossary.html#gl:event-class">event&nbsp;classes</a>.
 </p>
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen</code>
 </p>
@@ -27,19 +27,19 @@
 </p>
 <p><span class="fndoclabel">Arguments</span><table class="tight">
 <tr valign="top"><td valign="baseline"><i>function</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#gl:function">function</a>
-</td></tr><tr valign="top"><td valign="baseline"><i>event-class-specifier</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An <a href="ref-glossary.html#id49">extended&nbsp;event-class&nbsp;specification</a> 
+</td></tr><tr valign="top"><td valign="baseline"><i>event-class-specifier</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An <a href="ref-glossary.html#id52">extended&nbsp;event-class&nbsp;specification</a> 
 (see below; default is <code>t</code>)
 </td></tr><tr valign="top"><td valign="baseline"><i>unit-class-or-instance-specifier</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An 
-<a href="ref-glossary.html#id55">extended&nbsp;unit-class&nbsp;or&nbsp;instance&nbsp;specification</a> 
+<a href="ref-glossary.html#id58">extended&nbsp;unit-class&nbsp;or&nbsp;instance&nbsp;specification</a> 
 (see below; default is <code>t</code>)
 </td></tr><tr valign="top"><td valign="baseline"><i>slot-names <span 
     style="font-family: serif; font-style: normal">or</span> slot-name <td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A slot-name or list
 of slot-names (default is <code>t</code>)
 </td></tr><tr valign="top"><td valign="baseline"><i>paths <span 
-    style="font-family: serif; font-style: normal">or</span> path <td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id150">space-instance&nbsp;path</a>
+    style="font-family: serif; font-style: normal">or</span> path <td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id147">space-instance&nbsp;path</a>
 regular expression 
 (default is <code>(*)</code>)
-</td></tr><tr valign="top"><td valign="baseline"><i>permanent</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id72">generalized&nbsp;boolean</a> (default is <code>nil</code>)
+</td></tr><tr valign="top"><td valign="baseline"><i>permanent</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id71">generalized&nbsp;boolean</a> (default is <code>nil</code>)
 </td></tr><tr valign="top"><td valign="baseline"><i>priority</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An integer between -127 and 127, inclusive (default is <code>0</code>)
 </td></tr></table>
 </p>
@@ -88,14 +88,14 @@ regular expression
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
 <p><span class="fndoclabel">Description</span> <br />The specified <var>function</var> must accept the arguments associated with every
-<a href="ref-glossary.html#id37">event&nbsp;class</a> to which it is added.  In addition, <var>function</var>
+<a href="ref-glossary.html#id40">event&nbsp;class</a> to which it is added.  In addition, <var>function</var>
 should accept additional arguments that are associated with all
-<a href="ref-glossary.html#gl:subevents">subevents</a> of the specified <a href="ref-glossary.html#id37">event&nbsp;class</a>es. (This can be
+<a href="ref-glossary.html#gl:subevents">subevents</a> of the specified <a href="ref-glossary.html#gl:event-class">event&nbsp;classes</a>. (This can be
 achieved by specifying <code>&#38;allow-other-keys</code> in the lambda list of
 <var>function</var>.)
 </p>
 <p>The <var>paths</var> argument is either the symbol <code>t</code> (indicating
-all <a href="ref-glossary.html#id146">space&nbsp;instance</a>s) or a list representing a regular
+all <a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a>) or a list representing a regular
 expression where the following reserved symbols are interpreted as
 follows:
 <a name="id3"></a></p>
@@ -122,14 +122,14 @@ follows:
 </p>
 <p><span class="fndoclabel">Examples</span> <br /><a name="id4">Add</a> the event function <a href="ref-evfn-printv.html">evfn-printv</a> to the set of functions
 to be invoked when <code>create-instance-event</code> is signalled on a
-<code>hyp</code> <a href="ref-glossary.html#id162">unit&nbsp;instance</a>:
+<code>hyp</code> <a href="ref-glossary.html#id163">unit&nbsp;instance</a>:
 </p>
 <pre>
   (add-event-function 'evfn-printv 'create-instance-event 'hyp)
 </pre>
 <p>Add the event function <a href="ref-evfn-printv.html">evfn-printv</a> to the set of functions
 to be invoked when <code>create-instance-event</code> is signalled on a
-<code>hyp</code> <a href="ref-glossary.html#id162">unit&nbsp;instance</a> or its subclasses:
+<code>hyp</code> <a href="ref-glossary.html#id163">unit&nbsp;instance</a> or its subclasses:
 </p>
 <pre>
   (add-event-function 'evfn-printv 'create-instance-event '(hyp :plus-subclasses))

@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/tools/print-object-for.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Jul 21 23:49:41 2007 *-*
+;;;; *-* Last-Edit: Wed Jul 25 13:03:51 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -148,7 +148,7 @@
                       (if (slot-boundp instance slot-name)
                           (,name (slot-value instance slot-name) stream)
                           ;; Unbound value indicator:
-                          (format stream "#~"))))
+                          (format stream "#_"))))
                   (princ ")" stream))
                 instance)))
   (make print-object-for-saving)

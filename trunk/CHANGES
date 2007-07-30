@@ -1,3 +1,49 @@
+Important changes since GBBopen 0.9.6:
+
+  * Version 2.0 of the Portable Threads Interface
+    - Recursive and nonrecursive locks, with stronger enforcement of usage
+      violations (to reduce the potential for different behavior on different
+      CL implementations).
+    - Emphasis on condition variables for thread waiting/notification
+    - Improved hibernation behavior
+    - With-timeout added
+    Allegro-style gates and process-wait are depreciated and will be removed
+    soon. (See the GBBopen Reference Manual for details.)
+
+    The names of many Portable Threads functions have been changed (for
+    consistency with new capabilities and to make the portable-threads
+    interface names more "thread-centric" rather than "process-centric"):
+       all-processes              all-threads
+       awaken-process             awaken-thread
+       current-process            current-thread
+       hibernate-process          hibernate-thread
+       kill-process               kill-thread
+       make-process-lock          make-recursive-lock
+       process-name               thread-name
+       processp                   threadp
+       process-wait               thread-wait
+       process-wait-with-timeout  thread-wait-with-timeout
+       process-whostate           thread-whostate
+       process-yield              thread-yield
+       run-in-process             run-in-thread
+       spawn-process              spawn-thread
+       symbol-value-in-process    symbol-value-in-thread
+       with-process-lock          with-lock-held
+       <new>                      condition-variable (object)
+       <new>                      condition-variable-broadcast
+       <new>                      condition-variable-signal
+       <new>                      condition-variable-wait
+       <new>                      condition-variable-wait-with-timeout
+       <new>                      make-condition-variable
+       <new>                      make-lock
+       <new>                      thread-holds-lock-p
+       close-gate                 <deprecated>
+       gate-open-p                <deprecated>
+       make-gate                  <deprecated>
+       open-gate                  <deprecated>
+       process-wait               <deprecated>
+       process-wait-with-timeout  <deprecated>
+
 
 Important changes in GBBopen 0.9.6:
 

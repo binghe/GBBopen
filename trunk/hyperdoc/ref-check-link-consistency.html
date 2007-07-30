@@ -20,7 +20,7 @@
 <var>silent</var> <i> =&gt; </i> <var>boolean</var></td><td valign="baseline" align="right">[<i>Function</i>]
 </td></tr></table></p>
 <p><span class="fndoclabel">Purpose</span> <br />Check for consistency in <a href="ref-glossary.html#gl:link-slot">link-slot</a> definitions of
-<a href="ref-glossary.html#id160">unit&nbsp;class</a>es to be linked.
+<a href="ref-glossary.html#gl:unit-class">unit&nbsp;classes</a> to be linked.
 </p>
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen</code>
 </p>
@@ -43,7 +43,7 @@ again to check for additional inconsistencies.
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-define-unit-class.html"><b>define-unit-class</b></a>
 </p>
 <p><span class="fndoclabel">Examples</span> <br />Check for consistency in <a href="ref-glossary.html#gl:link-slot">link-slot</a> definitions in all
-<a href="ref-glossary.html#id160">unit&nbsp;class</a>es: 
+<a href="ref-glossary.html#gl:unit-class">unit&nbsp;classes</a>: 
 </p>
 <pre>
 &gt; (check-link-consistency)
@@ -61,7 +61,7 @@ Warning: The inverse of link MISMATCHED-LINK in unit-class BAD refers
          to unit-class MISSING, which is not defined.
 nil
 </pre>
-<p>Define the missing <a href="ref-glossary.html#id160">unit&nbsp;class</a>, but incorrectly:
+<p>Define the missing <a href="ref-glossary.html#id161">unit&nbsp;class</a>, but incorrectly:
 </p>
 <pre>
 (<a href="ref-define-unit-class.html">define-unit-class</a> missing () ((mismatched-link :link (missing bad))))

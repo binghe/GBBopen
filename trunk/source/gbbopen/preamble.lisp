@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/preamble.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Jul 19 05:41:36 2007 *-*
+;;;; *-* Last-Edit: Sat Jul 28 12:26:16 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -67,8 +67,8 @@
 ;;; Although heavy-weight, we use one master lock to synchronize all
 ;;; unit-instance & space-instance activities:
 
-(defvar *master-instance-lock*
-    (make-process-lock :name "Master instance lock"))
+(defvar *master-instance-lock* 
+    (make-recursive-lock :name "Master instance lock"))
 
 ;;; ---------------------------------------------------------------------------
 

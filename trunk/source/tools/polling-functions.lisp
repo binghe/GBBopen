@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/tools/polling-functions.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Nov 15 05:22:00 2006 *-*
+;;;; *-* Last-Edit: Mon Jul 30 10:02:15 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2003-2006, Dan Corkill <corkill@GBBopen.org> 
+;;; Copyright (C) 2003-2007, Dan Corkill <corkill@GBBopen.org> 
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -42,7 +42,7 @@
 (defvar *polling-functions* nil)
 
 ;;; ===========================================================================
-;;;   Polling Functions (primarily for single-process CLs)
+;;;   Polling Functions (primarily for non-threaded CLs)
 
 (defun describe-all-polling-functions ()
   (format t "~&; Polling functions:~:[  None~;~]~%" *polling-functions*)
@@ -76,30 +76,29 @@
 
 (defun polling-sleep (seconds &optional (poll-interval 
                                          *polling-sleep-poll-interval*))
-  #-multiprocessing-not-available
+  #-threads-not-available
   (declare (ignore poll-interval))
-  #-multiprocessing-not-available
+  #-threads-not-available
   (sleep seconds)
-  #+multiprocessing-not-available
+  #+threads-not-available
   (if (< seconds 1)
       (sleep seconds)
       (let ((end-time (+ (get-internal-real-time) 
                          (* internal-time-units-per-second seconds))))
         (loop until (> (get-internal-real-time) end-time)
             do (sleep poll-interval)
-               (process-yield)))))
+               (thread-yield)))))
 
-#-(or full-safety multiprocessing-not-available)
+#-(or full-safety threads-not-available)
 (define-compiler-macro polling-sleep (seconds &optional poll-interval)
   (declare (ignore poll-interval))
   `(sleep ,seconds))
 
 ;;; ---------------------------------------------------------------------------
-;;;  Run the polling functions on process-wait & process-wait-with-timeout
-;;;  on non-multiprocessing CLs:
+;;;  Run the polling functions on thread-yield on non-threaded CLs:
 
-#+multiprocessing-not-available
-(pushnew 'run-polling-functions *non-threaded-process-wait-hook*)
+#+threads-not-available
+(pushnew 'run-polling-functions *non-threaded-polling-function-hook*)
 
 ;;; ===========================================================================
 ;;;				  End of File

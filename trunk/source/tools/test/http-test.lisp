@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-SOCKETS-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/tools/test/http-test.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jul 25 17:46:34 2007 *-*
+;;;; *-* Last-Edit: Thu Jul 26 10:28:02 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -26,7 +26,7 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (unless (find-package :portable-sockets-user) 
     (defpackage :portable-sockets-user
-      (:use :common-lisp :portable-threads :portable-sockets))))
+      (:use :common-lisp #-ecl :portable-threads :portable-sockets))))
 
 (in-package :portable-sockets-user)
 

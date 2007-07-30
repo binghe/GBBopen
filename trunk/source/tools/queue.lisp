@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/tools/queue.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Mar 14 12:15:04 2007 *-*
+;;;; *-* Last-Edit: Sat Jul 28 13:35:14 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -94,7 +94,7 @@
 (with-generate-accessors-format (:prefix)
   (define-class queue (queue-pointers)
     ((lock
-      :initform (make-process-lock :name "Queue Lock")
+      :initform (make-lock :name "Queue Lock")
       :reader queue.lock)
      ;; Note: queue length is not protected against errors that might 
      ;;       occur during insertion/deletion.  Therefore, it is possible
@@ -155,7 +155,7 @@
               element
               current-queue)
       (remove-from-queue element)))
-  (with-process-lock ((queue.lock queue))
+  (with-lock-held ((queue.lock queue))
     ;; Do the insertion:
     (let ((previous-element (queue.previous queue)))
       (setf (queue.previous element) previous-element)
@@ -181,7 +181,7 @@
               element
               current-queue)
       (remove-from-queue element)))
-  (with-process-lock ((queue.lock queue))
+  (with-lock-held ((queue.lock queue))
     (let* ((ptr (queue.next queue))
            (key (ordered-queue.key queue))
            (test (ordered-queue.test queue))
@@ -211,7 +211,7 @@
   ;;; Removes `element' from the queue on which it resides 
   (let ((queue (on-queue-p element)))
     (when queue
-      (with-process-lock ((queue.lock queue))
+      (with-lock-held ((queue.lock queue))
         (let ((next (queue.next element))
               (previous (queue.previous element)))
           (setf (queue.next previous) next)
@@ -228,7 +228,7 @@
 
 (defmethod first-queue-element ((queue queue))
 ;;;  Returns the first element in `queue' or nil if the queue is empty
-  (with-process-lock ((queue.lock queue))
+  (with-lock-held ((queue.lock queue))
     (let ((next (queue.next queue)))
       (unless (eq queue next) next))))
 
@@ -238,7 +238,7 @@
 ;;;  Returns the element following `element' in a queue or nil the element
 ;;;  is the last
   (let ((queue (on-queue-p element)))
-    (with-process-lock ((queue.lock queue))
+    (with-lock-held ((queue.lock queue))
       (let ((next (queue.next element)))
         (unless (eq queue next) next)))))
 
@@ -248,7 +248,7 @@
 ;;;  Returns the element that preceeds  `element' in a queue or nil the
 ;;;  element is the first
   (let ((queue (on-queue-p element)))
-    (with-process-lock ((queue.lock queue))
+    (with-lock-held ((queue.lock queue))
       (let ((previous (queue.previous element)))
         (unless (eq queue previous) previous)))))
 
@@ -260,7 +260,7 @@
 ;;;  Returns the nth element in `queue' or nil if the queue is shorter than
 ;;;  `n'.  If `n' is negative, return the nth element counting backward
 ;;;  from the end of the queue (one origin)
-  (with-process-lock ((queue.lock queue))
+  (with-lock-held ((queue.lock queue))
     (let ((ptr queue))
       (if (minusp n)
           ;; From the end
@@ -281,7 +281,7 @@
 
 (defmethod last-queue-element ((queue queue))
 ;;;  Returns the last element in `queue' or nil if the queue is empty
-  (with-process-lock ((queue.lock queue))
+  (with-lock-held ((queue.lock queue))
     (let ((previous (queue.previous queue)))
       (unless (eq queue previous) previous))))
 
@@ -289,7 +289,7 @@
 
 (defmethod map-queue (fn (queue queue))
   ;;; Applys `fn' to each element in `queue' queue order.
-  (with-process-lock ((queue.lock queue))
+  (with-lock-held ((queue.lock queue))
     (let ((ptr (queue.next queue))
           element)
       (until (eq ptr queue)
@@ -306,7 +306,7 @@
     ;; Do-xxx version of map-queue:
     (with-once-only-bindings (queue)
       (with-gensyms (elt ptr)
-        `(with-process-lock ((queue.lock ,queue))
+        `(with-lock-held ((queue.lock ,queue))
            (let ((,ptr (queue.next ,queue))
                  ,elt)
              (until (eq ,ptr ,queue)

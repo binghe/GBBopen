@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/control-shells/examples/abort-ks-execution.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Jul 14 13:41:59 2007 *-*
+;;;; *-* Last-Edit: Sat Jul 28 12:21:27 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2006, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2006-2007, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -53,20 +53,20 @@
                  :retain-event-functions 't
                  :retain-event-printing 't)
   (let ((sleep-time 2))
-    ;; Got multiprocessing? Spawn a process to abort ths KS execution:
-    #-multiprocessing-not-available
-    (spawn-process "KS aborter" 
+    ;; Got threads? Spawn a thread to abort ths KS execution:
+    #-threads-not-available
+    (spawn-thread "KS aborter" 
                    #'(lambda (sleep-time)
-                       (format t "~&;; Spawned aborting process, sleeping ~
+                       (format t "~&;; Spawned aborting thread, sleeping ~
                                    for ~s second~:p...~%"
                                sleep-time)                       
                        (sleep sleep-time)
                        (format t "~&;; Aborting KS execution...~%")
                        (abort-ks-execution))
                    sleep-time)
-    ;; No multiprocessing? Set the abort-time and add a polling-function to
-    ;; abort the KS execution:
-    #+multiprocessing-not-available
+    ;; No threads? Set the abort-time and add a polling-function to abort the
+    ;; KS execution:
+    #+threads-not-available
     (let ((abort-time (+ (get-universal-time) sleep-time)))
       (labels ((abort-ks-polling-function ()
                  (when (>= (get-universal-time) abort-time)

@@ -18,8 +18,8 @@
 <tr valign="top"><td valign="baseline" align="left"%>
 <nobr><b><font color="#000000">map-instances-of-class</font></b></nobr></td><td valign="baseline"> &nbsp; </td><td valign="baseline" align="left" width="99%"><var>function unit-classes-specifier</var></td><td valign="baseline" align="right">[<i>Function</i>]
 </td></tr></table></p>
-<p><span class="fndoclabel">Purpose</span> <br />Apply a <a href="ref-glossary.html#gl:function">function</a> once to each <a href="ref-glossary.html#id162">unit&nbsp;instance</a> of the
-specified <a href="ref-glossary.html#id160">unit&nbsp;class</a>es. 
+<p><span class="fndoclabel">Purpose</span> <br />Apply a <a href="ref-glossary.html#gl:function">function</a> once to each <a href="ref-glossary.html#id163">unit&nbsp;instance</a> of the
+specified <a href="ref-glossary.html#gl:unit-class">unit&nbsp;classes</a>. 
 </p>
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen</code>
 </p>
@@ -27,7 +27,7 @@ specified <a href="ref-glossary.html#id160">unit&nbsp;class</a>es.
 </p>
 <p><span class="fndoclabel">Arguments</span><table class="tight">
 <tr valign="top"><td valign="baseline"><i>function</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#gl:function">function</a> of one argument
-</td></tr><tr valign="top"><td valign="baseline"><i>unit-classes-specifier</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An <a href="ref-glossary.html#id58">extended&nbsp;unit-classes&nbsp;specification</a>
+</td></tr><tr valign="top"><td valign="baseline"><i>unit-classes-specifier</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An <a href="ref-glossary.html#id61">extended&nbsp;unit-classes&nbsp;specification</a>
 (see below)
 </td></tr></table>
 </p>
@@ -59,8 +59,8 @@ specified <a href="ref-glossary.html#id160">unit&nbsp;class</a>es.
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
 <p><span class="fndoclabel">Description</span> <br />The specified <a href="ref-glossary.html#gl:function">function</a> is applied once to each
-<a href="ref-glossary.html#id162">unit&nbsp;instance</a> of the specified <a href="ref-glossary.html#id160">unit&nbsp;class</a>es, whether
-or not the instances reside on any <a href="ref-glossary.html#id146">space&nbsp;instance</a>s.
+<a href="ref-glossary.html#id163">unit&nbsp;instance</a> of the specified <a href="ref-glossary.html#gl:unit-class">unit&nbsp;classes</a>, whether
+or not the instances reside on any <a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a>.
 </p>
 <p><span class="fndoclabel">See also</span>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-class-instances-count.html"><b>class-instances-count</b></a>
@@ -70,32 +70,32 @@ or not the instances reside on any <a href="ref-glossary.html#id146">space&nbsp;
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-map-instances-on-space-instances.html"><b>map-instances-on-space-instances</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-map-sorted-instances-of-class.html"><b>map-sorted-instances-of-class</b></a>
 </p>
-<p><span class="fndoclabel">Examples</span> <br />Delete all <a href="ref-glossary.html#id162">unit&nbsp;instance</a>s of the class <code>hyp</code>:
+<p><span class="fndoclabel">Examples</span> <br />Delete all <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a> of the class <code>hyp</code>:
 </p>
 <pre>
   (map-instances-of-class #'<a href="ref-delete-instance.html">delete-instance</a> 'hyp)
 </pre> 
-<p>Delete all <a href="ref-glossary.html#id162">unit&nbsp;instance</a>s of the class <code>hyp</code> and
+<p>Delete all <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a> of the class <code>hyp</code> and
 instances of subclasses of <code>hyp</code>:
 </p>
 <pre>
   (map-instances-of-class #'<a href="ref-delete-instance.html">delete-instance</a> '(hyp :plus-subclasses))
 </pre> 
 <p><span class="fndoclabel">Notes</span> <br /><a name="id2">The</a> consequences are unspecified if an attempt is made to add or delete a
-<a href="ref-glossary.html#id162">unit&nbsp;instance</a> while <b>map-instances-of-class</b> is in progress.
+<a href="ref-glossary.html#id163">unit&nbsp;instance</a> while <b>map-instances-of-class</b> is in progress.
 There is one exception to this restriction: <var>function</var> may delete its
-<a href="ref-glossary.html#id162">unit&nbsp;instance</a> argument, provided that deletion does not trigger the
-deletion of any other <a href="ref-glossary.html#id162">unit&nbsp;instance</a>s.  For example, the following
-form intended to delete all <a href="ref-glossary.html#id146">space&nbsp;instance</a>s violates this restriction:
+<a href="ref-glossary.html#id163">unit&nbsp;instance</a> argument, provided that deletion does not trigger the
+deletion of any other <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a>.  For example, the following
+form intended to delete all <a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a> violates this restriction:
 </p>
 <pre>
    <font color="#ff0000">(map-instances-of-class 
      #'<a href="ref-delete-space-instance.html">delete-space-instance</a> '(<a href="ref-standard-space-instance.html">standard-space-instance</a> :plus-subclasses))</font>
 </pre>
-<p>because deletion of a <a href="ref-glossary.html#id146">space&nbsp;instance</a> with children automatically
-deletes those child <a href="ref-glossary.html#id146">space&nbsp;instance</a>s.  The function
+<p>because deletion of a <a href="ref-glossary.html#id145">space&nbsp;instance</a> with children automatically
+deletes those child <a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a>.  The function
 <b><a href="ref-delete-all-space-instances.html">delete-all-space-instances</a></b> provides an efficient means of
-deleting all <a href="ref-glossary.html#id146">space&nbsp;instance</a>s without violating this rule.
+deleting all <a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a> without violating this rule.
 </p>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />

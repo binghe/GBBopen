@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/find.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Jul  3 10:19:22 2007 *-*
+;;;; *-* Last-Edit: Sat Jul 28 13:24:23 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2003-2006, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2003-2007, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -1276,7 +1276,7 @@
           disjunctive-dimensional-extents space-instance))
      space-instances
      invoking-fn-name)
-    (with-process-lock (*master-instance-lock*)
+    (with-lock-held (*master-instance-lock*)
       ;; set all flags:
       (dolist (storage storage-objects)
         (set-all-mbr-instance-marks storage disjunctive-dimensional-extents))
@@ -1351,7 +1351,7 @@
      space-instances
      invoking-fn-name)
     ;; filter-before & pattern & filter-after & funcall `fn':
-    (with-process-lock (*master-instance-lock*)
+    (with-lock-held (*master-instance-lock*)
       (dolist (storage storage-objects)
         (map-all-instances-on-storage 
          #'(lambda (instance)
@@ -1408,7 +1408,7 @@
          (storage-objects-for-retrieval
           unit-classes-spec space-instances 't 't 't invoking-fn-name))
         (unit-class-check-fn (determine-unit-class-check unit-classes-spec)))
-    (with-process-lock (*master-instance-lock*)
+    (with-lock-held (*master-instance-lock*)
       ;; set all flags:
       (dolist (storage storage-objects)
         (set-all-mbr-instance-marks storage 't))
