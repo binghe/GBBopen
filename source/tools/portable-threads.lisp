@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/tools/portable-threads.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Nov 15 03:43:32 2006 *-*
+;;;; *-* Last-Edit: Mon Jul 30 05:19:51 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -14,19 +14,21 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2003-2006, Dan Corkill <corkill@GBBopen.org> 
+;;; Copyright (C) 2003-2007, Dan Corkill <corkill@GBBopen.org> 
 ;;;
-;;; Originally developed in conjunction with the GBBopen Project
-;;; (http://GBBopen.org) and donated to the CL Gardeners portable threads
-;;; initiative (http://wiki.alu.org/Portable_Threads).  (Released under the
-;;; Apache 2.0 license, see http://GBBopen.org/downloads/LICENSE for license
-;;; details.)
+;;; Developed and supported by the GBBopen Project (http://GBBopen.org) and
+;;; donated to the CL Gardeners portable threads initiative
+;;; (http://wiki.alu.org/Portable_Threads).  (Licenced under the Apache 2.0
+;;; license, see http://GBBopen.org/downloads/LICENSE for license details.)
 ;;;
 ;;; Bug reports, suggestions, enhancements, and extensions should be sent to
 ;;; corkill@GBBopen.org.
 ;;;
-;;; On-line documentation for these multiprocessing-interface entities is
+;;; On-line documentation for these portable thread interface entities is
 ;;; available at http://gbbopen.org/hyperdoc/index.html
+;;;
+;;; This file can be used stand-alone on the supported CLs (no additional
+;;; libraries are requried).
 ;;;
 ;;; Porting Notice:
 ;;;
@@ -38,8 +40,8 @@
 ;;;  11-21-03 File Created.  (Corkill)
 ;;;  03-20-04 Added process-yield, kill, hibernate/awaken.  (Corkill)
 ;;;  03-21-04 Added atomic operations.  (Corkill)
-;;;  06-11-05 Clean up best attempts for non-multiprocessing CLs.  (Corkill)
-;;;  10-21-05 Added polling functions for non-multiprocessing CLs.  (Corkill)
+;;;  06-11-05 Clean up best attempts for non-threaded CLs.  (Corkill)
+;;;  10-21-05 Added polling functions for non-threaded CLs.  (Corkill)
 ;;;  12-17-05 Added process-wait-with-timeout.  (Corkill)
 ;;;  12-22-05 Removed without-interrupts support (incompatible with
 ;;;           preemptive scheduling models).  (Corkill)
@@ -49,6 +51,7 @@
 ;;;  01-12-06 Added as-atomic-operation support, but only as a mechanism
 ;;;           for implementing very brief atomic operations.  (Corkill)
 ;;;  05-08-06 Added support for the Scieneer CL. (dtc)
+;;;  07-28-07 V2.0 naming changes, full condition variable support.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -94,7 +97,7 @@
       (lisp-implementation-version))
 
 ;;; ---------------------------------------------------------------------------
-;;; Import multiprocessing symbols, as needed:
+;;; Import the CL-implementation's threading symbols, as needed:
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (import
@@ -103,77 +106,87 @@
      mp:gate-open-p
      mp:make-gate
      mp:open-gate
-     mp:process-name
      mp:process-wait
      mp:process-wait-with-timeout
-     mp:process-whostate)
+     sys:with-timeout)
    #+clisp
    '()
    #+(and cmu mp)
-   '(mp:all-processes
-     mp:atomic-decf
+   '(mp:atomic-decf
      mp:atomic-incf
      mp:atomic-pop
      mp:atomic-push
-     mp:process-name
      mp:process-wait
      mp:process-wait-with-timeout
-     mp:process-whostate
-     mp:processp)
+     mp::recursive-lock
+     mp:with-timeout)
    #+(and cmu (not mp))
    '()
    #+cormanlisp
    '()
    #+digitool-mcl
-   '(ccl:process-name
-     ccl:process-wait
-     ccl:process-wait-with-timeout
-     ccl:process-whostate
-     ccl::processp)
+   '(ccl:process-wait
+     ccl:process-wait-with-timeout)
    #+(and ecl threads)
-   '(mp:all-processes
-     mp:process-name)
+   '(mp:make-lock)
    #+(and ecl (not threads))
    '()
    #+gcl
    '()
    #+lispworks
-   '(mp:process-name
+   '(mp:make-lock
      mp:process-wait
-     mp:process-wait-with-timeout
-     mp:process-whostate)
+     mp:process-wait-with-timeout)
    #+openmcl
-   '(ccl:all-processes
-     ccl:make-semaphore
-     ccl:process-name
-     ccl:process-wait
-     ccl:process-wait-with-timeout
-     ccl:process-whostate
-     ccl::processp
-     ccl:signal-semaphore)
-   #+(and sbcl sb-threads)
-   '(sb-threads:make-semaphore
-     sb-threads:signal-semaphore)
-   #+(and sbcl (not sb-threads))
+   '(ccl:process-wait
+     ccl:process-wait-with-timeout)
+   #+(and sbcl sb-thread)
+   '(sb-thread::thread-name)
+   #+(and sbcl (not sb-thread))
    '()
    #+scl
-   '(mp:all-processes
-     mp:atomic-decf
+   '(mp:atomic-decf
      mp:atomic-incf
      mp:atomic-pop
      mp:atomic-push
-     mp:process-name
-     mp:process-whostate
-     mp:processp
      thread:make-cond-var
      thread:cond-var-wait
      thread:cond-var-timedwait
      thread:cond-var-signal
      thread:cond-var-broadcast)))
 
+;;; ---------------------------------------------------------------------------
+;;;   Name changes in V1.0 (support for old names will be removed soon):
+;;;
+;;;    all-processes              all-threads
+;;;    awaken-process             awaken-thread
+;;;    current-process            current-thread
+;;;    hibernate-process          hibernate-thread
+;;;    kill-process               kill-thread
+;;;    make-process-lock          make-recursive-lock
+;;;    process-name               thread-name
+;;;    processp                   threadp
+;;;    process-wait               thread-wait
+;;;    process-wait-with-timeout  thread-wait-with-timeout
+;;;    process-whostate           thread-whostate
+;;;    process-yield              thread-yield
+;;;    run-in-process             run-in-thread
+;;;    spawn-process              spawn-thread
+;;;    symbol-value-in-process    symbol-value-in-thread
+;;;    with-process-lock          with-lock-held
+;;;    <new>                      make-lock
+;;;    <new>                      condition-variable (object)
+;;;    <new>                      make-condition-variable
+;;;    <new>                      condition-variable-broadcast
+;;;    <new>                      condition-variable-signal
+;;;    <new>                      condition-variable-wait
+;;;    <new>                      condition-variable-wait-with-timeout
+;;;    <new>                      thread-holds-lock-p
+
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (export '(*non-threaded-process-wait-hook* ; not documented
-	    all-processes
+  (export '(*non-threaded-polling-function-hook* ; not documented
+	    all-processes               ; renamed (to be removed soon)
+            all-threads
 	    as-atomic-operation
 	    atomic-decf
 	    atomic-delete
@@ -182,46 +195,64 @@
 	    atomic-pop
 	    atomic-push
 	    atomic-pushnew
-	    awaken-process		; deprecated, may be removed
-	    close-gate
-	    cond-var-wait
-	    cond-var-timedwait
-	    cond-var-signal
-	    cond-var-broadcast
-	    current-process
-	    gate-open-p
-	    hibernate-process		; deprecated, may be removed
-	    kill-process
-	    make-cond-var
-	    make-gate
-	    make-process-lock
-	    make-semaphore		; not yet documented
-	    multiprocessing-not-available ; not documented
-	    open-gate
-	    process-name
-	    processp
-	    process-wait
-	    process-wait-with-timeout
-	    process-whostate
-	    process-yield
-	    run-in-process
-	    signal-semaphore		; not yet documented
-	    spawn-process
-	    symbol-value-in-process
+	    awaken-process		; renamed (to be removed soon)
+	    awaken-thread
+	    close-gate                  ; deprecated, to be removed
+	    condition-variable
+	    condition-variable-broadcast
+            condition-variable-signal
+            condition-variable-wait
+	    condition-variable-wait-with-timeout
+	    current-process             ; renamed (to be removed soon)
+            current-thread
+	    gate-open-p                 ; deprecated, to be removed
+	    hibernate-process		; renamed (to be removed soon)
+	    hibernate-thread
+	    kill-process                ; renamed (to be removed soon)
+            kill-thread
+	    make-condition-variable
+	    make-gate                   ; deprecated, to be removed
+            make-lock
+	    make-process-lock           ; renamed (to be removed soon)
+            make-recursive-lock
+	    multiprocessing-not-available ; renamed (remove soon)
+	    open-gate                   ; deprecated, to be removed
+	    process-name                ; renamed (to be removed soon)
+            portable-threads-implementation-version ; not documented
+	    processp                    ; renamed (to be removed soon)
+	    process-wait                ; deprecated, to be removed
+	    process-wait-with-timeout   ; deprecated, to be removed
+	    process-whostate            ; renamed (to be removed soon)
+	    process-yield               ; renamed (to be removed soon)
+	    run-in-process              ; renamed (to be removed soon)
+            run-in-thread
+	    spawn-process               ; renamed (to be removed soon)
+            spawn-thread
+	    symbol-value-in-process     ; renamed (to be removed soon)
+            symbol-value-in-thread
+            threadp
+            threads-not-available       ; not documented
 	    thread-condition-variables-not-available ; not documented
-	    thread-scheduling-not-available ; not documented
-	    wait-on-semaphore		; not yet documented
-	    wait-on-semaphore-with-timeout ; not yet documented
-	    with-process-lock)))
+            thread-holds-lock-p         ; new (need to document)
+            thread-name
+            thread-whostate
+            thread-yield
+            with-lock-held
+	    with-process-lock           ; renamed (to be removed soon)
+            with-timeout)))
 
-;; Export cond-var entities (possible future interface entities):
-#+scl
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (export '(make-cond-var
-	    cond-var-wait
-	    cond-var-timedwait
-	    cond-var-signal
-	    cond-var-broadcast)))
+;;; ---------------------------------------------------------------------------
+;;;  Warn if the Idle Process is not running on CMUCL
+
+#+(and cmu mp)
+(unless (member-if #'(lambda (process)
+                       (string= "Idle Loop" (mp:process-name process)))
+                   (mp:all-processes))
+  (warn "You must start CMUCL's idle-loop process by calling~
+         ~%~3t~s~
+         ~%for ~s and other thread operations to function properly."
+        '(mp::startup-idle-and-top-level-loops)
+        'with-timeout))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -232,35 +263,25 @@
       gcl
       (and sbcl (not sb-thread)))
 (eval-when (:compile-toplevel :load-toplevel :execute)
+  (pushnew :threads-not-available *features*)
+  ;; Remove the following soon!
   (pushnew :multiprocessing-not-available *features*))
-
-#+(or (and ecl threads)
-      (and sbcl sb-thread)
-      scl)
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (pushnew :thread-scheduling-not-available *features*))
-
-#-scl
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (pushnew :thread-condition-variables-not-available *features*))
 
 ;;; ---------------------------------------------------------------------------
 
-#+multiprocessing-not-available
+#+threads-not-available
+(defun threads-not-available (operation)
+  (warn "Threads are not available in ~s running on ~s; ~s was used."
+	(lisp-implementation-type) 
+	(machine-type)
+	operation))
+
+;; Temporary backward name compatability:
+#+threads-not-available
 (defun multiprocessing-not-available (operation)
-  (warn "Multiprocessing is not available in ~s running on ~s; ~s was used."
-	(lisp-implementation-type) 
-	(machine-type)
-	operation))
+  (threads-not-available operation))
 
-#+thread-scheduling-not-available
-(defun thread-scheduling-not-available (operation)
-  (warn "Thread scheduling is not available in ~s running on ~s; ~s was used."
-	(lisp-implementation-type) 
-	(machine-type)
-	operation))
-
-#+thread-condition-variables-not-available
+#+threads-not-available
 (defun thread-condition-variables-not-available (operation)
   (warn "Thread condition variables are not available in ~s running on ~s; ~
         ~s was used."
@@ -268,121 +289,383 @@
 	(machine-type)
 	operation))
 
+#+threads-not-available
+(defun not-a-thread (thread)
+  (error "~s is not a thread object" thread))
+
+;;; ===========================================================================
+
+(defun portable-threads-implementation-version ()
+  "2.0")
+
+;;; Added to *features* at the end of this file:
+(defparameter *portable-threads-version-keyword* :portable-threads-2.0)
+
 ;;; ---------------------------------------------------------------------------
-;;;  Process-Wait hook for non-multiprocessing CLs (for example, GBBopen's 
+
+(defun print-portable-threads-herald ()
+  (format t "~%;;; ~72,,,'-<-~>
+;;;  Portable Threads Interface ~a~@
+;;;
+;;;    Developed and supported by the GBBopen Project (http:/GBBopen.org/)
+;;;    (See http://GBBopen.org/downloads/LICENSE for license details.)
+;;; ~72,,,'-<-~>~2%"
+          (portable-threads-implementation-version)))
+  
+(eval-when (:load-toplevel)
+  (print-portable-threads-herald))
+
+;;; ===========================================================================
+;;;  Thread-wait hook for non-threaded CLs (for example, GBBopen's
 ;;;  polling functions)
 
-#+multiprocessing-not-available
-(defvar *non-threaded-process-wait-hook* nil)
+#+threads-not-available
+(defvar *non-threaded-polling-function-hook* nil)
 
 ;;; ===========================================================================
-;;;   Make-Process-Lock
+;;;  With-timeout
 
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (defun make-process-lock (&key name)
-    #+allegro
-    (mp:make-process-lock :name name)
-    #+(and cmu mp)
-    (mp:make-lock name)
-    #+digitool-mcl
-    (ccl:make-lock name)
-    #+(and ecl threads)
-    (mp:make-lock :name name)    
-    #+lispworks
-    (mp:make-lock :name name)
-    #+openmcl
-    (ccl:make-lock name)
-    #+(and sbcl sb-thread)
-    (sb-thread:make-mutex :name name)
-    #+scl
-    (mp:make-lock name :type :recursive)
-    #+multiprocessing-not-available
-    (cons 'pseudo-lock name))
-  
-  #-(or full-safety cormanlisp)		; CLL 3.0 can't handle this one
-  (define-compiler-macro make-process-lock (&key (name nil name-supplied-p))
-    #+(or scl multiprocessing-not-available)
-    (declare (ignore name-supplied-p))
-    #+allegro
-    `(mp:make-process-lock ,@(when name-supplied-p (list ':name name)))
-    #+(and cmu mp)
-    `(mp:make-lock ,@(when name-supplied-p (list name)))
-    #+digitool-mcl
-    `(ccl:make-lock ,@(when name-supplied-p (list name)))
-    #+(and ecl threads)
-    `(mp:make-lock ,@(when name-supplied-p (list ':name name)))
-    #+lispworks
-    `(mp:make-lock ,@(when name-supplied-p (list ':name name)))
-    #+openmcl
-    `(ccl:make-lock ,@(when name-supplied-p (list name)))
-    #+(and sbcl sb-thread)
-    `(sb-thread:make-mutex ,@(when name-supplied-p (list ':name name)))
-    #+scl
-    `(mp:make-lock ,name :type :recursive)
-    #+multiprocessing-not-available
-    `(cons 'pseudo-lock ',name)))
-  
+#-(or allegro (and cmu mp))
+(defmacro with-timeout ((seconds &body timeout-body) &body timed-body)
+  #+lispworks
+  (let ((timer-sym (gensym)))
+    ;; Note that Lispworks runs the timer function in the process that is
+    ;; running when the timeout occurs, so we have to use some cruft to get
+    ;; back to the with-timeout process:
+    `(catch 'with-timeout
+       (let ((,timer-sym (mp:make-timer
+                          #'(lambda (process)
+                              (mp:process-interrupt 
+                               process
+                               #'(lambda ()
+                                   (throw 'with-timeout
+                                     (progn ,@timeout-body)))))
+                          mp:*current-process*)))
+         (mp:schedule-timer-relative ,timer-sym ,seconds)
+         (unwind-protect (progn ,@timed-body)
+           (mp:unschedule-timer ,timer-sym)))))
+  #+(or digitool-mcl
+        openmcl)
+  (let ((timer-process-sym (gensym)))
+    ;; No timers in OpenMCL, so we use sleep in a separate "timer" process:
+    `(catch 'with-timeout
+       (let ((,timer-process-sym
+              (ccl:process-run-function 
+                  "With-timeout timer"
+                #'(lambda (process seconds)
+                    (sleep seconds)
+                    (ccl:process-interrupt
+                     process
+                     #'(lambda ()
+                         (ignore-errors
+                          (throw 'with-timeout
+                            (progn ,@timeout-body))))))
+                ccl:*current-process*
+                ,seconds)))
+         (ccl:process-allow-schedule)
+         (unwind-protect (progn ,@timed-body)
+           (ccl:process-kill ,timer-process-sym)
+           (ccl:process-allow-schedule)))))
+  #+sbcl
+  (let ((timer-sym (gensym)))
+    `(block with-timeout
+       (let ((,timer-sym (sb-ext:make-timer
+                          #'(lambda () (return-from with-timeout
+                                         (progn ,@timeout-body))))))
+         (sb-ext:schedule-timer ,timer-sym ,seconds)
+         (unwind-protect (progn ,@timed-body)
+           (sb-ext:unschedule-timer ,timer-sym)))))
+  #+threads-not-available
+  (declare (ignore seconds timeout-body timed-body))
+  #+threads-not-available
+  (progn
+    (threads-not-available 'with-timeout)
+    '(threads-not-available 'with-timeout)))    
+
 ;;; ===========================================================================
-;;;   With-Process-Lock (supports recursive locking)
+;;;   Locks
+
+#+allegro
+(defstruct (recursive-lock
+            (:include mp:process-lock)
+            (:copier nil)))
+
+;; ECL's lock is a built-in class, but ECL allows us to subclass it:
+#+(and ecl threads) 
+(defclass recursive-lock (mp::lock) (name :initarg :name :initform nil))
+
+#+lispworks
+(defstruct (recursive-lock
+            (:include mp:lock)
+            (:copier nil)))
+
+;; OpenMCL only has a recursive lock object:
+#+(or digitool-mcl
+      openmcl)
+(progn
+  (defstruct (lock
+              (:copier nil)
+              (:constructor %make-lock))                
+    (ccl-lock))
+  (defstruct (recursive-lock 
+              (:include lock)
+              (:copier nil)
+              (:constructor %make-recursive-lock))))
+
+#+(and sbcl sb-thread)
+(defstruct (recursive-lock 
+            (:include sb-thread:mutex))
+  (:copier nil))
+
+#+threads-not-available
+(progn
+  (defstruct (lock (:copier nil))
+    (count 0 :type fixnum)
+    (name "Lock" :type string))
+  (defstruct (recursive-lock
+              (:include lock)
+              (:copier nil))))
+
+;;; ---------------------------------------------------------------------------
+;;; It would have been great if various CL's lock and condition-variable
+;;; objects were CLOS classes.  Without multiple inheritance, we have to hack
+;;; a delegated lock-extraction dispatch level into with-lock-held:
+
+(defgeneric %%get-lock%% (obj))
+
+(defmethod %%get-lock%% (obj)
+  ;; Regular lock & recursive-lock objects
+  obj)
+
+;;; ---------------------------------------------------------------------------
+
+(defun wrong-lock-type-error (lock needed-lock-type operator)
+  (error "A ~a lock is needed by ~s, a ~s was supplied"
+         needed-lock-type
+         operator
+         (type-of lock)))
+         
+;;; ---------------------------------------------------------------------------
+
+#+(or allegro
+      digitool-mcl
+      lispworks
+      openmcl)
+(defun recursive-lock-attempt-error (lock)
+  (error "A recursive attempt was made to hold lock ~s"
+         lock))
+         
+#+threads-not-available
+(defun non-threaded-lock-deadlock-error (lock)
+  (error "Attempt to grab the locked lock ~s on a non-threaded Common Lisp"
+         lock))
+  
+;;; ---------------------------------------------------------------------------
+;;;   Make-lock
+
+#-(or (and ecl threads)                 ; simply imported                 
+      lispworks                         ; simply imported
+      threads-not-available
+      cormanlisp)                       ; CLL 3.0 can't handle this one
+(defun make-lock (&key name)
+  #+allegro
+  (mp:make-process-lock :name name)
+  #+(and cmu mp)
+  (mp:make-lock name :kind ':error-check)
+  #+(or digitool-mcl
+        openmcl)
+  (%make-lock :ccl-lock (ccl:make-lock name))
+  #+(and sbcl sb-thread)
+  (sb-thread:make-mutex :name name)
+  #+scl
+  (mp:make-lock name :type :recursive))
+
+;;; ---------------------------------------------------------------------------
+;;;   Make-recursive-lock
+
+#-(or allegro 
+      lispworks
+      (and sbcl sb-thread)
+      threads-not-available)
+(defun make-recursive-lock (&key name)
+  #+(and cmu mp)
+  (mp:make-lock name)
+  #+(and ecl threads)
+  (make-instance 'recursive-lock :name name)
+  #+(or digitool-mcl
+        openmcl)
+  (%make-recursive-lock :ccl-lock (ccl:make-lock name))
+  #+scl
+  (mp:make-lock name :type :recursive))
+  
+;; Temporary backward name compatability:
+(defun make-process-lock (&rest args)
+  (declare (dynamic-extent args))
+  (apply #'make-recursive-lock args))
+#-full-safety
+(define-compiler-macro make-process-lock (&rest args)
+  `(make-recursive-lock ,@args))
+
+;;; ---------------------------------------------------------------------------
+;;;   With-Lock-held
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (defmacro with-process-lock ((lock &key (whostate "With Process Lock"))
-			       &body body)
-    #+(or multiprocessing-not-available 
-	  (and ecl threads)
-	  openmcl 
-	  (and sbcl sb-thread))
+  (defmacro with-lock-held ((lock &key (whostate "With Lock Held"))
+                            &body body)
+    #+(or (and ecl threads)
+	  (and sbcl sb-thread)
+          threads-not-available)
     (declare (ignore whostate))
+    (let ((lock-sym (gensym)))
+      `(let ((,lock-sym (%%get-lock%% ,lock)))
+         #+allegro
+         (progn
+           ;; Allegro's mp:with-process-lock doesn't evaluate its :norecursive
+           ;; option, so we roll our own recursive check:
+           (when (and (not (recursive-lock-p ,lock-sym))
+                      (eq system:*current-process*
+                          (mp:process-lock-locker ,lock-sym)))
+             (recursive-lock-attempt-error ,lock-sym))                     
+           (mp:with-process-lock 
+               (,lock-sym :norecursive nil
+                          :whostate ,whostate)
+             ,@body))
+         #+(and cmu mp)
+         (mp:with-lock-held (,lock-sym ,whostate) ,@body) 
+         #+(and ecl threads)
+         (mp:with-lock (,lock-sym) ,@body)
+         #+lispworks
+         (progn
+           (when (and (not (recursive-lock-p ,lock-sym))
+                      (eq mp:*current-process* 
+                          (mp:lock-owner ,lock-sym)))
+             (recursive-lock-attempt-error ,lock-sym))
+           (mp:with-lock (,lock-sym ,whostate) 
+             ,@body))
+         #+(or digitool-mcl
+               openmcl)
+         (let ((.ccl-lock. (and (lock-p ,lock-sym)
+                                (lock-ccl-lock (the lock ,lock-sym)))))
+           (when (and (not (recursive-lock-p ,lock-sym))
+                      (eq ccl:*current-process*
+                          (ccl::%%lock-owner .ccl-lock.)))
+             (recursive-lock-attempt-error ,lock-sym))
+           (ccl:with-lock-grabbed (.ccl-lock. ,whostate)
+             ,@body))
+         ;; sb-thread:with-recursive-lock is heavy handed, we roll our own
+         ;; with sb-thread:with-mutex (non-recursive) instead:
+         #+(and sbcl sb-thread)
+         (flet ((body-fn () ,@body))
+           (if (and (recursive-lock-p ,lock-sym)
+                    (eq (sb-thread:mutex-value ,lock-sym)
+                        sb-thread::*current-thread*))
+               (body-fn)
+               (sb-thread:with-mutex (,lock-sym) (body-fn))))
+         #+scl
+         `(mp:with-lock-held (,lock-sym ,whostate) ,@body) 
+         ;; Note that polling functions complicate non-threaded CL locking;
+         ;; the following does not deal with polling functions:
+         #+threads-not-available
+         (cond
+          ;; The lock is available:
+          ((or (recursive-lock-p ,lock-sym)
+               (zerop (the fixnum (lock-count ,lock-sym))))
+           (unwind-protect (progn (incf (the fixnum (lock-count ,lock-sym)))
+                                  ,@body)
+             (decf (the fixnum (lock-count ,lock-sym)))))
+          ;; Deadlocked:
+          (t (non-threaded-lock-deadlock-error ,lock-sym)))))))
+
+;; Temporary backward name compatability:
+(defmacro with-process-lock (&rest args)
+  `(with-lock-held ,@args))
+
+;;; ---------------------------------------------------------------------------
+
+(defun thread-holds-lock-p (lock)
+  (let ((lock (%%get-lock%% lock)))
     #+allegro
-    `(mp:with-process-lock (,lock :whostate ,whostate) ,@body)
+    (eq (mp:process-lock-locker lock) system:*current-process*)
     #+(and cmu mp)
-    `(mp:with-lock-held (,lock ,whostate) ,@body) 
-    #+digitool-mcl
-    `(ccl:with-lock-grabbed (,lock :whostate ,whostate) ,@body)
-    #+(and ecl threads)
-    `(mp:with-lock (,lock) ,@body)
+    (eq (mp::lock-process lock) mp:*current-process*)
     #+lispworks
-    `(mp:with-lock (,lock ,whostate) ,@body)
-    #+openmcl
-    `(ccl:with-lock-grabbed (,lock) ,@body)
-    ;; sb-thread:with-mutex does not allow recursive locking, 
-    ;; with-recursive-lock does:
+    (eq (mp:lock-owner lock) mp:*current-process*)
+    #+(or digitool-mcl 
+          openmcl)
+    (eq (ccl::%%lock-owner (lock-ccl-lock lock)) ccl:*current-process*)
     #+(and sbcl sb-thread)
-    `(sb-thread:with-recursive-lock (,lock) ,@body)
-    #+scl
-    `(mp:with-lock-held (,lock ,whostate) ,@body) 
-    #+multiprocessing-not-available
-    `(progn ,lock ,@body)))
+    (eq (sb-thread:mutex-value lock) sb-thread:*current-thread*)
+    ;; Note that polling functions complicate non-threaded CL locking;
+    ;; the following does not deal with polling functions:
+    #+threads-not-available
+    (plusp (the fixnum (lock-count lock)))))
+
+#-full-safety
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (define-compiler-macro thread-holds-lock-p (lock)
+    (let ((lock-sym (gensym)))
+      `(let ((,lock-sym (%%get-lock%% ,lock)))
+         #+allegro
+         (eq (mp:process-lock-locker ,lock-sym)
+             system:*current-process*)
+         #+(and cmu mp)
+         (eq (mp::lock-process ,lock-sym)
+             mp:*current-process*)
+         #+lispworks
+         (eq (mp:lock-owner ,lock-sym)
+             mp:*current-process*)
+         #+(or digitool-mcl 
+               openmcl)
+         (eq (ccl::%%lock-owner (lock-ccl-lock ,lock-sym))
+             ccl:*current-process*)
+         #+(and sbcl sb-thread)
+         (eq (sb-thread:mutex-value ,lock-sym)
+             sb-thread:*current-thread*)
+         #+threads-not-available
+         (plusp (the fixnum (lock-count ,lock-sym)))))))
 
 ;;; ===========================================================================
-;;;   As-Atomic-Operation (used to implement Atomic Operations); for very brief
-;;;   operations only
+;;;   As-atomic-operation 
+;;;
+;;;  (used to implement atomic operations; for very brief operations only)
 ;;;
 ;;; We use native without-scheduling on Allegro, CMUCL/mp, and SCL, and we use
 ;;; native without-interrupts on Digitool MCL and Lispworks.  
 ;;;
 ;;; OpenMCL's without-interrupts doesn't control thread scheduling, so we have
-;;; to use a process-lock.
+;;; to use a lock.
 ;;;
 ;;; The documentation of ECL/threads's without-interrupts is unspecific about
 ;;; it disabling all thread scheduling, so we don't use it.
 
-#-(or allegro (and cmu mp) lispworks scl)
-(defvar *atomic-operation-lock* (make-process-lock :name "Atomic operation"))
+#-(or allegro
+      (and cmu mp)
+      digitool-mcl
+      lispworks
+      scl)
+(defvar *atomic-operation-lock* (make-lock :name "Atomic operation"))
 
-#-(or allegro (and cmu mp) digitool-mcl lispworks scl)
+#-(or allegro
+      (and cmu mp)
+      digitool-mcl
+      lispworks
+      scl)
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defmacro as-atomic-operation (&body body)
-    `(with-process-lock (*atomic-operation-lock*)
+    `(with-lock-held (*atomic-operation-lock*)
        ,@body)))
 
-#+(or allegro (and cmu mp) digitool-mcl lispworks scl)
+#+(or allegro
+      (and cmu mp)
+      digitool-mcl 
+      lispworks
+      scl)
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defmacro as-atomic-operation (&body body)
     `(#+allegro mp:without-scheduling
       #+(and cmu mp) mp:without-scheduling
       #+digitool-mcl ccl:without-interrupts
-      #+lispworks mp:without-interrupts
+      #+lispworks mp:without-preemption
       #+scl mp:without-scheduling
       ,@body)))
 
@@ -419,8 +702,8 @@
 (defmacro atomic-decf (place &optional (delta 1))
   `(as-atomic-operation (decf ,place ,delta)))
 
-#-scl
 (defmacro atomic-delete (item place &rest args &environment env)
+  #-scl
   (if (symbolp place)
       `(as-atomic-operation
 	 (setf ,place (delete ,item ,place ,@args)))
@@ -432,34 +715,311 @@
 		    ,@(mapcar #'list vars vals)
 		    (,(first store-vars)
 		     (delete ,item-var ,reader-form ,@args)))
-	       ,writer-form))))))
-
-#+scl
-(defmacro atomic-delete (item place &rest args)
+	       ,writer-form)))))
+  #+scl
   (let ((list (gensym)))
     (ext:once-only ((item item))
       `(kernel:with-atomic-modification (,list ,place)
+         ;; Question for dtc: Why is remove used rather than delete?
 	 (remove ,item ,list ,@args)))))
 
-#-scl
 (defmacro atomic-flush (place)
   ;;; Set place to nil, returning the original value:
-  `(as-atomic-operation (prog1 ,place (setf ,place nil))))
-
-#+scl
-(defmacro atomic-flush (place)
-  ;;; Set place to nil, returning the original value:
+  #-scl
+  `(as-atomic-operation (prog1 ,place (setf ,place nil)))
+  #+scl
   `(loop
-    (let ((value ,place))
-      (when (eq (kernel:setf-conditional ,place value nil) value)
-	(return value)))))
+     (let ((value ,place))
+       (when (eq (kernel:setf-conditional ,place value nil) value)
+         (return value)))))
 
 ;;; ===========================================================================
-;;;   Spawn-Process
+;;;   Current-Thread (returns nil on CLs without threads)
 
-(defun spawn-process (name function &rest args)
-  #+multiprocessing-not-available
-  (declare (ignore name function args))
+(defun current-thread ()
+  #+allegro
+  mp:*current-process*
+  #+(and cmu mp)
+  mp:*current-process*
+  #+(and ecl threads)
+  mp:*current-process*
+  #+digitool-mcl
+  ccl:*current-process*
+  #+lispworks
+  mp:*current-process*
+  #+openmcl
+  ccl:*current-process*
+  #+(and sbcl sb-thread)
+  sb-thread:*current-thread*
+  #+scl
+  (mp:current-process)
+  #+threads-not-available
+  nil)
+
+#-full-safety
+(define-compiler-macro current-thread ()
+  #+allegro
+  'mp:*current-process*
+  #+(and cmu mp)
+  'mp:*current-process*
+  #+digitool-mcl
+  'ccl:*current-process*
+  #+lispworks
+  'mp:*current-process*
+  #+openmcl
+  'ccl:*current-process*
+  #+(and sbcl sb-thread)
+  'sb-thread:*current-thread*
+  #+scl
+  '(mp:current-process)
+  #+threads-not-available
+  nil)
+ 
+;; Temporary backward name compatability:
+(defun current-process ()
+  (current-thread))
+#-full-safety
+(define-compiler-macro current-process ()
+  '(current-thread))
+ 
+;;; ===========================================================================
+;;;   All-Threads (returns nil on CLs without threads)
+
+(defun all-threads ()
+  #+allegro
+  mp:*all-processes*
+  #+(and cmu mp)
+  (mp:all-processes)
+  #+digitool-mcl
+  ccl:*all-processes*
+  #+(and ecl threads)
+  (mp:all-processes)
+  #+lispworks
+  (mp:list-all-processes)
+  #+openmcl
+  (ccl:all-processes)
+  #+(and sbcl sb-thread)
+  sb-thread::*all-threads*
+  #+scl
+  (mp:all-processes)
+  #+threads-not-available
+  nil)
+  
+#-full-safety
+(define-compiler-macro all-threads ()
+  #+allegro
+  'mp:*all-processes*
+  #+(and cmu mp)
+  '(mp:all-processes)
+  #+digitool-mcl
+  'ccl:*all-processes*
+  #+(and ecl threads)
+  '(mp:all-processes)
+  #+lispworks
+  '(mp:list-all-processes)
+  #+openmcl
+  '(ccl:all-processes)
+  #+(and sbcl sb-thread)
+  'sb-thread::*all-threads*
+  #+scl
+  '(mp:all-processes)
+  #+threads-not-available
+  nil)
+
+;; Temporary backward name compatability:
+(defun all-processes ()
+  (all-threads))
+#-full-safety
+(define-compiler-macro all-processes ()
+  '(all-threads))
+ 
+;;; ---------------------------------------------------------------------------
+;;;   Threadp
+
+(defun threadp (obj)
+  #+allegro
+  (mp:process-p obj)
+  #+(and cmu mp)
+  (mp:processp obj)
+  #+digitool-mcl
+  (ccl::processp obj)
+  #+(and ecl threads)
+  (typep obj 'mp:process)
+  #+lispworks
+  (mp:process-p obj)
+  #+openmcl
+  (ccl::processp obj)
+  #+(and sbcl sb-thread)
+  (sb-thread::thread-p obj)
+  #+scl
+  (mp:processp obj)
+  #+threads-not-available
+  (declare (ignore obj))
+  #+threads-not-available
+  nil)
+
+#-full-safety
+(define-compiler-macro threadp (obj)
+  #+allegro
+  `(mp:process-p ,obj)
+  #+(and cmu mp)
+  `(mp:processp ,obj)
+  #+digitool-mcl
+  `(ccl::processp ,obj)
+  #+(and ecl threads)
+  `(typep ,obj 'mp:process)
+  #+lispworks
+  `(mp:process-p ,obj)
+  #+openmcl
+  `(ccl::processp ,obj)
+  #+(and sbcl sb-thread)
+  `(sb-thread::thread-p ,obj)
+  #+scl
+  `(mp:processp ,obj)
+  #+threads-not-available
+  (declare (ignore obj))
+  #+threads-not-available
+  nil)
+
+;; Temporary backward name compatability:
+(defun processp (obj)
+  (threadp obj))
+#-full-safety
+(define-compiler-macro processp (obj)
+  `(threadp ,obj))
+ 
+;;; ---------------------------------------------------------------------------
+;;;   Thread-name
+
+#-(and sbcl sb-thread)
+(defun thread-name (thread)
+  #+allegro
+  (mp:process-name thread)
+  #+(and cmu mp)
+  (mp:process-name thread)
+  #+digitool-mcl
+  (ccl:process-name thread)
+  #+(and ecl threads)
+  (mp:process-name thread)
+  #+lispworks
+  (mp:process-name thread)
+  #+openmcl
+  (ccl:process-name thread)
+  #+scl
+  (mp:process-name thread)
+  #+threads-not-available
+  (not-a-thread thread))
+
+#-(or full-safety threads-not-available (and sbcl sb-thread))
+(define-compiler-macro thread-name (thread)
+  #+allegro
+  `(mp:process-name ,thread)
+  #+(and cmu mp)
+  `(mp:process-name ,thread)
+  #+digitool-mcl
+  `(ccl:process-name ,thread)
+  #+(and ecl threads)
+  `(mp:process-name ,thread)
+  #+lispworks
+  `(mp:process-name ,thread)
+  #+openmcl
+  `(ccl:process-name ,thread)
+  #+scl
+  `(mp:process-name ,thread))
+
+;; Temporary backward name compatability:
+(defun process-name (thread)
+  (thread-name thread))
+#-full-safety
+(define-compiler-macro process-name (thread)
+  `(thread-name ,thread))
+
+;;; ---------------------------------------------------------------------------
+
+#-(and sbcl sb-thread)
+(defun (setf thread-name) (name thread)
+  #+allegro
+  (setf (mp:process-name thread) name)
+  #+(and cmu mp)
+  (setf (mp:process-name thread) name)
+  #+digitool-mcl
+  (setf (ccl:process-name thread) name)
+  #+(and ecl threads)
+  (setf (mp:process-name thread) name)
+  #+lispworks
+  (setf (mp:process-name thread) name)
+  #+openmcl
+  (setf (ccl:process-name thread) name)
+  #+scl
+  (setf (mp:process-name thread) name)
+  #+threads-not-available
+  (declare (ignore name))
+  #+threads-not-available
+  (not-a-thread thread))
+
+;; Temporary backward name compatability:
+(defun (setf process-name) (name thread)
+  (setf (thread-name thread) name))
+
+;;; ---------------------------------------------------------------------------
+;;;   Thread-whostate (values and capabilities vary among CLs)
+
+(defun thread-whostate (thread)
+  #+allegro
+  (mp:process-whostate thread)
+  #+(and cmu mp)
+  (mp:process-whostate thread)
+  #+digitool-mcl
+  (ccl:process-whostate thread)
+  ;; We fake a basic whostate for ECL/threads:
+  #+(and ecl threads)
+  (if (mp:process-active-p thread) "Active" "Inactive")
+  #+lispworks
+  (mp:process-whostate thread)  
+  #+openmcl
+  (ccl:process-whostate thread)     
+  ;; We fake a basic whostate for SBCL/sb-threads:
+  #+(and sbcl sb-thread)
+  (if (sb-thread:thread-alive-p thread) "Alive" "Dead")
+  #+scl
+  (mp:process-whostate thread)    
+  #+threads-not-available
+  (not-a-thread thread))
+
+#+threads-not-available
+(define-compiler-macro thread-whostate (thread)
+  #+allegro
+  `(mp:process-whostate ,thread)
+  #+(and cmu mp)
+  `(mp:process-whostate ,thread)
+  #+digitool-mcl
+  `(ccl:process-whostate ,thread)
+  ;; We fake a basic whostate for ECL/threads:
+  #+(and ecl threads)
+  `(if (mp:process-active-p ,thread) "Active" "Inactive")
+  #+lispworks
+  `(mp:process-whostate ,thread)  
+  #+openmcl
+  `(ccl:process-whostate ,thread)     
+  ;; We fake a basic whostate for SBCL/sb-threads:
+  #+(and sbcl sb-thread)
+  `(if (sb-thread:thread-alive-p ,thread) "Alive" "Dead")
+  #+scl
+  `(mp:process-whostate ,thread)
+  #+threads-not-available
+  `(not-a-thread ,thread))
+
+;; Temporary backward name compatability:
+(defun process-whostate (thread)
+  (thread-whostate thread))
+#-full-safety
+(define-compiler-macro process-whostate (thread)
+  `(thread-whostate ,thread))
+
+;;; ===========================================================================
+;;;   Spawn-Thread
+
+(defun spawn-thread (name function &rest args)
   #-(or (and cmu mp) cormanlisp (and sbcl sb-thread))
   (declare (dynamic-extent args))
   #+allegro
@@ -479,189 +1039,78 @@
 			 :name name)
   #+scl
   (mp:make-process #'(lambda () (apply function args)) :name name)
-  #+multiprocessing-not-available
-  (multiprocessing-not-available 'spawn-process))
+  #+threads-not-available
+  (declare (ignore name function args))
+  #+threads-not-available
+  (threads-not-available 'spawn-process))
 
-;;; ===========================================================================
-;;;   Kill-Process
+;; Temporary backward name compatability:
+(defun spawn-process (&rest args)
+  (declare (dynamic-extent args))
+  (apply #'spawn-thread args))
 
-(defun kill-process (process)
-  #+multiprocessing-not-available
-  (declare (ignore process))
+;;; ---------------------------------------------------------------------------
+;;;   Kill-Thread
+
+(defun kill-thread (thread)
   #+allegro
-  (mp:process-kill process)
+  (mp:process-kill thread)
   #+(and cmu mp)
-  (mp:destroy-process process)
+  (mp:destroy-process thread)
   #+digitool-mcl
-  (ccl:process-kill process)
+  (ccl:process-kill thread)
   #+(and ecl threads)
-  (mp:process-kill process)
+  (mp:process-kill thread)
   #+lispworks
-  (mp:process-kill process)
+  (mp:process-kill thread)
   #+openmcl
-  (ccl:process-kill process)
+  (ccl:process-kill thread)
   #+(and sbcl sb-thread)
-  (sb-thread:terminate-thread process)
+  (sb-thread:terminate-thread thread)
   #+scl
-  (mp:destroy-process process)
-  #+multiprocessing-not-available
-  (multiprocessing-not-available 'kill-process))
-
-;;; ===========================================================================
-;;;   Current-Process (returns nil on CLs without multiprocessing)
-
-(defun current-process ()
-  #+allegro
-  mp:*current-process*
-  #+(and cmu mp)
-  mp:*current-process*
-  #+(and ecl threads)
-  mp:*current-process*
-  #+digitool-mcl
-  ccl:*current-process*
-  #+lispworks
-  mp:*current-process*
-  #+openmcl
-  ccl:*current-process*
-  #+(and sbcl sb-thread)
-  sb-thread:*current-thread*
-  #+scl
-  (mp:current-process)
-  #+multiprocessing-not-available
-  nil)
+  (mp:destroy-process thread)
+  #+threads-not-available
+  (declare (ignore thread))
+  #+threads-not-available
+  (threads-not-available 'kill-thread))
 
 #-full-safety
-(define-compiler-macro current-process ()
+(define-compiler-macro kill-thread (thread)
   #+allegro
-  'mp:*current-process*
+  `(mp:process-kill ,thread)
   #+(and cmu mp)
-  'mp:*current-process*
+  `(mp:destroy-process ,thread)
   #+digitool-mcl
-  'ccl:*current-process*
+  `(ccl:process-kill ,thread)
+  #+(and ecl threads)
+  `(mp:process-kill ,thread)
   #+lispworks
-  'mp:*current-process*
+  `(mp:process-kill ,thread)
   #+openmcl
-  'ccl:*current-process*
+  `(ccl:process-kill ,thread)
   #+(and sbcl sb-thread)
-  'sb-thread:*current-thread*
+  `(sb-thread:terminate-thread ,thread)
   #+scl
-  '(mp:current-process)
-  #+multiprocessing-not-available
-  nil)
- 
-;;; ===========================================================================
-;;;   All-Processes (returns nil on CLs without multiprocessing)
+  `(mp:destroy-process ,thread)
+  #+threads-not-available
+  (declare (ignore thread))
+  #+threads-not-available
+  '(threads-not-available 'kill-thread))
 
-#-(or (and cmu mp) (and ecl threads) openmcl scl)
-(defun all-processes ()
-  #+allegro
-  mp:*all-processes*
-  #+digitool-mcl
-  ccl:*all-processes*
-  #+lispworks
-  (mp:list-all-processes)
-  #+(and sbcl sb-thread)
-  sb-thread::*all-threads*
-  #+multiprocessing-not-available
-  nil)
-
-#-(or full-safety (and cmu mp) (and ecl threads) openmcl scl)
-(define-compiler-macro all-processes ()
-  #+allegro
-  'mp:*all-processes*
-  #+digitool-mcl
-  'ccl:*all-processes*
-  #+lispworks
-  '(mp:list-all-processes)
-  #+(and sbcl sb-thread)
-  'sb-thread::*all-threads*
-  #+multiprocessing-not-available
-  nil)
- 
-;;; ===========================================================================
-;;;   Processp
-
-#-(or (and cmu mp) digitool-mcl openmcl scl)
-(defun processp (obj)
-  #+multiprocessing-not-available
-  (declare (ignore obj))
-  #+allegro
-  (mp:process-p obj)
-  #+lispworks
-  (mp:process-p obj)
-  #+(and ecl threads)
-  (typep obj 'mp:process)
-  #+(and sbcl sb-thread)
-  (sb-thread::thread-p obj)
-  #+multiprocessing-not-available
-  nil)
-
-#-(or full-safety (and cmu mp) digitool-mcl openmcl scl)
-(define-compiler-macro processp (obj)
-  #+multiprocessing-not-available
-  (declare (ignore obj))
-  #+allegro
-  `(mp:process-p ,obj)
-  #+(and ecl threads)
-  `(typep ,obj 'mp:process)
-  #+lispworks
-  `(mp:process-p ,obj)
-  #+(and sbcl sb-thread)
-  `(sb-thread::thread-p ,obj)
-  #+multiprocessing-not-available
-  nil)
- 
-;;; ===========================================================================
-;;;   Process-name (mostly inherited from the CL versions)
-
-#+multiprocessing-not-available
-(defun not-a-process (process)
-  (error "~s is not a process object" process))
-
-#+(or multiprocessing-not-available (and sbcl sb-thread))
-(defun process-name (process)
-  #+(and sbcl sb-thread)
-  (sb-thread::thread-name process)
-  #+multiprocessing-not-available
-  (not-a-process process))
-
-#+(and sbcl sb-thread)
-(defun (setf process-name) (name process)
-  (setf (sb-thread::thread-name process) name))
-
-#+(or multiprocessing-not-available (and sbcl sb-thread))
-(define-compiler-macro process-name (process)
-  #+(and sbcl sb-thread)
-  `(sb-thread::thread-name ,process)
-  #+multiprocessing-not-available
-  `(not-a-process ,process))
+;; Temporary backward name compatability:
+(defun kill-process (thread)
+  #+threads-not-available
+  (declare (ignore thread))
+  (kill-thread thread))
+#-full-safety
+(define-compiler-macro kill-process (thread)
+  `(kill-thread ,thread))
 
 ;;; ===========================================================================
-;;;   Process-whostate (inherited from CLs with whostate support); values and 
-;;;   capabilities vary among CLs
+;;;   Thread-yield (runs *non-threaded-polling-function-hook* functions on
+;;;                non-threaded CLs)
 
-#+(or multiprocessing-not-available (and ecl threads) (and sbcl sb-thread))
-(defun process-whostate (process)
-  ;; We fake a basic whostate for ECL/threads and SBCL/sb-thread:
-  #+(and ecl threads)
-  (if (mp:process-active-p process) "Active" "Inactive")
-  #+(and sbcl sb-thread)
-  (if (sb-thread:thread-alive-p process) "Alive" "Dead")
-  #+multiprocessing-not-available
-  (not-a-process process))
-
-#+multiprocessing-not-available
-(define-compiler-macro process-whostate (process)
-  ;; No compiler macro for ECL/threads or SBCL/sb-thread, we use the full
-  ;; function version (above)
-  #+multiprocessing-not-available
-  `(not-a-process ,process))
-
-;;; ===========================================================================
-;;;   Process-Yield (runs *non-threaded-process-wait-hook* functions on
-;;;                  non-multiprocessing CLs)
-
-(defun process-yield ()
+(defun thread-yield ()
   #+allegro
   (mp:process-allow-schedule)
   #+(and cmu mp)
@@ -669,21 +1118,22 @@
   #+digitool-mcl
   (ccl:process-allow-schedule)
   #+(and ecl threads)
-  ;; Yield is not yet available, so we sleep 0:
+  ;; Yield is not available, so we sleep 0:
   (sleep 0)
   #+lispworks
   (mp:process-allow-scheduling)
   #+openmcl
   (ccl:process-allow-schedule)
   #+(and sbcl sb-thread)
-  (sb-thread:release-foreground)
+  ;; Yield is not available, so we sleep 0.05:  
+  (sleep 0.05)
   #+scl
   (mp:process-yield)
-  #+multiprocessing-not-available
-  (mapc #'funcall *non-threaded-process-wait-hook*))
+  #+threads-not-available
+  (mapc #'funcall *non-threaded-polling-function-hook*))
 
 #-full-safety
-(define-compiler-macro process-yield ()
+(define-compiler-macro thread-yield ()
   #+allegro  
   '(mp:process-allow-schedule)
   #+(and cmu mp)
@@ -691,156 +1141,76 @@
   #+digitool-mcl
   '(ccl:process-allow-schedule)
   #+(and ecl threads)
-  ;; Yield is not yet available, so we sleep 0:
+  ;; Yield is not available, so we sleep 0:
   '(sleep 0)
   #+lispworks
   '(mp:process-allow-scheduling)
   #+openmcl
   '(ccl:process-allow-schedule)
   #+(and sbcl sb-thread)
-  '(sb-thread:release-foreground)
+  ;; Yield is not available, so we sleep 0.05:  
+  (sleep 0.05)
   #+scl
   '(mp:process-yield)
-  #+multiprocessing-not-available
-  '(mapc #'funcall *non-threaded-process-wait-hook*))
+  #+threads-not-available
+  '(mapc #'funcall *non-threaded-polling-function-hook*))
 
+;; Temporary backward name compatability:
+(defun process-yield ()
+  (thread-yield))
+#-full-safety
+(define-compiler-macro proces-yield ()
+  '(thread-yield))
+ 
 ;;; ---------------------------------------------------------------------------
-;;;   Process-Wait (our best approximation on several non-multiprocessing CLs,
-;;;                 ECL with threads, and SBCL with sb-thread)
+;;;  Run-in-thread
 
-#+(or multiprocessing-not-available (and ecl threads) (and sbcl sb-thread))
-(defun process-wait (whostate function &rest args)
-  (declare (ignore whostate))
-  (loop until (apply function args)
-      do (process-yield)))
-
-#+scl
-(defun process-wait (whostate function &rest args)
-  (mp:process-wait whostate #'(lambda () (apply function args))))
-
-;;; ---------------------------------------------------------------------------
-;;;   Process-Wait-With-Timeout (our best approximation on several
-;;;   non-multiprocessing CLs and SBCL with sb-thread)
-
-#+(or multiprocessing-not-available (and ecl threads) (and sbcl sb-thread))
-(defun process-wait-with-timeout (whostate seconds function &rest args)
-  (declare (ignore whostate))
-  (let ((end-time (+ (get-internal-real-time) 
-		     (* internal-time-units-per-second seconds))))
-    (loop until (or (apply function args)
-		    (> (get-internal-real-time) end-time)) 
-	do (process-yield))))
-
-#+scl
-(defun process-wait-with-timeout (whostate seconds function &rest args)
-  (mp:process-wait-with-timeout whostate seconds
-   #'(lambda () (apply function args))))
-
-;;; ===========================================================================
-;;;   Hibernate/Awaken (not available with ECL/threads or SBCL/sb-threads)
-;;;
-;;; Note that using run-in-process and symbol-value-in-process currently block
-;;; on some CLs if process is hibernating.
-;;;
-;;; A process in OpenMCL cannot hibernate itself.
-;;;
-;;; Due to these issues, hibernate-process & awaken-process may soon
-;;; be removed from the portable-threads interface.
-
-#+lispworks
-(defvar *hibernate/awaken-lock* (make-process-lock :name "Hibernate/Awaken"))
-
-(defun hibernate-process (&optional (process (current-process)))
-  #+(or multiprocessing-not-available thread-scheduling-not-available)
-  (declare (ignore process))
-  #+allegro
-  (mp:process-add-arrest-reason process ':hibernate)
-  #+(and cmu mp)
-  (mp:process-add-arrest-reason process ':hibernate)
-  #+digitool-mcl
-  (ccl::process-enable-arrest-reason process :hibernate)
-  #+lispworks
-  (progn
-    (with-process-lock (*hibernate/awaken-lock*)
-      (pushnew ':hibernate (mp:process-arrest-reasons process) 
-	       :test #'eq))
-    (process-yield))
-  #+openmcl
-  (if (eq process ccl:*current-process*)
-      ;; OpenMCL doesn't really support suspending oneself:
-      (error "~s on the current-process is not supported in OpenMCL"
-	     'hibernate-process)
-      (ccl:process-suspend process))
-  #+thread-scheduling-not-available
-  (thread-scheduling-not-available 'hibernate-process)
-  #+multiprocessing-not-available
-  (multiprocessing-not-available 'hibernate-process))
-
-;;; ---------------------------------------------------------------------------
-
-(defun awaken-process (process)
-  #+(or multiprocessing-not-available thread-scheduling-not-available)
-  (declare (ignore process))
-  #+allegro
-  (mp:process-revoke-arrest-reason process ':hibernate)
-  #+(and cmu mp)
-  (mp:process-revoke-arrest-reason process ':hibernate)
-  #+digitool-mcl
-  (ccl::process-disable-arrest-reason process :hibernate)
-  #+lispworks
-  (with-process-lock (*hibernate/awaken-lock*)
-    (setf (mp:process-arrest-reasons process)
-	  (delete ':hibernate (mp:process-arrest-reasons process)
-		  :test #'eq)))
-  #+openmcl
-  (ccl:process-resume process)
-  #+thread-scheduling-not-available
-  (thread-scheduling-not-available 'awaken-process)
-  #+multiprocessing-not-available
-  (multiprocessing-not-available 'awaken-process))
-  
-;;; ===========================================================================
-;;;  Run in process
-
-(defun run-in-process (process function &rest args)
+(defun run-in-thread (thread function &rest args)
+  #-threads-not-available
   (declare (dynamic-extent args))
-  #+multiprocessing-not-available
-  (declare (ignore process function args))
   #+allegro
-  (apply #'multiprocessing:process-interrupt process function args)
+  (apply #'multiprocessing:process-interrupt thread function args)
   #+(and cmu mp)
-  (multiprocessing:process-interrupt process
-				     #'(lambda () (apply function args)))
+  (multiprocessing:process-interrupt thread 
+                                     #'(lambda () (apply function args)))
   #+(and ecl threads)
-  (mp:interrupt-process process #'(lambda () (apply function args)))
+  (mp:interrupt-process thread #'(lambda () (apply function args)))
   #+digitool-mcl
-  (apply #'ccl:process-interrupt process function args)
+  (apply #'ccl:process-interrupt thread function args)
   #+lispworks
-  (apply #'mp:process-interrupt process function args)
+  (apply #'mp:process-interrupt thread function args)
   #+openmcl
-  (apply #'ccl:process-interrupt process function args)
+  (apply #'ccl:process-interrupt thread function args)
   #+(and sbcl sb-thread)
-  (sb-thread:interrupt-thread process #'(lambda () (apply function args)))
+  (sb-thread:interrupt-thread thread #'(lambda () (apply function args)))
   #+scl
-  (multiprocessing:process-interrupt process
+  (multiprocessing:process-interrupt thread
 				     #'(lambda () (apply function args)))
-  #+multiprocessing-not-available
-  (multiprocessing-not-available 'run-in-process))
+  #+threads-not-available
+  (declare (ignore thread function args))
+  #+threads-not-available
+  (threads-not-available 'run-in-thread))
   
-;;; ===========================================================================
-;;;   Symbol-value-in-process
+;; Temporary backward name compatability:
+(defun run-in-process (&rest args)
+  (declare (dynamic-extent args))
+  (apply #'run-in-thread args))
+#-full-safety
+(define-compiler-macro run-in-process (&rest args)
+  `(run-in-thread ,@args))
+ 
+;;; ---------------------------------------------------------------------------
+;;;   Symbol-value-in-thread
 
-(defun symbol-value-in-process (symbol process)
+(defun symbol-value-in-thread (symbol thread)
   ;; Returns two values:
   ;;  1. the symbol value (or nil if it is unbound)
   ;;  2. true if the symbol is bound; nil otherwise
-  ;; The global symbol value is returned if no process-local value is
+  ;; The global symbol value is returned if no thread-local value is
   ;; bound.
-  #+multiprocessing-not-available
-  (declare (ignore symbol process))
   #+allegro
   (multiple-value-bind (value boundp)
-      (mp:symeval-in-process symbol process)
+      (mp:symeval-in-process symbol thread)
     (if boundp
 	(values value (eq boundp 't))
 	(if (boundp symbol)
@@ -848,19 +1218,18 @@
 	    (values nil nil))))
   #+(and cmu mp)
   (let ((result nil))
-    (multiprocessing:process-interrupt
-     process 
-     #'(lambda () 
-	 (setq result
-	   (if (boundp symbol)
-	       `(,(symbol-value symbol) t)
-	       '(nil nil)))))
-    (process-wait "symbol-value-in-process" 
-		  #'(lambda () result))
+    (mp:process-interrupt
+     thread
+     #'(lambda ()
+         (setf result (if (boundp symbol)
+                          `(,(symbol-value symbol) t)
+                          '(nil nil)))))
+    ;; Wait for result:
+    (loop until result do (mp:process-yield))
     (apply #'values result))
   #+digitool-mcl
   (handler-case
-      (let ((value (ccl:symbol-value-in-process symbol process)))
+      (let ((value (ccl:symbol-value-in-process symbol thread)))
 	(if (eq value (ccl::%unbound-marker))
 	    (values nil nil)
 	    (values value 't)))
@@ -870,19 +1239,17 @@
   #+(and ecl threads)
   (let ((result nil))
     (mp:interrupt-process
-     process 
-     #'(lambda () 
-	 (setq result
-	   (if (boundp symbol)
-	       `(,(symbol-value symbol) t)
-	       '(nil nil)))))
-    (process-wait "symbol-value-in-process" 
-		  #'(lambda () result))
+     thread
+     #'(lambda () (setf result (if (boundp symbol)
+                                   `(,(symbol-value symbol) t)
+                                   '(nil nil)))))
+    ;; Wait for result:
+    (loop until result do (mp:process-yield))
     (apply #'values result))
   #+lispworks
-  (mp:read-special-in-process process symbol)
+  (mp:read-special-in-process thread symbol)
   #+openmcl
-  (let ((value (ccl:symbol-value-in-process symbol process)))
+  (let ((value (ccl:symbol-value-in-process symbol thread)))
     (if (eq value (ccl::%unbound-marker))
 	(values nil nil)
 	(values value 't)))
@@ -891,59 +1258,135 @@
   ;; symbol thread-sap), so:
   (let ((result nil))
     (sb-thread:interrupt-thread 
-     process 
-     #'(lambda () 
-	 (setq result
-	   (if (boundp symbol)
-	       `(,(symbol-value symbol) t)
-	       '(nil nil)))))
-    (process-wait "symbol-value-in-process" 
-		  #'(lambda () result))
+     thread
+     #'(lambda () (setf result
+                        (if (boundp symbol)
+                            `(,(symbol-value symbol) t)
+                            '(nil nil)))))
+    ;; Wait for result:
+    (loop until result do (sleep 0.05))
     (apply #'values result))
   #+scl
-  (handler-case
-      (values (kernel:thread-symbol-dynamic-value process symbol) t)
+  (handler-case 
+      (values (kernel:thread-symbol-dynamic-value thread symbol) t)
     (unbound-variable (condition)
       (declare (ignore condition))
       (handler-case
 	  (values (kernel:symbol-global-value symbol) t)
-	(unbound-variable (condition)
-	  (declare (ignore condition))
-	  (values nil nil)))))
-  #+multiprocessing-not-available
-  (multiprocessing-not-available 'symbol-value-in-process))
+	(unbound-variable () (values nil nil)))))
+  #+threads-not-available
+  (declare (ignore thread))
+  #+threads-not-available
+  (if (boundp symbol)
+      (values (symbol-value symbol) t)
+      (values nil nil)))
+
+;; Temporary backward name compatability:
+(defun symbol-value-in-process (symbol thread)
+  (symbol-value-in-thread symbol thread))
+#-full-safety
+(define-compiler-macro symbol-value-in-process (symbol thread)
+  `(symbol-value-in-thread ,symbol ,thread))
 
 ;;; ===========================================================================
-;;;   Semaphores (a work in progress; not yet complete!)
+;;;   Hibernate/Awaken Thread
+;;;
+;;;  Hibernating threads need to be able to perform run-in-thread and
+;;;  symbol-value-in-thread operations.  We also want to allow:
+;;;      (with-timeout (n) (hibernate-thread))
+;;;
+;;;  Process arrest-reasons are generally too powerful for these operations,
+;;;  so we resort to sleeping on these CLs (CMUCL, Lispworks, OpenMCL).
 
-(defun wait-on-semaphore (whostate semaphore)
-  (declare (ignore whostate))
-  #-openmcl
-  (declare (ignore semaphore))
-  #+openmcl (ccl:wait-on-semaphore semaphore)
-  #+multiprocessing-not-available
-  't)
+#+(or (and cmu mp) 
+      digitool-mcl
+      lispworks
+      openmcl
+      (and sbcl sb-thread))
+(defun throwable-sleep-forever ()
+  ;; Used in place of process-arrest-reasons in CL's that don't have
+  ;; them or that don't mix with-timeout and arrested processes:
+  (catch 'throwable-sleep-forever
+    (sleep most-positive-fixnum)))
 
 ;;; ---------------------------------------------------------------------------
 
-(defun wait-on-semaphore-with-timeout (whostate semaphore seconds)
-  (declare (ignore whostate))
-  #-openmcl
-  (declare (ignore semaphore seconds))
-  #+openmcl (ccl:timed-wait-on-semaphore semaphore seconds)
-  #+multiprocessing-not-available
-  't)
+#+(or (and cmu mp)
+      digitool-mcl
+      lispworks
+      openmcl
+      (and sbcl sb-thread))
+(defun awaken-throwable-sleeper (thread)
+  (flet ((awake-fn ()
+           (ignore-errors
+            (throw 'throwable-sleep-forever nil))))
+    #+(and cmu mp)
+    (mp:process-interrupt thread #'awake-fn)
+    #+lispworks
+    (progn (mp:process-interrupt thread #'awake-fn)
+           (mp:process-allow-scheduling))
+    #+(or digitool-mcl
+          openmcl)
+    (ccl:process-interrupt thread #'awake-fn)
+    #+(and sbcl sb-thread)
+    (sb-thread:interrupt-thread thread #'awake-fn)))
+
+;;; ---------------------------------------------------------------------------
+
+(defun hibernate-thread ()
+  #+allegro
+  (mp:process-add-arrest-reason mp:*current-process* ':hibernate)
+  #+(and cmu mp)
+  (throwable-sleep-forever)
+  #+digitool-mcl
+  (throwable-sleep-forever)
+  #+lispworks
+  (throwable-sleep-forever)
+  ;; OpenMCL doesn't support suspending oneself:
+  #+openmcl
+  (throwable-sleep-forever)
+  #+(and sbcl sb-thread)
+  (throwable-sleep-forever)
+  #+threads-not-available
+  (threads-not-available 'hibernate-thread))
+
+;; Temporary backward name compatability:
+(defun hibernate-process ()
+  (hibernate-thread))
+#-full-safety
+(define-compiler-macro hibernate-process ()
+  '(hibernate-thread))
+
+;;; ---------------------------------------------------------------------------
+
+(defun awaken-thread (thread)
+  #+allegro
+  (mp:process-revoke-arrest-reason thread ':hibernate)
+  #+(and cmu mp)
+  (awaken-throwable-sleeper thread)
+  #+digitool-mcl
+  (awaken-throwable-sleeper thread)
+  #+lispworks
+  (awaken-throwable-sleeper thread)
+  #+openmcl
+  (awaken-throwable-sleeper thread)
+  #+(and sbcl sb-thread)
+  (awaken-throwable-sleeper thread)
+  #+threads-not-available
+  (declare (ignore thread))
+  #+threads-not-available
+  (threads-not-available 'awaken-thread))
+  
+;; Temporary backward name compatability:
+(defun awaken-process (process)
+  (awaken-thread process))
+#-full-safety
+(define-compiler-macro awaken-process (process)
+  `(awaken-thread ,process))
 
 ;;; ===========================================================================
-;;;   Gates (Allegro provides them already...); we provide a simple
-;;;   implementations for other CLs (implementation-specific optimizations
-;;;   could be made on some CLs).  
-;;;
-;;;   Gates are really just a hack to work around limitations of 'process-wait.
-;;;   It is recommended that locks and condition variables be used for
-;;;   synchronization, and that use of 'process-wait be avoided making the
-;;;   gates work around obsolete. (dtc)
-;;;
+;;;  Allegro-style gates are deprecated and will be removed soon.
+;;;  Use condition variables instead. 
 
 #-allegro
 (locally (declare (optimize (speed 3) (safety 0) 
@@ -967,52 +1410,303 @@
     (declare (type (simple-array (signed-byte 32) (*)) gate))
     (not (zerop (the fixnum (aref gate 0))))))
 
-
-
 ;;; ===========================================================================
 ;;;   Condition variables
-;;;
-;;; Stubs for implementations not supporting condition variables.
-;;; It is likely support could be added for SBCL.
 
-#+thread-condition-variables-not-available
-(progn
+#+allegro
+(defclass condition-variable ()
+  ((lock :initarg :lock
+         :initform (mp:make-process-lock :name "CV Lock")
+         :reader condition-variable-lock)
+   (queue :initform nil
+          :accessor condition-variable-queue)))
 
-  (defun make-cond-var (&optional name)
-    (declare (ignore name))
-    (thread-condition-variables-not-available 'make-cond-var)
-    nil)
-  
-  (defun cond-var-wait (cond-var lock &optional (whostate "Waiting"))
-    (declare (ignore cond-var lock whostate))
-    (thread-condition-variables-not-available 'cond-var-wait)
-    (sleep 0.01)
-    (values))
-  
-  (defun cond-var-timedwait (cond-var lock timeout
-			     &optional (whostate "Waiting"))
-    (declare (ignore cond-var lock timeout whostate))
-    (thread-condition-variables-not-available 'cond-var-timedwait)
-    (sleep 0.01)
-    't)
+#+(and cmu mp)
+(defclass condition-variable ()
+  ((lock :initarg :lock
+         :initform (mp:make-lock "CV Lock" :kind ':error-check)
+         :reader condition-variable-lock)
+   (queue :initform nil
+          :accessor condition-variable-queue)))
 
-  (defun cond-var-signal (cond-var)
-    (declare (ignore cond-var))
-    (thread-condition-variables-not-available 'cond-var-signal)
-    nil)
+#+lispworks
+(defclass condition-variable ()
+  ((lock :initarg :lock
+         :initform (mp:make-lock :name "CV Lock")
+         :reader condition-variable-lock)
+   (queue :initform nil
+          :accessor condition-variable-queue)))
+
+#+(or digitool-mcl
+      openmcl)
+(defclass condition-variable ()
+  ((lock :initarg :lock
+         :initform (make-lock :name "CV Lock")
+         :reader condition-variable-lock)
+   (semaphore :initform (ccl:make-semaphore)
+              :reader condition-variable-semaphore)
+   (queue :initform nil
+          :accessor condition-variable-queue)))
+
+#+(and sbcl sb-thread)
+(defclass condition-variable ()
+  ((lock :initarg :lock
+         :initform (sb-thread:make-mutex :name "CV Lock")
+         :reader condition-variable-lock)
+   (cv :initform (sb-thread:make-waitqueue)
+       :reader condition-variable-cv)))
+
+#+threads-not-available
+(defclass condition-variable ()
+  ((lock :initarg :lock
+         :initform (make-lock :name "CV Lock")
+         :reader condition-variable-lock)))
   
-  (defun cond-var-broadcast (cond-var)
-    (declare (ignore cond-var))
-    (thread-condition-variables-not-available 'cond-var-broadcast)
-    nil))
+(defmethod %%get-lock%% ((obj condition-variable))
+  (condition-variable-lock obj))
+
+;;; ---------------------------------------------------------------------------
+;;; Syntactic sugar: make-condition-variable
+
+(defun make-condition-variable (&rest initargs 
+                                &key (class 'condition-variable)
+                                &allow-other-keys)
+  (declare (dynamic-extent initargs))
+  (flet ((remove-property (plist indicator)
+           (do* ((ptr plist (cddr ptr))
+                 (ind (car ptr) (car ptr))
+                 (result nil))
+               ;; Only when nothing was found:
+               ((null ptr) plist)
+             (cond ((atom (cdr ptr))
+                    (error "~s is a malformed property list." plist))
+                   ((eq ind indicator)
+                    (return (nreconc result (cddr ptr)))))
+             (setq result (list* (second ptr) ind result)))))
+    (apply #'make-instance class (remove-property initargs ':class))))
+
+;;; ---------------------------------------------------------------------------
+
+(defun condition-variable-lock-needed-error (condition-variable operation)
+  (error "The condition-variable lock is required by ~s: ~s"
+         operation
+         condition-variable))
+
+;;; ---------------------------------------------------------------------------
+
+(defun condition-variable-wait (condition-variable)
+  #-threads-not-available
+  (let ((lock (condition-variable-lock condition-variable)))
+    (unless (thread-holds-lock-p lock)
+      (condition-variable-lock-needed-error
+       condition-variable 'condition-variable-wait))
+    #+allegro
+    (progn
+      (push system:*current-process* 
+            (condition-variable-queue condition-variable))
+      (mp::process-unlock lock)
+      (mp:process-add-arrest-reason 
+       system:*current-process* condition-variable)
+      (mp::process-lock lock))
+    #+(and cmu mp)
+    (progn
+      (push mp:*current-process* (condition-variable-queue condition-variable))
+      (setf (mp::lock-process lock) nil)
+      (throwable-sleep-forever)
+      (mp::lock-wait lock nil))
+    #+lispworks
+    (progn
+      (push mp:*current-process* (condition-variable-queue condition-variable))
+      (mp:process-unlock lock)
+      (throwable-sleep-forever)
+      (mp:process-allow-scheduling)
+      (mp:process-lock lock))
+    #+(or digitool-mcl
+          openmcl)
+    (let ((ccl-lock (lock-ccl-lock lock)))
+      (unwind-protect
+          (progn
+            (push ccl:*current-process* 
+                  (condition-variable-queue condition-variable))
+            (ccl:release-lock ccl-lock)
+            (ccl:wait-on-semaphore 
+             (condition-variable-semaphore condition-variable)))
+        (ccl:grab-lock ccl-lock)))
+    #+(and sbcl sb-thread)
+    (sb-thread:condition-wait (condition-variable-cv condition-variable) lock))
+  #+threads-not-available
+  (declare (ignore condition-variable))
+  #+threads-not-available
+  (thread-condition-variables-not-available 'condition-variable-wait))
+
+;;; ---------------------------------------------------------------------------
+
+(defun condition-variable-wait-with-timeout (condition-variable seconds)
+  #-threads-not-available
+  (let ((lock (condition-variable-lock condition-variable)))
+    (unless (thread-holds-lock-p lock)
+      (condition-variable-lock-needed-error
+       condition-variable 'condition-variable-wait-with-timeout))
+    #+allegro
+    (progn
+      (push system:*current-process* 
+            (condition-variable-queue condition-variable))
+      (mp::process-unlock lock)
+      (with-timeout 
+          (seconds 
+           (system:without-scheduling
+             (setf (condition-variable-queue condition-variable)
+                   (remove system:*current-process*
+                           (condition-variable-queue condition-variable)))))
+        (mp:process-add-arrest-reason 
+         system:*current-process* condition-variable))
+      (mp::process-lock lock))
+    #+(and cmu mp)
+    (progn
+      (push mp:*current-process*
+            (condition-variable-queue condition-variable))
+      (setf (mp::lock-process lock) nil)
+      (with-timeout 
+          (seconds 
+           (mp:without-scheduling
+             (setf (condition-variable-queue condition-variable)
+                   (remove mp:*current-process*
+                           (condition-variable-queue condition-variable)))))
+        ;; with-timeout won't awaken an arrested process, so sleep as
+        ;; long as possible instead:
+        (throwable-sleep-forever))
+      (mp::lock-wait lock nil))
+    #+lispworks
+    (progn
+      (push mp:*current-process* (condition-variable-queue condition-variable))
+      (mp:process-unlock lock)
+      (with-timeout 
+          (seconds 
+           (mp:without-preemption
+             (setf (condition-variable-queue condition-variable)
+                   (remove mp:*current-process*
+                           (condition-variable-queue condition-variable)))))
+        ;; with-timeout won't awaken an arrested process, so sleep as
+        ;; long as possible instead:
+        (throwable-sleep-forever))
+      (mp:process-lock lock))
+    #+(or digitool-mcl
+          openmcl)
+    (let ((ccl-lock (lock-ccl-lock lock)))
+      (unwind-protect
+          (progn
+            (push ccl:*current-process* 
+                  (condition-variable-queue condition-variable))
+            (ccl:release-lock ccl-lock)
+            (ccl:timed-wait-on-semaphore 
+             (condition-variable-semaphore condition-variable) seconds))
+        (ccl:grab-lock ccl-lock)
+        (setf (condition-variable-queue condition-variable)
+              (remove ccl:*current-process*
+                      (condition-variable-queue condition-variable)))))
+    #+(and sbcl sb-thread)
+    (sb-ext:with-timeout seconds
+      (handler-case (sb-thread:condition-wait 
+                     (condition-variable-cv condition-variable) lock)
+        (sb-ext:timeout () nil))))
+  #+threads-not-available
+  (declare (ignore condition-variable seconds))
+  #+threads-not-available
+  (thread-condition-variables-not-available
+   'condition-variable-wait-with-timeout))
+
+;;; ---------------------------------------------------------------------------
+
+(defun condition-variable-signal (condition-variable)
+  (unless (thread-holds-lock-p (condition-variable-lock condition-variable))
+    (condition-variable-lock-needed-error
+     condition-variable 'condition-variable-signal))
+  #+allegro
+  (let ((thread (pop (condition-variable-queue condition-variable))))
+    (when thread
+      (mp:process-revoke-arrest-reason thread condition-variable)))
+  #+(and cmu mp)
+  (let ((thread (pop (condition-variable-queue condition-variable))))
+    (when thread 
+      (awaken-throwable-sleeper thread)))
+  #+lispworks
+  (let ((thread (pop (condition-variable-queue condition-variable))))
+    (when thread
+      (awaken-throwable-sleeper thread)))
+  #+(or digitool-mcl
+        openmcl)
+  (ccl:signal-semaphore (condition-variable-semaphore condition-variable))
+  #+(and sbcl sb-thread)
+  (sb-thread:condition-notify (condition-variable-cv condition-variable)))
+  
+;;; ---------------------------------------------------------------------------
+
+(defun condition-variable-broadcast (condition-variable)
+  (unless (thread-holds-lock-p (condition-variable-lock condition-variable))
+    (condition-variable-lock-needed-error
+     condition-variable 'condition-variable-broadcast))
+  #+allegro
+  (let ((queue (condition-variable-queue condition-variable)))
+    (setf (condition-variable-queue condition-variable) nil)
+    (dolist (thread queue)
+      (mp:process-revoke-arrest-reason thread condition-variable)))
+  #+(and cmu mp)
+  (let ((queue (condition-variable-queue condition-variable)))
+    (setf (condition-variable-queue condition-variable) nil)
+    (dolist (thread queue)
+      (awaken-throwable-sleeper thread)))
+  #+lispworks
+  (let ((queue (condition-variable-queue condition-variable)))
+    (setf (condition-variable-queue condition-variable) nil)
+    (dolist (thread queue)
+      (awaken-throwable-sleeper thread)))
+  #+(or digitool-mcl
+        openmcl)        
+  (let ((queue-length (length (condition-variable-queue condition-variable)))
+        (semaphore (condition-variable-semaphore condition-variable)))
+    (dotimes (i queue-length)
+      (ccl:signal-semaphore semaphore)))
+  #+(and sbcl sb-thread)
+  (sb-thread:condition-broadcast (condition-variable-cv condition-variable)))
 
 ;;; ===========================================================================
-;;;  Portable Threads are loaded:
+;;;   Process-Wait (our best approximation on several non-threaded CLs,
+;;;                 ECL with threads, and SBCL with sb-thread)
+
+#+(or threads-not-available (and ecl threads) (and sbcl sb-thread))
+(defun process-wait (whostate function &rest args)
+  (declare (ignore whostate))
+  (loop until (apply function args)
+      do (process-yield)))
+
+#+scl
+(defun process-wait (whostate function &rest args)
+  (mp:process-wait whostate #'(lambda () (apply function args))))
+
+;;; ---------------------------------------------------------------------------
+;;;   Process-Wait-With-Timeout (our best approximation on several
+;;;   non-threaded CLs and SBCL with sb-thread)
+
+#+(or threads-not-available (and ecl threads) (and sbcl sb-thread))
+(defun process-wait-with-timeout (whostate seconds function &rest args)
+  (declare (ignore whostate))
+  (let ((end-time (+ (get-internal-real-time) 
+		     (* internal-time-units-per-second seconds))))
+    (loop until (or (apply function args)
+		    (> (get-internal-real-time) end-time)) 
+	do (process-yield))))
+
+#+scl
+(defun process-wait-with-timeout (whostate seconds function &rest args)
+  (mp:process-wait-with-timeout whostate seconds
+   #'(lambda () (apply function args))))
+
+;;; ===========================================================================
+;;;  Portable threads interface is fully loaded:
 
 (pushnew :portable-threads *features*)
+(pushnew *portable-threads-version-keyword* *features*)
 
 ;;; ===========================================================================
 ;;;				  End of File
 ;;; ===========================================================================
-
-

@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:AGENDA-SHELL; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/control-shells/agenda-shell.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Jun 22 13:01:01 2007 *-*
+;;;; *-* Last-Edit: Sat Jul 28 12:18:57 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -72,9 +72,9 @@
 	    ensure-ks
             execute-ksa                 ; not yet documented
             execution-cycle-of
-            exit-all-control-shell-processes ; not yet documented
+            exit-all-control-shell-threads ; not yet documented
             exit-control-shell
-            exit-control-shell-process	; not yet documented
+            exit-control-shell-thread   ; not yet documented
             find-ks-by-name
             ks
             ks-enabled-p
@@ -91,7 +91,7 @@
             select-ksa-to-execute       ; not yet documented
 	    sole-trigger-event-of
             sole-trigger-instance-of
-            spawn-control-shell-process	; not yet documented
+            spawn-control-shell-thread  ; not yet documented
             start-control-shell
             trigger-events-of
             undefine-ks
@@ -116,9 +116,9 @@
 (defvar == nil)
 
 ;;; ---------------------------------------------------------------------------
-;;;  Control-shell processes:
+;;;  Control-shell threads:
 
-(defvar *control-shell-processes* nil)
+(defvar *control-shell-threads* nil)
 
 ;;; ---------------------------------------------------------------------------
 ;;;  *CS* is used to hold the control-shell state structure for a 
@@ -206,7 +206,7 @@
   (obviated-ksas-count 0)
   (current-ksa nil)
   (event-buffer nil)
-  (event-buffer-lock (make-process-lock :name "event-buffer"))
+  (event-buffer-lock (make-lock :name "event-buffer"))
   (pending-ksas (make-queue :class 'ordered-queue
                             :key #'rating-of))
   (executed-ksas (make-queue :class 'queue))
@@ -215,12 +215,11 @@
   (hibernating nil :type boolean)
   (hibernate-on-quiescence nil :type boolean) 
   (awaken-on-event 't :type boolean)
-  (run-polling-functions
-   #+multiprocessing-not-available 't
-   #-multiprocessing-not-available nil
-   :type boolean)
+  (run-polling-functions #+threads-not-available 't
+                         #-threads-not-available nil
+                         :type boolean)
   (continue-past-quiescence nil :type boolean) 
-  (process nil)
+  (thread nil)
   (save-executed-ksas nil :type boolean)
   (save-obviated-ksas nil :type boolean)
   (stepping nil)
@@ -432,12 +431,12 @@
                           :ks-triggers ks-triggers
                           args))
             (cs (or *cs*
-		    ;; Look for a control-shell process:
-		    #-multiprocessing-not-available
-		    (some #'(lambda (process)
-			      (symbol-value-in-process '*cs* process))
-			  *control-shell-processes*))))
-        (cond (cs (with-process-lock ((cs.event-buffer-lock cs))
+		    ;; Look for a control-shell thread:
+		    #-threads-not-available
+		    (some #'(lambda (thread)
+			      (symbol-value-in-thread '*cs* thread))
+			  *control-shell-threads*))))
+        (cond (cs (with-lock-held ((cs.event-buffer-lock cs))
                     (push event (cs.event-buffer cs))
                     (when (and (cs.hibernating cs)
                                (cs.awaken-on-event cs))
@@ -557,36 +556,36 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defmacro with-abort-ks-execution-catcher ((&key report) &body body)
     (if report
-        `(let* ((current-process (current-process))
+        `(let* ((current-thread (current-thread))
                 (result
                  (catch 'abort-ks-execution-catcher 
-                   (let ((*within-abort-ks-execution-catcher* current-process))
+                   (let ((*within-abort-ks-execution-catcher* current-thread))
                      ,@body))))
-           (when (and (eq result current-process)
+           (when (and (eq result current-thread)
                       (cs.print cs))
              (format (cs.output-stream cs)
                      "~&;; KS execution ~s was aborted.~%"
                      (cs.current-ksa cs))))
         `(catch 'abort-ks-execution-catcher 
-           (let ((*within-abort-ks-execution-catcher* (current-process)))
+           (let ((*within-abort-ks-execution-catcher* (current-thread)))
              ,@body)))))
 
 ;;; ---------------------------------------------------------------------------
 
 (defun abort-ks-execution 
     (&optional 
-     #-multiprocessing-not-available
+     #-threads-not-available
      (cs (or *cs*
-             ;; Look for a control-shell process:
-             (some #'(lambda (process)
-                       (symbol-value-in-process '*cs* process))
-                   *control-shell-processes*)
-             (error "No control-shell process was found"))))
+             ;; Look for a control-shell thread:
+             (some #'(lambda (thread)
+                       (symbol-value-in-thread '*cs* thread))
+                   *control-shell-threads*)
+             (error "No control-shell thread was found"))))
   (cond 
-   ((eq (current-process) *within-abort-ks-execution-catcher*)
+   ((eq (current-thread) *within-abort-ks-execution-catcher*)
     (throw 'abort-ks-execution-catcher *within-abort-ks-execution-catcher*))
-   (t #-multiprocessing-not-available
-      (run-in-process (cs.process cs)
+   (t #-threads-not-available
+      (run-in-thread (cs.thread cs)
                       #'(lambda ()
                           (when *within-abort-ks-execution-catcher*
                             (throw 'abort-ks-execution-catcher
@@ -1155,17 +1154,10 @@
 (defun hibernate-control-shell (cs)
   (signal-event 'control-shell-hibernation-event)
   (setf (cs.hibernating cs) 't)
-  ;; On uniprocess and non-thread-scheduling CLs, we must
-  ;; "busy wait" (but not too fast) until something
+  ;; On uniprocess we must "busy wait" (but not too fast) until something
   ;; awakens the control-shell:
   (cond 
-   ;; Don't hibernate unless we have multiprocessing with thread scheduling;
-   ;; also don't hibernate when polling-functions running was requested:
-   (#-(or multiprocessing-not-available
-	  thread-scheduling-not-available)
-    (cs.run-polling-functions cs)
-    #+(or multiprocessing-not-available thread-scheduling-not-available)
-    t
+   ((cs.run-polling-functions cs)
     (while (cs.hibernating cs)
       (let ((sleep-time 0.5))
 	(when (cs.run-polling-functions cs)
@@ -1178,16 +1170,15 @@
 	;; take longer than that):
 	(when (plusp sleep-time)
 	  (sleep sleep-time)))))
-   #-(or multiprocessing-not-available
-	 thread-scheduling-not-available)
-   (t (hibernate-process))))
+   #-threads-not-available
+   (t (hibernate-thread))))
 
 ;;; ---------------------------------------------------------------------------
 
 (defun awaken-control-shell (cs)
   (setf (cs.hibernating cs) nil)
-  #-(or multiprocessing-not-available thread-scheduling-not-available)
-  (awaken-process (cs.process cs)))
+  #-threads-not-available
+  (awaken-thread (cs.thread cs)))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -1201,9 +1192,8 @@
 	    (catch 'exit-control-shell 
 	      (loop
 		;; yield at the start of each cycle to allow pending
-		;; processes, I/O, and events to progress:
-                #-thread-scheduling-not-available
-		(process-yield)
+		;; threads, I/O, and events to progress:
+		(thread-yield)
 		;; run the polling functions, if so requested:
 		(when (cs.run-polling-functions cs)
 		  (run-polling-functions))
@@ -1329,8 +1319,8 @@
 			    (pause nil)
                             (print 't)
 			    (run-polling-functions
-			        #+multiprocessing-not-available 't
-				#-multiprocessing-not-available nil)
+			        #+threads-not-available 't
+				#-threads-not-available nil)
                             (save-executed-ksas nil)
                             (save-obviated-ksas nil)
                             (stepping nil)
@@ -1357,7 +1347,7 @@
 						      #'>
 						      #'>=)
 					    :key #'rating-of)
-		  :process (current-process)))
+		  :thread (current-thread)))
       (when (cs.print *cs*)
 	(format (cs.output-stream *cs*) "~&;; Control shell started~%"))
       (signal-event 'start-control-shell-event)
@@ -1388,41 +1378,41 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun spawn-control-shell-process (&rest initargs)
+(defun spawn-control-shell-thread (&rest initargs)
   (declare (dynamic-extent initargs))
-  #+multiprocessing-not-available
+  #+threads-not-available
   (declare (ignore initargs))
-  #+multiprocessing-not-available
-  (multiprocessing-not-available 'spawn-control-shell-process)
-  #-multiprocessing-not-available
-  (let ((control-shell-process
-	 (spawn-process 
+  #+threads-not-available
+  (threads-not-available 'spawn-control-shell-thread)
+  #-threads-not-available
+  (let ((control-shell-thread
+	 (spawn-thread 
 	  "Agenda Shell" 
 	  #'(lambda (initargs)
 	      (with-control-shell-instance ()
 		(apply #'start-control-shell
 		       (append initargs '(:hibernate-on-quiescence t)))))
 	  initargs)))
-    (push control-shell-process *control-shell-processes*)
-    control-shell-process))
+    (push control-shell-thread *control-shell-threads*)
+    control-shell-thread))
 
 ;;; ---------------------------------------------------------------------------
 
-(defun exit-control-shell-process (control-shell-process)
-  #+multiprocessing-not-available
-  (declare (ignore control-shell-process))
-  #+multiprocessing-not-available
-  (gbbopen-tools::multiprocessing-not-available 'exit-control-shell-process)
-  #-multiprocessing-not-available
+(defun exit-control-shell-thread (control-shell-thread)
+  #+threads-not-available
+  (declare (ignore control-shell-thread))
+  #+threads-not-available
+  (portable-threads:threads-not-available 'exit-control-shell-thread)
+  #-threads-not-available
   (progn
-    (setf *control-shell-processes* 
-      (delq control-shell-process *control-shell-processes*))
-    (run-in-process control-shell-process #'exit-control-shell)))
+    (setf *control-shell-threads* 
+      (delq control-shell-thread *control-shell-threads*))
+    (run-in-thread control-shell-thread #'exit-control-shell)))
   
 ;;; ---------------------------------------------------------------------------
 
-(defun exit-all-control-shell-processes ()
-  (mapc #'exit-control-shell-process *control-shell-processes*))
+(defun exit-all-control-shell-threads ()
+  (mapc #'exit-control-shell-thread *control-shell-threads*))
 
 ;;; ===========================================================================
 ;;;  The Agenda Shell is fully loaded

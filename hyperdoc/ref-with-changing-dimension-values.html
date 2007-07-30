@@ -24,7 +24,7 @@
 <i> =&gt; </i> <var>result</var>*</td><td valign="baseline" align="right">[<i>Macro</i>]
 </td></tr></table></p>
 <p><span class="fndoclabel">Purpose</span> <br />Inform GBBopen that the dimensional values of a
-<a href="ref-glossary.html#id162">unit&nbsp;instance</a> will potentially be changed by the evaluation of
+<a href="ref-glossary.html#id163">unit&nbsp;instance</a> will potentially be changed by the evaluation of
 <var>forms</var>.
 </p>
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen</code>
@@ -32,11 +32,11 @@
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-core</code>
 </p>
 <p><span class="fndoclabel">Arguments</span><table class="tight">
-<tr valign="top"><td valign="baseline"><i>unit-instance</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id162">unit&nbsp;instance</a>
+<tr valign="top"><td valign="baseline"><i>unit-instance</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id163">unit&nbsp;instance</a>
 </td></tr><tr valign="top"><td valign="baseline"><i>dimension-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A symbol specifying a <a href="ref-glossary.html#gl:dimension">dimension</a> of
 <var>unit-instance</var> 
 </td></tr><tr valign="top"><td valign="baseline"><i>declaration</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A declare expression
-</td></tr><tr valign="top"><td valign="baseline"><i>forms</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An implicit <b>progn</b> of <a href="ref-glossary.html#gl:form">form</a>s to be evaluated
+</td></tr><tr valign="top"><td valign="baseline"><i>forms</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An implicit <b>progn</b> of <a href="ref-glossary.html#gl:forms">forms</a> to be evaluated
 </td></tr></table>
 </p>
 <p><span class="fndoclabel">Returns</span> <br />The values returned by evaluating the last <var>form</var>.
@@ -50,9 +50,9 @@ Retrievals performed by separate threads also should be synchronized with
 <b>with-changing-dimension-values</b>.
 </p>
 <p>If <var>dimension-names</var> are specified, only the indexes for those
-<a href="ref-glossary.html#gl:dimension">dimension</a>s of <var>unit-instance</var> will be updated. If no
+<a href="ref-glossary.html#gl:dimensions">dimensions</a> of <var>unit-instance</var> will be updated. If no
 <var>dimension-names</var> are specified, the values of any or all
-<a href="ref-glossary.html#gl:dimension">dimension</a>s of <var>unit-instance</var> are assumed to have been
+<a href="ref-glossary.html#gl:dimensions">dimensions</a> of <var>unit-instance</var> are assumed to have been
 potentially changed by <var>forms</var>.
 </p>
 <p><span class="fndoclabel">Examples</span> <br />Notify GBBopen that the <code>x</code>, <code>y</code>, and <code>belief</code>

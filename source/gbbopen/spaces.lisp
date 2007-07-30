@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/spaces.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jun 13 11:39:46 2007 *-*
+;;;; *-* Last-Edit: Sat Jul 28 13:24:54 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -467,7 +467,7 @@
   ;;; space-instance after the first time an instance of a unit class
   ;;; is added.  Must be cleared if unit-class is redefined, however.
   (declare (inline class-of))
-  (with-process-lock (*master-instance-lock*)
+  (with-lock-held (*master-instance-lock*)
     (check-for-deleted-instance instance 'add-instance-to-space-instance)
     (check-for-deleted-instance
      space-instance 'add-instance-to-space-instance)
@@ -561,7 +561,7 @@
 
 (defun remove-instance-from-space-instance-internal (instance space-instance)
   (declare (inline class-of))
-  (with-process-lock (*master-instance-lock*)
+  (with-lock-held (*master-instance-lock*)
     (check-for-deleted-instance 
      instance 'remove-instance-from-space-instance)
     (check-for-deleted-instance 

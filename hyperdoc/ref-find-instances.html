@@ -20,21 +20,21 @@
 space-instances pattern</var> <br /><code>&#38;key</code> <var>filter-before filter-after</var> <i> =&gt; </i> 
 <var>unit-instances</var></td><td valign="baseline" align="right">[<i>Function</i>]
 </td></tr></table></p>
-<p><span class="fndoclabel">Purpose</span> <br />Retrieve <a href="ref-glossary.html#id162">unit&nbsp;instance</a>s from
-<a href="ref-glossary.html#id146">space&nbsp;instance</a>s based on a <a href="ref-glossary.html#id138">retrieval&nbsp;pattern</a>.
+<p><span class="fndoclabel">Purpose</span> <br />Retrieve <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a> from
+<a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a> based on a <a href="ref-glossary.html#id137">retrieval&nbsp;pattern</a>.
 </p>
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen</code>
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-core</code>
 </p>
 <p><span class="fndoclabel">Arguments</span><table class="tight">
-<tr valign="top"><td valign="baseline"><i>unit-classes-specifier</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An <a href="ref-glossary.html#id58">extended&nbsp;unit-classes&nbsp;specification</a>
+<tr valign="top"><td valign="baseline"><i>unit-classes-specifier</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An <a href="ref-glossary.html#id61">extended&nbsp;unit-classes&nbsp;specification</a>
 (see below)
-</td></tr><tr valign="top"><td valign="baseline"><i>space-instances</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id146">space&nbsp;instance</a>, a list of
-<a href="ref-glossary.html#id146">space&nbsp;instance</a>s, a <a href="ref-glossary.html#id150">space-instance&nbsp;path</a> regular expression,
-or <code>t</code> (indicating all <a href="ref-glossary.html#id146">space&nbsp;instance</a>s)
+</td></tr><tr valign="top"><td valign="baseline"><i>space-instances</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id145">space&nbsp;instance</a>, a list of
+<a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a>, a <a href="ref-glossary.html#id147">space-instance&nbsp;path</a> regular expression,
+or <code>t</code> (indicating all <a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a>)
 </p>
-</td></tr><tr valign="top"><td valign="baseline"><i><p>pattern</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id138">retrieval&nbsp;pattern</a> (see below)
+</td></tr><tr valign="top"><td valign="baseline"><i><p>pattern</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id137">retrieval&nbsp;pattern</a> (see below)
 </p>
 </td></tr><tr valign="top"><td valign="baseline"><i><p>filter-before</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A single-argument predicate to be applied before
 pattern-matching tests occur
@@ -43,7 +43,7 @@ pattern-matching tests occur
 pattern-matching tests occur
 </td></tr></table>
 </p>
-<p><span class="fndoclabel">Returns</span> <br /><a name="id1">A</a> newly consed list of <a href="ref-glossary.html#id162">unit&nbsp;instance</a>s specified by
+<p><span class="fndoclabel">Returns</span> <br /><a name="id1">A</a> newly consed list of <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a> specified by
 <var>unit-class-specifier</var> that reside on <var>space-instances</var> and
 satisfy the specified <var>pattern</var> and any predicate filters.
 </p>
@@ -185,10 +185,10 @@ satisfy the specified <var>pattern</var> and any predicate filters.
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
 <p><span class="fndoclabel">Description</span> <br />The <var>pattern</var> <code>t</code> matches all
-<a href="ref-glossary.html#id162">unit&nbsp;instance</a>s whose <a href="ref-glossary.html#id25">dimension&nbsp;value</a>s overlap the
-<a href="ref-glossary.html#id29">dimensional&nbsp;extent</a> of at least one <a href="ref-glossary.html#id146">space&nbsp;instance</a> in
+<a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a> whose <a href="ref-glossary.html#id29">dimension&nbsp;values</a> overlap the
+<a href="ref-glossary.html#id32">dimensional&nbsp;extent</a> of at least one <a href="ref-glossary.html#id145">space&nbsp;instance</a> in
 <var>space-instances</var>. The <var>pattern</var> <code>:all</code> matches every
-<a href="ref-glossary.html#id162">unit&nbsp;instance</a> on a <a href="ref-glossary.html#id146">space&nbsp;instance</a> in
+<a href="ref-glossary.html#id163">unit&nbsp;instance</a> on a <a href="ref-glossary.html#id145">space&nbsp;instance</a> in
 <var>space-instances</var>, regardless of dimensional overlap.
 </p>
 <p><a href="ref-declared-numerics.html">Declared numeric</a> pattern operators are also

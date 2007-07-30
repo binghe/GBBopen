@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Jul  3 10:29:13 2007 *-*
+;;;; *-* Last-Edit: Sat Jul 28 12:25:14 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -290,7 +290,7 @@
         ;; shared-initialize :before and :after methods:
         (*%%existing-space-instances%%* nil))
     (declare (special *%%existing-space-instances%%*))
-    (with-process-lock (*master-instance-lock*)
+    (with-lock-held (*master-instance-lock*)
       (call-next-method))))
 
 ;;; ---------------------------------------------------------------------------
@@ -390,7 +390,7 @@
          (test (hash-table-test 
                 (standard-unit-class.instance-hash-table unit-class))))
     (unless (funcall test old-name new-name)
-      (with-process-lock (*master-instance-lock*)
+      (with-lock-held (*master-instance-lock*)
         (add-name-to-instance-hash-table unit-class instance new-name)
         ;; remove old-name from instance-hash-table:
         (remhash old-name
@@ -479,7 +479,7 @@
 (defmethod delete-instance :around ((instance %%gbbopen-unit-instance%%))
   ;;; Deletion-event signaling is done in this :around method to surround 
   ;;; activities performed by primary and :before/:after methods
-  (with-process-lock (*master-instance-lock*)
+  (with-lock-held (*master-instance-lock*)
     (unless (instance-deleted-p instance)
       ;; signal the delete-instance event:
       (signal-event-using-class
@@ -669,7 +669,7 @@
   (ensure-finalized-class new-class)
   (let ((unit-class (class-of instance))
 	(new-class-slots (class-slots new-class)))
-    (with-process-lock (*master-instance-lock*)
+    (with-lock-held (*master-instance-lock*)
       (add-name-to-instance-hash-table 
        new-class instance (instance-name-of instance))
       (remhash (instance-name-of instance)

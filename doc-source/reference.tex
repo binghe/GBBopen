@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /home/gbbopen/current/doc-source/reference.tex *-*
-%% *-* Last-Edit: Sat Jul 21 02:24:50 2007; Edited-By: cork *-*
+%% *-* Last-Edit: Mon Jul 30 09:34:18 2007; Edited-By: cork *-*
 %% *-* Machine: ruby.corkills.org *-*
 
 %% Copyright (C) 2003-2007, Dan Corkill <corkill@GBBopen.org>
@@ -159,8 +159,8 @@ GBBopen is structured for high-performance and scalability while
 maintaining flexibility and adaptability to changes in representation,
 \glref{knowledge-source} (KS) components, and control strategies.
 Multi-dimensional abstraction of blackboard components
-(``\glref{space~instance}s''), blackboard objects
-(``\glref{unit~instance}s''), and proximity-based retrieval patterns
+(``\glref{space~instances}''), blackboard objects
+(``\glref{unit~instances}''), and proximity-based retrieval patterns
 is used to provide a semantically meaningful separation of
 blackboard-repository storage mechanisms from \glref{KS} and control code.
 This separation allows storage and search strategies and optimizations
@@ -176,7 +176,7 @@ providing all the advantages of a rich, dynamic, reflective, and
 extensible programming language to the blackboard-system architects
 and component writers.  These capabilities are crucial in building
 complex blackboard-based applications where object representations,
-knowledge sources (\glref{KS}s), and control mechanisms will change
+knowledge sources (\glref{KSs}), and control mechanisms will change
 during development and over the operational lifetime of the blackboard
 application. GBBopen is tightly integrated with CLOS (the Common Lisp
 Object System) and provides additional blackboard-specific object
@@ -743,15 +743,15 @@ reload all subsequent files and modules \\[2pt]
 \end{tabular}
 }
 
-\newcommand{\nomultiprocessing}{Multiprocessing is not supported on the
+\newcommand{\nothreads}{Threads (multiprocessing) is not supported on the
 Common Lisp implementation.} 
 
-\newcommand{\noscheduling}{Lisp process scheduling is not available with
-\xsitelink{SBCL}{http://sbcl.sourceforge.net} threads.} 
+\newcommand{\nocvlock}{The \glref{lock} (or \glref{recursive~lock}) associated
+  with \var{condition-variable} is not held by the executing process.}
 
 \newcommand{\pollingnote}{When a non-\nil{} \code{:run-polling-functions}
   value is supplied to \textbf{\entlink{start-control-shell}} (the default on
-  non-multiprocessing Common Lisp implementations),
+  Common Lisp implementations without threads),
   \textbf{\entlink{run-polling-functions}} is called at the beginning of every
   control-shell-cycle and at one-half-second intervals when the Agenda Shell
   is hibernating due to \glref{quiescence}.}
@@ -2030,10 +2030,10 @@ Common Lisp additions and utilities.  Convenient (\reflink{shorthand
 single-float, double-float, and long-float numeric operators are also
 provided by the \code{:gbbopen-tools} module.
 
-Uniform interfaces to implementation-specific multiprocessing
+Uniform interfaces to implementation-specific thread (multiprocessing)
 capabilities are provided by the \reflink{\code{:portable-threads}
   module}{sec:portablethreads}, polling functions for Common Lisp
-implementations that do not provide multiprocessing capabilities are
+implementations that do not provide thread capabilities are
 provided by the \reflink{\code{:polling-functions}
   module}{sec:pollingfunctions}, uniform socket interfaces are
 provided by the \reflink{\code{:portable-sockets}
@@ -2945,7 +2945,7 @@ evaluating them to \code{*trace-output*}.
 
 \fnargs
 \begin{args}{results}
-\arg[forms] An implicit \textbf{progn} of \glref{form}s to be
+\arg[forms] An implicit \textbf{progn} of \glref{forms} to be
 evaluated and printed  
 \end{args}
 
@@ -3423,7 +3423,7 @@ elements.
 \fnreturns Two values:
 \begin{tightitemize}
 \item a copy of \var{list\/} up to, but not including, the last
-  \var{n\/} \glref{cons}es
+  \var{n\/} \glref{conses}
 \item the unused tail of \var{list}
 \end{tightitemize}
 
@@ -3494,7 +3494,7 @@ elements.
 \textbf{defmethod}) 
 \arg[declarations] A declare expression (not evaluated)
 \arg[documentation] A string (not evaluated)
-\arg[forms] Zero or more \glref{form}s
+\arg[forms] Zero or more \glref{forms}
 \end{args}
 
 \fnexample
@@ -3568,7 +3568,7 @@ as long as \var{test-form\/} evaluates to \nil.
 \begin{args}{test-form}
 \arg[test-form] A \glref{form}
 \arg[declaration] A declare expression
-\arg[forms] An implicit \textbf{progn} of \glref{form}s to be evaluated
+\arg[forms] An implicit \textbf{progn} of \glref{forms} to be evaluated
 \end{args}
 
 \begin{alsos}{do-until}
@@ -3611,7 +3611,7 @@ until \var{test-form\/} evaluates to \nil.
 \begin{args}{test-form}
 \arg[test-form] A \glref{form}
 \arg[declaration] A declare expression
-\arg[forms] An implicit \textbf{progn} of \glref{form}s to be evaluated
+\arg[forms] An implicit \textbf{progn} of \glref{forms} to be evaluated
 \end{args}
 
 \begin{alsos}{do-until}
@@ -3653,7 +3653,7 @@ nil
 \fnargs
 \begin{args}{error-forms}
 \arg[form] A \glref{form}
-\arg[error-forms] Zero or more \glref{form}s
+\arg[error-forms] Zero or more \glref{forms}
 \end{args}
 
 \fnreturns The values returned by evaluating \var{form\/} unless an
@@ -3705,7 +3705,7 @@ settings.
 \begin{args}{options}
 \arg[option] No options are currently supported
 \arg[declaration] A declare expression
-\arg[forms] An implicit \textbf{progn} of \glref{form}s to be evaluated
+\arg[forms] An implicit \textbf{progn} of \glref{forms} to be evaluated
 \end{args}
 
 \fnreturns The values returned by evaluating \var{form\/}.
@@ -3765,7 +3765,7 @@ argument-checking optimizations:
 \item A \glref{function~object} accepting two arguments, class-name and slot-name,
   that returns the complete string to be used for the accessor name
 \end{tightitemize}
-\arg[forms] An implicit \textbf{progn} of \glref{form}s
+\arg[forms] An implicit \textbf{progn} of \glref{forms}
 \end{args}
 
 \fnreturns The values returned by evaluating the last \var{form}.
@@ -3861,7 +3861,7 @@ strange-name-string
 \begin{args}{error-forms}
 \arg[symbols] Zero or more symbols to be bound to gensyms
 \arg[declaration] A declare expression
-\arg[forms] An implicit \textbf{progn} of \glref{form}s to be evaluated
+\arg[forms] An implicit \textbf{progn} of \glref{forms} to be evaluated
 \end{args}
 
 \fnreturns The values returned by evaluating the last \var{form}.
@@ -3897,7 +3897,7 @@ value.
 \begin{args}{error-forms}
 \arg[symbols] Zero or more symbols to be evaluated once only
 \arg[declaration] A declare expression
-\arg[forms] An implicit \textbf{progn} of \glref{form}s to be evaluated
+\arg[forms] An implicit \textbf{progn} of \glref{forms} to be evaluated
 \end{args}
 
 \fnreturns The values returned by evaluating the last \var{form}.
@@ -4740,50 +4740,127 @@ Time value.
 
 \index{module!:portable-threads@\code{:portable-threads}}%
 \index{:portable-threads@\code{:portable-threads} module}%
-The \code{:portable-threads} module provides a uniform interface to
-commonly used multiprocessing entitites.  Where possible, these
-entities do something reasonable in Common Lisp implementations that
-do not provide multiprocessing; entities that make no sense without
-multiprocessing signal errors (as noted with each entity).
+The \code{:portable-threads} module provides a uniform interface to commonly
+used \glref{thread} (multiprocessing) entities.  Wherever possible, these
+entities do something reasonable in Common Lisp implementations that do not
+provide threads. However, entities that make no sense without threads signal
+errors in non-threaded implementations (as noted with each entity). GBBopen
+adds the \glref{feature} \code{:threads-not-available} on Common Lisp
+implementations without thread support.
 
-GBBopen adds the feature \code{:multiprocessing-not-available} on Common Lisp
-implementations that do not provide multiprocessing support.  The feature
-\code{:thread-scheduling-not-available} is added on implementations that
-provide multiprocessing, but not controllable thread scheduling.
+\ppar{Threads and Processes}
+
+Common Lisp implementations that provide multiprocessing capabilities use one
+of two approaches:
+\begin{tightitemize}
+\item \textit{Application-level threads\/} (also called ``Lisp processes'') which are
+  created, deleted, and scheduled internally by the Common Lisp implementation
+\item \textit{Operating-system threads\/} (or ``native threads'') which are
+  lightweight, operating-system threads that are created, deleted, and
+  scheduled by the operating system
+\end{tightitemize}
+
+There are advantages and complexities associated with each approach, and the
+Portable Threads Interface is designed to provide a uniform abstraction over
+them that can be used to code applications that perform consistently and
+efficiently on any supported Common Lisp implementation.
+
+\ppar{Locks}
+
+Common Lisp implementations provide differing semantics for the behavior of
+mutual-exclusion locks that are acquired recursively by the same
+\glref{thread}: some always allow recursive use, others provide special
+``recursive'' lock objects in addition to non-recursive locks, and still
+others allow recursive use to be specified at the time that a lock is being
+acquired.  To enable behavioral consistency in all Common Lisp
+implementations, the \code{:portable-threads} interface module provides
+(non-recursive) \glref{locks} and \glref{recursive~locks} and a single
+acquisition form, \textbf{\entlink{with-lock-held}}, that behaves
+appropriately for each lock type.
+
+\ppar{Condition Variables}
+
+POSIX-style \glref{condition~variables} provide an atomic means for a
+\glref{thread} to release a lock that it holds and go to sleep until it is
+awakened by another thread.  Once awakened, the lock that it was holding is
+reacquired atomically before the thread is allowed to do anything else.
+
+A condition variable must always be associated with a \glref{lock} (or
+\glref{recursive~lock}) in order to avoid a race condition created by one
+thread preparing to wait and another thread which may signal the condition
+before the first thread actually waits on it.  In this situation, the thread
+would be perpetually waiting for a signal that has already been sent.  In the
+POSIX model, there is no explicit link between the lock and the condition
+variable.  The Portable Threads Interface makes this association explicit by
+bundling the lock with the \textbf{\entlink{condition-variable}} CLOS object
+instance.
+
+\ppar{Hibernation}
+
+Sometimes it is desirable to put a thread to sleep (perhaps for a long time)
+until some event has occurred.  The Portable Threads Interface provides two
+entities that make this situation easy to code:
+\textbf{\entlink{hibernate-thread}} and \textbf{\entlink{awaken-thread}}.
+Note that when a thread is hibernating, it remains available to respond to
+\textbf{\entlink{run-in-thread}} and \textbf{\entlink{symbol-value-in-thread}}
+operations as well as to be awakened by a dynamically surrounding
+\textbf{\entlink{with-timeout}}.
+
+\ppar{What about Process Wait?}
+
+Thread coordination functions, such as \code{process-wait}, are expensive to
+implement with operating-system threads.  Such functions stop the executing
+thread until a Common Lisp predicate function returns a true value.  With
+application-level threads, the Lisp-based scheduler simply evaluates the
+predicate periodically when looking for other threads that can be run.  With
+operating-system threads, however, scheduling is performed by the operating
+system and evaluating the predicate function requires some complex and
+expensive interaction between the operating-system scheduling and the Common
+Lisp implementation.  Given this cost and complexity, some Common Lisp
+implementations using operating-system threads have elected not to provide
+\code{process-wait}-style coordination functions, and this issue extends to
+the Portable Threads Interface as well.
+
+Fortunately, most uses of \code{process-wait} can be replaced by a different
+strategy that relies on the producer of a change that would affect the
+\code{process-wait} predicate function to signal the event rather than having
+the consumers of the change use predicate functions to poll for it.  Condition
+variables, the Portable Threads \textbf{\entlink{hibernate-thread}} and
+\textbf{\entlink{awaken-thread}} mechanism, or blocking I/O functions cover
+most of the typical uses of \code{process-wait}.
 
 \W\entities
 \T\clearpage
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Function}{all-processes}{\noargs{} 
-    \returns{} \var{list-of-processes\/}}
-\index{process!obtaining all}%
+\begin{functiondoc}{Function}{all-threads}{\noargs{} 
+    \returns{} \var{list-of-threads\/}}
+\index{thread!obtaining all}%
 
 \fnsyntax
 
-\fnpurpose Return a list of all \glref{process}es.
+\fnpurpose Return a list of all \glref{threads}.
 
 \fnpackage \code{:portable-threads}
 
 \fnmodule \code{:portable-threads}
 
-\fnreturns A list of objects representing the \glref{process}es. 
+\fnreturns A list of objects representing the \glref{threads}. 
 
-\fndescription
-On Common Lisp implementations without multiprocessing, \nil{} is returned.
-
-\begin{alsos}{current-process}
-\also[current-process]
-\also[processp]
-\also[spawn-process]
+\begin{alsos}{current-thread}
+\also[current-thread]
+\also[threadp]
+\also[spawn-thread]
 \end{alsos}
 
 \fnexample
 \begin{example}
-> (all-processes)
-(#<process Listener 1>)
+> (all-threads)
+(#<thread Listener 1>)
 \end{example}
+
+\fnnotes On Common Lisp implementations without threads, \nil{} is returned.
 
 \end{functiondoc}
 
@@ -5175,254 +5252,401 @@ the same as any element in the list stored in \var{place\/}, prepend
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Function}{awaken-process}{\var{process\/}}
-\index{process!awakening}%
-\index{awakening a process}%
+\begin{functiondoc}{Function}{awaken-thread}{\var{thread\/}}
+\index{thread!awakening}%
+\index{awakening a thread}%
 
 \fnsyntax
 
-\fnpurpose Awaken a hibernating \glref{process}.
+\fnpurpose Awaken a hibernating \glref{thread}.
 
 \fnpackage \code{:portable-threads}
 
 \fnmodule \code{:portable-threads}
 
 \fnargs
-\begin{args}{process}
-\arg[process] A \glref{process}
+\begin{args}{thread}
+\arg[thread] A \glref{thread}
 \end{args}
 
 \fnerrors
-\nomultiprocessing{}
-\\
-\noscheduling{}
+\nothreads{}
 
-\begin{alsos}{hibernate-process}
-\also[hibernate-process]
+\begin{alsos}{hibernate-thread}
+\also[hibernate-thread]
 \end{alsos}
 
 \fnexample
 \begin{example}
-  (awaken-process process)
+  (awaken-thread thread)
 \end{example}
 
 \end{functiondoc}
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Function}{close-gate}{\var{gate\/}}
-\index{gate!closing}%
-\index{closing,a gate}%
+\begin{functiondoc}{Class}{condition-variable}{}
+\index{class!condition-variable@\textbf{condition-variable}}%
+  
+\fnsyntax
+
+\fnpackage \code{:portable-threads}
+
+\fnmodule \code{:portable-threads}
+
+\fndescription The class \textbf{condition-variable} is a subclass of
+\code{standard-object}.  Instances of \textbf{condition-variable} include an
+associated lock, which can be either a \glref{lock} (the default) or a
+\glref{recursive~lock}.
+
+\begin{alsos}{make-condition-variable}
+\also[make-condition-variable]
+\also[define-class]
+\end{alsos}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{condition-variable-broadcast}%
+  {\var{condition-variable}}
+\index{signaling, condition variable!all blocked threads}%
 
 \fnsyntax
 
-\fnpurpose Close a \glref{gate}.
+\fnpurpose Unblock all \glref{threads} that are blocked on \var{condition-variable}.
 
 \fnpackage \code{:portable-threads}
 
 \fnmodule \code{:portable-threads}
 
 \fnargs
-\begin{args}{gate}
-\arg[gate] A \glref{gate}
+\begin{args}{condition-variable}
+\arg[condition-variable] A \glref{condition~variable}
 \end{args}
 
-\begin{alsos}{gate-open-p}
-\also[gate-open-p]
-\also[make-gate]
-\also[open-gate]
+\fnerrors
+\nocvlock{}
+
+\fndescription If no threads are blocked on \var{condition-variable}, this
+function is a no-op.
+
+\begin{alsos}{condition-variable-wait-with-timeout}
+\also[condition-variable-signal]
+\also[condition-variable-wait]
+\also[condition-variable-wait-with-timeout]
+\also[make-condition-variable]
 \end{alsos}
 
-\fnexample
+\bfindexit{with-lock-held}%
+\fnexample Acquire the \glref{lock} associated with \code{condition-variable}
+and then signal all blocked \glref{threads} that are waiting on it:
 \begin{example}
-  (close-gate godot-gate)
+  (\entlink{with-lock-held} (condition-variable)
+    (condition-variable-broadcast condition-variable))
 \end{example}
+
+\fnnotes On Common Lisp implementations without threads, this function does
+nothing.
 
 \end{functiondoc}
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Function}{current-process}{\noargs{} 
-    \returns{} \var{process\/}}
-\index{process!obtaining the current}%
+\begin{functiondoc}{Function}{condition-variable-signal}%
+  {\var{condition-variable}}
+\index{signaling, condition variable!one blocked thread}%
 
 \fnsyntax
 
-\fnpurpose Return the object representing the current \glref{process}.
-
-\fnpackage \code{:portable-threads}
-
-\fnmodule \code{:portable-threads}
-
-\fnreturns The object representing the current \glref{process}. 
-
-\fndescription
-On Common Lisp implementations without multiprocessing, \nil{} is returned.
-
-\begin{alsos}{spawn-process}
-\also[all-processes]
-\also[spawn-process]
-\end{alsos}
-
-\fnexample
-\begin{example}
-> (current-process)
-#<process Listener 1>
-\end{example}
-
-\end{functiondoc}
-
-%% ------------------------------------------------------------------------
-
-\begin{functiondoc}{Function}{gate-open-p}{\var{gate\/} \returns{}
-    \var{boolean\/}}
-\index{gate!checking state}%
-
-\fnsyntax
-
-\fnpurpose Check if a \glref{gate} is open.
+\fnpurpose Unblock one \glref{thread} that is blocked on \var{condition-variable}.
 
 \fnpackage \code{:portable-threads}
 
 \fnmodule \code{:portable-threads}
 
 \fnargs
-\begin{args}{gate}
-\arg[gate] A \glref{gate}
+\begin{args}{condition-variable}
+\arg[condition-variable] A \glref{condition~variable}
 \end{args}
 
-\fnreturns True if \var{gate\/} is open; \nil{} otherwise.  
+\fnerrors
+\nocvlock{}
 
-\begin{alsos}{make-gate}
-\also[close-gate]
-\also[make-gate]
-\also[open-gate]
+\fndescription If no threads are blocked on \var{condition-variable}, this
+function is a no-op.
+
+\begin{alsos}{condition-variable-wait-with-timeout}
+\also[condition-variable-broadcast]
+\also[condition-variable-wait]
+\also[condition-variable-wait-with-timeout]
+\also[make-condition-variable]
 \end{alsos}
 
-\bfindexit{process-wait}%
-\fnexample
+\bfindexit{with-lock-held}%
+\fnexample Acquire the \glref{lock} associated with \code{condition-variable}
+and then signal one blocked \glref{thread} that is waiting on it:
 \begin{example}
-  (\entlink{process-wait} "Waiting for Godot" #'gate-open-p godot-gate)
+  (\entlink{with-lock-held} (condition-variable)
+    (condition-variable-signal condition-variable))
+\end{example}
+
+\fnnotes On Common Lisp implementations without threads, this function does
+nothing.
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{condition-variable-wait}%
+  {\var{condition-variable}}
+\index{waiting, on condition variable}%
+
+\fnsyntax
+
+\fnpurpose Block the current \glref{thread} on \var{condition-variable}.
+
+\fnpackage \code{:portable-threads}
+
+\fnmodule \code{:portable-threads}
+
+\fnargs
+\begin{args}{condition-variable}
+\arg[condition-variable] A \glref{condition~variable}
+\end{args}
+
+\fnerrors
+\nocvlock{}
+\par
+\nothreads{}
+
+\begin{alsos}{condition-variable-wait-with-timeout}
+\also[condition-variable-broadcast]
+\also[condition-variable-signal]
+\also[condition-variable-wait-with-timeout]
+\also[make-condition-variable]
+\end{alsos}
+
+\bfindexit{with-lock-held}%
+\fnexample Acquire the condition-variable \glref{lock} and then wait until
+signaled by another \glref{thread}:
+\begin{example}
+  (\entlink{with-lock-held} (condition-variable)
+    (condition-variable-wait condition-variable))
 \end{example}
 
 \end{functiondoc}
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Function}{hibernate-process}{\noargs{}}
-\index{process!hibernating}%
+\begin{functiondoc}{Function}{condition-variable-wait-with-timeout}%
+  {\var{condition-variable seconds}}
+\index{waiting, on condition variable, time limited}%
 
 \fnsyntax
 
-\fnpurpose Hibernate a \glref{process}.
+\fnpurpose Block the current \glref{thread} on \var{condition-variable} or until
+\var{seconds} have elapsed.
+
+\fnpackage \code{:portable-threads}
+
+\fnmodule \code{:portable-threads}
+
+\fnargs
+\begin{args}{condition-variable}
+\arg[condition-variable] A \glref{condition~variable}
+\arg[seconds] A number
+\end{args}
+
+\fnerrors
+\nocvlock{}
+\par
+\nothreads{}
+
+\begin{alsos}{condition-variable-broadcast}
+\also[condition-variable-broadcast]
+\also[condition-variable-signal]
+\also[condition-variable-wait]
+\also[make-condition-variable]
+\end{alsos}
+
+\bfindexit{with-lock-held}%
+\fnexample Acquire the condition-variable \glref{lock} and then wait until
+signaled by another \glref{thread} or until 5 seconds have elapsed:
+\begin{example}
+  (\entlink{with-lock-held} (condition-variable)
+    (condition-variable-wait-with-timeout condition-variable 5))
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{current-thread}{\noargs{} 
+    \returns{} \var{thread\/}}
+\index{thread!obtaining the current}%
+
+\fnsyntax
+
+\fnpurpose Return the object representing the current \glref{thread}.
+
+\fnpackage \code{:portable-threads}
+
+\fnmodule \code{:portable-threads}
+
+\fnreturns The object representing the current \glref{thread}. 
+
+\begin{alsos}{spawn-thread}
+\also[all-threads]
+\also[spawn-thread]
+\end{alsos}
+
+\fnexample
+\begin{example}
+> (current-thread)
+#<thread Listener 1>
+\end{example}
+
+\fnnotes On Common Lisp implementations without threads, \nil{} is returned.
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{hibernate-thread}{\noargs{}}
+\index{thread!hibernating}%
+
+\fnsyntax
+
+\fnpurpose Hibernate the current \glref{thread}.
 
 \fnpackage \code{:portable-threads}
 
 \fnmodule \code{:portable-threads}
 
 \fnerrors
-\nomultiprocessing{}
-\\
-\noscheduling{}
+\nothreads{}
 
-\begin{alsos}{process-wait-with-timeout}
-\also[awaken-process]
-\also[process-wait]
-\also[process-wait-with-timeout]
+\begin{alsos}{awaken-thread}
+\also[awaken-thread]
 \end{alsos}
 
 \fnexample
-Hibernate the current \glref{process}:
+Hibernate the current \glref{thread}:
 \begin{example}
-  (hibernate-process)
+  (hibernate-thread)
 \end{example}
 
 \end{functiondoc}
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Function}{kill-process}{\var{process\/}}
-\index{process!killing}%
-\index{killing a process}%
+\begin{functiondoc}{Function}{kill-thread}{\var{thread\/}}
+\index{thread!killing}%
+\index{killing a thread}%
 
 \fnsyntax
 
-\fnpurpose Kill a \glref{process}.
+\fnpurpose Kill a \glref{thread}.
 
 \fnpackage \code{:portable-threads}
 
 \fnmodule \code{:portable-threads}
 
 \fnargs
-\begin{args}{process}
-\arg[process] A \glref{process}
+\begin{args}{thread}
+\arg[thread] A \glref{thread}
 \end{args}
 
 \fnerrors
-\nomultiprocessing{}
+\nothreads{}
 
-\begin{alsos}{spawn-process}
-\also[spawn-process]
+\begin{alsos}{spawn-thread}
+\also[spawn-thread]
 \end{alsos}
 
 \fnexample
 \begin{example}
-  (kill-process process)
+  (kill-thread thread)
 \end{example}
 
 \end{functiondoc}
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Function}{make-gate}{\var{open} \returns{} \var{gate\/}}
-\index{gate!creating}%
-\index{creating!a gate}%
-\index{making!a gate}%
-
+\begin{functiondoc}{Function}{make-condition-variable}%
+  {\code{\&rest} \var{initargs\/} \\ 
+   \code{\&key} \var{class\/} \\
+   \returns{} \var{condition-variable\/}}
+\index{creating!a condition variable}%
+\index{making!a condition variable}%
+\index{condition variable!creating}%
+ 
 \fnsyntax
 
-\fnpurpose Create and initialize a \glref{gate}.
+\fnpurpose Create a new \glref{condition~variable}.
 
 \fnpackage \code{:portable-threads}
 
 \fnmodule \code{:portable-threads}
 
 \fnargs
-\begin{args}{open}
-\arg[open] A \glref{generalized~boolean} indicating whether to
-initialize the \glref{gate} as open (if true) or closed (if \nil).
+\begin{args}{initargs}
+\arg[initargs] An \glref{initialization~argument~list}
+\arg[class] The name of the \glref{class} for the created
+\glref{condition~variable} instance (default is \code{condition-variable})
 \end{args}
 
-\fnreturns The newly created \glref{gate}. 
+\fnreturns
+The created \textbf{\entlink{condition-variable}}.
 
-\begin{alsos}{gate-open-p}
-\also[close-gate]
-\also[gate-open-p]
-\also[open-gate]
+\begin{alsos}{make-instance}
+\also[make-instance]
 \end{alsos}
 
 \fnexamples
+Make a \textbf{condition-variable} instance with a non-recursive 
+\glref{lock}:
 \begin{example}
-> (make-gate 't)
-#(1)
-> (make-gate nil)
-#(0)
+> (make-condition-variable)
+#<condition-variable>
+\end{example}
+
+Make a \textbf{condition-variable} instance with a
+\glref{recursive~lock}:
+\begin{example}
+> (make-condition-variable :lock (\entlink{make-recursive-lock}))
+#<condition-variable>
+\end{example}
+
+Define a subclass of \textbf{condition-variable} that includes a 
+\code{state} slot:
+\begin{example}
+  (defclass state-cv (condition-variable)
+    ((state :initarg :state
+            :initform nil
+            :accessor state-of)))
+\end{example}
+and then create a \code{state-cv} instance with a \glref{recursive~lock}:
+\begin{example}
+> (make-condition-variable :class 'state-cv
+                           :lock (\entlink{make-recursive-lock}))
+#<state-cv>
 \end{example}
 
 \end{functiondoc}
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Function}{make-process-lock}{\code{\&key} \var{name}
+\begin{functiondoc}{Function}{make-lock}{\code{\&key} \var{name}
     \returns{} \var{lock\/}} 
 \index{lock!creating}%
-\index{process lock!creating}%
-\index{creating!a process lock}%
-\index{making!a process lock}%
+\index{creating!a lock}%
+\index{making!a lock}%
 
 \fnsyntax
 
-\fnpurpose Create a \glref{process~lock}.
+\fnpurpose Create a \glref{lock}.
 
 \fnpackage \code{:portable-threads}
 
@@ -5433,131 +5657,143 @@ initialize the \glref{gate} as open (if true) or closed (if \nil).
 \arg[name] A string.
 \end{args}
 
-\fnreturns The newly created \glref{process~lock}. 
+\fnreturns The newly created \glref{lock}. 
 
-\fndescription On Common Lisp implementations without multiprocessing,
-a ``pseudo-lock'' object is returned.  A pseudo-lock is always unlocked. 
-
-\begin{alsos}{make-process-lock}
-\also[with-process-lock]
+\begin{alsos}{make-condition-variable}
+\also[make-condition-variable]
+\also[make-recursive-lock]
+\also[thread-holds-lock-p]
+\also[with-lock-held]
 \end{alsos}
 
 \fnexample
 \begin{example}
-> (make-process-lock :name "Priority Queue")
-#<process-lock Priority Queue>
+> (make-lock :name "Priority Queue")
+#<lock Priority Queue>
 \end{example}
+
+\fnnotes On Common Lisp implementations without threads, a
+``pseudo-lock'' object is returned.
 
 \end{functiondoc}
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Function}{open-gate}{\var{gate\/}}
-\index{gate!opening}%
-\index{opening!a gate}%
+\begin{functiondoc}{Function}{make-recursive-lock}{\code{\&key} \var{name}
+    \returns{} \var{recursive-lock\/}} 
+\index{lock!creating}%
+\index{creating!a lock}%
+\index{making!a lock}%
 
 \fnsyntax
 
-\fnpurpose Open a \glref{gate}.
+\fnpurpose Create a \glref{recursive~lock}.
 
 \fnpackage \code{:portable-threads}
 
 \fnmodule \code{:portable-threads}
 
 \fnargs
-\begin{args}{gate}
-\arg[gate] A \glref{gate}
+\begin{args}{name}
+\arg[name] A string.
 \end{args}
 
-\begin{alsos}{gate-open-p}
-\also[close-gate]
-\also[gate-open-p]
-\also[make-gate]
+\fnreturns The newly created \glref{recursive~lock}. 
+
+\begin{alsos}{make-condition-variable}
+\also[make-condition-variable]
+\also[make-lock]
+\also[thread-holds-lock-p]
+\also[with-lock-held]
 \end{alsos}
 
 \fnexample
 \begin{example}
-  (open-gate godot-gate)
+> (make-recursive-lock :name "Priority Queue")
+#<recursive-lock Priority Queue>
 \end{example}
+
+\fnnotes On Common Lisp implementations without threads, a
+``pseudo-recursive-lock'' object is returned.
 
 \end{functiondoc}
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Function}{process-name}{\var{process\/} 
+\begin{functiondoc}{Function}{thread-name}{\var{thread\/} 
    \returns{} \var{name-string\/}} 
 
 \fnsyntax
 
-\fnpurpose Return the name of a \glref{process}.
+\fnpurpose Return the name of a \glref{thread}.
 
 \fnsetf
-\fnsetfsyntax{process-name}{\var{process\/}}{\var{name-string\/}}
+\fnsetfsyntax{thread-name}{\var{thread\/}}{\var{name-string\/}}
 
 \fnpackage \code{:portable-threads}
 
 \fnmodule \code{:portable-threads}
 
 \fnargs
-\begin{args}{process}
-\arg[process] A \glref{process}
+\begin{args}{thread}
+\arg[thread] A \glref{thread}
 \end{args}
 
-\fnreturns The process \var{name-string}.
+\fnreturns The name of \var{thread}.
 
 \fnerrors
-\nomultiprocessing{}
+\nothreads{}
 
-\begin{alsos}{spawn-process}
-\also[spawn-process]
+\begin{alsos}{spawn-thread}
+\also[spawn-thread]
 \end{alsos}
 
 \fnexamples
 \begin{example}
-> (process-name process)
+> (thread-name thread)
 "Initial"
-> (setf (process-name process) "Version 2")
+> (setf (thread-name thread) "Version 2")
 "Version 2"
-> (process-name process)
+> (thread-name thread)
 "Version 2"
 \end{example}
 
 \fnnotes Digitool's \xsitelink{Macintosh Common Lisp}{http://www.digitool.com}
-does not support changing the process name via \textbf{setf}.
+does not support changing the thread name via \textbf{setf}.
 
 \end{functiondoc}
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Function}{process-whostate}{\var{process\/}
+\begin{functiondoc}{Function}{thread-whostate}{\var{thread\/}
    \returns{} \var{whostate\/}} 
 
 \fnsyntax
 
 \fnpurpose Return a string that describes the current state of a 
-\glref{process}.
+\glref{thread}.
 
 \fnpackage \code{:portable-threads}
 
 \fnmodule \code{:portable-threads}
 
 \fnargs
-\begin{args}{process}
-\arg[process] A \glref{process}
+\begin{args}{thread}
+\arg[thread] A \glref{thread}
 \end{args}
 
-\fnreturns The \glref{process}-whostate string or \nil.
+\fnreturns The whostate string of the \glref{thread} or \nil.
 
 \fnerrors
-\nomultiprocessing{}
+\nothreads{}
 
-\begin{alsos}{spawn-process}
-\also[spawn-process]
+\begin{alsos}{spawn-thread}
+\also[spawn-thread]
 \end{alsos}
 
 \fnexample
 \begin{example}
-> (process-whostate process)
+> (thread-whostate thread)
 "Running"
 \end{example}
 
@@ -5570,14 +5806,14 @@ programmatically.
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Function}{processp}{\var{object\/} \returns{}
+\begin{functiondoc}{Function}{threadp}{\var{object\/} \returns{}
     \var{boolean\/}}
-\index{process!checking state}%
+\index{thread!checking state}%
 
 \fnsyntax
 
 \fnpurpose Check if \var{object\/} is an object representing a
-\glref{process}.
+\glref{thread}.
 
 \fnpackage \code{:portable-threads}
 
@@ -5588,18 +5824,18 @@ programmatically.
 \arg[object] An object
 \end{args}
 
-\fnreturns True if \var{object\/} is an object representing a \glref{process};
-\nil{} otherwise.
+\fnreturns True if \var{object\/} is an object representing a 
+\glref{thread}; \nil{} otherwise.
 
-\begin{alsos}{spawn-process}
-\also[all-processes]
-\also[spawn-process]
+\begin{alsos}{spawn-thread}
+\also[all-threads]
+\also[spawn-thread]
 \end{alsos}
 
-\bfindexit{all-processes}%
+\bfindexit{all-threads}%
 \fnexample
 \begin{example}
-> (processp (car (\entlink{all-processes})))
+> (threadp (car (\entlink{all-threads})))
 t
 \end{example}
 
@@ -5607,119 +5843,39 @@ t
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Function}{process-wait}{\var{whostate predicate\/}
+\begin{functiondoc}{Function}{thread-yield}{\noargs{}}
+\index{thread!yielding to other threads}%
+\index{yielding to other threads}%
+
+\fnsyntax
+
+\fnpurpose Give other \glref{threads} a chance to execute.
+
+\fnpackage \code{:portable-threads}
+
+\fnmodule \code{:portable-threads}
+
+\fnexample
+\begin{example}
+  (thread-yield)
+\end{example}
+
+\fnnotes On Common Lisp implementations without thread support, this function
+executes \textbf{\entlink{run-polling-functions}} if the
+\code{:polling-functions} module has been loaded.  Otherwise, it is a no-op on
+non-threaded implementations.
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{run-in-thread}{\var{thread function\/}
     \code{\&rest} \var{args\/}}
-\index{process!waiting}%
-\index{waiting, a process}%
+\index{thread!running a function in}%
 
 \fnsyntax
 
-\fnpurpose Suspend a \glref{process} until applying \var{predicate\/}
-to \var{args\/} returns true.
-
-\fnpackage \code{:portable-threads}
-
-\fnmodule \code{:portable-threads}
-
-\fnargs
-\begin{args}{predicate}
-\arg[whostate] A string
-\arg[predicate] A \glref{function} that returns a\glref{generalized~boolean}
-\arg[args] Arguments to the \var{predicate\/} function
-\end{args}
-
-\begin{alsos}{process-wait-with-timeout}
-\also[hibernate-process]
-\also[process-wait-with-timeout]
-\also[process-whostate]
-\end{alsos}
-
-\bfindexit{gate-open-p}%
-\fnexample
-\begin{example}
-  (process-wait "Waiting for Godot" #'\entlink{gate-open-p} godot-gate)
-\end{example}
-
-\fnnotes The \var{whostate\/} value is ignored by
-\xsitelink{SBCL}{http://sbcl.sourceforge.net}.
-
-\end{functiondoc}
-
-%% ------------------------------------------------------------------------
-
-\begin{functiondoc}{Function}{process-wait-with-timeout}{\var{whostate
-    seconds predicate\/} \code{\&rest} \var{args\/}}
-\index{process!waiting}%
-\index{waiting, a process}%
-
-\fnsyntax
-
-\fnpurpose Suspend a \glref{process} until applying \var{predicate\/}
-to \var{args\/} returns true or \var{seconds} have elapsed.
-
-\fnpackage \code{:portable-threads}
-
-\fnmodule \code{:portable-threads}
-
-\fnargs
-\begin{args}{predicate}
-\arg[whostate] A string
-\arg[seconds] A number
-\arg[predicate] A \glref{function} that returns a\glref{generalized~boolean}
-\arg[args] Arguments to the \var{predicate\/} function
-\end{args}
-
-\begin{alsos}{hibernate-process}
-\also[hibernate-process]
-\also[process-wait]
-\also[process-whostate]
-\end{alsos}
-
-\bfindexit{gate-open-p}%
-\fnexample
-\begin{example}
-  (process-wait "Waiting for Godot (for up to 10 seconds)" 
-                #'\entlink{gate-open-p} 10 godot-gate)
-\end{example}
-
-\fnnotes The \var{whostate\/} value is ignored by
-\xsitelink{SBCL}{http://sbcl.sourceforge.net}.
-
-\end{functiondoc}
-
-%% ------------------------------------------------------------------------
-
-\begin{functiondoc}{Function}{process-yield}{\noargs{}}
-\index{process!yielding to other processes}%
-\index{yielding to other processes}%
-
-\fnsyntax
-
-\fnpurpose Give other \glref{process}es a chance to execute.
-
-\fnpackage \code{:portable-threads}
-
-\fnmodule \code{:portable-threads}
-
-\fnexample
-\begin{example}
-  (process-yield)
-\end{example}
-
-\fnnotes This function is a no-op on Common Lisp implementations without
-multiprocessing support.
-
-\end{functiondoc}
-
-%% ------------------------------------------------------------------------
-
-\begin{functiondoc}{Function}{run-in-process}{\var{process function\/}
-    \code{\&rest} \var{args\/}}
-\index{process!running a function in}%
-
-\fnsyntax
-
-\fnpurpose Force \var{process\/} to apply \var{function\/} to \var{args\/}
+\fnpurpose Force \var{thread\/} to apply \var{function\/} to \var{args\/}
 
 \fnpackage \code{:portable-threads}
 
@@ -5727,43 +5883,39 @@ multiprocessing support.
 
 \fnargs
 \begin{args}{function}
-\arg[process] A \glref{process}
+\arg[thread] A \glref{thread}
 \arg[function] A \glref{function}
 \arg[args] Arguments to the function
 \end{args}
 
 \fnerrors
-\nomultiprocessing{}
+\nothreads{}
 
-\fndescription The behavior of calling \textbf{run-in-process} with a
-\glref{process} that is hibernating is undefined.  Some Common Lisp
-implementations may not call \var{function\/} until the process is awakened.
-
-\begin{alsos}{spawn-process}
-\also[spawn-process]
+\begin{alsos}{spawn-thread}
+\also[spawn-thread]
 \end{alsos}
 
 \fnexample
 \begin{example}
-  (run-in-process process 
-                  #'(lambda (result) (throw ':exit result)) 
-                  result)
+  (run-in-thread thread
+                 #'(lambda (result) (throw ':exit result)) 
+                 result)
 \end{example}
 
 \end{functiondoc}
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Function}{spawn-process}{\var{name function\/}
+\begin{functiondoc}{Function}{spawn-thread}{\var{name function\/}
     \code{\&rest}
-    \var{args\/} \returns{} \var{process\/}}
-\index{process!spawning}%
-\index{creating!a process}%
-\index{making!a process}%
+    \var{args\/} \returns{} \var{thread\/}}
+\index{thread!spawning}%
+\index{creating!a thread}%
+\index{making!a thread}%
 
 \fnsyntax
 
-\fnpurpose Spawn a new \glref{process}.
+\fnpurpose Spawn a new \glref{thread}.
 
 \fnpackage \code{:portable-threads}
 
@@ -5776,43 +5928,43 @@ implementations may not call \var{function\/} until the process is awakened.
 \arg[args] Arguments to the function
 \end{args}
 
-\fnreturns The new \glref{process}.
+\fnreturns The object representing the new \glref{thread}.
   
 \fnerrors
-\nomultiprocessing{}
+\nothreads{}
 
-\begin{alsos}{symbol-value-in-process}
-\also[all-processes]
-\also[awaken-process]
-\also[current-process]
-\also[hibernate-process]
-\also[kill-process]
-\also[process-name]
-\also[process-whostate]
-\also[processp]
-\also[run-in-process]
-\also[symbol-value-in-process]
+\begin{alsos}{symbol-value-in-thread}
+\also[all-threads]
+\also[awaken-thread]
+\also[current-thread]
+\also[hibernate-thread]
+\also[kill-thread]
+\also[thread-name]
+\also[thread-whostate]
+\also[threadp]
+\also[run-in-thread]
+\also[symbol-value-in-thread]
 \end{alsos}
 
 \fnexample
 \begin{example}
-> (spawn-process "Sleepy" #'sleep 60)
-#<process Sleepy>
+> (spawn-thread "Sleepy" #'sleep 60)
+#<thread Sleepy>
 \end{example}
 
 \end{functiondoc}
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Function}{symbol-value-in-process}{\var{symbol 
-    process\/}
+\begin{functiondoc}{Function}{symbol-value-in-thread}{\var{symbol 
+    thread\/}
     \returns{} \mbox{\var{object, boundp\/}}}
-\index{process!symbol value in}%
-\index{value, of a symbol in a process}%
+\index{thread!symbol value in}%
+\index{value, of a symbol in a thread}%
 
 \fnsyntax
 
-\fnpurpose Return the value of \var{symbol\/} in a \glref{process}.
+\fnpurpose Return the value of \var{symbol\/} in a \glref{thread}.
 
 \fnpackage \code{:portable-threads}
 
@@ -5821,62 +5973,109 @@ implementations may not call \var{function\/} until the process is awakened.
 \fnargs
 \begin{args}{function}
 \arg[symbol] A symbol
-\arg[process] A \glref{process}
+\arg[thread] A \glref{thread}
 \end{args}
 
 \fnreturns Two values:
 \begin{tightitemize}
-\item the value of \var{symbol\/} in \var{process\/} or nil if no value is
+\item the value of \var{symbol\/} in \var{thread\/} or nil if no value is
   bound
 \item \code{t} if \var{symbol\/} is specially or globally bound in 
-  \var{process}; otherwise \nil
+  \var{thread}; otherwise \nil
 \end{tightitemize}
   
-\fnerrors
-\nomultiprocessing{}
-
 \fndescription The global symbol value is returned as the first value if no
-process-local value is bound.
+thread-local value is bound.
 
-The behavior of calling \textbf{symbol-value-in-process} with a
-\glref{process} that is hibernating is undefined.  Some Common Lisp
-implementations may not return until the process is awakened.
-
-\begin{alsos}{spawn-process}
-\also[spawn-process]
+\begin{alsos}{spawn-thread}
+\also[spawn-thread]
 \end{alsos}
 
 \fnexamples
 \begin{example}
-> (symbol-value-in-process '*x* process)
+> (symbol-value-in-thread '*x* thread)
 33
 t
-> (symbol-value-in-process 'pi process)
+> (symbol-value-in-thread 'pi thread)
 3.141592653589793d0
 t
-> (symbol-value-in-process '*unbound* process)
+> (symbol-value-in-thread '*unbound* thread)
 nil
 nil
+\end{example}
+
+\fnnotes On Common Lisp implementations without threads, this function obtains
+the global symbol value.
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{thread-holds-lock-p}{\var{lock\/}
+    \returns{} \var{boolean\/}}
+\index{lock, held by current thread}%
+
+\fnsyntax
+
+\fnpurpose Determine if \var{lock\/} is held by the current \glref{thread}.
+
+\fnpackage \code{:portable-threads}
+
+\fnmodule \code{:portable-threads}
+
+\fnargs
+\begin{args}{lock}
+\arg[lock] A \glref{lock}, a \glref{recursive~lock}, or a 
+\glref{condition~variable}
+\end{args}
+
+\fnreturns True if the current thread holds \var{lock}; \nil{} otherwise.
+
+\begin{alsos}{make-condition-variable}
+\also[make-condition-variable]
+\also[make-lock]
+\also[make-recursive-lock]
+\also[with-lock-held]
+\end{alsos}
+
+\bfindexit{with-lock-held}%
+\fnexamples
+Two simple examples using a \glref{lock}:
+\begin{example}
+> (thread-holds-lock-p lock)
+nil
+> (\entlink{with-lock-held} (lock)
+    (thread-holds-lock-p lock))
+t
+\end{example}
+
+Two more simple examples using a \glref{condition~variable}:
+\begin{example}
+> (thread-holds-lock-p condition-variable)
+nil
+> (\entlink{with-lock-held} (condition-variable)
+    (thread-holds-lock-p condition-variable))
+t
 \end{example}
 
 \end{functiondoc}
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Macro}{with-process-lock}{\code{(}\var{lock\/} 
+\begin{functiondoc}{Macro}{with-lock-held}{\code{(}\var{lock\/} 
     \code{\&key}
     \var{whostate\/}\code{)}
-    \var{declaration\/}\superstar{}
     \var{form\/}\superstar{} 
     \returns{} \var{value\/}\superstar}
 \index{lock!acquiring}%
-\index{process lock!acquiring}%
-\index{aquiring, a process lock}%
+\index{aquiring!a lock}%
+\index{recursive lock!acquiring}%
+\index{aquiring!a recursive lock}%
 
 \fnsyntax
 
-\fnpurpose After acquiring a \glref{process~lock}, execute forms and
-then release the lock.
+\fnpurpose After acquiring a \glref{lock} or a \glref{recursive~lock},
+execute forms and then release the lock.
 
 \fnpackage \code{:portable-threads}
 
@@ -5884,34 +6083,115 @@ then release the lock.
 
 \fnargs
 \begin{args}{whostate}
-\arg[lock] A \glref{process~lock}
-\arg[whostate] A string (default \code{"With Process Lock"})
-\arg[declaration] A declare expression
-\arg[forms] An implicit \textbf{progn} of \glref{form}s to be evaluated
+\arg[lock] A \glref{lock}, a \glref{recursive~lock}, or a 
+\glref{condition~variable}
+\arg[whostate] A string (default \code{"With Lock Held"})
+\arg[forms] An implicit \textbf{progn} of \glref{forms} to be evaluated
 \end{args}
 
 \fnreturns The values returned by evaluating the last \var{form}.
-  
-\fndescription If a \glref{process} executes a
-\textbf{with-process-lock} that is dynamically inside another
-\textbf{with-process-lock} involving the same \glref{process~lock}, the
-inner \textbf{with-process-lock} simply executes its \glref{form}s and
-has no effect on the lock.
 
-\begin{alsos}{make-process-lock}
-\also[make-process-lock]
-\also[process-whostate]
+\fnerrors A \glref{thread} attempts to re-acquire a (non-recursive)
+\glref{lock} that it holds.
+  
+\fndescription If a \glref{thread} executes a \textbf{with-lock-held}
+that is dynamically inside another \textbf{with-lock-held} involving
+the same \glref{recursive~lock}, the inner \textbf{with-lock-held}
+simply proceeds as if it had acquired the lock.
+
+\begin{alsos}{thread-holds-lock-p}
+\also[make-condition-variable]
+\also[make-lock]
+\also[make-recursive-lock]
+\also[thread-holds-lock-p]
+\also[thread-whostate]
 \end{alsos}
 
-\fnexample
+\fnexamples
+Acquire the lock controlling access to a critical section of code:
 \begin{example}
-  (with-process-lock (lock :whostate "Waiting for Critical Lock")
+  (with-lock-held (lock :whostate "Waiting for Critical Lock")
     (critical-section))
 \end{example}
 
+A silly example showing a recursive re-acquisition of a
+\glref{recursive~lock}:
+\begin{example}
+  (with-lock-held (recursive-lock :whostate "Waiting for Critical Lock")
+    (with-lock-held (recursive-lock :whostate "Again Waiting for Critical Lock")
+      (critical-section)))
+\end{example}
+
+\bfindexit{condition-variable-signal}%
+Acquire the \glref{lock} associated with \code{condition-variable} and then
+signal all blocked \glref{threads} that are waiting on it:
+\begin{example}
+  (with-lock-held (condition-variable)
+    (\entlink{condition-variable-signal} condition-variable))
+\end{example}
+
 \fnnotes The \var{whostate\/} value is ignored by
-\xsitelink{OpenMCL}{http://openmcl.clozure.com/} and
 \xsitelink{SBCL}{http://sbcl.sourceforge.net}.
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Macro}{with-timeout}{\code{(}\var{seconds\/} 
+    \var{timeout-form\/}\superstar{}\code{)}
+    \var{form\/}\superstar{} 
+    \returns{} \var{value\/}\superstar}
+\fnsyntax
+
+\fnpurpose Bound the time allowed to evaluate \var{forms\/} to
+\var{seconds\/}, evaluating \var{timeout-forms} if the time limit is reached.
+
+\fnpackage \code{:portable-threads}
+
+\fnmodule \code{:portable-threads}
+
+\fnargs
+\begin{args}{whostate}
+\arg[seconds] A number
+\arg[timeout-forms] An implicit \textbf{progn} of \glref{forms} to be
+evaluated if the timed \var{forms} do not completed before \var{seconds\/}
+seconds have elapsed
+\arg[forms] An implicit \textbf{progn} of \glref{forms} to be evaluated
+\end{args}
+
+\fnreturns The values returned by evaluating the last \var{form\/} if
+completed in less than \var{seconds}; otherwise the values returned by
+evaluating the last \var{timeout-form}
+
+\fnerrors
+\nothreads{}
+
+\fndescription If the evaluation of \var{forms\/} does not complete within
+\var{seconds}, execution of \var{forms\/} is terminated and the
+\var{timeout-forms\/} are evaluated, returning the result of the last
+\var{timeout-form}. The \var{timeout-forms\/} are not evaluated if the
+\var{forms} complete within \var{seconds}, in which case the result of the
+last \var{form} is returned.
+
+\begin{alsos}{condition-variable-wait-with-timeout}
+\also[condition-variable-wait-with-timeout]
+\end{alsos}
+
+\fnexamples
+Evaluate a simple form, with a one-second time out:
+\begin{example}
+> (with-timeout (1 ':timed-out) 
+     ':did-not-time-out)
+:did-not-time-out
+\end{example}
+
+Again, but this time sleep for two seconds to cause a time out:
+\begin{example}
+> (with-timeout (1 ':timed-out)
+     (sleep 2) 
+     ':did-not-time-out)
+:timed-out              \textrm{\textcolor{green}{; (after 2 seconds)}}
+\end{example}
 
 \end{functiondoc}
 
@@ -5932,7 +6212,7 @@ has no effect on the lock.
 \index{:polling-functions@\code{:polling-functions} module}%
 The \code{:polling-functions} module provides a set of \textit{polling
   functions\/} that can be used to support ``event-loop'' processing on Common
-Lisp implementations that do not provide multiprocessing.  These functions are
+Lisp implementations that do not provide threads.  These functions are
 available for use with all Common Lisp implementations.
 
 \W\entities
@@ -6478,7 +6758,7 @@ resources.
 \begin{functiondoc}{Function}{start-connection-server}%
   {\var{function port\/} \code{\&key} \var{backlog interface name 
       reuse-address\/}
-   \returns{} \var{process\/}}
+   \returns{} \var{thread\/}}
 \index{socket!accepting connections}%
 \index{socket!connection server}%
 \index{connection server!starting}%
@@ -6486,7 +6766,7 @@ resources.
 
 \fnsyntax
 
-\fnpurpose Create a connection-server process that accepts connections
+\fnpurpose Create a connection-server thread that accepts connections
 and processes them according to \var{function}.
 
 \fnpackage \code{:portable-sockets}
@@ -6504,15 +6784,15 @@ interface on the local machine or \nil
 \arg[reuse-address] A \glref{generalized~boolean} (default is \nil)
 \end{args}
 
-\fnreturns The new connection-server \glref{process}.
+\fnreturns The new connection-server \glref{thread}.
 
 \fnerrors
-\nomultiprocessing{}
+\nothreads{}
 
 \bfindexit{accept-connection}%
 \fndescription The connection server will not accept another
 connection until \var{function\/} returns, so normally
-\var{function\/} should spawn another process to handle the
+\var{function\/} should spawn another thread to handle the
 connection.  
 
 An \var{interface\/} string can be either a host name, such as
@@ -6523,7 +6803,7 @@ how many unprocessed connections can be held pending (connected but
 still awaiting an \textbf{\entlink{accept-connection}}).
 
 \begin{alsos}{with-open-connection}
-\also[kill-process]
+\also[kill-thread]
 \also[open-connection]
 \also[with-open-connection]
 \end{alsos}
@@ -6538,12 +6818,12 @@ Start a simple connection server that accepts connections on port
              (format t "~&;; New Connection: ~a~%" line)
              (close connection)))
      5555)
-#<process Connection Server>
+#<thread Connection Server>
 \end{verbatim}
 
-\bfindexit{kill-process}%
+\bfindexit{kill-thread}%
 \fnnotes
-Use \textbf{\entlink{kill-process}} to kill the connection-server process.
+Use \textbf{\entlink{kill-thread}} to kill the connection-server thread.
 
 \end{functiondoc}
 
@@ -6573,7 +6853,7 @@ connection.
 \arg[host] A 32-bit internet address or a string specifying the remote host
 \arg[port] An integer or a string specifying the service port
 \arg[declaration] A declare expression
-\arg[forms] An implicit \textbf{progn} of \glref{form}s to be evaluated
+\arg[forms] An implicit \textbf{progn} of \glref{forms} to be evaluated
 \end{args}
 
 \fndescription This macro ensures that the opened connection is closed when
@@ -6822,7 +7102,7 @@ specified \var{queue\/}.
 \arg[form] A \glref{form}
 \end{args}
 
-\fndescription The iteration over \glref{queue~element}s is performed
+\fndescription The iteration over \glref{queue~elements} is performed
 in queue order (first to last).
 
 \begin{alsos}{ordered-queue}
@@ -6835,7 +7115,7 @@ in queue order (first to last).
 \bfindexit{incf\&}%
 \bfindexit{memq}%
 \bfindexit{collect-trigger-instances}%
-Count the number of \glref{pending~KS~activation}s that were triggered by
+Count the number of \glref{pending~KSAs} that were triggered by
 \code{hyp}: 
 \begin{example}
 > (let ((count 0))
@@ -7041,7 +7321,7 @@ specified \var{queue\/}.
 \end{args}
 
 \fndescription The \var{function\/} is applied to the
-\glref{queue~element}s in queue order (first to last).
+\glref{queue~elements} in queue order (first to last).
 
 \begin{alsos}{ordered-queue}
 \also[do-queue]
@@ -7053,7 +7333,7 @@ specified \var{queue\/}.
 \bfindexit{incf\&}%
 \bfindexit{memq}%
 \bfindexit{collect-trigger-instances}%
-Count the number of \glref{pending~KS~activation}s that were triggered by
+Count the number of \glref{pending~KSAs} that were triggered by
 \code{hyp}: 
 \begin{example}
 > (let ((count 0))
@@ -7312,8 +7592,8 @@ GBBopen queues.
 
 \fnexample 
 \bfindexit{standard-unit-instance}%
-Define a \glref{KS~activation} class whose \glref{unit~instance}s can be kept
-in a queue of \glref{pending~KS~activation}s:
+Define a \glref{KS~activation} class whose \glref{unit~instances} can be kept
+in a queue of \glref{pending~KSAs}:
 \begin{example}
   (define-unit-class ksa (\entlink{standard-unit-instance} queue-element)
     ((rating
@@ -7348,7 +7628,7 @@ in a queue of \glref{pending~KS~activation}s:
 \begin{args}{function}
 \arg[queue] A GBBopen \glref{queue}
 \arg[recount-p] If true, actually counts the individual
-\glref{queue~element}s (default is \nil) 
+\glref{queue~elements} (default is \nil) 
 \end{args}
 
 \fnreturns The \var{queue\/} length.
@@ -7361,12 +7641,12 @@ true, the elements are actually counted and then the count maintained
 with the queue is updated and returned.
 
 \fnexamples
-Return the number of \glref{KS~activation}s in the queue \code{pending-ksas}:
+Return the number of \glref{KSAs} in the queue \code{pending-ksas}:
 \begin{example}
 > (queue-length pending-ksas)
 896
 \end{example}
-Count and then return the actual number of \glref{KS~activation}s in the
+Count and then return the actual number of \glref{KSAs} in the
 queue \code{pending-ksas}:
 \begin{example}
 > (queue-length pending-ksas 't)
@@ -7450,7 +7730,7 @@ to be shown (default is \nil)
 \end{alsos}
 
 \fnexample
-Show the first five \glref{KS~activation}s on the queue \code{pending-ksas}:
+Show the first five \glref{KSAs} on the queue \code{pending-ksas}:
 \begin{example}
 > (show-queue pending-ksas :end 5)
     0. #<ksa 2217>
@@ -7539,7 +7819,7 @@ nil
 
 \fnsyntax
 
-\fnpurpose Add an \glref{event~function} for one or more \glref{event~class}es.
+\fnpurpose Add an \glref{event~function} for one or more \glref{event~classes}.
 
 \fnpackage \code{:gbbopen}
 
@@ -7573,12 +7853,12 @@ regular expression
 The specified \var{function\/} must accept the arguments associated with every
 \glref{event~class} to which it is added.  In addition, \var{function\/}
 should accept additional arguments that are associated with all
-\glref{subevents} of the specified \glref{event~class}es. (This can be
+\glref{subevents} of the specified \glref{event~classes}. (This can be
 achieved by specifying \code{\&allow-other-keys} in the lambda list of
 \var{function}.)
 
 The \var{paths\/} argument is either the symbol \code{t} (indicating
-all \glref{space~instance}s) or a list representing a regular
+all \glref{space~instances}) or a list representing a regular
 expression where the following reserved symbols are interpreted as
 follows:
 \spaceinstanceregexp
@@ -7685,8 +7965,8 @@ or
 
 \fnsyntax
 
-\fnpurpose Return the \glref{extended~unit-classes~specification}s of
-\glref{unit~class}es whose \glref{unit~instance}s are allowed on a
+\fnpurpose Return the \glref{extended~unit-classes~specifications} of
+\glref{unit~classes} whose \glref{unit~instances} are allowed on a
 \glref{space~instance}.
 
 \fnmethods
@@ -7703,9 +7983,9 @@ or
 \arg[space-instance] A \glref{space~instance}
 \end{args}
 
-\fnreturns A list of \glref{extended~unit-classes~specification}s; \code{t},
+\fnreturns A list of \glref{extended~unit-classes~specifications}; \code{t},
 if instances of any \glref{unit~class} are allowed on the
-\glref{space~instance}; or \nil, if no \glref{unit~instance}s are allowed on
+\glref{space~instance}; or \nil, if no \glref{unit~instances} are allowed on
 the \glref{space~instance}
 
 \begin{alsos}{make-space-instance}
@@ -7713,8 +7993,8 @@ the \glref{space~instance}
 \end{alsos}
 
 \fnexample
-Return the \glref{extended~unit-classes~specification}s describing the allowed
-classes that can have their \glref{unit~instance}s stored on the \code{(bb
+Return the \glref{extended~unit-classes~specifications} describing the allowed
+classes that can have their \glref{unit~instances} stored on the \code{(bb
   hyps)} \glref{space~instance}:
 \begin{example}
 > (allowed-unit-classes '(bb hyps))
@@ -7732,7 +8012,7 @@ classes that can have their \glref{unit~instance}s stored on the \code{(bb
 \fnsyntax
 
 \fnpurpose Check for consistency in \glref{link-slot} definitions of
-\glref{unit~class}es to be linked.
+\glref{unit~classes} to be linked.
 
 \fnpackage \code{:gbbopen}
 
@@ -7758,7 +8038,7 @@ again to check for additional inconsistencies.
 
 \fnexamples
 Check for consistency in \glref{link-slot} definitions in all
-\glref{unit~class}es: 
+\glref{unit~classes}: 
 \begin{example}
 > (check-link-consistency)
 ;; All link definitions are consistent.
@@ -7813,7 +8093,7 @@ t
 
 \fnsyntax
 
-\fnpurpose Obtain the current count of \glref{unit~instance}s of a
+\fnpurpose Obtain the current count of \glref{unit~instances} of a
 \glref{unit~class}. 
 
 \fnmethods
@@ -7837,7 +8117,7 @@ t
 \glref{unit~class} 
 \end{args}
 
-\fnreturns Returns the count of \glref{unit~instance}s of the
+\fnreturns Returns the count of \glref{unit~instances} of the
 specified \glref{unit~class}.  If an
 \glref{extended~unit-classes~specification} is supplied, the sum of the
 \glref{unit~instance} counts of the specified classes is returned.
@@ -7847,7 +8127,7 @@ specified \glref{unit~class}.  If an
 \end{alsos}
 
 \fnexamples
- Return the count of \glref{unit~instance}s of
+ Return the count of \glref{unit~instances} of
 \code{standard-space-instance}: 
 \begin{example}
 > (class-instances-count 'standard-space-instance)
@@ -7870,8 +8150,8 @@ Return the count of all \glref{space~instance}:
 
 \fnsyntax
 
-\fnpurpose Remove (but not delete) all \glref{unit~instance}s from
-\glref{space~instance}s.
+\fnpurpose Remove (but not delete) all \glref{unit~instances} from
+\glref{space~instances}.
 
 \fnpackage \code{:gbbopen}
 
@@ -7880,7 +8160,7 @@ Return the count of all \glref{space~instance}:
 \fnargs
 \begin{args}{space-instances}
 \arg[space-instances] A \glref{space~instance}, a list of
-  \glref{space~instance}s, a \glref{space-instance~path} regular
+  \glref{space~instances}, a \glref{space-instance~path} regular
   expression, or \code{t} (indicating all space instances)
 \end{args}
 
@@ -7899,7 +8179,7 @@ for each \glref{unit~instance} that is removed from a \glref{space~instance}.
 \fnexamples
 \index{events!remove-instance-from-space-instance-event@\code{remove-instance-from-space-instance-event}|itidx}%
 \bfindexit{remove-instance-from-space-instance}%
-Remove all the \glref{unit~instance}s that
+Remove all the \glref{unit~instances} that
 reside on the \code{(bb probable-hyps)} \glref{space~instance}:
 \begin{example}
   (clear-space-instances
@@ -8277,13 +8557,13 @@ default initializtion value associated with the metaclass is used.
 \bfindexit{make-space-instance}%
 Define a \glref{space~class},
 \code{space-instance-with-lock}, that has an additional \glref{slot}
-containing a \glref{process~lock} that can be used to synchronize
+containing a \glref{lock} that can be used to synchronize
 operations on each \glref{space~instance} of that class. Then, create
 one \glref{instance} of the \code{space-instance-with-lock}
 \glref{space~class}.
 \begin{example}
 > (define-space-class space-with-lock ()
-    ((lock :initform (\entlink{make-process-lock} :name "Space-Instance Lock"))))
+    ((lock :initform (\entlink{make-lock} :name "Space-Instance Lock"))))
 #<standard-space-class space-with-lock>
 > (\entlink{make-space-instance} '(bb hyps) 
     :class 'space-with-lock)
@@ -8576,7 +8856,7 @@ Create, then delete, a \code{hyp} \glref{unit~instance}:
 
 \fnsyntax
 
-\fnpurpose Delete all \glref{space~instance}s.
+\fnpurpose Delete all \glref{space~instances}.
 
 \fnpackage \code{:gbbopen}
 
@@ -8591,7 +8871,7 @@ process of each \glref{space~instance} and an \code{instance-deleted-event} is
 signaled when the deletion of each \glref{space~instance} has been completed.
 The following events may also be signaled if a \var{space-instance} is,
 itself, on a \glref{space~instance} or is linked to other
-\glref{unit~instance}s: \codeindexit{unlink-event}%
+\glref{unit~instances}: \codeindexit{unlink-event}%
 \codeindexit{remove-instance-from-space-instance-event}%
 \codeindexit{delete-instance-event}%
 \codeindexit{instance-deleted-event}%
@@ -8655,7 +8935,7 @@ A \code{delete-instance-event} is signaled at the start of the
 deletion process and an \code{instance-deleted-event} is
 signaled when the deletion has been completed.  The following events
 may also be signaled if the \var{space-instance} is, itself, on a
-\glref{space~instance} or is linked to other \glref{unit~instance}s:
+\glref{space~instance} or is linked to other \glref{unit~instances}:
 \codeindexit{unlink-event}%
 \codeindexit{remove-instance-from-space-instance-event}%
 \codeindexit{delete-instance-event}%
@@ -8699,9 +8979,9 @@ or simply
 \index{space instance!printing information about}%
 \index{blackboard repository!printing information about}%
 \index{printing!information about!the blackboard repository}%
-Print information about the \glref{space~instance}s in the blackboard
+Print information about the \glref{space~instances} in the blackboard
 repository and their contents.  The total count of the
-\glref{unit~instance}s of each \glref{unit~class} (including ones that
+\glref{unit~instances} of each \glref{unit~class} (including ones that
 do not reside on any \glref{space~instance}) is also printed.
 
 \fnpackage \code{:gbbopen}
@@ -8750,7 +9030,7 @@ standard-space-instance               3
 \fnsyntax
 
 \fnpurpose Describe the printing of events for one or more
-\glref{event~class}es. 
+\glref{event~classes}. 
 
 \fnpackage \code{:gbbopen}
 
@@ -8779,7 +9059,7 @@ expression (default is \code{(*)})
 \fndescription 
 \bfindexit{*standard-output*}%
 The \var{paths\/} argument is either the symbol \code{t} (indicating
-all \glref{space~instance}s) or a list representing a regular
+all \glref{space~instances}) or a list representing a regular
 expression where the following reserved symbols are interpreted as
 follows:
 \spaceinstanceregexp
@@ -9056,7 +9336,7 @@ Standard-unit-class #<standard-unit-class hyp>
 \fnsyntax
 
 \fnpurpose Disable the printing of events for one or more
-\glref{event~class}es. 
+\glref{event~classes}. 
 
 \fnpackage \code{:gbbopen}
 
@@ -9084,7 +9364,7 @@ Standard-unit-class #<standard-unit-class hyp>
 
 \fndescription 
 The \var{paths\/} argument is either the symbol \code{t} (indicating
-all \glref{space~instance}s) or a list representing a regular
+all \glref{space~instances}) or a list representing a regular
 expression where the following reserved symbols are interpreted as
 follows:
 \spaceinstanceregexp
@@ -9118,8 +9398,8 @@ Disable all event printing:
 
 \fnsyntax
 
-\fnpurpose Iterate over all \glref{unit~instance}s of the specified
-\glref{unit~class}es.
+\fnpurpose Iterate over all \glref{unit~instances} of the specified
+\glref{unit~classes}.
 
 \fnpackage \code{:gbbopen}
 
@@ -9139,9 +9419,9 @@ Disable all event printing:
 \unitclassesspec
 \subclassingspec
 
-\fndescription The iteration over the \glref{unit~instance}s of the specified
-\glref{unit~class}es is performed once for each \glref{unit~instance}, whether
-or not the instances reside on any \glref{space~instance}s.
+\fndescription The iteration over the \glref{unit~instances} of the specified
+\glref{unit~classes} is performed once for each \glref{unit~instance}, whether
+or not the instances reside on any \glref{space~instances}.
 
 \begin{alsos}{map-instances-on-space-instances}
 \also[class-instances-count]
@@ -9154,13 +9434,13 @@ or not the instances reside on any \glref{space~instance}s.
 \end{alsos}
 
 \fnexamples
-Delete all \glref{unit~instance}s of the class \code{hyp}:
+Delete all \glref{unit~instances} of the class \code{hyp}:
 \begin{example}
   (do-instances-of-class (instance 'hyp)
     (\entlink{delete-instance} instance))
 \end{example} 
 
-Delete all \glref{unit~instance}s of the class \code{hyp} and
+Delete all \glref{unit~instances} of the class \code{hyp} and
 instances of subclasses of \code{hyp}:
 \begin{example}
   (do-instances-of-class (instance '(hyp :plus-subclasses))
@@ -9174,17 +9454,17 @@ The consequences are unspecified if an attempt is made to add or delete a
 \glref{unit~instance} while \textbf{do-instances-of-class} is in progress.
 There is one exception to this restriction: the current \glref{unit~instance}
 in the iteration (bound to \var{var\/}) can be deleted, provided that the deletion
-does not trigger the deletion of any other \glref{unit~instance}s.  For
-example, the following form intended to delete all \glref{space~instance}s
+does not trigger the deletion of any other \glref{unit~instances}.  For
+example, the following form intended to delete all \glref{space~instances}
 violates this restriction:
 \begin{example}
    \textcolor{red}{(do-instances-of-class (space-instance '(\entlink{standard-space-instance} :plus-subclasses))
      (\entlink{delete-space-instance} space-instance))}
 \end{example}
 because deletion of a \glref{space~instance} with children automatically
-deletes those child \glref{space~instance}s.  The function
+deletes those child \glref{space~instances}.  The function
 \textbf{\entlink{delete-all-space-instances}} provides an efficient means of
-deleting all \glref{space~instance}s without violating this rule.
+deleting all \glref{space~instances} without violating this rule.
 
 \end{functiondoc}
 
@@ -9202,7 +9482,7 @@ deleting all \glref{space~instance}s without violating this rule.
 
 \fnsyntax
 
-\fnpurpose Iterate over each \glref{unit~instance} on \glref{space~instance}s,
+\fnpurpose Iterate over each \glref{unit~instance} on \glref{space~instances},
 optionally selected by a \glref{retrieval~pattern}.
 
 \fnpackage \code{:gbbopen}
@@ -9215,7 +9495,7 @@ optionally selected by a \glref{retrieval~pattern}.
 \arg[unit-classes-specifier] An \glref{extended~unit-classes~specification}
   (see below)
 \arg[space-instances] A \glref{space~instance}, a list of
-  \glref{space~instance}s, a \glref{space-instance~path} regular expression, or
+  \glref{space~instances}, a \glref{space-instance~path} regular expression, or
   \code{t} (indicating all space instances)
 \arg[pattern] A \glref{retrieval~pattern} (see below; default is \code{t})
 \arg[filter-before] A single-argument predicate to be applied before
@@ -9242,10 +9522,10 @@ optionally selected by a \glref{retrieval~pattern}.
 
 \fndescription The iteration is performed only once for each selected
 \glref{unit~instance}, even if the \glref{unit~instance} resides on multiple
-\glref{space~instance}s.
+\glref{space~instances}.
 
-The \var{pattern\/} \code{t} matches all \glref{unit~instance}s whose
-\glref{dimension~value}s overlap the \glref{dimensional~extent} of at least
+The \var{pattern\/} \code{t} matches all \glref{unit~instances} whose
+\glref{dimension~values} overlap the \glref{dimensional~extent} of at least
 one \glref{space~instance} in \var{space-instances}. The \var{pattern\/}
 \code{:all} matches every \glref{unit~instance} on a \glref{space~instance} in
 \var{space-instances}, regardless of dimensional overlap.
@@ -9271,9 +9551,9 @@ and \code{=\$\$\$} and \code{within\&}, \code{within\$\&}, \code{within\$},
 \bfindexit{delete-instance}%
 \index{events!remove-instance-from-space-instance-event@\code{remove-instance-from-space-instance-event}|itidx}%
 \bfindexit{remove-instance-from-space-instance}%
-Remove all the \code{hyp} \glref{unit~instance}s that
+Remove all the \code{hyp} \glref{unit~instances} that
 reside on the \code{(bb probable-hyps)} \glref{space~instance},
-deleting those \glref{unit~instance}s that do not reside on any other
+deleting those \glref{unit~instances} that do not reside on any other
 \glref{space~instance}:
 \begin{example}
   (let ((space-instance 
@@ -9287,7 +9567,7 @@ deleting those \glref{unit~instance}s that do not reside on any other
 
 \bfindexit{find-space-instance-by-path}%
 \bfindexit{delete-instance}%
-Delete \code{hyp} \glref{unit~instance}s that
+Delete \code{hyp} \glref{unit~instances} that
 reside on the \code{(bb probable-hyps)} \glref{space~instance} that
 have a belief value of less than 0.5:
 \begin{example}
@@ -9309,7 +9589,7 @@ have a belief value of less than 0.5:
 \fnsyntax
 
 \fnpurpose Iterate over each \glref{unit~instance} of the specified
-\glref{unit~class}es, in sorted order.
+\glref{unit~classes}, in sorted order.
 
 \fnpackage \code{:gbbopen}
 
@@ -9333,8 +9613,8 @@ have a belief value of less than 0.5:
 \subclassingspec
 
 \fndescription The iteration is performed once for each \glref{unit~instance}
-of the specified \glref{unit~class}es, whether or not the instances reside on
-any \glref{space~instance}s.
+of the specified \glref{unit~classes}, whether or not the instances reside on
+any \glref{space~instances}.
 
 \begin{alsos}{map-sorted-instances-of-class}
 \also[do-instances-of-class]
@@ -9371,7 +9651,7 @@ Print a list of all \code{hyp} instance names, in ascending order:
 \begin{args}{space-instance-regexp}
 \arg[var] A \glref{variable~symbol}
 \arg[space-instance-regexp] A \glref{space-instance~path} regular expression
-specifying the \glref{space~instance}s to be mapped over
+specifying the \glref{space~instances} to be mapped over
 \arg[declaration] A declare expression
 \arg[tag] A \code{go} tag (not evaluated)
 \arg[form] A \glref{form}
@@ -9379,13 +9659,13 @@ specifying the \glref{space~instance}s to be mapped over
 
 \fndescription 
 The \var{space-instance-regexp\/} argument is either the symbol
-\code{t} (indicating all \glref{space~instance}s) or a list
+\code{t} (indicating all \glref{space~instances}) or a list
 representing a regular expression where the following reserved symbols
 are interpreted as follows:
 \spaceinstanceregexp
 
 A \var{space-instance-regexp\/} value consisting of a list of
-\glref{space~instance}s mapped over as supplied.
+\glref{space~instances} mapped over as supplied.
 
 \begin{alsos}{find-space-instances}
 \also[find-space-instances]
@@ -9395,8 +9675,8 @@ A \var{space-instance-regexp\/} value consisting of a list of
 \fnexample 
 \bfindexit{remove-instance-from-space-instance}%
 \bfindexit{map-instances-on-space-instances}%
-Remove all \code{hyp} \glref{unit~instance}s from
-\glref{space~instance}s that are rooted at \code{(bb)}:
+Remove all \code{hyp} \glref{unit~instances} from
+\glref{space~instances} that are rooted at \code{(bb)}:
 \begin{example}
   (do-space-instances (space-instance '(bb +))
     (\entlink{do-instances-on-space-instances} (unit-instance 'hyp space-instance)
@@ -9417,7 +9697,7 @@ Remove all \code{hyp} \glref{unit~instance}s from
 \fnmodule \code{:gbbopen-core}
 
 \fndescription The class \textbf{effective-link-definition} is the default
-effective link-definition \glref{metaobject~class} of \glref{unit~class}es
+effective link-definition \glref{metaobject~class} of \glref{unit~classes}
 created by \textbf{\entlinknoex{define-unit-class}}.
 \textbf{Effective-link-definition} is a subclass of
 \textbf{\entlinknoex{gbbopen-effective-slot-definition}}.
@@ -9442,7 +9722,7 @@ created by \textbf{\entlinknoex{define-unit-class}}.
 
 \fndescription The class \textbf{effective-nonlink-slot-definition} is the
 default effective nonlink-slot-definition \glref{metaobject~class} of
-\glref{unit~class}es created by \textbf{\entlinknoex{define-unit-class}}.
+\glref{unit~classes} created by \textbf{\entlinknoex{define-unit-class}}.
 \textbf{Effective-nonlink-slot-definition} is a subclass of
 \textbf{\entlinknoex{gbbopen-effective-slot-definition}}.
 
@@ -9467,7 +9747,7 @@ default effective nonlink-slot-definition \glref{metaobject~class} of
 
 \fnsyntax
 
-\fnpurpose Enable the printing of events for one or more \glref{event~class}es.
+\fnpurpose Enable the printing of events for one or more \glref{event~classes}.
 
 \fnpackage \code{:gbbopen}
 
@@ -9495,7 +9775,7 @@ default effective nonlink-slot-definition \glref{metaobject~class} of
 
 \fndescription 
 The \var{paths\/} argument is either the symbol \code{t} (indicating
-all \glref{space~instance}s) or a list representing a regular
+all \glref{space~instances}) or a list representing a regular
 expression where the following reserved symbols are interpreted as
 follows:
 \spaceinstanceregexp
@@ -9509,7 +9789,7 @@ follows:
 
 \fnexample
 Enable event printing on all \glref{space-instance} events of
-\code{hyp} \glref{unit~instance}s:
+\code{hyp} \glref{unit~instances}:
 \begin{example}
   (enable-event-printing '(space-instance-event :plus-subevents)
                          '(hyp :plus-subclasses))
@@ -9537,7 +9817,7 @@ evaluating them to \code{*trace-output*}.
 
 \fnargs
 \begin{args}{results}
-\arg[forms] An implicit \textbf{progn} of \glref{form}s to be
+\arg[forms] An implicit \textbf{progn} of \glref{forms} to be
 evaluated and printed  
 \end{args}
 
@@ -9622,8 +9902,8 @@ greater than one-half of its width will always result in a zero-width
 
 \fnsyntax
 
-\fnpurpose Select matching \glref{unit~instance}s from a list of
-\glref{unit~instance}s based on a \glref{retrieval~pattern}.
+\fnpurpose Select matching \glref{unit~instances} from a list of
+\glref{unit~instances} based on a \glref{retrieval~pattern}.
 
 \fnpackage \code{:gbbopen}
 
@@ -9631,7 +9911,7 @@ greater than one-half of its width will always result in a zero-width
 
 \fnargs
 \begin{args}{unit-instances}
-\arg[unit-instances] A list of \glref{unit~instance}s
+\arg[unit-instances] A list of \glref{unit~instances}
 \arg[pattern] A \glref{retrieval~pattern} (see below)
 \arg[filter-before] A single-argument predicate to be applied before
 pattern-matching tests occur
@@ -9641,7 +9921,7 @@ applied after pattern-matching tests occur
 
 \index{pattern!specification!filter-instances@\textbf{filter-instances}}%
 \index{filter-instances@\textbf{filter-instances}!pattern specification}%
-\fnreturns A newly consed list of \glref{unit~instance}s that satisfy
+\fnreturns A newly consed list of \glref{unit~instances} that satisfy
 the specified pattern and predicate filters.
 
 \fndsyntax
@@ -9714,9 +9994,9 @@ the specified class if one exists; \nil{} otherwise.
 (\code{eq}, \code{eql}, \code{equal}, or \code{equalp}) specified in
 \textbf{\entlink{define-unit-class}} is used to match \var{name\/}
 with the \glref{unit-instance} name.  If you are using strings as the
-names of \glref{unit~instance}s, you should specify \code{equal} or
-\code{equalp} as the comparision function in the \glref{unit~class}es
-of those \glref{unit~instance}s.
+names of \glref{unit~instances}, you should specify \code{equal} or
+\code{equalp} as the comparision function in the \glref{unit~classes}
+of those \glref{unit~instances}.
 
 \begin{alsos}{define-unit-class}
 \also[define-unit-class]
@@ -9746,8 +10026,8 @@ Find the \code{hyp} \glref{unit~instance} 119:
 
 \fnsyntax
 
-\fnpurpose Retrieve \glref{unit~instance}s from
-\glref{space~instance}s based on a \glref{retrieval~pattern}.
+\fnpurpose Retrieve \glref{unit~instances} from
+\glref{space~instances} based on a \glref{retrieval~pattern}.
 
 \fnpackage \code{:gbbopen}
 
@@ -9758,8 +10038,8 @@ Find the \code{hyp} \glref{unit~instance} 119:
 \arg[unit-classes-specifier] An \glref{extended~unit-classes~specification}
   (see below)
 \arg[space-instances] A \glref{space~instance}, a list of
-  \glref{space~instance}s, a \glref{space-instance~path} regular expression,
-  or \code{t} (indicating all \glref{space~instance}s)
+  \glref{space~instances}, a \glref{space-instance~path} regular expression,
+  or \code{t} (indicating all \glref{space~instances})
 
 \arg[pattern] A \glref{retrieval~pattern} (see below)
 
@@ -9773,7 +10053,7 @@ Find the \code{hyp} \glref{unit~instance} 119:
 \fnreturns 
 \index{pattern!specification!find-instances@\textbf{find-instances}}%
 \index{find-instances@\textbf{find-instances}!pattern specification}%
-A newly consed list of \glref{unit~instance}s specified by
+A newly consed list of \glref{unit~instances} specified by
 \var{unit-class-specifier\/} that reside on \var{space-instances} and
 satisfy the specified \var{pattern\/} and any predicate filters.
 
@@ -9789,7 +10069,7 @@ satisfy the specified \var{pattern\/} and any predicate filters.
 \patternterms
 
 \fndescription The \var{pattern\/} \code{t} matches all
-\glref{unit~instance}s whose \glref{dimension~value}s overlap the
+\glref{unit~instances} whose \glref{dimension~values} overlap the
 \glref{dimensional~extent} of at least one \glref{space~instance} in
 \var{space-instances}. The \var{pattern\/} \code{:all} matches every
 \glref{unit~instance} on a \glref{space~instance} in
@@ -9849,8 +10129,8 @@ and \code{=\$\$\$} and \code{within\&}, \code{within\$\&}, \code{within\$},
 
 \fnsyntax
 
-\fnpurpose Return a list of all \glref{unit~instance}s of the
-specified \glref{unit~class}es.
+\fnpurpose Return a list of all \glref{unit~instances} of the
+specified \glref{unit~classes}.
 
 \fnpackage \code{:gbbopen}
 
@@ -9866,8 +10146,8 @@ specified \glref{unit~class}es.
 \fnreturns
 \index{pattern!specification!find-instances@\textbf{find-instances}}%
 \index{find-instances@\textbf{find-instances}!pattern specification}%
-A newly consed list of all \glref{unit~instance}s of the
-\glref{unit~class}es specified by \var{unit-class-specifier\/},
+A newly consed list of all \glref{unit~instances} of the
+\glref{unit~classes} specified by \var{unit-class-specifier\/},
 whether or not they reside on any \glref{space~instance}.
 
 \fndsyntax
@@ -9883,7 +10163,7 @@ whether or not they reside on any \glref{space~instance}.
 \end{alsos}
 
 \fnexample
-Return the list of all \code{hyp} \glref{unit~instance}s:
+Return the list of all \code{hyp} \glref{unit~instances}:
 \begin{example}
 > (find-instances-of-class 'hyp)
 (#<hyp 319 (1835 8419) .91>
@@ -9943,7 +10223,7 @@ Find the \glref{space~instance} with path \code{(bb hyps)}:
 
 \fnsyntax
 
-\fnpurpose Return the \glref{space~instance}s that match a
+\fnpurpose Return the \glref{space~instances} that match a
 \glref{path-expression} pattern.
 
 \fnpackage \code{:gbbopen}
@@ -9953,23 +10233,23 @@ Find the \glref{space~instance} with path \code{(bb hyps)}:
 \fnargs
 \begin{args}{space-instance-regexp}
 \arg[space-instance-regexp] A \glref{space-instance~path} regular expression
-specifying the \glref{space~instance}s to be returned 
+specifying the \glref{space~instances} to be returned 
 \end{args}
 
-\fnreturns The specified \glref{space~instance}s.
+\fnreturns The specified \glref{space~instances}.
 
 \fndescription 
 \index{space instance!returning all}%
 The \var{space-instance-regexp\/} argument is either the symbol
-\code{t} (indicating all \glref{space~instance}s) or a list
+\code{t} (indicating all \glref{space~instances}) or a list
 representing a regular expression where the following reserved symbols
 are interpreted as follows: 
 \spaceinstanceregexp
 Thus both \code{(find-space-instances '(*))} and
-\code{(find-space-instances 't)} return all \glref{space~instance}s.
+\code{(find-space-instances 't)} return all \glref{space~instances}.
 
 A \var{space-instance-regexp\/} value consisting of a list of
-\glref{space~instance}s is returned unchanged.
+\glref{space~instances} is returned unchanged.
 
 \begin{alsos}{find-space-instance-by-path}
 \also[find-space-instance-by-path]
@@ -9977,7 +10257,7 @@ A \var{space-instance-regexp\/} value consisting of a list of
 \end{alsos}
 
 \fnexamples
-Return the \glref{space~instance}s that are rooted at \code{(bb)}:
+Return the \glref{space~instances} that are rooted at \code{(bb)}:
 \begin{example}
 > (find-space-instances '(bb +))
 (#<standard-space-instance (bb hyps)>
@@ -9985,7 +10265,7 @@ Return the \glref{space~instance}s that are rooted at \code{(bb)}:
  #<standard-space-instance (bb rejected-hyps)>)
 \end{example}
 
-Return all the \glref{space~instance}s \code{(bb)} and below:
+Return all the \glref{space~instances} \code{(bb)} and below:
 \begin{example}
 > (find-space-instances '(bb *))
 (#<standard-space-instance (bb hyps)>
@@ -10175,7 +10455,7 @@ Return the name of a \glref{unit~instance}.
 
 \fnexamples
 \bfindexit{find-instance-by-name}%
-Return the names of the \glref{unit~instance}s supporting
+Return the names of the \glref{unit~instances} supporting
 \code{hyp} \glref{unit~instance} \code{180}:
 \begin{example}
 > (mapcar #'instance-name-of 
@@ -10289,7 +10569,7 @@ Change the name of \code{hyp} \code{180} to \code{"bogus-180"}:
 \fnsyntax
 
 \fnpurpose Add a \glref{link} between a \glref{unit~instance} and one
-or more \glref{unit~instance}s.
+or more \glref{unit~instances}.
 
 \fnpackage \code{:gbbopen}
 
@@ -10300,7 +10580,7 @@ or more \glref{unit~instance}s.
 \arg[\glref{link-slot-place}] A form which is suitable for use as a
 \glref{generalized~reference} to a \glref{link~slot}
 \arg[unit-instance-or-instances] A \glref{unit~instance} or a
-list of \glref{unit~instance}s
+list of \glref{unit~instances}
 \end{args}
 
 \fnreturns The supplied \var{unit-instance-or-instances}.
@@ -10347,7 +10627,7 @@ A \code{link-event} is signaled for:
 \fnsyntax
 
 \fnpurpose Set \var{\glref{link-slot-place}\/} to be precisely
-\var{unit-instance-or-instances\/} \glref{link}s between
+\var{unit-instance-or-instances\/} \glref{links} between
 \glref{unit~instance} and \var{unit-instance-or-instances}.
 
 \fnpackage \code{:gbbopen}
@@ -10359,7 +10639,7 @@ A \code{link-event} is signaled for:
 \arg[\glref{link-slot-place}] A form which is suitable for use as a
 \glref{generalized~reference} to a \glref{link~slot}
 \arg[unit-instance-or-instances] A \glref{unit~instance} or a
-list of \glref{unit~instance}s
+list of \glref{unit~instances}
 \end{args}
 
 \fnreturns The supplied \var{unit-instance-or-instances}.
@@ -10385,10 +10665,10 @@ A \code{link-event} is signaled for:
   another \glref{unit~instance}
 \end{tightitemize}
 
-\fndescription Any existing \glref{link}s in
+\fndescription Any existing \glref{links} in
 \var{\glref{link-slot-place}} that do not involve
-\var{unit-instance-or-instances\/} are unlinked.  Then \glref{link}s
-to any additional \glref{unit~instance}s in
+\var{unit-instance-or-instances\/} are unlinked.  Then \glref{links}
+to any additional \glref{unit~instances} in
 \var{unit-instance-or-instances\/} are added.
 
 \begin{alsos}{unlinkf-all}
@@ -10398,7 +10678,7 @@ to any additional \glref{unit~instance}s in
 \end{alsos}
 
 \fnexample Set the \code{supporting-hyps} \glref{link~slot} of the
-\code{hyp} \glref{unit~instance} to the \glref{unit~instance}s in
+\code{hyp} \glref{unit~instance} to the \glref{unit~instances} in
 \code{supporting-hyps}:
 \begin{example}
 > (link-setf (supporting-hyps-of unit-instance) supporting-hyps)
@@ -10556,7 +10836,7 @@ Create a new \code{hyp} \glref{unit~instance}:
 \fnnotes 
 \bfindexit{make-space-instance}%
 The function \textbf{\entlinknoex{make-space-instance}} provides a clear and
-convenient shorthand for creating \glref{space~instance}s.
+convenient shorthand for creating \glref{space~instances}.
 
 \end{functiondoc}
 
@@ -10659,7 +10939,7 @@ associated with the \glref{space~class}.
 
 \fnexamples
 Create a top-level \glref{space~instance}, \code{bb},
-that cannot store any \glref{unit~instance}s:
+that cannot store any \glref{unit~instances}:
 \begin{example}
 > (make-space-instance '(bb) 
      :allowed-unit-classes nil)
@@ -10667,9 +10947,9 @@ that cannot store any \glref{unit~instance}s:
 \end{example}
 
 \bfindexit{unit-class-dimensions}%
-Now create a \glref{space~instance} for \code{hyp} \glref{unit~instance}s,
+Now create a \glref{space~instance} for \code{hyp} \glref{unit~instances},
 named \code{hyps}, as a child of \code{bb}, with uniform, 100-wide, bucket
-storage for indexing \glref{unit~instance}s with dimensional values between 
+storage for indexing \glref{unit~instances} with dimensional values between 
 0--10,000 in the \code{x} and \code{y} dimensions:
 \begin{example}
 > (make-space-instance '(bb hyps)
@@ -10683,7 +10963,7 @@ storage for indexing \glref{unit~instance}s with dimensional values between
 
 \W\\
 Here is an improved \glref{space~instance} for \code{hyp}
-\glref{unit~instance}s named \code{hyps}, with both uniform-bucket storage for
+\glref{unit~instances} named \code{hyps}, with both uniform-bucket storage for
 indexing in the \code{x} and \code{y} dimensions and hashed storage using
 \code{eq} to retrive match candidates via \code{classification}
 dimensional values:
@@ -10711,7 +10991,7 @@ dimensional values:
 \fnsyntax
 
 \fnpurpose Apply a \glref{function} once to each \glref{unit~instance} of the
-specified \glref{unit~class}es. 
+specified \glref{unit~classes}. 
 
 \fnpackage \code{:gbbopen}
 
@@ -10729,8 +11009,8 @@ specified \glref{unit~class}es.
 \subclassingspec
 
 \fndescription The specified \glref{function} is applied once to each
-\glref{unit~instance} of the specified \glref{unit~class}es, whether
-or not the instances reside on any \glref{space~instance}s.
+\glref{unit~instance} of the specified \glref{unit~classes}, whether
+or not the instances reside on any \glref{space~instances}.
 
 \begin{alsos}{map-instances-on-space-instances}
 \also[class-instances-count]
@@ -10742,12 +11022,12 @@ or not the instances reside on any \glref{space~instance}s.
 \end{alsos}
 
 \fnexamples
-Delete all \glref{unit~instance}s of the class \code{hyp}:
+Delete all \glref{unit~instances} of the class \code{hyp}:
 \begin{example}
   (map-instances-of-class #'\entlink{delete-instance} 'hyp)
 \end{example} 
 
-Delete all \glref{unit~instance}s of the class \code{hyp} and
+Delete all \glref{unit~instances} of the class \code{hyp} and
 instances of subclasses of \code{hyp}:
 \begin{example}
   (map-instances-of-class #'\entlink{delete-instance} '(hyp :plus-subclasses))
@@ -10760,16 +11040,16 @@ The consequences are unspecified if an attempt is made to add or delete a
 \glref{unit~instance} while \textbf{map-instances-of-class} is in progress.
 There is one exception to this restriction: \var{function\/} may delete its
 \glref{unit~instance} argument, provided that deletion does not trigger the
-deletion of any other \glref{unit~instance}s.  For example, the following
-form intended to delete all \glref{space~instance}s violates this restriction:
+deletion of any other \glref{unit~instances}.  For example, the following
+form intended to delete all \glref{space~instances} violates this restriction:
 \begin{example}
    \textcolor{red}{(map-instances-of-class 
      #'\entlink{delete-space-instance} '(\entlink{standard-space-instance} :plus-subclasses))}
 \end{example}
 because deletion of a \glref{space~instance} with children automatically
-deletes those child \glref{space~instance}s.  The function
+deletes those child \glref{space~instances}.  The function
 \textbf{\entlink{delete-all-space-instances}} provides an efficient means of
-deleting all \glref{space~instance}s without violating this rule.
+deleting all \glref{space~instances} without violating this rule.
 
 \end{functiondoc}
 
@@ -10787,7 +11067,7 @@ deleting all \glref{space~instance}s without violating this rule.
 \fnsyntax
 
 \fnpurpose Apply a \glref{function} once to each \glref{unit~instance} on
-\glref{space~instance}s, optionally selected by a
+\glref{space~instances}, optionally selected by a
 \glref{retrieval~pattern}. 
 
 \fnpackage \code{:gbbopen}
@@ -10800,7 +11080,7 @@ deleting all \glref{space~instance}s without violating this rule.
 \arg[unit-classes-specifier] An \glref{extended~unit-classes~specification}
   (see below)
 \arg[space-instances] A \glref{space~instance}, a list of
-  \glref{space~instance}s, a \glref{space-instance~path} regular expression, or
+  \glref{space~instances}, a \glref{space-instance~path} regular expression, or
   \code{t} (indicating all space instances)
 \arg[pattern] A \glref{retrieval~pattern} (see below; default is \code{t})
 \arg[filter-before] A single-argument predicate to be applied before
@@ -10824,10 +11104,10 @@ deleting all \glref{space~instance}s without violating this rule.
 
 \fndescription The \var{function\/} will be applied only once to each
 \glref{unit~instance}, even if the \glref{unit~instance} resides on
-multiple \glref{space~instance}s.
+multiple \glref{space~instances}.
 
-The \var{pattern\/} \code{t} matches all \glref{unit~instance}s whose
-\glref{dimension~value}s overlap the \glref{dimensional~extent} of at
+The \var{pattern\/} \code{t} matches all \glref{unit~instances} whose
+\glref{dimension~values} overlap the \glref{dimensional~extent} of at
 least one \glref{space~instance} in \var{space-instances}. The
 \var{pattern\/} \code{:all} matches every \glref{unit~instance} on a
 \glref{space~instance} in \var{space-instances}, regardless of
@@ -10854,9 +11134,9 @@ and \code{=\$\$\$} and \code{within\&}, \code{within\$\&}, \code{within\$},
 \bfindexit{delete-instance}%
 \index{events!remove-instance-from-space-instance-event@\code{remove-instance-from-space-instance-event}|itidx}%
 \bfindexit{remove-instance-from-space-instance}%
-Remove all the \code{hyp} \glref{unit~instance}s that
+Remove all the \code{hyp} \glref{unit~instances} that
 reside on the \code{(bb probable-hyps)} \glref{space~instance},
-deleting those \glref{unit~instance}s that do not reside on any other
+deleting those \glref{unit~instances} that do not reside on any other
 \glref{space~instance}:
 \begin{example}
   (let ((space-instance 
@@ -10872,7 +11152,7 @@ deleting those \glref{unit~instance}s that do not reside on any other
 
 \bfindexit{find-space-instance-by-path}%
 \bfindexit{delete-instance}%
-Delete \code{hyp} \glref{unit~instance}s that
+Delete \code{hyp} \glref{unit~instances} that
 reside on the \code{(bb probable-hyps)} \glref{space~instance} that
 have a belief value of less than 0.5:
 \begin{example}
@@ -10893,7 +11173,7 @@ have a belief value of less than 0.5:
 \fnsyntax
 
 \fnpurpose Apply a \glref{function} once to each \glref{unit~instance}
-of the specified \glref{unit~class}es, in sorted order.
+of the specified \glref{unit~classes}, in sorted order.
 
 \fnpackage \code{:gbbopen}
 
@@ -10914,8 +11194,8 @@ of the specified \glref{unit~class}es, in sorted order.
 \subclassingspec
 
 \fndescription  The specified \glref{function} is applied once to each
-\glref{unit~instance} of the specified \glref{unit~class}es, whether
-or not the instances reside on any \glref{space~instance}s.
+\glref{unit~instance} of the specified \glref{unit~classes}, whether
+or not the instances reside on any \glref{space~instances}.
 
 \begin{alsos}{do-sorted-instances-of-class}
 \also[do-sorted-instances-of-class]
@@ -10951,18 +11231,18 @@ Print a list of all \code{hyp} instance names, in ascending order:
 \begin{args}{space-instance-regexp}
 \arg[function] A \glref{function} of one argument
 \arg[space-instance-regexp] A \glref{space-instance~path} regular expression
-specifying the \glref{space~instance}s to be mapped over
+specifying the \glref{space~instances} to be mapped over
 \end{args}
 
 \fndescription 
 The \var{space-instance-regexp\/} argument is either the symbol
-\code{t} (indicating all \glref{space~instance}s) or a list
+\code{t} (indicating all \glref{space~instances}) or a list
 representing a regular expression where the following reserved symbols
 are interpreted as follows:
 \spaceinstanceregexp
 
 A \var{space-instance-regexp\/} value consisting of a list of
-\glref{space~instance}s mapped over as supplied.
+\glref{space~instances} mapped over as supplied.
 
 \begin{alsos}{find-space-instances}
 \also[do-space-instances]
@@ -10972,8 +11252,8 @@ A \var{space-instance-regexp\/} value consisting of a list of
 \fnexample 
 \bfindexit{remove-instance-from-space-instance}%
 \bfindexit{map-instances-on-space-instances}%
-Remove all \code{hyp} \glref{unit~instance}s from
-\glref{space~instance}s that are rooted at \code{(bb)}:
+Remove all \code{hyp} \glref{unit~instances} from
+\glref{space~instances} that are rooted at \code{(bb)}:
 \begin{example}
   (map-space-instances 
     #'(lambda (space-instance)
@@ -11001,7 +11281,7 @@ Remove all \code{hyp} \glref{unit~instance}s from
 
 \fnsyntax
 
-\fnpurpose Remove all \glref{event~function}s for one or more \glref{event~class}es.
+\fnpurpose Remove all \glref{event~functions} for one or more \glref{event~classes}.
 
 \fnpackage \code{:gbbopen}
 
@@ -11067,7 +11347,7 @@ its subclasses:
 
 \fnsyntax
 
-\fnpurpose Remove an \glref{event~function} for one or more \glref{event~class}es.
+\fnpurpose Remove an \glref{event~function} for one or more \glref{event~classes}.
 
 \fnpackage \code{:gbbopen}
 
@@ -11259,7 +11539,7 @@ report is displayed.
 
 \fnsyntax
 
-\fnpurpose Delete all \glref{unit~instance}s, \glref{space~instance}s,
+\fnpurpose Delete all \glref{unit~instances}, \glref{space~instances},
 and more.
 
 \fnpackage \code{:gbbopen}
@@ -11286,7 +11566,7 @@ and more.
 \codeindexit{delete-instance-event}%
 \codeindexit{instance-deleted-event}%
 If \var{disable-events} is \nil, the following events may be signaled as
-\glref{unit~instance}s and \glref{space~instance}s are deleted:
+\glref{unit~instances} and \glref{space~instances} are deleted:
 \begin{tightitemize}
 \item \code{unlink-event}
 \item \code{remove-instance-from-space-instance-event}
@@ -11298,7 +11578,7 @@ If \var{disable-events} is \nil, the following events may be signaled as
 \unitclassesspec
 
 \fndescription Calling \textbf{reset-gbbopen} deletes all
-\glref{unit~instance}s and \glref{space~instance}s, disables all event
+\glref{unit~instances} and \glref{space~instances}, disables all event
 printing, removes all event functions, and resets all
 \glref{unit-class} instance-name counters to 1.  \textbf{Reset-gbbopen}
 does not undefine any class definitions, functions, methods, etc.
@@ -11310,14 +11590,14 @@ does not undefine any class definitions, functions, methods, etc.
 \end{alsos}
 
 \fnexamples
-Delete all \glref{unit~instance}s and \glref{space~instance}s, with
+Delete all \glref{unit~instances} and \glref{space~instances}, with
 event-signaling disabled:
 \begin{example}
   (reset-gbbopen)
 \end{example}
 
-Delete all \glref{unit~instance}s and \glref{space~instance}s, except for
-\glref{KS} \glref{unit~instance}s, with event-signaling disabled:
+Delete all \glref{unit~instances} and \glref{space~instances}, except for
+\glref{KS} \glref{unit~instances}, with event-signaling disabled:
 \begin{example}
   (reset-gbbopen :retain-classes '((ks :plus-subclasses)))
 \end{example}
@@ -11336,7 +11616,7 @@ This is the only GBBopen \glref{function} that disables \glref{event}
 signaling by default.  This conflicts with the normal use of
 \textbf{\entlinknoex{with-events-disabled}} and
 \textbf{\entlinknoex{with-events-enabled}} macros for controlling
-\glref{event} signaling, but having \glref{event}s disabled is the desired
+\glref{event} signaling, but having \glref{events} disabled is the desired
 behavior in almost every reset situation.
 
 \end{functiondoc}
@@ -11373,7 +11653,7 @@ but only if the \glref{unit~class} is not abstract and if there are no
 existing instances of that class.  If instances do exist, a warning is
 issued.
 
-\fnexample Reset the instance-name counters of all \glref{unit-class}es
+\fnexample Reset the instance-name counters of all \glref{unit~classes}
 to 1:
 \begin{example}
 > (reset-unit-class 't)
@@ -11401,7 +11681,7 @@ that class exist.
 \fnsyntax
 
 \fnpurpose Resume the printing of printing-enabled events for one or more
-\glref{event~class}es. 
+\glref{event~classes}. 
 
 \fnpackage \code{:gbbopen}
 
@@ -11429,7 +11709,7 @@ that class exist.
 
 \fndescription 
 The \var{paths\/} argument is either the symbol \code{t} (indicating
-all \glref{space~instance}s) or a list representing a regular
+all \glref{space~instances}) or a list representing a regular
 expression where the following reserved symbols are interpreted as
 follows:
 \spaceinstanceregexp
@@ -11612,7 +11892,7 @@ Return the child space instances  of the \code{(bb)} \glref{space~instance}:
 
 \fnsyntax
 
-\fnpurpose Return the \glref{dimension}s of a \glref{space~instance}.
+\fnpurpose Return the \glref{dimensions} of a \glref{space~instance}.
 
 \fnmethods
 \fnalternate{space-instance-dimensions}%
@@ -11637,7 +11917,7 @@ Return the child space instances  of the \code{(bb)} \glref{space~instance}:
 
 \fnexample
 \bfindexit{find-space-instance-by-path}%
-Return the \glref{dimension}s of the \code{(bb hyps)} \glref{space~instance}:
+Return the \glref{dimensions} of the \code{(bb hyps)} \glref{space~instance}:
 \begin{example}
 > (space-instance-dimensions (\entlink{find-space-instance-by-path} '(bb hyps))
 ((x :ordered) (y :ordered) (belief :ordered) (classification :enumerated))
@@ -11721,7 +12001,7 @@ Return the siblings of the \code{(bb)} \glref{space~instance}:
 
 \fnsyntax
 
-\fnpurpose Obtain the \glref{space~instance}s on which a
+\fnpurpose Obtain the \glref{space~instances} on which a
 \glref{unit~instance} resides. 
 
 \fnpackage \code{:gbbopen}
@@ -11733,18 +12013,18 @@ Return the siblings of the \code{(bb)} \glref{space~instance}:
 \arg[unit-instance] A \glref{unit~instance}
 \end{args}
 
-\fnreturns The list of \glref{space~instance}s on which
+\fnreturns The list of \glref{space~instances} on which
 \var{unit-instance\/} resides.
 
 \fnexample
-Return the \glref{space~instance}s on which the \glref{unit~instance},
+Return the \glref{space~instances} on which the \glref{unit~instance},
 \code{unit-instance}, resides:
 \begin{example}
 > (space-instances-of unit-instance)
 (#<standard-space-instance (bb hyps)>)
 \end{example}
 
-\fnnotes The returned list of \glref{space~instance}s should not be
+\fnnotes The returned list of \glref{space~instances} should not be
 destructively altered.
 
 \end{functiondoc}
@@ -11855,7 +12135,7 @@ rectangles are abstract classes that cannot be signalled.
 \bfindexit{define-space-class}%
 \bfindexit{standard-unit-class}%
 The class \textbf{standard-space-class} is the default class of
-\glref{space~class}es defined by \textbf{\entlinknoex{define-space-class}}.
+\glref{space~classes} defined by \textbf{\entlinknoex{define-space-class}}.
 It is a subclass of \textbf{\entlinknoex{standard-unit-class}}.
 
 \begin{alsos}{standard-space-instance}
@@ -11880,7 +12160,7 @@ It is a subclass of \textbf{\entlinknoex{standard-unit-class}}.
 \fndescription \bfindexit{make-space-instance}%
 \bfindexit{standard-unit-instance}%
 The class \textbf{standard-space-instance} is the default \glref{class} of
-\glref{instance}s created by \textbf{\entlinknoex{make-space-instance}}.  A
+\glref{instances} created by \textbf{\entlinknoex{make-space-instance}}.  A
 \glref{space~instance} is also a \glref{unit~instance}, so
 \textbf{standard-space-instance} is a subclass of
 \textbf{\entlinknoex{standard-unit-instance}}.
@@ -11967,7 +12247,7 @@ A \glref{space~instance} is also a \glref{unit~instance}, so
 \fnsyntax
 
 \fnpurpose Suspend the printing of printing-enabled events for one or more
-\glref{event~class}es. 
+\glref{event~classes}. 
 
 \fnpackage \code{:gbbopen}
 
@@ -12000,7 +12280,7 @@ Disabled event printing remains disabled if event printing is
 resumed (by using \textbf{\entlinknoex{resume-event-printing}}).
 
 The \var{paths\/} argument is either the symbol \code{t} (indicating
-all \glref{space~instance}s) or a list representing a regular
+all \glref{space~instances}) or a list representing a regular
 expression where the following reserved symbols are interpreted as
 follows:
 \spaceinstanceregexp
@@ -12014,7 +12294,7 @@ follows:
 
 \fnexample
 Suspend all event printing associated with \code{possible-hyp}
-\glref{unit~instance}s: 
+\glref{unit~instances}: 
 \begin{example}
   (suspend-event-printing 't 'possible-hyp)
 \end{example}
@@ -12052,7 +12332,7 @@ of a \glref{unit~class}.
 \fnargs
 \begin{args}{unit-classes-specifier}
   \arg[unit-classes-specifier] An \glref{extended~unit-classes~specification}
-  or a list of \glref{extended~unit-classes~specification}s
+  or a list of \glref{extended~unit-classes~specifications}
 \end{args}
 
 \fnreturns A list of \glref{dimension~name}, \glref{dimension~type} pairs.
@@ -12063,7 +12343,7 @@ of a \glref{unit~class}.
 \end{alsos}
 
 \fnexample
-Return the \glref{dimension}s defined for instances of
+Return the \glref{dimensions} defined for instances of
 \glref{unit~class} \code{hyp}: 
 \begin{example}
 > (unit-class-dimensions 'hyp)
@@ -12083,7 +12363,7 @@ Return the \glref{dimension}s defined for instances of
 \fnsyntax
 
 \fnpurpose Remove a \glref{link} between a \glref{unit~instance} and one
-or more \glref{unit~instance}s.
+or more \glref{unit~instances}.
 
 \fnpackage \code{:gbbopen}
 
@@ -12094,7 +12374,7 @@ or more \glref{unit~instance}s.
 \arg[\glref{link-slot-place}] A form which is suitable for use as a
 \glref{generalized~reference} to a \glref{link~slot}
 \arg[unit-instance-or-instances] A \glref{unit~instance} or a
-list of \glref{unit~instance}s
+list of \glref{unit~instances}
 \end{args}
 
 \fnreturns The supplied \var{unit-instance-or-instances}.
@@ -12135,7 +12415,7 @@ An \code{unlink-event} is signaled for:
 
 \fnsyntax
 
-\fnpurpose Remove all the \glref{link}s in the specified
+\fnpurpose Remove all the \glref{links} in the specified
 \glref{link~slot}.
 
 \fnpackage \code{:gbbopen}
@@ -12167,7 +12447,7 @@ An \code{unlink-event} is signaled for:
 \end{alsos}
 
 \fnexample
-Remove all supporting hypothesis \glref{link}s from the
+Remove all supporting hypothesis \glref{links} from the
 \code{supporting-hyps} \glref{link~slot} of the \code{hyp}
 \glref{unit~instance} \code{unit-instance}:  
 \begin{example}
@@ -12202,7 +12482,7 @@ Remove all supporting hypothesis \glref{link}s from the
 \arg[dimension-name] A symbol specifying a \glref{dimension} of
   \var{unit-instance} 
 \arg[declaration] A declare expression
-\arg[forms] An implicit \textbf{progn} of \glref{form}s to be evaluated
+\arg[forms] An implicit \textbf{progn} of \glref{forms} to be evaluated
 \end{args}
 
 \fnreturns The values returned by evaluating the last \var{form}.
@@ -12216,9 +12496,9 @@ Retrievals performed by separate threads also should be synchronized with
 \textbf{with-changing-dimension-values}.
 
 If \var{dimension-names\/} are specified, only the indexes for those
-\glref{dimension}s of \var{unit-instance\/} will be updated. If no
+\glref{dimensions} of \var{unit-instance\/} will be updated. If no
 \var{dimension-names\/} are specified, the values of any or all
-\glref{dimension}s of \var{unit-instance\/} are assumed to have been
+\glref{dimensions} of \var{unit-instance\/} are assumed to have been
 potentially changed by \var{forms}.
 
 \fnexamples Notify GBBopen that the \code{x}, \code{y}, and \code{belief}
@@ -12260,7 +12540,7 @@ Notify GBBopen that some dimension values of \code{hyp} might be changed:
 \begin{args}{options}
 \arg[option] No options are currently supported
 \arg[declaration] A declare expression
-\arg[forms] An implicit \textbf{progn} of \glref{form}s to be evaluated
+\arg[forms] An implicit \textbf{progn} of \glref{forms} to be evaluated
 \end{args}
 
 \fnreturns The values returned by evaluating the last \var{form}.
@@ -12307,7 +12587,7 @@ Create a \code{hyp} without signaling any events:
 \begin{args}{options}
 \arg[option] No options are currently supported
 \arg[declaration] A declare expression
-\arg[forms] An implicit \textbf{progn} of \glref{form}s to be evaluated
+\arg[forms] An implicit \textbf{progn} of \glref{forms} to be evaluated
 \end{args}
 
 \fnreturns The values returned by evaluating the last \var{form}.
@@ -12365,7 +12645,7 @@ Record and optionally display retrieval statistics for
 \arg[initialize] A \glref{generalized~boolean}(default is \code{t})
 \arg[report] A \glref{generalized~boolean}(default is \code{t})
 \arg[declaration] A declare expression
-\arg[forms] An implicit \textbf{progn} of \glref{form}s to be evaluated
+\arg[forms] An implicit \textbf{progn} of \glref{forms} to be evaluated
 \end{args}
 
 \fnreturns The values returned by evaluating the last \var{form}.
@@ -12421,7 +12701,7 @@ Disable the collecting of retrieval statistics while executing \var{forms}.
 \fnargs
 \begin{args}{forms}
 \arg[declaration] A declare expression
-\arg[forms] An implicit \textbf{progn} of \glref{form}s to be evaluated
+\arg[forms] An implicit \textbf{progn} of \glref{forms} to be evaluated
 \end{args}
 
 \fnreturns The values returned by evaluating the last \var{form}.
@@ -12554,8 +12834,8 @@ Return the activation cycle of \code{ksa}:
 
 \fnsyntax
 
-\fnpurpose Return the trigger \glref{unit~instance}s of a \glref{KSA},
-\glref{event}, or a list of \glref{KSA}s or \glref{event}s
+\fnpurpose Return the trigger \glref{unit~instances} of a \glref{KSA},
+\glref{event}, or a list of \glref{KSAs} or \glref{events}
 
 \fnmethods
 \fnalternate{collect-trigger-instances}%
@@ -12581,17 +12861,17 @@ Return the activation cycle of \code{ksa}:
 \fnargs
 \begin{args}{source}
 \arg[source] A \glref{KSA}, \glref{event},
-or a list of \glref{KSA}s or \glref{event}s
+or a list of \glref{KSAs} or \glref{events}
 \end{args}
 
-\fnreturns The list of trigger \glref{unit~instance}s
+\fnreturns The list of trigger \glref{unit~instances}
   
 \begin{alsos}{sole-trigger-instance-of}
 \also[sole-trigger-instance-of]
 \end{alsos}
 
 \fnexample
-Return the trigger \glref{unit~instance}s of a KSA:
+Return the trigger \glref{unit~instances} of a KSA:
 \begin{example}
 > (collect-trigger-instances ksa)
 (#<hyp 119 (1835 4791) .85>
@@ -12682,7 +12962,7 @@ not evaluated)
 
 \fndescription
 A \glref{KS} definition creates a \glref{unit~instance} of class
-\var{ks-class\/} which specifies how \glref{activation}s of the \glref{KS} are
+\var{ks-class\/} which specifies how \glref{activations} of the \glref{KS} are
 created and executed.  The lifetime of each \glref{KS~activation} involves the
 following sequence:
 
@@ -12702,14 +12982,14 @@ following sequence:
   current control-shell cycle number is stored in the \code{activation-cycle}
   slot of the \glref{KSA} \glref{unit~instance}.
 \item The \glref{KSA} is placed on the queue of
-  \glref{pending~KS~activation}s.
+  \glref{pending~KSAs}.
 \item If an \glref{event} matching one of the event specifications in
   \var{obviation-events\/} occurs, the \var{obviation-predicate\/}, if
   specified, is called.  If it returns true, the \glref{pending~KSA} is
-  removed from the \glref{pending~KS~activation}s queue, the current
+  removed from the \glref{pending~KSAs} queue, the current
   control-shell cycle number is stored in the \code{obviation-cycle} slot of
   the \glref{KSA}, and the \glref{KSA} is placed on the queue of
-  \glref{obviated~KSA}s.
+  \glref{obviated~KSAs}.
 \item If an \glref{event} matching one of the event specifications in
   \var{retrigger-events\/} occurs, the \var{retrigger-function\/}, if
   specified, is called.  A \var{retrigger-function\/} is often used to change
@@ -12720,16 +13000,16 @@ following sequence:
   currently in effect for the control shell), the
   \var{revalidation-predicate\/}, if specified, is called. If the
   \var{revalidation-predicate\/} returns \nil, the \glref{pending~KSA} is
-  removed from the \glref{pending~KS~activation}s queue, the current
+  removed from the \glref{pending~KSAs} queue, the current
   control-shell cycle number is stored in the \code{obviation-cycle} slot of
   the \glref{KSA}, and the \glref{KSA}is placed on the queue of
-  \glref{obviated~KSA}s.
+  \glref{obviated~KSAs}.
 \item The \glref{pending~KSA} is removed from the
-  \glref{pending~KS~activation}s queue, the current control-shell cycle number
+  \glref{pending~KSAs} queue, the current control-shell cycle number
   is stored in the \code{execution-cycle} slot of the \glref{KSA}
   \glref{unit~instance}, and the \var{execution-function\/} is called.
 \item The executed \glref{KSA} is placed on the queue of
-  \glref{executed~KSA}s.
+  \glref{executed~KSAs}.
 \end{tightitemize}
 
 \fndspar{KS functions and predicates}
@@ -12742,7 +13022,7 @@ following sequence:
 \index{KS!execution function}%
 \index{execution function, of a KS}%
 The Agenda Shell provides a rich set of \glref{KS} functions and predicates to
-manage the progression of \glref{KSA}s from initial triggering and activation
+manage the progression of \glref{KSAs} from initial triggering and activation
 through \glref{obviation} or execution.  A typicial \glref{KS} will only
 require a subset of these functions and predicates.
 
@@ -13032,18 +13312,18 @@ default initializtion value associated with the metaclass is used.
 \fnexamples
 Define a \glref{ks~class},
 \code{ks-with-lock}, that has an additional \glref{slot}
-containing a \glref{process~lock} that can be used to synchronize
+containing a \glref{lock} that can be used to synchronize
 operations on each defined \glref{KS} of that class.
 \begin{example}
 > (define-ks-class ks-with-lock ()
-    ((lock :initform (\entlink{make-process-lock} :name "KS Lock"))))
+    ((lock :initform (\entlink{make-lock} :name "KS Lock"))))
 #<standard-unit-class ks-with-lock>
 \end{example}
 
 Do the same, but with a mixin class:
 \begin{example}
 > (define-unit-class lock-mixin (ks my-mixin)
-    ((lock :initform (\entlink{make-process-lock} :name "KS Lock"))))
+    ((lock :initform (\entlink{make-lock} :name "KS Lock"))))
 #<standard-unit-class lock-mixin>
 > (define-ks-class ks-with-lock (ks lock-mixin)
     ())
@@ -13255,18 +13535,18 @@ default initializtion value associated with the metaclass is used.
 \fnexamples
 Define a \glref{ksa~class},
 \code{ksa-with-lock}, that has an additional \glref{slot}
-containing a \glref{process~lock} that can be used to synchronize
+containing a \glref{lock} that can be used to synchronize
 operations on each \glref{KSA} of that class.
 \begin{example}
 > (define-ksa-class ksa-with-lock ()
-    ((lock :initform (\entlink{make-process-lock} :name "KSA Lock"))))
+    ((lock :initform (\entlink{make-lock} :name "KSA Lock"))))
 #<standard-ksa-class ksa-with-lock>
 \end{example}
 
 Do the same, but with a mixin class:
 \begin{example}
 > (define-unit-class lock-mixin (ks my-mixin)
-    ((lock :initform (\entlink{make-process-lock} :name "KS Lock"))))
+    ((lock :initform (\entlink{make-lock} :name "KS Lock"))))
 #<standard-unit-class lock-mixin>
 > (define-ksa-class ksa-with-lock (ksa lock-mixin)
     ())
@@ -13558,7 +13838,7 @@ or \nil, if none has been defined.
 \fndescription 
 \bfindexit{define-ks}%
 The class \textbf{ks} is the default \glref{class} of
-\glref{instance}s created by \textbf{\entlinknoex{define-ks}}.
+\glref{instances} created by \textbf{\entlinknoex{define-ks}}.
 
 \begin{alsos}{define-ks}
 \also[define-ks]
@@ -13581,7 +13861,7 @@ The class \textbf{ks} is the default \glref{class} of
 
 \fndescription 
 The class \textbf{ksa} is the default \glref{class} of
-\glref{unit~instance}s representing \glref{KS~activation}s.
+\glref{unit~instances} representing \glref{KS~activations}.
 
 \begin{alsos}{ks}
 \also[ks]
@@ -13757,7 +14037,7 @@ Return the \glref{obviation} cycle of \code{ksa}:
 
 \fndescription An integer between \code{most-negative-rating} (-32768)
 and \code{most-positive-rating} (32767), inclusive. Ratings are used
-by the Agenda Shell to order \glref{pending~KSA}s.
+by the Agenda Shell to order \glref{pending~KSAs}.
 
 \end{functiondoc}
 
@@ -13836,8 +14116,8 @@ related macros with this accessor.
 One of the following values: 
 \begin{tightitemize}
 \item \code{:quiescense}---If the control-shell scheduling loop is terminated
-  due to \glref{quiescence} (that is, no more \glref{executable~KSA}s remain 
-  in the queue of \glref{pending~KSA}s) 
+  due to \glref{quiescence} (that is, no more \glref{executable~KSAs} remain 
+  in the queue of \glref{pending~KSAs}) 
 \item \code{:stop} and (optionally) associated reasons, as multiple
   values---If one of the following conditions occurs:
 \begin{tightitemize}
@@ -13863,7 +14143,7 @@ A \code{restart-control-shell-event} is signaled.
 \end{alsos}
 
 \fnexample
-Restart the Agenda Shell (in this case, without any \glref{KS}s defined):
+Restart the Agenda Shell (in this case, without any \glref{KSs} defined):
 \begin{example}
 > (restart-control-shell)
 ;; Control shell restarting after cycle 2
@@ -13936,7 +14216,7 @@ Return the (sole) trigger \glref{event} of a \glref{KSA}:
 \fnsyntax
 
 \fnpurpose Return the trigger \glref{unit~instance} of a \glref{KSA},
-\glref{event}, or a list of \glref{KSA}s or \glref{event}s
+\glref{event}, or a list of \glref{KSAs} or \glref{events}
 
 \fnmethods
 \fnalternate{sole-trigger-instance-of}%
@@ -13962,7 +14242,7 @@ Return the (sole) trigger \glref{event} of a \glref{KSA}:
 \fnargs
 \begin{args}{source}
 \arg[source] A \glref{KSA}, \glref{event},
-or a list of \glref{KSA}s or \glref{event}s
+or a list of \glref{KSAs} or \glref{events}
 \end{args}
 
 \fnreturns The trigger \glref{unit~instance} or \nil, if one was not found in
@@ -14001,7 +14281,7 @@ Return the (sole) trigger \glref{unit~instance} of a \glref{KSA}:
 \bfindexit{define-ksa-class}%
 \bfindexit{standard-unit-class}%
 The class \textbf{standard-ksa-class} is the default class of
-\glref{ksa~class}es defined by \textbf{\entlinknoex{define-ksa-class}}.
+\glref{ksa~classes} defined by \textbf{\entlinknoex{define-ksa-class}}.
 It is a subclass of \textbf{\entlinknoex{standard-unit-class}}.
 
 \begin{alsos}{print-instance-slots}
@@ -14040,8 +14320,8 @@ One of the following values:
 
 \begin{tightitemize}
 \item \code{:quiescense}---If the control-shell scheduling loop is terminated
-  due to \glref{quiescence} (that is, no more \glref{executable~KSA}s remain
-  in the queue of \glref{pending~KSA}s)
+  due to \glref{quiescence} (that is, no more \glref{executable~KSAs} remain
+  in the queue of \glref{pending~KSAs})
 \item \code{:stop} and (optionally) associated reasons, as multiple
   values---If one of the following conditions occurs:
 \begin{tightitemize}
@@ -14090,7 +14370,8 @@ is \nil)
 \code{*trace-output*}) 
 \arg[pause] A \glref{generalized~boolean} (default is \nil) 
 \arg[print] A \glref{generalized~boolean} (default is \code{t}) 
-\arg[run-polling-functions] A \glref{generalized~boolean} (default is \code{t} on non-multiprocessing Common Lisp implementations; \nil{} otherwise) 
+\arg[run-polling-functions] A \glref{generalized~boolean} (default is 
+  \code{t} on non-threaded Common Lisp implementations; \nil{} otherwise) 
 \arg[save-executed-ksas] A \glref{generalized~boolean} (default is \nil) 
 \arg[save-obviated-ksas] A \glref{generalized~boolean} (default is \nil) 
 \arg[stepping] Control-shell stepping options (default is \nil) 
@@ -14110,15 +14391,15 @@ non-default values for the following \var{initargs}:
   \keyword[:continue-past-quiescence] A \glref{generalized~boolean} value
   indicating whether the control shell loop should continue even when
   quiescence-event processing has failed to produce any
-  \glref{executable~KSA}s; use with caution, as the control shell will only
+  \glref{executable~KSAs}; use with caution, as the control shell will only
   exit by an explicit call to \textbf{\entlinknoex{exit-control-shell}}
 
   \keyword[:fifo-queue-ordering] A \glref{generalized~boolean} value that
   indicates a newly rated \glref{pending~KSA} is to be placed ahead of equally
-  rated \glref{KSA}s (first-in, first out) or after them (last-in, first out)
+  rated \glref{KSAs} (first-in, first out) or after them (last-in, first out)
 
   \keyword[:hibernate-on-quiescence] A \glref{generalized~boolean} value that
-  determines whether the control-shell process will hibernate rather than exit
+  determines whether the control-shell will hibernate rather than exit
   when no executable \glref{KSA} exists; this decision point is never reached when
   \code{:continue-past-quiescence} is true
 
@@ -14190,7 +14471,7 @@ of a \glref{KS}
 \end{alsos}
 
 \fnexamples
-Start the Agenda Shell (in this case, without any \glref{KS}s defined):
+Start the Agenda Shell (in this case, without any \glref{KSs} defined):
 \begin{example}
 > (start-control-shell)
 ;; Control shell started
@@ -14201,7 +14482,7 @@ Start the Agenda Shell (in this case, without any \glref{KS}s defined):
 :quiescence
 \end{example}
 
-Start the Agenda Shell (again without any \glref{KS}s defined, but with
+Start the Agenda Shell (again without any \glref{KSs} defined, but with
 stepping enabled):
 \begin{example}
 > (start-control-shell :stepping 't)
@@ -14368,7 +14649,7 @@ An \glref{association~list}.
 
 \glent[association~list]
 \index{association list}%
-A list of \glref{cons}es representing an association of keys with values. The
+A list of \glref{conses} representing an association of keys with values. The
 \glref{car} of each \glref{cons} is the key and the \glref{cdr} is the value
 associated with that key.
 
@@ -14377,7 +14658,7 @@ associated with that key.
 \glent[atomic~operation]
 \index{atomic operation}%
 A computation that, once started, is completed without being interrupted by
-another \glref{process}.
+another \glref{thread}.
 
 %% ------------------------------------------------------------------------
 
@@ -14389,10 +14670,11 @@ The internal storage containing all \glref{unit~instance} and
 %% ------------------------------------------------------------------------
 
 \glent[boolean~dimension]
+\gllabel{boolean~dimensions}%
 \index{boolean dimension}%
 \index{dimension type!boolean}%
 A \glref{dimension} of \code{:boolean} \glref{dimension~type} where
-\code{:boolean} \glref{dimension~value}s are either true (non-\nil) or
+\code{:boolean} \glref{dimension~values} are either true (non-\nil) or
 false (\nil).
 
 %% ------------------------------------------------------------------------
@@ -14405,10 +14687,11 @@ itself in its successive sublists.
 %% ------------------------------------------------------------------------
 
 \glent[class]
+\gllabel{classes}%
 \index{class}%
 An object that uniquely (directly or indirectly) determines the structure and
 behavior of a set of other objects. Members of this set are called
-\glref{instance}s of the class.
+\glref{instances} of the class.
 
 %% ------------------------------------------------------------------------
 
@@ -14422,13 +14705,27 @@ An option that refers to a \glref{class} as a whole or to all the slots of the
 \glent[composite~dimension~value]
 \index{composite dimension!value}% 
 A dimension value that is a set, sequence, or series of
-\glref{dimension~value}s.
+\glref{dimension~values}.
+
+%% ------------------------------------------------------------------------
+
+\glent[condition~variable]
+\gllabel{condition~variables}%
+\index{POSIX-style, condition variable}% 
+A condition variable provides an atomic means for a \glref{thread} to release
+a \glref{lock} (or \glref{recursive~lock}) that it holds and go to sleep until
+it is awakened by another thread.  Once awakened, the lock that it was holding
+is reacquired atomically before the awakened thread is allowed to do anything
+else.  A Portable Threads condition variable object includes the lock that is
+associated with the condition variable, and the condition-variable object can
+be used directly as a lock.
 
 %% ------------------------------------------------------------------------
 
 \glent[cons]
 \gllabel{car}%
 \gllabel{cdr}%
+\gllabel{conses}%
 \bfindex{cons}%
 \bfindex{car}%
 \bfindex{cdr}%
@@ -14437,32 +14734,35 @@ Conses are used to construct lists.
 
 %% ------------------------------------------------------------------------
 
-\glent[dimension] A conceptual extent within which values that share some
+\glent[dimension] 
+\gllabel{dimensions}%
+A conceptual extent within which values that share some
 relationship can be placed.  GBBopen uses dimensionality to relate the
-extent representations of \glref{unit~instance}s,
-\glref{space~instance}s, and \glref{retrieval~pattern}s.
+extent representations of \glref{unit~instances},
+\glref{space~instances}, and \glref{retrieval~patterns}.
 
-GBBopen supports three \glref{dimension~type}s:
+GBBopen supports three \glref{dimension~types}:
 \begin{tightenumerate}
-\item \glref{ordered~dimension}s (\code{:ordered})
-\item \glref{enumerated~dimension}s (\code{:enumerated})
-\item \glref{boolean~dimension}s (\code{:boolean})
+\item \glref{ordered~dimensions} (\code{:ordered})
+\item \glref{enumerated~dimensions} (\code{:enumerated})
+\item \glref{boolean~dimensions} (\code{:boolean})
 \end{tightenumerate}
 
 Real-world dimensions (such as time and location) can be represented as
-\glref{ordered~dimension}s.
+\glref{ordered~dimensions}.
 
 %% ------------------------------------------------------------------------
 
 \glent[dimension~name]
 \index{dimension name}%
-A symbol used to identify a \glref{dimension}.  Two \glref{dimension}s
-with different \glref{dimension~type}s should not be given the same
+A symbol used to identify a \glref{dimension}.  Two \glref{dimensions}
+with different \glref{dimension~types} should not be given the same
 dimension name.
 
 %% ------------------------------------------------------------------------
 
 \glent[dimension~type]
+\gllabel{dimension~types}%
 \index{dimension type}%
 \index{type!dimension}%
 The interpretation associated with a \glref{dimension} of a
@@ -14472,13 +14772,15 @@ one of \code{:ordered}, \code{:enumerated}, or \code{:boolean}.
 %% ------------------------------------------------------------------------
 
 \glent[dimension~value]
+\gllabel{dimension~values}%
 \index{dimension value}%
 The value that is used to position a \glref{unit~instance} on a
-\glref{dimension} of one or more \glref{space~instance}s.
+\glref{dimension} of one or more \glref{space~instances}.
 
 %% ------------------------------------------------------------------------
 
 \glent[dimension-value~type]
+\gllabel{dimension-value~types}%
 \index{dimension value!type}%
 \index{type!dimension value}%
 \codeindexit{:point}%
@@ -14499,7 +14801,7 @@ The dimension-value types \code{:point}, \code{:interval}, and
 \glent[dimensional~extent]
 \index{dimensional extent, of a space instance}%
 \index{space instance!dimensional extent}%
-The \glref{dimension}s of a \glref{space~instance}.
+The \glref{dimensions} of a \glref{space~instance}.
 
 %% ------------------------------------------------------------------------
 
@@ -14512,15 +14814,17 @@ A list that is terminated by a non-\nil{} atom rather than the empty list,
 %% ------------------------------------------------------------------------
 
 \glent[enumerated~dimension]
+\gllabel{enumerated~dimensions}%
 \index{enumerated dimension}%
 \index{dimension type!enumerated}%
 A \glref{dimension} of \code{:enumerated} \glref{dimension~type} where
-\code{:element} \glref{dimension~value}s are individual elements from an extensible
+\code{:element} \glref{dimension~values} are individual elements from an extensible
 set of discrete elements.
 
 %% ------------------------------------------------------------------------
 
 \glent[event]
+\gllabel{events}%
 \index{event}%
 An activity that is noticed, and signaled, by GBBopen.
 
@@ -14528,6 +14832,7 @@ An activity that is noticed, and signaled, by GBBopen.
 
 \glent[event~class]
 \gllabel{event-class}%
+\gllabel{event~classes}%
 \index{event class}%
 \index{class!event}%
 \bfindexit{standard-event-class}%
@@ -14537,6 +14842,7 @@ An object that is a subclass of \textbf{\entlinknoex{standard-event-class}}.
 
 \glent[event~function]
 \gllabel{event-function}%
+\gllabel{event~functions}%
 \index{event function}%
 \index{function!event}%
 A \glref{function} that is associated with one or more event specifications
@@ -14548,6 +14854,7 @@ each event metaclass.
 
 \glent[event~instance] 
 \gllabel{event-instance}%
+\gllabel{event~instances}%
 \index{event instance}%
 \index{instance!event}%
 \bfindexit{standard-event-instance}%
@@ -14571,6 +14878,7 @@ one of the following event metaclasses:
 
 \glent[executable~KS~activation]
 \gllabel{executable~KSA}%
+\gllabel{executable~KSAs}%
 \index{executable knowledge-source activation}%
 \index{KS activation!executable}%
 \index{KSA!executable}%
@@ -14582,6 +14890,7 @@ the control shell.
 
 \glent[executed~KS~activation]
 \gllabel{executed~KSA}%
+\gllabel{executed~KSAs}%
 \index{executed knowledge-source activation}%
 \index{KS activation!executed}%
 \index{KSA!executed}%
@@ -14593,7 +14902,7 @@ be operated on again by the control shell.
 \glent[extended~event-class~specification]
 \index{extended event-class specification}%
 \index{event class!extended event-class specification}%
-A specification of one or more \glref{event~class}es as indicated by
+A specification of one or more \glref{event~classes} as indicated by
 one of the following:
 \begin{tightitemize}
 \item a \glref{event~class}
@@ -14612,7 +14921,7 @@ a list containing one of the above followed by the keyword
 \glent[extended~unit-class~specification]
 \index{extended unit-class specification}%
 \index{unit class!extended unit-class specification}%
-A specification of one or more \glref{unit~class}es as indicated by
+A specification of one or more \glref{unit~classes} as indicated by
 one of the following:
 \begin{tightitemize}
 \item a \glref{unit~class}
@@ -14632,8 +14941,8 @@ a list containing one of the above followed by the keyword
 \index{extended unit-class specification}%
 \index{unit instance!specification}%
 \index{unit class!extended unit-class specification}%
-A specification of one or more \glref{unit~instance}s or one or more
-\glref{unit~class}es as indicated by one of the following:
+A specification of one or more \glref{unit~instances} or one or more
+\glref{unit~classes} as indicated by one of the following:
 \begin{tightitemize}
 \item a \glref{unit~class}
 \item a symbol naming a \glref{unit~class}
@@ -14645,15 +14954,16 @@ a list containing one of the above followed by the keyword
 \item the symbol \code{t}, which is equivalent to
   \code{(standard-unit-instance :plus-subclasses)} 
 \item a \glref{unit~instance}
-\item a list of \glref{unit~instance}s
+\item a list of \glref{unit~instances}
 \end{tightitemize}
 
 %% ------------------------------------------------------------------------
 
 \glent[extended~unit-classes~specification]
+\gllabel{extended~unit-classes~specifications}%
 \index{extended unit-classes specification}%
 \index{unit class!extended unit-classes specification}%
-A specification of one or more \glref{unit~class}es as indicated by
+A specification of one or more \glref{unit~classes} as indicated by
 one of the following:
 \begin{tightitemize}
 \item a \glref{unit~class}
@@ -14680,7 +14990,9 @@ implementation-specific behaviors.
 %% ------------------------------------------------------------------------
 
 \glent[form]
+\gllabel{forms}%
 \gllabel{Form}%
+\gllabel{forms}%
 \index{form}%
 An object (including an expression) to be evaluated.
 
@@ -14706,27 +15018,6 @@ object'' used when referring specifically to a function object.
 
 %% ------------------------------------------------------------------------
 
-\glent[gate]
-\index{gate}%
-\bfindexit{make-gate}%
-\bfindexit{process-wait}%
-An object with two states, open and closed, created by
-\textbf{\entlinknoex{make-gate}}. Gates are typically used for coordination in
-multi-threaded applications, and testing the state of a gate in a
-\textbf{\entlinknoex{process-wait}} predicate function is very efficient in
-some Common Lisp implementations.
-
-%% ------------------------------------------------------------------------
-
-\glent[standard-gbbopen-instance]
-\bfindexit{standard-gbbopen-instance}%
-An object whose class is a subclass of 
-\textbf{\entlinknoex{standard-gbbopen-instance}}. It is a superclass of
-\textbf{\entlink{standard-event-instance}} and
-\textbf{\entlink{standard-unit-instance}}.
-
-%% ------------------------------------------------------------------------
-
 \glent[generalized~boolean]
 \index{generalized boolean}%
 \index{boolean, generalized}%
@@ -14749,29 +15040,66 @@ arguments supplied to it.
 
 %% ------------------------------------------------------------------------
 
+\glent[incomposite~dimension~value]
+\index{incomposite dimension value}%
+\index{dimension value!incomposite}%
+A \glref{dimension~value} that is a single point, interval, element, or
+boolean (i.e., not a \glref{composite~dimension~value}).
+
+%% ------------------------------------------------------------------------
+
+\glent[initialization~argument~list]
+\gllabel{initialization~arguments}%
+\index{initialization argument list}%
+\index{list!initialization arguments}%
+A list of alternating names and values used to initialize or reinitialize
+\glref{instances} of \glref{classes}.  If more than one name and value pair
+has the same name, only the first such pair is used to provide the value.
+
+%% ------------------------------------------------------------------------
+
 \glent[instance]
+\gllabel{instances}%
 \index{instance}%
 An object whose structure and behavior is uniquely (directly or indirectly)
 determined by a \glref{class} object.
 
 %% ------------------------------------------------------------------------
 
+\glent[interval] 
+A \glref{cons}, two-element list, or two-element array containing the start
+and end value representing the set of real numbers between them, inclusive.
+
+%% ------------------------------------------------------------------------
+
+\glent[keyword~symbol]
+\index{keyword symbol}%
+\index{symbol!keyword}%
+A symbol whose home package is the \code{keyword} package.
+
+%% ------------------------------------------------------------------------
+
 \glent[knowledge~source]
 \gllabel{knowledge-source}%
 \gllabel{KS}%
+\gllabel{KSs}%
 \index{knowledge source}%
 The expertise associated with a collaborating computational entity in
 a blackboard application (often abbreviated as ``KS''). More
 specifically, a KS is an object containing the expertise and other
 information associated with a computational entity. A \code{ks} object
-is also a \glref{unit~instance}, but \code{ks}s are normally described
+is also a \glref{unit~instance}, but KSs are normally described
 by their more specific categorization.
 
 %% ------------------------------------------------------------------------
 
 \glent[KS~activation]
 \gllabel{KSA}%
+\gllabel{KSAs}%
+\gllabel{KS~activation}%
+\gllabel{KS~activations}%
 \gllabel{activation}%
+\gllabel{activations}%
 \index{knowledge source!activation}%
 \index{KS!activation}%
 The application of a \glref{KS} to a specific computational context
@@ -14784,6 +15112,7 @@ described by their more specific categorization.
 
 \glent[KS~execution]
 \gllabel{KS-execution}%
+\gllabel{KS~executions}%
 \index{knowledge source!execution}%
 \index{KS!execution}%
 The execution of a \glref{KS~activation}.
@@ -14791,7 +15120,8 @@ The execution of a \glref{KS~activation}.
 %% ------------------------------------------------------------------------
 
 \glent[ks~class]
-\gllabel{ks-class}
+\gllabel{ks-class}%
+\gllabel{ks~classes}%
 \index{ks class}%
 \index{class!ks}%
 An object that is a subclass of
@@ -14801,7 +15131,8 @@ An object that is a subclass of
 %% ------------------------------------------------------------------------
 
 \glent[ksa~class]
-\gllabel{ksa-class}
+\gllabel{ksa-class}%
+\gllabel{ksa~classes}%
 \index{ksa class}%
 \index{class!ksa}%
 An object that is a subclass of \textbf{\entlinknoex{standard-ksa-class}}
@@ -14809,16 +15140,10 @@ that is used to represent a \glref{KSA}.
 
 %% ------------------------------------------------------------------------
 
-\glent[keyword~symbol]
-\index{keyword symbol}%
-\index{symbol!keyword}%
-A symbol whose home package is the \code{keyword} package.
-
-%% ------------------------------------------------------------------------
-
 \glent[link]
+\gllabel{links}%
 \index{link}%
-A bi-directional pair of pointers between two \glref{unit~instance}s.
+A bi-directional pair of pointers between two \glref{unit~instances}.
 Link operators maintain bi-directional consistency of link pointers.
 
 %% ------------------------------------------------------------------------
@@ -14826,7 +15151,7 @@ Link operators maintain bi-directional consistency of link pointers.
 \glent[link~slot]
 \gllabel{link-slot}%
 \index{link slot}%
-A \glref{slot} designated for the outgoing pointers of \glref{link}s
+A \glref{slot} designated for the outgoing pointers of \glref{links}
 associated with that \glref{slot}.
 
 %% ------------------------------------------------------------------------
@@ -14854,25 +15179,19 @@ link slot
 
 %% ------------------------------------------------------------------------
 
-\glent[lock]
-\index{process!lock}%
-A \glref{process~lock}.
-
-%% ------------------------------------------------------------------------
-
-\glent[initialization~argument~list]
-\gllabel{initialization~arguments}%
-\index{initialization argument list}%
-\index{list!initialization arguments}%
-A list of alternating names and values used to initialize or reinitialize
-\glref{instance}s of \glref{class}es.  If more than one name and value pair
-has the same name, only the first such pair is used to provide the value.
-
-%% ------------------------------------------------------------------------
-
-\glent[interval] 
-A \glref{cons}, two-element list, or two-element array containing the start
-and end value representing the set of real numbers between them, inclusive.
+\glent[lock] 
+\gllabel{locks}%
+\index{lock}%
+\index{lock!non-recursive}%
+A mutual-exclusion object that allows multiple \glref{threads} to
+synchronize activities or access to shared resources. A lock has two
+states, unlocked or locked by a specific \glref{thread}. Once a lock
+is held by a \glref{thread}, any other \glref{threads} attempting to
+lock it will block. When the lock-holding \glref{thread} unlocks
+(releases) the lock, one of the blocked \glref{threads} will acquire
+(lock) it and proceed.  If the \glref{thread} that is holding the lock
+attempts to re-acquire it, an error is signaled (see
+\glref{recursive~lock}).
 
 %% ------------------------------------------------------------------------
 
@@ -14892,6 +15211,7 @@ classes: \code{class}, \code{slot-definition}, \code{generic-function},
 
 \glent[obviated~KS~activation]
 \gllabel{obviated~KSA}%
+\gllabel{obviated~KSAs}%
 \gllabel{obviated}%
 \gllabel{obviation}%
 \index{obviated knowledge-source activation}%
@@ -14903,17 +15223,19 @@ therefore never be executed.
 %% ------------------------------------------------------------------------
 
 \glent[ordered~dimension]
-\gllabel{ordered-dimension}
+\gllabel{ordered-dimension}%
+\gllabel{ordered~dimensions}%
 \index{ordered dimension}%
 \index{dimension type!ordered}%
 A \glref{dimension} of \code{:ordered} \glref{dimension~type} where
 \code{:point}, \code{:interval}, and \code{:mixed}
-\glref{dimension~value}s are points or intervals on a continuous,
+\glref{dimension~values} are points or intervals on a continuous,
 real-number extent.
 
 %% ------------------------------------------------------------------------
 
 \glent[ordered~queue]
+\gllabel{ordered~queues}
 \index{ordered queue}%
 \index{queue!ordered}%
 \bfindexit{ordered-queue}%
@@ -14933,35 +15255,17 @@ port.
 \gllabel{path-expression}%
 \index{path!expression}%
 \index{path!space instances expression}%
-A regular expression representing one or more \glref{space-instance~path}s.
+A regular expression representing one or more \glref{space-instance~paths}.
 
 %% ------------------------------------------------------------------------
 
 \glent[pending~KS~activation]
 \gllabel{pending~KSA}%
+\gllabel{pending~KSAs}%
 \index{pending knowledge-source activation}%
 \index{KS activation!pending}%
 \index{KSA!pending}%
 A \glref{KS~activation} that has not been executed or \glref{obviated}.
-
-%% ------------------------------------------------------------------------
-
-\glent[process]
-\index{process}%
-A thread in a multi-threaded Common Lisp application.
-
-%% ------------------------------------------------------------------------
-
-\glent[process~lock]
-\index{process!lock}%
-\index{lock!process}%
-A mutual-exclusion object that allows multiple \glref{process}es to
-synchronize activities or access to shared resources. A process lock has to
-states, unlocked or locked by a specific \glref{process}. Once a process lock
-is held by a \glref{process}, other \glref{process}es attempting to lock it
-will block. When the lock-holding \glref{process} unlocks (releases) the
-process lock, one of the blocked \glref{process}es will acquire (lock) it and
-proceed.
 
 %% ------------------------------------------------------------------------
 
@@ -14993,13 +15297,14 @@ A list containing an even number of elements that represent alternating names
 \index{doubly-linked queue}%
 A doubly linked queue.  A GBBopen queue is headed by an object that is a
 subclass of \textbf{\entlinknoex{queue}}.  GBBopen queues that maintain a
-sorted ordering of \glref{queue~element}s are provided by
-\glref{ordered~queue}s.
+sorted ordering of \glref{queue~elements} are provided by
+\glref{ordered~queues}.
 
 %% ------------------------------------------------------------------------
 
 \glent[queue~element]
 \gllabel{queue-element}%
+\gllabel{queue~elements}%
 \index{queue element}%
 An object that is a subclass of \textbf{\entlinknoex{queue-element}}.
 
@@ -15008,15 +15313,32 @@ An object that is a subclass of \textbf{\entlinknoex{queue-element}}.
 \glent[quiescence]
 \index{agenda Shell!quiescence}%
 \index{control shell!quiescence}%
-A control-shell state when no more \glref{executable~KSA}s are in the queue of
-\glref{pending~KSA}s.
+A control-shell state when no more \glref{executable~KSAs} are in the queue of
+\glref{pending~KSAs}.
 
 %% ------------------------------------------------------------------------
 
 \glent[rating]
 \index{rating!of a KSA}%
 An integer between -32768 and 32767 inclusive, used by the Agenda Shell to
-order \glref{pending~KSA}s (see \textbf{\entlinknoex{rating}}).
+order \glref{pending~KSAs} (see \textbf{\entlinknoex{rating}}).
+
+%% ------------------------------------------------------------------------
+
+\glent[recursive~lock] 
+\gllabel{recursive-lock}%
+\gllabel{recursive~locks}%
+\index{recursive lock}%
+\index{lock!recursive}%
+A mutual-exclusion object that allows multiple \glref{threads} to synchronize
+activities or access to shared resources. A recursive lock has two states,
+unlocked or locked by a specific \glref{thread}. Once a recursive lock is held
+by a \glref{thread}, any other \glref{threads} attempting to lock it will
+block. When the lock-holding \glref{thread} unlocks (releases) the recursive
+lock, one of the blocked \glref{threads} will acquire (lock) it and proceed.
+If the \glref{thread} that is holding the recursive lock attempts to
+re-acquire it, that \glref{thread} is allowed to proceed as if it had acquired
+the lock (without error or blocking, see \glref{lock}).
 
 %% ------------------------------------------------------------------------
 
@@ -15029,6 +15351,7 @@ Part of the \reflink{Mini Module system}{sec:mini-module}.
 %% ------------------------------------------------------------------------
 
 \glent[retrieval~pattern]
+\gllabel{retrieval~patterns}%
 \index{retrieval!pattern}%
 \index{pattern!retrieval}%
 \bfindexit{filter-instances}%
@@ -15037,7 +15360,7 @@ Part of the \reflink{Mini Module system}{sec:mini-module}.
 A list argument to \textbf{\entlinknoex{filter-instances}},
 \textbf{\entlinknoex{find-instances}}, and
 \textbf{\entlinknoex{map-instances-on-space-instances}} specifying the
-\glref{dimension}al requirements for selecting \glref{unit~instance}s
+\glref{dimension}al requirements for selecting \glref{unit~instances}
 to be returned.
 
 %% ------------------------------------------------------------------------
@@ -15051,14 +15374,6 @@ Part of the \reflink{Mini Module system}{sec:mini-module}.
 
 %% ------------------------------------------------------------------------
 
-\glent[incomposite~dimension~value]
-\index{incomposite dimension value}%
-\index{dimension value!incomposite}%
-A \glref{dimension~value} that is a single point, interval, element, or
-boolean (i.e., not a \glref{composite~dimension~value}).
-
-%% ------------------------------------------------------------------------
-
 \glent[slot]
 \index{slot}%
 \index{object!slot}%
@@ -15066,8 +15381,17 @@ A component of an object that can store a value.
 
 %% ------------------------------------------------------------------------
 
+\glent[space~class]
+\gllabel{space~classes}%
+\index{class!space}%
+\bfindexit{standard-space-class}%
+An object that is a subclass of \textbf{\entlinknoex{standard-space-class}}.
+
+%% ------------------------------------------------------------------------
+
 \glent[space~instance]
 \gllabel{space-instance}%
+\gllabel{space~instances}%
 \index{space instance}%
 \index{instance!space instance}%
 \bfindexit{standard-space-instance}%
@@ -15078,14 +15402,9 @@ more specific categorization.
 
 %% ------------------------------------------------------------------------
 
-\glent[space~class]
-\index{class!space}%
-\bfindexit{standard-space-class}%
-An object that is a subclass of \textbf{\entlinknoex{standard-space-class}}.
-
-%% ------------------------------------------------------------------------
-
-\glent[space-instance~path] \index{space instance!path}%
+\glent[space-instance~path] 
+\gllabel{space-instance~paths}%
+\index{space instance!path}%
 \index{path!space instance}%
 A complete list of space-instance names, starting with the most distant
 indirect parent space-instance name, that uniquely identifies a
@@ -15093,10 +15412,19 @@ indirect parent space-instance name, that uniquely identifies a
 
 %% ------------------------------------------------------------------------
 
+\glent[standard-gbbopen-instance]
+\bfindexit{standard-gbbopen-instance}%
+An object whose class is a subclass of 
+\textbf{\entlinknoex{standard-gbbopen-instance}}. It is a superclass of
+\textbf{\entlink{standard-event-instance}} and
+\textbf{\entlink{standard-unit-instance}}.
+
+%% ------------------------------------------------------------------------
+
 \glent[storage~specification]
 \index{storage specification}%
 \index{space instance!storage specification}%
-A specification of how \glref{unit~instance}s are to be stored on a
+A specification of how \glref{unit~instances} are to be stored on a
 \glref{space~instance}.
 
 %% ------------------------------------------------------------------------
@@ -15114,16 +15442,28 @@ The classes that inherit from an \glref{event~class}.
 
 %% ------------------------------------------------------------------------
 
+\glent[thread] 
+\gllabel{threads}%
+\index{thread}%
+A thread in a multi-threaded Common Lisp implementation or a Lisp process in a
+Common Lisp that provides multiprocessing.
+
+%% ------------------------------------------------------------------------
+
 \glent[time~zone]
 \index{time zone}%
 A rational number between -24 (inclusive) and 24 (inclusive) that represents a
 time zone as a number of hours offset from Greenwich Mean Time. A non-integral
-time zone must be a multiple of \W1/3600.  \T$\frac{1}{3600}$.
+time zone must be a multiple of 
+%
+\W1/3600.  
+\T$\frac{1}{3600}$.
 
 %% ------------------------------------------------------------------------
 
 \glent[unit~class]
 \gllabel{unit-class}%
+\gllabel{unit~classes}%
 \index{unit class}%
 \index{class!unit}%
 \bfindexit{standard-unit-class}%
@@ -15132,13 +15472,14 @@ An object that is a subclass of \textbf{\entlinknoex{standard-unit-class}}.
 %% ------------------------------------------------------------------------
 
 \glent[unit~instance] 
+\gllabel{unit~instances}%
 \gllabel{unit-instance}%
 \index{unit instance}%
 \index{instance!unit}%
 \bfindexit{standard-unit-instance}%
 An object whose class is a subclass of
 \textbf{\entlinknoex{standard-unit-instance}}. A \glref{space~instance} is
-also a unit instance, but \glref{space~instance}s are normally described by
+also a unit instance, but \glref{space~instances} are normally described by
 their more specific categorization.
 
 %% ------------------------------------------------------------------------

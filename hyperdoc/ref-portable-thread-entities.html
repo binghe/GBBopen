@@ -14,21 +14,99 @@
 <table width="100%" cellpadding="0" cellspacing="2"><tr>
 <td bgcolor="#99ccff"><a href="ref-offset-universal-time-entities.html"><img border="0" alt="Offset Universal Time" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="ref-tools-entities.html"><img border="0" alt="Tools" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-polling-function-entities.html"><img border="0" alt="Polling Functions" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b>Portable Threads</b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table>
 <h2>Portable Threads</h2>
-<p>The <code>:portable-threads</code> module provides a uniform interface to
-commonly used multiprocessing entitites.  Where possible, these
-entities do something reasonable in Common Lisp implementations that
-do not provide multiprocessing; entities that make no sense without
-multiprocessing signal errors (as noted with each entity).
+<p>The <code>:portable-threads</code> module provides a uniform interface to commonly
+used <a href="ref-glossary.html#gl:thread">thread</a> (multiprocessing) entities.  Wherever possible, these
+entities do something reasonable in Common Lisp implementations that do not
+provide threads. However, entities that make no sense without threads signal
+errors in non-threaded implementations (as noted with each entity). GBBopen
+adds the <a href="ref-glossary.html#gl:feature">feature</a> <code>:threads-not-available</code> on Common Lisp
+implementations without thread support.
 </p>
-<p>GBBopen adds the feature <code>:multiprocessing-not-available</code> on Common Lisp
-implementations that do not provide multiprocessing support.  The feature
-<code>:thread-scheduling-not-available</code> is added on implementations that
-provide multiprocessing, but not controllable thread scheduling.
+<p><h4>Threads and Processes</h4>
+</p>
+<p>Common Lisp implementations that provide multiprocessing capabilities use one
+of two approaches:
+</p>
+<p><ul class="tight"><li><i>Application-level threads</i> (also called &#8220;Lisp processes&#8221;) which are
+created, deleted, and scheduled internally by the Common Lisp implementation
+<li><i>Operating-system threads</i> (or &#8220;native threads&#8221;) which are
+lightweight, operating-system threads that are created, deleted, and
+scheduled by the operating system
+</ul>
+</p>
+<p>There are advantages and complexities associated with each approach, and the
+Portable Threads Interface is designed to provide a uniform abstraction over
+them that can be used to code applications that perform consistently and
+efficiently on any supported Common Lisp implementation.
+</p>
+<p><h4>Locks</h4>
+</p>
+<p>Common Lisp implementations provide differing semantics for the behavior of
+mutual-exclusion locks that are acquired recursively by the same
+<a href="ref-glossary.html#gl:thread">thread</a>: some always allow recursive use, others provide special
+&#8220;recursive&#8221; lock objects in addition to non-recursive locks, and still
+others allow recursive use to be specified at the time that a lock is being
+acquired.  To enable behavioral consistency in all Common Lisp
+implementations, the <code>:portable-threads</code> interface module provides
+(non-recursive) <a href="ref-glossary.html#gl:locks">locks</a> and <a href="ref-glossary.html#gl:recursive-lock">recursive&nbsp;locks</a> and a single
+acquisition form, <b><a href="ref-with-lock-held.html">with-lock-held</a></b>, that behaves
+appropriately for each lock type.
+</p>
+<p><h4>Condition Variables</h4>
+</p>
+<p>POSIX-style <a href="ref-glossary.html#id19">condition&nbsp;variables</a> provide an atomic means for a
+<a href="ref-glossary.html#gl:thread">thread</a> to release a lock that it holds and go to sleep until it is
+awakened by another thread.  Once awakened, the lock that it was holding is
+reacquired atomically before the thread is allowed to do anything else.
+</p>
+<p>A condition variable must always be associated with a <a href="ref-glossary.html#gl:lock">lock</a> (or
+<a href="ref-glossary.html#id133">recursive&nbsp;lock</a>) in order to avoid a race condition created by one
+thread preparing to wait and another thread which may signal the condition
+before the first thread actually waits on it.  In this situation, the thread
+would be perpetually waiting for a signal that has already been sent.  In the
+POSIX model, there is no explicit link between the lock and the condition
+variable.  The Portable Threads Interface makes this association explicit by
+bundling the lock with the <b><a href="ref-condition-variable.html">condition-variable</a></b> CLOS object
+instance.
+</p>
+<p><h4>Hibernation</h4>
+</p>
+<p>Sometimes it is desirable to put a thread to sleep (perhaps for a long time)
+until some event has occurred.  The Portable Threads Interface provides two
+entities that make this situation easy to code:
+<b><a href="ref-hibernate-thread.html">hibernate-thread</a></b> and <b><a href="ref-awaken-thread.html">awaken-thread</a></b>.
+Note that when a thread is hibernating, it remains available to respond to
+<b><a href="ref-run-in-thread.html">run-in-thread</a></b> and <b><a href="ref-symbol-value-in-thread.html">symbol-value-in-thread</a></b>
+operations as well as to be awakened by a dynamically surrounding
+<b><a href="ref-with-timeout.html">with-timeout</a></b>.
+</p>
+<p><h4>What about Process Wait?</h4>
+</p>
+<p>Thread coordination functions, such as <code>process-wait</code>, are expensive to
+implement with operating-system threads.  Such functions stop the executing
+thread until a Common Lisp predicate function returns a true value.  With
+application-level threads, the Lisp-based scheduler simply evaluates the
+predicate periodically when looking for other threads that can be run.  With
+operating-system threads, however, scheduling is performed by the operating
+system and evaluating the predicate function requires some complex and
+expensive interaction between the operating-system scheduling and the Common
+Lisp implementation.  Given this cost and complexity, some Common Lisp
+implementations using operating-system threads have elected not to provide
+<code>process-wait</code>-style coordination functions, and this issue extends to
+the Portable Threads Interface as well.
+</p>
+<p>Fortunately, most uses of <code>process-wait</code> can be replaced by a different
+strategy that relies on the producer of a change that would affect the
+<code>process-wait</code> predicate function to signal the event rather than having
+the consumers of the change use predicate functions to poll for it.  Condition
+variables, the Portable Threads <b><a href="ref-hibernate-thread.html">hibernate-thread</a></b> and
+<b><a href="ref-awaken-thread.html">awaken-thread</a></b> mechanism, or blocking I/O functions cover
+most of the typical uses of <code>process-wait</code>.
 </p>
 <p><b><font size="+1">Entities</font></b>
 </p>
 <ul>
-<li><a href="ref-all-processes.html"><font color="#000000">all-processes</font></a></li>
+<li><a href="ref-all-threads.html"><font color="#000000">all-threads</font></a></li>
 <li><a href="ref-as-atomic-operation.html"><font color="#000000">as-atomic-operation</font></a></li>
 <li><a href="ref-atomic-decf.html"><font color="#000000">atomic-decf</font></a></li>
 <li><a href="ref-atomic-delete.html"><font color="#000000">atomic-delete</font></a></li>
@@ -37,25 +115,28 @@ provide multiprocessing, but not controllable thread scheduling.
 <li><a href="ref-atomic-pop.html"><font color="#000000">atomic-pop</font></a></li>
 <li><a href="ref-atomic-push.html"><font color="#000000">atomic-push</font></a></li>
 <li><a href="ref-atomic-pushnew.html"><font color="#000000">atomic-pushnew</font></a></li>
-<li><a href="ref-awaken-process.html"><font color="#000000">awaken-process</font></a></li>
-<li><a href="ref-close-gate.html"><font color="#000000">close-gate</font></a></li>
-<li><a href="ref-current-process.html"><font color="#000000">current-process</font></a></li>
-<li><a href="ref-gate-open-p.html"><font color="#000000">gate-open-p</font></a></li>
-<li><a href="ref-hibernate-process.html"><font color="#000000">hibernate-process</font></a></li>
-<li><a href="ref-kill-process.html"><font color="#000000">kill-process</font></a></li>
-<li><a href="ref-make-gate.html"><font color="#000000">make-gate</font></a></li>
-<li><a href="ref-make-process-lock.html"><font color="#000000">make-process-lock</font></a></li>
-<li><a href="ref-open-gate.html"><font color="#000000">open-gate</font></a></li>
-<li><a href="ref-process-name.html"><font color="#000000">process-name</font></a></li>
-<li><a href="ref-process-whostate.html"><font color="#000000">process-whostate</font></a></li>
-<li><a href="ref-processp.html"><font color="#000000">processp</font></a></li>
-<li><a href="ref-process-wait.html"><font color="#000000">process-wait</font></a></li>
-<li><a href="ref-process-wait-with-timeout.html"><font color="#000000">process-wait-with-timeout</font></a></li>
-<li><a href="ref-process-yield.html"><font color="#000000">process-yield</font></a></li>
-<li><a href="ref-run-in-process.html"><font color="#000000">run-in-process</font></a></li>
-<li><a href="ref-spawn-process.html"><font color="#000000">spawn-process</font></a></li>
-<li><a href="ref-symbol-value-in-process.html"><font color="#000000">symbol-value-in-process</font></a></li>
-<li><a href="ref-with-process-lock.html"><font color="#000000">with-process-lock</font></a></li>
+<li><a href="ref-awaken-thread.html"><font color="#000000">awaken-thread</font></a></li>
+<li><a href="ref-condition-variable.html"><font color="#000000">condition-variable</font></a></li>
+<li><a href="ref-condition-variable-broadcast.html"><font color="#000000">condition-variable-broadcast</font></a></li>
+<li><a href="ref-condition-variable-signal.html"><font color="#000000">condition-variable-signal</font></a></li>
+<li><a href="ref-condition-variable-wait.html"><font color="#000000">condition-variable-wait</font></a></li>
+<li><a href="ref-condition-variable-wait-with-timeout.html"><font color="#000000">condition-variable-wait-with-timeout</font></a></li>
+<li><a href="ref-current-thread.html"><font color="#000000">current-thread</font></a></li>
+<li><a href="ref-hibernate-thread.html"><font color="#000000">hibernate-thread</font></a></li>
+<li><a href="ref-kill-thread.html"><font color="#000000">kill-thread</font></a></li>
+<li><a href="ref-make-condition-variable.html"><font color="#000000">make-condition-variable</font></a></li>
+<li><a href="ref-make-lock.html"><font color="#000000">make-lock</font></a></li>
+<li><a href="ref-make-recursive-lock.html"><font color="#000000">make-recursive-lock</font></a></li>
+<li><a href="ref-thread-name.html"><font color="#000000">thread-name</font></a></li>
+<li><a href="ref-thread-whostate.html"><font color="#000000">thread-whostate</font></a></li>
+<li><a href="ref-threadp.html"><font color="#000000">threadp</font></a></li>
+<li><a href="ref-thread-yield.html"><font color="#000000">thread-yield</font></a></li>
+<li><a href="ref-run-in-thread.html"><font color="#000000">run-in-thread</font></a></li>
+<li><a href="ref-spawn-thread.html"><font color="#000000">spawn-thread</font></a></li>
+<li><a href="ref-symbol-value-in-thread.html"><font color="#000000">symbol-value-in-thread</font></a></li>
+<li><a href="ref-thread-holds-lock-p.html"><font color="#000000">thread-holds-lock-p</font></a></li>
+<li><a href="ref-with-lock-held.html"><font color="#000000">with-lock-held</font></a></li>
+<li><a href="ref-with-timeout.html"><font color="#000000">with-timeout</font></a></li>
 </ul>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />

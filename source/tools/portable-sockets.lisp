@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-SOCKETS; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/tools/portable-sockets.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jul 25 22:00:36 2007 *-*
+;;;; *-* Last-Edit: Sat Jul 28 13:41:40 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -17,6 +17,20 @@
 ;;; Copyright (C) 2005-2007, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
+;;; Developed and supported by the GBBopen Project (http://GBBopen.org) and
+;;; licenced under the Apache 2.0 license (see
+;;; http://GBBopen.org/downloads/LICENSE for license details.)
+;;;
+;;; Bug reports, suggestions, enhancements, and extensions should be sent to
+;;; corkill@GBBopen.org.
+;;;
+;;; On-line documentation for these portable sockets interface entities is
+;;; available at http://gbbopen.org/hyperdoc/index.html
+;;;
+;;; This file requires the GBBopen Portable Threads Interface file
+;;; (portable-threads.lisp), but is otherwise self-contained on the supported
+;;; CLs.
+;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
 ;;;  08-02-05 File created.  (Corkill)
@@ -29,7 +43,7 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (unless (find-package :portable-sockets)
     (defpackage :portable-sockets
-      (:use :common-lisp :portable-threads))))
+      (:use :common-lisp #-ecl :portable-threads))))
 
 (in-package :portable-sockets)
 
@@ -168,11 +182,33 @@
      (how :long))
   :result-type :fixnum)
 ;;;
+;;;   and for ECL
+#+ecl
+(uffi:def-function "shutdown"
+    ((socket :int)
+     (how :int))
+  :returning :int)
+;;;
 ;;;   and for SBCL
 #+sbcl
 (sb-alien:define-alien-routine shutdown sb-alien:int
     (socket sb-alien:int)
     (how sb-alien:int))
+
+;;; ---------------------------------------------------------------------------
+;;;   Add selct for ECL (used in accept-connection)
+
+#+ecl
+(progn
+  (uffi:def-foreign-type nil (:struct timeval (tv-sec :long) (tv-usec :long)))
+  (declaim (inline select))
+  (uffi:def-function "select"
+      ((nfds :int)
+       (readfds (* (:struct nil (--fds-bits (:array :long 32)))))
+       (writefds (* (:struct nil (--fds-bits (:array :long 32)))))
+       (exceptfds (* (:struct nil (--fds-bits (:array :long 32)))))
+       (timeout (* (:struct timeval (tv-sec :long) (tv-usec :long)))))
+    :returning :int))
 
 ;;; ===========================================================================
 ;;;  Utilities
@@ -350,7 +386,7 @@
 	:port port)
       ;; Avoid Lispworks race condition on filling in the passive 
       ;; socket fd value (still exists in LW 4.4.6):
-      (process-yield)))
+      (thread-yield)))
   #+(or digitool-mcl
         openmcl)
   (ccl:make-socket :connect ':passive
@@ -414,24 +450,29 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun shutdown-socket-stream (socket-stream direction)
+  ;;; Note: Allegro, CLISP, Digitool-MCL, and OpenMCL only support :input and
+  ;;;       :output direction, so that is all that we document as providing...
   #-(or allegro
         clisp
         cmu
         digitool-mcl
         lispworks
         openmcl
-        sbcl)
+        sbcl
+        scl)
   (declare (ignore socket-stream direction))
   #+allegro
   (socket:shutdown socket-stream :direction direction)
   #+clisp
   (socket:socket-stream-shutdown socket-stream direction)
-  #+cmu
+  #+(or cmu
+        scl)
   (ext:inet-shutdown (sys:fd-stream-fd socket-stream)
                      (ecase direction
                        (:input ext:shut-rd)
                        (:output ext:shut-wr)
-                       (:both ext:shut-rdwr)))
+                       #+not-supported
+                       (:input-output ext:shut-rdwr)))
   #+(or digitool-mcl 
         openmcl)
   (ccl:shutdown socket-stream :direction direction)
@@ -440,20 +481,23 @@
             (ecase direction
               (:input 0)
               (:output 1)
-              (:both 2)))
+              #+not-supported
+              (:input-output 2)))
   #+sbcl
   (shutdown (sb-sys::fd-stream-fd socket-stream)
             (ecase direction
               (:input 0)
               (:output 1)
-              (:both 2)))
+              #+not-supported
+              (:input-output 2)))
   #-(or allegro 
         clisp 
         cmu
         digitool-mcl 
         lispworks
         openmcl
-        sbcl)
+        sbcl
+        scl)
   (port-needed 'shutdown-socket-stream))
   
 ;;; ---------------------------------------------------------------------------
@@ -488,7 +532,7 @@
   (when (progn ; need something like wait-until-fd-usable 
 	 (sb-bsd-sockets:socket-file-descriptor passive-socket) 
 	 ':input
-	 ;; convert :wait to timeout:
+         ;; convert :wait to timeout:
 	 (cond ((eq wait 't) nil)
 	       ((not wait) 0)
 	       (t wait)))
@@ -539,10 +583,10 @@
 				     (backlog 5)
 				     interface
 				     reuse-address)
-  #+multiprocessing-not-available
+  #+threads-not-available
   (declare (ignore function port name backlog interface reuse-address))
-  #-multiprocessing-not-available
-  (spawn-process 
+  #-threads-not-available
+  (spawn-thread 
    name 
    #'(lambda (function port interface backlog reuse-address)
        (let ((passive-socket 
@@ -556,8 +600,8 @@
 		 (funcall function connection)))
 	   (close-passive-socket passive-socket))))
    function port interface backlog reuse-address)
-  #+multiprocessing-not-available
-  (multiprocessing-not-available 'start-connection-server))
+  #+threads-not-available
+  (threads-not-available 'start-connection-server))
 
 ;;; ===========================================================================
 ;;;  Socket Attribute Readers

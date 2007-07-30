@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/unit-metaclasses.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jun 13 13:25:51 2007 *-*
+;;;; *-* Last-Edit: Sat Jul 28 12:24:04 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -171,7 +171,7 @@
                           to ~s (do not interrupt)...~%"
                   (class-name class)
                   (standard-unit-class.instance-name-comparison-test class)))
-        (with-process-lock (*master-instance-lock*)
+        (with-lock-held (*master-instance-lock*)
           (let ((old-ht (standard-unit-class.instance-hash-table class))
                 (new-ht 
                  (make-hash-table 
