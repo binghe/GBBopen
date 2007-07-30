@@ -44,6 +44,10 @@ Important changes since GBBopen 0.9.6:
        process-wait               <deprecated>
        process-wait-with-timeout  <deprecated>
 
+    Backward compatibility with the previous version of :portable-threads is
+    provided, but users should migrate quickly to the new version as this
+    backward compatibility will be dropped relatively soon.
+
 
 Important changes in GBBopen 0.9.6:
 
