@@ -60,14 +60,15 @@ awakened by another thread.  Once awakened, the lock that it was holding is
 reacquired atomically before the thread is allowed to do anything else.
 </p>
 <p>A condition variable must always be associated with a <a href="ref-glossary.html#gl:lock">lock</a> (or
-<a href="ref-glossary.html#id133">recursive&nbsp;lock</a>) in order to avoid a race condition created by one
-thread preparing to wait and another thread which may signal the condition
-before the first thread actually waits on it.  In this situation, the thread
-would be perpetually waiting for a signal that has already been sent.  In the
-POSIX model, there is no explicit link between the lock and the condition
-variable.  The Portable Threads Interface makes this association explicit by
-bundling the lock with the <b><a href="ref-condition-variable.html">condition-variable</a></b> CLOS object
-instance.
+<a href="ref-glossary.html#id133">recursive&nbsp;lock</a>) in order to avoid a race condition created when one
+thread signals a condition while another thread is preparing to wait on it.
+In this situation, the second thread would be perpetually waiting for the
+signal that has already been sent.  In the POSIX model, there is no explicit
+link between the lock used to control access to the condition variable and the
+condition variable.  The Portable Threads Interface makes this association
+explicit by bundling the lock with the <b><a href="ref-condition-variable.html">condition-variable</a></b>
+CLOS object instance and allowing the <b><a href="ref-condition-variable.html">condition-variable</a></b>
+object to be used directly in lock entities.
 </p>
 <p><h4>Hibernation</h4>
 </p>
@@ -85,15 +86,15 @@ operations as well as to be awakened by a dynamically surrounding
 <p>Thread coordination functions, such as <code>process-wait</code>, are expensive to
 implement with operating-system threads.  Such functions stop the executing
 thread until a Common Lisp predicate function returns a true value.  With
-application-level threads, the Lisp-based scheduler simply evaluates the
-predicate periodically when looking for other threads that can be run.  With
-operating-system threads, however, scheduling is performed by the operating
-system and evaluating the predicate function requires some complex and
-expensive interaction between the operating-system scheduling and the Common
-Lisp implementation.  Given this cost and complexity, some Common Lisp
-implementations using operating-system threads have elected not to provide
-<code>process-wait</code>-style coordination functions, and this issue extends to
-the Portable Threads Interface as well.
+application-level threads, the Lisp-based scheduler evaluates the predicate
+periodically when looking for other threads that can be run.  With
+operating-system threads, however, thread scheduling is performed by the
+operating system and evaluating a Common Lisp predicate function requires some
+complex and expensive interaction between the operating-system scheduling and
+the Common Lisp implementation.  Given this cost and complexity, some Common
+Lisp implementations using operating-system threads have elected not to
+provide <code>process-wait</code>-style coordination functions, and this issue
+extends to the Portable Threads Interface as well.
 </p>
 <p>Fortunately, most uses of <code>process-wait</code> can be replaced by a different
 strategy that relies on the producer of a change that would affect the
