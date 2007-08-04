@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/tools/portable-threads.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Jul 30 05:19:51 2007 *-*
+;;;; *-* Last-Edit: Sat Aug  4 15:13:45 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -127,8 +127,10 @@
    #+digitool-mcl
    '(ccl:process-wait
      ccl:process-wait-with-timeout)
+   ;; EL's mp:make-lock doesn't support owner, so we must build our own
+   ;; from it
    #+(and ecl threads)
-   '(mp:make-lock)
+   '()                                  
    #+(and ecl (not threads))
    '()
    #+gcl
@@ -390,9 +392,18 @@
             (:include mp:process-lock)
             (:copier nil)))
 
-;; ECL's lock is a built-in class, but ECL allows us to subclass it:
+;; ECL's mp:lock is a built-in class, and although ECL allows us to subclass it,
+;; ECL's mp:with-lock performs an exact (non-subclass) type match.  Also ECL
+;; doesn't support lock owner inquiry, so we must build our own:
 #+(and ecl threads) 
-(defclass recursive-lock (mp::lock) (name :initarg :name :initform nil))
+(progn
+  (defclass nonrecursive-lock ()
+    ((%lock :initform (mp:make-lock)
+            :accessor %lock-of)
+     (name :initarg :name :initform nil)
+     (owner :initform nil :accessor lock-owner)))
+  (defclass recursive-lock (nonrecursive-lock) 
+    ()))
 
 #+lispworks
 (defstruct (recursive-lock
@@ -463,8 +474,7 @@
 ;;; ---------------------------------------------------------------------------
 ;;;   Make-lock
 
-#-(or (and ecl threads)                 ; simply imported                 
-      lispworks                         ; simply imported
+#-(or lispworks                         ; simply imported
       threads-not-available
       cormanlisp)                       ; CLL 3.0 can't handle this one
 (defun make-lock (&key name)
@@ -472,6 +482,8 @@
   (mp:make-process-lock :name name)
   #+(and cmu mp)
   (mp:make-lock name :kind ':error-check)
+  #+(and ecl threads)
+  (make-instance 'nonrecursive-lock :name name)
   #+(or digitool-mcl
         openmcl)
   (%make-lock :ccl-lock (ccl:make-lock name))
@@ -533,7 +545,7 @@
          #+(and cmu mp)
          (mp:with-lock-held (,lock-sym ,whostate) ,@body) 
          #+(and ecl threads)
-         (mp:with-lock (,lock-sym) ,@body)
+         (mp:with-lock ((%lock-of ,lock-sym)) ,@body)
          #+lispworks
          (progn
            (when (and (not (recursive-lock-p ,lock-sym))
@@ -588,6 +600,8 @@
     (eq (mp:process-lock-locker lock) system:*current-process*)
     #+(and cmu mp)
     (eq (mp::lock-process lock) mp:*current-process*)
+    #+(and ecl threads)
+    nil                                 ; need to find lock owner
     #+lispworks
     (eq (mp:lock-owner lock) mp:*current-process*)
     #+(or digitool-mcl 
@@ -611,6 +625,8 @@
          #+(and cmu mp)
          (eq (mp::lock-process ,lock-sym)
              mp:*current-process*)
+         #+(and ecl threads)
+         nil                            ; need to find lock owner
          #+lispworks
          (eq (mp:lock-owner ,lock-sym)
              mp:*current-process*)
@@ -1244,7 +1260,7 @@
                                    `(,(symbol-value symbol) t)
                                    '(nil nil)))))
     ;; Wait for result:
-    (loop until result do (mp:process-yield))
+    (loop until result do (sleep 0))
     (apply #'values result))
   #+lispworks
   (mp:read-special-in-process thread symbol)
@@ -1295,14 +1311,10 @@
 ;;;  symbol-value-in-thread operations.  We also want to allow:
 ;;;      (with-timeout (n) (hibernate-thread))
 ;;;
-;;;  Process arrest-reasons are generally too powerful for these operations,
-;;;  so we resort to sleeping on these CLs (CMUCL, Lispworks, OpenMCL).
+;;;  Using process arrest-reasons is too powerful for these operations,
+;;;  instead we use sleeping which works like a charm!
 
-#+(or (and cmu mp) 
-      digitool-mcl
-      lispworks
-      openmcl
-      (and sbcl sb-thread))
+#-threads-not-available
 (defun throwable-sleep-forever ()
   ;; Used in place of process-arrest-reasons in CL's that don't have
   ;; them or that don't mix with-timeout and arrested processes:
@@ -1311,15 +1323,13 @@
 
 ;;; ---------------------------------------------------------------------------
 
-#+(or (and cmu mp)
-      digitool-mcl
-      lispworks
-      openmcl
-      (and sbcl sb-thread))
+#-threads-not-available
 (defun awaken-throwable-sleeper (thread)
   (flet ((awake-fn ()
            (ignore-errors
             (throw 'throwable-sleep-forever nil))))
+    #+allegro
+    (multiprocessing::process-interrupt thread #'awake-fn)
     #+(and cmu mp)
     (mp:process-interrupt thread #'awake-fn)
     #+lispworks
@@ -1334,18 +1344,7 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun hibernate-thread ()
-  #+allegro
-  (mp:process-add-arrest-reason mp:*current-process* ':hibernate)
-  #+(and cmu mp)
-  (throwable-sleep-forever)
-  #+digitool-mcl
-  (throwable-sleep-forever)
-  #+lispworks
-  (throwable-sleep-forever)
-  ;; OpenMCL doesn't support suspending oneself:
-  #+openmcl
-  (throwable-sleep-forever)
-  #+(and sbcl sb-thread)
+  #-threads-not-available
   (throwable-sleep-forever)
   #+threads-not-available
   (threads-not-available 'hibernate-thread))
@@ -1360,17 +1359,7 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun awaken-thread (thread)
-  #+allegro
-  (mp:process-revoke-arrest-reason thread ':hibernate)
-  #+(and cmu mp)
-  (awaken-throwable-sleeper thread)
-  #+digitool-mcl
-  (awaken-throwable-sleeper thread)
-  #+lispworks
-  (awaken-throwable-sleeper thread)
-  #+openmcl
-  (awaken-throwable-sleeper thread)
-  #+(and sbcl sb-thread)
+  #-threads-not-available
   (awaken-throwable-sleeper thread)
   #+threads-not-available
   (declare (ignore thread))
@@ -1425,6 +1414,14 @@
 (defclass condition-variable ()
   ((lock :initarg :lock
          :initform (mp:make-lock "CV Lock" :kind ':error-check)
+         :reader condition-variable-lock)
+   (queue :initform nil
+          :accessor condition-variable-queue)))
+
+#+(and ecl threads)
+(defclass condition-variable ()
+  ((lock :initarg :lock
+         :initform (make-lock :name "CV Lock")
          :reader condition-variable-lock)
    (queue :initform nil
           :accessor condition-variable-queue)))
@@ -1505,8 +1502,7 @@
       (push system:*current-process* 
             (condition-variable-queue condition-variable))
       (mp::process-unlock lock)
-      (mp:process-add-arrest-reason 
-       system:*current-process* condition-variable)
+      (throwable-sleep-forever)
       (mp::process-lock lock))
     #+(and cmu mp)
     (progn
@@ -1558,8 +1554,7 @@
              (setf (condition-variable-queue condition-variable)
                    (remove system:*current-process*
                            (condition-variable-queue condition-variable)))))
-        (mp:process-add-arrest-reason 
-         system:*current-process* condition-variable))
+        (throwable-sleep-forever))
       (mp::process-lock lock))
     #+(and cmu mp)
     (progn
@@ -1572,8 +1567,6 @@
              (setf (condition-variable-queue condition-variable)
                    (remove mp:*current-process*
                            (condition-variable-queue condition-variable)))))
-        ;; with-timeout won't awaken an arrested process, so sleep as
-        ;; long as possible instead:
         (throwable-sleep-forever))
       (mp::lock-wait lock nil))
     #+lispworks
@@ -1586,8 +1579,6 @@
              (setf (condition-variable-queue condition-variable)
                    (remove mp:*current-process*
                            (condition-variable-queue condition-variable)))))
-        ;; with-timeout won't awaken an arrested process, so sleep as
-        ;; long as possible instead:
         (throwable-sleep-forever))
       (mp:process-lock lock))
     #+(or digitool-mcl
@@ -1623,8 +1614,8 @@
      condition-variable 'condition-variable-signal))
   #+allegro
   (let ((thread (pop (condition-variable-queue condition-variable))))
-    (when thread
-      (mp:process-revoke-arrest-reason thread condition-variable)))
+    (when thread 
+      (awaken-throwable-sleeper thread)))
   #+(and cmu mp)
   (let ((thread (pop (condition-variable-queue condition-variable))))
     (when thread 
@@ -1649,7 +1640,7 @@
   (let ((queue (condition-variable-queue condition-variable)))
     (setf (condition-variable-queue condition-variable) nil)
     (dolist (thread queue)
-      (mp:process-revoke-arrest-reason thread condition-variable)))
+      (awaken-throwable-sleeper thread)))
   #+(and cmu mp)
   (let ((queue (condition-variable-queue condition-variable)))
     (setf (condition-variable-queue condition-variable) nil)

@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/tools/test/portable-threads-test.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Jul 30 05:10:54 2007 *-*
+;;;; *-* Last-Edit: Sat Aug  4 15:02:48 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -210,6 +210,17 @@
     (sleepy-time)
     (when (member thread (all-threads))
       (log-error "Killed thread is still a member of (all-threads)")))
+  ;; Check if (sleep 0) is optimized away by this CL:
+  (let ((iterations 10000))
+    (forced-format "~&;;   Timing ~s (sleep 0)s..." iterations)
+    (time-it (dotimes (i iterations)
+               (declare (fixnum i))
+               (sleep 0)))
+    (forced-format "~&;;   Timing ~s throwable (sleep 0)s..." iterations)
+    (time-it (dotimes (i iterations)
+               (declare (fixnum i))
+               (catch 'throwable-sleep-forever
+                 (sleep 0)))))
   (forced-format "~&;; Basic thread completed~%"))
 
 ;;; ---------------------------------------------------------------------------
