@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /home/gbbopen/current/doc-source/reference.tex *-*
-%% *-* Last-Edit: Tue Jul 31 04:40:34 2007; Edited-By: cork *-*
+%% *-* Last-Edit: Wed Aug  8 04:21:37 2007; Edited-By: cork *-*
 %% *-* Machine: ruby.corkills.org *-*
 
 %% Copyright (C) 2003-2007, Dan Corkill <corkill@GBBopen.org>
@@ -11881,6 +11881,9 @@ Return the child space instances  of the \code{(bb)} \glref{space~instance}:
  #<standard-space-instance (bb rejected-hyps)>)
 \end{example}
 
+\fnnotes The returned list of child \glref{space~instances} should not be
+destructively altered.
+
 \end{functiondoc}
 
 %% ------------------------------------------------------------------------
@@ -11893,7 +11896,8 @@ Return the child space instances  of the \code{(bb)} \glref{space~instance}:
 
 \fnsyntax
 
-\fnpurpose Return the \glref{dimensions} of a \glref{space~instance}.
+\fnpurpose Return the \glref{dimension} specifications of a
+\glref{space~instance}.
 
 \fnmethods
 \fnalternate{space-instance-dimensions}%
@@ -11923,6 +11927,9 @@ Return the \glref{dimensions} of the \code{(bb hyps)} \glref{space~instance}:
 > (space-instance-dimensions (\entlink{find-space-instance-by-path} '(bb hyps))
 ((x :ordered) (y :ordered) (belief :ordered) (classification :enumerated))
 \end{example}
+
+\fnnotes The returned list of \glref{dimension} specifications should not be
+destructively altered.
 
 \end{functiondoc}
 
