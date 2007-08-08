@@ -85,7 +85,7 @@
 <p><a name="id2">Change</a> the name of <code>hyp</code> <code>180</code> to <code>"bogus-180"</code>:
 </p>
 <pre>
-&gt; (setf (<a href="ref-find-instance-by-name.html">find-instance-by-name</a> 180 'hyp) "bogus-180")
+&gt; (setf (instance-name-of (<a href="ref-find-instance-by-name.html">find-instance-by-name</a> 180 'hyp)) "bogus-180")
 "bogus-180"
 </pre>
 <hr /><address><a target="_top" class="address"
