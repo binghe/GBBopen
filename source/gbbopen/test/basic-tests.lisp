@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/test/basic-tests.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Jul 14 13:43:06 2007 *-*
+;;;; *-* Last-Edit: Wed Aug  8 04:02:36 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -509,7 +509,7 @@
              'link-1 u1 value expected-value)))
         (delete-instance x))
       ;; cleanup
-      (mapcar #'delete-instance (list u1 u2 u3 u4 u5))
+      (mapc #'delete-instance (list u1 u2 u3 u4 u5))
       ;; double-check
       (let ((instances (find-instances 't 't 't)))
         (when instances
