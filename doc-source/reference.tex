@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /home/gbbopen/current/doc-source/reference.tex *-*
-%% *-* Last-Edit: Wed Aug  8 04:21:37 2007; Edited-By: cork *-*
+%% *-* Last-Edit: Wed Aug  8 04:39:08 2007; Edited-By: cork *-*
 %% *-* Machine: ruby.corkills.org *-*
 
 %% Copyright (C) 2003-2007, Dan Corkill <corkill@GBBopen.org>
@@ -10467,7 +10467,7 @@ Return the names of the \glref{unit~instances} supporting
 \bfindexit{find-instance-by-name}%
 Change the name of \code{hyp} \code{180} to \code{"bogus-180"}:
 \begin{example}
-> (setf (\entlink{find-instance-by-name} 180 'hyp) "bogus-180")
+> (setf (instance-name-of (\entlink{find-instance-by-name} 180 'hyp)) "bogus-180")
 "bogus-180"
 \end{example}
 
