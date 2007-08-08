@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/spaces.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Jul 28 13:24:54 2007 *-*
+;;;; *-* Last-Edit: Wed Aug  8 04:13:07 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -104,7 +104,7 @@
     :accessor standard-space-instance.space-name)
    (children 
     :link (standard-space-instance parent :singular t)
-    :accessor space-instance-children))
+    :reader space-instance-children))
   (:generate-accessors nil))
 
 ;;; ---------------------------------------------------------------------------
@@ -167,7 +167,7 @@
    (parent 
     :link (root-space-instance children)
     :singular t
-    :accessor space-instance-parent))
+    :reader space-instance-parent))
   (:generate-accessors-format :prefix)
   (:generate-accessors t :exclude allowed-unit-classes dimensions parent))
 
@@ -218,7 +218,7 @@
       (setf (slot-value instance 'allowed-unit-classes)
             (ensure-unit-classes-specifiers allowed-unit-classes))
       (setf (standard-space-instance.space-name instance) space-name)
-      (linkf (space-instance-parent instance) 
+      (linkf (slot-value instance 'parent)
              (if parent-space-instance
                  parent-space-instance
                  (find-root-space-instance)))))
