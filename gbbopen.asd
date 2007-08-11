@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/gbbopen.asd *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Aug 10 21:24:41 2007 *-*
+;;;; *-* Last-Edit: Sat Aug 11 05:21:24 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -30,11 +30,45 @@
 
 (require :asdf)
 
+(defparameter *gbbopen-version* "0.9.6")
+
+;;; ---------------------------------------------------------------------------
+
 (let ((truename *load-truename*))
   (load (make-pathname 
 	 :name "gbbopen-init"
 	 :type "lisp"
 	 :defaults truename)))
+
+;;; ---------------------------------------------------------------------------
+;;;  We have trivially completed all of the :gbbopen system operations by
+;;;  loading this file:
+
+(defclass gbbopen (asdf:component)
+  ())
+
+(defmethod asdf:component-pathname ((component gbbopen))
+  nil)
+
+(defmethod asdf:operation-done-p ((op asdf:compile-op) (component gbbopen))
+  t)
+
+(defmethod asdf:operation-done-p ((op asdf:load-op) (component gbbopen))
+  t)
+
+(defmethod asdf:operation-done-p ((op asdf:load-source-op) (component gbbopen))
+  t)
+
+(defmethod asdf:perform ((op asdf:compile-op) (component gbbopen)))
+
+(defmethod asdf:perform ((op asdf:load-op) (component gbbopen)))
+
+(defmethod asdf:perform ((op asdf:load-source-op) (component gbbopen)))
+
+(eval `(asdf:defsystem :gbbopen
+           :author "The GBBopen Project <gbbopen@GBBopen.org>"
+           :maintainer "Dan Corkill <corkill@GBBopen.org>"
+           :version ,*gbbopen-version*))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -86,15 +120,33 @@
 ;;;  Still to do: Generate asdf:defsystems directly from the
 ;;;  define-tll-command machinery
 
-(dolist (module-name '(:mini-module :gbbopen-tools :multiprocessing
-		       :os-interface :gbbopen-core :gbbopen-user
-		       :agenda-shell :agenda-shell-user :gbbopen-graphics
-		       :gbbopen-test :multiprocessing-test :http-test 
-		       :agenda-shell-test))
+(dolist (module-name '(:mini-module 
+                       ;; GBBopen Tools
+                       :gbbopen-tools 
+                       :portable-threads
+                       :portable-sockets
+                       :polling-functions
+		       :os-interface 
+                       ;; GBBopen Core
+                       :gbbopen-core 
+                       :gbbopen-user
+		       ;; Agenda Shell
+                       :agenda-shell
+                       :agenda-shell-user
+                       ;; Example Modules
+                       :tutorial-example 
+                       :abort-ks-execution-example
+                       ;; Test Modules
+		       :gbbopen-test 
+                       :portable-threads-test
+                       :http-test 
+		       :agenda-shell-test 
+                       ;; Compile All GBBopen Modules
+                       :compile-gbbopen))
   (eval `(asdf:defsystem ,module-name
 	     :author "The GBBopen Project <gbbopen@GBBopen.org>"
 	     :maintainer "Dan Corkill <corkill@GBBopen.org>"
-	     :version "0.9.5"
+	     :version ,*gbbopen-version*
 	     :components ((:mini-module ,module-name)))))
 
 ;;; ===========================================================================
