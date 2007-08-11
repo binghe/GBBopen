@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/commands.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jul 18 10:14:01 2007 *-*
+;;;; *-* Last-Edit: Sat Aug 11 05:26:32 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -56,7 +56,7 @@
 (in-package :common-lisp-user)
 
 ;;; ===========================================================================
-;;;   Useful GBBopen Commands
+;;;   Useful GBBopen Commands  (Keep gbbopen.asd consistent with these!)
 
 (define-tll-command :start ()
   "Load GBBopen startup.lisp file"

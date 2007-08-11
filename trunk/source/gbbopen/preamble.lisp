@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/preamble.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Jul 28 12:26:16 2007 *-*
+;;;; *-* Last-Edit: Sat Aug 11 05:25:25 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -40,8 +40,10 @@
 	    instance-name-comparison-test)))
 
 ;;; ---------------------------------------------------------------------------
+;;;  GBBopen version
 
 (defun gbbopen-implementation-version ()
+  ;; NOTE: Change the value in ../../gbbopen.asd when this value is changed:
   "0.9.6")
 
 ;;; Added to *features* in epilogue.lisp:
