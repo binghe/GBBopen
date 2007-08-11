@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/gbbopen.asd *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Dec 18 14:59:39 2006 *-*
+;;;; *-* Last-Edit: Fri Aug 10 21:24:41 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2005, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2005-2007, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;;  Interfaces GBBopen's mini-module facility, a lightweight and easy to use
@@ -87,7 +87,7 @@
 ;;;  define-tll-command machinery
 
 (dolist (module-name '(:mini-module :gbbopen-tools :multiprocessing
-		       :os-interface :gbbopen :gbbopen-user
+		       :os-interface :gbbopen-core :gbbopen-user
 		       :agenda-shell :agenda-shell-user :gbbopen-graphics
 		       :gbbopen-test :multiprocessing-test :http-test 
 		       :agenda-shell-test))
