@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/mini-module/mini-module.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Jul 15 05:54:50 2007 *-*
+;;;; *-* Last-Edit: Sun Aug 12 07:47:55 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -146,7 +146,7 @@
 ;;; ===========================================================================
 ;;;  Implementation-Specific Package & Feature Adjustments
 
-;;; Use CMUCL package nicknames with SBCL:
+;; Allow use of CMUCL package nicknames with SBCL:
 #+sbcl
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (sb-impl::enter-new-nicknames (find-package "SB-PCL") '("PCL"))
@@ -370,8 +370,17 @@
   #+(and scl unix)
   (ext:unix-namestring (make-pathname :name nil :type nil :version nil
 				      :defaults path))
-  #-(or allegro clisp (and cmu unix) cormanlisp digitool-mcl ecl gcl
-	lispworks openmcl (and sbcl unix) (and scl unix))
+  #-(or allegro
+        clisp
+        (and cmu unix)
+        cormanlisp 
+        digitool-mcl
+        ecl
+        gcl
+	lispworks 
+        openmcl
+        (and sbcl unix)
+        (and scl unix))
   (need-to-port 'probe-directory))
 
 ;;; ---------------------------------------------------------------------------

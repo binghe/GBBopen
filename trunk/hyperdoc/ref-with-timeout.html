@@ -37,17 +37,17 @@ seconds have elapsed
 </td></tr></table>
 </p>
 <p><span class="fndoclabel">Returns</span> <br />The values returned by evaluating the last <var>form</var> if
-completed in less than <var>seconds</var>; otherwise the values returned by
+completed in less than <var>seconds</var> seconds; otherwise the values returned by
 evaluating the last <var>timeout-form</var>
 </p>
 <p><span class="fndoclabel">Errors</span> <br />Threads (multiprocessing) is not supported on the
 Common Lisp implementation.
 </p>
 <p><span class="fndoclabel">Description</span> <br />If the evaluation of <var>forms</var> does not complete within
-<var>seconds</var>, execution of <var>forms</var> is terminated and the
+<var>seconds</var> seconds, execution of <var>forms</var> is terminated and the
 <var>timeout-forms</var> are evaluated, returning the result of the last
 <var>timeout-form</var>. The <var>timeout-forms</var> are not evaluated if the
-<var>forms</var> complete within <var>seconds</var>, in which case the result of the
+<var>forms</var> complete within <var>seconds</var> seconds, in which case the result of the
 last <var>form</var> is returned.
 </p>
 <p><span class="fndoclabel">See also</span>

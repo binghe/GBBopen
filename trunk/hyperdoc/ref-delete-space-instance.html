@@ -19,7 +19,7 @@
 <nobr><b><font color="#000000">delete-space-instance</font></b></nobr></td><td valign="baseline"> &nbsp; </td><td valign="baseline" align="left" width="99%"><var>space-instance-or-path</var>
 <i> =&gt; </i> <var>deleted-space-instance</var></td><td valign="baseline" align="right">[<i>Generic&nbsp;Function</i>]
 </td></tr></table></p>
-<p><span class="fndoclabel">Purpose</span> <br />Delete a <a href="ref-glossary.html#id145">space&nbsp;instance</a>.
+<p><span class="fndoclabel">Purpose</span> <br />Delete a <a href="ref-glossary.html#id147">space&nbsp;instance</a>.
 </p>
 <p><span class="fndoclabel">Method signatures</span></p>
 <p><table class="tight" width="100%">
@@ -53,17 +53,17 @@
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-core</code>
 </p>
 <p><span class="fndoclabel">Arguments</span><table class="tight">
-<tr valign="top"><td valign="baseline"><i>space-instance-or-path</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> The <a href="ref-glossary.html#id145">space&nbsp;instance</a> or
-<a href="ref-glossary.html#id147">space-instance&nbsp;path</a> to be deleted
+<tr valign="top"><td valign="baseline"><i>space-instance-or-path</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> The <a href="ref-glossary.html#id147">space&nbsp;instance</a> or
+<a href="ref-glossary.html#id149">space-instance&nbsp;path</a> to be deleted
 </td></tr></table>
 </p>
-<p><span class="fndoclabel">Returns</span> <br />The (deleted) <a href="ref-glossary.html#id145">space&nbsp;instance</a>.
+<p><span class="fndoclabel">Returns</span> <br />The (deleted) <a href="ref-glossary.html#id147">space&nbsp;instance</a>.
 </p>
 <p><span class="fndoclabel">Events</span> <br /><a name="id1">A</a> <code>delete-instance-event</code> is signaled at the start of the
 deletion process and an <code>instance-deleted-event</code> is
 signaled when the deletion has been completed.  The following events
 may also be signaled if the <var>space-instance</var> is, itself, on a
-<a href="ref-glossary.html#id145">space&nbsp;instance</a> or is linked to other <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a>:
+<a href="ref-glossary.html#id147">space&nbsp;instance</a> or is linked to other <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a>:
 <a name="id2"></a></p>
 <p><ul class="tight"><li><code>unlink-event</code>
 <li><code>remove-instance-from-space-instance-event</code>
@@ -75,7 +75,7 @@ may also be signaled if the <var>space-instance</var> is, itself, on a
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-make-space-instance.html"><b>make-space-instance</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-reset-gbbopen.html"><b>reset-gbbopen</b></a>
 </p>
-<p><span class="fndoclabel">Examples</span> <br /><a name="id3">Delete</a> the <code>(bb hyps)</code> <a href="ref-glossary.html#id145">space&nbsp;instance</a>:
+<p><span class="fndoclabel">Examples</span> <br /><a name="id3">Delete</a> the <code>(bb hyps)</code> <a href="ref-glossary.html#id147">space&nbsp;instance</a>:
 </p>
 <pre>
 &gt; (delete-space-instance (<a href="ref-find-space-instance-by-path.html">find-space-instance-by-path</a> '(bb hyps))

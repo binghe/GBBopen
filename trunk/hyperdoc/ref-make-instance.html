@@ -21,7 +21,7 @@
 <code>&#38;key</code> &#38;allow-other-keys <i> =&gt; </i> <var>instance</var></td><td valign="baseline" align="right">[<i>Generic&nbsp;Function</i>]
 </td></tr></table></p>
 <p><span class="fndoclabel">Purpose</span> <br />Create a new <a href="ref-glossary.html#gl:instance">instance</a> of <var>class</var>, such as a new
-<a href="ref-glossary.html#id163">unit&nbsp;instance</a>.
+<a href="ref-glossary.html#id165">unit&nbsp;instance</a>.
 </p>
 <p><span class="fndoclabel">Method signatures</span></p>
 <p><table class="tight" width="100%">
@@ -63,18 +63,18 @@
 </p>
 <p><span class="fndoclabel">Returns</span> <br />The newly created <a href="ref-glossary.html#gl:instance">instance</a> of <var>class</var>.
 </p>
-<p><span class="fndoclabel">Events</span> <br /><a name="id1">When</a> a <a href="ref-glossary.html#id163">unit&nbsp;instance</a> is created, events are signaled in the
+<p><span class="fndoclabel">Events</span> <br /><a name="id1">When</a> a <a href="ref-glossary.html#id165">unit&nbsp;instance</a> is created, events are signaled in the
 following sequence: 
 </p>
 <p><ol class="tight"><li>An <code>update-nonlink-slot-event</code> or
 <code>link-event</code> is signaled for each slot in
-the newly created <a href="ref-glossary.html#id163">unit&nbsp;instance</a>. A <code>link-event</code>
+the newly created <a href="ref-glossary.html#id165">unit&nbsp;instance</a>. A <code>link-event</code>
 is also signaled for each inverse pointer from an existing
-<a href="ref-glossary.html#id163">unit&nbsp;instance</a> to the newly created <a href="ref-glossary.html#id163">unit&nbsp;instance</a>.
+<a href="ref-glossary.html#id165">unit&nbsp;instance</a> to the newly created <a href="ref-glossary.html#id165">unit&nbsp;instance</a>.
 </p>
 <p><li>An <code>add-instance-to-space-instance-event</code> is signaled
-for each <a href="ref-glossary.html#id145">space&nbsp;instance</a> on which the newly created
-<a href="ref-glossary.html#id163">unit&nbsp;instance</a> is added.
+for each <a href="ref-glossary.html#id147">space&nbsp;instance</a> on which the newly created
+<a href="ref-glossary.html#id165">unit&nbsp;instance</a> is added.
 </p>
 <p><li>A <code>create-instance-event</code> is signaled.
 </p>
@@ -83,10 +83,10 @@ for each <a href="ref-glossary.html#id145">space&nbsp;instance</a> on which the 
 </p>
 <a name="id2"></a><p><span class="fndoclabel">Description</span> <br />Specifying a <code>:space-instances</code> initialization argument
 causes that value to be used instead of the <code>:initial-space-instances</code>
-specification associated with the <a href="ref-glossary.html#id161">unit&nbsp;class</a>. Similarly, specifying a
+specification associated with the <a href="ref-glossary.html#id163">unit&nbsp;class</a>. Similarly, specifying a
 <code>:instance-name-of</code> initialization argument causes that value to be used as
-the name of the newly created <a href="ref-glossary.html#id163">unit&nbsp;instance</a> instead of the
-instance-name counter value associated with the <a href="ref-glossary.html#id161">unit&nbsp;class</a>.
+the name of the newly created <a href="ref-glossary.html#id165">unit&nbsp;instance</a> instead of the
+instance-name counter value associated with the <a href="ref-glossary.html#id163">unit&nbsp;class</a>.
 </p>
 <p><span class="fndoclabel">See also</span>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-define-event-class.html"><b>define-event-class</b></a>
@@ -97,7 +97,7 @@ instance-name counter value associated with the <a href="ref-glossary.html#id161
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-instance-name-of.html"><b>instance-name-of</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-make-space-instance.html"><b>make-space-instance</b></a>
 </p>
-<p><span class="fndoclabel">Example</span> <br />Create a new <code>hyp</code> <a href="ref-glossary.html#id163">unit&nbsp;instance</a>:
+<p><span class="fndoclabel">Example</span> <br />Create a new <code>hyp</code> <a href="ref-glossary.html#id165">unit&nbsp;instance</a>:
 </p>
 <pre>
 &gt; (make-instance 'hyp 

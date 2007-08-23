@@ -36,7 +36,7 @@
     style="font-family: serif; font-style: normal">or</span> slot-name <td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A slot-name or list
 of slot-names (default is <code>t</code>)
 </td></tr><tr valign="top"><td valign="baseline"><i>paths <span 
-    style="font-family: serif; font-style: normal">or</span> path <td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id147">space-instance&nbsp;path</a>
+    style="font-family: serif; font-style: normal">or</span> path <td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id149">space-instance&nbsp;path</a>
 regular expression 
 (default is <code>(*)</code>)
 </td></tr><tr valign="top"><td valign="baseline"><i>permanent</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id71">generalized&nbsp;boolean</a> (default is <code>nil</code>)
@@ -122,14 +122,14 @@ follows:
 </p>
 <p><span class="fndoclabel">Examples</span> <br /><a name="id4">Add</a> the event function <a href="ref-evfn-printv.html">evfn-printv</a> to the set of functions
 to be invoked when <code>create-instance-event</code> is signalled on a
-<code>hyp</code> <a href="ref-glossary.html#id163">unit&nbsp;instance</a>:
+<code>hyp</code> <a href="ref-glossary.html#id165">unit&nbsp;instance</a>:
 </p>
 <pre>
   (add-event-function 'evfn-printv 'create-instance-event 'hyp)
 </pre>
 <p>Add the event function <a href="ref-evfn-printv.html">evfn-printv</a> to the set of functions
 to be invoked when <code>create-instance-event</code> is signalled on a
-<code>hyp</code> <a href="ref-glossary.html#id163">unit&nbsp;instance</a> or its subclasses:
+<code>hyp</code> <a href="ref-glossary.html#id165">unit&nbsp;instance</a> or its subclasses:
 </p>
 <pre>
   (add-event-function 'evfn-printv 'create-instance-event '(hyp :plus-subclasses))
