@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<!-- XML file produced from file: reference.tex
+     using Hyperlatex v 2.9-in-waiting-rk (c) Otfried Cheong -->
+<head>
+<title>GBBopen 0.9.6 Reference -- make-scheduled-function</title>
+</p>
+<link rel="SHORTCUT ICON" href="favicon.ico"><link rel=stylesheet
+        href="gbbopen.css" type="text/css" />
+</head>
+<body>
+<table width="100%" cellpadding="0" cellspacing="2"><tr>
+<td bgcolor="#99ccff"><a href="ref-make-recursive-lock.html"><img border="0" alt="make-recursive-lock" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="ref-portable-thread-entities.html"><img border="0" alt="Portable Threads" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-restart-scheduled-function-scheduler.html"><img border="0" alt="restart-scheduled-function-scheduler" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">make-scheduled-function</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table>
+ 
+<p><table class="tight" width="100%">
+<tr valign="top"><td valign="baseline" align="left"%>
+<nobr><b><font color="#000000">make-scheduled-function</font></b></nobr></td><td valign="baseline"> &nbsp; </td><td valign="baseline" align="left" width="99%"><var>function</var> 
+<code>&#38;key</code> <var>name</var>
+<i> =&gt; </i> <var>scheduled-function</var></td><td valign="baseline" align="right">[<i>Function</i>]
+</td></tr></table></p>
+<p><span class="fndoclabel">Purpose</span> <br />Create a <a href="ref-glossary.html#id141">scheduled&nbsp;function</a>.
+</p>
+<p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:portable-threads</code>
+</p>
+<p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:portable-threads</code>
+</p>
+<p><span class="fndoclabel">Arguments</span><table class="tight">
+<tr valign="top"><td valign="baseline"><i>function</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#gl:function">function</a> of one argument
+</td></tr><tr valign="top"><td valign="baseline"><i>name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An object (typically a string or a symbol)
+</td></tr></table>
+</p>
+<p><span class="fndoclabel">Returns</span> <br />The newly created <a href="ref-glossary.html#id141">scheduled&nbsp;function</a>. 
+</p>
+<p><span class="fndoclabel">Errors</span> <br />Threads (multiprocessing) is not supported on the
+Common Lisp implementation.
+</p>
+<p><span class="fndoclabel">Description</span> <br />Unless the run time of <var>function</var> is brief, it
+should spawn a new <a href="ref-glossary.html#gl:thread">thread</a> in which to perform its activities
+so as to avoid delaying the invocation of a subsequent
+<a href="ref-glossary.html#id141">scheduled&nbsp;function</a>.
+</p>
+<p><span class="fndoclabel">See also</span>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-schedule-function-verbose.html"><b>*schedule-function-verbose*</b></a>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-all-scheduled-functions.html"><b>all-scheduled-functions</b></a>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-schedule-function.html"><b>schedule-function</b></a>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-schedule-function-relative.html"><b>schedule-function-relative</b></a>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-scheduled-function-name.html"><b>scheduled-function-name</b></a>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-scheduled-function-repeat-interval.html"><b>scheduled-function-repeat-interval</b></a>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-unschedule-function.html"><b>unschedule-function</b></a>
+</p>
+<p><span class="fndoclabel">Examples</span> <br />Create a scheduled function that simply prints <code>"Hello"</code> when invoked:
+</p>
+<pre>
+&gt; (make-scheduled-function 
+    #'(lambda (scheduled-function)
+        (declare (ignore scheduled-function))
+        (print "Hello"))
+    :name 'hello)
+#&lt;scheduled-function hello [unscheduled]&gt;
+</pre>
+<p><a name="id1">A</a> more complex scheduled function that spawns a new <a href="ref-glossary.html#gl:thread">thread</a> to do its
+work and randomly sets whether to reschedule itself (and at what interval):
+</p>
+<pre>
+&gt; (defun complex-function (scheduled-function)
+    (let ((interval (random 100)))
+      (setf (<a href="ref-scheduled-function-repeat-interval.html">scheduled-function-repeat-interval</a> scheduled-function)
+            (if (plusp interval) 
+                ;; repeat 1-99 seconds from now:
+                interval
+                ;; don't repeat 1&#37; of the time:
+                nil)))
+    (<a href="ref-spawn-thread.html">spawn-thread</a> "Lots of stuff doer" #'do-lots-of-stuff))
+complex-function
+&gt; (make-scheduled-function 'complex-function :name 'complex)
+#&lt;scheduled-function complex [unscheduled]&gt;
+</pre>
+<hr /><address><a target="_top" class="address"
+    href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
+<table width="100%" cellpadding="0" cellspacing="2"><tr>
+<td bgcolor="#99ccff"><a href="ref-make-recursive-lock.html"><img border="0" alt="make-recursive-lock" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="ref-portable-thread-entities.html"><img border="0" alt="Portable Threads" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-restart-scheduled-function-scheduler.html"><img border="0" alt="restart-scheduled-function-scheduler" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">make-scheduled-function</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table></body></html>

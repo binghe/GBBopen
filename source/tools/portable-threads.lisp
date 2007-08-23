@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/tools/portable-threads.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Aug  4 15:13:45 2007 *-*
+;;;; *-* Last-Edit: Thu Aug 23 06:10:15 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -52,6 +52,8 @@
 ;;;           for implementing very brief atomic operations.  (Corkill)
 ;;;  05-08-06 Added support for the Scieneer CL. (dtc)
 ;;;  07-28-07 V2.0 naming changes, full condition variable support.  (Corkill)
+;;;  08-20-07 V2.1: Added scheduled functions, thread-alive-p, 
+;;;           encode-time-of-day. (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -143,7 +145,8 @@
    '(ccl:process-wait
      ccl:process-wait-with-timeout)
    #+(and sbcl sb-thread)
-   '(sb-thread::thread-name)
+   '(sb-thread:thread-alive-p
+     sb-thread::thread-name)
    #+(and sbcl (not sb-thread))
    '()
    #+scl
@@ -187,7 +190,9 @@
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(*non-threaded-polling-function-hook* ; not documented
+            *schedule-function-verbose*
 	    all-processes               ; renamed (to be removed soon)
+            all-scheduled-functions
             all-threads
 	    as-atomic-operation
 	    atomic-decf
@@ -207,6 +212,7 @@
 	    condition-variable-wait-with-timeout
 	    current-process             ; renamed (to be removed soon)
             current-thread
+            encode-time-of-day          ; new (document soon)
 	    gate-open-p                 ; deprecated, to be removed
 	    hibernate-process		; renamed (to be removed soon)
 	    hibernate-thread
@@ -217,6 +223,7 @@
             make-lock
 	    make-process-lock           ; renamed (to be removed soon)
             make-recursive-lock
+            make-scheduled-function
 	    multiprocessing-not-available ; renamed (remove soon)
 	    open-gate                   ; deprecated, to be removed
 	    process-name                ; renamed (to be removed soon)
@@ -226,19 +233,27 @@
 	    process-wait-with-timeout   ; deprecated, to be removed
 	    process-whostate            ; renamed (to be removed soon)
 	    process-yield               ; renamed (to be removed soon)
+            restart-scheduled-function-scheduler
 	    run-in-process              ; renamed (to be removed soon)
             run-in-thread
+            schedule-function
+            schedule-function-relative
+            scheduled-function          ; structure (not documented)
+            scheduled-function-name
+            scheduled-function-repeat-interval
 	    spawn-process               ; renamed (to be removed soon)
             spawn-thread
 	    symbol-value-in-process     ; renamed (to be removed soon)
             symbol-value-in-thread
             threadp
             threads-not-available       ; not documented
+            thread-alive-p
 	    thread-condition-variables-not-available ; not documented
-            thread-holds-lock-p         ; new (need to document)
+            thread-holds-lock-p
             thread-name
             thread-whostate
             thread-yield
+            unschedule-function
             with-lock-held
 	    with-process-lock           ; renamed (to be removed soon)
             with-timeout)))
@@ -298,10 +313,10 @@
 ;;; ===========================================================================
 
 (defun portable-threads-implementation-version ()
-  "2.0")
+  "2.1")
 
 ;;; Added to *features* at the end of this file:
-(defparameter *portable-threads-version-keyword* :portable-threads-2.0)
+(defparameter *portable-threads-version-keyword* :portable-threads-2.1)
 
 ;;; ---------------------------------------------------------------------------
 
@@ -905,6 +920,51 @@
   `(threadp ,obj))
  
 ;;; ---------------------------------------------------------------------------
+;;;   Thread-alive-p
+
+#-(and sbcl sb-thread)
+(defun thread-alive-p (obj)
+  #+allegro
+  (mp:process-alive-p obj)
+  #+(and cmu mp)
+  (mp:process-alive-p obj)
+  #+digitool-mcl
+  (ccl::process-active-p obj)
+  #+(and ecl threads)
+  (mp:process-active-p obj)
+  #+lispworks
+  (mp:process-alive-p obj)
+  #+openmcl
+  (ccl::process-active-p obj)
+  #+scl
+  (mp:process-alive-p obj)
+  #+threads-not-available
+  (declare (ignore obj))
+  #+threads-not-available
+  nil)
+
+#-(or full-safety threads-not-available (and sbcl sb-thread))
+(define-compiler-macro thread-alive-p (obj)
+  #+allegro
+  `(mp:process-alive-p ,obj)
+  #+(and cmu mp)
+  `(mp:process-alive-p ,obj)
+  #+digitool-mcl
+  `(ccl::process-active-p ,obj)
+  #+(and ecl threads)
+  `(mp:process-active-p ,obj)
+  #+lispworks
+  `(mp:process-alive-p ,obj)
+  #+openmcl
+  `(ccl::process-active-p ,obj)
+  #+scl
+  `(mp:process-alive-p ,obj)
+  #+threads-not-available
+  (declare (ignore obj))
+  #+threads-not-available
+  nil)
+
+;;; ---------------------------------------------------------------------------
 ;;;   Thread-name
 
 #-(and sbcl sb-thread)
@@ -1194,7 +1254,10 @@
   #+digitool-mcl
   (apply #'ccl:process-interrupt thread function args)
   #+lispworks
-  (apply #'mp:process-interrupt thread function args)
+  (progn
+    (apply #'mp:process-interrupt thread function args)
+    ;; Help Lispworks be more aggressive in running function promptly:
+    (mp:process-allow-scheduling))
   #+openmcl
   (apply #'ccl:process-interrupt thread function args)
   #+(and sbcl sb-thread)
@@ -1328,18 +1391,7 @@
   (flet ((awake-fn ()
            (ignore-errors
             (throw 'throwable-sleep-forever nil))))
-    #+allegro
-    (multiprocessing::process-interrupt thread #'awake-fn)
-    #+(and cmu mp)
-    (mp:process-interrupt thread #'awake-fn)
-    #+lispworks
-    (progn (mp:process-interrupt thread #'awake-fn)
-           (mp:process-allow-scheduling))
-    #+(or digitool-mcl
-          openmcl)
-    (ccl:process-interrupt thread #'awake-fn)
-    #+(and sbcl sb-thread)
-    (sb-thread:interrupt-thread thread #'awake-fn)))
+    (run-in-thread  thread #'awake-fn)))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -1612,17 +1664,11 @@
   (unless (thread-holds-lock-p (condition-variable-lock condition-variable))
     (condition-variable-lock-needed-error
      condition-variable 'condition-variable-signal))
-  #+allegro
+  #+(or allegro
+        (and cmu mp)
+        lispworks)
   (let ((thread (pop (condition-variable-queue condition-variable))))
     (when thread 
-      (awaken-throwable-sleeper thread)))
-  #+(and cmu mp)
-  (let ((thread (pop (condition-variable-queue condition-variable))))
-    (when thread 
-      (awaken-throwable-sleeper thread)))
-  #+lispworks
-  (let ((thread (pop (condition-variable-queue condition-variable))))
-    (when thread
       (awaken-throwable-sleeper thread)))
   #+(or digitool-mcl
         openmcl)
@@ -1636,17 +1682,9 @@
   (unless (thread-holds-lock-p (condition-variable-lock condition-variable))
     (condition-variable-lock-needed-error
      condition-variable 'condition-variable-broadcast))
-  #+allegro
-  (let ((queue (condition-variable-queue condition-variable)))
-    (setf (condition-variable-queue condition-variable) nil)
-    (dolist (thread queue)
-      (awaken-throwable-sleeper thread)))
-  #+(and cmu mp)
-  (let ((queue (condition-variable-queue condition-variable)))
-    (setf (condition-variable-queue condition-variable) nil)
-    (dolist (thread queue)
-      (awaken-throwable-sleeper thread)))
-  #+lispworks
+  #+(or allegro
+        (and cmu mp)
+        lispworks)
   (let ((queue (condition-variable-queue condition-variable)))
     (setf (condition-variable-queue condition-variable) nil)
     (dolist (thread queue)
@@ -1691,6 +1729,387 @@
 (defun process-wait-with-timeout (whostate seconds function &rest args)
   (mp:process-wait-with-timeout whostate seconds
    #'(lambda () (apply function args))))
+
+;;; ===========================================================================
+;;;  Scheduled Functions (built entirely on top of Portable Threads substrate)
+
+(defstruct (scheduled-function
+            (:constructor %make-scheduled-function (function name))
+            (:copier nil))
+  name
+  function
+  invocation-time
+  repeat-interval)
+
+(defmethod print-object ((obj scheduled-function) stream)
+  (if *print-readably*
+      (call-next-method)
+      (print-unreadable-object (obj stream :type t)
+        (format stream "~s [" (scheduled-function-name obj))
+        (pretty-invocation-time (scheduled-function-invocation-time obj)
+                                stream)
+        (format stream "]"))))
+
+;;; ---------------------------------------------------------------------------
+
+(defvar *month-name-vector* 
+    (vector "Jan" "Feb" "Mar" "Apr" "May" "Jun"
+	    "Jul" "Aug" "Sep" "Oct" "Nov" "Dec"))
+
+;;; ---------------------------------------------------------------------------
+
+(defun pretty-invocation-time (ut stream)
+  (if ut
+      (multiple-value-bind (isecond iminute ihour idate imonth iyear)
+          (decode-universal-time ut)
+        (multiple-value-bind (second minute hour date month year)
+            (decode-universal-time (get-universal-time))
+          (declare (ignore second minute hour))
+          (cond 
+           ;; today?
+           ((and (= date idate)
+                 (= month imonth)
+                 (= year iyear))
+            (format stream "~2,'0d:~2,'0d:~2,'0d"
+                    ihour
+                    iminute
+                    isecond))
+           ;; someday:
+           (t (let ((imonth-name (svref *month-name-vector* (1- imonth))))
+                (format stream "~a ~d, ~d ~2,'0d:~2,'0d:~2,'0d"
+                        imonth-name
+                        idate
+                        iyear
+                        ihour
+                        iminute
+                        isecond))))))
+      (format stream "unscheduled")))
+  
+;;; ---------------------------------------------------------------------------
+
+(defvar *scheduled-functions* nil)
+(defvar *schedule-function-verbose* nil)
+#-threads-not-available
+(defvar *scheduled-functions-cv* (make-condition-variable))
+(defvar *scheduled-function-scheduler-thread* nil)
+
+;;; ---------------------------------------------------------------------------
+
+(defun all-scheduled-functions ()
+  ;;; Returns the (unprotected) list of scheduled scheduled-functions.
+  *scheduled-functions*)
+
+;;; ---------------------------------------------------------------------------
+
+(defun make-scheduled-function (function &key name)
+  #-threads-not-available
+  (%make-scheduled-function function name)
+  #+threads-not-available
+  (declare (ignore function name))
+  #+threads-not-available
+  (threads-not-available 'make-scheduled-function))
+
+;;; ---------------------------------------------------------------------------
+
+#-threads-not-available
+(defun invoke-scheduled-function (scheduled-function)
+  (with-simple-restart (continue "Resume scheduled-function scheduling")
+    (funcall (scheduled-function-function scheduled-function)
+             scheduled-function)))
+
+;;; ---------------------------------------------------------------------------
+
+#-threads-not-available
+(defun scheduled-function-scheduler ()
+  ;;; The scheduled-function scheduler (run by the
+  ;;; scheduled-function-scheduler thread).
+  (let ((scheduled-function-to-run nil))
+    (loop
+      (with-lock-held (*scheduled-functions-cv*)
+        (cond 
+         ;; nothing to schedule, wait until signaled:
+         ((null *scheduled-functions*)
+          (condition-variable-wait *scheduled-functions-cv*))
+         ;; something to schedule:
+         (t (let ((invocation-time (scheduled-function-invocation-time
+                                    (first *scheduled-functions*)))
+                  (now (get-universal-time)))
+              (cond 
+               ;; wait until the next scheduled function (or until signaled):
+               ((> invocation-time now)
+                (condition-variable-wait-with-timeout 
+                 *scheduled-functions-cv*
+                 (- invocation-time now))
+                ;; recheck that it's time to run the first scheduled function
+                ;; before running the scheduled-function (in case we have been
+                ;; awakened due to a schedule change rather than due to the
+                ;; scheduled time of the next scheduled-function):
+                (let ((invocation-time (scheduled-function-invocation-time
+                                        (first *scheduled-functions*)))
+                      (now (get-universal-time)))
+                  (when (<= invocation-time now)
+                    (setf scheduled-function-to-run
+                          (pop *scheduled-functions*)))))
+               ;; no need to wait:
+               (t (setf scheduled-function-to-run
+                        (pop *scheduled-functions*))))))))
+      ;; funcall the scheduled function (outside of the CV lock):
+      (when scheduled-function-to-run
+        (unwind-protect (invoke-scheduled-function scheduled-function-to-run)
+          (let ((repeat-interval (scheduled-function-repeat-interval
+                                  scheduled-function-to-run)))
+            (cond 
+             ;; reschedule, if a repeat interval was specified:
+             (repeat-interval
+              ;; The following keeps invocations closest to intended, but
+              ;; leads to rapidly repeating "catch up" invocations if the
+              ;; scheduler has been blocked or terminated/restarted:
+              #+this-keeps-times-in-alignment
+              (incf (scheduled-function-invocation-time
+                     scheduled-function-to-run)
+                    repeat-interval)
+              ;; This version avoids "catch up" invocations, but can
+              ;; drift over time:
+              #-this-keeps-times-in-alignment
+              (setf (scheduled-function-invocation-time
+                     scheduled-function-to-run)
+                    (+ (get-universal-time) repeat-interval))
+              ;; This verbose message will only be displayed if
+              ;; *schedule-function-verbose* has been set globally  
+              (when *schedule-function-verbose*
+                (format *trace-output* 
+                        "~&;; Scheduling ~s at repeat-interval ~s...~%"
+                        scheduled-function-to-run
+                        repeat-interval)
+                (force-output *trace-output*))
+              (with-lock-held (*scheduled-functions-cv*)
+                (insert-scheduled-function scheduled-function-to-run nil)))
+             ;; otherwise, clear the invocation time:
+             (t (setf (scheduled-function-invocation-time 
+                       scheduled-function-to-run)
+                      nil))))
+          (setf scheduled-function-to-run nil))))))
+
+;;; ---------------------------------------------------------------------------
+
+#-threads-not-available
+(defun awaken-scheduled-function-scheduler ()
+  ;;; Awaken the scheduled-function-scheduler thread due to a change.
+  ;;; If the thread isn't alive, start (or restart) it up.
+  (if (and (threadp *scheduled-function-scheduler-thread*)
+           (thread-alive-p *scheduled-function-scheduler-thread*))
+      (condition-variable-signal *scheduled-functions-cv*)
+      (setf *scheduled-function-scheduler-thread*
+            (spawn-thread "Scheduled-Function Scheduler" 
+                          'scheduled-function-scheduler))))
+
+;;; ---------------------------------------------------------------------------
+
+#-threads-not-available
+(defun insert-scheduled-function (scheduled-function verbose)
+  ;;; Do the work of inserting a scheduled function into the list of
+  ;;; *scheduled-functions*.  The *scheduled-function-cv* lock must be held
+  ;;; when calling this function.
+  (cond
+   ;; empty list:
+   ((null *scheduled-functions*)
+    (when verbose
+      (format *trace-output* 
+              "~&;; Scheduling ~s as the next scheduled-function...~%"
+              scheduled-function)
+      (force-output *trace-output*))
+    (setf *scheduled-functions* (list scheduled-function))
+    ;; schedule it:
+    (awaken-scheduled-function-scheduler))
+   ;; find position in list:
+   (t (let ((invocation-time
+             (scheduled-function-invocation-time scheduled-function)))
+        (cond
+         ;; front insertion:
+         ((< invocation-time (scheduled-function-invocation-time 
+                              (car *scheduled-functions*)))
+          (when verbose
+            (format *trace-output* 
+                    "~&;; Scheduling ~s as the next scheduled-function...~%"
+                    scheduled-function)
+            (force-output *trace-output*))
+          (setf *scheduled-functions*
+                (cons scheduled-function *scheduled-functions*))
+          ;; schedule it:
+          (awaken-scheduled-function-scheduler))
+         ;; splice into the list:
+         (t (when verbose
+              (format *trace-output* 
+                      "~&;; Adding ~s as a scheduled-function...~%"
+                      scheduled-function)
+              (force-output *trace-output*))
+            (do ((sublist *scheduled-functions* (cdr sublist)))
+                ((null (cdr sublist))
+                 (setf (cdr sublist) (list scheduled-function)))
+              (when (< invocation-time 
+                       (scheduled-function-invocation-time (cadr sublist)))
+                (setf (cdr sublist) (cons scheduled-function (cdr sublist)))
+                (return)))))))))
+
+;;; ---------------------------------------------------------------------------
+
+#-threads-not-available
+(defun delete-scheduled-function (name-or-scheduled-function verbose)
+  ;;; Do the work of deleting a scheduled function from the list of
+  ;;; *scheduled-functions*.  The *scheduled-function-cv* lock must be held
+  ;;; when calling this function.
+  (let ((the-deleted-scheduled-function nil))
+    (flet ((on-deletion (scheduled-function)
+             (when verbose
+               (format *trace-output* "~&;; Unscheduling ~s...~%"
+                       scheduled-function)
+               (force-output *trace-output*))
+             ;; Clear the invocation and repeat-interval values:
+             (setf (scheduled-function-invocation-time scheduled-function)
+                   nil)
+             (setf (scheduled-function-repeat-interval scheduled-function) 
+                   nil)
+             ;; Record the deleted function (which also returns true):
+             (setf the-deleted-scheduled-function scheduled-function)))
+      (setf *scheduled-functions* 
+            (delete-if
+             (if (scheduled-function-p name-or-scheduled-function)
+                 #'(lambda (scheduled-function)
+                     (when (eq scheduled-function name-or-scheduled-function)
+                       (on-deletion scheduled-function)))
+               #'(lambda (scheduled-function)
+                   (when (equal (scheduled-function-name scheduled-function)
+                                name-or-scheduled-function)
+                       (on-deletion scheduled-function))))
+             *scheduled-functions*)))
+    ;; return the deleted scheduled-function (or nil, if unsuccessful):
+    the-deleted-scheduled-function))
+
+;;; ---------------------------------------------------------------------------
+
+#-threads-not-available
+(defun schedule-function-internal (name-or-scheduled-function invocation-time
+                                   repeat-interval verbose)
+  (with-lock-held (*scheduled-functions-cv*)
+    (let* ((next-scheduled-function (first *scheduled-functions*))
+           (unscheduled-scheduled-function 
+            (delete-scheduled-function name-or-scheduled-function verbose))
+           (scheduled-function 
+            (or unscheduled-scheduled-function name-or-scheduled-function)))
+      (cond
+       ((scheduled-function-p scheduled-function)
+        (setf (scheduled-function-invocation-time scheduled-function)
+              invocation-time)
+        (setf (scheduled-function-repeat-interval scheduled-function)
+              repeat-interval)
+        (insert-scheduled-function scheduled-function verbose)
+        ;; awaken scheduler if this scheduled-function was the next to be
+        ;; run and now it is not the next to be run:
+        (when (and (eq next-scheduled-function scheduled-function)
+                   (not (eq (first *scheduled-functions*) scheduled-function)))
+          (awaken-scheduled-function-scheduler)))                   
+       ;; unable to find the requested scheduled-function:
+       (t (warn "Unable to find scheduled-function ~s."
+                name-or-scheduled-function))))))
+
+;;; ---------------------------------------------------------------------------
+
+(defun schedule-function (name-or-scheduled-function invocation-time
+                          &key repeat-interval
+                               (verbose *schedule-function-verbose*))
+  #-threads-not-available
+  (progn
+    (check-type invocation-time integer)
+    (check-type repeat-interval (or null integer))
+    (schedule-function-internal name-or-scheduled-function invocation-time
+                                repeat-interval verbose)
+    (values))
+  #+threads-not-available
+  (declare (ignore name-or-scheduled-function invocation-time repeat-interval
+                   verbose))
+  #+threads-not-available
+  (threads-not-available 'schedule-function))
+
+;;; ---------------------------------------------------------------------------
+
+(defun schedule-function-relative (name-or-scheduled-function interval
+                                   &key repeat-interval 
+                                        (verbose *schedule-function-verbose*))
+  ;;; Syntactic sugar that simply adds `interval' to the current time before
+  ;;; scheduling the scheduled-function.
+  #-threads-not-available
+  (progn
+    (check-type interval integer)
+    (check-type repeat-interval (or null integer))
+    (schedule-function-internal name-or-scheduled-function 
+                                (+ (get-universal-time) interval)
+                                repeat-interval verbose)
+    (values))
+  #+threads-not-available
+  (declare (ignore name-or-scheduled-function interval repeat-interval
+                   verbose))
+  #+threads-not-available
+  (threads-not-available 'schedule-function-relative))
+
+;;; ---------------------------------------------------------------------------
+
+(defun unschedule-function (name-or-scheduled-function 
+                            &key (verbose *schedule-function-verbose*))
+  #-threads-not-available
+  (with-lock-held (*scheduled-functions-cv*)
+    (let ((next-scheduled-function (first *scheduled-functions*)))
+      (cond
+       ;; unscheduled successfully: 
+       ((delete-scheduled-function name-or-scheduled-function verbose)
+        ;; awaken the scheduler if the next scheduled-function was the one
+        ;; that was unscheduled:
+        (unless (eq next-scheduled-function (first *scheduled-functions*))
+          (awaken-scheduled-function-scheduler))
+        ;; return t if unscheduled:
+        't)
+       ;; unable to find it:
+       (t (warn "Scheduled-function ~s was not scheduled; no action taken."
+                name-or-scheduled-function)))))
+  #+threads-not-available
+  (declare (ignore name-or-scheduled-function verbose))
+  #+threads-not-available
+  (threads-not-available 'unschedule-function))
+
+;;; ---------------------------------------------------------------------------
+
+(defun restart-scheduled-function-scheduler ()
+  #-threads-not-available
+  (if (and (threadp *scheduled-function-scheduler-thread*)
+           (thread-alive-p *scheduled-function-scheduler-thread*))
+      (format t "~%;; The scheduled-function scheduler is already running.~%")
+      (with-lock-held (*scheduled-functions-cv*)
+        (awaken-scheduled-function-scheduler)))
+  #+threads-not-available
+  (threads-not-available 'restart-scheduled-function-scheduler))
+
+;;; ---------------------------------------------------------------------------
+;;;  Handy utility to encode (hour minute second) time of day into a universal
+;;;  time.  If that time has already passed, the next day is assumed.
+
+(defun encode-time-of-day (hour minute second
+                           &optional (universal-time (get-universal-time)))
+  ;; get the decoded current time of day:
+  (multiple-value-bind (current-second current-minute current-hour
+                        date month year)
+      (decode-universal-time universal-time)
+    ;; substitute the supplied hour, minute, and second values:
+    (let ((tentative-result
+           (encode-universal-time second minute hour date month year)))
+      (flet ((seconds-into-day (hour minute second)
+               (the fixnum (+ (the fixnum (* (the fixnum hour) 3600))
+                              (the fixnum (* (the fixnum minute) 60))
+                              (the fixnum second)))))
+        ;; if the time of day has already passed for today, assume
+        ;; tomorrow is intended:
+        (if (> (seconds-into-day current-hour current-minute current-second)
+               (seconds-into-day hour minute second))
+            (+ tentative-result #.(* 60 60 24))
+            tentative-result)))))
 
 ;;; ===========================================================================
 ;;;  Portable threads interface is fully loaded:
