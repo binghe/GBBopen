@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:AGENDA-SHELL; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/control-shells/agenda-shell.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Jul 28 12:18:57 2007 *-*
+;;;; *-* Last-Edit: Mon Aug 27 16:43:05 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -35,6 +35,8 @@
 ;;;  03-24-06 Added control-shell-cycle-event.  (Corkill)
 ;;;  10-05-06 Added ksa-class metaclass check.  (Corkill)
 ;;;  11-13-06 Added abort-ks-execution.  (Corkill)
+;;;  08-27-07 Renamed control-shell-started-p to control-shell-running-p.
+;;;           (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -65,7 +67,7 @@
 	    agenda-shell-node-state     ; not yet documented
 	    awaken-control-shell	; not yet documented
             collect-trigger-instances
-	    control-shell-started-p	; not yet documented
+	    control-shell-running-p
 	    cs.pause			; not documented
             define-ks
             describe-ks
@@ -1303,7 +1305,7 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun control-shell-started-p ()
+(defun control-shell-running-p ()
   (and (typep *cs* 'control-shell)
        (cs.in-control-shell-loop-p *cs*)))
 
@@ -1326,7 +1328,7 @@
                             (stepping nil)
                             (stepping-stream *query-io*))
   (cond
-   ((control-shell-started-p)
+   ((control-shell-running-p)
     (a-control-shell-is-running 'start-control-shell))
    (t (setf *cs* (make-control-shell 
 		  :awaken-on-event awaken-on-event
