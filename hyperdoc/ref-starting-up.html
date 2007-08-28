@@ -154,13 +154,13 @@ used when top-level keyword processing is not fully supported.
 </p>
 <p><h4>Personal gbbopen-commands.lisp file</h4>
 <a name="id5">You</a> can add your own top-level commands by defining them in a personal
-<code>gbbopen-commands.lisp</code> file.  If a <code>gbbopen-commands</code> file
-(source or compiled) is present in the user's home directory (as defined by
+<code>gbbopen-commands.lisp</code> file.  If a <code>gbbopen-commands</code> file (source
+or compiled) is present in the user's home directory (as defined by
 <b>user-homedir-pathname</b>), it is loaded automatically by GBBopen's
 <code>gbbopen-init.lisp</code> file.  For example, the following personal
-<code>gbbopen-commands.lisp</code> file defines a top-level keyword command
-(named <code>:my-app</code>) and an equivalent function (<code>cl-user::my-app</code>) for
-compiling and loading the <code>:my-app</code> module that was defined above:
+<code>gbbopen-commands.lisp</code> file defines a top-level keyword command (named
+<code>:my-app</code>) and an equivalent <a href="ref-glossary.html#gl:function">function</a> (<code>cl-user::my-app</code>)
+for compiling and loading the <code>:my-app</code> module that was defined above:
 </p>
 <pre>
   ;;;; -*- Mode:Common-Lisp; Package:CL-USER -*-
@@ -175,7 +175,7 @@ compiling and loading the <code>:my-app</code> module that was defined above:
   ;;;   End of File
   ;;; ===============================================
 </pre>
-<p>The macro <code>define-tll-command</code> and the function <code>startup-module</code>
+<p>The macro <code>define-tll-command</code> and the <a href="ref-glossary.html#gl:function">function</a> <code>startup-module</code>
 that are used in this example are both defined in the file
 <var><i>&lt;</i>install-directory<i>&gt;</i></var><code>gbbopen-init.lisp</code>.  Most GBBopen users
 prefer to have their Common Lisp initialization file load

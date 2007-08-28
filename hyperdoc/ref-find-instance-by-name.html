@@ -20,19 +20,19 @@
 <code>&#38;optional</code> <var>unit-class-specifier</var> <i> =&gt; </i>
 <var>unit-instance</var></td><td valign="baseline" align="right">[<i>Function</i>]
 </td></tr></table></p>
-<p><span class="fndoclabel">Purpose</span> <br />Retrieve a <a href="ref-glossary.html#id165">unit&nbsp;instance</a> by its name.
+<p><span class="fndoclabel">Purpose</span> <br />Retrieve a <a href="ref-glossary.html#id167">unit&nbsp;instance</a> by its name.
 </p>
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen</code>
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-core</code>
 </p>
 <p><span class="fndoclabel">Arguments</span><table class="tight">
-<tr valign="top"><td valign="baseline"><i>name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> The name of a <a href="ref-glossary.html#id165">unit&nbsp;instance</a>
+<tr valign="top"><td valign="baseline"><i>name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> The name of a <a href="ref-glossary.html#id167">unit&nbsp;instance</a>
 </td></tr><tr valign="top"><td valign="baseline"><i>unit-class-specifier</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An <a href="ref-glossary.html#id55">extended&nbsp;unit-class&nbsp;specification</a>
 (see below; default is <code>t</code>)
 </td></tr></table>
 </p>
-<p><span class="fndoclabel">Returns</span> <br />The <a href="ref-glossary.html#id165">unit&nbsp;instance</a> with the specified <var>name</var> of
+<p><span class="fndoclabel">Returns</span> <br />The <a href="ref-glossary.html#id167">unit&nbsp;instance</a> with the specified <var>name</var> of
 the specified class if one exists; <code>nil</code> otherwise.
 </p>
 <p><span class="fndoclabel">Detailed syntax</span></p>
@@ -60,7 +60,7 @@ the specified class if one exists; <code>nil</code> otherwise.
 <b><a href="ref-define-unit-class.html">define-unit-class</a></b> is used to match <var>name</var>
 with the <a href="ref-glossary.html#gl:unit-instance">unit-instance</a> name.  If you are using strings as the
 names of <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a>, you should specify <code>equal</code> or
-<code>equalp</code> as the comparision function in the <a href="ref-glossary.html#gl:unit-class">unit&nbsp;classes</a>
+<code>equalp</code> as the comparision <a href="ref-glossary.html#gl:function">function</a> in the <a href="ref-glossary.html#gl:unit-class">unit&nbsp;classes</a>
 of those <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a>.
 </p>
 <p><span class="fndoclabel">See also</span>
@@ -68,7 +68,7 @@ of those <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a>.
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-filter-instances.html"><b>filter-instances</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-find-instances.html"><b>find-instances</b></a>
 </p>
-<p><span class="fndoclabel">Example</span> <br />Find the <code>hyp</code> <a href="ref-glossary.html#id165">unit&nbsp;instance</a> 119:
+<p><span class="fndoclabel">Example</span> <br />Find the <code>hyp</code> <a href="ref-glossary.html#id167">unit&nbsp;instance</a> 119:
 </p>
 <pre>
 &gt; (find-instance-by-name 119 'hyp)
