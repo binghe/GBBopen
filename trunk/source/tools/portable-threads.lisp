@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/tools/portable-threads.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Aug 27 22:07:36 2007 *-*
+;;;; *-* Last-Edit: Mon Aug 27 22:15:37 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -1812,7 +1812,7 @@
   #-threads-not-available
   (%make-scheduled-function function name)
   #+threads-not-available
-  (declare (ignore function name))
+  (declare (ignore name))
   #+threads-not-available
   (threads-not-available 'make-scheduled-function))
 
@@ -2155,7 +2155,7 @@
     (spawn-thread (format nil "Periodic Function~@[ ~a~]" name)
                   #'fn))
   #+threads-not-available
-  (declare (ignore function interval count name verbose))
+  (declare (ignore interval count name verbose))
   #+threads-not-available
   (threads-not-available 'spawn-periodic-function))
 
