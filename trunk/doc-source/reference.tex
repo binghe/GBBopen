@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /home/gbbopen/current/doc-source/reference.tex *-*
-%% *-* Last-Edit: Thu Aug 23 06:13:22 2007; Edited-By: cork *-*
+%% *-* Last-Edit: Mon Aug 27 21:24:14 2007; Edited-By: cork *-*
 %% *-* Machine: ruby.corkills.org *-*
 
 %% Copyright (C) 2003-2007, Dan Corkill <corkill@GBBopen.org>
@@ -971,13 +971,13 @@ used when top-level keyword processing is not fully supported.
 \index{top-level command definitions, loading user-specific}%
 \bfindexit{user-homedir-pathname}%
 You can add your own top-level commands by defining them in a personal
-\code{gbbopen-commands.lisp} file.  If a \code{gbbopen-commands} file
-(source or compiled) is present in the user's home directory (as defined by
+\code{gbbopen-commands.lisp} file.  If a \code{gbbopen-commands} file (source
+or compiled) is present in the user's home directory (as defined by
 \textbf{user-homedir-pathname}), it is loaded automatically by GBBopen's
 \code{gbbopen-init.lisp} file.  For example, the following personal
-\code{gbbopen-commands.lisp} file defines a top-level keyword command
-(named \code{:my-app}) and an equivalent function (\code{cl-user::my-app}) for
-compiling and loading the \code{:my-app} module that was defined above:
+\code{gbbopen-commands.lisp} file defines a top-level keyword command (named
+\code{:my-app}) and an equivalent \glref{function} (\code{cl-user::my-app})
+for compiling and loading the \code{:my-app} module that was defined above:
 
 \begin{example}
   ;;;; -*- Mode:Common-Lisp; Package:CL-USER -*-
@@ -993,7 +993,7 @@ compiling and loading the \code{:my-app} module that was defined above:
   ;;; ===============================================
 \end{example}
 
-The macro \code{define-tll-command} and the function \code{startup-module}
+The macro \code{define-tll-command} and the \glref{function} \code{startup-module}
 that are used in this example are both defined in the file
 \var{$<$install-directory\/$>$}\code{gbbopen-init.lisp}.  Most GBBopen users
 prefer to have their Common Lisp initialization file load
@@ -1149,7 +1149,7 @@ file) on Linux machines:
      #-(or lispworks sbcl) "opera")
 \end{example}
 
-\fnnotes \xsitelink{LispWorks}{http://www.lispworks.com} (non-Windows
+\fnnote \xsitelink{LispWorks}{http://www.lispworks.com} (non-Windows
 platforms) and \xsitelink{SBCL}{http://sbcl.sourceforge.net} do not perform a
 \code{PATH} search for programs, so the browser-program path must be explicitly
 included in the preferred browser setting.
@@ -2103,7 +2103,7 @@ Toggle between date formatting options:
 "16 Feb 12:11"
 \end{example}
 
-\fnnotes
+\fnnote
 \indexit{module!:mini-module@\code{:mini-module}}%
 \indexit{:mini-module@\code{:mini-module} module}%
 This variable is defined in the \code{:mini-module} module to make it
@@ -2232,7 +2232,7 @@ The date and time 100 days ago (with seconds):
 "Nov  8, 2004   "
 \end{example}
 
-\fnnotes
+\fnnote
 \indexit{module!:mini-module@\code{:mini-module}}%
 \indexit{:mini-module@\code{:mini-module} module}%
 This function is loaded with the \code{:mini-module} module to make it
@@ -2307,7 +2307,7 @@ the \var{count\/} is provided, and in that case only the rightmost
 1
 \end{example}
 
-\fnnotes This is what \textbf{delete} should have been (and was on the
+\fnnote This is what \textbf{delete} should have been (and was on the
 Lisp Machines). 
 
 \end{functiondoc}
@@ -2600,7 +2600,7 @@ nil
 2
 \end{example}
 
-\fnnotes This \glref{function} will not work on a \glref{circular~list}.
+\fnnote This \glref{function} will not work on a \glref{circular~list}.
 
 \end{functiondoc}
 
@@ -2632,7 +2632,7 @@ nil
 #<standard-unit-class hyp>
 \end{example}
 
-\fnnotes \inline
+\fnnote \inline
 
 \end{functiondoc}
 
@@ -2669,7 +2669,7 @@ an atom, a newly consed list containing \var{object\/} as its sole element.
 nil
 \end{example}
 
-\fnnotes \inline
+\fnnote \inline
 
 \end{functiondoc}
 
@@ -2782,7 +2782,7 @@ nil
 :gbbopen
 \end{example}
 
-\fnnotes \inline
+\fnnote \inline
 
 \end{functiondoc}
 
@@ -3393,7 +3393,7 @@ Error: The list (a b) contains more than 1 element.
        If continued - Ignore the remaining elements.
 \end{example}
 
-\fnnotes \inline
+\fnnote \inline
 
 \end{functiondoc}
 
@@ -3515,7 +3515,7 @@ After creating an undesired method, use \textbf{undefmethod} to remove it:
 112
 \end{example}
 
-\fnnotes This macro may not be able to locate and undefine some methods with
+\fnnote This macro may not be able to locate and undefine some methods with
 environment-specific eql specializers.
 
 \end{functiondoc}
@@ -3537,7 +3537,7 @@ environment-specific eql specializers.
 \end{alsos}
 
 \fnexample
-Define a slot-reader function that returns the value of \code{my-slot} or 
+Define a slot-reader \glref{function} that returns the value of \code{my-slot} or 
 \textbf{unbound-value-indicator} if the slot is unbound: 
 \begin{example}
 (defun safe-my-slot-of (instance)
@@ -3663,7 +3663,7 @@ error occurs during that evaluation in which case values of evaluating
 \fndescription If an error occurs while evaluating \var{form},
 \var{error-forms\/} are evaluated and the values returned by the last
 \var{error-form\/} is returned.  A lexical function, \textbf{error-message},
-is available for use within \var{error-forms}.  This lexical function accepts
+is available for use within \var{error-forms}.  This lexical \glref{function} accepts
 no arguments and returns a string describing the error that occurred during
 the evaluation of \var{form}.
 
@@ -3717,7 +3717,7 @@ fastest (and least safe) compiler optimizations.  If the \glref{feature}
 \textbf{\entlinknoex{:full-safety}} is present at compile time, this macro
 has no effect on optimization settings.
 
-\fnexamples Declare a function definition, including argument checking,
+\fnexamples Declare a \glref{function} definition, including argument checking,
 to be fully optimized for the fastest (and least safe) execution:
 
 \begin{example}
@@ -3726,7 +3726,7 @@ to be fully optimized for the fastest (and least safe) execution:
       `(,value ,infinity)))
 \end{example}
 
-Optimize the same function definition, but this time without invocation and
+Optimize the same \glref{function} definition, but this time without invocation and
 argument-checking optimizations:
 
 \begin{example}
@@ -3821,7 +3821,7 @@ Re-define the classes, generating
 
 Re-define the classes, generating
 ``\var{slot-name}\code{-of-}\var{class-name}'' slot accessors (note that the
-\code{strange-name-string} name-generation function must be available at
+\code{strange-name-string} name-generation \glref{function} must be available at
 compile time):
 \begin{example}
 > (eval-when (:compile-toplevel :load-toplevel :execute)
@@ -4124,7 +4124,7 @@ These fixnum numeric-operation macros are defined in the
 \T\medskip
 
 \bfindex{coerce\&}%
-The one-argument function \textbf{coerce\&} provides convenient fixnum
+The one-argument \glref{function} \textbf{coerce\&} provides convenient fixnum
 coercion:
 \begin{example}
   (setf x (coerce& x))
@@ -4214,7 +4214,7 @@ These short-float numeric operation macros are defined in the
 \T\medskip
 
 \bfindex{coerce\$\&}%
-The one-argument function \textbf{coerce\$\&} provides convenient 
+The one-argument \glref{function} \textbf{coerce\$\&} provides convenient 
 short-float coercion:
 \begin{example}
   (setf x (coerce\$& x))
@@ -4304,7 +4304,7 @@ These single-float numeric operation macros are defined in the
 \T\medskip
 
 \bfindex{coerce\$}%
-The one-argument function \textbf{coerce\$} provides convenient 
+The one-argument \glref{function} \textbf{coerce\$} provides convenient 
 single-float coercion:
 \begin{example}
   (setf x (coerce\$ x))
@@ -4394,7 +4394,7 @@ These double-float numeric operation macros are defined in the
 \T\medskip
 
 \bfindex{coerce\$\$}%
-The one-argument function \textbf{coerce\$\$} provides convenient 
+The one-argument \glref{function} \textbf{coerce\$\$} provides convenient 
 double-float coercion:
 \begin{example}
   (setf x (coerce\$\$ x))
@@ -4484,7 +4484,7 @@ These long-float numeric operation macros are defined in the
 \T\medskip
 
 \bfindex{coerce\$\$\$}%
-The one-argument function \textbf{coerce\$\$\$} provides convenient 
+The one-argument \glref{function} \textbf{coerce\$\$\$} provides convenient 
 long-float coercion:
 \begin{example}
   (setf x (coerce\$ x))
@@ -4811,41 +4811,50 @@ operations as well as to be awakened by a dynamically surrounding
 
 Thread coordination functions, such as \code{process-wait}, are expensive to
 implement with operating-system threads.  Such functions stop the executing
-thread until a Common Lisp predicate function returns a true value.  With
-application-level threads, the Lisp-based scheduler evaluates the predicate
-periodically when looking for other threads that can be run.  With
+thread until a Common Lisp predicate \glref{function} returns a true value.
+With application-level threads, the Lisp-based scheduler evaluates the
+predicate periodically when looking for other threads that can be run.  With
 operating-system threads, however, thread scheduling is performed by the
-operating system and evaluating a Common Lisp predicate function requires some
-complex and expensive interaction between the operating-system scheduling and
-the Common Lisp implementation.  Given this cost and complexity, some Common
-Lisp implementations using operating-system threads have elected not to
-provide \code{process-wait}-style coordination functions, and this issue
-extends to the Portable Threads Interface as well.
+operating system and evaluating a Common Lisp predicate \glref{function}
+requires some complex and expensive interaction between the operating-system
+scheduling and the Common Lisp implementation.  Given this cost and
+complexity, some Common Lisp implementations using operating-system threads
+have elected not to provide \code{process-wait}-style coordination functions,
+and this issue extends to the Portable Threads Interface as well.
 
 Fortunately, most uses of \code{process-wait} can be replaced by a different
 strategy that relies on the producer of a change that would affect the
-\code{process-wait} predicate function to signal the event rather than having
-the consumers of the change use predicate functions to poll for it.  Condition
-variables, the Portable Threads \textbf{\entlink{hibernate-thread}} and
-\textbf{\entlink{awaken-thread}} mechanism, or blocking I/O functions cover
-most of the typical uses of \code{process-wait}.
+\code{process-wait} predicate \glref{function} to signal the event rather than
+having the consumers of the change use predicate functions to poll for it.
+Condition variables, the Portable Threads \textbf{\entlink{hibernate-thread}}
+and \textbf{\entlink{awaken-thread}} mechanism, or blocking I/O functions
+cover most of the typical uses of \code{process-wait}.
 
 \ppar{Scheduled Functions}
 
-A \glref{scheduled~function} is an object that contains a function to be run
-at a specified time. When that specified time arrives, the function is invoked
-with a single argument: the \glref{scheduled~function} object. A repeat
-interval (in seconds) can also be specified for the
-\glref{scheduled~function}. This value is used whenever the
+A \glref{scheduled~function} is an object that contains a \glref{function} to
+be run at a specified time. When that specified time arrives, the
+\glref{function} is invoked with a single argument: the
+\glref{scheduled~function} object. A repeat interval (in seconds) can also be
+specified for the \glref{scheduled~function}. This value is used whenever the
 \glref{scheduled~function} is invoked to schedule itself again at a new time
 relative to the current invocation.  \glref{Scheduled~functions} can be
-scheduled to a resolution of one second.  
+scheduled to a resolution of one second.
 
 \glref{Scheduled~functions} are managed and invoked by a separate
-\code{"Scheduled-Function Scheduler"} \glref{thread}.  Unless the run
-time of the invoked function is brief, the function should spawn a new
-\glref{thread} in which to perform its activities so as to avoid
-delaying the invocation of a subsequent \glref{scheduled~function}.
+\code{"Scheduled-Function Scheduler"} \glref{thread}.  Unless the run time of
+the invoked \glref{function} is brief, the function should spawn a new
+\glref{thread} in which to perform its activities so as to avoid delaying the
+invocation of a subsequent \glref{scheduled~function}.
+
+\ppar{Periodic Functions} 
+
+A \glref{periodic~function} is a \glref{function} to be run repeatedly at a
+specified interval.  Unlike \glref{scheduled~functions}, which can be
+scheduled only to a resolution of one second, a \glref{periodic~function} can
+be repeated at intervals as brief as is supported by the underlying Common
+Lisp's \code{sleep} function.  A separate \glref{thread} is spawned to manage
+each \glref{periodic~function}.
 
 \W\entities
 \T\clearpage
@@ -4890,6 +4899,51 @@ t
 ;; Unscheduling #<scheduled-function quitting-time [17:00:00]>...
 ;; Scheduling #<scheduled-function quitting-time [17:30:00]> 
    as the next scheduled-function...
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}[periodic-function-verbose]{Variable}%
+  {*periodic-function-verbose*}{}%
+
+\fnsyntax
+
+\fnpurpose Controls whether initiation and termination of
+\glref{periodic-function} \glref{threads} are printed as comments.
+
+\fnpackage \code{:portable-threads}
+
+\fnmodule \code{:portable-threads}
+
+\fnvaluetype A \glref{generalized~boolean}
+
+\fninitialvalue \nil
+
+\fndescription The value of \textbf{*periodic-function-verbose*} can be
+changed globally to display the management of \glref{periodic~functions}.
+
+\begin{alsos}{spawn-periodic-function}
+\also[kill-periodic-function]
+\also[spawn-periodic-function]
+\end{alsos}
+
+\bfindexit{spawn-periodic-function}%
+\fnexample 
+Schedule a simple \glref{periodic~function} with verbose printing enabled:
+\begin{example}
+> (setf *periodic-function-verbose* 't)
+t
+> (\entlink{spawn-periodic-function} #'(lambda () (print "Hello!")) 0.1 
+    :name 'hello
+    :count 2)
+;; Spawning periodic-function thread for hello...
+#<thread Periodic Function hello>
+>
+"Hello!" 
+"Hello!" 
+;; Exiting periodic-function thread hello
 \end{example}
 
 \end{functiondoc}
@@ -5450,7 +5504,7 @@ and then signal all blocked \glref{threads} that are waiting on it:
     (condition-variable-broadcast condition-variable))
 \end{example}
 
-\fnnotes On Common Lisp implementations without threads, this function does
+\fnnote On Common Lisp implementations without threads, this function does
 nothing.
 
 \end{functiondoc}
@@ -5495,7 +5549,7 @@ and then signal one blocked \glref{thread} that is waiting on it:
     (condition-variable-signal condition-variable))
 \end{example}
 
-\fnnotes On Common Lisp implementations without threads, this function does
+\fnnote On Common Lisp implementations without threads, this function does
 nothing.
 
 \end{functiondoc}
@@ -5611,7 +5665,7 @@ signaled by another \glref{thread} or until 5 seconds have elapsed:
 #<thread Listener 1>
 \end{example}
 
-\fnnotes On Common Lisp implementations without threads, \nil{} is returned.
+\fnnote On Common Lisp implementations without threads, \nil{} is returned.
 
 \end{functiondoc}
 
@@ -5700,6 +5754,56 @@ Verbosely change \code{quitting-time} to 5:30pm every day:
 Hibernate the current \glref{thread}:
 \begin{example}
   (hibernate-thread)
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{kill-periodic-function}{\noargs{}}
+\index{periodic function!terminating}%
+\index{function!periodic, terminating}%
+
+\fnsyntax
+
+\fnpurpose Terminate the thread invoking a \glref{periodic~function}.
+
+\fnpackage \code{:portable-threads}
+
+\fnmodule \code{:portable-threads}
+
+\fnerrors
+\nothreads{}
+
+\textbf{Kill-periodic-function} called outside the dynamic scope of a
+\glref{periodic~function}.
+
+\begin{alsos}{*periodic-function-verbose*}
+\also[*periodic-function-verbose*]
+\also[all-threads]
+\also[kill-thread]
+\also[spawn-periodic-function]
+\end{alsos}
+
+\bfindexit{define-event-class}%
+\bfindexit{signal-event}%
+\bfindexit{control-shell-running-p}%
+\bfindexit{spawn-periodic-function}%
+\fnexample
+Define and spawn a \glref{periodic~function} that is invoked every 0.5 seconds
+to signal a \code{half-second-interrupt-event}, continuing as long as the
+control shell is running:
+\begin{example}
+> (\entlink{define-event-class} half-second-timer-event (timer-interrupt-event)
+    ())
+half-second-timer-event
+> (defun half-second-timer ()
+    (unless (\entlink{control-shell-running-p})
+      (kill-periodic-function))
+    (\entlink{signal-event} 'half-second-timer-event))
+half-second-timer
+> (\entlink{spawn-periodic-function} 'half-second-timer 0.5)
+#<thread Periodic Function half-second-timer>
 \end{example}
 
 \end{functiondoc}
@@ -5838,7 +5942,7 @@ and then create a \code{state-cv} instance with a \glref{recursive~lock}:
 #<lock Priority Queue>
 \end{example}
 
-\fnnotes On Common Lisp implementations without threads, a
+\fnnote On Common Lisp implementations without threads, a
 ``pseudo-lock'' object is returned.
 
 \end{functiondoc}
@@ -5879,7 +5983,7 @@ and then create a \code{state-cv} instance with a \glref{recursive~lock}:
 #<recursive-lock Priority Queue>
 \end{example}
 
-\fnnotes On Common Lisp implementations without threads, a
+\fnnote On Common Lisp implementations without threads, a
 ``pseudo-recursive-lock'' object is returned.
 
 \end{functiondoc}
@@ -5905,7 +6009,8 @@ and then create a \code{state-cv} instance with a \glref{recursive~lock}:
 \fnargs
 \begin{args}{function}
 \arg[function] A \glref{function} of one argument
-\arg[name] An object (typically a string or a symbol)
+\arg[name] An object (typically a string or a symbol; default is
+\var{function\/}, if \var{function\/} is a symbol, otherwise \nil)
 \end{args}
 
 \fnreturns The newly created \glref{scheduled~function}. 
@@ -5929,7 +6034,7 @@ so as to avoid delaying the invocation of a subsequent
 \end{alsos}
 
 \fnexamples
-Create a scheduled function that simply prints \code{"Hello"} when invoked:
+Create a \glref{scheduled~function} that simply prints \code{"Hello"} when invoked:
 \begin{example}
 > (make-scheduled-function 
     #'(lambda (scheduled-function)
@@ -5941,7 +6046,7 @@ Create a scheduled function that simply prints \code{"Hello"} when invoked:
 
 \bfindexit{scheduled-function-repeat-interval}%
 \bfindexit{spawn-thread}%
-A more complex scheduled function that spawns a new \glref{thread} to do its
+A more complex \glref{scheduled~function} that spawns a new \glref{thread} to do its
 work and randomly sets whether to reschedule itself (and at what interval):
 \begin{example}
 > (defun complex-function (scheduled-function)
@@ -5954,8 +6059,8 @@ work and randomly sets whether to reschedule itself (and at what interval):
                 nil)))
     (\entlink{spawn-thread} "Lots of stuff doer" #'do-lots-of-stuff))
 complex-function
-> (make-scheduled-function 'complex-function :name 'complex)
-#<scheduled-function complex [unscheduled]>
+> (make-scheduled-function 'complex-function)
+#<scheduled-function complex-function [unscheduled]>
 \end{example}
 
 \end{functiondoc}
@@ -6178,6 +6283,11 @@ Schedule a \glref{scheduled~function} that signals a GBBopen
     :repeat-interval 30)
 \end{example}
 
+\fnnote The form \mbox{\code{(schedule-function-relative}
+  \var{scheduled-function\/} \code{10)}} is equivalent to
+\mbox{\code{(\entlink{schedule-function}} \var{scheduled-function\/}
+\code{(+ (get-universal-time) 10))}}.
+
 \end{functiondoc}
 
 %% ------------------------------------------------------------------------
@@ -6273,7 +6383,7 @@ currently scheduled \glref{scheduled~function}:
 nil
 \end{example}
 
-Define a function to be used as a \glref{scheduled~function} that randomly
+Define a \glref{function} to be used as a \glref{scheduled~function} that randomly
 sets whether to reschedule itself (and at what interval):
 \begin{example}
   (defun complex-function (scheduled-function)
@@ -6285,6 +6395,117 @@ sets whether to reschedule itself (and at what interval):
                 ;; don't repeat 1\% of the time:
                 nil)))
     (do-some-stuff))
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{spawn-periodic-function}%
+  {\var{function repeat-interval\/} 
+    \code{\&key} \var{count name verbose\/}
+    \returns{} \var{thread\/}}
+\index{periodic function!spawning}%
+\index{function!periodic, spawning}%
+
+\fnsyntax
+
+\fnpurpose Spawn a thread invoking \var{function\/} every
+\var{repeat-interval\/} seconds.
+
+\fnpackage \code{:portable-threads}
+
+\fnmodule \code{:portable-threads}
+
+\fnargs
+\begin{args}{repeat-interval}
+\arg[function] A \glref{function} of no arguments
+\arg[repeat-interval] A number (representing seconds)
+\arg[count] A number or \nil{} (default is \nil)
+\arg[name] An object (typically a string or a symbol; default is
+\var{function\/}, if \var{function\/} is a symbol, otherwise \nil)
+\arg[verbose] A \glref{generalized~boolean}
+  (default is \textbf{\entlink{*periodic-function-verbose*}})
+\end{args}
+
+\fnreturns The object representing the \glref{thread} associated with the
+\glref{periodic~function}.
+
+\fnerrors
+\nothreads{}
+
+\fndescription If \var{count\/} is \nil, \var{function\/} will continue to be
+invoked every \var{repeat-interval\/} seconds until the
+\glref{periodic-function} \glref{thread} is killed or until \var{function\/}
+calls \textbf{\entlink{kill-periodic-function}}.  Otherwise, \var{count\/} is
+decremented by one prior to each invocation of \var{function\/} and, if it is
+negative, the \glref{periodic~function} is terminated.
+
+\begin{alsos}{*periodic-function-verbose*}
+\also[*periodic-function-verbose*]
+\also[all-threads]
+\also[kill-periodic-function]
+\also[kill-thread]
+\also[make-scheduled-function]
+\also[schedule-function-relative]
+\end{alsos}
+
+\fnexamples 
+Spawn a simple \glref{periodic~function} that is invoked every 0.1 seconds,
+but that only runs twice:
+\begin{example}
+> (spawn-periodic-function #'(lambda () (print "Hello!")) 0.1 
+    :name 'hello
+    :count 2)
+#<thread Periodic Function hello>
+>
+"Hello!" 
+"Hello!" 
+\end{example}
+
+\bfindexit{kill-periodic-function}%
+Spawn a simple \glref{periodic~function} that is invoked every 0.1 seconds
+that runs up to 20 times, but with a 10\% chance on each invocation of
+terminating early:
+\begin{example}
+> (spawn-periodic-function 
+     #'(lambda ()
+         (when (zerop (random 10))
+           (kill-periodic-function))
+         (print "Hello!")) 
+     0.1
+     :count 20
+     :verbose 't)
+;; Spawning periodic-function thread for...
+#<thread Periodic Function>
+>
+"Hello!" 
+"Hello!" 
+"Hello!" 
+"Hello!" 
+;; Killing periodic-function...
+;; Exiting periodic-function thread
+
+\end{example}
+
+\bfindexit{define-event-class}%
+\bfindexit{signal-event}%
+\bfindexit{control-shell-running-p}%
+\bfindexit{kill-periodic-function}%
+Define and spawn a \glref{periodic~function} that is invoked every 0.5 seconds
+to signal a \code{half-second-interrupt-event}, continuing as long as the
+control shell is running:
+\begin{example}
+> (\entlink{define-event-class} half-second-timer-event (timer-interrupt-event)
+    ())
+half-second-timer-event
+> (defun half-second-timer ()
+    (unless (\entlink{control-shell-running-p})
+      (\entlink{kill-periodic-function}))
+    (\entlink{signal-event} 'half-second-timer-event))
+half-second-timer
+> (spawn-periodic-function 'half-second-timer 0.5)
+#<thread Periodic Function half-second-timer>
 \end{example}
 
 \end{functiondoc}
@@ -6375,7 +6596,7 @@ nil
 "Version 2"
 \end{example}
 
-\fnnotes Digitool's \xsitelink{Macintosh Common Lisp}{http://www.digitool.com}
+\fnnote Digitool's \xsitelink{Macintosh Common Lisp}{http://www.digitool.com}
 does not support changing the thread name via \textbf{setf}.
 
 \end{functiondoc}
@@ -6414,7 +6635,7 @@ does not support changing the thread name via \textbf{setf}.
 "Running"
 \end{example}
 
-\fnnotes Although the \var{whostate\/} value can provide helpful
+\fnnote Although the \var{whostate\/} value can provide helpful
 information when debugging, specific \var{whostate\/} values and their
 meanings vary among Common Lisp implementations and should not be used
 programmatically.
@@ -6440,7 +6661,7 @@ programmatically.
   (thread-yield)
 \end{example}
 
-\fnnotes On Common Lisp implementations without thread support, this function
+\fnnote On Common Lisp implementations without thread support, this function
 executes \textbf{\entlink{run-polling-functions}} if the
 \code{:polling-functions} module has been loaded.  Otherwise, it is a no-op on
 non-threaded implementations.
@@ -6623,7 +6844,7 @@ nil
 nil
 \end{example}
 
-\fnnotes On Common Lisp implementations without threads, this function obtains
+\fnnote On Common Lisp implementations without threads, this function obtains
 the global symbol value.
 
 \end{functiondoc}
@@ -6822,7 +7043,7 @@ signal all blocked \glref{threads} that are waiting on it:
     (\entlink{condition-variable-signal} condition-variable))
 \end{example}
 
-\fnnotes The \var{whostate\/} value is ignored by
+\fnnote The \var{whostate\/} value is ignored by
 \xsitelink{SBCL}{http://sbcl.sourceforge.net}.
 
 \end{functiondoc}
@@ -6918,7 +7139,7 @@ available for use with all Common Lisp implementations.
 
 \fnsyntax 
 
-\fnpurpose Add a polling function to the list of polling functions at the
+\fnpurpose Add a polling \glref{function} to the list of polling functions at the
 position indicated by \var{priority\/}.
 
 \fnpackage \code{:gbbopen-tools}
@@ -6943,7 +7164,7 @@ The description is printed to the {\bf *standard-output*} stream.
 \end{alsos}
 
 \fnexample
-Add the function \code{check-for-new-connection} to the list of polling 
+Add the \glref{function} \code{check-for-new-connection} to the list of polling 
 functions (with priority -10):
 \begin{example}
   (add-polling-function #'check-for-new-connection
@@ -6994,7 +7215,7 @@ Describe list of polling functions:
 
 \fnsyntax 
 
-\fnpurpose Remove a polling function from the list of polling functions.
+\fnpurpose Remove a polling \glref{function} from the list of polling functions.
 
 \fnpackage \code{:gbbopen-tools}
 
@@ -7013,7 +7234,7 @@ Describe list of polling functions:
 \end{alsos}
 
 \fnexample
-Remove the function \code{check-for-new-connection} from the list of polling 
+Remove the \glref{function} \code{check-for-new-connection} from the list of polling 
 functions:
 \begin{example}
   (remove-polling-function #'check-for-new-connection)
@@ -7056,7 +7277,7 @@ Remove all functions from the list of polling functions:
 
 \fnsyntax 
 
-\fnpurpose Run every polling function in the list of polling functions.
+\fnpurpose Run every polling \glref{function} in the list of polling functions.
 
 \fnpackage \code{:gbbopen-tools}
 
@@ -7079,7 +7300,7 @@ Run the polling functions (once, in sequence):
 \bfindexit{start-control-shell}%
 \index{polling function!called by the control shell}%
 
-\fnnotes \pollingnote
+\fnnote \pollingnote
 
 \end{functiondoc}
 
@@ -7145,7 +7366,7 @@ Accept a connection made to a newly created passive socket:
 #<stream socket connected from localhost/5555 to localhost/59946>
 \end{example}
 
-\fnnotes Connections should always be closed using \textbf{close}
+\fnnote Connections should always be closed using \textbf{close}
 (from both sides) to free up operating-system resources when they are
 no longer needed.
 
@@ -7285,7 +7506,7 @@ Create a passive socket, listening on port 5555:
 \end{example}
 
 \bfindexit{close-passive-socket}%
-\fnnotes The passive socket should be closed using
+\fnnote The passive socket should be closed using
 \textbf{\entlink{close-passive-socket}} when the service is no longer
 needed in order to free up operating system resources.
 
@@ -7342,7 +7563,7 @@ Open a socket connection to the GBBopen Project web server:
 #<stream socket connected from localhost/51756 to gbbopen.org/80>
 \end{example}
 
-\fnnotes Connections should always be closed using \textbf{close} (from
+\fnnote Connections should always be closed using \textbf{close} (from
 both sides) when they are no longer needed to free up operating-system
 resources.
 
@@ -7439,7 +7660,7 @@ output on the socket stream (send an end-of-file indictation):
   (shutdown-socket-stream socket-stream ':output)
 \end{example}
 
-\fnnotes Connections should always be closed using \textbf{close} (from
+\fnnote Connections should always be closed using \textbf{close} (from
 both sides) when they are no longer needed to free up operating-system
 resources.
 
@@ -7514,7 +7735,7 @@ Start a simple connection server that accepts connections on port
 \end{verbatim}
 
 \bfindexit{kill-thread}%
-\fnnotes
+\fnnote
 Use \textbf{\entlink{kill-thread}} to kill the connection-server thread.
 
 \end{functiondoc}
@@ -8562,21 +8783,21 @@ follows:
 
 \fnexamples
 \bfindexit{evfn-printer}%
-Add the event function \entlink{evfn-printv} to the set of functions
+Add the event \glref{function} \entlink{evfn-printv} to the set of functions
 to be invoked when \code{create-instance-event} is signalled on a
 \code{hyp} \glref{unit~instance}:
 \begin{example}
   (add-event-function 'evfn-printv 'create-instance-event 'hyp)
 \end{example}
 
-Add the event function \entlink{evfn-printv} to the set of functions
+Add the event \glref{function} \entlink{evfn-printv} to the set of functions
 to be invoked when \code{create-instance-event} is signalled on a
 \code{hyp} \glref{unit~instance} or its subclasses:
 \begin{example}
   (add-event-function 'evfn-printv 'create-instance-event '(hyp :plus-subclasses))
 \end{example}
 
-\fnnotes
+\fnnote
 \instanceevfnsnyi
 
 \end{functiondoc}
@@ -9778,7 +9999,7 @@ instance-event
   standard-space-instance
 \end{example}
 
-\fnnotes
+\fnnote
 \instanceevfnsnyi
 
 \end{functiondoc}
@@ -10074,7 +10295,7 @@ Disable all event printing:
   (disable-event-printing)
 \end{example}
 
-\fnnotes
+\fnnote
 \instanceevfnsnyi
 
 \end{functiondoc}
@@ -10139,7 +10360,7 @@ instances of subclasses of \code{hyp}:
     (\entlink{delete-instance} instance))
 \end{example} 
 
-\fnnotes
+\fnnote
 \bfindexit{delete-space-instance}%
 \bfindexit{standard-space-instance}%
 The consequences are unspecified if an attempt is made to add or delete a
@@ -10487,7 +10708,7 @@ Enable event printing on all \glref{space-instance} events of
                          '(hyp :plus-subclasses))
 \end{example}
 
-\fnnotes
+\fnnote
 \instanceevfnsnyi
 
 \end{functiondoc}
@@ -10522,7 +10743,7 @@ double-quote characters.
 
 \fnexamples
 \bfindexit{evfn-printer}%
-Add the event function \entlink{evfn-printv} to the set of functions
+Add the event \glref{function} \entlink{evfn-printv} to the set of functions
 to be invoked when \code{create-instance-event} is signalled on a
 \code{hyp} \glref{unit~instance}:
 \begin{example}
@@ -10687,7 +10908,7 @@ the specified class if one exists; \nil{} otherwise.
 \textbf{\entlink{define-unit-class}} is used to match \var{name\/}
 with the \glref{unit-instance} name.  If you are using strings as the
 names of \glref{unit~instances}, you should specify \code{equal} or
-\code{equalp} as the comparision function in the \glref{unit~classes}
+\code{equalp} as the comparision \glref{function} in the \glref{unit~classes}
 of those \glref{unit~instances}.
 
 \begin{alsos}{define-unit-class}
@@ -10866,7 +11087,7 @@ Return the list of all \code{hyp} \glref{unit~instances}:
  #<hyp 233 (1835 4791) .89>)
 \end{example} 
 
-\fnnotes In general, \textbf{\entlink{do-instances-of-class}} or
+\fnnote In general, \textbf{\entlink{do-instances-of-class}} or
 \textbf{\entlink{map-instances-of-class}} is preferred over operating
 on the list created by \textbf{find-instances-of-class}.
 
@@ -11380,7 +11601,7 @@ to any additional \glref{unit~instances} in
 #<hyp 231 (1488 7405) .63>
 \end{example}
 
-\fnnotes 
+\fnnote 
 \bfindexit{unlinkf-all}%
 The form \mbox{\code{(link-setf} \var{\glref{link-slot-place}\/}
   \code{nil)}} is semantically equivalent to
@@ -11528,10 +11749,10 @@ Create a new \code{hyp} \glref{unit~instance}:
 #<hyp 119 (1835 4791) .85>
 \end{example}
 
-\fnnotes 
+\fnnote 
 \bfindexit{make-space-instance}%
-The function \textbf{\entlinknoex{make-space-instance}} provides a clear and
-convenient shorthand for creating \glref{space~instances}.
+The \glref{function} \textbf{\entlinknoex{make-space-instance}} provides a
+clear and convenient shorthand for creating \glref{space~instances}.
 
 \end{functiondoc}
 
@@ -11728,7 +11949,7 @@ instances of subclasses of \code{hyp}:
   (map-instances-of-class #'\entlink{delete-instance} '(hyp :plus-subclasses))
 \end{example} 
 
-\fnnotes
+\fnnote
 \bfindexit{delete-space-instance}%
 \bfindexit{standard-space-instance}%
 The consequences are unspecified if an attempt is made to add or delete a
@@ -12023,7 +12244,7 @@ its subclasses:
   (remove-all-event-functions 'create-instance-event '(hyp :plus-subclasses))
 \end{example}
 
-\fnnotes
+\fnnote
 \instanceevfnsnyi
 
 \end{functiondoc}
@@ -12077,21 +12298,21 @@ its subclasses:
 
 \fnexamples
 \bfindexit{evfn-printer}%
-Remove the event function \entlink{evfn-printv} from the set of functions
+Remove the event \glref{function} \entlink{evfn-printv} from the set of functions
 to be invoked when \code{create-instance-event} is signalled on a
 \code{hyp} \glref{unit~instance}:
 \begin{example}
   (remove-event-function 'evfn-printv 'create-instance-event 'hyp)
 \end{example}
 
-Remove the event function \entlink{evfn-printv} from the set of functions
+Remove the event \glref{function} \entlink{evfn-printv} from the set of functions
 to be invoked when \code{create-instance-event} is signalled on a
 \code{hyp} \glref{unit~instance} or its subclasses:
 \begin{example}
   (remove-event-function 'evfn-printv 'create-instance-event '(hyp :plus-subclasses))
 \end{example}
 
-\fnnotes
+\fnnote
 \instanceevfnsnyi
 
 \end{functiondoc}
@@ -12304,7 +12525,7 @@ As above, but also retain all event functions and event printing:
 		 :retain-event-printing 't)
 \end{example}
 
-\fnnotes 
+\fnnote 
 \bfindexit{with-events-disabled}%
 \bfindexit{with-events-enabled}%
 This is the only GBBopen \glref{function} that disables \glref{event}
@@ -12422,7 +12643,7 @@ Resume all suspended event printing:
   (resume-event-printing)
 \end{example}
 
-\fnnotes
+\fnnote
 Resuming event printing does not enable event printing that is disabled.
 
 \instanceevfnsnyi
@@ -12575,7 +12796,7 @@ Return the child space instances  of the \code{(bb)} \glref{space~instance}:
  #<standard-space-instance (bb rejected-hyps)>)
 \end{example}
 
-\fnnotes The returned list of child \glref{space~instances} should not be
+\fnnote The returned list of child \glref{space~instances} should not be
 destructively altered.
 
 \end{functiondoc}
@@ -12622,7 +12843,7 @@ Return the \glref{dimensions} of the \code{(bb hyps)} \glref{space~instance}:
 ((x :ordered) (y :ordered) (belief :ordered) (classification :enumerated))
 \end{example}
 
-\fnnotes The returned list of \glref{dimension} specifications should not be
+\fnnote The returned list of \glref{dimension} specifications should not be
 destructively altered.
 
 \end{functiondoc}
@@ -12726,7 +12947,7 @@ Return the \glref{space~instances} on which the \glref{unit~instance},
 (#<standard-space-instance (bb hyps)>)
 \end{example}
 
-\fnnotes The returned list of \glref{space~instances} should not be
+\fnnote The returned list of \glref{space~instances} should not be
 destructively altered.
 
 \end{functiondoc}
@@ -13001,7 +13222,7 @@ Suspend all event printing associated with \code{possible-hyp}
   (suspend-event-printing 't 'possible-hyp)
 \end{example}
 
-\fnnotes
+\fnnote
 \instanceevfnsnyi
 
 \end{functiondoc}
@@ -13584,6 +13805,35 @@ Return the trigger \glref{unit~instances} of a KSA:
 
 %% ------------------------------------------------------------------------
 
+\begin{functiondoc}{Function}{control-shell-running-p}{\noargs{}
+    \returns{} \var{boolean\/}}
+
+\fnsyntax
+
+\fnpurpose Return a value indicating whether a control shell is running.
+
+\fnpackage \code{:agenda-shell}
+
+\fnmodule \code{:agenda-shell}
+
+\fnreturns True if the control shell is running; \nil{} otherwise.
+
+\begin{alsos}{restart-control-shell}
+\also[start-control-shell]
+\also[restart-control-shell]
+\end{alsos}
+
+\fnexample
+See if the control shell is running:
+\begin{example}
+> (control-shell-running-p)
+nil
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
 \begin{functiondoc}{Macro}{define-ks}{\var{ks-name\/} \code{\&key}
   \var{activation-predicate enabled execution-function 
        ks-class ksa-class
@@ -13754,7 +14004,7 @@ should return one of the following sets of values:
 An \var{execution-function\/} is a \glref{function} that implements the
 \glref{KS}.  When an activation of the \glref{KS} is executed, this
 \glref{function} is called with one argument, the \glref{unit~instance}
-representing the \glref{KSA}. If the execution function returns the value
+representing the \glref{KSA}. If the execution \glref{function} returns the value
 \code{:stop} (and, optionally, a additional values to be returned by the
 control shell), the control shell will exit immediately.
 
@@ -13806,7 +14056,7 @@ Define a \glref{KS} named \code{aggregate-hyps} that is triggered whenever a
      :execution-function #'aggregate-hyps-ks-function)
 \end{example}
 
-\fnnotes
+\fnnote
 \instancekstriggersnyi
 
 \end{functiondoc}
@@ -14476,8 +14726,9 @@ Return the execution cycle of \code{ksa}:
 \fnerrors \textbf{Exit-control-shell} called outside the context of an
 executing control shell.
 
-\begin{alsos}{restart-control-shell}
+\begin{alsos}{control-shell-running-p}
 \also[abort-ks-execution]
+\also[control-shell-running-p]
 \also[restart-control-shell]
 \also[start-control-shell]
 \end{alsos}
@@ -14630,9 +14881,6 @@ Check once again:
 > (ks-enabled-p ks)
 nil
 \end{example}
-
-\fnnotes This generic function has been renamed 
-\textbf{\entlink{ks-enabled-p}}.
 
 \end{functiondoc}
 
@@ -14794,7 +15042,7 @@ Return the rating of a \glref{KSA}:
 58
 \end{example}
 
-\fnnotes 
+\fnnote 
 The rating of a \glref{pending~KSA} can be changed by using {\bf setf} or
 related macros with this accessor.
 
@@ -14803,7 +15051,7 @@ related macros with this accessor.
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{restart-control-shell}{\noargs
-\returns{} \var{value\/}\superstar}
+    \returns{} \var{value\/}\superstar}
 \index{agenda shell, restarting}%
 \index{control shell!restarting}%
 \index{restart, agenda shell}%
@@ -14840,7 +15088,9 @@ One of the following values:
 \codeindexit{restart-control-shell-event}%
 A \code{restart-control-shell-event} is signaled.
  
-\begin{alsos}{run-polling-functions}
+\begin{alsos}{control-shell-running-p}
+\also[abort-ks-execution]
+\also[control-shell-running-p]
 \also[exit-control-shell]
 \also[run-polling-functions]
 \also[start-control-shell]
@@ -14859,7 +15109,7 @@ Restart the Agenda Shell (in this case, without any \glref{KSs} defined):
 \end{example}
 
 \bfindexit{run-polling-functions}%
-\fnnotes \pollingnote
+\fnnote \pollingnote
 
 \end{functiondoc}
 
@@ -15168,7 +15418,8 @@ of a \glref{KS}
 \end{keywords}
 
 
-\begin{alsos}{run-polling-functions}
+\begin{alsos}{control-shell-running-p}
+\also[control-shell-running-p]
 \also[exit-control-shell]
 \also[run-polling-functions]
 \also[restart-control-shell]
@@ -15219,7 +15470,7 @@ All stepping disabled
 \end{example}
 
 \bfindexit{run-polling-functions}%
-\fnnotes \pollingnote
+\fnnote \pollingnote
 
 \end{functiondoc}
 
@@ -15971,6 +16222,20 @@ A regular expression representing one or more \glref{space-instance~paths}.
 \index{KSA!pending}%
 A \glref{KS~activation} that has not been executed or \glref{obviated}.
 
+%% ---------------------------------------------------------------------------
+
+\glent[periodic~function]
+\gllabel{periodic-function}%
+\gllabel{periodic~functions}%
+
+A \glref{function} of no arguments that is run repeatedly at a specified interval, at
+a resolution as brief as supported by \code{sleep}. A separate \glref{thread}
+is spawned to manage the periodic invocations of the specified function.
+
+A count can also be provided for the periodic function. When specified, this
+value is decremented prior to each invocation of the function and, when it is
+no longer positive, the periodic-function thread is terminated.
+
 %% ------------------------------------------------------------------------
 
 \glent[proper~list]
@@ -16083,7 +16348,7 @@ Part of the \reflink{Mini Module system}{sec:mini-module}.
 \gllabel{Scheduled~functions}%
 \gllabel{scheduled-function}%
 
-An object that contains a function that may be scheduled to run at an
+An object that contains a \glref{function} that may be scheduled to run at an
 absolute or relative time. When that specified time arrives, the function
 is invoked with a single argument: the scheduled-function object.
 
@@ -16091,6 +16356,10 @@ A repeat interval can also be specified for the scheduled
 function. When specified, this value is used whenever the function is
 invoked to schedule the function again at a new time relative to the
 current invocation.
+
+Scheduled functions can be scheduled to a resolution of one second.  Periodic
+function invocations at brief time intervals are provided by
+\glref{periodic~functions}.
 
 %% ------------------------------------------------------------------------
 

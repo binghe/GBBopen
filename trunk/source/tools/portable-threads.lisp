@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/tools/portable-threads.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Aug 23 06:10:15 2007 *-*
+;;;; *-* Last-Edit: Mon Aug 27 22:07:36 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -54,6 +54,7 @@
 ;;;  07-28-07 V2.0 naming changes, full condition variable support.  (Corkill)
 ;;;  08-20-07 V2.1: Added scheduled functions, thread-alive-p, 
 ;;;           encode-time-of-day. (Corkill)
+;;;  08-27-07 V2.2: Added periodic functions.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -190,6 +191,7 @@
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(*non-threaded-polling-function-hook* ; not documented
+            *periodic-function-verbose* ; new (document soon)
             *schedule-function-verbose*
 	    all-processes               ; renamed (to be removed soon)
             all-scheduled-functions
@@ -212,10 +214,11 @@
 	    condition-variable-wait-with-timeout
 	    current-process             ; renamed (to be removed soon)
             current-thread
-            encode-time-of-day          ; new (document soon)
+            encode-time-of-day
 	    gate-open-p                 ; deprecated, to be removed
 	    hibernate-process		; renamed (to be removed soon)
 	    hibernate-thread
+            kill-periodic-function      ; new (document soon)
 	    kill-process                ; renamed (to be removed soon)
             kill-thread
 	    make-condition-variable
@@ -241,6 +244,7 @@
             scheduled-function          ; structure (not documented)
             scheduled-function-name
             scheduled-function-repeat-interval
+            spawn-periodic-function     ; new (document soon)
 	    spawn-process               ; renamed (to be removed soon)
             spawn-thread
 	    symbol-value-in-process     ; renamed (to be removed soon)
@@ -313,10 +317,10 @@
 ;;; ===========================================================================
 
 (defun portable-threads-implementation-version ()
-  "2.1")
+  "2.2")
 
 ;;; Added to *features* at the end of this file:
-(defparameter *portable-threads-version-keyword* :portable-threads-2.1)
+(defparameter *portable-threads-version-keyword* :portable-threads-2.2)
 
 ;;; ---------------------------------------------------------------------------
 
@@ -1739,7 +1743,8 @@
   name
   function
   invocation-time
-  repeat-interval)
+  repeat-interval
+  verbose)
 
 (defmethod print-object ((obj scheduled-function) stream)
   (if *print-readably*
@@ -1801,7 +1806,9 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun make-scheduled-function (function &key name)
+(defun make-scheduled-function (function &key                                      
+                                         (name (and (symbolp function)
+                                                    function)))
   #-threads-not-available
   (%make-scheduled-function function name)
   #+threads-not-available
@@ -1874,9 +1881,8 @@
               (setf (scheduled-function-invocation-time
                      scheduled-function-to-run)
                     (+ (get-universal-time) repeat-interval))
-              ;; This verbose message will only be displayed if
-              ;; *schedule-function-verbose* has been set globally  
-              (when *schedule-function-verbose*
+              (when (or *schedule-function-verbose*
+                        (scheduled-function-verbose scheduled-function-to-run))
                 (format *trace-output* 
                         "~&;; Scheduling ~s at repeat-interval ~s...~%"
                         scheduled-function-to-run
@@ -1900,7 +1906,7 @@
            (thread-alive-p *scheduled-function-scheduler-thread*))
       (condition-variable-signal *scheduled-functions-cv*)
       (setf *scheduled-function-scheduler-thread*
-            (spawn-thread "Scheduled-Function Scheduler" 
+            (spawn-thread "Scheduled-Function Scheduler"
                           'scheduled-function-scheduler))))
 
 ;;; ---------------------------------------------------------------------------
@@ -2002,6 +2008,7 @@
               invocation-time)
         (setf (scheduled-function-repeat-interval scheduled-function)
               repeat-interval)
+        (setf (scheduled-function-verbose scheduled-function) verbose)
         (insert-scheduled-function scheduled-function verbose)
         ;; awaken scheduler if this scheduled-function was the next to be
         ;; run and now it is not the next to be run:
@@ -2110,6 +2117,66 @@
                (seconds-into-day hour minute second))
             (+ tentative-result #.(* 60 60 24))
             tentative-result)))))
+
+;;; ===========================================================================
+;;;  Periodic Functions (also built entirely on top of Portable Threads)
+
+(defvar *periodic-function-verbose* nil)
+
+;;; ---------------------------------------------------------------------------
+
+(defun spawn-periodic-function (function interval 
+                                &key (count nil)
+                                     (name (and (symbolp function)
+                                                function))
+                                     (verbose *periodic-function-verbose*))
+  #-threads-not-available
+  (flet ((fn ()
+           (let ((*periodic-function-verbose* verbose)
+                 (*periodic-function-name* name))
+             (declare (special *periodic-function-name*))
+             (catch 'kill-periodic-function
+               (loop
+                 (when (and count (minusp (decf count)))
+                   (return))
+                 (sleep interval)
+                 (with-simple-restart (continue "Resume periodic-function")
+                   (funcall function))))
+             (when *periodic-function-verbose*
+               (format *trace-output* 
+                       "~&;; Exiting periodic-function thread~@[ ~s~]~%"
+                       name)
+               (force-output *trace-output*)))))
+    (when verbose
+      (format *trace-output* 
+              "~&;; Spawning periodic-function thread for~@[ ~s~]...~%"
+              name)
+      (force-output *trace-output*))
+    (spawn-thread (format nil "Periodic Function~@[ ~a~]" name)
+                  #'fn))
+  #+threads-not-available
+  (declare (ignore function interval count name verbose))
+  #+threads-not-available
+  (threads-not-available 'spawn-periodic-function))
+
+;;; ---------------------------------------------------------------------------
+
+(defun kill-periodic-function ()
+  #-threads-not-available
+  (locally (declare (special *periodic-function-name*))
+    (handler-case 
+        (progn
+          (when *periodic-function-verbose*
+            (format *trace-output* "~&;; Killing periodic-function~@[ ~s~]...~%"
+                    (and (boundp '*periodic-function-name*)
+                         *periodic-function-name*))
+            (force-output *trace-output*))
+          (throw 'kill-periodic-function nil))
+      (control-error ()
+        (error "~s must be called within a periodic function"
+               'kill-periodic-function))))
+  #+threads-not-available
+  (threads-not-available 'kill-periodic-function))
 
 ;;; ===========================================================================
 ;;;  Portable threads interface is fully loaded:

@@ -1,5 +1,11 @@
 Important changes since GBBopen 0.9.6:
 
+  * Version 2.2 of the Portable Threads Interface
+    - Periodic functions
+
+  * Version 2.1 of the Portable Threads Interface
+    - Scheduled functions, thread-alive-p, encode-time-of-day
+
   * Version 2.0 of the Portable Threads Interface
     - Recursive and nonrecursive locks, with stronger enforcement of usage
       violations (to reduce the potential for different behavior on different

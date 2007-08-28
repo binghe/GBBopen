@@ -43,7 +43,7 @@
 #&lt;condition-variable&gt;
 </pre>
 <p>Make a <b>condition-variable</b> instance with a
-<a href="ref-glossary.html#id133">recursive&nbsp;lock</a>:
+<a href="ref-glossary.html#id135">recursive&nbsp;lock</a>:
 </p>
 <pre>
 &gt; (make-condition-variable :lock (<a href="ref-make-recursive-lock.html">make-recursive-lock</a>))
@@ -58,7 +58,7 @@
             :initform nil
             :accessor state-of)))
 </pre>
-<p>and then create a <code>state-cv</code> instance with a <a href="ref-glossary.html#id133">recursive&nbsp;lock</a>:
+<p>and then create a <code>state-cv</code> instance with a <a href="ref-glossary.html#id135">recursive&nbsp;lock</a>:
 </p>
 <pre>
 &gt; (make-condition-variable :class 'state-cv
