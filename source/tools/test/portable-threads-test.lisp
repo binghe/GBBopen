@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/tools/test/portable-threads-test.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Aug  4 15:02:48 2007 *-*
+;;;; *-* Last-Edit: Tue Sep 18 16:58:03 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -210,6 +210,15 @@
     (sleepy-time)
     (when (member thread (all-threads))
       (log-error "Killed thread is still a member of (all-threads)")))
+  ;; Check that sleep is not "busy waiting...":
+  (let ((start-time (get-internal-run-time)))
+    (forced-format "~&;;   Timing (sleep 10)...")
+    (sleep 10)
+    (let ((run-time (- (get-internal-run-time) start-time)))
+      (if (plusp run-time)
+          (warn "Sleeping consumed ~s seconds of processing time."
+                (/ run-time #.(float internal-time-units-per-second)))
+          (forced-format " 0 seconds"))))
   ;; Check if (sleep 0) is optimized away by this CL:
   (let ((iterations 10000))
     (forced-format "~&;;   Timing ~s (sleep 0)s..." iterations)
