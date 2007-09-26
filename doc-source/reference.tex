@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /home/gbbopen/current/doc-source/reference.tex *-*
-%% *-* Last-Edit: Mon Aug 27 21:24:14 2007; Edited-By: cork *-*
+%% *-* Last-Edit: Wed Sep 19 20:43:43 2007; Edited-By: cork *-*
 %% *-* Machine: ruby.corkills.org *-*
 
 %% Copyright (C) 2003-2007, Dan Corkill <corkill@GBBopen.org>
@@ -9385,29 +9385,6 @@ one \glref{space~class} name.  This error is signaled on class finalization.
 \dimensionalvaluesspec
 \T\\
 \begin{tabular}{@{~}l@{~}l}
-\mbox{\var{dimensional-value-specifier\/} ::=}
-  & \code{(}\var{dimension-name dimension-value-type 
-    dimension-value-place\/}\code{)} \\
-\end{tabular}
-\T\\
-\begin{tabular}{@{~}l@{~}l}
-\mbox{\var{dimension-value-type\/} ::=}
-\codeindexit{:point}%
-\codeindexit{:range}%
-\codeindexit{:mixed}%
-\codeindexit{:element}% 
-\codeindexit{:boolean}% 
-  & \code{:point} \vbar{} \code{:interval} \vbar{} \code{:mixed} \vbar{}
-    \code{:element} \vbar{} \code{:boolean}\\
-\end{tabular}
-\T\\
-\begin{tabular}{@{~}l@{~}l}
-\mbox{\var{dimension-value-place\/} ::=}
-  & \var{slot-name\/} \vbar{} \var{slot-name\/} \var{slot-name\/} \vbar{}
-  \{\var{function} [\var{slot-name\/}]\} \\
-\end{tabular}
-\T\\
-\begin{tabular}{@{~}l@{~}l}
 \mbox{\var{direct-slots-specifier\/} ::=} & \nil{} \vbar{} \code{t} \vbar{}
   \var{included-slot-name\/}\superstar{} \vbar \\
   & \{\code{t :exclude} \var{excluded-slot-name\/}\superstar{}\} \\
@@ -14181,29 +14158,6 @@ one \glref{ks~class} name.  This error is signaled on class finalization.
 \dimensionalvaluesspec
 \T\\
 \begin{tabular}{@{~}l@{~}l}
-\mbox{\var{dimensional-value-specifier\/} ::=}
-  & \code{(}\var{dimension-name dimension-value-type 
-    dimension-value-place\/}\code{)} \\
-\end{tabular}
-\T\\
-\begin{tabular}{@{~}l@{~}l}
-\mbox{\var{dimension-value-type\/} ::=}
-\codeindexit{:point}%
-\codeindexit{:range}%
-\codeindexit{:mixed}%
-\codeindexit{:element}% 
-\codeindexit{:boolean}% 
-  & \code{:point} \vbar{} \code{:interval} \vbar{} \code{:mixed} \vbar{}
-    \code{:element} \vbar{} \code{:boolean}\\
-\end{tabular}
-\T\\
-\begin{tabular}{@{~}l@{~}l}
-\mbox{\var{dimension-value-place\/} ::=}
-  & \var{slot-name\/} \vbar{} \var{slot-name\/} \var{slot-name\/} \vbar{}
-  \{\var{function} [\var{slot-name\/}]\} \\
-\end{tabular}
-\T\\
-\begin{tabular}{@{~}l@{~}l}
 \mbox{\var{direct-slots-specifier\/} ::=} & \nil{} \vbar{} \code{t} \vbar{}
   \var{included-slot-name\/}\superstar{} \vbar \\
   & \{\code{t :exclude} \var{excluded-slot-name\/}\superstar{}\} \\
@@ -14402,29 +14356,6 @@ one \glref{ksa~class} name.  This error is signaled on class finalization.
 \end{tabular}
 \T\\
 \dimensionalvaluesspec
-\T\\
-\begin{tabular}{@{~}l@{~}l}
-\mbox{\var{dimensional-value-specifier\/} ::=}
-  & \code{(}\var{dimension-name dimension-value-type 
-    dimension-value-place\/}\code{)} \\
-\end{tabular}
-\T\\
-\begin{tabular}{@{~}l@{~}l}
-\mbox{\var{dimension-value-type\/} ::=}
-\codeindexit{:point}%
-\codeindexit{:range}%
-\codeindexit{:mixed}%
-\codeindexit{:element}% 
-\codeindexit{:boolean}% 
-  & \code{:point} \vbar{} \code{:interval} \vbar{} \code{:mixed} \vbar{}
-    \code{:element} \vbar{} \code{:boolean}\\
-\end{tabular}
-\T\\
-\begin{tabular}{@{~}l@{~}l}
-\mbox{\var{dimension-value-place\/} ::=}
-  & \var{slot-name\/} \vbar{} \var{slot-name\/} \var{slot-name\/} \vbar{}
-  \{\var{function} [\var{slot-name\/}]\} \\
-\end{tabular}
 \T\\
 \begin{tabular}{@{~}l@{~}l}
 \mbox{\var{direct-slots-specifier\/} ::=} & \nil{} \vbar{} \code{t} \vbar{}
