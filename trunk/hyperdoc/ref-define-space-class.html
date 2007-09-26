@@ -207,27 +207,6 @@ dimension-value-place</var><code>)</code> </td></tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
 <table class="tight"><table><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
-<var>dimensional-value-specifier</var>&nbsp;::=
-</td><td valign="baseline" colspan="1" align="left"> <code>(</code><var>dimension-name dimension-value-type 
-dimension-value-place</var><code>)</code> </td></tr>
-<tr>
-<td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
-<table class="tight"><table><tbody><tr>
-<td valign="baseline" colspan="1" align="left">
-<var>dimension-value-type</var>&nbsp;::=
-<a name="id2"></a></td><td valign="baseline" colspan="1" align="left"> <code>:point</code> | <code>:interval</code> | <code>:mixed</code> |
-<code>:element</code> | <code>:boolean</code></td></tr>
-<tr>
-<td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
-<table class="tight"><table><tbody><tr>
-<td valign="baseline" colspan="1" align="left">
-<var>dimension-value-place</var>&nbsp;::=
-</td><td valign="baseline" colspan="1" align="left"> <var>slot-name</var> | <var>slot-name</var> <var>slot-name</var> |
-&#123;<var>function</var> [<var>slot-name</var>]&#125; </td></tr>
-<tr>
-<td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
-<table class="tight"><table><tbody><tr>
-<td valign="baseline" colspan="1" align="left">
 <var>direct-slots-specifier</var>&nbsp;::= </td><td valign="baseline" colspan="1" align="left"> <code>nil</code> | <code>t</code> |
 <var>included-slot-name</var>* |</td></tr>
 <tr>
@@ -249,17 +228,17 @@ is <code>eql</code>)
 <var>slot-names</var> can be specified only for <code>:interval</code>
 dimension-value types.
 </p>
-<p><a name="id3">Each</a> <var>superclass-name</var> argument specifies a direct superclass of the new
+<p><a name="id2">Each</a> <var>superclass-name</var> argument specifies a direct superclass of the new
 class. If the superclass list is empty, then the direct superclass defaults to the
 single class <b><a href="ref-standard-space-class.html">standard-space-class</a></b>.
 </p>
-<p><a name="id4">The</a> <code>:metaclass</code> <var>class-name</var>, if specified, must be a subclass of
+<p><a name="id3">The</a> <code>:metaclass</code> <var>class-name</var>, if specified, must be a subclass of
 <b><a href="ref-standard-space-class.html">standard-space-class</a></b>.  The default metaclass value is
 also <b><a href="ref-standard-space-class.html">standard-space-class</a></b>.
 </p>
 <p><p><b>Inheritance of class options</b></p>
 </p>
-<p><a name="id5">The</a> set of <var>dimensional-values</var> for a <a href="ref-glossary.html#id165">unit&nbsp;class</a> is the
+<p><a name="id4">The</a> set of <var>dimensional-values</var> for a <a href="ref-glossary.html#id165">unit&nbsp;class</a> is the
 union of the sets specified in the <var>dimensional-values</var> options
 of the class and its superclasses.  When more than one dimensional
 index is supplied for a given dimension, the one supplied by the most
@@ -280,7 +259,7 @@ default initializtion value associated with the metaclass is used.
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-standard-space-class.html"><b>standard-space-class</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-with-generate-accessors-format.html"><b>with-generate-accessors-format</b></a>
 </p>
-<p><span class="fndoclabel">Example</span> <br /><a name="id6">Define</a> a <a href="ref-glossary.html#id147">space&nbsp;class</a>,
+<p><span class="fndoclabel">Example</span> <br /><a name="id5">Define</a> a <a href="ref-glossary.html#id147">space&nbsp;class</a>,
 <code>space-instance-with-lock</code>, that has an additional <a href="ref-glossary.html#gl:slot">slot</a>
 containing a <a href="ref-glossary.html#gl:lock">lock</a> that can be used to synchronize
 operations on each <a href="ref-glossary.html#id149">space&nbsp;instance</a> of that class. Then, create
