@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/system-events.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jun 13 13:26:46 2007 *-*
+;;;; *-* Last-Edit: Wed Oct  3 22:11:48 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -201,7 +201,8 @@
 ;;; ---------------------------------------------------------------------------
 
 (define-event-class link/nonlink-slot-modify-event (link/nonlink-slot-event)
-  ((current-value))
+  ((current-value)
+   (initialization))
   (:abstract t)
   (:metaclass instance-event-class)
   (:export-class-name t)
