@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Jul 28 12:25:14 2007 *-*
+;;;; *-* Last-Edit: Wed Oct  3 22:10:58 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -257,7 +257,8 @@
                :slot eslotd
                :current-value (slot-value-using-class 
                                unit-class instance 
-                               slot-name/def)))))))
+                               slot-name/def)
+               :initialization 't))))))
     ;; Add this instance to the explicitly-specified space instances.  This is
     ;; ugly, but we first remove the supplied space instances stored in the
     ;; %%space-instances%% slot, and then we re-add them either directly or
@@ -360,7 +361,8 @@
 
 (defmethod initialize-instance :around ((instance %%gbbopen-unit-instance%%) 
                                         &key)
-  (call-next-method)
+  (let ((*%%doing-initialize-instance%%* 't))
+    (call-next-method))
   ;; signal the creation event:
   (signal-event-using-class
    (load-time-value (find-class 'create-instance-event))
@@ -583,7 +585,8 @@
      (load-time-value (find-class 'update-nonlink-slot-event))
      :instance instance
      :slot slot
-     :current-value nv)))
+     :current-value nv
+     :initialization *%%doing-initialize-instance%%*)))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  CMUCL can't handle the above :before/:after combination, so we must use a
@@ -608,7 +611,8 @@
      (load-time-value (find-class 'update-nonlink-slot-event))
      :instance instance
      :slot slot
-     :current-value nv)))
+     :current-value nv)
+     :initialization *%%doing-initialize-instance%%*))
 
 ;;; ---------------------------------------------------------------------------
 ;;;   Find instance by name

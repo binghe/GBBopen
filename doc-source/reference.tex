@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /home/gbbopen/current/doc-source/reference.tex *-*
-%% *-* Last-Edit: Wed Sep 19 20:43:43 2007; Edited-By: cork *-*
+%% *-* Last-Edit: Wed Oct  3 22:42:24 2007; Edited-By: cork *-*
 %% *-* Machine: ruby.corkills.org *-*
 
 %% Copyright (C) 2003-2007, Dan Corkill <corkill@GBBopen.org>
@@ -11678,11 +11678,12 @@ Return the names of the link slots of the \code{hyp} \glref{unit~class}:
 When a \glref{unit~instance} is created, events are signaled in the
 following sequence: 
 \begin{tightenumerate}
-\item An \code{update-nonlink-slot-event} or
-  \code{link-event} is signaled for each slot in
-  the newly created \glref{unit~instance}. A \code{link-event}
-  is also signaled for each inverse pointer from an existing
-  \glref{unit~instance} to the newly created \glref{unit~instance}.
+
+\item An \code{update-nonlink-slot-event} or \code{link-event} is
+  signaled for each initialized slot in the newly created
+  \glref{unit~instance}.  A \code{link-event} is also signaled for
+  each inverse pointer from an existing \glref{unit~instance} to the
+  newly created \glref{unit~instance}.
 
 \item An \code{add-instance-to-space-instance-event} is signaled
   for each \glref{space~instance} on which the newly created

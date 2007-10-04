@@ -66,11 +66,12 @@
 <p><span class="fndoclabel">Events</span> <br /><a name="id1">When</a> a <a href="ref-glossary.html#id167">unit&nbsp;instance</a> is created, events are signaled in the
 following sequence: 
 </p>
-<p><ol class="tight"><li>An <code>update-nonlink-slot-event</code> or
-<code>link-event</code> is signaled for each slot in
-the newly created <a href="ref-glossary.html#id167">unit&nbsp;instance</a>. A <code>link-event</code>
-is also signaled for each inverse pointer from an existing
-<a href="ref-glossary.html#id167">unit&nbsp;instance</a> to the newly created <a href="ref-glossary.html#id167">unit&nbsp;instance</a>.
+<p><ol class="tight">
+<li>An <code>update-nonlink-slot-event</code> or <code>link-event</code> is
+signaled for each initialized slot in the newly created
+<a href="ref-glossary.html#id167">unit&nbsp;instance</a>.  A <code>link-event</code> is also signaled for
+each inverse pointer from an existing <a href="ref-glossary.html#id167">unit&nbsp;instance</a> to the
+newly created <a href="ref-glossary.html#id167">unit&nbsp;instance</a>.
 </p>
 <p><li>An <code>add-instance-to-space-instance-event</code> is signaled
 for each <a href="ref-glossary.html#id149">space&nbsp;instance</a> on which the newly created

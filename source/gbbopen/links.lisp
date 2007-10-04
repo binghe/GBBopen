@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/links.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jun 13 13:27:42 2007 *-*
+;;;; *-* Last-Edit: Wed Oct  3 22:47:53 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -106,13 +106,16 @@
              (link-slot #+(or ecl lispworks) symbol
                         #-(or ecl lispworks) effective-link-definition))
   (declare (ignore nv))
+  #+ecl 
+  (printv link-slot *%%allow-setf-on-link%%*)
   (unless (or *%%allow-setf-on-link%%*
-               ;; determine if the slot is a link slot (ECL & Lispworks):
-               #+(or ecl lispworks)
-               (not (typep (find link-slot (class-slots class)
-                                 :test #'eq
-                                 :key 'slot-definition-name)
-                           'effective-link-definition)))
+              ;; determine if the slot is a link slot (ECL & Lispworks):
+              #+(or ecl lispworks)
+              (let ((link-slot (find link-slot (class-slots class)
+                                     :test #'eq
+                                     :key 'slot-definition-name)))
+                #+ecl (printv "THE" link-slot)
+                (not (typep link-slot 'effective-link-definition))))
     (error "~s attempted on a link slot ~s of unit class ~s"
            'setf 
            #+(or ecl lispworks)
@@ -417,7 +420,8 @@
                             :slot (find-eslotd-given-dslotd instance dslotd)
                             :current-value current-value
                             :added-instances added-instances
-                            :directp 't))
+                            :directp 't
+                            :initialization *%%doing-initialize-instance%%*))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -428,7 +432,8 @@
                             :slot (find-eslotd-given-dslotd instance dslotd)
                             :current-value current-value
                             :added-instances added-instances
-                            :directp nil))
+                            :directp nil
+                            :initialization *%%doing-initialize-instance%%*))
 
 ;;; ---------------------------------------------------------------------------
 

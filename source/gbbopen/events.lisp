@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/events.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jun 13 13:24:19 2007 *-*
+;;;; *-* Last-Edit: Wed Oct  3 22:08:32 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -63,6 +63,8 @@
 ;; Indicates when add/remove-event-functions are being performed on a new
 ;; space instance:
 (defvar *%%doing-path-event-functions%%* nil)
+;; Indicates when an instance is being initialized:
+(defvar *%%doing-initialize-instance%%* nil)
 
 ;;; ===========================================================================
 ;;;   Event disable/enable macros
