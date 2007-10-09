@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/links.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Oct  3 22:47:53 2007 *-*
+;;;; *-* Last-Edit: Tue Oct  9 05:08:16 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -101,20 +101,17 @@
     :before (nv
              (class standard-unit-class)
              instance
-             ;; instead of the effective-slot-definition, ECL and Lispworks
-             ;; provide the slot name:
-             (link-slot #+(or ecl lispworks) symbol
-                        #-(or ecl lispworks) effective-link-definition))
+             ;; instead of the effective-slot-definition, Lispworks
+             ;; provides the slot name:
+             (link-slot #+lispworks symbol
+                        #-lispworks effective-link-definition))
   (declare (ignore nv))
-  #+ecl 
-  (printv link-slot *%%allow-setf-on-link%%*)
   (unless (or *%%allow-setf-on-link%%*
-              ;; determine if the slot is a link slot (ECL & Lispworks):
-              #+(or ecl lispworks)
+              ;; determine if the slot is a link slot (Lispworks):
+              #+lispworks
               (let ((link-slot (find link-slot (class-slots class)
                                      :test #'eq
                                      :key 'slot-definition-name)))
-                #+ecl (printv "THE" link-slot)
                 (not (typep link-slot 'effective-link-definition))))
     (error "~s attempted on a link slot ~s of unit class ~s"
            'setf 
