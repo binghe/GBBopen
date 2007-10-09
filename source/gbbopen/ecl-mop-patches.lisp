@@ -1,13 +1,13 @@
 ;;;; -*- Mode:Common-Lisp; Package:CLOS; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/ecl-mop-patches.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Mar 22 10:34:45 2006 *-*
+;;;; *-* Last-Edit: Tue Oct  9 05:15:13 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
 ;;;; *
-;;;; *                     Required MOP Patches for ECL 0.9h
+;;;; *                   Required MOP Patches for ECL 0.9i
 ;;;; *
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -80,12 +80,11 @@
 ;;; ---------------------------------------------------------------------------
 ;;;  Adapted from install-method (kernel.lsp):
 
-
 (defun install-accessor-method (name qualifiers specializers lambda-list doc plist
-				fun 
-				;; Added by Corkill:
+                                fun
+                                ;; Added by Corkill:
 				reader-method-class slot-name
-				&rest options)
+                                &rest options)
   (declare (ignore doc)
 	   (notinline ensure-generic-function))
 ;  (record-definition 'method `(method ,name ,@qualifiers ,specializers))
@@ -130,22 +129,28 @@
 				 (values (slot-unbound (class-of self) self slot-name)))))
 		setter #'(lambda (value self)
 			   (si:instance-set self index value)))
-	  (setf reader #'(lambda (self)
-			   (slot-value-using-class (si:instance-class self)
-						   self slotd))
-		setter #'(lambda (value self)
-			   (setf (slot-value-using-class (si:instance-class self)
-							 self slotd) value))))
+	  (let ((slotd slotd))
+	    ;; Note that in order to save this value in the closure we have to copy
+	    ;; the variable, because the value of SLOTD is going to change!
+	    (setf reader #'(lambda (self)
+			     (slot-value-using-class (si:instance-class self)
+						     self slotd))
+		  setter #'(lambda (value self)
+			     (setf (slot-value-using-class (si:instance-class self)
+							   self slotd) value)))))
       ;; Changed the following to call install-accessor-method (Corkill):
+      #+original
+      (dolist (fname (slot-definition-readers slotd))
+	(install-method fname nil `(,standard-class) '(self) nil nil
+			reader))
+      #-original
       (dolist (fname (slot-definition-readers slotd))
 	(install-accessor-method
 	 fname nil `(,standard-class) '(self) nil nil reader 	
 	 'standard-reader-method slot-name))
       (dolist (fname (slot-definition-writers slotd))
-	(install-accessor-method 
-	 fname nil `(nil ,standard-class) '(value self)
-	 nil nil setter
-	 'standard-writer-method slot-name)))))
+	(install-method fname nil `(,(find-class t) ,standard-class) '(value self)
+			nil nil setter)))))
 
 ;;; ---------------------------------------------------------------------------
 ;;; Needed here only to be called from finalize-inheritance.  Copied verbatim 
