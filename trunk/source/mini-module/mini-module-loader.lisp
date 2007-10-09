@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/mini-module/mini-module-loader.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Jul 15 06:09:36 2007 *-*
+;;;; *-* Last-Edit: Tue Oct  9 05:00:03 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -133,7 +133,9 @@
                  #+(and pentium3 (not linux)) "windows"
 		 #-(or pentium3)
                  (must-port '*compiled-directory-name*))
-             (lisp-implementation-version))
+             ;; Strip away any CVS info:
+             (let ((full-version (lisp-implementation-version)))
+               (subseq full-version 0 (position '#\space full-version))))
      ;; GCL:
      #+gcl
      (format nil "~a-gcl-~s.~s"
