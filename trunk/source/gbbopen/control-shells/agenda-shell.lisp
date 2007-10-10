@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:AGENDA-SHELL; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/control-shells/agenda-shell.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Aug 27 16:43:05 2007 *-*
+;;;; *-* Last-Edit: Wed Oct 10 04:52:17 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -411,9 +411,9 @@
                     (apply #'reinitialize-instance existing-ks 
                            :instance-name name
                            args)
-                    ;; CLISP, Lispworks, and OpenMCL don't return the 
+                    ;; CLISP, ECL, Lispworks, and OpenMCL don't return the 
                     ;; instance from reinitialize-instance!
-                    #+(or clisp lispworks openmcl)
+                    #+(or clisp ecl lispworks openmcl)
                     existing-ks)
                    (t (apply #'make-instance class-name 
                              :instance-name name
