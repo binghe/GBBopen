@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Oct  3 22:10:58 2007 *-*
+;;;; *-* Last-Edit: Tue Oct  9 04:44:05 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -534,23 +534,23 @@
            (nv
             (class standard-unit-class)
             instance
-            ;; instead of the effective-slot-definition, ECL & Lispworks
-            ;; provide the slot name:
-            (slot #+(or ecl lispworks)
+            ;; instead of the effective-slot-definition, Lispworks
+            ;; provides the slot name:
+            (slot #+lispworks
                   (eql 'instance-name)
-                  #-(or ecl lispworks)
+                  #-lispworks
                   effective-nonlink-slot-definition))
   #+ecl (declare (ignore slot))
-  (when #+(or ecl lispworks) 't
-        #-(or ecl lispworks) (eq (slot-definition-name slot) 'instance-name)        
+  (when #+lispworks 't
+        #-lispworks (eq (slot-definition-name slot) 'instance-name)        
      (when (slot-boundp-using-class 
             class instance
-            #+(or ecl lispworks) 'instance-name
-            #-(or ecl lispworks) slot)
+            #+lispworks 'instance-name
+            #-lispworks slot)
        (let ((ov (slot-value-using-class 
                   class instance 
-                  #+(or ecl lispworks) 'instance-name
-                  #-(or ecl lispworks) slot)))
+                  #+lispworks 'instance-name
+                  #-lispworks slot)))
          (rename-instance-in-instance-hash-table instance ov nv)))))
 
 ;;; ---------------------------------------------------------------------------
@@ -569,18 +569,18 @@
            (nv
             (class standard-unit-class)
             instance
-            ;; instead of the effective-slot-definition, ECL & Lispworks
-            ;; provide the slot name:
-            (slot #+(or ecl lispworks) symbol
-                  #-(or ecl lispworks) effective-nonlink-slot-definition))
-  ;; must look up the slot object in ECL & Lispworks:
-  #+(or ecl lispworks)
+            ;; instead of the effective-slot-definition, Lispworks
+            ;; provides the slot name:
+            (slot #+lispworks symbol
+                  #-lispworks effective-nonlink-slot-definition))
+  ;; must look up the slot object in Lispworks:
+  #+lispworks
   (setf slot (find slot (class-slots class)
                    :test #'eq
                    :key 'slot-definition-name))
-  (when #-(or ecl lispworks) 't
+  (when #-lispworks 't
         ;; only non-link slots!
-        #+(or ecl lispworks) (typep slot 'effective-nonlink-slot-definition)    
+        #+lispworks (typep slot 'effective-nonlink-slot-definition)    
     (signal-event-using-class 
      (load-time-value (find-class 'update-nonlink-slot-event))
      :instance instance
