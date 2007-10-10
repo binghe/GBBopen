@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/mini-module/mini-module-loader.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Oct  9 05:00:03 2007 *-*
+;;;; *-* Last-Edit: Wed Oct 10 05:01:28 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -131,6 +131,8 @@
      (format nil "~a-ecl-~a"
              (or #+(and pentium3 linux) "linux86" 
                  #+(and pentium3 (not linux)) "windows"
+                 #+(and (not pentium3) darwin) "darwin"
+                 #+(and pentium3 darwin) "macosx86"
 		 #-(or pentium3)
                  (must-port '*compiled-directory-name*))
              ;; Strip away any CVS info:
