@@ -9,7 +9,7 @@ Requirements:
    implementations:
 
        Allegro CL   (Version 8.1)
-       CLISP        (Version 2.41)
+       CLISP        (Version 2.42)
        CMUCL        (Version 19d)
        Digitool MCL (Version 5.1)
        ECL          (Version 0.9i)
@@ -30,7 +30,7 @@ Requirements:
    See PORTING for information on porting GBBopen to other Common Lisp
    implementations.
 
-Current Status Notes (September 25, 2007):
+Current Status Notes (October 18, 2007):
 
  - Implementation work is progressing on a regular basis.  See the list
    of pending development activities maintained on the "What's New"
