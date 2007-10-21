@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/test/basic-tests.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Aug  8 04:02:36 2007 *-*
+;;;; *-* Last-Edit: Sun Oct 14 06:27:56 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -136,6 +136,7 @@
     (dotimes (i n)
       (linkf (link-2-of x) (make-instance 'uc-2 :x i :y i)))))
 
+#+not-timed
 (defun time-test-1-sorted (n)
   (let* ((x (make-instance 'uc-1))
          (dslotd (gbbopen::get-dlslotd-from-reader 'link-2-of x))
@@ -154,7 +155,7 @@
    :make-parents t)
   (map-instances-of-class #'delete-instance '(abstract :plus-subclasses))
   (reset-unit-class 't)
-  (format t "~&;; Running timing test #1...~%")
+  (format t "~&;; Running timing test (~s instances)...~%" n)
   (time (time-test-1 n))
   (reset-gbbopen))
   
@@ -214,6 +215,53 @@
       (setq incomposite-set (make-instances incomposite-elements))
       (setq composite-set (make-instances composite-elements)))
     (values incomposite-set composite-set)))
+
+;;; ---------------------------------------------------------------------------
+;;;  Make sure that CLOS and MOP are behaving appropriately:
+
+(defvar *method-trail* nil)
+
+(define-class checker-metaclass (standard-class) ())
+
+(defmethod validate-superclass ((class checker-metaclass) 
+                                (superclass standard-class))
+  #+ecl (declare (ignore class superclass))
+  't)
+
+(define-class one-slot-instance () 
+  ((slot :initform 0))
+  (:metaclass checker-metaclass))
+
+(defmethod slot-value-using-class :before ((class checker-metaclass)
+                                           instance
+                                           slot)
+  (declare (ignore instance slot))
+  (push 'slot-value-using-class *method-trail*))
+
+(defmethod (setf slot-value-using-class) :before (nv 
+                                                  (class checker-metaclass)
+                                                  instance
+                                                  slot)
+  (declare (ignore nv instance slot))
+  (push 'setf-slot-value-using-class *method-trail*))
+
+;;; ---------------------------------------------------------------------------
+
+(defun clos/mop-tests ()
+  (format t "~&;; Running basic CLOS/MOP tests...~%")
+  (let ((instance (make-instance 'one-slot-instance))
+        (*method-trail* nil))
+    (slot-value instance 'slot)
+    (unless (memq 'slot-value-using-class *method-trail*)
+      (error "~s did not call ~s"
+             'slot-value
+             'slot-value-using-class))
+    (setf *method-trail* nil)
+    (setf (slot-value instance 'slot) 1)
+    (unless (memq 'setf-slot-value-using-class *method-trail*)
+      (error "~s did not call ~s"
+             '(setf slot-value)
+             '(setf slot-value-using-class)))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -902,6 +950,7 @@
 ;;;   Run the tests
 
 (defun all-tests ()
+  (clos/mop-tests)
   (basic-tests)
   (event-function-tests)
   
