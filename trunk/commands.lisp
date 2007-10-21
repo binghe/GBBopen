@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/commands.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Aug 11 05:26:32 2007 *-*
+;;;; *-* Last-Edit: Sun Oct 14 12:44:37 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -149,6 +149,10 @@
 (define-tll-command :gbbopen-test (&rest options)
   "Compile And Load GBBopen Test Module"
   (startup-module :gbbopen-test options  :gbbopen-user))
+
+(define-tll-command :timing-tests (&rest options)
+  "Compile And Load Timing Tests Module"
+  (startup-module :timing-tests options  :gbbopen-user))
 
 (define-tll-command :portable-threads-test (&rest options)
   "Compile And Load Portable Threads Test Module"
