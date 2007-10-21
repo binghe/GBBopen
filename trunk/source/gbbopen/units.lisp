@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/units.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Aug  7 23:16:21 2007 *-*
+;;;; *-* Last-Edit: Sun Sep 30 10:42:54 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -425,7 +425,7 @@
       ;; We must tell to use accessor methods that call slot-value-using-class
       ;; (ECL 0.9i *must* optimize slot access, as non-optimized accessors
       ;; always return nil):
-      #+lispworks
+      #+(or ecl lispworks)
       (setq clos-class-options 
         (cons '(:optimize-slot-access nil) clos-class-options))
       `(#-clisp progn

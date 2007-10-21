@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/links.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Oct  9 05:08:16 2007 *-*
+;;;; *-* Last-Edit: Sun Oct 14 06:26:16 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -92,7 +92,7 @@
 ;;; Catch unauthorized setf's of link slots.  This doesn't work on Lisps that
 ;;; optimize defclass link-writer methods rather than calling the (setf
 ;;; slot-value-using-class) method.  With those Lisps, we could attach to all
-;;; the writer methods, but we haven't done so yet.
+;;; the writer methods, but we haven't tried doing that yet.
 ;;;
 ;;; Note that Lispworks uses the :optimize-slot-access class option to control
 ;;; the use of slot reader/writer methods.
@@ -506,10 +506,12 @@
   ;;; Return the direct-link definition associated with `reader-method-name'
   ;;; and `object'
     
-  (let ((reader-method
-	 (first
-	  (compute-applicable-methods
-	   (symbol-function reader-method-name) (list object)))))
+  (let* ((reader-methods
+          (compute-applicable-methods
+           (symbol-function reader-method-name) (list object)))
+         (reader-method
+          #+ecl (first (last reader-methods))
+          #-ecl (first reader-methods)))
     (or (when (typep reader-method 'standard-reader-method)
 	  (let ((dslotd
 		 (accessor-method-slot-definition reader-method)))

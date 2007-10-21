@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CLOS; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/ecl-mop-patches.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Oct  9 05:15:13 2007 *-*
+;;;; *-* Last-Edit: Tue Oct  9 05:44:49 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -42,10 +42,10 @@
   (defclass standard-writer-method (standard-accessor-method) ()))
 
 (defmethod accessor-method-class ((method standard-accessor-method))
-  (car (slot-value method 'specializers)))
+  (first (slot-value method 'specializers)))
 
 (defmethod accessor-method-class ((method standard-writer-method))
-  (cadr (slot-value method 'specializers)))
+  (second (slot-value method 'specializers)))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Initialize the accessor-method-slot-definition value:
@@ -54,10 +54,11 @@
                                      slot-names
                                      &key)
   (declare (ignore slot-names))
-  (with-slots (slot-name slot-definition) method
+  (with-slots (slot-name slot-definition)
+      method
     (unless slot-definition
       (let ((class (accessor-method-class method)))
-	(setq slot-definition (find slot-name (class-direct-slots class)
+	(setf slot-definition (find slot-name (class-direct-slots class)
 				    :key #'slot-definition-name))))))
 
 ;;; ---------------------------------------------------------------------------
