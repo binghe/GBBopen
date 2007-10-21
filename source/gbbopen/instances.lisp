@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Oct  9 04:44:05 2007 *-*
+;;;; *-* Last-Edit: Mon Oct 15 12:01:59 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -157,6 +157,7 @@
 
 (defmethod print-instance-slots :after ((instance standard-unit-instance)
                                         stream)
+  ;;; This :after method places "[Deleted]" after all slots are printed.
   (when (and (slot-boundp instance '%%space-instances%%)
              (instance-deleted-p instance))
     (format stream " [Deleted]")))
@@ -169,9 +170,9 @@
   ;; To support reinitialize-instance and friends, remove instance from any
   ;; space-instances that aren't retained in the specified space-instances
   ;; value:
-  (when (and (or (eq slot-names 't)
-                 (memq '%%space-instances%% slot-names))
-             (slot-boundp instance '%%space-instances%%))
+  (when (and (slot-boundp instance '%%space-instances%%)
+             (or (eq slot-names 't)
+                 (memq '%%space-instances%% slot-names)))
     (dolist (space-instance
                 (standard-unit-instance.%%space-instances%% instance))
       (unless (memq space-instance space-instances)
