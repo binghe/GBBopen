@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/modules.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Jul 20 18:01:35 2007 *-*
+;;;; *-* Last-Edit: Mon Oct 15 05:15:10 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -92,8 +92,8 @@
   (:requires :portable-threads :gbbopen-tools)
   (:directory :gbbopen)
   (:files "preamble"
-	  #+ecl
-	  ("ecl-mop-patches" :forces-recompile)
+          #+ecl
+          ("ecl-mop-patches" :forces-recompile)
           "mop-interface"
           "utilities"                   
           ("unit-metaclasses" :forces-recompile)
@@ -124,7 +124,7 @@
 (define-module :agenda-shell
   (:requires :gbbopen-core :queue :polling-functions)
   (:directory :gbbopen "control-shells")
-  (:files "agenda-shell-metaclasses"
+  (:files ("agenda-shell-metaclasses" :forces-recompile)
 	  ("agenda-shell-metering" :forces-recompile)
 	  "agenda-shell"))
 
@@ -171,6 +171,14 @@
 
 ;;; ---------------------------------------------------------------------------
 
+(define-module :timing-tests
+  (:requires :gbbopen-user)
+  (:directory :gbbopen "test")
+  (:files ("timing-tests-metaclasses" :forces-recompile)
+          ("timing-tests" :reload)))
+
+;;; ---------------------------------------------------------------------------
+
 (define-module :agenda-shell-test
   (:requires :agenda-shell-user)
   (:directory :gbbopen "control-shells" "test")
@@ -189,13 +197,6 @@
   (:requires :portable-threads)
   (:directory :gbbopen-tools "test")
   (:files ("portable-threads-test" :reload)))
-
-;;; ---------------------------------------------------------------------------
-
-(define-module :timing-test
-  (:requires :gbbopen-user)
-  (:directory :gbbopen "test")
-  (:files ("timing-tests" :reload)))
 
 ;;; ===========================================================================
 ;;;  Example Modules
