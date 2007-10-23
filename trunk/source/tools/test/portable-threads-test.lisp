@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/tools/test/portable-threads-test.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Sep 18 16:58:03 2007 *-*
+;;;; *-* Last-Edit: Tue Oct 23 04:40:27 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -85,8 +85,8 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun sleep-forever ()
-  (sleep most-positive-fixnum))
+(defun sleep-nearly-forever ()
+  (sleep *nearly-forever-seconds*))
 
 (defun sleepy-time ()
   ;; We sleep long enough for thread startup/cleanup/scheduling to occur:
@@ -200,7 +200,7 @@
     (log-error "(current-thread) is not a thread"))
   (unless (member (current-thread) (all-threads))
     (log-error "(current-thread) is not a member of (all-threads)"))
-  (let ((thread (spawn-thread "Trivial thread" #'sleep-forever)))
+  (let ((thread (spawn-thread "Trivial thread" #'sleep-nearly-forever)))
     (unless (threadp thread)
       (log-error "Spawned thread is not a thread"))
     (unless (member thread (all-threads))
@@ -212,7 +212,7 @@
       (log-error "Killed thread is still a member of (all-threads)")))
   ;; Check that sleep is not "busy waiting...":
   (let ((start-time (get-internal-run-time)))
-    (forced-format "~&;;   Timing (sleep 10)...")
+    (forced-format "~&;;   Timing (sleep 10), runtime should be 0 seconds...")
     (sleep 10)
     (let ((run-time (- (get-internal-run-time) start-time)))
       (if (plusp run-time)
@@ -228,7 +228,7 @@
     (forced-format "~&;;   Timing ~s throwable (sleep 0)s..." iterations)
     (time-it (dotimes (i iterations)
                (declare (fixnum i))
-               (catch 'throwable-sleep-forever
+               (catch 'throwable-sleep-nearly-forever
                  (sleep 0)))))
   (forced-format "~&;; Basic thread completed~%"))
 
@@ -326,7 +326,7 @@
   (when (all-threads)
     (log-error "(all-threads) is not nil"))
   (check-error-checking 
-   (spawn-thread "Trivial thread" #'sleep-forever)
+   (spawn-thread "Trivial thread" #'sleep-nearly-forever)
    warning
    "(spawn-thread) did not generate a warning")
   (check-error-checking 
@@ -487,7 +487,7 @@
      #'(lambda (cv)
          (forced-format "~&;;    Also waiting-with-timeout on CV...~%")
          (with-lock-held (cv)
-           (condition-variable-wait-with-timeout cv most-positive-fixnum))
+           (condition-variable-wait-with-timeout cv *nearly-forever-seconds*))
          (forced-format
           "~&;;    Also continuing on waiting-with-timeout CV...~%"))
      cv)
@@ -505,7 +505,7 @@
      cv)
     (forced-format "~&;;    Waiting-with-timeout on CV...~%")
     (with-lock-held (cv)
-           (condition-variable-wait-with-timeout cv most-positive-fixnum))
+           (condition-variable-wait-with-timeout cv *nearly-forever-seconds*))
     (forced-format "~&;;    Continuing on waiting-with-timout CV...~%"))
   (forced-format 
    "~&;; Condition-variable wait-with-timeout (non-timeout) tests completed~%")
@@ -561,7 +561,7 @@
                   "Service Thread"
                   #'(lambda (cv)
                       (forced-format "~&;;   Sleeping...~%")
-                      (catch 'awaken (sleep most-positive-fixnum))
+                      (catch 'awaken (sleep-nearly-forever))
                       (forced-format "~&;;   Awakened...~%")
                       (with-lock-held (cv)
                         (incf *x*)
