@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/tools/portable-threads.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Aug 27 22:15:37 2007 *-*
+;;;; *-* Last-Edit: Tue Oct 23 04:44:36 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -55,6 +55,7 @@
 ;;;  08-20-07 V2.1: Added scheduled functions, thread-alive-p, 
 ;;;           encode-time-of-day. (Corkill)
 ;;;  08-27-07 V2.2: Added periodic functions.  (Corkill)
+;;;  10-23-07 Fixed 64-bit CL sleep issues (thanks Antony!).  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -190,7 +191,8 @@
 ;;;    <new>                      thread-holds-lock-p
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (export '(*non-threaded-polling-function-hook* ; not documented
+  (export '(*nearly-forever-seconds*             ; not documented
+            *non-threaded-polling-function-hook* ; not documented
             *periodic-function-verbose* ; new (document soon)
             *schedule-function-verbose*
 	    all-processes               ; renamed (to be removed soon)
@@ -348,6 +350,27 @@
 
 #-(or allegro (and cmu mp))
 (defmacro with-timeout ((seconds &body timeout-body) &body timed-body)
+  #+(and ecl threads)
+  (let ((timer-process-sym (gensym)))
+    ;; No timers in ECL, so we use sleep in a separate "timer" process:
+    `(catch 'with-timeout
+       (let ((,timer-process-sym
+              (mp:process-run-function 
+                  "With-timeout timer"
+                #'(lambda (process seconds)
+                    (sleep seconds)
+                    (mp:interrupt-process
+                     process
+                     #'(lambda ()
+                         (ignore-errors
+                          (throw 'with-timeout
+                            (progn ,@timeout-body))))))
+                mp:*current-process*
+                ,seconds)))
+         (sleep 0)
+         (unwind-protect (progn ,@timed-body)
+           (mp:process-kill ,timer-process-sym)
+           (sleep 0)))))
   #+lispworks
   (let ((timer-sym (gensym)))
     ;; Note that Lispworks runs the timer function in the process that is
@@ -799,6 +822,8 @@
   'mp:*current-process*
   #+digitool-mcl
   'ccl:*current-process*
+  #+(and ecl threads)
+  'mp:*current-process*
   #+lispworks
   'mp:*current-process*
   #+openmcl
@@ -1381,12 +1406,19 @@
 ;;;  Using process arrest-reasons is too powerful for these operations,
 ;;;  instead we use sleeping which works like a charm!
 
+(defparameter *nearly-forever-seconds* 
+    #.(min most-positive-fixnum
+           ;; Keep well within a 32-bit word on 64-bit CLs:
+           (1- (expt 2 29))))
+
+;;; ---------------------------------------------------------------------------
+
 #-threads-not-available
 (defun throwable-sleep-forever ()
   ;; Used in place of process-arrest-reasons in CL's that don't have
   ;; them or that don't mix with-timeout and arrested processes:
   (catch 'throwable-sleep-forever
-    (sleep most-positive-fixnum)))
+    (sleep *nearly-forever-seconds*)))
 
 ;;; ---------------------------------------------------------------------------
 
