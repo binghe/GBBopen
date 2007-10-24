@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/tools/test/portable-threads-test.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Oct 23 04:40:27 2007 *-*
+;;;; *-* Last-Edit: Wed Oct 24 03:12:31 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -59,9 +59,11 @@
     (let ((start-time-sym (gensym)))
       `(let ((,start-time-sym (get-internal-run-time)))
          ,@body
-         (format t " ~s seconds"
-                 (/ (float (- (get-internal-run-time) ,start-time-sym))
-                    (float internal-time-units-per-second)))))))
+         (let ((run-time (/ (float (- (get-internal-run-time) ,start-time-sym))
+                            (float internal-time-units-per-second))))
+           (format t " ~s seconds" run-time)
+           ;; return the run-time
+           run-time)))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -107,7 +109,7 @@
         (recursive-lock (make-recursive-lock :name "Recursive"))
         (cv (make-condition-variable))
         (not-a-lock (make-not-a-lock))
-        (iterations 500000))
+        (iterations 1000000))
     (declare (fixnum iterations))
     ;; Try each type of locking:
     (when (thread-holds-lock-p nonrecursive-lock)
@@ -131,21 +133,24 @@
         (log-error 
          "Incorrect thread-holds-lock-p value on condition-variable lock")))
     ;; Lock timing tests:
-    (forced-format "~&;;   Timing nonrecursive locking...")
+    (forced-format "~&;;   Timing ~s nonrecursive-lock acquisitions..."
+                   iterations)
     (time-it 
      (dotimes (i iterations)
        (declare (fixnum i))
        (with-lock-held (nonrecursive-lock
                         :whostate "Waiting on nonrecursive lock")
          nil)))
-    (forced-format "~&;;   Timing recursive locking...")
+    (forced-format "~&;;   Timing ~s recursive-lock acquisitions..." 
+                   iterations)
     (time-it 
      (dotimes (i iterations)
        (declare (fixnum i))
        (with-lock-held (recursive-lock
                         :whostate "Waiting on recursive lock")
          nil)))
-    (forced-format "~&;;   Timing condition-variable locking...")
+    (forced-format "~&;;   Timing ~s condition-variable lock acquisitions..."
+                   iterations)
     (time-it 
      (dotimes (i iterations)
        (declare (fixnum i))
@@ -153,13 +158,13 @@
          nil)))
     (forced-format "~&;;   Checking with a non-lock object...")
     ;; Incorrect lock type:
-    (check-error-checking 
-     (with-lock-held (not-a-lock)
-       nil)
+    (check-error-checking
+       (with-lock-held (not-a-lock) nil)
      error
      "With-lock-held did not fail when given a non lock")
     ;; Check recursive locking:
-    (forced-format "~&;;   Recursive locking with a recursive lock...~%")
+    (forced-format 
+     "~&;;   Testing recursive locking with a recursive lock...~%")
     (let ((counter 0))
       (with-lock-held (recursive-lock :whostate "Level 1")
         (incf counter)
@@ -170,12 +175,13 @@
       (unless (= counter 3)
 	(log-error "Incorrect recursive-lock counter value (should be 3): ~s" 
                    counter)))
-    (forced-format "~&;;   Recursive locking with a non-recursive lock...~%")
+    (forced-format
+     "~&;;   Checking recursive locking with a non-recursive lock...~%")
     (check-error-checking
-     (with-lock-held (nonrecursive-lock :whostate "Level 1")
-       (with-lock-held (nonrecursive-lock :whostate "Level 2")
-         (with-lock-held (nonrecursive-lock :whostate "Level 3")
-           nil)))
+       (with-lock-held (nonrecursive-lock :whostate "Level 1")
+         (with-lock-held (nonrecursive-lock :whostate "Level 2")
+           (with-lock-held (nonrecursive-lock :whostate "Level 3")
+             nil)))
      #-(and sbcl sb-thread)
      error
      #+(and sbcl sb-thread)
@@ -210,26 +216,33 @@
     (sleepy-time)
     (when (member thread (all-threads))
       (log-error "Killed thread is still a member of (all-threads)")))
-  ;; Check that sleep is not "busy waiting...":
-  (let ((start-time (get-internal-run-time)))
-    (forced-format "~&;;   Timing (sleep 10), runtime should be 0 seconds...")
+  ;; Check that sleep is not "busy waiting...":  
+  (sleep 0)                             ; one untimed call to set things up...
+  (forced-format "~&;;   Timing (sleep 0), run time should be zero seconds...")
+  (let ((run-time (time-it (sleep 0))))
+    (when (plusp run-time)
+      (warn "(sleep 0) consumed ~s seconds of processing time." run-time)))
+  (forced-format
+   "~&;;   Timing (sleep 10), run time should also be zero seconds...")
+  (let ((run-time (time-it (sleep 10))))
     (sleep 10)
-    (let ((run-time (- (get-internal-run-time) start-time)))
-      (if (plusp run-time)
-          (warn "Sleeping consumed ~s seconds of processing time."
-                (/ run-time #.(float internal-time-units-per-second)))
-          (forced-format " 0 seconds"))))
-  ;; Check if (sleep 0) is optimized away by this CL:
-  (let ((iterations 10000))
+    (when (plusp run-time)
+      (warn "(sleep 10) consumed ~s seconds of processing time." run-time)))
+  ;; Check to be sure that (sleep 0) is not optimized away by this CL:
+  (let ((iterations 100000))
     (forced-format "~&;;   Timing ~s (sleep 0)s..." iterations)
-    (time-it (dotimes (i iterations)
-               (declare (fixnum i))
-               (sleep 0)))
+    (let ((run-time (time-it (dotimes (i iterations)
+                               (declare (fixnum i))
+                               (sleep 0)))))
+      (when (zerop run-time)
+        (warn "~s (sleep 0)s took ~s seconds" iterations run-time)))
     (forced-format "~&;;   Timing ~s throwable (sleep 0)s..." iterations)
-    (time-it (dotimes (i iterations)
-               (declare (fixnum i))
-               (catch 'throwable-sleep-nearly-forever
-                 (sleep 0)))))
+    (let ((run-time (time-it (dotimes (i iterations)
+                               (declare (fixnum i))
+                               (catch 'throwable-sleep-nearly-forever
+                                 (sleep 0))))))
+      (when (zerop run-time)
+        (warn "~s throwable (sleep 0)s took ~s seconds" iterations run-time))))
   (forced-format "~&;; Basic thread completed~%"))
 
 ;;; ---------------------------------------------------------------------------
@@ -325,12 +338,14 @@
     (log-error "(current-thread) is not nil"))
   (when (all-threads)
     (log-error "(all-threads) is not nil"))
+  (forced-format "~&;;   Checking spawn-thread...")
   (check-error-checking 
-   (spawn-thread "Trivial thread" #'sleep-nearly-forever)
+     (spawn-thread "Trivial thread" #'sleep-nearly-forever)
    warning
    "(spawn-thread) did not generate a warning")
+  (forced-format "~&;;   Checking kill-thread...")
   (check-error-checking 
-   (kill-thread nil)
+     (kill-thread nil)
    warning
    "(kill-thread) did not generate a warning")
   (forced-format "~&;; Basic nonthreaded thread tests completed~%"))
