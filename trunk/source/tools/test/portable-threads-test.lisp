@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/tools/test/portable-threads-test.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Oct 24 03:12:31 2007 *-*
+;;;; *-* Last-Edit: Thu Oct 25 03:40:23 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -61,7 +61,7 @@
          ,@body
          (let ((run-time (/ (float (- (get-internal-run-time) ,start-time-sym))
                             (float internal-time-units-per-second))))
-           (format t " ~s seconds" run-time)
+           (forced-format " ~s seconds" run-time)
            ;; return the run-time
            run-time)))))
 
@@ -109,7 +109,8 @@
         (recursive-lock (make-recursive-lock :name "Recursive"))
         (cv (make-condition-variable))
         (not-a-lock (make-not-a-lock))
-        (iterations 1000000))
+        (iterations (min 1000000 most-positive-fixnum))
+        (start-real-time (get-internal-real-time)))
     (declare (fixnum iterations))
     ;; Try each type of locking:
     (when (thread-holds-lock-p nonrecursive-lock)
@@ -159,7 +160,7 @@
     (forced-format "~&;;   Checking with a non-lock object...")
     ;; Incorrect lock type:
     (check-error-checking
-       (with-lock-held (not-a-lock) nil)
+     (with-lock-held (not-a-lock) nil)
      error
      "With-lock-held did not fail when given a non lock")
     ;; Check recursive locking:
@@ -194,56 +195,64 @@
       (unless (equal returned-values '(1 2))
         (error "Incorrect ~s returned values: ~s"
                'with-lock-held
-               returned-values))))
-  (forced-format "~&;; Basic lock tests completed~%"))
+               returned-values)))
+    (forced-format
+     "~&;; Basic lock tests completed (~,2f seconds real time).~%"
+     (/ (float (- (get-internal-real-time) start-real-time))
+        (float internal-time-units-per-second)))))
   
 ;;; ---------------------------------------------------------------------------
 
 #-threads-not-available
 (defun basic-thread-tests ()  
   (forced-format "~&;; Performing basic thread tests...")
-  (unless (threadp (current-thread))
-    (log-error "(current-thread) is not a thread"))
-  (unless (member (current-thread) (all-threads))
-    (log-error "(current-thread) is not a member of (all-threads)"))
-  (let ((thread (spawn-thread "Trivial thread" #'sleep-nearly-forever)))
-    (unless (threadp thread)
-      (log-error "Spawned thread is not a thread"))
-    (unless (member thread (all-threads))
-      (log-error "Spawned thread is not a member of (all-threads)"))
-    (kill-thread thread)
-    ;; Allow sufficient time for the kill to be completed:
-    (sleepy-time)
-    (when (member thread (all-threads))
-      (log-error "Killed thread is still a member of (all-threads)")))
-  ;; Check that sleep is not "busy waiting...":  
-  (sleep 0)                             ; one untimed call to set things up...
-  (forced-format "~&;;   Timing (sleep 0), run time should be zero seconds...")
-  (let ((run-time (time-it (sleep 0))))
-    (when (plusp run-time)
-      (warn "(sleep 0) consumed ~s seconds of processing time." run-time)))
-  (forced-format
-   "~&;;   Timing (sleep 10), run time should also be zero seconds...")
-  (let ((run-time (time-it (sleep 10))))
-    (sleep 10)
-    (when (plusp run-time)
-      (warn "(sleep 10) consumed ~s seconds of processing time." run-time)))
-  ;; Check to be sure that (sleep 0) is not optimized away by this CL:
-  (let ((iterations 100000))
-    (forced-format "~&;;   Timing ~s (sleep 0)s..." iterations)
-    (let ((run-time (time-it (dotimes (i iterations)
-                               (declare (fixnum i))
-                               (sleep 0)))))
-      (when (zerop run-time)
-        (warn "~s (sleep 0)s took ~s seconds" iterations run-time)))
-    (forced-format "~&;;   Timing ~s throwable (sleep 0)s..." iterations)
-    (let ((run-time (time-it (dotimes (i iterations)
-                               (declare (fixnum i))
-                               (catch 'throwable-sleep-nearly-forever
-                                 (sleep 0))))))
-      (when (zerop run-time)
-        (warn "~s throwable (sleep 0)s took ~s seconds" iterations run-time))))
-  (forced-format "~&;; Basic thread completed~%"))
+  (let ((start-real-time (get-internal-real-time)))
+    (unless (threadp (current-thread))
+      (log-error "(current-thread) is not a thread"))
+    (unless (member (current-thread) (all-threads))
+      (log-error "(current-thread) is not a member of (all-threads)"))
+    (let ((thread (spawn-thread "Trivial thread" #'sleep-nearly-forever)))
+      (unless (threadp thread)
+        (log-error "Spawned thread is not a thread"))
+      (unless (member thread (all-threads))
+        (log-error "Spawned thread is not a member of (all-threads)"))
+      (kill-thread thread)
+      ;; Allow sufficient time for the kill to be completed:
+      (sleepy-time)
+      (when (member thread (all-threads))
+        (log-error "Killed thread is still a member of (all-threads)")))
+    ;; Check that sleep is not "busy waiting...":  
+    (sleep 0)                           ; one untimed call to set things up...
+    (forced-format 
+     "~&;;   Timing (sleep 0), run time should be zero seconds...")
+    (let ((run-time (time-it (sleep 0))))
+      (when (plusp run-time)
+        (warn "(sleep 0) consumed ~s seconds of processing time." run-time)))
+    (forced-format
+     "~&;;   Timing (sleep 10), run time should also be zero seconds...")
+    (let ((run-time (time-it (sleep 10))))
+      (when (plusp run-time)
+        (warn "(sleep 10) consumed ~s seconds of processing time." run-time)))
+    ;; Check to be sure that (sleep 0) is not optimized away by this CL:
+    (let ((iterations (min 100000 most-positive-fixnum)))
+      (forced-format "~&;;   Timing ~s (sleep 0)s..." iterations)
+      (let ((run-time (time-it (dotimes (i iterations)
+                                 (declare (fixnum i))
+                                 (sleep 0)))))
+        (when (zerop run-time)
+          (warn "~s (sleep 0)s took ~s seconds" iterations run-time)))
+      (forced-format "~&;;   Timing ~s throwable (sleep 0)s..." iterations)
+      (let ((run-time (time-it (dotimes (i iterations)
+                                 (declare (fixnum i))
+                                 (catch 'throwable-sleep-nearly-forever
+                                   (sleep 0))))))
+        (when (zerop run-time)
+          (warn "~s throwable (sleep 0)s took ~s seconds" 
+                iterations run-time))))
+    (forced-format 
+     "~&;; Basic thread tests completed  (~,2f seconds real time).~%"
+     (/ (float (- (get-internal-real-time) start-real-time))
+        (float internal-time-units-per-second)))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -277,7 +286,8 @@
          #-openmcl
          10000)
         (thread-count (length (all-threads)))
-        (cv (make-condition-variable)))
+        (cv (make-condition-variable))
+        (start-real-time (get-internal-real-time)))
     (declare (fixnum iterations))
     (forced-format "~&;;   Timing ~s spawn and die threads..." iterations)
     (labels ((spawn-and-die-fn (count)
@@ -304,8 +314,11 @@
                    (condition-variable-wait cv)))))
     (sleepy-time)
     (unless (= thread-count (length (all-threads)))
-      (log-error "A spawn-and-die thread is still a member of (all-threads)")))
-  (forced-format "~&;; Thread timing tests completed~%"))
+      (log-error "A spawn-and-die thread is still a member of (all-threads)"))
+    (forced-format
+     "~&;; Thread timing tests completed (~,2f seconds real time).~%"
+     (/ (float (- (get-internal-real-time) start-real-time))
+        (float internal-time-units-per-second)))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -540,7 +553,8 @@
   (let ((cv (make-condition-variable
              :class 'state-cv
              :state 0))
-        (iterations 5000))
+        (iterations 5000)
+        (start-real-time (get-internal-real-time)))
     (forced-format "~&;; Timing ~s condition-variable wait & signals..."
                    (* 2 iterations))
     (spawn-thread 
@@ -562,9 +576,12 @@
              do (condition-variable-wait cv))
          (decf (state-of cv))
          (condition-variable-signal cv))
-       (thread-yield))))
-  (forced-format
-   "~&;; Condition-variable wait & signal timing test completed~%"))
+       (thread-yield)))
+    (forced-format
+     "~&;; Condition-variable wait & signal timing test completed~
+      ~%;;    (~,2f seconds real time).~%"
+     (/ (float (- (get-internal-real-time) start-real-time))
+        (float internal-time-units-per-second)))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -755,37 +772,41 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun portable-threads-tests ()
-  (forced-format "~&;; Starting portable threads tests...~%")
-  (basic-lock-tests)
-  (atomic-incf/decf-tests) 
-  #+threads-not-available
-  (basic-nonthreaded-thread-tests)
-  #-threads-not-available
-  (let ((all-threads (all-threads)))
-    (with-timeout-tests)
-    (basic-thread-tests)
-    (nonrecursive-lock-contention-tests)
-    (recursive-lock-contention-tests)
-    (condition-variables-tests)
-    (thread-timing-tests)
-    (hibernate/awaken-thread-tests)
-    (symbol-value-in-thread-tests)
-    (forced-format "~&;; Checking for unreclaimed threads...~%")
-    (sleepy-time)                       ; allow some time for cleanups
-    (let ((new-all-threads (all-threads)))
-      (unless (= (length all-threads)
-                 (length new-all-threads))
-        (let ((unexpected-remaining-threads                 
-               (set-difference new-all-threads all-threads))
-              (unexpected-missing-threads                 
-               (set-difference all-threads new-all-threads)))
-          (when unexpected-remaining-threads
-            (log-error "Unexpected remaining missing: ~s"
-                       unexpected-remaining-threads))
-          (when unexpected-missing-threads
-            (log-error "Unexpected threads missing: ~s"
-                       unexpected-missing-threads))))))
-  (forced-format "~&;; Portable threads tests completed.~%"))
+  (let ((start-real-time (get-internal-real-time)))
+    (forced-format "~&;; Starting portable threads tests...~%")
+    (basic-lock-tests)
+    (atomic-incf/decf-tests) 
+    #+threads-not-available
+    (basic-nonthreaded-thread-tests)
+    #-threads-not-available
+    (let ((all-threads (all-threads)))
+      (with-timeout-tests)
+      (basic-thread-tests)
+      (nonrecursive-lock-contention-tests)
+      (recursive-lock-contention-tests)
+      (condition-variables-tests)
+      (thread-timing-tests)
+      (hibernate/awaken-thread-tests)
+      (symbol-value-in-thread-tests)
+      (forced-format "~&;; Checking for unreclaimed threads...~%")
+      (sleepy-time)                     ; allow some time for cleanups
+      (let ((new-all-threads (all-threads)))
+        (unless (= (length all-threads)
+                   (length new-all-threads))
+          (let ((unexpected-remaining-threads                 
+                 (set-difference new-all-threads all-threads))
+                (unexpected-missing-threads                 
+                 (set-difference all-threads new-all-threads)))
+            (when unexpected-remaining-threads
+              (log-error "Unexpected remaining missing: ~s"
+                         unexpected-remaining-threads))
+            (when unexpected-missing-threads
+              (log-error "Unexpected threads missing: ~s"
+                         unexpected-missing-threads))))))
+    (forced-format
+     "~&;; Portable threads tests completed (~,2f seconds real time).~%"
+     (/ (float (- (get-internal-real-time) start-real-time))
+        (float internal-time-units-per-second)))))
 
 ;;; ---------------------------------------------------------------------------
 
