@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/tools/portable-threads.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Oct 23 04:44:36 2007 *-*
+;;;; *-* Last-Edit: Thu Oct 25 03:47:07 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -614,9 +614,11 @@
                     (eq (sb-thread:mutex-value ,lock-sym)
                         sb-thread::*current-thread*))
                (body-fn)
-               (sb-thread:with-mutex (,lock-sym) (body-fn))))
+               (if (sb-thread::mutex-p ,lock-sym)
+                   (sb-thread:with-mutex (,lock-sym) (body-fn))
+                   (error "~s is not a lock" ,lock-sym))))
          #+scl
-         `(mp:with-lock-held (,lock-sym ,whostate) ,@body) 
+         (mp:with-lock-held (,lock-sym ,whostate) ,@body) 
          ;; Note that polling functions complicate non-threaded CL locking;
          ;; the following does not deal with polling functions:
          #+threads-not-available
