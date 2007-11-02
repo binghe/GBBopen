@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /home/gbbopen/current/doc-source/reference.tex *-*
-%% *-* Last-Edit: Wed Oct  3 22:42:24 2007; Edited-By: cork *-*
+%% *-* Last-Edit: Fri Nov  2 11:45:11 2007; Edited-By: cork *-*
 %% *-* Machine: ruby.corkills.org *-*
 
 %% Copyright (C) 2003-2007, Dan Corkill <corkill@GBBopen.org>
@@ -9211,7 +9211,7 @@ direct superclass of the \glref{event~class} \var{event-class-name\/}
 \bfindexit{standard-event-class}%
 Each \var{superclass-name} argument specifies a direct superclass of the new
 class. If the superclass list is empty, then the direct superclass defaults to the
-single class \textbf{\entlink{standard-event-class}}.
+single class \textbf{\entlink{standard-event-instance}}.
 
 \bfindexit{standard-event-class}%
 The \code{:metaclass} \var{class-name\/}, if specified, must be a subclass of
@@ -9251,6 +9251,7 @@ the \glref{event} that is being signaled.
 \begin{alsos}{with-generate-accessors-format}
 \also[signal-event]
 \also[standard-event-class]
+\also[standard-event-instance]
 \also[with-generate-accessors-format]
 \end{alsos}
 
@@ -9409,12 +9410,12 @@ dimension-value types.
 \bfindexit{standard-space-class}%
 Each \var{superclass-name} argument specifies a direct superclass of the new
 class. If the superclass list is empty, then the direct superclass defaults to the
-single class \textbf{\entlink{standard-space-class}}.
+single class \textbf{\entlink{standard-space-instance}}.
 
 \bfindexit{standard-space-class}%
 The \code{:metaclass} \var{class-name\/}, if specified, must be a subclass of
 \textbf{\entlinknoex{standard-space-class}}.  The default metaclass value is
-also \textbf{\entlinknoex{standard-space-class}}.
+\textbf{\entlinknoex{standard-space-class}}.
 
 \fndspar{Inheritance of class options}
 
@@ -9440,6 +9441,7 @@ default initializtion value associated with the metaclass is used.
 \also[define-unit-class]
 \also[make-space-instance]
 \also[standard-space-class]
+\also[standard-space-instance]
 \also[with-generate-accessors-format]
 \end{alsos}
 
@@ -9613,7 +9615,7 @@ appropriate.
 \bfindexit{standard-unit-class}%
 Each \var{superclass-name} argument specifies a direct superclass of the new
 class. If the superclass list is empty, then the direct superclass defaults to the
-single class \textbf{\entlink{standard-unit-class}}.
+single class \textbf{\entlink{standard-unit-instance}}.
 
 \bfindexit{standard-unit-class}%
 The \code{:metaclass} class option, if specified, must be a subclass
@@ -9647,6 +9649,7 @@ default initializtion value associated with the metaclass is used.
 \also[link-slot-p]
 \also[make-instance]
 \also[standard-unit-class]
+\also[standard-unit-instance]
 \also[with-generate-accessors-format]
 \end{alsos}
 
