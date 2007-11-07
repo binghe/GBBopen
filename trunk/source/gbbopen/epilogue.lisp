@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/epilogue.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon May 29 13:23:20 2006 *-*
+;;;; *-* Last-Edit: Wed Nov  7 11:03:10 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -14,13 +14,14 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2004-2006, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2004-2007, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
 ;;;  01-16-04 File Created.  (Corkill)
 ;;;  05-03-04 Added reset-gbbopen.  (Corkill)
+;;;  11-07-07 Retain the root-space-instance when resetting GBBopen.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -43,8 +44,11 @@
     (map-extended-unit-classes 
      #'(lambda (unit-class plus-subclasses)
 	 (declare (ignore plus-subclasses))
-	 (unless (and retain-classes
-		      (unit-class-in-specifier-p unit-class retain-classes))
+	 (unless (or 
+                  ;; Retain the root-space-instance
+                  (eq (class-name unit-class) 'root-space-instance)
+                  (and retain-classes
+                       (unit-class-in-specifier-p unit-class retain-classes)))
 	   ;; We must practice safe delete-instance:
 	   (let ((instances nil))
 	     (map-instances-given-class 
