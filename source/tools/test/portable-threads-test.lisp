@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/tools/test/portable-threads-test.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Nov  2 03:17:08 2007 *-*
+;;;; *-* Last-Edit: Thu Nov 15 15:56:42 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -32,11 +32,6 @@
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (import '(common-lisp-user::*autorun-modules*)))
-
-#+(and sbcl sb-thread)
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (when (string< "1.0.11" (lisp-implementation-version))
-    (pushnew :sbcl-mutex-warnings-not-errors *features*)))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Bindings used in thread tests:
@@ -184,14 +179,16 @@
     (forced-format
      "~&;;   Checking recursive locking with a non-recursive lock...~%")
     (check-error-checking
-       (with-lock-held (nonrecursive-lock :whostate "Level 1")
-         (with-lock-held (nonrecursive-lock :whostate "Level 2")
-           (with-lock-held (nonrecursive-lock :whostate "Level 3")
-             nil)))
-     #-sbcl-mutex-warnings-not-errors
+     (with-lock-held (nonrecursive-lock :whostate "Level 1")
+       (with-lock-held (nonrecursive-lock :whostate "Level 2")
+         (with-lock-held (nonrecursive-lock :whostate "Level 3")
+           nil)))
+     #+(and sbcl sb-thread)
+     #.(if (string< "1.0.11" (lisp-implementation-version))
+           'warning
+           'error)
+     #-(and sbcl sb-thread)
      error
-     #+sbcl-mutex-warnings-not-errors
-     warning
      "With-lock-held did not fail when used recursively")
     (forced-format "~&;;   Testing with-lock-held returned values...~%")
     (let ((returned-values
@@ -815,7 +812,8 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(when *autorun-modules*
+(unless (and (boundp '*autorun-modules*)
+             (not *autorun-modules*))
   (portable-threads-tests))
 
 ;;; ===========================================================================
