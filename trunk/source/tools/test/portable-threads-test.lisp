@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/tools/test/portable-threads-test.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Nov 15 15:56:42 2007 *-*
+;;;; *-* Last-Edit: Fri Nov 16 04:50:14 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -32,6 +32,10 @@
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (import '(common-lisp-user::*autorun-modules*)))
+
+;; (Re-)define *autorun-modules* here, in case we are using this file
+;; stand-alone...
+(defvar *autorun-modules* nil)
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Bindings used in thread tests:
@@ -812,8 +816,7 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(unless (and (boundp '*autorun-modules*)
-             (not *autorun-modules*))
+(when *autorun-modules*
   (portable-threads-tests))
 
 ;;; ===========================================================================
