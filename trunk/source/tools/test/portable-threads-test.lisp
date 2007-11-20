@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/tools/test/portable-threads-test.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Nov 20 05:18:17 2007 *-*
+;;;; *-* Last-Edit: Tue Nov 20 05:21:43 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -272,10 +272,12 @@
   ;; Do spawn-thread timing:
   (let ((iterations 
          #+allegro 1500                 ; Allegro is limited to < 2K or so
+         #+digitool-mcl 100
          #+lispworks 250                ; Lispworks is limited to < 300 or so
          ;; Spawning in OpenMCL is slow (10K works, but we don't want to wait)
          #+openmcl 1000
          #-(or allegro 
+               digitool-mcl
                lispworks 
                openmcl)
          10000)
