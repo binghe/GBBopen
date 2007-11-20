@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/modules.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Oct 15 05:15:10 2007 *-*
+;;;; *-* Last-Edit: Tue Nov 20 04:17:18 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -145,14 +145,6 @@
   (:requires :portable-sockets :gbbopen-core)
   (:directory :gbbopen "extensions")
   (:files "web-inspector"))
-
-;;; ===========================================================================
-;;;  Graphics Modules (very preliminary)
-
-(define-module :gbbopen-graphics
-  (:requires :gbbopen-core :os-interface)
-  (:directory :gbbopen "graphics")
-  (:files "gbbopen-tk-graphics"))
 
 ;;; ===========================================================================
 ;;;  Test Modules
