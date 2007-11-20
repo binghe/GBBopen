@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/commands.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Oct 14 12:44:37 2007 *-*
+;;;; *-* Last-Edit: Tue Nov 20 04:17:37 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -113,13 +113,6 @@
 (define-tll-command :agenda-shell-user (&rest options)
   "Compile And Load Agenda-Shell-User Module"
   (startup-module :agenda-shell-user options :gbbopen-user))
-
-;;; ---------------------------------------------------------------------------
-;;;  GBBopen Graphics (very preliminary)
-
-(define-tll-command :gbbopen-graphics (&rest options)
-  "Compile And Load GBBopen-Graphics Module (under development)"
-  (startup-module :gbbopen-graphics options :gbbopen-graphics))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Extensions (not yet documented)
