@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/tools/test/portable-threads-test.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Nov 16 04:50:14 2007 *-*
+;;;; *-* Last-Edit: Tue Nov 20 05:18:17 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -240,7 +240,11 @@
       (when (plusp run-time)
         (warn "(sleep 10) consumed ~s seconds of processing time." run-time)))
     ;; Check to be sure that (sleep 0) is not optimized away by this CL:
-    (let ((iterations (min 100000 most-positive-fixnum)))
+    (let ((iterations 
+           #+digitool-mcl
+           100                          ; MCL has a VERY high overhead
+           #-digitool-mcl
+           (min 100000 most-positive-fixnum)))
       (forced-format "~&;;   Timing ~s (sleep 0)s..." iterations)
       (let ((run-time (time-it (dotimes (i iterations)
                                  (declare (fixnum i))
