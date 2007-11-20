@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/tools/test/portable-threads-test.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Nov 20 05:21:43 2007 *-*
+;;;; *-* Last-Edit: Tue Nov 20 09:39:25 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -272,7 +272,8 @@
   ;; Do spawn-thread timing:
   (let ((iterations 
          #+allegro 1500                 ; Allegro is limited to < 2K or so
-         #+digitool-mcl 100
+         ;; Spawning in MCL is slow (10K works, but we don't want to wait)
+         #+digitool-mcl 500
          #+lispworks 250                ; Lispworks is limited to < 300 or so
          ;; Spawning in OpenMCL is slow (10K works, but we don't want to wait)
          #+openmcl 1000
@@ -292,10 +293,14 @@
       (log-error "A do-nothing thread is still a member of (all-threads)")))
   ;; Do spawn and die timing:
   (let ((iterations 
+         ;; Spawning in MCL is slow (10K works, but we don't want to wait)
+         #+digitool-mcl 
+         1000
          ;; Spawning in OpenMCL is slow (10K works, but we don't want to wait)
          #+openmcl
          1000
-         #-openmcl
+         #-(or digitool-mcl
+               openmcl)
          10000)
         (thread-count (length (all-threads)))
         (cv (make-condition-variable))

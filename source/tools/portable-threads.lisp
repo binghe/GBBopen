@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/tools/portable-threads.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Oct 25 03:47:07 2007 *-*
+;;;; *-* Last-Edit: Tue Nov 20 09:47:15 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -42,7 +42,6 @@
 ;;;  03-21-04 Added atomic operations.  (Corkill)
 ;;;  06-11-05 Clean up best attempts for non-threaded CLs.  (Corkill)
 ;;;  10-21-05 Added polling functions for non-threaded CLs.  (Corkill)
-;;;  12-17-05 Added process-wait-with-timeout.  (Corkill)
 ;;;  12-22-05 Removed without-interrupts support (incompatible with
 ;;;           preemptive scheduling models).  (Corkill)
 ;;;  12-27-05 Added process-name.  (Corkill)
@@ -56,6 +55,8 @@
 ;;;           encode-time-of-day. (Corkill)
 ;;;  08-27-07 V2.2: Added periodic functions.  (Corkill)
 ;;;  10-23-07 Fixed 64-bit CL sleep issues (thanks Antony!).  (Corkill)
+;;;  11-20-07 V2.2.1: Remove V1.0 compatabilty; resupport Digitool MCL.
+;;;           (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -92,12 +93,19 @@
       :sb-thread)
 
 ;;; ---------------------------------------------------------------------------
-;;;  Warn if threads support is missing in ECL
+;;;  Warn if threads support is missing in ECL (currently disabled!)
 
-#+(and ecl (not threads)) 
+#+(and ecl time-deadlock-fixed (not threads)) 
 (warn "Thread support on ~a is not present.~@
        (Use configure option --enable-threads and remake to provide threads ~
         support.)"
+      (lisp-implementation-version))
+
+;;;  Instead, warn that threads have issues in the current ECL
+
+#+(and ecl threads)
+(warn "Thread support on ~a is not recommended at the present time.~@
+       (For example, the time macro will deadlock in the current release.)"
       (lisp-implementation-version))
 
 ;;; ---------------------------------------------------------------------------
@@ -106,13 +114,7 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (import
    #+allegro 
-   '(mp:close-gate
-     mp:gate-open-p
-     mp:make-gate
-     mp:open-gate
-     mp:process-wait
-     mp:process-wait-with-timeout
-     sys:with-timeout)
+   '(sys:with-timeout)
    #+clisp
    '()
    #+(and cmu mp)
@@ -120,8 +122,6 @@
      mp:atomic-incf
      mp:atomic-pop
      mp:atomic-push
-     mp:process-wait
-     mp:process-wait-with-timeout
      mp::recursive-lock
      mp:with-timeout)
    #+(and cmu (not mp))
@@ -129,8 +129,7 @@
    #+cormanlisp
    '()
    #+digitool-mcl
-   '(ccl:process-wait
-     ccl:process-wait-with-timeout)
+   '()
    ;; EL's mp:make-lock doesn't support owner, so we must build our own
    ;; from it
    #+(and ecl threads)
@@ -140,12 +139,9 @@
    #+gcl
    '()
    #+lispworks
-   '(mp:make-lock
-     mp:process-wait
-     mp:process-wait-with-timeout)
+   '(mp:make-lock)
    #+openmcl
-   '(ccl:process-wait
-     ccl:process-wait-with-timeout)
+   '()
    #+(and sbcl sb-thread)
    '(sb-thread:thread-alive-p
      sb-thread::thread-name)
@@ -162,40 +158,11 @@
      thread:cond-var-signal
      thread:cond-var-broadcast)))
 
-;;; ---------------------------------------------------------------------------
-;;;   Name changes in V1.0 (support for old names will be removed soon):
-;;;
-;;;    all-processes              all-threads
-;;;    awaken-process             awaken-thread
-;;;    current-process            current-thread
-;;;    hibernate-process          hibernate-thread
-;;;    kill-process               kill-thread
-;;;    make-process-lock          make-recursive-lock
-;;;    process-name               thread-name
-;;;    processp                   threadp
-;;;    process-wait               thread-wait
-;;;    process-wait-with-timeout  thread-wait-with-timeout
-;;;    process-whostate           thread-whostate
-;;;    process-yield              thread-yield
-;;;    run-in-process             run-in-thread
-;;;    spawn-process              spawn-thread
-;;;    symbol-value-in-process    symbol-value-in-thread
-;;;    with-process-lock          with-lock-held
-;;;    <new>                      make-lock
-;;;    <new>                      condition-variable (object)
-;;;    <new>                      make-condition-variable
-;;;    <new>                      condition-variable-broadcast
-;;;    <new>                      condition-variable-signal
-;;;    <new>                      condition-variable-wait
-;;;    <new>                      condition-variable-wait-with-timeout
-;;;    <new>                      thread-holds-lock-p
-
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(*nearly-forever-seconds*             ; not documented
             *non-threaded-polling-function-hook* ; not documented
             *periodic-function-verbose* ; new (document soon)
             *schedule-function-verbose*
-	    all-processes               ; renamed (to be removed soon)
             all-scheduled-functions
             all-threads
 	    as-atomic-operation
@@ -206,40 +173,23 @@
 	    atomic-pop
 	    atomic-push
 	    atomic-pushnew
-	    awaken-process		; renamed (to be removed soon)
 	    awaken-thread
-	    close-gate                  ; deprecated, to be removed
 	    condition-variable
 	    condition-variable-broadcast
             condition-variable-signal
             condition-variable-wait
 	    condition-variable-wait-with-timeout
-	    current-process             ; renamed (to be removed soon)
             current-thread
             encode-time-of-day
-	    gate-open-p                 ; deprecated, to be removed
-	    hibernate-process		; renamed (to be removed soon)
 	    hibernate-thread
             kill-periodic-function      ; new (document soon)
-	    kill-process                ; renamed (to be removed soon)
             kill-thread
 	    make-condition-variable
-	    make-gate                   ; deprecated, to be removed
             make-lock
-	    make-process-lock           ; renamed (to be removed soon)
             make-recursive-lock
             make-scheduled-function
-	    multiprocessing-not-available ; renamed (remove soon)
-	    open-gate                   ; deprecated, to be removed
-	    process-name                ; renamed (to be removed soon)
             portable-threads-implementation-version ; not documented
-	    processp                    ; renamed (to be removed soon)
-	    process-wait                ; deprecated, to be removed
-	    process-wait-with-timeout   ; deprecated, to be removed
-	    process-whostate            ; renamed (to be removed soon)
-	    process-yield               ; renamed (to be removed soon)
             restart-scheduled-function-scheduler
-	    run-in-process              ; renamed (to be removed soon)
             run-in-thread
             schedule-function
             schedule-function-relative
@@ -247,9 +197,7 @@
             scheduled-function-name
             scheduled-function-repeat-interval
             spawn-periodic-function     ; new (document soon)
-	    spawn-process               ; renamed (to be removed soon)
             spawn-thread
-	    symbol-value-in-process     ; renamed (to be removed soon)
             symbol-value-in-thread
             threadp
             threads-not-available       ; not documented
@@ -261,7 +209,6 @@
             thread-yield
             unschedule-function
             with-lock-held
-	    with-process-lock           ; renamed (to be removed soon)
             with-timeout)))
 
 ;;; ---------------------------------------------------------------------------
@@ -319,7 +266,7 @@
 ;;; ===========================================================================
 
 (defun portable-threads-implementation-version ()
-  "2.2")
+  "2.2.1")
 
 ;;; Added to *features* at the end of this file:
 (defparameter *portable-threads-version-keyword* :portable-threads-2.2)
@@ -452,7 +399,7 @@
             (:include mp:lock)
             (:copier nil)))
 
-;; OpenMCL only has a recursive lock object:
+;; Digitool's MCL and OpenMCL only have a recursive lock object:
 #+(or digitool-mcl
       openmcl)
 (progn
@@ -552,14 +499,6 @@
   #+scl
   (mp:make-lock name :type :recursive))
   
-;; Temporary backward name compatability:
-(defun make-process-lock (&rest args)
-  (declare (dynamic-extent args))
-  (apply #'make-recursive-lock args))
-#-full-safety
-(define-compiler-macro make-process-lock (&rest args)
-  `(make-recursive-lock ,@args))
-
 ;;; ---------------------------------------------------------------------------
 ;;;   With-Lock-held
 
@@ -586,6 +525,16 @@
              ,@body))
          #+(and cmu mp)
          (mp:with-lock-held (,lock-sym ,whostate) ,@body) 
+         #+digitool-mcl
+         (let ((.ccl-lock. (and (lock-p ,lock-sym)
+                                (lock-ccl-lock (the lock ,lock-sym)))))
+           (when (and (not (recursive-lock-p ,lock-sym))
+                      (eq ccl:*current-process*
+                          (ccl::lock.value .ccl-lock.)))
+             (recursive-lock-attempt-error ,lock-sym))
+           (ccl:with-lock-grabbed (.ccl-lock. ccl:*current-process*
+                                              ,whostate)
+             ,@body))
          #+(and ecl threads)
          (mp:with-lock ((%lock-of ,lock-sym)) ,@body)
          #+lispworks
@@ -596,8 +545,7 @@
              (recursive-lock-attempt-error ,lock-sym))
            (mp:with-lock (,lock-sym ,whostate) 
              ,@body))
-         #+(or digitool-mcl
-               openmcl)
+         #+openmcl
          (let ((.ccl-lock. (and (lock-p ,lock-sym)
                                 (lock-ccl-lock (the lock ,lock-sym)))))
            (when (and (not (recursive-lock-p ,lock-sym))
@@ -632,10 +580,6 @@
           ;; Deadlocked:
           (t (non-threaded-lock-deadlock-error ,lock-sym)))))))
 
-;; Temporary backward name compatability:
-(defmacro with-process-lock (&rest args)
-  `(with-lock-held ,@args))
-
 ;;; ---------------------------------------------------------------------------
 
 (defun thread-holds-lock-p (lock)
@@ -644,12 +588,13 @@
     (eq (mp:process-lock-locker lock) system:*current-process*)
     #+(and cmu mp)
     (eq (mp::lock-process lock) mp:*current-process*)
+    #+digitool-mcl
+    (eq (ccl::lock.value (lock-ccl-lock lock)) ccl:*current-process*)
     #+(and ecl threads)
     nil                                 ; need to find lock owner
     #+lispworks
     (eq (mp:lock-owner lock) mp:*current-process*)
-    #+(or digitool-mcl 
-          openmcl)
+    #+openmcl
     (eq (ccl::%%lock-owner (lock-ccl-lock lock)) ccl:*current-process*)
     #+(and sbcl sb-thread)
     (eq (sb-thread:mutex-value lock) sb-thread:*current-thread*)
@@ -669,13 +614,15 @@
          #+(and cmu mp)
          (eq (mp::lock-process ,lock-sym)
              mp:*current-process*)
+         #+digitool-mcl 
+         (eq (ccl::lock.value (lock-ccl-lock ,lock-sym))
+             ccl:*current-process*)
          #+(and ecl threads)
          nil                            ; need to find lock owner
          #+lispworks
          (eq (mp:lock-owner ,lock-sym)
              mp:*current-process*)
-         #+(or digitool-mcl 
-               openmcl)
+         #+openmcl
          (eq (ccl::%%lock-owner (lock-ccl-lock ,lock-sym))
              ccl:*current-process*)
          #+(and sbcl sb-thread)
@@ -837,13 +784,6 @@
   #+threads-not-available
   nil)
  
-;; Temporary backward name compatability:
-(defun current-process ()
-  (current-thread))
-#-full-safety
-(define-compiler-macro current-process ()
-  '(current-thread))
- 
 ;;; ===========================================================================
 ;;;   All-Threads (returns nil on CLs without threads)
 
@@ -888,13 +828,6 @@
   #+threads-not-available
   nil)
 
-;; Temporary backward name compatability:
-(defun all-processes ()
-  (all-threads))
-#-full-safety
-(define-compiler-macro all-processes ()
-  '(all-threads))
- 
 ;;; ---------------------------------------------------------------------------
 ;;;   Threadp
 
@@ -943,13 +876,6 @@
   #+threads-not-available
   nil)
 
-;; Temporary backward name compatability:
-(defun processp (obj)
-  (threadp obj))
-#-full-safety
-(define-compiler-macro processp (obj)
-  `(threadp ,obj))
- 
 ;;; ---------------------------------------------------------------------------
 ;;;   Thread-alive-p
 
@@ -1034,13 +960,6 @@
   #+scl
   `(mp:process-name ,thread))
 
-;; Temporary backward name compatability:
-(defun process-name (thread)
-  (thread-name thread))
-#-full-safety
-(define-compiler-macro process-name (thread)
-  `(thread-name ,thread))
-
 ;;; ---------------------------------------------------------------------------
 
 #-(and sbcl sb-thread)
@@ -1050,7 +969,7 @@
   #+(and cmu mp)
   (setf (mp:process-name thread) name)
   #+digitool-mcl
-  (setf (ccl:process-name thread) name)
+  (setf (ccl::process.name thread) name)
   #+(and ecl threads)
   (setf (mp:process-name thread) name)
   #+lispworks
@@ -1063,10 +982,6 @@
   (declare (ignore name))
   #+threads-not-available
   (not-a-thread thread))
-
-;; Temporary backward name compatability:
-(defun (setf process-name) (name thread)
-  (setf (thread-name thread) name))
 
 ;;; ---------------------------------------------------------------------------
 ;;;   Thread-whostate (values and capabilities vary among CLs)
@@ -1116,13 +1031,6 @@
   #+threads-not-available
   `(not-a-thread ,thread))
 
-;; Temporary backward name compatability:
-(defun process-whostate (thread)
-  (thread-whostate thread))
-#-full-safety
-(define-compiler-macro process-whostate (thread)
-  `(thread-whostate ,thread))
-
 ;;; ===========================================================================
 ;;;   Spawn-Thread
 
@@ -1149,12 +1057,7 @@
   #+threads-not-available
   (declare (ignore name function args))
   #+threads-not-available
-  (threads-not-available 'spawn-process))
-
-;; Temporary backward name compatability:
-(defun spawn-process (&rest args)
-  (declare (dynamic-extent args))
-  (apply #'spawn-thread args))
+  (threads-not-available 'spawn-thread))
 
 ;;; ---------------------------------------------------------------------------
 ;;;   Kill-Thread
@@ -1203,15 +1106,6 @@
   (declare (ignore thread))
   #+threads-not-available
   '(threads-not-available 'kill-thread))
-
-;; Temporary backward name compatability:
-(defun kill-process (thread)
-  #+threads-not-available
-  (declare (ignore thread))
-  (kill-thread thread))
-#-full-safety
-(define-compiler-macro kill-process (thread)
-  `(kill-thread ,thread))
 
 ;;; ===========================================================================
 ;;;   Thread-yield (runs *non-threaded-polling-function-hook* functions on
@@ -1262,13 +1156,6 @@
   #+threads-not-available
   '(mapc #'funcall *non-threaded-polling-function-hook*))
 
-;; Temporary backward name compatability:
-(defun process-yield ()
-  (thread-yield))
-#-full-safety
-(define-compiler-macro proces-yield ()
-  '(thread-yield))
- 
 ;;; ---------------------------------------------------------------------------
 ;;;  Run-in-thread
 
@@ -1301,14 +1188,6 @@
   #+threads-not-available
   (threads-not-available 'run-in-thread))
   
-;; Temporary backward name compatability:
-(defun run-in-process (&rest args)
-  (declare (dynamic-extent args))
-  (apply #'run-in-thread args))
-#-full-safety
-(define-compiler-macro run-in-process (&rest args)
-  `(run-in-thread ,@args))
- 
 ;;; ---------------------------------------------------------------------------
 ;;;   Symbol-value-in-thread
 
@@ -1391,13 +1270,6 @@
       (values (symbol-value symbol) t)
       (values nil nil)))
 
-;; Temporary backward name compatability:
-(defun symbol-value-in-process (symbol thread)
-  (symbol-value-in-thread symbol thread))
-#-full-safety
-(define-compiler-macro symbol-value-in-process (symbol thread)
-  `(symbol-value-in-thread ,symbol ,thread))
-
 ;;; ===========================================================================
 ;;;   Hibernate/Awaken Thread
 ;;;
@@ -1405,8 +1277,9 @@
 ;;;  symbol-value-in-thread operations.  We also want to allow:
 ;;;      (with-timeout (n) (hibernate-thread))
 ;;;
-;;;  Using process arrest-reasons is too powerful for these operations,
-;;;  instead we use sleeping which works like a charm!
+;;;  Using scheduler mechanisms, such as process-arrest-reasons, often
+;;;  interferes with these operations.  Instead we use sleeping which
+;;;  works like a charm in most CLs!
 
 (defparameter *nearly-forever-seconds* 
     #.(min most-positive-fixnum
@@ -1417,8 +1290,9 @@
 
 #-threads-not-available
 (defun throwable-sleep-forever ()
-  ;; Used in place of process-arrest-reasons in CL's that don't have
-  ;; them or that don't mix with-timeout and arrested processes:
+  ;; In most CLs, sleep allows run-in-thread, symbol-value-in-thread,
+  ;; and throws to be processed while sleeping, and sleep is often
+  ;; well optimized.  So, we use it whenever possible.
   (catch 'throwable-sleep-forever
     (sleep *nearly-forever-seconds*)))
 
@@ -1429,7 +1303,7 @@
   (flet ((awake-fn ()
            (ignore-errors
             (throw 'throwable-sleep-forever nil))))
-    (run-in-thread  thread #'awake-fn)))
+    (run-in-thread thread #'awake-fn)))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -1438,13 +1312,6 @@
   (throwable-sleep-forever)
   #+threads-not-available
   (threads-not-available 'hibernate-thread))
-
-;; Temporary backward name compatability:
-(defun hibernate-process ()
-  (hibernate-thread))
-#-full-safety
-(define-compiler-macro hibernate-process ()
-  '(hibernate-thread))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -1456,39 +1323,6 @@
   #+threads-not-available
   (threads-not-available 'awaken-thread))
   
-;; Temporary backward name compatability:
-(defun awaken-process (process)
-  (awaken-thread process))
-#-full-safety
-(define-compiler-macro awaken-process (process)
-  `(awaken-thread ,process))
-
-;;; ===========================================================================
-;;;  Allegro-style gates are deprecated and will be removed soon.
-;;;  Use condition variables instead. 
-
-#-allegro
-(locally (declare (optimize (speed 3) (safety 0) 
-			    (debug 0) (compilation-speed 0)))
-  
-  (defun make-gate (open)
-    (let ((gate (make-array '(1) :element-type '(signed-byte 32))))
-      (setf (aref gate 0)
-            (if open 1 0))
-      gate))
-  
-  (defun open-gate (gate)
-    (declare (type (simple-array (signed-byte 32) (*)) gate))
-    (setf (aref gate 0) 1))
-  
-  (defun close-gate (gate)
-    (declare (type (simple-array (signed-byte 32) (*)) gate))
-    (setf (aref gate 0) 0))
-  
-  (defun gate-open-p (gate)
-    (declare (type (simple-array (signed-byte 32) (*)) gate))
-    (not (zerop (the fixnum (aref gate 0))))))
-
 ;;; ===========================================================================
 ;;;   Condition variables
 
@@ -1504,6 +1338,14 @@
 (defclass condition-variable ()
   ((lock :initarg :lock
          :initform (mp:make-lock "CV Lock" :kind ':error-check)
+         :reader condition-variable-lock)
+   (queue :initform nil
+          :accessor condition-variable-queue)))
+
+#+digitool-mcl
+(defclass condition-variable ()
+  ((lock :initarg :lock
+         :initform (make-lock :name "CV Lock")
          :reader condition-variable-lock)
    (queue :initform nil
           :accessor condition-variable-queue)))
@@ -1524,8 +1366,7 @@
    (queue :initform nil
           :accessor condition-variable-queue)))
 
-#+(or digitool-mcl
-      openmcl)
+#+openmcl
 (defclass condition-variable ()
   ((lock :initarg :lock
          :initform (make-lock :name "CV Lock")
@@ -1600,6 +1441,12 @@
       (setf (mp::lock-process lock) nil)
       (throwable-sleep-forever)
       (mp::lock-wait lock nil))
+    #+digitool-mcl
+    (let ((ccl-lock (lock-ccl-lock lock)))
+      (push ccl:*current-process* (condition-variable-queue condition-variable))
+      (ccl:process-unlock ccl-lock)
+      (throwable-sleep-forever)
+      (ccl:process-lock ccl-lock ccl:*current-process*))
     #+lispworks
     (progn
       (push mp:*current-process* (condition-variable-queue condition-variable))
@@ -1607,8 +1454,7 @@
       (throwable-sleep-forever)
       (mp:process-allow-scheduling)
       (mp:process-lock lock))
-    #+(or digitool-mcl
-          openmcl)
+    #+openmcl
     (let ((ccl-lock (lock-ccl-lock lock)))
       (unwind-protect
           (progn
@@ -1659,6 +1505,18 @@
                            (condition-variable-queue condition-variable)))))
         (throwable-sleep-forever))
       (mp::lock-wait lock nil))
+    #+digitool-mcl
+    (let ((ccl-lock (lock-ccl-lock lock)))
+      (push ccl:*current-process* (condition-variable-queue condition-variable))
+      (ccl:process-unlock ccl-lock)
+      (with-timeout 
+          (seconds 
+           (ccl:without-interrupts
+             (setf (condition-variable-queue condition-variable)
+                   (remove ccl:*current-process*
+                           (condition-variable-queue condition-variable)))))
+        (throwable-sleep-forever))
+      (ccl:process-lock ccl-lock ccl:*current-process*))
     #+lispworks
     (progn
       (push mp:*current-process* (condition-variable-queue condition-variable))
@@ -1671,8 +1529,7 @@
                            (condition-variable-queue condition-variable)))))
         (throwable-sleep-forever))
       (mp:process-lock lock))
-    #+(or digitool-mcl
-          openmcl)
+    #+openmcl
     (let ((ccl-lock (lock-ccl-lock lock)))
       (unwind-protect
           (progn
@@ -1704,12 +1561,12 @@
      condition-variable 'condition-variable-signal))
   #+(or allegro
         (and cmu mp)
+        digitool-mcl
         lispworks)
   (let ((thread (pop (condition-variable-queue condition-variable))))
     (when thread 
       (awaken-throwable-sleeper thread)))
-  #+(or digitool-mcl
-        openmcl)
+  #+openmcl
   (ccl:signal-semaphore (condition-variable-semaphore condition-variable))
   #+(and sbcl sb-thread)
   (sb-thread:condition-notify (condition-variable-cv condition-variable)))
@@ -1722,51 +1579,19 @@
      condition-variable 'condition-variable-broadcast))
   #+(or allegro
         (and cmu mp)
+        digitool-mcl
         lispworks)
   (let ((queue (condition-variable-queue condition-variable)))
     (setf (condition-variable-queue condition-variable) nil)
     (dolist (thread queue)
       (awaken-throwable-sleeper thread)))
-  #+(or digitool-mcl
-        openmcl)        
+  #+openmcl
   (let ((queue-length (length (condition-variable-queue condition-variable)))
         (semaphore (condition-variable-semaphore condition-variable)))
     (dotimes (i queue-length)
       (ccl:signal-semaphore semaphore)))
   #+(and sbcl sb-thread)
   (sb-thread:condition-broadcast (condition-variable-cv condition-variable)))
-
-;;; ===========================================================================
-;;;   Process-Wait (our best approximation on several non-threaded CLs,
-;;;                 ECL with threads, and SBCL with sb-thread)
-
-#+(or threads-not-available (and ecl threads) (and sbcl sb-thread))
-(defun process-wait (whostate function &rest args)
-  (declare (ignore whostate))
-  (loop until (apply function args)
-      do (process-yield)))
-
-#+scl
-(defun process-wait (whostate function &rest args)
-  (mp:process-wait whostate #'(lambda () (apply function args))))
-
-;;; ---------------------------------------------------------------------------
-;;;   Process-Wait-With-Timeout (our best approximation on several
-;;;   non-threaded CLs and SBCL with sb-thread)
-
-#+(or threads-not-available (and ecl threads) (and sbcl sb-thread))
-(defun process-wait-with-timeout (whostate seconds function &rest args)
-  (declare (ignore whostate))
-  (let ((end-time (+ (get-internal-real-time) 
-		     (* internal-time-units-per-second seconds))))
-    (loop until (or (apply function args)
-		    (> (get-internal-real-time) end-time)) 
-	do (process-yield))))
-
-#+scl
-(defun process-wait-with-timeout (whostate seconds function &rest args)
-  (mp:process-wait-with-timeout whostate seconds
-   #'(lambda () (apply function args))))
 
 ;;; ===========================================================================
 ;;;  Scheduled Functions (built entirely on top of Portable Threads substrate)
