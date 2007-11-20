@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Jul 14 05:03:10 2007 *-*
+;;;; *-* Last-Edit: Mon Nov 19 15:29:08 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -87,9 +87,11 @@
         ccl:compute-effective-method
         ccl:compute-effective-slot-definition
         ccl:compute-slots
-        ccl:direct-slot-definition 
+        ;; Not exported in Digitool MCL:
+        ccl::direct-slot-definition 
         ccl:direct-slot-definition-class
-        ccl:effective-slot-definition
+        ;; Not exported in Digitool MCL:
+        ccl::effective-slot-definition
         ccl:effective-slot-definition-class
         ccl:ensure-class 
         ccl:ensure-class-using-class
@@ -125,7 +127,8 @@
         ccl:remove-direct-subclass
         ccl:set-funcallable-instance-function
         ccl:slot-boundp-using-class
-        ccl:slot-definition
+        ;; Not exported in Digitool MCL:
+        ccl::slot-definition
         ccl:slot-definition-allocation
         ccl:slot-definition-initargs
         ccl:slot-definition-initform
@@ -145,7 +148,8 @@
         ccl:standard-effective-slot-definition
         ccl:standard-instance-access
         ccl:standard-reader-method
-        ccl:standard-slot-definition
+        ;; Not exported in Digitool MCL:
+        ccl::standard-slot-definition
         ccl:standard-writer-method
         ccl:update-dependent
         ccl:validate-superclass
