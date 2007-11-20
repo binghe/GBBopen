@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-SOCKETS; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/tools/portable-sockets.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Jul 28 13:41:40 2007 *-*
+;;;; *-* Last-Edit: Tue Nov 20 11:06:33 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -69,7 +69,9 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   #+allegro
   (require :sock)
-  ;; ECL must be built using ./configure --with-tcp --enable-threads:
+  #+digitool-mcl
+  (require :opentransport)
+  ;; ECL must be built using ./configure --enable-threads:
   #+ecl
   (require 'sockets)
   #+lispworks
@@ -278,12 +280,13 @@
      :element-type 'character
      :buffering ':full
      :auto-close 't))
+  #+digitool-mcl
+  (ccl::open-tcp-stream host port)
   #+ecl
   (si:open-client-stream host port)
   #+lispworks
   (comm:open-tcp-stream host port :timeout timeout)
-  #+(or digitool-mcl
-        openmcl)
+  #+openmcl
   (ccl:make-socket :remote-host host :remote-port port)
   #+sbcl
   (let ((socket (make-instance 'sb-bsd-sockets:inet-socket
@@ -360,6 +363,9 @@
 				  :reuse-address reuse-address)
     :element-type 'base-char
     :port port)    
+  #+digitool-mcl
+  (ccl::open-tcp-stream interface port
+                        :reuse-local-port-p reuse-address)
   #+ecl
   (let ((passive-socket (make-instance 'sb-bsd-sockets:inet-socket
 			  :protocol ':tcp
@@ -387,8 +393,7 @@
       ;; Avoid Lispworks race condition on filling in the passive 
       ;; socket fd value (still exists in LW 4.4.6):
       (thread-yield)))
-  #+(or digitool-mcl
-        openmcl)
+  #+openmcl
   (ccl:make-socket :connect ':passive
                    :type ':stream
 		   :backlog backlog
@@ -455,7 +460,6 @@
   #-(or allegro
         clisp
         cmu
-        digitool-mcl
         lispworks
         openmcl
         sbcl
@@ -473,9 +477,6 @@
                        (:output ext:shut-wr)
                        #+not-supported
                        (:input-output ext:shut-rdwr)))
-  #+(or digitool-mcl 
-        openmcl)
-  (ccl:shutdown socket-stream :direction direction)
   #+lispworks
   (shutdown (comm:socket-stream-socket socket-stream)
             (ecase direction
@@ -483,6 +484,8 @@
               (:output 1)
               #+not-supported
               (:input-output 2)))
+  #+openmcl
+  (ccl:shutdown socket-stream :direction direction)
   #+sbcl
   (shutdown (sb-sys::fd-stream-fd socket-stream)
             (ecase direction
@@ -493,7 +496,6 @@
   #-(or allegro 
         clisp 
         cmu
-        digitool-mcl 
         lispworks
         openmcl
         sbcl
@@ -548,8 +550,7 @@
         :socket (comm::get-fd-from-socket socket-fd)
         :direction ':io
         :element-type (passive-socket.element-type passive-socket))))
-  #+(or digitool-mcl 
-        openmcl)
+  #+openmcl
   (ccl:accept-connection passive-socket :wait wait)
   #+sbcl
   (when (sb-sys:wait-until-fd-usable 
@@ -567,7 +568,6 @@
   #-(or allegro 
         clisp
         cmu
-        digitool-mcl 
         ecl 
         lispworks 
         openmcl
@@ -610,7 +610,6 @@
   #-(or allegro
         clisp 
         cmu
-        digitool-mcl
         lispworks
         openmcl
         sbcl
@@ -653,8 +652,7 @@
 			(format nil "~a (~a)" dotted resolved)
 			dotted)))
 	    port)))
-  #+(or digitool-mcl
-        openmcl)
+  #+openmcl
   (let* ((ipaddr (ccl:local-host connection))
 	 (dotted (ccl:ipaddr-to-dotted ipaddr)))
     (values (if do-not-resolve
@@ -678,7 +676,6 @@
   #-(or allegro
         clisp 
         cmu
-        digitool-mcl
         lispworks
         openmcl
         sbcl
@@ -691,7 +688,6 @@
   #-(or allegro
         clisp
         cmu
-        digitool-mcl
         lispworks
         openmcl
         sbcl
@@ -734,8 +730,7 @@
 			(format nil "~a (~a)" dotted resolved)
 			dotted)))
 	    port)))
-  #+(or digitool-mcl
-        openmcl)
+  #+openmcl
   (let* ((ipaddr (ccl:remote-host connection))
 	 (dotted (ccl:ipaddr-to-dotted ipaddr)))
     (values (if do-not-resolve
@@ -760,7 +755,6 @@
   #-(or allegro
         clisp
         cmu 
-        digitool-mcl
         lispworks
         openmcl
         sbcl
