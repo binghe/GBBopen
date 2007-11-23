@@ -67,7 +67,7 @@ the user's &#8220;home&#8221; directory (as defined by
 <b>user-homedir-pathname</b>), it is loaded by the
 <var><i>&lt;</i>install-directory<i>&gt;</i></var><code>startup.lisp</code> file after the
 module facility and definitions have been loaded.  A personal
-<code>gbbopen-init.lisp</code> file is a very useful mechanism for defining
+<code>gbbopen-init.lisp</code> file is a handy mechanism for defining
 user-specific modules, application modules, GBBopen parameters, and
 other personalizations.
 </p>
@@ -92,6 +92,12 @@ that defines a root directory named <code>:my-app-root</code> and the module
   ;;;   End of File
   ;;; ===============================================
 </pre>
+<p>For shared or more substantial application modules, we recommend a
+packaging convention that mirrors that of GBBopen.  This will be
+discussed shortly in conjunction with using a <a href="#sec:personal-gbbopen-modules-directory">personal
+<code>gbbopen-modules</code>
+directory</a>.
+</p>
 <p>Next, we show how to add convenient GBBopen keyword commands to the
 read-eval-print loop (REPL) in your Common Lisp environment and how to
 define a personal top-level command that makes it easy to compile and load
@@ -185,8 +191,9 @@ standard keyword commands for GBBopen&mdash;and their own, personalized
 extensions&mdash;in the Lisp listener.
 </p>
 <p><h4>Personal gbbopen-modules directory</h4>
+<a name="sec:personal-gbbopen-modules-directory"></a>
 </p>
-<p><a name="id6">Earlier,</a> we showed a simple example of using a personal
+<p><a name="id7">Earlier,</a> we showed a simple example of using a personal
 <code>gbbopen-init.lisp</code> file to define the module <code>:my-app</code>.  If you
 develop or use a number of modules or applications, GBBopen provides an
 alternative mechanism that is even more convenient.
@@ -229,7 +236,7 @@ either your Common Lisp initialization file or in your personal
 <code>gbbopen-init.lisp</code> file.  Changing the default setting in
 <code>startup.lisp</code> is not recommended.
 </p>
-<p><a name="id8"></a><a target="_top" href="http://www.gnu.org/software/emacs/emacs.html">Emacs</a> access to the
+<p><a name="id9"></a><a target="_top" href="http://www.gnu.org/software/emacs/emacs.html">Emacs</a> access to the
 GBBopen Hyperdoc is provided by
 <var><i>&lt;</i>install-directory<i>&gt;</i></var><code>/browse-hyperdoc.el</code>.  This file defines
 the interactive Emacs command <code>browse-hyperdoc</code> and binds it to

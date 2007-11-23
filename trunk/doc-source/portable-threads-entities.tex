@@ -1,0 +1,2376 @@
+%% -*- Mode:TeX; Fonts:(hl12fb) -*-
+%% *-* File: /home/gbbopen/current/doc-source/portable-threads-entities.tex *-*
+%% *-* Last-Edit: Thu Nov 15 22:08:17 2007; Edited-By: cork *-*
+%% *-* Machine: ruby.corkills.org *-*
+
+\index{module!:portable-threads@\code{:portable-threads}}%
+\index{:portable-threads@\code{:portable-threads} module}%
+The \code{:portable-threads} module provides a uniform interface to commonly
+used \glref{thread} (multiprocessing) entities.  Wherever possible, these
+entities do something reasonable in Common Lisp implementations that do not
+provide threads. However, entities that make no sense without threads signal
+errors in non-threaded implementations (as noted with each entity). GBBopen
+adds the \glref{feature} \code{:threads-not-available} on Common Lisp
+implementations without thread support.
+
+\ppar{Threads and Processes}
+
+Common Lisp implementations that provide multiprocessing capabilities use one
+of two approaches:
+\begin{tightitemize}
+\item \textit{Application-level threads\/} (also called ``Lisp processes'') which are
+  created, deleted, and scheduled internally by the Common Lisp implementation
+\item \textit{Operating-system threads\/} (or ``native threads'') which are
+  lightweight, operating-system threads that are created, deleted, and
+  scheduled by the operating system
+\end{tightitemize}
+
+There are advantages and complexities associated with each approach, and the
+Portable Threads Interface is designed to provide a uniform abstraction over
+them that can be used to code applications that perform consistently and
+efficiently on any supported Common Lisp implementation.
+
+\ppar{Locks}
+
+Common Lisp implementations provide differing semantics for the behavior of
+mutual-exclusion locks that are acquired recursively by the same
+\glref{thread}: some always allow recursive use, others provide special
+``recursive'' lock objects in addition to non-recursive locks, and still
+others allow recursive use to be specified at the time that a lock is being
+acquired.  To enable behavioral consistency in all Common Lisp
+implementations, the \code{:portable-threads} interface module provides
+(non-recursive) \glref{locks} and \glref{recursive~locks} and a single
+acquisition form, \textbf{\entlink{with-lock-held}}, that behaves
+appropriately for each lock type.
+
+\ppar{Condition Variables}
+
+POSIX-style \glref{condition~variables} provide an atomic means for a
+\glref{thread} to release a lock that it holds and go to sleep until it is
+awakened by another thread.  Once awakened, the lock that it was holding is
+reacquired atomically before the thread is allowed to do anything else.
+
+A condition variable must always be associated with a \glref{lock} (or
+\glref{recursive~lock}) in order to avoid a race condition created when one
+thread signals a condition while another thread is preparing to wait on it.
+In this situation, the second thread would be perpetually waiting for the
+signal that has already been sent.  In the POSIX model, there is no explicit
+link between the lock used to control access to the condition variable and the
+condition variable.  The Portable Threads Interface makes this association
+explicit by bundling the lock with the \textbf{\entlink{condition-variable}}
+CLOS object instance and allowing the \textbf{\entlink{condition-variable}}
+object to be used directly in lock entities.
+
+\ppar{Hibernation}
+
+Sometimes it is desirable to put a thread to sleep (perhaps for a long time)
+until some event has occurred.  The Portable Threads Interface provides two
+entities that make this situation easy to code:
+\textbf{\entlink{hibernate-thread}} and \textbf{\entlink{awaken-thread}}.
+Note that when a thread is hibernating, it remains available to respond to
+\textbf{\entlink{run-in-thread}} and \textbf{\entlink{symbol-value-in-thread}}
+operations as well as to be awakened by a dynamically surrounding
+\textbf{\entlink{with-timeout}}.
+
+\ppar{What about Process Wait?}
+
+Thread coordination functions, such as \code{process-wait}, are expensive to
+implement with operating-system threads.  Such functions stop the executing
+thread until a Common Lisp predicate \glref{function} returns a true value.
+With application-level threads, the Lisp-based scheduler evaluates the
+predicate periodically when looking for other threads that can be run.  With
+operating-system threads, however, thread scheduling is performed by the
+operating system and evaluating a Common Lisp predicate \glref{function}
+requires some complex and expensive interaction between the operating-system
+scheduling and the Common Lisp implementation.  Given this cost and
+complexity, some Common Lisp implementations using operating-system threads
+have elected not to provide \code{process-wait}-style coordination functions,
+and this issue extends to the Portable Threads Interface as well.
+
+Fortunately, most uses of \code{process-wait} can be replaced by a different
+strategy that relies on the producer of a change that would affect the
+\code{process-wait} predicate \glref{function} to signal the event rather than
+having the consumers of the change use predicate functions to poll for it.
+Condition variables, the Portable Threads \textbf{\entlink{hibernate-thread}}
+and \textbf{\entlink{awaken-thread}} mechanism, or blocking I/O functions
+cover most of the typical uses of \code{process-wait}.
+
+\ppar{Scheduled Functions}
+
+A \glref{scheduled~function} is an object that contains a \glref{function} to
+be run at a specified time. When that specified time arrives, the
+\glref{function} is invoked with a single argument: the
+\glref{scheduled~function} object. A repeat interval (in seconds) can also be
+specified for the \glref{scheduled~function}. This value is used whenever the
+\glref{scheduled~function} is invoked to schedule itself again at a new time
+relative to the current invocation.  \glref{Scheduled~functions} can be
+scheduled to a resolution of one second.
+
+\glref{Scheduled~functions} are managed and invoked by a separate
+\code{"Scheduled-Function Scheduler"} \glref{thread}.  Unless the run time of
+the invoked \glref{function} is brief, the function should spawn a new
+\glref{thread} in which to perform its activities so as to avoid delaying the
+invocation of a subsequent \glref{scheduled~function}.
+
+\ppar{Periodic Functions} 
+
+A \glref{periodic~function} is a \glref{function} to be run repeatedly at a
+specified interval.  Unlike \glref{scheduled~functions}, which can be
+scheduled only to a resolution of one second, a \glref{periodic~function} can
+be repeated at intervals as brief as is supported by the underlying Common
+Lisp's \code{sleep} function.  A separate \glref{thread} is spawned to manage
+each \glref{periodic~function}.
+
+\W\entities
+\T\clearpage
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}[schedule-function-verbose]{Variable}%
+  {*schedule-function-verbose*}{}%
+
+\fnsyntax
+
+\fnpurpose Controls whether scheduling changes made to
+\glref{scheduled~functions} are printed as comments. 
+
+\fnpackage \code{:portable-threads}
+
+\fnmodule \code{:portable-threads}
+
+\fnvaluetype A \glref{generalized~boolean}
+
+\fninitialvalue \nil
+
+\fndescription The value of \textbf{*schedule-function-verbose*} can be
+changed globally to display the activities of the \glref{scheduled~function}
+scheduler.
+
+\begin{alsos}{schedule-function-relative}
+\also[schedule-function]
+\also[schedule-function-relative]
+\also[unschedule-function]
+\end{alsos}
+
+\bfindexit{encode-time-of-day}%
+\fnexample 
+Change the invocation time of \glref{scheduled~function} \code{quitting-time}
+from 5pm to 5:30pm with verbose printing enabled:
+\begin{example}
+> (setf *schedule-function-verbose* 't)
+t
+> (schedule-function 'quitting-time (\entlink{encode-time-of-day} 17 30 0)
+    :repeat-interval #.(* 24 60 60))
+;; Unscheduling #<scheduled-function quitting-time [17:00:00]>...
+;; Scheduling #<scheduled-function quitting-time [17:30:00]> 
+   as the next scheduled-function...
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}[periodic-function-verbose]{Variable}%
+  {*periodic-function-verbose*}{}%
+
+\fnsyntax
+
+\fnpurpose Controls whether initiation and termination of
+\glref{periodic-function} \glref{threads} are printed as comments.
+
+\fnpackage \code{:portable-threads}
+
+\fnmodule \code{:portable-threads}
+
+\fnvaluetype A \glref{generalized~boolean}
+
+\fninitialvalue \nil
+
+\fndescription The value of \textbf{*periodic-function-verbose*} can be
+changed globally to display the management of \glref{periodic~functions}.
+
+\begin{alsos}{spawn-periodic-function}
+\also[kill-periodic-function]
+\also[spawn-periodic-function]
+\end{alsos}
+
+\bfindexit{spawn-periodic-function}%
+\fnexample 
+Schedule a simple \glref{periodic~function} with verbose printing enabled:
+\begin{example}
+> (setf *periodic-function-verbose* 't)
+t
+> (\entlink{spawn-periodic-function} #'(lambda () (print "Hello!")) 0.1 
+    :name 'hello
+    :count 2)
+;; Spawning periodic-function thread for hello...
+#<thread Periodic Function hello>
+>
+"Hello!" 
+"Hello!" 
+;; Exiting periodic-function thread hello
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{all-scheduled-functions}{\noargs{} 
+    \returns{} \var{list-of-scheduled-functions\/}}
+\index{scheduled functions!obtaining all}%
+\index{function!scheduled, obtaining all}%
+
+\fnsyntax
+
+\fnpurpose Return a list of all \glref{scheduled~functions} that are
+currently scheduled.
+
+\fnpackage \code{:portable-threads}
+
+\fnmodule \code{:portable-threads}
+
+\fnreturns A list of \code{scheduled-function} objects. 
+
+\begin{alsos}{schedule-function-relative}
+\also[make-scheduled-function]
+\also[schedule-function]
+\also[schedule-function-relative]
+\also[unschedule-function]
+\end{alsos}
+
+\fnexample
+\begin{example}
+> (all-threads)
+(#<thread Listener 1>)
+\end{example}
+
+\fnnotes On Common Lisp implementations without threads, \nil{} is returned.
+
+The returned list of \glref{scheduled~functions} should not be
+destructively altered.
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{all-threads}{\noargs{} 
+    \returns{} \var{list-of-threads\/}}
+\index{thread!obtaining all}%
+
+\fnsyntax
+
+\fnpurpose Return a list of all \glref{threads}.
+
+\fnpackage \code{:portable-threads}
+
+\fnmodule \code{:portable-threads}
+
+\fnreturns A list of objects representing the \glref{threads}. 
+
+\begin{alsos}{thread-alive-p}
+\also[current-thread]
+\also[thread-alive-p]
+\also[threadp]
+\also[spawn-thread]
+\end{alsos}
+
+\fnexample
+\begin{example}
+> (all-threads)
+(#<thread Listener 1>)
+\end{example}
+
+\fnnotes On Common Lisp implementations without threads, \nil{} is returned.
+
+The returned list of \glref{threads} should not be destructively
+altered.
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Macro}{as-atomic-operation}%
+  {\var{form\/}\superstar{} 
+    \returns{} \var{value\/}}
+
+\fnsyntax
+
+\fnpurpose Execute \var{forms\/} as an atomic operation.
+
+\fnpackage \code{:portable-threads}
+
+\fnmodule \code{:portable-threads}
+
+\fnargs
+\begin{args}{form}
+\arg[form] A \glref{form}
+\end{args}
+
+\fnreturns The single value returned by evaluating the last \var{form}.
+
+\fndescription This macro provides atomicity in the following entities:
+\textbf{\entlink{atomic-decf}}, \textbf{\entlink{atomic-delete}},
+\textbf{\entlink{atomic-flush}}, \textbf{\entlink{atomic-incf}},
+\textbf{\entlink{atomic-push}}, \textbf{\entlink{atomic-pushnew}}, and
+\textbf{\entlink{atomic-pop}}.  It is intended only for implementing very
+brief atomic operations and should not be used for long computations or
+computations that wait or block.
+
+Note that \textbf{as-atomic-operation} is only guaranteed to return a single
+value, not multiple values.
+
+\begin{alsos}{browse-hyperdoc}
+\also[atomic-decf]
+\also[atomic-delete]
+\also[atomic-flush]
+\also[atomic-incf]
+\also[atomic-push]
+\also[atomic-pushnew]
+\also[atomic-pop]
+\end{alsos}
+
+\fnexample
+Define an atomic \textbf{\entlink{nsorted-insert}}:
+\begin{example}
+  (defun atomic-nsorted-insert (\&rest args)
+    (declare (dynamic-extent args))
+    (as-atomic-operation (apply #'\entlink{nsorted-insert} args)))
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Macro}{atomic-decf}{\var{place\/} [\var{delta-form\/}]
+      \returns{} \var{new-place-value\/}}
+\index{atomic operations!decf@\textbf{decf}}%
+
+\fnsyntax \fnpurpose Decrement the value stored in \var{place\/} as an
+          \glref{atomic~operation}.
+
+\fnpackage \code{:portable-threads}
+
+\fnmodule \code{:portable-threads}
+
+\fnargs
+\begin{args}{place}
+\arg[place] A form which is suitable for use as a
+\glref{generalized~reference} 
+\arg[delta-form] A form that is evaluated to produce a delta value (default is 1).
+\end{args}
+
+\fnreturns The new value of \var{place\/}. 
+
+\begin{alsos}{as-atomic-operation}
+\also[as-atomic-operation]
+\also[atomic-delete]
+\also[atomic-flush]
+\also[atomic-incf]
+\also[atomic-pop]
+\also[atomic-pushnew]
+\end{alsos}
+
+\fnexamples
+\begin{example}
+> x
+5
+> (atomic-decf x)
+4
+> (atomic-decf x 1.5)
+2.5
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Macro}{atomic-delete}{\var{item place\/}
+    \code{\&key} \var{from-end test test-not start end count key\/}
+    \returns{} \var{result-sequence\/}}
+\index{atomic operations!delete@\textbf{delete}}%
+
+\fnsyntax
+
+\fnpurpose As an \glref{atomic~operation}, set \var{place\/} to the
+sequence in \var{place\/} from which the elements that satisfy the
+\var{test\/} have been removed.
+
+\fnpackage \code{:portable-threads}
+
+\fnmodule \code{:portable-threads}
+
+\fnargs
+\begin{args}{from-end}
+\arg[item] An object
+\arg[place] A form which is suitable for use as a
+\glref{generalized~reference} that contains a proper sequence
+\arg[from-end] A \glref{generalized~boolean} (default is \nil)
+\arg[test] A \glref{function} of two arguments that returns a
+\glref{generalized~boolean} (default is \code{\#'eql}) 
+\arg[test-not] A \glref{function} of two arguments that returns a
+\glref{generalized~boolean} (use of \code{:test-not} is deprecated)
+\arg[start] Starting index into \var{sequence\/} (default is \code{0})
+\arg[end] Ending index into \var{sequence\/} (default is \nil, meaning
+end of \var{sequence\/})
+\arg[count] An integer or \nil{} (default is \nil)
+\arg[key] A \glref{function} of one argument, or \nil{} (default is \nil)
+\end{args}
+
+\fnreturns The sequence in \var{place\/} from which the elements that
+satisfy the test have been removed.
+
+\fndescription Replaces \var{place\/} with the sequence in
+\var{place\/} from which elements that satisfy the \var{test\/} have
+been deleted.  The supplied \var{place\/} sequence may be modified in
+constructing the result; however, modification of the sequence itself
+is not guaranteed.
+
+Specifying a \var{from-end\/} value of true matters only when
+the \var{count\/} is provided, and in that case only the rightmost
+\var{count\/} elements satisfying the \var{test\/} are deleted.
+
+\begin{alsos}{as-atomic-operation}
+\also[as-atomic-operation]
+\also[atomic-flush]
+\also[atomic-pop]
+\also[atomic-push]
+\also[atomic-pushnew]
+\also[counted-delete]
+\end{alsos}
+
+\fnexample
+\begin{example}
+> list
+(1 2 3)
+> (atomic-delete 2 list)
+(2 3)
+> list
+(2 3)
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Macro}{atomic-flush}{\var{place\/} \returns{}
+    \var{old-place-value\/}}
+\index{atomic operations!flush}%
+
+\fnsyntax
+
+\fnpurpose As an \glref{atomic~operation}, set the value of
+\var{place\/} to \nil, and return the value \var{place\/} had prior to
+being set.
+
+\fnpackage \code{:portable-threads}
+
+\fnmodule \code{:portable-threads}
+
+\fnargs
+\begin{args}{place}
+\arg[place] A form which is suitable for use as a
+\glref{generalized~reference} 
+\end{args}
+
+\fnreturns The \var{place\/} value prior to being set to \nil.
+
+\begin{alsos}{as-atomic-operation}
+\also[as-atomic-operation]
+\also[atomic-delete]
+\also[atomic-pop]
+\also[atomic-push]
+\also[atomic-pushnew]
+\end{alsos}
+
+\fnexample
+\begin{example}
+> list
+(1 2 3)
+> (atomic-flush list)
+(1 2 3)
+> list
+nil
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Macro}{atomic-incf}{\var{place\/} [\var{delta-form\/}]
+      \returns{} \var{new-place-value\/}}
+\index{atomic operations!incf@\textbf{incf}}%
+
+\fnsyntax \fnpurpose Increment the value stored in \var{place\/} as an
+          \glref{atomic~operation}.
+
+\fnpackage \code{:portable-threads}
+
+\fnmodule \code{:portable-threads}
+
+\fnargs
+\begin{args}{place}
+\arg[place] A form which is suitable for use as a
+\glref{generalized~reference} 
+\arg[delta-form] A form that is evaluated to produce a delta value (default is 1).
+\end{args}
+
+\fnreturns The new value of \var{place\/}. 
+
+\begin{alsos}{as-atomic-operation}
+\also[as-atomic-operation]
+\also[atomic-decf]
+\end{alsos}
+
+\fnexamples
+\begin{example}
+> x
+2
+> (atomic-incf x)
+3
+> (atomic-incf x 1.5)
+4.5
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Macro}{atomic-pop}{\var{place\/} \returns{}
+    \var{element\/}}
+\index{atomic operations!pop@\textbf{pop}}%
+
+\fnsyntax
+
+\fnpurpose As an \glref{atomic~operation}, remove the first element
+from the list stored in \var{place\/}, store the updated list in
+\var{place\/}, and return the removed first element.
+
+\fnpackage \code{:portable-threads}
+
+\fnmodule \code{:portable-threads}
+
+\fnargs
+\begin{args}{place}
+\arg[place] A form which is suitable for use as a
+  \glref{generalized~reference} that contains a \glref{proper~list} or
+   a \glref{dotted~list}
+\end{args}
+
+\fnreturns The first element (the \glref{car}) of the list stored in
+\var{place\/}.
+
+\begin{alsos}{as-atomic-operation}
+\also[as-atomic-operation]
+\also[atomic-delete]
+\also[atomic-flush]
+\also[atomic-push]
+\also[atomic-pushnew]
+\end{alsos}
+
+\fnexample
+\begin{example}
+> list
+(1 2 3)
+> (atomic-pop list)
+1
+> list
+(2 3)
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Macro}{atomic-push}{\var{item place\/} \returns{}
+    \var{new-place-value\/}}
+\index{atomic operations!push@\textbf{push}}%
+
+\fnsyntax
+
+\fnpurpose As an \glref{atomic~operation}, prepend \var{item\/} to the
+list stored in \var{place\/} and store the updated list in
+\var{place\/}.
+
+\fnpackage \code{:portable-threads}
+
+\fnmodule \code{:portable-threads}
+
+\fnargs
+\begin{args}{place}
+\arg[item] An object
+\arg[place] A form which is suitable for use as a
+\glref{generalized~reference} 
+\end{args}
+
+\fnreturns The new value of \var{place\/}. 
+
+\begin{alsos}{as-atomic-operation}
+\also[as-atomic-operation]
+\also[atomic-delete]
+\also[atomic-flush]
+\also[atomic-pop]
+\also[atomic-pushnew]
+\end{alsos}
+
+\fnexample
+\begin{example}
+> list
+(1 2 3)
+> (atomic-push 10 list)
+(10 1 2 3)
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Macro}{atomic-pushnew}{\var{item place\/} 
+    \code{\&key} \var{key test test-not\/}
+    \returns{} \var{new-place-value\/}}
+\index{atomic operations!pushnew@\textbf{pushnew}}%
+
+\fnsyntax
+
+\fnpurpose As an \glref{atomic~operation}, when \var{item\/} is not
+the same as any element in the list stored in \var{place\/}, prepend
+\var{item\/} to the list and store the updated list in \var{place\/}.
+
+\fnpackage \code{:portable-threads}
+
+\fnmodule \code{:portable-threads}
+
+\fnargs
+\begin{args}{place}
+\arg[item] An object
+\arg[place] A form which is suitable for use as a
+\glref{generalized~reference} that contains a \glref{proper~list} 
+\arg[key] A \glref{function} of one argument, or \nil{} (default is \nil)
+\arg[test] A \glref{function} of two arguments that returns a
+\glref{generalized~boolean} (default is \code{\#'eql}) 
+\arg[test-not] A \glref{function} of two arguments that returns a
+\glref{generalized~boolean} (use of \code{:test-not} is deprecated)
+\end{args}
+
+\fnreturns The new value of \var{place\/}. 
+
+\begin{alsos}{as-atomic-operation}
+\also[as-atomic-operation]
+\also[atomic-delete]
+\also[atomic-flush]
+\also[atomic-pop]
+\also[atomic-push]
+\end{alsos}
+
+\fnexamples
+\begin{example}
+> list
+(1 2 3)
+> (atomic-pushnew 2 list)
+(1 2 3)
+> (atomic-pushnew 10 list)
+(10 1 2 3)
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{awaken-thread}{\var{thread\/}}
+\index{thread!awakening}%
+\index{awakening a thread}%
+
+\fnsyntax
+
+\fnpurpose Awaken a hibernating \glref{thread}.
+
+\fnpackage \code{:portable-threads}
+
+\fnmodule \code{:portable-threads}
+
+\fnargs
+\begin{args}{thread}
+\arg[thread] A \glref{thread}
+\end{args}
+
+\fnerrors
+\nothreads{}
+
+\begin{alsos}{hibernate-thread}
+\also[hibernate-thread]
+\end{alsos}
+
+\fnexample
+\begin{example}
+  (awaken-thread thread)
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Class}{condition-variable}{}
+\index{class!condition-variable@\textbf{condition-variable}}%
+  
+\fnsyntax
+
+\fnpackage \code{:portable-threads}
+
+\fnmodule \code{:portable-threads}
+
+\fndescription The class \textbf{condition-variable} is a subclass of
+\code{standard-object}.  Instances of \textbf{condition-variable} include an
+associated lock, which can be either a \glref{lock} (the default) or a
+\glref{recursive~lock}.
+
+\begin{alsos}{make-condition-variable}
+\also[make-condition-variable]
+\also[define-class]
+\end{alsos}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{condition-variable-broadcast}%
+  {\var{condition-variable}}
+\index{signaling, condition variable!all blocked threads}%
+
+\fnsyntax
+
+\fnpurpose Unblock all \glref{threads} that are blocked on \var{condition-variable}.
+
+\fnpackage \code{:portable-threads}
+
+\fnmodule \code{:portable-threads}
+
+\fnargs
+\begin{args}{condition-variable}
+\arg[condition-variable] A \glref{condition~variable}
+\end{args}
+
+\fnerrors
+\nocvlock{}
+
+\fndescription If no threads are blocked on \var{condition-variable}, this
+function is a no-op.
+
+\begin{alsos}{condition-variable-wait-with-timeout}
+\also[condition-variable-signal]
+\also[condition-variable-wait]
+\also[condition-variable-wait-with-timeout]
+\also[make-condition-variable]
+\end{alsos}
+
+\bfindexit{with-lock-held}%
+\fnexample Acquire the \glref{lock} associated with \code{condition-variable}
+and then signal all blocked \glref{threads} that are waiting on it:
+\begin{example}
+  (\entlink{with-lock-held} (condition-variable)
+    (condition-variable-broadcast condition-variable))
+\end{example}
+
+\fnnote On Common Lisp implementations without threads, this function does
+nothing.
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{condition-variable-signal}%
+  {\var{condition-variable}}
+\index{signaling, condition variable!one blocked thread}%
+
+\fnsyntax
+
+\fnpurpose Unblock one \glref{thread} that is blocked on \var{condition-variable}.
+
+\fnpackage \code{:portable-threads}
+
+\fnmodule \code{:portable-threads}
+
+\fnargs
+\begin{args}{condition-variable}
+\arg[condition-variable] A \glref{condition~variable}
+\end{args}
+
+\fnerrors
+\nocvlock{}
+
+\fndescription If no threads are blocked on \var{condition-variable}, this
+function is a no-op.
+
+\begin{alsos}{condition-variable-wait-with-timeout}
+\also[condition-variable-broadcast]
+\also[condition-variable-wait]
+\also[condition-variable-wait-with-timeout]
+\also[make-condition-variable]
+\end{alsos}
+
+\bfindexit{with-lock-held}%
+\fnexample Acquire the \glref{lock} associated with \code{condition-variable}
+and then signal one blocked \glref{thread} that is waiting on it:
+\begin{example}
+  (\entlink{with-lock-held} (condition-variable)
+    (condition-variable-signal condition-variable))
+\end{example}
+
+\fnnote On Common Lisp implementations without threads, this function does
+nothing.
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{condition-variable-wait}%
+  {\var{condition-variable}}
+\index{waiting, on condition variable}%
+
+\fnsyntax
+
+\fnpurpose Block the current \glref{thread} on \var{condition-variable}.
+
+\fnpackage \code{:portable-threads}
+
+\fnmodule \code{:portable-threads}
+
+\fnargs
+\begin{args}{condition-variable}
+\arg[condition-variable] A \glref{condition~variable}
+\end{args}
+
+\fnerrors
+\nocvlock{}
+\par
+\nothreads{}
+
+\begin{alsos}{condition-variable-wait-with-timeout}
+\also[condition-variable-broadcast]
+\also[condition-variable-signal]
+\also[condition-variable-wait-with-timeout]
+\also[make-condition-variable]
+\end{alsos}
+
+\bfindexit{with-lock-held}%
+\fnexample Acquire the condition-variable \glref{lock} and then wait until
+signaled by another \glref{thread}:
+\begin{example}
+  (\entlink{with-lock-held} (condition-variable)
+    (condition-variable-wait condition-variable))
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{condition-variable-wait-with-timeout}%
+  {\var{condition-variable seconds}}
+\index{waiting, on condition variable, time limited}%
+
+\fnsyntax
+
+\fnpurpose Block the current \glref{thread} on \var{condition-variable} or until
+\var{seconds} seconds have elapsed.
+
+\fnpackage \code{:portable-threads}
+
+\fnmodule \code{:portable-threads}
+
+\fnargs
+\begin{args}{condition-variable}
+\arg[condition-variable] A \glref{condition~variable}
+\arg[seconds] A number
+\end{args}
+
+\fnerrors
+\nocvlock{}
+\par
+\nothreads{}
+
+\begin{alsos}{condition-variable-broadcast}
+\also[condition-variable-broadcast]
+\also[condition-variable-signal]
+\also[condition-variable-wait]
+\also[make-condition-variable]
+\end{alsos}
+
+\bfindexit{with-lock-held}%
+\fnexample Acquire the condition-variable \glref{lock} and then wait until
+signaled by another \glref{thread} or until 5 seconds have elapsed:
+\begin{example}
+  (\entlink{with-lock-held} (condition-variable)
+    (condition-variable-wait-with-timeout condition-variable 5))
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{current-thread}{\noargs{} 
+    \returns{} \var{thread\/}}
+\index{thread!obtaining the current}%
+
+\fnsyntax
+
+\fnpurpose Return the object representing the current \glref{thread}.
+
+\fnpackage \code{:portable-threads}
+
+\fnmodule \code{:portable-threads}
+
+\fnreturns The object representing the current \glref{thread}. 
+
+\begin{alsos}{spawn-thread}
+\also[all-threads]
+\also[spawn-thread]
+\end{alsos}
+
+\fnexample
+\begin{example}
+> (current-thread)
+#<thread Listener 1>
+\end{example}
+
+\fnnote On Common Lisp implementations without threads, \nil{} is returned.
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{encode-time-of-day}%
+  {\var{hour minute second\/} 
+    \code{\&optional} \var{universal-time\/}
+    \returns{} \var{universal-time\/}}
+
+\fnsyntax
+
+\fnpurpose Return a \glref{universal~time} representing a specified
+time-of-day.
+
+\fnpackage \code{:portable-threads}
+
+\fnmodule \code{:portable-threads}
+
+\fnargs
+\begin{args}{universal-time}
+\arg[hour] An integer between 0 and 23, inclusive
+\arg[minute] An integer between 0 and 59, inclusive
+\arg[second] An integer between 0 and 59, inclusive
+\arg[universal-time] A \glref{universal~time} (default is \nil,
+  which is equivalent to the value returned by
+  \code{(get-universal-time)})
+\end{args}
+
+\fndescription If the specified time-of-date has already passed (relative to
+the \var{universal-time\/} value), the next day is assumed.
+
+\begin{alsos}{schedule-function}
+\also[schedule-function]
+\end{alsos}
+
+\bfindexit{make-scheduled-function}%
+\bfindexit{schedule-function}%
+\fnexamples
+Schedule a \glref{scheduled~function} that prints \code{"It's quitting time!"} 
+every day at 5pm:
+\begin{example}
+> (\entlink{schedule-function}
+    (\entlink{make-scheduled-function}
+      #'(lambda (scheduled-function)
+          (declare (ignore scheduled-function))
+          (print "It's quitting time!"))
+      :name 'quitting-time)
+     (encode-time-of-day 17 0 0) :repeat-interval #.(* 24 60 60))
+\end{example}
+
+\bfindexit{encode-time-of-day}%
+Verbosely change \code{quitting-time} to 5:30pm every day:
+\begin{example}
+> (\entlink{schedule-function} 'quitting-time (encode-time-of-day 17 30 0)
+    :repeat-interval #.(* 24 60 60)
+    :verbose 't)
+;; Unscheduling #<scheduled-function quitting-time [17:00:00]>...
+;; Scheduling #<scheduled-function quitting-time [17:30:00]> 
+   as the next scheduled-function...
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{hibernate-thread}{\noargs{}}
+\index{thread!hibernating}%
+
+\fnsyntax
+
+\fnpurpose Hibernate the current \glref{thread}.
+
+\fnpackage \code{:portable-threads}
+
+\fnmodule \code{:portable-threads}
+
+\fnerrors
+\nothreads{}
+
+\begin{alsos}{awaken-thread}
+\also[awaken-thread]
+\end{alsos}
+
+\fnexample
+Hibernate the current \glref{thread}:
+\begin{example}
+  (hibernate-thread)
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{kill-periodic-function}{\noargs{}}
+\index{periodic function!terminating}%
+\index{function!periodic, terminating}%
+
+\fnsyntax
+
+\fnpurpose Terminate the thread invoking a \glref{periodic~function}.
+
+\fnpackage \code{:portable-threads}
+
+\fnmodule \code{:portable-threads}
+
+\fnerrors
+\nothreads{}
+
+\textbf{Kill-periodic-function} called outside the dynamic scope of a
+\glref{periodic~function}.
+
+\begin{alsos}{*periodic-function-verbose*}
+\also[*periodic-function-verbose*]
+\also[all-threads]
+\also[kill-thread]
+\also[spawn-periodic-function]
+\end{alsos}
+
+\bfindexit{define-event-class}%
+\bfindexit{signal-event}%
+\bfindexit{control-shell-running-p}%
+\bfindexit{spawn-periodic-function}%
+\fnexample
+Define and spawn a \glref{periodic~function} that is invoked every 0.5 seconds
+to signal a \code{half-second-interrupt-event}, continuing as long as the
+control shell is running:
+\begin{example}
+> (\entlink{define-event-class} half-second-timer-event (timer-interrupt-event)
+    ())
+half-second-timer-event
+> (defun half-second-timer ()
+    (unless (\entlink{control-shell-running-p})
+      (kill-periodic-function))
+    (\entlink{signal-event} 'half-second-timer-event))
+half-second-timer
+> (\entlink{spawn-periodic-function} 'half-second-timer 0.5)
+#<thread Periodic Function half-second-timer>
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{kill-thread}{\var{thread\/}}
+\index{thread!killing}%
+\index{killing a thread}%
+
+\fnsyntax
+
+\fnpurpose Kill a \glref{thread}.
+
+\fnpackage \code{:portable-threads}
+
+\fnmodule \code{:portable-threads}
+
+\fnargs
+\begin{args}{thread}
+\arg[thread] A \glref{thread}
+\end{args}
+
+\fnerrors
+\nothreads{}
+
+\begin{alsos}{thread-alive-p}
+\also[spawn-thread]
+\also[thread-alive-p]
+\end{alsos}
+
+\fnexample
+\begin{example}
+  (kill-thread thread)
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{make-condition-variable}%
+  {\code{\&rest} \var{initargs\/} \\ 
+   \code{\&key} \var{class\/} \\
+   \returns{} \var{condition-variable\/}}
+\index{creating!a condition variable}%
+\index{making!a condition variable}%
+\index{condition variable!creating}%
+ 
+\fnsyntax
+
+\fnpurpose Create a new \glref{condition~variable}.
+
+\fnpackage \code{:portable-threads}
+
+\fnmodule \code{:portable-threads}
+
+\fnargs
+\begin{args}{initargs}
+\arg[initargs] An \glref{initialization~argument~list}
+\arg[class] The name of the \glref{class} for the created
+\glref{condition~variable} instance (default is \code{condition-variable})
+\end{args}
+
+\fnreturns
+The created \textbf{\entlink{condition-variable}}.
+
+\begin{alsos}{make-instance}
+\also[make-instance]
+\end{alsos}
+
+\fnexamples
+Make a \textbf{condition-variable} instance with a non-recursive 
+\glref{lock}:
+\begin{example}
+> (make-condition-variable)
+#<condition-variable>
+\end{example}
+
+Make a \textbf{condition-variable} instance with a
+\glref{recursive~lock}:
+\begin{example}
+> (make-condition-variable :lock (\entlink{make-recursive-lock}))
+#<condition-variable>
+\end{example}
+
+Define a subclass of \textbf{condition-variable} that includes a 
+\code{state} slot:
+\begin{example}
+  (defclass state-cv (condition-variable)
+    ((state :initarg :state
+            :initform nil
+            :accessor state-of)))
+\end{example}
+and then create a \code{state-cv} instance with a \glref{recursive~lock}:
+\begin{example}
+> (make-condition-variable :class 'state-cv
+                           :lock (\entlink{make-recursive-lock}))
+#<state-cv>
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{make-lock}{\code{\&key} \var{name\/}
+    \returns{} \var{lock\/}} 
+\index{lock!creating}%
+\index{creating!a lock}%
+\index{making!a lock}%
+
+\fnsyntax
+
+\fnpurpose Create a \glref{lock}.
+
+\fnpackage \code{:portable-threads}
+
+\fnmodule \code{:portable-threads}
+
+\fnargs
+\begin{args}{name}
+\arg[name] A string.
+\end{args}
+
+\fnreturns The newly created \glref{lock}. 
+
+\begin{alsos}{make-condition-variable}
+\also[make-condition-variable]
+\also[make-recursive-lock]
+\also[thread-holds-lock-p]
+\also[with-lock-held]
+\end{alsos}
+
+\fnexample
+\begin{example}
+> (make-lock :name "Priority Queue")
+#<lock Priority Queue>
+\end{example}
+
+\fnnote On Common Lisp implementations without threads, a
+``pseudo-lock'' object is returned.
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{make-recursive-lock}{\code{\&key} \var{name\/}
+    \returns{} \var{recursive-lock\/}} 
+\index{lock!creating}%
+\index{creating!a lock}%
+\index{making!a lock}%
+
+\fnsyntax
+
+\fnpurpose Create a \glref{recursive~lock}.
+
+\fnpackage \code{:portable-threads}
+
+\fnmodule \code{:portable-threads}
+
+\fnargs
+\begin{args}{name}
+\arg[name] A string.
+\end{args}
+
+\fnreturns The newly created \glref{recursive~lock}. 
+
+\begin{alsos}{make-condition-variable}
+\also[make-condition-variable]
+\also[make-lock]
+\also[thread-holds-lock-p]
+\also[with-lock-held]
+\end{alsos}
+
+\fnexample
+\begin{example}
+> (make-recursive-lock :name "Priority Queue")
+#<recursive-lock Priority Queue>
+\end{example}
+
+\fnnote On Common Lisp implementations without threads, a
+``pseudo-recursive-lock'' object is returned.
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{make-scheduled-function}{\var{function\/} 
+    \code{\&key} \var{name\/}
+    \returns{} \var{scheduled-function\/}} 
+\index{scheduled function!creating}%
+\index{function!scheduled, creating}%
+\index{creating!a scheduled function}%
+\index{making!a scheduled function}%
+
+\fnsyntax
+
+\fnpurpose Create a \glref{scheduled~function}.
+
+\fnpackage \code{:portable-threads}
+
+\fnmodule \code{:portable-threads}
+
+\fnargs
+\begin{args}{function}
+\arg[function] A \glref{function} of one argument
+\arg[name] An object (typically a string or a symbol; default is
+\var{function\/}, if \var{function\/} is a symbol, otherwise \nil)
+\end{args}
+
+\fnreturns The newly created \glref{scheduled~function}. 
+
+\fnerrors
+\nothreads{}
+
+\fndescription Unless the run time of \var{function} is brief, it
+should spawn a new \glref{thread} in which to perform its activities
+so as to avoid delaying the invocation of a subsequent
+\glref{scheduled~function}.
+
+\begin{alsos}{*schedule-function-verbose*}
+\also[*schedule-function-verbose*]
+\also[all-scheduled-functions]
+\also[schedule-function]
+\also[schedule-function-relative]
+\also[scheduled-function-name]
+\also[scheduled-function-repeat-interval]
+\also[unschedule-function]
+\end{alsos}
+
+\fnexamples
+Create a \glref{scheduled~function} that simply prints \code{"Hello"} when invoked:
+\begin{example}
+> (make-scheduled-function 
+    #'(lambda (scheduled-function)
+        (declare (ignore scheduled-function))
+        (print "Hello"))
+    :name 'hello)
+#<scheduled-function hello [unscheduled]>
+\end{example}
+
+\bfindexit{scheduled-function-repeat-interval}%
+\bfindexit{spawn-thread}%
+A more complex \glref{scheduled~function} that spawns a new \glref{thread} to do its
+work and randomly sets whether to reschedule itself (and at what interval):
+\begin{example}
+> (defun complex-function (scheduled-function)
+    (let ((interval (random 100)))
+      (setf (\entlink{scheduled-function-repeat-interval} scheduled-function)
+            (if (plusp interval) 
+                ;; repeat 1-99 seconds from now:
+                interval
+                ;; don't repeat 1\% of the time:
+                nil)))
+    (\entlink{spawn-thread} "Lots of stuff doer" #'do-lots-of-stuff))
+complex-function
+> (make-scheduled-function 'complex-function)
+#<scheduled-function complex-function [unscheduled]>
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{restart-scheduled-function-scheduler}%
+  {\noargs{} \returns{} \var{thread\/}}
+\index{scheduled function!scheduler, restarting}%
+
+\fnsyntax
+
+\fnpurpose Restart the \glref{scheduled-function} scheduling thread.
+
+\fnpackage \code{:portable-threads}
+
+\fnmodule \code{:portable-threads}
+
+\fnreturns The object representing the newly spawned
+\glref{scheduled-function} scheduler \glref{thread} or \nil{} if the
+\glref{scheduled-function} scheduler was already running.
+
+\fnerrors
+\nothreads{}
+
+\fndescription If the \glref{scheduled-function} scheduler \glref{thread} has
+been killed accidently, this function can be used to start a new scheduler
+\glref{thread}.
+
+\begin{alsos}{scheduled-function-repeat-interval}
+\also[schedule-function]
+\also[scheduled-function-repeat-interval]
+\also[unschedule-function]
+\end{alsos}
+
+\fnexamples
+Restart the \glref{scheduled-function} scheduler:
+\begin{example}
+> (restart-scheduled-function-scheduler)
+#<thread Scheduled-Function Scheduler>
+\end{example}
+
+Restarting a \glref{scheduled-function} scheduler that is already running has
+no effect:
+\begin{example}
+> (restart-scheduled-function-scheduler)
+;; The scheduled-function scheduler is already running.
+nil
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{schedule-function}%
+  {\var{name-or-scheduled-function invocation-time\/} 
+    \code{\&key} \var{repeat-interval verbose\/}}
+\index{scheduled function!scheduling}%
+\index{function!scheduled, scheduling}%
+\index{scheduling!a scheduled function}%
+
+\fnsyntax
+
+\fnpurpose Schedule a \glref{scheduled~function} at an absolute invocation time.
+
+\fnpackage \code{:portable-threads}
+
+\fnmodule \code{:portable-threads}
+
+\fnargs
+\begin{args}{name-or-scheduled-function}
+\arg[name-or-scheduled-function] An object (typically a string or a
+  symbol) naming a currently scheduled \glref{scheduled~function} or a
+  \code{scheduled-function} object
+\arg[invocation-time] A \glref{universal~time}
+\arg[repeat-interval] A positive integer (representing seconds) or
+  \nil{} (default is \nil)
+\arg[verbose] A \glref{generalized~boolean} 
+  (default is \textbf{\entlink{*schedule-function-verbose*}})
+\end{args}
+
+\fnerrors
+\nothreads{}
+
+\fndescription If the \var{scheduled-function} object is unscheduled, it is
+added to the list of currently scheduled \glref{scheduled~functions} with the
+specified \var{invocation-time\/} and \var{repeat-interval}.  If the
+\var{scheduled-function} object is currently scheduled, it is first
+unscheduled and then rescheduled with the specified \var{invocation-time\/}
+and \var{repeat-interval}.
+
+\begin{alsos}{restart-scheduled-function-scheduler}
+\also[*schedule-function-verbose*]
+\also[all-scheduled-functions]
+\also[encode-time-of-day]
+\also[make-scheduled-function]
+\also[restart-scheduled-function-scheduler]
+\also[schedule-function-relative]
+\also[scheduled-function-repeat-interval]
+\also[unschedule-function]
+\end{alsos}
+
+\bfindexit{make-scheduled-function}%
+\fnexamples
+Schedule a \glref{scheduled~function} that simply prints \code{"Happy New Year!"} 
+at midnight (local time) on January 1, 2010:
+\begin{example}
+> (schedule-function
+    (\entlink{make-scheduled-function}
+      #'(lambda (scheduled-function)
+          (declare (ignore scheduled-function))
+          (print "Happy New Year!")))
+     (encode-universal-time 0 0 0 1 1 2010))
+> (all-scheduled-functions)
+(#<scheduled-function nil [Jan 1, 2010 00:00:00]>)
+\end{example}
+
+\bfindexit{make-scheduled-function}%
+\bfindexit{encode-time-of-day}%
+Schedule a \glref{scheduled~function} that prints \code{"It's quitting time!"} 
+every day at 5pm:
+\begin{example}
+> (schedule-function
+    (\entlink{make-scheduled-function}
+      #'(lambda (scheduled-function)
+          (declare (ignore scheduled-function))
+          (print "It's quitting time!"))
+      :name 'quitting-time)
+     (\entlink{encode-time-of-day} 17 0 0) :repeat-interval #.(* 24 60 60))
+\end{example}
+
+\bfindexit{encode-time-of-day}%
+Verbosely change \code{quitting-time} to 5:30pm every day:
+\begin{example}
+> (schedule-function 'quitting-time (\entlink{encode-time-of-day} 17 30 0)
+    :repeat-interval #.(* 24 60 60)
+    :verbose 't)
+;; Unscheduling #<scheduled-function quitting-time [17:00:00]>...
+;; Scheduling #<scheduled-function quitting-time [17:30:00]> 
+   as the next scheduled-function...
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{schedule-function-relative}%
+  {\var{name-or-scheduled-function seconds\/} 
+    \code{\&key} \var{repeat-interval verbose\/}}
+\index{scheduled function!scheduling}%
+\index{function!scheduled, scheduling}%
+\index{scheduling!a scheduled function}%
+
+\fnsyntax
+
+\fnpurpose Schedule a \glref{scheduled~function} a specified number of
+seconds from now.
+
+\fnpackage \code{:portable-threads}
+
+\fnmodule \code{:portable-threads}
+
+\fnargs
+\begin{args}{name-or-scheduled-function}
+\arg[name-or-scheduled-function] An object (typically a string or a
+  symbol) naming a currently scheduled \glref{scheduled~function} or a
+  \code{scheduled-function} object
+\arg[seconds] A positive integer
+\arg[repeat-interval] A positive integer (representing seconds) or
+  \nil{} (default is \nil)
+\arg[verbose] A \glref{generalized~boolean}
+  (default is \textbf{\entlink{*schedule-function-verbose*}})
+\end{args}
+
+\fnerrors
+\nothreads{}
+
+\fndescription If the \var{scheduled-function} object is unscheduled, it is
+added to the list of currently scheduled \glref{scheduled~functions} with an
+invocation time of \var{interval\/} seconds from the current time and the
+specified \var{repeat-interval}.  If the \var{scheduled-function} object is
+currently scheduled, it is first unscheduled and then rescheduled with an
+invocation time of \var{interval\/} seconds from the current time and the
+specified \var{repeat-interval}.
+
+\begin{alsos}{restart-scheduled-function-scheduler}
+\also[*schedule-function-verbose*]
+\also[all-scheduled-functions]
+\also[make-scheduled-function]
+\also[restart-scheduled-function-scheduler]
+\also[schedule-function]
+\also[scheduled-function-repeat-interval]
+\also[unschedule-function]
+\end{alsos}
+
+\bfindexit{make-scheduled-function}%
+\fnexamples
+Schedule a \glref{scheduled~function} that simply prints \code{"Hello!"} 
+5 seconds from now:
+\begin{example}
+> (schedule-function-relative
+    (\entlink{make-scheduled-function}
+      #'(lambda (scheduled-function)
+          (declare (ignore scheduled-function))
+          (print "Hello!")))
+     5)
+\end{example}
+
+\bfindexit{make-scheduled-function}%
+\bfindexit{signal-event}%
+Schedule a \glref{scheduled~function} that signals a GBBopen
+\code{timer-interrupt-event} every 30 seconds:
+\begin{example}
+> (schedule-function-relative
+    (\entlink{make-scheduled-function}
+      #'(lambda (scheduled-function)
+          (declare (ignore scheduled-function))
+          (\entlink{signal-event} 'timer-interrupt-event)))
+    30
+    :repeat-interval 30)
+\end{example}
+
+\fnnote The form \mbox{\code{(schedule-function-relative}
+  \var{scheduled-function\/} \code{10)}} is equivalent to
+\mbox{\code{(\entlink{schedule-function}} \var{scheduled-function\/}
+\code{(+ (get-universal-time) 10))}}.
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{scheduled-function-name}%
+  {\var{scheduled-function\/}}
+\index{function!scheduled, name}%
+\index{changing!name of a scheduled function}%
+
+\fnsyntax
+
+\fnpurpose Return the name of a \glref{scheduled~function}.
+
+\fnsetf
+\fnsetfsyntax{scheduled-function-repeat-interval}%
+  {\var{scheduled-function\/}}{\var{name\/}}
+
+\fnpackage \code{:portable-threads}
+
+\fnmodule \code{:portable-threads}
+
+\fnargs
+\begin{args}{scheduled-function}
+\arg[scheduled-function] A \glref{scheduled~function}
+\arg[name] An object (typically a string or a symbol)
+\end{args}
+
+\fnreturns The name of \var{scheduled-function}. 
+
+\begin{alsos}{schedule-function-relative}
+\also[all-scheduled-functions]
+\also[make-scheduled-function]
+\also[schedule-function]
+\also[schedule-function-relative]
+\also[scheduled-function-name]
+\end{alsos}
+
+\bfindexit{all-scheduled-functions}%
+\fnexample
+Return the names of all currently scheduled \glref{scheduled~functions}:
+\begin{example}
+> (mapcar #'scheduled-function-name (\entlink{all-scheduled-functions}))
+(quitting-time)
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{scheduled-function-repeat-interval}%
+  {\var{scheduled-function\/}}
+\index{function!scheduled, repeat-interval value}%
+\index{changing!repeat-interval, of a scheduled function}%
+
+\fnsyntax
+
+\fnpurpose Return the repeat interval of a \glref{scheduled~function}.
+
+\fnsetf
+\fnsetfsyntax{scheduled-function-repeat-interval}%
+  {\var{scheduled-function\/}}{\var{repeat-interval\/}}
+
+\fnpackage \code{:portable-threads}
+
+\fnmodule \code{:portable-threads}
+
+\fnargs
+\begin{args}{scheduled-function}
+\arg[scheduled-function] A \glref{scheduled~function}
+\arg[repeat-interval] A positive integer (representing seconds) or \nil
+\end{args}
+
+\fnreturns The repeat interval of \var{scheduled-function}. 
+
+\begin{alsos}{schedule-function-relative}
+\also[all-scheduled-functions]
+\also[make-scheduled-function]
+\also[schedule-function]
+\also[schedule-function-relative]
+\also[scheduled-function-name]
+\end{alsos}
+
+\bfindexit{all-scheduled-functions}%
+\fnexamples 
+Display the \code{scheduled-function} object and its repeat interval for each
+currently scheduled \glref{scheduled~function}:
+\begin{example}
+> (dolist (scheduled-function (\entlink{all-scheduled-functions}))
+   (format t "~&;; ~s ~s~%"
+           scheduled-function
+           (scheduled-function-repeat-interval scheduled-function)))
+;; #<scheduled-function quitting-time [17:00:00]> 86400
+nil
+\end{example}
+
+Define a \glref{function} to be used as a \glref{scheduled~function} that randomly
+sets whether to reschedule itself (and at what interval):
+\begin{example}
+  (defun complex-function (scheduled-function)
+    (let ((interval (random 100)))
+      (setf (scheduled-function-repeat-interval scheduled-function)
+            (if (plusp interval) 
+                ;; repeat 1-99 seconds from now:
+                interval
+                ;; don't repeat 1\% of the time:
+                nil)))
+    (do-some-stuff))
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{spawn-periodic-function}%
+  {\var{function repeat-interval\/} 
+    \code{\&key} \var{count name verbose\/}
+    \returns{} \var{thread\/}}
+\index{periodic function!spawning}%
+\index{function!periodic, spawning}%
+
+\fnsyntax
+
+\fnpurpose Spawn a thread invoking \var{function\/} every
+\var{repeat-interval\/} seconds.
+
+\fnpackage \code{:portable-threads}
+
+\fnmodule \code{:portable-threads}
+
+\fnargs
+\begin{args}{repeat-interval}
+\arg[function] A \glref{function} of no arguments
+\arg[repeat-interval] A number (representing seconds)
+\arg[count] A number or \nil{} (default is \nil)
+\arg[name] An object (typically a string or a symbol; default is
+\var{function\/}, if \var{function\/} is a symbol, otherwise \nil)
+\arg[verbose] A \glref{generalized~boolean}
+  (default is \textbf{\entlink{*periodic-function-verbose*}})
+\end{args}
+
+\fnreturns The object representing the \glref{thread} associated with the
+\glref{periodic~function}.
+
+\fnerrors
+\nothreads{}
+
+\fndescription If \var{count\/} is \nil, \var{function\/} will continue to be
+invoked every \var{repeat-interval\/} seconds until the
+\glref{periodic-function} \glref{thread} is killed or until \var{function\/}
+calls \textbf{\entlink{kill-periodic-function}}.  Otherwise, \var{count\/} is
+decremented by one prior to each invocation of \var{function\/} and, if it is
+negative, the \glref{periodic~function} is terminated.
+
+\begin{alsos}{*periodic-function-verbose*}
+\also[*periodic-function-verbose*]
+\also[all-threads]
+\also[kill-periodic-function]
+\also[kill-thread]
+\also[make-scheduled-function]
+\also[schedule-function-relative]
+\end{alsos}
+
+\fnexamples 
+Spawn a simple \glref{periodic~function} that is invoked every 0.1 seconds,
+but that only runs twice:
+\begin{example}
+> (spawn-periodic-function #'(lambda () (print "Hello!")) 0.1 
+    :name 'hello
+    :count 2)
+#<thread Periodic Function hello>
+>
+"Hello!" 
+"Hello!" 
+\end{example}
+
+\bfindexit{kill-periodic-function}%
+Spawn a simple \glref{periodic~function} that is invoked every 0.1 seconds
+that runs up to 20 times, but with a 10\% chance on each invocation of
+terminating early:
+\begin{example}
+> (spawn-periodic-function 
+     #'(lambda ()
+         (when (zerop (random 10))
+           (kill-periodic-function))
+         (print "Hello!")) 
+     0.1
+     :count 20
+     :verbose 't)
+;; Spawning periodic-function thread for...
+#<thread Periodic Function>
+>
+"Hello!" 
+"Hello!" 
+"Hello!" 
+"Hello!" 
+;; Killing periodic-function...
+;; Exiting periodic-function thread
+
+\end{example}
+
+\bfindexit{define-event-class}%
+\bfindexit{signal-event}%
+\bfindexit{control-shell-running-p}%
+\bfindexit{kill-periodic-function}%
+Define and spawn a \glref{periodic~function} that is invoked every 0.5 seconds
+to signal a \code{half-second-interrupt-event}, continuing as long as the
+control shell is running:
+\begin{example}
+> (\entlink{define-event-class} half-second-timer-event (timer-interrupt-event)
+    ())
+half-second-timer-event
+> (defun half-second-timer ()
+    (unless (\entlink{control-shell-running-p})
+      (\entlink{kill-periodic-function}))
+    (\entlink{signal-event} 'half-second-timer-event))
+half-second-timer
+> (spawn-periodic-function 'half-second-timer 0.5)
+#<thread Periodic Function half-second-timer>
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{thread-alive-p}{\var{thread\/} 
+    \returns{} \var{boolean\/}}
+
+\fnsyntax
+
+\fnpurpose Return a value indicating whether a \glref{thread} is alive.
+
+\fnpackage \code{:portable-threads}
+
+\fnmodule \code{:portable-threads}
+
+\fnargs
+\begin{args}{thread}
+\arg[thread] A \glref{thread}
+\end{args}
+
+\fnreturns True if \var{thread} is alive; \nil{} otherwise.
+
+\fnerrors
+\nothreads{}
+
+\begin{alsos}{spawn-thread}
+\also[all-threads]
+\also[kill-thread]
+\also[spawn-thread]
+\end{alsos}
+
+\bfindexit{spawn-thread}%
+\bfindexit{kill-thread}%
+\fnexamples
+\begin{example}
+> (defparameter *silly-thread* (\entlink{spawn-thread} "Sleeper" 'sleep 10000))
+#<thread Sleeper>
+> (thread-alive-p *silly-thread*)
+t
+> (\entlink{kill-thread} *silly-thread*)
+t
+> (thread-alive-p *silly-thread*)
+nil
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{thread-name}{\var{thread\/} 
+   \returns{} \var{name-string\/}} 
+
+\fnsyntax
+
+\fnpurpose Return the name of a \glref{thread}.
+
+\fnsetf
+\fnsetfsyntax{thread-name}{\var{thread\/}}{\var{name-string\/}}
+
+\fnpackage \code{:portable-threads}
+
+\fnmodule \code{:portable-threads}
+
+\fnargs
+\begin{args}{thread}
+\arg[thread] A \glref{thread}
+\arg[name-string] A string
+\end{args}
+
+\fnreturns The name of \var{thread}.
+
+\fnerrors
+\nothreads{}
+
+\begin{alsos}{spawn-thread}
+\also[spawn-thread]
+\end{alsos}
+
+\fnexamples
+\begin{example}
+> (thread-name thread)
+"Initial"
+> (setf (thread-name thread) "Version 2")
+"Version 2"
+> (thread-name thread)
+"Version 2"
+\end{example}
+
+\fnnote Digitool's \xsitelink{Macintosh Common Lisp}{http://www.digitool.com}
+does not support changing the thread name via \textbf{setf}.
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{thread-whostate}{\var{thread\/}
+   \returns{} \var{whostate\/}} 
+
+\fnsyntax
+
+\fnpurpose Return a string that describes the current state of a 
+\glref{thread}.
+
+\fnpackage \code{:portable-threads}
+
+\fnmodule \code{:portable-threads}
+
+\fnargs
+\begin{args}{thread}
+\arg[thread] A \glref{thread}
+\end{args}
+
+\fnreturns The whostate string of the \glref{thread} or \nil.
+
+\fnerrors
+\nothreads{}
+
+\begin{alsos}{spawn-thread}
+\also[spawn-thread]
+\end{alsos}
+
+\fnexample
+\begin{example}
+> (thread-whostate thread)
+"Running"
+\end{example}
+
+\fnnote Although the \var{whostate\/} value can provide helpful
+information when debugging, specific \var{whostate\/} values and their
+meanings vary among Common Lisp implementations and should not be used
+programmatically.
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{thread-yield}{\noargs{}}
+\index{thread!yielding to other threads}%
+\index{yielding to other threads}%
+
+\fnsyntax
+
+\fnpurpose Give other \glref{threads} a chance to execute.
+
+\fnpackage \code{:portable-threads}
+
+\fnmodule \code{:portable-threads}
+
+\fnexample
+\begin{example}
+  (thread-yield)
+\end{example}
+
+\fnnote On Common Lisp implementations without thread support, this function
+executes \textbf{\entlink{run-polling-functions}} if the
+\code{:polling-functions} module has been loaded.  Otherwise, it is a no-op on
+non-threaded implementations.
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{threadp}{\var{object\/} \returns{}
+    \var{boolean\/}}
+\index{thread!checking state}%
+
+\fnsyntax
+
+\fnpurpose Check if \var{object\/} is an object representing a
+\glref{thread}.
+
+\fnpackage \code{:portable-threads}
+
+\fnmodule \code{:portable-threads}
+
+\fnargs
+\begin{args}{object}
+\arg[object] An object
+\end{args}
+
+\fnreturns True if \var{object\/} is an object representing a 
+\glref{thread}; \nil{} otherwise.
+
+\begin{alsos}{thread-alive-p}
+\also[all-threads]
+\also[spawn-thread]
+\also[thread-alive-p]
+\end{alsos}
+
+\bfindexit{all-threads}%
+\fnexample
+\begin{example}
+> (threadp (car (\entlink{all-threads})))
+t
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{run-in-thread}{\var{thread function\/}
+    \code{\&rest} \var{args\/}}
+\index{thread!running a function in}%
+
+\fnsyntax
+
+\fnpurpose Force \var{thread\/} to apply \var{function\/} to \var{args\/}
+
+\fnpackage \code{:portable-threads}
+
+\fnmodule \code{:portable-threads}
+
+\fnargs
+\begin{args}{function}
+\arg[thread] A \glref{thread}
+\arg[function] A \glref{function}
+\arg[args] Arguments to the function
+\end{args}
+
+\fnerrors
+\nothreads{}
+
+\begin{alsos}{spawn-thread}
+\also[spawn-thread]
+\end{alsos}
+
+\fnexample
+\begin{example}
+  (run-in-thread thread
+                 #'(lambda (result) (throw ':exit result)) 
+                 result)
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{spawn-thread}{\var{name function\/}
+    \code{\&rest}
+    \var{args\/} \returns{} \var{thread\/}}
+\index{thread!spawning}%
+\index{creating!a thread}%
+\index{making!a thread}%
+
+\fnsyntax
+
+\fnpurpose Spawn a new \glref{thread}.
+
+\fnpackage \code{:portable-threads}
+
+\fnmodule \code{:portable-threads}
+
+\fnargs
+\begin{args}{function}
+\arg[name] A string
+\arg[function] A \glref{function}
+\arg[args] Arguments to the function
+\end{args}
+
+\fnreturns The object representing the new \glref{thread}.
+  
+\fnerrors
+\nothreads{}
+
+\begin{alsos}{symbol-value-in-thread}
+\also[all-threads]
+\also[awaken-thread]
+\also[current-thread]
+\also[hibernate-thread]
+\also[kill-thread]
+\also[thread-alive-p]
+\also[thread-name]
+\also[thread-whostate]
+\also[threadp]
+\also[run-in-thread]
+\also[symbol-value-in-thread]
+\end{alsos}
+
+\fnexample
+\begin{example}
+> (spawn-thread "Sleepy" #'sleep 60)
+#<thread Sleepy>
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{symbol-value-in-thread}{\var{symbol 
+    thread\/}
+    \returns{} \mbox{\var{object, boundp\/}}}
+\index{thread!symbol value in}%
+\index{value, of a symbol in a thread}%
+
+\fnsyntax
+
+\fnpurpose Return the value of \var{symbol\/} in a \glref{thread}.
+
+\fnpackage \code{:portable-threads}
+
+\fnmodule \code{:portable-threads}
+
+\fnargs
+\begin{args}{function}
+\arg[symbol] A symbol
+\arg[thread] A \glref{thread}
+\end{args}
+
+\fnreturns Two values:
+\begin{tightitemize}
+\item the value of \var{symbol\/} in \var{thread\/} or nil if no value is
+  bound
+\item \code{t} if \var{symbol\/} is specially or globally bound in 
+  \var{thread}; otherwise \nil
+\end{tightitemize}
+  
+\fndescription The global symbol value is returned as the first value if no
+thread-local value is bound.
+
+\begin{alsos}{spawn-thread}
+\also[spawn-thread]
+\end{alsos}
+
+\fnexamples
+\begin{example}
+> (symbol-value-in-thread '*x* thread)
+33
+t
+> (symbol-value-in-thread 'pi thread)
+3.141592653589793d0
+t
+> (symbol-value-in-thread '*unbound* thread)
+nil
+nil
+\end{example}
+
+\fnnote On Common Lisp implementations without threads, this function obtains
+the global symbol value.
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{thread-holds-lock-p}{\var{lock\/}
+    \returns{} \var{boolean\/}}
+\index{lock, held by current thread}%
+
+\fnsyntax
+
+\fnpurpose Determine if \var{lock\/} is held by the current \glref{thread}.
+
+\fnpackage \code{:portable-threads}
+
+\fnmodule \code{:portable-threads}
+
+\fnargs
+\begin{args}{lock}
+\arg[lock] A \glref{lock}, a \glref{recursive~lock}, or a 
+\glref{condition~variable}
+\end{args}
+
+\fnreturns True if the current thread holds \var{lock}; \nil{} otherwise.
+
+\begin{alsos}{make-condition-variable}
+\also[make-condition-variable]
+\also[make-lock]
+\also[make-recursive-lock]
+\also[with-lock-held]
+\end{alsos}
+
+\bfindexit{with-lock-held}%
+\fnexamples
+Two simple examples using a \glref{lock}:
+\begin{example}
+> (thread-holds-lock-p lock)
+nil
+> (\entlink{with-lock-held} (lock)
+    (thread-holds-lock-p lock))
+t
+\end{example}
+
+Two more simple examples using a \glref{condition~variable}:
+\begin{example}
+> (thread-holds-lock-p condition-variable)
+nil
+> (\entlink{with-lock-held} (condition-variable)
+    (thread-holds-lock-p condition-variable))
+t
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{unschedule-function}%
+  {\var{name-or-scheduled-function\/}
+    \code{\&key} \var{verbose\/}
+  \returns{} \var{boolean\/}} 
+\index{scheduled function!cancelling scheduling}%
+\index{function!scheduled, cancelling scheduling}%
+\index{scheduling!cancelling a scheduled function}%
+\index{unscheduling!a scheduled function}%
+
+\fnsyntax
+
+\fnpurpose Cancel the upcoming invocation of a currently scheduled
+\glref{scheduled~function}.
+
+\fnpackage \code{:portable-threads}
+
+\fnmodule \code{:portable-threads}
+
+\fnargs
+\begin{args}{name-or-scheduled-function}
+\arg[name-or-scheduled-function] An object (typically a string or a
+  symbol) naming a currently scheduled \glref{scheduled~function} or a
+  \code{scheduled-function} object
+\arg[verbose] A \glref{generalized~boolean} 
+  (default is \textbf{\entlink{*schedule-function-verbose*}})
+\end{args}
+
+\fnreturns The \glref{scheduled~function} if it was unscheduled; \nil{} if the 
+\glref{scheduled~function} was not currently scheduled or was not found.
+
+\fnerrors
+\nothreads{}
+
+\fndescription If the \var{scheduled-function} object is scheduled, it is
+removed from the list of currently scheduled \glref{scheduled~functions}.
+
+\begin{alsos}{restart-scheduled-function-scheduler}
+\also[*schedule-function-verbose*]
+\also[all-scheduled-functions]
+\also[make-scheduled-function]
+\also[schedule-function]
+\also[schedule-function-relative]
+\end{alsos}
+
+\fnexamples
+Unschedule the \code{quitting-time} \glref{scheduled~function}:
+\begin{example}
+> (unschedule-function 'quitting-time)
+#<scheduled-function quitting-time [unscheduled]>
+\end{example}
+
+\bfindexit{all-scheduled-functions}%
+Unschedule all currently scheduled \glref{scheduled~functions}:
+\begin{example}
+> (\entlink{all-scheduled-functions})
+(#<scheduled-function nil [Jan 1, 2010 00:00:00]>)
+> (mapc #'unschedule-function (\entlink{all-scheduled-functions}))
+(#<scheduled-function nil [unscheduled]>)
+> (\entlink{all-scheduled-functions})
+nil
+\end{example}
+
+Unschedule a non-existent \glref{scheduled~function}:
+\begin{example}
+>(unschedule-function 'non-existent)
+Warning: Scheduled-function non-existent was not scheduled; no action taken.
+nil
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Macro}{with-lock-held}{\code{(}\var{lock\/} 
+    \code{\&key}
+    \var{whostate\/}\code{)}
+    \var{form\/}\superstar{} 
+    \returns{} \var{value\/}\superstar}
+\index{lock!acquiring}%
+\index{aquiring!a lock}%
+\index{recursive lock!acquiring}%
+\index{aquiring!a recursive lock}%
+
+\fnsyntax
+
+\fnpurpose After acquiring a \glref{lock} or a \glref{recursive~lock},
+execute forms and then release the lock.
+
+\fnpackage \code{:portable-threads}
+
+\fnmodule \code{:portable-threads}
+
+\fnargs
+\begin{args}{whostate}
+\arg[lock] A \glref{lock}, a \glref{recursive~lock}, or a 
+\glref{condition~variable}
+\arg[whostate] A string (default \code{"With Lock Held"})
+\arg[forms] An implicit \textbf{progn} of \glref{forms} to be evaluated
+\end{args}
+
+\fnreturns The values returned by evaluating the last \var{form}.
+
+\fnerrors A \glref{thread} attempts to re-acquire a (non-recursive)
+\glref{lock} that it holds.
+  
+\fndescription If a \glref{thread} executes a \textbf{with-lock-held}
+that is dynamically inside another \textbf{with-lock-held} involving
+the same \glref{recursive~lock}, the inner \textbf{with-lock-held}
+simply proceeds as if it had acquired the lock.
+
+\begin{alsos}{thread-holds-lock-p}
+\also[make-condition-variable]
+\also[make-lock]
+\also[make-recursive-lock]
+\also[thread-holds-lock-p]
+\also[thread-whostate]
+\end{alsos}
+
+\fnexamples
+Acquire the lock controlling access to a critical section of code:
+\begin{example}
+  (with-lock-held (lock :whostate "Waiting for Critical Lock")
+    (critical-section))
+\end{example}
+
+A silly example showing a recursive re-acquisition of a
+\glref{recursive~lock}:
+\begin{example}
+  (with-lock-held (recursive-lock :whostate "Waiting for Critical Lock")
+    (with-lock-held (recursive-lock :whostate "Again Waiting for Critical Lock")
+      (critical-section)))
+\end{example}
+
+\bfindexit{condition-variable-signal}%
+Acquire the \glref{lock} associated with \code{condition-variable} and then
+signal all blocked \glref{threads} that are waiting on it:
+\begin{example}
+  (with-lock-held (condition-variable)
+    (\entlink{condition-variable-signal} condition-variable))
+\end{example}
+
+\fnnote The \var{whostate\/} value is ignored by
+\xsitelink{SBCL}{http://sbcl.sourceforge.net}.
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Macro}{with-timeout}{\code{(}\var{seconds\/} 
+    \var{timeout-form\/}\superstar{}\code{)}
+    \var{form\/}\superstar{} 
+    \returns{} \var{value\/}\superstar}
+\fnsyntax
+
+\fnpurpose Bound the time allowed to evaluate \var{forms\/} to
+\var{seconds\/}, evaluating \var{timeout-forms} if the time limit is reached.
+
+\fnpackage \code{:portable-threads}
+
+\fnmodule \code{:portable-threads}
+
+\fnargs
+\begin{args}{whostate}
+\arg[seconds] A number
+\arg[timeout-forms] An implicit \textbf{progn} of \glref{forms} to be
+evaluated if the timed \var{forms} do not completed before \var{seconds\/}
+seconds have elapsed
+\arg[forms] An implicit \textbf{progn} of \glref{forms} to be evaluated
+\end{args}
+
+\fnreturns The values returned by evaluating the last \var{form\/} if
+completed in less than \var{seconds} seconds; otherwise the values returned by
+evaluating the last \var{timeout-form}
+
+\fnerrors
+\nothreads{}
+
+\fndescription If the evaluation of \var{forms\/} does not complete within
+\var{seconds} seconds, execution of \var{forms\/} is terminated and the
+\var{timeout-forms\/} are evaluated, returning the result of the last
+\var{timeout-form}. The \var{timeout-forms\/} are not evaluated if the
+\var{forms} complete within \var{seconds} seconds, in which case the result of the
+last \var{form} is returned.
+
+\begin{alsos}{condition-variable-wait-with-timeout}
+\also[condition-variable-wait-with-timeout]
+\end{alsos}
+
+\fnexamples
+Evaluate a simple form, with a one-second time out:
+\begin{example}
+> (with-timeout (1 ':timed-out) 
+     ':did-not-time-out)
+:did-not-time-out
+\end{example}
+
+Again, but this time sleep for two seconds to cause a time out:
+\begin{example}
+> (with-timeout (1 ':timed-out)
+     (sleep 2) 
+     ':did-not-time-out)
+:timed-out              \textrm{\textcolor{green}{; (after 2 seconds)}}
+\end{example}
+
+\end{functiondoc}
+
+%% ========================================================================
