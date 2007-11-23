@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Portable-Threads-System; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/portable-threads.asd *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Nov 16 05:00:34 2007 *-*
+;;;; *-* Last-Edit: Fri Nov 23 09:13:10 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -23,6 +23,7 @@
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
 ;;;  11-15-07 File created.  (Lendval)
+;;;  11-23-07 Replaced non-portable :pathnames with :modules.  (Costanza)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -45,20 +46,32 @@
     :description "Portable Threads"
     :components ((:static-file "COPYING")
                  (:static-file "LICENSE")
-                 (:static-file "portable-threads-test"
-                               :pathname
-                               "source/tools/test/portable-threads-test.lisp")
-                 (:file "portable-threads"
-                        :pathname
-                        "source/tools/portable-threads.lisp")))
+		 (:module
+		  "source"
+		  :components 
+		  ((:module
+		    "tools"
+		    :components
+		    ((:file "portable-threads")
+		     (:module
+		      "test"
+		      :components
+		      ((:static-file "portable-threads-test.lisp")))))))))
 
 ;;; ---------------------------------------------------------------------------
 
 (defsystem :portable-threads-test
     :depends-on (:portable-threads)
-    :components ((:file "portable-threads-test"
-                        :pathname 
-                        "source/tools/test/portable-threads-test.lisp")))
+    :components ((:module
+		  "source"
+		  :components
+		  ((:module
+		    "tools"
+		    :components
+		    ((:module
+		      "test"
+		      :components
+		      ((:file "portable-threads-test")))))))))
 
 ;;; ---------------------------------------------------------------------------
 
