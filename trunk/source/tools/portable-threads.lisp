@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/tools/portable-threads.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Nov 24 04:04:16 2007 *-*
+;;;; *-* Last-Edit: Sat Nov 24 11:08:06 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -1683,7 +1683,9 @@
         (semaphore (condition-variable-semaphore condition-variable)))
     (dotimes (i queue-length)
       (declare (fixnum i))
-      (ccl:signal-semaphore semaphore)))
+      (ccl:signal-semaphore semaphore)
+      ;; Let each thread respond:
+      (ccl:process-allow-schedule)))
   #+(and sbcl sb-thread)
   (sb-thread:condition-broadcast (condition-variable-cv condition-variable)))
 
