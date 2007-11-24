@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/tools/test/portable-threads-test.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Nov 20 09:39:25 2007 *-*
+;;;; *-* Last-Edit: Sat Nov 24 04:48:00 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -469,13 +469,15 @@
   ;;;
   ;;; Condition-variable wait test with signal:
   (forced-format "~&;; Performing condition-variable wait & signal tests...")
-  (let ((cv (make-condition-variable)))
+  (let ((cv (make-condition-variable :class 'state-cv)))
     (spawn-thread
      "Condition Variable Waiter"
      #'(lambda (cv)
          (forced-format "~&;;    Also waiting on CV...~%")
          (with-lock-held (cv)
-           (condition-variable-wait cv))
+           (loop until (eq (state-of cv) ':signaled)
+               do (condition-variable-wait cv))
+           (setf (state-of cv) nil))
          (forced-format "~&;;    Also continuing on CV...~%"))
      cv)
     (spawn-thread 
@@ -484,28 +486,33 @@
          (sleepy-time)
          (forced-format "~&;;    Signaling CV...~%")
          (with-lock-held (cv)
+           (setf (state-of cv) ':signaled)
            (condition-variable-signal cv))
          (sleepy-time)
          (forced-format "~&;;    Re-signaling CV...~%")
          (with-lock-held (cv)
+           (setf (state-of cv) ':signaled)
            (condition-variable-signal cv)))
      cv)
     (forced-format "~&;;    Waiting on CV...~%")
     (with-lock-held (cv)
-      (condition-variable-wait cv))
+      (loop until (eq (state-of cv) ':signaled)
+          do (condition-variable-wait cv))
+      (setf (state-of cv) nil))
     (forced-format "~&;;    Continuing on CV...~%"))
   (forced-format "~&;; Condition-variable wait & signal tests completed~%")
   ;;;
   ;;; Condition-variable wait test with broadcast:
   (forced-format 
    "~&;; Performing condition-variable wait & broadcast tests...")
-  (let ((cv (make-condition-variable)))
+  (let ((cv (make-condition-variable :class 'state-cv)))
     (spawn-thread
      "Broadcast Condition Variable Waiter"
      #'(lambda (cv)
          (forced-format "~&;;    Also waiting on broadcast CV...~%")
          (with-lock-held (cv)
-           (condition-variable-wait cv))
+           (loop until (eq (state-of cv) ':broadcasted)
+               do (condition-variable-wait cv)))
          (forced-format "~&;;    Continuing on broadcast CV...~%"))
      cv)
     (spawn-thread 
@@ -514,11 +521,13 @@
          (sleepy-time)
          (forced-format "~&;;    Signaling CV to all...~%")
          (with-lock-held (cv)
+           (setf (state-of cv) ':broadcasted)
            (condition-variable-broadcast cv)))
      cv)
     (forced-format "~&;;    Waiting on broadcast CV...~%")
     (with-lock-held (cv)
-      (condition-variable-wait cv))
+      (loop until (eq (state-of cv) ':broadcasted)
+          do (condition-variable-wait cv)))
     (forced-format "~&;;    Also continuing on broadcast CV...~%"))
   (forced-format 
    "~&;; Condition-variable wait & broadcast tests completed~%")
@@ -564,41 +573,55 @@
       (condition-variable-wait-with-timeout cv 1))
     (forced-format "~&;;    Continuing without CV...~%"))
   (forced-format
-   "~&;; Condition-variable wait-with-timeout (timeout) tests completed~%")
-  ;;;
-  ;;; Condition-variable timing test:
-  (let ((cv (make-condition-variable
-             :class 'state-cv
-             :state 0))
-        (iterations 5000)
-        (start-real-time (get-internal-real-time)))
-    (forced-format "~&;; Timing ~s condition-variable wait & signals..."
-                   (* 2 iterations))
-    (spawn-thread 
-     "Condition Variable Incrementer"
-     #'(lambda (cv iterations)
-         (dotimes (i iterations)
-           (with-lock-held (cv)
-             (loop while (plusp (state-of cv)) 
-                 do (condition-variable-wait cv))
-             (incf (state-of cv))
-             (condition-variable-signal cv))             
-           (thread-yield)))
-     cv 
-     iterations)
-    (time-it
-     (dotimes (i iterations)
-       (with-lock-held (cv)
-         (loop until (plusp (state-of cv)) 
-             do (condition-variable-wait cv))
-         (decf (state-of cv))
-         (condition-variable-signal cv))
-       (thread-yield)))
-    (forced-format
-     "~&;; Condition-variable wait & signal timing test completed~
-      ~%;;    (~,2f seconds real time).~%"
-     (/ (float (- (get-internal-real-time) start-real-time))
-        (float internal-time-units-per-second)))))
+   "~&;; Condition-variable wait-with-timeout (timeout) tests completed~%"))
+
+;;; ---------------------------------------------------------------------------
+
+#-threads-not-available
+(defun condition-variable-timing-tests ()
+  (forced-format "~&;; Performing condition-variable timing tests...")
+  (flet ((test (signal-fn signal-fn-label)
+           (let ((cv (make-condition-variable
+                      :class 'state-cv
+                      :state 0))
+                 (iterations 5000)
+                 (start-real-time (get-internal-real-time)))
+             (forced-format
+              "~&;;   Timing ~s condition-variable wait & ~as..."
+              (* 2 iterations)
+              signal-fn-label)
+             (spawn-thread 
+              "Condition Variable Incrementer"
+              #'(lambda (cv iterations signal-fn)
+                  (dotimes (i iterations)
+                    (with-lock-held (cv)
+                      (loop while (plusp (state-of cv)) 
+                          do (condition-variable-wait cv))
+                      (incf (state-of cv))
+                      (funcall signal-fn cv))
+                    (thread-yield)))
+              cv 
+              iterations
+              signal-fn)
+             (time-it
+              (dotimes (i iterations)
+                (with-lock-held (cv)
+                  (loop until (plusp (state-of cv)) 
+                      do (condition-variable-wait cv))
+                  (decf (state-of cv))
+                  (funcall signal-fn cv))
+                (thread-yield)))
+             (forced-format
+              "~&;;   Condition-variable wait & ~a timing test completed~
+               ~%;;      (~,2f seconds real time).~%"
+              signal-fn-label
+              (/ (float (- (get-internal-real-time) start-real-time))
+                 (float internal-time-units-per-second))))))
+    ;; Wait & signal timing:
+    (test #'condition-variable-signal "signal")
+    ;; Wait & broadcast timing:
+    (test #'condition-variable-broadcast "broadcast"))
+  (forced-format "~&;; Condition-variable timing tests completed~%"))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -802,6 +825,7 @@
       (nonrecursive-lock-contention-tests)
       (recursive-lock-contention-tests)
       (condition-variables-tests)
+      (condition-variable-timing-tests)
       (thread-timing-tests)
       (hibernate/awaken-thread-tests)
       (symbol-value-in-thread-tests)

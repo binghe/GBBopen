@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/tools/portable-threads.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Nov 20 09:47:15 2007 *-*
+;;;; *-* Last-Edit: Sat Nov 24 04:04:16 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -95,17 +95,10 @@
 ;;; ---------------------------------------------------------------------------
 ;;;  Warn if threads support is missing in ECL (currently disabled!)
 
-#+(and ecl time-deadlock-fixed (not threads)) 
+#+(and ecl (not threads)) 
 (warn "Thread support on ~a is not present.~@
        (Use configure option --enable-threads and remake to provide threads ~
         support.)"
-      (lisp-implementation-version))
-
-;;;  Instead, warn that threads have issues in the current ECL
-
-#+(and ecl threads)
-(warn "Thread support on ~a is not recommended at the present time.~@
-       (For example, the time macro will deadlock in the current release.)"
       (lisp-implementation-version))
 
 ;;; ---------------------------------------------------------------------------
@@ -303,7 +296,7 @@
     `(catch 'with-timeout
        (let ((,timer-process-sym
               (mp:process-run-function 
-                  "With-timeout timer"
+                  "with-timeout timer"
                 #'(lambda (process seconds)
                     (sleep seconds)
                     (mp:interrupt-process
@@ -316,8 +309,9 @@
                 ,seconds)))
          (sleep 0)
          (unwind-protect (progn ,@timed-body)
-           (mp:process-kill ,timer-process-sym)
-           (sleep 0)))))
+           (when (mp:process-active-p ,timer-process-sym)
+             (mp:process-kill ,timer-process-sym)
+             (sleep 0))))))
   #+lispworks
   (let ((timer-sym (gensym)))
     ;; Note that Lispworks runs the timer function in the process that is
@@ -338,11 +332,12 @@
   #+(or digitool-mcl
         openmcl)
   (let ((timer-process-sym (gensym)))
-    ;; No timers in OpenMCL, so we use sleep in a separate "timer" process:
+    ;; No timers in Digitool MCL or OpenMCL, so we use sleep in a separate
+    ;; "timer" process:
     `(catch 'with-timeout
        (let ((,timer-process-sym
               (ccl:process-run-function 
-                  "With-timeout timer"
+                  "with-timeout timer"
                 #'(lambda (process seconds)
                     (sleep seconds)
                     (ccl:process-interrupt
@@ -374,6 +369,55 @@
     '(threads-not-available 'with-timeout)))    
 
 ;;; ===========================================================================
+;;;   Thread-yield (runs *non-threaded-polling-function-hook* functions on
+;;;                non-threaded CLs)
+
+(defun thread-yield ()
+  #+allegro
+  (mp:process-allow-schedule)
+  #+(and cmu mp)
+  (mp:process-yield)
+  #+digitool-mcl
+  (ccl:process-allow-schedule)
+  #+(and ecl threads)
+  ;; Yield is not available, so we sleep 0:
+  (sleep 0)
+  #+lispworks
+  (mp:process-allow-scheduling)
+  #+openmcl
+  (ccl:process-allow-schedule)
+  #+(and sbcl sb-thread)
+  ;; Yield is not available, so we sleep 0.05:  
+  (sleep 0.05)
+  #+scl
+  (mp:process-yield)
+  #+threads-not-available
+  (mapc #'funcall *non-threaded-polling-function-hook*))
+
+#-full-safety
+(define-compiler-macro thread-yield ()
+  #+allegro  
+  '(mp:process-allow-schedule)
+  #+(and cmu mp)
+  '(mp:process-yield)
+  #+digitool-mcl
+  '(ccl:process-allow-schedule)
+  #+(and ecl threads)
+  ;; Yield is not available, so we sleep 0:
+  '(sleep 0)
+  #+lispworks
+  '(mp:process-allow-scheduling)
+  #+openmcl
+  '(ccl:process-allow-schedule)
+  #+(and sbcl sb-thread)
+  ;; Yield is not available, so we sleep 0.05:  
+  (sleep 0.05)
+  #+scl
+  '(mp:process-yield)
+  #+threads-not-available
+  '(mapc #'funcall *non-threaded-polling-function-hook*))
+
+;;; ===========================================================================
 ;;;   Locks
 
 #+allegro
@@ -381,36 +425,92 @@
             (:include mp:process-lock)
             (:copier nil)))
 
+;; Digitool's MCL only has a recursive lock object:
+#+digitool-mcl
+(progn
+  (defstruct (lock
+              (:copier nil)
+              (:constructor %make-lock))                
+    (ccl-lock))
+
+  (defstruct (recursive-lock 
+              (:include lock)
+              (:copier nil)
+              (:constructor %make-recursive-lock)))
+
+  (defmethod print-object ((lock lock) stream)
+    (if *print-readably*
+        (call-next-method)
+        (print-unreadable-object (lock stream :type t)
+          (format stream "~s" 
+                  (let ((ccl-lock (lock-ccl-lock lock)))
+                    (if ccl-lock
+                        (ccl:lock-name ccl-lock)
+                        "[No ccl-lock]")))))))
+
 ;; ECL's mp:lock is a built-in class, and although ECL allows us to subclass it,
-;; ECL's mp:with-lock performs an exact (non-subclass) type match.  Also ECL
+;; ECL's mp:with-lock performs an exact (non-subclass) type match.  Also, ECL
 ;; doesn't support lock owner inquiry, so we must build our own:
 #+(and ecl threads) 
 (progn
-  (defclass nonrecursive-lock ()
-    ((%lock :initform (mp:make-lock)
-            :accessor %lock-of)
-     (name :initarg :name :initform nil)
-     (owner :initform nil :accessor lock-owner)))
-  (defclass recursive-lock (nonrecursive-lock) 
-    ()))
+  (defstruct (lock
+              (:copier nil)
+              (:constructor %make-lock))
+    (ecl-lock)
+    ;; Even though ECL's mp:lock has a name slot, it doesn't yet provide
+    ;; accessors to it, so we duplicate it:
+    (name nil)
+    (%owner nil))
+
+  (defstruct (recursive-lock 
+              (:include lock)
+              (:copier nil)
+              (:constructor %make-recursive-lock)))
+
+  (defmethod print-object ((lock lock) stream)
+    (if *print-readably*
+        (call-next-method)
+        (print-unreadable-object (lock stream :type t)
+          (format stream "~s" (lock-name lock)))))
+  
+  (defun get-lock (lock)
+    (mp::get-lock (lock-ecl-lock lock))
+    (setf (lock-%owner lock) mp:*current-process*))
+
+  (defun release-lock (lock)
+    (setf (lock-%owner lock) nil)
+    (mp::giveup-lock (lock-ecl-lock lock)))
+  
+  (defun lock-owner (lock)
+    (lock-%owner lock)))
 
 #+lispworks
 (defstruct (recursive-lock
             (:include mp:lock)
             (:copier nil)))
 
-;; Digitool's MCL and OpenMCL only have a recursive lock object:
-#+(or digitool-mcl
-      openmcl)
+;; OpenMCL only has a recursive lock object:
+#+openmcl
 (progn
   (defstruct (lock
               (:copier nil)
               (:constructor %make-lock))                
     (ccl-lock))
+
   (defstruct (recursive-lock 
               (:include lock)
               (:copier nil)
-              (:constructor %make-recursive-lock))))
+              (:constructor %make-recursive-lock)))
+
+  (defmethod print-object ((lock lock) stream)
+    (if *print-readably*
+        (call-next-method)
+        (print-unreadable-object (lock stream :type t)
+          (format stream "~s" 
+                  (let ((ccl-lock (lock-ccl-lock lock)))
+                    (if ccl-lock
+                        (ccl:lock-name ccl-lock)
+                        "[No ccl-lock]")))))))
 
 #+(and sbcl sb-thread)
 (defstruct (recursive-lock 
@@ -422,6 +522,7 @@
   (defstruct (lock (:copier nil))
     (count 0 :type fixnum)
     (name "Lock" :type string))
+
   (defstruct (recursive-lock
               (:include lock)
               (:copier nil))))
@@ -449,6 +550,7 @@
 
 #+(or allegro
       digitool-mcl
+      (and ecl threads)
       lispworks
       openmcl)
 (defun recursive-lock-attempt-error (lock)
@@ -472,7 +574,9 @@
   #+(and cmu mp)
   (mp:make-lock name :kind ':error-check)
   #+(and ecl threads)
-  (make-instance 'nonrecursive-lock :name name)
+  (%make-lock :ecl-lock (mp:make-lock :name name)
+              ;; We duplicate ECL's unaccessable name slot:
+              :name name)
   #+(or digitool-mcl
         openmcl)
   (%make-lock :ccl-lock (ccl:make-lock name))
@@ -492,7 +596,9 @@
   #+(and cmu mp)
   (mp:make-lock name)
   #+(and ecl threads)
-  (make-instance 'recursive-lock :name name)
+  (%make-recursive-lock :ecl-lock (mp:make-lock :name name)
+                        ;; We duplicate ECL's unaccessable name slot:
+                        :name name)
   #+(or digitool-mcl
         openmcl)
   (%make-recursive-lock :ccl-lock (ccl:make-lock name))
@@ -536,7 +642,23 @@
                                               ,whostate)
              ,@body))
          #+(and ecl threads)
-         (mp:with-lock ((%lock-of ,lock-sym)) ,@body)
+         (let ((.ecl-lock. (lock-ecl-lock ,lock-sym)))
+           (when (and (not (recursive-lock-p ,lock-sym))
+                      (eq mp:*current-process* (lock-%owner ,lock-sym)))
+             (recursive-lock-attempt-error ,lock-sym))
+           ;; We roll our own version of ECL's mp:with-lock to handle owner
+           ;; properly:
+           (unwind-protect
+               (progn
+                 ;; expanded (get-lock ,lock-sym):
+                 (progn 
+                   (mp::get-lock .ecl-lock.)
+                   (setf (lock-%owner ,lock-sym) mp:*current-process*))
+                 ,@body)
+             ;; expanded (release-lock ,lock-sym):
+             (progn 
+               (mp::giveup-lock .ecl-lock.)
+               (setf (lock-%owner ,lock-sym) nil))))
          #+lispworks
          (progn
            (when (and (not (recursive-lock-p ,lock-sym))
@@ -591,7 +713,7 @@
     #+digitool-mcl
     (eq (ccl::lock.value (lock-ccl-lock lock)) ccl:*current-process*)
     #+(and ecl threads)
-    nil                                 ; need to find lock owner
+    (eq (lock-owner lock) mp:*current-process*)
     #+lispworks
     (eq (mp:lock-owner lock) mp:*current-process*)
     #+openmcl
@@ -618,7 +740,7 @@
          (eq (ccl::lock.value (lock-ccl-lock ,lock-sym))
              ccl:*current-process*)
          #+(and ecl threads)
-         nil                            ; need to find lock owner
+         (eq (lock-owner ,lock-sym) mp:*current-process*)
          #+lispworks
          (eq (mp:lock-owner ,lock-sym)
              mp:*current-process*)
@@ -639,11 +761,10 @@
 ;;; We use native without-scheduling on Allegro, CMUCL/mp, and SCL, and we use
 ;;; native without-interrupts on Digitool MCL and Lispworks.  
 ;;;
+;;; ECL's mp:without-interrupts isn't fully operational, so we use a lock.
+;;;
 ;;; OpenMCL's without-interrupts doesn't control thread scheduling, so we have
 ;;; to use a lock.
-;;;
-;;; The documentation of ECL/threads's without-interrupts is unspecific about
-;;; it disabling all thread scheduling, so we don't use it.
 
 #-(or allegro
       (and cmu mp)
@@ -1107,55 +1228,6 @@
   #+threads-not-available
   '(threads-not-available 'kill-thread))
 
-;;; ===========================================================================
-;;;   Thread-yield (runs *non-threaded-polling-function-hook* functions on
-;;;                non-threaded CLs)
-
-(defun thread-yield ()
-  #+allegro
-  (mp:process-allow-schedule)
-  #+(and cmu mp)
-  (mp:process-yield)
-  #+digitool-mcl
-  (ccl:process-allow-schedule)
-  #+(and ecl threads)
-  ;; Yield is not available, so we sleep 0:
-  (sleep 0)
-  #+lispworks
-  (mp:process-allow-scheduling)
-  #+openmcl
-  (ccl:process-allow-schedule)
-  #+(and sbcl sb-thread)
-  ;; Yield is not available, so we sleep 0.05:  
-  (sleep 0.05)
-  #+scl
-  (mp:process-yield)
-  #+threads-not-available
-  (mapc #'funcall *non-threaded-polling-function-hook*))
-
-#-full-safety
-(define-compiler-macro thread-yield ()
-  #+allegro  
-  '(mp:process-allow-schedule)
-  #+(and cmu mp)
-  '(mp:process-yield)
-  #+digitool-mcl
-  '(ccl:process-allow-schedule)
-  #+(and ecl threads)
-  ;; Yield is not available, so we sleep 0:
-  '(sleep 0)
-  #+lispworks
-  '(mp:process-allow-scheduling)
-  #+openmcl
-  '(ccl:process-allow-schedule)
-  #+(and sbcl sb-thread)
-  ;; Yield is not available, so we sleep 0.05:  
-  (sleep 0.05)
-  #+scl
-  '(mp:process-yield)
-  #+threads-not-available
-  '(mapc #'funcall *non-threaded-polling-function-hook*))
-
 ;;; ---------------------------------------------------------------------------
 ;;;  Run-in-thread
 
@@ -1447,6 +1519,12 @@
       (ccl:process-unlock ccl-lock)
       (throwable-sleep-forever)
       (ccl:process-lock ccl-lock ccl:*current-process*))
+    #+(and ecl threads)
+    (progn
+      (push mp:*current-process* (condition-variable-queue condition-variable))
+      (release-lock lock)
+      (throwable-sleep-forever)
+      (get-lock lock))
     #+lispworks
     (progn
       (push mp:*current-process* (condition-variable-queue condition-variable))
@@ -1486,10 +1564,10 @@
       (mp::process-unlock lock)
       (with-timeout 
           (seconds 
-           (system:without-scheduling
-             (setf (condition-variable-queue condition-variable)
-                   (remove system:*current-process*
-                           (condition-variable-queue condition-variable)))))
+           (as-atomic-operation
+            (setf (condition-variable-queue condition-variable)
+                  (remove system:*current-process*
+                          (condition-variable-queue condition-variable)))))
         (throwable-sleep-forever))
       (mp::process-lock lock))
     #+(and cmu mp)
@@ -1499,10 +1577,10 @@
       (setf (mp::lock-process lock) nil)
       (with-timeout 
           (seconds 
-           (mp:without-scheduling
-             (setf (condition-variable-queue condition-variable)
-                   (remove mp:*current-process*
-                           (condition-variable-queue condition-variable)))))
+           (as-atomic-operation
+            (setf (condition-variable-queue condition-variable)
+                  (remove mp:*current-process*
+                          (condition-variable-queue condition-variable)))))
         (throwable-sleep-forever))
       (mp::lock-wait lock nil))
     #+digitool-mcl
@@ -1511,22 +1589,34 @@
       (ccl:process-unlock ccl-lock)
       (with-timeout 
           (seconds 
-           (ccl:without-interrupts
-             (setf (condition-variable-queue condition-variable)
-                   (remove ccl:*current-process*
-                           (condition-variable-queue condition-variable)))))
+           (as-atomic-operation
+            (setf (condition-variable-queue condition-variable)
+                  (remove ccl:*current-process*
+                          (condition-variable-queue condition-variable)))))
         (throwable-sleep-forever))
       (ccl:process-lock ccl-lock ccl:*current-process*))
+    #+(and ecl threads)
+    (progn
+      (push mp:*current-process* (condition-variable-queue condition-variable))
+      (release-lock lock)
+      (with-timeout 
+          (seconds 
+           (as-atomic-operation
+            (setf (condition-variable-queue condition-variable)
+                  (remove mp:*current-process*
+                          (condition-variable-queue condition-variable)))))
+        (throwable-sleep-forever))
+      (get-lock lock))
     #+lispworks
     (progn
       (push mp:*current-process* (condition-variable-queue condition-variable))
       (mp:process-unlock lock)
       (with-timeout 
           (seconds 
-           (mp:without-preemption
-             (setf (condition-variable-queue condition-variable)
-                   (remove mp:*current-process*
-                           (condition-variable-queue condition-variable)))))
+           (as-atomic-operation
+            (setf (condition-variable-queue condition-variable)
+                  (remove mp:*current-process*
+                          (condition-variable-queue condition-variable)))))
         (throwable-sleep-forever))
       (mp:process-lock lock))
     #+openmcl
@@ -1562,9 +1652,10 @@
   #+(or allegro
         (and cmu mp)
         digitool-mcl
+        (and ecl threads)
         lispworks)
   (let ((thread (pop (condition-variable-queue condition-variable))))
-    (when thread 
+    (when (and thread (thread-alive-p thread))
       (awaken-throwable-sleeper thread)))
   #+openmcl
   (ccl:signal-semaphore (condition-variable-semaphore condition-variable))
@@ -1580,15 +1671,18 @@
   #+(or allegro
         (and cmu mp)
         digitool-mcl
+        (and ecl threads)
         lispworks)
   (let ((queue (condition-variable-queue condition-variable)))
     (setf (condition-variable-queue condition-variable) nil)
     (dolist (thread queue)
-      (awaken-throwable-sleeper thread)))
+      (when (thread-alive-p thread)
+        (awaken-throwable-sleeper thread))))
   #+openmcl
   (let ((queue-length (length (condition-variable-queue condition-variable)))
         (semaphore (condition-variable-semaphore condition-variable)))
     (dotimes (i queue-length)
+      (declare (fixnum i))
       (ccl:signal-semaphore semaphore)))
   #+(and sbcl sb-thread)
   (sb-thread:condition-broadcast (condition-variable-cv condition-variable)))
