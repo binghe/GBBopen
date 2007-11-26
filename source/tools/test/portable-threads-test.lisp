@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/tools/test/portable-threads-test.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Nov 24 04:48:00 2007 *-*
+;;;; *-* Last-Edit: Mon Nov 26 10:30:58 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -188,7 +188,7 @@
          (with-lock-held (nonrecursive-lock :whostate "Level 3")
            nil)))
      #+(and sbcl sb-thread)
-     #.(if (string< "1.0.11" (lisp-implementation-version))
+     #.(if (string= "1.0.11" (lisp-implementation-version))
            'warning
            'error)
      #-(and sbcl sb-thread)
