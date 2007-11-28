@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/tools/test/portable-threads-test.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Nov 26 10:30:58 2007 *-*
+;;;; *-* Last-Edit: Wed Nov 28 12:08:14 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -274,11 +274,13 @@
          #+allegro 1500                 ; Allegro is limited to < 2K or so
          ;; Spawning in MCL is slow (10K works, but we don't want to wait)
          #+digitool-mcl 500
+         #+ecl 3000                     ; ECL is limited to < 3K or so
          #+lispworks 250                ; Lispworks is limited to < 300 or so
          ;; Spawning in OpenMCL is slow (10K works, but we don't want to wait)
          #+openmcl 1000
          #-(or allegro 
                digitool-mcl
+               ecl
                lispworks 
                openmcl)
          10000)
@@ -541,7 +543,10 @@
      #'(lambda (cv)
          (forced-format "~&;;    Also waiting-with-timeout on CV...~%")
          (with-lock-held (cv)
-           (condition-variable-wait-with-timeout cv *nearly-forever-seconds*))
+           (unless (condition-variable-wait-with-timeout
+                    cv *nearly-forever-seconds*)
+             (log-error "~s returned nil on non-timeout"
+                        'condition-variable-wait-with-timeout)))
          (forced-format
           "~&;;    Also continuing on waiting-with-timeout CV...~%"))
      cv)
@@ -559,7 +564,7 @@
      cv)
     (forced-format "~&;;    Waiting-with-timeout on CV...~%")
     (with-lock-held (cv)
-           (condition-variable-wait-with-timeout cv *nearly-forever-seconds*))
+      (condition-variable-wait-with-timeout cv *nearly-forever-seconds*))
     (forced-format "~&;;    Continuing on waiting-with-timout CV...~%"))
   (forced-format 
    "~&;; Condition-variable wait-with-timeout (non-timeout) tests completed~%")
@@ -570,7 +575,9 @@
   (let ((cv (make-condition-variable)))
     (forced-format "~&;;    Waiting-with-timeout (forever) on CV...~%")
     (with-lock-held (cv)
-      (condition-variable-wait-with-timeout cv 1))
+      (when (condition-variable-wait-with-timeout cv 1)
+        (log-error "~s did not return nil on timeout"
+                   'condition-variable-wait-with-timeout)))      
     (forced-format "~&;;    Continuing without CV...~%"))
   (forced-format
    "~&;; Condition-variable wait-with-timeout (timeout) tests completed~%"))

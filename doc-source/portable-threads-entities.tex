@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /home/gbbopen/current/doc-source/portable-threads-entities.tex *-*
-%% *-* Last-Edit: Wed Nov 28 09:39:06 2007; Edited-By: cork *-*
+%% *-* Last-Edit: Wed Nov 28 12:47:30 2007; Edited-By: cork *-*
 %% *-* Machine: ruby.corkills.org *-*
 
 \index{module!:portable-threads@\code{:portable-threads}}%
@@ -880,6 +880,9 @@ signaled by another \glref{thread}:
 \arg[condition-variable] A \glref{condition~variable}
 \arg[seconds] A number
 \end{args}
+
+\fnreturns True if \var{condition-variable} is unblocked before
+\var{seconds} seconds have elapsed; \nil{} if the timeout has occurred.
 
 \fnerrors
 \nocvlock{}
