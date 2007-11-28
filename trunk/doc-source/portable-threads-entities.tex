@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /home/gbbopen/current/doc-source/portable-threads-entities.tex *-*
-%% *-* Last-Edit: Thu Nov 15 22:08:17 2007; Edited-By: cork *-*
+%% *-* Last-Edit: Wed Nov 28 09:39:06 2007; Edited-By: cork *-*
 %% *-* Machine: ruby.corkills.org *-*
 
 \index{module!:portable-threads@\code{:portable-threads}}%
@@ -1111,7 +1111,7 @@ half-second-timer
 
 \begin{functiondoc}{Function}{make-condition-variable}%
   {\code{\&rest} \var{initargs\/} \\ 
-   \code{\&key} \var{class\/} \\
+   \code{\&key} \var{class lock\/} \\
    \returns{} \var{condition-variable\/}}
 \index{creating!a condition variable}%
 \index{making!a condition variable}%
@@ -1130,6 +1130,8 @@ half-second-timer
 \arg[initargs] An \glref{initialization~argument~list}
 \arg[class] The name of the \glref{class} for the created
 \glref{condition~variable} instance (default is \code{condition-variable})
+\arg[lock] A \glref{lock}, a \glref{recursive~lock}, or a 
+\glref{condition~variable} (default is a non-recursive lock)
 \end{args}
 
 \fnreturns
