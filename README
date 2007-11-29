@@ -14,7 +14,7 @@ Requirements:
        Digitool MCL (Version 5.1)
        ECL          (Version 0.9i)
        Lispworks    (Version 5.0.2)
-       OpenMCL      (Version 1.0 & Version 1.1 r7676)
+       OpenMCL      (Version 1.0 & Version 1.1 r7780)
        SBCL         (Version 1.0.12)
        Scieneer CL  (Version 1.3.2)
 
