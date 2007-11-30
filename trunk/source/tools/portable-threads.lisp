@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/tools/portable-threads.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Nov 28 12:39:19 2007 *-*
+;;;; *-* Last-Edit: Fri Nov 30 06:55:00 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -73,7 +73,7 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (require 'threads))
 
-;;; ---------------------------------------------------------------------------
+;;; ===========================================================================
 ;;; Add a single feature to identify sufficiently new Digitool MCL
 ;;; implementations (at present, both Digitool MCL and OpenMCL include
 ;;; the feature mcl):
@@ -81,6 +81,13 @@
 #+(and digitool ccl-5.1)
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (pushnew :digitool-mcl *features*))
+
+;;; ---------------------------------------------------------------------------
+;;; Add a single feature to identify pre-Clozure CL OpenMCL:
+
+#+(and openmcl (not clozure))
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (pushnew :openmcl-legacy *features*))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Warn if sb-thread support is missing on SBCL/linux
@@ -106,7 +113,7 @@
 (unless (fboundp 'mp::make-condition-variable)
   (warn "The latest CVS checkout of ECL is required."))
 
-;;; ---------------------------------------------------------------------------
+;;; ===========================================================================
 ;;; Import the CL-implementation's threading symbols, as needed:
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
@@ -122,6 +129,8 @@
      mp:atomic-push
      mp::recursive-lock
      mp:with-timeout)
+   #+clozure
+   '()
    #+(and cmu (not mp))
    '()
    #+cormanlisp
@@ -136,7 +145,7 @@
    '()
    #+lispworks
    '(mp:make-lock)
-   #+openmcl
+   #+openmcl-legacy
    '()
    #+(and sbcl sb-thread)
    '(sb-thread:thread-alive-p
@@ -220,7 +229,8 @@
         '(mp::startup-idle-and-top-level-loops)
         'with-timeout))
 
-;;; ---------------------------------------------------------------------------
+;;; ===========================================================================
+;;;  Features & warnings
 
 #+(or clisp
       cormanlisp
@@ -332,11 +342,12 @@
          (mp:schedule-timer-relative ,timer-sym ,seconds)
          (unwind-protect (progn ,@timed-body)
            (mp:unschedule-timer ,timer-sym)))))
-  #+(or digitool-mcl
-        openmcl)
+  #+(or clozure
+        digitool-mcl
+        openmcl-legacy)
   (let ((timer-process-sym (gensym)))
-    ;; No timers in Digitool MCL or OpenMCL, so we use sleep in a separate
-    ;; "timer" process:
+    ;; No timers in Clozure, Digitool MCL, or OpenMCL, so we use sleep in a
+    ;; separate "timer" process:
     `(catch 'with-timeout
        (let ((,timer-process-sym
               (ccl:process-run-function 
@@ -378,6 +389,8 @@
 (defun thread-yield ()
   #+allegro
   (mp:process-allow-schedule)
+  #+clozure
+  (ccl:process-allow-schedule)
   #+(and cmu mp)
   (mp:process-yield)
   #+digitool-mcl
@@ -387,7 +400,7 @@
   (sleep 0)
   #+lispworks
   (mp:process-allow-scheduling)
-  #+openmcl
+  #+openmcl-legacy
   (ccl:process-allow-schedule)
   #+(and sbcl sb-thread)
   ;; Yield is not available, so we sleep 0.05:  
@@ -401,6 +414,8 @@
 (define-compiler-macro thread-yield ()
   #+allegro  
   '(mp:process-allow-schedule)
+  #+clozure
+  '(ccl:process-allow-schedule)
   #+(and cmu mp)
   '(mp:process-yield)
   #+digitool-mcl
@@ -410,7 +425,7 @@
   '(sleep 0)
   #+lispworks
   '(mp:process-allow-scheduling)
-  #+openmcl
+  #+openmcl-legacy
   '(ccl:process-allow-schedule)
   #+(and sbcl sb-thread)
   ;; Yield is not available, so we sleep 0.05:  
@@ -427,6 +442,29 @@
 (defstruct (recursive-lock
             (:include mp:process-lock)
             (:copier nil)))
+
+;; Clozure Common Lisp only has a recursive lock object:
+#+clozure
+(progn
+  (defstruct (lock
+              (:copier nil)
+              (:constructor %make-lock))                
+    (ccl-lock))
+
+  (defstruct (recursive-lock 
+              (:include lock)
+              (:copier nil)
+              (:constructor %make-recursive-lock)))
+
+  (defmethod print-object ((lock lock) stream)
+    (if *print-readably*
+        (call-next-method)
+        (print-unreadable-object (lock stream :type t)
+          (format stream "~s" 
+                  (let ((ccl-lock (lock-ccl-lock lock)))
+                    (if ccl-lock
+                        (ccl:lock-name ccl-lock)
+                        "[No ccl-lock]")))))))
 
 ;; Digitool's MCL only has a recursive lock object:
 #+digitool-mcl
@@ -457,7 +495,7 @@
             (:copier nil)))
 
 ;; OpenMCL only has a recursive lock object:
-#+openmcl
+#+openmcl-legacy
 (progn
   (defstruct (lock
               (:copier nil)
@@ -516,9 +554,10 @@
 ;;; ---------------------------------------------------------------------------
 
 #+(or allegro
+      clozure
       digitool-mcl
       lispworks
-      openmcl)
+      openmcl-legacy)
 (defun recursive-lock-attempt-error (lock)
   (error "A recursive attempt was made to hold lock ~s"
          lock))
@@ -541,8 +580,9 @@
   (mp:make-lock name :kind ':error-check)
   #+(and ecl threads)
   (mp:make-lock :name name :recursive nil)
-  #+(or digitool-mcl
-        openmcl)
+  #+(or clozure
+        digitool-mcl
+        openmcl-legacy)
   (%make-lock :ccl-lock (ccl:make-lock name))
   #+(and sbcl sb-thread)
   (sb-thread:make-mutex :name name)
@@ -561,8 +601,9 @@
   (mp:make-lock name)
   #+(and ecl threads)
   (mp:make-lock :name name :recursive t)
-  #+(or digitool-mcl
-        openmcl)
+  #+(or clozure
+        digitool-mcl
+        openmcl-legacy)
   (%make-recursive-lock :ccl-lock (ccl:make-lock name))
   #+scl
   (mp:make-lock name :type :recursive))
@@ -591,6 +632,15 @@
                (,lock-sym :norecursive nil
                           :whostate ,whostate)
              ,@body))
+         #+clozure
+         (let ((.ccl-lock. (and (lock-p ,lock-sym)
+                                (lock-ccl-lock (the lock ,lock-sym)))))
+           (when (and (not (recursive-lock-p ,lock-sym))
+                      (eq ccl:*current-process*
+                          (ccl::%%lock-owner .ccl-lock.)))
+             (recursive-lock-attempt-error ,lock-sym))
+           (ccl:with-lock-grabbed (.ccl-lock. ,whostate)
+             ,@body))
          #+(and cmu mp)
          (mp:with-lock-held (,lock-sym ,whostate) ,@body) 
          #+digitool-mcl
@@ -614,7 +664,7 @@
              (recursive-lock-attempt-error ,lock-sym))
            (mp:with-lock (,lock-sym ,whostate) 
              ,@body))
-         #+openmcl
+         #+openmcl-legacy
          (let ((.ccl-lock. (and (lock-p ,lock-sym)
                                 (lock-ccl-lock (the lock ,lock-sym)))))
            (when (and (not (recursive-lock-p ,lock-sym))
@@ -655,6 +705,8 @@
   (let ((lock (%%get-lock%% lock)))
     #+allegro
     (eq (mp:process-lock-locker lock) system:*current-process*)
+    #+clozure
+    (eq (ccl::%%lock-owner (lock-ccl-lock lock)) ccl:*current-process*)
     #+(and cmu mp)
     (eq (mp::lock-process lock) mp:*current-process*)
     #+digitool-mcl
@@ -663,7 +715,7 @@
     (eq (mp:lock-holder lock) mp:*current-process*)
     #+lispworks
     (eq (mp:lock-owner lock) mp:*current-process*)
-    #+openmcl
+    #+openmcl-legacy
     (eq (ccl::%%lock-owner (lock-ccl-lock lock)) ccl:*current-process*)
     #+(and sbcl sb-thread)
     (eq (sb-thread:mutex-value lock) sb-thread:*current-thread*)
@@ -679,6 +731,9 @@
       `(let ((,lock-sym (%%get-lock%% ,lock)))
          #+allegro
          (eq (mp:process-lock-locker ,lock-sym) system:*current-process*)
+         #+clozure
+         (eq (ccl::%%lock-owner (lock-ccl-lock ,lock-sym))
+             ccl:*current-process*)
          #+(and cmu mp)
          (eq (mp::lock-process ,lock-sym) mp:*current-process*)
          #+digitool-mcl 
@@ -688,7 +743,7 @@
          (eq (mp:lock-holder ,lock-sym) mp:*current-process*)
          #+lispworks
          (eq (mp:lock-owner ,lock-sym) mp:*current-process*)
-         #+openmcl
+         #+openmcl-legacy
          (eq (ccl::%%lock-owner (lock-ccl-lock ,lock-sym))
              ccl:*current-process*)
          #+(and sbcl sb-thread)
@@ -704,8 +759,8 @@
 ;;; We use native without-scheduling on Allegro, CMUCL/mp, and SCL, and we use
 ;;; native without-interrupts on Digitool MCL, ECL/threads, and Lispworks.  
 ;;;
-;;; OpenMCL's without-interrupts doesn't control thread scheduling, so we have
-;;; to use a lock.
+;;; Clozure & OpenMCL's without-interrupts doesn't control thread scheduling,
+;;; so we have to use a lock.
 
 #-(or allegro
       (and cmu mp)
@@ -811,6 +866,8 @@
 (defun current-thread ()
   #+allegro
   mp:*current-process*
+  #+clozure
+  ccl:*current-process*
   #+(and cmu mp)
   mp:*current-process*
   #+(and ecl threads)
@@ -819,7 +876,7 @@
   ccl:*current-process*
   #+lispworks
   mp:*current-process*
-  #+openmcl
+  #+openmcl-legacy
   ccl:*current-process*
   #+(and sbcl sb-thread)
   sb-thread:*current-thread*
@@ -832,6 +889,8 @@
 (define-compiler-macro current-thread ()
   #+allegro
   'mp:*current-process*
+  #+clozure
+  'ccl:*current-process*
   #+(and cmu mp)
   'mp:*current-process*
   #+digitool-mcl
@@ -840,7 +899,7 @@
   'mp:*current-process*
   #+lispworks
   'mp:*current-process*
-  #+openmcl
+  #+openmcl-legacy
   'ccl:*current-process*
   #+(and sbcl sb-thread)
   'sb-thread:*current-thread*
@@ -855,6 +914,8 @@
 (defun all-threads ()
   #+allegro
   mp:*all-processes*
+  #+clozure
+  (ccl:all-processes)
   #+(and cmu mp)
   (mp:all-processes)
   #+digitool-mcl
@@ -863,7 +924,7 @@
   (mp:all-processes)
   #+lispworks
   (mp:list-all-processes)
-  #+openmcl
+  #+openmcl-legacy
   (ccl:all-processes)
   #+(and sbcl sb-thread)
   sb-thread::*all-threads*
@@ -876,6 +937,8 @@
 (define-compiler-macro all-threads ()
   #+allegro
   'mp:*all-processes*
+  #+clozure
+  '(ccl:all-processes)
   #+(and cmu mp)
   '(mp:all-processes)
   #+digitool-mcl
@@ -884,7 +947,7 @@
   '(mp:all-processes)
   #+lispworks
   '(mp:list-all-processes)
-  #+openmcl
+  #+openmcl-legacy
   '(ccl:all-processes)
   #+(and sbcl sb-thread)
   'sb-thread::*all-threads*
@@ -899,6 +962,8 @@
 (defun threadp (obj)
   #+allegro
   (mp:process-p obj)
+  #+clozure
+  (ccl::processp obj)
   #+(and cmu mp)
   (mp:processp obj)
   #+digitool-mcl
@@ -907,7 +972,7 @@
   (typep obj 'mp:process)
   #+lispworks
   (mp:process-p obj)
-  #+openmcl
+  #+openmcl-legacy
   (ccl::processp obj)
   #+(and sbcl sb-thread)
   (sb-thread::thread-p obj)
@@ -922,6 +987,8 @@
 (define-compiler-macro threadp (obj)
   #+allegro
   `(mp:process-p ,obj)
+  #+clozure
+  `(ccl::processp ,obj)
   #+(and cmu mp)
   `(mp:processp ,obj)
   #+digitool-mcl
@@ -930,7 +997,7 @@
   `(typep ,obj 'mp:process)
   #+lispworks
   `(mp:process-p ,obj)
-  #+openmcl
+  #+openmcl-legacy
   `(ccl::processp ,obj)
   #+(and sbcl sb-thread)
   `(sb-thread::thread-p ,obj)
@@ -948,6 +1015,8 @@
 (defun thread-alive-p (obj)
   #+allegro
   (mp:process-alive-p obj)
+  #+clozure
+  (ccl::process-active-p obj)
   #+(and cmu mp)
   (mp:process-alive-p obj)
   #+digitool-mcl
@@ -956,7 +1025,7 @@
   (mp:process-active-p obj)
   #+lispworks
   (mp:process-alive-p obj)
-  #+openmcl
+  #+openmcl-legacy
   (ccl::process-active-p obj)
   #+scl
   (mp:process-alive-p obj)
@@ -969,6 +1038,8 @@
 (define-compiler-macro thread-alive-p (obj)
   #+allegro
   `(mp:process-alive-p ,obj)
+  #+clozure
+  `(ccl::process-active-p ,obj)
   #+(and cmu mp)
   `(mp:process-alive-p ,obj)
   #+digitool-mcl
@@ -977,7 +1048,7 @@
   `(mp:process-active-p ,obj)
   #+lispworks
   `(mp:process-alive-p ,obj)
-  #+openmcl
+  #+openmcl-legacy
   `(ccl::process-active-p ,obj)
   #+scl
   `(mp:process-alive-p ,obj)
@@ -993,6 +1064,8 @@
 (defun thread-name (thread)
   #+allegro
   (mp:process-name thread)
+  #+clozure
+  (ccl:process-name thread)
   #+(and cmu mp)
   (mp:process-name thread)
   #+digitool-mcl
@@ -1001,7 +1074,7 @@
   (mp:process-name thread)
   #+lispworks
   (mp:process-name thread)
-  #+openmcl
+  #+openmcl-legacy
   (ccl:process-name thread)
   #+scl
   (mp:process-name thread)
@@ -1012,6 +1085,8 @@
 (define-compiler-macro thread-name (thread)
   #+allegro
   `(mp:process-name ,thread)
+  #+clozure
+  `(ccl:process-name ,thread)
   #+(and cmu mp)
   `(mp:process-name ,thread)
   #+digitool-mcl
@@ -1020,7 +1095,7 @@
   `(mp:process-name ,thread)
   #+lispworks
   `(mp:process-name ,thread)
-  #+openmcl
+  #+openmcl-legacy
   `(ccl:process-name ,thread)
   #+scl
   `(mp:process-name ,thread))
@@ -1031,6 +1106,8 @@
 (defun (setf thread-name) (name thread)
   #+allegro
   (setf (mp:process-name thread) name)
+  #+clozure
+  (setf (ccl:process-name thread) name)
   #+(and cmu mp)
   (setf (mp:process-name thread) name)
   #+digitool-mcl
@@ -1039,7 +1116,7 @@
   (setf (mp:process-name thread) name)
   #+lispworks
   (setf (mp:process-name thread) name)
-  #+openmcl
+  #+openmcl-legacy
   (setf (ccl:process-name thread) name)
   #+scl
   (setf (mp:process-name thread) name)
@@ -1054,6 +1131,8 @@
 (defun thread-whostate (thread)
   #+allegro
   (mp:process-whostate thread)
+  #+clozure
+  (ccl:process-whostate thread)     
   #+(and cmu mp)
   (mp:process-whostate thread)
   #+digitool-mcl
@@ -1063,7 +1142,7 @@
   (if (mp:process-active-p thread) "Active" "Inactive")
   #+lispworks
   (mp:process-whostate thread)  
-  #+openmcl
+  #+openmcl-legacy
   (ccl:process-whostate thread)     
   ;; We fake a basic whostate for SBCL/sb-threads:
   #+(and sbcl sb-thread)
@@ -1077,6 +1156,8 @@
 (define-compiler-macro thread-whostate (thread)
   #+allegro
   `(mp:process-whostate ,thread)
+  #+clozure
+  `(ccl:process-whostate ,thread)     
   #+(and cmu mp)
   `(mp:process-whostate ,thread)
   #+digitool-mcl
@@ -1086,7 +1167,7 @@
   `(if (mp:process-active-p ,thread) "Active" "Inactive")
   #+lispworks
   `(mp:process-whostate ,thread)  
-  #+openmcl
+  #+openmcl-legacy
   `(ccl:process-whostate ,thread)     
   ;; We fake a basic whostate for SBCL/sb-threads:
   #+(and sbcl sb-thread)
@@ -1104,6 +1185,8 @@
   (declare (dynamic-extent args))
   #+allegro
   (apply #'mp:process-run-function name function args)
+  #+clozure
+  (apply #'ccl:process-run-function name function args)
   #+(and cmu mp)
   (mp:make-process #'(lambda () (apply function args)) :name name)
   #+digitool-mcl
@@ -1112,7 +1195,7 @@
   (apply #'mp:process-run-function name function args)
   #+lispworks
   (apply #'mp:process-run-function name nil function args)
-  #+openmcl
+  #+openmcl-legacy
   (apply #'ccl:process-run-function name function args)
   #+(and sbcl sb-thread)
   (sb-thread:make-thread #'(lambda () (apply function args))
@@ -1130,6 +1213,8 @@
 (defun kill-thread (thread)
   #+allegro
   (mp:process-kill thread)
+  #+clozure
+  (ccl:process-kill thread)
   #+(and cmu mp)
   (mp:destroy-process thread)
   #+digitool-mcl
@@ -1138,7 +1223,7 @@
   (mp:process-kill thread)
   #+lispworks
   (mp:process-kill thread)
-  #+openmcl
+  #+openmcl-legacy
   (ccl:process-kill thread)
   #+(and sbcl sb-thread)
   (sb-thread:terminate-thread thread)
@@ -1153,6 +1238,8 @@
 (define-compiler-macro kill-thread (thread)
   #+allegro
   `(mp:process-kill ,thread)
+  #+clozure
+  `(ccl:process-kill ,thread)
   #+(and cmu mp)
   `(mp:destroy-process ,thread)
   #+digitool-mcl
@@ -1161,7 +1248,7 @@
   `(mp:process-kill ,thread)
   #+lispworks
   `(mp:process-kill ,thread)
-  #+openmcl
+  #+openmcl-legacy
   `(ccl:process-kill ,thread)
   #+(and sbcl sb-thread)
   `(sb-thread:terminate-thread ,thread)
@@ -1180,6 +1267,8 @@
   (declare (dynamic-extent args))
   #+allegro
   (apply #'multiprocessing:process-interrupt thread function args)
+  #+clozure
+  (apply #'ccl:process-interrupt thread function args)
   #+(and cmu mp)
   (multiprocessing:process-interrupt thread 
                                      #'(lambda () (apply function args)))
@@ -1192,7 +1281,7 @@
     (apply #'mp:process-interrupt thread function args)
     ;; Help Lispworks be more aggressive in running function promptly:
     (mp:process-allow-scheduling))
-  #+openmcl
+  #+openmcl-legacy
   (apply #'ccl:process-interrupt thread function args)
   #+(and sbcl sb-thread)
   (sb-thread:interrupt-thread thread #'(lambda () (apply function args)))
@@ -1221,6 +1310,11 @@
 	(if (boundp symbol)
 	    (values (symbol-value symbol) 't)
 	    (values nil nil))))
+  #+clozure
+  (let ((value (ccl:symbol-value-in-process symbol thread)))
+    (if (eq value (ccl::%unbound-marker))
+	(values nil nil)
+	(values value 't)))
   #+(and cmu mp)
   (let ((result nil))
     (mp:process-interrupt
@@ -1253,7 +1347,7 @@
     (apply #'values result))
   #+lispworks
   (mp:read-special-in-process thread symbol)
-  #+openmcl
+  #+openmcl-legacy
   (let ((value (ccl:symbol-value-in-process symbol thread)))
     (if (eq value (ccl::%unbound-marker))
 	(values nil nil)
@@ -1351,6 +1445,16 @@
    (queue :initform nil
           :accessor condition-variable-queue)))
 
+#+clozure
+(defclass condition-variable ()
+  ((lock :initarg :lock
+         :initform (make-lock :name "CV Lock")
+         :reader condition-variable-lock)
+   (semaphore :initform (ccl:make-semaphore)
+              :reader condition-variable-semaphore)
+   (queue :initform nil
+          :accessor condition-variable-queue)))
+
 #+(and cmu mp)
 (defclass condition-variable ()
   ((lock :initarg :lock
@@ -1383,7 +1487,7 @@
    (queue :initform nil
           :accessor condition-variable-queue)))
 
-#+openmcl
+#+openmcl-legacy
 (defclass condition-variable ()
   ((lock :initarg :lock
          :initform (make-lock :name "CV Lock")
@@ -1452,6 +1556,16 @@
       (mp::process-unlock lock)
       (throwable-sleep-forever)
       (mp::process-lock lock))
+    #+clozure
+    (let ((ccl-lock (lock-ccl-lock lock)))
+      (unwind-protect
+          (progn
+            (push ccl:*current-process* 
+                  (condition-variable-queue condition-variable))
+            (ccl:release-lock ccl-lock)
+            (ccl:wait-on-semaphore 
+             (condition-variable-semaphore condition-variable)))
+        (ccl:grab-lock ccl-lock)))
     #+(and cmu mp)
     (progn
       (push mp:*current-process*
@@ -1476,7 +1590,7 @@
       (throwable-sleep-forever)
       (mp:process-allow-scheduling)
       (mp:process-lock lock))
-    #+openmcl
+    #+openmcl-legacy
     (let ((ccl-lock (lock-ccl-lock lock)))
       (unwind-protect
           (progn
@@ -1518,6 +1632,19 @@
             (throwable-sleep-forever)
             't)
         (mp::process-lock lock)))
+    #+clozure
+    (let ((ccl-lock (lock-ccl-lock lock)))
+      (unwind-protect
+          (progn
+            (push ccl:*current-process* 
+                  (condition-variable-queue condition-variable))
+            (ccl:release-lock ccl-lock)
+            (ccl:timed-wait-on-semaphore 
+             (condition-variable-semaphore condition-variable) seconds))
+        (ccl:grab-lock ccl-lock)
+        (setf (condition-variable-queue condition-variable)
+              (remove ccl:*current-process*
+                      (condition-variable-queue condition-variable)))))
     #+(and cmu mp)
     (progn
       (push mp:*current-process*
@@ -1570,7 +1697,7 @@
             (throwable-sleep-forever)
             't)
         (mp:process-lock lock)))
-    #+openmcl
+    #+openmcl-legacy
     (let ((ccl-lock (lock-ccl-lock lock)))
       (unwind-protect
           (progn
@@ -1609,9 +1736,11 @@
   (let ((thread (pop (condition-variable-queue condition-variable))))
     (when (and thread (thread-alive-p thread))
       (awaken-throwable-sleeper thread)))
+  #+clozure
+  (ccl:signal-semaphore (condition-variable-semaphore condition-variable))
   #+(and ecl threads)
   (mp:condition-variable-signal (condition-variable-cv condition-variable))
-  #+openmcl
+  #+openmcl-legacy
   (ccl:signal-semaphore (condition-variable-semaphore condition-variable))
   #+(and sbcl sb-thread)
   (sb-thread:condition-notify (condition-variable-cv condition-variable)))
@@ -1631,9 +1760,17 @@
     (dolist (thread queue)
       (when (thread-alive-p thread)
         (awaken-throwable-sleeper thread))))
+  #+clozure
+  (let ((queue-length (length (condition-variable-queue condition-variable)))
+        (semaphore (condition-variable-semaphore condition-variable)))
+    (dotimes (i queue-length)
+      (declare (fixnum i))
+      (ccl:signal-semaphore semaphore)
+      ;; Let each thread respond:
+      (ccl:process-allow-schedule)))
   #+(and ecl threads)
   (mp:condition-variable-broadcast (condition-variable-cv condition-variable))
-  #+openmcl
+  #+openmcl-legacy
   (let ((queue-length (length (condition-variable-queue condition-variable)))
         (semaphore (condition-variable-semaphore condition-variable)))
     (dotimes (i queue-length)

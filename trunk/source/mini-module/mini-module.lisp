@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/mini-module/mini-module.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Nov 29 19:15:52 2007 *-*
+;;;; *-* Last-Edit: Thu Nov 29 21:31:13 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -363,7 +363,7 @@
        (directory path))
   #+lispworks
   (system::file-directory-p path)
-  #+(and openmcl (not clozure))
+  #+openmcl-legacy
   (ccl:directory-pathname-p path)
   #+(and sbcl unix)
   (let ((dir (namestring 
@@ -381,7 +381,7 @@
         ecl
         gcl
 	lispworks 
-        (and openmcl (not clozure))
+        openmcl-legacy
         (and sbcl unix)
         (and scl unix))
   (need-to-port 'probe-directory))
