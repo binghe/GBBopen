@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Nov 19 15:29:08 2007 *-*
+;;;; *-* Last-Edit: Thu Nov 29 21:33:29 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -60,7 +60,7 @@
 ;;; ---------------------------------------------------------------------------
 ;;;  Create CLOS package nickname (or package!) where needed
 
-#+(or digitool-mcl openmcl)
+#+(or clozure digitool-mcl openmcl-legacy)
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (unless (find-package :clos)
     (defpackage :clos
@@ -155,7 +155,7 @@
         ccl:validate-superclass
         ccl:writer-method-class)))
 
-#+(or digitool-mcl openmcl)
+#+(or clozure digitool-mcl openmcl-legacy)
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (import *clos-symbols* :clos)
   (export *clos-symbols* :clos))
@@ -222,6 +222,10 @@
    #+clisp
    '(posix::copy-file
      system::memq)
+   #+clozure
+   '(ccl:copy-file
+     ccl:memq
+     ccl:delq)
    #+cmu
    '(ext:memq
      ext:delq)
@@ -240,7 +244,7 @@
    '(system::copy-file
      system:memq
      system:delq)
-   #+openmcl
+   #+openmcl-legacy
    '(ccl:copy-file
      ccl:memq
      ccl:delq)
@@ -250,8 +254,8 @@
    #+scl
    '(ext:memq
      ext:delq)
-   #-(or allegro clisp cmu cormanlisp digitool-mcl ecl gcl lispworks openmcl
-	 sbcl scl)
+   #-(or allegro clisp clozure cmu cormanlisp digitool-mcl ecl gcl 
+         lispworks openmcl-legacy sbcl scl)
    '()))
 
 ;;; ---------------------------------------------------------------------------
@@ -329,7 +333,16 @@
 ;;; ===========================================================================
 ;;;  Memq (lists only)
 
-#-(or allegro clisp cmu digitool-mcl ecl lispworks openmcl sbcl scl)
+#-(or allegro
+      clisp
+      clozure
+      cmu
+      digitool-mcl
+      ecl
+      lispworks
+      openmcl-legacy
+      sbcl 
+      scl)
 (progn
   (defun memq (item list)
     (declare (list list))
@@ -351,7 +364,7 @@
   (define-compiler-macro delq (item list)
     `(excl::list-delete-eq ,item ,list)))
 
-#-(or allegro cmu digitool-mcl lispworks openmcl sbcl scl)
+#-(or allegro clozure cmu digitool-mcl lispworks openmcl-legacy sbcl scl)
 (progn
   (defun delq (item list)
     (declare (list list))
@@ -364,7 +377,7 @@
 ;;; ===========================================================================
 ;;;  Copy-file (for CLs that don't provide their own version)
 
-#-(or allegro clisp digitool-mcl lispworks openmcl)
+#-(or allegro clisp clozure digitool-mcl lispworks openmcl-legacy)
 (defun copy-file (from to)
   (with-open-file (output to
                    :element-type 'unsigned-byte

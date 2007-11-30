@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/tools/os-interface.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue May 22 10:57:50 2007 *-*
+;;;; *-* Last-Edit: Fri Nov 30 06:44:12 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -41,6 +41,10 @@
    '()
    #+clisp
    '(ext:run-program)
+   #+clozure
+   '(ccl:run-program 
+     ccl:external-process-output-stream 
+     ccl:external-process-input-stream)
    #+cmu
    '(ext:run-program
      ext:process-input
@@ -54,7 +58,7 @@
    '()
    #+lispworks
    '()
-   #+openmcl
+   #+openmcl-legacy
    '(ccl:run-program 
      ccl:external-process-output-stream 
      ccl:external-process-input-stream)
@@ -148,7 +152,7 @@
   ;; was not passed to ARGV when args as non NIL. The bug may or may not be
   ;; present in unix versions. Environment variable PATH *IS* searched.
   (system:open-pipe `(,program ,program ,@args) :direction :io)
-  #+(or cmu openmcl sbcl scl)
+  #+(or clozure cmu openmcl-legacy sbcl scl)
   (let ((process (run-program program args
 			      :input input
 			      :output output
@@ -159,7 +163,8 @@
         (external-process-output-stream process)              
         (external-process-input-stream process)))
      process))
-  #-(or allegro clisp cmu digitool-mcl ecl lispworks openmcl sbcl scl)
+  #-(or allegro clisp clozure cmu digitool-mcl ecl lispworks openmcl-legacy 
+        sbcl scl)
   (port-needed 'run-external-program))
 
 ;;; ---------------------------------------------------------------------------

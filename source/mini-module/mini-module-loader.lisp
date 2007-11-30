@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/mini-module/mini-module-loader.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Nov 29 19:16:26 2007 *-*
+;;;; *-* Last-Edit: Thu Nov 29 21:30:49 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -64,6 +64,13 @@
 #+(and digitool ccl-5.1)
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (pushnew :digitool-mcl *features*))
+
+;;; ===========================================================================
+;;; Add a single feature to identify pre-Clozure CL OpenMCL:
+
+#+(and openmcl (not clozure))
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (pushnew :openmcl-legacy *features*))
 
 ;;; ===========================================================================
 ;;;  Source/Compiled Directory Names
@@ -172,7 +179,7 @@
              system::*major-version-number*
              system::*minor-version-number*)
      ;; OpenMCL:
-     #+(and openmcl (not clozure))
+     #+openmcl-legacy
      (format nil "~a-openmcl-~a.~a"
              (or
               #+darwin "darwin"
@@ -211,7 +218,7 @@
            digitool-mcl
            ecl
            lispworks
-           (and openmcl (not clozure))
+           openmcl-legacy
 	   sbcl 
            scl)
      (must-port '*compiled-directory-name*)))
@@ -256,7 +263,7 @@
      #+lispworks
      compiler:*fasl-extension-string*
      ;; OpenMCL:
-     #+(and openmcl (not clozure))
+     #+openmcl-legacy
      (pathname-type ccl:*.fasl-pathname*)
      ;; SBCL:
      #+sbcl
@@ -273,7 +280,7 @@
            digitool-mcl
            ecl
            lispworks
-           (and openmcl (not clozure))
+           openmcl-legacy
 	   sbcl
            scl)
      (must-port '*compiled-file-type*)))

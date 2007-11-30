@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-SOCKETS; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/tools/portable-sockets.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Nov 20 11:06:33 2007 *-*
+;;;; *-* Last-Edit: Fri Nov 30 07:03:53 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -63,6 +63,13 @@
 #+(and digitool ccl-5.1)
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (pushnew :digitool-mcl *features*))
+
+;;; ---------------------------------------------------------------------------
+;;; Add a single feature to identify pre-Clozure CL OpenMCL:
+
+#+(and openmcl (not clozure))
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (pushnew :openmcl-legacy *features*))
 
 ;;; ===========================================================================
 
@@ -259,10 +266,11 @@
   ;; The (currently undocumented) :timeout extension is only accepted by CLISP
   ;; and Lispworks:
   #+(or allegro
+        clozure
         cmu
         digitool-mcl
         ecl
-        openmcl
+        openmcl-legacy
         sbcl
         scl)
   (declare (ignore timeout))
@@ -270,8 +278,9 @@
   (socket:make-socket :remote-host host :remote-port port)
   #+clisp
   (socket:socket-connect port host :external-format ':unix :timeout timeout)
-  #+(or cmu 
-        scl)
+  #+clozure
+  (ccl:make-socket :remote-host host :remote-port port)
+  #+cmu
   (let ((socket (extensions:connect-to-inet-socket host port)))
     (system:make-fd-stream 
      socket
@@ -286,7 +295,7 @@
   (si:open-client-stream host port)
   #+lispworks
   (comm:open-tcp-stream host port :timeout timeout)
-  #+openmcl
+  #+openmcl-legacy
   (ccl:make-socket :remote-host host :remote-port port)
   #+sbcl
   (let ((socket (make-instance 'sb-bsd-sockets:inet-socket
@@ -302,13 +311,23 @@
      :input 't :output 't
      :element-type 'character
      :buffering ':full))
+  #+scl
+  (let ((socket (extensions:connect-to-inet-socket host port)))
+    (system:make-fd-stream 
+     socket
+     :input 't
+     :output 't
+     :element-type 'character
+     :buffering ':full
+     :auto-close 't))
   #-(or allegro
         clisp
+        clozure
         cmu
         digitool-mcl
         ecl
         lispworks
-        openmcl
+        openmcl-legacy
         sbcl
         scl)
   (port-needed 'open-connection-to-host))
@@ -354,8 +373,14 @@
     (socket:socket-options passive-socket
 			   :so-reuseaddr reuse-address)
     passive-socket)
-  #+(or cmu
-        scl)
+  #+clozure
+  (ccl:make-socket :connect ':passive
+                   :type ':stream
+		   :backlog backlog
+                   :reuse-address reuse-address
+                   :local-port port
+		   :local-host interface)  
+  #+cmu
   (make-instance 'passive-socket
     :fd (ext:create-inet-listener port ':stream 
 				  :backlog backlog
@@ -393,7 +418,7 @@
       ;; Avoid Lispworks race condition on filling in the passive 
       ;; socket fd value (still exists in LW 4.4.6):
       (thread-yield)))
-  #+openmcl
+  #+openmcl-legacy
   (ccl:make-socket :connect ':passive
                    :type ':stream
 		   :backlog backlog
@@ -415,13 +440,22 @@
      port)
     (sb-bsd-sockets:socket-listen passive-socket backlog)
     passive-socket)
+  #+scl
+  (make-instance 'passive-socket
+    :fd (ext:create-inet-listener port ':stream 
+				  :backlog backlog
+				  :host (or interface 0)
+				  :reuse-address reuse-address)
+    :element-type 'base-char
+    :port port)    
   #-(or allegro
         clisp
+        clozure
         cmu
         digitool-mcl
         ecl
         lispworks
-        openmcl
+        openmcl-legacy
         sbcl
         scl)
   (port-needed 'make-passive-socket))
@@ -431,13 +465,14 @@
 (defun close-passive-socket (passive-socket)
   #+clisp
   (socket:socket-server-close passive-socket)
-  #+(or cmu
-        scl)
+  #+cmu
   (unix:unix-close (passive-socket.fd passive-socket))
   #+ecl
   (sb-bsd-sockets:socket-close passive-socket)
   #+sbcl
   (sb-bsd-sockets:socket-close passive-socket)
+  #+scl
+  (unix:unix-close (passive-socket.fd passive-socket))
   #-(or clisp
         cmu
         ecl
@@ -455,13 +490,15 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun shutdown-socket-stream (socket-stream direction)
-  ;;; Note: Allegro, CLISP, Digitool-MCL, and OpenMCL only support :input and
-  ;;;       :output direction, so that is all that we document as providing...
+  ;;; Note: Allegro, CLISP, Clozure, Digitool-MCL, and OpenMCL only support
+  ;;;       :input and :output direction, so that is all that we document as
+  ;;;       providing...
   #-(or allegro
         clisp
+        clozure
         cmu
         lispworks
-        openmcl
+        openmcl-legacy
         sbcl
         scl)
   (declare (ignore socket-stream direction))
@@ -469,8 +506,9 @@
   (socket:shutdown socket-stream :direction direction)
   #+clisp
   (socket:socket-stream-shutdown socket-stream direction)
-  #+(or cmu
-        scl)
+  #+clozure
+  (ccl:shutdown socket-stream :direction direction)
+  #+cmu
   (ext:inet-shutdown (sys:fd-stream-fd socket-stream)
                      (ecase direction
                        (:input ext:shut-rd)
@@ -484,7 +522,7 @@
               (:output 1)
               #+not-supported
               (:input-output 2)))
-  #+openmcl
+  #+openmcl-legacy
   (ccl:shutdown socket-stream :direction direction)
   #+sbcl
   (shutdown (sb-sys::fd-stream-fd socket-stream)
@@ -493,11 +531,19 @@
               (:output 1)
               #+not-supported
               (:input-output 2)))
+  #+scl
+  (ext:inet-shutdown (sys:fd-stream-fd socket-stream)
+                     (ecase direction
+                       (:input ext:shut-rd)
+                       (:output ext:shut-wr)
+                       #+not-supported
+                       (:input-output ext:shut-rdwr)))
   #-(or allegro 
         clisp 
+        clozure
         cmu
         lispworks
-        openmcl
+        openmcl-legacy
         sbcl
         scl)
   (port-needed 'shutdown-socket-stream))
@@ -514,8 +560,9 @@
 	       (socket:socket-wait passive-socket))
 	      (t (socket:socket-wait passive-socket 0)))
     (socket:socket-accept passive-socket :external-format ':unix))
-  #+(or cmu
-        scl)
+  #+clozure
+  (ccl:accept-connection passive-socket :wait wait)
+  #+cmu
   (let ((fd (passive-socket.fd passive-socket)))
     (when (sys:wait-until-fd-usable 
 	   fd ':input
@@ -550,7 +597,7 @@
         :socket (comm::get-fd-from-socket socket-fd)
         :direction ':io
         :element-type (passive-socket.element-type passive-socket))))
-  #+openmcl
+  #+openmcl-legacy
   (ccl:accept-connection passive-socket :wait wait)
   #+sbcl
   (when (sb-sys:wait-until-fd-usable 
@@ -565,12 +612,28 @@
      :input 't :output 't
      :element-type 'character
      :buffering ':full))
+  #+scl
+  (let ((fd (passive-socket.fd passive-socket)))
+    (when (sys:wait-until-fd-usable 
+	   fd ':input
+	   ;; convert :wait to timeout:
+	   (cond ((eq wait 't) nil)
+		 ((not wait) 0)
+		 (t wait)))
+      (sys:make-fd-stream
+       (ext:accept-tcp-connection fd)
+       :input 't
+       :output 't
+       :element-type (passive-socket.element-type passive-socket)
+       :buffering ':full
+       :auto-close 't)))
   #-(or allegro 
         clisp
+        clozure
         cmu
         ecl 
         lispworks 
-        openmcl
+        openmcl-legacy
         sbcl
         scl)
   (port-needed 'accept-connection))
@@ -609,9 +672,10 @@
 (defun local-hostname-and-port (connection &optional do-not-resolve)
   #-(or allegro
         clisp 
+        clozure
         cmu
         lispworks
-        openmcl
+        openmcl-legacy
         sbcl
         scl)
   (declare (ignore connection do-not-resolve))
@@ -627,8 +691,16 @@
 	    (socket:local-port connection)))
   #+clisp
   (socket:socket-stream-local connection (not do-not-resolve))
-  #+(or cmu
-        scl)
+  #+clozure
+  (let* ((ipaddr (ccl:local-host connection))
+	 (dotted (ccl:ipaddr-to-dotted ipaddr)))
+    (values (if do-not-resolve
+		dotted
+		(let ((resolved (ccl:ipaddr-to-hostname ipaddr)))
+		  (if resolved
+		      (format nil "~a (~a)" dotted resolved))))
+	    (ccl:local-port connection)))
+  #+cmu
   (let ((fd (sys:fd-stream-fd connection)))
     (multiple-value-bind (ipaddr port)
 	(ext:get-socket-host-and-port fd)
@@ -652,7 +724,7 @@
 			(format nil "~a (~a)" dotted resolved)
 			dotted)))
 	    port)))
-  #+openmcl
+  #+openmcl-legacy
   (let* ((ipaddr (ccl:local-host connection))
 	 (dotted (ccl:ipaddr-to-dotted ipaddr)))
     (values (if do-not-resolve
@@ -673,11 +745,24 @@
 			  (format nil "~a (~a)" dotted resolved)
 			  dotted)))
 		port)))) 	
+  #+scl
+  (let ((fd (sys:fd-stream-fd connection)))
+    (multiple-value-bind (ipaddr port)
+	(ext:get-socket-host-and-port fd)
+      (let ((dotted (ipaddr-to-dotted ipaddr)))
+	(values (if do-not-resolve
+		    dotted
+		    (let ((resolved (ipaddr-to-hostname ipaddr)))
+		      (if resolved
+			  (format nil "~a (~a)" dotted resolved)
+			  dotted)))
+		port))))   
   #-(or allegro
         clisp 
+        clozure
         cmu
         lispworks
-        openmcl
+        openmcl-legacy
         sbcl
         scl)
   (port-needed 'local-hostname-and-port))
@@ -687,9 +772,10 @@
 (defun remote-hostname-and-port (connection &optional do-not-resolve)
   #-(or allegro
         clisp
+        clozure
         cmu
         lispworks
-        openmcl
+        openmcl-legacy
         sbcl
         scl)
   (declare (ignore connection do-not-resolve))
@@ -705,8 +791,17 @@
 	    (socket:remote-port connection)))
   #+clisp
   (socket:socket-stream-peer connection (not do-not-resolve))
-  #+(or cmu
-        scl)
+  #+clozure
+  (let* ((ipaddr (ccl:remote-host connection))
+	 (dotted (ccl:ipaddr-to-dotted ipaddr)))
+    (values (if do-not-resolve
+		dotted
+		(let ((resolved (ccl:ipaddr-to-hostname ipaddr)))
+		  (if resolved
+		      (format nil "~a (~a)" dotted resolved)
+		      dotted)))
+	    (ccl:remote-port connection)))
+  #+cmu
   (let ((fd (sys:fd-stream-fd connection)))
     (multiple-value-bind (ipaddr port)
 	(ext:get-peer-host-and-port fd)
@@ -730,7 +825,7 @@
 			(format nil "~a (~a)" dotted resolved)
 			dotted)))
 	    port)))
-  #+openmcl
+  #+openmcl-legacy
   (let* ((ipaddr (ccl:remote-host connection))
 	 (dotted (ccl:ipaddr-to-dotted ipaddr)))
     (values (if do-not-resolve
@@ -752,11 +847,24 @@
 			  (format nil "~a (~a)" dotted resolved)
 			  dotted)))
 		port)))) 	
+  #+scl
+  (let ((fd (sys:fd-stream-fd connection)))
+    (multiple-value-bind (ipaddr port)
+	(ext:get-peer-host-and-port fd)
+      (let ((dotted (ipaddr-to-dotted ipaddr)))
+	(values (if do-not-resolve
+		    dotted
+		    (let ((resolved (ipaddr-to-hostname ipaddr)))
+		      (if resolved
+			  (format nil "~a (~a)" dotted resolved)
+			  dotted)))
+		port))))   
   #-(or allegro
         clisp
+        clozure
         cmu 
         lispworks
-        openmcl
+        openmcl-legacy
         sbcl
         scl)
   (port-needed 'remote-hostname-and-port))
