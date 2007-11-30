@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/control-shells/test/agenda-shell-test.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Jul 14 13:39:57 2007 *-*
+;;;; *-* Last-Edit: Sat Nov 10 02:56:10 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -171,7 +171,7 @@
 
 (define-ks add-uc-one-to-space-instance-event-ks
     :trigger-events ((add-instance-to-space-instance-event 
-                      uc-one :path (space-1)))
+                      uc-one :paths (? space-1)))
     :precondition-function 
     #'(lambda (ks events)
         (declare (ignore ks events))
@@ -200,8 +200,8 @@
 ;;; ---------------------------------------------------------------------------
 
 (define-ks add-uc-one-to-future-space-instance-event-ks
-    :trigger-events ((add-instance-to-space-instance-event uc-one 
-                                                           :path (space-3)))
+    :trigger-events ((add-instance-to-space-instance-event 
+                      uc-one :path (space-3)))
     :execution-function 
     #'(lambda (ksa)
 	(declare (ignore ksa))

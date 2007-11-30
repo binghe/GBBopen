@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/find.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Jul 28 13:24:23 2007 *-*
+;;;; *-* Last-Edit: Mon Sep 24 05:39:35 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -478,6 +478,13 @@
 ;;; ---------------------------------------------------------------------------
 
 (with-full-optimization ()
+  (defun match-matches (instance-value pattern-value)
+    ;; placeholder for general string match operator:
+    (nyi instance-value pattern-value)))
+           
+;;; ---------------------------------------------------------------------------
+
+(with-full-optimization ()
   (defun extent-< (value)
     `(,-infinity ,value)))
 
@@ -572,12 +579,19 @@
 ;;; ---------------------------------------------------------------------------
 
 (defparameter *enumerated-match-op-fns*
+    ;; TODO: finish moving from having to specify the match type in the pattern
+    ;;       operator to the generic is enumerated operator:
     `((is ,'#'match-is)
       ;; Strong-type matches (deprecate these?):
       (eq ,#'eq)
       (eql ,#'eql)
       (equal ,#'equal)
       (equalp ,#'equalp)))
+
+;;; ---------------------------------------------------------------------------
+
+(defparameter *string-match-op-fns*
+    `((matches ,#'match-matches)))
 
 ;;; ---------------------------------------------------------------------------
 
