@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/mini-module/mini-module-loader.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Oct 10 05:01:28 2007 *-*
+;;;; *-* Last-Edit: Thu Nov 29 19:16:26 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -115,6 +115,15 @@
               (port-need '*compiled-directory-name*))
              (let ((version (lisp-implementation-version)))
                (subseq version 0 (position #\Space version))))	       
+     ;; Clozure Common Lisp:
+     #+clozure
+     (format nil "~a-clozure-~a.~a"
+             (or
+              #+darwin "darwin"
+              #-darwin
+              (must-port '*compiled-directory-name*))
+             ccl::*openmcl-major-version*
+             ccl::*openmcl-minor-version*)
      ;; Corman Common Lisp:
      #+cormanlisp
      (format nil "windows-corman-~a"
@@ -163,7 +172,7 @@
              system::*major-version-number*
              system::*minor-version-number*)
      ;; OpenMCL:
-     #+openmcl
+     #+(and openmcl (not clozure))
      (format nil "~a-openmcl-~a.~a"
              (or
               #+darwin "darwin"
@@ -196,12 +205,13 @@
      ;; Unknown CL:
      #-(or allegro 
            clisp 
+           clozure
            cmu
            cormanlisp 
            digitool-mcl
            ecl
            lispworks
-           openmcl
+           (and openmcl (not clozure))
 	   sbcl 
            scl)
      (must-port '*compiled-directory-name*)))
@@ -224,6 +234,9 @@
      ;; CLISP:
      #+clisp
      (car custom:*compiled-file-types*)
+     ;; Clozure Common Lisp:
+     #+clozure
+     (pathname-type ccl:*.fasl-pathname*)
      ;; CMUCL:
      #+cmu
      (c:backend-fasl-file-type c:*backend*)
@@ -243,7 +256,7 @@
      #+lispworks
      compiler:*fasl-extension-string*
      ;; OpenMCL:
-     #+openmcl
+     #+(and openmcl (not clozure))
      (pathname-type ccl:*.fasl-pathname*)
      ;; SBCL:
      #+sbcl
@@ -254,12 +267,13 @@
      ;; Unknown CL:
      #-(or allegro 
            clisp
+           clozure
            cmu
            cormanlisp
            digitool-mcl
            ecl
            lispworks
-           openmcl
+           (and openmcl (not clozure))
 	   sbcl
            scl)
      (must-port '*compiled-file-type*)))

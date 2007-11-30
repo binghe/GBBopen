@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/mini-module/mini-module.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Aug 12 07:47:55 2007 *-*
+;;;; *-* Last-Edit: Thu Nov 29 19:15:52 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -336,6 +336,8 @@
    ;; CLISP's probe-directory function signals an error if path is not a
    ;; directory:
    (ext:probe-directory path))
+  #+clozure
+  (ccl:directory-pathname-p path)
   #+(and cmu unix)
   (let ((dir (namestring 
               (make-pathname :name nil :type nil :defaults path))))
@@ -361,7 +363,7 @@
        (directory path))
   #+lispworks
   (system::file-directory-p path)
-  #+openmcl
+  #+(and openmcl (not clozure))
   (ccl:directory-pathname-p path)
   #+(and sbcl unix)
   (let ((dir (namestring 
@@ -372,13 +374,14 @@
 				      :defaults path))
   #-(or allegro
         clisp
+        clozure
         (and cmu unix)
         cormanlisp 
         digitool-mcl
         ecl
         gcl
 	lispworks 
-        openmcl
+        (and openmcl (not clozure))
         (and sbcl unix)
         (and scl unix))
   (need-to-port 'probe-directory))
