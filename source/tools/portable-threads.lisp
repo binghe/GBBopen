@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/tools/portable-threads.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Nov 30 06:55:00 2007 *-*
+;;;; *-* Last-Edit: Sat Dec  1 07:54:58 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -1678,9 +1678,8 @@
             't)
         (ccl:process-lock ccl-lock ccl:*current-process*)))
     #+(and ecl threads)
-    (with-timeout (seconds)
-      (mp:condition-variable-wait 
-       (condition-variable-cv condition-variable) lock))
+    (mp:condition-variable-timedwait
+     (condition-variable-cv condition-variable) lock seconds)
     #+lispworks
     (progn
       (push mp:*current-process* 
