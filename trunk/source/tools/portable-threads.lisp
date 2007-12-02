@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/tools/portable-threads.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Dec  2 15:38:42 2007 *-*
+;;;; *-* Last-Edit: Sun Dec  2 17:15:29 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -115,7 +115,7 @@
 
 ;;;  Error if threads support is outdated in user's ECL 
 #+(and ecl threads)
-(unless (fboundp 'mp::make-condition-variable)
+(unless (fboundp 'mp::process-yield)
   (error "The latest CVS checkout of ECL is required."))
 
 ;;; ===========================================================================
@@ -403,8 +403,7 @@
   #+digitool-mcl
   (ccl:process-allow-schedule)
   #+(and ecl threads)
-  ;; Yield is not available, so we sleep 0:
-  (sleep 0)
+  (mp:process-yield)
   #+lispworks
   (mp:process-allow-scheduling)
   #+openmcl-legacy
@@ -425,7 +424,7 @@
   #+digitool-mcl
   '(ccl:process-allow-schedule)
   #+(and ecl threads)
-  ;; Yield is not available, so we sleep 0:
+  '(mp:process-yield)
   '(sleep 0)
   #+lispworks
   '(mp:process-allow-scheduling)
