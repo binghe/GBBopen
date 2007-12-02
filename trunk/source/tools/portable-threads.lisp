@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/tools/portable-threads.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Dec  1 07:54:58 2007 *-*
+;;;; *-* Last-Edit: Sun Dec  2 15:38:42 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -90,7 +90,7 @@
   (pushnew :openmcl-legacy *features*))
 
 ;;; ---------------------------------------------------------------------------
-;;;  Warn if sb-thread support is missing on SBCL/linux
+;;;  Warn if sb-thread support is missing on SBC/Linux
 
 #+(and sbcl linux (not sb-thread))
 (warn "Thread support on ~a is not present.~@
@@ -98,6 +98,11 @@
         and rebuild)"
       (lisp-implementation-type)
       :sb-thread)
+
+;;;  Error if threads support is outdated in user's SBCL
+#+(and sbcl sb-thread)
+(unless (fboundp 'sb-thread::thread-yield)
+  (error "A newer SBCL release is required."))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Warn if threads support is missing in ECL
@@ -108,10 +113,10 @@
         support.)"
       (lisp-implementation-version))
 
-;;;  Warn if threads support is outdated in user's ECL 
+;;;  Error if threads support is outdated in user's ECL 
 #+(and ecl threads)
 (unless (fboundp 'mp::make-condition-variable)
-  (warn "The latest CVS checkout of ECL is required."))
+  (error "The latest CVS checkout of ECL is required."))
 
 ;;; ===========================================================================
 ;;; Import the CL-implementation's threading symbols, as needed:
@@ -149,7 +154,8 @@
    '()
    #+(and sbcl sb-thread)
    '(sb-thread:thread-alive-p
-     sb-thread::thread-name)
+     sb-thread:thread-name
+     sb-thread:thread-yield)
    #+(and sbcl (not sb-thread))
    '()
    #+scl
@@ -386,6 +392,7 @@
 ;;;   Thread-yield (runs *non-threaded-polling-function-hook* functions on
 ;;;                non-threaded CLs)
 
+#-(and sbcl sb-thread)
 (defun thread-yield ()
   #+allegro
   (mp:process-allow-schedule)
@@ -402,15 +409,12 @@
   (mp:process-allow-scheduling)
   #+openmcl-legacy
   (ccl:process-allow-schedule)
-  #+(and sbcl sb-thread)
-  ;; Yield is not available, so we sleep 0.05:  
-  (sleep 0.05)
   #+scl
   (mp:process-yield)
   #+threads-not-available
   (mapc #'funcall *non-threaded-polling-function-hook*))
 
-#-full-safety
+#-(or full-safety (and sbcl sb-thread))
 (define-compiler-macro thread-yield ()
   #+allegro  
   '(mp:process-allow-schedule)
@@ -427,9 +431,6 @@
   '(mp:process-allow-scheduling)
   #+openmcl-legacy
   '(ccl:process-allow-schedule)
-  #+(and sbcl sb-thread)
-  ;; Yield is not available, so we sleep 0.05:  
-  (sleep 0.05)
   #+scl
   '(mp:process-yield)
   #+threads-not-available
