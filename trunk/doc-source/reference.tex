@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /home/gbbopen/current/doc-source/reference.tex *-*
-%% *-* Last-Edit: Thu Nov 29 19:22:10 2007; Edited-By: cork *-*
+%% *-* Last-Edit: Wed Dec  5 12:31:38 2007; Edited-By: cork *-*
 %% *-* Machine: ruby.corkills.org *-*
 
 %% Copyright (C) 2003-2007, Dan Corkill <corkill@GBBopen.org>
@@ -3349,6 +3349,42 @@ t
 > (shuffle-list '(a b c d))
 (c a d b)
 \end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{shrink-vector}{\var{vector length\/}
+    \returns{} \var{vector\/}} 
+  
+\fnsyntax
+
+\fnpurpose Shorten a one-dimensional simple array destructively.
+
+\fnpackage \code{:gbbopen-tools}
+
+\fnmodule \code{:gbbopen-tools}
+
+\fnargs
+\begin{args}{list}
+\arg[vector] A ``simple'' vector that is a one-dimensional simple array
+\arg[length] A non-negative integer, not greater than the length of
+\var{vector}
+\end{args}
+
+\fnreturns The truncated \var{vector}, which may not be identical (\code{eq})
+to the original \var{vector\/} argument on some Common Lisp implementations.
+
+\fndescription This function provides access to the Common Lisp
+implementation's low-level truncation interface.
+
+\fnexample
+\begin{example}
+> (shrink-vector "abcdefghijklmnopqrstuvwxyz" 3)
+"abc"
+\end{example}
+
+\fnnote \inline
 
 \end{functiondoc}
 

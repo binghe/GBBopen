@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Nov 29 21:33:29 2007 *-*
+;;;; *-* Last-Edit: Wed Dec  5 12:21:28 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -52,6 +52,7 @@
 ;;;  05-08-06 Added support for the Scieneer CL. (dtc)
 ;;;  08-20-06 Added extract-declarations.  (Corkill)
 ;;;  09-22-06 Added CormanLisp 3.0 support.  (Corkill)
+;;;  12-05-07 Added shrink-vector.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -306,6 +307,7 @@
 	    set-equal
 	    sets-overlap-p
 	    shuffle-list
+            shrink-vector
 	    sole-element
 	    splitting-butlast
 	    undefmethod
@@ -529,6 +531,53 @@
   (cerror "Ignore the remaining elements."
           "The list ~s contains more than 1 element."
           list))
+
+;;; ===========================================================================
+;;;   Shrink-vector
+;;;
+;;;   Destructively truncates a simple vector (when the CL implementation
+;;;   supports it--some implementations allocate a new vector anyway)
+
+(defun shrink-vector (vector length)
+  #+allegro
+  (excl::.primcall 'sys::shrink-svector vector length)
+  #+clozure
+  (ccl::%shrink-vector vector length)
+  #+cmu
+  (common-lisp::shrink-vector vector length)
+  #+digitool
+  (ccl::%shrink-vector vector length)
+  #+ecl
+  (si::shrink-vector vector length)
+  #+lispworks
+  (system::shrink-vector$vector vector length)
+  #+openmcl
+  (ccl::%shrink-vector vector length)
+  #+sbcl
+  (sb-kernel:shrink-vector vector length)
+  #+scl
+  (common-lisp::shrink-vector vector length))
+
+#-full-safety 
+(define-compiler-macro shrink-vector (vector length)
+  #+allegro
+  `(excl::.primcall 'sys::shrink-svector ,vector ,length)
+  #+clozure
+  `(ccl::%shrink-vector ,vector ,length)
+  #+cmu
+  `(common-lisp::shrink-vector ,vector ,length)
+  #+digitool
+  `(ccl::%shrink-vector ,vector ,length)
+  #+ecl
+  `(si::shrink-vector ,vector ,length)
+  #+lispworks
+  `(system::shrink-vector$vector ,vector ,length)
+  #+openmcl
+  `(ccl::%shrink-vector ,vector ,length)
+  #+sbcl
+  `(sb-kernel:shrink-vector ,vector ,length)
+  #+scl
+  `(common-lisp::shrink-vector ,vector ,length))
 
 ;;; ===========================================================================
 ;;;  Specialized length checkers

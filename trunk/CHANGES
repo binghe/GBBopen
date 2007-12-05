@@ -1,5 +1,7 @@
 Important changes since GBBopen 0.9.6:
 
+  * Added shrink-vector to GBBopen-tools
+ 
   * Version 2.2 of the Portable Threads Interface
     - Periodic functions
 
@@ -10,13 +12,11 @@ Important changes since GBBopen 0.9.6:
     - Recursive and nonrecursive locks, with stronger enforcement of usage
       violations (to reduce the potential for different behavior on different
       CL implementations).
-    - Emphasis on condition variables for thread waiting/notification
+    - Use of condition variables for thread waiting/notification
     - Improved hibernation behavior
     - With-timeout added
-    Allegro-style gates and process-wait are depreciated and will be removed
-    soon. (See the GBBopen Reference Manual for details.)
 
-    The names of many Portable Threads functions have been changed (for
+    The names of many Portable Threads functions were changed (for
     consistency with new capabilities and to make the portable-threads
     interface names more "thread-centric" rather than "process-centric"):
        all-processes              all-threads
@@ -43,17 +43,12 @@ Important changes since GBBopen 0.9.6:
        <new>                      make-condition-variable
        <new>                      make-lock
        <new>                      thread-holds-lock-p
-       close-gate                 <deprecated>
-       gate-open-p                <deprecated>
-       make-gate                  <deprecated>
-       open-gate                  <deprecated>
-       process-wait               <deprecated>
-       process-wait-with-timeout  <deprecated>
-
-    Backward compatibility with the previous version of :portable-threads is
-    provided, but users should migrate quickly to the new version as this
-    backward compatibility will be dropped relatively soon.
-
+       close-gate                 <removed>
+       gate-open-p                <removed>
+       make-gate                  <removed>
+       open-gate                  <removed>
+       process-wait               <removed>
+       process-wait-with-timeout  <removed>
 
 Important changes in GBBopen 0.9.6:
 
