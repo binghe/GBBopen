@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Dec  5 12:54:32 2007 *-*
+;;;; *-* Last-Edit: Wed Dec  5 14:52:46 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -541,6 +541,7 @@
 (defun shrink-vector (vector length)
   #+allegro
   (excl::.primcall 'sys::shrink-svector vector length)
+  ;; Can we do better on CLISP?
   #+clisp
   (subseq vector 0 length)
   #+clozure
