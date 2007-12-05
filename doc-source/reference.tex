@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /home/gbbopen/current/doc-source/reference.tex *-*
-%% *-* Last-Edit: Wed Dec  5 12:31:38 2007; Edited-By: cork *-*
+%% *-* Last-Edit: Wed Dec  5 16:05:19 2007; Edited-By: cork *-*
 %% *-* Machine: ruby.corkills.org *-*
 
 %% Copyright (C) 2003-2007, Dan Corkill <corkill@GBBopen.org>
@@ -3359,7 +3359,8 @@ t
   
 \fnsyntax
 
-\fnpurpose Shorten a one-dimensional simple array destructively.
+\fnpurpose Shorten a one-dimensional simple array destructively, if 
+possible.
 
 \fnpackage \code{:gbbopen-tools}
 
@@ -3376,7 +3377,7 @@ t
 to the original \var{vector\/} argument on some Common Lisp implementations.
 
 \fndescription This function provides access to the Common Lisp
-implementation's low-level truncation interface.
+implementation's low-level truncation operation.
 
 \fnexample
 \begin{example}
