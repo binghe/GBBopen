@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/mini-module/mini-module-loader.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Nov 29 21:30:49 2007 *-*
+;;;; *-* Last-Edit: Mon Dec 10 14:52:05 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -145,11 +145,11 @@
      ;; ECL (Embedable Common Lisp):
      #+ecl
      (format nil "~a-ecl-~a"
-             (or #+(and pentium3 linux) "linux86" 
-                 #+(and pentium3 (not linux)) "windows"
-                 #+(and (not pentium3) darwin) "darwin"
-                 #+(and pentium3 darwin) "macosx86"
-		 #-(or pentium3)
+             (or #+(and (or pentium3 pentium4) linux) "linux86" 
+                 #+(and (or pentium3 pentium4) (not linux)) "windows"
+                 #+(and (not (or pentium3 pentium4)) darwin) "darwin"
+                 #+(and (or pentium3 pentium4) darwin) "macosx86"
+		 #-(or pentium3 pentium4)
                  (must-port '*compiled-directory-name*))
              ;; Strip away any CVS info:
              (let ((full-version (lisp-implementation-version)))
