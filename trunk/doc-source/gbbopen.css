@@ -24,3 +24,6 @@ table.tight {
           margin: 0pt; 
           padding: 0pt; 
           border-spacing: 0pt}
+p.tiny   {font-family: "sans-serif"; 
+          font-size: 7pt;
+          color: #0099FF}
