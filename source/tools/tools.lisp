@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/current/source/tools/tools.lisp *-*
+;;;; *-* File: /home/gbbopen/gbbopen/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Dec  5 14:52:46 2007 *-*
+;;;; *-* Last-Edit: Thu Dec 13 04:34:17 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -547,7 +547,7 @@
   #+clozure
   (ccl::%shrink-vector vector length)
   #+cmu
-  (common-lisp::shrink-vector vector length)
+  (lisp::shrink-vector vector length)
   #+digitool
   (ccl::%shrink-vector vector length)
   #+ecl
@@ -570,7 +570,7 @@
   #+clozure
   `(ccl::%shrink-vector ,vector ,length)
   #+cmu
-  `(common-lisp::shrink-vector ,vector ,length)
+  `(lisp::shrink-vector ,vector ,length)
   #+digitool
   `(ccl::%shrink-vector ,vector ,length)
   #+ecl
