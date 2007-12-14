@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/gbbopen-modules-directory.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Jun 24 10:41:58 2006 *-*
+;;;; *-* Last-Edit: Fri Dec 14 03:13:48 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2006, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2006-2007, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;;   This file is loaded by gbbopen-init.lisp (and optionally by startup.lisp)
@@ -23,8 +23,8 @@
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
 ;;;  12-08-02 Split out from startup.lisp and gbbopen-init.lisp.  (Corkill)
-;;;  06-20-06 Add "pseudo symbolic-link" support (for OSes without
-;;;           real symbolic links.  (Corkill)
+;;;  06-20-06 Add "pseudo symbolic-link" support (for operating systems that
+;;;           do not provide symbolic links).  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -78,13 +78,13 @@
 			      '("gbbopen-modules"))
 	   :defaults user-homedir-pathname))
 	 (subdirs-pathname
-	  #-openmcl
+	  #-(or clozure openmcl)
 	  (make-pathname
 	   :directory (append (pathname-directory user-modules-dir)
-			      #-(or allegro cmu scl ecl)
+			      #-(or allegro cmu scl)
 			      '(:wild))
 	   :defaults user-modules-dir)
-	  #+openmcl
+	  #+(or clozure openmcl)
 	  (make-pathname
 	   :name ':wild
 	   :defaults user-modules-dir))
@@ -96,9 +96,11 @@
 	    :defaults user-modules-dir)))
 	 (module-dirs
 	  (append
-	   #-openmcl (directory subdirs-pathname)
-	   #+openmcl (directory subdirs-pathname :directories 't)
-	   ;; Add in any *.sym file "pseudo" symbolic links:
+	   #-(or clozure openmcl)
+           (directory subdirs-pathname)
+	   #+(or clozure openmcl)
+           (directory subdirs-pathname :directories 't)
+           ;; Add in any *.sym file "pseudo" symbolic links:
 	   (mapcan 'read-target-directory-specification
 		   pseudo-sym-link-paths))))
     (when module-dirs
