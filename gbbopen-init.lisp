@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/gbbopen-init.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Jul 14 05:44:52 2007 *-*
+;;;; *-* Last-Edit: Fri Dec 14 03:19:59 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -21,7 +21,10 @@
 ;;; your personal CL initialization file (in place of startup.lisp).  After
 ;;; loading, handy top-level-loop keyword commands, such as :gbbopen-tools,
 ;;; :gbbopen, :gbbopen-user, and :gbbopen-test, are available on Allegro CL,
-;;; CMUCL, SCL, ECL, Lispworks, OpenMCL, and SBCL.  For example:
+;;; CLISP, Clozure CL, CMUCL, SCL, ECL, Lispworks, OpenMCL, and SBCL.  GBBopen
+;;; keyword commands are also supported in the SLIME REPL.
+;;;
+;;; For example:
 ;;;
 ;;;    > :gbbopen-test :create-dirs
 ;;;
