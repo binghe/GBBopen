@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/mini-module/mini-module.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Nov 29 21:31:13 2007 *-*
+;;;; *-* Last-Edit: Fri Dec 14 03:42:51 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -337,15 +337,16 @@
    ;; directory:
    (ext:probe-directory path))
   #+clozure
-  (ccl:directory-pathname-p path)
+  (let ((pathname (probe-file path)))
+    (and pathname
+         (null (pathname-name pathname))
+         (null (pathname-type pathname))))	 
   #+(and cmu unix)
   (let ((dir (namestring 
               (make-pathname :name nil :type nil :defaults path))))
     (eq (unix::unix-file-kind dir) :directory))
   #+cormanlisp
   (cormanlisp:directory-p path)
-  ;; Directory-pathname-p doesn't work for this on MCL, so we must use the
-  ;; probe-file approach for now:
   #+digitool-mcl
   (let ((pathname (probe-file path)))
     (and pathname
@@ -364,7 +365,10 @@
   #+lispworks
   (system::file-directory-p path)
   #+openmcl-legacy
-  (ccl:directory-pathname-p path)
+  (let ((pathname (probe-file path)))
+    (and pathname
+         (null (pathname-name pathname))
+         (null (pathname-type pathname))))	 
   #+(and sbcl unix)
   (let ((dir (namestring 
               (make-pathname :name nil :type nil :defaults path))))
@@ -894,6 +898,8 @@
   (multiple-value-bind (source-directory compiled-directory)
       (module-source/compiled-directories module)
     (when compiled-directory
+      ;; Check if the compiled-directory exists; create it if automatically
+      ;; creating missing directories  or if the user so directs:
       (unless (probe-directory compiled-directory)
         (when (or *automatically-create-missing-directories*
                   (restart-case
@@ -910,7 +916,7 @@
           (ensure-directories-exist compiled-directory))))
     (compile/load-module-files-helper 
      module source-directory compiled-directory
-     t recompile? reload? source? print? propagate?)))
+     't recompile? reload? source? print? propagate?)))
 
 ;;; ---------------------------------------------------------------------------
 
