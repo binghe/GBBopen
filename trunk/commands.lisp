@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/commands.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Nov 20 04:17:37 2007 *-*
+;;;; *-* Last-Edit: Fri Dec 14 03:21:42 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -20,17 +20,17 @@
 ;;; Loaded by gbbopen-init.lisp.  After loading, handy top-level-loop keyword
 ;;; commands, such as :gbbopen-tools, :gbbopen-core, :gbbopen-user,
 ;;; :gbbopen-test, :agenda-shell-user, and :agenda-shell-test are available on
-;;; Allegro, CLISP, CMUCL, SCL, ECL, Lispworks, OpenMCL, and SBCL.  GBBopen
-;;; keyword commands are also supported in the SLIME REPL.
+;;; Allegro CL, CLISP, Clozure CL, CMUCL, SCL, ECL, Lispworks, OpenMCL, and
+;;; SBCL.  GBBopen keyword commands are also supported in the SLIME REPL.
 ;;;
 ;;; In many CL implementations, commands with arguments can be specified in
-;;; either list or spread notation.  However, OpenMCL and the SLIME interface
-;;; do not support spread notation, and Allegro and Lispworks do not support
-;;; list notation. For example:
+;;; either list or spread notation.  However, Clozure CL, OpenMCL, and the
+;;; SLIME interface do not support spread notation, while Allegro CL and
+;;; Lispworks do not support list notation. For example:
 ;;;
-;;;    > :gbbopen-test :create-dirs        [not OpenMCL or SLIME]
+;;;    > :gbbopen-test :create-dirs        [not Clozure CL, OpenMCL or SLIME]
 ;;; or
-;;;    > (:gbbopen-test :create-dirs)      [not Allegro or Lispworks]
+;;;    > (:gbbopen-test :create-dirs)      [not Allegro CL or Lispworks]
 ;;;
 ;;; will compile and load GBBopen and perform a basic trip test.
 ;;;
@@ -265,7 +265,7 @@
 	    (first command)
 	    (third command))))
 
-#+openmcl
+#+(or clozure openmcl)
 (define-tll-command :help ()
   "Show REPL commands"
   (ccl::check-toplevel-command ':?))
