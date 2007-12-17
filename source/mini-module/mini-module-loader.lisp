@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/gbbopen/source/mini-module/mini-module-loader.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Dec 17 17:16:38 2007 *-*
+;;;; *-* Last-Edit: Mon Dec 17 17:41:53 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -20,17 +20,17 @@
 ;;;
 ;;; Stand-alone Use:
 ;;;
-;;;    To use the Mini-Module Facility separate from the GBBopen Project
+;;;    To use the Mini-Module System separate from the GBBopen Project
 ;;;    software tree, do the following:
-;;;      1. Create a directory to contain the mini-module software tree
+;;;      1. Create a "root" directory to contain the mini-module software tree
 ;;;         (e.g., $ mkdir my-tree)
 ;;;      2. Create the mini-module portion of the source tree in that 
-;;;         directory  (e.g., $ cd my-tree ; mkdir -p source/mini-module)
+;;;         "root" directory  (e.g., $ cd my-tree; mkdir -p source/mini-module)
 ;;;      3. Copy the mini-module-loader.lisp and mini-module.lisp files into
-;;;         the ../source/mini-module directory
+;;;         the .../source/mini-module directory
 ;;;      4. Start your CL and then load the mini-module-loader.lisp file
 ;;;         (e.g., > (load "my-tree/source/mini-module/mini-module-loader"))
-;;;      5. Compile the :mini-module module:
+;;;      5. Compile the :mini-module system module
 ;;;         (e.g., > (mini-module:compile-module :mini-module :create-dirs))
 ;;;
 ;;; Porting Notice:

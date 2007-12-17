@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
-%% *-* File: /home/gbbopen/current/doc-source/reference.tex *-*
-%% *-* Last-Edit: Mon Dec 10 23:00:01 2007; Edited-By: cork *-*
+%% *-* File: /home/gbbopen/gbbopen/doc-source/reference.tex *-*
+%% *-* Last-Edit: Mon Dec 17 17:49:42 2007; Edited-By: cork *-*
 %% *-* Machine: ruby.corkills.org *-*
 
 %% Copyright (C) 2003-2007, Dan Corkill <corkill@GBBopen.org>
@@ -1339,6 +1339,24 @@ GBBopen parameters, and other personalizations
 \T\begin{ifhtml}
   (see the GBBopen \link{start-up description}{sec:startup}).
 \T\end{ifhtml}
+
+To bootstrap the Mini-Module System stand alone (separate from the GBBopen
+Project software tree), do the following:
+\begin{tightitemize}
+\item create a ``root'' directory to contain the mini-module software tree\\
+  (for example, \code{\$ mkdir my-tree})
+\item create the mini-module portion of the source tree in the newly created
+  ``root'' directory\\
+  (e.g., \code{\$ cd my-tree ; mkdir -p source/mini-module})
+\item copy the \code{mini-module-loader.lisp} and \code{mini-module.lisp}
+  files into the\\
+  \code{.../source/mini-module} directory
+\item start your Common Lisp implementation and then load the
+  \code{mini-module-loader.lisp} file\\
+   (e.g., \code{> (load "my-tree/source/mini-module/mini-module-loader")})
+\item compile the \code{:mini-module} module\\
+   (e.g., \code{> (mini-module:compile-module :mini-module :create-dirs)})
+\end{tightitemize}
 
 \W\entities
 \T\clearpage
