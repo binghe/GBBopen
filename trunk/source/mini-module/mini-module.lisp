@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/current/source/mini-module/mini-module.lisp *-*
+;;;; *-* File: /home/gbbopen/gbbopen/source/mini-module/mini-module.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Dec 14 03:42:51 2007 *-*
+;;;; *-* Last-Edit: Mon Dec 17 17:19:26 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -26,10 +26,7 @@
 ;;; --------------------------------------------------------------------------
 ;;;
 ;;;  This mini-module facility provides a lightweight and easy to use
-;;;  mechanism for maintaining (compiling and loading) module files.  The
-;;;  mini-module facility is sufficient for many situations, and if not, there
-;;;  are more complex open-source defsystem packages (such as ASDF) that are
-;;;  available.
+;;;  mechanism for maintaining (compiling and loading) module files.
 ;;;
 ;;;  This file assumes the global variables *compiled-directory-name* and
 ;;;  *compiled-file-type* have been defined by loading
@@ -49,7 +46,9 @@
 ;;;                mini-module.lisp            mini-module.<fasl>
 ;;;
 ;;;  This file can be used as a stand-alone system (when loaded by its
-;;;  companion file, mini-module-loader.lisp).
+;;;  companion file, mini-module-loader.lisp).  Instructions for stand-alone
+;;;  usage of the mini-module facility are provided in the
+;;;  mini-module-startup.lisp file.
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
