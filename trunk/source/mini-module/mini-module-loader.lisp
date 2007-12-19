@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/gbbopen/source/mini-module/mini-module-loader.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Dec 19 16:15:16 2007 *-*
+;;;; *-* Last-Edit: Wed Dec 19 16:24:11 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -108,7 +108,7 @@
               #+sparc "sparc"
               #+rs6000 "rs6000"
               #+(and x86 linux86) "linux86"
-              #+(and x86-64 linux86) "linux86-64" ; Thanks to Raymond de Lacaze
+              #+(and x86-64 linux) "linux86-64" ; Thanks to Raymond de Lacaze
               #+(and x86 macosx) "macosx86"
               #+(and x86 (not linux86)) "windows"
 	      #+powerpc "darwin"
