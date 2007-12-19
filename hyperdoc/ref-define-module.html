@@ -68,9 +68,9 @@ order in a previously defined module.
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
 <p><span class="fndoclabel">Terms</span><table class="tight">
 <tr valign="top"><td valign="baseline"><i>root-or-relative-directory</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A keyword naming a <a href="ref-glossary.html#gl:root">root</a> or
-<a href="ref-glossary.html#id137">relative&nbsp;directory</a> or <code>nil</code>, indicating that the module 
-is rooted at the <code>*load-truename*</code> value in effect when the module
-definition is loaded
+<a href="ref-glossary.html#id137">relative&nbsp;directory</a>, a keyword naming another module, or <code>nil</code>,
+indicating that the module is rooted at the <code>*load-truename*</code> value in
+effect when the module definition is loaded
 </td></tr><tr valign="top"><td valign="baseline"><i>subdirectory</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A string naming a subdirectory
 </td></tr><tr valign="top"><td valign="baseline"><i>file-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A string naming a file
 </td></tr><tr valign="top"><td valign="baseline"><i>module-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A keyword symbol naming a module 
@@ -80,9 +80,14 @@ definition is loaded
 <code>:directory</code>, and <code>:files</code> can be specified in any order,
 but at most one of each is allowed.
 </p>
-<p>If a <code>:directory</code> module option is not specified, an implicit
-root directory for the module (at the <code>*load-truename*</code> of the
-file containing the <b>define-module</b> form) is used.
+<p>If a <code>:directory</code> module option is not specified, an implicit root
+directory for the module (at the <code>*load-truename*</code> of the file containing
+the <b>define-module</b> form) is used.  If the <code>:directory</code> module
+option specifies a keyword naming another module, the directory specification
+of the named module is used as the base (root or relative) directory for the
+module that is being defined.  If both a module and a root or relative directory
+definition have the same name, the directory definition takes precedence over
+the module directory specification.
 </p>
 <p>The <code>:requires</code> module option specifies, in order, the modules that must
 be loaded before this module.  The fully expanded required-module order

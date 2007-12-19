@@ -1,5 +1,8 @@
 Important changes since GBBopen 0.9.6:
 
+  * Version 1.2 of the Mini-Module System
+    - Support module-relative directory specifications; implicit module rooting
+
   * Added shrink-vector to GBBopen-tools
  
   * Version 2.2 of the Portable Threads Interface

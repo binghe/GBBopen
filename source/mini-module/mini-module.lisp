@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/gbbopen/source/mini-module/mini-module.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Dec 17 17:19:26 2007 *-*
+;;;; *-* Last-Edit: Wed Dec 19 15:49:52 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -82,6 +82,8 @@
 ;;;           them in the module definition).  (Corkill)
 ;;;  07-14-07 Add subdirectories support to define-root-directory.  (Corkill)
 ;;;  07-14-07 Add :noautorun compile/load-module option.  (Corkill)
+;;;  12-19-07 Add module-relative support to compute-relative-directory and
+;;;           increment version to 1.2.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -136,7 +138,8 @@
   (setf *mini-module-load-verbose* nil))
 
 ;;; ---------------------------------------------------------------------------
-;;;  Controls whether GBBopen example and test modules autorun themselves.
+;;;  Controls whether modules (such as GBBopen example and tests) autorun
+;;;  themselves.
 
 (declaim (special *autorun-modules*))
 (unless (boundp '*autorun-modules*)
@@ -187,7 +190,7 @@
 ;;; ===========================================================================
 
 (defun mini-module-implementation-version ()
-  "1.1")
+  "1.2")
 
 ;;; Added to *features* at the end of this file:
 (defparameter *mini-module-version-keyword* :mini-module-1.1)
@@ -221,7 +224,7 @@
 ;;;  Dotted-conc-name
 
 (defun dotted-conc-name (symbol)
-  ;; Supports case-sensitive CLs
+  ;; Support reader-case-preserving CLs
   (concatenate 'simple-string (symbol-name symbol) "."))
 
 ;;; ===========================================================================
@@ -448,6 +451,7 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun define-root-directory (name spec &rest subdirectories)
+  (declare (dynamic-extent subdirectories))
   (unless (keywordp name)
     (non-keyword-directory-name-error name))
   (let ((root-directory-path (compute-root-directory spec subdirectories)))
@@ -481,7 +485,7 @@
      :directory (append-subdirectories (pathname-directory name)
                                        (list (if compiled?
                                                  *compiled-directory-name*
-                                                 *source-directory-name*))
+                                                 "source"))
                                        subdirectories)
      :defaults name))      
    (t (let ((mm-dir (gethash name *mm-directories*)))
@@ -500,11 +504,26 @@
                           (pathname-directory root-path)
                           (list (if compiled?
                                     *compiled-directory-name*
-                                    *source-directory-name*))
+                                    "source"))
                           subdirectories)
               :defaults root-path)))
           (otherwise
-           (error "Directory ~s is not defined." name)))))))
+           (let ((module 
+                  ;; Check if we have a module reference (look without the
+                  ;; get-module error check):
+                  (gethash name *mm-modules*)))
+             (cond 
+              ;; The reference is module relative:
+              (module
+               (when (eq name (mm-module.directory module))
+                 (error "Directory ~s is defined in terms of itself" name))
+               (compute-relative-directory
+                (mm-module.directory module)
+                (append-subdirectories 
+                 (mm-module.subdirectories module)
+                 subdirectories)
+                compiled?))
+              (t (error "Directory ~s is not defined." name))))))))))
            
 ;;; ---------------------------------------------------------------------------
 
@@ -531,11 +550,13 @@
              (format t "~&~s~%~4tRoot: ~a"
                      (mm-directory.name directory)
                      (mm-root-directory.path directory)))
-            (t (format t "~&~s~%~4tRelative to ~(~s~)~
-                          ~%~4tsubdirectories: ~s"
-                       (mm-directory.name directory)
-                       (mm-relative-directory.root directory)
-                       (mm-relative-directory.subdirectories directory)))))
+            (t (let ((root-name (mm-relative-directory.root directory)))
+                 (format t "~&~s~%~4tRelative to~:[ module~;~] ~(~s~)~
+                            ~%~4tsubdirectories: ~s"
+                         (mm-directory.name directory)
+                         (gethash root-name *mm-directories*)
+                         root-name
+                         (mm-relative-directory.subdirectories directory))))))
         (terpri))))
   (terpri)
   (values))
@@ -1232,56 +1253,13 @@
 ;;;  Get directory
 
 (defun get-directory (name &rest subdirectories)
-  ;; Get-directory is for direct directory specifications; there is no
-  ;; source/compiled subtree handling:
-  (let ((mm-dir (gethash name *mm-directories*)))
-    (typecase mm-dir
-      (mm-root-directory 
-       (let ((path (mm-root-directory.path mm-dir)))
-         (if subdirectories
-             (make-pathname 
-              :directory (append-subdirectories (pathname-directory path)
-                                                subdirectories)
-              :defaults path)
-             path)))
-      (mm-relative-directory
-       (let ((root-path (mm-root-directory.path
-                         (gethash 
-                          (mm-relative-directory.root mm-dir)
-                          *mm-directories*))))
-         (make-pathname 
-          :directory (append-subdirectories
-                      (pathname-directory root-path)
-                      '(#.*source-directory-name*)
-                      (mm-relative-directory.subdirectories mm-dir)
-                      subdirectories)
-          :defaults root-path)))
-      (otherwise
-       ;; See if module `name' has been defined:
-       (let ((module (get-module name)))
-         (if module
-             (let* ((module-directory (mm-module.directory module))
-                    (path
-                     (typecase module-directory
-                       ;; Implicitly rooted module:
-                       (pathname module-directory)
-                       ;; Use source directory of module:
-                       (otherwise 
-                        (nth-value 0 (module-source/compiled-directories
-                                      module))))))
-               (if subdirectories
-                   (make-pathname 
-                    :directory (append-subdirectories (pathname-directory path)
-                                                      subdirectories)
-                    :defaults path)
-                   path))
-             (error "Directory ~s is not defined." name)))))))
+  (declare (dynamic-extent subdirectories))
+  (compute-relative-directory name subdirectories nil))
 
 ;;; ===========================================================================
-;;;  Define :mini-module-root directory and the :mini-module module
+;;;  Define the mini-module directory root and :mini-module module
 
-(let ((this-file-truename *load-truename*))
-  (define-root-directory :mini-module-root this-file-truename :up :up))
+(define-root-directory :mini-module-root *load-truename* :up :up)
 
 (define-module :mini-module
   (:directory :mini-module-root "mini-module")
@@ -1294,7 +1272,7 @@
 (let* ((mini-module (gethash :mini-module *mm-modules*))
        (this-file (or *load-truename*
 		      ;; CormanLisp doesn't bind *load-truename* properly 
-		      ;; during bootstrapping, so we hardcode the filename
+		      ;; during bootstrapping, so we hardcode the pathname
 		      ;; during compilation:
 		      #+cormanlisp
 		      #.*compile-file-truename*))

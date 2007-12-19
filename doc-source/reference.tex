@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
-%% *-* File: /home/gbbopen/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Mon Dec 17 21:54:14 2007; Edited-By: cork *-*
+%% *-* File: /home/gbbopen/current/doc-source/reference.tex *-*
+%% *-* Last-Edit: Wed Dec 19 15:34:52 2007; Edited-By: cork *-*
 %% *-* Machine: ruby.corkills.org *-*
 
 %% Copyright (C) 2003-2007, Dan Corkill <corkill@GBBopen.org>
@@ -1046,15 +1046,13 @@ directory tree can contain:
 \end{tightitemize}
 
 We highly recommend following this packaging convention, which mirrors
-that of GBBopen itself. It is very easy to use and share modules
+that of GBBopen itself. It is very easy to create, use,  and share modules
 defined in this way by placing symbolic links to the module
 directories in your personal \code{gbbopen-modules} directory.
 Windows, unfortunately, is the exception to this as Windows does not
 provide symbolic links.  GBBopen users running on Windows must create
 a text file of type \code{.sym} (containing target directory path as
-its sole line) as a stand-in for the symbolic link.  The
-\textit{GBBopen Tutorial} will provide a more detailed example of
-this.
+its sole line) as a stand-in for the symbolic link. 
 
 \ppar{GBBopen Hyperdoc}
 \label{sec:hyperdoc}
@@ -1484,11 +1482,11 @@ following effects (overriding the behavior of \var{options\/} supplied to
 \also[startup-module]
 \end{alsos}
 
-\fnexample Compile and load the GBBopen core module and all its
+\fnexample Compile and load the GBBopen User module and all its
 required modules, creating new compilation directories if they do not
 exist already:
 \begin{example}
-  (compile-module :gbbopen-core :propagate :create-dirs)
+  (compile-module :gbbopen-user :propagate :create-dirs)
 \end{example}
 
 \end{functiondoc}
@@ -1547,9 +1545,9 @@ order in a previously defined module.
 \fnterms
 \begin{args}{root-or-relative-directory}
 \arg[root-or-relative-directory] A keyword naming a \glref{root} or
-\glref{relative~directory} or \nil{}, indicating that the module 
-  is rooted at the \code{*load-truename*} value in effect when the module
-  definition is loaded
+  \glref{relative~directory}, a keyword naming another module, or \nil{},
+  indicating that the module is rooted at the \code{*load-truename*} value in
+  effect when the module definition is loaded
 \arg[subdirectory] A string naming a subdirectory
 \arg[file-name] A string naming a file
 \arg[module-name] A keyword symbol naming a module 
@@ -1559,9 +1557,14 @@ order in a previously defined module.
 \code{:directory}, and \code{:files} can be specified in any order,
 but at most one of each is allowed.
 
-If a \code{:directory} module option is not specified, an implicit
-root directory for the module (at the \code{*load-truename*} of the
-file containing the \textbf{define-module} form) is used.
+If a \code{:directory} module option is not specified, an implicit root
+directory for the module (at the \code{*load-truename*} of the file containing
+the \textbf{define-module} form) is used.  If the \code{:directory} module
+option specifies a keyword naming another module, the directory specification
+of the named module is used as the base (root or relative) directory for the
+module that is being defined.  If both a module and a root or relative directory
+definition have the same name, the directory definition takes precedence over
+the module directory specification.
 
 The \code{:requires} module option specifies, in order, the modules that must
 be loaded before this module.  The fully expanded required-module order
@@ -1620,7 +1623,8 @@ containing the \textbf{define-module} form:
 
 \fnsyntax 
 
-\fnpurpose Defines a directory relative to a root or relative directory.
+\fnpurpose Defines a directory relative to a root or relative directory or to
+the directory specification of a module definition.
 
 \fnpackage \code{:mini-module}
 
@@ -1628,9 +1632,9 @@ containing the \textbf{define-module} form:
 
 \fnargs
 \begin{args}{subdirectories}
-\arg[module-name] A keyword symbol naming the relative directory
-\arg[directory] The keyword symbol name of a root or relative directory
-ancestor of the relative directory
+\arg[name] A keyword symbol naming the relative directory
+\arg[directory] The keyword symbol name of a root or relative directory or the 
+name of a module
 \arg[subdirectories] One or more strings specifying, in order, subdirectories
 from \var{directory\/} to the relative directory. (The keyword \code{:up} or
 \code{:back} can also be supplied in place of any of these strings, indicating
@@ -1638,27 +1642,33 @@ to go upward one semantic or syntactic level of directory structure,
 respectively.)
 \end{args}
 
-\fndescription Root and relative directory definitions are used to
-isolate file-system details from module definitions.  A relative
-directory is defined in relation to another directory definition.  If
-this directory location changes, the relative directory is adjusted
-automatically.
+\fndescription Root and relative directory definitions are used to isolate
+file-system details from module definitions.  A relative directory is defined
+in relation to another directory definition, the ``base'' directory.  If this
+base directory location changes, the relative directory is adjusted automatically.
 
 \begin{alsos}{show-defined-directories}
 \also[define-root-directory]
 \also[show-defined-directories]
 \end{alsos}
 
-\fnexamples Define a relative directory named \code{:my-tests}:
+\fnexamples Define a relative directory below \code{:my-app-root} named
+\code{:my-tests}:
 \begin{example}
   (define-relative-directory :my-tests :my-app-root "tests")
 \end{example}
 
-Define a relative directory below \code{:my-app-root} named
-\code{:my-performance-tests}: 
+Define another relative directory named
+\code{:my-performance-tests} below \code{:my-tests}: 
 \begin{example}
   (define-relative-directory :my-performance-tests :my-tests "performance") 
 \end{example}
+
+Define a data directory sibling to the \code{source} directory of \code{:my-app} module: 
+\begin{example}
+  (define-relative-directory :app-data :my-app :up "data") 
+\end{example}
+
 
 \end{functiondoc}
 
@@ -1818,7 +1828,7 @@ returned for relative directories is the source pathname.
 Return the pathname of the \code{:my-app-root} root directory:
 \begin{example}
 > (get-directory :my-app-root)
-#P"~/my-app")
+#P"~/my-app"
 \end{example}
 
 Return the pathname of the \code{:gbbopen-tools} module:
