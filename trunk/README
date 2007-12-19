@@ -8,19 +8,17 @@ Requirements:
    extensions.  GBBopen has been ported to following Common Lisp
    implementations:
 
-       Allegro CL   (Version 8.1)
-       CLISP        (Version 2.43)
-       Clozure CL   (Version 1.1 r7780)
-       CMUCL        (Version 19d)
-       Digitool MCL (Version 5.1)
-       ECL          (Version 0.9i)
-       Lispworks    (Version 5.0.2)
-       OpenMCL      (Version 1.0)
-       SBCL         (Version 1.0.12)
-       Scieneer CL  (Version 1.3.2)
+       Allegro CL   Version 8.1
+       CLISP        Version 2.43
+       Clozure CL   Version 1.1 (r7780)
+       CMUCL        Version 19d
+       Digitool MCL Version 5.1
+       ECL          Version 0.9i (configure with --enable-threads if possible)
+       Lispworks    Version 5.0.2
+       OpenMCL      Version 1.0
+       SBCL         Version 1.0.12 (use sb-threads if possible)
+       Scieneer CL  Version 1.3.2
 
-   GBBopen on ECL (Version 0.9i) requires --enable-threads=yes.
- 
    Ports of GBBopen to Corman Common Lisp (Version 3.0), and GCL
    (Version 2.7.0 with --enable-ansi) are incomplete (due to limitations 
    in the MOP support in these implementations).  The latest GCL tested was
