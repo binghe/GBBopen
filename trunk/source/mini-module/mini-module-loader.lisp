@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/gbbopen/source/mini-module/mini-module-loader.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Dec 17 17:41:53 2007 *-*
+;;;; *-* Last-Edit: Wed Dec 19 16:15:16 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -88,17 +88,13 @@
   (pushnew :openmcl-legacy *features*))
 
 ;;; ===========================================================================
-;;;  Source/Compiled Directory Names
-
-(defparameter *source-directory-name* "source")
-
-;;; ---------------------------------------------------------------------------
 ;;; The mini-module system uses a separate compiled directory tree for each CL
 ;;; implementation and version.  The following form creates a unique name for
 ;;; the root of this tree for a number of CL implementations.  If you use the
 ;;; mini-module system with another CL implementation, you should add that
 ;;; implementation to the *compiled-directory-name* form and e-mail the
-;;; modified form to the GBBopen Project for inclusion in future releases.
+;;; modified form to the GBBopen Project (bugs@GBBopen.org) for inclusion in
+;;; future releases.
 
 (defparameter *compiled-directory-name*
     (or
@@ -112,10 +108,15 @@
               #+sparc "sparc"
               #+rs6000 "rs6000"
               #+(and x86 linux86) "linux86"
+              #+(and x86-64 linux86) "linux86-64" ; Thanks to Raymond de Lacaze
               #+(and x86 macosx) "macosx86"
               #+(and x86 (not linux86)) "windows"
 	      #+powerpc "darwin"
-              #-(or alpha prism sgi sparc rs6000 x86 powerpc)
+              #-(or alpha prism sgi sparc rs6000 powerpc
+                    (and x86 linux86)
+                    (and x86-64 linux86) 
+                    (and x86 macosx)
+                    (and x86 (not linux86)))
               (must-port '*compiled-directory-name*))
 	     (eq excl:*current-case-mode* ':case-sensitive-lower) 
              excl::*common-lisp-version-number*)
@@ -210,7 +211,7 @@
               #+(and x86 darwin) "macosx86"
               #+sparc "sparc"
               #+(and x86 linux) "linux86"
-              #+(and x86-64 linux) "linux86-64" ;; Thanks to Eric Menard
+              #+(and x86-64 linux) "linux86-64" ; Thanks to Eric Menard
               #+(and x86 (not linux)) "windows"
               #-(or darwin sparc x86 (and x86-64 linux))
               (must-port '*compiled-directory-name*))
@@ -241,12 +242,12 @@
 ;;; ===========================================================================
 ;;;  Compiled File Type
 ;;;
-;;; The mini-module system needs to know the file type of compiled files.
-;;; The following form specifies the compiled-file type for a number of CL
+;;; The mini-module system needs to know the file type of compiled files.  The
+;;; following form specifies the compiled-file type for a number of CL
 ;;; implementations. If you use the mini-module system with another CL
 ;;; implementation, you should add that implementation to the
 ;;; *compiled-file-type* form and e-mail the modified form to the GBBopen
-;;; Project for inclusion in future releases.
+;;; Project (bugs@GBBopen.org) for inclusion in future releases.
 
 (defparameter *compiled-file-type*
     (or
@@ -322,8 +323,7 @@
                     :name name
                     :type "lisp"
                     :directory `(,@(pathname-directory root-pathname)
-                                   ,*source-directory-name* 
-                                   "mini-module")
+                                   "source" "mini-module")
                     :version :newest
                     :defaults root-pathname))
                   (compiled-path

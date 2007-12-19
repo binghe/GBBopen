@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/current/modules.lisp *-*
+;;;; *-* File: /home/gbbopen/gbbopen/modules.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Nov 20 04:17:18 2007 *-*
+;;;; *-* Last-Edit: Wed Dec 19 09:40:20 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -37,6 +37,12 @@
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 (in-package :mini-module)
+
+;;; ---------------------------------------------------------------------------
+;;;  Define the root GBBopen installation directory relative to this file:
+
+(let ((this-file-truename *load-truename*))
+  (define-root-directory :gbbopen-root this-file-truename))
 
 ;;; ===========================================================================
 ;;;  GBBopen Tools Modules
