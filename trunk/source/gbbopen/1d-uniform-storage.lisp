@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/1d-uniform-storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Jul  3 10:20:31 2007 *-*
+;;;; *-* Last-Edit: Thu Dec 20 12:56:29 2007 *-*
 ;;;; *-* Machine: ruby.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -118,7 +118,8 @@
                        (print-1d-uniform-buckets-usage-message
                         (1+& (-& end-index start-index))
                         storage))
-                     (loop for bucket-index from start-index to end-index do
+                     (loop for bucket-index of-type fixnum 
+                         from start-index to end-index do
                            (funcall bucket-action instance 
                                     buckets bucket-index)))))))
 	(cond 
