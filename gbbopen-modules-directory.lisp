@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/gbbopen-modules-directory.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Dec 14 03:13:48 2007 *-*
-;;;; *-* Machine: ruby.corkills.org *-*
+;;;; *-* Last-Edit: Thu Dec 27 10:03:39 2007 *-*
+;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -38,31 +38,32 @@
   (with-open-file (file filename)
     (let (line)
       (loop
-	(setq line (ignore-errors (read-line file nil nil)))
+	(setf line (ignore-errors (read-line file nil nil)))
 	(unless line
 	  (return-from read-target-directory-specification nil))
-	(setq line (string-trim '(#\Space #\Tab #\Newline) line))
-	(when (plusp (length line))
-	  (case (aref line 0)
-	    ;; Skip comment lines:
-	    ((#\; #\#))
-	    ;;
-	    (#\" (let ((string
-			(ignore-errors (read-from-string line nil nil))))
-		   (return-from read-target-directory-specification 
-		     (typecase string
-		       ;; We got the expected string:
-		       (string (list string))
-		       (otherwise 
-			(warn "While reading from ~s: Unable to read ~
-                               target-directory, ~a, " 
-			      (namestring file)
-			      line)
-			;; return nil
-			nil)))))				  
-	    (otherwise 
-	     (return-from read-target-directory-specification 
-	       (list line)))))))))
+	(locally (declare (simple-string line))
+	  (setf line (string-trim '(#\Space #\Tab #\Newline) line))
+	  (when (plusp (length line))
+	    (case (aref line 0)
+	      ;; Skip comment lines:
+	      ((#\; #\#))
+	      ;;
+	      (#\" (let ((string
+			  (ignore-errors (read-from-string line nil nil))))
+		     (return-from read-target-directory-specification 
+		       (typecase string
+			 ;; We got the expected string:
+			 (string (list string))
+			 (otherwise 
+			  (warn "While reading from ~s: Unable to read ~
+                                 target-directory, ~a, " 
+				(namestring file)
+				line)
+			  ;; return nil
+			  nil)))))
+	      (otherwise 
+	       (return-from read-target-directory-specification 
+		 (list line))))))))))
 
 ;;; ---------------------------------------------------------------------------
 
