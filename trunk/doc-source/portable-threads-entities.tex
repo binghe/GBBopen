@@ -1,7 +1,7 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
-%% *-* File: /home/gbbopen/current/doc-source/portable-threads-entities.tex *-*
-%% *-* Last-Edit: Wed Nov 28 12:47:30 2007; Edited-By: cork *-*
-%% *-* Machine: ruby.corkills.org *-*
+%% *-* File: /home/gbbopen/doc-source/portable-threads-entities.tex *-*
+%% *-* Last-Edit: Thu Dec 27 13:30:56 2007; Edited-By: cork *-*
+%% *-* Machine: whirlwind.corkills.org *-*
 
 \index{module!:portable-threads@\code{:portable-threads}}%
 \index{:portable-threads@\code{:portable-threads} module}%
@@ -11,7 +11,9 @@ entities do something reasonable in Common Lisp implementations that do not
 provide threads. However, entities that make no sense without threads signal
 errors in non-threaded implementations (as noted with each entity). GBBopen
 adds the \glref{feature} \code{:threads-not-available} on Common Lisp
-implementations without thread support.
+implementations without thread support.  The \glref{feature}
+\code{:with-timeout-not-available} is added on Common Lisp implementations
+that do not support \textbf{\entlink{with-timeout}}.
 
 \ppar{Threads and Processes}
 
@@ -1132,7 +1134,7 @@ half-second-timer
 \begin{args}{initargs}
 \arg[initargs] An \glref{initialization~argument~list}
 \arg[class] The name of the \glref{class} for the created
-\glref{condition~variable} instance (default is \code{condition-variable})
+\glref{condition-variable} instance (default is \code{condition-variable})
 \arg[lock] A \glref{lock}, a \glref{recursive~lock}, or a 
 \glref{condition~variable} (default is a non-recursive lock)
 \end{args}
@@ -1173,6 +1175,11 @@ and then create a \code{state-cv} instance with a \glref{recursive~lock}:
                            :lock (\entlink{make-recursive-lock}))
 #<state-cv>
 \end{example}
+
+\fnnote The \textbf{make-condition-variable} function is equivalent to using
+\textbf{\entlinknoex{make-instance}} with the desired \glref{class} for the
+created \glref{condition-variable} instance.  However, using
+\textbf{make-condition-variable} is preferable stylistically.
 
 \end{functiondoc}
 
@@ -2346,8 +2353,8 @@ seconds have elapsed
 completed in less than \var{seconds} seconds; otherwise the values returned by
 evaluating the last \var{timeout-form}
 
-\fnerrors
-\nothreads{}
+\fnerrors \nothreads{} However, \textbf{with-timeout} is also
+supported on non-threaded \xsitelink{SBCL}{http://sbcl.sourceforge.net}.
 
 \fndescription If the evaluation of \var{forms\/} does not complete within
 \var{seconds} seconds, execution of \var{forms\/} is terminated and the

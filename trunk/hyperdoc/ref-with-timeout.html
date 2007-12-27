@@ -41,7 +41,8 @@ completed in less than <var>seconds</var> seconds; otherwise the values returned
 evaluating the last <var>timeout-form</var>
 </p>
 <p><span class="fndoclabel">Errors</span> <br />Threads (multiprocessing) is not supported on the
-Common Lisp implementation.
+Common Lisp implementation. However, <b>with-timeout</b> is also
+supported on non-threaded <a target="_top" href="http://sbcl.sourceforge.net">SBCL</a>.
 </p>
 <p><span class="fndoclabel">Description</span> <br />If the evaluation of <var>forms</var> does not complete within
 <var>seconds</var> seconds, execution of <var>forms</var> is terminated and the

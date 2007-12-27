@@ -27,7 +27,7 @@
 <p><span class="fndoclabel">Arguments</span><table class="tight">
 <tr valign="top"><td valign="baseline"><i>initargs</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An <a href="ref-glossary.html#id79">initialization&nbsp;argument&nbsp;list</a>
 </td></tr><tr valign="top"><td valign="baseline"><i>class</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> The name of the <a href="ref-glossary.html#gl:class">class</a> for the created
-<a href="ref-glossary.html#id18">condition&nbsp;variable</a> instance (default is <code>condition-variable</code>)
+<a href="ref-glossary.html#gl:condition-variable">condition-variable</a> instance (default is <code>condition-variable</code>)
 </td></tr><tr valign="top"><td valign="baseline"><i>lock</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#gl:lock">lock</a>, a <a href="ref-glossary.html#id135">recursive&nbsp;lock</a>, or a 
 <a href="ref-glossary.html#id18">condition&nbsp;variable</a> (default is a non-recursive lock)
 </td></tr></table>
@@ -67,6 +67,11 @@
                            :lock (<a href="ref-make-recursive-lock.html">make-recursive-lock</a>))
 #&lt;state-cv&gt;
 </pre>
+<p><span class="fndoclabel">Note</span> <br />The <b>make-condition-variable</b> function is equivalent to using
+<b><a href="ref-make-instance.html">make-instance</a></b> with the desired <a href="ref-glossary.html#gl:class">class</a> for the
+created <a href="ref-glossary.html#gl:condition-variable">condition-variable</a> instance.  However, using
+<b>make-condition-variable</b> is preferable stylistically.
+</p>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
 <table width="100%" cellpadding="0" cellspacing="2"><tr>
