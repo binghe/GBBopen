@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/current/source/tools/portable-threads.lisp *-*
+;;;; *-* File: /home/gbbopen/source/tools/portable-threads.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Dec  2 17:15:29 2007 *-*
-;;;; *-* Machine: ruby.corkills.org *-*
+;;;; *-* Last-Edit: Thu Dec 27 11:00:55 2007 *-*
+;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -381,9 +381,9 @@
          (sb-ext:schedule-timer ,timer-sym ,seconds)
          (unwind-protect (progn ,@timed-body)
            (sb-ext:unschedule-timer ,timer-sym)))))
-  #+threads-not-available
+  #+(and threads-not-available (not sbcl))
   (declare (ignore seconds timeout-body timed-body))
-  #+threads-not-available
+  #+(and threads-not-available (not sbcl))
   (progn
     (threads-not-available 'with-timeout)
     '(threads-not-available 'with-timeout)))    
