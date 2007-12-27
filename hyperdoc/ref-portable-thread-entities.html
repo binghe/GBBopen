@@ -20,7 +20,9 @@ entities do something reasonable in Common Lisp implementations that do not
 provide threads. However, entities that make no sense without threads signal
 errors in non-threaded implementations (as noted with each entity). GBBopen
 adds the <a href="ref-glossary.html#gl:feature">feature</a> <code>:threads-not-available</code> on Common Lisp
-implementations without thread support.
+implementations without thread support.  The <a href="ref-glossary.html#gl:feature">feature</a>
+<code>:with-timeout-not-available</code> is added on Common Lisp implementations
+that do not support <b><a href="ref-with-timeout.html">with-timeout</a></b>.
 </p>
 <p><h4>Threads and Processes</h4>
 </p>
@@ -54,7 +56,7 @@ appropriately for each lock type.
 </p>
 <p><h4>Condition Variables</h4>
 </p>
-<p>POSIX-style <a href="ref-glossary.html#id19">condition&nbsp;variables</a> provide an atomic means for a
+<p>POSIX-style <a href="ref-glossary.html#gl:condition-variable">condition&nbsp;variables</a> provide an atomic means for a
 <a href="ref-glossary.html#gl:thread">thread</a> to release a lock that it holds and go to sleep until it is
 awakened by another thread.  Once awakened, the lock that it was holding is
 reacquired atomically before the thread is allowed to do anything else.

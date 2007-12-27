@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/tools/portable-threads.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Dec 27 11:00:55 2007 *-*
+;;;; *-* Last-Edit: Thu Dec 27 12:33:31 2007 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -220,7 +220,9 @@
             thread-yield
             unschedule-function
             with-lock-held
-            with-timeout)))
+            with-timeout
+	    with-timeout-not-available	; not documented
+	    )))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Warn if the Idle Process is not running on CMUCL
@@ -245,27 +247,20 @@
       gcl
       (and sbcl (not sb-thread)))
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (pushnew :threads-not-available *features*)
-  ;; Remove the following soon!
-  (pushnew :multiprocessing-not-available *features*))
+  (pushnew :threads-not-available *features*))
 
 ;;; ---------------------------------------------------------------------------
 
 #+threads-not-available
 (defun threads-not-available (operation)
-  (warn "Threads are not available in ~s running on ~s; ~s was used."
+  (warn "Threads are not available in ~a running on ~a; ~s was used."
 	(lisp-implementation-type) 
 	(machine-type)
 	operation))
 
-;; Temporary backward name compatability:
-#+threads-not-available
-(defun multiprocessing-not-available (operation)
-  (threads-not-available operation))
-
 #+threads-not-available
 (defun thread-condition-variables-not-available (operation)
-  (warn "Thread condition variables are not available in ~s running on ~s; ~
+  (warn "Thread condition variables are not available in ~a running on ~a; ~
         ~s was used."
 	(lisp-implementation-type) 
 	(machine-type)
@@ -274,6 +269,23 @@
 #+threads-not-available
 (defun not-a-thread (thread)
   (error "~s is not a thread object" thread))
+
+;;; ---------------------------------------------------------------------------
+
+#+(and threads-not-available
+       ;; With-timeout is supported on non-threaded SBCL
+       (not sbcl))
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (pushnew :with-timeout-not-available *features*))
+
+;;; ---------------------------------------------------------------------------
+
+#+with-timeout-not-available
+(defun with-timeout-not-available ()
+  (warn "~s is not available in ~a running on ~a."
+	'with-timeout
+	(lisp-implementation-type) 
+	(machine-type)))
 
 ;;; ===========================================================================
 
@@ -381,12 +393,12 @@
          (sb-ext:schedule-timer ,timer-sym ,seconds)
          (unwind-protect (progn ,@timed-body)
            (sb-ext:unschedule-timer ,timer-sym)))))
-  #+(and threads-not-available (not sbcl))
+  #+with-timeout-not-available
   (declare (ignore seconds timeout-body timed-body))
-  #+(and threads-not-available (not sbcl))
+  #+with-timeout-not-available
   (progn
-    (threads-not-available 'with-timeout)
-    '(threads-not-available 'with-timeout)))    
+    (with-timeout-not-available)
+    '(with-timeout-not-available)))
 
 ;;; ===========================================================================
 ;;;   Thread-yield (runs *non-threaded-polling-function-hook* functions on
