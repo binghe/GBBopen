@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/mini-module/mini-module.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Jan  5 03:01:26 2008 *-*
+;;;; *-* Last-Edit: Sat Jan  5 03:16:12 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -93,15 +93,15 @@
   (unless (find-package :mini-module)
     (error "This file should be loaded using the file ~
             mini-module-loader.lisp")))
-	 
+         
 (in-package :mini-module)
 
 (flet ((check-var (var)
-	 (unless (boundp var)
-	   (error "~s is not defined.~
+         (unless (boundp var)
+           (error "~s is not defined.~
                    (This file should be loaded using the file ~
                     mini-module-loader.lisp)"
-		  var))))
+                  var))))
   (check-var '*compiled-directory-name*)
   (check-var '*compiled-file-type*))
 
@@ -115,8 +115,8 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (import '(common-lisp-user::*automatically-create-missing-directories*
             common-lisp-user::*autorun-modules*
-	    common-lisp-user::*mini-module-compile-verbose*
-	    common-lisp-user::*mini-module-load-verbose*)))
+            common-lisp-user::*mini-module-compile-verbose*
+            common-lisp-user::*mini-module-load-verbose*)))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Controls whether the mini-module system automatically creates missing 
@@ -163,30 +163,30 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(*automatically-create-missing-directories*
             *autorun-modules*
-	    *mini-module-compile-verbose* ; not yet documented
-	    *mini-module-load-verbose*  ; not yet documented
+            *mini-module-compile-verbose* ; not yet documented
+            *mini-module-load-verbose*  ; not yet documented
             *month-preceeds-date*
-	    compile-module
-	    compute-relative-directory	; not documented
-	    define-relative-directory
-	    define-root-directory
-	    define-module
-	    describe-module
-	    dotted-conc-name		; part of tools, but placed here
+            compile-module
+            compute-relative-directory  ; not documented
+            define-relative-directory
+            define-root-directory
+            define-module
+            describe-module
+            dotted-conc-name            ; part of tools, but placed here
             get-directory
             list-modules                ; not yet documented
-	    load-module
-	    load-module-file
+            load-module
+            load-module-file
             mini-module-implementation-version ; not documented
-	    module-directories		; not yet documented
-	    module-loaded-p
-	    need-to-port		; not documented
-	    port-needed			; not documented
-	    brief-date-and-time		; part of tools, but placed here
-	    show-defined-directories
-	    show-modules                ; not yet documented
-	    undefine-directory          ; not yet documented
-	    undefine-module             ; not yet documented
+            module-directories          ; not yet documented
+            module-loaded-p
+            need-to-port                ; not documented
+            port-needed                 ; not documented
+            brief-date-and-time         ; part of tools, but placed here
+            show-defined-directories
+            show-modules                ; not yet documented
+            undefine-directory          ; not yet documented
+            undefine-module             ; not yet documented
             )))
 
 ;;; ===========================================================================
@@ -216,10 +216,10 @@
 
 #+digitool-mcl 
 (defmethod documentation ((object ccl::standard-slot-definition)
-			  &optional doc-type)
+                          &optional doc-type)
   (declare (ignore doc-type))
   (when (and (slot-exists-p object 'documentation)
-	     (slot-boundp object 'documentation))
+             (slot-boundp object 'documentation))
     (slot-value object 'documentation)))
 
 ;;; ===========================================================================
@@ -242,50 +242,50 @@
 
 (defvar *month-name-vector* 
     (vector "Jan" "Feb" "Mar" "Apr" "May" "Jun"
-	    "Jul" "Aug" "Sep" "Oct" "Nov" "Dec"))
+            "Jul" "Aug" "Sep" "Oct" "Nov" "Dec"))
 
 (defun brief-date-and-time (&optional time time-zone include-seconds)
   (let ((current-time (get-universal-time))
-	time-difference)
+        time-difference)
     (if time
-	(setf time-difference (abs (- current-time time)))
-	(setf time current-time 
-	      time-difference 0))
+        (setf time-difference (abs (- current-time time)))
+        (setf time current-time 
+              time-difference 0))
     (multiple-value-bind (second minute hour date month year)
-	(if time-zone 
-	    (decode-universal-time time time-zone)
-	    (decode-universal-time time))
+        (if time-zone 
+            (decode-universal-time time time-zone)
+            (decode-universal-time time))
       (declare (fixnum year))
       (let ((month-name (svref *month-name-vector* (1- month))))
-	(if (< time-difference
-	       ;; 120 days:
-	       #.(* 60 60 24 120))
-	    (if *month-preceeds-date*
-		(format nil "~a ~2d ~2,'0d:~2,'0d~:[~;:~2,'0d~]"
-			month-name
-			date
-			hour
-			minute
-			include-seconds
-			second)
-		(format nil "~2d ~a ~2,'0d:~2,'0d~:[~;:~2,'0d~]"
-			date
-			month-name
-			hour
-			minute
-			include-seconds
-			second))
-	    (if *month-preceeds-date*	  
-		(format nil "~a ~2d, ~a~@[   ~]"
-			month-name
-			date
-			year
-			include-seconds)
-		(format nil "~2d ~a, ~a~@[   ~]"
-			date
-			month-name
-			year
-			include-seconds)))))))
+        (if (< time-difference
+               ;; 120 days:
+               #.(* 60 60 24 120))
+            (if *month-preceeds-date*
+                (format nil "~a ~2d ~2,'0d:~2,'0d~:[~;:~2,'0d~]"
+                        month-name
+                        date
+                        hour
+                        minute
+                        include-seconds
+                        second)
+                (format nil "~2d ~a ~2,'0d:~2,'0d~:[~;:~2,'0d~]"
+                        date
+                        month-name
+                        hour
+                        minute
+                        include-seconds
+                        second))
+            (if *month-preceeds-date*     
+                (format nil "~a ~2d, ~a~@[   ~]"
+                        month-name
+                        date
+                        year
+                        include-seconds)
+                (format nil "~2d ~a, ~a~@[   ~]"
+                        date
+                        month-name
+                        year
+                        include-seconds)))))))
 
 ;;; ===========================================================================
 ;;;  Port needed reporting
@@ -344,7 +344,7 @@
   (let ((pathname (probe-file path)))
     (and pathname
          (null (pathname-name pathname))
-         (null (pathname-type pathname))))	 
+         (null (pathname-type pathname))))       
   #+(and cmu unix)
   (let ((dir (namestring 
               (make-pathname :name nil :type nil :defaults path))))
@@ -355,12 +355,12 @@
   (let ((pathname (probe-file path)))
     (and pathname
          (null (pathname-name pathname))
-         (null (pathname-type pathname))))	 
+         (null (pathname-type pathname))))       
   #+ecl
   (let ((pathname (probe-file path)))
     (and pathname
          (null (pathname-name pathname))
-         (null (pathname-type pathname))))	 
+         (null (pathname-type pathname))))       
   #+gcl
   ;; GCL's probe-file returns nil on directories, but directory returns
   ;; the directory (on linux, at least):
@@ -372,14 +372,14 @@
   (let ((pathname (probe-file path)))
     (and pathname
          (null (pathname-name pathname))
-         (null (pathname-type pathname))))	 
+         (null (pathname-type pathname))))       
   #+(and sbcl unix)
   (let ((dir (namestring 
               (make-pathname :name nil :type nil :defaults path))))
     (eq (sb-unix::unix-file-kind dir) :directory))
   #+(and scl unix)
   (ext:unix-namestring (make-pathname :name nil :type nil :version nil
-				      :defaults path))
+                                      :defaults path))
   #-(or allegro
         clisp
         clozure
@@ -388,7 +388,7 @@
         digitool-mcl
         ecl
         gcl
-	lispworks 
+        lispworks 
         openmcl-legacy
         (and sbcl unix)
         (and scl unix))
@@ -403,7 +403,7 @@
 
 (defun non-keyword-root/relative-directory-name-error (name)
   (error "Root or relative directory name, ~s, must be a keyword."
-	 name))
+         name))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -611,7 +611,7 @@
          (setf directory (second option))
          (setf subdirectories (cddr option))
          (unless (or (not directory)
-		     (keywordp directory))
+                     (keywordp directory))
            (error "The :directory specification supplied in module ~s ~_~
                    must begin with a keyword root or relative directory ~
                    name or nil: ~_~s"
@@ -642,16 +642,16 @@
                   option name))))    
     (when (and files (not directory))
       (let ((truename *load-truename*))
-	(if truename
-	    (setf directory 
-	      (make-pathname
-	       :name nil
-	       :type nil
-	       :defaults truename))
-	    (error "A ~s-relative :directory specification to ~s cannot ~
+        (if truename
+            (setf directory 
+              (make-pathname
+               :name nil
+               :type nil
+               :defaults truename))
+            (error "A ~s-relative :directory specification to ~s cannot ~
                     be evaluated outside of a load context."
-		   '*load-truename*
-		   'define-module))))
+                   '*load-truename*
+                   'define-module))))
     `(ensure-module ',name ',directory ',subdirectories ',requires 
                     ',files
                     ',after-form)))
@@ -661,18 +661,18 @@
 (defun get-module (name &optional (errorp t))
   (or (gethash name *mm-modules*)
       (when errorp
-	(error "Module ~s is not defined." name))))
+        (error "Module ~s is not defined." name))))
 
 ;;; ---------------------------------------------------------------------------
 
 (defun determine-modules (module-names &optional skip-undefined-modules-p
-			  &aux result)
+                          &aux result)
   (labels ((maybe-add-module (name)
              (let ((module (get-module name (not skip-undefined-modules-p))))
-	       (when module
-		 (dolist (name (mm-module.requires module))
-		   (maybe-add-module name))
-		 (pushnew module result :test #'eq :key #'mm-module.name)))))
+               (when module
+                 (dolist (name (mm-module.requires module))
+                   (maybe-add-module name))
+                 (pushnew module result :test #'eq :key #'mm-module.name)))))
     (dolist (name module-names)
       (maybe-add-module name)))
   ;; Maintain precedence order...
@@ -687,12 +687,12 @@
     (declare (fixnum pos))
     (dolist (item seq1 't)
       (let ((item-pos (position item seq2)))
-	(when item-pos
-	  (locally (declare (fixnum item-pos))
-	    (cond ((< item-pos pos)
-		   (return nil))
-		  ((> item-pos pos)
-		   (setf pos item-pos)))))))))
+        (when item-pos
+          (locally (declare (fixnum item-pos))
+            (cond ((< item-pos pos)
+                   (return nil))
+                  ((> item-pos pos)
+                   (setf pos item-pos)))))))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -704,23 +704,23 @@
   (let ((new-requires-list (determine-modules new-module-requires 't)))
     (maphash
      #'(lambda (name module)
-	 (unless (eq name new-module-name)
-	   (let ((requires-list (determine-modules
-				 (mm-module.requires module) 't)))
-	     (unless (compatible-ordering-p new-requires-list requires-list)
-	       ;; TODO: Someday add a wizard to suggest a compatible
-	       ;;       :requires list for the new module...
-	       (error "Module ~s is being defined with a fully expanded ~
+         (unless (eq name new-module-name)
+           (let ((requires-list (determine-modules
+                                 (mm-module.requires module) 't)))
+             (unless (compatible-ordering-p new-requires-list requires-list)
+               ;; TODO: Someday add a wizard to suggest a compatible
+               ;;       :requires list for the new module...
+               (error "Module ~s is being defined with a fully expanded ~
                        :requires module order: ~:@_~s which is incompatible ~
                        with the fully expanded :requires order: ~:@_~s~
                        ~:@_of the defined module ~s. ~:@_The :requires ~
                        value that was specified for module ~s was: ~:@_~s."
-		      new-module-name
-		      (mapcar #'mm-module.name new-requires-list)
-		      (mapcar #'mm-module.name requires-list)
-		      name
-		      new-module-name
-		      new-module-requires)))))
+                      new-module-name
+                      (mapcar #'mm-module.name new-requires-list)
+                      (mapcar #'mm-module.name requires-list)
+                      name
+                      new-module-name
+                      new-module-requires)))))
      *mm-modules*)))
 
 ;;; ---------------------------------------------------------------------------
@@ -733,14 +733,14 @@
            :name name 
            :directory directory
            :subdirectories subdirectories
-	   :requires requires
+           :requires requires
            :files files 
            :files-loaded 
-	     (when (and existing-module
-			;; if the files specification has changed at all,
-			;; reload them all...
-			(equal files (mm-module.files existing-module)))
-	       (mm-module.files-loaded existing-module))
+             (when (and existing-module
+                        ;; if the files specification has changed at all,
+                        ;; reload them all...
+                        (equal files (mm-module.files existing-module)))
+               (mm-module.files-loaded existing-module))
            :after-form after-form)))
   ;; Return the module name (returned by define-module):
   name)
@@ -807,7 +807,7 @@
   (when (and (not *load-verbose*)
              *mini-module-load-verbose*)
     (format t "~&;;; loading file ~a...~%"
-	    (namestring path)))
+            (namestring path)))
   (load path :print print?))
 
 ;;; ---------------------------------------------------------------------------
@@ -830,7 +830,7 @@
                            :type "lisp"
                            :defaults source-directory))
              (source-file-date (or (and (probe-file source-path)
-					(file-write-date source-path)) 0))
+                                        (file-write-date source-path)) 0))
              (compiled-path (make-pathname
                              :name file-name
                              :type *compiled-file-type*
@@ -838,7 +838,7 @@
              (compiled-file-date
               (or (and (probe-file compiled-path)
                        (file-write-date compiled-path))
-		  -1))
+                  -1))
              (files-loaded (mm-module.files-loaded module))
              (file-loaded-acons (assoc file-name files-loaded
                                        :test #'string=)))
@@ -850,61 +850,61 @@
                 bad-options))           
         (flet ((load-it (path date)
                  (when (or reload?
-			   (member ':reload file-options :test #'eq)
-			   (not file-loaded-acons)
-			   (> date (cdr file-loaded-acons)))
+                           (member ':reload file-options :test #'eq)
+                           (not file-loaded-acons)
+                           (> date (cdr file-loaded-acons)))
                    (load-file path print?)
-		   (when (member ':forces-recompile file-options :test #'eq)
-		     (let ((latest-source/compiled-file-date 
-			    (max source-file-date compiled-file-date)))
-		       (maybe-update-forces-recompile-date 
-			latest-source/compiled-file-date))
-		     (setf (mm-module.latest-forces-recompiled-date module)
-			   (max compiled-file-date
-				(mm-module.latest-forces-recompiled-date
-				 module))))
+                   (when (member ':forces-recompile file-options :test #'eq)
+                     (let ((latest-source/compiled-file-date 
+                            (max source-file-date compiled-file-date)))
+                       (maybe-update-forces-recompile-date 
+                        latest-source/compiled-file-date))
+                     (setf (mm-module.latest-forces-recompiled-date module)
+                           (max compiled-file-date
+                                (mm-module.latest-forces-recompiled-date
+                                 module))))
                    (if file-loaded-acons
-		       ;; update the date in the existing acons:
+                       ;; update the date in the existing acons:
                        (setf (cdr file-loaded-acons) date)
-		       ;; add file and date as a new acons in files-loaded:
+                       ;; add file and date as a new acons in files-loaded:
                        (setf (mm-module.files-loaded module)
                              (acons file-name date files-loaded))))
-		 ;; warn that recompilation is needed:
-		 (when (and (plusp compiled-file-date)
-			    (> *latest-forces-recompile-date*
-			       compiled-file-date)
-			    (not (member ':source file-options :test #'eq)))
-		   (format t "~&; File ~a in ~s needs to be recompiled.~%"
-			   file-name (mm-module.name module)))))
-	  (when (and (not (member ':source file-options :test #'eq))
+                 ;; warn that recompilation is needed:
+                 (when (and (plusp compiled-file-date)
+                            (> *latest-forces-recompile-date*
+                               compiled-file-date)
+                            (not (member ':source file-options :test #'eq)))
+                   (format t "~&; File ~a in ~s needs to be recompiled.~%"
+                           file-name (mm-module.name module)))))
+          (when (and (not (member ':source file-options :test #'eq))
                      (or recompile? 
                          (member ':recompile file-options :test #'eq)
                          (and compile?
                               (or (> source-file-date compiled-file-date)
-				  (> *latest-forces-recompile-date* 
-				     compiled-file-date)))))
-	    ;; Delete the old compiled file, if it exists:
+                                  (> *latest-forces-recompile-date* 
+                                     compiled-file-date)))))
+            ;; Delete the old compiled file, if it exists:
             (when (plusp compiled-file-date)
               (delete-file compiled-path))
-	    ;; Generate our own compile-verbose message:
-	    (when (and (not *compile-verbose*)
-		       *mini-module-compile-verbose*)
-	      (format t "~&;;; Compiling file ~a...~%"
-		      (namestring source-path)))
+            ;; Generate our own compile-verbose message:
+            (when (and (not *compile-verbose*)
+                       *mini-module-compile-verbose*)
+              (format t "~&;;; Compiling file ~a...~%"
+                      (namestring source-path)))
             (compile-file source-path 
                           :print print?
                           :output-file compiled-path)
             (setf compiled-file-date 
               (or (and (probe-file compiled-path)
-		       (file-write-date compiled-path))
+                       (file-write-date compiled-path))
                   ;; Compiled file can be missing if compilation was
                   ;; aborted:
                   -1))
             (when (member ':forces-recompile file-options :test #'eq)
-	      (maybe-update-forces-recompile-date compiled-file-date)
-	      (setf (mm-module.latest-forces-recompiled-date module)
-		    (max compiled-file-date
-			 (mm-module.latest-forces-recompiled-date module)))
+              (maybe-update-forces-recompile-date compiled-file-date)
+              (setf (mm-module.latest-forces-recompiled-date module)
+                    (max compiled-file-date
+                         (mm-module.latest-forces-recompiled-date module)))
               (setf recompile? 't propagate? 't)))
           (unless (member ':noload file-options :test #'eq)
             (if (or source? (> source-file-date compiled-file-date))
@@ -988,7 +988,7 @@
          (*autorun-modules*
           (if (member ':noautorun options :test #'eq) nil *autorun-modules*))
          (modules-to-load (determine-modules module-names))
-	 (*latest-forces-recompile-date* 0))
+         (*latest-forces-recompile-date* 0))
     ;; specifying :source implies :reload
     (when source? (setf reload? 't))        
     (dolist (module modules-to-load)
@@ -1032,7 +1032,7 @@
         (*autorun-modules*
          (if (member ':noautorun options :test #'eq) nil *autorun-modules*))
         (modules-to-load (determine-modules module-names))
-	(*latest-forces-recompile-date* 0))
+        (*latest-forces-recompile-date* 0))
   ;; specifying :source implies :reload:
     (when source? (setf reload? 't))        
     (dolist (module modules-to-load)
@@ -1062,20 +1062,20 @@
   (declare (dynamic-extent file-options))
   (let ((module (get-module module-name)))
     (multiple-value-bind (source-directory compiled-directory)
-	(module-source/compiled-directories module)
+        (module-source/compiled-directories module)
       (let* ((source-path (make-pathname
-			   :name file-name
-			   :type "lisp"
-			   :defaults source-directory))
-	     (source-file-date (or (and (probe-file source-path)
-					(file-write-date source-path)) 0))
-	     (compiled-path (make-pathname
-			     :name file-name
-			     :type *compiled-file-type*
-			     :defaults compiled-directory))
-	     (compiled-file-date (or (and (probe-file compiled-path)
-					  (file-write-date compiled-path)) 
-				     -1))
+                           :name file-name
+                           :type "lisp"
+                           :defaults source-directory))
+             (source-file-date (or (and (probe-file source-path)
+                                        (file-write-date source-path)) 0))
+             (compiled-path (make-pathname
+                             :name file-name
+                             :type *compiled-file-type*
+                             :defaults compiled-directory))
+             (compiled-file-date (or (and (probe-file compiled-path)
+                                          (file-write-date compiled-path)) 
+                                     -1))
              (files-loaded (mm-module.files-loaded module))
              (file-loaded-acons (assoc file-name files-loaded
                                        :test #'string=))
@@ -1084,20 +1084,20 @@
               (if (member ':noautorun file-options :test #'eq)
                   nil
                   *autorun-modules*)))
-	(flet ((load-it (path date)
-		 (load-file path print?)
-		 (if file-loaded-acons
-		     ;; update the date in the existing acons:
-		     (setf (cdr file-loaded-acons) date)
-		     ;; add file and date as a new acons in files-loaded:
-		     (setf (mm-module.files-loaded module)
-			   (acons file-name date files-loaded)))
-		 ;; Return the file path:
-		 path))
-	  (if (or (member ':source file-options :test #'eq)
-		  (> source-file-date compiled-file-date))
-	      (load-it source-path source-file-date)
-	      (load-it compiled-path compiled-file-date)))))))
+        (flet ((load-it (path date)
+                 (load-file path print?)
+                 (if file-loaded-acons
+                     ;; update the date in the existing acons:
+                     (setf (cdr file-loaded-acons) date)
+                     ;; add file and date as a new acons in files-loaded:
+                     (setf (mm-module.files-loaded module)
+                           (acons file-name date files-loaded)))
+                 ;; Return the file path:
+                 path))
+          (if (or (member ':source file-options :test #'eq)
+                  (> source-file-date compiled-file-date))
+              (load-it source-path source-file-date)
+              (load-it compiled-path compiled-file-date)))))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -1128,50 +1128,50 @@
  (defun sb-impl::unparse-unix-piece (thing)
    (etypecase thing
      ((member :wild) "*")
-     ((member :unspecific)		; Added by DDC
+     ((member :unspecific)              ; Added by DDC
       ;; CLHS 19.2.2.2.3.1 says "That is, both nil and :unspecific
       ;; cause the component not to appear in the namestring."
       "")
      (simple-string
       (let* ((srclen (length thing))
-	     (dstlen srclen))
-	(dotimes (i srclen)
-	  (case (schar thing i)
-	    ((#\* #\? #\[)
-	     (incf dstlen))))
-	(let ((result (make-string dstlen))
-	      (dst 0))
-	  (dotimes (src srclen)
-	    (let ((char (schar thing src)))
-	      (case char
-		((#\* #\? #\[)
-		 (setf (schar result dst) #\\)
-		 (incf dst)))
-	      (setf (schar result dst) char)
-	      (incf dst)))
-	  result)))
+             (dstlen srclen))
+        (dotimes (i srclen)
+          (case (schar thing i)
+            ((#\* #\? #\[)
+             (incf dstlen))))
+        (let ((result (make-string dstlen))
+              (dst 0))
+          (dotimes (src srclen)
+            (let ((char (schar thing src)))
+              (case char
+                ((#\* #\? #\[)
+                 (setf (schar result dst) #\\)
+                 (incf dst)))
+              (setf (schar result dst) char)
+              (incf dst)))
+          result)))
      (sb-impl::pattern
       (sb-impl::collect ((strings))
          (dolist (piece (sb-impl::pattern-pieces thing))
-	   (etypecase piece
-	     (simple-string
-	      (strings piece))
-	     (symbol
-	      (ecase piece
-		(:multi-char-wild
-		 (strings "*"))
-		(:single-char-wild
-		 (strings "?"))))
-	     (cons
-	      (case (car piece)
-		(:character-set
-		 (strings "[")
-		 (strings (cdr piece))
-		 (strings "]"))
-		(t (error "invalid pattern piece: ~S" piece))))))
-	 (apply #'concatenate
-		'simple-base-string
-		(strings)))))))
+           (etypecase piece
+             (simple-string
+              (strings piece))
+             (symbol
+              (ecase piece
+                (:multi-char-wild
+                 (strings "*"))
+                (:single-char-wild
+                 (strings "?"))))
+             (cons
+              (case (car piece)
+                (:character-set
+                 (strings "[")
+                 (strings (cdr piece))
+                 (strings "]"))
+                (t (error "invalid pattern piece: ~S" piece))))))
+         (apply #'concatenate
+                'simple-base-string
+                (strings)))))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -1183,11 +1183,11 @@
 
 (defun describe-module (module-name)
   (let* ((module (get-module module-name))
-	 (files-loaded (mm-module.files-loaded module))
-	 (forces-recompile-date
-	  (mm-module.latest-forces-recompiled-date module)))
+         (files-loaded (mm-module.files-loaded module))
+         (forces-recompile-date
+          (mm-module.latest-forces-recompiled-date module)))
     (multiple-value-bind (source-directory compiled-directory)
-	(module-source/compiled-directories module)
+        (module-source/compiled-directories module)
       (format t "~&Module ~s (~:[not ~;~]loaded)~
                  ~%  Requires: ~w~
                  ~%  Fully expanded requires: ~w~
@@ -1195,25 +1195,29 @@
                  ~%  Compiled directory: ~a~
                  ~%  Forces recompile date: ~a~
                  ~%  Files:"
-	      module-name
-	      (mm-module.load-completed? module)
-	      (mm-module.requires module)
-	      (mapcar #'mm-module.name 
-		      (determine-modules (mm-module.requires module)))
-	      (namestring source-directory)
-	      (namestring compiled-directory)
-	      (if (zerop forces-recompile-date)
-		  "None"
-		  (brief-date-and-time forces-recompile-date))))
+              module-name
+              (mm-module.load-completed? module)
+              (mm-module.requires module)
+              (mapcar #'mm-module.name 
+                      (determine-modules (mm-module.requires module) 't))
+              (if source-directory
+                  (namestring source-directory)
+                  "[Undefined]")
+              (if compiled-directory
+                  (namestring compiled-directory)
+                  "[Undefined]")
+              (if (zerop forces-recompile-date)
+                  "None"
+                  (brief-date-and-time forces-recompile-date))))
     (dolist (file (mm-module.files module))
       (multiple-value-bind (file-name options)
-	  (if (consp file) (values (car file) (cdr file)) file)
-	(let ((loaded-date (cdr (assoc file-name files-loaded 
-				       :test #'string=))))
-	  (format t "~9t~@[~a~]~22t~a ~@[~w~]~%" 
-		  (and loaded-date (brief-date-and-time loaded-date)) 
-		  file-name
-		  options)))))
+          (if (consp file) (values (car file) (cdr file)) file)
+        (let ((loaded-date (cdr (assoc file-name files-loaded 
+                                       :test #'string=))))
+          (format t "~9t~@[~a~]~22t~a ~@[~w~]~%" 
+                  (and loaded-date (brief-date-and-time loaded-date)) 
+                  file-name
+                  options)))))
   (values))
 
 ;;; ---------------------------------------------------------------------------
@@ -1276,20 +1280,20 @@
 
 (let* ((mini-module (gethash :mini-module *mm-modules*))
        (this-file (or *load-truename*
-		      ;; CormanLisp doesn't bind *load-truename* properly 
-		      ;; during bootstrapping, so we hardcode the pathname
-		      ;; during compilation:
-		      #+cormanlisp
-		      #.*compile-file-truename*))
+                      ;; CormanLisp doesn't bind *load-truename* properly 
+                      ;; during bootstrapping, so we hardcode the pathname
+                      ;; during compilation:
+                      #+cormanlisp
+                      #.*compile-file-truename*))
        (this-file-name (pathname-name this-file))
        (files-loaded (mm-module.files-loaded mini-module))
        (file-loaded-acons (assoc this-file-name files-loaded 
-				 :test #'string=))
+                                 :test #'string=))
        (date (file-write-date this-file)))
   (if file-loaded-acons
       (setf (rest file-loaded-acons) date)
       (setf (mm-module.files-loaded mini-module)
-	    (acons this-file-name date files-loaded))))
+            (acons this-file-name date files-loaded))))
   
 ;;; ===========================================================================
 ;;;  Top-Level Mini-Module Command Support 
@@ -1304,20 +1308,20 @@
     (when (and (null options) *last-lm/cm-module*)
       (setf recalled-options 't)
       (setf options (cons *last-lm/cm-module*
-			  (symbol-value save-symbol))))
+                          (symbol-value save-symbol))))
     (cond 
      ;; New module arguments were specified:
      (options
       (setf *last-lm/cm-module* (first options))
       (setf (symbol-value save-symbol) (rest options))
       (when recalled-options
-	(format *trace-output* "~&;; ~(~s~)~{ ~(~s~)~}~%"
-		cmd options))
+        (format *trace-output* "~&;; ~(~s~)~{ ~(~s~)~}~%"
+                cmd options))
       (apply fn options))
      ;; Recall previous module arguments:
      (t (format *trace-output* 
-		"~&;; ~(~s~) -- No previous module specified."
-		cmd)))))
+                "~&;; ~(~s~) -- No previous module specified."
+                cmd)))))
 
 (defun lm-tll-command (options)
   (do-mini-module-tll-command :lm #'load-module options '*last-lm-options*))
@@ -1332,7 +1336,7 @@
 (pushnew *mini-module-version-keyword* *features*)
 
 ;;; ===========================================================================
-;;;				  End of File
+;;;                               End of File
 ;;; ===========================================================================
 
 
