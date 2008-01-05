@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/gbbopen/source/mini-module/mini-module.lisp *-*
+;;;; *-* File: /home/gbbopen/source/mini-module/mini-module.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Dec 19 15:49:52 2007 *-*
-;;;; *-* Machine: ruby.corkills.org *-*
+;;;; *-* Last-Edit: Sat Jan  5 03:01:26 2008 *-*
+;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -15,7 +15,7 @@
 ;;; Written by: Dan Corkill (incorporating some original ideas by 
 ;;;                          Kevin Gallagher and Zachary Rubinstein)
 ;;;
-;;; Copyright (C) 2002-2007, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2008, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; Porting Notice:
@@ -84,6 +84,8 @@
 ;;;  07-14-07 Add :noautorun compile/load-module option.  (Corkill)
 ;;;  12-19-07 Add module-relative support to compute-relative-directory and
 ;;;           increment version to 1.2.  (Corkill)
+;;;  01-05-08 Skip undefined modules when performing compatiblity-ordering
+;;;           check of a module.  (Corkill) 
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -656,18 +658,21 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun get-module (name)
+(defun get-module (name &optional (errorp t))
   (or (gethash name *mm-modules*)
-      (error "Module ~s is not defined." name)))
+      (when errorp
+	(error "Module ~s is not defined." name))))
 
 ;;; ---------------------------------------------------------------------------
 
-(defun determine-modules (module-names &aux result)
+(defun determine-modules (module-names &optional skip-undefined-modules-p
+			  &aux result)
   (labels ((maybe-add-module (name)
-             (let ((module (get-module name)))
-               (dolist (name (mm-module.requires module))
-                 (maybe-add-module name))
-               (pushnew module result :test #'eq :key #'mm-module.name))))
+             (let ((module (get-module name (not skip-undefined-modules-p))))
+	       (when module
+		 (dolist (name (mm-module.requires module))
+		   (maybe-add-module name))
+		 (pushnew module result :test #'eq :key #'mm-module.name)))))
     (dolist (name module-names)
       (maybe-add-module name)))
   ;; Maintain precedence order...
@@ -696,12 +701,12 @@
   ;; :requires list that is compatible with all existing module definitions.
   ;; This requirement ensures that module files will not be recompiled
   ;; solely due to a different relative ordering among defined modules.
-  (let ((new-requires-list (determine-modules new-module-requires)))
+  (let ((new-requires-list (determine-modules new-module-requires 't)))
     (maphash
      #'(lambda (name module)
 	 (unless (eq name new-module-name)
 	   (let ((requires-list (determine-modules
-				 (mm-module.requires module))))
+				 (mm-module.requires module) 't)))
 	     (unless (compatible-ordering-p new-requires-list requires-list)
 	       ;; TODO: Someday add a wizard to suggest a compatible
 	       ;;       :requires list for the new module...
