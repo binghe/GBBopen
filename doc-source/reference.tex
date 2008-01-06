@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
-%% *-* File: /home/gbbopen/current/doc-source/reference.tex *-*
-%% *-* Last-Edit: Tue Jan  1 03:45:17 2008; Edited-By: cork *-*
+%% *-* File: /home/gbbopen/doc-source/reference.tex *-*
+%% *-* Last-Edit: Sun Jan  6 13:51:34 2008; Edited-By: cork *-*
 %% *-* Machine: whirlwind.corkills.org *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -2737,6 +2737,7 @@ nil
 \fnreturns True if \var{list\/} has length 1; \nil{} otherwise.
 
 \begin{alsos}{list-length-2-p}
+\also[list-length>1]
 \also[list-length-2-p]
 \end{alsos}
 
@@ -2778,6 +2779,7 @@ nil
 
 \begin{alsos}{list-length-1-p}
 \also[list-length-1-p]
+\also[list-length>1]
 \end{alsos}
 
 \fnexamples
@@ -2790,6 +2792,47 @@ nil
 nil
 > (list-length-2-p '(a b . c))
 nil
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}[list-length-gt-1]{Function}{list-length>1}%
+  {\var{list\/} \returns{} \var{boolean\/}}
+\index{length!testing a list for length > 1}%
+\index{list!testing length > 1}%
+
+\fnsyntax
+
+\fnpurpose Fast length>1 test of a list.
+
+\fnpackage \code{:gbbopen-tools}
+
+\fnmodule \code{:gbbopen-tools}
+
+\fnargs
+\begin{args}{list}
+\arg[list] A \glref{proper~list} or a \glref{dotted~list}
+\end{args}
+
+\fnreturns True if \var{list\/} has length > 1; \nil{} otherwise.
+
+\begin{alsos}{list-length-2-p}
+\also[list-length-1-p]
+\also[list-length-2-p]
+\end{alsos}
+
+\fnexamples
+\begin{example}
+> (list-length>1 '(a b))
+t
+> (list-length>1 '(a))
+nil
+> (list-length>1 '(a . b))
+nil
+> (list-length>1 '(a b . c))
+t
 \end{example}
 
 \end{functiondoc}

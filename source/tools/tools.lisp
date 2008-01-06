@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Jan  6 10:28:38 2008 *-*
+;;;; *-* Last-Edit: Sun Jan  6 13:42:24 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -285,7 +285,7 @@
 	    iso8661-date-and-time	; not yet documented
 	    list-length-1-p
 	    list-length-2-p
-	    list-length>1		; not yet documented
+	    list-length>1
 	    macrolet-debug		; not documented
 	    make-keyword
 	    memq
