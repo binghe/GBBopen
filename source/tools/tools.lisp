@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/gbbopen/source/tools/tools.lisp *-*
+;;;; *-* File: /home/gbbopen/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Dec 13 04:34:17 2007 *-*
-;;;; *-* Machine: ruby.corkills.org *-*
+;;;; *-* Last-Edit: Sun Jan  6 10:28:38 2008 *-*
+;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2002-2007, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2008, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; Porting Notice:
@@ -53,6 +53,7 @@
 ;;;  08-20-06 Added extract-declarations.  (Corkill)
 ;;;  09-22-06 Added CormanLisp 3.0 support.  (Corkill)
 ;;;  12-05-07 Added shrink-vector.  (Corkill)
+;;;  01-06-08 Added list-length>1.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -284,6 +285,7 @@
 	    iso8661-date-and-time	; not yet documented
 	    list-length-1-p
 	    list-length-2-p
+	    list-length>1		; not yet documented
 	    macrolet-debug		; not documented
 	    make-keyword
 	    memq
@@ -595,6 +597,8 @@
   (with-once-only-bindings (list)
     `(and (consp ,list) (null (cdr ,list)))))
 
+;;; ---------------------------------------------------------------------------
+
 (defun list-length-2-p (list)
   (and (consp list)
        (let ((rest (cdr list)))
@@ -608,6 +612,16 @@
 	  (let ((rest (cdr, list)))
 	    (and (consp rest)
 		 (null (cdr rest)))))))
+
+;;; ---------------------------------------------------------------------------
+
+(defun list-length>1 (list)
+  (and (consp list) (consp (cdr list))))
+
+#-full-safety
+(define-compiler-macro list-length>1 (list)
+  (with-once-only-bindings (list)
+    `(and (consp ,list) (consp (cdr ,list)))))
 
 ;;; ===========================================================================
 ;;;  Shuffle-list
