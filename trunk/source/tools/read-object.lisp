@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/tools/read-object.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jan  9 16:25:44 2008 *-*
+;;;; *-* Last-Edit: Wed Jan  9 16:37:57 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -34,23 +34,11 @@
             read-sent-object)))		; not yet documented
 
 ;;; ===========================================================================
+;;;  Dispatch-macro-character readers
 
-(defparameter *saved/sent-object-readtable*
-    (let ((*readtable* (copy-readtable)))
-      ;; Duplicate infinity reader (from declared-numerics.lisp):
-      (safely-set-dispatch-macro-character #\# #\@ 
-					   #-cormanlisp 'inf-reader
-					   #+cormanlisp #'inf-reader)
-      (safely-set-dispatch-macro-character #\# #\H 'hash-table-reader)
-      *readtable*))
-
-;;; ---------------------------------------------------------------------------
-
-(defmacro with-saved/sent-object-syntax ((&key (readtable
-						'*saved/sent-object-readtable*))
-					 &body body)
-  `(let ((*readtable* ,readtable))
-     ,@body))
+(defun unbound-value-reader (stream sub-char infix-parameter)
+  (declare (ignore sub-char infix-parameter stream))
+  unbound-value-indicator)
 
 ;;; ---------------------------------------------------------------------------
 
@@ -64,7 +52,30 @@
 	  do (setf (gethash indicator ht) value))
       ht)))
 
-;;; ---------------------------------------------------------------------------
+;;; ===========================================================================
+;;;  The saved/sent-object readtable
+
+(defparameter *saved/sent-object-readtable*
+    (let ((*readtable* (copy-readtable)))
+      ;; Duplicate infinity reader (from declared-numerics.lisp):
+      (safely-set-dispatch-macro-character #\# #\@ 
+					   #-cormanlisp 'inf-reader
+					   #+cormanlisp #'inf-reader)
+      (safely-set-dispatch-macro-character #\# #\_ 'unbound-value-reader)
+      (safely-set-dispatch-macro-character #\# #\H 'hash-table-reader)
+      *readtable*))
+
+;;; ===========================================================================
+;;;  With-saved/sent-object-syntax
+
+(defmacro with-saved/sent-object-syntax ((&key (readtable
+						'*saved/sent-object-readtable*))
+					 &body body)
+  `(let ((*readtable* ,readtable))
+     ,@body))
+
+;;; ===========================================================================
+;;;  Temporary testing function
 
 (defun test (string)
   (with-saved/sent-object-syntax ()
