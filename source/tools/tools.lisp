@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/source/tools/tools.lisp *-*
+;;;; *-* File: /home/gbbopen/current/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Jan  6 13:42:24 2008 *-*
+;;;; *-* Last-Edit: Wed Jan  9 08:47:59 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -54,6 +54,7 @@
 ;;;  09-22-06 Added CormanLisp 3.0 support.  (Corkill)
 ;;;  12-05-07 Added shrink-vector.  (Corkill)
 ;;;  01-06-08 Added list-length>1.  (Corkill)
+;;;  01-09-08 Added list-length> and trimmed-substring.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -285,6 +286,7 @@
 	    iso8661-date-and-time	; not yet documented
 	    list-length-1-p
 	    list-length-2-p
+	    list-length>
 	    list-length>1
 	    macrolet-debug		; not documented
 	    make-keyword
@@ -312,6 +314,7 @@
             shrink-vector
 	    sole-element
 	    splitting-butlast
+	    trimmed-substring
 	    undefmethod
 	    until
 	    while
@@ -587,6 +590,21 @@
   `(common-lisp::shrink-vector ,vector ,length))
 
 ;;; ===========================================================================
+;;;  Trimmed-substring
+
+(defun trimmed-substring (char-bag string start 
+			  &optional (end (length string)))
+  ;; Return extracted substring with `char-bag' trimming:
+  (while (and (<& start end)
+	      (member (char string start) char-bag))
+    (incf& start))
+  (decf& end)
+  (while (and (<& start end)
+	      (member (char string end) char-bag))
+    (decf& end))
+  (subseq string start (1+& end)))
+
+;;; ===========================================================================
 ;;;  Specialized length checkers
 
 (defun list-length-1-p (list)
@@ -612,6 +630,15 @@
 	  (let ((rest (cdr, list)))
 	    (and (consp rest)
 		 (null (cdr rest)))))))
+
+;;; ---------------------------------------------------------------------------
+
+(defun list-length> (n list)
+  (dotimes (i (1+& n) 't)
+    (declare (fixnum i))
+    (unless (consp list)
+      (return nil))
+    (setf list (cdr (the cons list)))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -873,6 +900,7 @@
       (unless (<& length n)
         (let ((result nil))
           (dotimes (i (-& length n))
+	    (declare (fixnum i))
             (push (pop list) result))
           (values (nreverse result) list))))))             
 
