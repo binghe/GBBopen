@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
-%% *-* File: /home/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Sun Jan  6 13:51:34 2008; Edited-By: cork *-*
+%% *-* File: /home/gbbopen/current/doc-source/reference.tex *-*
+%% *-* Last-Edit: Wed Jan  9 12:37:32 2008; Edited-By: cork *-*
 %% *-* Machine: whirlwind.corkills.org *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -2064,11 +2064,11 @@ t
 
 \index{module!:gbbopen-tools@\code{:gbbopen-tools}}%
 \index{:gbbopen-tools@\code{:gbbopen-tools} module}%
-The GBBopen Tools module, \code{:gbbopen-tools}, contains useful
-Common Lisp additions and utilities.  Convenient (\reflink{shorthand
-  macros}{sec:declared-numerics} for declared fixnum, short-float,
-single-float, double-float, and long-float numeric operators are also
-provided by the \code{:gbbopen-tools} module.
+The GBBopen Tools module, \code{:gbbopen-tools}, contains useful Common Lisp
+additions and utilities.  Convenient (\reflink{shorthand
+  macros}{sec:declared-numerics} for declared \glref{fixnum}, short-float,
+single-float, double-float, and long-float numeric operators are also provided
+by the \code{:gbbopen-tools} module.
 
 Uniform interfaces to implementation-specific thread (multiprocessing)
 capabilities are provided by the \reflink{\code{:portable-threads}
@@ -2206,7 +2206,7 @@ and maximum value.
 
 \fnpackage \code{:gbbopen-tools  (home package is \code{:mini-module})}
 
-\fnmodule \code{:mini-module }
+\fnmodule \code{:mini-module}
 
 \fnargs
 \begin{args}{universal-time}
@@ -2723,7 +2723,7 @@ nil
 
 \fnsyntax
 
-\fnpurpose Fast length=1 test of a list.
+\fnpurpose Fast length = 1 test of a list.
 
 \fnpackage \code{:gbbopen-tools}
 
@@ -2737,6 +2737,7 @@ nil
 \fnreturns True if \var{list\/} has length 1; \nil{} otherwise.
 
 \begin{alsos}{list-length-2-p}
+\also[list-length>]
 \also[list-length>1]
 \also[list-length-2-p]
 \end{alsos}
@@ -2764,7 +2765,7 @@ nil
 
 \fnsyntax
 
-\fnpurpose Fast length=2 test of a list.
+\fnpurpose Fast length = 2 test of a list.
 
 \fnpackage \code{:gbbopen-tools}
 
@@ -2779,6 +2780,7 @@ nil
 
 \begin{alsos}{list-length-1-p}
 \also[list-length-1-p]
+\also[list-length>]
 \also[list-length>1]
 \end{alsos}
 
@@ -2798,6 +2800,51 @@ nil
 
 %% ------------------------------------------------------------------------
 
+\begin{functiondoc}[list-length-gt]{Function}{list-length>}%
+  {\var{n list\/} \returns{} \var{boolean\/}}
+\index{length!testing a list for length > $n$}%
+\index{list!testing length > $n$}%
+
+\fnsyntax
+
+\fnpurpose Fast length > $n$ test of a list.
+
+\fnpackage \code{:gbbopen-tools}
+
+\fnmodule \code{:gbbopen-tools}
+
+\fnargs
+\begin{args}{list}
+\arg[n] A non-negative \glref{fixnum}
+\arg[list] A \glref{proper~list} or a \glref{dotted~list}
+\end{args}
+
+\fnreturns True if \var{list\/} has length > $n$; \nil{} otherwise.
+
+\begin{alsos}{list-length-2-p}
+\also[list-length>]
+\also[list-length-1-p]
+\also[list-length-2-p]
+\end{alsos}
+
+\fnexamples
+\begin{example}
+> (list-length> 1 '(a b))
+t
+> (list-length> 2 '(a b))
+nil
+> (list-length> 1 '(a))
+nil
+> (list-length> 1 '(a . b))
+nil
+> (list-length> 1 '(a b . c))
+t
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
 \begin{functiondoc}[list-length-gt-1]{Function}{list-length>1}%
   {\var{list\/} \returns{} \var{boolean\/}}
 \index{length!testing a list for length > 1}%
@@ -2805,7 +2852,7 @@ nil
 
 \fnsyntax
 
-\fnpurpose Fast length>1 test of a list.
+\fnpurpose Fast length > 1 test of a list.
 
 \fnpackage \code{:gbbopen-tools}
 
@@ -2819,6 +2866,7 @@ nil
 \fnreturns True if \var{list\/} has length > 1; \nil{} otherwise.
 
 \begin{alsos}{list-length-2-p}
+\also[list-length>]
 \also[list-length-1-p]
 \also[list-length-2-p]
 \end{alsos}
@@ -3590,6 +3638,57 @@ elements.
 
 %% ------------------------------------------------------------------------
 
+\begin{functiondoc}{Function}{trimmed-substring}%
+  {\var{character-bag string\/} \code{\&optional} \var{start end\/}
+    \returns{} \var{string\/}}
+\index{date, formatted}% 
+
+\fnsyntax
+
+\fnpurpose Extract and trim a substring from \var{string}.
+
+\fnpackage \code{:gbbopen-tools}
+
+\fnmodule \code{:gbbopen-tools}
+
+\fnargs
+\begin{args}{character-bag}
+\arg[character-bag] A sequence containing characters
+\arg[string] A \glref{string~designator}
+\arg[start] Starting index into \var{string\/} (default is \code{0})
+\arg[end] Ending index into \var{string\/} (default is \nil, meaning
+end of \var{string\/})
+\end{args}
+
+\fnreturns The extracted, trimmed string
+
+\fnexamples
+\begin{example}
+> (trimmed-substring '(#\bkslash{}space #\bkslash{}tab) "xxx   abc   yyy" 3 12)
+"abc"
+> (trimmed-substring " " "xxx   abc   yyy" 3 12)
+"abc"
+> (trimmed-substring " " "xxx   abc   yyy" 3)
+"abc   yyy"
+> (trimmed-substring " " "xxx   abc   yyy" 3 13)
+"abc   y"
+> (trimmed-substring " " "xxx   abc   yyy" 2 12)
+"x   abc"
+> (trimmed-substring " " "   abc   ")
+"abc"
+\end{example}
+
+\fnnote 
+The function \textbf{trimmed-substring} is semantically equivalent to
+\begin{example}
+  (string-trim \var{character-bag\/} (subseq \var{string start end\/}))
+\end{example} 
+but avoids allocating an intermediate substring.
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
 \begin{functiondoc}{Macro}{undefmethod}{\var{function-name\/}
     \{\var{method-qualifier\/}\}\superstar{} \var{specialized-lambda-list\/} 
     \mbox{[[\var{declaration\/}\superstar{} \vbar{} \var{documentation\/}]]}
@@ -4102,7 +4201,7 @@ t
 \bfindexit{:full-safety}%
 The \code{:gbbopen-tools} module contains a set of
 numeric-operation macros that provide convenient shorthands for
-declaring fixnum, short-float, single-float, double-float, and
+declaring \glref{fixnum}, short-float, single-float, double-float, and
 long-float numeric operators. If the \glref{feature}
 \textbf{\entlinknoex{:full-safety}} is present at compile time, these
 macros do not make their fixnum, single-float, double-float, and long-float
@@ -4198,7 +4297,7 @@ single format).
 \bfindex{truncate\&}%
 \bfindex{zerop\&}%
 %
-These fixnum numeric-operation macros are defined in the
+These \glref{fixnum} numeric-operation macros are defined in the
 \code{:gbbopen-tools} module:
 
 \code{%
@@ -4245,8 +4344,8 @@ These fixnum numeric-operation macros are defined in the
 \T\medskip
 
 \bfindex{coerce\&}%
-The one-argument \glref{function} \textbf{coerce\&} provides convenient fixnum
-coercion:
+The one-argument \glref{function} \textbf{coerce\&} provides convenient 
+\glref{fixnum} coercion:
 \begin{example}
   (setf x (coerce& x))
 \end{example}
@@ -4636,7 +4735,7 @@ To reduce computation and storage requirements, a fourth time
 representation, Offset Universal Time (OT), can be used.  Offset
 Universal Time is Universal Time that is offset by an integer
 time-base value so that the most often used Offset Universal Time
-values in an application are fixnums.
+values in an application are \glref{fixnums}.
 
 Nearly all Common Lisp implementations provide fixnums of at least 30
 bits (34 years of time range) or more, but CLISP on 32-bit machines
@@ -4664,7 +4763,7 @@ value is changed.
 
 \fnsyntax
 
-\fnpurpose Check if the current time can be represented as a fixnum
+\fnpurpose Check if the current time can be represented as a \glref{fixnum}
 given the current Offset Universal Time time-base value.
 
 \fnpackage \code{:gbbopen-tools}
@@ -4676,7 +4775,7 @@ given the current Offset Universal Time time-base value.
 \arg[suppress-warning] A \glref{generalized~boolean} (default is \nil)
 \end{args}
 
-\fnreturns True if the current time can be represented as a fixnum
+\fnreturns True if the current time can be represented as a \glref{fixnum}
 Offset Universal Time value; nil otherwise.
 
 \fnerrors The Offset Universal Time time-base value has not been set.
@@ -4902,7 +5001,7 @@ position indicated by \var{priority\/}.
 \fnargs
 \begin{args}{priority}
 \arg[function] A \glref{function}
-\arg[priority] A fixnum (default is \code{0})
+\arg[priority] A \glref{fixnum} (default is \code{0})
 \end{args}
 
 \fndescription
@@ -6074,7 +6173,7 @@ on a GBBopen queue.
 
 \fnargs
 \begin{args}{queue}
-\arg[n] A fixnum
+\arg[n] A \glref{fixnum}
 \arg[queue] A GBBopen \glref{queue}
 \end{args}
 
