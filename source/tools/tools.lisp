@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jan  9 08:47:59 2008 *-*
+;;;; *-* Last-Edit: Wed Jan  9 11:53:14 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -592,15 +592,19 @@
 ;;; ===========================================================================
 ;;;  Trimmed-substring
 
-(defun trimmed-substring (char-bag string start 
-			  &optional (end (length string)))
+(defun trimmed-substring (character-bag string 
+			  &optional (start 0) (end (length string)))
+  (declare (fixnum start end))
+  ;; Allow string-designator:
+  (unless (stringp string)
+    (setf string (string string)))
   ;; Return extracted substring with `char-bag' trimming:
   (while (and (<& start end)
-	      (member (char string start) char-bag))
+	      (find (char (the simple-string string) start) character-bag))
     (incf& start))
   (decf& end)
   (while (and (<& start end)
-	      (member (char string end) char-bag))
+	      (find (char (the simple-string string) end) character-bag))
     (decf& end))
   (subseq string start (1+& end)))
 
