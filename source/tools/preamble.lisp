@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/current/source/tools/preamble.lisp *-*
+;;;; *-* File: /home/gbbopen/source/tools/preamble.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Jul 20 18:14:19 2007 *-*
-;;;; *-* Machine: ruby.corkills.org *-*
+;;;; *-* Last-Edit: Wed Jan  9 16:09:50 2008 *-*
+;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2004-2007, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2004-2008, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -23,6 +23,7 @@
 ;;;  06-15-05 Added add-package-nickname.  (Corkill)
 ;;;  09-13-05 Added hyperdoc-filename.  (Corkill)
 ;;;  09-28-05 Added import of *preferred-browser* setting.  (Corkill)
+;;;  01-09-08 Added safely-set-dispatch-macro-character.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -136,6 +137,55 @@
 			   "~&;;  ~w =>~{ ~w~^;~}~%" form value))))
        (force-output *trace-output*)
        (values-list (first (last ,values))))))
+
+;;; ===========================================================================
+;;;   Dispatch-macro-character conflict checker
+
+(defun safely-set-dispatch-macro-character (disp-char sub-char function)
+  (let ((existing-dispatch 
+	 (get-dispatch-macro-character disp-char sub-char)))
+    (unless (or (null existing-dispatch)
+		(eq existing-dispatch function)
+		(and (functionp existing-dispatch)
+		     (eq (nth-value 
+			  2 (function-lambda-expression existing-dispatch))
+			 function))
+		;; On Corman Lisp, look if the dispatch function is the same
+		;; as the default (by checking against another unlikely macro
+		;; character):
+		#+cormanlisp
+		(eq existing-dispatch
+		    (get-dispatch-macro-character #\# #\&))
+		#+cmu
+		(eq existing-dispatch
+		    (symbol-function 'lisp::dispatch-char-error))
+		;; On CCL, look if the dispatch function is the same as the
+		;; default (by checking against another unlikely macro
+		;; character):
+		#+(or clozure digitool-mcl openmcl-legacy)
+		(and (functionp existing-dispatch)
+		     (eq (nth-value 
+			  2 (function-lambda-expression existing-dispatch))
+			 'ccl::|#@-reader|))
+		;; On ECL, look if the dispatch function is the same as the
+		;; default (by checking against another unlikely macro
+		;; character):
+		#+ecl
+		(eq existing-dispatch
+		    (get-dispatch-macro-character #\# #\&))
+		;; On GCL, look if the dispatch function is the same as the
+		;; default (by checking against another unlikely macro
+		;; character):
+		#+gcl
+		(eq existing-dispatch
+		    (get-dispatch-macro-character #\# #\&)))
+      (cerror "Change and continue"
+	      "An existing dispatch-macro for ~c~c is defined for ~a: ~s"
+	      disp-char
+	      sub-char
+	      (lisp-implementation-type)
+	      existing-dispatch))
+    (set-dispatch-macro-character disp-char sub-char function)))
 
 ;;; ===========================================================================
 ;;;   Hyperdoc lookup helper
