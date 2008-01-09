@@ -25,10 +25,10 @@
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:portable-threads</code>
 </p>
 <p><span class="fndoclabel">Arguments</span><table class="tight">
-<tr valign="top"><td valign="baseline"><i>initargs</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An <a href="ref-glossary.html#id79">initialization&nbsp;argument&nbsp;list</a>
+<tr valign="top"><td valign="baseline"><i>initargs</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An <a href="ref-glossary.html#id81">initialization&nbsp;argument&nbsp;list</a>
 </td></tr><tr valign="top"><td valign="baseline"><i>class</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> The name of the <a href="ref-glossary.html#gl:class">class</a> for the created
 <a href="ref-glossary.html#gl:condition-variable">condition-variable</a> instance (default is <code>condition-variable</code>)
-</td></tr><tr valign="top"><td valign="baseline"><i>lock</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#gl:lock">lock</a>, a <a href="ref-glossary.html#id135">recursive&nbsp;lock</a>, or a 
+</td></tr><tr valign="top"><td valign="baseline"><i>lock</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#gl:lock">lock</a>, a <a href="ref-glossary.html#id137">recursive&nbsp;lock</a>, or a 
 <a href="ref-glossary.html#id18">condition&nbsp;variable</a> (default is a non-recursive lock)
 </td></tr></table>
 </p>
@@ -45,7 +45,7 @@
 #&lt;condition-variable&gt;
 </pre>
 <p>Make a <b>condition-variable</b> instance with a
-<a href="ref-glossary.html#id135">recursive&nbsp;lock</a>:
+<a href="ref-glossary.html#id137">recursive&nbsp;lock</a>:
 </p>
 <pre>
 &gt; (make-condition-variable :lock (<a href="ref-make-recursive-lock.html">make-recursive-lock</a>))
@@ -60,7 +60,7 @@
             :initform nil
             :accessor state-of)))
 </pre>
-<p>and then create a <code>state-cv</code> instance with a <a href="ref-glossary.html#id135">recursive&nbsp;lock</a>:
+<p>and then create a <code>state-cv</code> instance with a <a href="ref-glossary.html#id137">recursive&nbsp;lock</a>:
 </p>
 <pre>
 &gt; (make-condition-variable :class 'state-cv

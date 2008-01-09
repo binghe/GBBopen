@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
-%% *-* File: /home/gbbopen/doc-source/glossary.tex *-*
-%% *-* Last-Edit: Thu Dec 27 13:34:03 2007; Edited-By: cork *-*
+%% *-* File: /home/gbbopen/current/doc-source/glossary.tex *-*
+%% *-* Last-Edit: Wed Jan  9 12:34:10 2008; Edited-By: cork *-*
 %% *-* Machine: whirlwind.corkills.org *-*
 
 \begin{glossary-list}
@@ -382,6 +382,14 @@ specifically to a \glref{function~object}.
 An object of type \code{function}.  The term ``function'' is often
 used to denote a \glref{function~designator}, with the term ``function
 object'' used when referring specifically to a function object.
+
+%% ------------------------------------------------------------------------
+
+\glent[fixnum]
+\gllabel{fixnums}%
+\index{fixnum}%
+An integer between \code{most-negative-fixnum} and
+\code{most-positive-fixnum} inclusive.
 
 %% ------------------------------------------------------------------------
 
@@ -827,6 +835,14 @@ An object whose class is a subclass of
 \index{space instance!storage specification}%
 A specification of how \glref{unit~instances} are to be stored on a
 \glref{space~instance}.
+
+%% ------------------------------------------------------------------------
+
+\glent[string~designator]
+\index{string designator}%
+An object that denotes a string. One of: a character (denoting a
+singleton string that has the character as its only element), a symbol
+(denoting the string that is its name), or a string (denoting itself).
 
 %% ------------------------------------------------------------------------
 
