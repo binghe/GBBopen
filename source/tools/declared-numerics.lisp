@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/current/source/tools/declared-numerics.lisp *-*
+;;;; *-* File: /home/gbbopen/source/tools/declared-numerics.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Nov 30 06:21:49 2007 *-*
-;;;; *-* Machine: ruby.corkills.org *-*
+;;;; *-* Last-Edit: Wed Jan  9 16:28:22 2008 *-*
+;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2002-2006, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2008, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; Porting Notice:
@@ -925,52 +925,9 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(let ((existing-dispatch (get-dispatch-macro-character #\# #\@))
-      #+cormanlisp 
-      (inf-reader-fn #'inf-reader))
-  (unless (or (null existing-dispatch)
-	      (eq existing-dispatch
-		  #-cormanlisp 'inf-reader
-		  #+cormanlisp inf-reader-fn)
-	      (and (functionp existing-dispatch)
-		   (eq (nth-value 
-			2 (function-lambda-expression existing-dispatch))
-		       'inf-reader))
-	      #+cormanlisp
-	      (eq existing-dispatch
-		  (get-dispatch-macro-character #\# #\&))
-	      #+cmu
-	      (eq existing-dispatch
-		  (symbol-function 'lisp::dispatch-char-error))
-	      ;; On ECL, look if the dispatch function is the same as the
-	      ;; default (by checking against another unlikely macro
-	      ;; character):
-	      #+digitool-mcl
-	      (and (functionp existing-dispatch)
-		   (eq (nth-value 
-			2 (function-lambda-expression existing-dispatch))
-		       'ccl::|#@-reader|))
-	      ;; On CCL, look if the dispatch function is the same as the
-	      ;; default (by checking against another unlikely macro
-	      ;; character):
-	      #+ecl
-	      (eq existing-dispatch
-		  (get-dispatch-macro-character #\# #\&))
-	      ;; On GCL, look if the dispatch function is the same as the
-	      ;; default (by checking against another unlikely macro
-	      ;; character):
-	      #+gcl
-	      (eq existing-dispatch
-		  (get-dispatch-macro-character #\# #\&)))
-    (cerror "An existing dispatch-macro for #\@ is defined for ~a: ~s"
-    	    "Change and continue"
-	    (lisp-implementation-type)
-	    existing-dispatch)
-
-    (set-dispatch-macro-character #\# #\@ 
-				  #-cormanlisp 'inf-reader
-				  #+cormanlisp #'inf-reader)))
-			      
+(safely-set-dispatch-macro-character #\# #\@ 
+				     #-cormanlisp 'inf-reader
+				     #+cormanlisp #'inf-reader)
 
 ;;; ---------------------------------------------------------------------------
 
