@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/current/source/tools/print-object-for.lisp *-*
+;;;; *-* File: /home/gbbopen/source/tools/print-object-for.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jul 25 13:03:51 2007 *-*
-;;;; *-* Machine: ruby.corkills.org *-*
+;;;; *-* Last-Edit: Thu Jan 10 21:29:38 2008 *-*
+;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -144,7 +144,7 @@
                   (format stream "#I(~s" (class-name class))
                   (dolist (slot (class-slots class))
                     (let ((slot-name (slot-definition-name slot)))
-                      (format stream " :~a " slot-name)
+                      (format stream " ~a " slot-name)
                       (if (slot-boundp instance slot-name)
                           (,name (slot-value instance slot-name) stream)
                           ;; Unbound value indicator:

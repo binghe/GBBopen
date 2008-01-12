@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/tools/read-object.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jan  9 16:37:57 2008 *-*
+;;;; *-* Last-Edit: Sat Jan 12 14:03:38 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -52,6 +52,26 @@
 	  do (setf (gethash indicator ht) value))
       ht)))
 
+;;; ---------------------------------------------------------------------------
+
+(defun standard-object-reader (stream sub-char infix-parameter)
+  (declare (ignore sub-char infix-parameter))
+  (destructuring-bind (class-name &rest slots-and-values)
+      (read stream t nil 't)
+    (declare (dynamic-extent initargs))
+    (let* ((class (find-class class-name))
+	   (instance (allocate-instance class))
+	   (class-slot-names 
+	    (mapcar #'slot-definition-name (class-slots class))))
+      (loop for (slot-name value) on slots-and-values by #'cddr
+	  do (setf class-slot-names (delq slot-name class-slot-names)) 
+	     ;; Set the slot value, unless it is to remain unbound:
+	     (unless (eq value unbound-value-indicator)
+	       (setf (slot-value instance slot-name) value)))
+      ;; Initialize any remaining slots:
+      (shared-initialize instance class-slot-names)
+      instance)))
+
 ;;; ===========================================================================
 ;;;  The saved/sent-object readtable
 
@@ -63,6 +83,7 @@
 					   #+cormanlisp #'inf-reader)
       (safely-set-dispatch-macro-character #\# #\_ 'unbound-value-reader)
       (safely-set-dispatch-macro-character #\# #\H 'hash-table-reader)
+      (safely-set-dispatch-macro-character #\# #\I 'standard-object-reader)
       *readtable*))
 
 ;;; ===========================================================================
