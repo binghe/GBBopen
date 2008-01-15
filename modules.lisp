@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/modules.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jan  9 15:16:47 2008 *-*
+;;;; *-* Last-Edit: Tue Jan 15 11:58:34 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -58,6 +58,9 @@
           ("defflags" :forces-recompile)
           ("tools" :forces-recompile)
           ("define-class" :forces-recompile)
+          #+ecl
+          ("ecl-mop-patches" :forces-recompile)
+          "mop-interface"
 	  "gbbopen-instance"
           "offset-universal-time"
           "print-object-for"
@@ -99,9 +102,6 @@
   (:requires :portable-threads :gbbopen-tools)
   (:directory :gbbopen)
   (:files "preamble"
-          #+ecl
-          ("ecl-mop-patches" :forces-recompile)
-          "mop-interface"
           "utilities"                   
           ("unit-metaclasses" :forces-recompile)
           ("units" :forces-recompile)
