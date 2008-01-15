@@ -1,8 +1,8 @@
-;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/current/source/gbbopen/mop-interface.lisp *-*
+;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
+;;;; *-* File: /home/gbbopen/source/tools/mop-interface.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Sep 28 12:07:27 2006 *-*
-;;;; *-* Machine: ruby.corkills.org *-*
+;;;; *-* Last-Edit: Tue Jan 15 12:05:11 2008 *-*
+;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2004-2006, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2004-2008, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; Porting Notice:
@@ -30,10 +30,11 @@
 ;;;  06-15-05 Consolidated interface.  (Corkill)
 ;;;  09-22-06 Updated for CormanLisp 3.0, but MOP is still incomplete.
 ;;;           (Corkill)
+;;;  01-15-08 Moved into :gbbopen-tools.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-(in-package :gbbopen)
+(in-package :gbbopen-tools)
   
 #+lispworks
 (eval-when (:compile-toplevel :load-toplevel :execute)
@@ -125,6 +126,11 @@
 		   value)
 	       direct-methods)
       result)))
+
+;;; ---------------------------------------------------------------------------
+
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (export *mop-symbols*))
 
 ;;; ===========================================================================
 ;;;				  End of File

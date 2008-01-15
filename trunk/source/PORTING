@@ -26,6 +26,10 @@ mini-module/mini-module.lisp
 tools/declarations.lisp
   - allow-redefinition (optional)
 ------------------------------------------------------------------------------
+tools/declared-numerics.lisp
+  - fixnump, single-float-p, and double-float-p
+  - infinity and negative-infinity values, reading, and printing
+------------------------------------------------------------------------------
 tools/tools.lisp
   - create CLOS package nickname, where needed
   - import MOP finalization functions for ensure-finalized-class
@@ -34,9 +38,8 @@ tools/tools.lisp
   - import EXTRACT-DECLARATIONS, where available
   - print-pretty-function-object can be customized for each CL implementation
 ------------------------------------------------------------------------------
-tools/declared-numerics.lisp
-  - fixnump, single-float-p, and double-float-p
-  - infinity and negative-infinity values, reading, and printing
+tools/mop-interface.lisp
+  - import required MOP symbols
 ------------------------------------------------------------------------------
 tools/os-interface.lisp
   - implementation-specific OS process entities
@@ -53,9 +56,6 @@ tools/queue.lisp
 ------------------------------------------------------------------------------
 tools/system.lisp
   - implementation-specific OS-interface entities
-------------------------------------------------------------------------------
-gbbopen/mop-interface.lisp
-  - import required MOP symbols
 ------------------------------------------------------------------------------
 gbbopen/unit-metaclasses.lisp
   - Lispworks MOP deviations
