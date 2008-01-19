@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/tools/read-object.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Jan 12 14:03:38 2008 *-*
+;;;; *-* Last-Edit: Sat Jan 19 10:35:43 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -31,19 +31,46 @@
   
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(read-saved-object		; not yet documented
-            read-sent-object)))		; not yet documented
+            read-sent-object		; not yet documented
+            with-reading-object-block))) ; not yet documented
+
+;;; ===========================================================================
+
+(defmacro with-reading-object-block ((&key) &body body)
+  `(let ((*recorded-class-descriptions-ht* (make-hash-table :test 'eq)))
+     ,@body))
+
 
 ;;; ===========================================================================
 ;;;  Dispatch-macro-character readers
 
-(defun unbound-value-reader (stream sub-char infix-parameter)
-  (declare (ignore sub-char infix-parameter stream))
+(defun gbbopen-save/send-dispatch-reader (stream sub-char-infix-parameter)
+  (declare (ignore sub-char infix-parameter))
+  (funcall
+   (ecase (read-char stream)
+     (#\C 'class-description-reader)
+     (#\H 'hash-table-reader)
+     (#\I 'standard-object-reader)
+     (#\U 'unbound-value-reader))
+   stream))
+
+;;; ---------------------------------------------------------------------------
+
+(defun unbound-value-reader (stream)
+  (declare (ignore stream))
   unbound-value-indicator)
 
 ;;; ---------------------------------------------------------------------------
 
-(defun hash-table-reader (stream sub-char infix-parameter)
-  (declare (ignore sub-char infix-parameter))
+(defun class-description-reader (stream)
+  (destructuring-bind (class-name &rest slot-names)
+      (read stream t nil 't)
+    (setf (gethash class-name *recorded-class-descriptions-ht*)
+          slot-names)))
+
+;;; ---------------------------------------------------------------------------
+
+(defun hash-table-reader (stream)
   (destructuring-bind (ht-test ht-count &rest initargs)
       (read stream t nil 't)
     (declare (dynamic-extent initargs))
@@ -54,22 +81,33 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun standard-object-reader (stream sub-char infix-parameter)
-  (declare (ignore sub-char infix-parameter))
-  (destructuring-bind (class-name &rest slots-and-values)
+(defun standard-object-reader (stream)
+  (destructuring-bind (class-name &rest slot-values)
       (read stream t nil 't)
     (declare (dynamic-extent initargs))
     (let* ((class (find-class class-name))
+           (class-slots (class-slots class))
 	   (instance (allocate-instance class))
-	   (class-slot-names 
-	    (mapcar #'slot-definition-name (class-slots class))))
-      (loop for (slot-name value) on slots-and-values by #'cddr
-	  do (setf class-slot-names (delq slot-name class-slot-names)) 
-	     ;; Set the slot value, unless it is to remain unbound:
-	     (unless (eq value unbound-value-indicator)
-	       (setf (slot-value instance slot-name) value)))
+	   (incoming-class-slot-names 
+            (or (copy-list 
+                 (gethash class-name *recorded-class-descriptions-ht*))
+                (error "No class description has been read for class ~s"
+                       class-name))))
+      (loop for slot-name in incoming-class-slot-names
+          and value in slot-values
+          do (setf incoming-class-slot-names
+                   (delq slot-name incoming-class-slot-names))
+             ;; Check that incoming slot-name is present in the current
+             ;; class definition:
+             (when (member slot-name class-slots
+                           :key #'slot-definition-name
+                           :test #'eq)
+               ;; Set the slot value, unless it is to remain unbound:
+               (unless (eq value unbound-value-indicator)
+                 (setf (slot-value instance slot-name) value))))
       ;; Initialize any remaining slots:
-      (shared-initialize instance class-slot-names)
+      (when incoming-class-slot-names
+	(shared-initialize instance incoming-class-slot-names))
       instance)))
 
 ;;; ===========================================================================
@@ -81,9 +119,8 @@
       (safely-set-dispatch-macro-character #\# #\@ 
 					   #-cormanlisp 'inf-reader
 					   #+cormanlisp #'inf-reader)
-      (safely-set-dispatch-macro-character #\# #\_ 'unbound-value-reader)
-      (safely-set-dispatch-macro-character #\# #\H 'hash-table-reader)
-      (safely-set-dispatch-macro-character #\# #\I 'standard-object-reader)
+      (safely-set-dispatch-macro-character #\# #\G 
+                                           'gbbopen-save/send-dispatch-reader)
       *readtable*))
 
 ;;; ===========================================================================
@@ -96,11 +133,24 @@
      ,@body))
 
 ;;; ===========================================================================
-;;;  Temporary testing function
+;;;  Temporary testing functions
 
-(defun test (string)
-  (with-saved/sent-object-syntax ()
-    (read-from-string string)))
+(defun save-test (obj)
+  (with-output-to-string (s)
+    (with-saving/sending-block ()
+      (print-object-for-saving obj s))))
+
+(defun read-test (string)
+  (with-reading-object-block ()
+    (with-saved/sent-object-syntax ()
+      (let ((eof-marker '#:eof)
+            obj
+            (position 0))
+        (loop
+          (multiple-value-setq (obj position)
+            (read-from-string string nil eof-marker :start position))
+          (when (eq obj eof-marker) (return))
+          (describe obj))))))
 
 ;;; ===========================================================================
 ;;;				  End of File
