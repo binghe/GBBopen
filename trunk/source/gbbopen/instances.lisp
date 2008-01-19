@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/current/source/gbbopen/instances.lisp *-*
+;;;; *-* File: /home/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Oct 15 12:01:59 2007 *-*
-;;;; *-* Machine: ruby.corkills.org *-*
+;;;; *-* Last-Edit: Sat Jan 19 11:01:13 2008 *-*
+;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -93,6 +93,18 @@
 #+cmu-possible-optimization
 (declaim (pcl::slots (slot-boundp standard-unit-instance)
                      (inline standard-unit-instance)))
+
+;;; ---------------------------------------------------------------------------
+;;;  Saving/Sending Unit Instances
+
+(defparameter *unsaved/unsent-unit-instance-slot-names*
+    '(%%marks%% %%space-instances%%))
+
+(defmethod slots-for-saving/sending ((class standard-class))
+  (loop for slot in (class-slots class) 
+      unless (memq (slot-definition-name slot) 
+                   *unsaved/unsent-unit-instance-slot-names*)
+      collect slot))
 
 ;;; ---------------------------------------------------------------------------
 
