@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:AGENDA-SHELL; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/current/source/gbbopen/control-shells/agenda-shell.lisp *-*
+;;;; *-* File: /home/gbbopen/source/gbbopen/control-shells/agenda-shell.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Nov 30 07:12:48 2007 *-*
-;;;; *-* Machine: ruby.corkills.org *-*
+;;;; *-* Last-Edit: Sun Jan 20 14:27:53 2008 *-*
+;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2004-2007, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2004-2008, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -329,8 +329,10 @@
 (defmethod print-instance-slots ((instance ksa) stream)
   (call-next-method)
   (format stream " ~s ~a"
-	  (let ((ks (ks-of instance)))
-            (when ks (instance-name-of ks)))
+          (if (slot-boundp instance 'ks)
+              (let ((ks (ks-of instance)))
+                (when ks (instance-name-of ks)))
+              "##")
           (if (slot-boundp instance 'rating)
               (rating-of instance)
               "##")))
