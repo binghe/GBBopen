@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/tools/read-object.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Jan 20 14:48:17 2008 *-*
+;;;; *-* Last-Edit: Mon Jan 21 04:35:11 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -135,6 +135,12 @@
 ;;; ===========================================================================
 ;;;  The saved/sent-object readtable
 
+(defun gbbopen-save/send-reader-dispatcher (stream sub-char infix-parameter)
+  (declare (ignore sub-char infix-parameter))
+  (gbbopen-save/send-object-reader (read-char stream) stream))
+
+;;; ---------------------------------------------------------------------------
+
 (defparameter *saved/sent-object-readtable*
     (let ((*readtable* (copy-readtable)))
       ;; Duplicate infinity reader (from declared-numerics.lisp):
@@ -146,12 +152,6 @@
        #\# #\G 
        'gbbopen-save/send-reader-dispatcher)
       *readtable*))
-
-;;; ---------------------------------------------------------------------------
-
-(defun gbbopen-save/send-reader-dispatcher (stream sub-char infix-parameter)
-  (declare (ignore sub-char infix-parameter))
-  (gbbopen-save/send-object-reader (read-char stream) stream))
 
 ;;; ===========================================================================
 ;;;  With-saved/sent-object-syntax
