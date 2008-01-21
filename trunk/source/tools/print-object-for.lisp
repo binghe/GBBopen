@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/tools/print-object-for.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Jan 21 04:31:50 2008 *-*
+;;;; *-* Last-Edit: Mon Jan 21 10:07:53 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -110,6 +110,12 @@
           (print-object-for-saving/sending ptr stream))
         (princ ")" stream))))
   cons)
+
+;;; ---------------------------------------------------------------------------
+;;;  Strings
+
+(defmethod print-object-for-saving/sending ((string string) stream)
+  (prin1 string stream))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Vectors
