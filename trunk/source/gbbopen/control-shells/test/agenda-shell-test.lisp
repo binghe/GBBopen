@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-USER; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/current/source/gbbopen/control-shells/test/agenda-shell-test.lisp *-*
+;;;; *-* File: /home/gbbopen/source/gbbopen/control-shells/test/agenda-shell-test.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Nov 10 02:56:10 2007 *-*
-;;;; *-* Machine: ruby.corkills.org *-*
+;;;; *-* Last-Edit: Mon Jan 21 03:40:45 2008 *-*
+;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2004-2007, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2004-2008, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -254,10 +254,10 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(when *autorun-modules*
+(when (and (boundp '*autorun-modules*) 
+           *autorun-modules*)
   (format t "~{~&~s~%~}"
-	  (multiple-value-list 
-	   (agenda-shell-test :save-executed-ksas 't))))
+	  (multiple-value-list (agenda-shell-test :save-executed-ksas 't))))
 
 ;;; ===========================================================================
 ;;;				  End of File

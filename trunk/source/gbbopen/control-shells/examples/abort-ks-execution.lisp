@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-USER; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/current/source/gbbopen/control-shells/examples/abort-ks-execution.lisp *-*
+;;;; *-* File: /home/gbbopen/source/gbbopen/control-shells/examples/abort-ks-execution.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Jul 28 12:21:27 2007 *-*
-;;;; *-* Machine: ruby.corkills.org *-*
+;;;; *-* Last-Edit: Mon Jan 21 03:40:17 2008 *-*
+;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2006-2007, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2006-2008, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -81,9 +81,9 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(when *autorun-modules*
-  (format t "~{~&~s~%~}"
-	  (multiple-value-list (start-control-shell))))
+(when (and (boundp '*autorun-modules*) 
+           *autorun-modules*)
+  (format t "~{~&~s~%~}" (multiple-value-list (start-control-shell))))
 
 ;;; ===========================================================================
 ;;;				  End of File
