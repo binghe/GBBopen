@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-USER; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/current/source/gbbopen/test/timing-tests.lisp *-*
+;;;; *-* File: /home/gbbopen/source/gbbopen/test/timing-tests.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Oct 16 05:33:47 2007 *-*
-;;;; *-* Machine: ruby.corkills.org *-*
+;;;; *-* Last-Edit: Mon Jan 21 03:38:08 2008 *-*
+;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2007, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2007-2008, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -323,7 +323,9 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(when *autorun-modules* (do-timing-tests))
+(when (and (boundp '*autorun-modules*) 
+           *autorun-modules*)
+  (do-timing-tests))
 
 ;;; ===========================================================================
 ;;;				  End of File
