@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/tools/print-object-for.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Jan 19 10:58:01 2008 *-*
+;;;; *-* Last-Edit: Mon Jan 21 04:31:50 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -34,12 +34,9 @@
             print-object-for-saving     ; not yet documented
             print-object-for-saving/sending ; not yet documented
             print-object-for-sending    ; not yet documented
+            print-slot-for-saving/sending ; not yet documented
             slots-for-saving/sending    ; not yet documented
             with-saving/sending-block))) ; not yet documented
-
-;;; ---------------------------------------------------------------------------
-
-(defvar *print-object-for-sending* nil)
 
 ;;; ===========================================================================
 ;;;  With-sending/saving-block
@@ -47,10 +44,17 @@
 (defvar *recorded-class-descriptions-ht*)
 
 (defmacro with-saving/sending-block ((&key) &body body)
-  `(let ((*recorded-class-descriptions-ht* (make-hash-table :test 'eq)))
+  `(let ((*recorded-class-descriptions-ht*
+          #+allegro
+          (make-hash-table :test 'eq :values nil)
+          #-allegro
+          (make-hash-table :test 'eq)))
      ,@body))
 
 ;;; ===========================================================================
+;;;  User level print-object-for-saving/sending functions
+
+(defvar *print-object-for-sending* nil)
 
 (defun print-object-for-saving (object stream)
   (let ((*print-object-for-sending* nil))
@@ -163,7 +167,7 @@
 
 (defmethod print-object-for-saving/sending ((class standard-class) stream)
   (format stream "#GC(~s" (class-name class))
-  (dolist (slot (class-slots class))
+  (dolist (slot (slots-for-saving/sending class))
     (let ((slot-name (slot-definition-name slot)))
       (format stream " ~s" slot-name)))
   (princ ")" stream)
@@ -172,6 +176,17 @@
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Instances
+
+(defgeneric print-slot-for-saving/sending (instance slot-name stream))
+
+;;; ---------------------------------------------------------------------------
+
+(defmethod print-slot-for-saving/sending ((instance standard-object)
+                                          slot-name
+                                          stream)
+  (print-object-for-saving/sending (slot-value instance slot-name) stream))
+
+;;; ---------------------------------------------------------------------------
 
 (defmethod print-object-for-saving/sending ((instance standard-object) stream)
   (let* ((class (class-of instance))
@@ -182,11 +197,11 @@
       (print-object-for-saving/sending class stream)
       (setf (gethash class-name *recorded-class-descriptions-ht*) 't))
     (format stream "#GI(~s" (class-name class))
-    (dolist (slot (class-slots class))
+    (dolist (slot (slots-for-saving/sending class))
       (princ " " stream)
       (if (slot-boundp-using-class class instance slot)
-          (print-object-for-saving/sending 
-           (slot-value-using-class class instance slot) stream)
+          (print-slot-for-saving/sending 
+           instance (slot-definition-name slot) stream)
           ;; Unbound value indicator:
           (format stream "#GU")))
     (princ ")" stream))
