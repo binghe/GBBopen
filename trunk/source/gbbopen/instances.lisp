@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Jan 19 11:01:13 2008 *-*
+;;;; *-* Last-Edit: Mon Jan 21 04:29:30 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2002-2007, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2008, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -98,7 +98,7 @@
 ;;;  Saving/Sending Unit Instances
 
 (defparameter *unsaved/unsent-unit-instance-slot-names*
-    '(%%marks%% %%space-instances%%))
+    '(%%marks%%))
 
 (defmethod slots-for-saving/sending ((class standard-class))
   (loop for slot in (class-slots class) 
@@ -108,13 +108,65 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defmethod hidden-nonlink-slot-names ((instance standard-unit-instance))
-  ;; Returns a list of nonlink-slot-names that should not be shown
-  ;; by describe-instance.
-  #+ecl (declare (ignore instance))
-  '(%%marks%% %%space-instances%% 
-    ;; not really hidden, but we treat this slot specially in describes:
-    instance-name))
+(defmethod print-slot-for-saving/sending ((instance standard-unit-instance)
+                                          (slot-name (eql '%%space-instances%%))
+                                          stream)
+  (let ((slot-value (slot-value instance slot-name)))
+    (cond 
+     ;; We have some space-instances:
+     ((consp slot-value)
+      (princ "(" stream)
+      ;; print the first space-instance path:
+      (prin1 (instance-name-of (car slot-value)) stream)
+      ;; print any remaining space-instance paths:
+      (dolist (space-instance (cdr slot-value))
+        (princ " ")
+        (prin1 (instance-name-of space-instance) stream))
+      (princ ")" stream))
+     ;; Otherwise, simply print nil or :deleted:
+     (t (prin1 slot-value stream)))))
+
+;;; ---------------------------------------------------------------------------
+
+(defvar *save/send-unit-references* nil)
+
+(defmethod print-object-for-saving/sending ((instance standard-unit-instance)
+                                            stream)
+  (cond
+   ;; Unit-instance references only:
+   (*save/send-unit-references*
+    (format stream "#GR(~s ~s)"
+            (type-of instance)
+            (instance-name-of instance)))
+   ;; Save/send this unit instance:
+   (t (let ((*save/send-unit-references* 't))
+        (call-next-method)))))
+
+;;; ---------------------------------------------------------------------------
+
+(defmethod initialize-gbbopen-save/send-instance
+    (class (instance standard-unit-instance) incoming-class-slot-names
+     slot-values)
+  ;; Allow setf setting of link-slot pointers:
+  (let ((*%%allow-setf-on-link%%* 't))
+    (call-next-method))
+  (add-name-to-instance-hash-table class instance (instance-name-of instance))
+  (let ((space-instance-paths
+         (standard-unit-instance.%%space-instances%% instance)  ))
+    (unless (or (null space-instance-paths)
+                (eq space-instance-paths ':deleted))
+      (add-instance-to-space-instance-paths instance space-instance-paths))))
+
+;;; ---------------------------------------------------------------------------
+;;;  Unit-instance-reference reader
+
+(defmethod gbbopen-save/send-object-reader ((char (eql #\R)) stream)
+  (destructuring-bind (class-name instance-name)
+      (read stream t nil 't)
+    (or (find-instance-by-name instance-name class-name)
+        (error "A reference was made to non-existent unit instance ~s ~
+                of class ~s."
+               instance-name class-name))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -309,6 +361,15 @@
 
 ;;; ---------------------------------------------------------------------------
 
+(defun add-instance-to-space-instance-paths (instance space-instance-paths)
+  (dolist (path space-instance-paths)
+    (let ((space-instance (find-space-instance-by-path path)))
+      (if space-instance
+          (add-instance-to-space-instance instance space-instance)
+          (error "Space instance ~s does not exist." path)))))
+
+;;; ---------------------------------------------------------------------------
+
 (defun add-instance-to-initial-space-instances (instance unit-class)
   ;; Add the unit instance to initial space instances
   (let ((initial-space-instances
@@ -322,12 +383,8 @@
 		   (funcall initial-space-instances instance)))
 	(add-instance-to-space-instance instance space-instance)))
      ;; constant initial-space instances:
-     (t (dolist (path initial-space-instances)
-	  (let ((space-instance (find-space-instance-by-path path)))
-	    (if space-instance
-		(add-instance-to-space-instance instance space-instance)
-		(error "Space instance ~s does not exist."
-		       path))))))))
+     (t (add-instance-to-space-instance-paths 
+         instance initial-space-instances)))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -413,6 +470,16 @@
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Describe instance
+
+(defmethod hidden-nonlink-slot-names ((instance standard-unit-instance))
+  ;; Returns a list of nonlink-slot-names that should not be shown
+  ;; by describe-instance.
+  #+ecl (declare (ignore instance))
+  '(%%marks%% %%space-instances%% 
+    ;; not really hidden, but we treat this slot specially in describes:
+    instance-name))
+
+;;; ---------------------------------------------------------------------------
 
 (defmethod describe-instance ((instance standard-unit-instance))
   (let ((class (class-of instance)))
