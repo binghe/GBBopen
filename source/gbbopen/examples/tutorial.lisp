@@ -1,8 +1,8 @@
 ;;;; -*- Mode:COMMON-LISP; Package:GBBOPEN-USER; Base:10 -*-
-;;;; *-* File: /home/gbbopen/current/source/gbbopen/examples/tutorial.lisp *-*
+;;;; *-* File: /home/gbbopen/source/gbbopen/examples/tutorial.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Oct 12 06:49:12 2006 *-*
-;;;; *-* Machine: ruby.corkills.org *-*
+;;;; *-* Last-Edit: Mon Jan 21 03:35:15 2008 *-*
+;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -14,7 +14,9 @@
 ;;;
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
-;;; To run:
+;;; Runs once (automatically) when loaded using the mini-module system.
+;;;
+;;; To run manually:
 ;;;   1. Compile and load the :tutorial-example module
 ;;;   2. Set the current package to :gbbopen-user
 ;;;   3. Evaluate: (take-a-walk)
@@ -242,6 +244,12 @@
 ;;; Initally enable printing of all control shell events:
 
 (show-important-events)
+
+;;; ---------------------------------------------------------------------------
+
+(when (and (boundp '*autorun-modules*) 
+           *autorun-modules*)
+  (format t "~{~&~s~%~}" (multiple-value-list (take-a-walk))))
 
 ;;; ===========================================================================
 ;;;                               End of File
