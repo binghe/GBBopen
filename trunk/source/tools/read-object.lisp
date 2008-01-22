@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/tools/read-object.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Jan 21 04:35:11 2008 *-*
+;;;; *-* Last-Edit: Tue Jan 22 04:01:39 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -30,37 +30,49 @@
             clos:slot-definition-name)))
   
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (export '(gbbopen-save/send-object-readre ; not yet documented
+  (export '(*forward-referenced-saved/sent-instances* ; not yet documented
+            allocate-gbbopen-save/send-instance ; not yet documented
+            gbbopen-save/send-object-reader ; not yet documented
             initialize-gbbopen-save/send-instance ; not yet documented
-            with-reading-object-block))) ; not yet documented
+            with-reading-object-block   ; not yet documented
+            with-saved/sent-object-syntax))) ; not yet documented
 
 ;;; ---------------------------------------------------------------------------
 
-;; Dynamically bound in weith-reading-object-block to maintain objects that
+;; Dynamically bound in with-reading-object-block to maintain instances that
 ;; have been referenced but not yet read:
 
-(defvar *forward-referenced-objects*)
+(defvar *forward-referenced-saved/sent-instances*)
 
 ;;; ===========================================================================
 
 (defmacro with-reading-object-block ((&key) &body body)
   `(let ((*recorded-class-descriptions-ht* (make-hash-table :test 'eq))
-         (*forward-referenced-objects* 
-          #+allegro (make-hash-table :test 'eq :values nil)
-          #-allegro (make-hash-table :test 'eq)))
-     ,@body))
+         (*forward-referenced-saved/sent-instances* 
+          #+allegro (make-hash-table :test 'equal :values nil)
+          #-allegro (make-hash-table :test 'equal)))
+     (multiple-value-prog1 (progn ,@body)
+       (when (plusp& (hash-table-count 
+                      *forward-referenced-saved/sent-instances*))
+         (warn "These instances were referenced and never defined: ~s"
+               (loop for key being the hash-keys of
+                         *forward-referenced-saved/sent-instances* 
+                   collect key))))))
 
 ;;; ===========================================================================
 ;;;  Standard GBBopen save/send reader methods
 
 (defgeneric gbbopen-save/send-object-reader (char stream))
+(defgeneric allocate-gbbopen-save/send-instance 
+    (class slot-names slot-values))
 (defgeneric initialize-gbbopen-save/send-instance 
-    (class instance incoming-class-slot-names slot-values))
+    (instance incoming-class-slot-names slot-values))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Default (error) reader
 
 (defmethod gbbopen-save/send-object-reader (char stream)
+  (declare (ignore stream))
   (error "No GBBopen save/send-object reader defined for #G~c" char))
 
 ;;; ---------------------------------------------------------------------------
@@ -83,20 +95,35 @@
 ;;;  Hash-table reader
 
 (defmethod gbbopen-save/send-object-reader ((char (eql #\H)) stream)
-  (destructuring-bind (ht-test ht-count &rest initargs)
+  (destructuring-bind (ht-test ht-count ht-values &rest keys-and-values)
       (read stream t nil 't)
-    (declare (dynamic-extent initargs))
-    (let ((ht (make-hash-table :test ht-test :size ht-count)))
-      (loop for (indicator value) on initargs by #'cddr
-	  do (setf (gethash indicator ht) value))
+    (declare (dynamic-extent keys-and-values))
+    (let ((ht (if ht-values 
+                  (make-hash-table :test ht-test :size ht-count)
+                  (make-hash-table :test ht-test :size ht-count :values nil))))
+      (if ht-values 
+          (loop for (key value) on keys-and-values by #'cddr
+              do (setf (gethash key ht) value))
+          (dolist (key keys-and-values)
+            (setf (gethash key ht) 't)))
       ht)))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Standard-object reader
 
+(defmethod allocate-gbbopen-save/send-instance ((class standard-class)
+                                                slot-names slot-values)
+  (declare (ignore slot-names slot-values))
+  (allocate-instance class))
+
+;;; ---------------------------------------------------------------------------
+
 (defmethod initialize-gbbopen-save/send-instance
-    (class (instance standard-object) incoming-class-slot-names slot-values)
-  (let ((class-slots (class-slots class)))
+    ((instance standard-object) incoming-class-slot-names slot-values)
+  (let* ((class (class-of instance))
+         (class-slots (class-slots class)))
+    ;; Allow destructive (delq) removal below:
+    (setf incoming-class-slot-names (copy-list incoming-class-slot-names))
     (loop for slot-name in incoming-class-slot-names
         and value in slot-values
         do (setf incoming-class-slot-names
@@ -120,16 +147,17 @@
 (defmethod gbbopen-save/send-object-reader ((char (eql #\I)) stream)
   (destructuring-bind (class-name &rest slot-values)
       (read stream t nil 't)
-    (declare (dynamic-extent initargs))
-    (let* ((class (find-class class-name))
-	   (instance (allocate-instance class))
-	   (incoming-class-slot-names 
-            (or (copy-list 
-                 (gethash class-name *recorded-class-descriptions-ht*))
+    (declare (dynamic-extent slot-values))
+    (let* ((incoming-class-slot-names 
+            (or (gethash class-name *recorded-class-descriptions-ht*)
                 (error "No class description has been read for class ~s"
-                       class-name))))
+                       class-name)))
+           (instance (allocate-gbbopen-save/send-instance 
+                      (find-class class-name 't)
+                      incoming-class-slot-names
+                      slot-values)))
       (initialize-gbbopen-save/send-instance 
-       class instance incoming-class-slot-names slot-values)
+       instance incoming-class-slot-names slot-values)
       instance)))
 
 ;;; ===========================================================================

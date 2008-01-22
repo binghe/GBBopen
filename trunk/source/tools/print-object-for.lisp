@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/tools/print-object-for.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Jan 21 10:07:53 2008 *-*
+;;;; *-* Last-Edit: Tue Jan 22 03:56:40 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -130,7 +130,14 @@
   vector)
 
 ;;; ---------------------------------------------------------------------------
-;;;  Arrays
+;;;  Bit-vectors
+
+(defmethod print-object-for-saving/sending ((bit-vector bit-vector) stream)
+  (prin1 bit-vector stream))
+
+;;; ---------------------------------------------------------------------------
+;;;  Arrays (simple only--someday support extended syntax for arrays with
+;;;          a fill-pointer, specialized element-type, etc.)
 
 (defmethod print-object-for-saving/sending ((array array) stream)
   (let ((dimensions (array-dimensions array))
@@ -157,7 +164,8 @@
 ;;; ---------------------------------------------------------------------------
 ;;;  Structures
 
-(defmethod print-object-for-saving/sending ((structure structure-object) stream)
+(defmethod print-object-for-saving/sending ((structure structure-object) 
+                                            stream)
   (let ((class (class-of structure)))
     (format stream "#S(~s" (class-name class))
     (dolist (slot (slots-for-saving/sending class))
@@ -217,17 +225,27 @@
 ;;;  Hash Tables
 
 (defmethod print-object-for-saving/sending ((hash-table hash-table) stream)
-  (format stream "#GH(~s ~s"
-          (hash-table-test hash-table)
-          (hash-table-count hash-table))
-  (maphash #'(lambda (key value)
-               (format stream " ")
-               (print-object-for-saving/sending key stream)
-               (format stream " ")
-               (print-object-for-saving/sending value stream))
-           hash-table)
-  (princ ")" stream)
-  hash-table)
+  (let ((keys-and-values-hash-table? 
+         #+allegro (excl:hash-table-values hash-table)
+         #-allegro 't))
+    (format stream "#GH(~s ~s ~s"
+            (hash-table-test hash-table)
+            (hash-table-count hash-table)
+            keys-and-values-hash-table?)
+    (maphash 
+     (if keys-and-values-hash-table? 
+         #'(lambda (key value)
+             (format stream " ")
+             (print-object-for-saving/sending key stream)
+             (format stream " ")
+             (print-object-for-saving/sending value stream))
+         #'(lambda (key value)
+             (declare (ignore value))
+             (format stream " ")
+             (print-object-for-saving/sending key stream)))
+     hash-table)
+    (princ ")" stream)
+    hash-table))
 
 ;;; ===========================================================================
 ;;;				  End of File

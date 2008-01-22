@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Jan 21 04:29:30 2008 *-*
+;;;; *-* Last-Edit: Tue Jan 22 03:26:38 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -100,7 +100,7 @@
 (defparameter *unsaved/unsent-unit-instance-slot-names*
     '(%%marks%%))
 
-(defmethod slots-for-saving/sending ((class standard-class))
+(defmethod slots-for-saving/sending ((class standard-unit-class))
   (loop for slot in (class-slots class) 
       unless (memq (slot-definition-name slot) 
                    *unsaved/unsent-unit-instance-slot-names*)
@@ -145,12 +145,13 @@
 ;;; ---------------------------------------------------------------------------
 
 (defmethod initialize-gbbopen-save/send-instance
-    (class (instance standard-unit-instance) incoming-class-slot-names
-     slot-values)
+    ((instance standard-unit-instance) slot-names slot-values)
+  (declare (ignore slot-names slot-values))
   ;; Allow setf setting of link-slot pointers:
   (let ((*%%allow-setf-on-link%%* 't))
     (call-next-method))
-  (add-name-to-instance-hash-table class instance (instance-name-of instance))
+  (add-name-to-instance-hash-table
+   (class-of instance) instance (instance-name-of instance))
   (let ((space-instance-paths
          (standard-unit-instance.%%space-instances%% instance)  ))
     (unless (or (null space-instance-paths)
@@ -160,13 +161,40 @@
 ;;; ---------------------------------------------------------------------------
 ;;;  Unit-instance-reference reader
 
+(defun make-or-allocate-gbbopen-save/send-instance (class instance-name)
+  (or (find-instance-by-name instance-name (class-name class))
+      (allocate-instance class)))
+
+;;; ---------------------------------------------------------------------------
+
+(defmethod allocate-gbbopen-save/send-instance ((class standard-unit-class)
+                                                slot-names slot-values)
+  (let* ((position (position 'instance-name slot-names :test #'eq))
+         (instance-name (nth position slot-values))
+         (instance (make-or-allocate-gbbopen-save/send-instance
+                    class instance-name)))
+    (remhash instance *forward-referenced-saved/sent-instances*)
+    instance))
+
+;;; ---------------------------------------------------------------------------
+
 (defmethod gbbopen-save/send-object-reader ((char (eql #\R)) stream)
   (destructuring-bind (class-name instance-name)
       (read stream t nil 't)
     (or (find-instance-by-name instance-name class-name)
-        (error "A reference was made to non-existent unit instance ~s ~
+        (let* ((class (find-class class-name 't))
+               (instance (make-or-allocate-gbbopen-save/send-instance
+                          class instance-name)))
+          (setf (gethash instance *forward-referenced-saved/sent-instances*)
+                't)
+          (setf (instance-name-of instance) instance-name)
+          (add-name-to-instance-hash-table class instance instance-name)
+          instance))))
+        
+#+for-later
+(error "A reference was made to non-existent unit instance ~s ~
                 of class ~s."
-               instance-name class-name))))
+       instance-name class-name)
 
 ;;; ---------------------------------------------------------------------------
 
