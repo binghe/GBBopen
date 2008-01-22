@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/tools/read-object.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Jan 22 04:12:55 2008 *-*
+;;;; *-* Last-Edit: Tue Jan 22 09:48:01 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -34,30 +34,7 @@
             allocate-gbbopen-save/send-instance ; not yet documented
             gbbopen-save/send-object-reader ; not yet documented
             initialize-gbbopen-save/send-instance ; not yet documented
-            with-reading-object-block   ; not yet documented
-            with-saved/sent-object-syntax))) ; not yet documented
-
-;;; ---------------------------------------------------------------------------
-
-;; Dynamically bound in with-reading-object-block to maintain instances that
-;; have been referenced but not yet read:
-
-(defvar *forward-referenced-saved/sent-instances*)
-
-;;; ===========================================================================
-
-(defmacro with-reading-object-block ((&key) &body body)
-  `(let ((*recorded-class-descriptions-ht* (make-hash-table :test 'eq))
-         (*forward-referenced-saved/sent-instances* 
-          #+allegro (make-hash-table :test 'equal :values nil)
-          #-allegro (make-hash-table :test 'equal)))
-     (multiple-value-prog1 (progn ,@body)
-       (when (plusp& (hash-table-count 
-                      *forward-referenced-saved/sent-instances*))
-         (warn "These instances were referenced and never defined: ~s"
-               (loop for key being the hash-keys of
-                         *forward-referenced-saved/sent-instances* 
-                   collect key))))))
+            with-reading-object-block))) ; not yet documented
 
 ;;; ===========================================================================
 ;;;  Standard GBBopen save/send reader methods
@@ -181,14 +158,29 @@
        'gbbopen-save/send-reader-dispatcher)
       *readtable*))
 
-;;; ===========================================================================
-;;;  With-saved/sent-object-syntax
+;;; ---------------------------------------------------------------------------
+;;; Dynamically bound in with-reading-object-block to maintain instances that
+;;; have been referenced but not yet read:
 
-(defmacro with-saved/sent-object-syntax ((&key (readtable
-						'*saved/sent-object-readtable*))
-					 &body body)
-  `(let ((*readtable* ,readtable))
-     ,@body))
+(defvar *forward-referenced-saved/sent-instances*)
+
+;;; ===========================================================================
+
+(defmacro with-reading-object-block ((&key (readtable
+                                            '*saved/sent-object-readtable*))
+                                     &body body)
+  `(let ((*readtable* ,readtable)
+         (*recorded-class-descriptions-ht* (make-hash-table :test 'eq))
+         (*forward-referenced-saved/sent-instances* 
+          #+allegro (make-hash-table :test 'equal :values nil)
+          #-allegro (make-hash-table :test 'equal)))
+     (multiple-value-prog1 (progn ,@body)
+       (when (plusp& (hash-table-count 
+                      *forward-referenced-saved/sent-instances*))
+         (warn "These instances were referenced and never defined: ~s"
+               (loop for key being the hash-keys of
+                         *forward-referenced-saved/sent-instances* 
+                   collect key))))))
 
 ;;; ===========================================================================
 ;;;				  End of File
