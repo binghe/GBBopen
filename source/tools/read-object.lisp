@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/tools/read-object.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Jan 22 04:01:39 2008 *-*
+;;;; *-* Last-Edit: Tue Jan 22 04:12:55 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -189,26 +189,6 @@
 					 &body body)
   `(let ((*readtable* ,readtable))
      ,@body))
-
-;;; ===========================================================================
-;;;  Temporary testing functions
-
-(defun save-test (obj)
-  (with-output-to-string (s)
-    (with-saving/sending-block ()
-      (print-object-for-saving obj s))))
-
-(defun read-test (string)
-  (with-reading-object-block ()
-    (with-saved/sent-object-syntax ()
-      (let ((eof-marker '#:eof)
-            obj
-            (position 0))
-        (loop
-          (multiple-value-setq (obj position)
-            (read-from-string string nil eof-marker :start position))
-          (when (eq obj eof-marker) (return))
-          (describe obj))))))
 
 ;;; ===========================================================================
 ;;;				  End of File
