@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/source/tools/read-object.lisp *-*
+;;;; *-* File: /home/gbbopen/current/source/tools/read-object.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Jan 22 09:48:01 2008 *-*
+;;;; *-* Last-Edit: Wed Jan 23 13:00:54 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -40,10 +40,9 @@
 ;;;  Standard GBBopen save/send reader methods
 
 (defgeneric gbbopen-save/send-object-reader (char stream))
-(defgeneric allocate-gbbopen-save/send-instance 
-    (class slot-names slot-values))
+(defgeneric allocate-gbbopen-save/send-instance (class slots slot-values))
 (defgeneric initialize-gbbopen-save/send-instance 
-    (instance incoming-class-slot-names slot-values))
+    (instance incoming-slots slot-values missing-slot-names))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Default (error) reader
@@ -65,8 +64,28 @@
 (defmethod gbbopen-save/send-object-reader ((char (eql #\C)) stream)
   (destructuring-bind (class-name &rest slot-names)
       (read stream t nil 't)
-    (setf (gethash class-name *recorded-class-descriptions-ht*)
-          slot-names)))
+    (let* ((class (find-class class-name 't))
+           (class-slots (copy-list (progn
+                                     (ensure-finalized-class class)
+                                     (class-slots class))))
+           (supplied-slots nil))
+      (dolist (slot-name slot-names)
+        ;; Check that incoming slot-name is present in the current class
+        ;; definition:
+        (let ((slot (find slot-name class-slots
+                          :key #'slot-definition-name
+                          :test #'eq)))
+          (unless slot
+            (warn "Slot ~s is no longer defined for class ~s; saved values ~
+                   for this slot will be discarded."
+                  slot-name class-name))
+          (push slot supplied-slots)
+          (setf class-slots (delq slot class-slots))))
+      ;; Save the incoming class-slots and the missing slot-names for this
+      ;; class:
+      (setf (gethash class-name *recorded-class-descriptions-ht*)
+            (list (nreverse supplied-slots)
+                  (mapcar #'slot-definition-name class-slots))))))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Hash-table reader
@@ -89,35 +108,33 @@
 ;;;  Standard-object reader
 
 (defmethod allocate-gbbopen-save/send-instance ((class standard-class)
-                                                slot-names slot-values)
-  (declare (ignore slot-names slot-values))
+                                                slots slot-values)
+  (declare (ignore slots slot-values))
   (allocate-instance class))
 
 ;;; ---------------------------------------------------------------------------
 
+(defvar *%skip-gbbopen-shared-initialize-method-processing%* nil)
+
 (defmethod initialize-gbbopen-save/send-instance
-    ((instance standard-object) incoming-class-slot-names slot-values)
-  (let* ((class (class-of instance))
-         (class-slots (class-slots class)))
-    ;; Allow destructive (delq) removal below:
-    (setf incoming-class-slot-names (copy-list incoming-class-slot-names))
-    (loop for slot-name in incoming-class-slot-names
+    ((instance standard-object) slots slot-values missing-slot-names)
+  (let ((class (class-of instance)))
+    (loop for slot in slots
         and value in slot-values
-        do (setf incoming-class-slot-names
-                 (delq slot-name incoming-class-slot-names))
-           ;; Check that incoming slot-name is present in the current
-           ;; class definition:
-           (let ((slot (find slot-name class-slots
-                             :key #'slot-definition-name
-                             :test #'eq)))
-             (when slot
-               ;; Set the slot value, unless it is to remain unbound:
-               (unless (eq value unbound-value-indicator)
-                 (setf (slot-value-using-class class instance slot) 
-                       value)))))
+        do (when slot
+             ;; Set the slot value, unless it is to remain unbound:
+             (unless (eq value unbound-value-indicator)
+               ;; Lispworks can't use slot-value-using-class here
+               ;; (prior to shared-initialize?):
+               #+lispworks
+               (setf (slot-value instance (slot-definition-name slot)) value)
+               #-lispworks
+               (setf (slot-value-using-class class instance slot) 
+                     value))))
     ;; Initialize any remaining slots:
-    (when incoming-class-slot-names
-      (shared-initialize instance incoming-class-slot-names))))
+    (when missing-slot-names
+      (let ((*%skip-gbbopen-shared-initialize-method-processing%* 't))
+        (shared-initialize instance missing-slot-names)))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -125,17 +142,17 @@
   (destructuring-bind (class-name &rest slot-values)
       (read stream t nil 't)
     (declare (dynamic-extent slot-values))
-    (let* ((incoming-class-slot-names 
-            (or (gethash class-name *recorded-class-descriptions-ht*)
-                (error "No class description has been read for class ~s"
-                       class-name)))
-           (instance (allocate-gbbopen-save/send-instance 
-                      (find-class class-name 't)
-                      incoming-class-slot-names
-                      slot-values)))
-      (initialize-gbbopen-save/send-instance 
-       instance incoming-class-slot-names slot-values)
-      instance)))
+    (destructuring-bind (incoming-slots missing-slot-names)
+        (or (gethash class-name *recorded-class-descriptions-ht*)
+            (error "No class description has been read for class ~s"
+                   class-name))
+      (let ((instance (allocate-gbbopen-save/send-instance 
+                       (find-class class-name 't)
+                       incoming-slots
+                       slot-values)))
+        (initialize-gbbopen-save/send-instance 
+         instance incoming-slots slot-values missing-slot-names)
+        instance))))
 
 ;;; ===========================================================================
 ;;;  The saved/sent-object readtable
