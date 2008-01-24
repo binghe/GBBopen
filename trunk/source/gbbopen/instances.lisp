@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jan 23 12:43:46 2008 *-*
+;;;; *-* Last-Edit: Thu Jan 24 12:20:20 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -124,7 +124,7 @@
         (princ " ")
         (prin1 (instance-name-of space-instance) stream))
       (princ ")" stream))
-     ;; Otherwise, simply print nil or :deleted:
+     ;; Otherwise, check for delete instance; otherwise, simply print nil
      (t (prin1 slot-value stream)))))
 
 ;;; ---------------------------------------------------------------------------
@@ -133,6 +133,7 @@
 
 (defmethod print-object-for-saving/sending ((instance standard-unit-instance)
                                             stream)
+  (check-for-deleted-instance instance 'print-object-for/saving/sending)
   (cond
    ;; Unit-instance references only:
    (*save/send-unit-references*
