@@ -10,7 +10,7 @@ Requirements:
 
        Allegro CL   Version 8.1
        CLISP        Version 2.43
-       Clozure CL   Version 1.1 (r7780)
+       Clozure CL   Version 1.1 (r8258)
        CMUCL        Version 19d
        Digitool MCL Version 5.1
        ECL          Version 0.9j (configure with --enable-threads if possible)
