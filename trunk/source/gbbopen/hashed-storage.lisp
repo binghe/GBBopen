@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/current/source/gbbopen/hashed-storage.lisp *-*
+;;;; *-* File: /home/gbbopen/source/gbbopen/hashed-storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Jul  3 10:20:55 2007 *-*
-;;;; *-* Machine: ruby.corkills.org *-*
+;;;; *-* Last-Edit: Fri Jan 25 04:04:49 2008 *-*
+;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2003-2007, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -106,8 +106,7 @@
       instance storage verbose
       ;; unbound-value action:
       #'(lambda (instance storage)
-	  (setf (gethash instance (unbound-value-instances-of storage)) 
-		instance))
+	  (setf (gethash instance (unbound-value-instances-of storage)) 't))
        ;; bound-value action:
       #'(lambda (instance storage dimension-value)
 	  (pushnew instance
@@ -174,7 +173,7 @@
 	       (declare (ignore key))
 	       (incf& bucket-count)
 	       (dolist (instance bucket)
-		 (funcall action instance instance))))
+		 (funcall action instance 't))))
 	(cond (full-map-p
 	       (maphash #'map-bucket bound-instances-hash-table))		
 	      (t (dolist (storage-extent storage-extents)
@@ -196,8 +195,8 @@
                                             disjunctive-dimensional-extents
                                             verbose)
   (do-hashed-map-actions
-      #'(lambda (key instance)
-	  (declare (ignore key))
+      #'(lambda (instance value)
+	  (declare (ignore value))
           (when (mbr-instance-mark-set-p instance)
             (funcall (the function fn) instance)))
     storage disjunctive-dimensional-extents verbose))
@@ -208,8 +207,8 @@
                                          disjunctive-dimensional-extents
 					 verbose)
   (do-hashed-map-actions 
-      #'(lambda (key instance)
-	  (declare (ignore key))
+      #'(lambda (instance value)
+	  (declare (ignore value))
 	  (funcall (the function fn) instance))
     storage disjunctive-dimensional-extents verbose))
 

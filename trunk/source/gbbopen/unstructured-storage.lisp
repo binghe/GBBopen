@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/current/source/gbbopen/unstructured-storage.lisp *-*
+;;;; *-* File: /home/gbbopen/source/gbbopen/unstructured-storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Jul  3 10:21:05 2007 *-*
-;;;; *-* Machine: ruby.corkills.org *-*
+;;;; *-* Last-Edit: Fri Jan 25 03:54:52 2008 *-*
+;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2003-2007, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -34,7 +34,10 @@
 ;;;  Unstructured storage
 
 (define-class unstructured-storage (storage)
-  ((instances :initform (make-hash-table :test 'eq)))
+  ((instances :initform (make-hash-table 
+                         :test 'eq
+                         ;; Use Allegro's sans-value hash tables:
+                         #+allegro :values #+allegro nil)))
   (:generate-initargs nil)
   (:export-class-name t))
 
@@ -52,7 +55,7 @@
                                     (storage unstructured-storage)
                                     verbose)
   (when verbose (print-unstructured-storage-usage-message storage))
-  (setf (gethash instance (instances-of storage)) instance))
+  (setf (gethash instance (instances-of storage)) 't))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -83,8 +86,8 @@
                                             disjunctive-dimensional-extents
                                             verbose)
   (do-unstructured-map-actions 
-      #'(lambda (key instance)
-	  (declare (ignore key))
+      #'(lambda (instance value)
+	  (declare (ignore value))
           (when (mbr-instance-mark-set-p instance)
             (funcall (the function fn) instance)))
     storage disjunctive-dimensional-extents verbose))
@@ -95,8 +98,8 @@
                                          disjunctive-dimensional-extents
 					 verbose)
   (do-unstructured-map-actions 
-      #'(lambda (key instance)
-	  (declare (ignore key))
+      #'(lambda (instance value)
+	  (declare (ignore value))
 	  (funcall (the function fn) instance))
     storage disjunctive-dimensional-extents verbose))
 
