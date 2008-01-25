@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/current/source/gbbopen/find.lisp *-*
+;;;; *-* File: /home/gbbopen/source/gbbopen/find.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Sep 24 05:39:35 2007 *-*
-;;;; *-* Machine: ruby.corkills.org *-*
+;;;; *-* Last-Edit: Fri Jan 25 03:55:31 2008 *-*
+;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2003-2007, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -1352,7 +1352,9 @@
                         ;; we'll be a bit aggressive here:
                         :size *processed-hash-table-size*
                         ;; and here:
-                        :rehash-size *processed-hash-table-rehash-size*)))
+                        :rehash-size *processed-hash-table-rehash-size*
+                        ;; Use Allegro's sans-value hash tables:
+                        #+allegro :values #+allegro nil)))
     (when verbose 
       (find-verbose-preamble pattern opt-pattern 
                              storage-objects space-instances))
@@ -1392,7 +1394,7 @@
                  (incf (find-stats.instances-accepted find-stats)))
                (funcall (the function fn) instance))
              ;; we have accepted or rejected this instance:
-             (setf (gethash instance processed-ht) instance))
+             (setf (gethash instance processed-ht) 't))
          storage
          disjunctive-dimensional-extents
          verbose)))

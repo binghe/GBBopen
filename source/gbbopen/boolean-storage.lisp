@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/current/source/gbbopen/boolean-storage.lisp *-*
+;;;; *-* File: /home/gbbopen/source/gbbopen/boolean-storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Jul  3 10:20:21 2007 *-*
-;;;; *-* Machine: ruby.corkills.org *-*
+;;;; *-* Last-Edit: Fri Jan 25 03:59:22 2008 *-*
+;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2003-2007, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -101,16 +101,13 @@
       instance storage verbose
       ;; unbound-value action:
       #'(lambda (instance storage)
-	  (setf (gethash instance (unbound-value-instances-of storage)) 
-		instance))
+	  (setf (gethash instance (unbound-value-instances-of storage)) 't))
       ;; true-value action:
       #'(lambda (instance storage)
-	  (setf (gethash instance (true-instances-of storage)) 
-		instance))
+	  (setf (gethash instance (true-instances-of storage)) 't))
        ;; false-value action:
       #'(lambda (instance storage)
-	  (setf (gethash instance (false-instances-of storage)) 
-		instance))))
+	  (setf (gethash instance (false-instances-of storage)) 't))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -190,8 +187,8 @@
                                             disjunctive-dimensional-extents
                                             verbose)
   (do-boolean-map-actions
-      #'(lambda (key instance)
-	  (declare (ignore key))
+      #'(lambda (instance value)
+	  (declare (ignore value))
           (when (mbr-instance-mark-set-p instance)
             (funcall (the function fn) instance)))
     storage disjunctive-dimensional-extents verbose))
@@ -202,8 +199,8 @@
                                          disjunctive-dimensional-extents
 					 verbose)
   (do-boolean-map-actions 
-      #'(lambda (key instance)
-	  (declare (ignore key))
+      #'(lambda (instance value)
+	  (declare (ignore value))
 	  (funcall (the function fn) instance))
     storage disjunctive-dimensional-extents verbose))
 
