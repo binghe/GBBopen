@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/tools/preamble.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jan  9 16:09:50 2008 *-*
+;;;; *-* Last-Edit: Sat Jan 26 10:14:33 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -24,6 +24,7 @@
 ;;;  09-13-05 Added hyperdoc-filename.  (Corkill)
 ;;;  09-28-05 Added import of *preferred-browser* setting.  (Corkill)
 ;;;  01-09-08 Added safely-set-dispatch-macro-character.  (Corkill)
+;;;  01-26-08 Added ensure-package.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -62,6 +63,13 @@
 ;;; as well:
 
 (defgeneric delete-instance (instance))
+
+;;; ===========================================================================
+;;;  Ensure package (find-package with error check)
+
+(defun ensure-package (package)
+  (or (find-package package)
+      (error "Package ~s does not exist" package)))
 
 ;;; ===========================================================================
 ;;;  Convenient package-nickname adder
