@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/current/source/tools/tools.lisp *-*
+;;;; *-* File: /home/gbbopen/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jan  9 11:53:14 2008 *-*
+;;;; *-* Last-Edit: Sat Jan 26 10:30:37 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -482,13 +482,13 @@
 ;;; ===========================================================================
 ;;;  Make-keyword
 
-(defun make-keyword (symbol)
-  (intern (symbol-name symbol)  
+(defun make-keyword (string-symbol-or-character)
+  (intern (string string-symbol-or-character)  
 	  (load-time-value (find-package 'keyword))))
 
 #-full-safety
-(define-compiler-macro make-keyword (symbol)
-  `(intern (symbol-name ,symbol) 
+(define-compiler-macro make-keyword (string-symbol-or-character)
+  `(intern (string ,string-symbol-or-character) 
 	   (load-time-value (find-package 'keyword))))
 
 ;;; =========================================================================== 

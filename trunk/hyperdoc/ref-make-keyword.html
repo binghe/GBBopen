@@ -16,26 +16,29 @@
  
 <p><table class="tight" width="100%">
 <tr valign="top"><td valign="baseline" align="left"%>
-<nobr><b><font color="#000000">make-keyword</font></b></nobr></td><td valign="baseline"> &nbsp; </td><td valign="baseline" align="left" width="99%"><var>symbol</var> <i> =&gt; </i>
+<nobr><b><font color="#000000">make-keyword</font></b></nobr></td><td valign="baseline"> &nbsp; </td><td valign="baseline" align="left" width="99%"><var>x</var> <i> =&gt; </i>
 <var>keyword</var></td><td valign="baseline" align="right">[<i>Function</i>]
 </td></tr></table></p>
-<p><span class="fndoclabel">Purpose</span> <br />Return a <a href="ref-glossary.html#id86">keyword&nbsp;symbol</a> with the same print name
-as <var>symbol</var>.
+<p><span class="fndoclabel">Purpose</span> <br />Return a <a href="ref-glossary.html#id86">keyword&nbsp;symbol</a> as specified by <var>x</var>.
 </p>
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-tools</code>
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-tools</code>
 </p>
 <p><span class="fndoclabel">Arguments</span><table class="tight">
-<tr valign="top"><td valign="baseline"><i>symbol</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A symbol
+<tr valign="top"><td valign="baseline"><i>x</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A string, symbol, or character
 </td></tr></table>
 </p>
 <p><span class="fndoclabel">Returns</span> <br />The keyword symbol.
 </p>
-<p><span class="fndoclabel">Example</span> <br /></p>
+<p><span class="fndoclabel">Examples</span> <br /></p>
 <pre>
 &gt; (make-keyword 'gbbopen)
 :gbbopen
+&gt; (make-keyword "GBBOPEN")
+:gbbopen
+&gt; (make-keyword #\X)
+:x
 </pre>
 <p><span class="fndoclabel">Note</span> <br />This function is compiled in-line for top performance.
 </p>
