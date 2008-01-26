@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/tools/preamble.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Jan 26 10:14:33 2008 *-*
+;;;; *-* Last-Edit: Sat Jan 26 10:20:25 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -75,8 +75,7 @@
 ;;;  Convenient package-nickname adder
 
 (defun add-package-nickname (nickname package)
-  (check-type nickname string)
-  (let ((package (find-package package))
+  (let ((package (ensure-package package))
 	(nickname-package (find-package nickname)))
     (if nickname-package
 	(unless (eq package nickname-package)
