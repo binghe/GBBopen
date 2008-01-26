@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
-%% *-* File: /home/gbbopen/current/doc-source/reference.tex *-*
-%% *-* Last-Edit: Wed Jan  9 12:37:32 2008; Edited-By: cork *-*
+%% *-* File: /home/gbbopen/doc-source/reference.tex *-*
+%% *-* Last-Edit: Sat Jan 26 10:44:26 2008; Edited-By: cork *-*
 %% *-* Machine: whirlwind.corkills.org *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -2887,31 +2887,34 @@ t
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Function}{make-keyword}{\var{symbol\/} \returns{}
+\begin{functiondoc}{Function}{make-keyword}{\var{x\/} \returns{}
     \var{keyword\/}} 
 \index{creating!a keyword symbol}%
 \index{making!a keyword symbol}%
   
 \fnsyntax
 
-\fnpurpose Return a \glref{keyword~symbol} with the same print name
-  as \var{symbol\/}.
+\fnpurpose Return a \glref{keyword~symbol} as specified by \var{x\/}.
 
 \fnpackage \code{:gbbopen-tools}
 
 \fnmodule \code{:gbbopen-tools}
 
 \fnargs
-\begin{args}{symbol}
-\arg[symbol] A symbol
+\begin{args}{x}
+\arg[x] A string, symbol, or character
 \end{args}
 
 \fnreturns The keyword symbol.
 
-\fnexample
+\fnexamples
 \begin{example}
 > (make-keyword 'gbbopen)
 :gbbopen
+> (make-keyword "GBBOPEN")
+:gbbopen
+> (make-keyword #\bkslash{}X)
+:x
 \end{example}
 
 \fnnote \inline
