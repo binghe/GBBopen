@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/current/source/tools/read-object.lisp *-*
+;;;; *-* File: /home/gbbopen/source/tools/read-object.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jan 23 13:00:54 2008 *-*
+;;;; *-* Last-Edit: Sat Jan 26 05:56:47 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -175,29 +175,46 @@
        'gbbopen-save/send-reader-dispatcher)
       *readtable*))
 
-;;; ---------------------------------------------------------------------------
-;;; Dynamically bound in with-reading-object-block to maintain instances that
-;;; have been referenced but not yet read:
+;;; ===========================================================================
+;;;  With-reading-object-block
 
+;; Dynamically bound in with-reading-object-block to maintain instances that
+;; have been referenced but not yet read:
 (defvar *forward-referenced-saved/sent-instances*)
 
-;;; ===========================================================================
+;; Dynamically bound in with-reading-object-block to hold the universal-time
+;; value recorded by with-saving/sending-block:
+(defvar *block-written-time*)
 
-(defmacro with-reading-object-block ((&key (readtable
-                                            '*saved/sent-object-readtable*))
+;;; ---------------------------------------------------------------------------
+
+(defun check-for-undefined-instance-references ()
+  (when (plusp& (hash-table-count *forward-referenced-saved/sent-instances*))
+    (warn "These instances were referenced and never defined: ~s"
+          (loop for key being the hash-keys 
+              of *forward-referenced-saved/sent-instances* 
+              collect key))))
+
+;;; ---------------------------------------------------------------------------
+
+(defmacro with-reading-object-block ((stream 
+                                      &key (readtable
+                                            '*saved/sent-object-readtable*)
+                                           (read-eval nil))
                                      &body body)
-  `(let ((*readtable* ,readtable)
-         (*recorded-class-descriptions-ht* (make-hash-table :test 'eq))
-         (*forward-referenced-saved/sent-instances* 
-          #+allegro (make-hash-table :test 'equal :values nil)
-          #-allegro (make-hash-table :test 'equal)))
-     (multiple-value-prog1 (progn ,@body)
-       (when (plusp& (hash-table-count 
-                      *forward-referenced-saved/sent-instances*))
-         (warn "These instances were referenced and never defined: ~s"
-               (loop for key being the hash-keys of
-                         *forward-referenced-saved/sent-instances* 
-                   collect key))))))
+  `(with-standard-io-syntax 
+     (let ((*block-written-time*
+            ;; Note that read-saving/sending-block-info also sets
+            ;; *package* and *read-default-float-format*:
+            (read-saving/sending-block-info ,stream))
+           (*recorded-class-descriptions-ht* (make-hash-table :test 'eq))
+           (*forward-referenced-saved/sent-instances* 
+            (make-keys-only-hash-table-if-supported :test 'equal)))
+     (setf *readtable* ,readtable)           
+     (setf *read-eval* ,read-eval)
+       (multiple-value-prog1
+           (progn ,@body)
+         (check-for-undefined-instance-references)))))
 
 ;;; ===========================================================================
 ;;;				  End of File

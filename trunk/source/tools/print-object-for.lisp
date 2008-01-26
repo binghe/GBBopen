@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/tools/print-object-for.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Jan 22 03:56:40 2008 *-*
+;;;; *-* Last-Edit: Sat Jan 26 10:12:49 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -38,18 +38,65 @@
             slots-for-saving/sending    ; not yet documented
             with-saving/sending-block))) ; not yet documented
 
+;;; ---------------------------------------------------------------------------
+;;;  Saving/sending-block format version
+
+(defparameter *saving/sending-block-format-version* "1.0")
+
+;;; ---------------------------------------------------------------------------
+
+(defun write-saving/sending-block-info (stream)
+  ;; Record the format-version, time, *package*, and
+  ;; *read-default-float-format* for reading by read-saving/sending-block-info
+  ;; (below) which is called by with-reading-object-block:
+  (format stream "(~s ~s ~s ~s)~%" 
+          *saving/sending-block-format-version*
+          (get-universal-time)
+          ;; save package-name as keyword symbol, to avoid package/modern-mode
+          ;; issues:
+          (make-keyword (package-name *package*))
+          *read-default-float-format*))
+
+;;; ---------------------------------------------------------------------------
+
+(defun read-saving/sending-block-info (stream)
+  ;; Read the format-version, time, *package*, and *read-default-float-format*
+  ;; recorded by with-saving/sending-block, returning the time:
+  (destructuring-bind (format-version date-written package-name 
+                       read-default-float-format)
+      (read stream)
+    (unless (string= format-version *saving/sending-block-format-version*)
+      (warn "Reading old ~s format version ~a (the current version is ~a)"
+            'with-saving/sending-block
+            format-version
+            *saving/sending-block-format-version*))
+    (setf *package* (ensure-package package-name))
+    (setf *read-default-float-format* read-default-float-format)
+    date-written))
+
 ;;; ===========================================================================
 ;;;  With-sending/saving-block
 
 (defvar *recorded-class-descriptions-ht*)
 
-(defmacro with-saving/sending-block ((&key) &body body)
-  `(let ((*recorded-class-descriptions-ht*
-          #+allegro
-          (make-hash-table :test 'eq :values nil)
-          #-allegro
-          (make-hash-table :test 'eq)))
-     ,@body))
+(defmacro with-saving/sending-block ((stream 
+                                      &key (package '':cl-user)
+                                           (read-default-float-format 
+                                            ''single-float))
+                                     &body body)
+  (with-gensyms (package-sym)
+    `(with-standard-io-syntax 
+       (let ((*recorded-class-descriptions-ht*
+              (make-keys-only-hash-table-if-supported :test 'eq))
+             (stream ,stream))
+         (setf *package*
+               (let ((,package-sym ,package))
+                 (if (packagep ,package-sym)
+                     ,package-sym
+                     (ensure-package ,package-sym))))
+         (setf *read-default-float-format* ,read-default-float-format)
+         (write-saving/sending-block-info stream)
+               ,@body))))
 
 ;;; ===========================================================================
 ;;;  User level print-object-for-saving/sending functions
@@ -205,11 +252,20 @@
 (defmethod print-object-for-saving/sending ((instance standard-object) stream)
   (let* ((class (class-of instance))
          (class-name (class-name class)))
-    ;; Save the class description, if we've not done so in
+    ;; Check that we are in a with-saving/sending-block:
+    (unless (boundp '*recorded-class-descriptions-ht*)
+      (error "Call to ~s on ~s is not within a ~s form"
+             (if *print-object-for-sending*
+                 'print-object-for-sending
+                 'print-object-for-saving)
+             instance
+             'with-saving/sending-block))
+    ;; Save/send the class description, if we've not done so in
     ;; this block:
     (unless (gethash class-name *recorded-class-descriptions-ht*)
       (print-object-for-saving/sending class stream)
       (setf (gethash class-name *recorded-class-descriptions-ht*) 't))
+    ;; Now save/send the instance:
     (format stream "#GI(~s" (class-name class))
     (dolist (slot (slots-for-saving/sending class))
       (princ " " stream)
