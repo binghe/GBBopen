@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/current/source/tools/declarations.lisp *-*
+;;;; *-* File: /home/gbbopen/source/tools/declarations.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Jun 12 12:20:44 2007 *-*
-;;;; *-* Machine: ruby.corkills.org *-*
+;;;; *-* Last-Edit: Sat Jan 26 06:11:16 2008 *-*
+;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2002-2007, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2008, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -22,6 +22,7 @@
 ;;;  07-18-02 File Created.  (Corkill)
 ;;;  01-18-04 Added NYI error signalling.  (Corkill)
 ;;;  06-22-04 Added (debug 0) to with-full-optimization.  (Corkill)
+;;;  01-26-08 Added make-keys-only-hash-table-if-supported.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -30,7 +31,8 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(*generate-nyi-errors*	; not documented
 	    allow-redefinition		; not documented
-	    nyi				; not documented
+            make-keys-only-hash-table-if-supported ; not documented
+	    nyi                         ; not documented
 	    unbound-value-indicator
 	    without-cmu/sbcl-optimization-warnings ; not documented
 	    with-full-optimization)))
@@ -81,6 +83,22 @@
 (defconstant unbound-value-indicator
     ;; We use Allegro's keyword symbol (as good as any choice...)
     :---unbound---)
+
+;;; ---------------------------------------------------------------------------
+
+(defmacro make-keys-only-hash-table-if-supported (&key test
+                                                       size
+                                                       rehash-size
+                                                       rehash-threshold)
+  ;; Return a keys only hash table, if supported by the CL implementation;
+  ;; otherwise return a regular hash table:
+  `(make-hash-table 
+    ;; Use Allegro's sans-value hash tables:
+    #+allegro :values #+allegro nil
+    ,@(when test `(:test ,test))
+    ,@(when size `(:size ,size))
+    ,@(when rehash-size `(:rehash-size ,rehash-size))
+    ,@(when rehash-threshold `(:rehash-threshold ,rehash-threshold))))
 
 ;;; ===========================================================================
 ;;;				  End of File

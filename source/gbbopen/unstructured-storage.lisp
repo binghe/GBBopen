@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/gbbopen/unstructured-storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Jan 25 03:54:52 2008 *-*
+;;;; *-* Last-Edit: Sat Jan 26 06:12:23 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -34,10 +34,7 @@
 ;;;  Unstructured storage
 
 (define-class unstructured-storage (storage)
-  ((instances :initform (make-hash-table 
-                         :test 'eq
-                         ;; Use Allegro's sans-value hash tables:
-                         #+allegro :values #+allegro nil)))
+  ((instances :initform (make-keys-only-hash-table-if-supported :test 'eq)))
   (:generate-initargs nil)
   (:export-class-name t))
 

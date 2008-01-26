@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/gbbopen/find.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Jan 25 03:55:31 2008 *-*
+;;;; *-* Last-Edit: Sat Jan 26 06:09:10 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -1347,14 +1347,12 @@
            (eq pattern ':all)
            invoking-fn-name))
          (unit-class-check-fn (determine-unit-class-check unit-classes-spec))
-         (processed-ht (make-hash-table
+         (processed-ht (make-keys-only-hash-table-if-supported
                         :test 'eq
                         ;; we'll be a bit aggressive here:
                         :size *processed-hash-table-size*
                         ;; and here:
-                        :rehash-size *processed-hash-table-rehash-size*
-                        ;; Use Allegro's sans-value hash tables:
-                        #+allegro :values #+allegro nil)))
+                        :rehash-size *processed-hash-table-rehash-size*)))
     (when verbose 
       (find-verbose-preamble pattern opt-pattern 
                              storage-objects space-instances))
