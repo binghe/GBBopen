@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/gbbopen/boolean-storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Jan 25 03:59:22 2008 *-*
+;;;; *-* Last-Edit: Sat Jan 26 06:14:08 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -38,9 +38,12 @@
 ;;;    * handle a fully infeasible extent (without a full sweep!)
 
 (define-class boolean-storage (storage)
-  ((true-instances :initform (make-hash-table :test 'eq))
-   (false-instances :initform (make-hash-table :test 'eq))
-   (unbound-value-instances :initform (make-hash-table :test 'eq)))
+  ((true-instances 
+    :initform (make-keys-only-hash-table-if-supported :test 'eq))
+   (false-instances 
+    :initform (make-keys-only-hash-table-if-supported :test 'eq))
+   (unbound-value-instances
+    :initform (make-keys-only-hash-table-if-supported :test 'eq)))
   (:generate-initargs nil)
   (:export-class-name t))
 

@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/gbbopen/hashed-storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Jan 25 04:04:49 2008 *-*
+;;;; *-* Last-Edit: Sat Jan 26 06:14:52 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -42,7 +42,8 @@
 
 (define-class hashed-storage (storage)
   ((bound-instances)                    ; initialized in shared-initialize
-   (unbound-value-instances :initform (make-hash-table :test 'eq)))
+   (unbound-value-instances
+    :initform (make-keys-only-hash-table-if-supported  :test 'eq)))
   (:generate-initargs nil)
   (:export-class-name t))
 
