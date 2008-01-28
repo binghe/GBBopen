@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/current/source/gbbopen/instances.lisp *-*
+;;;; *-* File: /home/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Jan 24 12:20:20 2008 *-*
+;;;; *-* Last-Edit: Mon Jan 28 03:35:38 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -98,14 +98,8 @@
 ;;; ---------------------------------------------------------------------------
 ;;;  Saving/Sending Unit Instances
 
-(defparameter *unsaved/unsent-unit-instance-slot-names*
-    '(%%marks%%))
-
-(defmethod slots-for-saving/sending ((class standard-unit-class))
-  (loop for slot in (class-slots class) 
-      unless (memq (slot-definition-name slot) 
-                   *unsaved/unsent-unit-instance-slot-names*)
-      collect slot))
+(defmethod omitted-slots-for-saving/sending ((instance standard-unit-instance))
+  (append '(%%marks%%) (call-next-method)))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -129,19 +123,18 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defvar *save/send-unit-references* nil)
-
 (defmethod print-object-for-saving/sending ((instance standard-unit-instance)
                                             stream)
   (check-for-deleted-instance instance 'print-object-for/saving/sending)
   (cond
    ;; Unit-instance references only:
-   (*save/send-unit-references*
+   (*save/send-references-only*
     (format stream "#GR(~s ~s)"
             (type-of instance)
             (instance-name-of instance)))
-   ;; Save/send this unit instance:
-   (t (let ((*save/send-unit-references* 't))
+   ;; Save/send this unit instance (but only save/send references to instances
+   ;; that it points to):
+   (t (let ((*save/send-references-only* 't))
         (call-next-method)))))
 
 ;;; ---------------------------------------------------------------------------
@@ -153,51 +146,58 @@
   (let ((*%%allow-setf-on-link%%* 't))
     (call-next-method))
   (with-lock-held (*master-instance-lock*)
-    (add-name-to-instance-hash-table
-     (class-of instance) instance (instance-name-of instance))
     (let ((space-instance-paths
            (standard-unit-instance.%%space-instances%% instance)))
-      (unless (or (null space-instance-paths)
-                  (eq space-instance-paths ':deleted))
-        (add-instance-to-space-instance-paths 
-         instance space-instance-paths)))))
-
-;;; ---------------------------------------------------------------------------
-;;;  Unit-instance-reference reader
-
-(defun make-or-allocate-gbbopen-save/send-instance (class instance-name)
-  (or (find-instance-by-name instance-name (class-name class))
-      (allocate-instance class)))
+      (when space-instance-paths
+        (add-instance-to-space-instance-paths
+         instance space-instance-paths))))
+  instance)
 
 ;;; ---------------------------------------------------------------------------
 
-(defmethod allocate-gbbopen-save/send-instance ((class standard-unit-class)
-                                                slots slot-values)
+(defmethod allocate-gbbopen-save/send-instance
+    ((class-prototype standard-unit-instance) slots slot-values)
   (let* ((position (position-if
                     #'(lambda (slot)
                         (eq 'instance-name (slot-definition-name slot)))
                     slots))
          (instance-name (nth position slot-values))
-         (instance (make-or-allocate-gbbopen-save/send-instance
-                    class instance-name)))
-    (remhash instance *forward-referenced-saved/sent-instances*)
-    instance))
+         (instance (find-instance-by-name 
+                    instance-name (type-of class-prototype))))
+    (cond
+     ;; Instance was forward referenced, return the incomplete unit-instance
+     ;; and remove it from the not-yet-defined (forward-referenced) instance
+     ;; hash table:
+     (instance 
+      (remhash instance *forward-referenced-saved/sent-instances*)
+      instance)
+     ;; Instance was not forward referenced, so we allocate it and add it
+     ;; to the instance hash table (in preparation for the remaining
+     ;; initializations):
+     (t (let* ((class (class-of class-prototype))
+               (instance (allocate-instance class)))
+          (add-name-to-instance-hash-table class instance instance-name))))))
 
 ;;; ---------------------------------------------------------------------------
+;;;  Unit-instance-reference reader
 
 (defmethod gbbopen-save/send-object-reader ((char (eql #\R)) stream)
   (destructuring-bind (class-name instance-name)
       (read stream t nil 't)
-    (or (find-instance-by-name instance-name class-name)
-        (let* ((class (find-class class-name 't))
-               (instance (make-or-allocate-gbbopen-save/send-instance
-                          class instance-name)))
-          (setf (gethash instance *forward-referenced-saved/sent-instances*)
-                't)
-          (setf (instance-name-of instance) instance-name)
-          (with-lock-held (*master-instance-lock*)
-            (add-name-to-instance-hash-table class instance instance-name))
-          instance))))
+    (or 
+     ;; Instance is already present or has been forward referenced before:
+     (find-instance-by-name instance-name class-name)
+     ;; Otherwise, this is a forward-reference to a new unit instance; we
+     ;; allocate an incomplete instance, add it to the instance-name hash
+     ;; table of the unit-class, and record it as forward referenced:
+     (let* ((class (find-class class-name 't))
+            (instance (allocate-instance class)))
+       (setf (instance-name-of instance) instance-name)
+       (setf (gethash instance *forward-referenced-saved/sent-instances*)
+             't)
+       (with-lock-held (*master-instance-lock*)
+         (add-name-to-instance-hash-table class instance instance-name))
+       instance))))
         
 ;;; ---------------------------------------------------------------------------
 
