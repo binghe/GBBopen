@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/tools/print-object-for.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Jan 26 10:12:49 2008 *-*
+;;;; *-* Last-Edit: Sun Jan 27 19:07:02 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -31,12 +31,19 @@
   
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(*print-object-for-sending*  ; not yet documented
+            *save/send-references-only* ; not yet documented
+            omitted-slots-for-saving/sending ; not yet documented
             print-object-for-saving     ; not yet documented
             print-object-for-saving/sending ; not yet documented
             print-object-for-sending    ; not yet documented
             print-slot-for-saving/sending ; not yet documented
-            slots-for-saving/sending    ; not yet documented
             with-saving/sending-block))) ; not yet documented
+
+;;; ---------------------------------------------------------------------------
+
+(defgeneric omitted-slots-for-saving/sending (instance))
+(defgeneric print-object-for-saving/sending (object stream))
+(defgeneric print-slot-for-saving/sending (instance slot-name stream))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Saving/sending-block format version
@@ -86,8 +93,7 @@
                                      &body body)
   (with-gensyms (package-sym)
     `(with-standard-io-syntax 
-       (let ((*recorded-class-descriptions-ht*
-              (make-keys-only-hash-table-if-supported :test 'eq))
+       (let ((*recorded-class-descriptions-ht* (make-hash-table :test 'eq))
              (stream ,stream))
          (setf *package*
                (let ((,package-sym ,package))
@@ -102,31 +108,61 @@
 ;;;  User level print-object-for-saving/sending functions
 
 (defvar *print-object-for-sending* nil)
+(defvar *save/send-references-only* 't)
 
 (defun print-object-for-saving (object stream)
-  (let ((*print-object-for-sending* nil))
+  (let ((*print-object-for-sending* nil)
+        (*save/send-references-only* nil))
     (print-object-for-saving/sending object stream)))
 
 (defun print-object-for-sending (object stream)
-  (let ((*print-object-for-sending* 't))
+  (let ((*print-object-for-sending* 't)
+        (*save/send-references-only* nil))
     (print-object-for-saving/sending object stream)))
 
 ;;; ===========================================================================
 ;;;  Slots-for-saving/sending methods
 
-(defgeneric slots-for-saving/sending (class))
+(defun slots-for-saving/sending (instance stream)
+  ;; Caches the slots that should be saved/sent for `class', saving/sending
+  ;; the class description, if we've not done so in the save/send block.
+  ;; Always returns the list of slots that should be saved/sent.
+  (let* ((class (class-of instance))
+         (class-name (class-name class)))
+    ;; Check that we are in a with-saving/sending-block:
+    (unless (boundp '*recorded-class-descriptions-ht*)
+      (error "Call to ~s on ~s is not within a ~s form"
+             (if *print-object-for-sending*
+                 'print-object-for-sending
+                 'print-object-for-saving)
+             instance
+             'with-saving/sending-block))
+    (multiple-value-bind (slots-for-saving/sending present-p)
+        (gethash class-name *recorded-class-descriptions-ht*)
+      ;; Determine the slots that should be saved/sent and save/send the class
+      ;; description, if we've not done so already in this block:
+      (unless present-p
+        (let ((omitted-slot-names (omitted-slots-for-saving/sending instance)))
+          (setf slots-for-saving/sending
+                (setf (gethash class-name *recorded-class-descriptions-ht*)
+                      (remove-if 
+                       #'(lambda (slot)
+                           (memq (slot-definition-name slot)
+                                 omitted-slot-names))
+                       (class-slots class)))))
+        (print-object-for-saving/sending class stream))
+      slots-for-saving/sending)))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Default
 
-(defmethod slots-for-saving/sending ((class standard-class))
-  (class-slots class))
+(defmethod omitted-slots-for-saving/sending (object)
+  (declare (ignore object))
+  nil)
 
 ;;; ===========================================================================
 ;;;  Standard print-object-for-saving/sending methods
-
-(defgeneric print-object-for-saving/sending (object stream))
-
+;;;
 ;;; ---------------------------------------------------------------------------
 ;;;  Default
 
@@ -213,9 +249,12 @@
 
 (defmethod print-object-for-saving/sending ((structure structure-object) 
                                             stream)
-  (let ((class (class-of structure)))
-    (format stream "#S(~s" (class-name class))
-    (dolist (slot (slots-for-saving/sending class))
+  (let* ((slots-for-saving/sending 
+          ;; Cache/write the class description, if needed; always get the
+          ;; slots to be written:
+          (slots-for-saving/sending structure stream)))
+    (format stream "#S(~s" (type-of structure))
+    (dolist (slot slots-for-saving/sending)
       (let ((slot-name (slot-definition-name slot)))
         (format stream " :~a " slot-name)
         (print-object-for-saving/sending
@@ -227,20 +266,20 @@
 ;;;  Class Descriptions
 
 (defmethod print-object-for-saving/sending ((class standard-class) stream)
-  (format stream "#GC(~s" (class-name class))
-  (dolist (slot (slots-for-saving/sending class))
-    (let ((slot-name (slot-definition-name slot)))
-      (format stream " ~s" slot-name)))
-  (princ ")" stream)
-  (terpri stream)
+  (let ((class-name (class-name class)))
+    (multiple-value-bind (slots-for-saving/sending present-p)
+        (gethash class-name *recorded-class-descriptions-ht*)
+      (unless present-p
+        (error "Class ~s has not been recorded in this saving/sending block"))
+      (format stream "~&#GC(~s" class-name)
+      (dolist (slot slots-for-saving/sending)
+        (let ((slot-name (slot-definition-name slot)))
+          (format stream " ~s" slot-name)))
+      (princ ")" stream)))
   class)
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Instances
-
-(defgeneric print-slot-for-saving/sending (instance slot-name stream))
-
-;;; ---------------------------------------------------------------------------
 
 (defmethod print-slot-for-saving/sending ((instance standard-object)
                                           slot-name
@@ -250,26 +289,14 @@
 ;;; ---------------------------------------------------------------------------
 
 (defmethod print-object-for-saving/sending ((instance standard-object) stream)
-  (let* ((class (class-of instance))
-         (class-name (class-name class)))
-    ;; Check that we are in a with-saving/sending-block:
-    (unless (boundp '*recorded-class-descriptions-ht*)
-      (error "Call to ~s on ~s is not within a ~s form"
-             (if *print-object-for-sending*
-                 'print-object-for-sending
-                 'print-object-for-saving)
-             instance
-             'with-saving/sending-block))
-    ;; Save/send the class description, if we've not done so in
-    ;; this block:
-    (unless (gethash class-name *recorded-class-descriptions-ht*)
-      (print-object-for-saving/sending class stream)
-      (setf (gethash class-name *recorded-class-descriptions-ht*) 't))
-    ;; Now save/send the instance:
-    (format stream "#GI(~s" (class-name class))
-    (dolist (slot (slots-for-saving/sending class))
+  (let ((slots-for-saving/sending 
+         ;; Cache/write the class description, if needed; always get the
+         ;; slots to be written:
+         (slots-for-saving/sending instance stream)))
+    (format stream "~&#GI(~s" (type-of instance))
+    (dolist (slot slots-for-saving/sending)
       (princ " " stream)
-      (if (slot-boundp-using-class class instance slot)
+      (if (slot-boundp-using-class (class-of instance) instance slot)
           (print-slot-for-saving/sending 
            instance (slot-definition-name slot) stream)
           ;; Unbound value indicator:

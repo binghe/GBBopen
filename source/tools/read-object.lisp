@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/tools/read-object.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Jan 26 05:56:47 2008 *-*
+;;;; *-* Last-Edit: Mon Jan 28 03:28:24 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -40,7 +40,8 @@
 ;;;  Standard GBBopen save/send reader methods
 
 (defgeneric gbbopen-save/send-object-reader (char stream))
-(defgeneric allocate-gbbopen-save/send-instance (class slots slot-values))
+(defgeneric allocate-gbbopen-save/send-instance 
+    (class-prototype slots slot-values))
 (defgeneric initialize-gbbopen-save/send-instance 
     (instance incoming-slots slot-values missing-slot-names))
 
@@ -107,10 +108,10 @@
 ;;; ---------------------------------------------------------------------------
 ;;;  Standard-object reader
 
-(defmethod allocate-gbbopen-save/send-instance ((class standard-class)
-                                                slots slot-values)
+(defmethod allocate-gbbopen-save/send-instance 
+    ((class-prototype standard-object) slots slot-values)
   (declare (ignore slots slot-values))
-  (allocate-instance class))
+  (allocate-instance (class-of class-prototype)))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -146,10 +147,11 @@
         (or (gethash class-name *recorded-class-descriptions-ht*)
             (error "No class description has been read for class ~s"
                    class-name))
-      (let ((instance (allocate-gbbopen-save/send-instance 
-                       (find-class class-name 't)
-                       incoming-slots
-                       slot-values)))
+      (let* ((unit-class (find-class class-name 't))
+             (instance (allocate-gbbopen-save/send-instance 
+                        (class-prototype unit-class)
+                        incoming-slots
+                        slot-values)))
         (initialize-gbbopen-save/send-instance 
          instance incoming-slots slot-values missing-slot-names)
         instance))))
