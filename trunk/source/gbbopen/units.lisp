@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/current/source/gbbopen/units.lisp *-*
+;;;; *-* File: /home/gbbopen/source/gbbopen/units.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Sep 30 10:42:54 2007 *-*
-;;;; *-* Machine: ruby.corkills.org *-*
+;;;; *-* Last-Edit: Tue Jan 29 03:43:28 2008 *-*
+;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2002-2007, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2008, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; Porting Notice:
@@ -129,11 +129,12 @@
 
 ;;; ---------------------------------------------------------------------------
 
+(defvar *%%fixup-function-objects%%*)
+
 (defun fixup-function-value-part1 (value)
   ;;; Part 1 of the function-fixup scheme.  Adds functions and possible
-  ;;; closures to *%fixup-function-objects%* and replaces `value' with a
-  ;;; gensym key into *%fixup-function-objects%*
-  (declare (special *%fixup-function-objects%*))
+  ;;; closures to *%%fixup-function-objects%%* and replaces `value' with a
+  ;;; gensym key into *%%fixup-function-objects%%*
   (cond 
    ;; We'll allow symbols as if they were quoted symbols
    ((symbolp value) value)
@@ -147,7 +148,7 @@
          (eq (first value) 'function))
     (let ((fixup-symbol (gensym "F")))
       (push `(,fixup-symbol ,value)
-            *%fixup-function-objects%*)
+            *%%fixup-function-objects%%*)
       fixup-symbol))
    ;; Pass thru anything else
    (t value)))
@@ -410,8 +411,7 @@
   ;; objects in the defclass form with the gensyms.  Then, at load time, we
   ;; replace the gensyms in the generated class object with the compiled
   ;; function objects from the let binding.
-  (let ((*%fixup-function-objects%* nil))
-    (declare (special *%fixup-function-objects%*))
+  (let ((*%%fixup-function-objects%%* nil))
     (multiple-value-bind (clos-direct-slots clos-class-options exports)
         (parse-define-class 
          unit-class-name direct-slots 
@@ -451,9 +451,9 @@
 	;; defclass (e.g., CMUCL and SBCL).  So, we'll always use
 	;; find-class to get it back...
 	,(with-gensyms (unit-class)
-	   (let ((fixup-symbols (mapcar #'first *%fixup-function-objects%*)))
+	   (let ((fixup-symbols (mapcar #'first *%%fixup-function-objects%%*)))
 	     `(let ((,unit-class (find-class ',unit-class-name))
-		    ,.*%fixup-function-objects%*)
+		    ,.*%%fixup-function-objects%%*)
 		(declare (special ,@fixup-symbols))
 		(finish-unit-class-loading ,unit-class ',fixup-symbols)
 		,unit-class)))))))
