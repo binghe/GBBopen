@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/tools/print-object-for.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Jan 27 19:07:02 2008 *-*
+;;;; *-* Last-Edit: Tue Jan 29 12:07:11 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -33,9 +33,7 @@
   (export '(*print-object-for-sending*  ; not yet documented
             *save/send-references-only* ; not yet documented
             omitted-slots-for-saving/sending ; not yet documented
-            print-object-for-saving     ; not yet documented
             print-object-for-saving/sending ; not yet documented
-            print-object-for-sending    ; not yet documented
             print-slot-for-saving/sending ; not yet documented
             with-saving/sending-block))) ; not yet documented
 
@@ -44,6 +42,11 @@
 (defgeneric omitted-slots-for-saving/sending (instance))
 (defgeneric print-object-for-saving/sending (object stream))
 (defgeneric print-slot-for-saving/sending (instance slot-name stream))
+
+;;; ---------------------------------------------------------------------------
+
+(defvar *print-object-for-sending* nil)
+(defvar *save/send-references-only* 't)
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Saving/sending-block format version
@@ -103,22 +106,6 @@
          (setf *read-default-float-format* ,read-default-float-format)
          (write-saving/sending-block-info stream)
                ,@body))))
-
-;;; ===========================================================================
-;;;  User level print-object-for-saving/sending functions
-
-(defvar *print-object-for-sending* nil)
-(defvar *save/send-references-only* 't)
-
-(defun print-object-for-saving (object stream)
-  (let ((*print-object-for-sending* nil)
-        (*save/send-references-only* nil))
-    (print-object-for-saving/sending object stream)))
-
-(defun print-object-for-sending (object stream)
-  (let ((*print-object-for-sending* 't)
-        (*save/send-references-only* nil))
-    (print-object-for-saving/sending object stream)))
 
 ;;; ===========================================================================
 ;;;  Slots-for-saving/sending methods
