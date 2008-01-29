@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/current/source/gbbopen/epilogue.lisp *-*
+;;;; *-* File: /home/gbbopen/source/gbbopen/epilogue.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Nov  7 11:03:10 2007 *-*
-;;;; *-* Machine: ruby.corkills.org *-*
+;;;; *-* Last-Edit: Tue Jan 29 10:19:37 2008 *-*
+;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -28,7 +28,9 @@
 (in-package :gbbopen)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (export '(reset-gbbopen)))
+  (export '(load-blackboard-repository  ; not yet documented
+            save-blackboard-repository  ; not yet documented
+            reset-gbbopen)))
 
 ;;; ===========================================================================
 ;;;  Miscellaneous Entities
@@ -73,6 +75,64 @@
     (unless retain-event-functions
       (remove-all-event-functions))))
 
+;;; ===========================================================================
+;;;  Save & restore repository
+
+(defun make-bb-pathname (pathname) 
+  ;; Adds type "bb", if not supplied ; then adds defaults from
+  ;; *default-pathname-defaults*, as needed:
+  (merge-pathnames 
+   pathname
+   (make-pathname :type "bb"
+                  :defaults *default-pathname-defaults*)))
+
+;;; ---------------------------------------------------------------------------
+
+(defun save-blackboard-repository (pathname &key (package ':cl-user)
+                                                 (read-default-float-format 
+                                                  'single-float))
+  (with-open-file (file (make-bb-pathname pathname)
+                   :direction ':output
+                   :if-exists ':supersede)
+    (format file ";;;  GBBopen Blackboard Repository (saved ~a)~%"
+            (internet-text-date-and-time))
+    (with-saving/sending-block (file :package package
+                                     :read-default-float-format 
+                                     read-default-float-format)
+      (let ((root-space-instance-children
+             (space-instance-children *root-space-instance*)))
+        (format file "~&;;;  Space instances:~%")
+        (let ((*save/send-references-only* 't))
+          (print-object-for-saving/sending root-space-instance-children file))
+        (dolist (child root-space-instance-children)
+          (traverse-space-instance-tree 
+           #'(lambda (space-instance)
+               (print-object-for-saving space-instance file))
+           child)))
+      (format file "~&;;;  Other unit instances:~%")
+      (do-instances-of-class (instance t)
+        ;; Skip  space instances:
+        (unless (typep instance 'root-space-instance)
+          (print-object-for-saving instance file))))
+    (format file "~&;;;  End of File~%")
+    (namestring file)))
+
+;;; ---------------------------------------------------------------------------
+
+(defun load-blackboard-repository (pathname &rest reset-gbbopen-args)
+  (declare (dynamic-extent reset-gbbopen-args))
+  (with-open-file (file  (make-bb-pathname pathname)
+                   :direction ':input)
+    (apply 'reset-gbbopen reset-gbbopen-args)
+    (with-reading-object-block (file)
+      (let ((root-children (read file))
+            (*%%allow-setf-on-link%%* 't))
+        (setf (slot-value *root-space-instance* 'children) root-children))
+      ;; Now read everything else:
+      (let ((eof-marker '#:eof))
+        (until (eq eof-marker (read file nil eof-marker)))))
+    (namestring file)))
+  
 ;;; ===========================================================================
 ;;;  GBBopen is fully loaded
 

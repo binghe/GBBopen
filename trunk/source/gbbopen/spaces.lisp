@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/current/source/gbbopen/spaces.lisp *-*
+;;;; *-* File: /home/gbbopen/source/gbbopen/spaces.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Aug  8 04:13:07 2007 *-*
-;;;; *-* Machine: ruby.corkills.org *-*
+;;;; *-* Last-Edit: Tue Jan 29 10:58:56 2008 *-*
+;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2003-2007, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -107,8 +107,8 @@
     :reader space-instance-children))
   (:generate-accessors nil))
 
-;;; ---------------------------------------------------------------------------
-;;;   Instance renaming
+;;; ===========================================================================
+;;;   Space-instance renaming
 ;;;
 ;;; This doesn't work on Lisps that optimize defclass slot-writer methods
 ;;; rather than calling the (setf slot-value-using-class) method.  With such
@@ -143,11 +143,9 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun find-root-space-instance ()
-  ;;; Return the root space-instance (creating one if it does not yet exist)
-  (or (find-instance-by-name 'root-space-instance 'root-space-instance)
-      (make-instance 'root-space-instance 
-        :instance-name 'root-space-instance)))
+(defvar *root-space-instance*   
+    (make-instance 'root-space-instance 
+      :instance-name 'root-space-instance))
 
 ;;; ===========================================================================
 ;;;   Standard Space Instance
@@ -160,6 +158,7 @@
     ;; actually, this slot contains a list of <unit-classes-spec>s
     :reader allowed-unit-classes
     :initform t)
+   (%%storage-spec%%)
    (%%storage%%
     :initform nil)
    (%%evfn-unit-ht%% :initform (make-hash-table :test 'eq))
@@ -178,7 +177,7 @@
 ;;; ---------------------------------------------------------------------------
 
 (defmethod hidden-nonlink-slot-names ((instance standard-space-instance))
-  (append '(%%evfn-unit-ht%% %%bb-widgets%% %%storage%%)
+  (append '(%%evfn-unit-ht%% %%bb-widgets%% %%storage-spec%% %%storage%%)
           (call-next-method)))
 
 ;;; ---------------------------------------------------------------------------
@@ -218,10 +217,11 @@
       (setf (slot-value instance 'allowed-unit-classes)
             (ensure-unit-classes-specifiers allowed-unit-classes))
       (setf (standard-space-instance.space-name instance) space-name)
+      (setf (standard-space-instance.%%storage-spec%% instance) storage)
       (linkf (slot-value instance 'parent)
              (if parent-space-instance
                  parent-space-instance
-                 (find-root-space-instance)))))
+                 *root-space-instance*))))
   (setup-instance-storage instance storage))
 
 ;;; ---------------------------------------------------------------------------
@@ -264,6 +264,8 @@
          :instance-name path 
          (remove-property initargs :class)))
 
+;;; ---------------------------------------------------------------------------
+
 (defun find-space-instance-by-path (path 
                                     ;; undocumented optional, for internal
                                     ;; error checking use
@@ -271,6 +273,8 @@
   (or (find-instance-by-name path '(standard-space-instance :plus-subclasses))
       (when errorp
         (error "Space instance ~s does not exist." path))))
+
+;;; ---------------------------------------------------------------------------
 
 (defmethod delete-space-instance ((space-instance standard-space-instance))
   (delete-instance space-instance))
@@ -280,25 +284,29 @@
    (find-space-instance-by-path space-instance ':with-error)))
 
 ;;; ---------------------------------------------------------------------------
-;;;   Delete-All-Space-Instances
+;;;   Delete-all-space-instances
 ;;;
-;;; Care must be taken  when deleting instances that delete other instances
+;;; Deletes all space instances (except for the "hidden" root-space-instance).
+;;;
+;;; Care must be taken when deleting instances that delete other instances
 ;;; by side-effect.  For example:
 ;;;   (map-instances-of-class #'delete-space-instance
 ;;;                           '(standard-space-instance :plus-subclasses))
-;;; violates the traversal rule for instances because deleting a space-instance
-;;; automatically deletes all of its children.  The following is the most
-;;; careful way to delete all space instances:
-;;;   (dolist (space-instance (find-space-instances '(?)))
-;;;      (delete-space-instance space-instance))
-;;; The following does the equivalent, slightly more efficiently:
+;;; will most likely violate the bottom-up deletion contract for space
+;;; instances from the space-instance-path tree, because deleting a
+;;; space-instance automatically deletes all of its children.  A very careful
+;;; way to delete all space instances is:
+;;;    (dolist (space-instance (find-space-instances '(?)))
+;;;       (delete-space-instance space-instance))
+;;; However, the following traversal-based approach is also safe and slightly
+;;; more efficient:
 
 (defun delete-all-space-instances ()
-  (dolist (space-instance (space-instance-children (find-root-space-instance)))
+  (dolist (space-instance (space-instance-children *root-space-instance*))
     (delete-space-instance space-instance)))
 
 ;;; ---------------------------------------------------------------------------
-;;;   Clear-Space-Instances
+;;;   Clear-space-instances
 
 (defun clear-space-instances (space-instances)
   ;;; Removes (but does not delete) all unit instances from `space-instances'
@@ -309,7 +317,27 @@
          (remove-instance-from-space-instance instance space-instance)))
    't space-instances))
 
+;;; ===========================================================================
+;;;   Saving/Sending Space Instances
+
+(defmethod omitted-slots-for-saving/sending ((instance standard-space-instance))
+  (append '(space-name                  ; recomputed from instance-name
+            %%storage%%
+            %%bb-widgets%%) 
+          (call-next-method)))
+
 ;;; ---------------------------------------------------------------------------
+
+(defmethod initialize-gbbopen-save/send-instance
+    ((instance standard-space-instance) slots slot-values missing-slot-names)
+  (declare (ignore slots slot-values missing-slot-names))
+  (setf (standard-space-instance.space-name instance)
+        (car (last (instance-name-of instance))))
+  (call-next-method)
+  (setup-instance-storage
+   instance (standard-space-instance.%%storage-spec%% instance)))
+
+;;; ===========================================================================
 ;;;   Specialized regular-expression-like matcher used by find-space-instances
 
 (defun path-match (complete-pattern candidate)
@@ -382,9 +410,19 @@
     (nreverse reversed-pattern)))
 
 ;;; ---------------------------------------------------------------------------
+
+(defun subsumed-path-pattern-p (candidate-path-pattern path-pattern)
+  ;;; Returns true if `candidate-path-pattern' is fully subsumed by 
+  ;;; `path-pattern' (conservative guess, if uncertain).  Called by
+  ;;; rmfrom-evfn-using-class (in events.lisp).
+  (cond 
+   ((equal path-pattern '(*)) 't)
+   ((equal candidate-path-pattern path-pattern) 't)))
+
+;;; ===========================================================================
 ;;;   Map/Find Space Instances
 ;;;
-;;;   Example: all space-instances (find-space-instances '(*))
+;;;   Example: find all space-instances (find-space-instances '(*))
 
 (defun map-space-instances (fn pattern &optional invoking-fn-name)
   ;;; Applies `fn' to all space instances that match `pattern'.  If
@@ -437,14 +475,19 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun subsumed-path-pattern-p (candidate-path-pattern path-pattern)
-  ;;; Returns true if `candidate-path-pattern' is fully subsumed by 
-  ;;; `path-pattern' (conservative guess, if uncertain)
-  (cond 
-   ((equal path-pattern '(*)) 't)
-   ((equal candidate-path-pattern path-pattern) 't)))
+(defun traverse-space-instance-tree (fn &optional 
+                                        (space-instance *root-space-instance*))
+  ;;; Call `fn' on all space-instances in the subtree rooted by
+  ;;; `space-instance' (the root, if not specified), in parent-first order
+  ;;; (beginning with `space-instance')
+  (labels ((do-node (space-instance)
+             (funcall fn space-instance)
+             (dolist (child (space-instance-children space-instance))
+               (do-node child))))
+    (do-node space-instance)))
 
-;;; ---------------------------------------------------------------------------
+;;; ===========================================================================
+;;;   Add/remove unit instances to/from a space instance
 
 (defmethod add-instance-to-space-instance 
     ((instance standard-unit-instance)
@@ -637,7 +680,7 @@
 (defun describe-blackboard-repository ()
   ;;; Print a description of the blackboard repository to *standard-output*
   (let* ((2nd-column-indent 30)
-         (root-space-instance (find-root-space-instance))
+         (root-space-instance *root-space-instance*)
          (top-level-space-instances 
           (and root-space-instance
                (space-instance-children root-space-instance))))

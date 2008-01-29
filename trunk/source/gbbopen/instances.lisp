@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Jan 28 03:35:38 2008 *-*
+;;;; *-* Last-Edit: Tue Jan 29 10:58:39 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -43,7 +43,7 @@
 (in-package :gbbopen)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (import '(gbbopen-tools::*%skip-gbbopen-shared-initialize-method-processing%*
+  (import '(gbbopen-tools::*%%skip-gbbopen-shared-initialize-method-processing%%*
             gbbopen-tools::clear-flag
             gbbopen-tools::set-flag)))
 
@@ -149,6 +149,7 @@
     (let ((space-instance-paths
            (standard-unit-instance.%%space-instances%% instance)))
       (when space-instance-paths
+        (setf (standard-unit-instance.%%space-instances%% instance) nil)
         (add-instance-to-space-instance-paths
          instance space-instance-paths))))
   instance)
@@ -193,6 +194,7 @@
      (let* ((class (find-class class-name 't))
             (instance (allocate-instance class)))
        (setf (instance-name-of instance) instance-name)
+       ;; Do any subclass initializations:
        (setf (gethash instance *forward-referenced-saved/sent-instances*)
              't)
        (with-lock-held (*master-instance-lock*)
@@ -265,7 +267,7 @@
   ;; To support reinitialize-instance and friends, remove instance from any
   ;; space-instances that aren't retained in the specified space-instances
   ;; value:
-  (when (and (not *%skip-gbbopen-shared-initialize-method-processing%*)
+  (when (and (not *%%skip-gbbopen-shared-initialize-method-processing%%*)
              (slot-boundp instance '%%space-instances%%)
              (or (eq slot-names 't)
                  (memq '%%space-instances%% slot-names)))
@@ -285,7 +287,7 @@
                                      slot-names 
                                      &key space-instances)  
   (declare (inline class-of))
-  (unless *%skip-gbbopen-shared-initialize-method-processing%*
+  (unless *%%skip-gbbopen-shared-initialize-method-processing%%*
     (let ((unit-class (class-of instance)))
       ;; Link slot processing: fix atomic, non-singular link-slot values and
       ;; create link inverse pointers:
@@ -385,7 +387,7 @@
                                       slot-names &key)
   (declare (ignore slot-names))
   (cond 
-   (*%skip-gbbopen-shared-initialize-method-processing%*
+   (*%%skip-gbbopen-shared-initialize-method-processing%%*
     (let (;; allow initialization of link slots
             (*%%allow-setf-on-link%%* t))
       (call-next-method)))
