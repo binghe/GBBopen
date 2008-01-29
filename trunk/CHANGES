@@ -1,5 +1,8 @@
 Important changes since GBBopen 0.9.6:
 
+  * Save & load blackboard repository support; print-object-for-saving/sending
+    protocol
+
   * Version 1.2 of the Mini-Module System
     - Support module-relative directory specifications; implicit module rooting
 

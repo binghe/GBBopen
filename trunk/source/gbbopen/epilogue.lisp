@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/gbbopen/epilogue.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Jan 29 10:19:37 2008 *-*
+;;;; *-* Last-Edit: Tue Jan 29 12:06:08 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -104,16 +104,17 @@
         (format file "~&;;;  Space instances:~%")
         (let ((*save/send-references-only* 't))
           (print-object-for-saving/sending root-space-instance-children file))
-        (dolist (child root-space-instance-children)
-          (traverse-space-instance-tree 
-           #'(lambda (space-instance)
-               (print-object-for-saving space-instance file))
-           child)))
-      (format file "~&;;;  Other unit instances:~%")
-      (do-instances-of-class (instance t)
-        ;; Skip  space instances:
-        (unless (typep instance 'root-space-instance)
-          (print-object-for-saving instance file))))
+        (let ((*save/send-references-only* nil))
+          (dolist (child root-space-instance-children)
+            (traverse-space-instance-tree 
+             #'(lambda (space-instance)
+                 (print-object-for-saving/sending space-instance file))
+             child))
+          (format file "~&;;;  Other unit instances:~%")
+          (do-instances-of-class (instance t)
+            ;; Skip  space instances:
+            (unless (typep instance 'root-space-instance)
+              (print-object-for-saving/sending instance file))))))
     (format file "~&;;;  End of File~%")
     (namestring file)))
 
