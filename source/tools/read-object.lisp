@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/tools/read-object.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Jan 28 03:28:24 2008 *-*
+;;;; *-* Last-Edit: Tue Jan 29 10:23:31 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -115,7 +115,7 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defvar *%skip-gbbopen-shared-initialize-method-processing%* nil)
+(defvar *%%skip-gbbopen-shared-initialize-method-processing%%* nil)
 
 (defmethod initialize-gbbopen-save/send-instance
     ((instance standard-object) slots slot-values missing-slot-names)
@@ -134,7 +134,7 @@
                      value))))
     ;; Initialize any remaining slots:
     (when missing-slot-names
-      (let ((*%skip-gbbopen-shared-initialize-method-processing%* 't))
+      (let ((*%%skip-gbbopen-shared-initialize-method-processing%%* 't))
         (shared-initialize instance missing-slot-names)))))
 
 ;;; ---------------------------------------------------------------------------
@@ -205,6 +205,9 @@
                                            (read-eval nil))
                                      &body body)
   `(with-standard-io-syntax 
+     (setf *print-readably* nil)        ; We don't need readably-printing
+     (setf *readtable* ,readtable)           
+     (setf *read-eval* ,read-eval)
      (let ((*block-written-time*
             ;; Note that read-saving/sending-block-info also sets
             ;; *package* and *read-default-float-format*:
@@ -212,8 +215,6 @@
            (*recorded-class-descriptions-ht* (make-hash-table :test 'eq))
            (*forward-referenced-saved/sent-instances* 
             (make-keys-only-hash-table-if-supported :test 'equal)))
-     (setf *readtable* ,readtable)           
-     (setf *read-eval* ,read-eval)
        (multiple-value-prog1
            (progn ,@body)
          (check-for-undefined-instance-references)))))
