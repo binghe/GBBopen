@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/tools/print-object-for.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Jan 29 12:07:11 2008 *-*
+;;;; *-* Last-Edit: Wed Jan 30 11:45:47 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -32,7 +32,7 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(*print-object-for-sending*  ; not yet documented
             *save/send-references-only* ; not yet documented
-            omitted-slots-for-saving/sending ; not yet documented
+            omitted-slots-for-saving/sending
             print-object-for-saving/sending ; not yet documented
             print-slot-for-saving/sending ; not yet documented
             with-saving/sending-block))) ; not yet documented

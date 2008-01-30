@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/current/source/gbbopen/unit-metaclasses.lisp *-*
+;;;; *-* File: /home/gbbopen/source/gbbopen/unit-metaclasses.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Nov 30 07:11:47 2007 *-*
-;;;; *-* Machine: ruby.corkills.org *-*
+;;;; *-* Last-Edit: Wed Jan 30 04:54:28 2008 *-*
+;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2002-2007, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2008, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; Porting Notice:
@@ -35,7 +35,8 @@
 (in-package :gbbopen)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (export '(direct-link-definition      ; not yet documented
+  (export '(dimensions-of
+            direct-link-definition      ; not yet documented
             effective-link-definition   ; not yet documented
             effective-nonlink-slot-definition ; not yet documented
             gbbopen-node-state          ; not yet documented
@@ -43,7 +44,8 @@
             restore-gbbopen-node-state  ; not yet documented
             save-gbbopen-node-state     ; not yet documented
             standard-space-class
-            unit-class-dimensions)))
+            unit-class-dimensions       ; deprecated, to be removed in 0.9.8
+            )))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -75,32 +77,44 @@
     :initform nil)
    (unit-class-dimensions 
     :initform nil
+    :reader dimensions-of
+    ;; deprecated, to be removed in 0.9.8
     :reader unit-class-dimensions
     :writer (setf standard-unit-class.unit-class-dimensions))
-   (evfn-blks :initform nil))
+   (evfn-blks :initform nil)
+   ;; For class retrievals:
+   (%%storage%% :initform nil))
   (:export-class-name t)
   (:generate-accessors-format :prefix)
   (:generate-accessors t :exclude unit-class-dimensions))
 
 ;;; ---------------------------------------------------------------------------
 
-(defmethod unit-class-dimensions ((unit-class-name symbol))
+(defmethod dimensions-of ((unit-class-name symbol))
   ;;; Support unit-class name in addition to unit-class method (above)
   (if (eq unit-class-name 't)
-      (unit-class-dimensions '(standard-unit-instance :plus-subclasses))
-      (unit-class-dimensions (find-unit-class unit-class-name))))
+      (dimensions-of '(standard-unit-instance :plus-subclasses))
+      (dimensions-of (find-unit-class unit-class-name))))
+
+;; deprecated, to be removed in 0.9.8
+(defmethod unit-class-dimensions ((unit-class-name symbol))
+  (dimensions-of unit-class-name))
 
 ;;; ---------------------------------------------------------------------------
 
-(defmethod unit-class-dimensions ((unit-classes-specifier cons))
+(defmethod dimensions-of ((unit-classes-specifier cons))
   ;;; Support unit-classes-specifiers:
   (let ((result nil))
     (map-unit-classes-specifier
      #'(lambda (unit-class) 
-         (dolist (dimension (unit-class-dimensions unit-class))
+         (dolist (dimension (dimensions-of unit-class))
            (pushnew dimension result :test #'equal)))
      unit-classes-specifier)
     result))
+
+;; deprecated, to be removed in 0.9.8
+(defmethod unit-class-dimensions ((unit-classes-specifier cons))
+  (dimensions-of unit-classes-specifier))
 
 ;;; ---------------------------------------------------------------------------
 

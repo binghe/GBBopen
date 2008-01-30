@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/gbbopen/units.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Jan 29 03:43:28 2008 *-*
+;;;; *-* Last-Edit: Wed Jan 30 03:40:01 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -59,8 +59,7 @@
             find-effective-slot-definition-by-name ; not documented (yet...)
             find-unit-class             ; not documented (at least yet...)
             gbbopen-effective-slot-definition
-            reset-unit-class
-            unit-class-dimensions)))
+            reset-unit-class)))
 
 ;;; ---------------------------------------------------------------------------
 

@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/gbbopen/test/basic-tests.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Jan 21 03:38:21 2008 *-*
+;;;; *-* Last-Edit: Wed Jan 30 03:38:58 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -149,7 +149,7 @@
 (defun do-time-tests (n)
   (make-space-instance 
    '(bb sub-bb space-1) 
-   :dimensions (unit-class-dimensions 'uc-1)
+   :dimensions (dimensions-of 'uc-1)
    :storage '((t t unstructured) 
 	      (uc-1 t unstructured))
    :make-parents t)
@@ -167,12 +167,12 @@
   (make-space-instance '(bb sub-bb) :allowed-unit-classes nil)
   (make-space-instance '(bb sub-bb space-1)
                        :allowed-unit-classes '((uc-1 :plus-subclasses))
-		       :dimensions (unit-class-dimensions 'uc-1)
+		       :dimensions (dimensions-of 'uc-1)
                        :storage space-1-storage)
   (make-space-instance '(bb sub-bb space-2) 
                        :class 'my-space-instance
 		       :my-space-slot infinity
-		       :dimensions (unit-class-dimensions 'uc-1)
+		       :dimensions (dimensions-of 'uc-1)
 		       :allowed-unit-classes '(uc-1)))
 
 (declaim (special u1 u2 u3 u4 u5 u6 u7 u8 u9 u10 u11 u12 cu1))

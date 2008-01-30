@@ -5,7 +5,7 @@
 <!-- XML file produced from file: reference.tex
      using Hyperlatex v 2.9-in-waiting-rk (c) Otfried Cheong -->
 <head>
-<title>GBBopen 0.9.6 Reference -- make-scheduled-function</title>
+<title>GBBopen 0.9.7 Reference -- make-scheduled-function</title>
 </p>
 <link rel="SHORTCUT ICON" href="favicon.ico"><link rel=stylesheet
         href="gbbopen.css" type="text/css" />
@@ -20,7 +20,7 @@
 <code>&#38;key</code> <var>name</var>
 <i> =&gt; </i> <var>scheduled-function</var></td><td valign="baseline" align="right">[<i>Function</i>]
 </td></tr></table></p>
-<p><span class="fndoclabel">Purpose</span> <br />Create a <a href="ref-glossary.html#id145">scheduled&nbsp;function</a>.
+<p><span class="fndoclabel">Purpose</span> <br />Create a <a href="ref-glossary.html#id151">scheduled&nbsp;function</a>.
 </p>
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:portable-threads</code>
 </p>
@@ -32,7 +32,7 @@
 <var>function</var>, if <var>function</var> is a symbol, otherwise <code>nil</code>)
 </td></tr></table>
 </p>
-<p><span class="fndoclabel">Returns</span> <br />The newly created <a href="ref-glossary.html#id145">scheduled&nbsp;function</a>. 
+<p><span class="fndoclabel">Returns</span> <br />The newly created <a href="ref-glossary.html#id151">scheduled&nbsp;function</a>. 
 </p>
 <p><span class="fndoclabel">Errors</span> <br />Threads (multiprocessing) is not supported on the
 Common Lisp implementation.
@@ -40,7 +40,7 @@ Common Lisp implementation.
 <p><span class="fndoclabel">Description</span> <br />Unless the run time of <var>function</var> is brief, it
 should spawn a new <a href="ref-glossary.html#gl:thread">thread</a> in which to perform its activities
 so as to avoid delaying the invocation of a subsequent
-<a href="ref-glossary.html#id145">scheduled&nbsp;function</a>.
+<a href="ref-glossary.html#id151">scheduled&nbsp;function</a>.
 </p>
 <p><span class="fndoclabel">See also</span>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-schedule-function-verbose.html"><b>*schedule-function-verbose*</b></a>
@@ -51,7 +51,7 @@ so as to avoid delaying the invocation of a subsequent
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-scheduled-function-repeat-interval.html"><b>scheduled-function-repeat-interval</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-unschedule-function.html"><b>unschedule-function</b></a>
 </p>
-<p><span class="fndoclabel">Examples</span> <br />Create a <a href="ref-glossary.html#id145">scheduled&nbsp;function</a> that simply prints <code>"Hello"</code> when invoked:
+<p><span class="fndoclabel">Examples</span> <br />Create a <a href="ref-glossary.html#id151">scheduled&nbsp;function</a> that simply prints <code>"Hello"</code> when invoked:
 </p>
 <pre>
 &gt; (make-scheduled-function 
@@ -61,7 +61,7 @@ so as to avoid delaying the invocation of a subsequent
     :name 'hello)
 #&lt;scheduled-function hello [unscheduled]&gt;
 </pre>
-<p><a name="id1">A</a> more complex <a href="ref-glossary.html#id145">scheduled&nbsp;function</a> that spawns a new <a href="ref-glossary.html#gl:thread">thread</a> to do its
+<p><a name="id1">A</a> more complex <a href="ref-glossary.html#id151">scheduled&nbsp;function</a> that spawns a new <a href="ref-glossary.html#gl:thread">thread</a> to do its
 work and randomly sets whether to reschedule itself (and at what interval):
 </p>
 <pre>

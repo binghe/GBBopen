@@ -1,20 +1,20 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/preamble.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Aug 11 05:25:25 2007 *-*
-;;;; *-* Machine: ruby.corkills.org *-*
+;;;; *-* Last-Edit: Tue Jan 29 19:13:44 2008 *-*
+;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
 ;;;; *
-;;;; *                          GBBopen Preamble
+;;;; *                            GBBopen Preamble
 ;;;; *
 ;;;; **************************************************************************
 ;;;; **************************************************************************
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2002-2007, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2008, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -44,10 +44,10 @@
 
 (defun gbbopen-implementation-version ()
   ;; NOTE: Change the value in ../../gbbopen.asd when this value is changed:
-  "0.9.6")
+  "0.9.7")
 
 ;;; Added to *features* in epilogue.lisp:
-(defparameter *gbbopen-version-keyword* :gbbopen-0.9.6)
+(defparameter *gbbopen-version-keyword* :gbbopen-0.9.7)
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Control warnings when:

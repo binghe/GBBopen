@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/current/source/gbbopen/storage.lisp *-*
+;;;; *-* File: /home/gbbopen/source/gbbopen/storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Jul  3 10:19:42 2007 *-*
-;;;; *-* Machine: ruby.corkills.org *-*
+;;;; *-* Last-Edit: Wed Jan 30 03:31:05 2008 *-*
+;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2003-2007, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -165,8 +165,7 @@
 				       disjunctive-dimensional-extents)
   ;;; Returns the dimensional intersection of `space-instance' and
   ;;; `disjunctive-dimensional-extents'
-  (let ((space-instance-dimensions 
-	 (space-instance-dimensions space-instance)))
+  (let ((space-instance-dimensions (dimensions-of space-instance)))
     (declare (type list space-instance-dimensions))
     (if (eq disjunctive-dimensional-extents 't)
 	space-instance-dimensions 
@@ -260,7 +259,7 @@
 	(destructuring-bind (unit-class . plus-subclasses)
 	    unit-class-spec
 	  (flet ((do-si (space-instance)
-		   (when (allowed-unit-classes space-instance)
+		   (when (allowed-unit-classes-of space-instance)
 		     (let ((retrieval-dimensions
 			    (unless mapping-only
 			      (determine-retrieval-dimensions 
@@ -366,7 +365,7 @@
   ;;; cannot store any unit instances.
   #+ecl (declare (ignore storage-spec))
   (setf (standard-space-instance.%%storage%% space-instance)
-	(if (allowed-unit-classes space-instance)
+	(if (allowed-unit-classes-of space-instance)
 	    (list (do-storage space-instance '(t t unstructured)))
 	    nil)))
 
@@ -375,7 +374,7 @@
 (defmethod setup-instance-storage ((space-instance standard-space-instance)
                                    (storage-spec cons))
   ;;; Sets up the specified storage for `space-instance'
-  (unless (allowed-unit-classes space-instance)
+  (unless (allowed-unit-classes-of space-instance)
     (error "Space instance ~s does not allow any unit instances."
 	   space-instance))	 
   (let ((result nil))
@@ -466,7 +465,7 @@
 
 (defun print-space-instance-storage-summary (space-instance)
   ;;; Internal function called by describe-blackboard-repository
-  (when (allowed-unit-classes space-instance)
+  (when (allowed-unit-classes-of space-instance)
     (let ((total 0)
 	  (class-counts nil))
       (dolist (storage (standard-space-instance.%%storage%% space-instance))

@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/gbbopen/epilogue.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Jan 29 12:06:08 2008 *-*
+;;;; *-* Last-Edit: Wed Jan 30 11:11:12 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2004-2007, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2004-2008, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -22,14 +22,16 @@
 ;;;  01-16-04 File Created.  (Corkill)
 ;;;  05-03-04 Added reset-gbbopen.  (Corkill)
 ;;;  11-07-07 Retain the root-space-instance when resetting GBBopen.  (Corkill)
+;;;  01-28-08 Added load-blackboard-repository and save-blackboard-repository.
+;;;           (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 (in-package :gbbopen)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (export '(load-blackboard-repository  ; not yet documented
-            save-blackboard-repository  ; not yet documented
+  (export '(load-blackboard-repository
+            save-blackboard-repository
             reset-gbbopen)))
 
 ;;; ===========================================================================
@@ -99,8 +101,7 @@
     (with-saving/sending-block (file :package package
                                      :read-default-float-format 
                                      read-default-float-format)
-      (let ((root-space-instance-children
-             (space-instance-children *root-space-instance*)))
+      (let ((root-space-instance-children (children-of *root-space-instance*)))
         (format file "~&;;;  Space instances:~%")
         (let ((*save/send-references-only* 't))
           (print-object-for-saving/sending root-space-instance-children file))
@@ -116,15 +117,37 @@
             (unless (typep instance 'root-space-instance)
               (print-object-for-saving/sending instance file))))))
     (format file "~&;;;  End of File~%")
-    (namestring file)))
+    (pathname file)))
 
 ;;; ---------------------------------------------------------------------------
 
-(defun load-blackboard-repository (pathname &rest reset-gbbopen-args)
+(defun empty-blackboard-repository-p ()
+  ;; Returns t if there are no unit instances (other than the
+  ;; root-space-instance) in the blackboard repository
+  (map-unit-classes
+   #'(lambda (class)
+       (unless (eq (class-name class) 'root-space-instance)
+         (when (plusp& (class-instances-count class))
+           (return-from empty-blackboard-repository-p nil))))
+   (find-class 'standard-unit-instance))
+  ;; The repository is empty:
+  't)
+
+;;; ---------------------------------------------------------------------------
+
+(defun load-blackboard-repository (pathname &rest reset-gbbopen-args
+                                                  &key (confirm-if-not-empty 't))
   (declare (dynamic-extent reset-gbbopen-args))
+  (when (and confirm-if-not-empty
+             (not (empty-blackboard-repository-p)))
+    (unless (yes-or-no-p "The blackboard repository is not empty.~
+                          ~%Continue anyway ~
+                          (the current contents will be deleted)? ")
+      (return-from load-blackboard-repository nil)))
   (with-open-file (file  (make-bb-pathname pathname)
                    :direction ':input)
-    (apply 'reset-gbbopen reset-gbbopen-args)
+    (apply 'reset-gbbopen 
+           (remove-property reset-gbbopen-args ':confirm-if-not-empty))
     (with-reading-object-block (file)
       (let ((root-children (read file))
             (*%%allow-setf-on-link%%* 't))
@@ -132,7 +155,7 @@
       ;; Now read everything else:
       (let ((eof-marker '#:eof))
         (until (eq eof-marker (read file nil eof-marker)))))
-    (namestring file)))
+    (pathname file)))
   
 ;;; ===========================================================================
 ;;;  GBBopen is fully loaded

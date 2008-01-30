@@ -5,23 +5,23 @@
 <!-- XML file produced from file: reference.tex
      using Hyperlatex v 2.9-in-waiting-rk (c) Otfried Cheong -->
 <head>
-<title>GBBopen 0.9.6 Reference -- map-instances-on-space-instances</title>
+<title>GBBopen 0.9.7 Reference -- map-instances-on-space-instances</title>
 </p>
 <link rel="SHORTCUT ICON" href="favicon.ico"><link rel=stylesheet
         href="gbbopen.css" type="text/css" />
 </head>
 <body>
 <table width="100%" cellpadding="0" cellspacing="2"><tr>
-<td bgcolor="#99ccff"><a href="ref-map-instances-of-class.html"><img border="0" alt="map-instances-of-class" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="ref-GBBopen-core-entities.html"><img border="0" alt="GBBopen Core" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-map-sorted-instances-of-class.html"><img border="0" alt="map-sorted-instances-of-class" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">map-instances-on-space-instances</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table>
+<td bgcolor="#99ccff"><a href="ref-map-instances-of-class.html"><img border="0" alt="map-instances-of-class" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="ref-retrieval-entities.html"><img border="0" alt="Instance Retrieval" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-map-sorted-instances-of-class.html"><img border="0" alt="map-sorted-instances-of-class" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">map-instances-on-space-instances</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table>
 
 <p><table class="tight" width="100%">
 <tr valign="top"><td valign="baseline" align="left"%>
 <nobr><b><font color="#000000">map-instances-on-space-instances</font></b></nobr></td><td valign="baseline"> &nbsp; </td><td valign="baseline" align="left" width="99%"><var>function unit-classes-specifier space-instances</var> 
 <code>&#38;key</code> <var>pattern filter-before filter-after</var></td><td valign="baseline" align="right">[<i>Function</i>]
 </td></tr></table></p>
-<p><span class="fndoclabel">Purpose</span> <br />Apply a <a href="ref-glossary.html#gl:function">function</a> once to each <a href="ref-glossary.html#id171">unit&nbsp;instance</a> on
+<p><span class="fndoclabel">Purpose</span> <br />Apply a <a href="ref-glossary.html#gl:function">function</a> once to each <a href="ref-glossary.html#id177">unit&nbsp;instance</a> on
 <a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a>, optionally selected by a
-<a href="ref-glossary.html#id141">retrieval&nbsp;pattern</a>. 
+<a href="ref-glossary.html#id147">retrieval&nbsp;pattern</a>. 
 </p>
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen</code>
 </p>
@@ -31,10 +31,10 @@
 <tr valign="top"><td valign="baseline"><i>function</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#gl:function">function</a> of one argument
 </td></tr><tr valign="top"><td valign="baseline"><i>unit-classes-specifier</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An <a href="ref-glossary.html#id61">extended&nbsp;unit-classes&nbsp;specification</a>
 (see below)
-</td></tr><tr valign="top"><td valign="baseline"><i>space-instances</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id151">space&nbsp;instance</a>, a list of
-<a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a>, a <a href="ref-glossary.html#id153">space-instance&nbsp;path</a> regular expression, or
+</td></tr><tr valign="top"><td valign="baseline"><i>space-instances</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id157">space&nbsp;instance</a>, a list of
+<a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a>, a <a href="ref-glossary.html#id159">space-instance&nbsp;path</a> regular expression, or
 <code>t</code> (indicating all space instances)
-</td></tr><tr valign="top"><td valign="baseline"><i>pattern</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id141">retrieval&nbsp;pattern</a> (see below; default is <code>t</code>)
+</td></tr><tr valign="top"><td valign="baseline"><i>pattern</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id147">retrieval&nbsp;pattern</a> (see below; default is <code>t</code>)
 </td></tr><tr valign="top"><td valign="baseline"><i>filter-before</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A single-argument predicate to be applied before
 pattern-matching tests occur
 </td></tr><tr valign="top"><td valign="baseline"><i>filter-after</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A single-argument predicate to be
@@ -179,14 +179,14 @@ applied after pattern-matching tests occur
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
 <p><span class="fndoclabel">Description</span> <br />The <var>function</var> will be applied only once to each
-<a href="ref-glossary.html#id171">unit&nbsp;instance</a>, even if the <a href="ref-glossary.html#id171">unit&nbsp;instance</a> resides on
+<a href="ref-glossary.html#id177">unit&nbsp;instance</a>, even if the <a href="ref-glossary.html#id177">unit&nbsp;instance</a> resides on
 multiple <a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a>.
 </p>
 <p>The <var>pattern</var> <code>t</code> matches all <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a> whose
 <a href="ref-glossary.html#id29">dimension&nbsp;values</a> overlap the <a href="ref-glossary.html#id32">dimensional&nbsp;extent</a> of at
-least one <a href="ref-glossary.html#id151">space&nbsp;instance</a> in <var>space-instances</var>. The
-<var>pattern</var> <code>:all</code> matches every <a href="ref-glossary.html#id171">unit&nbsp;instance</a> on a
-<a href="ref-glossary.html#id151">space&nbsp;instance</a> in <var>space-instances</var>, regardless of
+least one <a href="ref-glossary.html#id157">space&nbsp;instance</a> in <var>space-instances</var>. The
+<var>pattern</var> <code>:all</code> matches every <a href="ref-glossary.html#id177">unit&nbsp;instance</a> on a
+<a href="ref-glossary.html#id157">space&nbsp;instance</a> in <var>space-instances</var>, regardless of
 dimensional overlap.
 </p>
 <p><a href="ref-declared-numerics.html">Declared numeric</a> pattern operators are also
@@ -204,9 +204,9 @@ and <code>=&#36;&#36;&#36;</code> and <code>within&#38;</code>, <code>within&#36
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-declared-numerics.html">Declared numerics</a>
 </p>
 <p><span class="fndoclabel">Examples</span> <br /><a name="id13">Remove</a> all the <code>hyp</code> <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a> that
-reside on the <code>(bb probable-hyps)</code> <a href="ref-glossary.html#id151">space&nbsp;instance</a>,
+reside on the <code>(bb probable-hyps)</code> <a href="ref-glossary.html#id157">space&nbsp;instance</a>,
 deleting those <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a> that do not reside on any other
-<a href="ref-glossary.html#id151">space&nbsp;instance</a>:
+<a href="ref-glossary.html#id157">space&nbsp;instance</a>:
 </p>
 <pre>
   (let ((space-instance 
@@ -220,7 +220,7 @@ deleting those <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances<
        space-instance))
 </pre>
 <p><a name="id14">Delete</a> <code>hyp</code> <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a> that
-reside on the <code>(bb probable-hyps)</code> <a href="ref-glossary.html#id151">space&nbsp;instance</a> that
+reside on the <code>(bb probable-hyps)</code> <a href="ref-glossary.html#id157">space&nbsp;instance</a> that
 have a belief value of less than 0.5:
 </p>
 <pre>
@@ -231,4 +231,4 @@ have a belief value of less than 0.5:
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
 <table width="100%" cellpadding="0" cellspacing="2"><tr>
-<td bgcolor="#99ccff"><a href="ref-map-instances-of-class.html"><img border="0" alt="map-instances-of-class" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="ref-GBBopen-core-entities.html"><img border="0" alt="GBBopen Core" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-map-sorted-instances-of-class.html"><img border="0" alt="map-sorted-instances-of-class" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">map-instances-on-space-instances</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table></body></html>
+<td bgcolor="#99ccff"><a href="ref-map-instances-of-class.html"><img border="0" alt="map-instances-of-class" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="ref-retrieval-entities.html"><img border="0" alt="Instance Retrieval" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-map-sorted-instances-of-class.html"><img border="0" alt="map-sorted-instances-of-class" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">map-instances-on-space-instances</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table></body></html>

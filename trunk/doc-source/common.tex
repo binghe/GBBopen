@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
-%% *-* File: /home/gbbopen/doc-source/common.tex *-*
-%% *-* Last-Edit: Sun Jan  6 13:42:48 2008; Edited-By: cork *-*
+%% *-* File: /home/gbbopen/current/doc-source/common.tex *-*
+%% *-* Last-Edit: Wed Jan 30 04:38:22 2008; Edited-By: cork *-*
 %% *-* Machine: whirlwind.corkills.org *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -18,7 +18,7 @@
 %\newcommand{\timezone}{EDT}
 
 %% Html declarations: output directory and filenames, node title
-\newcommand{\gbbopenversion}{0.9.6}
+\newcommand{\gbbopenversion}{0.9.7}
 \newcommand{\runningtitle}{GBBopen \gbbopenversion{} \docname}
 \htmltitle{\runningtitle}
 
@@ -288,6 +288,8 @@
 %% Internal links (includes paper-format \ref references)
 \W\newcommand{\reflink}[2]{\link{#1}{#2}}
 \T\newcommand{\reflink}[2]{\link{#1}{#2} (see page~\pageref{#2})}
+\W\newcommand{\refsectionlink}[2]{\link{#1}{#2}}
+\T\newcommand{\refsectionlink}[2]{\link{#1}{#2} (Section~\ref{#2})}
 
 %% X-links (tutorial to hyperdoc)
 \T\begin{ifhtml}
@@ -961,12 +963,12 @@
 
 %% ----------------------------------------------------------------------------
 %%  Hyperlatex remove Navigation section from Navigation menu and force
-%%  inclusion of Tools subsections:
+%%  inclusion of Tools and Core subsections:
 
 \T\begin{ifhtml}
 \HlxEval{
 (defun special-section-p (secname)
-  "DDC added predicate for GBBopen Reference `special' Tools subsections" 
+  "DDC added predicate for GBBopen Reference `special' subsections" 
   (member secname
 	  '("Declared Numerics"
             "Offset Universal Time"
@@ -974,7 +976,10 @@
 	    "Polling Functions"
 	    "Portable Sockets"
 	    "OS Interface"
-	    "Queue Management")))
+	    "Queue Management"
+            "Events"
+            "Instance Retrieval"
+            "Blackboard Repository")))
 
 (defun hyperlatex-insert-menu (secnum depth)
   "Insert a menu for section SECNUM of depth DEPTH."
@@ -1007,8 +1012,9 @@
                               (substring secname 0 4))
                          nav-string)
                   ;; don't add the special section entries to the entries
-                  ;; listed on the Tools page::
-                  (and (string= node-secname "Tools")
+                  ;; listed on the Tools & GBBopen Core pages:
+                  (and (or (string= node-secname "Tools")
+                           (string= node-secname "GBBopen Core"))
                        special-section-p))
               ;; --- end DDC mod
               

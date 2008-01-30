@@ -5,7 +5,7 @@
 <!-- XML file produced from file: tutorial.tex
      using Hyperlatex v 2.9-in-waiting-rk (c) Otfried Cheong -->
 <head>
-<title>GBBopen 0.9.6 Tutorial -- Add Another KS</title>
+<title>GBBopen 0.9.7 Tutorial -- Add Another KS</title>
 </p>
 <link rel="SHORTCUT ICON" href="favicon.ico"><link rel=stylesheet
         href="gbbopen.css" type="text/css" />
@@ -75,7 +75,7 @@ triggering unit instance
     ;; Make a new known-world space instance:
     (make-space-instance 
      '(known-world)
-     :dimensions (unit-class-dimensions 'location)))
+     :dimensions (dimensions-of 'location)))
 
   (add-event-function 'initializations 'start-control-shell-event
                       ;; Initializations should be done first!
@@ -105,7 +105,7 @@ the dimensions of the <code>location</code> unit class:
 </p>
 <pre><font color="#8c8c8c">    (make-space-instance 
         '(known-world)
-        :dimensions (unit-class-dimensions 'location)))
+        :dimensions (dimensions-of 'location)))
 </pre></font>
 <p>Therefore, we don't need to modify our call to <code>make-space-instance</code> in
 order to add <code>time</code> as a dimension of <code>known-world</code>.
