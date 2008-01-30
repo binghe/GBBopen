@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/gbbopen/spaces.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Jan 29 10:58:56 2008 *-*
+;;;; *-* Last-Edit: Wed Jan 30 04:57:19 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -44,15 +44,18 @@
             ^                           ; path reg-exp operator
             add-instance-to-space-instance
             all-space-instances
-            allowed-unit-classes
+            allowed-unit-classes        ; deprecated, to be removed in 0.9.8
+            allowed-unit-classes-of
             clear-space-instances
             children                    ; standard-space-instance slot name
+            children-of
             define-space-class
             delete-all-space-instances
             delete-space-instance
             describe-blackboard-repository
             describe-space-instance     ; not yet documented
             dimensions                  ; standard-space-instance slot name
+            dimensions-of
             do-space-instances
             find-space-instance-by-path
             find-space-instances
@@ -61,12 +64,13 @@
             make-space-instance
             map-space-instances
             parent                      ; standard-space-instance slot name
+            parent-of
             remove-instance-from-space-instance
             root-space-instance         ; not documented
             show-forward-path-event-functions ; debugging only; not documented
-            space-instance-children
-            space-instance-dimensions
-            space-instance-parent
+            space-instance-children     ; deprecated, to be removed in 0.9.8
+            space-instance-dimensions   ; deprecated, to be removed in 0.9.8
+            space-instance-parent       ; deprecated, to be removed in 0.9.8
             space-name                  ; standard-space-instance slot name
             standard-space-instance)))
 
@@ -104,6 +108,8 @@
     :accessor standard-space-instance.space-name)
    (children 
     :link (standard-space-instance parent :singular t)
+    :reader children-of 
+    ;; Deprecated, to be removed in 0.9.8:
     :reader space-instance-children))
   (:generate-accessors nil))
 
@@ -152,12 +158,16 @@
 
 (define-space-class standard-space-instance (root-space-instance)
   ((dimensions 
-    :reader space-instance-dimensions
-    :initform nil)      
+    :initform nil
+    :reader dimensions-of
+    ;; Deprecated, to be removed in 0.9.8
+    :reader space-instance-dimensions)
    (allowed-unit-classes
     ;; actually, this slot contains a list of <unit-classes-spec>s
-    :reader allowed-unit-classes
-    :initform t)
+    :initform t
+    :reader allowed-unit-classes-of
+    ;; Deprecated, to be removed in 0.9.8
+    :reader allowed-unit-classes)
    (%%storage-spec%%)
    (%%storage%%
     :initform nil)
@@ -166,12 +176,19 @@
    (parent 
     :link (root-space-instance children)
     :singular t
+    :reader parent-of
+    ;; Deprecated, to be removed in 0.9.8:
     :reader space-instance-parent))
   (:generate-accessors-format :prefix)
   (:generate-accessors t :exclude allowed-unit-classes dimensions parent))
 
+(defmethod allowed-unit-classes-of ((space-instance cons))
+  (allowed-unit-classes-of 
+   (find-space-instance-by-path space-instance ':with-error)))
+
+;; deprecated, to be removed in 0.9.8:
 (defmethod allowed-unit-classes ((space-instance cons))
-  (allowed-unit-classes 
+  (allowed-unit-classes-of 
    (find-space-instance-by-path space-instance ':with-error)))
 
 ;;; ---------------------------------------------------------------------------
@@ -242,8 +259,7 @@
          (remove-instance-from-space-instance instance space-instance)))
    't
    space-instance)
-  (mapc #'delete-space-instance 
-        (space-instance-children space-instance))
+  (mapc #'delete-space-instance (children-of space-instance))
   (call-next-method))
   
 ;;; ---------------------------------------------------------------------------
@@ -302,7 +318,7 @@
 ;;; more efficient:
 
 (defun delete-all-space-instances ()
-  (dolist (space-instance (space-instance-children *root-space-instance*))
+  (dolist (space-instance (children-of *root-space-instance*))
     (delete-space-instance space-instance)))
 
 ;;; ---------------------------------------------------------------------------
@@ -482,7 +498,7 @@
   ;;; (beginning with `space-instance')
   (labels ((do-node (space-instance)
              (funcall fn space-instance)
-             (dolist (child (space-instance-children space-instance))
+             (dolist (child (children-of space-instance))
                (do-node child))))
     (do-node space-instance)))
 
@@ -525,7 +541,7 @@
               space-instance)))
      (t
       ;; Is `instance' allowed on `space-instance'?
-      (let ((allowed-unit-class-names (allowed-unit-classes space-instance)))
+      (let ((allowed-unit-class-names (allowed-unit-classes-of space-instance)))
         (unless (or (eq allowed-unit-class-names 't)
                     (some #'(lambda (unit-class-name)
                               (extended-unit-type-p instance unit-class-name))
@@ -537,11 +553,9 @@
                  space-instance
                  allowed-unit-class-names)))
       ;; dimension compatability-checks (cache someday!):
-      (let ((unit-class-dimensions 
-             (unit-class-dimensions (class-of instance))))
+      (let ((unit-class-dimensions (dimensions-of (class-of instance))))
         (when unit-class-dimensions
-          (let ((space-instance-dimensions
-                 (space-instance-dimensions space-instance))
+          (let ((space-instance-dimensions (dimensions-of space-instance))
                 (dimension-in-common-p nil))
             (declare (type list space-instance-dimensions))
             (dolist (unit-class-dimension unit-class-dimensions) 
@@ -658,8 +672,8 @@
 ;;;  Describers
 
 (defmethod describe-space-instance ((space-instance standard-space-instance))
-  (let ((dimensions (space-instance-dimensions space-instance))
-        (allowed-unit-classes (allowed-unit-classes space-instance)))
+  (let ((dimensions (dimensions-of space-instance))
+        (allowed-unit-classes (allowed-unit-classes-of space-instance)))
     (format t "~&~@(~s~) ~s~
                ~%  Allowed unit classes:~
                      ~:[~:[ None~;~:*~{~%~4t~s~}~]~; ~s~]~
@@ -682,8 +696,7 @@
   (let* ((2nd-column-indent 30)
          (root-space-instance *root-space-instance*)
          (top-level-space-instances 
-          (and root-space-instance
-               (space-instance-children root-space-instance))))
+          (and root-space-instance (children-of root-space-instance))))
     (labels 
         ((do-instances (list indent)
            (dolist (instance (sort (copy-list list) #'string<
@@ -692,7 +705,7 @@
                      indent (standard-space-instance.space-name instance) 
                      2nd-column-indent)
              (print-space-instance-storage-summary instance)
-             (do-instances (space-instance-children instance) 
+             (do-instances (children-of instance) 
                (+& 3 indent)))))
       (when top-level-space-instances
         (format t "~2&Space Instance ~vtContents~

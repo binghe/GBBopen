@@ -5,14 +5,14 @@
 <!-- XML file produced from file: reference.tex
      using Hyperlatex v 2.9-in-waiting-rk (c) Otfried Cheong -->
 <head>
-<title>GBBopen 0.9.6 Reference -- remove-event-function</title>
+<title>GBBopen 0.9.7 Reference -- remove-event-function</title>
 </p>
 <link rel="SHORTCUT ICON" href="favicon.ico"><link rel=stylesheet
         href="gbbopen.css" type="text/css" />
 </head>
 <body>
 <table width="100%" cellpadding="0" cellspacing="2"><tr>
-<td bgcolor="#99ccff"><a href="ref-remove-all-event-functions.html"><img border="0" alt="remove-all-event-functions" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="ref-GBBopen-core-entities.html"><img border="0" alt="GBBopen Core" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-remove-instance-from-space-instance.html"><img border="0" alt="remove-instance-from-space-instance" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">remove-event-function</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table>
+<td bgcolor="#99ccff"><a href="ref-remove-all-event-functions.html"><img border="0" alt="remove-all-event-functions" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="ref-event-entities.html"><img border="0" alt="Events" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-resume-event-printing.html"><img border="0" alt="resume-event-printing" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">remove-event-function</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table>
 
 <p><table class="tight" width="100%">
 <tr valign="top"><td valign="baseline" align="left"%>
@@ -36,7 +36,7 @@
     style="font-family: serif; font-style: normal">or</span> slot-name <td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A slot-name or list of slot-names
 (default is <code>t</code>)
 </td></tr><tr valign="top"><td valign="baseline"><i>paths <span 
-    style="font-family: serif; font-style: normal">or</span> path <td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id153">space-instance&nbsp;path</a> regular expression
+    style="font-family: serif; font-style: normal">or</span> path <td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id159">space-instance&nbsp;path</a> regular expression
 (default is <code>(*)</code>)
 </td></tr><tr valign="top"><td valign="baseline"><i>permanent</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id73">generalized&nbsp;boolean</a> (default is <code>nil</code>)
 </td></tr></table>
@@ -91,14 +91,14 @@
 </p>
 <p><span class="fndoclabel">Examples</span> <br /><a name="id3">Remove</a> the event <a href="ref-glossary.html#gl:function">function</a> <a href="ref-evfn-printv.html">evfn-printv</a> from the set of functions
 to be invoked when <code>create-instance-event</code> is signalled on a
-<code>hyp</code> <a href="ref-glossary.html#id171">unit&nbsp;instance</a>:
+<code>hyp</code> <a href="ref-glossary.html#id177">unit&nbsp;instance</a>:
 </p>
 <pre>
   (remove-event-function 'evfn-printv 'create-instance-event 'hyp)
 </pre>
 <p>Remove the event <a href="ref-glossary.html#gl:function">function</a> <a href="ref-evfn-printv.html">evfn-printv</a> from the set of functions
 to be invoked when <code>create-instance-event</code> is signalled on a
-<code>hyp</code> <a href="ref-glossary.html#id171">unit&nbsp;instance</a> or its subclasses:
+<code>hyp</code> <a href="ref-glossary.html#id177">unit&nbsp;instance</a> or its subclasses:
 </p>
 <pre>
   (remove-event-function 'evfn-printv 'create-instance-event '(hyp :plus-subclasses))
@@ -109,4 +109,4 @@ are not yet implemented in GBBopen.
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
 <table width="100%" cellpadding="0" cellspacing="2"><tr>
-<td bgcolor="#99ccff"><a href="ref-remove-all-event-functions.html"><img border="0" alt="remove-all-event-functions" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="ref-GBBopen-core-entities.html"><img border="0" alt="GBBopen Core" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-remove-instance-from-space-instance.html"><img border="0" alt="remove-instance-from-space-instance" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">remove-event-function</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table></body></html>
+<td bgcolor="#99ccff"><a href="ref-remove-all-event-functions.html"><img border="0" alt="remove-all-event-functions" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="ref-event-entities.html"><img border="0" alt="Events" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-resume-event-printing.html"><img border="0" alt="resume-event-printing" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">remove-event-function</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table></body></html>

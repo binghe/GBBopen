@@ -5,7 +5,7 @@
 <!-- XML file produced from file: tutorial.tex
      using Hyperlatex v 2.9-in-waiting-rk (c) Otfried Cheong -->
 <head>
-<title>GBBopen 0.9.6 Tutorial -- Application Startup and Event Functions</title>
+<title>GBBopen 0.9.7 Tutorial -- Application Startup and Event Functions</title>
 </p>
 <link rel="SHORTCUT ICON" href="favicon.ico"><link rel=stylesheet
         href="gbbopen.css" type="text/css" />
@@ -222,7 +222,7 @@ specification:
      :dimensions <font color="#ff0000">'((x :ordered) (y :ordered))</font>
      :allowed-unit-classes 'location))
 </pre></font>
-<p>and replacing it with a call of <b>unit-class-dimensions</b> to
+<p>and replacing it with a call of <b>dimensions-of</b> to
 obtain the dimensions associated with instances of the <code>location</code>
 unit class:
 </p>
@@ -235,7 +235,7 @@ unit class:
     ;; Make a new known-world space instance:
     (make-space-instance 
      '(known-world)
-     :dimensions <font color="#000000">(unit-class-dimensions 'location)</font>
+     :dimensions <font color="#000000">(dimensions-of 'location)</font>
      :allowed-unit-classes 'location))
 </pre></font>
 <h2><a name="id7">Step 6: Run the application again</a></h2><p>

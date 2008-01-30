@@ -5,7 +5,7 @@
 <!-- XML file produced from file: tutorial.tex
      using Hyperlatex v 2.9-in-waiting-rk (c) Otfried Cheong -->
 <head>
-<title>GBBopen 0.9.6 Tutorial -- Creating an Application</title>
+<title>GBBopen 0.9.7 Tutorial -- Creating an Application</title>
 </p>
 <link rel="SHORTCUT ICON" href="favicon.ico"><link rel=stylesheet
         href="gbbopen.css" type="text/css" />
@@ -78,7 +78,7 @@ system
     ;; Make a new known-world space instance:
     (make-space-instance 
      '(known-world)
-     :dimensions (unit-class-dimensions 'location)))
+     :dimensions (dimensions-of 'location)))
 
   (add-event-function 'initializations 'start-control-shell-event
                       ;; Initializations should be done first!

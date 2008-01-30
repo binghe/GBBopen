@@ -1,7 +1,7 @@
 ;;;; -*- Mode:COMMON-LISP; Package:GBBOPEN-USER; Base:10 -*-
 ;;;; *-* File: /home/gbbopen/source/gbbopen/examples/tutorial.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Jan 21 03:35:15 2008 *-*
+;;;; *-* Last-Edit: Wed Jan 30 03:37:51 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -28,6 +28,7 @@
 ;;;
 ;;;  10-08-05 Adapted from the `Getting Started with GBB' example.  (Corkill)
 ;;;  09-22-06 Converted to GBBopen 0.9.5.  (Corkill)
+;;;  01-30-08 Converted to GBBopen 0.9.8.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -213,7 +214,7 @@
   (make-space-instance 
    '(known-world)
    :allowed-unit-classes '(location path)
-   :dimensions (unit-class-dimensions 'location)
+   :dimensions (dimensions-of 'location)
    :storage '((location (x y) uniform-buckets :layout ((0 100 5)
                                                        (0 100 5))))))
 

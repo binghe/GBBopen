@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/gbbopen/find.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Jan 26 06:09:10 2008 *-*
+;;;; *-* Last-Edit: Wed Jan 30 03:12:11 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -1242,8 +1242,7 @@
             dimensional-extent
           (declare (ignore new-extents))
           (let ((space-dimension
-                 (assoc extent-dimension-name 
-                        (space-instance-dimensions space-instance)
+                 (assoc extent-dimension-name (dimensions-of space-instance)
                         :test #'eq)))
             (when space-dimension
               (destructuring-bind (space-dimension-name space-dimension-type)

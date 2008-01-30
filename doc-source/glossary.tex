@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /home/gbbopen/current/doc-source/glossary.tex *-*
-%% *-* Last-Edit: Wed Jan  9 12:34:10 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Wed Jan 30 10:21:00 2008; Edited-By: cork *-*
 %% *-* Machine: whirlwind.corkills.org *-*
 
 \begin{glossary-list}
@@ -584,6 +584,11 @@ classes: \code{class}, \code{slot-definition}, \code{generic-function},
 
 %% ------------------------------------------------------------------------
 
+\glent[namestring]
+A string that represents a filename.
+
+%% ------------------------------------------------------------------------
+
 \glent[obviated~KS~activation]
 \gllabel{obviated~KSA}%
 \gllabel{obviated~KSAs}%
@@ -619,6 +624,14 @@ is a subclass of \textbf{\entlinknoex{ordered-queue}}.
 
 %% ------------------------------------------------------------------------
 
+\glent[package~designator]
+\index{package!designator}%
+
+A \glref{string~designator} (denoting a string that designates the name or
+nickname of a package) or a package (denoting itself).
+
+%% ------------------------------------------------------------------------
+
 \glent[passive~socket]
 \index{socket!passive}%
 A socket that is used to accept a connection initiation to a specific service
@@ -631,6 +644,22 @@ port.
 \index{path!expression}%
 \index{path!space instances expression}%
 A regular expression representing one or more \glref{space-instance~paths}.
+
+%% ------------------------------------------------------------------------
+
+\glent[pathname]
+
+A structured representation of the name of a file. A pathname has six
+components: host, device, directory, name, type, and version.
+
+%% ------------------------------------------------------------------------
+
+\glent[pathname~designator]
+\index{pathname!designator}%
+
+A \glref{namestring} (denoting the corresponding \glref{pathname}), a stream
+associated with a file (denoting the \glref{pathname} used to open the file),
+or a \glref{pathname} (denoting itself).
 
 %% ------------------------------------------------------------------------
 

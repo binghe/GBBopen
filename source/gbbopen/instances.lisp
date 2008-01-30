@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Jan 29 10:58:39 2008 *-*
+;;;; *-* Last-Edit: Wed Jan 30 04:54:55 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -548,7 +548,7 @@
                   space-instances))
         (format t "~2tDimensional values:")
         (let ((dimension-specs 
-               (sort (unit-class-dimensions (class-of instance))
+               (sort (copy-list (dimensions-of (class-of instance)))
                      #'string< :key #'first)))
           (if dimension-specs
               (dolist (dimension-spec dimension-specs)
@@ -617,7 +617,7 @@
   instance)
 
 ;;; ---------------------------------------------------------------------------
-;;;   Extended-Unit-Type-P 
+;;;   Extended-unit-type-p 
 
 (defun extended-unit-type-p (object unit-class-name)
   ;;; Returns true if `object' is "extended-type-p" of `unit-class-name'
