@@ -14,7 +14,8 @@ Important changes in GBBopen 0.9.7:
     - Support for module-relative directory specifications; implicit module
       rooting
 
-  * Added shrink-vector to GBBopen-tools
+  * Added list-length>1, list-length>, shrink-vector, and trimmed-substring to
+    GBBopen-tools
  
   * Version 2.2 of the Portable Threads Interface
     - Periodic functions
