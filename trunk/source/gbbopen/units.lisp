@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/gbbopen/units.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jan 30 03:40:01 2008 *-*
+;;;; *-* Last-Edit: Mon Feb  4 10:48:50 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -235,8 +235,7 @@
                unit-class-name)))
     ;; build the dimensional-value lookup function, called on a unit instance
     ;; to return the dimensional value for the `dv-spec' dimension:
-    (let ((dv-lookup-function
-           (fixup-function-value-part1
+    (let* ((unfixed-dv-lookup-function
             `(function
               (lambda (instance &optional into-cons)
                 (declare (type ,unit-class-name instance)
@@ -247,11 +246,11 @@
                         (symbolp slot-name-or-fn)
                         slot-name)
                    `(if (and (slot-boundp instance ',slot-name-or-fn)
-			     (slot-boundp instance ',slot-name))
-			(cond 
-			 (into-cons
-			  (setf (car into-cons)
-				(slot-value instance ',slot-name-or-fn))
+                             (slot-boundp instance ',slot-name))
+                        (cond 
+                         (into-cons
+                          (setf (car into-cons)
+                                (slot-value instance ',slot-name-or-fn))
 			  (setf (cdr into-cons)
 				(slot-value instance ',slot-name))
 			  into-cons)
@@ -272,7 +271,9 @@
 			unbound-value-indicator))
                   ;; just a function
                   (t `(funcall ,(declared-function-designator slot-name-or-fn)
-			       instance))))))))
+			       instance))))))
+           (dv-lookup-function 
+            (fixup-function-value-part1 unfixed-dv-lookup-function)))
       `(,dimension-name ,dimension-value-type ,dv-lookup-function
                         ,composite-type ,ordering-dimension-name))))
 
@@ -280,7 +281,7 @@
 
 (defun fixup-function-objects-part2 (unit-class fixup-symbols)
   ;;; Part 2 of the function-fixup scheme.  Restores function initvals for
-  ;;; :sort-function and :sort-key from *%fixup-function-objects*% based on
+  ;;; :sort-function and :sort-key from *%%fixup-function-objects%%* based on
   ;;; the gensym'ed fixup-symbols
   (declare (type list fixup-symbols))
   (map-direct-link-slots 
@@ -299,7 +300,13 @@
   ;; fixup canonicalized :dimensional-values option:  
   (dolist (dv-spec (standard-unit-class.dimensional-values unit-class))
     (let ((maybe-fn (third dv-spec)))
-      (when (memq maybe-fn fixup-symbols)
+      ;; NOTE: CLISP sometimes looses eq-ness of the uninterned fixup-symbols
+      ;; (last observed in CLISP 2.44).  As a work-around until this is
+      ;; tracked down, we look up the symbol in fixup-symbols by comparing the
+      ;; symbol-name and then using the symbol from fixup-symbols:
+      (when #-clisp (memq maybe-fn fixup-symbols)
+            #+clisp (setf maybe-fn 
+                          (find maybe-fn fixup-symbols :test #'string=))
         (setf (third dv-spec)
               (symbol-value maybe-fn)))))
   ;; fixup :initial-space-instances option
@@ -317,7 +324,7 @@
 
 (defun fixup-function-initargs (initargs)
   ;;; Part 1b of the function-fixup scheme.  Adds function initvals for
-  ;;; :sort-function and :sort-key to *%fixup-function-objects*% and replaces
+  ;;; :sort-function and :sort-key to *%%fixup-function-objects%%* and replaces
   ;;; them with gensyms
   (flet ((fixup-initarg (slot-def indicator)
            (let ((initval (getf (cdr slot-def) indicator)))
@@ -335,7 +342,7 @@
   ;;; Part 1a of the function-fixup scheme.  
   ;;;
   ;;; Adds functional option values for :initial-space-instances to
-  ;;; *%fixup-function-objects*% and replaces them with gensyms.
+  ;;; *%%fixup-function-objects%%* and replaces them with gensyms.
   ;;;
   ;;; Also adds functional option-values for :dimensional-values, as part of
   ;;; syntax checking and cannonicalization.
