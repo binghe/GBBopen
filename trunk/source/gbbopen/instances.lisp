@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jan 30 04:54:55 2008 *-*
+;;;; *-* Last-Edit: Wed Jan 30 13:04:58 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -99,7 +99,7 @@
 ;;;  Saving/Sending Unit Instances
 
 (defmethod omitted-slots-for-saving/sending ((instance standard-unit-instance))
-  (append '(%%marks%%) (call-next-method)))
+  (cons '%%marks%% (call-next-method)))
 
 ;;; ---------------------------------------------------------------------------
 

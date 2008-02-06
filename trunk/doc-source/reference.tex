@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /home/gbbopen/current/doc-source/reference.tex *-*
-%% *-* Last-Edit: Wed Jan 30 11:44:24 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Wed Feb  6 04:08:30 2008; Edited-By: cork *-*
 %% *-* Machine: whirlwind.corkills.org *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -11135,6 +11135,8 @@ supply any missing components to \var{pathname}.
 
 \begin{alsos}{omitted-slots-for-saving/sending}
 \also[omitted-slots-for-saving/sending]
+\also[print-object-for-saving/sending]
+\also[print-slot-for-saving/sending]
 \also[save-blackboard-repository]
 \end{alsos}
 
@@ -11401,6 +11403,8 @@ are not saved or sent.
 
 \begin{alsos}{save-blackboard-repository}
 \also[load-blackboard-repository]
+\also[print-object-for-saving/sending]
+\also[print-slot-for-saving/sending]
 \also[save-blackboard-repository]
 \end{alsos}
 
@@ -11409,8 +11413,7 @@ Specify that slot \code{complex-unsaved-slot} in \code{my-unit-instance} should 
 added to the list of slots that are not saved or sent:
 \begin{example}
   (defmethod omitted-slots-for-saving/sending ((instance my-unit-instance))
-    (append '(complex-unsaved-slot)
-             (call-next-method)))
+    (cons 'complex-unsaved-slot (call-next-method)))
 \end{example}
 
 \end{functiondoc}
@@ -11478,6 +11481,188 @@ Return the siblings of the \code{(bb)} \glref{space~instance}:
     (\entlink{parent-of} (\entlink{find-space-instance-by-path} '(bb))
 (#<standard-space-instance (bb)>
  #<standard-space-instance (control-shell)>)
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}[print-object-for-saving-sending]{Generic~Function}%
+  {print-object-for-saving/sending}%
+  {\var{object stream\/}
+    \returns{} \var{object\/}}
+
+\index{saving!an object}%
+\index{sending!an object}%
+\index{object!saving}%
+\index{object!sending}%
+
+\fnsyntax
+
+\fnpurpose Write the printed representation of \var{object\/} to
+\var{stream\/} when saving or sending.
+
+\fnmethods
+\fnalternate{print-object-for-saving/sending}%
+  {\code{(}\var{object\/} \code{array)}
+    \var{stream\/}
+    \returns{} \var{object\/}}
+\fnalternate{print-object-for-saving/sending}%
+  {\code{(}\var{object\/} \code{bit-vector)}
+    \var{stream\/}
+    \returns{} \var{object\/}}
+\fnalternate{print-object-for-saving/sending}%
+  {\code{(}\var{object\/} \code{cons)}
+    \var{stream\/}
+    \returns{} \var{object\/}}
+\fnalternate{print-object-for-saving/sending}%
+  {\code{(}\var{object\/} \code{hash-table)}
+    \var{stream\/}
+    \returns{} \var{object\/}}
+\fnalternate{print-object-for-saving/sending}%
+  {\code{(}\var{object\/} \code{standard-class)}
+    \var{stream\/}
+    \returns{} \var{object\/}}
+\fnalternate{print-object-for-saving/sending}%
+  {\code{(}\var{object\/} \code{standard-object)}
+    \var{stream\/}
+    \returns{} \var{object\/}}
+\fnalternate{print-object-for-saving/sending}%
+  {\code{(}\var{object\/} \code{standard-unit-instance)}
+    \var{stream\/}
+    \returns{} \var{object\/}}
+\fnalternate{print-object-for-saving/sending}%
+  {\code{(}\var{object\/} \code{string)}
+    \var{stream\/}
+    \returns{} \var{object\/}}
+\fnalternate{print-object-for-saving/sending}%
+  {\code{(}\var{object\/} \code{structure-object)}
+    \var{stream\/}
+    \returns{} \var{object\/}}
+\fnalternate{print-object-for-saving/sending}%
+  {\code{(}\var{object\/} \code{vector)}
+    \var{stream\/}
+    \returns{} \var{object\/}}
+\fnalternate{print-object-for-saving/sending}%
+  {\code{(}\var{object\/} \code{t)}
+    \var{stream\/}
+    \returns{} \var{object\/}}
+
+\fnpackage \code{:gbbopen-tools}
+
+\fnmodule \code{:gbbopen-tools} (instance-class methods are added by
+\code{:gbbopen-core})
+
+\fnargs
+\begin{args}{stream}
+\arg[object] An object
+\arg[stream] A stream
+\end{args}
+
+\fnreturns The \var{object}.
+
+\fnerrors A call to \textbf{print-object-for-saving/sending} was made
+outside the dynamic scope of a
+\textbf{\entlink{with-saving/sending-block}}.
+
+\begin{alsos}{omitted-slots-for-saving/sending}
+\also[load-blackboard-repository]
+\also[omitted-slots-for-saving/sending]
+\also[print-slot-for-saving/sending]
+\also[save-blackboard-repository]
+\also[with-saving/sending-block]
+\end{alsos}
+
+\fnexample Define a method to save/send compiled-function references,
+when possible:
+\begin{example}
+  (defmethod print-object-for-saving/sending ((fn function)
+                                              stream)
+    (flet ((save/send-error ()
+             (let ((*print-readably* nil))
+               (error "Unable to save/send ~s reliably." fn))))
+      (typecase fn
+        (compiled-function
+         (multiple-value-bind (lambda-expression closure-p name)
+             (function-lambda-expression fn)
+           (declare (ignore lambda-expression)
+                    #+(or cmu sbcl)
+                    (ignore closure-p))
+           (when (or 
+                  ;; CMUCL and SBCL always return that
+                  ;; closure-p is true, so we ignore their
+                  ;; closure-p value and risk that `fn' might
+                  ;; be a non-trivial closure that can't be
+                  ;; represented externally:
+                  #-(or cmu sbcl)
+                  closure-p
+                  ;; Implementations are free to always return
+                  ;; nil as name or return an object that is
+                  ;; not valid for use as a name in function.
+                  ;; Fortunately, implementations usually
+                  ;; provide a useful name value:
+                  (not (symbolp name))
+                  (not name))
+             (save/send-error))
+           (format stream "#'~s" name)))
+        (otherwise (save/send-error))))
+    fn)
+\end{example}
+Note that the above method is not without risk, but it will work in
+many situations.
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}[print-slot-for-saving-sending]{Generic~Function}%
+  {print-slot-for-saving/sending}%
+  {\var{instance slot-name stream\/}}
+
+\index{printing!a slot, for saving}%
+\index{printing!a slot, for sending}%
+\index{slot!printing for saving}%
+\index{slot!printing for sending}%
+
+\fnsyntax
+
+\fnpurpose Write the printed representation of slot \var{slot-name\/} in
+\var{object\/} to \var{stream\/} when saving or sending.
+
+\fnmethods
+\fnalternate{print-slot-for-saving/sending}%
+  {\code{(}\var{instance\/} \code{standard-object)}
+    \var{slot-name stream\/}}
+\fnalternate{print-slot-for-saving/sending}%
+  {\code{(}\var{instance\/} \code{standard-unit-instance)}
+    \code{(}\var{slot-name\/} \code{(eql gbbopen::\%\%space-instances\%\%)}
+    \var{stream\/}}
+  
+\fnpackage \code{:gbbopen-tools}
+
+\fnmodule \code{:gbbopen-tools} (instance-class methods are added by
+\code{:gbbopen-core})
+
+\fnargs
+\begin{args}{stream}
+\arg[instance] A \glref{unit~instance} (or \glref{space~instance})
+\arg[slot-name] A non-\nil, non-keyword symbol
+\arg[stream] A stream
+\end{args}
+
+\begin{alsos}{omitted-slots-for-saving/sending}
+\also[load-blackboard-repository]
+\also[omitted-slots-for-saving/sending]
+\also[print-object-for-saving/sending]
+\also[save-blackboard-repository]
+\end{alsos}
+
+\fnexample 
+\bfindexit{print-object-for-saving/sending}%
+Write the binary value of slot \code{song} in \glref{unit~instances} of
+\code{bird} as a Base64 portable string:
+\begin{example}
+  (defmethod print-slot-for-saving/sending ((bird bird) (slot-name (eql 'song)) stream)
+    (\entlink{print-object-for-saving/sending} (base64-encode (song-of bird)) stream))
 \end{example}
 
 \end{functiondoc}
@@ -11674,9 +11859,16 @@ The size of the blackboard-repository data file can be reduced by specifying a
 \var{package\/} containing the majority of the symbols that are written to the
 file.
 
+A \textbf{\entlink{with-saving/sending-block}}, with the
+\var{package\/} and \var{read-default-float-format\/} values, is
+established when saving the blackboard repository.
+
 \begin{alsos}{omitted-slots-for-saving/sending}
 \also[load-blackboard-repository]
 \also[omitted-slots-for-saving/sending]
+\also[print-object-for-saving/sending]
+\also[print-slot-for-saving/sending]
+\also[with-saving/sending-block]
 \end{alsos}
 
 \fnexample Run the GBBopen Tutorial Example application and then save the
@@ -11744,6 +11936,56 @@ The class \textbf{standard-space-instance} is the default \glref{class} of
 \also[print-instance-slots]
 \also[standard-space-class]
 \also[standard-unit-instance]
+\end{alsos}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}[with-saving-sending-block]{Macro}%
+  {with-saving/sending-block}%
+  {\code{(}\var{stream\/} 
+    \code{\&key} \var{package read-default-float-format\/}\code{)}
+    \var{form\/}\superstar
+    \returns{} \var{result\/}\superstar}
+  
+\fnsyntax
+
+\fnpurpose Bind printer and GBBopen save/sendcontrol variables) to
+values that produce standard save/send behavior when evaluating
+\var{forms}.
+
+\fnpackage \code{:gbbopen-tools}
+
+\fnmodule \code{:gbbopen-tools}
+
+\fnargs
+\begin{args}{read-default-float-format}
+\arg[stream] A stream
+\arg[package] A \glref{package~designator} indicating the package to
+be used when saving/sending and when loading/receiving (default is
+\code{:common-lisp-user})
+\arg[read-default-float-format] One of the atomic type specifiers
+\code{short-float}, \code{single-float}, \code{double-float}, or
+\code{long-float} (default is \code{single-float})
+\arg[forms] An implicit \textbf{progn} of \glref{forms} to be evaluated
+\end{args}
+
+\fnreturns The values returned by evaluating the last \var{form}.
+
+\fndescription 
+Within the dynamic extent of the body of \var{forms}, all Common Lisp
+printer control variables (including any implementation-defined ones)
+and GBBopen save/send control variables are bound to values that
+produce standard save/send behavior.  The function
+\textbf{\entlink{save-blackboard-repository}} establishes a
+\textbf{with-saving/sending-block} when saving the blackboard
+repository, and this macro can be used in constructing specialized
+saving/sending operations.
+
+\begin{alsos}{print-object-for-saving/sending}
+\also[save-blackboard-repository]
+\also[print-object-for-saving/sending]
 \end{alsos}
 
 \end{functiondoc}
