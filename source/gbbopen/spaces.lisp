@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/gbbopen/spaces.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jan 30 04:57:19 2008 *-*
+;;;; *-* Last-Edit: Wed Jan 30 13:04:43 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -194,8 +194,11 @@
 ;;; ---------------------------------------------------------------------------
 
 (defmethod hidden-nonlink-slot-names ((instance standard-space-instance))
-  (append '(%%evfn-unit-ht%% %%bb-widgets%% %%storage-spec%% %%storage%%)
-          (call-next-method)))
+  (list* '%%evfn-unit-ht%% 
+         '%%bb-widgets%% 
+         '%%storage-spec%% 
+         '%%storage%%
+         (call-next-method)))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -337,10 +340,10 @@
 ;;;   Saving/Sending Space Instances
 
 (defmethod omitted-slots-for-saving/sending ((instance standard-space-instance))
-  (append '(space-name                  ; recomputed from instance-name
-            %%storage%%
-            %%bb-widgets%%) 
-          (call-next-method)))
+  (list* 'space-name                  ; recomputed from instance-name
+         '%%storage%%
+         '%%bb-widgets%%
+         (call-next-method)))
 
 ;;; ---------------------------------------------------------------------------
 

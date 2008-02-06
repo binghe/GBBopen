@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
-%% *-* File: /home/gbbopen/current/doc-source/common.tex *-*
-%% *-* Last-Edit: Wed Jan 30 04:38:22 2008; Edited-By: cork *-*
+%% *-* File: /home/gbbopen/doc-source/common.tex *-*
+%% *-* Last-Edit: Tue Feb  5 11:18:13 2008; Edited-By: cork *-*
 %% *-* Machine: whirlwind.corkills.org *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -346,7 +346,8 @@
   
   \newcommand{\endfndoc}{}
   
-  \newcommand{\fnsyntax}{\endpar\par\xml{table class="tight" width="100%"}
+  \newcommand{\fnsyntax}{\endpar\par
+    \xml{table class="tight" width="100%"}
       \xml{tr valign="top"}%
       \xml{td align="left"%}
       \xml{nobr}\textbf{\fnname}\xml{/nobr}%
@@ -362,8 +363,7 @@
         \xml{/table}%
         \endpar}
 
-  \newcommand{\fnalternate}[2]{\endpar
-    \xml{table class="tight" width="100%"}
+  \newcommand{\fnalternate}[2]{\xml{table class="tight" width="100%"}
       \xml{tr valign="top"}
       \xml{td align="left"}
         \xml{nobr}#1\xml{/nobr}
@@ -376,8 +376,7 @@
           \xml{/table}}
   \newcommand{\endfnalternate}{}
 
-  \newcommand{\fnsetfsyntax}[3]{\endpar
-    \xml{table class="tight" width="100%"}
+  \newcommand{\fnsetfsyntax}[3]{\xml{table class="tight" width="100%"}
       \xml{tr valign="top"}
       \xml{td align="left"}
         \xml{nobr}(setf (#1\xml{/nobr}
