@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/tools/read-object.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Feb  8 04:45:34 2008 *-*
+;;;; *-* Last-Edit: Sat Feb  9 14:52:53 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -34,7 +34,7 @@
             *reading-saved/sent-objects-readtable*  ; not yet documented
             allocate-saved/sent-instance ; not yet documented
             saved/sent-object-reader    ; not yet documented
-            initialize-saved/sent-instance ; not yet documented
+            initialize-saved/sent-instance
             with-reading-saved/sent-objects-block)))
 
 ;;; ===========================================================================

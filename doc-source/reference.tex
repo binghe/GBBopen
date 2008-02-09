@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /home/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Sat Feb  9 05:33:16 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Sat Feb  9 15:33:47 2008; Edited-By: cork *-*
 %% *-* Machine: whirlwind.corkills.org *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -1362,7 +1362,7 @@ Project software tree), do the following:
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}[automatically-create-missing-directories]{Variable}%
+\begin{functiondoc}[automatically-create-missing-directories-var]{Variable}%
   {*automatically-create-missing-directories*}{}%
 
 \fnsyntax
@@ -1402,7 +1402,7 @@ tree, rather than generating a continuable error:
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}[autorun-modules]{Variable}{*autorun-modules*}{}%
+\begin{functiondoc}[autorun-modules-var]{Variable}{*autorun-modules*}{}%
 
 \fnsyntax
 
@@ -11573,6 +11573,88 @@ saving/sending and loading/reading objects.
 
 %% ------------------------------------------------------------------------
 
+\begin{functiondoc}[print-object-for-sending-var]{Variable}%
+{*print-object-for-sending*}{}%
+
+\fnsyntax
+
+\fnpurpose Controls \textbf{\entlink{print-object-for-saving/sending}}
+printing customization for sending versus for saving.
+
+\fnpackage \code{:gbbopen-tools}
+
+\fnmodule \code{:gbbopen-tools}
+
+\fnvaluetype A \glref{generalized~boolean}
+
+\fninitialvalue \nil
+
+\begin{alsos}{print-object-for-saving/sending}
+\also[omitted-slots-for-saving/sending]
+\also[print-object-for-saving/sending]
+\also[print-slot-for-saving/sending]
+\end{alsos}
+
+\fnexample
+\bfindexit{with-saving/sending-block}%
+\bfindexit{*save/send-references-only*}%
+\bfindexit{do-instances-of-class}%
+\bfindexit{print-object-for-saving/sending}%
+Send some \code{hyp} \glref{unit~instances} to another agent:
+\begin{example}
+> (let ((*print-object-for-sending* 't))
+    (\entlink{with-saving/sending-block} (stream :package ':my-app)
+      (let ((\entlink{*save/send-references-only*} nil))
+        (\entlink{do-instances-of-class} (instance 'hyp :plus-subclasses)
+          (\entlink{print-object-for-saving/sending} instance stream)))))
+nil
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}[save-send-references-only-var]{Variable}%
+{*save/send-references-only*}{}%
+
+\fnsyntax
+
+\fnpurpose Controls whether \textbf{\entlink{print-object-for-saving/sending}}
+prints references to instances or the instance contents.
+
+\fnpackage \code{:gbbopen-tools}
+
+\fnmodule \code{:gbbopen-tools}
+
+\fnvaluetype A \glref{generalized~boolean}
+
+\fninitialvalue True
+
+\begin{alsos}{print-object-for-saving/sending}
+\also[omitted-slots-for-saving/sending]
+\also[print-object-for-saving/sending]
+\also[print-slot-for-saving/sending]
+\end{alsos}
+
+\fnexample
+\bfindexit{with-saving/sending-block}%
+\bfindexit{*print-object-for-sending*}%
+\bfindexit{do-instances-of-class}%
+\bfindexit{print-object-for-saving/sending}%
+Send some \code{hyp} \glref{unit~instances} to another agent:
+\begin{example}
+> (let ((\entlink{*print-object-for-sending*} 't))
+    (\entlink{with-saving/sending-block} (stream :package ':my-app)
+      (let ((*save/send-references-only* nil))
+        (\entlink{do-instances-of-class} (instance 'hyp :plus-subclasses)
+          (\entlink{print-object-for-saving/sending} instance stream)))))
+nil
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
 \begin{functiondoc}[initialize-saved-sent-instance]{Generic~Function}%
   {initialize-saved/sent-instance}%
   {\var{instance slots slot-values 
@@ -11786,6 +11868,7 @@ are not saved or sent.
 \fnreturns A list of omitted slot names.
 
 \begin{alsos}{save-blackboard-repository}
+\also[*print-object-for-sending*]
 \also[load-blackboard-repository]
 \also[print-object-for-saving/sending]
 \also[print-slot-for-saving/sending]
@@ -11882,6 +11965,7 @@ added to the list of slots that are not saved or sent:
 the dynamic scope of a \textbf{\entlink{with-saving/sending-block}}.
 
 \begin{alsos}{omitted-slots-for-saving/sending}
+\also[*print-object-for-sending*]
 \also[omitted-slots-for-saving/sending]
 \also[print-slot-for-saving/sending]
 \also[save-blackboard-repository]
@@ -11968,6 +12052,7 @@ many situations.
 the dynamic scope of a \textbf{\entlink{with-saving/sending-block}}.
 
 \begin{alsos}{omitted-slots-for-saving/sending}
+\also[*print-object-for-sending*]
 \also[omitted-slots-for-saving/sending]
 \also[print-object-for-saving/sending]
 \also[print-slot-for-saving/sending]
