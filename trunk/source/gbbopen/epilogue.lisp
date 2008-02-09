@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/gbbopen/epilogue.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Feb  9 04:29:50 2008 *-*
+;;;; *-* Last-Edit: Sat Feb  9 05:27:36 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -92,12 +92,15 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun save-blackboard-repository (pathname &key (package ':cl-user)
-                                                 (read-default-float-format 
-                                                  'single-float))
+(defun save-blackboard-repository (pathname
+                                   &key (package ':cl-user)
+                                        (read-default-float-format
+                                         'single-float)
+                                        (external-format ':default))
   (with-open-file (file (make-bb-pathname pathname)
                    :direction ':output
-                   :if-exists ':supersede)
+                   :if-exists ':supersede
+                   :external-format external-format)
     (format file ";;;  GBBopen Blackboard Repository (saved ~a)~%"
             (internet-text-date-and-time))
     (with-saving/sending-block (file :package package
@@ -127,7 +130,8 @@
   ;; Returns t if there are no unit instances (other than the
   ;; root-space-instance) in the blackboard repository
   (map-unit-classes
-   #'(lambda (class)
+   #'(lambda (class plus-subclasses-p)
+       (declare (ignore plus-subclasses-p))
        (unless (eq (class-name class) 'root-space-instance)
          (when (plusp& (class-instances-count class))
            (return-from empty-blackboard-repository-p nil))))
@@ -147,17 +151,26 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun load-blackboard-repository (pathname &rest reset-gbbopen-args
-                                                  &key (confirm-if-not-empty 't))
+(defun load-blackboard-repository (pathname 
+                                   &rest reset-gbbopen-args
+                                   &key (confirm-if-not-empty 't)
+                                        (external-format ':default)
+                                        (readtable
+                                         *reading-saved/sent-objects-readtable*)
+                                        (read-eval nil))
   (declare (dynamic-extent reset-gbbopen-args))
   (when confirm-if-not-empty
     (unless (confirm-if-blackboard-repository-not-empty-p)
       (return-from load-blackboard-repository nil)))
-  (with-open-file (file  (make-bb-pathname pathname)
-                   :direction ':input)
+  (with-open-file (file (make-bb-pathname pathname)
+                   :direction ':input
+                   :external-format external-format)
     (apply 'reset-gbbopen 
-           (remove-property reset-gbbopen-args ':confirm-if-not-empty))
-    (with-reading-saved/sent-objects-block (file)
+           (remove-properties reset-gbbopen-args 
+                              '(:confirm-if-not-empty :external-format
+                                :readtable :read-eval)))
+    (with-reading-saved/sent-objects-block (file :readtable readtable
+                                                 :read-eval read-eval)
       (let ((root-children (read file))
             (*%%allow-setf-on-link%%* 't))
         (setf (slot-value *root-space-instance* 'children) root-children))

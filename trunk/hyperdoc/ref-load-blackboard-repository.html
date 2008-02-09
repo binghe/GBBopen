@@ -19,6 +19,9 @@
 <nobr><b><font color="#000000">load-blackboard-repository</font></b></nobr></td><td valign="baseline"> &nbsp; </td><td valign="baseline" align="left" width="99%"><var>pathname</var>
 <code>&#38;key</code> <var>confirm-if-not-empty
 disable-events 
+external-format
+readtable
+read-eval
 retain-classes 
 retain-event-functions
 retain-event-printing</var> 
@@ -38,6 +41,11 @@ retain-event-printing</var>
 the user must confirm loading when the current blackboard repository contains
 <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a> (default is true)
 </td></tr><tr valign="top"><td valign="baseline"><i>disable-events</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id73">generalized&nbsp;boolean</a> (default is <code>t</code>)
+</td></tr><tr valign="top"><td valign="baseline"><i>external-format</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An external-file-format designator (default is
+<code>:default</code>)
+</td></tr><tr valign="top"><td valign="baseline"><i>readtable</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A readtable (default is 
+<code>*reading-saved/sent-objects-readtable*</code>)
+</td></tr><tr valign="top"><td valign="baseline"><i>read-eval</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id73">generalized&nbsp;boolean</a> (default is <code>nil</code>)
 </td></tr><tr valign="top"><td valign="baseline"><i>retain-classes</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An <a href="ref-glossary.html#id61">extended&nbsp;unit-classes&nbsp;specification</a>
 (see below)
 </td></tr><tr valign="top"><td valign="baseline"><i>retain-event-functions</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id73">generalized&nbsp;boolean</a> (default is <code>nil</code>)
