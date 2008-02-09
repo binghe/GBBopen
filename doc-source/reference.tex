@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /home/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Sat Feb  9 04:42:42 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Sat Feb  9 05:33:16 2008; Edited-By: cork *-*
 %% *-* Machine: whirlwind.corkills.org *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -11659,6 +11659,9 @@ to the slot named \code{new-slot} in the current class definition of \code{hyp}:
 \begin{functiondoc}{Function}{load-blackboard-repository}{\var{pathname\/}
     \code{\&key} \var{confirm-if-not-empty
                       disable-events 
+                      external-format
+                      readtable
+                      read-eval
                       retain-classes 
                       retain-event-functions
                       retain-event-printing\/} 
@@ -11684,6 +11687,11 @@ to the slot named \code{new-slot} in the current class definition of \code{hyp}:
 the user must confirm loading when the current blackboard repository contains
 \glref{unit~instances} (default is true)
 \arg[disable-events] A \glref{generalized~boolean} (default is \code{t})
+\arg[external-format] An external-file-format designator (default is
+  \code{:default})
+\arg[readtable] A readtable (default is 
+  \code{*reading-saved/sent-objects-readtable*})
+\arg[read-eval] A \glref{generalized~boolean} (default is \nil)
 \arg[retain-classes] An \glref{extended~unit-classes~specification}
   (see below)
 \arg[retain-event-functions] A \glref{generalized~boolean} (default is \nil)
@@ -11984,7 +11992,7 @@ Write the binary value of slot \code{song} in \glref{unit~instances} of
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{save-blackboard-repository}{\var{pathname\/}
-    \code{\&key} \var{package read-default-float-format\/} 
+    \code{\&key} \var{external-format package read-default-float-format\/} 
     \returns{} \var{pathname\/}}
 \index{blackboard repository!saving to a file}%
 \index{saving!the blackboard repository to a file}% 
@@ -12001,6 +12009,8 @@ Write the binary value of slot \code{song} in \glref{unit~instances} of
 \fnargs
 \begin{args}{read-default-float-format}
 \arg[pathname] A \glref{pathname~designator}
+\arg[external-format] An external-file-format designator (default is
+  \code{:default})
 \arg[package] A \glref{package~designator} indicating the package to be used
 when saving and loading the blackboard repository (default is
 \code{:common-lisp-user})
