@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/gbbopen/spaces.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jan 30 13:04:43 2008 *-*
+;;;; *-* Last-Edit: Fri Feb  8 04:40:45 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -347,7 +347,7 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defmethod initialize-gbbopen-save/send-instance
+(defmethod initialize-saved/sent-instance
     ((instance standard-space-instance) slots slot-values missing-slot-names)
   (declare (ignore slots slot-values missing-slot-names))
   (setf (standard-space-instance.space-name instance)

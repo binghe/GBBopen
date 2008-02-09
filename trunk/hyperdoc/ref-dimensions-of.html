@@ -20,7 +20,7 @@
 <i> =&gt; </i> <var>dimension-specifications-list</var></td><td valign="baseline" align="right">[<i>Generic&nbsp;Function</i>]
 </td></tr></table></p>
 <p><span class="fndoclabel">Purpose</span> <br />Return the <a href="ref-glossary.html#gl:dimension">dimension</a> specifications of a
-<a href="ref-glossary.html#id157">space&nbsp;instance</a> or one or more <a href="ref-glossary.html#gl:unit-class">unit&nbsp;classes</a>.
+<a href="ref-glossary.html#id158">space&nbsp;instance</a> or one or more <a href="ref-glossary.html#gl:unit-class">unit&nbsp;classes</a>.
 </p>
 <p><span class="fndoclabel">Method signatures</span><table class="tight" width="100%">
 <tr valign="top">
@@ -64,7 +64,7 @@
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-core</code>
 </p>
 <p><span class="fndoclabel">Arguments</span><table class="tight">
-<tr valign="top"><td valign="baseline"><i>space-instance-or-unit-classes-specifier</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id157">space&nbsp;instance</a>, 
+<tr valign="top"><td valign="baseline"><i>space-instance-or-unit-classes-specifier</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id158">space&nbsp;instance</a>, 
 an <a href="ref-glossary.html#id61">extended&nbsp;unit-classes&nbsp;specification</a>
 or a list of <a href="ref-glossary.html#id62">extended&nbsp;unit-classes&nbsp;specifications</a>
 </td></tr></table>
@@ -76,21 +76,21 @@ or a list of <a href="ref-glossary.html#id62">extended&nbsp;unit-classes&nbsp;sp
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-make-space-instance.html"><b>make-space-instance</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-dimensions-of.html"><b>dimensions-of</b></a>
 </p>
-<p><span class="fndoclabel">Examples</span> <br /><a name="id1">Return</a> the <a href="ref-glossary.html#gl:dimensions">dimensions</a> of the <code>(bb hyps)</code> <a href="ref-glossary.html#id157">space&nbsp;instance</a>:
+<p><span class="fndoclabel">Examples</span> <br /><a name="id1">Return</a> the <a href="ref-glossary.html#gl:dimensions">dimensions</a> of the <code>(bb hyps)</code> <a href="ref-glossary.html#id158">space&nbsp;instance</a>:
 </p>
 <pre>
 &gt; (dimensions-of (<a href="ref-find-space-instance-by-path.html">find-space-instance-by-path</a> '(bb hyps))
 ((x :ordered) (y :ordered) (belief :ordered) (classification :enumerated))
 </pre>
 <p>Return the <a href="ref-glossary.html#gl:dimensions">dimensions</a> defined for instances of
-<a href="ref-glossary.html#id175">unit&nbsp;class</a> <code>hyp</code>: 
+<a href="ref-glossary.html#id177">unit&nbsp;class</a> <code>hyp</code>: 
 </p>
 <pre>
 &gt; (dimensions-of 'hyp)
 ((x :ordered) (y :ordered) (belief :ordered) (classification :enumerated))
 </pre>
 <p><span class="fndoclabel">Note</span> <br />The returned list of <a href="ref-glossary.html#gl:dimension">dimension</a> specifications for a
-<a href="ref-glossary.html#id157">space&nbsp;instance</a> or for a <a href="ref-glossary.html#id175">unit&nbsp;class</a> should not be destructively
+<a href="ref-glossary.html#id158">space&nbsp;instance</a> or for a <a href="ref-glossary.html#id177">unit&nbsp;class</a> should not be destructively
 altered.
 </p>
 <hr /><address><a target="_top" class="address"
