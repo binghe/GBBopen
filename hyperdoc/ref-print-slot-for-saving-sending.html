@@ -12,7 +12,7 @@
 </head>
 <body>
 <table width="100%" cellpadding="0" cellspacing="2"><tr>
-<td bgcolor="#99ccff"><a href="ref-print-object-for-saving-sending.html"><img border="0" alt="print-object-for-saving/sending" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="ref-bb-repository-entities.html"><img border="0" alt="Blackboard Repository" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-remove-instance-from-space-instance.html"><img border="0" alt="remove-instance-from-space-instance" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">print-slot-for-saving/sending</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table>
+<td bgcolor="#99ccff"><a href="ref-print-object-for-saving-sending.html"><img border="0" alt="print-object-for-saving/sending" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="ref-saving-sending-entities.html"><img border="0" alt="Saving and Sending" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-save-blackboard-repository.html"><img border="0" alt="save-blackboard-repository" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">print-slot-for-saving/sending</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table>
 
 <p><table class="tight" width="100%">
 <tr valign="top"><td valign="baseline" align="left"%>
@@ -49,23 +49,28 @@
 </p>
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-tools</code>
 </p>
-<p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-tools</code> (instance-class methods are added by
+<p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-tools</code> (the <a href="ref-glossary.html#gl:unit-instance">unit-instance</a> method is added by
 <code>:gbbopen-core</code>)
 </p>
 <p><span class="fndoclabel">Arguments</span><table class="tight">
-<tr valign="top"><td valign="baseline"><i>instance</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id177">unit&nbsp;instance</a> (or <a href="ref-glossary.html#id157">space&nbsp;instance</a>)
+<tr valign="top"><td valign="baseline"><i>instance</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id179">unit&nbsp;instance</a> (or <a href="ref-glossary.html#id158">space&nbsp;instance</a>)
 </td></tr><tr valign="top"><td valign="baseline"><i>slot-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A non-<code>nil</code>, non-keyword symbol
 </td></tr><tr valign="top"><td valign="baseline"><i>stream</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A stream
 </td></tr></table>
 </p>
+<p><span class="fndoclabel">Errors</span> <br />A call to <b>print-slot-for-saving/sending</b> was made outside
+the dynamic scope of a <b><a href="ref-with-saving-sending-block.html">with-saving/sending-block</a></b>.
+</p>
 <p><span class="fndoclabel">See also</span>
-<br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-load-blackboard-repository.html"><b>load-blackboard-repository</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-omitted-slots-for-saving-sending.html"><b>omitted-slots-for-saving/sending</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-print-object-for-saving-sending.html"><b>print-object-for-saving/sending</b></a>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-print-slot-for-saving-sending.html"><b>print-slot-for-saving/sending</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-save-blackboard-repository.html"><b>save-blackboard-repository</b></a>
 </p>
-<p><span class="fndoclabel">Example</span> <br /><a name="id1">Write</a> the binary value of slot <code>song</code> in <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a> of
-<code>bird</code> as a Base64 portable string:
+<a name="ex:song-save"></a>
+<p><span class="fndoclabel">Example</span> <br /><a name="id2">Write</a> the binary value of slot <code>song</code> in <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a> of
+<code>bird</code> as a Base64 portable string (see the companion <a href="ref-initialize-saved-sent-instance.html#ex:song-read">decoding
+example</a>):
 </p>
 <pre>
   (defmethod print-slot-for-saving/sending ((bird bird) (slot-name (eql 'song)) stream)
@@ -74,4 +79,4 @@
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
 <table width="100%" cellpadding="0" cellspacing="2"><tr>
-<td bgcolor="#99ccff"><a href="ref-print-object-for-saving-sending.html"><img border="0" alt="print-object-for-saving/sending" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="ref-bb-repository-entities.html"><img border="0" alt="Blackboard Repository" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-remove-instance-from-space-instance.html"><img border="0" alt="remove-instance-from-space-instance" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">print-slot-for-saving/sending</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table></body></html>
+<td bgcolor="#99ccff"><a href="ref-print-object-for-saving-sending.html"><img border="0" alt="print-object-for-saving/sending" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="ref-saving-sending-entities.html"><img border="0" alt="Saving and Sending" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-save-blackboard-repository.html"><img border="0" alt="save-blackboard-repository" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">print-slot-for-saving/sending</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table></body></html>

@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/current/source/tools/print-object-for.lisp *-*
+;;;; *-* File: /home/gbbopen/source/tools/print-object-for.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Feb  6 03:30:15 2008 *-*
+;;;; *-* Last-Edit: Thu Feb  7 03:50:51 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -107,6 +107,13 @@
          (write-saving/sending-block-info stream)
                ,@body))))
 
+;;; ---------------------------------------------------------------------------
+
+(defun outside-saving/sending-block-error (function-name)
+  (error "Call to ~s is not within a ~s form"
+         function-name
+         'with-saving/sending-block))
+
 ;;; ===========================================================================
 ;;;  Slots-for-saving/sending methods
 
@@ -118,12 +125,7 @@
          (class-name (class-name class)))
     ;; Check that we are in a with-saving/sending-block:
     (unless (boundp '*recorded-class-descriptions-ht*)
-      (error "Call to ~s on ~s is not within a ~s form"
-             (if *print-object-for-sending*
-                 'print-object-for-sending
-                 'print-object-for-saving)
-             instance
-             'with-saving/sending-block))
+      (outside-saving/sending-block-error 'slots-for-saving/sending))
     (multiple-value-bind (slots-for-saving/sending present-p)
         (gethash class-name *recorded-class-descriptions-ht*)
       ;; Determine the slots that should be saved/sent and save/send the class
@@ -253,6 +255,9 @@
 ;;;  Class Descriptions
 
 (defmethod print-object-for-saving/sending ((class standard-class) stream)
+  ;; Check that we are in a with-saving/sending-block:
+  (unless (boundp '*recorded-class-descriptions-ht*)
+    (outside-saving/sending-block-error 'print-object-for-saving/sending))
   (let ((class-name (class-name class)))
     (multiple-value-bind (slots-for-saving/sending present-p)
         (gethash class-name *recorded-class-descriptions-ht*)

@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
-%% *-* File: /home/gbbopen/current/doc-source/glossary.tex *-*
-%% *-* Last-Edit: Wed Jan 30 10:21:00 2008; Edited-By: cork *-*
+%% *-* File: /home/gbbopen/doc-source/glossary.tex *-*
+%% *-* Last-Edit: Sat Feb  9 04:51:48 2008; Edited-By: cork *-*
 %% *-* Machine: whirlwind.corkills.org *-*
 
 \begin{glossary-list}
@@ -83,7 +83,7 @@ A condition variable provides an atomic means for a \glref{thread} to release
 a \glref{lock} (or \glref{recursive~lock}) that it holds and go to sleep until
 it is awakened by another thread.  Once awakened, the lock that it was holding
 is reacquired atomically before the awakened thread is allowed to do anything
-else.  A Portable Threads condition variable object includes the lock that is
+else.  A Portable Threads condition-variable object includes the lock that is
 associated with the condition variable, and the condition-variable object can
 be used directly as a lock.
 
@@ -819,6 +819,11 @@ A component of an object that can store a value.
 
 %% ------------------------------------------------------------------------
 
+\glent[space]
+Pertaining to a \glref{space~class} or \glref{space~instance}.
+
+%% ------------------------------------------------------------------------
+
 \glent[space~class]
 \gllabel{space~classes}%
 \index{class!space}%
@@ -904,6 +909,11 @@ time zone must be a multiple of
 %
 \W1/3600.  
 \T$\frac{1}{3600}$.
+
+%% ------------------------------------------------------------------------
+
+\glent[unit]
+Pertaining to a \glref{unit~class} or \glref{unit~instance}.
 
 %% ------------------------------------------------------------------------
 

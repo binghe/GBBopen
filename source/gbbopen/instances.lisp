@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jan 30 13:04:58 2008 *-*
+;;;; *-* Last-Edit: Fri Feb  8 04:44:29 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -45,7 +45,8 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (import '(gbbopen-tools::*%%skip-gbbopen-shared-initialize-method-processing%%*
             gbbopen-tools::clear-flag
-            gbbopen-tools::set-flag)))
+            gbbopen-tools::set-flag
+            gbbopen-tools::outside-reading-saved/sent-objects-block-error)))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(check-for-deleted-instance  ; not documented (yet...)
@@ -139,8 +140,8 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defmethod initialize-gbbopen-save/send-instance
-    ((instance standard-unit-instance) slots slot-values missing-slot-names)
+(defmethod initialize-saved/sent-instance ((instance standard-unit-instance)
+                                           slots slot-values missing-slot-names)
   (declare (ignore slots slot-values missing-slot-names))
   ;; Allow setf setting of link-slot pointers:
   (let ((*%%allow-setf-on-link%%* 't))
@@ -156,8 +157,12 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defmethod allocate-gbbopen-save/send-instance
+(defmethod allocate-saved/sent-instance 
     ((class-prototype standard-unit-instance) slots slot-values)
+  ;; Check that we are in a with-saving/sending-block:
+  (unless (boundp '*forward-referenced-saved/sent-instances*)
+    (outside-reading-saved/sent-objects-block-error 
+     'allocate-saved/sent-instance))
   (let* ((position (position-if
                     #'(lambda (slot)
                         (eq 'instance-name (slot-definition-name slot)))
@@ -182,7 +187,7 @@
 ;;; ---------------------------------------------------------------------------
 ;;;  Unit-instance-reference reader
 
-(defmethod gbbopen-save/send-object-reader ((char (eql #\R)) stream)
+(defmethod saved/sent-object-reader ((char (eql #\R)) stream)
   (destructuring-bind (class-name instance-name)
       (read stream t nil 't)
     (or 
@@ -194,7 +199,12 @@
      (let* ((class (find-class class-name 't))
             (instance (allocate-instance class)))
        (setf (instance-name-of instance) instance-name)
-       ;; Do any subclass initializations:
+       ;; Check that we are in a with-saving/sending-block:
+       (unless (boundp '*forward-referenced-saved/sent-instances*)
+         (outside-reading-saved/sent-objects-block-error
+          'saved/sent-object-reader))
+       ;; Record the instance as forward referenced and in the instance-name
+       ;; hash table of the class:
        (setf (gethash instance *forward-referenced-saved/sent-instances*)
              't)
        (with-lock-held (*master-instance-lock*)

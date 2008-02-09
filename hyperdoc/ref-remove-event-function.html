@@ -36,7 +36,7 @@
     style="font-family: serif; font-style: normal">or</span> slot-name <td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A slot-name or list of slot-names
 (default is <code>t</code>)
 </td></tr><tr valign="top"><td valign="baseline"><i>paths <span 
-    style="font-family: serif; font-style: normal">or</span> path <td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id159">space-instance&nbsp;path</a> regular expression
+    style="font-family: serif; font-style: normal">or</span> path <td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id160">space-instance&nbsp;path</a> regular expression
 (default is <code>(*)</code>)
 </td></tr><tr valign="top"><td valign="baseline"><i>permanent</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id73">generalized&nbsp;boolean</a> (default is <code>nil</code>)
 </td></tr></table>
@@ -91,14 +91,14 @@
 </p>
 <p><span class="fndoclabel">Examples</span> <br /><a name="id3">Remove</a> the event <a href="ref-glossary.html#gl:function">function</a> <a href="ref-evfn-printv.html">evfn-printv</a> from the set of functions
 to be invoked when <code>create-instance-event</code> is signalled on a
-<code>hyp</code> <a href="ref-glossary.html#id177">unit&nbsp;instance</a>:
+<code>hyp</code> <a href="ref-glossary.html#id179">unit&nbsp;instance</a>:
 </p>
 <pre>
   (remove-event-function 'evfn-printv 'create-instance-event 'hyp)
 </pre>
 <p>Remove the event <a href="ref-glossary.html#gl:function">function</a> <a href="ref-evfn-printv.html">evfn-printv</a> from the set of functions
 to be invoked when <code>create-instance-event</code> is signalled on a
-<code>hyp</code> <a href="ref-glossary.html#id177">unit&nbsp;instance</a> or its subclasses:
+<code>hyp</code> <a href="ref-glossary.html#id179">unit&nbsp;instance</a> or its subclasses:
 </p>
 <pre>
   (remove-event-function 'evfn-printv 'create-instance-event '(hyp :plus-subclasses))

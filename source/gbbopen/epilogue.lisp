@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/gbbopen/epilogue.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jan 30 11:11:12 2008 *-*
+;;;; *-* Last-Edit: Sat Feb  9 04:29:50 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -30,7 +30,9 @@
 (in-package :gbbopen)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (export '(load-blackboard-repository
+  (export '(confirm-if-blackboard-repository-not-empty-p ; not yet documented
+            empty-blackboard-repository-p ; not yet documented
+            load-blackboard-repository
             save-blackboard-repository
             reset-gbbopen)))
 
@@ -135,20 +137,27 @@
 
 ;;; ---------------------------------------------------------------------------
 
+(defun confirm-if-blackboard-repository-not-empty-p ()
+  ;; Returns true unless the blackboard-repository is not empty and the user
+  ;; doesn't confirm continuing:
+  (if (empty-blackboard-repository-p)
+      't
+      (yes-or-no-p "The blackboard repository is not empty.~%Continue anyway ~
+                    (the current contents will be deleted)? ")))
+
+;;; ---------------------------------------------------------------------------
+
 (defun load-blackboard-repository (pathname &rest reset-gbbopen-args
                                                   &key (confirm-if-not-empty 't))
   (declare (dynamic-extent reset-gbbopen-args))
-  (when (and confirm-if-not-empty
-             (not (empty-blackboard-repository-p)))
-    (unless (yes-or-no-p "The blackboard repository is not empty.~
-                          ~%Continue anyway ~
-                          (the current contents will be deleted)? ")
+  (when confirm-if-not-empty
+    (unless (confirm-if-blackboard-repository-not-empty-p)
       (return-from load-blackboard-repository nil)))
   (with-open-file (file  (make-bb-pathname pathname)
                    :direction ':input)
     (apply 'reset-gbbopen 
            (remove-property reset-gbbopen-args ':confirm-if-not-empty))
-    (with-reading-object-block (file)
+    (with-reading-saved/sent-objects-block (file)
       (let ((root-children (read file))
             (*%%allow-setf-on-link%%* 't))
         (setf (slot-value *root-space-instance* 'children) root-children))
