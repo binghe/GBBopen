@@ -210,7 +210,7 @@
   (let ((metaclass (class-of instance)))
     (check-type metaclass standard-space-class))
   (check-type instance-name cons)
-  (check-type allowed-unit-classes (or list (eql t)))
+  (check-type allowed-unit-classes (or symbol list))
   (multiple-value-bind (parent-path space-name)
       (splitting-butlast instance-name)
     ;; space-name is the car of the space-name butlast tail
