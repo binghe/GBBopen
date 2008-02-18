@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/source/gbbopen/unit-metaclasses.lisp *-*
+;;;; *-* File: /home/gbbopen/current/source/gbbopen/unit-metaclasses.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Feb 18 05:51:55 2008 *-*
+;;;; *-* Last-Edit: Mon Feb 18 06:35:33 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -84,7 +84,7 @@
    (evfn-blks :initform nil)
    ;; Controls if instances are deleted by reset-gbbopen (unless overridden by
    ;; an :all-classes reset):
-   (retain :initform nil :type boolean)
+   (retain :initform nil)
    ;; For class retrievals:
    (%%storage%% :initform nil))
   (:export-class-name t)
