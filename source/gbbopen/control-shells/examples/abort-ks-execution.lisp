@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/gbbopen/control-shells/examples/abort-ks-execution.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Jan 21 03:40:17 2008 *-*
+;;;; *-* Last-Edit: Wed Feb 13 03:33:18 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -49,9 +49,7 @@
 (defun initializations (event-name &key &allow-other-keys)
   (declare (ignore event-name))
   ;; Clean up any previous run:
-  (reset-gbbopen :retain-classes '((ks :plus-subclasses))
-                 :retain-event-functions 't
-                 :retain-event-printing 't)
+  (delete-blackboard-repository)
   (let ((sleep-time 2))
     ;; Got threads? Spawn a thread to abort ths KS execution:
     #-threads-not-available

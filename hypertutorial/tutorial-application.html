@@ -5,7 +5,7 @@
 <!-- XML file produced from file: tutorial.tex
      using Hyperlatex v 2.9-in-waiting-rk (c) Otfried Cheong -->
 <head>
-<title>GBBopen 0.9.7 Tutorial -- Creating an Application</title>
+<title>GBBopen 0.9.8 Tutorial -- Creating an Application</title>
 </p>
 <link rel="SHORTCUT ICON" href="favicon.ico"><link rel=stylesheet
         href="gbbopen.css" type="text/css" />
@@ -69,12 +69,13 @@ system
       :trigger-events ((start-control-shell-event))
       :execution-function 'startup-ks-function)
 
+  ;;; ========================================================================
+  ;;;   Initializations (run at Agenda Shell startup)
+
   (defun initializations (event-name &amp;key &amp;allow-other-keys)
     (declare (ignore event-name))
     ;; Clean up any previous run:
-    (reset-gbbopen :retain-classes '((ks :plus-subclasses))
-                   :retain-event-functions 't
-                   :retain-event-printing 't)
+    (delete-blackboard-repository)
     ;; Make a new known-world space instance:
     (make-space-instance 
      '(known-world)

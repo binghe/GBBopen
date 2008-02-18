@@ -5,7 +5,7 @@
 <!-- XML file produced from file: tutorial.tex
      using Hyperlatex v 2.9-in-waiting-rk (c) Otfried Cheong -->
 <head>
-<title>GBBopen 0.9.7 Tutorial -- Add Another KS</title>
+<title>GBBopen 0.9.8 Tutorial -- Add Another KS</title>
 </p>
 <link rel="SHORTCUT ICON" href="favicon.ico"><link rel=stylesheet
         href="gbbopen.css" type="text/css" />
@@ -66,12 +66,13 @@ triggering unit instance
       :trigger-events ((start-control-shell-event))
       :execution-function 'startup-ks-function)
 
+  ;;; ========================================================================
+  ;;;   Initializations (run at Agenda Shell startup)
+
   (defun initializations (event-name &amp;key &amp;allow-other-keys)
     (declare (ignore event-name))
     ;; Clean up any previous run:
-    (reset-gbbopen :retain-classes '((ks :plus-subclasses))
-                   :retain-event-functions 't
-                   :retain-event-printing 't)
+    (delete-blackboard-repository)
     ;; Make a new known-world space instance:
     (make-space-instance 
      '(known-world)
@@ -125,9 +126,9 @@ Let's check our work.  Compile and load the
 again:
 </p>
 <pre><font color="#8c8c8c">  &gt; <font color="#000000">(start-control-shell)</font>
-  ;; Control shell started
+  ;; Control shell 1 started
   ;; No executable KSAs remain, exiting control shell
-  ;; Control shell exited: 3 cycles completed
+  ;; Control shell 1 exited: 3 cycles completed
   ;; Run time: 0 seconds
   ;; Elapsed time: 0 seconds
   :quiescence
@@ -140,15 +141,14 @@ again:
     Instance name: 1
     Space instances: ((known-world))
     Dimensional values:
-      time 0
-      x 40
-      y 60
+      time:  0
+      x:  40
+      y:  60
     Non-link slots:
-      time 0
-      x 40
-      y 60
-    Link slots:
-      [None]
+      time:  0
+      x:  40
+      y : 60
+    Link slots: None
   &gt;
 </pre></font>
 <h2><a name="id5">Step 3: Define another KS</a></h2><p>
@@ -276,11 +276,11 @@ definition:
 Compile and load the <code>random-walk-ks</code> forms, and then start the Agenda Shell:
 </p>
 <pre><font color="#8c8c8c">  &gt; <font color="#000000">(start-control-shell)</font>
-  ;; Control shell started
+  ;; Control shell 1 started
 
   Walked off the world: (23, 55).
   ;; No executable KSAs remain, exiting control shell
-  ;; Control shell exited: 64 cycles completed
+  ;; Control shell 1 exited: 64 cycles completed
   ;; Run time: 0.01 seconds
   ;; Elapsed time: 0 seconds
   :quiescence
@@ -299,9 +299,14 @@ created:
 
   Unit Class                    Instances
   ----------                    ---------
-  ks                                    1
+  control-shell                         1 *
+  ks                                    1 +
+  ksa-queue                             2 +
   location                             61
+  ordered-ksa-queue                     1 +
   standard-space-instance               1
+                                ---------
+                                       67 instances
 </pre></font>
 <p>The 61 <code>location</code> instances makes sense.  Previously, it required 3
 control-shell cycles to create the initial <code>location</code> unit instance (one
@@ -436,11 +441,11 @@ where we create the allotted 75 <code>location</code> unit instances without wal
 off the <code>known-world</code>:
 </p>
 <pre><font color="#8c8c8c">  &gt; <font color="#000000">(start-control-shell)</font>
-  ;; Control shell started
+  ;; Control shell 1 started
 
   Walked too long.
   ;; No executable KSAs remain, exiting control shell
-  ;; Control shell exited: 78 cycles completed
+  ;; Control shell 1 exited: 78 cycles completed
   ;; Run time: 0.04 seconds
   ;; Elapsed time: 0 seconds
   :quiescence

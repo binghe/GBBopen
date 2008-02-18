@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/tools/declarations.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Jan 26 06:11:16 2008 *-*
+;;;; *-* Last-Edit: Wed Feb 13 03:42:01 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -85,20 +85,20 @@
     :---unbound---)
 
 ;;; ---------------------------------------------------------------------------
+;;;  Keys-only hash tables
 
-(defmacro make-keys-only-hash-table-if-supported (&key test
-                                                       size
-                                                       rehash-size
-                                                       rehash-threshold)
+(defun make-keys-only-hash-table-if-supported (&rest args)
   ;; Return a keys only hash table, if supported by the CL implementation;
   ;; otherwise return a regular hash table:
-  `(make-hash-table 
-    ;; Use Allegro's sans-value hash tables:
-    #+allegro :values #+allegro nil
-    ,@(when test `(:test ,test))
-    ,@(when size `(:size ,size))
-    ,@(when rehash-size `(:rehash-size ,rehash-size))
-    ,@(when rehash-threshold `(:rehash-threshold ,rehash-threshold))))
+  (declare (dynamic-extent args))
+  (apply #'make-hash-table 
+         ;; Use Allegro's sans-value hash tables:
+         #+allegro :values #+allegro nil
+         args))
+
+;;; Add the keys-only-hash-table feature, if supported:
+#+allegro
+(pushnew ':has-keys-only-hash-tables *features*)
 
 ;;; ===========================================================================
 ;;;				  End of File

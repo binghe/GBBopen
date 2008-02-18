@@ -5,7 +5,7 @@
 <!-- XML file produced from file: reference.tex
      using Hyperlatex v 2.9-in-waiting-rk (c) Otfried Cheong -->
 <head>
-<title>GBBopen 0.9.7 Reference -- describe-blackboard-repository</title>
+<title>GBBopen 0.9.8 Reference -- describe-blackboard-repository</title>
 </p>
 <link rel="SHORTCUT ICON" href="favicon.ico"><link rel=stylesheet
         href="gbbopen.css" type="text/css" />
@@ -18,16 +18,25 @@
 <tr valign="top"><td valign="baseline" align="left"%>
 <nobr><b><font color="#000000">describe-blackboard-repository</font></b></nobr></td><td valign="baseline"> &nbsp; </td><td valign="baseline" align="left" width="99%"><i>&lt;</i>no arguments<i>&gt;</i></td><td valign="baseline" align="right">[<i>Function</i>]
 </td></tr></table></p>
-<p><span class="fndoclabel">Purpose</span> <br /><a name="id1">Print</a> information about the <a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a> in the blackboard
-repository and their contents.  The total count of the
-<a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a> of each <a href="ref-glossary.html#id177">unit&nbsp;class</a> (including ones that
-do not reside on any <a href="ref-glossary.html#id158">space&nbsp;instance</a>) is also printed.
+<p><span class="fndoclabel">Purpose</span> <br /><a name="id1">Print</a> information about the <a href="ref-glossary.html#gl:unit">unit</a> and <a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a> in the
+blackboard repository.
 </p>
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen</code>
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-core</code>
 </p>
-<p><span class="fndoclabel">Description</span> <br /><a name="id2">The</a> description is printed to the <b>*standard-output*</b> stream.
+<p><span class="fndoclabel">Description</span> <br /><a name="id2">Information</a> is printed about the <a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a> in the blackboard
+repository and their contents.  The total count of the
+<a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a> of each <a href="ref-glossary.html#id177">unit&nbsp;class</a> (including ones that
+do not reside on any <a href="ref-glossary.html#id158">space&nbsp;instance</a>) is also printed, as well
+as a character that indicates if the <a href="ref-glossary.html#id177">unit&nbsp;class</a> has been
+defined to be <i>retained</i> by
+<b><a href="ref-delete-blackboard-repository.html">delete-blackboard-repository</a></b>.  A plus sign
+indicates that the retention status will be propagated to subclasses
+of the unit class, while an asterisk (<code>*</code>) indicates a retain,
+But not propagated, status for the <a href="ref-glossary.html#id177">unit&nbsp;class</a>.
+</p>
+<p>The description is printed to the <b>*standard-output*</b> stream.
 </p>
 <p><span class="fndoclabel">Example</span> <br /></p>
 <pre>
@@ -42,11 +51,16 @@ bb
 
 Unit Class                    Instances
 ----------                    ---------
+control-shell                         1 *
 hyp                                1695
-ks                                   13 
-ksa                                 891
+ks                                   13 + 
+ksa                                 891 +
+ksa-queue                             2 +
+ordered-ksa-queue                     1 +
 sensor-report                     13744
 standard-space-instance               3
+                              ---------
+                                  16350 instances
 </pre>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />

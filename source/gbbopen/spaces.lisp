@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/gbbopen/spaces.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Feb  8 04:40:45 2008 *-*
+;;;; *-* Last-Edit: Thu Feb 14 12:59:37 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -715,7 +715,8 @@
                     ~%-------------- ~:*~vt--------" 2nd-column-indent)
         (do-instances top-level-space-instances 0)))
     ;; Now summarize the unit instances:
-    (let ((header-displayed? nil))
+    (let ((header-displayed? nil)
+          (total-instances 0))
       (map-extended-unit-classes-sorted
        #'(lambda (unit-class plus-subclasses)
            (declare (ignore plus-subclasses))
@@ -723,21 +724,29 @@
            (unless (eq (class-name unit-class) 'root-space-instance)
              (let ((count (class-instances-count unit-class)))
                (when (plusp& count)
+                 (incf total-instances count)
                  (unless header-displayed?
                    (setf header-displayed? 't)
                    (unless top-level-space-instances
                      (format t "~&There are no space instances in the ~
                                   blackboard repository.~%"))
                    (format t "~2&Unit Class~vtInstances~
-                              ~%----------~:*~vt---------~%"
+                               ~%----------~:*~vt---------~%"
                            2nd-column-indent))
-                 (format t "~s~vt~9d~%" 
+                 (format t "~s~vt~9d ~c~%" 
                          (class-name unit-class)
                          2nd-column-indent
-                         count)))))
+                         count
+                         (case (standard-unit-class.retain unit-class)
+                           ((nil) #\space)
+                           (:propagate #\+)
+                           (otherwise #\*)))))))
        't)
-      (unless header-displayed?
-        (format t "~&There are no space or unit instances in the ~
+      (if header-displayed?
+          (format t "~&~vt---------~%~:*~vt~9d instance~:p"
+                  2nd-column-indent
+                  total-instances)                
+          (format t "~&There are no space or unit instances in the ~
                      blackboard repository.~%"))))
   (fresh-line)
   (values))

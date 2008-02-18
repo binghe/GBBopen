@@ -5,7 +5,7 @@
 <!-- XML file produced from file: reference.tex
      using Hyperlatex v 2.9-in-waiting-rk (c) Otfried Cheong -->
 <head>
-<title>GBBopen 0.9.7 Reference -- reset-gbbopen</title>
+<title>GBBopen 0.9.8 Reference -- reset-gbbopen</title>
 </p>
 <link rel="SHORTCUT ICON" href="favicon.ico"><link rel=stylesheet
         href="gbbopen.css" type="text/css" />
@@ -16,12 +16,11 @@
 
 <p><table class="tight" width="100%">
 <tr valign="top"><td valign="baseline" align="left"%>
-<nobr><b><font color="#000000">reset-gbbopen</font></b></nobr></td><td valign="baseline"> &nbsp; </td><td valign="baseline" align="left" width="99%"><code>&#38;key</code> <var>disable-events retain-classes 
-retain-event-functions
-retain-event-printing</var></td><td valign="baseline" align="right">[<i>Function</i>]
+<nobr><b><font color="#000000">reset-gbbopen</font></b></nobr></td><td valign="baseline"> &nbsp; </td><td valign="baseline" align="left" width="99%"><code>&#38;key</code> <var>disable-events</var></td><td valign="baseline" align="right">[<i>Function</i>]
 </td></tr></table></p>
-<p><span class="fndoclabel">Purpose</span> <br />Delete all <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a>, <a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a>,
-and more.
+<p><span class="fndoclabel">Purpose</span> <br />Unconditionally delete all <a href="ref-glossary.html#gl:unit">unit</a> and
+<a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a>, remove all <a href="ref-glossary.html#gl:event-function">event&nbsp;functions</a>, and disable event
+printing.
 </p>
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen</code>
 </p>
@@ -29,10 +28,6 @@ and more.
 </p>
 <p><span class="fndoclabel">Arguments</span><table class="tight">
 <tr valign="top"><td valign="baseline"><i>disable-events</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id73">generalized&nbsp;boolean</a> (default is <code>t</code>)
-</td></tr><tr valign="top"><td valign="baseline"><i>retain-classes</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An <a href="ref-glossary.html#id61">extended&nbsp;unit-classes&nbsp;specification</a>
-(see below)
-</td></tr><tr valign="top"><td valign="baseline"><i>retain-event-functions</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id73">generalized&nbsp;boolean</a> (default is <code>nil</code>)
-</td></tr><tr valign="top"><td valign="baseline"><i>retain-event-printing</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id73">generalized&nbsp;boolean</a> (default is <code>nil</code>)
 </td></tr></table>
 </p>
 <p><span class="fndoclabel">Events</span> <br /><a name="id1">If</a> <var>disable-events</var> is <code>nil</code>, the following events may be signaled as
@@ -44,27 +39,6 @@ and more.
 <li><code>instance-deleted-event</code>
 </ul>
 </p>
-<p><span class="fndoclabel">Detailed syntax</span></p>
-<table class="tight"><table><tbody><tr>
-<td valign="baseline" colspan="1" align="left">
-<var>unit-classes-specifier</var>&nbsp;::= </td><td valign="baseline" colspan="1" align="left"> <code>t</code> | 
-<var>single-unit-class-specifier</var> 
-| <code>(</code><var>single-unit-class-specifier</var><sup>+</sup><code>)</code></td></tr>
-<tr>
-<td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
-<table class="tight"><table><tbody><tr>
-<td valign="baseline" colspan="1" align="left">
-<var>single-unit-class-specifier</var>&nbsp;::= 
-</td><td valign="baseline" colspan="1" align="left"> <var>atomic-unit-class</var> |
-<code>(</code><var>atomic-unit-class subclassing-specifier</var><code>)</code></td></tr>
-<tr>
-<td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
-<table class="tight"><table><tbody><tr>
-<td valign="baseline" colspan="1" align="left">
-<var>atomic-unit-class</var>&nbsp;::= </td><td valign="baseline" colspan="1" align="left"> <var>unit-class</var> | 
-<var>unit-class-name</var> </td></tr>
-<tr>
-<td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
 <p><span class="fndoclabel">Description</span> <br />Calling <b>reset-gbbopen</b> deletes all
 <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a> and <a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a>, disables all event
 printing, removes all event functions, and resets all
@@ -72,33 +46,24 @@ printing, removes all event functions, and resets all
 does not undefine any class definitions, functions, methods, etc.
 </p>
 <p><span class="fndoclabel">See also</span>
-<br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-delete-instance.html"><b>delete-instance</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-delete-all-space-instances.html"><b>delete-all-space-instances</b></a>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-delete-instance.html"><b>delete-instance</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-delete-space-instance.html"><b>delete-space-instance</b></a>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-define-ks-class.html"><b>define-ks-class</b></a>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-define-ksa-class.html"><b>define-ksa-class</b></a>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-define-space-class.html"><b>define-space-class</b></a>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-define-unit-class.html"><b>define-unit-class</b></a>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-reset-gbbopen.html"><b>reset-gbbopen</b></a>
 </p>
-<p><span class="fndoclabel">Examples</span> <br />Delete all <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a> and <a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a>, with
-event-signaling disabled:
+<p><span class="fndoclabel">Example</span> <br />Prepare for a new application by resetting GBBopen:
 </p>
 <pre>
   (reset-gbbopen)
 </pre>
-<p>Delete all <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a> and <a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a>, except for
-<a href="ref-glossary.html#gl:KSs">KS</a> <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a>, with event-signaling disabled:
-</p>
-<pre>
-  (reset-gbbopen :retain-classes '((ks :plus-subclasses)))
-</pre>
-<p>As above, but also retain all event functions and event printing:
-</p>
-<pre>
-  (reset-gbbopen :retain-classes '((ks :plus-subclasses))
-		 :retain-event-functions 't
-		 :retain-event-printing 't)
-</pre>
-<p><span class="fndoclabel">Note</span> <br /><a name="id2">This</a> is the only GBBopen <a href="ref-glossary.html#gl:function">function</a> that disables <a href="ref-glossary.html#gl:event">event</a>
-signaling by default.  This conflicts with the normal use of
-<b><a href="ref-with-events-disabled.html">with-events-disabled</a></b> and
-<b><a href="ref-with-events-enabled.html">with-events-enabled</a></b> macros for controlling
+<p><span class="fndoclabel">Note</span> <br /><a name="id2">This</a> function and <b><a href="ref-delete-blackboard-repository.html">delete-blackboard-repository</a></b> are the only
+GBBopen functions that disable <a href="ref-glossary.html#gl:event">event</a> signaling by default.  This
+conflicts with the normal use of <b><a href="ref-with-events-disabled.html">with-events-disabled</a></b>
+and <b><a href="ref-with-events-enabled.html">with-events-enabled</a></b> macros for controlling
 <a href="ref-glossary.html#gl:event">event</a> signaling, but having <a href="ref-glossary.html#gl:events">events</a> disabled is the desired
 behavior in almost every reset situation.
 </p>

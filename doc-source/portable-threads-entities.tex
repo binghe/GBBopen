@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /home/gbbopen/doc-source/portable-threads-entities.tex *-*
-%% *-* Last-Edit: Thu Dec 27 13:30:56 2007; Edited-By: cork *-*
+%% *-* Last-Edit: Sat Feb 16 11:54:06 2008; Edited-By: cork *-*
 %% *-* Machine: whirlwind.corkills.org *-*
 
 \index{module!:portable-threads@\code{:portable-threads}}%
@@ -935,7 +935,8 @@ signaled by another \glref{thread} or until 5 seconds have elapsed:
 #<thread Listener 1>
 \end{example}
 
-\fnnote On Common Lisp implementations without threads, \nil{} is returned.
+\fnnote On Common Lisp implementations without threads,
+\code{:threads-not-available} is returned.
 
 \end{functiondoc}
 

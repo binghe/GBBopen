@@ -1,8 +1,8 @@
-;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/current/source/tools/queue.lisp *-*
+;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
+;;;; *-* File: /home/gbbopen/source/gbbopen/queue.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Jul 28 13:35:14 2007 *-*
-;;;; *-* Machine: ruby.corkills.org *-*
+;;;; *-* Last-Edit: Sat Feb 16 11:28:03 2008 *-*
+;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2004-2007, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2004-2008, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; These queue mixins are intended for fairly heavy-weight, synchronized
@@ -32,7 +32,7 @@
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-(in-package :gbbopen-tools)
+(in-package :gbbopen)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (use-package :portable-threads))
@@ -40,8 +40,7 @@
 ;;; ---------------------------------------------------------------------------
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (export '(delete-instance             ; already exported by tools/preamble
-            do-queue
+  (export '(do-queue
             first-queue-element
             insert-on-queue             ; already exported by tools/preamble
             last-queue-element
@@ -60,6 +59,7 @@
 
 ;;; ---------------------------------------------------------------------------
 
+(defgeneric first-element-of (queue))
 (defgeneric first-queue-element (queue))
 (defgeneric insert-on-queue (element queue))
 (defgeneric last-queue-element (queue))
@@ -74,63 +74,81 @@
 ;;; ===========================================================================
 ;;;   Doubly-Linked Queue Class Definitions
 
-(define-class queue-pointers (standard-gbbopen-instance)
-  ;;; Queue-pointers is a common abstract class for queue and
-  ;;; queue-element classes
+(define-unit-class queue-pointers ()
+  ;;; Queue-pointers is a common abstract class for queue and queue-element
+  ;;; classes
   ((next
+    :link (queue-pointers previous :singular t)
+    :singular t
     :accessor queue.next
     :initform nil)
    (previous
+    :link (queue-pointers next :singular t)
+    :singular t
     :accessor queue.previous
     :initform nil)
    (header
     :reader on-queue-p
     :writer (setf queue.header)
     :initform nil))
-  (:generate-accessors nil))
+  (:generate-accessors nil)
+  (:abstract t))
 
 ;;; ---------------------------------------------------------------------------
 
-(with-generate-accessors-format (:prefix)
-  (define-class queue (queue-pointers)
-    ((lock
-      :initform (make-lock :name "Queue Lock")
-      :reader queue.lock)
-     ;; Note: queue length is not protected against errors that might 
-     ;;       occur during insertion/deletion.  Therefore, it is possible
-     ;;       that the length value becomes inaccurate.  This value is
-     ;;       not used directly in any queue code, so this is only an
-     ;;       annoyance rather than a fatal problem...
-     (length :initform 0
-             :type fixnum))
-    (:generate-accessors t :exclude lock)
-    (:generate-initargs t :exclude lock)))
+(define-unit-class queue (queue-pointers)
+  ((lock
+    ;; This lock is recursive to allow things like:
+    ;;   (map-queue #'delete-instance ..), etc.
+    :initform (make-recursive-lock :name "Queue Lock")
+    :reader queue.lock)
+   ;; Note: queue length is not protected against errors that might 
+   ;;       occur during insertion/deletion.  Therefore, it is possible
+   ;;       that the length value becomes inaccurate.  This value is
+   ;;       not used directly in any queue code, so this is only an
+   ;;       annoyance rather than a fatal problem...
+   (length :initform 0
+           :type fixnum))
+  (:generate-accessors-format :prefix)
+  (:generate-accessors t :exclude lock)
+  (:generate-initargs t :exclude lock))
+
+;;; ---------------------------------------------------------------------------
 
 (defmethod initialize-instance :after ((queue queue)
                                        &key)
   (setf (queue.header queue) queue)
-  (setf (queue.next queue) queue)
-  (setf (queue.previous queue) queue))
+  (linkf (queue.next queue) queue))
 
 ;;; ---------------------------------------------------------------------------
 
-(define-class ordered-queue (queue)
+(defmethod omitted-slots-for-saving/sending ((queue queue))
+  (list* 'lock 'length (call-next-method)))
+
+;;; ===========================================================================
+;;;  Ordered-queue
+
+(define-unit-class ordered-queue (queue)
   ((key
-    :initform #'identity
+    :initform #+sbcl 'identity
+              #-sbcl #'identity
     :reader ordered-queue.key)
    (test
-    :initform #'>
+    :initform #+sbcl '>
+              #-sbcl #'>
     :reader ordered-queue.test))
   (:generate-accessors nil))
 
-;;; ---------------------------------------------------------------------------
+;;; ===========================================================================
+;;;  Queue-element
 
-(define-class queue-element (queue-pointers)
+(define-unit-class queue-element (queue-pointers)
   ())
 
 ;;; Ensure that any deleted queue-elements are removed from their lists:
-(defmethod delete-instance :after ((element queue-element))
-  (remove-from-queue element))
+(defmethod delete-instance ((element queue-element))
+  (remove-from-queue element)
+  (call-next-method))
 
 ;;; ---------------------------------------------------------------------------
 ;;; Syntactic sugar for making a queue...
@@ -147,7 +165,7 @@
 ;;; --------------------------------------------------------------------------
 
 (defmethod insert-on-queue ((element queue-element) (queue queue))
-  ;;; Inserts `element' at the end of 'queue'
+  ;;; Inserts `element' at the end of an unordered queue.
   (let ((current-queue (on-queue-p element)))
     (when current-queue
       (cerror "Remove it from ~:*~s and then perform the insertion."
@@ -157,22 +175,24 @@
       (remove-from-queue element)))
   (with-lock-held ((queue.lock queue))
     ;; Do the insertion:
-    (let ((previous-element (queue.previous queue)))
-      (setf (queue.previous element) previous-element)
-      (setf (queue.next previous-element) element)
-      (setf (queue.next element) queue)
-      (setf (queue.previous queue) element))
+    (let ((previous (queue.previous queue)))
+      ;; *************************** UNTIL LINK-SETF IS FIXED:
+      (progn
+        (unlinkf-all (queue.previous queue))
+        (unlinkf-all (queue.next previous)))
+      (link-setf (queue.previous element) previous)
+      (link-setf (queue.next element) queue))
     (setf (queue.header element) queue)
     (incf& (queue.length queue)))
-  ;; Return the element
+  ;; Return the element:
   element)
 
 ;;; --------------------------------------------------------------------------
 
 (defmethod insert-on-queue ((element queue-element) 
                             (queue ordered-queue))
-  ;;; Inserts `element' at the proper place in 'queue' based on the test
-  ;;; associated with the queue (the default test is #'>, which yields a
+  ;;; Inserts `element' at the proper place in an ordered queue based on the
+  ;;; test associated with the queue (the default test is #'>, which yields a
   ;;; numerically decreasing queue).
   (let ((current-queue (on-queue-p element)))
     (when current-queue
@@ -193,34 +213,35 @@
               ;; test is true
               (funcall test element-value (funcall key ptr)))
         (setf ptr (queue.next ptr)))
-      
       ;; Do the insertion:
-      (let ((previous-element (queue.previous ptr)))
-        (setf (queue.previous element) previous-element)
-        (setf (queue.next previous-element) element)
-        (setf (queue.next element) ptr)
-        (setf (queue.previous ptr) element))
+      (let ((previous (queue.previous ptr)))
+        ;; *************************** UNTIL LINK-SETF IS FIXED:
+        (progn
+          (unlinkf-all (queue.previous ptr))
+          (unlinkf-all (queue.next previous)))
+        (link-setf (queue.previous element) previous)
+        (link-setf (queue.next element) ptr))
       (setf (queue.header element) queue)
       (incf& (queue.length queue))))
-  ;; Return the element
+  ;; Return the element:
   element)
 
 ;;; ---------------------------------------------------------------------------
 
 (defmethod remove-from-queue ((element queue-element))
-  ;;; Removes `element' from the queue on which it resides 
+  ;;; Removes `element' from the queue on which it resides:
   (let ((queue (on-queue-p element)))
-    (when queue
+    (when queue                  ;; do nothing, if `element' is not on a queue
       (with-lock-held ((queue.lock queue))
         (let ((next (queue.next element))
               (previous (queue.previous element)))
-          (setf (queue.next previous) next)
-          (setf (queue.previous next) previous))
+          ;; *************************** UNTIL LINK-SETF IS FIXED:
+          (progn
+            (unlinkf-all (queue.previous element))
+            (unlinkf-all (queue.next element)))
+          (link-setf (queue.next previous) next))
         (decf& (queue.length queue))
-        (setf (queue.header element) nil)
-        #+full-safety
-        (setf (queue.next element) nil
-              (queue.previous element) nil)))
+        (setf (queue.header element) nil)))
     ;; Return the element
     element))
 
@@ -255,6 +276,7 @@
 ;;; ---------------------------------------------------------------------------
 
 (defmethod nth-queue-element ((n #-(or clisp ecl) fixnum 
+                                 ;; CLISP & ECL don't have a fixnum class:
                                  #+(or clisp ecl) integer)
                               (queue queue))
 ;;;  Returns the nth element in `queue' or nil if the queue is shorter than
@@ -262,7 +284,7 @@
 ;;;  from the end of the queue (one origin)
   (with-lock-held ((queue.lock queue))
     (let ((ptr queue))
-      (if (minusp n)
+      (if (minusp& n)
           ;; From the end
           (dotimes (i (-& n))
             (declare (fixnum i))
@@ -351,7 +373,7 @@
 ;;; --------------------------------------------------------------------------
 
 (defun standard-show-queue-element (index element)
-  (format t "~&~5d.~5T~s" index element))
+  (format t "~&~5d.~5t~s~%" index element))
 
 ;;; ===========================================================================
 ;;;                               End of File

@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/gbbopen/control-shells/test/agenda-shell-test.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Jan 21 03:40:45 2008 *-*
+;;;; *-* Last-Edit: Mon Feb 11 10:00:17 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -225,9 +225,7 @@
 (defun initializations (event-name &key &allow-other-keys)
   (declare (ignore event-name))
   ;; Clean up any previous run:
-  (reset-gbbopen :retain-classes '((ks :plus-subclasses))
-                 :retain-event-printing 't
-		 :retain-event-functions 't)
+  (delete-blackboard-repository)
   ;; Enable all KSs:
   (map-instances-of-class #'(lambda (ks) (setf (ks-enabled-p ks) 't)) 'ks)
   ;; Make new space instances:

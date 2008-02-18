@@ -1,7 +1,7 @@
 ;;;; -*- Mode:COMMON-LISP; Package:GBBOPEN-USER; Base:10 -*-
 ;;;; *-* File: /home/gbbopen/source/gbbopen/examples/tutorial.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jan 30 03:37:51 2008 *-*
+;;;; *-* Last-Edit: Mon Feb 18 04:40:21 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -28,7 +28,8 @@
 ;;;
 ;;;  10-08-05 Adapted from the `Getting Started with GBB' example.  (Corkill)
 ;;;  09-22-06 Converted to GBBopen 0.9.5.  (Corkill)
-;;;  01-30-08 Converted to GBBopen 0.9.8.  (Corkill)
+;;;  01-30-08 Converted to GBBopen 0.9.7.  (Corkill)
+;;;  02-12-08 Converted to GBBopen 0.9.8.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -207,9 +208,7 @@
 (defun initializations (event-name &key &allow-other-keys)
   (declare (ignore event-name))
   ;; Clean up any previous run:
-  (reset-gbbopen :retain-classes '((ks :plus-subclasses))
-                 :retain-event-functions 't
-                 :retain-event-printing 't)
+  (delete-blackboard-repository)
   ;; Make a new known-world space instance:
   (make-space-instance 
    '(known-world)
@@ -229,6 +228,13 @@
   (declare (dynamic-extent initargs))
   ;; Take-a-walk is equivalent to calling start-control-shell:
   (apply #'start-control-shell initargs))
+
+;;; ===========================================================================
+;;;   After load-blackboard-repository actions
+
+(defun after-loading-actions ()
+  ;; Assign the path unit-instance to the *the-random-walk* global variable:
+  (setf *the-random-walk* (find-instance-by-name 1 'path)))
 
 ;;; ===========================================================================
 ;;;   Event printing control:

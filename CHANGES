@@ -1,11 +1,9 @@
-Important changes coming in GBBopen 0.9.8:
+Important changes in GBBopen 0.9.8:
 
-  * New DELETE-BLACKBOARD-REPOSITORY function replaces typical uses of
-    RESET-GBBOPEN
-    - RESET-GBBOPEN unconditionally deletes/resets all instances, event 
-      functions, and event printing 
-    - DELETE-BLACKBOARD-REPOSITORY includes new :ALL-CLASSES keyword 
-      (overrides :RETAIN class option);
+  * INCOMPATIBLE CHANGE: New DELETE-BLACKBOARD-REPOSITORY function
+    replaces typical uses of RESET-GBBOPEN:
+    - RESET-GBBOPEN now unconditionally deletes/resets all instances,
+      event functions, and event printing
 
   * New :RETAIN class option in DEFINE-UNIT-CLASS (and DEFINE-SPACE-CLASS,
     DEFINE-KS-CLASS, and DEFINE-KSA-CLASS), controls default
@@ -13,6 +11,8 @@ Important changes coming in GBBopen 0.9.8:
       nil  = don't retain 
       true = retain (a value of :PROPAGATE indicates propagation of
                      :PROPAGATE retention value (as default) to subclasses)
+    - The :RETAIN class option is overridden if DELETE-BLACKBOARD-REPOSITORY
+      is invoked with a true :ALL-CLASSES keyword value
 
   * Queue objects (headers, elements) are now unit instances, new Agenda
     Shell unit classes KSA-QUEUE and ORDERED-KSA-QUEUE

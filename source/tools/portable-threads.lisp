@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/tools/portable-threads.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Dec 27 12:33:31 2007 *-*
+;;;; *-* Last-Edit: Sun Feb 17 04:25:20 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -88,6 +88,14 @@
 #+(and openmcl (not clozure))
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (pushnew :openmcl-legacy *features*))
+
+;;; ---------------------------------------------------------------------------
+;;; Add a feature to identify new lock structure for Lispworks:
+
+#+lispworks
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (when (fboundp 'mp::lock-i-name)
+    (pushnew :new-locks *features*)))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Warn if sb-thread support is missing on SBC/Linux
@@ -501,10 +509,18 @@
                         (ccl:lock-name ccl-lock)
                         "[No ccl-lock]")))))))
 
+#+(and lispworks new-locks)
+(defstruct (nonrecursive-lock
+            (:include mp:lock)
+            (:copier nil)
+	    (:constructor %make-nonrecursive-lock)))
+
 #+lispworks
 (defstruct (recursive-lock
             (:include mp:lock)
-            (:copier nil)))
+            (:copier nil)
+	    #+new-locks
+	    (:constructor %make-recursive-lock)))
 
 ;; OpenMCL only has a recursive lock object:
 #+openmcl-legacy
@@ -582,7 +598,7 @@
 ;;; ---------------------------------------------------------------------------
 ;;;   Make-lock
 
-#-(or lispworks                         ; simply imported
+#-(or lispworks				; simply imported
       threads-not-available
       cormanlisp)                       ; CLL 3.0 can't handle this one
 (defun make-lock (&key name)
@@ -605,7 +621,7 @@
 ;;;   Make-recursive-lock
 
 #-(or allegro 
-      lispworks
+      (and lispworks (not new-locks))
       (and sbcl sb-thread)
       threads-not-available)
 (defun make-recursive-lock (&key name)
@@ -617,6 +633,8 @@
         digitool-mcl
         openmcl-legacy)
   (%make-recursive-lock :ccl-lock (ccl:make-lock name))
+  #+(and lispworks new-locks)
+  (%make-recursive-lock :i-name name)
   #+scl
   (mp:make-lock name :type :recursive))
   
@@ -873,7 +891,7 @@
          (return value)))))
 
 ;;; ===========================================================================
-;;;   Current-Thread (returns nil on CLs without threads)
+;;;   Current-Thread (returns :threads-not-available on CLs without threads)
 
 (defun current-thread ()
   #+allegro
@@ -895,7 +913,7 @@
   #+scl
   (mp:current-process)
   #+threads-not-available
-  nil)
+  ':threads-not-available)
 
 #-full-safety
 (define-compiler-macro current-thread ()
@@ -918,7 +936,7 @@
   #+scl
   '(mp:current-process)
   #+threads-not-available
-  nil)
+  ':threads-not-available)
  
 ;;; ===========================================================================
 ;;;   All-Threads (returns nil on CLs without threads)

@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/tools/preamble.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Jan 26 10:20:25 2008 *-*
+;;;; *-* Last-Edit: Sun Feb 17 17:43:31 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -131,7 +131,8 @@
 
 (defmacro printv (&rest forms)
   (with-gensyms (values)
-    `(let* ((,values (list ,@(mapcar #'(lambda (form)
+    `(let* ((*print-readably* nil)
+            (,values (list ,@(mapcar #'(lambda (form)
 					 `(multiple-value-list ,form))
 				     forms))))
        (declare (dynamic-extent ,values))

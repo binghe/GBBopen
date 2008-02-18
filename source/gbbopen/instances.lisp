@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Feb  8 04:44:29 2008 *-*
+;;;; *-* Last-Edit: Fri Feb 15 01:51:05 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -524,11 +524,9 @@
 
 (defmethod hidden-nonlink-slot-names ((instance standard-unit-instance))
   ;; Returns a list of nonlink-slot-names that should not be shown
-  ;; by describe-instance.
+  ;; by describe-instance or describe-unit-class:
   #+ecl (declare (ignore instance))
-  '(%%marks%% %%space-instances%% 
-    ;; not really hidden, but we treat this slot specially in describes:
-    instance-name))
+  '(%%marks%% %%space-instances%%))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -546,7 +544,7 @@
          (t (push eslotd non-link-slots))))
       (flet ((do-slot (eslotd)
                (let ((boundp (slot-boundp-using-class class instance eslotd)))
-                 (format t "~4t~s ~:[~*<unbound>~;~s~]~%" 
+                 (format t "~&~4t~s:  ~:[~*<unbound>~;~s~]~%" 
                          (slot-definition-name eslotd)
                          boundp
                          (when boundp
@@ -565,27 +563,31 @@
                 (let* ((dimension-name (first dimension-spec))
                        (dimension-value
                         (instance-dimension-value instance dimension-name))) 
-                  (format t "~&~4t~s ~:[~s~;<unbound>~]~%"
+                  (format t "~&~4t~s:  ~:[~s~;<unbound>~]~%"
                           dimension-name
                           (eq dimension-value unbound-value-indicator)
                           dimension-value)))
               (format t " None~%")))
-        (format t "~2tNon-link slots:~%")
+        (format t "~2tNon-link slots:")
         (let ((slot-printed nil))
           (dolist (eslotd (sort non-link-slots #'string< 
                                 :key #'slot-definition-name))
-            (unless (memq (slot-definition-name eslotd)
-                          (hidden-nonlink-slot-names instance))
-              (setf slot-printed t)
-              (do-slot eslotd)))
+            (let ((slot-name (slot-definition-name eslotd)))
+              (unless (or 
+                       ;; not really hidden, but we treat this slot
+                       ;; specially in describe:
+                       (eq slot-name 'instance-name)
+                       (memq slot-name (hidden-nonlink-slot-names instance)))
+                (setf slot-printed t)
+                (do-slot eslotd))))
           (unless slot-printed 
-            (format t "~4t[None]~%")))
-        (format t "~2tLink slots:~%")
+            (format t " None~%")))
+        (format t "~2tLink slots:")
         (if link-slots
             (dolist (eslotd (sort link-slots #'string<
                                   :key #'slot-definition-name))
               (do-slot eslotd))
-            (format t "~4t[None]~%")))))
+            (format t " None~%")))))
   (values))
 
 ;;; ---------------------------------------------------------------------------

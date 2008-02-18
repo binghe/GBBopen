@@ -5,7 +5,7 @@
 <!-- XML file produced from file: tutorial.tex
      using Hyperlatex v 2.9-in-waiting-rk (c) Otfried Cheong -->
 <head>
-<title>GBBopen 0.9.7 Tutorial -- Using a Control Shell</title>
+<title>GBBopen 0.9.8 Tutorial -- Using a Control Shell</title>
 </p>
 <link rel="SHORTCUT ICON" href="favicon.ico"><link rel=stylesheet
         href="gbbopen.css" type="text/css" />
@@ -89,9 +89,9 @@ the <code>:gbbopen-user</code> package.
 Now, start the Agenda Shell:
 </p>
 <pre><font color="#8c8c8c">  &gt; <font color="#000000">(start-control-shell)</font>
-  ;; Control shell started
+  ;; Control shell 1 started
   ;; No executable KSAs remain, exiting control shell
-  ;; Control shell exited: 2 cycles completed
+  ;; Control shell 1 exited: 2 cycles completed
   ;; Run time: 0 seconds
   ;; Elapsed time: 0 seconds
   :quiescence
@@ -179,9 +179,9 @@ instance:
 Start the Agenda Shell again:
 </p>
 <pre><font color="#8c8c8c">  &gt; <font color="#000000">(start-control-shell)</font>
-  ;; Control shell started
+  ;; Control shell 1 started
   ;; No executable KSAs remain, exiting control shell
-  ;; Control shell exited: 3 cycles completed
+  ;; Control shell 1 exited: 3 cycles completed
   ;; Run time: 0 seconds
   ;; Elapsed time: 0 seconds
   :quiescence
@@ -197,28 +197,55 @@ Start the Agenda Shell again:
 
   Unit Class                    Instances
   ----------                    ---------
-  ks                                    1
+  control-shell                         1 *
+  ks                                    1 +
+  ksa-queue                             2 +
   location                              1
+  ordered-ksa-queue                     1 +
   standard-space-instance               1
+                                ---------
+                                        7 instances
   &gt;
 </pre></font>
 <p>The initial <code>location</code> unit instance is there!
 </p>
-<h2><a name="id7">Step 6: Display control shell activities</a></h2><p>
-Let's rerun the control shell, but this time we will ask GBBopen to display
-more of what the control shell is doing.  First, reset GBBopen:
+<p>Note that some other unit instances have been created by the control shell.
+There is one <code>ks</code> unit instance, our <code>startup-ks</code> KS, as well as two
+<code>ksa-queue</code> and one <code>ordered-ksa-queue</code> unit instances.  The
+<code>ordered-ksa-queue</code> is the rating-based queue of pending KSAs (no pending
+KSAs remain on it) and the two <code>ksa-queue</code> queues are the Agenda Shell's
+executed KSAs and obviated KSAs queues (both empty).  We will discuss these
+queues in a later exercise.
 </p>
-<pre><font color="#8c8c8c">  &gt; <font color="#000000">(reset-gbbopen :retain-classes '(ks standard-space-instance))</font>
+<p>The <code>ks</code>, <code>ksa-queue</code>, <code>ordered-ksa-queue</code> unit-instance counts
+are followed by plus signs (<code>+</code>).  This indicates that these unit classes
+have been defined to be <i>retained</i>, meaning that their instances are
+not deleted by our call to <code>delete-blackboard-repository</code>.  The plus sign
+indicates that the retention attribute will be propagated to all subclasses of
+those unit classes; retained, but not propagated, would be shown by an
+asterisk (<code>*</code>).
+</p>
+<p>Let's verify this behavior by calling <code>delete-blackboard-repository</code> and
+then describe the blackboard repository:
+</p>
+<pre><font color="#8c8c8c">  &gt; <font color="#000000">(delete-blackboard-repository)</font>
   t
+  &gt; <font color="#000000">:dsbb</font>
+  There are no space instances in the blackboard repository.
+
+  Unit Class                    Instances
+  ----------                    ---------
+  control-shell                         1 *
+  ks                                    1 +
+  ksa-queue                             2 +
+  ordered-ksa-queue                     1 +
   &gt;
 </pre></font>
-<p>Note that we told GBBopen to retain the unit instances of classes <code>ks</code>
-(our KS definition) and <code>standard-space-instance</code> (our
-<code>known-world</code>).  Without the <code>:retain-classes</code> argument, GBBopen
-would delete all unit instances, and we would have to redefine
-<code>startup-ks</code> and make another <code>known-world</code> space instance.
-</p>
-<p>Now, enable display of all control-shell and instance-creation events:
+<h2><a name="id7">Step 6: Display control shell activities</a></h2><p>
+With all but the retained unit instances deleted from the blackboard
+repository, let's rerun the control shell.  However, this time we will ask
+GBBopen to display more of what the control shell is doing. First, enable
+display of all control-shell and instance-creation events:
 </p>
 <pre><font color="#8c8c8c">  &gt; <font color="#000000">(enable-event-printing '(control-shell-event :plus-subevents))</font>
   nil
@@ -232,7 +259,7 @@ detail in a later exercise.
 <p><a name="id8">Start</a> the Agenda Shell once again:
 </p>
 <pre><font color="#8c8c8c">  &gt; <font color="#000000">(start-control-shell)</font>
-  ;; Control shell started
+  ;; Control shell 1 started
   =&gt; Start-control-shell-event
   =&gt; Control-shell-cycle-event
        :cycle 1
@@ -252,7 +279,7 @@ detail in a later exercise.
   =&gt; Control-shell-cycle-event
        :cycle 3
   ;; No executable KSAs remain, exiting control shell
-  ;; Control shell exited: 3 cycles completed
+  ;; Control shell 1 exited: 3 cycles completed
   ;; Run time: 0 seconds
   ;; Elapsed time: 0 seconds
   :quiescence
@@ -260,19 +287,22 @@ detail in a later exercise.
 </pre></font>
 <h2><a name="id9">Step 7: Control-shell stepping</a></h2><p>
 Let's rerun the control shell once again, but this time we will enable
-control-shell stepping. Again, reset GBBopen:
+control-shell stepping. Again, delete the blackboard repository:
 </p>
-<pre><font color="#8c8c8c">  &gt; <font color="#000000">(reset-gbbopen :retain-classes '(ks standard-space-instance))</font>
+<pre><font color="#8c8c8c">  &gt; <font color="#000000">(delete-blackboard-repository)</font>
   t
   &gt;
 </pre></font>
-<p>Note that the event printing that we enabled in the last step is reset
-(disabled) by default by <b>reset-gbbopen</b>.
+<p>and disable the event printing that we enabled in the last step:
 </p>
+<pre><font color="#8c8c8c">  &gt; <font color="#000000">(disable-event-printing)</font>
+  nil
+  &gt;
+</pre></font>
 <p><a name="id10">Now</a> start the Agenda Shell, this time with stepping enabled:
 </p>
 <pre><font color="#8c8c8c">  &gt; <font color="#000000">(start-control-shell :stepping 't)</font>
-  ;; Control shell started
+  ;; Control shell 1 started
   &gt;&gt; CS Step (cycle 1):
      About to process event #&lt;start-control-shell-event&gt;... <font color="#00ff00">[<i>? entered</i>]</font>
   Stepping commands (follow with &lt;Return&gt;):
@@ -300,7 +330,7 @@ control-shell stepping. Again, reset GBBopen:
   &gt;&gt; CS Step (cycle 3):
      About to signal quiescence... <font color="#00ff00">[<i>&lt;Return&gt; entered</i>]</font>
   ;; No executable KSAs remain, exiting control shell
-  ;; Control shell exited: 3 cycles completed
+  ;; Control shell 1 exited: 3 cycles completed
   ;; Run time: 0 seconds
   ;; Elapsed time: 1 minute, 6 seconds
   :quiescence

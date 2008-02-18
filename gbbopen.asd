@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/current/gbbopen.asd *-*
+;;;; *-* File: /home/gbbopen/gbbopen.asd *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Jan 29 19:13:20 2008 *-*
+;;;; *-* Last-Edit: Mon Feb 11 19:43:10 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -30,7 +30,7 @@
 
 (require :asdf)
 
-(defparameter *gbbopen-version* "0.9.7")
+(defparameter *gbbopen-version* "0.9.8")
 
 ;;; ---------------------------------------------------------------------------
 
