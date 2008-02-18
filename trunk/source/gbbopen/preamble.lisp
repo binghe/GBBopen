@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/current/source/gbbopen/preamble.lisp *-*
+;;;; *-* File: /home/gbbopen/source/gbbopen/preamble.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Jan 29 19:13:44 2008 *-*
+;;;; *-* Last-Edit: Mon Feb 11 19:43:20 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -44,10 +44,10 @@
 
 (defun gbbopen-implementation-version ()
   ;; NOTE: Change the value in ../../gbbopen.asd when this value is changed:
-  "0.9.7")
+  "0.9.8")
 
 ;;; Added to *features* in epilogue.lisp:
-(defparameter *gbbopen-version-keyword* :gbbopen-0.9.7)
+(defparameter *gbbopen-version-keyword* :gbbopen-0.9.8)
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Control warnings when:

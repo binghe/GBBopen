@@ -5,14 +5,14 @@
 <!-- XML file produced from file: reference.tex
      using Hyperlatex v 2.9-in-waiting-rk (c) Otfried Cheong -->
 <head>
-<title>GBBopen 0.9.7 Reference -- define-space-class</title>
+<title>GBBopen 0.9.8 Reference -- define-space-class</title>
 </p>
 <link rel="SHORTCUT ICON" href="favicon.ico"><link rel=stylesheet
         href="gbbopen.css" type="text/css" />
 </head>
 <body>
 <table width="100%" cellpadding="0" cellspacing="2"><tr>
-<td bgcolor="#99ccff"><a href="ref-clear-space-instances.html"><img border="0" alt="clear-space-instances" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="ref-bb-repository-entities.html"><img border="0" alt="Blackboard Repository" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-delete-all-space-instances.html"><img border="0" alt="delete-all-space-instances" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">define-space-class</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table>
+<td bgcolor="#99ccff"><a href="ref-clear-space-instances.html"><img border="0" alt="clear-space-instances" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="ref-bb-repository-entities.html"><img border="0" alt="Blackboard Repository" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-delete-blackboard-repository.html"><img border="0" alt="delete-blackboard-repository" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">define-space-class</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table>
 
 <p><table class="tight" width="100%">
 <tr valign="top"><td valign="baseline" align="left"%>
@@ -149,7 +149,9 @@ one <a href="ref-glossary.html#id156">space&nbsp;class</a> name.  This error is 
 <td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code>(:instance-name-comparision-test</code>
 <var>instance-name-comparision-test</var><code>)</code> |</td></tr>
 <tr>
-<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code>(:metaclass</code> <var>class-name</var><code>)</code> </td></tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code>(:metaclass</code> <var>class-name</var><code>)</code>  |</td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code>(:retain</code> &#123;<var>boolean</var> | <code>:propagate</code>&#125;<code>)</code> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
 <table class="tight"><table><tbody><tr>
@@ -232,29 +234,33 @@ dimension-value types.
 class. If the superclass list is empty, then the direct superclass defaults to the
 single class <b><a href="ref-standard-space-instance.html">standard-space-instance</a></b>.
 </p>
-<p><a name="id3">The</a> <code>:metaclass</code> <var>class-name</var>, if specified, must be a subclass of
-<b><a href="ref-standard-space-class.html">standard-space-class</a></b>.  The default metaclass value is
-<b><a href="ref-standard-space-class.html">standard-space-class</a></b>.
+<p><a name="id3">The</a> <code>:metaclass</code> <var>class-name</var> class option, if specified, must be a
+subclass of <b><a href="ref-standard-space-class.html">standard-space-class</a></b>.  The default
+metaclass value is <b><a href="ref-standard-space-class.html">standard-space-class</a></b>.
 </p>
 <p><p><b>Inheritance of class options</b></p>
+<a name="id4">The</a> set of <var>dimensional-values</var> for a <a href="ref-glossary.html#id177">unit&nbsp;class</a> is the union
+of the sets specified in the <var>dimensional-values</var> options of the class
+and its superclasses.  When more than one dimensional index is supplied for
+a given dimension, the one supplied by the most specific class is used.
 </p>
-<p><a name="id4">The</a> set of <var>dimensional-values</var> for a <a href="ref-glossary.html#id177">unit&nbsp;class</a> is the
-union of the sets specified in the <var>dimensional-values</var> options
-of the class and its superclasses.  When more than one dimensional
-index is supplied for a given dimension, the one supplied by the most
-specific class is used.
-</p>
-<p>The effective <var>initial-space-instances</var> value for a
-<a href="ref-glossary.html#id177">unit&nbsp;class</a> is the value specified in the definition of the
-most specific <a href="ref-glossary.html#id177">unit&nbsp;class</a>. If no definitions specify an
+<p>The effective <var>initial-space-instances</var> value for a <a href="ref-glossary.html#id177">unit&nbsp;class</a>
+is the value specified in the definition of the most specific
+<a href="ref-glossary.html#id177">unit&nbsp;class</a>. If no definitions specify an
 <var>initial-space-instances</var> value, <code>nil</code> is used.
 </p>
-<p>The <var>instance-name-comparison-test</var> value is not inherited.  If
-no value is specified in the <a href="ref-glossary.html#gl:unit-class">unit-class</a> definition, the
-default initializtion value associated with the metaclass is used.
+<p>The <var>instance-name-comparison-test</var> value is not inherited.  If no
+value is specified in the <a href="ref-glossary.html#gl:unit-class">unit-class</a> definition, the default
+initializtion value associated with the metaclass is used.
+</p>
+<p>If a <var>retain</var> value is not specified, a value of <code>:propagate</code> is
+used as the default if any parent <a href="ref-glossary.html#gl:unit-class">unit&nbsp;classes</a> have a
+<code>:propagate</code> retention value; otherwise <code>nil</code> is used as the default
+value.
 </p>
 <p><span class="fndoclabel">See also</span>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-define-unit-class.html"><b>define-unit-class</b></a>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-delete-blackboard-repository.html"><b>delete-blackboard-repository</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-make-space-instance.html"><b>make-space-instance</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-standard-space-class.html"><b>standard-space-class</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-standard-space-instance.html"><b>standard-space-instance</b></a>
@@ -278,4 +284,4 @@ one <a href="ref-glossary.html#gl:instance">instance</a> of the <code>space-inst
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
 <table width="100%" cellpadding="0" cellspacing="2"><tr>
-<td bgcolor="#99ccff"><a href="ref-clear-space-instances.html"><img border="0" alt="clear-space-instances" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="ref-bb-repository-entities.html"><img border="0" alt="Blackboard Repository" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-delete-all-space-instances.html"><img border="0" alt="delete-all-space-instances" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">define-space-class</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table></body></html>
+<td bgcolor="#99ccff"><a href="ref-clear-space-instances.html"><img border="0" alt="clear-space-instances" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="ref-bb-repository-entities.html"><img border="0" alt="Blackboard Repository" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-delete-blackboard-repository.html"><img border="0" alt="delete-blackboard-repository" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">define-space-class</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table></body></html>

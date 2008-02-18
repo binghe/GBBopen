@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/gbbopen/epilogue.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Feb  9 05:27:36 2008 *-*
+;;;; *-* Last-Edit: Mon Feb 18 05:44:35 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -30,21 +30,30 @@
 (in-package :gbbopen)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
+  (import '(gbbopen-tools::*recorded-class-descriptions-ht*)))
+
+(eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(confirm-if-blackboard-repository-not-empty-p ; not yet documented
+            delete-blackboard-repository
             empty-blackboard-repository-p ; not yet documented
             load-blackboard-repository
             save-blackboard-repository
             reset-gbbopen)))
 
+;;; ---------------------------------------------------------------------------
+;;;  Save-blackboard-repository format version
+
+(defparameter *save-blackboard-repository-format-version* 2)
+
 ;;; ===========================================================================
 ;;;  Miscellaneous Entities
 
-(defun reset-gbbopen (&key (disable-events t)
-			   (retain-classes nil)
-			   (retain-event-printing nil)
-			   (retain-event-functions nil)
-			   ;; Not documented:
-			   (retain-space-instance-event-functions nil))
+(defun delete-blackboard-repository (&key (all-classes nil)
+                                          (disable-events t)
+                                          (retain-classes nil))
+  (when (and all-classes retain-classes)
+    (warn "~s is being overridden by ~s ~s."
+          ':all-classes ':retain-classes retain-classes))
   ;;; Deletes all unit and space instances; resets instance counters to 1.
   (let ((*%%events-enabled%%* (not disable-events)))
     (map-extended-unit-classes 
@@ -53,31 +62,28 @@
 	 (unless (or 
                   ;; Retain the root-space-instance
                   (eq (class-name unit-class) 'root-space-instance)
+                  ;; Explicitly retained:
                   (and retain-classes
-                       (unit-class-in-specifier-p unit-class retain-classes)))
+                       (unit-class-in-specifier-p
+                        unit-class retain-classes))
+                  ;; :all-classes specified or a retained unit class:
+                  (not (or all-classes
+                           (not (or (standard-unit-class.retain unit-class))))))
 	   ;; We must practice safe delete-instance:
 	   (let ((instances nil))
 	     (map-instances-given-class 
 	      #'(lambda (instance) (push instance instances)) unit-class)
 	     (mapc #'delete-instance instances)
 	     (reset-unit-class unit-class))))
-     't)
-    (unless retain-event-printing (disable-event-printing))
-    ;; Keep around the path-event-functions specifications for new
-    ;; space-instances if either :retain-event-functions (or the more
-    ;; specific :retain-space-instance-event-functions) is specified:
-    (unless (or retain-event-functions
-		retain-space-instance-event-functions)
-      (map-event-classes 
-       #'(lambda (event-class plus-subclasses)
-	   (declare (ignore plus-subclasses))
-	   (setf (space-instance-event-class.path-event-functions event-class)
-		 nil))
-       (find-class 'space-instance-event)))
-    ;; Remove all event functions (path-event-functions specifications
-    ;; for new space instances are removed above, if appropriate):
-    (unless retain-event-functions
-      (remove-all-event-functions))))
+     't)))
+  
+;;; ---------------------------------------------------------------------------
+
+(defun reset-gbbopen (&key (disable-events t))
+  (delete-blackboard-repository :all-classes 't
+                                :disable-events disable-events)
+  (disable-event-printing)
+  (remove-all-event-functions))
 
 ;;; ===========================================================================
 ;;;  Save & restore repository
@@ -93,7 +99,8 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun save-blackboard-repository (pathname
-                                   &key (package ':cl-user)
+                                   &key (after-loading-function nil)
+                                        (package ':cl-user)
                                         (read-default-float-format
                                          'single-float)
                                         (external-format ':default))
@@ -101,27 +108,45 @@
                    :direction ':output
                    :if-exists ':supersede
                    :external-format external-format)
-    (format file ";;;  GBBopen Blackboard Repository (saved ~a)~%"
+    (format file ";;; GBBopen Blackboard Repository (saved ~a)~%"
             (internet-text-date-and-time))
     (with-saving/sending-block (file :package package
                                      :read-default-float-format 
                                      read-default-float-format)
+      ;; Save repository-format version:
+      (format file "~&;;; Saved repository format version:~%~s~%"
+              *save-blackboard-repository-format-version*)
+      ;; Save after-loading-function:
+      (format file "~&;;; After-loading function:~%")
+      (print-object-for-saving/sending after-loading-function file)
+      ;; Save space instances:
       (let ((root-space-instance-children (children-of *root-space-instance*)))
-        (format file "~&;;;  Space instances:~%")
+        (format file "~&;;; Space instances:~%")
+        ;; Save top-level (root children) space-instance references:
         (let ((*save/send-references-only* 't))
           (print-object-for-saving/sending root-space-instance-children file))
+        ;; Now save the space-instances in the repository forest:
         (let ((*save/send-references-only* nil))
           (dolist (child root-space-instance-children)
             (traverse-space-instance-tree 
              #'(lambda (space-instance)
                  (print-object-for-saving/sending space-instance file))
              child))
-          (format file "~&;;;  Other unit instances:~%")
+          ;; Save non-space unit instances:
+          (format file "~&;;; Other unit instances:~%")
           (do-instances-of-class (instance t)
-            ;; Skip  space instances:
+            ;; Skip space instances (root-space-instance :plus-subclasses):
             (unless (typep instance 'root-space-instance)
-              (print-object-for-saving/sending instance file))))))
-    (format file "~&;;;  End of File~%")
+              (print-object-for-saving/sending instance file)))
+          ;; Save unit-class states:
+          (format file "~&;;; Unit-class states:~%")
+          (loop for class-name being the hash-keys
+              of *recorded-class-descriptions-ht* do
+                (let ((class (find-class class-name)))
+                  (when (typep class 'standard-unit-class)
+                    (print-unit-class-state-for-saving/sending
+                     class stream)))))))
+    (format file "~&;;; End of file~%")
     (pathname file)))
 
 ;;; ---------------------------------------------------------------------------
@@ -146,8 +171,8 @@
   ;; doesn't confirm continuing:
   (if (empty-blackboard-repository-p)
       't
-      (yes-or-no-p "The blackboard repository is not empty.~%Continue anyway ~
-                    (the current contents will be deleted)? ")))
+      (y-or-n-p "The blackboard repository is not empty.~%Continue anyway ~
+                 (the current contents will be deleted)? ")))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -155,6 +180,7 @@
                                    &rest reset-gbbopen-args
                                    &key (confirm-if-not-empty 't)
                                         (external-format ':default)
+                                        (ignore-after-loading-function nil)
                                         (readtable
                                          *reading-saved/sent-objects-readtable*)
                                         (read-eval nil))
@@ -165,19 +191,35 @@
   (with-open-file (file (make-bb-pathname pathname)
                    :direction ':input
                    :external-format external-format)
-    (apply 'reset-gbbopen 
+    (apply 'delete-blackboard-repository
+           :all-classes 't
            (remove-properties reset-gbbopen-args 
                               '(:confirm-if-not-empty :external-format
+                                :ignore-after-loading-function
                                 :readtable :read-eval)))
     (with-reading-saved/sent-objects-block (file :readtable readtable
                                                  :read-eval read-eval)
-      (let ((root-children (read file))
+      (let ((format-version (read file)))
+        (unless (eql format-version *save-blackboard-repository-format-version*)
+          (error "Incompatible ~s format version ~a (the current version is ~a)"
+                 'save-blackboard-repository
+                 format-version
+                 *save-blackboard-repository-format-version*)))
+      (let ((after-loading-function (read file))
+            ;; Read top-level (root children) space-instance references:
+            (root-children (read file))
             (*%%allow-setf-on-link%%* 't))
-        (setf (slot-value *root-space-instance* 'children) root-children))
-      ;; Now read everything else:
-      (let ((eof-marker '#:eof))
-        (until (eq eof-marker (read file nil eof-marker)))))
-    (pathname file)))
+        (setf (slot-value *root-space-instance* 'children) root-children)
+        ;; Now read everything else:
+        (let ((eof-marker '#:eof))
+          (until (eq eof-marker (read file nil eof-marker))))
+        ;; Return the pathname and values from executing the
+        ;; after-loading-function:
+        (values-list
+         (cons (pathname file)
+               (when (and after-loading-function
+                          (not ignore-after-loading-function))
+                 (multiple-value-list (funcall after-loading-function )))))))))
   
 ;;; ===========================================================================
 ;;;  GBBopen is fully loaded

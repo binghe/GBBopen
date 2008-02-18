@@ -5,7 +5,7 @@
 <!-- XML file produced from file: tutorial.tex
      using Hyperlatex v 2.9-in-waiting-rk (c) Otfried Cheong -->
 <head>
-<title>GBBopen 0.9.7 Tutorial -- Making Connections</title>
+<title>GBBopen 0.9.8 Tutorial -- Making Connections</title>
 </p>
 <link rel="SHORTCUT ICON" href="favicon.ico"><link rel=stylesheet
         href="gbbopen.css" type="text/css" />
@@ -64,12 +64,13 @@ This exercise shows you how to:
       :trigger-events ((start-control-shell-event))
       :execution-function 'startup-ks-function)
 
+  ;;; ========================================================================
+  ;;;   Initializations (run at Agenda Shell startup)
+
   (defun initializations (event-name &amp;key &amp;allow-other-keys)
     (declare (ignore event-name))
     ;; Clean up any previous run:
-    (reset-gbbopen :retain-classes '((ks :plus-subclasses))
-                   :retain-event-functions 't
-                   :retain-event-printing 't)
+    (delete-blackboard-repository)
     ;; Make a new known-world space instance:
     (make-space-instance 
      '(known-world)
@@ -335,11 +336,11 @@ to <code>make-instance</code>:
 <code>C-c C-x</code> in ELI) and then run the application:
 </p>
 <pre><font color="#8c8c8c">  &gt; <font color="#000000">(start-control-shell)</font>
-  ;; Control shell started
+  ;; Control shell 1 started
 
   Walked off the world: (55, 35).
   ;; No executable KSAs remain, exiting control shell
-  ;; Control shell exited: 66 cycles completed
+  ;; Control shell 1 exited: 66 cycles completed
   ;; Run time: 0.01 seconds
   ;; Elapsed time: 0 seconds
   :quiescence
@@ -352,16 +353,16 @@ First, the initial <code>location</code> unit instance:
     Instance name: 1
     Space instances: ((known-world))
     Dimensional values:
-      time 0
-      x 40
-      y 60
+      time:  0
+      x:  40
+      y:  60
     Non-link slots:
-      time 0
-      x 40
-      y 60
+      time:  0
+      x:  40
+      y:  60
     Link slots:
-      next-location #&lt;location 2 (-10 10)&gt;
-      previous-location nil
+      next-location:  #&lt;location 2 (-10 10)&gt;
+      previous-location:  nil
   &gt;
 </pre></font>
 <p>Note that the <code>next-location</code> link slot points to the next
@@ -373,16 +374,16 @@ unit instance:
     Instance name: 2
     Space instances: ((known-world))
     Dimensional values:
-      time 1
-      x -10
-      y 10
+      time:  1
+      x:  -10
+      y:  10
     Non-link slots:
-      time 1
-      x -10
-      y 10
+      time:  1
+      x:  -10
+      y:  10
     Link slots:
-      next-location #&lt;location 3 (-6 19)&gt;
-      previous-location #&lt;location 1 (0 0)&gt;
+      next-location:  #&lt;location 3 (-6 19)&gt;
+      previous-location:  #&lt;location 1 (0 0)&gt;
   &gt;
 </pre></font>
 <p>Its <code>next-location</code> link slot points to the third <code>location</code> unit
@@ -465,7 +466,7 @@ and over again.
 <code>print-walk-ks</code> KS in place:
 </p>
 <pre><font color="#8c8c8c">  &gt; <font color="#000000">(start-control-shell)</font>
-  ;; Control shell started
+  ;; Control shell 1 started
 
   Walked off the world: (54, 15).
 
@@ -486,7 +487,7 @@ and over again.
   37 (49 12)
   38 (47 10)
   ;; Explicit :stop issued by KS print-walk-ks
-  ;; Control shell exited: 41 cycles completed
+  ;; Control shell 1 exited: 41 cycles completed
   ;; Run time: 0.01 seconds
   ;; Elapsed time: 0 seconds
   :stop

@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/gbbopen/units.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Feb  4 10:48:50 2008 *-*
+;;;; *-* Last-Edit: Fri Feb 15 01:41:16 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -88,7 +88,9 @@
   (let ((initial-space-instances
          (standard-unit-class.initial-space-instances unit-class))
         (dimensional-values
-         (standard-unit-class.dimensional-values unit-class)))
+         (standard-unit-class.dimensional-values unit-class))
+        (retain
+         (standard-unit-class.retain unit-class)))
     (declare (type list dimensional-values))
     (unless initial-space-instances
       ;; Find closest initial-space-instances from supers:
@@ -122,6 +124,13 @@
                            (:element ':enumerated)
                            ((:point :interval :mixed) ':ordered))))
 		  dimensional-values))
+    ;; Propogate retain attribute from supers:
+    (unless retain
+      (dolist (super (class-direct-superclasses unit-class))
+        (when (and (typep super 'standard-unit-class)
+                   (eq (standard-unit-class.retain super) ':propagate))
+          (setf (standard-unit-class.retain unit-class) ':propagate)
+          (return))))
     ;; Propagate to subs (naive, for now...):
     (dolist (sub (class-direct-subclasses unit-class))
       (compute-inherited-unit-class-values sub))))
@@ -780,10 +789,20 @@
           (class-name (class-of unit-class))
           unit-class
           (standard-unit-class.abstract unit-class))
-  (let ((supers (class-direct-superclasses unit-class))
-        (subs (class-direct-subclasses unit-class))
-        (direct-slots (class-direct-slots unit-class))
-        (effective-slots (class-slots unit-class)))
+  (let* ((supers (class-direct-superclasses unit-class))
+         (subs (class-direct-subclasses unit-class))
+         (hidden-slot-names
+          (hidden-nonlink-slot-names (class-prototype unit-class)))
+         (direct-slots
+          (remove-if #'(lambda (slot)
+                         (memq (slot-definition-name slot)
+                               hidden-slot-names))
+                     (class-direct-slots unit-class)))
+         (effective-slots
+          (remove-if #'(lambda (slot)
+                         (memq (slot-definition-name slot)
+                               hidden-slot-names))
+                     (class-slots unit-class))))
     (flet ((name&abstract (class)
              (values (class-name class)
                      (and (typep class 'standard-unit-class)
@@ -792,40 +811,65 @@
       (format-column 4 supers "~s~:[~; (abstract)~]" #'name&abstract)
       (format t "~&~2tDirect subclasses:")
       (format-column 4 subs "~s~:[~; (abstract)~]" #'name&abstract))
-    (format t "~&~2tDirect slots:")
+    ;; Direct slots:
+    (format t "~&~2tDirect slots:~@[ None~%~]"
+            (notany #'(lambda (slot) 
+                        (not (typep slot 'direct-link-definition)))
+                    direct-slots))
     (dolist (slot direct-slots)
       (unless (typep slot 'direct-link-definition)
         (describe-unit-slot unit-class slot)))
-    (format t "~&~2tDirect link slots:")
+    ;; Direct link slots:
+    (format t "~&~2tDirect link slots:~@[ None~%~]"
+            (notany #'(lambda (slot) (typep slot 'direct-link-definition))
+                    direct-slots))
     (dolist (slot direct-slots)
       (when (typep slot 'direct-link-definition)
         (describe-unit-slot unit-class slot)))
+    ;; Effective slots:
     (format t "~&~2tEffective slots:")
     (dolist (slot effective-slots)
       (unless (typep slot 'effective-link-definition)
         (describe-unit-slot unit-class slot)))
-    (format t "~&~2tEffective link slots:")
+    ;; Effective link slots:
+    (format t "~&~2tEffective link slots:~@[ None~%~]"
+            (notany #'(lambda (slot) (typep slot 'effective-link-definition))
+                    effective-slots))
     (dolist (slot effective-slots)
       (when (typep slot 'effective-link-definition)
         (describe-unit-slot unit-class slot)))
-    (format t "~&~2tDimensional values:")
-    (dolist (dv (standard-unit-class.dimensional-values unit-class))
-      (describe-dimensional-value unit-class dv))
-    (format t "~&~2tEffective dimensional values:")
-    (dolist (dv (standard-unit-class.effective-dimensional-values unit-class))
-      (describe-dimensional-value unit-class dv))
-    (format t "~&~2tInitial space instances:")
-    (dolist (space-instance
-                (ensure-list
-                 (standard-unit-class.initial-space-instances
-                  unit-class)))
-      (describe-initial-space-instance unit-class space-instance))
-    (format t "~&~2tEffective initial space instances:")
-    (dolist (space-instance
-                (ensure-list
-                 (standard-unit-class.effective-initial-space-instances
-                  unit-class)))
-      (describe-initial-space-instance unit-class space-instance)))
+    ;; Dimensional values:
+    (let ((dvs (standard-unit-class.dimensional-values unit-class)))
+      (format t "~&~2tDimensional values:~@[ None~%~]"
+              (null dvs))
+      (dolist (dv dvs)
+        (describe-dimensional-value unit-class dv)))
+    ;; Effective dimensional values:
+    (let ((dvs (standard-unit-class.effective-dimensional-values unit-class)))
+      (format t "~&~2tEffective dimensional values:~@[ None~%~]"
+              (null dvs))
+      (dolist (dv dvs)
+        (describe-dimensional-value unit-class dv)))
+    ;; Initial space instances:
+    (let ((space-instances 
+           (ensure-list
+            (standard-unit-class.initial-space-instances
+             unit-class))))
+      (format t "~&~2tInitial space instances:~@[ None~%~]"
+              (null space-instances))
+      (dolist (space-instance space-instances)
+        (describe-initial-space-instance unit-class space-instance)))
+    ;; Effective initial space instances:
+    (let ((space-instances 
+           (ensure-list
+            (standard-unit-class.effective-initial-space-instances
+             unit-class))))
+      (format t "~&~2tEffective initial space instances:~@[ None~%~]"
+              (null space-instances))
+      (dolist (space-instance space-instances)
+        (describe-initial-space-instance unit-class space-instance)))
+    ;; Retain:
+    (format t "~&~2tRetain: ~s~%" (standard-unit-class.retain unit-class)))
   (values))
   
 ;;; ---------------------------------------------------------------------------

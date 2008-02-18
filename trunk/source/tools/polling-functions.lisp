@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/current/source/tools/polling-functions.lisp *-*
+;;;; *-* File: /home/gbbopen/source/tools/polling-functions.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Jul 30 10:02:15 2007 *-*
-;;;; *-* Machine: ruby.corkills.org *-*
+;;;; *-* Last-Edit: Mon Feb 11 08:25:07 2008 *-*
+;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2003-2007, Dan Corkill <corkill@GBBopen.org> 
+;;; Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org> 
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -25,6 +25,9 @@
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 (in-package :gbbopen-tools)
+
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (use-package '(:portable-threads)))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(*polling-sleep-poll-interval* ; not yet documented

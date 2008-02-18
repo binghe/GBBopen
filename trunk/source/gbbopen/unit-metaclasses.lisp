@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/gbbopen/unit-metaclasses.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jan 30 04:54:28 2008 *-*
+;;;; *-* Last-Edit: Mon Feb 18 05:51:55 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -82,6 +82,9 @@
     :reader unit-class-dimensions
     :writer (setf standard-unit-class.unit-class-dimensions))
    (evfn-blks :initform nil)
+   ;; Controls if instances are deleted by reset-gbbopen (unless overridden by
+   ;; an :all-classes reset):
+   (retain :initform nil :type boolean)
    ;; For class retrievals:
    (%%storage%% :initform nil))
   (:export-class-name t)
@@ -116,6 +119,27 @@
 (defmethod unit-class-dimensions ((unit-classes-specifier cons))
   (dimensions-of unit-classes-specifier))
 
+;;; ---------------------------------------------------------------------------
+
+(defun print-unit-class-state-for-saving/sending (unit-class stream)
+  (format stream "~&#GM(~s ~s)"
+          (class-name unit-class)
+          (standard-unit-class.instance-name-counter unit-class)))
+
+;;; ---------------------------------------------------------------------------
+;;;  Standard-unit-instance-updater reader
+
+(defmethod saved/sent-object-reader ((char (eql #\M)) stream)
+  (destructuring-bind (class-name instance-name-counter)
+      (read stream t nil 't)
+    (let ((unit-class (find-class class-name)))
+      (if (and unit-class
+               (typep unit-class 'standard-unit-class))
+          (setf (standard-unit-class.instance-name-counter unit-class)
+                instance-name-counter)
+          (warn "Unable to update the instance-name count of unit-class ~s"
+                class-name)))))
+        
 ;;; ---------------------------------------------------------------------------
 
 (defun generate-renaming-instance-name (instance-name counter)
@@ -160,7 +184,7 @@
                     nconc
                       (case indicator
                         ;; single-value class options:
-                        ((:abstract :instance-name-comparison-test)
+                        ((:abstract :instance-name-comparison-test :retain)
                          (list indicator (sole-element value)))
                         (otherwise (list indicator value)))))))
     ;; create/copy appropriate type of instance-hash-table:
@@ -476,7 +500,8 @@
   
 (defmethod validate-class-option ((metaclass standard-unit-class) option)
   #+ecl (declare (ignore metaclass))
-  (or (memq (car option) '(:abstract :instance-name-comparison-test))
+  (or (memq (car option) 
+            '(:abstract :instance-name-comparison-test :retain))
       (call-next-method)))
 
 ;;; ===========================================================================

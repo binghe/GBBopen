@@ -5,7 +5,7 @@
 <!-- XML file produced from file: reference.tex
      using Hyperlatex v 2.9-in-waiting-rk (c) Otfried Cheong -->
 <head>
-<title>GBBopen 0.9.7 Reference -- load-blackboard-repository</title>
+<title>GBBopen 0.9.8 Reference -- load-blackboard-repository</title>
 </p>
 <link rel="SHORTCUT ICON" href="favicon.ico"><link rel=stylesheet
         href="gbbopen.css" type="text/css" />
@@ -20,12 +20,13 @@
 <code>&#38;key</code> <var>confirm-if-not-empty
 disable-events 
 external-format
+ignore-after-loading-function
 readtable
 read-eval
 retain-classes 
 retain-event-functions
 retain-event-printing</var> 
-<i> =&gt; </i> <var>pathname</var></td><td valign="baseline" align="right">[<i>Function</i>]
+<i> =&gt; </i> <var>pathname, result</var>*</td><td valign="baseline" align="right">[<i>Function</i>]
 </td></tr></table></p>
 <p><span class="fndoclabel">Purpose</span> <br />Load the blackboard repository (all <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a> and
 <a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a>) that has been saved to a file previously by
@@ -43,6 +44,7 @@ the user must confirm loading when the current blackboard repository contains
 </td></tr><tr valign="top"><td valign="baseline"><i>disable-events</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id73">generalized&nbsp;boolean</a> (default is <code>t</code>)
 </td></tr><tr valign="top"><td valign="baseline"><i>external-format</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An external-file-format designator (default is
 <code>:default</code>)
+</td></tr><tr valign="top"><td valign="baseline"><i>ignore-after-loading-function</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id73">generalized&nbsp;boolean</a> (default is <code>nil</code>)
 </td></tr><tr valign="top"><td valign="baseline"><i>readtable</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A readtable (default is 
 <code>*reading-saved/sent-objects-readtable*</code>)
 </td></tr><tr valign="top"><td valign="baseline"><i>read-eval</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id73">generalized&nbsp;boolean</a> (default is <code>nil</code>)
@@ -52,8 +54,11 @@ the user must confirm loading when the current blackboard repository contains
 </td></tr><tr valign="top"><td valign="baseline"><i>retain-event-printing</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id73">generalized&nbsp;boolean</a> (default is <code>nil</code>)
 </td></tr></table>
 </p>
-<p><span class="fndoclabel">Returns</span> <br />The pathname of the saved blackboard-repository data file or <code>nil</code>
-if replacing a non-empty blackboard repository is not confirmed.
+<p><span class="fndoclabel">Returns</span> <br />The pathname of the saved blackboard-repository data file
+(or <code>nil</code> if replacing a non-empty blackboard repository is not
+confirmed) followed by the values returned by evaluating the
+<var>after-loading-function</var>, if one was specified when the
+repository was saved by using <b><a href="ref-save-blackboard-repository.html">save-blackboard-repository</a></b>.
 </p>
 <p><span class="fndoclabel">Events</span> <br /><a name="id1">If</a> <var>disable-events</var> is <code>nil</code>, the following events may be signaled as
 <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a> and <a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a> are deleted prior to loading:
@@ -68,6 +73,10 @@ if replacing a non-empty blackboard repository is not confirmed.
 <code>bb</code> is added to it.  Then, <code>*default-pathname-defaults*</code> is used to
 supply any missing components to <var>pathname</var>.
 </p>
+<p>If <var>ignore-after-loading-function</var> is true, the
+<var>after-loading-function</var> (if specified when the repository was
+saved) is not executed.
+</p>
 <p><span class="fndoclabel">See also</span>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-save-blackboard-repository.html"><b>save-blackboard-repository</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-with-reading-saved-sent-objects-block.html"><b>with-reading-saved/sent-objects-block</b></a>
@@ -78,7 +87,8 @@ and then load a blackboard repository that was saved previously:
 <pre>
   &gt; :tutorial-example :noautorun 
   &gt; (load-blackboard-repository "tutorial")
-  #P"/Users/corkill/tutorial.bb"
+  #P"/Users/corkill/tutorial.bb";
+  #&lt;path 1&gt;
 </pre>
 <p>Try loading the repository again:
 </p>
@@ -87,6 +97,14 @@ and then load a blackboard repository that was saved previously:
   The blackboard repository is not empty.
   Continue anyway (the current contents will be deleted)? no
   nil
+</pre>
+<p>Load the repository again, but without executing its
+<var>after-loading-function</var>:
+</p>
+<pre>
+  &gt; :tutorial-example :noautorun 
+  &gt; (load-blackboard-repository "tutorial" :ignore-after-loading-function 't)
+  #P"/Users/corkill/tutorial.bb"
 </pre>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />

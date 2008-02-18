@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:AGENDA-SHELL; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/gbbopen/control-shells/agenda-shell.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Jan 20 14:27:53 2008 *-*
+;;;; *-* Last-Edit: Sun Feb 17 05:23:04 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -45,18 +45,17 @@
 ;;; Import needed entities (MOP entities are imported from the :gbbopen package
 ;;; to hide implementation-specific MOP package differences):
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (import '(gbbopen::effective-slot-definition-class
+  (import '(gbbopen::*%%allow-setf-on-link%%*
+            gbbopen::do-evfns
+            gbbopen::effective-slot-definition-class
 	    gbbopen::evfn-blk.ks-triggers
+            gbbopen::evfn-describer
+            gbbopen::map-extended-unit-classes
+            gbbopen::map-instances-given-class
 	    gbbopen::show-evfn-describer-headers
             gbbopen::slot-value-using-class
 	    gbbopen::standard-unit-class.lock
 	    gbbopen::standard-unit-class.instance-hash-table)))
-
-;;; Import evfn control-shell-interface functions:
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (import '(gbbopen::*%%allow-setf-on-link%%*
-            gbbopen::do-evfns
-            gbbopen::evfn-describer)))      
 
 ;;; ---------------------------------------------------------------------------
 
@@ -67,6 +66,7 @@
 	    agenda-shell-node-state     ; not yet documented
 	    awaken-control-shell	; not yet documented
             collect-trigger-instances
+            control-shell               ; class not yet documented
 	    control-shell-running-p
 	    cs.pause			; not documented
             define-ks
@@ -82,11 +82,13 @@
             ks-enabled-p
             ks-of
             ksa
+            ksa-queue                   ; not documented
             make-ks-activation          ; not yet documented
             most-positive-rating
             most-negative-rating
             obviate-ksa                 ; not yet documented
             obviation-cycle
+            ordered-ksa-queue           ; not documented
             rating
             rating-of
             restart-control-shell
@@ -123,8 +125,7 @@
 (defvar *control-shell-threads* nil)
 
 ;;; ---------------------------------------------------------------------------
-;;;  *CS* is used to hold the control-shell state structure for a 
-;;;  control-shell instance.
+;;;  *CS* is used to hold the control-shell unit instance for a control shell
 
 (defvar *cs* nil)
 
@@ -201,36 +202,73 @@
 ;;; ===========================================================================
 ;;;   Control-Shell State
 
-(defstruct (control-shell (:conc-name #.(dotted-conc-name 'cs)))
-  (cycle 0)
-  (ks-activations-count 0)
-  (executed-ksas-count 0)
-  (obviated-ksas-count 0)
-  (current-ksa nil)
-  (event-buffer nil)
-  (event-buffer-lock (make-lock :name "event-buffer"))
-  (pending-ksas (make-queue :class 'ordered-queue
-                            :key #'rating-of))
-  (executed-ksas (make-queue :class 'queue))
-  (obviated-ksas (make-queue :class 'queue))
-  (fifo-queue-ordering 't :type boolean)
-  (hibernating nil :type boolean)
-  (hibernate-on-quiescence nil :type boolean) 
-  (awaken-on-event 't :type boolean)
-  (run-polling-functions #+threads-not-available 't
-                         #-threads-not-available nil
-                         :type boolean)
-  (continue-past-quiescence nil :type boolean) 
-  (thread nil)
-  (save-executed-ksas nil :type boolean)
-  (save-obviated-ksas nil :type boolean)
-  (stepping nil)
-  (stepping-stream *query-io*)
-  (minimum-ksa-execution-rating 1 :type rating)
-  (print 't)
-  (output-stream *trace-output*)
-  (pause nil)
-  (in-control-shell-loop-p nil))
+(define-unit-class control-shell ()
+  ((cycle :initform 0)
+   (ks-activations-count :initform 0)
+   (executed-ksas-count :initform 0)
+   (obviated-ksas-count :initform 0)
+   (current-ksa :initform nil)
+   (event-buffer :initform nil)
+   (events-being-processed :initform nil)
+   (event-buffer-lock :initform (make-lock :name "event-buffer"))
+   (pending-ksas :initform (make-queue :class 'ordered-ksa-queue
+                                       :key #'rating-of))
+   (executed-ksas :initform (make-queue :class 'ksa-queue))
+   (obviated-ksas :initform (make-queue :class 'ksa-queue))
+   (fifo-queue-ordering :initform 't :type boolean)
+   (hibernating :initform nil :type boolean)
+   (hibernate-on-quiescence :initform nil :type boolean) 
+   (awaken-on-event :initform 't :type boolean)
+   (run-polling-functions :initform #+threads-not-available 't
+                                    #-threads-not-available nil
+                          :type boolean)
+   (continue-past-quiescence :initform nil :type boolean) 
+   (thread :initform nil)
+   (save-executed-ksas :initform nil :type boolean)
+   (save-obviated-ksas :initform nil :type boolean)
+   (stepping :initform nil)
+   (stepping-stream :initform *query-io*)
+   (minimum-ksa-execution-rating :initform 1 :type rating)
+   (print :initform 't)
+   (output-stream :initform *trace-output*)
+   (pause :initform nil)
+   (in-control-shell-loop-p :initform nil))
+  (:retain t)
+  (:instance-name-comparison-test equal)
+  (:generate-accessors-format :prefix)
+  (:generate-accessors-prefix #.(dotted-conc-name '#:cs)))
+
+;;; ---------------------------------------------------------------------------
+
+(defmethod delete-instance ((control-shell control-shell))
+  ;; delete ksa-queue elements:
+  (map-queue #'delete-instance (cs.pending-ksas control-shell))
+  (map-queue #'delete-instance (cs.executed-ksas control-shell))
+  (map-queue #'delete-instance (cs.obviated-ksas control-shell))
+  ;; delete ksa-queue headers:
+  (delete-instance (cs.pending-ksas control-shell))
+  (delete-instance (cs.executed-ksas control-shell))
+  (delete-instance (cs.obviated-ksas control-shell))
+  (call-next-method))
+
+;;; ---------------------------------------------------------------------------
+
+(defmethod omitted-slots-for-saving/sending ((control-shell control-shell))
+  (list* 'event-buffer-lock
+         ;; If we record the run-polling-functions value, then we risk
+         ;; problems if an in-progress application without polling is
+         ;; restarted on a CL without threads.  On the other hand, if someone
+         ;; has forced polling on a threaded CL, then we lose that setting.
+         ;; We assume the former situation is the more frequent/helpful and
+         ;; allow run-polling-functions to be initialized rather than
+         ;; saved/sent:
+         'run-polling-functions
+         'thread
+         'stepping-stream
+         'output-stream
+         ;; a saved control-shell is never running:
+         'in-control-shell-loop-p
+         (call-next-method)))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Multinode support
@@ -287,6 +325,7 @@
    (obviation-events
     :initform '()
     :type list))
+  (:retain :propagate)
   (:export-class-name t)
   (:generate-accessors t :exclude enabled))
 
@@ -304,9 +343,22 @@
   (remove-ks-triggers ks))
   
 ;;; ===========================================================================
-;;;   KSA unit-class
+;;;   KSA unit-class and queues
 
-(define-unit-class ksa (standard-unit-instance queue-element)
+(define-unit-class ksa-queue (queue)
+  ()
+  ;; reset-gbbopen should retain ksa-queue instances (unless an :all-classes
+  ;; reset-gbbopen is requested); propagate retention to subclasses:
+  (:retain :propagate))
+
+;;; ---------------------------------------------------------------------------
+
+(define-unit-class ordered-ksa-queue (ksa-queue ordered-queue)
+  ())
+
+;;; ---------------------------------------------------------------------------
+
+(define-unit-class ksa (queue-element)
   ((activation-cycle :initform nil)
    (execution-cycle :initform nil)
    (obviation-cycle :initform nil)
@@ -325,6 +377,8 @@
   (:metaclass standard-ksa-class)
   (:generate-accessors t :exclude trigger-events)
   (:export-class-name t))
+
+;;; ---------------------------------------------------------------------------
 
 (defmethod print-instance-slots ((instance ksa) stream)
   (call-next-method)
@@ -1075,76 +1129,91 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun process-event-buffer (cs)
-  (dolist (event (nreverse (atomic-flush (cs.event-buffer cs))))
-    (maybe-control-shell-step (cs :process-event event event))
-    (let ((ks-triggers (standard-event-instance.ks-triggers event)))
-      ;; clear these out, now that we are done with them!
-      (setf (standard-event-instance.ks-triggers event) nil)
-      ;; process interested trigger KSs:
-      (dolist (kst (triggers-of ks-triggers))
-        (let ((ks (kst.ks kst)))
-          (when (and (not (instance-deleted-p ks))
-                     (ks-enabled-p ks))
-            (let ((activation-predicate (activation-predicate-of ks)))
-              (when (or (not activation-predicate)
-                        (progn
-                          (maybe-control-shell-step 
-                           (cs :activation-predicate event ks)
-			   (with-update-stat 
-			       (agenda-shell-ks-stats.activation-predicate ks)
-			     (funcall activation-predicate ks event)))))
-                (let ((precondition-function (precondition-function-of ks))
-                      (rating (rating-of ks))
-                      (initargs nil))
-                  (when precondition-function
-                    (multiple-value-setq (rating initargs)
-                      (maybe-control-shell-step 
-                       (cs :precondition-function event ks)
-		       (with-update-stat 
-			   (agenda-shell-ks-stats.precondition-function ks)
-			 (funcall precondition-function ks event))))
-		    (when (eq rating ':stop)
-		      (when (cs.print cs)
-			(format (cs.output-stream cs)
-				"~&;; Explicit :stop issued by KS ~
-                                      ~s precondition function~%"
-				(instance-name-of ks)))
-                      (apply #'exit-control-shell ':stop initargs)))
-                  (when rating
-                    (let ((events (list event)))
-                      (maybe-control-shell-step (cs :ks-activation events ks))
-                      (make-ks-activation ks 
-                                          events
-                                          (list* :rating rating initargs)
-                                          cs)))))))))
-      ;; process interested obviation KSs:
-      (dolist (kst (obviation-triggers-of ks-triggers))
-        (let ((ks (kst.ks kst)))
-          (unless (instance-deleted-p ks)
-            (let ((obviation-predicate (obviation-predicate-of ks)))
-              (dolist (ksa (pending-activations-of ks))             
-                (when (or (not obviation-predicate)
+  ;; First, move the current events (now placed in chronological order) to an
+  ;; "in processing" list of events. New events go into the event buffer for
+  ;; processing in the next CS cycle:
+  (setf (cs.events-being-processed cs)
+        ;; There might be some unprocessed events left if saved/sent was
+        ;; performed during process-event-buffer:
+        (nconc (cs.events-being-processed cs) 
+               (nreverse (atomic-flush (cs.event-buffer cs)))))
+  ;; Now process each event:
+  (let (event)
+    (while (cs.events-being-processed cs)
+      ;; We can't pop the event yet--just in case the user decides to
+      ;; save or exit in the stepper--so we only peek at the event:
+      (let ((event (first (cs.events-being-processed cs))))
+        (maybe-control-shell-step (cs :process-event event event)))
+      ;; Now we can pop the event and proceed:
+      (setf event (pop (cs.events-being-processed cs)))
+      (let ((ks-triggers (standard-event-instance.ks-triggers event)))
+        ;; clear these out, now that we are done with them!
+        (setf (standard-event-instance.ks-triggers event) nil)
+        ;; process interested trigger KSs:
+        (dolist (kst (triggers-of ks-triggers))
+          (let ((ks (kst.ks kst)))
+            (when (and (not (instance-deleted-p ks))
+                       (ks-enabled-p ks))
+              (let ((activation-predicate (activation-predicate-of ks)))
+                (when (or (not activation-predicate)
                           (progn
                             (maybe-control-shell-step 
-                             (cs :obviation-predicate event ks)
-			     (with-update-stat 
-				 (agenda-shell-ks-stats.obviation-predicate ks)
-			       (funcall obviation-predicate ksa event)))))
-		  (obviate-ksa ks ksa cs)))))))
-      ;; process interested retrigger KSs:
-      (dolist (kst (retriggers-of ks-triggers))
-        (let ((ks (kst.ks kst)))
-          (unless (instance-deleted-p ks)
-            (let ((retrigger-function (retrigger-function-of ks)))
-              (when retrigger-function
-                (dolist (ksa (pending-activations-of ks))
-                  (maybe-control-shell-step 
-                   (cs :retrigger-function event ksa))
-		  (signal-event 'ksa-retrigger-event
-				:instance ksa :cycle (cs.cycle cs))
-		  (with-update-stat 
-		      (agenda-shell-ks-stats.retrigger-function ks)
-		    (funcall retrigger-function ksa event)))))))))))
+                             (cs :activation-predicate event ks)
+                             (with-update-stat 
+                                 (agenda-shell-ks-stats.activation-predicate ks)
+                               (funcall activation-predicate ks event)))))
+                  (let ((precondition-function (precondition-function-of ks))
+                        (rating (rating-of ks))
+                        (initargs nil))
+                    (when precondition-function
+                      (multiple-value-setq (rating initargs)
+                        (maybe-control-shell-step 
+                         (cs :precondition-function event ks)
+                         (with-update-stat 
+                             (agenda-shell-ks-stats.precondition-function ks)
+                           (funcall precondition-function ks event))))
+                      (when (eq rating ':stop)
+                        (when (cs.print cs)
+                          (format (cs.output-stream cs)
+                                  "~&;; Explicit :stop issued by KS ~
+                                        ~s precondition function~%"
+                                  (instance-name-of ks)))
+                        (apply #'exit-control-shell ':stop initargs)))
+                    (when rating
+                      (let ((events (list event)))
+                        (maybe-control-shell-step (cs :ks-activation events ks))
+                        (make-ks-activation ks 
+                                            events
+                                            (list* :rating rating initargs)
+                                            cs)))))))))
+        ;; process interested obviation KSs:
+        (dolist (kst (obviation-triggers-of ks-triggers))
+          (let ((ks (kst.ks kst)))
+            (unless (instance-deleted-p ks)
+              (let ((obviation-predicate (obviation-predicate-of ks)))
+                (dolist (ksa (pending-activations-of ks))             
+                  (when (or (not obviation-predicate)
+                            (progn
+                              (maybe-control-shell-step 
+                               (cs :obviation-predicate event ks)
+                               (with-update-stat 
+                                   (agenda-shell-ks-stats.obviation-predicate ks)
+                                 (funcall obviation-predicate ksa event)))))
+                    (obviate-ksa ks ksa cs)))))))
+        ;; process interested retrigger KSs:
+        (dolist (kst (retriggers-of ks-triggers))
+          (let ((ks (kst.ks kst)))
+            (unless (instance-deleted-p ks)
+              (let ((retrigger-function (retrigger-function-of ks)))
+                (when retrigger-function
+                  (dolist (ksa (pending-activations-of ks))
+                    (maybe-control-shell-step 
+                     (cs :retrigger-function event ksa))
+                    (signal-event 'ksa-retrigger-event
+                                  :instance ksa :cycle (cs.cycle cs))
+                    (with-update-stat 
+                        (agenda-shell-ks-stats.retrigger-function ks)
+                      (funcall retrigger-function ksa event))))))))))))
 
 ;;; ===========================================================================
 ;;;   Agenda Shell loop
@@ -1282,9 +1351,10 @@
 	  ;; on exit:
 	  (when (cs.print cs)
 	    (format (cs.output-stream cs)
-		    "~&;; Control shell exited: ~s cycle~:p completed~
+		    "~&;; Control shell ~s exited: ~s cycle~:p completed~
                      ~%;; Run time: ~a~
                      ~%;; Elapsed time: ~a~%"
+                    (instance-name-of cs)
 		    (cs.cycle cs)
 		    (pretty-run-time-interval
 		     (- (get-internal-run-time) start-runtime))
@@ -1301,15 +1371,20 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun a-control-shell-is-running (operation)
-  (warn "A control-shell is running already; ignoring ~s."
-	operation))  
+(defun control-shell-is-running-already (cs operation)
+  (warn 
+   "The control shell named ~s is already running in ~:[another~;this~] ~
+    thread; ignoring ~s request."
+   (instance-name-of cs)
+   (eq (current-thread) (cs.thread cs))
+   operation))
 
 ;;; ---------------------------------------------------------------------------
 
-(defun control-shell-running-p ()
-  (and (typep *cs* 'control-shell)
-       (cs.in-control-shell-loop-p *cs*)))
+(defun control-shell-running-p (&optional (cs *cs*))
+  (and (typep cs 'control-shell)
+       (not (instance-deleted-p cs))
+       (cs.in-control-shell-loop-p cs)))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -1319,6 +1394,7 @@
                             (fifo-queue-ordering 't)
                             (hibernate-on-quiescence nil)
                             (minimum-ksa-execution-rating 1)
+                            (name 1)
 			    (output-stream *trace-output*)
 			    (pause nil)
                             (print 't)
@@ -1329,49 +1405,120 @@
                             (save-obviated-ksas nil)
                             (stepping nil)
                             (stepping-stream *query-io*))
-  (cond
-   ((control-shell-running-p)
-    (a-control-shell-is-running 'start-control-shell))
-   (t (setf *cs* (make-control-shell 
-		  :awaken-on-event awaken-on-event
-		  :continue-past-quiescence continue-past-quiescence
-		  :hibernate-on-quiescence hibernate-on-quiescence
-		  :minimum-ksa-execution-rating minimum-ksa-execution-rating
-		  :output-stream output-stream
-		  :pause pause
-		  :print print
-		  :run-polling-functions run-polling-functions
-		  :save-executed-ksas save-executed-ksas
-		  :save-obviated-ksas save-obviated-ksas
-		  :stepping stepping
-		  :stepping-stream stepping-stream
-		  ;; Non-specifiable values:
-		  :pending-ksas (make-queue :class 'ordered-queue
-					    :test (if fifo-queue-ordering
-						      #'>
-						      #'>=)
-					    :key #'rating-of)
-		  :thread (current-thread)))
-      (when (cs.print *cs*)
-	(format (cs.output-stream *cs*) "~&;; Control shell started~%"))
-      (signal-event 'start-control-shell-event)
-      (control-shell-loop *cs*))))
+  ;; There is a control shell that is running in this thread:
+  (when (and (typep *cs* 'control-shell)
+             (not (instance-deleted-p *cs*))
+             (control-shell-running-p *cs*))
+    (unless (y-or-n-p "A running control-shell instance named ~s is ~
+                       associated with this thread.~%Delete it and ~
+                       start the new one in its place? "
+                        (instance-name-of *cs*))
+      (format *query-io* "~&Ignoring ~s request.~%"
+              'start-control-shell)
+        (return-from start-control-shell nil))
+      ;; OK to proceed with the new control shell, so abort the
+      ;; current one:
+      (exit-control-shell ':aborted))
+  (let ((cs (find-instance-by-name name 'control-shell)))
+    ;; We found the named control shell:
+    (when cs
+      ;; It's running already in another thread:
+      (when (and (control-shell-running-p cs)
+                 (not (eq (current-thread) (cs.thread cs))))
+        (control-shell-is-running-already cs 'start-control-shell)
+        (return-from start-control-shell nil))
+      ;; It's defunct, so we delete it:
+      (delete-instance cs)))
+  ;; Delete old *cs* instance, if present (and its queue headers):
+  (when (and (typep *cs* 'control-shell)
+             (not (instance-deleted-p *cs*)))
+    (delete-instance *cs*))
+  ;; Start it up:
+  (setf *cs*
+        (make-instance 'control-shell 
+          :awaken-on-event awaken-on-event
+          :continue-past-quiescence continue-past-quiescence
+          :hibernate-on-quiescence hibernate-on-quiescence
+          :instance-name name
+          :minimum-ksa-execution-rating minimum-ksa-execution-rating
+          :output-stream output-stream
+          :pause pause
+          :print print
+          :run-polling-functions run-polling-functions
+          :save-executed-ksas save-executed-ksas
+          :save-obviated-ksas save-obviated-ksas
+          :stepping stepping
+          :stepping-stream stepping-stream
+          ;; Non-specifiable values:
+          :pending-ksas (make-queue :class 'ordered-ksa-queue
+                                    :test (if fifo-queue-ordering
+                                              ;; SBCL optimizes these into
+                                              ;; function objects that aren't
+                                              ;; named (so they can't be
+                                              ;; saved/sent)--use symbols
+                                              ;; instead:
+                                              #+sbcl '>
+                                              #-sbcl #'>
+                                              #+sbcl '>=
+                                              #-sbcl #'>=)
+                                    :key #'rating-of)
+          :thread (current-thread)))
+  (when (cs.print *cs*)
+    (format (cs.output-stream *cs*) 
+            "~&;; Control shell ~s started~%"
+            (instance-name-of *cs*)))
+  (signal-event 'start-control-shell-event)
+  (control-shell-loop *cs*))
    
 ;;; ---------------------------------------------------------------------------
 
-(defun restart-control-shell ()
-  (let ((cs *cs*))
-    (cond
-     ((not (typep cs 'control-shell))
-      (warn "There is no control shell to restart."))
-     ((cs.in-control-shell-loop-p cs)
-      (a-control-shell-is-running 'restart-control-shell))    
-     (t (when (cs.print cs)
-	  (format (cs.output-stream cs)
-		  "~&;; Control shell restarting after cycle ~s~%"
-		  (cs.cycle cs)))
-	(signal-event 'restart-control-shell-event)
-	(control-shell-loop cs)))))
+(defun restart-control-shell (&key (name 1))
+  (let ((cs (find-instance-by-name name 'control-shell)))
+     ;; No control-shell instance found:
+    (unless cs
+      (warn "No control shell named ~s was found; ignoring ~s request."
+            name
+            'restart-control-shell)
+      ;; return nil
+      (return-from restart-control-shell nil))
+    ;; We found the named control shell, it's running already in
+    ;; another thread:
+    (when (and (control-shell-running-p cs)
+               (not (eq (current-thread) (cs.thread cs))))
+      (control-shell-is-running-already cs 'restart-control-shell)
+      (return-from restart-control-shell nil))
+
+    ;; We found the named control shell, but the current control-shell
+    ;; in this thread is different:
+    (when (and (typep *cs* 'control-shell)
+               (not (instance-deleted-p *cs*))
+               (not (equal (instance-name-of *cs*) name)))
+      (unless (y-or-n-p "Another control-shell instance named ~s ~
+                         (~@[not ~]running) is associated with this ~
+                         thread.~%Delete it and restart ~s in its place? "
+                        (instance-name-of *cs*)
+                        (not (control-shell-running-p *cs*))
+                        name)
+        (format *query-io* "~&Ignoring ~s request.~%"
+                'restart-control-shell)
+        (return-from restart-control-shell nil))
+      ;; OK to proceed with the found control shell, so abort the
+      ;; current one:
+      (exit-control-shell ':aborted))
+    ;; Ready to restart, but its running already in this thread:
+    (when (control-shell-running-p cs)
+      (control-shell-is-running-already cs 'restart-control-shell)
+      (return-from restart-control-shell nil))
+    ;; Finally, we can restart it up:
+    (setf *cs* cs)
+    (setf (cs.thread cs) (current-thread))
+    (when (cs.print cs)
+      (format (cs.output-stream cs)
+              "~&;; Control shell ~s restarting after cycle ~s~%"
+              (instance-name-of cs)
+              (cs.cycle cs)))
+    (signal-event 'restart-control-shell-event)
+    (control-shell-loop cs)))
 
 ;;; ---------------------------------------------------------------------------
 

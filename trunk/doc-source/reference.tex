@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /home/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Sat Feb  9 15:33:47 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Mon Feb 18 05:25:16 2008; Edited-By: cork *-*
 %% *-* Machine: whirlwind.corkills.org *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -746,8 +746,35 @@ reload all subsequent files and modules \\[2pt]
 \end{tabular}
 }
 
+\newcommand{\classoptioninheritance}{%
+  \index{inheritance!unit-class options}%
+  \index{dimensional values!inheritance}%
+  \index{initial space instances!inheritance}%
+  \index{retention, of unit instances!inheritance}%
+  \index{unit instance!retaining, by delete-blackboard-repository!inheritance}%
+  %
+  The set of \var{dimensional-values\/} for a \glref{unit~class} is the union
+  of the sets specified in the \var{dimensional-values\/} options of the class
+  and its superclasses.  When more than one dimensional index is supplied for
+  a given dimension, the one supplied by the most specific class is used.
+
+  The effective \var{initial-space-instances\/} value for a \glref{unit~class}
+  is the value specified in the definition of the most specific
+  \glref{unit~class}. If no definitions specify an
+  \var{initial-space-instances\/} value, \nil{} is used.
+
+  The \var{instance-name-comparison-test\/} value is not inherited.  If no
+  value is specified in the \glref{unit-class} definition, the default
+  initializtion value associated with the metaclass is used.
+
+  If a \var{retain\/} value is not specified, a value of \code{:propagate} is
+  used as the default if any parent \glref{unit~classes} have a
+  \code{:propagate} retention value; otherwise \nil{} is used as the default
+  value.
+}
+
 \newcommand{\nothreads}{Threads (multiprocessing) is not supported on the
-Common Lisp implementation.} 
+  Common Lisp implementation.}
 
 \newcommand{\nocvlock}{The \glref{lock} (or \glref{recursive~lock}) associated
   with \var{condition-variable} is not held by the executing process.}
@@ -2077,11 +2104,9 @@ implementations that do not provide thread capabilities are
 provided by the \reflink{\code{:polling-functions}
   module}{sec:pollingfunctions}, uniform socket interfaces are
 provided by the \reflink{\code{:portable-sockets}
-  module}{sec:portablesockets}, uniform interfaces to the operating
+  module}{sec:portablesockets}, and uniform interfaces to the operating
 system are provided by the \reflink{\code{:os-interface}
-  module}{sec:os-interface}, and queue-management objects and
-operations are provided by the \reflink{\code{:queue}
-  module}{sec:queue}.
+  module}{sec:os-interface}.
 
 \W\entities
 \T\clearpage
@@ -2479,14 +2504,14 @@ direct superclass of the \glref{class} \var{class-name\/}
 \end{args}
 
 \fndescription 
+Each \var{superclass-name} argument specifies a direct superclass of
+the new class. If the superclass list is empty, then the direct
+superclass defaults to the single class \code{standard-object}.
+
 \bfindexit{standard-class}%
 The \code{:metaclass} class option, if specified, must be a subclass
 of \code{standard-class}.  The default metaclass value is
 \code{standard-class}.
-
-Each \var{superclass-name} argument specifies a direct superclass of
-the new class. If the superclass list is empty, then the direct
-superclass defaults to the single class \code{standard-object}.
 
 \begin{alsos}{with-generate-accessors-format}
 \also[define-unit-class]
@@ -5003,7 +5028,7 @@ position indicated by \var{priority\/}.
 
 \fnargs
 \begin{args}{priority}
-\arg[function] A \glref{function}
+\arg[function] A \glref{function} of no arguments
 \arg[priority] A \glref{fixnum} (default is \code{0})
 \end{args}
 
@@ -5825,691 +5850,6 @@ string.
 
 \end{functiondoc}
 
-%% ------------------------------------------------------------------------
-
-\T\markright{}%
-\T\pagestyle{plain}
-\T\clearpage
-\W\xname{ref-queue-entities}
-\T\pagestyle{fancy}
-\T\thispagestyle{fancybottom}
-\T\global\def\fnlastname{ }%
-\subsection{Queue Management}
-\label{sec:queue}%
-
-\index{module!:queue@\code{:queue}}%
-\index{:queue@\code{:queue} module}%
-The \code{:queue} module provides queue-management objects and operators.
-
-\W\entities
-\T\clearpage
-
-%% ------------------------------------------------------------------------
-
-\begin{functiondoc}{Macro}{do-queue}{(\var{var queue\/})
-    \var{declaration\/}\superstar{} 
-    \mbox{\{\var{tag\/} \vbar{} \var{form\/}\}\superstar}}
-\index{queue!operating on all elements elements of}%
-\index{queue!elements, operating on all elements of}%
-
-\fnsyntax
-
-\fnpurpose Iterate over each \glref{queue~element} on the
-specified \var{queue\/}.
-
-\fnpackage \code{:gbbopen-tools}
-
-\fnmodule \code{:queue}
-
-\fnargs
-\begin{args}{function}
-\arg[var] A \glref{variable~symbol}
-\arg[queue] A GBBopen \glref{queue}
-\arg[declaration] A declare expression
-\arg[tag] A \code{go} tag (not evaluated)
-\arg[form] A \glref{form}
-\end{args}
-
-\fndescription The iteration over \glref{queue~elements} is performed
-in queue order (first to last).
-
-\begin{alsos}{ordered-queue}
-\also[map-queue]
-\also[queue]
-\also[ordered-queue]
-\end{alsos}
-
-\fnexample
-\bfindexit{incf\&}%
-\bfindexit{memq}%
-\bfindexit{collect-trigger-instances}%
-Count the number of \glref{pending~KSAs} that were triggered by
-\code{hyp}: 
-\begin{example}
-> (let ((count 0))
-    (do-queue (ksa pending-ksas)
-      (when (\entlink{memq} hyp (collect-trigger-instances ksa))
-        (\link{incf&}{ent:incfAMP} count)))
-     count)
-31
-\end{example}
-
-\end{functiondoc}
-
-%% ------------------------------------------------------------------------
-
-\begin{functiondoc}{Generic~Function}{first-queue-element}{\var{queue\/}
-    \returns{} \var{queue-element\/}}
-\index{queue!returning first element}%
-\index{first element! of a queue, returning}%
-
-\fnsyntax
-
-\fnpurpose Return the first \glref{queue~element} on \var{queue}.
-
-\fnmethods
-\fnalternate{first-queue-element}{\code{(}\var{queue\/} \code{queue)}
-  \returns{} \var{queue-element}}
-
-\fnpackage \code{:gbbopen-tools}
-
-\fnmodule \code{:queue}
-
-\fnargs
-\begin{args}{queue}
-\arg[queue] A GBBopen \glref{queue}
-\end{args}
-
-\fnreturns The first \glref{queue~element} on \var{queue}.
-  
-\begin{alsos}{last-queue-element}
-\also[last-queue-element]
-\also[nth-queue-element]
-\end{alsos}
-
-\fnexample
-\begin{example}
-> (first-queue-element pending-ksas)
-#<ksa 2217>
-\end{example}
-
-\end{functiondoc}
-
-%% ------------------------------------------------------------------------
-
-\begin{functiondoc}{Generic~Function}{insert-on-queue}{\var{queue-element
-      queue\/} \returns{} \var{queue-element\/}}
-\index{queue!inserting an element on}%
-\index{inserting an item!onto a queue}%
-\index{inserting an item!into an ordered queue}%
-
-\fnsyntax
-
-\fnpurpose Insert a \glref{queue~element} on \var{queue}.
-
-\fnmethods
-\fnalternate{insert-on-queue}%
-  {\code{(}\var{queue-element\/} queue-element\code{)}
-  \code{(}\var{queue\/} \code{queue)} \returns{} \var{queue-element}}
-\fnalternate{insert-on-queue}%
-  {\code{(}\var{queue-element\/} \code{queue-element)}
-  \code{(}\var{queue\/} \code{ordered-queue)} \returns{} \var{queue-element}}
-
-\fnpackage \code{:gbbopen-tools}
-
-\fnmodule \code{:queue}
-
-\fnargs
-\begin{args}{queue-element}
-\arg[queue-element] A GBBopen \glref{queue~element} object
-\arg[queue] A GBBopen \glref{queue}
-\end{args}
-
-\fnreturns The supplied \var{queue-element}.
-
-\fndescription If \var{queue} is an
-\glref{ordered~queue}, the position of \var{queue-element} in
-\var{queue} is based on the key and test functions provided when the
-queue was created.  If \var{queue} is a standard \glref{queue},
-\var{queue-element} is inserted at the end of the queue.
-  
-\begin{alsos}{remove-from-queue}
-\also[make-queue]
-\also[remove-from-queue]
-\end{alsos}
-
-\fnexample
-\begin{example}
-> (insert-on-queue ksa pending-ksas)
-#<ksa 2372>
-\end{example}
-
-\end{functiondoc}
-
-%% ------------------------------------------------------------------------
-
-\begin{functiondoc}{Generic~Function}{last-queue-element}{\var{queue\/}
-    \returns{} \var{queue-element\/}}
-\index{queue!returning last element}%
-
-\fnsyntax
-
-\fnpurpose Return the last \glref{queue~element} on \var{queue}.
-
-\fnmethods
-\fnalternate{last-queue-element}{\code{(}\var{queue\/} \code{queue)}
-  \returns{} \var{queue-element}}
-
-\fnpackage \code{:gbbopen-tools}
-
-\fnmodule \code{:queue}
-
-\fnargs
-\begin{args}{queue}
-\arg[queue] A GBBopen \glref{queue}
-\end{args}
-
-\fnreturns The last \glref{queue~element} on \var{queue}.
-  
-\begin{alsos}{first-queue-element}
-\also[first-queue-element]
-\also[nth-queue-element]
-\end{alsos}
-
-\fnexample
-\begin{example}
-> (last-queue-element pending-ksas)
-#<ksa 2372>
-\end{example}
-
-\end{functiondoc}
-
-%% ------------------------------------------------------------------------
-
-\begin{functiondoc}{Function}{make-queue}{\code{\&rest} \var{initargs\/}
-    \returns{} \var{queue\/}}
-\index{creating!a queue}%
-\index{making!a queue}%
-\index{queue!making a}%
-
-\fnsyntax
-
-\fnpurpose Make a GBBopen \glref{queue}.
-
-\fnpackage \code{:gbbopen-tools}
-
-\fnmodule \code{:queue}
-
-\fnargs
-\begin{args}{initargs}
-\arg[initargs] An \glref{initialization~argument~list}
-\end{args}
-
-\fnreturns The newly created \glref{queue}.
-  
-\begin{alsos}{ordered-queue}
-\also[queue]
-\also[ordered-queue]
-\end{alsos}
-
-\fnexample
-\bfindexit{ordered-queue}%
-\bfindexit{rating-of}%
-\begin{example}
-> (setf pending-ksas (make-queue :class '\entlink{ordered-queue}
-                                 :key #'\entlink{rating-of}))
-#<ordered-queue>
-\end{example}
-
-\end{functiondoc}
-
-%% ------------------------------------------------------------------------
-
-\begin{functiondoc}{Generic~Function}{map-queue}{\var{function queue\/}}
-\index{queue!applying a function to elements of}%
-\index{queue!elements, applying a function to}%
-
-\fnsyntax
-
-\fnpurpose Apply a \glref{function} to each \glref{queue~element} on the
-specified \var{queue\/}.
-
-\fnmethods
-\fnalternate{map-queue}{\code{(}\var{function\/} \code{t)}
-   \code{(}\var{queue\/} \code{queue)}}
-
-\fnpackage \code{:gbbopen-tools}
-
-\fnmodule \code{:queue}
-
-\fnargs
-\begin{args}{function}
-\arg[function] A \glref{function} of one argument
-\arg[queue] A GBBopen \glref{queue}
-\end{args}
-
-\fndescription The \var{function\/} is applied to the
-\glref{queue~elements} in queue order (first to last).
-
-\begin{alsos}{ordered-queue}
-\also[do-queue]
-\also[queue]
-\also[ordered-queue]
-\end{alsos}
-
-\fnexample
-\bfindexit{incf\&}%
-\bfindexit{memq}%
-\bfindexit{collect-trigger-instances}%
-Count the number of \glref{pending~KSAs} that were triggered by
-\code{hyp}: 
-\begin{example}
-> (let ((count 0))
-    (map-queue #'(lambda (ksa)
-                   (when (\entlink{memq} hyp (\entlink{collect-trigger-instances} ksa))
-                     (\link{incf&}{ent:incfAMP} count)))
-               pending-ksas)
-     count)
-31
-\end{example}
-
-\end{functiondoc}
-
-%% ------------------------------------------------------------------------
-
-\begin{functiondoc}{Generic~Function}{next-queue-element}{\var{queue-element\/}
-   \returns{} \var{next-queue-element\/}}
-\index{queue!returning next element}%
-
-\fnsyntax
-
-\fnpurpose Return the \glref{queue~element} that follows \var{queue-element}
-on a GBBopen queue.
-
-\fnmethods
-\fnalternate{next-queue-element}%
-  {\code{(}\var{queue-element\/} \code{queue-element)}
-  \returns{} \var{next-queue-element}}
-
-\fnpackage \code{:gbbopen-tools}
-
-\fnmodule \code{:queue}
-
-\fnargs
-\begin{args}{queue-element}
-\arg[queue-element] A GBBopen \glref{queue~element} object
-\end{args}
-
-\fnreturns The \glref{queue~element} that follows
-\var{queue-element}. 
-  
-\begin{alsos}{previous-queue-element}
-\also[previous-queue-element]
-\end{alsos}
-
-\fnexample
-\begin{example}
-> (next-queue-element ksa)
-#<ksa 2166>
-\end{example}
-
-\end{functiondoc}
-
-%% ------------------------------------------------------------------------
-
-\begin{functiondoc}{Generic~Function}{nth-queue-element}{\var{n queue\/} 
-    \returns{} \var{queue-element\/}}
-\index{queue!returning nth element}%
-
-\fnsyntax
-
-\fnpurpose Return the nth \glref{queue~element} on \var{queue}.
-
-\fnmethods
-\fnalternate{nth-queue-element}{\code{(}\var{n} \code{fixnum)}
-  \code{(}\var{queue\/} \code{queue)}
-  \returns{} \var{queue-element}}
-
-\fnpackage \code{:gbbopen-tools}
-
-\fnmodule \code{:queue}
-
-\fnargs
-\begin{args}{queue}
-\arg[n] A \glref{fixnum}
-\arg[queue] A GBBopen \glref{queue}
-\end{args}
-
-\fnreturns The specified \glref{queue~element} or \nil{} if none exists.
-  
-\fndescription Returns the nth element in \var{queue\/} (zero origin) or
-\nil{} if the queue is shorter than \var{n}.  If \var{n\/} is negative,
-return the nth element counting backward from the end of the queue (one
-origin).
-
-\begin{alsos}{first-queue-element}
-\also[first-queue-element]
-\also[last-queue-element]
-\end{alsos}
-
-\bfindexit{first-queue-element}%
-\bfindexit{last-queue-element}%
-\fnexamples
-Return the first element on \code{pending-ksas} (equivalent to
-\textbf{\entlinknoex{first-queue-element}}):
-\begin{example}
-> (nth-queue-element 0 pending-ksas)
-#<ksa 2217>
-\end{example}
-Return the last element on \code{pending-ksas} (equivalent to
-\textbf{\entlinknoex{last-queue-element}}):
-\begin{example}
-> (nth-queue-element -1 pending-ksas)
-#<ksa 2372>
-\end{example}
-
-\end{functiondoc}
-
-%% ------------------------------------------------------------------------
-
-\begin{functiondoc}{Generic~Function}{on-queue-p}{\var{queue-element\/} 
-    \returns{} \var{queue\/}}
-\index{queue!determining membership on}%
-\index{queue element!determining queue membership of}%
-
-\fnsyntax
-
-\fnpurpose Determine if \var{queue-element\/} resides on a
- \glref{queue} by returning the \glref{queue} or \nil.
-
-\fnmethods
-\fnalternate{on-queue-p}{\code{(}\var{queue-element\/} \code{queue-element)}
-  \returns{} \var{queue}}
-
-\fnpackage \code{:gbbopen-tools}
-
-\fnmodule \code{:queue}
-
-\fnargs
-\begin{args}{queue}
-\arg[queue-element] A GBBopen \glref{queue~element} object
-\end{args}
-
-\fnreturns The \glref{queue} queue on which \var{queue-element\/}
-resides or \nil{} if \var{queue-element\/} is not on a queue.
-  
-\begin{alsos}{queue-element}
-\also[queue-element]
-\also[show-queue]
-\end{alsos}
-
-\fnexample
-Return the queue on which \code{ksa} resides:
-\begin{example}
-> (on-queue-p ksa)
-#<ordered-queue>
-\end{example}
-
-\end{functiondoc}
-
-%% ------------------------------------------------------------------------
-
-\begin{functiondoc}{Class}{ordered-queue}{}
-\index{class!ordered-queue@\textbf{ordered-queue}}%
-
-\fnsyntax
-
-\fnpackage \code{:gbb-tools}
-
-\fnmodule \code{:queue}
-
-\fndescription The mixin-class used as the header of ordered (sorted) 
-GBBopen queues.
-
-\begin{alsos}{queue-element}
-\also[make-queue]
-\also[queue]
-\also[queue-element]
-\also[show-queue]
-\end{alsos}
-
-\end{functiondoc}
-
-%% ------------------------------------------------------------------------
-
-\begin{functiondoc}{Generic~Function}{previous-queue-element}%
-  {\var{queue-element\/}
-    \returns{} \var{previous-queue-element\/}}
-\index{queue!returning previous element}%
-
-\fnsyntax
-
-\fnpurpose Return the \glref{queue~element} that precedes
-\var{queue-element} on a GBBopen queue.
-
-\fnmethods
-\fnalternate{previous-queue-element}%
-  {\code{(}\var{queue-element\/} \code{queue-element)}
-  \returns{} \var{previous-queue-element}}
-
-\fnpackage \code{:gbbopen-tools}
-
-\fnmodule \code{:queue}
-
-\fnargs
-\begin{args}{queue-element}
-\arg[queue-element] A GBBopen \glref{queue~element} object
-\end{args}
-
-\fnreturns The \glref{queue~element} that precedes
-\var{queue-element}. 
-  
-\begin{alsos}{next-queue-element}
-\also[next-queue-element]
-\end{alsos}
-
-\fnexample
-\begin{example}
-> (previous-queue-element ksa)
-#<ksa 2166>
-\end{example}
-
-\end{functiondoc}
-
-%% ------------------------------------------------------------------------
-
-\begin{functiondoc}{Class}{queue}{}
-\index{class!queue@\textbf{queue}}%
-  
-\fnsyntax
-
-\fnpackage \code{:gbb-tools}
-
-\fnmodule \code{:queue}
-
-\fndescription The mixin-class used as the header of GBBopen queues.
-
-\begin{alsos}{queue-element}
-\also[make-queue]
-\also[ordered-queue]
-\also[queue-element]
-\also[show-queue]
-\end{alsos}
-
-\end{functiondoc}
-
-%% ------------------------------------------------------------------------
-
-\begin{functiondoc}{Class}{queue-element}{}
-\index{class!queue-element@\textbf{queue-element}}%
-  
-\fnsyntax
-
-\fnpackage \code{:gbb-tools}
-
-\fnmodule \code{:queue}
-
-\fndescription Objects that inherit from the mixin-class
-\textbf{queue-element} can be elements of GBBopen queues.
-
-\begin{alsos}{ordered-queue}
-\also[on-queue-p]
-\also[ordered-queue]
-\also[queue]
-\end{alsos}
-
-\fnexample 
-\bfindexit{standard-unit-instance}%
-Define a \glref{KS~activation} class whose \glref{unit~instances} can be kept
-in a queue of \glref{pending~KSAs}:
-\begin{example}
-  (define-unit-class ksa (\entlink{standard-unit-instance} queue-element)
-    ((rating
-      :initform -1
-      :type rating)
-      \textrm{\ldots{}} ))
-\end{example}
-
-\end{functiondoc}
-
-%% ------------------------------------------------------------------------
-
-\begin{functiondoc}{Generic~Function}{queue-length}{\var{queue\/}
-    \code{\&optional} \var{recount-p\/} \returns{} \var{integer\/}}
-\index{length!of a queue}%
-\index{queue!obtaining the length of}%
-
-\fnsyntax
-
-\fnpurpose Return the length of \var{queue\/}.
-
-\fnmethods
-\fnalternate{queue-length}{\code{(}\var{queue\/} \code{queue)}
-  \code{\&optional}
-  \var{recount-p\/} \returns{} \var{integer\/}} 
-
-\fnpackage \code{:gbbopen-tools}
-
-\fnmodule \code{:queue}
-
-\fnargs
-\begin{args}{function}
-\arg[queue] A GBBopen \glref{queue}
-\arg[recount-p] If true, actually counts the individual
-\glref{queue~elements} (default is \nil) 
-\end{args}
-
-\fnreturns The \var{queue\/} length.
-
-\fndescription Normally \textbf{queue-length} simply returns a count
-that is maintained with the queue.  Although highly unlikely, this
-count could become inaccurate if \glref{queue-element} insertion or
-deletion operations are aborted in process. If \var{recount-p} is
-true, the elements are actually counted and then the count maintained
-with the queue is updated and returned.
-
-\fnexamples
-Return the number of \glref{KSAs} in the queue \code{pending-ksas}:
-\begin{example}
-> (queue-length pending-ksas)
-896
-\end{example}
-Count and then return the actual number of \glref{KSAs} in the
-queue \code{pending-ksas}:
-\begin{example}
-> (queue-length pending-ksas 't)
-896
-\end{example}
-
-\end{functiondoc}
-
-%% ------------------------------------------------------------------------
-
-\begin{functiondoc}{Generic~Function}{remove-from-queue}%
-  {\var{queue-element\/} \returns{} \var{queue-element\/}}
-\index{queue!removing an element from}%
-
-\fnsyntax
-
-\fnpurpose Remove a \glref{queue~element} from its \glref{queue}.
-
-\fnmethods
-\fnalternate{remove-from-queue}%
-  {\code{(}\var{queue-element\/} \code{queue-element)}
-   \returns{} \var{queue-element\/}}
-
-\fnpackage \code{:gbbopen-tools}
-
-\fnmodule \code{:queue}
-
-\fnargs
-\begin{args}{queue-element}
-\arg[queue-element] A GBBopen \glref{queue~element} object
-\end{args}
-
-\fnreturns The supplied \var{queue-element}.
-
-\begin{alsos}{insert-on-queue}
-\also[insert-on-queue]
-\end{alsos}
-
-\fnexample
-\begin{example}
-> (remove-from-queue ksa)
-#<ksa 2372>
-\end{example}
-
-\end{functiondoc}
-
-%% ------------------------------------------------------------------------
-
-\begin{functiondoc}{Generic~Function}{show-queue}{\var{queue\/}
-    \code{\&key} \var{start end show-element-function\/}}
-\index{queue!printing elements of}%
-\index{printing!queue, elements of}%
-\index{elements!on a queue, printing}%
-
-\fnsyntax
-
-\fnpurpose Print the elements on \var{queue}.
-
-\fnmethods
-\fnalternate{show-queue}{\code{(}\var{queue\/} \code{queue)}
-  \code{\&key} \var{start end show-element-function\/}}
-
-\fnpackage \code{:gbbopen-tools}
-
-\fnmodule \code{:queue}
-
-\fnargs
-\begin{args}{show-element-function}
-\arg[queue] A GBBopen \glref{queue}
-\arg[start] An integer specifying the first \glref{queue~element} to
-be shown (default is \code{0})
-\arg[end] An integer specifying the last \glref{queue~element} to
-be shown or \nil{} indicating that the last \glref{queue~element} is
-to be shown (default is \nil) 
-\arg[show-element-function] A two-argument \glref{function} used to print each
-\glref{queue~element} line (default is \code{\#'standard-show-queue-element})
-\end{args}
-
-\begin{alsos}{on-queue-p}
-\also[on-queue-p]
-\end{alsos}
-
-\fnexample
-Show the first five \glref{KSAs} on the queue \code{pending-ksas}:
-\begin{example}
-> (show-queue pending-ksas :end 5)
-    0. #<ksa 2217>
-    1. #<ksa 2293>
-    2. #<ksa 2303>
-    3. #<ksa 2280>
-    4. #<ksa 2249>
-\end{example}
-
-\end{functiondoc}
-
 %% ========================================================================
 %%  GBBopen Core
 
@@ -6547,6 +5887,7 @@ well as general-purpose \code{:gbbopen-core} entities, is \texorhtml{included
     entities}{sec:retrieval}
 \item \refsectionlink{saving/sending and loading/reading 
     entities}{sec:saving-sending}
+\item \refsectionlink{queue-management entities}{sec:queue}
 \end{tightitemize}
 
 \W\entities
@@ -6799,7 +6140,8 @@ one \glref{unit~class} name.  This error is signaled on class finalization.
      \var{initial-space-instance-specifier\/}\code{)} \vbar \\
  & \code{(:instance-name-comparision-test}
      \var{instance-name-comparision-test\/}\code{)} \vbar \\
- & \code{(:metaclass} \var{class-name\/}\code{)} \\
+ & \code{(:metaclass} \var{class-name\/}\code{)}  \vbar \\
+ & \code{(:retain} \{\var{boolean\/} \vbar{} \code{:propagate}\}\code{)} \\
 \end{tabular}
 \T\\
 \begin{tabular}{@{~}l@{~}l}
@@ -6850,29 +6192,13 @@ The \code{:metaclass} class option, if specified, must be a subclass
 of \textbf{\entlinknoex{standard-unit-class}}.  The default metaclass
 value is \textbf{\entlinknoex{standard-unit-class}}.
 
-\index{inheritance!unit-class options}%
-\index{dimensional values!inheritance}%
-\index{initial space instances!inheritance}%
 \fndspar{Inheritance of class options}
-
-The set of \var{dimensional-values\/} for a \glref{unit~class} is the
-union of the sets specified in the \var{dimensional-values\/} options
-of the class and its superclasses.  When more than one dimensional
-index is supplied for a given dimension, the one supplied by the most
-specific class is used.
-
-The effective \var{initial-space-instances\/} value for a
-\glref{unit~class} is the value specified in the definition of the
-most specific \glref{unit~class}. If no definitions specify an
-\var{initial-space-instances\/} value, \nil{} is used.
-
-The \var{instance-name-comparison-test\/} value is not inherited.  If
-no value is specified in the \glref{unit-class} definition, the
-default initializtion value associated with the metaclass is used.
+\classoptioninheritance
 
 \begin{alsos}{with-generate-accessors-format}
 \also[define-space-class]
 \also[define-class]
+\also[delete-blackboard-repository]
 \also[find-instance-by-name]
 \also[link-slot-p]
 \also[make-instance]
@@ -6952,8 +6278,9 @@ may also be signaled:
 \item \code{remove-instance-from-space-instance-event}
 \end{tightitemize}
 
-\begin{alsos}{delete-all-space-instances}
+\begin{alsos}{delete-blackboard-repository}
 \also[delete-all-space-instances]
+\also[delete-blackboard-repository]
 \also[delete-space-instance]
 \also[make-instance]
 \also[reset-gbbopen]
@@ -7012,17 +6339,17 @@ Hyp #<hyp 119>
   Instance name: 119
   Space instances: (#<standard-space-instance (bb hyps)>)
   Dimensional values:
-    belief 0.85
-    identity (:car :truck :bus :motorcycle :duck-boat)
-    x 1835
-    y 4791
+    belief:  0.85
+    identity:  (:car :truck :bus :motorcycle :duck-boat)
+    x:  1835
+    y:  4791
   Non-link slots:
-    belief 0.85
-    identity (:car :truck :bus :motorcycle :duck-boat)
-    location (1835 4791)
+    belief:  0.85
+    identity:  (:car :truck :bus :motorcycle :duck-boat)
+    location:  (1835 4791)
   Link slots:
-    supporting-hyps (#<hyp 183 (1835 4791) .82>
-                     #<hyp 233 (1835 4791) .89>)
+    supporting-hyps:  (#<hyp 183 (1835 4791) .82>
+                       #<hyp 233 (1835 4791) .89>)
 \end{example}
 
 \end{functiondoc}
@@ -7145,6 +6472,7 @@ Standard-unit-class #<standard-unit-class hyp>
     (bb hyps)
   Effective initial space instances:
     (bb hyps)
+  Retain: nil
 \end{example}
 
 \end{functiondoc}
@@ -8011,8 +7339,9 @@ destructively altered.
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Class}{standard-unit-class}{}
+\begin{functiondoc}{Unit~Class}{standard-unit-class}{}
 \index{class!standard-unit-class@\textbf{standard-unit-class}}%
+\index{unit class!standard-unit-class@\textbf{standard-unit-class}}%
 
 \fnsyntax
 
@@ -8441,13 +7770,13 @@ class. If the superclass list is empty, then the direct superclass defaults to t
 single class \textbf{\entlink{standard-event-instance}}.
 
 \bfindexit{standard-event-class}%
-The \code{:metaclass} \var{class-name\/}, if specified, must be a subclass of
-\textbf{\entlinknoex{standard-event-class}}.  The default metaclass value is
-the metaclass of the event superclasses of \var{event-class-name} if they all
-have the same metaclass.  If the event superclasses have multiple metaclasses,
-the metaclass of \var{event-class-name} must be provided. The following table
-lists the compatible event-superclass metaclasses for each
-\glref{event~metaclass}:
+The \code{:metaclass} \var{class-name\/} class option, if specified, must be a
+subclass of \textbf{\entlinknoex{standard-event-class}}.  The default
+metaclass value is the metaclass of the event superclasses of
+\var{event-class-name} if they all have the same metaclass.  If the event
+superclasses have multiple metaclasses, the metaclass of
+\var{event-class-name} must be provided. The following table lists the
+compatible event-superclass metaclasses for each \glref{event~metaclass}:
 
 \begin{center}
 \begin{tabular}{@{}l@{}l@{}c@{}l@{}c@{}l@{}c@{}l@{}c@{}l@{}c@{}}
@@ -9361,7 +8690,7 @@ or
 \fnsyntax
 
 \fnpurpose Return the \glref{extended~unit-classes~specifications} of
-\glref{unit~classes} whose \glref{unit~instances} are allowed on a
+\glref{unit~classes} whose \glref{instances} are allowed on a
 \glref{space~instance}.
 
 \fnmethods
@@ -9612,7 +8941,8 @@ one \glref{space~class} name.  This error is signaled on class finalization.
      \var{initial-space-instance-specifier\/}\code{)} \vbar \\
  & \code{(:instance-name-comparision-test}
      \var{instance-name-comparision-test\/}\code{)} \vbar \\
- & \code{(:metaclass} \var{class-name\/}\code{)} \\
+ & \code{(:metaclass} \var{class-name\/}\code{)}  \vbar \\
+ & \code{(:retain} \{\var{boolean\/} \vbar{} \code{:propagate}\}\code{)} \\
 \end{tabular}
 \T\\
 \begin{tabular}{@{~}l@{~}l}
@@ -9651,32 +8981,16 @@ class. If the superclass list is empty, then the direct superclass defaults to t
 single class \textbf{\entlink{standard-space-instance}}.
 
 \bfindexit{standard-space-class}%
-The \code{:metaclass} \var{class-name\/}, if specified, must be a subclass of
-\textbf{\entlinknoex{standard-space-class}}.  The default metaclass value is
-\textbf{\entlinknoex{standard-space-class}}.
+The \code{:metaclass} \var{class-name\/} class option, if specified, must be a
+subclass of \textbf{\entlinknoex{standard-space-class}}.  The default
+metaclass value is \textbf{\entlinknoex{standard-space-class}}.
 
 \fndspar{Inheritance of class options}
-
-\index{inheritance!unit-class options}%
-\index{dimensional values!inheritance}%
-\index{initial space instances!inheritance}%
-The set of \var{dimensional-values\/} for a \glref{unit~class} is the
-union of the sets specified in the \var{dimensional-values\/} options
-of the class and its superclasses.  When more than one dimensional
-index is supplied for a given dimension, the one supplied by the most
-specific class is used.
-
-The effective \var{initial-space-instances\/} value for a
-\glref{unit~class} is the value specified in the definition of the
-most specific \glref{unit~class}. If no definitions specify an
-\var{initial-space-instances\/} value, \nil{} is used.
-
-The \var{instance-name-comparison-test\/} value is not inherited.  If
-no value is specified in the \glref{unit-class} definition, the
-default initializtion value associated with the metaclass is used.
+\classoptioninheritance
 
 \begin{alsos}{with-generate-accessors-format}
 \also[define-unit-class]
+\also[delete-blackboard-repository]
 \also[make-space-instance]
 \also[standard-space-class]
 \also[standard-space-instance]
@@ -9699,6 +9013,99 @@ one \glref{instance} of the \code{space-instance-with-lock}
     :class 'space-with-lock)
 #<space-with-lock (bb hyps)>
 \end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{delete-blackboard-repository}%
+  {\code{\&key} \var{all-classes
+                     disable-events 
+                     retain-classes\/}}
+\index{unit instance!deleting all}%
+\index{space instance!deleting all}%
+
+\fnsyntax
+
+\fnpurpose Delete all \glref{unit} and \glref{space~instances}.
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:gbbopen-core}
+
+\fnargs
+\begin{args}{disable-events}
+\arg[all-classes] A \glref{generalized~boolean} (default is \nil)
+\arg[disable-events] A \glref{generalized~boolean} (default is \code{t})
+\arg[retain-classes] An \glref{extended~unit-classes~specification}
+  (see below)
+\end{args}
+
+\fnevents
+\index{events!generated by!delete-blackboard-repository@\textbf{delete-blackboard-repository}}%
+\index{events!unlink-event@\code{unlink-event}|itidx}%
+\index{events!remove-instance-from-space-instance-event@\code{remove-instance-from-space-instance-event}|itidx}%
+\index{events!delete-instance-event@\code{delete-instance-event}|itidx}%
+\index{events!instance-deleted-event@\code{instance-deleted-event}|itidx}%
+\codeindexit{unlink-event}%
+\codeindexit{remove-instance-from-space-instance-event}%
+\codeindexit{delete-instance-event}%
+\codeindexit{instance-deleted-event}%
+If \var{disable-events} is \nil, the following events may be signaled as
+\glref{unit~instances} and \glref{space~instances} are deleted:
+\begin{tightitemize}
+\item \code{unlink-event}
+\item \code{remove-instance-from-space-instance-event}
+\item \code{delete-instance-event}
+\item \code{instance-deleted-event}
+\end{tightitemize}
+
+\fndsyntax
+\unitclassesspec
+
+\fndescription Calling \textbf{delete-blackboard-repository} deletes all
+\glref{unit~instances} and \glref{space~instances} that have not been defined
+with a \code{:retain} class option (unless overridden by \var{all-classes\/}).
+All \glref{unit~instances} of \glref{unit~classes} specified by
+\var{retain-classes\/} are also retained.  If both \var{all-classes\/} and
+\var{retain-classes\/} are specified, the classes specified
+\var{retain-classes\/} are retained, but all other \glref{unit~instances} are
+deleted.  The instance-name counters of all non-retained \glref{unit~classes}
+are reset to 1.
+
+\textbf{Delete-blackboard-repository} does not undefine any class
+definitions, functions, methods, etc.
+
+\begin{alsos}{delete-all-space-instances}
+\also[delete-instance]
+\also[delete-all-space-instances]
+\also[delete-space-instance]
+\end{alsos}
+
+\fnexamples 
+
+Delete all \glref{unit~instances} and \glref{space~instances}
+(except for the \glref{unit~instances} of \glref{unit~classes} that have been
+defined to be retained by default):
+\begin{example}
+  (delete-blackboard-repository)
+\end{example}
+
+As above, but also delete all \glref{unit~instances} of \glref{unit~classes}
+that have been defined to be retained by default:
+\begin{example}
+  (delete-blackboard-repository :all-classes t)
+\end{example}
+
+\fnnote 
+\bfindexit{with-events-disabled}%
+\bfindexit{with-events-enabled}%
+This function and \textbf{\entlink{reset-gbbopen}} are the only GBBopen
+functions that disable \glref{event} signaling by default.  This conflicts
+with the normal use of \textbf{\entlinknoex{with-events-disabled}} and
+\textbf{\entlinknoex{with-events-enabled}} macros for controlling
+\glref{event} signaling, but having \glref{events} disabled is the desired
+behavior in almost every \code{delete-blackboard-repository} situation.
 
 \end{functiondoc}
 
@@ -9734,7 +9141,9 @@ itself, on a \glref{space~instance} or is linked to other
 \item \code{remove-instance-from-space-instance-event}
 \end{tightitemize}
 
-\begin{alsos}{make-space-instance}
+\begin{alsos}{delete-blackboard-repository}
+\also[delete-all-space-instances]
+\also[delete-blackboard-repository]
 \also[delete-space-instance]
 \also[make-space-instance]
 \also[reset-gbbopen]
@@ -9799,8 +9208,9 @@ may also be signaled if the \var{space-instance} is, itself, on a
 \item \code{remove-instance-from-space-instance-event}
 \end{tightitemize}
 
-\begin{alsos}{delete-all-space-instances}
+\begin{alsos}{delete-blackboard-repository}
 \also[delete-all-space-instances]
+\also[delete-blackboard-repository]
 \also[delete-instance]
 \also[make-space-instance]
 \also[reset-gbbopen]
@@ -9829,21 +9239,30 @@ or simply
 
 \fnsyntax
 
-\fnpurpose 
-\index{space instance!printing information about}%
+\fnpurpose \index{space instance!printing information about}%
 \index{blackboard repository!printing information about}%
 \index{printing!information about!the blackboard repository}%
-Print information about the \glref{space~instances} in the blackboard
-repository and their contents.  The total count of the
-\glref{unit~instances} of each \glref{unit~class} (including ones that
-do not reside on any \glref{space~instance}) is also printed.
+Print information about the \glref{unit} and \glref{space~instances} in the
+blackboard repository.
 
 \fnpackage \code{:gbbopen}
 
 \fnmodule \code{:gbbopen-core}
 
 \fndescription
+\bfindexit{delete-blackboard-repository}%
 \bfindexit{*standard-output*}%
+Information is printed about the \glref{space~instances} in the blackboard
+repository and their contents.  The total count of the
+\glref{unit~instances} of each \glref{unit~class} (including ones that
+do not reside on any \glref{space~instance}) is also printed, as well
+as a character that indicates if the \glref{unit~class} has been
+defined to be \textit{retained} by
+\textbf{\entlink{delete-blackboard-repository}}.  A plus sign
+indicates that the retention status will be propagated to subclasses
+of the unit class, while an asterisk (\code{*}) indicates a retain,
+But not propagated, status for the \glref{unit~class}.
+
 The description is printed to the {\bf *standard-output*} stream.
 
 \fnexample
@@ -9859,11 +9278,16 @@ bb
 
 Unit Class                    Instances
 ----------                    ---------
+control-shell                         1 *
 hyp                                1695
-ks                                   13 
-ksa                                 891
+ks                                   13 + 
+ksa                                 891 +
+ksa-queue                             2 +
+ordered-ksa-queue                     1 +
 sensor-report                     13744
 standard-space-instance               3
+                              ---------
+                                  16350 instances
 \end{example}
 
 \end{functiondoc}
@@ -9910,9 +9334,9 @@ Describe the \code{hyps} \glref{space~instance}:
 > (describe-space-instance '(hyps))
   Standard-space-instance #<standard-space-instance (bb hyps)>
     Path: (bb hyps)
-    Dimensions: None
-    Allowed Unit Classes:
+    Allowed unit classes:
       (hyp :plus-subclasses)
+    Dimensions: None
 \end{example}
 
 \end{functiondoc}
@@ -10401,16 +9825,15 @@ or
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{reset-gbbopen}%
-  {\code{\&key} \var{disable-events retain-classes 
-                     retain-event-functions
-                     retain-event-printing\/}}
+  {\code{\&key} \var{disable-events\/}}
 \index{unit instance!deleting all}%
 \index{space instance!deleting all}%
 
 \fnsyntax
 
-\fnpurpose Delete all \glref{unit~instances}, \glref{space~instances},
-and more.
+\fnpurpose Unconditionally delete all \glref{unit} and
+\glref{space~instances}, remove all \glref{event~functions}, and disable event
+printing.
 
 \fnpackage \code{:gbbopen}
 
@@ -10419,10 +9842,6 @@ and more.
 \fnargs
 \begin{args}{retain-event-functions}
 \arg[disable-events] A \glref{generalized~boolean} (default is \code{t})
-\arg[retain-classes] An \glref{extended~unit-classes~specification}
-  (see below)
-\arg[retain-event-functions] A \glref{generalized~boolean} (default is \nil)
-\arg[retain-event-printing] A \glref{generalized~boolean} (default is \nil)
 \end{args}
 
 \fnevents
@@ -10444,48 +9863,37 @@ If \var{disable-events} is \nil, the following events may be signaled as
 \item \code{instance-deleted-event}
 \end{tightitemize}
 
-\fndsyntax
-\unitclassesspec
-
 \fndescription Calling \textbf{reset-gbbopen} deletes all
 \glref{unit~instances} and \glref{space~instances}, disables all event
 printing, removes all event functions, and resets all
 \glref{unit-class} instance-name counters to 1.  \textbf{Reset-gbbopen}
 does not undefine any class definitions, functions, methods, etc.
 
-\begin{alsos}{delete-all-space-instances}
-\also[delete-instance]
+\begin{alsos}{delete-blackboard-repository}
 \also[delete-all-space-instances]
+\also[delete-instance]
 \also[delete-space-instance]
+\also[define-ks-class]
+\also[define-ksa-class]
+\also[define-space-class]
+\also[define-unit-class]
+\also[reset-gbbopen]
 \end{alsos}
 
-\fnexamples
-Delete all \glref{unit~instances} and \glref{space~instances}, with
-event-signaling disabled:
+\fnexample
+
+Prepare for a new application by resetting GBBopen:
 \begin{example}
   (reset-gbbopen)
-\end{example}
-
-Delete all \glref{unit~instances} and \glref{space~instances}, except for
-\glref{KS} \glref{unit~instances}, with event-signaling disabled:
-\begin{example}
-  (reset-gbbopen :retain-classes '((ks :plus-subclasses)))
-\end{example}
-
-As above, but also retain all event functions and event printing:
-\begin{example}
-  (reset-gbbopen :retain-classes '((ks :plus-subclasses))
-		 :retain-event-functions 't
-		 :retain-event-printing 't)
 \end{example}
 
 \fnnote 
 \bfindexit{with-events-disabled}%
 \bfindexit{with-events-enabled}%
-This is the only GBBopen \glref{function} that disables \glref{event}
-signaling by default.  This conflicts with the normal use of
-\textbf{\entlinknoex{with-events-disabled}} and
-\textbf{\entlinknoex{with-events-enabled}} macros for controlling
+This function and \textbf{\entlink{delete-blackboard-repository}} are the only
+GBBopen functions that disable \glref{event} signaling by default.  This
+conflicts with the normal use of \textbf{\entlinknoex{with-events-disabled}}
+and \textbf{\entlinknoex{with-events-enabled}} macros for controlling
 \glref{event} signaling, but having \glref{events} disabled is the desired
 behavior in almost every reset situation.
 
@@ -10493,8 +9901,10 @@ behavior in almost every reset situation.
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Class}{standard-space-class}{}
+\begin{functiondoc}{Space~Class}{standard-space-class}{}
 \index{class!standard-space-class@\textbf{standard-space-class}}%
+\index{unit class!standard-space-class@\textbf{standard-space-class}}%
+\index{space class!standard-space-class@\textbf{standard-space-class}}%
   
 \fnsyntax
 
@@ -11742,12 +11152,13 @@ to the slot named \code{new-slot} in the current class definition of \code{hyp}:
     \code{\&key} \var{confirm-if-not-empty
                       disable-events 
                       external-format
+                      ignore-after-loading-function
                       readtable
                       read-eval
                       retain-classes 
                       retain-event-functions
                       retain-event-printing\/} 
-    \returns{} \var{pathname\/}}
+    \returns{} \var{pathname, result\/}\superstar}
 \index{blackboard repository!loading from a file}%
 \index{loading!the blackboard repository from a file}% 
 \index{restoring!the blackboard repository from a file}% 
@@ -11763,7 +11174,7 @@ to the slot named \code{new-slot} in the current class definition of \code{hyp}:
 \fnmodule \code{:gbbopen-core}
 
 \fnargs
-\begin{args}{retain-event-functions}
+\begin{args}{ignore-after-loading-function}
 \arg[pathname] A \glref{pathname~designator}
 \arg[confirm-if-not-empty] A \glref{generalized~boolean} indicating whether
 the user must confirm loading when the current blackboard repository contains
@@ -11771,6 +11182,7 @@ the user must confirm loading when the current blackboard repository contains
 \arg[disable-events] A \glref{generalized~boolean} (default is \code{t})
 \arg[external-format] An external-file-format designator (default is
   \code{:default})
+\arg[ignore-after-loading-function] A \glref{generalized~boolean} (default is \nil)
 \arg[readtable] A readtable (default is 
   \code{*reading-saved/sent-objects-readtable*})
 \arg[read-eval] A \glref{generalized~boolean} (default is \nil)
@@ -11780,8 +11192,11 @@ the user must confirm loading when the current blackboard repository contains
 \arg[retain-event-printing] A \glref{generalized~boolean} (default is \nil)
 \end{args}
 
-\fnreturns The pathname of the saved blackboard-repository data file or \nil{}
-if replacing a non-empty blackboard repository is not confirmed.
+\fnreturns The pathname of the saved blackboard-repository data file
+(or \nil{} if replacing a non-empty blackboard repository is not
+confirmed) followed by the values returned by evaluating the
+\var{after-loading-function\/}, if one was specified when the
+repository was saved by using \textbf{\entlink{save-blackboard-repository}}.
 
 \fnevents
 \index{events!generated by!load-blackboard-repository@\textbf{load-blackboard-repository}}%
@@ -11806,6 +11221,10 @@ If \var{disable-events} is \nil, the following events may be signaled as
 \code{bb} is added to it.  Then, \code{*default-pathname-defaults*} is used to
 supply any missing components to \var{pathname}.
 
+If \var{ignore-after-loading-function\/} is true, the
+\var{after-loading-function\/} (if specified when the repository was
+saved) is not executed.
+
 \begin{alsos}{with-reading-saved/sent-objects-block}
 \also[save-blackboard-repository]
 \also[with-reading-saved/sent-objects-block]
@@ -11816,7 +11235,8 @@ and then load a blackboard repository that was saved previously:
 \begin{example}
   > :tutorial-example :noautorun 
   > (load-blackboard-repository "tutorial")
-  #P"/Users/corkill/tutorial.bb"
+  #P"/Users/corkill/tutorial.bb";
+  #<path 1>
 \end{example}
 Try loading the repository again:
 \begin{example}
@@ -11825,7 +11245,13 @@ Try loading the repository again:
   Continue anyway (the current contents will be deleted)? no
   nil
 \end{example}
-
+Load the repository again, but without executing its
+\var{after-loading-function\/}:
+\begin{example}
+  > :tutorial-example :noautorun 
+  > (load-blackboard-repository "tutorial" :ignore-after-loading-function 't)
+  #P"/Users/corkill/tutorial.bb"
+\end{example}
 \end{functiondoc}
 
 %% ------------------------------------------------------------------------
@@ -11916,11 +11342,27 @@ added to the list of slots that are not saved or sent:
     \var{stream\/}
     \returns{} \var{object\/}}
 \fnalternate{print-object-for-saving/sending}%
+  {\code{(}\var{object\/} \code{function)}
+    \var{stream\/}
+    \returns{} \var{object\/}}
+\fnalternate{print-object-for-saving/sending}%
+  {\code{(}\var{object\/} \code{generic-function)}
+    \var{stream\/}
+    \returns{} \var{object\/}}
+\fnalternate{print-object-for-saving/sending}%
   {\code{(}\var{object\/} \code{hash-table)}
     \var{stream\/}
     \returns{} \var{object\/}}
 \fnalternate{print-object-for-saving/sending}%
+  {\code{(}\var{object\/} \code{package)}
+    \var{stream\/}
+    \returns{} \var{object\/}}
+\fnalternate{print-object-for-saving/sending}%
   {\code{(}\var{object\/} \code{standard-class)}
+    \var{stream\/}
+    \returns{} \var{object\/}}
+\fnalternate{print-object-for-saving/sending}%
+  {\code{(}\var{object\/} \code{standard-generic-function)}
     \var{stream\/}
     \returns{} \var{object\/}}
 \fnalternate{print-object-for-saving/sending}%
@@ -12076,7 +11518,8 @@ Write the binary value of slot \code{song} in \glref{unit~instances} of
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Function}{save-blackboard-repository}{\var{pathname\/}
+\begin{functiondoc}{Function}{save-blackboard-repository}%
+  {\var{after-loading-function pathname\/}
     \code{\&key} \var{external-format package read-default-float-format\/} 
     \returns{} \var{pathname\/}}
 \index{blackboard repository!saving to a file}%
@@ -12096,6 +11539,8 @@ Write the binary value of slot \code{song} in \glref{unit~instances} of
 \arg[pathname] A \glref{pathname~designator}
 \arg[external-format] An external-file-format designator (default is
   \code{:default})
+\arg[after-loading-function] A \glref{function} of no arguments, or
+  \nil{} (default is \nil)
 \arg[package] A \glref{package~designator} indicating the package to be used
 when saving and loading the blackboard repository (default is
 \code{:common-lisp-user})
@@ -12133,7 +11578,7 @@ resulting blackboard repository:
   > :tutorial-example
       \textrm{\ldots{}}
   ;; No executable KSAs remain, exiting control shell
-  ;; Control shell exited: 63 cycles completed
+  ;; Control shell 1 exited: 63 cycles completed
   ;; Run time: 0.04 seconds
   ;; Elapsed time: 0 seconds
   :quiescence
@@ -12238,6 +11683,697 @@ saving/sending operations.
 \also[print-object-for-saving/sending]
 \also[with-reading-saved/sent-objects-block]
 \end{alsos}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\T\markright{}%
+\T\pagestyle{plain}
+\T\clearpage
+\W\xname{ref-queue-entities}
+\T\pagestyle{fancy}
+\T\thispagestyle{fancybottom}
+\T\global\def\fnlastname{ }%
+\subsection{Queue Management}
+\label{sec:queue}%
+
+\index{module!:queue@\code{:queue}}%
+\index{:queue@\code{:queue} module}%
+The \code{:queue} module provides queue-management objects and operators.
+
+\W\entities
+\T\clearpage
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Macro}{do-queue}{(\var{var queue\/})
+    \var{declaration\/}\superstar{} 
+    \mbox{\{\var{tag\/} \vbar{} \var{form\/}\}\superstar}}
+\index{queue!operating on all elements elements of}%
+\index{queue!elements, operating on all elements of}%
+
+\fnsyntax
+
+\fnpurpose Iterate over each \glref{queue~element} on the
+specified \var{queue\/}.
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:queue}
+
+\fnargs
+\begin{args}{function}
+\arg[var] A \glref{variable~symbol}
+\arg[queue] A GBBopen \glref{queue}
+\arg[declaration] A declare expression
+\arg[tag] A \code{go} tag (not evaluated)
+\arg[form] A \glref{form}
+\end{args}
+
+\fndescription The iteration over \glref{queue~elements} is performed
+in queue order (first to last).
+
+\begin{alsos}{ordered-queue}
+\also[map-queue]
+\also[queue]
+\also[ordered-queue]
+\end{alsos}
+
+\fnexample
+\bfindexit{incf\&}%
+\bfindexit{memq}%
+\bfindexit{collect-trigger-instances}%
+Count the number of \glref{pending~KSAs} that were triggered by
+\code{hyp}: 
+\begin{example}
+> (let ((count 0))
+    (do-queue (ksa pending-ksas)
+      (when (\entlink{memq} hyp (collect-trigger-instances ksa))
+        (\link{incf&}{ent:incfAMP} count)))
+     count)
+31
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Generic~Function}{first-queue-element}{\var{queue\/}
+    \returns{} \var{queue-element\/}}
+\index{queue!returning first element}%
+\index{first element! of a queue, returning}%
+
+\fnsyntax
+
+\fnpurpose Return the first \glref{queue~element} on \var{queue}.
+
+\fnmethods
+\fnalternate{first-queue-element}{\code{(}\var{queue\/} \code{queue)}
+  \returns{} \var{queue-element}}
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:queue}
+
+\fnargs
+\begin{args}{queue}
+\arg[queue] A GBBopen \glref{queue}
+\end{args}
+
+\fnreturns The first \glref{queue~element} on \var{queue}.
+  
+\begin{alsos}{last-queue-element}
+\also[last-queue-element]
+\also[nth-queue-element]
+\end{alsos}
+
+\fnexample
+\begin{example}
+> (first-queue-element pending-ksas)
+#<ksa 2217>
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Generic~Function}{insert-on-queue}{\var{queue-element
+      queue\/} \returns{} \var{queue-element\/}}
+\index{queue!inserting an element on}%
+\index{inserting an item!onto a queue}%
+\index{inserting an item!into an ordered queue}%
+
+\fnsyntax
+
+\fnpurpose Insert a \glref{queue~element} on \var{queue}.
+
+\fnmethods
+\fnalternate{insert-on-queue}%
+  {\code{(}\var{queue-element\/} queue-element\code{)}
+  \code{(}\var{queue\/} \code{queue)} \returns{} \var{queue-element}}
+\fnalternate{insert-on-queue}%
+  {\code{(}\var{queue-element\/} \code{queue-element)}
+  \code{(}\var{queue\/} \code{ordered-queue)} \returns{} \var{queue-element}}
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:queue}
+
+\fnargs
+\begin{args}{queue-element}
+\arg[queue-element] A GBBopen \glref{queue~element} object
+\arg[queue] A GBBopen \glref{queue}
+\end{args}
+
+\fnreturns The supplied \var{queue-element}.
+
+\fndescription If \var{queue} is an
+\glref{ordered~queue}, the position of \var{queue-element} in
+\var{queue} is based on the key and test functions provided when the
+queue was created.  If \var{queue} is a standard \glref{queue},
+\var{queue-element} is inserted at the end of the queue.
+  
+\begin{alsos}{remove-from-queue}
+\also[make-queue]
+\also[remove-from-queue]
+\end{alsos}
+
+\fnexample
+\begin{example}
+> (insert-on-queue ksa pending-ksas)
+#<ksa 2372>
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Generic~Function}{last-queue-element}{\var{queue\/}
+    \returns{} \var{queue-element\/}}
+\index{queue!returning last element}%
+
+\fnsyntax
+
+\fnpurpose Return the last \glref{queue~element} on \var{queue}.
+
+\fnmethods
+\fnalternate{last-queue-element}{\code{(}\var{queue\/} \code{queue)}
+  \returns{} \var{queue-element}}
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:queue}
+
+\fnargs
+\begin{args}{queue}
+\arg[queue] A GBBopen \glref{queue}
+\end{args}
+
+\fnreturns The last \glref{queue~element} on \var{queue}.
+  
+\begin{alsos}{first-queue-element}
+\also[first-queue-element]
+\also[nth-queue-element]
+\end{alsos}
+
+\fnexample
+\begin{example}
+> (last-queue-element pending-ksas)
+#<ksa 2372>
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{make-queue}{\code{\&rest} \var{initargs\/}
+    \returns{} \var{queue\/}}
+\index{creating!a queue}%
+\index{making!a queue}%
+\index{queue!making a}%
+
+\fnsyntax
+
+\fnpurpose Make a GBBopen \glref{queue}.
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:queue}
+
+\fnargs
+\begin{args}{initargs}
+\arg[initargs] An \glref{initialization~argument~list}
+\end{args}
+
+\fnreturns The newly created \glref{queue}.
+  
+\begin{alsos}{ordered-queue}
+\also[queue]
+\also[ordered-queue]
+\end{alsos}
+
+\fnexample
+\bfindexit{ordered-queue}%
+\bfindexit{rating-of}%
+\begin{example}
+> (setf pending-ksas (make-queue :class '\entlink{ordered-queue}
+                                 :key #'\entlink{rating-of}))
+#<ordered-queue>
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Generic~Function}{map-queue}{\var{function queue\/}}
+\index{queue!applying a function to elements of}%
+\index{queue!elements, applying a function to}%
+
+\fnsyntax
+
+\fnpurpose Apply a \glref{function} to each \glref{queue~element} on the
+specified \var{queue\/}.
+
+\fnmethods
+\fnalternate{map-queue}{\code{(}\var{function\/} \code{t)}
+   \code{(}\var{queue\/} \code{queue)}}
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:queue}
+
+\fnargs
+\begin{args}{function}
+\arg[function] A \glref{function} of one argument
+\arg[queue] A GBBopen \glref{queue}
+\end{args}
+
+\fndescription The \var{function\/} is applied to the
+\glref{queue~elements} in queue order (first to last).
+
+\begin{alsos}{ordered-queue}
+\also[do-queue]
+\also[queue]
+\also[ordered-queue]
+\end{alsos}
+
+\fnexample
+\bfindexit{incf\&}%
+\bfindexit{memq}%
+\bfindexit{collect-trigger-instances}%
+Count the number of \glref{pending~KSAs} that were triggered by
+\code{hyp}: 
+\begin{example}
+> (let ((count 0))
+    (map-queue #'(lambda (ksa)
+                   (when (\entlink{memq} hyp (\entlink{collect-trigger-instances} ksa))
+                     (\link{incf&}{ent:incfAMP} count)))
+               pending-ksas)
+     count)
+31
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Generic~Function}{next-queue-element}{\var{queue-element\/}
+   \returns{} \var{next-queue-element\/}}
+\index{queue!returning next element}%
+
+\fnsyntax
+
+\fnpurpose Return the \glref{queue~element} that follows \var{queue-element}
+on a GBBopen queue.
+
+\fnmethods
+\fnalternate{next-queue-element}%
+  {\code{(}\var{queue-element\/} \code{queue-element)}
+  \returns{} \var{next-queue-element}}
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:queue}
+
+\fnargs
+\begin{args}{queue-element}
+\arg[queue-element] A GBBopen \glref{queue~element} object
+\end{args}
+
+\fnreturns The \glref{queue~element} that follows
+\var{queue-element}. 
+  
+\begin{alsos}{previous-queue-element}
+\also[previous-queue-element]
+\end{alsos}
+
+\fnexample
+\begin{example}
+> (next-queue-element ksa)
+#<ksa 2166>
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Generic~Function}{nth-queue-element}{\var{n queue\/} 
+    \returns{} \var{queue-element\/}}
+\index{queue!returning nth element}%
+
+\fnsyntax
+
+\fnpurpose Return the nth \glref{queue~element} on \var{queue}.
+
+\fnmethods
+\fnalternate{nth-queue-element}{\code{(}\var{n} \code{fixnum)}
+  \code{(}\var{queue\/} \code{queue)}
+  \returns{} \var{queue-element}}
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:queue}
+
+\fnargs
+\begin{args}{queue}
+\arg[n] A \glref{fixnum}
+\arg[queue] A GBBopen \glref{queue}
+\end{args}
+
+\fnreturns The specified \glref{queue~element} or \nil{} if none exists.
+  
+\fndescription Returns the nth element in \var{queue\/} (zero origin) or
+\nil{} if the queue is shorter than \var{n}.  If \var{n\/} is negative,
+return the nth element counting backward from the end of the queue (one
+origin).
+
+\begin{alsos}{first-queue-element}
+\also[first-queue-element]
+\also[last-queue-element]
+\end{alsos}
+
+\bfindexit{first-queue-element}%
+\bfindexit{last-queue-element}%
+\fnexamples
+Return the first element on \code{pending-ksas} (equivalent to
+\textbf{\entlinknoex{first-queue-element}}):
+\begin{example}
+> (nth-queue-element 0 pending-ksas)
+#<ksa 2217>
+\end{example}
+Return the last element on \code{pending-ksas} (equivalent to
+\textbf{\entlinknoex{last-queue-element}}):
+\begin{example}
+> (nth-queue-element -1 pending-ksas)
+#<ksa 2372>
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Generic~Function}{on-queue-p}{\var{queue-element\/} 
+    \returns{} \var{queue\/}}
+\index{queue!determining membership on}%
+\index{queue element!determining queue membership of}%
+
+\fnsyntax
+
+\fnpurpose Determine if \var{queue-element\/} resides on a
+ \glref{queue} by returning the \glref{queue} or \nil.
+
+\fnmethods
+\fnalternate{on-queue-p}{\code{(}\var{queue-element\/} \code{queue-element)}
+  \returns{} \var{queue}}
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:queue}
+
+\fnargs
+\begin{args}{queue}
+\arg[queue-element] A GBBopen \glref{queue~element} object
+\end{args}
+
+\fnreturns The \glref{queue} queue on which \var{queue-element\/}
+resides or \nil{} if \var{queue-element\/} is not on a queue.
+  
+\begin{alsos}{queue-element}
+\also[queue-element]
+\also[show-queue]
+\end{alsos}
+
+\fnexample
+Return the queue on which \code{ksa} resides:
+\begin{example}
+> (on-queue-p ksa)
+#<ordered-queue>
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Unit~Class}{ordered-queue}{}
+\index{class!ordered-queue@\textbf{ordered-queue}}%
+\index{unit class!ordered-queue@\textbf{ordered-queue}}%
+
+\fnsyntax
+
+\fnpackage \code{:gbb-tools}
+
+\fnmodule \code{:queue}
+
+\fndescription The \glref{unit~class} whose \glref{instances} are used 
+as the header of ordered (sorted) GBBopen queues.
+
+\begin{alsos}{queue-element}
+\also[ordered-ksa-queue]
+\also[make-queue]
+\also[queue]
+\also[queue-element]
+\also[show-queue]
+\end{alsos}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Generic~Function}{previous-queue-element}%
+  {\var{queue-element\/}
+    \returns{} \var{previous-queue-element\/}}
+\index{queue!returning previous element}%
+
+\fnsyntax
+
+\fnpurpose Return the \glref{queue~element} that precedes
+\var{queue-element} on a GBBopen queue.
+
+\fnmethods
+\fnalternate{previous-queue-element}%
+  {\code{(}\var{queue-element\/} \code{queue-element)}
+  \returns{} \var{previous-queue-element}}
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:queue}
+
+\fnargs
+\begin{args}{queue-element}
+\arg[queue-element] A GBBopen \glref{queue~element} object
+\end{args}
+
+\fnreturns The \glref{queue~element} that precedes
+\var{queue-element}. 
+  
+\begin{alsos}{next-queue-element}
+\also[next-queue-element]
+\end{alsos}
+
+\fnexample
+\begin{example}
+> (previous-queue-element ksa)
+#<ksa 2166>
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Unit~Class}{queue}{}
+\index{class!queue@\textbf{queue}}%
+\index{unit class!queue@\textbf{queue}}%
+  
+\fnsyntax
+
+\fnpackage \code{:gbb-tools}
+
+\fnmodule \code{:queue}
+
+\fndescription The \glref{unit~class} whose \glref{instances} are used as
+the header of GBBopen queues.
+
+\begin{alsos}{queue-element}
+\also[ksa-queue]
+\also[make-queue]
+\also[ordered-queue]
+\also[queue-element]
+\also[show-queue]
+\end{alsos}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Unit~Class}{queue-element}{}
+\index{class!queue-element@\textbf{queue-element}}%
+\index{unit class!queue-element@\textbf{queue-element}}%
+  
+\fnsyntax
+
+\fnpackage \code{:gbb-tools}
+
+\fnmodule \code{:queue}
+
+\fndescription Objects that inherit from the \glref{unit~class}
+\textbf{queue-element} can be elements of GBBopen queues.
+
+\begin{alsos}{ordered-queue}
+\also[on-queue-p]
+\also[ordered-queue]
+\also[queue]
+\end{alsos}
+
+\fnexample 
+\bfindexit{standard-unit-instance}%
+Define a \glref{KS~activation} class whose \glref{instances} can be kept
+in a queue of \glref{pending~KSAs}:
+\begin{example}
+  (define-unit-class ksa (\entlink{standard-unit-instance} queue-element)
+    ((rating
+      :initform -1
+      :type rating)
+      \textrm{\ldots{}} ))
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Generic~Function}{queue-length}{\var{queue\/}
+    \code{\&optional} \var{recount-p\/} \returns{} \var{integer\/}}
+\index{length!of a queue}%
+\index{queue!obtaining the length of}%
+
+\fnsyntax
+
+\fnpurpose Return the length of \var{queue\/}.
+
+\fnmethods
+\fnalternate{queue-length}{\code{(}\var{queue\/} \code{queue)}
+  \code{\&optional}
+  \var{recount-p\/} \returns{} \var{integer\/}} 
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:queue}
+
+\fnargs
+\begin{args}{function}
+\arg[queue] A GBBopen \glref{queue}
+\arg[recount-p] If true, actually counts the individual
+\glref{queue~elements} (default is \nil) 
+\end{args}
+
+\fnreturns The \var{queue\/} length.
+
+\fndescription Normally \textbf{queue-length} simply returns a count
+that is maintained with the queue.  Although highly unlikely, this
+count could become inaccurate if \glref{queue-element} insertion or
+deletion operations are aborted in process. If \var{recount-p} is
+true, the elements are actually counted and then the count maintained
+with the queue is updated and returned.
+
+\fnexamples
+Return the number of \glref{KSAs} in the queue \code{pending-ksas}:
+\begin{example}
+> (queue-length pending-ksas)
+896
+\end{example}
+Count and then return the actual number of \glref{KSAs} in the
+queue \code{pending-ksas}:
+\begin{example}
+> (queue-length pending-ksas 't)
+896
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Generic~Function}{remove-from-queue}%
+  {\var{queue-element\/} \returns{} \var{queue-element\/}}
+\index{queue!removing an element from}%
+
+\fnsyntax
+
+\fnpurpose Remove a \glref{queue~element} from its \glref{queue}.
+
+\fnmethods
+\fnalternate{remove-from-queue}%
+  {\code{(}\var{queue-element\/} \code{queue-element)}
+   \returns{} \var{queue-element\/}}
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:queue}
+
+\fnargs
+\begin{args}{queue-element}
+\arg[queue-element] A GBBopen \glref{queue~element} object
+\end{args}
+
+\fnreturns The supplied \var{queue-element}.
+
+\begin{alsos}{insert-on-queue}
+\also[insert-on-queue]
+\end{alsos}
+
+\fnexample
+\begin{example}
+> (remove-from-queue ksa)
+#<ksa 2372>
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Generic~Function}{show-queue}{\var{queue\/}
+    \code{\&key} \var{start end show-element-function\/}}
+\index{queue!printing elements of}%
+\index{printing!queue, elements of}%
+\index{elements!on a queue, printing}%
+
+\fnsyntax
+
+\fnpurpose Print the elements on \var{queue}.
+
+\fnmethods
+\fnalternate{show-queue}{\code{(}\var{queue\/} \code{queue)}
+  \code{\&key} \var{start end show-element-function\/}}
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:queue}
+
+\fnargs
+\begin{args}{show-element-function}
+\arg[queue] A GBBopen \glref{queue}
+\arg[start] An integer specifying the first \glref{queue~element} to
+be shown (default is \code{0})
+\arg[end] An integer specifying the last \glref{queue~element} to
+be shown or \nil{} indicating that the last \glref{queue~element} is
+to be shown (default is \nil) 
+\arg[show-element-function] A two-argument \glref{function} used to print each
+\glref{queue~element} line (default is \code{\#'standard-show-queue-element})
+\end{args}
+
+\begin{alsos}{on-queue-p}
+\also[on-queue-p]
+\end{alsos}
+
+\fnexample
+Show the first five \glref{KSAs} on the queue \code{pending-ksas}:
+\begin{example}
+> (show-queue pending-ksas :end 5)
+    0. #<ksa 2217>
+    1. #<ksa 2293>
+    2. #<ksa 2303>
+    3. #<ksa 2280>
+    4. #<ksa 2249>
+\end{example}
 
 \end{functiondoc}
 
@@ -12757,7 +12893,8 @@ one \glref{ks~class} name.  This error is signaled on class finalization.
      \var{initial-space-instance-specifier\/}\code{)} \vbar \\
  & \code{(:instance-name-comparision-test}
      \var{instance-name-comparision-test\/}\code{)} \vbar \\
- & \code{(:metaclass} \var{class-name\/}\code{)} \\
+ & \code{(:metaclass} \var{class-name\/}\code{)}  \vbar \\
+ & \code{(:retain} \{\var{boolean\/} \vbar{} \code{:propagate}\}\code{)} \\
 \end{tabular}
 \T\\
 \begin{tabular}{@{~}l@{~}l}
@@ -12796,32 +12933,16 @@ class. If the superclass list is empty, then the direct superclass defaults to t
 single class \textbf{\entlink{ks}}.
 
 \bfindexit{standard-unit-class}%
-The \code{:metaclass} \var{class-name\/}, if specified, must be a subclass of
-\textbf{\entlinknoex{standard-unit-class}}.  The default metaclass value is
-also \textbf{\entlinknoex{standard-unit-class}}.
+The \code{:metaclass} \var{class-name\/} class option, if specified, must be a
+subclass of \textbf{\entlinknoex{standard-unit-class}}.  The default metaclass
+value is also \textbf{\entlinknoex{standard-unit-class}}.
 
 \fndspar{Inheritance of class options}
-
-\index{inheritance!unit-class options}%
-\index{dimensional values!inheritance}%
-\index{initial space instances!inheritance}%
-The set of \var{dimensional-values\/} for a \glref{unit~class} is the
-union of the sets specified in the \var{dimensional-values\/} options
-of the class and its superclasses.  When more than one dimensional
-index is supplied for a given dimension, the one supplied by the most
-specific class is used.
-
-The effective \var{initial-space-instances\/} value for a
-\glref{unit~class} is the value specified in the definition of the
-most specific \glref{unit~class}. If no definitions specify an
-\var{initial-space-instances\/} value, \nil{} is used.
-
-The \var{instance-name-comparison-test\/} value is not inherited.  If
-no value is specified in the \glref{unit-class} definition, the
-default initializtion value associated with the metaclass is used.
+\classoptioninheritance
 
 \begin{alsos}{with-generate-accessors-format}
 \also[define-ks]
+\also[delete-blackboard-repository]
 \also[standard-unit-class]
 \also[with-generate-accessors-format]
 \end{alsos}
@@ -12957,7 +13078,8 @@ one \glref{ksa~class} name.  This error is signaled on class finalization.
      \var{initial-space-instance-specifier\/}\code{)} \vbar \\
  & \code{(:instance-name-comparision-test}
      \var{instance-name-comparision-test\/}\code{)} \vbar \\
- & \code{(:metaclass} \var{class-name\/}\code{)} \\
+ & \code{(:metaclass} \var{class-name\/}\code{)}  \vbar \\
+ & \code{(:retain} \{\var{boolean\/} \vbar{} \code{:propagate}\}\code{)} \\
 \end{tabular}
 \T\\
 \begin{tabular}{@{~}l@{~}l}
@@ -12996,32 +13118,16 @@ class. If the superclass list is empty, then the direct superclass defaults to t
 single class \textbf{\entlink{ksa}}.
 
 \bfindexit{standard-unit-class}%
-The \code{:metaclass} \var{class-name\/}, if specified, must be a subclass of
-\textbf{\entlinknoex{standard-ksa-class}}.  The default metaclass value is
-also \textbf{\entlinknoex{standard-ksa-class}}.
+The \code{:metaclass} \var{class-name\/} class option, if specified, must be a
+subclass of \textbf{\entlinknoex{standard-ksa-class}}.  The default metaclass
+value is also \textbf{\entlinknoex{standard-ksa-class}}.
 
 \fndspar{Inheritance of class options}
-
-\index{inheritance!unit-class options}%
-\index{dimensional values!inheritance}%
-\index{initial space instances!inheritance}%
-The set of \var{dimensional-values\/} for a \glref{unit~class} is the
-union of the sets specified in the \var{dimensional-values\/} options
-of the class and its superclasses.  When more than one dimensional
-index is supplied for a given dimension, the one supplied by the most
-specific class is used.
-
-The effective \var{initial-space-instances\/} value for a
-\glref{unit~class} is the value specified in the definition of the
-most specific \glref{unit~class}. If no definitions specify an
-\var{initial-space-instances\/} value, \nil{} is used.
-
-The \var{instance-name-comparison-test\/} value is not inherited.  If
-no value is specified in the \glref{unit-class} definition, the
-default initializtion value associated with the metaclass is used.
+\classoptioninheritance
 
 \begin{alsos}{with-generate-accessors-format}
 \also[define-ks]
+\also[delete-blackboard-repository]
 \also[standard-ksa-class]
 \also[with-generate-accessors-format]
 \end{alsos}
@@ -13344,28 +13450,6 @@ The class \textbf{ks} is the default \glref{class} of
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Unit~Class}{ksa}{}
-\index{class!ksa@\textbf{ksa}}%
-\index{unit class!ksa@\textbf{ksa}}%
-
-\fnsyntax
-
-\fnpackage \code{:agenda-shell}
-
-\fnmodule \code{:agenda-shell}
-
-\fndescription 
-The class \textbf{ksa} is the default \glref{class} of
-\glref{unit~instances} representing \glref{KS~activations}.
-
-\begin{alsos}{ks}
-\also[ks]
-\end{alsos}
-
-\end{functiondoc}
-
-%% ------------------------------------------------------------------------
-
 \begin{functiondoc}{Generic~Function}{ks-enabled-p}{\var{ks\/} 
     \returns{} \var{boolean\/}}
 \index{KS!enabled}%
@@ -13475,6 +13559,54 @@ Return the \glref{KS} of a \glref{KSA}:
 
 %% ------------------------------------------------------------------------
 
+\begin{functiondoc}{Unit~Class}{ksa}{}
+\index{class!ksa@\textbf{ksa}}%
+\index{unit class!ksa@\textbf{ksa}}%
+
+\fnsyntax
+
+\fnpackage \code{:agenda-shell}
+
+\fnmodule \code{:agenda-shell}
+
+\fndescription 
+The class \textbf{ksa} is the default \glref{class} of
+\glref{unit~instances} representing \glref{KS~activations}.
+
+\begin{alsos}{ks}
+\also[ks]
+\end{alsos}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Unit~Class}{ksa-queue}{}
+\index{class!ksa-queue@\textbf{ksa-queue}}%
+\index{unit class!ksa-queue@\textbf{ksa-queue}}%
+  
+\fnsyntax
+
+\fnpackage \code{:agenda-shell}
+
+\fnmodule \code{:agenda-shell}
+
+\fndescription The \glref{unit~class} whose \glref{instances} are used as
+the header of \glref{KSA} queues.
+
+\begin{alsos}{queue-element}
+\also[make-queue]
+\also[ordered-ksa-queue]
+\also[ordered-queue]
+\also[queue]
+\also[queue-element]
+\also[show-queue]
+\end{alsos}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
 \begin{functiondoc}{Generic~Reader}{obviation-cycle-of}{\var{ksa\/} 
     \returns{} \var{cycle-number\/}}
 \index{KSA!obviation cycle of}%
@@ -13514,6 +13646,31 @@ Return the \glref{obviation} cycle of \code{ksa}:
 > (obviation-cycle-of ksa)
 1211
 \end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Unit~Class}{ordered-ksa-queue}{}
+\index{class!ordered-queue@\textbf{ordered-queue}}%
+\index{unit class!ordered-queue@\textbf{ordered-queue}}%
+
+\fnsyntax
+
+\fnpackage \code{:gbb-tools}
+
+\fnmodule \code{:queue}
+
+\fndescription The \glref{unit~class} whose \glref{instances} are used as
+the header of ordered (sorted) \glref{KSA} queues.
+
+\begin{alsos}{queue-element}
+\also[ksa-queue]
+\also[make-queue]
+\also[queue]
+\also[queue-element]
+\also[show-queue]
+\end{alsos}
 
 \end{functiondoc}
 
@@ -13592,7 +13749,8 @@ related macros with this accessor.
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Function}{restart-control-shell}{\noargs
+\begin{functiondoc}{Function}{restart-control-shell}{%
+    \code{\&key} \var{name\/}
     \returns{} \var{value\/}\superstar}
 \index{agenda shell, restarting}%
 \index{control shell!restarting}%
@@ -13600,11 +13758,17 @@ related macros with this accessor.
 
 \fnsyntax
 
-\fnpurpose Restart the agenda shell.
+\fnpurpose Restart the agenda shell named \var{name\/}.
 
 \fnpackage \code{:agenda-shell}
 
 \fnmodule \code{:agenda-shell}
+
+\codeindexqualit{:name}{\textbf{restart-control-shell} initarg}%
+\fnargs
+\begin{args}{name}
+\arg[name] An object naming a control-shell instance (default is \code{1}) 
+\end{args}
 
 \fnreturns
 One of the following values: 
@@ -13642,9 +13806,9 @@ A \code{restart-control-shell-event} is signaled.
 Restart the Agenda Shell (in this case, without any \glref{KSs} defined):
 \begin{example}
 > (restart-control-shell)
-;; Control shell restarting after cycle 2
+;; Control shell 1 restarting after cycle 2
 ;; No executable KSAs remain, exiting control shell
-;; Control shell exited: 4 cycles completed
+;; Control shell 1 exited: 4 cycles completed
 ;; Run time: 0 seconds
 ;; Elapsed time: 0 seconds
 :quiescence
@@ -13764,8 +13928,9 @@ Return the (sole) trigger \glref{unit~instance} of a \glref{KSA}:
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Class}{standard-ksa-class}{}
+\begin{functiondoc}{Unit~Class}{standard-ksa-class}{}
 \index{class!standard-ksa-class@\textbf{standard-ksa-class}}%
+\index{unit class!standard-ksa-class@\textbf{standard-ksa-class}}%
   
 \fnsyntax
 
@@ -13847,9 +14012,10 @@ Available \var{initargs\/} are:
   initarg}% 
 \codeindexqualit{:minimum-ksa-execution-rating}{\textbf{start-control-shell}
   initarg}% 
+\codeindexqualit{:name}{\textbf{start-control-shell} initarg}%
+\codeindexqualit{:output-stream}{\textbf{start-control-shell} initarg}%
 \codeindexqualit{:pause}{\textbf{start-control-shell} initarg}%
 \codeindexqualit{:print}{\textbf{start-control-shell} initarg}%
-\codeindexqualit{:output-stream}{\textbf{start-control-shell} initarg}%
 \codeindexqualit{:run-polling-functions}{\textbf{start-control-shell}
   initarg}% 
 \codeindexqualit{:save-executed-ksas}{\textbf{start-control-shell} initarg}%
@@ -13862,6 +14028,7 @@ is \nil)
 \arg[fifo-queue-ordering] A \glref{generalized~boolean} (default is \code{t}) 
 \arg[hibernate-on-quiescence] A \glref{generalized~boolean} (default is \nil) 
 \arg[minimum-ksa-execution-rating] A \glref{rating} (default is \code{1}) 
+\arg[name] An object naming this control-shell instance (default is \code{1}) 
 \arg[output-stream] Control-shell output stream (default is
 \code{*trace-output*}) 
 \arg[pause] A \glref{generalized~boolean} (default is \nil) 
@@ -13971,9 +14138,9 @@ of a \glref{KS}
 Start the Agenda Shell (in this case, without any \glref{KSs} defined):
 \begin{example}
 > (start-control-shell)
-;; Control shell started
+;; Control shell 1 started
 ;; No executable KSAs remain, exiting control shell
-;; Control shell exited: 2 cycles completed
+;; Control shell 1 exited: 2 cycles completed
 ;; Run time: 0 seconds
 ;; Elapsed time: 0 seconds
 :quiescence
@@ -13983,7 +14150,7 @@ Start the Agenda Shell (again without any \glref{KSs} defined, but with
 stepping enabled):
 \begin{example}
 > (start-control-shell :stepping 't)
-;; Control shell started
+;; Control shell 1 started
 >> CS Step (cycle 1):
    About to signal quiescence... \entered{?}
 Stepping commands (follow with <Return>):
@@ -14005,7 +14172,7 @@ Stepping commands (follow with <Return>):
    About to signal quiescence... \entered{q}
 All stepping disabled
 ;; No executable KSAs remain, exiting control shell
-;; Control shell exited: 2 cycles completed
+;; Control shell 1 exited: 2 cycles completed
 ;; Run time: 0 seconds
 ;; Elapsed time: 54 seconds
 :quiescence

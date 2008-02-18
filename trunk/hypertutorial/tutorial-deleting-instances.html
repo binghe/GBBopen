@@ -5,7 +5,7 @@
 <!-- XML file produced from file: tutorial.tex
      using Hyperlatex v 2.9-in-waiting-rk (c) Otfried Cheong -->
 <head>
-<title>GBBopen 0.9.7 Tutorial -- Deleting Instances</title>
+<title>GBBopen 0.9.8 Tutorial -- Deleting Instances</title>
 </p>
 <link rel="SHORTCUT ICON" href="favicon.ico"><link rel=stylesheet
         href="gbbopen.css" type="text/css" />
@@ -28,7 +28,7 @@ This exercise shows you how to:
 <p><ul class="tight"><li>Delete a unit instance
 <li>Create a space-instance hierarchy
 <li>Delete a space instance
-<li>Reset gbbopen, deleting all unit and space instances (and more)
+<li>Delete all unit and space instances from the blackboard repository
 </ul>
 </p>
 <hr color="99CCCC">
@@ -249,6 +249,13 @@ the <code>east-side</code> and <code>west-side</code> as children.  We can use
      my-town                    Empty
         east-side               Empty
         west-side               Empty
+
+  Unit Class                    Instances
+  ----------                    ---------
+  location                              6
+  standard-space-instance               4
+                                ---------
+                                       10 instances
   &gt;
 </pre></font>
 <p><a name="id16">Observe</a> from the above description that child space instances that we created
@@ -286,14 +293,14 @@ Now, let's add <code>location</code> <code>2</code> to the <code>my-town</code> 
 <pre><font color="#8c8c8c">  &gt; <font color="#000000">(describe-instance (find-instance-by-name 2 'location))</font>
   Location #&lt;location 2&gt;
     Instance name: 2
-    Space instances: ((known-world my-town east-side) (known-world my-town)
+    Space instances: ((known-world my-town east-side)
+                      (known-world my-town)
                       (known-world))
     Dimensional values: None
     Non-link slots:
-      x 80
-      y 90
-    Link slots:
-      [None]
+      x:  80
+      y:  90
+    Link slots: None
   &gt;
 </pre></font>
 <p>and the description of the blackboard repository is:
@@ -306,6 +313,13 @@ Now, let's add <code>location</code> <code>2</code> to the <code>my-town</code> 
      my-town                    1 instance (1 location)
         east-side               1 instance (1 location)
         west-side               Empty
+
+  Unit Class                    Instances
+  ----------                    ---------
+  location                              6
+  standard-space-instance               4
+                                ---------
+                                       10 instances
   &gt;
 </pre></font>
 <p>Placing a unit instance on multiple space instances is useful when each space
@@ -334,6 +348,13 @@ Now let's delete some of what we just created.  Let's delete the
   Space Instance                Contents
   --------------                --------
   known-world                   6 instances (6 location)
+
+  Unit Class                    Instances
+  ----------                    ---------
+  location                              6
+  standard-space-instance               1
+                                ---------
+                                        7 instances
   &gt;
 </pre></font>
 <p>Notice that GBBopen has also deleted all the child space instances of
@@ -367,11 +388,11 @@ form:
 </pre></font>
 <p>to explicitly delete the <code>location</code> unit instances in <code>my-town</code>.
 </p>
-<h2><a name="id24">Step 7: Reset GBBopen</a></h2><p>
+<h2><a name="id24">Step 7: Delete the Blackboard Repository</a></h2><p>
 If we really want to get rid of all our unit and space instances, we can use
-the <b>reset-gbbopen</b> function:
+the <b>delete-blackboard-repository</b> function:
 </p>
-<pre><font color="#8c8c8c">  &gt; <font color="#000000">(reset-gbbopen)</font>
+<pre><font color="#8c8c8c">  &gt; <font color="#000000">(delete-blackboard-repository)</font>
   t
   &gt; <font color="#000000">(describe-blackboard-repository)</font>
   There are no space instances in the blackboard repository.
@@ -379,16 +400,17 @@ the <b>reset-gbbopen</b> function:
   nil
   &gt;
 </pre></font>
-<p><a name="id25"></a><b>Reset-gbbopen</b> has deleted every space and unit instance, but it has
-not eliminated our <code>location</code> unit class definition.  Let's create
-a <code>location</code> unit instance once again:
+<p><a name="id25"></a><b>delete-blackboard-repository</b> has deleted every space and unit
+instance, but it has not eliminated our <code>location</code> unit class definition.
+Let's create a <code>location</code> unit instance once again:
 </p>
 <pre><font color="#8c8c8c">  &gt; <font color="#000000">(make-instance 'location)</font>
   #&lt;location 1&gt;
   &gt;
 </pre></font>
-<p>Note that resetting GBBopen also reset the counter for <code>location</code>
-instance names, so the created unit instance is again named <code>1</code>.
+<p>Note that deleting the blackboard repository also reset the counter for
+<code>location</code> instance names, so the created unit instance is again named
+<code>1</code>.
 </p>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />

@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/tools/mop-interface.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Jan 15 12:05:11 2008 *-*
+;;;; *-* Last-Edit: Wed Feb 13 04:21:40 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -66,6 +66,7 @@
 	clos:finalize-inheritance
 	clos:generic-function-method-class
 	clos:generic-function-methods
+        clos:generic-function-name
 	#-(or cormanlisp ecl)
 	clos:reader-method-class	; not currently used in GBBopen
 	clos:slot-boundp-using-class

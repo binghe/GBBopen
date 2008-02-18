@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS-USER; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/current/source/tools/test/portable-threads-test.lisp *-*
+;;;; *-* File: /home/gbbopen/source/tools/test/portable-threads-test.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Nov 28 12:08:14 2007 *-*
-;;;; *-* Machine: ruby.corkills.org *-*
+;;;; *-* Last-Edit: Sun Feb 17 03:47:34 2008 *-*
+;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2005-2007, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2005-2008, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -187,11 +187,6 @@
        (with-lock-held (nonrecursive-lock :whostate "Level 2")
          (with-lock-held (nonrecursive-lock :whostate "Level 3")
            nil)))
-     #+(and sbcl sb-thread)
-     #.(if (string= "1.0.11" (lisp-implementation-version))
-           'warning
-           'error)
-     #-(and sbcl sb-thread)
      error
      "With-lock-held did not fail when used recursively")
     (forced-format "~&;;   Testing with-lock-held returned values...~%")
@@ -366,8 +361,11 @@
 #+threads-not-available
 (defun basic-nonthreaded-thread-tests ()  
   (forced-format "~&;; Performing basic nonthreaded thread tests...")
-  (when (current-thread)
-    (log-error "(current-thread) is not nil"))
+  (let ((current-thread (current-thread)))
+    (unless (eq current-thread ':threads-not-available)
+      (log-error "(current-thread) is ~s, not ~s" 
+                 current-thread
+                 ':threads-not-available)))
   (when (all-threads)
     (log-error "(all-threads) is not nil"))
   (forced-format "~&;;   Checking spawn-thread...")
@@ -603,10 +601,12 @@
                   (dotimes (i iterations)
                     (with-lock-held (cv)
                       (loop while (plusp (state-of cv)) 
-                          do (condition-variable-wait cv))
+                          do (unless
+                                 (condition-variable-wait-with-timeout cv 2)
+                               (warn "Incrementer wait timeout (iteration ~s)"
+                                     i)))
                       (incf (state-of cv))
-                      (funcall signal-fn cv))
-                    (thread-yield)))
+                      (funcall signal-fn cv))))
               cv 
               iterations
               signal-fn)
@@ -614,10 +614,11 @@
               (dotimes (i iterations)
                 (with-lock-held (cv)
                   (loop until (plusp (state-of cv)) 
-                      do (condition-variable-wait cv))
+                      do (unless (condition-variable-wait-with-timeout cv 2)
+                           (warn "Decrementer wait timeout (iteration ~s)"
+                                 i)))
                   (decf (state-of cv))
-                  (funcall signal-fn cv))
-                (thread-yield)))
+                  (funcall signal-fn cv))))
              (forced-format
               "~&;;   Condition-variable wait & ~a timing test completed~
                ~%;;      (~,2f seconds real time).~%"
@@ -686,7 +687,7 @@
                                   (state-of cv)
                                   ':proceed))))
                  (forced-format
-                  "~&;;     Proceed signal received,  signaling rehibernate.~%")
+                  "~&;;     Proceed signal received, signaling rehibernate.~%")
                  (with-lock-held (cv)
                    (setf (state-of cv) ':ready-to-rehibernate)
                    (condition-variable-signal cv))

@@ -5,7 +5,7 @@
 <!-- XML file produced from file: tutorial.tex
      using Hyperlatex v 2.9-in-waiting-rk (c) Otfried Cheong -->
 <head>
-<title>GBBopen 0.9.7 Tutorial -- Application Startup and Event Functions</title>
+<title>GBBopen 0.9.8 Tutorial -- Application Startup and Event Functions</title>
 </p>
 <link rel="SHORTCUT ICON" href="favicon.ico"><link rel=stylesheet
         href="gbbopen.css" type="text/css" />
@@ -15,14 +15,12 @@
 <td bgcolor="#99ccff"><a href="tutorial-control-shell.html"><img border="0" alt="Using a Control Shell" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="tutorial_0.html"><img border="0" alt="Top" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="tutorial-another-ks.html"><img border="0" alt="Add Another KS" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b>Application Startup and Event Functions</b></td><td bgcolor="#99ccff"><a target="_top" href="tutorial.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table>
 <h1>Application Startup and Event Functions</h1>
 <p>In the last exercise, we needed to create the <code>known-world</code> space
-instance, with <code>x</code> and <code>y</code> dimensions, before we started the
-Agenda Shell.  We also needed to call <b>reset-gbbopen</b>,
-retaining the unit instances of classes <code>ks</code> and
-<code>standard-space-instance</code>, before calling
-<b>start-control-shell</b> to execute another run of our developing
+instance, with <code>x</code> and <code>y</code> dimensions, before we started the Agenda
+Shell.  We also needed to call <b>delete-blackboard-repository</b> before
+calling <b>start-control-shell</b> to execute another run of our developing
 application.  It is convenient to have these activities performed
-automatically whenever the control shell is started, so we'll do so in
-this exercise.
+automatically whenever the control shell is started, so we'll do so in this
+exercise.
 </p>
 <p><hr color="99CCCC">
 This exercise shows you how to:
@@ -83,30 +81,26 @@ definition at the end of the file:
   (defun initializations (event-name &amp;key &amp;allow-other-keys)
     (declare (ignore event-name))
     ;; Clean up any previous run:
-    (reset-gbbopen :retain-classes '((ks :plus-subclasses))
-                   :retain-event-functions 't
-                   :retain-event-printing 't)
+    (delete-blackboard-repository)
     ;; Make a new known-world space instance:
     (make-space-instance 
      '(known-world)
      :dimensions '((x :ordered) (y :ordered))))
 </pre>
 <p>The first thing to note about the function definition is the argument
-signature: <code>initializations</code> is to be invoked with an event name
-(which is ignored in our function) and possibly other keyword
-arguments (indicated by the <code>&#38;key</code> and <code>&#38;allow-other-keys</code>
-lambda list keywords).  This argument signature conforms to GBBopen's
-event-function capabilities, which will be introduced in the next step
-in this exercise.
+signature: <code>initializations</code> is to be invoked with an event name (which
+is ignored in our function) and possibly other keyword arguments (indicated by
+the <code>&#38;key</code> and <code>&#38;allow-other-keys</code> lambda list keywords).  This
+argument signature conforms to GBBopen's event-function capabilities, which
+will be introduced in the next step in this exercise.
 </p>
-<p>When <code>initializations</code> executes, it resets GBBopen, retaining
-only <code>ks</code> unit instances (and instances of any subclasses of
-<code>ks</code>), event functions, and the current event printing.  Then it
-creates a new <code>(known-world)</code> space instance with ordered
-dimensions <code>x</code> and <code>y</code>.  We could have had
-<b>reset-gbbopen</b> also retain all space instances, as we did in
-the last exercise.  However, I prefer creating all new instances
-(other than KSs) over reuse when re-running an application.
+<p>When <code>initializations</code> executes, it deletes all of our application unit
+and space instances from the blackboard repository.  Only <code>ks</code>,
+<code>ksa-queue</code>, and <code>ordered-ksa-queue</code> unit instances, which are
+defined by the control shell as retained, are not deleted by
+<code>delete-blackboard-repository</code>.  Then <code>initializations</code> creates a
+new <code>(known-world)</code> space instance with ordered dimensions <code>x</code> and
+<code>y</code>.
 </p>
 <h2><a name="id3">Step 2: Add an event function</a></h2><p>
 GBBopen allows you to attach functions, called <i>event
@@ -153,9 +147,9 @@ Start a fresh Common Lisp session, compile and load the
 again:
 </p>
 <pre><font color="#8c8c8c">  &gt; <font color="#000000">(start-control-shell)</font>
-  ;; Control shell started
+  ;; Control shell 1 started
   ;; No executable KSAs remain, exiting control shell
-  ;; Control shell exited: 3 cycles completed
+  ;; Control shell 1 exited: 3 cycles completed
   ;; Run time: 0 seconds
   ;; Elapsed time: 0 seconds
   :quiescence
@@ -164,17 +158,17 @@ again:
 <p>Note that our developing application performs the same as it did in the last
 exercise, but now our <code>initializations</code> event function is taking care of
 all the details of starting up our application.  We no longer have to remember
-to create the <code>known-world</code> space instance or to reset GBBopen before
-running the application another time.
+to create the <code>known-world</code> space instance or to delete the blackboard
+repository before running the application another time.
 </p>
 <h2><a name="id5">Step 4: Run it Again</a></h2><p>
 Let's verify that we can re-run our application. Without doing anything else,
 start the Agenda Shell again:
 </p>
 <pre><font color="#8c8c8c">  &gt; <font color="#000000">(start-control-shell)</font>
-  ;; Control shell started
+  ;; Control shell 1 started
   ;; No executable KSAs remain, exiting control shell
-  ;; Control shell exited: 3 cycles completed
+  ;; Control shell 1 exited: 3 cycles completed
   ;; Run time: 0 seconds
   ;; Elapsed time: 0 seconds
   :quiescence
@@ -193,9 +187,7 @@ value to <code>make-space-instance</code>:
 <pre><font color="#8c8c8c">  (defun initializations (event-name &amp;key &amp;allow-other-keys)
     (declare (ignore event-name))
     ;; Clean up any previous run:
-    (reset-gbbopen :retain-classes '((ks :plus-subclasses))
-                   :retain-event-functions 't
-                   :retain-event-printing 't)
+    (delete-blackboard-repository)
     ;; Make a new known-world space instance:
     (make-space-instance 
      '(known-world)
@@ -213,9 +205,7 @@ specification:
 <pre><font color="#8c8c8c">  (defun initializations (event-name &amp;key &amp;allow-other-keys)
     (declare (ignore event-name))
     ;; Clean up any previous run:
-    (reset-gbbopen :retain-classes '((ks :plus-subclasses))
-                   :retain-event-functions 't
-                   :retain-event-printing 't)
+    (delete-blackboard-repository)
     ;; Make a new known-world space instance:
     (make-space-instance 
      '(known-world)
@@ -229,9 +219,7 @@ unit class:
 <pre><font color="#8c8c8c">  (defun initializations (event-name &amp;key &amp;allow-other-keys)
     (declare (ignore event-name))
     ;; Clean up any previous run:
-    (reset-gbbopen :retain-classes '((ks :plus-subclasses))
-                   :retain-event-functions 't
-                   :retain-event-printing 't)
+    (delete-blackboard-repository)
     ;; Make a new known-world space instance:
     (make-space-instance 
      '(known-world)
@@ -244,9 +232,9 @@ editor buffer (using <code>C-c C-k</code> in SLIME; <code>C-c C-b</code> in ELI)
 the Agenda Shell again:
 </p>
 <pre><font color="#8c8c8c">  &gt; <font color="#000000">(start-control-shell)</font>
-  ;; Control shell started
+  ;; Control shell 1 started
   ;; No executable KSAs remain, exiting control shell
-  ;; Control shell exited: 3 cycles completed
+  ;; Control shell 1 exited: 3 cycles completed
   ;; Run time: 0 seconds
   ;; Elapsed time: 0 seconds
   :quiescence

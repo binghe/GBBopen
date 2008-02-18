@@ -50,6 +50,9 @@ tools/portable-sockets.lisp
 tools/portable-threads.lisp
   - implementation-specific multiprocessing entities
 ------------------------------------------------------------------------------
+tools/print-object-for.lisp
+  - implementation-specific function saving/sending
+------------------------------------------------------------------------------
 tools/queue.lisp
   - CLISP and ECL require integer nth-queue-element method (rather than 
     fixnum), as they don't include fixnum as a built-in-class

@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/modules.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Jan 15 11:58:34 2008 *-*
+;;;; *-* Last-Edit: Mon Feb 11 08:14:17 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -89,8 +89,8 @@
   (:files ("portable-sockets")))
 
 (define-module :queue
-  (:requires :portable-threads :gbbopen-tools)
-  (:directory :gbbopen-tools)
+  (:requires :portable-threads :gbbopen-core :polling-functions)
+  (:directory :gbbopen)
   (:files ("queue" :forces-recompile)))
 
 ;;; ===========================================================================
@@ -129,7 +129,7 @@
 ;;;  Agenda Shell Modules
 
 (define-module :agenda-shell
-  (:requires :gbbopen-core :queue :polling-functions)
+  (:requires :gbbopen-core :queue)
   (:directory :gbbopen "control-shells")
   (:files ("agenda-shell-metaclasses" :forces-recompile)
 	  ("agenda-shell-metering" :forces-recompile)

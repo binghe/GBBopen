@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/tools/read-object.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Feb  9 14:52:53 2008 *-*
+;;;; *-* Last-Edit: Sun Feb 17 14:28:51 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -116,14 +116,21 @@
   unbound-value-indicator)
 
 ;;; ---------------------------------------------------------------------------
+;;;  Class (reference) reader
+         
+(defmethod saved/sent-object-reader ((char (eql #\C)) stream)
+  (let ((class-name (read stream 't nil 't)))
+    (find-class class-name 't)))
+
+;;; ---------------------------------------------------------------------------
 ;;;  Class-description reader
 
-(defmethod saved/sent-object-reader ((char (eql #\C)) stream)
+(defmethod saved/sent-object-reader ((char (eql #\D)) stream)
   ;; Check that we are in a with-saving/sending-block:
   (unless (boundp '*read-class-descriptions-ht*)
     (outside-reading-saved/sent-objects-block-error 'saved/sent-object-reader))
   (destructuring-bind (class-name &rest slot-names)
-      (read stream t nil 't)
+      (read stream 't nil 't)
     (let* ((class (find-class class-name 't))
            (class-slots (copy-list (progn
                                      (ensure-finalized-class class)
@@ -145,18 +152,34 @@
       ;; class:
       (setf (gethash class-name *read-class-descriptions-ht*)
             (list (nreverse supplied-slots)
-                  (mapcar #'slot-definition-name class-slots))))))
+                  (mapcar #'slot-definition-name class-slots)))))
+  ;; The next form should always be the object that triggered the class
+  ;; definition, so we read it here (to "hide" the class-definition and return
+  ;; the object in its place):
+  (read stream 't nil 't))
+
+;;; ---------------------------------------------------------------------------
+;;;  Function reader
+         
+(defmethod saved/sent-object-reader ((char (eql #\F)) stream)
+  (destructuring-bind (function-name)
+      (read stream 't nil 't)
+    (coerce function-name 'function)))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Hash-table reader
 
 (defmethod saved/sent-object-reader ((char (eql #\H)) stream)
   (destructuring-bind (ht-test ht-count ht-values &rest keys-and-values)
-      (read stream t nil 't)
+      (read stream 't nil 't)
     (declare (dynamic-extent keys-and-values))
-    (let ((ht (if ht-values 
-                  (make-hash-table :test ht-test :size ht-count)
-                  (make-hash-table :test ht-test :size ht-count :values nil))))
+    (let ((ht 
+           #+has-keys-only-hash-tables
+           (if ht-values 
+               (make-hash-table :test ht-test :size ht-count)
+               (make-hash-table :test ht-test :size ht-count :values nil))
+           #-has-keys-only-hash-tables
+           (make-hash-table :test ht-test :size ht-count)))
       (if ht-values 
           (loop for (key value) on keys-and-values by #'cddr
               do (setf (gethash key ht) value))
@@ -203,7 +226,7 @@
   (unless (boundp '*read-class-descriptions-ht*)
     (outside-reading-saved/sent-objects-block-error 'saved/sent-object-reader))
   (destructuring-bind (class-name &rest slot-values)
-      (read stream t nil 't)
+      (read stream 't nil 't)
     (declare (dynamic-extent slot-values))
     (destructuring-bind (incoming-slots missing-slot-names)
         (or (gethash class-name *read-class-descriptions-ht*)
@@ -217,6 +240,13 @@
         (initialize-saved/sent-instance 
          instance incoming-slots slot-values missing-slot-names)
         instance))))
+
+;;; ---------------------------------------------------------------------------
+;;;  Package (reference) reader
+         
+(defmethod saved/sent-object-reader ((char (eql #\P)) stream)
+  (let ((package-name (read stream 't nil 't)))
+    (ensure-package package-name)))
 
 ;;; ===========================================================================
 ;;;  The saved/sent-object readtable

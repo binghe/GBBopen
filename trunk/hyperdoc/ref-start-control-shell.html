@@ -5,7 +5,7 @@
 <!-- XML file produced from file: reference.tex
      using Hyperlatex v 2.9-in-waiting-rk (c) Otfried Cheong -->
 <head>
-<title>GBBopen 0.9.7 Reference -- start-control-shell</title>
+<title>GBBopen 0.9.8 Reference -- start-control-shell</title>
 </p>
 <link rel="SHORTCUT ICON" href="favicon.ico"><link rel=stylesheet
         href="gbbopen.css" type="text/css" />
@@ -56,6 +56,7 @@ is <code>nil</code>)
 </td></tr><tr valign="top"><td valign="baseline"><i>fifo-queue-ordering</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id73">generalized&nbsp;boolean</a> (default is <code>t</code>) 
 </td></tr><tr valign="top"><td valign="baseline"><i>hibernate-on-quiescence</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id73">generalized&nbsp;boolean</a> (default is <code>nil</code>) 
 </td></tr><tr valign="top"><td valign="baseline"><i>minimum-ksa-execution-rating</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#gl:rating">rating</a> (default is <code>1</code>) 
+</td></tr><tr valign="top"><td valign="baseline"><i>name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An object naming this control-shell instance (default is <code>1</code>) 
 </td></tr><tr valign="top"><td valign="baseline"><i>output-stream</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> Control-shell output stream (default is
 <code>*trace-output*</code>) 
 </td></tr><tr valign="top"><td valign="baseline"><i>pause</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id73">generalized&nbsp;boolean</a> (default is <code>nil</code>) 
@@ -158,9 +159,9 @@ of a <a href="ref-glossary.html#gl:KSs">KS</a>
 </p>
 <pre>
 &gt; (start-control-shell)
-;; Control shell started
+;; Control shell 1 started
 ;; No executable KSAs remain, exiting control shell
-;; Control shell exited: 2 cycles completed
+;; Control shell 1 exited: 2 cycles completed
 ;; Run time: 0 seconds
 ;; Elapsed time: 0 seconds
 :quiescence
@@ -170,7 +171,7 @@ stepping enabled):
 </p>
 <pre>
 &gt; (start-control-shell :stepping 't)
-;; Control shell started
+;; Control shell 1 started
 &gt;&gt; CS Step (cycle 1):
    About to signal quiescence... <font color="#00ff00">[<i>? entered</i>]</font>
 Stepping commands (follow with &lt;Return&gt;):
@@ -192,7 +193,7 @@ Stepping commands (follow with &lt;Return&gt;):
    About to signal quiescence... <font color="#00ff00">[<i>q entered</i>]</font>
 All stepping disabled
 ;; No executable KSAs remain, exiting control shell
-;; Control shell exited: 2 cycles completed
+;; Control shell 1 exited: 2 cycles completed
 ;; Run time: 0 seconds
 ;; Elapsed time: 54 seconds
 :quiescence

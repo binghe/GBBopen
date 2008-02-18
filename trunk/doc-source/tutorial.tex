@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
-%% *-* File: /home/gbbopen/current/doc-source/tutorial.tex *-*
-%% *-* Last-Edit: Wed Jan 30 03:43:02 2008; Edited-By: cork *-*
+%% *-* File: /home/gbbopen/doc-source/tutorial.tex *-*
+%% *-* Last-Edit: Fri Feb 15 02:14:22 2008; Edited-By: cork *-*
 %% *-* Machine: whirlwind.corkills.org *-*
 
 %% Copyright (C) 2005-2008, Dan Corkill <corkill@GBBopen.org>
@@ -930,10 +930,9 @@ Now, display a description of the unit instance by using GBBopen's
     Space instances: None
     Dimensional values: None
     Non-link slots:
-      x 40
-      y 60
-    Link slots:
-      [None]
+      x:  40
+      y:  60
+    Link slots: None
   >
 \end{example}
 
@@ -1008,10 +1007,9 @@ changed \code{x} slot value:
     Space instances: None
     Dimensional values: None
     Non-link slots:
-      x 50
-      y 60
-    Link slots:
-      [None]
+      x:  50
+      y:  60
+    Link slots: None
   >
 \end{example}
 
@@ -1139,6 +1137,8 @@ Display a description of the blackboard repository, which now contains the
   ----------                    ---------
   location                              1
   standard-space-instance               1
+                                ---------
+                                        2 instances
   >
 \end{example}
 
@@ -1199,6 +1199,8 @@ Display the description of the blackboard repository again:
   ----------                    ---------
   location                              1
   standard-space-instance               1
+                                ---------
+                                        2 instances
   >
 \end{example}
 
@@ -1218,10 +1220,9 @@ observing the change in the space instances from the last exercise:
     Space instances: ((known-world))
     Dimensional values: None
     Non-link slots:
-      x 50
-      y 60
-    Link slots:
-      [None]
+      x:  50
+      y:  60
+    Link slots: None
   >
 \end{example}
 
@@ -1295,6 +1296,13 @@ Display the description of the blackboard repository again:
   Space Instance                Contents
   --------------                --------
   known-world                   2 instances (2 location)
+
+  Unit Class                    Instances
+  ----------                    ---------
+  location                              2
+  standard-space-instance               1
+                                ---------
+                                        3 instances
   >
 \end{example}
 
@@ -1333,10 +1341,9 @@ and describing the \code{location} unit instance confirms this:
     Space instances: None
     Dimensional values: None
     Non-link slots:
-      x 50
-      y 60
-    Link slots:
-      [None]
+      x:  50
+      y:  60
+    Link slots: None
   >
 \end{example}
 
@@ -1368,7 +1375,7 @@ This exercise shows you how to:
 \item Delete a unit instance
 \item Create a space-instance hierarchy
 \item Delete a space instance
-\item Reset gbbopen, deleting all unit and space instances (and more)
+\item Delete all unit and space instances from the blackboard repository
 \end{tightitemize}
 
 \fndocrule
@@ -1661,6 +1668,13 @@ the \code{east-side} and \code{west-side} as children.  We can use
      my-town                    Empty
         east-side               Empty
         west-side               Empty
+
+  Unit Class                    Instances
+  ----------                    ---------
+  location                              6
+  standard-space-instance               4
+                                ---------
+                                       10 instances
   >
 \end{example}
 
@@ -1713,14 +1727,14 @@ As we expect, \code{location} \code{2} is now on three space instances:
   > \textcolor{black}{(describe-instance (find-instance-by-name 2 'location))}
   Location #<location 2>
     Instance name: 2
-    Space instances: ((known-world my-town east-side) (known-world my-town)
+    Space instances: ((known-world my-town east-side)
+                      (known-world my-town)
                       (known-world))
     Dimensional values: None
     Non-link slots:
-      x 80
-      y 90
-    Link slots:
-      [None]
+      x:  80
+      y:  90
+    Link slots: None
   >
 \end{example}
 %
@@ -1735,6 +1749,13 @@ and the description of the blackboard repository is:
      my-town                    1 instance (1 location)
         east-side               1 instance (1 location)
         west-side               Empty
+
+  Unit Class                    Instances
+  ----------                    ---------
+  location                              6
+  standard-space-instance               4
+                                ---------
+                                       10 instances
   >
 \end{example}
 
@@ -1773,6 +1794,13 @@ and describe the blackboard repository:
   Space Instance                Contents
   --------------                --------
   known-world                   6 instances (6 location)
+
+  Unit Class                    Instances
+  ----------                    ---------
+  location                              6
+  standard-space-instance               1
+                                ---------
+                                        7 instances
   >
 \end{example}
 %
@@ -1814,16 +1842,16 @@ form:
 %
 to explicitly delete the \code{location} unit instances in \code{my-town}.
 
-\subsection*{Step 7: Reset GBBopen}
+\subsection*{Step 7: Delete the Blackboard Repository}
 
-\bfindex{reset-gbbopen}%
+\bfindex{delete-blackboard-repository}%
 \bfindexit{describe-blackboard-repository}%
 \bfindexit{map-instances-of-class}%
 If we really want to get rid of all our unit and space instances, we can use
-the \textbf{reset-gbbopen} function:
+the \textbf{delete-blackboard-repository} function:
 %
 \begin{example}\color{darkergray}%
-  > \textcolor{black}{(reset-gbbopen)}
+  > \textcolor{black}{(delete-blackboard-repository)}
   t
   > \textcolor{black}{(describe-blackboard-repository)}
   There are no space instances in the blackboard repository.
@@ -1833,9 +1861,9 @@ the \textbf{reset-gbbopen} function:
 \end{example}
 
 \bfindexit{make-instance}%
-\textbf{Reset-gbbopen} has deleted every space and unit instance, but it has
-not eliminated our \code{location} unit class definition.  Let's create
-a \code{location} unit instance once again:
+\textbf{delete-blackboard-repository} has deleted every space and unit
+instance, but it has not eliminated our \code{location} unit class definition.
+Let's create a \code{location} unit instance once again:
 %
 \begin{example}\color{darkergray}%
   > \textcolor{black}{(make-instance 'location)}
@@ -1843,8 +1871,9 @@ a \code{location} unit instance once again:
   >
 \end{example}
 
-Note that resetting GBBopen also reset the counter for \code{location}
-instance names, so the created unit instance is again named \code{1}.
+Note that deleting the blackboard repository also reset the counter for
+\code{location} instance names, so the created unit instance is again named
+\code{1}.
 
 %% ========================================================================
 %%  Enhancing Your Development Environment
@@ -2384,11 +2413,11 @@ the REPL:
   >
 \end{example}
 
-\bfindexit{reset-gbbopen}%
-Then reset GBBopen in preparation for the next exercise:
+\bfindexit{delete-blackboard-repository}%
+Then delete the blackboard repository in preparation for the next exercise:
 %
 \begin{example}\color{darkergray}%
-  > \textcolor{black}{(reset-gbbopen)}
+  > \textcolor{black}{(delete-blackboard-repository)}
   t
   >
 \end{example}
@@ -2539,13 +2568,12 @@ and display its description:
     Instance name: 1
     Space instances: None
     Dimensional values:
-      x 40
-      y 60
+      x:  40
+      y:  60
     Non-link slots:
-      x 40
-      y 60
-    Link slots:
-      [None]
+      x:  40
+      y:  60
+    Link slots: None
   >
 \end{example}
 %
@@ -2589,6 +2617,13 @@ shown by \textbf{describe-blackboard-repository}:
   Space Instance                Contents
   --------------                --------
   known-world                   1 instance (1 location)
+
+  Unit Class                    Instances
+  ----------                    ---------
+  location                              1
+  standard-space-instance               1
+                                ---------
+                                        2 instances
   >
 \end{example}
 %
@@ -2693,6 +2728,8 @@ and confirm that the new \code{location} is on the \code{known-world}:
   ----------                    ---------
   location                              2
   standard-space-instance               1
+                                ---------
+                                        3 instances
   >
 \end{example}
 %
@@ -2727,6 +2764,8 @@ and verify that they are all on the \code{known-world}:
   ----------                    ---------
   location                              5
   standard-space-instance               1
+                                ---------
+                                        6 instances
   >
 \end{example}
 
@@ -2768,13 +2807,12 @@ We can use \textbf{describe-instance} to verify that we found the desired
     Instance name: 3
     Space instances: ((known-world))
     Dimensional values:
-      x 20
-      y 20
+      x:  20
+      y:  20
     Non-link slots:
-      x 20
-      y 20
-    Link slots:
-      [None]
+      x:  20
+      y:  20
+    Link slots: None
   >
 \end{example}
 %
@@ -3030,9 +3068,9 @@ Now, start the Agenda Shell:
 %
 \begin{example}\color{darkergray}%
   > \textcolor{black}{(start-control-shell)}
-  ;; Control shell started
+  ;; Control shell 1 started
   ;; No executable KSAs remain, exiting control shell
-  ;; Control shell exited: 2 cycles completed
+  ;; Control shell 1 exited: 2 cycles completed
   ;; Run time: 0 seconds
   ;; Elapsed time: 0 seconds
   :quiescence
@@ -3132,9 +3170,9 @@ Start the Agenda Shell again:
 %
 \begin{example}\color{darkergray}%
   > \textcolor{black}{(start-control-shell)}
-  ;; Control shell started
+  ;; Control shell 1 started
   ;; No executable KSAs remain, exiting control shell
-  ;; Control shell exited: 3 cycles completed
+  ;; Control shell 1 exited: 3 cycles completed
   ;; Run time: 0 seconds
   ;; Elapsed time: 0 seconds
   :quiescence
@@ -3152,32 +3190,59 @@ Did it work?  Let's describe the blackboard repository:
 
   Unit Class                    Instances
   ----------                    ---------
-  ks                                    1
+  control-shell                         1 *
+  ks                                    1 +
+  ksa-queue                             2 +
   location                              1
+  ordered-ksa-queue                     1 +
   standard-space-instance               1
+                                ---------
+                                        7 instances
   >
 \end{example}
 
 The initial \code{location} unit instance is there!
 
-\subsection*{Step 6: Display control shell activities}
+Note that some other unit instances have been created by the control shell.
+There is one \code{ks} unit instance, our \code{startup-ks} KS, as well as two
+\code{ksa-queue} and one \code{ordered-ksa-queue} unit instances.  The
+\code{ordered-ksa-queue} is the rating-based queue of pending KSAs (no pending
+KSAs remain on it) and the two \code{ksa-queue} queues are the Agenda Shell's
+executed KSAs and obviated KSAs queues (both empty).  We will discuss these
+queues in a later exercise.
 
-Let's rerun the control shell, but this time we will ask GBBopen to display
-more of what the control shell is doing.  First, reset GBBopen:
+The \code{ks}, \code{ksa-queue}, \code{ordered-ksa-queue} unit-instance counts
+are followed by plus signs (\code{+}).  This indicates that these unit classes
+have been defined to be \textit{retained}, meaning that their instances are
+not deleted by our call to \code{delete-blackboard-repository}.  The plus sign
+indicates that the retention attribute will be propagated to all subclasses of
+those unit classes; retained, but not propagated, would be shown by an
+asterisk (\code{*}).
+
+Let's verify this behavior by calling \code{delete-blackboard-repository} and
+then describe the blackboard repository:
 %
 \begin{example}\color{darkergray}%
-  > \textcolor{black}{(reset-gbbopen :retain-classes '(ks standard-space-instance))}
+  > \textcolor{black}{(delete-blackboard-repository)}
   t
+  > \textcolor{black}{:dsbb}
+  There are no space instances in the blackboard repository.
+
+  Unit Class                    Instances
+  ----------                    ---------
+  control-shell                         1 *
+  ks                                    1 +
+  ksa-queue                             2 +
+  ordered-ksa-queue                     1 +
   >
 \end{example}
-%
-Note that we told GBBopen to retain the unit instances of classes \code{ks}
-(our KS definition) and \code{standard-space-instance} (our
-\code{known-world}).  Without the \code{:retain-classes} argument, GBBopen
-would delete all unit instances, and we would have to redefine
-\code{startup-ks} and make another \code{known-world} space instance.
 
-Now, enable display of all control-shell and instance-creation events:
+\subsection*{Step 6: Display control shell activities}
+
+With all but the retained unit instances deleted from the blackboard
+repository, let's rerun the control shell.  However, this time we will ask
+GBBopen to display more of what the control shell is doing. First, enable
+display of all control-shell and instance-creation events:
 %
 \begin{example}\color{darkergray}%
   > \textcolor{black}{(enable-event-printing '(control-shell-event :plus-subevents))}
@@ -3195,7 +3260,7 @@ Start the Agenda Shell once again:
 %
 \begin{example}\color{darkergray}%
   > \textcolor{black}{(start-control-shell)}
-  ;; Control shell started
+  ;; Control shell 1 started
   => Start-control-shell-event
   => Control-shell-cycle-event
        :cycle 1
@@ -3215,7 +3280,7 @@ Start the Agenda Shell once again:
   => Control-shell-cycle-event
        :cycle 3
   ;; No executable KSAs remain, exiting control shell
-  ;; Control shell exited: 3 cycles completed
+  ;; Control shell 1 exited: 3 cycles completed
   ;; Run time: 0 seconds
   ;; Elapsed time: 0 seconds
   :quiescence
@@ -3224,25 +3289,30 @@ Start the Agenda Shell once again:
 
 \subsection*{Step 7: Control-shell stepping}
 
-\bfindexit{reset-gbbopen}%
+\bfindexit{delete-blackboard-repository}%
 Let's rerun the control shell once again, but this time we will enable
-control-shell stepping. Again, reset GBBopen:
+control-shell stepping. Again, delete the blackboard repository:
 %
 \begin{example}\color{darkergray}%
-  > \textcolor{black}{(reset-gbbopen :retain-classes '(ks standard-space-instance))}
+  > \textcolor{black}{(delete-blackboard-repository)}
   t
   >
 \end{example}
 %
-Note that the event printing that we enabled in the last step is reset
-(disabled) by default by \textbf{reset-gbbopen}.
+and disable the event printing that we enabled in the last step:
+%
+\begin{example}\color{darkergray}%
+  > \textcolor{black}{(disable-event-printing)}
+  nil
+  >
+\end{example}
 
 \bfindex{start-control-shell}%
 Now start the Agenda Shell, this time with stepping enabled:
 %
 \begin{example}\color{darkergray}%
   > \textcolor{black}{(start-control-shell :stepping 't)}
-  ;; Control shell started
+  ;; Control shell 1 started
   >> CS Step (cycle 1):
      About to process event #<start-control-shell-event>... \entered{?}
   Stepping commands (follow with <Return>):
@@ -3270,7 +3340,7 @@ Now start the Agenda Shell, this time with stepping enabled:
   >> CS Step (cycle 3):
      About to signal quiescence... \entered{<Return>}
   ;; No executable KSAs remain, exiting control shell
-  ;; Control shell exited: 3 cycles completed
+  ;; Control shell 1 exited: 3 cycles completed
   ;; Run time: 0 seconds
   ;; Elapsed time: 1 minute, 6 seconds
   :quiescence
@@ -3291,14 +3361,12 @@ Now start the Agenda Shell, this time with stepping enabled:
 \label{sec:application-startup}%
 
 In the last exercise, we needed to create the \code{known-world} space
-instance, with \code{x} and \code{y} dimensions, before we started the
-Agenda Shell.  We also needed to call \textbf{reset-gbbopen},
-retaining the unit instances of classes \code{ks} and
-\code{standard-space-instance}, before calling
-\textbf{start-control-shell} to execute another run of our developing
+instance, with \code{x} and \code{y} dimensions, before we started the Agenda
+Shell.  We also needed to call \textbf{delete-blackboard-repository} before
+calling \textbf{start-control-shell} to execute another run of our developing
 application.  It is convenient to have these activities performed
-automatically whenever the control shell is started, so we'll do so in
-this exercise.
+automatically whenever the control shell is started, so we'll do so in this
+exercise.
 
 \fndocrule
 
@@ -3366,9 +3434,7 @@ definition at the end of the file:
   (defun initializations (event-name &key &allow-other-keys)
     (declare (ignore event-name))
     ;; Clean up any previous run:
-    (reset-gbbopen :retain-classes '((ks :plus-subclasses))
-                   :retain-event-functions 't
-                   :retain-event-printing 't)
+    (delete-blackboard-repository)
     ;; Make a new known-world space instance:
     (make-space-instance 
      '(known-world)
@@ -3376,21 +3442,19 @@ definition at the end of the file:
 \end{example}
 
 The first thing to note about the function definition is the argument
-signature: \code{initializations} is to be invoked with an event name
-(which is ignored in our function) and possibly other keyword
-arguments (indicated by the \code{\&key} and \code{\&allow-other-keys}
-lambda list keywords).  This argument signature conforms to GBBopen's
-event-function capabilities, which will be introduced in the next step
-in this exercise.
+signature: \code{initializations} is to be invoked with an event name (which
+is ignored in our function) and possibly other keyword arguments (indicated by
+the \code{\&key} and \code{\&allow-other-keys} lambda list keywords).  This
+argument signature conforms to GBBopen's event-function capabilities, which
+will be introduced in the next step in this exercise.
 
-When \code{initializations} executes, it resets GBBopen, retaining
-only \code{ks} unit instances (and instances of any subclasses of
-\code{ks}), event functions, and the current event printing.  Then it
-creates a new \code{(known-world)} space instance with ordered
-dimensions \code{x} and \code{y}.  We could have had
-\textbf{reset-gbbopen} also retain all space instances, as we did in
-the last exercise.  However, I prefer creating all new instances
-(other than KSs) over reuse when re-running an application.
+When \code{initializations} executes, it deletes all of our application unit
+and space instances from the blackboard repository.  Only \code{ks},
+\code{ksa-queue}, and \code{ordered-ksa-queue} unit instances, which are
+defined by the control shell as retained, are not deleted by
+\code{delete-blackboard-repository}.  Then \code{initializations} creates a
+new \code{(known-world)} space instance with ordered dimensions \code{x} and
+\code{y}.
 
 \subsection*{Step 2: Add an event function}
 
@@ -3453,9 +3517,9 @@ again:
 %
 \begin{example}\color{darkergray}%
   > \textcolor{black}{(start-control-shell)}
-  ;; Control shell started
+  ;; Control shell 1 started
   ;; No executable KSAs remain, exiting control shell
-  ;; Control shell exited: 3 cycles completed
+  ;; Control shell 1 exited: 3 cycles completed
   ;; Run time: 0 seconds
   ;; Elapsed time: 0 seconds
   :quiescence
@@ -3465,8 +3529,8 @@ again:
 Note that our developing application performs the same as it did in the last
 exercise, but now our \code{initializations} event function is taking care of
 all the details of starting up our application.  We no longer have to remember
-to create the \code{known-world} space instance or to reset GBBopen before
-running the application another time.
+to create the \code{known-world} space instance or to delete the blackboard
+repository before running the application another time.
 
 \subsection*{Step 4: Run it Again}
 
@@ -3476,9 +3540,9 @@ start the Agenda Shell again:
 %
 \begin{example}\color{darkergray}%
   > \textcolor{black}{(start-control-shell)}
-  ;; Control shell started
+  ;; Control shell 1 started
   ;; No executable KSAs remain, exiting control shell
-  ;; Control shell exited: 3 cycles completed
+  ;; Control shell 1 exited: 3 cycles completed
   ;; Run time: 0 seconds
   ;; Elapsed time: 0 seconds
   :quiescence
@@ -3500,9 +3564,7 @@ value to \code{make-space-instance}:
   (defun initializations (event-name &key &allow-other-keys)
     (declare (ignore event-name))
     ;; Clean up any previous run:
-    (reset-gbbopen :retain-classes '((ks :plus-subclasses))
-                   :retain-event-functions 't
-                   :retain-event-printing 't)
+    (delete-blackboard-repository)
     ;; Make a new known-world space instance:
     (make-space-instance 
      '(known-world)
@@ -3522,9 +3584,7 @@ specification:
   (defun initializations (event-name &key &allow-other-keys)
     (declare (ignore event-name))
     ;; Clean up any previous run:
-    (reset-gbbopen :retain-classes '((ks :plus-subclasses))
-                   :retain-event-functions 't
-                   :retain-event-printing 't)
+    (delete-blackboard-repository)
     ;; Make a new known-world space instance:
     (make-space-instance 
      '(known-world)
@@ -3540,9 +3600,7 @@ unit class:
   (defun initializations (event-name &key &allow-other-keys)
     (declare (ignore event-name))
     ;; Clean up any previous run:
-    (reset-gbbopen :retain-classes '((ks :plus-subclasses))
-                   :retain-event-functions 't
-                   :retain-event-printing 't)
+    (delete-blackboard-repository)
     ;; Make a new known-world space instance:
     (make-space-instance 
      '(known-world)
@@ -3558,9 +3616,9 @@ the Agenda Shell again:
 %
 \begin{example}\color{darkergray}%
   > \textcolor{black}{(start-control-shell)}
-  ;; Control shell started
+  ;; Control shell 1 started
   ;; No executable KSAs remain, exiting control shell
-  ;; Control shell exited: 3 cycles completed
+  ;; Control shell 1 exited: 3 cycles completed
   ;; Run time: 0 seconds
   ;; Elapsed time: 0 seconds
   :quiescence
@@ -3648,12 +3706,13 @@ This exercise shows you how to:
       :trigger-events ((start-control-shell-event))
       :execution-function 'startup-ks-function)
 
+  ;;; ========================================================================
+  ;;;   Initializations (run at Agenda Shell startup)
+
   (defun initializations (event-name &key &allow-other-keys)
     (declare (ignore event-name))
     ;; Clean up any previous run:
-    (reset-gbbopen :retain-classes '((ks :plus-subclasses))
-                   :retain-event-functions 't
-                   :retain-event-printing 't)
+    (delete-blackboard-repository)
     ;; Make a new known-world space instance:
     (make-space-instance 
      '(known-world)
@@ -3718,9 +3777,9 @@ again:
 %
 \begin{example}\color{darkergray}%
   > \textcolor{black}{(start-control-shell)}
-  ;; Control shell started
+  ;; Control shell 1 started
   ;; No executable KSAs remain, exiting control shell
-  ;; Control shell exited: 3 cycles completed
+  ;; Control shell 1 exited: 3 cycles completed
   ;; Run time: 0 seconds
   ;; Elapsed time: 0 seconds
   :quiescence
@@ -3737,15 +3796,14 @@ Check that the initial \code{location} unit instance is at \code{time} zero:
     Instance name: 1
     Space instances: ((known-world))
     Dimensional values:
-      time 0
-      x 40
-      y 60
+      time:  0
+      x:  40
+      y:  60
     Non-link slots:
-      time 0
-      x 40
-      y 60
-    Link slots:
-      [None]
+      time:  0
+      x:  40
+      y : 60
+    Link slots: None
   >
 \end{example}
 
@@ -3893,11 +3951,11 @@ Compile and load the \code{random-walk-ks} forms, and then start the Agenda Shel
 %
 \begin{example}\color{darkergray}%
   > \textcolor{black}{(start-control-shell)}
-  ;; Control shell started
+  ;; Control shell 1 started
 
   Walked off the world: (23, 55).
   ;; No executable KSAs remain, exiting control shell
-  ;; Control shell exited: 64 cycles completed
+  ;; Control shell 1 exited: 64 cycles completed
   ;; Run time: 0.01 seconds
   ;; Elapsed time: 0 seconds
   :quiescence
@@ -3919,9 +3977,14 @@ created:
 
   Unit Class                    Instances
   ----------                    ---------
-  ks                                    1
+  control-shell                         1 *
+  ks                                    1 +
+  ksa-queue                             2 +
   location                             61
+  ordered-ksa-queue                     1 +
   standard-space-instance               1
+                                ---------
+                                       67 instances
 \end{example}
 
 The 61 \code{location} instances makes sense.  Previously, it required 3
@@ -4071,11 +4134,11 @@ off the \code{known-world}:
 %
 \begin{example}\color{darkergray}%
   > \textcolor{black}{(start-control-shell)}
-  ;; Control shell started
+  ;; Control shell 1 started
 
   Walked too long.
   ;; No executable KSAs remain, exiting control shell
-  ;; Control shell exited: 78 cycles completed
+  ;; Control shell 1 exited: 78 cycles completed
   ;; Run time: 0.04 seconds
   ;; Elapsed time: 0 seconds
   :quiescence
@@ -4180,12 +4243,13 @@ This exercise shows you how to:
       :trigger-events ((start-control-shell-event))
       :execution-function 'startup-ks-function)
 
+  ;;; ========================================================================
+  ;;;   Initializations (run at Agenda Shell startup)
+
   (defun initializations (event-name &key &allow-other-keys)
     (declare (ignore event-name))
     ;; Clean up any previous run:
-    (reset-gbbopen :retain-classes '((ks :plus-subclasses))
-                   :retain-event-functions 't
-                   :retain-event-printing 't)
+    (delete-blackboard-repository)
     ;; Make a new known-world space instance:
     (make-space-instance 
      '(known-world)
@@ -4477,11 +4541,11 @@ Compile the \code{random-walk-ks-function} (using \code{C-c C-c} in SLIME or
 %
 \begin{example}\color{darkergray}%
   > \textcolor{black}{(start-control-shell)}
-  ;; Control shell started
+  ;; Control shell 1 started
 
   Walked off the world: (55, 35).
   ;; No executable KSAs remain, exiting control shell
-  ;; Control shell exited: 66 cycles completed
+  ;; Control shell 1 exited: 66 cycles completed
   ;; Run time: 0.01 seconds
   ;; Elapsed time: 0 seconds
   :quiescence
@@ -4496,16 +4560,16 @@ First, the initial \code{location} unit instance:
     Instance name: 1
     Space instances: ((known-world))
     Dimensional values:
-      time 0
-      x 40
-      y 60
+      time:  0
+      x:  40
+      y:  60
     Non-link slots:
-      time 0
-      x 40
-      y 60
+      time:  0
+      x:  40
+      y:  60
     Link slots:
-      next-location #<location 2 (-10 10)>
-      previous-location nil
+      next-location:  #<location 2 (-10 10)>
+      previous-location:  nil
   >
 \end{example}
 
@@ -4519,16 +4583,16 @@ unit instance:
     Instance name: 2
     Space instances: ((known-world))
     Dimensional values:
-      time 1
-      x -10
-      y 10
+      time:  1
+      x:  -10
+      y:  10
     Non-link slots:
-      time 1
-      x -10
-      y 10
+      time:  1
+      x:  -10
+      y:  10
     Link slots:
-      next-location #<location 3 (-6 19)>
-      previous-location #<location 1 (0 0)>
+      next-location:  #<location 3 (-6 19)>
+      previous-location:  #<location 1 (0 0)>
   >
 \end{example}
 
@@ -4621,7 +4685,7 @@ Let's compile our latest changes and then run our application with the new
 %
 \begin{example}\color{darkergray}%
   > \textcolor{black}{(start-control-shell)}
-  ;; Control shell started
+  ;; Control shell 1 started
 
   Walked off the world: (54, 15).
 
@@ -4642,7 +4706,7 @@ Let's compile our latest changes and then run our application with the new
   37 (49 12)
   38 (47 10)
   ;; Explicit :stop issued by KS print-walk-ks
-  ;; Control shell exited: 41 cycles completed
+  ;; Control shell 1 exited: 41 cycles completed
   ;; Run time: 0.01 seconds
   ;; Elapsed time: 0 seconds
   :stop
@@ -4721,12 +4785,13 @@ This exercise shows you how to:
       :trigger-events ((start-control-shell-event))
       :execution-function 'startup-ks-function)
 
+  ;;; ========================================================================
+  ;;;   Initializations (run at Agenda Shell startup)
+
   (defun initializations (event-name &key &allow-other-keys)
     (declare (ignore event-name))
     ;; Clean up any previous run:
-    (reset-gbbopen :retain-classes '((ks :plus-subclasses))
-                   :retain-event-functions 't
-                   :retain-event-printing 't)
+    (delete-blackboard-repository)
     ;; Make a new known-world space instance:
     (make-space-instance 
      '(known-world)

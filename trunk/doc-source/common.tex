@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /home/gbbopen/doc-source/common.tex *-*
-%% *-* Last-Edit: Fri Feb  8 16:24:37 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Mon Feb 11 11:38:20 2008; Edited-By: cork *-*
 %% *-* Machine: whirlwind.corkills.org *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -18,7 +18,7 @@
 %\newcommand{\timezone}{EDT}
 
 %% Html declarations: output directory and filenames, node title
-\newcommand{\gbbopenversion}{0.9.7}
+\newcommand{\gbbopenversion}{0.9.8}
 \newcommand{\runningtitle}{GBBopen \gbbopenversion{} \docname}
 \htmltitle{\runningtitle}
 
@@ -969,17 +969,19 @@
 (defun special-section-p (secname)
   "DDC added predicate for GBBopen Reference `special' subsections" 
   (member secname
-	  '("Declared Numerics"
+	  '(;; :gbbopen-tools
+            "Declared Numerics"
             "Offset Universal Time"
 	    "Portable Threads"
 	    "Polling Functions"
 	    "Portable Sockets"
 	    "OS Interface"
-	    "Queue Management"
+            ;; :gbbopen-core
             "Events"
             "Blackboard Repository"
             "Instance Retrieval"
-            "Saving and Sending")))
+            "Saving and Sending"
+	    "Queue Management")))
 
 (defun hyperlatex-insert-menu (secnum depth)
   "Insert a menu for section SECNUM of depth DEPTH."
