@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
-%% *-* File: /home/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Mon Feb 18 05:25:16 2008; Edited-By: cork *-*
+%% *-* File: /home/gbbopen/current/doc-source/reference.tex *-*
+%% *-* Last-Edit: Tue Feb 19 09:33:49 2008; Edited-By: cork *-*
 %% *-* Machine: whirlwind.corkills.org *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -6220,8 +6220,8 @@ value is \textbf{\entlinknoex{standard-unit-class}}.
     (:dimensional-values 
      (belief :point belief)
      (classification :element classification)
-     (x :point #'location.x location)
-     (y :point #'location.y location))
+     (x :point #'x-of location)
+     (y :point #'y-of location))
     (:initial-space-instances (bb hyps)))
 #<standard-unit-class hyp>
 \end{example}
@@ -10480,6 +10480,14 @@ and \code{=\$\$\$} and \code{within\&}, \code{within\$\&}, \code{within\$},
 (#<hyp 319 (1835 8419) .91>
  #<hyp 331 (1835 8419) .88>
  #<hyp 335 (1835 8419) .92>)
+> (find-instances 'hyp (\entlink{find-space-instance-by-path} '(bb hyps)) 
+    '(and (= x 1835) (within belief (.85 .9))))
+(#<hyp 119 (1835 4791) .85>
+ #<hyp 331 (1835 8419) .88>
+ #<hyp 233 (1835 4791) .89>)
+> (find-instances 'hyp (\entlink{find-space-instance-by-path} '(bb hyps)) 
+    '(and (= x 1835) (covers belief (.85 .9))))
+nil
 \end{example}
 
 \end{functiondoc}
@@ -12121,7 +12129,7 @@ Return the queue on which \code{ksa} resides:
 
 \fnsyntax
 
-\fnpackage \code{:gbb-tools}
+\fnpackage \code{:gbbopen}
 
 \fnmodule \code{:queue}
 
@@ -12187,7 +12195,7 @@ as the header of ordered (sorted) GBBopen queues.
   
 \fnsyntax
 
-\fnpackage \code{:gbb-tools}
+\fnpackage \code{:gbbopen}
 
 \fnmodule \code{:queue}
 
@@ -12212,7 +12220,7 @@ the header of GBBopen queues.
   
 \fnsyntax
 
-\fnpackage \code{:gbb-tools}
+\fnpackage \code{:gbbopen}
 
 \fnmodule \code{:queue}
 

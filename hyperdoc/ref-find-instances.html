@@ -227,6 +227,14 @@ and <code>=&#36;&#36;&#36;</code> and <code>within&#38;</code>, <code>within&#36
 (#&lt;hyp 319 (1835 8419) .91&gt;
  #&lt;hyp 331 (1835 8419) .88&gt;
  #&lt;hyp 335 (1835 8419) .92&gt;)
+&gt; (find-instances 'hyp (<a href="ref-find-space-instance-by-path.html">find-space-instance-by-path</a> '(bb hyps)) 
+    '(and (= x 1835) (within belief (.85 .9))))
+(#&lt;hyp 119 (1835 4791) .85&gt;
+ #&lt;hyp 331 (1835 8419) .88&gt;
+ #&lt;hyp 233 (1835 4791) .89&gt;)
+&gt; (find-instances 'hyp (<a href="ref-find-space-instance-by-path.html">find-space-instance-by-path</a> '(bb hyps)) 
+    '(and (= x 1835) (covers belief (.85 .9))))
+nil
 </pre>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
