@@ -14,8 +14,13 @@ Important changes in GBBopen 0.9.8:
     - The :RETAIN class option is overridden if DELETE-BLACKBOARD-REPOSITORY
       is invoked with a true :ALL-CLASSES keyword value
 
-  * Queue objects (headers, elements) are now unit instances, new Agenda
-    Shell unit classes KSA-QUEUE and ORDERED-KSA-QUEUE
+  * POTENTIALLY INCOMPATIBLE CHANGE: Queue objects (headers, elements) are now
+    unit instances, all queue-management entities have been moved from the
+    :GBBOPEN-TOOLS package to the :GBBOPEN package; new Agenda Shell unit
+    classes KSA-QUEUE and ORDERED-KSA-QUEUE
+    - Any subclasses of ORDERED-QUEUE, QUEUE, and QUEUE-ELEMENT that were
+      defined previously to be unit instances should no longer include
+      STANDARD-UNIT-INSTANCE in their direct superclasses
 
   * New :name argument for START-CONTROL-SHELL and RESUME-CONTROL-SHELL
 
