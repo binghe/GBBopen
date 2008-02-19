@@ -1,13 +1,13 @@
 ;;;; -*- Mode:Common-Lisp; Package:CLOS; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/current/source/gbbopen/ecl-mop-patches.lisp *-*
+;;;; *-* File: /home/gbbopen/current/source/tools/ecl-mop-patches.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Oct  9 05:44:49 2007 *-*
-;;;; *-* Machine: ruby.corkills.org *-*
+;;;; *-* Last-Edit: Tue Feb 19 05:21:47 2008 *-*
+;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
 ;;;; *
-;;;; *                   Required MOP Patches for ECL 0.9i
+;;;; *                   Required MOP Patches for ECL 0.9j
 ;;;; *
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -62,7 +62,7 @@
 				    :key #'slot-definition-name))))))
 
 ;;; ---------------------------------------------------------------------------
-;;;  Adapted from make-method (fixups.lsp):
+;;;  Adapted from make-method (fixup.lsp):
 
 (defun make-accessor-method (qualifiers specializers arglist function plist
 			     options gfun method-class slot-name)
