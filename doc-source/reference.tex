@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /home/gbbopen/current/doc-source/reference.tex *-*
-%% *-* Last-Edit: Tue Feb 19 09:33:49 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Wed Feb 20 05:44:39 2008; Edited-By: cork *-*
 %% *-* Machine: whirlwind.corkills.org *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -6212,16 +6212,19 @@ value is \textbf{\entlinknoex{standard-unit-class}}.
 > (define-unit-class hyp ()
     ((belief :initform 0.0)
      (location :initform nil)
-     (classification :initform :unknown)
+     (velocity-range)
+     (classification :initform '(:car :truck :bus :motorcycle :train :duck-boat 
+                                 :lawn-mower :anything))
      (supporting-hyps 
       :link (hyp supported-hyps))
      (supported-hyps 
       :link (hyp supporting-hyps)))
     (:dimensional-values 
      (belief :point belief)
-     (classification :element classification)
-     (x :point #'x-of location)
-     (y :point #'y-of location))
+     (velocity-range :interval velocity-range)
+     (classification :element :set classification)
+     (x :point #'location.x location)
+     (y :point #'location.y location))
     (:initial-space-instances (bb hyps)))
 #<standard-unit-class hyp>
 \end{example}
@@ -6290,7 +6293,7 @@ may also be signaled:
 \bfindexit{make-instance}%
 Create, then delete, a \code{hyp} \glref{unit~instance}:
 \begin{example}
-> (delete-instance (\entlink{make-instance} 'hyp)))
+> (delete-instance (\entlink{make-instance} 'hyp :location '(896 388) :belief .68))
 #<hyp 311 (896 388) .68 [Deleted]>
 \end{example}
 
@@ -6335,21 +6338,25 @@ The description is printed to the {\bf *standard-output*} stream.
 Describe the \code{hyp} \glref{unit~instance}:
 \begin{example}
 > (describe-instance hyp)
-Hyp #<hyp 119>
-  Instance name: 119
-  Space instances: (#<standard-space-instance (bb hyps)>)
+Hyp #<hyp 419 (1835 4791) 0.85 [5..35]>
+  Instance name: 419
+  Space instances: ((bb hyps))
   Dimensional values:
     belief:  0.85
-    identity:  (:car :truck :bus :motorcycle :duck-boat)
+    classification:  (:car :truck)
+    velocity-range:  (5 35)
     x:  1835
     y:  4791
   Non-link slots:
     belief:  0.85
-    identity:  (:car :truck :bus :motorcycle :duck-boat)
+    classification:  (:car :truck)
     location:  (1835 4791)
+    velocity-range:  (5 35)
   Link slots:
-    supporting-hyps:  (#<hyp 183 (1835 4791) .82>
-                       #<hyp 233 (1835 4791) .89>)
+    supported-hyps:  nil
+    supporting-hyps:  (#<hyp 183 (1835 4791) 0.82 [0..35]>
+                       #<hyp 233 (1835 4791) 0.89 [5..35]>)
+  Space instances: (#<standard-space-instance (bb hyps)>)
 \end{example}
 
 \end{functiondoc}
@@ -6396,8 +6403,8 @@ The description is printed to the {\bf *standard-output*} stream.
 \begin{example}
 > (describe-unit-class 'hyp)
 Standard-unit-class #<standard-unit-class hyp>
-  Direct superclasses: 
-    standard-unit-class (abstract)
+  Direct superclasses:
+    standard-unit-instance (abstract)
   Direct subclasses: None
   Direct slots:
     belief
@@ -6412,27 +6419,33 @@ Standard-unit-class #<standard-unit-class hyp>
       :initform nil
       :readers (location-of)
       :writers ((setf location-of))
+    velocity-range
+      :allocation :instance
+      :initargs (:velocity-range)
+      :readers (velocity-range-of)
+      :writers ((setf velocity-range-of))
     classification
       :allocation :instance
       :initargs (:classification)
-      :initform :unknown
+      :initform '(:car :truck :bus :motorcycle :train :duck-boat :lawn-mower
+                  :anything)
       :readers (classification-of)
       :writers ((setf classification-of))
   Direct link slots:
-    supported-hyps
-      :allocation :instance
-      :initargs (:supported-hyps)
-      :initform nil
-      :readers (supported-hyps-of)
-      :writers ((setf supported-hyps-of))
-      :link (hyp supporting-hyps)
     supporting-hyps
       :allocation :instance
       :initargs (:supporting-hyps)
       :initform nil
       :readers (supporting-hyps-of)
       :writers ((setf supporting-hyps-of))
-      :link (hyp supported-hyps)
+      :link (hyp supported-hyps) 
+    supported-hyps
+      :allocation :instance
+      :initargs (:supported-hyps)
+      :initform nil
+      :readers (supported-hyps-of)
+      :writers ((setf supported-hyps-of))
+      :link (hyp supporting-hyps) 
   Effective slots:
     instance-name
       :allocation :instance
@@ -6445,33 +6458,39 @@ Standard-unit-class #<standard-unit-class hyp>
       :allocation :instance
       :initargs (:location)
       :initform nil
+    velocity-range
+      :allocation :instance
+      :initargs (:velocity-range)
     classification
       :allocation :instance
       :initargs (:classification)
-      :initform :unknown
+      :initform '(:car :truck :bus :motorcycle :train :duck-boat :lawn-mower
+                  :anything)
   Effective link slots:
-    supported-hyps
-      :allocation :instance
-      :initargs (:supported-hyps)
-      :initform nil
     supporting-hyps
       :allocation :instance
       :initargs (:supporting-hyps)
       :initform nil
+    supported-hyps
+      :allocation :instance
+      :initargs (:supported-hyps)
+      :initform nil
   Dimensional values:
       belief :point
+      velocity-range :interval
       classification :element
       x :point
       y :point
   Effective dimensional values:
       belief :point
+      velocity-range :interval
       classification :element
       x :point
       y :point
   Initial space instances:
-    (bb hyps)
+      (bb hyps)
   Effective initial space instances:
-    (bb hyps)
+      (bb hyps)
   Retain: nil
 \end{example}
 
@@ -6772,10 +6791,10 @@ Return the \code{x} \glref{dimension~value} of the \glref{unit~instance},
 nil
 nil
 \end{example}
-Return the \code{identity} \glref{dimension~value}:
+Return the \code{classification} \glref{dimension~value}:
 \begin{example}
-> (instance-dimension-value hyp 'identity)
-(:truck :bus :duck-boat)
+> (instance-dimension-value hyp 'classification)
+(:car :truck)
 :element
 :set
 nil
@@ -6977,7 +6996,7 @@ A \code{link-event} is signaled for:
 \code{unit-instance}:
 \begin{example}
 > (linkf (supporting-hyps-of unit-instance) support-hyp)
-#<hyp 231 (1488 7405) .63>
+#<hyp 231 (1488 7405) 0.63 [0..8]>
 \end{example}
 
 \end{functiondoc}
@@ -7051,7 +7070,7 @@ to any additional \glref{unit~instances} in
 \code{supporting-hyps}:
 \begin{example}
 > (link-setf (supporting-hyps-of unit-instance) supporting-hyps)
-#<hyp 231 (1488 7405) .63>
+#<hyp 231 (1488 7405) 0.63 [0..8]>
 \end{example}
 
 \fnnote 
@@ -7197,10 +7216,11 @@ Create a new \code{hyp} \glref{unit~instance}:
 \begin{example}
 > (make-instance 'hyp 
      :location (list x y)
-     :identity '(:car :truck :bus :motorcycle :duck-boat)
+     :classification '(:car :truck)
      :belief .85
+     :velocity-range '(5 35)
      :supporting-hyps supporting-hyps)
-#<hyp 119 (1835 4791) .85>
+#<hyp 419 (1835 4791) 0.85 [5..35]>
 \end{example}
 
 \fnnote 
@@ -7447,7 +7467,7 @@ An \code{unlink-event} is signaled for:
 \code{unit-instance}:
 \begin{example}
 > (unlinkf (supporting-hyps-of unit-instance) support-hyp)
-#<hyp 231 (1488 7405) .63>
+#<hyp 231 (1488 7405) 0.63 [0..8]>
 \end{example}
 
 \end{functiondoc}
@@ -8536,10 +8556,11 @@ Create a \code{hyp} without signaling any events:
 > (with-events-disabled ()
      (\entlink{make-instance} 'hyp 
         :location (list x y)
-        :identity '(:car :truck :bus :motorcycle :duck-boat)
+        :classification '(:car :truck)
         :belief .85
+        :velocity-range '(5 35)
         :supporting-hyps supporting-hyps))
-#<hyp 119 (1835 4791) .85>
+#<hyp 419 (1835 4791) 0.85 [5..35]>
 \end{example}
 
 \end{functiondoc}
@@ -8583,13 +8604,14 @@ supporting-hypothesis links with events enabled:
 \begin{example}
 > (\entlink{with-events-disabled}
      (let ((hyp (\entlink{make-instance} 'hyp 
-                    :location (list x y)
-                    :identity '(:car :truck :bus :motorcycle :duck-boat)
-                    :belief .85)))
+                   :location (list x y)
+                   :classification '(:car :truck)
+                   :belief .85
+                   :velocity-range '(5 35))))
         (with-events-enabled ()
            (linkf (supporting-hyps-of hyp) supporting-hyps))
         hyp))
-#<hyp 119 (1835 4791) .85>
+#<hyp 419 (1835 4791) 0.85 [5..35]>
 \end{example}
 
 \end{functiondoc}
@@ -8668,14 +8690,14 @@ Add a highly plausible hypothesis \glref{unit~instance},
 \begin{example}
 > (add-instance-to-space-instance 
     good-hyp (\entlink{find-space-instance-by-path} '(bb hyps)))
-#<hyp 119 (1835 4791) .85>
+#<hyp 419 (1835 4791) 0.85 [5..35]>
 \end{example}
 %
 or
 %
 \begin{example}
 > (add-instance-to-space-instance good-hyp '(bb hyps))
-#<hyp 119 (1835 4791) .85>
+#<hyp 419 (1835 4791) 0.85 [5..35]>
 \end{example}
 
 \end{functiondoc}
@@ -8774,7 +8796,7 @@ destructively altered.
 
 \end{functiondoc}
 
-;;; ---------------------------------------------------------------------------
+%% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{clear-space-instances}%
 {\var{space-instances\/}}
@@ -9810,14 +9832,14 @@ Remove an incorrect hypothesis \glref{unit~instance},
 \begin{example}
 > (remove-instance-from-space-instance 
     incorrect-hyp (\entlink{find-space-instance-by-path} '(bb hyps)))
-#<hyp 311 (896 388) .68>
+#<hyp 311 (896 388) 0.68 [0..6]>
 \end{example}
 
 or 
 
 \begin{example}
 > (remove-instance-from-space-instance incorrect-hyp '(bb hyps))
-#<hyp 311 (896 388) .68>
+#<hyp 311 (896 388) 0.68 [0..6]>
 \end{example}
 
 \end{functiondoc}
@@ -10315,12 +10337,12 @@ and \code{=\$\$\$} and \code{within\&}, \code{within\$\&}, \code{within\$},
 \fnexamples
 \begin{example}
 > (filter-instances (supporting-hyps-of hyp) '(> belief .8))
-(#<hyp 119 (1835 4791) .85>
- #<hyp 183 (1835 4791) .82>
- #<hyp 233 (1835 4791) .89>)
+(#<hyp 183 (1835 4791) 0.82 [0..35]>
+ #<hyp 233 (1835 4791) 0.89 [5..35]>
+ #<hyp 419 (1835 4791) 0.85 [5..35]>)
 > (filter-instances (supporting-hyps-of hyp) `(within belief (.85 ,infinity)))
-(#<hyp 119 (1835 4791) .85>
- #<hyp 233 (1835 4791) .89>)
+(#<hyp 233 (1835 4791) 0.89 [5..35]>
+ #<hyp 419 (1835 4791) 0.85 [5..35]>)
 \end{example}
 
 \end{functiondoc}
@@ -10371,10 +10393,10 @@ of those \glref{unit~instances}.
 \end{alsos}
 
 \fnexample
-Find the \code{hyp} \glref{unit~instance} 119:
+Find the \code{hyp} \glref{unit~instance} 419:
 \begin{example}
-> (find-instance-by-name 119 'hyp)
-#<hyp 119 (1835 4791) .85>
+> (find-instance-by-name 419 'hyp)
+#<hyp 419 (1835 4791) 0.85 [5..35]>
 \end{example}
 
 \end{functiondoc}
@@ -10464,30 +10486,60 @@ and \code{=\$\$\$} and \code{within\&}, \code{within\$\&}, \code{within\$},
 \begin{example}
 > (find-instances 'hyp (\entlink{find-space-instance-by-path} '(bb hyps)) 
     '(and (= x 1835) (> belief .8)))
-(#<hyp 319 (1835 8419) .91>
- #<hyp 119 (1835 4791) .85>
- #<hyp 331 (1835 8419) .88>
- #<hyp 335 (1835 8419) .92>
- #<hyp 183 (1835 4791) .82>
- #<hyp 233 (1835 4791) .89>)
+(#<hyp 319 (1835 8419) 0.91 [4..12]>
+ #<hyp 331 (1835 8419) 0.88 [15..30]>
+ #<hyp 335 (1835 8419) 0.92 [15..35]>
+ #<hyp 183 (1835 4791) 0.82 [0..35]>
+ #<hyp 233 (1835 4791) 0.89 [5..35]>
+ #<hyp 419 (1835 4791) 0.85 [5..35]>)
 > (find-instances 'hyp '(bb hyps)
-    `(and (= x 1835) (> belief ,(\entlink{find-instance-by-name} 331 'hyp))))
-(#<hyp 319 (1835 8419) .91>
- #<hyp 335 (1835 8419) .92>
- #<hyp 233 (1835 4791) .89>)
+    `(and (= x 1835) 
+          (> belief ,(belief-of (\entlink{find-instance-by-name} 331 'hyp)))))
+(#<hyp 319 (1835 8419) 0.91 [4..12]>
+ #<hyp 335 (1835 8419) 0.92 [15..35]>
+ #<hyp 233 (1835 4791) 0.89 [5..35]>)
 > (find-instances '(hyp :no-subclasses) '(bb hyps)
     '(= (x y) (1835 8419)))
-(#<hyp 319 (1835 8419) .91>
- #<hyp 331 (1835 8419) .88>
- #<hyp 335 (1835 8419) .92>)
-> (find-instances 'hyp (\entlink{find-space-instance-by-path} '(bb hyps)) 
+(#<hyp 319 (1835 8419) 0.91 [4..12]>
+ #<hyp 331 (1835 8419) 0.88 [15..30]>
+ #<hyp 335 (1835 8419) 0.92 [15..35]>)
+> (find-instances 'hyp '(bb hyps) 
     '(and (= x 1835) (within belief (.85 .9))))
-(#<hyp 119 (1835 4791) .85>
- #<hyp 331 (1835 8419) .88>
- #<hyp 233 (1835 4791) .89>)
-> (find-instances 'hyp (\entlink{find-space-instance-by-path} '(bb hyps)) 
-    '(and (= x 1835) (covers belief (.85 .9))))
+(#<hyp 331 (1835 8419) 0.88 [15..30]>
+ #<hyp 233 (1835 4791) 0.89 [5..35]>
+ #<hyp 419 (1835 4791) 0.85 [5..35]>)
+> (find-instances 'hyp '(bb hyps) 
+    '(and (= x 1835) (overlaps velocity-range (0 10))))
+(#<hyp 319 (1835 8419) 0.91 [4..12]>
+ #<hyp 183 (1835 4791) 0.82 [0..35]>
+ #<hyp 233 (1835 4791) 0.89 [5..35]>
+ #<hyp 419 (1835 4791) 0.85 [5..35]>)
+> (find-instances 'hyp '(bb hyps) 
+    '(and (= x 1835) (overlaps velocity-range (35 40))))
+(#<hyp 335 (1835 8419) 0.92 [15..35]>
+ #<hyp 183 (1835 4791) 0.82 [0..35]>
+ #<hyp 233 (1835 4791) 0.89 [5..35]>
+ #<hyp 419 (1835 4791) 0.85 [5..35]>)
+> (find-instances 'hyp '(bb hyps) 
+    '(and (= x 1835) (covers velocity-range (0 10))))
+(#<hyp 183 (1835 4791) 0.82 [0..35]>)
+> (find-instances 'hyp '(bb hyps) 
+    '(and (= x 1835) (covers velocity-range (4 10))))
+(#<hyp 319 (1835 8419) 0.91 [4..12]>
+ #<hyp 183 (1835 4791) 0.82 [0..35]>)
+> (find-instances 'hyp '(bb hyps) 
+    '(and (= x 1835) (within velocity-range (0 10))))
 nil
+> (find-instances 'hyp '(bb hyps) 
+    '(and (= x 1835) (within velocity-range (0 20))))
+(#<hyp 319 (1835 8419) 0.91 [4..12]>)
+> (find-instances 'hyp '(bb hyps) 
+    '(and (= x 1835) (starts velocity-range 5)))
+(#<hyp 233 (1835 4791) 0.89 [5..35]>
+ #<hyp 419 (1835 4791) 0.85 [5..35]>)
+> (find-instances 'hyp '(bb hyps) 
+    '(and (= x 1835) (ends velocity-range 30)))
+(#<hyp 331 (1835 8419) 0.88 [15..30]>)
 \end{example}
 
 \end{functiondoc}
@@ -10539,12 +10591,15 @@ whether or not they reside on any \glref{space~instance}.
 Return the list of all \code{hyp} \glref{unit~instances}:
 \begin{example}
 > (find-instances-of-class 'hyp)
-(#<hyp 319 (1835 8419) .91>
- #<hyp 119 (1835 4791) .85>
- #<hyp 331 (1835 8419) .88>
+(#<hyp 233 (1835 4791) 0.89 [5..35]>
+ #<hyp 319 (1835 8419) 0.91 [4..12]>
+ #<hyp 419 (1835 4791) 0.85 [5..35]>
+ #<hyp 231 (1488 7405) 0.63 [0..8]>
+ #<hyp 311 (896 388) 0.68 [0..6]> 
    \textrm{\ldots{}}
- #<hyp 183 (1835 4791) .82>
- #<hyp 233 (1835 4791) .89>)
+ #<hyp 331 (1835 8419) 0.88 [15..30]>
+ #<hyp 183 (1835 4791) 0.82 [0..35]>
+ #<hyp 335 (1835 8419) 0.92 [15..35]>)
 \end{example} 
 
 \fnnote In general, \textbf{\entlink{do-instances-of-class}} or
@@ -10844,8 +10899,8 @@ report is displayed.
 ;;     18480 instances considered
 ;;      1042 instances accepted
 ;;      0.32 seconds (0.80 msec/operation)
-(#<hyp 319 (1835 8419) .91>
- #<hyp 331 (1835 8419) .88>)
+(#<hyp 319 (1835 8419) 0.91 [4..12]>
+ #<hyp 331 (1835 8419) 0.88 [15..30]>)
 > (report-find-stats)
 ;; No find/map statistics are available.
 \end{example}
@@ -10908,8 +10963,8 @@ running an application \glref{function} \code{scanner}:
 ;;      9240 instances considered
 ;;       521 instances accepted
 ;;      0.16 seconds (0.80 msec/operation)
-(#<hyp 119 (1835 4791) .85>
- #<hyp 233 (1835 4791) .89>)
+(#<hyp 419 (1835 4791) 0.85 [5..35]>
+ #<hyp 233 (1835 4791) 0.89 [5..35]>)
 \end{example}
 
 \end{functiondoc}
@@ -10964,8 +11019,8 @@ running an application \glref{function} \code{scanner}:
 ;;      9240 instances considered
 ;;       521 instances accepted
 ;;      0.16 seconds (0.80 msec/operation)
-(#<hyp 319 (1835 8419) .91>
- #<hyp 331 (1835 8419) .88>)
+(#<hyp 319 (1835 8419) 0.91 [4..12]>
+ #<hyp 331 (1835 8419) 0.88 [15..30]>)
 \end{example}
 
 \end{functiondoc}
@@ -11243,7 +11298,7 @@ and then load a blackboard repository that was saved previously:
 \begin{example}
   > :tutorial-example :noautorun 
   > (load-blackboard-repository "tutorial")
-  #P"/Users/corkill/tutorial.bb";
+  #P"/Users/corkill/tutorial.bb"
   #<path 1>
 \end{example}
 Try loading the repository again:
@@ -12529,8 +12584,8 @@ or a list of \glref{KSAs} or \glref{events}
 Return the trigger \glref{unit~instances} of a KSA:
 \begin{example}
 > (collect-trigger-instances ksa)
-(#<hyp 119 (1835 4791) .85>
- #<hyp 233 (1835 4791) .89>)
+(#<hyp 419 (1835 4791) 0.85 [5..35]>
+ #<hyp 233 (1835 4791) 0.89 [5..35]>)
 \end{example}
 
 \end{functiondoc}
@@ -13929,7 +13984,7 @@ trigger \glref{unit~instance} is found in \var{source}, an error is signaled.
 Return the (sole) trigger \glref{unit~instance} of a \glref{KSA}:
 \begin{example}
 > (sole-trigger-instance-of ksa)
-#<hyp 119 (1835 4791) .85>
+#<hyp 419 (1835 4791) 0.85 [5..35]>
 \end{example}
 
 \end{functiondoc}
@@ -14231,7 +14286,7 @@ This \glref{generic~function} accesses the value stored in the
 Return the events that triggered a \glref{KSA}:
 \begin{example}
 > (trigger-events-of ksa)
-(#<create-instance-event #<hyp 233 (1835 4791) .89>)
+(#<create-instance-event #<hyp 233 (1835 4791) 0.89 [5..35]>)
 \end{example}
 
 \end{functiondoc}

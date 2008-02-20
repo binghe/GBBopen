@@ -281,16 +281,19 @@ value.
 &gt; (define-unit-class hyp ()
     ((belief :initform 0.0)
      (location :initform nil)
-     (classification :initform :unknown)
+     (velocity-range)
+     (classification :initform '(:car :truck :bus :motorcycle :train :duck-boat 
+                                 :lawn-mower :anything))
      (supporting-hyps 
       :link (hyp supported-hyps))
      (supported-hyps 
       :link (hyp supporting-hyps)))
     (:dimensional-values 
      (belief :point belief)
-     (classification :element classification)
-     (x :point #'x-of location)
-     (y :point #'y-of location))
+     (velocity-range :interval velocity-range)
+     (classification :element :set classification)
+     (x :point #'location.x location)
+     (y :point #'location.y location))
     (:initial-space-instances (bb hyps)))
 #&lt;standard-unit-class hyp&gt;
 </pre>

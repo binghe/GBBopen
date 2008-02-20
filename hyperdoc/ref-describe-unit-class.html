@@ -96,8 +96,8 @@
 <pre>
 &gt; (describe-unit-class 'hyp)
 Standard-unit-class #&lt;standard-unit-class hyp&gt;
-  Direct superclasses: 
-    standard-unit-class (abstract)
+  Direct superclasses:
+    standard-unit-instance (abstract)
   Direct subclasses: None
   Direct slots:
     belief
@@ -112,27 +112,33 @@ Standard-unit-class #&lt;standard-unit-class hyp&gt;
       :initform nil
       :readers (location-of)
       :writers ((setf location-of))
+    velocity-range
+      :allocation :instance
+      :initargs (:velocity-range)
+      :readers (velocity-range-of)
+      :writers ((setf velocity-range-of))
     classification
       :allocation :instance
       :initargs (:classification)
-      :initform :unknown
+      :initform '(:car :truck :bus :motorcycle :train :duck-boat :lawn-mower
+                  :anything)
       :readers (classification-of)
       :writers ((setf classification-of))
   Direct link slots:
-    supported-hyps
-      :allocation :instance
-      :initargs (:supported-hyps)
-      :initform nil
-      :readers (supported-hyps-of)
-      :writers ((setf supported-hyps-of))
-      :link (hyp supporting-hyps)
     supporting-hyps
       :allocation :instance
       :initargs (:supporting-hyps)
       :initform nil
       :readers (supporting-hyps-of)
       :writers ((setf supporting-hyps-of))
-      :link (hyp supported-hyps)
+      :link (hyp supported-hyps) 
+    supported-hyps
+      :allocation :instance
+      :initargs (:supported-hyps)
+      :initform nil
+      :readers (supported-hyps-of)
+      :writers ((setf supported-hyps-of))
+      :link (hyp supporting-hyps) 
   Effective slots:
     instance-name
       :allocation :instance
@@ -145,33 +151,39 @@ Standard-unit-class #&lt;standard-unit-class hyp&gt;
       :allocation :instance
       :initargs (:location)
       :initform nil
+    velocity-range
+      :allocation :instance
+      :initargs (:velocity-range)
     classification
       :allocation :instance
       :initargs (:classification)
-      :initform :unknown
+      :initform '(:car :truck :bus :motorcycle :train :duck-boat :lawn-mower
+                  :anything)
   Effective link slots:
-    supported-hyps
-      :allocation :instance
-      :initargs (:supported-hyps)
-      :initform nil
     supporting-hyps
       :allocation :instance
       :initargs (:supporting-hyps)
       :initform nil
+    supported-hyps
+      :allocation :instance
+      :initargs (:supported-hyps)
+      :initform nil
   Dimensional values:
       belief :point
+      velocity-range :interval
       classification :element
       x :point
       y :point
   Effective dimensional values:
       belief :point
+      velocity-range :interval
       classification :element
       x :point
       y :point
   Initial space instances:
-    (bb hyps)
+      (bb hyps)
   Effective initial space instances:
-    (bb hyps)
+      (bb hyps)
   Retain: nil
 </pre>
 <hr /><address><a target="_top" class="address"
