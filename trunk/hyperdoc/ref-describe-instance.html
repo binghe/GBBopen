@@ -52,21 +52,25 @@
 </p>
 <pre>
 &gt; (describe-instance hyp)
-Hyp #&lt;hyp 119&gt;
-  Instance name: 119
-  Space instances: (#&lt;standard-space-instance (bb hyps)&gt;)
+Hyp #&lt;hyp 419 (1835 4791) 0.85 [5..35]&gt;
+  Instance name: 419
+  Space instances: ((bb hyps))
   Dimensional values:
     belief:  0.85
-    identity:  (:car :truck :bus :motorcycle :duck-boat)
+    classification:  (:car :truck)
+    velocity-range:  (5 35)
     x:  1835
     y:  4791
   Non-link slots:
     belief:  0.85
-    identity:  (:car :truck :bus :motorcycle :duck-boat)
+    classification:  (:car :truck)
     location:  (1835 4791)
+    velocity-range:  (5 35)
   Link slots:
-    supporting-hyps:  (#&lt;hyp 183 (1835 4791) .82&gt;
-                       #&lt;hyp 233 (1835 4791) .89&gt;)
+    supported-hyps:  nil
+    supporting-hyps:  (#&lt;hyp 183 (1835 4791) 0.82 [0..35]&gt;
+                       #&lt;hyp 233 (1835 4791) 0.89 [5..35]&gt;)
+  Space instances: (#&lt;standard-space-instance (bb hyps)&gt;)
 </pre>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />

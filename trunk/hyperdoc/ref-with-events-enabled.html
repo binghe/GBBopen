@@ -45,13 +45,14 @@ supporting-hypothesis links with events enabled:
 <pre>
 &gt; (<a href="ref-with-events-disabled.html">with-events-disabled</a>
      (let ((hyp (<a href="ref-make-instance.html">make-instance</a> 'hyp 
-                    :location (list x y)
-                    :identity '(:car :truck :bus :motorcycle :duck-boat)
-                    :belief .85)))
+                   :location (list x y)
+                   :classification '(:car :truck)
+                   :belief .85
+                   :velocity-range '(5 35))))
         (with-events-enabled ()
            (linkf (supporting-hyps-of hyp) supporting-hyps))
         hyp))
-#&lt;hyp 119 (1835 4791) .85&gt;
+#&lt;hyp 419 (1835 4791) 0.85 [5..35]&gt;
 </pre>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />

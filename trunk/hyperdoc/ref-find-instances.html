@@ -211,30 +211,60 @@ and <code>=&#36;&#36;&#36;</code> and <code>within&#38;</code>, <code>within&#36
 <pre>
 &gt; (find-instances 'hyp (<a href="ref-find-space-instance-by-path.html">find-space-instance-by-path</a> '(bb hyps)) 
     '(and (= x 1835) (&gt; belief .8)))
-(#&lt;hyp 319 (1835 8419) .91&gt;
- #&lt;hyp 119 (1835 4791) .85&gt;
- #&lt;hyp 331 (1835 8419) .88&gt;
- #&lt;hyp 335 (1835 8419) .92&gt;
- #&lt;hyp 183 (1835 4791) .82&gt;
- #&lt;hyp 233 (1835 4791) .89&gt;)
+(#&lt;hyp 319 (1835 8419) 0.91 [4..12]&gt;
+ #&lt;hyp 331 (1835 8419) 0.88 [15..30]&gt;
+ #&lt;hyp 335 (1835 8419) 0.92 [15..35]&gt;
+ #&lt;hyp 183 (1835 4791) 0.82 [0..35]&gt;
+ #&lt;hyp 233 (1835 4791) 0.89 [5..35]&gt;
+ #&lt;hyp 419 (1835 4791) 0.85 [5..35]&gt;)
 &gt; (find-instances 'hyp '(bb hyps)
-    `(and (= x 1835) (&gt; belief ,(<a href="ref-find-instance-by-name.html">find-instance-by-name</a> 331 'hyp))))
-(#&lt;hyp 319 (1835 8419) .91&gt;
- #&lt;hyp 335 (1835 8419) .92&gt;
- #&lt;hyp 233 (1835 4791) .89&gt;)
+    `(and (= x 1835) 
+          (&gt; belief ,(belief-of (<a href="ref-find-instance-by-name.html">find-instance-by-name</a> 331 'hyp)))))
+(#&lt;hyp 319 (1835 8419) 0.91 [4..12]&gt;
+ #&lt;hyp 335 (1835 8419) 0.92 [15..35]&gt;
+ #&lt;hyp 233 (1835 4791) 0.89 [5..35]&gt;)
 &gt; (find-instances '(hyp :no-subclasses) '(bb hyps)
     '(= (x y) (1835 8419)))
-(#&lt;hyp 319 (1835 8419) .91&gt;
- #&lt;hyp 331 (1835 8419) .88&gt;
- #&lt;hyp 335 (1835 8419) .92&gt;)
-&gt; (find-instances 'hyp (<a href="ref-find-space-instance-by-path.html">find-space-instance-by-path</a> '(bb hyps)) 
+(#&lt;hyp 319 (1835 8419) 0.91 [4..12]&gt;
+ #&lt;hyp 331 (1835 8419) 0.88 [15..30]&gt;
+ #&lt;hyp 335 (1835 8419) 0.92 [15..35]&gt;)
+&gt; (find-instances 'hyp '(bb hyps) 
     '(and (= x 1835) (within belief (.85 .9))))
-(#&lt;hyp 119 (1835 4791) .85&gt;
- #&lt;hyp 331 (1835 8419) .88&gt;
- #&lt;hyp 233 (1835 4791) .89&gt;)
-&gt; (find-instances 'hyp (<a href="ref-find-space-instance-by-path.html">find-space-instance-by-path</a> '(bb hyps)) 
-    '(and (= x 1835) (covers belief (.85 .9))))
+(#&lt;hyp 331 (1835 8419) 0.88 [15..30]&gt;
+ #&lt;hyp 233 (1835 4791) 0.89 [5..35]&gt;
+ #&lt;hyp 419 (1835 4791) 0.85 [5..35]&gt;)
+&gt; (find-instances 'hyp '(bb hyps) 
+    '(and (= x 1835) (overlaps velocity-range (0 10))))
+(#&lt;hyp 319 (1835 8419) 0.91 [4..12]&gt;
+ #&lt;hyp 183 (1835 4791) 0.82 [0..35]&gt;
+ #&lt;hyp 233 (1835 4791) 0.89 [5..35]&gt;
+ #&lt;hyp 419 (1835 4791) 0.85 [5..35]&gt;)
+&gt; (find-instances 'hyp '(bb hyps) 
+    '(and (= x 1835) (overlaps velocity-range (35 40))))
+(#&lt;hyp 335 (1835 8419) 0.92 [15..35]&gt;
+ #&lt;hyp 183 (1835 4791) 0.82 [0..35]&gt;
+ #&lt;hyp 233 (1835 4791) 0.89 [5..35]&gt;
+ #&lt;hyp 419 (1835 4791) 0.85 [5..35]&gt;)
+&gt; (find-instances 'hyp '(bb hyps) 
+    '(and (= x 1835) (covers velocity-range (0 10))))
+(#&lt;hyp 183 (1835 4791) 0.82 [0..35]&gt;)
+&gt; (find-instances 'hyp '(bb hyps) 
+    '(and (= x 1835) (covers velocity-range (4 10))))
+(#&lt;hyp 319 (1835 8419) 0.91 [4..12]&gt;
+ #&lt;hyp 183 (1835 4791) 0.82 [0..35]&gt;)
+&gt; (find-instances 'hyp '(bb hyps) 
+    '(and (= x 1835) (within velocity-range (0 10))))
 nil
+&gt; (find-instances 'hyp '(bb hyps) 
+    '(and (= x 1835) (within velocity-range (0 20))))
+(#&lt;hyp 319 (1835 8419) 0.91 [4..12]&gt;)
+&gt; (find-instances 'hyp '(bb hyps) 
+    '(and (= x 1835) (starts velocity-range 5)))
+(#&lt;hyp 233 (1835 4791) 0.89 [5..35]&gt;
+ #&lt;hyp 419 (1835 4791) 0.85 [5..35]&gt;)
+&gt; (find-instances 'hyp '(bb hyps) 
+    '(and (= x 1835) (ends velocity-range 30)))
+(#&lt;hyp 331 (1835 8419) 0.88 [15..30]&gt;)
 </pre>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
