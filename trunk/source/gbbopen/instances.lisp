@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Feb 15 01:51:05 2008 *-*
+;;;; *-* Last-Edit: Thu Feb 21 04:36:41 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -343,8 +343,7 @@
                                (slot-definition-name eslotd))
                               current-value)))))
                 ;; do the inverse pointers for this link slot:
-                (%do-ilinks 
-                 dslotd instance (ensure-list current-value))
+                (%do-ilinks dslotd instance (ensure-list current-value) 't)
                 ;; signal the direct link event:
                 (%signal-direct-link-event 
                  instance dslotd current-value current-value)))))
