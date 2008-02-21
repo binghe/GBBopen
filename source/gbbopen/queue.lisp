@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/gbbopen/queue.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Feb 16 11:28:03 2008 *-*
+;;;; *-* Last-Edit: Thu Feb 21 04:41:52 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -176,10 +176,6 @@
   (with-lock-held ((queue.lock queue))
     ;; Do the insertion:
     (let ((previous (queue.previous queue)))
-      ;; *************************** UNTIL LINK-SETF IS FIXED:
-      (progn
-        (unlinkf-all (queue.previous queue))
-        (unlinkf-all (queue.next previous)))
       (link-setf (queue.previous element) previous)
       (link-setf (queue.next element) queue))
     (setf (queue.header element) queue)
@@ -215,10 +211,6 @@
         (setf ptr (queue.next ptr)))
       ;; Do the insertion:
       (let ((previous (queue.previous ptr)))
-        ;; *************************** UNTIL LINK-SETF IS FIXED:
-        (progn
-          (unlinkf-all (queue.previous ptr))
-          (unlinkf-all (queue.next previous)))
         (link-setf (queue.previous element) previous)
         (link-setf (queue.next element) ptr))
       (setf (queue.header element) queue)
@@ -235,10 +227,6 @@
       (with-lock-held ((queue.lock queue))
         (let ((next (queue.next element))
               (previous (queue.previous element)))
-          ;; *************************** UNTIL LINK-SETF IS FIXED:
-          (progn
-            (unlinkf-all (queue.previous element))
-            (unlinkf-all (queue.next element)))
           (link-setf (queue.next previous) next))
         (decf& (queue.length queue))
         (setf (queue.header element) nil)))

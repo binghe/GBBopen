@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/current/source/gbbopen/links.lisp *-*
+;;;; *-* File: /home/gbbopen/source/gbbopen/links.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Oct 14 06:26:16 2007 *-*
-;;;; *-* Machine: ruby.corkills.org *-*
+;;;; *-* Last-Edit: Thu Feb 21 04:56:19 2008 *-*
+;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -219,33 +219,51 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun %do-ilinks (dslotd instance other-instances)
+(defun non-empty-singular-link-error (dslotd instance existing-value)
+  (cerror "Unlink instance ~1@*~s."
+          "Singular link ~s in instance ~s is not empty. ~
+           It contains ~s."
+          (slot-definition-name dslotd)
+          instance 
+          existing-value))
+
+;;; ---------------------------------------------------------------------------
+
+(defun %do-ilinks (dslotd instance other-instances force)
   ;;; Set the inverse pointers to `instance' in each other-instance
   (let* ((idslotd (direct-link-definition.inverse-link-definition dslotd))
          (singular (direct-link-definition.singular idslotd))
          (slot-name (slot-definition-name idslotd))
          (*%%allow-setf-on-link%%* t)
 	 (added-instances (list instance)))
-    (dolist (oui other-instances)
-      (if singular 
-          (setf (slot-value oui slot-name) instance)
-          (let* ((sort-function (direct-link-definition.sort-function idslotd))
+    (dolist (other-instance other-instances)
+      (cond
+       ;; ilink is singular:
+       (singular 
+        (let ((existing (slot-value other-instance slot-name)))
+          (when existing 
+            (unless force
+              (non-empty-singular-link-error idslotd other-instance existing))
+            ;; unlink the existing value
+            (%do-iunlink idslotd other-instance existing))
+          (setf (slot-value other-instance slot-name) instance)))
+       ;; multi-link ilink:
+       (t (let* ((sort-function (direct-link-definition.sort-function idslotd))
 		 (sort-key (direct-link-definition.sort-key idslotd))
-		 (slot-value (slot-value oui slot-name))
+		 (slot-value (slot-value other-instance slot-name))
 		 (new-value
 		  (if sort-function
 		      (nsorted-insert instance slot-value
 				      sort-function sort-key)
 		      (cons instance slot-value))))
-	    (setf (slot-value oui slot-name) new-value)
-	    ;; signal the indirect link event:
-	    (%signal-indirect-link-event oui idslotd new-value 
-					 added-instances))))))
+	    (setf (slot-value other-instance slot-name) new-value)
+            ;; signal the indirect link event:
+	    (%signal-indirect-link-event 
+             other-instance idslotd new-value added-instances)))))))
 
 ;;; ---------------------------------------------------------------------------
 
-(defun %do-iunlinks
-    (dslotd instance other-instances)
+(defun %do-iunlinks (dslotd instance other-instances)
   ;;; Remove the inverse pointers to `instance' in each other-instance
   (let* ((idslotd (direct-link-definition.inverse-link-definition dslotd))
          (slot-name (slot-definition-name idslotd))
@@ -258,8 +276,26 @@
 		  (setf (slot-value other-instance slot-name) 
 			(delq instance previous-value))
 		  (setf (slot-value other-instance slot-name) nil))))
-        (%signal-indirect-unlink-event other-instance idslotd current-value 
-                                       removed-instances)))))
+        (%signal-indirect-unlink-event 
+         other-instance idslotd current-value removed-instances)))))
+
+;;; ---------------------------------------------------------------------------
+
+(defun %do-iunlink (dslotd instance other-instance)
+  ;;; Single value version of %do-iunlinks (above) --
+  ;;; removes the inverse pointer to `instance' in `other-instance'
+  (let* ((idslotd (direct-link-definition.inverse-link-definition dslotd))
+         (slot-name (slot-definition-name idslotd))
+         (*%%allow-setf-on-link%%* t)
+         (removed-instances (list instance)))
+    (let* ((previous-value (slot-value other-instance slot-name))
+           (current-value
+            (if (consp previous-value)
+                (setf (slot-value other-instance slot-name) 
+                      (delq instance previous-value))
+                (setf (slot-value other-instance slot-name) nil))))
+      (%signal-indirect-unlink-event
+       other-instance idslotd current-value removed-instances))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -292,17 +328,12 @@
         ;; non-empty existing value:
         (when existing 
           (unless force
-            (cerror "Unlink instance ~1@*~s."
-                    "Singular link ~s in instance ~s is not empty. ~
-                     It contains ~s."
-                    (slot-definition-name dslotd)
-                    (instance-name-of instance)
-                    existing))
+            (non-empty-singular-link-error dslotd instance existing))
           ;; unlink the existing value
-          (%do-iunlinks dslotd instance (list existing))
+          (%do-iunlink dslotd instance existing)
           (setf forced-removal t))
         (let ((change (ensure-list new)))
-          (%do-ilinks dslotd instance change)
+          (%do-ilinks dslotd instance change force)
           ;; return the new link value and changes:
           (values new change forced-removal)))))
      ;; multi-link:
@@ -317,7 +348,7 @@
             (dolist (existing-instance existing)
               (unless (memq existing-instance new)
                 (setf existing (delq existing-instance existing))
-                (%do-iunlinks dslotd instance (list existing-instance))
+                (%do-iunlink dslotd instance existing-instance)
                 (setf forced-removal t))))
           ;; add in new links:
           (dolist (new-instance new)
@@ -328,7 +359,7 @@
                     (nsorted-insert new-instance existing sort-function sort-key))
                   (push new-instance existing))
               (push new-instance change)))
-          (%do-ilinks dslotd instance change)
+          (%do-ilinks dslotd instance change force)
           (values existing change forced-removal))))))
 
 ;;; ---------------------------------------------------------------------------
@@ -349,10 +380,9 @@
                     (memq existing remove)))
            (check-for-deleted-instance existing 'unlinkf)
            ;; unlink the inverse pointer
-           (let ((change (list existing)))
-             (%do-iunlinks dslotd instance change)
-             ;; return the new link value and changes
-             (values nil change)))
+           (%do-iunlink dslotd instance existing)
+           ;; return the new link value and changes
+           (values nil (list existing)))
           (t (values existing nil))))
    ;; multi-link
    (t (let ((change nil))
@@ -382,13 +412,11 @@
   (cond
    ;; singular link:
    ((direct-link-definition.singular dslotd)
-    (cond
-     (existing
-      (let ((change (list existing)))
-        ;; unlink the inverse pointer of the existing value:
-        (%do-iunlinks dslotd instance change)
-        ;; return the new link value and changes:
-        (values nil change)))))
+    (when existing
+      ;; unlink the inverse pointer of the existing value:
+      (%do-iunlink dslotd instance existing)
+      ;; return the new link value and changes:
+      (values nil (list existing))))
    ;; multi-link:
    (t
     ;; unlink the inverse pointers:
@@ -464,10 +492,9 @@
 	(inverse-instances
 	 (slot-value-using-class (class-of instance) instance link-slot)))
     (when inverse-instances
-      (%do-iunlinks dslotd instance 
-		    (if (direct-link-definition.singular dslotd)
-			(list inverse-instances)
-			inverse-instances)))))
+      (if (direct-link-definition.singular dslotd)
+          (%do-iunlink dslotd instance inverse-instances)
+          (%do-iunlinks dslotd instance inverse-instances)))))
 
 ;;; ---------------------------------------------------------------------------
 
