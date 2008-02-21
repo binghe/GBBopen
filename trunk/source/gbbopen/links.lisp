@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/gbbopen/links.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Feb 21 04:56:19 2008 *-*
+;;;; *-* Last-Edit: Thu Feb 21 05:34:33 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -219,7 +219,7 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun non-empty-singular-link-error (dslotd instance existing-value)
+(defun non-empty-singular-link-cerror (dslotd instance existing-value)
   (cerror "Unlink instance ~1@*~s."
           "Singular link ~s in instance ~s is not empty. ~
            It contains ~s."
@@ -243,7 +243,7 @@
         (let ((existing (slot-value other-instance slot-name)))
           (when existing 
             (unless force
-              (non-empty-singular-link-error idslotd other-instance existing))
+              (non-empty-singular-link-cerror idslotd other-instance existing))
             ;; unlink the existing value
             (%do-iunlink idslotd other-instance existing))
           (setf (slot-value other-instance slot-name) instance)))
@@ -328,7 +328,7 @@
         ;; non-empty existing value:
         (when existing 
           (unless force
-            (non-empty-singular-link-error dslotd instance existing))
+            (non-empty-singular-link-cerror dslotd instance existing))
           ;; unlink the existing value
           (%do-iunlink dslotd instance existing)
           (setf forced-removal t))
