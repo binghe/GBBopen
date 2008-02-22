@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Feb 22 13:52:43 2008 *-*
+;;;; *-* Last-Edit: Fri Feb 22 16:47:49 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -482,7 +482,8 @@
 (defmethod initialize-instance :around ((instance %%gbbopen-unit-instance%%) 
                                         &key)
   (let ((*%%doing-initialize-instance%%* 't))
-    (call-next-method))
+    (with-lock-held (*master-instance-lock*)
+      (call-next-method)))
   ;; signal the creation event:
   (signal-event-using-class
    (load-time-value (find-class 'create-instance-event))
