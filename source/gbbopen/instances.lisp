@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/current/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Feb 22 13:41:37 2008 *-*
+;;;; *-* Last-Edit: Fri Feb 22 13:52:43 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -800,7 +800,7 @@
   ;; first; then we remove it from instance-hash-table of the old-class,
   ;; then we actually change its class: 
   (declare (inline class-of))
-  (check-for-deleted-instance instance 'change-class)
+  (check-for-deleted-instance instance 'change-class)
   ;; We must ensure finalization, as the changed instance could be the first
   ;; instance of `new-class':
   (ensure-finalized-class new-class)
