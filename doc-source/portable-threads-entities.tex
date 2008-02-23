@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
-%% *-* File: /home/gbbopen/doc-source/portable-threads-entities.tex *-*
-%% *-* Last-Edit: Sat Feb 16 11:54:06 2008; Edited-By: cork *-*
+%% *-* File: /home/gbbopen/current/doc-source/portable-threads-entities.tex *-*
+%% *-* Last-Edit: Sat Feb 23 16:40:06 2008; Edited-By: cork *-*
 %% *-* Machine: whirlwind.corkills.org *-*
 
 \index{module!:portable-threads@\code{:portable-threads}}%
@@ -865,7 +865,9 @@ signaled by another \glref{thread}:
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{condition-variable-wait-with-timeout}%
-  {\var{condition-variable seconds}}
+  {\var{condition-variable seconds}
+    \returns{} \var{boolean\/}}
+
 \index{waiting, on condition variable, time limited}%
 
 \fnsyntax
