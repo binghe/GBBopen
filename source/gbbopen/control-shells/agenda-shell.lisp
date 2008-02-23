@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:AGENDA-SHELL; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/gbbopen/control-shells/agenda-shell.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Feb 17 05:23:04 2008 *-*
+;;;; *-* Last-Edit: Sat Feb 23 18:15:14 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -1147,6 +1147,14 @@
       ;; Now we can pop the event and proceed:
       (setf event (pop (cs.events-being-processed cs)))
       (let ((ks-triggers (standard-event-instance.ks-triggers event)))
+        ;; debugging check if ks-triggers is nil
+        #+debugging-gbbopen
+        (progn
+          (printv event)
+          (unless ks-triggers
+            (describe event)
+            (error "Internal error: KS triggers of event ~s is nil"
+                   event)))
         ;; clear these out, now that we are done with them!
         (setf (standard-event-instance.ks-triggers event) nil)
         ;; process interested trigger KSs:
