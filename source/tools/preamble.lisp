@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/tools/preamble.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Feb 24 10:10:59 2008 *-*
+;;;; *-* Last-Edit: Sun Feb 24 10:19:47 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -53,7 +53,7 @@
             hyperdoc-filename           ; not yet documented
 	    hyperdoc-url		; not yet documented
             insert-on-queue             ; needed for :queue module (see below)
-            object-address              ; not yet documented
+            object-address
 	    printv
 	    with-gensyms
 	    with-once-only-bindings)))	; not yet documented
@@ -130,37 +130,37 @@
 ;;;
 
 (defun object-address (obj &optional hex-string-p)
-  (let ((address
-         #+allegro
-         (excl::pointer-to-address obj)
-         #+clisp
-         (system::address-of obj)
-         #+clozure
-         (ccl::%address-of obj)
-         #+cmu
-         (kernel:get-lisp-obj-address obj)
-         #+digitool-mcl
-         (ccl::%address-of obj)
-         #+ecl
-         (si:pointer obj)
-         #+lispworks
-         (system:object-address obj)
-         #+openmcl-legacy
-         (ccl::%address-of obj)
-         #+sbcl
-         (sb-kernel:get-lisp-obj-address obj) 
-         #+scl
-         (kernel:get-lisp-obj-address obj)
-         #-(or allegro
-               clisp
-               clozure
-               cmu
-               digitool-mcl
-               ecl
-               openmcl-legacy
-               sbcl
-               scl)
-         (need-to-port object-address)))
+  (let ((address #+allegro
+                 (excl::pointer-to-address obj)
+                 #+clisp
+                 (system::address-of obj)
+                 #+clozure
+                 (ccl::%address-of obj)
+                 #+cmu
+                 (kernel:get-lisp-obj-address obj)
+                 #+digitool-mcl
+                 (ccl::%address-of obj)
+                 #+ecl
+                 (si:pointer obj)
+                 #+lispworks
+                 (system:object-address obj)
+                 #+openmcl-legacy
+                 (ccl::%address-of obj)
+                 #+sbcl
+                 (sb-kernel:get-lisp-obj-address obj) 
+                 #+scl
+                 (kernel:get-lisp-obj-address obj)
+                 #-(or allegro
+                       clisp
+                       clozure
+                       cmu
+                       digitool-mcl
+                       ecl
+                       lispworks
+                       openmcl-legacy
+                       sbcl
+                       scl)
+                 (need-to-port object-address)))
     (if hex-string-p
         (format nil "~x" address)
         address)))
