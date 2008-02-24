@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/current/source/tools/os-interface.lisp *-*
+;;;; *-* File: /home/gbbopen/source/tools/os-interface.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Nov 30 06:44:12 2007 *-*
-;;;; *-* Machine: ruby.corkills.org *-*
+;;;; *-* Last-Edit: Sun Feb 24 08:18:46 2008 *-*
+;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2005-2007, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2005-2008, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -165,7 +165,7 @@
      process))
   #-(or allegro clisp clozure cmu digitool-mcl ecl lispworks openmcl-legacy 
         sbcl scl)
-  (port-needed 'run-external-program))
+  (need-to-port run-external-program))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -189,7 +189,7 @@
   #+sbcl
   (process-kill os-process)
   #-(or cmu sbcl scl)
-  (port-needed 'kill-external-program))
+  (need-to-port kill-external-program))
 
 ;;; ---------------------------------------------------------------------------
 

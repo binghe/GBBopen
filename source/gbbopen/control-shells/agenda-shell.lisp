@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:AGENDA-SHELL; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/gbbopen/control-shells/agenda-shell.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Feb 23 18:15:14 2008 *-*
+;;;; *-* Last-Edit: Sun Feb 24 10:06:06 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -1150,7 +1150,7 @@
         ;; debugging check if ks-triggers is nil
         #+debugging-gbbopen
         (progn
-          (printv event)
+          (printv event (object-address event 't))
           (unless ks-triggers
             (describe event)
             (error "Internal error: KS triggers of event ~s is nil"

@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/gbbopen/links.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Feb 21 05:34:33 2008 *-*
+;;;; *-* Last-Edit: Thu Feb 21 09:39:41 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -157,25 +157,7 @@
 	    ilinkd))))
                 
 ;;; ===========================================================================
-;;;   Linkf & friends
-
-(defmacro linkf (place other-instances &environment env)
-  (build-link-macro-code '%do-linkf '%signal-direct-link-event
-                         place env other-instances))
-
-(defmacro link-setf (place other-instances &environment env)
-  (build-link-macro-code '%do-linkf '%signal-direct-link-event 
-                         place env other-instances 't))
-
-(defmacro unlinkf (place other-instances &environment env)
-  (build-link-macro-code '%do-unlinkf '%signal-direct-unlink-event 
-                         place env other-instances))
-
-(defmacro unlinkf-all (place &environment env)
-  (build-link-macro-code '%do-unlinkf-all '%signal-direct-unlink-event 
-                         place env))
-
-;;; ---------------------------------------------------------------------------
+;;;   Link/unlink support functions
 
 (defun build-link-macro-code (fn event-fn place env 
                               &optional 
@@ -548,6 +530,25 @@
 	       reader-method-name
 	       object))))
   
+;;; ===========================================================================
+;;;   Linkf & friends
+
+(defmacro linkf (place other-instances &environment env)
+  (build-link-macro-code '%do-linkf '%signal-direct-link-event
+                         place env other-instances))
+
+(defmacro link-setf (place other-instances &environment env)
+  (build-link-macro-code '%do-linkf '%signal-direct-link-event 
+                         place env other-instances 't))
+
+(defmacro unlinkf (place other-instances &environment env)
+  (build-link-macro-code '%do-unlinkf '%signal-direct-unlink-event 
+                         place env other-instances))
+
+(defmacro unlinkf-all (place &environment env)
+  (build-link-macro-code '%do-unlinkf-all '%signal-direct-unlink-event 
+                         place env))
+
 ;;; ===========================================================================
 ;;;   Link consistency checking
 

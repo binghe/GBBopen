@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-SOCKETS; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/current/source/tools/portable-sockets.lisp *-*
+;;;; *-* File: /home/gbbopen/source/tools/portable-sockets.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Nov 30 07:03:53 2007 *-*
-;;;; *-* Machine: ruby.corkills.org *-*
+;;;; *-* Last-Edit: Sun Feb 24 08:48:28 2008 *-*
+;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2005-2007, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2005-2008, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; Developed and supported by the GBBopen Project (http://GBBopen.org) and
@@ -134,13 +134,24 @@
 
 (defgeneric open-connection (host port))
 
+;;; ===========================================================================
+;;;  Need-to-port reporting
+
+(defun need-to-port-warning/error (obj &optional error)
+  (funcall (if error 'error 'warn)
+           "~s needs to be defined for ~a~@[ running on ~a~]."
+           obj
+           (lisp-implementation-type) 
+           (machine-type)))
+
 ;;; ---------------------------------------------------------------------------
 
-(defun port-needed (obj)
-  (error "You must define ~s on ~a~@[ running on ~a~]."
-         obj
-         (lisp-implementation-type) 
-         (machine-type))) 
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defmacro need-to-port (obj)
+    ;;; Generate compile-time warnings of needed porting:
+    (need-to-port-warning/error obj)
+    ;; Error if called at run time:
+    `(need-to-port-warning/error ',obj t)))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Passive-socket class for CLs without one
@@ -330,7 +341,7 @@
         openmcl-legacy
         sbcl
         scl)
-  (port-needed 'open-connection-to-host))
+  (need-to-port open-connection-to-host))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -458,7 +469,7 @@
         openmcl-legacy
         sbcl
         scl)
-  (port-needed 'make-passive-socket))
+  (need-to-port make-passive-socket))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -546,7 +557,7 @@
         openmcl-legacy
         sbcl
         scl)
-  (port-needed 'shutdown-socket-stream))
+  (need-to-port shutdown-socket-stream))
   
 ;;; ---------------------------------------------------------------------------
 
@@ -636,7 +647,7 @@
         openmcl-legacy
         sbcl
         scl)
-  (port-needed 'accept-connection))
+  (need-to-port accept-connection))
 
 ;;; ===========================================================================
 ;;;  Connection Server
@@ -765,7 +776,7 @@
         openmcl-legacy
         sbcl
         scl)
-  (port-needed 'local-hostname-and-port))
+  (need-to-port local-hostname-and-port))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -867,7 +878,7 @@
         openmcl-legacy
         sbcl
         scl)
-  (port-needed 'remote-hostname-and-port))
+  (need-to-port remote-hostname-and-port))
 
 ;;; ===========================================================================
 ;;;  Useful for HTTP line termination:

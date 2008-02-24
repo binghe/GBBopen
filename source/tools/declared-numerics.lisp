@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/tools/declared-numerics.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jan  9 16:28:22 2008 *-*
+;;;; *-* Last-Edit: Sun Feb 24 08:17:54 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -126,8 +126,8 @@
      kernel:double-float-p kernel:long-float-p)
    #-(or allegro clisp clozure cmu cormanlisp digitool-mcl ecl gcl 
          lispworks openmcl-legacy sbcl scl)
-   (need-to-port '(fixnump short-float-p single-float-p double-float-p
-                   long-float-p))))
+   (need-to-port (fixnump short-float-p single-float-p double-float-p
+                          long-float-p))))
 
 ;;; CLs that don't have short-float-p predicates:
 #+(or allegro ecl gcl)
@@ -745,7 +745,7 @@
       #+infinity-not-available most-positive-double-float
       #-(or allegro clozure cmu digitool-mcl lispworks openmcl-legacy
             sbcl scl infinity-not-available)
-      (port-needed 'infinity$$))
+      (need-to-port infinity$$))
 
   (defconstant -infinity$$
       #+allegro excl::*negative-infinity-double*
@@ -772,7 +772,7 @@
       #+infinity-not-available most-negative-double-float
       #-(or allegro clozure cmu digitool-mcl lispworks openmcl-legacy 
             sbcl scl infinity-not-available)
-      (port-needed '-infinity$$))
+      (need-to-port -infinity$$))
 
   ;; --------------------------------------------------------------------------
   ;; Single-float infinities:
@@ -790,7 +790,7 @@
       #+infinity-not-available most-positive-single-float
       #-(or allegro clozure cmu digitool-mcl lispworks openmcl-legacy
             sbcl scl infinity-not-available)
-      (port-needed 'infinity$))
+      (need-to-port infinity$))
   
   (defconstant -infinity$
       #+allegro excl::*negative-infinity-single*
@@ -805,7 +805,7 @@
       #+infinity-not-available most-negative-single-float
       #-(or allegro clozure cmu digitool-mcl lispworks openmcl-legacy
             sbcl scl infinity-not-available)
-      (port-needed '-infinity$))
+      (need-to-port -infinity$))
   
   ;; --------------------------------------------------------------------------
   ;; Short-float infinities:
@@ -823,7 +823,7 @@
       #+infinity-not-available most-positive-short-float
       #-(or allegro clozure cmu digitool-mcl lispworks openmcl-legacy
             sbcl scl infinity-not-available)
-      (port-needed 'infinity$&))
+      (need-to-port infinity$&))
   
   (defconstant -infinity$&
       #+allegro -infinity$
@@ -838,7 +838,7 @@
       #+infinity-not-available most-negative-short-float
       #-(or allegro clozure cmu digitool-mcl lispworks openmcl-legacy
             sbcl scl infinity-not-available)
-      (port-needed '-infinity$&))
+      (need-to-port -infinity$&))
 
   ;; --------------------------------------------------------------------------
   ;; Long-float infinities:
@@ -856,7 +856,7 @@
       #+infinity-not-available most-positive-long-float
       #-(or allegro clozure cmu digitool-mcl lispworks openmcl-legacy
             sbcl scl infinity-not-available)
-      (port-needed 'infinity$$$))
+      (need-to-port infinity$$$))
   
   (defconstant -infinity$$$
       #+allegro -infinity$$
@@ -871,7 +871,7 @@
       #+infinity-not-available most-positive-long-float
       #-(or allegro clozure cmu digitool-mcl lispworks openmcl-legacy
             sbcl sl infinity-not-available)
-      (port-needed '-infinity$$$))
+      (need-to-port -infinity$$$))
   
   ;; --------------------------------------------------------------------------
   ;; Generic infinities:

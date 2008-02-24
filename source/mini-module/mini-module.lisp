@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/mini-module/mini-module.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Jan  5 03:16:12 2008 *-*
+;;;; *-* Last-Edit: Sun Feb 24 09:21:07 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -57,7 +57,6 @@
 ;;;  01-29-04 Exported module-loaded-p.  (Corkill)
 ;;;  02-01-04 Support use of existing root-directory in define-root-directory.
 ;;;           (Corkill)
-;;;  03-19-04 Added port-needed error function.  (Corkill)
 ;;;  03-19-04 Added top-level mini-module commands for Lispworks.  (Corkill)
 ;;;  03-19-04 Added file-options checking.  (Corkill)
 ;;;  06-10-04 Added proper :forces-recompile date checking and warning
@@ -166,13 +165,15 @@
             *mini-module-compile-verbose* ; not yet documented
             *mini-module-load-verbose*  ; not yet documented
             *month-preceeds-date*
+            brief-date-and-time         ; part of tools, but placed here
             compile-module
             compute-relative-directory  ; not documented
             define-relative-directory
             define-root-directory
             define-module
             describe-module
-            dotted-conc-name            ; part of tools, but placed here
+            dotted-conc-name            ; part of tools, but placed here; not
+                                        ; documented
             get-directory
             list-modules                ; not yet documented
             load-module
@@ -181,8 +182,6 @@
             module-directories          ; not yet documented
             module-loaded-p
             need-to-port                ; not documented
-            port-needed                 ; not documented
-            brief-date-and-time         ; part of tools, but placed here
             show-defined-directories
             show-modules                ; not yet documented
             undefine-directory          ; not yet documented
@@ -288,20 +287,29 @@
                         include-seconds)))))))
 
 ;;; ===========================================================================
-;;;  Port needed reporting
+;;;  Need-to-port reporting
 
-(defun port-needed (obj)
-  (error "You must define ~s on ~a~@[ running on ~a~]."
-         obj
-         (lisp-implementation-type) 
-         (machine-type))) 
+(defun need-to-port-warning/error (obj &optional error)
+  (funcall (if error 'error 'warn)
+           "~s needs to be defined for ~a~@[ running on ~a~]."
+           obj
+           (lisp-implementation-type) 
+           (machine-type)))
 
 ;;; ---------------------------------------------------------------------------
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defmacro need-to-port (obj)
-    ;;; Used to generate compile-time porting errors!
-    (port-needed obj)))
+    ;;; Generate compile-time warnings of needed porting:
+    (need-to-port-warning/error obj)
+    ;; Error if called at run time:
+    `(need-to-port-warning/error ',obj t)))
+
+;;; ===========================================================================
+;;;  Directories and modules hash tables
+
+(defvar *mm-directories* (make-hash-table :test 'eq))
+(defvar *mm-modules* (make-hash-table))
 
 ;;; ===========================================================================
 ;;;  Module Directories
@@ -323,8 +331,6 @@
             (:copier nil))
   root
   subdirectories)
-
-(defvar *mm-directories* (make-hash-table :test 'eq))
 
 ;;; ===========================================================================
 ;;;  Directory operators
@@ -392,7 +398,7 @@
         openmcl-legacy
         (and sbcl unix)
         (and scl unix))
-  (need-to-port 'probe-directory))
+  (need-to-port probe-directory))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -579,8 +585,6 @@
   (latest-forces-recompiled-date 0)
   ;; undocumented (used for compile-gbbopen exit):
   (after-form nil))
-
-(defvar *mm-modules* (make-hash-table))
 
 ;;; ---------------------------------------------------------------------------
 
