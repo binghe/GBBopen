@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:AGENDA-SHELL; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/gbbopen/control-shells/agenda-shell.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Feb 24 10:06:06 2008 *-*
+;;;; *-* Last-Edit: Sun Feb 24 11:06:13 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -1153,6 +1153,7 @@
           (printv event (object-address event 't))
           (unless ks-triggers
             (describe event)
+            (pprint (all-threads))
             (error "Internal error: KS triggers of event ~s is nil"
                    event)))
         ;; clear these out, now that we are done with them!
