@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:AGENDA-SHELL; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/gbbopen/control-shells/agenda-shell.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Feb 24 13:00:11 2008 *-*
+;;;; *-* Last-Edit: Sun Feb 24 13:41:25 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -501,7 +501,7 @@
 			      (symbol-value-in-thread '*cs* thread))
 			  *control-shell-threads*))))
         (cond (cs (with-lock-held ((cs.event-buffer-lock cs))
-                    (push event (cs.event-buffer cs))
+                    (atomic-push event (cs.event-buffer cs))
                     (when (and (cs.hibernating cs)
                                (cs.awaken-on-event cs))
                       (awaken-control-shell cs))))
@@ -1563,7 +1563,7 @@
 		(apply #'start-control-shell
 		       (append initargs '(:hibernate-on-quiescence t)))))
 	  initargs)))
-    (push control-shell-thread *control-shell-threads*)
+    (atomic-push control-shell-thread *control-shell-threads*)
     control-shell-thread))
 
 ;;; ---------------------------------------------------------------------------
