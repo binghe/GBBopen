@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:AGENDA-SHELL; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/gbbopen/control-shells/agenda-shell.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Feb 24 13:41:25 2008 *-*
+;;;; *-* Last-Edit: Sun Feb 24 15:04:00 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -501,7 +501,7 @@
 			      (symbol-value-in-thread '*cs* thread))
 			  *control-shell-threads*))))
         (cond (cs (with-lock-held ((cs.event-buffer-lock cs))
-                    (atomic-push event (cs.event-buffer cs))
+                    (push event (cs.event-buffer cs))
                     (when (and (cs.hibernating cs)
                                (cs.awaken-on-event cs))
                       (awaken-control-shell cs))))
@@ -1139,11 +1139,13 @@
   ;; First, move the current events (now placed in chronological order) to an
   ;; "in processing" list of events. New events go into the event buffer for
   ;; processing in the next CS cycle:
-  (setf (cs.events-being-processed cs)
-        ;; There might be some unprocessed events left if saved/sent was
-        ;; performed during process-event-buffer:
-        (nconc (cs.events-being-processed cs) 
-               (nreverse (atomic-flush (cs.event-buffer cs)))))
+  (with-lock-held ((cs.event-buffer-lock cs))
+    (setf (cs.events-being-processed cs)
+          ;; There might be some unprocessed events left if saved/sent was
+          ;; performed during process-event-buffer:
+          (nconc (cs.events-being-processed cs) 
+                 (nreverse (cs.event-buffer cs))))
+    (setf (cs.event-buffer cs) nil))
   ;; Now process each event:
   (let (event)
     (while (cs.events-being-processed cs)
