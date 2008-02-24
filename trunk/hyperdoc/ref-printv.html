@@ -38,7 +38,10 @@ result values of each evaluation to <code>*trace-output*</code>.  Any <var>form<
 that is a string (before evaluation) is simply printed without enclosing
 double-quote characters.
 </p>
-<p><span class="fndoclabel">Example</span> <br /></p>
+<p><span class="fndoclabel">See also</span>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-object-address.html"><b>object-address</b></a>
+</p>
+<a name="id1"></a><p><span class="fndoclabel">Examples</span> <br /></p>
 <pre>
 &gt; (printv (list 1 2) (list 3 4) '"A string" 
           "Return multiple values:" (values 5 6))
@@ -49,6 +52,10 @@ double-quote characters.
 ;;  (values 5 6) =&gt; 5; 6
 5
 6
+&gt; (printv *package* (<a href="ref-object-address.html">object-address</a> *package* 't))
+;;  *package* =&gt; #&lt;The GBBOPEN-USER package&gt;
+;;  (object-address *package* 't) =&gt; "71b32f5a"
+"71b32f5a"
 </pre>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
