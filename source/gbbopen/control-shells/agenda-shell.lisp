@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:AGENDA-SHELL; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/gbbopen/control-shells/agenda-shell.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Feb 24 12:16:45 2008 *-*
+;;;; *-* Last-Edit: Sun Feb 24 12:45:03 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -1123,8 +1123,9 @@
   ;;; Change the queue position of `ksa' when its rating is changed
   (let ((queue (on-queue-p ksa)))
     (when queue
-      (remove-from-queue ksa)
-      (insert-on-queue ksa queue))))
+      (with-lock-held ((queue.lock queue))
+        (remove-from-queue ksa)
+        (insert-on-queue ksa queue)))))
 
 ;;; ---------------------------------------------------------------------------
 
