@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:AGENDA-SHELL; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/gbbopen/control-shells/agenda-shell.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Feb 24 12:46:58 2008 *-*
+;;;; *-* Last-Edit: Sun Feb 24 13:00:11 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -430,8 +430,13 @@
    (t (when (or (execution-cycle-of ksa)
                 (obviation-cycle-of ksa))
         (error "KSA ~s is no longer pending." ksa))
-      (call-next-method)
-      (move-ksa-on-queue ksa)
+      (let ((queue (on-queue-p ksa)))
+        ;; Should be on the pending-ksas queue, but we'll check just in case:
+        (when (eq queue (cs.pending-ksas *cs*))
+          (with-lock-held ((queue.lock queue))
+            (call-next-method)
+            (move-ksa-on-queue ksa))))
+      ;; return the new rating:
       nv)))
 
 ;;; ===========================================================================
@@ -1122,11 +1127,11 @@
 
 (defun move-ksa-on-queue (ksa)
   ;;; Change the queue position of `ksa' when its rating is changed
+  ;;; (queue.lock has been grabbed surrounding this call):
   (let ((queue (on-queue-p ksa)))
     (when queue
-      (with-lock-held ((queue.lock queue))
-        (remove-from-queue ksa)
-        (insert-on-queue ksa queue)))))
+      (remove-from-queue ksa)
+      (insert-on-queue ksa queue))))
 
 ;;; ---------------------------------------------------------------------------
 
