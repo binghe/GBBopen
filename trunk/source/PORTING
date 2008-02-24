@@ -30,6 +30,9 @@ tools/declared-numerics.lisp
   - fixnump, single-float-p, and double-float-p
   - infinity and negative-infinity values, reading, and printing
 ------------------------------------------------------------------------------
+tools/preamble.lisp
+  - object-address
+------------------------------------------------------------------------------
 tools/tools.lisp
   - create CLOS package nickname, where needed
   - import MOP finalization functions for ensure-finalized-class

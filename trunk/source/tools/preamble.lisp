@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/tools/preamble.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Feb 17 17:43:31 2008 *-*
+;;;; *-* Last-Edit: Sun Feb 24 10:05:03 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -25,6 +25,7 @@
 ;;;  09-28-05 Added import of *preferred-browser* setting.  (Corkill)
 ;;;  01-09-08 Added safely-set-dispatch-macro-character.  (Corkill)
 ;;;  01-26-08 Added ensure-package.  (Corkill)
+;;;  02-24-08 Added object-address.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -52,6 +53,7 @@
             hyperdoc-filename           ; not yet documented
 	    hyperdoc-url		; not yet documented
             insert-on-queue             ; needed for :queue module (see below)
+            object-address              ; not yet documented
 	    printv
 	    with-gensyms
 	    with-once-only-bindings)))	; not yet documented
@@ -121,6 +123,47 @@
 			   symbols
 			   gensyms))
 	     ,@body)))))
+
+
+;;; ===========================================================================
+;;;  Object-address (can be useful in conjunction with printv)
+;;;
+
+(defun object-address (obj &optional hex-string-p)
+  (let ((address
+         #+allegro
+         (excl::pointer-to-address obj)
+         #+clisp
+         (system::address-of obj)
+         #+clozure
+         (ccl::%address-of obj)
+         #+cmu
+         (kernel:get-lisp-obj-address obj)
+         #+digitool-mcl
+         (ccl::%address-of obj)
+         #+ecl
+         (si:pointer obj)
+         #+lispworks
+         (system:object-address obj)
+         #+openmcl-legacy
+         (ccl::%address-of obj)
+         #+sbcl
+         (sb-kernel:get-lisp-obj-address obj) 
+         #+scl
+         (kernel:get-lisp-obj-address obj)
+         #-(or allegro
+               clisp
+               closzure
+               cmu
+               digitool-mcl
+               ecl
+               openmcl-legacy
+               sbcl
+               scl)
+         (need-to-port object-address)))
+    (if hex-string-p
+        (format nil "~x" address)
+        address)))
 
 ;;; ===========================================================================
 ;;;  Printv

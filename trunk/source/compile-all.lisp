@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/current/source/compile-all.lisp *-*
+;;;; *-* File: /home/gbbopen/source/compile-all.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jun  6 12:31:29 2007 *-*
-;;;; *-* Machine: ruby.corkills.org *-*
+;;;; *-* Last-Edit: Sun Feb 24 09:56:01 2008 *-*
+;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2006-2007, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2006-2008, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -39,17 +39,19 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(compile-it :gbbopen-test)
+;; Compile :agenda-shell-test first to compile most of the commonly shared
+;; modules at once (and reduce :forces-recompile recompilations):
 (compile-it :agenda-shell-test)
+;; Now do the rest:
+(compile-it :gbbopen-test)
 (compile-it :tutorial-example)
 (compile-it :http-test :dont-reset 't)
 (compile-it :multinode :dont-reset 't)
-#-multiprocessing-not-available
 (compile-it :portable-threads-test :dont-reset 't)
 (compile-it :abort-ks-execution-example)
 
 (format t "~2&;;; ~72,,,'-<-~>~
-            ~%;;; GBBopen module compilation completed.~%")
+            ~%;;; GBBopen modules compilation completed.~%")
   
 ;;; ===========================================================================
 ;;;				  End of File

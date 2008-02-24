@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/tools/portable-threads.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Feb 17 04:25:20 2008 *-*
+;;;; *-* Last-Edit: Sun Feb 24 08:21:27 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2003-2007, Dan Corkill <corkill@GBBopen.org> 
+;;; Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org> 
 ;;;
 ;;; Developed and supported by the GBBopen Project (http://GBBopen.org) and
 ;;; donated to the CL Gardeners portable threads initiative
@@ -135,6 +135,8 @@
    '(sys:with-timeout)
    #+clisp
    '()
+   #+clozure
+   '()
    #+(and cmu mp)
    '(mp:atomic-decf
      mp:atomic-incf
@@ -142,8 +144,6 @@
      mp:atomic-push
      mp::recursive-lock
      mp:with-timeout)
-   #+clozure
-   '()
    #+(and cmu (not mp))
    '()
    #+cormanlisp
