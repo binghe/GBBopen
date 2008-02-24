@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/mini-module/mini-module-loader.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Feb 24 14:53:52 2008 *-*
+;;;; *-* Last-Edit: Sun Feb 24 15:10:28 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -143,8 +143,8 @@
      (format nil "~a-clozure-~a.~a"
              (or
               #+darwin "darwin"
-              #+linux-target "linux"
-              #-(or darwin linux-target) 
+              #+linuxx8664-target "linux86-64" ; Thanks to Matthew Danish
+              #-(or darwin linuxx8664-target) 
               (must-port '*compiled-directory-name*))
              ccl::*openmcl-major-version*
              ccl::*openmcl-minor-version*)
