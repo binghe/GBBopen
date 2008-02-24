@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:AGENDA-SHELL; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/gbbopen/control-shells/agenda-shell.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Feb 24 11:06:13 2008 *-*
+;;;; *-* Last-Edit: Sun Feb 24 12:16:45 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -1159,7 +1159,10 @@
         ;; clear these out, now that we are done with them!
         (setf (standard-event-instance.ks-triggers event) nil)
         ;; process interested trigger KSs:
-        (dolist (kst (triggers-of ks-triggers))
+        (dolist (kst (and 
+                      #-debugging-gbbopen
+                      ks-triggers
+                      (triggers-of ks-triggers)))
           (let ((ks (kst.ks kst)))
             (when (and (not (instance-deleted-p ks))
                        (ks-enabled-p ks))
