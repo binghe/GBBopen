@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/tools/preamble.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Feb 24 10:05:03 2008 *-*
+;;;; *-* Last-Edit: Sun Feb 24 10:10:59 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -153,7 +153,7 @@
          (kernel:get-lisp-obj-address obj)
          #-(or allegro
                clisp
-               closzure
+               clozure
                cmu
                digitool-mcl
                ecl
