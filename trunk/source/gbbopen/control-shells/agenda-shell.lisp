@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:AGENDA-SHELL; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/gbbopen/control-shells/agenda-shell.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Feb 24 12:45:03 2008 *-*
+;;;; *-* Last-Edit: Sun Feb 24 12:46:58 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -52,6 +52,7 @@
             gbbopen::evfn-describer
             gbbopen::map-extended-unit-classes
             gbbopen::map-instances-given-class
+            gbbopen::queue.lock
 	    gbbopen::show-evfn-describer-headers
             gbbopen::slot-value-using-class
 	    gbbopen::standard-unit-class.lock
