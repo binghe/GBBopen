@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/current/source/gbbopen/instances.lisp *-*
+;;;; *-* File: /home/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Feb 22 16:47:49 2008 *-*
+;;;; *-* Last-Edit: Mon Feb 25 05:59:23 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -302,73 +302,76 @@
       ;; Link slot processing: fix atomic, non-singular link-slot values and
       ;; create link inverse pointers:
       (dolist (eslotd (class-slots unit-class))
-        (cond 
-         ;; link slot:
-         ((typep eslotd 'effective-link-definition)
-          (let ((current-value
-                 (slot-value-using-class unit-class instance eslotd)))
-            (when current-value
-              (let* ((dslotd
-                      (effective-link-definition.direct-slot-definition
-                       eslotd))
-                     (sort-function 
-                      (direct-link-definition.sort-function dslotd))
-                     (sort-key
-                      (or (direct-link-definition.sort-key dslotd)
-                          #'identity))) 
-                ;; Nothing special to do for a singular link slot:
-                (unless (direct-link-definition.singular dslotd)
-                  (let ((rewrite-slot nil))
-                    ;; fix-up atomic non-singular link slot initialization
-                    ;; values here; pretty late, but OK for now.
-                    (unless (consp current-value)
-                      (setf current-value (list current-value)
-                            rewrite-slot 't))
-                    ;; Make sure the direct link-slot value is sorted, if so
-                    ;; specified:
-                    (when (and sort-function
-                               ;; length > 1
-                               (cdr current-value))
-                      (setf current-value (sort (copy-list current-value)
-                                                sort-function
-                                                :key sort-key)
-                            rewrite-slot 't))
-                    (when rewrite-slot
-                      (with-events-disabled ()
-                        (setf (slot-value-using-class 
-                               unit-class instance 
-                               #-lispworks
-                               eslotd
-                               #+lispworks
-                               (slot-definition-name eslotd))
-                              current-value)))))
-                ;; do the inverse pointers for this link slot:
-                (%do-ilinks dslotd instance (ensure-list current-value) 't)
-                ;; signal the direct link event:
-                (%signal-direct-link-event 
-                 instance dslotd current-value current-value)))))
-         ;; nonlink slot:
-         #+(or digitool-mcl lispworks)
-         ;; In implementations that don't use (setf slot-value-using-class) to
-         ;; initialize slots, we must signal the nonlink-slot update event
-         ;; ourselves:
-         (t (let ((slot-name/def
-                   #+lispworks
-                   (slot-definition-name eslotd)
-                   #+digitool-mcl
-                   eslotd))
-              (when (and (typep eslotd 'gbbopen-effective-slot-definition)
-                         (slot-boundp-using-class unit-class instance 
-                                                  slot-name/def))
-                ;; signal the update-nonlink-slot event:
-                (signal-event-using-class
-                 (load-time-value (find-class 'update-nonlink-slot-event))
-                 :instance instance
-                 :slot eslotd
-                 :current-value (slot-value-using-class 
+        ;; Only process specified slots:
+        (when (or (eq slot-names 't)
+                  (memq (slot-definition-name eslotd) slot-names))
+          (cond 
+           ;; link slot:
+           ((typep eslotd 'effective-link-definition)
+            (let ((current-value
+                   (slot-value-using-class unit-class instance eslotd)))
+              (when current-value
+                (let* ((dslotd
+                        (effective-link-definition.direct-slot-definition
+                         eslotd))
+                       (sort-function 
+                        (direct-link-definition.sort-function dslotd))
+                       (sort-key
+                        (or (direct-link-definition.sort-key dslotd)
+                            #'identity))) 
+                  ;; Nothing special to do for a singular link slot:
+                  (unless (direct-link-definition.singular dslotd)
+                    (let ((rewrite-slot nil))
+                      ;; fix-up atomic non-singular link slot initialization
+                      ;; values here; pretty late, but OK for now.
+                      (unless (consp current-value)
+                        (setf current-value (list current-value)
+                              rewrite-slot 't))
+                      ;; Make sure the direct link-slot value is sorted, if so
+                      ;; specified:
+                      (when (and sort-function
+                                 ;; length > 1
+                                 (cdr current-value))
+                        (setf current-value (sort (copy-list current-value)
+                                                  sort-function
+                                                  :key sort-key)
+                              rewrite-slot 't))
+                      (when rewrite-slot
+                        (with-events-disabled ()
+                          (setf (slot-value-using-class 
                                  unit-class instance 
-                                 slot-name/def)
-                 :initialization 't))))))
+                                 #-lispworks
+                                 eslotd
+                                 #+lispworks
+                                 (slot-definition-name eslotd))
+                                current-value)))))
+                  ;; do the inverse pointers for this link slot:
+                  (%do-ilinks dslotd instance (ensure-list current-value) 't)
+                  ;; signal the direct link event:
+                  (%signal-direct-link-event 
+                   instance dslotd current-value current-value)))))
+           ;; nonlink slot:
+           #+(or digitool-mcl lispworks)
+           ;; In implementations that don't use (setf slot-value-using-class)
+           ;; to initialize slots, we must signal the nonlink-slot update
+           ;; event ourselves:
+           (t (let ((slot-name/def
+                     #+lispworks
+                     (slot-definition-name eslotd)
+                     #+digitool-mcl
+                     eslotd))
+                (when (and (typep eslotd 'gbbopen-effective-slot-definition)
+                           (slot-boundp-using-class unit-class instance 
+                                                    slot-name/def))
+                  ;; signal the update-nonlink-slot event:
+                  (signal-event-using-class
+                   (load-time-value (find-class 'update-nonlink-slot-event))
+                   :instance instance
+                   :slot eslotd
+                   :current-value (slot-value-using-class 
+                                   unit-class instance 
+                                   slot-name/def)
+                   :initialization 't)))))))
       ;; Add this instance to the explicitly-specified space instances.  This
       ;; is ugly, but we first remove the supplied space instances stored in
       ;; the %%space-instances%% slot, and then we re-add them either directly
