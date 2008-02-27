@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /home/gbbopen/current/doc-source/glossary.tex *-*
-%% *-* Last-Edit: Tue Feb 12 12:15:59 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Wed Feb 27 11:40:49 2008; Edited-By: cork *-*
 %% *-* Machine: whirlwind.corkills.org *-*
 
 \begin{glossary-list}
@@ -394,6 +394,7 @@ An integer between \code{most-negative-fixnum} and
 %% ------------------------------------------------------------------------
 
 \glent[generalized~boolean]
+\gllabel{generalized-boolean}%
 \index{generalized boolean}%
 \index{boolean, generalized}%
 An object used as a truth value, where \nil{} represents false and all other
@@ -677,13 +678,22 @@ A \glref{KS~activation} that has not been executed or \glref{obviated}.
 \gllabel{periodic-function}%
 \gllabel{periodic~functions}%
 
-A \glref{function} of no arguments that is run repeatedly at a specified interval, at
-a resolution as brief as supported by \code{sleep}. A separate \glref{thread}
-is spawned to manage the periodic invocations of the specified function.
+A \glref{function} of no arguments that is run repeatedly at a specified
+interval, at a resolution as brief as supported by \code{sleep}. A separate
+\glref{thread} is spawned to manage the periodic invocations of the specified
+function.
 
 A count can also be provided for the periodic function. When specified, this
 value is decremented prior to each invocation of the function and, when it is
 no longer positive, the periodic-function thread is terminated.
+
+%% ------------------------------------------------------------------------
+
+\glent[predicate~function]
+\gllabel{predicate-function}%
+\index{predicate function}%
+\index{function!predicate}%
+A \glref{function} that returns a \glref{generalized-boolean} value.
 
 %% ------------------------------------------------------------------------
 
