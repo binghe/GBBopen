@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /home/gbbopen/current/doc-source/portable-threads-entities.tex *-*
-%% *-* Last-Edit: Sat Feb 23 16:40:06 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Wed Feb 27 12:11:55 2008; Edited-By: cork *-*
 %% *-* Machine: whirlwind.corkills.org *-*
 
 \index{module!:portable-threads@\code{:portable-threads}}%
@@ -78,20 +78,21 @@ operations as well as to be awakened by a dynamically surrounding
 
 Thread coordination functions, such as \code{process-wait}, are expensive to
 implement with operating-system threads.  Such functions stop the executing
-thread until a Common Lisp predicate \glref{function} returns a true value.
+thread until a Common Lisp \glref{predicate~function} returns a true value.
 With application-level threads, the Lisp-based scheduler evaluates the
-predicate periodically when looking for other threads that can be run.  With
-operating-system threads, however, thread scheduling is performed by the
-operating system and evaluating a Common Lisp predicate \glref{function}
-requires some complex and expensive interaction between the operating-system
-scheduling and the Common Lisp implementation.  Given this cost and
-complexity, some Common Lisp implementations using operating-system threads
-have elected not to provide \code{process-wait}-style coordination functions,
-and this issue extends to the Portable Threads Interface as well.
+\glref{predicate~function} periodically when looking for other threads that
+can be run.  With operating-system threads, however, thread scheduling is
+performed by the operating system and evaluating a Common Lisp
+\glref{predicate~function} requires complex and expensive interaction between
+the operating-system thread scheduling and the Common Lisp implementation.
+Given this cost and complexity, many Common Lisp implementations that use
+operating-system threads have elected not to provide \code{process-wait}-style
+coordination functions, and this issue extends to the Portable Threads
+Interface as well.
 
 Fortunately, most uses of \code{process-wait} can be replaced by a different
 strategy that relies on the producer of a change that would affect the
-\code{process-wait} predicate \glref{function} to signal the event rather than
+\code{process-wait} \glref{predicate~function} to signal the event rather than
 having the consumers of the change use predicate functions to poll for it.
 Condition variables, the Portable Threads \textbf{\entlink{hibernate-thread}}
 and \textbf{\entlink{awaken-thread}} mechanism, or blocking I/O functions
@@ -108,9 +109,9 @@ specified for the \glref{scheduled~function}. This value is used whenever the
 relative to the current invocation.  \glref{Scheduled~functions} can be
 scheduled to a resolution of one second.
 
-\glref{Scheduled~functions} are managed and invoked by a separate
+\glref{Scheduled~functions} are scheduled and invoked by a separate
 \code{"Scheduled-Function Scheduler"} \glref{thread}.  Unless the run time of
-the invoked \glref{function} is brief, the function should spawn a new
+the invoked \glref{function} is brief, the \glref{function} should spawn a new
 \glref{thread} in which to perform its activities so as to avoid delaying the
 invocation of a subsequent \glref{scheduled~function}.
 
@@ -119,9 +120,9 @@ invocation of a subsequent \glref{scheduled~function}.
 A \glref{periodic~function} is a \glref{function} to be run repeatedly at a
 specified interval.  Unlike \glref{scheduled~functions}, which can be
 scheduled only to a resolution of one second, a \glref{periodic~function} can
-be repeated at intervals as brief as is supported by the underlying Common
-Lisp's \code{sleep} function.  A separate \glref{thread} is spawned to manage
-each \glref{periodic~function}.
+be repeated at intervals as brief as is supported by the \code{sleep} function
+of the Common Lisp implementation.  Each \glref{periodic~function} is executed
+in a separate \glref{thread}.
 
 \W\entities
 \T\clearpage
