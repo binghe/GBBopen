@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/gbbopen/preamble.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Feb 11 19:43:20 2008 *-*
+;;;; *-* Last-Edit: Thu Feb 28 17:15:36 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -115,14 +115,14 @@
 (defgeneric describe-instance (instance))
 (defgeneric describe-space-instance (space-instance))
 (defgeneric describe-unit-class (unit-class-name-or-class))
-(defgeneric describe-unit-slot (class slot))
+(defgeneric describe-unit-slot (unit-class slot))
 (defgeneric ds-evfn-using-class (fn event-class &rest args))
 (defgeneric do-evfns (evfn-blk event-class args))
 (defgeneric draw-instance-on-bb-widget (instance bb-widget &optional filter))
 (defgeneric event-printer (class stream &rest args))
 (defgeneric evfn-describer (evfn-blk fn))
 (defgeneric hidden-nonlink-slot-names (instance))
-(defgeneric instance-name-comparison-test (class))
+(defgeneric instance-name-comparison-test (unit-class))
 (defgeneric link-slot-p (slot))
 (defgeneric map-all-instances-on-storage (fn storage 
 					  disjunctive-dimensional-extents  
@@ -130,6 +130,7 @@
 (defgeneric map-marked-instances-on-storage (fn storage 
 					     disjunctive-dimensional-extents 
                                              verbose))
+(defgeneric next-class-instance-number (unit-class-name-or-class))
 (defgeneric propagate-event-evfns/printing (event-class
                                             super-event-classes))
 (defgeneric remove-instance-from-space-instance (instance space-instance))
@@ -141,7 +142,7 @@
                                      slot-names paths permanent printing 
                                      evfn-blk-fn evfn-blk-fn-args))
 (defgeneric setup-instance-storage (space-instance instance-mapping))
-(defgeneric signal-event-using-class (class &rest args))
+(defgeneric signal-event-using-class (event-class &rest args))
 (defgeneric validate-event-metaclass (event-metaclass-name
                                       super-event-metaclasses))
 (defgeneric validate-class-option (metaclass option))

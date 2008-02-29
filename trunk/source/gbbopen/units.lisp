@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/gbbopen/units.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Feb 15 01:41:16 2008 *-*
+;;;; *-* Last-Edit: Thu Feb 28 19:08:39 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -59,6 +59,7 @@
             find-effective-slot-definition-by-name ; not documented (yet...)
             find-unit-class             ; not documented (at least yet...)
             gbbopen-effective-slot-definition
+            next-class-instance-number
             reset-unit-class)))
 
 ;;; ---------------------------------------------------------------------------
@@ -713,6 +714,15 @@
   ;;; `unit-class-name-or-class'
   (hash-table-count (standard-unit-class.instance-hash-table unit-class)))
     
+;;; ---------------------------------------------------------------------------
+
+(defmethod next-class-instance-number ((unit-class standard-unit-class))
+  (with-lock-held (*master-instance-lock*)
+    (incf (standard-unit-class.instance-name-counter unit-class))))
+
+(defmethod next-class-instance-number ((unit-class-name symbol))
+  (next-class-instance-number (find-unit-class unit-class-name)))
+
 ;;; ---------------------------------------------------------------------------
 
 (defmethod class-instances-summary ((unit-class-name symbol))
