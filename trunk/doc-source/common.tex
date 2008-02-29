@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /home/gbbopen/doc-source/common.tex *-*
-%% *-* Last-Edit: Mon Feb 11 11:38:20 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Fri Feb 29 10:34:50 2008; Edited-By: cork *-*
 %% *-* Machine: whirlwind.corkills.org *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -110,6 +110,7 @@
 %%  LaTeX Modifications
 
 \W\begin{iftex}
+\newcommand{\goodpagebreak}{\pagebreak[0]}
 \makeatletter
 
 % article.cls
@@ -252,6 +253,7 @@
 \W\newcommand{\hfill}{\xml{p align="right"}}
 \W\newcommand{\normalbaselines}{}
 \W\newcommand{\^}{\xmlent{##94}}
+\W\newcommand{\goodpagebreak}{}
 %\W\NotSpecial{\do\^}
 
 %% ----------------------------------------------------------------------------
