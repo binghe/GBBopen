@@ -1,3 +1,7 @@
+Important changes since GBBopen 0.9.8:
+
+  * New NEXT-CLASS-INSTANCE-NUMBER function
+
 Important changes in GBBopen 0.9.8:
 
   * INCOMPATIBLE CHANGE: New DELETE-BLACKBOARD-REPOSITORY function

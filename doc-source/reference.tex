@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /home/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Sun Feb 24 10:45:28 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Thu Feb 28 19:07:23 2008; Edited-By: cork *-*
 %% *-* Machine: whirlwind.corkills.org *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -6084,12 +6084,12 @@ specified \glref{unit~class}.  If an
 \glref{extended~unit-classes~specification} is supplied, the sum of the
 \glref{unit~instance} counts of the specified classes is returned.
 
-\begin{alsos}{map-instances-of-class}
-\also[map-instances-of-class]
+\begin{alsos}{next-class-instance-number}
+\also[next-class-instance-number]
 \end{alsos}
 
 \fnexamples
- Return the count of \glref{unit~instances} of
+Return the count of \glref{unit~instances} of
 \code{standard-space-instance}: 
 \begin{example}
 > (class-instances-count 'standard-space-instance)
@@ -6358,6 +6358,7 @@ may also be signaled:
 \also[delete-space-instance]
 \also[make-instance]
 \also[reset-gbbopen]
+\also[reset-unit-class]
 \end{alsos}
 
 \fnexample
@@ -7269,15 +7270,15 @@ Use of an initialization argument that has not been declared as valid.
 
 \codeindexit{:space-instances}%
 \codeindexit{:initial-space-instances}%
-\codeindexit{:instance-name-of}%
+\codeindexit{:instance-name}%
 \fndescription Specifying a \code{:space-instances} initialization argument
 causes that value to be used instead of the \code{:initial-space-instances}
 specification associated with the \glref{unit~class}. Similarly, specifying a
-\code{:instance-name-of} initialization argument causes that value to be used as
+\code{:instance-name} initialization argument causes that value to be used as
 the name of the newly created \glref{unit~instance} instead of the
 instance-name counter value associated with the \glref{unit~class}.
 
-\begin{alsos}{make-space-instance}
+\begin{alsos}{next-class-instance-number}
 \also[define-event-class]
 \also[define-unit-class]
 \also[define-space-class]
@@ -7285,6 +7286,7 @@ instance-name counter value associated with the \glref{unit~class}.
 \also[describe-instance]
 \also[instance-name-of]
 \also[make-space-instance]
+\also[next-class-instance-number]
 \end{alsos}
 
 \fnexample
@@ -7303,6 +7305,63 @@ Create a new \code{hyp} \glref{unit~instance}:
 \bfindexit{make-space-instance}%
 The \glref{function} \textbf{\entlinknoex{make-space-instance}} provides a
 clear and convenient shorthand for creating \glref{space~instances}.
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Generic~Function}{next-class-instance-number}%
+  {\var{unit-class-or-name\/} 
+    \returns{} \var{integer\/}}
+\index{unit class!instance number, next}%
+\index{unit instance!instance number}%
+
+\fnsyntax
+
+\fnpurpose Increment and return the instance-name counter value
+associated with the \glref{unit~class}.
+
+\fnmethods
+\fnalternate{next-class-instance-number}%
+  {\code{(}\var{unit-class-name\/} \code{symbol)}
+  \returns{} \var{integer\/}} 
+\fnalternate{next-class-instance-number}%
+  {\code{(}\var{unit-class\/} \code{standard-unit-class)}
+  \returns{} \var{integer\/}}
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:gbbopen-core}
+
+\fnargs
+\begin{args}{unit-class-or-name}
+\arg[unit-class-or-name] A \glref{unit~class} or a symbol naming a
+\glref{unit~class} 
+\end{args}
+
+\fnreturns Returns the incremented instance-name counter value
+associated with the \glref{unit~class}.
+
+\begin{alsos}{class-instances-count}
+\also[class-instances-count]
+\also[make-instance]
+\end{alsos}
+
+\fnexamples
+ Return the next instance-name number of \glref{unit~instances} of \code{ksa}: 
+\begin{example}
+> (next-class-instance-count 'ksa)
+8
+\end{example} 
+
+Change the class of \glref{unit~instance} \code{hyp} from
+\code{probable-hyp} to \code{rejected-hyp}:
+\begin{example}
+> (change-class hyp 'rejected-hyp 
+    :instance-name (next-class-instance-number 'rejected-hyp))
+#<rejected-hyp 1409 (896 388) .68>
+\end{example} 
+
 
 \end{functiondoc}
 
@@ -7337,6 +7396,11 @@ clear and convenient shorthand for creating \glref{space~instances}.
 but only if the \glref{unit~class} is not abstract and if there are no
 existing instances of that class.  If instances do exist, a warning is
 issued.
+
+\begin{alsos}{delete-blackboard-repository}
+\also[delete-blackboard-repository]
+\also[reset-gbbopen]
+\end{alsos}
 
 \fnexample Reset the instance-name counters of all \glref{unit~classes}
 to 1:
@@ -9247,6 +9311,7 @@ itself, on a \glref{space~instance} or is linked to other
 \also[delete-space-instance]
 \also[make-space-instance]
 \also[reset-gbbopen]
+\also[reset-unit-class]
 \end{alsos}
 
 \fnexample
@@ -9314,6 +9379,7 @@ may also be signaled if the \var{space-instance} is, itself, on a
 \also[delete-instance]
 \also[make-space-instance]
 \also[reset-gbbopen]
+\also[reset-unit-class]
 \end{alsos}
 
 \fnexamples
@@ -9980,6 +10046,7 @@ does not undefine any class definitions, functions, methods, etc.
 \also[define-space-class]
 \also[define-unit-class]
 \also[reset-gbbopen]
+\also[reset-unit-class]
 \end{alsos}
 
 \fnexample
