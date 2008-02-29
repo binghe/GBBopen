@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Jan 26 10:30:37 2008 *-*
+;;;; *-* Last-Edit: Fri Feb 29 11:15:32 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -55,6 +55,8 @@
 ;;;  12-05-07 Added shrink-vector.  (Corkill)
 ;;;  01-06-08 Added list-length>1.  (Corkill)
 ;;;  01-09-08 Added list-length> and trimmed-substring.  (Corkill)
+;;;  02-29-08 Added handler-forms and error-condition lexical function to 
+;;;           with-error-handling.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -276,7 +278,8 @@
 	    dosequence
 	    dotted-conc-name		; in mini-module, but part of tools
 	    dotted-length
-	    error-message		; lexical fn in with-error-handling
+	    error-condition             ; lexical fn in with-error-handling
+            error-message               ; lexical fn in with-error-handling
 	    ensure-finalized-class
 	    ensure-list
 	    ensure-list-of-lists	; not yet documented
@@ -444,24 +447,68 @@
 ;;;
 ;;;  Evaluates body if an error occurs while evaluating form
 
-(defmacro with-error-handling (form &body body)
-  `(handler-case ,form
-    (error (condition)
-           ,@(if body
+(defun error-message-string (condition)                            
+  (let ((*print-readably* nil))
+    (handler-case (format nil "~a" condition)
+      (error () "<error: unprintable condition>"))))
+
+;;; ---------------------------------------------------------------------------
+
+(defmacro with-error-handling (form-and-handler &body error-body)
+  ;; Determine if form-and-handler is form or (form &body handler-body):
+  (unless (and (consp form-and-handler)
+               (consp (car form-and-handler))
+               ;; Support CLHS 3.1.2.1.2.4 lambda form:
+               (not (eq (caar form-and-handler) 'lambda)))
+    ;; Convert a simple form to a form with (null) handler-body:
+    (setf form-and-handler (list form-and-handler)))
+  (destructuring-bind (form &body handler-body)
+      form-and-handler
+    (let ((block (gensym))
+          (condition/tag (when error-body (gensym))))
+      `(block ,block
+         (let (,@(when error-body (list condition/tag)))
+           (tagbody
+             (handler-bind
+                 ((error
+                   #'(lambda (condition)
+                       ,@(if handler-body
+                             `((flet ((error-message ()
+                                        (error-message-string condition))
+                                      (error-condition ()
+                                        condition))
+                                 (declare (dynamic-extent error-message
+                                                          error-condition))
+                                 #-sbcl
+                                 (declare (ignorable error-message
+                                                     error-condition))
+                                 ,@(if error-body
+                                       `(,@handler-body
+                                         ;; Save the condition for use
+                                         ;; by (error-message) in error-body:
+                                         (setf ,condition/tag condition)
+                                         (go ,condition/tag))
+                                       `((return-from ,block 
+                                           (progn ,@handler-body))))))
+                             `(,@(if error-body
+                                     `(,@handler-body
+                                       ;; Save the condition for use by
+                                       ;; (error-message) in error-body:
+                                       (setf ,condition/tag condition)
+                                       (go ,condition/tag))
+                                     `((declare (ignore condition))
+                                       (return-from ,block (values)))))))))
+               ,form)
+             ,@(when error-body (list condition/tag))
+             ,@(when error-body
                  `((flet ((error-message ()
-                            (let ((*print-readably* nil))
-                              (handler-case (format nil "~a" condition)
-                               (error ()
-                                 "<error: unprintable condition>")))))
-                     (declare (dynamic-extent error-message))
-                     ;; Heavy handed way to suppress warning of unused
-                     ;; (error-message) in SBCL--find something better
-                     #+sbcl
-                     (error-message)
-		     #-sbcl
-                     (declare (ignorable error-message))
-                     ,@body))
-                 '((declare (ignore condition)))))))
+                            (error-message-string ,condition/tag))
+                          (error-condition ()
+                            ,condition/tag))
+                     (declare (dynamic-extent error-message error-condition))
+                     #-sbcl
+                     (declare (ignorable error-message error-condition))
+                     (return-from ,block (progn ,@error-body)))))))))))
 
 ;;; ===========================================================================
 ;;;  Ensure-finalized-class
@@ -548,7 +595,9 @@
   (excl::.primcall 'sys::shrink-svector vector length)
   ;; Can we do better on CLISP?
   #+clisp
-  (subseq vector 0 length)
+  (if (=& length (length vector))
+      vector
+      (subseq vector 0 length))
   #+clozure
   (ccl::%shrink-vector vector length)
   #+cmu
@@ -571,7 +620,10 @@
   #+allegro
   `(excl::.primcall 'sys::shrink-svector ,vector ,length)
   #+clisp
-  `(subseq ,vector 0 ,length)
+  (with-once-only-bindings (vector length)
+    `(if (=& ,length (length ,vector))
+         ,vector
+         (subseq ,vector 0 ,length)))
   #+clozure
   `(ccl::%shrink-vector ,vector ,length)
   #+cmu

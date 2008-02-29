@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /home/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Thu Feb 28 19:07:23 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Fri Feb 29 11:04:34 2008; Edited-By: cork *-*
 %% *-* Machine: whirlwind.corkills.org *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -2367,7 +2367,7 @@ the \var{count\/} is provided, and in that case only the rightmost
 2
 > (counted-delete #\bkslash{}a "abcabc")
 "bcbc"
-2
+2\goodpagebreak
 > (counted-delete 'z '(a b c a b c))
 (a b c a b c)
 0
@@ -2415,8 +2415,6 @@ structure of \var{list\/} in constructing the \var{result-list}.
 \begin{example}
 > (delq 'b '(a b c b))
 (a c)
-\end{example}
-\begin{example}
 > (delq 'x '(a b c b))
 (a b c b)
 \end{example}
@@ -2574,7 +2572,7 @@ repeatedly, as long as \var{test-form\/} evaluates to \nil.
 1 
 2 
 3 
-nil
+nil\goodpagebreak
 > (let ((i 10)) 
     (do-until (print i)
         (> (incf i) 3)))
@@ -2629,7 +2627,7 @@ The scope of the binding of \var{var\/} does not include the
 1 
 2 
 3 
-nil
+nil\goodpagebreak
 > (dosequence (char "abc") (print char))
 #\(\backslash\)a 
 #\(\backslash\)b 
@@ -2865,7 +2863,7 @@ t
 > (list-length> 2 '(a b))
 nil
 > (list-length> 1 '(a))
-nil
+nil\goodpagebreak
 > (list-length> 1 '(a . b))
 nil
 > (list-length> 1 '(a b . c))
@@ -2908,7 +2906,7 @@ t
 > (list-length>1 '(a b))
 t
 > (list-length>1 '(a))
-nil
+nil\goodpagebreak
 > (list-length>1 '(a . b))
 nil
 > (list-length>1 '(a b . c))
@@ -2990,8 +2988,6 @@ comparison function.
 \begin{example}
 > (memq 'b '(a b c b))
 (b c b)
-\end{example}
-\begin{example}
 > (memq 'x '(a b c b))
 nil
 \end{example}
@@ -3180,7 +3176,7 @@ double-quote characters.
 ;; Return multiple values:
 ;;  (values 5 6) => 5; 6
 5
-6
+6\goodpagebreak
 > (printv *package* (\entlink{object-address} *package* 't))
 ;;  *package* => #<The GBBOPEN-USER package>
 ;;  (object-address *package* 't) => "71b32f5a"
@@ -3226,7 +3222,7 @@ double-quote characters.
 > (setf alist nil)
 nil
 > (push-acons 'x 1 alist)
-((x . 1))
+((x . 1))\goodpagebreak
 > (push-acons 'y 2 alist)
 ((y . 2) (x . 1))
 > alist
@@ -3284,7 +3280,7 @@ nil
 > (pushnew-acons 'x 1 alist)
 ((x . 1))
 > (pushnew-acons 'y 2 alist)
-((y . 2) (x . 1))
+((y . 2) (x . 1))\goodpagebreak
 > (pushnew-acons 'x -1 alist)
 ((y . 2) (x . -1))
 > alist
@@ -3392,7 +3388,7 @@ nil
 > (pushnew/incf-acons 'x 1 alist)
 ((x . 1))
 > (pushnew/incf-acons 'x 1 alist)
-((x . 2))
+((x . 2))\goodpagebreak
 > (pushnew/incf-acons 'y 2 alist)
 ((y . 2) (x . 2))
 > (pushnew/incf-acons 'x -1 alist)
@@ -3480,7 +3476,7 @@ true.
 > (set-equal '(1 2 3) '(3 2 1))
 t
 > (set-equal '(1 2) '(3 2 1))
-nil
+nil\goodpagebreak
 > (set-equal '(1 2 3) '(3 1))
 nil
 > (set-equal '(1 2 3) '(3 3 3 2 1))
@@ -3646,7 +3642,7 @@ used on the results of calling \textbf{\entlinknoex{find-instances}} or
 > (sole-element '(a))
 a
 > (sole-element nil)
-nil
+nil\goodpagebreak
 > (sole-element '(a b))
 Error: The list (a b) contains more than 1 element.
        If continued - Ignore the remaining elements.
@@ -3694,7 +3690,7 @@ elements.
 (e)
 > (splitting-butlast '(a b c d e) 3)
 (a b)
-(c d e)
+(c d e)\goodpagebreak
 > (splitting-butlast '(a b . c))
 (a)
 (b . c)
@@ -3759,9 +3755,9 @@ end of \var{string\/})
 > (trimmed-substring '(#\bkslash{}space #\bkslash{}tab) "xxx   abc   yyy" 3 12)
 "abc"
 > (trimmed-substring " " "xxx   abc   yyy" 3 12)
-"abc"
+"abc"\goodpagebreak
 > (trimmed-substring " " "xxx   abc   yyy" 3)
-"abc   yyy"
+"abc   yyy"\goodpagebreak
 > (trimmed-substring " " "xxx   abc   yyy" 3 13)
 "abc   y"
 > (trimmed-substring " " "xxx   abc   yyy" 2 12)
@@ -3896,7 +3892,7 @@ as long as \var{test-form\/} evaluates to \nil.
 1 
 2 
 3 
-nil
+nil\goodpagebreak
 > (until 't (print "No"))
 nil
 \end{example}
@@ -3939,7 +3935,7 @@ until \var{test-form\/} evaluates to \nil.
 1 
 2 
 3 
-nil
+nil\goodpagebreak
 > (while nil (print "No"))
 nil
 \end{example}
@@ -3948,37 +3944,51 @@ nil
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Macro}{with-error-handling}{\var{form\/} 
+\begin{functiondoc}{Macro}{with-error-handling}{[\var{form\/} \vbar{}
+    \code{(}\var{form handler-form\/}\superstar{}\code{)}]
     \var{error-form\/}\superstar{} 
     \returns{} \var{result\/}\superstar} 
 \index{ignoring errors}%
 \index{handling errors}%
+\index{error-condition@\textbf{error-condition}, in \textbf{with-error-handling}}%  
 \index{error-message@\textbf{error-message}, in \textbf{with-error-handling}}%  
 \fnsyntax
 
-\fnpurpose Evaluate \var{error-forms\/} if an error occurs while evaluating
-\var{form}. 
+\fnpurpose Evaluate \var{handler-forms\/} and \var{error-forms\/} if an error
+occurs while evaluating \var{form}.
 
 \fnpackage \code{:gbbopen-tools}
 
 \fnmodule \code{:gbbopen-tools}
 
 \fnargs
-\begin{args}{error-forms}
+\begin{args}{handler-forms}
 \arg[form] A \glref{form}
+\arg[handler-forms] Zero or more \glref{forms}
 \arg[error-forms] Zero or more \glref{forms}
 \end{args}
 
 \fnreturns The values returned by evaluating \var{form\/} unless an
-error occurs during that evaluation in which case values of evaluating 
-\var{error-forms\/} are returned.
+error occurs during that evaluation in which case:
+\begin{tightitemize}
+\item values of evaluating \var{error-forms\/}, if specified, are returned
+\item otherwise, values of evaluating \var{handler-forms\/}, if specified, are returned
+\item otherwise, no values are returned
+\end{tightitemize}
 
 \fndescription If an error occurs while evaluating \var{form},
-\var{error-forms\/} are evaluated and the values returned by the last
-\var{error-form\/} is returned.  A lexical function, \textbf{error-message},
-is available for use within \var{error-forms}.  This lexical \glref{function} accepts
-no arguments and returns a string describing the error that occurred during
-the evaluation of \var{form}.
+\var{handler-forms\/} are evaluated in the dynamic context of the error, then
+the dynamic context is unwound to that in which \var{form\/} was evaluated and
+the \var{error-forms\/} are evaluated.
+
+A lexical \glref{function}, \textbf{error-message}, is available for use
+within \var{handler-forms\/} and \var{error-forms}.  This lexical function
+accepts no arguments and returns a string describing the error that occurred
+during the evaluation of \var{form}.
+
+Another lexical \glref{function}, \textbf{error-condition}, is also available for use
+within \var{handler-forms\/} and \var{error-forms}.  This lexical function
+accepts no arguments and returns the condition object that signalled the error.
 
 \bfindexit{printv}%
 \fnexamples
@@ -3989,8 +3999,64 @@ the evaluation of \var{form}.
 3
 > (with-error-handling (values 1 2 (error "Bad")) :error-occurred)
 :error-occurred
-> (with-error-handling (values 1 2 (/ 10 0)) (\entlink{printv} (error-message)))
+> (with-error-handling (values 1 2 (/ 10 0)) (\entlink{printv} (error-message)) nil)
 ;;  (error-message) => "Attempt to divide 10 by zero."
+nil\goodpagebreak
+> (let ((x 0)) 
+    (with-error-handling 
+        ((let ((x 1))
+           (error "A silly error has occurred."))
+         (\entlink{printv} "Handler form" (error-message) x)
+         (values :c :b :a))
+      (\entlink{printv} "Error form" (error-message) x)
+      (values :a :b :c)))
+;; Handler form
+;;  (error-message) => "A silly error has occurred."
+;;  x => 1
+;; Error form
+;;  (error-message) => "A silly error has occurred."
+;;  x => 0
+:a
+:b
+:c\goodpagebreak
+> (let ((x 0)) 
+    (with-error-handling 
+        ((let ((x 1))
+           (error "A silly error has occurred."))
+         (\entlink{printv} "Handler form" (error-message) x)
+         (values :c :b :a))))
+;; Handler form
+;;  (error-message) => "A silly error has occurred."
+;;  x => 1
+:c
+:b
+:a\goodpagebreak
+> (let ((x 0)) 
+    (with-error-handling 
+        ;; No handler-forms:
+        ((let ((x 1))
+           (error "A silly error has occurred.")))
+      (\entlink{printv} "Error form" (error-message) x)
+      (values :a :b :c)))
+;; Error form
+;;  (error-message) => "A silly error has occurred."
+;;  x => 0
+:a
+:b
+:c\goodpagebreak
+> (let ((x 0)) 
+    (with-error-handling 
+        ;; Just a form:
+        (let ((x 1))
+          (error "A silly error has occurred."))
+      (\entlink{printv} "Error form" (error-message) x)
+      (values :a :b :c)))
+;; Error form
+;;  (error-message) => "A silly error has occurred."
+;;  x => 0
+:a
+:b
+:c
 \end{example}
 
 \end{functiondoc}
@@ -4032,7 +4098,6 @@ has no effect on optimization settings.
 
 \fnexamples Declare a \glref{function} definition, including argument checking,
 to be fully optimized for the fastest (and least safe) execution:
-
 \begin{example}
   (with-full-optimization ()
     (defun extent-> (value)
@@ -4041,7 +4106,6 @@ to be fully optimized for the fastest (and least safe) execution:
 
 Optimize the same \glref{function} definition, but this time without invocation and
 argument-checking optimizations:
-
 \begin{example}
   (defun extent-> (value)
     (with-full-optimization ()
@@ -4257,7 +4321,7 @@ nil
 > (xor nil nil)
 nil
 > (xor 't 't)
-nil
+nil\goodpagebreak
 > (xor nil 't)
 t
 > (xor 't nil)
@@ -6725,7 +6789,7 @@ greater than one-half of its width will always result in a zero-width
 > (expand-interval '(2 5) 2)
 (0 7)
 > (expand-interval '(2 . 5) -1)
-(3 . 4)
+(3 . 4)\goodpagebreak
 > (expand-interval #(2 5) .5)
 #(1.5 5.5)
 > (expand-interval '(2 5) -3)
@@ -10487,7 +10551,7 @@ and \code{=\$\$\$} and \code{within\&}, \code{within\$\&}, \code{within\$},
 > (filter-instances (supporting-hyps-of hyp) '(> belief .8))
 (#<hyp 183 (1835 4791) 0.82 [0..35]>
  #<hyp 233 (1835 4791) 0.89 [5..35]>
- #<hyp 419 (1835 4791) 0.85 [5..35]>)
+ #<hyp 419 (1835 4791) 0.85 [5..35]>)\goodpagebreak
 > (filter-instances (supporting-hyps-of hyp) `(within belief (.85 ,infinity)))
 (#<hyp 233 (1835 4791) 0.89 [5..35]>
  #<hyp 419 (1835 4791) 0.85 [5..35]>)
@@ -10639,52 +10703,52 @@ and \code{=\$\$\$} and \code{within\&}, \code{within\$\&}, \code{within\$},
  #<hyp 335 (1835 8419) 0.92 [15..35]>
  #<hyp 183 (1835 4791) 0.82 [0..35]>
  #<hyp 233 (1835 4791) 0.89 [5..35]>
- #<hyp 419 (1835 4791) 0.85 [5..35]>)
+ #<hyp 419 (1835 4791) 0.85 [5..35]>)\goodpagebreak
 > (find-instances 'hyp '(bb hyps)
     `(and (= x 1835) 
           (> belief ,(belief-of (\entlink{find-instance-by-name} 331 'hyp)))))
 (#<hyp 319 (1835 8419) 0.91 [4..12]>
  #<hyp 335 (1835 8419) 0.92 [15..35]>
- #<hyp 233 (1835 4791) 0.89 [5..35]>)
+ #<hyp 233 (1835 4791) 0.89 [5..35]>)\goodpagebreak
 > (find-instances '(hyp :no-subclasses) '(bb hyps)
     '(= (x y) (1835 8419)))
 (#<hyp 319 (1835 8419) 0.91 [4..12]>
  #<hyp 331 (1835 8419) 0.88 [15..30]>
- #<hyp 335 (1835 8419) 0.92 [15..35]>)
+ #<hyp 335 (1835 8419) 0.92 [15..35]>)\goodpagebreak
 > (find-instances 'hyp '(bb hyps) 
     '(and (= x 1835) (within belief (.85 .9))))
 (#<hyp 331 (1835 8419) 0.88 [15..30]>
  #<hyp 233 (1835 4791) 0.89 [5..35]>
- #<hyp 419 (1835 4791) 0.85 [5..35]>)
+ #<hyp 419 (1835 4791) 0.85 [5..35]>)\goodpagebreak
 > (find-instances 'hyp '(bb hyps) 
     '(and (= x 1835) (overlaps velocity-range (0 10))))
 (#<hyp 319 (1835 8419) 0.91 [4..12]>
  #<hyp 183 (1835 4791) 0.82 [0..35]>
  #<hyp 233 (1835 4791) 0.89 [5..35]>
- #<hyp 419 (1835 4791) 0.85 [5..35]>)
+ #<hyp 419 (1835 4791) 0.85 [5..35]>)\goodpagebreak
 > (find-instances 'hyp '(bb hyps) 
     '(and (= x 1835) (overlaps velocity-range (35 40))))
 (#<hyp 335 (1835 8419) 0.92 [15..35]>
  #<hyp 183 (1835 4791) 0.82 [0..35]>
  #<hyp 233 (1835 4791) 0.89 [5..35]>
- #<hyp 419 (1835 4791) 0.85 [5..35]>)
+ #<hyp 419 (1835 4791) 0.85 [5..35]>)\goodpagebreak
 > (find-instances 'hyp '(bb hyps) 
     '(and (= x 1835) (covers velocity-range (0 10))))
 (#<hyp 183 (1835 4791) 0.82 [0..35]>)
 > (find-instances 'hyp '(bb hyps) 
     '(and (= x 1835) (covers velocity-range (4 10))))
 (#<hyp 319 (1835 8419) 0.91 [4..12]>
- #<hyp 183 (1835 4791) 0.82 [0..35]>)
+ #<hyp 183 (1835 4791) 0.82 [0..35]>)\goodpagebreak
 > (find-instances 'hyp '(bb hyps) 
     '(and (= x 1835) (within velocity-range (0 10))))
 nil
 > (find-instances 'hyp '(bb hyps) 
     '(and (= x 1835) (within velocity-range (0 20))))
-(#<hyp 319 (1835 8419) 0.91 [4..12]>)
+(#<hyp 319 (1835 8419) 0.91 [4..12]>)\goodpagebreak
 > (find-instances 'hyp '(bb hyps) 
     '(and (= x 1835) (starts velocity-range 5)))
 (#<hyp 233 (1835 4791) 0.89 [5..35]>
- #<hyp 419 (1835 4791) 0.85 [5..35]>)
+ #<hyp 419 (1835 4791) 0.85 [5..35]>)\goodpagebreak
 > (find-instances 'hyp '(bb hyps) 
     '(and (= x 1835) (ends velocity-range 30)))
 (#<hyp 331 (1835 8419) 0.88 [15..30]>)
@@ -14488,13 +14552,9 @@ equivalent:
 > (undefine-ks inital
      :trigger-events '((start-control-shell-event)) 
      :execution-function #'initial-ks-function)
-#<ks initial [Deleted]>
-\end{example}
-\begin{example}
+#<ks initial [Deleted]>\goodpagebreak
 > (undefine-ks inital)
-#<ks initial [Deleted]>
-\end{example}
-\begin{example}
+#<ks initial [Deleted]>\goodpagebreak
 > (\entlink{delete-instance} 
      (\entlink{find-instance-by-name} 'initial '(ks :plus-subclasses)))
 #<ks initial [Deleted]>
