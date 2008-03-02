@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Feb 25 05:59:23 2008 *-*
+;;;; *-* Last-Edit: Sun Mar  2 10:36:27 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -507,7 +507,15 @@
 		(type-of existing-instance)
 		(instance-name-of existing-instance))
 	(delete-instance existing-instance))
-      (setf (gethash instance-name instance-hash-table) instance))))
+      (setf (gethash instance-name instance-hash-table) instance)
+      ;; If instance-name is an integer larger than the current counter for
+      ;; the class, set the counter just in case the user is mixing setting
+      ;; and defaulting models:
+      (when (and (integerp instance-name)
+                 (> instance-name 
+                    (standard-unit-class.instance-name-counter unit-class)))
+        (setf (standard-unit-class.instance-name-counter unit-class)
+              instance-name)))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -516,7 +524,7 @@
          (test (hash-table-test 
                 (standard-unit-class.instance-hash-table unit-class))))
     (unless (funcall test old-name new-name)
-      (with-lock-held (*master-instance-lock*)
+      (with-lock-held (*master-instance-lock*)        
         (add-name-to-instance-hash-table unit-class instance new-name)
         ;; remove old-name from instance-hash-table:
         (remhash old-name
@@ -798,11 +806,12 @@
 
 (defmethod change-class :before ((instance standard-unit-instance)
 				 (new-class class) 
-                                 &key)
-  ;; to best handle potential instance-name conflicts we first try adding
-  ;; the instance to the new-class's instance-hash-table, so the error is up
-  ;; first; then we remove it from instance-hash-table of the old-class,
-  ;; then we actually change its class: 
+                                 &key
+                                 (instance-name nil instance-name-specified-p))
+  ;;; To best handle potential instance-name conflicts we first try adding the
+  ;;; instance to the new-class's instance HT, so the error occurs up first;
+  ;;; then we remove it from instance-hash-table of the old-class, then we
+  ;;; actually change its class.
   (declare (inline class-of))
   (check-for-deleted-instance instance 'change-class)
   ;; We must ensure finalization, as the changed instance could be the first
@@ -810,14 +819,19 @@
   (ensure-finalized-class new-class)
   (let ((unit-class (class-of instance))
 	(new-class-slots (class-slots new-class)))
-    (with-lock-held (*master-instance-lock*)
-      (add-name-to-instance-hash-table 
-       new-class instance (instance-name-of instance))
-      (remhash (instance-name-of instance)
-	       (standard-unit-class.instance-hash-table unit-class)))
-    ;; remove instance from all space instances before changing its class:
-    (dolist (space-instance 
-		(standard-unit-instance.%%space-instances%% instance))
+    ;; add instance to the new-class instance HT (using its new
+    ;; instance-name, if provided):
+    (add-name-to-instance-hash-table new-class instance 
+                                     (if instance-name-specified-p
+                                         instance-name
+                                         (instance-name-of instance)))
+    ;; remove instance from its current-class instance HT:
+    (remhash (instance-name-of instance)
+             (standard-unit-class.instance-hash-table unit-class))
+    ;; Also, remove instance from all space instances before changing its
+    ;; class:
+    (dolist (space-instance
+                (standard-unit-instance.%%space-instances%% instance))
       (remove-instance-from-space-instance instance space-instance))
     ;; Unlink backpointers from any link slots that aren't in the new
     ;; class:
@@ -833,7 +847,7 @@
 				&key (space-instances 
 				      nil space-instances-p)
                                 &allow-other-keys)
-  ;; add instance to appropriate space instances:
+  ;; Add instance to appropriate space instances:
   (cond 
    (space-instances-p
     ;; This is ugly, but if :space-instances have been specified, we first
@@ -860,7 +874,8 @@
      (load-time-value (find-class 'change-instance-class-event))
      :instance instance
      :new-class new-class)
-    (call-next-method)
+    (with-lock-held (*master-instance-lock*)
+      (call-next-method))
     (signal-event-using-class
      (load-time-value (find-class 'instance-changed-class-event))
      :instance instance
