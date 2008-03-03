@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /home/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Fri Feb 29 11:04:34 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Mon Mar  3 09:32:05 2008; Edited-By: cork *-*
 %% *-* Machine: whirlwind.corkills.org *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -7808,6 +7808,47 @@ Notify GBBopen that some dimension values of \code{hyp} might be changed:
 This section contains \code{:gbbopen-core} entities that pertain to
 \glref{events}, \glref{event~functions}, event printing, and event signaling.
 
+\index{event classes, graph of}%
+Here are the event subclasses of \textbf{standard-event-instance}
+that are defined in the \code{:gbbopen-core} 
+module:
+
+\T\begin{ifhtml}
+\xml{br}
+\xml{img align="center" src="gbbopen-events.png"}
+\xml{br clear="both"}
+\T\end{ifhtml}
+\W\begin{iftex} 
+\begin{center}
+\includegraphics[scale=0.85]{gbbopen-events}
+\end{center}
+\W\end{iftex}
+
+\noindent The event classes shown within rectangles are abstract classes
+that cannot be signalled.
+
+\W\xml{p}
+
+Here are the defined event subclasses when both the
+\code{:gbbopen-core} and \code{:agenda-shell} modules have been loaded:
+
+\T\begin{ifhtml}
+\xml{br}
+\xml{img align="center" src="agenda-shell-events.png"}
+\xml{br clear="both"}
+\T\end{ifhtml}
+\W\begin{iftex} 
+\begin{center}
+\includegraphics[scale=0.85]{agenda-shell-events}
+\end{center}
+\W\end{iftex}
+
+\noindent The additional \code{control-shell-event} classes are
+defined and signalled by the Agenda Shell.  Again classes shown within
+rectangles are abstract classes that cannot be signalled.
+
+
+
 
 \W\entities
 \T\clearpage
@@ -8603,45 +8644,6 @@ The class \textbf{standard-event-instance} is an \glref{instance} of
 \glref{event~class} that is an \glref{instance} of
 \textbf{\entlinknoex{standard-event-class}} except itself.  It is a subclass
 of \textbf{\glref{standard-gbbopen-instance}}.
-
-\index{event classes, graph of}%
-Here are the event subclasses of \textbf{standard-event-instance}
-that are defined in the \code{:gbbopen-core} 
-module:
-
-\T\begin{ifhtml}
-\xml{br}
-\xml{img align="center" src="gbbopen-events.png"}
-\xml{br clear="both"}
-\T\end{ifhtml}
-\W\begin{iftex} 
-\begin{center}
-\includegraphics[scale=0.85]{gbbopen-events}
-\end{center}
-\W\end{iftex}
-
-\noindent The event classes shown within rectangles are abstract classes
-that cannot be signalled.
-
-\W\xml{p}
-
-Here are the defined event subclasses when both the
-\code{:gbbopen-core} and \code{:agenda-shell} modules have been loaded:
-
-\T\begin{ifhtml}
-\xml{br}
-\xml{img align="center" src="agenda-shell-events.png"}
-\xml{br clear="both"}
-\T\end{ifhtml}
-\W\begin{iftex} 
-\begin{center}
-\includegraphics[scale=0.85]{agenda-shell-events}
-\end{center}
-\W\end{iftex}
-
-\noindent The additional \code{control-shell-event} classes are
-defined and signalled by the Agenda Shell.  Again classes shown within
-rectangles are abstract classes that cannot be signalled.
 
 \begin{alsos}{standard-event-class}
 \also[print-instance-slots]
