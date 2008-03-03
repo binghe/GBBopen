@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Mar  2 10:36:27 2008 *-*
+;;;; *-* Last-Edit: Mon Mar  3 10:36:06 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -496,6 +496,8 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun add-name-to-instance-hash-table (unit-class instance instance-name)
+  ;;; Note: the *master-instance-lock* is expected to be held whenever
+  ;;; this function is called.
   (let* ((instance-hash-table 
           (standard-unit-class.instance-hash-table unit-class))
          (existing-instance (gethash instance-name instance-hash-table)))
@@ -743,13 +745,13 @@
             instance
             (slot effective-nonlink-slot-definition))
   (prog1
-      (if (and (eq (slot-definition-name slot) 'instance-name)
-               (slot-boundp-using-class class instance slot))
-          (let ((ov (slot-value-using-class class instance slot)))
-            (prog1
-                (call-next-method)
-              (rename-instance-in-instance-hash-table instance ov nv)))
-          (call-next-method))
+      (cond 
+       ((and (eq (slot-definition-name slot) 'instance-name)
+             (slot-boundp-using-class class instance slot))
+        (let ((ov (slot-value-using-class class instance slot)))
+          (rename-instance-in-instance-hash-table instance ov nv)
+          (call-next-method)))
+       (t (call-next-method)))
     ;; signal the update event:
     (signal-event-using-class 
      (load-time-value (find-class 'update-nonlink-slot-event))
@@ -803,11 +805,26 @@
 
 ;;; ---------------------------------------------------------------------------
 ;;;   Change-class support
+;;;
+;;; There is a lot of change-class method complexity below to support 
+;;; all unit-class combinations of change-class:
+;;;    1. unit class to unit class
+;;;    2. unit class to non-unit class
+;;;    3. non-unit class to unit class
+;;; as well as to have the change events signalled fully before and after the
+;;; change.
+
+(defvar *%in-unit-instance-change-class%* nil)
+
+;;; ---------------------------------------------------------------------------
 
 (defmethod change-class :before ((instance standard-unit-instance)
 				 (new-class class) 
                                  &key
-                                 (instance-name nil instance-name-specified-p))
+                                 (instance-name nil instance-name-p))
+  ;;l This :before method (with typep tests below) handles class changes from a
+  ;;; unit class to a unit class or from a unit class to a non-unit class.
+  ;;;
   ;;; To best handle potential instance-name conflicts we first try adding the
   ;;; instance to the new-class's instance HT, so the error occurs up first;
   ;;; then we remove it from instance-hash-table of the old-class, then we
@@ -818,13 +835,15 @@
   ;; instance of `new-class':
   (ensure-finalized-class new-class)
   (let ((unit-class (class-of instance))
-	(new-class-slots (class-slots new-class)))
-    ;; add instance to the new-class instance HT (using its new
-    ;; instance-name, if provided):
-    (add-name-to-instance-hash-table new-class instance 
-                                     (if instance-name-specified-p
-                                         instance-name
-                                         (instance-name-of instance)))
+        (non-unit-new-class (not (typep new-class 'standard-unit-class)))
+        (new-class-slots (class-slots new-class)))
+    ;; If new-class is a stabdard-unit-class, add instance to the new-class
+    ;; instance HT (using its new instance-name, if provided):
+    (unless non-unit-new-class
+      (add-name-to-instance-hash-table new-class instance 
+                                       (if instance-name-p
+                                           instance-name
+                                           (instance-name-of instance))))
     ;; remove instance from its current-class instance HT:
     (remhash (instance-name-of instance)
              (standard-unit-class.instance-hash-table unit-class))
@@ -837,17 +856,16 @@
     ;; class:
     (dolist (slot (class-slots unit-class))
       (when (typep slot 'effective-link-definition)
-	(unless (memq slot new-class-slots)
+	(unless (or non-unit-new-class
+                    (memq slot new-class-slots))
 	  (delete-incoming-link-pointer instance slot))))))
 
 ;;; ---------------------------------------------------------------------------
 
-(defmethod change-class :after ((instance standard-unit-instance)
-				(new-class class) 
-				&key (space-instances 
-				      nil space-instances-p)
-                                &allow-other-keys)
-  ;; Add instance to appropriate space instances:
+(defun add-changed-class-instance-to-space-instances (instance new-class
+                                                      space-instances
+                                                      space-instances-p)
+  ;; Add changed-class instance to appropriate space instances:
   (cond 
    (space-instances-p
     ;; This is ugly, but if :space-instances have been specified, we first
@@ -862,6 +880,39 @@
    (t (add-instance-to-initial-space-instances instance new-class))))
 
 ;;; ---------------------------------------------------------------------------
+
+(defmethod change-class :after ((instance standard-object)
+                                (new-class standard-unit-class) 
+                                &key (space-instances 
+				      nil space-instances-p)
+                                &allow-other-keys)
+  ;;; This :after method (with unless test below) handles class changes from a
+  ;;; non-unit class to a unit class.
+  (unless *%in-unit-instance-change-class%*
+    (with-lock-held (*master-instance-lock*)
+      (add-name-to-instance-hash-table 
+       new-class instance 
+       (if (slot-boundp instance 'instance-name)
+           (instance-name-of instance)
+           (setf (instance-name-of instance)
+                 (next-class-instance-number new-class)))))
+    ;; Add instance to appropriate space instances:
+    (add-changed-class-instance-to-space-instances 
+     instance new-class space-instances space-instances-p)))
+
+;;; ---------------------------------------------------------------------------
+
+(defmethod change-class :after ((instance standard-unit-instance)
+				(new-class standard-unit-class) 
+				&key (space-instances 
+				      nil space-instances-p)
+                                &allow-other-keys)
+  ;;; This :after method handles adding the instance to space instances on
+  ;;; class changes from a unit class to a unit class:
+  (add-changed-class-instance-to-space-instances 
+   instance new-class space-instances space-instances-p))
+
+;;; ---------------------------------------------------------------------------
 ;;; Event signaling is done in this :around method to surround activities
 ;;; performed by primary and :before/:after methods
 
@@ -869,17 +920,44 @@
 				 (new-class class) 
                                  &key)
   (declare (inline class-of))
-  (let ((previous-class (class-of instance)))
+  ;;; This :around method handles adding the instance to space instances on
+  ;;; class changes from a unit class to a unit class or from a unit class to
+  ;;; a non-unit class.
+  (let ((previous-class (class-of instance))
+        (*%in-unit-instance-change-class%* 't))
     (signal-event-using-class
      (load-time-value (find-class 'change-instance-class-event))
      :instance instance
      :new-class new-class)
     (with-lock-held (*master-instance-lock*)
       (call-next-method))
-    (signal-event-using-class
-     (load-time-value (find-class 'instance-changed-class-event))
-     :instance instance
-     :previous-class previous-class))
+    ;; Only signal the instance-changed event if new-class is a unit class:
+    (when (typep new-class 'standard-unit-class)
+      (signal-event-using-class
+       (load-time-value (find-class 'instance-changed-class-event))
+       :instance instance
+       :previous-class previous-class)))
+  instance)
+
+;;; ---------------------------------------------------------------------------
+
+(defmethod change-class :around ((instance standard-object)
+				 (new-class standard-unit-class) 
+                                 &key)
+  ;;; This :around method handles event-signalling on class changes from a
+  ;;; non-unit class to a unit class (or simply calls next method on changes
+  ;;; from a unit class to another class):
+  (cond 
+   ;; Previous class was a unit class:
+   ((typep instance 'standard-unit-instance)
+    (call-next-method))
+   ;; Changing from a non-unit class to a unit class:
+   (t (let ((previous-class (class-of instance)))
+        (call-next-method)
+        (signal-event-using-class
+         (load-time-value (find-class 'instance-changed-class-event))
+         :instance instance
+         :previous-class previous-class))))
   instance)
 
 ;;; ---------------------------------------------------------------------------
