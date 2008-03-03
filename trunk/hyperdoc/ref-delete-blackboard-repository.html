@@ -27,18 +27,18 @@ retain-classes</var></td><td valign="baseline" align="right">[<i>Function</i>]
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-core</code>
 </p>
 <p><span class="fndoclabel">Arguments</span><table class="tight">
-<tr valign="top"><td valign="baseline"><i>all-classes</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id73">generalized&nbsp;boolean</a> (default is <code>nil</code>)
-</td></tr><tr valign="top"><td valign="baseline"><i>disable-events</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id73">generalized&nbsp;boolean</a> (default is <code>t</code>)
-</td></tr><tr valign="top"><td valign="baseline"><i>retain-classes</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An <a href="ref-glossary.html#id61">extended&nbsp;unit-classes&nbsp;specification</a>
+<tr valign="top"><td valign="baseline"><i>all-classes</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id75">generalized&nbsp;boolean</a> (default is <code>nil</code>)
+</td></tr><tr valign="top"><td valign="baseline"><i>disable-events</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id75">generalized&nbsp;boolean</a> (default is <code>t</code>)
+</td></tr><tr valign="top"><td valign="baseline"><i>retain-classes</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An <a href="ref-glossary.html#id63">extended&nbsp;unit-classes&nbsp;specification</a>
 (see below)
 </td></tr></table>
 </p>
 <p><span class="fndoclabel">Events</span> <br /><a name="id1">If</a> <var>disable-events</var> is <code>nil</code>, the following events may be signaled as
 <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a> and <a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a> are deleted:
 </p>
-<p><ul class="tight"><li><code>unlink-event</code>
+<p><ul class="tight"><li><code>delete-instance-event</code>
+<li><code>unlink-event</code>
 <li><code>remove-instance-from-space-instance-event</code>
-<li><code>delete-instance-event</code>
 <li><code>instance-deleted-event</code>
 </ul>
 </p>
