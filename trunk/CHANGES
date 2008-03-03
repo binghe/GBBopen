@@ -5,7 +5,9 @@ Important changes since GBBopen 0.9.8:
   * Handler-forms (evaluated in the dynamic context of the error) and new
     ERROR-CONDITION lexical function added to WITH-ERROR-HANDLING
 
-IMPORTANT78 changes in GBBopen 0.9.8:
+  * CHANGE-CLASS support to/from non-unit instances
+
+Important changes in GBBopen 0.9.8:
 
   * INCOMPATIBLE CHANGE: New DELETE-BLACKBOARD-REPOSITORY function
     replaces typical uses of RESET-GBBOPEN:
