@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Mar  3 10:36:06 2008 *-*
+;;;; *-* Last-Edit: Mon Mar  3 13:06:14 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -182,7 +182,9 @@
      ;; initializations):
      (t (let* ((class (class-of class-prototype))
                (instance (allocate-instance class)))
-          (add-name-to-instance-hash-table class instance instance-name))))))
+          (add-name-to-instance-hash-table class instance instance-name)
+          ;; Return the instance:
+          instance)))))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Unit-instance-reference reader
