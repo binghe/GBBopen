@@ -45,7 +45,7 @@ when saving and loading the blackboard repository (default is
 <p><span class="fndoclabel">Returns</span> <br />The pathname of the saved blackboard-repository data file.
 </p>
 <p><span class="fndoclabel">Description</span> <br />If <var>pathname</var> does not specify a file type, the type
-<code>bb</code> is added to it.  Then, <code>*default-pathname-defaults*</code> is used to
+<code>bb</code> is added to it.  Then, <code>(user-homedir-pathname)</code> is used to
 supply any missing components to <var>pathname</var>.
 </p>
 <p>The size of the blackboard-repository data file can be reduced by specifying a

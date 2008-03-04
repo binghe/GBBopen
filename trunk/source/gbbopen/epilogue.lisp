@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/gbbopen/epilogue.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Feb 18 05:44:35 2008 *-*
+;;;; *-* Last-Edit: Tue Mar  4 01:46:38 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -90,11 +90,11 @@
 
 (defun make-bb-pathname (pathname) 
   ;; Adds type "bb", if not supplied ; then adds defaults from
-  ;; *default-pathname-defaults*, as needed:
+  ;; (user-homedir-pathname), as needed:
   (merge-pathnames 
    pathname
    (make-pathname :type "bb"
-                  :defaults *default-pathname-defaults*)))
+                  :defaults (user-homedir-pathname))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -178,7 +178,8 @@
 
 (defun load-blackboard-repository (pathname 
                                    &rest reset-gbbopen-args
-                                   &key (confirm-if-not-empty 't)
+                                   &key (class-name-translations nil)
+                                        (confirm-if-not-empty 't)
                                         (external-format ':default)
                                         (ignore-after-loading-function nil)
                                         (readtable
@@ -194,11 +195,16 @@
     (apply 'delete-blackboard-repository
            :all-classes 't
            (remove-properties reset-gbbopen-args 
-                              '(:confirm-if-not-empty :external-format
+                              '(:class-name-translations
+                                :confirm-if-not-empty
+                                :external-format
                                 :ignore-after-loading-function
-                                :readtable :read-eval)))
-    (with-reading-saved/sent-objects-block (file :readtable readtable
-                                                 :read-eval read-eval)
+                                :readtable
+                                :read-eval)))
+    (with-reading-saved/sent-objects-block 
+        (file :class-name-translations class-name-translations
+              :readtable readtable
+              :read-eval read-eval)
       (let ((format-version (read file)))
         (unless (eql format-version *save-blackboard-repository-format-version*)
           (error "Incompatible ~s format version ~a (the current version is ~a)"
