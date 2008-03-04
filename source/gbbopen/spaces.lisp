@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/gbbopen/spaces.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Feb 14 12:59:37 2008 *-*
+;;;; *-* Last-Edit: Tue Mar  4 02:37:55 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -353,6 +353,17 @@
   (setf (standard-space-instance.space-name instance)
         (car (last (instance-name-of instance))))
   (call-next-method)
+  ;; Translate allowed-unit-classes:
+  (let ((allowed-unit-classes (allowed-unit-classes-of instance)))
+    (when (consp allowed-unit-classes)
+      (setf (slot-value instance 'allowed-unit-classes)
+            (mapcar #'(lambda (unit-class-spec)
+                        (if (consp unit-class-spec)
+                            (cons (possibly-translate-class-name
+                                   (first unit-class-spec))
+                                  (rest unit-class-spec))
+                            (possibly-translate-class-name unit-class-spec)))
+                    allowed-unit-classes))))
   (setup-instance-storage
    instance (standard-space-instance.%%storage-spec%% instance)))
 

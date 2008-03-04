@@ -1,11 +1,15 @@
 Important changes since GBBopen 0.9.8:
 
+  * New :CLASS-NAME-TRANSLATIONS added to LOAD-BLACKBOARD-REPOSITORY and
+    WITH-READING-SAVED/SENT-OBJECTS-BLOCK
+
   * New NEXT-CLASS-INSTANCE-NUMBER function
 
-  * Handler-forms (evaluated in the dynamic context of the error) and new
+  * New handler-forms (evaluated in the dynamic context of the error) and new
     ERROR-CONDITION lexical function added to WITH-ERROR-HANDLING
 
   * CHANGE-CLASS support to/from non-unit instances
+
 
 Important changes in GBBopen 0.9.8:
 

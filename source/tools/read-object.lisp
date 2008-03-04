@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/tools/read-object.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Feb 17 14:28:51 2008 *-*
+;;;; *-* Last-Edit: Tue Mar  4 02:24:17 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -52,6 +52,10 @@
 ;; the universal-time value recorded by with-saving/sending-block:
 (defvar *block-written-time*)
 
+;; Dynamically bound in with-reading-saved/sent-objects-block to hold the
+;; user-specified alist of class-name translations:
+(defvar *reading-saved/sent-class-name-translations*)
+
 ;;; ---------------------------------------------------------------------------
 
 (defun outside-reading-saved/sent-objects-block-error (function-name)
@@ -70,9 +74,20 @@
 
 ;;; ---------------------------------------------------------------------------
 
+(defun possibly-translate-class-name (class-name)
+  ;; Performs any class-name translation for reading-saved/sent-objects-block:
+  (let ((translations *reading-saved/sent-class-name-translations*))
+    (if translations
+        (let ((new-class-name (cdr (assoc class-name translations :test #'eq))))
+          (or new-class-name class-name))
+        class-name)))
+
+;;; ---------------------------------------------------------------------------
+
 (defmacro with-reading-saved/sent-objects-block 
     ((stream 
-      &key (readtable
+      &key (class-name-translations nil)
+           (readtable
             '*reading-saved/sent-objects-readtable*)
            (read-eval nil))
      &body body)
@@ -84,6 +99,8 @@
             ;; Note that read-saving/sending-block-info also sets
             ;; *package* and *read-default-float-format*:
             (read-saving/sending-block-info ,stream))
+           (*reading-saved/sent-class-name-translations* 
+            ,class-name-translations)
            (*read-class-descriptions-ht* (make-hash-table :test 'eq))
            (*forward-referenced-saved/sent-instances* 
             (make-keys-only-hash-table-if-supported :test 'equal)))
@@ -120,7 +137,7 @@
          
 (defmethod saved/sent-object-reader ((char (eql #\C)) stream)
   (let ((class-name (read stream 't nil 't)))
-    (find-class class-name 't)))
+    (find-class (possibly-translate-class-name class-name) 't)))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Class-description reader
@@ -131,6 +148,7 @@
     (outside-reading-saved/sent-objects-block-error 'saved/sent-object-reader))
   (destructuring-bind (class-name &rest slot-names)
       (read stream 't nil 't)
+    (setf class-name (possibly-translate-class-name class-name))
     (let* ((class (find-class class-name 't))
            (class-slots (copy-list (progn
                                      (ensure-finalized-class class)
@@ -227,7 +245,8 @@
     (outside-reading-saved/sent-objects-block-error 'saved/sent-object-reader))
   (destructuring-bind (class-name &rest slot-values)
       (read stream 't nil 't)
-    (declare (dynamic-extent slot-values))
+    (declare (dynamic-extent slot-values))    
+    (setf class-name (possibly-translate-class-name class-name))
     (destructuring-bind (incoming-slots missing-slot-names)
         (or (gethash class-name *read-class-descriptions-ht*)
             (error "No class description has been read for class ~s"

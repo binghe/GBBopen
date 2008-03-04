@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Mar  3 13:06:14 2008 *-*
+;;;; *-* Last-Edit: Tue Mar  4 02:24:40 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -45,8 +45,9 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (import '(gbbopen-tools::*%%skip-gbbopen-shared-initialize-method-processing%%*
             gbbopen-tools::clear-flag
-            gbbopen-tools::set-flag
-            gbbopen-tools::outside-reading-saved/sent-objects-block-error)))
+            gbbopen-tools::outside-reading-saved/sent-objects-block-error
+            gbbopen-tools::possibly-translate-class-name
+            gbbopen-tools::set-flag)))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(check-for-deleted-instance  ; not documented (yet...)
@@ -192,6 +193,7 @@
 (defmethod saved/sent-object-reader ((char (eql #\R)) stream)
   (destructuring-bind (class-name instance-name)
       (read stream t nil 't)
+    (setf class-name (possibly-translate-class-name class-name))
     (or 
      ;; Instance is already present or has been forward referenced before:
      (find-instance-by-name instance-name class-name)

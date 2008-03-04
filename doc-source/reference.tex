@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /home/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Mon Mar  3 15:08:32 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Tue Mar  4 03:21:46 2008; Edited-By: cork *-*
 %% *-* Machine: whirlwind.corkills.org *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -11497,6 +11497,7 @@ nil
 \glref{space~instances}) that has been saved to a file previously by
 \textbf{\entlink{save-blackboard-repository}}.
 
+\fnmethods
 \fnalternate{initialize-saved/sent-instance}%
   {\code{(}\var{instance\/} \code{standard-object)}
     \var{slots slot-values missing-slot-names\/}
@@ -11569,7 +11570,8 @@ to the slot named \code{new-slot} in the current class definition of \code{hyp}:
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{load-blackboard-repository}{\var{pathname\/}
-    \code{\&key} \var{confirm-if-not-empty
+    \code{\&key} \var{class-name-translations
+                      confirm-if-not-empty
                       disable-events 
                       external-format
                       ignore-after-loading-function
@@ -11596,9 +11598,8 @@ to the slot named \code{new-slot} in the current class definition of \code{hyp}:
 \fnargs
 \begin{args}{ignore-after-loading-function}
 \arg[pathname] A \glref{pathname~designator}
-\arg[confirm-if-not-empty] A \glref{generalized~boolean} indicating whether
-the user must confirm loading when the current blackboard repository contains
-\glref{unit~instances} (default is true)
+\arg[class-name-translations] An \glref{association~list} (default is \nil)
+\arg[confirm-if-not-empty] A \glref{generalized~boolean} (default is true)
 \arg[disable-events] A \glref{generalized~boolean} (default is \code{t})
 \arg[external-format] An external-file-format designator (default is
   \code{:default})
@@ -11642,12 +11643,24 @@ to loading:
 \end{tightitemize}
 
 \fndescription If \var{pathname\/} does not specify a file type, the type
-\code{bb} is added to it.  Then, \code{*default-pathname-defaults*} is used to
+\code{bb} is added to it.  Then, \code{(user-homedir-pathname)} is used to
 supply any missing components to \var{pathname}.
 
+The \var{class-name-translations\/} \glref{association~list}, if specified,
+should contain \glref{conses} of the form:\\
+%
+~~~~~~~~\texttt{(\var{class-name\/} . \var{new-class-name\/})}\\
+%
+for any \glref{class} translations that should occur during repository
+loading.
+
+If \var{confirm-if-not-empty} is true, the user must confirm loading when the
+current blackboard repository contains \glref{unit~instances}.
+
 If \var{ignore-after-loading-function\/} is true, the
-\var{after-loading-function\/} (if specified when the repository was
-saved) is not executed.
+\var{after-loading-function\/} (if one was specified when the repository was
+saved) is not executed.  Otherwise, the \var{after-loading-function\/} is
+executed at the conclusion of repository loading.
 
 \begin{alsos}{with-reading-saved/sent-objects-block}
 \also[save-blackboard-repository]
@@ -11662,6 +11675,7 @@ and then load a blackboard repository that was saved previously:
   #P"/Users/corkill/tutorial.bb"
   #<path 1>
 \end{example}
+%
 Try loading the repository again:
 \begin{example}
   > (load-blackboard-repository "tutorial")
@@ -11669,13 +11683,45 @@ Try loading the repository again:
   Continue anyway (the current contents will be deleted)? no
   nil
 \end{example}
+%
 Load the repository again, but without executing its
 \var{after-loading-function\/}:
 \begin{example}
-  > :tutorial-example :noautorun 
-  > (load-blackboard-repository "tutorial" :ignore-after-loading-function 't)
+  > (load-blackboard-repository "tutorial" 
+      :confirm-if-not-empty nil
+      :ignore-after-loading-function 't)
   #P"/Users/corkill/tutorial.bb"
 \end{example}
+%
+Define a new \glref{unit~class}, \code{new-location}, and then load the
+repository again, translating all \code{location} \glref{unit~instances} to
+\code{new-location} \glref{unit~instances}:
+\begin{example}
+  > (define-unit-class new-location (location) ())
+  #<standard-unit-class new-location>
+  > (load-blackboard-repository "tutorial"
+      :class-name-translations '((location . new-location))
+      :confirm-if-not-empty nil)
+  #P"/Users/corkill/tutorial.bb"
+  > :dsbb
+
+  Space Instance                Contents
+  --------------                --------
+  known-world                   54 instances (53 new-location; 1 path)
+
+  Unit Class                    Instances
+  ----------                    ---------
+  control-shell                         1 *
+  ks                                    4 +
+  ksa-queue                             2 +
+  new-location                         53  
+  ordered-ksa-queue                     1 +
+  path                                  1  
+  standard-space-instance               1  
+                                ---------
+                                       63 instances
+\end{example}
+
 \end{functiondoc}
 
 %% ------------------------------------------------------------------------
@@ -11977,7 +12023,7 @@ when saving and loading the blackboard repository (default is
 \fnreturns The pathname of the saved blackboard-repository data file.
 
 \fndescription If \var{pathname\/} does not specify a file type, the type
-\code{bb} is added to it.  Then, \code{*default-pathname-defaults*} is used to
+\code{bb} is added to it.  Then, \code{(user-homedir-pathname)} is used to
 supply any missing components to \var{pathname}.
 
 The size of the blackboard-repository data file can be reduced by specifying a
@@ -12017,7 +12063,7 @@ resulting blackboard repository:
 \begin{functiondoc}[with-reading-saved-sent-objects-block]{Macro}%
   {with-reading-saved/sent-objects-block}%
   {\code{(}\var{stream\/} 
-    \code{\&key} \var{readtable read-eval\/}\code{)}
+    \code{\&key} \var{class-name-translations readtable read-eval\/}\code{)}
     \var{form\/}\superstar
     \returns{} \var{result\/}\superstar}
   
@@ -12034,6 +12080,7 @@ reading-saved/sent-objects behavior when evaluating \var{forms}.
 \fnargs
 \begin{args}{read-default-float-format}
 \arg[stream] A stream
+\arg[class-name-translations] An \glref{association~list} (default is \nil)
 \arg[readtable] A readtable (default is 
   \code{*reading-saved/sent-objects-readtable*})
 \arg[read-eval] A \glref{generalized~boolean} (default is \nil)
@@ -12051,6 +12098,13 @@ reading-saved/sent-objects behavior.  The function
 \textbf{with-reading-saved/sent-objects-block} when loading the
 blackboard repository, and this macro can be used in constructing
 specialized reading-saved/sent-objects operations.
+
+The \var{class-name-translations\/} \glref{association~list}, if specified,
+should contain \glref{conses} of the form:\\
+%
+~~~~~~~~\texttt{(\var{class-name\/} . \var{new-class-name\/})}\\
+%
+for any \glref{class} translations that should occur during reading.
 
 \begin{alsos}{load-blackboard-repository}
 \also[load-blackboard-repository]
