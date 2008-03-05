@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/tools/preamble.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Feb 24 10:19:47 2008 *-*
+;;;; *-* Last-Edit: Wed Mar  5 15:16:09 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -230,12 +230,26 @@
 		#+gcl
 		(eq existing-dispatch
 		    (get-dispatch-macro-character #\# #\&)))
-      (cerror "Change and continue"
-	      "An existing dispatch-macro for ~c~c is defined for ~a: ~s"
+      (cond 
+       ;; Allow an override (and warn), if the user has set up an
+       ;; *inf-reader-escape-hook* and we are setting the inf-reader dispatch
+       ;; (done in tools/declared-numerics.lisp):
+       ((and (eql disp-char #\#)
+             (eql sub-char #\@)
+             *inf-reader-escape-hook* 
+             (eq function 'inf-reader))
+        (warn "Replacing existing dispatch-macro for ~c~c due to ~s value ~s"
 	      disp-char
 	      sub-char
-	      (lisp-implementation-type)
-	      existing-dispatch))
+              '*inf-reader-escape-hook*
+              *inf-reader-escape-hook*))
+       ;; Allow the user to continue:
+       (t (cerror "Change and continue"
+                  "An existing dispatch-macro for ~c~c is defined for ~a: ~s"
+                  disp-char
+                  sub-char
+                  (lisp-implementation-type)
+                  existing-dispatch))))
     (set-dispatch-macro-character disp-char sub-char function)))
 
 ;;; ===========================================================================
