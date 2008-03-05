@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:AGENDA-SHELL; Syntax:common-lisp -*-
 ;;;; *-* File: /home/gbbopen/source/gbbopen/control-shells/agenda-shell.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Feb 24 15:04:00 2008 *-*
+;;;; *-* Last-Edit: Wed Mar  5 09:57:15 2008 *-*
 ;;;; *-* Machine: whirlwind.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -218,6 +218,7 @@
    (obviated-ksas :initform (make-queue :class 'ksa-queue))
    (fifo-queue-ordering :initform 't :type boolean)
    (hibernating :initform nil :type boolean)
+   (hibernating-cv :initform (make-condition-variable))
    (hibernate-on-quiescence :initform nil :type boolean) 
    (awaken-on-event :initform 't :type boolean)
    (run-polling-functions :initform #+threads-not-available 't
@@ -241,19 +242,6 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defmethod delete-instance ((control-shell control-shell))
-  ;; delete ksa-queue elements:
-  (map-queue #'delete-instance (cs.pending-ksas control-shell))
-  (map-queue #'delete-instance (cs.executed-ksas control-shell))
-  (map-queue #'delete-instance (cs.obviated-ksas control-shell))
-  ;; delete ksa-queue headers:
-  (delete-instance (cs.pending-ksas control-shell))
-  (delete-instance (cs.executed-ksas control-shell))
-  (delete-instance (cs.obviated-ksas control-shell))
-  (call-next-method))
-
-;;; ---------------------------------------------------------------------------
-
 (defmethod omitted-slots-for-saving/sending ((control-shell control-shell))
   (list* 'event-buffer-lock
          ;; If we record the run-polling-functions value, then we risk
@@ -264,12 +252,26 @@
          ;; allow run-polling-functions to be initialized rather than
          ;; saved/sent:
          'run-polling-functions
+         'hibernating-cv
          'thread
          'stepping-stream
          'output-stream
          ;; a saved control-shell is never running:
          'in-control-shell-loop-p
          (call-next-method)))
+
+;;; ---------------------------------------------------------------------------
+
+(defmethod delete-instance ((control-shell control-shell))
+  ;; delete ksa-queue elements:
+  (map-queue #'delete-instance (cs.pending-ksas control-shell))
+  (map-queue #'delete-instance (cs.executed-ksas control-shell))
+  (map-queue #'delete-instance (cs.obviated-ksas control-shell))
+  ;; delete ksa-queue headers:
+  (delete-instance (cs.pending-ksas control-shell))
+  (delete-instance (cs.executed-ksas control-shell))
+  (delete-instance (cs.obviated-ksas control-shell))
+  (call-next-method))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Multinode support
@@ -502,9 +504,14 @@
 			  *control-shell-threads*))))
         (cond (cs (with-lock-held ((cs.event-buffer-lock cs))
                     (push event (cs.event-buffer cs))
-                    (when (and (cs.hibernating cs)
-                               (cs.awaken-on-event cs))
-                      (awaken-control-shell cs))))
+                    #+threads-not-available
+                    (setf (cs.hibernating cs) nil)
+                    #-threads-not-available
+                    (with-lock-held ((cs.hibernating-cv cs))
+                      (when (and (cs.hibernating cs)
+                                 (cs.awaken-on-event cs))
+                        (setf (cs.hibernating cs) nil)
+                        (condition-variable-signal (cs.hibernating-cv cs))))))
 	      (*warn-about-unusual-requests*
 	       (warn "No control shell is servicing event ~s"
 		     event)))))))
@@ -1247,11 +1254,11 @@
 
 (defun hibernate-control-shell (cs)
   (signal-event 'control-shell-hibernation-event)
-  (setf (cs.hibernating cs) 't)
-  ;; On uniprocess we must "busy wait" (but not too fast) until something
+  ;; On a uniprocess CL we must "busy wait" (but not too fast) until something
   ;; awakens the control-shell:
   (cond 
    ((cs.run-polling-functions cs)
+    (setf (cs.hibernating cs) 't)
     (while (cs.hibernating cs)
       (let ((sleep-time 0.5))
 	(when (cs.run-polling-functions cs)
@@ -1264,15 +1271,24 @@
 	;; take longer than that):
 	(when (plusp sleep-time)
 	  (sleep sleep-time)))))
-   #-threads-not-available
-   (t (hibernate-thread))))
+   (t #+threads-not-available
+      (error "Polling functions must be used when threads are not available.")
+      #-threads-not-available
+      (with-lock-held ((cs.hibernating-cv cs))
+        (setf (cs.hibernating cs) 't)
+        (while (cs.hibernating cs)
+          (condition-variable-wait (cs.hibernating-cv cs)))))))
 
 ;;; ---------------------------------------------------------------------------
 
 (defun awaken-control-shell (cs)
+  ;; Note: CS can also be awakened by do-evfns :after method:
+  #+threads-not-available
   (setf (cs.hibernating cs) nil)
   #-threads-not-available
-  (awaken-thread (cs.thread cs)))
+  (with-lock-held ((cs.hibernating-cv cs))
+    (setf (cs.hibernating cs) nil)
+    (condition-variable-signal (cs.hibernating-cv cs))))
 
 ;;; ---------------------------------------------------------------------------
 
