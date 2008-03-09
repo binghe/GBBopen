@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/source/gbbopen/epilogue.lisp *-*
+;;;; *-* File: /usr/local/gbbopen/source/gbbopen/epilogue.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Mar  4 01:46:38 2008 *-*
-;;;; *-* Machine: whirlwind.corkills.org *-*
+;;;; *-* Last-Edit: Sun Mar  9 07:28:38 2008 *-*
+;;;; *-* Machine: vagabond.cs.umass.edu *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -171,8 +171,9 @@
   ;; doesn't confirm continuing:
   (if (empty-blackboard-repository-p)
       't
-      (y-or-n-p "The blackboard repository is not empty.~%Continue anyway ~
-                 (the current contents will be deleted)? ")))
+      (nicer-y-or-n-p 
+       "The blackboard repository is not empty.~%Continue anyway ~
+        (the current contents will be deleted)? ")))
 
 ;;; ---------------------------------------------------------------------------
 
