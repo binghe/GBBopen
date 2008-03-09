@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/source/tools/tools.lisp *-*
+;;;; *-* File: /usr/local/gbbopen/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Feb 29 11:15:32 2008 *-*
-;;;; *-* Machine: whirlwind.corkills.org *-*
+;;;; *-* Last-Edit: Sun Mar  9 07:22:03 2008 *-*
+;;;; *-* Machine: vagabond.cs.umass.edu *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -57,6 +57,7 @@
 ;;;  01-09-08 Added list-length> and trimmed-substring.  (Corkill)
 ;;;  02-29-08 Added handler-forms and error-condition lexical function to 
 ;;;           with-error-handling.  (Corkill)
+;;;  02-09-08 Added nicer-y-or-n-p and nicer-yes-or-no-p.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -294,7 +295,9 @@
 	    macrolet-debug		; not documented
 	    make-keyword
 	    memq
-	    message-log-date-and-time	; not yet documented
+	    message-log-date-and-time   ; not yet documented
+            nicer-y-or-n-p              ; not-documented
+            nicer-yes-or-no-p           ; not-documented
 	    nsorted-insert
 	    pretty-time-interval	; not yet documented
 	    pretty-run-time-interval	; not yet documented
@@ -441,6 +444,32 @@
          (map nil #'(lambda (element) (,fun element nil))
               ,sequence)
          ,@(when result `((,fun nil t))))))) 
+
+;;; ===========================================================================
+;;;  Nicer y-or-n-p and yes-or-no-p (add initial help to Allegro & CMUCL
+;;;  versions:
+
+(defun nicer-y-or-n-p (&optional control-string &rest args)
+  (declare (dynamic-extent args))
+  (apply #'y-or-n-p 
+         #+(or allegro cmu)
+         (when control-string
+           (format nil "~a[y or n] " control-string))
+         #-(or allegro cmu)
+         control-string
+         args))
+
+;;; ---------------------------------------------------------------------------
+
+(defun nicer-yes-or-no-p (&optional control-string &rest args)
+  (declare (dynamic-extent args))
+  (apply #'yes-or-no-p 
+         #+(or allegro cmu)
+         (when control-string
+           (format nil "~a[yes or no] " control-string))
+         #-(or allegro cmu)
+         control-string
+         args))
 
 ;;; ===========================================================================
 ;;;  With-error-handling

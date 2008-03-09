@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:AGENDA-SHELL; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/source/gbbopen/control-shells/agenda-shell.lisp *-*
+;;;; *-* File: /usr/local/gbbopen/source/gbbopen/control-shells/agenda-shell.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Mar  5 09:57:15 2008 *-*
-;;;; *-* Machine: whirlwind.corkills.org *-*
+;;;; *-* Last-Edit: Sun Mar  9 07:28:12 2008 *-*
+;;;; *-* Machine: vagabond.cs.umass.edu *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -943,7 +943,8 @@
 	       (format stream "~&Stepping is enabled for:~{~%~2t~s~}"
 		       current-stepping)
 	       (format stream "~&All stepping is currently disabled~%"))))
-	(#\x (when (y-or-n-p "Do you really want to exit the control shell? ")
+	(#\x (when (nicer-y-or-n-p 
+                    "Do you really want to exit the control shell? ")
 	       (exit-control-shell)))
         (#\+
          (setf (cs.stepping cs) 't)
@@ -1446,9 +1447,9 @@
   (when (and (typep *cs* 'control-shell)
              (not (instance-deleted-p *cs*))
              (control-shell-running-p *cs*))
-    (unless (y-or-n-p "A running control-shell instance named ~s is ~
-                       associated with this thread.~%Delete it and ~
-                       start the new one in its place? "
+    (unless (nicer-y-or-n-p "A running control-shell instance named ~s is ~
+                             associated with this thread.~%Delete it and ~
+                             start the new one in its place? "
                         (instance-name-of *cs*))
       (format *query-io* "~&Ignoring ~s request.~%"
               'start-control-shell)
@@ -1530,9 +1531,9 @@
     (when (and (typep *cs* 'control-shell)
                (not (instance-deleted-p *cs*))
                (not (equal (instance-name-of *cs*) name)))
-      (unless (y-or-n-p "Another control-shell instance named ~s ~
-                         (~@[not ~]running) is associated with this ~
-                         thread.~%Delete it and restart ~s in its place? "
+      (unless (nicer-y-or-n-p "Another control-shell instance named ~s ~
+                               (~@[not ~]running) is associated with this ~
+                               thread.~%Delete it and restart ~s in its place? "
                         (instance-name-of *cs*)
                         (not (control-shell-running-p *cs*))
                         name)
