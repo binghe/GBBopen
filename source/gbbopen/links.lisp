@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/source/gbbopen/links.lisp *-*
+;;;; *-* File: /usr/local/gbbopen/source/gbbopen/links.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Feb 21 09:39:41 2008 *-*
-;;;; *-* Machine: whirlwind.corkills.org *-*
+;;;; *-* Last-Edit: Mon Mar 10 18:25:02 2008 *-*
+;;;; *-* Machine: vagabond.cs.umass.edu *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -212,36 +212,50 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun %do-ilinks (dslotd instance other-instances force)
-  ;;; Set the inverse pointers to `instance' in each other-instance
+  ;;; Set the inverse pointers to `instance' in each other-instance, if it is
+  ;;; not present already
   (let* ((idslotd (direct-link-definition.inverse-link-definition dslotd))
          (singular (direct-link-definition.singular idslotd))
          (slot-name (slot-definition-name idslotd))
          (*%%allow-setf-on-link%%* t)
 	 (added-instances (list instance)))
     (dolist (other-instance other-instances)
-      (cond
-       ;; ilink is singular:
-       (singular 
-        (let ((existing (slot-value other-instance slot-name)))
-          (when existing 
-            (unless force
-              (non-empty-singular-link-cerror idslotd other-instance existing))
-            ;; unlink the existing value
-            (%do-iunlink idslotd other-instance existing))
-          (setf (slot-value other-instance slot-name) instance)))
-       ;; multi-link ilink:
-       (t (let* ((sort-function (direct-link-definition.sort-function idslotd))
-		 (sort-key (direct-link-definition.sort-key idslotd))
-		 (slot-value (slot-value other-instance slot-name))
-		 (new-value
-		  (if sort-function
-		      (nsorted-insert instance slot-value
-				      sort-function sort-key)
-		      (cons instance slot-value))))
-	    (setf (slot-value other-instance slot-name) new-value)
-            ;; signal the indirect link event:
-	    (%signal-indirect-link-event 
-             other-instance idslotd new-value added-instances)))))))
+      (let ((pointer-added? nil)
+            new-value)
+        (cond
+         ;; ilink is singular:
+         (singular 
+          (let ((existing (slot-value other-instance slot-name)))
+            ;; Do nothing, if the inverse pointer is present already:
+            (unless (eq instance existing)
+              ;; Handle another inverse pointer present:
+              (when existing 
+                (unless force
+                  (non-empty-singular-link-cerror idslotd other-instance existing))
+                ;; unlink the existing value
+                (%do-iunlink idslotd other-instance existing))
+              ;; Note the addition and set the value:
+              (setf pointer-added? 't)
+              (setf new-value instance) 
+              (setf (slot-value other-instance slot-name) instance))))
+         ;; multi-link ilink:
+         (t (let* ((sort-function (direct-link-definition.sort-function idslotd))
+                   (sort-key (direct-link-definition.sort-key idslotd))
+                   (slot-value (slot-value other-instance slot-name)))
+              ;; Do nothing, if the inverse pointer is present already:
+              (unless (memq instance slot-value)
+                ;; Note the addition and set the value:
+                (setf pointer-added? 't)
+                (setf new-value
+                      (if sort-function
+                          (nsorted-insert instance slot-value
+                                          sort-function sort-key)
+                          (cons instance slot-value)))
+                (setf (slot-value other-instance slot-name) new-value)))))
+        ;; signal the indirect link event, if the inverse pointer was added:
+        (when pointer-added?
+          (%signal-indirect-link-event 
+           other-instance idslotd new-value added-instances))))))
 
 ;;; ---------------------------------------------------------------------------
 
