@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Mar 10 03:48:05 2008 *-*
+;;;; *-* Last-Edit: Mon Mar 10 18:33:25 2008 *-*
 ;;;; *-* Machine: vagabond.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -924,8 +924,18 @@
 				&key (space-instances 
 				      nil space-instances-p)
                                 &allow-other-keys)
-  ;;; This :after method handles adding the instance to space instances on
-  ;;; class changes from a unit class to a unit class:
+  ;;; This :after method handles link processing and adding the instance to
+  ;;; space instances on class changes from a unit class to a unit class.
+  ;;;
+  ;; Add inverse pointers from ihstances pointed to by any link slots that
+  ;; aren't present already:
+  (dolist (slot (class-slots new-class))
+    (when (typep slot 'effective-link-definition)
+      (%do-ilinks (effective-link-definition.direct-slot-definition slot)
+                  instance 
+                  (ensure-list (slot-value-using-class new-class instance slot))
+                  nil)))
+  ;; Add the changed-class instance to its space instances:
   (add-changed-class-instance-to-space-instances 
    instance new-class space-instances space-instances-p))
 
