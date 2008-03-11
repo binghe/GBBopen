@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Mar 10 18:33:25 2008 *-*
+;;;; *-* Last-Edit: Tue Mar 11 10:58:17 2008 *-*
 ;;;; *-* Machine: vagabond.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -183,7 +183,7 @@
      ;; initializations):
      (t (let* ((class (class-of class-prototype))
                (instance (allocate-instance class)))
-          (add-name-to-instance-hash-table class instance instance-name)
+          (add-instance-to-instance-hash-table class instance instance-name)
           ;; Return the instance:
           instance)))))
 
@@ -212,7 +212,7 @@
        (setf (gethash instance *forward-referenced-saved/sent-instances*)
              't)
        (with-lock-held (*master-instance-lock*)
-         (add-name-to-instance-hash-table class instance instance-name))
+         (add-instance-to-instance-hash-table class instance instance-name))
        instance))))
         
 ;;; ---------------------------------------------------------------------------
@@ -487,8 +487,7 @@
                        (slot-definition-name slotd))
                       (incf (standard-unit-class.instance-name-counter
                              unit-class))))))
-      (add-name-to-instance-hash-table 
-       unit-class instance instance-name))
+      (add-instance-to-instance-hash-table unit-class instance instance-name))
     ;; add the unit instance to initial space instances, unless
     ;; :initial-space-instances was overridden by an explicit :space-instances
     ;; value:
@@ -512,7 +511,7 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun add-name-to-instance-hash-table (unit-class instance instance-name)
+(defun add-instance-to-instance-hash-table (unit-class instance instance-name)
   ;;; Note: the *master-instance-lock* is expected to be held whenever
   ;;; this function is called.
   (let* ((instance-hash-table 
@@ -538,16 +537,27 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun rename-instance-in-instance-hash-table (instance old-name new-name)
-  (let* ((unit-class (class-of instance))
-         (test (hash-table-test 
-                (standard-unit-class.instance-hash-table unit-class))))
+(defun remove-instance-from-instance-hash-table (unit-class instance-name)
+  (remhash instance-name (standard-unit-class.instance-hash-table unit-class)))
+
+;;; ---------------------------------------------------------------------------
+
+(defun rename-instance-in-instance-hash-table (unit-class instance 
+                                               old-name new-name)
+  (let ((test (hash-table-test 
+               (standard-unit-class.instance-hash-table unit-class))))
     (unless (funcall test old-name new-name)
-      (with-lock-held (*master-instance-lock*)        
-        (add-name-to-instance-hash-table unit-class instance new-name)
-        ;; remove old-name from instance-hash-table:
-        (remhash old-name
-                 (standard-unit-class.instance-hash-table unit-class))))))
+      (with-lock-held (*master-instance-lock*)
+        ;; Add new-name first, in case there is a conflict:
+        (add-instance-to-instance-hash-table unit-class instance new-name)
+        ;; If OK or continued, remove the old-name from instance-hash-table
+        ;; (we must check that the old-name does reference instance, as the
+        ;; change-class procedure can have a different instance stored under
+        ;; the old name and that must be retained):
+        (when (eq instance 
+                  (gethash old-name (standard-unit-class.instance-hash-table
+                                     unit-class)))
+          (remove-instance-from-instance-hash-table unit-class old-name))))))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Describe instance
@@ -629,8 +639,8 @@
   (delete-all-incoming-link-pointers instance)
   (let ((unit-class (class-of instance)))
     ;; remove from instance-hash-table:
-    (remhash (instance-name-of instance)
-             (standard-unit-class.instance-hash-table unit-class))
+    (remove-instance-from-instance-hash-table 
+     unit-class (instance-name-of instance))
     ;; remove from all space instances:
     (dolist (space-instance 
                 (standard-unit-instance.%%space-instances%% instance))
@@ -714,7 +724,7 @@
                   class instance 
                   #+lispworks 'instance-name
                   #-lispworks slot)))
-         (rename-instance-in-instance-hash-table instance ov nv)))))
+         (rename-instance-in-instance-hash-table class instance ov nv)))))
 
 ;;; ---------------------------------------------------------------------------
 ;;;   Update-nonlink-slot event signaling
@@ -766,7 +776,7 @@
        ((and (eq (slot-definition-name slot) 'instance-name)
              (slot-boundp-using-class class instance slot))
         (let ((ov (slot-value-using-class class instance slot)))
-          (rename-instance-in-instance-hash-table instance ov nv)
+          (rename-instance-in-instance-hash-table class instance ov nv)
           (call-next-method)))
        (t (call-next-method)))
     ;; signal the update event:
@@ -837,15 +847,9 @@
 
 (defmethod change-class :before ((instance standard-unit-instance)
 				 (new-class class) 
-                                 &key
-                                 (instance-name nil instance-name-p))
+                                 &key)
   ;;l This :before method (with typep tests below) handles class changes from a
   ;;; unit class to a unit class or from a unit class to a non-unit class.
-  ;;;
-  ;;; To best handle potential instance-name conflicts we first try adding the
-  ;;; instance to the new-class's instance HT, so the error occurs up first;
-  ;;; then we remove it from instance-hash-table of the old-class, then we
-  ;;; actually change its class.
   (declare (inline class-of))
   (check-for-deleted-instance instance 'change-class)
   ;; We must ensure finalization, as the changed instance could be the first
@@ -854,27 +858,21 @@
   (let ((unit-class (class-of instance))
         (non-unit-new-class (not (typep new-class 'standard-unit-class)))
         (new-class-slots (class-slots new-class)))
-    ;; If new-class is a stabdard-unit-class, add instance to the new-class
-    ;; instance HT (using its new instance-name, if provided):
-    (unless non-unit-new-class
-      (add-name-to-instance-hash-table new-class instance 
-                                       (if instance-name-p
-                                           instance-name
-                                           (instance-name-of instance))))
-    ;; remove instance from its current-class instance HT:
-    (remhash (instance-name-of instance)
-             (standard-unit-class.instance-hash-table unit-class))
+    ;; Remove instance from its current-class instance HT:
+    (remove-instance-from-instance-hash-table 
+     unit-class (instance-name-of instance))
     ;; Also, remove instance from all space instances before changing its
     ;; class:
     (dolist (space-instance
                 (standard-unit-instance.%%space-instances%% instance))
       (remove-instance-from-space-instance instance space-instance))
-    ;; Unlink backpointers from any link slots that aren't in the new
-    ;; class:
+    ;; Unlink incoming link pointers from instances pointed to by any link
+    ;; slots that aren't link slots in the new class:
     (dolist (slot (class-slots unit-class))
       (when (typep slot 'effective-link-definition)
 	(unless (or non-unit-new-class
-                    (memq slot new-class-slots))
+                    (let ((new-class-slot (car (memq slot new-class-slots))))
+                      (typep new-class-slot 'effective-link-definition)))
 	  (delete-incoming-link-pointer instance slot))))))
 
 ;;; ---------------------------------------------------------------------------
@@ -907,12 +905,13 @@
   ;;; non-unit class to a unit class.
   (unless *%in-unit-instance-change-class%*
     (with-lock-held (*master-instance-lock*)
-      (add-name-to-instance-hash-table 
-       new-class instance 
-       (if (slot-boundp instance 'instance-name)
-           (instance-name-of instance)
-           (setf (instance-name-of instance)
-                 (next-class-instance-number new-class)))))
+      (let ((instance-name 
+             (if (slot-boundp instance 'instance-name)
+                 (instance-name-of instance)
+                 (setf (instance-name-of instance)
+                       (next-class-instance-number new-class)))))
+        (add-instance-to-instance-hash-table 
+         new-class instance instance-name))) 
     ;; Add instance to appropriate space instances:
     (add-changed-class-instance-to-space-instances 
      instance new-class space-instances space-instances-p)))
