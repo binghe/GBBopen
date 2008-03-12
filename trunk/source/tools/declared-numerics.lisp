@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/source/tools/declared-numerics.lisp *-*
+;;;; *-* File: /usr/local/gbbopen/source/tools/declared-numerics.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Feb 24 08:17:54 2008 *-*
-;;;; *-* Machine: whirlwind.corkills.org *-*
+;;;; *-* Last-Edit: Wed Mar 12 04:34:03 2008 *-*
+;;;; *-* Machine: vagabond.cs.umass.edu *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -211,23 +211,35 @@
 	    *inf-reader-escape-hook*)))
 
 ;;; ---------------------------------------------------------------------------
-;;; Warn if various floats are not implemented distinctly
+;;;  Check if various floats are not implemented distinctly (run at compile
+;;;  time in order to push features)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (defun check-numeric-type (declared-type feature)
+  (defun check-for-numeric-type (declared-type feature)
     (let ((actual-type (type-of (coerce 1.0l0 declared-type))))
-      (if (eq actual-type declared-type)
-          (pushnew feature *features*)
-          (warn "~s is equivalent to ~s on ~a~@[ running on ~a~]."
-                declared-type
-                actual-type
-                (lisp-implementation-type) 
-                (machine-type)))))
+      (when (eq actual-type declared-type)
+        (pushnew feature *features*))))
+  (check-for-numeric-type 'short-float ':has-short-float)
+  (check-for-numeric-type 'single-float ':has-single-float)
+  (check-for-numeric-type 'double-float ':has-double-float)
+  (check-for-numeric-type 'long-float ':has-long-float))
+
+;;; ---------------------------------------------------------------------------
+;;;  Warn if various floats are not implemented distinctly
+
+(defun warn-numeric-type (declared-type feature)
+  (unless (member feature *features*)
+    (let ((actual-type (type-of (coerce 1.0l0 declared-type))))
+      (warn "~s is equivalent to ~s on ~a~@[ running on ~a~]."
+            declared-type
+            actual-type
+            (lisp-implementation-type) 
+            (machine-type)))))
   
-  (check-numeric-type 'short-float ':has-short-float)
-  (check-numeric-type 'single-float ':has-single-float)
-  (check-numeric-type 'double-float ':has-double-float)
-  (check-numeric-type 'long-float ':has-long-float))
+(warn-numeric-type 'short-float ':has-short-float)
+(warn-numeric-type 'single-float ':has-single-float)
+(warn-numeric-type 'double-float ':has-double-float)
+(warn-numeric-type 'long-float ':has-long-float)
 
 ;;; ---------------------------------------------------------------------------
 ;;; Allows a function to be called from the #@ inf-reader function, if the
