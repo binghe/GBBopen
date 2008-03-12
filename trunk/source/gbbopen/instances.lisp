@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Mar 11 10:58:17 2008 *-*
+;;;; *-* Last-Edit: Wed Mar 12 10:51:02 2008 *-*
 ;;;; *-* Machine: vagabond.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -75,6 +75,13 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (define-class %%gbbopen-unit-instance%% (standard-gbbopen-instance)
     ()))
+
+;;; ===========================================================================
+;;;   Add %%marks%% slot to standard-unit-instance internal slot names 
+;;;     (added to here, but defined in unit-metaclasses.lisp)
+
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (pushnew '%%marks%% *internal-unit-instance-slot-names*))
 
 ;; compile-time evaluation required for fast typep check in 
 ;; parse-unit-class/instance-specifier (below):

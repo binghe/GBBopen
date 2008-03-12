@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/current/source/gbbopen/unit-metaclasses.lisp *-*
+;;;; *-* File: /usr/local/gbbopen/source/gbbopen/unit-metaclasses.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Feb 18 06:35:33 2008 *-*
-;;;; *-* Machine: whirlwind.corkills.org *-*
+;;;; *-* Last-Edit: Wed Mar 12 11:37:49 2008 *-*
+;;;; *-* Machine: vagabond.cs.umass.edu *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -36,6 +36,7 @@
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(dimensions-of
+            direct-nonlink-slot-definition ; not yet documented
             direct-link-definition      ; not yet documented
             effective-link-definition   ; not yet documented
             effective-nonlink-slot-definition ; not yet documented
@@ -58,6 +59,12 @@
               (ext:fasthash-eql 'eql)
               (ext:fasthash-equal 'equal)
               (otherwise hash-table-test))))
+
+;;; ===========================================================================
+;;;   Define variable for standard-unit-instance internal (regular) slot names 
+;;;     (declared nil here, but added to in instances.lisp and spaces.lisp)
+
+(defvar *internal-unit-instance-slot-names* nil)
 
 ;;; ===========================================================================
 ;;;   Standard-Unit-Class  (Metaclass of Standard-Unit-Instance)
@@ -318,9 +325,21 @@
             (instance-hash-table-of unit-class-state)))))
 
 ;;; ===========================================================================
-;;;   Direct-link definitions
+;;;   Direct link and non-link slot definitions
  
-(define-class direct-link-definition (standard-direct-slot-definition)
+;; Common class for GBBopen direct link and non-link slots
+(define-class gbbopen-direct-slot-definition
+    (standard-direct-slot-definition)
+  ())
+
+;;; ---------------------------------------------------------------------------
+
+(define-class direct-nonlink-slot-definition (gbbopen-direct-slot-definition)
+  ())
+
+;;; ---------------------------------------------------------------------------
+
+(define-class direct-link-definition (gbbopen-direct-slot-definition)
   ((singular :type boolean :initform nil)
    (inverse-link :initarg :link :initform nil)
    (inverse-link-definition :initform nil)
@@ -371,15 +390,23 @@
     (:initfunction (list* :initfunction `',value already-processed-options))
     (otherwise (call-next-method))))
 
+;;; ---------------------------------------------------------------------------
+
 (defmethod direct-slot-definition-class ((class standard-unit-class)
                                          &rest initargs)
   (declare (dynamic-extent initargs))
-  (if (getf initargs ':link)
-      (find-class 'direct-link-definition)
-      (call-next-method)))
+  (cond
+   ;; Direct link slot
+   ((getf initargs ':link)
+    (load-time-value (find-class 'direct-link-definition)))
+   ;; Direct non-link slot     
+   ((not (memq (getf initargs ':name) *internal-unit-instance-slot-names*))
+    (load-time-value (find-class 'direct-nonlink-slot-definition)))
+   ;; Internal (regular CL) slot
+   (t (call-next-method))))
 
 ;;; ===========================================================================
-;;;   Effective-link and non-link slot definitions
+;;;   Effective link and non-link slot definitions
 ;;;
 ;;; Dynamic binding hack to make effective-link-definition inheritance passing
 ;;; work properly (bound in compute-effective-slot-definition).
@@ -388,7 +415,7 @@
 
 ;;; ---------------------------------------------------------------------------
 
-;; Common class for GBBopen link and non-link slots
+;; Common class for GBBopen effective link and non-link slots
 (define-class gbbopen-effective-slot-definition
     (standard-effective-slot-definition)
   ((evfn-blks :initform nil))
@@ -396,7 +423,7 @@
 
 ;;; ---------------------------------------------------------------------------
   
-(define-class effective-nonlink-slot-definition 
+(define-class effective-nonlink-slot-definition
     (gbbopen-effective-slot-definition)
   ())
   
@@ -442,10 +469,6 @@
     (when (typep most-specific-direct-slot-definition 'direct-link-definition)
       (setq *%%inherited-link-slot%%* most-specific-direct-slot-definition))
     (call-next-method)))
-
-;;; ---------------------------------------------------------------------------
-
-(defparameter *internal-unit-instance-slot-names* '(%%marks%%))
 
 ;;; ---------------------------------------------------------------------------
 
