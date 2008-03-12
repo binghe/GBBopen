@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/source/gbbopen/spaces.lisp *-*
+;;;; *-* File: /usr/local/gbbopen/source/gbbopen/spaces.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Mar  4 02:37:55 2008 *-*
-;;;; *-* Machine: whirlwind.corkills.org *-*
+;;;; *-* Last-Edit: Wed Mar 12 10:52:20 2008 *-*
+;;;; *-* Machine: vagabond.cs.umass.edu *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -152,6 +152,18 @@
 (defvar *root-space-instance*   
     (make-instance 'root-space-instance 
       :instance-name 'root-space-instance))
+
+;;; ===========================================================================
+;;;   Add hidden slots to standard-unit-instance internal slot names 
+;;;     (added to here, but defined in unit-metaclasses.lisp and also set in
+;;;      instances.lisp)
+
+(setf *internal-unit-instance-slot-names* 
+      (union (list '%%evfn-unit-ht%% 
+                   '%%bb-widgets%% 
+                   '%%storage-spec%% 
+                   '%%storage%%)
+             *internal-unit-instance-slot-names*))
 
 ;;; ===========================================================================
 ;;;   Standard Space Instance
