@@ -29,7 +29,7 @@
 <p><span class="fndoclabel">Arguments</span><table class="tight">
 <tr valign="top"><td valign="baseline"><i>ks-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A symbol naming the <a href="ref-glossary.html#gl:KSs">KS</a> (not evaluated, but the remaining
 arguments are evaluated)
-</td></tr><tr valign="top"><td valign="baseline"><i>ignored-initargs</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> The remainding initialization arguments are ignored
+</td></tr><tr valign="top"><td valign="baseline"><i>ignored-initargs</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> The remaining initialization arguments are ignored
 </td></tr></table>
 </p>
 <p><span class="fndoclabel">Returns</span> <br />The (deleted) <a href="ref-glossary.html#gl:KSs">KS</a> <a href="ref-glossary.html#id183">unit&nbsp;instance</a>, if
@@ -48,11 +48,11 @@ defining form (such as from within an editor buffer).
 equivalent:
 </p>
 <pre>
-&gt; (undefine-ks inital
+&gt; (undefine-ks initial
      :trigger-events '((start-control-shell-event)) 
      :execution-function #'initial-ks-function)
 #&lt;ks initial [Deleted]&gt;
-&gt; (undefine-ks inital)
+&gt; (undefine-ks initial)
 #&lt;ks initial [Deleted]&gt;
 &gt; (<a href="ref-delete-instance.html">delete-instance</a> 
      (<a href="ref-find-instance-by-name.html">find-instance-by-name</a> 'initial '(ks :plus-subclasses)))

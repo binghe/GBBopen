@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/source/gbbopen/queue.lisp *-*
+;;;; *-* File: /usr/local/gbbopen/source/gbbopen/queue.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Feb 21 04:41:52 2008 *-*
-;;;; *-* Machine: whirlwind.corkills.org *-*
+;;;; *-* Last-Edit: Thu Mar 13 00:39:57 2008 *-*
+;;;; *-* Machine: vagabond.cs.umass.edu *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -254,7 +254,7 @@
 ;;; ---------------------------------------------------------------------------
 
 (defmethod previous-queue-element ((element queue-element))
-;;;  Returns the element that preceeds  `element' in a queue or nil the
+;;;  Returns the element that precedes  `element' in a queue or nil the
 ;;;  element is the first
   (let ((queue (on-queue-p element)))
     (with-lock-held ((queue.lock queue))

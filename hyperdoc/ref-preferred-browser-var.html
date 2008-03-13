@@ -43,7 +43,7 @@ file or your personal <code>gbbopen-init.lisp</code> file.  Because
       ;; On Mac OSX we defer to the OS default browser:
       #+(or macosx darwin)
       "open"
-      ;; Lispworks (non-Windows) and SBCL do not search PATH for programs, so
+      ;; LispWorks (non-Windows) and SBCL do not search PATH for programs, so
       ;; the path must be explicitly included in the preferred browser setting:
       #+(or (and lispworks (not win32)) sbcl) "/usr/bin/firefox"
       #-(or macosx darwin (and lispworks (not win32)) sbcl) "firefox")

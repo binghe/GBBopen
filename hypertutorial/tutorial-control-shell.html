@@ -101,7 +101,7 @@ Now, start the Agenda Shell:
 to do.  However, we have not yet defined any knowledge sources (KSs), so the
 Agenda Shell indicates that it did not find any executable KSAs in its initial
 KS-execution cycle.  This situation is called <i>quiescence</i> and, by
-default, the Agenda Shell signals that quiescence has occured and then
+default, the Agenda Shell signals that quiescence has occurred and then
 continues for an additional KS-execution cycle in case any executable KSAs
 resulted from the quiescence signal.  Again, no executable KSAs were found in
 cycle 2, so the Agenda Shell exits due to <code>:quiescence</code>.
@@ -149,7 +149,7 @@ creates a <code>location</code> unit instance at the center of the
 <p>The <b>define-ks</b> form defines a KS named <code>startup-ks</code> to the
 Agenda Shell.  The <code>:trigger-events</code> value indicates that the KS should
 be triggered when an event called <code>start-control-shell-event</code> is
-signalled.  The Agenda Shell signals <code>start-control-shell-event</code> once,
+signaled.  The Agenda Shell signals <code>start-control-shell-event</code> once,
 when the control shell is started.  The <code>:execution-function</code> names the
 function (that we just defined) that implements the KS.
 </p>

@@ -182,7 +182,7 @@ is stored in the <code>execution-cycle</code> slot of the <a href="ref-glossary.
 </p>
 <p><a name="id4">The</a> Agenda Shell provides a rich set of <a href="ref-glossary.html#gl:KSs">KS</a> functions and predicates to
 manage the progression of <a href="ref-glossary.html#gl:activations">KSAs</a> from initial triggering and activation
-through <a href="ref-glossary.html#gl:obviation">obviation</a> or execution.  A typicial <a href="ref-glossary.html#gl:KSs">KS</a> will only
+through <a href="ref-glossary.html#gl:obviation">obviation</a> or execution.  A typical <a href="ref-glossary.html#gl:KSs">KS</a> will only
 require a subset of these functions and predicates.
 </p>
 <p>An <var>activation-predicate</var> is a <a href="ref-glossary.html#gl:function">function</a> that is called with two
@@ -248,7 +248,7 @@ false).
 <p><span class="fndoclabel">Examples</span> <br />Define an initial <a href="ref-glossary.html#gl:KSs">KS</a> that is triggered when the control shell is started:
 </p>
 <pre>
-  (define-ks inital
+  (define-ks initial
      :trigger-events ((start-control-shell-event)) 
      :execution-function #'initial-ks-function)
 </pre>

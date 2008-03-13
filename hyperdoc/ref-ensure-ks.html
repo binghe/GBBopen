@@ -25,7 +25,7 @@ retrigger-events retrigger-function
 revalidation-predicate trigger-events</var> 
 <i> =&gt; </i> <var>ks</var></td><td valign="baseline" align="right">[<i>Function</i>]
 </td></tr></table></p>
-<p><span class="fndoclabel">Purpose</span> <br />Programatically define or redefine a <a href="ref-glossary.html#id90">knowledge&nbsp;source</a> (KS).
+<p><span class="fndoclabel">Purpose</span> <br />Programmatically define or redefine a <a href="ref-glossary.html#id90">knowledge&nbsp;source</a> (KS).
 </p>
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:agenda-shell</code>
 </p>
@@ -143,7 +143,7 @@ redefinition.)
 started:
 </p>
 <pre>
-  (ensure-ks 'inital
+  (ensure-ks 'initial
      :trigger-events '((start-control-shell-event)) 
      :execution-function #'initial-ks-function)
 </pre>
