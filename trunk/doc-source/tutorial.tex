@@ -1,7 +1,7 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
-%% *-* File: /home/gbbopen/doc-source/tutorial.tex *-*
-%% *-* Last-Edit: Fri Feb 15 02:14:22 2008; Edited-By: cork *-*
-%% *-* Machine: whirlwind.corkills.org *-*
+%% *-* File: /usr/local/gbbopen/current/doc-source/tutorial.tex *-*
+%% *-* Last-Edit: Thu Mar 13 01:23:32 2008; Edited-By: cork *-*
+%% *-* Machine: vagabond.cs.umass.edu *-*
 
 %% Copyright (C) 2005-2008, Dan Corkill <corkill@GBBopen.org>
 %% Part of the GBBopen Project (see LICENSE for license information).
@@ -2236,7 +2236,7 @@ If you are using
 \xsitelink{\textit{Lispbox}}{http://www.gigamonkeys.com/book/lispbox/}, you
 will have to enable loading of the \code{.emacs} initialization file, as it is
 disabled in the Lispbox startup file.  Edit the Lispbox startup file
-(\code{lispbox.bat} on Windows, \code{lispbox.sh} on unix, and
+(\code{lispbox.bat} on Windows, \code{lispbox.sh} on Unix, and
 \code{/Applications/Lispbox/Emacs.app/Contents/MacOS/lispbox.sh} on Mac OS)
 and remove the \code{-{}-no-init-file} option from the Emacs invocation line.
 
@@ -2255,7 +2255,7 @@ command will automatically defer to the \xsitelink{Common Lisp
 non-GBBopen entity.  
 
 I prefer to download a local copy of the Common Lisp HyperSpec using the
-\xsitelink{downloadable
+\xsitelink{down-loadable
   archive}{ftp://ftp.lispworks.com/pub/software_tools/reference/HyperSpec-7-0.tar.gz}
 provided by \xsitelink{LispWorks}{http://www.lispworks.com}, LTD.  This allows
 me to quickly reference the HyperSpec without a network connection.  I set the
@@ -2443,7 +2443,7 @@ application code.  This separation provides flexibility in developing
 and evolving complex blackboard applications and allows GBBopen to
 change storage and search strategies and optimizations dynamically.
 
-Each space instance can be created as a conceptual hyperdimensional
+Each space instance can be created as a conceptual hyper-dimensional
 volume.  Unit instances occupy multidimensional extent based on their
 attributes.  The location of a unit instance within the space instance
 is determined by the intersection of the space instance's
@@ -3081,7 +3081,7 @@ What just happened?  The Agenda Shell began executing and looked for something
 to do.  However, we have not yet defined any knowledge sources (KSs), so the
 Agenda Shell indicates that it did not find any executable KSAs in its initial
 KS-execution cycle.  This situation is called \textit{quiescence} and, by
-default, the Agenda Shell signals that quiescence has occured and then
+default, the Agenda Shell signals that quiescence has occurred and then
 continues for an additional KS-execution cycle in case any executable KSAs
 resulted from the quiescence signal.  Again, no executable KSAs were found in
 cycle 2, so the Agenda Shell exits due to \code{:quiescence}.
@@ -3132,7 +3132,7 @@ creates a \code{location} unit instance at the center of the
 The \textbf{define-ks} form defines a KS named \code{startup-ks} to the
 Agenda Shell.  The \code{:trigger-events} value indicates that the KS should
 be triggered when an event called \code{start-control-shell-event} is
-signalled.  The Agenda Shell signals \code{start-control-shell-event} once,
+signaled.  The Agenda Shell signals \code{start-control-shell-event} once,
 when the control shell is started.  The \code{:execution-function} names the
 function (that we just defined) that implements the KS.
 
@@ -3459,7 +3459,7 @@ new \code{(known-world)} space instance with ordered dimensions \code{x} and
 \subsection*{Step 2: Add an event function}
 
 GBBopen allows you to attach functions, called \textit{event
-  functions}, that are called whenever a specific event is signalled.
+  functions}, that are called whenever a specific event is signaled.
 Each event function must accept the arguments associated with every
 event class to which it is added. In addition, the function should
 accept additional arguments that are associated with all subevents of
@@ -3481,7 +3481,7 @@ been loaded:
 \W\end{iftex}
 
 \noindent Event classes shown within rectangles are abstract event classes
-that cannot be signalled.  Nevertheless, abstract event classes are
+that cannot be signaled.  Nevertheless, abstract event classes are
 very convenient if we wish to attach an event function to an entire
 subtree of event classes.  We used abstract event classes to advantage
 earlier when we enabled display of all control-shell events by
@@ -4662,7 +4662,7 @@ it is completed. Add the following KS to the end of your
 \end{example}
 %
 The \code{print-walk-ks} is triggered by a \code{quiescence-event}.  Recall
-that the Agenda Shell signals that quiescence has occured when no
+that the Agenda Shell signals that quiescence has occurred when no
 executable KSAs are available to be executed and then it continues for an
 additional KS-execution cycle in case any executable KSAs resulted from the
 quiescence event.  So, \code{print-walk-ks} will be triggered once no

@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/current/doc-source/reference.tex *-*
-%% *-* Last-Edit: Sun Mar  9 08:08:13 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Thu Mar 13 01:00:12 2008; Edited-By: cork *-*
 %% *-* Machine: vagabond.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -765,7 +765,7 @@ reload all subsequent files and modules \\[2pt]
 
   The \var{instance-name-comparison-test\/} value is not inherited.  If no
   value is specified in the \glref{unit-class} definition, the default
-  initializtion value associated with the metaclass is used.
+  initialization value associated with the metaclass is used.
 
   If a \var{retain\/} value is not specified, a value of \code{:propagate} is
   used as the default if any parent \glref{unit~classes} have a
@@ -1167,7 +1167,7 @@ Here is the setting that is made in \code{startup.lisp}:
       ;; On Mac OSX we defer to the OS default browser:
       #+(or macosx darwin)
       "open"
-      ;; Lispworks (non-Windows) and SBCL do not search PATH for programs, so
+      ;; LispWorks (non-Windows) and SBCL do not search PATH for programs, so
       ;; the path must be explicitly included in the preferred browser setting:
       #+(or (and lispworks (not win32)) sbcl) "/usr/bin/firefox"
       #-(or macosx darwin (and lispworks (not win32)) sbcl) "firefox")
@@ -2141,8 +2141,8 @@ optimizations disabled:
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}[month-preceeds-date-var]{Variable}%
-{*month-preceeds-date*}{}%
+\begin{functiondoc}[month-precedes-date-var]{Variable}%
+{*month-precedes-date*}{}%
 
 \fnsyntax
 
@@ -2163,10 +2163,10 @@ optimizations disabled:
 \fnexamples
 Toggle between date formatting options:
 \begin{example}
-> (let ((*month-preceeds-date* t))
+> (let ((*month-precedes-date* t))
     (brief-date-and-time))
 "Feb 16 12:11"
-> (let ((*month-preceeds-date* nil))
+> (let ((*month-precedes-date* nil))
     (brief-date-and-time))
 "16 Feb 12:11"
 \end{example}
@@ -2265,8 +2265,8 @@ current time zone adjusted for daylight saving time. If
 \var{time-zone} is supplied, it is assumed to include any adjustment
 for daylight saving time.
 
-\begin{alsos}{*month-preceeds-date*}
-\also[*month-preceeds-date*]
+\begin{alsos}{*month-precedes-date*}
+\also[*month-precedes-date*]
 \end{alsos}
 
 \fnexamples
@@ -3056,7 +3056,7 @@ constructing the result; however, modification of the supplied
 \end{args}
 
 \fnreturns The integer internal address of \var{object\/} or a string
-containing the hexidecimal representation of the address if
+containing the hexadecimal representation of the address if
 \var{hex-string-p\/} is true.
 
 \fndescription \textbf{Object-address} can be useful with \textbf{\entlink{printv}}.
@@ -3408,7 +3408,7 @@ nil
   
 \fnsyntax
 
-\fnpurpose Nondestructively remove a \glref{property} from a
+\fnpurpose Non-destructively remove a \glref{property} from a
 \glref{property~list}. 
 
 \fnpackage \code{:gbbopen-tools}
@@ -3534,7 +3534,7 @@ t
 
 \begin{functiondoc}{Function}{shuffle-list}{\var{list\/}
   \returns{} \var{shuffled-list\/}}
-\index{list!suffling}%
+\index{list!shuffling}%
 
 \fnsyntax
 
@@ -3654,7 +3654,7 @@ Error: The list (a b) contains more than 1 element.
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Function}{spliting-butlast}{\var{list\/}
+\begin{functiondoc}{Function}{splitting-butlast}{\var{list\/}
     \code{\&optional} \var{n\/} 
     \returns{} \var{result-list, tail\/}} 
 \index{list!splitting into two sublists}%
@@ -3794,7 +3794,7 @@ but avoids allocating an intermediate substring.
 \fnmodule \code{:gbbopen-tools}
 
 \fnargs
-\begin{args}{specializied-lambda-list}
+\begin{args}{specialized-lambda-list}
 \arg[function-name] Either a symbol or \code{(setf \var{symbol\/})}
 \arg[method-qualifier] A non-list method qualifier object (such as
 \code{:before}, \code{:after}, or \code{:around})
@@ -3988,7 +3988,7 @@ during the evaluation of \var{form}.
 
 Another lexical \glref{function}, \textbf{error-condition}, is also available for use
 within \var{handler-forms\/} and \var{error-forms}.  This lexical function
-accepts no arguments and returns the condition object that signalled the error.
+accepts no arguments and returns the condition object that signaled the error.
 
 \bfindexit{printv}%
 \fnexamples
@@ -4091,7 +4091,7 @@ settings.
 
 \fndescription
 \bfindexit{:full-safety}%
-This macro provides a convenient means of declaring small code fragements for
+This macro provides a convenient means of declaring small code fragments for
 fastest (and least safe) compiler optimizations.  If the \glref{feature}
 \textbf{\entlinknoex{:full-safety}} is present at compile time, this macro
 has no effect on optimization settings.
@@ -4170,7 +4170,7 @@ The default \var{prefix/suffix-name\/} for \code{:prefix} is a
 
 \fnexamples
 Define three classes, \code{point}, \code{circle} and
-\code{rectangle}, generating GBB-sytle
+\code{rectangle}, generating GBB-style
 ``\var{class-name}\code{.}\var{slot-name}'' slot accessors:
 \begin{example}
 > (with-generate-accessors-format (:prefix)
@@ -4981,7 +4981,7 @@ value.
 
 \fnargs
 \begin{args}{offset-universal-time}
-\arg[offset-univeral-time] An Offset Universal Time value
+\arg[offset-universal-time] An Offset Universal Time value
 \end{args}
 
 \fnreturns The equivalent Universal Time value
@@ -5076,7 +5076,7 @@ Time value.
 
 \fnargs
 \begin{args}{universal-time}
-\arg[univeral-time] A Universal Time value (default is the current
+\arg[universal-time] A Universal Time value (default is the current
    Universal Time)
 \end{args}
 
@@ -5329,7 +5329,7 @@ Run the polling functions (once, in sequence):
 \index{module!:portable-sockets@\code{:portable-sockets}}%
 \index{:portable-sockets@\code{:portable-sockets} module}%
 The \code{:portable-sockets} module provides a uniform interface to commonly
-used socket entitites.
+used socket entities.
 
 \W\entities
 \T\clearpage
@@ -5668,7 +5668,7 @@ specifying the direction to be closed
 
 \fnexample
 Tell the other end of a socket connection that we are done sending
-output on the socket stream (send an end-of-file indictation):
+output on the socket stream (send an end-of-file indication):
 \begin{example}
   (shutdown-socket-stream socket-stream ':output)
 \end{example}
@@ -5834,7 +5834,7 @@ Open a socket connection to the GBBopen Project web server:
 \index{module!:os-interface@\code{:os-interface}}%
 \index{:os-interface@\code{:os-interface} module}%
 The \code{:os-interface} module provides a uniform interface to
-commonly used operating-system entitites. 
+commonly used operating-system entities. 
 
 \W\entities
 \T\clearpage
@@ -6378,8 +6378,8 @@ one \glref{unit~class} name.  This error is signaled on class finalization.
  & \code{(:generate-initargs} \var{direct-slots-specifier\/}\code{)} \vbar \\
  & \code{(:initial-space-instances}
      \var{initial-space-instance-specifier\/}\code{)} \vbar \\
- & \code{(:instance-name-comparision-test}
-     \var{instance-name-comparision-test\/}\code{)} \vbar \\
+ & \code{(:instance-name-comparison-test}
+     \var{instance-name-comparison-test\/}\code{)} \vbar \\
  & \code{(:metaclass} \var{class-name\/}\code{)}  \vbar \\
  & \code{(:retain} \{\var{boolean\/} \vbar{} \code{:propagate}\}\code{)} \\
 \end{tabular}
@@ -7945,7 +7945,7 @@ module:
 \W\end{iftex}
 
 \noindent The event classes shown within rectangles are abstract classes
-that cannot be signalled.
+that cannot be signaled.
 
 \W\xml{p}
 
@@ -7964,8 +7964,8 @@ Here are the defined event subclasses when both the
 \W\end{iftex}
 
 \noindent The additional \code{control-shell-event} classes are
-defined and signalled by the Agenda Shell.  Again classes shown within
-rectangles are abstract classes that cannot be signalled.
+defined and signaled by the Agenda Shell.  Again classes shown within
+rectangles are abstract classes that cannot be signaled.
 
 \W\entities
 \T\clearpage
@@ -8036,14 +8036,14 @@ follows:
 \fnexamples
 \bfindexit{evfn-printer}%
 Add the event \glref{function} \entlink{evfn-printv} to the set of functions
-to be invoked when \code{create-instance-event} is signalled on a
+to be invoked when \code{create-instance-event} is signaled on a
 \code{hyp} \glref{unit~instance}:
 \begin{example}
   (add-event-function 'evfn-printv 'create-instance-event 'hyp)
 \end{example}
 
 Add the event \glref{function} \entlink{evfn-printv} to the set of functions
-to be invoked when \code{create-instance-event} is signalled on a
+to be invoked when \code{create-instance-event} is signaled on a
 \code{hyp} \glref{unit~instance} or its subclasses:
 \begin{example}
   (add-event-function 'evfn-printv 'create-instance-event '(hyp :plus-subclasses))
@@ -8448,7 +8448,7 @@ double-quote characters.
 \fnexamples
 \bfindexit{evfn-printer}%
 Add the event \glref{function} \entlink{evfn-printv} to the set of functions
-to be invoked when \code{create-instance-event} is signalled on a
+to be invoked when \code{create-instance-event} is signaled on a
 \code{hyp} \glref{unit~instance}:
 \begin{example}
   (add-event-function 'evfn-printv 'create-instance-event 'hyp)
@@ -8572,14 +8572,14 @@ its subclasses:
 \fnexamples
 \bfindexit{evfn-printer}%
 Remove the event \glref{function} \entlink{evfn-printv} from the set of functions
-to be invoked when \code{create-instance-event} is signalled on a
+to be invoked when \code{create-instance-event} is signaled on a
 \code{hyp} \glref{unit~instance}:
 \begin{example}
   (remove-event-function 'evfn-printv 'create-instance-event 'hyp)
 \end{example}
 
 Remove the event \glref{function} \entlink{evfn-printv} from the set of functions
-to be invoked when \code{create-instance-event} is signalled on a
+to be invoked when \code{create-instance-event} is signaled on a
 \code{hyp} \glref{unit~instance} or its subclasses:
 \begin{example}
   (remove-event-function 'evfn-printv 'create-instance-event '(hyp :plus-subclasses))
@@ -9081,7 +9081,7 @@ classes that can have their \glref{unit~instances} stored on the \code{(bb
 \begin{functiondoc}{Generic~Function}{children-of}%
   {\var{space-instance\/}
     \returns{} \var{space-instances\/}}
-\index{space instance!finding chldren of}%
+\index{space instance!finding children of}%
 
 \fnsyntax
 
@@ -9291,8 +9291,8 @@ one \glref{space~class} name.  This error is signaled on class finalization.
  & \code{(:generate-initargs} \var{direct-slots-specifier\/}\code{)} \vbar \\
  & \code{(:initial-space-instances}
      \var{initial-space-instance-specifier\/}\code{)} \vbar \\
- & \code{(:instance-name-comparision-test}
-     \var{instance-name-comparision-test\/}\code{)} \vbar \\
+ & \code{(:instance-name-comparison-test}
+     \var{instance-name-comparison-test\/}\code{)} \vbar \\
  & \code{(:metaclass} \var{class-name\/}\code{)}  \vbar \\
  & \code{(:retain} \{\var{boolean\/} \vbar{} \code{:propagate}\}\code{)} \\
 \end{tabular}
@@ -9989,7 +9989,7 @@ storage for indexing \glref{unit~instances} with dimensional values between
 Here is an improved \glref{space~instance} for \code{hyp}
 \glref{unit~instances} named \code{hyps}, with both uniform-bucket storage for
 indexing in the \code{x} and \code{y} dimensions and hashed storage using
-\code{eq} to retrive match candidates via \code{classification}
+\code{eq} to retrieve match candidates via \code{classification}
 dimensional values:
 \begin{example}
 > (make-space-instance '(bb hyps)
@@ -10740,7 +10740,7 @@ the specified class if one exists; \nil{} otherwise.
 \textbf{\entlink{define-unit-class}} is used to match \var{name\/}
 with the \glref{unit-instance} name.  If you are using strings as the
 names of \glref{unit~instances}, you should specify \code{equal} or
-\code{equalp} as the comparision \glref{function} in the \glref{unit~classes}
+\code{equalp} as the comparison \glref{function} in the \glref{unit~classes}
 of those \glref{unit~instances}.
 
 \begin{alsos}{define-unit-class}
@@ -13182,7 +13182,7 @@ following sequence:
 \index{execution function, of a KS}%
 The Agenda Shell provides a rich set of \glref{KS} functions and predicates to
 manage the progression of \glref{KSAs} from initial triggering and activation
-through \glref{obviation} or execution.  A typicial \glref{KS} will only
+through \glref{obviation} or execution.  A typical \glref{KS} will only
 require a subset of these functions and predicates.
 
 An \var{activation-predicate\/} is a \glref{function} that is called with two
@@ -13249,7 +13249,7 @@ false).
 \fnexamples
 Define an initial \glref{KS} that is triggered when the control shell is started:
 \begin{example}
-  (define-ks inital
+  (define-ks initial
      :trigger-events ((start-control-shell-event)) 
      :execution-function #'initial-ks-function)
 \end{example}
@@ -13374,8 +13374,8 @@ one \glref{ks~class} name.  This error is signaled on class finalization.
  & \code{(:generate-initargs} \var{direct-slots-specifier\/}\code{)} \vbar \\
  & \code{(:initial-space-instances}
      \var{initial-space-instance-specifier\/}\code{)} \vbar \\
- & \code{(:instance-name-comparision-test}
-     \var{instance-name-comparision-test\/}\code{)} \vbar \\
+ & \code{(:instance-name-comparison-test}
+     \var{instance-name-comparison-test\/}\code{)} \vbar \\
  & \code{(:metaclass} \var{class-name\/}\code{)}  \vbar \\
  & \code{(:retain} \{\var{boolean\/} \vbar{} \code{:propagate}\}\code{)} \\
 \end{tabular}
@@ -13559,8 +13559,8 @@ one \glref{ksa~class} name.  This error is signaled on class finalization.
  & \code{(:generate-initargs} \var{direct-slots-specifier\/}\code{)} \vbar \\
  & \code{(:initial-space-instances}
      \var{initial-space-instance-specifier\/}\code{)} \vbar \\
- & \code{(:instance-name-comparision-test}
-     \var{instance-name-comparision-test\/}\code{)} \vbar \\
+ & \code{(:instance-name-comparison-test}
+     \var{instance-name-comparison-test\/}\code{)} \vbar \\
  & \code{(:metaclass} \var{class-name\/}\code{)}  \vbar \\
  & \code{(:retain} \{\var{boolean\/} \vbar{} \code{:propagate}\}\code{)} \\
 \end{tabular}
@@ -13701,7 +13701,7 @@ KS: start-control-shell-ks
 
 \fnsyntax
 
-\fnpurpose Programatically define or redefine a \glref{knowledge~source} (KS).
+\fnpurpose Programmatically define or redefine a \glref{knowledge~source} (KS).
 
 \fnpackage \code{:agenda-shell}
 
@@ -13780,7 +13780,7 @@ redefinition.)
 Define an initial \glref{KS} that is triggered when the control shell is
 started:
 \begin{example}
-  (ensure-ks 'inital
+  (ensure-ks 'initial
      :trigger-events '((start-control-shell-event)) 
      :execution-function #'initial-ks-function)
 \end{example}
@@ -13839,7 +13839,7 @@ Return the execution cycle of \code{ksa}:
 \index{agenda shell!exiting}%
 \index{control shell!exiting}%
 \index{exiting, agenda shell}%
-\index{stoping, agenda shell}%
+\index{stopping, agenda shell}%
 
 \fnsyntax
 
@@ -14140,9 +14140,9 @@ Return the \glref{obviation} cycle of \code{ksa}:
 
 \fnsyntax
 
-\fnpackage \code{:gbb-tools}
+\fnpackage \code{:agenda-shell}
 
-\fnmodule \code{:queue}
+\fnmodule \code{:agenda-shell}
 
 \fndescription The \glref{unit~class} whose \glref{instances} are used as
 the header of ordered (sorted) \glref{KSA} queues.
@@ -14256,7 +14256,7 @@ related macros with this accessor.
 \fnreturns
 One of the following values: 
 \begin{tightitemize}
-\item \code{:quiescense}---If the control-shell scheduling loop is terminated
+\item \code{:quiescence}---If the control-shell scheduling loop is terminated
   due to \glref{quiescence} (that is, no more \glref{executable~KSAs} remain 
   in the queue of \glref{pending~KSAs}) 
 \item \code{:stop} and (optionally) associated reasons, as multiple
@@ -14466,7 +14466,7 @@ It is a subclass of \textbf{\entlinknoex{standard-unit-class}}.
 One of the following values: 
 
 \begin{tightitemize}
-\item \code{:quiescense}---If the control-shell scheduling loop is terminated
+\item \code{:quiescence}---If the control-shell scheduling loop is terminated
   due to \glref{quiescence} (that is, no more \glref{executable~KSAs} remain
   in the queue of \glref{pending~KSAs})
 \item \code{:stop} and (optionally) associated reasons, as multiple
@@ -14538,7 +14538,7 @@ non-default values for the following \var{initargs}:
 
   \keyword[:awaken-on-event] A \glref{generalized~boolean} value indicating
   whether the control shell is to be awakened from hibernation when any event
-  is signalled
+  is signaled
 
   \keyword[:continue-past-quiescence] A \glref{generalized~boolean} value
   indicating whether the control shell loop should continue even when
@@ -14738,7 +14738,7 @@ Return the events that triggered a \glref{KSA}:
 \begin{args}{ignored-initargs}
 \arg[ks-name] A symbol naming the \glref{KS} (not evaluated, but the remaining
 arguments are evaluated)
-\arg[ignored-initargs] The remainding initialization arguments are ignored
+\arg[ignored-initargs] The remaining initialization arguments are ignored
 \end{args}
 
 \fnreturns The (deleted) \glref{KS} \glref{unit~instance}, if
@@ -14758,11 +14758,11 @@ defining form (such as from within an editor buffer).
 Undefine the \glref{KS} named \code{initial}. The following forms are all
 equivalent:
 \begin{example}
-> (undefine-ks inital
+> (undefine-ks initial
      :trigger-events '((start-control-shell-event)) 
      :execution-function #'initial-ks-function)
 #<ks initial [Deleted]>\goodpagebreak
-> (undefine-ks inital)
+> (undefine-ks initial)
 #<ks initial [Deleted]>\goodpagebreak
 > (\entlink{delete-instance} 
      (\entlink{find-instance-by-name} 'initial '(ks :plus-subclasses)))

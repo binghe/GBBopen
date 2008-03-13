@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/source/mini-module/mini-module.lisp *-*
+;;;; *-* File: /usr/local/gbbopen/source/mini-module/mini-module.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Feb 24 09:21:07 2008 *-*
-;;;; *-* Machine: whirlwind.corkills.org *-*
+;;;; *-* Last-Edit: Thu Mar 13 00:38:09 2008 *-*
+;;;; *-* Machine: vagabond.cs.umass.edu *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -164,7 +164,7 @@
             *autorun-modules*
             *mini-module-compile-verbose* ; not yet documented
             *mini-module-load-verbose*  ; not yet documented
-            *month-preceeds-date*
+            *month-precedes-date*
             brief-date-and-time         ; part of tools, but placed here
             compile-module
             compute-relative-directory  ; not documented
@@ -237,7 +237,7 @@
 ;;;
 ;;; ------------------------------------------------------------------------
 
-(defvar *month-preceeds-date* 't)
+(defvar *month-precedes-date* 't)
 
 (defvar *month-name-vector* 
     (vector "Jan" "Feb" "Mar" "Apr" "May" "Jun"
@@ -259,7 +259,7 @@
         (if (< time-difference
                ;; 120 days:
                #.(* 60 60 24 120))
-            (if *month-preceeds-date*
+            (if *month-precedes-date*
                 (format nil "~a ~2d ~2,'0d:~2,'0d~:[~;:~2,'0d~]"
                         month-name
                         date
@@ -274,7 +274,7 @@
                         minute
                         include-seconds
                         second))
-            (if *month-preceeds-date*     
+            (if *month-precedes-date*     
                 (format nil "~a ~2d, ~a~@[   ~]"
                         month-name
                         date

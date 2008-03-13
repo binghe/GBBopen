@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/current/source/gbbopen/utilities.lisp *-*
+;;;; *-* File: /usr/local/gbbopen/source/gbbopen/utilities.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jun 13 10:38:56 2007 *-*
-;;;; *-* Machine: ruby.corkills.org *-*
+;;;; *-* Last-Edit: Thu Mar 13 00:40:19 2008 *-*
+;;;; *-* Machine: vagabond.cs.umass.edu *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -179,7 +179,7 @@
 (defun bounded-bucket-index (value start size number-of-buckets)
   ;;; Compute the bounded uniform bucket index for `value' for
   ;;; `number-of-buckets' uniform buckets of `size':
-  ;;;  - a value that preceeds the buckets returns an index of 0
+  ;;;  - a value that precedes the buckets returns an index of 0
   ;;;  - a value that follows the buckets returns an index of
   ;;;    (+ 1 number-of-buckets)
   ;;;  - other values return the "natural" index incremented by 1
@@ -198,7 +198,7 @@
 (defun bounded-uniform-bucket-index (value start size number-of-buckets)
   ;;; Compute the bounded uniform bucket index for `value' for
   ;;; `number-of-buckets' uniform buckets of `size':
-  ;;;  - a value that preceeds the buckets returns an index of 0
+  ;;;  - a value that precedes the buckets returns an index of 0
   ;;;  - a value that follows the buckets returns an index of
   ;;;    (+ 1 number-of-buckets)
   ;;;  - an "unbound" value returns an index of (+ 2 number-of-buckets)
@@ -217,7 +217,7 @@
     ;;; Compute the bounded uniform bucket interval indexes for
     ;;; `start-value' through `end-value' for `number-of-buckets'
     ;;; uniform buckets of `size':
-    ;;;  - a value that preceeds the buckets includes an index of 0
+    ;;;  - a value that precedes the buckets includes an index of 0
     ;;;  - a value that follows the buckets includes an index of
     ;;;    (+ 1 number-of-buckets)
     ;;;  - other values return the "natural" indexes are incremented by 1
