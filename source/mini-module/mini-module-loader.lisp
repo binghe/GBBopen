@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/source/mini-module/mini-module-loader.lisp *-*
+;;;; *-* File: /usr/local/gbbopen/source/mini-module/mini-module-loader.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Feb 24 15:10:28 2008 *-*
-;;;; *-* Machine: whirlwind.corkills.org *-*
+;;;; *-* Last-Edit: Sun Mar 16 06:17:25 2008 *-*
+;;;; *-* Machine: cyclone.local *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -15,7 +15,7 @@
 ;;; Written by: Dan Corkill (incorporating some original ideas by 
 ;;;                          Kevin Gallagher and Zack Rubinstein)
 ;;;
-;;; Copyright (C) 2002-2007, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2008, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; Stand-alone Use:
@@ -65,11 +65,14 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun must-port (entity)
-  (error "You must specify ~s for ~a running on ~a."
+(defun must-port (entity &optional ask-for-features-p)
+  (error "You must specify ~s for ~a running on ~a.~
+          ~@[~%(Please send this error message and end the result of ~
+                (pprint *features*) to bugs@gbbopen.org.)~]"
          entity
          (lisp-implementation-type) 
-         (machine-type)))
+         (machine-type)
+         ask-for-features-p))
 
 ;;; ===========================================================================
 ;;; Add a single feature to identify sufficiently new Digitool MCL
@@ -117,7 +120,7 @@
                     (and x86-64 linux) 
                     (and x86 macosx)
                     (and x86 (not linux86)))
-              (must-port '*compiled-directory-name*))
+              (must-port '*compiled-directory-name* 't))
 	     (eq excl:*current-case-mode* ':case-sensitive-lower) 
              excl::*common-lisp-version-number*)
      ;; CLISP:
@@ -135,7 +138,7 @@
               #+(and x86 linux) "linux86"
               #+(and x86 (not linux)) "windows"
               #-(or darwin sparc x86)
-              (port-need '*compiled-directory-name*))
+              (must-port '*compiled-directory-name* 't))
              (let ((version (lisp-implementation-version)))
                (subseq version 0 (position #\Space version))))	       
      ;; Clozure Common Lisp:
@@ -143,9 +146,10 @@
      (format nil "~a-clozure-~a.~a"
              (or
               #+darwin "darwin"
+              #+darwinx8664-target "macosx86-64"
               #+linuxx8664-target "linux86-64" ; Thanks to Matthew Danish
-              #-(or darwin linuxx8664-target) 
-              (must-port '*compiled-directory-name*))
+              #-(or darwin darwinx8664-target linuxx8664-target) 
+              (must-port '*compiled-directory-name* 't))
              ccl::*openmcl-major-version*
              ccl::*openmcl-minor-version*)
      ;; Corman Common Lisp:
@@ -157,17 +161,17 @@
      (format nil "~a-mcl-~a"
              (or #+powerpc "darwin" 
                  #-powerpc
-                 (must-port '*compiled-directory-name*))
+                 (must-port '*compiled-directory-name* 't))
              (ccl::lisp-implementation-short-version))
      ;; ECL (Embedable Common Lisp):
      #+ecl
      (format nil "~a-ecl-~a"
              (or #+(and (or pentium3 pentium4) linux) "linux86" 
-                 #+(and (or pentium3 pentium4) (not linux)) "windows"
+                 #+(and (or pentium3 pentium4) darwin) "macosx86" 
+                 #+(and (or pentium3 pentium4) (not (or linux darwin))) "windows"
                  #+(and (not (or pentium3 pentium4)) darwin) "darwin"
-                 #+(and (or pentium3 pentium4) darwin) "macosx86"
 		 #-(or pentium3 pentium4)
-                 (must-port '*compiled-directory-name*))
+                 (must-port '*compiled-directory-name* 't))
              ;; Strip away any CVS info:
              (let ((full-version (lisp-implementation-version)))
                (subseq full-version 0 (position '#\space full-version))))
@@ -177,7 +181,7 @@
              (or #+linux "linux86" 
 		 #+sparc "sparc"
 		 #-(or linux sparc)
-                 (must-port '*compiled-directory-name*))
+                 (must-port '*compiled-directory-name* 't))
 	     system::*gcl-major-version*
 	     system::*gcl-minor-version*)
      ;; Lispworks:
@@ -192,7 +196,7 @@
 	      #+(and (not iapx386) darwin) "darwin"
               #+(and iapx386 darwin) "macosx86"
               #-(or alpha darwin prism sparc iapx386)
-              (must-port '*compiled-directory-name*))
+              (must-port '*compiled-directory-name* 't))
              system::*major-version-number*
              system::*minor-version-number*)
      ;; OpenMCL:
@@ -201,7 +205,7 @@
              (or
               #+darwin "darwin"
               #-darwin
-              (must-port '*compiled-directory-name*))
+              (must-port '*compiled-directory-name* 't))
              ccl::*openmcl-major-version*
              ccl::*openmcl-minor-version*)
      ;; SBCL:
@@ -215,7 +219,7 @@
               #+(and x86-64 linux) "linux86-64" ; Thanks to Eric Menard
               #+(and x86 (not linux)) "windows"
               #-(or darwin sparc x86 (and x86-64 linux))
-              (must-port '*compiled-directory-name*))
+              (must-port '*compiled-directory-name* 't))
              (lisp-implementation-version))
      ;; The Scieneer CL:
      #+scl
@@ -238,7 +242,7 @@
            openmcl-legacy
 	   sbcl 
            scl)
-     (must-port '*compiled-directory-name*)))
+     (must-port '*compiled-directory-name* 't)))
 
 ;;; ===========================================================================
 ;;;  Compiled File Type
