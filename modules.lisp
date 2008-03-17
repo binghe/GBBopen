@@ -1,8 +1,8 @@
-;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/modules.lisp *-*
+;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE-USER; Syntax:common-lisp -*-
+;;;; *-* File: /usr/local/gbbopen/modules.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Feb 11 08:14:17 2008 *-*
-;;;; *-* Machine: whirlwind.corkills.org *-*
+;;;; *-* Last-Edit: Mon Mar 17 05:03:19 2008 *-*
+;;;; *-* Machine: cyclone.local *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -36,7 +36,7 @@
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-(in-package :mini-module)
+(in-package :mini-module-user)
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Define the root GBBopen installation directory relative to this file:
@@ -50,7 +50,7 @@
 (define-relative-directory :gbbopen-tools :gbbopen-root "tools")
 
 (define-module :gbbopen-tools
-  (:requires :mini-module) 		; required only for brief-date-and-time
+  (:requires :mini-module-user)         ; required only for brief-date-and-time
   (:directory :gbbopen-tools)
   (:files "preamble"
           ("declarations" :forces-recompile)
@@ -68,8 +68,9 @@
           "epilogue"))
 
 (define-module :portable-threads
-  (:requires :mini-module)		; not really required, but we want 
-                                        ; :mini-module compiled/loaded first
+  (:requires :mini-module-user)         ; not really required, but we want
+                                        ; :mini-module-user compiled/loaded if
+                                        ; we are using the mini-module system
   (:directory :gbbopen-tools)
   (:files ("portable-threads" :forces-recompile)))
 

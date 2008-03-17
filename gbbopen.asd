@@ -1,8 +1,8 @@
-;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/gbbopen.asd *-*
+;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
+;;;; *-* File: /usr/local/gbbopen/current/gbbopen.asd *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Feb 11 19:43:10 2008 *-*
-;;;; *-* Machine: whirlwind.corkills.org *-*
+;;;; *-* Last-Edit: Mon Mar 17 04:46:06 2008 *-*
+;;;; *-* Machine: cyclone.local *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -23,6 +23,7 @@
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
 ;;;  12-12-05 File Created.  (Corkill)
+;;;  03-17-08 Added :mini-module-user.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -120,7 +121,8 @@
 ;;;  Still to do: Generate asdf:defsystems directly from the
 ;;;  define-tll-command machinery
 
-(dolist (module-name '(:mini-module 
+(dolist (module-name '(:mini-module
+                       :mini-module-user
                        ;; GBBopen Tools
                        :gbbopen-tools 
                        :portable-threads
