@@ -1,8 +1,8 @@
-;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/current/commands.lisp *-*
+;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
+;;;; *-* File: /usr/local/gbbopen/current/commands.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Dec 14 03:21:42 2007 *-*
-;;;; *-* Machine: ruby.corkills.org *-*
+;;;; *-* Last-Edit: Mon Mar 17 04:44:12 2008 *-*
+;;;; *-* Machine: cyclone.local *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2004-2007, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2004-2008, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; Loaded by gbbopen-init.lisp.  After loading, handy top-level-loop keyword
@@ -50,6 +50,7 @@
 ;;;  01-02-05 Changed :multiprocessing to :portable-threads.  (Corkill)
 ;;;  01-05-06 Added :portable-sockets command.  (Corkill)
 ;;;  11-13-06 Added :abort-ks-execution-example command.  (Corkill)
+;;;  03-17-08 Added :mini-module-user command.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -66,104 +67,108 @@
 ;;;  Mini-Module System
 
 (define-tll-command :mini-module (&rest options)
-  "Compile and Load GBBopen's Mini-Module system"
+  "Compile and load Mini-Module system"
   (startup-module :mini-module options :mini-module))
+
+(define-tll-command :mini-module-user (&rest options)
+  "Compile and load Mini-Module-User module"
+  (startup-module :mini-module-user options :mini-module-user))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  GBBopen Tools
 
 (define-tll-command :gbbopen-tools (&rest options)
-  "Compile and Load GBBopen Tools Module"
+  "Compile and load GBBopen Tools module"
   (startup-module :gbbopen-tools options :gbbopen-tools))
 
 (define-tll-command :portable-threads (&rest options)
-  "Compile and Load Portable Threads Module"
+  "Compile and load Portable Threads module"
   (startup-module :portable-threads options :portable-threads))
 
 (define-tll-command :portable-sockets (&rest options)
-  "Compile and Load Portable Sockets Module"
+  "Compile and load Portable Sockets module"
   (startup-module :portable-sockets options :portable-sockets))
 
 (define-tll-command :polling-functions (&rest options)
-  "Compile and Load Polling Functions Module"
+  "Compile and load Polling Functions module"
   (startup-module :polling-functions options :gbbopen-user))
 
 (define-tll-command :os-interface (&rest options)
-  "Compile and Load GBBopen-Tools OS-interface Module"
+  "Compile and load GBBopen-Tools OS-interface module"
   (startup-module :os-interface options :gbbopen-tools))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  GBBopen Core
 
 (define-tll-command :gbbopen-core (&rest options)
-  "Compile And Load GBBopen Module"
+  "Compile and load GBBopen-Core module"
   (startup-module :gbbopen-core options :gbbopen))
 
 (define-tll-command :gbbopen-user (&rest options)
-  "Compile And Load GBBopen-User Module"
+  "Compile and load GBBopen-User module"
   (startup-module :gbbopen-user options :gbbopen-user))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Agenda Shell
 
 (define-tll-command :agenda-shell (&rest options)
-  "Compile And Load Agenda-Shell Module"
+  "Compile and load Agenda-Shell module"
   (startup-module :agenda-shell options :agenda-shell))
 
 (define-tll-command :agenda-shell-user (&rest options)
-  "Compile And Load Agenda-Shell-User Module"
+  "Compile and load Agenda-Shell-User module"
   (startup-module :agenda-shell-user options :gbbopen-user))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Extensions (not yet documented)
 
 (define-tll-command :multinode (&rest options)
-  "Multi-Node Support (under construction)"
+  "Compile and load GBBopen multi-node support (under construction)"
   (startup-module :multinode options nil))
 
 (define-tll-command :web-inspector (&rest options)
-  "Web Inspector (under construction)"
+  "Compile and load Web inspector (under construction)"
   (startup-module :web-inspector options nil))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Example Modules
 
 (define-tll-command :tutorial-example (&rest options)
-  "Compile And Load GBBopen Tutorial Example Module"
+  "Compile and load GBBopen Tutorial-Example module"
   (startup-module :tutorial-example options :gbbopen-user))
 
 (define-tll-command :abort-ks-execution-example (&rest options)
-  "Compile And Load the Abort KS Execution Example Module"
+  "Compile and load the Abort-KS-Execution Example module"
   (startup-module :abort-ks-execution-example options :gbbopen-user))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Test Modules
 
 (define-tll-command :gbbopen-test (&rest options)
-  "Compile And Load GBBopen Test Module"
+  "Compile and load GBBopen Test module"
   (startup-module :gbbopen-test options  :gbbopen-user))
 
 (define-tll-command :timing-tests (&rest options)
-  "Compile And Load Timing Tests Module"
+  "Compile and load Timing Tests module"
   (startup-module :timing-tests options  :gbbopen-user))
 
 (define-tll-command :portable-threads-test (&rest options)
-  "Compile And Load Portable Threads Test Module"
+  "Compile and load Portable-Threads-Test module"
   (startup-module :portable-threads-test options :portable-threads-user))
 
 (define-tll-command :http-test (&rest options)
-  "Compile And Load Socket/HTTP Test Module"
+  "Compile and load Socket/HTTP-Test module"
   (startup-module :http-test options :portable-sockets-user))
 
 (define-tll-command :agenda-shell-test (&rest options)
-  "Compile And Load Agenda-Shell-Test Module"
+  "Compile and load Agenda-Shell-Test module"
   (startup-module :agenda-shell-test options :gbbopen-user))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Compile All GBBopen Modules
 
 (define-tll-command :compile-gbbopen (&rest options)
-  "Compile All GBBopen Modules"
+  "Compile all GBBopen modules and exit Common Lisp"
   (let ((*automatically-create-missing-directories* 't)
 	(*autorun-modules* nil))
     (declare (special *automatically-create-missing-directories*
@@ -178,13 +183,13 @@
   (values))
 
 (define-tll-command :lm (&rest options)
-  "Load Module"
+  "Load module"
   (if (find-package :mini-module)
       (funcall (intern (symbol-name '#:lm-tll-command) :mini-module) options)
       (mini-module-not-loaded)))
   
 (define-tll-command :cm (&rest options)
-  "Compile And Load Module"
+  "Compile and load module"
   (if (find-package :mini-module)
       (funcall (intern (symbol-name '#:cm-tll-command) :mini-module) options)
       (mini-module-not-loaded)))
@@ -197,13 +202,13 @@
   (describe (eval obj)))
 
 (define-tll-command :dsbb ()
-  "Describe Blackboard Repository"
+  "Describe blackboard repository"
   (funcall (intern (symbol-name '#:describe-blackboard-repository) :gbbopen)))
 
 ;;; * is not set in SBCL
 
 (define-tll-command :fi (&rest args)
-  "Find Instance by Name"
+  "Find instance by name"
   (let ((instance
          (apply (intern (symbol-name '#:find-instance-by-name) :gbbopen) 
                 args)))
@@ -240,7 +245,7 @@
 
 ;;  Allegro CL provides :pa, but we repeat for SLIME interface:
 (define-tll-command :pa (&optional package)
-  "Set/Show Current Package"
+  "Set/show current package"
   (when package
     (let ((the-package (find-package package)))
       (if the-package 

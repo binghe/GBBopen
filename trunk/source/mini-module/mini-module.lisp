@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/mini-module/mini-module.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Mar 13 00:38:09 2008 *-*
-;;;; *-* Machine: vagabond.cs.umass.edu *-*
+;;;; *-* Last-Edit: Mon Mar 17 05:36:51 2008 *-*
+;;;; *-* Machine: cyclone.local *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -1243,7 +1243,7 @@
               (format t "~&Defined Modules:")
               (format t "~&Loaded Modules:"))
           (dolist (module (sort modules #'string-lessp :key #'mm-module.name))
-            (format t "~%~s~:[~; [~a]~]"
+            (format t "~%  ~s~:[~; [~a]~]"
                     (mm-module.name module)
                     all-modules?
                     (if (module-fully-loaded? module)
@@ -1270,13 +1270,19 @@
   (compute-relative-directory name subdirectories nil))
 
 ;;; ===========================================================================
-;;;  Define the mini-module directory root and :mini-module module
+;;;  Define the mini-module directory root and the :mini-module and
+;;;  :mini-module-user modules
 
 (define-root-directory :mini-module-root *load-truename* :up :up)
 
 (define-module :mini-module
   (:directory :mini-module-root "mini-module")
   (:files "mini-module"))
+
+(define-module :mini-module-user
+  (:requires :mini-module)
+  (:directory :mini-module-root "mini-module")
+  (:files "mini-module-user"))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Record this file as loaded in the mini-module hash table (due to bootstrap
@@ -1332,6 +1338,10 @@
 
 (defun cm-tll-command (options)
   (do-mini-module-tll-command :cm #'compile-module options '*last-cm-options*))
+
+;;; ===========================================================================
+
+(load-module :mini-module-user)
 
 ;;; ===========================================================================
 ;;;   Mini-module system is fully loaded:
