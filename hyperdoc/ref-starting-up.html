@@ -163,7 +163,7 @@ used when top-level keyword processing is not fully supported.
 <p><h4>Personal gbbopen-commands.lisp file</h4>
 <a name="id5">You</a> can add your own top-level commands by defining them in a personal
 <code>gbbopen-commands.lisp</code> file.  If a <code>gbbopen-commands</code> file (source
-or compiled) is present in the user's home directory (as defined by
+or compiled) is present in the user's &#8220;homedir&#8221; home directory (as defined by
 <b>user-homedir-pathname</b>), it is loaded automatically by GBBopen's
 <code>gbbopen-init.lisp</code> file.  For example, the following personal
 <code>gbbopen-commands.lisp</code> file defines a top-level keyword command (named
@@ -200,30 +200,35 @@ extensions&mdash;in the Lisp listener.
 develop or use a number of modules or applications, GBBopen provides an
 alternative mechanism that is even more convenient.
 </p>
-<p>If a <code>gbbopen-modules</code> directory is present in the user's home
-directory (as defined by <b>user-homedir-pathname</b>), it is
-assumed to contain symbolic links (or &#8220;pseudo symbolic-link&#8221; files on
-Windows) to individual GBBopen module directory trees.  Each module
-directory tree can contain:
+<p>If a <code>gbbopen-modules</code> directory is present in the user's home directory
+(as defined by <b>user-homedir-pathname</b>), it is expected to consist of
+directories each containing an individual GBBopen application.  Although the
+application directories can be placed directly in the <code>gbbopen-modules</code>
+directory, it is generally more convenient to use a symbolic link (or a
+&#8220;pseudo symbolic-link file&#8221; on Windows) to point to the actual application
+directory.  For example, an application can be provided to a number of users
+by creating a symbolic link to the application directory in each user's
+<code>gbbopen-modules</code> directory.
 </p>
-<p><ul class="tight"><li>a <code>commands.lisp</code> file that specifies top-level commands for the
-module (loaded after the personal <code>gbbopen-commands.lisp</code> file
-if there is one in the user's home directory)
-<li>a <code>modules.lisp</code> file that contains module definitions (loaded
+<p>Each application directory can contain:
+</p>
+<p><ul class="tight"><li>a <code>modules.lisp</code> file that contains module definitions (loaded
 after the personal <code>gbbopen-init.lisp</code> file if there is one in the
-user's home directory)
-<li>a directory named <code>source</code> containing all the additional source
-files for the module or application
+user's &#8220;homedir&#8221;)
+<li>a directory named <code>source</code> containing all the source files for the
+module or application
+<li>an optional <code>commands.lisp</code> file that specifies top-level commands
+for the module (loaded after the personal <code>gbbopen-commands.lisp</code> file
+if there is one in the user's &#8220;homedir&#8221;)
 </ul>
 </p>
-<p>We highly recommend following this packaging convention, which mirrors
-that of GBBopen itself. It is very easy to create, use,  and share modules
-defined in this way by placing symbolic links to the module
-directories in your personal <code>gbbopen-modules</code> directory.
-Windows, unfortunately, is the exception to this as Windows does not
-provide symbolic links.  GBBopen users running on Windows must create
-a text file of type <code>.sym</code> (containing target directory path as
-its sole line) as a stand-in for the symbolic link. 
+<p>We highly recommend following this packaging convention, which mirrors that of
+GBBopen itself. It is very easy to create, use, and share modules defined in
+this way by placing symbolic links to the module directories in your personal
+<code>gbbopen-modules</code> directory.  Windows, unfortunately, is the exception to
+this as Windows does not provide symbolic links.  GBBopen users running on
+Windows must create a text file of type <code>.sym</code> (that contains the target
+directory path as its sole line) as a stand-in for the symbolic link.
 </p>
 <p><h4>GBBopen Hyperdoc</h4>
 <a name="sec:hyperdoc">
@@ -231,9 +236,9 @@ Convenient</a> access to a local copy of the GBBopen Hyperdoc manual from Common
 Lisp is available by using the <b><a href="ref-browse-hyperdoc.html">browse-hyperdoc</a></b> function;
 part of the <a href="ref-os-interface-entities.html"><code>:os-interface</code></a> module. The
 browser used by <b><a href="ref-browse-hyperdoc.html">browse-hyperdoc</a></b> is specified by the value
-of <code><a href="ref-preferred-browser-var.html">*preferred-browser*</a></code>.  A different value can be provided in
-either your Common Lisp initialization file or in your personal
-<code>gbbopen-init.lisp</code> file.  Changing the default setting in
+of <code><a href="ref-preferred-browser-var.html">*preferred-browser*</a></code>.  A different value can be specified
+in either your Common Lisp initialization file or, preferably, in your
+personal <code>gbbopen-init.lisp</code> file.  Changing the default setting in
 <code>startup.lisp</code> is not recommended.
 </p>
 <p><a name="id9"></a><a target="_top" href="http://www.gnu.org/software/emacs/emacs.html">Emacs</a> access to the
