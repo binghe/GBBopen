@@ -1,7 +1,7 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
-%% *-* File: /usr/local/gbbopen/current/doc-source/reference.tex *-*
-%% *-* Last-Edit: Thu Mar 13 01:00:12 2008; Edited-By: cork *-*
-%% *-* Machine: vagabond.cs.umass.edu *-*
+%% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
+%% *-* Last-Edit: Tue Mar 18 17:18:39 2008; Edited-By: cork *-*
+%% *-* Machine: cyclone.local *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
 %% Part of the GBBopen Project (see LICENSE for license information).
@@ -1010,7 +1010,7 @@ used when top-level keyword processing is not fully supported.
 \bfindexit{user-homedir-pathname}%
 You can add your own top-level commands by defining them in a personal
 \code{gbbopen-commands.lisp} file.  If a \code{gbbopen-commands} file (source
-or compiled) is present in the user's home directory (as defined by
+or compiled) is present in the user's ``homedir'' home directory (as defined by
 \textbf{user-homedir-pathname}), it is loaded automatically by GBBopen's
 \code{gbbopen-init.lisp} file.  For example, the following personal
 \code{gbbopen-commands.lisp} file defines a top-level keyword command (named
@@ -1043,10 +1043,9 @@ extensions---in the Lisp listener.
 \ppar{Personal gbbopen-modules directory}
 \label{sec:personal-gbbopen-modules-directory}
 
-\index{initialization, personal
-  gbbopen-modules@\code{gbbopen-modules} directory files}%
-\index{gbbopen-modules@\code{gbbopen-modules}, personal
-  module definitions}%
+\index{initialization, personal gbbopen-modules@\code{gbbopen-modules}
+  directory files}%
+\index{gbbopen-modules@\code{gbbopen-modules}, personal module definitions}%
 \index{loading!user-specific module definitions}%
 \index{module definitions, loading user-specific}%
 \bfindexit{user-homedir-pathname}%
@@ -1055,31 +1054,36 @@ Earlier, we showed a simple example of using a personal
 develop or use a number of modules or applications, GBBopen provides an
 alternative mechanism that is even more convenient.
 
-If a \code{gbbopen-modules} directory is present in the user's home
-directory (as defined by \textbf{user-homedir-pathname}), it is
-assumed to contain symbolic links (or ``pseudo symbolic-link'' files on
-Windows) to individual GBBopen module directory trees.  Each module
-directory tree can contain:
+If a \code{gbbopen-modules} directory is present in the user's home directory
+(as defined by \textbf{user-homedir-pathname}), it is expected to consist of
+directories each containing an individual GBBopen application.  Although the
+application directories can be placed directly in the \code{gbbopen-modules}
+directory, it is generally more convenient to use a symbolic link (or a
+``pseudo symbolic-link file'' on Windows) to point to the actual application
+directory.  For example, an application can be provided to a number of users
+by creating a symbolic link to the application directory in each user's
+\code{gbbopen-modules} directory.
+
+Each application directory can contain:
 
 \begin{tightitemize}
-\item a \code{commands.lisp} file that specifies top-level commands for the
-  module (loaded after the personal \code{gbbopen-commands.lisp} file
-  if there is one in the user's home directory)
 \item a \code{modules.lisp} file that contains module definitions (loaded
   after the personal \code{gbbopen-init.lisp} file if there is one in the
-  user's home directory)
-\item a directory named \code{source} containing all the additional source
-  files for the module or application
+  user's ``homedir'')
+\item a directory named \code{source} containing all the source files for the
+  module or application
+\item an optional \code{commands.lisp} file that specifies top-level commands
+  for the module (loaded after the personal \code{gbbopen-commands.lisp} file
+  if there is one in the user's ``homedir'')
 \end{tightitemize}
 
-We highly recommend following this packaging convention, which mirrors
-that of GBBopen itself. It is very easy to create, use,  and share modules
-defined in this way by placing symbolic links to the module
-directories in your personal \code{gbbopen-modules} directory.
-Windows, unfortunately, is the exception to this as Windows does not
-provide symbolic links.  GBBopen users running on Windows must create
-a text file of type \code{.sym} (containing target directory path as
-its sole line) as a stand-in for the symbolic link. 
+We highly recommend following this packaging convention, which mirrors that of
+GBBopen itself. It is very easy to create, use, and share modules defined in
+this way by placing symbolic links to the module directories in your personal
+\code{gbbopen-modules} directory.  Windows, unfortunately, is the exception to
+this as Windows does not provide symbolic links.  GBBopen users running on
+Windows must create a text file of type \code{.sym} (that contains the target
+directory path as its sole line) as a stand-in for the symbolic link.
 
 \ppar{GBBopen Hyperdoc}
 \label{sec:hyperdoc}
@@ -1099,9 +1103,9 @@ Convenient access to a local copy of the GBBopen Hyperdoc manual from Common
 Lisp is available by using the \textbf{\entlink{browse-hyperdoc}} function;
 part of the \reflink{\code{:os-interface}}{sec:os-interface} module. The
 browser used by \textbf{\entlink{browse-hyperdoc}} is specified by the value
-of \code{\entlink{*preferred-browser*}}.  A different value can be provided in
-either your Common Lisp initialization file or in your personal
-\code{gbbopen-init.lisp} file.  Changing the default setting in
+of \code{\entlink{*preferred-browser*}}.  A different value can be specified
+in either your Common Lisp initialization file or, preferably, in your
+personal \code{gbbopen-init.lisp} file.  Changing the default setting in
 \code{startup.lisp} is not recommended.
 
 \index{SLIME, and top-level keyword commands}%
