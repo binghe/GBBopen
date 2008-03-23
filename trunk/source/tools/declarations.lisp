@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/source/tools/declarations.lisp *-*
+;;;; *-* File: /usr/local/gbbopen/source/tools/declarations.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Feb 13 03:42:01 2008 *-*
-;;;; *-* Machine: whirlwind.corkills.org *-*
+;;;; *-* Last-Edit: Thu Mar 20 10:58:18 2008 *-*
+;;;; *-* Machine: cyclone.local *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -70,7 +70,7 @@
 ;;; ---------------------------------------------------------------------------
 ;;;   NYI wrapper (for use with code that is not yet ready for prime time)
 
-(defvar *generate-nyi-errors* t)
+(defvar *generate-nyi-errors* 't)
 
 (defmacro nyi (&body body)
   `(progn
@@ -82,7 +82,7 @@
 
 (defconstant unbound-value-indicator
     ;; We use Allegro's keyword symbol (as good as any choice...)
-    :---unbound---)
+    ':---unbound---)
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Keys-only hash tables

@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/current/gbbopen-init.lisp *-*
+;;;; *-* File: /usr/local/gbbopen/gbbopen-init.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Dec 14 03:19:59 2007 *-*
-;;;; *-* Machine: ruby.corkills.org *-*
+;;;; *-* Last-Edit: Sat Mar 22 09:44:56 2008 *-*
+;;;; *-* Machine: cyclone.local *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2002-2007, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2008, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; Useful generic GBBopen initialization definitions.  Load this file from
@@ -92,7 +92,7 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun startup-module (module-name options package)
+(defun startup-module (module-name options &optional package)
   (startup-gbbopen)
   (apply (intern (symbol-name '#:compile-module) :mini-module)
 	 module-name :propagate options)

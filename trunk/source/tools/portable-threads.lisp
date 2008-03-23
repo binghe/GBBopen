@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/source/tools/portable-threads.lisp *-*
+;;;; *-* File: /usr/local/gbbopen/source/tools/portable-threads.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Feb 24 08:21:27 2008 *-*
-;;;; *-* Machine: whirlwind.corkills.org *-*
+;;;; *-* Last-Edit: Sun Mar 23 07:31:55 2008 *-*
+;;;; *-* Machine: cyclone.local *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -55,7 +55,7 @@
 ;;;           encode-time-of-day. (Corkill)
 ;;;  08-27-07 V2.2: Added periodic functions.  (Corkill)
 ;;;  10-23-07 Fixed 64-bit CL sleep issues (thanks Antony!).  (Corkill)
-;;;  11-20-07 V2.2.1: Remove V1.0 compatabilty; resupport Digitool MCL.
+;;;  11-20-07 V2.3: Remove V1.0 compatabilty; resupport Digitool MCL.
 ;;;           (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -298,10 +298,13 @@
 ;;; ===========================================================================
 
 (defun portable-threads-implementation-version ()
-  "2.2.1")
+  "2.3")
 
 ;;; Added to *features* at the end of this file:
-(defparameter *portable-threads-version-keyword* :portable-threads-2.2)
+(defparameter *portable-threads-version-keyword* 
+    ;; Support cross-case mode CLs:
+    (read-from-string (format nil ":portable-threads-~a" 
+                              (portable-threads-implementation-version))))
 
 ;;; ---------------------------------------------------------------------------
 
