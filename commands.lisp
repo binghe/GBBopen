@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
-;;;; *-* File: /usr/local/gbbopen/current/commands.lisp *-*
+;;;; *-* File: /usr/local/gbbopen/commands.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Mar 17 04:44:12 2008 *-*
+;;;; *-* Last-Edit: Sat Mar 22 12:16:45 2008 *-*
 ;;;; *-* Machine: cyclone.local *-*
 
 ;;;; **************************************************************************
@@ -57,7 +57,7 @@
 (in-package :common-lisp-user)
 
 ;;; ===========================================================================
-;;;   Useful GBBopen Commands  (Keep gbbopen.asd consistent with these!)
+;;;   Useful GBBopen Commands
 
 (define-tll-command :start ()
   "Load GBBopen startup.lisp file"
@@ -65,10 +65,6 @@
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Mini-Module System
-
-(define-tll-command :mini-module (&rest options)
-  "Compile and load Mini-Module system"
-  (startup-module :mini-module options :mini-module))
 
 (define-tll-command :mini-module-user (&rest options)
   "Compile and load Mini-Module-User module"
@@ -79,30 +75,18 @@
 
 (define-tll-command :gbbopen-tools (&rest options)
   "Compile and load GBBopen Tools module"
-  (startup-module :gbbopen-tools options :gbbopen-tools))
+  (startup-module :gbbopen-tools options))
 
 (define-tll-command :portable-threads (&rest options)
   "Compile and load Portable Threads module"
-  (startup-module :portable-threads options :portable-threads))
+  (startup-module :portable-threads options))
 
 (define-tll-command :portable-sockets (&rest options)
   "Compile and load Portable Sockets module"
-  (startup-module :portable-sockets options :portable-sockets))
-
-(define-tll-command :polling-functions (&rest options)
-  "Compile and load Polling Functions module"
-  (startup-module :polling-functions options :gbbopen-user))
-
-(define-tll-command :os-interface (&rest options)
-  "Compile and load GBBopen-Tools OS-interface module"
-  (startup-module :os-interface options :gbbopen-tools))
+  (startup-module :portable-sockets options))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  GBBopen Core
-
-(define-tll-command :gbbopen-core (&rest options)
-  "Compile and load GBBopen-Core module"
-  (startup-module :gbbopen-core options :gbbopen))
 
 (define-tll-command :gbbopen-user (&rest options)
   "Compile and load GBBopen-User module"
@@ -110,10 +94,6 @@
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Agenda Shell
-
-(define-tll-command :agenda-shell (&rest options)
-  "Compile and load Agenda-Shell module"
-  (startup-module :agenda-shell options :agenda-shell))
 
 (define-tll-command :agenda-shell-user (&rest options)
   "Compile and load Agenda-Shell-User module"

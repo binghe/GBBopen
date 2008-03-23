@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/source/gbbopen/preamble.lisp *-*
+;;;; *-* File: /usr/local/gbbopen/source/gbbopen/preamble.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Feb 28 17:15:36 2008 *-*
-;;;; *-* Machine: whirlwind.corkills.org *-*
+;;;; *-* Last-Edit: Sun Mar 23 07:46:57 2008 *-*
+;;;; *-* Machine: cyclone.local *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -40,14 +40,24 @@
 	    instance-name-comparison-test)))
 
 ;;; ---------------------------------------------------------------------------
-;;;  GBBopen version
+;;;  GBBopen version (read from ../../VERSION file)
 
-(defun gbbopen-implementation-version ()
-  ;; NOTE: Change the value in ../../gbbopen.asd when this value is changed:
-  "0.9.8")
+(let ((truename *load-truename*))
+  (defun gbbopen-implementation-version ()
+    (with-open-file (version-file 
+                     (make-pathname
+                      :directory (append (pathname-directory truename)
+                                         '(:up :up))
+                      :name "VERSION"
+                      :type nil
+                      :defaults truename))
+      (read version-file))))
 
 ;;; Added to *features* in epilogue.lisp:
-(defparameter *gbbopen-version-keyword* :gbbopen-0.9.8)
+(defparameter *gbbopen-version-keyword* 
+    ;; Support cross-case mode CLs:
+    (read-from-string (format nil ":gbbopen-~a" 
+                              (gbbopen-implementation-version))))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Control warnings when:

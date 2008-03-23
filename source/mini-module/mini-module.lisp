@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/mini-module/mini-module.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Mar 17 05:36:51 2008 *-*
+;;;; *-* Last-Edit: Sun Mar 23 11:43:29 2008 *-*
 ;;;; *-* Machine: cyclone.local *-*
 
 ;;;; **************************************************************************
@@ -194,7 +194,10 @@
   "1.2")
 
 ;;; Added to *features* at the end of this file:
-(defparameter *mini-module-version-keyword* :mini-module-1.1)
+(defparameter *mini-module-version-keyword* 
+    ;; Support cross-case mode CLs:
+    (read-from-string (format nil ":mini-module-~a" 
+                              (mini-module-implementation-version))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -483,6 +486,10 @@
 
 ;;; ---------------------------------------------------------------------------
 
+(declaim (ftype (function (mm-module) (values t &optional)) 
+                mm-module.directory
+                mm-module.subdirectories))
+
 (defun compute-relative-directory (name subdirectories compiled?)
   (cond
    ((null name) nil)
@@ -746,6 +753,9 @@
                         (equal files (mm-module.files existing-module)))
                (mm-module.files-loaded existing-module))
            :after-form after-form)))
+  ;; Add an ADSF component definition, if gbbopen.asd has been loaded:
+  (when (fboundp 'mm-component-defsystem)
+    (funcall 'mm-component-defsystem name))
   ;; Return the module name (returned by define-module):
   name)
 
@@ -753,6 +763,9 @@
 
 (defun undefine-module (name)
   (get-module name)                     ; check that it is defined.
+  ;; Remove ADSF component definition, if gbbopen.asd has been loaded:
+  (when (fboundp 'mm-component-undefsystem)
+    (funcall 'mm-component-undefsystem name))
   (remhash name *mm-modules*))
 
 ;;; ===========================================================================

@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/modules.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Mar 17 05:03:19 2008 *-*
+;;;; *-* Last-Edit: Sat Mar 22 11:05:03 2008 *-*
 ;;;; *-* Machine: cyclone.local *-*
 
 ;;;; **************************************************************************
@@ -95,7 +95,7 @@
   (:files ("queue" :forces-recompile)))
 
 ;;; ===========================================================================
-;;;  GBBopen Core Modules
+;;;  GBBopen Core Modules   (Keep gbbopen.asd consistent with these!)
 
 (define-relative-directory :gbbopen :gbbopen-root "gbbopen")
 

@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-SOCKETS; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/source/tools/portable-sockets.lisp *-*
+;;;; *-* File: /usr/local/gbbopen/source/tools/portable-sockets.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Feb 24 08:48:28 2008 *-*
-;;;; *-* Machine: whirlwind.corkills.org *-*
+;;;; *-* Last-Edit: Sun Mar 23 07:31:35 2008 *-*
+;;;; *-* Machine: cyclone.local *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -107,7 +107,10 @@
   "1.0")
 
 ;;; Added to *features* at the end of this file:
-(defparameter *portable-sockets-version-keyword* :portable-sockets-1.0)
+(defparameter *portable-sockets-version-keyword* 
+    ;; Support cross-case mode CLs:
+    (read-from-string (format nil ":portable-sockets-~a" 
+                              (portable-sockets-implementation-version))))
 
 ;;; ---------------------------------------------------------------------------
 

@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/current/gbbopen.asd *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Mar 17 04:46:06 2008 *-*
+;;;; *-* Last-Edit: Sun Mar 23 10:55:05 2008 *-*
 ;;;; *-* Machine: cyclone.local *-*
 
 ;;;; **************************************************************************
@@ -23,7 +23,6 @@
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
 ;;;  12-12-05 File Created.  (Corkill)
-;;;  03-17-08 Added :mini-module-user.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -31,15 +30,97 @@
 
 (require :asdf)
 
-(defparameter *gbbopen-version* "0.9.8")
-
 ;;; ---------------------------------------------------------------------------
 
 (let ((truename *load-truename*))
   (load (make-pathname 
 	 :name "gbbopen-init"
 	 :type "lisp"
-	 :defaults truename)))
+	 :defaults truename))
+  (defparameter *gbbopen-version*
+      (with-open-file (version-file 
+                       (make-pathname :name "VERSION"
+                                      :type nil
+                                      :defaults truename))
+        (read version-file))))
+
+;;; ===========================================================================
+;;;  Compile/load GBBopen's Mini Module system
+
+(mini-module-user :propagate)
+
+(in-package :mini-module)
+
+;;; ===========================================================================
+;;;  Utilities
+
+(defun do-mm-component (mm-component &rest options)
+  (declare (dynamic-extent options))
+  (apply 'compile-module
+         ;; Support cross-case mode CLs:
+         (read-from-string (format nil ":~a" (asdf:component-name mm-component)))
+         :propagate
+         options))
+
+;;; ---------------------------------------------------------------------------
+
+(defun mm-component-done-p (mm-component)
+  (module-loaded-p
+   ;; Support cross-case mode CLs:
+   (read-from-string (format nil ":~a" (asdf:component-name mm-component)))))
+
+;;; ---------------------------------------------------------------------------
+
+(defun mm-component-defsystem (module-name &optional no-components-p)
+  (eval `(asdf:defsystem ,module-name
+	     :author "The GBBopen Project <gbbopen@GBBopen.org>"
+	     :maintainer "Dan Corkill <corkill@GBBopen.org>"
+             :version ,common-lisp-user::*gbbopen-version*
+	     ,@(unless no-components-p
+                 `(:components ((:mm-component ,module-name)))))))
+
+;;; ---------------------------------------------------------------------------
+
+(defun mm-component-undefsystem (module-name)
+  (remhash module-name asdf::*defined-systems*))
+
+;;; ===========================================================================
+;;;  Mini-Module ASDF component
+
+(defclass mm-component (asdf:component)
+  ())
+
+(defmethod asdf:component-pathname ((component mm-component))
+  nil)
+
+(defmethod asdf:operation-done-p ((op asdf:compile-op)
+				  (component mm-component))
+  (mm-component-done-p component))
+
+(defmethod asdf:operation-done-p ((op asdf:load-op)
+				  (component mm-component))
+  (mm-component-done-p component))
+
+(defmethod asdf:operation-done-p ((op asdf:load-source-op)
+				  (component mm-component))
+  (mm-component-done-p component))
+
+(defmethod asdf:perform ((op asdf:compile-op) (component mm-component))
+  (do-mm-component component))
+
+(defmethod asdf:perform ((op asdf:load-op) (component mm-component))
+  (do-mm-component component))
+
+(defmethod asdf:perform ((op asdf:load-source-op) (component mm-component))
+  (do-mm-component component :source))
+
+;;; ===========================================================================
+;;;  Generate an asdf:defsystem for each defined module
+
+(format t "~&;; Defining ASDF defsystems...~%")
+
+(dolist (module-name (list-modules 't))
+  (mm-component-defsystem module-name))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  We have trivially completed all of the :gbbopen system operations by
@@ -66,90 +147,7 @@
 
 (defmethod asdf:perform ((op asdf:load-source-op) (component gbbopen)))
 
-(eval `(asdf:defsystem :gbbopen
-           :author "The GBBopen Project <gbbopen@GBBopen.org>"
-           :maintainer "Dan Corkill <corkill@GBBopen.org>"
-           :version ,*gbbopen-version*))
-
-;;; ---------------------------------------------------------------------------
-
-(defun do-mini-module (mini-module)
-  (funcall
-   ;; Support cross-case mode CLs:
-   (read-from-string 
-    (format nil "cl-user::~a" (asdf:component-name mini-module)))))
-
-;;; ---------------------------------------------------------------------------
-
-(defun mini-module-done-p (mini-module)
-  (when (find-package ':mini-module)
-    (funcall (intern (symbol-name '#:module-loaded-p) ':mini-module)
-	     ;; Support cross-case mode CLs:
-	     (read-from-string 
-	      (format nil ":~a" (asdf:component-name mini-module))))))
-
-;;; ---------------------------------------------------------------------------
-
-(defclass mini-module (asdf:component)
-  ())
-
-(defmethod asdf:component-pathname ((component mini-module))
-  nil)
-
-(defmethod asdf:operation-done-p ((op asdf:compile-op)
-				  (component mini-module))
-  (mini-module-done-p component))
-
-(defmethod asdf:operation-done-p ((op asdf:load-op)
-				  (component mini-module))
-  (mini-module-done-p component))
-
-(defmethod asdf:operation-done-p ((op asdf:load-source-op)
-				  (component mini-module))
-  (mini-module-done-p component))
-
-(defmethod asdf:perform ((op asdf:compile-op) (component mini-module))
-  (do-mini-module component))
-
-(defmethod asdf:perform ((op asdf:load-op) (component mini-module))
-  (do-mini-module component))
-
-(defmethod asdf:perform ((op asdf:load-source-op) (component mini-module))
-  (do-mini-module component))
-
-;;; ---------------------------------------------------------------------------
-;;;  Still to do: Generate asdf:defsystems directly from the
-;;;  define-tll-command machinery
-
-(dolist (module-name '(:mini-module
-                       :mini-module-user
-                       ;; GBBopen Tools
-                       :gbbopen-tools 
-                       :portable-threads
-                       :portable-sockets
-                       :polling-functions
-		       :os-interface 
-                       ;; GBBopen Core
-                       :gbbopen-core 
-                       :gbbopen-user
-		       ;; Agenda Shell
-                       :agenda-shell
-                       :agenda-shell-user
-                       ;; Example Modules
-                       :tutorial-example 
-                       :abort-ks-execution-example
-                       ;; Test Modules
-		       :gbbopen-test 
-                       :portable-threads-test
-                       :http-test 
-		       :agenda-shell-test 
-                       ;; Compile All GBBopen Modules
-                       :compile-gbbopen))
-  (eval `(asdf:defsystem ,module-name
-	     :author "The GBBopen Project <gbbopen@GBBopen.org>"
-	     :maintainer "Dan Corkill <corkill@GBBopen.org>"
-	     :version ,*gbbopen-version*
-	     :components ((:mini-module ,module-name)))))
+(mm-component-defsystem :gbbopen 't)
 
 ;;; ===========================================================================
 ;;;				  End of File
