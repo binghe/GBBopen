@@ -5,26 +5,27 @@
 <!-- XML file produced from file: tutorial.tex
      using Hyperlatex v 2.9-in-waiting-rk (c) Otfried Cheong -->
 <head>
-<title>GBBopen 0.9.8 Tutorial -- Creating an Application</title>
+<title>GBBopen 0.9.8 Tutorial -- Creating a GBBopen Application</title>
 </p>
 <link rel="SHORTCUT ICON" href="favicon.ico"><link rel=stylesheet
         href="gbbopen.css" type="text/css" />
 </head>
 <body>
 <table width="100%" cellpadding="0" cellspacing="2"><tr>
-<td bgcolor="#99ccff"><a href="tutorial-connections.html"><img border="0" alt="Making Connections" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="tutorial_0.html"><img border="0" alt="Top" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="tutorial-multiple-walkers.html"><img border="0" alt="Multiple Walkers" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b>Creating an Application</b></td><td bgcolor="#99ccff"><a target="_top" href="tutorial.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table>
-<h1>Creating an Application</h1>
-<p>GBBopen's mini-module system provides
-facilities that make it easy to define and use your own application.
+<td bgcolor="#99ccff"><a href="tutorial-connections.html"><img border="0" alt="Making Connections" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="tutorial_0.html"><img border="0" alt="Top" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="tutorial-multiple-walkers.html"><img border="0" alt="Multiple Walkers" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b>Creating a GBBopen Application</b></td><td bgcolor="#99ccff"><a target="_top" href="tutorial.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table>
+<h1>Creating a GBBopen Application</h1>
+<p>GBBopen's Mini Module system provides facilities
+that make it easy to define and use your own GBBopen applications.
 </p>
 <p><hr color="99CCCC">
 This exercise shows you how to:
 </p>
-<p><ul class="tight"><li>Structure an application using the mini-module
+<p><ul class="tight"><li>Structure an application using the Mini Module
 system
 <li>Define a top-level REPL command for your application
-<li>Create and use an application-specific package
 <li>Compile and load your application using your REPL command
+<li>Create and use an application-specific package
+<li>Add an &#8220;autorun&#8221; form 
 </ul>
 </p>
 <hr color="99CCCC">
@@ -32,129 +33,583 @@ system
 <p><ul class="tight"><li>The <code>tutorial-example.lisp</code> file as modified thus far:
 </p>
 <pre>
-  (in-package :gbbopen-user)
+(in-package :gbbopen-user)
 
-  (define-unit-class location ()
-    (time 
-     x y
-     (next-location
-      :link (location previous-location :singular t) 
-      :singular t)
-     (previous-location
-      :link (location next-location :singular t)  
-      :singular t))
-    (:dimensional-values
-      (time :point time)
-      (x :point x)
-      (y :point y))
-    (:initial-space-instances (known-world)))
+(define-unit-class location ()
+  (time 
+   x y
+   (next-location
+    :link (location previous-location :singular t) 
+    :singular t)
+   (previous-location
+    :link (location next-location :singular t)  
+    :singular t))
+  (:dimensional-values
+    (time :point time)
+    (x :point x)
+    (y :point y))
+  (:initial-space-instances (known-world)))
 
-  (defmethod print-instance-slots ((location location) stream)
-    (call-next-method)
-    (when (and (slot-boundp location 'x)
-               (slot-boundp location 'y))
-      (format stream " (~s ~s)"
-              (x-of location)
-              (y-of location))))
+(defmethod print-instance-slots ((location location) stream)
+  (call-next-method)
+  (when (and (slot-boundp location 'x)
+             (slot-boundp location 'y))
+    (format stream " (~s ~s)"
+            (x-of location)
+            (y-of location))))
 
-  ;;; ========================================================================
-  ;;;   Startup KS
+;;; ======================================================================
+;;;   Startup KS
 
-  (defun startup-ks-function (ksa)
-    (declare (ignore ksa))
-    ;; Create an initial location unit instance at (0,0):
-    (make-instance 'location :time 0 :x 0 :y 0))
+(defun startup-ks-function (ksa)
+  (declare (ignore ksa))
+  ;; Create an initial location unit instance at (0,0):
+  (make-instance 'location :time 0 :x 0 :y 0))
 
-  (define-ks startup-ks
-      :trigger-events ((start-control-shell-event))
-      :execution-function 'startup-ks-function)
+(define-ks startup-ks
+    :trigger-events ((start-control-shell-event))
+    :execution-function 'startup-ks-function)
 
-  ;;; ========================================================================
-  ;;;   Initializations (run at Agenda Shell startup)
+;;; ======================================================================
+;;;   Initializations (run at Agenda Shell startup)
 
-  (defun initializations (event-name &amp;key &amp;allow-other-keys)
-    (declare (ignore event-name))
-    ;; Clean up any previous run:
-    (delete-blackboard-repository)
-    ;; Make a new known-world space instance:
-    (make-space-instance 
-     '(known-world)
-     :dimensions (dimensions-of 'location)))
+(defun initializations (event-name &amp;key &amp;allow-other-keys)
+  (declare (ignore event-name))
+  ;; Clean up any previous run:
+  (delete-blackboard-repository)
+  ;; Make a new known-world space instance:
+  (make-space-instance 
+   '(known-world)
+   :dimensions (dimensions-of 'location)))
 
-  (add-event-function 'initializations 'start-control-shell-event
-                      ;; Initializations should be done first!
-                      :priority 100)
+(add-event-function 'initializations 'start-control-shell-event
+                    ;; Initializations should be done first!
+                    :priority 100)
 
-  ;;; ========================================================================
-  ;;;   Random-walk KS
+;;; ======================================================================
+;;;   Random-walk KS
 
-  (defun add-linear-variance (value max-variance)
-    ;;; Returns a new random value in the interval
-    ;;; [(- value max-variance), (+ value max-variance)]
-    (+ value (- (random (1+ (* max-variance 2))) max-variance)))
+(defun add-linear-variance (value max-variance)
+  ;;; Returns a new random value in the interval
+  ;;; [(- value max-variance), (+ value max-variance)]
+  (+ value (- (random (1+ (* max-variance 2))) max-variance)))
 
-  (defun random-walk-ks-function (ksa)
-    ;;; Move to the next (random) location in the world
-    (let* ((trigger-instance (sole-trigger-instance-of ksa))
-           ;; The new time is one greater than the stimulus instance's time:
-           (time (1+ (time-of trigger-instance))))
-      (cond
-       ;; If the maximum time value (75) is reached, tell the user we've
-       ;; walked too long:
-       ((&gt;= time 75) (format t "~2&amp;Walked too long.~&#37;"))
-       (t ;; The new location is +/- 10 of the stimulus instance's location:
-        (let ((x (add-linear-variance (x-of trigger-instance) 10))
-              (y (add-linear-variance (y-of trigger-instance) 10)))
-          (cond
-           ;; Check that the new location is within the known-world
-           ;; boundaries.  If so, create the new location instance:
-           ((and (&lt;= -50 x 50) (&lt;= -50 y 50))
-            (make-instance 'location 
-              :time time 
-              :x x 
-              :y y
-              :previous-location trigger-instance))
-           ;; Otherwise, tell the user that we've walked too far away:
-           (t (format t "~2&amp;Walked off the world: (~d, ~d).~&#37;" x y))))))))
+(defun random-walk-ks-function (ksa)
+  ;;; Move to the next (random) location in the world
+  (let* ((trigger-instance (sole-trigger-instance-of ksa))
+         ;; The new time is one greater than the stimulus instance's time:
+         (time (1+ (time-of trigger-instance))))
+    (cond
+     ;; If the maximum time value (75) is reached, tell the user we've
+     ;; walked too long:
+     ((&gt;= time 75) (format t "~2&amp;Walked too long.~&#37;"))
+     (t ;; The new location is +/- 10 of the stimulus instance's location:
+      (let ((x (add-linear-variance (x-of trigger-instance) 10))
+            (y (add-linear-variance (y-of trigger-instance) 10)))
+        (cond
+         ;; Check that the new location is within the known-world
+         ;; boundaries.  If so, create the new location instance:
+         ((and (&lt;= -50 x 50) (&lt;= -50 y 50))
+          (make-instance 'location 
+            :time time 
+            :x x 
+            :y y
+            :previous-location trigger-instance))
+         ;; Otherwise, tell the user that we've walked too far away:
+         (t (format t "~2&#38;Walked off the world: (~d, ~d).~&#37;" x y))))))))
 
-  (define-ks random-walk-ks
-      :trigger-events ((create-instance-event location))
-      :rating 100
-      :execution-function 'random-walk-ks-function)
-
-  ;;; ========================================================================
-  ;;;   Print-walk KS
-
-  (defun print-walk-ks-function (ksa)
-    ;;; Starting with the initial location instance, print the instance name and
-    ;;; location of the walk
-    (declare (ignore ksa))
-    (format t "~2&#38;The random walk:~&#37;")
-      (let ((instance (find-instance-by-name 1 'location)))
-      (while instance
-        (format t "~s (~s ~s)~&#37;"
-                (instance-name-of instance)
-                (x-of instance)
-                (y-of instance))
-        (setf instance (next-location-of instance))))
-    ;; Tell the Agenda Shell to exit:
-    ':stop)
-
-  (define-ks print-walk-ks
-    :trigger-events ((quiescence-event))
+(define-ks random-walk-ks
+    :trigger-events ((create-instance-event location))
     :rating 100
-    :execution-function 'print-walk-ks-function)
+    :execution-function 'random-walk-ks-function)
+
+;;; ======================================================================
+;;;   Print-walk KS
+
+(defun print-walk-ks-function (ksa)
+  ;;; Starting with the initial location instance, print the instance name
+  ;;; and location of the walk
+  (declare (ignore ksa))
+  (format t "~2&#38;The random walk:~&#37;")
+    (let ((instance (find-instance-by-name 1 'location)))
+    (while instance
+      (format t "~s (~s ~s)~&#37;"
+              (instance-name-of instance)
+              (x-of instance)
+              (y-of instance))
+      (setf instance (next-location-of instance))))
+  ;; Tell the Agenda Shell to exit:
+  ':stop)
+
+(define-ks print-walk-ks
+  :trigger-events ((quiescence-event))
+  :rating 100
+  :execution-function 'print-walk-ks-function)
 </pre>
-<p><li>The GBBopen environment setup using <tt>gbbopen-init.lisp</tt>
-as described in Steps 1 and 2 of the Enhancing Your
-Development Environment exercise
+<p><li>The GBBopen environment setup using
+<code><var>&lt;install-dir&gt;</var>/gbbopen-init.lisp</code> as described in Steps 1 and 2
+of the <a href="tutorial-development-environment.html">Enhancing Your Development Environment
+exercise</a>
 </ul>
 </p>
 <h2><a name="id2">Step 1: Create your personal <code>gbbopen-modules</code> directory</a></h2><p>
-<font color="#8c8c8c"><span 
-    style="font-family: sans-serif; font-style: normal"><b>To be completed soon<i>...</i><br />&nbsp;<br />For now, please continue with the next exercise.</b></span></font>
+Create a directory named <code>gbbopen-modules</code> in your <a href="tutorial-development-environment.html#ref:your-homedir">&#8220;homedir&#8221;
+directory</a>.  For example:
+</p>
+<pre><font color="#666666">  [~]&#36; <font color="#000000">mkdir gbbopen-modules</font>
+  [~]&#36; 
+</pre></font>
+<p>This is a special directory that is read by used by GBBopen to find
+applications when GBBopen is started using
+<code><var>&lt;install-dir&gt;</var>/gbbopen-init.lisp</code>, as described in Steps 1 and 2
+of the <a href="tutorial-development-environment.html">Enhancing Your Development Environment
+exercise</a>.
+</p>
+<h2><a name="id3">Step 2: Create a module-definition file for the random-walk application</a></h2><p>
+Recall that you created a directory to hold the random-walk application in Step 1
+of <a href="tutorial-working-within-a-file.html">Working Within a File exercise</a>.  I used these shell
+commands to create my directories:
+</p>
+<pre><font color="#666666">  [~]&#36; mkdir tutorial
+  [~]&#36; cd tutorial
+  [~/tutorial]&#36; mkdir source
+  [~/tutorial]&#36; 
+</pre></font>
+<p>Then you created the <code>tutorial-example.lisp</code> file in this <code>source</code>
+subdirectory. We said that we would explain why we created the <code>source</code>
+directory in a later exercise.  Well, later has arrived.
+</p>
+<p>Each GBBopen application is packaged in a directory that contains:
+</p>
+<p><ul class="tight"><li>a <code>modules.lisp</code> file that contains module definitions (loaded
+after the personal <code><var>&lt;install-dir&gt;</var>/gbbopen-init.lisp</code> file if
+there is one in the user's &#8220;homedir&#8221;)
+<li>a directory named <code>source</code> containing all the source files for the
+module or application
+<li>an optional <code>commands.lisp</code> file that specifies top-level commands
+for the module (loaded after the personal <code>gbbopen-commands.lisp</code> file
+if there is one in the user's &#8220;homedir&#8221;)
+</ul>
+You already have the <code>source</code> directory and the
+<code>tutorial-example.lisp</code> source file.  Next, we create the
+<code>modules.lisp</code> file for the application.  (We will create a
+<code>commands.lisp</code> file for the random-walk application in Step 5.)
+</p>
+<p>Use your Common Lisp editor to create a new file named <code>modules.lisp</code> in
+the <code>tutorial</code> directory (just as you created the
+<code>tutorial-example.lisp</code> file in Step 2 of <a href="tutorial-working-within-a-file.html">Working Within a File
+exercise</a>.  Note that this file is <i>not</i> in the
+<code>source</code> subdirectory, but in the <code>tutorial</code> directory that contains
+the <code>source</code> subdirectory.
+</p>
+<p>Type the following two forms into the new <code>modules.lisp</code>
+file:
+</p>
+<pre>
+(in-package :common-lisp-user)
+
+(define-module :tutorial
+  (:requires :agenda-shell-user)
+  (:files "tutorial-example"))
+</pre>
+<p>and then save the file.
+</p>
+<p>Recall that the <code>in-package</code> form specifies the Common Lisp package that
+is made current when the file is compiled or loaded.  A <code>modules.lisp</code>
+file should always specify the <code>:mini-module-user</code> package as the first
+form in the file.
+</p>
+<p>The second form defines our application module, which we will name
+<code>:tutorial</code>.  The <code>:requires</code> subform specifies that the
+<code>:agenda-shell-user</code> module must be compiled (if necessary) and then
+loaded before our <code>:tutorial</code> module.  The <code>:files</code> subform
+specified the files that comprise the module. In our case, there is one file:
+<code>tutorial-example.lisp</code>.  We leave off the <code>.lisp</code> file extension,
+as the Mini Module system will add the appropriate
+source or compiled file extension for us.
+</p>
+<h2><a name="id4">Step 3: Add the random-walk application to your personal
+<code>gbbopen-modules</code> directory</a></h2><p>
+The <code>gbbopen-modules</code> directory in your &#8220;homedir&#8221; is expected to
+consist of directories each containing an individual GBBopen application.  We
+could place the random-walk application directly in the <code>gbbopen-modules</code>
+directory by moving the <code>tutorial</code> directory there.  However, it is
+generally more convenient to use a symbolic link to point to the actual
+application directory.  For example, an application can be provided to a
+number of users by creating a symbolic link to the application directory in
+each user's <code>gbbopen-modules</code> directory.
+</p>
+<p>Unless you are running Windows, add the random-walk application to your
+<code>gbbopen-applications</code> by creating a symbolic link.  For example:
+</p>
+<pre><font color="#666666">  [~]&#36; <font color="#000000">cd ~/gbbopen-modules/</font>
+  [~]&#36; <font color="#000000">ln -s ~/tutorial .</font>
+  [~]&#36; 
+</pre></font>
+<h3><a name="id5">Windows users</a></h3><p>
+Instead of creating a symbolic link, GBBopen also supports a special &#8220;pseudo
+symbolic-link&#8221; file that can be used with Windows.  This is simply a text
+file of type <code>.sym</code> that contains the target directory path as the sole
+line in the file.  For example, you could create the file <code>tutorial.sym</code>
+in your <code>gbbopen-modules</code> directory with:
+</p>
+<pre>
+  C:\tutorial\
+</pre>
+<p>as the sole line in the file.
+</p>
+<h2><a name="id6">Step 4: Try the <code>:tutorial</code> module definition</a></h2><p>
+Let's try out our module definition.  Exit Common Lisp and start a fresh
+Common Lisp session.  If you have set up your environment according to the
+<a href="tutorial-development-environment.html">Enhancing Your Development Environment exercise</a>,
+the following files should be loaded:
+</p>
+<pre><font color="#666666">     ...
+  ;; Loading <var>&lt;homedir&gt;</var>/shared-init.lisp
+  ;;   Loading <var>&lt;install-dir&gt;</var>/gbbopen-init.lisp
+  ;;     Loading <var>&lt;install-dir&gt;</var>/extended-repl.lisp
+  ;;     Loading <var>&lt;install-dir&gt;</var>/commands.lisp
+  ;;     Loading <var>&lt;install-dir&gt;</var>/gbbopen-modules-directory.lisp
+  ;; Loading module command definitions from <var>&lt;homedir&gt;</var>/gbbopen-modules/...
+  cl-user&gt;
+</pre></font>
+<p>Note that some basic GBBopen initialization files have been loaded for us (but
+no command definitions yet) and that GBBopen itself (or even the Mini Module
+system) are not loaded by <code><var>&lt;install-dir&gt;</var>/gbbopen-init.lisp</code>.
+</p>
+<p>Now, instead of loading the <code>:agenda-shell-user</code> module, let's load only
+the <code>:mini-module-user</code> module:
+</p>
+<pre><font color="#666666">  cl-user&gt; <font color="#000000">:mini-module-user</font>
+  ;; Loading <var>&lt;install-dir&gt;</var>/startup.lisp
+     ...
+  ;;   Loading <var>&lt;install-dir&gt;</var>/<var>&lt;platform-dir&gt;</var>/mini-module/mini-module-user.fasl
+  ;;   Loading <var>&lt;install-dir&gt;</var>/modules.lisp
+  ;; Loading module definitions from <var>&lt;homedir&gt;</var>/gbbopen-modules/...
+  ;;     Loading <var>&lt;homedir&gt;</var>/tutorial/modules.lisp
+  mini-module-user&gt;
+</pre></font>
+<p>Note that when the Mini Module system was loaded as part of loading the
+<code>:mini-module-user</code> module, the module definitions for our personal
+GBBopen modules were loaded automatically.  (In this case, the
+<code><var>&lt;homedir&gt;</var>/tutorial/modules.lisp</code> file.)  Now that our
+<code>:tutorial</code> module has been defined, we can use the
+<b>compile-module</b> REPL command, <code>:cm</code>, to compile (if needed) and
+load our application module:
+</p>
+<pre><font color="#666666">  mini-module-user&gt; <font color="#000000">:cm :tutorial</font>
+  ;;   Loading <var>&lt;install-dir&gt;</var>/<var>&lt;platform-dir&gt;</var>/tools/portable-threads.fasl
+     ...
+  ;;   Loading .../gbbopen/control-shells/agenda-shell-user.fasl
+
+  Error: Directory <var>&lt;homedir&gt;</var>/tutorial/<var>&lt;platform-dir&gt;</var>/ 
+         in module :tutorial doesn't exist.
+
+  Restart actions (select using :c n):
+    0: Create this directory.
+    1: Create this directory and any future missing directories.
+  mini-module-user&gt;&gt;
+</pre></font>
+<p>The <code>:requires</code> in our <code>:tutorial</code> module definition causes the
+<code>:agenda-shell-user</code> module (and its required modules) to be loaded for
+us.  Then the Mini Module system stops with a continuable error, telling us
+that the directory to hold the compiled application files does not exist.  The
+compiled files are put in a Common Lisp and platform-specific subdirectory,
+<code>&lt;<var>platform-dir&gt;</var></code>, in our <code>tutorial</code> directory that mirrors
+the <code>source</code> directory.  This organization makes it easy to use the
+application with a number of Common Lisp implementations and on a file system
+shared with a number of different hosts and operating systems.
+</p>
+<p>We could have avoided this continuable error by providing the
+<code>:create-dirs</code> option to the <code>:cm</code> command:
+</p>
+<pre><font color="#666666">  mini-module-user&gt; :cm :tutorial :create-dirs
+</pre></font>
+<p>to allow the Mini Module system to create the <code>&lt;<var>platform-dir&gt;</var></code>
+subdirectory automatically for us.  Since we did not do this, we can still
+continue from the error:
+</p>
+<pre><font color="#666666">  Restart actions (select using :c n):
+    0: Create this directory.
+    1: Create this directory and any future missing directories.
+  mini-module-user&gt;&gt; <font color="#000000">:c 0</font>
+  ;; Compiling file <var>&lt;homedir&gt;</var>/tutorial/source/tutorial-example.lisp
+  ;; Loading <var>&lt;homedir&gt;</var>/tutorial/<var>&lt;platform-dir&gt;</var>/tutorial-example.fasl
+  mini-module-user&gt;
+</pre></font>
+<p>At this point, we've compiled and loaded our <code>:tutorial</code> application
+module.
+</p>
+<h2><a name="id7">Step 5: Create a command-definition file for the random-walk
+application</a></h2><p>
+It is convenient to define a REPL command to compile and load you application
+(and any required GBBopen modules).  
+</p>
+<p>Use your Common Lisp editor to create a new file named <code>commands.lisp</code> in
+the <code>tutorial</code> directory. Type the following two forms into the new
+<code>commands.lisp</code> file:
+</p>
+<pre>
+(in-package :common-lisp-user)
+
+(define-tll-command :tutorial (&#38;rest options)
+  "Compile and load the Random-Walk Tutorial Application Module"
+  (startup-module :tutorial options :gbbopen-user))
+</pre>
+<p>and then save the file.
+</p>
+<p>A <code>commands.lisp</code> file should always specify the <code>:common-lisp-user</code>
+package as the first form in the file.
+</p>
+<p>The <b>define-tll-command</b> form adds a top-level REPL command, named
+<code>:tutorial</code>, to the set of handy REPL commands.  The
+<b>startup-module</b> call does all the work associated with executing the
+command.  The first argument to <b>startup-module</b> specifies that the
+<code>:tutorial</code> module will be compiled (if necessary) and then loaded by the
+Mini Module system when the <code>:</code>tutorial
+command is issued.  The second, <code>options</code>, argument passes any options
+given with the command to a <b>compile-module</b> call that is performed by
+<b>startup-module</b>.  The third argument, <code>:gbbopen-user</code> is optional
+and specifies that the REPL's current package should be changed to <code>:gbbopen-user</code> after the <code>:tutorial</code> module is loaded. 
+</p>
+<h2><a name="id8">Step 6: Try the <code>:tutorial</code> command</a></h2><p>
+Let's try our command definition.  Exit Common Lisp and start a fresh
+Common Lisp session.  If you have set up your environment according to the
+<a href="tutorial-development-environment.html">Enhancing Your Development Environment exercise</a>,
+the following files should be loaded:
+</p>
+<pre><font color="#666666">     ...
+  ;; Loading <var>&lt;homedir&gt;</var>/shared-init.lisp
+  ;;   Loading <var>&lt;install-dir&gt;</var>/gbbopen-init.lisp
+  ;;     Loading <var>&lt;install-dir&gt;</var>/extended-repl.lisp
+  ;;     Loading <var>&lt;install-dir&gt;</var>/commands.lisp
+  ;;     Loading <var>&lt;install-dir&gt;</var>/gbbopen-modules-directory.lisp
+  ;; Loading module command definitions from <var>&lt;homedir&gt;</var>/gbbopen-modules/...
+  ;      Loading <var>&lt;homedir&gt;</var>/gbbopen-modules/tutorial/commands.lisp
+  cl-user&gt;
+</pre></font>
+<p>Note that the <code>commands.lisp</code> file from the <code>tutorial</code> directory has
+been loaded by <code><var>&lt;install-dir&gt;</var>/gbbopen-init.lisp</code>.
+</p>
+<p>Now, we can compile and load the <code>:tutorial</code> module by simply issuing the
+<code>:tutorial</code> REPL command:
+</p>
+<pre><font color="#666666">  cl-user&gt; <font color="#000000">:tutorial</font>
+  ;; Loading <var>&lt;install-dir&gt;</var>/startup.lisp
+     ...
+  ;; Loading <var>&lt;homedir&gt;</var>/tutorial/<var>&lt;platform-dir&gt;</var>/tutorial-example.fasl
+  gbbopen-user&gt;
+</pre></font>
+<p>With the command definition in place, we are able to compile and load our
+random-walk application by issuing a single command, <code>:tutorial</code>.
+</p>
+<p>Note a potential continuable error due to a missing
+<code><var>&lt;platform-dir&gt;</var></code> subdirectory can always be avoided by providing
+the <code>:create-dirs</code> option to the <code>:tutorial</code> command:
+</p>
+<pre><font color="#666666">  gbbopen-user&gt; :tutorial :create-dirs
+</pre></font>
+<p>to allow the Mini Module system to create the <code><var>&lt;platform-dir&gt;</var></code>
+subdirectory automatically for us.  However, since we created
+<code><var>&lt;platform-dir&gt;</var></code> in Step 4, we did not need to specify the
+<code>:create-dirs</code> option again in this step.
+</p>
+<h2><a name="id9">Step 7: Create missing subdirectories automatically</a></h2>
+<p>If you prefer, you can specify that the Mini Module system should always
+create missing <code><var>&lt;platform-dir&gt;</var></code> directories and subdirectories
+instead of signaling an continuable error if one is missing (and
+<code>:create-dirs</code> was not specified).  This behavior is controlled by the
+value of the symbol <b>*automatically-create-missing-directories*</b>, which
+is in the <code>:common-lisp-user</code> package and is set to <code>nil</code> by default.
+If you wish, add the following form to your <code>shared-init.lisp</code> file (in
+your &#8220;homedir&#8221; directory):
+</p>
+<pre>
+(defparameter *automatically-create-missing-directories* 't)
+</pre>
+<p>I actually prefer to have the Mini Module system generate the continuable
+error if it has to create a <code><var>&lt;platform-dir&gt;</var></code> directory and I
+didn't specify <code>:create-dirs</code>, so I leave
+<b>*automatically-create-missing-directories*</b> set to the default <code>nil</code>
+value.
+</p>
+<h2><a name="id10">Step 8: Create and use an application-specific package</a></h2><p>
+We have been developing our random-walk application in GBBopen's
+<code>:gbbopen-user</code> package.  The <code>:gbbopen-user</code> package is convenient,
+and we could continue using it.  However, if we develop multiple GBBopen
+applications in the <code>:gbbopen-user</code> package and load several of them at
+the same time, symbol-name clashes could occur.
+</p>
+<p>To eliminate this possibility, we can create our own package for the
+random-walk application.  First, let's determine what packages are being used by GBBopen's <code>:gbbopen-user</code> package.  Evaluate the following:
+</p>
+<pre><font color="#666666">  gbbopen-user&gt; <font color="#000000">(package-use-list :gbbopen-user)</font>
+  (#&lt;package PORTABLE-THREADS&gt; #&lt;package AGENDA-SHELL&gt;
+   #&lt;package MINI-MODULE&gt; #&lt;package COMMON-LISP&gt; #&lt;package CLOS&gt;
+   #&lt;package GBBOPEN-TOOLS&gt; #&lt;package GBBOPEN&gt;)
+  gbbopen-user&gt;
+</pre></font>
+<p>The <code>CLOS</code> package does not have a standard name in Common Lisp, so the
+package that you see listed may be named differently (such as <code>ACLMOP</code> or
+<code>SB-PCL</code>).  GBBopen provides the <code>:clos</code> nickname when necessary, so
+that you can reference the &#8220;<code>CLOS</code>&#8221; package using <code>:clos</code> on any
+supported Common Lisp implementation.
+</p>
+<h3><a name="id11">Change <code>tutorial-example.lisp</code></a></h3><p>We want our new <code>:tutorial</code> package to use the same packages that the
+<code>:agenda-shell-user</code> package used. Edit your <code>tutorial-example.lisp</code>
+file and replace the <code>:gbbopen-user</code> package specification:
+</p>
+<pre>
+<font color="#ff0000">(in-package :gbbopen-user)</font>
+</pre>
+<p>with the following:
+</p>
+<pre>
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (unless (find-package :tutorial)
+    (defpackage :tutorial
+      (:use :common-lisp :clos :mini-module :gbbopen-tools :gbbopen 
+            :portable-threads :agenda-shell))))
+
+(in-package :tutorial)
+</pre>
+<p>and save the file.
+</p>
+<p>Note the use of <code>eval-when</code> in the first form above.  Normally, top-level
+forms in a file are not evaluated at compile time.  In this case, however, we
+want to define the <code>:tutorial</code> package when needed, whether the file is
+being compiled or loaded.  The <code>eval-when</code> special operator with the
+three situations (<code>:compile-toplevel</code>, <code>:load-toplevel</code>, and <code>
+:execute</code>) provides this behavior to the forms that it contains.  Such
+<code>eval-when</code> forms are a standard Common Lisp idiom for compile-time and
+load-time evaluation.
+</p>
+<h3><a name="id12">An application feature</a></h3><p>In my applications, I also add a feature to Common Lisp's <code>*features*</code>
+list to indicate that the application has been fully loaded.  To do this, add
+the following at the end of your <code>tutorial-example.lisp</code> file:
+</p>
+<pre>
+(pushnew :tutorial *features*)
+</pre>
+<p>and save the file.
+</p>
+<h3><a name="id13">Change <code>commands.lisp</code></a></h3><p>Next, edit your <code>commands.lisp</code> file and delete the <code>:gbbopen-user</code>
+package-name argument to <b>startup-module</b>:
+</p>
+<pre><font color="#666666">(define-tll-command :tutorial (&#38;rest options)
+  "Compile and load the Random-Walk Tutorial Application Module"
+  (startup-module :tutorial options <font color="#ff0000">:gbbopen-user</font>))
+</pre></font>
+<p>and add the package-name <code>:tutorial</code> in its place:
+</p>
+<pre><font color="#666666">(define-tll-command :tutorial (&#38;rest options)
+  "Compile and load the Random-Walk Tutorial Application Module"
+  (startup-module :tutorial options <font color="#000000">:tutorial</font>))
+</pre></font>
+<p>Save the file.
+</p>
+<h3><a name="id14">Change <code>modules.lisp</code></a></h3><p>Finally, we no longer need the <code>:gbbopen-user</code> package that is created by
+requiring the <code>:agenda-shell-user</code> module.  Let's take a closer look at the <code>:tutorial</code> module that we defined:
+</p>
+<pre><font color="#666666">  gbbopen-user&gt; <font color="#000000">(describe-module :tutorial)</font>
+  Module :tutorial (loaded)
+    Requires: (:agenda-shell-user)
+    Fully expanded requires: (:mini-module :mini-module-user :portable-threads
+                              :gbbopen-tools :gbbopen-core :polling-functions
+                              :queue :agenda-shell :os-interface :gbbopen-user
+                              :agenda-shell-user)
+    Source directory: <var>&lt;homedir&gt;</var>/tutorial/source/
+    Compiled directory: <var>&lt;homedir&gt;</var>/<var>&lt;platform-dir&gt;</var>/
+    Forces recompile date: None
+    Files: Mar 24 06:02 tutorial-example
+  gbbopen-user&gt;
+</pre></font>
+<p>Although we only specified that the <code>:agenda-shell-user</code> module was
+required, our <code>:tutorial</code> module implicitly requires a number of packages
+that are required by the <code>:agenda-shell-user</code> module and its implicitly
+required packages.  These are shown as the &#8220;Fully expanded requires&#8221; value.
+</p>
+<p>If we look at the details of the <code>:agenda-shell-user</code> module we see:
+</p>
+<pre><font color="#666666">  gbbopen-user&gt; <font color="#000000">(describe-module :agenda-shell-user)</font>
+  Module :agenda-shell-user (loaded)
+    Requires: (:agenda-shell :gbbopen-user)
+    Fully expanded requires: (:mini-module :mini-module-user :portable-threads
+                              :gbbopen-tools :gbbopen-core :polling-functions
+                              :queue :agenda-shell :os-interface :gbbopen-user)
+    Source directory: <var>&lt;install-dir&gt;</var>/source/gbbopen/control-shells/
+    Compiled directory: <var>&lt;install-dir&gt;</var>/<var>&lt;platform-dir&gt;</var>/gbbopen/control-shells/
+    Forces recompile date: None
+    Files: Mar 23 12:27 agenda-shell-user 
+  gbbopen-user&gt;
+</pre></font>
+<p>Note that the <code>:agenda-shell-user</code> module requires two modules:
+<code>:agenda-shell</code> and <code>:gbbopen-user</code>. We can eliminate the loading of
+the <code>:gbbopen-user</code> module by editing our <code>modules.lisp</code> file and
+delete <code>:agenda-shell-user</code> in the <code>:requires</code> option in our
+<code>:tutorial</code> module definition:
+</p>
+<pre><font color="#666666">(in-package :common-lisp-user)
+
+(define-module :tutorial
+  (:requires <font color="#ff0000">:agenda-shell-user</font>)
+  (:files "tutorial-example"))
+</pre></font>
+<p>and replace it with <code>:agenda-shell</code>:
+</p>
+<pre><font color="#666666">(in-package :common-lisp-user)
+
+(define-module :tutorial
+  (:requires <font color="#000000">:agenda-shell</font>)
+  (:files "tutorial-example"))
+</pre></font>
+<p>Save the file.
+</p>
+<h2><a name="id15">Step 9: Verify our changes</a></h2><p>
+Let's make sure that everything is still working.  Exit Common Lisp and start
+a fresh Common Lisp session.  Next enter the
+<code>:tutorial</code> REPL command:
+</p>
+<pre><font color="#666666">  cl-user&gt; <font color="#000000">:tutorial</font>
+  ;; Loading <var>&lt;install-dir&gt;</var>/startup.lisp
+     ...
+  ;; Loading <var>&lt;homedir&gt;</var>/tutorial/<var>&lt;platform-dir&gt;</var>/tutorial-example.fasl
+  tutorial&gt;
+</pre></font>
+<p>Note that we are now in our newly defined <code>:tutorial</code> package.  We should
+still be able to run the random-walk application:
+</p>
+<pre><font color="#666666">  tutorial&gt; <font color="#000000">(start-control-shell)</font>
+  ;; Control shell 1 started
+
+  Walked off the world:  (56, 38).
+
+  The random walk:
+  1 (0 0)
+  2 (-1 -1)
+  3 (-8 -10)
+  4 (0 -2)
+  5 (-5 2)
+  6 (3 11)
+  7 (8 5)
+  8 (12 2)
+  9 (3 12)
+  10 (10 4)
+       ...
+  55 (50 40)
+  56 (42 47)
+  57 (47 41)
+  ;; Explicit :stop issued by KS print-walk-ks
+  ;; Control shell 1 exited: 60 cycles completed
+  ;; Run time: 0.01 seconds
+  ;; Elapsed time: 0 seconds
+  :stop
+  gbbopen-user&gt;
+</pre></font>
+<p><font color="#666666"><span 
+    style="font-family: sans-serif; font-style: normal"><b>To be completed soon<i>...</i><br />&nbsp;<br />For now, please continue with the next exercise.</b></span></font>  
 </p>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
 <table width="100%" cellpadding="0" cellspacing="2"><tr>
-<td bgcolor="#99ccff"><a href="tutorial-connections.html"><img border="0" alt="Making Connections" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="tutorial_0.html"><img border="0" alt="Top" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="tutorial-multiple-walkers.html"><img border="0" alt="Multiple Walkers" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b>Creating an Application</b></td><td bgcolor="#99ccff"><a target="_top" href="tutorial.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table></body></html>
+<td bgcolor="#99ccff"><a href="tutorial-connections.html"><img border="0" alt="Making Connections" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="tutorial_0.html"><img border="0" alt="Top" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="tutorial-multiple-walkers.html"><img border="0" alt="Multiple Walkers" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b>Creating a GBBopen Application</b></td><td bgcolor="#99ccff"><a target="_top" href="tutorial.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table></body></html>

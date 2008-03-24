@@ -29,23 +29,24 @@ environments
 <h2><a name="id1">Step 1: Create the tutorial-example directories</a></h2><p>
 Create a directory to hold the random-walk application.  I'm calling mine
 <code>tutorial</code>.  Next, create a subdirectory in that directory named
-<code>source</code>.  (The reason for doing this will become clear in an upcoming
-exercise.)  Here are the shell commands that I used to create my directories:
+<code>source</code>.  The reason for doing this will become clear in an
+<a href="tutorial-application.html">upcoming exercise</a>. Here are the shell commands
+that I used to create my directories:
 </p>
-<pre><font color="#8c8c8c">  [~]$ <font color="#000000">mkdir tutorial</font>
-  [~]$ <font color="#000000">cd tutorial</font>
-  [~/tutorial]$ <font color="#000000">mkdir source</font>
-  [~/tutorial]$ 
+<pre><font color="#666666">  [~]&#36; <font color="#000000">mkdir tutorial</font>
+  [~]&#36; <font color="#000000">cd tutorial</font>
+  [~/tutorial]&#36; <font color="#000000">mkdir source</font>
+  [~/tutorial]&#36; 
 </pre></font>
 <h2><a name="id2">Step 2: Create the tutorial-example file</a></h2><p>
 Start up a fresh Common Lisp session and load the <code>:gbbopen-user</code>
 module, using the REPL command we set up in the last exercise:
 </p>
-<pre><font color="#8c8c8c">  &gt; <font color="#000000">:gbbopen-user</font>
-  ;; Loading <var>&lt;install-directory&gt;</var>/startup.lisp
+<pre><font color="#666666">  cl-user&gt; <font color="#000000">:gbbopen-user</font>
+  ;; Loading <var>&lt;install-dir&gt;</var>/startup.lisp
      ...
-  ;; Loading <var>&lt;install-directory&gt;</var>/<var>platform-directory</var>/gbbopen/gbbopen-user.fasl
-  &gt;
+  ;; Loading <var>&lt;install-dir&gt;</var>/<var>&lt;platform-dir&gt;</var>/gbbopen/gbbopen-user.fasl
+  gbbopen-user&gt;
 </pre></font>
 <p>Next, begin editing a new file named <code>tutorial-example.lisp</code> in
 the <code>source</code> subdirectory that you just created.  Even if you are
@@ -63,10 +64,10 @@ typing <code>^c</code> followed by ^f.)
 file buffer:
 </p>
 <pre>
-  (in-package :gbbopen-user)
+(in-package :gbbopen-user)
 
-  (define-unit-class location ()
-    (x y))
+(define-unit-class location ()
+  (x y))
 </pre>
 <p>The <code>in-package</code> form specifies the Common Lisp package that is made
 current when the file is compiled or loaded.  The first form in every Common
@@ -85,19 +86,19 @@ At this point, we have been using Common Lisp's
 development environment, but we have not loaded the forms in our file
 into Common Lisp:
 </p>
-<pre><font color="#8c8c8c">  &gt; <font color="#000000">(make-instance 'location)</font>
+<pre><font color="#666666">  gbbopen-user&gt; <font color="#000000">(make-instance 'location)</font>
   Error: No class named: location.
-  &gt;&gt; <font color="#000000">:a</font>
-  &gt;
+  gbbopen-user&gt;&gt; <font color="#000000">:a</font>
+  gbbopen-user&gt;
 </pre></font>
 <p>We could use Common Lisp's <code>compile-file</code> to compile the file and
 then <code>load</code> to load the resulting compiled file. For example:
 </p>
-<pre><font color="#8c8c8c">  &gt; <font color="#000000">(load (compile-file "~/tutorial/source/tutorial-example.lisp"))</font>
+<pre><font color="#666666">  gbbopen-user&gt; <font color="#000000">(load (compile-file "~/tutorial/source/tutorial-example.lisp"))</font>
   ;; Compiling file ~/tutorial/source/tutorial-example.lisp
   ;; Loading ~/tutorial/source/tutorial-example.fasl
   t
-  &gt;
+  gbbopen-user&gt;
 </pre></font>
 <p>but you should be able to compile and load the file directly from the
 editor buffer.  In SLIME, the command <code>C-c C-k</code> will compile and
@@ -108,15 +109,15 @@ compile-and-load-file command in your editing environment.
 <p>Verify that all is well by creating a <code>location</code> unit instance in
 the REPL:
 </p>
-<pre><font color="#8c8c8c">  &gt; <font color="#000000">(make-instance 'location)</font>
+<pre><font color="#666666">  gbbopen-user&gt; <font color="#000000">(make-instance 'location)</font>
   #&lt;location 1&gt;
-  &gt;
+  gbbopen-user&gt;
 </pre></font>
 <p><a name="id4">Then</a> delete the blackboard repository in preparation for the next exercise:
 </p>
-<pre><font color="#8c8c8c">  &gt; <font color="#000000">(delete-blackboard-repository)</font>
+<pre><font color="#666666">  gbbopen-user&gt; <font color="#000000">(delete-blackboard-repository)</font>
   t
-  &gt;
+  gbbopen-user&gt;
 </pre></font>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />

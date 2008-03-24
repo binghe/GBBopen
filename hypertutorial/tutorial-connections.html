@@ -12,7 +12,7 @@
 </head>
 <body>
 <table width="100%" cellpadding="0" cellspacing="2"><tr>
-<td bgcolor="#99ccff"><a href="tutorial-another-ks.html"><img border="0" alt="Add Another KS" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="tutorial_0.html"><img border="0" alt="Top" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="tutorial-application.html"><img border="0" alt="Creating an Application" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b>Making Connections</b></td><td bgcolor="#99ccff"><a target="_top" href="tutorial.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table>
+<td bgcolor="#99ccff"><a href="tutorial-another-ks.html"><img border="0" alt="Add Another KS" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="tutorial_0.html"><img border="0" alt="Top" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="tutorial-application.html"><img border="0" alt="Creating a GBBopen Application" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b>Making Connections</b></td><td bgcolor="#99ccff"><a target="_top" href="tutorial.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table>
 <h1>Making Connections</h1>
 <p>We finally did some walking in the last exercise and learned how to display
 the <code>location</code>s in our walk from the REPL.  In this exercise, we learn
@@ -33,88 +33,88 @@ This exercise shows you how to:
 </ul>
 </p>
 <pre>
-  (in-package :gbbopen-user)
+(in-package :gbbopen-user)
 
-  (define-unit-class location ()
-    (time 
-     x y)
-    (:dimensional-values
-      (time :point time)
-      (x :point x)
-      (y :point y))
-    (:initial-space-instances (known-world)))
+(define-unit-class location ()
+  (time 
+   x y)
+  (:dimensional-values
+    (time :point time)
+    (x :point x)
+    (y :point y))
+  (:initial-space-instances (known-world)))
 
-  (defmethod print-instance-slots ((location location) stream)
-    (call-next-method)
-    (when (and (slot-boundp location 'x)
-               (slot-boundp location 'y))
-      (format stream " (~s ~s)"
-              (x-of location)
-              (y-of location))))
+(defmethod print-instance-slots ((location location) stream)
+  (call-next-method)
+  (when (and (slot-boundp location 'x)
+             (slot-boundp location 'y))
+    (format stream " (~s ~s)"
+            (x-of location)
+            (y-of location))))
 
-  ;;; ========================================================================
-  ;;;   Startup KS
+;;; ======================================================================
+;;;   Startup KS
 
-  (defun startup-ks-function (ksa)
-    (declare (ignore ksa))
-    ;; Create an initial location unit instance at (0,0):
-    (make-instance 'location :time 0 :x 0 :y 0))
+(defun startup-ks-function (ksa)
+  (declare (ignore ksa))
+  ;; Create an initial location unit instance at (0,0):
+  (make-instance 'location :time 0 :x 0 :y 0))
 
-  (define-ks startup-ks
-      :trigger-events ((start-control-shell-event))
-      :execution-function 'startup-ks-function)
+(define-ks startup-ks
+    :trigger-events ((start-control-shell-event))
+    :execution-function 'startup-ks-function)
 
-  ;;; ========================================================================
-  ;;;   Initializations (run at Agenda Shell startup)
+;;; ======================================================================
+;;;   Initializations (run at Agenda Shell startup)
 
-  (defun initializations (event-name &amp;key &amp;allow-other-keys)
-    (declare (ignore event-name))
-    ;; Clean up any previous run:
-    (delete-blackboard-repository)
-    ;; Make a new known-world space instance:
-    (make-space-instance 
-     '(known-world)
-     :dimensions (dimensions-of 'location)))
+(defun initializations (event-name &amp;key &amp;allow-other-keys)
+  (declare (ignore event-name))
+  ;; Clean up any previous run:
+  (delete-blackboard-repository)
+  ;; Make a new known-world space instance:
+  (make-space-instance 
+   '(known-world)
+   :dimensions (dimensions-of 'location)))
 
-  (add-event-function 'initializations 'start-control-shell-event
-                      ;; Initializations should be done first!
-                      :priority 100)
+(add-event-function 'initializations 'start-control-shell-event
+                    ;; Initializations should be done first!
+                    :priority 100)
 
-  ;;; ========================================================================
-  ;;;   Random-walk KS
+;;; ======================================================================
+;;;   Random-walk KS
 
-  (defun add-linear-variance (value max-variance)
-    ;;; Returns a new random value in the interval
-    ;;; [(- value max-variance), (+ value max-variance)]
-    (+ value (- (random (1+ (* max-variance 2))) max-variance)))
+(defun add-linear-variance (value max-variance)
+  ;;; Returns a new random value in the interval
+  ;;; [(- value max-variance), (+ value max-variance)]
+  (+ value (- (random (1+ (* max-variance 2))) max-variance)))
 
-  (defun random-walk-ks-function (ksa)
-    ;;; Move to the next (random) location in the world
-    (let* ((trigger-instance (sole-trigger-instance-of ksa))
-           ;; The new time is one greater than the stimulus instance's time:
-           (time (1+ (time-of trigger-instance))))
-      (cond
-       ;; If the maximum time value (75) is reached, tell the user we've
-       ;; walked too long:
-       ((&gt;= time 75) (format t "~2&amp;Walked too long.~&#37;"))
-       (t ;; The new location is +/- 10 of the stimulus instance's location:
-        (let ((x (add-linear-variance (x-of trigger-instance) 10))
-              (y (add-linear-variance (y-of trigger-instance) 10)))
-          (cond
-           ;; Check that the new location is within the known-world
-           ;; boundaries.  If so, create the new location instance:
-           ((and (&lt;= -50 x 50) (&lt;= -50 y 50))
-            (make-instance 'location 
-              :time time 
-              :x x 
-              :y y))
-           ;; Otherwise, tell the user that we've walked too far away:
-           (t (format t "~2&amp;Walked off the world: (~d, ~d).~&#37;" x y))))))))
+(defun random-walk-ks-function (ksa)
+  ;;; Move to the next (random) location in the world
+  (let* ((trigger-instance (sole-trigger-instance-of ksa))
+         ;; The new time is one greater than the stimulus instance's time:
+         (time (1+ (time-of trigger-instance))))
+    (cond
+     ;; If the maximum time value (75) is reached, tell the user we've
+     ;; walked too long:
+     ((&gt;= time 75) (format t "~2&amp;Walked too long.~&#37;"))
+     (t ;; The new location is +/- 10 of the stimulus instance's location:
+      (let ((x (add-linear-variance (x-of trigger-instance) 10))
+            (y (add-linear-variance (y-of trigger-instance) 10)))
+        (cond
+         ;; Check that the new location is within the known-world
+         ;; boundaries.  If so, create the new location instance:
+         ((and (&lt;= -50 x 50) (&lt;= -50 y 50))
+          (make-instance 'location 
+            :time time 
+            :x x 
+            :y y))
+         ;; Otherwise, tell the user that we've walked too far away:
+         (t (format t "~2&amp;Walked off the world: (~d, ~d).~&#37;" x y))))))))
 
-  (define-ks random-walk-ks
-      :trigger-events ((create-instance-event location))
-      :rating 100
-      :execution-function 'random-walk-ks-function)
+(define-ks random-walk-ks
+    :trigger-events ((create-instance-event location))
+    :rating 100
+    :execution-function 'random-walk-ks-function)
 </pre>
 <p><ul class="tight"><li>The <code>:agenda-shell-user</code> module is loaded
 </ul>
@@ -140,20 +140,20 @@ pointers to deleted unit instances.
 <code>tutorial-example.lisp</code> file, adding two link slots, <code>next-location</code>
 and <code>previous-location</code>, to the <code>location</code> unit class definition:
 </p>
-<pre><font color="#8c8c8c">  (define-unit-class location ()
-    (time 
-     x y
-     <font color="#000000">(next-location
-      :link (location previous-location :singular t) 
-      :singular t)
-     (previous-location
-      :link (location next-location :singular t)  
-      :singular t)</font>)
-    (:dimensional-values
-      (time :point time)
-      (x :point x)
-      (y :point y))
-    (:initial-space-instances (known-world)))
+<pre><font color="#666666">(define-unit-class location ()
+  (time 
+   x y
+   <font color="#000000">(next-location
+    :link (location previous-location :singular t) 
+    :singular t)
+   (previous-location
+    :link (location next-location :singular t)  
+    :singular t)</font>)
+  (:dimensional-values
+    (time :point time)
+    (x :point x)
+    (y :point y))
+  (:initial-space-instances (known-world)))
 </pre></font>
 <p>Each link-slot specification is a list whose first element is the name of the
 link slot.  This is followed by the link slot option <code>:link</code> and a
@@ -171,13 +171,13 @@ specification of link slot arity, let's temporarily assume that we want a
 <code>location</code> instance that can have many next locations, but only a single
 previous location.  This link relation would be specified as follows:
 </p>
-<pre><font color="#8c8c8c">      ...
-   <font color="#0000ff">(next-locations
-    :link (location previous-location :singular t)))
-   (previous-location
-    :link (location next-locations)  
-    :singular t)</font>
-      ...
+<pre><font color="#666666">    ...
+ <font color="#0000ff">(next-locations
+  :link (location previous-location :singular t)))
+ (previous-location
+  :link (location next-locations)  
+  :singular t)</font>
+    ...
 </pre></font>
 <p>We've followed the natural GBBopen convention of giving singular link
 slots a singular name (such as <code>previous-location</code>) and link
@@ -201,9 +201,10 @@ latest changes in your <code>tutorial-example.lisp</code> file (including
 the new <code>next-location</code> and <code>previous-location</code> link slots).
 Then check link consistency:
 </p>
-<pre><font color="#8c8c8c">  &gt; <font color="#000000">(check-link-consistency)</font>
+<pre><font color="#666666">  gbbopen-user&gt; <font color="#000000">(check-link-consistency)</font>
   ;; All link definitions are consistent.
   t
+  gbbopen-user&gt;
 </pre></font>
 <p>GBBopen reports that all link definitions are consistent.
 </p>
@@ -213,21 +214,21 @@ of the link in our <code>location</code> unit-class definition. Edit the
 <code>tutorial-example.lisp</code> file, adding the line <code>&#35;+ignore</code>
 immediately before the <code>previous-location</code> link-slot definition:
 </p>
-<pre><font color="#8c8c8c">  (define-unit-class location ()
-    (time 
-     x y
-     (next-location
-      :link (location previous-location :singular t) 
-      :singular t)
-      <font color="#000000">&#35;+ignore</font>     
-     (previous-location
-      :link (location next-location :singular t)  
-      :singular t))
-    (:dimensional-values
-      (time :point time)
-      (x :point x)
-      (y :point y))
-    (:initial-space-instances (known-world)))
+<pre><font color="#666666">(define-unit-class location ()
+  (time 
+   x y
+   (next-location
+    :link (location previous-location :singular t) 
+    :singular t)
+    <font color="#000000">&#35;+ignore</font>     
+   (previous-location
+    :link (location next-location :singular t)  
+    :singular t))
+  (:dimensional-values
+    (time :point time)
+    (x :point x)
+    (y :point y))
+  (:initial-space-instances (known-world)))
 </pre></font>
 <p>The <code>&#35;+ignore</code> read-time conditionalization tells Common Lisp to
 skip over the next form if <code>ignore</code> is not an element of the
@@ -238,11 +239,12 @@ for temporarily &#8220;commenting out&#8221; a single form.
 <p>Compile the now-defective definition (using <code>C-c C-c</code> in SLIME or
 <code>C-c C-x</code> in ELI) and then recheck link consistency:
 </p>
-<pre><font color="#8c8c8c">  &gt; <font color="#000000">(check-link-consistency)</font>
+<pre><font color="#666666">  gbbopen-user&gt; <font color="#000000">(check-link-consistency)</font>
   Warning: The inverse of link slot next-location in unit class location 
            refers to link slot previous-location which is not present in 
            unit class location.
   nil
+  gbbopen-user&gt;
 </pre></font>
 <p>As expected, GBBopen alerts us to the problem.
 </p>
@@ -250,56 +252,58 @@ for temporarily &#8220;commenting out&#8221; a single form.
 <code>:singular t</code> portion of the inverse link-slot specification in 
 <code>next-location</code>:
 </p>
-<pre><font color="#8c8c8c">  (define-unit-class location ()
-    (time 
-     x y
-     (next-location
-      :link (location previous-location<font color="#000000">) ;</font> :singular t) 
-      :singular t)
-      <font color="#ff0000">#+ignore</font>     
-     (previous-location
-      :link (location next-location :singular t)  
-      :singular t))
-    (:dimensional-values
-      (time :point time)
-      (x :point x)
-      (y :point y))
-    (:initial-space-instances (known-world)))
+<pre><font color="#666666">(define-unit-class location ()
+  (time 
+   x y
+   (next-location
+    :link (location previous-location<font color="#000000">) ;</font> :singular t) 
+    :singular t)
+    <font color="#ff0000">#+ignore</font>     
+   (previous-location
+    :link (location next-location :singular t)  
+    :singular t))
+  (:dimensional-values
+    (time :point time)
+    (x :point x)
+    (y :point y))
+  (:initial-space-instances (known-world)))
 </pre></font>
 <p>Compile the again-defective definition (using <code>C-c C-c</code> in SLIME or
 <code>C-c C-x</code> in ELI) and then recheck link consistency:
 </p>
-<pre><font color="#8c8c8c">  &gt; <font color="#000000">(check-link-consistency)</font>
+<pre><font color="#666666">  gbbopen-user&gt; <font color="#000000">(check-link-consistency)</font>
   Warning: Link slot next-location in unit class location incorrectly 
            declares its inverse link slot previous-location in unit 
            class location as not singular.
-nil
+  nil
+  gbbopen-user&gt;
 </pre></font>
 <p>Once again, GBBopen has alerted us to the problem.
 </p>
 <p>Restore the <code>:singular t</code> portion of the inverse link-slot
 specification in <code>next-location</code> that we just commented out:
 </p>
-<pre><font color="#8c8c8c">  (define-unit-class location ()
-    (time 
-     x y
-     (next-location
-      :link (location previous-location<font color="#ff0000">) ;</font> :singular t) 
-      :singular t)
-     (previous-location
-      :link (location next-location :singular t)  
-      :singular t))
-    (:dimensional-values
-      (time :point time)
-      (x :point x)
-      (y :point y))
-    (:initial-space-instances (known-world)))
+<pre><font color="#666666">(define-unit-class location ()
+  (time 
+   x y
+   (next-location
+    :link (location previous-location<font color="#ff0000">) ;</font> :singular t) 
+    :singular t)
+   (previous-location
+    :link (location next-location :singular t)  
+    :singular t))
+  (:dimensional-values
+    (time :point time)
+    (x :point x)
+    (y :point y))
+  (:initial-space-instances (known-world)))
 </pre></font>
 <p>Then recompile and recheck link consistency:
 </p>
-<pre><font color="#8c8c8c">  &gt; <font color="#000000">(check-link-consistency)</font>
+<pre><font color="#666666">  gbbopen-user&gt; <font color="#000000">(check-link-consistency)</font>
   ;; All link definitions are consistent.
   t
+  gbbopen-user&gt;
 </pre></font>
 <h2><a name="id4">Step 3: Create some links</a></h2><p>
 Let's use our newly defined <code>next-location</code>/<code>previous-location</code> link
@@ -308,34 +312,34 @@ to connect our <code>location</code> unit instances.  Edit the
 file, adding the trigger instance as a new <code>:previous-location</code> argument
 to <code>make-instance</code>:
 </p>
-<pre><font color="#8c8c8c">  (defun random-walk-ks-function (ksa)
-    ;;; Move to the next (random) location in the world
-    (let* ((trigger-instance (sole-trigger-instance-of ksa))
-           ;; The new time is one greater than the stimulus instance's time:
-           (time (1+ (time-of trigger-instance))))
-      (cond
-       ;; If the maximum time value (75) is reached, tell the user we've
-       ;; walked too long:
-       ((&gt;= time 75) (format t "~2&amp;Walked too long.~&#37;"))
-       (t ;; The new location is +/- 10 of the stimulus instance's location:
-        (let ((x (add-linear-variance (x-of trigger-instance) 10))
-              (y (add-linear-variance (y-of trigger-instance) 10)))
-          (cond
-           ;; Check that the new location is within the known-world
-           ;; boundaries.  If so, create the new location instance:
-           ((and (&lt;= -50 x 50) (&lt;= -50 y 50))
-            (make-instance 'location 
-              :time time 
-              :x x 
-              :y y
-              <font color="#000000">:previous-location trigger-instance</font>))
-           ;; Otherwise, tell the user that we've walked too far away:
-           (t (format t "~2&amp;Walked off the world: (~d, ~d).~&#37;" x y))))))))
+<pre><font color="#666666">(defun random-walk-ks-function (ksa)
+  ;;; Move to the next (random) location in the world
+  (let* ((trigger-instance (sole-trigger-instance-of ksa))
+         ;; The new time is one greater than the stimulus instance's time:
+         (time (1+ (time-of trigger-instance))))
+    (cond
+     ;; If the maximum time value (75) is reached, tell the user we've
+     ;; walked too long:
+     ((&gt;= time 75) (format t "~2&amp;Walked too long.~&#37;"))
+     (t ;; The new location is +/- 10 of the stimulus instance's location:
+      (let ((x (add-linear-variance (x-of trigger-instance) 10))
+            (y (add-linear-variance (y-of trigger-instance) 10)))
+        (cond
+         ;; Check that the new location is within the known-world
+         ;; boundaries.  If so, create the new location instance:
+         ((and (&lt;= -50 x 50) (&lt;= -50 y 50))
+          (make-instance 'location 
+            :time time 
+            :x x 
+            :y y
+            <font color="#000000">:previous-location trigger-instance</font>))
+         ;; Otherwise, tell the user that we've walked too far away:
+         (t (format t "~2&amp;Walked off the world: (~d, ~d).~&#37;" x y))))))))
 </pre></font>
 <p>Compile the <code>random-walk-ks-function</code> (using <code>C-c C-c</code> in SLIME or
 <code>C-c C-x</code> in ELI) and then run the application:
 </p>
-<pre><font color="#8c8c8c">  &gt; <font color="#000000">(start-control-shell)</font>
+<pre><font color="#666666">  gbbopen-user&gt; <font color="#000000">(start-control-shell)</font>
   ;; Control shell 1 started
 
   Walked off the world: (55, 35).
@@ -344,11 +348,12 @@ to <code>make-instance</code>:
   ;; Run time: 0.01 seconds
   ;; Elapsed time: 0 seconds
   :quiescence
+  gbbopen-user&gt;
 </pre></font>
 <p>Let's describe a couple of <code>location</code> unit instances to check our work.
 First, the initial <code>location</code> unit instance:
 </p>
-<pre><font color="#8c8c8c">  &gt; <font color="#000000">(describe-instance (find-instance-by-name 1 'location))</font>
+<pre><font color="#666666">  gbbopen-user&gt; <font color="#000000">(describe-instance (find-instance-by-name 1 'location))</font>
   Location #&lt;location 1 (0 0)&gt;
     Instance name: 1
     Space instances: ((known-world))
@@ -363,13 +368,13 @@ First, the initial <code>location</code> unit instance:
     Link slots:
       next-location:  #&lt;location 2 (-10 10)&gt;
       previous-location:  nil
-  &gt;
+  gbbopen-user&gt;
 </pre></font>
 <p>Note that the <code>next-location</code> link slot points to the next
 <code>location</code> unit instance in our random walk.  Let's describe that
 unit instance:
 </p>
-<pre><font color="#8c8c8c">  &gt; <font color="#000000">(describe-instance (find-instance-by-name 2 'location))</font>
+<pre><font color="#666666">  gbbopen-user&gt; <font color="#000000">(describe-instance (find-instance-by-name 2 'location))</font>
   Location #&lt;location 2 (-10 10)&gt;
     Instance name: 2
     Space instances: ((known-world))
@@ -384,7 +389,7 @@ unit instance:
     Link slots:
       next-location:  #&lt;location 3 (-6 19)&gt;
       previous-location:  #&lt;location 1 (0 0)&gt;
-  &gt;
+  gbbopen-user&gt;
 </pre></font>
 <p>Its <code>next-location</code> link slot points to the third <code>location</code> unit
 instance in our random walk and its <code>previous-location</code> link slot points
@@ -392,9 +397,9 @@ back to the initial <code>location</code> unit instance.
 </p>
 <p>We can now follow the links to display the random walk:
 </p>
-<pre><font color="#8c8c8c">  &gt; <font color="#000000">(loop with location = (find-instance-by-name 1 'location) 
-      do (print location)
-      while (setf location (next-location-of location)))</font>
+<pre><font color="#666666">  gbbopen-user&gt; <font color="#000000">(loop with location = (find-instance-by-name 1 'location) 
+                  do (print location)
+                  while (setf location (next-location-of location)))</font>
 
   #&lt;location 1 (0 0)&gt; 
   #&lt;location 2 (-10 10)&gt; 
@@ -412,7 +417,7 @@ back to the initial <code>location</code> unit instance.
   #&lt;location 62 (40 23)&gt; 
   #&lt;location 63 (45 28)&gt; 
   nil
-  &gt;
+  gbbopen-user&gt;
 </pre></font>
 <h2><a name="id5">Step 4: Define a &#8220;print walk&#8221; KS</a></h2><p>
 Let's add a new KS, <code>print-walk-ks</code>, that displays the random walk once
@@ -420,12 +425,12 @@ it is completed. Add the following KS to the end of your
 <code>tutorial-example.lisp</code> file:
 </p>
 <pre>
-  ;;; ========================================================================
-  ;;;   Print-walk KS
+;;; ======================================================================
+;;;   Print-walk KS
 
-  (defun print-walk-ks-function (ksa)
-    ;;; Starting with the initial location instance, print the instance name and
-    ;;; location of the walk
+(defun print-walk-ks-function (ksa)
+  ;;; Starting with the initial location instance, print the instance name
+  ;;; and location of the walk
     (declare (ignore ksa))
     (format t "~2&#38;The random walk:~&#37;")
       (let ((instance (find-instance-by-name 1 'location)))
@@ -465,7 +470,7 @@ and over again.
 <p>Let's compile our latest changes and then run our application with the new
 <code>print-walk-ks</code> KS in place:
 </p>
-<pre><font color="#8c8c8c">  &gt; <font color="#000000">(start-control-shell)</font>
+<pre><font color="#666666">  gbbopen-user&gt; <font color="#000000">(start-control-shell)</font>
   ;; Control shell 1 started
 
   Walked off the world: (54, 15).
@@ -491,9 +496,9 @@ and over again.
   ;; Run time: 0.01 seconds
   ;; Elapsed time: 0 seconds
   :stop
-  &gt;
+  gbbopen-user&gt;
 </pre></font>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
 <table width="100%" cellpadding="0" cellspacing="2"><tr>
-<td bgcolor="#99ccff"><a href="tutorial-another-ks.html"><img border="0" alt="Add Another KS" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="tutorial_0.html"><img border="0" alt="Top" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="tutorial-application.html"><img border="0" alt="Creating an Application" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b>Making Connections</b></td><td bgcolor="#99ccff"><a target="_top" href="tutorial.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table></body></html>
+<td bgcolor="#99ccff"><a href="tutorial-another-ks.html"><img border="0" alt="Add Another KS" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="tutorial_0.html"><img border="0" alt="Top" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="tutorial-application.html"><img border="0" alt="Creating a GBBopen Application" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b>Making Connections</b></td><td bgcolor="#99ccff"><a target="_top" href="tutorial.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table></body></html>

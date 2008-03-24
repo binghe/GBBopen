@@ -1,8 +1,8 @@
-;;;; -*- Mode:COMMON-LISP; Package:GBBOPEN-USER; Base:10 -*-
-;;;; *-* File: /home/gbbopen/source/gbbopen/examples/tutorial.lisp *-*
+;;;; -*- Mode:COMMON-LISP; Package:TUTORIAL; Base:10 -*-
+;;;; *-* File: /usr/local/gbbopen/source/gbbopen/examples/tutorial.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Feb 18 04:40:21 2008 *-*
-;;;; *-* Machine: whirlwind.corkills.org *-*
+;;;; *-* Last-Edit: Mon Mar 24 11:08:51 2008 *-*
+;;;; *-* Machine: cyclone.local *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -18,7 +18,7 @@
 ;;;
 ;;; To run manually:
 ;;;   1. Compile and load the :tutorial-example module
-;;;   2. Set the current package to :gbbopen-user
+;;;   2. Set the current package to :tutorial
 ;;;   3. Evaluate: (take-a-walk)
 ;;;
 ;;; Use (show-important-events) [default] and (hide-important-events) to
@@ -33,7 +33,13 @@
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-(in-package :gbbopen-user)
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (unless (find-package :tutorial)
+    (defpackage :tutorial
+      (:use :common-lisp :clos :mini-module :gbbopen-tools :gbbopen 
+            :portable-threads :agenda-shell))))
+
+(in-package :tutorial)
 
 ;;; ------------------------------------------------------------------------
 
@@ -252,7 +258,13 @@
 
 (show-important-events)
 
-;;; ---------------------------------------------------------------------------
+;;; ===========================================================================
+;;;  Indicate successful loading
+
+(pushnew :tutorial *features*)
+
+;;; ===========================================================================
+;;;  Autorun actions
 
 (when (and (boundp '*autorun-modules*) 
            *autorun-modules*)

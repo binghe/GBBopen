@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/source/tools/preamble.lisp *-*
+;;;; *-* File: /usr/local/gbbopen/source/tools/preamble.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Mar  5 15:16:09 2008 *-*
-;;;; *-* Machine: whirlwind.corkills.org *-*
+;;;; *-* Last-Edit: Mon Mar 24 10:25:50 2008 *-*
+;;;; *-* Machine: cyclone.local *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -35,10 +35,20 @@
 
 (in-package :gbbopen-tools)
 
+;;; We require the :mini-module package for a few entities (see
+;;; ../mini-module/mini-module.lisp for details):
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (let ((mini-module-package (find-package :mini-module)))
-    (when mini-module-package
-      (use-package (list mini-module-package)))))
+    (if mini-module-package
+        (use-package (list mini-module-package))
+        (let ((truename *load-truename*))
+          (error "The file ~s is required by ~s"
+                 (make-pathname 
+                  :directory (append (butlast (pathname-directory truename)) 
+                                     '("mini-module"))
+                  :name "mini-module"
+                  :defaults truename)
+                 truename)))))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Import user's preferred browser setting
@@ -193,6 +203,7 @@
 ;;;   Dispatch-macro-character conflict checker
 
 (defun safely-set-dispatch-macro-character (disp-char sub-char function)
+  (declare (special *inf-reader-escape-hook*))
   (let ((existing-dispatch 
 	 (get-dispatch-macro-character disp-char sub-char)))
     (unless (or (null existing-dispatch)

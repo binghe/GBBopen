@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Tue Mar 18 17:18:39 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Sat Mar 22 11:56:50 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.local *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -848,14 +848,14 @@ example, to compile all core GBBopen modules and execute a basic
 trip-tests file, you only need to evaluate the following forms within
 your Common Lisp environment:
 \begin{example}
-> (load "\var{<install-directory\/>}startup.lisp")
-; Loading \var{<install-directory\/>}/startup.lisp
-;  Loading \var{<install-directory\/>}/source/mini-module/mini-module-loader.lisp
-;   Loading \var{<install-directory\/>}/source/mini-module/mini-module.lisp
-;  Loading \var{<install-directory\/>}/source/modules.lisp
+> (load "\var{<install-dir\/>}startup.lisp")
+; Loading \var{<install-dir\/>}/startup.lisp
+;  Loading \var{<install-dir\/>}/source/mini-module/mini-module-loader.lisp
+;   Loading \var{<install-dir\/>}/source/mini-module/mini-module.lisp
+;  Loading \var{<install-dir\/>}/source/modules.lisp
 T
 > (mini-module:\entlink{compile-module} :gbbopen-test :propagate :create-dirs)
-; Compiling \var{<install-directory\/>}/source/mini-module/mini-module.lisp
+; Compiling \var{<install-dir\/>}/source/mini-module/mini-module.lisp
      ...
 ;; Running basic GBBopen tests...
      ...
@@ -1259,7 +1259,7 @@ to the \code{:gbbopen-user} package:
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{startup-module}%
-  {\var{module-name options package-name\/}}
+  {\var{module-name options \code{\&optional} package-name\/}}
 \index{compiling, a module, and also loading module}%
 \index{loading!a module}% 
 \index{module!compiling, recompiling, and loading}%
@@ -1271,26 +1271,26 @@ to the \code{:gbbopen-user} package:
 \fnsyntax 
 
 \fnpurpose Compile and load a GBBopen module, even if GBBopen is not
-yet loaded, and set the current package.
+yet loaded, and optionally set the current package.
 
 \fnpackage \code{:common-lisp-user} (not exported)
 
 \fnmodule Defined in \code{gbbopen-init.lisp}
 
 \fnargs
-\begin{args}{module-name}
+\begin{args}{package-name}
 \arg[module-name] A keyword symbol naming a module 
 \arg[option] Any of the following keywords: 
 \compilemoduleoptions
-\arg[package-name] A package name
+\arg[package-name] A package name (default is \nil)
 \end{args}
 
 \fndescription This function bootstraps GBBopen loading, if needed, before
 calling \textbf{\entlinknoex{compile-module}} on \var{module-name\/} with
-\var{options}.  Then the current package is set according to
-\var{package-name}.  The package named by \var{package-name\/} does not need
-to be defined before calling \textbf{startup-module}, but it must be defined
-at the conclusion of module compilation and loading.
+\var{options}.  Then, unless \var{package-name\/} is \nil, the current package
+is set to the package named by \var{package-name}.  The named package does not
+need to be defined before calling \textbf{startup-module}, but it must be
+defined at the conclusion of module compilation and loading.
 
 \begin{alsos}{define-tll-command}
 \also[compile-module]
