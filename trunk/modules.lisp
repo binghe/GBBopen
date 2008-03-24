@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/modules.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Mar 22 11:05:03 2008 *-*
+;;;; *-* Last-Edit: Mon Mar 24 11:09:20 2008 *-*
 ;;;; *-* Machine: cyclone.local *-*
 
 ;;;; **************************************************************************
@@ -202,7 +202,7 @@
 ;;;  Example Modules
 
 (define-module :tutorial-example
-  (:requires :agenda-shell-user)
+  (:requires :agenda-shell)
   (:directory :gbbopen "examples")
   (:files "tutorial"))
 

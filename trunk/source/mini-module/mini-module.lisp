@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/mini-module/mini-module.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Mar 23 11:43:29 2008 *-*
+;;;; *-* Last-Edit: Mon Mar 24 10:24:22 2008 *-*
 ;;;; *-* Machine: cyclone.local *-*
 
 ;;;; **************************************************************************

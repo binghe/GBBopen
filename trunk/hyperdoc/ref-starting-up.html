@@ -23,14 +23,14 @@ trip-tests file, you only need to evaluate the following forms within
 your Common Lisp environment:
 </p>
 <pre>
-&gt; (load "<var>&lt;install-directory&gt;</var>startup.lisp")
-; Loading <var>&lt;install-directory&gt;</var>/startup.lisp
-;  Loading <var>&lt;install-directory&gt;</var>/source/mini-module/mini-module-loader.lisp
-;   Loading <var>&lt;install-directory&gt;</var>/source/mini-module/mini-module.lisp
-;  Loading <var>&lt;install-directory&gt;</var>/source/modules.lisp
+&gt; (load "<var>&lt;install-dir&gt;</var>startup.lisp")
+; Loading <var>&lt;install-dir&gt;</var>/startup.lisp
+;  Loading <var>&lt;install-dir&gt;</var>/source/mini-module/mini-module-loader.lisp
+;   Loading <var>&lt;install-dir&gt;</var>/source/mini-module/mini-module.lisp
+;  Loading <var>&lt;install-dir&gt;</var>/source/modules.lisp
 T
 &gt; (mini-module:<a href="ref-compile-module.html">compile-module</a> :gbbopen-test :propagate :create-dirs)
-; Compiling <var>&lt;install-directory&gt;</var>/source/mini-module/mini-module.lisp
+; Compiling <var>&lt;install-dir&gt;</var>/source/mini-module/mini-module.lisp
      ...
 ;; Running basic GBBopen tests...
      ...

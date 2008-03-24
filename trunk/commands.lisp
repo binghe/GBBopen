@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/commands.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Mar 22 12:16:45 2008 *-*
+;;;; *-* Last-Edit: Mon Mar 24 11:11:46 2008 *-*
 ;;;; *-* Machine: cyclone.local *-*
 
 ;;;; **************************************************************************
@@ -115,7 +115,7 @@
 
 (define-tll-command :tutorial-example (&rest options)
   "Compile and load GBBopen Tutorial-Example module"
-  (startup-module :tutorial-example options :gbbopen-user))
+  (startup-module :tutorial-example options :tutorial))
 
 (define-tll-command :abort-ks-execution-example (&rest options)
   "Compile and load the Abort-KS-Execution Example module"

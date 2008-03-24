@@ -87,7 +87,7 @@ Extract the archive into a directory of your choosing, and follow the
 client installed on your computer, you can checkout the latest files directly
 from the GBBopen repository.  For example, the shell command:
 </p>
-<pre><font color="#8c8c8c">  [~]$ <font color="#000000">svn checkout http://GBBopen.org/svn/GBBopen/trunk/ GBBopen</font>
+<pre><font color="#666666">  [~]&#36; <font color="#000000">svn checkout http://GBBopen.org/svn/GBBopen/trunk/ GBBopen</font>
 </pre></font>
 <p>will create a GBBopen repository tree rooted at the directory named
 <code>GBBopen</code> in your current working directory.  As above, follow the
@@ -100,7 +100,7 @@ Using subversion is the easiest way to keep current, and you are strongly
 encouraged to install a subversion client and use it perform frequent updates.
 Simply issue the command:
 </p>
-<pre><font color="#8c8c8c">  [~]$ <font color="#000000">svn update</font>
+<pre><font color="#666666">  [~]&#36; <font color="#000000">svn update</font>
 </pre></font>
 <p>from the root directory of your GBBopen repository tree.  
 The <a target="_top" href="http://tortoisesvn.tigris.org/">TortoiseSVN</a> subversion
@@ -135,34 +135,32 @@ or simply the REPL) that it provides.
 <p>When you start your Common Lisp system, it may first display some informational
 messages and then you should see a prompt for input that looks something like:
 </p>
-<pre><font color="#8c8c8c">  &gt; 
+<pre><font color="#666666">  &gt; 
 </pre></font>
 <p>The specific format of the prompt differs depending on your Common Lisp
-implementation.  The prompt character may vary, such as:
-</p>
-<pre><font color="#8c8c8c">  * 
-</pre></font>
-<p>or
-</p>
-<pre><font color="#8c8c8c">  ? 
-</pre></font>
-<p>The prompt might include a entry number that is incremented each time an
+implementation.  The prompt character may vary, such as <code>*</code> or <code>?</code>.
+The prompt might include a entry number that is incremented each time an
 expression is entered, such as:
 </p>
-<pre><font color="#8c8c8c">  [1]&gt; 
+<pre><font color="#666666">  [1]&gt; 
 </pre></font>
 <p>Or it might also include the name of the current package (symbol namespace)
 being used by the REPL:
 </p>
-<pre><font color="#8c8c8c">  gbbopen-user(1): 
+<pre><font color="#666666">  cl-user(1)&gt; 
+</pre></font>
+<p>Throughout this tutorial, we will include the package name in our
+example prompts to make it clear what package should be current:
+</p>
+<pre><font color="#666666">  cl-user&gt; 
 </pre></font>
 <p>The REPL prompt indicates that it is awaiting a Common Lisp expression to
 evaluate and then display the evaluation results. For example, enter the
 expression:
 </p>
-<pre><font color="#8c8c8c">  &gt; <font color="#000000">(+ 1 2)</font>
+<pre><font color="#666666">  cl-user&gt; <font color="#000000">(+ 1 2)</font>
   3
-  &gt;
+  cl-user&gt;
 </pre></font>
 <p>Note that what you need to enter is shown in black and other items, such as
 the REPL prompt and displayed result, <code>3</code>, are shown in gray.  We will
@@ -171,9 +169,9 @@ must provide in the context of other information.
 </p>
 <p><a name="id7">While</a> we are on the subject of what is displayed, enter the following expression:
 </p>
-<pre><font color="#8c8c8c">  &gt; <font color="#000000">'symbol</font>
+<pre><font color="#666666">  cl-user&gt; <font color="#000000">'symbol</font>
   symbol
-  &gt;
+  cl-user&gt;
 </pre></font>
 <p>The displayed result that you see might be in lower case, as shown, or upper
 case, or even capitalized.  In this tutorial, results are shown with Common
@@ -181,28 +179,28 @@ Lisp symbols displayed in lower case, which I prefer as being slightly easier
 to read.  If you wish, you can duplicate this behavior in your REPL by
 entering the following form:
 </p>
-<pre><font color="#8c8c8c">  &gt; <font color="#000000">(setf *print-case* ':downcase)</font>
+<pre><font color="#666666">  cl-user&gt; <font color="#000000">(setf *print-case* ':downcase)</font>
   :downcase
-  &gt;
+  cl-user&gt;
 </pre></font>
 <p><a name="id8">Your</a> Common Lisp implementation may also differ slightly on how it displays
 multiple returned values.  For example:
 </p>
-<pre><font color="#8c8c8c">  &gt; <font color="#000000">(values 1 2 3)</font>
+<pre><font color="#666666">  cl-user&gt; <font color="#000000">(values 1 2 3)</font>
   1
   2
   3
-  &gt;
+  cl-user&gt;
 </pre></font>
 <p>In this tutorial, we show multiple returned values as displayed on separate
 lines.  Your Common Lisp implementation may show them differently, such as
 with semicolon value-separation characters:
 </p>
-<pre><font color="#8c8c8c">  &gt; <font color="#000000">(values 1 2 3)</font>
+<pre><font color="#666666">  cl-user&gt; <font color="#000000">(values 1 2 3)</font>
   1 ;
   2 ;
   3
-  &gt;
+  cl-user&gt;
 </pre></font>
 <h2><a name="id9">Step 5: Recover from an error</a></h2><p>
 Even you are a very careful typist, sooner or later you will enter a Common
@@ -210,9 +208,9 @@ Lisp expression that signals an error.  Therefore, it is important that you
 know how to get back on track when the inevitable occurs.  Let's intentionally
 generate an error.  Enter:
 </p>
-<pre><font color="#8c8c8c">  &gt; <font color="#000000">(/ 1 0)</font>
+<pre><font color="#666666">  cl-user&gt; <font color="#000000">(/ 1 0)</font>
   Error: Attempt to divide 1 by zero.
-  &gt;&gt;
+  cl-user&gt;&gt;
 </pre></font>
 <p>The behavior of your Common Lisp environment should look similar, and you
 should now be in your implementation's debugger or &#8220;break loop.&#8221;  The
@@ -234,10 +232,10 @@ dependent, so you may need to investigate how to abort out of an error on your
 Common Lisp implementation.  For example, it might be as easy as entering an
 abort debugger command:
 </p>
-<pre><font color="#8c8c8c">  &gt; (/ 1 0)
+<pre><font color="#666666">  cl-user&gt; (/ 1 0)
   Error: Attempt to divide 1 by zero.
-  &gt;&gt; <font color="#000000">:a</font>
-  &gt;
+  cl-user&gt;&gt; <font color="#000000">:a</font>
+  cl-user&gt;
 </pre></font>
 <p>Consult your Common Lisp documentation or a knowledgeable friend if
 you need assistance with the debugger in your Common Lisp
@@ -247,7 +245,7 @@ implementation (<code>:a</code> or <code>q</code> are typical abort commands).
 There are other mistakes that don't signal an error.  Suppose I
 foolishly evaluate this expression:
 </p>
-<pre><font color="#8c8c8c">  &gt; <font color="#000000">(loop (print "This is repetitive...") (sleep 1))</font>
+<pre><font color="#666666">  cl-user&gt; <font color="#000000">(loop (print "This is repetitive...") (sleep 1))</font>
 
   "This is repetitive." 
   "This is repetitive." 
@@ -261,7 +259,7 @@ program.
 needed is to interrupt, or &#8220;break,&#8221; the computation.  Often this is
 associated with typing one or more Control-c (<code>^c</code>) characters:
 </p>
-<pre><font color="#8c8c8c">  &gt; (loop (print "This is repetitive...") (sleep 1))
+<pre><font color="#666666">  cl-user&gt; (loop (print "This is repetitive...") (sleep 1))
 
   "This is repetitive." 
   "This is repetitive." 
@@ -270,12 +268,12 @@ associated with typing one or more Control-c (<code>^c</code>) characters:
   "This is repetitive." 
   "This is rep<font color="#000000">^C</font>
   Error: Received keyboard interrupt ^C
-  &gt;&gt;
+  cl-user&gt;&gt;
 </pre></font>
 <p>Typically a keyboard interrupt invokes the debugger where the computation
 can be resumed or aborted:
 </p>
-<pre><font color="#8c8c8c">  &gt; (loop (print "This is repetitive...") (sleep 1))
+<pre><font color="#666666">  cl-user&gt; (loop (print "This is repetitive...") (sleep 1))
 
   "This is repetitive." 
   "This is repetitive." 
@@ -284,28 +282,28 @@ can be resumed or aborted:
   "This is repetitive." 
   "This is rep^C
   Error: Received keyboard interrupt ^C
-  &gt;&gt; <font color="#000000">:a</font>
-  &gt;
+  cl-user&gt;&gt; <font color="#000000">:a</font>
+  cl-user&gt;
 </pre></font>
 <h3><a name="id11">Help! My REPL is broken!</a></h3><p>
 Here is one last difficulty.  Suppose I enter:
 </p>
-<pre><font color="#8c8c8c">  &gt; <font color="#000000">(list "This" "is "also" "a" "problem!")</font>
-  &gt;
-  &gt;
-  &gt;
+<pre><font color="#666666">  cl-user&gt; <font color="#000000">(list "This" "is "also" "a" "problem!")</font>
+  cl-user&gt;
+  cl-user&gt;
+  cl-user&gt;
 </pre></font>
 <p>My REPL seems dead: no result is displayed and I continue to be prompted again
 and again for input.  I suppose I should try the entering the expression
 again:
 </p>
-<pre><font color="#8c8c8c">  &gt; (list "This" "is "also" "a" "problem!")
-  &gt;
-  &gt;
-  &gt;
-  &gt; <font color="#000000">(list "This" "is" "also" "a" "problem!")</font>
-  &gt;
-  &gt;
+<pre><font color="#666666">  cl-user&gt; (list "This" "is "also" "a" "problem!")
+  cl-user&gt;
+  cl-user&gt;
+  cl-user&gt;
+  cl-user&gt; <font color="#000000">(list "This" "is" "also" "a" "problem!")</font>
+  cl-user&gt;
+  cl-user&gt;
 </pre></font>
 <p>Nope, my REPL is still broken.
 </p>
@@ -317,35 +315,35 @@ still patiently waiting for me to finish that first Common Lisp expression.
 <p>So how do I get out of this?  I could try entering a sequence of double-quote
 and close parentheses and hope I that I get lucky:
 </p>
-<pre><font color="#8c8c8c">  &gt; (list "This" "is "also" "a" "problem!")
-  &gt;
-  &gt;
-  &gt;
-  &gt; (list "This" "is" "also" "a" "problem!")
-  &gt;
-  &gt;
-  &gt; <font color="#000000">"</font>
-  &gt; <font color="#000000">)</font>
+<pre><font color="#666666">  cl-user&gt; (list "This" "is "also" "a" "problem!")
+  cl-user&gt;
+  cl-user&gt;
+  cl-user&gt;
+  cl-user&gt; (list "This" "is" "also" "a" "problem!")
+  cl-user&gt;
+  cl-user&gt;
+  cl-user&gt; <font color="#000000">"</font>
+  cl-user&gt; <font color="#000000">)</font>
   Error: Attempt to take the value of the unbound variable `also'.
-  &gt;&gt;
+  cl-user&gt;&gt;
 </pre></font>
 <p>or I could interrupt the REPL read operation, just as I did with the infinite
 loop situation above, and abort back from the debugger to the REPL and try
 again:
 </p>
-<pre><font color="#8c8c8c">  &gt; (list "This" "is "also" "a" "problem!")
-  &gt;
-  &gt;
-  &gt;
-  &gt; (list "This" "is" "also" "a" "problem!")
-  &gt;
-  &gt;
-  &gt; <font color="#000000">^C</font>
+<pre><font color="#666666">  cl-user&gt; (list "This" "is "also" "a" "problem!")
+  cl-user&gt;
+  cl-user&gt;
+  cl-user&gt;
+  cl-user&gt; (list "This" "is" "also" "a" "problem!")
+  cl-user&gt;
+  cl-user&gt;
+  cl-user&gt; <font color="#000000">^C</font>
   Error: Received keyboard interrupt ^C
-  &gt;&gt; <font color="#000000">:a</font>
-  &gt; <font color="#000000">(list "This" "is" "also" "a" "problem!")</font>
+  cl-user&gt;&gt; <font color="#000000">:a</font>
+  cl-user&gt; <font color="#000000">(list "This" "is" "also" "a" "problem!")</font>
   ("This" "is" "also" "a" "problem!")
-  &gt;
+  cl-user&gt;
 </pre></font>
 <p>You may discover even more creative ways to get into problems, but these
 example situations should give you enough experience to get through the rest
@@ -357,27 +355,29 @@ that supports compiling and loading GBBopen components.
 </p>
 <p>To compile and load the <code>:gbbopen-user</code> module and all the GBBopen
 modules it requires, you need to evaluate the following forms within your
-Common Lisp environment.  First, load GBBopen's <code>startup.lisp</code> file from
-wherever GBBopen has been installed:
+Common Lisp environment.  First, load GBBopen's
+<code><var>&lt;install-dir&gt;</var>/startup.lisp</code> file from wherever GBBopen has been
+installed:
 </p>
-<pre><font color="#8c8c8c">  &gt; <font color="#000000">(load "<var>&lt;install-directory&gt;</var>startup.lisp")</font>
-  ;; Loading <var>&lt;install-directory&gt;</var>/startup.lisp
-  ;;  Loading <var>&lt;install-directory&gt;</var>/source/mini-module/mini-module-loader.lisp
-  ;;   Loading <var>&lt;install-directory&gt;</var>/source/mini-module/mini-module.lisp
-  ;;  Loading <var>&lt;install-directory&gt;</var>/source/modules.lisp
+<pre><font color="#666666">  cl-user&gt; <font color="#000000">(load "<var>&lt;install-dir&gt;</var>/startup.lisp")</font>
+  ;; Loading <var>&lt;install-dir&gt;</var>/startup.lisp
+  ;;  Loading <var>&lt;install-dir&gt;</var>/source/mini-module/mini-module-loader.lisp
+  ;;   Loading <var>&lt;install-dir&gt;</var>/source/mini-module/mini-module.lisp
+  ;;   Loading <var>&lt;install-dir&gt;</var>/source/mini-module/mini-module-user.lisp
+  ;;  Loading <var>&lt;install-dir&gt;</var>/source/modules.lisp
   t
-  &gt;
+  cl-user&gt;
 </pre></font>
 <p><a name="id13">Then</a> compile and load the <code>:gbbopen-user</code> module and all the
 GBBopen modules it requires by evaluating:
 </p>
-<pre><font color="#8c8c8c">  &gt; <font color="#000000">(mini-module:compile-module :gbbopen-user :propagate :create-dirs)</font>
-  ;; Compiling <var>&lt;install-directory&gt;</var>/source/mini-module/mini-module.lisp
-  ;; Loading <var>&lt;install-directory&gt;</var>/<var>platform-directory</var>/gbbopen/gbbopen-user.fasl
+<pre><font color="#666666">  cl-user&gt; <font color="#000000">(mini-module:compile-module :gbbopen-user :propagate :create-dirs)</font>
+  ;; Compiling <var>&lt;install-dir&gt;</var>/source/mini-module/mini-module.lisp
+  ;; Loading <var>&lt;install-dir&gt;</var>/<var>&lt;platform-dir&gt;</var>/mini-module/mini-module.fasl
        ...
-  ;; Compiling <var>&lt;install-directory&gt;</var>/source/gbbopen/gbbopen-user.lisp
-  ;; Loading <var>&lt;install-directory&gt;</var>/<var>platform-directory</var>/gbbopen/gbbopen-user.fasl
-  &gt;
+  ;; Compiling <var>&lt;install-dir&gt;</var>/source/gbbopen/gbbopen-user.lisp
+  ;; Loading <var>&lt;install-dir&gt;</var>/<var>&lt;platform-dir&gt;</var>/gbbopen/gbbopen-user.fasl
+  cl-user&gt;
 </pre></font>
 <p>GBBopen should compile (if necessary) and load all the files needed for the
 next exercise without error.  The output on your Common Lisp implementation
@@ -387,30 +387,38 @@ may vary somewhat from that shown above.
 If one or more GBBopen files needs to be compiled, you must have write
 permission for those files and directories on your file system.  If you do not
 have write permission and someone else is maintaining your GBBopen
-installation, they must start up Common Lisp and evaluate the following
-expressions:
+installation, they must start up Common Lisp and then evaluate the following
+two expressions:
 </p>
-<pre><font color="#8c8c8c">  &gt; <font color="#000000">(load "<var>&lt;install-directory&gt;</var>gbbopen-init.lisp")</font>
-  ;; Loading <var>&lt;install-directory&gt;</var>/gbbopen-init.lisp
-  ;;  Loading <var>&lt;install-directory&gt;</var>/extended-repl.lisp
-  ;;  Loading <var>&lt;install-directory&gt;</var>/commands.lisp
+<pre><font color="#666666">  cl-user&gt; <font color="#000000">(load "<var>&lt;install-dir&gt;</var>/gbbopen-init.lisp")</font>
+  ;; Loading <var>&lt;install-dir&gt;</var>/gbbopen-init.lisp
+  ;;  Loading <var>&lt;install-dir&gt;</var>/extended-repl.lisp
+  ;;  Loading <var>&lt;install-dir&gt;</var>/commands.lisp
   t
-  &gt; <font color="#000000">(compile-gbbopen)</font>
-  ;; Loading <var>&lt;install-directory&gt;</var>/startup.lisp
+  cl-user&gt; <font color="#000000">(compile-gbbopen)</font>
+  ;; Loading <var>&lt;install-dir&gt;</var>/startup.lisp
      ...
   ;;; GBBopen module compilation completed.
-  &gt;
+  [~]&#36;
 </pre></font>
 <p>every time they update GBBopen to ensure that all GBBopen modules have
 been compiled.
 </p>
-<h2><a name="id15">Step 7: Change to the <code>:gbbopen-user</code> package</a></h2><p>
+<h3><a name="id15">Beyond <code><var>&lt;install-dir&gt;</var>/startup.lisp</code></a></h3><p>
+Although loading GBBopen's <code><var>&lt;install-dir&gt;</var>/startup.lisp</code> file is a
+very easy way to get started with GBBopen, setting up your computing
+environment for serious GBBopen development requires only a few moments that
+will be recouped almost immediately.  The steps needed to set everything up
+will be detailed soon in the <a href="tutorial-development-environment.html">Enhancing Your Development Environment
+exercise</a>.
+</p>
+<h2><a name="id16">Step 7: Change to the <code>:gbbopen-user</code> package</a></h2><p>
 Now that the <code>:gbbopen-user</code> module is loaded, change the current
 package to the <code>:gbbopen-user</code> package:
 </p>
-<pre><font color="#8c8c8c">  &gt; <font color="#000000">(in-package :gbbopen-user)</font>
-  #&lt;The gbbopen-user package&gt;
-  &gt;
+<pre><font color="#666666">  cl-user&gt; <font color="#000000">(in-package :gbbopen-user)</font>
+  #&lt;package GBBOPEN-USER&gt;
+  gbbopen-user&gt;
 </pre></font>
 <p>In Common Lisp, a <i>package</i> is a namespace that maps names to
 symbols.  One package is always designated as the &#8220;current&#8221; package, and it

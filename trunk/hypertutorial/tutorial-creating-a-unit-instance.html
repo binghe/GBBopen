@@ -52,22 +52,22 @@ This exercise shows you how to:
 If you ended the Common Lisp session used in the last exercise, begin a new
 session and evaluate the following forms:
 </p>
-<pre><font color="#8c8c8c">  &gt; <font color="#000000">(load "<var>&lt;install-directory&gt;</var>startup.lisp")</font>
+<pre><font color="#666666">  cl-user&gt; <font color="#000000">(load "<var>&lt;install-dir&gt;</var>/startup.lisp")</font>
      ...
-  &gt; <font color="#000000">(mini-module:compile-module :gbbopen-user :propagate :create-dirs)</font>
+  cl-user&gt; <font color="#000000">(mini-module:compile-module :gbbopen-user :propagate :create-dirs)</font>
      ...
-  &gt; <font color="#000000">(in-package :gbbopen-user)</font>
-  #&lt;The gbbopen-user package&gt;
-  &gt;
+  cl-user&gt; <font color="#000000">(in-package :gbbopen-user)</font>
+  #&lt;package GBBOPEN-USER&gt;
+  gbbopen-user&gt;
 </pre></font>
 <h2><a name="id2">Step 1: Define the <code>location</code> unit class</a></h2><p>
 We begin by defining a unit class <code>location</code> that has two slots,
 named <code>x</code> and <code>y</code>.
 </p>
-<pre><font color="#8c8c8c">  &gt; <font color="#000000">(define-unit-class location ()
-      (x y))</font>
+<pre><font color="#666666">  gbbopen-user&gt; <font color="#000000">(define-unit-class location ()
+                  (x y))</font>
   #&lt;location&gt;
-  &gt;
+  gbbopen-user&gt;
 </pre></font>
 <p>This unit-class definition instructs GBBopen to:
 </p>
@@ -86,16 +86,16 @@ unit class.  To simplify access to the unit instance during subsequent
 activities, first define a global variable called <code>ui</code>
 by entering the following form:
 </p>
-<pre><font color="#8c8c8c">  &gt; <font color="#000000">(defvar ui)</font>
+<pre><font color="#666666">  gbbopen-user&gt; <font color="#000000">(defvar ui)</font>
   ui
-  &gt;
+  gbbopen-user&gt;
 </pre></font>
 <p><a name="id4">Now,</a> create a unit instance and assign it to the variable <code>ui</code> by
 entering the form:
 </p>
-<pre><font color="#8c8c8c">  &gt; <font color="#000000">(setf ui (make-instance 'location :x 40 :y 60))</font>
+<pre><font color="#666666">  gbbopen-user&gt; <font color="#000000">(setf ui (make-instance 'location :x 40 :y 60))</font>
   #&lt;location 1&gt;
-  &gt;
+  gbbopen-user&gt;
 </pre></font>
 <p>This creates a unit instance of the <code>location</code> class, initializes the
 instance's <code>x</code> and <code>y</code> slots with the values specified by the
@@ -106,7 +106,7 @@ is then assigned to the variable <code>ui</code>.
 Now, display a description of the unit instance by using GBBopen's
 <b>describe-instance</b> function.  Enter the following form:
 </p>
-<pre><font color="#8c8c8c">  &gt; <font color="#000000">(describe-instance ui)</font>
+<pre><font color="#666666">  gbbopen-user&gt; <font color="#000000">(describe-instance ui)</font>
   Location #&lt;location 1&gt;
     Instance name: 1
     Space instances: None
@@ -115,7 +115,7 @@ Now, display a description of the unit instance by using GBBopen's
       x:  40
       y:  60
     Link slots: None
-  &gt;
+  gbbopen-user&gt;
 </pre></font>
 <p>Note that you didn't specify a name for the unit instance when you created it.
 In fact, there is often no natural reason to name each unit instance you
@@ -128,9 +128,9 @@ named within the class.
 You can look up a particular unit instance by its name. For example, to
 find the <code>location</code> <code>1</code> unit instance by name, enter the form:
 </p>
-<pre><font color="#8c8c8c">  &gt; <font color="#000000">(find-instance-by-name 1 'location)</font>
+<pre><font color="#666666">  gbbopen-user&gt; <font color="#000000">(find-instance-by-name 1 'location)</font>
   #&lt;location 1&gt;
-  &gt;
+  gbbopen-user&gt;
 </pre></font>
 <p>Of course, we assigned the <code>location</code> unit instance to the global
 variable <code>ui</code>, but it is nice to know that we can always find our unit
@@ -143,28 +143,28 @@ then to change its value to 50:
 </p>
 <p><ol class="tight"><a name="id8"></a><li>Get the value of the <code>x</code> slot of the unit instance:
 </p>
-<pre><font color="#8c8c8c">    &gt; <font color="#000000">(x-of ui)</font>
-    40
-    &gt;
+<pre><font color="#666666">  gbbopen-user&gt; <font color="#000000">(x-of ui)</font>
+  40
+  gbbopen-user&gt;
   </pre></font>
 <a name="id9"></a><li><p>Change the slot value to 50:
 </p>
-<pre><font color="#8c8c8c">    &gt; <font color="#000000">(setf (x-of ui) 50)</font>
-    50
-    &gt;
+<pre><font color="#666666">  gbbopen-user&gt; <font color="#000000">(setf (x-of ui) 50)</font>
+  50
+  gbbopen-user&gt;
   </pre></font>
 <li><p>Get the (new) value of the <code>x</code> slot:
 </p>
-<pre><font color="#8c8c8c">    &gt; <font color="#000000">(x-of ui)</font>
-    50
-    &gt;
+<pre><font color="#666666">  gbbopen-user&gt; <font color="#000000">(x-of ui)</font>
+  50
+  gbbopen-user&gt;
   </pre></font>
 </ol>
 <h2><a name="id10">Step 6: Again display the description of the unit instance</a></h2><p>
 Display the description of the <code>location</code> unit instance again, observing the
 changed <code>x</code> slot value:
 </p>
-<pre><font color="#8c8c8c">  &gt; <font color="#000000">(describe-instance ui)</font>
+<pre><font color="#666666">  gbbopen-user&gt; <font color="#000000">(describe-instance ui)</font>
   Location #&lt;location 1&gt;
     Instance name: 1
     Space instances: None
@@ -173,7 +173,7 @@ changed <code>x</code> slot value:
       x:  50
       y:  60
     Link slots: None
-  &gt;
+  gbbopen-user&gt;
 </pre></font>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />

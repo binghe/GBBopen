@@ -52,33 +52,33 @@ This exercise shows you how to:
 The <code>tutorial-example.lisp</code> file as modified thus far:
 </p>
 <pre>
-  (in-package :gbbopen-user)
+(in-package :gbbopen-user)
 
-  (define-unit-class location ()
-    (x y)
-    (:dimensional-values
-      (x :point x)
-      (y :point y))
-    (:initial-space-instances (known-world)))
+(define-unit-class location ()
+  (x y)
+  (:dimensional-values
+    (x :point x)
+    (y :point y))
+  (:initial-space-instances (known-world)))
 
-  (defmethod print-instance-slots ((location location) stream)
-    (call-next-method)
-    (when (and (slot-boundp location 'x)
-               (slot-boundp location 'y))
-      (format stream " (~s ~s)"
-              (x-of location)
-              (y-of location))))
+(defmethod print-instance-slots ((location location) stream)
+  (call-next-method)
+  (when (and (slot-boundp location 'x)
+             (slot-boundp location 'y))
+    (format stream " (~s ~s)"
+            (x-of location)
+            (y-of location))))
 </pre>
 <h2><a name="id2">Step 1: Load the Agenda Shell</a></h2><p>
 Start up a fresh Common Lisp session and load the <code>:agenda-shell-user</code>
 module, using the <code>:agenda-shell-user</code> REPL command:
 </p>
-<pre><font color="#8c8c8c">  &gt; <font color="#000000">:agenda-shell-user</font>
-  ;; Loading <var>&lt;install-directory&gt;</var>/startup.lisp
+<pre><font color="#666666">  cl-user&gt; <font color="#000000">:agenda-shell-user</font>
+  ;; Loading <var>&lt;install-dir&gt;</var>/startup.lisp
      ...
-  ;; Loading <var>&lt;install-directory&gt;</var>/<var>platform-directory</var>/gbbopen/
+  ;; Loading <var>&lt;install-dir&gt;</var>/<var>&lt;platform-dir&gt;</var>/gbbopen/
   ;;            control-shells/agenda-shell-user.fasl
-  &gt;
+  gbbopen-user&gt;
 </pre></font>
 <p>This loads everything that we've been loading with the <code>:gbbopen-user</code>
 module and, additionally, GBBopen's Agenda Shell control shell. As with the
@@ -88,14 +88,14 @@ the <code>:gbbopen-user</code> package.
 <h2><a name="id3">Step 2: Run the control shell</a></h2><p>
 Now, start the Agenda Shell:
 </p>
-<pre><font color="#8c8c8c">  &gt; <font color="#000000">(start-control-shell)</font>
+<pre><font color="#666666">  gbbopen-user&gt; <font color="#000000">(start-control-shell)</font>
   ;; Control shell 1 started
   ;; No executable KSAs remain, exiting control shell
   ;; Control shell 1 exited: 2 cycles completed
   ;; Run time: 0 seconds
   ;; Elapsed time: 0 seconds
   :quiescence
-  &gt;
+  gbbopen-user&gt;
 </pre></font>
 <p>What just happened?  The Agenda Shell began executing and looked for something
 to do.  However, we have not yet defined any knowledge sources (KSs), so the
@@ -112,32 +112,32 @@ So let's define a KS!
 <p>Edit your <code>tutorial-example.lisp</code> file and add the following function
 and KS definition to the end of the <code>tutorial-example.lisp</code> file:
 </p>
-<pre><font color="#8c8c8c">  (define-unit-class location ()
-    (x y)
-    (:dimensional-values
-      (x :point x)
-      (y :point y))
-    (:initial-space-instances (known-world)))
+<pre><font color="#666666">(define-unit-class location ()
+  (x y)
+  (:dimensional-values
+    (x :point x)
+    (y :point y))
+  (:initial-space-instances (known-world)))
 
-  (defmethod print-instance-slots ((location location) stream)
-    (call-next-method)
-    (when (and (slot-boundp location 'x)
-               (slot-boundp location 'y))
-      (format stream " (~s ~s)"
-              (x-of location)
-              (y-of location))))
+(defmethod print-instance-slots ((location location) stream)
+  (call-next-method)
+  (when (and (slot-boundp location 'x)
+             (slot-boundp location 'y))
+    (format stream " (~s ~s)"
+            (x-of location)
+            (y-of location))))
 
-  <font color="#000000">;;; ========================================================================
-  ;;;   Startup KS
+<font color="#000000">;;; ======================================================================
+;;;   Startup KS
 
 (defun startup-ks-function (ksa)
-    (declare (ignore ksa))
-    ;; Create an initial location unit instance at (0,0):
-    (make-instance 'location :x 0 :y 0))
+  (declare (ignore ksa))
+  ;; Create an initial location unit instance at (0,0):
+  (make-instance 'location :x 0 :y 0))
 
-  (define-ks startup-ks
-      :trigger-events ((start-control-shell-event))
-      :execution-function 'startup-ks-function)</font>
+(define-ks startup-ks
+    :trigger-events ((start-control-shell-event))
+    :execution-function 'startup-ks-function)</font>
 </pre></font>
 <p>The function <code>startup-ks-function</code> implements the KS.  The Agenda Shell
 always calls a KS's execution function with a single argument, a <code>ksa</code>
@@ -159,10 +159,10 @@ the editor buffer (using <code>C-c C-k</code> in SLIME; <code>C-c C-b</code> in 
 <p>The Agenda Shell creates a <code>ks</code> unit instance for each KS that we
 define:
 </p>
-<pre><font color="#8c8c8c">  &gt; <font color="#000000">(map-instances-of-class #'print 'ks)</font>
+<pre><font color="#666666">  gbbopen-user&gt; <font color="#000000">(map-instances-of-class #'print 'ks)</font>
   #&lt;ks startup-ks&gt; 
   nil
-  &gt;
+  gbbopen-user&gt;
 </pre></font>
 <p>Note that the name of the <code>ks</code> unit instance is the name of the KS.
 </p>
@@ -170,26 +170,26 @@ define:
 Before we can run our KS, we must make the <code>known-world</code> space
 instance:
 </p>
-<pre><font color="#8c8c8c">  &gt; <font color="#000000">(make-space-instance '(known-world)
-              :dimensions '((x :ordered) (y :ordered))))</font>
+<pre><font color="#666666">  gbbopen-user&gt; <font color="#000000">(make-space-instance '(known-world)
+                          :dimensions '((x :ordered) (y :ordered))))</font>
   #&lt;standard-space-instance (known-world)&gt;
-  &gt;
+  gbbopen-user&gt;
 </pre></font>
 <h2><a name="id6">Step 5: Start the control shell</a></h2><p>
 Start the Agenda Shell again:
 </p>
-<pre><font color="#8c8c8c">  &gt; <font color="#000000">(start-control-shell)</font>
+<pre><font color="#666666">  gbbopen-user&gt; <font color="#000000">(start-control-shell)</font>
   ;; Control shell 1 started
   ;; No executable KSAs remain, exiting control shell
   ;; Control shell 1 exited: 3 cycles completed
   ;; Run time: 0 seconds
   ;; Elapsed time: 0 seconds
   :quiescence
-  &gt;
+  gbbopen-user&gt;
 </pre></font>
 <p>Did it work?  Let's describe the blackboard repository:
 </p>
-<pre><font color="#8c8c8c">  &gt; <font color="#000000">:dsbb</font>
+<pre><font color="#666666">  gbbopen-user&gt; <font color="#000000">:dsbb</font>
   
   Space Instance                Contents
   --------------                --------
@@ -205,7 +205,7 @@ Start the Agenda Shell again:
   standard-space-instance               1
                                 ---------
                                         7 instances
-  &gt;
+  gbbopen-user&gt;
 </pre></font>
 <p>The initial <code>location</code> unit instance is there!
 </p>
@@ -228,9 +228,9 @@ asterisk (<code>*</code>).
 <p>Let's verify this behavior by calling <code>delete-blackboard-repository</code> and
 then describe the blackboard repository:
 </p>
-<pre><font color="#8c8c8c">  &gt; <font color="#000000">(delete-blackboard-repository)</font>
+<pre><font color="#666666">  gbbopen-user&gt; <font color="#000000">(delete-blackboard-repository)</font>
   t
-  &gt; <font color="#000000">:dsbb</font>
+  gbbopen-user&gt; <font color="#000000">:dsbb</font>
   There are no space instances in the blackboard repository.
 
   Unit Class                    Instances
@@ -239,7 +239,7 @@ then describe the blackboard repository:
   ks                                    1 +
   ksa-queue                             2 +
   ordered-ksa-queue                     1 +
-  &gt;
+  gbbopen-user&gt;
 </pre></font>
 <h2><a name="id7">Step 6: Display control shell activities</a></h2><p>
 With all but the retained unit instances deleted from the blackboard
@@ -247,18 +247,18 @@ repository, let's rerun the control shell.  However, this time we will ask
 GBBopen to display more of what the control shell is doing. First, enable
 display of all control-shell and instance-creation events:
 </p>
-<pre><font color="#8c8c8c">  &gt; <font color="#000000">(enable-event-printing '(control-shell-event :plus-subevents))</font>
+<pre><font color="#666666">  gbbopen-user&gt; <font color="#000000">(enable-event-printing '(control-shell-event :plus-subevents))</font>
   nil
-  &gt; <font color="#000000">(enable-event-printing 'create-instance-event)</font>
+  gbbopen-user&gt; <font color="#000000">(enable-event-printing 'create-instance-event)</font>
   nil
-  &gt;
+  gbbopen-user&gt;
 </pre></font>
 <p>We will cover events, event printing, and event functions in greater
 detail in a later exercise.
 </p>
 <p><a name="id8">Start</a> the Agenda Shell once again:
 </p>
-<pre><font color="#8c8c8c">  &gt; <font color="#000000">(start-control-shell)</font>
+<pre><font color="#666666">  gbbopen-user&gt; <font color="#000000">(start-control-shell)</font>
   ;; Control shell 1 started
   =&gt; Start-control-shell-event
   =&gt; Control-shell-cycle-event
@@ -283,25 +283,25 @@ detail in a later exercise.
   ;; Run time: 0 seconds
   ;; Elapsed time: 0 seconds
   :quiescence
-  &gt;
+  gbbopen-user&gt;
 </pre></font>
 <h2><a name="id9">Step 7: Control-shell stepping</a></h2><p>
 Let's rerun the control shell once again, but this time we will enable
 control-shell stepping. Again, delete the blackboard repository:
 </p>
-<pre><font color="#8c8c8c">  &gt; <font color="#000000">(delete-blackboard-repository)</font>
+<pre><font color="#666666">  gbbopen-user&gt; <font color="#000000">(delete-blackboard-repository)</font>
   t
-  &gt;
+  gbbopen-user&gt;
 </pre></font>
 <p>and disable the event printing that we enabled in the last step:
 </p>
-<pre><font color="#8c8c8c">  &gt; <font color="#000000">(disable-event-printing)</font>
+<pre><font color="#666666">  gbbopen-user&gt; <font color="#000000">(disable-event-printing)</font>
   nil
-  &gt;
+  gbbopen-user&gt;
 </pre></font>
 <p><a name="id10">Now</a> start the Agenda Shell, this time with stepping enabled:
 </p>
-<pre><font color="#8c8c8c">  &gt; <font color="#000000">(start-control-shell :stepping 't)</font>
+<pre><font color="#666666">  gbbopen-user&gt; <font color="#000000">(start-control-shell :stepping 't)</font>
   ;; Control shell 1 started
   &gt;&gt; CS Step (cycle 1):
      About to process event #&lt;start-control-shell-event&gt;... <font color="#00ff00">[<i>? entered</i>]</font>
@@ -334,7 +334,7 @@ control-shell stepping. Again, delete the blackboard repository:
   ;; Run time: 0 seconds
   ;; Elapsed time: 1 minute, 6 seconds
   :quiescence
-  &gt;
+  gbbopen-user&gt;
 </pre></font>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />

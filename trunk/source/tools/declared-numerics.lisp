@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/declared-numerics.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Mar 12 04:34:03 2008 *-*
-;;;; *-* Machine: vagabond.cs.umass.edu *-*
+;;;; *-* Last-Edit: Mon Mar 24 10:21:22 2008 *-*
+;;;; *-* Machine: cyclone.local *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -245,7 +245,9 @@
 ;;; Allows a function to be called from the #@ inf-reader function, if the
 ;;; object read is not one of the legal infinite-value names:
 
-(defvar *inf-reader-escape-hook* nil)
+(declaim (special *inf-reader-escape-hook*))
+(unless (boundp '*inf-reader-escape-hook*)
+  (setf *inf-reader-escape-hook* nil))
 
 ;;; ===========================================================================
 ;;;   Fixnum Operations
