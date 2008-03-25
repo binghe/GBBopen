@@ -1,7 +1,7 @@
 ;;;; -*- Mode:COMMON-LISP; Package:TUTORIAL; Base:10 -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/examples/tutorial.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Mar 24 11:08:51 2008 *-*
+;;;; *-* Last-Edit: Tue Mar 25 04:19:46 2008 *-*
 ;;;; *-* Machine: cyclone.local *-*
 
 ;;;; **************************************************************************
@@ -237,6 +237,11 @@
 
 ;;; ===========================================================================
 ;;;   After load-blackboard-repository actions
+;;;
+;;;   Usage:
+;;;    (save-blackboard-repository "tutorial" 
+;;;       :package :tutorial 
+;;;       :after-loading-function 'after-loading-actions) 
 
 (defun after-loading-actions ()
   ;; Assign the path unit-instance to the *the-random-walk* global variable:
