@@ -1,5 +1,7 @@
 Important changes since GBBopen 0.9.8:
 
+  * <install-dir>/gbbopen-init.lisp renamed to more intuitive <install-dir>/initiate.lisp
+
   * New :CLASS-NAME-TRANSLATIONS added to LOAD-BLACKBOARD-REPOSITORY and
     WITH-READING-SAVED/SENT-OBJECTS-BLOCK
 

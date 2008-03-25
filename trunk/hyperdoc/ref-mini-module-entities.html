@@ -27,14 +27,15 @@ there are more complex open-source <b>defsystem</b> packages, such as ASDF
 (<a target="_top" href="http://www.weitz.de/asdf-install/">http://www.weitz.de/asdf-install/</a>), that are available.
 </p>
 <p><a name="id1">The</a> <code>:mini-module</code> module is automatically loaded by the GBBopen
-<var><i>&lt;</i>install-directory<i>&gt;</i></var><code>startup.lisp</code> file (via the
+<code><var>&lt;install-directory&gt;</var>/startup.lisp</code> file (via the
 <code>mini-module-loader.lisp</code> file located in the <code>mini-module</code>
-subdirectory). If a <code>gbbopen-init.lisp</code> file (source or compiled)
-is present in the user's &#8220;home&#8221; directory, it is loaded immediately
-following the loading of the mini-module facility by the
-<code>startup.lisp</code> file.  A personal <code>gbbopen-init.lisp</code> file is
-very useful for defining user-specific modules, application modules,
-GBBopen parameters, and other personalizations
+subdirectory). If a <code>gbbopen-init.lisp</code> file (source or compiled) is
+present in the user's &#8220;home&#8221; directory, it is loaded immediately following
+the loading of the mini-module facility by the
+<code><var>&lt;install-directory&gt;</var>/startup.lisp</code> file.  A personal
+<code><var>&lt;homedir&gt;</var>/gbbopen-init.lisp</code> file is very useful for defining
+user-specific modules, application modules, GBBopen parameters, and other
+personalizations
 (see the GBBopen <a href="ref-starting-up.html">start-up description</a>).
 </p>
 <p>To bootstrap the Mini-Module System stand-alone (separate from the GBBopen

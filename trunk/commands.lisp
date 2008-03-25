@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/commands.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Mar 24 11:11:46 2008 *-*
-;;;; *-* Machine: cyclone.local *-*
+;;;; *-* Last-Edit: Tue Mar 25 11:29:30 2008 *-*
+;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -17,7 +17,7 @@
 ;;; Copyright (C) 2004-2008, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
-;;; Loaded by gbbopen-init.lisp.  After loading, handy top-level-loop keyword
+;;; Loaded by initiate.lisp.  After loading, handy top-level-loop keyword
 ;;; commands, such as :gbbopen-tools, :gbbopen-core, :gbbopen-user,
 ;;; :gbbopen-test, :agenda-shell-user, and :agenda-shell-test are available on
 ;;; Allegro CL, CLISP, Clozure CL, CMUCL, SCL, ECL, Lispworks, OpenMCL, and
@@ -43,7 +43,7 @@
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
-;;;  06-04-05 Split out from gbbopen-init.lisp.  (Corkill)
+;;;  06-04-05 Split out from initiate.lisp.  (Corkill)
 ;;;  08-20-05 Added :agenda-shell-user command.  (Corkill)
 ;;;  08-21-05 Added :multiprocessing-test command.  (Corkill)
 ;;;  10-08-05 Added :tutorial-example command.  (Corkill)

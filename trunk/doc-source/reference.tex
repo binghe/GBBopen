@@ -1,7 +1,7 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Sat Mar 22 11:56:50 2008; Edited-By: cork *-*
-%% *-* Machine: cyclone.local *-*
+%% *-* Last-Edit: Tue Mar 25 11:48:11 2008; Edited-By: cork *-*
+%% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
 %% Part of the GBBopen Project (see LICENSE for license information).
@@ -134,7 +134,7 @@
 
 \T\begin{ifhtml}
 \xml{p class="tiny" align="right"} 
-\xsitelink{PDF version}{http://gbbopen.org/downloads/tutorial.pdf}
+\xsitelink{PDF version}{http://gbbopen.org/downloads/reference.pdf}
 \xml{/p}
 \xml{img align="left" src="GBBopen-logo.png"}
 \xml{br clear="both"}
@@ -892,25 +892,24 @@ creates any directories that are missing in the compiled-file directory tree.
 
 \ppar{Personal gbbopen-init.lisp file}
 
-\index{initialization, personal
-  gbbopen-init.lisp@\code{gbbopen-init.lisp} file}%
-\index{gbbopen-init.lisp@\code{gbbopen-init.lisp}, personal
-  initializations file}%
+\index{initialization, personal gbbopen-init.lisp@\code{gbbopen-init.lisp}
+  file}%
+\index{gbbopen-init.lisp@\code{gbbopen-init.lisp}, personal initializations
+  file}%
 \index{loading!user-specific module definitions}%
 \index{module definitions, loading user-specific}%
 \bfindexit{user-homedir-pathname}%
-If a \code{gbbopen-init.lisp} file (source or compiled) is present in
-the user's ``home'' directory (as defined by
-\textbf{user-homedir-pathname}), it is loaded by the
-\var{$<$install-directory\/$>$}\code{startup.lisp} file after the
-module facility and definitions have been loaded.  A personal
-\code{gbbopen-init.lisp} file is a handy mechanism for defining
-user-specific modules, application modules, GBBopen parameters, and
+If a \code{gbbopen-init.lisp} file (source or compiled) is present in the
+user's ``home'' directory (as defined by \textbf{user-homedir-pathname}), it
+is loaded by the \code{\var{<install-directory>\/}/startup.lisp} file after
+the module facility and definitions have been loaded.  A personal
+\code{\var{<homedir>\/}/gbbopen-init.lisp} file is a handy mechanism for
+defining user-specific modules, application modules, GBBopen parameters, and
 other personalizations.
 
-Here is a simple example of a personal \code{gbbopen-init.lisp} file
-that defines a root directory named \code{:my-app-root} and the module
-\code{:my-app}:
+Here is a simple example of a personal
+\code{\var{<homedir>\/}/gbbopen-init.lisp} file that defines a root directory
+named \code{:my-app-root} and the module \code{:my-app}:
 
 \begin{example}
   ;;;; -*- Mode:Common-Lisp; Package:CL-USER -*-
@@ -946,9 +945,10 @@ your Common Lisp image.
 \index{GBBopen!top-level (keyword) commands}%
 
 \index{SLIME!top-level keyword commands}%
-The file\var{$<$install-directory\/$>$}\code{gbbopen-init.lisp} is an
-alternative for \var{$<$install-directory\/$>$}\code{startup.lisp} that adds
-some handy GBBopen keyword commands to the top-level REPL listener for
+The file \code{\var{<install-directory>\/}/initiate.lisp} is an alternative
+for \code{\var{<install-directory>\/}/startup.lisp} that adds some handy
+GBBopen keyword commands to the top-level REPL listener for
+%
 \xsitelink{Allegro CL}{http://www.franz.com},
 \xsitelink{CLISP}{http://clisp.cons.org/},
 \xsitelink{Clozure CL}{http://trac.clozure.com/openmcl/},
@@ -958,26 +958,27 @@ some handy GBBopen keyword commands to the top-level REPL listener for
 \xsitelink{OpenMCL}{http://openmcl.clozure.com/},
 \xsitelink{SBCL}{http://sbcl.sourceforge.net} and
 \xsitelink{Scieneer CL}{http://www.scieneer.com/scl/}
-users.  Some interaction
-interfaces, such as \xsitelink{SLIME}{http://common-lisp.net/project/slime/},
-use their own REPL rather than the top-level listener
-provided by the Common Lisp implementation and, therefore, may not support
-keyword top-level command processing.  GBBopen does provide a swank extension
-in the \xsitelink{SLIME}{http://common-lisp.net/project/slime/} REPL that
-supports GBBopen keyword commands.
+%
+users.  Some interaction interfaces, such as
+\xsitelink{SLIME}{http://common-lisp.net/project/slime/}, use their own REPL
+rather than the top-level listener provided by the Common Lisp implementation
+and, therefore, may not support keyword top-level command processing.  GBBopen
+does provide a swank extension in the
+\xsitelink{SLIME}{http://common-lisp.net/project/slime/} REPL that supports
+GBBopen keyword commands.
 
 To make GBBopen keyword commands available, simply load
-\var{$<$install-directory\/$>$}\code{gbbopen-init.lisp} from your personal
-Common Lisp initialization file.  (You should not explicitly load the
-\var{$<$install-directory\/$>$}\code{startup.lisp} file when using
-\var{$<$install-directory\/$>$}\code{gbbopen-init.lisp}---it will handle the
-\var{$<$install-directory\/$>$}\code{startup.lisp} file loading for you.)
+\code{\var{<install-directory>\/}/initiate.lisp} from your personal Common
+Lisp initialization file.  (You should not explicitly load the
+\code{\var{<install-directory>\/}/startup.lisp} file when using
+\code{\var{<install-directory>\/}/initiate.lisp}---it will handle the
+\code{\var{<install-directory>\/}/startup.lisp} file loading for you at the
+appropriate time.)
 
 The standard GBBopen top-level commands are defined in the file
-\var{$<$install-directory\/$>$}\code{commands.lisp}. 
-In many Common Lisp implementations, top-level keyword commands that have
-arguments can be specified using either a list or a spread representation.
-For example:
+\code{\var{<install-directory>\/}/commands.lisp}.  In many Common Lisp
+implementations, top-level keyword commands that have arguments can be
+specified using either a list or a spread representation.  For example:
 
 \begin{example}
 > (:gbbopen-test :create-dirs)
@@ -1012,7 +1013,7 @@ You can add your own top-level commands by defining them in a personal
 \code{gbbopen-commands.lisp} file.  If a \code{gbbopen-commands} file (source
 or compiled) is present in the user's ``homedir'' home directory (as defined by
 \textbf{user-homedir-pathname}), it is loaded automatically by GBBopen's
-\code{gbbopen-init.lisp} file.  For example, the following personal
+\code{initiate.lisp} file.  For example, the following personal
 \code{gbbopen-commands.lisp} file defines a top-level keyword command (named
 \code{:my-app}) and an equivalent \glref{function} (\code{cl-user::my-app})
 for compiling and loading the \code{:my-app} module that was defined above:
@@ -1031,14 +1032,15 @@ for compiling and loading the \code{:my-app} module that was defined above:
   ;;; ===============================================
 \end{example}
 
-The macro \code{define-tll-command} and the \glref{function} \code{startup-module}
-that are used in this example are both defined in the file
-\var{$<$install-directory\/$>$}\code{gbbopen-init.lisp}.  Most GBBopen users
-prefer to have their Common Lisp initialization file load
-\var{$<$install-directory\/$>$}\code{gbbopen-init.lisp} rather than
-\var{$<$install-directory\/$>$}\code{startup.lisp} in order to use the
-standard keyword commands for GBBopen---and their own, personalized
-extensions---in the Lisp listener.
+The macro \code{define-tll-command} and the \glref{function}
+\code{startup-module} that are used in this example are both defined in the
+file \code{\var{<install-directory>\/}/initiate.lisp}.  Experienced GBBopen
+users prefer to have their Common Lisp initialization file load
+\code{\var{<install-directory>\/}/initiate.lisp} rather than
+\code{\var{<install-directory>\/}/startup.lisp} in order to use the standard
+keyword commands for GBBopen---and their own, personalized extensions---in the
+Lisp listener.  See the ``Enhancing Your Development Environment'' exercise in
+the GBBopen Tutorial for details.
 
 \ppar{Personal gbbopen-modules directory}
 \label{sec:personal-gbbopen-modules-directory}
@@ -1111,10 +1113,11 @@ personal \code{gbbopen-init.lisp} file.  Changing the default setting in
 \index{SLIME, and top-level keyword commands}%
 \xsitelink{Emacs}{http://www.gnu.org/software/emacs/emacs.html} access to the
 GBBopen Hyperdoc is provided by
-\var{$<$install-directory\/$>$}\code{/browse-hyperdoc.el}.  This file defines
-the interactive Emacs command \code{browse-hyperdoc} and binds it to
-\code{META-?}.  To enable this command, load \code{browse-hyperdoc.el} from
-your \code{.emacs} initialization file.
+\code{\var{<install-directory>\/}/browse-hyperdoc.el}.  This file defines the
+interactive Emacs command \code{browse-hyperdoc} and binds it to
+\code{META-?}.  To enable this command, load
+\code{\var{<install-directory>\/}/browse-hyperdoc.el} from your \code{.emacs}
+initialization file.
 
 If you already use the
 \xsitelink{hyperspec.el}{http://cvs.sourceforge.net/viewcvs.py/ilisp/ILISP/extra/hyperspec.el?rev=1.5&view=auto}
@@ -1212,7 +1215,7 @@ included in the preferred browser setting.
 
 \fnpackage \code{:common-lisp-user} (not exported)
 
-\fnmodule Defined in \code{gbbopen-init.lisp}
+\fnmodule Defined in \code{initiate.lisp}
 
 \fnargs
 \begin{args}{documentation}
@@ -1275,7 +1278,7 @@ yet loaded, and optionally set the current package.
 
 \fnpackage \code{:common-lisp-user} (not exported)
 
-\fnmodule Defined in \code{gbbopen-init.lisp}
+\fnmodule Defined in \code{initiate.lisp}
 
 \fnargs
 \begin{args}{package-name}
@@ -1346,22 +1349,24 @@ there are more complex open-source \textbf{defsystem} packages, such as ASDF
 (\xsitelink{http://www.weitz.de/asdf-install/}%
 {http://www.weitz.de/asdf-install/}), that are available.
 
-\index{initialization, personal
-  gbbopen-init.lisp@\code{gbbopen-init.lisp} file}%
-\index{gbbopen-init.lisp@\code{gbbopen-init.lisp}, personal
-  initializations file}%
+\index{initialization, personal gbbopen-init.lisp@\code{gbbopen-init.lisp}
+  file}%
+\index{gbbopen-init.lisp@\code{gbbopen-init.lisp}, personal initializations
+  file}%
 \index{loading!user-specific module definitions}%
 \index{module definitions, loading user-specific}%
 \bfindexit{user-homedir-pathname}%
 The \code{:mini-module} module is automatically loaded by the GBBopen
-\mbox{\var{$<$install-directory\/$>$}\code{startup.lisp}} file (via the
+\mbox{\code{\var{<install-directory>\/}/startup.lisp}} file (via the
 \code{mini-module-loader.lisp} file located in the \code{mini-module}
-subdirectory). If a \code{gbbopen-init.lisp} file (source or compiled)
-is present in the user's ``home'' directory, it is loaded immediately
-following the loading of the mini-module facility by the
-\code{startup.lisp} file.  A personal \code{gbbopen-init.lisp} file is
-very useful for defining user-specific modules, application modules,
-GBBopen parameters, and other personalizations
+subdirectory). If a \code{gbbopen-init.lisp} file (source or compiled) is
+present in the user's ``home'' directory, it is loaded immediately following
+the loading of the mini-module facility by the
+\code{\var{<install-directory>\/}/startup.lisp} file.  A personal
+\code{\var{<homedir>\/}/gbbopen-init.lisp} file is very useful for defining
+user-specific modules, application modules, GBBopen parameters, and other
+personalizations
+%
 \W\begin{iftex}
   (see \link{Section~\ref{sec:startup}}{sec:startup}).
 \W\end{iftex}
@@ -11676,7 +11681,7 @@ and then load a blackboard repository that was saved previously:
 \begin{example}
   > :tutorial-example :noautorun 
   > (load-blackboard-repository "tutorial")
-  #P"/Users/corkill/tutorial.bb"
+  #P"\var{<homedir>\/}/tutorial.bb"
   #<path 1>
 \end{example}
 %
@@ -11694,7 +11699,7 @@ Load the repository again, but without executing its
   > (load-blackboard-repository "tutorial" 
       :confirm-if-not-empty nil
       :ignore-after-loading-function 't)
-  #P"/Users/corkill/tutorial.bb"
+  #P"\var{<homedir>\/}/tutorial.bb"
 \end{example}
 %
 Define a new \glref{unit~class}, \code{new-location}, and then load the
@@ -11706,7 +11711,7 @@ repository again, translating all \code{location} \glref{unit~instances} to
   > (load-blackboard-repository "tutorial"
       :class-name-translations '((location . new-location))
       :confirm-if-not-empty nil)
-  #P"/Users/corkill/tutorial.bb"
+  #P"\var{<homedir>\/}/tutorial.bb"
   > :dsbb
 
   Space Instance                Contents
@@ -12057,7 +12062,7 @@ resulting blackboard repository:
   ;; Elapsed time: 0 seconds
   :quiescence
   > (save-blackboard-repository "tutorial" :package ':gbbopen-user)
-  #P"/Users/corkill/tutorial.bb"
+  #P"\var{<homedir>\/}/tutorial.bb"
 \end{example}
 
 \end{functiondoc}

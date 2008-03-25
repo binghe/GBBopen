@@ -62,18 +62,17 @@ creates any directories that are missing in the compiled-file directory tree.
 </p>
 <p><h4>Personal gbbopen-init.lisp file</h4>
 </p>
-<p><a name="id3">If</a> a <code>gbbopen-init.lisp</code> file (source or compiled) is present in
-the user's &#8220;home&#8221; directory (as defined by
-<b>user-homedir-pathname</b>), it is loaded by the
-<var><i>&lt;</i>install-directory<i>&gt;</i></var><code>startup.lisp</code> file after the
-module facility and definitions have been loaded.  A personal
-<code>gbbopen-init.lisp</code> file is a handy mechanism for defining
-user-specific modules, application modules, GBBopen parameters, and
+<p><a name="id3">If</a> a <code>gbbopen-init.lisp</code> file (source or compiled) is present in the
+user's &#8220;home&#8221; directory (as defined by <b>user-homedir-pathname</b>), it
+is loaded by the <code><var>&lt;install-directory&gt;</var>/startup.lisp</code> file after
+the module facility and definitions have been loaded.  A personal
+<code><var>&lt;homedir&gt;</var>/gbbopen-init.lisp</code> file is a handy mechanism for
+defining user-specific modules, application modules, GBBopen parameters, and
 other personalizations.
 </p>
-<p>Here is a simple example of a personal <code>gbbopen-init.lisp</code> file
-that defines a root directory named <code>:my-app-root</code> and the module
-<code>:my-app</code>:
+<p>Here is a simple example of a personal
+<code><var>&lt;homedir&gt;</var>/gbbopen-init.lisp</code> file that defines a root directory
+named <code>:my-app-root</code> and the module <code>:my-app</code>:
 </p>
 <pre>
   ;;;; -*- Mode:Common-Lisp; Package:CL-USER -*-
@@ -105,9 +104,9 @@ the <code>:my-app</code> module&mdash;even if GBBopen has not yet been loaded in
 your Common Lisp image.
 </p>
 <p><h4>GBBopen top-level commands</h4>
-<a name="id4">The</a> file<var><i>&lt;</i>install-directory<i>&gt;</i></var><code>gbbopen-init.lisp</code> is an
-alternative for <var><i>&lt;</i>install-directory<i>&gt;</i></var><code>startup.lisp</code> that adds
-some handy GBBopen keyword commands to the top-level REPL listener for
+<a name="id4">The</a> file <code><var>&lt;install-directory&gt;</var>/initiate.lisp</code> is an alternative
+for <code><var>&lt;install-directory&gt;</var>/startup.lisp</code> that adds some handy
+GBBopen keyword commands to the top-level REPL listener for
 <a target="_top" href="http://www.franz.com">Allegro CL</a>,
 <a target="_top" href="http://clisp.cons.org/">CLISP</a>,
 <a target="_top" href="http://trac.clozure.com/openmcl/">Clozure CL</a>,
@@ -117,26 +116,26 @@ some handy GBBopen keyword commands to the top-level REPL listener for
 <a target="_top" href="http://openmcl.clozure.com/">OpenMCL</a>,
 <a target="_top" href="http://sbcl.sourceforge.net">SBCL</a> and
 <a target="_top" href="http://www.scieneer.com/scl/">Scieneer CL</a>
-users.  Some interaction
-interfaces, such as <a target="_top" href="http://common-lisp.net/project/slime/">SLIME</a>,
-use their own REPL rather than the top-level listener
-provided by the Common Lisp implementation and, therefore, may not support
-keyword top-level command processing.  GBBopen does provide a swank extension
-in the <a target="_top" href="http://common-lisp.net/project/slime/">SLIME</a> REPL that
-supports GBBopen keyword commands.
+users.  Some interaction interfaces, such as
+<a target="_top" href="http://common-lisp.net/project/slime/">SLIME</a>, use their own REPL
+rather than the top-level listener provided by the Common Lisp implementation
+and, therefore, may not support keyword top-level command processing.  GBBopen
+does provide a swank extension in the
+<a target="_top" href="http://common-lisp.net/project/slime/">SLIME</a> REPL that supports
+GBBopen keyword commands.
 </p>
 <p>To make GBBopen keyword commands available, simply load
-<var><i>&lt;</i>install-directory<i>&gt;</i></var><code>gbbopen-init.lisp</code> from your personal
-Common Lisp initialization file.  (You should not explicitly load the
-<var><i>&lt;</i>install-directory<i>&gt;</i></var><code>startup.lisp</code> file when using
-<var><i>&lt;</i>install-directory<i>&gt;</i></var><code>gbbopen-init.lisp</code>&mdash;it will handle the
-<var><i>&lt;</i>install-directory<i>&gt;</i></var><code>startup.lisp</code> file loading for you.)
+<code><var>&lt;install-directory&gt;</var>/initiate.lisp</code> from your personal Common
+Lisp initialization file.  (You should not explicitly load the
+<code><var>&lt;install-directory&gt;</var>/startup.lisp</code> file when using
+<code><var>&lt;install-directory&gt;</var>/initiate.lisp</code>&mdash;it will handle the
+<code><var>&lt;install-directory&gt;</var>/startup.lisp</code> file loading for you at the
+appropriate time.)
 </p>
 <p>The standard GBBopen top-level commands are defined in the file
-<var><i>&lt;</i>install-directory<i>&gt;</i></var><code>commands.lisp</code>. 
-In many Common Lisp implementations, top-level keyword commands that have
-arguments can be specified using either a list or a spread representation.
-For example:
+<code><var>&lt;install-directory&gt;</var>/commands.lisp</code>.  In many Common Lisp
+implementations, top-level keyword commands that have arguments can be
+specified using either a list or a spread representation.  For example:
 </p>
 <pre>
 &gt; (:gbbopen-test :create-dirs)
@@ -165,7 +164,7 @@ used when top-level keyword processing is not fully supported.
 <code>gbbopen-commands.lisp</code> file.  If a <code>gbbopen-commands</code> file (source
 or compiled) is present in the user's &#8220;homedir&#8221; home directory (as defined by
 <b>user-homedir-pathname</b>), it is loaded automatically by GBBopen's
-<code>gbbopen-init.lisp</code> file.  For example, the following personal
+<code>initiate.lisp</code> file.  For example, the following personal
 <code>gbbopen-commands.lisp</code> file defines a top-level keyword command (named
 <code>:my-app</code>) and an equivalent <a href="ref-glossary.html#gl:function">function</a> (<code>cl-user::my-app</code>)
 for compiling and loading the <code>:my-app</code> module that was defined above:
@@ -183,14 +182,15 @@ for compiling and loading the <code>:my-app</code> module that was defined above
   ;;;   End of File
   ;;; ===============================================
 </pre>
-<p>The macro <code>define-tll-command</code> and the <a href="ref-glossary.html#gl:function">function</a> <code>startup-module</code>
-that are used in this example are both defined in the file
-<var><i>&lt;</i>install-directory<i>&gt;</i></var><code>gbbopen-init.lisp</code>.  Most GBBopen users
-prefer to have their Common Lisp initialization file load
-<var><i>&lt;</i>install-directory<i>&gt;</i></var><code>gbbopen-init.lisp</code> rather than
-<var><i>&lt;</i>install-directory<i>&gt;</i></var><code>startup.lisp</code> in order to use the
-standard keyword commands for GBBopen&mdash;and their own, personalized
-extensions&mdash;in the Lisp listener.
+<p>The macro <code>define-tll-command</code> and the <a href="ref-glossary.html#gl:function">function</a>
+<code>startup-module</code> that are used in this example are both defined in the
+file <code><var>&lt;install-directory&gt;</var>/initiate.lisp</code>.  Experienced GBBopen
+users prefer to have their Common Lisp initialization file load
+<code><var>&lt;install-directory&gt;</var>/initiate.lisp</code> rather than
+<code><var>&lt;install-directory&gt;</var>/startup.lisp</code> in order to use the standard
+keyword commands for GBBopen&mdash;and their own, personalized extensions&mdash;in the
+Lisp listener.  See the &#8220;Enhancing Your Development Environment&#8221; exercise in
+the GBBopen Tutorial for details.
 </p>
 <p><h4>Personal gbbopen-modules directory</h4>
 <a name="sec:personal-gbbopen-modules-directory"></a>
@@ -243,10 +243,11 @@ personal <code>gbbopen-init.lisp</code> file.  Changing the default setting in
 </p>
 <p><a name="id9"></a><a target="_top" href="http://www.gnu.org/software/emacs/emacs.html">Emacs</a> access to the
 GBBopen Hyperdoc is provided by
-<var><i>&lt;</i>install-directory<i>&gt;</i></var><code>/browse-hyperdoc.el</code>.  This file defines
-the interactive Emacs command <code>browse-hyperdoc</code> and binds it to
-<code>META-?</code>.  To enable this command, load <code>browse-hyperdoc.el</code> from
-your <code>.emacs</code> initialization file.
+<code><var>&lt;install-directory&gt;</var>/browse-hyperdoc.el</code>.  This file defines the
+interactive Emacs command <code>browse-hyperdoc</code> and binds it to
+<code>META-?</code>.  To enable this command, load
+<code><var>&lt;install-directory&gt;</var>/browse-hyperdoc.el</code> from your <code>.emacs</code>
+initialization file.
 </p>
 <p>If you already use the
 <a target="_top" href="http://cvs.sourceforge.net/viewcvs.py/ilisp/ILISP/extra/hyperspec.el?rev=1.5&amp;view=auto">hyperspec.el</a>

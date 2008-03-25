@@ -147,7 +147,7 @@ system
   :execution-function 'print-walk-ks-function)
 </pre>
 <p><li>The GBBopen environment setup using
-<code><var>&lt;install-dir&gt;</var>/gbbopen-init.lisp</code> as described in Steps 1 and 2
+<code><var>&lt;install-dir&gt;</var>/initiate.lisp</code> as described in Steps 1 and 2
 of the <a href="tutorial-development-environment.html">Enhancing Your Development Environment
 exercise</a>
 </ul>
@@ -161,7 +161,7 @@ directory</a>.  For example:
 </pre></font>
 <p>This is a special directory that is read by used by GBBopen to find
 applications when GBBopen is started using
-<code><var>&lt;install-dir&gt;</var>/gbbopen-init.lisp</code>, as described in Steps 1 and 2
+<code><var>&lt;install-dir&gt;</var>/initiate.lisp</code>, as described in Steps 1 and 2
 of the <a href="tutorial-development-environment.html">Enhancing Your Development Environment
 exercise</a>.
 </p>
@@ -182,7 +182,7 @@ directory in a later exercise.  Well, later has arrived.
 <p>Each GBBopen application is packaged in a directory that contains:
 </p>
 <p><ul class="tight"><li>a <code>modules.lisp</code> file that contains module definitions (loaded
-after the personal <code><var>&lt;install-dir&gt;</var>/gbbopen-init.lisp</code> file if
+after the personal <code>gbbopen-init.lisp</code> file if
 there is one in the user's &#8220;homedir&#8221;)
 <li>a directory named <code>source</code> containing all the source files for the
 module or application
@@ -266,7 +266,7 @@ the following files should be loaded:
 </p>
 <pre><font color="#666666">     ...
   ;; Loading <var>&lt;homedir&gt;</var>/shared-init.lisp
-  ;;   Loading <var>&lt;install-dir&gt;</var>/gbbopen-init.lisp
+  ;;   Loading <var>&lt;install-dir&gt;</var>/initiate.lisp
   ;;     Loading <var>&lt;install-dir&gt;</var>/extended-repl.lisp
   ;;     Loading <var>&lt;install-dir&gt;</var>/commands.lisp
   ;;     Loading <var>&lt;install-dir&gt;</var>/gbbopen-modules-directory.lisp
@@ -275,7 +275,7 @@ the following files should be loaded:
 </pre></font>
 <p>Note that some basic GBBopen initialization files have been loaded for us (but
 no command definitions yet) and that GBBopen itself (or even the Mini Module
-system) are not loaded by <code><var>&lt;install-dir&gt;</var>/gbbopen-init.lisp</code>.
+system) are not loaded by <code><var>&lt;install-dir&gt;</var>/initiate.lisp</code>.
 </p>
 <p>Now, instead of loading the <code>:agenda-shell-user</code> module, let's load only
 the <code>:mini-module-user</code> module:
@@ -380,7 +380,7 @@ the following files should be loaded:
 </p>
 <pre><font color="#666666">     ...
   ;; Loading <var>&lt;homedir&gt;</var>/shared-init.lisp
-  ;;   Loading <var>&lt;install-dir&gt;</var>/gbbopen-init.lisp
+  ;;   Loading <var>&lt;install-dir&gt;</var>/initiate.lisp
   ;;     Loading <var>&lt;install-dir&gt;</var>/extended-repl.lisp
   ;;     Loading <var>&lt;install-dir&gt;</var>/commands.lisp
   ;;     Loading <var>&lt;install-dir&gt;</var>/gbbopen-modules-directory.lisp
@@ -389,7 +389,7 @@ the following files should be loaded:
   cl-user&gt;
 </pre></font>
 <p>Note that the <code>commands.lisp</code> file from the <code>tutorial</code> directory has
-been loaded by <code><var>&lt;install-dir&gt;</var>/gbbopen-init.lisp</code>.
+been loaded by <code><var>&lt;install-dir&gt;</var>/initiate.lisp</code>.
 </p>
 <p>Now, we can compile and load the <code>:tutorial</code> module by simply issuing the
 <code>:tutorial</code> REPL command:

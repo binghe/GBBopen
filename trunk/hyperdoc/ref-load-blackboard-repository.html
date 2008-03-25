@@ -96,7 +96,7 @@ and then load a blackboard repository that was saved previously:
 <pre>
   &gt; :tutorial-example :noautorun 
   &gt; (load-blackboard-repository "tutorial")
-  #P"/Users/corkill/tutorial.bb"
+  #P"<var>&lt;homedir&gt;</var>/tutorial.bb"
   #&lt;path 1&gt;
 </pre>
 <p>Try loading the repository again:
@@ -114,7 +114,7 @@ and then load a blackboard repository that was saved previously:
   &gt; (load-blackboard-repository "tutorial" 
       :confirm-if-not-empty nil
       :ignore-after-loading-function 't)
-  #P"/Users/corkill/tutorial.bb"
+  #P"<var>&lt;homedir&gt;</var>/tutorial.bb"
 </pre>
 <p>Define a new <a href="ref-glossary.html#id181">unit&nbsp;class</a>, <code>new-location</code>, and then load the
 repository again, translating all <code>location</code> <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a> to
@@ -126,7 +126,7 @@ repository again, translating all <code>location</code> <a href="ref-glossary.ht
   &gt; (load-blackboard-repository "tutorial"
       :class-name-translations '((location . new-location))
       :confirm-if-not-empty nil)
-  #P"/Users/corkill/tutorial.bb"
+  #P"<var>&lt;homedir&gt;</var>/tutorial.bb"
   &gt; :dsbb
 
   Space Instance                Contents

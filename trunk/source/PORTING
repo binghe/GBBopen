@@ -9,7 +9,7 @@ If you building GBBopen for a new CL implementation, please e-mail the
 modifications to the GBBopen Project for inclusion in future releases.
 
 ==============================================================================
-../gbbopen-init.lisp
+../initiate.lisp
   - implementation-specific define-tll-command semantics (optional)
 ------------------------------------------------------------------------------
 mini-module/mini-module-loader.lisp

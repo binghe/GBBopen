@@ -120,8 +120,8 @@ permission to the compiled GBBopen directories, you should compile all of
 the GBBopen modules whenever you install or update GBBopen.  To compile all
 GBBopen modules, perform the following in a fresh Common Lisp environment:
 
-   > (load "<install-dir>/gbbopen-init.lisp")
-   ;; Loading <install-dir>/gbbopen-init.lisp
+   > (load "<install-dir>/initiate.lisp")
+   ;; Loading <install-dir>/initiate.lisp
    ;;  Loading <install-dir>/extended-repl.lisp
    ;;  Loading <install-dir>/gbbopen-toplevel-commands.lisp
    t
@@ -148,14 +148,14 @@ Some Useful Things
 
 (You did work through the GBBopen Tutorial, didn't you?)
 
-The file <install-directory>gbbopen-init.lisp is an alternative for
+The file <install-directory>/initiate.lisp is an alternative for
 <install-directory>startup.lisp that adds some handy GBBopen keyword commands
 to the top-level listener for Allegro CL, CLISP, Clozure CL, CMUCL, SCL, ECL,
 Lispworks, OpenMCL, SLIME, and SBCL users and defines equivalent functions (in
 the :common-lisp-user package) on all Common Lisp implementations.  Simply
-load gbbopen-init.lisp from your personal Common Lisp initialization file.
+load initiate.lisp from your personal Common Lisp initialization file.
 (You do not need to explicitly load the startup.lisp file when using
-gbbopen-init.lisp--it will handle the loading of startup.lisp for you.)
+initiate.lisp--it will handle the loading of startup.lisp for you.)
 
 
 Personal gbbopen-init.lisp file
@@ -173,7 +173,7 @@ Personal gbbopen-commands.lisp file
 
 If a gbbopen-commands.lisp file (source or compiled) is present in the user's
 "home" directory, it is loaded at the end of loading the
-<install-directory>gbbopen-init.lisp file and gbbopen-modules directory files.
+<install-directory>initiate.lisp file and gbbopen-modules directory files.
 A personal gbbopen-commands file is useful for defining user-specific
 top-level (REPL) commands for compiling and loading user-specific modules and
 other common activities.  See the "Starting Up" section in the GBBopen

@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/gbbopen/startup.lisp *-*
+;;;; *-* File: /usr/local/gbbopen/startup.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Dec 19 04:37:44 2007 *-*
-;;;; *-* Machine: ruby.corkills.org *-*
+;;;; *-* Last-Edit: Tue Mar 25 11:31:30 2008 *-*
+;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2002-2007, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2008, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;;  For GBBopen porting information, refer to the file PORTING.
@@ -26,10 +26,10 @@
 ;;;  07-08-02 File Created.  (Corkill)
 ;;;  04-14-04 Added MCL feature hacking to keep things simpler 
 ;;;           throughout.  (Corkill)
-;;;  06-09-04 Added <home-dir>gbbopen-init.lisp file loading. (Corkill)
+;;;  06-09-04 Added <homedir>/gbbopen-init.lisp file loading. (Corkill)
 ;;;  06-10-04 Moved the :gbbopen package definition here (from
 ;;;           gbbopen/preamble.lisp) to facilitate setting GBBopen parameters
-;;;           in a user's <home-dir>gbbopen-init.lisp file.  (Corkill)
+;;;           in a user's <homedir>/gbbopen-init.lisp file.  (Corkill)
 ;;;  06-08-05 Added CLISP support.  (sds)
 ;;;  09-28-05 Added *preferred-browser*.  (Corkill)
 ;;;  03-11-06 Added *mini-module-compile-verbose* and 
@@ -86,7 +86,7 @@
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Define the :gbbopen-tools and :gbbopen packages here, to allow a user to
-;;;  set GBBopen parameters in their <user-homedir>gbbopen-init.lisp file
+;;;  set GBBopen parameters in their <homedir>/gbbopen-init.lisp file
 ;;;  (loaded below):
 
 (unless (find-package :gbbopen-tools)
