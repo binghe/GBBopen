@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
-;;;; *-* File: /usr/local/gbbopen/current/gbbopen.asd *-*
+;;;; *-* File: /usr/local/gbbopen/gbbopen.asd *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Mar 23 10:55:05 2008 *-*
-;;;; *-* Machine: cyclone.local *-*
+;;;; *-* Last-Edit: Tue Mar 25 11:38:54 2008 *-*
+;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -34,7 +34,7 @@
 
 (let ((truename *load-truename*))
   (load (make-pathname 
-	 :name "gbbopen-init"
+	 :name "initiate"
 	 :type "lisp"
 	 :defaults truename))
   (defparameter *gbbopen-version*

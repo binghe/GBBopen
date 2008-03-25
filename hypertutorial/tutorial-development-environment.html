@@ -48,7 +48,7 @@ to <code>:gbbopen-user</code>.  We can set up our Common Lisp environment so tha
 can do this (and eventually compile and load our random-walk application) by
 issuing only a single command.
 </p>
-<p>The file <code><var>&lt;install-dir&gt;</var>/gbbopen-init.lisp</code> is an
+<p>The file <code><var>&lt;install-dir&gt;</var>/initiate.lisp</code> is an
 alternative for <code><var>&lt;install-dir&gt;</var>/startup.lisp</code> that adds
 handy GBBopen keyword commands to the top-level REPL listener for
 <a target="_top" href="http://www.franz.com">Allegro CL</a>,
@@ -68,12 +68,12 @@ provided by Common Lisp, may not support keyword top-level command processing
 (see below).
 </p>
 <p>To make these GBBopen keyword commands available, simply load the file
-<code><var>&lt;install-dir&gt;</var>/gbbopen-init.lisp</code> rather than
+<code><var>&lt;install-dir&gt;</var>/initiate.lisp</code> rather than
 <code><var>&lt;install-dir&gt;</var>/startup.lisp</code>.  Let's try it.  Start up a fresh
 Common Lisp session and enter the following form in the REPL:
 </p>
-<pre><font color="#666666">  cl-user&gt; <font color="#000000">(load "<var>&lt;install-dir&gt;</var>/gbbopen-init.lisp")</font>
-  ;; Loading <var>&lt;install-dir&gt;</var>/gbbopen-init.lisp
+<pre><font color="#666666">  cl-user&gt; <font color="#000000">(load "<var>&lt;install-dir&gt;</var>/initiate.lisp")</font>
+  ;; Loading <var>&lt;install-dir&gt;</var>/initiate.lisp
   ;;  Loading <var>&lt;install-dir&gt;</var>/extended-repl.lisp
   ;;  Loading <var>&lt;install-dir&gt;</var>/commands.lisp
   t
@@ -105,7 +105,7 @@ option.
 <h3><a name="id3">If it didn't work<i>...</i></a></h3><p>
 If you are running GBBopen in a Common Lisp environment that doesn't support
 top-level REPL commands and the <b>:gbbopen-user</b> REPL command didn't
-work, all is not lost.  Loading <code><var>&lt;install-dir&gt;</var>/gbbopen-init.lisp</code>
+work, all is not lost.  Loading <code><var>&lt;install-dir&gt;</var>/initiate.lisp</code>
 also defines functions in the <code>:common-lisp-user</code> package with the same
 name as the REPL command:
 </p>
@@ -163,7 +163,7 @@ requires arguments.
 </p>
 <h2><a name="id5">Step 2: Customizing your Common Lisp initialization file</a></h2><p>
 I'm lazy and would rather not have to explicitly load the
-<code><var>&lt;install-dir&gt;</var>/gbbopen-init.lisp</code> file each time I start a new
+<code><var>&lt;install-dir&gt;</var>/initiate.lisp</code> file each time I start a new
 Common Lisp session.  So, I have my Common Lisp's initialization file load it
 for me.  To make it easy to similarly customize different Common Lisp
 implementations, I use the following strategy:
@@ -184,17 +184,17 @@ containing the following:
 (let ((defaults *load-truename*))
   (load (make-pathname 
          ;; where GBBopen is installed:
-         :directory '(:absolute <font color="#ff0000">"home" "gbbopen"</font>)
-         :name "gbbopen-init"
+         :directory '(:absolute <font color="#ff0000">"usr" "local" "gbbopen"</font>)
+         :name "initiate"
          :type "lisp"
          :defaults defaults)))
 </pre>
-<p>The <code>:directory</code> argument to <code>make-pathname</code> is a Common
-Lisp <i>absolute pathname</i> that is portable across all operating
-systems.  I installed my GBBopen in <code>/home/gbbopen/</code>, and I
-specified this with the <code>"home"</code> and <code>"gbbopen"</code> elements in
-the <code>:directory</code> argument.  Change these elements as appropriate
-for the location of your GBBopen installation.
+<p>The <code>:directory</code> argument to <code>make-pathname</code> is a Common Lisp
+<i>absolute pathname</i> that is portable across all operating systems.  I
+installed my GBBopen in <code>/usr/local/gbbopen/</code>, and I specified this with
+the <code>"usr"</code>, <code>"local"</code>, and <code>"gbbopen"</code> elements in the
+<code>:directory</code> argument.  Change these elements as appropriate for the
+location of your GBBopen installation.
 </p>
 </li><li>For each Common Lisp implementation that I use, I create a personal
 initialization file that performs any implementation-specific
@@ -332,7 +332,7 @@ initialization file:
 ;; GBBopen hyperdoc (where GBBopen was installed):
 (load "<var>&lt;install-dir&gt;</var>/browse-hyperdoc")
 </pre>
-<p>If there is no <code>.emacs</code> file present in your &#8220;home&#8221; directory, simply
+<p>If there is no <code>.emacs</code> file present in your home directory, simply
 create one containing the above command. Once again, Windows users need to
 worry about where Emacs looks for their &#8220;home&#8221; directory.
 </p>
@@ -372,7 +372,7 @@ value of <code>common-lisp-hyperspec-root</code> in my <code>.emacs</code> initi
 file to a URL that points to my local copy of the HyperSpec:
 </p>
 <pre>
-(setf common-lisp-hyperspec-root "file:/home/CLHS/")
+(setf common-lisp-hyperspec-root "file:/usr/local/CLHS/")
 </pre>
 <h3><a name="id9">Non-Emacs access</a></h3><p>
 If you are not using an Emacs-based environment, GBBopen provides a Common

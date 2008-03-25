@@ -1,7 +1,7 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/tutorial.tex *-*
-%% *-* Last-Edit: Mon Mar 24 11:00:36 2008; Edited-By: cork *-*
-%% *-* Machine: cyclone.local *-*
+%% *-* Last-Edit: Tue Mar 25 11:15:26 2008; Edited-By: cork *-*
+%% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2005-2008, Dan Corkill <corkill@GBBopen.org>
 %% Part of the GBBopen Project (see LICENSE for license information).
@@ -755,8 +755,8 @@ installation, they must start up Common Lisp and then evaluate the following
 two expressions:
 %
 \begin{example}\color{darkergray}%
-  cl-user> \textcolor{black}{(load "\var{<install-dir\/>}/gbbopen-init.lisp")}
-  ;; Loading \var{<install-dir\/>}/gbbopen-init.lisp
+  cl-user> \textcolor{black}{(load "\var{<install-dir\/>}/initiate.lisp")}
+  ;; Loading \var{<install-dir\/>}/initiate.lisp
   ;;  Loading \var{<install-dir\/>}/extended-repl.lisp
   ;;  Loading \var{<install-dir\/>}/commands.lisp
   t
@@ -1934,7 +1934,7 @@ to \code{:gbbopen-user}.  We can set up our Common Lisp environment so that we
 can do this (and eventually compile and load our random-walk application) by
 issuing only a single command.
 
-The file \code{\var{<install-dir>\/}/gbbopen-init.lisp} is an
+The file \code{\var{<install-dir>\/}/initiate.lisp} is an
 alternative for \code{\var{<install-dir>\/}/startup.lisp} that adds
 handy GBBopen keyword commands to the top-level REPL listener for
 \xsitelink{Allegro CL}{http://www.franz.com},
@@ -1954,13 +1954,13 @@ provided by Common Lisp, may not support keyword top-level command processing
 (see below).
 
 To make these GBBopen keyword commands available, simply load the file
-\code{\var{<install-dir>\/}/gbbopen-init.lisp} rather than
+\code{\var{<install-dir>\/}/initiate.lisp} rather than
 \code{\var{<install-dir>\/}/startup.lisp}.  Let's try it.  Start up a fresh
 Common Lisp session and enter the following form in the REPL:
 %
 \begin{example}\color{darkergray}%
-  cl-user> \textcolor{black}{(load "\var{<install-dir\/>}/gbbopen-init.lisp")}
-  ;; Loading \var{<install-dir\/>}/gbbopen-init.lisp
+  cl-user> \textcolor{black}{(load "\var{<install-dir\/>}/initiate.lisp")}
+  ;; Loading \var{<install-dir\/>}/initiate.lisp
   ;;  Loading \var{<install-dir\/>}/extended-repl.lisp
   ;;  Loading \var{<install-dir\/>}/commands.lisp
   t
@@ -1998,7 +1998,7 @@ option.
 
 If you are running GBBopen in a Common Lisp environment that doesn't support
 top-level REPL commands and the \textbf{:gbbopen-user} REPL command didn't
-work, all is not lost.  Loading \code{\var{<install-dir>\/}/gbbopen-init.lisp}
+work, all is not lost.  Loading \code{\var{<install-dir>\/}/initiate.lisp}
 also defines functions in the \code{:common-lisp-user} package with the same
 name as the REPL command:
 %
@@ -2067,7 +2067,7 @@ requires arguments.
 \subsection*{Step 2: Customizing your Common Lisp initialization file}
 
 I'm lazy and would rather not have to explicitly load the
-\code{\var{<install-dir>\/}/gbbopen-init.lisp} file each time I start a new
+\code{\var{<install-dir>\/}/initiate.lisp} file each time I start a new
 Common Lisp session.  So, I have my Common Lisp's initialization file load it
 for me.  To make it easy to similarly customize different Common Lisp
 implementations, I use the following strategy:
@@ -2090,18 +2090,18 @@ implementations, I use the following strategy:
 (let ((defaults *load-truename*))
   (load (make-pathname 
          ;; where GBBopen is installed:
-         :directory '(:absolute \textcolor{red}{"home" "gbbopen"})
-         :name "gbbopen-init"
+         :directory '(:absolute \textcolor{red}{"usr" "local" "gbbopen"})
+         :name "initiate"
          :type "lisp"
          :defaults defaults)))
 \end{example}
 
-The \code{:directory} argument to \code{make-pathname} is a Common
-Lisp \textit{absolute pathname} that is portable across all operating
-systems.  I installed my GBBopen in \code{/home/gbbopen/}, and I
-specified this with the \code{"home"} and \code{"gbbopen"} elements in
-the \code{:directory} argument.  Change these elements as appropriate
-for the location of your GBBopen installation.
+The \code{:directory} argument to \code{make-pathname} is a Common Lisp
+\textit{absolute pathname} that is portable across all operating systems.  I
+installed my GBBopen in \code{/usr/local/gbbopen/}, and I specified this with
+the \code{"usr"}, \code{"local"}, and \code{"gbbopen"} elements in the
+\code{:directory} argument.  Change these elements as appropriate for the
+location of your GBBopen installation.
 
 \item For each Common Lisp implementation that I use, I create a personal
   initialization file that performs any implementation-specific
@@ -2241,7 +2241,7 @@ initialization file:
 (load "\var{<install-dir\/>}/browse-hyperdoc")
 \end{example}
 
-If there is no \code{.emacs} file present in your ``home'' directory, simply
+If there is no \code{.emacs} file present in your home directory, simply
 create one containing the above command. Once again, Windows users need to
 worry about where Emacs looks for their ``home'' directory.
 
@@ -2283,7 +2283,7 @@ value of \code{common-lisp-hyperspec-root} in my \code{.emacs} initialization
 file to a URL that points to my local copy of the HyperSpec:
 %
 \begin{example}
-(setf common-lisp-hyperspec-root "file:/home/CLHS/")
+(setf common-lisp-hyperspec-root "file:/usr/local/CLHS/")
 \end{example}
 
 \subsubsection*{Non-Emacs access}
@@ -4900,7 +4900,7 @@ This exercise shows you how to:
 \end{example}
 
 \item The GBBopen environment setup using
-  \code{\var{<install-dir>\/}/gbbopen-init.lisp} as described in Steps 1 and 2
+  \code{\var{<install-dir>\/}/initiate.lisp} as described in Steps 1 and 2
   of the \reflink{Enhancing Your Development Environment
     exercise}{sec:environment}
 \end{tightitemize}
@@ -4917,7 +4917,7 @@ Create a directory named \code{gbbopen-modules} in your \reflink{``homedir''
 %
 This is a special directory that is read by used by GBBopen to find
 applications when GBBopen is started using
-\code{\var{<install-dir>\/}/gbbopen-init.lisp}, as described in Steps 1 and 2
+\code{\var{<install-dir>\/}/initiate.lisp}, as described in Steps 1 and 2
 of the \reflink{Enhancing Your Development Environment
   exercise}{sec:environment}.
 
@@ -4941,7 +4941,7 @@ directory in a later exercise.  Well, later has arrived.
 Each GBBopen application is packaged in a directory that contains:
 \begin{tightitemize}
 \item a \code{modules.lisp} file that contains module definitions (loaded
-  after the personal \code{\var{<install-dir>\/}/gbbopen-init.lisp} file if
+  after the personal \code{gbbopen-init.lisp} file if
   there is one in the user's ``homedir'')
 \item a directory named \code{source} containing all the source files for the
   module or application
@@ -5035,7 +5035,7 @@ the following files should be loaded:
 \begin{example}\color{darkergray}%
      ...
   ;; Loading \var{<homedir\/>}/shared-init.lisp
-  ;;   Loading \var{<install-dir\/>}/gbbopen-init.lisp
+  ;;   Loading \var{<install-dir\/>}/initiate.lisp
   ;;     Loading \var{<install-dir\/>}/extended-repl.lisp
   ;;     Loading \var{<install-dir\/>}/commands.lisp
   ;;     Loading \var{<install-dir\/>}/gbbopen-modules-directory.lisp
@@ -5045,7 +5045,7 @@ the following files should be loaded:
 
 Note that some basic GBBopen initialization files have been loaded for us (but
 no command definitions yet) and that GBBopen itself (or even the Mini Module
-system) are not loaded by \code{\var{<install-dir>\/}/gbbopen-init.lisp}.
+system) are not loaded by \code{\var{<install-dir>\/}/initiate.lisp}.
 
 Now, instead of loading the \code{:agenda-shell-user} module, let's load only
 the \code{:mini-module-user} module:
@@ -5163,7 +5163,7 @@ the following files should be loaded:
 \begin{example}\color{darkergray}%
      ...
   ;; Loading \var{<homedir\/>}/shared-init.lisp
-  ;;   Loading \var{<install-dir\/>}/gbbopen-init.lisp
+  ;;   Loading \var{<install-dir\/>}/initiate.lisp
   ;;     Loading \var{<install-dir\/>}/extended-repl.lisp
   ;;     Loading \var{<install-dir\/>}/commands.lisp
   ;;     Loading \var{<install-dir\/>}/gbbopen-modules-directory.lisp
@@ -5173,7 +5173,7 @@ the following files should be loaded:
 \end{example}
 
 Note that the \code{commands.lisp} file from the \code{tutorial} directory has
-been loaded by \code{\var{<install-dir>\/}/gbbopen-init.lisp}.
+been loaded by \code{\var{<install-dir>\/}/initiate.lisp}.
 
 Now, we can compile and load the \code{:tutorial} module by simply issuing the
 \code{:tutorial} REPL command:

@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/current/gbbopen-modules-directory.lisp *-*
+;;;; *-* File: /usr/local/gbbopen/gbbopen-modules-directory.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Dec 27 10:03:39 2007 *-*
-;;;; *-* Machine: whirlwind.corkills.org *-*
+;;;; *-* Last-Edit: Tue Mar 25 11:30:07 2008 *-*
+;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -14,15 +14,15 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2006-2007, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2006-2008, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
-;;;   This file is loaded by gbbopen-init.lisp (and optionally by startup.lisp)
+;;;   This file is loaded by initiate.lisp (and optionally by startup.lisp)
 ;;;   to process personal gbbopen-modules directory items:
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
-;;;  12-08-02 Split out from startup.lisp and gbbopen-init.lisp.  (Corkill)
+;;;  12-08-02 Split out from startup.lisp and initiate.lisp.  (Corkill)
 ;;;  06-20-06 Add "pseudo symbolic-link" support (for operating systems that
 ;;;           do not provide symbolic links).  (Corkill)
 ;;;
