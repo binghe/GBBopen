@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/source/tools/print-object-for.lisp *-*
+;;;; *-* File: /usr/local/gbbopen/source/tools/print-object-for.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Feb 17 14:38:25 2008 *-*
-;;;; *-* Machine: whirlwind.corkills.org *-*
+;;;; *-* Last-Edit: Tue Mar 25 04:58:28 2008 *-*
+;;;; *-* Machine: cyclone.local *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -32,11 +32,18 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(*print-object-for-sending*
             *save/send-references-only*
+            *warn-about-nonportable-saving/sending* ; not yet documented
             omitted-slots-for-saving/sending
             print-object-for-saving/sending
             print-slot-for-saving/sending
             unable-to-save/send-object-error ; not documented
             with-saving/sending-block)))
+
+;;; ---------------------------------------------------------------------------
+;;;  Control warnings when:
+;;;    1. a hash-table with a non-standard test is saved/sent
+
+(defvar *warn-about-nonportable-saving/sending* 't)
 
 ;;; ---------------------------------------------------------------------------
 
@@ -319,9 +326,13 @@
   (let ((keys-and-values-hash-table? 
          #+allegro (excl:hash-table-values hash-table)
          #-has-keys-only-hash-tables
-         't))
+         't)
+        (hash-table-test (hash-table-test hash-table)))
+    (unless (and *warn-about-nonportable-saving/sending*
+                 (memq hash-table-test '(eq eql equal equalp)))
+      (warn "Hash-table-test ~s is not portable." hash-table-test))
     (format stream "#GH(~s ~s ~s"
-            (hash-table-test hash-table)
+            hash-table-test
             (hash-table-count hash-table)
             keys-and-values-hash-table?)
     (maphash 
