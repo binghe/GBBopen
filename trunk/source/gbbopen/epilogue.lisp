@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/epilogue.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Mar  9 07:28:38 2008 *-*
-;;;; *-* Machine: vagabond.cs.umass.edu *-*
+;;;; *-* Last-Edit: Tue Mar 25 05:30:44 2008 *-*
+;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -222,11 +222,11 @@
           (until (eq eof-marker (read file nil eof-marker))))
         ;; Return the pathname and values from executing the
         ;; after-loading-function:
-        (values-list
-         (cons (pathname file)
+        (apply #'values
+               (pathname file)
                (when (and after-loading-function
                           (not ignore-after-loading-function))
-                 (multiple-value-list (funcall after-loading-function )))))))))
+                 (multiple-value-list (funcall after-loading-function))))))))
   
 ;;; ===========================================================================
 ;;;  GBBopen is fully loaded
