@@ -10,11 +10,11 @@ Requirements:
 
        Allegro CL   Version 8.1
        CLISP        Version 2.44.1
-       Clozure CL   Version 1.1 (r8575)
+       Clozure CL   Version 1.1 (r8902)
        CMUCL        Version 19D and 19E-pre
        Digitool MCL Version 5.1
        ECL          Version 0.9j (configure with --enable-threads if possible)
-       Lispworks    Version 5.0.2
+       Lispworks    Version 5.1
        OpenMCL      Version 1.0
        SBCL         Version 1.0.15 (use sb-threads if possible)
        Scieneer CL  Version 1.3.2
@@ -29,13 +29,13 @@ Requirements:
    See PORTING for information on porting GBBopen to other Common Lisp
    implementations.
 
-Current Status Notes (March 3, 2008):
+Current Status Notes (March 27, 2008):
 
- - Implementation work is progressing on a regular basis.  See the list
-   of pending development activities maintained on the "What's New"
-   page on the GBBopen Project web site (http://GBBopen.org/) for the
-   latest information.  GBBopen users are encouraged to update their
-   GBBopen installation frequently.
+ - Implementation work is progressing on a regular basis.  See the list of
+   pending development activities maintained on the "Development Activities"
+   page on the GBBopen Project web site (http://GBBopen.org/) for the latest
+   information.  GBBopen users are encouraged to update their GBBopen sources
+   frequently.
 
 
 STEP 1: Getting GBBopen
@@ -129,7 +129,7 @@ GBBopen modules, perform the following in a fresh Common Lisp environment:
    ;; Loading <install-dir>/startup.lisp
       ...
    ;;; GBBopen module compilation completed.
-   >
+   [Common Lisp will exit]
 
 All GBBopen modules should compile without error.
 
@@ -173,11 +173,12 @@ Personal gbbopen-commands.lisp file
 
 If a gbbopen-commands.lisp file (source or compiled) is present in the user's
 "home" directory, it is loaded at the end of loading the
-<install-directory>initiate.lisp file and gbbopen-modules directory files.
-A personal gbbopen-commands file is useful for defining user-specific
-top-level (REPL) commands for compiling and loading user-specific modules and
-other common activities.  See the "Starting Up" section in the GBBopen
-Reference Manual for details.
+<install-directory>initiate.lisp file and gbbopen-modules directory files.  A
+personal gbbopen-commands file is useful for defining user-specific top-level
+(REPL) commands for common application-independent activities.  See the
+"Starting Up" section in the GBBopen Reference Manual for details.
+Application-specific commands should be defined in separate application
+"commands.lisp" files (see next paragraph).
 
 
 Personal gbbopen-modules directory
@@ -247,6 +248,3 @@ to committed enhancements (it won't buy lunch, but we're happy to provide a
 morsel of acknowledgment).
 
 ==============================================================================
-
-
-
