@@ -2,9 +2,15 @@
                                     Bugs
                                     ----
 
-instances.lisp
+No priority bugs at this time
 
- * link slots need special handling in reinitialize-instance and change-class
+
+                                  Small Tasks
+                                  ----------
+
+* Improve define-tll-command SLIME support
+* Add LispWorks "heavy-allocation" support to with-reading-saved/sent-objects
+* Add LispWorks 5.1 symeval-in-process support to Portable Threads
 
 
                                   Immediate
@@ -39,7 +45,7 @@ storage.lisp
 
 
 			     Future Enhancements
-                             -------------------
+                             -----------------
 
 space.lisp
 
