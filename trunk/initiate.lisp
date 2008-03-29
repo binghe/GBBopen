@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/initiate.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Mar 25 11:33:04 2008 *-*
+;;;; *-* Last-Edit: Sat Mar 29 05:26:53 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -50,6 +50,7 @@
 ;;;           available.  (Corkill)
 ;;;  04-07-06 Added gbbopen-modules directory support.  (Corkill)
 ;;;  03-25-08 Renamed to more intuitive initiate.lisp.  (Corkill)
+;;;  03-29-08 Add process-gbbopen-modules-directory rescanning.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -75,11 +76,16 @@
 
 (let ((truename *load-truename*))
   (defun startup-gbbopen ()
-    (unless *gbbopen-startup-loaded*
-      (load (make-pathname 
-	     :name "startup"
-	     :type "lisp"
-	     :defaults truename)))))
+    (cond 
+     ;; Scan for changes if startup.lisp has been loaded:
+     (*gbbopen-startup-loaded* 
+      (funcall 'process-gbbopen-modules-directory "commands" 't)
+      (funcall 'process-gbbopen-modules-directory "modules" 't))
+     ;; Load startup.lisp:
+     (t (load (make-pathname 
+               :name "startup"
+               :type "lisp"
+               :defaults truename))))))
 
 ;;; ---------------------------------------------------------------------------
 

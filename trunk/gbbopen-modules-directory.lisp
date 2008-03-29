@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/gbbopen-modules-directory.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Mar 25 11:30:07 2008 *-*
+;;;; *-* Last-Edit: Sat Mar 29 05:34:38 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -25,10 +25,15 @@
 ;;;  12-08-02 Split out from startup.lisp and initiate.lisp.  (Corkill)
 ;;;  06-20-06 Add "pseudo symbolic-link" support (for operating systems that
 ;;;           do not provide symbolic links).  (Corkill)
+;;;  03-29-08 Add process-gbbopen-modules-directory rescanning.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 (in-package :common-lisp-user)
+
+;;; ---------------------------------------------------------------------------
+
+(defvar *loaded-gbbopen-modules-directory-files* nil)
 
 ;;; ---------------------------------------------------------------------------
 
@@ -67,7 +72,7 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun process-gbbopen-modules-directory (filename)
+(defun process-gbbopen-modules-directory (filename &optional load-only-if-new)
   (let* ((user-homedir-pathname
 	  ;; CMUCL uses a search list in (user-homedir-pathname), so we must
 	  ;; fixate it using truename before proceeding:
@@ -103,28 +108,50 @@
            (directory subdirs-pathname :directories 't)
            ;; Add in any *.sym file "pseudo" symbolic links:
 	   (mapcan 'read-target-directory-specification
-		   pseudo-sym-link-paths))))
-    (when module-dirs
-      (format t "~&;; Loading ~a from ~a...~%" 
-	      (cond ((string= filename "modules")
-		     "module definitions")
-		    ((string= filename "commands")
-		     "module command definitions")
-		    (t filename))
-	      (namestring user-modules-dir))
+		   pseudo-sym-link-paths)))
+         (now (get-universal-time)))
+    (when module-dirs 
+      (unless load-only-if-new
+        (format t "~&;; Loading ~a from ~a...~%" 
+                (cond ((string= filename "modules")
+                       "module definitions")
+                      ((string= filename "commands")
+                       "module command definitions")
+                      (t filename))
+                (namestring user-modules-dir)))
       (dolist (dir module-dirs)
-	(let ((pathname-name (pathname-name dir)))
-	  (load (namestring 
-		 (make-pathname 
-		  :name filename
-		  :type "lisp"
-		  :directory (if (and pathname-name
-				      (not (eq pathname-name ':unspecific)))
-				 `(,@(pathname-directory dir)
-				     ,(pathname-name dir))
-				 (pathname-directory dir))
-		  :defaults dir))
-		:if-does-not-exist nil))))))
+	(let* ((dir-pathname-name (pathname-name dir))
+               (pathname (make-pathname 
+                          :name filename
+                          :type "lisp"
+                          :directory (if (and dir-pathname-name
+                                              (not (eq dir-pathname-name 
+                                                       ':unspecific)))
+                                         `(,@(pathname-directory dir)
+                                             ,(pathname-name dir))
+                                         (pathname-directory dir))
+                          :defaults dir))
+               (previous-load-time-acons 
+                (assoc pathname *loaded-gbbopen-modules-directory-files*
+                       :test #'equal))
+               (previous-load-time (cdr previous-load-time-acons)))
+          (unless (and previous-load-time
+                       (let ((file-write-date (file-write-date pathname)))
+                         (and file-write-date
+                              (locally  ; avoid SBCL optimization warning: 
+                                  (declare (optimize (speed 1)))
+                                (not (> file-write-date 
+                                        previous-load-time))))))
+            (when (load (namestring pathname)
+                        :if-does-not-exist nil)
+              (cond 
+               (previous-load-time-acons
+                (setf (cdr previous-load-time-acons) now))
+               (t (setf *loaded-gbbopen-modules-directory-files*
+                        (acons pathname
+                               now
+                               *loaded-gbbopen-modules-directory-files*)))))))
+        ))))
 
 ;;; ===========================================================================
 ;;;				  End of File
