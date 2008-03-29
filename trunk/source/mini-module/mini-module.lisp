@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/mini-module/mini-module.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Mar 24 10:24:22 2008 *-*
-;;;; *-* Machine: cyclone.local *-*
+;;;; *-* Last-Edit: Sat Mar 29 10:47:44 2008 *-*
+;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -85,6 +85,8 @@
 ;;;           increment version to 1.2.  (Corkill)
 ;;;  01-05-08 Skip undefined modules when performing compatiblity-ordering
 ;;;           check of a module.  (Corkill) 
+;;;  03-29-08 Add :nopropagate (:propagate canceling) compile/load-module 
+;;;           option.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -780,6 +782,7 @@
     '(:create-dirs
       :create-directories               ; full-name synonym for :create-dirs
       :noautorun
+      :nopropagate
       :print
       :propagate
       :recompile
@@ -790,6 +793,7 @@
 
 (defparameter *load-module-options*
     '(:noautorun
+      :nopropagate
       :print
       :propagate
       :reload 
@@ -980,6 +984,7 @@
   ;;;   :create-dirs Creates directories that are missing in the
   ;;;                compiled-file tree (also full :create-directories)
   ;;;   :noautorun   Sets *autorun-modules* to nil during loading
+  ;;;   :nopropagate Ignores a specified :propagate option
   ;;;   :print       Enables form-level print during compiling/loading
   ;;;   :propagate   Applies the specified options to all required modules
   ;;;   :recompile   Compiles even if the compiled file is newer than the
@@ -994,7 +999,8 @@
       (warn "Unrecognized compile-module option ~s, ignored." option)))
   (let* ((recompile? (member ':recompile options :test #'eq))
          (reload? (member ':reload options :test #'eq))
-         (propagate? (member ':propagate options :test #'eq))
+         (propagate? (and (member ':propagate options :test #'eq)
+                          (not (member ':nopropagate options :test #'eq))))
          (source? (member ':source options :test #'eq))
          (print? (member ':print options :test #'eq))
          (*automatically-create-missing-directories*
@@ -1032,6 +1038,7 @@
   ;;;
   ;;; Options:
   ;;;   :noautorun   Sets *autorun-modules* to nil during loading
+  ;;;   :nopropagate Ignores a specified :propagate option
   ;;;   :print       Enables form-level print during compiling/loading
   ;;;   :propagate   Applies the specified options to all required modules
   ;;;   :recompile   Ignored by load-module
@@ -1043,7 +1050,8 @@
     (unless (member option *load-module-options* :test #'eq)
       (warn "Unrecognized load-module option ~s, ignored." option)))
   (let ((reload? (member ':reload options :test #'eq))
-        (propagate? (member ':propagate options :test #'eq))
+        (propagate? (and (member ':propagate options :test #'eq)
+                         (not (member ':nopropagate options :test #'eq))))
         (source? (member ':source options :test #'eq))
         (print? (member ':print options :test #'eq))
         (*autorun-modules*

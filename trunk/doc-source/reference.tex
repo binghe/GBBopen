@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Tue Mar 25 11:48:11 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Sat Mar 29 10:49:18 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -344,6 +344,7 @@ and \xsitelink{Hyperlatex}{http://hyperlatex.sourceforge.net/} 2.9a.
 \newcommand{\compilemoduleoptions}{\T\\[4pt]
 \codeindexqual{:create-dirs}{compile/load-module option}%
 \codeindexqual{:noautorun}{compile/load-module option}%
+\codeindexqual{:nopropagate}{compile/load-module option}%
 \codeindexqual{:print}{compile/load-module option}%
 \codeindexqual{:propagate}{compile/load-module option}%
 \codeindexsub{:recompile}{compile/load-module option}%
@@ -355,6 +356,7 @@ and \xsitelink{Hyperlatex}{http://hyperlatex.sourceforge.net/} 2.9a.
   compiled-file tree\\[2pt]
 \code{:noautorun} & Binds \textbf{\entlink{*autorun-modules*}} to nil
   during compilation and loading\\[2pt]
+\code{:nopropagate} & Cancels (overrides) a specified :propagate option\\[2pt]
 \code{:print} & Incrementally prints information during compilation and
   loading\\[2pt]
 \code{:propagate} & Applies the specified options to all required 
@@ -369,6 +371,7 @@ and \xsitelink{Hyperlatex}{http://hyperlatex.sourceforge.net/} 2.9a.
 
 \newcommand{\loadmoduleoptions}{\T\\[4pt]
 \codeindexqual{:noautorun}{compile/load-module option}%
+\codeindexqual{:nopropagate}{compile/load-module option}%
 \codeindexqual{:print}{compile/load-module option}%
 \codeindexqual{:propagate}{compile/load-module option}%
 \codeindexsub{:reload}{compile/load-module option}%
@@ -377,6 +380,7 @@ and \xsitelink{Hyperlatex}{http://hyperlatex.sourceforge.net/} 2.9a.
 \begin{tabular}{@{~~~}l@{}l@{}}
 \code{:noautorun}~~~ & Binds \textbf{\entlink{*autorun-modules*}} to nil
   during compilation and loading\\[2pt]
+\code{:nopropagate} & Cancels (overrides) a specified :propagate option\\[2pt]
 \code{:print} & Incrementally prints information during compilation and
   loading\\[2pt]
 \code{:propagate} & Applies the specified options to all required 
