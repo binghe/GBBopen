@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/tutorial.tex *-*
-%% *-* Last-Edit: Tue Mar 25 11:15:26 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Sat Mar 29 18:39:03 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2005-2008, Dan Corkill <corkill@GBBopen.org>
@@ -4774,7 +4774,7 @@ This exercise shows you how to:
 \item Define a top-level REPL command for your application
 \item Compile and load your application using your REPL command
 \item Create and use an application-specific package
-\item Add an ``autorun'' form 
+\item Add an ``autorun'' action
 \end{tightitemize}
 
 \fndocrule
@@ -5382,7 +5382,7 @@ and replace it with \code{:agenda-shell}:
 %
 Save the file.
 
-\subsection*{Step 9: Verify our changes}
+\subsection*{Step 9: Verify your changes}
 
 Let's make sure that everything is still working.  Exit Common Lisp and start
 a fresh Common Lisp session.  Next enter the
@@ -5429,11 +5429,288 @@ still be able to run the random-walk application:
   gbbopen-user>
 \end{example}
 
+\subsection*{Step 10: Add an ``autorun'' action}
 
+Suppose we want the random-walk application to run automatically when it is
+loaded.  You could simply add:
+% 
+\begin{example}\color{darkergray}% 
+(start-control-shell)
+\end{example}
+%
+as a top-level form at the end of your \code{tutorial-example.lisp} file.  The
+problem with this is that sometimes you may want to compile and load the
+application without running it.  
 
-\T\begin{center}
-  \textcolor{darkergray}{\textsf{\textbf{To be completed soon$\ldots$\\~\\
-        For now, please continue with the next exercise.}}}  \T\end{center}
+GBBopen's Mini Module system supports a convention that makes it easy to
+conditionalize load-time action execution via the value of
+\textbf{*autorun-modules*}.  Normally, \code{*autorun-modules*} will be
+true, but it can be set to \nil{} when a module is loaded with the
+\code{:noautorun} option.
+
+Add the following at the end of your \code{tutorial-example.lisp}
+file:
+% 
+\begin{example} 
+(when *autorun-modules* 
+  (format t "~\{~\&~s~\%~\}" (multiple-value-list (start-control-shell))))
+\end{example}
+%
+and save the file.  We could have simply called \textbf{start-control-shell}
+when \code{*autorun-modules*} is true, but then we would not be able to see
+what values are returned by the Agenda Shell.  The \code{format} form above
+prints each returned value on a separate output line.
+
+By convention, the ``autorun'' form is placed at the very end of the file,
+immediately after the form to add \code{:tutorial} to Common Lisp's
+\code{*features*}.  This is so that the \code{:tutorial} feature will be
+present during the ``autorun'' execution and thereafter---even if an error
+occurs when executing the ``autorun'' form.
+
+\subsection*{Step 11: Try it out}
+
+Enter the \code{:tutorial} REPL command; the modified
+\code{tutorial-example.lisp} file should compile and load, followed by a
+random walk:
+%
+\begin{example}\color{darkergray}%
+  tutorial> \textcolor{black}{:tutorial}
+  ;; Compiling \var{<homedir\/>}/tutorial/source/tutorial-example.lisp
+  ;; Loading \var{<homedir\/>}/tutorial/\var{<platform-dir\/>}/tutorial-example.fasl
+  ;; Control shell 1 started
+
+  Walked off the world: (11, -51).
+
+  The random walk:
+  1 (0 0)
+  2 (6 7)
+  3 (6 3)
+  4 (3 -4)
+  5 (10 -13)
+     ...
+  21 (-5 -46)
+  22 (-9 -39)
+  23 (1 -33)
+  24 (8 -41)
+  ;; Explicit :stop issued by KS print-walk-ks
+  ;; Control shell 1 exited: 27 cycles completed
+  ;; Run time: 0.01 seconds
+  ;; Elapsed time: 0 seconds
+  :stop
+  tutorial>
+\end{example}
+
+Let's try it again:
+%
+\begin{example}\color{darkergray}%
+  tutorial> \textcolor{black}{:tutorial}
+  tutorial>
+\end{example}
+%
+Nothing happened.  Why?
+
+Since no source files were modified, the Mini Module system knows that the
+latest compiled files for the \code{:tutorial} module and its required modules
+have all been loaded.  So, because the \code{tutorial-example} file is not
+loaded, its ``autorun'' conditional form is not evaluated.
+
+We can tell the Mini Module system to always reload the
+\code{tutorial-example} file by editing our \code{modules.lisp} file and
+adding the \code{:reload} file option to the \code{:tutorial} module definition:
+%
+\begin{example}\color{darkergray}%
+(define-module :tutorial
+  (:requires :agenda-shell)
+  (:files \textcolor{black}{(}"tutorial-example" \textcolor{black}{:reload})))
+\end{example}
+%
+Note that once a file has one or more options, the file name and its options
+are enclosed in parentheses.
+
+Save the modified \code{modules.lisp} file. Now, if you try the
+\code{:tutorial} command, the \code{tutorial-example} file will always be
+loaded and its ``autorun'' form evaluated:
+%
+\begin{example}\color{darkergray}%
+  tutorial> \textcolor{black}{:tutorial}
+  ;; Loading \var{<homedir\/>}/tutorial/modules.lisp
+  ;; Loading \var{<homedir\/>}/tutorial/\var{<platform-dir\/>}/tutorial-example.fasl
+  ;; Control shell 1 started
+     ...
+  tutorial>
+\end{example}
+%
+The Mini Module system noticed our updated \code{modules.lisp} file and loaded
+it, redefining the \code{:tutorial} module definition, and then followed our
+\code{:reload} specification.
+
+Let's try the \code{:tutorial} command one more time, just to be certain that
+\code{:reload} is happening when no files have been updated:
+%
+\begin{example}\color{darkergray}%
+  tutorial> \textcolor{black}{:tutorial}
+  ;; Loading \var{<homedir\/>}/tutorial/\var{<platform-dir\/>}/tutorial-example.fasl
+  ;; Control shell 1 started
+     ...
+  tutorial>
+\end{example}
+
+\subsubsection*{Mini Module propagation}
+
+The Mini Module's \textbf{compile-module} function also accepts a
+\code{:reload} option, so we might be tempted to simply add that option when
+we specify our \code{:tutorial} command:
+%
+\begin{example}\color{darkergray}%
+  tutorial> :tutorial :reload
+  ;;   Loading \var{<install-dir\/>}/\var{<platform-dir\/>}/mini-module/mini-module.fasl
+  ;;   Loading \var{<install-dir\/>}/\var{<platform-dir\/>}/mini-module/mini-module-user.fasl
+
+     ...
+  ;; Control shell 1 started
+     ...
+  tutorial>
+\end{example}
+%
+however, this would also reload all the files of very module required by the
+\code{:tutorial} module, as the \textbf{startup-module} function that we used
+in defining our \code{:tutorial} REPL command always adds a \code{:propagate}
+option to the options that we provide to the command.  We could override
+(cancel) this propagation behavior by adding the \code{:nopropagate} option
+when we specify our \code{:tutorial} command:
+%
+\begin{example}\color{darkergray}%
+  tutorial> :tutorial :reload :nopropagate
+  ;; Loading \var{<homedir\/>}/tutorial/\var{<platform-dir\/>}/tutorial-example.fasl
+  ;; Control shell 1 started
+     ...
+  tutorial>
+\end{example}
+%
+which would eliminate reloading of all but the files in the \code{:tutorial}
+module.  Since we only have one file (at the moment) specified in our
+\code{:tutorial} module definition, this behavior is equivalent, but less
+convenient, than specifying the \code{:reload} file option to our
+\code{tutorial-example} file in the module definition.  If we had a number of
+files, however, we would probably only want the last one reloaded every time.
+
+\subsubsection*{Mini Module memories}
+
+The Mini Module system also remembers the last module (and any provided
+options, such as \code{:create-dirs}) that was specified to a \code{:cm}
+(textbf{compile-module}) or \code{:lm} (\textbf{load-module}) command.  The
+\textbf{startup-module} function that we used in defining our \code{:tutorial}
+REPL command performs an implicit \code{:cm} command for us, so we could have
+alternatively typed the \code{:cm} REPL command rather than \code{:tutorial}
+once we have issued the first \code{:tutorial} REPL command:
+%
+\begin{example}\color{darkergray}%
+  tutorial> \textcolor{black}{:cm}
+  ;; :cm :tutorial :propagate
+  ;; Loading \var{<homedir\/>}/tutorial/\var{<platform-dir\/>}/tutorial-example.fasl
+  ;; Control shell 1 started
+     ...
+  tutorial>
+\end{example}
+%
+Just the thing for lazy typists like me!  Note that the \code{:cm} command
+echos the full (implicitly completed) command with the remembered module name
+and any remembered options.
+
+\subsection*{Step 12: Add a second source file}
+
+Reloading the entire \code{tutorial-application} file in order to evaluate our
+``autorun'' form is still a bit heavy handed.  There are two ways to improve
+this situation, and both involve placing the ``autorun'' form in a separate
+file.  Use your Common Lisp editor to create a new file named
+\code{autorun.lisp} in the \code{source} subdirectory of the \code{tutorial}
+directory. Type (or copy) the following two forms into the new
+\code{autorun.lisp} file:
+%
+\begin{example}
+(in-package :tutorial)
+
+(when *autorun-modules*
+  (format t "~\{~\&~s~\%~\}" (multiple-value-list (start-control-shell))))
+\end{example}
+%
+and save the file.  Next, edit the \code{tutorial-example.lisp} file and
+remove the ``autorun'' form from the end of the file:
+% 
+\begin{example}\color{red} 
+(when *autorun-modules* 
+  (format t "~\{~\&~s~\%~\}" (multiple-value-list (start-control-shell))))
+\end{example}
+%
+Save the file. 
+
+We could define a second random-walk application module, say
+\code{:run-tutorial}, in our \code{modules.lisp} file that contains the new
+\code{autorun.lisp} file and requires our current \code{:tutorial} module.
+This definition would look like:
+%
+\begin{example}\color{darkergray}%
+(define-module :run-tutorial
+  (:requires :tutorial
+  (:files ("autorun" :reload))))
+\end{example}
+
+However, we can avoid creating a new module by simply adding the
+\code{autorun} file to our current \code{:tutorial} module definition.  Edit
+the \code{modules.lisp} file in the \code{tutorial} directory and remove the
+\code{:reload} file option from the \code{:tutorial-example} file
+specification:
+%
+\begin{example}\color{darkergray}%
+(define-module :tutorial
+  (:requires :agenda-shell)
+  (:files \textcolor{red}{(}"tutorial-example" \textcolor{red}{:reload)}))
+\end{example}
+%
+and then add a new line for the \code{autorun} file with the \code{:reload}
+file option:
+%
+\begin{example}\color{darkergray}%
+(define-module :tutorial
+  (:requires :agenda-shell)
+  (:files "tutorial-example"
+          \textcolor{black}{("autorun" :reload)}))
+\end{example}
+%
+Save the file.
+
+\subsection*{Step 13: One last check}
+
+Let's double-check that everything is working:
+%
+\begin{example}\color{darkergray}%
+  tutorial> \textcolor{black}{:cm}
+  ;; :cm :tutorial :propagate
+  ;; Loading \var{<homedir\/>}/tutorial/modules.lisp
+  ;; Compiling \var{<homedir\/>}/tutorial/source/tutorial-example.lisp
+  ;; Loading \var{<homedir\/>}/tutorial/\var{<platform-dir\/>}/tutorial-example.fasl
+  ;; Compiling \var{<homedir\/>}/tutorial/source/autorun.lisp
+  ;; Loading \var{<homedir\/>}/tutorial/\var{<platform-dir\/>}/autorun.fasl
+  ;; Control shell 1 started
+     ...
+  tutorial>
+\end{example}
+%
+The modified files are compiled and loaded and the Agenda Shell is invoked.
+
+Let's try it one last time, just to be sure the application runs when no files
+have been modified:
+%
+\begin{example}\color{darkergray}%
+  tutorial> \textcolor{black}{:cm}
+  ;; :cm :tutorial :propagate
+  ;; Loading \var{<homedir\/>}/tutorial/\var{<platform-dir\/>}/autorun.fasl
+  ;; Control shell 1 started
+     ...
+  tutorial>
+\end{example}
+
+Congratulations!  It's time to move to the next exercise.
 
 %% ========================================================================
 %%  Multiple Walkers
