@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Sat Mar 29 10:49:18 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Sat Mar 29 11:19:57 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -1298,6 +1298,13 @@ calling \textbf{\entlinknoex{compile-module}} on \var{module-name\/} with
 is set to the package named by \var{package-name}.  The named package does not
 need to be defined before calling \textbf{startup-module}, but it must be
 defined at the conclusion of module compilation and loading.
+
+\codeindexqualit{:nopropagate}{compile/load-module option}%
+\codeindexqualit{:propagate}{compile/load-module option}%
+%
+\textbf{Startup-module} adds the option \code{:propagate} to the supplied
+\var{options}.  If this propagation behavior is not desired, the
+\code{:nopropagate} option can be specified to override (cancel) propagation.
 
 \begin{alsos}{define-tll-command}
 \also[compile-module]
