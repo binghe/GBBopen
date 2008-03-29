@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/mini-module/mini-module.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Mar 29 10:47:44 2008 *-*
+;;;; *-* Last-Edit: Sat Mar 29 13:17:14 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -1334,31 +1334,47 @@
 (defvar *last-lm-options* nil)
 (defvar *last-cm-options* nil)
 
-(defun do-mini-module-tll-command (cmd fn options save-symbol)
+(defun do-mini-module-tll-command (cmd module-and-options)
   (let ((recalled-options nil))
-    (when (and (null options) *last-lm/cm-module*)
-      (setf recalled-options 't)
-      (setf options (cons *last-lm/cm-module*
-                          (symbol-value save-symbol))))
-    (cond 
-     ;; New module arguments were specified:
-     (options
-      (setf *last-lm/cm-module* (first options))
-      (setf (symbol-value save-symbol) (rest options))
-      (when recalled-options
-        (format *trace-output* "~&;; ~(~s~)~{ ~(~s~)~}~%"
-                cmd options))
-      (apply fn options))
-     ;; Recall previous module arguments:
-     (t (format *trace-output* 
-                "~&;; ~(~s~) -- No previous module specified."
-                cmd)))))
+    (destructuring-bind (&optional module-name &rest options)
+        module-and-options
+      ;; No module-name was specified, but one was remembered:
+      (when (and (not module-name) 
+                 *last-lm/cm-module*)
+        (setf recalled-options 't)
+        (setf module-name *last-lm/cm-module*)
+        (setf options (if (eq cmd ':cm)
+                          *last-cm-options*
+                          *last-lm-options*)))
+      (cond 
+       ;; New module-name or options were specified:
+       (module-name
+        (let ((fn (ecase cmd
+                    (:cm 'compile-module)
+                    (:lm 'load-module))))
+          (setf *last-lm/cm-module* module-name)
+          (cond 
+           ;; :cm command:
+           ((eq cmd ':cm)
+            (setf *last-cm-options* options)
+            (setf *last-lm-options* (intersection options *load-module-options*
+                                                  :test #'eq)))
+           ;; :lm command:
+           (t (setf *last-lm-options* options)))
+          (when recalled-options
+            (format *trace-output* "~&;; ~(~s ~s~)~{ ~(~s~)~}~%"
+                    cmd module-name options))
+          (apply fn module-name options)))
+       ;; No module was ever specified:
+       (t (format *trace-output* 
+                  "~&;; ~(~s~) -- No previous module specified."
+                  cmd))))))
 
 (defun lm-tll-command (options)
-  (do-mini-module-tll-command :lm #'load-module options '*last-lm-options*))
+  (do-mini-module-tll-command ':lm options))
 
 (defun cm-tll-command (options)
-  (do-mini-module-tll-command :cm #'compile-module options '*last-cm-options*))
+  (do-mini-module-tll-command ':cm options))
 
 ;;; ===========================================================================
 

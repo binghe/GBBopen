@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/commands.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Mar 25 11:29:30 2008 *-*
+;;;; *-* Last-Edit: Sat Mar 29 13:15:17 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -162,16 +162,18 @@
   (format t "~&The mini-module facility has not been loaded.~%")
   (values))
 
-(define-tll-command :lm (&rest options)
+(define-tll-command :lm (&rest module-name-and-options)
   "Load module"
   (if (find-package :mini-module)
-      (funcall (intern (symbol-name '#:lm-tll-command) :mini-module) options)
+      (funcall (intern (symbol-name '#:lm-tll-command) :mini-module) 
+               module-name-and-options)
       (mini-module-not-loaded)))
   
-(define-tll-command :cm (&rest options)
+(define-tll-command :cm (&rest module-name-and-options)
   "Compile and load module"
   (if (find-package :mini-module)
-      (funcall (intern (symbol-name '#:cm-tll-command) :mini-module) options)
+      (funcall (intern (symbol-name '#:cm-tll-command) :mini-module) 
+               module-name-and-options)
       (mini-module-not-loaded)))
 
 ;;; ===========================================================================
