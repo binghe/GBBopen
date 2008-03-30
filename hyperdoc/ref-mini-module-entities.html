@@ -37,6 +37,8 @@ the loading of the mini-module facility by the
 GBBopen parameters and other personalizations
 (see the GBBopen <a href="ref-starting-up.html">start-up description</a>).
 </p>
+<p><h3>Stand-alone usage</h3>
+</p>
 <p>To bootstrap the Mini-Module Facility stand-alone (separate from the GBBopen
 Project software tree), do the following:
 </p>
@@ -53,6 +55,9 @@ files into the<br /><code>source/mini-module</code> directory
 <code>mini-module-loader.lisp</code> file<br />&nbsp;&nbsp;&nbsp;<code>&gt; (load "my-tree/source/mini-module/mini-module-loader")</code>
 <li>compile the <code>:mini-module</code> and <code>:mini-module-user</code> modules:<br />&nbsp;&nbsp;&nbsp;<code>&gt; (mini-module:<a href="ref-compile-module.html">compile-module</a> :mini-module-user :create-dirs :propagate)</code>
 </ul>
+The Mini-Module Facility can now be used stand-alone by loading
+<code>source/mini-module-loader.lisp</code> as part of your Common Lisp
+initialization.
 </p>
 <p><b><font size="+1">Entities</font></b>
 </p>
