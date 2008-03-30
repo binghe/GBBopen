@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Sun Mar 30 09:38:24 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Sun Mar 30 09:57:12 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -1385,6 +1385,9 @@ GBBopen parameters and other personalizations
   (see the GBBopen \link{start-up description}{sec:startup}).
 \T\end{ifhtml}
 
+\T\subsubsection*{Stand-alone usage}
+\W\xml{h3}Stand-alone usage\xml{/h3}
+
 To bootstrap the Mini-Module Facility stand-alone (separate from the GBBopen
 Project software tree), do the following:
 \begin{tightitemize}
@@ -1406,6 +1409,10 @@ Project software tree), do the following:
 \item compile the \code{:mini-module} and \code{:mini-module-user} modules:\\
 ~~~\code{> (mini-module:\entlink{compile-module} :mini-module-user :create-dirs :propagate)}
 \end{tightitemize}
+%
+The Mini-Module Facility can now be used stand-alone by loading
+\code{source/mini-module-loader.lisp} as part of your Common Lisp
+initialization.
 
 \W\entities
 \T\clearpage

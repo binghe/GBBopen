@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/mini-module/mini-module-loader.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Mar 30 09:32:55 2008 *-*
+;;;; *-* Last-Edit: Sun Mar 30 09:49:44 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -33,6 +33,9 @@
 ;;;      5. Compile the :mini-module and :mini-module-user modules:
 ;;;          > (mini-module:compile-module :mini-module-user
 ;;;                                        :create-dirs :propagate)
+;;;    The Mini-Module Facility can now be used stand-alone by loading
+;;;    source/mini-module-loader.lisp as part of your Common Lisp
+;;;    initialization.
 ;;;
 ;;; Porting Notice:
 ;;;
