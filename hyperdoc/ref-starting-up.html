@@ -27,6 +27,7 @@ your Common Lisp environment:
 ; Loading <var>&lt;install-dir&gt;</var>/startup.lisp
 ;  Loading <var>&lt;install-dir&gt;</var>/source/mini-module/mini-module-loader.lisp
 ;   Loading <var>&lt;install-dir&gt;</var>/source/mini-module/mini-module.lisp
+;     Loading <var>&lt;install-dir&gt;</var>/source/mini-module/mini-module-user.lisp
 ;  Loading <var>&lt;install-dir&gt;</var>/source/modules.lisp
 T
 &gt; (mini-module:<a href="ref-compile-module.html">compile-module</a> :gbbopen-test :propagate :create-dirs)
@@ -50,9 +51,10 @@ For example:
 <p>As can be seen from the file-loading messages, the <code>startup.lisp</code> file
 loads a bootstrap loader file for the module facility (the file
 <code>source/mini-module/mini-module-loader.lisp</code>).  This bootstrap file then
-loads the mini-module file (<code>source/mini-module/mini-module.lisp</code>)
-followed by the module definitions for all GBBopen modules (contained in the
-file <code>source/modules.lisp</code>).
+loads the mini-module files (<code>source/mini-module/mini-module.lisp</code> and
+<code>source/mini-module/mini-module-user.lisp</code>) followed by the module
+definitions for all GBBopen modules (contained in the file
+<code>source/modules.lisp</code>).
 </p>
 <p><a name="id2">The</a> <code>:propagate</code> option to <b><a href="ref-compile-module.html">compile-module</a></b> causes
 any file in the required modules to be compiled if its binary file does not
