@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/unit-metaclasses.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Mar 12 11:37:49 2008 *-*
+;;;; *-* Last-Edit: Fri Mar 14 05:41:56 2008 *-*
 ;;;; *-* Machine: vagabond.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -167,10 +167,10 @@
       (let ((counter 0)                 ; we will start with 1...
             (existing-instance-name (instance-name-of existing-instance))
             renaming-instance-name)
-        (while (gethash (setq renaming-instance-name 
-                          (generate-renaming-instance-name 
-                           existing-instance-name
-                           (incf counter)))
+        (while (gethash (setf renaming-instance-name 
+                              (generate-renaming-instance-name 
+                               existing-instance-name
+                               (incf counter)))
                         hash-table))
         (warn "Renaming instance ~s of class ~s to ~s to avoid instance-name ~
                conflict"
@@ -330,12 +330,14 @@
 ;; Common class for GBBopen direct link and non-link slots
 (define-class gbbopen-direct-slot-definition
     (standard-direct-slot-definition)
-  ())
+  ()
+  (:generate-accessors-format :prefix))
 
 ;;; ---------------------------------------------------------------------------
 
 (define-class direct-nonlink-slot-definition (gbbopen-direct-slot-definition)
-  ())
+  ()
+  (:generate-accessors-format :prefix))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -425,7 +427,8 @@
   
 (define-class effective-nonlink-slot-definition
     (gbbopen-effective-slot-definition)
-  ())
+  ()
+  (:generate-accessors-format :prefix))
   
 ;;; ---------------------------------------------------------------------------
   
@@ -467,7 +470,7 @@
          (first direct-slot-definitions))
         (*%%inherited-link-slot%%* nil))
     (when (typep most-specific-direct-slot-definition 'direct-link-definition)
-      (setq *%%inherited-link-slot%%* most-specific-direct-slot-definition))
+      (setf *%%inherited-link-slot%%* most-specific-direct-slot-definition))
     (call-next-method)))
 
 ;;; ---------------------------------------------------------------------------
