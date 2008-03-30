@@ -1,19 +1,24 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
-%% *-* File: /usr/local/gbbopen/current/doc-source/portable-threads-entities.tex *-*
-%% *-* Last-Edit: Thu Mar 13 01:04:34 2008; Edited-By: cork *-*
-%% *-* Machine: vagabond.cs.umass.edu *-*
+%% *-* File: /usr/local/gbbopen/doc-source/portable-threads-entities.tex *-*
+%% *-* Last-Edit: Sun Mar 30 04:50:12 2008; Edited-By: cork *-*
+%% *-* Machine: cyclone.cs.umass.edu *-*
 
 \index{module!:portable-threads@\code{:portable-threads}}%
 \index{:portable-threads@\code{:portable-threads} module}%
-The \code{:portable-threads} module provides a uniform interface to commonly
-used \glref{thread} (multiprocessing) entities.  Wherever possible, these
-entities do something reasonable in Common Lisp implementations that do not
-provide threads. However, entities that make no sense without threads signal
-errors in non-threaded implementations (as noted with each entity). GBBopen
-adds the \glref{feature} \code{:threads-not-available} on Common Lisp
-implementations without thread support.  The \glref{feature}
-\code{:with-timeout-not-available} is added on Common Lisp implementations
-that do not support \textbf{\entlink{with-timeout}}.
+GBBopen's Portable Threads provides a uniform interface to commonly used
+\glref{thread} (multiprocessing) entities.  Wherever possible, these entities
+do something reasonable in Common Lisp implementations that do not provide
+threads. However, entities that make no sense without threads signal errors in
+non-threaded implementations (as noted with each entity).  The \glref{feature}
+\code{:threads-not-available} is added on Common Lisp implementations without
+thread support, and the \glref{feature} \code{:with-timeout-not-available} is
+added on implementations that do not support \textbf{\entlink{with-timeout}}.
+
+Portable Threads entities are provided by the \code{:portable-threads} module
+in GBBopen.  Stand-alone use of the Portable Threads interface is also easy,
+requiring only the
+\xsitelink{\code{portable-threads.lisp}}{http://gbbopen.org/svn/GBBopen/trunk/source/tools/portable-threads.lisp}
+file.
 
 \ppar{Threads and Processes}
 

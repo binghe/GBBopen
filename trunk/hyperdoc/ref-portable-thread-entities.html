@@ -14,15 +14,20 @@
 <table width="100%" cellpadding="0" cellspacing="2"><tr>
 <td bgcolor="#99ccff"><a href="ref-offset-universal-time-entities.html"><img border="0" alt="Offset Universal Time" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="ref-tools-entities.html"><img border="0" alt="Tools" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-polling-function-entities.html"><img border="0" alt="Polling Functions" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b>Portable Threads</b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table>
 <h2>Portable Threads</h2>
-<p>The <code>:portable-threads</code> module provides a uniform interface to commonly
-used <a href="ref-glossary.html#gl:thread">thread</a> (multiprocessing) entities.  Wherever possible, these
-entities do something reasonable in Common Lisp implementations that do not
-provide threads. However, entities that make no sense without threads signal
-errors in non-threaded implementations (as noted with each entity). GBBopen
-adds the <a href="ref-glossary.html#gl:feature">feature</a> <code>:threads-not-available</code> on Common Lisp
-implementations without thread support.  The <a href="ref-glossary.html#gl:feature">feature</a>
-<code>:with-timeout-not-available</code> is added on Common Lisp implementations
-that do not support <b><a href="ref-with-timeout.html">with-timeout</a></b>.
+<p>GBBopen's Portable Threads provides a uniform interface to commonly used
+<a href="ref-glossary.html#gl:thread">thread</a> (multiprocessing) entities.  Wherever possible, these entities
+do something reasonable in Common Lisp implementations that do not provide
+threads. However, entities that make no sense without threads signal errors in
+non-threaded implementations (as noted with each entity).  The <a href="ref-glossary.html#gl:feature">feature</a>
+<code>:threads-not-available</code> is added on Common Lisp implementations without
+thread support, and the <a href="ref-glossary.html#gl:feature">feature</a> <code>:with-timeout-not-available</code> is
+added on implementations that do not support <b><a href="ref-with-timeout.html">with-timeout</a></b>.
+</p>
+<p>Portable Threads entities are provided by the <code>:portable-threads</code> module
+in GBBopen.  Stand-alone use of the Portable Threads interface is also easy,
+requiring only the
+<a target="_top" href="http://gbbopen.org/svn/GBBopen/trunk/source/tools/portable-threads.lisp"><code>portable-threads.lisp</code></a>
+file.
 </p>
 <p><h4>Threads and Processes</h4>
 </p>
