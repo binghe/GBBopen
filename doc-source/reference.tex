@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Sat Mar 29 11:19:57 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Sun Mar 30 04:05:28 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -879,13 +879,12 @@ For example:
 > (load "c:\\GBBopen\\startup.lisp")
 \end{verbatim}
 
-As can be seen from the file-loading messages, the \code{startup.lisp}
-file loads a bootstrap loader file for the module facility (the file
-\code{source/mini-module/mini-module-loader.lisp}).  This bootstrap
-file then loads the module system file
-(\code{source/mini-module/mini-module.lisp}) followed by the module
-definitions for all GBBopen modules (contained in the file
-\code{source/modules.lisp}).
+As can be seen from the file-loading messages, the \code{startup.lisp} file
+loads a bootstrap loader file for the module facility (the file
+\code{source/mini-module/mini-module-loader.lisp}).  This bootstrap file then
+loads the mini-module file (\code{source/mini-module/mini-module.lisp})
+followed by the module definitions for all GBBopen modules (contained in the
+file \code{source/modules.lisp}).
 
 \codeindexqualit{:propagate}{compile/load-module option}%
 \codeindexqualit{:create-dirs}{compile/load-module option}%
@@ -1325,7 +1324,7 @@ to the \code{:gbbopen-user} package:
 \end{functiondoc}
 
 %% ========================================================================
-%%  Mini-Module System
+%%  Mini-Module Facility
 
 \T\markright{}%
 \T\pagestyle{plain}
@@ -1335,7 +1334,7 @@ to the \code{:gbbopen-user} package:
 \T\thispagestyle{fancybottom}
 \T\global\def\fnlastname{ }%
 \T\renewcommand{\headrulewidth}{0pt}
-\section{Mini-Module System}
+\section{Mini-Module Facility}
 \label{sec:mini-module}%
 
 \index{module!:mini-module@\code{:mini-module}}%
@@ -1357,8 +1356,8 @@ implementations.
 
 The mini-module facility is sufficient for many situations, and if not,
 there are more complex open-source \textbf{defsystem} packages, such as ASDF
-(\xsitelink{http://www.weitz.de/asdf-install/}%
-{http://www.weitz.de/asdf-install/}), that are available.
+(\xsitelink{http://constantly.at/lisp/asdf/}%
+{http://constantly.at/lisp/asdf/}), that are available.
 
 \index{initialization, personal gbbopen-init.lisp@\code{gbbopen-init.lisp}
   file}%
@@ -1385,7 +1384,7 @@ personalizations
   (see the GBBopen \link{start-up description}{sec:startup}).
 \T\end{ifhtml}
 
-To bootstrap the Mini-Module System stand-alone (separate from the GBBopen
+To bootstrap the Mini-Module Facility stand-alone (separate from the GBBopen
 Project software tree), do the following:
 \begin{tightitemize}
 \item create a ``root'' directory to contain the mini-module software tree\\

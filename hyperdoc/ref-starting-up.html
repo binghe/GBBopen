@@ -12,7 +12,7 @@
 </head>
 <body>
 <table width="100%" cellpadding="0" cellspacing="2"><tr>
-<td bgcolor="#99ccff"><a href="ref-acknowledgments.html"><img border="0" alt="Acknowledgments" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="reference_0.html"><img border="0" alt="Top" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-mini-module-entities.html"><img border="0" alt="Mini-Module System" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b>Starting Up</b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table>
+<td bgcolor="#99ccff"><a href="ref-acknowledgments.html"><img border="0" alt="Acknowledgments" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="reference_0.html"><img border="0" alt="Top" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-mini-module-entities.html"><img border="0" alt="Mini-Module Facility" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b>Starting Up</b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table>
 <h1>Starting Up</h1>
 <p>GBBopen is packaged with its own <a href="ref-mini-module-entities.html">module
 system</a> that supports compiling and loading GBBopen
@@ -47,13 +47,12 @@ For example:
 <pre>
 &gt; (load "c:\\GBBopen\\startup.lisp")
 </pre>
-<p>As can be seen from the file-loading messages, the <code>startup.lisp</code>
-file loads a bootstrap loader file for the module facility (the file
-<code>source/mini-module/mini-module-loader.lisp</code>).  This bootstrap
-file then loads the module system file
-(<code>source/mini-module/mini-module.lisp</code>) followed by the module
-definitions for all GBBopen modules (contained in the file
-<code>source/modules.lisp</code>).
+<p>As can be seen from the file-loading messages, the <code>startup.lisp</code> file
+loads a bootstrap loader file for the module facility (the file
+<code>source/mini-module/mini-module-loader.lisp</code>).  This bootstrap file then
+loads the mini-module file (<code>source/mini-module/mini-module.lisp</code>)
+followed by the module definitions for all GBBopen modules (contained in the
+file <code>source/modules.lisp</code>).
 </p>
 <p><a name="id2">The</a> <code>:propagate</code> option to <b><a href="ref-compile-module.html">compile-module</a></b> causes
 any file in the required modules to be compiled if its binary file does not
@@ -275,4 +274,4 @@ Common Lisp HyperSpec for use without a network connection.  In this case, set t
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
 <table width="100%" cellpadding="0" cellspacing="2"><tr>
-<td bgcolor="#99ccff"><a href="ref-acknowledgments.html"><img border="0" alt="Acknowledgments" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="reference_0.html"><img border="0" alt="Top" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-mini-module-entities.html"><img border="0" alt="Mini-Module System" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b>Starting Up</b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table></body></html>
+<td bgcolor="#99ccff"><a href="ref-acknowledgments.html"><img border="0" alt="Acknowledgments" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="reference_0.html"><img border="0" alt="Top" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-mini-module-entities.html"><img border="0" alt="Mini-Module Facility" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b>Starting Up</b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table></body></html>
