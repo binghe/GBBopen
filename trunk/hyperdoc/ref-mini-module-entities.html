@@ -40,14 +40,18 @@ GBBopen parameters and other personalizations
 <p>To bootstrap the Mini-Module Facility stand-alone (separate from the GBBopen
 Project software tree), do the following:
 </p>
-<p><ul class="tight"><li>create a &#8220;root&#8221; directory to contain the mini-module software tree<br />(for example, <code>&#36; mkdir my-tree</code>)
+<p><ul class="tight"><li>create a &#8220;root&#8221; directory to contain the mini-module software tree<br />(for example: <code>&#36; mkdir my-tree</code>)
 <li>create the mini-module portion of the source tree in the newly created
-&#8220;root&#8221; directory<br />(e.g., <code>&#36; cd my-tree ; mkdir -p source/mini-module</code>)
-<li>copy the <code>mini-module-loader.lisp</code> and <code>mini-module.lisp</code>
-files into the<br /><code>.../source/mini-module</code> directory
+&#8220;root&#8221; directory<br />(for example: <code>&#36; cd my-tree ; mkdir -p source/mini-module</code>)
+<li>copy the
+<a target="_top" href="http://gbbopen.org/svn/GBBopen/trunk/source/mini-module/mini-module-loader.lisp"><code>mini-module-loader.lisp</code></a>,
+<a target="_top" href="http://gbbopen.org/svn/GBBopen/trunk/source/mini-module/mini-module.lisp"><code>mini-module.lisp</code></a>,
+and
+<a target="_top" href="http://gbbopen.org/svn/GBBopen/trunk/source/mini-module/mini-module-user.lisp"><code>mini-module-user.lisp</code></a>
+files into the<br /><code>source/mini-module</code> directory
 <li>start your Common Lisp implementation and then load the
-<code>mini-module-loader.lisp</code> file<br />(e.g., <code>&gt; (load "my-tree/source/mini-module/mini-module-loader")</code>)
-<li>compile the <code>:mini-module</code> module<br />(e.g., <code>&gt; (mini-module:compile-module :mini-module :create-dirs)</code>)
+<code>mini-module-loader.lisp</code> file<br />&nbsp;&nbsp;&nbsp;<code>&gt; (load "my-tree/source/mini-module/mini-module-loader")</code>
+<li>compile the <code>:mini-module</code> and <code>:mini-module-user</code> modules:<br />&nbsp;&nbsp;&nbsp;<code>&gt; (mini-module:<a href="ref-compile-module.html">compile-module</a> :mini-module-user :create-dirs :propagate)</code>
 </ul>
 </p>
 <p><b><font size="+1">Entities</font></b>

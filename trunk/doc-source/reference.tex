@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Sun Mar 30 04:23:28 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Sun Mar 30 09:38:24 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -856,6 +856,7 @@ your Common Lisp environment:
 ; Loading \var{<install-dir\/>}/startup.lisp
 ;  Loading \var{<install-dir\/>}/source/mini-module/mini-module-loader.lisp
 ;   Loading \var{<install-dir\/>}/source/mini-module/mini-module.lisp
+;     Loading \var{<install-dir\/>}/source/mini-module/mini-module-user.lisp
 ;  Loading \var{<install-dir\/>}/source/modules.lisp
 T
 > (mini-module:\entlink{compile-module} :gbbopen-test :propagate :create-dirs)
@@ -882,9 +883,10 @@ For example:
 As can be seen from the file-loading messages, the \code{startup.lisp} file
 loads a bootstrap loader file for the module facility (the file
 \code{source/mini-module/mini-module-loader.lisp}).  This bootstrap file then
-loads the mini-module file (\code{source/mini-module/mini-module.lisp})
-followed by the module definitions for all GBBopen modules (contained in the
-file \code{source/modules.lisp}).
+loads the mini-module files (\code{source/mini-module/mini-module.lisp} and
+\code{source/mini-module/mini-module-user.lisp}) followed by the module
+definitions for all GBBopen modules (contained in the file
+\code{source/modules.lisp}).
 
 \codeindexqualit{:propagate}{compile/load-module option}%
 \codeindexqualit{:create-dirs}{compile/load-module option}%
@@ -1387,18 +1389,22 @@ To bootstrap the Mini-Module Facility stand-alone (separate from the GBBopen
 Project software tree), do the following:
 \begin{tightitemize}
 \item create a ``root'' directory to contain the mini-module software tree\\
-  (for example, \code{\$ mkdir my-tree})
+  (for example: \code{\$ mkdir my-tree})
 \item create the mini-module portion of the source tree in the newly created
   ``root'' directory\\
-  (e.g., \code{\$ cd my-tree ; mkdir -p source/mini-module})
-\item copy the \code{mini-module-loader.lisp} and \code{mini-module.lisp}
+  (for example: \code{\$ cd my-tree ; mkdir -p source/mini-module})
+\item copy the
+  \xsitelink{\code{mini-module-loader.lisp}}{http://gbbopen.org/svn/GBBopen/trunk/source/mini-module/mini-module-loader.lisp},
+  \xsitelink{\code{mini-module.lisp}}{http://gbbopen.org/svn/GBBopen/trunk/source/mini-module/mini-module.lisp},
+  and
+  \xsitelink{\code{mini-module-user.lisp}}{http://gbbopen.org/svn/GBBopen/trunk/source/mini-module/mini-module-user.lisp}
   files into the\\
-  \code{.../source/mini-module} directory
+  \code{source/mini-module} directory
 \item start your Common Lisp implementation and then load the
   \code{mini-module-loader.lisp} file\\
-   (e.g., \code{> (load "my-tree/source/mini-module/mini-module-loader")})
-\item compile the \code{:mini-module} module\\
-   (e.g., \code{> (mini-module:compile-module :mini-module :create-dirs)})
+~~~\code{> (load "my-tree/source/mini-module/mini-module-loader")}
+\item compile the \code{:mini-module} and \code{:mini-module-user} modules:\\
+~~~\code{> (mini-module:\entlink{compile-module} :mini-module-user :create-dirs :propagate)}
 \end{tightitemize}
 
 \W\entities
