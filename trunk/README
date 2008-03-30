@@ -76,7 +76,7 @@ http://GBBopen.org/svn/GBBopen/trunk/.
 STEP 2: Compiling/Loading GBBopen Modules
 =========================================
 
-GBBopen includes a mini-module system (a very simple defsystem) that
+GBBopen includes a mini-module facility (a very simple defsystem) that
 supports compiling and loading GBBopen components.  To compile all core
 GBBopen modules and a simple trip-tests file, evaluate the following within
 your Common Lisp environment:
