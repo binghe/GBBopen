@@ -5,7 +5,7 @@
 <!-- XML file produced from file: reference.tex
      using Hyperlatex v 2.9-in-waiting-rk (c) Otfried Cheong -->
 <head>
-<title>GBBopen 0.9.8 Reference -- do-sorted-instances-of-class</title>
+<title>GBBopen 0.9.9 Reference -- do-sorted-instances-of-class</title>
 </p>
 <link rel="SHORTCUT ICON" href="favicon.ico"><link rel=stylesheet
         href="gbbopen.css" type="text/css" />
@@ -19,7 +19,7 @@
 <nobr><b><font color="#000000">do-sorted-instances-of-class</font></b></nobr></td><td valign="baseline"> &nbsp; </td><td valign="baseline" align="left" width="99%">(<var>var unit-classes-specifier predicate</var> &#38;key <var>key</var>)
 &#123;<var>tag</var>&nbsp;|&nbsp;<var>form</var>&#125;*</td><td valign="baseline" align="right">[<i>Macro</i>]
 </td></tr></table></p>
-<p><span class="fndoclabel">Purpose</span> <br />Iterate over each <a href="ref-glossary.html#id183">unit&nbsp;instance</a> of the specified
+<p><span class="fndoclabel">Purpose</span> <br />Iterate over each <a href="ref-glossary.html#id195">unit&nbsp;instance</a> of the specified
 <a href="ref-glossary.html#gl:unit-class">unit&nbsp;classes</a>, in sorted order.
 </p>
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen</code>
@@ -27,11 +27,11 @@
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-core</code>
 </p>
 <p><span class="fndoclabel">Arguments</span><table class="tight">
-<tr valign="top"><td valign="baseline"><i>var</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id187">variable&nbsp;symbol</a>
-</td></tr><tr valign="top"><td valign="baseline"><i>unit-classes-specifier</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An <a href="ref-glossary.html#id63">extended&nbsp;unit-classes&nbsp;specification</a>
+<tr valign="top"><td valign="baseline"><i>var</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id199">variable&nbsp;symbol</a>
+</td></tr><tr valign="top"><td valign="baseline"><i>unit-classes-specifier</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An <a href="ref-glossary.html#id65">extended&nbsp;unit-classes&nbsp;specification</a>
 (see below)
 </td></tr><tr valign="top"><td valign="baseline"><i>predicate</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#gl:function">function</a> of two arguments that returns a
-<a href="ref-glossary.html#id75">generalized&nbsp;boolean</a>
+<a href="ref-glossary.html#id77">generalized&nbsp;boolean</a>
 </td></tr><tr valign="top"><td valign="baseline"><i>key</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#gl:function">function</a> of one argument, or <code>nil</code> (default is <code>nil</code>)
 </td></tr><tr valign="top"><td valign="baseline"><i>declaration</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A declare expression
 </td></tr><tr valign="top"><td valign="baseline"><i>tag</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <code>go</code> tag (not evaluated)
@@ -65,7 +65,7 @@
 <a name="id1"></a></td><td valign="baseline" colspan="1" align="left"> <code>:plus-subclasses</code> | <code>:no-subclasses</code> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
-<p><span class="fndoclabel">Description</span> <br />The iteration is performed once for each <a href="ref-glossary.html#id183">unit&nbsp;instance</a>
+<p><span class="fndoclabel">Description</span> <br />The iteration is performed once for each <a href="ref-glossary.html#id195">unit&nbsp;instance</a>
 of the specified <a href="ref-glossary.html#gl:unit-class">unit&nbsp;classes</a>, whether or not the instances reside on
 any <a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a>.
 </p>
@@ -75,7 +75,7 @@ any <a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a>.
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-map-instances-of-class.html"><b>map-instances-of-class</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-map-sorted-instances-of-class.html"><b>map-sorted-instances-of-class</b></a>
 </p>
-<p><span class="fndoclabel">Example</span> <br />Print a list of all <code>hyp</code> instance names, in ascending order:
+<p><span class="fndoclabel">Example</span> <br />Print a list of all <code>hyp</code> <a href="ref-glossary.html#gl:instance-name">instance&nbsp;names</a>, in ascending order:
 </p>
 <pre>
   (do-sorted-instances-of-class (instance 'hyp #'&lt; :key #'<a href="ref-instance-name-of.html">instance-name-of</a>)

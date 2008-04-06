@@ -1,14 +1,60 @@
-Important changes since GBBopen 0.9.8:
+Important changes since GBBopen 0.9.9:
+  
+  None yet.
 
-  * <install-dir>/gbbopen-init.lisp renamed to more intuitive <install-dir>/initiate.lisp
+Important changes in GBBopen 0.9.9:
 
-  * New :CLASS-NAME-TRANSLATIONS added to LOAD-BLACKBOARD-REPOSITORY and
-    WITH-READING-SAVED/SENT-OBJECTS-BLOCK
+  * INCOMPATIBLE CHANGE: INSTANCE-DIMENSION-VALUE now returns five values:
+      1. the dimension value of the unit instance in the specified dimension
+      2. the dimension-value type of the specified dimension
+      3. the comparison type of the specified dimension
+      4. the composite type of the dimension value, if it is a
+         composite; NIL if it is an incomposite value
+      5. the name of the ordering dimension if the dimension value is
+         a series composite; NIL otherwise
+    The third value is new in GBBopen 0.9.9.
+
+  * Renamed "specified comparison test" element (enumerated dimension) 
+    pattern operators:
+       EQ     -> IS-EQ
+       EQL    -> IS-EQL
+       EQUAL  -> IS-EQUAL
+       EQUALP -> IS-EQUALP 
+    The old operator names are deprecated, but will remain available until the
+    next release
+
+  * New comparison-type specification support for DEFINE-UNIT-CLASS
+    :DIMENSIONAL-VALUES class option
+
+  * The :TEST option for a hashed-storage specification to
+    MAKE-SPACE-INSTANCE is deprecated, as the comparison test is now
+    determined from the dimensions of the unit classes associated
+    with the hashed storage
+
+  * <install-dir>/gbbopen-init.lisp renamed to more intuitive
+    <install-dir>/initiate.lisp
+
+  * Reloading of changed commands.lisp and modules.lisp files in
+    <homedir>/gbbopen-modules/ directory  
+
+  * New :nopropagate option to COMPILE-MODULE and LOAD-MODULE; improved
+    remembering of REPL :cm and :lm command parameters 
+
+  * New :MINI-MODULE-USER package
+
+  * New :CLASS-NAME-TRANSLATIONS argument added to LOAD-BLACKBOARD-REPOSITORY
+    and WITH-READING-SAVED/SENT-OBJECTS-BLOCK
 
   * New NEXT-CLASS-INSTANCE-NUMBER function
 
+  * New FIND-ALL-INSTANCES-BY-NAME function
+
+  * New INSTANCE-DIMENSION-VALUES function
+
   * New handler-forms (evaluated in the dynamic context of the error) and new
     ERROR-CONDITION lexical function added to WITH-ERROR-HANDLING
+
+  * New *WARN-ABOUT-NONPORTABLE-SAVING/SENDING* global variable
 
   * CHANGE-CLASS support to/from non-unit instances
 
@@ -37,7 +83,8 @@ Important changes in GBBopen 0.9.8:
       defined previously to be unit instances should no longer include
       STANDARD-UNIT-INSTANCE in their direct superclasses
 
-  * New :name argument for START-CONTROL-SHELL and RESUME-CONTROL-SHELL
+  * New :instance-name argument for START-CONTROL-SHELL and 
+    RESUME-CONTROL-SHELL
 
 
 Important changes in GBBopen 0.9.7:

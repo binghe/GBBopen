@@ -5,7 +5,7 @@
 <!-- XML file produced from file: reference.tex
      using Hyperlatex v 2.9-in-waiting-rk (c) Otfried Cheong -->
 <head>
-<title>GBBopen 0.9.8 Reference -- schedule-function</title>
+<title>GBBopen 0.9.9 Reference -- schedule-function</title>
 </p>
 <link rel="SHORTCUT ICON" href="favicon.ico"><link rel=stylesheet
         href="gbbopen.css" type="text/css" />
@@ -19,7 +19,7 @@
 <nobr><b><font color="#000000">schedule-function</font></b></nobr></td><td valign="baseline"> &nbsp; </td><td valign="baseline" align="left" width="99%"><var>name-or-scheduled-function invocation-time</var> 
 <code>&#38;key</code> <var>repeat-interval verbose</var></td><td valign="baseline" align="right">[<i>Function</i>]
 </td></tr></table></p>
-<p><span class="fndoclabel">Purpose</span> <br />Schedule a <a href="ref-glossary.html#id155">scheduled&nbsp;function</a> at an absolute invocation time.
+<p><span class="fndoclabel">Purpose</span> <br />Schedule a <a href="ref-glossary.html#id159">scheduled&nbsp;function</a> at an absolute invocation time.
 </p>
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:portable-threads</code>
 </p>
@@ -27,12 +27,12 @@
 </p>
 <p><span class="fndoclabel">Arguments</span><table class="tight">
 <tr valign="top"><td valign="baseline"><i>name-or-scheduled-function</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An object (typically a string or a
-symbol) naming a currently scheduled <a href="ref-glossary.html#id155">scheduled&nbsp;function</a> or a
+symbol) naming a currently scheduled <a href="ref-glossary.html#id159">scheduled&nbsp;function</a> or a
 <code>scheduled-function</code> object
-</td></tr><tr valign="top"><td valign="baseline"><i>invocation-time</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id185">universal&nbsp;time</a>
+</td></tr><tr valign="top"><td valign="baseline"><i>invocation-time</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id197">universal&nbsp;time</a>
 </td></tr><tr valign="top"><td valign="baseline"><i>repeat-interval</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A positive integer (representing seconds) or
 <code>nil</code> (default is <code>nil</code>)
-</td></tr><tr valign="top"><td valign="baseline"><i>verbose</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id75">generalized&nbsp;boolean</a> 
+</td></tr><tr valign="top"><td valign="baseline"><i>verbose</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id77">generalized&nbsp;boolean</a> 
 (default is <b><a href="ref-schedule-function-verbose.html">*schedule-function-verbose*</a></b>)
 </td></tr></table>
 </p>
@@ -57,7 +57,7 @@ and <var>repeat-interval</var>.
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-spawn-periodic-function.html"><b>spawn-periodic-function</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-unschedule-function.html"><b>unschedule-function</b></a>
 </p>
-<a name="id1"></a><p><span class="fndoclabel">Examples</span> <br />Schedule a <a href="ref-glossary.html#id155">scheduled&nbsp;function</a> that simply prints <code>"Happy New Year!"</code> 
+<a name="id1"></a><p><span class="fndoclabel">Examples</span> <br />Schedule a <a href="ref-glossary.html#id159">scheduled&nbsp;function</a> that simply prints <code>"Happy New Year!"</code> 
 at midnight (local time) on January 1, 2010:
 </p>
 <pre>
@@ -70,7 +70,7 @@ at midnight (local time) on January 1, 2010:
 &gt; (all-scheduled-functions)
 (#&lt;scheduled-function nil [Jan 1, 2010 00:00:00]&gt;)
 </pre>
-<p><a name="id2">Schedule</a> a <a href="ref-glossary.html#id155">scheduled&nbsp;function</a> that prints <code>"It's quitting time!"</code> 
+<p><a name="id2">Schedule</a> a <a href="ref-glossary.html#id159">scheduled&nbsp;function</a> that prints <code>"It's quitting time!"</code> 
 every day at 5pm:
 </p>
 <pre>

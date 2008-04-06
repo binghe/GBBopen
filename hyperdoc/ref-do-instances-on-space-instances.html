@@ -5,7 +5,7 @@
 <!-- XML file produced from file: reference.tex
      using Hyperlatex v 2.9-in-waiting-rk (c) Otfried Cheong -->
 <head>
-<title>GBBopen 0.9.8 Reference -- do-instances-on-space-instances</title>
+<title>GBBopen 0.9.9 Reference -- do-instances-on-space-instances</title>
 </p>
 <link rel="SHORTCUT ICON" href="favicon.ico"><link rel=stylesheet
         href="gbbopen.css" type="text/css" />
@@ -20,21 +20,21 @@
 <code>&#38;key</code> <var>pattern filter-before filter-after</var>)
 &#123;<var>tag</var>&nbsp;|&nbsp;<var>form</var>&#125;*</td><td valign="baseline" align="right">[<i>Macro</i>]
 </td></tr></table></p>
-<p><span class="fndoclabel">Purpose</span> <br />Iterate over each <a href="ref-glossary.html#id183">unit&nbsp;instance</a> on <a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a>,
-optionally selected by a <a href="ref-glossary.html#id151">retrieval&nbsp;pattern</a>.
+<p><span class="fndoclabel">Purpose</span> <br />Iterate over each <a href="ref-glossary.html#id195">unit&nbsp;instance</a> on <a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a>,
+optionally selected by a <a href="ref-glossary.html#id155">retrieval&nbsp;pattern</a>.
 </p>
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen</code>
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-core</code>
 </p>
 <p><span class="fndoclabel">Arguments</span><table class="tight">
-<tr valign="top"><td valign="baseline"><i>var</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id187">variable&nbsp;symbol</a>
-</td></tr><tr valign="top"><td valign="baseline"><i>unit-classes-specifier</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An <a href="ref-glossary.html#id63">extended&nbsp;unit-classes&nbsp;specification</a>
+<tr valign="top"><td valign="baseline"><i>var</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id199">variable&nbsp;symbol</a>
+</td></tr><tr valign="top"><td valign="baseline"><i>unit-classes-specifier</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An <a href="ref-glossary.html#id65">extended&nbsp;unit-classes&nbsp;specification</a>
 (see below)
-</td></tr><tr valign="top"><td valign="baseline"><i>space-instances</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id162">space&nbsp;instance</a>, a list of
-<a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a>, a <a href="ref-glossary.html#id164">space-instance&nbsp;path</a> regular expression, or
+</td></tr><tr valign="top"><td valign="baseline"><i>space-instances</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id174">space&nbsp;instance</a>, a list of
+<a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a>, a <a href="ref-glossary.html#id176">space-instance&nbsp;path</a> regular expression, or
 <code>t</code> (indicating all space instances)
-</td></tr><tr valign="top"><td valign="baseline"><i>pattern</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id151">retrieval&nbsp;pattern</a> (see below; default is <code>t</code>)
+</td></tr><tr valign="top"><td valign="baseline"><i>pattern</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id155">retrieval&nbsp;pattern</a> (see below; default is <code>t</code>)
 </td></tr><tr valign="top"><td valign="baseline"><i>filter-before</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A single-argument predicate to be applied before
 pattern-matching tests occur
 </td></tr><tr valign="top"><td valign="baseline"><i>filter-after</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A single-argument predicate to be
@@ -104,13 +104,35 @@ applied after pattern-matching tests occur
 <tr>
 <td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <var>enumerated-dimension-pattern-op</var> | </td></tr>
 <tr>
-<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <var>boolean-dimension-pattern-op</var> </td></tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <var>boolean-dimension-binary-pattern-op</var> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
 <table class="tight"><table><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>ordered-dimension-pattern-op</var>&nbsp;::=
-<a name="id6"></a></td><td valign="baseline" colspan="1" align="left"> <code><i>&lt;</i></code> | <code><i>&lt;</i>=</code> | <code><i>&gt;</i>=</code> | 
+<a name="id6"></a></td><td valign="baseline" colspan="1" align="left"> <var>ordered-dimension-any-numeric-value-pattern-op</var> | </td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <var>ordered-dimension-explicit-type-pattern-op</var> </td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
+<table class="tight"><table><tbody><tr>
+<td valign="baseline" colspan="1" align="left">
+<var>ordered-dimension-explicit-type-pattern-op</var>&nbsp;::=
+<a name="id7"></a></td><td valign="baseline" colspan="1" align="left"> <var>ordered-dimension-fixnum-pattern-op</var> | </td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <var>ordered-dimension-short-float-pattern-op</var> | </td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <var>ordered-dimension-single-float-pattern-op</var> | </td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <var>ordered-dimension-double-float-pattern-op</var> | </td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <var>ordered-dimension-long-float-pattern-op</var> </td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
+<table class="tight"><table><tbody><tr>
+<td valign="baseline" colspan="1" align="left">
+<var>ordered-dimension-any-numeric-value-pattern-op</var>&nbsp;::=
+<a name="id8"></a></td><td valign="baseline" colspan="1" align="left"> <code><i>&lt;</i></code> | <code><i>&lt;</i>=</code> | <code><i>&gt;</i>=</code> | 
 <code><i>&gt;</i></code> | <code>=</code> | <code>/=</code> | </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code>within</code> | <code>covers</code> | <code>overlaps</code> |
@@ -119,20 +141,87 @@ applied after pattern-matching tests occur
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
 <table class="tight"><table><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
-<var>enumerated-dimension-pattern-op</var>&nbsp;::= 
-<a name="id7"></a></td><td valign="baseline" colspan="1" align="left"> <code>eq</code> | <code>eql</code> | <code>equal</code> | <code>equalp</code> </td></tr>
+<var>ordered-dimension-fixnum-pattern-op</var>&nbsp;::=
+<a name="id9"></a></td><td valign="baseline" colspan="1" align="left"> <code><i>&lt;</i>&#38;</code> | <code><i>&lt;</i>=&#38;</code> | <code><i>&gt;</i>=&#38;</code> | 
+<code><i>&gt;</i>&#38;</code> | <code>=&#38;</code> | <code>/=&#38;</code> | </td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code>within&#38;</code> | <code>covers&#38;</code> | <code>overlaps&#38;</code> |
+<code>starts&#38;</code> | <code>ends&#38;</code> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
 <table class="tight"><table><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
-<var>boolean-dimension-pattern-op</var>&nbsp;::= 
-<a name="id8"></a></td><td valign="baseline" colspan="1" align="left"> <code>eqv</code> </td></tr>
+<var>ordered-dimension-short-float-pattern-op</var>&nbsp;::=
+<a name="id10"></a></td><td valign="baseline" colspan="1" align="left"> <code><i>&lt;</i>&#36;&#38;</code> | <code><i>&lt;</i>=&#36;&#38;</code> | <code><i>&gt;</i>=&#36;&#38;</code> | 
+<code><i>&gt;</i>&#36;&#38;</code> | <code>=&#36;&#38;</code> | <code>/=&#36;&#38;</code> | </td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code>within&#36;&#38;</code> | <code>covers&#36;&#38;</code> |
+<code>overlaps&#36;&#38;</code> | </td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code>starts&#36;&#38;</code> | <code>ends&#36;&#38;</code> </td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
+<table class="tight"><table><tbody><tr>
+<td valign="baseline" colspan="1" align="left">
+<var>ordered-dimension-single-float-pattern-op</var>&nbsp;::=
+<a name="id11"></a></td><td valign="baseline" colspan="1" align="left"> <code><i>&lt;</i>&#36;</code> | <code><i>&lt;</i>=&#36;</code> | <code><i>&gt;</i>=&#36;</code> | 
+<code><i>&gt;</i>&#36;</code> | <code>=&#36;</code> | <code>/=&#36;</code> | </td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code>within&#36;</code> | <code>covers&#36;</code> | 
+<code>overlaps&#36;</code> | </td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code>starts&#36;</code> | <code>ends&#36;</code> </td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
+<table class="tight"><table><tbody><tr>
+<td valign="baseline" colspan="1" align="left">
+<var>ordered-dimension-double-float-pattern-op</var>&nbsp;::=
+<a name="id12"></a></td><td valign="baseline" colspan="1" align="left"> <code><i>&lt;</i>&#36;&#36;</code> | <code><i>&lt;</i>=&#36;&#36;</code> | <code><i>&gt;</i>=&#36;&#36;</code> | 
+<code><i>&gt;</i>&#36;&#36;</code> | <code>=&#36;&#36;</code> | <code>/=&#36;&#36;</code> | </td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code>within&#36;&#36;</code> | <code>covers&#36;&#36;</code> | 
+<code>overlaps&#36;&#36;</code> | </td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code>starts&#36;&#36;</code> | <code>ends&#36;&#36;</code> </td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
+<table class="tight"><table><tbody><tr>
+<td valign="baseline" colspan="1" align="left">
+<var>ordered-dimension-long-float-pattern-op</var>&nbsp;::=
+<a name="id13"></a></td><td valign="baseline" colspan="1" align="left"> <code><i>&lt;</i>&#36;&#36;&#36;</code> | <code><i>&lt;</i>=&#36;&#36;&#36;</code> |
+<code><i>&gt;</i>=&#36;&#36;&#36;</code> | 
+<code><i>&gt;</i>&#36;&#36;&#36;</code> | <code>=&#36;&#36;&#36;</code> |
+<code>/=&#36;&#36;&#36;</code> | </td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code>within&#36;&#36;&#36;</code> | <code>covers&#36;&#36;&#36;</code> | 
+<code>overlaps&#36;&#36;&#36;</code> | </td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code>starts&#36;&#36;&#36;</code> | <code>ends&#36;&#36;&#36;</code> </td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
+<table class="tight"><table><tbody><tr>
+<td valign="baseline" colspan="1" align="left">
+<var>enumerated-dimension-pattern-op</var>&nbsp;::= 
+<a name="id14"></a></td><td valign="baseline" colspan="1" align="left"> <code>is</code> | <var>enumerated-dimension-explicit-test-pattern-op</var> </td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
+<table class="tight"><table><tbody><tr>
+<td valign="baseline" colspan="1" align="left">
+<var>enumerated-dimension-explicit-test-pattern-op</var>&nbsp;::= 
+<a name="id15"></a></td><td valign="baseline" colspan="1" align="left"> <code>is-eq</code> | <code>is-eql</code> | <code>is-equal</code> |
+<code>is-equalp</code> </td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
+<table class="tight"><table><tbody><tr>
+<td valign="baseline" colspan="1" align="left">
+<var>boolean-dimension-binary-pattern-op</var>&nbsp;::= 
+<a name="id16"></a></td><td valign="baseline" colspan="1" align="left"> <code>eqv</code> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
 <table class="tight"><table><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>boolean-dimension-unary-pattern-op</var>&nbsp;::= 
-<a name="id9"></a></td><td valign="baseline" colspan="1" align="left"> <code>true</code> | <code>false</code> </td></tr>
+<a name="id17"></a></td><td valign="baseline" colspan="1" align="left"> <code>true</code> | <code>false</code> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
 <table class="tight"><table><tbody><tr>
@@ -144,7 +233,7 @@ applied after pattern-matching tests occur
 <table class="tight"><table><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>pattern-values</var>&nbsp;::= 
-<a name="id10"></a></td><td valign="baseline" colspan="1" align="left"> <var>pattern-value</var> | </td></tr>
+<a name="id18"></a></td><td valign="baseline" colspan="1" align="left"> <var>pattern-value</var> | </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code>(</code><var>pattern-value</var><sup>+</sup><code>)</code> | </td></tr>
 <tr>
@@ -157,7 +246,7 @@ applied after pattern-matching tests occur
 <table class="tight"><table><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>pattern-value</var>&nbsp;::= 
-<a name="id11"></a></td><td valign="baseline" colspan="1" align="left"> <var>point</var> | <var>interval</var> |
+<a name="id19"></a></td><td valign="baseline" colspan="1" align="left"> <var>point</var> | <var>interval</var> |
 <var>element</var> | <var>set</var> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
@@ -172,7 +261,7 @@ applied after pattern-matching tests occur
 <table class="tight"><table><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>point</var>
-<a name="id12"></a></td><td valign="baseline" colspan="1" align="left"> </td><td valign="baseline" colspan="1" align="left"> A number, <code>infinity</code>, or <code>-infinity</code></td></tr>
+<a name="id20"></a></td><td valign="baseline" colspan="1" align="left"> </td><td valign="baseline" colspan="1" align="left"> A number, <code>infinity</code>, or <code>-infinity</code></td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"><var>start</var> </td><td valign="baseline" colspan="1" align="left"> </td><td valign="baseline" colspan="1" align="left"> A number or <code>infinity</code></td></tr>
 <tr>
@@ -182,13 +271,13 @@ applied after pattern-matching tests occur
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
 <p><span class="fndoclabel">Description</span> <br />The iteration is performed only once for each selected
-<a href="ref-glossary.html#id183">unit&nbsp;instance</a>, even if the <a href="ref-glossary.html#id183">unit&nbsp;instance</a> resides on multiple
+<a href="ref-glossary.html#id195">unit&nbsp;instance</a>, even if the <a href="ref-glossary.html#id195">unit&nbsp;instance</a> resides on multiple
 <a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a>.
 </p>
 <p>The <var>pattern</var> <code>t</code> matches all <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a> whose
-<a href="ref-glossary.html#id31">dimension&nbsp;values</a> overlap the <a href="ref-glossary.html#id34">dimensional&nbsp;extent</a> of at least
-one <a href="ref-glossary.html#id162">space&nbsp;instance</a> in <var>space-instances</var>. The <var>pattern</var>
-<code>:all</code> matches every <a href="ref-glossary.html#id183">unit&nbsp;instance</a> on a <a href="ref-glossary.html#id162">space&nbsp;instance</a> in
+<a href="ref-glossary.html#id33">dimension&nbsp;values</a> overlap the <a href="ref-glossary.html#id36">dimensional&nbsp;extent</a> of at least
+one <a href="ref-glossary.html#id174">space&nbsp;instance</a> in <var>space-instances</var>. The <var>pattern</var>
+<code>:all</code> matches every <a href="ref-glossary.html#id195">unit&nbsp;instance</a> on a <a href="ref-glossary.html#id174">space&nbsp;instance</a> in
 <var>space-instances</var>, regardless of dimensional overlap.
 </p>
 <p><a href="ref-declared-numerics.html">Declared numeric</a> pattern operators are also
@@ -205,10 +294,10 @@ and <code>=&#36;&#36;&#36;</code> and <code>within&#38;</code>, <code>within&#36
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-with-find-stats.html"><b>with-find-stats</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-declared-numerics.html">Declared numerics</a>
 </p>
-<p><span class="fndoclabel">Examples</span> <br /><a name="id13">Remove</a> all the <code>hyp</code> <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a> that
-reside on the <code>(bb probable-hyps)</code> <a href="ref-glossary.html#id162">space&nbsp;instance</a>,
+<p><span class="fndoclabel">Examples</span> <br /><a name="id21">Remove</a> all the <code>hyp</code> <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a> that
+reside on the <code>(bb probable-hyps)</code> <a href="ref-glossary.html#id174">space&nbsp;instance</a>,
 deleting those <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a> that do not reside on any other
-<a href="ref-glossary.html#id162">space&nbsp;instance</a>:
+<a href="ref-glossary.html#id174">space&nbsp;instance</a>:
 </p>
 <pre>
   (let ((space-instance 
@@ -219,8 +308,8 @@ deleting those <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances<
                   instance space-instance)
                (<a href="ref-delete-instance.html">delete-instance</a> instance))))
 </pre>
-<p><a name="id14">Delete</a> <code>hyp</code> <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a> that
-reside on the <code>(bb probable-hyps)</code> <a href="ref-glossary.html#id162">space&nbsp;instance</a> that
+<p><a name="id22">Delete</a> <code>hyp</code> <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a> that
+reside on the <code>(bb probable-hyps)</code> <a href="ref-glossary.html#id174">space&nbsp;instance</a> that
 have a belief value of less than 0.5:
 </p>
 <pre>

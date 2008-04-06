@@ -5,7 +5,7 @@
 <!-- XML file produced from file: reference.tex
      using Hyperlatex v 2.9-in-waiting-rk (c) Otfried Cheong -->
 <head>
-<title>GBBopen 0.9.8 Reference -- restart-control-shell</title>
+<title>GBBopen 0.9.9 Reference -- restart-control-shell</title>
 </p>
 <link rel="SHORTCUT ICON" href="favicon.ico"><link rel=stylesheet
         href="gbbopen.css" type="text/css" />
@@ -16,24 +16,25 @@
 
 <p><table class="tight" width="100%">
 <tr valign="top"><td valign="baseline" align="left"%>
-<nobr><b><font color="#000000">restart-control-shell</font></b></nobr></td><td valign="baseline"> &nbsp; </td><td valign="baseline" align="left" width="99%"><code>&#38;key</code> <var>name</var>
+<nobr><b><font color="#000000">restart-control-shell</font></b></nobr></td><td valign="baseline"> &nbsp; </td><td valign="baseline" align="left" width="99%"><code>&#38;key</code> <var>instance-name</var>
 <i> =&gt; </i> <var>value</var>*</td><td valign="baseline" align="right">[<i>Function</i>]
 </td></tr></table></p>
-<p><span class="fndoclabel">Purpose</span> <br />Restart the agenda shell named <var>name</var>.
+<p><span class="fndoclabel">Purpose</span> <br />Restart the agenda shell named <var>instance-name</var>.
 </p>
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:agenda-shell</code>
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:agenda-shell</code>
 </p>
 <a name="id1"></a><p><span class="fndoclabel">Arguments</span><table class="tight">
-<tr valign="top"><td valign="baseline"><i>name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An object naming a control-shell instance (default is <code>1</code>) 
+<tr valign="top"><td valign="baseline"><i>instance-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An object naming a control-shell instance (default is 
+<code>1</code>) 
 </td></tr></table>
 </p>
 <p><span class="fndoclabel">Returns</span> <br />One of the following values: 
 </p>
 <p><ul class="tight"><li><code>:quiescence</code>&mdash;If the control-shell scheduling loop is terminated
-due to <a href="ref-glossary.html#gl:quiescence">quiescence</a> (that is, no more <a href="ref-glossary.html#id51">executable&nbsp;KSAs</a> remain 
-in the queue of <a href="ref-glossary.html#id128">pending&nbsp;KSAs</a>) 
+due to <a href="ref-glossary.html#gl:quiescence">quiescence</a> (that is, no more <a href="ref-glossary.html#id53">executable&nbsp;KSAs</a> remain 
+in the queue of <a href="ref-glossary.html#id132">pending&nbsp;KSAs</a>) 
 <li><code>:stop</code> and (optionally) associated reasons, as multiple
 values&mdash;If one of the following conditions occurs:
 </p>

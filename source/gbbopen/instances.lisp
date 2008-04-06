@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Mar 12 10:51:02 2008 *-*
-;;;; *-* Machine: vagabond.cs.umass.edu *-*
+;;;; *-* Last-Edit: Sat Apr  5 22:12:43 2008 *-*
+;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -30,13 +30,15 @@
 ;;;           (Corkill)
 ;;;  08-20-06 Added do-instances-of-class & do-sorted-instances-of-class
 ;;;           syntactic sugar.  (Corkill)
-;;;  09-09-14 Added instance-name-of and space-instances-of, instance-name and
-;;;           instance-space-instances will be deprecated soon.  (Corkill)
+;;;  09-04-06 Added instance-name-of and space-instances-of in place of
+;;;           instance-name and instance-space-instances.  (Corkill)
 ;;;  09-06-06 Completed change-class support.  (Corkill)
 ;;;  03-09-07 Added find-instances-of-class (please don't abuse!).  (Corkill)
 ;;;  06-14-07 Removed instance-name and instance-space-instances.  (Corkill)
 ;;;  07-03-07 Reworked instance-marks and locking to use only a single
 ;;;           mark-based-retrieval mark.  (Corkill)
+;;;  04-04-08 Added find-all-instances-by-name (please don't abuse!). 
+;;;           (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -56,8 +58,10 @@
             do-instances-of-class
             do-sorted-instances-of-class
             find-instance-by-name
+            find-all-instance-by-name   ; not documented (yet...)
             find-instances-of-class
             instance-dimension-value
+            instance-dimension-values
             instance-deleted-p
             instance-name               ; export the slot name
 	    instance-name-of
@@ -76,9 +80,10 @@
   (define-class %%gbbopen-unit-instance%% (standard-gbbopen-instance)
     ()))
 
-;;; ===========================================================================
+;;; ---------------------------------------------------------------------------
 ;;;   Add %%marks%% slot to standard-unit-instance internal slot names 
-;;;     (added to here, but defined in unit-metaclasses.lisp)
+;;;   (added to *internal-unit-instance-slot-names* here, but defined in
+;;;    unit-metaclasses.lisp)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (pushnew '%%marks%% *internal-unit-instance-slot-names*))
@@ -104,7 +109,7 @@
 (declaim (pcl::slots (slot-boundp standard-unit-instance)
                      (inline standard-unit-instance)))
 
-;;; ---------------------------------------------------------------------------
+;;; ===========================================================================
 ;;;  Saving/Sending Unit Instances
 
 (defmethod omitted-slots-for-saving/sending ((instance standard-unit-instance))
@@ -171,28 +176,29 @@
   (unless (boundp '*forward-referenced-saved/sent-instances*)
     (outside-reading-saved/sent-objects-block-error 
      'allocate-saved/sent-instance))
-  (let* ((position (position-if
-                    #'(lambda (slot)
-                        (eq 'instance-name (slot-definition-name slot)))
-                    slots))
-         (instance-name (nth position slot-values))
-         (instance (find-instance-by-name 
-                    instance-name (type-of class-prototype))))
-    (cond
-     ;; Instance was forward referenced, return the incomplete unit-instance
-     ;; and remove it from the not-yet-defined (forward-referenced) instance
-     ;; hash table:
-     (instance 
-      (remhash instance *forward-referenced-saved/sent-instances*)
-      instance)
-     ;; Instance was not forward referenced, so we allocate it and add it
-     ;; to the instance hash table (in preparation for the remaining
-     ;; initializations):
-     (t (let* ((class (class-of class-prototype))
-               (instance (allocate-instance class)))
-          (add-instance-to-instance-hash-table class instance instance-name)
-          ;; Return the instance:
-          instance)))))
+  (with-lock-held (*master-instance-lock*)
+    (let* ((position (position-if
+                      #'(lambda (slot)
+                          (eq 'instance-name (slot-definition-name slot)))
+                      slots))
+           (instance-name (nth position slot-values))
+           (instance (find-instance-by-name 
+                      instance-name (type-of class-prototype))))
+      (cond
+       ;; Instance was forward referenced, return the incomplete unit-instance
+       ;; and remove it from the not-yet-defined (forward-referenced) instance
+       ;; hash table:
+       (instance 
+        (remhash instance *forward-referenced-saved/sent-instances*)
+        instance)
+       ;; Instance was not forward referenced, so we allocate it and add it to
+       ;; the instance hash table (in preparation for the remaining
+       ;; initializations):
+       (t (let* ((class (class-of class-prototype))
+                 (instance (allocate-instance class)))
+            (add-instance-to-instance-hash-table class instance instance-name)
+            ;; Return the instance:
+            instance))))))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Unit-instance-reference reader
@@ -222,7 +228,8 @@
          (add-instance-to-instance-hash-table class instance instance-name))
        instance))))
         
-;;; ---------------------------------------------------------------------------
+;;; ===========================================================================
+;;;  Unit-instance utility funtions
 
 (defun instance-deleted-p (instance)
   (eq (standard-unit-instance.%%space-instances%% instance) ':deleted))
@@ -566,7 +573,7 @@
                                      unit-class)))
           (remove-instance-from-instance-hash-table unit-class old-name))))))
 
-;;; ---------------------------------------------------------------------------
+;;; ===========================================================================
 ;;;  Describe instance
 
 (defmethod hidden-nonlink-slot-names ((instance standard-unit-instance))
@@ -637,7 +644,7 @@
             (format t " None~%")))))
   (values))
 
-;;; ---------------------------------------------------------------------------
+;;; ===========================================================================
 ;;;  Delete instace
 
 (defmethod delete-instance ((instance standard-unit-instance))
@@ -698,7 +705,7 @@
      ;; anything else we assume is a unit-class name:
      (t (eq (type-of object) unit-class-name)))))
   
-;;; ---------------------------------------------------------------------------
+;;; ===========================================================================
 ;;;   Instance renaming
 ;;;
 ;;; This doesn't work on Lisps that optimize defclass slot-writer methods
@@ -733,7 +740,7 @@
                   #-lispworks slot)))
          (rename-instance-in-instance-hash-table class instance ov nv)))))
 
-;;; ---------------------------------------------------------------------------
+;;; ===========================================================================
 ;;;   Update-nonlink-slot event signaling
 ;;;
 ;;; This doesn't work on Lisps that optimize defclass slot-writer methods
@@ -794,7 +801,7 @@
      :current-value nv)
      :initialization *%%doing-initialize-instance%%*))
 
-;;; ---------------------------------------------------------------------------
+;;; ===========================================================================
 ;;;   Find instance by name
 
 (defun find-instance-by-name (instance-name &optional (unit-class-name 't))
@@ -811,6 +818,23 @@
      unit-class-name)))
 
 ;;; ---------------------------------------------------------------------------
+
+(defun find-all-instances-by-name (instance-name &optional (unit-class-name 't))
+  ;;; Returns all unit-instances with `instance-name'.
+  (let ((instances nil))
+    (flet ((find-it (unit-class)
+             (let ((instance-hash-table
+                    (standard-unit-class.instance-hash-table unit-class)))
+               (gethash instance-name instance-hash-table))))
+      (map-extended-unit-classes
+       #'(lambda (unit-class plus-subclasses)
+           (declare (ignore plus-subclasses))
+           (let ((result (find-it unit-class)))
+             (when result (push result instances))))
+       unit-class-name))
+    instances))
+
+;;; ===========================================================================
 ;;;  Instance Marks (used by mark-based-retrieval)
 ;;;
 ;;;  For now, we just have one mark bit, so we don't use bit operations
@@ -837,7 +861,7 @@
 (define-compiler-macro mbr-instance-mark-set-p (instance)
   `(=& (standard-unit-instance.%%marks%% ,instance) 1))
 
-;;; ---------------------------------------------------------------------------
+;;; ===========================================================================
 ;;;   Change-class support
 ;;;
 ;;; There is a lot of change-class method complexity below to support 
@@ -847,10 +871,7 @@
 ;;;    3. non-unit class to unit class
 ;;; as well as to have the change events signalled fully before and after the
 ;;; change.
-
-(defvar *%in-unit-instance-change-class%* nil)
-
-;;; ---------------------------------------------------------------------------
+;;;
 
 (defmethod change-class :before ((instance standard-unit-instance)
 				 (new-class class) 
@@ -908,17 +929,16 @@
                                 &key (space-instances 
 				      nil space-instances-p)
                                 &allow-other-keys)
-  ;;; This :after method (with unless test below) handles class changes from a
-  ;;; non-unit class to a unit class.
-  (unless *%in-unit-instance-change-class%*
-    (with-lock-held (*master-instance-lock*)
-      (let ((instance-name 
-             (if (slot-boundp instance 'instance-name)
-                 (instance-name-of instance)
-                 (setf (instance-name-of instance)
-                       (next-class-instance-number new-class)))))
-        (add-instance-to-instance-hash-table 
-         new-class instance instance-name))) 
+  ;;; This :after method handles class changes from a non-unit class to a unit
+  ;;; class (so we must grab the master-instance lock here):
+  (with-lock-held (*master-instance-lock*)
+    (let ((instance-name 
+           (if (slot-boundp instance 'instance-name)
+               (instance-name-of instance)
+               (setf (instance-name-of instance)
+                     (next-class-instance-number new-class)))))
+      (add-instance-to-instance-hash-table 
+       new-class instance instance-name))
     ;; Add instance to appropriate space instances:
     (add-changed-class-instance-to-space-instances 
      instance new-class space-instances space-instances-p)))
@@ -956,8 +976,7 @@
   ;;; This :around method handles adding the instance to space instances on
   ;;; class changes from a unit class to a unit class or from a unit class to
   ;;; a non-unit class.
-  (let ((previous-class (class-of instance))
-        (*%in-unit-instance-change-class%* 't))
+  (let ((previous-class (class-of instance)))
     (signal-event-using-class
      (load-time-value (find-class 'change-instance-class-event))
      :instance instance
@@ -993,7 +1012,7 @@
          :previous-class previous-class))))
   instance)
 
-;;; ---------------------------------------------------------------------------
+;;; ===========================================================================
 ;;;   Class-instance mappers (and do-xxx versions)
 
 (with-full-optimization ()
@@ -1058,15 +1077,15 @@
       ,predicate 
       ,@(when key `(:key ,key)))))
 
-;;; ---------------------------------------------------------------------------
+;;; ===========================================================================
 ;;;  Dimension-value access
 
 (with-full-optimization ()
   (defun internal-instance-dimension-value (instance dimension-name
                                             &optional into-cons)
-    ;;; Returns four values: the dimension value, the dimension-value type,
-    ;;;                      the composite type and, for series, the 
-    ;;;                      ordering-dimension-name
+    ;;; Returns five values: the dimension value, the dimension-value type,
+    ;;;                      the comparison-type, the composite type, and the
+    ;;;                      ordering-dimension-name (for a series composite)
     ;;; Called for top performance, but this internal version does not check
     ;;; for deleted unit instances.
     (declare (inline class-of))
@@ -1082,7 +1101,9 @@
         (error "~s is not a dimension of ~s."
                dimension-name
                instance))
-      (destructuring-bind (dimension-name dimension-value-type value-fn
+      (destructuring-bind (dimension-name 
+                           dimension-value-type comparison-type
+                           value-fn
                            composite-type ordering-dimension-name)
           dimension-spec
         (declare (ignore dimension-name))
@@ -1090,6 +1111,7 @@
          ;; get the dimension value:
          (funcall (the function value-fn) instance into-cons)
          dimension-value-type
+         comparison-type
          composite-type 
          ordering-dimension-name)))))
 
@@ -1097,16 +1119,15 @@
 
 (defun instance-dimension-value (instance dimension-name)
   ;;; The public function.
-  ;;; Returns four values: the dimension value, the dimension-value type,
-  ;;;                      the composite type and, for series, the 
-  ;;;                      ordering-dimension-name
+  ;;; Returns five values: the dimension value, the dimension-value type,
+  ;;;                      the comparison-type, the composite type, and the 
+  ;;;                      ordering-dimension-name (for a series composite)
   (check-for-deleted-instance instance 'instance-dimension-value)
   (internal-instance-dimension-value instance dimension-name))
 
 ;;; ---------------------------------------------------------------------------
-;;;  With-changing-dimension-values
 
-(defun current-dimension-values (instance &optional (dimension-names 't))
+(defun instance-dimension-values (instance &optional (dimension-names 't))
   ;;; Returns an alist of the current dimension values (specified by 
   ;;; `dimension-names'); if a single dimension-name symbol is provided
   ;;; only the appropriate acons is returned.
@@ -1124,7 +1145,8 @@
               (make-dimension-value-acons dimension-names))
           (mapcar #'make-dimension-value-acons dimension-names)))))
 
-;;; ---------------------------------------------------------------------------
+;;; ===========================================================================
+;;;  With-changing-dimension-values
 
 (defun update-instance-locators (instance old-dimension-values 
                                  dimensions-being-changed verbose)
@@ -1173,13 +1195,13 @@
       ;; only a single/small number of them, as the other dimension values 
       ;; may also be needed to update the storage locators:
       `(let ((,current-dimension-values
-              (current-dimension-values ,instance t)))
+              (instance-dimension-values ,instance t)))
          (multiple-value-prog1 (progn ,@body)
            (update-instance-locators
             ,instance ,current-dimension-values 
             ',(or dimensions-being-changed 't) nil))))))
 
-;;; ---------------------------------------------------------------------------
+;;; ===========================================================================
 ;;;   Parser for unit-class/instance specifiers (placed here rather than next
 ;;;   to parse-unit-class-specifier in units.lisp to optimize
 ;;;   standard-unit-instance typep test)

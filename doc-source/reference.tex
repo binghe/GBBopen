@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Sun Mar 30 09:57:12 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Sat Apr  5 05:59:32 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -103,7 +103,7 @@
 \W\renewcommand{\navigationname}{{\Large Reference Manual}}
 
 \newcommand{\inprogress}{\vfill\textcolor{darkergray}{\textsf{\textbf{This
-        draft manual is being revised and expanded on a regular basis.}}}}
+        reference manual is being revised and expanded on a regular basis.}}}}
   
 \newcommand{\inline}{This function is compiled in-line for top performance.}
 
@@ -477,12 +477,28 @@ reload all subsequent files and modules \\[2pt]
 \begin{tabular}{@{~}l@{~}l}
 \mbox{\var{pattern-op\/} ::=} & \var{ordered-dimension-pattern-op\/} \vbar{} \\
     & \var{enumerated-dimension-pattern-op\/} \vbar{} \\
-    & \var{boolean-dimension-pattern-op\/} \\
+    & \var{boolean-dimension-binary-pattern-op\/} \\
 \end{tabular}
 \T\\
 \begin{tabular}{@{~}l@{~}l}
 \mbox{\var{ordered-dimension-pattern-op\/} ::=}
 \index{ordered dimension!pattern operators}%
+    & \var{ordered-dimension-any-numeric-value-pattern-op\/} \vbar{} \\
+    & \var{ordered-dimension-explicit-type-pattern-op\/} \\
+\end{tabular}
+\T\\
+\begin{tabular}{@{~}l@{~}l}
+\mbox{\var{ordered-dimension-explicit-type-pattern-op\/} ::=}
+\index{ordered dimension!pattern operators}%
+    & \var{ordered-dimension-fixnum-pattern-op\/} \vbar{} \\
+    & \var{ordered-dimension-short-float-pattern-op\/} \vbar{} \\
+    & \var{ordered-dimension-single-float-pattern-op\/} \vbar{} \\
+    & \var{ordered-dimension-double-float-pattern-op\/} \vbar{} \\
+    & \var{ordered-dimension-long-float-pattern-op\/} \\
+\end{tabular}
+\T\\
+\begin{tabular}{@{~}l@{~}l}
+\mbox{\var{ordered-dimension-any-numeric-value-pattern-op\/} ::=}
 \index{$<$@\code{$<$} ~(ordered-dimension pattern operator)|itidx}%
 \index{$<$=@\code{$<$=} ~(ordered-dimension pattern operator)|itidx}%
 \index{$>$=@\code{$>$=} ~(ordered-dimension pattern operator)|itidx}%
@@ -501,17 +517,181 @@ reload all subsequent files and modules \\[2pt]
 \end{tabular}
 \T\\
 \begin{tabular}{@{~}l@{~}l}
-\mbox{\var{enumerated-dimension-pattern-op\/} ::=} 
-\index{enumerated dimension!pattern operators}%
-\index{eq@\code{eq} ~(enumerated-dimension pattern operator)|itidx}%
-\index{eql@\code{eql} ~(enumerated-dimension pattern operator)|itidx}%
-\index{equal@\code{equal} ~(enumerated-dimension pattern operator)|itidx}%
-\index{equalp@\code{equalp} ~(enumerated-dimension pattern operator)|itidx}%
-  & \code{eq} \vbar{} \code{eql} \vbar{} \code{equal} \vbar{} \code{equalp} \\
+\mbox{\var{ordered-dimension-fixnum-pattern-op\/} ::=}
+\index{$<$\&@\code{$<$\&} ~(ordered-dimension fixnum
+  pattern operator)|itidx}%
+\index{$<$\&=@\code{$<$=\&} ~(ordered-dimension fixnum
+  pattern operator)|itidx}%
+\index{$>$\&=@\code{$>$=\&} ~(ordered-dimension fixnum
+  pattern operator)|itidx}%
+\index{$>$\&@\code{$>$\&} ~(ordered-dimension fixnum
+  pattern operator)|itidx}%
+\index{=\&@\code{=\&} ~(ordered-dimension fixnum
+  pattern operator)|itidx}%
+\index{/=\&@\code{/=\&} ~(ordered-dimension fixnum
+  pattern operator)|itidx}%
+\index{within\&@\code{within\&} ~(ordered-dimension fixnum
+  pattern operator)|itidx}%
+\index{covers\&@\code{covers\&} ~(ordered-dimension fixnum
+  pattern operator)|itidx}%
+\index{overlaps\&@\code{overlaps\&} ~(ordered-dimension fixnum
+  pattern operator)|itidx}%
+\index{starts\&@\code{starts\&} ~(ordered-dimension fixnum
+  pattern operator)|itidx}%
+\index{ends\&@\code{ends\&} ~(ordered-dimension fixnum
+  pattern operator)|itidx}%
+     & \code{$<$\&} \vbar{} \code{$<$=\&} \vbar{} \code{$>$=\&} \vbar{} 
+       \code{$>$\&} \vbar{} \code{=\&} \vbar{} \code{/=\&} \vbar{} \\
+     & \code{within\&} \vbar{} \code{covers\&} \vbar{} \code{overlaps\&} \vbar{}
+       \code{starts\&} \vbar{} \code{ends\&} \\
 \end{tabular}
 \T\\
 \begin{tabular}{@{~}l@{~}l}
-\mbox{\var{boolean-dimension-pattern-op\/} ::=} 
+\mbox{\var{ordered-dimension-short-float-pattern-op\/} ::=}
+\index{$<$\$\&@\code{$<$\$\&} ~(ordered-dimension short-float 
+  pattern operator)|itidx}%
+\index{$<$\$\&=@\code{$<$=\$\&} ~(ordered-dimension short-float
+  pattern operator)|itidx}%
+\index{$>$\$\&=@\code{$>$=\$\&} ~(ordered-dimension short-float
+  pattern operator)|itidx}%
+\index{$>$\$\&@\code{$>$\$\&} ~(ordered-dimension short-float
+  pattern operator)|itidx}%
+\index{=\$\&@\code{=\$\&} ~(ordered-dimension short-float
+  pattern operator)|itidx}%
+\index{/=\$\&@\code{/=\$\&} ~(ordered-dimension short-float
+  pattern operator)|itidx}%
+\index{within\$\&@\code{within\$\&} ~(ordered-dimension short-float 
+  pattern operator)|itidx}%
+\index{covers\$\&@\code{covers\$\&} ~(ordered-dimension short-float
+  pattern operator)|itidx}%
+\index{overlaps\$\&@\code{overlaps\$\&} ~(ordered-dimension short-float
+  pattern operator)|itidx}%
+\index{starts\$\&@\code{starts\$\&} ~(ordered-dimension short-float
+  pattern operator)|itidx}%
+\index{ends\$\&@\code{ends\$\&} ~(ordered-dimension short-float 
+  pattern operator)|itidx}%
+     & \code{$<$\$\&} \vbar{} \code{$<$=\$\&} \vbar{} \code{$>$=\$\&} \vbar{} 
+       \code{$>$\$\&} \vbar{} \code{=\$\&} \vbar{} \code{/=\$\&} \vbar{} \\
+     & \code{within\$\&} \vbar{} \code{covers\$\&} \vbar{}
+       \code{overlaps\$\&} \vbar{} \\
+     & \code{starts\$\&} \vbar{} \code{ends\$\&} \\
+\end{tabular}
+\T\\
+\begin{tabular}{@{~}l@{~}l}
+\mbox{\var{ordered-dimension-single-float-pattern-op\/} ::=}
+\index{$<$\$@\code{$<$\$} ~(ordered-dimension single-float
+  pattern operator)|itidx}%
+\index{$<$\$=@\code{$<$=\$} ~(ordered-dimension single-float
+  pattern operator)|itidx}%
+\index{$>$\$=@\code{$>$=\$} ~(ordered-dimension single-float
+  pattern operator)|itidx}%
+\index{$>$\$@\code{$>$\$} ~(ordered-dimension single-float
+  pattern operator)|itidx}%
+\index{=\$@\code{=\$} ~(ordered-dimension single-float
+  pattern operator)|itidx}%
+\index{/=\$@\code{/=\$} ~(ordered-dimension single-float
+  pattern operator)|itidx}%
+\index{within\$@\code{within\$} ~(ordered-dimension single-float
+  pattern operator)|itidx}%
+\index{covers\$@\code{covers\$} ~(ordered-dimension single-float
+  pattern operator)|itidx}%
+\index{overlaps\$@\code{overlaps\$} ~(ordered-dimension single-float
+  pattern operator)|itidx}%
+\index{starts\$@\code{starts\$} ~(ordered-dimension single-float
+  pattern operator)|itidx}%
+\index{ends\$@\code{ends\$} ~(ordered-dimension single-float
+  pattern operator)|itidx}%
+     & \code{$<$\$} \vbar{} \code{$<$=\$} \vbar{} \code{$>$=\$} \vbar{} 
+       \code{$>$\$} \vbar{} \code{=\$} \vbar{} \code{/=\$} \vbar{} \\
+     & \code{within\$} \vbar{} \code{covers\$} \vbar{} 
+       \code{overlaps\$} \vbar{} \\
+     & \code{starts\$} \vbar{} \code{ends\$} \\
+\end{tabular}
+\T\\
+\begin{tabular}{@{~}l@{~}l}
+\mbox{\var{ordered-dimension-double-float-pattern-op\/} ::=}
+\index{$<$\$\$@\code{$<$\$\$} ~(ordered-dimension double-float
+  pattern operator)|itidx}%
+\index{$<$\$\$=@\code{$<$=\$\$} ~(ordered-dimension double-float
+  pattern operator)|itidx}%
+\index{$>$\$\$=@\code{$>$=\$\$} ~(ordered-dimension double-float
+  pattern operator)|itidx}%
+\index{$>$\$\$@\code{$>$\$\$} ~(ordered-dimension double-float
+  pattern operator)|itidx}%
+\index{=\$\$@\code{=\$\$} ~(ordered-dimension double-float
+  pattern operator)|itidx}%
+\index{/=\$\$@\code{/=\$\$} ~(ordered-dimension double-float
+  pattern operator)|itidx}%
+\index{within\$\$@\code{within\$\$} ~(ordered-dimension double-float
+  pattern operator)|itidx}%
+\index{covers\$\$@\code{covers\$\$} ~(ordered-dimension double-float
+  pattern operator)|itidx}%
+\index{overlaps\$\$@\code{overlaps\$\$} ~(ordered-dimension double-float
+  pattern operator)|itidx}%
+\index{starts\$\$@\code{starts\$\$} ~(ordered-dimension double-float
+  pattern operator)|itidx}%
+\index{ends\$\$@\code{ends\$\$} ~(ordered-dimension double-float
+  pattern operator)|itidx}%
+     & \code{$<$\$\$} \vbar{} \code{$<$=\$\$} \vbar{} \code{$>$=\$\$} \vbar{} 
+       \code{$>$\$\$} \vbar{} \code{=\$\$} \vbar{} \code{/=\$\$} \vbar{} \\
+     & \code{within\$\$} \vbar{} \code{covers\$\$} \vbar{} 
+       \code{overlaps\$\$} \vbar{} \\
+     & \code{starts\$\$} \vbar{} \code{ends\$\$} \\
+\end{tabular}
+\T\\
+\begin{tabular}{@{~}l@{~}l}
+\mbox{\var{ordered-dimension-long-float-pattern-op\/} ::=}
+\index{$<$\$\$\$@\code{$<$\$\$\$} ~(ordered-dimension long-float
+  pattern operator)|itidx}%
+\index{$<$\$\$\$=@\code{$<$=\$\$\$} ~(ordered-dimension long-float
+  pattern operator)|itidx}%
+\index{$>$\$\$\$=@\code{$>$=\$\$\$} ~(ordered-dimension long-float
+  pattern operator)|itidx}%
+\index{$>$\$\$\$@\code{$>$\$\$\$} ~(ordered-dimension long-float
+  pattern operator)|itidx}%
+\index{=\$\$\$@\code{=\$\$\$} ~(ordered-dimension long-float
+  pattern operator)|itidx}%
+\index{/=\$\$\$@\code{/=\$\$\$} ~(ordered-dimension long-float
+  pattern operator)|itidx}%
+\index{within\$\$\$@\code{within\$\$\$} ~(ordered-dimension long-float
+  pattern operator)|itidx}%
+\index{covers\$\$\$@\code{covers\$\$\$} ~(ordered-dimension long-float
+  pattern operator)|itidx}%
+\index{overlaps\$\$\$@\code{overlaps\$\$\$} ~(ordered-dimension long-float
+  pattern operator)|itidx}%
+\index{starts\$\$\$@\code{starts\$\$\$} ~(ordered-dimension long-float
+  pattern operator)|itidx}%
+\index{ends\$\$\$@\code{ends\$\$\$} ~(ordered-dimension long-float
+  pattern operator)|itidx}%
+     & \code{$<$\$\$\$} \vbar{} \code{$<$=\$\$\$} \vbar{}
+       \code{$>$=\$\$\$} \vbar{} 
+       \code{$>$\$\$\$} \vbar{} \code{=\$\$\$} \vbar{}
+       \code{/=\$\$\$} \vbar{} \\
+     & \code{within\$\$\$} \vbar{} \code{covers\$\$\$} \vbar{} 
+       \code{overlaps\$\$\$} \vbar{} \\
+     & \code{starts\$\$\$} \vbar{} \code{ends\$\$\$} \\
+\end{tabular}
+\T\\
+\begin{tabular}{@{~}l@{~}l}
+\mbox{\var{enumerated-dimension-pattern-op\/} ::=} 
+\index{enumerated dimension!pattern operators}%
+\index{is@\code{is} ~(enumerated-dimension pattern operator)|itidx}%
+  & \code{is} \vbar{} \var{enumerated-dimension-explicit-test-pattern-op\/} \\
+\end{tabular}
+\T\\
+\begin{tabular}{@{~}l@{~}l}
+\mbox{\var{enumerated-dimension-explicit-test-pattern-op\/} ::=} 
+\index{is-eq@\code{is-eq} ~(enumerated-dimension pattern operator)|itidx}%
+\index{is-eql@\code{is-eql} ~(enumerated-dimension pattern operator)|itidx}%
+\index{is-equal@\code{is-equal} ~(enumerated-dimension pattern operator)|itidx}%
+\index{ie-equalp@\code{ie-equalp} ~(enumerated-dimension
+  pattern operator)|itidx}%
+   & \code{is-eq} \vbar{} \code{is-eql} \vbar{} \code{is-equal} \vbar{}
+     \code{is-equalp} \\
+\end{tabular}
+\T\\
+\begin{tabular}{@{~}l@{~}l}
+\mbox{\var{boolean-dimension-binary-pattern-op\/} ::=} 
 \index{boolean dimension!pattern operators}%
 \index{eqv@\code{eqv} ~(boolean-dimension pattern operator)|itidx}%
   & \code{eqv} \\
@@ -525,7 +705,7 @@ reload all subsequent files and modules \\[2pt]
   & \code{true} \vbar{} \code{false} \\
 \end{tabular}
 \T\\
-\begin{tabular}{@{}l@{~}l}
+\begin{tabular}{@{~}l@{~}l}
 \mbox{\var{dimension-names\/} ::=} & \var{dimension-name\/} \vbar{} 
     \code{(}\var{dimension-name\/}\superplus\code{)} \\
 \end{tabular}
@@ -688,18 +868,12 @@ reload all subsequent files and modules \\[2pt]
   & \code{boolean} \vbar{}\\
   & \code{uniform-buckets} \code{:layout} 
     \var{dimension-buckets-specification\/}\superplus{} \vbar{}\\
-  & \code{hashed} [\code{:test} \var{hashed-test\/}]\\
+  & \code{hashed}\\
 \end{tabular}
 \T\\
 \begin{tabular}{@{~}l@{~}l}
 \mbox{\var{dimension-buckets-specification\/} ::=} 
   & \code{(}\var{start-value end-value bucket-width\/}\code{)}\\
-\end{tabular}
-\T\\
-\begin{tabular}{@{~}l@{~}l}
-\mbox{\var{hashed-test\/} ::=} 
-  & \code{eq} \vbar{} \code{eql} \vbar{} 
-    \code{equal} \vbar{} \code{equalp}\\ 
 \end{tabular}
 }
 
@@ -709,46 +883,113 @@ reload all subsequent files and modules \\[2pt]
 \begin{tabular}{@{~}l@{~}l}
 \mbox{\var{dimensional-value-specifier\/} ::=}
   & \var{incomposite-dv-specifier\/} \vbar{}
-     \var{composite-dv-specifier\/} \\
+     \textcolor{darkergray}{\var{composite-dv-specifier\/}} \\
 \end{tabular}
 \T\\
 \begin{tabular}{@{~}l@{~}l}
 \mbox{\var{incomposite-dv-specifier\/} ::=}
-  & \code{(}\var{dimension-name dimension-value-type 
+  & \code{(}\var{dimension-name dimension-value-spec 
      dimension-value-place\/}\code{)} \\
 \end{tabular}
 \T\\
+\textcolor{darkergray}{%
 \begin{tabular}{@{~}l@{~}l}
 \mbox{\var{composite-dv-specifier\/} ::=}
-  & \code{(}\var{dimension-name dimension-value-type\/} \\
+  & \code{(}\var{dimension-name dimension-value-specifier\/} \\
   & ~ \var{composite-type dimension-value-place\/}\code{)} \\
 \end{tabular}
+}%endtexcolor
 \T\\
+\textcolor{darkergray}{%
 \begin{tabular}{@{~}l@{~}l}
 \mbox{\var{composite-type\/} ::=}
   & \code{:set} \vbar{} \code{:sequence} \vbar{} \\
   & \{\code{:ascending-series} \var{ordering-dimension-name\/}\} \vbar{} \\
   & \{\code{:descending-series} \var{ordering-dimension-name\/}\} \\
 \end{tabular}
+}%endtexcolor
+\T\\
+\begin{tabular}{@{~}l@{~}l}
+\mbox{\var{dimension-value-specifier\/} ::=}
+  & \var{dimension-value-type\/} \vbar{} \\
+  &  \code{(}\var{ordered-dimension-value-type\/}
+           [\var{ordered-comparison-type\/}]\code{)} \vbar{} \\
+  & \code{(}\var{enumerated-dimension-value-type\/}
+           [\var{enumerated-comparison-type\/}]\code{)} \vbar{} \\
+  & \code{(}\var{boolean-dimension-value-type\/}
+           [\var{boolean-comparison-type\/}]\code{)} \\
+\end{tabular}
 \T\\
 \begin{tabular}{@{~}l@{~}l}
 \mbox{\var{dimension-value-type\/} ::=}
+  & \var{ordered-dimension-value-type\/} \vbar{} \\
+  & \var{enumerated-dimension-value-type\/} \vbar{} \\
+  & \var{boolean-dimension-value-type\/} \\
+\end{tabular}
+\T\\
+\begin{tabular}{@{~}l@{~}l}
+\mbox{\var{ordered-dimension-value-type\/} ::=}
 \codeindexit{:point}%
 \codeindexit{:range}%
 \codeindexit{:mixed}%
+  & \code{:point} \vbar{} \code{:interval} \vbar{} \code{:mixed}\\
+\end{tabular}
+\T\\
+\begin{tabular}{@{~}l@{~}l}
+\mbox{\var{enumerated-dimension-value-type\/} ::=}
 \codeindexit{:element}%
+  & \code{:element} \\
+\end{tabular}
+\T\\
+\begin{tabular}{@{~}l@{~}l}
+\mbox{\var{boolean-dimension-value-type\/} ::=}
 \codeindexit{:boolean}%
-  & \code{:point} \vbar{} \code{:interval} \vbar{} \code{:mixed} \vbar{}
-    \code{:element} \vbar{} \code{:boolean}\\
+  &  \code{:boolean}\\
+\end{tabular}
+\T\\
+\begin{tabular}{@{~}l@{~}l}
+\mbox{\var{ordered-comparison-type\/} ::=}
+\codeindexit{number}%
+\codeindexit{fixnum}%
+\codeindexit{short-float}%
+\codeindexit{single-float}%
+\codeindexit{double-float}%
+\codeindexit{long-float}%
+  & \code{number} \vbar{} \code{fixnum} \vbar{}
+    \code{short-float} \vbar{} \code{single-float} \vbar{} \\
+  & \code{double-float} \vbar{} \code{long-float} \\
+\end{tabular}
+\T\\
+\begin{tabular}{@{~}l@{~}l}
+\mbox{\var{enumerated-comparison-type\/} ::=}
+\codeindexit{eq}%
+\codeindexit{eql}%
+\codeindexit{equal}%
+\codeindexit{equalp}%
+  & \code{eq} \vbar{} \code{eql} \vbar{}
+    \code{equal} \vbar{} \code{equalp} \\
+\end{tabular}
+\T\\
+\begin{tabular}{@{~}l@{~}l}
+\mbox{\var{boolean-comparison-type\/} ::=}
+  & \code{t} \\
 \end{tabular}
 \T\\
 \begin{tabular}{@{~}l@{~}l}
 \mbox{\var{dimension-value-place\/} ::=}
   & \{\var{slot-name\/} [\var{slot-name\/}]\} \vbar{} 
     \{\var{function} [\var{slot-name\/}]\} \\
- 
 \end{tabular}
 }
+
+\newcommand{\dimensionalvaluesspecnote}{%
+The default \var{ordered-comparison-type\/}, if unspecified, is \code{number}. 
+The default \var{enumerated-comparison-type\/}, if unspecified, is \code{eql}. 
+The default \var{boolean-comparison-type\/} is \code{t}. 
+
+A \var{dimension-value-place\/} with two
+  \var{slot-names\/} is allowed only for an \code{:interval} dimension-value
+  specification.}
 
 \newcommand{\classoptioninheritance}{%
   \index{inheritance!unit-class options}%
@@ -4170,8 +4411,8 @@ argument-checking optimizations:
 \begin{tightitemize}
 \item A string 
 \item A symbol
-\item A \glref{function~object} accepting two arguments, class-name and slot-name,
-  that returns the complete string to be used for the accessor name
+\item A \glref{function~object} accepting two arguments, class-name and
+  slot-name, that returns the complete string to be used for the accessor name
 \end{tightitemize}
 \arg[forms] An implicit \textbf{progn} of \glref{forms}
 \end{args}
@@ -4234,9 +4475,9 @@ compile time):
 \begin{example}
 > (eval-when (:compile-toplevel :load-toplevel :execute)
     (defun strange-name-string (class-name slot-name)
-      (format nil "~a-~a-~a" 
-        (symbol-name class-name) 
-        (symbol-name '#:of)
+      (concatenate 'simple-string
+        (symbol-name class-name) "-" 
+        (symbol-name '#:of) "-" 
         (symbol-name slot-name))))
 strange-name-string
 > (with-generate-accessors-format (:prefix (symbol-function 'strange-name-string))
@@ -6263,7 +6504,7 @@ t
   {\code{(}\var{unit-class-name\/} \code{symbol)}
   \returns{} \var{count\/}} 
 \fnalternate{class-instances-count}%
-  {\code{(}\var{unit-class-spec\/} \code{cons)}
+  {\code{(}\var{unit-class-specifier\/} \code{cons)}
   \returns{} \var{count\/}} 
 \fnalternate{class-instances-count}%
   {\code{(}\var{unit-class\/} \code{standard-unit-class)}
@@ -6340,7 +6581,7 @@ direct superclass of the \glref{unit~class} \var{unit-class-name\/}
 \fnerrors The specified \var{superclass-names\/} do not include at least
 one \glref{unit~class} name.  This error is signaled on class finalization.
 
-\fndsyntax
+\fndsyntaxwgray
 \begin{tabular}{@{~}l@{~}l}
 \mbox{\var{slot-specifier\/} ::=}
  & \var{slot-name\/} \vbar \\
@@ -6428,6 +6669,8 @@ one \glref{unit~class} name.  This error is signaled on class finalization.
   \var{included-slot-name\/}\superstar{} \vbar \\
   & \{\code{t :exclude} \var{excluded-slot-name\/}\superstar{}\} \\
 \end{tabular}
+\T\\[4pt]
+\dimensionalvaluesspecnote
 
 \fnterms
 \begin{args}{instance-name-comparison-test}
@@ -6470,6 +6713,7 @@ value is \textbf{\entlinknoex{standard-unit-class}}.
 \also[define-space-class]
 \also[define-class]
 \also[delete-blackboard-repository]
+\also[find-all-instances-by-name]
 \also[find-instance-by-name]
 \also[link-slot-p]
 \also[make-instance]
@@ -6484,6 +6728,7 @@ value is \textbf{\entlinknoex{standard-unit-class}}.
     ((belief :initform 0.0)
      (location :initform nil)
      (velocity-range)
+     (color)
      (classification :initform '(:car :truck :bus :motorcycle :train :duck-boat 
                                  :lawn-mower :anything))
      (supporting-hyps 
@@ -6493,9 +6738,10 @@ value is \textbf{\entlinknoex{standard-unit-class}}.
     (:dimensional-values 
      (belief :point belief)
      (velocity-range :interval velocity-range)
-     (classification :element :set classification)
-     (x :point #'location.x location)
-     (y :point #'location.y location))
+     (color (:element eq) color)
+     (classification (:element eq) \textcolor{darkergray}{:set} classification)
+     (x (:point fixnum) #'location.x location)
+     (y (:point fixnum) #'location.y location))
     (:initial-space-instances (bb hyps)))
 #<standard-unit-class hyp>
 \end{example}
@@ -6619,12 +6865,14 @@ Hyp #<hyp 419 (1835 4791) 0.85 [5..35]>
   Dimensional values:
     belief:  0.85
     classification:  (:car :truck)
+    color:  :red
     velocity-range:  (5 35)
     x:  1835
     y:  4791
   Non-link slots:
     belief:  0.85
     classification:  (:car :truck)
+    color:  :red
     location:  (1835 4791)
     velocity-range:  (5 35)
   Link slots:
@@ -6652,7 +6900,7 @@ Print information about a \glref{unit~class}.
 \fnalternate{describe-unit-class}%
   {\code{(}\var{unit-class-name\/} \code{symbol)}}
 \fnalternate{describe-unit-class}%
-  {\code{(}\var{unit-class-spec\/} \code{cons)}}
+  {\code{(}\var{unit-class-specifier\/} \code{cons)}}
 \fnalternate{describe-unit-class}%
   {\code{(}\var{unit-class\/} \code{standard-unit-class)}}
 
@@ -6680,92 +6928,102 @@ The description is printed to the {\bf *standard-output*} stream.
 Standard-unit-class #<standard-unit-class hyp>
   Direct superclasses:
     standard-unit-instance (abstract)
-  Direct subclasses: None
-  Direct slots:
+  Direct subclasses: None\goodpagebreak
+  Direct nonlink slots:
     belief
       :allocation :instance
       :initargs (:belief)
       :initform 0.0
       :readers (belief-of)
-      :writers ((setf belief-of))
-    location
-      :allocation :instance
-      :initargs (:location)
-      :initform nil
-      :readers (location-of)
-      :writers ((setf location-of))
-    velocity-range
-      :allocation :instance
-      :initargs (:velocity-range)
-      :readers (velocity-range-of)
-      :writers ((setf velocity-range-of))
+      :writers ((setf belief-of))\goodpagebreak
     classification
       :allocation :instance
       :initargs (:classification)
       :initform '(:car :truck :bus :motorcycle :train :duck-boat :lawn-mower
                   :anything)
       :readers (classification-of)
-      :writers ((setf classification-of))
-  Direct link slots:
-    supporting-hyps
+      :writers ((setf classification-of))\goodpagebreak
+    color
       :allocation :instance
-      :initargs (:supporting-hyps)
+      :initargs (:color)
+      :readers (color-of)
+      :writers ((setf color-of))\goodpagebreak
+    location
+      :allocation :instance
+      :initargs (:location)
       :initform nil
-      :readers (supporting-hyps-of)
-      :writers ((setf supporting-hyps-of))
-      :link (hyp supported-hyps) 
+      :readers (location-of)
+      :writers ((setf location-of))\goodpagebreak
+    velocity-range
+      :allocation :instance
+      :initargs (:velocity-range)
+      :readers (velocity-range-of)
+      :writers ((setf velocity-range-of))\goodpagebreak
+  Direct link slots:
     supported-hyps
       :allocation :instance
       :initargs (:supported-hyps)
       :initform nil
       :readers (supported-hyps-of)
       :writers ((setf supported-hyps-of))
-      :link (hyp supporting-hyps) 
-  Effective slots:
-    instance-name
-      :allocation :instance
-      :initargs (:instance-name)
-    belief
-      :allocation :instance
-      :initargs (:belief)
-      :initform 0.0
-    location
-      :allocation :instance
-      :initargs (:location)
-      :initform nil
-    velocity-range
-      :allocation :instance
-      :initargs (:velocity-range)
-    classification
-      :allocation :instance
-      :initargs (:classification)
-      :initform '(:car :truck :bus :motorcycle :train :duck-boat :lawn-mower
-                  :anything)
-  Effective link slots:
+      :link (hyp supporting-hyps)\goodpagebreak
     supporting-hyps
       :allocation :instance
       :initargs (:supporting-hyps)
       :initform nil
+      :readers (supporting-hyps-of)
+      :writers ((setf supporting-hyps-of))
+      :link (hyp supported-hyps)\goodpagebreak
+  Effective nonlink slots:
+    belief
+      :allocation :instance
+      :initargs (:belief)
+      :initform 0.0\goodpagebreak
+    classification
+      :allocation :instance
+      :initargs (:classification)
+      :initform '(:car :truck :bus :motorcycle :train :duck-boat :lawn-mower
+                  :anything)\goodpagebreak
+    color
+      :allocation :instance
+      :initargs (:color)\goodpagebreak
+    instance-name
+      :allocation :instance
+      :initargs (:instance-name)\goodpagebreak
+    location
+      :allocation :instance
+      :initargs (:location)
+      :initform nil\goodpagebreak
+    velocity-range
+      :allocation :instance
+      :initargs (:velocity-range)\goodpagebreak
+  Effective link slots:
     supported-hyps
       :allocation :instance
       :initargs (:supported-hyps)
-      :initform nil
+      :initform nil\goodpagebreak
+    supporting-hyps
+      :allocation :instance
+      :initargs (:supporting-hyps)
+      :initform nil\goodpagebreak
   Dimensional values:
-      belief :point
-      velocity-range :interval
-      classification :element
-      x :point
-      y :point
+    belief (:point number)
+    classification (:element eq) :set
+    color (:element eq)
+    velocity-range (:interval number)
+    x (:point fixnum)
+    y (:point fixnum)\goodpagebreak
   Effective dimensional values:
-      belief :point
-      velocity-range :interval
-      classification :element
-      x :point
-      y :point
+    belief (:point number)
+    classification (:element eq) :set
+    color (:element eq)
+    velocity-range (:interval number)
+    x (:point fixnum)
+    y (:point fixnum)\goodpagebreak
   Initial space instances:
-      (bb hyps)
+    (bb hyps)
   Effective initial space instances:
-      (bb hyps)
+    (bb hyps)
   Retain: nil
 \end{example}
 
@@ -6808,7 +7066,8 @@ Standard-unit-class #<standard-unit-class hyp>
   or a list of \glref{extended~unit-classes~specifications}
 \end{args}
 
-\fnreturns A list of \glref{dimension~name}, \glref{dimension~type} pairs.
+\fnreturns A list of \code{(\glref{dimension-name} (\glref{dimension-type}
+  \glref{comparison-type}))} pairs.
 
 \begin{alsos}{make-space-instance}
 \also[define-unit-class]
@@ -6817,18 +7076,42 @@ Standard-unit-class #<standard-unit-class hyp>
 \end{alsos}
 
 \fnexamples
-\bfindexit{find-space-instance-by-path}%
-Return the \glref{dimensions} of the \code{(bb hyps)} \glref{space~instance}:
-\begin{example}
-> (dimensions-of (\entlink{find-space-instance-by-path} '(bb hyps))
-((x :ordered) (y :ordered) (belief :ordered) (classification :enumerated))
-\end{example}
-
 Return the \glref{dimensions} defined for instances of
 \glref{unit~class} \code{hyp}: 
 \begin{example}
 > (dimensions-of 'hyp)
-((x :ordered) (y :ordered) (belief :ordered) (classification :enumerated))
+((x (:ordered fixnum)) (y (:ordered fixnum)) (belief (:ordered number))
+ (velocity-range (:ordered number)) (color (:enumerated eq)) 
+ (classification (:enumerated eq)))
+\end{example}
+
+\bfindexit{find-space-instance-by-path}%
+Return the \glref{dimensions} of the \code{(bb hyps)} \glref{space~instance}:
+\begin{example}
+> (dimensions-of (\entlink{find-space-instance-by-path} '(bb hyps)))
+((x (:ordered fixnum)) (y (:ordered fixnum)) (belief (:ordered number))
+ (velocity-range (:ordered number)) (color (:enumerated eq)) 
+ (classification (:enumerated eq)))
+\end{example}
+
+\bfindexit{find-space-instance-by-path}%
+\indexit{dimensional extent}%
+Note that the \glref{dimensions} of a \glref{space~instance} (its
+\glref{dimensional~extent} as a container for other \glref{unit~instances}) is
+independent of any \glref{dimension~values} that the space instance might have
+as a \glref{unit~instance}:
+%
+\begin{example}
+> (\entlink{instance-dimension-values} (class-of (\entlink{find-space-instance-by-path} '(bb hyps))))
+nil
+\end{example}
+%
+or the \glref{dimensions} that the \glref{unit~class} of the space instance
+might have:
+%
+\begin{example}
+> (dimensions-of (class-of (\entlink{find-space-instance-by-path} '(bb hyps))))
+nil
 \end{example}
 
 \fnnote The returned list of \glref{dimension} specifications for a
@@ -7025,7 +7308,7 @@ t
 \begin{functiondoc}{Function}{instance-dimension-value}%
   {\var{unit-instance dimension-name\/}
     \returns{} \mbox{\var{dimension-value, dimension-value-type,
-        composite-type\/}}}
+        comparison-type, composite-type, ordering-dimension-name\/}}}
 \index{unit instance!obtaining a dimension value of}%
 \index{dimension value!of a unit instance}%
 
@@ -7044,19 +7327,27 @@ t
   \var{unit-instance} 
 \end{args}
 
-\fnreturns Four values: 
+\fnreturns Five values: 
 \begin{tightitemize}
-\item the value of the specified \glref{dimension}
-\item the dimension-value type of the returned \glref{dimension~value}
-\item the composite type of the returned \glref{dimension~value} if it is a
-  \glref{composite~dimension~value}; \nil{} if it is a
+\item the \glref{dimension~value} of the \var{unit-instance} in the specified
+  \glref{dimension}
+\item the dimension-value type of the specified \glref{dimension}
+\item the comparision type of the specified \glref{dimension}
+\item the composite type of the \glref{dimension~value} if it is a
+  \glref{composite~dimension~value}; \nil{} if it is an
   \glref{incomposite~dimension~value}
-\item the name of the ordering dimension if the \glref{dimension~value} is a
-  series composite; \nil{} otherwise
+\item the name of the ordering dimension, if the \glref{dimension~value}
+  is a \glref{series-composite~dimension~value}; \nil{} otherwise
 \end{tightitemize}
 
 \fnerrors The \glref{dimension} \var{dimension-name\/} is not defined for
 \var{unit-instance}. 
+
+\begin{alsos}{instance-dimension-values}
+\also[define-unit-class]
+\also[instance-dimension-values]
+\also[make-instance]
+\end{alsos}
 
 \fnexamples
 Return the \code{x} \glref{dimension~value} of the \glref{unit~instance},
@@ -7065,6 +7356,7 @@ Return the \code{x} \glref{dimension~value} of the \glref{unit~instance},
 > (instance-dimension-value hyp 'x)
 1835
 :point
+:fixnum
 nil
 nil
 \end{example}
@@ -7073,6 +7365,7 @@ Return the \code{classification} \glref{dimension~value}:
 > (instance-dimension-value hyp 'classification)
 (:car :truck)
 :element
+eq
 :set
 nil
 \end{example}
@@ -7081,24 +7374,84 @@ nil
 
 %% ------------------------------------------------------------------------
 
+\begin{functiondoc}{Function}{instance-dimension-values}%
+  {\var{unit-instance\/}
+    \code{\&optional} \var{dimension-names\/}
+    \returns{} \var{dimension-values-alist\/}}
+\index{unit instance!obtaining a dimension values of}%
+\index{dimension value!of a unit instance}%
+
+\fnsyntax
+
+\fnpurpose Return \glref{dimension~values} of a \glref{unit~instance}.
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:gbbopen-core}
+
+\fnargs
+\begin{args}{dimension-names}
+\arg[unit-instance] A \glref{unit~instance}
+\arg[dimension-names] A list of symbols naming \glref{dimensions} of
+  \var{unit-instance} or \code{t}, indicating all \glref{dimensions} of 
+  \var{unit-instance} (default is \code{t})
+\end{args}
+
+\fnreturns An \glref{association~list} of \glref{dimension~name} and
+\glref{dimension~value} pairs.
+
+\fnerrors A \glref{dimension~name} specified in \var{dimension-names\/} is not
+defined for \var{unit-instance}.
+
+\begin{alsos}{instance-dimension-value}
+\also[define-unit-class]
+\also[instance-dimension-value]
+\also[make-instance]
+\end{alsos}
+
+\fnexamples Return all \glref{dimension~values} of the
+\glref{unit~instance}, \code{hyp}:
+%
+\begin{example}
+> (instance-dimension-values hyp)
+((belief . 0.85) (velocity-range 5 35) (color . :red)
+ (classification :car :truck) (x . 1835) (y . 4791))
+\end{example}
+
+Return the \code{x} and \code{y} \glref{dimension~values} of the
+\glref{unit~instance}, \code{hyp}:
+%
+\begin{example}
+> (instance-dimension-values hyp '(x y))
+((x . 1835) (y . 4791))
+\end{example}
+
+\fnnote Using \textbf{\entlink{instance-dimension-value}} is preferable to
+using \textbf{instance-dimension-values} when obtaining individual
+\glref{dimension~values} of a \glref{unit~instance}.
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
 \begin{functiondoc}{Generic~Function}{instance-name-of}{\var{instance\/}
-    \returns{} \var{name\/}}
+    \returns{} \var{instance-name\/}}
 
 \fnsyntax
 
 \fnpurpose
-Return the name of a \glref{unit~instance}.
+Return the \glref{instance~name} of a \glref{unit~instance}.
 
 \fnsetf
-\fnsetfsyntax{instance-name-of}{\var{instance\/}}{\var{name\/}}
+\fnsetfsyntax{instance-name-of}{\var{instance\/}}{\var{instance-name\/}}
 
 \fnmethods
 \fnalternate{instance-name-of}%
   {\code{(}\var{instance\/} \code{standard-event-instance)}
-  \returns{} \var{name}}
+  \returns{} \var{instance-name}}
 \fnalternate{instance-name-of}%
   {\code{(}\var{instance\/} \code{standard-unit-instance)}
-  \returns{} \var{name}}
+  \returns{} \var{instance-name}}
 
 \fnpackage \code{:gbbopen}
 
@@ -7107,10 +7460,10 @@ Return the name of a \glref{unit~instance}.
 \fnargs
 \begin{args}{instance}
 \arg[instance] A \glref{unit~instance} or an \glref{event~instance}
-\arg[name] An object
+\arg[instance-name] An object
 \end{args}
 
-\fnreturns The name of the \var{instance}.
+\fnreturns The \glref{instance~name} of the \var{instance}.
 
 \begin{alsos}{make-instance}
 \also[make-instance]
@@ -7118,7 +7471,7 @@ Return the name of a \glref{unit~instance}.
 
 \fnexamples
 \bfindexit{find-instance-by-name}%
-Return the names of the \glref{unit~instances} supporting
+Return the \glref{instance~names} of the \glref{unit~instances} supporting
 \code{hyp} \glref{unit~instance} \code{180}:
 \begin{example}
 > (mapcar #'instance-name-of 
@@ -7127,7 +7480,8 @@ Return the names of the \glref{unit~instances} supporting
 \end{example}
 
 \bfindexit{find-instance-by-name}%
-Change the name of \code{hyp} \code{180} to \code{"bogus-180"}:
+Change the \glref{instance~name} of \code{hyp} \code{180} to 
+\code{"bogus-180"}:
 \begin{example}
 > (setf (instance-name-of (\entlink{find-instance-by-name} 180 'hyp)) "bogus-180")
 "bogus-180"
@@ -7483,8 +7837,8 @@ Use of an initialization argument that has not been declared as valid.
 causes that value to be used instead of the \code{:initial-space-instances}
 specification associated with the \glref{unit~class}. Similarly, specifying a
 \code{:instance-name} initialization argument causes that value to be used as
-the name of the newly created \glref{unit~instance} instead of the
-instance-name counter value associated with the \glref{unit~class}.
+the \glref{instance~name} of the newly created \glref{unit~instance} instead
+of the instance-name counter value associated with the \glref{unit~class}.
 
 \begin{alsos}{next-class-instance-number}
 \also[define-event-class]
@@ -7503,6 +7857,7 @@ Create a new \code{hyp} \glref{unit~instance}:
 > (make-instance 'hyp 
      :location (list x y)
      :classification '(:car :truck)
+     :color ':gray
      :belief .85
      :velocity-range '(5 35)
      :supporting-hyps supporting-hyps)
@@ -7588,7 +7943,7 @@ Change the class of \glref{unit~instance} \code{hyp} from
 \fnalternate{reset-unit-class}%
   {\code{(}\var{unit-class-name\/} \code{symbol)}}
 \fnalternate{reset-unit-class}%
-  {\code{(}\var{unit-class-spec\/} \code{cons)}}
+  {\code{(}\var{unit-class-specifier\/} \code{cons)}}
 \fnalternate{reset-unit-class}%
   {\code{(}\var{unit-class\/} \code{standard-unit-instance)}}
 
@@ -8912,6 +9267,7 @@ Create a \code{hyp} without signaling any events:
      (\entlink{make-instance} 'hyp 
         :location (list x y)
         :classification '(:car :truck)
+        :color ':red
         :belief .85
         :velocity-range '(5 35)
         :supporting-hyps supporting-hyps))
@@ -8961,6 +9317,7 @@ supporting-hypothesis links with events enabled:
      (let ((hyp (\entlink{make-instance} 'hyp 
                    :location (list x y)
                    :classification '(:car :truck)
+                   :color ':red
                    :belief .85
                    :velocity-range '(5 35))))
         (with-events-enabled ()
@@ -9253,7 +9610,7 @@ direct superclass of the \glref{space~class} \var{space-class-name\/}
 \fnerrors The specified \var{superclass-names\/} do not include at least
 one \glref{space~class} name.  This error is signaled on class finalization.
 
-\fndsyntax
+\fndsyntaxwgray
 \begin{tabular}{@{~}l@{~}l}
 \mbox{\var{slot-specifier\/} ::=}
  & \var{slot-name\/} \vbar \\
@@ -9308,7 +9665,7 @@ one \glref{space~class} name.  This error is signaled on class finalization.
  & \code{(:abstract} \var{boolean\/}\code{)} \vbar \\
  & \code{(:default-initargs .} \var{initarg-list\/}\code{)} \vbar \\
  & \code{(:dimensional-values} 
-   \var{dimensional-value-spec\/}\superstar\code{)} \vbar \\
+   \var{dimensional-value-specifier\/}\superstar\code{)} \vbar \\
  & \code{(:documentation} \var{string\/}\code{)} \vbar \\
  & \code{(:export-class-name} \var{boolean\/}\code{)} \vbar \\
  & \code{(:export-accessors} \var{boolean\/}\code{)} \vbar \\
@@ -9341,6 +9698,8 @@ one \glref{space~class} name.  This error is signaled on class finalization.
   \var{included-slot-name\/}\superstar{} \vbar \\
   & \{\code{t :exclude} \var{excluded-slot-name\/}\superstar{}\} \\
 \end{tabular}
+\T\\[4pt]
+\dimensionalvaluesspecnote
 
 \fnterms
 \begin{args}{instance-name-comparison-test}
@@ -10019,9 +10378,9 @@ storage for indexing \glref{unit~instances} with dimensional values between
 
 Here is an improved \glref{space~instance} for \code{hyp}
 \glref{unit~instances} named \code{hyps}, with both uniform-bucket storage for
-indexing in the \code{x} and \code{y} dimensions and hashed storage using
-\code{eq} to retrieve match candidates via \code{classification}
-dimensional values:
+indexing in the \code{x} and \code{y} dimensions and hashed storage to
+retrieve match candidates via \code{classification} dimensional values:
+%
 \begin{example}
 > (make-space-instance '(bb hyps)
      :dimensions (\entlink{dimensions-of} 'hyp)
@@ -10030,7 +10389,7 @@ dimensional values:
                  uniform-buckets :layout ((0 10000 100)
                                           (0 10000 100)))
                 ((hyp :plus-subclasses) (classification) 
-                 hashed :test eq)))
+                 hashed)))
 #<standard-space-instance (bb hyps)>
 \end{example}
 
@@ -10658,7 +11017,7 @@ any \glref{space~instances}.
 \end{alsos}
 
 \fnexample
-Print a list of all \code{hyp} instance names, in ascending order:
+Print a list of all \code{hyp} \glref{instance~names}, in ascending order:
 \begin{example}
   (do-sorted-instances-of-class (instance 'hyp #'< :key #'\entlink{instance-name-of})
      (print (\entlink{instance-name-of} instance)))
@@ -10717,6 +11076,7 @@ and \code{=\$\$\$} and \code{within\&}, \code{within\$\&}, \code{within\$},
 
 \begin{alsos}{*warn-about-unusual-requests*}
 \also[*warn-about-unusual-requests*]
+\also[find-all-instances-by-name]
 \also[find-instance-by-name]
 \also[find-instances]
 \secalso[Declared numerics]{sec:declared-numerics}
@@ -10737,16 +11097,17 @@ and \code{=\$\$\$} and \code{within\&}, \code{within\$\&}, \code{within\$},
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Function}{find-instance-by-name}{\var{name\/}
+\begin{functiondoc}{Function}{find-all-instances-by-name}%
+  {\var{instance-name\/}
     \code{\&optional} \var{unit-class-specifier\/} 
-    \returns{} \var{unit-instance\/}} 
-\index{unit instance!retrieving by name}%
+    \returns{} \var{unit-instances\/}} 
+\index{unit instance!retrieving by instance name}%
 \index{name-based retrieval}%
 \index{retrieval!name-based, of unit instances}%
 
 \fnsyntax
 
-\fnpurpose Retrieve a \glref{unit~instance} by its name.
+\fnpurpose Retrieve \glref{unit~instances} with a given \var{name}.
 
 \fnpackage \code{:gbbopen}
 
@@ -10754,30 +11115,96 @@ and \code{=\$\$\$} and \code{within\&}, \code{within\$\&}, \code{within\$},
 
 \fnargs
 \begin{args}{unit-classes-specifier}
-\arg[name] The name of a \glref{unit~instance}
+\arg[instance-name] The \glref{instance~name} for the retrieval
 \arg[unit-class-specifier] An \glref{extended~unit-class~specification}
 (see below; default is \code{t})
 \end{args}
 
-\fnreturns The \glref{unit~instance} with the specified \var{name\/} of
-the specified class if one exists; \nil{} otherwise.
+\fnreturns A list of the \glref{unit~instances} with the specified
+\var{name\/} of the specified \var{classes\/} if any exist; \nil{} otherwise.
 
 \fndsyntax
 \unitclassspec
 \subclassingspec
 
-\fndescription The \code{:instance-name-comparison-test} function
-(\code{eq}, \code{eql}, \code{equal}, or \code{equalp}) specified in
-\textbf{\entlink{define-unit-class}} is used to match \var{name\/}
-with the \glref{unit-instance} name.  If you are using strings as the
-names of \glref{unit~instances}, you should specify \code{equal} or
-\code{equalp} as the comparison \glref{function} in the \glref{unit~classes}
-of those \glref{unit~instances}.
+\fndescription The \code{:instance-name-comparison-test} function (\code{eq},
+\code{eql}, \code{equal}, or \code{equalp}) specified in
+\textbf{\entlink{define-unit-class}} is used to match \var{instance-name\/}
+with the \glref{unit-instance}'s instance name.  If you are using strings as
+the names of unit instances, you should specify \code{equal} (case sensitive)
+or \code{equalp} (case insensitive) as the comparison \glref{function} in the
+\glref{unit~classes} of those unit instances.
 
-\begin{alsos}{define-unit-class}
+\begin{alsos}{find-all-instances-by-name}
+\also[define-unit-class]
+\also[filter-instances]
+\also[find-all-instances-by-name]
+\also[find-instance-by-name]
+\also[find-instances]
+\end{alsos}
+
+\fnexamples
+Find all \glref{unit~instances} (of any \glref{unit~class}) that are named
+419:
+\begin{example}
+> (find-instances-by-name 419 't)
+(#<hyp 419 (1835 4791) 0.85 [5..35]>)
+\end{example}
+
+Find all \glref{unit~instances} (of any \glref{unit~class}) that are named
+419:
+\begin{example}
+> (find-instances-by-name 419 '(hyp :plus-subclasses))
+(#<hyp 419 (1835 4791) 0.85 [5..35]>)
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{find-instance-by-name}{\var{instance-name\/}
+    \code{\&optional} \var{unit-class-specifier\/} 
+    \returns{} \var{unit-instance\/}} 
+\index{unit instance!retrieving by instance name}%
+\index{name-based retrieval}%
+\index{retrieval!name-based, of unit instances}%
+
+\fnsyntax
+
+\fnpurpose Retrieve a \glref{unit~instance} by its \glref{instance~name}.
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:gbbopen-core}
+
+\fnargs
+\begin{args}{unit-classes-specifier}
+\arg[instance-name] The \glref{instance~name} for the retrieval
+\arg[unit-class-specifier] An \glref{extended~unit-class~specification}
+(see below; default is \code{t})
+\end{args}
+
+\fnreturns The first \glref{unit~instance} found of the specified
+\var{class(es)\/} that has the specified \var{instance-name\/} if one exists;
+\nil{} otherwise.
+
+\fndsyntax
+\unitclassspec
+\subclassingspec
+
+\fndescription The \code{:instance-name-comparison-test} function (\code{eq},
+\code{eql}, \code{equal}, or \code{equalp}) specified in
+\textbf{\entlink{define-unit-class}} is used to match \var{instance-name\/}
+with the \glref{unit-instance}'s instance name.  If you are using strings as
+the names of unit instances, you should specify \code{equal} (case sensitive)
+or \code{equalp} (case insensitive) as the comparison \glref{function} in the
+\glref{unit~classes} of those unit instances.
+
+\begin{alsos}{find-all-instances-by-name}
 \also[define-unit-class]
 \also[filter-instances]
 \also[find-instances]
+\also[find-all-instances-by-name]
 \end{alsos}
 
 \fnexample
@@ -10856,11 +11283,12 @@ supported, for example: \code{=\&}, \code{=\$\&}, \code{=\$}, \code{=\$\$},
 and \code{=\$\$\$} and \code{within\&}, \code{within\$\&}, \code{within\$},
 \code{within\$\$}, and \code{within\$\$\$}.
 
-\begin{alsos}{*warn-about-unusual-requests*}
+\begin{alsos}{map-sorted-instances-of-class}
 \also[*warn-about-unusual-requests*]
 \also[do-instances-of-class]
 \also[do-sorted-instances-of-class]
 \also[filter-instances]
+\also[find-all-instances-by-name]
 \also[find-instance-by-name]
 \also[find-instances-of-class]
 \also[map-instances-of-class]
@@ -10887,7 +11315,7 @@ and \code{=\$\$\$} and \code{within\&}, \code{within\$\&}, \code{within\$},
  #<hyp 335 (1835 8419) 0.92 [15..35]>
  #<hyp 233 (1835 4791) 0.89 [5..35]>)\goodpagebreak
 > (find-instances '(hyp :no-subclasses) '(bb hyps)
-    '(= (x y) (1835 8419)))
+    '(=\& (x y) (1835 8419)))
 (#<hyp 319 (1835 8419) 0.91 [4..12]>
  #<hyp 331 (1835 8419) 0.88 [15..30]>
  #<hyp 335 (1835 8419) 0.92 [15..35]>)\goodpagebreak
@@ -10928,6 +11356,15 @@ nil
 > (find-instances 'hyp '(bb hyps) 
     '(and (= x 1835) (ends velocity-range 30)))
 (#<hyp 331 (1835 8419) 0.88 [15..30]>)
+> (find-instances 'hyp '(bb hyps) 
+    '(is color :silver))
+(#<hyp 183 (1835 4791) 0.82 [0..35]> 
+ #<hyp 233 (1835 4791) 0.89 [5..35]>
+ #<hyp 231 (1488 7405) 0.63 [0..8]>)
+> (find-instances 'hyp '(bb hyps) 
+    '(is-eq color :yellow))
+(#<hyp 331 (1835 8419) 0.88 [15..30]> 
+ #<hyp 311 (896 388) 0.68 [0..6]>)
 \end{example}
 
 \end{functiondoc}
@@ -11218,7 +11655,7 @@ or not the instances reside on any \glref{space~instances}.
 \end{alsos}
 
 \fnexample
-Print a list of all \code{hyp} instance names, in ascending order:
+Print a list of all \code{hyp} \glref{instance~names}, in ascending order:
 \begin{example}
   (map-sorted-instances-of-class 
      #'(lambda (instance)
@@ -13336,7 +13773,7 @@ direct superclass of the \glref{ks~class} \var{ks-class-name\/}
 \fnerrors The specified \var{superclass-names\/} do not include at least
 one \glref{ks~class} name.  This error is signaled on class finalization.
 
-\fndsyntax
+\fndsyntaxwgray
 \begin{tabular}{@{~}l@{~}l}
 \mbox{\var{slot-specifier\/} ::=}
  & \var{slot-name\/} \vbar \\
@@ -13391,7 +13828,7 @@ one \glref{ks~class} name.  This error is signaled on class finalization.
  & \code{(:abstract} \var{boolean\/}\code{)} \vbar \\
  & \code{(:default-initargs .} \var{initarg-list\/}\code{)} \vbar \\
  & \code{(:dimensional-values} 
-   \var{dimensional-value-spec\/}\superstar\code{)} \vbar \\
+   \var{dimensional-value-specifier\/}\superstar\code{)} \vbar \\
  & \code{(:documentation} \var{string\/}\code{)} \vbar \\
  & \code{(:export-class-name} \var{boolean\/}\code{)} \vbar \\
  & \code{(:export-accessors} \var{boolean\/}\code{)} \vbar \\
@@ -13424,6 +13861,8 @@ one \glref{ks~class} name.  This error is signaled on class finalization.
   \var{included-slot-name\/}\superstar{} \vbar \\
   & \{\code{t :exclude} \var{excluded-slot-name\/}\superstar{}\} \\
 \end{tabular}
+\T\\[4pt]
+\dimensionalvaluesspecnote
 
 \fnterms
 \begin{args}{instance-name-comparison-test}
@@ -13576,7 +14015,7 @@ one \glref{ksa~class} name.  This error is signaled on class finalization.
  & \code{(:abstract} \var{boolean\/}\code{)} \vbar \\
  & \code{(:default-initargs .} \var{initarg-list\/}\code{)} \vbar \\
  & \code{(:dimensional-values} 
-   \var{dimensional-value-spec\/}\superstar\code{)} \vbar \\
+   \var{dimensional-value-specifier\/}\superstar\code{)} \vbar \\
  & \code{(:documentation} \var{string\/}\code{)} \vbar \\
  & \code{(:export-class-name} \var{boolean\/}\code{)} \vbar \\
  & \code{(:export-accessors} \var{boolean\/}\code{)} \vbar \\
@@ -13609,6 +14048,8 @@ one \glref{ksa~class} name.  This error is signaled on class finalization.
   \var{included-slot-name\/}\superstar{} \vbar \\
   & \{\code{t :exclude} \var{excluded-slot-name\/}\superstar{}\} \\
 \end{tabular}
+\T\\[4pt]
+\dimensionalvaluesspecnote
 
 \fnterms
 \begin{args}{instance-name-comparison-test}
@@ -14264,7 +14705,7 @@ related macros with this accessor.
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{restart-control-shell}{%
-    \code{\&key} \var{name\/}
+    \code{\&key} \var{instance-name\/}
     \returns{} \var{value\/}\superstar}
 \index{agenda shell, restarting}%
 \index{control shell!restarting}%
@@ -14272,7 +14713,7 @@ related macros with this accessor.
 
 \fnsyntax
 
-\fnpurpose Restart the agenda shell named \var{name\/}.
+\fnpurpose Restart the agenda shell named \var{instance-name\/}.
 
 \fnpackage \code{:agenda-shell}
 
@@ -14280,8 +14721,9 @@ related macros with this accessor.
 
 \codeindexqualit{:name}{\textbf{restart-control-shell} initarg}%
 \fnargs
-\begin{args}{name}
-\arg[name] An object naming a control-shell instance (default is \code{1}) 
+\begin{args}{instance-name}
+\arg[instance-name] An object naming a control-shell instance (default is 
+\code{1}) 
 \end{args}
 
 \fnreturns
@@ -14532,7 +14974,7 @@ Available \var{initargs\/} are:
   initarg}% 
 \codeindexqualit{:minimum-ksa-execution-rating}{\textbf{start-control-shell}
   initarg}% 
-\codeindexqualit{:name}{\textbf{start-control-shell} initarg}%
+\codeindexqualit{:instance-name}{\textbf{start-control-shell} initarg}%
 \codeindexqualit{:output-stream}{\textbf{start-control-shell} initarg}%
 \codeindexqualit{:pause}{\textbf{start-control-shell} initarg}%
 \codeindexqualit{:print}{\textbf{start-control-shell} initarg}%
@@ -14548,7 +14990,8 @@ is \nil)
 \arg[fifo-queue-ordering] A \glref{generalized~boolean} (default is \code{t}) 
 \arg[hibernate-on-quiescence] A \glref{generalized~boolean} (default is \nil) 
 \arg[minimum-ksa-execution-rating] A \glref{rating} (default is \code{1}) 
-\arg[name] An object naming this control-shell instance (default is \code{1}) 
+\arg[instance-name] An object naming this control-shell instance (default is 
+\code{1}) 
 \arg[output-stream] Control-shell output stream (default is
 \code{*trace-output*}) 
 \arg[pause] A \glref{generalized~boolean} (default is \nil) 

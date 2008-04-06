@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/source/gbbopen/find.lisp *-*
+;;;; *-* File: /usr/local/gbbopen/source/gbbopen/find.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jan 30 03:12:11 2008 *-*
-;;;; *-* Machine: whirlwind.corkills.org *-*
+;;;; *-* Last-Edit: Sat Apr  5 23:17:25 2008 *-*
+;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -33,12 +33,9 @@
 ;;;           proper repair will require reworking of extent formation to
 ;;;           operate in all dimensions of an operator together.  (Corkill)
 ;;;  06-08-04 Add extent-generator-fn for ordered pattern operators.  (Corkill)
-;;;  11-25-04 Deprecated is enumerated pattern operator, in favor of
-;;;           eq, eql, equal, equalp.  (Corkill)
 ;;;  04-25-05 Fix interval instance, interval pattern operator.  (Corkill)
 ;;;  05-26-05 Add :all pattern support for find-instances and
 ;;;           map-instances-on-space-instances.  (Corkill)
-;;;  03-10-06 Remove deprecated is enumerated pattern operator.  (Corkill)
 ;;;  08-20-06 Added do-instances-on-space-instances syntactic sugar.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -55,44 +52,61 @@
             *processed-hash-table-size* ; not documented, yet
             *processed-hash-table-rehash-size* ; not documented, yet
             covers
+            ;; --- declared-type operators:
             covers&
             covers$
             covers$&
             covers$$
             covers$$$
+            ;; ---
             do-instances-on-space-instances
             ends
+            ;; --- declared-type operators:
             ends&
             ends$&
             ends$
             ends$$
             ends$$$
+            ;; ---
             eqv
             false
             filter-instances
             find-instances
+            is
+            ;; --- declared-type operators:
+            is-eq
+            is-eql
+            is-equal
+            is-equalp
+            ;; ---
             map-instances-on-space-instances
             overlaps
+            ;; --- declared-type operators:
             overlaps&
             overlaps$&
             overlaps$
             overlaps$$
             overlaps$$$
+            ;; ---
             report-find-stats
             starts
+            ;; --- declared-type operators:
             starts&
             starts$&
             starts$
             starts$$
             starts$$$
+            ;; ---
             true
             with-find-stats
             within
+            ;; --- declared-type operators:
             within&
             within$&
             within$
             within$$
             within$$$
+            ;; ---
             without-find-stats)))
 
 ;;; ---------------------------------------------------------------------------
@@ -117,14 +131,15 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun find-verbose-preamble (pattern opt-pattern storage-objects
+(defun find-verbose-preamble (pattern optimized-pattern storage-objects
                               space-instances)
   (format *trace-output* "~&;; Search pattern:  ~:@w~%" pattern)
   (format *trace-output* 
           "~&;; Space instances: ~:[None~%~;~:*~@<~{~w~^~:@_~}~:>~]" 
           (mapcar #'instance-name-of (find-space-instances space-instances)))
   (let ((disjunctive-dimensional-extents
-         (optimized-pattern.disjunctive-dimensional-extents opt-pattern)))
+         (optimized-pattern.disjunctive-dimensional-extents 
+          optimized-pattern)))
     (format *trace-output* "~&;; Dimensional extents: ~
                             ~:[None~%~;~:[~2:*~<~{~w~^~:@_~}~:>~;All~%~]~]"
             disjunctive-dimensional-extents
@@ -222,12 +237,37 @@
 ;;; ===========================================================================
 ;;;  Pattern Operators
 
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defun generate-numeric-dispatch (match-op-name)
+    (labels ((specific-match-op-name (suffix)
+               (intern (concatenate 'simple-string 
+                         (string match-op-name) suffix)))
+             (do-type (suffix)
+               `(return-from ,match-op-name
+                  (,(specific-match-op-name suffix) 
+                   instance-value pattern-value comparison-type))))
+      `(case comparison-type
+         ;; Ordered by likely frequency/effect:
+         (fixnum ,(do-type "&"))
+         (number)                       ; no dispatch on number
+         (single-float ,(do-type "$"))
+         (short-float ,(do-type "$&"))
+         (double-float ,(do-type "$$"))
+         (long-float ,(do-type "$$$"))))))
+
+;;; ---------------------------------------------------------------------------
+
 (macrolet 
-    ((generate-match-< (name number-test op)
+    ((generate-match-< (name number-test op &optional dispatching)
        `(with-full-optimization ()
-          (defun ,name (instance-value pattern-value)
+          (defun ,name (instance-value pattern-value comparison-type)
             ,@(when (eq number-test 'numberp)
                 `((declare (notinline ,op))))
+            ,(cond
+              ;; If dispatching, generate the dispatch code:
+              (dispatching (generate-numeric-dispatch name))
+              ;; Non-dispatching (declared type) operators:
+              (t '(declare (ignore comparison-type))))
             (cond 
              ;; point instance-value:
              ((,number-test instance-value)
@@ -240,9 +280,9 @@
              ;; interval instance-value and pattern-value:
              (t (,op (interval-end instance-value) 
                      (interval-start pattern-value))))))))
-  (generate-match-< match-< numberp <)
-  (generate-match-< match-<= numberp <=)
-  (generate-match-< match-ends numberp =)
+  (generate-match-< match-< numberp < :dispatching)
+  (generate-match-< match-<= numberp <= :dispatching)
+  (generate-match-< match-ends numberp = :dispatching)
   ;; declared fixnums:
   (generate-match-< match-<& fixnump <&)
   (generate-match-< match-<=& fixnump <=&)
@@ -267,11 +307,16 @@
 ;;; ---------------------------------------------------------------------------
 
 (macrolet 
-    ((generate-match-> (name number-test op)
+    ((generate-match-> (name number-test op &optional dispatching)
        `(with-full-optimization ()
-          (defun ,name (instance-value pattern-value)
+          (defun ,name (instance-value pattern-value comparison-type)
             ,@(when (eq number-test 'numberp)
                 `((declare (notinline ,op))))
+            ,(cond
+              ;; If dispatching, generate the dispatch code:
+              (dispatching (generate-numeric-dispatch name))
+              ;; Non-dispatching (declared type) operators:
+              (t '(declare (ignore comparison-type))))
             (cond 
              ;; point instance-value:
              ((,number-test instance-value)
@@ -284,18 +329,18 @@
              ;; interval instance-value and pattern-value:
              (t (,op (interval-start instance-value) 
                      (interval-end pattern-value))))))))
-  (generate-match-> match-> numberp >)
-  (generate-match-> match->= numberp >=)
-  (generate-match-> match-starts numberp =)
+  (generate-match-> match-> numberp > :dispatching)
+  (generate-match-> match->= numberp >= :dispatching)
+  (generate-match-> match-starts numberp = :dispatching)
   ;; declared fixnums:
   (generate-match-> match->& fixnump >&)
   (generate-match-> match->=& fixnump >=&)
   (generate-match-> match-starts& fixnump =&)
-  ;; declared short-floats:  
+  ;; declared short-floats:
   (generate-match-> match->$& short-float-p >$&)
   (generate-match-> match->=$& short-float-p >=$&)
   (generate-match-> match-starts$& short-float-p =$&)
-  ;; declared single-floats:  
+  ;; declared single-floats:
   (generate-match-> match->$ single-float-p >$)
   (generate-match-> match->=$ single-float-p >=$)
   (generate-match-> match-starts$ single-float-p =$)
@@ -311,11 +356,17 @@
 ;;; ---------------------------------------------------------------------------
 
 (macrolet 
-    ((generate-match-within (name number-test point-op range-op)
+    ((generate-match-within (name number-test point-op range-op
+                             &optional dispatching)
        `(with-full-optimization ()
-          (defun ,name (instance-value pattern-value)
+          (defun ,name (instance-value pattern-value comparison-type)
             ,@(when (eq number-test 'numberp)
                 `((declare (notinline ,point-op ,range-op))))
+            ,(cond
+              ;; If dispatching, generate the dispatch code:
+              (dispatching (generate-numeric-dispatch name))
+              ;; Non-dispatching (declared type) operators:
+              (t '(declare (ignore comparison-type))))
             (cond 
              ;; point instance-value:
              ((,number-test instance-value)
@@ -335,15 +386,15 @@
                   (multiple-value-bind (pstart pend)
                       (interval-values pattern-value)
                     (,range-op pstart istart iend pend)))))))))
-  (generate-match-within match-= numberp = =)
-  (generate-match-within match-within numberp = <=)
+  (generate-match-within match-= numberp = = :dispatching)
+  (generate-match-within match-within numberp = <= :dispatching)
   ;; declared fixnums:
   (generate-match-within match-=& fixnump =& =&)
   (generate-match-within match-within& fixnump =& <=&)
-  ;; declared short-floats: 
+  ;; declared short-floats:
   (generate-match-within match-=$& short-float-p =$& =$&)
   (generate-match-within match-within$& short-float-p =$& <=$&)
-  ;; declared single-floats: 
+  ;; declared single-floats:
   (generate-match-within match-=$ single-float-p =$ =$)
   (generate-match-within match-within$ single-float-p =$ <=$)
   ;; declared double-floats:
@@ -356,11 +407,17 @@
 ;;; ---------------------------------------------------------------------------
 
 (macrolet 
-    ((generate-match-covers (name number-test point-op range-op)
+    ((generate-match-covers (name number-test point-op range-op
+                             &optional dispatching)
        `(with-full-optimization ()
-          (defun ,name (instance-value pattern-value)
+          (defun ,name (instance-value pattern-value comparison-type)
             ,@(when (eq number-test 'numberp)
                 `((declare (notinline ,point-op ,range-op))))
+            ,(cond
+              ;; If dispatching, generate the dispatch code:
+              (dispatching (generate-numeric-dispatch name))
+              ;; Non-dispatching (declared type) operators:
+              (t '(declare (ignore comparison-type))))
             (cond 
              ;; point instance-value:
              ((,number-test instance-value)
@@ -380,12 +437,12 @@
                   (multiple-value-bind (pstart pend)
                       (interval-values pattern-value)
                     (,range-op istart pstart pend iend)))))))))
-  (generate-match-covers match-covers numberp = <=)
+  (generate-match-covers match-covers numberp = <= :dispatching)
   ;; declared fixnums:
   (generate-match-covers match-covers& fixnump =& <=&)
-  ;; declared short-floats: 
+  ;; declared short-floats:
   (generate-match-covers match-covers$& short-float-p =$& <=$&)
-  ;; declared single-floats: 
+  ;; declared single-floats:
   (generate-match-covers match-covers$ single-float-p =$ <=$)
   ;; declared double-floats:
   (generate-match-covers match-covers$$ double-float-p =$$ <=$$)
@@ -395,11 +452,17 @@
 ;;; ---------------------------------------------------------------------------
 
 (macrolet 
-    ((generate-match-overlaps (name number-test point-op range-op sub-op)
+    ((generate-match-overlaps (name number-test point-op range-op sub-op
+                               &optional dispatching)
        `(with-full-optimization ()
-          (defun ,name (instance-value pattern-value)
+          (defun ,name (instance-value pattern-value comparison-type)
             ,@(when (eq number-test 'numberp)
                 `((declare (notinline ,point-op ,range-op ,sub-op))))
+            ,(cond
+              ;; If dispatching, generate the dispatch code:
+              (dispatching (generate-numeric-dispatch name))
+              ;; Non-dispatching (declared type) operators:
+              (t '(declare (ignore comparison-type))))
             (cond 
              ;; point instance-value:
              ((,number-test instance-value)
@@ -433,7 +496,7 @@
                      (,sub-op pstart (,sub-op iend istart)) 
                      istart 
                      pend)))))))))
-  (generate-match-overlaps match-overlaps numberp = <= -)
+  (generate-match-overlaps match-overlaps numberp = <= - :dispatching)
   ;; declared fixnums:
   (generate-match-overlaps match-overlaps& fixnump =& <=& -&)
   ;; declared short-floats:
@@ -448,7 +511,31 @@
 ;;; ---------------------------------------------------------------------------
 
 (with-full-optimization ()
-  (defun match-true (instance-value there-is-no-pattern-value)
+  (defun match-is (instance-value pattern-value comparison-type)
+    ;; general enumerated match operator:
+    (funcall (the symbol comparison-type) instance-value pattern-value)))
+           
+;;; ---------------------------------------------------------------------------
+
+(macrolet
+    ((generate-match-is (name comparison-test)
+       `(with-full-optimization ()
+          (defun ,name (instance-value pattern-value comparison-type)
+            (declare (ignore comparison-type))
+            ;; Eliminate SBCL optimization warnings:
+            #+sbcl (declare (optimize (speed 1)))
+            (,comparison-test instance-value pattern-value)))))
+  (generate-match-is match-is-eq eq)
+  (generate-match-is match-is-eql eql)
+  (generate-match-is match-is-equal equal)
+  (generate-match-is match-is-equalp equalp))
+
+;;; ---------------------------------------------------------------------------
+
+(with-full-optimization ()
+  (defun match-true (instance-value there-is-no-pattern-value 
+                     comparison-type)
+    (declare (ignore comparison-type))
     (declare (ignore there-is-no-pattern-value))
     ;; Boolean match functions do not involve a pattern value:
     instance-value))
@@ -456,7 +543,9 @@
 ;;; ---------------------------------------------------------------------------
 
 (with-full-optimization ()
-  (defun match-false (instance-value there-is-no-pattern-value)
+  (defun match-false (instance-value there-is-no-pattern-value
+                      comparison-type)
+    (declare (ignore comparison-type))
     (declare (ignore there-is-no-pattern-value))
     ;; Boolean match functions do not involve a pattern value:
     (not instance-value)))
@@ -464,21 +553,16 @@
 ;;; ---------------------------------------------------------------------------
 
 (with-full-optimization ()
-  (defun match-eqv (instance-value pattern-value)
+  (defun match-eqv (instance-value pattern-value comparison-type)
+    (declare (ignore comparison-type))
     ;; fast (not (xor instance-value pattern-value)):
     (if instance-value pattern-value (not pattern-value))))
            
 ;;; ---------------------------------------------------------------------------
 
 (with-full-optimization ()
-  (defun match-is (instance-value pattern-value)
-    ;; placeholder for general enumerated match operator:
-    (nyi instance-value pattern-value)))
-           
-;;; ---------------------------------------------------------------------------
-
-(with-full-optimization ()
-  (defun match-matches (instance-value pattern-value)
+  (defun match-matches (instance-value pattern-value comparison-type)
+    (declare (ignore comparison-type))
     ;; placeholder for general string match operator:
     (nyi instance-value pattern-value)))
            
@@ -527,7 +611,7 @@
       (overlaps& ,#'match-overlaps&)
       (starts& ,#'match-starts& ,#'extent->)
       (ends& ,#'match-ends& ,#'extent-<)
-      ;; declared short-floats:
+      ;; declared short-floats 
       (=$& ,#'match-=$&)
       (<$& ,#'match-<$& ,#'extent-<)
       (>$& ,#'match->$& ,#'extent->)
@@ -581,12 +665,17 @@
 (defparameter *enumerated-match-op-fns*
     ;; TODO: finish moving from having to specify the match type in the pattern
     ;;       operator to the generic is enumerated operator:
-    `((is ,'#'match-is)
-      ;; Strong-type matches (deprecate these?):
-      (eq ,#'eq)
-      (eql ,#'eql)
-      (equal ,#'equal)
-      (equalp ,#'equalp)))
+    `((is ,#'match-is)
+      ;; Strong-type matches:
+      (is-eq ,#'match-is-eq)
+      (is-eql ,#'match-is-eql)
+      (is-equal ,#'match-is-equal)
+      (is-equalp ,#'match-is-equalp)
+      ;; Deprecated strong-type matches:
+      (eq ,#'match-is-eq)
+      (eql ,#'match-is-eql)
+      (equal ,#'match-is-equal)
+      (equalp ,#'match-is-equalp)))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -603,97 +692,102 @@
 ;;; ===========================================================================
 ;;;  Pattern Matching
 
-(defun match-instance-to-pattern-element (instance pattern-element verbose)
+(defun match-instance-to-pattern-element (instance pattern-element into-cons
+                                          verbose)
   ;;; Returns true if `instance' matches `pattern-element'
-  (let ((into-cons (cons nil nil)))
-    (destructuring-bind (op-fn dimensions &optional values &rest options)
-        pattern-element
-      (declare (type function op-fn))
-      (declare (ignore options))
-      (declare (dynamic-extent options))
-      ;; Do an extended "every-like" iteration (supporting atoms,
-      ;; lists, dotted-lists, or sequences with appropriate length
-      ;; checks based on the structure of dimensions).  Just using:
-      ;;
-      ;;       (every #'(lambda (dimension value)
-      ;;         (funcall op-fn
-      ;;                  (instance-dimension-value instance dimension)
-      ;;                    value))
-      ;;         dimensions
-      ;;         values)
-      ;;
-      ;; comes close, but we require a bit more flexibility.
-      (flet ((match-it (dimension-name pattern-value)
-               (multiple-value-bind (dimension-value dimension-value-type
-                                     composite-type ordering-dimension-name)
-                   (internal-instance-dimension-value 
-                    instance dimension-name into-cons)
-                 (declare (ignore dimension-value-type ordering-dimension-name))
-                 (let ((result 
-                        (cond 
-                         ;; unbound value:
-                         ((eq dimension-value unbound-value-indicator)
-                          nil)
-                         ;; set composite dimension value:
-                         ((eq composite-type ':sequence)
-                          (some #'(lambda (component-dimension-value)
-                                    (funcall op-fn 
-                                             component-dimension-value
-                                             pattern-value))
-                                dimension-value))                      
-                         ;; sequence composite dimension value:
-                         ((eq composite-type ':sequence)
-                          (nyi))
-                         ;; series composite dimension value:
-                         ((eq composite-type ':series)
-                          (nyi))
-                         ;; incomposite dimension value:
-                         (t (funcall op-fn dimension-value pattern-value)))))
-                   (cond 
-                    ;; success on this dimension:
-                    (result 't)
-                    ;; failure
-                    (t (when verbose
-                         (find-verbose-dimension-failure 
-                          instance dimension-name op-fn
-                          pattern-value dimension-value))
-                       ;; return failure:
-                       nil))))))
-        (cond 
-         ;; atomic dimension requires a single value:
-         ((symbolp dimensions)
-          (match-it dimensions values))
-         ;; list dimensions with non-list values:
-         ((vectorp values)
-          (let ((index 0)
-                (dimension-list dimensions))
+  (destructuring-bind (op-fn dimensions &optional values &rest options)
+      pattern-element
+    (declare (type function op-fn))
+    (declare (ignore options))
+    (declare (dynamic-extent options))
+    ;; Do an extended "every-like" iteration (supporting atoms,
+    ;; lists, dotted-lists, or sequences with appropriate length
+    ;; checks based on the structure of dimensions).  Just using:
+    ;;
+    ;;       (every #'(lambda (dimension value)
+    ;;         (funcall op-fn
+    ;;                  (instance-dimension-value instance dimension)
+    ;;                    value))
+    ;;         dimensions
+    ;;         values)
+    ;;
+    ;; comes close, but we require a bit more flexibility.
+    (flet ((match-it (dimension-name pattern-value)
+             (multiple-value-bind (dimension-value dimension-value-type
+                                   comparison-type
+                                   composite-type ordering-dimension-name)
+                 (internal-instance-dimension-value 
+                  instance dimension-name into-cons)
+               (declare (ignore dimension-value-type ordering-dimension-name))
+               (let ((result 
+                      (cond 
+                       ;; unbound value:
+                       ((eq dimension-value unbound-value-indicator)
+                        nil)
+                       ;; set-composite dimension value:
+                       ((eq composite-type ':set)
+                        (some #'(lambda (component-dimension-value)
+                                  (funcall op-fn 
+                                           component-dimension-value
+                                           pattern-value
+                                           comparison-type))
+                              dimension-value))                      
+                       ;; sequence-composite dimension value:
+                       ((eq composite-type ':sequence)
+                        (nyi))
+                       ;; series-composite dimension value:
+                       ((eq composite-type ':series)
+                        (nyi))
+                       ;; incomposite dimension value:
+                       (t (funcall op-fn
+                                   dimension-value
+                                   pattern-value
+                                   comparison-type)))))
+                 (cond 
+                  ;; success on this dimension:
+                  (result 't)
+                  ;; failure
+                  (t (when verbose
+                       (find-verbose-dimension-failure 
+                        instance dimension-name op-fn
+                        pattern-value dimension-value))
+                     ;; return failure:
+                     nil))))))
+      (cond 
+       ;; atomic dimension requires a single value:
+       ((symbolp dimensions)
+        (match-it dimensions values))
+       ;; list dimensions with non-list values:
+       ((vectorp values)
+        (let ((index 0)
+              (dimension-list dimensions))
+          (declare (type list dimension-list))
+          (while (consp dimension-list)
+            (unless (match-it (pop dimension-list) (elt values index))
+              ;; failed on this dimension:
+              (return-from match-instance-to-pattern-element nil))
+            (incf& index)))
+        ;; success:
+        't)
+       ;; list/dotted-list dimension values:
+       (t (let ((dimension-list dimensions))
             (declare (type list dimension-list))
             (while (consp dimension-list)
-              (unless (match-it (pop dimension-list) (elt values index))
+              (unless (match-it
+                       (pop dimension-list)
+                       ;; handle pure and dotted-list values:
+                       (cond ((consp values) (pop values))
+                             ((null values)
+                              (error "Too few pattern values supplied."))
+                             (t (prog1 values (setf values nil)))))
                 ;; failed on this dimension:
-                (return-from match-instance-to-pattern-element nil))
-              (incf& index)))
+                (return-from match-instance-to-pattern-element nil))))
           ;; success:
-          't)
-         ;; list/dotted-list dimension values:
-         (t (let ((dimension-list dimensions))
-              (declare (type list dimension-list))
-              (while (consp dimension-list)
-                (unless (match-it
-                         (pop dimension-list)
-                         ;; handle pure and dotted-list values:
-                         (cond ((consp values) (pop values))
-                               ((null values)
-                                (error "Too few pattern values supplied."))
-                               (t (prog1 values (setf values nil)))))
-                  ;; failed on this dimension:
-                  (return-from match-instance-to-pattern-element nil))))
-            ;; success:
-            't))))))
+          't)))))
                         
 ;;; ---------------------------------------------------------------------------
 
-(defun match-instance-to-pattern (instance pattern verbose)
+(defun match-instance-to-pattern (instance pattern into-cons verbose)
   ;;; Returns true if `instance' matches `pattern'
   (when verbose (find-verbose-begin-match instance))  
   (let ((result
@@ -710,7 +804,7 @@
                        (some #'match-instance-to-simpler-pattern (cdr p)))
                       (otherwise
                        (match-instance-to-pattern-element
-                        instance p verbose)))))
+                        instance p into-cons verbose)))))
                (match-instance-to-simpler-pattern pattern))))))
     (when verbose
       (if result
@@ -976,13 +1070,14 @@
                                   ;; Separate dimension handling can't address
                                   ;; multiple-dimension negation (a "hole" in
                                   ;; a space.  The following only scans the
-                                  ;; lower-right and upper-left quadrants bounding
-                                  ;; the "hole".
+                                  ;; lower-right and upper-left quadrants
+                                  ;; bounding the "hole".
                                   #+wrong
                                   `((,-infinity ,start) (,end ,infinity))
                                   ;; To fix this issue, we need to consider
-                                  ;; each disjunct in all pattern dimensions (not
-                                  ;; individually.  For now, we'll look everywhere!
+                                  ;; each disjunct in all pattern dimensions
+                                  ;; (not individually.  For now, we'll look
+                                  ;; everywhere!
                                   #-wrong
                                   `((,-infinity ,infinity))
                                   `((,start ,end)))))))
@@ -1041,15 +1136,15 @@
         (destructuring-bind (ordered-op-fn 
                              &optional extent-generator-fn)
             ordered-op-spec
-          (values ordered-op-fn :ordered extent-generator-fn))
+          (values ordered-op-fn ':ordered extent-generator-fn))
         (let ((enumerated-op-fn 
                (second (assoc operator *enumerated-match-op-fns* :test #'eq))))
           (if enumerated-op-fn
-              (values enumerated-op-fn :enumerated)
+              (values enumerated-op-fn ':enumerated)
               (let ((boolean-op-fn 
                      (second (assoc operator *boolean-match-op-fns* :test #'eq))))
                 (if boolean-op-fn
-                    (values boolean-op-fn :boolean)
+                    (values boolean-op-fn ':boolean)
                     (error "Illegal pattern operator ~s in pattern element ~s."
                            operator pattern-element))))))))
 
@@ -1157,7 +1252,8 @@
   ;;; extents) for `pattern'
   (cond
    ((eq pattern 't)
-    (make-optimized-pattern :disjunctive-dimensional-extents 't :pattern 't))
+    (make-optimized-pattern :disjunctive-dimensional-extents 't 
+                            :pattern 't))
    (t (let ((dimensional-extents nil)
             ;; For error/warning messages:
             (*%%pattern%%* pattern)
@@ -1211,12 +1307,13 @@
                   (optimize-pattern-element p anding negated)))))
           (let* ((dnf-pattern (convert-to-dnf pattern))
                  (*%%pattern-extents%%* nil)
-                 (opt-pattern (optimize-simpler-pattern dnf-pattern nil nil)))
+                 (optimized-pattern 
+                  (optimize-simpler-pattern dnf-pattern nil nil)))
             (when *%%pattern-extents%%*
               (push *%%pattern-extents%%* dimensional-extents))
             (make-optimized-pattern 
-             :pattern opt-pattern
-             :disjunctive-dimensional-extents dimensional-extents)))))))
+             :disjunctive-dimensional-extents dimensional-extents
+             :pattern optimized-pattern)))))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -1245,10 +1342,13 @@
                  (assoc extent-dimension-name (dimensions-of space-instance)
                         :test #'eq)))
             (when space-dimension
-              (destructuring-bind (space-dimension-name space-dimension-type)
+              (destructuring-bind (space-dimension-name 
+                                   (space-dimension-type
+                                    comparison-type))
                   space-dimension
-                (declare (ignore space-dimension-name))
-                (unless (eq dimension-type space-dimension-type)
+                (declare (ignore space-dimension-name
+                                 comparison-type))
+                (unless (equal dimension-type space-dimension-type)
                   (incompatible-pattern/space-dimensions
                    extent-dimension-name 
                    dimension-type 
@@ -1266,19 +1366,22 @@
   ;;; the speed of mark-slot access (level of CLOS optimization).
   (let* ((find-stats *find-stats*)
          (run-time (if find-stats (get-internal-run-time) 0))
-         (opt-pattern (optimize-pattern pattern))
+         (optimized-pattern (optimize-pattern pattern))
          (disjunctive-dimensional-extents
-          (optimized-pattern.disjunctive-dimensional-extents opt-pattern))
+          (optimized-pattern.disjunctive-dimensional-extents
+           optimized-pattern))
          (storage-objects
           (storage-objects-for-retrieval
            unit-classes-spec space-instances
-           (optimized-pattern.disjunctive-dimensional-extents opt-pattern)
+           (optimized-pattern.disjunctive-dimensional-extents 
+            optimized-pattern)
            pattern
            (eq pattern ':all)
            invoking-fn-name))
-         (unit-class-check-fn (determine-unit-class-check unit-classes-spec)))
+         (unit-class-check-fn (determine-unit-class-check unit-classes-spec))
+         (into-cons (cons nil nil)))
     (when verbose 
-      (find-verbose-preamble pattern opt-pattern
+      (find-verbose-preamble pattern optimized-pattern
                              storage-objects space-instances))
     (when find-stats
       (incf (find-stats.number-of-finds find-stats))
@@ -1308,7 +1411,8 @@
                             (funcall (the function filter-before) instance))
                         (match-instance-to-pattern 
                          instance
-                         (optimized-pattern.pattern opt-pattern)
+                         (optimized-pattern.pattern optimized-pattern)
+                         into-cons
                          verbose)
                         (or (null filter-after)
                             (funcall (the function filter-after) instance)))
@@ -1335,13 +1439,15 @@
   ;;; selected/rejected instances.
   (let* ((find-stats *find-stats*)
          (run-time (if find-stats (get-internal-run-time) 0))
-         (opt-pattern (optimize-pattern pattern))
+         (optimized-pattern (optimize-pattern pattern))
          (disjunctive-dimensional-extents
-          (optimized-pattern.disjunctive-dimensional-extents opt-pattern))
+          (optimized-pattern.disjunctive-dimensional-extents 
+           optimized-pattern))
          (storage-objects
           (storage-objects-for-retrieval
            unit-classes-spec space-instances
-           (optimized-pattern.disjunctive-dimensional-extents opt-pattern)
+           (optimized-pattern.disjunctive-dimensional-extents
+            optimized-pattern)
            pattern
            (eq pattern ':all)
            invoking-fn-name))
@@ -1351,9 +1457,10 @@
                         ;; we'll be a bit aggressive here:
                         :size *processed-hash-table-size*
                         ;; and here:
-                        :rehash-size *processed-hash-table-rehash-size*)))
+                        :rehash-size *processed-hash-table-rehash-size*))
+         (into-cons (cons nil nil)))
     (when verbose 
-      (find-verbose-preamble pattern opt-pattern 
+      (find-verbose-preamble pattern optimized-pattern 
                              storage-objects space-instances))
     (when find-stats
       (incf (find-stats.number-of-finds find-stats)))
@@ -1382,7 +1489,8 @@
                             (funcall (the function filter-before) instance))
                         (match-instance-to-pattern 
                          instance
-                         (optimized-pattern.pattern opt-pattern)
+                         (optimized-pattern.pattern optimized-pattern)
+                         into-cons
                          verbose)
                         (or (null filter-after)
                             (funcall (the function filter-after) instance)))
@@ -1566,9 +1674,10 @@
                          &key filter-before filter-after 
                               (verbose *find-verbose*))
   (when verbose (find-verbose-operation 'filter-instances))
-  (let ((opt-pattern (optimize-pattern pattern))
+  (let ((optimized-pattern (optimize-pattern pattern))
         (filter-before (when filter-before (coerce filter-before 'function)))
-        (filter-after (when filter-after (coerce filter-after 'function))))
+        (filter-after (when filter-after (coerce filter-after 'function)))
+        (into-cons (cons nil nil)))
     (mapcan
      #'(lambda (instance)
          ;; filter-before & pattern & filter-after
@@ -1576,7 +1685,8 @@
                         (funcall (the function filter-before) instance))
                     (match-instance-to-pattern 
                      instance
-                     (optimized-pattern.pattern opt-pattern)
+                     (optimized-pattern.pattern optimized-pattern)
+                     into-cons
                      verbose)
                     (or (null filter-after)
                         (funcall (the function filter-after) instance)))

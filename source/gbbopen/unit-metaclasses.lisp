@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/unit-metaclasses.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Mar 14 05:41:56 2008 *-*
-;;;; *-* Machine: vagabond.cs.umass.edu *-*
+;;;; *-* Last-Edit: Sun Apr  6 07:55:26 2008 *-*
+;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -27,7 +27,7 @@
 ;;;           into it when instance-name-comparison-test function is changed.
 ;;;           (Corkill)
 ;;;  06-06-06 Rename conflicting instances resulting from a change to
-;;;           instance-name-comparision-test (rather than asking for one to
+;;;           instance-name-comparison-test (rather than asking for one to
 ;;;           be deleted), as suggested by Susan Lander. (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -44,9 +44,7 @@
             link-slot-p                 ; not yet documented
             restore-gbbopen-node-state  ; not yet documented
             save-gbbopen-node-state     ; not yet documented
-            standard-space-class
-            unit-class-dimensions       ; deprecated, to be removed in 0.9.8
-            )))
+            standard-space-class)))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -85,15 +83,11 @@
    (unit-class-dimensions 
     :initform nil
     :reader dimensions-of
-    ;; deprecated, to be removed in 0.9.8
-    :reader unit-class-dimensions
     :writer (setf standard-unit-class.unit-class-dimensions))
    (evfn-blks :initform nil)
    ;; Controls if instances are deleted by reset-gbbopen (unless overridden by
    ;; an :all-classes reset):
-   (retain :initform nil)
-   ;; For class retrievals:
-   (%%storage%% :initform nil))
+   (retain :initform nil))
   (:export-class-name t)
   (:generate-accessors-format :prefix)
   (:generate-accessors t :exclude unit-class-dimensions))
@@ -106,10 +100,6 @@
       (dimensions-of '(standard-unit-instance :plus-subclasses))
       (dimensions-of (find-unit-class unit-class-name))))
 
-;; deprecated, to be removed in 0.9.8
-(defmethod unit-class-dimensions ((unit-class-name symbol))
-  (dimensions-of unit-class-name))
-
 ;;; ---------------------------------------------------------------------------
 
 (defmethod dimensions-of ((unit-classes-specifier cons))
@@ -121,10 +111,6 @@
            (pushnew dimension result :test #'equal)))
      unit-classes-specifier)
     result))
-
-;; deprecated, to be removed in 0.9.8
-(defmethod unit-class-dimensions ((unit-classes-specifier cons))
-  (dimensions-of unit-classes-specifier))
 
 ;;; ---------------------------------------------------------------------------
 

@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-USER; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/source/gbbopen/test/basic-tests.lisp *-*
+;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/basic-tests.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jan 30 03:38:58 2008 *-*
-;;;; *-* Machine: whirlwind.corkills.org *-*
+;;;; *-* Last-Edit: Fri Apr  4 05:07:06 2008 *-*
+;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -69,7 +69,7 @@
                  (if (slot-boundp instance 'slot-3) 
                      (z-of instance)
                      unbound-value-indicator)))
-   (classification :element classification)
+   (classification (:element eq) classification)
    (amphibious :boolean amphibious))
   (:initial-space-instances (bb sub-bb space-1)))
   
@@ -106,7 +106,7 @@
   ()
   (:dimensional-values 
    (x :mixed :set x)
-   (classification :element :set classification)))
+   (classification (:element eq) :set classification)))
 
 (define-unit-class uc-sequence (uc-4)
   ()
@@ -675,6 +675,9 @@
 			     '(= x 1)
 			     (list u1 u2 u3 u4))
 	       (do-find-test 't all-space-instances 
+			     '(=& x 1)
+			     (list u1 u2 u3 u4))
+	       (do-find-test 't all-space-instances 
 			     '(/= x 1)
 			     (list u5 u6 u7 u8 u9 u10 u11 u12 #+not-yet cu1))
 	       (do-find-test 't all-space-instances 
@@ -705,10 +708,16 @@
 			     '(ends (x y) (1 2))
 			     (list u3 u4))
 	       (do-find-test 't all-space-instances 
-			     '(eql classification :car)
+			     '(is classification :car)
 			     (list u2 u5 #+not-yet cu1))
 	       (do-find-test 't space-1
-			     '(and (eq classification :car) (= x 1))
+			     '(and (is-eq classification :car) (= x 1))
+			     (list u2))
+	       (do-find-test 't space-1
+			     '(and (is-eq classification :car) (= x 1))
+			     (list u2))
+	       (do-find-test 't space-1
+			     '(and (is classification :car) (= x 1))
 			     (list u2))
 	       (do-find-test 'uc-1 all-space-instances 
 			     '(covers (x y z) ((1 2) (2 3) 4))
@@ -798,11 +807,11 @@
 	(do-find-tests 't))
       ;; Filter-instances checks:
       (format t "~&;;   Filter-instance tests...~%")
-      (let ((p '(equalp classification :car)))
+      (let ((p '(is-equalp classification :car)))
 	(unless (set-equal (filter-instances test-set p)
 			   (list u2 u5 #+not-yet cu1))
 	  (error "Wrong results from filter-instances ~s" p)))
-      (let ((p '(eq classification :truck)))
+      (let ((p '(is-eq classification :truck)))
 	(unless (set-equal (filter-instances (cons u3 test-set) p)
 			   (list u3 u3))
 	  (error "Wrong results from filter-instances ~s" p)))))
@@ -963,9 +972,11 @@
   (find-tests '((uc-1 x uniform-buckets :layout (0 10 3))
 		(uc-2 x uniform-buckets :layout (0 10 2.5))))
   (find-tests '((uc-1 x uniform-buckets :layout (0 10 1))))
+  ;; Pre-0.9.9 (deprecated) syntax:
   (find-tests '((uc-1 classification hashed :test eq)))
+  ;; Pre-0.9.9 (deprecated) syntax:
   (find-tests '((uc-1 classification hashed 
-                      ;; it's OK to use a more complete :test predicate than
+                      ;; it's OK to use a more general :test predicate than
                       ;; the pattern predicate (but not the other way
                       ;; round!):
 		      :test equalp)))
