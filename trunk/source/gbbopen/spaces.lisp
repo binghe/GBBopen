@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/spaces.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Mar 12 10:52:20 2008 *-*
-;;;; *-* Machine: vagabond.cs.umass.edu *-*
+;;;; *-* Last-Edit: Sat Apr  5 09:39:53 2008 *-*
+;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -44,7 +44,6 @@
             ^                           ; path reg-exp operator
             add-instance-to-space-instance
             all-space-instances
-            allowed-unit-classes        ; deprecated, to be removed in 0.9.8
             allowed-unit-classes-of
             clear-space-instances
             children                    ; standard-space-instance slot name
@@ -68,9 +67,6 @@
             remove-instance-from-space-instance
             root-space-instance         ; not documented
             show-forward-path-event-functions ; debugging only; not documented
-            space-instance-children     ; deprecated, to be removed in 0.9.8
-            space-instance-dimensions   ; deprecated, to be removed in 0.9.8
-            space-instance-parent       ; deprecated, to be removed in 0.9.8
             space-name                  ; standard-space-instance slot name
             standard-space-instance)))
 
@@ -108,9 +104,7 @@
     :accessor standard-space-instance.space-name)
    (children 
     :link (standard-space-instance parent :singular t)
-    :reader children-of 
-    ;; Deprecated, to be removed in 0.9.8:
-    :reader space-instance-children))
+    :reader children-of))
   (:generate-accessors nil))
 
 ;;; ===========================================================================
@@ -171,15 +165,11 @@
 (define-space-class standard-space-instance (root-space-instance)
   ((dimensions 
     :initform nil
-    :reader dimensions-of
-    ;; Deprecated, to be removed in 0.9.8
-    :reader space-instance-dimensions)
+    :reader dimensions-of)
    (allowed-unit-classes
     ;; actually, this slot contains a list of <unit-classes-spec>s
     :initform t
-    :reader allowed-unit-classes-of
-    ;; Deprecated, to be removed in 0.9.8
-    :reader allowed-unit-classes)
+    :reader allowed-unit-classes-of)
    (%%storage-spec%%)
    (%%storage%%
     :initform nil)
@@ -188,18 +178,11 @@
    (parent 
     :link (root-space-instance children)
     :singular t
-    :reader parent-of
-    ;; Deprecated, to be removed in 0.9.8:
-    :reader space-instance-parent))
+    :reader parent-of))
   (:generate-accessors-format :prefix)
   (:generate-accessors t :exclude allowed-unit-classes dimensions parent))
 
 (defmethod allowed-unit-classes-of ((space-instance cons))
-  (allowed-unit-classes-of 
-   (find-space-instance-by-path space-instance ':with-error)))
-
-;; deprecated, to be removed in 0.9.8:
-(defmethod allowed-unit-classes ((space-instance cons))
   (allowed-unit-classes-of 
    (find-space-instance-by-path space-instance ':with-error)))
 
@@ -214,13 +197,86 @@
 
 ;;; ---------------------------------------------------------------------------
 
+(defun dimension-comparison-type-error (path dimension-name 
+                                        dimension-value-type comparison-type 
+                                        allowed-comparison-types)
+  (error "The comparison-type ~s specified for the ~s dimension ~a of ~
+          space-instance ~s is not~{~#[~^~; ~s~^~; ~s, or ~s~^~] ~s,~}."
+         comparison-type
+         dimension-value-type
+         dimension-name
+         path
+         allowed-comparison-types))
+
+;;; ---------------------------------------------------------------------------
+
+(defun determine-dimension-comparison-type (path dimension-name dimension-spec)
+  ;;; Check that a specified comparison-type for a space-instance
+  ;;; dimension-spec is valid:
+  (setf dimension-spec (ensure-list dimension-spec))
+  (destructuring-bind (dimension-type &optional comparison-type)
+      dimension-spec
+    (ecase dimension-type
+      (:ordered
+       (cond
+        (comparison-type
+         (unless (memq comparison-type *ordered-comparison-types*)
+           (dimension-comparison-type-error 
+            path dimension-name ':ordered comparison-type 
+            *ordered-comparison-types*))
+         dimension-spec)
+        (t (list dimension-type 'number))))
+      (:enumerated
+       (cond 
+        (comparison-type
+         (unless (memq comparison-type *enumerated-comparison-types*)
+           (dimension-comparison-type-error 
+            path dimension-name ':enumerated comparison-type 
+            *enumerated-comparison-types*))
+         dimension-spec)
+        (t (list dimension-type 'eql))))
+      (:boolean
+       (cond
+        (comparison-type
+         (unless (memq comparison-type *boolean-comparison-types*)
+           (dimension-comparison-type-error 
+            path dimension-name ':boolean comparison-type 
+            *boolean-comparison-types*))
+         dimension-spec)
+        (t (list dimension-type 't)))))))
+
+;;; ---------------------------------------------------------------------------
+
+(defun canonicalize-space-dimensions (path dimensions-spec)
+  (check-type dimensions-spec list)
+  (mapcar #'(lambda (dimension-spec)
+              (unless (typep dimension-spec 'cons)
+                (error "The dimension-specification ~s for a dimension of ~
+                        space-instance ~s is not a ~
+                        (<dimension-name> <dimension-type>) list."
+                       dimension-spec 
+                       path))
+              (destructuring-bind (dimension-name dimension-type-spec)
+                  dimension-spec
+                (list dimension-name
+                      (determine-dimension-comparison-type
+                       path dimension-name dimension-type-spec))))
+          dimensions-spec))
+
+;;; ---------------------------------------------------------------------------
+
 (defmethod initialize-instance ((instance standard-space-instance)
-                                &key instance-name make-parents storage
+                                &rest initargs
+                                &key instance-name 
+                                     make-parents 
+                                     dimensions
+                                     storage
                                      (allowed-unit-classes 't))
   (declare (inline class-of))
   ;; Verify that user-defined space-classes have the correct metaclass:
   (let ((metaclass (class-of instance)))
     (check-type metaclass standard-space-class))
+  ;; Verify that the path (instance-name) is at least a cons:
   (check-type instance-name cons)
   (check-type allowed-unit-classes (or symbol list))
   (multiple-value-bind (parent-path space-name)
@@ -244,7 +300,12 @@
                  :make-parents t))
               (error "A parent space instance for ~s does not exist."
                      instance-name))))
-      (call-next-method)
+      ;; Canonicalize the syntax of supplied dimensions:
+      (setf dimensions
+            (canonicalize-space-dimensions instance-name dimensions))
+      ;; Now do the normal unit-instance work:
+      (apply #'call-next-method instance 
+             :dimensions dimensions initargs)
       ;; Fixup a single extended-unit-class specification:
       (setf (slot-value instance 'allowed-unit-classes)
             (ensure-unit-classes-specifiers allowed-unit-classes))
@@ -259,8 +320,9 @@
 ;;; ---------------------------------------------------------------------------
 
 (defmethod initialize-instance :after ((instance standard-space-instance) &key)
-  ;; This *must* be done in an :after method, so that the new space-instance has
-  ;; been added to the class hash-table (by the above :around/primary method): 
+  ;; This *must* be done in an :after method, so that the new space-instance
+  ;; has been added to the class hash-table (by the :around method on the
+  ;; above primary method):
   (setup-space-instance-evfns instance))
 
 ;;; ---------------------------------------------------------------------------
@@ -548,9 +610,9 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun add-instance-to-space-instance-internal (instance space-instance)
-  ;;; Enhancement note: Cache dimension-compatibility checks on
-  ;;; space-instance after the first time an instance of a unit class
-  ;;; is added.  Must be cleared if unit-class is redefined, however.
+  ;;; Enhancement note: Add ability to cache dimension-compatibility checks on
+  ;;; space-instance the first time an instance of a unit class is
+  ;;; added.  Must be cleared if unit-class is redefined, however.
   (declare (inline class-of))
   (with-lock-held (*master-instance-lock*)
     (check-for-deleted-instance instance 'add-instance-to-space-instance)
@@ -581,7 +643,8 @@
       ;; dimension compatability-checks (cache someday!):
       (let ((unit-class-dimensions (dimensions-of (class-of instance))))
         (when unit-class-dimensions
-          (let ((space-instance-dimensions (dimensions-of space-instance))
+          (let ((space-instance-dimensions
+                 (dimensions-of space-instance))
                 (dimension-in-common-p nil))
             (declare (type list space-instance-dimensions))
             (dolist (unit-class-dimension unit-class-dimensions) 
@@ -590,8 +653,10 @@
                            space-instance-dimensions
                            :key #'car :test #'eq)))
                 (when matching-space-instance-dimension
-                  (unless (eq (second unit-class-dimension)
-                              (second matching-space-instance-dimension))
+                  ;; sdd comparison-test compatibility checks soon!!!
+                  (unless (eq (first (second unit-class-dimension))
+                              (first (second 
+                                      matching-space-instance-dimension)))
                     (error "Incompatible dimension types for dimension ~s.~%~
                             Unit-class dimension: ~s~%~
                             Space-instance dimension: ~s"

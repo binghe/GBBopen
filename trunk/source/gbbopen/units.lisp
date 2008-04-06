@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/source/gbbopen/units.lisp *-*
+;;;; *-* File: /usr/local/gbbopen/source/gbbopen/units.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Feb 28 19:08:39 2008 *-*
-;;;; *-* Machine: whirlwind.corkills.org *-*
+;;;; *-* Last-Edit: Sat Apr  5 23:25:29 2008 *-*
+;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -67,6 +67,15 @@
 (defparameter *dimension-value-types*
     '(:point :interval :mixed :element :boolean))
 
+(defparameter *ordered-comparison-types*
+    '(number fixnum short-float single-float double-float long-float))
+
+(defparameter *enumerated-comparison-types*
+    '(eq eql equal equalp))
+
+(defparameter *boolean-comparison-types*
+    '(t))
+
 ;;; ===========================================================================
 ;;;   Define-unit-class
 
@@ -106,12 +115,10 @@
     ;; Add dimensional-values from supers:
     (dolist (super (class-direct-superclasses unit-class))
       (when (typep super 'standard-unit-class)
-        (dolist (dimensional-value 
+        (dolist (cdv-spec 
                     (standard-unit-class.effective-dimensional-values super))
-          (pushnew dimensional-value dimensional-values
-                   :test #'eq
-                   :key #'car))))
-    ;; Stash the values:
+          (pushnew cdv-spec dimensional-values :test #'eq :key #'car))))
+    ;; Stash the effective values:
     (setf (standard-unit-class.effective-initial-space-instances unit-class)
           initial-space-instances)
     (setf (standard-unit-class.effective-dimensional-values unit-class)
@@ -119,12 +126,16 @@
     ;; Cache unit-class-dimensions:
     (setf (standard-unit-class.unit-class-dimensions unit-class)
           (mapcar #'(lambda (dimensional-value)
-                      `(,(first dimensional-value)
-                        ,(ecase (second dimensional-value)
-                           (:boolean ':boolean)
-                           (:element ':enumerated)
-                           ((:point :interval :mixed) ':ordered))))
-		  dimensional-values))
+                      `(;; dimension name:
+                        ,(first dimensional-value)
+                        (;; dimension type:
+                         ,(case (second dimensional-value)
+                            (:boolean ':boolean)
+                            (:element ':enumerated)
+                            ((:point :interval :mixed) ':ordered))
+                         ;; comparison type:
+                         ,(third dimensional-value))))
+                  dimensional-values))
     ;; Propogate retain attribute from supers:
     (unless retain
       (dolist (super (class-direct-superclasses unit-class))
@@ -145,73 +156,178 @@
   ;;; closures to *%%fixup-function-objects%%* and replaces `value' with a
   ;;; gensym key into *%%fixup-function-objects%%*
   (cond 
-   ;; We'll allow symbols as if they were quoted symbols
+   ;; We'll allow symbols as if they were quoted symbols:
    ((symbolp value) value)
-   ;; Quoted symbols imply (funcall 'symbol ...)
+   ;; Quoted symbols imply (funcall 'symbol ...):
    ((and (consp value) 
          (eq (first value) 'quote)
          (symbolp (second value)))
     (second value))
-   ;; Functions & possible closures
+   ;; Functions & possible closures:
    ((and (consp value) 
          (eq (first value) 'function))
     (let ((fixup-symbol (gensym "F")))
       (push `(,fixup-symbol ,value)
             *%%fixup-function-objects%%*)
       fixup-symbol))
-   ;; Pass thru anything else
+   ;; Pass thru anything else:
    (t value)))
 
 ;;; ---------------------------------------------------------------------------
+;;;   Dimensional-value class option syntax
 ;;;
 ;;; <dimensional-value> :== <incomposite-dimensional-value> | 
 ;;;                         <composite-dimensional-value>
 ;;; <incomposite-dimensional-value>
-;;;             :== (<dim-name> <dimension-value-type> <dimension-value-place>)
+;;;             :== (<dim-name> <dimension-value-spec> <dimension-value-place>)
 ;;; <composite-dimensional-value>
-;;;             :== (<dim-name> <dimension-value-type> 
+;;;             :== (<dim-name> <dimension-value-spec> 
 ;;;                  <composite-type> <dimension-value-place>)
 ;;; <composite-type> :== :set | :series |
 ;;;                      :ascending-series <ordering-dimension-name> |
 ;;;                      :descending-series <ordering-dimension-name>
-;;; <dimension-value-type> :==  :point | :interval | :mixed | 
-;;;                             :element | :boolean
+;;; <dimension-value-spec> :== <dimension-value-type> |
+;;;                            (<ordered-dimension-value-type> 
+;;;                             [<ordered-comparison-type>]) |
+;;;                            (<enumerated-dimension-value-type> 
+;;;                             [<enumerated-comparison-type>]) |
+;;;                            (<boolean-dimension-value-type>
+;;;                             [<boolean-comparison-type>]) 
+;;; <dimension-value-type> :==  <ordered-dimension-value-type> |
+;;;                             <enumerated-dimension-value-type> |
+;;;                             <boolean-dimension-value-type>
+;;; <ordered-dimension-value-type> :== :point | :interval | :mixed
+;;; <enumerated-dimension-value-type> :== :element
+;;; <boolean-dimension-value-type> :== :boolean
+;;; <ordered-comparison-type> :== number | fixnum | 
+;;;                               short-float | single-float |
+;;;                               double-float | long-float
+;;; <enumerated-comparison-type> :== eq | eql | equal | equalp
+;;; <boolean-comparison-type> :== t
 ;;; <dimension-value-place> :== {<slot-name> [<slot-name>]} |
 ;;;                             {<function> [<slot-name>]}
 ;;;  note that 2 slot-names are only allowed for :interval dimension values
+;;; ---------------------------------------------------------------------------
 
-(defun parse-dimensional-value-spec (dv-spec)
-  (case (third dv-spec)
-    ;; non-series composite dimensional value:
-    ((:set :sequence)
-     (destructuring-bind (dimension-name dimension-value-type
-                          composite-type slot-name-or-fn 
-                          &optional slot-name)
-         dv-spec
-       (values dimension-name dimension-value-type composite-type 
-               nil slot-name-or-fn slot-name)))
-    ((:ascending-series :descending-series)
-     (destructuring-bind (dimension-name dimension-value-type
-                          composite-type ordering-dimension-name
-                          slot-name-or-fn &optional slot-name)
-         dv-spec
-       (values dimension-name dimension-value-type composite-type
-               ordering-dimension-name slot-name-or-fn slot-name)))    
-    (otherwise 
-     (destructuring-bind (dimension-name #+IGNORE-FOR-NOW composite-value-type
-                          dimension-value-type slot-name-or-fn 
-                          &optional slot-name)
-         dv-spec
-       (values dimension-name dimension-value-type nil
-               nil slot-name-or-fn slot-name)))))   
+(defun comparison-type-error (unit-class-name dimension-name 
+                              dimension-value-type comparison-type 
+                              allowed-comparison-types)
+  (error "The comparison-type ~s specified for the ~s dimension ~a of ~
+          unit-class ~s is not~{~#[~^~; ~s~^~; ~s, or ~s~^~] ~s,~}."
+         comparison-type
+         dimension-value-type
+         dimension-name
+         unit-class-name
+         allowed-comparison-types))
+
+;;; ---------------------------------------------------------------------------
+
+(defun determine-dimension-value-comparison-type (unit-class-name 
+                                                  dimension-name dv-type-spec)
+  ;;; Returns the specified or implicit comparison-type for a
+  ;;; dimension-value-type-spec or nil if the specified dimension-value-type
+  ;;; is invalid.
+  (destructuring-bind (dv-type &optional comparison-type)
+      (ensure-list dv-type-spec)
+    (case dv-type
+      ((:point :interval :mixed)
+       (cond 
+        ;; specified, check its validity:
+        (comparison-type
+         (unless (memq comparison-type *ordered-comparison-types*)
+           (comparison-type-error unit-class-name 
+                                  dimension-name ':ordered comparison-type 
+                                  *ordered-comparison-types*)))
+        ;; use the ordered-dimension default:
+        (t (setf comparison-type 'number)))
+       comparison-type)
+      (:element
+       (cond
+        ;; specified, check its validity:
+        (comparison-type
+         (unless (memq comparison-type *enumerated-comparison-types*)
+           (comparison-type-error unit-class-name 
+                                  dimension-name ':enumerated comparison-type 
+                                  *enumerated-comparison-types*)))
+        ;; use the enumerated-dimension default:
+        ((setf comparison-type 'eql)))
+       comparison-type)
+      (:boolean
+       (cond
+        ;; specified, check its validity:
+        (comparison-type
+         (unless (memq comparison-type *boolean-comparison-types*)
+           (comparison-type-error unit-class-name
+                                  dimension-name ':boolean comparison-type 
+                                  *boolean-comparison-types*)))
+        ;; use the boolean-dimension default:
+        (t (setf comparison-type 't)))
+       comparison-type))))
+
+;;; ---------------------------------------------------------------------------
+
+(defun unfinished-composite-type-warning (composite-type)
+  (warn "Support for ~s composite dimensional values is not completed."
+        composite-type))
+
+;;; ---------------------------------------------------------------------------
+
+(defun parse-dimensional-value-spec (unit-class-name dv-spec)
+  ;;; Handles syntax differences among the various composite types.
+  ;;; (Also warns about use of unfinished composite types)
+  (flet ((extract-dimension-value-type (dimension-value-type)
+           (if (consp dimension-value-type)
+               (first dimension-value-type)
+               dimension-value-type)))
+    (case (third dv-spec)               ; potential composite-type keyword
+      ;; A set-composite or a sequence-composite dimensional value spec:
+      ((:set :sequence)
+       (unfinished-composite-type-warning (third dv-spec))
+       (destructuring-bind (dimension-name dimension-value-type
+                            composite-type slot-name-or-fn 
+                            &optional slot-name)
+           dv-spec
+         (values dimension-name
+                 (extract-dimension-value-type dimension-value-type)
+                 (determine-dimension-value-comparison-type 
+                  unit-class-name dimension-name dimension-value-type)
+                 composite-type nil 
+                 slot-name-or-fn slot-name)))
+      ;; A series-composite dimensional value spec:
+      ((:ascending-series :descending-series)
+       (unfinished-composite-type-warning (third dv-spec))
+       (destructuring-bind (dimension-name dimension-value-type
+                            composite-type ordering-dimension-name
+                            slot-name-or-fn &optional slot-name)
+           dv-spec
+         (values dimension-name
+                 (extract-dimension-value-type dimension-value-type)
+                 (determine-dimension-value-comparison-type 
+                  unit-class-name dimension-name dimension-value-type)
+                 composite-type ordering-dimension-name 
+                 slot-name-or-fn slot-name)))    
+      ;; An incomposite dimensional value spec:
+      (otherwise 
+       (destructuring-bind (dimension-name #+IGNORE-FOR-NOW composite-value-type
+                            dimension-value-type slot-name-or-fn 
+                            &optional slot-name)
+           dv-spec
+         (values dimension-name 
+                 (extract-dimension-value-type dimension-value-type)
+                 (determine-dimension-value-comparison-type 
+                  unit-class-name dimension-name dimension-value-type)
+                 nil nil 
+                 slot-name-or-fn slot-name))))))
  
 ;;; ---------------------------------------------------------------------------
 
 (defun declared-function-designator (fnd)
   ;; Declares `fnd' is a function, unless it is a quoted symbol:
-  (if (eq 'quote (first fnd))
-      fnd
-      `(the function ,fnd)))
+  (cond 
+   ;; quoted symbol:
+   ((eq 'quote (first fnd)) fnd)
+   ;; anything else should be a function:
+   (t `(the function ,fnd))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -219,16 +335,19 @@
   ;;; Returns a cannonical dimension-value specification of `dv-spec' of the
   ;;; form:
   ;;;
-  ;;;   (dimension-name dimension-value-type lookup-fn
+  ;;;   (dimension-name dimension-value-type comparison-type lookup-fn
   ;;;    composite-type ordering-dimension-name)
   ;;;
   ;;; Note that the cannonical value does not contain sufficient accessible
-  ;;; information to recreate the original `dv-spec'.
-  (multiple-value-bind (dimension-name dimension-value-type
+  ;;; information to recreate the exact original `dv-spec'.
+  (multiple-value-bind (dimension-name 
+                        dimension-value-type comparison-type
                         composite-type ordering-dimension-name
                         slot-name-or-fn slot-name)
-      (parse-dimensional-value-spec dv-spec)
-    (unless (memq dimension-value-type (the list *dimension-value-types*))
+      (parse-dimensional-value-spec unit-class-name dv-spec)
+    ;; A nil comparison-type indicates that an illegal dimension-value-type
+    ;; was specified:
+    (unless comparison-type
       (error "Dimension-value-type ~s specified for ~
               dimension ~s of ~s is not one of ~
               ~{~#[~;~s~;~s and ~s~:;~@{~s~#[~;, or ~:;, ~]~}~]~}."
@@ -236,6 +355,7 @@
              dimension-name
              unit-class-name
 	     *dimension-value-types*))
+    ;; Slot-name must name a real slot:
     (when slot-name
       (unless (symbolp slot-name)
         (error "Invalid slot name ~s specified for ~
@@ -243,7 +363,7 @@
                slot-name
                dimension-name
                unit-class-name)))
-    ;; build the dimensional-value lookup function, called on a unit instance
+    ;; Build the dimensional-value lookup function, called on a unit instance
     ;; to return the dimensional value for the `dv-spec' dimension:
     (let* ((unfixed-dv-lookup-function
             `(function
@@ -257,17 +377,17 @@
                         slot-name)
                    `(if (and (slot-boundp instance ',slot-name-or-fn)
                              (slot-boundp instance ',slot-name))
-                        (cond 
-                         (into-cons
-                          (setf (car into-cons)
-                                (slot-value instance ',slot-name-or-fn))
-			  (setf (cdr into-cons)
-				(slot-value instance ',slot-name))
-			  into-cons)
-			 (t (cons
-			     (slot-value instance ',slot-name-or-fn)
-			     (slot-value instance ',slot-name))))
-			unbound-value-indicator))
+                        (let ((interval-start 
+                               (slot-value instance ',slot-name-or-fn))
+                              (interval-end
+                               (slot-value instance ',slot-name)))
+                          (cond 
+                           (into-cons
+                            (setf (car into-cons) interval-start)
+                            (setf (cdr into-cons) interval-end)
+                            into-cons)
+			 (t (cons interval-start interval-end))))
+                        unbound-value-indicator))
                   ;; only a slot name:
                   ((symbolp slot-name-or-fn)
                    `(if (slot-boundp instance ',slot-name-or-fn)
@@ -276,15 +396,18 @@
                   ;; a function with a slot name:
                   (slot-name
                    `(if (slot-boundp instance ',slot-name)
-			(funcall ,(declared-function-designator slot-name-or-fn)
+			(funcall ,(declared-function-designator
+                                   slot-name-or-fn)
 				 (slot-value instance ',slot-name))
 			unbound-value-indicator))
                   ;; just a function
-                  (t `(funcall ,(declared-function-designator slot-name-or-fn)
+                  (t `(funcall ,(declared-function-designator 
+                                 slot-name-or-fn)
 			       instance))))))
            (dv-lookup-function 
             (fixup-function-value-part1 unfixed-dv-lookup-function)))
-      `(,dimension-name ,dimension-value-type ,dv-lookup-function
+      `(,dimension-name ,dimension-value-type ,comparison-type
+                        ,dv-lookup-function
                         ,composite-type ,ordering-dimension-name))))
 
 ;;; ---------------------------------------------------------------------------
@@ -308,8 +431,8 @@
                  (symbol-value fn)))))
    unit-class)
   ;; fixup canonicalized :dimensional-values option:  
-  (dolist (dv-spec (standard-unit-class.dimensional-values unit-class))
-    (let ((maybe-fn (third dv-spec)))
+  (dolist (cdv-spec (standard-unit-class.dimensional-values unit-class))
+    (let ((maybe-fn (fourth cdv-spec)))
       ;; NOTE: CLISP sometimes looses eq-ness of the uninterned fixup-symbols
       ;; (last observed in CLISP 2.44).  As a work-around until this is
       ;; tracked down, we look up the symbol in fixup-symbols by comparing the
@@ -317,7 +440,7 @@
       (when #-clisp (memq maybe-fn fixup-symbols)
             #+clisp (setf maybe-fn 
                           (find maybe-fn fixup-symbols :test #'string=))
-        (setf (third dv-spec)
+        (setf (fourth cdv-spec)
               (symbol-value maybe-fn)))))
   ;; fixup :initial-space-instances option
   (let* ((initial-space-instances-spec
@@ -804,15 +927,21 @@
          (hidden-slot-names
           (hidden-nonlink-slot-names (class-prototype unit-class)))
          (direct-slots
-          (remove-if #'(lambda (slot)
-                         (memq (slot-definition-name slot)
-                               hidden-slot-names))
-                     (class-direct-slots unit-class)))
+          (sort 
+           (delete-if #'(lambda (slot)
+                          (memq (slot-definition-name slot)
+                                hidden-slot-names))
+                      (copy-list (class-direct-slots unit-class)))
+           #'string<
+           :key #'slot-definition-name))
          (effective-slots
-          (remove-if #'(lambda (slot)
-                         (memq (slot-definition-name slot)
-                               hidden-slot-names))
-                     (class-slots unit-class))))
+          (sort
+           (delete-if #'(lambda (slot)
+                          (memq (slot-definition-name slot)
+                                hidden-slot-names))
+                      (copy-list (class-slots unit-class)))
+           #'string<
+           :key #'slot-definition-name)))
     (flet ((name&abstract (class)
              (values (class-name class)
                      (and (typep class 'standard-unit-class)
@@ -821,8 +950,8 @@
       (format-column 4 supers "~s~:[~; (abstract)~]" #'name&abstract)
       (format t "~&~2tDirect subclasses:")
       (format-column 4 subs "~s~:[~; (abstract)~]" #'name&abstract))
-    ;; Direct slots:
-    (format t "~&~2tDirect slots:~@[ None~%~]"
+    ;; Direct nonlink slots:
+    (format t "~&~2tDirect nonlink slots:~@[ None~%~]"
             (notany #'(lambda (slot) 
                         (not (typep slot 'direct-link-definition)))
                     direct-slots))
@@ -836,8 +965,8 @@
     (dolist (slot direct-slots)
       (when (typep slot 'direct-link-definition)
         (describe-unit-slot unit-class slot)))
-    ;; Effective slots:
-    (format t "~&~2tEffective slots:")
+    ;; Effective nonlink slots:
+    (format t "~&~2tEffective nonlink slots:")
     (dolist (slot effective-slots)
       (unless (typep slot 'effective-link-definition)
         (describe-unit-slot unit-class slot)))
@@ -849,17 +978,27 @@
       (when (typep slot 'effective-link-definition)
         (describe-unit-slot unit-class slot)))
     ;; Dimensional values:
-    (let ((dvs (standard-unit-class.dimensional-values unit-class)))
+    (let ((cdv-specs 
+           (sort
+            (copy-list (standard-unit-class.dimensional-values 
+                        unit-class))
+            #'string<
+            :key #'first)))
       (format t "~&~2tDimensional values:~@[ None~%~]"
-              (null dvs))
-      (dolist (dv dvs)
-        (describe-dimensional-value unit-class dv)))
+              (null cdv-specs))
+      (dolist (cdv-spec cdv-specs)
+        (describe-dimensional-value cdv-spec)))
     ;; Effective dimensional values:
-    (let ((dvs (standard-unit-class.effective-dimensional-values unit-class)))
+    (let ((ecdv-specs 
+           (sort
+            (copy-list (standard-unit-class.effective-dimensional-values 
+                        unit-class))
+            #'string<
+            :key #'first)))
       (format t "~&~2tEffective dimensional values:~@[ None~%~]"
-              (null dvs))
-      (dolist (dv dvs)
-        (describe-dimensional-value unit-class dv)))
+              (null ecdv-specs))
+      (dolist (cdv-spec ecdv-specs)
+        (describe-dimensional-value cdv-spec)))
     ;; Initial space instances:
     (let ((space-instances 
            (ensure-list
@@ -936,15 +1075,17 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun describe-dimensional-value (unit-class dv)
-  (declare (ignore unit-class))
-  (destructuring-bind (dimension-name dimension-value-type value-fn
+(defun describe-dimensional-value (dv)
+  (destructuring-bind (dimension-name 
+                       dimension-value-type comparison-type
+                       value-fn
                        composite-type ordering-dimension-name)
       dv
     (declare (ignore value-fn))
-    (format t "~&~6t~s ~s~@[ ~s~@[ ~s~]~]~%" 
+    (format t "~&~4t~s (~s ~s)~@[ ~s~@[ ~s~]~]~%" 
             dimension-name 
             dimension-value-type
+            comparison-type
             composite-type
             ordering-dimension-name)))
 
@@ -954,10 +1095,10 @@
   (declare (ignore unit-class))
   (cond 
    ((functionp space-instance-or-fn)
-    (format t "~&~6t")
+    (format t "~&~4t")
     (print-pretty-function-object space-instance-or-fn)
     (terpri))
-   (t (format t "~&~6t~s~%" space-instance-or-fn))))
+   (t (format t "~&~4t~s~%" space-instance-or-fn))))
 
 ;;; ===========================================================================
 ;;;                               End of File

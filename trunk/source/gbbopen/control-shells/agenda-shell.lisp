@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:AGENDA-SHELL; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/control-shells/agenda-shell.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Mar  9 07:28:12 2008 *-*
-;;;; *-* Machine: vagabond.cs.umass.edu *-*
+;;;; *-* Last-Edit: Fri Apr  4 23:19:50 2008 *-*
+;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -1432,7 +1432,7 @@
                             (fifo-queue-ordering 't)
                             (hibernate-on-quiescence nil)
                             (minimum-ksa-execution-rating 1)
-                            (name 1)
+                            (instance-name 1)
 			    (output-stream *trace-output*)
 			    (pause nil)
                             (print 't)
@@ -1457,7 +1457,7 @@
       ;; OK to proceed with the new control shell, so abort the
       ;; current one:
       (exit-control-shell ':aborted))
-  (let ((cs (find-instance-by-name name 'control-shell)))
+  (let ((cs (find-instance-by-name instance-name 'control-shell)))
     ;; We found the named control shell:
     (when cs
       ;; It's running already in another thread:
@@ -1477,7 +1477,7 @@
           :awaken-on-event awaken-on-event
           :continue-past-quiescence continue-past-quiescence
           :hibernate-on-quiescence hibernate-on-quiescence
-          :instance-name name
+          :instance-name instance-name
           :minimum-ksa-execution-rating minimum-ksa-execution-rating
           :output-stream output-stream
           :pause pause
@@ -1510,12 +1510,12 @@
    
 ;;; ---------------------------------------------------------------------------
 
-(defun restart-control-shell (&key (name 1))
-  (let ((cs (find-instance-by-name name 'control-shell)))
+(defun restart-control-shell (&key (instance-name 1))
+  (let ((cs (find-instance-by-name instance-name 'control-shell)))
      ;; No control-shell instance found:
     (unless cs
       (warn "No control shell named ~s was found; ignoring ~s request."
-            name
+            instance-name
             'restart-control-shell)
       ;; return nil
       (return-from restart-control-shell nil))
@@ -1530,13 +1530,13 @@
     ;; in this thread is different:
     (when (and (typep *cs* 'control-shell)
                (not (instance-deleted-p *cs*))
-               (not (equal (instance-name-of *cs*) name)))
+               (not (equal (instance-name-of *cs*) instance-name)))
       (unless (nicer-y-or-n-p "Another control-shell instance named ~s ~
                                (~@[not ~]running) is associated with this ~
                                thread.~%Delete it and restart ~s in its place? "
                         (instance-name-of *cs*)
                         (not (control-shell-running-p *cs*))
-                        name)
+                        instance-name)
         (format *query-io* "~&Ignoring ~s request.~%"
                 'restart-control-shell)
         (return-from restart-control-shell nil))

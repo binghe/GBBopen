@@ -5,7 +5,7 @@
 <!-- XML file produced from file: reference.tex
      using Hyperlatex v 2.9-in-waiting-rk (c) Otfried Cheong -->
 <head>
-<title>GBBopen 0.9.8 Reference -- spawn-periodic-function</title>
+<title>GBBopen 0.9.9 Reference -- spawn-periodic-function</title>
 </p>
 <link rel="SHORTCUT ICON" href="favicon.ico"><link rel=stylesheet
         href="gbbopen.css" type="text/css" />
@@ -33,12 +33,12 @@
 </td></tr><tr valign="top"><td valign="baseline"><i>count</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A number or <code>nil</code> (default is <code>nil</code>)
 </td></tr><tr valign="top"><td valign="baseline"><i>name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An object (typically a string or a symbol; default is
 <var>function</var>, if <var>function</var> is a symbol, otherwise <code>nil</code>)
-</td></tr><tr valign="top"><td valign="baseline"><i>verbose</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id75">generalized&nbsp;boolean</a>
+</td></tr><tr valign="top"><td valign="baseline"><i>verbose</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id77">generalized&nbsp;boolean</a>
 (default is <b><a href="ref-periodic-function-verbose.html">*periodic-function-verbose*</a></b>)
 </td></tr></table>
 </p>
 <p><span class="fndoclabel">Returns</span> <br />The object representing the <a href="ref-glossary.html#gl:thread">thread</a> associated with the
-<a href="ref-glossary.html#id129">periodic&nbsp;function</a>.
+<a href="ref-glossary.html#id133">periodic&nbsp;function</a>.
 </p>
 <p><span class="fndoclabel">Errors</span> <br />Threads (multiprocessing) is not supported on the
 Common Lisp implementation.
@@ -48,7 +48,7 @@ invoked every <var>repeat-interval</var> seconds until the
 <a href="ref-glossary.html#gl:periodic-function">periodic-function</a> <a href="ref-glossary.html#gl:thread">thread</a> is killed or until <var>function</var>
 calls <b><a href="ref-kill-periodic-function.html">kill-periodic-function</a></b>.  Otherwise, <var>count</var> is
 decremented by one prior to each invocation of <var>function</var> and, if it is
-negative, the <a href="ref-glossary.html#id129">periodic&nbsp;function</a> is terminated.
+negative, the <a href="ref-glossary.html#id133">periodic&nbsp;function</a> is terminated.
 </p>
 <p><span class="fndoclabel">See also</span>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-periodic-function-verbose.html"><b>*periodic-function-verbose*</b></a>
@@ -59,7 +59,7 @@ negative, the <a href="ref-glossary.html#id129">periodic&nbsp;function</a> is te
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-schedule-function.html"><b>schedule-function</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-schedule-function-relative.html"><b>schedule-function-relative</b></a>
 </p>
-<p><span class="fndoclabel">Examples</span> <br />Spawn a simple <a href="ref-glossary.html#id129">periodic&nbsp;function</a> that is invoked every 0.1 seconds,
+<p><span class="fndoclabel">Examples</span> <br />Spawn a simple <a href="ref-glossary.html#id133">periodic&nbsp;function</a> that is invoked every 0.1 seconds,
 but that only runs twice:
 </p>
 <pre>
@@ -71,7 +71,7 @@ but that only runs twice:
 "Hello!" 
 "Hello!" 
 </pre>
-<p><a name="id1">Spawn</a> a simple <a href="ref-glossary.html#id129">periodic&nbsp;function</a> that is invoked every 0.1 seconds
+<p><a name="id1">Spawn</a> a simple <a href="ref-glossary.html#id133">periodic&nbsp;function</a> that is invoked every 0.1 seconds
 that runs up to 20 times, but with a 10&#37; chance on each invocation of
 terminating early:
 </p>
@@ -95,7 +95,7 @@ terminating early:
 ;; Exiting periodic-function thread
 
 </pre>
-<p><a name="id2">Define</a> and spawn a <a href="ref-glossary.html#id129">periodic&nbsp;function</a> that is invoked every 0.5 seconds
+<p><a name="id2">Define</a> and spawn a <a href="ref-glossary.html#id133">periodic&nbsp;function</a> that is invoked every 0.5 seconds
 to signal a <code>half-second-interrupt-event</code>, continuing as long as the
 control shell is running:
 </p>

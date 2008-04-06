@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Mar  9 07:22:03 2008 *-*
-;;;; *-* Machine: vagabond.cs.umass.edu *-*
+;;;; *-* Last-Edit: Sat Apr  5 17:45:19 2008 *-*
+;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -45,8 +45,7 @@
 ;;;  11-30-05 Rewrote list-length=1 as list-length-1-p.  (Corkill)
 ;;;  02-13-06 Added GCL support.  (Corkill)
 ;;;  03-11-06 Depreciated assure-list.  (Corkill)
-;;;  03-12-06 Added list-length-2-p and removed deprecated list-length=1.
-;;;           (Corkill)
+;;;  03-12-06 Added list-length-2-p.  (Corkill)
 ;;;  03-18-06 Added dosequence.  (Corkill)
 ;;;  04-07-06 Added shuffle-list.  (Corkill)
 ;;;  05-08-06 Added support for the Scieneer CL. (dtc)
@@ -527,7 +526,7 @@
                                        (go ,condition/tag))
                                      `((declare (ignore condition))
                                        (return-from ,block (values)))))))))
-               ,form)
+               (return-from ,block ,form))
              ,@(when error-body (list condition/tag))
              ,@(when error-body
                  `((flet ((error-message ()

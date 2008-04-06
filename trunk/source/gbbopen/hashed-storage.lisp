@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/source/gbbopen/hashed-storage.lisp *-*
+;;;; *-* File: /usr/local/gbbopen/source/gbbopen/hashed-storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Jan 26 06:14:52 2008 *-*
-;;;; *-* Machine: whirlwind.corkills.org *-*
+;;;; *-* Last-Edit: Fri Apr  4 05:47:55 2008 *-*
+;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -32,7 +32,10 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defparameter *hashed-test-functions* '(eq eql equal equalp))
+(defparameter *hashed-test-functions* 
+    ;; This order is important, as it is used in determining the most
+    ;; liberal test:
+    '(eq eql equal equalp))
 
 ;;; ===========================================================================
 ;;;  Hashed storage
@@ -49,13 +52,80 @@
 
 ;;; ---------------------------------------------------------------------------
 
+(defun most-general-hash-table-test (test1 test2)
+  (cond 
+   ;; The tests are the same:
+   ((eq test1 test2) test1)
+   ;; Test1 is more liberal:
+   ((memq test1 (memq test2 *hashed-test-functions*))
+    test1)
+   ;; Test2 is more liberal:
+   (t test2)))
+
+;;; ---------------------------------------------------------------------------
+
+(defun determine-hash-table-test (storage)
+  ;; Determines the hash-table test for `storage' by using the stores-classes
+  ;; and dimension-names provided in the storage description to look up the
+  ;; information from the unit-class object.
+  (let ((test nil))
+    (dolist (class-spec (stores-classes-of storage))
+      (destructuring-bind (stores-class . plus-subclasses)
+          class-spec
+        (flet ((do-class (stores-class)
+                 (let ((effective-dimensional-values
+                        (standard-unit-class.effective-dimensional-values 
+                         stores-class)))
+                   (dolist (dimension-name (dimension-names-of storage))
+                     (let ((dv-spec (find-if
+                                     #'(lambda (dv-spec)
+                                         (eq dimension-name (first dv-spec)))
+                                     effective-dimensional-values)))
+                       (when dv-spec
+                         (destructuring-bind (dimension-name 
+                                              dimension-value-type 
+                                              comparison-type
+                                              value-fn
+                                              composite-type 
+                                              ordering-dimension-name)
+                             dv-spec
+                           (declare (ignore value-fn composite-type
+                                            ordering-dimension-name))
+                           (unless (eq ':element dimension-value-type)
+                             (error "Dimension ~s is not an :enumerated ~
+                                     dimension."
+                                    dimension-name))
+                           (cond 
+                            ;; We have a test already, determine the most
+                            ;; liberal test:
+                            (test
+                             (setf test (most-general-hash-table-test
+                                         test comparison-type)))
+                            ;; Set the test:
+                            (t (setf test comparison-type))))))))))
+          (if plus-subclasses
+              (map-unit-classes #'do-class stores-class)
+              (do-class stores-class)))))
+    test))
+
+;;; ---------------------------------------------------------------------------
+
 (defmethod shared-initialize :after ((storage hashed-storage)
-                                     slot-names &rest initargs
-                                     &key (test 'eql))
+                                     slot-names
+                                     ;; test is deprecated in 0.9.9:
+                                     &key (test 'eql test-specified-p))
   (declare (ignore slot-names))
-  (unless (memq test *hashed-test-functions*)
-    (missing-test-option storage initargs))
-  (setf (bound-instances-of storage) (make-hash-table :test test)))
+  (let ((determined-test (determine-hash-table-test storage)))
+    (unless determined-test
+      (internal-error "Unable to determine the hash-table test for ~s"
+                      storage))
+    ;; Remove this next (when) form when removing deprecated test argument
+    ;; after version 0.9.9:
+    (when test-specified-p 
+      (setf determined-test (most-general-hash-table-test 
+                             test determined-test)))
+    (setf (bound-instances-of storage) 
+          (make-hash-table :test determined-test))))
   
 ;;; ---------------------------------------------------------------------------
 

@@ -6,21 +6,34 @@ No priority bugs at this time
 
 
                                   Small Tasks
-                                  ----------
+                                  -----------
 
 * Improve define-tll-command SLIME support
+
 * Add LispWorks "heavy-allocation" support to with-reading-saved/sent-objects
-* Add LispWorks 5.1 symeval-in-process support to Portable Threads
 
 
                                   Immediate
                                   ---------
 
+* Add comparision-type compatibilty check in
+  ADD-INSTANCE-TO-SPACE-INSTANCE-INTERNAL
+
+* Add LispWorks 5.1 symeval-in-process support to Portable Threads
+
 * Add SLIME REPL package setting to GBBopen commands
 
 
-				 Needed Soon
+                                 Needed Soon
                                  -----------
+
+* Worry about the effect on the storage for existing space instances when
+  a unit-class definition is redefined with a change dimensional-value
+  specifications
+
+
+                                 Needed Later
+                                 ------------
 
 find.lisp
 
@@ -45,7 +58,7 @@ storage.lisp
 
 
 			     Future Enhancements
-                             -----------------
+                             -------------------
 
 space.lisp
 

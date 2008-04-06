@@ -1,5 +1,5 @@
 
-                                GBBopen (0.9.8)
+                                GBBopen (0.9.9)
                                 ---------------
 
 Requirements:
@@ -29,7 +29,7 @@ Requirements:
    See PORTING for information on porting GBBopen to other Common Lisp
    implementations.
 
-Current Status Notes (March 29, 2008):
+Current Status Notes (April 6, 2008):
 
  - Implementation work is progressing on a regular basis.  See the list of
    pending development activities maintained on the "Development Activities"
@@ -141,6 +141,21 @@ We highly recommend taking a walk through the GBBopen Tutorial.  (You'll get
 the pun once you've done so.)  The tutorial shows you how to get started
 using GBBopen through a series of exercises that cover GBBopen's concepts
 and features in a step-by-step sequence.
+
+
+Mailing Lists
+=============
+
+We strongly recommend that you subscribe to the GBBopen Announcements and the
+GBBopen Users mailing lists.  To subscribe, go to the "Mailing Lists" page on
+the GBBopen web site and click on the appropriate subscribe links.  The e-mail
+traffic is low, and the messages and advice will help you to write quality
+GBBopen applications easier and sooner.  (You can also browse the archived
+messages that are accessible from the "Mailing Lists" page.)
+
+If you need help or advice, the GBBopen Users list is the place to ask (should
+the GBBopen Tutorial and archived messages from the GBBopen Users list come up
+short).
 
 
 Some Useful Things

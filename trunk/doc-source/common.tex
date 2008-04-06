@@ -1,7 +1,7 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/common.tex *-*
-%% *-* Last-Edit: Mon Mar 17 19:53:13 2008; Edited-By: cork *-*
-%% *-* Machine: cyclone.local *-*
+%% *-* Last-Edit: Wed Apr  2 04:30:13 2008; Edited-By: cork *-*
+%% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
 %% Part of the GBBopen Project (see LICENSE for license information).
@@ -18,7 +18,7 @@
 \newcommand{\timezone}{EDT}
 
 %% Html declarations: output directory and filenames, node title
-\newcommand{\gbbopenversion}{0.9.8}
+\newcommand{\gbbopenversion}{0.9.9}
 \newcommand{\runningtitle}{GBBopen \gbbopenversion{} \docname}
 \htmltitle{\runningtitle}
 
@@ -523,6 +523,11 @@
   \fndocsec{Errors}~\\[2pt]\nopagebreak}
 \newcommand{\fndsyntax}{\ckfnpartctr{11}{Detailed syntax}%
   \fndocsec{Detailed syntax}~\\[2pt]\nopagebreak}
+\newcommand{\fndsyntaxwgray}{\ckfnpartctr{11}{Detailed syntax}%
+  \fndocsec{Detailed syntax}~\\[2pt]\nopagebreak
+  \hfil\textsf{\footnotesize\textcolor{darkergray}{[Syntax shown in gray is
+        not supported in GBBopen Version~\gbbopenversion, but will become
+        available in a future release.]}}\\[6pt]}
 \newcommand{\fnterms}{\ckfnpartctr{12}{Terms}%
   \fndocsec{Terms}~\\[2pt]\nopagebreak}
 \newcommand{\fndescription}{\ckfnpartctr{13}{Description}%
@@ -621,6 +626,12 @@
   \xml{span class="fndoclabel"}Errors\xml{/span} \\} 
 \newcommand{\fndsyntax}{\par\endpar
   \xml{span class="fndoclabel"}Detailed syntax\xml{/span}}  
+\newcommand{\fndsyntaxwgray}{\par\endpar
+  \xml{span class="fndoclabel"}Detailed syntax\xml{/span}\\
+  \xml{img height=14 width=0 src="shim.gif"}
+  \textsf{\small\textcolor{darkergray}{[Syntax shown in gray is
+        not supported in GBBopen Version~\gbbopenversion, but will become
+        available in a future release.]}}}
 \newcommand{\fnterms}{\par\endpar
   \xml{span class="fndoclabel"}Terms\xml{/span}}  
 \newcommand{\fndescription}{\par
