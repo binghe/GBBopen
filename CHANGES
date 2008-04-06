@@ -28,8 +28,8 @@ Important changes in GBBopen 0.9.9:
 
   * The :TEST option for a hashed-storage specification to
     MAKE-SPACE-INSTANCE is deprecated, as the comparison test is now
-    determined from the dimensions of the unit classes associated
-    with the hashed storage
+    determined from the dimension comparison-type specifications of
+    the unit classes associated with the hashed storage
 
   * <install-dir>/gbbopen-init.lisp renamed to more intuitive
     <install-dir>/initiate.lisp
