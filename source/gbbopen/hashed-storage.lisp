@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/hashed-storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Apr  4 05:47:55 2008 *-*
+;;;; *-* Last-Edit: Mon Apr  7 08:20:36 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -72,7 +72,8 @@
     (dolist (class-spec (stores-classes-of storage))
       (destructuring-bind (stores-class . plus-subclasses)
           class-spec
-        (flet ((do-class (stores-class)
+        (flet ((do-class (stores-class plus-subclasses)
+                 (declare (ignore plus-subclasses))
                  (let ((effective-dimensional-values
                         (standard-unit-class.effective-dimensional-values 
                          stores-class)))
@@ -105,7 +106,7 @@
                             (t (setf test comparison-type))))))))))
           (if plus-subclasses
               (map-unit-classes #'do-class stores-class)
-              (do-class stores-class)))))
+              (do-class stores-class 't)))))
     test))
 
 ;;; ---------------------------------------------------------------------------
