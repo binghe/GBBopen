@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/hashed-storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Apr  7 08:20:36 2008 *-*
+;;;; *-* Last-Edit: Mon Apr  7 08:27:46 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -106,7 +106,7 @@
                             (t (setf test comparison-type))))))))))
           (if plus-subclasses
               (map-unit-classes #'do-class stores-class)
-              (do-class stores-class 't)))))
+              (do-class stores-class nil)))))
     test))
 
 ;;; ---------------------------------------------------------------------------
