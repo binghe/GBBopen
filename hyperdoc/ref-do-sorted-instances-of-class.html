@@ -26,7 +26,7 @@
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-core</code>
 </p>
-<p><span class="fndoclabel">Arguments</span><table class="tight">
+<p><span class="fndoclabel">Arguments</span><table class="tighttop">
 <tr valign="top"><td valign="baseline"><i>var</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id199">variable&nbsp;symbol</a>
 </td></tr><tr valign="top"><td valign="baseline"><i>unit-classes-specifier</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An <a href="ref-glossary.html#id65">extended&nbsp;unit-classes&nbsp;specification</a>
 (see below)
@@ -38,7 +38,8 @@
 </td></tr><tr valign="top"><td valign="baseline"><i>form</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#gl:form">form</a>
 </td></tr></table>
 </p>
-<p><span class="fndoclabel">Detailed syntax</span></p>
+<p><table class="tighttop" width="100%"></table>
+<span class="fndoclabel">Detailed syntax</span></p>
 <table class="tight"><table><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>unit-classes-specifier</var>&nbsp;::= </td><td valign="baseline" colspan="1" align="left"> <code>t</code> | 
@@ -76,11 +77,11 @@ any <a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a>.
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-map-sorted-instances-of-class.html"><b>map-sorted-instances-of-class</b></a>
 </p>
 <p><span class="fndoclabel">Example</span> <br />Print a list of all <code>hyp</code> <a href="ref-glossary.html#gl:instance-name">instance&nbsp;names</a>, in ascending order:
-</p>
-<pre>
+<pre class="pretop">
   (do-sorted-instances-of-class (instance 'hyp #'&lt; :key #'<a href="ref-instance-name-of.html">instance-name-of</a>)
      (print (<a href="ref-instance-name-of.html">instance-name-of</a> instance)))
 </pre> 
+</p>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
 <table width="100%" cellpadding="0" cellspacing="2"><tr>

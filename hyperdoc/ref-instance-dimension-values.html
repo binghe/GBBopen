@@ -26,7 +26,7 @@
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-core</code>
 </p>
-<p><span class="fndoclabel">Arguments</span><table class="tight">
+<p><span class="fndoclabel">Arguments</span><table class="tighttop">
 <tr valign="top"><td valign="baseline"><i>unit-instance</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id195">unit&nbsp;instance</a>
 </td></tr><tr valign="top"><td valign="baseline"><i>dimension-names</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A list of symbols naming <a href="ref-glossary.html#gl:dimensions">dimensions</a> of
 <var>unit-instance</var> or <code>t</code>, indicating all <a href="ref-glossary.html#gl:dimensions">dimensions</a> of 
@@ -46,19 +46,18 @@ defined for <var>unit-instance</var>.
 </p>
 <p><span class="fndoclabel">Examples</span> <br />Return all <a href="ref-glossary.html#id33">dimension&nbsp;values</a> of the
 <a href="ref-glossary.html#id195">unit&nbsp;instance</a>, <code>hyp</code>:
-</p>
-<pre>
+<pre class="pretop">
 &gt; (instance-dimension-values hyp)
 ((belief . 0.85) (velocity-range 5 35) (color . :red)
  (classification :car :truck) (x . 1835) (y . 4791))
 </pre>
-<p>Return the <code>x</code> and <code>y</code> <a href="ref-glossary.html#id33">dimension&nbsp;values</a> of the
+Return the <code>x</code> and <code>y</code> <a href="ref-glossary.html#id33">dimension&nbsp;values</a> of the
 <a href="ref-glossary.html#id195">unit&nbsp;instance</a>, <code>hyp</code>:
-</p>
 <pre>
 &gt; (instance-dimension-values hyp '(x y))
 ((x . 1835) (y . 4791))
 </pre>
+</p>
 <p><span class="fndoclabel">Note</span> <br />Using <b><a href="ref-instance-dimension-value.html">instance-dimension-value</a></b> is preferable to
 using <b>instance-dimension-values</b> when obtaining individual
 <a href="ref-glossary.html#id33">dimension&nbsp;values</a> of a <a href="ref-glossary.html#id195">unit&nbsp;instance</a>.

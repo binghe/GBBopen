@@ -24,7 +24,7 @@
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:portable-threads</code>
 </p>
-<p><span class="fndoclabel">Arguments</span><table class="tight">
+<p><span class="fndoclabel">Arguments</span><table class="tighttop">
 <tr valign="top"><td valign="baseline"><i>initargs</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An <a href="ref-glossary.html#id85">initialization&nbsp;argument&nbsp;list</a>
 </td></tr><tr valign="top"><td valign="baseline"><i>class</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> The name of the <a href="ref-glossary.html#gl:class">class</a> for the created
 <a href="ref-glossary.html#gl:condition-variable">condition-variable</a> instance (default is <code>condition-variable</code>)
@@ -39,34 +39,31 @@
 </p>
 <p><span class="fndoclabel">Examples</span> <br />Make a <b>condition-variable</b> instance with a non-recursive 
 <a href="ref-glossary.html#gl:lock">lock</a>:
-</p>
-<pre>
+<pre class="pretop">
 &gt; (make-condition-variable)
 #&lt;condition-variable&gt;
 </pre>
-<p>Make a <b>condition-variable</b> instance with a
+Make a <b>condition-variable</b> instance with a
 <a href="ref-glossary.html#id151">recursive&nbsp;lock</a>:
-</p>
 <pre>
 &gt; (make-condition-variable :lock (<a href="ref-make-recursive-lock.html">make-recursive-lock</a>))
 #&lt;condition-variable&gt;
 </pre>
-<p>Define a subclass of <b>condition-variable</b> that includes a 
+Define a subclass of <b>condition-variable</b> that includes a 
 <code>state</code> slot:
-</p>
 <pre>
   (defclass state-cv (condition-variable)
     ((state :initarg :state
             :initform nil
             :accessor state-of)))
 </pre>
-<p>and then create a <code>state-cv</code> instance with a <a href="ref-glossary.html#id151">recursive&nbsp;lock</a>:
-</p>
+and then create a <code>state-cv</code> instance with a <a href="ref-glossary.html#id151">recursive&nbsp;lock</a>:
 <pre>
 &gt; (make-condition-variable :class 'state-cv
                            :lock (<a href="ref-make-recursive-lock.html">make-recursive-lock</a>))
 #&lt;state-cv&gt;
 </pre>
+</p>
 <p><span class="fndoclabel">Note</span> <br />The <b>make-condition-variable</b> function is equivalent to using
 <b><a href="ref-make-instance.html">make-instance</a></b> with the desired <a href="ref-glossary.html#gl:class">class</a> for the
 created <a href="ref-glossary.html#gl:condition-variable">condition-variable</a> instance.  However, using

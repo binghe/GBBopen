@@ -25,7 +25,7 @@
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:agenda-shell</code>
 </p>
-<a name="id1"></a><p><span class="fndoclabel">Arguments</span><table class="tight">
+<a name="id1"></a><p><span class="fndoclabel">Arguments</span><table class="tighttop">
 <tr valign="top"><td valign="baseline"><i>instance-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An object naming a control-shell instance (default is 
 <code>1</code>) 
 </td></tr></table>
@@ -57,8 +57,7 @@ calling <b><a href="ref-exit-control-shell.html">exit-control-shell</a></b>.
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-start-control-shell.html"><b>start-control-shell</b></a>
 </p>
 <p><span class="fndoclabel">Example</span> <br />Restart the Agenda Shell (in this case, without any <a href="ref-glossary.html#gl:KSs">KSs</a> defined):
-</p>
-<pre>
+<pre class="pretop">
 &gt; (restart-control-shell)
 ;; Control shell 1 restarting after cycle 2
 ;; No executable KSAs remain, exiting control shell
@@ -67,6 +66,7 @@ calling <b><a href="ref-exit-control-shell.html">exit-control-shell</a></b>.
 ;; Elapsed time: 0 seconds
 :quiescence
 </pre>
+</p>
 <a name="id3"></a><p><span class="fndoclabel">Note</span> <br />When a non-<code>nil</code> <code>:run-polling-functions</code>
 value is supplied to <b><a href="ref-start-control-shell.html">start-control-shell</a></b> (the default on
 Common Lisp implementations without threads),

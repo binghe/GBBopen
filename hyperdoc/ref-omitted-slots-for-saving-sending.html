@@ -22,48 +22,27 @@
 <p><span class="fndoclabel">Purpose</span> <br />Add slot names of a <a href="ref-glossary.html#id193">unit&nbsp;class</a> to the list of slots that
 are not saved or sent.
 </p>
-<p><span class="fndoclabel">Method signatures</span><table class="tight" width="100%">
-<tr valign="top">
-<td valign="baseline" align="left">
-<nobr>omitted-slots-for-saving/sending</nobr>
-</td>
-<td valign="baseline">&nbsp; </td>
-<td valign="baseline" align="left" width="99%">
+<p><span class="fndoclabel">Method signatures</span><table class="tighttop" width="100%">
+<tr valign="top"><td valign="baseline" align="left"><nobr>omitted-slots-for-saving/sending</nobr></td><td valign="baseline">&nbsp; </td><td valign="baseline" align="left" width="99%">
 <code>(</code><var>instance</var> <code>standard-space-instance)</code>
 <i> =&gt; </i> <var>omitted-slot-names</var>
-</td>
-</tr>
-</table>
+</td></tr></table>
 <table class="tight" width="100%">
-<tr valign="top">
-<td valign="baseline" align="left">
-<nobr>omitted-slots-for-saving/sending</nobr>
-</td>
-<td valign="baseline">&nbsp; </td>
-<td valign="baseline" align="left" width="99%">
+<tr valign="top"><td valign="baseline" align="left"><nobr>omitted-slots-for-saving/sending</nobr></td><td valign="baseline">&nbsp; </td><td valign="baseline" align="left" width="99%">
 <code>(</code><var>instance</var> <code>standard-unit-instance)</code>
 <i> =&gt; </i> <var>omitted-slot-names</var>
-</td>
-</tr>
-</table>
+</td></tr></table>
 <table class="tight" width="100%">
-<tr valign="top">
-<td valign="baseline" align="left">
-<nobr>omitted-slots-for-saving/sending</nobr>
-</td>
-<td valign="baseline">&nbsp; </td>
-<td valign="baseline" align="left" width="99%">
+<tr valign="top"><td valign="baseline" align="left"><nobr>omitted-slots-for-saving/sending</nobr></td><td valign="baseline">&nbsp; </td><td valign="baseline" align="left" width="99%">
 <code>(</code><var>instance</var> <code>t)</code>
-<i> =&gt; </i> <code>nil</code></td>
-</tr>
-</table>
+<i> =&gt; </i> <code>nil</code></td></tr></table>
 </p>
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-tools</code>
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-tools</code> (the <a href="ref-glossary.html#gl:unit-instance">unit-instance</a> and
 <a href="ref-glossary.html#gl:space-instance">space-instance</a> methods are added by <code>:gbbopen-core</code>)
 </p>
-<p><span class="fndoclabel">Arguments</span><table class="tight">
+<p><span class="fndoclabel">Arguments</span><table class="tighttop">
 <tr valign="top"><td valign="baseline"><i>instance</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id195">unit&nbsp;instance</a> (or <a href="ref-glossary.html#id174">space&nbsp;instance</a>)
 </td></tr></table>
 </p>
@@ -76,13 +55,13 @@ are not saved or sent.
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-print-slot-for-saving-sending.html"><b>print-slot-for-saving/sending</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-save-blackboard-repository.html"><b>save-blackboard-repository</b></a>
 </p>
-<p><span class="fndoclabel">Example</span> <br />Specify that slot <code>complex-unsaved-slot</code> in <code>my-unit-instance</code> should be
-added to the list of slots that are not saved or sent:
-</p>
-<pre>
+<p><span class="fndoclabel">Example</span> <br />Specify that slot <code>complex-unsaved-slot</code> in <code>my-unit-instance</code>
+should be added to the list of slots that are not saved or sent:
+<pre class="pretop">
   (defmethod omitted-slots-for-saving/sending ((instance my-unit-instance))
     (cons 'complex-unsaved-slot (call-next-method)))
 </pre>
+</p>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
 <table width="100%" cellpadding="0" cellspacing="2"><tr>

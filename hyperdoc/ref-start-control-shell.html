@@ -25,7 +25,7 @@
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:agenda-shell</code>
 </p>
-<p><span class="fndoclabel">Arguments</span><table class="tight">
+<p><span class="fndoclabel">Arguments</span><table class="tighttop">
 <tr valign="top"><td valign="baseline"><i>initargs</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An <a href="ref-glossary.html#id85">initialization&nbsp;argument&nbsp;list</a> (see below)
 </td></tr></table>
 </p>
@@ -48,8 +48,9 @@ calling <b><a href="ref-exit-control-shell.html">exit-control-shell</a></b>.
 </p>
 <p><span class="fndoclabel">Events</span> <br /><a name="id1">A</a> <code>start-control-shell-event</code> is signaled.
 </p>
-<p><span class="fndoclabel">Detailed syntax</span>Available <var>initargs</var> are:
-<table class="tight">
+<p><table class="tighttop" width="100%"></table>
+<span class="fndoclabel">Detailed syntax</span>Available <var>initargs</var> are:
+<table class="tighttop">
 <a name="id2"></a><tr valign="top"><td valign="baseline"><i>awaken-on-event</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id77">generalized&nbsp;boolean</a> (default is <code>t</code>) 
 </td></tr><tr valign="top"><td valign="baseline"><i>continue-past-quiescence</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id77">generalized&nbsp;boolean</a> (default
 is <code>nil</code>) 
@@ -157,8 +158,7 @@ of a <a href="ref-glossary.html#gl:KSs">KS</a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-restart-control-shell.html"><b>restart-control-shell</b></a>
 </p>
 <p><span class="fndoclabel">Examples</span> <br />Start the Agenda Shell (in this case, without any <a href="ref-glossary.html#gl:KSs">KSs</a> defined):
-</p>
-<pre>
+<pre class="pretop">
 &gt; (start-control-shell)
 ;; Control shell 1 started
 ;; No executable KSAs remain, exiting control shell
@@ -167,14 +167,14 @@ of a <a href="ref-glossary.html#gl:KSs">KS</a>
 ;; Elapsed time: 0 seconds
 :quiescence
 </pre>
+</p>
 <p>Start the Agenda Shell (again without any <a href="ref-glossary.html#gl:KSs">KSs</a> defined, but with
 stepping enabled):
-</p>
-<pre>
+<pre class="pretop">
 &gt; (start-control-shell :stepping 't)
 ;; Control shell 1 started
 &gt;&gt; CS Step (cycle 1):
-   About to signal quiescence... <font color="#00ff00">[<i>? entered</i>]</font>
+   About to signal quiescence... <font color="#00b200">[<i>? entered</i>]</font>
 Stepping commands (follow with &lt;Return&gt;):
    d       Disable this kind of stepping (:quiescence)
    e       Enable another kind of stepping
@@ -188,10 +188,10 @@ Stepping commands (follow with &lt;Return&gt;):
    -       Disable all stepping
    &lt;Space&gt; Continue (resume processing)
 &gt;&gt; CS Step (cycle 1):
-   About to signal quiescence... <font color="#00ff00">[<i>d entered</i>]</font>
+   About to signal quiescence... <font color="#00b200">[<i>d entered</i>]</font>
 :quiescence stepping disabled
 &gt;&gt; CS Step (cycle 1):
-   About to signal quiescence... <font color="#00ff00">[<i>q entered</i>]</font>
+   About to signal quiescence... <font color="#00b200">[<i>q entered</i>]</font>
 All stepping disabled
 ;; No executable KSAs remain, exiting control shell
 ;; Control shell 1 exited: 2 cycles completed
@@ -199,6 +199,7 @@ All stepping disabled
 ;; Elapsed time: 54 seconds
 :quiescence
 </pre>
+</p>
 <a name="id4"></a><p><span class="fndoclabel">Note</span> <br />When a non-<code>nil</code> <code>:run-polling-functions</code>
 value is supplied to <b><a href="ref-start-control-shell.html">start-control-shell</a></b> (the default on
 Common Lisp implementations without threads),

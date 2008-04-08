@@ -24,7 +24,7 @@
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:portable-sockets</code>
 </p>
-<p><span class="fndoclabel">Arguments</span><table class="tight">
+<p><span class="fndoclabel">Arguments</span><table class="tighttop">
 <tr valign="top"><td valign="baseline"><i>socket-stream</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A socket stream
 </td></tr><tr valign="top"><td valign="baseline"><i>direction</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> The keyword symbol <code>:input</code> or <code>:output</code> 
 specifying the direction to be closed
@@ -37,10 +37,10 @@ specifying the direction to be closed
 </p>
 <p><span class="fndoclabel">Example</span> <br />Tell the other end of a socket connection that we are done sending
 output on the socket stream (send an end-of-file indication):
-</p>
-<pre>
+<pre class="pretop">
   (shutdown-socket-stream socket-stream ':output)
 </pre>
+</p>
 <p><span class="fndoclabel">Note</span> <br />Connections should always be closed using <b>close</b> (from
 both sides) when they are no longer needed to free up operating-system
 resources.

@@ -25,7 +25,7 @@
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-core</code>
 </p>
-<p><span class="fndoclabel">Arguments</span><table class="tight">
+<p><span class="fndoclabel">Arguments</span><table class="tighttop">
 <tr valign="top"><td valign="baseline"><i>unit-instance</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id195">unit&nbsp;instance</a>
 </td></tr><tr valign="top"><td valign="baseline"><i>dimension-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A symbol specifying a <a href="ref-glossary.html#gl:dimension">dimension</a> of
 <var>unit-instance</var> 
@@ -54,8 +54,7 @@ is a <a href="ref-glossary.html#id161">series-composite&nbsp;dimension&nbsp;valu
 </p>
 <p><span class="fndoclabel">Examples</span> <br />Return the <code>x</code> <a href="ref-glossary.html#id32">dimension&nbsp;value</a> of the <a href="ref-glossary.html#id195">unit&nbsp;instance</a>,
 <code>hyp</code>:
-</p>
-<pre>
+<pre class="pretop">
 &gt; (instance-dimension-value hyp 'x)
 1835
 :point
@@ -63,8 +62,7 @@ is a <a href="ref-glossary.html#id161">series-composite&nbsp;dimension&nbsp;valu
 nil
 nil
 </pre>
-<p>Return the <code>classification</code> <a href="ref-glossary.html#id32">dimension&nbsp;value</a>:
-</p>
+Return the <code>classification</code> <a href="ref-glossary.html#id32">dimension&nbsp;value</a>:
 <pre>
 &gt; (instance-dimension-value hyp 'classification)
 (:car :truck)
@@ -73,6 +71,7 @@ eq
 :set
 nil
 </pre>
+</p>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
 <table width="100%" cellpadding="0" cellspacing="2"><tr>

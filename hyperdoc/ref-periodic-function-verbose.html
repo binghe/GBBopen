@@ -36,8 +36,7 @@ changed globally to display the management of <a href="ref-glossary.html#gl:peri
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-spawn-periodic-function.html"><b>spawn-periodic-function</b></a>
 </p>
 <a name="id1"></a><p><span class="fndoclabel">Example</span> <br />Schedule a simple <a href="ref-glossary.html#id133">periodic&nbsp;function</a> with verbose printing enabled:
-</p>
-<pre>
+<pre class="pretop">
 &gt; (setf *periodic-function-verbose* 't)
 t
 &gt; (<a href="ref-spawn-periodic-function.html">spawn-periodic-function</a> #'(lambda () (print "Hello!")) 0.1 
@@ -50,6 +49,7 @@ t
 "Hello!" 
 ;; Exiting periodic-function thread hello
 </pre>
+</p>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
 <table width="100%" cellpadding="0" cellspacing="2"><tr>

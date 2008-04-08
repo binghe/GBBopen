@@ -26,7 +26,7 @@
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:mini-module</code>
 </p>
-<p><span class="fndoclabel">Arguments</span><table class="tight">
+<p><span class="fndoclabel">Arguments</span><table class="tighttop">
 <tr valign="top"><td valign="baseline"><i>universal-time</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id197">universal&nbsp;time</a> (default is <code>nil</code>,
 which is equivalent to the value returned by
 <code>(get-universal-time)</code>)
@@ -57,41 +57,36 @@ for daylight saving time.
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-month-precedes-date-var.html"><b>*month-precedes-date*</b></a>
 </p>
 <p><span class="fndoclabel">Examples</span> <br />Display the current date and time: 
-</p>
-<pre>
+<pre class="pretop">
 &gt; (brief-date-and-time)
 "Feb 16 12:11"
 </pre>
-<p>Display the current date and time (with seconds):
-</p>
+Display the current date and time (with seconds):
 <pre>
 &gt; (brief-date-and-time nil nil 't)
 "Feb 16 12:11:38"
 </pre>
-<p>Display the current date and time as GMT: 
-</p>
+Display the current date and time as GMT: 
 <pre>
 &gt; (brief-date-and-time nil 0)
 "Feb 16 17:11"
 </pre>
-<p>The date and time 10 days ago:
-</p>
+The date and time 10 days ago:
 <pre>
 &gt; (brief-date-and-time (- (get-universal-time) (* 60 60 24 10)))
 "Feb 6 12:11"
 </pre>
-<p>The date and time 100 days ago:
-</p>
+The date and time 100 days ago:
 <pre>
 &gt; (brief-date-and-time (- (get-universal-time) (* 60 60 24 100)))
 "Nov  8, 2004"
 </pre>
-<p>The date and time 100 days ago (with seconds):
-</p>
+The date and time 100 days ago (with seconds):
 <pre>
 &gt; (brief-date-and-time (- (get-universal-time) (* 60 60 24 100)))
 "Nov  8, 2004   "
 </pre>
+</p>
 <p><span class="fndoclabel">Note</span> <br /><a name="id2">This</a> function is loaded with the <code>:mini-module</code> module to make it
 available as early as possible.
 </p>

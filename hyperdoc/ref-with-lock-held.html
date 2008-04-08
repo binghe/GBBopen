@@ -29,7 +29,7 @@ execute forms and then release the lock.
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:portable-threads</code>
 </p>
-<p><span class="fndoclabel">Arguments</span><table class="tight">
+<p><span class="fndoclabel">Arguments</span><table class="tighttop">
 <tr valign="top"><td valign="baseline"><i>lock</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#gl:lock">lock</a>, a <a href="ref-glossary.html#id151">recursive&nbsp;lock</a>, or a 
 <a href="ref-glossary.html#id22">condition&nbsp;variable</a>
 </td></tr><tr valign="top"><td valign="baseline"><i>whostate</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A string (default <code>"With Lock Held"</code>)
@@ -54,26 +54,24 @@ simply proceeds as if it had acquired the lock.
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-thread-whostate.html"><b>thread-whostate</b></a>
 </p>
 <p><span class="fndoclabel">Examples</span> <br />Acquire the lock controlling access to a critical section of code:
-</p>
-<pre>
+<pre class="pretop">
   (with-lock-held (lock :whostate "Waiting for Critical Lock")
     (critical-section))
 </pre>
-<p>A silly example showing a recursive re-acquisition of a
+A silly example showing a recursive re-acquisition of a
 <a href="ref-glossary.html#id151">recursive&nbsp;lock</a>:
-</p>
 <pre>
   (with-lock-held (recursive-lock :whostate "Waiting for Critical Lock")
     (with-lock-held (recursive-lock :whostate "Again Waiting for Critical Lock")
       (critical-section)))
 </pre>
-<p><a name="id1">Acquire</a> the <a href="ref-glossary.html#gl:lock">lock</a> associated with <code>condition-variable</code> and then
+<a name="id1">Acquire</a> the <a href="ref-glossary.html#gl:lock">lock</a> associated with <code>condition-variable</code> and then
 signal all blocked <a href="ref-glossary.html#gl:threads">threads</a> that are waiting on it:
-</p>
 <pre>
   (with-lock-held (condition-variable)
     (<a href="ref-condition-variable-signal.html">condition-variable-signal</a> condition-variable))
 </pre>
+</p>
 <p><span class="fndoclabel">Note</span> <br />The <var>whostate</var> value is ignored by
 <a target="_top" href="http://sbcl.sourceforge.net">SBCL</a>.
 </p>

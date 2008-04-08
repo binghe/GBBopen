@@ -27,7 +27,7 @@ optionally selected by a <a href="ref-glossary.html#id155">retrieval&nbsp;patter
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-core</code>
 </p>
-<p><span class="fndoclabel">Arguments</span><table class="tight">
+<p><span class="fndoclabel">Arguments</span><table class="tighttop">
 <tr valign="top"><td valign="baseline"><i>var</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id199">variable&nbsp;symbol</a>
 </td></tr><tr valign="top"><td valign="baseline"><i>unit-classes-specifier</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An <a href="ref-glossary.html#id65">extended&nbsp;unit-classes&nbsp;specification</a>
 (see below)
@@ -44,7 +44,8 @@ applied after pattern-matching tests occur
 </td></tr><tr valign="top"><td valign="baseline"><i>form</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#gl:form">form</a>
 </td></tr></table>
 </p>
-<p><span class="fndoclabel">Detailed syntax</span><a name="id1"></a></p>
+<p><table class="tighttop" width="100%"></table>
+<span class="fndoclabel">Detailed syntax</span><a name="id1"></a></p>
 <table class="tight"><table><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>unit-classes-specifier</var>&nbsp;::= </td><td valign="baseline" colspan="1" align="left"> <code>t</code> | 
@@ -298,8 +299,7 @@ and <code>=&#36;&#36;&#36;</code> and <code>within&#38;</code>, <code>within&#36
 reside on the <code>(bb probable-hyps)</code> <a href="ref-glossary.html#id174">space&nbsp;instance</a>,
 deleting those <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a> that do not reside on any other
 <a href="ref-glossary.html#id174">space&nbsp;instance</a>:
-</p>
-<pre>
+<pre class="pretop">
   (let ((space-instance 
            (<a href="ref-find-space-instance-by-path.html">find-space-instance-by-path</a> '(bb probable-hyps))))
     (do-instances-on-space-instances (instance 'hyp space-instance)
@@ -308,15 +308,16 @@ deleting those <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances<
                   instance space-instance)
                (<a href="ref-delete-instance.html">delete-instance</a> instance))))
 </pre>
+</p>
 <p><a name="id22">Delete</a> <code>hyp</code> <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a> that
 reside on the <code>(bb probable-hyps)</code> <a href="ref-glossary.html#id174">space&nbsp;instance</a> that
 have a belief value of less than 0.5:
-</p>
-<pre>
+<pre class="pretop">
   (do-instances-on-space-instances (instance 'hyp '(bb probable-hyps)
                                     :pattern '(&lt; belief .5))
      (<a href="ref-delete-instance.html">delete-instance</a> instance))
 </pre>
+</p>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
 <table width="100%" cellpadding="0" cellspacing="2"><tr>

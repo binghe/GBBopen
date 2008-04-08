@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Sat Apr  5 05:59:32 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Tue Apr  8 05:50:25 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -342,15 +342,6 @@ and \xsitelink{Hyperlatex}{http://hyperlatex.sourceforge.net/} 2.9a.
 %%  Global syntax specifications
 
 \newcommand{\compilemoduleoptions}{\T\\[4pt]
-\codeindexqual{:create-dirs}{compile/load-module option}%
-\codeindexqual{:noautorun}{compile/load-module option}%
-\codeindexqual{:nopropagate}{compile/load-module option}%
-\codeindexqual{:print}{compile/load-module option}%
-\codeindexqual{:propagate}{compile/load-module option}%
-\codeindexsub{:recompile}{compile/load-module option}%
-\codeindexsub{:reload}{compile/load-module option}%
-\codeindexsub{:source}{compile/load-module option}%
-%
 \begin{tabular}{@{~~~}l@{}l@{}}
 \code{:create-dirs}~~~ & Creates any needed directories that are missing in the
   compiled-file tree\\[2pt]
@@ -367,16 +358,18 @@ and \xsitelink{Hyperlatex}{http://hyperlatex.sourceforge.net/} 2.9a.
 \code{:source} & Loads from the source file even if the existing compiled file
   is newer than the source file (implies \code{:reload})\\[2pt]
 \end{tabular}
-}
-
-\newcommand{\loadmoduleoptions}{\T\\[4pt]
+%
+\codeindexqual{:create-dirs}{compile/load-module option}%
 \codeindexqual{:noautorun}{compile/load-module option}%
 \codeindexqual{:nopropagate}{compile/load-module option}%
 \codeindexqual{:print}{compile/load-module option}%
 \codeindexqual{:propagate}{compile/load-module option}%
+\codeindexsub{:recompile}{compile/load-module option}%
 \codeindexsub{:reload}{compile/load-module option}%
 \codeindexsub{:source}{compile/load-module option}%
-%
+}
+
+\newcommand{\loadmoduleoptions}{\T\\[4pt]
 \begin{tabular}{@{~~~}l@{}l@{}}
 \code{:noautorun}~~~ & Binds \textbf{\entlink{*autorun-modules*}} to nil
   during compilation and loading\\[2pt]
@@ -389,13 +382,16 @@ and \xsitelink{Hyperlatex}{http://hyperlatex.sourceforge.net/} 2.9a.
 \code{:source} & Loads from the source file even if the existing compiled file
   is newer than the source file (implies \code{:reload})\\[2pt]
 \end{tabular}
+%
+\codeindexqual{:noautorun}{compile/load-module option}%
+\codeindexqual{:nopropagate}{compile/load-module option}%
+\codeindexqual{:print}{compile/load-module option}%
+\codeindexqual{:propagate}{compile/load-module option}%
+\codeindexsub{:reload}{compile/load-module option}%
+\codeindexsub{:source}{compile/load-module option}%
 }
 
 \newcommand{\loadonefilemoduleoptions}{\T\\[4pt]
-\codeindexqual{:noautorun}{compile/load-module option}%
-\codeindexqual{:print}{compile/load-module option}%
-\codeindexsub{:source}{compile/load-module option}%
-%
 \begin{tabular}{@{~~~}l@{}l@{}}
 \code{:noautorun}~~~ & Binds \textbf{\entlink{*autorun-modules*}} to nil
   during compilation and loading\\[2pt]
@@ -404,15 +400,13 @@ and \xsitelink{Hyperlatex}{http://hyperlatex.sourceforge.net/} 2.9a.
 \code{:source} & Loads from the source file even if the existing compiled file
   is newer than the source file\\[2pt]
 \end{tabular}
+%
+\codeindexqual{:noautorun}{compile/load-module option}%
+\codeindexqual{:print}{compile/load-module option}%
+\codeindexsub{:source}{compile/load-module option}%
 }
 
 \newcommand{\compilemodulefileoptions}{\T\\[4pt] 
-\codeindexqual{:forces-recompile}{define-module file option}%
-\codeindexqual{:noload}{define-module file option}%
-\codeindexsub{:recompile}{define-module file option}%
-\codeindexsub{:reload}{define-module file option}%
-\codeindexsub{:source}{define-module file option}%
-%
 \begin{tabular}{@{~~~}l@{}l@{}}
 \code{:forces-recompile}~~~ & If the file has changed, recompile and
 reload all subsequent files and modules \\[2pt]
@@ -421,13 +415,15 @@ reload all subsequent files and modules \\[2pt]
 \code{:reload} & Always reload the file \\[2pt]
 \code{:source} & Do not compile the file (load the source instead) \\
 \end{tabular}
+%
+\codeindexqual{:forces-recompile}{define-module file option}%
+\codeindexqual{:noload}{define-module file option}%
+\codeindexsub{:recompile}{define-module file option}%
+\codeindexsub{:reload}{define-module file option}%
+\codeindexsub{:source}{define-module file option}%
 }
 
 \newcommand{\loadmodulefileoptions}{\T\\[4pt] 
-\codeindexqual{:noautorun}{compile/load-module option}%
-\codeindexqual{:print}{compile/load-module option}%
-\codeindexsub{:reload}{define-module file option}%
-\codeindexsub{:source}{define-module file option}%
 \begin{tabular}{@{~~~}l@{}l@{}}
 \code{:forces-recompile}~~~ & If the file has changed, recompile and
 reload all subsequent files and modules \\[2pt]
@@ -438,6 +434,11 @@ reload all subsequent files and modules \\[2pt]
 \code{:reload} & Always reload the file \\[2pt]
 \code{:source} & Do not compile the file (load the source instead) \\
 \end{tabular}
+%
+\codeindexqual{:noautorun}{compile/load-module option}%
+\codeindexqual{:print}{compile/load-module option}%
+\codeindexsub{:reload}{define-module file option}%
+\codeindexsub{:source}{define-module file option}%
 }
 
 %% ---------------------------------------------------------------------------
@@ -1092,21 +1093,23 @@ for simplicity in porting to Common Lisp implementations.  For
 example, to compile all core GBBopen modules and execute a basic
 trip-tests file, you only need to evaluate the following forms within
 your Common Lisp environment:
+%
+\W\supp
 \begin{example}
-> (load "\var{<install-dir\/>}startup.lisp")
-; Loading \var{<install-dir\/>}/startup.lisp
-;  Loading \var{<install-dir\/>}/source/mini-module/mini-module-loader.lisp
-;   Loading \var{<install-dir\/>}/source/mini-module/mini-module.lisp
-;     Loading \var{<install-dir\/>}/source/mini-module/mini-module-user.lisp
-;  Loading \var{<install-dir\/>}/source/modules.lisp
-T
-> (mini-module:\entlink{compile-module} :gbbopen-test :propagate :create-dirs)
-; Compiling \var{<install-dir\/>}/source/mini-module/mini-module.lisp
-     ...
-;; Running basic GBBopen tests...
-     ...
+  > (load "\var{<install-dir\/>}startup.lisp")
+  ;; Loading \var{<install-dir\/>}/startup.lisp
+  ;;  Loading \var{<install-dir\/>}/source/mini-module/mini-module-loader.lisp
+  ;;   Loading \var{<install-dir\/>}/source/mini-module/mini-module.lisp
+  ;;     Loading \var{<install-dir\/>}/source/mini-module/mini-module-user.lisp
+  ;;  Loading \var{<install-dir\/>}/source/modules.lisp
+  T
+  > (mini-module:\entlink{compile-module} :gbbopen-test :propagate :create-dirs)
+  ;; Compiling \var{<install-dir\/>}/source/mini-module/mini-module.lisp
+       ...
+  ;; Running basic GBBopen tests...
+       ...
 \end{example}
-
+%
 GBBopen should compile, load, and run the basic tests file without error.
 
 \index{backslash character, in Windows file specifications}%
@@ -1117,10 +1120,12 @@ next character to treated as a normal character rather than as having
 any special syntactic characteristics. So, each backslash in a
 file-specification string must be entered as two backslash characters.
 For example:
+%
+\W\supp
 \begin{verbatim}
-> (load "c:\\GBBopen\\startup.lisp")
+  > (load "c:\\GBBopen\\startup.lisp")
 \end{verbatim}
-
+%
 As can be seen from the file-loading messages, the \code{startup.lisp} file
 loads a bootstrap loader file for the module facility (the file
 \code{source/mini-module/mini-module-loader.lisp}).  This bootstrap file then
@@ -1156,7 +1161,8 @@ other personalizations.
 Here is a simple example of a personal
 \code{\var{<homedir>\/}/gbbopen-init.lisp} file that defines a root directory
 named \code{:my-app-root} and the module \code{:my-app}:
-
+%
+\W\supp
 \begin{example}
   ;;;; -*- Mode:Common-Lisp; Package:CL-USER -*-
 
@@ -1225,14 +1231,19 @@ The standard GBBopen top-level commands are defined in the file
 \code{\var{<install-directory>\/}/commands.lisp}.  In many Common Lisp
 implementations, top-level keyword commands that have arguments can be
 specified using either a list or a spread representation.  For example:
-
+%
+\W\supp
 \begin{example}
-> (:gbbopen-test :create-dirs)
+  > (:gbbopen-test :create-dirs)
 \end{example}
+%
 or
+%
+\W\supp\notpretop
 \begin{example}
-> :gbbopen-test :create-dirs
+  > :gbbopen-test :create-dirs
 \end{example}
+%
 However, \xsitelink{Clozure CL}{http://trac.clozure.com/openmcl/},
 \xsitelink{OpenMCL}{http://openmcl.clozure.com/}, and the
 \xsitelink{SLIME}{http://common-lisp.net/project/slime/} REPL interface do not
@@ -1263,7 +1274,8 @@ or compiled) is present in the user's ``homedir'' home directory (as defined by
 \code{gbbopen-commands.lisp} file defines a top-level keyword command (named
 \code{:my-app}) and an equivalent \glref{function} (\code{cl-user::my-app})
 for compiling and loading the \code{:my-app} module that was defined above:
-
+%
+\W\supp\notpretop
 \begin{example}
   ;;;; -*- Mode:Common-Lisp; Package:CL-USER -*-
 
@@ -1277,7 +1289,7 @@ for compiling and loading the \code{:my-app} module that was defined above:
   ;;;   End of File
   ;;; ===============================================
 \end{example}
-
+%
 The macro \code{define-tll-command} and the \glref{function}
 \code{startup-module} that are used in this example are both defined in the
 file \code{\var{<install-directory>\/}/initiate.lisp}.  Experienced GBBopen
@@ -1313,7 +1325,7 @@ by creating a symbolic link to the application directory in each user's
 \code{gbbopen-modules} directory.
 
 Each application directory can contain:
-
+%
 \begin{tightitemize}
 \item a \code{modules.lisp} file that contains module definitions (loaded
   after the personal \code{gbbopen-init.lisp} file if there is one in the
@@ -1369,13 +1381,17 @@ If you already use the
 \xsitelink{hyperspec.el}{http://cvs.sourceforge.net/viewcvs.py/ilisp/ILISP/extra/hyperspec.el?rev=1.5&view=auto}
 utility (included with
 \xsitelink{SLIME}{http://common-lisp.net/project/slime/} and
-\xsitelink{ILISP}{http://sourceforge.net/projects/ilisp/}
-distributions, but usable on its own), the Emacs
-\code{browse-hyperdoc} command will automatically defer to the
-\xsitelink{Common Lisp  HyperSpec}{http://www.lispworks.com/documentation/HyperSpec/} when
-given a non-GBBopen entity.  You can also download and install a local copy of the 
-Common Lisp HyperSpec for use without a network connection.  In this case, set the value of \code{common-lisp-hyperspec-root} in your \code{.emacs} initialization file to point to your local copy of the HyperSpec.  For example:
-
+\xsitelink{ILISP}{http://sourceforge.net/projects/ilisp/} distributions, but
+usable on its own), the Emacs \code{browse-hyperdoc} command will
+automatically defer to the \xsitelink{Common Lisp
+  HyperSpec}{http://www.lispworks.com/documentation/HyperSpec/} when given a
+non-GBBopen entity.  You can also download and install a local copy of the
+Common Lisp HyperSpec for use without a network connection.  In this case, set
+the value of \code{common-lisp-hyperspec-root} in your \code{.emacs}
+initialization file to point to your local copy of the HyperSpec.  For
+example:
+%
+\W\supp
 \begin{example}
   (setf common-lisp-hyperspec-root "file:/usr/local/CLHS/")
 \end{example}
@@ -1415,6 +1431,8 @@ file or your personal \code{gbbopen-init.lisp} file.  Because
 
 \fnexamples
 Here is the setting that is made in \code{startup.lisp}:
+%
+\W\supp
 \begin{example}
   (defvar *preferred-browser* 
       ;; On Mac OSX we defer to the OS default browser:
@@ -1428,6 +1446,8 @@ Here is the setting that is made in \code{startup.lisp}:
 
 Specify a different browser (in a personal \code{gbbopen-init.lisp}
 file) on Linux machines:
+%
+\W\supp
 \begin{example}
   (in-package :common-lisp-user)
 
@@ -1488,6 +1508,8 @@ Lisp implementations.
 \fnexamples
 Define a top-level-loop command named \code{:ds} to be a handy
 shortcut to the Common Lisp \code{describe} function:
+%
+\W\supp
 \begin{example}
   (define-tll-command :ds (obj)
     "Describe"
@@ -1497,6 +1519,8 @@ shortcut to the Common Lisp \code{describe} function:
 Define a top-level command named \code{:my-app} that compiles
 and loads the module \code{:my-app} and sets the current package
 to the \code{:gbbopen-user} package:
+%
+\W\supp
 \begin{example}
   (define-tll-command :my-app (&rest options)
     "Compile and load my GBBopen application module"
@@ -1558,6 +1582,8 @@ defined at the conclusion of module compilation and loading.
 Define a top-level command named \code{:my-app} that compiles
 and loads the module \code{:my-app} and sets the current package
 to the \code{:gbbopen-user} package:
+%
+\W\supp
 \begin{example}
   (\entlink{define-tll-command} :my-app (&rest options)
     "Compile and load my GBBopen application module"
@@ -1693,6 +1719,8 @@ compilation.
 \fnexample 
 Automatically create, as needed, any missing directory in the compiled-file
 tree, rather than generating a continuable error:
+%
+\W\supp
 \begin{example}
   (setf common-lisp-user::*automatically-create-missing-directories* 't)
 \end{example}
@@ -1733,6 +1761,8 @@ load-module option \code{:noautorun} can also be specified to bind
 \fnexample
 Conditionally evaluate the \code{http-test} function when the file 
 \code{http-test.lisp} that includes the following form is loaded:
+%
+\W\supp
 \begin{example}
   (when common-lisp-user::*autorun-modules*
     (http-test "GBBopen.org" 80))
@@ -1784,6 +1814,8 @@ following effects (overriding the behavior of \var{options\/} supplied to
 \fnexample Compile and load the GBBopen User module and all its
 required modules, creating new compilation directories if they do not
 exist already:
+%
+\W\supp
 \begin{example}
   (compile-module :gbbopen-user :propagate :create-dirs)
 \end{example}
@@ -1883,6 +1915,8 @@ consistent with all previously defined modules.
 \fnexamples
 \bfindexit{define-root-directory}%
 Define a root directory and module for \code{:my-app}:
+%
+\W\supp
 \begin{example}
   (\entlink{define-root-directory} :my-app-root 
     (make-pathname :directory "~/my-app"))
@@ -1899,6 +1933,8 @@ Define a root directory and module for \code{:my-app}:
 
 Define a module for \code{:my-app} rooted relative to the file 
 containing the \textbf{define-module} form:
+%
+\W\supp
 \begin{example}
   (define-module :my-app
     (:requires :gbbopen-user)
@@ -1954,21 +1990,27 @@ base directory location changes, the relative directory is adjusted automaticall
 
 \fnexamples Define a relative directory below \code{:my-app-root} named
 \code{:my-tests}:
+%
+\W\supp
 \begin{example}
   (define-relative-directory :my-tests :my-app-root "tests")
 \end{example}
-
-Define another relative directory named
-\code{:my-performance-tests} below \code{:my-tests}: 
+%
+Define another relative directory named \code{:my-performance-tests} below
+\code{:my-tests}:
+%
+\W\supp\notpretop
 \begin{example}
   (define-relative-directory :my-performance-tests :my-tests "performance") 
 \end{example}
-
-Define a data directory sibling to the \code{source} directory of \code{:my-app} module: 
+%
+Define a data directory sibling to the \code{source} directory of
+\code{:my-app} module:
+%
+\W\supp\notpretop
 \begin{example}
   (define-relative-directory :app-data :my-app :up "data") 
 \end{example}
-
 
 \end{functiondoc}
 
@@ -2023,13 +2065,17 @@ location of the source root directory is changed.
 \end{alsos}
 
 \fnexamples Define a root directory named \code{:my-app-root}:
+%
+\W\supp
 \begin{example}
   (define-root-directory :my-app-root 
     (make-pathname :directory "~/my-app"))
 \end{example}
-
+%
 Define a root directory named \code{:my-app-root} to be the directory
 containing the file containing the \textbf{define-root-directory} form:
+%
+\W\supp\notpretop
 \begin{example}
   (define-root-directory :my-app-root 
     (make-pathname :directory *load-truename*))
@@ -2070,6 +2116,8 @@ The description is printed to the {\bf *standard-output*} stream.
 
 \fnexample
 Describe the \code{:gbbopen-tools} module:
+%
+\W\supp
 \begin{example}
 > (describe-module :gbbopen-tools)
 Module :gbbopen-tools (loaded)
@@ -2127,12 +2175,16 @@ returned for relative directories is the source pathname.
 \fnexamples
 
 Return the pathname of the \code{:my-app-root} root directory:
+%
+\W\supp
 \begin{example}
 > (get-directory :my-app-root)
 #P"~/my-app"
 \end{example}
-
+%
 Return the pathname of the \code{:gbbopen-tools} module:
+%
+\W\supp\notpretop
 \begin{example}
 > (get-directory :gbbopen-tools)
 #P"/home/GBBopen/current/source/tools"
@@ -2178,6 +2230,8 @@ following effects (overriding the behavior of \var{options\/} supplied to
 \end{alsos}
 
 \fnexample Load the GBBopen User module and all its required modules:
+%
+\W\supp
 \begin{example}
   (load-module :gbbopen-user)
 \end{example}
@@ -2226,6 +2280,8 @@ definition (see \textbf{\entlinknoex{define-module}}) are ignored by
 
 \fnexample Load the source of the file \code{tools} from the GBBopen
 Tools module:
+%
+\W\supp
 \begin{example}
 > (load-module-file :gbbopen-tools "tools" :source)
 #P"/home/GBBopen/current/source/tools/tools.lisp"
@@ -2265,6 +2321,8 @@ Module \var{module-name\/} has not been defined.
 
 \fnexample
 Return the source and compiled directories of the Agenda Shell module:
+%
+\W\supp
 \begin{example}
 > (module-directories :agenda-shell)
 #P"/home/GBBopen/current/source/gbbopen/control-shells"
@@ -2306,7 +2364,9 @@ Module \var{module-name\/} has not been defined.
 
 \fnexample
 Check if the Agenda Shell module has been loaded:
+%
 \begin{example}
+\W\supp
 > (module-loaded-p :agenda-shell)
 t
 \end{example} 
@@ -2336,6 +2396,8 @@ t
 
 \fnexample List the currently defined root and relative directories:
 \begin{example}
+%
+\W\supp
 > (show-defined-directories)
 :gbbopen
     Relative to :gbbopen-root
@@ -2404,6 +2466,8 @@ system are provided by the \reflink{\code{:os-interface}
 \codeindexqualit{:propagate}{compile/load-module option}%
 Recompile a GBBopen application (and GBBopen itself) with all GBBopen
 optimizations disabled:
+%
+\W\supp
 \begin{example}
   (pushnew :full-safety *features*)
   (\entlink{compile-module} :my-app :recompile :propagate)
@@ -2434,6 +2498,8 @@ optimizations disabled:
 
 \fnexamples
 Toggle between date formatting options:
+%
+\W\supp
 \begin{example}
 > (let ((*month-precedes-date* t))
     (brief-date-and-time))
@@ -2482,6 +2548,8 @@ and maximum value.
 
 \fnexamples
 \begin{example}
+%
+\W\supp
 > (bounded-value 3 pi 4)
 3.141592653589793d0
 > (bounded-value 3.5 pi 4)
@@ -2543,31 +2611,48 @@ for daylight saving time.
 
 \fnexamples
 Display the current date and time: 
+%
+\W\supp
 \begin{example}
 > (brief-date-and-time)
 "Feb 16 12:11"
 \end{example}
+%
 Display the current date and time (with seconds):
+%
+\W\supp\notpretop
 \begin{example}
 > (brief-date-and-time nil nil 't)
 "Feb 16 12:11:38"
 \end{example}
+%
 Display the current date and time as GMT: 
+%
+\W\supp\notpretop
 \begin{example}
 > (brief-date-and-time nil 0)
 "Feb 16 17:11"
 \end{example}
+%
 The date and time 10 days ago:
+%
+\W\supp\notpretop
 \begin{example}
 > (brief-date-and-time (- (get-universal-time) (* 60 60 24 10)))
 "Feb 6 12:11"
 \end{example}
+%
 The date and time 100 days ago:
+%
+\W\supp\notpretop
 \begin{example}
 > (brief-date-and-time (- (get-universal-time) (* 60 60 24 100)))
 "Nov  8, 2004"
 \end{example}
+%
 The date and time 100 days ago (with seconds):
+%
+\W\supp\notpretop
 \begin{example}
 > (brief-date-and-time (- (get-universal-time) (* 60 60 24 100)))
 "Nov  8, 2004   "
@@ -2634,6 +2719,8 @@ the \var{count\/} is provided, and in that case only the rightmost
 
 \fnexamples
 \begin{example}
+%
+\W\supp
 > (counted-delete 'a '(a b c a b c))
 (b c b c)
 2
@@ -2677,6 +2764,8 @@ as the comparison function.
 \fnreturns A list from which all \var{item\/}s have been deleted.
 
 \fndescription \textbf{Delq} is a convenient shorthand for:
+%
+\W\supp
 \begin{example}
   (delete \var{item\/} (the list \var{list\/}) :test #'eq)
 \end{example}
@@ -2684,6 +2773,7 @@ As is the case with \code{delete}, \textbf{delq} may modify the top-level
 structure of \var{list\/} in constructing the \var{result-list}.
 
 \fnexamples
+\W\supp
 \begin{example}
 > (delq 'b '(a b c b))
 (a c)
@@ -2794,6 +2884,8 @@ of \code{standard-class}.  The default metaclass value is
 
 \fnexamples
 Define a class, \code{rectangle}, generating ``\code{-of}'' slot accessors:
+%
+\W\supp
 \begin{example}
 > (define-class rectangle (point)
     (length width))
@@ -2802,6 +2894,8 @@ Define a class, \code{rectangle}, generating ``\code{-of}'' slot accessors:
 
 Define a class, \code{foo}, generating
 ``\var{class-name}\code{.}\var{slot-name}'' slot accessors:
+%
+\W\supp
 \begin{example}
 > (define-class foo ()
     ((slot :initform ':uninitialized))
@@ -2837,6 +2931,8 @@ repeatedly, as long as \var{test-form\/} evaluates to \nil.
 \end{alsos}
 
 \fnexamples
+%
+\W\supp
 \begin{example}
 > (let ((i 0)) 
     (do-until (print i)
@@ -2894,6 +2990,8 @@ The scope of the binding of \var{var\/} does not include the
 \var{sequence-form}, but it does include the \var{result-form}.
 
 \fnexamples
+%
+\W\supp
 \begin{example}
 > (dosequence (elt #(1 2 3)) (print elt))
 1 
@@ -2932,6 +3030,8 @@ nil
 \fnreturns The length of \var{list\/}.
 
 \fnexamples
+%
+\W\supp
 \begin{example}
 > (dotted-length '(a b))
 2
@@ -2966,6 +3066,8 @@ nil
 \fnreturns The supplied \var{class\/}.
 
 \fnexample
+%
+\W\supp
 \begin{example}
 > (ensure-finalized-class (find-class 'hyp))
 #<standard-unit-class hyp>
@@ -2999,6 +3101,8 @@ already a list.
 an atom, a newly consed list containing \var{object\/} as its sole element.
   
 \fnexamples
+%
+\W\supp
 \begin{example}
 > (ensure-list 'x)
 (x)
@@ -3042,6 +3146,8 @@ nil
 \end{alsos}
 
 \fnexamples
+%
+\W\supp
 \begin{example}
 > (list-length-1-p '(a))
 t
@@ -3085,6 +3191,8 @@ nil
 \end{alsos}
 
 \fnexamples
+%
+\W\supp
 \begin{example}
 > (list-length-2-p '(a b))
 t
@@ -3129,6 +3237,8 @@ nil
 \end{alsos}
 
 \fnexamples
+%
+\W\supp
 \begin{example}
 > (list-length> 1 '(a b))
 t
@@ -3174,6 +3284,8 @@ t
 \end{alsos}
 
 \fnexamples
+%
+\W\supp
 \begin{example}
 > (list-length>1 '(a b))
 t
@@ -3210,6 +3322,8 @@ t
 \fnreturns The keyword symbol.
 
 \fnexamples
+%
+\W\supp
 \begin{example}
 > (make-keyword 'gbbopen)
 :gbbopen
@@ -3248,6 +3362,8 @@ comparison function.
 \var{item\/} is present; \nil{} otherwise.
 
 \fndescription \textbf{Memq} is a convenient shorthand for:
+%
+\W\supp
 \begin{example}
   (member \var{item\/} (the list \var{list\/}) :test #'eq)
 \end{example}
@@ -3257,6 +3373,8 @@ comparison function.
 \end{alsos}
 
 \fnexamples
+%
+\W\supp
 \begin{example}
 > (memq 'b '(a b c b))
 (b c b)
@@ -3299,6 +3417,8 @@ constructing the result; however, modification of the supplied
 \var{list\/} itself is not guaranteed.
 
 \fnexample
+%
+\W\supp
 \begin{example}
 > (nsorted-insert 5 '(2 4 6 8))
 (2 4 5 6 8)
@@ -3338,6 +3458,8 @@ containing the hexadecimal representation of the address if
 \end{alsos}
 
 \fnexamples
+%
+\W\supp
 \begin{example}
 > (object-address *package*)
 1907568474
@@ -3393,6 +3515,8 @@ information.
 \end{alsos}
 
 \fnexample
+%
+\W\supp
 \begin{example}
   (defmethod print-instance-slots ((obj hyp) stream)
     (call-next-method)
@@ -3439,6 +3563,8 @@ double-quote characters.
 
 \bfindexit{object-address}%
 \fnexamples
+%
+\W\supp
 \begin{example}
 > (printv (list 1 2) (list 3 4) '"A string" 
           "Return multiple values:" (values 5 6))
@@ -3490,6 +3616,8 @@ double-quote characters.
 \end{alsos}
 
 \fnexamples
+%
+\W\supp
 \begin{example}
 > (setf alist nil)
 nil
@@ -3546,6 +3674,8 @@ existing association for \var{item}.
 \end{alsos}
 
 \fnexamples
+%
+\W\supp
 \begin{example}
 > (setf alist nil)
 nil
@@ -3598,6 +3728,8 @@ the element is not already present, it is prepended to the list stored
 in \var{place}.
 
 \fnexamples
+%
+\W\supp
 \begin{example}
 > (setf x '(1 3 5))
 (1 3 5)
@@ -3654,6 +3786,8 @@ add a new \var{item increment\/} \glref{cons} to the
 \end{alsos}
 
 \fnexamples
+%
+\W\supp
 \begin{example}
 > (setf alist nil)
 nil
@@ -3700,6 +3834,8 @@ nil
 removed.
 
 \fnexamples
+%
+\W\supp
 \begin{example}
 > (remove-property '(:x 1 :y 2 :z 3) :y)
 (:x 1 :z 3)
@@ -3744,6 +3880,8 @@ lengths of \var{list-1} and \var{list-2} can differ and still return
 true.
 
 \fnexamples
+%
+\W\supp
 \begin{example}
 > (set-equal '(1 2 3) '(3 2 1))
 t
@@ -3791,6 +3929,8 @@ t
 \fndescription Duplicate elements in either list are permitted.
 
 \fnexamples
+%
+\W\supp
 \begin{example}
 > (sets-overlap-p '(1 2 3) '(3 4 5))
 t
@@ -3824,6 +3964,8 @@ t
 \fnreturns The shuffled copy of \var{list\/}.
 
 \fnexamples
+%
+\W\supp
 \begin{example}
 > (shuffle-list '(a b c d))
 (b a c d)
@@ -3861,6 +4003,8 @@ to the original \var{vector\/} argument on some Common Lisp implementations.
 implementation's low-level truncation operation.
 
 \fnexample
+%
+\W\supp
 \begin{example}
 > (shrink-vector "abcdefghijklmnopqrstuvwxyz" 3)
 "abc"
@@ -3910,6 +4054,8 @@ used on the results of calling \textbf{\entlinknoex{find-instances}} or
 \glref{unit~instance} is expected in the result list.
 
 \fnexamples
+%
+\W\supp
 \begin{example}
 > (sole-element '(a))
 a
@@ -3956,6 +4102,8 @@ elements.
 \end{tightitemize}
 
 \fnexamples
+%
+\W\supp
 \begin{example}
 > (splitting-butlast '(a b c d e))
 (a b c d)
@@ -4023,6 +4171,8 @@ end of \var{string\/})
 \fnreturns The extracted, trimmed string
 
 \fnexamples
+%
+\W\supp
 \begin{example}
 > (trimmed-substring '(#\bkslash{}space #\bkslash{}tab) "xxx   abc   yyy" 3 12)
 "abc"
@@ -4040,9 +4190,12 @@ end of \var{string\/})
 
 \fnnote 
 The function \textbf{trimmed-substring} is semantically equivalent to
+%
+\W\supp
 \begin{example}
   (string-trim \var{character-bag\/} (subseq \var{string start end\/}))
 \end{example} 
+%
 but avoids allocating an intermediate substring.
 
 \end{functiondoc}
@@ -4081,6 +4234,8 @@ but avoids allocating an intermediate substring.
 \bfindexit{instance-name-of}%
 \bfindexit{find-instance-by-name}%
 After creating an undesired method, use \textbf{undefmethod} to remove it:
+%
+\W\supp
 \begin{example}
 > (defmethod instance-name-of :before ((instance standard-unit-instance))
      (print "Opps"))
@@ -4119,6 +4274,8 @@ environment-specific eql specializers.
 \fnexample
 Define a slot-reader \glref{function} that returns the value of \code{my-slot} or 
 \textbf{unbound-value-indicator} if the slot is unbound: 
+%
+\W\supp
 \begin{example}
 (defun safe-my-slot-of (instance)
   (if (slot-bound-p instance 'my-slot)
@@ -4157,6 +4314,8 @@ as long as \var{test-form\/} evaluates to \nil.
 \end{alsos}
 
 \fnexamples
+%
+\W\supp
 \begin{example}
 > (let ((i 0)) 
     (until (> (incf i) 3) 
@@ -4200,6 +4359,8 @@ until \var{test-form\/} evaluates to \nil.
 \end{alsos}
 
 \fnexamples
+%
+\W\supp
 \begin{example}
 > (let ((i 0)) 
     (while (<= (incf i) 3) 
@@ -4264,6 +4425,8 @@ accepts no arguments and returns the condition object that signaled the error.
 
 \bfindexit{printv}%
 \fnexamples
+%
+\W\supp
 \begin{example}
 > (with-error-handling (values 1 2 3) :error-occurred)
 1
@@ -4370,14 +4533,18 @@ has no effect on optimization settings.
 
 \fnexamples Declare a \glref{function} definition, including argument checking,
 to be fully optimized for the fastest (and least safe) execution:
+%
+\W\supp
 \begin{example}
   (with-full-optimization ()
     (defun extent-> (value)
       `(,value ,infinity)))
 \end{example}
-
-Optimize the same \glref{function} definition, but this time without invocation and
-argument-checking optimizations:
+%
+Optimize the same \glref{function} definition, but this time without
+invocation and argument-checking optimizations:
+%
+\W\supp\notpretop
 \begin{example}
   (defun extent-> (value)
     (with-full-optimization ()
@@ -4444,6 +4611,8 @@ The default \var{prefix/suffix-name\/} for \code{:prefix} is a
 Define three classes, \code{point}, \code{circle} and
 \code{rectangle}, generating GBB-style
 ``\var{class-name}\code{.}\var{slot-name}'' slot accessors:
+%
+\W\supp
 \begin{example}
 > (with-generate-accessors-format (:prefix)
     (define-class point ()
@@ -4454,9 +4623,10 @@ Define three classes, \code{point}, \code{circle} and
       (length width)))
 #<standard-class rectangle>
 \end{example}
-
-Re-define the classes, generating 
-``\var{slot-name}''-only slot accessors:
+%
+Re-define the classes, generating ``\var{slot-name}''-only slot accessors:
+%
+\W\supp\notpretop
 \begin{example}
 > (with-generate-accessors-format (:suffix "")
     (define-class point ()
@@ -4467,11 +4637,13 @@ Re-define the classes, generating
       (length width)))
 #<standard-class rectangle>
 \end{example}
-
+%
 Re-define the classes, generating
 ``\var{slot-name}\code{-of-}\var{class-name}'' slot accessors (note that the
-\code{strange-name-string} name-generation \glref{function} must be available at
-compile time):
+\code{strange-name-string} name-generation \glref{function} must be available
+at compile time):
+%
+\W\supp\notpretop
 \begin{example}
 > (eval-when (:compile-toplevel :load-toplevel :execute)
     (defun strange-name-string (class-name slot-name)
@@ -4516,6 +4688,8 @@ strange-name-string
 \fnreturns The values returned by evaluating the last \var{form}.
 
 \fnexamples
+%
+\W\supp
 \begin{example}
 > (pprint (macroexpand '(with-gensyms (a b) (form))))
 (let ((a (gensym))
@@ -4557,6 +4731,8 @@ only evaluated once and in the specified order.
 
 \bfindexit{ensure-list}%
 \fnexample
+%
+\W\supp
 \begin{example}
   (define-compiler-macro \entlink{ensure-list} (x)
     (with-once-only-bindings (x)
@@ -4587,6 +4763,8 @@ only evaluated once and in the specified order.
 otherwise.
 
 \fnexamples
+%
+\W\supp
 \begin{example}
 > (xor)
 nil
@@ -4658,6 +4836,8 @@ Thus, the declared-numeric \code{+} macros are:
 \end{tabular}
 
 Some examples of declared-numeric macros include:
+%
+\W\supp
 \begin{example}
   (\& x) \expands (the fixnum x)
   (+\& x y) \expands (the fixnum (+ (the fixnum x) (the fixnum y))
@@ -4665,6 +4845,7 @@ Some examples of declared-numeric macros include:
   (minusp$$ value) \expands (minusp (the double-float value))
   (truncate\& x y)) \expands (the (values fixnum fixnum) (truncate (& x) (& y)))
 \end{example}
+%
 The complete set of macros for each declared numeric type are listed in the
 following sections.
 
@@ -4775,6 +4956,8 @@ These \glref{fixnum} numeric-operation macros are defined in the
 \bfindex{coerce\&}%
 The one-argument \glref{function} \textbf{coerce\&} provides convenient 
 \glref{fixnum} coercion:
+%
+\W\supp
 \begin{example}
   (setf x (coerce& x))
 \end{example}
@@ -4865,6 +5048,8 @@ These short-float numeric operation macros are defined in the
 \bfindex{coerce\$\&}%
 The one-argument \glref{function} \textbf{coerce\$\&} provides convenient 
 short-float coercion:
+%
+\W\supp
 \begin{example}
   (setf x (coerce\$& x))
 \end{example}
@@ -4955,6 +5140,8 @@ These single-float numeric operation macros are defined in the
 \bfindex{coerce\$}%
 The one-argument \glref{function} \textbf{coerce\$} provides convenient 
 single-float coercion:
+%
+\W\supp
 \begin{example}
   (setf x (coerce\$ x))
 \end{example}
@@ -5045,6 +5232,8 @@ These double-float numeric operation macros are defined in the
 \bfindex{coerce\$\$}%
 The one-argument \glref{function} \textbf{coerce\$\$} provides convenient 
 double-float coercion:
+%
+\W\supp
 \begin{example}
   (setf x (coerce\$\$ x))
 \end{example}
@@ -5135,6 +5324,8 @@ These long-float numeric operation macros are defined in the
 \bfindex{coerce\$\$\$}%
 The one-argument \glref{function} \textbf{coerce\$\$\$} provides convenient 
 long-float coercion:
+%
+\W\supp
 \begin{example}
   (setf x (coerce\$ x))
 \end{example}
@@ -5217,13 +5408,18 @@ Offset Universal Time value; nil otherwise.
 
 \fnexamples
 Set the time base for Offset Universal Time to today and check:
+%
+\W\supp
 \begin{example}
 > (\entlink{set-ot-base})
 3410655616
 > (check-ot-base)
 t
 \end{example}
+%
 Set the time base for Offset Universal Time to January 1, 1900 and check:
+%
+\W\supp\notpretop
 \begin{example}
 > (\entlink{set-ot-base} 1 1 1900)
 16777216
@@ -5267,6 +5463,8 @@ value.
 \end{alsos}
 
 \fnexample
+%
+\W\supp
 \begin{example}
 > (\entlink{set-ot-base} 1 7 2007)
 3409014016
@@ -5318,11 +5516,16 @@ dates or save or communicate Offset Universal Time values.
 
 \fnexamples
 Set the time base for Offset Universal Time to today:
+%
+\W\supp
 \begin{example}
 > (set-ot-base)
 3410655616
 \end{example}
+%
 Set the time base for Offset Universal Time to July 1, 2007:
+%
+\W\supp\notpretop
 \begin{example}
 > (set-ot-base 1 7 2007)
 3409014016
@@ -5363,6 +5566,8 @@ Time value.
 \end{alsos}
 
 \fnexamples
+%
+\W\supp
 \begin{example}
 > (\entlink{set-ot-base} 1 7 2007)
 3409014016
@@ -5448,6 +5653,8 @@ The description is printed to the {\bf *standard-output*} stream.
 \fnexample
 Add the \glref{function} \code{check-for-new-connection} to the list of polling 
 functions (with priority -10):
+%
+\W\supp
 \begin{example}
   (add-polling-function #'check-for-new-connection
      :priority -10)
@@ -5482,6 +5689,8 @@ The description is printed to the {\bf *standard-output*} stream.
 
 \fnexample
 Describe list of polling functions:
+%
+\W\supp
 \begin{example}
 > (describe-all-polling-functions)
 ; Polling functions:
@@ -5518,6 +5727,8 @@ Describe list of polling functions:
 \fnexample
 Remove the \glref{function} \code{check-for-new-connection} from the list of polling 
 functions:
+%
+\W\supp
 \begin{example}
   (remove-polling-function #'check-for-new-connection)
 \end{example}
@@ -5546,6 +5757,8 @@ functions:
 
 \fnexample
 Remove all functions from the list of polling functions:
+%
+\W\supp
 \begin{example}
   (remove-all-polling-functions)
 \end{example}
@@ -5575,6 +5788,8 @@ Remove all functions from the list of polling functions:
 
 \fnexample
 Run the polling functions (once, in sequence):
+%
+\W\supp
 \begin{example}
   (run-polling-functions)
 \end{example}
@@ -5640,6 +5855,8 @@ used socket entities.
 \bfindexit{close-passive-socket}%
 \fnexample
 Accept a connection made to a newly created passive socket:
+%
+\W\supp
 \begin{example}
 > (let* ((passive-socket (\entlink{make-passive-socket} 5555))
          (connection (accept-connection passive-socket)))
@@ -5679,6 +5896,8 @@ no longer needed.
 
 \fnexample
 Close a passive socket:
+%
+\W\supp
 \begin{example}
   (close-passive-socket passive-socket)
 \end{example}
@@ -5726,14 +5945,18 @@ Close a passive socket:
 \fnexamples
 Return the local hostname and port of an open socket-stream
 connection to the \code{wiki.alu.org} web server:
+%
+\W\supp
 \begin{example}
 > (local-hostname-and-port connection)
 "192.168.240.104 (ruby.gbbopen.org)"
 56833
 \end{example}
-
-Again, return the local hostname and port of the open socket-stream
+%
+Return the local hostname and port of the open socket-stream
 connection, but without hostname resolution:
+%
+\W\supp\notpretop
 \begin{example}
 > (local-hostname-and-port connection 't)
 "192.168.240.104"
@@ -5784,6 +6007,8 @@ still awaiting an \textbf{\entlink{accept-connection}}).
 
 \fnexample
 Create a passive socket, listening on port 5555:
+%
+\W\supp
 \begin{example}
 > (make-passive-socket 5555)
 #<passive socket waiting for connection at */5555>
@@ -5809,7 +6034,8 @@ needed in order to free up operating system resources.
 \fnpurpose Open a socket-stream connection to server \var{host}.
 
 \fnmethods
-\fnalternate{open-connection}{\code{(}\var{host\/} \code{integer)} \var{port\/}
+\fnalternate{open-connection}{\code{(}\var{host\/} \code{integer)}
+  \var{port\/}
   \returns{} \var{socket-stream\/}}
 \fnalternate{open-connection}{\code{(}\var{host\/} \code{string)} \var{port\/}
   \returns{} \var{socket-stream\/}}
@@ -5842,6 +6068,8 @@ the \code{Windows} directory.
 
 \fnexample
 Open a socket connection to the GBBopen Project web server:
+%
+\W\supp
 \begin{example}
 > (open-connection "GBBopen.org" 80)
 #<stream socket connected from localhost/51756 to gbbopen.org/80>
@@ -5894,14 +6122,18 @@ resources.
 \fnexamples
 Return the remote hostname and port of an open socket-stream
 connection to the \code{wiki.alu.org} web server:
+%
+\W\supp
 \begin{example}
 > (remote-hostname-and-port connection)
 "206.169.106.4 (bibop.alu.org)"
 80
 \end{example}
-
-Again, return the remote hostname and port of the open socket-stream
+%
+Return the remote hostname and port of the open socket-stream
 connection, but without hostname resolution:
+%
+\W\supp\notpretop
 \begin{example}
 > (remote-hostname-and-port connection 't)
 "206.169.106.4"
@@ -5941,6 +6173,8 @@ specifying the direction to be closed
 \fnexample
 Tell the other end of a socket connection that we are done sending
 output on the socket stream (send an end-of-file indication):
+%
+\W\supp
 \begin{example}
   (shutdown-socket-stream socket-stream ':output)
 \end{example}
@@ -6009,6 +6243,8 @@ still awaiting an \textbf{\entlink{accept-connection}}).
 \fnexample
 Start a simple connection server that accepts connections on port
 5555, reads one line of input, and closes the connection:
+%
+\W\supp
 \begin{verbatim}
 > (start-connection-server
      #'(lambda (connection)
@@ -6072,6 +6308,8 @@ systems, the services file is \code{/etc/services}. On Windows, it is the file
 
 \fnexample
 Open a socket connection to the GBBopen Project web server:
+%
+\W\supp
 \begin{verbatim}
 > (with-open-connection (connection "GBBopen.org" 80)
      (flet ((write-crlf (stream)
@@ -6146,6 +6384,8 @@ available and has been passed to the preferred browser; no value otherwise.
 \end{alsos}
 
 \fnexample
+%
+\W\supp
 \begin{example}
 > (browse-hyperdoc 'standard-event-instance)
 t
@@ -6180,6 +6420,8 @@ t
 
 \bfindexit{run-external-program}%
 \fnexample
+%
+\W\supp
 \begin{example}
 > (let ((stream (\entlink{run-external-program} "date" nil)))
      (print (read-line stream))
@@ -6246,6 +6488,8 @@ string.
 
 \bfindexit{close-external-program-stream}%
 \fnexample
+%
+\W\supp
 \begin{example}
 > (let ((stream (run-external-program "date" nil)))
      (print (read-line stream))
@@ -6394,8 +6638,11 @@ The following events may also be signaled:
 
 \fnexample
 \bfindexit{next-class-instance-number}%
-Change the class of \glref{unit~instance} \code{hyp} from
-\code{probable-hyp} to \code{rejected-hyp}:
+%
+Change the class of \glref{unit~instance} \code{hyp} from \code{probable-hyp}
+to \code{rejected-hyp}:
+%
+\W\supp
 \begin{example}
 > (change-class hyp 'rejected-hyp 
     :instance-name (\entlink{next-class-instance-number} 'rejected-hyp))
@@ -6441,14 +6688,19 @@ again to check for additional inconsistencies.
 \fnexamples
 Check for consistency in \glref{link-slot} definitions in all
 \glref{unit~classes}: 
+%
+\W\supp
 \begin{example}
 > (check-link-consistency)
 ;; All link definitions are consistent.
 t
 \end{example}
-
+%
 \bfindexit{define-unit-class}%
+%
 Create a \glref{link-slot} inconsistency:
+%
+\W\supp\notpretop
 \begin{example}
 > (\entlink{define-unit-class} bad () 
      ((mismatched-link :link (missing inverse))))
@@ -6458,8 +6710,10 @@ Warning: The inverse of link MISMATCHED-LINK in unit-class BAD refers
          to unit-class MISSING, which is not defined.
 nil
 \end{example}
-
+%
 Define the missing \glref{unit~class}, but incorrectly:
+%
+\W\supp\notpretop
 \begin{example}
 (\entlink{define-unit-class} missing () ((mismatched-link :link (missing bad))))
 missing
@@ -6468,8 +6722,10 @@ Warning: The inverse of link MISMATCHED-LINK in unit-class MISSING
          refers to link BAD which is not present in unit-class MISSING.
 nil
 \end{example}
-
+%
 Fix the definition and check again:
+%
+\W\supp\notpretop
 \begin{example}
 > (\entlink{define-unit-class} missing () ((inverse :link (bad mismatched-link))))
 #<standard-unit-class missing>
@@ -6477,8 +6733,10 @@ Fix the definition and check again:
 ;; All link definitions are consistent.
 t
 \end{example}
-
+%
 Check again, but silently:
+%
+\W\supp\notpretop
 \begin{example}
 > (check-link-consistency 't)
 t
@@ -6532,12 +6790,16 @@ specified \glref{unit~class}.  If an
 \fnexamples
 Return the count of \glref{unit~instances} of
 \code{standard-space-instance}: 
+%
+\W\supp
 \begin{example}
 > (class-instances-count 'standard-space-instance)
 8
 \end{example} 
-
+%
 Return the count of all \glref{space~instance}:
+%
+\W\supp\notpretop
 \begin{example}
 > (class-instances-count '(standard-space-instance :plus-subclasses))
 14
@@ -6723,6 +6985,8 @@ value is \textbf{\entlinknoex{standard-unit-class}}.
 \end{alsos}
 
 \fnexample
+%
+\W\supp
 \begin{example}
 > (define-unit-class hyp ()
     ((belief :initform 0.0)
@@ -6813,6 +7077,8 @@ may also be signaled:
 \fnexample
 \bfindexit{make-instance}%
 Create, then delete, a \code{hyp} \glref{unit~instance}:
+%
+\W\supp
 \begin{example}
 > (delete-instance (\entlink{make-instance} 'hyp :location '(896 388) :belief .68))
 #<hyp 311 (896 388) .68 [Deleted]>
@@ -6857,6 +7123,8 @@ The description is printed to the {\bf *standard-output*} stream.
 
 \fnexample
 Describe the \code{hyp} \glref{unit~instance}:
+%
+\W\supp
 \begin{example}
 > (describe-instance hyp)
 Hyp #<hyp 419 (1835 4791) 0.85 [5..35]>
@@ -6923,6 +7191,8 @@ Print information about a \glref{unit~class}.
 The description is printed to the {\bf *standard-output*} stream.
 
 \fnexample
+%
+\W\supp
 \begin{example}
 > (describe-unit-class 'hyp)
 Standard-unit-class #<standard-unit-class hyp>
@@ -7078,15 +7348,20 @@ Standard-unit-class #<standard-unit-class hyp>
 \fnexamples
 Return the \glref{dimensions} defined for instances of
 \glref{unit~class} \code{hyp}: 
+%
+\W\supp
 \begin{example}
 > (dimensions-of 'hyp)
 ((x (:ordered fixnum)) (y (:ordered fixnum)) (belief (:ordered number))
  (velocity-range (:ordered number)) (color (:enumerated eq)) 
  (classification (:enumerated eq)))
 \end{example}
-
+%
 \bfindexit{find-space-instance-by-path}%
+%
 Return the \glref{dimensions} of the \code{(bb hyps)} \glref{space~instance}:
+%
+\W\supp\notpretop
 \begin{example}
 > (dimensions-of (\entlink{find-space-instance-by-path} '(bb hyps)))
 ((x (:ordered fixnum)) (y (:ordered fixnum)) (belief (:ordered number))
@@ -7101,6 +7376,8 @@ Note that the \glref{dimensions} of a \glref{space~instance} (its
 independent of any \glref{dimension~values} that the space instance might have
 as a \glref{unit~instance}:
 %
+%
+\W\supp
 \begin{example}
 > (\entlink{instance-dimension-values} (class-of (\entlink{find-space-instance-by-path} '(bb hyps))))
 nil
@@ -7109,6 +7386,7 @@ nil
 or the \glref{dimensions} that the \glref{unit~class} of the space instance
 might have:
 %
+\W\supp\notpretop
 \begin{example}
 > (dimensions-of (class-of (\entlink{find-space-instance-by-path} '(bb hyps))))
 nil
@@ -7207,6 +7485,8 @@ greater than one-half of its width will always result in a zero-width
 \end{alsos}
 
 \fnexamples
+%
+\W\supp
 \begin{example}
 > (expand-interval '(2 5) 2)
 (0 7)
@@ -7261,6 +7541,8 @@ parent \glref{class} of \textbf{\entlinknoex{effective-link-definition}} and
 
 \fnexample
 Return the GBBopen implementation-version string:
+%
+\W\supp
 \begin{example}
 > (gbbopen-implementation-version)
 "0.9.3"
@@ -7296,6 +7578,8 @@ Return the GBBopen implementation-version string:
 \bfindexit{delete-instance}%
 \bfindexit{make-instance}%
 Create, then delete, then check, a \code{hyp} \glref{unit~instance}:
+%
+\W\supp
 \begin{example}
 > (instance-deleted-p (\entlink{delete-instance} (\entlink{make-instance} 'hyp)))
 t
@@ -7352,6 +7636,8 @@ t
 \fnexamples
 Return the \code{x} \glref{dimension~value} of the \glref{unit~instance},
 \code{hyp}:
+%
+\W\supp
 \begin{example}
 > (instance-dimension-value hyp 'x)
 1835
@@ -7360,7 +7646,10 @@ Return the \code{x} \glref{dimension~value} of the \glref{unit~instance},
 nil
 nil
 \end{example}
+%
 Return the \code{classification} \glref{dimension~value}:
+%
+\W\supp\notpretop
 \begin{example}
 > (instance-dimension-value hyp 'classification)
 (:car :truck)
@@ -7412,15 +7701,18 @@ defined for \var{unit-instance}.
 \fnexamples Return all \glref{dimension~values} of the
 \glref{unit~instance}, \code{hyp}:
 %
+%
+\W\supp
 \begin{example}
 > (instance-dimension-values hyp)
 ((belief . 0.85) (velocity-range 5 35) (color . :red)
  (classification :car :truck) (x . 1835) (y . 4791))
 \end{example}
-
+%
 Return the \code{x} and \code{y} \glref{dimension~values} of the
 \glref{unit~instance}, \code{hyp}:
 %
+\W\supp\notpretop
 \begin{example}
 > (instance-dimension-values hyp '(x y))
 ((x . 1835) (y . 4791))
@@ -7473,15 +7765,20 @@ Return the \glref{instance~name} of a \glref{unit~instance}.
 \bfindexit{find-instance-by-name}%
 Return the \glref{instance~names} of the \glref{unit~instances} supporting
 \code{hyp} \glref{unit~instance} \code{180}:
+%
+\W\supp
 \begin{example}
 > (mapcar #'instance-name-of 
           (supporting-hyps-of (\entlink{find-instance-by-name} 'hyp 180)))
 (123 158 94)
 \end{example}
-
+%
 \bfindexit{find-instance-by-name}%
+%
 Change the \glref{instance~name} of \code{hyp} \code{180} to 
 \code{"bogus-180"}:
+%
+\W\supp\notpretop
 \begin{example}
 > (setf (instance-name-of (\entlink{find-instance-by-name} 180 'hyp)) "bogus-180")
 "bogus-180"
@@ -7523,6 +7820,8 @@ Change the \glref{instance~name} of \code{hyp} \code{180} to
 \end{alsos}
 
 \fnexamples
+%
+\W\supp
 \begin{example}
 > (interval-end '(1 2))
 2
@@ -7568,6 +7867,8 @@ Change the \glref{instance~name} of \code{hyp} \code{180} to
 \end{alsos}
 
 \fnexamples
+%
+\W\supp
 \begin{example}
 > (interval-start '(1 2))
 1
@@ -7630,6 +7931,8 @@ A \code{link-event} is signaled for:
 \fnexample Add \code{support-hyp} to the \code{supporting-hyps}
 \glref{link~slot} of the \code{hyp} \glref{unit~instance}
 \code{unit-instance}:
+%
+\W\supp
 \begin{example}
 > (linkf (supporting-hyps-of unit-instance) support-hyp)
 #<hyp 231 (1488 7405) 0.63 [0..8]>
@@ -7707,6 +8010,8 @@ to any additional \glref{unit~instances} in
 \fnexample Set the \code{supporting-hyps} \glref{link~slot} of the
 \code{hyp} \glref{unit~instance} to the \glref{unit~instances} in
 \code{supporting-hyps}:
+%
+\W\supp
 \begin{example}
 > (link-setf (supporting-hyps-of unit-instance) supporting-hyps)
 #<hyp 231 (1488 7405) 0.63 [0..8]>
@@ -7757,6 +8062,8 @@ slightly faster.
 
 \fnexample
 Return the names of the link slots of the \code{hyp} \glref{unit~class}:
+%
+\W\supp
 \begin{example}
 > (loop for slot in (class-slots (find-class 'hyp)) 
      if (link-slot-p slot) collect (slot-definition-name slot))
@@ -7853,6 +8160,8 @@ of the instance-name counter value associated with the \glref{unit~class}.
 
 \fnexample
 Create a new \code{hyp} \glref{unit~instance}:
+%
+\W\supp
 \begin{example}
 > (make-instance 'hyp 
      :location (list x y)
@@ -7913,14 +8222,19 @@ associated with the \glref{unit~class}.
 
 \fnexamples
  Return the next instance-name number of \glref{unit~instances} of \code{ksa}: 
+%
+\W\supp
 \begin{example}
 > (next-class-instance-count 'ksa)
 8
 \end{example} 
 
 \bfindexit{change-class}%
+%
 Change the class of \glref{unit~instance} \code{hyp} from
 \code{probable-hyp} to \code{rejected-hyp}:
+%
+\W\supp
 \begin{example}
 > (\entlink{change-class} hyp 'rejected-hyp 
     :instance-name (next-class-instance-number 'rejected-hyp))
@@ -7968,11 +8282,13 @@ issued.
 
 \fnexample Reset the instance-name counters of all \glref{unit~classes}
 to 1:
+%
+\W\supp
 \begin{example}
 > (reset-unit-class 't)
 Warning: Unit class standard-space-instance has 4 instances; not reset
 \end{example}
-
+%
 Note that a warning was issued when resetting
 \textbf{\entlinknoex{standard-space-instance}} because 4 space instances of
 that class exist.
@@ -8014,6 +8330,8 @@ newly allocated, shifted \var{new-interval}.
 \end{alsos}
 
 \fnexamples
+%
+\W\supp
 \begin{example}
 > (shift-interval '(2 5) 2)
 (4 7)
@@ -8053,6 +8371,8 @@ newly allocated, shifted \var{new-interval}.
 \fnexample
 Return the \glref{space~instances} on which the \glref{unit~instance},
 \code{unit-instance}, resides:
+%
+\W\supp
 \begin{example}
 > (space-instances-of unit-instance)
 (#<standard-space-instance (bb hyps)>)
@@ -8174,6 +8494,8 @@ An \code{unlink-event} is signaled for:
 \fnexample Remove \code{support-hyp} from the \code{supporting-hyps}
 \glref{link~slot} of the \code{hyp} \glref{unit~instance}
 \code{unit-instance}:
+%
+\W\supp
 \begin{example}
 > (unlinkf (supporting-hyps-of unit-instance) support-hyp)
 #<hyp 231 (1488 7405) 0.63 [0..8]>
@@ -8227,6 +8549,8 @@ An \code{unlink-event} is signaled for:
 Remove all supporting hypothesis \glref{links} from the
 \code{supporting-hyps} \glref{link~slot} of the \code{hyp}
 \glref{unit~instance} \code{unit-instance}:  
+%
+\W\supp
 \begin{example}
   (unlinkf-all (supporting-hyps-of unit-instance))
 \end{example}
@@ -8280,13 +8604,18 @@ potentially changed by \var{forms}.
 
 \fnexamples Notify GBBopen that the \code{x}, \code{y}, and \code{belief}
 dimension values of \code{hyp} might be changed:
+%
+\W\supp
 \begin{example}
 > (with-changing-dimension-values (hyp x y belief)
     (setf (location-of hyp) '(30 40))
     (setf (belief-of hyp) 0.78))
 \end{example}
-
-Notify GBBopen that some dimension values of \code{hyp} might be changed:
+%
+Notify GBBopen that \textit{some\/} dimension values of \code{hyp} might be
+changed:
+%
+\W\supp\notpretop
 \begin{example}
 > (with-changing-dimension-values (hyp)
     (setf (location-of hyp) '(36 52))
@@ -8424,13 +8753,17 @@ follows:
 Add the event \glref{function} \entlink{evfn-printv} to the set of functions
 to be invoked when \code{create-instance-event} is signaled on a
 \code{hyp} \glref{unit~instance}:
+%
+\W\supp
 \begin{example}
   (add-event-function 'evfn-printv 'create-instance-event 'hyp)
 \end{example}
-
+%
 Add the event \glref{function} \entlink{evfn-printv} to the set of functions
 to be invoked when \code{create-instance-event} is signaled on a
 \code{hyp} \glref{unit~instance} or its subclasses:
+%
+\W\supp\notpretop
 \begin{example}
   (add-event-function 'evfn-printv 'create-instance-event '(hyp :plus-subclasses))
 \end{example}
@@ -8583,6 +8916,8 @@ the \glref{event} that is being signaled.
 
 \bfindexit{non-instance-event}%
 \fnexample
+%
+\W\supp
 \begin{example}
 > (define-event-class my-event (non-instance-event)
     ((my-event-arg1 :initform nil)
@@ -8652,6 +8987,8 @@ The description is printed to the {\bf *standard-output*} stream.
 
 \fnexample
 Describe all event printing:
+%
+\W\supp
 \begin{example}
 > (describe-event-printing 'instance-event)
 instance-event
@@ -8727,6 +9064,8 @@ follows:
 
 \fnexample
 Disable all event printing:
+%
+\W\supp
 \begin{example}
   (disable-event-printing)
 \end{example}
@@ -8793,6 +9132,8 @@ follows:
 \fnexample
 Enable event printing on all \glref{space-instance} events of
 \code{hyp} \glref{unit~instances}:
+%
+\W\supp
 \begin{example}
   (enable-event-printing '(space-instance-event :plus-subevents)
                          '(hyp :plus-subclasses))
@@ -8836,6 +9177,8 @@ double-quote characters.
 Add the event \glref{function} \entlink{evfn-printv} to the set of functions
 to be invoked when \code{create-instance-event} is signaled on a
 \code{hyp} \glref{unit~instance}:
+%
+\W\supp
 \begin{example}
   (add-event-function 'evfn-printv 'create-instance-event 'hyp)
 \end{example}
@@ -8892,13 +9235,17 @@ to be invoked when \code{create-instance-event} is signaled on a
 \bfindexit{evfn-printer}%
 Remove all event functions associated with a
 \code{create-instance-event} on a \code{hyp} \glref{unit~instance}:
+%
+\W\supp
 \begin{example}
   (remove-all-event-functions 'create-instance-event 'hyp)
 \end{example}
-
+%
 Remove all event functions associated with a
 \code{create-instance-event} on a \code{hyp} \glref{unit~instance} or
 its subclasses:
+%
+\W\supp\notpretop
 \begin{example}
   (remove-all-event-functions 'create-instance-event '(hyp :plus-subclasses))
 \end{example}
@@ -8960,13 +9307,17 @@ its subclasses:
 Remove the event \glref{function} \entlink{evfn-printv} from the set of functions
 to be invoked when \code{create-instance-event} is signaled on a
 \code{hyp} \glref{unit~instance}:
+%
+\W\supp
 \begin{example}
   (remove-event-function 'evfn-printv 'create-instance-event 'hyp)
 \end{example}
-
-Remove the event \glref{function} \entlink{evfn-printv} from the set of functions
-to be invoked when \code{create-instance-event} is signaled on a
+%
+Remove the event \glref{function} \entlink{evfn-printv} from the set of
+functions to be invoked when \code{create-instance-event} is signaled on a
 \code{hyp} \glref{unit~instance} or its subclasses:
+%
+\W\supp\notpretop
 \begin{example}
   (remove-event-function 'evfn-printv 'create-instance-event '(hyp :plus-subclasses))
 \end{example}
@@ -9033,6 +9384,8 @@ follows:
 
 \fnexample
 Resume all suspended event printing:
+%
+\W\supp
 \begin{example}
   (resume-event-printing)
 \end{example}
@@ -9098,6 +9451,8 @@ are required for specific event metaclasses:
 \end{alsos}
 
 \fnexample
+%
+\W\supp
 \begin{example}
   (signal-event 'my-event :my-event-arg1 3)
 \end{example}
@@ -9218,6 +9573,8 @@ follows:
 \fnexample
 Suspend all event printing associated with \code{possible-hyp}
 \glref{unit~instances}: 
+%
+\W\supp
 \begin{example}
   (suspend-event-printing 't 'possible-hyp)
 \end{example}
@@ -9262,6 +9619,8 @@ Suspend all event printing associated with \code{possible-hyp}
 \fnexample
 \bfindexit{make-instance}%
 Create a \code{hyp} without signaling any events:
+%
+\W\supp
 \begin{example}
 > (with-events-disabled ()
      (\entlink{make-instance} 'hyp 
@@ -9312,6 +9671,8 @@ Create a \code{hyp} without signaling any events:
 \bfindexit{make-instance}%
 Create a \code{hyp} without signaling any events, then add
 supporting-hypothesis links with events enabled:
+%
+\W\supp
 \begin{example}
 > (\entlink{with-events-disabled}
      (let ((hyp (\entlink{make-instance} 'hyp 
@@ -9402,6 +9763,8 @@ An \code{add-instance-to-space-instance-event} is signaled.
 \bfindexit{find-space-instance-by-path}%
 Add a highly plausible hypothesis \glref{unit~instance},
 \code{good-hyp}, to the \code{hyps} \glref{space~instance}:
+%
+\W\supp
 \begin{example}
 > (add-instance-to-space-instance 
     good-hyp (\entlink{find-space-instance-by-path} '(bb hyps)))
@@ -9410,6 +9773,7 @@ Add a highly plausible hypothesis \glref{unit~instance},
 %
 or
 %
+\W\supp\notpretop
 \begin{example}
 > (add-instance-to-space-instance good-hyp '(bb hyps))
 #<hyp 419 (1835 4791) 0.85 [5..35]>
@@ -9457,6 +9821,8 @@ the \glref{space~instance}
 Return the \glref{extended~unit-classes~specifications} describing the allowed
 classes that can have their \glref{unit~instances} stored on the \code{(bb
   hyps)} \glref{space~instance}:
+%
+\W\supp
 \begin{example}
 > (allowed-unit-classes-of '(bb hyps))
 ((hyp :plus-subclasses))
@@ -9499,6 +9865,8 @@ classes that can have their \glref{unit~instances} stored on the \code{(bb
 \fnexample
 \bfindexit{find-space-instance-by-path}%
 Return the child space instances  of the \code{(bb)} \glref{space~instance}:
+%
+\W\supp
 \begin{example}
 > (children-of (\entlink{find-space-instance-by-path} '(bb))
 (#<standard-space-instance (bb hyps)>
@@ -9553,19 +9921,23 @@ for each \glref{unit~instance} that is removed from a \glref{space~instance}.
 \bfindexit{remove-instance-from-space-instance}%
 Remove all the \glref{unit~instances} that
 reside on the \code{(bb probable-hyps)} \glref{space~instance}:
+%
+\W\supp
 \begin{example}
   (clear-space-instances
     (\entlink{find-space-instance-by-path} '(bb probable-hyps)))
 \end{example}
-
+%
 or
-
+%
+\W\supp\notpretop
 \begin{example}
   (clear-space-instances '(bb probable-hyps))
 \end{example}
-
+%
 or
-
+%
+\W\supp\notpretop
 \begin{example}
   (clear-space-instances
     (\entlink{find-space-instances} '(bb probable-hyps)))
@@ -9747,6 +10119,8 @@ containing a \glref{lock} that can be used to synchronize
 operations on each \glref{space~instance} of that class. Then, create
 one \glref{instance} of the \code{space-instance-with-lock}
 \glref{space~class}.
+%
+\W\supp
 \begin{example}
 > (define-space-class space-with-lock ()
     ((lock :initform (\entlink{make-lock} :name "Space-Instance Lock"))))
@@ -9832,12 +10206,16 @@ definitions, functions, methods, etc.
 Delete all \glref{unit~instances} and \glref{space~instances}
 (except for the \glref{unit~instances} of \glref{unit~classes} that have been
 defined to be retained by default):
+%
+\W\supp
 \begin{example}
   (delete-blackboard-repository)
 \end{example}
-
+%
 As above, but also delete all \glref{unit~instances} of \glref{unit~classes}
 that have been defined to be retained by default:
+%
+\W\supp\notpretop
 \begin{example}
   (delete-blackboard-repository :all-classes t)
 \end{example}
@@ -9904,6 +10282,8 @@ itself, on a \glref{space~instance} or is linked to other
 
 \fnexample
 Delete every space instance:
+%
+\W\supp
 \begin{example}
   (delete-all-space-instances)
 \end{example}
@@ -9977,6 +10357,8 @@ may also be signaled if the \var{space-instance} is, itself, on a
 \fnexamples
 \bfindexit{find-space-instance-by-path}%
 Delete the \code{(bb hyps)} \glref{space~instance}:
+%
+\W\supp
 \begin{example}
 > (delete-space-instance (\entlink{find-space-instance-by-path} '(bb hyps))
 #<standard-space-instance (bb hyps) [Deleted]>
@@ -9984,6 +10366,7 @@ Delete the \code{(bb hyps)} \glref{space~instance}:
 %
 or simply
 %
+\W\supp\notpretop
 \begin{example}
 > (delete-space-instance '(bb hyps)
 #<standard-space-instance (bb hyps) [Deleted]>
@@ -10024,6 +10407,8 @@ But not propagated, status for the \glref{unit~class}.
 The description is printed to the {\bf *standard-output*} stream.
 
 \fnexample
+%
+\W\supp
 \begin{example}
 > (describe-blackboard-repository)
 
@@ -10088,6 +10473,8 @@ The description is printed to the {\bf *standard-output*} stream.
 
 \fnexample
 Describe the \code{hyps} \glref{space~instance}:
+%
+\W\supp
 \begin{example}
 > (describe-space-instance '(hyps))
   Standard-space-instance #<standard-space-instance (bb hyps)>
@@ -10144,6 +10531,8 @@ A \var{space-instance-regexp\/} value consisting of a list of
 \bfindexit{map-instances-on-space-instances}%
 Remove all \code{hyp} \glref{unit~instances} from
 \glref{space~instances} that are rooted at \code{(bb)}:
+%
+\W\supp
 \begin{example}
   (do-space-instances (space-instance '(bb +))
     (\entlink{do-instances-on-space-instances} (unit-instance 'hyp space-instance)
@@ -10182,6 +10571,8 @@ otherwise.
 
 \fnexample
 Find the \glref{space~instance} with path \code{(bb hyps)}:
+%
+\W\supp
 \begin{example}
 > (find-space-instance-by-path '(bb hyps))
 #<standard-space-instance (bb hyps)>
@@ -10232,14 +10623,18 @@ A \var{space-instance-regexp\/} value consisting of a list of
 
 \fnexamples
 Return the \glref{space~instances} that are rooted at \code{(bb)}:
+%
+\W\supp
 \begin{example}
 > (find-space-instances '(bb +))
 (#<standard-space-instance (bb hyps)>
  #<standard-space-instance (bb probable-hyps)>)
  #<standard-space-instance (bb rejected-hyps)>)
 \end{example}
-
+%
 Return all the \glref{space~instances} \code{(bb)} and below:
+%
+\W\supp\notpretop
 \begin{example}
 > (find-space-instances '(bb *))
 (#<standard-space-instance (bb hyps)>
@@ -10355,17 +10750,22 @@ placing any other \glref{unit~instance} on a \glref{space~instance}.
 \fnexamples
 Create a top-level \glref{space~instance}, \code{bb},
 that cannot store any \glref{unit~instances}:
+%
+\W\supp
 \begin{example}
 > (make-space-instance '(bb) 
      :allowed-unit-classes nil)
 #<standard-space-instance (bb)>
 \end{example}
-
+%
 \bfindexit{dimensions-of}%
+%
 Now create a \glref{space~instance} for \code{hyp} \glref{unit~instances},
 named \code{hyps}, as a child of \code{bb}, with uniform, 100-wide, bucket
 storage for indexing \glref{unit~instances} with dimensional values between 
 0--10,000 in the \code{x} and \code{y} dimensions:
+%
+\W\supp\notpretop
 \begin{example}
 > (make-space-instance '(bb hyps)
      :dimensions (\entlink{dimensions-of} 'hyp)
@@ -10381,6 +10781,7 @@ Here is an improved \glref{space~instance} for \code{hyp}
 indexing in the \code{x} and \code{y} dimensions and hashed storage to
 retrieve match candidates via \code{classification} dimensional values:
 %
+\W\supp
 \begin{example}
 > (make-space-instance '(bb hyps)
      :dimensions (\entlink{dimensions-of} 'hyp)
@@ -10442,6 +10843,8 @@ A \var{space-instance-regexp\/} value consisting of a list of
 \bfindexit{map-instances-on-space-instances}%
 Remove all \code{hyp} \glref{unit~instances} from
 \glref{space~instances} that are rooted at \code{(bb)}:
+%
+\W\supp
 \begin{example}
   (map-space-instances 
     #'(lambda (space-instance)
@@ -10500,19 +10903,25 @@ parent.
 \bfindexit{children-of}%
 Return the parent space instances of the \code{(bb hyp)} 
 \glref{space~instance}:
+%
+\W\supp
 \begin{example}
 > (parent-of (\entlink{find-space-instance-by-path} '(bb hyp))
 #<standard-space-instance (bb)>
 \end{example}
-
+%
 Return the parent space instances (the \code{root-space-instance}) of
 the \code{(bb)} \glref{space~instance}:
+%
+\W\supp\notpretop
 \begin{example}
 > (parent-of (\entlink{find-space-instance-by-path} '(bb))
 #<root-space-instance root-space-instance>
 \end{example}
-
+%
 Return the siblings of the \code{(bb)} \glref{space~instance}:
+%
+\W\supp\notpretop
 \begin{example}
 > (children-of
     (\entlink{parent-of} (\entlink{find-space-instance-by-path} '(bb))
@@ -10570,14 +10979,17 @@ A \code{remove-instance-from-space-instance-event} is signaled.
 \bfindexit{find-space-instance-by-path}%
 Remove an incorrect hypothesis \glref{unit~instance},
 \code{incorrect-hyp}, from the \code{hyps} \glref{space~instance}:
+%
+\W\supp
 \begin{example}
 > (remove-instance-from-space-instance 
     incorrect-hyp (\entlink{find-space-instance-by-path} '(bb hyps)))
 #<hyp 311 (896 388) 0.68 [0..6]>
 \end{example}
-
+%
 or 
-
+%
+\W\supp\notpretop
 \begin{example}
 > (remove-instance-from-space-instance incorrect-hyp '(bb hyps))
 #<hyp 311 (896 388) 0.68 [0..6]>
@@ -10650,6 +11062,8 @@ does not undefine any class definitions, functions, methods, etc.
 \fnexample
 
 Prepare for a new application by resetting GBBopen:
+%
+\W\supp
 \begin{example}
   (reset-gbbopen)
 \end{example}
@@ -10768,6 +11182,8 @@ requests that are likely to be mistakes.
 
 \fnexample
 Suppress the warning message associated with an unachievable retrieval pattern:
+%
+\W\supp
 \begin{example}
 > (\entlink{filter-instances} nil '(and (> x 3) (< x 2)))
 Warning: Pattern (and (> X 3) (< X 2)) can not be satisfied.
@@ -10827,32 +11243,38 @@ or not the instances reside on any \glref{space~instances}.
 
 \fnexamples
 Delete all \glref{unit~instances} of the class \code{hyp}:
+%
+\W\supp
 \begin{example}
   (do-instances-of-class (instance 'hyp)
     (\entlink{delete-instance} instance))
 \end{example} 
-
+%
 Delete all \glref{unit~instances} of the class \code{hyp} and
 instances of subclasses of \code{hyp}:
+%
+\W\supp\notpretop
 \begin{example}
   (do-instances-of-class (instance '(hyp :plus-subclasses))
     (\entlink{delete-instance} instance))
 \end{example} 
 
-\fnnote
-\bfindexit{delete-space-instance}%
+\fnnote \bfindexit{delete-space-instance}%
 \bfindexit{standard-space-instance}%
 The consequences are unspecified if an attempt is made to add or delete a
 \glref{unit~instance} while \textbf{do-instances-of-class} is in progress.
 There is one exception to this restriction: the current \glref{unit~instance}
-in the iteration (bound to \var{var\/}) can be deleted, provided that the deletion
-does not trigger the deletion of any other \glref{unit~instances}.  For
-example, the following form intended to delete all \glref{space~instances}
+in the iteration (bound to \var{var\/}) can be deleted, provided that the
+deletion does not trigger the deletion of any other \glref{unit~instances}.
+For example, the following form intended to delete all \glref{space~instances}
 violates this restriction:
+%
+\W\supp
 \begin{example}
    \textcolor{red}{(do-instances-of-class (space-instance '(\entlink{standard-space-instance} :plus-subclasses))
      (\entlink{delete-space-instance} space-instance))}
 \end{example}
+%
 because deletion of a \glref{space~instance} with children automatically
 deletes those child \glref{space~instances}.  The function
 \textbf{\entlink{delete-all-space-instances}} provides an efficient means of
@@ -10948,6 +11370,8 @@ Remove all the \code{hyp} \glref{unit~instances} that
 reside on the \code{(bb probable-hyps)} \glref{space~instance},
 deleting those \glref{unit~instances} that do not reside on any other
 \glref{space~instance}:
+%
+\W\supp
 \begin{example}
   (let ((space-instance 
            (\entlink{find-space-instance-by-path} '(bb probable-hyps))))
@@ -10963,6 +11387,8 @@ deleting those \glref{unit~instances} that do not reside on any other
 Delete \code{hyp} \glref{unit~instances} that
 reside on the \code{(bb probable-hyps)} \glref{space~instance} that
 have a belief value of less than 0.5:
+%
+\W\supp
 \begin{example}
   (do-instances-on-space-instances (instance 'hyp '(bb probable-hyps)
                                     :pattern '(< belief .5))
@@ -11018,6 +11444,8 @@ any \glref{space~instances}.
 
 \fnexample
 Print a list of all \code{hyp} \glref{instance~names}, in ascending order:
+%
+\W\supp
 \begin{example}
   (do-sorted-instances-of-class (instance 'hyp #'< :key #'\entlink{instance-name-of})
      (print (\entlink{instance-name-of} instance)))
@@ -11083,6 +11511,8 @@ and \code{=\$\$\$} and \code{within\&}, \code{within\$\&}, \code{within\$},
 \end{alsos}
 
 \fnexamples
+%
+\W\supp
 \begin{example}
 > (filter-instances (supporting-hyps-of hyp) '(> belief .8))
 (#<hyp 183 (1835 4791) 0.82 [0..35]>
@@ -11146,13 +11576,17 @@ or \code{equalp} (case insensitive) as the comparison \glref{function} in the
 \fnexamples
 Find all \glref{unit~instances} (of any \glref{unit~class}) that are named
 419:
+%
+\W\supp
 \begin{example}
 > (find-instances-by-name 419 't)
 (#<hyp 419 (1835 4791) 0.85 [5..35]>)
 \end{example}
-
+%
 Find all \glref{unit~instances} (of any \glref{unit~class}) that are named
 419:
+%
+\W\supp\notpretop
 \begin{example}
 > (find-instances-by-name 419 '(hyp :plus-subclasses))
 (#<hyp 419 (1835 4791) 0.85 [5..35]>)
@@ -11209,6 +11643,8 @@ or \code{equalp} (case insensitive) as the comparison \glref{function} in the
 
 \fnexample
 Find the \code{hyp} \glref{unit~instance} 419:
+%
+\W\supp
 \begin{example}
 > (find-instance-by-name 419 'hyp)
 #<hyp 419 (1835 4791) 0.85 [5..35]>
@@ -11299,6 +11735,8 @@ and \code{=\$\$\$} and \code{within\&}, \code{within\$\&}, \code{within\$},
 \fnexamples
 \bfindexit{find-space-instance-by-path}%
 \bfindexit{find-instance-by-name}%
+%
+\W\supp
 \begin{example}
 > (find-instances 'hyp (\entlink{find-space-instance-by-path} '(bb hyps)) 
     '(and (= x 1835) (> belief .8)))
@@ -11414,6 +11852,8 @@ whether or not they reside on any \glref{space~instance}.
 
 \fnexample
 Return the list of all \code{hyp} \glref{unit~instances}:
+%
+\W\supp
 \begin{example}
 > (find-instances-of-class 'hyp)
 (#<hyp 233 (1835 4791) 0.89 [5..35]>
@@ -11475,12 +11915,16 @@ or not the instances reside on any \glref{space~instances}.
 
 \fnexamples
 Delete all \glref{unit~instances} of the class \code{hyp}:
+%
+\W\supp
 \begin{example}
   (map-instances-of-class #'\entlink{delete-instance} 'hyp)
 \end{example} 
-
+%
 Delete all \glref{unit~instances} of the class \code{hyp} and
 instances of subclasses of \code{hyp}:
+%
+\W\supp\notpretop
 \begin{example}
   (map-instances-of-class #'\entlink{delete-instance} '(hyp :plus-subclasses))
 \end{example} 
@@ -11488,16 +11932,20 @@ instances of subclasses of \code{hyp}:
 \fnnote
 \bfindexit{delete-space-instance}%
 \bfindexit{standard-space-instance}%
+%
 The consequences are unspecified if an attempt is made to add or delete a
 \glref{unit~instance} while \textbf{map-instances-of-class} is in progress.
 There is one exception to this restriction: \var{function\/} may delete its
 \glref{unit~instance} argument, provided that deletion does not trigger the
-deletion of any other \glref{unit~instances}.  For example, the following
-form intended to delete all \glref{space~instances} violates this restriction:
+deletion of any other \glref{unit~instances}.  For example, the following form
+intended to delete all \glref{space~instances} violates this restriction:
+%
+\W\supp
 \begin{example}
    \textcolor{red}{(map-instances-of-class 
      #'\entlink{delete-space-instance} '(\entlink{standard-space-instance} :plus-subclasses))}
 \end{example}
+%
 because deletion of a \glref{space~instance} with children automatically
 deletes those child \glref{space~instances}.  The function
 \textbf{\entlink{delete-all-space-instances}} provides an efficient means of
@@ -11586,10 +12034,12 @@ and \code{=\$\$\$} and \code{within\&}, \code{within\$\&}, \code{within\$},
 \bfindexit{delete-instance}%
 \index{events!remove-instance-from-space-instance-event@\code{remove-instance-from-space-instance-event}|itidx}%
 \bfindexit{remove-instance-from-space-instance}%
-Remove all the \code{hyp} \glref{unit~instances} that
-reside on the \code{(bb probable-hyps)} \glref{space~instance},
-deleting those \glref{unit~instances} that do not reside on any other
-\glref{space~instance}:
+%
+Remove all the \code{hyp} \glref{unit~instances} that reside on the \code{(bb
+  probable-hyps)} \glref{space~instance}, deleting those
+\glref{unit~instances} that do not reside on any other \glref{space~instance}:
+%
+\W\supp
 \begin{example}
   (let ((space-instance 
            (\entlink{find-space-instance-by-path} '(bb probable-hyps))))
@@ -11604,9 +12054,12 @@ deleting those \glref{unit~instances} that do not reside on any other
 
 \bfindexit{find-space-instance-by-path}%
 \bfindexit{delete-instance}%
-Delete \code{hyp} \glref{unit~instances} that
-reside on the \code{(bb probable-hyps)} \glref{space~instance} that
-have a belief value of less than 0.5:
+%
+Delete \code{hyp} \glref{unit~instances} that reside on the \code{(bb
+  probable-hyps)} \glref{space~instance} that have a belief value of less than
+0.5:
+%
+\W\supp
 \begin{example}
   (map-instances-on-space-instances
      #'\entlink{delete-instance} 
@@ -11656,6 +12109,8 @@ or not the instances reside on any \glref{space~instances}.
 
 \fnexample
 Print a list of all \code{hyp} \glref{instance~names}, in ascending order:
+%
+\W\supp
 \begin{example}
   (map-sorted-instances-of-class 
      #'(lambda (instance)
@@ -11705,6 +12160,8 @@ report is displayed.
 \bfindexit{find-instance-by-name}%
 \bfindexit{with-find-stats}%
 \fnexamples
+%
+\W\supp
 \begin{example}
 > (\entlink{with-find-stats} ()
     (scanner (\entlink{find-instance-by-name} 471 'hyp))
@@ -11778,6 +12235,8 @@ Record and optionally display retrieval statistics for
 \bfindexit{find-instance-by-name}%
 Collect and display the retrieval statistics associated with
 running an application \glref{function} \code{scanner}:
+%
+\W\supp
 \begin{example}
 > (with-find-stats ()
      (scanner (\entlink{find-instance-by-name} 471 'hyp)))
@@ -11832,6 +12291,8 @@ Disable the collecting of retrieval statistics while executing \var{forms}.
 \bfindexit{with-find-stats}%
 Collect and display the retrieval statistics associated with
 running an application \glref{function} \code{scanner}:
+%
+\W\supp
 \begin{example}
 > (\entlink{with-find-stats} ()
      (scanner (\entlink{find-instance-by-name} 471 'hyp))
@@ -11899,6 +12360,8 @@ printing customization for sending versus for saving.
 \bfindexit{do-instances-of-class}%
 \bfindexit{print-object-for-saving/sending}%
 Send some \code{hyp} \glref{unit~instances} to another agent:
+%
+\W\supp
 \begin{example}
 > (let ((*print-object-for-sending* 't))
     (\entlink{with-saving/sending-block} (stream :package ':my-app)
@@ -11940,6 +12403,8 @@ prints references to instances or the instance contents.
 \bfindexit{do-instances-of-class}%
 \bfindexit{print-object-for-saving/sending}%
 Send some \code{hyp} \glref{unit~instances} to another agent:
+%
+\W\supp
 \begin{example}
 > (let ((\entlink{*print-object-for-sending*} 't))
     (\entlink{with-saving/sending-block} (stream :package ':my-app)
@@ -12005,12 +12470,13 @@ were saved/sent, but which are no longer present in the class definition of
 
 \fnexamples
 \label{ex:song-read}
-Restore the binary value of slot \code{song} in \glref{unit~instances}
-of \code{bird} that was saved/sent as a Base64 portable string (see
-the companion \texorhtml{encoding example on
-  page~\pageref{ex:song-save}}{\link{encoding
+%
+Restore the binary value of slot \code{song} in \glref{unit~instances} of
+\code{bird} that was saved/sent as a Base64 portable string (see the companion
+\texorhtml{encoding example on page~\pageref{ex:song-save}}{\link{encoding
     example}{ex:song-save}}):
 %
+\W\supp
 \begin{example}
   (defmethod initialize-saved/sent-instance :after ((bird bird)
                                                     slots slot-values 
@@ -12018,10 +12484,12 @@ the companion \texorhtml{encoding example on
     (declare (ignore slots slot-values missing-slot-names))
     (setf (song-of bird) (base64-decode (song-of bird))))
 \end{example}
-
+%
 Transfer the slot value that was saved/sent as the slot named \code{old-slot}
-to the slot named \code{new-slot} in the current class definition of \code{hyp}:
-
+to the slot named \code{new-slot} in the current class definition of
+\code{hyp}:
+%
+\W\supp\notpretop
 \begin{example}
   (defmethod initialize-saved/sent-instance :after ((hyp hyp)
                                                     slots slot-values 
@@ -12137,6 +12605,8 @@ executed at the conclusion of repository loading.
 
 \fnexamples Load the GBBopen Tutorial Example application (without running it)
 and then load a blackboard repository that was saved previously:
+%
+\W\supp
 \begin{example}
   > :tutorial-example :noautorun 
   > (load-blackboard-repository "tutorial")
@@ -12145,6 +12615,8 @@ and then load a blackboard repository that was saved previously:
 \end{example}
 %
 Try loading the repository again:
+%
+\W\supp\notpretop
 \begin{example}
   > (load-blackboard-repository "tutorial")
   The blackboard repository is not empty.
@@ -12154,6 +12626,8 @@ Try loading the repository again:
 %
 Load the repository again, but without executing its
 \var{after-loading-function\/}:
+%
+\W\supp\notpretop
 \begin{example}
   > (load-blackboard-repository "tutorial" 
       :confirm-if-not-empty nil
@@ -12164,6 +12638,8 @@ Load the repository again, but without executing its
 Define a new \glref{unit~class}, \code{new-location}, and then load the
 repository again, translating all \code{location} \glref{unit~instances} to
 \code{new-location} \glref{unit~instances}:
+%
+\W\supp
 \begin{example}
   > (define-unit-class new-location (location) ())
   #<standard-unit-class new-location>
@@ -12240,8 +12716,11 @@ are not saved or sent.
 \end{alsos}
 
 \fnexample
-Specify that slot \code{complex-unsaved-slot} in \code{my-unit-instance} should be
-added to the list of slots that are not saved or sent:
+%
+Specify that slot \code{complex-unsaved-slot} in \code{my-unit-instance}
+should be added to the list of slots that are not saved or sent:
+%
+\W\supp
 \begin{example}
   (defmethod omitted-slots-for-saving/sending ((instance my-unit-instance))
     (cons 'complex-unsaved-slot (call-next-method)))
@@ -12354,6 +12833,8 @@ the dynamic scope of a \textbf{\entlink{with-saving/sending-block}}.
 
 \fnexample Define a method to save/send compiled-function references,
 when possible:
+%
+\W\supp
 \begin{example}
   (defmethod print-object-for-saving/sending ((fn function)
                                               stream)
@@ -12442,11 +12923,13 @@ the dynamic scope of a \textbf{\entlink{with-saving/sending-block}}.
 \label{ex:song-save}
 \fnexample 
 \bfindexit{print-object-for-saving/sending}%
+%
 Write the binary value of slot \code{song} in \glref{unit~instances} of
 \code{bird} as a Base64 portable string (see the companion \texorhtml{decoding
   example on page~\pageref{ex:song-read}}{\link{decoding
     example}{ex:song-read}}):
 %
+\W\supp
 \begin{example}
   (defmethod print-slot-for-saving/sending ((bird bird) (slot-name (eql 'song)) stream)
     (\entlink{print-object-for-saving/sending} (base64-encode (song-of bird)) stream))
@@ -12512,6 +12995,8 @@ established when saving the blackboard repository.
 
 \fnexample Run the GBBopen Tutorial Example application and then save the
 resulting blackboard repository:
+%
+\W\supp
 \begin{example}
   > :tutorial-example
       \textrm{\ldots{}}
@@ -12690,8 +13175,10 @@ in queue order (first to last).
 \bfindexit{incf\&}%
 \bfindexit{memq}%
 \bfindexit{collect-trigger-instances}%
-Count the number of \glref{pending~KSAs} that were triggered by
-\code{hyp}: 
+%
+Count the number of \glref{pending~KSAs} that were triggered by \code{hyp}:
+%
+\W\supp
 \begin{example}
 > (let ((count 0))
     (do-queue (ksa pending-ksas)
@@ -12735,6 +13222,8 @@ Count the number of \glref{pending~KSAs} that were triggered by
 \end{alsos}
 
 \fnexample
+%
+\W\supp
 \begin{example}
 > (first-queue-element pending-ksas)
 #<ksa 2217>
@@ -12789,6 +13278,8 @@ queue was created.  If \var{queue} is a standard \glref{queue},
 \end{alsos}
 
 \fnexample
+%
+\W\supp
 \begin{example}
 > (insert-on-queue ksa pending-ksas)
 #<ksa 2372>
@@ -12827,6 +13318,8 @@ queue was created.  If \var{queue} is a standard \glref{queue},
 \end{alsos}
 
 \fnexample
+%
+\W\supp
 \begin{example}
 > (last-queue-element pending-ksas)
 #<ksa 2372>
@@ -12865,6 +13358,8 @@ queue was created.  If \var{queue} is a standard \glref{queue},
 \fnexample
 \bfindexit{ordered-queue}%
 \bfindexit{rating-of}%
+%
+\W\supp
 \begin{example}
 > (setf pending-ksas (make-queue :class '\entlink{ordered-queue}
                                  :key #'\entlink{rating-of}))
@@ -12913,6 +13408,8 @@ specified \var{queue\/}.
 \bfindexit{collect-trigger-instances}%
 Count the number of \glref{pending~KSAs} that were triggered by
 \code{hyp}: 
+%
+\W\supp
 \begin{example}
 > (let ((count 0))
     (map-queue #'(lambda (ksa)
@@ -12958,6 +13455,8 @@ on a GBBopen queue.
 \end{alsos}
 
 \fnexample
+%
+\W\supp
 \begin{example}
 > (next-queue-element ksa)
 #<ksa 2166>
@@ -13007,12 +13506,17 @@ origin).
 \fnexamples
 Return the first element on \code{pending-ksas} (equivalent to
 \textbf{\entlinknoex{first-queue-element}}):
+%
+\W\supp
 \begin{example}
 > (nth-queue-element 0 pending-ksas)
 #<ksa 2217>
 \end{example}
+%
 Return the last element on \code{pending-ksas} (equivalent to
 \textbf{\entlinknoex{last-queue-element}}):
+%
+\W\supp\notpretop
 \begin{example}
 > (nth-queue-element -1 pending-ksas)
 #<ksa 2372>
@@ -13055,6 +13559,8 @@ resides or \nil{} if \var{queue-element\/} is not on a queue.
 
 \fnexample
 Return the queue on which \code{ksa} resides:
+%
+\W\supp
 \begin{example}
 > (on-queue-p ksa)
 #<ordered-queue>
@@ -13121,6 +13627,8 @@ as the header of ordered (sorted) GBBopen queues.
 \end{alsos}
 
 \fnexample
+%
+\W\supp
 \begin{example}
 > (previous-queue-element ksa)
 #<ksa 2166>
@@ -13176,8 +13684,11 @@ the header of GBBopen queues.
 
 \fnexample 
 \bfindexit{standard-unit-instance}%
-Define a \glref{KS~activation} class whose \glref{instances} can be kept
-in a queue of \glref{pending~KSAs}:
+%
+Define a \glref{KS~activation} class whose \glref{instances} can be kept in a
+queue of \glref{pending~KSAs}:
+%
+\W\supp
 \begin{example}
   (define-unit-class ksa (\entlink{standard-unit-instance} queue-element)
     ((rating
@@ -13227,12 +13738,17 @@ with the queue is updated and returned.
 
 \fnexamples
 Return the number of \glref{KSAs} in the queue \code{pending-ksas}:
+%
+\W\supp
 \begin{example}
 > (queue-length pending-ksas)
 896
 \end{example}
+%
 Count and then return the actual number of \glref{KSAs} in the
 queue \code{pending-ksas}:
+%
+\W\supp\notpretop
 \begin{example}
 > (queue-length pending-ksas 't)
 896
@@ -13272,6 +13788,8 @@ queue \code{pending-ksas}:
 \end{alsos}
 
 \fnexample
+%
+\W\supp
 \begin{example}
 > (remove-from-queue ksa)
 #<ksa 2372>
@@ -13317,6 +13835,8 @@ to be shown (default is \nil)
 
 \fnexample
 Show the first five \glref{KSAs} on the queue \code{pending-ksas}:
+%
+\W\supp
 \begin{example}
 > (show-queue pending-ksas :end 5)
     0. #<ksa 2217>
@@ -13372,6 +13892,8 @@ agenda-based control shell.
 
 \fnexample
 Abort the currently executing KSA::
+%
+\W\supp
 \begin{example}
   (abort-ks-execution)
 \end{example}
@@ -13415,6 +13937,8 @@ maintained by the Agenda Shell and should not be changed.
 
 \fnexample
 Return the activation cycle of \code{ksa}:
+%
+\W\supp
 \begin{example}
 > (activation-cycle-of ksa)
 1192
@@ -13470,6 +13994,8 @@ or a list of \glref{KSAs} or \glref{events}
 
 \fnexample
 Return the trigger \glref{unit~instances} of a KSA:
+%
+\W\supp
 \begin{example}
 > (collect-trigger-instances ksa)
 (#<hyp 419 (1835 4791) 0.85 [5..35]>
@@ -13500,6 +14026,8 @@ Return the trigger \glref{unit~instances} of a KSA:
 
 \fnexample
 See if the control shell is running:
+%
+\W\supp
 \begin{example}
 > (control-shell-running-p)
 nil
@@ -13716,6 +14244,8 @@ false).
 
 \fnexamples
 Define an initial \glref{KS} that is triggered when the control shell is started:
+%
+\W\supp
 \begin{example}
   (define-ks initial
      :trigger-events ((start-control-shell-event)) 
@@ -13724,6 +14254,8 @@ Define an initial \glref{KS} that is triggered when the control shell is started
 
 Define a \glref{KS} named \code{aggregate-hyps} that is triggered whenever a
 \code{hyp} \glref{unit~instance} is created:
+%
+\W\supp
 \begin{example}
   (define-ks aggregate-hyps
      :trigger-events ((create-instance-event hyp))
@@ -13905,13 +14437,17 @@ Define a \glref{ks~class},
 \code{ks-with-lock}, that has an additional \glref{slot}
 containing a \glref{lock} that can be used to synchronize
 operations on each defined \glref{KS} of that class.
+%
+\W\supp
 \begin{example}
 > (define-ks-class ks-with-lock ()
     ((lock :initform (\entlink{make-lock} :name "KS Lock"))))
 #<standard-unit-class ks-with-lock>
 \end{example}
-
+%
 Do the same, but with a mixin class:
+%
+\W\supp\notpretop
 \begin{example}
 > (define-unit-class lock-mixin (ks my-mixin)
     ((lock :initform (\entlink{make-lock} :name "KS Lock"))))
@@ -14092,13 +14628,17 @@ Define a \glref{ksa~class},
 \code{ksa-with-lock}, that has an additional \glref{slot}
 containing a \glref{lock} that can be used to synchronize
 operations on each \glref{KSA} of that class.
+%
+\W\supp
 \begin{example}
 > (define-ksa-class ksa-with-lock ()
     ((lock :initform (\entlink{make-lock} :name "KSA Lock"))))
 #<standard-ksa-class ksa-with-lock>
 \end{example}
-
+%
 Do the same, but with a mixin class:
+%
+\W\supp\notpretop
 \begin{example}
 > (define-unit-class lock-mixin (ks my-mixin)
     ((lock :initform (\entlink{make-lock} :name "KS Lock"))))
@@ -14146,6 +14686,8 @@ The description is printed to the {\bf *standard-output*} stream.
 \end{alsos}
 
 \fnexample
+%
+\W\supp
 \begin{example}
 > (describe-ks 'start-control-shell-ks)
 
@@ -14249,8 +14791,11 @@ redefinition.)
 \end{alsos}
 
 \fnexample
+%
 Define an initial \glref{KS} that is triggered when the control shell is
 started:
+%
+\W\supp
 \begin{example}
   (ensure-ks 'initial
      :trigger-events '((start-control-shell-event)) 
@@ -14297,6 +14842,8 @@ maintained by the Agenda Shell and should not be changed.
 
 \fnexample
 Return the execution cycle of \code{ksa}:
+%
+\W\supp
 \begin{example}
 > (execution-cycle-of ksa)
 1237
@@ -14338,6 +14885,8 @@ executing control shell.
 
 \fnexample Exit the Agenda Shell, indicating that a solution, 
 \code{solution}, was found:
+%
+\W\supp
 \begin{example}
   (exit-control-shell ':solution-found solution)
 \end{example}
@@ -14372,6 +14921,8 @@ or \nil, if none has been defined.
 \end{alsos}
 
 \fnexample Return the \glref{KS} named \code{start-control-shell-ks}:
+%
+\W\supp
 \begin{example}
 > (find-ks-by-name 'start-control-shell-ks)
 #<ks start-control-shell-ks>
@@ -14447,17 +14998,23 @@ This \glref{generic~function} accesses the value stored in the
 
 \fnexamples
 See if \glref{KS} \var{ks} is enabled for execution:
+%
+\W\supp
 \begin{example}
 > (ks-enabled-p ks)
 t
 \end{example}
-
+%
 Now disable \glref{KS} \code{ks}:
+%
+\W\supp\notpretop
 \begin{example}
   (setf (ks-enabled-p ks) nil)
 \end{example}
-
+%
 Check once again:
+%
+\W\supp\notpretop
 \begin{example}
 > (ks-enabled-p ks)
 nil
@@ -14505,6 +15062,8 @@ maintained by the Agenda Shell and should not be changed.
 
 \fnexample
 Return the \glref{KS} of a \glref{KSA}:
+%
+\W\supp
 \begin{example}
 > (ks-of ksa)
 #<ks start-control-shell-ks>
@@ -14597,6 +15156,8 @@ maintained by the Agenda Shell and should not be changed.
 
 \fnexample
 Return the \glref{obviation} cycle of \code{ksa}:
+%
+\W\supp
 \begin{example}
 > (obviation-cycle-of ksa)
 1211
@@ -14691,6 +15252,8 @@ Agenda Shell to determine when to execute the \glref{KSA}.
 
 \fnexample
 Return the rating of a \glref{KSA}:
+%
+\W\supp
 \begin{example}
 > (rating-of ksa)
 58
@@ -14763,6 +15326,8 @@ A \code{restart-control-shell-event} is signaled.
 
 \fnexample
 Restart the Agenda Shell (in this case, without any \glref{KSs} defined):
+%
+\W\supp
 \begin{example}
 > (restart-control-shell)
 ;; Control shell 1 restarting after cycle 2
@@ -14816,6 +15381,8 @@ Restart the Agenda Shell (in this case, without any \glref{KSs} defined):
 
 \fnexample
 Return the (sole) trigger \glref{event} of a \glref{KSA}:
+%
+\W\supp
 \begin{example}
 > (sole-trigger-event-of ksa)
 #<create-instance-event hyp>
@@ -14878,6 +15445,8 @@ trigger \glref{unit~instance} is found in \var{source}, an error is signaled.
 
 \fnexample
 Return the (sole) trigger \glref{unit~instance} of a \glref{KSA}:
+%
+\W\supp
 \begin{example}
 > (sole-trigger-instance-of ksa)
 #<hyp 419 (1835 4791) 0.85 [5..35]>
@@ -15099,6 +15668,8 @@ of a \glref{KS}
 
 \fnexamples
 Start the Agenda Shell (in this case, without any \glref{KSs} defined):
+%
+\W\supp
 \begin{example}
 > (start-control-shell)
 ;; Control shell 1 started
@@ -15111,6 +15682,8 @@ Start the Agenda Shell (in this case, without any \glref{KSs} defined):
 
 Start the Agenda Shell (again without any \glref{KSs} defined, but with
 stepping enabled):
+%
+\W\supp
 \begin{example}
 > (start-control-shell :stepping 't)
 ;; Control shell 1 started
@@ -15184,6 +15757,8 @@ This \glref{generic~function} accesses the value stored in the
 
 \fnexample
 Return the events that triggered a \glref{KSA}:
+%
+\W\supp
 \begin{example}
 > (trigger-events-of ksa)
 (#<create-instance-event #<hyp 233 (1835 4791) 0.89 [5..35]>)
@@ -15231,6 +15806,8 @@ defining form (such as from within an editor buffer).
 \fnexamples
 Undefine the \glref{KS} named \code{initial}. The following forms are all
 equivalent:
+%
+\W\supp
 \begin{example}
 > (undefine-ks initial
      :trigger-events '((start-control-shell-event)) 

@@ -17,11 +17,22 @@ span.fndoclabel {
           font-family: "sans-serif"; 
           font-weight: bold;
           color: #3333AA}
-pre      {margin: 0pt; color: #000033}
-ol.tight {margin-top: 0pt}
-ul.tight {margin-top: 0pt}
+pre.pretop {
+          margin-top: -10px;
+          margin-bottom: 6px;
+          color: #000033}
+pre      {margin-top: 6px;
+          margin-bottom: 6px;
+          color: #000033}
+ol.tight {margin-top: -12px}
+ul.tight {margin-top: -12px}
 table.tight {
           margin: 0pt; 
+          padding: 0pt; 
+          border-spacing: 0pt}
+table.tighttop {
+          margin: 0pt; 
+          margin-top: -12px;
           padding: 0pt; 
           border-spacing: 0pt}
 p.tiny   {font-family: "sans-serif"; 

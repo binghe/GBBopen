@@ -31,7 +31,7 @@ revalidation-predicate trigger-events</var>
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:agenda-shell</code>
 </p>
-<p><span class="fndoclabel">Arguments</span><table class="tight">
+<p><span class="fndoclabel">Arguments</span><table class="tighttop">
 <tr valign="top"><td valign="baseline"><i>ks-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A symbol naming the <a href="ref-glossary.html#gl:KSs">KS</a>
 </td></tr><tr valign="top"><td valign="baseline"><i>activation-predicate</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#gl:function">function</a> of two arguments (the
 <a href="ref-glossary.html#gl:KSs">KS</a> <a href="ref-glossary.html#id195">unit&nbsp;instance</a> and the <a href="ref-glossary.html#gl:event">event</a> object) that returns a
@@ -63,7 +63,8 @@ revalidation-predicate trigger-events</var>
 </td></tr></table>
 <p><span class="fndoclabel">Returns</span> <br />The <a href="ref-glossary.html#id195">unit&nbsp;instance</a> representing the <a href="ref-glossary.html#gl:KSs">KS</a>
 </p>
-<p><span class="fndoclabel">Detailed syntax</span></p>
+<p><table class="tighttop" width="100%"></table>
+<span class="fndoclabel">Detailed syntax</span></p>
 <table class="tight"><table><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>event-specification</var>&nbsp;::=
@@ -141,12 +142,12 @@ redefinition.)
 </p>
 <p><span class="fndoclabel">Example</span> <br />Define an initial <a href="ref-glossary.html#gl:KSs">KS</a> that is triggered when the control shell is
 started:
-</p>
-<pre>
+<pre class="pretop">
   (ensure-ks 'initial
      :trigger-events '((start-control-shell-event)) 
      :execution-function #'initial-ks-function)
 </pre>
+</p>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
 <table width="100%" cellpadding="0" cellspacing="2"><tr>

@@ -26,7 +26,7 @@
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:portable-sockets</code>
 </p>
-<p><span class="fndoclabel">Arguments</span><table class="tight">
+<p><span class="fndoclabel">Arguments</span><table class="tighttop">
 <tr valign="top"><td valign="baseline"><i>passive-socket</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id124">passive&nbsp;socket</a>
 </td></tr><tr valign="top"><td valign="baseline"><i>wait</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id77">generalized&nbsp;boolean</a> (default is <code>t</code>)
 </td></tr></table>
@@ -38,14 +38,14 @@
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-start-connection-server.html"><b>start-connection-server</b></a>
 </p>
 <a name="id1"></a><p><span class="fndoclabel">Example</span> <br />Accept a connection made to a newly created passive socket:
-</p>
-<pre>
+<pre class="pretop">
 &gt; (let* ((passive-socket (<a href="ref-make-passive-socket.html">make-passive-socket</a> 5555))
          (connection (accept-connection passive-socket)))
      (<a href="ref-close-passive-socket.html">close-passive-socket</a> passive-socket)
      connection)
 #&lt;stream socket connected from localhost/5555 to localhost/59946&gt;
 </pre>
+</p>
 <p><span class="fndoclabel">Note</span> <br />Connections should always be closed using <b>close</b>
 (from both sides) to free up operating-system resources when they are
 no longer needed.

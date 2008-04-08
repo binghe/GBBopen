@@ -37,7 +37,7 @@ retain-event-printing</var>
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-core</code>
 </p>
-<p><span class="fndoclabel">Arguments</span><table class="tight">
+<p><span class="fndoclabel">Arguments</span><table class="tighttop">
 <tr valign="top"><td valign="baseline"><i>pathname</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id129">pathname&nbsp;designator</a>
 </td></tr><tr valign="top"><td valign="baseline"><i>class-name-translations</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An <a href="ref-glossary.html#id2">association&nbsp;list</a> (default is <code>nil</code>)
 </td></tr><tr valign="top"><td valign="baseline"><i>confirm-if-not-empty</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id77">generalized&nbsp;boolean</a> (default is true)
@@ -92,35 +92,31 @@ executed at the conclusion of repository loading.
 </p>
 <p><span class="fndoclabel">Examples</span> <br />Load the GBBopen Tutorial Example application (without running it)
 and then load a blackboard repository that was saved previously:
-</p>
-<pre>
+<pre class="pretop">
   &gt; :tutorial-example :noautorun 
   &gt; (load-blackboard-repository "tutorial")
   #P"<var>&lt;homedir&gt;</var>/tutorial.bb"
   #&lt;path 1&gt;
 </pre>
-<p>Try loading the repository again:
-</p>
+Try loading the repository again:
 <pre>
   &gt; (load-blackboard-repository "tutorial")
   The blackboard repository is not empty.
   Continue anyway (the current contents will be deleted) [y or n]? n
   nil
 </pre>
-<p>Load the repository again, but without executing its
+Load the repository again, but without executing its
 <var>after-loading-function</var>:
-</p>
 <pre>
   &gt; (load-blackboard-repository "tutorial" 
       :confirm-if-not-empty nil
       :ignore-after-loading-function 't)
   #P"<var>&lt;homedir&gt;</var>/tutorial.bb"
 </pre>
-<p>Define a new <a href="ref-glossary.html#id193">unit&nbsp;class</a>, <code>new-location</code>, and then load the
+Define a new <a href="ref-glossary.html#id193">unit&nbsp;class</a>, <code>new-location</code>, and then load the
 repository again, translating all <code>location</code> <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a> to
 <code>new-location</code> <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a>:
-</p>
-<pre>
+<pre class="pretop">
   &gt; (define-unit-class new-location (location) ())
   #&lt;standard-unit-class new-location&gt;
   &gt; (load-blackboard-repository "tutorial"
@@ -145,6 +141,7 @@ repository again, translating all <code>location</code> <a href="ref-glossary.ht
                                 ---------
                                        63 instances
 </pre>
+</p>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
 <table width="100%" cellpadding="0" cellspacing="2"><tr>

@@ -26,7 +26,7 @@
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-core</code>
 </p>
-<p><span class="fndoclabel">Arguments</span><table class="tight">
+<p><span class="fndoclabel">Arguments</span><table class="tighttop">
 <tr valign="top"><td valign="baseline"><i>space-instance-regexp</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id176">space-instance&nbsp;path</a> regular expression
 specifying the <a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a> to be returned 
 </td></tr></table>
@@ -66,15 +66,13 @@ are interpreted as follows:
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-map-space-instances.html"><b>map-space-instances</b></a>
 </p>
 <p><span class="fndoclabel">Examples</span> <br />Return the <a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a> that are rooted at <code>(bb)</code>:
-</p>
-<pre>
+<pre class="pretop">
 &gt; (find-space-instances '(bb +))
 (#&lt;standard-space-instance (bb hyps)&gt;
  #&lt;standard-space-instance (bb probable-hyps)&gt;)
  #&lt;standard-space-instance (bb rejected-hyps)&gt;)
 </pre>
-<p>Return all the <a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a> <code>(bb)</code> and below:
-</p>
+Return all the <a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a> <code>(bb)</code> and below:
 <pre>
 &gt; (find-space-instances '(bb *))
 (#&lt;standard-space-instance (bb hyps)&gt;
@@ -82,6 +80,7 @@ are interpreted as follows:
  #&lt;standard-space-instance (bb rejected-hyps)&gt;
  #&lt;standard-space-instance (bb)&gt;)
 </pre>
+</p>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
 <table width="100%" cellpadding="0" cellspacing="2"><tr>

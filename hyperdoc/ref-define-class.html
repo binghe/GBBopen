@@ -28,7 +28,7 @@
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-tools</code>
 </p>
-<p><span class="fndoclabel">Arguments</span><table class="tight">
+<p><span class="fndoclabel">Arguments</span><table class="tighttop">
 <tr valign="top"><td valign="baseline"><i>class-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A non-<code>nil</code>, non-keyword symbol that names the
 <a href="ref-glossary.html#gl:class">class</a> 
 </td></tr><tr valign="top"><td valign="baseline"><i>superclass-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A non-<code>nil</code>, non-keyword symbol that specifies a
@@ -40,7 +40,8 @@ direct superclass of the <a href="ref-glossary.html#gl:class">class</a> <var>cla
 </p>
 <p><span class="fndoclabel">Returns</span> <br />The newly defined <a href="ref-glossary.html#gl:class">class</a> object.
 </p>
-<p><span class="fndoclabel">Detailed syntax</span></p>
+<p><table class="tighttop" width="100%"></table>
+<span class="fndoclabel">Detailed syntax</span></p>
 <table class="tight"><table><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>slot-specifier</var>&nbsp;::=
@@ -104,7 +105,7 @@ direct superclass of the <a href="ref-glossary.html#gl:class">class</a> <var>cla
 <td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> &#123;<code>t :exclude</code> <var>excluded-slot-name</var>*&#125; </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
-<p><span class="fndoclabel">Terms</span><table class="tight">
+<p><span class="fndoclabel">Terms</span><table class="tighttop">
 <tr valign="top"><td valign="baseline"><i>class-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A non-<code>nil</code>, non-keyword symbol that names a
 <a href="ref-glossary.html#gl:class">class</a> 
 </td></tr><tr valign="top"><td valign="baseline"><i>initarg-list</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An <a href="ref-glossary.html#id85">initialization&nbsp;argument&nbsp;list</a>
@@ -125,21 +126,21 @@ of <code>standard-class</code>.  The default metaclass value is
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-with-generate-accessors-format.html"><b>with-generate-accessors-format</b></a>
 </p>
 <p><span class="fndoclabel">Examples</span> <br />Define a class, <code>rectangle</code>, generating &#8220;<code>-of</code>&#8221; slot accessors:
-</p>
-<pre>
+<pre class="pretop">
 &gt; (define-class rectangle (point)
     (length width))
 #&lt;standard-class rectangle&gt;
 </pre>
+</p>
 <p>Define a class, <code>foo</code>, generating
 &#8220;<var>class-name</var><code>.</code><var>slot-name</var>&#8221; slot accessors:
-</p>
-<pre>
+<pre class="pretop">
 &gt; (define-class foo ()
     ((slot :initform ':uninitialized))
     (:generate-accessors-format :prefix))
 #&lt;standard-class foo&gt;
 </pre>
+</p>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
 <table width="100%" cellpadding="0" cellspacing="2"><tr>

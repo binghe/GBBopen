@@ -25,7 +25,7 @@
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-core</code>
 </p>
-<p><span class="fndoclabel">Arguments</span><table class="tight">
+<p><span class="fndoclabel">Arguments</span><table class="tighttop">
 <tr valign="top"><td valign="baseline"><i>path</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id176">space-instance&nbsp;path</a> specifying the location in
 the <a href="ref-glossary.html#id6">blackboard&nbsp;repository</a> where the new <a href="ref-glossary.html#id174">space&nbsp;instance</a>
 is to be created
@@ -59,7 +59,8 @@ for each <a href="ref-glossary.html#id174">space&nbsp;instance</a> on which the 
 <li>A <code>create-instance-event</code> is signaled.
 </ol>
 </p>
-<p><span class="fndoclabel">Detailed syntax</span></p>
+<p><table class="tighttop" width="100%"></table>
+<span class="fndoclabel">Detailed syntax</span></p>
 <table class="tight"><table><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>allowed-unit-classes</var>&nbsp;::= <var>unit-classes-specifier</var>
@@ -141,17 +142,15 @@ placing any other <a href="ref-glossary.html#id195">unit&nbsp;instance</a> on a 
 </p>
 <p><span class="fndoclabel">Examples</span> <br />Create a top-level <a href="ref-glossary.html#id174">space&nbsp;instance</a>, <code>bb</code>,
 that cannot store any <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a>:
-</p>
-<pre>
+<pre class="pretop">
 &gt; (make-space-instance '(bb) 
      :allowed-unit-classes nil)
 #&lt;standard-space-instance (bb)&gt;
 </pre>
-<p><a name="id4">Now</a> create a <a href="ref-glossary.html#id174">space&nbsp;instance</a> for <code>hyp</code> <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a>,
+<a name="id4">Now</a> create a <a href="ref-glossary.html#id174">space&nbsp;instance</a> for <code>hyp</code> <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a>,
 named <code>hyps</code>, as a child of <code>bb</code>, with uniform, 100-wide, bucket
 storage for indexing <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a> with dimensional values between 
 0&ndash;10,000 in the <code>x</code> and <code>y</code> dimensions:
-</p>
 <pre>
 &gt; (make-space-instance '(bb hyps)
      :dimensions (<a href="ref-dimensions-of.html">dimensions-of</a> 'hyp)
@@ -161,12 +160,12 @@ storage for indexing <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;inst
                                           (0 10000 100)))))
 #&lt;standard-space-instance (bb hyps)&gt;
 </pre>
+</p>
 <p>Here is an improved <a href="ref-glossary.html#id174">space&nbsp;instance</a> for <code>hyp</code>
 <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a> named <code>hyps</code>, with both uniform-bucket storage for
 indexing in the <code>x</code> and <code>y</code> dimensions and hashed storage to
 retrieve match candidates via <code>classification</code> dimensional values:
-</p>
-<pre>
+<pre class="pretop">
 &gt; (make-space-instance '(bb hyps)
      :dimensions (<a href="ref-dimensions-of.html">dimensions-of</a> 'hyp)
      :allowed-unit-classes '((hyp :plus-subclasses))
@@ -177,6 +176,7 @@ retrieve match candidates via <code>classification</code> dimensional values:
                  hashed)))
 #&lt;standard-space-instance (bb hyps)&gt;
 </pre>
+</p>
 <p><span class="fndoclabel">Note</span> <br />The <b>make-space-instance</b> function is equivalent to using
 <b><a href="ref-make-instance.html">make-instance</a></b> with the desired <a href="ref-glossary.html#id172">space&nbsp;class</a> and
 with the initialization argument <code>:instance-name</code> containing the

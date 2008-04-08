@@ -25,10 +25,10 @@ yet loaded, and optionally set the current package.
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;Defined in <code>initiate.lisp</code>
 </p>
-<p><span class="fndoclabel">Arguments</span><table class="tight">
+<p><span class="fndoclabel">Arguments</span><table class="tighttop">
 <tr valign="top"><td valign="baseline"><i>module-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A keyword symbol naming a module 
 </td></tr><tr valign="top"><td valign="baseline"><i>option</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> Any of the following keywords: 
-<a name="id1"></a></p>
+</p>
 <table class="tight"><table><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <code>:create-dirs</code>&nbsp;&nbsp;&nbsp; </td><td valign="baseline" colspan="1" align="left"> Creates any needed directories that are missing in the
@@ -62,7 +62,7 @@ is newer than the source file (implies <code>:reload</code>)</td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left">
 </td></tr></tbody></table>
-</td></tr><tr valign="top"><td valign="baseline"><i><p>package-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A package name (default is <code>nil</code>)
+<a name="id1"></a></td></tr><tr valign="top"><td valign="baseline"><i><p>package-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A package name (default is <code>nil</code>)
 </td></tr></table>
 </p>
 <p><span class="fndoclabel">Description</span> <br />This function bootstraps GBBopen loading, if needed, before
@@ -84,12 +84,12 @@ defined at the conclusion of module compilation and loading.
 <p><span class="fndoclabel">Example</span> <br />Define a top-level command named <code>:my-app</code> that compiles
 and loads the module <code>:my-app</code> and sets the current package
 to the <code>:gbbopen-user</code> package:
-</p>
-<pre>
+<pre class="pretop">
   (<a href="ref-define-tll-command.html">define-tll-command</a> :my-app (&amp;rest options)
     "Compile and load my GBBopen application module"
     (startup-module :my-app options :gbbopen-user))
 </pre> 
+</p>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
 <table width="100%" cellpadding="0" cellspacing="2"><tr>

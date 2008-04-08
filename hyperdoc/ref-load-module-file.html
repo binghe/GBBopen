@@ -26,11 +26,11 @@
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:mini-module</code>
 </p>
-<p><span class="fndoclabel">Arguments</span><table class="tight">
+<p><span class="fndoclabel">Arguments</span><table class="tighttop">
 <tr valign="top"><td valign="baseline"><i>module-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A keyword symbol naming a module 
 </td></tr><tr valign="top"><td valign="baseline"><i>file-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A string naming a file in the module 
 </td></tr><tr valign="top"><td valign="baseline"><i>option</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> Any of the following keywords: 
-<a name="id1"></a></p>
+</p>
 <table class="tight"><table><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <code>:noautorun</code>&nbsp;&nbsp;&nbsp; </td><td valign="baseline" colspan="1" align="left"> Binds <b><a href="ref-autorun-modules-var.html">*autorun-modules*</a></b> to nil
@@ -46,7 +46,7 @@ is newer than the source file</td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left">
 </td></tr></tbody></table>
-</td></tr></table>
+<a name="id1"></a></td></tr></table>
 <p><span class="fndoclabel">Returns</span> <br />The pathname of the loaded file.
 </p>
 <p><span class="fndoclabel">Errors</span> <br />Module <var>module-name</var> has not been defined.  File
@@ -63,11 +63,11 @@ definition (see <b><a href="ref-define-module.html">define-module</a></b>) are i
 </p>
 <p><span class="fndoclabel">Example</span> <br />Load the source of the file <code>tools</code> from the GBBopen
 Tools module:
-</p>
-<pre>
+<pre class="pretop">
 &gt; (load-module-file :gbbopen-tools "tools" :source)
 #P"/home/GBBopen/current/source/tools/tools.lisp"
 </pre>
+</p>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
 <table width="100%" cellpadding="0" cellspacing="2"><tr>

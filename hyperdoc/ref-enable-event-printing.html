@@ -25,7 +25,7 @@
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-core</code>
 </p>
-<p><span class="fndoclabel">Arguments</span><table class="tight">
+<p><span class="fndoclabel">Arguments</span><table class="tighttop">
 <tr valign="top"><td valign="baseline"><i>event-class-specifier</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An <a href="ref-glossary.html#id56">extended&nbsp;event-class&nbsp;specification</a> 
 (see below; default is <code>t</code>)
 </td></tr><tr valign="top"><td valign="baseline"><i>unit-class-or-instance-specifier</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An 
@@ -39,7 +39,8 @@
 (default is <code>(*)</code>)
 </td></tr></table>
 </p>
-<p><span class="fndoclabel">Detailed syntax</span></p>
+<p><table class="tighttop" width="100%"></table>
+<span class="fndoclabel">Detailed syntax</span></p>
 <table class="tight"><table><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>event-class-specifier</var>&nbsp;::= </td><td valign="baseline" colspan="1" align="left"> <var>atomic-event-class</var> |
@@ -113,11 +114,11 @@ follows:
 </p>
 <p><span class="fndoclabel">Example</span> <br />Enable event printing on all <a href="ref-glossary.html#gl:space-instance">space-instance</a> events of
 <code>hyp</code> <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a>:
-</p>
-<pre>
+<pre class="pretop">
   (enable-event-printing '(space-instance-event :plus-subevents)
                          '(hyp :plus-subclasses))
 </pre>
+</p>
 <p><span class="fndoclabel">Note</span> <br />Unit-instance-specific event functions
 are not yet implemented in GBBopen.
 </p>

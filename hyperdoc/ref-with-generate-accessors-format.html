@@ -29,7 +29,7 @@
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-tools</code>
 </p>
-<p><span class="fndoclabel">Arguments</span><table class="tight">
+<p><span class="fndoclabel">Arguments</span><table class="tighttop">
 <tr valign="top"><td valign="baseline"><i>format</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> Either the keyword <code>:prefix</code> or <code>:suffix</code>
 </td></tr><tr valign="top"><td valign="baseline"><i>prefix/suffix-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> One of the following (evaluated):
 </p>
@@ -66,8 +66,7 @@ concatenated after the slot name.
 <p><span class="fndoclabel">Examples</span> <br />Define three classes, <code>point</code>, <code>circle</code> and
 <code>rectangle</code>, generating GBB-style
 &#8220;<var>class-name</var><code>.</code><var>slot-name</var>&#8221; slot accessors:
-</p>
-<pre>
+<pre class="pretop">
 &gt; (with-generate-accessors-format (:prefix)
     (define-class point ()
       (x y))
@@ -77,9 +76,7 @@ concatenated after the slot name.
       (length width)))
 #&lt;standard-class rectangle&gt;
 </pre>
-<p>Re-define the classes, generating 
-&#8220;<var>slot-name</var>&#8221;-only slot accessors:
-</p>
+Re-define the classes, generating &#8220;<var>slot-name</var>&#8221;-only slot accessors:
 <pre>
 &gt; (with-generate-accessors-format (:suffix "")
     (define-class point ()
@@ -90,11 +87,10 @@ concatenated after the slot name.
       (length width)))
 #&lt;standard-class rectangle&gt;
 </pre>
-<p>Re-define the classes, generating
+Re-define the classes, generating
 &#8220;<var>slot-name</var><code>-of-</code><var>class-name</var>&#8221; slot accessors (note that the
-<code>strange-name-string</code> name-generation <a href="ref-glossary.html#gl:function">function</a> must be available at
-compile time):
-</p>
+<code>strange-name-string</code> name-generation <a href="ref-glossary.html#gl:function">function</a> must be available
+at compile time):
 <pre>
 &gt; (eval-when (:compile-toplevel :load-toplevel :execute)
     (defun strange-name-string (class-name slot-name)
@@ -112,6 +108,7 @@ strange-name-string
       (length width)))
 #&lt;standard-class rectangle&gt;
 </pre>
+</p>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
 <table width="100%" cellpadding="0" cellspacing="2"><tr>

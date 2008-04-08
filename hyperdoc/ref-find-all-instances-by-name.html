@@ -26,7 +26,7 @@
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-core</code>
 </p>
-<p><span class="fndoclabel">Arguments</span><table class="tight">
+<p><span class="fndoclabel">Arguments</span><table class="tighttop">
 <tr valign="top"><td valign="baseline"><i>instance-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> The <a href="ref-glossary.html#id89">instance&nbsp;name</a> for the retrieval
 </td></tr><tr valign="top"><td valign="baseline"><i>unit-class-specifier</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An <a href="ref-glossary.html#id59">extended&nbsp;unit-class&nbsp;specification</a>
 (see below; default is <code>t</code>)
@@ -35,7 +35,8 @@
 <p><span class="fndoclabel">Returns</span> <br />A list of the <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a> with the specified
 <var>name</var> of the specified <var>classes</var> if any exist; <code>nil</code> otherwise.
 </p>
-<p><span class="fndoclabel">Detailed syntax</span></p>
+<p><table class="tighttop" width="100%"></table>
+<span class="fndoclabel">Detailed syntax</span></p>
 <table class="tight"><table><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>unit-class-specifier</var>&nbsp;::= </td><td valign="baseline" colspan="1" align="left"> <var>atomic-unit-class</var> |
@@ -72,18 +73,17 @@ or <code>equalp</code> (case insensitive) as the comparison <a href="ref-glossar
 </p>
 <p><span class="fndoclabel">Examples</span> <br />Find all <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a> (of any <a href="ref-glossary.html#id193">unit&nbsp;class</a>) that are named
 419:
-</p>
-<pre>
+<pre class="pretop">
 &gt; (find-instances-by-name 419 't)
 (#&lt;hyp 419 (1835 4791) 0.85 [5..35]&gt;)
 </pre>
-<p>Find all <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a> (of any <a href="ref-glossary.html#id193">unit&nbsp;class</a>) that are named
+Find all <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a> (of any <a href="ref-glossary.html#id193">unit&nbsp;class</a>) that are named
 419:
-</p>
 <pre>
 &gt; (find-instances-by-name 419 '(hyp :plus-subclasses))
 (#&lt;hyp 419 (1835 4791) 0.85 [5..35]&gt;)
 </pre>
+</p>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
 <table width="100%" cellpadding="0" cellspacing="2"><tr>

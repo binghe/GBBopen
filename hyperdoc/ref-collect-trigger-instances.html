@@ -22,71 +22,36 @@
 <p><span class="fndoclabel">Purpose</span> <br />Return the trigger <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a> of a <a href="ref-glossary.html#gl:activations">KSA</a>,
 <a href="ref-glossary.html#gl:event">event</a>, or a list of <a href="ref-glossary.html#gl:activations">KSAs</a> or <a href="ref-glossary.html#gl:events">events</a>
 </p>
-<p><span class="fndoclabel">Method signatures</span><table class="tight" width="100%">
-<tr valign="top">
-<td valign="baseline" align="left">
-<nobr>collect-trigger-instances</nobr>
-</td>
-<td valign="baseline">&nbsp; </td>
-<td valign="baseline" align="left" width="99%">
+<p><span class="fndoclabel">Method signatures</span><table class="tighttop" width="100%">
+<tr valign="top"><td valign="baseline" align="left"><nobr>collect-trigger-instances</nobr></td><td valign="baseline">&nbsp; </td><td valign="baseline" align="left" width="99%">
 <code>(</code><var>cons</var> <code>cons)</code>
 <i> =&gt; </i> <var>trigger-instances</var>
-</td>
-</tr>
-</table>
+</td></tr></table>
 <table class="tight" width="100%">
-<tr valign="top">
-<td valign="baseline" align="left">
-<nobr>collect-trigger-instances</nobr>
-</td>
-<td valign="baseline">&nbsp; </td>
-<td valign="baseline" align="left" width="99%">
+<tr valign="top"><td valign="baseline" align="left"><nobr>collect-trigger-instances</nobr></td><td valign="baseline">&nbsp; </td><td valign="baseline" align="left" width="99%">
 <code>(</code><var>event</var> <code>single-instance-event)</code>
 <i> =&gt; </i> <var>trigger-instances</var>
-</td>
-</tr>
-</table>
+</td></tr></table>
 <table class="tight" width="100%">
-<tr valign="top">
-<td valign="baseline" align="left">
-<nobr>collect-trigger-instances</nobr>
-</td>
-<td valign="baseline">&nbsp; </td>
-<td valign="baseline" align="left" width="99%">
+<tr valign="top"><td valign="baseline" align="left"><nobr>collect-trigger-instances</nobr></td><td valign="baseline">&nbsp; </td><td valign="baseline" align="left" width="99%">
 <code>(</code><var>ksa</var> <code>ksa)</code>
 <i> =&gt; </i> <var>trigger-instances</var>
-</td>
-</tr>
-</table>
+</td></tr></table>
 <table class="tight" width="100%">
-<tr valign="top">
-<td valign="baseline" align="left">
-<nobr>collect-trigger-instances</nobr>
-</td>
-<td valign="baseline">&nbsp; </td>
-<td valign="baseline" align="left" width="99%">
+<tr valign="top"><td valign="baseline" align="left"><nobr>collect-trigger-instances</nobr></td><td valign="baseline">&nbsp; </td><td valign="baseline" align="left" width="99%">
 <code>(</code><var>event</var> <code>multiple-instance-event)</code>
 <i> =&gt; </i> <var>trigger-instances</var>
-</td>
-</tr>
-</table>
+</td></tr></table>
 <table class="tight" width="100%">
-<tr valign="top">
-<td valign="baseline" align="left">
-<nobr>collect-trigger-instances</nobr>
-</td>
-<td valign="baseline">&nbsp; </td>
-<td valign="baseline" align="left" width="99%">
+<tr valign="top"><td valign="baseline" align="left"><nobr>collect-trigger-instances</nobr></td><td valign="baseline">&nbsp; </td><td valign="baseline" align="left" width="99%">
 <code>(</code><var>event</var> <code>non-instance-event)</code>
-<i> =&gt; </i> <code>nil</code></td>
-</tr>
-</table>
+<i> =&gt; </i> <code>nil</code></td></tr></table>
 </p>
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:agenda-shell</code>
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:agenda-shell</code>
 </p>
-<p><span class="fndoclabel">Arguments</span><table class="tight">
+<p><span class="fndoclabel">Arguments</span><table class="tighttop">
 <tr valign="top"><td valign="baseline"><i>source</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#gl:activations">KSA</a>, <a href="ref-glossary.html#gl:event">event</a>,
 or a list of <a href="ref-glossary.html#gl:activations">KSAs</a> or <a href="ref-glossary.html#gl:events">events</a>
 </td></tr></table>
@@ -97,12 +62,12 @@ or a list of <a href="ref-glossary.html#gl:activations">KSAs</a> or <a href="ref
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-sole-trigger-instance-of.html"><b>sole-trigger-instance-of</b></a>
 </p>
 <p><span class="fndoclabel">Example</span> <br />Return the trigger <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a> of a KSA:
-</p>
-<pre>
+<pre class="pretop">
 &gt; (collect-trigger-instances ksa)
 (#&lt;hyp 419 (1835 4791) 0.85 [5..35]&gt;
  #&lt;hyp 233 (1835 4791) 0.89 [5..35]&gt;)
 </pre>
+</p>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
 <table width="100%" cellpadding="0" cellspacing="2"><tr>

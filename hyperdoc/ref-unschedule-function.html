@@ -27,7 +27,7 @@
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:portable-threads</code>
 </p>
-<p><span class="fndoclabel">Arguments</span><table class="tight">
+<p><span class="fndoclabel">Arguments</span><table class="tighttop">
 <tr valign="top"><td valign="baseline"><i>name-or-scheduled-function</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An object (typically a string or a
 symbol) naming a currently scheduled <a href="ref-glossary.html#id159">scheduled&nbsp;function</a> or a
 <code>scheduled-function</code> object
@@ -52,13 +52,11 @@ removed from the list of currently scheduled <a href="ref-glossary.html#gl:sched
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-schedule-function-relative.html"><b>schedule-function-relative</b></a>
 </p>
 <p><span class="fndoclabel">Examples</span> <br />Unschedule the <code>quitting-time</code> <a href="ref-glossary.html#id159">scheduled&nbsp;function</a>:
-</p>
-<pre>
+<pre class="pretop">
 &gt; (unschedule-function 'quitting-time)
 #&lt;scheduled-function quitting-time [unscheduled]&gt;
 </pre>
-<p><a name="id1">Unschedule</a> all currently scheduled <a href="ref-glossary.html#gl:scheduled-function">scheduled&nbsp;functions</a>:
-</p>
+<a name="id1">Unschedule</a> all currently scheduled <a href="ref-glossary.html#gl:scheduled-function">scheduled&nbsp;functions</a>:
 <pre>
 &gt; (<a href="ref-all-scheduled-functions.html">all-scheduled-functions</a>)
 (#&lt;scheduled-function nil [Jan 1, 2010 00:00:00]&gt;)
@@ -67,13 +65,13 @@ removed from the list of currently scheduled <a href="ref-glossary.html#gl:sched
 &gt; (<a href="ref-all-scheduled-functions.html">all-scheduled-functions</a>)
 nil
 </pre>
-<p>Unschedule a non-existent <a href="ref-glossary.html#id159">scheduled&nbsp;function</a>:
-</p>
+Unschedule a non-existent <a href="ref-glossary.html#id159">scheduled&nbsp;function</a>:
 <pre>
 &gt;(unschedule-function 'non-existent)
 Warning: Scheduled-function non-existent was not scheduled; no action taken.
 nil
 </pre>
+</p>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
 <table width="100%" cellpadding="0" cellspacing="2"><tr>

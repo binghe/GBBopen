@@ -26,7 +26,7 @@
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-tools</code>
 </p>
-<p><span class="fndoclabel">Arguments</span><table class="tight">
+<p><span class="fndoclabel">Arguments</span><table class="tighttop">
 <tr valign="top"><td valign="baseline"><i>character-bag</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A sequence containing characters
 </td></tr><tr valign="top"><td valign="baseline"><i>string</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id182">string&nbsp;designator</a>
 </td></tr><tr valign="top"><td valign="baseline"><i>start</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> Starting index into <var>string</var> (default is <code>0</code>)
@@ -36,8 +36,7 @@ end of <var>string</var>)
 </p>
 <p><span class="fndoclabel">Returns</span> <br />The extracted, trimmed string
 </p>
-<p><span class="fndoclabel">Examples</span> <br /></p>
-<pre>
+<p><span class="fndoclabel">Examples</span> <br /><pre class="pretop">
 &gt; (trimmed-substring '(#\space #\tab) "xxx   abc   yyy" 3 12)
 "abc"
 &gt; (trimmed-substring " " "xxx   abc   yyy" 3 12)
@@ -51,12 +50,12 @@ end of <var>string</var>)
 &gt; (trimmed-substring " " "   abc   ")
 "abc"
 </pre>
-<p><span class="fndoclabel">Note</span> <br />The function <b>trimmed-substring</b> is semantically equivalent to
 </p>
-<pre>
+<p><span class="fndoclabel">Note</span> <br />The function <b>trimmed-substring</b> is semantically equivalent to
+<pre class="pretop">
   (string-trim <var>character-bag</var> (subseq <var>string start end</var>))
 </pre> 
-<p>but avoids allocating an intermediate substring.
+but avoids allocating an intermediate substring.
 </p>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />

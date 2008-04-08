@@ -25,7 +25,7 @@ of the specified <a href="ref-glossary.html#gl:unit-class">unit&nbsp;classes</a>
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-core</code>
 </p>
-<p><span class="fndoclabel">Arguments</span><table class="tight">
+<p><span class="fndoclabel">Arguments</span><table class="tighttop">
 <tr valign="top"><td valign="baseline"><i>function</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#gl:function">function</a> of one argument
 </td></tr><tr valign="top"><td valign="baseline"><i>unit-classes-specifier</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An <a href="ref-glossary.html#id65">extended&nbsp;unit-classes&nbsp;specification</a>
 (see below)
@@ -34,7 +34,8 @@ of the specified <a href="ref-glossary.html#gl:unit-class">unit&nbsp;classes</a>
 </td></tr><tr valign="top"><td valign="baseline"><i>key</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#gl:function">function</a> of one argument, or <code>nil</code> (default is <code>nil</code>)
 </td></tr></table>
 </p>
-<p><span class="fndoclabel">Detailed syntax</span></p>
+<p><table class="tighttop" width="100%"></table>
+<span class="fndoclabel">Detailed syntax</span></p>
 <table class="tight"><table><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>unit-classes-specifier</var>&nbsp;::= </td><td valign="baseline" colspan="1" align="left"> <code>t</code> | 
@@ -70,13 +71,13 @@ or not the instances reside on any <a href="ref-glossary.html#gl:space-instance"
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-map-instances-of-class.html"><b>map-instances-of-class</b></a>
 </p>
 <p><span class="fndoclabel">Example</span> <br />Print a list of all <code>hyp</code> <a href="ref-glossary.html#gl:instance-name">instance&nbsp;names</a>, in ascending order:
-</p>
-<pre>
+<pre class="pretop">
   (map-sorted-instances-of-class 
      #'(lambda (instance)
          (print (<a href="ref-instance-name-of.html">instance-name-of</a> instance)))
      'hyp #'&lt; :key #'<a href="ref-instance-name-of.html">instance-name-of</a>)
 </pre> 
+</p>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
 <table width="100%" cellpadding="0" cellspacing="2"><tr>

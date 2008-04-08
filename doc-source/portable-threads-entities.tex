@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/portable-threads-entities.tex *-*
-%% *-* Last-Edit: Sun Mar 30 04:50:12 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Tue Apr  8 05:56:45 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 \index{module!:portable-threads@\code{:portable-threads}}%
@@ -164,6 +164,8 @@ scheduler.
 \fnexample 
 Change the invocation time of \glref{scheduled~function} \code{quitting-time}
 from 5pm to 5:30pm with verbose printing enabled:
+%
+\W\supp
 \begin{example}
 > (setf *schedule-function-verbose* 't)
 t
@@ -205,6 +207,8 @@ changed globally to display the management of \glref{periodic~functions}.
 \bfindexit{spawn-periodic-function}%
 \fnexample 
 Schedule a simple \glref{periodic~function} with verbose printing enabled:
+%
+\W\supp
 \begin{example}
 > (setf *periodic-function-verbose* 't)
 t
@@ -247,6 +251,8 @@ currently scheduled.
 \end{alsos}
 
 \fnexample
+%
+\W\supp
 \begin{example}
 > (all-threads)
 (#<thread Listener 1>)
@@ -283,6 +289,8 @@ destructively altered.
 \end{alsos}
 
 \fnexample
+%
+\W\supp
 \begin{example}
 > (all-threads)
 (#<thread Listener 1>)
@@ -339,6 +347,8 @@ value, not multiple values.
 
 \fnexample
 Define an atomic \textbf{\entlink{nsorted-insert}}:
+%
+\W\supp
 \begin{example}
   (defun atomic-nsorted-insert (\&rest args)
     (declare (dynamic-extent args))
@@ -379,6 +389,8 @@ Define an atomic \textbf{\entlink{nsorted-insert}}:
 \end{alsos}
 
 \fnexamples
+%
+\W\supp
 \begin{example}
 > x
 5
@@ -447,6 +459,8 @@ the \var{count\/} is provided, and in that case only the rightmost
 \end{alsos}
 
 \fnexample
+%
+\W\supp
 \begin{example}
 > list
 (1 2 3)
@@ -491,6 +505,8 @@ being set.
 \end{alsos}
 
 \fnexample
+%
+\W\supp
 \begin{example}
 > list
 (1 2 3)
@@ -530,6 +546,8 @@ nil
 \end{alsos}
 
 \fnexamples
+%
+\W\supp
 \begin{example}
 > x
 2
@@ -576,6 +594,8 @@ from the list stored in \var{place\/}, store the updated list in
 \end{alsos}
 
 \fnexample
+%
+\W\supp
 \begin{example}
 > list
 (1 2 3)
@@ -621,6 +641,8 @@ list stored in \var{place\/} and store the updated list in
 \end{alsos}
 
 \fnexample
+%
+\W\supp
 \begin{example}
 > list
 (1 2 3)
@@ -670,6 +692,8 @@ the same as any element in the list stored in \var{place\/}, prepend
 \end{alsos}
 
 \fnexamples
+%
+\W\supp
 \begin{example}
 > list
 (1 2 3)
@@ -708,6 +732,8 @@ the same as any element in the list stored in \var{place\/}, prepend
 \end{alsos}
 
 \fnexample
+%
+\W\supp
 \begin{example}
   (awaken-thread thread)
 \end{example}
@@ -772,6 +798,8 @@ function is a no-op.
 \bfindexit{with-lock-held}%
 \fnexample Acquire the \glref{lock} associated with \code{condition-variable}
 and then signal all blocked \glref{threads} that are waiting on it:
+%
+\W\supp
 \begin{example}
   (\entlink{with-lock-held} (condition-variable)
     (condition-variable-broadcast condition-variable))
@@ -817,6 +845,8 @@ function is a no-op.
 \bfindexit{with-lock-held}%
 \fnexample Acquire the \glref{lock} associated with \code{condition-variable}
 and then signal one blocked \glref{thread} that is waiting on it:
+%
+\W\supp
 \begin{example}
   (\entlink{with-lock-held} (condition-variable)
     (condition-variable-signal condition-variable))
@@ -861,6 +891,8 @@ nothing.
 \bfindexit{with-lock-held}%
 \fnexample Acquire the condition-variable \glref{lock} and then wait until
 signaled by another \glref{thread}:
+%
+\W\supp
 \begin{example}
   (\entlink{with-lock-held} (condition-variable)
     (condition-variable-wait condition-variable))
@@ -909,6 +941,8 @@ signaled by another \glref{thread}:
 \bfindexit{with-lock-held}%
 \fnexample Acquire the condition-variable \glref{lock} and then wait until
 signaled by another \glref{thread} or until 5 seconds have elapsed:
+%
+\W\supp
 \begin{example}
   (\entlink{with-lock-held} (condition-variable)
     (condition-variable-wait-with-timeout condition-variable 5))
@@ -938,6 +972,8 @@ signaled by another \glref{thread} or until 5 seconds have elapsed:
 \end{alsos}
 
 \fnexample
+%
+\W\supp
 \begin{example}
 > (current-thread)
 #<thread Listener 1>
@@ -986,6 +1022,8 @@ the \var{universal-time\/} value), the next day is assumed.
 \fnexamples
 Schedule a \glref{scheduled~function} that prints \code{"It's quitting time!"} 
 every day at 5pm:
+%
+\W\supp
 \begin{example}
 > (\entlink{schedule-function}
     (\entlink{make-scheduled-function}
@@ -998,6 +1036,8 @@ every day at 5pm:
 
 \bfindexit{encode-time-of-day}%
 Verbosely change \code{quitting-time} to 5:30pm every day:
+%
+\W\supp
 \begin{example}
 > (\entlink{schedule-function} 'quitting-time (encode-time-of-day 17 30 0)
     :repeat-interval #.(* 24 60 60)
@@ -1031,6 +1071,8 @@ Verbosely change \code{quitting-time} to 5:30pm every day:
 
 \fnexample
 Hibernate the current \glref{thread}:
+%
+\W\supp
 \begin{example}
   (hibernate-thread)
 \end{example}
@@ -1072,6 +1114,8 @@ Hibernate the current \glref{thread}:
 Define and spawn a \glref{periodic~function} that is invoked every 0.5 seconds
 to signal a \code{half-second-interrupt-event}, continuing as long as the
 control shell is running:
+%
+\W\supp
 \begin{example}
 > (\entlink{define-event-class} half-second-timer-event (timer-interrupt-event)
     ())
@@ -1115,6 +1159,8 @@ half-second-timer
 \end{alsos}
 
 \fnexample
+%
+\W\supp
 \begin{example}
   (kill-thread thread)
 \end{example}
@@ -1158,27 +1204,36 @@ The created \textbf{\entlink{condition-variable}}.
 \fnexamples
 Make a \textbf{condition-variable} instance with a non-recursive 
 \glref{lock}:
+%
+\W\supp
 \begin{example}
 > (make-condition-variable)
 #<condition-variable>
 \end{example}
-
+%
 Make a \textbf{condition-variable} instance with a
 \glref{recursive~lock}:
+%
+\W\supp\notpretop
 \begin{example}
 > (make-condition-variable :lock (\entlink{make-recursive-lock}))
 #<condition-variable>
 \end{example}
-
+%
 Define a subclass of \textbf{condition-variable} that includes a 
 \code{state} slot:
+%
+\W\supp\notpretop
 \begin{example}
   (defclass state-cv (condition-variable)
     ((state :initarg :state
             :initform nil
             :accessor state-of)))
 \end{example}
+%
 and then create a \code{state-cv} instance with a \glref{recursive~lock}:
+%
+\W\supp\notpretop
 \begin{example}
 > (make-condition-variable :class 'state-cv
                            :lock (\entlink{make-recursive-lock}))
@@ -1223,6 +1278,8 @@ created \glref{condition-variable} instance.  However, using
 \end{alsos}
 
 \fnexample
+%
+\W\supp
 \begin{example}
 > (make-lock :name "Priority Queue")
 #<lock Priority Queue>
@@ -1264,6 +1321,8 @@ created \glref{condition-variable} instance.  However, using
 \end{alsos}
 
 \fnexample
+%
+\W\supp
 \begin{example}
 > (make-recursive-lock :name "Priority Queue")
 #<recursive-lock Priority Queue>
@@ -1321,7 +1380,11 @@ so as to avoid delaying the invocation of a subsequent
 \end{alsos}
 
 \fnexamples
-Create a \glref{scheduled~function} that simply prints \code{"Hello"} when invoked:
+%
+Create a \glref{scheduled~function} that simply prints \code{"Hello"} when
+invoked:
+%
+\W\supp
 \begin{example}
 > (make-scheduled-function 
     #'(lambda (scheduled-function)
@@ -1333,8 +1396,12 @@ Create a \glref{scheduled~function} that simply prints \code{"Hello"} when invok
 
 \bfindexit{scheduled-function-repeat-interval}%
 \bfindexit{spawn-thread}%
-A more complex \glref{scheduled~function} that spawns a new \glref{thread} to do its
-work and randomly sets whether to reschedule itself (and at what interval):
+%
+A more complex \glref{scheduled~function} that spawns a new \glref{thread} to
+do its work and randomly sets whether to reschedule itself (and at what
+interval):
+%
+\W\supp
 \begin{example}
 > (defun complex-function (scheduled-function)
     (let ((interval (random 100)))
@@ -1385,13 +1452,17 @@ been killed accidentally, this function can be used to start a new scheduler
 
 \fnexamples
 Restart the \glref{scheduled-function} scheduler:
+%
+\W\supp
 \begin{example}
 > (restart-scheduled-function-scheduler)
 #<thread Scheduled-Function Scheduler>
 \end{example}
-
+%
 Restarting a \glref{scheduled-function} scheduler that is already running has
 no effect:
+%
+\W\supp\notpretop
 \begin{example}
 > (restart-scheduled-function-scheduler)
 ;; The scheduled-function scheduler is already running.
@@ -1455,6 +1526,8 @@ and \var{repeat-interval}.
 \fnexamples
 Schedule a \glref{scheduled~function} that simply prints \code{"Happy New Year!"} 
 at midnight (local time) on January 1, 2010:
+%
+\W\supp
 \begin{example}
 > (schedule-function
     (\entlink{make-scheduled-function}
@@ -1465,11 +1538,14 @@ at midnight (local time) on January 1, 2010:
 > (all-scheduled-functions)
 (#<scheduled-function nil [Jan 1, 2010 00:00:00]>)
 \end{example}
-
+%
 \bfindexit{make-scheduled-function}%
 \bfindexit{encode-time-of-day}%
+%
 Schedule a \glref{scheduled~function} that prints \code{"It's quitting time!"} 
 every day at 5pm:
+%
+\W\supp\notpretop
 \begin{example}
 > (schedule-function
     (\entlink{make-scheduled-function}
@@ -1479,9 +1555,12 @@ every day at 5pm:
       :name 'quitting-time)
      (\entlink{encode-time-of-day} 17 0 0) :repeat-interval #.(* 24 60 60))
 \end{example}
-
+%
 \bfindexit{encode-time-of-day}%
+%
 Verbosely change \code{quitting-time} to 5:30pm every day:
+%
+\W\supp\notpretop
 \begin{example}
 > (schedule-function 'quitting-time (\entlink{encode-time-of-day} 17 30 0)
     :repeat-interval #.(* 24 60 60)
@@ -1547,8 +1626,11 @@ specified \var{repeat-interval}.
 
 \bfindexit{make-scheduled-function}%
 \fnexamples
+%
 Schedule a \glref{scheduled~function} that simply prints \code{"Hello!"} 
 5 seconds from now:
+%
+\W\supp
 \begin{example}
 > (schedule-function-relative
     (\entlink{make-scheduled-function}
@@ -1557,11 +1639,14 @@ Schedule a \glref{scheduled~function} that simply prints \code{"Hello!"}
           (print "Hello!")))
      5)
 \end{example}
-
+%
 \bfindexit{make-scheduled-function}%
 \bfindexit{signal-event}%
+%
 Schedule a \glref{scheduled~function} that signals a GBBopen
 \code{timer-interrupt-event} every 30 seconds:
+%
+\W\supp\notpretop
 \begin{example}
 > (schedule-function-relative
     (\entlink{make-scheduled-function}
@@ -1616,7 +1701,10 @@ Schedule a \glref{scheduled~function} that signals a GBBopen
 
 \bfindexit{all-scheduled-functions}%
 \fnexample
+%
 Return the names of all currently scheduled \glref{scheduled~functions}:
+%
+\W\supp
 \begin{example}
 > (mapcar #'scheduled-function-name (\entlink{all-scheduled-functions}))
 (quitting-time)
@@ -1660,9 +1748,12 @@ Return the names of all currently scheduled \glref{scheduled~functions}:
 \end{alsos}
 
 \bfindexit{all-scheduled-functions}%
-\fnexamples 
+\fnexamples
+% 
 Display the \code{scheduled-function} object and its repeat interval for each
 currently scheduled \glref{scheduled~function}:
+%
+\W\supp
 \begin{example}
 > (dolist (scheduled-function (\entlink{all-scheduled-functions}))
    (format t "~&;; ~s ~s~%"
@@ -1672,8 +1763,10 @@ currently scheduled \glref{scheduled~function}:
 nil
 \end{example}
 
-Define a \glref{function} to be used as a \glref{scheduled~function} that randomly
-sets whether to reschedule itself (and at what interval):
+Define a \glref{function} to be used as a \glref{scheduled~function} that
+randomly sets whether to reschedule itself (and at what interval):
+%
+\W\supp
 \begin{example}
   (defun complex-function (scheduled-function)
     (let ((interval (random 100)))
@@ -1743,6 +1836,8 @@ negative, the \glref{periodic~function} is terminated.
 \fnexamples 
 Spawn a simple \glref{periodic~function} that is invoked every 0.1 seconds,
 but that only runs twice:
+%
+\W\supp
 \begin{example}
 > (spawn-periodic-function #'(lambda () (print "Hello!")) 0.1 
     :name 'hello
@@ -1752,11 +1847,14 @@ but that only runs twice:
 "Hello!" 
 "Hello!" 
 \end{example}
-
+%
 \bfindexit{kill-periodic-function}%
+%
 Spawn a simple \glref{periodic~function} that is invoked every 0.1 seconds
 that runs up to 20 times, but with a 10\% chance on each invocation of
 terminating early:
+%
+\W\supp\notpretop
 \begin{example}
 > (spawn-periodic-function 
      #'(lambda ()
@@ -1775,16 +1873,18 @@ terminating early:
 "Hello!" 
 ;; Killing periodic-function...
 ;; Exiting periodic-function thread
-
 \end{example}
-
+%
 \bfindexit{define-event-class}%
 \bfindexit{signal-event}%
 \bfindexit{control-shell-running-p}%
 \bfindexit{kill-periodic-function}%
+%
 Define and spawn a \glref{periodic~function} that is invoked every 0.5 seconds
 to signal a \code{half-second-interrupt-event}, continuing as long as the
 control shell is running:
+%
+\W\supp\notpretop
 \begin{example}
 > (\entlink{define-event-class} half-second-timer-event (timer-interrupt-event)
     ())
@@ -1832,6 +1932,8 @@ half-second-timer
 \bfindexit{spawn-thread}%
 \bfindexit{kill-thread}%
 \fnexamples
+%
+\W\supp
 \begin{example}
 > (defparameter *silly-thread* (\entlink{spawn-thread} "Sleeper" 'sleep 10000))
 #<thread Sleeper>
@@ -1877,6 +1979,8 @@ nil
 \end{alsos}
 
 \fnexamples
+%
+\W\supp
 \begin{example}
 > (thread-name thread)
 "Initial"
@@ -1920,6 +2024,8 @@ does not support changing the thread name via \textbf{setf}.
 \end{alsos}
 
 \fnexample
+%
+\W\supp
 \begin{example}
 > (thread-whostate thread)
 "Running"
@@ -1947,6 +2053,8 @@ programmatically.
 \fnmodule \code{:portable-threads}
 
 \fnexample
+%
+\W\supp
 \begin{example}
   (thread-yield)
 \end{example}
@@ -1989,6 +2097,8 @@ non-threaded implementations.
 
 \bfindexit{all-threads}%
 \fnexample
+%
+\W\supp
 \begin{example}
 > (threadp (car (\entlink{all-threads})))
 t
@@ -2025,6 +2135,8 @@ t
 \end{alsos}
 
 \fnexample
+%
+\W\supp
 \begin{example}
   (run-in-thread thread
                  #'(lambda (result) (throw ':exit result)) 
@@ -2077,6 +2189,8 @@ t
 \end{alsos}
 
 \fnexample
+%
+\W\supp
 \begin{example}
 > (spawn-thread "Sleepy" #'sleep 60)
 #<thread Sleepy>
@@ -2122,6 +2236,8 @@ thread-local value is bound.
 \end{alsos}
 
 \fnexamples
+%
+\W\supp
 \begin{example}
 > (symbol-value-in-thread '*x* thread)
 33
@@ -2171,6 +2287,8 @@ the global symbol value.
 \bfindexit{with-lock-held}%
 \fnexamples
 Two simple examples using a \glref{lock}:
+%
+\W\supp
 \begin{example}
 > (thread-holds-lock-p lock)
 nil
@@ -2178,8 +2296,10 @@ nil
     (thread-holds-lock-p lock))
 t
 \end{example}
-
+%
 Two more simple examples using a \glref{condition~variable}:
+%
+\W\supp\notpretop
 \begin{example}
 > (thread-holds-lock-p condition-variable)
 nil
@@ -2238,13 +2358,18 @@ removed from the list of currently scheduled \glref{scheduled~functions}.
 
 \fnexamples
 Unschedule the \code{quitting-time} \glref{scheduled~function}:
+%
+\W\supp
 \begin{example}
 > (unschedule-function 'quitting-time)
 #<scheduled-function quitting-time [unscheduled]>
 \end{example}
-
+%
 \bfindexit{all-scheduled-functions}%
+%
 Unschedule all currently scheduled \glref{scheduled~functions}:
+%
+\W\supp\notpretop
 \begin{example}
 > (\entlink{all-scheduled-functions})
 (#<scheduled-function nil [Jan 1, 2010 00:00:00]>)
@@ -2253,8 +2378,10 @@ Unschedule all currently scheduled \glref{scheduled~functions}:
 > (\entlink{all-scheduled-functions})
 nil
 \end{example}
-
+%
 Unschedule a non-existent \glref{scheduled~function}:
+%
+\W\supp\notpretop
 \begin{example}
 >(unschedule-function 'non-existent)
 Warning: Scheduled-function non-existent was not scheduled; no action taken.
@@ -2312,22 +2439,29 @@ simply proceeds as if it had acquired the lock.
 
 \fnexamples
 Acquire the lock controlling access to a critical section of code:
+%
+\W\supp
 \begin{example}
   (with-lock-held (lock :whostate "Waiting for Critical Lock")
     (critical-section))
 \end{example}
-
+%
 A silly example showing a recursive re-acquisition of a
 \glref{recursive~lock}:
+%
+\W\supp\notpretop
 \begin{example}
   (with-lock-held (recursive-lock :whostate "Waiting for Critical Lock")
     (with-lock-held (recursive-lock :whostate "Again Waiting for Critical Lock")
       (critical-section)))
 \end{example}
-
+%
 \bfindexit{condition-variable-signal}%
+%
 Acquire the \glref{lock} associated with \code{condition-variable} and then
 signal all blocked \glref{threads} that are waiting on it:
+%
+\W\supp\notpretop
 \begin{example}
   (with-lock-held (condition-variable)
     (\entlink{condition-variable-signal} condition-variable))
@@ -2382,13 +2516,17 @@ last \var{form} is returned.
 
 \fnexamples
 Evaluate a simple form, with a one-second time out:
+%
+\W\supp
 \begin{example}
 > (with-timeout (1 ':timed-out) 
      ':did-not-time-out)
 :did-not-time-out
 \end{example}
-
+%
 Again, but this time sleep for two seconds to cause a time out:
+%
+\W\supp\notpretop
 \begin{example}
 > (with-timeout (1 ':timed-out)
      (sleep 2) 

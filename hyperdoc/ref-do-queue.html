@@ -27,7 +27,7 @@ specified <var>queue</var>.
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:queue</code>
 </p>
-<p><span class="fndoclabel">Arguments</span><table class="tight">
+<p><span class="fndoclabel">Arguments</span><table class="tighttop">
 <tr valign="top"><td valign="baseline"><i>var</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id199">variable&nbsp;symbol</a>
 </td></tr><tr valign="top"><td valign="baseline"><i>queue</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A GBBopen <a href="ref-glossary.html#gl:queue">queue</a>
 </td></tr><tr valign="top"><td valign="baseline"><i>declaration</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A declare expression
@@ -43,10 +43,8 @@ in queue order (first to last).
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-queue.html"><b>queue</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-ordered-queue.html"><b>ordered-queue</b></a>
 </p>
-<p><span class="fndoclabel">Example</span> <br /><a name="id1">Count</a> the number of <a href="ref-glossary.html#id132">pending&nbsp;KSAs</a> that were triggered by
-<code>hyp</code>: 
-</p>
-<pre>
+<p><span class="fndoclabel">Example</span> <br /><a name="id1">Count</a> the number of <a href="ref-glossary.html#id132">pending&nbsp;KSAs</a> that were triggered by <code>hyp</code>:
+<pre class="pretop">
 &gt; (let ((count 0))
     (do-queue (ksa pending-ksas)
       (when (<a href="ref-memq.html">memq</a> hyp (collect-trigger-instances ksa))
@@ -54,6 +52,7 @@ in queue order (first to last).
      count)
 31
 </pre>
+</p>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
 <table width="100%" cellpadding="0" cellspacing="2"><tr>

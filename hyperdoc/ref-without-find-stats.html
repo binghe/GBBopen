@@ -26,7 +26,7 @@
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-core</code>
 </p>
-<p><span class="fndoclabel">Arguments</span><table class="tight">
+<p><span class="fndoclabel">Arguments</span><table class="tighttop">
 <tr valign="top"><td valign="baseline"><i>declaration</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A declare expression
 </td></tr><tr valign="top"><td valign="baseline"><i>forms</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An implicit <b>progn</b> of <a href="ref-glossary.html#gl:forms">forms</a> to be evaluated
 </td></tr></table>
@@ -38,8 +38,7 @@
 </p>
 <p><span class="fndoclabel">Example</span> <br /><a name="id2">Collect</a> and display the retrieval statistics associated with
 running an application <a href="ref-glossary.html#gl:function">function</a> <code>scanner</code>:
-</p>
-<pre>
+<pre class="pretop">
 &gt; (<a href="ref-with-find-stats.html">with-find-stats</a> ()
      (scanner (<a href="ref-find-instance-by-name.html">find-instance-by-name</a> 471 'hyp))
      (without-find-stats
@@ -54,6 +53,7 @@ running an application <a href="ref-glossary.html#gl:function">function</a> <cod
 (#&lt;hyp 319 (1835 8419) 0.91 [4..12]&gt;
  #&lt;hyp 331 (1835 8419) 0.88 [15..30]&gt;)
 </pre>
+</p>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
 <table width="100%" cellpadding="0" cellspacing="2"><tr>

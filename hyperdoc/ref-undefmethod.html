@@ -27,7 +27,7 @@
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-tools</code>
 </p>
-<p><span class="fndoclabel">Arguments</span><table class="tight">
+<p><span class="fndoclabel">Arguments</span><table class="tighttop">
 <tr valign="top"><td valign="baseline"><i>function-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> Either a symbol or <code>(setf <var>symbol</var>)</code>
 </td></tr><tr valign="top"><td valign="baseline"><i>method-qualifier</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A non-list method qualifier object (such as
 <code>:before</code>, <code>:after</code>, or <code>:around</code>)
@@ -39,8 +39,7 @@
 </td></tr></table>
 </p>
 <p><span class="fndoclabel">Example</span> <br /><a name="id1">After</a> creating an undesired method, use <b>undefmethod</b> to remove it:
-</p>
-<pre>
+<pre class="pretop">
 &gt; (defmethod instance-name-of :before ((instance standard-unit-instance))
      (print "Opps"))
 #&lt;standard-method instance-name-of :before (standard-unit-instance)&gt;
@@ -53,6 +52,7 @@
 &gt; (<a href="ref-instance-name-of.html">instance-name-of</a> (<a href="ref-find-instance-by-name.html">find-instance-by-name</a> 112 'hyp))
 112
 </pre>
+</p>
 <p><span class="fndoclabel">Note</span> <br />This macro may not be able to locate and undefine some methods with
 environment-specific eql specializers.
 </p>

@@ -25,7 +25,7 @@
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-core</code>
 </p>
-<p><span class="fndoclabel">Arguments</span><table class="tight">
+<p><span class="fndoclabel">Arguments</span><table class="tighttop">
 <tr valign="top"><td valign="baseline"><i>space-instances</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id174">space&nbsp;instance</a>, a list of
 <a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a>, a <a href="ref-glossary.html#id176">space-instance&nbsp;path</a> regular
 expression, or <code>t</code> (indicating all space instances)
@@ -40,22 +40,20 @@ for each <a href="ref-glossary.html#id195">unit&nbsp;instance</a> that is remove
 </p>
 <p><span class="fndoclabel">Examples</span> <br /><a name="id2">Remove</a> all the <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a> that
 reside on the <code>(bb probable-hyps)</code> <a href="ref-glossary.html#id174">space&nbsp;instance</a>:
-</p>
-<pre>
+<pre class="pretop">
   (clear-space-instances
     (<a href="ref-find-space-instance-by-path.html">find-space-instance-by-path</a> '(bb probable-hyps)))
 </pre>
-<p>or
-</p>
+or
 <pre>
   (clear-space-instances '(bb probable-hyps))
 </pre>
-<p>or
-</p>
+or
 <pre>
   (clear-space-instances
     (<a href="ref-find-space-instances.html">find-space-instances</a> '(bb probable-hyps)))
 </pre>
+</p>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
 <table width="100%" cellpadding="0" cellspacing="2"><tr>
