@@ -37,8 +37,7 @@ file or your personal <code>gbbopen-init.lisp</code> file.  Because
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-browse-hyperdoc.html"><b>browse-hyperdoc</b></a>
 </p>
 <p><span class="fndoclabel">Examples</span> <br />Here is the setting that is made in <code>startup.lisp</code>:
-</p>
-<pre>
+<pre class="pretop">
   (defvar *preferred-browser* 
       ;; On Mac OSX we defer to the OS default browser:
       #+(or macosx darwin)
@@ -48,10 +47,10 @@ file or your personal <code>gbbopen-init.lisp</code> file.  Because
       #+(or (and lispworks (not win32)) sbcl) "/usr/bin/firefox"
       #-(or macosx darwin (and lispworks (not win32)) sbcl) "firefox")
 </pre>
+</p>
 <p>Specify a different browser (in a personal <code>gbbopen-init.lisp</code>
 file) on Linux machines:
-</p>
-<pre>
+<pre class="pretop">
   (in-package :common-lisp-user)
 
   #+linux
@@ -61,6 +60,7 @@ file) on Linux machines:
      #+(or lispworks sbcl) "/usr/bin/opera"
      #-(or lispworks sbcl) "opera")
 </pre>
+</p>
 <p><span class="fndoclabel">Note</span> <br /><a target="_top" href="http://www.lispworks.com">LispWorks</a> (non-Windows
 platforms) and <a target="_top" href="http://sbcl.sourceforge.net">SBCL</a> do not perform a
 <code>PATH</code> search for programs, so the browser-program path must be explicitly

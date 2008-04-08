@@ -21,22 +21,21 @@ for simplicity in porting to Common Lisp implementations.  For
 example, to compile all core GBBopen modules and execute a basic
 trip-tests file, you only need to evaluate the following forms within
 your Common Lisp environment:
-</p>
-<pre>
-&gt; (load "<var>&lt;install-dir&gt;</var>startup.lisp")
-; Loading <var>&lt;install-dir&gt;</var>/startup.lisp
-;  Loading <var>&lt;install-dir&gt;</var>/source/mini-module/mini-module-loader.lisp
-;   Loading <var>&lt;install-dir&gt;</var>/source/mini-module/mini-module.lisp
-;     Loading <var>&lt;install-dir&gt;</var>/source/mini-module/mini-module-user.lisp
-;  Loading <var>&lt;install-dir&gt;</var>/source/modules.lisp
-T
-&gt; (mini-module:<a href="ref-compile-module.html">compile-module</a> :gbbopen-test :propagate :create-dirs)
-; Compiling <var>&lt;install-dir&gt;</var>/source/mini-module/mini-module.lisp
-     ...
-;; Running basic GBBopen tests...
-     ...
+<pre class="pretop">
+  &gt; (load "<var>&lt;install-dir&gt;</var>startup.lisp")
+  ;; Loading <var>&lt;install-dir&gt;</var>/startup.lisp
+  ;;  Loading <var>&lt;install-dir&gt;</var>/source/mini-module/mini-module-loader.lisp
+  ;;   Loading <var>&lt;install-dir&gt;</var>/source/mini-module/mini-module.lisp
+  ;;     Loading <var>&lt;install-dir&gt;</var>/source/mini-module/mini-module-user.lisp
+  ;;  Loading <var>&lt;install-dir&gt;</var>/source/modules.lisp
+  T
+  &gt; (mini-module:<a href="ref-compile-module.html">compile-module</a> :gbbopen-test :propagate :create-dirs)
+  ;; Compiling <var>&lt;install-dir&gt;</var>/source/mini-module/mini-module.lisp
+       ...
+  ;; Running basic GBBopen tests...
+       ...
 </pre>
-<p>GBBopen should compile, load, and run the basic tests file without error.
+GBBopen should compile, load, and run the basic tests file without error.
 </p>
 <p><a name="id1">If</a> you are running GBBopen on Windows, note that backslash is the
 escape character in the standard Common Lisp reader; it causes the
@@ -44,11 +43,10 @@ next character to treated as a normal character rather than as having
 any special syntactic characteristics. So, each backslash in a
 file-specification string must be entered as two backslash characters.
 For example:
-</p>
-<pre>
-&gt; (load "c:\\GBBopen\\startup.lisp")
+<pre class="pretop">
+  &gt; (load "c:\\GBBopen\\startup.lisp")
 </pre>
-<p>As can be seen from the file-loading messages, the <code>startup.lisp</code> file
+As can be seen from the file-loading messages, the <code>startup.lisp</code> file
 loads a bootstrap loader file for the module facility (the file
 <code>source/mini-module/mini-module-loader.lisp</code>).  This bootstrap file then
 loads the mini-module files (<code>source/mini-module/mini-module.lisp</code> and
@@ -74,8 +72,7 @@ other personalizations.
 <p>Here is a simple example of a personal
 <code><var>&lt;homedir&gt;</var>/gbbopen-init.lisp</code> file that defines a root directory
 named <code>:my-app-root</code> and the module <code>:my-app</code>:
-</p>
-<pre>
+<pre class="pretop">
   ;;;; -*- Mode:Common-Lisp; Package:CL-USER -*-
 
   (in-package :cl-user)
@@ -92,6 +89,7 @@ named <code>:my-app-root</code> and the module <code>:my-app</code>:
   ;;;   End of File
   ;;; ===============================================
 </pre>
+</p>
 <p>For shared or more substantial application modules, we recommend a
 packaging convention that mirrors that of GBBopen.  This will be
 discussed shortly in conjunction with using a <a href="#sec:personal-gbbopen-modules-directory">personal
@@ -137,16 +135,14 @@ appropriate time.)
 <code><var>&lt;install-directory&gt;</var>/commands.lisp</code>.  In many Common Lisp
 implementations, top-level keyword commands that have arguments can be
 specified using either a list or a spread representation.  For example:
-</p>
-<pre>
-&gt; (:gbbopen-test :create-dirs)
+<pre class="pretop">
+  &gt; (:gbbopen-test :create-dirs)
 </pre>
-<p>or
-</p>
+or
 <pre>
-&gt; :gbbopen-test :create-dirs
+  &gt; :gbbopen-test :create-dirs
 </pre>
-<p>However, <a target="_top" href="http://trac.clozure.com/openmcl/">Clozure CL</a>,
+However, <a target="_top" href="http://trac.clozure.com/openmcl/">Clozure CL</a>,
 <a target="_top" href="http://openmcl.clozure.com/">OpenMCL</a>, and the
 <a target="_top" href="http://common-lisp.net/project/slime/">SLIME</a> REPL interface do not
 support the spread representation, and <a target="_top" href="http://www.franz.com">Allegro
@@ -169,7 +165,6 @@ or compiled) is present in the user's &#8220;homedir&#8221; home directory (as d
 <code>gbbopen-commands.lisp</code> file defines a top-level keyword command (named
 <code>:my-app</code>) and an equivalent <a href="ref-glossary.html#gl:function">function</a> (<code>cl-user::my-app</code>)
 for compiling and loading the <code>:my-app</code> module that was defined above:
-</p>
 <pre>
   ;;;; -*- Mode:Common-Lisp; Package:CL-USER -*-
 
@@ -183,7 +178,7 @@ for compiling and loading the <code>:my-app</code> module that was defined above
   ;;;   End of File
   ;;; ===============================================
 </pre>
-<p>The macro <code>define-tll-command</code> and the <a href="ref-glossary.html#gl:function">function</a>
+The macro <code>define-tll-command</code> and the <a href="ref-glossary.html#gl:function">function</a>
 <code>startup-module</code> that are used in this example are both defined in the
 file <code><var>&lt;install-directory&gt;</var>/initiate.lisp</code>.  Experienced GBBopen
 users prefer to have their Common Lisp initialization file load
@@ -254,16 +249,19 @@ initialization file.
 <a target="_top" href="http://cvs.sourceforge.net/viewcvs.py/ilisp/ILISP/extra/hyperspec.el?rev=1.5&amp;view=auto">hyperspec.el</a>
 utility (included with
 <a target="_top" href="http://common-lisp.net/project/slime/">SLIME</a> and
-<a target="_top" href="http://sourceforge.net/projects/ilisp/">ILISP</a>
-distributions, but usable on its own), the Emacs
-<code>browse-hyperdoc</code> command will automatically defer to the
-<a target="_top" href="http://www.lispworks.com/documentation/HyperSpec/">Common Lisp  HyperSpec</a> when
-given a non-GBBopen entity.  You can also download and install a local copy of the 
-Common Lisp HyperSpec for use without a network connection.  In this case, set the value of <code>common-lisp-hyperspec-root</code> in your <code>.emacs</code> initialization file to point to your local copy of the HyperSpec.  For example:
-</p>
-<pre>
+<a target="_top" href="http://sourceforge.net/projects/ilisp/">ILISP</a> distributions, but
+usable on its own), the Emacs <code>browse-hyperdoc</code> command will
+automatically defer to the <a target="_top" href="http://www.lispworks.com/documentation/HyperSpec/">Common Lisp
+HyperSpec</a> when given a
+non-GBBopen entity.  You can also download and install a local copy of the
+Common Lisp HyperSpec for use without a network connection.  In this case, set
+the value of <code>common-lisp-hyperspec-root</code> in your <code>.emacs</code>
+initialization file to point to your local copy of the HyperSpec.  For
+example:
+<pre class="pretop">
   (setf common-lisp-hyperspec-root "file:/usr/local/CLHS/")
 </pre>
+</p>
 <p>Highly recommended!
 </p>
 <p><b><font size="+1">Entities</font></b>

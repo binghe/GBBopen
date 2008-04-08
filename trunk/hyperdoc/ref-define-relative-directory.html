@@ -26,7 +26,7 @@ the directory specification of a module definition.
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:mini-module</code>
 </p>
-<p><span class="fndoclabel">Arguments</span><table class="tight">
+<p><span class="fndoclabel">Arguments</span><table class="tighttop">
 <tr valign="top"><td valign="baseline"><i>name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A keyword symbol naming the relative directory
 </td></tr><tr valign="top"><td valign="baseline"><i>directory</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> The keyword symbol name of a root or relative directory or the 
 name of a module
@@ -48,21 +48,20 @@ base directory location changes, the relative directory is adjusted automaticall
 </p>
 <p><span class="fndoclabel">Examples</span> <br />Define a relative directory below <code>:my-app-root</code> named
 <code>:my-tests</code>:
-</p>
-<pre>
+<pre class="pretop">
   (define-relative-directory :my-tests :my-app-root "tests")
 </pre>
-<p>Define another relative directory named
-<code>:my-performance-tests</code> below <code>:my-tests</code>: 
-</p>
+Define another relative directory named <code>:my-performance-tests</code> below
+<code>:my-tests</code>:
 <pre>
   (define-relative-directory :my-performance-tests :my-tests "performance") 
 </pre>
-<p>Define a data directory sibling to the <code>source</code> directory of <code>:my-app</code> module: 
-</p>
+Define a data directory sibling to the <code>source</code> directory of
+<code>:my-app</code> module:
 <pre>
   (define-relative-directory :app-data :my-app :up "data") 
 </pre>
+</p>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
 <table width="100%" cellpadding="0" cellspacing="2"><tr>

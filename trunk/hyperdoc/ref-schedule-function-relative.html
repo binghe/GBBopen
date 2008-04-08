@@ -26,7 +26,7 @@ seconds from now.
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:portable-threads</code>
 </p>
-<p><span class="fndoclabel">Arguments</span><table class="tight">
+<p><span class="fndoclabel">Arguments</span><table class="tighttop">
 <tr valign="top"><td valign="baseline"><i>name-or-scheduled-function</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An object (typically a string or a
 symbol) naming a currently scheduled <a href="ref-glossary.html#id159">scheduled&nbsp;function</a> or a
 <code>scheduled-function</code> object
@@ -60,8 +60,7 @@ specified <var>repeat-interval</var>.
 </p>
 <a name="id1"></a><p><span class="fndoclabel">Examples</span> <br />Schedule a <a href="ref-glossary.html#id159">scheduled&nbsp;function</a> that simply prints <code>"Hello!"</code> 
 5 seconds from now:
-</p>
-<pre>
+<pre class="pretop">
 &gt; (schedule-function-relative
     (<a href="ref-make-scheduled-function.html">make-scheduled-function</a>
       #'(lambda (scheduled-function)
@@ -69,9 +68,8 @@ specified <var>repeat-interval</var>.
           (print "Hello!")))
      5)
 </pre>
-<p><a name="id2">Schedule</a> a <a href="ref-glossary.html#id159">scheduled&nbsp;function</a> that signals a GBBopen
+<a name="id2">Schedule</a> a <a href="ref-glossary.html#id159">scheduled&nbsp;function</a> that signals a GBBopen
 <code>timer-interrupt-event</code> every 30 seconds:
-</p>
 <pre>
 &gt; (schedule-function-relative
     (<a href="ref-make-scheduled-function.html">make-scheduled-function</a>
@@ -81,6 +79,7 @@ specified <var>repeat-interval</var>.
     30
     :repeat-interval 30)
 </pre>
+</p>
 <p><span class="fndoclabel">Note</span> <br />The form <code>(schedule-function-relative</code>&nbsp;<var>scheduled-function</var>&nbsp;<code>10)</code> is equivalent to
 <code>(<a href="ref-schedule-function.html">schedule-function</a></code>&nbsp;<var>scheduled-function</var>&nbsp;<code>(+&nbsp;(get-universal-time)&nbsp;10))</code>.
 </p>

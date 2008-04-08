@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/common.tex *-*
-%% *-* Last-Edit: Wed Apr  2 04:30:13 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Mon Apr  7 21:22:36 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -32,7 +32,8 @@
 \T\newcommand{\superplus}{\raisebox{4pt}{+}}
 \W\newcommand{\superplus}{\xml{sup}+\xml{/sup}}
 \definecolor{rulegray}{gray}{.75}
-\definecolor{darkergray}{gray}{.40}
+\definecolor{darkergray}{rgb}{.4,.5,.4}
+\definecolor{darkgreen}{rgb}{.0,.7,.0}
 \definecolor{caution}{rgb}{.8,.6,.0}
 
 %% ----------------------------------------------------------------------------
@@ -321,7 +322,7 @@
 
 %% ----------------------------------------------------------------------------
 
-\newcommand{\entered}[1]{\textcolor{green}{[\textit{{#1} entered}]}}
+\newcommand{\entered}[1]{\textcolor{darkgreen}{[\textit{{#1} entered}]}}
 
 %% ----------------------------------------------------------------------------
 %%  Function Documentation
@@ -365,20 +366,24 @@
         \xml{/table}%
         \endpar}
 
-  \newcommand{\fnalternate}[2]{\xml{table class="tight" width="100%"}
-      \xml{tr valign="top"}
-      \xml{td align="left"}
-        \xml{nobr}#1\xml{/nobr}
-        \xml{/td}
-        \xml{td}\xmlent{nbsp} \xml{/td}
-        \xml{td align="left" width="99%"}
-          #2
-          \xml{/td}
-          \xml{/tr}
-          \xml{/table}}
+ \newcommand{\alternatetarted}{}
+
+ \newcommand{\fnalternate}[2]{%
+     \EmptyP{\alternatestarted}{\xml{table class="tight" width="100%"}}{\xml{table class="tighttop" width="100%"}}
+      \renewcommand{\alternatestarted}{*}%
+      \xml{tr valign="top"}%
+      \xml{td align="left"}%
+      \xml{nobr}#1\xml{/nobr}%
+      \xml{/td}%
+      \xml{td}\xmlent{nbsp} \xml{/td}%
+      \xml{td align="left" width="99%"}
+        #2
+      \xml{/td}%
+      \xml{/tr}%
+      \xml{/table}}
   \newcommand{\endfnalternate}{}
 
-  \newcommand{\fnsetfsyntax}[3]{\xml{table class="tight" width="100%"}
+  \newcommand{\fnsetfsyntax}[3]{\xml{table class="tighttop" width="100%"}
       \xml{tr valign="top"}
       \xml{td align="left"}
         \xml{nobr}(setf (#1\xml{/nobr}
@@ -602,21 +607,25 @@
 \W\end{iftex}
 
 \T\begin{ifhtml}
+\newcommand{\separ}{\par\endpar}
+\newcommand{\emptytable}{\xml{table class="tighttop" width="100%"}\xml{/table}}
+
 \newcommand{\fnpurpose}{\par
   \xml{span class="fndoclabel"}Purpose\xml{/span} \\}
-\newcommand{\fnsetf}{\par\endpar
+\newcommand{\fnsetf}{\separ
   \xml{span class="fndoclabel"}Setf syntax\xml{/span}} 
-\newcommand{\fnmethods}{\par\endpar
+\newcommand{\fnmethods}{\separ
+  \renewcommand{\alternatestarted}{}%
   \xml{span class="fndoclabel"}Method signatures\xml{/span}}
-\newcommand{\fnpackage}{\par\endpar
+\newcommand{\fnpackage}{\separ
   \xml{span class="fndoclabel"}Package\xml{/span}~~~}
-\newcommand{\fnmodule}{\par\endpar
+\newcommand{\fnmodule}{\separ
   \xml{span class="fndoclabel"}Module\xml{/span}~~~}
-\newcommand{\fnvaluetype}{\par\endpar
+\newcommand{\fnvaluetype}{\separ
   \xml{span class="fndoclabel"}Value type\xml{/span}~~~} 
-\newcommand{\fninitialvalue}{\par\endpar
+\newcommand{\fninitialvalue}{\separ
   \xml{span class="fndoclabel"}Initial value\xml{/span}~~~} 
-\newcommand{\fnargs}{\par\endpar
+\newcommand{\fnargs}{\separ
   \xml{span class="fndoclabel"}Arguments\xml{/span}} 
 \newcommand{\fnreturns}{\par
   \xml{span class="fndoclabel"}Returns\xml{/span} \\} 
@@ -624,26 +633,26 @@
   \xml{span class="fndoclabel"}Events\xml{/span} \\} 
 \newcommand{\fnerrors}{\par
   \xml{span class="fndoclabel"}Errors\xml{/span} \\} 
-\newcommand{\fndsyntax}{\par\endpar
+\newcommand{\fndsyntax}{\emptytable{}
   \xml{span class="fndoclabel"}Detailed syntax\xml{/span}}  
-\newcommand{\fndsyntaxwgray}{\par\endpar
+\newcommand{\fndsyntaxwgray}{\emptytable{}
   \xml{span class="fndoclabel"}Detailed syntax\xml{/span}\\
   \xml{img height=14 width=0 src="shim.gif"}
   \textsf{\small\textcolor{darkergray}{[Syntax shown in gray is
         not supported in GBBopen Version~\gbbopenversion, but will become
         available in a future release.]}}}
-\newcommand{\fnterms}{\par\endpar
+\newcommand{\fnterms}{\separ
   \xml{span class="fndoclabel"}Terms\xml{/span}}  
 \newcommand{\fndescription}{\par
   \xml{span class="fndoclabel"}Description\xml{/span} \\} 
 % \fndetails is only for HyperLaTeX descriptions
 \newcommand{\fndetails}{\par
   \xml{span class="fndoclabel"}Details\xml{/span} \\} 
-\newcommand{\fnalsos}{\par\endpar
+\newcommand{\fnalsos}{\separ
   \xml{span class="fndoclabel"}See also\xml{/span}}
-\newcommand{\fnexample}{\par\endpar
+\newcommand{\fnexample}{\separ
   \xml{span class="fndoclabel"}Example\xml{/span} \\} 
-\newcommand{\fnexamples}{\par\endpar
+\newcommand{\fnexamples}{\separ
   \xml{span class="fndoclabel"}Examples\xml{/span} \\} 
 \newcommand{\fnnote}{\par
   \xml{span class="fndoclabel"}Note\xml{/span} \\} 
@@ -652,7 +661,7 @@
 \newcommand{\argstarted}{}
 \newcommand{\syntaxsep}{\\}
 \newenvironment{args}[1]{%
-  \xml{table class="tight"}%
+  \xml{table class="tighttop"}%
   \renewcommand{\argstarted}{}}%
 {\xml{/td}\xml{/tr}\xml{/table}}%
 \newcommand{\arg}[1][]{\EmptyP{\argstarted}{\xml{/td}\xml{/tr}}{}%
@@ -936,10 +945,101 @@
 \T\end{ifhtml}
 
 %% ----------------------------------------------------------------------------
+%%  Hyperlatex \par control hacks
+
+\T\begin{ifhtml}
+\HlxEval{
+(put 'supp 'hyperlatex 'Hlxsupp)
+(put 'notpretop 'hyperlatex 'Hlxnotpretop)
+
+(setq ddc-supp nil)
+(setq notpretop nil)
+
+(defun Hlxsupp ()
+  (setq ddc-supp t))
+
+(defun Hlxnotpretop ()
+  (setq notpretop t))
+
+(defun hyperlatex-leave-par ()
+;; Leave the current paragraph (if in any) and go into vertical mode.
+  (if ddc-supp
+      (progn (setq ddc-supp nil)
+             ;(hyperlatex-gen "br" "\n")
+             )
+      (if (not hyperlatex-in-b) nil
+        (if (hyperlatex-in-par-p) (hyperlatex-gen "/p" "\n"))
+        (if (hyperlatex-get-state) ; if state is defined the stack is non-empty
+          (hyperlatex-mode-set-state (cons hyperlatex-v-mode (point)))))))
+
+(defun hyperlatex-format-example ()
+  (hyperlatex-format-endpar)
+;; RK's
+  (hyperlatex-mode-level-up "example")
+;;
+  (if hyperlatex-in-body 
+      (progn
+	(hyperlatex-format-suspendpars)
+	(setq hyperlatex-verbatim-need-pars t))
+    (setq hyperlatex-verbatim-need-pars nil))
+  (hyperlatex-blk)
+  (hyperlatex-gen (if (not notpretop)
+                      "pre class=\"pretop\""
+                      (progn (setq notpretop nil)
+                             "pre")))
+  (let ((hyperlatex-special-chars-regexp
+	 (concat "[\\\\{}%" hyperlatex-meta-| "]"))
+	(hyperlatex-example-depth hyperlatex-recursion-depth)
+	(hyperlatex-active-space t))
+    ;; recursive call returns after processing \end{example}
+    (hyperlatex-format-region (point) (point-max) t))
+  (goto-char hyperlatex-command-start)
+;  (hyperlatex-delete-whitespace)
+  (hyperlatex-gen "/pre")
+;; RK's
+  (hyperlatex-mode-level-down "example")
+;;
+  (if hyperlatex-verbatim-need-pars
+      (hyperlatex-format-resumepars)))
+
+(defun hyperlatex-format-verbatim ()
+  (hyperlatex-format-endpar)
+;; RK's
+  (hyperlatex-mode-level-up "format-verbatim")
+;; end-of-RK's
+  (if hyperlatex-in-body 
+      (progn
+	(hyperlatex-format-suspendpars)
+	(setq hyperlatex-verbatim-need-pars t))
+    (setq hyperlatex-verbatim-need-pars nil))
+  (hyperlatex-delete-|)
+  (let ((env-name (symbol-name (car hyperlatex-stack))))
+    (hyperlatex-blk)
+    (hyperlatex-gen (if (not notpretop)
+                        "pre class=\"pretop\""
+                        (progn (setq notpretop nil)
+                               "pre")))
+    (search-forward  (concat "\\end{" env-name "}"))
+    (goto-char (match-beginning 0))))
+
+}
+\newcommand{\supp}{\Hlxsupp}
+\newcommand{\notpretop}{\Hlxnotpretop}
+\T\end{ifhtml}
+
+%% ----------------------------------------------------------------------------
 %%  Hyperlatex tabular class="tight" Mod
 
 \T\begin{ifhtml}
 \HlxEval{
+(put 'tabletop 'hyperlatex 'Hlxtabletop)
+
+(setq tabletop nil)
+
+(defun Hlxtabletop ()
+   ;; DDC mod to switch table class (hack):
+   (setq tabletop 't))
+
 (defun hyperlatex-format-tabular ()
   (hyperlatex-parse-optional-argument)
   (setq hyperlatex-tabular-column-descr
@@ -950,7 +1050,10 @@
   (hyperlatex-blk)
   ;; Add "tight" class DDC
   (hyperlatex-gen (concat (hyperlatex-get-attributes "table")
-                          " class=\"tight\""))
+                          (if tabletop " class=\"tight\""
+                                       " class=\"tight\"")))
+  (setq tabletop nil)
+  ;; End "tight" class mod DDC
   (hyperlatex-gen (hyperlatex-get-attributes "table"))
   (hyperlatex-gen (hyperlatex-get-attributes "tbody"))
   (hyperlatex-gen "tr" "\n")
@@ -971,6 +1074,7 @@
   ;; put contents of >{...} in front of the cell
   (hyperlatex-tabular-cell-front))
 }
+\newcommand{\tabletop}{\Hlxtabletop}
 \T\end{ifhtml}
 
 %% ----------------------------------------------------------------------------

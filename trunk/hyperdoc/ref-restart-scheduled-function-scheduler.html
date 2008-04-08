@@ -41,19 +41,18 @@ been killed accidentally, this function can be used to start a new scheduler
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-unschedule-function.html"><b>unschedule-function</b></a>
 </p>
 <p><span class="fndoclabel">Examples</span> <br />Restart the <a href="ref-glossary.html#gl:scheduled-function">scheduled-function</a> scheduler:
-</p>
-<pre>
+<pre class="pretop">
 &gt; (restart-scheduled-function-scheduler)
 #&lt;thread Scheduled-Function Scheduler&gt;
 </pre>
-<p>Restarting a <a href="ref-glossary.html#gl:scheduled-function">scheduled-function</a> scheduler that is already running has
+Restarting a <a href="ref-glossary.html#gl:scheduled-function">scheduled-function</a> scheduler that is already running has
 no effect:
-</p>
 <pre>
 &gt; (restart-scheduled-function-scheduler)
 ;; The scheduled-function scheduler is already running.
 nil
 </pre>
+</p>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
 <table width="100%" cellpadding="0" cellspacing="2"><tr>

@@ -22,48 +22,27 @@
 <p><span class="fndoclabel">Purpose</span> <br />Obtain the current count of <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a> of a
 <a href="ref-glossary.html#id193">unit&nbsp;class</a>. 
 </p>
-<p><span class="fndoclabel">Method signatures</span><table class="tight" width="100%">
-<tr valign="top">
-<td valign="baseline" align="left">
-<nobr>class-instances-count</nobr>
-</td>
-<td valign="baseline">&nbsp; </td>
-<td valign="baseline" align="left" width="99%">
+<p><span class="fndoclabel">Method signatures</span><table class="tighttop" width="100%">
+<tr valign="top"><td valign="baseline" align="left"><nobr>class-instances-count</nobr></td><td valign="baseline">&nbsp; </td><td valign="baseline" align="left" width="99%">
 <code>(</code><var>unit-class-name</var> <code>symbol)</code>
 <i> =&gt; </i> <var>count</var>
-</td>
-</tr>
-</table> 
+</td></tr></table> 
 <table class="tight" width="100%">
-<tr valign="top">
-<td valign="baseline" align="left">
-<nobr>class-instances-count</nobr>
-</td>
-<td valign="baseline">&nbsp; </td>
-<td valign="baseline" align="left" width="99%">
+<tr valign="top"><td valign="baseline" align="left"><nobr>class-instances-count</nobr></td><td valign="baseline">&nbsp; </td><td valign="baseline" align="left" width="99%">
 <code>(</code><var>unit-class-specifier</var> <code>cons)</code>
 <i> =&gt; </i> <var>count</var>
-</td>
-</tr>
-</table> 
+</td></tr></table> 
 <table class="tight" width="100%">
-<tr valign="top">
-<td valign="baseline" align="left">
-<nobr>class-instances-count</nobr>
-</td>
-<td valign="baseline">&nbsp; </td>
-<td valign="baseline" align="left" width="99%">
+<tr valign="top"><td valign="baseline" align="left"><nobr>class-instances-count</nobr></td><td valign="baseline">&nbsp; </td><td valign="baseline" align="left" width="99%">
 <code>(</code><var>unit-class</var> <code>standard-unit-class)</code>
 <i> =&gt; </i> <var>count</var>
-</td>
-</tr>
-</table>
+</td></tr></table>
 </p>
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen</code>
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-core</code>
 </p>
-<p><span class="fndoclabel">Arguments</span><table class="tight">
+<p><span class="fndoclabel">Arguments</span><table class="tighttop">
 <tr valign="top"><td valign="baseline"><i>unit-class-or-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id193">unit&nbsp;class</a> or a symbol naming a
 <a href="ref-glossary.html#id193">unit&nbsp;class</a> 
 </td></tr></table>
@@ -78,17 +57,16 @@ specified <a href="ref-glossary.html#id193">unit&nbsp;class</a>.  If an
 </p>
 <p><span class="fndoclabel">Examples</span> <br />Return the count of <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a> of
 <code>standard-space-instance</code>: 
-</p>
-<pre>
+<pre class="pretop">
 &gt; (class-instances-count 'standard-space-instance)
 8
 </pre> 
-<p>Return the count of all <a href="ref-glossary.html#id174">space&nbsp;instance</a>:
-</p>
+Return the count of all <a href="ref-glossary.html#id174">space&nbsp;instance</a>:
 <pre>
 &gt; (class-instances-count '(standard-space-instance :plus-subclasses))
 14
 </pre> 
+</p>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
 <table width="100%" cellpadding="0" cellspacing="2"><tr>

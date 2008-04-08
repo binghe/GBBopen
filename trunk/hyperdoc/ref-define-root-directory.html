@@ -25,7 +25,7 @@
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:mini-module</code>
 </p>
-<p><span class="fndoclabel">Arguments</span><table class="tight">
+<p><span class="fndoclabel">Arguments</span><table class="tighttop">
 <tr valign="top"><td valign="baseline"><i>name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A keyword symbol naming the root directory
 </td></tr><tr valign="top"><td valign="baseline"><i>directory-specification</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> One of the following:
 </p>
@@ -56,18 +56,17 @@ location of the source root directory is changed.
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-show-defined-directories.html"><b>show-defined-directories</b></a>
 </p>
 <p><span class="fndoclabel">Examples</span> <br />Define a root directory named <code>:my-app-root</code>:
-</p>
-<pre>
+<pre class="pretop">
   (define-root-directory :my-app-root 
     (make-pathname :directory "~/my-app"))
 </pre>
-<p>Define a root directory named <code>:my-app-root</code> to be the directory
+Define a root directory named <code>:my-app-root</code> to be the directory
 containing the file containing the <b>define-root-directory</b> form:
-</p>
 <pre>
   (define-root-directory :my-app-root 
     (make-pathname :directory *load-truename*))
 </pre>
+</p>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
 <table width="100%" cellpadding="0" cellspacing="2"><tr>

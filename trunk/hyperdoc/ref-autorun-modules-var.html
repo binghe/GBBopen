@@ -43,11 +43,11 @@ load-module option <code>:noautorun</code> can also be specified to bind
 </p>
 <p><span class="fndoclabel">Example</span> <br />Conditionally evaluate the <code>http-test</code> function when the file 
 <code>http-test.lisp</code> that includes the following form is loaded:
-</p>
-<pre>
+<pre class="pretop">
   (when common-lisp-user::*autorun-modules*
     (http-test "GBBopen.org" 80))
 </pre>
+</p>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
 <table width="100%" cellpadding="0" cellspacing="2"><tr>

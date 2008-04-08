@@ -28,7 +28,7 @@
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-core</code>
 </p>
-<p><span class="fndoclabel">Arguments</span><table class="tight">
+<p><span class="fndoclabel">Arguments</span><table class="tighttop">
 <tr valign="top"><td valign="baseline"><i>space-class-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A non-<code>nil</code>, non-keyword symbol that names the
 <a href="ref-glossary.html#id172">space&nbsp;class</a> 
 </td></tr><tr valign="top"><td valign="baseline"><i>superclass-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A non-<code>nil</code>, non-keyword symbol that specifies a
@@ -43,9 +43,10 @@ direct superclass of the <a href="ref-glossary.html#id172">space&nbsp;class</a> 
 <p><span class="fndoclabel">Errors</span> <br />The specified <var>superclass-names</var> do not include at least
 one <a href="ref-glossary.html#id172">space&nbsp;class</a> name.  This error is signaled on class finalization.
 </p>
-<p><span class="fndoclabel">Detailed syntax</span><br /><img height=14 width=0 src="shim.gif">
+<p><table class="tighttop" width="100%"></table>
+<span class="fndoclabel">Detailed syntax</span><br /><img height=14 width=0 src="shim.gif">
 <span 
-    style="font-family: sans-serif; font-style: normal"><font size="-1"><font color="#666666">[Syntax shown in gray is
+    style="font-family: sans-serif; font-style: normal"><font size="-1"><font color="#667f66">[Syntax shown in gray is
 not supported in GBBopen Version&nbsp;0.9.9, but will become
 available in a future release.]</font></font></span></p>
 <table class="tight"><table><tbody><tr>
@@ -169,7 +170,7 @@ available in a future release.]</font></font></span></p>
 <td valign="baseline" colspan="1" align="left">
 <var>dimensional-value-specifier</var>&nbsp;::=
 </td><td valign="baseline" colspan="1" align="left"> <var>incomposite-dv-specifier</var> |
-<font color="#666666"><var>composite-dv-specifier</var></font> </td></tr>
+<font color="#667f66"><var>composite-dv-specifier</var></font> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
 <table class="tight"><table><tbody><tr>
@@ -179,7 +180,7 @@ available in a future release.]</font></font></span></p>
 dimension-value-place</var><code>)</code> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
-<font color="#666666"><table class="tight"><table><tbody><tr>
+<font color="#667f66"><table class="tight"><table><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>composite-dv-specifier</var>&nbsp;::=
 </td><td valign="baseline" colspan="1" align="left"> <code>(</code><var>dimension-name dimension-value-specifier</var> </td></tr>
@@ -187,7 +188,7 @@ dimension-value-place</var><code>)</code> </td></tr>
 <td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> &nbsp; <var>composite-type dimension-value-place</var><code>)</code> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
-</font><font color="#666666"><table class="tight"><table><tbody><tr>
+</font><font color="#667f66"><table class="tight"><table><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>composite-type</var>&nbsp;::=
 </td><td valign="baseline" colspan="1" align="left"> <code>:set</code> | <code>:sequence</code> | </td></tr>
@@ -285,7 +286,7 @@ The default <var>boolean-comparison-type</var> is <code>t</code>.
 <var>slot-names</var> is allowed only for an <code>:interval</code> dimension-value
 specification.
 </p>
-<p><span class="fndoclabel">Terms</span><table class="tight">
+<p><span class="fndoclabel">Terms</span><table class="tighttop">
 <tr valign="top"><td valign="baseline"><i>class-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A non-<code>nil</code>, non-keyword symbol that names a
 <a href="ref-glossary.html#gl:class">class</a> 
 </td></tr><tr valign="top"><td valign="baseline"><i>initarg-list</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An <a href="ref-glossary.html#id85">initialization&nbsp;argument&nbsp;list</a>
@@ -342,8 +343,7 @@ containing a <a href="ref-glossary.html#gl:lock">lock</a> that can be used to sy
 operations on each <a href="ref-glossary.html#id174">space&nbsp;instance</a> of that class. Then, create
 one <a href="ref-glossary.html#gl:instance">instance</a> of the <code>space-instance-with-lock</code>
 <a href="ref-glossary.html#id172">space&nbsp;class</a>.
-</p>
-<pre>
+<pre class="pretop">
 &gt; (define-space-class space-with-lock ()
     ((lock :initform (<a href="ref-make-lock.html">make-lock</a> :name "Space-Instance Lock"))))
 #&lt;standard-space-class space-with-lock&gt;
@@ -351,6 +351,7 @@ one <a href="ref-glossary.html#gl:instance">instance</a> of the <code>space-inst
     :class 'space-with-lock)
 #&lt;space-with-lock (bb hyps)&gt;
 </pre>
+</p>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
 <table width="100%" cellpadding="0" cellspacing="2"><tr>

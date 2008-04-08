@@ -25,7 +25,7 @@
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:portable-threads</code>
 </p>
-<p><span class="fndoclabel">Arguments</span><table class="tight">
+<p><span class="fndoclabel">Arguments</span><table class="tighttop">
 <tr valign="top"><td valign="baseline"><i>lock</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#gl:lock">lock</a>, a <a href="ref-glossary.html#id151">recursive&nbsp;lock</a>, or a 
 <a href="ref-glossary.html#id22">condition&nbsp;variable</a>
 </td></tr></table>
@@ -39,16 +39,14 @@
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-with-lock-held.html"><b>with-lock-held</b></a>
 </p>
 <a name="id1"></a><p><span class="fndoclabel">Examples</span> <br />Two simple examples using a <a href="ref-glossary.html#gl:lock">lock</a>:
-</p>
-<pre>
+<pre class="pretop">
 &gt; (thread-holds-lock-p lock)
 nil
 &gt; (<a href="ref-with-lock-held.html">with-lock-held</a> (lock)
     (thread-holds-lock-p lock))
 t
 </pre>
-<p>Two more simple examples using a <a href="ref-glossary.html#id22">condition&nbsp;variable</a>:
-</p>
+Two more simple examples using a <a href="ref-glossary.html#id22">condition&nbsp;variable</a>:
 <pre>
 &gt; (thread-holds-lock-p condition-variable)
 nil
@@ -56,6 +54,7 @@ nil
     (thread-holds-lock-p condition-variable))
 t
 </pre>
+</p>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
 <table width="100%" cellpadding="0" cellspacing="2"><tr>

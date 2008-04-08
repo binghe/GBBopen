@@ -21,48 +21,27 @@
 </td></tr></table></p>
 <p><span class="fndoclabel">Purpose</span> <br />Determine if a slot meta-object is a <a href="ref-glossary.html#id106">link&nbsp;slot</a>.
 </p>
-<p><span class="fndoclabel">Method signatures</span><table class="tight" width="100%">
-<tr valign="top">
-<td valign="baseline" align="left">
-<nobr>link-slot-p</nobr>
-</td>
-<td valign="baseline">&nbsp; </td>
-<td valign="baseline" align="left" width="99%">
+<p><span class="fndoclabel">Method signatures</span><table class="tighttop" width="100%">
+<tr valign="top"><td valign="baseline" align="left"><nobr>link-slot-p</nobr></td><td valign="baseline">&nbsp; </td><td valign="baseline" align="left" width="99%">
 <code>(</code><var>slot</var> <code>direct-link-definition)</code>
 <i> =&gt; </i> <var>slot</var>
-</td>
-</tr>
-</table>
+</td></tr></table>
 <table class="tight" width="100%">
-<tr valign="top">
-<td valign="baseline" align="left">
-<nobr>link-slot-p</nobr>
-</td>
-<td valign="baseline">&nbsp; </td>
-<td valign="baseline" align="left" width="99%">
+<tr valign="top"><td valign="baseline" align="left"><nobr>link-slot-p</nobr></td><td valign="baseline">&nbsp; </td><td valign="baseline" align="left" width="99%">
 <code>(</code><var>slot</var> <code>effective-link-definition)</code>
 <i> =&gt; </i> <var>slot</var>
-</td>
-</tr>
-</table>
+</td></tr></table>
 <table class="tight" width="100%">
-<tr valign="top">
-<td valign="baseline" align="left">
-<nobr>link-slot-p</nobr>
-</td>
-<td valign="baseline">&nbsp; </td>
-<td valign="baseline" align="left" width="99%">
+<tr valign="top"><td valign="baseline" align="left"><nobr>link-slot-p</nobr></td><td valign="baseline">&nbsp; </td><td valign="baseline" align="left" width="99%">
 <code>(</code><var>slot</var> <code>slot-definition)</code>
 <i> =&gt; </i> <code>nil</code>
-</td>
-</tr>
-</table>
+</td></tr></table>
 </p>
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen</code>
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-core</code>
 </p>
-<p><span class="fndoclabel">Arguments</span><table class="tight">
+<p><span class="fndoclabel">Arguments</span><table class="tighttop">
 <tr valign="top"><td valign="baseline"><i>slot</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A slot meta object
 </td></tr></table>
 </p>
@@ -72,12 +51,12 @@
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-define-unit-class.html"><b>define-unit-class</b></a>
 </p>
 <p><span class="fndoclabel">Example</span> <br />Return the names of the link slots of the <code>hyp</code> <a href="ref-glossary.html#id193">unit&nbsp;class</a>:
-</p>
-<pre>
+<pre class="pretop">
 &gt; (loop for slot in (class-slots (find-class 'hyp)) 
      if (link-slot-p slot) collect (slot-definition-name slot))
 (supporting-hyps supported-hyps)
 </pre>
+</p>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
 <table width="100%" cellpadding="0" cellspacing="2"><tr>

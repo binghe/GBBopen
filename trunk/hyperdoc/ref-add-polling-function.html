@@ -26,7 +26,7 @@ position indicated by <var>priority</var>.
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:polling-functions</code>
 </p>
-<p><span class="fndoclabel">Arguments</span><table class="tight">
+<p><span class="fndoclabel">Arguments</span><table class="tighttop">
 <tr valign="top"><td valign="baseline"><i>function</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#gl:function">function</a> of no arguments
 </td></tr><tr valign="top"><td valign="baseline"><i>priority</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#gl:fixnum">fixnum</a> (default is <code>0</code>)
 </td></tr></table>
@@ -41,11 +41,11 @@ position indicated by <var>priority</var>.
 </p>
 <p><span class="fndoclabel">Example</span> <br />Add the <a href="ref-glossary.html#gl:function">function</a> <code>check-for-new-connection</code> to the list of polling 
 functions (with priority -10):
-</p>
-<pre>
+<pre class="pretop">
   (add-polling-function #'check-for-new-connection
      :priority -10)
 </pre>
+</p>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
 <table width="100%" cellpadding="0" cellspacing="2"><tr>

@@ -39,8 +39,7 @@ scheduler.
 </p>
 <a name="id1"></a><p><span class="fndoclabel">Example</span> <br />Change the invocation time of <a href="ref-glossary.html#id159">scheduled&nbsp;function</a> <code>quitting-time</code>
 from 5pm to 5:30pm with verbose printing enabled:
-</p>
-<pre>
+<pre class="pretop">
 &gt; (setf *schedule-function-verbose* 't)
 t
 &gt; (schedule-function 'quitting-time (<a href="ref-encode-time-of-day.html">encode-time-of-day</a> 17 30 0)
@@ -49,6 +48,7 @@ t
 ;; Scheduling #&lt;scheduled-function quitting-time [17:30:00]&gt; 
    as the next scheduled-function...
 </pre>
+</p>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
 <table width="100%" cellpadding="0" cellspacing="2"><tr>

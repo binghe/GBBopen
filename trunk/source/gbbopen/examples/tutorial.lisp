@@ -1,8 +1,8 @@
 ;;;; -*- Mode:COMMON-LISP; Package:TUTORIAL; Base:10 -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/examples/tutorial.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Mar 25 04:19:46 2008 *-*
-;;;; *-* Machine: cyclone.local *-*
+;;;; *-* Last-Edit: Tue Apr  8 04:59:58 2008 *-*
+;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -142,13 +142,13 @@
 (defun random-walk-ks-function (ksa)
   ;;; Move to the next (random) location in the world
   (let* ((trigger-instance (sole-trigger-instance-of ksa))
-         ;; The new time is one greater than the stimulus instance's time:
+         ;; The new time is one greater than the stimulus's time:
          (time (1+ (time-of trigger-instance))))
     (cond
      ;; If the maximum time value (75) is reached, tell the user we've
      ;; walked too long:
      ((>= time 75) (format t "~2&Walked too long.~%"))
-     (t ;; The new location is +/- 10 of the stimulus instance's location:
+     (t ;; The new location is +/- 10 of the stimulus's location:
       (let ((x (add-linear-variance (x-of trigger-instance) 10))
             (y (add-linear-variance (y-of trigger-instance) 10)))
         (cond
@@ -191,8 +191,8 @@
 ;;;   Print-walk KS
 
 (defun print-walk-ks-function (ksa)
-  ;;; Starting with the initial location instance, print the
-  ;l; instance name and location of the walk
+  ;;; Starting with the initial location instance, print the instance
+  ;;; name and location of the walk
   (format t "~2&The random path:~%")
   (let ((instance (sole-trigger-instance-of ksa)))
     (while instance

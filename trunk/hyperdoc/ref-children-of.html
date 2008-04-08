@@ -21,24 +21,17 @@
 </td></tr></table></p>
 <p><span class="fndoclabel">Purpose</span> <br />Return the child space instances of a <a href="ref-glossary.html#id174">space&nbsp;instance</a>.
 </p>
-<p><span class="fndoclabel">Method signatures</span><table class="tight" width="100%">
-<tr valign="top">
-<td valign="baseline" align="left">
-<nobr>children-of</nobr>
-</td>
-<td valign="baseline">&nbsp; </td>
-<td valign="baseline" align="left" width="99%">
+<p><span class="fndoclabel">Method signatures</span><table class="tighttop" width="100%">
+<tr valign="top"><td valign="baseline" align="left"><nobr>children-of</nobr></td><td valign="baseline">&nbsp; </td><td valign="baseline" align="left" width="99%">
 <code>(</code><var>space-instance</var> <code>root-space-instance)</code>
 <i> =&gt; </i> <var>space-instances</var>
-</td>
-</tr>
-</table>
+</td></tr></table>
 </p>
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen</code>
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-core</code>
 </p>
-<p><span class="fndoclabel">Arguments</span><table class="tight">
+<p><span class="fndoclabel">Arguments</span><table class="tighttop">
 <tr valign="top"><td valign="baseline"><i>space-instance</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id174">space&nbsp;instance</a>
 </td></tr></table>
 </p>
@@ -49,13 +42,13 @@
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-parent-of.html"><b>parent-of</b></a>
 </p>
 <p><span class="fndoclabel">Example</span> <br /><a name="id1">Return</a> the child space instances  of the <code>(bb)</code> <a href="ref-glossary.html#id174">space&nbsp;instance</a>:
-</p>
-<pre>
+<pre class="pretop">
 &gt; (children-of (<a href="ref-find-space-instance-by-path.html">find-space-instance-by-path</a> '(bb))
 (#&lt;standard-space-instance (bb hyps)&gt;
  #&lt;standard-space-instance (bb probable-hyps)&gt;
  #&lt;standard-space-instance (bb rejected-hyps)&gt;)
 </pre>
+</p>
 <p><span class="fndoclabel">Note</span> <br />The returned list of child <a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a> should not be
 destructively altered.
 </p>

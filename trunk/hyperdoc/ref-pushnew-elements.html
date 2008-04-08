@@ -27,7 +27,7 @@
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-tools</code>
 </p>
-<p><span class="fndoclabel">Arguments</span><table class="tight">
+<p><span class="fndoclabel">Arguments</span><table class="tighttop">
 <tr valign="top"><td valign="baseline"><i>list</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id137">proper&nbsp;list</a>
 </td></tr><tr valign="top"><td valign="baseline"><i>place</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A form which is suitable for use as a
 <a href="ref-glossary.html#id79">generalized&nbsp;reference</a> 
@@ -45,8 +45,7 @@ already present in the <a href="ref-glossary.html#id137">proper&nbsp;list</a> st
 the element is not already present, it is prepended to the list stored
 in <var>place</var>.
 </p>
-<p><span class="fndoclabel">Examples</span> <br /></p>
-<pre>
+<p><span class="fndoclabel">Examples</span> <br /><pre class="pretop">
 &gt; (setf x '(1 3 5))
 (1 3 5)
 &gt; (pushnew-elements '(1 2 3) x)
@@ -54,6 +53,7 @@ in <var>place</var>.
 &gt; (pushnew-elements '(3 4 5) x)
 (4 2 1 3 5)
 </pre>
+</p>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
 <table width="100%" cellpadding="0" cellspacing="2"><tr>

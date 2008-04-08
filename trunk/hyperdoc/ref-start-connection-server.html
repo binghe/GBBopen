@@ -27,7 +27,7 @@ and processes them according to <var>function</var>.
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:portable-sockets</code>
 </p>
-<p><span class="fndoclabel">Arguments</span><table class="tight">
+<p><span class="fndoclabel">Arguments</span><table class="tighttop">
 <tr valign="top"><td valign="baseline"><i>function</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#gl:function">function</a> of one argument
 </td></tr><tr valign="top"><td valign="baseline"><i>port</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An integer or a string specifying the service port
 </td></tr><tr valign="top"><td valign="baseline"><i>backlog</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An integer (default is 5)
@@ -60,8 +60,7 @@ still awaiting an <b><a href="ref-accept-connection.html">accept-connection</a><
 </p>
 <p><span class="fndoclabel">Example</span> <br />Start a simple connection server that accepts connections on port
 5555, reads one line of input, and closes the connection:
-</p>
-<pre>
+<pre class="pretop">
 &gt; (start-connection-server
      #'(lambda (connection)
           (let ((line (read-line connection nil)))
@@ -70,6 +69,7 @@ still awaiting an <b><a href="ref-accept-connection.html">accept-connection</a><
      5555)
 #&lt;thread Connection Server&gt;
 </pre>
+</p>
 <a name="id2"></a><p><span class="fndoclabel">Note</span> <br />Use <b><a href="ref-kill-thread.html">kill-thread</a></b> to kill the connection-server thread.
 </p>
 <hr /><address><a target="_top" class="address"

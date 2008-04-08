@@ -27,7 +27,7 @@ time-of-day.
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:portable-threads</code>
 </p>
-<p><span class="fndoclabel">Arguments</span><table class="tight">
+<p><span class="fndoclabel">Arguments</span><table class="tighttop">
 <tr valign="top"><td valign="baseline"><i>hour</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An integer between 0 and 23, inclusive
 </td></tr><tr valign="top"><td valign="baseline"><i>minute</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An integer between 0 and 59, inclusive
 </td></tr><tr valign="top"><td valign="baseline"><i>second</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An integer between 0 and 59, inclusive
@@ -44,8 +44,7 @@ the <var>universal-time</var> value), the next day is assumed.
 </p>
 <a name="id1"></a><p><span class="fndoclabel">Examples</span> <br />Schedule a <a href="ref-glossary.html#id159">scheduled&nbsp;function</a> that prints <code>"It's quitting time!"</code> 
 every day at 5pm:
-</p>
-<pre>
+<pre class="pretop">
 &gt; (<a href="ref-schedule-function.html">schedule-function</a>
     (<a href="ref-make-scheduled-function.html">make-scheduled-function</a>
       #'(lambda (scheduled-function)
@@ -54,9 +53,9 @@ every day at 5pm:
       :name 'quitting-time)
      (encode-time-of-day 17 0 0) :repeat-interval #.(* 24 60 60))
 </pre>
-<p><a name="id2">Verbosely</a> change <code>quitting-time</code> to 5:30pm every day:
 </p>
-<pre>
+<p><a name="id2">Verbosely</a> change <code>quitting-time</code> to 5:30pm every day:
+<pre class="pretop">
 &gt; (<a href="ref-schedule-function.html">schedule-function</a> 'quitting-time (encode-time-of-day 17 30 0)
     :repeat-interval #.(* 24 60 60)
     :verbose 't)
@@ -64,6 +63,7 @@ every day at 5pm:
 ;; Scheduling #&lt;scheduled-function quitting-time [17:30:00]&gt; 
    as the next scheduled-function...
 </pre>
+</p>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
 <table width="100%" cellpadding="0" cellspacing="2"><tr>

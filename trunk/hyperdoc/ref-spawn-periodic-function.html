@@ -27,7 +27,7 @@
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:portable-threads</code>
 </p>
-<p><span class="fndoclabel">Arguments</span><table class="tight">
+<p><span class="fndoclabel">Arguments</span><table class="tighttop">
 <tr valign="top"><td valign="baseline"><i>function</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#gl:function">function</a> of no arguments
 </td></tr><tr valign="top"><td valign="baseline"><i>repeat-interval</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A number (representing seconds)
 </td></tr><tr valign="top"><td valign="baseline"><i>count</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A number or <code>nil</code> (default is <code>nil</code>)
@@ -61,8 +61,7 @@ negative, the <a href="ref-glossary.html#id133">periodic&nbsp;function</a> is te
 </p>
 <p><span class="fndoclabel">Examples</span> <br />Spawn a simple <a href="ref-glossary.html#id133">periodic&nbsp;function</a> that is invoked every 0.1 seconds,
 but that only runs twice:
-</p>
-<pre>
+<pre class="pretop">
 &gt; (spawn-periodic-function #'(lambda () (print "Hello!")) 0.1 
     :name 'hello
     :count 2)
@@ -71,10 +70,9 @@ but that only runs twice:
 "Hello!" 
 "Hello!" 
 </pre>
-<p><a name="id1">Spawn</a> a simple <a href="ref-glossary.html#id133">periodic&nbsp;function</a> that is invoked every 0.1 seconds
+<a name="id1">Spawn</a> a simple <a href="ref-glossary.html#id133">periodic&nbsp;function</a> that is invoked every 0.1 seconds
 that runs up to 20 times, but with a 10&#37; chance on each invocation of
 terminating early:
-</p>
 <pre>
 &gt; (spawn-periodic-function 
      #'(lambda ()
@@ -93,12 +91,10 @@ terminating early:
 "Hello!" 
 ;; Killing periodic-function...
 ;; Exiting periodic-function thread
-
 </pre>
-<p><a name="id2">Define</a> and spawn a <a href="ref-glossary.html#id133">periodic&nbsp;function</a> that is invoked every 0.5 seconds
+<a name="id2">Define</a> and spawn a <a href="ref-glossary.html#id133">periodic&nbsp;function</a> that is invoked every 0.5 seconds
 to signal a <code>half-second-interrupt-event</code>, continuing as long as the
 control shell is running:
-</p>
 <pre>
 &gt; (<a href="ref-define-event-class.html">define-event-class</a> half-second-timer-event (timer-interrupt-event)
     ())
@@ -111,6 +107,7 @@ half-second-timer
 &gt; (spawn-periodic-function 'half-second-timer 0.5)
 #&lt;thread Periodic Function half-second-timer&gt;
 </pre>
+</p>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
 <table width="100%" cellpadding="0" cellspacing="2"><tr>

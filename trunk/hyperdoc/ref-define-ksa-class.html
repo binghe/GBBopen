@@ -28,7 +28,7 @@
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:agenda-shell</code>
 </p>
-<p><span class="fndoclabel">Arguments</span><table class="tight">
+<p><span class="fndoclabel">Arguments</span><table class="tighttop">
 <tr valign="top"><td valign="baseline"><i>ksa-class-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A non-<code>nil</code>, non-keyword symbol that names the
 <a href="ref-glossary.html#id102">ksa&nbsp;class</a> 
 </td></tr><tr valign="top"><td valign="baseline"><i>superclass-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A non-<code>nil</code>, non-keyword symbol that specifies a
@@ -43,7 +43,8 @@ direct superclass of the <a href="ref-glossary.html#id102">ksa&nbsp;class</a> <v
 <p><span class="fndoclabel">Errors</span> <br />The specified <var>superclass-names</var> do not include at least
 one <a href="ref-glossary.html#id102">ksa&nbsp;class</a> name.  This error is signaled on class finalization.
 </p>
-<p><span class="fndoclabel">Detailed syntax</span></p>
+<p><table class="tighttop" width="100%"></table>
+<span class="fndoclabel">Detailed syntax</span></p>
 <table class="tight"><table><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>slot-specifier</var>&nbsp;::=
@@ -165,7 +166,7 @@ one <a href="ref-glossary.html#id102">ksa&nbsp;class</a> name.  This error is si
 <td valign="baseline" colspan="1" align="left">
 <var>dimensional-value-specifier</var>&nbsp;::=
 </td><td valign="baseline" colspan="1" align="left"> <var>incomposite-dv-specifier</var> |
-<font color="#666666"><var>composite-dv-specifier</var></font> </td></tr>
+<font color="#667f66"><var>composite-dv-specifier</var></font> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
 <table class="tight"><table><tbody><tr>
@@ -175,7 +176,7 @@ one <a href="ref-glossary.html#id102">ksa&nbsp;class</a> name.  This error is si
 dimension-value-place</var><code>)</code> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
-<font color="#666666"><table class="tight"><table><tbody><tr>
+<font color="#667f66"><table class="tight"><table><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>composite-dv-specifier</var>&nbsp;::=
 </td><td valign="baseline" colspan="1" align="left"> <code>(</code><var>dimension-name dimension-value-specifier</var> </td></tr>
@@ -183,7 +184,7 @@ dimension-value-place</var><code>)</code> </td></tr>
 <td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> &nbsp; <var>composite-type dimension-value-place</var><code>)</code> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
-</font><font color="#666666"><table class="tight"><table><tbody><tr>
+</font><font color="#667f66"><table class="tight"><table><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>composite-type</var>&nbsp;::=
 </td><td valign="baseline" colspan="1" align="left"> <code>:set</code> | <code>:sequence</code> | </td></tr>
@@ -281,7 +282,7 @@ The default <var>boolean-comparison-type</var> is <code>t</code>.
 <var>slot-names</var> is allowed only for an <code>:interval</code> dimension-value
 specification.
 </p>
-<p><span class="fndoclabel">Terms</span><table class="tight">
+<p><span class="fndoclabel">Terms</span><table class="tighttop">
 <tr valign="top"><td valign="baseline"><i>class-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A non-<code>nil</code>, non-keyword symbol that names a
 <a href="ref-glossary.html#gl:class">class</a> 
 </td></tr><tr valign="top"><td valign="baseline"><i>initarg-list</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An <a href="ref-glossary.html#id85">initialization&nbsp;argument&nbsp;list</a>
@@ -334,14 +335,12 @@ value.
 <code>ksa-with-lock</code>, that has an additional <a href="ref-glossary.html#gl:slot">slot</a>
 containing a <a href="ref-glossary.html#gl:lock">lock</a> that can be used to synchronize
 operations on each <a href="ref-glossary.html#gl:activations">KSA</a> of that class.
-</p>
-<pre>
+<pre class="pretop">
 &gt; (define-ksa-class ksa-with-lock ()
     ((lock :initform (<a href="ref-make-lock.html">make-lock</a> :name "KSA Lock"))))
 #&lt;standard-ksa-class ksa-with-lock&gt;
 </pre>
-<p>Do the same, but with a mixin class:
-</p>
+Do the same, but with a mixin class:
 <pre>
 &gt; (define-unit-class lock-mixin (ks my-mixin)
     ((lock :initform (<a href="ref-make-lock.html">make-lock</a> :name "KS Lock"))))
@@ -350,6 +349,7 @@ operations on each <a href="ref-glossary.html#gl:activations">KSA</a> of that cl
     ())
 #&lt;standard-ksa-class ksa-with-lock&gt;
 </pre>
+</p>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
 <table width="100%" cellpadding="0" cellspacing="2"><tr>

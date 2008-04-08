@@ -30,7 +30,7 @@
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-core</code>
 </p>
-<p><span class="fndoclabel">Arguments</span><table class="tight">
+<p><span class="fndoclabel">Arguments</span><table class="tighttop">
 <tr valign="top"><td valign="baseline"><i>unit-instance</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id195">unit&nbsp;instance</a>
 </td></tr><tr valign="top"><td valign="baseline"><i>dimension-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A symbol specifying a <a href="ref-glossary.html#gl:dimension">dimension</a> of
 <var>unit-instance</var> 
@@ -56,19 +56,19 @@ potentially changed by <var>forms</var>.
 </p>
 <p><span class="fndoclabel">Examples</span> <br />Notify GBBopen that the <code>x</code>, <code>y</code>, and <code>belief</code>
 dimension values of <code>hyp</code> might be changed:
-</p>
-<pre>
+<pre class="pretop">
 &gt; (with-changing-dimension-values (hyp x y belief)
     (setf (location-of hyp) '(30 40))
     (setf (belief-of hyp) 0.78))
 </pre>
-<p>Notify GBBopen that some dimension values of <code>hyp</code> might be changed:
-</p>
+Notify GBBopen that <i>some</i> dimension values of <code>hyp</code> might be
+changed:
 <pre>
 &gt; (with-changing-dimension-values (hyp)
     (setf (location-of hyp) '(36 52))
     (incf (belief-of hyp) 0.05))
 </pre>
+</p>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
 <table width="100%" cellpadding="0" cellspacing="2"><tr>

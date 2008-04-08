@@ -26,7 +26,7 @@
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:portable-sockets</code>
 </p>
-<p><span class="fndoclabel">Arguments</span><table class="tight">
+<p><span class="fndoclabel">Arguments</span><table class="tighttop">
 <tr valign="top"><td valign="baseline"><i>port</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An integer or a string specifying the service port
 </td></tr><tr valign="top"><td valign="baseline"><i>backlog</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An integer (default is 5)
 </td></tr><tr valign="top"><td valign="baseline"><i>interface</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A 32-bit internet address or a string specifying a network 
@@ -47,11 +47,11 @@ still awaiting an <b><a href="ref-accept-connection.html">accept-connection</a><
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-start-connection-server.html"><b>start-connection-server</b></a>
 </p>
 <p><span class="fndoclabel">Example</span> <br />Create a passive socket, listening on port 5555:
-</p>
-<pre>
+<pre class="pretop">
 &gt; (make-passive-socket 5555)
 #&lt;passive socket waiting for connection at */5555&gt;
 </pre>
+</p>
 <a name="id1"></a><p><span class="fndoclabel">Note</span> <br />The passive socket should be closed using
 <b><a href="ref-close-passive-socket.html">close-passive-socket</a></b> when the service is no longer
 needed in order to free up operating system resources.

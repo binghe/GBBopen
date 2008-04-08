@@ -22,7 +22,7 @@
 <p><span class="fndoclabel">Purpose</span> <br />Determine if the specified <a href="ref-glossary.html#gl:KSs">KS</a> is enabled for
 execution
 </p>
-<p><span class="fndoclabel">Setf syntax</span><table class="tight" width="100%">
+<p><span class="fndoclabel">Setf syntax</span><table class="tighttop" width="100%">
 <tr valign="top">
 <td valign="baseline" align="left">
 <nobr>(setf (ks-enabled-p</nobr>
@@ -34,36 +34,22 @@ execution
 </tr>
 </table>
 </p>
-<p><span class="fndoclabel">Method signatures</span><table class="tight" width="100%">
-<tr valign="top">
-<td valign="baseline" align="left">
-<nobr>ks-enabled-p</nobr>
-</td>
-<td valign="baseline">&nbsp; </td>
-<td valign="baseline" align="left" width="99%">
+<p><span class="fndoclabel">Method signatures</span><table class="tighttop" width="100%">
+<tr valign="top"><td valign="baseline" align="left"><nobr>ks-enabled-p</nobr></td><td valign="baseline">&nbsp; </td><td valign="baseline" align="left" width="99%">
 <code>(</code><var>ks</var> <code>ks)</code> 
 <i> =&gt; </i> <var>boolean</var>
-</td>
-</tr>
-</table>
+</td></tr></table>
 <table class="tight" width="100%">
-<tr valign="top">
-<td valign="baseline" align="left">
-<nobr>(setf ks-enabled-p)</nobr>
-</td>
-<td valign="baseline">&nbsp; </td>
-<td valign="baseline" align="left" width="99%">
+<tr valign="top"><td valign="baseline" align="left"><nobr>(setf ks-enabled-p)</nobr></td><td valign="baseline">&nbsp; </td><td valign="baseline" align="left" width="99%">
 <var>boolean</var> <code>(</code><var>ks</var> <code>ks)</code>
 <i> =&gt; </i> <var>boolean</var>
-</td>
-</tr>
-</table> 
+</td></tr></table> 
 </p>
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:agenda-shell</code>
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:agenda-shell</code>
 </p>
-<p><span class="fndoclabel">Arguments</span><table class="tight">
+<p><span class="fndoclabel">Arguments</span><table class="tighttop">
 <tr valign="top"><td valign="baseline"><i>ks</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#gl:KSs">KS</a>
 </td></tr><tr valign="top"><td valign="baseline"><i>boolean</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id77">generalized&nbsp;boolean</a>
 </td></tr></table>
@@ -79,22 +65,20 @@ execution
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-undefine-ks.html"><b>undefine-ks</b></a>
 </p>
 <p><span class="fndoclabel">Examples</span> <br />See if <a href="ref-glossary.html#gl:KSs">KS</a> <var>ks</var> is enabled for execution:
-</p>
-<pre>
+<pre class="pretop">
 &gt; (ks-enabled-p ks)
 t
 </pre>
-<p>Now disable <a href="ref-glossary.html#gl:KSs">KS</a> <code>ks</code>:
-</p>
+Now disable <a href="ref-glossary.html#gl:KSs">KS</a> <code>ks</code>:
 <pre>
   (setf (ks-enabled-p ks) nil)
 </pre>
-<p>Check once again:
-</p>
+Check once again:
 <pre>
 &gt; (ks-enabled-p ks)
 nil
 </pre>
+</p>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
 <table width="100%" cellpadding="0" cellspacing="2"><tr>

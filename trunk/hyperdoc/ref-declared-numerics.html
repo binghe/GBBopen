@@ -56,15 +56,14 @@ characters:
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
 <p>Some examples of declared-numeric macros include:
-</p>
-<pre>
+<pre class="pretop">
   (&#38; x) $ ==&gt; $ (the fixnum x)
   (+&#38; x y) $ ==&gt; $ (the fixnum (+ (the fixnum x) (the fixnum y))
   (&gt;&#36; a b) $ ==&gt; $ (&gt; (the single-float a) (the single-float b))
   (minusp$$ value) $ ==&gt; $ (minusp (the double-float value))
   (truncate&#38; x y)) $ ==&gt; $ (the (values fixnum fixnum) (truncate (&amp; x) (&amp; y)))
 </pre>
-<p>The complete set of macros for each declared numeric type are listed in the
+The complete set of macros for each declared numeric type are listed in the
 following sections.
 </p>
 <p><span class="fndoclabel">Notes</span> <br /><a name="id1">Most</a> Common Lisp implementations map double-float numbers to the

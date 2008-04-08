@@ -54,8 +54,8 @@ This exercise shows you how to:
 <h2><a name="id1">Prerequisites</a></h2><p>
 If you ended the Common Lisp session used in the last exercise, begin a new
 session and evaluate the following forms:
-</p>
-<pre><font color="#666666">  cl-user&gt; <font color="#000000">(load "<var>&lt;install-dir&gt;</var>/startup.lisp")</font>
+<pre class="pretop">
+<font color="#667f66">  cl-user&gt; <font color="#000000">(load "<var>&lt;install-dir&gt;</var>/startup.lisp")</font>
      ...
   cl-user&gt; <font color="#000000">(mini-module:compile-module :gbbopen-user :propagate :create-dirs)</font>
      ...
@@ -66,24 +66,27 @@ session and evaluate the following forms:
   #&lt;location&gt;
   gbbopen-user&gt; <font color="#000000">(defparameter ui (make-instance 'location :x 40 :y 60))</font>
   ui
-  gbbopen-user&gt;
-</pre></font>
+  gbbopen-user&gt;</font>
+</pre>
+</p>
 <h2><a name="id2">Step 1: Create a space instance</a></h2><p>
 Create a <i>space instance</i> named <code>known-world</code>.  To simplify
 access to the space instance during subsequent activities, first define a
 global variable called <code>si</code> by entering the following form:
-</p>
-<pre><font color="#666666">  gbbopen-user&gt; <font color="#000000">(defvar si)</font>
+<pre class="pretop">
+<font color="#667f66">  gbbopen-user&gt; <font color="#000000">(defvar si)</font>
   si
-  gbbopen-user&gt;
-</pre></font>
+  gbbopen-user&gt;</font>
+</pre>
+</p>
 <p><a name="id3">Now,</a> create the space instance and assign it to the variable <code>si</code> by
 entering the form:
-</p>
-<pre><font color="#666666">  gbbopen-user&gt; <font color="#000000">(setf si (make-space-instance '(known-world)))</font>
+<pre class="pretop">
+<font color="#667f66">  gbbopen-user&gt; <font color="#000000">(setf si (make-space-instance '(known-world)))</font>
   #&lt;standard-space-instance (known-world)&gt;
-  gbbopen-user&gt;
-</pre></font>
+  gbbopen-user&gt;</font>
+</pre>
+</p>
 <p>The argument to the <b>make-space-instance</b> is the &#8220;path&#8221; to be used
 for the created space instance.  A <i>space-instance path</i> is the
 complete list of space-instance names, starting with the name of the most
@@ -94,8 +97,8 @@ so its path is simply <code>(known-world)</code>.
 <h2><a name="id4">Step 2: Display a description of the blackboard repository</a></h2><p>
 Display a description of the blackboard repository, which now contains the
 <code>known-world</code> space instance:
-</p>
-<pre><font color="#666666">  gbbopen-user&gt; <font color="#000000">(describe-blackboard-repository)</font>
+<pre class="pretop">
+<font color="#667f66">  gbbopen-user&gt; <font color="#000000">(describe-blackboard-repository)</font>
   
   Space Instance                Contents
   --------------                --------
@@ -107,8 +110,9 @@ Display a description of the blackboard repository, which now contains the
   standard-space-instance               1
                                 ---------
                                         2 instances
-  gbbopen-user&gt;
-</pre></font>
+  gbbopen-user&gt;</font>
+</pre>
+</p>
 <p>The description indicates that:
 </p>
 <p><ul class="tight"><li>One space instance, <code>known-world</code>, exists in the repository
@@ -123,11 +127,12 @@ on any space instance
 </p>
 <h2><a name="id5">Step 3: Find a space instance by its path</a></h2><p>
 You can look up a particular space instance by its space-instance path:
-</p>
-<pre><font color="#666666">  gbbopen-user&gt; <font color="#000000">(find-space-instance-by-path '(known-world))</font>
+<pre class="pretop">
+<font color="#667f66">  gbbopen-user&gt; <font color="#000000">(find-space-instance-by-path '(known-world))</font>
   #&lt;standard-space-instance (known-world)&gt;
-  gbbopen-user&gt;
-</pre></font>
+  gbbopen-user&gt;</font>
+</pre>
+</p>
 <p>We assigned the <code>known-world</code> space instance to the global variable
 <code>si</code>, but it is nice to know that we can always find it again using its
 path.
@@ -135,15 +140,16 @@ path.
 <h2><a name="id6">Step 4: Add the unit instance to the space instance</a></h2><p>
 Now, add the <code>location</code> unit instance to the space instance.
 Enter the following form:
-</p>
-<pre><font color="#666666">  gbbopen-user&gt; <font color="#000000">(add-instance-to-space-instance ui si)</font>
+<pre class="pretop">
+<font color="#667f66">  gbbopen-user&gt; <font color="#000000">(add-instance-to-space-instance ui si)</font>
   #&lt;location 1&gt;
-  gbbopen-user&gt;
-</pre></font>
+  gbbopen-user&gt;</font>
+</pre>
+</p>
 <h2><a name="id7">Step 5: Again, display the blackboard-repository description</a></h2><p>
 Display the description of the blackboard repository again:
-</p>
-<pre><font color="#666666">  gbbopen-user&gt; <font color="#000000">(describe-blackboard-repository)</font>
+<pre class="pretop">
+<font color="#667f66">  gbbopen-user&gt; <font color="#000000">(describe-blackboard-repository)</font>
   
   Space Instance                Contents
   --------------                --------
@@ -155,16 +161,17 @@ Display the description of the blackboard repository again:
   standard-space-instance               1
                                 ---------
                                         2 instances
-  gbbopen-user&gt;
-</pre></font>
+  gbbopen-user&gt;</font>
+</pre>
+</p>
 <p>This time the description indicates that the <code>known-world</code> space instance
 has one instance of the <code>location</code> unit class stored on it.
 </p>
 <h2><a name="id8">Step 6: Display the description of the unit instance</a></h2><p>
 Display the description of the <code>location</code> unit instance once again,
 observing the change in the space instances from the last exercise:
-</p>
-<pre><font color="#666666">  gbbopen-user&gt; <font color="#000000">(describe-instance ui)</font>
+<pre class="pretop">
+<font color="#667f66">  gbbopen-user&gt; <font color="#000000">(describe-instance ui)</font>
   Location #&lt;location 1&gt;
     Instance name: 1
     Space instances: ((known-world))
@@ -173,19 +180,20 @@ observing the change in the space instances from the last exercise:
       x:  50
       y:  60
     Link slots: None
-  gbbopen-user&gt;
-</pre></font>
+  gbbopen-user&gt;</font>
+</pre>
+</p>
 <h2><a name="id9">Step 7: Find the unit instance on the space instance</a></h2><p>
 Now that the <code>location</code> unit instance is on the <code>known-world</code> space
 instance, we can find it on the space instance. The form is as follows,
 where <code>:all</code> is a very basic retrieval pattern specifying that all unit
 instances on the <code>known-world</code> space instance are to be returned:
-</p>
-<pre><font color="#666666">  gbbopen-user&gt; <font color="#000000">(find-instances 'location '(known-world) :all)</font>
+<pre class="pretop">
+<font color="#667f66">  gbbopen-user&gt; <font color="#000000">(find-instances 'location '(known-world) :all)</font>
   (#&lt;location 1&gt;)
-  gbbopen-user&gt;
-</pre></font>
-<p>The list of found unit instances is returned. (In this case, there is only one
+  gbbopen-user&gt;</font>
+</pre>
+The list of found unit instances is returned. (In this case, there is only one
 in the list.)
 </p>
 <p>This is a very simple retrieval; however, GBBopen can perform extremely
@@ -196,31 +204,34 @@ upcoming exercises.
 Create a second instance of the <code>location</code> unit class, with <code>x</code> and
 <code>y</code> slot values 80 and 90, respectively, and add it to the
 <code>known-world</code> space instance:
-</p>
-<pre><font color="#666666">  gbbopen-user&gt; <font color="#000000">(add-instance-to-space-instance 
+<pre class="pretop">
+<font color="#667f66">  gbbopen-user&gt; <font color="#000000">(add-instance-to-space-instance 
                    (make-instance 'location :x 80 :y 90)
                    si)</font>
   #&lt;location 2&gt;
-  gbbopen-user&gt;
-</pre></font>
+  gbbopen-user&gt;</font>
+</pre>
+</p>
 <p><a name="id11">This</a> time we did not assign the new <code>location</code> unit instance to a global
 variable but, as before, we can find the unit instance by its name:
-</p>
-<pre><font color="#666666">  gbbopen-user&gt; <font color="#000000">(find-instance-by-name 2 'location)</font>
+<pre class="pretop">
+<font color="#667f66">  gbbopen-user&gt; <font color="#000000">(find-instance-by-name 2 'location)</font>
   #&lt;location 2&gt;
-  gbbopen-user&gt;
-</pre></font>
+  gbbopen-user&gt;</font>
+</pre>
+</p>
 <p><a name="id12">As</a> you would expect, we can retrieve both <code>location</code> unit instances from the
 <code>known-world</code> space instance using <b>find-instances</b>:
-</p>
-<pre><font color="#666666">  gbbopen-user&gt; <font color="#000000">(find-instances 'location '(known-world) :all)</font>
+<pre class="pretop">
+<font color="#667f66">  gbbopen-user&gt; <font color="#000000">(find-instances 'location '(known-world) :all)</font>
   (#&lt;location 2&gt; #&lt;location 1&gt;)
-  gbbopen-user&gt;
-</pre></font>
+  gbbopen-user&gt;</font>
+</pre>
+</p>
 <h2><a name="id13">Step 9: Again, display the blackboard-repository description</a></h2><p>
 Display the description of the blackboard repository again:
-</p>
-<pre><font color="#666666">  gbbopen-user&gt; <font color="#000000">(describe-blackboard-repository)</font>
+<pre class="pretop">
+<font color="#667f66">  gbbopen-user&gt; <font color="#000000">(describe-blackboard-repository)</font>
   
   Space Instance                Contents
   --------------                --------
@@ -232,29 +243,30 @@ Display the description of the blackboard repository again:
   standard-space-instance               1
                                 ---------
                                         3 instances
-  gbbopen-user&gt;
-</pre></font>
+  gbbopen-user&gt;</font>
+</pre>
+</p>
 <p>This time the description indicates that the <code>known-world</code> space instance
 has both instances of the <code>location</code> unit class stored on it.
 </p>
 <h2><a name="id14">Step 10:  Remove a unit instance from the space instance</a></h2><p>
 Now, remove the first <code>location</code> unit instance from the
 <code>known-world</code> space instance.  Enter the following form:
-</p>
-<pre><font color="#666666">  gbbopen-user&gt; <font color="#000000">(remove-instance-from-space-instance ui si)</font>
+<pre class="pretop">
+<font color="#667f66">  gbbopen-user&gt; <font color="#000000">(remove-instance-from-space-instance ui si)</font>
   #&lt;location 1&gt;
-  gbbopen-user&gt;
-</pre></font>
-<p><a name="id15">As</a> you would expect, only the second <code>location</code> unit instance remains on the
+  gbbopen-user&gt;</font>
+</pre>
+<a name="id15">As</a> you would expect, only the second <code>location</code> unit instance remains on the
 <code>known-world</code> space instance:
-</p>
-<pre><font color="#666666">  gbbopen-user&gt; <font color="#000000">(find-instances 'location '(known-world) :all)</font>
+<pre>
+<font color="#667f66">  gbbopen-user&gt; <font color="#000000">(find-instances 'location '(known-world) :all)</font>
   (#&lt;location 2&gt;)
-  gbbopen-user&gt;
-</pre></font>
-<p>and describing the <code>location</code> unit instance confirms this:
-</p>
-<pre><font color="#666666">  gbbopen-user&gt; <font color="#000000">(describe-instance ui)</font>
+  gbbopen-user&gt;</font>
+</pre>
+and describing the <code>location</code> unit instance confirms this:
+<pre>
+<font color="#667f66">  gbbopen-user&gt; <font color="#000000">(describe-instance ui)</font>
   Location #&lt;location 1&gt;
     Instance name: 1
     Space instances: None
@@ -263,8 +275,9 @@ Now, remove the first <code>location</code> unit instance from the
       x:  50
       y:  60
     Link slots: None
-  gbbopen-user&gt;
-</pre></font>
+  gbbopen-user&gt;</font>
+</pre>
+</p>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
 <table width="100%" cellpadding="0" cellspacing="2"><tr>

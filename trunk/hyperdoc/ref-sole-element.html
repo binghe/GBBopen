@@ -25,7 +25,7 @@
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-tools</code>
 </p>
-<p><span class="fndoclabel">Arguments</span><table class="tight">
+<p><span class="fndoclabel">Arguments</span><table class="tighttop">
 <tr valign="top"><td valign="baseline"><i>list</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id137">proper&nbsp;list</a>
 </td></tr></table>
 </p>
@@ -45,8 +45,7 @@ used on the results of calling <b><a href="ref-find-instances.html">find-instanc
 <b><a href="ref-filter-instances.html">filter-instances</a></b> when only a single
 <a href="ref-glossary.html#id195">unit&nbsp;instance</a> is expected in the result list.
 </p>
-<p><span class="fndoclabel">Examples</span> <br /></p>
-<pre>
+<p><span class="fndoclabel">Examples</span> <br /><pre class="pretop">
 &gt; (sole-element '(a))
 a
 &gt; (sole-element nil)
@@ -55,6 +54,7 @@ nil
 Error: The list (a b) contains more than 1 element.
        If continued - Ignore the remaining elements.
 </pre>
+</p>
 <p><span class="fndoclabel">Note</span> <br />This function is compiled in-line for top performance.
 </p>
 <hr /><address><a target="_top" class="address"

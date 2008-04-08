@@ -26,15 +26,14 @@ already a list.
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-tools</code>
 </p>
-<p><span class="fndoclabel">Arguments</span><table class="tight">
+<p><span class="fndoclabel">Arguments</span><table class="tighttop">
 <tr valign="top"><td valign="baseline"><i>object</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An object
 </td></tr></table>
 </p>
 <p><span class="fndoclabel">Returns</span> <br />The <var>object</var> if it is a list or, if <var>object</var> is
 an atom, a newly consed list containing <var>object</var> as its sole element.
 </p>
-<p><span class="fndoclabel">Examples</span> <br /></p>
-<pre>
+<p><span class="fndoclabel">Examples</span> <br /><pre class="pretop">
 &gt; (ensure-list 'x)
 (x)
 &gt; (ensure-list '(x))
@@ -42,6 +41,7 @@ an atom, a newly consed list containing <var>object</var> as its sole element.
 &gt; (ensure-list nil)
 nil
 </pre>
+</p>
 <p><span class="fndoclabel">Note</span> <br />This function is compiled in-line for top performance.
 </p>
 <hr /><address><a target="_top" class="address"

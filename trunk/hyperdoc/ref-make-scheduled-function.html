@@ -26,7 +26,7 @@
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:portable-threads</code>
 </p>
-<p><span class="fndoclabel">Arguments</span><table class="tight">
+<p><span class="fndoclabel">Arguments</span><table class="tighttop">
 <tr valign="top"><td valign="baseline"><i>function</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#gl:function">function</a> of one argument
 </td></tr><tr valign="top"><td valign="baseline"><i>name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An object (typically a string or a symbol; default is
 <var>function</var>, if <var>function</var> is a symbol, otherwise <code>nil</code>)
@@ -52,9 +52,9 @@ so as to avoid delaying the invocation of a subsequent
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-spawn-periodic-function.html"><b>spawn-periodic-function</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-unschedule-function.html"><b>unschedule-function</b></a>
 </p>
-<p><span class="fndoclabel">Examples</span> <br />Create a <a href="ref-glossary.html#id159">scheduled&nbsp;function</a> that simply prints <code>"Hello"</code> when invoked:
-</p>
-<pre>
+<p><span class="fndoclabel">Examples</span> <br />Create a <a href="ref-glossary.html#id159">scheduled&nbsp;function</a> that simply prints <code>"Hello"</code> when
+invoked:
+<pre class="pretop">
 &gt; (make-scheduled-function 
     #'(lambda (scheduled-function)
         (declare (ignore scheduled-function))
@@ -62,10 +62,11 @@ so as to avoid delaying the invocation of a subsequent
     :name 'hello)
 #&lt;scheduled-function hello [unscheduled]&gt;
 </pre>
-<p><a name="id1">A</a> more complex <a href="ref-glossary.html#id159">scheduled&nbsp;function</a> that spawns a new <a href="ref-glossary.html#gl:thread">thread</a> to do its
-work and randomly sets whether to reschedule itself (and at what interval):
 </p>
-<pre>
+<p><a name="id1">A</a> more complex <a href="ref-glossary.html#id159">scheduled&nbsp;function</a> that spawns a new <a href="ref-glossary.html#gl:thread">thread</a> to
+do its work and randomly sets whether to reschedule itself (and at what
+interval):
+<pre class="pretop">
 &gt; (defun complex-function (scheduled-function)
     (let ((interval (random 100)))
       (setf (<a href="ref-scheduled-function-repeat-interval.html">scheduled-function-repeat-interval</a> scheduled-function)
@@ -79,6 +80,7 @@ complex-function
 &gt; (make-scheduled-function 'complex-function)
 #&lt;scheduled-function complex-function [unscheduled]&gt;
 </pre>
+</p>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
 <table width="100%" cellpadding="0" cellspacing="2"><tr>

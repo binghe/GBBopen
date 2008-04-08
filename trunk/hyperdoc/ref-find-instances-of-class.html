@@ -26,7 +26,7 @@ specified <a href="ref-glossary.html#gl:unit-class">unit&nbsp;classes</a>.
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-core</code>
 </p>
-<p><span class="fndoclabel">Arguments</span><table class="tight">
+<p><span class="fndoclabel">Arguments</span><table class="tighttop">
 <tr valign="top"><td valign="baseline"><i>unit-classes-specifier</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An <a href="ref-glossary.html#id65">extended&nbsp;unit-classes&nbsp;specification</a>
 (see below)
 </td></tr></table>
@@ -35,7 +35,8 @@ specified <a href="ref-glossary.html#gl:unit-class">unit&nbsp;classes</a>.
 <a href="ref-glossary.html#gl:unit-class">unit&nbsp;classes</a> specified by <var>unit-class-specifier</var>,
 whether or not they reside on any <a href="ref-glossary.html#id174">space&nbsp;instance</a>.
 </p>
-<p><span class="fndoclabel">Detailed syntax</span></p>
+<p><table class="tighttop" width="100%"></table>
+<span class="fndoclabel">Detailed syntax</span></p>
 <table class="tight"><table><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>unit-classes-specifier</var>&nbsp;::= </td><td valign="baseline" colspan="1" align="left"> <code>t</code> | 
@@ -70,8 +71,7 @@ whether or not they reside on any <a href="ref-glossary.html#id174">space&nbsp;i
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-map-sorted-instances-of-class.html"><b>map-sorted-instances-of-class</b></a>
 </p>
 <p><span class="fndoclabel">Example</span> <br />Return the list of all <code>hyp</code> <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a>:
-</p>
-<pre>
+<pre class="pretop">
 &gt; (find-instances-of-class 'hyp)
 (#&lt;hyp 233 (1835 4791) 0.89 [5..35]&gt;
  #&lt;hyp 319 (1835 8419) 0.91 [4..12]&gt;
@@ -84,6 +84,7 @@ whether or not they reside on any <a href="ref-glossary.html#id174">space&nbsp;i
  #&lt;hyp 183 (1835 4791) 0.82 [0..35]&gt;
  #&lt;hyp 335 (1835 8419) 0.92 [15..35]&gt;)
 </pre> 
+</p>
 <p><span class="fndoclabel">Note</span> <br />In general, <b><a href="ref-do-instances-of-class.html">do-instances-of-class</a></b> or
 <b><a href="ref-map-instances-of-class.html">map-instances-of-class</a></b> is preferred over operating
 on the list created by <b>find-instances-of-class</b>.

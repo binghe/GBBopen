@@ -28,7 +28,7 @@
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:portable-threads</code>
 </p>
-<p><span class="fndoclabel">Arguments</span><table class="tight">
+<p><span class="fndoclabel">Arguments</span><table class="tighttop">
 <tr valign="top"><td valign="baseline"><i>seconds</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A number
 </td></tr><tr valign="top"><td valign="baseline"><i>timeout-forms</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An implicit <b>progn</b> of <a href="ref-glossary.html#gl:forms">forms</a> to be
 evaluated if the timed <var>forms</var> do not completed before <var>seconds</var>
@@ -55,14 +55,12 @@ last <var>form</var> is returned.
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-condition-variable-wait-with-timeout.html"><b>condition-variable-wait-with-timeout</b></a>
 </p>
 <p><span class="fndoclabel">Examples</span> <br />Evaluate a simple form, with a one-second time out:
-</p>
-<pre>
+<pre class="pretop">
 &gt; (with-timeout (1 ':timed-out) 
      ':did-not-time-out)
 :did-not-time-out
 </pre>
-<p>Again, but this time sleep for two seconds to cause a time out:
-</p>
+Again, but this time sleep for two seconds to cause a time out:
 <pre>
 &gt; (with-timeout (1 ':timed-out)
      (sleep 2) 
@@ -70,6 +68,7 @@ last <var>form</var> is returned.
 :timed-out              <span 
     style="font-family: serif; font-style: normal"><font color="#00ff00">; (after 2 seconds)</font></span>
 </pre>
+</p>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
 <table width="100%" cellpadding="0" cellspacing="2"><tr>

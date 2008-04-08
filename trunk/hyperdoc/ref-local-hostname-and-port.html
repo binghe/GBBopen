@@ -27,7 +27,7 @@
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:portable-sockets</code>
 </p>
-<p><span class="fndoclabel">Arguments</span><table class="tight">
+<p><span class="fndoclabel">Arguments</span><table class="tighttop">
 <tr valign="top"><td valign="baseline"><i>socket-stream</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A socket stream
 </td></tr><tr valign="top"><td valign="baseline"><i>do-not-resolve</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id77">generalized&nbsp;boolean</a> (default is <code>nil</code>)
 </td></tr></table>
@@ -45,20 +45,19 @@
 </p>
 <p><span class="fndoclabel">Examples</span> <br />Return the local hostname and port of an open socket-stream
 connection to the <code>wiki.alu.org</code> web server:
-</p>
-<pre>
+<pre class="pretop">
 &gt; (local-hostname-and-port connection)
 "192.168.240.104 (ruby.gbbopen.org)"
 56833
 </pre>
-<p>Again, return the local hostname and port of the open socket-stream
+Return the local hostname and port of the open socket-stream
 connection, but without hostname resolution:
-</p>
 <pre>
 &gt; (local-hostname-and-port connection 't)
 "192.168.240.104"
 56833
 </pre>
+</p>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
 <table width="100%" cellpadding="0" cellspacing="2"><tr>

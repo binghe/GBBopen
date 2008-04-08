@@ -25,7 +25,7 @@
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:portable-threads</code>
 </p>
-<p><span class="fndoclabel">Arguments</span><table class="tight">
+<p><span class="fndoclabel">Arguments</span><table class="tighttop">
 <tr valign="top"><td valign="baseline"><i>thread</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#gl:thread">thread</a>
 </td></tr><tr valign="top"><td valign="baseline"><i>function</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#gl:function">function</a>
 </td></tr><tr valign="top"><td valign="baseline"><i>args</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> Arguments to the function
@@ -37,12 +37,12 @@ Common Lisp implementation.
 <p><span class="fndoclabel">See also</span>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-spawn-thread.html"><b>spawn-thread</b></a>
 </p>
-<p><span class="fndoclabel">Example</span> <br /></p>
-<pre>
+<p><span class="fndoclabel">Example</span> <br /><pre class="pretop">
   (run-in-thread thread
                  #'(lambda (result) (throw ':exit result)) 
                  result)
 </pre>
+</p>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
 <table width="100%" cellpadding="0" cellspacing="2"><tr>

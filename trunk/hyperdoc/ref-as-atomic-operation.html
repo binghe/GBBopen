@@ -25,7 +25,7 @@
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:portable-threads</code>
 </p>
-<p><span class="fndoclabel">Arguments</span><table class="tight">
+<p><span class="fndoclabel">Arguments</span><table class="tighttop">
 <tr valign="top"><td valign="baseline"><i>form</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#gl:form">form</a>
 </td></tr></table>
 </p>
@@ -52,12 +52,12 @@ value, not multiple values.
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-atomic-pop.html"><b>atomic-pop</b></a>
 </p>
 <p><span class="fndoclabel">Example</span> <br />Define an atomic <b><a href="ref-nsorted-insert.html">nsorted-insert</a></b>:
-</p>
-<pre>
+<pre class="pretop">
   (defun atomic-nsorted-insert (&#38;rest args)
     (declare (dynamic-extent args))
     (as-atomic-operation (apply #'<a href="ref-nsorted-insert.html">nsorted-insert</a> args)))
 </pre>
+</p>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
 <table width="100%" cellpadding="0" cellspacing="2"><tr>

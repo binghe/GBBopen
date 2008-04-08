@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/tutorial.tex *-*
-%% *-* Last-Edit: Sat Apr  5 09:26:06 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Tue Apr  8 04:58:59 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2005-2008, Dan Corkill <corkill@GBBopen.org>
@@ -386,8 +386,10 @@ Alternatively, if you are familiar with
 client installed on your computer, you can checkout the latest files directly
 from the GBBopen repository.  For example, the shell command:
 %
-\begin{example}\color{darkergray}%
-  [~]\$ \textcolor{black}{svn checkout http://GBBopen.org/svn/GBBopen/trunk/ GBBopen}
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
+  [~]\$ \textcolor{black}{svn checkout http://GBBopen.org/svn/GBBopen/trunk/ GBBopen}}
 \end{example}
 %
 will create a GBBopen repository tree rooted at the directory named
@@ -406,8 +408,10 @@ Using subversion is the easiest way to keep current, and you are strongly
 encouraged to install a subversion client and use it perform frequent updates.
 Simply issue the command:
 %
-\begin{example}\color{darkergray}%
-  [~]\$ \textcolor{black}{svn update}
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
+  [~]\$ \textcolor{black}{svn update}}
 \end{example}
 %
 from the root directory of your GBBopen repository tree.  
@@ -451,41 +455,51 @@ or simply the REPL) that it provides.
 When you start your Common Lisp system, it may first display some informational
 messages and then you should see a prompt for input that looks something like:
 %
-\begin{example}\color{darkergray}%
-  > 
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
+  >}
 \end{example}
 %
 The specific format of the prompt differs depending on your Common Lisp
-implementation.  The prompt character may vary, such as \code{*} or \code{?}.
-The prompt might include a entry number that is incremented each time an
-expression is entered, such as:
+implementation.  The prompt character may vary, such as \code{*}, \code{:}, or
+\code{?}.  The prompt might include a entry number that is incremented each
+time an expression is entered, such as:
 %
-\begin{example}\color{darkergray}%
-  [1]> 
+\W\supp\notpretop
+\begin{example}
+\textcolor{darkergray}{%
+  [1]>}
 \end{example}
 %
-Or it might also include the name of the current package (symbol namespace)
+or it might also include the name of the current package (symbol namespace)
 being used by the REPL:
 %
-\begin{example}\color{darkergray}%
-  cl-user(1)> 
+\W\supp\notpretop
+\begin{example}
+\textcolor{darkergray}{%
+  cl-user(1)>}
 \end{example}
 
 Throughout this tutorial, we will include the package name in our
 example prompts to make it clear what package should be current:
 %
-\begin{example}\color{darkergray}%
-  cl-user> 
+\W\supp
+\begin{example}%
+\textcolor{darkergray}{%
+  cl-user>}
 \end{example}
-
+%
 The REPL prompt indicates that it is awaiting a Common Lisp expression to
 evaluate and then display the evaluation results. For example, enter the
 expression:
 %
-\begin{example}\color{darkergray}%
+\W\supp\notpretop
+\begin{example}
+\textcolor{darkergray}{%
   cl-user> \textcolor{black}{(+ 1 2)}
   3
-  cl-user>
+  cl-user>}
 \end{example}
 %
 Note that what you need to enter is shown in black and other items, such as
@@ -493,13 +507,22 @@ the REPL prompt and displayed result, \code{3}, are shown in gray.  We will
 follow this convention throughout the tutorial to help make it clear what you
 must provide in the context of other information.
 
+You may find it easier and faster to cut and paste text from this tutorial (if
+you are working with it on-line) rather than typing what is requested.  On the
+other hand, some feel that they learn faster (and improve retention) through
+the action of typing.  Either text-entry approach, however, is preferable to
+simply reading through the exercises.  This tutorial is about \textit{learning by doing!}
+
 \codeindexit{*print-case*}%
-While we are on the subject of what is displayed, enter the following expression:
+While we are on the subject of what is displayed, enter the following
+expression:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   cl-user> \textcolor{black}{'symbol}
   symbol
-  cl-user>
+  cl-user>}
 \end{example}
 %
 The displayed result that you see might be in lower case, as shown, or upper
@@ -508,34 +531,40 @@ Lisp symbols displayed in lower case, which I prefer as being slightly easier
 to read.  If you wish, you can duplicate this behavior in your REPL by
 entering the following form:
 %
-\begin{example}\color{darkergray}%
+\W\supp\notpretop
+\begin{example}
+\textcolor{darkergray}{%
   cl-user> \textcolor{black}{(setf *print-case* ':downcase)}
   :downcase
-  cl-user>
+  cl-user>}
 \end{example}
 
 \codeindexit{values}%
 Your Common Lisp implementation may also differ slightly on how it displays
 multiple returned values.  For example:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   cl-user> \textcolor{black}{(values 1 2 3)}
   1
   2
   3
-  cl-user>
+  cl-user>}
 \end{example}
-%
+
 In this tutorial, we show multiple returned values as displayed on separate
 lines.  Your Common Lisp implementation may show them differently, such as
-with semicolon value-separation characters:
+with semicolon value-separator characters:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   cl-user> \textcolor{black}{(values 1 2 3)}
   1 ;
   2 ;
   3
-  cl-user>
+  cl-user>}
 \end{example}
 
 \subsection*{Step 5: Recover from an error}
@@ -547,10 +576,12 @@ Lisp expression that signals an error.  Therefore, it is important that you
 know how to get back on track when the inevitable occurs.  Let's intentionally
 generate an error.  Enter:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   cl-user> \textcolor{black}{(/ 1 0)}
   Error: Attempt to divide 1 by zero.
-  cl-user>>
+  cl-user>>}
 \end{example}
 
 The behavior of your Common Lisp environment should look similar, and you
@@ -573,11 +604,13 @@ dependent, so you may need to investigate how to abort out of an error on your
 Common Lisp implementation.  For example, it might be as easy as entering an
 abort debugger command:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   cl-user> (/ 1 0)
   Error: Attempt to divide 1 by zero.
   cl-user>> \textcolor{black}{:a}
-  cl-user>
+  cl-user>}
 \end{example}
 %
 Consult your Common Lisp documentation or a knowledgeable friend if
@@ -589,12 +622,14 @@ implementation (\code{:a} or \code{q} are typical abort commands).
 There are other mistakes that don't signal an error.  Suppose I
 foolishly evaluate this expression:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   cl-user> \textcolor{black}{(loop (print "This is repetitive...") (sleep 1))}
 
   "This is repetitive." 
   "This is repetitive." 
-       ...
+       ...}
 \end{example}
 %
 Once I grow tired of watching this phrase repeat, it would be good to
@@ -605,7 +640,9 @@ Again, the specifics depend on your Common Lisp environment, but all that is
 needed is to interrupt, or ``break,'' the computation.  Often this is
 associated with typing one or more Control-c (\code{\ctrl{c}}) characters:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   cl-user> (loop (print "This is repetitive...") (sleep 1))
 
   "This is repetitive." 
@@ -615,13 +652,15 @@ associated with typing one or more Control-c (\code{\ctrl{c}}) characters:
   "This is repetitive." 
   "This is rep\textcolor{black}{\ctrl{C}}
   Error: Received keyboard interrupt \ctrl{C}
-  cl-user>>
+  cl-user>>}
 \end{example}
 %
 Typically a keyboard interrupt invokes the debugger where the computation
 can be resumed or aborted:
 %
-\begin{example}\color{darkergray}%
+\W\supp\notpretop
+\begin{example}
+\textcolor{darkergray}{%
   cl-user> (loop (print "This is repetitive...") (sleep 1))
 
   "This is repetitive." 
@@ -632,32 +671,36 @@ can be resumed or aborted:
   "This is rep\ctrl{C}
   Error: Received keyboard interrupt \ctrl{C}
   cl-user>> \textcolor{black}{:a}
-  cl-user>
+  cl-user>}
 \end{example}
 
 \subsubsection*{Help! My REPL is broken!}
 
 Here is one last difficulty.  Suppose I enter:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   cl-user> \textcolor{black}{(list "This" "is "also" "a" "problem!")}
   cl-user>
   cl-user>
-  cl-user>
+  cl-user>}
 \end{example}
 %
 My REPL seems dead: no result is displayed and I continue to be prompted again
 and again for input.  I suppose I should try the entering the expression
 again:
 %
-\begin{example}\color{darkergray}%
+\W\supp\notpretop
+\begin{example}
+\textcolor{darkergray}{%
   cl-user> (list "This" "is "also" "a" "problem!")
   cl-user>
   cl-user>
   cl-user>
   cl-user> \textcolor{black}{(list "This" "is" "also" "a" "problem!")}
   cl-user>
-  cl-user>
+  cl-user>}
 \end{example}
 %
 Nope, my REPL is still broken.
@@ -670,7 +713,9 @@ still patiently waiting for me to finish that first Common Lisp expression.
 So how do I get out of this?  I could try entering a sequence of double-quote
 and close parentheses and hope I that I get lucky:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   cl-user> (list "This" "is "also" "a" "problem!")
   cl-user>
   cl-user>
@@ -681,14 +726,16 @@ and close parentheses and hope I that I get lucky:
   cl-user> \textcolor{black}{"}
   cl-user> \textcolor{black}{)}
   Error: Attempt to take the value of the unbound variable `also'.
-  cl-user>>
+  cl-user>>}
 \end{example}
 %
 or I could interrupt the REPL read operation, just as I did with the infinite
 loop situation above, and abort back from the debugger to the REPL and try
 again:
 %
-\begin{example}\color{darkergray}%
+\W\supp\notpretop
+\begin{example}
+\textcolor{darkergray}{%
   cl-user> (list "This" "is "also" "a" "problem!")
   cl-user>
   cl-user>
@@ -701,7 +748,7 @@ again:
   cl-user>> \textcolor{black}{:a}
   cl-user> \textcolor{black}{(list "This" "is" "also" "a" "problem!")}
   ("This" "is" "also" "a" "problem!")
-  cl-user>
+  cl-user>}
 \end{example}
 
 You may discover even more creative ways to get into problems, but these
@@ -720,7 +767,9 @@ Common Lisp environment.  First, load GBBopen's
 \code{\var{<install-dir>\/}/startup.lisp} file from wherever GBBopen has been
 installed:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   cl-user> \textcolor{black}{(load "\var{<install-dir\/>}/startup.lisp")}
   ;; Loading \var{<install-dir\/>}/startup.lisp
   ;;  Loading \var{<install-dir\/>}/source/mini-module/mini-module-loader.lisp
@@ -728,21 +777,23 @@ installed:
   ;;     Loading \var{<install-dir\/>}/source/mini-module/mini-module-user.lisp
   ;;  Loading \var{<install-dir\/>}/source/modules.lisp
   t
-  cl-user>
+  cl-user>}
 \end{example}
-
+%
 \bfindexit{compile-module}%
 Then compile and load the \code{:gbbopen-user} module and all the
 GBBopen modules it requires by evaluating:
 %
-\begin{example}\color{darkergray}%
+\W\supp\notpretop
+\begin{example}
+\textcolor{darkergray}{%
   cl-user> \textcolor{black}{(mini-module:compile-module :gbbopen-user :propagate :create-dirs)}
   ;; Compiling \var{<install-dir\/>}/source/mini-module/mini-module.lisp
   ;; Loading \var{<install-dir\/>}/\var{<platform-dir\/>}/mini-module/mini-module.fasl
        ...
   ;; Compiling \var{<install-dir\/>}/source/gbbopen/gbbopen-user.lisp
   ;; Loading \var{<install-dir\/>}/\var{<platform-dir\/>}/gbbopen/gbbopen-user.fasl
-  cl-user>
+  cl-user>}
 \end{example}
 
 GBBopen should compile (if necessary) and load all the files needed for the
@@ -758,7 +809,9 @@ have write permission and someone else is maintaining your GBBopen
 installation, they must start up Common Lisp and then evaluate the following
 two expressions:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   cl-user> \textcolor{black}{(load "\var{<install-dir\/>}/initiate.lisp")}
   ;; Loading \var{<install-dir\/>}/initiate.lisp
   ;;  Loading \var{<install-dir\/>}/extended-repl.lisp
@@ -768,7 +821,7 @@ two expressions:
   ;; Loading \var{<install-dir\/>}/startup.lisp
      ...
   ;;; GBBopen module compilation completed.
-  [~]\$
+  [~]\$}
 \end{example}
 %
 every time they update GBBopen to ensure that all GBBopen modules have
@@ -789,10 +842,12 @@ will be detailed soon in the \reflink{Enhancing Your Development Environment
 Now that the \code{:gbbopen-user} module is loaded, change the current
 package to the \code{:gbbopen-user} package:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   cl-user> \textcolor{black}{(in-package :gbbopen-user)}
   #<package GBBOPEN-USER>
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 
 In Common Lisp, a \textit{package\/} is a namespace that maps names to
@@ -861,14 +916,16 @@ This exercise shows you how to:
 If you ended the Common Lisp session used in the last exercise, begin a new
 session and evaluate the following forms:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   cl-user> \textcolor{black}{(load "\var{<install-dir\/>}/startup.lisp")}
      ...
   cl-user> \textcolor{black}{(mini-module:compile-module :gbbopen-user :propagate :create-dirs)}
      ...
   cl-user> \textcolor{black}{(in-package :gbbopen-user)}
   #<package GBBOPEN-USER>
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 
 \subsection*{Step 1: Define the \code{location} unit class}
@@ -878,11 +935,13 @@ session and evaluate the following forms:
 We begin by defining a unit class \code{location} that has two slots,
 named \code{x} and \code{y}.
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(define-unit-class location ()
                   (x y))}
   #<location>
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 
 This unit-class definition instructs GBBopen to:
@@ -906,20 +965,24 @@ unit class.  To simplify access to the unit instance during subsequent
 activities, first define a global variable called \code{ui}
 by entering the following form:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(defvar ui)}
   ui
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 
 \bfindexit{make-instance}%
 Now, create a unit instance and assign it to the variable \code{ui} by
 entering the form:
 %
-\begin{example}\color{darkergray}%
+\W\supp\notpretop
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(setf ui (make-instance 'location :x 40 :y 60))}
   #<location 1>
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 
 This creates a unit instance of the \code{location} class, initializes the
@@ -934,7 +997,9 @@ is then assigned to the variable \code{ui}.
 Now, display a description of the unit instance by using GBBopen's
 \textbf{describe-instance} function.  Enter the following form:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(describe-instance ui)}
   Location #<location 1>
     Instance name: 1
@@ -944,7 +1009,7 @@ Now, display a description of the unit instance by using GBBopen's
       x:  40
       y:  60
     Link slots: None
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 
 Note that you didn't specify a name for the unit instance when you created it.
@@ -961,10 +1026,12 @@ named within the class.
 You can look up a particular unit instance by its name. For example, to
 find the \code{location} \code{1} unit instance by name, enter the form:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(find-instance-by-name 1 'location)}
   #<location 1>
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 
 Of course, we assigned the \code{location} unit instance to the global
@@ -977,41 +1044,49 @@ instance using its name.
 \index{unit instance!slot!setting value of}%
 \index{slot!getting value of}%
 \index{slot!setting value of}%
-Use the \code{x-of} reader and writer methods GBBopen defined for the
-\code{x} slot (in Step 3 above) to obtain the value of the \code{x} slot and
-then to change its value to 50:
+\index{x-of@\code{x-of} slot reader method|itidx}%
+\index{(setf x-of)@\code{(setf x-of)} slot writer method|itidx}%
+\codeindexit{(setf x-of)}%
 %
-\begin{tightenumerate}
-  \index{x-of@\code{x-of} slot reader method|itidx}%
-\item Get the value of the \code{x} slot of the unit instance:
-  \begin{example}\color{darkergray}%
+Use the \code{x-of} reader and writer methods GBBopen defined for the \code{x}
+slot (in Step 3 above) to get the value of the \code{x} slot of the unit
+instance:
+%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(x-of ui)}
   40
-  gbbopen-user>
-  \end{example}
-  \index{(setf x-of)@\code{(setf x-of)} slot writer method|itidx}%
-\codeindexit{(setf x-of)}%
-\item Change the slot value to 50:
-  \begin{example}\color{darkergray}%
+  gbbopen-user>}
+\end{example}
+%
+change the slot value to 50:
+%
+\W\supp\notpretop
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(setf (x-of ui) 50)}
   50
-  gbbopen-user>
-  \end{example}
-\item Get the (new) value of the \code{x} slot:
-  \begin{example}\color{darkergray}%
+  gbbopen-user>}
+\end{example}
+%
+and then get the (new) value of the \code{x} slot:
+%
+\W\supp\notpretop
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(x-of ui)}
   50
-  gbbopen-user>
-  \end{example}
-\end{tightenumerate}
-
-\subsection*{Step 6: Again display the description of the unit instance}
+  gbbopen-user>}
+\end{example}
 
 \bfindexit{describe-instance}%
 Display the description of the \code{location} unit instance again, observing the
 changed \code{x} slot value:
 %
-\begin{example}\color{darkergray}%
+\begin{example}
+\W\supp
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(describe-instance ui)}
   Location #<location 1>
     Instance name: 1
@@ -1021,7 +1096,7 @@ changed \code{x} slot value:
       x:  50
       y:  60
     Link slots: None
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 
 %% ========================================================================
@@ -1084,7 +1159,9 @@ This exercise shows you how to:
 If you ended the Common Lisp session used in the last exercise, begin a new
 session and evaluate the following forms:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   cl-user> \textcolor{black}{(load "\var{<install-dir\/>}/startup.lisp")}
      ...
   cl-user> \textcolor{black}{(mini-module:compile-module :gbbopen-user :propagate :create-dirs)}
@@ -1096,7 +1173,7 @@ session and evaluate the following forms:
   #<location>
   gbbopen-user> \textcolor{black}{(defparameter ui (make-instance 'location :x 40 :y 60))}
   ui
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 
 \subsection*{Step 1: Create a space instance}
@@ -1107,20 +1184,24 @@ Create a \textit{space instance\/} named \code{known-world}.  To simplify
 access to the space instance during subsequent activities, first define a
 global variable called \code{si} by entering the following form:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(defvar si)}
   si
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 
 \bfindexit{make-space-instance}%
 Now, create the space instance and assign it to the variable \code{si} by
 entering the form:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(setf si (make-space-instance '(known-world)))}
   #<standard-space-instance (known-world)>
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 
 The argument to the \textbf{make-space-instance} is the ``path'' to be used
@@ -1137,7 +1218,9 @@ so its path is simply \code{(known-world)}.
 Display a description of the blackboard repository, which now contains the
 \code{known-world} space instance:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(describe-blackboard-repository)}
   
   Space Instance                Contents
@@ -1150,7 +1233,7 @@ Display a description of the blackboard repository, which now contains the
   standard-space-instance               1
                                 ---------
                                         2 instances
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 
 The description indicates that:
@@ -1171,10 +1254,12 @@ The description indicates that:
 \bfindexit{find-space-instance-by-path}%
 You can look up a particular space instance by its space-instance path:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(find-space-instance-by-path '(known-world))}
   #<standard-space-instance (known-world)>
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 
 We assigned the \code{known-world} space instance to the global variable
@@ -1188,10 +1273,12 @@ path.
 Now, add the \code{location} unit instance to the space instance.
 Enter the following form:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(add-instance-to-space-instance ui si)}
   #<location 1>
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 
 \subsection*{Step 5: Again, display the blackboard-repository description}
@@ -1199,7 +1286,9 @@ Enter the following form:
 \bfindexit{describe-blackboard-repository}%
 Display the description of the blackboard repository again:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(describe-blackboard-repository)}
   
   Space Instance                Contents
@@ -1212,7 +1301,7 @@ Display the description of the blackboard repository again:
   standard-space-instance               1
                                 ---------
                                         2 instances
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 
 This time the description indicates that the \code{known-world} space instance
@@ -1224,7 +1313,9 @@ has one instance of the \code{location} unit class stored on it.
 Display the description of the \code{location} unit instance once again,
 observing the change in the space instances from the last exercise:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(describe-instance ui)}
   Location #<location 1>
     Instance name: 1
@@ -1234,7 +1325,7 @@ observing the change in the space instances from the last exercise:
       x:  50
       y:  60
     Link slots: None
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 
 \subsection*{Step 7: Find the unit instance on the space instance}
@@ -1246,12 +1337,14 @@ instance, we can find it on the space instance. The form is as follows,
 where \code{:all} is a very basic retrieval pattern specifying that all unit
 instances on the \code{known-world} space instance are to be returned:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(find-instances 'location '(known-world) :all)}
   (#<location 1>)
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
-
+%
 The list of found unit instances is returned. (In this case, there is only one
 in the list.)
 
@@ -1267,22 +1360,26 @@ Create a second instance of the \code{location} unit class, with \code{x} and
 \code{y} slot values 80 and 90, respectively, and add it to the
 \code{known-world} space instance:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(add-instance-to-space-instance 
                    (make-instance 'location :x 80 :y 90)
                    si)}
   #<location 2>
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 
 \bfindexit{find-instance-by-name}%
 This time we did not assign the new \code{location} unit instance to a global
 variable but, as before, we can find the unit instance by its name:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(find-instance-by-name 2 'location)}
   #<location 2>
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 
 \bfindexit{find-instance-by-name}%
@@ -1290,10 +1387,12 @@ variable but, as before, we can find the unit instance by its name:
 As you would expect, we can retrieve both \code{location} unit instances from the
 \code{known-world} space instance using \textbf{find-instances}:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(find-instances 'location '(known-world) :all)}
   (#<location 2> #<location 1>)
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 
 \subsection*{Step 9: Again, display the blackboard-repository description}
@@ -1301,7 +1400,9 @@ As you would expect, we can retrieve both \code{location} unit instances from th
 \bfindexit{describe-blackboard-repository}%
 Display the description of the blackboard repository again:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(describe-blackboard-repository)}
   
   Space Instance                Contents
@@ -1314,7 +1415,7 @@ Display the description of the blackboard repository again:
   standard-space-instance               1
                                 ---------
                                         3 instances
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 
 This time the description indicates that the \code{known-world} space instance
@@ -1327,25 +1428,31 @@ has both instances of the \code{location} unit class stored on it.
 Now, remove the first \code{location} unit instance from the
 \code{known-world} space instance.  Enter the following form:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(remove-instance-from-space-instance ui si)}
   #<location 1>
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
-
+%
 \bfindexit{find-instances}%
 As you would expect, only the second \code{location} unit instance remains on the
 \code{known-world} space instance:
 %
-\begin{example}\color{darkergray}%
+\W\supp\notpretop
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(find-instances 'location '(known-world) :all)}
   (#<location 2>)
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 %
 and describing the \code{location} unit instance confirms this:
 %
-\begin{example}\color{darkergray}%
+\W\supp\notpretop
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(describe-instance ui)}
   Location #<location 1>
     Instance name: 1
@@ -1355,7 +1462,7 @@ and describing the \code{location} unit instance confirms this:
       x:  50
       y:  60
     Link slots: None
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 
 %% ========================================================================
@@ -1399,7 +1506,9 @@ This exercise shows you how to:
 If you ended the Common Lisp session used in the last exercise, begin a new
 session and evaluate the following forms:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   cl-user> \textcolor{black}{(load "\var{<install-dir\/>}/startup.lisp")}
      ...
   cl-user> \textcolor{black}{(mini-module:compile-module :gbbopen-user :propagate :create-dirs)}
@@ -1417,42 +1526,46 @@ session and evaluate the following forms:
                    (make-instance 'location :x 80 :y 90)
                    si)}
   #<location 2>
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 
 \subsection*{Step 1: Create a few more unit instances}
 
-Just to review, we now have created two \code{location} unit instances.  The unit
-instance named \code{1} is no longer on the \code{known-world} space instance, but it is still assigned to the global variable \code{ui}:
+Just to review, we created two \code{location} unit instances.  The unit
+instance named \code{1} is no longer on the \code{known-world} space instance,
+but it is still assigned to the global variable \code{ui}:
 %
 \codeindexit{print}%
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{ui}
   #<location 1> 
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
-
-The \code{location} unit instance named \code{2} is on the \code{known-world}
-space instance:
+%
+The \code{location} unit instance named \code{2} is the only \code{location}
+unit instance on the \code{known-world} space instance:
 %
 \bfindexit{find-instances}%
-As you would expect, only the second \code{location} unit instance remains on the
-\code{known-world} space instance:
-%
-\begin{example}\color{darkergray}%
+\W\supp\notpretop
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(find-instances 'location '(known-world) :all)}
   (#<location 2>)
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 
-Let's create five more \code{location} unit instances.  Enter:
+Now, let's create five more \code{location} unit instances.  Enter:
 %
 \bfindexit{make-instance}%
 \codeindexit{dotimes}%
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(dotimes (i 5) (make-instance 'location))}
   nil
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 %
 Note that we did not specify \code{x} and \code{y} slot values for these new
@@ -1469,10 +1582,12 @@ or add them to the \code{known-world} space instance.  Can we still reference
 them?  If we know the names of the new unit instances, we can use the
 \textbf{find-instance-by-name} function that we learned earlier.  For example:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(find-instance-by-name 5 'location)}
   #<location 5>
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 
 \bfindexit{map-instances-of-class}%
@@ -1482,7 +1597,9 @@ GBBopen provides a \textit{mapping function}, or ``iterator,'' that repeatedly
 calls a function with each instance of a unit class as the argument to the
 function.  For example:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(map-instances-of-class #'print 'location)}
 
   #<location 6> 
@@ -1493,7 +1610,7 @@ function.  For example:
   #<location 4> 
   #<location 5> 
   nil
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 %
 displays each of our \code{location} unit instances.  Note that the exact
@@ -1505,16 +1622,20 @@ function may differ from the above example in your Common Lisp implementation.
 Currently, there is only one \code{location} unit instance on the
 \code{known-world} space instance:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(find-instances 'location '(known-world) :all)}
   (#<location 2>)
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
-%
+
 Let's use \textbf{map-instances-of-class} to add all the \code{location} unit
 instances to the \code{known-world}:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(map-instances-of-class 
                   #'(lambda (instance) 
                        (add-instance-to-space-instance instance si))
@@ -1522,18 +1643,20 @@ instances to the \code{known-world}:
   Warning: In add-instance-to-space-instance: #<location 2> is already on 
            space instance #<standard-space-instance (known-world)>.
   nil
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 %
 GBBopen warns us that the \code{location} \code{2} unit instance is already on
 the \code{known-world} and adds all the other \code{location} instances.  We
 can verify this by using \textbf{find-instances}:
 %
-\begin{example}\color{darkergray}%
+\W\supp\notpretop
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(find-instances 'location '(known-world) :all)}
   (#<location 7> #<location 6> #<location 5> #<location 4> #<location 3>
    #<location 2> #<location 1>)
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 
 \bfindexit{map-instances-of-class}%
@@ -1542,9 +1665,11 @@ For those who prefer a more iterative programming style, GBBopen provides a
 to \textbf{map-instances-of-class}.  So, to add all the \code{location} unit
 instances to the \code{known-world}, we could have chosen to use the form:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   (do-instances-of-class (instance 'location)
-     (add-instance-to-space-instance instance si))
+     (add-instance-to-space-instance instance si))}
 \end{example}
 %
 instead of the \textbf{map-instances-of-class} version.  As with things
@@ -1556,10 +1681,12 @@ stylistic, the choice is yours.
 \bfindexit{delete-instance}%
 Let's delete the first \code{location} unit instance that we created:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(delete-instance ui)}
   #<location 1 [Deleted]>
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 %
 Note that the displayed representation of the unit instance now includes
@@ -1568,17 +1695,22 @@ Note that the displayed representation of the unit instance now includes
 \bfindexit{find-instance-by-name}%
 \bfindexit{map-instances-of-class}%
 \codeindexit{print}%
+%
 We can no longer find the deleted unit instance by its name:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(find-instance-by-name 1 'location)}
   nil
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 %
-it is no longer included in a \textbf{map-instances-of-class} iteration:
+and it is no longer included in a \textbf{map-instances-of-class} iteration:
 %
-\begin{example}\color{darkergray}%
+\W\supp\notpretop
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(map-instances-of-class #'print 'location)}
 
   #<location 6> 
@@ -1588,46 +1720,54 @@ it is no longer included in a \textbf{map-instances-of-class} iteration:
   #<location 4> 
   #<location 5> 
   nil
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 %
 and it is no longer on the \code{known-world} space instance:
 %
-\begin{example}\color{darkergray}%
+\W\supp\notpretop
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(find-instances 'location '(known-world) :all)}
   (#<location 7> #<location 6> #<location 5> #<location 4> #<location 3>
    #<location 2>)
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 
 \bfindexit{add-instance-to-space-instance}%
 However, the deleted \code{location} unit instance is still assigned to the
 \code{ui} global variable:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{ui}
   #<location 1 [Deleted]>
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 %
 and that can lead to problems.  Let's try to place the deleted \code{location}
 unit instance on the \code{known-world} space instance:
 %
-\begin{example}\color{darkergray}%
+\W\supp\notpretop
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(add-instance-to-space-instance ui si)}
   Error: add-instance-to-space-instance attempted with a deleted instance:
          #<location 1 [Deleted]>
   gbbopen-user>> \textcolor{black}{:a}
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
-%
+
 Many of GBBopen's operations signal an error if they are given a deleted unit
 instance.  This is not true of all operations, however:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(x-of ui)}
   50
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 
 \bfindexit{instance-deleted-p}%
@@ -1639,10 +1779,12 @@ such as reading and writing slot values, function normally.  The deletion
 status of a unit instance can be determined using the
 \textbf{instance-deleted-p} predicate:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(instance-deleted-p ui)}
   t
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 
 \subsection*{Step 4: Create a simple space-instance hierarchy}
@@ -1653,14 +1795,16 @@ In the last exercise, we noted that space instances can be organized in
 hierarchical structures.  To illustrate this, let's create a few more space
 instances:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(make-space-instance '(known-world my-town))}
   #<standard-space-instance (known-world my-town)>
   gbbopen-user> \textcolor{black}{(make-space-instance '(known-world my-town east-side))}
   #<standard-space-instance (known-world my-town east-side)>
   gbbopen-user> \textcolor{black}{(make-space-instance '(known-world my-town west-side))}
   #<standard-space-instance (known-world my-town west-side)>
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 
 \bfindexit{describe-blackboard-repository}%
@@ -1671,7 +1815,9 @@ starting with the name of the most distant indirect parent.  So, the
 the \code{east-side} and \code{west-side} as children.  We can use
 \textbf{describe-blackboard-repository} to see this organization:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(describe-blackboard-repository)}
 
   Space Instance                Contents
@@ -1687,7 +1833,7 @@ the \code{east-side} and \code{west-side} as children.  We can use
   standard-space-instance               4
                                 ---------
                                        10 instances
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 
 \bfindex{standard-space-instance}%
@@ -1707,12 +1853,14 @@ property of space instances is very powerful when it is needed.
 The functions \textbf{parent-of} and \textbf{children-of} are provided to
 traverse the space-instance hierarchy.  For example:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(children-of 
                   (find-space-instance-by-path '(known-world my-town)))}
   (#<standard-space-instance (known-world my-town west-side)>
    #<standard-space-instance (known-world my-town east-side)>)
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 
 \subsection*{Step 5: Add a unit instance to multiple space instances}
@@ -1722,19 +1870,23 @@ traverse the space-instance hierarchy.  For example:
 Now, let's add \code{location} \code{2} to the \code{my-town} and 
 \code{east-side} space instances:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(let ((location-2 (find-instance-by-name 2 'location)))
                  (add-instance-to-space-instance location-2 '(known-world my-town))
                  (add-instance-to-space-instance location-2 '(known-world my-town east-side)))}
   #<location 2>
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
-
+%
 \bfindexit{find-instance-by-name}%
 \bfindexit{describe-blackboard-repository}%
 As we expect, \code{location} \code{2} is now on three space instances:
 %
-\begin{example}\color{darkergray}%
+\W\supp\notpretop
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(describe-instance (find-instance-by-name 2 'location))}
   Location #<location 2>
     Instance name: 2
@@ -1746,12 +1898,14 @@ As we expect, \code{location} \code{2} is now on three space instances:
       x:  80
       y:  90
     Link slots: None
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 %
 and the description of the blackboard repository is:
 %
-\begin{example}\color{darkergray}%
+\W\supp\notpretop
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(describe-blackboard-repository)}
 
   Space Instance                Contents
@@ -1767,7 +1921,7 @@ and the description of the blackboard repository is:
   standard-space-instance               4
                                 ---------
                                        10 instances
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 
 Placing a unit instance on multiple space instances is useful when each space
@@ -1775,12 +1929,14 @@ instance represents a different view of unit instances.  In this case,
 \code{location} \code{2} is in the \code{known-world}, in \code{my-town}, and
 on the \code{east-side}:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(find-instances 'location '(known-world my-town) :all)}
   (#<location 2>)
   gbbopen-user> \textcolor{black}{(find-instances 'location '(known-world my-town east-side) :all)}
   (#<location 2>)
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 
 \subsection*{Step 6: Delete a space instance}
@@ -1790,16 +1946,20 @@ on the \code{east-side}:
 Now let's delete some of what we just created.  Let's delete the
 \code{my-town} space instance:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(delete-space-instance '(known-world my-town))}
   #<standard-space-instance (known-world my-town) [Deleted]>
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 %
 \bfindexit{describe-blackboard-repository}%
 and describe the blackboard repository:
 %
-\begin{example}\color{darkergray}%
+\W\supp\notpretop
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(describe-blackboard-repository)}
 
   Space Instance                Contents
@@ -1812,7 +1972,7 @@ and describe the blackboard repository:
   standard-space-instance               1
                                 ---------
                                         7 instances
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 %
 Notice that GBBopen has also deleted all the child space instances of
@@ -1828,11 +1988,13 @@ instances that were stored on them.  If we want to delete a space instance
 explicitly delete the unit instances before deleting the space instance.
 For example, we could do:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> (map-instances-on-space-instances #'delete-instance 
                   'location '(known-world my-town))
   nil
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 %
 to delete the unit instances in \code{my-town}.  However, we must keep in mind
@@ -1846,9 +2008,11 @@ As is the case with \textbf{map-instances-of-class}, GBBopen provides a
 \textbf{map-instances-on-space-instances}.  So we could have chosen to use the
 form:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   (do-instances-on-space-instances (instance 'location '(known-world my-town))
-    (delete-instance instance))
+    (delete-instance instance))}
 \end{example}
 %
 to explicitly delete the \code{location} unit instances in \code{my-town}.
@@ -1861,14 +2025,16 @@ to explicitly delete the \code{location} unit instances in \code{my-town}.
 If we really want to get rid of all our unit and space instances, we can use
 the \textbf{delete-blackboard-repository} function:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(delete-blackboard-repository)}
   t
   gbbopen-user> \textcolor{black}{(describe-blackboard-repository)}
   There are no space instances in the blackboard repository.
   gbbopen-user> \textcolor{black}{(map-instances-of-class #'print location)}
   nil
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 
 \bfindexit{make-instance}%
@@ -1876,12 +2042,14 @@ the \textbf{delete-blackboard-repository} function:
 instance, but it has not eliminated our \code{location} unit class definition.
 Let's create a \code{location} unit instance once again:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(make-instance 'location)}
   #<location 1>
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
-
+%
 Note that deleting the blackboard repository also reset the counter for
 \code{location} instance names, so the created unit instance is again named
 \code{1}.
@@ -1923,14 +2091,16 @@ This exercise shows you how to:
 
 Thus far, we have entered the forms:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   cl-user> \textcolor{black}{(load "\var{<install-dir\/>}/startup.lisp")}
      ...
   cl-user> \textcolor{black}{(mini-module:compile-module :gbbopen-user :propagate :create-dirs)}
      ...
   cl-user> \textcolor{black}{(in-package :gbbopen-user)}
   #<package GBBOPEN-USER>
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 %
 to compile and load needed GBBopen components and to set the current package
@@ -1962,13 +2132,15 @@ To make these GBBopen keyword commands available, simply load the file
 \code{\var{<install-dir>\/}/startup.lisp}.  Let's try it.  Start up a fresh
 Common Lisp session and enter the following form in the REPL:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   cl-user> \textcolor{black}{(load "\var{<install-dir\/>}/initiate.lisp")}
   ;; Loading \var{<install-dir\/>}/initiate.lisp
   ;;  Loading \var{<install-dir\/>}/extended-repl.lisp
   ;;  Loading \var{<install-dir\/>}/commands.lisp
   t
-  cl-user>
+  cl-user>}
 \end{example}
 
 \index{:gbbopen-user@\textbf{:gbbopen-user} REPL command|itidx}%
@@ -1976,21 +2148,25 @@ Note that the \xreflink{mini-module system}{sec:mini-module} and GBBopen
 module definitions have not been loaded.  Now enter the REPL
 command, \textbf{:gbbopen-user}:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   cl-user> \textcolor{black}{:gbbopen-user}
   ;; Loading \var{<install-dir\/>}/startup.lisp
      ...
   ;; Loading \var{<install-dir\/>}/\var{<platform-dir\/>}/gbbopen/gbbopen-user.fasl
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 %
 The \code{:gbbopen-user} module (and supporting modules) are loaded, and the
 current package is set to \code{:gbbopen-user}:
 %
-\begin{example}\color{darkergray}%
+\W\supp\notpretop
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{*package*}
   #<package GBBOPEN-USER>
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 
 Module-compilation REPL commands, such as \code{:gbbopen-user},
@@ -2006,12 +2182,14 @@ work, all is not lost.  Loading \code{\var{<install-dir>\/}/initiate.lisp}
 also defines functions in the \code{:common-lisp-user} package with the same
 name as the REPL command:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   cl-user> \textcolor{black}{(gbbopen-user)}
   ;; Loading \var{<install-dir\/>}/startup.lisp
      ...
   ;; Loading \var{<install-dir\/>}/\var{<platform-dir\/>}/gbbopen/gbbopen-user.fasl
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 
 \subsubsection*{REPL command syntax}
@@ -2022,22 +2200,26 @@ commands in your Common Lisp environment.  On many Common Lisp
 implementations, REPL commands with arguments can be specified in either list
 or ``spread'' notation.  For example:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   cl-user> \textcolor{black}{(:gbbopen-user :create-dirs)}
   ;; Loading \var{<install-dir\/>}/startup.lisp
      ...
   ;; Loading \var{<install-dir\/>}/\var{<platform-dir\/>}/gbbopen/gbbopen-user.fasl
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 %
 or
 %
-\begin{example}\color{darkergray}%
+\W\supp\notpretop
+\begin{example}
+\textcolor{darkergray}{%
   cl-user> \textcolor{black}{:gbbopen-user :create-dirs}
   ;; Loading \var{<install-dir\/>}/startup.lisp
      ...
   ;; Loading \var{<install-dir\/>}/\var{<platform-dir\/>}/gbbopen/gbbopen-user.fasl
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 
 However, \xsitelink{Clozure CL}{http://trac.clozure.com/openmcl/},
@@ -2050,12 +2232,14 @@ the spread notation---without arguments.  So, CLISP users must use the
 \code{:common-lisp-user} functions rather than a REPL command when the command
 requires arguments:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   cl-user> \textcolor{black}{(cl-user:gbbopen-user :create-dirs)}
   ;; Loading \var{<install-dir\/>}/startup.lisp
      ...
   ;; Loading \var{<install-dir\/>}/\var{<platform-dir\/>}/gbbopen/gbbopen-user.fasl
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 %
 We will show the \reflink{spread command syntax}{sec:REPL-command-syntax} throughout
@@ -2079,25 +2263,26 @@ implementations, I use the following strategy:
 \begin{enumerate}
 
 \item I create a file, \code{shared-init.lisp}, in my home directory,
-  containing the following:
-
+containing the following:
+%
+\W\supp\notpretop
 \begin{example}
-(in-package :common-lisp-user)
+  (in-package :common-lisp-user)
 
-;; My personal preferences.  Note: Allegro CL requires 
-;; tpl:setq-default during initialization to retain changes
-;; to these global variables (done in .clinit.cl):
-(setf *print-case* ':downcase)
-(setf *compile-verbose* 't)
-(setf *load-verbose* 't)
+  ;; My personal preferences.  Note: Allegro CL requires 
+  ;; tpl:setq-default during initialization to retain changes
+  ;; to these global variables (done in .clinit.cl):
+  (setf *print-case* ':downcase)
+  (setf *compile-verbose* 't)
+  (setf *load-verbose* 't)
 
-(let ((defaults *load-truename*))
-  (load (make-pathname 
-         ;; where GBBopen is installed:
-         :directory '(:absolute \textcolor{red}{"usr" "local" "gbbopen"})
-         :name "initiate"
-         :type "lisp"
-         :defaults defaults)))
+  (let ((defaults *load-truename*))
+    (load (make-pathname 
+            ;; where GBBopen is installed:
+            :directory '(:absolute \textcolor{red}{"usr" "local" "gbbopen"})
+            :name "initiate"
+            :type "lisp"
+            :defaults defaults)))
 \end{example}
 
 The \code{:directory} argument to \code{make-pathname} is a Common Lisp
@@ -2112,57 +2297,60 @@ location of your GBBopen installation.
   initializations and then loads \code{shared-init.lisp}.  For example, here
   is the \code{.clisprc} initialization file that I use for
   \xsitelink{CLISP}{http://clisp.cons.org/}:
-
+%
+\W\supp\notpretop
 \begin{example}
-(in-package :common-lisp-user)
+  (in-package :common-lisp-user)
 
-;; enable maximum ANSI compliance:
-(setf custom:*ansi* 't)
+  ;; enable maximum ANSI compliance:
+  (setf custom:*ansi* 't)
 
-(let ((defaults *load-truename*))
-  (load (make-pathname 
-         :name "shared-init"
-         :type "lisp"
-         :defaults defaults)))
+  (let ((defaults *load-truename*))
+    (load (make-pathname 
+            :name "shared-init"
+            :type "lisp"
+            :defaults defaults)))
 \end{example}
 
 \xsitelink{SBCL}{http://sbcl.sourceforge.net} has a very strict interpretation
 of \code{*load-truename*} semantics, so my \code{.sbclrc} initialization file
 is:
 %
+\W\supp
 \begin{example}
-(in-package :common-lisp-user)
+  (in-package :common-lisp-user)
 
-;; *load-truename* returns nil when used in SBCL's .sbclrc 
-;; initialization file, so use (user-homedir-pathname):
-(let ((defaults (user-homedir-pathname)))
-  (load (make-pathname 
-         :name "shared-init"
-         :type "lisp"
-         :defaults defaults)))
+  ;; *load-truename* returns nil when used in SBCL's .sbclrc 
+  ;; initialization file, so use (user-homedir-pathname):
+  (let ((defaults (user-homedir-pathname)))
+    (load (make-pathname 
+            :name "shared-init"
+            :type "lisp"
+            :defaults defaults)))
 \end{example}
 
 Here is my \code{.clinit.cl} initialization file for
 \xsitelink{Allegro CL}{http://www.franz.com}:
-
+%
+\W\supp
 \begin{example}
-(in-package :common-lisp-user)
+  (in-package :common-lisp-user)
 
-;; Allegro CL requires tpl:setq-default during initialization
-;; to retain changes to these global variables:
-(tpl:setq-default *print-case* ':downcase)
-(tpl:setq-default *compile-verbose* 't)
-(tpl:setq-default *load-verbose* 't)
+  ;; Allegro CL requires tpl:setq-default during initialization
+  ;; to retain changes to these global variables:
+  (tpl:setq-default *print-case* ':downcase)
+  (tpl:setq-default *compile-verbose* 't)
+  (tpl:setq-default *load-verbose* 't)
 
-(let ((defaults *load-truename*))
-  (load (make-pathname 
-         :name "shared-init"
-         :type "lisp"
-         :defaults defaults)))
+  (let ((defaults *load-truename*))
+    (load (make-pathname 
+            :name "shared-init"
+            :type "lisp"
+            :defaults defaults)))
 \end{example}
 
 The initialization file names for supported GBBopen ports are:
-
+%
 \begin{tabular}{llll}
 ~~~~~~ & \xsitelink{Allegro CL}{http://www.franz.com} &
 ~~~~~~ & \code{.clinit.cl} \\
@@ -2212,13 +2400,16 @@ deem as your ``home'' directory.
 Here is a quick way to have Common Lisp tell you where it thinks your ``home''
 directory is located:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   cl-user> \textcolor{black}{(truename (user-homedir-pathname))}
   "C:\bkslash\bkslash{}Documents and Settings\bkslash\bkslash{}corkill\bkslash\bkslash"
-  cl-user>
+  cl-user>}
 \end{example}
 We will refer to this directory from now on as your ``homedir'' directory.
-\W\\
+
+\W\\~\\
 
 \item With this setup in place, all that is needed to use GBBopen is
   to start up a Common Lisp and type a GBBopen command, such as
@@ -2240,9 +2431,10 @@ the same time) .  To enable this Emacs command, add a command to load
 \code{\var{<install-dir>\/}/browse-hyperdoc.el} in your \code{.emacs}
 initialization file:
 %
+\W\supp
 \begin{example}
-;; GBBopen hyperdoc (where GBBopen was installed):
-(load "\var{<install-dir\/>}/browse-hyperdoc")
+  ;; GBBopen hyperdoc (where GBBopen was installed):
+  (load "\var{<install-dir\/>}/browse-hyperdoc")
 \end{example}
 
 If there is no \code{.emacs} file present in your home directory, simply
@@ -2252,9 +2444,10 @@ worry about where Emacs looks for their ``home'' directory.
 While you are editing your \code{.emacs} file, you might also want to add a
 command to load GBBopen's Emacs indentation customizations:
 %
+\W\supp
 \begin{example}
-;; GBBopen indentations (where GBBopen was installed):
-(load "\var{<install-dir\/>}/gbbopen-indent")
+  ;; GBBopen indentations (where GBBopen was installed):
+  (load "\var{<install-dir\/>}/gbbopen-indent")
 \end{example}
 
 If you are using
@@ -2286,8 +2479,9 @@ me to quickly reference the HyperSpec without a network connection.  I set the
 value of \code{common-lisp-hyperspec-root} in my \code{.emacs} initialization
 file to a URL that points to my local copy of the HyperSpec:
 %
+\W\supp
 \begin{example}
-(setf common-lisp-hyperspec-root "file:/usr/local/CLHS/")
+  (setf common-lisp-hyperspec-root "file:/usr/local/CLHS/")
 \end{example}
 
 \subsubsection*{Non-Emacs access}
@@ -2298,14 +2492,16 @@ Lisp function, \textbf{browse-hyperdoc}, that can be used to access GBBopen
 HyperDoc pages from Common Lisp.  GBBopen's \code{:os-interface} module must
 be loaded to make \textbf{browse-hyperdoc} available.  For example:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   cl-user> \textcolor{black}{:os-interface}
   ;; Loading \var{<install-dir\/>}/startup.lisp
      ...
   ;; Loading \var{<install-dir\/>}/\var{<platform-dir\/>}/tools/os-interface.fasl
   gbbopen-tools> \textcolor{black}{(browse-hyperdoc 'define-unit-class)}
   t
-  gbbopen-tools>
+  gbbopen-tools>}
 \end{example}
 %
 will display the GBBopen HyperDoc page for \textbf{define-unit-class} in your
@@ -2349,11 +2545,13 @@ Create a directory to hold the random-walk application.  I'm calling mine
 \reflink{upcoming exercise}{sec:application}. Here are the shell commands
 that I used to create my directories:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   [~]\$ \textcolor{black}{mkdir tutorial}
   [~]\$ \textcolor{black}{cd tutorial}
   [~/tutorial]\$ \textcolor{black}{mkdir source}
-  [~/tutorial]\$ 
+  [~/tutorial]\$}
 \end{example}
 
 \subsection*{Step 2: Create the tutorial-example file}
@@ -2361,34 +2559,37 @@ that I used to create my directories:
 Start up a fresh Common Lisp session and load the \code{:gbbopen-user}
 module, using the REPL command we set up in the last exercise:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   cl-user> \textcolor{black}{:gbbopen-user}
   ;; Loading \var{<install-dir\/>}/startup.lisp
      ...
   ;; Loading \var{<install-dir\/>}/\var{<platform-dir\/>}/gbbopen/gbbopen-user.fasl
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 
-Next, begin editing a new file named \code{tutorial-example.lisp} in
-the \code{source} subdirectory that you just created.  Even if you are
-more comfortable using another editor, use the editing facilities that
-are provided by your Common Lisp environment.  The development
-features of a quality Common Lisp environment are well worth the price
-of learning a new editor.  In an Emacs-based environment, such as
-\xsitelink{SLIME}{http://common-lisp.net/project/slime/} or
-\xsitelink{Allegro CL}{http://www.franz.com}'s ELI, typing \code{C-x
-  C-f} will prompt you for the name of a file to editor or create.
-(We will use Emacs key-binding notation, where \code{C-x C-f} means
-typing \code{\ctrl{c}} followed by {\ctrl{f}}.)  
+Next, begin editing a new file named \code{tutorial-example.lisp} in the
+\code{source} subdirectory that you just created.  Even if you are more
+comfortable using another editor, use the editing facilities that are provided
+by your Common Lisp environment.  The development features of a quality Common
+Lisp environment are well worth the price of learning a new editor.  In an
+Emacs-based environment, such as
+\xsitelink{SLIME}{http://common-lisp.net/project/slime/} or \xsitelink{Allegro
+  CL}{http://www.franz.com}'s ELI, typing \code{C-x C-f} will prompt you for
+the name of a file to editor or create.  (We will use Emacs key-binding
+notation, where \code{C-x C-f} means typing \code{\ctrl{c}} followed by
+{\ctrl{f}}.)
 
-Type the following two forms into the \code{tutorial-example.lisp}
-file buffer:
+Type the following two forms into the \code{tutorial-example.lisp} file
+buffer:
 %
+\W\supp
 \begin{example}
-(in-package :gbbopen-user)
+  (in-package :gbbopen-user)
 
-(define-unit-class location ()
-  (x y))
+  (define-unit-class location ()
+    (x y))
 \end{example}
 
 The \code{in-package} form specifies the Common Lisp package that is made
@@ -2409,22 +2610,26 @@ At this point, we have been using Common Lisp's
 development environment, but we have not loaded the forms in our file
 into Common Lisp:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(make-instance 'location)}
   Error: No class named: location.
   gbbopen-user>> \textcolor{black}{:a}
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 
 We could use Common Lisp's \code{compile-file} to compile the file and
 then \code{load} to load the resulting compiled file. For example:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(load (compile-file "~/tutorial/source/tutorial-example.lisp"))}
   ;; Compiling file ~/tutorial/source/tutorial-example.lisp
   ;; Loading ~/tutorial/source/tutorial-example.fasl
   t
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 %
 but you should be able to compile and load the file directly from the
@@ -2436,19 +2641,23 @@ compile-and-load-file command in your editing environment.
 Verify that all is well by creating a \code{location} unit instance in
 the REPL:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(make-instance 'location)}
   #<location 1>
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 
 \bfindexit{delete-blackboard-repository}%
 Then delete the blackboard repository in preparation for the next exercise:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(delete-blackboard-repository)}
   t
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 
 %% ========================================================================
@@ -2513,12 +2722,14 @@ This exercise shows you how to:
 
 \begin{tightitemize}
 \item The \code{tutorial-example.lisp} file created in the last exercise, containing:
+%
+\W\supp\notpretop
+\begin{example}
+\textcolor{darkergray}{%
+  (in-package :gbbopen-user)
 
-\begin{example}\color{darkergray}%
-(in-package :gbbopen-user)
-
-(define-unit-class location ()
-  (x y))
+  (define-unit-class location ()
+    (x y))}
 \end{example}
 \W\\
 
@@ -2530,12 +2741,14 @@ This exercise shows you how to:
 Edit your \code{tutorial-example.lisp} file, and change the
 \code{location} unit-class definition as follows:
 %
-\begin{example}\color{darkergray}%
-(define-unit-class location ()
-  (x y)
-  \textcolor{black}{(:dimensional-values
-    (x :point x)
-    (y :point y))})
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
+  (define-unit-class location ()
+    (x y)
+    \textcolor{black}{(:dimensional-values
+      (x :point x)
+      (y :point y))})}
 \end{example}
 %
 In this tutorial, we will highlight code additions and changes using a
@@ -2551,12 +2764,14 @@ Because we chose to use the same name for each dimension and its
 associated slot value, our \code{:dimensional-values} option might
 appear to be double-talk.  We could have defined our class as:
 %
-\begin{example}\color{darkergray}%
-(define-unit-class location ()
-  (x-slot y-slot)
-  (:dimensional-values
-    (x :point x-slot)
-    (y :point y-slot)))
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
+  (define-unit-class location ()
+    (x-slot y-slot)
+    (:dimensional-values
+      (x :point x-slot)
+      (y :point y-slot)))}
 \end{example}
 %
 which clarifies the semantics of the \code{:dimensional-values}
@@ -2582,16 +2797,20 @@ top-level form is \code{C-c C-c}.  In Allegro's ELI, the command is
 Let's test our new \code{location} unit class definition by making an
 instance.  Enter the following form in the REPL:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(defparameter ui (make-instance 'location :x 40 :y 60))}
   ui
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
-
+%
 \bfindexit{describe-instance}%
 and display its description:
 %
-\begin{example}\color{darkergray}%
+\W\supp\notpretop
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(describe-instance ui)}
   Location #<location 1>
     Instance name: 1
@@ -2603,7 +2822,7 @@ and display its description:
       x:  40
       y:  60
     Link slots: None
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 %
 Note the dimensional values for the \code{x} and \code{y} dimensions.
@@ -2613,10 +2832,12 @@ Note the dimensional values for the \code{x} and \code{y} dimensions.
 \bfindexit{make-space-instance}%
 Create the \code{known-world} space instance by evaluating:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(defparameter si (make-space-instance '(known-world)))}
   si
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 
 \subsection*{Step 5: Add the unit instance to the space instance}
@@ -2624,13 +2845,15 @@ Create the \code{known-world} space instance by evaluating:
 \bfindexit{add-instance-to-space-instance}%
 Now, add the \code{location} unit instance to the space instance:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(add-instance-to-space-instance ui si)}
   Warning: In add-instance-to-space-instance: #<location 1>
            does not share any dimensions with space instance 
            #<standard-space-instance (known-world)>.
   #<location 1>
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 
 \bfindexit{describe-blackboard-repository}%
@@ -2640,7 +2863,9 @@ instance (because we didn't specify any dimensions for the
 \code{known-world}).  GBBopen dutifully added the unit instance, as
 shown by \textbf{describe-blackboard-repository}:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(describe-blackboard-repository)}
   
   Space Instance                Contents
@@ -2653,7 +2878,7 @@ shown by \textbf{describe-blackboard-repository}:
   standard-space-instance               1
                                 ---------
                                         2 instances
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 %
 but we cannot perform dimension-based retrieval of our \code{location}
@@ -2663,16 +2888,19 @@ unit instance on the \code{known-world}.
 
 \bfindexit{delete-space-instance}%
 \bfindexit{make-space-instance}%
-Let's delete the \code{known-world} and create another one---this time
-with \code{x} and \code{y} dimensions:
 %
-\begin{example}\color{darkergray}%
+Let's delete the \code{known-world} and create another one---this time with
+\code{x} and \code{y} dimensions:
+%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(delete-space-instance si)}
   #<standard-space-instance (known-world) [Deleted]>
   gbbopen-user> \textcolor{black}{(setf si (make-space-instance '(known-world)
               :dimensions '((x :ordered) (y :ordered))))}
   #<standard-space-instance (known-world)>
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 %
 We have specified \code{x} and \code{y} as ordered dimensions, making the
@@ -2680,30 +2908,38 @@ We have specified \code{x} and \code{y} as ordered dimensions, making the
 proud!)
 
 \bfindexit{describe-space-instance}%
-Verify the dimensionality of the \code{known-world} space instance by evaluating:
 %
-\begin{example}\color{darkergray}%
+Verify the dimensionality of the \code{known-world} space instance by
+evaluating:
+%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(describe-space-instance si)}
   Standard-space-instance #<standard-space-instance (known-world)>
     Allowed unit classes: t
     Dimensions:
       (x :ordered)
       (y :ordered)
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 
 \subsection*{Step 7: Add the \code{location} unit instance to the new
   \code{known-world}}
 
 \bfindexit{add-instance-to-space-instance}%
-Add the \code{location} unit instance to the new \code{known-world} space instance:
 %
-\begin{example}\color{darkergray}%
+Add the \code{location} unit instance to the new \code{known-world} space
+instance:
+%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(add-instance-to-space-instance ui si)}
   #<location 1>
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
-
+%
 The dimension warning is gone.
 
 \subsection*{Step 8: Adding every \code{location} to the \code{known-world}
@@ -2716,17 +2952,20 @@ space instances by using the \code{:initial-space-instances} class option in
 \textbf{define-unit-class}.
 
 \bfindexit{define-unit-class}%
+%
 Add the following \code{:initial-space-instances} class option to the
 \code{location} unit-class definition in your \code{tutorial-example.lisp}
 file:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   (define-unit-class location ()
     (x y)
     (:dimensional-values
       (x :point x)
       (y :point y))
-    \textcolor{black}{(:initial-space-instances (known-world))})
+    \textcolor{black}{(:initial-space-instances (known-world))})}
 \end{example}
 
 Compile and load the new \code{location} unit-class definition.
@@ -2735,19 +2974,25 @@ Compile and load the new \code{location} unit-class definition.
 
 \bfindexit{make-instance}%
 \codeindexit{defparameter}%
+%
 Let's test our new \code{location} unit class definition by making another
 instance.  Enter the following form in the REPL:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(make-instance 'location :x 70 :y 30)}
   #<location 2>
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 %
 \bfindexit{:dsbb}%
+%
 and confirm that the new \code{location} is on the \code{known-world}:
 %
-\begin{example}\color{darkergray}%
+\W\supp\notpretop
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{:dsbb}
   
   Space Instance                Contents
@@ -2760,7 +3005,7 @@ and confirm that the new \code{location} is on the \code{known-world}:
   standard-space-instance               1
                                 ---------
                                         3 instances
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 %
 Here we used GBBopen's \code{:dsbb} REPL command, which is equivalent to
@@ -2769,21 +3014,26 @@ is a useful check that our unit instances and space instances are being
 created and deleted as intended.
 
 \bfindexit{make-instance}%
+%
 Now, let's populate the \code{known-world} with a few more \code{locations}s:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(make-instance 'location :x 20 :y 20)}
   #<location 3>
   gbbopen-user> \textcolor{black}{(make-instance 'location :x 25 :y 25)}
   #<location 4>
   gbbopen-user> \textcolor{black}{(make-instance 'location :x 20 :y 30)}
   #<location 5>
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 %
 and verify that they are all on the \code{known-world}:
 %
-\begin{example}\color{darkergray}%
+\W\supp\notpretop
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{:dsbb}
   
   Space Instance                Contents
@@ -2796,39 +3046,46 @@ and verify that they are all on the \code{known-world}:
   standard-space-instance               1
                                 ---------
                                         6 instances
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 
 \subsection*{Step 10: Dimensional retrieval}
 
 \bfindexit{find-instances}%
+%
 We have seen how we can use \textbf{find-instances} to retrieve all
 \code{location} unit instances from the \code{known-world}:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(find-instances 'location '(known-world) :all)}
   (#<location 5> #<location 4> #<location 3> #<location 2> #<location 1>)
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 
-\bfindexit{find-instances}%
 Now that we have added \code{x} and \code{y} dimensions to \code{location}s
 and the \code{known-world}, we can retrieve \code{location} unit instances
 using dimensional patterns.  For example, let's retrieve the unit instance
 positioned at (20,20):
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(find-instances 'location '(known-world)
                   '(and (= x 20) (= y 20)))}
    (#<location 3>)
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 
 \bfindexit{describe-instance}%
+%
 We can use \textbf{describe-instance} to verify that we found the desired
 \code{location} unit instance:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(find-instances 'location '(known-world)
                   '(and (= x 20) (= y 20)))}
    (#<location 3>)
@@ -2843,7 +3100,7 @@ We can use \textbf{describe-instance} to verify that we found the desired
       x:  20
       y:  20
     Link slots: None
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 %
 Note that we used Common Lisp's REPL \code{*} variable that is always set to
@@ -2859,25 +3116,28 @@ GBBopen makes this is easy to do by providing the
 Common Lisp's \code{print-object} displays \code{location} unit instances.
 
 \bfindex{print-instance-slots}%
+%
 Add the following \textbf {print-instance-slots} method \underline{after} the
 \code{location} unit-class definition in your \code{tutorial-example.lisp}
 file:
 %
-\begin{example}\color{darkergray}%
-(define-unit-class location ()
-  (x y)
-  (:dimensional-values
-    (x :point x)
-    (y :point y))
-  (:initial-space-instances (known-world)))
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
+  (define-unit-class location ()
+    (x y)
+    (:dimensional-values
+      (x :point x)
+      (y :point y))
+    (:initial-space-instances (known-world)))
 
-\textcolor{black}{(defmethod print-instance-slots ((location location) stream)
-  (call-next-method)
-  (when (and (slot-boundp location 'x)
-             (slot-boundp location 'y))
-    (format stream " (~s ~s)"
-            (x-of location)
-            (y-of location))))}
+  \textcolor{black}{(defmethod print-instance-slots ((location location) stream)
+    (call-next-method)
+    (when (and (slot-boundp location 'x)
+               (slot-boundp location 'y))
+      (format stream " (~s ~s)"
+              (x-of location)
+              (y-of location))))}}
 \end{example}
 %
 The method first performs a \code{(call-next-method)} to produce the initial
@@ -2890,14 +3150,17 @@ should always perform this safety check in any \textbf{print-instance-slots}
 methods.
 
 \bfindexit{find-instances}%
+%
 Now, compile and load the \textbf {print-instance-slots} method and try it
 out:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(find-instances 'location '(known-world)
                   '(= (x y) (20 20)))}
    (#<location 3 (20 20)>)
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 
 Note that this time we used a two-dimensional (\code{x},\code{y}) retrieval
@@ -2910,94 +3173,111 @@ note that we can see immediately that we retrieved the desired
 \subsection*{Step 12: More dimensional retrievals}
 
 \bfindexit{find-instances}%
-Let's try some additional dimensional retrievals.
-
-Find all \code{location}s with an \code{x} position of 20:
 %
-\begin{example}\color{darkergray}%
+Let's try some additional dimensional retrievals.  First, find all
+\code{location}s with an \code{x} position of 20:
+%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(find-instances 'location '(known-world)
                   '(= x 20))}
    (#<location 5 (20 30)> #<location 3 (20 20)>)
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
-
+%
 Find all \code{location}s with whose \code{x} and \code{y} coordinates
 are less than or equal to 25:
 %
-\begin{example}\color{darkergray}%
+\W\supp\notpretop
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(find-instances 'location '(known-world)
                   '(<= (x y) (25 25)))}
   (#<location 4 (25 25)> #<location 3 (20 20)>)
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
-
+%
 Find all \code{location}s with whose \code{x} coordinates are between 0 and 40
 (inclusive) and whose \code{y} coordinates are between 60 and 100 (inclusive):
 %
-\begin{example}\color{darkergray}%
+\W\supp\notpretop
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(find-instances 'location '(known-world)
                   '(within (x y) ((0 40) (60 100))))}
   (#<location 1 (40 60)>)
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
-
+%
 Find all \code{location}s with whose coordinates are not within the above
 region:
 %
-\begin{example}\color{darkergray}%
+\W\supp\notpretop
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(find-instances 'location '(known-world)
                   '(not (within (x y) ((0 40) (60 100)))))}
   (#<location 5 (20 30)> #<location 4 (25 25)> #<location 3 (20 20)>
    #<location 2 (70 30)>)
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 
 \subsection*{Step 13: Change a dimensional value}
 
+\bfindexit{find-instances}%
+%
 Recall that we assigned \code{location} \code{1} to the global variable
 \code{ui}:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{ui}
   #<location 1 (40 60)>
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
-  
-\bfindexit{find-instances}%
+%  
 and we can retrieve it by its \code{x} and \code{y} coordinates:
 %
-\begin{example}\color{darkergray}%
+\W\supp\notpretop
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(find-instances 'location '(known-world)
                   '(= (x y) (40 60)))}
   (#<location 1 (40 60)>)
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 
 \bfindexit{find-instances}%
+%
 Let's change its \code{x} position to \code{80} and try retrieving it again:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(setf (x-of ui) 80)}
   80
   gbbopen-user> \textcolor{black}{(find-instances 'location '(known-world)
                   '(= (x y) (40 60)))}
   nil
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
-
-\bfindexit{find-instances}%
+%
 It has moved on the \code{known-world}.  As expected, the \code{location}
 \code{1} unit instance is now at (80, 60):
 %
-\begin{example}\color{darkergray}%
+\W\supp\notpretop
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(find-instances 'location '(known-world)
                   '(= (x y) (80 60)))}
   (#<location 1 (80 60)>)
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
-
+%
 Also note that the textual representation of \code{location} \code{1}
-also shows the new \code{x} slot value.
+shows the new \code{x} slot value.
 
 %% ========================================================================
 %%  Using A Control Shell
@@ -3023,6 +3303,7 @@ GBBopen's Agenda Shell is a generalization of the priority-based scheduling
 approach that was used in the original Hearsay-II blackboard architecture.
 The Agenda Shell manages KS definitions, and it initiates and terminates KS
 activities by:
+%
 \begin{tightitemize}
 \item Triggering KSs in response to events
 \item Deciding which triggered KSs should be activated and their priority
@@ -3038,6 +3319,7 @@ the most basic Agenda Shell capabilities in this Tutorial.
 \fndocrule
 
 This exercise shows you how to:
+%
 \begin{tightitemize}
 \item Load GBBopen's Agenda Shell control shell
 \item Start the Agenda Shell executing
@@ -3051,39 +3333,41 @@ This exercise shows you how to:
 \subsection*{Prerequisites}
 
 The \code{tutorial-example.lisp} file as modified thus far:
-
+%
+\W\supp
 \begin{example}
-(in-package :gbbopen-user)
+  (in-package :gbbopen-user)
 
-(define-unit-class location ()
-  (x y)
-  (:dimensional-values
-    (x :point x)
-    (y :point y))
-  (:initial-space-instances (known-world)))
+  (define-unit-class location ()
+    (x y)
+    (:dimensional-values
+      (x :point x)
+      (y :point y))
+    (:initial-space-instances (known-world)))
 
-(defmethod print-instance-slots ((location location) stream)
-  (call-next-method)
-  (when (and (slot-boundp location 'x)
-             (slot-boundp location 'y))
-    (format stream " (~s ~s)"
-            (x-of location)
-            (y-of location))))
+  (defmethod print-instance-slots ((location location) stream)
+    (call-next-method)
+    (when (and (slot-boundp location 'x)
+               (slot-boundp location 'y))
+      (format stream " (~s ~s)"
+              (x-of location)
+              (y-of location))))
 \end{example}
-
 
 \subsection*{Step 1: Load the Agenda Shell}
 
 Start up a fresh Common Lisp session and load the \code{:agenda-shell-user}
 module, using the \code{:agenda-shell-user} REPL command:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   cl-user> \textcolor{black}{:agenda-shell-user}
   ;; Loading \var{<install-dir\/>}/startup.lisp
      ...
   ;; Loading \var{<install-dir\/>}/\var{<platform-dir\/>}/gbbopen/
   ;;            control-shells/agenda-shell-user.fasl
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 
 This loads everything that we've been loading with the \code{:gbbopen-user}
@@ -3094,9 +3378,12 @@ the \code{:gbbopen-user} package.
 \subsection*{Step 2: Run the control shell}
 
 \bfindex{start-control-shell}%
+%
 Now, start the Agenda Shell:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(start-control-shell)}
   ;; Control shell 1 started
   ;; No executable KSAs remain, exiting control shell
@@ -3104,7 +3391,7 @@ Now, start the Agenda Shell:
   ;; Run time: 0 seconds
   ;; Elapsed time: 0 seconds
   :quiescence
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 
 What just happened?  The Agenda Shell began executing and looked for something
@@ -3123,33 +3410,35 @@ So let's define a KS!
 Edit your \code{tutorial-example.lisp} file and add the following function
 and KS definition to the end of the \code{tutorial-example.lisp} file:
 %
-\begin{example}\color{darkergray}%
-(define-unit-class location ()
-  (x y)
-  (:dimensional-values
-    (x :point x)
-    (y :point y))
-  (:initial-space-instances (known-world)))
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
+  (define-unit-class location ()
+    (x y)
+    (:dimensional-values
+      (x :point x)
+      (y :point y))
+    (:initial-space-instances (known-world)))
 
-(defmethod print-instance-slots ((location location) stream)
-  (call-next-method)
-  (when (and (slot-boundp location 'x)
-             (slot-boundp location 'y))
-    (format stream " (~s ~s)"
-            (x-of location)
-            (y-of location))))
+  (defmethod print-instance-slots ((location location) stream)
+    (call-next-method)
+    (when (and (slot-boundp location 'x)
+               (slot-boundp location 'y))
+      (format stream " (~s ~s)"
+              (x-of location)
+              (y-of location))))
 
-\textcolor{black}{;;; ======================================================================
-;;;   Startup KS
+  \textcolor{black}{;;; ====================================================================
+  ;;;   Startup KS
 
-(defun startup-ks-function (ksa)
-  (declare (ignore ksa))
-  ;; Create an initial location unit instance at (0,0):
-  (make-instance 'location :x 0 :y 0))
+  (defun startup-ks-function (ksa)
+    (declare (ignore ksa))
+    ;; Create an initial location unit instance at (0,0):
+    (make-instance 'location :x 0 :y 0))
 
-(define-ks startup-ks
-    :trigger-events ((start-control-shell-event))
-    :execution-function 'startup-ks-function)}
+  (define-ks startup-ks
+      :trigger-events ((start-control-shell-event))
+      :execution-function 'startup-ks-function)}}
 \end{example}
 
 The function \code{startup-ks-function} implements the KS.  The Agenda Shell
@@ -3172,13 +3461,15 @@ the editor buffer (using \code{C-c C-k} in SLIME; \code{C-c C-b} in ELI).
 The Agenda Shell creates a \code{ks} unit instance for each KS that we
 define:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(map-instances-of-class #'print 'ks)}
   #<ks startup-ks> 
   nil
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
-
+%
 Note that the name of the \code{ks} unit instance is the name of the KS.
 
 \subsection*{Step 4: Make the \code{known-world}}
@@ -3186,19 +3477,24 @@ Note that the name of the \code{ks} unit instance is the name of the KS.
 Before we can run our KS, we must make the \code{known-world} space
 instance:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(make-space-instance '(known-world)
                           :dimensions '((x :ordered) (y :ordered))))}
   #<standard-space-instance (known-world)>
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 
 \subsection*{Step 5: Start the control shell}
 
 \bfindex{start-control-shell}%
+%
 Start the Agenda Shell again:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(start-control-shell)}
   ;; Control shell 1 started
   ;; No executable KSAs remain, exiting control shell
@@ -3206,12 +3502,14 @@ Start the Agenda Shell again:
   ;; Run time: 0 seconds
   ;; Elapsed time: 0 seconds
   :quiescence
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 
 Did it work?  Let's describe the blackboard repository:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{:dsbb}
   
   Space Instance                Contents
@@ -3228,9 +3526,9 @@ Did it work?  Let's describe the blackboard repository:
   standard-space-instance               1
                                 ---------
                                         7 instances
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
-
+%
 The initial \code{location} unit instance is there!
 
 Note that some other unit instances have been created by the control shell.
@@ -3252,7 +3550,9 @@ asterisk (\code{*}).
 Let's verify this behavior by calling \code{delete-blackboard-repository} and
 then describe the blackboard repository:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(delete-blackboard-repository)}
   t
   gbbopen-user> \textcolor{black}{:dsbb}
@@ -3264,7 +3564,7 @@ then describe the blackboard repository:
   ks                                    1 +
   ksa-queue                             2 +
   ordered-ksa-queue                     1 +
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 
 \subsection*{Step 6: Display control shell activities}
@@ -3274,21 +3574,26 @@ repository, let's rerun the control shell.  However, this time we will ask
 GBBopen to display more of what the control shell is doing. First, enable
 display of all control-shell and instance-creation events:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(enable-event-printing '(control-shell-event :plus-subevents))}
   nil
   gbbopen-user> \textcolor{black}{(enable-event-printing 'create-instance-event)}
   nil
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 %
 We will cover events, event printing, and event functions in greater
 detail in a later exercise.
 
 \bfindex{start-control-shell}%
+%
 Start the Agenda Shell once again:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(start-control-shell)}
   ;; Control shell 1 started
   => Start-control-shell-event
@@ -3314,33 +3619,41 @@ Start the Agenda Shell once again:
   ;; Run time: 0 seconds
   ;; Elapsed time: 0 seconds
   :quiescence
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 
 \subsection*{Step 7: Control-shell stepping}
 
 \bfindexit{delete-blackboard-repository}%
+%
 Let's rerun the control shell once again, but this time we will enable
 control-shell stepping. Again, delete the blackboard repository:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(delete-blackboard-repository)}
   t
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 %
 and disable the event printing that we enabled in the last step:
 %
-\begin{example}\color{darkergray}%
+\W\supp\notpretop
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(disable-event-printing)}
   nil
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 
 \bfindex{start-control-shell}%
+%
 Now start the Agenda Shell, this time with stepping enabled:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(start-control-shell :stepping 't)}
   ;; Control shell 1 started
   >> CS Step (cycle 1):
@@ -3374,7 +3687,7 @@ Now start the Agenda Shell, this time with stepping enabled:
   ;; Run time: 0 seconds
   ;; Elapsed time: 1 minute, 6 seconds
   :quiescence
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 
 %% ========================================================================
@@ -3419,36 +3732,37 @@ This exercise shows you how to:
 \begin{tightitemize}
 \item The \code{tutorial-example.lisp} file as modified thus far:
 \end{tightitemize}
-
+%
+\W\supp
 \begin{example}
-(in-package :gbbopen-user)
+  (in-package :gbbopen-user)
 
-(define-unit-class location ()
-  (x y)
-  (:dimensional-values
-    (x :point x)
-    (y :point y))
-  (:initial-space-instances (known-world)))
+  (define-unit-class location ()
+    (x y)
+    (:dimensional-values
+      (x :point x)
+      (y :point y))
+    (:initial-space-instances (known-world)))
 
-(defmethod print-instance-slots ((location location) stream)
-  (call-next-method)
-  (when (and (slot-boundp location 'x)
-             (slot-boundp location 'y))
-    (format stream " (~s ~s)"
-            (x-of location)
-            (y-of location))))
+  (defmethod print-instance-slots ((location location) stream)
+    (call-next-method)
+    (when (and (slot-boundp location 'x)
+               (slot-boundp location 'y))
+      (format stream " (~s ~s)"
+              (x-of location)
+              (y-of location))))
 
-;;; ======================================================================
-;;;   Startup KS
+  ;;; ====================================================================
+  ;;;   Startup KS
 
-(defun startup-ks-function (ksa)
-  (declare (ignore ksa))
-  ;; Create an initial location unit instance at (0,0):
-  (make-instance 'location :x 0 :y 0))
+  (defun startup-ks-function (ksa)
+    (declare (ignore ksa))
+    ;; Create an initial location unit instance at (0,0):
+    (make-instance 'location :x 0 :y 0))
 
-(define-ks startup-ks
-    :trigger-events ((start-control-shell-event))
-    :execution-function 'startup-ks-function)
+  (define-ks startup-ks
+      :trigger-events ((start-control-shell-event))
+      :execution-function 'startup-ks-function)
 \end{example}
 
 \begin{tightitemize}
@@ -3460,15 +3774,16 @@ This exercise shows you how to:
 Edit your \code{tutorial-example.lisp} file and add the following function
 definition at the end of the file:
 %
+\W\supp
 \begin{example}
-(defun initializations (event-name &key &allow-other-keys)
-  (declare (ignore event-name))
-  ;; Clean up any previous run:
-  (delete-blackboard-repository)
-  ;; Make a new known-world space instance:
-  (make-space-instance 
-   '(known-world)
-   :dimensions '((x :ordered) (y :ordered))))
+  (defun initializations (event-name &key &allow-other-keys)
+    (declare (ignore event-name))
+    ;; Clean up any previous run:
+    (delete-blackboard-repository)
+    ;; Make a new known-world space instance:
+    (make-space-instance 
+     '(known-world)
+     :dimensions '((x :ordered) (y :ordered))))
 \end{example}
 
 The first thing to note about the function definition is the argument
@@ -3498,7 +3813,7 @@ the specified event classes. This is achieved by specifying
 
 Here are GBBopen's defined event classes when the Agenda Shell has
 been loaded:
-
+%
 \T\begin{ifhtml}
 \xml{br}
 \xml{img align="center" src="agenda-shell-events.png"}
@@ -3509,29 +3824,30 @@ been loaded:
 \includegraphics[scale=0.85]{agenda-shell-events}
 \end{center}
 \W\end{iftex}
-
-\noindent Event classes shown within rectangles are abstract event classes
-that cannot be signaled.  Nevertheless, abstract event classes are
-very convenient if we wish to attach an event function to an entire
-subtree of event classes.  We used abstract event classes to advantage
-earlier when we enabled display of all control-shell events by
-evaluating:
 %
-\begin{example}\color{darkergray}%
+Event classes shown within rectangles are abstract event classes that cannot
+be signaled.  Nevertheless, abstract event classes are very convenient if we
+wish to attach an event function to an entire subtree of event classes.  We
+used abstract event classes to advantage earlier when we enabled display of
+all control-shell events by evaluating:
+%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> (enable-event-printing '(control-shell-event :plus-subevents))
   nil
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
-
 
 Add the following form at the end of your \code{tutorial-example.lisp} file:
 %
+\W\supp
 \begin{example}
-(add-event-function 'initializations 'start-control-shell-event
-                    ;; Initializations should be done first!
-                    :priority 100)
+  (add-event-function 'initializations 'start-control-shell-event
+                      ;; Initializations should be done first!
+                      :priority 100)
 \end{example}
-
+%
 (We'll place the \textbf{add-event-function} form immediately after the
 \code{initializations} function definition in our file, but this choice of
 location is purely a code organizational style preference---the form could be
@@ -3540,12 +3856,15 @@ placed anywhere relative to the function definition.)
 \subsection*{Step 3: Run the application}
 
 \bfindex{start-control-shell}%
+%
 Start a fresh Common Lisp session, compile and load the
 \code{tutorial-example.lisp} file directly from the editor buffer (using
 \code{C-c C-k} in SLIME; \code{C-c C-b} in ELI) and start the Agenda Shell
 again:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(start-control-shell)}
   ;; Control shell 1 started
   ;; No executable KSAs remain, exiting control shell
@@ -3553,7 +3872,7 @@ again:
   ;; Run time: 0 seconds
   ;; Elapsed time: 0 seconds
   :quiescence
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 
 Note that our developing application performs the same as it did in the last
@@ -3565,10 +3884,13 @@ repository before running the application another time.
 \subsection*{Step 4: Run it Again}
 
 \bfindex{start-control-shell}%
+%
 Let's verify that we can re-run our application. Without doing anything else,
 start the Agenda Shell again:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(start-control-shell)}
   ;; Control shell 1 started
   ;; No executable KSAs remain, exiting control shell
@@ -3576,21 +3898,24 @@ start the Agenda Shell again:
   ;; Run time: 0 seconds
   ;; Elapsed time: 0 seconds
   :quiescence
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 
-As before our \code{initializations} event function took care of all the
+As before, our \code{initializations} event function took care of all the
 details of starting up our application.
 
 \subsection*{Step 5: It's a new world$\ldots$}
 
 \bfindexit{make-space-instance}%
+%
 GBBopen allows us to restrict the classes of unit instances that can be stored
 on a space instance.  For example, we can limit the \code{known-world} to
 \code{location} unit instances by specifying an \code{:allowed-unit-classes}
 value to \code{make-space-instance}:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   (defun initializations (event-name &key &allow-other-keys)
     (declare (ignore event-name))
     ;; Clean up any previous run:
@@ -3599,7 +3924,7 @@ value to \code{make-space-instance}:
     (make-space-instance 
      '(known-world)
      :dimensions '((x :ordered) (y :ordered))
-     \textcolor{black}{:allowed-unit-classes 'location}))
+     \textcolor{black}{:allowed-unit-classes 'location}))}
 \end{example}
 %
 Attempting to add any unit-instance that is not a \code{location} to
@@ -3610,32 +3935,36 @@ to those of one or more unit classes.  Edit the definition of
 \code{initializations}, removing the \code{x} and \code{y} dimensions
 specification:
 %
-\begin{example}\color{darkergray}%
-(defun initializations (event-name &key &allow-other-keys)
-  (declare (ignore event-name))
-  ;; Clean up any previous run:
-  (delete-blackboard-repository)
-  ;; Make a new known-world space instance:
-  (make-space-instance 
-   '(known-world)
-   :dimensions \textcolor{red}{'((x :ordered) (y :ordered))}
-   :allowed-unit-classes 'location))
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
+  (defun initializations (event-name &key &allow-other-keys)
+    (declare (ignore event-name))
+    ;; Clean up any previous run:
+    (delete-blackboard-repository)
+    ;; Make a new known-world space instance:
+    (make-space-instance 
+     '(known-world)
+     :dimensions \textcolor{red}{'((x :ordered) (y :ordered))}
+     :allowed-unit-classes 'location))}
 \end{example}
 %
 and replacing it with a call of \textbf{dimensions-of} to
 obtain the dimensions associated with instances of the \code{location}
 unit class:
 %
-\begin{example}\color{darkergray}%
-(defun initializations (event-name &key &allow-other-keys)
-  (declare (ignore event-name))
-  ;; Clean up any previous run:
-  (delete-blackboard-repository)
-  ;; Make a new known-world space instance:
-  (make-space-instance 
-   '(known-world)
-   :dimensions \textcolor{black}{(dimensions-of 'location)}
-   :allowed-unit-classes 'location))
+\W\supp\notpretop
+\begin{example}
+\textcolor{darkergray}{%
+  (defun initializations (event-name &key &allow-other-keys)
+    (declare (ignore event-name))
+    ;; Clean up any previous run:
+    (delete-blackboard-repository)
+    ;; Make a new known-world space instance:
+    (make-space-instance 
+     '(known-world)
+     :dimensions \textcolor{black}{(dimensions-of 'location)}
+     :allowed-unit-classes 'location))}
 \end{example}
 
 \subsection*{Step 6: Run the application again}
@@ -3644,7 +3973,9 @@ Compile and load the \code{tutorial-example.lisp} file directly from the
 editor buffer (using \code{C-c C-k} in SLIME; \code{C-c C-b} in ELI) and start
 the Agenda Shell again:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(start-control-shell)}
   ;; Control shell 1 started
   ;; No executable KSAs remain, exiting control shell
@@ -3652,21 +3983,23 @@ the Agenda Shell again:
   ;; Run time: 0 seconds
   ;; Elapsed time: 0 seconds
   :quiescence
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 
 \bfindexit{describe-space-instance}%
 Verify the dimensionality of the \code{known-world} space instance by
 evaluating:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(describe-space-instance '(known-world))}
   Standard-space-instance #<standard-space-instance (known-world)>
     Allowed unit classes: t
     Dimensions:
       (x :ordered)
       (y :ordered)
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 
 %% ========================================================================
@@ -3707,52 +4040,53 @@ This exercise shows you how to:
 \begin{tightitemize}
 \item The \code{tutorial-example.lisp} file as modified thus far:
 \end{tightitemize}
-
+%
+\W\supp
 \begin{example}
-(in-package :gbbopen-user)
+  (in-package :gbbopen-user)
 
-(define-unit-class location ()
-  (x y)
-  (:dimensional-values
-    (x :point x)
-    (y :point y))
-  (:initial-space-instances (known-world)))
+  (define-unit-class location ()
+    (x y)
+    (:dimensional-values
+      (x :point x)
+      (y :point y))
+    (:initial-space-instances (known-world)))
 
-(defmethod print-instance-slots ((location location) stream)
-  (call-next-method)
-  (when (and (slot-boundp location 'x)
-             (slot-boundp location 'y))
-    (format stream " (~s ~s)"
-            (x-of location)
-            (y-of location))))
+  (defmethod print-instance-slots ((location location) stream)
+    (call-next-method)
+    (when (and (slot-boundp location 'x)
+               (slot-boundp location 'y))
+      (format stream " (~s ~s)"
+              (x-of location)
+              (y-of location))))
 
-;;; ======================================================================
-;;;   Startup KS
+  ;;; ====================================================================
+  ;;;   Startup KS
 
-(defun startup-ks-function (ksa)
-  (declare (ignore ksa))
-  ;; Create an initial location unit instance at (0,0):
-  (make-instance 'location :x 0 :y 0))
+  (defun startup-ks-function (ksa)
+    (declare (ignore ksa))
+    ;; Create an initial location unit instance at (0,0):
+    (make-instance 'location :x 0 :y 0))
 
-(define-ks startup-ks
-    :trigger-events ((start-control-shell-event))
-    :execution-function 'startup-ks-function)
+  (define-ks startup-ks
+      :trigger-events ((start-control-shell-event))
+      :execution-function 'startup-ks-function)
 
-;;; ======================================================================
-;;;   Initializations (run at Agenda Shell startup)
+  ;;; ====================================================================
+  ;;;   Initializations (run at Agenda Shell startup)
 
-(defun initializations (event-name &key &allow-other-keys)
-  (declare (ignore event-name))
-  ;; Clean up any previous run:
-  (delete-blackboard-repository)
-  ;; Make a new known-world space instance:
-  (make-space-instance 
-   '(known-world)
-   :dimensions (dimensions-of 'location)))
+  (defun initializations (event-name &key &allow-other-keys)
+    (declare (ignore event-name))
+    ;; Clean up any previous run:
+    (delete-blackboard-repository)
+    ;; Make a new known-world space instance:
+    (make-space-instance 
+     '(known-world)
+     :dimensions (dimensions-of 'location)))
 
-(add-event-function 'initializations 'start-control-shell-event
-                    ;; Initializations should be done first!
-                    :priority 100)
+  (add-event-function 'initializations 'start-control-shell-event
+                      ;; Initializations should be done first!
+                      :priority 100)
 \end{example}
 
 \begin{tightitemize}
@@ -3766,25 +4100,29 @@ It's time we introduce the notion of time to our application.  Edit the
 a new slot, \code{time}, to the \code{location} unit class definition and a
 corresponding \code{time} dimensional value:
 %
-\begin{example}\color{darkergray}%
-(define-unit-class location ()
-  (\textcolor{black}{time} 
-   x y)
-  (:dimensional-values
-    \textcolor{black}{(time :point time)}
-    (x :point x)
-    (y :point y))
-  (:initial-space-instances (known-world)))
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
+  (define-unit-class location ()
+    (\textcolor{black}{time} 
+     x y)
+    (:dimensional-values
+      \textcolor{black}{(time :point time)}
+      (x :point x)
+      (y :point y))
+    (:initial-space-instances (known-world)))}
 \end{example}
 
 Recall that we specified that the dimensions of the \code{known-world} space
 instance that is created by our \code{initializations} function relative to
 the dimensions of the \code{location} unit class:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   (make-space-instance 
       '(known-world)
-      :dimensions (dimensions-of 'location)))
+      :dimensions (dimensions-of 'location)))}
 \end{example}
 %
 Therefore, we don't need to modify our call to \code{make-space-instance} in
@@ -3793,21 +4131,24 @@ order to add \code{time} as a dimension of \code{known-world}.
 Next, modify \code{startup-ks-function} in \code{tutorial-example.lisp} so
 that it creates the initial \code{location} unit instance at time 0:
 %
-\begin{example}\color{darkergray}%
-(defun startup-ks-function (ksa)
-  (declare (ignore ksa))
-  ;; Create an initial location unit instance at (0,0) \textcolor{black}{at time 0}:
-  (make-instance 'location \textcolor{black}{:time 0} :x 0 :y 0))
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
+  (defun startup-ks-function (ksa)
+    (declare (ignore ksa))
+    ;; Create an initial location unit instance at (0,0) \textcolor{black}{at time 0}:
+    (make-instance 'location \textcolor{black}{:time 0} :x 0 :y 0))}
 \end{example}
 
 \subsection*{Step 2: A test of time}
 
-Let's check our work.  Compile and load the
-\code{tutorial-example.lisp} file directly from the editor buffer (using
-\code{C-c C-k} in SLIME; \code{C-c C-b} in ELI) and start the Agenda Shell
-again:
+Let's verify our work.  Compile and load the \code{tutorial-example.lisp} file
+directly from the editor buffer (using \code{C-c C-k} in SLIME; \code{C-c C-b}
+in ELI) and start the Agenda Shell:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(start-control-shell)}
   ;; Control shell 1 started
   ;; No executable KSAs remain, exiting control shell
@@ -3815,14 +4156,16 @@ again:
   ;; Run time: 0 seconds
   ;; Elapsed time: 0 seconds
   :quiescence
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 
 \bfindexit{describe-instance}%
 \bfindexit{find-instance-by-name}%
 Check that the initial \code{location} unit instance is at \code{time} zero:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(describe-instance (find-instance-by-name 1 'location))}
   Location #<location 1 (0 0)>
     Instance name: 1
@@ -3836,13 +4179,13 @@ Check that the initial \code{location} unit instance is at \code{time} zero:
       x:  40
       y : 60
     Link slots: None
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 
 \subsection*{Step 3: Define another KS}
 
 Define a KS called \code{random-walk-ks} that:
-
+%
 \begin{tightitemize}
 \item Is triggered when a \code{location} unit instance is created
 \item Has a constant KSA rating of 100
@@ -3867,22 +4210,26 @@ Define a KS called \code{random-walk-ks} that:
 
 Begin implementing the \code{random-walk-ks} by adding the following
 utility function to the end of your \code{tutorial-example.lisp} file:
-
+%
+\W\supp
 \begin{example}
-;;; ======================================================================
-;;;   Random-walk KS
+  ;;; ====================================================================
+  ;;;   Random-walk KS
 
-(defun add-linear-variance (value max-variance)
-  ;;; Returns a new random value in the interval
-  ;;; [(- value max-variance), (+ value max-variance)]
-  (+ value (- (random (1+ (* max-variance 2))) max-variance)))
+  (defun add-linear-variance (value max-variance)
+    ;;; Returns a new random value in the interval
+    ;;; [(- value max-variance), (+ value max-variance)]
+    (+ value (- (random (1+ (* max-variance 2))) max-variance)))
 \end{example}
-
+%
 Then compile the definition (using \code{C-c C-c} in SLIME or \code{C-c
   C-x} in ELI) and evaluate the following test in the REPL:
-
+%
 \bfindex{printv}%
-\begin{example}\color{darkergray}%
+%
+\W\supp\notpretop
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(dotimes (i 15) (printv (add-linear-variance 0 10)))}
   ;;  (add-linear-variance 0 10) => 8
   ;;  (add-linear-variance 0 10) => 9
@@ -3900,7 +4247,7 @@ Then compile the definition (using \code{C-c C-c} in SLIME or \code{C-c
   ;;  (add-linear-variance 0 10) => 7
   ;;  (add-linear-variance 0 10) => 6
   nil
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 
 Because \code{add-linear-variance} is stochastic, your results will be
@@ -3910,8 +4257,10 @@ greatly assist debugging by printing forms and the results of evaluating
 them.  \textbf{Printv} can be transparently wrapped around any form in a
 complex function definition, as it evaluates and displays all the forms in
 its body and returns the values resulting from evaluating the last form:
-
-\begin{example}\color{darkergray}%
+%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user>  (printv "Some multiple values" (values 1 2) "Some more" (values 3 4 5))
   ;; Some multiple values
   ;;  (values 1 2) => 1; 2
@@ -3920,40 +4269,42 @@ its body and returns the values resulting from evaluating the last form:
   4
   5
   6
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 
 \subsubsection*{Step 3b: Define the \code{random-walk-ks} execution function}
 
 Next add the following KS-execution function to the end of your
 \code{tutorial-example.lisp} file:
-
+%
+\W\supp
 \begin{example}
-(defun random-walk-ks-function (ksa)
-  ;;; Move to the next (random) location in the world
-  (let* ((trigger-instance (sole-trigger-instance-of ksa))
-         ;; The new time is one greater than the stimulus instance's time:
-         (time (1+ (time-of trigger-instance))))
-    (cond
-     ;; If the maximum time value (75) is reached, tell the user we've
-     ;; walked too long:
-     ((>= time 75) (format t "~2&Walked too long.~\%"))
-     (t ;; The new location is +/- 10 of the stimulus instance's location:
-      (let ((x (add-linear-variance (x-of trigger-instance) 10))
-            (y (add-linear-variance (y-of trigger-instance) 10)))
-        (cond
-         ;; Check that the new location is within the known-world
-         ;; boundaries.  If so, create the new location instance:
-         ((and (<= -50 x 50) (<= -50 y 50))
-          (make-instance 'location 
-            :time time 
-            :x x 
-            :y y))
-         ;; Otherwise, tell the user that we've walked too far away:
-         (t (format t "~2\&Walked off the world: (~d, ~d).~\%" x y))))))))
+  (defun random-walk-ks-function (ksa)
+    ;;; Move to the next (random) location in the world
+    (let* ((trigger-instance (sole-trigger-instance-of ksa))
+           ;; The new time is one greater than the stimulus's time:
+           (time (1+ (time-of trigger-instance))))
+      (cond
+       ;; If the maximum time value (75) is reached, tell the user we've
+       ;; walked too long:
+       ((>= time 75) (format t "~2&Walked too long.~\%"))
+       (t ;; The new location is +/- 10 of the stimulus's location:
+        (let ((x (add-linear-variance (x-of trigger-instance) 10))
+              (y (add-linear-variance (y-of trigger-instance) 10)))
+          (cond
+           ;; Check that the new location is within the known-world
+           ;; boundaries.  If so, create the new location instance:
+           ((and (<= -50 x 50) (<= -50 y 50))
+            (make-instance 'location 
+              :time time 
+              :x x 
+              :y y))
+           ;; Otherwise, tell the user that we've walked too far away:
+           (t (format t "~2\&Walked off the world: (~d, ~d).~\%" x y))))))))
 \end{example}
 
 \bfindex{sole-trigger-instance-of}%
+%
 Unlike the KS-execution functions that we have defined previously,
 \code{random-walk-ks-function} does not ignore its \code{ksa} argument.
 Instead, it calls \textbf{sole-trigger-instance-of} with the \code{ksa}
@@ -3967,22 +4318,27 @@ context for the KS execution is typical of many KSs.
 Finally, add this \code{define-ks} form to the end of your
 \code{tutorial-example.lisp} file to complete the \code{random-walk-ks}
 definition:
-
+%
 \bfindexit{define-ks}%
 \codeindex{quiescence-event}%
+\W\supp
 \begin{example}
-(define-ks random-walk-ks
-   :trigger-events ((create-instance-event location))
-   :rating 100
-   :execution-function 'random-walk-ks-function)
+  (define-ks random-walk-ks
+     :trigger-events ((create-instance-event location))
+     :rating 100
+     :execution-function 'random-walk-ks-function)
 \end{example}
 
 \subsection*{Step 4:  Run the application}
 
 \bfindexit{start-control-shell}%
-Compile and load the \code{random-walk-ks} forms, and then start the Agenda Shell:
 %
-\begin{example}\color{darkergray}%
+Compile and load the \code{random-walk-ks} forms, and then start the Agenda
+Shell:
+%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(start-control-shell)}
   ;; Control shell 1 started
 
@@ -3992,7 +4348,7 @@ Compile and load the \code{random-walk-ks} forms, and then start the Agenda Shel
   ;; Run time: 0.01 seconds
   ;; Elapsed time: 0 seconds
   :quiescence
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 
 \bfindexit{:dsbb}%
@@ -4001,7 +4357,9 @@ is stochastic, your results will be similar but not identical.)  Let's look at
 the blackboard repository and see how many \code{location} unit instances were
 created:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{:dsbb}
 
   Space Instance                Contents
@@ -4018,7 +4376,7 @@ created:
   standard-space-instance               1
                                 ---------
                                        67 instances
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 
 The 61 \code{location} instances makes sense.  Previously, it required 3
@@ -4032,11 +4390,14 @@ number of control-shell cycles.
 \subsection*{Step 5:  Where have we been?}
 
 \bfindexit{map-instances-of-class}%
+%
 It would be interesting to see where our random walk has taken us.  We could
 use GBBopen's \textbf{map-instances-of-class} iterator to print each of the
 \code{location} unit instances:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(map-instances-of-class #'print 'location)}
 
   #<location 58 (5 31)> 
@@ -4061,7 +4422,7 @@ use GBBopen's \textbf{map-instances-of-class} iterator to print each of the
   #<location 32 (-25 12)> 
   #<location 45 (-7 23)> 
   nil
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 %
 Unfortunately, the order that unit instances are supplied to the \code{print}
@@ -4069,10 +4430,13 @@ function is not controllable.  Our walk would be much clearer if we printed
 the \code{location}s in time order.
 
 \bfindexit{map-sorted-instances-of-class}%
+%
 We might consider taking advantage of the instance names that GBBopen assigns
 to unit instances.  We could do something like the following:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{red}{(dotimes (i 76)
                   (let ((location (find-instance-by-name i 'location)))
                     (when location
@@ -4102,7 +4466,7 @@ to unit instances.  We could do something like the following:
   #<location 60 (17 41)> 
   #<location 61 (21 50)> 
   nil
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 
 This is a bad idea for several reasons.  First, we are looking up every
@@ -4116,12 +4480,15 @@ happens to mirror the sequencing that we really want to display---the
 \code{location} printing that relies on the \code{time} values directly.
 
 \bfindex{map-sorted-instances-of-class}%
+%
 GBBopen provides a variant of \textbf{map-instances-of-class}, called
 \textbf{map-sorted-instances-of-class}, that sorts the unit instances based on
 a comparison predicate and an optional \code{:key} accessor function that
 suits our needs:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(map-sorted-instances-of-class #'print 'location #'< 
                    :key #'time-of)}
 
@@ -4149,10 +4516,11 @@ suits our needs:
   #<location 60 (17 41)> 
   #<location 61 (21 50)> 
   nil
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 
 \bfindex{do-sorted-instances-of-class}%
+%
 Using \textbf{map-sorted-instances-of-class} involves a sorting operation, so
 this approach still has some efficiency concerns for use in application code.
 However, it suits our REPL-exploration needs just fine.  (There is a
@@ -4163,11 +4531,14 @@ displaying the random walk in the next exercise.
 \subsection*{Step 6:  Run the application a few more times}
 
 \bfindexit{start-control-shell}%
+%
 If we run the application a few more times, we eventually encounter a case
 where we create the allotted 75 \code{location} unit instances without walking
 off the \code{known-world}:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(start-control-shell)}
   ;; Control shell 1 started
 
@@ -4177,13 +4548,15 @@ off the \code{known-world}:
   ;; Run time: 0.04 seconds
   ;; Elapsed time: 0 seconds
   :quiescence
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 
 \bfindexit{map-sorted-instances-of-class}%
 Here is one such random walk:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(map-sorted-instances-of-class #'print 'location #'< 
                    :key #'time-of)}
 
@@ -4205,7 +4578,7 @@ Here is one such random walk:
   #<location 74 (-8 -11)> 
   #<location 75 (-13 -15)> 
   nil
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 
 %% ========================================================================
@@ -4246,90 +4619,91 @@ This exercise shows you how to:
 \begin{tightitemize}
 \item The \code{tutorial-example.lisp} file as modified thus far:
 \end{tightitemize}
-
+%
 \begin{example}
-(in-package :gbbopen-user)
+\W\supp
+  (in-package :gbbopen-user)
 
-(define-unit-class location ()
-  (time 
-   x y)
-  (:dimensional-values
-    (time :point time)
-    (x :point x)
-    (y :point y))
-  (:initial-space-instances (known-world)))
+  (define-unit-class location ()
+    (time 
+     x y)
+    (:dimensional-values
+      (time :point time)
+      (x :point x)
+      (y :point y))
+    (:initial-space-instances (known-world)))
 
-(defmethod print-instance-slots ((location location) stream)
-  (call-next-method)
-  (when (and (slot-boundp location 'x)
-             (slot-boundp location 'y))
-    (format stream " (~s ~s)"
-            (x-of location)
-            (y-of location))))
+  (defmethod print-instance-slots ((location location) stream)
+    (call-next-method)
+    (when (and (slot-boundp location 'x)
+               (slot-boundp location 'y))
+      (format stream " (~s ~s)"
+              (x-of location)
+              (y-of location))))
 
-;;; ======================================================================
-;;;   Startup KS
+  ;;; ====================================================================
+  ;;;   Startup KS
 
-(defun startup-ks-function (ksa)
-  (declare (ignore ksa))
-  ;; Create an initial location unit instance at (0,0):
-  (make-instance 'location :time 0 :x 0 :y 0))
+  (defun startup-ks-function (ksa)
+    (declare (ignore ksa))
+    ;; Create an initial location unit instance at (0,0):
+    (make-instance 'location :time 0 :x 0 :y 0))
 
-(define-ks startup-ks
-    :trigger-events ((start-control-shell-event))
-    :execution-function 'startup-ks-function)
+  (define-ks startup-ks
+      :trigger-events ((start-control-shell-event))
+      :execution-function 'startup-ks-function)
 
-;;; ======================================================================
-;;;   Initializations (run at Agenda Shell startup)
+  ;;; ====================================================================
+  ;;;   Initializations (run at Agenda Shell startup)
 
-(defun initializations (event-name &key &allow-other-keys)
-  (declare (ignore event-name))
-  ;; Clean up any previous run:
-  (delete-blackboard-repository)
-  ;; Make a new known-world space instance:
-  (make-space-instance 
-   '(known-world)
-   :dimensions (dimensions-of 'location)))
+  (defun initializations (event-name &key &allow-other-keys)
+    (declare (ignore event-name))
+    ;; Clean up any previous run:
+    (delete-blackboard-repository)
+    ;; Make a new known-world space instance:
+    (make-space-instance 
+     '(known-world)
+     :dimensions (dimensions-of 'location)))
 
-(add-event-function 'initializations 'start-control-shell-event
-                    ;; Initializations should be done first!
-                    :priority 100)
+  (add-event-function 'initializations 'start-control-shell-event
+                      ;; Initializations should be done first!
+                      :priority 100)
 
-;;; ======================================================================
-;;;   Random-walk KS
+  ;;; ====================================================================
+  ;;;   Random-walk KS
 
-(defun add-linear-variance (value max-variance)
-  ;;; Returns a new random value in the interval
-  ;;; [(- value max-variance), (+ value max-variance)]
-  (+ value (- (random (1+ (* max-variance 2))) max-variance)))
+  (defun add-linear-variance (value max-variance)
+    ;;; Returns a new random value in the interval
+    ;;; [(- value max-variance), (+ value max-variance)]
+    (+ value (- (random (1+ (* max-variance 2))) max-variance)))
 
-(defun random-walk-ks-function (ksa)
-  ;;; Move to the next (random) location in the world
-  (let* ((trigger-instance (sole-trigger-instance-of ksa))
-         ;; The new time is one greater than the stimulus instance's time:
-         (time (1+ (time-of trigger-instance))))
-    (cond
-     ;; If the maximum time value (75) is reached, tell the user we've
-     ;; walked too long:
-     ((>= time 75) (format t "~2&Walked too long.~\%"))
-     (t ;; The new location is +/- 10 of the stimulus instance's location:
-      (let ((x (add-linear-variance (x-of trigger-instance) 10))
-            (y (add-linear-variance (y-of trigger-instance) 10)))
-        (cond
-         ;; Check that the new location is within the known-world
-         ;; boundaries.  If so, create the new location instance:
-         ((and (<= -50 x 50) (<= -50 y 50))
-          (make-instance 'location 
-            :time time 
-            :x x 
-            :y y))
-         ;; Otherwise, tell the user that we've walked too far away:
-         (t (format t "~2&Walked off the world: (~d, ~d).~\%" x y))))))))
+  (defun random-walk-ks-function (ksa)
+    ;;; Move to the next (random) location in the world
+    (let* ((trigger-instance (sole-trigger-instance-of ksa))
+           ;; The new time is one greater than the stimulus's time:
+           (time (1+ (time-of trigger-instance))))
+      (cond
+       ;; If the maximum time value (75) is reached, tell the user we've
+       ;; walked too long:
+       ((>= time 75) (format t "~2&Walked too long.~\%"))
+       (t ;; The new location is +/- 10 of the stimulus's location:
+        (let ((x (add-linear-variance (x-of trigger-instance) 10))
+              (y (add-linear-variance (y-of trigger-instance) 10)))
+          (cond
+           ;; Check that the new location is within the known-world
+           ;; boundaries.  If so, create the new location instance:
+           ((and (<= -50 x 50) (<= -50 y 50))
+            (make-instance 'location 
+              :time time 
+              :x x 
+              :y y))
+           ;; Otherwise, tell the user that we've walked too far away:
+           (t (format t "~2&Walked off the world: (~d, ~d).~\%" x y))))))))
 
-(define-ks random-walk-ks
-    :trigger-events ((create-instance-event location))
-    :rating 100
-    :execution-function 'random-walk-ks-function)
+  (define-ks random-walk-ks
+      :trigger-events ((create-instance-event location))
+      :rating 100
+      :execution-function 'random-walk-ks-function)
 \end{example}
 
 \begin{tightitemize}
@@ -4358,21 +4732,23 @@ Edit the \code{location} unit-class definition in your
 \code{tutorial-example.lisp} file, adding two link slots, \code{next-location}
 and \code{previous-location}, to the \code{location} unit class definition:
 %
-\begin{example}\color{darkergray}%
-(define-unit-class location ()
-  (time 
-   x y
-   \textcolor{black}{(next-location
-    :link (location previous-location :singular t) 
-    :singular t)
-   (previous-location
-    :link (location next-location :singular t)  
-    :singular t)})
-  (:dimensional-values
-    (time :point time)
-    (x :point x)
-    (y :point y))
-  (:initial-space-instances (known-world)))
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
+  (define-unit-class location ()
+    (time 
+     x y
+     \textcolor{black}{(next-location
+      :link (location previous-location :singular t) 
+      :singular t)
+     (previous-location
+      :link (location next-location :singular t)  
+      :singular t)})
+    (:dimensional-values
+      (time :point time)
+      (x :point x)
+      (y :point y))
+    (:initial-space-instances (known-world)))}
 \end{example}
 
 Each link-slot specification is a list whose first element is the name of the
@@ -4391,14 +4767,16 @@ specification of link slot arity, let's temporarily assume that we want a
 \code{location} instance that can have many next locations, but only a single
 previous location.  This link relation would be specified as follows:
 %
-\begin{example}\color{darkergray}%
-    ...
- \textcolor{blue}{(next-locations
-  :link (location previous-location :singular t)))
- (previous-location
-  :link (location next-locations)  
-  :singular t)}
-    ...
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
+      ...
+   \textcolor{blue}{(next-locations
+    :link (location previous-location :singular t)))
+   (previous-location
+    :link (location next-locations)  
+    :singular t)}
+      ...}
 \end{example}
 
 We've followed the natural GBBopen convention of giving singular link
@@ -4424,11 +4802,13 @@ latest changes in your \code{tutorial-example.lisp} file (including
 the new \code{next-location} and \code{previous-location} link slots).
 Then check link consistency:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(check-link-consistency)}
   ;; All link definitions are consistent.
   t
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 %
 GBBopen reports that all link definitions are consistent.
@@ -4439,22 +4819,24 @@ of the link in our \code{location} unit-class definition. Edit the
 \code{tutorial-example.lisp} file, adding the line \code{\#+ignore}
 immediately before the \code{previous-location} link-slot definition:
 %
-\begin{example}\color{darkergray}%
-(define-unit-class location ()
-  (time 
-   x y
-   (next-location
-    :link (location previous-location :singular t) 
-    :singular t)
-    \textcolor{black}{\#+ignore}     
-   (previous-location
-    :link (location next-location :singular t)  
-    :singular t))
-  (:dimensional-values
-    (time :point time)
-    (x :point x)
-    (y :point y))
-  (:initial-space-instances (known-world)))
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
+  (define-unit-class location ()
+    (time 
+     x y
+     (next-location
+      :link (location previous-location :singular t) 
+      :singular t)
+      \textcolor{black}{\#+ignore}     
+     (previous-location
+      :link (location next-location :singular t)  
+      :singular t))
+    (:dimensional-values
+      (time :point time)
+      (x :point x)
+      (y :point y))
+    (:initial-space-instances (known-world)))}
 \end{example}
 
 The \code{\#+ignore} read-time conditionalization tells Common Lisp to
@@ -4466,13 +4848,15 @@ for temporarily ``commenting out'' a single form.
 Compile the now-defective definition (using \code{C-c C-c} in SLIME or
 \code{C-c C-x} in ELI) and then recheck link consistency:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(check-link-consistency)}
   Warning: The inverse of link slot next-location in unit class location 
            refers to link slot previous-location which is not present in 
            unit class location.
   nil
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 %
 As expected, GBBopen alerts us to the problem.
@@ -4481,34 +4865,38 @@ Remove the \code{\#+ignore} that we just added and comment out the
 \code{:singular t} portion of the inverse link-slot specification in 
 \code{next-location}:
 %
-\begin{example}\color{darkergray}%
-(define-unit-class location ()
-  (time 
-   x y
-   (next-location
-    :link (location previous-location\textcolor{black}{) ;} :singular t) 
-    :singular t)
-    \textcolor{red}{#+ignore}     
-   (previous-location
-    :link (location next-location :singular t)  
-    :singular t))
-  (:dimensional-values
-    (time :point time)
-    (x :point x)
-    (y :point y))
-  (:initial-space-instances (known-world)))
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
+  (define-unit-class location ()
+    (time 
+     x y
+     (next-location
+      :link (location previous-location\textcolor{black}{) ;} :singular t) 
+      :singular t)
+      \textcolor{red}{#+ignore}     
+     (previous-location
+      :link (location next-location :singular t)  
+      :singular t))
+    (:dimensional-values
+      (time :point time)
+      (x :point x)
+      (y :point y))
+    (:initial-space-instances (known-world)))}
 \end{example}
-
+%
 Compile the again-defective definition (using \code{C-c C-c} in SLIME or
 \code{C-c C-x} in ELI) and then recheck link consistency:
 %
-\begin{example}\color{darkergray}%
+\W\supp\notpretop
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(check-link-consistency)}
   Warning: Link slot next-location in unit class location incorrectly 
            declares its inverse link slot previous-location in unit 
            class location as not singular.
   nil
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 %
 Once again, GBBopen has alerted us to the problem.
@@ -4516,30 +4904,34 @@ Once again, GBBopen has alerted us to the problem.
 Restore the \code{:singular t} portion of the inverse link-slot
 specification in \code{next-location} that we just commented out:
 %
-\begin{example}\color{darkergray}%
-(define-unit-class location ()
-  (time 
-   x y
-   (next-location
-    :link (location previous-location\textcolor{red}{) ;} :singular t) 
-    :singular t)
-   (previous-location
-    :link (location next-location :singular t)  
-    :singular t))
-  (:dimensional-values
-    (time :point time)
-    (x :point x)
-    (y :point y))
-  (:initial-space-instances (known-world)))
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
+  (define-unit-class location ()
+    (time 
+     x y
+     (next-location
+      :link (location previous-location\textcolor{red}{) ;} :singular t) 
+      :singular t)
+     (previous-location
+      :link (location next-location :singular t)  
+      :singular t))
+    (:dimensional-values
+      (time :point time)
+      (x :point x)
+      (y :point y))
+    (:initial-space-instances (known-world)))}
 \end{example}
-
+%
 Then recompile and recheck link consistency:
 %
-\begin{example}\color{darkergray}%
+\W\supp\notpretop
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(check-link-consistency)}
   ;; All link definitions are consistent.
   t
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 
 \subsection*{Step 3: Create some links}
@@ -4550,36 +4942,40 @@ to connect our \code{location} unit instances.  Edit the
 file, adding the trigger instance as a new \code{:previous-location} argument
 to \code{make-instance}:
 %
-\begin{example}\color{darkergray}%
-(defun random-walk-ks-function (ksa)
-  ;;; Move to the next (random) location in the world
-  (let* ((trigger-instance (sole-trigger-instance-of ksa))
-         ;; The new time is one greater than the stimulus instance's time:
-         (time (1+ (time-of trigger-instance))))
-    (cond
-     ;; If the maximum time value (75) is reached, tell the user we've
-     ;; walked too long:
-     ((>= time 75) (format t "~2&Walked too long.~\%"))
-     (t ;; The new location is +/- 10 of the stimulus instance's location:
-      (let ((x (add-linear-variance (x-of trigger-instance) 10))
-            (y (add-linear-variance (y-of trigger-instance) 10)))
-        (cond
-         ;; Check that the new location is within the known-world
-         ;; boundaries.  If so, create the new location instance:
-         ((and (<= -50 x 50) (<= -50 y 50))
-          (make-instance 'location 
-            :time time 
-            :x x 
-            :y y
-            \textcolor{black}{:previous-location trigger-instance}))
-         ;; Otherwise, tell the user that we've walked too far away:
-         (t (format t "~2&Walked off the world: (~d, ~d).~\%" x y))))))))
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
+  (defun random-walk-ks-function (ksa)
+    ;;; Move to the next (random) location in the world
+    (let* ((trigger-instance (sole-trigger-instance-of ksa))
+           ;; The new time is one greater than the stimulus's time:
+           (time (1+ (time-of trigger-instance))))
+      (cond
+       ;; If the maximum time value (75) is reached, tell the user we've
+       ;; walked too long:
+       ((>= time 75) (format t "~2&Walked too long.~\%"))
+       (t ;; The new location is +/- 10 of the stimulus's location:
+        (let ((x (add-linear-variance (x-of trigger-instance) 10))
+              (y (add-linear-variance (y-of trigger-instance) 10)))
+          (cond
+           ;; Check that the new location is within the known-world
+           ;; boundaries.  If so, create the new location instance:
+           ((and (<= -50 x 50) (<= -50 y 50))
+            (make-instance 'location 
+              :time time 
+              :x x 
+              :y y
+              \textcolor{black}{:previous-location trigger-instance}))
+           ;; Otherwise, tell the user that we've walked too far away:
+           (t (format t "~2&Walked off the world: (~d, ~d).~\%" x y))))))))}
 \end{example}
 
 Compile the \code{random-walk-ks-function} (using \code{C-c C-c} in SLIME or
 \code{C-c C-x} in ELI) and then run the application:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(start-control-shell)}
   ;; Control shell 1 started
 
@@ -4589,13 +4985,15 @@ Compile the \code{random-walk-ks-function} (using \code{C-c C-c} in SLIME or
   ;; Run time: 0.01 seconds
   ;; Elapsed time: 0 seconds
   :quiescence
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 
 Let's describe a couple of \code{location} unit instances to check our work.
 First, the initial \code{location} unit instance:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(describe-instance (find-instance-by-name 1 'location))}
   Location #<location 1 (0 0)>
     Instance name: 1
@@ -4611,14 +5009,16 @@ First, the initial \code{location} unit instance:
     Link slots:
       next-location:  #<location 2 (-10 10)>
       previous-location:  nil
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
-
+%
 Note that the \code{next-location} link slot points to the next
 \code{location} unit instance in our random walk.  Let's describe that
 unit instance:
 %
-\begin{example}\color{darkergray}%
+\W\supp\notpretop
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(describe-instance (find-instance-by-name 2 'location))}
   Location #<location 2 (-10 10)>
     Instance name: 2
@@ -4634,16 +5034,19 @@ unit instance:
     Link slots:
       next-location:  #<location 3 (-6 19)>
       previous-location:  #<location 1 (0 0)>
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
-
-Its \code{next-location} link slot points to the third \code{location} unit
-instance in our random walk and its \code{previous-location} link slot points
-back to the initial \code{location} unit instance.
+%
+The \code{next-location} link slot in \code{location} \code{2} points to the
+third \code{location} unit instance in our random walk and its
+\code{previous-location} link slot points back to the initial \code{location}
+unit instance.
 
 We can now follow the links to display the random walk:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(loop with location = (find-instance-by-name 1 'location) 
                   do (print location)
                   while (setf location (next-location-of location)))}
@@ -4664,7 +5067,7 @@ We can now follow the links to display the random walk:
   #<location 62 (40 23)> 
   #<location 63 (45 28)> 
   nil
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 
 \subsection*{Step 4: Define a ``print walk'' KS}
@@ -4677,13 +5080,14 @@ Let's add a new KS, \code{print-walk-ks}, that displays the random walk once
 it is completed. Add the following KS to the end of your
 \code{tutorial-example.lisp} file:
 %
+\W\supp
 \begin{example}
-;;; ======================================================================
-;;;   Print-walk KS
+  ;;; ====================================================================
+  ;;;   Print-walk KS
 
-(defun print-walk-ks-function (ksa)
-  ;;; Starting with the initial location instance, print the instance name
-  ;;; and location of the walk
+  (defun print-walk-ks-function (ksa)
+    ;;; Starting with the initial location instance, print the instance 
+    ;;; name and location of the walk
     (declare (ignore ksa))
     (format t "~2\&The random walk:~\%")
       (let ((instance (find-instance-by-name 1 'location)))
@@ -4724,7 +5128,9 @@ and over again.
 Let's compile our latest changes and then run our application with the new
 \code{print-walk-ks} KS in place:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(start-control-shell)}
   ;; Control shell 1 started
 
@@ -4751,7 +5157,7 @@ Let's compile our latest changes and then run our application with the new
   ;; Run time: 0.01 seconds
   ;; Elapsed time: 0 seconds
   :stop
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 
 %% ========================================================================
@@ -4788,120 +5194,121 @@ This exercise shows you how to:
 
 \begin{tightitemize}
 \item The \code{tutorial-example.lisp} file as modified thus far:
-
+%
+\W\supp\notpretop
 \begin{example}
-(in-package :gbbopen-user)
+  (in-package :gbbopen-user)
 
-(define-unit-class location ()
-  (time 
-   x y
-   (next-location
-    :link (location previous-location :singular t) 
-    :singular t)
-   (previous-location
-    :link (location next-location :singular t)  
-    :singular t))
-  (:dimensional-values
-    (time :point time)
-    (x :point x)
-    (y :point y))
-  (:initial-space-instances (known-world)))
+  (define-unit-class location ()
+    (time 
+     x y
+     (next-location
+      :link (location previous-location :singular t) 
+      :singular t)
+     (previous-location
+      :link (location next-location :singular t)  
+      :singular t))
+    (:dimensional-values
+      (time :point time)
+      (x :point x)
+      (y :point y))
+    (:initial-space-instances (known-world)))
 
-(defmethod print-instance-slots ((location location) stream)
-  (call-next-method)
-  (when (and (slot-boundp location 'x)
-             (slot-boundp location 'y))
-    (format stream " (~s ~s)"
-            (x-of location)
-            (y-of location))))
+  (defmethod print-instance-slots ((location location) stream)
+    (call-next-method)
+    (when (and (slot-boundp location 'x)
+               (slot-boundp location 'y))
+      (format stream " (~s ~s)"
+              (x-of location)
+              (y-of location))))
 
-;;; ======================================================================
-;;;   Startup KS
+  ;;; ====================================================================
+  ;;;   Startup KS
 
-(defun startup-ks-function (ksa)
-  (declare (ignore ksa))
-  ;; Create an initial location unit instance at (0,0):
-  (make-instance 'location :time 0 :x 0 :y 0))
+  (defun startup-ks-function (ksa)
+    (declare (ignore ksa))
+    ;; Create an initial location unit instance at (0,0):
+    (make-instance 'location :time 0 :x 0 :y 0))
 
-(define-ks startup-ks
-    :trigger-events ((start-control-shell-event))
-    :execution-function 'startup-ks-function)
+  (define-ks startup-ks
+      :trigger-events ((start-control-shell-event))
+      :execution-function 'startup-ks-function)
 
-;;; ======================================================================
-;;;   Initializations (run at Agenda Shell startup)
+  ;;; ====================================================================
+  ;;;   Initializations (run at Agenda Shell startup)
 
-(defun initializations (event-name &key &allow-other-keys)
-  (declare (ignore event-name))
-  ;; Clean up any previous run:
-  (delete-blackboard-repository)
-  ;; Make a new known-world space instance:
-  (make-space-instance 
-   '(known-world)
-   :dimensions (dimensions-of 'location)))
+  (defun initializations (event-name &key &allow-other-keys)
+    (declare (ignore event-name))
+    ;; Clean up any previous run:
+    (delete-blackboard-repository)
+    ;; Make a new known-world space instance:
+    (make-space-instance 
+     '(known-world)
+     :dimensions (dimensions-of 'location)))
 
-(add-event-function 'initializations 'start-control-shell-event
-                    ;; Initializations should be done first!
-                    :priority 100)
+  (add-event-function 'initializations 'start-control-shell-event
+                      ;; Initializations should be done first!
+                      :priority 100)
 
-;;; ======================================================================
-;;;   Random-walk KS
+  ;;; ====================================================================
+  ;;;   Random-walk KS
 
-(defun add-linear-variance (value max-variance)
-  ;;; Returns a new random value in the interval
-  ;;; [(- value max-variance), (+ value max-variance)]
-  (+ value (- (random (1+ (* max-variance 2))) max-variance)))
+  (defun add-linear-variance (value max-variance)
+    ;;; Returns a new random value in the interval
+    ;;; [(- value max-variance), (+ value max-variance)]
+    (+ value (- (random (1+ (* max-variance 2))) max-variance)))
 
-(defun random-walk-ks-function (ksa)
-  ;;; Move to the next (random) location in the world
-  (let* ((trigger-instance (sole-trigger-instance-of ksa))
-         ;; The new time is one greater than the stimulus instance's time:
-         (time (1+ (time-of trigger-instance))))
-    (cond
-     ;; If the maximum time value (75) is reached, tell the user we've
-     ;; walked too long:
-     ((>= time 75) (format t "~2&Walked too long.~\%"))
-     (t ;; The new location is +/- 10 of the stimulus instance's location:
-      (let ((x (add-linear-variance (x-of trigger-instance) 10))
-            (y (add-linear-variance (y-of trigger-instance) 10)))
-        (cond
-         ;; Check that the new location is within the known-world
-         ;; boundaries.  If so, create the new location instance:
-         ((and (<= -50 x 50) (<= -50 y 50))
-          (make-instance 'location 
-            :time time 
-            :x x 
-            :y y
-            :previous-location trigger-instance))
-         ;; Otherwise, tell the user that we've walked too far away:
-         (t (format t "~2\&Walked off the world: (~d, ~d).~\%" x y))))))))
+  (defun random-walk-ks-function (ksa)
+    ;;; Move to the next (random) location in the world
+    (let* ((trigger-instance (sole-trigger-instance-of ksa))
+           ;; The new time is one greater than the stimulus's time:
+           (time (1+ (time-of trigger-instance))))
+      (cond
+       ;; If the maximum time value (75) is reached, tell the user we've
+       ;; walked too long:
+       ((>= time 75) (format t "~2&Walked too long.~\%"))
+       (t ;; The new location is +/- 10 of the stimulus's location:
+        (let ((x (add-linear-variance (x-of trigger-instance) 10))
+              (y (add-linear-variance (y-of trigger-instance) 10)))
+          (cond
+           ;; Check that the new location is within the known-world
+           ;; boundaries.  If so, create the new location instance:
+           ((and (<= -50 x 50) (<= -50 y 50))
+            (make-instance 'location 
+              :time time 
+              :x x 
+              :y y
+              :previous-location trigger-instance))
+           ;; Otherwise, tell the user that we've walked too far away:
+           (t (format t "~2\&Walked off the world: (~d, ~d).~\%" x y))))))))
 
-(define-ks random-walk-ks
-    :trigger-events ((create-instance-event location))
+  (define-ks random-walk-ks
+      :trigger-events ((create-instance-event location))
+      :rating 100
+      :execution-function 'random-walk-ks-function)
+
+  ;;; ====================================================================
+  ;;;   Print-walk KS
+
+  (defun print-walk-ks-function (ksa)
+    ;;; Starting with the initial location instance, print the instance
+    ;;; name and location of the walk
+    (declare (ignore ksa))
+    (format t "~2\&The random walk:~\%")
+      (let ((instance (find-instance-by-name 1 'location)))
+      (while instance
+        (format t "~s (~s ~s)~\%"
+                (instance-name-of instance)
+                (x-of instance)
+                (y-of instance))
+        (setf instance (next-location-of instance))))
+    ;; Tell the Agenda Shell to exit:
+    ':stop)
+
+  (define-ks print-walk-ks
+    :trigger-events ((quiescence-event))
     :rating 100
-    :execution-function 'random-walk-ks-function)
-
-;;; ======================================================================
-;;;   Print-walk KS
-
-(defun print-walk-ks-function (ksa)
-  ;;; Starting with the initial location instance, print the instance name
-  ;;; and location of the walk
-  (declare (ignore ksa))
-  (format t "~2\&The random walk:~\%")
-    (let ((instance (find-instance-by-name 1 'location)))
-    (while instance
-      (format t "~s (~s ~s)~\%"
-              (instance-name-of instance)
-              (x-of instance)
-              (y-of instance))
-      (setf instance (next-location-of instance))))
-  ;; Tell the Agenda Shell to exit:
-  ':stop)
-
-(define-ks print-walk-ks
-  :trigger-events ((quiescence-event))
-  :rating 100
-  :execution-function 'print-walk-ks-function)
+    :execution-function 'print-walk-ks-function)
 \end{example}
 
 \item The GBBopen environment setup using
@@ -4915,9 +5322,11 @@ This exercise shows you how to:
 Create a directory named \code{gbbopen-modules} in your \reflink{``homedir''
   directory}{ref:your-homedir}.  For example:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   [~]\$ \textcolor{black}{mkdir gbbopen-modules}
-  [~]\$ 
+  [~]\$}
 \end{example}
 %
 This is a special directory that is read by used by GBBopen to find
@@ -4928,15 +5337,17 @@ of the \reflink{Enhancing Your Development Environment
 
 \subsection*{Step 2: Create a module-definition file for the random-walk application}
 
-Recall that you created a directory to hold the random-walk application in Step 1
-of \reflink{Working Within a File exercise}{sec:file}.  I used these shell
-commands to create my directories:
+Recall that you created a directory to hold the random-walk application in
+Step 1 of \reflink{Working Within a File exercise}{sec:file}.  I used these
+shell commands to create my directories:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   [~]\$ mkdir tutorial
   [~]\$ cd tutorial
   [~/tutorial]\$ mkdir source
-  [~/tutorial]\$ 
+  [~/tutorial]\$}
 \end{example}
 %
 Then you created the \code{tutorial-example.lisp} file in this \code{source}
@@ -4970,12 +5381,13 @@ the \code{source} subdirectory.
 Type the following two forms into the new \code{modules.lisp}
 file:
 %
+\W\supp
 \begin{example}
-(in-package :common-lisp-user)
+  (in-package :common-lisp-user)
 
-(define-module :tutorial
-  (:requires :agenda-shell-user)
-  (:files "tutorial-example"))
+  (define-module :tutorial
+    (:requires :agenda-shell-user)
+    (:files "tutorial-example"))
 \end{example}
 %
 and then save the file.
@@ -5009,10 +5421,12 @@ each user's \code{gbbopen-modules} directory.
 Unless you are running Windows, add the random-walk application to your
 \code{gbbopen-applications} by creating a symbolic link.  For example:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   [~]\$ \textcolor{black}{cd ~/gbbopen-modules/}
   [~]\$ \textcolor{black}{ln -s ~/tutorial .}
-  [~]\$ 
+  [~]\$}
 \end{example}
 
 \subsubsection*{Windows users}
@@ -5023,6 +5437,7 @@ file of type \code{.sym} that contains the target directory path as the sole
 line in the file.  For example, you could create the file \code{tutorial.sym}
 in your \code{gbbopen-modules} directory with:
 %
+\W\supp
 \begin{example}
   C:\bkslash{}tutorial\bkslash
 \end{example}
@@ -5037,7 +5452,9 @@ Common Lisp session.  If you have set up your environment according to the
 \reflink{Enhancing Your Development Environment exercise}{sec:environment},
 the following files should be loaded:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
      ...
   ;; Loading \var{<homedir\/>}/shared-init.lisp
   ;;   Loading \var{<install-dir\/>}/initiate.lisp
@@ -5045,7 +5462,7 @@ the following files should be loaded:
   ;;     Loading \var{<install-dir\/>}/commands.lisp
   ;;     Loading \var{<install-dir\/>}/gbbopen-modules-directory.lisp
   ;; Loading module command definitions from \var{<homedir\/>}/gbbopen-modules/...
-  cl-user>
+  cl-user>}
 \end{example}
 
 Note that some basic GBBopen initialization files have been loaded for us (but
@@ -5054,9 +5471,10 @@ system) are not loaded by \code{\var{<install-dir>\/}/initiate.lisp}.
 
 Now, instead of loading the \code{:agenda-shell-user} module, let's load only
 the \code{:mini-module-user} module:
-
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   cl-user> \textcolor{black}{:mini-module-user}
   ;; Loading \var{<install-dir\/>}/startup.lisp
      ...
@@ -5064,18 +5482,21 @@ the \code{:mini-module-user} module:
   ;;   Loading \var{<install-dir\/>}/modules.lisp
   ;; Loading module definitions from \var{<homedir\/>}/gbbopen-modules/...
   ;;     Loading \var{<homedir\/>}/tutorial/modules.lisp
-  mini-module-user>
+  mini-module-user>}
 \end{example}
-
+%
 Note that when the Mini Module system was loaded as part of loading the
 \code{:mini-module-user} module, the module definitions for our personal
 GBBopen modules were loaded automatically.  (In this case, the
-\code{\var{<homedir>\/}/tutorial/modules.lisp} file.)  Now that our
-\code{:tutorial} module has been defined, we can use the
+\code{\var{<homedir>\/}/tutorial/modules.lisp} file.)  
+
+Now that we have defined our \code{:tutorial} module, we can use the
 \textbf{compile-module} REPL command, \code{:cm}, to compile (if needed) and
-load our application module:
+load it:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   mini-module-user> \textcolor{black}{:cm :tutorial}
   ;;   Loading \var{<install-dir\/>}/\var{<platform-dir\/>}/tools/portable-threads.fasl
      ...
@@ -5087,7 +5508,7 @@ load our application module:
   Restart actions (select using :c n):
     0: Create this directory.
     1: Create this directory and any future missing directories.
-  mini-module-user>>
+  mini-module-user>>}
 \end{example}
 %
 The \code{:requires} in our \code{:tutorial} module definition causes the
@@ -5102,22 +5523,27 @@ shared with a number of different hosts and operating systems.
 
 We could have avoided this continuable error by providing the
 \code{:create-dirs} option to the \code{:cm} command:
-\begin{example}\color{darkergray}%
-  mini-module-user> :cm :tutorial :create-dirs
+%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
+  mini-module-user> :cm :tutorial :create-dirs}
 \end{example}
 %
 to allow the Mini Module system to create the \code{<\var{platform-dir>\/}}
 subdirectory automatically for us.  Since we did not do this, we can still
 continue from the error:
 %
-\begin{example}\color{darkergray}%
+\W\supp\notpretop
+\begin{example}
+\textcolor{darkergray}{%
   Restart actions (select using :c n):
     0: Create this directory.
     1: Create this directory and any future missing directories.
   mini-module-user>> \textcolor{black}{:c 0}
   ;; Compiling file \var{<homedir\/>}/tutorial/source/tutorial-example.lisp
   ;; Loading \var{<homedir\/>}/tutorial/\var{<platform-dir\/>}/tutorial-example.fasl
-  mini-module-user>
+  mini-module-user>}
 \end{example}
 
 At this point, we've compiled and loaded our \code{:tutorial} application
@@ -5133,6 +5559,7 @@ Use your Common Lisp editor to create a new file named \code{commands.lisp} in
 the \code{tutorial} directory. Type the following two forms into the new
 \code{commands.lisp} file:
 %
+\W\supp
 \begin{example}
 (in-package :common-lisp-user)
 
@@ -5140,12 +5567,9 @@ the \code{tutorial} directory. Type the following two forms into the new
   "Compile and load the Random-Walk Tutorial Application Module"
   (startup-module :tutorial options :gbbopen-user))
 \end{example}
-
 %
-and then save the file.
-
-A \code{commands.lisp} file should always specify the \code{:common-lisp-user}
-package as the first form in the file.
+and then save the file.  A \code{commands.lisp} file should always specify the
+\code{:common-lisp-user} package as the first form in the file.
 
 The \textbf{define-tll-command} form adds a top-level REPL command, named
 \code{:tutorial}, to the set of handy REPL commands.  The
@@ -5165,7 +5589,9 @@ Common Lisp session.  If you have set up your environment according to the
 \reflink{Enhancing Your Development Environment exercise}{sec:environment},
 the following files should be loaded:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
      ...
   ;; Loading \var{<homedir\/>}/shared-init.lisp
   ;;   Loading \var{<install-dir\/>}/initiate.lisp
@@ -5174,24 +5600,25 @@ the following files should be loaded:
   ;;     Loading \var{<install-dir\/>}/gbbopen-modules-directory.lisp
   ;; Loading module command definitions from \var{<homedir\/>}/gbbopen-modules/...
   ;      Loading \var{<homedir>}/gbbopen-modules/tutorial/commands.lisp
-  cl-user>
+  cl-user>}
 \end{example}
-
+%
 Note that the \code{commands.lisp} file from the \code{tutorial} directory has
 been loaded by \code{\var{<install-dir>\/}/initiate.lisp}.
 
 Now, we can compile and load the \code{:tutorial} module by simply issuing the
 \code{:tutorial} REPL command:
-
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   cl-user> \textcolor{black}{:tutorial}
   ;; Loading \var{<install-dir\/>}/startup.lisp
      ...
   ;; Loading \var{<homedir\/>}/tutorial/\var{<platform-dir\/>}/tutorial-example.fasl
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
-
+%
 With the command definition in place, we are able to compile and load our
 random-walk application by issuing a single command, \code{:tutorial}.
 
@@ -5199,8 +5626,10 @@ Note a potential continuable error due to a missing
 \code{\var{<platform-dir>\/}} subdirectory can always be avoided by providing
 the \code{:create-dirs} option to the \code{:tutorial} command:
 %
-\begin{example}\color{darkergray}%
-  gbbopen-user> :tutorial :create-dirs
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
+  gbbopen-user> :tutorial :create-dirs}
 \end{example}
 %
 to allow the Mini Module system to create the \code{\var{<platform-dir>\/}}
@@ -5221,8 +5650,9 @@ is in the \code{:common-lisp-user} package and is set to \nil{} by default.
 If you wish, add the following form to your \code{shared-init.lisp} file (in
 your ``homedir'' directory):
 %
+\W\supp
 \begin{example}
-(defparameter *automatically-create-missing-directories* 't)
+  (defparameter *automatically-create-missing-directories* 't)
 \end{example}
 
 I actually prefer to have the Mini Module system generate the continuable
@@ -5242,12 +5672,14 @@ the same time, symbol-name clashes could occur.
 To eliminate this possibility, we can create our own package for the
 random-walk application.  First, let's determine what packages are being used by GBBopen's \code{:gbbopen-user} package.  Evaluate the following:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(package-use-list :gbbopen-user)}
   (#<package PORTABLE-THREADS> #<package AGENDA-SHELL>
    #<package MINI-MODULE> #<package COMMON-LISP> #<package CLOS>
    #<package GBBOPEN-TOOLS> #<package GBBOPEN>)
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 %
 The \code{CLOS} package does not have a standard name in Common Lisp, so the
@@ -5261,20 +5693,23 @@ supported Common Lisp implementation.
 We want our new \code{:tutorial} package to use the same packages that the
 \code{:agenda-shell-user} package used. Edit your \code{tutorial-example.lisp}
 file and replace the \code{:gbbopen-user} package specification:
+%
+\W\supp
 \begin{example}
-\textcolor{red}{(in-package :gbbopen-user)}
+  \textcolor{red}{(in-package :gbbopen-user)}
 \end{example}
 %
 with the following:
 %
+\W\supp\notpretop
 \begin{example}
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (unless (find-package :tutorial)
-    (defpackage :tutorial
-      (:use :common-lisp :clos :mini-module :gbbopen-tools :gbbopen 
-            :portable-threads :agenda-shell))))
+  (eval-when (:compile-toplevel :load-toplevel :execute)
+    (unless (find-package :tutorial)
+      (defpackage :tutorial
+        (:use :common-lisp :clos :mini-module :gbbopen-tools :gbbopen 
+              :portable-threads :agenda-shell))))
 
-(in-package :tutorial)
+  (in-package :tutorial)
 \end{example}
 %
 and save the file.
@@ -5293,8 +5728,10 @@ load-time evaluation.
 In my applications, I also add a feature to Common Lisp's \code{*features*}
 list to indicate that the application has been fully loaded.  To do this, add
 the following at the end of your \code{tutorial-example.lisp} file:
+%
+\W\supp
 \begin{example}
-(pushnew :tutorial *features*)
+  (pushnew :tutorial *features*)
 \end{example}
 %
 and save the file.
@@ -5304,28 +5741,36 @@ and save the file.
 Next, edit your \code{commands.lisp} file and delete the \code{:gbbopen-user}
 package-name argument to \textbf{startup-module}:
 %
-\begin{example}\color{darkergray}%
-(define-tll-command :tutorial (\&rest options)
-  "Compile and load the Random-Walk Tutorial Application Module"
-  (startup-module :tutorial options \textcolor{red}{:gbbopen-user}))
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
+  (define-tll-command :tutorial (\&rest options)
+    "Compile and load the Random-Walk Tutorial Application Module"
+    (startup-module :tutorial options \textcolor{red}{:gbbopen-user}))}
 \end{example}
 %
 and add the package-name \code{:tutorial} in its place:
 %
-\begin{example}\color{darkergray}%
-(define-tll-command :tutorial (\&rest options)
-  "Compile and load the Random-Walk Tutorial Application Module"
-  (startup-module :tutorial options \textcolor{black}{:tutorial}))
+\W\supp\notpretop
+\begin{example}
+\textcolor{darkergray}{%
+  (define-tll-command :tutorial (\&rest options)
+    "Compile and load the Random-Walk Tutorial Application Module"
+    (startup-module :tutorial options \textcolor{black}{:tutorial}))}
 \end{example}
 %
 Save the file.
 
 \subsubsection*{Change \code{modules.lisp}}
+
+\bfindexit{describe-module}%
 %
 Finally, we no longer need the \code{:gbbopen-user} package that is created by
 requiring the \code{:agenda-shell-user} module.  Let's take a closer look at the \code{:tutorial} module that we defined:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(describe-module :tutorial)}
   Module :tutorial (loaded)
     Requires: (:agenda-shell-user)
@@ -5337,7 +5782,7 @@ requiring the \code{:agenda-shell-user} module.  Let's take a closer look at the
     Compiled directory: \var{<homedir>\/}/\var{<platform-dir>\/}/
     Forces recompile date: None
     Files: Mar 24 06:02 tutorial-example
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 %
 Although we only specified that the \code{:agenda-shell-user} module was
@@ -5347,7 +5792,9 @@ required packages.  These are shown as the ``Fully expanded requires'' value.
 
 If we look at the details of the \code{:agenda-shell-user} module we see:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(describe-module :agenda-shell-user)}
   Module :agenda-shell-user (loaded)
     Requires: (:agenda-shell :gbbopen-user)
@@ -5358,7 +5805,7 @@ If we look at the details of the \code{:agenda-shell-user} module we see:
     Compiled directory: \var{<install-dir>\/}/\var{<platform-dir>\/}/gbbopen/control-shells/
     Forces recompile date: None
     Files: Mar 23 12:27 agenda-shell-user 
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 %
 Note that the \code{:agenda-shell-user} module requires two modules:
@@ -5367,22 +5814,26 @@ the \code{:gbbopen-user} module by editing our \code{modules.lisp} file and
 delete \code{:agenda-shell-user} in the \code{:requires} option in our
 \code{:tutorial} module definition:
 %
-\begin{example}\color{darkergray}%
-(in-package :common-lisp-user)
+\W\supp\notpretop
+\begin{example}
+\textcolor{darkergray}{%
+  (in-package :common-lisp-user)
 
-(define-module :tutorial
-  (:requires \textcolor{red}{:agenda-shell-user})
-  (:files "tutorial-example"))
+  (define-module :tutorial
+    (:requires \textcolor{red}{:agenda-shell-user})
+    (:files "tutorial-example"))}
 \end{example}
 %
 and replace it with \code{:agenda-shell}:
 %
-\begin{example}\color{darkergray}%
-(in-package :common-lisp-user)
+\W\supp\notpretop
+\begin{example}
+\textcolor{darkergray}{%
+  (in-package :common-lisp-user)
 
-(define-module :tutorial
-  (:requires \textcolor{black}{:agenda-shell})
-  (:files "tutorial-example"))
+  (define-module :tutorial
+    (:requires \textcolor{black}{:agenda-shell})
+    (:files "tutorial-example"))}
 \end{example}
 %
 Save the file.
@@ -5392,20 +5843,23 @@ Save the file.
 Let's make sure that everything is still working.  Exit Common Lisp and start
 a fresh Common Lisp session.  Next enter the
 \code{:tutorial} REPL command:
-
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   cl-user> \textcolor{black}{:tutorial}
   ;; Loading \var{<install-dir\/>}/startup.lisp
      ...
   ;; Loading \var{<homedir\/>}/tutorial/\var{<platform-dir\/>}/tutorial-example.fasl
-  tutorial>
+  tutorial>}
 \end{example}
 %
 Note that we are now in our newly defined \code{:tutorial} package.  We should
 still be able to run the random-walk application:
 %
-\begin{example}\color{darkergray}%
+\W\supp\notpretop
+\begin{example}
+\textcolor{darkergray}{%
   tutorial> \textcolor{black}{(start-control-shell)}
   ;; Control shell 1 started
 
@@ -5431,7 +5885,7 @@ still be able to run the random-walk application:
   ;; Run time: 0.01 seconds
   ;; Elapsed time: 0 seconds
   :stop
-  gbbopen-user>
+  gbbopen-user>}
 \end{example}
 
 \subsection*{Step 10: Add an ``autorun'' action}
@@ -5439,8 +5893,10 @@ still be able to run the random-walk application:
 Suppose we want the random-walk application to run automatically when it is
 loaded.  You could simply add:
 % 
-\begin{example}\color{darkergray}% 
-(start-control-shell)
+\W\supp
+\begin{example}
+\textcolor{darkergray}{% 
+  (start-control-shell)}
 \end{example}
 %
 as a top-level form at the end of your \code{tutorial-example.lisp} file.  The
@@ -5456,9 +5912,10 @@ true, but it can be set to \nil{} when a module is loaded with the
 Add the following at the end of your \code{tutorial-example.lisp}
 file:
 % 
-\begin{example} 
-(when *autorun-modules* 
-  (format t "~\{~\&~s~\%~\}" (multiple-value-list (start-control-shell))))
+\W\supp
+\begin{example}
+  (when *autorun-modules* 
+    (format t "~\{~\&~s~\%~\}" (multiple-value-list (start-control-shell))))
 \end{example}
 %
 and save the file.  We could have simply called \textbf{start-control-shell}
@@ -5478,7 +5935,9 @@ Enter the \code{:tutorial} REPL command; the modified
 \code{tutorial-example.lisp} file should compile and load, followed by a
 random walk:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   tutorial> \textcolor{black}{:tutorial}
   ;; Compiling \var{<homedir\/>}/tutorial/source/tutorial-example.lisp
   ;; Loading \var{<homedir\/>}/tutorial/\var{<platform-dir\/>}/tutorial-example.fasl
@@ -5502,17 +5961,19 @@ random walk:
   ;; Run time: 0.01 seconds
   ;; Elapsed time: 0 seconds
   :stop
-  tutorial>
+  tutorial>}
 \end{example}
 
 Let's try it again:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   tutorial> \textcolor{black}{:tutorial}
-  tutorial>
+  tutorial>}
 \end{example}
 %
-Nothing happened.  Why?
+This time, nothing happened.  Why?
 
 Since no source files were modified, the Mini Module system knows that the
 latest compiled files for the \code{:tutorial} module and its required modules
@@ -5521,12 +5982,15 @@ loaded, its ``autorun'' conditional form is not evaluated.
 
 We can tell the Mini Module system to always reload the
 \code{tutorial-example} file by editing our \code{modules.lisp} file and
-adding the \code{:reload} file option to the \code{:tutorial} module definition:
+adding the \code{:reload} file option to the \code{:tutorial} module
+definition:
 %
-\begin{example}\color{darkergray}%
-(define-module :tutorial
-  (:requires :agenda-shell)
-  (:files \textcolor{black}{(}"tutorial-example" \textcolor{black}{:reload})))
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
+  (define-module :tutorial
+    (:requires :agenda-shell)
+    (:files \textcolor{black}{(}"tutorial-example" \textcolor{black}{:reload})))}
 \end{example}
 %
 Note that once a file has one or more options, the file name and its options
@@ -5536,13 +6000,15 @@ Save the modified \code{modules.lisp} file. Now, if you try the
 \code{:tutorial} command, the \code{tutorial-example} file will always be
 loaded and its ``autorun'' form evaluated:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   tutorial> \textcolor{black}{:tutorial}
   ;; Loading \var{<homedir\/>}/tutorial/modules.lisp
   ;; Loading \var{<homedir\/>}/tutorial/\var{<platform-dir\/>}/tutorial-example.fasl
   ;; Control shell 1 started
      ...
-  tutorial>
+  tutorial>}
 \end{example}
 %
 The Mini Module system noticed our updated \code{modules.lisp} file and loaded
@@ -5552,12 +6018,14 @@ it, redefining the \code{:tutorial} module definition, and then followed our
 Let's try the \code{:tutorial} command one more time, just to be certain that
 \code{:reload} is happening when no files have been updated:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   tutorial> \textcolor{black}{:tutorial}
   ;; Loading \var{<homedir\/>}/tutorial/\var{<platform-dir\/>}/tutorial-example.fasl
   ;; Control shell 1 started
      ...
-  tutorial>
+  tutorial>}
 \end{example}
 
 \subsubsection*{Mini Module propagation}
@@ -5566,7 +6034,9 @@ The Mini Module's \textbf{compile-module} function also accepts a
 \code{:reload} option, so we might be tempted to simply add that option when
 we specify our \code{:tutorial} command:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   tutorial> :tutorial :reload
   ;;   Loading \var{<install-dir\/>}/\var{<platform-dir\/>}/mini-module/mini-module.fasl
   ;;     Loading \var{<install-dir\/>}/\var{<platform-dir\/>}/mini-module/mini-module-user.fasl
@@ -5574,7 +6044,7 @@ we specify our \code{:tutorial} command:
      ...
   ;; Control shell 1 started
      ...
-  tutorial>
+  tutorial>}
 \end{example}
 %
 however, this would also reload all the files of very module required by the
@@ -5584,12 +6054,14 @@ option to the options that we provide to the command.  We could override
 (cancel) this propagation behavior by adding the \code{:nopropagate} option
 when we specify our \code{:tutorial} command:
 %
-\begin{example}\color{darkergray}%
+\W\supp\notpretop
+\begin{example}
+\textcolor{darkergray}{%
   tutorial> :tutorial :reload :nopropagate
   ;; Loading \var{<homedir\/>}/tutorial/\var{<platform-dir\/>}/tutorial-example.fasl
   ;; Control shell 1 started
      ...
-  tutorial>
+  tutorial>}
 \end{example}
 %
 which would eliminate reloading of all but the files in the \code{:tutorial}
@@ -5609,13 +6081,15 @@ REPL command performs an implicit \code{:cm} command for us, so we could have
 alternatively typed the \code{:cm} REPL command rather than \code{:tutorial}
 once we have issued the first \code{:tutorial} REPL command:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   tutorial> \textcolor{black}{:cm}
   ;; :cm :tutorial :propagate
   ;; Loading \var{<homedir\/>}/tutorial/\var{<platform-dir\/>}/tutorial-example.fasl
   ;; Control shell 1 started
      ...
-  tutorial>
+  tutorial>}
 \end{example}
 %
 Just the thing for lazy typists like me!  Note that the \code{:cm} command
@@ -5632,19 +6106,24 @@ file.  Use your Common Lisp editor to create a new file named
 directory. Type (or copy) the following two forms into the new
 \code{autorun.lisp} file:
 %
+\W\supp
 \begin{example}
-(in-package :tutorial)
+  (in-package :tutorial)
 
-(when *autorun-modules*
-  (format t "~\{~\&~s~\%~\}" (multiple-value-list (start-control-shell))))
+  (when *autorun-modules*
+    (format t "~\{~\&~s~\%~\}" (multiple-value-list (start-control-shell))))
 \end{example}
 %
-and save the file.  Next, edit the \code{tutorial-example.lisp} file and
-remove the ``autorun'' form from the end of the file:
+and save the file.  
+
+Next, edit the \code{tutorial-example.lisp} file and remove the ``autorun''
+form from the end of the file:
 % 
-\begin{example}\color{red} 
-(when *autorun-modules* 
-  (format t "~\{~\&~s~\%~\}" (multiple-value-list (start-control-shell))))
+\W\supp
+\begin{example}
+\textcolor{red}{% 
+  (when *autorun-modules* 
+    (format t "~\{~\&~s~\%~\}" (multiple-value-list (start-control-shell))))}
 \end{example}
 %
 Save the file. 
@@ -5654,41 +6133,50 @@ We could define a second random-walk application module, say
 \code{autorun.lisp} file and requires our current \code{:tutorial} module.
 This definition would look like:
 %
-\begin{example}\color{darkergray}%
-(define-module :run-tutorial
-  (:requires :tutorial
-  (:files ("autorun" :reload))))
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
+  (define-module :run-tutorial
+    (:requires :tutorial
+    (:files ("autorun" :reload))))}
 \end{example}
-
+%
 However, we can avoid creating a new module by simply adding the
-\code{autorun} file to our current \code{:tutorial} module definition.  Edit
-the \code{modules.lisp} file in the \code{tutorial} directory and remove the
-\code{:reload} file option from the \code{:tutorial-example} file
+\code{autorun} file to our current \code{:tutorial} module definition.  
+
+Edit the \code{modules.lisp} file in the \code{tutorial} directory and remove
+the \code{:reload} file option from the \code{:tutorial-example} file
 specification:
 %
-\begin{example}\color{darkergray}%
-(define-module :tutorial
-  (:requires :agenda-shell)
-  (:files \textcolor{red}{(}"tutorial-example" \textcolor{red}{:reload)}))
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
+  (define-module :tutorial
+    (:requires :agenda-shell)
+    (:files \textcolor{red}{(}"tutorial-example" \textcolor{red}{:reload)}))}
 \end{example}
 %
 and then add a new line for the \code{autorun} file with the \code{:reload}
 file option:
 %
-\begin{example}\color{darkergray}%
-(define-module :tutorial
-  (:requires :agenda-shell)
-  (:files "tutorial-example"
-          \textcolor{black}{("autorun" :reload)}))
+\W\supp\notpretop
+\begin{example}
+\textcolor{darkergray}{%
+  (define-module :tutorial
+    (:requires :agenda-shell)
+    (:files "tutorial-example"
+            \textcolor{black}{("autorun" :reload)}))}
 \end{example}
 %
-Save the file.
+and save the file.
 
 \subsection*{Step 13: One last check}
 
 Let's double-check that everything is working:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   tutorial> \textcolor{black}{:cm}
   ;; :cm :tutorial :propagate
   ;; Loading \var{<homedir\/>}/tutorial/modules.lisp
@@ -5698,21 +6186,23 @@ Let's double-check that everything is working:
   ;; Loading \var{<homedir\/>}/tutorial/\var{<platform-dir\/>}/autorun.fasl
   ;; Control shell 1 started
      ...
-  tutorial>
+  tutorial>}
 \end{example}
 %
 The modified files are compiled and loaded and the Agenda Shell is invoked.
 
-Let's try it one last time, just to be sure the application runs when no files
-have been modified:
+Let's try it one last time, just to be sure that the application runs when no
+files have been modified:
 %
-\begin{example}\color{darkergray}%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
   tutorial> \textcolor{black}{:cm}
   ;; :cm :tutorial :propagate
   ;; Loading \var{<homedir\/>}/tutorial/\var{<platform-dir\/>}/autorun.fasl
   ;; Control shell 1 started
      ...
-  tutorial>
+  tutorial>}
 \end{example}
 
 Congratulations!  It's time to move to the next exercise.

@@ -21,7 +21,7 @@
 </td></tr></table></p>
 <p><span class="fndoclabel">Purpose</span> <br />Accesses the rating of a <a href="ref-glossary.html#gl:activations">KSA</a>
 </p>
-<p><span class="fndoclabel">Setf syntax</span><table class="tight" width="100%">
+<p><span class="fndoclabel">Setf syntax</span><table class="tighttop" width="100%">
 <tr valign="top">
 <td valign="baseline" align="left">
 <nobr>(setf (rating-of</nobr>
@@ -33,37 +33,23 @@
 </tr>
 </table>
 </p>
-<p><span class="fndoclabel">Method signatures</span><table class="tight" width="100%">
-<tr valign="top">
-<td valign="baseline" align="left">
-<nobr>rating-of</nobr>
-</td>
-<td valign="baseline">&nbsp; </td>
-<td valign="baseline" align="left" width="99%">
+<p><span class="fndoclabel">Method signatures</span><table class="tighttop" width="100%">
+<tr valign="top"><td valign="baseline" align="left"><nobr>rating-of</nobr></td><td valign="baseline">&nbsp; </td><td valign="baseline" align="left" width="99%">
 <code>(</code><var>ksa</var> <code>ksa)</code>
 <i> =&gt; </i> <var>rating</var>
-</td>
-</tr>
-</table>
+</td></tr></table>
 <table class="tight" width="100%">
-<tr valign="top">
-<td valign="baseline" align="left">
-<nobr>(setf rating-of)</nobr>
-</td>
-<td valign="baseline">&nbsp; </td>
-<td valign="baseline" align="left" width="99%">
+<tr valign="top"><td valign="baseline" align="left"><nobr>(setf rating-of)</nobr></td><td valign="baseline">&nbsp; </td><td valign="baseline" align="left" width="99%">
 <var>rating</var>
 <code>(</code><var>ksa</var> <code>ksa)</code>
 <i> =&gt; </i> <var>rating</var>
-</td>
-</tr>
-</table>
+</td></tr></table>
 </p>
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:agenda-shell</code>
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:agenda-shell</code>
 </p>
-<p><span class="fndoclabel">Arguments</span><table class="tight">
+<p><span class="fndoclabel">Arguments</span><table class="tighttop">
 <tr valign="top"><td valign="baseline"><i>ksa</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#gl:activations">KSA</a>
 </td></tr><tr valign="top"><td valign="baseline"><i>rating</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#gl:rating">rating</a>
 </td></tr></table>
@@ -80,11 +66,11 @@ Agenda Shell to determine when to execute the <a href="ref-glossary.html#gl:acti
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-ksa.html"><b>ksa</b></a>
 </p>
 <p><span class="fndoclabel">Example</span> <br />Return the rating of a <a href="ref-glossary.html#gl:activations">KSA</a>:
-</p>
-<pre>
+<pre class="pretop">
 &gt; (rating-of ksa)
 58
 </pre>
+</p>
 <p><span class="fndoclabel">Note</span> <br />The rating of a <a href="ref-glossary.html#id132">pending&nbsp;KSA</a> can be changed by using <b>setf</b> or
 related macros with this accessor.
 </p>

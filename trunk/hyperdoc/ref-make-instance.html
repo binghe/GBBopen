@@ -24,38 +24,24 @@
 <p><span class="fndoclabel">Purpose</span> <br />Create a new <a href="ref-glossary.html#gl:instance">instance</a> of <var>class</var>, such as a new
 <a href="ref-glossary.html#id195">unit&nbsp;instance</a>.
 </p>
-<p><span class="fndoclabel">Method signatures</span><table class="tight" width="100%">
-<tr valign="top">
-<td valign="baseline" align="left">
-<nobr>make-instance</nobr>
-</td>
-<td valign="baseline">&nbsp; </td>
-<td valign="baseline" align="left" width="99%">
+<p><span class="fndoclabel">Method signatures</span><table class="tighttop" width="100%">
+<tr valign="top"><td valign="baseline" align="left"><nobr>make-instance</nobr></td><td valign="baseline">&nbsp; </td><td valign="baseline" align="left" width="99%">
 <code>(</code><var>class</var> <code>standard-class)</code>
 <code>&#38;rest</code> <var>initargs</var>
 <i> =&gt; </i> <var>instance</var>
-</td>
-</tr>
-</table>
+</td></tr></table>
 <table class="tight" width="100%">
-<tr valign="top">
-<td valign="baseline" align="left">
-<nobr>make-instance</nobr>
-</td>
-<td valign="baseline">&nbsp; </td>
-<td valign="baseline" align="left" width="99%">
+<tr valign="top"><td valign="baseline" align="left"><nobr>make-instance</nobr></td><td valign="baseline">&nbsp; </td><td valign="baseline" align="left" width="99%">
 <code>(</code><var>class</var> <code>symbol)</code>
 <code>&#38;rest</code> <var>initargs</var>
 <i> =&gt; </i> <var>instance</var>
-</td>
-</tr>
-</table>
+</td></tr></table>
 </p>
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen</code>
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-core</code>
 </p>
-<p><span class="fndoclabel">Arguments</span><table class="tight">
+<p><span class="fndoclabel">Arguments</span><table class="tighttop">
 <tr valign="top"><td valign="baseline"><i>class</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id14">class&nbsp;designator</a>
 </td></tr><tr valign="top"><td valign="baseline"><i>initargs</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An <a href="ref-glossary.html#id85">initialization&nbsp;argument&nbsp;list</a>
 </td></tr></table>
@@ -96,8 +82,7 @@ of the instance-name counter value associated with the <a href="ref-glossary.htm
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-next-class-instance-number.html"><b>next-class-instance-number</b></a>
 </p>
 <p><span class="fndoclabel">Example</span> <br />Create a new <code>hyp</code> <a href="ref-glossary.html#id195">unit&nbsp;instance</a>:
-</p>
-<pre>
+<pre class="pretop">
 &gt; (make-instance 'hyp 
      :location (list x y)
      :classification '(:car :truck)
@@ -107,6 +92,7 @@ of the instance-name counter value associated with the <a href="ref-glossary.htm
      :supporting-hyps supporting-hyps)
 #&lt;hyp 419 (1835 4791) 0.85 [5..35]&gt;
 </pre>
+</p>
 <p><span class="fndoclabel">Note</span> <br /><a name="id3">The</a> <a href="ref-glossary.html#gl:function">function</a> <b><a href="ref-make-space-instance.html">make-space-instance</a></b> provides a
 clear and convenient shorthand for creating <a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a>.
 </p>

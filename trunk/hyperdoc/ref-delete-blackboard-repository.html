@@ -26,7 +26,7 @@ retain-classes</var></td><td valign="baseline" align="right">[<i>Function</i>]
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-core</code>
 </p>
-<p><span class="fndoclabel">Arguments</span><table class="tight">
+<p><span class="fndoclabel">Arguments</span><table class="tighttop">
 <tr valign="top"><td valign="baseline"><i>all-classes</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id77">generalized&nbsp;boolean</a> (default is <code>nil</code>)
 </td></tr><tr valign="top"><td valign="baseline"><i>disable-events</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id77">generalized&nbsp;boolean</a> (default is <code>t</code>)
 </td></tr><tr valign="top"><td valign="baseline"><i>retain-classes</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An <a href="ref-glossary.html#id65">extended&nbsp;unit-classes&nbsp;specification</a>
@@ -42,7 +42,8 @@ retain-classes</var></td><td valign="baseline" align="right">[<i>Function</i>]
 <li><code>instance-deleted-event</code>
 </ul>
 </p>
-<p><span class="fndoclabel">Detailed syntax</span></p>
+<p><table class="tighttop" width="100%"></table>
+<span class="fndoclabel">Detailed syntax</span></p>
 <table class="tight"><table><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>unit-classes-specifier</var>&nbsp;::= </td><td valign="baseline" colspan="1" align="left"> <code>t</code> | 
@@ -84,16 +85,15 @@ definitions, functions, methods, etc.
 <p><span class="fndoclabel">Examples</span> <br />Delete all <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a> and <a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a>
 (except for the <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a> of <a href="ref-glossary.html#gl:unit-class">unit&nbsp;classes</a> that have been
 defined to be retained by default):
-</p>
-<pre>
+<pre class="pretop">
   (delete-blackboard-repository)
 </pre>
-<p>As above, but also delete all <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a> of <a href="ref-glossary.html#gl:unit-class">unit&nbsp;classes</a>
+As above, but also delete all <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a> of <a href="ref-glossary.html#gl:unit-class">unit&nbsp;classes</a>
 that have been defined to be retained by default:
-</p>
 <pre>
   (delete-blackboard-repository :all-classes t)
 </pre>
+</p>
 <p><span class="fndoclabel">Note</span> <br /><a name="id2">This</a> function and <b><a href="ref-reset-gbbopen.html">reset-gbbopen</a></b> are the only GBBopen
 functions that disable <a href="ref-glossary.html#gl:event">event</a> signaling by default.  This conflicts
 with the normal use of <b><a href="ref-with-events-disabled.html">with-events-disabled</a></b> and

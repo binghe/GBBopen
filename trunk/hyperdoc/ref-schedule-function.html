@@ -25,7 +25,7 @@
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:portable-threads</code>
 </p>
-<p><span class="fndoclabel">Arguments</span><table class="tight">
+<p><span class="fndoclabel">Arguments</span><table class="tighttop">
 <tr valign="top"><td valign="baseline"><i>name-or-scheduled-function</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An object (typically a string or a
 symbol) naming a currently scheduled <a href="ref-glossary.html#id159">scheduled&nbsp;function</a> or a
 <code>scheduled-function</code> object
@@ -59,8 +59,7 @@ and <var>repeat-interval</var>.
 </p>
 <a name="id1"></a><p><span class="fndoclabel">Examples</span> <br />Schedule a <a href="ref-glossary.html#id159">scheduled&nbsp;function</a> that simply prints <code>"Happy New Year!"</code> 
 at midnight (local time) on January 1, 2010:
-</p>
-<pre>
+<pre class="pretop">
 &gt; (schedule-function
     (<a href="ref-make-scheduled-function.html">make-scheduled-function</a>
       #'(lambda (scheduled-function)
@@ -70,9 +69,8 @@ at midnight (local time) on January 1, 2010:
 &gt; (all-scheduled-functions)
 (#&lt;scheduled-function nil [Jan 1, 2010 00:00:00]&gt;)
 </pre>
-<p><a name="id2">Schedule</a> a <a href="ref-glossary.html#id159">scheduled&nbsp;function</a> that prints <code>"It's quitting time!"</code> 
+<a name="id2">Schedule</a> a <a href="ref-glossary.html#id159">scheduled&nbsp;function</a> that prints <code>"It's quitting time!"</code> 
 every day at 5pm:
-</p>
 <pre>
 &gt; (schedule-function
     (<a href="ref-make-scheduled-function.html">make-scheduled-function</a>
@@ -82,8 +80,7 @@ every day at 5pm:
       :name 'quitting-time)
      (<a href="ref-encode-time-of-day.html">encode-time-of-day</a> 17 0 0) :repeat-interval #.(* 24 60 60))
 </pre>
-<p><a name="id3">Verbosely</a> change <code>quitting-time</code> to 5:30pm every day:
-</p>
+<a name="id3">Verbosely</a> change <code>quitting-time</code> to 5:30pm every day:
 <pre>
 &gt; (schedule-function 'quitting-time (<a href="ref-encode-time-of-day.html">encode-time-of-day</a> 17 30 0)
     :repeat-interval #.(* 24 60 60)
@@ -92,6 +89,7 @@ every day at 5pm:
 ;; Scheduling #&lt;scheduled-function quitting-time [17:30:00]&gt; 
    as the next scheduled-function...
 </pre>
+</p>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
 <table width="100%" cellpadding="0" cellspacing="2"><tr>

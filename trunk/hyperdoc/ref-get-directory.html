@@ -26,7 +26,7 @@ directory, or a module.
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:mini-module</code>
 </p>
-<p><span class="fndoclabel">Arguments</span><table class="tight">
+<p><span class="fndoclabel">Arguments</span><table class="tighttop">
 <tr valign="top"><td valign="baseline"><i>name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A keyword symbol naming a root directory, a relative directory, 
 or a module.
 </td></tr></table>
@@ -45,17 +45,16 @@ returned for relative directories is the source pathname.
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-show-defined-directories.html"><b>show-defined-directories</b></a>
 </p>
 <p><span class="fndoclabel">Examples</span> <br />Return the pathname of the <code>:my-app-root</code> root directory:
-</p>
-<pre>
+<pre class="pretop">
 &gt; (get-directory :my-app-root)
 #P"~/my-app"
 </pre>
-<p>Return the pathname of the <code>:gbbopen-tools</code> module:
-</p>
+Return the pathname of the <code>:gbbopen-tools</code> module:
 <pre>
 &gt; (get-directory :gbbopen-tools)
 #P"/home/GBBopen/current/source/tools"
 </pre>
+</p>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
 <table width="100%" cellpadding="0" cellspacing="2"><tr>

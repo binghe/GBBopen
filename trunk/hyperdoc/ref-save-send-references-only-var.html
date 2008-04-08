@@ -34,8 +34,7 @@ prints references to instances or the instance contents.
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-print-slot-for-saving-sending.html"><b>print-slot-for-saving/sending</b></a>
 </p>
 <p><span class="fndoclabel">Example</span> <br /><a name="id1">Send</a> some <code>hyp</code> <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a> to another agent:
-</p>
-<pre>
+<pre class="pretop">
 &gt; (let ((<a href="ref-print-object-for-sending-var.html">*print-object-for-sending*</a> 't))
     (<a href="ref-with-saving-sending-block.html">with-saving/sending-block</a> (stream :package ':my-app)
       (let ((*save/send-references-only* nil))
@@ -43,6 +42,7 @@ prints references to instances or the instance contents.
           (<a href="ref-print-object-for-saving-sending.html">print-object-for-saving/sending</a> instance stream)))))
 nil
 </pre>
+</p>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
 <table width="100%" cellpadding="0" cellspacing="2"><tr>

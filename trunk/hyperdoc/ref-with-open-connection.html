@@ -28,7 +28,7 @@ connection.
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:portable-sockets</code>
 </p>
-<p><span class="fndoclabel">Arguments</span><table class="tight">
+<p><span class="fndoclabel">Arguments</span><table class="tighttop">
 <tr valign="top"><td valign="baseline"><i>var</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id199">variable&nbsp;symbol</a>
 </td></tr><tr valign="top"><td valign="baseline"><i>host</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A 32-bit internet address or a string specifying the remote host
 </td></tr><tr valign="top"><td valign="baseline"><i>port</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An integer or a string specifying the service port
@@ -52,8 +52,7 @@ systems, the services file is <code>/etc/services</code>. On Windows, it is the 
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-shutdown-socket-stream.html"><b>shutdown-socket-stream</b></a>
 </p>
 <p><span class="fndoclabel">Example</span> <br />Open a socket connection to the GBBopen Project web server:
-</p>
-<pre>
+<pre class="pretop">
 &gt; (with-open-connection (connection "GBBopen.org" 80)
      (flet ((write-crlf (stream)
               ;; HTTP requires CR/LF line termination: 
@@ -69,6 +68,7 @@ systems, the services file is <code>/etc/services</code>. On Windows, it is the 
           (format t "~&amp;;; Received: ~a~%" line))))
 ;; Received: HTTP/1.1 200 OK
 </pre>
+</p>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
 <table width="100%" cellpadding="0" cellspacing="2"><tr>

@@ -28,13 +28,13 @@
 </p>
 <p><span class="fndoclabel">Example</span> <br />Define a slot-reader <a href="ref-glossary.html#gl:function">function</a> that returns the value of <code>my-slot</code> or 
 <b>unbound-value-indicator</b> if the slot is unbound: 
-</p>
-<pre>
+<pre class="pretop">
 (defun safe-my-slot-of (instance)
   (if (slot-bound-p instance 'my-slot)
       (slot-value instance 'my-slot)
       unbound-value-indicator))
 </pre>
+</p>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
 <table width="100%" cellpadding="0" cellspacing="2"><tr>
