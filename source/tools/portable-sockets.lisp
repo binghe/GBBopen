@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-SOCKETS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/portable-sockets.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Mar 23 07:31:35 2008 *-*
-;;;; *-* Machine: cyclone.local *-*
+;;;; *-* Last-Edit: Wed Apr  9 02:31:35 2008 *-*
+;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -140,12 +140,13 @@
 ;;; ===========================================================================
 ;;;  Need-to-port reporting
 
-(defun need-to-port-warning/error (obj &optional error)
-  (funcall (if error 'error 'warn)
-           "~s needs to be defined for ~a~@[ running on ~a~]."
-           obj
-           (lisp-implementation-type) 
-           (machine-type)))
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defun need-to-port-warning/error (obj &optional error)
+    (funcall (if error 'error 'warn)
+             "~s needs to be defined for ~a~@[ running on ~a~]."
+             obj
+             (lisp-implementation-type) 
+             (machine-type))))
 
 ;;; ---------------------------------------------------------------------------
 
