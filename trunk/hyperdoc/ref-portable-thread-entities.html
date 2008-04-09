@@ -135,8 +135,10 @@ invocation of a subsequent <a href="ref-glossary.html#id159">scheduled&nbsp;func
 specified interval.  Unlike <a href="ref-glossary.html#gl:scheduled-function">scheduled&nbsp;functions</a>, which can be
 scheduled only to a resolution of one second, a <a href="ref-glossary.html#id133">periodic&nbsp;function</a> can
 be repeated at intervals as brief as is supported by the <code>sleep</code> function
-of the Common Lisp implementation.  Each <a href="ref-glossary.html#id133">periodic&nbsp;function</a> is executed
-in a separate <a href="ref-glossary.html#gl:thread">thread</a>.
+of the Common Lisp implementation.  A <a href="ref-glossary.html#id133">periodic&nbsp;function</a> is scheduled
+and executed in its own <a href="ref-glossary.html#gl:thread">thread</a>.  As with <a href="ref-glossary.html#gl:scheduled-function">scheduled&nbsp;functions</a>,
+however, <a href="ref-glossary.html#gl:function">function</a> should spawn a new <a href="ref-glossary.html#gl:thread">thread</a> in which to
+perform its activities, unless its run time is brief.
 </p>
 <p><b><font size="+1">Entities</font></b>
 </p>
@@ -169,19 +171,19 @@ in a separate <a href="ref-glossary.html#gl:thread">thread</a>.
 <li><a href="ref-make-recursive-lock.html"><font color="#000000">make-recursive-lock</font></a></li>
 <li><a href="ref-make-scheduled-function.html"><font color="#000000">make-scheduled-function</font></a></li>
 <li><a href="ref-restart-scheduled-function-scheduler.html"><font color="#000000">restart-scheduled-function-scheduler</font></a></li>
+<li><a href="ref-run-in-thread.html"><font color="#000000">run-in-thread</font></a></li>
 <li><a href="ref-schedule-function.html"><font color="#000000">schedule-function</font></a></li>
 <li><a href="ref-schedule-function-relative.html"><font color="#000000">schedule-function-relative</font></a></li>
 <li><a href="ref-scheduled-function-name.html"><font color="#000000">scheduled-function-name</font></a></li>
 <li><a href="ref-scheduled-function-repeat-interval.html"><font color="#000000">scheduled-function-repeat-interval</font></a></li>
 <li><a href="ref-spawn-periodic-function.html"><font color="#000000">spawn-periodic-function</font></a></li>
+<li><a href="ref-spawn-thread.html"><font color="#000000">spawn-thread</font></a></li>
+<li><a href="ref-symbol-value-in-thread.html"><font color="#000000">symbol-value-in-thread</font></a></li>
 <li><a href="ref-thread-alive-p.html"><font color="#000000">thread-alive-p</font></a></li>
 <li><a href="ref-thread-name.html"><font color="#000000">thread-name</font></a></li>
 <li><a href="ref-thread-whostate.html"><font color="#000000">thread-whostate</font></a></li>
 <li><a href="ref-thread-yield.html"><font color="#000000">thread-yield</font></a></li>
 <li><a href="ref-threadp.html"><font color="#000000">threadp</font></a></li>
-<li><a href="ref-run-in-thread.html"><font color="#000000">run-in-thread</font></a></li>
-<li><a href="ref-spawn-thread.html"><font color="#000000">spawn-thread</font></a></li>
-<li><a href="ref-symbol-value-in-thread.html"><font color="#000000">symbol-value-in-thread</font></a></li>
 <li><a href="ref-thread-holds-lock-p.html"><font color="#000000">thread-holds-lock-p</font></a></li>
 <li><a href="ref-unschedule-function.html"><font color="#000000">unschedule-function</font></a></li>
 <li><a href="ref-with-lock-held.html"><font color="#000000">with-lock-held</font></a></li>

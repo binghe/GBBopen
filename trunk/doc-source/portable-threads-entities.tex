@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/portable-threads-entities.tex *-*
-%% *-* Last-Edit: Tue Apr  8 05:56:45 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Tue Apr  8 21:57:30 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 \index{module!:portable-threads@\code{:portable-threads}}%
@@ -126,8 +126,10 @@ A \glref{periodic~function} is a \glref{function} to be run repeatedly at a
 specified interval.  Unlike \glref{scheduled~functions}, which can be
 scheduled only to a resolution of one second, a \glref{periodic~function} can
 be repeated at intervals as brief as is supported by the \code{sleep} function
-of the Common Lisp implementation.  Each \glref{periodic~function} is executed
-in a separate \glref{thread}.
+of the Common Lisp implementation.  A \glref{periodic~function} is scheduled
+and executed in its own \glref{thread}.  As with \glref{scheduled~functions},
+however, \glref{function} should spawn a new \glref{thread} in which to
+perform its activities, unless its run time is brief.
 
 \W\entities
 \T\clearpage
@@ -1353,7 +1355,8 @@ created \glref{condition-variable} instance.  However, using
 
 \fnargs
 \begin{args}{function}
-\arg[function] A \glref{function} of one argument
+\arg[function] A \glref{function~designator} specifying a
+ \glref{function~object} of one argument
 \arg[name] An object (typically a string or a symbol; default is
 \var{function\/}, if \var{function\/} is a symbol, otherwise \nil)
 \end{args}
@@ -1467,6 +1470,45 @@ no effect:
 > (restart-scheduled-function-scheduler)
 ;; The scheduled-function scheduler is already running.
 nil
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{run-in-thread}{\var{thread function\/}
+    \code{\&rest} \var{args\/}}
+\index{thread!running a function in}%
+
+\fnsyntax
+
+\fnpurpose Force \var{thread\/} to apply \var{function\/} to \var{args\/}
+
+\fnpackage \code{:portable-threads}
+
+\fnmodule \code{:portable-threads}
+
+\fnargs
+\begin{args}{function}
+\arg[thread] A \glref{thread}
+\arg[function] A \glref{function~designator}
+\arg[args] Arguments to the function
+\end{args}
+
+\fnerrors
+\nothreads{}
+
+\begin{alsos}{spawn-thread}
+\also[spawn-thread]
+\end{alsos}
+
+\fnexample
+%
+\W\supp
+\begin{example}
+  (run-in-thread thread
+                 #'(lambda (result) (throw ':exit result)) 
+                 result)
 \end{example}
 
 \end{functiondoc}
@@ -1801,7 +1843,8 @@ randomly sets whether to reschedule itself (and at what interval):
 
 \fnargs
 \begin{args}{repeat-interval}
-\arg[function] A \glref{function} of no arguments
+\arg[function] A \glref{function~designator} specifying a
+  \glref{function~object} of no arguments
 \arg[repeat-interval] A number (representing seconds)
 \arg[count] A number or \nil{} (default is \nil)
 \arg[name] An object (typically a string or a symbol; default is
@@ -1897,6 +1940,116 @@ half-second-timer
 > (spawn-periodic-function 'half-second-timer 0.5)
 #<thread Periodic Function half-second-timer>
 \end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{spawn-thread}{\var{name function\/}
+    \code{\&rest}
+    \var{args\/} \returns{} \var{thread\/}}
+\index{thread!spawning}%
+\index{creating!a thread}%
+\index{making!a thread}%
+
+\fnsyntax
+
+\fnpurpose Spawn a new \glref{thread}.
+
+\fnpackage \code{:portable-threads}
+
+\fnmodule \code{:portable-threads}
+
+\fnargs
+\begin{args}{function}
+\arg[name] A string
+\arg[function] A \glref{function~designator}
+\arg[args] Arguments to the function
+\end{args}
+
+\fnreturns The object representing the new \glref{thread}.
+  
+\fnerrors
+\nothreads{}
+
+\begin{alsos}{symbol-value-in-thread}
+\also[all-threads]
+\also[awaken-thread]
+\also[current-thread]
+\also[hibernate-thread]
+\also[kill-thread]
+\also[thread-alive-p]
+\also[thread-name]
+\also[thread-whostate]
+\also[threadp]
+\also[run-in-thread]
+\also[symbol-value-in-thread]
+\end{alsos}
+
+\fnexample
+%
+\W\supp
+\begin{example}
+> (spawn-thread "Sleepy" #'sleep 60)
+#<thread Sleepy>
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{symbol-value-in-thread}{\var{symbol 
+    thread\/}
+    \returns{} \mbox{\var{object, boundp\/}}}
+\index{thread!symbol value in}%
+\index{value, of a symbol in a thread}%
+
+\fnsyntax
+
+\fnpurpose Return the value of \var{symbol\/} in a \glref{thread}.
+
+\fnpackage \code{:portable-threads}
+
+\fnmodule \code{:portable-threads}
+
+\fnargs
+\begin{args}{function}
+\arg[symbol] A symbol
+\arg[thread] A \glref{thread}
+\end{args}
+
+\fnreturns Two values:
+\begin{tightitemize}
+\item the value of \var{symbol\/} in \var{thread\/} or nil if no value is
+  bound
+\item \code{t} if \var{symbol\/} is specially or globally bound in 
+  \var{thread}; otherwise \nil
+\end{tightitemize}
+  
+\fndescription The global symbol value is returned as the first value if no
+thread-local value is bound.
+
+\begin{alsos}{spawn-thread}
+\also[spawn-thread]
+\end{alsos}
+
+\fnexamples
+%
+\W\supp
+\begin{example}
+> (symbol-value-in-thread '*x* thread)
+33
+t
+> (symbol-value-in-thread 'pi thread)
+3.141592653589793d0
+t
+> (symbol-value-in-thread '*unbound* thread)
+nil
+nil
+\end{example}
+
+\fnnote On Common Lisp implementations without threads, this function obtains
+the global symbol value.
 
 \end{functiondoc}
 
@@ -2103,155 +2256,6 @@ non-threaded implementations.
 > (threadp (car (\entlink{all-threads})))
 t
 \end{example}
-
-\end{functiondoc}
-
-%% ------------------------------------------------------------------------
-
-\begin{functiondoc}{Function}{run-in-thread}{\var{thread function\/}
-    \code{\&rest} \var{args\/}}
-\index{thread!running a function in}%
-
-\fnsyntax
-
-\fnpurpose Force \var{thread\/} to apply \var{function\/} to \var{args\/}
-
-\fnpackage \code{:portable-threads}
-
-\fnmodule \code{:portable-threads}
-
-\fnargs
-\begin{args}{function}
-\arg[thread] A \glref{thread}
-\arg[function] A \glref{function}
-\arg[args] Arguments to the function
-\end{args}
-
-\fnerrors
-\nothreads{}
-
-\begin{alsos}{spawn-thread}
-\also[spawn-thread]
-\end{alsos}
-
-\fnexample
-%
-\W\supp
-\begin{example}
-  (run-in-thread thread
-                 #'(lambda (result) (throw ':exit result)) 
-                 result)
-\end{example}
-
-\end{functiondoc}
-
-%% ------------------------------------------------------------------------
-
-\begin{functiondoc}{Function}{spawn-thread}{\var{name function\/}
-    \code{\&rest}
-    \var{args\/} \returns{} \var{thread\/}}
-\index{thread!spawning}%
-\index{creating!a thread}%
-\index{making!a thread}%
-
-\fnsyntax
-
-\fnpurpose Spawn a new \glref{thread}.
-
-\fnpackage \code{:portable-threads}
-
-\fnmodule \code{:portable-threads}
-
-\fnargs
-\begin{args}{function}
-\arg[name] A string
-\arg[function] A \glref{function}
-\arg[args] Arguments to the function
-\end{args}
-
-\fnreturns The object representing the new \glref{thread}.
-  
-\fnerrors
-\nothreads{}
-
-\begin{alsos}{symbol-value-in-thread}
-\also[all-threads]
-\also[awaken-thread]
-\also[current-thread]
-\also[hibernate-thread]
-\also[kill-thread]
-\also[thread-alive-p]
-\also[thread-name]
-\also[thread-whostate]
-\also[threadp]
-\also[run-in-thread]
-\also[symbol-value-in-thread]
-\end{alsos}
-
-\fnexample
-%
-\W\supp
-\begin{example}
-> (spawn-thread "Sleepy" #'sleep 60)
-#<thread Sleepy>
-\end{example}
-
-\end{functiondoc}
-
-%% ------------------------------------------------------------------------
-
-\begin{functiondoc}{Function}{symbol-value-in-thread}{\var{symbol 
-    thread\/}
-    \returns{} \mbox{\var{object, boundp\/}}}
-\index{thread!symbol value in}%
-\index{value, of a symbol in a thread}%
-
-\fnsyntax
-
-\fnpurpose Return the value of \var{symbol\/} in a \glref{thread}.
-
-\fnpackage \code{:portable-threads}
-
-\fnmodule \code{:portable-threads}
-
-\fnargs
-\begin{args}{function}
-\arg[symbol] A symbol
-\arg[thread] A \glref{thread}
-\end{args}
-
-\fnreturns Two values:
-\begin{tightitemize}
-\item the value of \var{symbol\/} in \var{thread\/} or nil if no value is
-  bound
-\item \code{t} if \var{symbol\/} is specially or globally bound in 
-  \var{thread}; otherwise \nil
-\end{tightitemize}
-  
-\fndescription The global symbol value is returned as the first value if no
-thread-local value is bound.
-
-\begin{alsos}{spawn-thread}
-\also[spawn-thread]
-\end{alsos}
-
-\fnexamples
-%
-\W\supp
-\begin{example}
-> (symbol-value-in-thread '*x* thread)
-33
-t
-> (symbol-value-in-thread 'pi thread)
-3.141592653589793d0
-t
-> (symbol-value-in-thread '*unbound* thread)
-nil
-nil
-\end{example}
-
-\fnnote On Common Lisp implementations without threads, this function obtains
-the global symbol value.
 
 \end{functiondoc}
 
