@@ -20,7 +20,7 @@
 <var>declaration</var>* 
 &#123;<var>tag</var>&nbsp;|&nbsp;<var>form</var>&#125;*</td><td valign="baseline" align="right">[<i>Macro</i>]
 </td></tr></table></p>
-<p><span class="fndoclabel">Purpose</span> <br />Iterate over all <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a> of the specified
+<p><span class="fndoclabel">Purpose</span> <br />Iterate over all <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a> of the specified
 <a href="ref-glossary.html#gl:unit-class">unit&nbsp;classes</a>.
 </p>
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen</code>
@@ -64,7 +64,7 @@
 <a name="id1"></a></td><td valign="baseline" colspan="1" align="left"> <code>:plus-subclasses</code> | <code>:no-subclasses</code> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
-<p><span class="fndoclabel">Description</span> <br />The iteration over the <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a> of the specified
+<p><span class="fndoclabel">Description</span> <br />The iteration over the <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a> of the specified
 <a href="ref-glossary.html#gl:unit-class">unit&nbsp;classes</a> is performed once for each <a href="ref-glossary.html#id195">unit&nbsp;instance</a>, whether
 or not the instances reside on any <a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a>.
 </p>
@@ -77,12 +77,12 @@ or not the instances reside on any <a href="ref-glossary.html#gl:space-instance"
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-map-instances-on-space-instances.html"><b>map-instances-on-space-instances</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-map-sorted-instances-of-class.html"><b>map-sorted-instances-of-class</b></a>
 </p>
-<p><span class="fndoclabel">Examples</span> <br />Delete all <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a> of the class <code>hyp</code>:
+<p><span class="fndoclabel">Examples</span> <br />Delete all <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a> of the class <code>hyp</code>:
 <pre class="pretop">
   (do-instances-of-class (instance 'hyp)
     (<a href="ref-delete-instance.html">delete-instance</a> instance))
 </pre> 
-Delete all <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a> of the class <code>hyp</code> and
+Delete all <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a> of the class <code>hyp</code> and
 instances of subclasses of <code>hyp</code>:
 <pre>
   (do-instances-of-class (instance '(hyp :plus-subclasses))
@@ -93,7 +93,7 @@ instances of subclasses of <code>hyp</code>:
 <a href="ref-glossary.html#id195">unit&nbsp;instance</a> while <b>do-instances-of-class</b> is in progress.
 There is one exception to this restriction: the current <a href="ref-glossary.html#id195">unit&nbsp;instance</a>
 in the iteration (bound to <var>var</var>) can be deleted, provided that the
-deletion does not trigger the deletion of any other <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a>.
+deletion does not trigger the deletion of any other <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a>.
 For example, the following form intended to delete all <a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a>
 violates this restriction:
 <pre class="pretop">

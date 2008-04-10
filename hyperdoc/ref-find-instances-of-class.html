@@ -19,7 +19,7 @@
 <nobr><b><font color="#000000">find-instances-of-class</font></b></nobr></td><td valign="baseline"> &nbsp; </td><td valign="baseline" align="left" width="99%"><var>unit-classes-specifier</var>
 <i> =&gt; </i> <var>unit-instances</var></td><td valign="baseline" align="right">[<i>Function</i>]
 </td></tr></table></p>
-<p><span class="fndoclabel">Purpose</span> <br />Return a list of all <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a> of the
+<p><span class="fndoclabel">Purpose</span> <br />Return a list of all <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a> of the
 specified <a href="ref-glossary.html#gl:unit-class">unit&nbsp;classes</a>.
 </p>
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen</code>
@@ -31,7 +31,7 @@ specified <a href="ref-glossary.html#gl:unit-class">unit&nbsp;classes</a>.
 (see below)
 </td></tr></table>
 </p>
-<p><span class="fndoclabel">Returns</span> <br /><a name="id1">A</a> newly consed list of all <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a> of the
+<p><span class="fndoclabel">Returns</span> <br /><a name="id1">A</a> newly consed list of all <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a> of the
 <a href="ref-glossary.html#gl:unit-class">unit&nbsp;classes</a> specified by <var>unit-class-specifier</var>,
 whether or not they reside on any <a href="ref-glossary.html#id174">space&nbsp;instance</a>.
 </p>
@@ -70,7 +70,7 @@ whether or not they reside on any <a href="ref-glossary.html#id174">space&nbsp;i
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-map-instances-on-space-instances.html"><b>map-instances-on-space-instances</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-map-sorted-instances-of-class.html"><b>map-sorted-instances-of-class</b></a>
 </p>
-<p><span class="fndoclabel">Example</span> <br />Return the list of all <code>hyp</code> <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a>:
+<p><span class="fndoclabel">Example</span> <br />Return the list of all <code>hyp</code> <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a>:
 <pre class="pretop">
 &gt; (find-instances-of-class 'hyp)
 (#&lt;hyp 233 (1835 4791) 0.89 [5..35]&gt;
