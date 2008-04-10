@@ -1,6 +1,8 @@
 Important changes since GBBopen 0.9.9:
   
-  None yet.
+  * Support for enumerated set-composite instances dimension values and
+    hashed space-instance storage of them; incomposite (scalar) pattern
+    retrieval of enumerated set-composite instances
 
 Important changes in GBBopen 0.9.9:
 
