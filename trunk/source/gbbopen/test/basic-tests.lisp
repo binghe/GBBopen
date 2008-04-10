@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/basic-tests.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Apr  4 05:07:06 2008 *-*
+;;;; *-* Last-Edit: Thu Apr 10 00:11:28 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -198,7 +198,7 @@
 	   (u11 uc-1 (5 2 5) :bus nil)
 	   (u12 uc-1 (10 2 5) :bus nil)))
 	(composite-elements
-	 '(#+not-yet (cu1 uc-set ((10 15 20) 5 5) (:bus :car) nil))))
+	 '((cu1 uc-set ((10 15 20) 5 5) (:bus :car) nil))))
     (flet ((make-instances (elements)
 	     (mapcar 
 	      #'(lambda (element)
@@ -679,13 +679,13 @@
 			     (list u1 u2 u3 u4))
 	       (do-find-test 't all-space-instances 
 			     '(/= x 1)
-			     (list u5 u6 u7 u8 u9 u10 u11 u12 #+not-yet cu1))
+			     (list u5 u6 u7 u8 u9 u10 u11 u12 cu1))
 	       (do-find-test 't all-space-instances 
 			     '(> x 2)
-			     (list u11 u12 #+not-yet cu1))
+			     (list u11 u12 cu1))
 	       (do-find-test 't all-space-instances 
 			     '(>= x 2)
-			     (list u5 u6 u11 u12 #+not-yet cu1))
+			     (list u5 u6 u11 u12 cu1))
 	       (do-find-test 't all-space-instances 
 			     '(< x 2)
 			     (list u1 u2 u3 u4))
@@ -709,7 +709,7 @@
 			     (list u3 u4))
 	       (do-find-test 't all-space-instances 
 			     '(is classification :car)
-			     (list u2 u5 #+not-yet cu1))
+			     (list u2 u5 cu1))
 	       (do-find-test 't space-1
 			     '(and (is-eq classification :car) (= x 1))
 			     (list u2))
@@ -742,10 +742,10 @@
 			     (list u3 u4 u6 u7 u8 u9))
 	       (do-find-test 't all-space-instances 
 			     '(or (<= (x y) (1 2)) (or (>= (x y) (3 . 2))))
-			     (list u1 u2 u3 u4 u11 u12 #+not-yet cu1))
+			     (list u1 u2 u3 u4 u11 u12 cu1))
 	       (do-find-test 't all-space-instances 
 			     '(not (within (x y) ((1 3) (2 . 5))))
-			     (list u1 u2 u5 u10 u11 u12 #+not-yet cu1))
+			     (list u1 u2 u5 u10 u11 u12 cu1))
 	       (do-find-test 't all-space-instances 
 			     `(within x #.infinite-interval)
 			     test-set)
@@ -760,15 +760,13 @@
 			     (list u6))
 	       (do-find-test 't all-space-instances 
 			     '(false amphibious)
-			     (list u1 u2 u3 u4 u5 u7 u8 u9 u10 u11 u12 
-				   #+not-yet cu1))
+			     (list u1 u2 u3 u4 u5 u7 u8 u9 u10 u11 u12 cu1))
 	       (do-find-test 't all-space-instances 
 			     '(eqv amphibious anything-true)
 			     (list u6))
 	       (do-find-test 't all-space-instances 
 			     '(eqv amphibious nil)
-			     (list u1 u2 u3 u4 u5 u7 u8 u9 u10 u11 u12 
-				   #+not-yet cu1))
+			     (list u1 u2 u3 u4 u5 u7 u8 u9 u10 u11 u12 cu1))
 	       (do-find-test 't all-space-instances 
 			     '(not (or (within x (0 1)) (within x (6 10))))
 			     (list u5 u6 u7 u8 u9 u10 u11))
@@ -780,7 +778,7 @@
 			     nil)
 	       (do-find-test 'uc-set space-1
 			     '(= x 10)
-			     (list #+not-yet cu1))
+			     (list cu1))
 	       (do-find-test 't all-space-instances 
 			     '(or (= x 2) 
 			       (and (eqv amphibious 'yes)
@@ -794,8 +792,7 @@
 		't all-space-instances 
 		:pattern p 
 		:use-marking use-marking?)
-	       (unless (set-equal result (list u1 u2 u5 u10 u11 u12 
-					       #+not-yet cu1))
+	       (unless (set-equal result (list u1 u2 u5 u10 u11 u12 cu1))
 		 (error 
 		  "Wrong results from map-instances-on-space-instances ~s"
 		  p)))))
@@ -809,7 +806,7 @@
       (format t "~&;;   Filter-instance tests...~%")
       (let ((p '(is-equalp classification :car)))
 	(unless (set-equal (filter-instances test-set p)
-			   (list u2 u5 #+not-yet cu1))
+			   (list u2 u5 cu1))
 	  (error "Wrong results from filter-instances ~s" p)))
       (let ((p '(is-eq classification :truck)))
 	(unless (set-equal (filter-instances (cons u3 test-set) p)
