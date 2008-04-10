@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/hashed-storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Apr  7 08:27:46 2008 *-*
+;;;; *-* Last-Edit: Wed Apr  9 23:29:45 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -146,11 +146,13 @@
 				    bound-value-action)
   (declare (type function unbound-value-action bound-value-action))
   (when verbose (print-hashed-storage-usage-message storage))
-  (multiple-value-bind (dimension-value dimension-type composite-type
-			composite-dimension-name)
+  (multiple-value-bind (dimension-value dimension-type 
+                        comparison-type
+                        composite-type composite-dimension-name)
       (instance-dimension-value 
        instance (sole-element (dimension-names-of storage)))
-    (declare (ignore dimension-type composite-dimension-name))
+    (declare (ignore dimension-type comparison-type composite-dimension-name))
+    (printv composite-type)
     (flet ((do-a-value (dimension-value)
 	     (funcall bound-value-action instance storage dimension-value)))
       (cond 

@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/current/source/gbbopen/1d-uniform-storage.lisp *-*
+;;;; *-* File: /usr/local/gbbopen/source/gbbopen/1d-uniform-storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Dec 20 12:56:29 2007 *-*
-;;;; *-* Machine: ruby.corkills.org *-*
+;;;; *-* Last-Edit: Wed Apr  9 23:11:22 2008 *-*
+;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -89,13 +89,15 @@
 	 (start (start-of storage))
 	 (size (size-of storage))
 	 (dimension-name (sole-element (dimension-names-of storage))))
-    (multiple-value-bind (dimension-value dimension-type composite-type
-			  composite-dimension-name)
+    (multiple-value-bind (dimension-value dimension-type 
+                          comparison-type
+                          composite-type composite-dimension-name)
 	(if old-dimension-values
             ;; This isn't ready yet for composites!
             (cdr (assoc dimension-name old-dimension-values :test #'eq))
             (instance-dimension-value instance dimension-name))
-      (declare (ignore dimension-type composite-dimension-name))
+      (declare (ignore dimension-type comparison-type 
+                       composite-dimension-name))
       (flet ((do-a-value (dimension-value)
 	       (cond
                 ;; scalar value:

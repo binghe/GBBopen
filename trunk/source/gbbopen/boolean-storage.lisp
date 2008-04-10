@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/source/gbbopen/boolean-storage.lisp *-*
+;;;; *-* File: /usr/local/gbbopen/source/gbbopen/boolean-storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Jan 26 06:14:08 2008 *-*
-;;;; *-* Machine: whirlwind.corkills.org *-*
+;;;; *-* Last-Edit: Wed Apr  9 23:10:59 2008 *-*
+;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -67,11 +67,12 @@
   (declare (type function unbound-value-action true-value-action
 		 false-value-action))
   (when verbose (print-boolean-storage-usage-message storage))
-  (multiple-value-bind (dimension-value dimension-type composite-type
-			composite-dimension-name)
+  (multiple-value-bind (dimension-value dimension-type 
+                        comparison-type
+                        composite-type composite-dimension-name)
       (instance-dimension-value 
        instance (sole-element (dimension-names-of storage)))
-    (declare (ignore dimension-type composite-dimension-name))
+    (declare (ignore dimension-type comparison-type composite-dimension-name))
     (flet ((do-a-value (dimension-value)
 	     (cond
 	      ;; true value:

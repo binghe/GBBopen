@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/units.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Apr  5 23:25:29 2008 *-*
+;;;; *-* Last-Edit: Wed Apr  9 23:48:18 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -282,11 +282,12 @@
     (case (third dv-spec)               ; potential composite-type keyword
       ;; A set-composite or a sequence-composite dimensional value spec:
       ((:set :sequence)
-       (unfinished-composite-type-warning (third dv-spec))
        (destructuring-bind (dimension-name dimension-value-type
                             composite-type slot-name-or-fn 
                             &optional slot-name)
            dv-spec
+         (when (eq composite-type ':sequence)
+           (unfinished-composite-type-warning composite-type))
          (values dimension-name
                  (extract-dimension-value-type dimension-value-type)
                  (determine-dimension-value-comparison-type 
