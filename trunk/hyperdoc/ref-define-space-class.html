@@ -169,8 +169,7 @@ available in a future release.]</font></font></span></p>
 <table class="tight"><table><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>dimensional-value-specifier</var>&nbsp;::=
-</td><td valign="baseline" colspan="1" align="left"> <var>incomposite-dv-specifier</var> |
-<font color="#667f66"><var>composite-dv-specifier</var></font> </td></tr>
+</td><td valign="baseline" colspan="1" align="left"> <var>incomposite-dv-specifier</var> | <var>composite-dv-specifier</var> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
 <table class="tight"><table><tbody><tr>
@@ -180,7 +179,7 @@ available in a future release.]</font></font></span></p>
 dimension-value-place</var><code>)</code> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
-<font color="#667f66"><table class="tight"><table><tbody><tr>
+<table class="tight"><table><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>composite-dv-specifier</var>&nbsp;::=
 </td><td valign="baseline" colspan="1" align="left"> <code>(</code><var>dimension-name dimension-value-specifier</var> </td></tr>
@@ -188,17 +187,17 @@ dimension-value-place</var><code>)</code> </td></tr>
 <td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> &nbsp; <var>composite-type dimension-value-place</var><code>)</code> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
-</font><font color="#667f66"><table class="tight"><table><tbody><tr>
+<table class="tight"><table><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>composite-type</var>&nbsp;::=
-</td><td valign="baseline" colspan="1" align="left"> <code>:set</code> | <code>:sequence</code> | </td></tr>
+</td><td valign="baseline" colspan="1" align="left"> <code>:set</code> | <font color="#667f66"><code>:sequence</code></font> | </td></tr>
 <tr>
-<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> &#123;<code>:ascending-series</code> <var>ordering-dimension-name</var>&#125; | </td></tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <font color="#667f66">&#123;<code>:ascending-series</code> <var>ordering-dimension-name</var>&#125;</font> | </td></tr>
 <tr>
-<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> &#123;<code>:descending-series</code> <var>ordering-dimension-name</var>&#125; </td></tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <font color="#667f66">&#123;<code>:descending-series</code> <var>ordering-dimension-name</var>&#125;</font> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
-</font><table class="tight"><table><tbody><tr>
+<table class="tight"><table><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>dimension-value-specifier</var>&nbsp;::=
 </td><td valign="baseline" colspan="1" align="left"> <var>dimension-value-type</var> | </td></tr>
@@ -341,7 +340,7 @@ value.
 <code>space-instance-with-lock</code>, that has an additional <a href="ref-glossary.html#gl:slot">slot</a>
 containing a <a href="ref-glossary.html#gl:lock">lock</a> that can be used to synchronize
 operations on each <a href="ref-glossary.html#id174">space&nbsp;instance</a> of that class. Then, create
-one <a href="ref-glossary.html#gl:instance">instance</a> of the <code>space-instance-with-lock</code>
+one <a href="ref-glossary.html#gl:instances">instance</a> of the <code>space-instance-with-lock</code>
 <a href="ref-glossary.html#id172">space&nbsp;class</a>.
 <pre class="pretop">
 &gt; (define-space-class space-with-lock ()

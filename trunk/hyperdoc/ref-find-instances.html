@@ -19,7 +19,7 @@
 <nobr><b><font color="#000000">find-instances</font></b></nobr></td><td valign="baseline"> &nbsp; </td><td valign="baseline" align="left" width="99%"><var>unit-classes-specifier space-instances pattern</var> <br /><code>&#38;key</code> <var>filter-before filter-after</var> 
 <i> =&gt; </i> <var>unit-instances</var></td><td valign="baseline" align="right">[<i>Function</i>]
 </td></tr></table></p>
-<p><span class="fndoclabel">Purpose</span> <br />Retrieve <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a> from
+<p><span class="fndoclabel">Purpose</span> <br />Retrieve <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a> from
 <a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a> based on a <a href="ref-glossary.html#id155">retrieval&nbsp;pattern</a>.
 </p>
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen</code>
@@ -42,7 +42,7 @@ pattern-matching tests occur
 pattern-matching tests occur
 </td></tr></table>
 </p>
-<p><span class="fndoclabel">Returns</span> <br /><a name="id1">A</a> newly consed list of <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a> specified by
+<p><span class="fndoclabel">Returns</span> <br /><a name="id1">A</a> newly consed list of <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a> specified by
 <var>unit-class-specifier</var> that reside on <var>space-instances</var> and
 satisfy the specified <var>pattern</var> and any predicate filters.
 </p>
@@ -274,7 +274,7 @@ satisfy the specified <var>pattern</var> and any predicate filters.
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
 <p><span class="fndoclabel">Description</span> <br />The <var>pattern</var> <code>t</code> matches all
-<a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a> whose <a href="ref-glossary.html#id33">dimension&nbsp;values</a> overlap the
+<a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a> whose <a href="ref-glossary.html#id33">dimension&nbsp;values</a> overlap the
 <a href="ref-glossary.html#id36">dimensional&nbsp;extent</a> of at least one <a href="ref-glossary.html#id174">space&nbsp;instance</a> in
 <var>space-instances</var>. The <var>pattern</var> <code>:all</code> matches every
 <a href="ref-glossary.html#id195">unit&nbsp;instance</a> on a <a href="ref-glossary.html#id174">space&nbsp;instance</a> in
@@ -297,7 +297,8 @@ and <code>=&#36;&#36;&#36;</code> and <code>within&#38;</code>, <code>within&#36
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-map-sorted-instances-of-class.html"><b>map-sorted-instances-of-class</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-declared-numerics.html">Declared numerics</a>
 </p>
-<p><span class="fndoclabel">Examples</span> <br /><a name="id21"></a><pre class="pretop">
+<p><span class="fndoclabel">Examples</span> <br /><a name="id21">Here</a> are some basic examples of finding <code>hyp</code> <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a>:
+<pre class="pretop">
 &gt; (find-instances 'hyp (<a href="ref-find-space-instance-by-path.html">find-space-instance-by-path</a> '(bb hyps)) 
     '(and (= x 1835) (&gt; belief .8)))
 (#&lt;hyp 319 (1835 8419) 0.91 [4..12]&gt;
@@ -363,6 +364,19 @@ nil
     '(is-eq color :yellow))
 (#&lt;hyp 331 (1835 8419) 0.88 [15..30]&gt; 
  #&lt;hyp 311 (896 388) 0.68 [0..6]&gt;)
+</pre>
+</p>
+<p>Some examples finding a <code>word</code> <a href="ref-glossary.html#id195">unit&nbsp;instance</a>:
+<pre class="pretop">
+&gt; (find-instances 'word '(words) '(is character #\s))
+(#&lt;word 1&gt;)
+&gt; (find-instances 'word '(words) '(is character #\x))
+nil
+</pre>
+Find <code>word</code> <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a> with special characters in them:
+<pre>
+&gt; (find-instances 'word '(words) '(overlaps char-code (0 64)))
+(#&lt;word 1&gt;)
 </pre>
 </p>
 <hr /><address><a target="_top" class="address"

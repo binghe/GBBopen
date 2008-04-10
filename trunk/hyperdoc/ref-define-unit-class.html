@@ -169,8 +169,7 @@ available in a future release.]</font></font></span></p>
 <table class="tight"><table><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>dimensional-value-specifier</var>&nbsp;::=
-</td><td valign="baseline" colspan="1" align="left"> <var>incomposite-dv-specifier</var> |
-<font color="#667f66"><var>composite-dv-specifier</var></font> </td></tr>
+</td><td valign="baseline" colspan="1" align="left"> <var>incomposite-dv-specifier</var> | <var>composite-dv-specifier</var> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
 <table class="tight"><table><tbody><tr>
@@ -180,7 +179,7 @@ available in a future release.]</font></font></span></p>
 dimension-value-place</var><code>)</code> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
-<font color="#667f66"><table class="tight"><table><tbody><tr>
+<table class="tight"><table><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>composite-dv-specifier</var>&nbsp;::=
 </td><td valign="baseline" colspan="1" align="left"> <code>(</code><var>dimension-name dimension-value-specifier</var> </td></tr>
@@ -188,17 +187,17 @@ dimension-value-place</var><code>)</code> </td></tr>
 <td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> &nbsp; <var>composite-type dimension-value-place</var><code>)</code> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
-</font><font color="#667f66"><table class="tight"><table><tbody><tr>
+<table class="tight"><table><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>composite-type</var>&nbsp;::=
-</td><td valign="baseline" colspan="1" align="left"> <code>:set</code> | <code>:sequence</code> | </td></tr>
+</td><td valign="baseline" colspan="1" align="left"> <code>:set</code> | <font color="#667f66"><code>:sequence</code></font> | </td></tr>
 <tr>
-<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> &#123;<code>:ascending-series</code> <var>ordering-dimension-name</var>&#125; | </td></tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <font color="#667f66">&#123;<code>:ascending-series</code> <var>ordering-dimension-name</var>&#125;</font> | </td></tr>
 <tr>
-<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> &#123;<code>:descending-series</code> <var>ordering-dimension-name</var>&#125; </td></tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <font color="#667f66">&#123;<code>:descending-series</code> <var>ordering-dimension-name</var>&#125;</font> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
-</font><table class="tight"><table><tbody><tr>
+<table class="tight"><table><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>dimension-value-specifier</var>&nbsp;::=
 </td><td valign="baseline" colspan="1" align="left"> <var>dimension-value-type</var> | </td></tr>
@@ -348,7 +347,9 @@ value.
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-standard-unit-instance.html"><b>standard-unit-instance</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-with-generate-accessors-format.html"><b>with-generate-accessors-format</b></a>
 </p>
-<p><span class="fndoclabel">Example</span> <br /><pre class="pretop">
+<p><span class="fndoclabel">Examples</span> <br />Define a unit class, <code>hyp</code>, that illustrates a number of
+<b>define-unit-class</b> capabilities:
+<pre class="pretop">
 &gt; (define-unit-class hyp ()
     ((belief :initform 0.0)
      (location :initform nil)
@@ -364,11 +365,28 @@ value.
      (belief :point belief)
      (velocity-range :interval velocity-range)
      (color (:element eq) color)
-     (classification (:element eq) <font color="#667f66">:set</font> classification)
+     (classification (:element eq) :set classification)
      (x (:point fixnum) #'location.x location)
      (y (:point fixnum) #'location.y location))
     (:initial-space-instances (bb hyps)))
 #&lt;standard-unit-class hyp&gt;
+</pre>
+</p>
+<p>Define a unit class, <code>word</code>, whose <a href="ref-glossary.html#gl:instances">instances</a> are indexed by the
+word's individual characters in an <a href="ref-glossary.html#id40">enumerated&nbsp;dimension</a> and the
+<b>code-char</b> values of the individual characters in an
+<a href="ref-glossary.html#id118">ordered&nbsp;dimension</a>:
+<pre class="pretop">
+&gt; (define-unit-class word ()
+    ((string :initform "what's"))
+    (:dimensional-values
+     (character :element :set string)
+     (char-code (:point fixnum) :set 
+                #'(lambda (string)
+                    (map 'list #'char-code string))
+                string))
+    (:initial-space-instances (words)))
+#&lt;standard-unit-class word&gt;
 </pre>
 </p>
 <hr /><address><a target="_top" class="address"

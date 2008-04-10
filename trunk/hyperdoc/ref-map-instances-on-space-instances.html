@@ -273,7 +273,7 @@ applied after pattern-matching tests occur
 <a href="ref-glossary.html#id195">unit&nbsp;instance</a>, even if the <a href="ref-glossary.html#id195">unit&nbsp;instance</a> resides on
 multiple <a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a>.
 </p>
-<p>The <var>pattern</var> <code>t</code> matches all <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a> whose
+<p>The <var>pattern</var> <code>t</code> matches all <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a> whose
 <a href="ref-glossary.html#id33">dimension&nbsp;values</a> overlap the <a href="ref-glossary.html#id36">dimensional&nbsp;extent</a> of at
 least one <a href="ref-glossary.html#id174">space&nbsp;instance</a> in <var>space-instances</var>. The
 <var>pattern</var> <code>:all</code> matches every <a href="ref-glossary.html#id195">unit&nbsp;instance</a> on a
@@ -294,9 +294,9 @@ and <code>=&#36;&#36;&#36;</code> and <code>within&#38;</code>, <code>within&#36
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-with-find-stats.html"><b>with-find-stats</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-declared-numerics.html">Declared numerics</a>
 </p>
-<p><span class="fndoclabel">Examples</span> <br /><a name="id21">Remove</a> all the <code>hyp</code> <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a> that reside on the <code>(bb
+<p><span class="fndoclabel">Examples</span> <br /><a name="id21">Remove</a> all the <code>hyp</code> <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a> that reside on the <code>(bb
 probable-hyps)</code> <a href="ref-glossary.html#id174">space&nbsp;instance</a>, deleting those
-<a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a> that do not reside on any other <a href="ref-glossary.html#id174">space&nbsp;instance</a>:
+<a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a> that do not reside on any other <a href="ref-glossary.html#id174">space&nbsp;instance</a>:
 <pre class="pretop">
   (let ((space-instance 
            (<a href="ref-find-space-instance-by-path.html">find-space-instance-by-path</a> '(bb probable-hyps))))
@@ -309,7 +309,7 @@ probable-hyps)</code> <a href="ref-glossary.html#id174">space&nbsp;instance</a>,
        space-instance))
 </pre>
 </p>
-<p><a name="id22">Delete</a> <code>hyp</code> <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a> that reside on the <code>(bb
+<p><a name="id22">Delete</a> <code>hyp</code> <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a> that reside on the <code>(bb
 probable-hyps)</code> <a href="ref-glossary.html#id174">space&nbsp;instance</a> that have a belief value of less than
 0.5:
 <pre class="pretop">

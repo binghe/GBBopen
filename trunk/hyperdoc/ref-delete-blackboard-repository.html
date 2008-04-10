@@ -34,7 +34,7 @@ retain-classes</var></td><td valign="baseline" align="right">[<i>Function</i>]
 </td></tr></table>
 </p>
 <p><span class="fndoclabel">Events</span> <br /><a name="id1">If</a> <var>disable-events</var> is <code>nil</code>, the following events may be signaled as
-<a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a> and <a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a> are deleted:
+<a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a> and <a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a> are deleted:
 </p>
 <p><ul class="tight"><li><code>delete-instance-event</code>
 <li><code>unlink-event</code>
@@ -65,12 +65,12 @@ retain-classes</var></td><td valign="baseline" align="right">[<i>Function</i>]
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
 <p><span class="fndoclabel">Description</span> <br />Calling <b>delete-blackboard-repository</b> deletes all
-<a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a> and <a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a> that have not been defined
+<a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a> and <a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a> that have not been defined
 with a <code>:retain</code> class option (unless overridden by <var>all-classes</var>).
-All <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a> of <a href="ref-glossary.html#gl:unit-class">unit&nbsp;classes</a> specified by
+All <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a> of <a href="ref-glossary.html#gl:unit-class">unit&nbsp;classes</a> specified by
 <var>retain-classes</var> are also retained.  If both <var>all-classes</var> and
 <var>retain-classes</var> are specified, the classes specified
-<var>retain-classes</var> are retained, but all other <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a> are
+<var>retain-classes</var> are retained, but all other <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a> are
 deleted.  The instance-name counters of all non-retained <a href="ref-glossary.html#gl:unit-class">unit&nbsp;classes</a>
 are reset to 1.
 </p>
@@ -82,13 +82,13 @@ definitions, functions, methods, etc.
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-delete-all-space-instances.html"><b>delete-all-space-instances</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-delete-space-instance.html"><b>delete-space-instance</b></a>
 </p>
-<p><span class="fndoclabel">Examples</span> <br />Delete all <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a> and <a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a>
-(except for the <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a> of <a href="ref-glossary.html#gl:unit-class">unit&nbsp;classes</a> that have been
+<p><span class="fndoclabel">Examples</span> <br />Delete all <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a> and <a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a>
+(except for the <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a> of <a href="ref-glossary.html#gl:unit-class">unit&nbsp;classes</a> that have been
 defined to be retained by default):
 <pre class="pretop">
   (delete-blackboard-repository)
 </pre>
-As above, but also delete all <a href="ref-glossary.html#gl:unit-instance">unit&nbsp;instances</a> of <a href="ref-glossary.html#gl:unit-class">unit&nbsp;classes</a>
+As above, but also delete all <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a> of <a href="ref-glossary.html#gl:unit-class">unit&nbsp;classes</a>
 that have been defined to be retained by default:
 <pre>
   (delete-blackboard-repository :all-classes t)

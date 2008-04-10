@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Tue Apr  8 21:56:59 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Thu Apr 10 10:36:29 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -883,8 +883,7 @@ reload all subsequent files and modules \\[2pt]
 \newcommand{\dimensionalvaluesspec}{%
 \begin{tabular}{@{~}l@{~}l}
 \mbox{\var{dimensional-value-specifier\/} ::=}
-  & \var{incomposite-dv-specifier\/} \vbar{}
-     \textcolor{darkergray}{\var{composite-dv-specifier\/}} \\
+  & \var{incomposite-dv-specifier\/} \vbar{} \var{composite-dv-specifier\/} \\
 \end{tabular}
 \T\\
 \begin{tabular}{@{~}l@{~}l}
@@ -893,22 +892,18 @@ reload all subsequent files and modules \\[2pt]
      dimension-value-place\/}\code{)} \\
 \end{tabular}
 \T\\
-\textcolor{darkergray}{%
 \begin{tabular}{@{~}l@{~}l}
 \mbox{\var{composite-dv-specifier\/} ::=}
   & \code{(}\var{dimension-name dimension-value-specifier\/} \\
   & ~ \var{composite-type dimension-value-place\/}\code{)} \\
 \end{tabular}
-}%endtexcolor
 \T\\
-\textcolor{darkergray}{%
 \begin{tabular}{@{~}l@{~}l}
 \mbox{\var{composite-type\/} ::=}
-  & \code{:set} \vbar{} \code{:sequence} \vbar{} \\
-  & \{\code{:ascending-series} \var{ordering-dimension-name\/}\} \vbar{} \\
-  & \{\code{:descending-series} \var{ordering-dimension-name\/}\} \\
+  & \code{:set} \vbar{} \textcolor{darkergray}{\code{:sequence}} \vbar{} \\
+  & \textcolor{darkergray}{\{\code{:ascending-series} \var{ordering-dimension-name\/}\}} \vbar{} \\
+  & \textcolor{darkergray}{\{\code{:descending-series} \var{ordering-dimension-name\/}\}} \\
 \end{tabular}
-}%endtexcolor
 \T\\
 \begin{tabular}{@{~}l@{~}l}
 \mbox{\var{dimension-value-specifier\/} ::=}
@@ -6986,7 +6981,10 @@ value is \textbf{\entlinknoex{standard-unit-class}}.
 \also[with-generate-accessors-format]
 \end{alsos}
 
-\fnexample
+\fnexamples
+%
+Define a unit class, \code{hyp}, that illustrates a number of
+\textbf{define-unit-class} capabilities:
 %
 \W\supp
 \begin{example}
@@ -7005,11 +7003,30 @@ value is \textbf{\entlinknoex{standard-unit-class}}.
      (belief :point belief)
      (velocity-range :interval velocity-range)
      (color (:element eq) color)
-     (classification (:element eq) \textcolor{darkergray}{:set} classification)
+     (classification (:element eq) :set classification)
      (x (:point fixnum) #'location.x location)
      (y (:point fixnum) #'location.y location))
     (:initial-space-instances (bb hyps)))
 #<standard-unit-class hyp>
+\end{example}
+
+Define a unit class, \code{word}, whose \glref{instances} are indexed by the
+word's individual characters in an \glref{enumerated~dimension} and the
+\textbf{code-char} values of the individual characters in an
+\glref{ordered~dimension}:
+%
+\W\supp
+\begin{example}
+> (define-unit-class word ()
+    ((string :initform "what's"))
+    (:dimensional-values
+     (character :element :set string)
+     (char-code (:point fixnum) :set 
+                #'(lambda (string)
+                    (map 'list #'char-code string))
+                string))
+    (:initial-space-instances (words)))
+#<standard-unit-class word>
 \end{example}
 
 \end{functiondoc}
@@ -7636,6 +7653,7 @@ t
 \end{alsos}
 
 \fnexamples
+%
 Return the \code{x} \glref{dimension~value} of the \glref{unit~instance},
 \code{hyp}:
 %
@@ -7649,7 +7667,7 @@ nil
 nil
 \end{example}
 %
-Return the \code{classification} \glref{dimension~value}:
+and its \code{classification} \glref{dimension~value}:
 %
 \W\supp\notpretop
 \begin{example}
@@ -7657,6 +7675,31 @@ Return the \code{classification} \glref{dimension~value}:
 (:car :truck)
 :element
 eq
+:set
+nil
+\end{example}
+
+Return the \code{character} \glref{dimension~value} of the
+\glref{unit~instance}, \code{word}:
+%
+\W\supp
+\begin{example}
+> (instance-dimension-value w 'character)
+"what's"
+:element
+eql
+:set
+nil
+\end{example}
+%
+and its \code{char-code} \glref{dimension~value}:
+%
+\W\supp\notpretop
+\begin{example}
+> (instance-dimension-value word 'char-code)
+(119 104 97 116 39 115)
+:point
+fixnum
 :set
 nil
 \end{example}
@@ -7700,9 +7743,9 @@ defined for \var{unit-instance}.
 \also[make-instance]
 \end{alsos}
 
-\fnexamples Return all \glref{dimension~values} of the
-\glref{unit~instance}, \code{hyp}:
+\fnexamples
 %
+Return all \glref{dimension~values} of the \glref{unit~instance}, \code{hyp}:
 %
 \W\supp
 \begin{example}
@@ -7718,6 +7761,14 @@ Return the \code{x} and \code{y} \glref{dimension~values} of the
 \begin{example}
 > (instance-dimension-values hyp '(x y))
 ((x . 1835) (y . 4791))
+\end{example}
+
+Return all \glref{dimension~values} of the \glref{unit~instance}, \code{word}:
+%
+\W\supp
+\begin{example}
+> (instance-dimension-values word)
+((character . "what's") (char-code 119 104 97 116 39 115))
 \end{example}
 
 \fnnote Using \textbf{\entlink{instance-dimension-value}} is preferable to
@@ -11739,6 +11790,8 @@ and \code{=\$\$\$} and \code{within\&}, \code{within\$\&}, \code{within\$},
 \bfindexit{find-space-instance-by-path}%
 \bfindexit{find-instance-by-name}%
 %
+Here are some basic examples of finding \code{hyp} \glref{unit~instances}:
+%
 \W\supp
 \begin{example}
 > (find-instances 'hyp (\entlink{find-space-instance-by-path} '(bb hyps)) 
@@ -11806,6 +11859,24 @@ nil
     '(is-eq color :yellow))
 (#<hyp 331 (1835 8419) 0.88 [15..30]> 
  #<hyp 311 (896 388) 0.68 [0..6]>)
+\end{example}
+
+Some examples finding a \code{word} \glref{unit~instance}:
+%
+\W\supp
+\begin{verbatim}
+> (find-instances 'word '(words) '(is character #\s))
+(#<word 1>)
+> (find-instances 'word '(words) '(is character #\x))
+nil
+\end{verbatim}
+%
+Find \code{word} \glref{unit~instances} with special characters in them:
+%
+\W\supp\notpretop
+\begin{example}
+> (find-instances 'word '(words) '(overlaps char-code (0 64)))
+(#<word 1>)
 \end{example}
 
 \end{functiondoc}

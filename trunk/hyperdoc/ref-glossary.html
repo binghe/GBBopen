@@ -70,7 +70,7 @@ Conses are used to construct lists.
 </dd><dt><a name="gl:dimension"></a>dimension</dt><dd> 
 <a name="gl:dimensions">A</a> conceptual extent within which values that share some
 relationship can be placed.  GBBopen uses dimensionality to relate the
-extent representations of <a href="#gl:unit-instance">unit&nbsp;instances</a>,
+extent representations of <a href="#gl:instances">unit&nbsp;instances</a>,
 <a href="#gl:space-instance">space&nbsp;instances</a>, and <a href="#id156">retrieval&nbsp;patterns</a>.
 <p>GBBopen supports three <a href="#gl:dimension-type">dimension&nbsp;types</a>:
 </p>
@@ -158,7 +158,7 @@ one of the following:
 </ul>
 </p>
 </dd><dt><a name="id62"></a>extended&nbsp;unit-class&nbsp;or&nbsp;instance&nbsp;specification</dt><dd>
-<a name="id63">A</a> specification of one or more <a href="#gl:unit-instance">unit&nbsp;instances</a> or one or more
+<a name="id63">A</a> specification of one or more <a href="#gl:instances">unit&nbsp;instances</a> or one or more
 <a href="#gl:unit-class">unit&nbsp;classes</a> as indicated by one of the following:
 <p><ul class="tight"><li>a <a href="#id193">unit&nbsp;class</a>
 <li>a symbol naming a <a href="#id193">unit&nbsp;class</a>
@@ -167,7 +167,7 @@ one of the following:
 <li>the symbol <code>t</code>, which is equivalent to
 <code>(standard-unit-instance :plus-subclasses)</code> 
 <li>a <a href="#id195">unit&nbsp;instance</a>
-<li>a list of <a href="#gl:unit-instance">unit&nbsp;instances</a>
+<li>a list of <a href="#gl:instances">unit&nbsp;instances</a>
 </ul>
 </p>
 </dd><dt><a name="id65"></a>extended&nbsp;unit-classes&nbsp;specification</dt><dd>
@@ -220,7 +220,7 @@ has the same name, only the first such pair is used to provide the value.
 <a name="gl:instances">An</a> object whose structure and behavior is uniquely (directly or indirectly)
 determined by a <a href="#gl:class">class</a> object.
 </dd><dt><a name="id89"></a>instance&nbsp;name</dt><dd>
-<a name="gl:instance-name">An</a> object that uniquely identifies an <a href="#gl:instance">instance</a> of a
+<a name="gl:instance-name">An</a> object that uniquely identifies an <a href="#gl:instances">instance</a> of a
 <a href="#id193">unit&nbsp;class</a>.  The same object can be used to identify instances of
 different unit classes, but the same instance name cannot be used with two
 instances of the same class.
@@ -252,7 +252,7 @@ described by their more specific categorization.
 <a name="gl:ksa-class">An</a> object that is a subclass of <b><a href="ref-standard-ksa-class.html">standard-ksa-class</a></b>
 that is used to represent a <a href="#gl:activations">KSA</a>.
 </dd><dt><a name="gl:link"></a>link</dt><dd>
-<a name="gl:links">A</a> bi-directional pair of pointers between two <a href="#gl:unit-instance">unit&nbsp;instances</a>.
+<a name="gl:links">A</a> bi-directional pair of pointers between two <a href="#gl:instances">unit&nbsp;instances</a>.
 Link operators maintain bi-directional consistency of link pointers.
 </dd><dt><a name="id106"></a>link&nbsp;slot</dt><dd>
 <a name="gl:link-slot">A</a> <a href="#gl:slot">slot</a> designated for the outgoing pointers of <a href="#gl:links">links</a>
@@ -285,7 +285,7 @@ lock it will block. When the lock-holding <a href="#gl:thread">thread</a> unlock
 attempts to re-acquire it, an error is signaled (see
 <a href="#id151">recursive&nbsp;lock</a>).
 </dd><dt><a name="gl:metaobject"></a>metaobject</dt><dd>
-An <a href="#gl:instance">instance</a> of a <a href="#id113">metaobject&nbsp;class</a>.
+An <a href="#gl:instances">instance</a> of a <a href="#id113">metaobject&nbsp;class</a>.
 </dd><dt><a name="id113"></a>metaobject&nbsp;class</dt><dd>
 <a name="gl:metaobject-class">A</a> <a href="#gl:class">class</a> object that is a subclass of exactly one of the following
 classes: <code>class</code>, <code>slot-definition</code>, <code>generic-function</code>,
@@ -371,7 +371,7 @@ Part of the <a href="ref-mini-module-entities.html">Mini Module system</a>.
 <a name="id156">A</a> list argument to <b><a href="ref-filter-instances.html">filter-instances</a></b>,
 <b><a href="ref-find-instances.html">find-instances</a></b>, and
 <b><a href="ref-map-instances-on-space-instances.html">map-instances-on-space-instances</a></b> specifying the
-<a href="#id32">dimension&nbsp;value</a> requirements for selecting <a href="#gl:unit-instance">unit&nbsp;instances</a> to
+<a href="#id32">dimension&nbsp;value</a> requirements for selecting <a href="#gl:instances">unit&nbsp;instances</a> to
 be returned.
 </dd><dt><a name="id157"></a>root&nbsp;directory</dt><dd>
 <a name="gl:root">A</a> fixed anchor directory for a tree of relative directory definitions.
@@ -421,7 +421,7 @@ indirect parent space-instance name, that uniquely identifies a
 <b><a href="ref-standard-event-instance.html">standard-event-instance</a></b> and
 <b><a href="ref-standard-unit-instance.html">standard-unit-instance</a></b>.
 </dd><dt><a name="id180"></a>storage&nbsp;specification</dt><dd>
-<a name="id181">A</a> specification of how <a href="#gl:unit-instance">unit&nbsp;instances</a> are to be stored on a
+<a name="id181">A</a> specification of how <a href="#gl:instances">unit&nbsp;instances</a> are to be stored on a
 <a href="#id174">space&nbsp;instance</a>.
 </dd><dt><a name="id182"></a>string&nbsp;designator</dt><dd>
 <a name="id183">An</a> object that denotes a string. One of: a character (denoting a
@@ -444,7 +444,7 @@ Pertaining to a <a href="#id193">unit&nbsp;class</a> or <a href="#id195">unit&nb
 </dd><dt><a name="id193"></a>unit&nbsp;class</dt><dd>
 <a name="gl:unit-class">An</a> object that is a subclass of <b><a href="ref-standard-unit-class.html">standard-unit-class</a></b>.
 </dd><dt><a name="id195"></a>unit&nbsp;instance</dt><dd> 
-<a name="gl:unit-instance">An</a> object whose class is a subclass of
+<a name="gl:instances">An</a> object whose class is a subclass of
 <b><a href="ref-standard-unit-instance.html">standard-unit-instance</a></b>. A <a href="#id174">space&nbsp;instance</a> is
 also a unit instance, but <a href="#gl:space-instance">space&nbsp;instances</a> are normally described by
 their more specific categorization.
