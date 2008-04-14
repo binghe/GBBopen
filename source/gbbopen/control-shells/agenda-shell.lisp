@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:AGENDA-SHELL; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/control-shells/agenda-shell.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Apr 14 15:01:39 2008 *-*
+;;;; *-* Last-Edit: Mon Apr 14 15:23:04 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -211,7 +211,7 @@
    (current-ksa :initform nil)
    (event-buffer :initform nil)
    (events-being-processed :initform nil)
-   (event-buffer-lock :initform (make-recursive-lock :name "event-buffer"))
+   (event-buffer-lock :initform (make-lock :name "event-buffer"))
    (pending-ksas :initform (make-queue :class 'ordered-ksa-queue
                                        :key #'rating-of))
    (executed-ksas :initform (make-queue :class 'ksa-queue))
