@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/portable-threads.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Mar 23 07:31:55 2008 *-*
-;;;; *-* Machine: cyclone.local *-*
+;;;; *-* Last-Edit: Mon Apr 14 15:58:43 2008 *-*
+;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -233,7 +233,7 @@
 	    )))
 
 ;;; ---------------------------------------------------------------------------
-;;;  Warn if the Idle Process is not running on CMUCL
+;;;  Warn if the idle-loop process is not running on CMUCL
 
 #+(and cmu mp)
 (unless (member-if #'(lambda (process)
@@ -243,6 +243,17 @@
          ~%~3t~s~
          ~%for ~s and other thread operations to function properly."
         '(mp::startup-idle-and-top-level-loops)
+        'with-timeout))
+
+;;; ---------------------------------------------------------------------------
+;;;  Warn if multiprocessing is not running on Lispworks
+
+#+lispworks
+(unless mp:*current-process*
+  (warn "You must start multiprocessing on Lispworks by calling~
+         ~%~3t~s~
+         ~%for ~s and other thread operations to function properly."
+        '(mp::initialize-multiprocessing)
         'with-timeout))
 
 ;;; ===========================================================================
@@ -589,9 +600,11 @@
       digitool-mcl
       lispworks
       openmcl-legacy)
-(defun recursive-lock-attempt-error (lock)
-  (error "A recursive attempt was made to hold lock ~s"
-         lock))
+(defun recursive-lock-attempt-error (lock requesting-thread holding-thread)
+  (error "A recursive attempt was made by ~s to hold lock ~s (held by ~s)"
+         requesting-thread
+         lock
+         holding-thread))
          
 #+threads-not-available
 (defun non-threaded-lock-deadlock-error (lock)
@@ -657,10 +670,12 @@
          (progn
            ;; Allegro's mp:with-process-lock doesn't evaluate its :norecursive
            ;; option, so we roll our own recursive check:
-           (when (and (not (recursive-lock-p ,lock-sym))
-                      (eq system:*current-process*
-                          (mp:process-lock-locker ,lock-sym)))
-             (recursive-lock-attempt-error ,lock-sym))                     
+           (unless (recursive-lock-p ,lock-sym)
+             (let ((.current-thread. system:*current-process*)
+                   (.holding-thread. (mp:process-lock-locker ,lock-sym)))
+               (when (eq .current-thread. .holding-thread.)
+                 (recursive-lock-attempt-error 
+                  ,lock-sym .current-thread. .holding-thread.))))
            (mp:with-process-lock 
                (,lock-sym :norecursive nil
                           :whostate ,whostate)
@@ -668,10 +683,12 @@
          #+clozure
          (let ((.ccl-lock. (and (lock-p ,lock-sym)
                                 (lock-ccl-lock (the lock ,lock-sym)))))
-           (when (and (not (recursive-lock-p ,lock-sym))
-                      (eq ccl:*current-process*
-                          (ccl::%%lock-owner .ccl-lock.)))
-             (recursive-lock-attempt-error ,lock-sym))
+           (unless (recursive-lock-p ,lock-sym)
+             (let ((.current-thread. ccl:*current-process*)
+                   (.holding-thread. (ccl::%%lock-owner .ccl-lock.)))
+               (when (eq .current-thread. .holding-thread.)
+                 (recursive-lock-attempt-error
+                  ,lock-sym .current-thread. .holding-thread.))))
            (ccl:with-lock-grabbed (.ccl-lock. ,whostate)
              ,@body))
          #+(and cmu mp)
@@ -679,10 +696,12 @@
          #+digitool-mcl
          (let ((.ccl-lock. (and (lock-p ,lock-sym)
                                 (lock-ccl-lock (the lock ,lock-sym)))))
-           (when (and (not (recursive-lock-p ,lock-sym))
-                      (eq ccl:*current-process*
-                          (ccl::lock.value .ccl-lock.)))
-             (recursive-lock-attempt-error ,lock-sym))
+           (unless (recursive-lock-p ,lock-sym)
+             (let ((.current-thread. ccl:*current-process*)
+                   (.holding-thread. (ccl::lock.value .ccl-lock.)))
+               (when (eq .current-thread. .holding-thread.)
+                 (recursive-lock-attempt-error 
+                  ,lock-sym .current-thread. .holding-thread.))))
            (ccl:with-lock-grabbed (.ccl-lock. ccl:*current-process*
                                               ,whostate)
              ,@body))
@@ -691,19 +710,23 @@
            ,@body)
          #+lispworks
          (progn
-           (when (and (not (recursive-lock-p ,lock-sym))
-                      (eq mp:*current-process* 
-                          (mp:lock-owner ,lock-sym)))
-             (recursive-lock-attempt-error ,lock-sym))
+           (unless (recursive-lock-p ,lock-sym)
+             (let ((.current-thread. mp:*current-process*)
+                   (.holding-thread. (mp:lock-owner ,lock-sym)))
+               (when (eq .current-thread. .holding-thread.)
+                 (recursive-lock-attempt-error 
+                  ,lock-sym .current-thread. .holding-thread.))))
            (mp:with-lock (,lock-sym ,whostate) 
              ,@body))
          #+openmcl-legacy
          (let ((.ccl-lock. (and (lock-p ,lock-sym)
                                 (lock-ccl-lock (the lock ,lock-sym)))))
-           (when (and (not (recursive-lock-p ,lock-sym))
-                      (eq ccl:*current-process*
-                          (ccl::%%lock-owner .ccl-lock.)))
-             (recursive-lock-attempt-error ,lock-sym))
+           (unless (recursive-lock-p ,lock-sym)
+             (let ((.current-thread. ccl:*current-process*)
+                   (.holding-thread. (ccl::%%lock-owner .ccl-lock.)))
+               (when (eq .current-thread. .holding-thread.)
+                 (recursive-lock-attempt-error
+                  ,lock-sym .current-thread. .holding-thread.))))
            (ccl:with-lock-grabbed (.ccl-lock. ,whostate)
              ,@body))
          ;; sb-thread:with-recursive-lock is heavy handed, we roll our own
