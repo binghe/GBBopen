@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/1d-uniform-storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Apr  9 23:11:22 2008 *-*
+;;;; *-* Last-Edit: Mon Apr 14 10:41:58 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2003-2007, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -70,12 +70,11 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun print-1d-uniform-buckets-usage-message (buckets storage)
-  (let ((dimension-name (sole-element (dimension-names-of storage))))
-    (format *trace-output* 
-	    "~&;; - ~s: Using 1D-uniform buckets "
-	    dimension-name))
-  (format *trace-output* "(~s bucket~:p)~&" buckets))
+(defun print-1d-uniform-buckets-usage-message (buckets dimension-name)
+  (format *trace-output* "~&;; - ~s: Using 1D-uniform buckets "
+          dimension-name)
+  (format *trace-output* "(~s bucket~:p)~&"
+          buckets))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -87,55 +86,56 @@
   (let* ((buckets (buckets-of storage))
 	 (number-of-buckets (-& (length buckets) 3))
 	 (start (start-of storage))
-	 (size (size-of storage))
-	 (dimension-name (sole-element (dimension-names-of storage))))
-    (multiple-value-bind (dimension-value dimension-type 
-                          comparison-type
-                          composite-type composite-dimension-name)
-	(if old-dimension-values
-            ;; This isn't ready yet for composites!
-            (cdr (assoc dimension-name old-dimension-values :test #'eq))
-            (instance-dimension-value instance dimension-name))
-      (declare (ignore dimension-type comparison-type 
-                       composite-dimension-name))
-      (flet ((do-a-value (dimension-value)
-	       (cond
-                ;; scalar value:
-		((or (numberp dimension-value)
-                     (eq dimension-value unbound-value-indicator))
-		 (let ((bucket-index (bounded-uniform-bucket-index 
-                                      dimension-value 
-                                      start size number-of-buckets)))
-                   (when verbose
-                     (print-1d-uniform-buckets-usage-message 1 storage))
-                   (funcall bucket-action instance buckets bucket-index)))
-                ;; interval value:
-		(t (let ((start-index (bounded-uniform-bucket-index 
-				       (interval-start dimension-value)
-				       start size number-of-buckets))
-			 (end-index (bounded-uniform-bucket-index 
-				     (interval-end dimension-value)
-				     start size number-of-buckets)))
+	 (size (size-of storage)))
+    (dolist (dimension-name (dimension-names-of storage))
+      (multiple-value-bind (dimension-value dimension-type 
+                            comparison-type
+                            composite-type composite-dimension-name)
+          (if old-dimension-values
+              ;; This isn't ready yet for composites!
+              (cdr (assoc dimension-name old-dimension-values :test #'eq))
+              (instance-dimension-value instance dimension-name))
+        (declare (ignore dimension-type comparison-type 
+                         composite-dimension-name))
+        (flet ((do-a-value (dimension-value)
+                 (cond
+                  ;; scalar value:
+                  ((or (numberp dimension-value)
+                       (eq dimension-value unbound-value-indicator))
+                   (let ((bucket-index (bounded-uniform-bucket-index 
+                                        dimension-value 
+                                        start size number-of-buckets)))
                      (when verbose
-                       (print-1d-uniform-buckets-usage-message
-                        (1+& (-& end-index start-index))
-                        storage))
-                     (loop for bucket-index of-type fixnum 
-                         from start-index to end-index do
-                           (funcall bucket-action instance 
-                                    buckets bucket-index)))))))
-	(cond 
-	 ;; set composite dimension value:
-	 ((eq composite-type ':set)
-	  (map nil #'do-a-value dimension-value))
-         ;; sequence composite dimension value:
-	 ((eq composite-type ':sequence)
-	  (nyi))
-	 ;; series composite dimension value:
-	 ((eq composite-type ':series)
-	  (nyi))
-	 ;; incomposite or unbound dimension value:
-	 (t (do-a-value dimension-value)))))))
+                       (print-1d-uniform-buckets-usage-message 
+                        1 dimension-name))
+                     (funcall bucket-action instance buckets bucket-index)))
+                  ;; interval value:
+                  (t (let ((start-index (bounded-uniform-bucket-index 
+                                         (interval-start dimension-value)
+                                         start size number-of-buckets))
+                           (end-index (bounded-uniform-bucket-index 
+                                       (interval-end dimension-value)
+                                       start size number-of-buckets)))
+                       (when verbose
+                         (print-1d-uniform-buckets-usage-message
+                          (1+& (-& end-index start-index))
+                          dimension-name))
+                       (loop for bucket-index of-type fixnum 
+                           from start-index to end-index do
+                             (funcall bucket-action instance 
+                                      buckets bucket-index)))))))
+          (cond 
+           ;; set composite dimension value:
+           ((eq composite-type ':set)
+            (map nil #'do-a-value dimension-value))
+           ;; sequence composite dimension value:
+           ((eq composite-type ':sequence)
+            (nyi))
+           ;; series composite dimension value:
+           ((eq composite-type ':series)
+            (nyi))
+           ;; incomposite or unbound dimension value:
+           (t (do-a-value dimension-value))))))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -186,24 +186,26 @@
   ;;; Returns two values:
   ;;; 1) a list of disjunctive extents
   ;;; 2) a boolean indicating if a full-map was requested (via 't)
-  (let ((dimension-name (sole-element (dimension-names-of storage)))
-	(extents nil))
+  (let ((extents nil))
     (unless (eq disjunctive-dimensional-extents 't)
-      (dolist (dimensional-extents disjunctive-dimensional-extents)
-	(let ((dimensional-extent (assoc dimension-name dimensional-extents
-					 :test #'eq)))
-	  (when dimensional-extent
-	    (destructuring-bind (extent-dimension-name
-				 dimension-type . new-extents)
-		dimensional-extent
-	      (declare (ignore extent-dimension-name dimension-type))
-	      (dolist (new-extent new-extents)
-		(setq extents (merge-ordered-extent new-extent extents)))))))
-      ;; sort by increasing interval starts:
-      (setq extents (sort extents #'< :key #'car)))
+      (let ((dimension-names (dimension-names-of storage)))
+        (dolist (dimensional-extents disjunctive-dimensional-extents)
+          (dolist (dimension-name dimension-names)
+            (let ((dimensional-extent 
+                   (assoc dimension-name dimensional-extents :test #'eq)))
+              (when dimensional-extent
+                (destructuring-bind (extent-dimension-name
+                                     dimension-type . new-extents)
+                    dimensional-extent
+                  (declare (ignore extent-dimension-name dimension-type))
+                  (dolist (new-extent new-extents)
+                    (setf extents
+                          (merge-ordered-extent new-extent extents)))))))
+          ;; sort by increasing interval starts:
+          (setf extents (sort extents #'< :key #'car)))))
     (or extents 
-	(values (list infinite-interval) 't))))
-
+        (values (list infinite-interval) 't))))
+  
 ;;; ---------------------------------------------------------------------------
 
 (defun do-1d-uniform-map-actions (fn storage disjunctive-dimensional-extents 
@@ -222,7 +224,7 @@
       ;; unbound instances req'd:
       (when full-map-p
 	(when verbose
-	  (print-1d-uniform-buckets-usage-message ':unbound-value storage))
+	  (print-1d-uniform-buckets-usage-message ':unbound-value '*))
         ;; NEED TO DO SOMETHING TO THE INDEXES TO CAPTURE THE UNBOUND BUCKETS:
         ())
       (dolist (region disjunctive-storage-extents)
@@ -234,7 +236,7 @@
           (when verbose
             (print-1d-uniform-buckets-usage-message
              (max& 1 (-& end-index start-index))
-             storage))
+             '*))
           (let ((bucket-index start-index))
             (declare (type fixnum bucket-index))
             (until (>& bucket-index end-index)

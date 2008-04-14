@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/boolean-storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Apr  9 23:10:59 2008 *-*
+;;;; *-* Last-Edit: Mon Apr 14 10:40:51 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -67,34 +67,34 @@
   (declare (type function unbound-value-action true-value-action
 		 false-value-action))
   (when verbose (print-boolean-storage-usage-message storage))
-  (multiple-value-bind (dimension-value dimension-type 
-                        comparison-type
-                        composite-type composite-dimension-name)
-      (instance-dimension-value 
-       instance (sole-element (dimension-names-of storage)))
-    (declare (ignore dimension-type comparison-type composite-dimension-name))
-    (flet ((do-a-value (dimension-value)
-	     (cond
-	      ;; true value:
-	      (dimension-value 
-	       (funcall true-value-action instance storage))
-	      ;; false value:
-	      (t (funcall false-value-action instance storage)))))
-      (cond 
-       ;; unbound value:
-       ((eq dimension-value unbound-value-indicator)
-	(funcall unbound-value-action instance storage))
-       ;; set composite dimension value:
-       ((eq composite-type ':set)
-	(map nil #'do-a-value dimension-value))
-       ;; sequence composite dimension value:
-       ((eq composite-type ':sequence)
-	(nyi))
-       ;; series composite dimension value:
-       ((eq composite-type ':series)
-	(nyi))
-       ;; incomposite dimension value:
-       (t (do-a-value dimension-value))))))
+  (dolist (dimension-name (dimension-names-of storage))
+    (multiple-value-bind (dimension-value dimension-type 
+                          comparison-type
+                          composite-type composite-dimension-name)
+        (instance-dimension-value instance dimension-name)
+      (declare (ignore dimension-type comparison-type composite-dimension-name))
+      (flet ((do-a-value (dimension-value)
+               (cond
+                ;; true value:
+                (dimension-value 
+                 (funcall true-value-action instance storage))
+                ;; false value:
+                (t (funcall false-value-action instance storage)))))
+        (cond 
+         ;; unbound value:
+         ((eq dimension-value unbound-value-indicator)
+          (funcall unbound-value-action instance storage))
+         ;; set composite dimension value:
+         ((eq composite-type ':set)
+          (map nil #'do-a-value dimension-value))
+         ;; sequence composite dimension value:
+         ((eq composite-type ':sequence)
+          (nyi))
+         ;; series composite dimension value:
+         ((eq composite-type ':series)
+          (nyi))
+         ;; incomposite dimension value:
+         (t (do-a-value dimension-value)))))))
   
 ;;; ---------------------------------------------------------------------------
 
@@ -137,22 +137,23 @@
 
 (defun determine-boolean-storage-extents (storage 
 					  disjunctive-dimensional-extents)
-  (let ((dimension-name (sole-element (dimension-names-of storage)))
-	(extents nil))
+  (let ((extents nil))
     (unless (eq disjunctive-dimensional-extents 't)
-      (dolist (dimensional-extents disjunctive-dimensional-extents)
-	(let ((dimensional-extent (assoc dimension-name dimensional-extents
-					 :test #'eq)))
-	  (when dimensional-extent
-	    (destructuring-bind (extent-dimension-name
-				 dimension-type . new-extents)
-		dimensional-extent
-	      (declare (ignore extent-dimension-name dimension-type))
-	      ;; This isn't quite right, we need to remove the clause *AND*
-	      ;; not do a full sweep if it is the only one...
-	      (unless (equal new-extents '(:infeasible))
-		(dolist (new-extent new-extents)
-		  (setq extents (pushnew new-extent extents :test #'eq)))))))))
+      (let ((dimension-names (dimension-names-of storage)))
+        (dolist (dimensional-extents disjunctive-dimensional-extents)
+          (dolist (dimension-name dimension-names)
+            (let ((dimensional-extent 
+                   (assoc dimension-name dimensional-extents :test #'eq)))
+              (when dimensional-extent
+                (destructuring-bind (extent-dimension-name
+                                     dimension-type . new-extents)
+                    dimensional-extent
+                  (declare (ignore extent-dimension-name dimension-type))
+                  ;; This isn't quite right, we need to remove the clause
+                  ;; *AND* not do a full sweep if it is the only one...
+                  (unless (equal new-extents '(:infeasible))
+                    (dolist (new-extent new-extents)
+                      (pushnew new-extent extents :test #'eq))))))))))
     (or extents (values (list 'true 'false) 't))))
 
 ;;; ---------------------------------------------------------------------------
