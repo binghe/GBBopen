@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/hashed-storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Apr 10 00:00:32 2008 *-*
+;;;; *-* Last-Edit: Mon Apr 14 10:02:59 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -146,29 +146,30 @@
 				    bound-value-action)
   (declare (type function unbound-value-action bound-value-action))
   (when verbose (print-hashed-storage-usage-message storage))
-  (multiple-value-bind (dimension-value dimension-type 
-                        comparison-type
-                        composite-type composite-dimension-name)
-      (instance-dimension-value 
-       instance (sole-element (dimension-names-of storage)))
-    (declare (ignore dimension-type comparison-type composite-dimension-name))
-    (flet ((do-a-value (dimension-value)
-	     (funcall bound-value-action instance storage dimension-value)))
-      (cond 
-       ;; unbound value:
-       ((eq dimension-value unbound-value-indicator)
-	(funcall unbound-value-action instance storage))
-       ;; set composite dimension value:
-       ((eq composite-type ':set)
-	(map nil #'do-a-value dimension-value))
-       ;; sequence composite dimension value:
-       ((eq composite-type ':sequence)
-	(nyi))
-       ;; series composite dimension value:
-       ((eq composite-type ':series)
-	(nyi))
-       ;; incomposite dimension value:
-       (t (do-a-value dimension-value))))))
+  (dolist (dimension-name (dimension-names-of storage))
+    (multiple-value-bind (dimension-value dimension-type 
+                          comparison-type
+                          composite-type composite-dimension-name)
+        (instance-dimension-value instance dimension-name)
+      (declare (ignore dimension-type comparison-type 
+                       composite-dimension-name))
+      (flet ((do-a-value (dimension-value)
+               (funcall bound-value-action instance storage dimension-value)))
+        (cond 
+         ;; unbound value:
+         ((eq dimension-value unbound-value-indicator)
+          (funcall unbound-value-action instance storage))
+         ;; set composite dimension value:
+         ((eq composite-type ':set)
+          (map nil #'do-a-value dimension-value))
+         ;; sequence composite dimension value:
+         ((eq composite-type ':sequence)
+          (nyi))
+         ;; series composite dimension value:
+         ((eq composite-type ':series)
+          (nyi))
+         ;; incomposite dimension value:
+         (t (do-a-value dimension-value)))))))
   
 ;;; ---------------------------------------------------------------------------
 
@@ -210,22 +211,23 @@
 
 (defun determine-hashed-storage-extents (storage 
 					 disjunctive-dimensional-extents)
-  (let ((dimension-name (sole-element (dimension-names-of storage)))
-	(extents nil))
+  (let ((extents nil))
     (cond 
      ((eq disjunctive-dimensional-extents 't)
-      (values nil 't))
-     (t (dolist (dimensional-extents disjunctive-dimensional-extents)
-	  (let ((dimensional-extent (assoc dimension-name dimensional-extents
-					   :test #'eq)))
-	    (when dimensional-extent
-	      (destructuring-bind (extent-dimension-name
-				   dimension-type . new-extents)
-		  dimensional-extent
-		(declare (ignore extent-dimension-name dimension-type))
-		;; Support for composite extents (listed) is still needed:
-		(setq extents (pushnew new-extents extents :test #'eq))))))
-	(or extents
+      (values nil 't))     
+     (t (let ((dimension-names (dimension-names-of storage)))
+          (dolist (dimensional-extents disjunctive-dimensional-extents)
+            (dolist (dimension-name dimension-names)
+              (let ((dimensional-extent
+                     (assoc dimension-name dimensional-extents :test #'eq)))
+                (when dimensional-extent
+                  (destructuring-bind (extent-dimension-name
+                                       dimension-type . new-extents)
+                      dimensional-extent
+                    (declare (ignore extent-dimension-name dimension-type))
+                    ;; Support for composite extents (listed) is still needed:
+                    (pushnew new-extents extents :test #'eq)))))))
+        (or extents
 	    (values nil 't))))))
 
 ;;; ---------------------------------------------------------------------------
