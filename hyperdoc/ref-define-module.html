@@ -95,7 +95,15 @@ be loaded before this module.  The fully expanded required-module order
 determined from the specified <code>:requires</code> module option must be
 consistent with all previously defined modules.
 </p>
-<p><var>File-options</var> have the following effects: </p>
+<p>The <code>:files</code> module option specifies, in order, the files that are
+compiled (when appropriate) and loaded for this module.  The combination of
+the <code>:requires</code> and <code>:files</code> module options specifies a total
+ordering of all the files that must be loaded for this module (the files
+associated with each of the required modules followed by the files specified
+for this module).
+</p>
+<p><var>File-options</var> have the following effects: 
+</p>
 <table class="tight"><table><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <code>:forces-recompile</code>&nbsp;&nbsp;&nbsp; </td><td valign="baseline" colspan="1" align="left"> If the file has changed, recompile and

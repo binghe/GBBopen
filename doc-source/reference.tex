@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Tue Apr 15 04:48:15 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Tue Apr 15 11:02:20 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -1901,7 +1901,15 @@ be loaded before this module.  The fully expanded required-module order
 determined from the specified \code{:requires} module option must be
 consistent with all previously defined modules.
 
-\var{File-options\/} have the following effects: \compilemodulefileoptions
+The \code{:files} module option specifies, in order, the files that are
+compiled (when appropriate) and loaded for this module.  The combination of
+the \code{:requires} and \code{:files} module options specifies a total
+ordering of all the files that must be loaded for this module (the files
+associated with each of the required modules followed by the files specified
+for this module).
+
+\var{File-options\/} have the following effects: 
+\compilemodulefileoptions
 
 \begin{alsos}{define-relative-directory}
 \also[define-relative-directory]
