@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/portable-threads.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Apr 14 15:58:43 2008 *-*
+;;;; *-* Last-Edit: Tue Apr 15 04:15:36 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -236,25 +236,36 @@
 ;;;  Warn if the idle-loop process is not running on CMUCL
 
 #+(and cmu mp)
-(unless (member-if #'(lambda (process)
-                       (string= "Idle Loop" (mp:process-name process)))
-                   (mp:all-processes))
-  (warn "You must start CMUCL's idle-loop process by calling~
-         ~%~3t~s~
-         ~%for ~s and other thread operations to function properly."
-        '(mp::startup-idle-and-top-level-loops)
-        'with-timeout))
+(defun check-idle-loop-process (&optional errorp)
+  (unless (member-if #'(lambda (process)
+                         (string= "Idle Loop" (mp:process-name process)))
+                     (mp:all-processes))
+    (funcall (if errorp 'error 'warn)
+             "You must start CMUCL's idle-loop process by calling~
+              ~%~3t~s~
+              ~%for ~s and other thread operations to function properly."
+             '(mp::startup-idle-and-top-level-loops)
+             'with-timeout)))
+
+#+(and cmu mp)
+(check-idle-loop-process)
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Warn if multiprocessing is not running on Lispworks
 
 #+lispworks
-(unless mp:*current-process*
-  (warn "You must start multiprocessing on Lispworks by calling~
-         ~%~3t~s~
-         ~%for ~s and other thread operations to function properly."
-        '(mp::initialize-multiprocessing)
-        'with-timeout))
+(defun check-for-multiprocessing-started (&optional errorp)
+  (unless mp:*current-process*
+    (funcall (if errorp 'error 'warn)
+             "You must start multiprocessing on Lispworks by calling~
+              ~%~3t~s~
+              ~%for ~s, locks, and other thread operations to function ~
+              properly."
+             '(mp::initialize-multiprocessing)
+             'with-timeout)))
+
+#+lispworks
+(check-for-multiprocessing-started)
 
 ;;; ===========================================================================
 ;;;  Features & warnings

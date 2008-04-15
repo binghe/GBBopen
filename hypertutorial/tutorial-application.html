@@ -126,8 +126,8 @@ system
   ;;;   Print-walk KS
 
   (defun print-walk-ks-function (ksa)
-    ;;; Starting with the initial location instance, print the instance name
-    ;;; and location of the walk
+    ;;; Starting with the initial location instance, print the instance
+    ;;; name and location of the walk
     (declare (ignore ksa))
     (format t "~2&#38;The random walk:~&#37;")
       (let ((instance (find-instance-by-name 1 'location)))

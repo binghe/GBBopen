@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Thu Apr 10 10:36:29 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Tue Apr 15 04:48:15 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -1016,6 +1016,10 @@ A \var{dimension-value-place\/} with two
 
 \newcommand{\nothreads}{Threads (multiprocessing) is not supported on the
   Common Lisp implementation.}
+
+\newcommand{\threadsnotstarted}{The idle-loop process has not been started on
+  \xsitelink{CMUCL}{http://www.cons.org/cmucl/}.  Multiprocessing has not been
+  started on \xsitelink{LispWorks}{http://www.lispworks.com}.}
 
 \newcommand{\nocvlock}{The \glref{lock} (or \glref{recursive~lock}) associated
   with \var{condition-variable} is not held by the executing process.}
@@ -13945,7 +13949,14 @@ Show the first five \glref{KSAs} on the queue \code{pending-ksas}:
 \index{module!:agenda-shell@\code{:agenda-shell}}%
 \index{:agenda-shell@\code{:agenda-shell} module}%
 The Agenda Shell module, \code{:agenda-shell}, provides a responsive,
-agenda-based control shell.
+agenda-based control shell. 
+
+Note that the Agenda Shell requires that the idle-loop process has been
+started on \xsitelink{CMUCL}{http://www.cons.org/cmucl/} and that
+multiprocessing has been started on
+\xsitelink{LispWorks}{http://www.lispworks.com}.  (An error message when the
+Agenda Shell is started will instruct you on what to do if this is not the
+case.)
 
 \W\entities
 \T\clearpage
@@ -15394,6 +15405,9 @@ One of the following values:
 %
 A \code{restart-control-shell-event} is signaled.
  
+\fnerrors
+\threadsnotstarted
+
 \begin{alsos}{control-shell-running-p}
 \also[abort-ks-execution]
 \also[control-shell-running-p]
@@ -15610,8 +15624,12 @@ One of the following values:
 %
 A \code{start-control-shell-event} is signaled.
  
+\fnerrors
+\threadsnotstarted
+
 \fndsyntax
 Available \var{initargs\/} are:
+\W\\~\\
 \begin{args}{minimum-ksa-execution-rating}
 \codeindexqualit{:awaken-on-event}{\textbf{start-control-shell} initarg}%
 \codeindexqualit{:continue-past-quiescence}{\textbf{start-control-shell}

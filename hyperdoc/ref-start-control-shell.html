@@ -48,9 +48,12 @@ calling <b><a href="ref-exit-control-shell.html">exit-control-shell</a></b>.
 </p>
 <p><span class="fndoclabel">Events</span> <br /><a name="id1">A</a> <code>start-control-shell-event</code> is signaled.
 </p>
-<p><table class="tighttop" width="100%"></table>
-<span class="fndoclabel">Detailed syntax</span>Available <var>initargs</var> are:
-<table class="tighttop">
+<p><span class="fndoclabel">Errors</span> <br />The idle-loop process has not been started on
+<a target="_top" href="http://www.cons.org/cmucl/">CMUCL</a>.  Multiprocessing has not been
+started on <a target="_top" href="http://www.lispworks.com">LispWorks</a>.
+<table class="tighttop" width="100%"></table>
+<span class="fndoclabel">Detailed syntax</span><br />Available <var>initargs</var> are:
+<br />&nbsp;<br /><table class="tighttop">
 <a name="id2"></a><tr valign="top"><td valign="baseline"><i>awaken-on-event</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id77">generalized&nbsp;boolean</a> (default is <code>t</code>) 
 </td></tr><tr valign="top"><td valign="baseline"><i>continue-past-quiescence</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id77">generalized&nbsp;boolean</a> (default
 is <code>nil</code>) 
