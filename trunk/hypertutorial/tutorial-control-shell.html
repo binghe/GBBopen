@@ -108,6 +108,12 @@ continues for an additional KS-execution cycle in case any executable KSAs
 resulted from the quiescence signal.  Again, no executable KSAs were found in
 cycle 2, so the Agenda Shell exits due to <code>:quiescence</code>.
 </p>
+<p>Note that the Agenda Shell requires that the idle-loop process has been
+started on <a target="_top" href="http://www.cons.org/cmucl/">CMUCL</a> and that
+multiprocessing has been started on
+<a target="_top" href="http://www.lispworks.com">LispWorks</a>.  (An error message will
+instruct you on what to do if this is not the case.)
+</p>
 <h2><a name="id4">Step 3: Define a KS</a></h2><p>
 So let's define a KS!
 </p>

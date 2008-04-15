@@ -437,19 +437,19 @@ it is completed. Add the following KS to the end of your
   ;;;   Print-walk KS
 
   (defun print-walk-ks-function (ksa)
-    ;;; Starting with the initial location instance, print the instance name
-    ;;; and location of the walk
-      (declare (ignore ksa))
-      (format t "~2&#38;The random walk:~&#37;")
-        (let ((instance (find-instance-by-name 1 'location)))
-        (while instance
-          (format t "~s (~s ~s)~&#37;"
-                  (instance-name-of instance)
-                  (x-of instance)
-                  (y-of instance))
-          (setf instance (next-location-of instance))))
-      ;; Tell the Agenda Shell to exit:
-      ':stop)
+    ;;; Starting with the initial location instance, print the instance 
+    ;;; name and location of the walk
+    (declare (ignore ksa))
+    (format t "~2&#38;The random walk:~&#37;")
+      (let ((instance (find-instance-by-name 1 'location)))
+      (while instance
+        (format t "~s (~s ~s)~&#37;"
+                (instance-name-of instance)
+                (x-of instance)
+                (y-of instance))
+        (setf instance (next-location-of instance))))
+    ;; Tell the Agenda Shell to exit:
+    ':stop)
 
   (define-ks print-walk-ks
     :trigger-events ((quiescence-event))

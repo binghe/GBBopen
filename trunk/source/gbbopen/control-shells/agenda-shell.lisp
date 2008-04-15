@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:AGENDA-SHELL; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/control-shells/agenda-shell.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Apr 14 15:23:04 2008 *-*
+;;;; *-* Last-Edit: Tue Apr 15 04:20:34 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -37,6 +37,7 @@
 ;;;  11-13-06 Added abort-ks-execution.  (Corkill)
 ;;;  08-27-07 Renamed control-shell-started-p to control-shell-running-p.
 ;;;           (Corkill)
+;;;  04-15-08 Add threading-started checks for CMUCL and LispWorks.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -56,7 +57,12 @@
 	    gbbopen::show-evfn-describer-headers
             gbbopen::slot-value-using-class
 	    gbbopen::standard-unit-class.lock
-	    gbbopen::standard-unit-class.instance-hash-table)))
+	    gbbopen::standard-unit-class.instance-hash-table
+            ;; Threading checkers for CMUCL and LispWorks:
+            #+(and cmu mp)
+            portable-threads::check-idle-loop-process
+            #+lispworks
+            portable-threads::check-for-multiprocessing-started)))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -1443,6 +1449,11 @@
                             (save-obviated-ksas nil)
                             (stepping nil)
                             (stepping-stream *query-io*))
+  ;; Check that threading is running on CMUCL & LispWorks:
+  #+(and cmu mp)
+  (check-idle-loop-process 't)
+  #+lispworks
+  (check-for-multiprocessing-started 't)
   ;; There is a control shell that is running in this thread:
   (when (and (typep *cs* 'control-shell)
              (not (instance-deleted-p *cs*))
@@ -1511,6 +1522,11 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun restart-control-shell (&key (instance-name 1))
+  ;; Check that threading is running on CMUCL & LispWorks:
+  #+(and cmu mp)
+  (check-idle-loop-process 't)
+  #+lispworks
+  (check-for-multiprocessing-started 't)
   (let ((cs (find-instance-by-name instance-name 'control-shell)))
      ;; No control-shell instance found:
     (unless cs

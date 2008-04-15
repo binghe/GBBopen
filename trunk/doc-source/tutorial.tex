@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/tutorial.tex *-*
-%% *-* Last-Edit: Tue Apr  8 04:58:59 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Tue Apr 15 04:44:28 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2005-2008, Dan Corkill <corkill@GBBopen.org>
@@ -3402,6 +3402,12 @@ default, the Agenda Shell signals that quiescence has occurred and then
 continues for an additional KS-execution cycle in case any executable KSAs
 resulted from the quiescence signal.  Again, no executable KSAs were found in
 cycle 2, so the Agenda Shell exits due to \code{:quiescence}.
+
+Note that the Agenda Shell requires that the idle-loop process has been
+started on \xsitelink{CMUCL}{http://www.cons.org/cmucl/} and that
+multiprocessing has been started on
+\xsitelink{LispWorks}{http://www.lispworks.com}.  (An error message will
+instruct you on what to do if this is not the case.)
 
 \subsection*{Step 3: Define a KS}
 
