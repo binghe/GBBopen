@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/tutorial.tex *-*
-%% *-* Last-Edit: Wed Apr 16 12:10:34 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Wed Apr 16 12:24:12 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2005-2008, Dan Corkill <corkill@GBBopen.org>
@@ -3929,8 +3929,8 @@ value to \code{make-space-instance}:
     ;; Make a new known-world space instance:
     (make-space-instance 
      '(known-world)
-     :dimensions '((x :ordered) (y :ordered))
-     \textcolor{black}{:allowed-unit-classes '(location})))}
+     \textcolor{black}{:allowed-unit-classes '(location)}
+     :dimensions '((x :ordered) (y :ordered))))}
 \end{example}
 %
 Attempting to add any unit-instance that is not a \code{location} to
@@ -3951,8 +3951,8 @@ specification:
     ;; Make a new known-world space instance:
     (make-space-instance 
      '(known-world)
-     :dimensions \textcolor{red}{'((x :ordered) (y :ordered))}
-     :allowed-unit-classes '(location)))}
+     :allowed-unit-classes '(location)
+     :dimensions \textcolor{red}{'((x :ordered) (y :ordered))}))}
 \end{example}
 %
 and replacing it with a call of \textbf{dimensions-of} to
@@ -3969,8 +3969,8 @@ unit class:
     ;; Make a new known-world space instance:
     (make-space-instance 
      '(known-world)
-     :dimensions \textcolor{black}{(dimensions-of 'location)}
-     :allowed-unit-classes '(location)))}
+     :allowed-unit-classes '(location)
+     :dimensions \textcolor{black}{(dimensions-of 'location)}))}
 \end{example}
 
 \subsection*{Step 6: Run the application again}

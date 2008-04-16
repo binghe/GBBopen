@@ -191,8 +191,8 @@ value to <code>make-space-instance</code>:
     ;; Make a new known-world space instance:
     (make-space-instance 
      '(known-world)
-     :dimensions '((x :ordered) (y :ordered))
-     <font color="#000000">:allowed-unit-classes '(location</font>)))</font>
+     <font color="#000000">:allowed-unit-classes '(location)</font>
+     :dimensions '((x :ordered) (y :ordered))))</font>
 </pre>
 Attempting to add any unit-instance that is not a <code>location</code> to
 <code>known-world</code> will now generate an error.
@@ -209,8 +209,8 @@ specification:
     ;; Make a new known-world space instance:
     (make-space-instance 
      '(known-world)
-     :dimensions <font color="#ff0000">'((x :ordered) (y :ordered))</font>
-     :allowed-unit-classes '(location)))</font>
+     :allowed-unit-classes '(location)
+     :dimensions <font color="#ff0000">'((x :ordered) (y :ordered))</font>))</font>
 </pre>
 and replacing it with a call of <b>dimensions-of</b> to
 obtain the dimensions associated with instances of the <code>location</code>
@@ -223,8 +223,8 @@ unit class:
     ;; Make a new known-world space instance:
     (make-space-instance 
      '(known-world)
-     :dimensions <font color="#000000">(dimensions-of 'location)</font>
-     :allowed-unit-classes '(location)))</font>
+     :allowed-unit-classes '(location)
+     :dimensions <font color="#000000">(dimensions-of 'location)</font>))</font>
 </pre>
 </p>
 <h2><a name="id7">Step 6: Run the application again</a></h2><p>
