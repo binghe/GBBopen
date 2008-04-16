@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/mini-module/mini-module.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Mar 29 13:17:14 2008 *-*
+;;;; *-* Last-Edit: Wed Apr 16 10:28:18 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -87,6 +87,8 @@
 ;;;           check of a module.  (Corkill) 
 ;;;  03-29-08 Add :nopropagate (:propagate canceling) compile/load-module 
 ;;;           option.  (Corkill)
+;;;  04-16-08 Support "Source" and "SOURCE" directory-name conventions (in
+;;;           addition to conventional "source").  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -488,6 +490,36 @@
 
 ;;; ---------------------------------------------------------------------------
 
+(defun make-and-check-directory-pathname (name subdirectories compiled?)
+  ;;; Used by compute-relative-directory to handle various "source" 
+  ;;; directory-name conventions:
+  (labels ((make-directory-pathname (subtree-name 
+                                     &optional skip-subdirectories?)
+             (make-pathname 
+              :directory (append-subdirectories (pathname-directory name)
+                                                (list subtree-name)
+                                                (unless skip-subdirectories?
+                                                  subdirectories))
+              :defaults name)))
+    (cond
+     ;; If compiled?, just make and return the pathname:
+     (compiled? (make-directory-pathname *compiled-directory-name*))
+     ;; Otherwise, check what "source" is needed:
+     (t (cond
+         ;; Regular "source":
+         ((probe-directory (make-directory-pathname "source" t))
+          (make-directory-pathname "source"))
+         ;; "Source":
+         ((probe-directory (make-directory-pathname "Source" t))
+          (make-directory-pathname "Source"))
+         ;; "SOURCE":
+         ((probe-directory (make-directory-pathname "SOURCE" t))
+          (make-directory-pathname "SOURCE"))
+         ;; Otherwise, we'll just use "source":
+         (t (make-directory-pathname "source")))))))
+
+;;; ---------------------------------------------------------------------------
+
 (declaim (ftype (function (mm-module) (values t &optional)) 
                 mm-module.directory
                 mm-module.subdirectories))
@@ -498,13 +530,7 @@
    ;; `Name' can be a pathname if a *load-truename*-relative :directory
    ;; option was used in define-module:
    ((pathnamep name)
-    (make-pathname 
-     :directory (append-subdirectories (pathname-directory name)
-                                       (list (if compiled?
-                                                 *compiled-directory-name*
-                                                 "source"))
-                                       subdirectories)
-     :defaults name))      
+    (make-and-check-directory-pathname name subdirectories compiled?))
    (t (let ((mm-dir (gethash name *mm-directories*)))
         (typecase mm-dir
           (mm-relative-directory
@@ -516,14 +542,8 @@
             compiled?))
           (mm-root-directory
            (let ((root-path (mm-root-directory.path mm-dir)))
-             (make-pathname 
-              :directory (append-subdirectories
-                          (pathname-directory root-path)
-                          (list (if compiled?
-                                    *compiled-directory-name*
-                                    "source"))
-                          subdirectories)
-              :defaults root-path)))
+             (make-and-check-directory-pathname 
+              root-path subdirectories compiled?)))
           (otherwise
            (let ((module 
                   ;; Check if we have a module reference (look without the
@@ -678,18 +698,18 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun determine-modules (module-names &optional skip-undefined-modules-p
-                          &aux result)
-  (labels ((maybe-add-module (name)
-             (let ((module (get-module name (not skip-undefined-modules-p))))
-               (when module
-                 (dolist (name (mm-module.requires module))
-                   (maybe-add-module name))
-                 (pushnew module result :test #'eq :key #'mm-module.name)))))
-    (dolist (name module-names)
-      (maybe-add-module name)))
-  ;; Maintain precedence order...
-  (nreverse result))
+(defun determine-modules (module-names &optional skip-undefined-modules-p)
+  (let ((result nil))
+    (labels ((maybe-add-module (name)
+               (let ((module (get-module name (not skip-undefined-modules-p))))
+                 (when module
+                   (dolist (name (mm-module.requires module))
+                     (maybe-add-module name))
+                   (pushnew module result :test #'eq :key #'mm-module.name)))))
+      (dolist (name module-names)
+        (maybe-add-module name)))
+    ;; Maintain precedence order...
+    (nreverse result)))
 
 ;;; ---------------------------------------------------------------------------
 

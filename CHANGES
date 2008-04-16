@@ -4,6 +4,9 @@ Important changes since GBBopen 0.9.9:
     them; support for incomposite (scalar) pattern retrieval of set-composite
     unit instances
 
+  * Add Mini Module support for "Source" and "SOURCE" directory-name 
+    conventions (in addition to the recommended "source")
+
 Important changes in GBBopen 0.9.9:
 
   * INCOMPATIBLE CHANGE: INSTANCE-DIMENSION-VALUE now returns five values:
