@@ -1,21 +1,21 @@
 ;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/current/extended-repl.lisp *-*
+;;;; *-* File: /usr/local/gbbopen/extended-repl.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jul 18 09:30:04 2007 *-*
-;;;; *-* Machine: ruby.corkills.org *-*
+;;;; *-* Last-Edit: Thu Apr 17 04:47:32 2008 *-*
+;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
 ;;;; *
 ;;;; *                    Extended REPL Command Processing
-;;;; * for CLISP, CMUCL, SCL, ECL, and SBCL REPL and for SLIME (Emacs->swank)
+;;;; * for CLISP, CMUCL, SCL, ECL, and SBCL REPL and for SLIME (Emacs->Swank)
 ;;;; *
 ;;;; **************************************************************************
 ;;;; **************************************************************************
 ;;;
 ;;; Written by: Dan Corkill 
 ;;;
-;;; Copyright (C) 2005-2007, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2005-2008, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; Porting Notice:
@@ -25,13 +25,14 @@
 ;;;      and SBCL
 ;;;    - interface into CLISP's *user-commands* facility
 ;;;    - extend ECL's command repertoire
-;;;    - add keyword-command support to SLIME's Emacs->swank interface  
+;;;    - add keyword-command support to SLIME's Emacs->Swank interface  
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
 ;;;  06-04-05 File Created.  (Corkill)
 ;;;  02-02-06 Added ECL support.  (Corkill)
-;;;  02-04-06 Added SLIME (Emacs->swank) support.  (Corkill)
+;;;  02-04-06 Added SLIME (Emacs->Swank) support.  (Corkill)
+;;;  04-17-08 Reworked SLIME mechanism.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 	 
@@ -237,76 +238,36 @@
   (setf sb-int:*repl-read-form-fun* #'extended-repl-read-form-fun))
 
 ;;; ===========================================================================
-;;;  SLIME Interface
+;;;  SLIME REPL Interface Setup
+;;;
+;;;  SLIME doesn't provide an easy means of using its *after-init-hook*
+;;;  mechanism in advance of loading Swank.  We work around this in the
+;;;  current SLIME by creating the :swank-backend package (which is used by
+;;;  Swank) and exporting swank-backend:*after-init-hook*, which we have set.
+;;;  It would have been much easier if Swank simply imported a better-named
+;;;  variable (such as *after-swank-init-hook*) from the :cl-user package,
+;;;  allowing straightforward advanced adding of after-init hooks...
 
-(defpackage :swank
-  (:use :common-lisp))
+(unless (find-package ':swank-backend)
+  (defpackage :swank-backend
+    (:use :common-lisp)
+    (:export #:*after-init-hook*)))
 
-(defvar swank::*new-connection-hook*)
-(defvar swank::*slime-repl-eval-hooks*)
+(defvar *slime-extended-repl-file*
+    (make-pathname :name "slime-extended-repl"
+                   :type "lisp"
+                   :defaults *load-truename*))
 
-;;; ---------------------------------------------------------------------------
+(defun load-slime-extended-repl ()
+  (format t "~&;; Loading extended REPL command processing for SLIME...~%")
+  (load *slime-extended-repl-file*))  
 
-(defun get-extended-repl-command-with-help (command)
-  ;; Used in extended-repl-swank-eval-hook to add SLIME support for :help on
-  ;; CLs that already provide their own REPL help command (and is therefore
-  ;; not in *extended-repl-commands*)
-  (or (assoc command *extended-repl-commands* :test #'eq)
-      #+(or allegro ecl)
-      (and (member command '(:help :h))
-	   #+allegro
-	   '(:help tpl::tpl-help-command)
-	   #+ecl
-	   '(:help si::tpl-help-command))))
+(defvar swank-backend:*after-init-hook* nil
+  "Hook run after user init files are loaded.")
 
-;;; ---------------------------------------------------------------------------
-;;; We use Swank's eval hook to process command forms coming over the
-;;; Emacs->swank connection.
-
-(defun extended-repl-swank-eval-hook (form)
-  (let ((repl-command (get-extended-repl-command-with-help form)))
-    (flet ((do-command (symbol-or-fn args)
-	     (apply (the function (if (symbolp symbol-or-fn) 
-				      (fdefinition symbol-or-fn)
-				      symbol-or-fn))
-		    args)
-	     (values)))
-      (cond (repl-command
-	     (do-command (second repl-command) nil))
-	    ;; Support (<command> <arg>*) syntax as well:
-	    ((and (consp form)
-		  (setf repl-command
-                        (get-extended-repl-command-with-help (car form))))
-	     (do-command (second repl-command) (cdr form)))
-	    ;; Tell swank that we pass (normal eval):
-	    (t (funcall 'swank::repl-eval-hook-pass))))))
-
-;;; ---------------------------------------------------------------------------
-;;; Swank can be loaded after user-initialization files, so we establish the
-;;; extended REPL command processing every time an Emacs->swank connection is
-;;; created.
-
-(defun extended-repl-new-swank-connection-hook (connection)
-  (declare (ignore connection))
-  (when (boundp 'swank::*slime-repl-eval-hooks*)
-    (format t "~&;; Adding extended REPL command processing to SLIME...~%")
-    (pushnew 'extended-repl-swank-eval-hook swank::*slime-repl-eval-hooks*)))
-  
-;;; ---------------------------------------------------------------------------
-
-(if (and (boundp 'swank::*new-connection-hook*)
-	 swank::*new-connection-hook*)
-    ;; We have an existing Emacs->swank connection, so run the hook:
-    (extended-repl-new-swank-connection-hook nil)
-    ;; Otherwise...
-    (if (boundp 'swank::*new-connection-hook*)
-	(pushnew 'extended-repl-new-swank-connection-hook
-		 swank::*new-connection-hook*)
-	(setf swank::*new-connection-hook* 
-              (list 'extended-repl-new-swank-connection-hook))))
+(pushnew 'load-slime-extended-repl swank-backend:*after-init-hook*)
 
 ;;; ===========================================================================
 ;;;				  End of File
 ;;; ===========================================================================
-
 
