@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/commands.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Mar 29 13:15:17 2008 *-*
+;;;; *-* Last-Edit: Thu Apr 17 19:32:47 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -24,13 +24,17 @@
 ;;; SBCL.  GBBopen keyword commands are also supported in the SLIME REPL.
 ;;;
 ;;; In many CL implementations, commands with arguments can be specified in
-;;; either list or spread notation.  However, Clozure CL, OpenMCL, and the
-;;; SLIME interface do not support spread notation, while Allegro CL and
-;;; Lispworks do not support list notation. For example:
+;;; either list or spread notation.  However, Clozure CL and OpenMCL do not
+;;; support spread notation, while Allegro CL and Lispworks do not support
+;;; list notation. CLISP also does not support the list representation and
+;;; currently does not support command arguments to spread commands in its
+;;; native REPL. For example:
 ;;;
-;;;    > :gbbopen-test :create-dirs        [not Clozure CL, OpenMCL or SLIME]
+;;;    > :gbbopen-test :create-dirs     [not CLISP, Clozure CL, or OpenMCL]
 ;;; or
-;;;    > (:gbbopen-test :create-dirs)      [not Allegro CL or Lispworks]
+;;;    > (:gbbopen-test :create-dirs)   [not Allegro CL, CLISP, or Lispworks]
+;;; or
+;;;    > :gbbopen-test                  [CLISP (cannot provide arguments)]
 ;;;
 ;;; will compile and load GBBopen and perform a basic trip test.
 ;;;
