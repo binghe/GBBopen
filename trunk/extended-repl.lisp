@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/extended-repl.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Apr 17 04:47:32 2008 *-*
+;;;; *-* Last-Edit: Thu Apr 17 10:39:12 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -250,8 +250,12 @@
 
 (unless (find-package ':swank-backend)
   (defpackage :swank-backend
-    (:use :common-lisp)
-    (:export #:*after-init-hook*)))
+    (:use :common-lisp)))
+
+;; Always do the export (even if the :swank-backend package was created
+;; already):
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (export '(swank-backend::*after-init-hook*) ':swank-backend))
 
 (defvar *slime-extended-repl-file*
     (make-pathname :name "slime-extended-repl"
