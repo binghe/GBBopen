@@ -133,8 +133,10 @@ appropriate time.)
 </p>
 <p>The standard GBBopen top-level commands are defined in the file
 <code><var>&lt;install-directory&gt;</var>/commands.lisp</code>.  In many Common Lisp
-implementations, top-level keyword commands that have arguments can be
-specified using either a list or a spread representation.  For example:
+implementations and in the
+<a target="_top" href="http://common-lisp.net/project/slime/">SLIME</a> REPL interface,
+top-level keyword commands that have arguments can be specified using either a
+list or a spread representation.  For example:
 <pre class="pretop">
   &gt; (:gbbopen-test :create-dirs)
 </pre>
@@ -142,14 +144,12 @@ or
 <pre>
   &gt; :gbbopen-test :create-dirs
 </pre>
-However, <a target="_top" href="http://trac.clozure.com/openmcl/">Clozure CL</a>,
-<a target="_top" href="http://openmcl.clozure.com/">OpenMCL</a>, and the
-<a target="_top" href="http://common-lisp.net/project/slime/">SLIME</a> REPL interface do not
-support the spread representation, and <a target="_top" href="http://www.franz.com">Allegro
-CL</a> and
+However, <a target="_top" href="http://trac.clozure.com/openmcl/">Clozure CL</a> and
+<a target="_top" href="http://openmcl.clozure.com/">OpenMCL</a> do not support the spread
+representation, and <a target="_top" href="http://www.franz.com">Allegro CL</a> and
 <a target="_top" href="http://www.lispworks.com">LispWorks</a> do not support the list
 representation.  <a target="_top" href="http://clisp.cons.org/">CLISP</a> also does not
-support the list representation and currently does not support command
+support the list representation and currently does not support spread command
 arguments in its native REPL.
 </p>
 <p>Equivalent functions in the <code>:common-lisp-user</code> package are always

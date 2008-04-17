@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Tue Apr 15 11:02:20 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Thu Apr 17 19:33:08 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -1228,8 +1228,10 @@ appropriate time.)
 
 The standard GBBopen top-level commands are defined in the file
 \code{\var{<install-directory>\/}/commands.lisp}.  In many Common Lisp
-implementations, top-level keyword commands that have arguments can be
-specified using either a list or a spread representation.  For example:
+implementations and in the
+\xsitelink{SLIME}{http://common-lisp.net/project/slime/} REPL interface,
+top-level keyword commands that have arguments can be specified using either a
+list or a spread representation.  For example:
 %
 \W\supp
 \begin{example}
@@ -1243,14 +1245,12 @@ or
   > :gbbopen-test :create-dirs
 \end{example}
 %
-However, \xsitelink{Clozure CL}{http://trac.clozure.com/openmcl/},
-\xsitelink{OpenMCL}{http://openmcl.clozure.com/}, and the
-\xsitelink{SLIME}{http://common-lisp.net/project/slime/} REPL interface do not
-support the spread representation, and \xsitelink{Allegro
-  CL}{http://www.franz.com} and
+However, \xsitelink{Clozure CL}{http://trac.clozure.com/openmcl/} and
+\xsitelink{OpenMCL}{http://openmcl.clozure.com/} do not support the spread
+representation, and \xsitelink{Allegro CL}{http://www.franz.com} and
 \xsitelink{LispWorks}{http://www.lispworks.com} do not support the list
 representation.  \xsitelink{CLISP}{http://clisp.cons.org/} also does not
-support the list representation and currently does not support command
+support the list representation and currently does not support spread command
 arguments in its native REPL.
 
 Equivalent functions in the \code{:common-lisp-user} package are always
