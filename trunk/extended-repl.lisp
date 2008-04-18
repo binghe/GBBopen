@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/extended-repl.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Apr 17 10:39:12 2008 *-*
+;;;; *-* Last-Edit: Fri Apr 18 10:49:27 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -239,23 +239,6 @@
 
 ;;; ===========================================================================
 ;;;  SLIME REPL Interface Setup
-;;;
-;;;  SLIME doesn't provide an easy means of using its *after-init-hook*
-;;;  mechanism in advance of loading Swank.  We work around this in the
-;;;  current SLIME by creating the :swank-backend package (which is used by
-;;;  Swank) and exporting swank-backend:*after-init-hook*, which we have set.
-;;;  It would have been much easier if Swank simply imported a better-named
-;;;  variable (such as *after-swank-init-hook*) from the :cl-user package,
-;;;  allowing straightforward advanced adding of after-init hooks...
-
-(unless (find-package ':swank-backend)
-  (defpackage :swank-backend
-    (:use :common-lisp)))
-
-;; Always do the export (even if the :swank-backend package was created
-;; already):
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (export '(swank-backend::*after-init-hook*) ':swank-backend))
 
 (defvar *slime-extended-repl-file*
     (make-pathname :name "slime-extended-repl"
@@ -266,10 +249,36 @@
   (format t "~&;; Loading extended REPL command processing for SLIME...~%")
   (load *slime-extended-repl-file*))  
 
-(defvar swank-backend:*after-init-hook* nil
-  "Hook run after user init files are loaded.")
+;;;  *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+;;;  SLIME doesn't provide an easy means of using its *after-init-hook*
+;;;  mechanism in advance of loading Swank.  We work around this in the
+;;;  current SLIME by creating the :swank-backend package (which is used by
+;;;  Swank) and exporting swank-backend:*after-init-hook*, which we have set.
+;;;  It would have been *SO* much easier if Swank simply imported a
+;;;  better-named variable (such as *after-swank-init-hook*) from the :cl-user
+;;;  package, allowing straightforward advanced adding of after-init hooks...
 
-(pushnew 'load-slime-extended-repl swank-backend:*after-init-hook*)
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (unless (find-package ':swank)
+    (unless (find-package ':swank-backend)
+      (format t "~&;; Predefining ~s package for SLIME...~%" 
+              ':swank-backend)
+      (defpackage :swank-backend (:use :common-lisp)))))
+
+(cond
+ ;; Swank is already present:
+ ((find-package ':swank)
+  (load-slime-extended-repl))
+ ;; The :swank package doesn't exist yet:
+ (t 
+  ;; Always do the export in this case (even if the :swank-backend package
+  ;; was created already):
+  (export '(swank-backend::*after-init-hook*) ':swank-backend)
+  (locally (declare (special swank-backend::*after-init-hook*))
+    (if (boundp 'swank-backend::*after-init-hook*)
+        (pushnew 'load-slime-extended-repl swank-backend::*after-init-hook*)
+        (setf swank-backend::*after-init-hook* 
+              '(load-slime-extended-repl))))))
 
 ;;; ===========================================================================
 ;;;				  End of File
