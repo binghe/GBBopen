@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/tutorial.tex *-*
-%% *-* Last-Edit: Thu Apr 17 19:35:25 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Fri Apr 18 05:29:04 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2005-2008, Dan Corkill <corkill@GBBopen.org>
@@ -5099,7 +5099,7 @@ it is completed. Add the following KS to the end of your
     ;;; name and location of the walk
     (declare (ignore ksa))
     (format t "~2\&The random walk:~\%")
-      (let ((instance (find-instance-by-name 1 'location)))
+    (let ((instance (find-instance-by-name 1 'location)))
       (while instance
         (format t "~s (~s ~s)~\%"
                 (instance-name-of instance)
@@ -5304,7 +5304,7 @@ This exercise shows you how to:
     ;;; name and location of the walk
     (declare (ignore ksa))
     (format t "~2\&The random walk:~\%")
-      (let ((instance (find-instance-by-name 1 'location)))
+    (let ((instance (find-instance-by-name 1 'location)))
       (while instance
         (format t "~s (~s ~s)~\%"
                 (instance-name-of instance)

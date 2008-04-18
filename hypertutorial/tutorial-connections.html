@@ -441,7 +441,7 @@ it is completed. Add the following KS to the end of your
     ;;; name and location of the walk
     (declare (ignore ksa))
     (format t "~2&#38;The random walk:~&#37;")
-      (let ((instance (find-instance-by-name 1 'location)))
+    (let ((instance (find-instance-by-name 1 'location)))
       (while instance
         (format t "~s (~s ~s)~&#37;"
                 (instance-name-of instance)
