@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/mini-module/mini-module.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Apr 19 10:24:52 2008 *-*
+;;;; *-* Last-Edit: Sat Apr 19 14:30:35 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -79,16 +79,18 @@
 ;;;  06-06-07 Added :after-form support for modules (somewhat reluctantly,
 ;;;           as putting forms in a module's files is preferable to having
 ;;;           them in the module definition).  (Corkill)
-;;;  07-14-07 Add subdirectories support to define-root-directory.  (Corkill)
-;;;  07-14-07 Add :noautorun compile/load-module option.  (Corkill)
-;;;  12-19-07 Add module-relative support to compute-relative-directory and
-;;;           increment version to 1.2.  (Corkill)
+;;;  07-14-07 Added subdirectories support to define-root-directory.  (Corkill)
+;;;  07-14-07 Added :noautorun compile/load-module option.  (Corkill)
+;;;  12-19-07 Added module-relative support to compute-relative-directory and
+;;;           incremented version to 1.2.  (Corkill)
 ;;;  01-05-08 Skip undefined modules when performing compatiblity-ordering
 ;;;           check of a module.  (Corkill) 
-;;;  03-29-08 Add :nopropagate (:propagate canceling) compile/load-module 
+;;;  03-29-08 Added :nopropagate (:propagate canceling) compile/load-module 
 ;;;           option.  (Corkill)
 ;;;  04-16-08 Support "Source" and "SOURCE" directory-name conventions (in
 ;;;           addition to conventional "source").  (Corkill)
+;;;  04-19-08 Added application-version-identifier support to 
+;;;           DEFINE-ROOT-DIRECTORY and incremented version to 1.3.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -196,7 +198,7 @@
 ;;; ===========================================================================
 
 (defun mini-module-implementation-version ()
-  "1.2")
+  "1.3")
 
 ;;; Added to *features* at the end of this file:
 (defparameter *mini-module-version-keyword* 
@@ -331,7 +333,8 @@
             (:include mm-directory)
             (:conc-name #.(dotted-conc-name 'mm-root-directory))
             (:copier nil))
-  path)
+  path
+  application-version-modifier)
 
 (defstruct (mm-relative-directory
             (:include mm-directory)
@@ -468,13 +471,18 @@
 
 (defun define-root-directory (name spec &rest subdirectories)
   (declare (dynamic-extent subdirectories))
-  (unless (keywordp name)
-    (non-keyword-directory-name-error name))
-  (let ((root-directory-path (compute-root-directory spec subdirectories)))
-    (setf (gethash name *mm-directories*)
-          (make-mm-root-directory
-           :name name
-           :path root-directory-path))))
+  (let ((application-version-modifier nil))
+    (when (consp name)
+      (setf application-version-modifier (second name))
+      (setf name (first name)))
+    (unless (keywordp name)
+      (non-keyword-directory-name-error name))
+    (let ((root-directory-path (compute-root-directory spec subdirectories)))
+      (setf (gethash name *mm-directories*)
+            (make-mm-root-directory
+             :name name
+             :path root-directory-path
+             :application-version-modifier application-version-modifier)))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -491,7 +499,8 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun make-and-check-directory-pathname (name subdirectories compiled?)
+(defun make-and-check-directory-pathname (name subdirectories compiled?
+                                          application-version-modifier)
   ;;; Used by compute-relative-directory to handle various "source" 
   ;;; directory-name conventions:
   (labels ((make-directory-pathname (subtree-name 
@@ -503,9 +512,17 @@
                                                   subdirectories))
               :defaults name)))
     (cond
-     ;; If compiled?, just make and return the pathname:
-     (compiled? (make-directory-pathname *compiled-directory-name*))
-     ;; Otherwise, check what "source" is needed:
+     ;; If compiled?, make and return the pathname (concatenating
+     ;; application-version modifier, if appropriate):
+     (compiled? 
+      (make-directory-pathname
+       (if application-version-modifier
+           ;; Concatenate the version modifier to the compiled-directory name:
+           (concatenate 'simple-string 
+             *compiled-directory-name* "-" application-version-modifier)
+           *compiled-directory-name*)))
+     ;; Source directory: check what "source" directory name is needed before
+     ;; making and returning the pathname:
      (t (cond
          ;; Regular "source":
          ((probe-directory (make-directory-pathname "source" t))
@@ -531,7 +548,7 @@
    ;; `Name' can be a pathname if a *load-truename*-relative :directory
    ;; option was used in define-module:
    ((pathnamep name)
-    (make-and-check-directory-pathname name subdirectories compiled?))
+    (make-and-check-directory-pathname name subdirectories compiled? nil))
    (t (let ((mm-dir (gethash name *mm-directories*)))
         (typecase mm-dir
           (mm-relative-directory
@@ -542,9 +559,12 @@
              subdirectories)
             compiled?))
           (mm-root-directory
-           (let ((root-path (mm-root-directory.path mm-dir)))
+           (let ((root-path (mm-root-directory.path mm-dir))
+                 (application-version-modifier
+                  (mm-root-directory.application-version-modifier mm-dir)))
              (make-and-check-directory-pathname 
-              root-path subdirectories compiled?)))
+              root-path subdirectories compiled?
+              application-version-modifier)))
           (otherwise
            (let ((module 
                   ;; Check if we have a module reference (look without the
