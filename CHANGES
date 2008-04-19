@@ -1,13 +1,19 @@
 Important changes since GBBopen 0.9.9:
   
-  * Support for set-composite dimension values and space-instance storage of
-    them; support for incomposite (scalar) pattern retrieval of set-composite
-    unit instances
+  * Support added for set-composite dimension values and space-instance
+    storage of them; support for incomposite (scalar) pattern retrieval of
+    set-composite unit instances
 
-  * Add Mini Module support for "Source" and "SOURCE" directory-name 
+  * Added Mini Module support for "Source" and "SOURCE" directory-name 
     conventions (in addition to the recommended "source")
 
+  * Added application-version modifier support to DEFINE-ROOT-DIRECTORY
+
   * New GET-ROOT-DIRECTORY Mini Module function
+
+  * Incremented Mini Module version to 1.3 to indicate new (upward compatible)
+    features
+
 
 Important changes in GBBopen 0.9.9:
 

@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Sat Apr 19 11:52:08 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Sat Apr 19 14:52:53 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -1989,11 +1989,11 @@ containing the \textbf{define-module} form:
 \arg[name] A keyword symbol naming the \glref{relative~directory}
 \arg[directory] The keyword symbol name of a \glref{root} or 
   \glref{relative~directory} or the name of a \glref{module}
-\arg[subdirectories] One or more strings specifying, in order, subdirectories
-from \var{directory\/} to the relative directory. (The keyword \code{:up} or
-\code{:back} can also be supplied in place of any of these strings, indicating
-to go upward one semantic or syntactic level of directory structure,
-respectively.)
+\arg[subdirectories] One or more strings specifying, in order,
+  subdirectories from \var{directory\/} to the relative directory. (The
+  keyword \code{:up} or \code{:back} can also be supplied in addition to any
+  of these strings, indicating to go upward one semantic or syntactic level of
+  directory structure, respectively.)
 \end{args}
 
 \fndescription \glref{Root} and \glref{relative~directory} definitions are
@@ -2055,7 +2055,9 @@ Define a data directory sibling to the \code{source} directory of
 
 \fnargs
 \begin{args}{directory-specification}
-\arg[name] A keyword symbol naming the \glref{root~directory}
+\arg[name] A keyword symbol naming the \glref{root~directory} or a list
+  containing the keyword-symbol name and, optionally, an
+  application-version-identifier string
 \arg[directory-specification] One of the following:
 \begin{tightitemize}
 \item A string specifying the \glref{root~directory}
@@ -2064,10 +2066,10 @@ Define a data directory sibling to the \code{source} directory of
 \item A symbol whose value is one of the above
 \end{tightitemize}
 \arg[subdirectories] One or more strings specifying, in order, subdirectories
-from \var{directory-specification\/} to the \glref{root~directory}. (The keyword
-\code{:up} or \code{:back} can also be supplied in place of any of these
-strings, indicating to go upward one semantic or syntactic level of directory
-structure, respectively.)
+from \var{directory-specification\/} to the \glref{root~directory}. (The
+keyword \code{:up} or \code{:back} can also be supplied in addition to any of
+these strings, indicating to go upward one semantic or syntactic level of
+directory structure, respectively.)
 \end{args}
 
 \fndescription \glref{Root} and \glref{relative~directory} definitions are
@@ -2082,8 +2084,15 @@ Note: When a \glref{root~directory} is used as the
 \glref{root-directory} location will not be changed if the location of the
 source \glref{root~directory} is changed.
 
+When an application-version-identifier string is supplied in \var{name\/}, it
+is concatenated to the standard \var{<platform-dir>\/} compiled-directory name
+for all compiled module files that are defined relative to this
+\glref{root-directory}.
+
 \begin{alsos}{show-defined-directories}
 \also[define-relative-directory]
+\also[get-directory]
+\also[get-root-directory]
 \also[show-defined-directories]
 \end{alsos}
 
@@ -2100,8 +2109,18 @@ containing the file containing the \textbf{define-root-directory} form:
 %
 \W\supp\notpretop
 \begin{example}
-  (define-root-directory :my-app-root 
-    (make-pathname :directory *load-truename*))
+  (define-root-directory :my-app-root *load-truename*)
+\end{example}
+%
+Define a \glref{root~directory} named \code{:my-app-root} to be the directory
+containing the file containing the \textbf{define-root-directory} form, but if
+the \code{:my-app-preprelease} feature is present, place the compiled files in
+a separate ``beta'' compile tree:
+%
+\W\supp\notpretop
+\begin{example}
+  (define-root-directory '(:my-app-root #+my-app-prerelease "beta")
+    *load-truename*)
 \end{example}
 
 \end{functiondoc}
@@ -2494,6 +2513,7 @@ t
 \also[define-relative-directory]
 \also[define-root-directory]
 \also[get-directory]
+\also[get-root-directory]
 \end{alsos}
 
 \fnexample 
