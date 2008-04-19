@@ -18,15 +18,16 @@
 <tr valign="top"><td valign="baseline" align="left"%>
 <nobr><b><font color="#000000">startup-module</font></b></nobr></td><td valign="baseline"> &nbsp; </td><td valign="baseline" align="left" width="99%"><var>module-name options <code>&#38;optional</code> package-name</var></td><td valign="baseline" align="right">[<i>Function</i>]
 </td></tr></table></p>
-<p><span class="fndoclabel">Purpose</span> <br />Compile and load a GBBopen module, even if GBBopen is not
-yet loaded, and optionally set the current package.
+<p><span class="fndoclabel">Purpose</span> <br />Compile and load a GBBopen <a href="ref-glossary.html#gl:module">module</a>, even if the
+<a href="ref-mini-module-entities.html">Mini Module system</a>is not yet loaded, and optionally
+set the current package.
 </p>
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:common-lisp-user</code> (not exported)
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;Defined in <code>initiate.lisp</code>
 </p>
 <p><span class="fndoclabel">Arguments</span><table class="tighttop">
-<tr valign="top"><td valign="baseline"><i>module-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A keyword symbol naming a module 
+<tr valign="top"><td valign="baseline"><i>module-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A keyword symbol naming a <a href="ref-glossary.html#gl:module">module</a>
 </td></tr><tr valign="top"><td valign="baseline"><i>option</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> Any of the following keywords: 
 </p>
 <table class="tight"><table><tbody><tr>
@@ -46,8 +47,8 @@ during compilation and loading</td></tr>
 loading</td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left">
-<code>:propagate</code> </td><td valign="baseline" colspan="1" align="left"> Applies the specified options to all required 
-modules</td></tr>
+<code>:propagate</code> </td><td valign="baseline" colspan="1" align="left"> Applies the specified options to all 
+<a href="ref-glossary.html#gl:required-module">required&nbsp;modules</a></td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left">
 <code>:recompile</code> </td><td valign="baseline" colspan="1" align="left"> Compiles files even if the existing compiled file is newer 
@@ -70,7 +71,7 @@ calling <b><a href="ref-compile-module.html">compile-module</a></b> on <var>modu
 <var>options</var>.  Then, unless <var>package-name</var> is <code>nil</code>, the current package
 is set to the package named by <var>package-name</var>.  The named package does not
 need to be defined before calling <b>startup-module</b>, but it must be
-defined at the conclusion of module compilation and loading.
+defined at the conclusion of <a href="ref-glossary.html#gl:module">module</a> compilation and loading.
 </p>
 <p><a name="id2"></a><b>Startup-module</b> adds the option <code>:propagate</code> to the supplied
 <var>options</var>.  If this propagation behavior is not desired, the
@@ -81,9 +82,9 @@ defined at the conclusion of module compilation and loading.
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-define-module.html"><b>define-module</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-define-tll-command.html"><b>define-tll-command</b></a>
 </p>
-<p><span class="fndoclabel">Example</span> <br />Define a top-level command named <code>:my-app</code> that compiles
-and loads the module <code>:my-app</code> and sets the current package
-to the <code>:gbbopen-user</code> package:
+<p><span class="fndoclabel">Example</span> <br />Define a top-level command named <code>:my-app</code> that compiles and loads the
+<a href="ref-glossary.html#gl:module">module</a> <code>:my-app</code> and sets the current package to the
+<code>:gbbopen-user</code> package:
 <pre class="pretop">
   (<a href="ref-define-tll-command.html">define-tll-command</a> :my-app (&amp;rest options)
     "Compile and load my GBBopen application module"

@@ -26,8 +26,8 @@
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:portable-threads</code>
 </p>
 <p><span class="fndoclabel">Arguments</span><table class="tighttop">
-<tr valign="top"><td valign="baseline"><i>lock</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#gl:lock">lock</a>, a <a href="ref-glossary.html#id151">recursive&nbsp;lock</a>, or a 
-<a href="ref-glossary.html#id22">condition&nbsp;variable</a>
+<tr valign="top"><td valign="baseline"><i>lock</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#gl:lock">lock</a>, a <a href="ref-glossary.html#id155">recursive&nbsp;lock</a>, or a 
+<a href="ref-glossary.html#id24">condition&nbsp;variable</a>
 </td></tr></table>
 </p>
 <p><span class="fndoclabel">Returns</span> <br />True if the current thread holds <var>lock</var>; <code>nil</code> otherwise.
@@ -46,7 +46,7 @@ nil
     (thread-holds-lock-p lock))
 t
 </pre>
-Two more simple examples using a <a href="ref-glossary.html#id22">condition&nbsp;variable</a>:
+Two more simple examples using a <a href="ref-glossary.html#id24">condition&nbsp;variable</a>:
 <pre>
 &gt; (thread-holds-lock-p condition-variable)
 nil

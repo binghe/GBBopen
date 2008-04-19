@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/tutorial.tex *-*
-%% *-* Last-Edit: Fri Apr 18 05:29:04 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Sat Apr 19 11:36:48 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2005-2008, Dan Corkill <corkill@GBBopen.org>
@@ -770,12 +770,12 @@ installed:
 \W\supp
 \begin{example}
 \textcolor{darkergray}{%
-  cl-user> \textcolor{black}{(load "\var{<install-dir\/>}/startup.lisp")}
-  ;; Loading \var{<install-dir\/>}/startup.lisp
-  ;;  Loading \var{<install-dir\/>}/source/mini-module/mini-module-loader.lisp
-  ;;   Loading \var{<install-dir\/>}/source/mini-module/mini-module.lisp
-  ;;     Loading \var{<install-dir\/>}/source/mini-module/mini-module-user.lisp
-  ;;  Loading \var{<install-dir\/>}/source/modules.lisp
+  cl-user> \textcolor{black}{(load "\var{<install-dir>\/}/startup.lisp")}
+  ;; Loading \var{<install-dir>\/}/startup.lisp
+  ;;  Loading \var{<install-dir>\/}/source/mini-module/mini-module-loader.lisp
+  ;;   Loading \var{<install-dir>\/}/source/mini-module/mini-module.lisp
+  ;;     Loading \var{<install-dir>\/}/source/mini-module/mini-module-user.lisp
+  ;;  Loading \var{<install-dir>\/}/source/modules.lisp
   t
   cl-user>}
 \end{example}
@@ -788,11 +788,11 @@ GBBopen modules it requires by evaluating:
 \begin{example}
 \textcolor{darkergray}{%
   cl-user> \textcolor{black}{(mini-module:compile-module :gbbopen-user :propagate :create-dirs)}
-  ;; Compiling \var{<install-dir\/>}/source/mini-module/mini-module.lisp
-  ;; Loading \var{<install-dir\/>}/\var{<platform-dir\/>}/mini-module/mini-module.fasl
+  ;; Compiling \var{<install-dir>\/}/source/mini-module/mini-module.lisp
+  ;; Loading \var{<install-dir>\/}/\var{<platform-dir>\/}/mini-module/mini-module.fasl
        ...
-  ;; Compiling \var{<install-dir\/>}/source/gbbopen/gbbopen-user.lisp
-  ;; Loading \var{<install-dir\/>}/\var{<platform-dir\/>}/gbbopen/gbbopen-user.fasl
+  ;; Compiling \var{<install-dir>\/}/source/gbbopen/gbbopen-user.lisp
+  ;; Loading \var{<install-dir>\/}/\var{<platform-dir>\/}/gbbopen/gbbopen-user.fasl
   cl-user>}
 \end{example}
 
@@ -812,13 +812,13 @@ two expressions:
 \W\supp
 \begin{example}
 \textcolor{darkergray}{%
-  cl-user> \textcolor{black}{(load "\var{<install-dir\/>}/initiate.lisp")}
-  ;; Loading \var{<install-dir\/>}/initiate.lisp
-  ;;  Loading \var{<install-dir\/>}/extended-repl.lisp
-  ;;  Loading \var{<install-dir\/>}/commands.lisp
+  cl-user> \textcolor{black}{(load "\var{<install-dir>\/}/initiate.lisp")}
+  ;; Loading \var{<install-dir>\/}/initiate.lisp
+  ;;  Loading \var{<install-dir>\/}/extended-repl.lisp
+  ;;  Loading \var{<install-dir>\/}/commands.lisp
   t
   cl-user> \textcolor{black}{(compile-gbbopen)}
-  ;; Loading \var{<install-dir\/>}/startup.lisp
+  ;; Loading \var{<install-dir>\/}/startup.lisp
      ...
   ;;; GBBopen module compilation completed.
   [~]\$}
@@ -919,7 +919,7 @@ session and evaluate the following forms:
 \W\supp
 \begin{example}
 \textcolor{darkergray}{%
-  cl-user> \textcolor{black}{(load "\var{<install-dir\/>}/startup.lisp")}
+  cl-user> \textcolor{black}{(load "\var{<install-dir>\/}/startup.lisp")}
      ...
   cl-user> \textcolor{black}{(mini-module:compile-module :gbbopen-user :propagate :create-dirs)}
      ...
@@ -1162,7 +1162,7 @@ session and evaluate the following forms:
 \W\supp
 \begin{example}
 \textcolor{darkergray}{%
-  cl-user> \textcolor{black}{(load "\var{<install-dir\/>}/startup.lisp")}
+  cl-user> \textcolor{black}{(load "\var{<install-dir>\/}/startup.lisp")}
      ...
   cl-user> \textcolor{black}{(mini-module:compile-module :gbbopen-user :propagate :create-dirs)}
      ...
@@ -1509,7 +1509,7 @@ session and evaluate the following forms:
 \W\supp
 \begin{example}
 \textcolor{darkergray}{%
-  cl-user> \textcolor{black}{(load "\var{<install-dir\/>}/startup.lisp")}
+  cl-user> \textcolor{black}{(load "\var{<install-dir>\/}/startup.lisp")}
      ...
   cl-user> \textcolor{black}{(mini-module:compile-module :gbbopen-user :propagate :create-dirs)}
      ...
@@ -2094,7 +2094,7 @@ Thus far, we have entered the forms:
 \W\supp
 \begin{example}
 \textcolor{darkergray}{%
-  cl-user> \textcolor{black}{(load "\var{<install-dir\/>}/startup.lisp")}
+  cl-user> \textcolor{black}{(load "\var{<install-dir>\/}/startup.lisp")}
      ...
   cl-user> \textcolor{black}{(mini-module:compile-module :gbbopen-user :propagate :create-dirs)}
      ...
@@ -2135,16 +2135,16 @@ Common Lisp session and enter the following form in the REPL:
 \W\supp
 \begin{example}
 \textcolor{darkergray}{%
-  cl-user> \textcolor{black}{(load "\var{<install-dir\/>}/initiate.lisp")}
-  ;; Loading \var{<install-dir\/>}/initiate.lisp
-  ;;  Loading \var{<install-dir\/>}/extended-repl.lisp
-  ;;  Loading \var{<install-dir\/>}/commands.lisp
+  cl-user> \textcolor{black}{(load "\var{<install-dir>\/}/initiate.lisp")}
+  ;; Loading \var{<install-dir>\/}/initiate.lisp
+  ;;  Loading \var{<install-dir>\/}/extended-repl.lisp
+  ;;  Loading \var{<install-dir>\/}/commands.lisp
   t
   cl-user>}
 \end{example}
 
 \index{:gbbopen-user@\textbf{:gbbopen-user} REPL command|itidx}%
-Note that the \xreflink{mini-module system}{sec:mini-module} and GBBopen
+Note that the \xreflink{Mini Module system}{sec:mini-module} and GBBopen
 module definitions have not been loaded.  Now enter the REPL
 command, \textbf{:gbbopen-user}:
 %
@@ -2152,9 +2152,9 @@ command, \textbf{:gbbopen-user}:
 \begin{example}
 \textcolor{darkergray}{%
   cl-user> \textcolor{black}{:gbbopen-user}
-  ;; Loading \var{<install-dir\/>}/startup.lisp
+  ;; Loading \var{<install-dir>\/}/startup.lisp
      ...
-  ;; Loading \var{<install-dir\/>}/\var{<platform-dir\/>}/gbbopen/gbbopen-user.fasl
+  ;; Loading \var{<install-dir>\/}/\var{<platform-dir>\/}/gbbopen/gbbopen-user.fasl
   gbbopen-user>}
 \end{example}
 %
@@ -2186,9 +2186,9 @@ name as the REPL command:
 \begin{example}
 \textcolor{darkergray}{%
   cl-user> \textcolor{black}{(gbbopen-user)}
-  ;; Loading \var{<install-dir\/>}/startup.lisp
+  ;; Loading \var{<install-dir>\/}/startup.lisp
      ...
-  ;; Loading \var{<install-dir\/>}/\var{<platform-dir\/>}/gbbopen/gbbopen-user.fasl
+  ;; Loading \var{<install-dir>\/}/\var{<platform-dir>\/}/gbbopen/gbbopen-user.fasl
   gbbopen-user>}
 \end{example}
 
@@ -2206,9 +2206,9 @@ notation.  For example:
 \begin{example}
 \textcolor{darkergray}{%
   cl-user> \textcolor{black}{(:gbbopen-user :create-dirs)}
-  ;; Loading \var{<install-dir\/>}/startup.lisp
+  ;; Loading \var{<install-dir>\/}/startup.lisp
      ...
-  ;; Loading \var{<install-dir\/>}/\var{<platform-dir\/>}/gbbopen/gbbopen-user.fasl
+  ;; Loading \var{<install-dir>\/}/\var{<platform-dir>\/}/gbbopen/gbbopen-user.fasl
   gbbopen-user>}
 \end{example}
 %
@@ -2218,9 +2218,9 @@ or
 \begin{example}
 \textcolor{darkergray}{%
   cl-user> \textcolor{black}{:gbbopen-user :create-dirs}
-  ;; Loading \var{<install-dir\/>}/startup.lisp
+  ;; Loading \var{<install-dir>\/}/startup.lisp
      ...
-  ;; Loading \var{<install-dir\/>}/\var{<platform-dir\/>}/gbbopen/gbbopen-user.fasl
+  ;; Loading \var{<install-dir>\/}/\var{<platform-dir>\/}/gbbopen/gbbopen-user.fasl
   gbbopen-user>}
 \end{example}
 
@@ -2239,9 +2239,9 @@ command requires arguments:
 \begin{example}
 \textcolor{darkergray}{%
   cl-user> \textcolor{black}{(cl-user:gbbopen-user :create-dirs)}
-  ;; Loading \var{<install-dir\/>}/startup.lisp
+  ;; Loading \var{<install-dir>\/}/startup.lisp
      ...
-  ;; Loading \var{<install-dir\/>}/\var{<platform-dir\/>}/gbbopen/gbbopen-user.fasl
+  ;; Loading \var{<install-dir>\/}/\var{<platform-dir>\/}/gbbopen/gbbopen-user.fasl
   gbbopen-user>}
 \end{example}
 %
@@ -2437,7 +2437,7 @@ initialization file:
 \W\supp
 \begin{example}
   ;; GBBopen hyperdoc (where GBBopen was installed):
-  (load "\var{<install-dir\/>}/browse-hyperdoc")
+  (load "\var{<install-dir>\/}/browse-hyperdoc")
 \end{example}
 
 If there is no \code{.emacs} file present in your home directory, simply
@@ -2450,7 +2450,7 @@ command to load GBBopen's Emacs indentation customizations:
 \W\supp
 \begin{example}
   ;; GBBopen indentations (where GBBopen was installed):
-  (load "\var{<install-dir\/>}/gbbopen-indent")
+  (load "\var{<install-dir>\/}/gbbopen-indent")
 \end{example}
 
 If you are using
@@ -2499,9 +2499,9 @@ be loaded to make \textbf{browse-hyperdoc} available.  For example:
 \begin{example}
 \textcolor{darkergray}{%
   cl-user> \textcolor{black}{:os-interface}
-  ;; Loading \var{<install-dir\/>}/startup.lisp
+  ;; Loading \var{<install-dir>\/}/startup.lisp
      ...
-  ;; Loading \var{<install-dir\/>}/\var{<platform-dir\/>}/tools/os-interface.fasl
+  ;; Loading \var{<install-dir>\/}/\var{<platform-dir>\/}/tools/os-interface.fasl
   gbbopen-tools> \textcolor{black}{(browse-hyperdoc 'define-unit-class)}
   t
   gbbopen-tools>}
@@ -2566,9 +2566,9 @@ module, using the REPL command we set up in the last exercise:
 \begin{example}
 \textcolor{darkergray}{%
   cl-user> \textcolor{black}{:gbbopen-user}
-  ;; Loading \var{<install-dir\/>}/startup.lisp
+  ;; Loading \var{<install-dir>\/}/startup.lisp
      ...
-  ;; Loading \var{<install-dir\/>}/\var{<platform-dir\/>}/gbbopen/gbbopen-user.fasl
+  ;; Loading \var{<install-dir>\/}/\var{<platform-dir>\/}/gbbopen/gbbopen-user.fasl
   gbbopen-user>}
 \end{example}
 
@@ -3366,9 +3366,9 @@ module, using the \code{:agenda-shell-user} REPL command:
 \begin{example}
 \textcolor{darkergray}{%
   cl-user> \textcolor{black}{:agenda-shell-user}
-  ;; Loading \var{<install-dir\/>}/startup.lisp
+  ;; Loading \var{<install-dir>\/}/startup.lisp
      ...
-  ;; Loading \var{<install-dir\/>}/\var{<platform-dir\/>}/gbbopen/
+  ;; Loading \var{<install-dir>\/}/\var{<platform-dir>\/}/gbbopen/
   ;;            control-shells/agenda-shell-user.fasl
   gbbopen-user>}
 \end{example}
@@ -5465,12 +5465,12 @@ the following files should be loaded:
 \begin{example}
 \textcolor{darkergray}{%
      ...
-  ;; Loading \var{<homedir\/>}/shared-init.lisp
-  ;;   Loading \var{<install-dir\/>}/initiate.lisp
-  ;;     Loading \var{<install-dir\/>}/extended-repl.lisp
-  ;;     Loading \var{<install-dir\/>}/commands.lisp
-  ;;     Loading \var{<install-dir\/>}/gbbopen-modules-directory.lisp
-  ;; Loading module command definitions from \var{<homedir\/>}/gbbopen-modules/...
+  ;; Loading \var{<homedir>\/}/shared-init.lisp
+  ;;   Loading \var{<install-dir>\/}/initiate.lisp
+  ;;     Loading \var{<install-dir>\/}/extended-repl.lisp
+  ;;     Loading \var{<install-dir>\/}/commands.lisp
+  ;;     Loading \var{<install-dir>\/}/gbbopen-modules-directory.lisp
+  ;; Loading module command definitions from \var{<homedir>\/}/gbbopen-modules/...
   cl-user>}
 \end{example}
 
@@ -5485,12 +5485,12 @@ the \code{:mini-module-user} module:
 \begin{example}
 \textcolor{darkergray}{%
   cl-user> \textcolor{black}{:mini-module-user}
-  ;; Loading \var{<install-dir\/>}/startup.lisp
+  ;; Loading \var{<install-dir>\/}/startup.lisp
      ...
-  ;;     Loading \var{<install-dir\/>}/\var{<platform-dir\/>}/mini-module/mini-module-user.fasl
-  ;;   Loading \var{<install-dir\/>}/modules.lisp
-  ;; Loading module definitions from \var{<homedir\/>}/gbbopen-modules/...
-  ;;     Loading \var{<homedir\/>}/tutorial/modules.lisp
+  ;;     Loading \var{<install-dir>\/}/\var{<platform-dir>\/}/mini-module/mini-module-user.fasl
+  ;;   Loading \var{<install-dir>\/}/modules.lisp
+  ;; Loading module definitions from \var{<homedir>\/}/gbbopen-modules/...
+  ;;     Loading \var{<homedir>\/}/tutorial/modules.lisp
   mini-module-user>}
 \end{example}
 %
@@ -5507,11 +5507,11 @@ load it:
 \begin{example}
 \textcolor{darkergray}{%
   mini-module-user> \textcolor{black}{:cm :tutorial}
-  ;;   Loading \var{<install-dir\/>}/\var{<platform-dir\/>}/tools/portable-threads.fasl
+  ;;   Loading \var{<install-dir>\/}/\var{<platform-dir>\/}/tools/portable-threads.fasl
      ...
   ;;   Loading .../gbbopen/control-shells/agenda-shell-user.fasl
 
-  Error: Directory \var{<homedir\/>}/tutorial/\var{<platform-dir\/>}/ 
+  Error: Directory \var{<homedir>\/}/tutorial/\var{<platform-dir>\/}/ 
          in module :tutorial doesn't exist.
 
   Restart actions (select using :c n):
@@ -5550,8 +5550,8 @@ continue from the error:
     0: Create this directory.
     1: Create this directory and any future missing directories.
   mini-module-user>> \textcolor{black}{:c 0}
-  ;; Compiling file \var{<homedir\/>}/tutorial/source/tutorial-example.lisp
-  ;; Loading \var{<homedir\/>}/tutorial/\var{<platform-dir\/>}/tutorial-example.fasl
+  ;; Compiling file \var{<homedir>\/}/tutorial/source/tutorial-example.lisp
+  ;; Loading \var{<homedir>\/}/tutorial/\var{<platform-dir>\/}/tutorial-example.fasl
   mini-module-user>}
 \end{example}
 
@@ -5602,12 +5602,12 @@ the following files should be loaded:
 \begin{example}
 \textcolor{darkergray}{%
      ...
-  ;; Loading \var{<homedir\/>}/shared-init.lisp
-  ;;   Loading \var{<install-dir\/>}/initiate.lisp
-  ;;     Loading \var{<install-dir\/>}/extended-repl.lisp
-  ;;     Loading \var{<install-dir\/>}/commands.lisp
-  ;;     Loading \var{<install-dir\/>}/gbbopen-modules-directory.lisp
-  ;; Loading module command definitions from \var{<homedir\/>}/gbbopen-modules/...
+  ;; Loading \var{<homedir>\/}/shared-init.lisp
+  ;;   Loading \var{<install-dir>\/}/initiate.lisp
+  ;;     Loading \var{<install-dir>\/}/extended-repl.lisp
+  ;;     Loading \var{<install-dir>\/}/commands.lisp
+  ;;     Loading \var{<install-dir>\/}/gbbopen-modules-directory.lisp
+  ;; Loading module command definitions from \var{<homedir>\/}/gbbopen-modules/...
   ;      Loading \var{<homedir>}/gbbopen-modules/tutorial/commands.lisp
   cl-user>}
 \end{example}
@@ -5622,9 +5622,9 @@ Now, we can compile and load the \code{:tutorial} module by simply issuing the
 \begin{example}
 \textcolor{darkergray}{%
   cl-user> \textcolor{black}{:tutorial}
-  ;; Loading \var{<install-dir\/>}/startup.lisp
+  ;; Loading \var{<install-dir>\/}/startup.lisp
      ...
-  ;; Loading \var{<homedir\/>}/tutorial/\var{<platform-dir\/>}/tutorial-example.fasl
+  ;; Loading \var{<homedir>\/}/tutorial/\var{<platform-dir>\/}/tutorial-example.fasl
   gbbopen-user>}
 \end{example}
 %
@@ -5857,9 +5857,9 @@ a fresh Common Lisp session.  Next enter the
 \begin{example}
 \textcolor{darkergray}{%
   cl-user> \textcolor{black}{:tutorial}
-  ;; Loading \var{<install-dir\/>}/startup.lisp
+  ;; Loading \var{<install-dir>\/}/startup.lisp
      ...
-  ;; Loading \var{<homedir\/>}/tutorial/\var{<platform-dir\/>}/tutorial-example.fasl
+  ;; Loading \var{<homedir>\/}/tutorial/\var{<platform-dir>\/}/tutorial-example.fasl
   tutorial>}
 \end{example}
 %
@@ -5948,8 +5948,8 @@ random walk:
 \begin{example}
 \textcolor{darkergray}{%
   tutorial> \textcolor{black}{:tutorial}
-  ;; Compiling \var{<homedir\/>}/tutorial/source/tutorial-example.lisp
-  ;; Loading \var{<homedir\/>}/tutorial/\var{<platform-dir\/>}/tutorial-example.fasl
+  ;; Compiling \var{<homedir>\/}/tutorial/source/tutorial-example.lisp
+  ;; Loading \var{<homedir>\/}/tutorial/\var{<platform-dir>\/}/tutorial-example.fasl
   ;; Control shell 1 started
 
   Walked off the world: (11, -51).
@@ -6013,8 +6013,8 @@ loaded and its ``autorun'' form evaluated:
 \begin{example}
 \textcolor{darkergray}{%
   tutorial> \textcolor{black}{:tutorial}
-  ;; Loading \var{<homedir\/>}/tutorial/modules.lisp
-  ;; Loading \var{<homedir\/>}/tutorial/\var{<platform-dir\/>}/tutorial-example.fasl
+  ;; Loading \var{<homedir>\/}/tutorial/modules.lisp
+  ;; Loading \var{<homedir>\/}/tutorial/\var{<platform-dir>\/}/tutorial-example.fasl
   ;; Control shell 1 started
      ...
   tutorial>}
@@ -6031,7 +6031,7 @@ Let's try the \code{:tutorial} command one more time, just to be certain that
 \begin{example}
 \textcolor{darkergray}{%
   tutorial> \textcolor{black}{:tutorial}
-  ;; Loading \var{<homedir\/>}/tutorial/\var{<platform-dir\/>}/tutorial-example.fasl
+  ;; Loading \var{<homedir>\/}/tutorial/\var{<platform-dir>\/}/tutorial-example.fasl
   ;; Control shell 1 started
      ...
   tutorial>}
@@ -6047,8 +6047,8 @@ we specify our \code{:tutorial} command:
 \begin{example}
 \textcolor{darkergray}{%
   tutorial> :tutorial :reload
-  ;;   Loading \var{<install-dir\/>}/\var{<platform-dir\/>}/mini-module/mini-module.fasl
-  ;;     Loading \var{<install-dir\/>}/\var{<platform-dir\/>}/mini-module/mini-module-user.fasl
+  ;;   Loading \var{<install-dir>\/}/\var{<platform-dir>\/}/mini-module/mini-module.fasl
+  ;;     Loading \var{<install-dir>\/}/\var{<platform-dir>\/}/mini-module/mini-module-user.fasl
 
      ...
   ;; Control shell 1 started
@@ -6067,7 +6067,7 @@ when we specify our \code{:tutorial} command:
 \begin{example}
 \textcolor{darkergray}{%
   tutorial> :tutorial :reload :nopropagate
-  ;; Loading \var{<homedir\/>}/tutorial/\var{<platform-dir\/>}/tutorial-example.fasl
+  ;; Loading \var{<homedir>\/}/tutorial/\var{<platform-dir>\/}/tutorial-example.fasl
   ;; Control shell 1 started
      ...
   tutorial>}
@@ -6095,7 +6095,7 @@ once we have issued the first \code{:tutorial} REPL command:
 \textcolor{darkergray}{%
   tutorial> \textcolor{black}{:cm}
   ;; :cm :tutorial :propagate
-  ;; Loading \var{<homedir\/>}/tutorial/\var{<platform-dir\/>}/tutorial-example.fasl
+  ;; Loading \var{<homedir>\/}/tutorial/\var{<platform-dir>\/}/tutorial-example.fasl
   ;; Control shell 1 started
      ...
   tutorial>}
@@ -6188,11 +6188,11 @@ Let's double-check that everything is working:
 \textcolor{darkergray}{%
   tutorial> \textcolor{black}{:cm}
   ;; :cm :tutorial :propagate
-  ;; Loading \var{<homedir\/>}/tutorial/modules.lisp
-  ;; Compiling \var{<homedir\/>}/tutorial/source/tutorial-example.lisp
-  ;; Loading \var{<homedir\/>}/tutorial/\var{<platform-dir\/>}/tutorial-example.fasl
-  ;; Compiling \var{<homedir\/>}/tutorial/source/autorun.lisp
-  ;; Loading \var{<homedir\/>}/tutorial/\var{<platform-dir\/>}/autorun.fasl
+  ;; Loading \var{<homedir>\/}/tutorial/modules.lisp
+  ;; Compiling \var{<homedir>\/}/tutorial/source/tutorial-example.lisp
+  ;; Loading \var{<homedir>\/}/tutorial/\var{<platform-dir>\/}/tutorial-example.fasl
+  ;; Compiling \var{<homedir>\/}/tutorial/source/autorun.lisp
+  ;; Loading \var{<homedir>\/}/tutorial/\var{<platform-dir>\/}/autorun.fasl
   ;; Control shell 1 started
      ...
   tutorial>}
@@ -6208,7 +6208,7 @@ files have been modified:
 \textcolor{darkergray}{%
   tutorial> \textcolor{black}{:cm}
   ;; :cm :tutorial :propagate
-  ;; Loading \var{<homedir\/>}/tutorial/\var{<platform-dir\/>}/autorun.fasl
+  ;; Loading \var{<homedir>\/}/tutorial/\var{<platform-dir>\/}/autorun.fasl
   ;; Control shell 1 started
      ...
   tutorial>}

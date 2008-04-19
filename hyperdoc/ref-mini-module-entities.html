@@ -14,24 +14,23 @@
 <table width="100%" cellpadding="0" cellspacing="2"><tr>
 <td bgcolor="#99ccff"><a href="ref-starting-up.html"><img border="0" alt="Starting Up" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="reference_0.html"><img border="0" alt="Top" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-tools-entities.html"><img border="0" alt="Tools" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b>Mini-Module Facility</b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table>
 <h1>Mini-Module Facility</h1>
-<p>The mini-module facility provides a lightweight and easy to use mechanism
-for compiling and loading module files.  The facility keeps track of the
+<p>The Mini Module facility provides a lightweight and easy to use mechanism for
+compiling and loading <a href="ref-glossary.html#gl:module">module</a> files.  The facility keeps track of the
 dependencies between modules and the modules that have been compiled and
-loaded. The mini-module facility was designed for simplicity and
-portability, yet it is powerful enough to manage substantial software
-projects, each operating on multiple hardware platforms and Common Lisp
-implementations.
+loaded. The Mini Module facility was designed for simplicity and portability,
+yet it is powerful enough to manage substantial software projects, each
+operating on multiple hardware platforms and Common Lisp implementations.
 </p>
-<p>The mini-module facility is sufficient for many situations, and if not,
+<p>The Mini Module facility is sufficient for many situations, and if not,
 there are more complex open-source <b>defsystem</b> packages, such as ASDF
 (<a target="_top" href="http://constantly.at/lisp/asdf/">http://constantly.at/lisp/asdf/</a>), that are available.
 </p>
-<p><a name="id1">The</a> <code>:mini-module</code> module is automatically loaded by the GBBopen
+<p><a name="id1">The</a> <code>:mini-module</code> <a href="ref-glossary.html#gl:module">module</a> is automatically loaded by the GBBopen
 <code><var>&lt;install-directory&gt;</var>/startup.lisp</code> file (via the
 <code>mini-module-loader.lisp</code> file located in the <code>mini-module</code>
 subdirectory). If a <code>gbbopen-init.lisp</code> file (source or compiled) is
 present in the user's &#8220;home&#8221; directory, it is loaded immediately following
-the loading of the mini-module facility by the
+the loading of the Mini Module facility by the
 <code><var>&lt;install-directory&gt;</var>/startup.lisp</code> file.  A personal
 <code><var>&lt;homedir&gt;</var>/gbbopen-init.lisp</code> file is very useful for defining
 GBBopen parameters and other personalizations
@@ -39,7 +38,7 @@ GBBopen parameters and other personalizations
 </p>
 <p><h3>Stand-alone usage</h3>
 </p>
-<p>To bootstrap the Mini-Module Facility stand-alone (separate from the GBBopen
+<p>To bootstrap the Mini Module facility stand-alone (separate from the GBBopen
 Project software tree), do the following:
 </p>
 <p><ul class="tight"><li>create a &#8220;root&#8221; directory to contain the mini-module software tree<br />(for example: <code>&#36; mkdir my-tree</code>)
@@ -55,7 +54,7 @@ files into the<br /><code>source/mini-module</code> directory
 <code>mini-module-loader.lisp</code> file<br />&nbsp;&nbsp;&nbsp;<code>&gt; (load "my-tree/source/mini-module/mini-module-loader")</code>
 <li>compile the <code>:mini-module</code> and <code>:mini-module-user</code> modules:<br />&nbsp;&nbsp;&nbsp;<code>&gt; (mini-module:<a href="ref-compile-module.html">compile-module</a> :mini-module-user :create-dirs :propagate)</code>
 </ul>
-The Mini-Module Facility can now be used stand-alone by loading
+The Mini Module facility can now be used stand-alone by loading
 <code>source/mini-module-loader.lisp</code> as part of your Common Lisp
 initialization.
 </p>
@@ -70,6 +69,7 @@ initialization.
 <li><a href="ref-define-root-directory.html"><font color="#000000">define-root-directory</font></a></li>
 <li><a href="ref-describe-module.html"><font color="#000000">describe-module</font></a></li>
 <li><a href="ref-get-directory.html"><font color="#000000">get-directory</font></a></li>
+<li><a href="ref-get-root-directory.html"><font color="#000000">get-root-directory</font></a></li>
 <li><a href="ref-load-module.html"><font color="#000000">load-module</font></a></li>
 <li><a href="ref-load-module-file.html"><font color="#000000">load-module-file</font></a></li>
 <li><a href="ref-module-directories.html"><font color="#000000">module-directories</font></a></li>

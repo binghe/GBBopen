@@ -18,18 +18,18 @@
 <tr valign="top"><td valign="baseline" align="left"%>
 <nobr><b><font color="#000000">make-condition-variable</font></b></nobr></td><td valign="baseline"> &nbsp; </td><td valign="baseline" align="left" width="99%"><code>&#38;rest</code> <var>initargs</var> <br /><code>&#38;key</code> <var>class lock</var> <br /><i> =&gt; </i> <var>condition-variable</var></td><td valign="baseline" align="right">[<i>Function</i>]
 </td></tr></table></p>
-<p><span class="fndoclabel">Purpose</span> <br />Create a new <a href="ref-glossary.html#id22">condition&nbsp;variable</a>.
+<p><span class="fndoclabel">Purpose</span> <br />Create a new <a href="ref-glossary.html#id24">condition&nbsp;variable</a>.
 </p>
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:portable-threads</code>
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:portable-threads</code>
 </p>
 <p><span class="fndoclabel">Arguments</span><table class="tighttop">
-<tr valign="top"><td valign="baseline"><i>initargs</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An <a href="ref-glossary.html#id85">initialization&nbsp;argument&nbsp;list</a>
+<tr valign="top"><td valign="baseline"><i>initargs</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An <a href="ref-glossary.html#id87">initialization&nbsp;argument&nbsp;list</a>
 </td></tr><tr valign="top"><td valign="baseline"><i>class</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> The name of the <a href="ref-glossary.html#gl:class">class</a> for the created
 <a href="ref-glossary.html#gl:condition-variable">condition-variable</a> instance (default is <code>condition-variable</code>)
-</td></tr><tr valign="top"><td valign="baseline"><i>lock</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#gl:lock">lock</a>, a <a href="ref-glossary.html#id151">recursive&nbsp;lock</a>, or a 
-<a href="ref-glossary.html#id22">condition&nbsp;variable</a> (default is a non-recursive lock)
+</td></tr><tr valign="top"><td valign="baseline"><i>lock</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#gl:lock">lock</a>, a <a href="ref-glossary.html#id155">recursive&nbsp;lock</a>, or a 
+<a href="ref-glossary.html#id24">condition&nbsp;variable</a> (default is a non-recursive lock)
 </td></tr></table>
 </p>
 <p><span class="fndoclabel">Returns</span> <br />The created <b><a href="ref-condition-variable.html">condition-variable</a></b>.
@@ -44,7 +44,7 @@
 #&lt;condition-variable&gt;
 </pre>
 Make a <b>condition-variable</b> instance with a
-<a href="ref-glossary.html#id151">recursive&nbsp;lock</a>:
+<a href="ref-glossary.html#id155">recursive&nbsp;lock</a>:
 <pre>
 &gt; (make-condition-variable :lock (<a href="ref-make-recursive-lock.html">make-recursive-lock</a>))
 #&lt;condition-variable&gt;
@@ -57,7 +57,7 @@ Define a subclass of <b>condition-variable</b> that includes a
             :initform nil
             :accessor state-of)))
 </pre>
-and then create a <code>state-cv</code> instance with a <a href="ref-glossary.html#id151">recursive&nbsp;lock</a>:
+and then create a <code>state-cv</code> instance with a <a href="ref-glossary.html#id155">recursive&nbsp;lock</a>:
 <pre>
 &gt; (make-condition-variable :class 'state-cv
                            :lock (<a href="ref-make-recursive-lock.html">make-recursive-lock</a>))

@@ -19,14 +19,14 @@
 <nobr><b><font color="#000000">compile-module</font></b></nobr></td><td valign="baseline"> &nbsp; </td><td valign="baseline" align="left" width="99%"><var>module-name</var>
 <code>&#38;rest</code> <var>options</var></td><td valign="baseline" align="right">[<i>Function</i>]
 </td></tr></table></p>
-<p><span class="fndoclabel">Purpose</span> <br />Compiles and loads the files in a module.
+<p><span class="fndoclabel">Purpose</span> <br />Compiles and loads the files in a <a href="ref-glossary.html#gl:module">module</a>.
 </p>
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:mini-module</code>
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:mini-module</code>
 </p>
 <p><span class="fndoclabel">Arguments</span><table class="tighttop">
-<tr valign="top"><td valign="baseline"><i>module-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A keyword symbol naming a module 
+<tr valign="top"><td valign="baseline"><i>module-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A keyword symbol naming a <a href="ref-glossary.html#gl:module">module</a>
 </td></tr><tr valign="top"><td valign="baseline"><i>option</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> Any of the following keywords: 
 </p>
 <table class="tight"><table><tbody><tr>
@@ -46,8 +46,8 @@ during compilation and loading</td></tr>
 loading</td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left">
-<code>:propagate</code> </td><td valign="baseline" colspan="1" align="left"> Applies the specified options to all required 
-modules</td></tr>
+<code>:propagate</code> </td><td valign="baseline" colspan="1" align="left"> Applies the specified options to all 
+<a href="ref-glossary.html#gl:required-module">required&nbsp;modules</a></td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left">
 <code>:recompile</code> </td><td valign="baseline" colspan="1" align="left"> Compiles files even if the existing compiled file is newer 
@@ -66,13 +66,13 @@ is newer than the source file (implies <code>:reload</code>)</td></tr>
 <p><span class="fndoclabel">Errors</span> <br />Module <var>module-name</var> has not been defined.
 </p>
 <p><span class="fndoclabel">Description</span> <br />These file options, when specified for individual files in the
-module definition (see <b><a href="ref-define-module.html">define-module</a></b>), have the
+<a href="ref-glossary.html#gl:module">module</a> definition (see <b><a href="ref-define-module.html">define-module</a></b>), have the
 following effects (overriding the behavior of <var>options</var> supplied to
 <b>compile-module</b>): </p>
 <table class="tight"><table><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <code>:forces-recompile</code>&nbsp;&nbsp;&nbsp; </td><td valign="baseline" colspan="1" align="left"> If the file has changed, recompile and
-reload all subsequent files and modules </td></tr>
+reload all subsequent files and <a href="ref-glossary.html#gl:modules">modules</a></td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left">
 <code>:noload</code> </td><td valign="baseline" colspan="1" align="left"> Compile, but do not load the file </td></tr>
@@ -96,8 +96,8 @@ reload all subsequent files and modules </td></tr>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-load-module-file.html"><b>load-module-file</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-startup-module.html"><b>startup-module</b></a>
 </p>
-<p><span class="fndoclabel">Example</span> <br />Compile and load the GBBopen User module and all its
-required modules, creating new compilation directories if they do not
+<p><span class="fndoclabel">Example</span> <br />Compile and load the GBBopen User <a href="ref-glossary.html#gl:module">module</a> and all its
+<a href="ref-glossary.html#gl:required-module">required&nbsp;modules</a>, creating new compilation directories if they do not
 exist already:
 <pre class="pretop">
   (compile-module :gbbopen-user :propagate :create-dirs)

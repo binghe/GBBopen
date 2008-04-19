@@ -19,20 +19,20 @@
 <nobr><b><font color="#000000">define-module</font></b></nobr></td><td valign="baseline"> &nbsp; </td><td valign="baseline" align="left" width="99%"><var>module-name
 module-option</var>*</td><td valign="baseline" align="right">[<i>Macro</i>]
 </td></tr></table></p>
-<p><span class="fndoclabel">Purpose</span> <br />Defines a module to the module facility.
+<p><span class="fndoclabel">Purpose</span> <br />Defines a <a href="ref-glossary.html#gl:module">module</a> to the Mini Module facility.
 </p>
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:mini-module</code>
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:mini-module</code>
 </p>
 <p><span class="fndoclabel">Arguments</span><table class="tighttop">
-<tr valign="top"><td valign="baseline"><i>module-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A keyword symbol naming a module 
+<tr valign="top"><td valign="baseline"><i>module-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A keyword symbol naming a <a href="ref-glossary.html#gl:module">module</a>
 </td></tr><tr valign="top"><td valign="baseline"><i>module-options</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> See below
 </td></tr></table>
 </p>
 <p><span class="fndoclabel">Errors</span> <br />The value <code>:requires</code> module option specifies a fully expanded
-required-module order that conflicts with the fully expanded required-module
-order in a previously defined module.
+<a href="ref-glossary.html#gl:required-module">required-module</a> order that conflicts with the fully expanded
+<a href="ref-glossary.html#gl:required-module">required-module</a> order in a previously defined <a href="ref-glossary.html#gl:module">module</a>.
 </p>
 <p><table class="tighttop" width="100%"></table>
 <span class="fndoclabel">Detailed syntax</span><br /></p>
@@ -68,13 +68,13 @@ order in a previously defined module.
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
 <p><span class="fndoclabel">Terms</span><table class="tighttop">
-<tr valign="top"><td valign="baseline"><i>root-or-relative-directory</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A keyword naming a <a href="ref-glossary.html#gl:root">root</a> or
-<a href="ref-glossary.html#id153">relative&nbsp;directory</a>, a keyword naming another module, or <code>nil</code>,
-indicating that the module is rooted at the <code>*load-truename*</code> value in
-effect when the module definition is loaded
+<tr valign="top"><td valign="baseline"><i>root-or-relative-directory</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A keyword naming a <a href="ref-glossary.html#gl:Root">root</a> or
+<a href="ref-glossary.html#id157">relative&nbsp;directory</a>, a keyword naming another <a href="ref-glossary.html#gl:module">module</a>, or
+<code>nil</code>, indicating that the module is rooted at the <code>*load-truename*</code>
+value in effect when the module definition is loaded
 </td></tr><tr valign="top"><td valign="baseline"><i>subdirectory</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A string naming a subdirectory
 </td></tr><tr valign="top"><td valign="baseline"><i>file-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A string naming a file
-</td></tr><tr valign="top"><td valign="baseline"><i>module-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A keyword symbol naming a module 
+</td></tr><tr valign="top"><td valign="baseline"><i>module-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A keyword symbol naming a <a href="ref-glossary.html#gl:module">module</a>
 </td></tr></table>
 </p>
 <p><span class="fndoclabel">Description</span> <br />The <var>module-options</var> <code>:requires</code>,
@@ -82,32 +82,33 @@ effect when the module definition is loaded
 but at most one of each is allowed.
 </p>
 <p>If a <code>:directory</code> module option is not specified, an implicit root
-directory for the module (at the <code>*load-truename*</code> of the file containing
-the <b>define-module</b> form) is used.  If the <code>:directory</code> module
-option specifies a keyword naming another module, the directory specification
-of the named module is used as the base (root or relative) directory for the
-module that is being defined.  If both a module and a root or relative directory
-definition have the same name, the directory definition takes precedence over
-the module directory specification.
+directory for the <a href="ref-glossary.html#gl:module">module</a> (at the <code>*load-truename*</code> of the file
+containing the <b>define-module</b> form) is used.  If the <code>:directory</code>
+module option specifies a keyword naming another <a href="ref-glossary.html#gl:module">module</a>, the directory
+specification of the named module is used as the base (root or relative)
+directory for the module that is being defined.  If both a <a href="ref-glossary.html#gl:module">module</a> and
+a <a href="ref-glossary.html#gl:Root">root</a> or <a href="ref-glossary.html#id157">relative&nbsp;directory</a> definition have the same name,
+the directory definition takes precedence over the module directory
+specification.
 </p>
-<p>The <code>:requires</code> module option specifies, in order, the modules that must
-be loaded before this module.  The fully expanded required-module order
-determined from the specified <code>:requires</code> module option must be
-consistent with all previously defined modules.
+<p>The <code>:requires</code> module option specifies, in order, the <a href="ref-glossary.html#gl:modules">modules</a>
+that must be loaded before this <a href="ref-glossary.html#gl:module">module</a>.  The fully expanded
+<a href="ref-glossary.html#gl:required-module">required-module</a> order determined from the specified <code>:requires</code>
+module option must be consistent with all previously defined modules.
 </p>
 <p>The <code>:files</code> module option specifies, in order, the files that are
-compiled (when appropriate) and loaded for this module.  The combination of
-the <code>:requires</code> and <code>:files</code> module options specifies a total
-ordering of all the files that must be loaded for this module (the files
-associated with each of the required modules followed by the files specified
-for this module).
+compiled (when appropriate) and loaded for this <a href="ref-glossary.html#gl:module">module</a>.  The
+combination of the <code>:requires</code> and <code>:files</code> module options specifies
+a total ordering of all the files that must be loaded for this <a href="ref-glossary.html#gl:module">module</a>
+(the files associated with each of the <a href="ref-glossary.html#gl:required-module">required&nbsp;modules</a> followed by
+the files specified for this <a href="ref-glossary.html#gl:module">module</a>).
 </p>
 <p><var>File-options</var> have the following effects: 
 </p>
 <table class="tight"><table><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <code>:forces-recompile</code>&nbsp;&nbsp;&nbsp; </td><td valign="baseline" colspan="1" align="left"> If the file has changed, recompile and
-reload all subsequent files and modules </td></tr>
+reload all subsequent files and <a href="ref-glossary.html#gl:modules">modules</a></td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left">
 <code>:noload</code> </td><td valign="baseline" colspan="1" align="left"> Compile, but do not load the file </td></tr>
@@ -130,7 +131,7 @@ reload all subsequent files and modules </td></tr>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-load-module.html"><b>load-module</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-load-module-file.html"><b>load-module-file</b></a>
 </p>
-<p><span class="fndoclabel">Examples</span> <br /><a name="id2">Define</a> a root directory and module for <code>:my-app</code>:
+<p><span class="fndoclabel">Examples</span> <br /><a name="id2">Define</a> a <a href="ref-glossary.html#id163">root&nbsp;directory</a> and <a href="ref-glossary.html#gl:module">module</a> for <code>:my-app</code>:
 <pre class="pretop">
   (<a href="ref-define-root-directory.html">define-root-directory</a> :my-app-root 
     (make-pathname :directory "~/my-app"))
@@ -145,7 +146,7 @@ reload all subsequent files and modules </td></tr>
             "epilogue"))
 </pre>
 </p>
-<p>Define a module for <code>:my-app</code> rooted relative to the file 
+<p>Define a <a href="ref-glossary.html#gl:module">module</a> for <code>:my-app</code> rooted relative to the file 
 containing the <b>define-module</b> form:
 <pre class="pretop">
   (define-module :my-app

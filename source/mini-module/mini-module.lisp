@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/mini-module/mini-module.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Apr 16 10:28:18 2008 *-*
+;;;; *-* Last-Edit: Sat Apr 19 10:24:52 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -179,6 +179,7 @@
             dotted-conc-name            ; part of tools, but placed here; not
                                         ; documented
             get-directory
+            get-root-directory          ; not yet documented
             list-modules                ; not yet documented
             load-module
             load-module-file
@@ -1310,6 +1311,30 @@
   (declare (dynamic-extent subdirectories))
   (compute-relative-directory name subdirectories nil))
 
+;;; ---------------------------------------------------------------------------
+;;;  Get root directory
+
+(defun get-root-directory (name)
+  ;;; Returns the root directory of `name', where name can be a root
+  ;;; directory, a relative directory, or a module-relative directory.
+  (let ((mm-dir (gethash name *mm-directories*)))
+    (typecase mm-dir
+      (mm-relative-directory
+       (get-root-directory (mm-relative-directory.root mm-dir)))
+      (mm-root-directory (mm-root-directory.path mm-dir))
+      (otherwise
+       (let ((module 
+              ;; Check if we have a module reference (look without the
+              ;; get-module error check):
+              (gethash name *mm-modules*)))
+         (cond 
+          ;; The reference is module relative:
+          (module
+           (when (eq name (mm-module.directory module))
+             (error "Directory ~s is defined in terms of itself" name))
+           (get-root-directory (mm-module.directory module)))
+          (t (error "Directory ~s is not defined." name))))))))
+ 
 ;;; ===========================================================================
 ;;;  Define the mini-module directory root and the :mini-module and
 ;;;  :mini-module-user modules

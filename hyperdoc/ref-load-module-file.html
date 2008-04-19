@@ -20,15 +20,15 @@
 <code>&#38;rest</code> <var>options</var> 
 <i> =&gt; </i> <var>pathname</var></td><td valign="baseline" align="right">[<i>Function</i>]
 </td></tr></table></p>
-<p><span class="fndoclabel">Purpose</span> <br />Loads a single file from a module.
+<p><span class="fndoclabel">Purpose</span> <br />Load a single file from a <a href="ref-glossary.html#gl:module">module</a>.
 </p>
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:mini-module</code>
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:mini-module</code>
 </p>
 <p><span class="fndoclabel">Arguments</span><table class="tighttop">
-<tr valign="top"><td valign="baseline"><i>module-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A keyword symbol naming a module 
-</td></tr><tr valign="top"><td valign="baseline"><i>file-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A string naming a file in the module 
+<tr valign="top"><td valign="baseline"><i>module-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A keyword symbol naming a <a href="ref-glossary.html#gl:module">module</a>
+</td></tr><tr valign="top"><td valign="baseline"><i>file-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A string naming a file in the <a href="ref-glossary.html#gl:module">module</a>
 </td></tr><tr valign="top"><td valign="baseline"><i>option</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> Any of the following keywords: 
 </p>
 <table class="tight"><table><tbody><tr>
@@ -52,9 +52,9 @@ is newer than the source file</td></tr>
 <p><span class="fndoclabel">Errors</span> <br />Module <var>module-name</var> has not been defined.  File
 <var>file-name</var> is not associated with the module.
 </p>
-<p><span class="fndoclabel">Description</span> <br />File options specified for individual files in the module
-definition (see <b><a href="ref-define-module.html">define-module</a></b>) are ignored by
-<b>load-module-file</b>.
+<p><span class="fndoclabel">Description</span> <br />File options specified for individual files in the
+<a href="ref-glossary.html#gl:module">module</a> definition (see <b><a href="ref-define-module.html">define-module</a></b>) are
+ignored by <b>load-module-file</b>.
 </p>
 <p><span class="fndoclabel">See also</span>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-autorun-modules-var.html"><b>*autorun-modules*</b></a>
@@ -62,10 +62,11 @@ definition (see <b><a href="ref-define-module.html">define-module</a></b>) are i
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-load-module.html"><b>load-module</b></a>
 </p>
 <p><span class="fndoclabel">Example</span> <br />Load the source of the file <code>tools</code> from the GBBopen
-Tools module:
+Tools <a href="ref-glossary.html#gl:module">module</a>:
 <pre class="pretop">
 &gt; (load-module-file :gbbopen-tools "tools" :source)
-#P"/home/GBBopen/current/source/tools/tools.lisp"
+;; Loading <var>&lt;install-dir&gt;</var>/source/tools/tools.lisp
+#P"<var>&lt;install-dir&gt;</var>/source/tools/tools.lisp"
 </pre>
 </p>
 <hr /><address><a target="_top" class="address"
