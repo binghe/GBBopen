@@ -53,9 +53,9 @@ shortcut to the Common Lisp <code>describe</code> function:
     (describe (eval obj)))
 </pre>
 </p>
-<p>Define a top-level command named <code>:my-app</code> that compiles
-and loads the module <code>:my-app</code> and sets the current package
-to the <code>:gbbopen-user</code> package:
+<p>Define a top-level command named <code>:my-app</code> that compiles and loads the
+<a href="ref-glossary.html#gl:module">module</a> <code>:my-app</code> and sets the current package to the
+<code>:gbbopen-user</code> package:
 <pre class="pretop">
   (define-tll-command :my-app (&amp;rest options)
     "Compile and load my GBBopen application module"

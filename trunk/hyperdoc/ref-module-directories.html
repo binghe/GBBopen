@@ -19,14 +19,14 @@
 <nobr><b><font color="#000000">module-directories</font></b></nobr></td><td valign="baseline"> &nbsp; </td><td valign="baseline" align="left" width="99%"><var>module-name</var>
 <i> =&gt; </i> <var>source-directory,&nbsp;compiled-directory</var></td><td valign="baseline" align="right">[<i>Function</i>]
 </td></tr></table></p>
-<p><span class="fndoclabel">Purpose</span> <br />Return the source and compiled directories of a module.
+<p><span class="fndoclabel">Purpose</span> <br />Return the source and compiled directories of a <a href="ref-glossary.html#gl:module">module</a>.
 </p>
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:mini-module</code>
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:mini-module</code>
 </p>
 <p><span class="fndoclabel">Arguments</span><table class="tighttop">
-<tr valign="top"><td valign="baseline"><i>module-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A keyword symbol naming a module 
+<tr valign="top"><td valign="baseline"><i>module-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A keyword symbol naming a <a href="ref-glossary.html#gl:module">module</a>
 </td></tr></table>
 </p>
 <p><span class="fndoclabel">Returns</span> <br />Two values: the source directory and the compiled directory.
@@ -37,11 +37,11 @@
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-define-module.html"><b>define-module</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-load-module-file.html"><b>load-module-file</b></a>
 </p>
-<p><span class="fndoclabel">Example</span> <br />Return the source and compiled directories of the Agenda Shell module:
+<p><span class="fndoclabel">Example</span> <br />Return the source and compiled directories of the Agenda Shell <a href="ref-glossary.html#gl:module">module</a>:
 <pre class="pretop">
 &gt; (module-directories :agenda-shell)
-#P"/home/GBBopen/current/source/gbbopen/control-shells"
-#P"/home/GBBopen/current/<i>compiled-dir-name</i>/gbbopen/control-shells"
+#P"<var>&lt;install-dir&gt;</var>/source/gbbopen/control-shells"
+#P"<var>&lt;install-dir&gt;</var>/<var>&lt;platform-dir&gt;</var>/gbbopen/control-shells"
 </pre> 
 </p>
 <hr /><address><a target="_top" class="address"

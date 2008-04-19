@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Thu Apr 17 19:33:08 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Sat Apr 19 11:52:08 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -204,7 +204,7 @@ The open-source licensing of GBBopen provides a number of important benefits:
   software depends. This is particularly important given the highly
   specialized nature of blackboard-system software and the lack of
   multiple implementations.
-\item GBBopen supports alternative and additional GBBopen modules for
+\item GBBopen supports alternative and additional GBBopen \glref{modules} for
   use in research and experimentation.
 \end{itemize}
 }% end of intro
@@ -350,8 +350,8 @@ and \xsitelink{Hyperlatex}{http://hyperlatex.sourceforge.net/} 2.9a.
 \code{:nopropagate} & Cancels (overrides) a specified :propagate option\\[2pt]
 \code{:print} & Incrementally prints information during compilation and
   loading\\[2pt]
-\code{:propagate} & Applies the specified options to all required 
-  modules\\[2pt]
+\code{:propagate} & Applies the specified options to all 
+  \glref{required~modules}\\[2pt]
 \code{:recompile} & Compiles files even if the existing compiled file is newer 
   than the source file\\[2pt]
 \code{:reload} & Loads files even if they are already loaded\\[2pt]
@@ -376,8 +376,8 @@ and \xsitelink{Hyperlatex}{http://hyperlatex.sourceforge.net/} 2.9a.
 \code{:nopropagate} & Cancels (overrides) a specified :propagate option\\[2pt]
 \code{:print} & Incrementally prints information during compilation and
   loading\\[2pt]
-\code{:propagate} & Applies the specified options to all required 
-  modules\\[2pt]
+\code{:propagate} & Applies the specified options to all 
+  \glref{required~modules}\\[2pt]
 \code{:reload} & Loads files even if they are already loaded\\[2pt]
 \code{:source} & Loads from the source file even if the existing compiled file
   is newer than the source file (implies \code{:reload})\\[2pt]
@@ -409,7 +409,7 @@ and \xsitelink{Hyperlatex}{http://hyperlatex.sourceforge.net/} 2.9a.
 \newcommand{\compilemodulefileoptions}{\T\\[4pt] 
 \begin{tabular}{@{~~~}l@{}l@{}}
 \code{:forces-recompile}~~~ & If the file has changed, recompile and
-reload all subsequent files and modules \\[2pt]
+reload all subsequent files and \glref{modules}\\[2pt]
 \code{:noload} & Compile, but do not load the file \\[2pt]
 \code{:recompile} & Always recompile the file \\[2pt]
 \code{:reload} & Always reload the file \\[2pt]
@@ -426,7 +426,7 @@ reload all subsequent files and modules \\[2pt]
 \newcommand{\loadmodulefileoptions}{\T\\[4pt] 
 \begin{tabular}{@{~~~}l@{}l@{}}
 \code{:forces-recompile}~~~ & If the file has changed, recompile and
-reload all subsequent files and modules \\[2pt]
+reload all subsequent files and \glref{modules}\\[2pt]
 \code{:noautorun}~~~ & Binds \textbf{\entlink{*autorun-modules*}} to nil
   during compilation and loading\\[2pt]
 \code{:print} & Incrementally prints information during compilation and
@@ -1085,25 +1085,24 @@ A \var{dimension-value-place\/} with two
 \section{Starting Up}
 \label{sec:startup}%
 
-GBBopen is packaged with its own \reflink{module
-  system}{sec:mini-module} that supports compiling and loading GBBopen
-components.  This mini-module facility is designed for ease of use and
-for simplicity in porting to Common Lisp implementations.  For
-example, to compile all core GBBopen modules and execute a basic
-trip-tests file, you only need to evaluate the following forms within
-your Common Lisp environment:
+GBBopen is packaged with its own \reflink{module system}{sec:mini-module} that
+supports compiling and loading GBBopen components.  This Mini Module facility
+is designed for ease of use and for simplicity in porting to Common Lisp
+implementations.  For example, to compile all core GBBopen \glref{modules} and
+execute a basic trip-tests file, you only need to evaluate the following forms
+within your Common Lisp environment:
 %
 \W\supp
 \begin{example}
-  > (load "\var{<install-dir\/>}startup.lisp")
-  ;; Loading \var{<install-dir\/>}/startup.lisp
-  ;;  Loading \var{<install-dir\/>}/source/mini-module/mini-module-loader.lisp
-  ;;   Loading \var{<install-dir\/>}/source/mini-module/mini-module.lisp
-  ;;     Loading \var{<install-dir\/>}/source/mini-module/mini-module-user.lisp
-  ;;  Loading \var{<install-dir\/>}/source/modules.lisp
+  > (load "\var{<install-dir>\/}/startup.lisp")
+  ;; Loading \var{<install-dir>\/}/startup.lisp
+  ;;  Loading \var{<install-dir>\/}/source/mini-module/mini-module-loader.lisp
+  ;;   Loading \var{<install-dir>\/}/source/mini-module/mini-module.lisp
+  ;;     Loading \var{<install-dir>\/}/source/mini-module/mini-module-user.lisp
+  ;;  Loading \var{<install-dir>\/}/source/modules.lisp
   T
   > (mini-module:\entlink{compile-module} :gbbopen-test :propagate :create-dirs)
-  ;; Compiling \var{<install-dir\/>}/source/mini-module/mini-module.lisp
+  ;; Compiling \var{<install-dir>\/}/source/mini-module/mini-module.lisp
        ...
   ;; Running basic GBBopen tests...
        ...
@@ -1126,19 +1125,21 @@ For example:
 \end{verbatim}
 %
 As can be seen from the file-loading messages, the \code{startup.lisp} file
-loads a bootstrap loader file for the module facility (the file
+loads a bootstrap loader file for the \reflink{Mini Module
+  system}{sec:mini-module} (the file
 \code{source/mini-module/mini-module-loader.lisp}).  This bootstrap file then
 loads the mini-module files (\code{source/mini-module/mini-module.lisp} and
 \code{source/mini-module/mini-module-user.lisp}) followed by the module
-definitions for all GBBopen modules (contained in the file
+definitions for all GBBopen \glref{modules} (contained in the file
 \code{source/modules.lisp}).
 
 \codeindexqualit{:propagate}{compile/load-module option}%
 \codeindexqualit{:create-dirs}{compile/load-module option}%
 The \code{:propagate} option to \textbf{\entlinknoex{compile-module}} causes
-any file in the required modules to be compiled if its binary file does not
-exist or is not up to date.  The \code{:create-dirs} option automatically
-creates any directories that are missing in the compiled-file directory tree.
+any file in the \glref{required~modules} to be compiled if its binary file
+does not exist or is not up to date.  The \code{:create-dirs} option
+automatically creates any directories that are missing in the compiled-file
+directory tree.
 
 \ppar{Personal gbbopen-init.lisp file}
 
@@ -1149,17 +1150,18 @@ creates any directories that are missing in the compiled-file directory tree.
 \index{loading!user-specific module definitions}%
 \index{module definitions, loading user-specific}%
 \bfindexit{user-homedir-pathname}%
+%
 If a \code{gbbopen-init.lisp} file (source or compiled) is present in the
 user's ``home'' directory (as defined by \textbf{user-homedir-pathname}), it
 is loaded by the \code{\var{<install-directory>\/}/startup.lisp} file after
-the module facility and definitions have been loaded.  A personal
-\code{\var{<homedir>\/}/gbbopen-init.lisp} file is a handy mechanism for
-defining user-specific modules, application modules, GBBopen parameters, and
-other personalizations.
+the \reflink{Mini Module system}{sec:mini-module} and definitions have been
+loaded.  A personal \code{\var{<homedir>\/}/gbbopen-init.lisp} file is a handy
+mechanism for defining user-specific modules, application \glref{modules},
+GBBopen parameters, and other personalizations.
 
 Here is a simple example of a personal
 \code{\var{<homedir>\/}/gbbopen-init.lisp} file that defines a root directory
-named \code{:my-app-root} and the module \code{:my-app}:
+named \code{:my-app-root} and the \glref{module} \code{:my-app}:
 %
 \W\supp
 \begin{example}
@@ -1180,10 +1182,9 @@ named \code{:my-app-root} and the module \code{:my-app}:
   ;;; ===============================================
 \end{example}
 
-For shared or more substantial application modules, we recommend a
-packaging convention that mirrors that of GBBopen.  This will be
-discussed shortly in conjunction with using a \reflink{personal
-  \code{gbbopen-modules}
+For shared or more substantial application \glref{modules}, we recommend a
+packaging convention that mirrors that of GBBopen.  This will be discussed
+shortly in conjunction with using a \reflink{personal \code{gbbopen-modules}
   directory}{sec:personal-gbbopen-modules-directory}.
 
 Next, we show how to add convenient GBBopen keyword commands to the
@@ -1265,14 +1266,16 @@ used when top-level keyword processing is not fully supported.
 \index{loading!user-specific, top-level command definitions}%
 \index{top-level command definitions, loading user-specific}%
 \bfindexit{user-homedir-pathname}%
+%
 You can add your own top-level commands by defining them in a personal
 \code{gbbopen-commands.lisp} file.  If a \code{gbbopen-commands} file (source
-or compiled) is present in the user's ``homedir'' home directory (as defined by
-\textbf{user-homedir-pathname}), it is loaded automatically by GBBopen's
+or compiled) is present in the user's ``homedir'' home directory (as defined
+by \textbf{user-homedir-pathname}), it is loaded automatically by GBBopen's
 \code{initiate.lisp} file.  For example, the following personal
 \code{gbbopen-commands.lisp} file defines a top-level keyword command (named
 \code{:my-app}) and an equivalent \glref{function} (\code{cl-user::my-app})
-for compiling and loading the \code{:my-app} module that was defined above:
+for compiling and loading the \code{:my-app} \glref{module} that was defined
+above:
 %
 \W\supp\notpretop
 \begin{example}
@@ -1308,10 +1311,11 @@ the GBBopen Tutorial for details.
 \index{loading!user-specific module definitions}%
 \index{module definitions, loading user-specific}%
 \bfindexit{user-homedir-pathname}%
-Earlier, we showed a simple example of using a personal
-\code{gbbopen-init.lisp} file to define the module \code{:my-app}.  If you
-develop or use a number of modules or applications, GBBopen provides an
-alternative mechanism that is even more convenient.
+%
+Previously, we showed a simple example of using a personal
+\code{gbbopen-init.lisp} file to define the \glref{module} \code{:my-app}.  If
+you develop or use a number of \glref{modules} or applications, GBBopen
+provides an alternative mechanism that is even more convenient.
 
 If a \code{gbbopen-modules} directory is present in the user's home directory
 (as defined by \textbf{user-homedir-pathname}), it is expected to consist of
@@ -1326,23 +1330,24 @@ by creating a symbolic link to the application directory in each user's
 Each application directory can contain:
 %
 \begin{tightitemize}
-\item a \code{modules.lisp} file that contains module definitions (loaded
-  after the personal \code{gbbopen-init.lisp} file if there is one in the
-  user's ``homedir'')
+\item a \code{modules.lisp} file that contains \glref{module} definitions
+  (loaded after the personal \code{gbbopen-init.lisp} file if there is one in
+  the user's ``homedir'')
 \item a directory named \code{source} containing all the source files for the
-  module or application
+  \glref{module} or application
 \item an optional \code{commands.lisp} file that specifies top-level commands
-  for the module (loaded after the personal \code{gbbopen-commands.lisp} file
-  if there is one in the user's ``homedir'')
+  for the \glref{module} (loaded after the personal
+  \code{gbbopen-commands.lisp} file if there is one in the user's ``homedir'')
 \end{tightitemize}
 
 We highly recommend following this packaging convention, which mirrors that of
-GBBopen itself. It is very easy to create, use, and share modules defined in
-this way by placing symbolic links to the module directories in your personal
-\code{gbbopen-modules} directory.  Windows, unfortunately, is the exception to
-this as Windows does not provide symbolic links.  GBBopen users running on
-Windows must create a text file of type \code{.sym} (that contains the target
-directory path as its sole line) as a stand-in for the symbolic link.
+GBBopen itself. It is very easy to create, use, and share \glref{modules}
+defined in this way by placing symbolic links to the module directories in
+your personal \code{gbbopen-modules} directory.  Windows, unfortunately, is
+the exception to this as Windows does not provide symbolic links.  GBBopen
+users running on Windows must create a text file of type \code{.sym} (that
+contains the target directory path as its sole line) as a stand-in for the
+symbolic link.
 
 \ppar{GBBopen Hyperdoc}
 \label{sec:hyperdoc}
@@ -1360,12 +1365,12 @@ directory path as its sole line) as a stand-in for the symbolic link.
 
 Convenient access to a local copy of the GBBopen Hyperdoc manual from Common
 Lisp is available by using the \textbf{\entlink{browse-hyperdoc}} function;
-part of the \reflink{\code{:os-interface}}{sec:os-interface} module. The
-browser used by \textbf{\entlink{browse-hyperdoc}} is specified by the value
-of \code{\entlink{*preferred-browser*}}.  A different value can be specified
-in either your Common Lisp initialization file or, preferably, in your
-personal \code{gbbopen-init.lisp} file.  Changing the default setting in
-\code{startup.lisp} is not recommended.
+part of the \reflink{\code{:os-interface}}{sec:os-interface}
+\glref{module}. The browser used by \textbf{\entlink{browse-hyperdoc}} is
+specified by the value of \code{\entlink{*preferred-browser*}}.  A different
+value can be specified in either your Common Lisp initialization file or,
+preferably, in your personal \code{gbbopen-init.lisp} file.  Changing the
+default setting in \code{startup.lisp} is not recommended.
 
 \index{SLIME, and top-level keyword commands}%
 \xsitelink{Emacs}{http://www.gnu.org/software/emacs/emacs.html} access to the
@@ -1515,9 +1520,9 @@ shortcut to the Common Lisp \code{describe} function:
     (describe (eval obj)))
 \end{example}
 
-Define a top-level command named \code{:my-app} that compiles
-and loads the module \code{:my-app} and sets the current package
-to the \code{:gbbopen-user} package:
+Define a top-level command named \code{:my-app} that compiles and loads the
+\glref{module} \code{:my-app} and sets the current package to the
+\code{:gbbopen-user} package:
 %
 \W\supp
 \begin{example}
@@ -1542,8 +1547,9 @@ to the \code{:gbbopen-user} package:
 
 \fnsyntax 
 
-\fnpurpose Compile and load a GBBopen module, even if GBBopen is not
-yet loaded, and optionally set the current package.
+\fnpurpose Compile and load a GBBopen \glref{module}, even if the
+\reflink{Mini Module system}{sec:mini-module}is not yet loaded, and optionally
+set the current package.
 
 \fnpackage \code{:common-lisp-user} (not exported)
 
@@ -1551,7 +1557,7 @@ yet loaded, and optionally set the current package.
 
 \fnargs
 \begin{args}{package-name}
-\arg[module-name] A keyword symbol naming a module 
+\arg[module-name] A keyword symbol naming a \glref{module}
 \arg[option] Any of the following keywords: 
 \compilemoduleoptions
 \arg[package-name] A package name (default is \nil)
@@ -1562,7 +1568,7 @@ calling \textbf{\entlinknoex{compile-module}} on \var{module-name\/} with
 \var{options}.  Then, unless \var{package-name\/} is \nil, the current package
 is set to the package named by \var{package-name}.  The named package does not
 need to be defined before calling \textbf{startup-module}, but it must be
-defined at the conclusion of module compilation and loading.
+defined at the conclusion of \glref{module} compilation and loading.
 
 \codeindexqualit{:nopropagate}{compile/load-module option}%
 \codeindexqualit{:propagate}{compile/load-module option}%
@@ -1578,9 +1584,10 @@ defined at the conclusion of module compilation and loading.
 \end{alsos}
 
 \fnexample
-Define a top-level command named \code{:my-app} that compiles
-and loads the module \code{:my-app} and sets the current package
-to the \code{:gbbopen-user} package:
+%
+Define a top-level command named \code{:my-app} that compiles and loads the
+\glref{module} \code{:my-app} and sets the current package to the
+\code{:gbbopen-user} package:
 %
 \W\supp
 \begin{example}
@@ -1614,15 +1621,15 @@ to the \code{:gbbopen-user} package:
 \index{startup.lisp@\code{startup.lisp} file|itidx}%
 \index{defsystem packages}%
 \index{ASDF (Another System Definition Facility)}%
-The mini-module facility provides a lightweight and easy to use mechanism
-for compiling and loading module files.  The facility keeps track of the
+%
+The Mini Module facility provides a lightweight and easy to use mechanism for
+compiling and loading \glref{module} files.  The facility keeps track of the
 dependencies between modules and the modules that have been compiled and
-loaded. The mini-module facility was designed for simplicity and
-portability, yet it is powerful enough to manage substantial software
-projects, each operating on multiple hardware platforms and Common Lisp
-implementations.
+loaded. The Mini Module facility was designed for simplicity and portability,
+yet it is powerful enough to manage substantial software projects, each
+operating on multiple hardware platforms and Common Lisp implementations.
 
-The mini-module facility is sufficient for many situations, and if not,
+The Mini Module facility is sufficient for many situations, and if not,
 there are more complex open-source \textbf{defsystem} packages, such as ASDF
 (\xsitelink{http://constantly.at/lisp/asdf/}%
 {http://constantly.at/lisp/asdf/}), that are available.
@@ -1634,12 +1641,13 @@ there are more complex open-source \textbf{defsystem} packages, such as ASDF
 \index{loading!user-specific module definitions}%
 \index{module definitions, loading user-specific}%
 \bfindexit{user-homedir-pathname}%
-The \code{:mini-module} module is automatically loaded by the GBBopen
+%
+The \code{:mini-module} \glref{module} is automatically loaded by the GBBopen
 \mbox{\code{\var{<install-directory>\/}/startup.lisp}} file (via the
 \code{mini-module-loader.lisp} file located in the \code{mini-module}
 subdirectory). If a \code{gbbopen-init.lisp} file (source or compiled) is
 present in the user's ``home'' directory, it is loaded immediately following
-the loading of the mini-module facility by the
+the loading of the Mini Module facility by the
 \code{\var{<install-directory>\/}/startup.lisp} file.  A personal
 \code{\var{<homedir>\/}/gbbopen-init.lisp} file is very useful for defining
 GBBopen parameters and other personalizations
@@ -1654,7 +1662,7 @@ GBBopen parameters and other personalizations
 \T\subsubsection*{Stand-alone usage}
 \W\xml{h3}Stand-alone usage\xml{/h3}
 
-To bootstrap the Mini-Module Facility stand-alone (separate from the GBBopen
+To bootstrap the Mini Module facility stand-alone (separate from the GBBopen
 Project software tree), do the following:
 \begin{tightitemize}
 \item create a ``root'' directory to contain the mini-module software tree\\
@@ -1676,7 +1684,7 @@ Project software tree), do the following:
 ~~~\code{> (mini-module:\entlink{compile-module} :mini-module-user :create-dirs :propagate)}
 \end{tightitemize}
 %
-The Mini-Module Facility can now be used stand-alone by loading
+The Mini Module facility can now be used stand-alone by loading
 \code{source/mini-module-loader.lisp} as part of your Common Lisp
 initialization.
 
@@ -1708,8 +1716,8 @@ is set to \code{nil}, but it can be set or bound to true to instruct
 \textbf{\entlink{compile-module}} to create any needed directories in the
 compiled-file tree rather than generating a continuable error. The
 compile-module option \code{:create-dirs} can also be specified to bind
-\textbf{*automatically-create-missing-directories*} to true during module
-compilation.
+\textbf{*automatically-create-missing-directories*} to true during
+\glref{module} compilation.
 
 \begin{alsos}{compile-module}
 \also[compile-module]
@@ -1732,8 +1740,8 @@ tree, rather than generating a continuable error:
 
 \fnsyntax
 
-\fnpurpose Indicates whether a module should evaluate autorun forms when it is
-loaded.
+\fnpurpose Indicates whether a \glref{module} should evaluate
+\glref{autorun~forms} when it is loaded.
 
 \fnpackage \code{:common-lisp-user}
 (also imported into and exported from \code{:mini-module})
@@ -1745,11 +1753,12 @@ loaded.
 \fninitialvalue True
 
 \fndescription The value of \textbf{*autorun-modules*} can be used to
-conditionally evaluate forms when module files are loaded.  By default, the
-value of \textbf{*autorun-modules*} is set to true, but it can be set or bound
-to \code{nil} to disable conditional autorun forms.  The compile-module or
-load-module option \code{:noautorun} can also be specified to bind
-\textbf{*autorun-modules*} to \code{nil} during module compilation and loading.
+conditionally evaluate forms when \glref{module} files are loaded.  By
+default, the value of \textbf{*autorun-modules*} is set to true, but it can be
+set or bound to \code{nil} to disable conditional \glref{autorun~forms}.  The
+compile-module or load-module option \code{:noautorun} can also be specified
+to bind \textbf{*autorun-modules*} to \code{nil} during module compilation and
+loading.
 
 \begin{alsos}{load-module-file}
 \also[compile-module]
@@ -1781,7 +1790,7 @@ Conditionally evaluate the \code{http-test} function when the file
 
 \fnsyntax 
 
-\fnpurpose Compiles and loads the files in a module.
+\fnpurpose Compiles and loads the files in a \glref{module}.
 
 \fnpackage \code{:mini-module}
 
@@ -1789,7 +1798,7 @@ Conditionally evaluate the \code{http-test} function when the file
 
 \fnargs
 \begin{args}{module-name}
-\arg[module-name] A keyword symbol naming a module 
+\arg[module-name] A keyword symbol naming a \glref{module}
 \arg[option] Any of the following keywords: 
 \compilemoduleoptions
 \end{args}
@@ -1797,7 +1806,7 @@ Conditionally evaluate the \code{http-test} function when the file
 \fnerrors Module \var{module-name\/} has not been defined.
 
 \fndescription These file options, when specified for individual files in the
-module definition (see \textbf{\entlinknoex{define-module}}), have the
+\glref{module} definition (see \textbf{\entlinknoex{define-module}}), have the
 following effects (overriding the behavior of \var{options\/} supplied to
 \textbf{compile-module}): \compilemodulefileoptions
 
@@ -1810,8 +1819,8 @@ following effects (overriding the behavior of \var{options\/} supplied to
 \also[startup-module]
 \end{alsos}
 
-\fnexample Compile and load the GBBopen User module and all its
-required modules, creating new compilation directories if they do not
+\fnexample Compile and load the GBBopen User \glref{module} and all its
+\glref{required~modules}, creating new compilation directories if they do not
 exist already:
 %
 \W\supp
@@ -1831,7 +1840,7 @@ exist already:
 
 \fnsyntax 
 
-\fnpurpose Defines a module to the module facility.
+\fnpurpose Defines a \glref{module} to the Mini Module facility.
 
 \fnpackage \code{:mini-module}
 
@@ -1839,13 +1848,13 @@ exist already:
 
 \fnargs
 \begin{args}{module-options}
-\arg[module-name] A keyword symbol naming a module 
+\arg[module-name] A keyword symbol naming a \glref{module}
 \arg[module-options] See below
 \end{args}
 
 \fnerrors The value \code{:requires} module option specifies a fully expanded
-required-module order that conflicts with the fully expanded required-module
-order in a previously defined module.
+\glref{required-module} order that conflicts with the fully expanded
+\glref{required-module} order in a previously defined \glref{module}.
 
 \fndsyntax
 \begin{tabular}{@{~}l@{~}l}
@@ -1875,12 +1884,12 @@ order in a previously defined module.
 \fnterms
 \begin{args}{root-or-relative-directory}
 \arg[root-or-relative-directory] A keyword naming a \glref{root} or
-  \glref{relative~directory}, a keyword naming another module, or \nil{},
-  indicating that the module is rooted at the \code{*load-truename*} value in
-  effect when the module definition is loaded
+  \glref{relative~directory}, a keyword naming another \glref{module}, or
+  \nil{}, indicating that the module is rooted at the \code{*load-truename*}
+  value in effect when the module definition is loaded
 \arg[subdirectory] A string naming a subdirectory
 \arg[file-name] A string naming a file
-\arg[module-name] A keyword symbol naming a module 
+\arg[module-name] A keyword symbol naming a \glref{module}
 \end{args}
 
 \fndescription The \var{module-options} \code{:requires},
@@ -1888,25 +1897,26 @@ order in a previously defined module.
 but at most one of each is allowed.
 
 If a \code{:directory} module option is not specified, an implicit root
-directory for the module (at the \code{*load-truename*} of the file containing
-the \textbf{define-module} form) is used.  If the \code{:directory} module
-option specifies a keyword naming another module, the directory specification
-of the named module is used as the base (root or relative) directory for the
-module that is being defined.  If both a module and a root or relative directory
-definition have the same name, the directory definition takes precedence over
-the module directory specification.
+directory for the \glref{module} (at the \code{*load-truename*} of the file
+containing the \textbf{define-module} form) is used.  If the \code{:directory}
+module option specifies a keyword naming another \glref{module}, the directory
+specification of the named module is used as the base (root or relative)
+directory for the module that is being defined.  If both a \glref{module} and
+a \glref{root} or \glref{relative~directory} definition have the same name,
+the directory definition takes precedence over the module directory
+specification.
 
-The \code{:requires} module option specifies, in order, the modules that must
-be loaded before this module.  The fully expanded required-module order
-determined from the specified \code{:requires} module option must be
-consistent with all previously defined modules.
+The \code{:requires} module option specifies, in order, the \glref{modules}
+that must be loaded before this \glref{module}.  The fully expanded
+\glref{required-module} order determined from the specified \code{:requires}
+module option must be consistent with all previously defined modules.
 
 The \code{:files} module option specifies, in order, the files that are
-compiled (when appropriate) and loaded for this module.  The combination of
-the \code{:requires} and \code{:files} module options specifies a total
-ordering of all the files that must be loaded for this module (the files
-associated with each of the required modules followed by the files specified
-for this module).
+compiled (when appropriate) and loaded for this \glref{module}.  The
+combination of the \code{:requires} and \code{:files} module options specifies
+a total ordering of all the files that must be loaded for this \glref{module}
+(the files associated with each of the \glref{required~modules} followed by
+the files specified for this \glref{module}).
 
 \var{File-options\/} have the following effects: 
 \compilemodulefileoptions
@@ -1921,7 +1931,7 @@ for this module).
 
 \fnexamples
 \bfindexit{define-root-directory}%
-Define a root directory and module for \code{:my-app}:
+Define a \glref{root~directory} and \glref{module} for \code{:my-app}:
 %
 \W\supp
 \begin{example}
@@ -1938,7 +1948,7 @@ Define a root directory and module for \code{:my-app}:
             "epilogue"))
 \end{example}
 
-Define a module for \code{:my-app} rooted relative to the file 
+Define a \glref{module} for \code{:my-app} rooted relative to the file 
 containing the \textbf{define-module} form:
 %
 \W\supp
@@ -1966,8 +1976,9 @@ containing the \textbf{define-module} form:
 
 \fnsyntax 
 
-\fnpurpose Defines a directory relative to a root or relative directory or to
-the directory specification of a module definition.
+\fnpurpose Defines a directory relative to a \glref{root} or
+\glref{relative~directory} or to the directory specification of a
+\glref{module} definition.
 
 \fnpackage \code{:mini-module}
 
@@ -1975,9 +1986,9 @@ the directory specification of a module definition.
 
 \fnargs
 \begin{args}{subdirectories}
-\arg[name] A keyword symbol naming the relative directory
-\arg[directory] The keyword symbol name of a root or relative directory or the 
-name of a module
+\arg[name] A keyword symbol naming the \glref{relative~directory}
+\arg[directory] The keyword symbol name of a \glref{root} or 
+  \glref{relative~directory} or the name of a \glref{module}
 \arg[subdirectories] One or more strings specifying, in order, subdirectories
 from \var{directory\/} to the relative directory. (The keyword \code{:up} or
 \code{:back} can also be supplied in place of any of these strings, indicating
@@ -1985,10 +1996,13 @@ to go upward one semantic or syntactic level of directory structure,
 respectively.)
 \end{args}
 
-\fndescription Root and relative directory definitions are used to isolate
-file-system details from module definitions.  A relative directory is defined
-in relation to another directory definition, the ``base'' directory.  If this
-base directory location changes, the relative directory is adjusted automatically.
+\fndescription \glref{Root} and \glref{relative~directory} definitions are
+used to isolate file-system details from \glref{module} definitions.  A
+\glref{relative~directory} is defined in relation to another directory
+definition, that is either a \glref{root~directory} or another
+\glref{relative~directory} (which itself is eventually associated with a
+\glref{root~directory}).  If this \glref{root} directory location changes,
+every \glref{relative~directory} associated with it is adjusted automatically.
 
 \begin{alsos}{show-defined-directories}
 \also[define-root-directory]
@@ -2012,7 +2026,7 @@ Define another relative directory named \code{:my-performance-tests} below
 \end{example}
 %
 Define a data directory sibling to the \code{source} directory of
-\code{:my-app} module:
+\code{:my-app} \glref{module}:
 %
 \W\supp\notpretop
 \begin{example}
@@ -2033,7 +2047,7 @@ Define a data directory sibling to the \code{source} directory of
 
 \fnsyntax 
 
-\fnpurpose Defines a root directory.
+\fnpurpose Define a \glref{root~directory}.
 
 \fnpackage \code{:mini-module}
 
@@ -2041,37 +2055,39 @@ Define a data directory sibling to the \code{source} directory of
 
 \fnargs
 \begin{args}{directory-specification}
-\arg[name] A keyword symbol naming the root directory
+\arg[name] A keyword symbol naming the \glref{root~directory}
 \arg[directory-specification] One of the following:
 \begin{tightitemize}
-\item A string specifying the root directory
-\item A pathname specifying the root directory
-\item A keyword naming a previously defined root directory
+\item A string specifying the \glref{root~directory}
+\item A pathname specifying the \glref{root~directory}
+\item A keyword naming a previously defined \glref{root~directory}
 \item A symbol whose value is one of the above
 \end{tightitemize}
 \arg[subdirectories] One or more strings specifying, in order, subdirectories
-from \var{directory-specification\/} to the root directory. (The keyword
+from \var{directory-specification\/} to the \glref{root~directory}. (The keyword
 \code{:up} or \code{:back} can also be supplied in place of any of these
 strings, indicating to go upward one semantic or syntactic level of directory
 structure, respectively.)
 \end{args}
 
-\fndescription Root and relative directory definitions are used to isolate
-file-system details from module definitions.  Root directories specify a fixed
-anchor directory for a tree of relative directory definitions.  If the root
-directory is redefined to a new location, all relative directories beneath it
-are handled automatically.
+\fndescription \glref{Root} and \glref{relative~directory} definitions are
+used to isolate file-system details from \glref{module} definitions.
+\glref{Root~directories} specify a fixed anchor directory for a tree of
+\glref{relative~directory} definitions.  If the \glref{root~directory} is
+redefined to a new location, all \glref{relative~directories} beneath it are
+updated automatically.
 
-Note: When a root directory is used as the directory specification for a new
-root directory, the new root-directory location will not be changed if the
-location of the source root directory is changed.
+Note: When a \glref{root~directory} is used as the
+\var{directory-specification\/} for a new \glref{root~directory}, the new
+\glref{root-directory} location will not be changed if the location of the
+source \glref{root~directory} is changed.
 
 \begin{alsos}{show-defined-directories}
 \also[define-relative-directory]
 \also[show-defined-directories]
 \end{alsos}
 
-\fnexamples Define a root directory named \code{:my-app-root}:
+\fnexamples Define a \glref{root~directory} named \code{:my-app-root}:
 %
 \W\supp
 \begin{example}
@@ -2079,7 +2095,7 @@ location of the source root directory is changed.
     (make-pathname :directory "~/my-app"))
 \end{example}
 %
-Define a root directory named \code{:my-app-root} to be the directory
+Define a \glref{root~directory} named \code{:my-app-root} to be the directory
 containing the file containing the \textbf{define-root-directory} form:
 %
 \W\supp\notpretop
@@ -2099,7 +2115,7 @@ containing the file containing the \textbf{define-root-directory} form:
 
 \fnsyntax 
 
-\fnpurpose Print information about a module.
+\fnpurpose Print information about a \glref{module}.
 
 \fnpackage \code{:mini-module}
 
@@ -2107,7 +2123,7 @@ containing the file containing the \textbf{define-root-directory} form:
 
 \fnargs
 \begin{args}{module-name}
-\arg[module-name] A keyword symbol naming a module 
+\arg[module-name] A keyword symbol naming a \glref{module}
 \end{args}
 
 \fnerrors
@@ -2122,7 +2138,7 @@ The description is printed to the {\bf *standard-output*} stream.
 \end{alsos}
 
 \fnexample
-Describe the \code{:gbbopen-tools} module:
+Describe the \code{:gbbopen-tools} \glref{module}:
 %
 \W\supp
 \begin{example}
@@ -2130,8 +2146,8 @@ Describe the \code{:gbbopen-tools} module:
 Module :gbbopen-tools (loaded)
   Requires: (:mini-module)
   Fully expanded requires: (:mini-module)
-  Source directory: /home/gbbopen/current/source/tools/
-  Compiled directory: /home/gbbopen/current/linux86-allegro-8.0/tools/
+  Source directory: \var{<install-dir>\/}/source/tools/
+  Compiled directory: \var{<install-dir>\/}/linux86-allegro-8.1/tools/
   Forces recompile date: Jan 15 17:11
   Files: Jan 15 17:11 preamble 
          Jan 15 17:11 declarations (:forces-recompile)
@@ -2152,8 +2168,8 @@ Module :gbbopen-tools (loaded)
 
 \fnsyntax 
 
-\fnpurpose Return the pathname of a root directory, a relative
-directory, or a module.
+\fnpurpose Return the pathname of \glref{root~directory}, a
+\glref{relative~directory}, or a \glref{module}.
 
 \fnpackage \code{:mini-module}
 
@@ -2161,40 +2177,115 @@ directory, or a module.
 
 \fnargs
 \begin{args}{directory-specification}
-\arg[name] A keyword symbol naming a root directory, a relative directory, 
-or a module.
+\arg[name] A keyword symbol naming a \glref{root~directory}, a
+\glref{relative~directory}, or a \glref{module}.
 \end{args}
 
 \fnreturns The pathname of the defined directory or module.
 
-\fndescription Root and relative directory definitions are searched
-first.  If no \var{name\/} directory definition is found, module
-definitions are searched.  Root directories specify a fixed anchor
-directory for a tree of relative directory definitions.  The pathname
-returned for relative directories is the source pathname.
+\fndescription \glref{Root} and \glref{relative-directory} definitions are
+searched first.  If no \var{name\/} directory definition is found,
+\glref{module} definitions are searched.  \glref{Root~directories} specify a
+fixed anchor directory for a tree of \glref{relative~directory} definitions.
+The pathname returned for relative directories is the source pathname.
 
 \begin{alsos}{show-defined-directories}
 \also[define-relative-directory]
 \also[define-root-directory]
+\also[get-root-directory]
 \also[show-defined-directories]
 \end{alsos}
 
 \fnexamples
 
-Return the pathname of the \code{:my-app-root} root directory:
+Return the pathname of the \code{:my-app-root} \glref{root~directory}:
 %
 \W\supp
 \begin{example}
 > (get-directory :my-app-root)
-#P"~/my-app"
+#P"~/my-app/"
 \end{example}
 %
-Return the pathname of the \code{:gbbopen-tools} module:
+Return the pathname of the \code{:gbbopen-tools} \glref{relative~directory}:
 %
 \W\supp\notpretop
 \begin{example}
 > (get-directory :gbbopen-tools)
-#P"/home/GBBopen/current/source/tools"
+#P"\var{<install-dir>\/}/source/tools/"
+\end{example}
+%
+Return the pathname of the \code{:gbbopen-user} \glref{module}:
+%
+\W\supp\notpretop
+\begin{example}
+> (get-directory :gbbopen-user)
+#P"\var{<install-dir>\/}/source/gbbopen/"
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{get-root-directory}{\var{name\/}
+    \returns{} \var{pathname\/}}
+\index{directory!getting root-directory pathname from name}%
+
+\fnsyntax 
+
+\fnpurpose Return the pathname of the \glref{root~directory} of a
+\glref{root~directory}, a \glref{relative~directory}, or a \glref{module}.
+
+\fnpackage \code{:mini-module}
+
+\fnmodule \code{:mini-module}
+
+\fnargs
+\begin{args}{directory-specification}
+\arg[name] A keyword symbol naming a \glref{root~directory}, a
+\glref{relative~directory}, or a \glref{module}.
+\end{args}
+
+\fnreturns The \glref{root-directory} pathname of the defined directory or
+module.
+
+\fndescription \glref{Root} and \glref{relative-directory} definitions are
+searched first.  If no \var{name\/} directory definition is found,
+\glref{module} definitions are searched.  \glref{Root~directories} specify a
+fixed anchor directory for a tree of \glref{relative~directory} definitions.
+
+\begin{alsos}{show-defined-directories}
+\also[define-relative-directory]
+\also[define-root-directory]
+\also[get-directory]
+\also[show-defined-directories]
+\end{alsos}
+
+\fnexamples
+%
+Return the \glref{root-directory} pathname of the \code{:gbbopen-root} 
+\glref{root~directory}:
+%
+\W\supp
+\begin{example}
+> (get-root-directory :gbbopen-root)
+#P"\var{<install-dir>\/}/"
+\end{example}
+%
+Return the \glref{root-directory} pathname of the \code{:gbbopen-tools} 
+\glref{relative~directory}:
+%
+\W\supp\notpretop
+\begin{example}
+> (get-root-directory :gbbopen-tools)
+#P"\var{<install-dir>\/}/"
+\end{example}
+Return the \glref{root-directory} pathname of the \code{:gbbopen-user} 
+\glref{module}:
+%
+\W\supp\notpretop
+\begin{example}
+> (get-root-directory :gbbopen-user)
+#P"\var{<install-dir>\/}/"
 \end{example}
 
 \end{functiondoc}
@@ -2208,7 +2299,7 @@ Return the pathname of the \code{:gbbopen-tools} module:
 
 \fnsyntax 
 
-\fnpurpose Loads the files in a module.
+\fnpurpose Load the files in a \glref{module}.
 
 \fnpackage \code{:mini-module}
 
@@ -2216,7 +2307,7 @@ Return the pathname of the \code{:gbbopen-tools} module:
 
 \fnargs
 \begin{args}{module-name}
-\arg[module-name] A keyword symbol naming a module 
+\arg[module-name] A keyword symbol naming a \glref{module}
 \arg[option] Any of the following keywords: 
 \loadmoduleoptions
 \end{args}
@@ -2224,7 +2315,7 @@ Return the pathname of the \code{:gbbopen-tools} module:
 \fnerrors Module \var{module-name\/} has not been defined.
 
 \fndescription These file options, when specified for individual files in the
-module definition (see \textbf{\entlinknoex{define-module}}), have the
+\glref{module} definition (see \textbf{\entlinknoex{define-module}}), have the
 following effects (overriding the behavior of \var{options\/} supplied to
 \textbf{load-module}):
 \loadmodulefileoptions
@@ -2236,7 +2327,9 @@ following effects (overriding the behavior of \var{options\/} supplied to
 \also[load-module-file]
 \end{alsos}
 
-\fnexample Load the GBBopen User module and all its required modules:
+\fnexample 
+%
+Load the GBBopen User \glref{module} and all its \glref{required~modules}:
 %
 \W\supp
 \begin{example}
@@ -2256,7 +2349,7 @@ following effects (overriding the behavior of \var{options\/} supplied to
 
 \fnsyntax 
 
-\fnpurpose Loads a single file from a module.
+\fnpurpose Load a single file from a \glref{module}.
 
 \fnpackage \code{:mini-module}
 
@@ -2264,8 +2357,8 @@ following effects (overriding the behavior of \var{options\/} supplied to
 
 \fnargs
 \begin{args}{module-name}
-\arg[module-name] A keyword symbol naming a module 
-\arg[file-name] A string naming a file in the module 
+\arg[module-name] A keyword symbol naming a \glref{module}
+\arg[file-name] A string naming a file in the \glref{module}
 \arg[option] Any of the following keywords: 
 \loadonefilemoduleoptions
 \end{args}
@@ -2275,9 +2368,9 @@ following effects (overriding the behavior of \var{options\/} supplied to
 \fnerrors Module \var{module-name\/} has not been defined.  File
 \var{file-name\/} is not associated with the module.
 
-\fndescription File options specified for individual files in the module
-definition (see \textbf{\entlinknoex{define-module}}) are ignored by
-\textbf{load-module-file}.
+\fndescription File options specified for individual files in the
+\glref{module} definition (see \textbf{\entlinknoex{define-module}}) are
+ignored by \textbf{load-module-file}.
 
 \begin{alsos}{*autorun-modules*}
 \also[*autorun-modules*]
@@ -2286,12 +2379,13 @@ definition (see \textbf{\entlinknoex{define-module}}) are ignored by
 \end{alsos}
 
 \fnexample Load the source of the file \code{tools} from the GBBopen
-Tools module:
+Tools \glref{module}:
 %
 \W\supp
 \begin{example}
 > (load-module-file :gbbopen-tools "tools" :source)
-#P"/home/GBBopen/current/source/tools/tools.lisp"
+;; Loading \var{<install-dir>\/}/source/tools/tools.lisp
+#P"\var{<install-dir>\/}/source/tools/tools.lisp"
 \end{example}
 
 \end{functiondoc}
@@ -2305,7 +2399,7 @@ Tools module:
 
 \fnsyntax 
 
-\fnpurpose Return the source and compiled directories of a module.
+\fnpurpose Return the source and compiled directories of a \glref{module}.
 
 \fnpackage \code{:mini-module}
 
@@ -2313,7 +2407,7 @@ Tools module:
 
 \fnargs
 \begin{args}{module-name}
-\arg[module-name] A keyword symbol naming a module 
+\arg[module-name] A keyword symbol naming a \glref{module}
 \end{args}
 
 \fnreturns Two values: the source directory and the compiled directory.
@@ -2327,13 +2421,14 @@ Module \var{module-name\/} has not been defined.
 \end{alsos}
 
 \fnexample
-Return the source and compiled directories of the Agenda Shell module:
+%
+Return the source and compiled directories of the Agenda Shell \glref{module}:
 %
 \W\supp
 \begin{example}
 > (module-directories :agenda-shell)
-#P"/home/GBBopen/current/source/gbbopen/control-shells"
-#P"/home/GBBopen/current/\textit{compiled-dir-name\/}/gbbopen/control-shells"
+#P"\var{<install-dir>\/}/source/gbbopen/control-shells"
+#P"\var{<install-dir>\/}/\var{<platform-dir>\/}/gbbopen/control-shells"
 \end{example} 
 
 \end{functiondoc}
@@ -2347,7 +2442,7 @@ Return the source and compiled directories of the Agenda Shell module:
 
 \fnsyntax 
 
-\fnpurpose Returns a value indicating whether a module has been fully
+\fnpurpose Return a value indicating whether a \glref{module} has been fully
 loaded into Common Lisp.
 
 \fnpackage \code{:mini-module}
@@ -2356,10 +2451,10 @@ loaded into Common Lisp.
 
 \fnargs
 \begin{args}{module-name}
-\arg[module-name] A keyword symbol naming a module 
+\arg[module-name] A keyword symbol naming a \glref{module}
 \end{args}
 
-\fnreturns True if the module has been fully loaded; \nil{} otherwise.
+\fnreturns True if the \glref{module} has been fully loaded; \nil{} otherwise.
 
 \fnerrors
 Module \var{module-name\/} has not been defined.
@@ -2370,7 +2465,7 @@ Module \var{module-name\/} has not been defined.
 \end{alsos}
 
 \fnexample
-Check if the Agenda Shell module has been loaded:
+Check if the Agenda Shell \glref{module} has been loaded:
 %
 \begin{example}
 \W\supp
@@ -2389,7 +2484,7 @@ t
 
 \fnsyntax
 
-\fnpurpose Show all root and relative directory definitions.
+\fnpurpose Show all \glref{root} and \glref{relative-directory} definitions.
 
 \fnpackage \code{:mini-module}
 
@@ -2401,7 +2496,10 @@ t
 \also[get-directory]
 \end{alsos}
 
-\fnexample List the currently defined root and relative directories:
+\fnexample 
+%
+List the currently defined \glref{root} and \glref{relative~directories}:
+%
 \begin{example}
 %
 \W\supp
@@ -2410,12 +2508,12 @@ t
     Relative to :gbbopen-root
     Subdirectories: ("gbbopen")
 :gbbopen-root
-    Root: /home/gbbopen/current/
+    Root: \var{<install-dir>\/}
 :gbbopen-tools
     Relative to :gbbopen-root
     Subdirectories: ("tools")
 :mini-module-root
-    Root: /home/gbbopen/current/
+    Root: \var{<install-dir>\/}
 \end{example}
 
 \end{functiondoc}
@@ -2435,11 +2533,12 @@ t
 
 \index{module!:gbbopen-tools@\code{:gbbopen-tools}}%
 \index{:gbbopen-tools@\code{:gbbopen-tools} module}%
-The GBBopen Tools module, \code{:gbbopen-tools}, contains useful Common Lisp
-additions and utilities.  Convenient (\reflink{shorthand
+%
+The GBBopen Tools \glref{module}, \code{:gbbopen-tools}, contains useful
+Common Lisp additions and utilities.  Convenient (\reflink{shorthand
   macros}{sec:declared-numerics} for declared \glref{fixnum}, short-float,
 single-float, double-float, and long-float numeric operators are also provided
-by the \code{:gbbopen-tools} module.
+by the \code{:gbbopen-tools} \glref{module}.
 
 Uniform interfaces to implementation-specific thread (multiprocessing)
 capabilities are provided by the \reflink{\code{:portable-threads}
@@ -2519,8 +2618,9 @@ Toggle between date formatting options:
 \fnnote
 \indexit{module!:mini-module@\code{:mini-module}}%
 \indexit{:mini-module@\code{:mini-module} module}%
-This variable is defined in the \code{:mini-module} module to make it
-available as early as possible.
+%
+This variable is defined in the \code{:mini-module} \glref{module} in order to
+make it available as early as possible.
 
 \end{functiondoc}
 
@@ -2668,8 +2768,9 @@ The date and time 100 days ago (with seconds):
 \fnnote
 \indexit{module!:mini-module@\code{:mini-module}}%
 \indexit{:mini-module@\code{:mini-module} module}%
-This function is loaded with the \code{:mini-module} module to make it
-available as early as possible.
+%
+This function is loaded with the \code{:mini-module} \glref{module} in order
+to to make it available as early as possible.
 
 \end{functiondoc}
 
@@ -4813,7 +4914,7 @@ t
 \index{module!:gbbopen-tools@\code{:gbbopen-tools}|itidx}%
 \index{:gbbopen-tools@\code{:gbbopen-tools} module|itidx}%
 \bfindexit{:full-safety}%
-The \code{:gbbopen-tools} module contains a set of
+The \code{:gbbopen-tools} \glref{module} contains a set of
 numeric-operation macros that provide convenient shorthands for
 declaring \glref{fixnum}, short-float, single-float, double-float, and
 long-float numeric operators. If the \glref{feature}
@@ -4915,7 +5016,7 @@ single format).
 \bfindex{zerop\&}%
 %
 These \glref{fixnum} numeric-operation macros are defined in the
-\code{:gbbopen-tools} module:
+\code{:gbbopen-tools} \glref{module}:
 
 \code{%
   \begin{tabular}{l@{}l@{}l@{}l@{}l}
@@ -5007,7 +5108,7 @@ The one-argument \glref{function} \textbf{coerce\&} provides convenient
 \bfindex{zerop\$\&}%
 %
 These short-float numeric operation macros are defined in the
-\code{:gbbopen-tools} module:
+\code{:gbbopen-tools} \glref{module}:
 
 \code{%
   \begin{tabular}{l@{}l@{}l@{}l@{}l}
@@ -5099,7 +5200,7 @@ short-float coercion:
 \bfindex{zerop\$}%
 %
 These single-float numeric operation macros are defined in the
-\code{:gbbopen-tools} module:
+\code{:gbbopen-tools} \glref{module}:
 
 \code{%
   \begin{tabular}{l@{}l@{}l@{}l@{}l}
@@ -5191,7 +5292,7 @@ single-float coercion:
 \bfindex{zerop\$\$}% 
 %
 These double-float numeric operation macros are defined in the
-\code{:gbbopen-tools} module:
+\code{:gbbopen-tools} \glref{module}:
 
 \code{%
   \begin{tabular}{l@{}l@{}l@{}l@{}l}
@@ -5283,7 +5384,7 @@ double-float coercion:
 \bfindex{zerop\$\$\$}%
 %
 These long-float numeric operation macros are defined in the
-\code{:gbbopen-tools} module:
+\code{:gbbopen-tools} \glref{module}:
 
 \code{%
   \begin{tabular}{l@{}l@{}l@{}l@{}l}
@@ -5616,7 +5717,8 @@ Time value.
 
 \index{module!:polling-functions@\code{:polling-functions}}%
 \index{:polling-functions@\code{:polling-functions} module}%
-The \code{:polling-functions} module provides a set of \textit{polling
+%
+The \code{:polling-functions} \glref{module} provides a set of \textit{polling
   functions\/} that can be used to support ``event-loop'' processing on Common
 Lisp implementations that do not provide threads.  These functions are
 available for use with all Common Lisp implementations.
@@ -5823,8 +5925,9 @@ Run the polling functions (once, in sequence):
 
 \index{module!:portable-sockets@\code{:portable-sockets}}%
 \index{:portable-sockets@\code{:portable-sockets} module}%
-The \code{:portable-sockets} module provides a uniform interface to commonly
-used socket entities.
+%
+The \code{:portable-sockets} \glref{module} provides a uniform interface to
+commonly used socket entities.
 
 \W\entities
 \T\clearpage
@@ -6352,8 +6455,9 @@ Open a socket connection to the GBBopen Project web server:
 
 \index{module!:os-interface@\code{:os-interface}}%
 \index{:os-interface@\code{:os-interface} module}%
-The \code{:os-interface} module provides a uniform interface to
-commonly used operating-system entities. 
+%
+The \code{:os-interface} \glref{module} provides a uniform interface to
+commonly used operating-system entities.
 
 \W\entities
 \T\clearpage
@@ -6526,8 +6630,9 @@ string.
 
 \index{module!:gbbopen-core@\code{:gbbopen-core}}%
 \index{:gbbopen-core@\code{:gbbopen-core} module}%
-The GBBopen Core module, \code{:gbbopen-core}, provides support for the
-\glref{blackboard~repository}, \glref{unit} and \glref{space} classes and
+%
+The GBBopen Core \glref{module}, \code{:gbbopen-core}, provides support for
+the \glref{blackboard~repository}, \glref{unit} and \glref{space} classes and
 instances, and \glref{event} signaling.
 
 Documentation for \glref{unit-class} and \glref{unit-instance} entities, as
@@ -8729,9 +8834,9 @@ that cannot be signaled.
 
 \W\xml{p}
 
-Here are the defined event subclasses when both the
-\code{:gbbopen-core} and \code{:agenda-shell} modules have been loaded:
-
+Here are the defined event subclasses when both the \code{:gbbopen-core} and
+\code{:agenda-shell} \glref{modules} have been loaded:
+%
 \T\begin{ifhtml}
 \xml{br}
 \xml{img align="center" src="agenda-shell-events.png"}
@@ -8742,10 +8847,10 @@ Here are the defined event subclasses when both the
 \includegraphics[scale=0.85]{agenda-shell-events}
 \end{center}
 \W\end{iftex}
-
-\noindent The additional \code{control-shell-event} classes are
-defined and signaled by the Agenda Shell.  Again classes shown within
-rectangles are abstract classes that cannot be signaled.
+%
+The additional \code{control-shell-event} classes are defined and signaled by
+the Agenda Shell.  Again classes shown within rectangles are abstract classes
+that cannot be signaled.
 
 \W\entities
 \T\clearpage
@@ -13220,7 +13325,9 @@ saving/sending operations.
 
 \index{module!:queue@\code{:queue}}%
 \index{:queue@\code{:queue} module}%
-The \code{:queue} module provides queue-management objects and operators.
+%
+The \code{:queue} \glref{module} provides queue-management objects and
+operators.
 
 \W\entities
 \T\clearpage
@@ -13956,8 +14063,9 @@ Show the first five \glref{KSAs} on the queue \code{pending-ksas}:
 
 \index{module!:agenda-shell@\code{:agenda-shell}}%
 \index{:agenda-shell@\code{:agenda-shell} module}%
-The Agenda Shell module, \code{:agenda-shell}, provides a responsive,
-agenda-based control shell. 
+%
+The Agenda Shell \glref{module}, \code{:agenda-shell}, provides a responsive,
+agenda-based control shell.
 
 Note that the Agenda Shell requires that the idle-loop process has been
 started on \xsitelink{CMUCL}{http://www.cons.org/cmucl/} and that

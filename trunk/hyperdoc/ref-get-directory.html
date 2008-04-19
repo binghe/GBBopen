@@ -12,50 +12,56 @@
 </head>
 <body>
 <table width="100%" cellpadding="0" cellspacing="2"><tr>
-<td bgcolor="#99ccff"><a href="ref-describe-module.html"><img border="0" alt="describe-module" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="ref-mini-module-entities.html"><img border="0" alt="Mini-Module Facility" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-load-module.html"><img border="0" alt="load-module" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">get-directory</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table>
+<td bgcolor="#99ccff"><a href="ref-describe-module.html"><img border="0" alt="describe-module" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="ref-mini-module-entities.html"><img border="0" alt="Mini-Module Facility" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-get-root-directory.html"><img border="0" alt="get-root-directory" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">get-directory</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table>
 
 <p><table class="tight" width="100%">
 <tr valign="top"><td valign="baseline" align="left"%>
 <nobr><b><font color="#000000">get-directory</font></b></nobr></td><td valign="baseline"> &nbsp; </td><td valign="baseline" align="left" width="99%"><var>name</var>
 <i> =&gt; </i> <var>pathname</var></td><td valign="baseline" align="right">[<i>Function</i>]
 </td></tr></table></p>
-<p><span class="fndoclabel">Purpose</span> <br />Return the pathname of a root directory, a relative
-directory, or a module.
+<p><span class="fndoclabel">Purpose</span> <br />Return the pathname of <a href="ref-glossary.html#id163">root&nbsp;directory</a>, a
+<a href="ref-glossary.html#id157">relative&nbsp;directory</a>, or a <a href="ref-glossary.html#gl:module">module</a>.
 </p>
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:mini-module</code>
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:mini-module</code>
 </p>
 <p><span class="fndoclabel">Arguments</span><table class="tighttop">
-<tr valign="top"><td valign="baseline"><i>name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A keyword symbol naming a root directory, a relative directory, 
-or a module.
+<tr valign="top"><td valign="baseline"><i>name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A keyword symbol naming a <a href="ref-glossary.html#id163">root&nbsp;directory</a>, a
+<a href="ref-glossary.html#id157">relative&nbsp;directory</a>, or a <a href="ref-glossary.html#gl:module">module</a>.
 </td></tr></table>
 </p>
 <p><span class="fndoclabel">Returns</span> <br />The pathname of the defined directory or module.
 </p>
-<p><span class="fndoclabel">Description</span> <br />Root and relative directory definitions are searched
-first.  If no <var>name</var> directory definition is found, module
-definitions are searched.  Root directories specify a fixed anchor
-directory for a tree of relative directory definitions.  The pathname
-returned for relative directories is the source pathname.
+<p><span class="fndoclabel">Description</span> <br /><a href="ref-glossary.html#gl:Root">Root</a> and <a href="ref-glossary.html#gl:relative-directory">relative-directory</a> definitions are
+searched first.  If no <var>name</var> directory definition is found,
+<a href="ref-glossary.html#gl:module">module</a> definitions are searched.  <a href="ref-glossary.html#gl:Root">Root&nbsp;directories</a> specify a
+fixed anchor directory for a tree of <a href="ref-glossary.html#id157">relative&nbsp;directory</a> definitions.
+The pathname returned for relative directories is the source pathname.
 </p>
 <p><span class="fndoclabel">See also</span>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-define-relative-directory.html"><b>define-relative-directory</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-define-root-directory.html"><b>define-root-directory</b></a>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-get-root-directory.html"><b>get-root-directory</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-show-defined-directories.html"><b>show-defined-directories</b></a>
 </p>
-<p><span class="fndoclabel">Examples</span> <br />Return the pathname of the <code>:my-app-root</code> root directory:
+<p><span class="fndoclabel">Examples</span> <br />Return the pathname of the <code>:my-app-root</code> <a href="ref-glossary.html#id163">root&nbsp;directory</a>:
 <pre class="pretop">
 &gt; (get-directory :my-app-root)
-#P"~/my-app"
+#P"~/my-app/"
 </pre>
-Return the pathname of the <code>:gbbopen-tools</code> module:
+Return the pathname of the <code>:gbbopen-tools</code> <a href="ref-glossary.html#id157">relative&nbsp;directory</a>:
 <pre>
 &gt; (get-directory :gbbopen-tools)
-#P"/home/GBBopen/current/source/tools"
+#P"<var>&lt;install-dir&gt;</var>/source/tools/"
+</pre>
+Return the pathname of the <code>:gbbopen-user</code> <a href="ref-glossary.html#gl:module">module</a>:
+<pre>
+&gt; (get-directory :gbbopen-user)
+#P"<var>&lt;install-dir&gt;</var>/source/gbbopen/"
 </pre>
 </p>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
 <table width="100%" cellpadding="0" cellspacing="2"><tr>
-<td bgcolor="#99ccff"><a href="ref-describe-module.html"><img border="0" alt="describe-module" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="ref-mini-module-entities.html"><img border="0" alt="Mini-Module Facility" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-load-module.html"><img border="0" alt="load-module" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">get-directory</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table></body></html>
+<td bgcolor="#99ccff"><a href="ref-describe-module.html"><img border="0" alt="describe-module" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="ref-mini-module-entities.html"><img border="0" alt="Mini-Module Facility" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-get-root-directory.html"><img border="0" alt="get-root-directory" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">get-directory</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table></body></html>
