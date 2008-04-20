@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/basic-tests.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Apr 10 00:11:28 2008 *-*
+;;;; *-* Last-Edit: Sun Apr 20 12:18:26 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -221,8 +221,13 @@
 
 (defvar *method-trail* nil)
 
-(define-class checker-metaclass (standard-class) ())
-
+;; Clozure 1.2-pre1 requires checker-metaclass in the compile-time environment
+;; (defclass uses :metaclass at compile time).  Normally metaclasses are best
+;; defined in a separate file, but we want basic-tests.lisp to be
+;; self-contained.
+(eval-when (#+ccl-1.2 :compile-toplevel :load-toplevel :execute)
+  (define-class checker-metaclass (standard-class) ()))
+  
 (defmethod validate-superclass ((class checker-metaclass) 
                                 (superclass standard-class))
   #+ecl (declare (ignore class superclass))
@@ -998,8 +1003,7 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(when (and (boundp '*autorun-modules*) 
-           *autorun-modules*)
+(when *autorun-modules*
   (all-tests))
 
 ;;; ===========================================================================
