@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/extended-repl.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Apr 22 16:23:56 2008 *-*
+;;;; *-* Last-Edit: Tue Apr 22 17:06:56 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -363,7 +363,7 @@
               ':swank)
       (delete-package ':swank)))
   ;; Now define the :swank-backend package, if needed:
-  (unless (and (find-package :swank) (find-package ':swank-backend))
+  (unless (and (not (find-package :swank)) (find-package ':swank-backend))
     (format t "~&;; Predefining ~s package for SLIME...~%" 
             ':swank-backend)
     (make-package ':swank-backend :use '(:common-lisp))))
