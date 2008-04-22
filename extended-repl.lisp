@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/extended-repl.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Apr 22 02:59:46 2008 *-*
+;;;; *-* Last-Edit: Tue Apr 22 09:02:43 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -55,6 +55,26 @@
   (assoc command *extended-repl-commands* :test #'eq))
 
 ;;; ---------------------------------------------------------------------------
+;;;  In Allegro, we hide non-native help commands by saving the command-name
+;;;  strings in *non-native-help-commandss* and fwrapping
+;;;  tpl::get-commands-list to remove the commands from its returned value.
+
+#+allegro
+(defvar *non-native-help-commands* nil)
+
+#+allegro
+(def-fwrapper filtered-get-commands-list-wrap ()
+  ;; Remove non-native extended-REPL commands:
+  (remove-if #'(lambda (command)
+                 (member (first command) *non-native-help-commands*
+                         :test #'equal))
+             (call-next-fwrapper)))
+
+#+allegro
+(fwrap 'top-level::get-commands-list 'extended-repl 
+       'filtered-get-commands-list-wrap)
+
+;;; ---------------------------------------------------------------------------
 
 (defmacro define-extended-repl-command (command lambda-list &body body)
   (let ((tlc-sym (gensym))
@@ -64,6 +84,11 @@
     (when (consp command)
       (setf options (rest command))
       (setf command (first command)))
+    ;; Handle Allegro hidden-help:
+    #+allegro
+    (unless (member ':add-to-native-help options)
+      (pushnew (string-downcase (symbol-name command))
+               *non-native-help-commands* :test #'equal))
     ;; Now do the REPL-command definition:
     `(progn
        ;; Define the command function:
@@ -82,8 +107,8 @@
        ;; Add to the CL implemention's top-level, where possible:
        #+allegro
        (unless (top-level::find-command-or-alias ,command :quiet t)
-	 (top-level:alias ,(string-downcase (symbol-name command))
-	     ,lambda-list ,@body))
+         (top-level:alias ,(string-downcase (symbol-name command))
+             ,lambda-list ,@body))
        #+lispworks
        (system::define-top-loop-command 
 	   ,command

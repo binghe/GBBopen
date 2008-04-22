@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/commands.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Apr 22 02:55:24 2008 *-*
+;;;; *-* Last-Edit: Tue Apr 22 03:58:04 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -255,7 +255,6 @@
 ;;; ===========================================================================
 ;;;   Top-Level-Loop Command Help (for those CLs without native help)
 
-#+(or clisp cmu scl sbcl)
 (define-tll-command (:commands :add-to-native-help) ()
   "Show all extended-REPL commands"
   (dolist (command (sort (copy-list *extended-repl-commands*)
