@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/gbbopen-modules-directory.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Mar 29 05:34:38 2008 *-*
+;;;; *-* Last-Edit: Tue Apr 22 17:41:37 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -69,6 +69,8 @@
 	      (otherwise 
 	       (return-from read-target-directory-specification 
 		 (list line))))))))))
+
+(compile 'read-target-directory-specification)
 
 ;;; ---------------------------------------------------------------------------
 
@@ -152,6 +154,8 @@
                                now
                                *loaded-gbbopen-modules-directory-files*)))))))
         ))))
+
+(compile 'process-gbbopen-modules-directory)
 
 ;;; ===========================================================================
 ;;;				  End of File
