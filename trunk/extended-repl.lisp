@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/extended-repl.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Apr 22 09:02:43 2008 *-*
+;;;; *-* Last-Edit: Tue Apr 22 10:23:25 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -77,6 +77,7 @@
 ;;; ---------------------------------------------------------------------------
 
 (defmacro define-extended-repl-command (command lambda-list &body body)
+  ;;; Internal macro used by initiate.lisp's define-ttl-command macro:
   (let ((tlc-sym (gensym))
 	(maybe-doc (first body))
         (options nil))
@@ -99,8 +100,14 @@
        (pushnew '(,command ,tlc-sym 
                   ;; documentation string:
                   ,(when (stringp maybe-doc) maybe-doc)
-                  ;; Add to native help
-                  ,(when (member ':add-to-native-help options) 't))
+                  ;; Help control:
+                  ,(or
+                    ;; no help:
+                    (when (member ':no-help options) 
+                         ':no-help)
+                    ;; add to native help:
+                    (when (member ':add-to-native-help options) 
+                         ':add-to-native-help)))
 		*extended-repl-commands*
 		:test #'eq
 		:key #'car)
@@ -133,6 +140,30 @@
 		  :key #'car)))))
 
 ;;; ---------------------------------------------------------------------------
+
+(defun show-all-extended-repl-commands ()
+  ;;; Display all extended-REPL (defined tll-commands) that are not marked
+  ;;; with :no-help control:
+  (dolist (command (sort (remove-if
+                          #'(lambda (command-spec)
+                              (destructuring-bind (command function doc 
+                                                   help-control)
+                                  command-spec
+                                (declare (ignore command function doc))
+                                (eq help-control ':no-help)))
+                          *extended-repl-commands*)
+			 #'(lambda (a b)
+			     (string< 
+			      (the simple-base-string (symbol-name a))
+			      (the simple-base-string (symbol-name b))))
+			 :key #'first))
+    (format t "~&~s~24,4t~@[~a~]~%"
+	    (first command)
+	    (third command))))
+
+(compile 'show-all-extended-repl-commands)
+
+;;; ---------------------------------------------------------------------------
 ;;;  Interface into CLISP's *user-commands* facility
 ;;;
 ;;; Currently there is no way to read remaining values from the RELP read-line
@@ -142,7 +173,7 @@
 (defun user-commands ()
   (mapcan 
    #'(lambda (command-spec)
-       (destructuring-bind (command function doc native-help-p)
+       (destructuring-bind (command function doc help-control)
 	   command-spec
 	 (let* ((command-name (concatenate 'simple-string 
                                 ":" 
@@ -162,7 +193,7 @@
                             (apply function (nreverse args)))))))
            `(,command-fn-pair
              ;; native-help command documentation:
-             ,@(when native-help-p
+             ,@(when (eq help-control ':add-to-native-help)
                  (list (format nil "~%~a~24,4t~a" command-name doc)))))))
    (sort (copy-list *extended-repl-commands*)
          #'(lambda (a b)
@@ -253,8 +284,8 @@
 (compile 'ext:interactive-eval)
 
 ;;; ---------------------------------------------------------------------------
-;;; Extend SBCL's default form reader with a richer version that provides
-;;; keyword-command capabilities:
+;;; Extend SBCL's default form reader, SB-IMPL::REPL-READ-FORM-FUN, with a
+;;; richer version that provides keyword-command capabilities:
 
 #+sbcl
 (progn
@@ -287,6 +318,7 @@
               (do-command (second repl-command) (cdr form))
               '(values))
              (t form))))))))
+
   (compile 'extended-repl-read-form-fun)
   (setf sb-int:*repl-read-form-fun* #'extended-repl-read-form-fun))
 
