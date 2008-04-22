@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/initiate.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Mar 29 11:56:53 2008 *-*
+;;;; *-* Last-Edit: Tue Apr 22 02:11:17 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -115,17 +115,44 @@
 ;;; ===========================================================================
 ;;;   Define-TLL-command
 
+(defun skipped-cl-user-tll-command-warning (command fn)
+  ;; avoid SBCL optimization warning: 
+  (declare (optimize (speed 1)))
+  (format t "~&;; Not defining a ~s function for TLL command ~s;~
+             ~%;;   a function named ~s is already defined in ~3:*~s~%"
+          ':cl-user
+          command fn))
+
+;;; ---------------------------------------------------------------------------
+
 (defmacro define-tll-command (command lambda-list &rest body)
-  `(progn
-     (define-extended-repl-command 
-	 ,command
-	 ,lambda-list
-       ,@body)
-     ;; Define CL-USER package functions on all CL implementations:
-     ,(let ((fn-name (intern (symbol-name command) :common-lisp-user)))
-        ;; don't replace an existing function:
-	`(unless (fboundp ',fn-name)
-	   (defun ,fn-name ,lambda-list ,@body)))))
+  (let ((options nil))
+    ;; Handle (<command> <option>*) syntax:
+    (when (consp command)
+      (setf options (rest command))
+      (setf command (first command))
+      (let ((bad-options 
+             (set-difference options 
+                             '(:add-to-native-help :skip-cl-user-function))))
+        (dolist (bad-option bad-options)
+          (warn "Illegal command option ~s specified for tll-command ~s"
+                bad-option command))))
+    `(progn
+       (define-extended-repl-command 
+           ,(if (member ':add-to-native-help options)
+                `(,command :add-to-native-help)
+                command)
+           ,lambda-list
+         ,@body)
+       ;; Define command functions in the :CL-USER package on all CL
+       ;; implementations:
+       ,@(unless (member ':skip-cl-user-function options)
+           (let ((fn-name (intern (symbol-name command) ':common-lisp-user)))
+             ;; Don't replace an existing :cl-user function:
+             `((if (fboundp ',fn-name)
+                   (skipped-cl-user-tll-command-warning ',command ',fn-name)
+                   (defun ,fn-name ,lambda-list 
+                     ,@body))))))))
 
 ;;; ===========================================================================
 ;;;  Load GBBopen's standard TLL commands
