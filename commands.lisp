@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/commands.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Apr 22 03:58:04 2008 *-*
+;;;; *-* Last-Edit: Tue Apr 22 10:42:40 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -253,24 +253,46 @@
 	  (package-name *package*)))
 
 ;;; ===========================================================================
-;;;   Top-Level-Loop Command Help (for those CLs without native help)
+;;;   Help command for all Extended REPL commands
 
 (define-tll-command (:commands :add-to-native-help) ()
   "Show all extended-REPL commands"
-  (dolist (command (sort (copy-list *extended-repl-commands*)
-			 #'(lambda (a b)
-			     (string< 
-			      (the simple-base-string (symbol-name a))
-			      (the simple-base-string (symbol-name b))))
-			 :key #'first))
-    (format t "~&~s~24,4t~@[~a~]~%"
-	    (first command)
-	    (third command))))
+  (show-all-extended-repl-commands))
 
-#+(or clozure openmcl)
+;;; ===========================================================================
+;;;   Add :help command, where needed:
+
+#+(or clozure 
+      openmcl
+      sbcl)
 (define-tll-command :help ()
   "Show REPL commands"
+  #+sbcl
+  (show-all-extended-repl-commands)
+  #+(or clozure openmcl)
   (ccl::check-toplevel-command ':?))
+
+;;; ---------------------------------------------------------------------------
+;;;   Add :h abbreviated command, where needed:
+
+#+(or allegro
+      sbcl)
+(define-tll-command (:h :no-help) ()
+  #+allegro
+  (top-level:do-command ':help)
+  #+sbcl
+  (show-all-extended-repl-commands))
+
+;;; ---------------------------------------------------------------------------
+;;;   Add :? abbreviated command, where needed:
+
+#+(or allegro
+      sbcl)
+(define-tll-command (:? :no-help) ()
+  #+allegro
+  (top-level:do-command ':help)
+  #+sbcl
+  (show-all-extended-repl-commands))
 
 ;;; ===========================================================================
 ;;;				  End of File

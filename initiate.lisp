@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/initiate.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Apr 22 02:11:17 2008 *-*
+;;;; *-* Last-Edit: Tue Apr 22 10:26:04 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -102,13 +102,13 @@
 (defun startup-module (module-name options &optional package)
   (startup-gbbopen)
   (funcall (intern (symbol-name '#:cm-tll-command) :mini-module)
-           (list* module-name 
-                  ':propagate
-                  options))
+           (list* module-name ':propagate options))
   (when package 
     (set-package package)
-    (import '(common-lisp-user::gbbopen-tools common-lisp-user::gbbopen
-              common-lisp-user::gbbopen-user common-lisp-user::gbbopen-test)
+    (import '(common-lisp-user::gbbopen-tools 
+              common-lisp-user::gbbopen
+              common-lisp-user::gbbopen-user 
+              common-lisp-user::gbbopen-test)
             *package*))
   (values))
 
@@ -132,16 +132,20 @@
       (setf options (rest command))
       (setf command (first command))
       (let ((bad-options 
-             (set-difference options 
-                             '(:add-to-native-help :skip-cl-user-function))))
+             (set-difference options '(:add-to-native-help 
+                                       :no-help
+                                       :skip-cl-user-function))))
         (dolist (bad-option bad-options)
           (warn "Illegal command option ~s specified for tll-command ~s"
                 bad-option command))))
     `(progn
        (define-extended-repl-command 
-           ,(if (member ':add-to-native-help options)
-                `(,command :add-to-native-help)
-                command)
+           ,(cond
+             ((member ':no-help options)
+              `(,command :no-help))
+             ((member ':add-to-native-help options)
+              `(,command :add-to-native-help))
+             (t command))
            ,lambda-list
          ,@body)
        ;; Define command functions in the :CL-USER package on all CL
