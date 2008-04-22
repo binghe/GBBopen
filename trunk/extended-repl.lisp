@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/extended-repl.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Apr 22 10:23:25 2008 *-*
+;;;; *-* Last-Edit: Tue Apr 22 16:23:56 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -141,22 +141,29 @@
 
 ;;; ---------------------------------------------------------------------------
 
+(defun sorted/filtered-extended-repl-commands ()
+  (sort (remove-if
+         #'(lambda (command-spec)
+             (destructuring-bind (command function doc 
+                                  help-control)
+                 command-spec
+               (declare (ignore command function doc))
+               (eq help-control ':no-help)))
+         *extended-repl-commands*)
+        #'(lambda (a b)
+            (string< 
+             (the simple-base-string (symbol-name a))
+             (the simple-base-string (symbol-name b))))
+        :key #'first))
+
+(compile 'sorted/filtered-extended-repl-commands)
+
+;;; ---------------------------------------------------------------------------
+
 (defun show-all-extended-repl-commands ()
   ;;; Display all extended-REPL (defined tll-commands) that are not marked
   ;;; with :no-help control:
-  (dolist (command (sort (remove-if
-                          #'(lambda (command-spec)
-                              (destructuring-bind (command function doc 
-                                                   help-control)
-                                  command-spec
-                                (declare (ignore command function doc))
-                                (eq help-control ':no-help)))
-                          *extended-repl-commands*)
-			 #'(lambda (a b)
-			     (string< 
-			      (the simple-base-string (symbol-name a))
-			      (the simple-base-string (symbol-name b))))
-			 :key #'first))
+  (dolist (command (sorted/filtered-extended-repl-commands))
     (format t "~&~s~24,4t~@[~a~]~%"
 	    (first command)
 	    (third command))))
@@ -201,6 +208,9 @@
               (the simple-base-string (symbol-name a))
               (the simple-base-string (symbol-name b))))
          :key #'first)))
+
+#+clisp
+(compile 'user-commands)
 
 #+clisp
 (pushnew #'user-commands custom:*user-commands*)
@@ -344,11 +354,19 @@
 ;;;  package, allowing straightforward advanced adding of after-init hooks...
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (unless (find-package ':swank)
+  ;; Package :swank is already present:
+  (when (find-package ':swank)
+    ;; If there is not a :swank-backend package, assume an outdated SLIME
+    ;; installation and delete the :swank package to force a reload:
     (unless (find-package ':swank-backend)
-      (format t "~&;; Predefining ~s package for SLIME...~%" 
-              ':swank-backend)
-      (make-package ':swank-backend :use '(:common-lisp)))))
+      (format t "~&;; Deleting outdated ~s package for SLIME...~%" 
+              ':swank)
+      (delete-package ':swank)))
+  ;; Now define the :swank-backend package, if needed:
+  (unless (and (find-package :swank) (find-package ':swank-backend))
+    (format t "~&;; Predefining ~s package for SLIME...~%" 
+            ':swank-backend)
+    (make-package ':swank-backend :use '(:common-lisp))))
 
 (cond
  ;; Swank is already present:

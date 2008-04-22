@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/commands.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Apr 22 10:42:40 2008 *-*
+;;;; *-* Last-Edit: Tue Apr 22 16:30:42 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -183,11 +183,9 @@
 ;;; ===========================================================================
 ;;;   Additional Useful Commands
 
-(define-tll-command (:ds :add-to-native-help) (&optional (obj nil obj-p))
+(define-tll-command (:ds :add-to-native-help) (&optional obj)
   "Describe object"
-  (if obj-p
-      (describe (eval obj))
-      (format t "~&No object was specified")))
+  (describe (eval obj)))
 
 ;; Note: * is not set in SBCL's REPL:
 (define-tll-command :fi (&rest args)
