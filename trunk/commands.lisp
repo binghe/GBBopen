@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/commands.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Apr 17 19:32:47 2008 *-*
+;;;; *-* Last-Edit: Tue Apr 22 02:55:24 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -166,14 +166,14 @@
   (format t "~&The mini-module facility has not been loaded.~%")
   (values))
 
-(define-tll-command :lm (&rest module-name-and-options)
+(define-tll-command (:lm :add-to-native-help) (&rest module-name-and-options)
   "Load module"
   (if (find-package :mini-module)
       (funcall (intern (symbol-name '#:lm-tll-command) :mini-module) 
                module-name-and-options)
       (mini-module-not-loaded)))
   
-(define-tll-command :cm (&rest module-name-and-options)
+(define-tll-command (:cm :add-to-native-help) (&rest module-name-and-options)
   "Compile and load module"
   (if (find-package :mini-module)
       (funcall (intern (symbol-name '#:cm-tll-command) :mini-module) 
@@ -183,16 +183,13 @@
 ;;; ===========================================================================
 ;;;   Additional Useful Commands
 
-(define-tll-command :ds (obj)
-  "Describe"
-  (describe (eval obj)))
+(define-tll-command (:ds :add-to-native-help) (&optional (obj nil obj-p))
+  "Describe object"
+  (if obj-p
+      (describe (eval obj))
+      (format t "~&No object was specified")))
 
-(define-tll-command :dsbb ()
-  "Describe blackboard repository"
-  (funcall (intern (symbol-name '#:describe-blackboard-repository) :gbbopen)))
-
-;;; * is not set in SBCL
-
+;; Note: * is not set in SBCL's REPL:
 (define-tll-command :fi (&rest args)
   "Find instance by name"
   (let ((instance
@@ -220,17 +217,32 @@
    #-allegro #'quit
    args))
 
-(define-tll-command :quit (&rest args)
+(define-tll-command (:quit :add-to-native-help
+                           #+(or clisp 
+                                 clozure
+                                 cmu
+                                 digitool-mcl
+                                 ecl
+                                 openmcl
+                                 sbcl
+                                 scl)
+                           :skip-cl-user-function)
+    (&rest args)
   "Exit Lisp" 
   (apply #'quit-lisp args))
 
-;;  Allegro CL and ECL provide :exit, but we repeat for SLIME interface:
-(define-tll-command :exit (&rest args)
+;; Allegro CL and ECL provide :exit commands already, but we still define them
+;; here on all platforms for SLIME interface:
+(define-tll-command (:exit :add-to-native-help
+                           #+(or allegro
+                                 clisp)
+                           :skip-cl-user-function)
+    (&rest args)
   "Exit Lisp" 
   (apply #'quit-lisp args))
 
 ;;  Allegro CL provides :pa, but we repeat for SLIME interface:
-(define-tll-command :pa (&optional package)
+(define-tll-command (:pa :add-to-native-help) (&optional package)
   "Set/show current package"
   (when package
     (let ((the-package (find-package package)))
@@ -244,15 +256,15 @@
 ;;;   Top-Level-Loop Command Help (for those CLs without native help)
 
 #+(or clisp cmu scl sbcl)
-(define-tll-command :help ()
-  "Show REPL commands"
+(define-tll-command (:commands :add-to-native-help) ()
+  "Show all extended-REPL commands"
   (dolist (command (sort (copy-list *extended-repl-commands*)
 			 #'(lambda (a b)
 			     (string< 
 			      (the simple-base-string (symbol-name a))
 			      (the simple-base-string (symbol-name b))))
 			 :key #'first))
-    (format t "~&~s~20,4t~@[~a~]~%"
+    (format t "~&~s~24,4t~@[~a~]~%"
 	    (first command)
 	    (third command))))
 

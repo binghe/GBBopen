@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/extended-repl.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Apr 18 10:49:27 2008 *-*
+;;;; *-* Last-Edit: Tue Apr 22 02:59:46 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -58,13 +58,24 @@
 
 (defmacro define-extended-repl-command (command lambda-list &body body)
   (let ((tlc-sym (gensym))
-	(maybe-doc (first body)))
+	(maybe-doc (first body))
+        (options nil))
+    ;; Handle (<command> <option>*) syntax:
+    (when (consp command)
+      (setf options (rest command))
+      (setf command (first command)))
+    ;; Now do the REPL-command definition:
     `(progn
        ;; Define the command function:
-       (defun ,tlc-sym ,lambda-list ,@body)
+       (defun ,tlc-sym ,lambda-list 
+         ,@body)
        ;; Always add command to *extended-repl-commands* (for SLIME interface
        ;; and more):
-       (pushnew '(,command ,tlc-sym ,(when (stringp maybe-doc) maybe-doc))
+       (pushnew '(,command ,tlc-sym 
+                  ;; documentation string:
+                  ,(when (stringp maybe-doc) maybe-doc)
+                  ;; Add to native help
+                  ,(when (member ':add-to-native-help options) 't))
 		*extended-repl-commands*
 		:test #'eq
 		:key #'car)
@@ -100,23 +111,40 @@
 ;;;  Interface into CLISP's *user-commands* facility
 ;;;
 ;;; Currently there is no way to read remaining values from the RELP read-line
-;;; string in CLISP.
+;;; string in CLISP (but maybe in 2.45!)
 
 #+clisp
 (defun user-commands ()
   (mapcan 
    #'(lambda (command-spec)
-       (destructuring-bind (command function &optional doc)
+       (destructuring-bind (command function doc native-help-p)
 	   command-spec
-	 (let ((command-name (concatenate 'string 
-			       ":" 
-			       (string-downcase (symbol-name command)))))
-	   (list 
-	    ;; the command
-	    `(,command-name . ,function)
-	    ;; command documentation:
-	    (format nil "~%~a~20t~a" command-name doc)))))
-   *extended-repl-commands*))
+	 (let* ((command-name (concatenate 'simple-string 
+                                ":" 
+                                (string-downcase (symbol-name command))))
+                (command-fn-pair
+                 `(,command-name 
+                   . ,#'(lambda (&optional .string.)
+                          (let ((args nil))
+                            ;; Pre-2.45 CLISP's will not have a
+                            ;; .string. argument:
+                            (when .string.
+                              (with-input-from-string (stream .string.)
+                                (loop 
+                                  (let ((form (read stream nil stream)))
+                                    (when (eq form stream) (return))
+                                    (push form args)))))
+                            (apply function (nreverse args)))))))
+           `(,command-fn-pair
+             ;; native-help command documentation:
+             ,@(when native-help-p
+                 (list (format nil "~%~a~24,4t~a" command-name doc)))))))
+   (sort (copy-list *extended-repl-commands*)
+         #'(lambda (a b)
+             (string< 
+              (the simple-base-string (symbol-name a))
+              (the simple-base-string (symbol-name b))))
+         :key #'first)))
 
 #+clisp
 (pushnew #'user-commands custom:*user-commands*)
@@ -263,7 +291,7 @@
     (unless (find-package ':swank-backend)
       (format t "~&;; Predefining ~s package for SLIME...~%" 
               ':swank-backend)
-      (defpackage :swank-backend (:use :common-lisp)))))
+      (make-package ':swank-backend :use '(:common-lisp)))))
 
 (cond
  ;; Swank is already present:

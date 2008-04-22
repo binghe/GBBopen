@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/startup.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Mar 25 11:31:30 2008 *-*
+;;;; *-* Last-Edit: Tue Apr 22 01:37:57 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -90,12 +90,10 @@
 ;;;  (loaded below):
 
 (unless (find-package :gbbopen-tools)
-  (defpackage :gbbopen-tools 
-    (:use :common-lisp :mini-module)))
+  (make-package ':gbbopen-tools :use '(:common-lisp :mini-module)))
 
 (unless (find-package :gbbopen)
-  (defpackage :gbbopen 
-    (:use :common-lisp :mini-module :gbbopen-tools)))
+  (make-package ':gbbopen :use '(:common-lisp :mini-module :gbbopen-tools)))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  If there is a gbbopen-init.lisp file (or compiled version) in the
@@ -129,7 +127,7 @@
 ;;;  Record that GBBopen's startup file has been loaded:
 
 (declaim (special *gbbopen-startup-loaded*))
-(setq *gbbopen-startup-loaded* 't)
+(setf *gbbopen-startup-loaded* 't)
 
 ;;; ===========================================================================
 ;;;                               End of File
