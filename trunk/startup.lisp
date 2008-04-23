@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/startup.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Apr 22 01:37:57 2008 *-*
+;;;; *-* Last-Edit: Wed Apr 23 05:40:08 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -59,6 +59,13 @@
 (load (make-pathname :name "corman-patches"
                      :type "lisp" 
                      :defaults *load-truename*))
+
+;;; ---------------------------------------------------------------------------
+;;;  Control gbbopen-modules directory processing (defvar is in initiate.lisp)
+
+(unless (boundp '*skip-gbbopen-modules-directory-processing*)
+  (locally (declare (special *skip-gbbopen-modules-directory-processing*))
+    (setf *skip-gbbopen-modules-directory-processing* nil)))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Bootstrap-load the mini-module system from its location relative to this
@@ -121,7 +128,8 @@
 ;;;  load the modules.lisp file (if present) from each module directory
 ;;;  that is linked from the gbbopen-modules directory:
 
-(process-gbbopen-modules-directory "modules")
+(unless *skip-gbbopen-modules-directory-processing*
+  (process-gbbopen-modules-directory "modules"))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Record that GBBopen's startup file has been loaded:

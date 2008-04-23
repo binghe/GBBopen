@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/initiate.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Apr 23 04:30:19 2008 *-*
+;;;; *-* Last-Edit: Wed Apr 23 05:36:51 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -55,6 +55,11 @@
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 (in-package :common-lisp-user)
+
+;;; ---------------------------------------------------------------------------
+;;;  Used to control gbbopen-modules directory processing by startup.lisp:
+
+(defvar *skip-gbbopen-modules-directory-processing* nil)
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Used to indicate if GBBopen's startup.lisp file has been loaded:
