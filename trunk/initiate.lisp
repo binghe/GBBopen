@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/initiate.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Apr 23 14:36:32 2008 *-*
+;;;; *-* Last-Edit: Wed Apr 23 15:47:09 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -221,12 +221,11 @@
 ;;; ===========================================================================
 ;;;  Load gbbopen-modules-directory processing, if needed:
 
-(unless (fboundp 'process-gbbopen-modules-directory)
-  (let ((truename *load-truename*))
-    (load (make-pathname 
-	   :name "gbbopen-modules-directory"
-	   :type "lisp"
-	   :defaults truename))))
+(let ((truename *load-truename*))
+  (load (make-pathname 
+         :name "gbbopen-modules-directory"
+         :type "lisp"
+         :defaults truename)))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  If there is a gbbopen-modules directory in the users "home" directory,
