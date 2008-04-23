@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/initiate.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Apr 23 05:36:51 2008 *-*
+;;;; *-* Last-Edit: Wed Apr 23 09:28:23 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -85,14 +85,23 @@
 	   :defaults truename))))
 
 ;;; ---------------------------------------------------------------------------
+;;;  GBBopen's startup.lisp loader
+;;;    :force t -> load startup.lisp even if it was loaded before
+;;;    :skip-gbbopen-modules-directory-processing -> controls whether 
+;;;       <homedir>/gbbopen-modules/ processing is performed
 
 (let ((truename *load-truename*))
-  (defun startup-gbbopen ()
+  (defun startup-gbbopen (&key                         
+                          force
+                          ((:skip-gbbopen-modules-directory-processing
+                            *skip-gbbopen-modules-directory-processing*)
+                           *skip-gbbopen-modules-directory-processing*))
     (cond 
      ;; Scan for changes if startup.lisp has been loaded:
-     (*gbbopen-startup-loaded* 
-      (funcall 'process-gbbopen-modules-directory "commands" 't)
-      (funcall 'process-gbbopen-modules-directory "modules" 't))
+     ((and (not force) *gbbopen-startup-loaded*)
+      (unless *skip-gbbopen-modules-directory-processing*
+        (funcall 'process-gbbopen-modules-directory "commands" 't)
+        (funcall 'process-gbbopen-modules-directory "modules" 't)))
      ;; Load startup.lisp:
      (t (load (make-pathname 
                :name "startup"
