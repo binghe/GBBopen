@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/gbbopen-modules-directory.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Apr 22 17:41:37 2008 *-*
+;;;; *-* Last-Edit: Wed Apr 23 03:28:01 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -70,7 +70,7 @@
 	       (return-from read-target-directory-specification 
 		 (list line))))))))))
 
-(compile 'read-target-directory-specification)
+(compile-if-advantageous 'read-target-directory-specification)
 
 ;;; ---------------------------------------------------------------------------
 
@@ -81,8 +81,7 @@
 	  (make-pathname :defaults (truename (user-homedir-pathname))))
 	 (user-modules-dir
 	  (make-pathname
-	   :directory (append (pathname-directory
-			       user-homedir-pathname)
+	   :directory (append (pathname-directory user-homedir-pathname)
 			      '("gbbopen-modules"))
 	   :defaults user-homedir-pathname))
 	 (subdirs-pathname
@@ -155,7 +154,7 @@
                                *loaded-gbbopen-modules-directory-files*)))))))
         ))))
 
-(compile 'process-gbbopen-modules-directory)
+(compile-if-advantageous 'process-gbbopen-modules-directory)
 
 ;;; ===========================================================================
 ;;;				  End of File

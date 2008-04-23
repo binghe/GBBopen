@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/extended-repl.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Apr 22 17:06:56 2008 *-*
+;;;; *-* Last-Edit: Wed Apr 23 03:26:26 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -53,6 +53,8 @@
 
 (defun get-extended-repl-command (command)
   (assoc command *extended-repl-commands* :test #'eq))
+
+(compile-if-advantageous 'get-extended-repl-command)
 
 ;;; ---------------------------------------------------------------------------
 ;;;  In Allegro, we hide non-native help commands by saving the command-name
@@ -139,6 +141,8 @@
 		  :test #'equal
 		  :key #'car)))))
 
+(compile-if-advantageous 'define-extended-repl-command)
+
 ;;; ---------------------------------------------------------------------------
 
 (defun sorted/filtered-extended-repl-commands ()
@@ -156,7 +160,7 @@
              (the simple-base-string (symbol-name b))))
         :key #'first))
 
-(compile 'sorted/filtered-extended-repl-commands)
+(compile-if-advantageous 'sorted/filtered-extended-repl-commands)
 
 ;;; ---------------------------------------------------------------------------
 
@@ -168,7 +172,7 @@
 	    (first command)
 	    (third command))))
 
-(compile 'show-all-extended-repl-commands)
+(compile-if-advantageous 'show-all-extended-repl-commands)
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Interface into CLISP's *user-commands* facility
@@ -210,7 +214,7 @@
          :key #'first)))
 
 #+clisp
-(compile 'user-commands)
+(compile-if-advantageous 'user-commands)
 
 #+clisp
 (pushnew #'user-commands custom:*user-commands*)
@@ -252,7 +256,7 @@
 	      (values))
 	     (t (original-interactive-eval form))))))
  
- (compile 'ext:interactive-eval))
+ (compile-if-advantageous 'ext:interactive-eval))
 
 ;;; ---------------------------------------------------------------------------
 ;;; The Scieneer CL 1.3 doesn't provide an extension hook in either %top-level
@@ -291,7 +295,7 @@
 	    (t (original-interactive-eval form))))))
 
 #+scl
-(compile 'ext:interactive-eval)
+(compile-if-advantageous 'ext:interactive-eval)
 
 ;;; ---------------------------------------------------------------------------
 ;;; Extend SBCL's default form reader, SB-IMPL::REPL-READ-FORM-FUN, with a
@@ -329,7 +333,7 @@
               '(values))
              (t form))))))))
 
-  (compile 'extended-repl-read-form-fun)
+  (compile-if-advantageous 'extended-repl-read-form-fun)
   (setf sb-int:*repl-read-form-fun* #'extended-repl-read-form-fun))
 
 ;;; ===========================================================================
@@ -346,12 +350,17 @@
 
 ;;;  *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 ;;;  SLIME doesn't provide an easy means of using its *after-init-hook*
-;;;  mechanism in advance of loading Swank.  We work around this in the
-;;;  current SLIME by creating the :swank-backend package (which is used by
-;;;  Swank) and exporting swank-backend:*after-init-hook*, which we have set.
-;;;  It would have been *SO* much easier if Swank simply imported a
-;;;  better-named variable (such as *after-swank-init-hook*) from the :cl-user
-;;;  package, allowing straightforward advanced adding of after-init hooks...
+;;;  mechanism in advance of loading Swank.  The :swank package cannot be
+;;;  created in advance, as the existence of the :swank package is used as an
+;;;  indicator that Swank has been initialized. We work around this in the
+;;;  current SLIME by creating the :swank-backend package (a package that will
+;;;  be used by the :swank package, once the :swank package is created),
+;;;  setting swank-backend::*after-init-hook*, and exporting
+;;;  swank-backend::*after-init-hook* so that it will become Swank's
+;;;  *after-init-hook*.  It would have been *SO* much easier if Swank simply
+;;;  imported/used a better-named variable (such as *after-swank-init-hook*)
+;;;  from the :cl-user package, allowing straightforward specification of
+;;;  after-init hooks in advance of Swank loading.
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   ;; Package :swank is already present:
@@ -363,7 +372,7 @@
               ':swank)
       (delete-package ':swank)))
   ;; Now define the :swank-backend package, if needed:
-  (unless (and (not (find-package :swank)) (find-package ':swank-backend))
+  (unless (find-package ':swank-backend)
     (format t "~&;; Predefining ~s package for SLIME...~%" 
             ':swank-backend)
     (make-package ':swank-backend :use '(:common-lisp))))
@@ -373,15 +382,12 @@
  ((find-package ':swank)
   (load-slime-extended-repl))
  ;; The :swank package doesn't exist yet:
- (t 
-  ;; Always do the export in this case (even if the :swank-backend package
-  ;; was created already):
-  (export '(swank-backend::*after-init-hook*) ':swank-backend)
-  (locally (declare (special swank-backend::*after-init-hook*))
-    (if (boundp 'swank-backend::*after-init-hook*)
-        (pushnew 'load-slime-extended-repl swank-backend::*after-init-hook*)
-        (setf swank-backend::*after-init-hook* 
-              '(load-slime-extended-repl))))))
+ (t (export '(swank-backend::*after-init-hook*) ':swank-backend)
+    (locally (declare (special swank-backend::*after-init-hook*))
+      (if (boundp 'swank-backend::*after-init-hook*)
+          (pushnew 'load-slime-extended-repl swank-backend::*after-init-hook*)
+          (setf swank-backend::*after-init-hook* 
+                '(load-slime-extended-repl))))))
 
 ;;; ===========================================================================
 ;;;				  End of File
