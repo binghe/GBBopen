@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:SWANK; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/slime-extended-repl.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Apr 17 19:02:10 2008 *-*
+;;;; *-* Last-Edit: Wed Apr 23 04:43:34 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -26,6 +26,9 @@
 	 
 (in-package :swank)
 
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (import '(cl-user::compile-if-advantageous)))
+
 ;;; ---------------------------------------------------------------------------
 
 (defun get-extended-repl-command-with-help (command)
@@ -40,6 +43,8 @@
 	   #+ecl
 	   '(:help si::tpl-help-command))))
 
+(compile-if-advantageous 'get-extended-repl-command-with-help)
+
 ;;; ---------------------------------------------------------------------------
 
 (unless (eq *listener-eval-function* 'repl-eval)
@@ -50,7 +55,7 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun repl-command-form (string)
-  (setq string (string-left-trim '(#\space #\tab) string))
+  (setf string (string-left-trim '(#\space #\tab) string))
   (when (or 
          ;; Check for 'spread' command syntax:
          (eql (char string 0) #\:)
@@ -89,12 +94,32 @@
                 ;; bypass normal REPL processing:
                 't)))))))))
 
+(compile-if-advantageous 'repl-command-form)
+
 ;;; ---------------------------------------------------------------------------
 
 (defun extended-repl-eval (string)
   (unless (repl-command-form string)
     ;; Normal REPL processing:
     (repl-eval string)))
+
+(compile-if-advantageous 'extended-repl-eval)
+
+;;; ---------------------------------------------------------------------------
+
+(defun set-slime-repl-package (package-specifier)
+  (when *emacs-connection*
+    (let ((package-name 
+           (if (packagep package-specifier)
+               (package-name package-specifier)
+               package-specifier))
+          ;; Don't return the results:
+          (*send-repl-results-function* #'identity))
+      (repl-eval (format nil "(in-package ~s)" package-name))
+      ;; Return success:
+      't)))
+
+(compile-if-advantageous 'set-slime-repl-package)
 
 ;;; ---------------------------------------------------------------------------
 

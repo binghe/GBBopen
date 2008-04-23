@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/commands.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Apr 22 16:30:42 2008 *-*
+;;;; *-* Last-Edit: Wed Apr 23 04:35:58 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -242,13 +242,16 @@
 ;;  Allegro CL provides :pa, but we repeat for SLIME interface:
 (define-tll-command (:pa :add-to-native-help) (&optional package)
   "Set/show current package"
-  (when package
+  (cond
+   ;; Package change:
+   (package
     (let ((the-package (find-package package)))
       (if the-package 
-	  (set-package the-package)
-	  (format t "~&The package ~s is not defined.~%" package))))
-  (format t "~&The ~s package is current.~%" 
-	  (package-name *package*)))
+          (set-package the-package)
+          (format t "~&The package ~s is not defined.~%" package))))
+   ;; Package show:
+   (t (format t "~&The ~s package is current.~%" 
+              (package-name *package*)))))
 
 ;;; ===========================================================================
 ;;;   Help command for all Extended REPL commands

@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/initiate.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Apr 22 10:26:04 2008 *-*
+;;;; *-* Last-Edit: Wed Apr 23 04:30:19 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -62,6 +62,13 @@
 (defvar *gbbopen-startup-loaded* nil)
 
 ;;; ---------------------------------------------------------------------------
+
+(defun compile-if-advantageous (fn-name)
+  ;;; Compile bootstrap-loaded function or macro on CLs where this is desirable
+    #+ecl (declare (ignore fn-name))
+    #-ecl (compile fn-name))
+
+;;; ---------------------------------------------------------------------------
 ;;; Load top-level REPL extensions for CLISP, CMUCL, SCL, ECL, and SBCL and
 ;;; SLIME command extensions for all:
 
@@ -86,16 +93,30 @@
                :name "startup"
                :type "lisp"
                :defaults truename))))))
+  
+(compile-if-advantageous 'startup-gbbopen)
 
 ;;; ---------------------------------------------------------------------------
 
 (defun set-package (package-specifier)
-  (setq *package* (find-package package-specifier))
-  ;; For Allegro CL's LEP Emacs interface:
-  #+(or allegro scl)
-  (when (lep:lep-is-running)
-    (lep::eval-in-emacs (format nil "(setq fi:package ~s)"
-				(package-name *package*)))))
+  (let ((swank-package (find-package ':swank)))
+    (cond
+     ;; If we are SLIME'ing:
+     ((and swank-package 
+           ;; Returns true if successful:
+           (funcall (intern (symbol-name '#:set-slime-repl-package)
+                            swank-package)
+                    package-specifier))
+      't)
+     ;; Otherwise:
+     (t (setf *package* (find-package package-specifier))
+        ;; For LEP Emacs interface (Allegro & SCL):
+        #+(or allegro scl)
+        (when (lep:lep-is-running)
+          (lep::eval-in-emacs (format nil "(setq fi:package ~s)"
+                                      (package-name *package*))))))))
+
+(compile-if-advantageous 'set-package)
 
 ;;; ---------------------------------------------------------------------------
 
@@ -112,6 +133,8 @@
             *package*))
   (values))
 
+(compile-if-advantageous 'startup-module)
+
 ;;; ===========================================================================
 ;;;   Define-TLL-command
 
@@ -122,6 +145,8 @@
              ~%;;   a function named ~s is already defined in ~3:*~s~%"
           ':cl-user
           command fn))
+
+(compile-if-advantageous 'skipped-cl-user-tll-command-warning)
 
 ;;; ---------------------------------------------------------------------------
 
@@ -157,6 +182,8 @@
                    (skipped-cl-user-tll-command-warning ',command ',fn-name)
                    (defun ,fn-name ,lambda-list 
                      ,@body))))))))
+
+(compile-if-advantageous 'define-tll-command)
 
 ;;; ===========================================================================
 ;;;  Load GBBopen's standard TLL commands
