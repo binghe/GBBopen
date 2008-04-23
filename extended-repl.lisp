@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/extended-repl.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Apr 23 03:26:26 2008 *-*
+;;;; *-* Last-Edit: Wed Apr 23 13:52:28 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -99,31 +99,32 @@
          ,@body)
        ;; Always add command to *extended-repl-commands* (for SLIME interface
        ;; and more):
-       (pushnew '(,command ,tlc-sym 
-                  ;; documentation string:
-                  ,(when (stringp maybe-doc) maybe-doc)
-                  ;; Help control:
-                  ,(or
-                    ;; no help:
-                    (when (member ':no-help options) 
+       (setf *extended-repl-commands*
+             (cons '(,command ,tlc-sym 
+                     ;; documentation string:
+                     ,(when (stringp maybe-doc) maybe-doc)
+                     ;; Help control:
+                     ,(or
+                       ;; no help:
+                       (when (member ':no-help options) 
                          ':no-help)
-                    ;; add to native help:
-                    (when (member ':add-to-native-help options) 
+                       ;; add to native help:
+                       (when (member ':add-to-native-help options) 
                          ':add-to-native-help)))
-		*extended-repl-commands*
-		:test #'eq
-		:key #'car)
+                   (delete ',command
+                           *extended-repl-commands*
+                           :test #'eq
+                           :key #'car)))
        ;; Add to the CL implemention's top-level, where possible:
        #+allegro
-       (unless (top-level::find-command-or-alias ,command :quiet t)
-         (top-level:alias ,(string-downcase (symbol-name command))
-             ,lambda-list ,@body))
+       (top-level:alias ,(string-downcase (symbol-name command))
+           ,lambda-list ,@body)
        #+lispworks
        (system::define-top-loop-command 
 	   ,command
 	   ,lambda-list
 	 (progn ,@body))
-       #+openmcl
+       #+(or clozure openmcl)
        (ccl::define-toplevel-command :global ,command ,lambda-list
 				     ,@body)
        #+ecl
