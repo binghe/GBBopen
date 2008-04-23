@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/initiate.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Apr 23 09:28:23 2008 *-*
+;;;; *-* Last-Edit: Wed Apr 23 14:36:32 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -152,15 +152,14 @@
 ;;; ===========================================================================
 ;;;   Define-TLL-command
 
-(defun skipped-cl-user-tll-command-warning (command fn)
+(defun redefining-cl-user-tll-command-warning (command fn)
   ;; avoid SBCL optimization warning: 
   (declare (optimize (speed 1)))
-  (format t "~&;; Not defining a ~s function for TLL command ~s;~
-             ~%;;   a function named ~s is already defined in ~3:*~s~%"
-          ':cl-user
-          command fn))
+  (let ((*package* (find-package ':common-lisp)))
+    (format t "~&;; Redefining ~s function for TLL command ~s~%"
+            fn command)))
 
-(compile-if-advantageous 'skipped-cl-user-tll-command-warning)
+(compile-if-advantageous 'redefining-cl-user-tll-command-warning)
 
 ;;; ---------------------------------------------------------------------------
 
@@ -191,11 +190,10 @@
        ;; implementations:
        ,@(unless (member ':skip-cl-user-function options)
            (let ((fn-name (intern (symbol-name command) ':common-lisp-user)))
-             ;; Don't replace an existing :cl-user function:
-             `((if (fboundp ',fn-name)
-                   (skipped-cl-user-tll-command-warning ',command ',fn-name)
-                   (defun ,fn-name ,lambda-list 
-                     ,@body))))))))
+             `((when (fboundp ',fn-name)
+                 (redefining-cl-user-tll-command-warning ',command ',fn-name))
+               (defun ,fn-name ,lambda-list 
+                 ,@body)))))))
 
 (compile-if-advantageous 'define-tll-command)
 
