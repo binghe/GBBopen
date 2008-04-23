@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/startup.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Apr 23 05:40:08 2008 *-*
+;;;; *-* Last-Edit: Wed Apr 23 19:13:17 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -66,6 +66,17 @@
 (unless (boundp '*skip-gbbopen-modules-directory-processing*)
   (locally (declare (special *skip-gbbopen-modules-directory-processing*))
     (setf *skip-gbbopen-modules-directory-processing* nil)))
+
+;;; ---------------------------------------------------------------------------
+;;;  Define compile-if-advantageous if it is not already present (from loading
+;;;  initiate.lisp)
+
+(unless (fboundp 'compile-if-advantageous)
+  (defun compile-if-advantageous (fn-name)
+    ;;; Compile bootstrap-loaded function or macro on CLs where this is
+    ;;; desirable
+    #+ecl (declare (ignore fn-name))
+    #-ecl (compile fn-name)))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Bootstrap-load the mini-module system from its location relative to this

@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/initiate.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Apr 23 15:47:09 2008 *-*
+;;;; *-* Last-Edit: Wed Apr 23 19:21:45 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -70,8 +70,8 @@
 
 (defun compile-if-advantageous (fn-name)
   ;;; Compile bootstrap-loaded function or macro on CLs where this is desirable
-    #+ecl (declare (ignore fn-name))
-    #-ecl (compile fn-name))
+  #+ecl (declare (ignore fn-name))
+  #-ecl (compile fn-name))
 
 ;;; ---------------------------------------------------------------------------
 ;;; Load top-level REPL extensions for CLISP, CMUCL, SCL, ECL, and SBCL and
@@ -88,7 +88,7 @@
 ;;;  GBBopen's startup.lisp loader
 ;;;    :force t -> load startup.lisp even if it was loaded before
 ;;;    :skip-gbbopen-modules-directory-processing -> controls whether 
-;;;       <homedir>/gbbopen-modules/ processing is performed
+;;;                 <homedir>/gbbopen-modules/ processing is performed
 
 (let ((truename *load-truename*))
   (defun startup-gbbopen (&key                         
@@ -108,6 +108,8 @@
                :type "lisp"
                :defaults truename))))))
   
+;; Lispworks can't compile the interpreted closure:
+#-lispworks
 (compile-if-advantageous 'startup-gbbopen)
 
 ;;; ---------------------------------------------------------------------------

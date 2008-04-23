@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/commands.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Apr 23 04:35:58 2008 *-*
+;;;; *-* Last-Edit: Wed Apr 23 19:17:00 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -221,6 +221,7 @@
                                  cmu
                                  digitool-mcl
                                  ecl
+                                 lispworks
                                  openmcl
                                  sbcl
                                  scl)
