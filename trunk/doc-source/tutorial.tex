@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/tutorial.tex *-*
-%% *-* Last-Edit: Sat Apr 19 11:36:48 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Thu Apr 24 05:41:20 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2005-2008, Dan Corkill <corkill@GBBopen.org>
@@ -2197,7 +2197,7 @@ name as the REPL command:
 
 GBBopen's REPL commands are defined to mimic the syntax of existing REPL
 commands in your Common Lisp environment.  On many Common Lisp
-implementations, and if you are using the
+implementations, or if you are using the
 \xsitelink{SLIME}{http://common-lisp.net/project/slime/} interface, REPL
 commands with arguments can be specified in either list or ``spread''
 notation.  For example:
@@ -2224,15 +2224,14 @@ or
   gbbopen-user>}
 \end{example}
 
-However, \xsitelink{Clozure CL}{http://trac.clozure.com/openmcl/} and
-\xsitelink{OpenMCL}{http://openmcl.clozure.com/} do not support the spread
-notation, and \xsitelink{Allegro CL}{http://www.franz.com} and
+However, \xsitelink{OpenMCL}{http://openmcl.clozure.com/} version 1.0 does not
+support the spread notation when the command has arguments, and
+\xsitelink{Allegro CL}{http://www.franz.com},
+\xsitelink{CLISP}{http://clisp.cons.org/}, and
 \xsitelink{LispWorks}{http://www.lispworks.com} do not support the list
-notation.  At present, \xsitelink{CLISP}{http://clisp.cons.org/} only supports
-the spread notation in its native REPL---but without arguments.  So, CLISP
-users that aren't using the
-\xsitelink{SLIME}{http://common-lisp.net/project/slime/} REPL interface must
-use the \code{:common-lisp-user} functions rather than a REPL command when the
+notation.  CLISP versions prior to 2.45 only support the spread notation---but
+without arguments.  So, a CLISP user running a version prior to 2.45 must use
+the \code{:common-lisp-user} functions rather than a REPL command when the
 command requires arguments:
 %
 \W\supp
@@ -2245,15 +2244,16 @@ command requires arguments:
   gbbopen-user>}
 \end{example}
 %
-We will show the \reflink{spread command syntax}{sec:REPL-command-syntax} throughout
-the rest of the Tutorial.  If you are running \xsitelink{Clozure
-  CL}{http://trac.clozure.com/openmcl/},
-\xsitelink{OpenMCL}{http://openmcl.clozure.com/}, or the
-\xsitelink{SLIME}{http://common-lisp.net/project/slime/} interface, remember
-to use the list REPL-command syntax if the command has arguments.
-\xsitelink{CLISP}{http://clisp.cons.org/} users must remember to use the
-\code{:common-lisp-user} functions rather than a REPL command when the command
-requires arguments.
+or use the \xsitelink{SLIME}{http://common-lisp.net/project/slime/} REPL
+interface.
+
+We will show the \reflink{spread command syntax}{sec:REPL-command-syntax}
+throughout the rest of the Tutorial.  If you are running
+\xsitelink{OpenMCL}{http://openmcl.clozure.com/} version 1.0, remember to use
+the list REPL-command syntax if the command has arguments.  If you are running
+a \xsitelink{CLISP}{http://clisp.cons.org/} version prior to 2.45, remember to
+use the \code{:common-lisp-user} functions rather than the REPL command when
+the command requires arguments.
 
 \subsection*{Step 2: Customizing your Common Lisp initialization file}
 

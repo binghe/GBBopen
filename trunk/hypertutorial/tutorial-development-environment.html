@@ -121,7 +121,7 @@ name as the REPL command:
 <h3><a name="sec:REPL-command-syntax">REPL command syntax</a></h3>
 <p>GBBopen's REPL commands are defined to mimic the syntax of existing REPL
 commands in your Common Lisp environment.  On many Common Lisp
-implementations, and if you are using the
+implementations, or if you are using the
 <a target="_top" href="http://common-lisp.net/project/slime/">SLIME</a> interface, REPL
 commands with arguments can be specified in either list or &#8220;spread&#8221;
 notation.  For example:
@@ -141,15 +141,14 @@ or
   gbbopen-user&gt;</font>
 </pre>
 </p>
-<p>However, <a target="_top" href="http://trac.clozure.com/openmcl/">Clozure CL</a> and
-<a target="_top" href="http://openmcl.clozure.com/">OpenMCL</a> do not support the spread
-notation, and <a target="_top" href="http://www.franz.com">Allegro CL</a> and
+<p>However, <a target="_top" href="http://openmcl.clozure.com/">OpenMCL</a> version 1.0 does not
+support the spread notation when the command has arguments, and
+<a target="_top" href="http://www.franz.com">Allegro CL</a>,
+<a target="_top" href="http://clisp.cons.org/">CLISP</a>, and
 <a target="_top" href="http://www.lispworks.com">LispWorks</a> do not support the list
-notation.  At present, <a target="_top" href="http://clisp.cons.org/">CLISP</a> only supports
-the spread notation in its native REPL&mdash;but without arguments.  So, CLISP
-users that aren't using the
-<a target="_top" href="http://common-lisp.net/project/slime/">SLIME</a> REPL interface must
-use the <code>:common-lisp-user</code> functions rather than a REPL command when the
+notation.  CLISP versions prior to 2.45 only support the spread notation&mdash;but
+without arguments.  So, a CLISP user running a version prior to 2.45 must use
+the <code>:common-lisp-user</code> functions rather than a REPL command when the
 command requires arguments:
 <pre class="pretop">
 <font color="#667f66">  cl-user&gt; <font color="#000000">(cl-user:gbbopen-user :create-dirs)</font>
@@ -158,15 +157,16 @@ command requires arguments:
   ;; Loading <var>&lt;install-dir&gt;</var>/<var>&lt;platform-dir&gt;</var>/gbbopen/gbbopen-user.fasl
   gbbopen-user&gt;</font>
 </pre>
-We will show the <a href="#sec:REPL-command-syntax">spread command syntax</a> throughout
-the rest of the Tutorial.  If you are running <a target="_top" href="http://trac.clozure.com/openmcl/">Clozure
-CL</a>,
-<a target="_top" href="http://openmcl.clozure.com/">OpenMCL</a>, or the
-<a target="_top" href="http://common-lisp.net/project/slime/">SLIME</a> interface, remember
-to use the list REPL-command syntax if the command has arguments.
-<a target="_top" href="http://clisp.cons.org/">CLISP</a> users must remember to use the
-<code>:common-lisp-user</code> functions rather than a REPL command when the command
-requires arguments.
+or use the <a target="_top" href="http://common-lisp.net/project/slime/">SLIME</a> REPL
+interface.
+</p>
+<p>We will show the <a href="#sec:REPL-command-syntax">spread command syntax</a>
+throughout the rest of the Tutorial.  If you are running
+<a target="_top" href="http://openmcl.clozure.com/">OpenMCL</a> version 1.0, remember to use
+the list REPL-command syntax if the command has arguments.  If you are running
+a <a target="_top" href="http://clisp.cons.org/">CLISP</a> version prior to 2.45, remember to
+use the <code>:common-lisp-user</code> functions rather than the REPL command when
+the command requires arguments.
 </p>
 <h2><a name="id5">Step 2: Customizing your Common Lisp initialization file</a></h2><p>
 I'm lazy and would rather not have to explicitly load the
