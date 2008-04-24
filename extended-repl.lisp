@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/extended-repl.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Apr 23 13:52:28 2008 *-*
+;;;; *-* Last-Edit: Thu Apr 24 04:57:49 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -353,16 +353,25 @@
 ;;;  SLIME doesn't provide an easy means of using its *after-init-hook*
 ;;;  mechanism in advance of loading Swank.  The :swank package cannot be
 ;;;  created in advance, as the existence of the :swank package is used as an
-;;;  indicator that Swank has been initialized. We work around this in the
-;;;  current SLIME by creating the :swank-backend package (a package that will
-;;;  be used by the :swank package, once the :swank package is created),
-;;;  setting swank-backend::*after-init-hook*, and exporting
-;;;  swank-backend::*after-init-hook* so that it will become Swank's
-;;;  *after-init-hook*.  It would have been *SO* much easier if Swank simply
-;;;  imported/used a better-named variable (such as *after-swank-init-hook*)
-;;;  from the :cl-user package, allowing straightforward specification of
-;;;  after-init hooks in advance of Swank loading.
+;;;  indicator that Swank has been initialized.
+;;;
+;;;  We work around this by creating the :swank-backend package in advance of
+;;;  swank loading (a package that will be used by the :swank package, once
+;;;  the :swank package is created), setting swank-backend::*after-init-hook*,
+;;;  and exporting swank-backend::*after-init-hook* so that it will become
+;;;  Swank's *after-init-hook*.  This exporting strategy doesn't work with
+;;;  LispWorks (defpackage :swank ...) handling of
+;;;  swank-backend::*after-init-hook*, so on LispWorks we pre-create the
+;;;  :swank-loader package and add :after advice to a placeholder
+;;;  swank-loader::load-swank function.  The :after advice will remain once
+;;;  the actual swank-loader::load-swank function is loaded.
+;;;
+;;;  It would have been *SO* much easier if Swank simply imported/used a
+;;;  better-named variable (such as *after-swank-init-hook*) from the :cl-user
+;;;  package, allowing straightforward specification of after-init hooks in
+;;;  advance of Swank loading.
 
+#-lispworks
 (eval-when (:compile-toplevel :load-toplevel :execute)
   ;; Package :swank is already present:
   (when (find-package ':swank)
@@ -378,6 +387,7 @@
             ':swank-backend)
     (make-package ':swank-backend :use '(:common-lisp))))
 
+#-lispworks
 (cond
  ;; Swank is already present:
  ((find-package ':swank)
@@ -389,6 +399,25 @@
           (pushnew 'load-slime-extended-repl swank-backend::*after-init-hook*)
           (setf swank-backend::*after-init-hook* 
                 '(load-slime-extended-repl))))))
+
+#+lispworks
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  ;; Define the :swank-loader package, if needed:
+  (unless (find-package ':swank-loader)
+    (format t "~&;; Predefining ~s package for SLIME...~%" 
+            ':swank-loader)
+    (make-package :swank-loader :use '(:common-lisp))))
+
+#+lispworks
+(progn
+  ;; Predefine a placeholder swank-loader::load-swank function to add
+  ;; advice to:
+  (unless (fboundp 'swank-loader::load-swank)
+    (defun swank-loader::load-swank (&rest args) args))
+  ;; Add the advice:
+  (defadvice (swank-loader::load-swank extended-repl :after)
+      ()
+    (load-slime-extended-repl)))
 
 ;;; ===========================================================================
 ;;;				  End of File
