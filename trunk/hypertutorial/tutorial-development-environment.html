@@ -165,8 +165,11 @@ throughout the rest of the Tutorial.  If you are running
 <a target="_top" href="http://openmcl.clozure.com/">OpenMCL</a> version 1.0, remember to use
 the list REPL-command syntax if the command has arguments.  If you are running
 a <a target="_top" href="http://clisp.cons.org/">CLISP</a> version prior to 2.45, remember to
-use the <code>:common-lisp-user</code> functions rather than the REPL command when
-the command requires arguments.
+use the <code>:common-lisp-user</code> function rather than the REPL command when
+the command requires arguments.  (Equivalent functions in the
+<code>:common-lisp-user</code> package are always defined for each GBBopen top-level
+keyword command, and these functions can be used when top-level keyword
+processing is not fully supported.)
 </p>
 <h2><a name="id5">Step 2: Customizing your Common Lisp initialization file</a></h2><p>
 I'm lazy and would rather not have to explicitly load the

@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/commands.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Apr 23 19:17:00 2008 *-*
+;;;; *-* Last-Edit: Thu Apr 24 11:23:50 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -225,7 +225,7 @@
                                  openmcl
                                  sbcl
                                  scl)
-                           :skip-cl-user-function)
+                           :no-cl-user-function)
     (&rest args)
   "Exit Lisp" 
   (apply #'quit-lisp args))
@@ -235,7 +235,7 @@
 (define-tll-command (:exit :add-to-native-help
                            #+(or allegro
                                  clisp)
-                           :skip-cl-user-function)
+                           :no-cl-user-function)
     (&rest args)
   "Exit Lisp" 
   (apply #'quit-lisp args))

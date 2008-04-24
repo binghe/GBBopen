@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/tutorial.tex *-*
-%% *-* Last-Edit: Thu Apr 24 05:41:20 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Thu Apr 24 11:43:28 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2005-2008, Dan Corkill <corkill@GBBopen.org>
@@ -2252,8 +2252,11 @@ throughout the rest of the Tutorial.  If you are running
 \xsitelink{OpenMCL}{http://openmcl.clozure.com/} version 1.0, remember to use
 the list REPL-command syntax if the command has arguments.  If you are running
 a \xsitelink{CLISP}{http://clisp.cons.org/} version prior to 2.45, remember to
-use the \code{:common-lisp-user} functions rather than the REPL command when
-the command requires arguments.
+use the \code{:common-lisp-user} function rather than the REPL command when
+the command requires arguments.  (Equivalent functions in the
+\code{:common-lisp-user} package are always defined for each GBBopen top-level
+keyword command, and these functions can be used when top-level keyword
+processing is not fully supported.)
 
 \subsection*{Step 2: Customizing your Common Lisp initialization file}
 

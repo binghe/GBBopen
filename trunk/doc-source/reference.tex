@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Thu Apr 24 05:42:13 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Thu Apr 24 11:56:12 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -1472,7 +1472,7 @@ included in the preferred browser setting.
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Macro}{define-tll-command}{\var{command-name 
+\begin{functiondoc}{Macro}{define-tll-command}{\var{command-name-spec 
      lambda-list\/} [\var{declaration\/}\superstar{} \vbar{}
      \var{documentation\/}] \var{form\/}\superstar}
 \index{startup!defining top-level-loop commands}%
@@ -1488,12 +1488,25 @@ included in the preferred browser setting.
 \fnmodule Defined in \code{initiate.lisp}
 
 \fnargs
-\begin{args}{documentation}
-\arg[command-name] A keyword symbol naming the command
+\begin{args}{command-name-spec}
+\arg[command-name-spec] A \var{command-name\/} or a list
+  \mbox{\code{(}\var{command-name} \var{option\/}\superstar\code{)}}
 \arg[lambda-list] A lambda-list
 \arg[declaration] A declare expression
 \arg[documentation] A string
 \arg[form] A \glref{form}
+\end{args}
+
+\fndsyntax
+\begin{tabular}{@{~}l@{~}l}
+\mbox{\var{option\/} ::=}
+  & \code{:add-to-native-help} \vbar{} \code{:no-help} \vbar{}
+    \code{:no-cl-user-function}\\
+\end{tabular}
+
+\fnterms
+\begin{args}{command-name}
+\arg[command-name] A keyword symbol naming the command
 \end{args}
 
 \fndescription 
@@ -1501,9 +1514,24 @@ The arguments to the command are not evaluated before the command is
 invoked; it is up to the command to perform argument evaluation if
 needed (see the example, below).
 
-\var{Documentation\/} is a documentation string that may be associated
-with the top-level-loop command \var{command-name\/} in certain Common
-Lisp implementations.
+If the \code{:add-to-native-help} option is specified, then the command and
+its \var{documentation\/} string are added to the Common Lisp implementation's
+primary REPL help; otherwise the command is only added to the extended-REPL
+commands help that is displayed by the \code{:commands} top-level command.
+(Not all Common Lisp implementations distinguish primary and secondary
+command-help levels.)
+
+If the \code{:no-help} option is specified, then the command is not added to
+either the primary or secondary help displays.
+
+An equivalent function in the \code{:common-lisp-user} package is normally
+defined for the \var{command-name\/} keyword command, and this function can be
+used when top-level keyword command processing is not fully supported.
+However, a \code{:common-lisp-user} functional version of the command is not
+defined if the \code{:no-cl-user-function} option is specified.
+
+\var{Documentation\/} is a documentation string to be associated
+with the top-level-loop command \var{command-name}.
 
 \begin{alsos}{startup-module}
 \also[startup-module]
@@ -1515,8 +1543,8 @@ shortcut to the Common Lisp \code{describe} function:
 %
 \W\supp
 \begin{example}
-  (define-tll-command :ds (obj)
-    "Describe"
+  (define-tll-command (:ds :add-to-native-help) (obj)
+    "Describe object"
     (describe (eval obj)))
 \end{example}
 

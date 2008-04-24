@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/initiate.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Apr 23 19:21:45 2008 *-*
+;;;; *-* Last-Edit: Thu Apr 24 11:23:25 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -173,8 +173,8 @@
       (setf command (first command))
       (let ((bad-options 
              (set-difference options '(:add-to-native-help 
-                                       :no-help
-                                       :skip-cl-user-function))))
+                                       :no-cl-user-function
+                                       :no-help))))
         (dolist (bad-option bad-options)
           (warn "Illegal command option ~s specified for tll-command ~s"
                 bad-option command))))
@@ -190,7 +190,7 @@
          ,@body)
        ;; Define command functions in the :CL-USER package on all CL
        ;; implementations:
-       ,@(unless (member ':skip-cl-user-function options)
+       ,@(unless (member ':no-cl-user-function options)
            (let ((fn-name (intern (symbol-name command) ':common-lisp-user)))
              `((when (fboundp ',fn-name)
                  (redefining-cl-user-tll-command-warning ',command ',fn-name))
