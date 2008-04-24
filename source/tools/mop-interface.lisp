@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/source/tools/mop-interface.lisp *-*
+;;;; *-* File: /usr/local/gbbopen/source/tools/mop-interface.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Feb 13 04:21:40 2008 *-*
-;;;; *-* Machine: whirlwind.corkills.org *-*
+;;;; *-* Last-Edit: Thu Apr 24 09:47:08 2008 *-*
+;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -102,7 +102,7 @@
 ;;;  Note: class-direct-methods is not currently used by GBBopen, it is here
 ;;;  for convenience and possible use in the future...
 ;;;  
-;;;  Lispworks provides class-direct-methods.
+;;;  Lispworks provides class-direct-methods already.
 ;;;
 ;;;  ECL 0.9i currently does not record direct-methods of a class, so we can't
 ;;;  implement class-direct-methods on ECL.
@@ -118,7 +118,7 @@
     ;; list, except in Lispworks:
     #-clisp
     (when (consp (car direct-methods))
-      (setq direct-methods (sole-element direct-methods)))
+      (setf direct-methods (sole-element direct-methods)))
     ;; and in CLISP:
     #+clisp
     (let ((result nil))

@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:CLOS; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/current/source/tools/ecl-mop-patches.lisp *-*
+;;;; *-* File: /usr/local/gbbopen/source/tools/ecl-mop-patches.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Feb 19 05:21:47 2008 *-*
-;;;; *-* Machine: whirlwind.corkills.org *-*
+;;;; *-* Last-Edit: Thu Apr 24 09:57:36 2008 *-*
+;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -62,7 +62,7 @@
 				    :key #'slot-definition-name))))))
 
 ;;; ---------------------------------------------------------------------------
-;;;  Adapted from make-method (fixup.lsp):
+;;;  Adapted from make-method (src/clos/fixup.lsp):
 
 (defun make-accessor-method (qualifiers specializers arglist function plist
 			     options gfun method-class slot-name)
@@ -79,12 +79,14 @@
 		 :allow-other-keys t))
 
 ;;; ---------------------------------------------------------------------------
-;;;  Adapted from install-method (kernel.lsp):
+;;;  Adapted from install-method (src/clos/kernel.lsp):
 
 (defun install-accessor-method (name qualifiers specializers lambda-list doc plist
                                 fun
-                                ;; Added by Corkill:
+                                ;; *****************************************
+                                ;; Extra arguments added by Corkill:
 				reader-method-class slot-name
+                                ;; *****************************************
                                 &rest options)
   (declare (ignore doc)
 	   (notinline ensure-generic-function))
@@ -99,12 +101,21 @@
 	 (method (make-accessor-method 
 		  qualifiers specializers lambda-list
 		  fun plist options gf
-		  reader-method-class slot-name)))
+                  ;; *********************************************************
+                  ;; Changed the following arguments:
+                  #+original
+                  (generic-function-method-class gf)
+                  #-original
+                  reader-method-class 
+                  #-original slot-name
+                  ;; *********************************************************
+                  )))
     (add-method gf method)
     method))
 
 ;;; ---------------------------------------------------------------------------
-;;;  Changed to call install-accessor-method (from standard.lsp):
+;;;  Changed to call new install-accessor-method in place of install-method
+;;;  (from src/clos/standard.lsp):
 
 (defun std-class-generate-accessors (standard-class)
   (declare (si::c-local))
@@ -139,6 +150,7 @@
 		  setter #'(lambda (value self)
 			     (setf (slot-value-using-class (si:instance-class self)
 							   self slotd) value)))))
+      ;; **********************************************************************
       ;; Changed the following to call install-accessor-method (Corkill):
       #+original
       (dolist (fname (slot-definition-readers slotd))
@@ -149,13 +161,14 @@
 	(install-accessor-method
 	 fname nil `(,standard-class) '(self) nil nil reader 	
 	 'standard-reader-method slot-name))
+      ;; **********************************************************************
       (dolist (fname (slot-definition-writers slotd))
 	(install-method fname nil `(,(find-class t) ,standard-class) '(value self)
 			nil nil setter)))))
 
 ;;; ---------------------------------------------------------------------------
-;;; Needed here only to be called from finalize-inheritance.  Copied verbatim 
-;;; from standard.lsp:
+;;; Needed only to be called from finalize-inheritance.  Copied verbatim from
+;;; src/clos/standard.lsp:
 
 (defun std-create-slots-table (class)
   (let* ((all-slots (class-slots class))
@@ -165,7 +178,8 @@
     (setf (slot-table class) table)))
 
 ;;; ---------------------------------------------------------------------------
-;;;  Needed to call the above fix, copied verbatim from standard.lsp:
+;;;  Needed only to call the above fix, copied verbatim from
+;;;  src/clos/standard.lsp:
 
 (defmethod finalize-inheritance ((class standard-class))
   (call-next-method)
