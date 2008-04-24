@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Sat Apr 19 14:52:53 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Thu Apr 24 05:42:13 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -1246,13 +1246,13 @@ or
   > :gbbopen-test :create-dirs
 \end{example}
 %
-However, \xsitelink{Clozure CL}{http://trac.clozure.com/openmcl/} and
-\xsitelink{OpenMCL}{http://openmcl.clozure.com/} do not support the spread
-representation, and \xsitelink{Allegro CL}{http://www.franz.com} and
+However, \xsitelink{OpenMCL}{http://openmcl.clozure.com/} version 1.0 does not
+support the spread notation when the command has arguments, and
+\xsitelink{Allegro CL}{http://www.franz.com},
+\xsitelink{CLISP}{http://clisp.cons.org/}, and
 \xsitelink{LispWorks}{http://www.lispworks.com} do not support the list
-representation.  \xsitelink{CLISP}{http://clisp.cons.org/} also does not
-support the list representation and currently does not support spread command
-arguments in its native REPL.
+notation.  CLISP versions prior to 2.45 only support the spread notation---but
+without arguments.
 
 Equivalent functions in the \code{:common-lisp-user} package are always
 defined for each GBBopen top-level keyword command, and these functions can be
