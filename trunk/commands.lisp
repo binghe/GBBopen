@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/commands.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Apr 24 11:23:50 2008 *-*
+;;;; *-* Last-Edit: Fri Apr 25 01:53:45 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -20,21 +20,19 @@
 ;;; Loaded by initiate.lisp.  After loading, handy top-level-loop keyword
 ;;; commands, such as :gbbopen-tools, :gbbopen-core, :gbbopen-user,
 ;;; :gbbopen-test, :agenda-shell-user, and :agenda-shell-test are available on
-;;; Allegro CL, CLISP, Clozure CL, CMUCL, SCL, ECL, Lispworks, OpenMCL, and
-;;; SBCL.  GBBopen keyword commands are also supported in the SLIME REPL.
+;;; Allegro CL, CLISP, Clozure CL, CMUCL, SCL, ECL, Lispworks, and SBCL.
+;;; GBBopen keyword commands are also supported in the SLIME REPL.
 ;;;
 ;;; In many CL implementations, commands with arguments can be specified in
-;;; either list or spread notation.  However, Clozure CL and OpenMCL do not
-;;; support spread notation, while Allegro CL and Lispworks do not support
-;;; list notation. CLISP also does not support the list representation and
-;;; currently does not support command arguments to spread commands in its
-;;; native REPL. For example:
+;;; either list or spread notation.  However, Allegro CL, CLISP, and Lispworks
+;;; do not support list notation. CLISP versions prior to 2.45 only support
+;;; the spread notation---but without arguments. For example:
 ;;;
-;;;    > :gbbopen-test :create-dirs     [not CLISP, Clozure CL, or OpenMCL]
+;;;    > :gbbopen-test :create-dirs
 ;;; or
-;;;    > (:gbbopen-test :create-dirs)   [not Allegro CL, CLISP, or Lispworks]
+;;;    > (:gbbopen-test :create-dirs)    [not Allegro CL, CLISP, or Lispworks]
 ;;; or
-;;;    > :gbbopen-test                  [CLISP (cannot provide arguments)]
+;;;    > :gbbopen-test             [CLISP pre-2.45 (cannot provide arguments)]
 ;;;
 ;;; will compile and load GBBopen and perform a basic trip test.
 ;;;
@@ -222,7 +220,6 @@
                                  digitool-mcl
                                  ecl
                                  lispworks
-                                 openmcl
                                  sbcl
                                  scl)
                            :no-cl-user-function)
@@ -265,13 +262,12 @@
 ;;;   Add :help command, where needed:
 
 #+(or clozure 
-      openmcl
       sbcl)
 (define-tll-command :help ()
   "Show REPL commands"
   #+sbcl
   (show-all-extended-repl-commands)
-  #+(or clozure openmcl)
+  #+clozure
   (ccl::check-toplevel-command ':?))
 
 ;;; ---------------------------------------------------------------------------

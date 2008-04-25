@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/mini-module/mini-module.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Apr 19 14:30:35 2008 *-*
+;;;; *-* Last-Edit: Fri Apr 25 02:01:45 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -172,6 +172,7 @@
             *mini-module-load-verbose*  ; not yet documented
             *month-precedes-date*
             brief-date-and-time         ; part of tools, but placed here
+            check-all-module-requires-orderings ; not yet documented
             compile-module
             compute-relative-directory  ; not documented
             define-relative-directory
@@ -385,11 +386,6 @@
        (directory path))
   #+lispworks
   (system::file-directory-p path)
-  #+openmcl-legacy
-  (let ((pathname (probe-file path)))
-    (and pathname
-         (null (pathname-name pathname))
-         (null (pathname-type pathname))))       
   #+(and sbcl unix)
   (let ((dir (namestring 
               (make-pathname :name nil :type nil :defaults path))))
@@ -406,7 +402,6 @@
         ecl
         gcl
         lispworks 
-        openmcl-legacy
         (and sbcl unix)
         (and scl unix))
   (need-to-port probe-directory))
@@ -776,6 +771,17 @@
                       new-module-name
                       new-module-requires)))))
      *mm-modules*)))
+
+;;; ---------------------------------------------------------------------------
+
+(defun check-all-module-requires-orderings (&optional silent)
+  (maphash
+   #'(lambda (name module)
+       (check-requires-ordering name (mm-module.requires module)))
+   *mm-modules*)
+  (unless silent
+    (format t "~&;; The :requires option in all module definitions are ~
+                    consistent.~%")))
 
 ;;; ---------------------------------------------------------------------------
 

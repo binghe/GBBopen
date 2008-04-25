@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/declared-numerics.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Mar 24 10:21:22 2008 *-*
-;;;; *-* Machine: cyclone.local *-*
+;;;; *-* Last-Edit: Fri Apr 25 02:04:49 2008 *-*
+;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -40,11 +40,11 @@
 ;;;  (1s++0, 1d++0, etc.).  
 ;;;
 ;;;  We proposed wider adoption of the Lispworks encoding scheme in other
-;;;  Common Lisp implementations and provided patches for CMUCL, OpenMCL, and
-;;;  SBCL to use the Lispworks representation.  Our proposal met with mixed
-;;;  opinions, and Nikodemus Siivola suggested an alternative approach using a
-;;;  #@ dispatch macro.  This is the approach that is currently being used in
-;;;  GBBopen, but it has three issues:
+;;;  Common Lisp implementations and provided patches for Clozure CL, CMUCL,
+;;;  and SBCL to use the Lispworks representation.  Our proposal met with
+;;;  mixed opinions, and Nikodemus Siivola suggested an alternative approach
+;;;  using a #@ dispatch macro.  This is the approach that is currently being
+;;;  used in GBBopen, but it has three issues:
 ;;;    1. Printing infinite values using #@ does not work in Lispworks, as we
 ;;;       are unable to use print-object (other CLs could eventually share this
 ;;;       issue)
@@ -78,7 +78,7 @@
 ;;;  06-08-05 Added CLISP support.  (sds)
 ;;;  08-23-05 Added coerce&, coerce$, and coerce$$.  (Corkill)
 ;;;  10-31-05 Add non-*read-eval*, *print-readably* printing for infinity and 
-;;;           NaN values for SBCL, CMUCL, & OpenMCL.  (Corkill)
+;;;           NaN values for SBCL, Clozure CL, & CMUCL.  (Corkill)
 ;;;  11-02-05 Added CormanLisp support (faking infinity for now).  (Corkill)
 ;;;  11-27-05 Changed infinity reading/printing to #@ dispatching macro (as
 ;;;           suggested by Nikodemus Siivola); no special NaN I/O.  (Corkill)
@@ -116,8 +116,6 @@
    #+lispworks
    '(lispworks:fixnump lispworks:short-float-p hcl:single-float-p
      hcl:double-float-p lispworks:long-float-p)
-   #+openmcl-legacy
-   '(ccl:fixnump ccl::short-float-p ccl::double-float-p)
    #+sbcl
    '(sb-int:fixnump sb-int:short-float-p sb-int:single-float-p
      sb-int:double-float-p sb-int:long-float-p)
@@ -125,7 +123,7 @@
    '(ext:fixnump kernel:short-float-p kernel:single-float-p
      kernel:double-float-p kernel:long-float-p)
    #-(or allegro clisp clozure cmu cormanlisp digitool-mcl ecl gcl 
-         lispworks openmcl-legacy sbcl scl)
+         lispworks sbcl scl)
    (need-to-port (fixnump short-float-p single-float-p double-float-p
                           long-float-p))))
 
@@ -139,11 +137,11 @@
   `(typep ,obj 'short-float))
 
 ;;; CLs that don't have single-float-p predicates:
-#+(or clozure digitool-mcl ecl gcl openmcl-legacy)
+#+(or clozure digitool-mcl ecl gcl)
 (defun single-float-p (obj)
   (typep obj 'single-float))
 
-#+(and (or clozure digitool-mcl ecl gcl openmcl-legacy)
+#+(and (or clozure digitool-mcl ecl gcl)
        (not full-safety))
 (define-compiler-macro single-float-p (obj)
   `(typep ,obj 'single-float))
@@ -158,11 +156,11 @@
   `(typep ,obj 'double-float))
 
 ;;; CLs that don't have long-float-p predicates:
-#+(or allegro clozure ecl gcl openmcl-legacy)
+#+(or allegro clozure ecl gcl)
 (defun long-float-p (obj)
   (typep obj 'long-float))
 
-#+(and (or allegro clozure ecl gcl openmcl-legacy)
+#+(and (or allegro clozure ecl gcl)
        (not full-safety))
 (define-compiler-macro long-float-p (obj)
   `(typep ,obj 'long-float))
@@ -748,16 +746,11 @@
 			     (/ 0d0))
 			 (ccl:set-fpu-mode :division-by-zero t))
       #+lispworks #.(read-from-string "10E999")
-      #+openmcl-legacy #.(unwind-protect
-                             (progn
-                               (ccl:set-fpu-mode :division-by-zero nil)
-                               (/ 0d0))
-                           (ccl:set-fpu-mode :division-by-zero t))
       #+sbcl sb-ext:double-float-positive-infinity
       #+scl ext:double-float-positive-infinity
       ;; We have to fake infinity
       #+infinity-not-available most-positive-double-float
-      #-(or allegro clozure cmu digitool-mcl lispworks openmcl-legacy
+      #-(or allegro clozure cmu digitool-mcl lispworks
             sbcl scl infinity-not-available)
       (need-to-port infinity$$))
 
@@ -775,16 +768,11 @@
 			     (/ -0d0))
 			 (ccl:set-fpu-mode :division-by-zero t))
       #+lispworks #.(read-from-string "-10E999")
-      #+openmcl-legacy #.(unwind-protect
-                             (progn
-                               (ccl:set-fpu-mode :division-by-zero nil)
-                               (/ -0d0))
-                           (ccl:set-fpu-mode :division-by-zero t))
       #+sbcl sb-ext:double-float-negative-infinity
       #+scl ext:double-float-negative-infinity
       ;; We have to fake negative infinity
       #+infinity-not-available most-negative-double-float
-      #-(or allegro clozure cmu digitool-mcl lispworks openmcl-legacy 
+      #-(or allegro clozure cmu digitool-mcl lispworks 
             sbcl scl infinity-not-available)
       (need-to-port -infinity$$))
 
@@ -797,12 +785,11 @@
       #+cmu ext:single-float-positive-infinity
       #+digitool-mcl (coerce infinity$$ 'single-float)
       #+lispworks (coerce infinity$$ 'single-float)
-      #+openmcl-legacy (coerce infinity$$ 'single-float)
       #+sbcl sb-ext:single-float-positive-infinity
       #+scl ext:single-float-positive-infinity
       ;; We have to fake infinity
       #+infinity-not-available most-positive-single-float
-      #-(or allegro clozure cmu digitool-mcl lispworks openmcl-legacy
+      #-(or allegro clozure cmu digitool-mcl lispworks
             sbcl scl infinity-not-available)
       (need-to-port infinity$))
   
@@ -812,12 +799,11 @@
       #+cmu ext:single-float-negative-infinity
       #+digitool-mcl (coerce -infinity$$ 'single-float)
       #+lispworks (coerce -infinity$$ 'single-float)
-      #+openmcl-legacy (coerce -infinity$$ 'single-float)
       #+sbcl sb-ext:single-float-negative-infinity
       #+scl ext:single-float-negative-infinity
       ;; We have to fake negative infinity
       #+infinity-not-available most-negative-single-float
-      #-(or allegro clozure cmu digitool-mcl lispworks openmcl-legacy
+      #-(or allegro clozure cmu digitool-mcl lispworks
             sbcl scl infinity-not-available)
       (need-to-port -infinity$))
   
@@ -830,12 +816,11 @@
       #+cmu ext:short-float-positive-infinity
       #+digitool-mcl (coerce infinity$$ 'short-float)
       #+lispworks (coerce infinity$$ 'short-float)
-      #+openmcl-legacy (coerce infinity$$ 'short-float)
       #+sbcl sb-ext:short-float-positive-infinity
       #+scl ext:short-float-positive-infinity
       ;; We have to fake infinity
       #+infinity-not-available most-positive-short-float
-      #-(or allegro clozure cmu digitool-mcl lispworks openmcl-legacy
+      #-(or allegro clozure cmu digitool-mcl lispworks
             sbcl scl infinity-not-available)
       (need-to-port infinity$&))
   
@@ -845,12 +830,11 @@
       #+cmu ext:short-float-negative-infinity
       #+digitool-mcl (coerce -infinity$$ 'short-float)
       #+lispworks (coerce -infinity$$ 'short-float)
-      #+openmcl-legacy (coerce -infinity$$ 'short-float)
       #+sbcl sb-ext:short-float-negative-infinity
       #+scl ext:short-float-negative-infinity
       ;; We have to fake negative infinity
       #+infinity-not-available most-negative-short-float
-      #-(or allegro clozure cmu digitool-mcl lispworks openmcl-legacy
+      #-(or allegro clozure cmu digitool-mcl lispworks
             sbcl scl infinity-not-available)
       (need-to-port -infinity$&))
 
@@ -863,12 +847,11 @@
       #+cmu ext:long-float-positive-infinity
       #+digitool-mcl (coerce infinity$$ 'long-float)
       #+lispworks (coerce infinity$$ 'long-float)
-      #+openmcl-legacy (coerce infinity$$ 'long-float)
       #+sbcl sb-ext:long-float-positive-infinity
       #+scl ext:long-float-positive-infinity
       ;; We have to fake infinity
       #+infinity-not-available most-positive-long-float
-      #-(or allegro clozure cmu digitool-mcl lispworks openmcl-legacy
+      #-(or allegro clozure cmu digitool-mcl lispworks
             sbcl scl infinity-not-available)
       (need-to-port infinity$$$))
   
@@ -878,12 +861,11 @@
       #+cmu ext:long-float-negative-infinity
       #+digitool-mcl (coerce -infinity$$ 'long-float)
       #+lispworks (coerce -infinity$$ 'long-float)
-      #+openmcl-legacy (coerce -infinity$$ 'long-float)
       #+sbcl sb-ext:long-float-negative-infinity
       #+scl ext:long-float-negative-infinity
       ;; We have to fake negative infinity
       #+infinity-not-available most-positive-long-float
-      #-(or allegro clozure cmu digitool-mcl lispworks openmcl-legacy
+      #-(or allegro clozure cmu digitool-mcl lispworks
             sbcl sl infinity-not-available)
       (need-to-port -infinity$$$))
   

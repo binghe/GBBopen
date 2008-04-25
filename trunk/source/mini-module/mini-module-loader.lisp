@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/mini-module/mini-module-loader.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Mar 30 09:49:44 2008 *-*
+;;;; *-* Last-Edit: Fri Apr 25 02:31:58 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -80,19 +80,19 @@
 
 ;;; ===========================================================================
 ;;; Add a single feature to identify sufficiently new Digitool MCL
-;;; implementations (at present, both Digitool MCL and OpenMCL include
-;;; the feature mcl):
+;;; implementations (both Digitool MCL and pre-1.2 Clozure CL include the
+;;; feature mcl):
 
 #+(and digitool ccl-5.1)
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (pushnew :digitool-mcl *features*))
 
-;;; ===========================================================================
-;;; Add a single feature to identify pre-Clozure CL OpenMCL:
+;;; ---------------------------------------------------------------------------
+;;; Add clozure feature to legacy OpenMCL:
 
 #+(and openmcl (not clozure))
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (pushnew :openmcl-legacy *features*))
+  (pushnew :clozure *features*))
 
 ;;; ===========================================================================
 ;;; The mini-module system uses a separate compiled directory tree for each CL
@@ -203,15 +203,6 @@
               (must-port '*compiled-directory-name* 't))
              system::*major-version-number*
              system::*minor-version-number*)
-     ;; OpenMCL:
-     #+openmcl-legacy
-     (format nil "~a-openmcl-~a.~a"
-             (or
-              #+darwin "darwin"
-              #-darwin
-              (must-port '*compiled-directory-name* 't))
-             ccl::*openmcl-major-version*
-             ccl::*openmcl-minor-version*)
      ;; SBCL:
      #+sbcl
      (format nil "~a-sbcl-~a" 
@@ -243,7 +234,6 @@
            digitool-mcl
            ecl
            lispworks
-           openmcl-legacy
 	   sbcl 
            scl)
      (must-port '*compiled-directory-name* 't)))
@@ -287,9 +277,6 @@
      ;; Lispworks:
      #+lispworks
      compiler:*fasl-extension-string*
-     ;; OpenMCL:
-     #+openmcl-legacy
-     (pathname-type ccl:*.fasl-pathname*)
      ;; SBCL:
      #+sbcl
      sb-fasl:*fasl-file-type*
@@ -305,7 +292,6 @@
            digitool-mcl
            ecl
            lispworks
-           openmcl-legacy
 	   sbcl
            scl)
      (must-port '*compiled-file-type*)))

@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS-USER; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/source/tools/test/portable-threads-test.lisp *-*
+;;;; *-* File: /usr/local/gbbopen/source/tools/test/portable-threads-test.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Feb 17 03:47:34 2008 *-*
-;;;; *-* Machine: whirlwind.corkills.org *-*
+;;;; *-* Last-Edit: Fri Apr 25 02:22:35 2008 *-*
+;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -267,17 +267,17 @@
   ;; Do spawn-thread timing:
   (let ((iterations 
          #+allegro 1500                 ; Allegro is limited to < 2K or so
+         ;; Spawning in CCL is slow (10K works, but we don't want to wait)
+         #+clozure 1000
          ;; Spawning in MCL is slow (10K works, but we don't want to wait)
          #+digitool-mcl 500
          #+ecl 3000                     ; ECL is limited to < 3K or so
          #+lispworks 250                ; Lispworks is limited to < 300 or so
-         ;; Spawning in OpenMCL is slow (10K works, but we don't want to wait)
-         #+openmcl 1000
          #-(or allegro 
+               clozure
                digitool-mcl
                ecl
-               lispworks 
-               openmcl)
+               lispworks)
          10000)
         (thread-count (length (all-threads))))
     (declare (fixnum iterations))
@@ -290,14 +290,14 @@
       (log-error "A do-nothing thread is still a member of (all-threads)")))
   ;; Do spawn and die timing:
   (let ((iterations 
+         ;; Spawning in CCL is slow (10K works, but we don't want to wait)
+         #+clozure
+         1000
          ;; Spawning in MCL is slow (10K works, but we don't want to wait)
          #+digitool-mcl 
-         1000
-         ;; Spawning in OpenMCL is slow (10K works, but we don't want to wait)
-         #+openmcl
-         1000
-         #-(or digitool-mcl
-               openmcl)
+         500
+         #-(or clozure
+               digitool-mcl)
          10000)
         (thread-count (length (all-threads)))
         (cv (make-condition-variable))
@@ -833,8 +833,6 @@
       (nonrecursive-lock-contention-tests)
       (recursive-lock-contention-tests)
       (condition-variables-tests)
-      (condition-variable-timing-tests)
-      (thread-timing-tests)
       (hibernate/awaken-thread-tests)
       (symbol-value-in-thread-tests)
       (forced-format "~&;; Checking for unreclaimed threads...~%")
@@ -851,7 +849,9 @@
                          unexpected-remaining-threads))
             (when unexpected-missing-threads
               (log-error "Unexpected threads missing: ~s"
-                         unexpected-missing-threads))))))
+                         unexpected-missing-threads)))))
+      (thread-timing-tests)
+      (condition-variable-timing-tests))
     (forced-format
      "~&;; Portable threads tests completed (~,2f seconds real time).~%"
      (/ (float (- (get-internal-real-time) start-real-time))
