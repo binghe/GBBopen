@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/spaces.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Apr 22 02:36:27 2008 *-*
+;;;; *-* Last-Edit: Fri Apr 25 07:41:06 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -787,7 +787,7 @@
 
 (defun describe-blackboard-repository ()
   ;;; Print a description of the blackboard repository to *standard-output*
-  (let* ((2nd-column-indent 30)
+  (let* ((2nd-column-indent 40)
          (root-space-instance *root-space-instance*)
          (top-level-space-instances 
           (and root-space-instance (children-of root-space-instance))))
