@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/initiate.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Apr 25 01:39:57 2008 *-*
+;;;; *-* Last-Edit: Fri Apr 25 02:48:15 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -55,6 +55,22 @@
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 (in-package :common-lisp-user)
+
+;;; ===========================================================================
+;;; Add a single feature to identify sufficiently new Digitool MCL
+;;; implementations (both Digitool MCL and pre-1.2 Clozure CL include the
+;;; feature mcl):
+
+#+(and digitool ccl-5.1)
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (pushnew :digitool-mcl *features*))
+
+;;; ---------------------------------------------------------------------------
+;;; Add clozure feature to legacy OpenMCL:
+
+#+(and openmcl (not clozure))
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (pushnew :clozure *features*))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Used to control gbbopen-modules directory processing by startup.lisp:
