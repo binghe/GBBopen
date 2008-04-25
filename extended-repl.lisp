@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/extended-repl.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Apr 24 04:57:49 2008 *-*
+;;;; *-* Last-Edit: Fri Apr 25 01:54:18 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -124,7 +124,7 @@
 	   ,command
 	   ,lambda-list
 	 (progn ,@body))
-       #+(or clozure openmcl)
+       #+clozure
        (ccl::define-toplevel-command :global ,command ,lambda-list
 				     ,@body)
        #+ecl

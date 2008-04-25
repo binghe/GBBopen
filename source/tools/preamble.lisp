@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/preamble.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Mar 24 10:25:50 2008 *-*
-;;;; *-* Machine: cyclone.local *-*
+;;;; *-* Last-Edit: Fri Apr 25 02:12:56 2008 *-*
+;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -154,8 +154,6 @@
                  (si:pointer obj)
                  #+lispworks
                  (system:object-address obj)
-                 #+openmcl-legacy
-                 (ccl::%address-of obj)
                  #+sbcl
                  (sb-kernel:get-lisp-obj-address obj) 
                  #+scl
@@ -167,7 +165,6 @@
                        digitool-mcl
                        ecl
                        lispworks
-                       openmcl-legacy
                        sbcl
                        scl)
                  (need-to-port object-address)))
@@ -224,7 +221,7 @@
 		;; On CCL, look if the dispatch function is the same as the
 		;; default (by checking against another unlikely macro
 		;; character):
-		#+(or clozure digitool-mcl openmcl-legacy)
+		#+(or clozure digitool-mcl)
 		(and (functionp existing-dispatch)
 		     (eq (nth-value 
 			  2 (function-lambda-expression existing-dispatch))

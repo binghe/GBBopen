@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/gbbopen-modules-directory.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Apr 23 03:28:01 2008 *-*
+;;;; *-* Last-Edit: Fri Apr 25 01:55:12 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -85,13 +85,13 @@
 			      '("gbbopen-modules"))
 	   :defaults user-homedir-pathname))
 	 (subdirs-pathname
-	  #-(or clozure openmcl)
+	  #-clozure
 	  (make-pathname
 	   :directory (append (pathname-directory user-modules-dir)
 			      #-(or allegro cmu scl)
 			      '(:wild))
 	   :defaults user-modules-dir)
-	  #+(or clozure openmcl)
+	  #+clozure
 	  (make-pathname
 	   :name ':wild
 	   :defaults user-modules-dir))
@@ -103,9 +103,9 @@
 	    :defaults user-modules-dir)))
 	 (module-dirs
 	  (append
-	   #-(or clozure openmcl)
+	   #-clozure
            (directory subdirs-pathname)
-	   #+(or clozure openmcl)
+	   #+clozure
            (directory subdirs-pathname :directories 't)
            ;; Add in any *.sym file "pseudo" symbolic links:
 	   (mapcan 'read-target-directory-specification

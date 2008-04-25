@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-SOCKETS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/portable-sockets.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Apr  9 02:31:35 2008 *-*
+;;;; *-* Last-Edit: Fri Apr 25 02:31:10 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -57,19 +57,19 @@
 
 ;;; ---------------------------------------------------------------------------
 ;;; Add a single feature to identify sufficiently new Digitool MCL
-;;; implementations (at present, both Digitool MCL and OpenMCL include
-;;; the feature mcl):
+;;; implementations (both Digitool MCL and pre-1.2 Clozure CL include the
+;;; feature mcl):
 
 #+(and digitool ccl-5.1)
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (pushnew :digitool-mcl *features*))
 
 ;;; ---------------------------------------------------------------------------
-;;; Add a single feature to identify pre-Clozure CL OpenMCL:
+;;; Add clozure feature to legacy OpenMCL:
 
 #+(and openmcl (not clozure))
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (pushnew :openmcl-legacy *features*))
+  (pushnew :clozure *features*))
 
 ;;; ===========================================================================
 
@@ -285,7 +285,6 @@
         cmu
         digitool-mcl
         ecl
-        openmcl-legacy
         sbcl
         scl)
   (declare (ignore timeout))
@@ -310,8 +309,6 @@
   (si:open-client-stream host port)
   #+lispworks
   (comm:open-tcp-stream host port :timeout timeout)
-  #+openmcl-legacy
-  (ccl:make-socket :remote-host host :remote-port port)
   #+sbcl
   (let ((socket (make-instance 'sb-bsd-sockets:inet-socket
 		  :protocol ':tcp
@@ -342,7 +339,6 @@
         digitool-mcl
         ecl
         lispworks
-        openmcl-legacy
         sbcl
         scl)
   (need-to-port open-connection-to-host))
@@ -433,13 +429,6 @@
       ;; Avoid Lispworks race condition on filling in the passive 
       ;; socket fd value (still exists in LW 4.4.6):
       (thread-yield)))
-  #+openmcl-legacy
-  (ccl:make-socket :connect ':passive
-                   :type ':stream
-		   :backlog backlog
-                   :reuse-address reuse-address
-                   :local-port port
-		   :local-host interface)  
   #+sbcl
   (let ((passive-socket (make-instance 'sb-bsd-sockets:inet-socket
 			  :protocol ':tcp
@@ -470,7 +459,6 @@
         digitool-mcl
         ecl
         lispworks
-        openmcl-legacy
         sbcl
         scl)
   (need-to-port make-passive-socket))
@@ -505,15 +493,13 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun shutdown-socket-stream (socket-stream direction)
-  ;;; Note: Allegro, CLISP, Clozure, Digitool-MCL, and OpenMCL only support
-  ;;;       :input and :output direction, so that is all that we document as
-  ;;;       providing...
+  ;;; Note: Allegro, CLISP, Clozure, and Digitool-MCL only support :input and
+  ;;;       :output direction, so that is all that we document as providing...
   #-(or allegro
         clisp
         clozure
         cmu
         lispworks
-        openmcl-legacy
         sbcl
         scl)
   (declare (ignore socket-stream direction))
@@ -537,8 +523,6 @@
               (:output 1)
               #+not-supported
               (:input-output 2)))
-  #+openmcl-legacy
-  (ccl:shutdown socket-stream :direction direction)
   #+sbcl
   (shutdown (sb-sys::fd-stream-fd socket-stream)
             (ecase direction
@@ -558,7 +542,6 @@
         clozure
         cmu
         lispworks
-        openmcl-legacy
         sbcl
         scl)
   (need-to-port shutdown-socket-stream))
@@ -612,8 +595,6 @@
         :socket (comm::get-fd-from-socket socket-fd)
         :direction ':io
         :element-type (passive-socket.element-type passive-socket))))
-  #+openmcl-legacy
-  (ccl:accept-connection passive-socket :wait wait)
   #+sbcl
   (when (sb-sys:wait-until-fd-usable 
 	 (sb-bsd-sockets:socket-file-descriptor passive-socket) 
@@ -648,7 +629,6 @@
         cmu
         ecl 
         lispworks 
-        openmcl-legacy
         sbcl
         scl)
   (need-to-port accept-connection))
@@ -690,7 +670,6 @@
         clozure
         cmu
         lispworks
-        openmcl-legacy
         sbcl
         scl)
   (declare (ignore connection do-not-resolve))
@@ -739,15 +718,6 @@
 			(format nil "~a (~a)" dotted resolved)
 			dotted)))
 	    port)))
-  #+openmcl-legacy
-  (let* ((ipaddr (ccl:local-host connection))
-	 (dotted (ccl:ipaddr-to-dotted ipaddr)))
-    (values (if do-not-resolve
-		dotted
-		(let ((resolved (ccl:ipaddr-to-hostname ipaddr)))
-		  (if resolved
-		      (format nil "~a (~a)" dotted resolved))))
-	    (ccl:local-port connection)))
   #+sbcl
   (let ((socket (sb-impl::fd-stream-name connection)))
     (multiple-value-bind (ipvector port)
@@ -777,7 +747,6 @@
         clozure
         cmu
         lispworks
-        openmcl-legacy
         sbcl
         scl)
   (need-to-port local-hostname-and-port))
@@ -790,7 +759,6 @@
         clozure
         cmu
         lispworks
-        openmcl-legacy
         sbcl
         scl)
   (declare (ignore connection do-not-resolve))
@@ -840,16 +808,6 @@
 			(format nil "~a (~a)" dotted resolved)
 			dotted)))
 	    port)))
-  #+openmcl-legacy
-  (let* ((ipaddr (ccl:remote-host connection))
-	 (dotted (ccl:ipaddr-to-dotted ipaddr)))
-    (values (if do-not-resolve
-		dotted
-		(let ((resolved (ccl:ipaddr-to-hostname ipaddr)))
-		  (if resolved
-		      (format nil "~a (~a)" dotted resolved)
-		      dotted)))
-	    (ccl:remote-port connection)))
   #+sbcl
   (let ((socket (sb-impl::fd-stream-name connection)))
     (multiple-value-bind (ipvector port)
@@ -879,7 +837,6 @@
         clozure
         cmu 
         lispworks
-        openmcl-legacy
         sbcl
         scl)
   (need-to-port remote-hostname-and-port))

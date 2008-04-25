@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/unit-metaclasses.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Apr  6 07:55:26 2008 *-*
+;;;; *-* Last-Edit: Fri Apr 25 01:58:22 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -486,7 +486,7 @@
 (defmethod writer-method-class ((class standard-unit-class)
                                 (slot standard-direct-slot-definition)
                                 &rest initargs)
-  #+(or clisp clozure cmu digitool-mcl ecl openmcl-legacy sbcl scl)
+  #+(or clisp clozure cmu digitool-mcl ecl sbcl scl)
   (declare (ignore #+ecl class #+ecl slot initargs))
   #+(or cmu sbcl)
   (find-class 'nonlink-writer-method)
@@ -501,7 +501,7 @@
 (defmethod writer-method-class ((class standard-unit-class)
                                 (slot direct-link-definition)
                                 &rest initargs)
-  #+(or clisp clozure cmu digitool-mcl ecl openmcl-legacy sbcl scl)
+  #+(or clisp clozure cmu digitool-mcl ecl sbcl scl)
   (declare (ignore #+ecl class #+ecl slot initargs))
   #+(or cmu sbcl)
   (find-class 'link-writer-method)

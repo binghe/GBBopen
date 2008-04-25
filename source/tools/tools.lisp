@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Apr  5 17:45:19 2008 *-*
+;;;; *-* Last-Edit: Fri Apr 25 02:25:22 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -65,7 +65,7 @@
 ;;; ---------------------------------------------------------------------------
 ;;;  Create CLOS package nickname (or package!) where needed
 
-#+(or clozure digitool-mcl openmcl-legacy)
+#+(or clozure digitool-mcl)
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (unless (find-package :clos)
     (defpackage :clos
@@ -160,7 +160,7 @@
         ccl:validate-superclass
         ccl:writer-method-class)))
 
-#+(or clozure digitool-mcl openmcl-legacy)
+#+(or clozure digitool-mcl)
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (import *clos-symbols* :clos)
   (export *clos-symbols* :clos))
@@ -249,10 +249,6 @@
    '(system::copy-file
      system:memq
      system:delq)
-   #+openmcl-legacy
-   '(ccl:copy-file
-     ccl:memq
-     ccl:delq)
    #+sbcl
    '(sb-int:memq
      sb-int:delq)
@@ -260,7 +256,7 @@
    '(ext:memq
      ext:delq)
    #-(or allegro clisp clozure cmu cormanlisp digitool-mcl ecl gcl 
-         lispworks openmcl-legacy sbcl scl)
+         lispworks sbcl scl)
    '()))
 
 ;;; ---------------------------------------------------------------------------
@@ -352,7 +348,6 @@
       digitool-mcl
       ecl
       lispworks
-      openmcl-legacy
       sbcl 
       scl)
 (progn
@@ -376,7 +371,7 @@
   (define-compiler-macro delq (item list)
     `(excl::list-delete-eq ,item ,list)))
 
-#-(or allegro clozure cmu digitool-mcl lispworks openmcl-legacy sbcl scl)
+#-(or allegro clozure cmu digitool-mcl lispworks sbcl scl)
 (progn
   (defun delq (item list)
     (declare (list list))
@@ -389,7 +384,7 @@
 ;;; ===========================================================================
 ;;;  Copy-file (for CLs that don't provide their own version)
 
-#-(or allegro clisp clozure digitool-mcl lispworks openmcl-legacy)
+#-(or allegro clisp clozure digitool-mcl lispworks)
 (defun copy-file (from to)
   (with-open-file (output to
                    :element-type 'unsigned-byte
@@ -636,8 +631,6 @@
   (si::shrink-vector vector length)
   #+lispworks
   (system::shrink-vector$vector vector length)
-  #+openmcl
-  (ccl::%shrink-vector vector length)
   #+sbcl
   (sb-kernel:shrink-vector vector length)
   #+scl
@@ -662,8 +655,6 @@
   `(si::shrink-vector ,vector ,length)
   #+lispworks
   `(system::shrink-vector$vector ,vector ,length)
-  #+openmcl
-  `(ccl::%shrink-vector ,vector ,length)
   #+sbcl
   `(sb-kernel:shrink-vector ,vector ,length)
   #+scl
