@@ -5,14 +5,14 @@
 <!-- XML file produced from file: reference.tex
      using Hyperlatex v 2.9-in-waiting-rk (c) Otfried Cheong -->
 <head>
-<title>GBBopen 0.9.9 Reference -- startup-module</title>
+<title>GBBopen 1.0 Reference -- startup-module</title>
 </p>
 <link rel="SHORTCUT ICON" href="favicon.ico"><link rel=stylesheet
         href="gbbopen.css" type="text/css" />
 </head>
 <body>
 <table width="100%" cellpadding="0" cellspacing="2"><tr>
-<td bgcolor="#99ccff"><a href="ref-define-tll-command.html"><img border="0" alt="define-tll-command" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="ref-starting-up.html"><img border="0" alt="Starting Up" src="up.png"/></a></td><td bgcolor="#99ccff"><img alt="" src="blank.png"/></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">startup-module</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table>
+<td bgcolor="#99ccff"><a href="ref-define-repl-command.html"><img border="0" alt="define-repl-command" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="ref-starting-up.html"><img border="0" alt="Starting Up" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-with-system-name.html"><img border="0" alt="with-system-name" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">startup-module</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table>
 
 <p><table class="tight" width="100%">
 <tr valign="top"><td valign="baseline" align="left"%>
@@ -27,8 +27,8 @@ set the current package.
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;Defined in <code>initiate.lisp</code>
 </p>
 <p><span class="fndoclabel">Arguments</span><table class="tighttop">
-<tr valign="top"><td valign="baseline"><i>module-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A keyword symbol naming a <a href="ref-glossary.html#gl:module">module</a>
-</td></tr><tr valign="top"><td valign="baseline"><i>option</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> Any of the following keywords: 
+<tr valign="top"><td valign="baseline"><i>module-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id97">keyword&nbsp;symbol</a> naming a <a href="ref-glossary.html#gl:module">module</a>
+</td></tr><tr valign="top"><td valign="baseline"><i>option</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> Any of the following <a href="ref-glossary.html#gl:keywords">keywords</a>: 
 </p>
 <table class="tight"><table><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
@@ -80,13 +80,13 @@ defined at the conclusion of <a href="ref-glossary.html#gl:module">module</a> co
 <p><span class="fndoclabel">See also</span>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-compile-module.html"><b>compile-module</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-define-module.html"><b>define-module</b></a>
-<br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-define-tll-command.html"><b>define-tll-command</b></a>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-define-repl-command.html"><b>define-repl-command</b></a>
 </p>
-<p><span class="fndoclabel">Example</span> <br />Define a top-level command named <code>:my-app</code> that compiles and loads the
+<p><span class="fndoclabel">Example</span> <br />Define a <a href="ref-glossary.html#id167">REPL&nbsp;command</a> named <code>:my-app</code> that compiles and loads the
 <a href="ref-glossary.html#gl:module">module</a> <code>:my-app</code> and sets the current package to the
 <code>:gbbopen-user</code> package:
 <pre class="pretop">
-  (<a href="ref-define-tll-command.html">define-tll-command</a> :my-app (&amp;rest options)
+  (<a href="ref-define-repl-command.html">define-repl-command</a> :my-app (&amp;rest options)
     "Compile and load my GBBopen application module"
     (startup-module :my-app options :gbbopen-user))
 </pre> 
@@ -94,4 +94,4 @@ defined at the conclusion of <a href="ref-glossary.html#gl:module">module</a> co
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
 <table width="100%" cellpadding="0" cellspacing="2"><tr>
-<td bgcolor="#99ccff"><a href="ref-define-tll-command.html"><img border="0" alt="define-tll-command" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="ref-starting-up.html"><img border="0" alt="Starting Up" src="up.png"/></a></td><td bgcolor="#99ccff"><img alt="" src="blank.png"/></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">startup-module</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table></body></html>
+<td bgcolor="#99ccff"><a href="ref-define-repl-command.html"><img border="0" alt="define-repl-command" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="ref-starting-up.html"><img border="0" alt="Starting Up" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-with-system-name.html"><img border="0" alt="with-system-name" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">startup-module</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table></body></html>

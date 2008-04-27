@@ -1,6 +1,6 @@
 
-                                GBBopen (0.9.9)
-                                ---------------
+                                GBBopen (1.0)
+                                -------------
 
 Requirements:
 
@@ -28,7 +28,7 @@ Requirements:
    See PORTING for information on porting GBBopen to other Common Lisp
    implementations.
 
-Current Status Notes (April 25, 2008):
+Current Status Notes (April 27, 2008):
 
  - Implementation work is progressing on a regular basis.  See the list of
    pending development activities maintained on the "Development Activities"
@@ -166,14 +166,14 @@ Some Useful Things
 
 (You did work through the GBBopen Tutorial, didn't you?)
 
-The file <install-directory>/initiate.lisp is an alternative for
-<install-directory>startup.lisp that adds some handy GBBopen keyword commands
-to the top-level listener for Allegro CL, CLISP, Clozure CL, CMUCL, SCL, ECL,
-Lispworks, SLIME, and SBCL users and defines equivalent functions (in the
-:common-lisp-user package) on all Common Lisp implementations.  Simply load
-initiate.lisp from your personal Common Lisp initialization file.  (You do not
-need to explicitly load the startup.lisp file when using initiate.lisp--it
-will handle the loading of startup.lisp for you.)
+The file <install-directory>/initiate.lisp is a highly recommended alternative
+for <install-directory>startup.lisp that adds some handy GBBopen keyword
+commands to the top-level listener for Allegro CL, CLISP, Clozure CL, CMUCL,
+SCL, ECL, Lispworks, SLIME, and SBCL users and defines equivalent functions
+(in the :common-lisp-user package) on all Common Lisp implementations.  Simply
+load initiate.lisp from your personal Common Lisp initialization file.  (You
+do not need to explicitly load the startup.lisp file when using
+initiate.lisp--it will handle the loading of startup.lisp for you.)
 
 
 Personal gbbopen-init.lisp file
@@ -219,14 +219,26 @@ contain:
     files for the module or application
 
 This is the recommended mechanism for managing and sharing multiple
-user-defined GBBopen modules and applications.  It is very easy to use and
-share modules defined in this way by placing symbolic links to the module
-directories in your personal gbbopen-modules directory.  Windows,
-unfortunately, is the exception to this as Windows does not provide symbolic
-links.  GBBopen users running on Windows must create a text file of type .sym
-(containing target directory path as its sole line) as a stand-in for the
-symbolic link. Once again, see the "Starting Up" section in the GBBopen
-Reference Manual for details.
+user-defined GBBopen modules and applications on an individual basis.  It is
+very easy to use and share modules defined in this way by placing symbolic
+links to the module directories in your personal gbbopen-modules directory.
+Windows, unfortunately, is the exception to this as Windows does not provide
+symbolic links.  GBBopen users running on Windows must create a text file of
+type .sym (containing target directory path as its sole line) as a stand-in
+for the symbolic link. Once again, see the "Starting Up" section in the
+GBBopen Reference Manual for details.
+
+
+Installation-wide shared-gbbopen-modules directory
+--------------------------------------------------
+
+There is also an <install-dir>/shared-gbbopen-modules directory.  As with a
+user's gbbopen-modules directory, the shared-gbbopen-modules directory is
+assumed to contain symbolic links (or "pseudo-symbolic-link" files on Windows)
+to individual GBBopen module directory trees.
+
+This is the recommended mechanism for installation-wide managing and sharing
+of modules and applications.
 
 
 GBBopen Hyperdoc

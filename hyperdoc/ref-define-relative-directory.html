@@ -5,7 +5,7 @@
 <!-- XML file produced from file: reference.tex
      using Hyperlatex v 2.9-in-waiting-rk (c) Otfried Cheong -->
 <head>
-<title>GBBopen 0.9.9 Reference -- define-relative-directory</title>
+<title>GBBopen 1.0 Reference -- define-relative-directory</title>
 </p>
 <link rel="SHORTCUT ICON" href="favicon.ico"><link rel=stylesheet
         href="gbbopen.css" type="text/css" />
@@ -20,7 +20,7 @@
 <code>&#38;rest</code> <var>subdirectories</var></td><td valign="baseline" align="right">[<i>Function</i>]
 </td></tr></table></p>
 <p><span class="fndoclabel">Purpose</span> <br />Defines a directory relative to a <a href="ref-glossary.html#gl:Root">root</a> or
-<a href="ref-glossary.html#id157">relative&nbsp;directory</a> or to the directory specification of a
+<a href="ref-glossary.html#id165">relative&nbsp;directory</a> or to the directory specification of a
 <a href="ref-glossary.html#gl:module">module</a> definition.
 </p>
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:mini-module</code>
@@ -28,27 +28,28 @@
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:mini-module</code>
 </p>
 <p><span class="fndoclabel">Arguments</span><table class="tighttop">
-<tr valign="top"><td valign="baseline"><i>name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A keyword symbol naming the <a href="ref-glossary.html#id157">relative&nbsp;directory</a>
-</td></tr><tr valign="top"><td valign="baseline"><i>directory</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> The keyword symbol name of a <a href="ref-glossary.html#gl:Root">root</a> or 
-<a href="ref-glossary.html#id157">relative&nbsp;directory</a> or the name of a <a href="ref-glossary.html#gl:module">module</a>
+<tr valign="top"><td valign="baseline"><i>name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id97">keyword&nbsp;symbol</a> naming the <a href="ref-glossary.html#id165">relative&nbsp;directory</a>
+</td></tr><tr valign="top"><td valign="baseline"><i>directory</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> The <a href="ref-glossary.html#id97">keyword&nbsp;symbol</a> name of a <a href="ref-glossary.html#gl:Root">root</a> or 
+<a href="ref-glossary.html#id165">relative&nbsp;directory</a> or the name of a <a href="ref-glossary.html#gl:module">module</a>
 </td></tr><tr valign="top"><td valign="baseline"><i>subdirectories</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> One or more strings specifying, in order,
 subdirectories from <var>directory</var> to the relative directory. (The
-keyword <code>:up</code> or <code>:back</code> can also be supplied in addition to any
+<a href="ref-glossary.html#gl:keywords">keyword</a> <code>:up</code> or <code>:back</code> can also be supplied in addition to any
 of these strings, indicating to go upward one semantic or syntactic level of
 directory structure, respectively.)
 </td></tr></table>
 </p>
-<p><span class="fndoclabel">Description</span> <br /><a href="ref-glossary.html#gl:Root">Root</a> and <a href="ref-glossary.html#id157">relative&nbsp;directory</a> definitions are
+<p><span class="fndoclabel">Description</span> <br /><a href="ref-glossary.html#gl:Root">Root</a> and <a href="ref-glossary.html#id165">relative&nbsp;directory</a> definitions are
 used to isolate file-system details from <a href="ref-glossary.html#gl:module">module</a> definitions.  A
-<a href="ref-glossary.html#id157">relative&nbsp;directory</a> is defined in relation to another directory
-definition, that is either a <a href="ref-glossary.html#id163">root&nbsp;directory</a> or another
-<a href="ref-glossary.html#id157">relative&nbsp;directory</a> (which itself is eventually associated with a
-<a href="ref-glossary.html#id163">root&nbsp;directory</a>).  If this <a href="ref-glossary.html#gl:Root">root</a> directory location changes,
-every <a href="ref-glossary.html#id157">relative&nbsp;directory</a> associated with it is adjusted automatically.
+<a href="ref-glossary.html#id165">relative&nbsp;directory</a> is defined in relation to another directory
+definition, that is either a <a href="ref-glossary.html#id173">root&nbsp;directory</a> or another
+<a href="ref-glossary.html#id165">relative&nbsp;directory</a> (which itself is eventually associated with a
+<a href="ref-glossary.html#id173">root&nbsp;directory</a>).  If this <a href="ref-glossary.html#gl:Root">root</a> directory location changes,
+every <a href="ref-glossary.html#id165">relative&nbsp;directory</a> associated with it is adjusted automatically.
 </p>
 <p><span class="fndoclabel">See also</span>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-define-root-directory.html"><b>define-root-directory</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-show-defined-directories.html"><b>show-defined-directories</b></a>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-with-system-name.html"><b>with-system-name</b></a>
 </p>
 <p><span class="fndoclabel">Examples</span> <br />Define a relative directory below <code>:my-app-root</code> named
 <code>:my-tests</code>:

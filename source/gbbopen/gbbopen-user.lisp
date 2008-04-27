@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/gbbopen-user.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Mar 24 11:07:35 2008 *-*
-;;;; *-* Machine: cyclone.local *-*
+;;;; *-* Last-Edit: Sun Apr 27 13:59:38 2008 *-*
+;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -26,9 +26,10 @@
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (unless (find-package :gbbopen-user)
-    (defpackage :gbbopen-user
-      (:use :common-lisp :clos :mini-module :gbbopen-tools :gbbopen))))
+  (unless (find-package ':gbbopen-user)
+    (make-package ':gbbopen-user
+                  :use '(:common-lisp :clos :mini-module 
+                         :gbbopen-tools :gbbopen))))
 
 (in-package :gbbopen-user)
 

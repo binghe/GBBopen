@@ -5,7 +5,7 @@
 <!-- XML file produced from file: reference.tex
      using Hyperlatex v 2.9-in-waiting-rk (c) Otfried Cheong -->
 <head>
-<title>GBBopen 0.9.9 Reference -- add-instance-to-space-instance</title>
+<title>GBBopen 1.0 Reference -- add-instance-to-space-instance</title>
 </p>
 <link rel="SHORTCUT ICON" href="favicon.ico"><link rel=stylesheet
         href="gbbopen.css" type="text/css" />
@@ -19,7 +19,7 @@
 <nobr><b><font color="#000000">add-instance-to-space-instance</font></b></nobr></td><td valign="baseline"> &nbsp; </td><td valign="baseline" align="left" width="99%"><var>unit-instance space-instance-or-path</var>
 <i> =&gt; </i> <var>unit-instance</var></td><td valign="baseline" align="right">[<i>Generic&nbsp;Function</i>]
 </td></tr></table></p>
-<p><span class="fndoclabel">Purpose</span> <br />Add a <a href="ref-glossary.html#id201">unit&nbsp;instance</a> to a <a href="ref-glossary.html#id180">space&nbsp;instance</a>.
+<p><span class="fndoclabel">Purpose</span> <br />Add a <a href="ref-glossary.html#id215">unit&nbsp;instance</a> to a <a href="ref-glossary.html#id191">space&nbsp;instance</a>.
 </p>
 <p><span class="fndoclabel">Method signatures</span><table class="tighttop" width="100%">
 <tr valign="top"><td valign="baseline" align="left"><nobr>add-instance-to-space-instance</nobr></td><td valign="baseline">&nbsp; </td><td valign="baseline" align="left" width="99%">
@@ -35,9 +35,9 @@
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-core</code>
 </p>
 <p><span class="fndoclabel">Arguments</span><table class="tighttop">
-<tr valign="top"><td valign="baseline"><i>unit-instance</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> The <a href="ref-glossary.html#id201">unit&nbsp;instance</a> to be added
-</td></tr><tr valign="top"><td valign="baseline"><i>space-instance-or-path</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> The <a href="ref-glossary.html#id180">space&nbsp;instance</a> or 
-<a href="ref-glossary.html#id182">space-instance&nbsp;path</a> to which the <a href="ref-glossary.html#id201">unit&nbsp;instance</a> is to be added
+<tr valign="top"><td valign="baseline"><i>unit-instance</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> The <a href="ref-glossary.html#id215">unit&nbsp;instance</a> to be added
+</td></tr><tr valign="top"><td valign="baseline"><i>space-instance-or-path</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> The <a href="ref-glossary.html#id191">space&nbsp;instance</a> or 
+<a href="ref-glossary.html#id193">space-instance&nbsp;path</a> to which the <a href="ref-glossary.html#id215">unit&nbsp;instance</a> is to be added
 </td></tr></table>
 </p>
 <p><span class="fndoclabel">Returns</span> <br />The supplied <var>unit-instance</var>
@@ -50,8 +50,8 @@
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-make-space-instance.html"><b>make-space-instance</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-remove-instance-from-space-instance.html"><b>remove-instance-from-space-instance</b></a>
 </p>
-<p><span class="fndoclabel">Examples</span> <br /><a name="id2">Add</a> a highly plausible hypothesis <a href="ref-glossary.html#id201">unit&nbsp;instance</a>,
-<code>good-hyp</code>, to the <code>hyps</code> <a href="ref-glossary.html#id180">space&nbsp;instance</a>:
+<p><span class="fndoclabel">Examples</span> <br /><a name="id2">Add</a> a highly plausible hypothesis <a href="ref-glossary.html#id215">unit&nbsp;instance</a>,
+<code>good-hyp</code>, to the <code>hyps</code> <a href="ref-glossary.html#id191">space&nbsp;instance</a>:
 <pre class="pretop">
 &gt; (add-instance-to-space-instance 
     good-hyp (<a href="ref-find-space-instance-by-path.html">find-space-instance-by-path</a> '(bb hyps)))

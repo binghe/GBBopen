@@ -5,7 +5,7 @@
 <!-- XML file produced from file: reference.tex
      using Hyperlatex v 2.9-in-waiting-rk (c) Otfried Cheong -->
 <head>
-<title>GBBopen 0.9.9 Reference -- instance-dimension-values</title>
+<title>GBBopen 1.0 Reference -- instance-dimension-values</title>
 </p>
 <link rel="SHORTCUT ICON" href="favicon.ico"><link rel=stylesheet
         href="gbbopen.css" type="text/css" />
@@ -20,23 +20,23 @@
 <code>&#38;optional</code> <var>dimension-names</var>
 <i> =&gt; </i> <var>dimension-values-alist</var></td><td valign="baseline" align="right">[<i>Function</i>]
 </td></tr></table></p>
-<p><span class="fndoclabel">Purpose</span> <br />Return <a href="ref-glossary.html#id35">dimension&nbsp;values</a> of a <a href="ref-glossary.html#id201">unit&nbsp;instance</a>.
+<p><span class="fndoclabel">Purpose</span> <br />Return <a href="ref-glossary.html#id36">dimension&nbsp;values</a> of a <a href="ref-glossary.html#id215">unit&nbsp;instance</a>.
 </p>
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen</code>
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-core</code>
 </p>
 <p><span class="fndoclabel">Arguments</span><table class="tighttop">
-<tr valign="top"><td valign="baseline"><i>unit-instance</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id201">unit&nbsp;instance</a>
+<tr valign="top"><td valign="baseline"><i>unit-instance</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id215">unit&nbsp;instance</a>
 </td></tr><tr valign="top"><td valign="baseline"><i>dimension-names</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A list of symbols naming <a href="ref-glossary.html#gl:dimensions">dimensions</a> of
 <var>unit-instance</var> or <code>t</code>, indicating all <a href="ref-glossary.html#gl:dimensions">dimensions</a> of 
 <var>unit-instance</var> (default is <code>t</code>)
 </td></tr></table>
 </p>
-<p><span class="fndoclabel">Returns</span> <br />An <a href="ref-glossary.html#id2">association&nbsp;list</a> of <a href="ref-glossary.html#id30">dimension&nbsp;name</a> and
-<a href="ref-glossary.html#id34">dimension&nbsp;value</a> pairs.
+<p><span class="fndoclabel">Returns</span> <br />An <a href="ref-glossary.html#id3">association&nbsp;list</a> of <a href="ref-glossary.html#id31">dimension&nbsp;name</a> and
+<a href="ref-glossary.html#id35">dimension&nbsp;value</a> pairs.
 </p>
-<p><span class="fndoclabel">Errors</span> <br />A <a href="ref-glossary.html#id30">dimension&nbsp;name</a> specified in <var>dimension-names</var> is not
+<p><span class="fndoclabel">Errors</span> <br />A <a href="ref-glossary.html#id31">dimension&nbsp;name</a> specified in <var>dimension-names</var> is not
 defined for <var>unit-instance</var>.
 </p>
 <p><span class="fndoclabel">See also</span>
@@ -44,20 +44,20 @@ defined for <var>unit-instance</var>.
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-instance-dimension-value.html"><b>instance-dimension-value</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-make-instance.html"><b>make-instance</b></a>
 </p>
-<p><span class="fndoclabel">Examples</span> <br />Return all <a href="ref-glossary.html#id35">dimension&nbsp;values</a> of the <a href="ref-glossary.html#id201">unit&nbsp;instance</a>, <code>hyp</code>:
+<p><span class="fndoclabel">Examples</span> <br />Return all <a href="ref-glossary.html#id36">dimension&nbsp;values</a> of the <a href="ref-glossary.html#id215">unit&nbsp;instance</a>, <code>hyp</code>:
 <pre class="pretop">
 &gt; (instance-dimension-values hyp)
 ((belief . 0.85) (velocity-range 5 35) (color . :red)
  (classification :car :truck) (x . 1835) (y . 4791))
 </pre>
-Return the <code>x</code> and <code>y</code> <a href="ref-glossary.html#id35">dimension&nbsp;values</a> of the
-<a href="ref-glossary.html#id201">unit&nbsp;instance</a>, <code>hyp</code>:
+Return the <code>x</code> and <code>y</code> <a href="ref-glossary.html#id36">dimension&nbsp;values</a> of the
+<a href="ref-glossary.html#id215">unit&nbsp;instance</a>, <code>hyp</code>:
 <pre>
 &gt; (instance-dimension-values hyp '(x y))
 ((x . 1835) (y . 4791))
 </pre>
 </p>
-<p>Return all <a href="ref-glossary.html#id35">dimension&nbsp;values</a> of the <a href="ref-glossary.html#id201">unit&nbsp;instance</a>, <code>word</code>:
+<p>Return all <a href="ref-glossary.html#id36">dimension&nbsp;values</a> of the <a href="ref-glossary.html#id215">unit&nbsp;instance</a>, <code>word</code>:
 <pre class="pretop">
 &gt; (instance-dimension-values word)
 ((character . "what's") (char-code 119 104 97 116 39 115))
@@ -65,7 +65,7 @@ Return the <code>x</code> and <code>y</code> <a href="ref-glossary.html#id35">di
 </p>
 <p><span class="fndoclabel">Note</span> <br />Using <b><a href="ref-instance-dimension-value.html">instance-dimension-value</a></b> is preferable to
 using <b>instance-dimension-values</b> when obtaining individual
-<a href="ref-glossary.html#id35">dimension&nbsp;values</a> of a <a href="ref-glossary.html#id201">unit&nbsp;instance</a>.
+<a href="ref-glossary.html#id36">dimension&nbsp;values</a> of a <a href="ref-glossary.html#id215">unit&nbsp;instance</a>.
 </p>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />

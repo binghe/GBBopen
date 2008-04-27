@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:SWANK; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/slime-extended-repl.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Apr 23 04:43:34 2008 *-*
+;;;; *-* Last-Edit: Sat Apr 26 10:22:56 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -77,12 +77,11 @@
            ((keywordp form)
             (let ((repl-command (get-extended-repl-command-with-help form)))
               (when repl-command
-                (let ((args nil))
+                (do-command (second repl-command) 
                   (loop 
-                    (let ((form (read stream nil stream)))
-                      (when (eq form stream) (return))
-                      (push form args)))
-                  (do-command (second repl-command) (nreverse args)))
+                      for form = (read stream nil stream)
+                      until (eq form stream)
+                      collect form))
                 ;; bypass normal REPL processing:
                 't)))
            ;; Support (<command> <arg>*) syntax as well:

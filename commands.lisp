@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/commands.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Apr 25 01:53:45 2008 *-*
+;;;; *-* Last-Edit: Sun Apr 27 04:53:51 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -52,246 +52,231 @@
 ;;;  01-02-05 Changed :multiprocessing to :portable-threads.  (Corkill)
 ;;;  01-05-06 Added :portable-sockets command.  (Corkill)
 ;;;  11-13-06 Added :abort-ks-execution-example command.  (Corkill)
-;;;  03-17-08 Added :mini-module-user command.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 (in-package :common-lisp-user)
 
 ;;; ===========================================================================
+;;;   Mini-Module Bootstrapping Commands
+
+(with-system-name (:mini-module)
+  (define-repl-command :startup ()
+    "Load GBBopen startup.lisp file"
+    (startup-gbbopen)))
+
+;;; ===========================================================================
 ;;;   Useful GBBopen Commands
 
-(define-tll-command :start ()
-  "Load GBBopen startup.lisp file"
-  (startup-gbbopen))
-
-;;; ---------------------------------------------------------------------------
-;;;  Mini-Module System
-
-(define-tll-command :mini-module-user (&rest options)
-  "Compile and load Mini-Module-User module"
-  (startup-module :mini-module-user options :mini-module-user))
+(with-system-name (:gbbopen)
 
 ;;; ---------------------------------------------------------------------------
 ;;;  GBBopen Tools
 
-(define-tll-command :gbbopen-tools (&rest options)
-  "Compile and load GBBopen Tools module"
-  (startup-module :gbbopen-tools options))
+  (define-repl-command :gbbopen-tools (&rest options)
+    "Compile and load GBBopen Tools module"
+    (startup-module :gbbopen-tools options))
 
-(define-tll-command :portable-threads (&rest options)
-  "Compile and load Portable Threads module"
-  (startup-module :portable-threads options))
+  (define-repl-command :portable-threads (&rest options)
+    "Compile and load Portable Threads module"
+    (startup-module :portable-threads options))
 
-(define-tll-command :portable-sockets (&rest options)
-  "Compile and load Portable Sockets module"
-  (startup-module :portable-sockets options))
+  (define-repl-command :portable-sockets (&rest options)
+    "Compile and load Portable Sockets module"
+    (startup-module :portable-sockets options))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  GBBopen Core
 
-(define-tll-command :gbbopen-user (&rest options)
-  "Compile and load GBBopen-User module"
-  (startup-module :gbbopen-user options :gbbopen-user))
+  (define-repl-command :gbbopen-user (&rest options)
+    "Compile and load GBBopen-User module"
+    (startup-module :gbbopen-user options :gbbopen-user))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Agenda Shell
 
-(define-tll-command :agenda-shell-user (&rest options)
-  "Compile and load Agenda-Shell-User module"
-  (startup-module :agenda-shell-user options :gbbopen-user))
-
-;;; ---------------------------------------------------------------------------
-;;;  Extensions (not yet documented)
-
-(define-tll-command :multinode (&rest options)
-  "Compile and load GBBopen multi-node support (under construction)"
-  (startup-module :multinode options nil))
-
-(define-tll-command :web-inspector (&rest options)
-  "Compile and load Web inspector (under construction)"
-  (startup-module :web-inspector options nil))
-
-;;; ---------------------------------------------------------------------------
-;;;  Example Modules
-
-(define-tll-command :tutorial-example (&rest options)
-  "Compile and load GBBopen Tutorial-Example module"
-  (startup-module :tutorial-example options :tutorial))
-
-(define-tll-command :abort-ks-execution-example (&rest options)
-  "Compile and load the Abort-KS-Execution Example module"
-  (startup-module :abort-ks-execution-example options :gbbopen-user))
-
-;;; ---------------------------------------------------------------------------
-;;;  Test Modules
-
-(define-tll-command :gbbopen-test (&rest options)
-  "Compile and load GBBopen Test module"
-  (startup-module :gbbopen-test options  :gbbopen-user))
-
-(define-tll-command :timing-tests (&rest options)
-  "Compile and load Timing Tests module"
-  (startup-module :timing-tests options  :gbbopen-user))
-
-(define-tll-command :portable-threads-test (&rest options)
-  "Compile and load Portable-Threads-Test module"
-  (startup-module :portable-threads-test options :portable-threads-user))
-
-(define-tll-command :http-test (&rest options)
-  "Compile and load Socket/HTTP-Test module"
-  (startup-module :http-test options :portable-sockets-user))
-
-(define-tll-command :agenda-shell-test (&rest options)
-  "Compile and load Agenda-Shell-Test module"
-  (startup-module :agenda-shell-test options :gbbopen-user))
+  (define-repl-command :agenda-shell-user (&rest options)
+    "Compile and load Agenda-Shell-User module"
+    (startup-module :agenda-shell-user options :gbbopen-user))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Compile All GBBopen Modules
 
-(define-tll-command :compile-gbbopen (&rest options)
-  "Compile all GBBopen modules and exit Common Lisp"
-  (let ((*automatically-create-missing-directories* 't)
-	(*autorun-modules* nil))
-    (declare (special *automatically-create-missing-directories*
-		      *autorun-modules*))
-    (startup-module :compile-gbbopen options :gbbopen-user)))
+  (define-repl-command :compile-gbbopen (&rest options)
+    "Compile all GBBopen modules and exit Common Lisp"
+    (let ((*automatically-create-missing-directories* 't)
+          (*autorun-modules* nil))
+      (declare (special *automatically-create-missing-directories*
+                        *autorun-modules*))
+      (startup-module :compile-gbbopen options :gbbopen-user)))
 
-;;; ===========================================================================
-;;;  Mini-Module Commands
+  ;; end with-system-name
+  )
 
-(defun mini-module-not-loaded ()
-  (format t "~&The mini-module facility has not been loaded.~%")
-  (values))
+;;; ---------------------------------------------------------------------------
+;;;  Example Modules
 
-(define-tll-command (:lm :add-to-native-help) (&rest module-name-and-options)
-  "Load module"
-  (if (find-package :mini-module)
-      (funcall (intern (symbol-name '#:lm-tll-command) :mini-module) 
-               module-name-and-options)
-      (mini-module-not-loaded)))
+(with-system-name (:gbbopen-examples)
+
+  (define-repl-command :tutorial-example (&rest options)
+    "Compile and load GBBopen Tutorial-Example module"
+    (startup-module :tutorial-example options :tutorial))
+
+  (define-repl-command :abort-ks-execution-example (&rest options)
+    "Compile and load the Abort-KS-Execution Example module"
+    (startup-module :abort-ks-execution-example options :gbbopen-user))
+
+  ;; end with-system-name
+  )
+
+;;; ---------------------------------------------------------------------------
+;;;  Test Modules
+
+(with-system-name (:gbbopen-tests)
   
-(define-tll-command (:cm :add-to-native-help) (&rest module-name-and-options)
-  "Compile and load module"
-  (if (find-package :mini-module)
-      (funcall (intern (symbol-name '#:cm-tll-command) :mini-module) 
-               module-name-and-options)
-      (mini-module-not-loaded)))
+  (define-repl-command :gbbopen-test (&rest options)
+    "Compile and load GBBopen Test module"
+    (startup-module :gbbopen-test options  :gbbopen-user))
+
+  (define-repl-command :timing-tests (&rest options)
+    "Compile and load Timing Tests module"
+    (startup-module :timing-tests options  :gbbopen-user))
+
+  (define-repl-command :portable-threads-test (&rest options)
+    "Compile and load Portable-Threads-Test module"
+    (startup-module :portable-threads-test options :portable-threads-user))
+
+  (define-repl-command :http-test (&rest options)
+    "Compile and load Socket/HTTP-Test module"
+    (startup-module :http-test options :portable-sockets-user))
+
+  (define-repl-command :agenda-shell-test (&rest options)
+    "Compile and load Agenda-Shell-Test module"
+    (startup-module :agenda-shell-test options :gbbopen-user))
+
+  ;; end with-system-name
+  )
+  
+;;; ---------------------------------------------------------------------------
+;;;  Extensions (not yet completed or documented)
+
+(with-system-name (:gbbopen-extensions)
+
+  (define-repl-command :multinode (&rest options)
+    "Compile and load GBBopen multi-node support (under construction)"
+    (startup-module :multinode options nil))
+
+  (define-repl-command :web-inspector (&rest options)
+    "Compile and load Web inspector (under construction)"
+    (startup-module :web-inspector options nil))
+
+  ;; end with-system-name
+  )
 
 ;;; ===========================================================================
 ;;;   Additional Useful Commands
+  
+(with-system-name (:built-in)
 
-(define-tll-command (:ds :add-to-native-help) (&optional obj)
-  "Describe object"
-  (describe (eval obj)))
+  (define-repl-command (:ds :add-to-native-help) (&optional obj)
+    "Describe object"
+    (describe (eval obj)))
+  
+;;; ---------------------------------------------------------------------------
 
-;; Note: * is not set in SBCL's REPL:
-(define-tll-command :fi (&rest args)
-  "Find instance by name"
-  (let ((instance
-         (apply (intern (symbol-name '#:find-instance-by-name) :gbbopen) 
-                args)))
-    (cond (instance
-           (setf * instance)
-           (format t "~&Found ~s (assigned to ~s)~%" instance '*)
-           (force-output)
-           instance)
-          (t (format t "~&No unit instance named ~s was found~%"
-                     (first args))
-             (force-output)))))          
-
-(defun quit-lisp (&rest args)
-  #+sbcl
-  (let ((swank-package (find-package :swank)))
-    (when swank-package
-      (let ((quit-lisp-fn (intern (symbol-name 'quit-lisp) swank-package)))
-	(when (fboundp quit-lisp-fn)
-	  (funcall quit-lisp-fn)))))
-  (apply
-   ;; Avoid infinite #'quit recursion in Allegro:
-   #+allegro #'exit
-   #-allegro #'quit
-   args))
-
-(define-tll-command (:quit :add-to-native-help
-                           #+(or clisp 
-                                 clozure
-                                 cmu
-                                 digitool-mcl
-                                 ecl
-                                 lispworks
-                                 sbcl
-                                 scl)
-                           :no-cl-user-function)
-    (&rest args)
-  "Exit Lisp" 
-  (apply #'quit-lisp args))
-
-;; Allegro CL and ECL provide :exit commands already, but we still define them
-;; here on all platforms for SLIME interface:
-(define-tll-command (:exit :add-to-native-help
-                           #+(or allegro
-                                 clisp)
-                           :no-cl-user-function)
-    (&rest args)
-  "Exit Lisp" 
-  (apply #'quit-lisp args))
-
-;;  Allegro CL provides :pa, but we repeat for SLIME interface:
-(define-tll-command (:pa :add-to-native-help) (&optional package)
-  "Set/show current package"
+  (define-repl-command (:quit :add-to-native-help
+                             #+(or clisp 
+                                   clozure
+                                   cmu
+                                   digitool-mcl
+                                   ecl
+                                   lispworks
+                                   sbcl
+                                   scl)
+                             :no-cl-user-function)
+      (&rest args)
+    "Exit Lisp" 
+    (apply #'extended-repl-quit-lisp args))
+  
+  ;; Allegro CL and ECL provide :exit commands already, but we still define
+  ;; them here on all platforms for SLIME interface:
+  (define-repl-command (:exit :add-to-native-help
+                             #+(or allegro
+                                   clisp)
+                             :no-cl-user-function)
+      (&rest args)
+    "Exit Lisp" 
+    (apply #'extended-repl-quit-lisp args))
+  
+;;; ---------------------------------------------------------------------------
+  
+  ;;  Allegro CL provides :pa, but we repeat for SLIME interface:
+  (define-repl-command (:pa :add-to-native-help) (&optional package)
+    "Set/show current package"
   (cond
    ;; Package change:
-   (package
-    (let ((the-package (find-package package)))
-      (if the-package 
-          (set-package the-package)
-          (format t "~&The package ~s is not defined.~%" package))))
+   (package (set-repl-package package))
    ;; Package show:
-   (t (format t "~&The ~s package is current.~%" 
+   (t (format t "~&;; The ~s package is current.~%" 
               (package-name *package*)))))
-
+  
 ;;; ===========================================================================
-;;;   Help command for all Extended REPL commands
-
-(define-tll-command (:commands :add-to-native-help) ()
-  "Show all extended-REPL commands"
-  (show-all-extended-repl-commands))
-
+;;;   Undefine system-name (commands, directories, & modules)
+  
+  (define-repl-command :undefine-system (&optional system-name)
+    "Undefine system commands, directories, & modules"
+    (do-undefine-system-repl-command system-name))
+  
 ;;; ===========================================================================
+;;;   Help commands for all Extended REPL systems
+  
+  (define-repl-command (:systems :add-to-native-help) ()
+    "Show extended-REPL systems"
+    (show-all-extended-repl-systems))
+  
+;;; ---------------------------------------------------------------------------
+  
+  (define-repl-command (:commands :add-to-native-help) (&optional system-name)
+    "Show extended-REPL commands"
+    (show-all-extended-repl-commands system-name))
+  
+;;; ---------------------------------------------------------------------------
 ;;;   Add :help command, where needed:
-
-#+(or clozure 
-      sbcl)
-(define-tll-command :help ()
-  "Show REPL commands"
-  #+sbcl
-  (show-all-extended-repl-commands)
-  #+clozure
-  (ccl::check-toplevel-command ':?))
-
+  
+  #+(or clozure 
+        sbcl)
+  (define-repl-command :help ()
+    "Show REPL commands"
+    #+sbcl
+    (show-all-extended-repl-commands)
+    #+clozure
+    (ccl::check-toplevel-command ':?))
+  
 ;;; ---------------------------------------------------------------------------
 ;;;   Add :h abbreviated command, where needed:
-
-#+(or allegro
-      sbcl)
-(define-tll-command (:h :no-help) ()
-  #+allegro
-  (top-level:do-command ':help)
-  #+sbcl
-  (show-all-extended-repl-commands))
-
+  
+  #+(or allegro
+        sbcl)
+  (define-repl-command (:h :no-help) ()
+    #+allegro
+    (top-level:do-command ':help)
+    #+sbcl
+    (show-all-extended-repl-commands))
+  
 ;;; ---------------------------------------------------------------------------
 ;;;   Add :? abbreviated command, where needed:
-
-#+(or allegro
-      sbcl)
-(define-tll-command (:? :no-help) ()
-  #+allegro
-  (top-level:do-command ':help)
-  #+sbcl
-  (show-all-extended-repl-commands))
-
+  
+  #+(or allegro
+        sbcl)
+  (define-repl-command (:? :no-help) ()
+    #+allegro
+    (top-level:do-command ':help)
+    #+sbcl
+    (show-all-extended-repl-commands))
+  
+    ;; end with-system-name
+  )
+  
 ;;; ===========================================================================
 ;;;				  End of File
 ;;; ===========================================================================

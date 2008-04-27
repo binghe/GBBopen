@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/mini-module/mini-module-user.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Mar 24 09:53:58 2008 *-*
-;;;; *-* Machine: cyclone.local *-*
+;;;; *-* Last-Edit: Sun Apr 27 14:10:52 2008 *-*
+;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -24,14 +24,14 @@
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (unless (find-package :mini-module-user)
-    (defpackage :mini-module-user
-      (:use :common-lisp :mini-module))))
+  (unless (find-package ':mini-module-user)
+    (make-package ':mini-module-user
+                  :use '(:common-lisp :mini-module))))
 
 (in-package :mini-module-user)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (let ((mini-module-package (find-package :mini-module)))
+  (let ((mini-module-package (find-package ':mini-module)))
     (when mini-module-package
       (use-package (list mini-module-package)))))
 

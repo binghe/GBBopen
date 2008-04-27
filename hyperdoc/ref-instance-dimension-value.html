@@ -5,7 +5,7 @@
 <!-- XML file produced from file: reference.tex
      using Hyperlatex v 2.9-in-waiting-rk (c) Otfried Cheong -->
 <head>
-<title>GBBopen 0.9.9 Reference -- instance-dimension-value</title>
+<title>GBBopen 1.0 Reference -- instance-dimension-value</title>
 </p>
 <link rel="SHORTCUT ICON" href="favicon.ico"><link rel=stylesheet
         href="gbbopen.css" type="text/css" />
@@ -19,29 +19,29 @@
 <nobr><b><font color="#000000">instance-dimension-value</font></b></nobr></td><td valign="baseline"> &nbsp; </td><td valign="baseline" align="left" width="99%"><var>unit-instance dimension-name</var>
 <i> =&gt; </i> <var>dimension-value,&nbsp;dimension-value-type,&nbsp;comparison-type,&nbsp;composite-type,&nbsp;ordering-dimension-name</var></td><td valign="baseline" align="right">[<i>Function</i>]
 </td></tr></table></p>
-<p><span class="fndoclabel">Purpose</span> <br />Obtain a <a href="ref-glossary.html#id34">dimension&nbsp;value</a> of a <a href="ref-glossary.html#id201">unit&nbsp;instance</a>.
+<p><span class="fndoclabel">Purpose</span> <br />Obtain a <a href="ref-glossary.html#id35">dimension&nbsp;value</a> of a <a href="ref-glossary.html#id215">unit&nbsp;instance</a>.
 </p>
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen</code>
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-core</code>
 </p>
 <p><span class="fndoclabel">Arguments</span><table class="tighttop">
-<tr valign="top"><td valign="baseline"><i>unit-instance</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id201">unit&nbsp;instance</a>
+<tr valign="top"><td valign="baseline"><i>unit-instance</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id215">unit&nbsp;instance</a>
 </td></tr><tr valign="top"><td valign="baseline"><i>dimension-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A symbol specifying a <a href="ref-glossary.html#gl:dimension">dimension</a> of
 <var>unit-instance</var> 
 </td></tr></table>
 </p>
 <p><span class="fndoclabel">Returns</span> <br />Five values: 
 </p>
-<p><ul class="tight"><li>the <a href="ref-glossary.html#id34">dimension&nbsp;value</a> of the <var>unit-instance</var> in the specified
+<p><ul class="tight"><li>the <a href="ref-glossary.html#id35">dimension&nbsp;value</a> of the <var>unit-instance</var> in the specified
 <a href="ref-glossary.html#gl:dimension">dimension</a>
 <li>the dimension-value type of the specified <a href="ref-glossary.html#gl:dimension">dimension</a>
 <li>the comparision type of the specified <a href="ref-glossary.html#gl:dimension">dimension</a>
-<li>the composite type of the <a href="ref-glossary.html#id34">dimension&nbsp;value</a> if it is a
-<a href="ref-glossary.html#id22">composite&nbsp;dimension&nbsp;value</a>; <code>nil</code> if it is an
-<a href="ref-glossary.html#id85">incomposite&nbsp;dimension&nbsp;value</a>
-<li>the name of the ordering dimension, if the <a href="ref-glossary.html#id34">dimension&nbsp;value</a>
-is a <a href="ref-glossary.html#id167">series-composite&nbsp;dimension&nbsp;value</a>; <code>nil</code> otherwise
+<li>the composite type of the <a href="ref-glossary.html#id35">dimension&nbsp;value</a> if it is a
+<a href="ref-glossary.html#id23">composite&nbsp;dimension&nbsp;value</a>; <code>nil</code> if it is an
+<a href="ref-glossary.html#id87">incomposite&nbsp;dimension&nbsp;value</a>
+<li>the name of the ordering dimension, if the <a href="ref-glossary.html#id35">dimension&nbsp;value</a>
+is a <a href="ref-glossary.html#id177">series-composite&nbsp;dimension&nbsp;value</a>; <code>nil</code> otherwise
 </ul>
 </p>
 <p><span class="fndoclabel">Errors</span> <br />The <a href="ref-glossary.html#gl:dimension">dimension</a> <var>dimension-name</var> is not defined for
@@ -52,7 +52,7 @@ is a <a href="ref-glossary.html#id167">series-composite&nbsp;dimension&nbsp;valu
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-instance-dimension-values.html"><b>instance-dimension-values</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-make-instance.html"><b>make-instance</b></a>
 </p>
-<p><span class="fndoclabel">Examples</span> <br />Return the <code>x</code> <a href="ref-glossary.html#id34">dimension&nbsp;value</a> of the <a href="ref-glossary.html#id201">unit&nbsp;instance</a>,
+<p><span class="fndoclabel">Examples</span> <br />Return the <code>x</code> <a href="ref-glossary.html#id35">dimension&nbsp;value</a> of the <a href="ref-glossary.html#id215">unit&nbsp;instance</a>,
 <code>hyp</code>:
 <pre class="pretop">
 &gt; (instance-dimension-value hyp 'x)
@@ -62,7 +62,7 @@ is a <a href="ref-glossary.html#id167">series-composite&nbsp;dimension&nbsp;valu
 nil
 nil
 </pre>
-and its <code>classification</code> <a href="ref-glossary.html#id34">dimension&nbsp;value</a>:
+and its <code>classification</code> <a href="ref-glossary.html#id35">dimension&nbsp;value</a>:
 <pre>
 &gt; (instance-dimension-value hyp 'classification)
 (:car :truck)
@@ -72,8 +72,8 @@ eq
 nil
 </pre>
 </p>
-<p>Return the <code>character</code> <a href="ref-glossary.html#id34">dimension&nbsp;value</a> of the
-<a href="ref-glossary.html#id201">unit&nbsp;instance</a>, <code>word</code>:
+<p>Return the <code>character</code> <a href="ref-glossary.html#id35">dimension&nbsp;value</a> of the
+<a href="ref-glossary.html#id215">unit&nbsp;instance</a>, <code>word</code>:
 <pre class="pretop">
 &gt; (instance-dimension-value w 'character)
 "what's"
@@ -82,7 +82,7 @@ eql
 :set
 nil
 </pre>
-and its <code>char-code</code> <a href="ref-glossary.html#id34">dimension&nbsp;value</a>:
+and its <code>char-code</code> <a href="ref-glossary.html#id35">dimension&nbsp;value</a>:
 <pre>
 &gt; (instance-dimension-value word 'char-code)
 (119 104 97 116 39 115)

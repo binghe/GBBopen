@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/extended-repl.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Apr 25 01:54:18 2008 *-*
+;;;; *-* Last-Edit: Sun Apr 27 10:13:24 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -38,8 +38,6 @@
 	 
 (in-package :common-lisp-user)
 
-(defvar *extended-repl-commands* nil)
-
 ;;; ---------------------------------------------------------------------------
 ;;;  In ECL, setup an Extended REPL command topic (must be done destructively,
 ;;;  as si::*tpl-commands* is already lexically bound in the default TLP)
@@ -48,13 +46,6 @@
 (setf (rest si::*tpl-commands*)
       (adjoin (list "Extended REPL Commands") (cdr si::*tpl-commands*)
 	      :key #'car :test #'equal))
-
-;;; ---------------------------------------------------------------------------
-
-(defun get-extended-repl-command (command)
-  (assoc command *extended-repl-commands* :test #'eq))
-
-(compile-if-advantageous 'get-extended-repl-command)
 
 ;;; ---------------------------------------------------------------------------
 ;;;  In Allegro, we hide non-native help commands by saving the command-name
@@ -78,81 +69,178 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defmacro define-extended-repl-command (command lambda-list &body body)
-  ;;; Internal macro used by initiate.lisp's define-ttl-command macro:
-  (let ((tlc-sym (gensym))
-	(maybe-doc (first body))
-        (options nil))
-    ;; Handle (<command> <option>*) syntax:
-    (when (consp command)
-      (setf options (rest command))
-      (setf command (first command)))
-    ;; Handle Allegro hidden-help:
-    #+allegro
-    (unless (member ':add-to-native-help options)
-      (pushnew (string-downcase (symbol-name command))
-               *non-native-help-commands* :test #'equal))
-    ;; Now do the REPL-command definition:
-    `(progn
-       ;; Define the command function:
-       (defun ,tlc-sym ,lambda-list 
-         ,@body)
-       ;; Always add command to *extended-repl-commands* (for SLIME interface
-       ;; and more):
-       (setf *extended-repl-commands*
-             (cons '(,command ,tlc-sym 
-                     ;; documentation string:
-                     ,(when (stringp maybe-doc) maybe-doc)
-                     ;; Help control:
-                     ,(or
-                       ;; no help:
-                       (when (member ':no-help options) 
-                         ':no-help)
-                       ;; add to native help:
-                       (when (member ':add-to-native-help options) 
-                         ':add-to-native-help)))
-                   (delete ',command
-                           *extended-repl-commands*
-                           :test #'eq
-                           :key #'car)))
-       ;; Add to the CL implemention's top-level, where possible:
-       #+allegro
-       (top-level:alias ,(string-downcase (symbol-name command))
-           ,lambda-list ,@body)
-       #+lispworks
-       (system::define-top-loop-command 
-	   ,command
-	   ,lambda-list
-	 (progn ,@body))
-       #+clozure
-       (ccl::define-toplevel-command :global ,command ,lambda-list
-				     ,@body)
-       #+ecl
-       (progn
-	 ;; Extend ECL's commands for ECL TPL use:
-	 (pushnew '((,command) ,tlc-sym :eval
-		    ,@(if (stringp maybe-doc)
-			  (list (format nil "~s~16,8t~a"
-				 command
-				 maybe-doc)
-			   maybe-doc)
-			  '("" "")))
-		  ;; Place in the extended REPL topic area:
-		  (cdr (second si::*tpl-commands*))
-		  :test #'equal
-		  :key #'car)))))
+(defvar *current-system-name* nil)
 
-(compile-if-advantageous 'define-extended-repl-command)
+(defmacro with-system-name ((&optional system-name) &body body)
+  (unless (keywordp system-name)
+    (error "System name, ~s, must be a keyword." system-name))
+  `(let ((*current-system-name* ',system-name))
+     ,@body))
+
+;;; ---------------------------------------------------------------------------
+
+(defvar *extended-repl-commands* nil)
+
+(defun get-extended-repl-command (command)
+  (assoc command *extended-repl-commands* :test #'eq))
+
+(compile-if-advantageous 'get-extended-repl-command)
+
+;;; ===========================================================================
+;;;   Define-repl-command
+
+(defun redefining-cl-user-repl-command-warning (command fn)
+  ;; avoid SBCL optimization warning: 
+  (declare (optimize (speed 1)))
+  (let ((*package* (find-package ':common-lisp)))
+    (format t "~&;; Redefining ~s function for REPL-command ~s~%"
+            fn command)))
+
+(compile-if-advantageous 'redefining-cl-user-repl-command-warning)
+
+;;; ---------------------------------------------------------------------------
+
+(defun add-repl-command-spec (command-spec)
+  (setf *extended-repl-commands*
+        (cons command-spec (delete (first command-spec)
+                                   (the list *extended-repl-commands*)
+                                   :test #'eq
+                                   :key #'car))))
+
+(compile-if-advantageous 'add-repl-command-spec)
+
+;;; ---------------------------------------------------------------------------
+
+(defmacro define-repl-command (command-name lambda-list &rest body)
+  (let ((.options. nil))
+    ;; Handle (<command> <option>*) syntax:
+    (when (consp command-name)
+      (setf .options. (rest command-name))
+      (setf command-name (first command-name))
+      (let ((bad-options 
+             (set-difference .options. '(:add-to-native-help 
+                                         :no-cl-user-function
+                                         :no-help))))
+        (dolist (bad-option bad-options)
+          (warn "Illegal command option ~s specified for REPL-command ~s"
+                bad-option command-name))))
+    (let ((cl-user-fn-name
+           ;; Check if a :cl-user function is to be created:
+           (unless (member ':no-cl-user-function .options.)
+             (intern (symbol-name command-name) ':common-lisp-user))))
+      `(progn 
+         ,@(when cl-user-fn-name
+             `((when (fboundp ',cl-user-fn-name)
+                 (redefining-cl-user-repl-command-warning 
+                  ',command-name ',cl-user-fn-name))
+               (defun ,cl-user-fn-name ,lambda-list 
+                 ,@body)))
+         ;; Now do the REPL-command definition:
+         ,(let ((tlc-sym (gensym))
+                (maybe-doc (first body)))
+            #+allegro
+            (unless (member ':add-to-native-help .options.)
+              (pushnew (string-downcase (symbol-name command-name))
+                       *non-native-help-commands* :test #'equal))
+            `(progn
+               ;; Define the command function:
+               (defun ,tlc-sym ,lambda-list 
+                 ,@body)
+               ;; Always add command to *extended-repl-commands* (for SLIME
+               ;; interface and more):
+               (add-repl-command-spec
+                `(,',command-name
+                  ,',tlc-sym 
+                  ;; documentation string:
+                  ,',(when (stringp maybe-doc) maybe-doc)
+                  ;; Help control:
+                  ,',(or
+                      ;; no help:
+                      (when (member ':no-help .options.) 
+                        ':no-help)
+                      ;; add to native help:
+                      (when (member ':add-to-native-help .options.) 
+                        ':add-to-native-help))
+                  ,',cl-user-fn-name
+                  ,*current-system-name*))
+               ;; Add to the CL implemention's top-level, where possible:
+               #+allegro
+               (top-level:alias ,(string-downcase (symbol-name command-name))
+                   ,lambda-list
+                 ,@body)
+               ;; NOTE: Clozure CL evaluates spread command arguments (but not
+               ;; ones in list command-form syntax). Our normal semantics are
+               ;; for unevaluated command arguments always.  Most of the time
+               ;; it doesn't matter, but some users might be surprized by the
+               ;; difference when using Clozure CL (but we keep consistent
+               ;; with Clozure CL's other toplevel commands).
+               #+clozure
+               (ccl::define-toplevel-command :global ,command-name ,lambda-list
+                                             ,@body)
+               ;; NOTE: ECL evaluates spread command arguments.  Most of the
+               ;; time it doesn't matter, but some users might be surprized by
+               ;; the difference when using ECL (but we keep consistent with
+               ;; ECL's other toplevel commands).
+               #+ecl
+               (progn
+                 ;; Extend ECL's commands for extended-REPL command use:
+                 (pushnew '((,command-name) ,tlc-sym :eval
+                            ,@(if (stringp maybe-doc)
+                                  (list (format nil "~s~16,8t~a"
+                                         command-name
+                                         maybe-doc)
+                                   maybe-doc)
+                                  '("" "")))
+                          ;; Place in the extended REPL topic area:
+                          (cdr (second si::*tpl-commands*))
+                          :test #'equal
+                          :key #'car))
+               #+lispworks
+               (system:define-top-loop-command ,command-name ,lambda-list
+                 (progn ,@body))
+               ',command-name))))))
+
+#-cmu
+(compile-if-advantageous 'define-repl-command)
+
+;;; Deprecated name, remove in 1.1:
+(defmacro define-tll-command (command lambda-list &rest body)
+  `(define-repl-command ,command ,lambda-list ,@body))
+
+;;; ---------------------------------------------------------------------------
+
+(defun list-all-extended-repl-systems ()
+  ;;; Return a list of all extended-REPL systems, as computed from REPL
+  ;;; commands and Mini Module definitions.
+  (let ((result nil))
+    (dolist (command-spec *extended-repl-commands*)
+      (destructuring-bind (command function doc help-control 
+                           ;; Make these two required in the next release:
+                           &optional cl-user-fn-name command-system-name)
+          command-spec
+        (declare (ignore command function doc help-control cl-user-fn-name))
+        (when command-system-name
+          (pushnew command-system-name result))))
+    (when (find-package ':mini-module)
+      (setf result (nunion result
+                           (funcall (intern (symbol-name '#:list-all-systems)
+                                            ':mini-module)))))
+    result))
+
+(compile-if-advantageous 'list-all-extended-repl-systems)
 
 ;;; ---------------------------------------------------------------------------
 
 (defun sorted/filtered-extended-repl-commands ()
   (sort (remove-if
          #'(lambda (command-spec)
-             (destructuring-bind (command function doc 
-                                  help-control)
+             (destructuring-bind (command function doc help-control
+                                  ;; Make these two required in the next
+                                  ;; release:
+                                  &optional cl-user-fn-name system-name)
                  command-spec
-               (declare (ignore command function doc))
+               (declare (ignore command function doc 
+                                cl-user-fn-name system-name))
                (eq help-control ':no-help)))
          *extended-repl-commands*)
         #'(lambda (a b)
@@ -165,15 +253,121 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun show-all-extended-repl-commands ()
-  ;;; Display all extended-REPL (defined tll-commands) that are not marked
-  ;;; with :no-help control:
-  (dolist (command (sorted/filtered-extended-repl-commands))
-    (format t "~&~s~24,4t~@[~a~]~%"
-	    (first command)
-	    (third command))))
+(defun show-all-extended-repl-commands (&optional system-name)
+  ;;; Display all extended-REPL commands that are not marked with :no-help
+  ;;; control.  Use `system-name' as a filter (:none matches commands without
+  ;;; a specified system name).
+  #+sbcl (declare (optimize (speed 1))) ; prevent SBCL generic-+ warnings:
+  (cond 
+   ((and system-name
+         (not (member system-name (list-all-extended-repl-systems)))
+         (not (eq system-name ':none)))
+    (format t "~&;; System ~s was not found.~%"
+            system-name))
+   (t (let ((2nd-column 28))
+        (format t "~&Command~v,4tDescription~:*~
+                   ~%-------~v,4t-----------~%"
+                2nd-column)
+        (dolist (command-spec (sorted/filtered-extended-repl-commands))
+          (destructuring-bind (command function doc help-control 
+                               ;; Make these two required in the next release:
+                               &optional cl-user-fn-name command-system-name)
+              command-spec
+            (declare (ignore function help-control cl-user-fn-name))
+            (when (or (not system-name)
+                      (eq system-name command-system-name)
+                      (and (eq system-name ':none)
+                           (not command-system-name)))
+              (format t "~&~s~v,4t~@[~a~]~%"
+                      command
+                      2nd-column
+                      doc))))))))
 
 (compile-if-advantageous 'show-all-extended-repl-commands)
+
+;;; ---------------------------------------------------------------------------
+
+(defun show-all-extended-repl-systems ()
+  ;;; Display all extended-REPL systems, as computed from REPL commands
+  ;;; and Mini Module definitions.
+  (dolist (system-name (sort (list-all-extended-repl-systems) #'string<))
+    (format t "~&~s~%" system-name))
+  (values))
+
+(compile-if-advantageous 'show-all-extended-repl-systems)
+
+;;; ---------------------------------------------------------------------------
+
+(defun undefine-system-repl-commands (system-name)
+  ;;; Removes all extended-REPL commands tagged with `system-name'.
+  (setf *extended-repl-commands*
+        (delete-if 
+         #'(lambda (command-spec)
+             (destructuring-bind (command-name function doc help-control
+                                  ;; Make these two required in the next
+                                  ;; release:
+                                  &optional cl-user-fn-name this-system-name)
+                 command-spec
+               (declare (ignore #-(or allegro clozure lispworks)
+                                command-name
+                                function doc help-control))
+               ;; Deleting?
+               (when (eq this-system-name system-name)
+                 #+allegro
+                 (let ((*terminal-io* excl::*null-stream*))
+                   (top-level:remove-alias
+                    (string-downcase (symbol-name command-name))))
+                 #+clozure
+                 (let ((global-toplevel-commands-acons
+                        (assoc ':global ccl::*defined-toplevel-commands*)))
+                   (setf (cdr global-toplevel-commands-acons)
+                         (delete command-name 
+                                 (cdr global-toplevel-commands-acons)
+                                 :test #'eq
+                                 :key #'car)))
+                 #+ecl
+                 (let ((extended-tpl-commands (second si::*tpl-commands*)))
+                   (setf (cdr extended-tpl-commands)
+                         (delete command-name 
+                                 (cdr extended-tpl-commands)
+                                 :test #'eq
+                                 :key #'caar)))                 
+                 #+lispworks
+                 (system::%put command-name 'system::top-loop-handler nil)
+                 ;; Also delete the :cl-user function?
+                 (when cl-user-fn-name
+                   (fmakunbound cl-user-fn-name))
+                 ;; please do the delete:
+                 't)))
+         (the list *extended-repl-commands*))))
+
+(compile-if-advantageous 'undefine-system-repl-commands)
+
+;;; ---------------------------------------------------------------------------
+
+(defun do-undefine-system-repl-command (system-name)
+  ;;; Implements the :undefine-system <system-name> REPL command:
+  (cond
+   ((and system-name
+         (cond 
+          ((not (member system-name (list-all-extended-repl-systems)))
+           (format t "~&;; System ~s was not found.~%"
+                   system-name)
+           ;; don't proceed further:
+           nil)
+          ;; confirm with the user:
+          ((y-or-n-p "Really undefine commands, directories, & modules ~
+                          of ~s?  "
+                     system-name))))
+    (undefine-system-repl-commands system-name)
+    (when (find-package ':mini-module)
+      (funcall (intern (symbol-name '#:undefine-system-directories-and-modules)
+                       ':mini-module)
+               system-name))
+    (format t "~&;; System ~s undefined.~%" system-name))
+   (t (format t "~&;; Nothing was undefined.~%"))))
+
+(compile-if-advantageous 'do-undefine-system-repl-command)
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Interface into CLISP's *user-commands* facility
@@ -185,8 +379,11 @@
 (defun user-commands ()
   (mapcan 
    #'(lambda (command-spec)
-       (destructuring-bind (command function doc help-control)
+       (destructuring-bind (command function doc help-control 
+                            ;; Make these two required in the next release
+                            &optional cl-user-fn-name system-name)
 	   command-spec
+         (declare (ignore cl-user-fn-name system-name))
 	 (let* ((command-name (concatenate 'simple-string 
                                 ":" 
                                 (string-downcase (symbol-name command))))
@@ -197,15 +394,17 @@
                             ;; Pre-2.45 CLISP's will not have a
                             ;; .string. argument:
                             (when .string.
-                              (with-input-from-string (stream .string.)
-                                (loop 
-                                  (let ((form (read stream nil stream)))
-                                    (when (eq form stream) (return))
-                                    (push form args)))))
-                            (apply function (nreverse args)))))))
+                              (apply function
+                                     (with-input-from-string (stream .string.)
+                                       (loop
+                                           for form = (read stream nil stream)
+                                           until (eq form stream)
+                                           collect form)))))))))
            `(,command-fn-pair
              ;; native-help command documentation:
              ,@(when (eq help-control ':add-to-native-help)
+                 ;; Keep the 2nd column at 24 to be consistent with CLISP's
+                 ;; own help format:
                  (list (format nil "~%~a~24,4t~a" command-name doc)))))))
    (sort (copy-list *extended-repl-commands*)
          #'(lambda (a b)
@@ -242,13 +441,10 @@
 	      ;; always return nil
 	      nil))
        (cond (repl-command
-	      (let ((forms nil))
+              (do-command (second repl-command)
 		(loop 
-		  (unless (ext:listen-skip-whitespace in)
-		    (return))
-		  (push (read in nil) forms))
-		(do-command (second repl-command)
-		  (nreverse forms)))
+                  while (ext:listen-skip-whitespace in)
+                    collect (read in nil)))
 	      (values))
 	     ;; Support (<command> <arg>*) syntax as well:
 	     ((and (consp form)
@@ -280,13 +476,10 @@
 	     ;; always return nil
 	     nil))
       (cond (repl-command
-	     (let ((forms nil))
-	       (loop 
-		(unless (ext:listen-skip-whitespace in)
-		  (return))
-		(push (read in nil) forms))
-	       (do-command (second repl-command)
-		 (nreverse forms)))
+             (do-command (second repl-command)
+               (loop 
+                   while (ext:listen-skip-whitespace in)
+                   collect (read in nil)))
 	     (values))
 	    ;; Support (<command> <arg>*) syntax as well:
 	    ((and (consp form)
@@ -320,12 +513,10 @@
 		   nil))
 	    (cond
              (repl-command
-              (let ((forms nil))
+              (do-command (second repl-command)
                 (loop 
-                  (unless (sb-int:listen-skip-whitespace in)
-                    (return))
-                  (push (read in nil) forms))
-                (do-command (second repl-command) (nreverse forms)))
+                  while (sb-int:listen-skip-whitespace in)
+                    collect (read in nil)))
               '(values))
              ;; Support (<command> <arg>*) syntax as well:
              ((and (consp form)
@@ -336,6 +527,24 @@
 
   (compile-if-advantageous 'extended-repl-read-form-fun)
   (setf sb-int:*repl-read-form-fun* #'extended-repl-read-form-fun))
+
+;;; ---------------------------------------------------------------------------
+;;;  Provide a standard way of quitting CL (for use in extended-REPL commands)
+
+(defun extended-repl-quit-lisp (&rest args)
+  #+sbcl
+  (let ((swank-package (find-package :swank)))
+    (when swank-package
+      (let ((quit-lisp-fn (intern (symbol-name 'quit-lisp) swank-package)))
+        (when (fboundp quit-lisp-fn)
+          (funcall quit-lisp-fn)))))
+  (apply
+   ;; Avoid infinite #'quit recursion in Allegro:
+   #+allegro #'exit
+   #-allegro #'quit
+   args))
+  
+(compile-if-advantageous 'extended-repl-quit-lisp)
 
 ;;; ===========================================================================
 ;;;  SLIME REPL Interface Setup
@@ -357,19 +566,22 @@
 ;;;
 ;;;  We work around this by creating the :swank-backend package in advance of
 ;;;  swank loading (a package that will be used by the :swank package, once
-;;;  the :swank package is created), setting swank-backend::*after-init-hook*,
-;;;  and exporting swank-backend::*after-init-hook* so that it will become
-;;;  Swank's *after-init-hook*.  This exporting strategy doesn't work with
-;;;  LispWorks (defpackage :swank ...) handling of
-;;;  swank-backend::*after-init-hook*, so on LispWorks we pre-create the
-;;;  :swank-loader package and add :after advice to a placeholder
-;;;  swank-loader::load-swank function.  The :after advice will remain once
-;;;  the actual swank-loader::load-swank function is loaded.
+;;;  the :swank package is created by defpackage), setting
+;;;  swank-backend::*after-init-hook*, and exporting
+;;;  swank-backend::*after-init-hook* so that it will become Swank's
+;;;  *after-init-hook*.  This exporting strategy doesn't work with LispWorks
+;;;  (defpackage :swank ...) handling of swank-backend::*after-init-hook*, so
+;;;  on LispWorks we instead pre-create the :swank-loader package and then add
+;;;  :after advice to a placeholder swank-loader::load-swank function that
+;;;  acts as our hook.  This :after advice will remain once the actual
+;;;  swank-loader::load-swank function is loaded and it will be invoked when
+;;;  swank-loader::load-swank is called.
 ;;;
-;;;  It would have been *SO* much easier if Swank simply imported/used a
-;;;  better-named variable (such as *after-swank-init-hook*) from the :cl-user
+;;;  It would have been *SO* much easier if Swank simply imported and used a
+;;;  better-named variable (such as *swank-after-init-hook*) from the :cl-user
 ;;;  package, allowing straightforward specification of after-init hooks in
 ;;;  advance of Swank loading.
+;;;  *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 
 #-lispworks
 (eval-when (:compile-toplevel :load-toplevel :execute)

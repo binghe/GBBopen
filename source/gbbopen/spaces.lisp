@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/spaces.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Apr 25 07:41:06 2008 *-*
+;;;; *-* Last-Edit: Sat Apr 26 11:26:46 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -38,9 +38,6 @@
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 (in-package :gbbopen)
-
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (import '(common-lisp-user::define-tll-command)))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(?                           ; path reg-exp operator
@@ -841,13 +838,6 @@
                      blackboard repository.~%"))))
   (fresh-line)
   (values))
-
-;;; ---------------------------------------------------------------------------
-;;;  Add :dsbb REPL command
-
-(define-tll-command (:dsbb :add-to-native-help) ()
-  "Describe blackboard repository"
-  (describe-blackboard-repository))
 
 ;;; ---------------------------------------------------------------------------
 

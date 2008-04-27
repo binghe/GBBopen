@@ -5,7 +5,7 @@
 <!-- XML file produced from file: tutorial.tex
      using Hyperlatex v 2.9-in-waiting-rk (c) Otfried Cheong -->
 <head>
-<title>GBBopen 0.9.9 Tutorial -- Enhancing Your Development Environment</title>
+<title>GBBopen 1.0 Tutorial -- Enhancing Your Development Environment</title>
 </p>
 <link rel="SHORTCUT ICON" href="favicon.ico"><link rel=stylesheet
         href="gbbopen.css" type="text/css" />
@@ -63,7 +63,7 @@ users.  GBBopen keyword commands
 are also supported in
 <a target="_top" href="http://common-lisp.net/project/slime/">SLIME</a>'s Emacs-based REPL.
 Other interaction interfaces that use their own REPL, rather than the one
-provided by Common Lisp, may not support keyword top-level command processing
+provided by Common Lisp, may not support keyword REPL command processing
 (see below).
 </p>
 <p>To make these GBBopen keyword commands available, simply load the file
@@ -105,7 +105,7 @@ option.
 </p>
 <h3><a name="id3">If it didn't work<i>...</i></a></h3><p>
 If you are running GBBopen in a Common Lisp environment that doesn't support
-top-level REPL commands and the <b>:gbbopen-user</b> REPL command didn't
+REPL commands and the <b>:gbbopen-user</b> REPL command didn't
 work, all is not lost.  Loading <code><var>&lt;install-dir&gt;</var>/initiate.lisp</code>
 also defines functions in the <code>:common-lisp-user</code> package with the same
 name as the REPL command:
@@ -162,8 +162,8 @@ throughout the rest of the Tutorial.  If you are running a
 <a target="_top" href="http://clisp.cons.org/">CLISP</a> version prior to 2.45, remember to
 use the <code>:common-lisp-user</code> function rather than the REPL command when
 the command requires arguments.  (Equivalent functions in the
-<code>:common-lisp-user</code> package are always defined for each GBBopen top-level
-keyword command, and these functions can be used when top-level keyword
+<code>:common-lisp-user</code> package are always defined for each REPL
+keyword command, and these functions can be used when REPL keyword
 processing is not fully supported.)
 </p>
 <h2><a name="id5">Step 2: Customizing your Common Lisp initialization file</a></h2><p>
