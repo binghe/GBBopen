@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/preamble.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Apr 25 02:12:56 2008 *-*
+;;;; *-* Last-Edit: Sun Apr 27 14:04:17 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -29,16 +29,17 @@
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-(unless (find-package :gbbopen-tools)
-  (defpackage :gbbopen-tools 
-    (:use :common-lisp)))
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (unless (find-package ':gbbopen-tools)
+    (make-package ':gbbopen-tools 
+                  :use '(:common-lisp))))
 
 (in-package :gbbopen-tools)
 
 ;;; We require the :mini-module package for a few entities (see
 ;;; ../mini-module/mini-module.lisp for details):
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (let ((mini-module-package (find-package :mini-module)))
+  (let ((mini-module-package (find-package ':mini-module)))
     (if mini-module-package
         (use-package (list mini-module-package))
         (let ((truename *load-truename*))

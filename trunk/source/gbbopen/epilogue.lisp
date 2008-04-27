@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/epilogue.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Mar 25 05:30:44 2008 *-*
+;;;; *-* Last-Edit: Sun Apr 27 13:56:51 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -28,6 +28,10 @@
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 (in-package :gbbopen)
+
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (import '(common-lisp-user::*current-system-name*
+            common-lisp-user::define-repl-command)))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (import '(gbbopen-tools::*recorded-class-descriptions-ht*)))
@@ -227,6 +231,33 @@
                (when (and after-loading-function
                           (not ignore-after-loading-function))
                  (multiple-value-list (funcall after-loading-function))))))))
+  
+;;; ---------------------------------------------------------------------------
+;;;  Add :dsbb REPL command (available if using GBBopen's initiate.lisp)
+
+(when (fboundp 'define-repl-command)
+  (let ((common-lisp-user::*current-system-name* ':gbbopen))
+    (declare (special common-lisp-user::*current-system-name*))
+
+    (define-repl-command (:dsbb :add-to-native-help) ()
+      "Describe blackboard repository"
+      (describe-blackboard-repository))
+
+    (define-repl-command :fi (&rest args)
+      "Find instance by name"
+      (let ((instance (apply 'find-instance-by-name args)))
+        (cond 
+         (instance
+          ;; Note: * is not set in SBCL's REPL:
+          (setf * instance)
+          (format t "~&Found ~s (assigned to ~s)~%" instance '*)
+          (force-output)
+          instance)
+         (t (format t "~&No unit instance named ~s~@[ of class ~s~] was ~
+                         found~%"
+                    (first args)
+                    (second args))
+            (force-output)))))))
   
 ;;; ===========================================================================
 ;;;  GBBopen is fully loaded

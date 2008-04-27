@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/tutorial.tex *-*
-%% *-* Last-Edit: Fri Apr 25 01:45:37 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Sun Apr 27 11:30:23 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2005-2008, Dan Corkill <corkill@GBBopen.org>
@@ -449,7 +449,7 @@ short).
 This tutorial assumes that you have a basic understanding of Common Lisp and,
 in particular, how to interact with the Common Lisp implementation that you
 are using.  Thus, you should be able to start up your Common Lisp system and
-enter forms into the ``Lisp Listener'' (also called the read-eval-print-loop
+enter forms into the ``Lisp Listener'' (also called the read-eval-print loop
 or simply the REPL) that it provides.  
 
 When you start your Common Lisp system, it may first display some informational
@@ -2123,7 +2123,7 @@ users.  GBBopen keyword commands
 are also supported in
 \xsitelink{SLIME}{http://common-lisp.net/project/slime/}'s Emacs-based REPL.
 Other interaction interfaces that use their own REPL, rather than the one
-provided by Common Lisp, may not support keyword top-level command processing
+provided by Common Lisp, may not support keyword REPL command processing
 (see below).
 
 To make these GBBopen keyword commands available, simply load the file
@@ -2176,7 +2176,7 @@ option.
 \subsubsection*{If it didn't work$\ldots$}
 
 If you are running GBBopen in a Common Lisp environment that doesn't support
-top-level REPL commands and the \textbf{:gbbopen-user} REPL command didn't
+REPL commands and the \textbf{:gbbopen-user} REPL command didn't
 work, all is not lost.  Loading \code{\var{<install-dir>\/}/initiate.lisp}
 also defines functions in the \code{:common-lisp-user} package with the same
 name as the REPL command:
@@ -2249,8 +2249,8 @@ throughout the rest of the Tutorial.  If you are running a
 \xsitelink{CLISP}{http://clisp.cons.org/} version prior to 2.45, remember to
 use the \code{:common-lisp-user} function rather than the REPL command when
 the command requires arguments.  (Equivalent functions in the
-\code{:common-lisp-user} package are always defined for each GBBopen top-level
-keyword command, and these functions can be used when top-level keyword
+\code{:common-lisp-user} package are always defined for each REPL
+keyword command, and these functions can be used when REPL keyword
 processing is not fully supported.)
 
 \subsection*{Step 2: Customizing your Common Lisp initialization file}
@@ -5187,7 +5187,7 @@ This exercise shows you how to:
 \begin{tightitemize}
 \item Structure an application using the \xreflink{Mini Module
     system}{sec:mini-module}
-\item Define a top-level REPL command for your application
+\item Define a REPL command for your application
 \item Compile and load your application using your REPL command
 \item Create and use an application-specific package
 \item Add an ``autorun'' action
@@ -5366,7 +5366,7 @@ Each GBBopen application is packaged in a directory that contains:
   there is one in the user's ``homedir'')
 \item a directory named \code{source} containing all the source files for the
   module or application
-\item an optional \code{commands.lisp} file that specifies top-level commands
+\item an optional \code{commands.lisp} file that specifies REPL commands
   for the module (loaded after the personal \code{gbbopen-commands.lisp} file
   if there is one in the user's ``homedir'')
 \end{tightitemize}
@@ -5568,7 +5568,7 @@ the \code{tutorial} directory. Type the following two forms into the new
 \begin{example}
 (in-package :common-lisp-user)
 
-(define-tll-command :tutorial (\&rest options)
+(define-repl-command :tutorial (\&rest options)
   "Compile and load the Random-Walk Tutorial Application Module"
   (startup-module :tutorial options :gbbopen-user))
 \end{example}
@@ -5576,7 +5576,7 @@ the \code{tutorial} directory. Type the following two forms into the new
 and then save the file.  A \code{commands.lisp} file should always specify the
 \code{:common-lisp-user} package as the first form in the file.
 
-The \textbf{define-tll-command} form adds a top-level REPL command, named
+The \textbf{define-repl-command} form adds a REPL command, named
 \code{:tutorial}, to the set of handy REPL commands.  The
 \textbf{startup-module} call does all the work associated with executing the
 command.  The first argument to \textbf{startup-module} specifies that the
@@ -5749,7 +5749,7 @@ package-name argument to \textbf{startup-module}:
 \W\supp
 \begin{example}
 \textcolor{darkergray}{%
-  (define-tll-command :tutorial (\&rest options)
+  (define-repl-command :tutorial (\&rest options)
     "Compile and load the Random-Walk Tutorial Application Module"
     (startup-module :tutorial options \textcolor{red}{:gbbopen-user}))}
 \end{example}
@@ -5759,7 +5759,7 @@ and add the package-name \code{:tutorial} in its place:
 \W\supp\notpretop
 \begin{example}
 \textcolor{darkergray}{%
-  (define-tll-command :tutorial (\&rest options)
+  (define-repl-command :tutorial (\&rest options)
     "Compile and load the Random-Walk Tutorial Application Module"
     (startup-module :tutorial options \textcolor{black}{:tutorial}))}
 \end{example}
@@ -5892,6 +5892,22 @@ still be able to run the random-walk application:
   :stop
   gbbopen-user>}
 \end{example}
+
+\subsubsection*{Installation-wide sharing}
+%
+\index{shared-gbbopen-modules@\code{shared-gbbopen-modules}, installation-wide application sharing}%
+
+GBBopen also has an \code{\var{<install-directory>\/}/shared-gbbopen-modules}
+directory.  As with our personal \code{gbbopen-modules} directory, this
+\code{shared-gbbopen-modules} directory is assumed to contain symbolic links
+(or ``pseudo-symbolic-link'' files on Windows) to individual GBBopen module
+directory trees.
+
+This is the recommended mechanism for installation-wide managing and sharing
+of modules and applications, and if we wanted to share our random-walk
+application to everyone using our GBBopen installation, we could create our
+symbolic link (or ``pseudo-symbolic-link'' file) in the
+\code{shared-gbbopen-modules} directory.
 
 \subsection*{Step 10: Add an ``autorun'' action}
 

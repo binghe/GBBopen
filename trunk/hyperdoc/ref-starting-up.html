@@ -5,7 +5,7 @@
 <!-- XML file produced from file: reference.tex
      using Hyperlatex v 2.9-in-waiting-rk (c) Otfried Cheong -->
 <head>
-<title>GBBopen 0.9.9 Reference -- Starting Up</title>
+<title>GBBopen 1.0 Reference -- Starting Up</title>
 </p>
 <link rel="SHORTCUT ICON" href="favicon.ico"><link rel=stylesheet
         href="gbbopen.css" type="text/css" />
@@ -15,7 +15,7 @@
 <td bgcolor="#99ccff"><a href="ref-acknowledgments.html"><img border="0" alt="Acknowledgments" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="reference_0.html"><img border="0" alt="Top" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-mini-module-entities.html"><img border="0" alt="Mini-Module Facility" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b>Starting Up</b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table>
 <h1>Starting Up</h1>
 <p>GBBopen is packaged with its own <a href="ref-mini-module-entities.html">module system</a> that
-supports compiling and loading GBBopen components.  This Mini Module facility
+supports compiling and loading GBBopen components.  The Mini Module system
 is designed for ease of use and for simplicity in porting to Common Lisp
 implementations.  For example, to compile all core GBBopen <a href="ref-glossary.html#gl:modules">modules</a> and
 execute a basic trip-tests file, you only need to evaluate the following forms
@@ -60,7 +60,7 @@ does not exist or is not up to date.  The <code>:create-dirs</code> option
 automatically creates any directories that are missing in the compiled-file
 directory tree.
 </p>
-<p><h4>Personal gbbopen-init.lisp file</h4>
+<p><h4>Personal <tt>gbbopen-init.lisp</tt> file</h4>
 </p>
 <p><a name="id3">If</a> a <code>gbbopen-init.lisp</code> file (source or compiled) is present in the
 user's &#8220;home&#8221; directory (as defined by <b>user-homedir-pathname</b>), it
@@ -96,16 +96,17 @@ packaging convention that mirrors that of GBBopen.  This will be discussed
 shortly in conjunction with using a <a href="#sec:personal-gbbopen-modules-directory">personal <code>gbbopen-modules</code>
 directory</a>.
 </p>
-<p>Next, we show how to add convenient GBBopen keyword commands to the
-read-eval-print loop (REPL) in your Common Lisp environment and how to
-define a personal top-level command that makes it easy to compile and load
-the <code>:my-app</code> module&mdash;even if GBBopen has not yet been loaded into
+<p>Next, we show how to add convenient GBBopen <a href="ref-glossary.html#gl:keyword-command">keyword&nbsp;commands</a> to the
+top level read-eval-print loop (REPL) in your Common Lisp environment and how
+to define a personal REPL <a href="ref-glossary.html#gl:keyword-command">command</a> that makes it easy to compile and
+load the <code>:my-app</code> module&mdash;even if GBBopen has not yet been loaded into
 your Common Lisp image.
 </p>
-<p><h4>GBBopen top-level commands</h4>
-<a name="id4">The</a> file <code><var>&lt;install-directory&gt;</var>/initiate.lisp</code> is an alternative
-for <code><var>&lt;install-directory&gt;</var>/startup.lisp</code> that adds some handy
-GBBopen keyword commands to the top-level REPL listener for
+<p><h4>Top-level REPL commands</h4>
+<a name="id4">The</a> file <code><var>&lt;install-directory&gt;</var>/initiate.lisp</code> is a highly
+recommended alternative for <code><var>&lt;install-directory&gt;</var>/startup.lisp</code>
+that adds some handy <a href="ref-glossary.html#gl:keyword-command">keyword&nbsp;commands</a> to the top-level REPL listener
+for
 <a target="_top" href="http://www.franz.com">Allegro CL</a>,
 <a target="_top" href="http://clisp.cons.org/">CLISP</a>,
 <a target="_top" href="http://trac.clozure.com/openmcl/">Clozure CL</a>,
@@ -117,12 +118,12 @@ GBBopen keyword commands to the top-level REPL listener for
 users.  Some interaction interfaces, such as
 <a target="_top" href="http://common-lisp.net/project/slime/">SLIME</a>, use their own REPL
 rather than the top-level listener provided by the Common Lisp implementation
-and, therefore, may not support keyword top-level command processing.  GBBopen
-does provide a swank extension in the
+and, therefore, may not support <a href="ref-glossary.html#gl:keywords">keyword</a> <a href="ref-glossary.html#id167">REPL&nbsp;command</a>
+processing.  GBBopen does provide a Swank extension to the
 <a target="_top" href="http://common-lisp.net/project/slime/">SLIME</a> REPL that supports
-GBBopen keyword commands.
+REPL <a href="ref-glossary.html#gl:keyword-command">keyword&nbsp;commands</a>.
 </p>
-<p>To make GBBopen keyword commands available, simply load
+<p>To make GBBopen's <a href="ref-glossary.html#gl:keyword-command">REPL&nbsp;commands</a> available, simply load
 <code><var>&lt;install-directory&gt;</var>/initiate.lisp</code> from your personal Common
 Lisp initialization file.  (You should not explicitly load the
 <code><var>&lt;install-directory&gt;</var>/startup.lisp</code> file when using
@@ -130,12 +131,12 @@ Lisp initialization file.  (You should not explicitly load the
 <code><var>&lt;install-directory&gt;</var>/startup.lisp</code> file loading for you at the
 appropriate time.)
 </p>
-<p>The standard GBBopen top-level commands are defined in the file
+<p>Built-in and GBBopen <a href="ref-glossary.html#gl:keyword-command">REPL&nbsp;commands</a> are defined in the file
 <code><var>&lt;install-directory&gt;</var>/commands.lisp</code>.  In many Common Lisp
 implementations and in the
 <a target="_top" href="http://common-lisp.net/project/slime/">SLIME</a> REPL interface,
-top-level keyword commands that have arguments can be specified using either a
-list or a spread representation.  For example:
+<a href="ref-glossary.html#gl:keyword-command">REPL&nbsp;commands</a> that have arguments can be specified using either a list
+or a spread representation.  For example:
 <pre class="pretop">
   &gt; (:gbbopen-test :create-dirs)
 </pre>
@@ -150,16 +151,16 @@ notation.  CLISP versions prior to 2.45 only support the spread notation&mdash;b
 without arguments.
 </p>
 <p>Equivalent functions in the <code>:common-lisp-user</code> package are always
-defined for each GBBopen top-level keyword command, and these functions can be
-used when top-level keyword processing is not fully supported.
+defined for each <a href="ref-glossary.html#id167">REPL&nbsp;command</a>, and these functions can be used when
+REPL <a href="ref-glossary.html#gl:keyword-command">keyword-command</a> processing is not fully supported.
 </p>
-<p><h4>Personal gbbopen-commands.lisp file</h4>
-<a name="id5">You</a> can add your own top-level commands by defining them in a personal
+<p><h4>Personal <tt>gbbopen-commands.lisp</tt> file</h4>
+<a name="id5">You</a> can create your own <a href="ref-glossary.html#gl:keyword-command">REPL&nbsp;commands</a> by defining them in a personal
 <code>gbbopen-commands.lisp</code> file.  If a <code>gbbopen-commands</code> file (source
 or compiled) is present in the user's &#8220;homedir&#8221; home directory (as defined
 by <b>user-homedir-pathname</b>), it is loaded automatically by GBBopen's
 <code>initiate.lisp</code> file.  For example, the following personal
-<code>gbbopen-commands.lisp</code> file defines a top-level keyword command (named
+<code>gbbopen-commands.lisp</code> file defines a <a href="ref-glossary.html#id167">REPL&nbsp;command</a> (named
 <code>:my-app</code>) and an equivalent <a href="ref-glossary.html#gl:function">function</a> (<code>cl-user::my-app</code>)
 for compiling and loading the <code>:my-app</code> <a href="ref-glossary.html#gl:module">module</a> that was defined
 above:
@@ -168,7 +169,7 @@ above:
 
   (in-package :cl-user)
 
-  (<a href="ref-define-tll-command.html">define-tll-command</a> :my-app (&amp;rest options)
+  (<a href="ref-define-repl-command.html">define-repl-command</a> :my-app (&amp;rest options)
     "Compile and load my GBBopen application module"
     (<a href="ref-startup-module.html">startup-module</a> :my-app options :gbbopen-user))
 
@@ -176,17 +177,17 @@ above:
   ;;;   End of File
   ;;; ===============================================
 </pre>
-The macro <code>define-tll-command</code> and the <a href="ref-glossary.html#gl:function">function</a>
+The macro <code>define-repl-command</code> and the <a href="ref-glossary.html#gl:function">function</a>
 <code>startup-module</code> that are used in this example are both defined in the
 file <code><var>&lt;install-directory&gt;</var>/initiate.lisp</code>.  Experienced GBBopen
 users prefer to have their Common Lisp initialization file load
 <code><var>&lt;install-directory&gt;</var>/initiate.lisp</code> rather than
 <code><var>&lt;install-directory&gt;</var>/startup.lisp</code> in order to use the standard
-keyword commands for GBBopen&mdash;and their own, personalized extensions&mdash;in the
-Lisp listener.  See the &#8220;Enhancing Your Development Environment&#8221; exercise in
-the GBBopen Tutorial for details.
+<a href="ref-glossary.html#gl:keyword-command">REPL&nbsp;commands</a> for GBBopen&mdash;as well as their own, personalized
+extensions&mdash;in the Lisp listener.  See the &#8220;Enhancing Your Development
+Environment&#8221; exercise in the GBBopen Tutorial for details.
 </p>
-<p><h4>Personal gbbopen-modules directory</h4>
+<p><h4>Personal <tt>gbbopen-modules</tt> directory</h4>
 <a name="sec:personal-gbbopen-modules-directory"></a>
 </p>
 <p><a name="id7">Previously,</a> we showed a simple example of using a personal
@@ -211,8 +212,8 @@ by creating a symbolic link to the application directory in each user's
 the user's &#8220;homedir&#8221;)
 <li>a directory named <code>source</code> containing all the source files for the
 <a href="ref-glossary.html#gl:module">module</a> or application
-<li>an optional <code>commands.lisp</code> file that specifies top-level commands
-for the <a href="ref-glossary.html#gl:module">module</a> (loaded after the personal
+<li>an optional <code>commands.lisp</code> file that specifies
+<a href="ref-glossary.html#gl:keyword-command">REPL&nbsp;commands</a> for the <a href="ref-glossary.html#gl:module">module</a> (loaded after the personal
 <code>gbbopen-commands.lisp</code> file if there is one in the user's &#8220;homedir&#8221;)
 </ul>
 </p>
@@ -225,6 +226,18 @@ users running on Windows must create a text file of type <code>.sym</code> (that
 contains the target directory path as its sole line) as a stand-in for the
 symbolic link.
 </p>
+<p><h4>Installation-wide <tt>shared-gbbopen-modules</tt> directory</h4>
+<a name="sec:shared-gbbopen-modules-directory"></a>
+</p>
+<p><a name="id9">There</a> is also an <code><var>&lt;install-directory&gt;</var>/shared-gbbopen-modules</code>
+directory.  As with a user's <code>gbbopen-modules</code> directory (discussed
+above), the <code>shared-gbbopen-modules</code> directory is assumed to contain
+symbolic links (or &#8220;pseudo-symbolic-link&#8221; files on Windows) to individual
+GBBopen module directory trees.
+</p>
+<p>This is the recommended mechanism for installation-wide managing and sharing
+of modules and applications.
+</p>
 <p><h4>GBBopen Hyperdoc</h4>
 <a name="sec:hyperdoc">
 Convenient</a> access to a local copy of the GBBopen Hyperdoc manual from Common
@@ -236,7 +249,7 @@ value can be specified in either your Common Lisp initialization file or,
 preferably, in your personal <code>gbbopen-init.lisp</code> file.  Changing the
 default setting in <code>startup.lisp</code> is not recommended.
 </p>
-<p><a name="id9"></a><a target="_top" href="http://www.gnu.org/software/emacs/emacs.html">Emacs</a> access to the
+<p><a target="_top" href="http://www.gnu.org/software/emacs/emacs.html">Emacs</a> access to the
 GBBopen Hyperdoc is provided by
 <code><var>&lt;install-directory&gt;</var>/browse-hyperdoc.el</code>.  This file defines the
 interactive Emacs command <code>browse-hyperdoc</code> and binds it to
@@ -267,8 +280,9 @@ example:
 </p>
 <ul>
 <li><a href="ref-preferred-browser-var.html"><font color="#000000">*preferred-browser*</font></a></li>
-<li><a href="ref-define-tll-command.html"><font color="#000000">define-tll-command</font></a></li>
+<li><a href="ref-define-repl-command.html"><font color="#000000">define-repl-command</font></a></li>
 <li><a href="ref-startup-module.html"><font color="#000000">startup-module</font></a></li>
+<li><a href="ref-with-system-name.html"><font color="#000000">with-system-name</font></a></li>
 </ul>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />

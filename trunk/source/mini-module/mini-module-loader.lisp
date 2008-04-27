@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/mini-module/mini-module-loader.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Apr 25 02:31:58 2008 *-*
+;;;; *-* Last-Edit: Sun Apr 27 14:15:20 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -62,8 +62,10 @@
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-(unless (find-package :mini-module)
-  (defpackage :mini-module (:use :common-lisp)))
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (unless (find-package ':mini-module)
+    (make-package ':mini-module 
+                  :use '(:common-lisp))))
 
 (in-package :mini-module)
 
@@ -149,7 +151,7 @@
      #+clozure
      (format nil "~a-clozure-~a.~a"
              (or
-              #+darwin "darwin"
+              #+darwinppc-target "darwin"
               #+darwinx8664-target "macosx86-64"
               #+linuxx8664-target "linux86-64" ; Thanks to Matthew Danish
               #-(or darwin darwinx8664-target linuxx8664-target) 

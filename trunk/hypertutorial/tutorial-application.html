@@ -5,7 +5,7 @@
 <!-- XML file produced from file: tutorial.tex
      using Hyperlatex v 2.9-in-waiting-rk (c) Otfried Cheong -->
 <head>
-<title>GBBopen 0.9.9 Tutorial -- Creating a GBBopen Application</title>
+<title>GBBopen 1.0 Tutorial -- Creating a GBBopen Application</title>
 </p>
 <link rel="SHORTCUT ICON" href="favicon.ico"><link rel=stylesheet
         href="gbbopen.css" type="text/css" />
@@ -22,7 +22,7 @@ This exercise shows you how to:
 </p>
 <p><ul class="tight"><li>Structure an application using the Mini Module
 system
-<li>Define a top-level REPL command for your application
+<li>Define a REPL command for your application
 <li>Compile and load your application using your REPL command
 <li>Create and use an application-specific package
 <li>Add an &#8220;autorun&#8221; action
@@ -186,7 +186,7 @@ after the personal <code>gbbopen-init.lisp</code> file if
 there is one in the user's &#8220;homedir&#8221;)
 <li>a directory named <code>source</code> containing all the source files for the
 module or application
-<li>an optional <code>commands.lisp</code> file that specifies top-level commands
+<li>an optional <code>commands.lisp</code> file that specifies REPL commands
 for the module (loaded after the personal <code>gbbopen-commands.lisp</code> file
 if there is one in the user's &#8220;homedir&#8221;)
 </ul>
@@ -353,14 +353,14 @@ the <code>tutorial</code> directory. Type the following two forms into the new
 <pre class="pretop">
 (in-package :common-lisp-user)
 
-(define-tll-command :tutorial (&#38;rest options)
+(define-repl-command :tutorial (&#38;rest options)
   "Compile and load the Random-Walk Tutorial Application Module"
   (startup-module :tutorial options :gbbopen-user))
 </pre>
 and then save the file.  A <code>commands.lisp</code> file should always specify the
 <code>:common-lisp-user</code> package as the first form in the file.
 </p>
-<p>The <b>define-tll-command</b> form adds a top-level REPL command, named
+<p>The <b>define-repl-command</b> form adds a REPL command, named
 <code>:tutorial</code>, to the set of handy REPL commands.  The
 <b>startup-module</b> call does all the work associated with executing the
 command.  The first argument to <b>startup-module</b> specifies that the
@@ -492,13 +492,13 @@ and save the file.
 <h3><a name="id13">Change <code>commands.lisp</code></a></h3><p>Next, edit your <code>commands.lisp</code> file and delete the <code>:gbbopen-user</code>
 package-name argument to <b>startup-module</b>:
 <pre class="pretop">
-<font color="#667f66">  (define-tll-command :tutorial (&#38;rest options)
+<font color="#667f66">  (define-repl-command :tutorial (&#38;rest options)
     "Compile and load the Random-Walk Tutorial Application Module"
     (startup-module :tutorial options <font color="#ff0000">:gbbopen-user</font>))</font>
 </pre>
 and add the package-name <code>:tutorial</code> in its place:
 <pre>
-<font color="#667f66">  (define-tll-command :tutorial (&#38;rest options)
+<font color="#667f66">  (define-repl-command :tutorial (&#38;rest options)
     "Compile and load the Random-Walk Tutorial Application Module"
     (startup-module :tutorial options <font color="#000000">:tutorial</font>))</font>
 </pre>
@@ -604,7 +604,19 @@ still be able to run the random-walk application:
   gbbopen-user&gt;</font>
 </pre>
 </p>
-<h2><a name="id16">Step 10: Add an &#8220;autorun&#8221; action</a></h2><p>
+<h3><a name="id16">Installation-wide sharing</a></h3><p>GBBopen also has an <code><var>&lt;install-directory&gt;</var>/shared-gbbopen-modules</code>
+directory.  As with our personal <code>gbbopen-modules</code> directory, this
+<code>shared-gbbopen-modules</code> directory is assumed to contain symbolic links
+(or &#8220;pseudo-symbolic-link&#8221; files on Windows) to individual GBBopen module
+directory trees.
+</p>
+<p>This is the recommended mechanism for installation-wide managing and sharing
+of modules and applications, and if we wanted to share our random-walk
+application to everyone using our GBBopen installation, we could create our
+symbolic link (or &#8220;pseudo-symbolic-link&#8221; file) in the
+<code>shared-gbbopen-modules</code> directory.
+</p>
+<h2><a name="id17">Step 10: Add an &#8220;autorun&#8221; action</a></h2><p>
 Suppose we want the random-walk application to run automatically when it is
 loaded.  You could simply add:
 <pre class="pretop">
@@ -637,7 +649,7 @@ immediately after the form to add <code>:tutorial</code> to Common Lisp's
 present during the &#8220;autorun&#8221; execution and thereafter&mdash;even if an error
 occurs when executing the &#8220;autorun&#8221; form.
 </p>
-<h2><a name="id17">Step 11: Try it out</a></h2><p>
+<h2><a name="id18">Step 11: Try it out</a></h2><p>
 Enter the <code>:tutorial</code> REPL command; the modified
 <code>tutorial-example.lisp</code> file should compile and load, followed by a
 random walk:
@@ -717,7 +729,7 @@ it, redefining the <code>:tutorial</code> module definition, and then followed o
   tutorial&gt;</font>
 </pre>
 </p>
-<h3><a name="id18">Mini Module propagation</a></h3><p>
+<h3><a name="id19">Mini Module propagation</a></h3><p>
 The Mini Module's <b>compile-module</b> function also accepts a
 <code>:reload</code> option, so we might be tempted to simply add that option when
 we specify our <code>:tutorial</code> command:
@@ -751,7 +763,7 @@ convenient, than specifying the <code>:reload</code> file option to our
 <code>tutorial-example</code> file in the module definition.  If we had a number of
 files, however, we would probably only want the last one reloaded every time.
 </p>
-<h3><a name="id19">Mini Module memories</a></h3><p>
+<h3><a name="id20">Mini Module memories</a></h3><p>
 The Mini Module system also remembers the last module (and any provided
 options, such as <code>:create-dirs</code>) that was specified to a <code>:cm</code>
 (textbfcompile-module) or <code>:lm</code> (<b>load-module</b>) command.  The
@@ -771,7 +783,7 @@ Just the thing for lazy typists like me!  Note that the <code>:cm</code> command
 echos the full (implicitly completed) command with the remembered module name
 and any remembered options.
 </p>
-<h2><a name="id20">Step 12: Add a second source file</a></h2><p>
+<h2><a name="id21">Step 12: Add a second source file</a></h2><p>
 Reloading the entire <code>tutorial-application</code> file in order to evaluate our
 &#8220;autorun&#8221; form is still a bit heavy handed.  There are two ways to improve
 this situation, and both involve placing the &#8220;autorun&#8221; form in a separate
@@ -825,7 +837,7 @@ file option:
 </pre>
 and save the file.
 </p>
-<h2><a name="id21">Step 13: One last check</a></h2><p>
+<h2><a name="id22">Step 13: One last check</a></h2><p>
 Let's double-check that everything is working:
 <pre class="pretop">
 <font color="#667f66">  tutorial&gt; <font color="#000000">:cm</font>

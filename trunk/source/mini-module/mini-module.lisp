@@ -1,13 +1,13 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/mini-module/mini-module.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Apr 25 02:01:45 2008 *-*
+;;;; *-* Last-Edit: Sun Apr 27 14:06:08 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
 ;;;; *
-;;;; *                         Mini-Module Facility
+;;;; *                         Mini Module System
 ;;;; *
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -25,14 +25,14 @@
 ;;;
 ;;; --------------------------------------------------------------------------
 ;;;
-;;;  This mini-module facility provides a lightweight and easy to use
+;;;  This Mini Module system provides a lightweight and easy to use
 ;;;  mechanism for maintaining (compiling and loading) module files.
 ;;;
 ;;;  This file assumes the global variables *compiled-directory-name* and
 ;;;  *compiled-file-type* have been defined by loading
 ;;;  mini-module-loader.lisp.
 ;;;
-;;;  The mini-module-faclity supports the following directory layout:
+;;;  The Mini Module system supports the following directory layout:
 ;;;
 ;;;                             <root-directory>
 ;;;                               /          \
@@ -47,7 +47,7 @@
 ;;;
 ;;;  This file can be used as a stand-alone system (when loaded by its
 ;;;  companion file, mini-module-loader.lisp).  Instructions for stand-alone
-;;;  usage of the mini-module facility are provided in the
+;;;  usage of the Mini Module system are provided in the
 ;;;  mini-module-startup.lisp file.
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -57,7 +57,7 @@
 ;;;  01-29-04 Exported module-loaded-p.  (Corkill)
 ;;;  02-01-04 Support use of existing root-directory in define-root-directory.
 ;;;           (Corkill)
-;;;  03-19-04 Added top-level mini-module commands for Lispworks.  (Corkill)
+;;;  03-19-04 Added top-level Mini Module commands for Lispworks.  (Corkill)
 ;;;  03-19-04 Added file-options checking.  (Corkill)
 ;;;  06-10-04 Added proper :forces-recompile date checking and warning
 ;;;           messages.  (Corkill)
@@ -95,11 +95,14 @@
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (unless (find-package :mini-module)
+  (unless (find-package ':mini-module)
     (error "This file should be loaded using the file ~
             mini-module-loader.lisp")))
          
 (in-package :mini-module)
+
+;;; ---------------------------------------------------------------------------
+;;;   Check if we are good to go:
 
 (flet ((check-var (var)
          (unless (boundp var)
@@ -109,6 +112,20 @@
                   var))))
   (check-var '*compiled-directory-name*)
   (check-var '*compiled-file-type*))
+
+;;; ===========================================================================
+;;;   Imports to support using extended REPL commands:
+
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (import '(common-lisp-user::*current-system-name*
+            common-lisp-user::define-repl-command
+            ;; deprecated, remove in 1.1:
+            common-lisp-user::define-tll-command
+            common-lisp-user::with-system-name)))
+
+(declaim (special *current-system-name*))
+(unless (boundp '*current-system-name*)
+  (setf *current-system-name* nil))
 
 ;;; ===========================================================================
 ;;;   CL-User Global Variables
@@ -124,7 +141,7 @@
             common-lisp-user::*mini-module-load-verbose*)))
 
 ;;; ---------------------------------------------------------------------------
-;;;  Controls whether the mini-module system automatically creates missing 
+;;;  Controls whether the Mini Module system automatically creates missing 
 ;;;  directories (without asking the user):
 
 (declaim (special *automatically-create-missing-directories*))
@@ -132,7 +149,7 @@
   (setf *automatically-create-missing-directories* nil))
 
 ;;; ---------------------------------------------------------------------------
-;;;  When true, the mini-module system will generate its own compile & load
+;;;  When true, the Mini Module system will generate its own compile & load
 ;;;  messages if the corresponding *compile-verbose* or *load-verbose* values
 ;;;  are nil.
 
@@ -162,12 +179,14 @@
   (sb-impl::enter-new-nicknames (find-package "SB-UNIX") '("UNIX")))
 
 ;;; ===========================================================================
-;;;  Export user-level mini-module names.  (Some of these names could collide
+;;;  Export user-level Mini Module names.  (Some of these names could collide
 ;;;  with similar names in other packages, but we export them anyway.)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (export '(*automatically-create-missing-directories*
-            *autorun-modules*
+  (export '(*automatically-create-missing-directories*  ; re-exported from
+                                                        ; :cl-user
+            *autorun-modules*           ; re-exported from :cl-user
+            *current-system-name*       ; re-exported from :cl-user
             *mini-module-compile-verbose* ; not yet documented
             *mini-module-load-verbose*  ; not yet documented
             *month-precedes-date*
@@ -177,6 +196,8 @@
             compute-relative-directory  ; not documented
             define-relative-directory
             define-root-directory
+            define-repl-command         ; re-exported from :cl-user
+            define-tll-command          ; deprecated, remove in 1.1
             define-module
             describe-module
             dotted-conc-name            ; part of tools, but placed here; not
@@ -194,6 +215,8 @@
             show-modules                ; not yet documented
             undefine-directory          ; not yet documented
             undefine-module             ; not yet documented
+            with-system-name            ; re-exported from :cl-user
+            with-module-redefinitions   ; not yet documented
             )))
 
 ;;; ===========================================================================
@@ -244,7 +267,7 @@
 ;;;
 ;;;  Returns formatted date/time string (brief, Unix ls-like form)--actually
 ;;;  part of the GBBopen-tools module.  It is placed here to use it with the
-;;;  mini-module package.
+;;;  :mini-module package.
 ;;;
 ;;; ------------------------------------------------------------------------
 
@@ -328,7 +351,8 @@
 (defstruct (mm-directory
             (:conc-name #.(dotted-conc-name 'mm-directory))
             (:copier nil))
-  name)
+  name
+  (system-name *current-system-name*))
 
 (defstruct (mm-root-directory
             (:include mm-directory)
@@ -617,6 +641,11 @@
 ;;; ===========================================================================
 ;;;  Modules
 
+(defvar *skip-requires-ordering-check* nil)
+(defvar *deferred-requires-ordering-check-module-names* nil)
+
+;;; ---------------------------------------------------------------------------
+
 (defstruct (mm-module
             (:conc-name #.(dotted-conc-name 'mm-module))
             (:copier nil))
@@ -629,7 +658,21 @@
   (load-completed? nil)
   (latest-forces-recompiled-date 0)
   ;; undocumented (used for compile-gbbopen exit):
-  (after-form nil))
+  (after-form nil)
+  (system-name *current-system-name*))
+
+;;; ---------------------------------------------------------------------------
+
+(defmacro with-module-redefinitions (&body body)
+  ;; skip requires-ordering checks as we go:
+  `(let ((*skip-requires-ordering-check* 't)
+         (*deferred-requires-ordering-check-module-names* nil))
+     ,@body
+     ;; but do check them at the end:
+     (check-all-module-requires-orderings 
+      :module-names 
+      ;; Check them in "as seen" order:
+      (nreverse *deferred-requires-ordering-check-module-names*))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -774,10 +817,12 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun check-all-module-requires-orderings (&optional silent)
+(defun check-all-module-requires-orderings (&key module-names silent)
   (maphash
    #'(lambda (name module)
-       (check-requires-ordering name (mm-module.requires module)))
+       (when (or (not module-names)
+                 (member name module-names :test #'eq))
+         (check-requires-ordering name (mm-module.requires module))))
    *mm-modules*)
   (unless silent
     (format t "~&;; The :requires option in all module definitions are ~
@@ -787,7 +832,9 @@
 
 (defun ensure-module (name directory subdirectories requires files after-form)
   (let ((existing-module (gethash name *mm-modules*)))
-    (check-requires-ordering name requires)
+    (if *skip-requires-ordering-check*
+        (check-requires-ordering name requires)
+        (push name *deferred-requires-ordering-check-module-names*))
     (setf (gethash name *mm-modules*)
           (make-mm-module 
            :name name 
@@ -1362,22 +1409,57 @@
           (t (error "Directory ~s is not defined." name))))))))
  
 ;;; ===========================================================================
-;;;  Define the mini-module directory root and the :mini-module and
-;;;  :mini-module-user modules
+;;;  System listing and deleting
 
-(define-root-directory :mini-module-root *load-truename* :up :up)
-
-(define-module :mini-module
-  (:directory :mini-module-root "mini-module")
-  (:files "mini-module"))
-
-(define-module :mini-module-user
-  (:requires :mini-module)
-  (:directory :mini-module-root "mini-module")
-  (:files "mini-module-user"))
+(defun list-all-systems ()
+  (let ((result nil))
+    (loop 
+        for directory being each hash-value in *mm-directories*
+        for system-name = (mm-directory.system-name directory)
+        when system-name do
+          (pushnew system-name result))
+    (loop 
+        for module being each hash-value in *mm-modules*
+        for system-name = (mm-module.system-name module)
+        when system-name do
+          (pushnew system-name result))
+    result))
 
 ;;; ---------------------------------------------------------------------------
-;;;  Record this file as loaded in the mini-module hash table (due to bootstrap
+
+(defun undefine-system-directories-and-modules (system-name)
+  ;;; Deletes all directory and module definitions that are tagged with
+  ;;; `system-name'.  
+  (loop   ;; delete directories:
+      for directory-name being each hash-key in *mm-directories*
+      using (hash-value directory)
+      when (eq system-name (mm-directory.system-name directory))
+      do (undefine-directory directory-name))
+  (loop   ;; delete modules:
+      for module-name being each hash-key in *mm-modules*
+      using (hash-value module)
+      when (eq system-name (mm-module.system-name module))
+      do (undefine-module module-name)))
+
+;;; ===========================================================================
+;;;  Define the Mini Module directory root and the :mini-module and
+;;;  :mini-module-user modules
+
+(let ((*current-system-name* ':mini-module))
+    
+  (define-root-directory :mini-module-root *load-truename* :up :up)
+  
+  (define-module :mini-module
+    (:directory :mini-module-root "mini-module")
+    (:files "mini-module"))
+  
+  (define-module :mini-module-user
+    (:requires :mini-module)
+    (:directory :mini-module-root "mini-module")
+    (:files "mini-module-user")))
+
+;;; ---------------------------------------------------------------------------
+;;;  Record this file as loaded in the Mini Module hash table (due to bootstrap
 ;;;  loading)
 
 (let* ((mini-module (gethash :mini-module *mm-modules*))
@@ -1398,14 +1480,18 @@
             (acons this-file-name date files-loaded))))
   
 ;;; ===========================================================================
-;;;  Top-Level Mini-Module Command Support 
-;;;  (requires gbbopen-top-level-commands)
+;;;  :mini-module-user Module
+
+(load-module :mini-module-user)
+
+;;; ===========================================================================
+;;;  Mini Module REPL Commands (requires extended-REPL command support)
 
 (defvar *last-lm/cm-module* nil)
 (defvar *last-lm-options* nil)
 (defvar *last-cm-options* nil)
 
-(defun do-mini-module-tll-command (cmd module-and-options)
+(defun do-mini-module-repl-command (cmd module-and-options)
   (let ((recalled-options nil))
     (destructuring-bind (&optional module-name &rest options)
         module-and-options
@@ -1441,18 +1527,23 @@
                   "~&;; ~(~s~) -- No previous module specified."
                   cmd))))))
 
-(defun lm-tll-command (options)
-  (do-mini-module-tll-command ':lm options))
+;;; ---------------------------------------------------------------------------
 
-(defun cm-tll-command (options)
-  (do-mini-module-tll-command ':cm options))
-
+(when (fboundp 'define-repl-command)
+  (let ((*current-system-name* ':mini-module))
+    
+    (define-repl-command (:lm :add-to-native-help) 
+        (&rest module-name-and-options)
+      "Load module"
+      (do-mini-module-repl-command ':lm module-name-and-options))
+  
+    (define-repl-command (:cm :add-to-native-help)
+        (&rest module-name-and-options)
+      "Compile and load module"
+      (do-mini-module-repl-command ':cm module-name-and-options))))
+  
 ;;; ===========================================================================
-
-(load-module :mini-module-user)
-
-;;; ===========================================================================
-;;;   Mini-module system is fully loaded:
+;;;   Mini Module system is fully loaded:
 
 (pushnew :mini-module *features*)
 (pushnew *mini-module-version-keyword* *features*)

@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Apr 25 02:25:22 2008 *-*
+;;;; *-* Last-Edit: Sun Apr 27 14:02:00 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -67,9 +67,9 @@
 
 #+(or clozure digitool-mcl)
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (unless (find-package :clos)
-    (defpackage :clos
-      (:use :common-lisp)))
+  (unless (find-package ':clos)
+    (make-package ':clos
+                  :use '(:common-lisp)))
   
   (defparameter *clos-symbols*
       '(ccl:accessor-method-slot-definition

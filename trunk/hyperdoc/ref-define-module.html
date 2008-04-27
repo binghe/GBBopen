@@ -5,7 +5,7 @@
 <!-- XML file produced from file: reference.tex
      using Hyperlatex v 2.9-in-waiting-rk (c) Otfried Cheong -->
 <head>
-<title>GBBopen 0.9.9 Reference -- define-module</title>
+<title>GBBopen 1.0 Reference -- define-module</title>
 </p>
 <link rel="SHORTCUT ICON" href="favicon.ico"><link rel=stylesheet
         href="gbbopen.css" type="text/css" />
@@ -26,11 +26,11 @@ module-option</var>*</td><td valign="baseline" align="right">[<i>Macro</i>]
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:mini-module</code>
 </p>
 <p><span class="fndoclabel">Arguments</span><table class="tighttop">
-<tr valign="top"><td valign="baseline"><i>module-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A keyword symbol naming a <a href="ref-glossary.html#gl:module">module</a>
+<tr valign="top"><td valign="baseline"><i>module-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id97">keyword&nbsp;symbol</a> naming a <a href="ref-glossary.html#gl:module">module</a>
 </td></tr><tr valign="top"><td valign="baseline"><i>module-options</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> See below
 </td></tr></table>
 </p>
-<p><span class="fndoclabel">Errors</span> <br />The value <code>:requires</code> module option specifies a fully expanded
+<p><span class="fndoclabel">Errors</span> <br />The <code>:requires</code> module option specifies a fully expanded
 <a href="ref-glossary.html#gl:required-module">required-module</a> order that conflicts with the fully expanded
 <a href="ref-glossary.html#gl:required-module">required-module</a> order in a previously defined <a href="ref-glossary.html#gl:module">module</a>.
 </p>
@@ -68,13 +68,13 @@ module-option</var>*</td><td valign="baseline" align="right">[<i>Macro</i>]
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
 <p><span class="fndoclabel">Terms</span><table class="tighttop">
-<tr valign="top"><td valign="baseline"><i>root-or-relative-directory</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A keyword naming a <a href="ref-glossary.html#gl:Root">root</a> or
-<a href="ref-glossary.html#id157">relative&nbsp;directory</a>, a keyword naming another <a href="ref-glossary.html#gl:module">module</a>, or
+<tr valign="top"><td valign="baseline"><i>root-or-relative-directory</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#gl:keywords">keyword</a> naming a <a href="ref-glossary.html#gl:Root">root</a> or
+<a href="ref-glossary.html#id165">relative&nbsp;directory</a>, a <a href="ref-glossary.html#gl:keywords">keyword</a> naming another <a href="ref-glossary.html#gl:module">module</a>, or
 <code>nil</code>, indicating that the module is rooted at the <code>*load-truename*</code>
 value in effect when the module definition is loaded
 </td></tr><tr valign="top"><td valign="baseline"><i>subdirectory</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A string naming a subdirectory
 </td></tr><tr valign="top"><td valign="baseline"><i>file-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A string naming a file
-</td></tr><tr valign="top"><td valign="baseline"><i>module-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A keyword symbol naming a <a href="ref-glossary.html#gl:module">module</a>
+</td></tr><tr valign="top"><td valign="baseline"><i>module-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id97">keyword&nbsp;symbol</a> naming a <a href="ref-glossary.html#gl:module">module</a>
 </td></tr></table>
 </p>
 <p><span class="fndoclabel">Description</span> <br />The <var>module-options</var> <code>:requires</code>,
@@ -84,10 +84,10 @@ but at most one of each is allowed.
 <p>If a <code>:directory</code> module option is not specified, an implicit root
 directory for the <a href="ref-glossary.html#gl:module">module</a> (at the <code>*load-truename*</code> of the file
 containing the <b>define-module</b> form) is used.  If the <code>:directory</code>
-module option specifies a keyword naming another <a href="ref-glossary.html#gl:module">module</a>, the directory
+module option specifies a <a href="ref-glossary.html#gl:keywords">keyword</a> naming another <a href="ref-glossary.html#gl:module">module</a>, the directory
 specification of the named module is used as the base (root or relative)
 directory for the module that is being defined.  If both a <a href="ref-glossary.html#gl:module">module</a> and
-a <a href="ref-glossary.html#gl:Root">root</a> or <a href="ref-glossary.html#id157">relative&nbsp;directory</a> definition have the same name,
+a <a href="ref-glossary.html#gl:Root">root</a> or <a href="ref-glossary.html#id165">relative&nbsp;directory</a> definition have the same name,
 the directory definition takes precedence over the module directory
 specification.
 </p>
@@ -130,8 +130,10 @@ reload all subsequent files and <a href="ref-glossary.html#gl:modules">modules</
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-compile-module.html"><b>compile-module</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-load-module.html"><b>load-module</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-load-module-file.html"><b>load-module-file</b></a>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-with-system-name.html"><b>with-system-name</b></a>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-with-module-redefinitions.html"><b>with-module-redefinitions</b></a>
 </p>
-<p><span class="fndoclabel">Examples</span> <br /><a name="id2">Define</a> a <a href="ref-glossary.html#id163">root&nbsp;directory</a> and <a href="ref-glossary.html#gl:module">module</a> for <code>:my-app</code>:
+<p><span class="fndoclabel">Examples</span> <br /><a name="id2">Define</a> a <a href="ref-glossary.html#id173">root&nbsp;directory</a> and <a href="ref-glossary.html#gl:module">module</a> for <code>:my-app</code>:
 <pre class="pretop">
   (<a href="ref-define-root-directory.html">define-root-directory</a> :my-app-root 
     (make-pathname :directory "~/my-app"))

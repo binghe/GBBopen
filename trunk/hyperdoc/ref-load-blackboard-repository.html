@@ -5,7 +5,7 @@
 <!-- XML file produced from file: reference.tex
      using Hyperlatex v 2.9-in-waiting-rk (c) Otfried Cheong -->
 <head>
-<title>GBBopen 0.9.9 Reference -- load-blackboard-repository</title>
+<title>GBBopen 1.0 Reference -- load-blackboard-repository</title>
 </p>
 <link rel="SHORTCUT ICON" href="favicon.ico"><link rel=stylesheet
         href="gbbopen.css" type="text/css" />
@@ -38,20 +38,20 @@ retain-event-printing</var>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-core</code>
 </p>
 <p><span class="fndoclabel">Arguments</span><table class="tighttop">
-<tr valign="top"><td valign="baseline"><i>pathname</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id133">pathname&nbsp;designator</a>
-</td></tr><tr valign="top"><td valign="baseline"><i>class-name-translations</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An <a href="ref-glossary.html#id2">association&nbsp;list</a> (default is <code>nil</code>)
-</td></tr><tr valign="top"><td valign="baseline"><i>confirm-if-not-empty</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id79">generalized&nbsp;boolean</a> (default is true)
-</td></tr><tr valign="top"><td valign="baseline"><i>disable-events</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id79">generalized&nbsp;boolean</a> (default is <code>t</code>)
+<tr valign="top"><td valign="baseline"><i>pathname</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id141">pathname&nbsp;designator</a>
+</td></tr><tr valign="top"><td valign="baseline"><i>class-name-translations</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An <a href="ref-glossary.html#id3">association&nbsp;list</a> (default is <code>nil</code>)
+</td></tr><tr valign="top"><td valign="baseline"><i>confirm-if-not-empty</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> (default is true)
+</td></tr><tr valign="top"><td valign="baseline"><i>disable-events</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> (default is <code>t</code>)
 </td></tr><tr valign="top"><td valign="baseline"><i>external-format</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An external-file-format designator (default is
 <code>:default</code>)
-</td></tr><tr valign="top"><td valign="baseline"><i>ignore-after-loading-function</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id79">generalized&nbsp;boolean</a> (default is <code>nil</code>)
+</td></tr><tr valign="top"><td valign="baseline"><i>ignore-after-loading-function</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> (default is <code>nil</code>)
 </td></tr><tr valign="top"><td valign="baseline"><i>readtable</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A readtable (default is 
 <code>*reading-saved/sent-objects-readtable*</code>)
-</td></tr><tr valign="top"><td valign="baseline"><i>read-eval</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id79">generalized&nbsp;boolean</a> (default is <code>nil</code>)
-</td></tr><tr valign="top"><td valign="baseline"><i>retain-classes</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An <a href="ref-glossary.html#id67">extended&nbsp;unit-classes&nbsp;specification</a>
+</td></tr><tr valign="top"><td valign="baseline"><i>read-eval</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> (default is <code>nil</code>)
+</td></tr><tr valign="top"><td valign="baseline"><i>retain-classes</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An <a href="ref-glossary.html#id68">extended&nbsp;unit-classes&nbsp;specification</a>
 (see below)
-</td></tr><tr valign="top"><td valign="baseline"><i>retain-event-functions</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id79">generalized&nbsp;boolean</a> (default is <code>nil</code>)
-</td></tr><tr valign="top"><td valign="baseline"><i>retain-event-printing</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id79">generalized&nbsp;boolean</a> (default is <code>nil</code>)
+</td></tr><tr valign="top"><td valign="baseline"><i>retain-event-functions</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> (default is <code>nil</code>)
+</td></tr><tr valign="top"><td valign="baseline"><i>retain-event-printing</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> (default is <code>nil</code>)
 </td></tr></table>
 </p>
 <p><span class="fndoclabel">Returns</span> <br />The pathname of the saved blackboard-repository data file
@@ -74,7 +74,7 @@ to loading:
 <code>bb</code> is added to it.  Then, <code>(user-homedir-pathname)</code> is used to
 supply any missing components to <var>pathname</var>.
 </p>
-<p>The <var>class-name-translations</var> <a href="ref-glossary.html#id2">association&nbsp;list</a>, if specified,
+<p>The <var>class-name-translations</var> <a href="ref-glossary.html#id3">association&nbsp;list</a>, if specified,
 should contain <a href="ref-glossary.html#gl:conses">conses</a> of the form:<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<tt>(<var>class-name</var> . <var>new-class-name</var>)</tt><br />for any <a href="ref-glossary.html#gl:class">class</a> translations that should occur during repository
 loading.
 </p>
@@ -113,7 +113,7 @@ Load the repository again, but without executing its
       :ignore-after-loading-function 't)
   #P"<var>&lt;homedir&gt;</var>/tutorial.bb"
 </pre>
-Define a new <a href="ref-glossary.html#id199">unit&nbsp;class</a>, <code>new-location</code>, and then load the
+Define a new <a href="ref-glossary.html#id213">unit&nbsp;class</a>, <code>new-location</code>, and then load the
 repository again, translating all <code>location</code> <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a> to
 <code>new-location</code> <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a>:
 <pre class="pretop">

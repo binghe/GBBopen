@@ -5,7 +5,7 @@
 <!-- XML file produced from file: reference.tex
      using Hyperlatex v 2.9-in-waiting-rk (c) Otfried Cheong -->
 <head>
-<title>GBBopen 0.9.9 Reference -- compile-module</title>
+<title>GBBopen 1.0 Reference -- compile-module</title>
 </p>
 <link rel="SHORTCUT ICON" href="favicon.ico"><link rel=stylesheet
         href="gbbopen.css" type="text/css" />
@@ -26,8 +26,8 @@
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:mini-module</code>
 </p>
 <p><span class="fndoclabel">Arguments</span><table class="tighttop">
-<tr valign="top"><td valign="baseline"><i>module-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A keyword symbol naming a <a href="ref-glossary.html#gl:module">module</a>
-</td></tr><tr valign="top"><td valign="baseline"><i>option</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> Any of the following keywords: 
+<tr valign="top"><td valign="baseline"><i>module-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id97">keyword&nbsp;symbol</a> naming a <a href="ref-glossary.html#gl:module">module</a>
+</td></tr><tr valign="top"><td valign="baseline"><i>option</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> Any of the following <a href="ref-glossary.html#gl:keywords">keywords</a>: 
 </p>
 <table class="tight"><table><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
@@ -102,6 +102,16 @@ exist already:
 <pre class="pretop">
   (compile-module :gbbopen-user :propagate :create-dirs)
 </pre>
+</p>
+<p><span class="fndoclabel">Note</span> <br /><b>Compile-module</b> can be invoked using the <a href="ref-glossary.html#id167">REPL&nbsp;command</a>:
+<pre class="pretop">
+  :cm <span 
+    style="font-family: serif; font-style: normal">[</span><var>module-name</var> <span 
+    style="font-family: serif; font-style: normal">[</span><var>option</var>*<span 
+    style="font-family: serif; font-style: normal">]]</span>
+</pre>
+which remembers the last specified <var>module-name</var> and <var>options</var> as
+default values for the command.
 </p>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />

@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:AGENDA-SHELL; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/current/source/gbbopen/control-shells/agenda-shell-metaclasses.lisp *-*
+;;;; *-* File: /usr/local/gbbopen/source/gbbopen/control-shells/agenda-shell-metaclasses.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Oct  5 03:00:40 2006 *-*
-;;;; *-* Machine: ruby.corkills.org *-*
+;;;; *-* Last-Edit: Sun Apr 27 14:00:31 2008 *-*
+;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -25,9 +25,10 @@
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (unless (find-package :agenda-shell)
-    (defpackage :agenda-shell 
-      (:use :common-lisp :gbbopen-tools :portable-threads :gbbopen))))
+  (unless (find-package ':agenda-shell)
+    (make-package ':agenda-shell 
+                  :use '(:common-lisp :gbbopen-tools :portable-threads 
+                         :gbbopen))))
 
 (in-package :agenda-shell)
 

@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-SOCKETS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/portable-sockets.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Apr 25 02:31:10 2008 *-*
+;;;; *-* Last-Edit: Sun Apr 27 14:05:10 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -41,9 +41,9 @@
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (unless (find-package :portable-sockets)
-    (defpackage :portable-sockets
-      (:use :common-lisp #-ecl :portable-threads))))
+  (unless (find-package ':portable-sockets)
+    (make-package ':portable-sockets
+                  :use '(:common-lisp #-ecl :portable-threads))))
 
 (in-package :portable-sockets)
 

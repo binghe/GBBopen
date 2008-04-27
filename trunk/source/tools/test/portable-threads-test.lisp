@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/test/portable-threads-test.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Apr 25 02:22:35 2008 *-*
+;;;; *-* Last-Edit: Sun Apr 27 14:03:07 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -24,9 +24,9 @@
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (unless (find-package :portable-threads-user) 
-    (defpackage :portable-threads-user
-      (:use :common-lisp :portable-threads))))
+  (unless (find-package ':portable-threads-user) 
+    (make-package ':portable-threads-user
+                  :use '(:common-lisp :portable-threads))))
 
 (in-package :portable-threads-user)
 

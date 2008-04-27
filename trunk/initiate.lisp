@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/initiate.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Apr 25 02:48:15 2008 *-*
+;;;; *-* Last-Edit: Sun Apr 27 12:43:29 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -51,6 +51,7 @@
 ;;;  04-07-06 Added gbbopen-modules directory support.  (Corkill)
 ;;;  03-25-08 Renamed to more intuitive initiate.lisp.  (Corkill)
 ;;;  03-29-08 Add process-gbbopen-modules-directory rescanning.  (Corkill)
+;;;  04-27-08 Added shared-gbbopen-modules directory support.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -102,7 +103,7 @@
 
 ;;; ---------------------------------------------------------------------------
 ;;;  GBBopen's startup.lisp loader
-;;;    :force t -> load startup.lisp even if it was loaded before
+;;;    :force t -> load startup.lisp even if it has been loaded
 ;;;    :skip-gbbopen-modules-directory-processing -> controls whether 
 ;;;                 <homedir>/gbbopen-modules/ processing is performed
 
@@ -116,7 +117,9 @@
      ;; Scan for changes if startup.lisp has been loaded:
      ((and (not force) *gbbopen-startup-loaded*)
       (unless *skip-gbbopen-modules-directory-processing*
+        (funcall 'process-shared-gbbopen-modules-directory "commands" 't)
         (funcall 'process-gbbopen-modules-directory "commands" 't)
+        (funcall 'process-shared-gbbopen-modules-directory "modules" 't)
         (funcall 'process-gbbopen-modules-directory "modules" 't)))
      ;; Load startup.lisp:
      (t (load (make-pathname 
@@ -124,40 +127,49 @@
                :type "lisp"
                :defaults truename))))))
   
-;; Lispworks can't compile the interpreted closure:
-#-lispworks
+;; CMUCL and Lispworks can't compile the interpreted closure:
+#-(or cmu lispworks)
 (compile-if-advantageous 'startup-gbbopen)
 
 ;;; ---------------------------------------------------------------------------
 
-(defun set-package (package-specifier)
-  (let ((swank-package (find-package ':swank)))
+(defun set-repl-package (package-specifier)
+  ;; Sets *package* as well as updating LEP and SLIME Emacs interfaces:
+  (let ((swank-package (find-package ':swank))
+        (requested-package (find-package package-specifier)))
     (cond
+     ;; No such package:
+     ((not requested-package)
+      (format t "~&;; The package ~s is not defined.~%" 
+              package-specifier))
      ;; If we are SLIME'ing:
      ((and swank-package 
            ;; Returns true if successful:
            (funcall (intern (symbol-name '#:set-slime-repl-package)
                             swank-package)
-                    package-specifier))
+                    (package-name requested-package)))
+      ;; in SLIME, we're done:
       't)
-     ;; Otherwise:
-     (t (setf *package* (find-package package-specifier))
+     ;; Not SLIME:
+     (t (setf *package* requested-package)
         ;; For LEP Emacs interface (Allegro & SCL):
         #+(or allegro scl)
         (when (lep:lep-is-running)
-          (lep::eval-in-emacs (format nil "(setq fi:package ~s)"
-                                      (package-name *package*))))))))
+          (lep::eval-in-emacs 
+           (format nil "(setq fi:package ~s)"
+                   (package-name requested-package))))))))
 
-(compile-if-advantageous 'set-package)
+(compile-if-advantageous 'set-repl-package)
 
 ;;; ---------------------------------------------------------------------------
 
 (defun startup-module (module-name options &optional package)
   (startup-gbbopen)
-  (funcall (intern (symbol-name '#:cm-tll-command) :mini-module)
+  (funcall (intern (symbol-name '#:do-mini-module-repl-command) :mini-module)
+           ':cm
            (list* module-name ':propagate options))
   (when package 
-    (set-package package)
+    (set-repl-package package)
     (import '(common-lisp-user::gbbopen-tools 
               common-lisp-user::gbbopen
               common-lisp-user::gbbopen-user 
@@ -168,55 +180,7 @@
 (compile-if-advantageous 'startup-module)
 
 ;;; ===========================================================================
-;;;   Define-TLL-command
-
-(defun redefining-cl-user-tll-command-warning (command fn)
-  ;; avoid SBCL optimization warning: 
-  (declare (optimize (speed 1)))
-  (let ((*package* (find-package ':common-lisp)))
-    (format t "~&;; Redefining ~s function for TLL command ~s~%"
-            fn command)))
-
-(compile-if-advantageous 'redefining-cl-user-tll-command-warning)
-
-;;; ---------------------------------------------------------------------------
-
-(defmacro define-tll-command (command lambda-list &rest body)
-  (let ((options nil))
-    ;; Handle (<command> <option>*) syntax:
-    (when (consp command)
-      (setf options (rest command))
-      (setf command (first command))
-      (let ((bad-options 
-             (set-difference options '(:add-to-native-help 
-                                       :no-cl-user-function
-                                       :no-help))))
-        (dolist (bad-option bad-options)
-          (warn "Illegal command option ~s specified for tll-command ~s"
-                bad-option command))))
-    `(progn
-       (define-extended-repl-command 
-           ,(cond
-             ((member ':no-help options)
-              `(,command :no-help))
-             ((member ':add-to-native-help options)
-              `(,command :add-to-native-help))
-             (t command))
-           ,lambda-list
-         ,@body)
-       ;; Define command functions in the :CL-USER package on all CL
-       ;; implementations:
-       ,@(unless (member ':no-cl-user-function options)
-           (let ((fn-name (intern (symbol-name command) ':common-lisp-user)))
-             `((when (fboundp ',fn-name)
-                 (redefining-cl-user-tll-command-warning ',command ',fn-name))
-               (defun ,fn-name ,lambda-list 
-                 ,@body)))))))
-
-(compile-if-advantageous 'define-tll-command)
-
-;;; ===========================================================================
-;;;  Load GBBopen's standard TLL commands
+;;;  Load GBBopen's standard REPL commands
 
 (let ((truename *load-truename*))
   (load (make-pathname 
@@ -244,6 +208,12 @@
          :name "gbbopen-modules-directory"
          :type "lisp"
          :defaults truename)))
+
+;;; ---------------------------------------------------------------------------
+;;;  Load the commands.lisp file (if present) from each module directory
+;;;  that is linked from GBBopen's shared-gbbopen-modules directory:
+
+(process-shared-gbbopen-modules-directory "commands")
 
 ;;; ---------------------------------------------------------------------------
 ;;;  If there is a gbbopen-modules directory in the users "home" directory,

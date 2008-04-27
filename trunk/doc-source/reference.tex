@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Fri Apr 25 01:43:05 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Sun Apr 27 15:17:40 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -1086,7 +1086,7 @@ A \var{dimension-value-place\/} with two
 \label{sec:startup}%
 
 GBBopen is packaged with its own \reflink{module system}{sec:mini-module} that
-supports compiling and loading GBBopen components.  This Mini Module facility
+supports compiling and loading GBBopen components.  The Mini Module system
 is designed for ease of use and for simplicity in porting to Common Lisp
 implementations.  For example, to compile all core GBBopen \glref{modules} and
 execute a basic trip-tests file, you only need to evaluate the following forms
@@ -1141,7 +1141,7 @@ does not exist or is not up to date.  The \code{:create-dirs} option
 automatically creates any directories that are missing in the compiled-file
 directory tree.
 
-\ppar{Personal gbbopen-init.lisp file}
+\ppar{Personal \texttt{gbbopen-init.lisp} file}
 
 \index{initialization, personal gbbopen-init.lisp@\code{gbbopen-init.lisp}
   file}%
@@ -1187,19 +1187,20 @@ packaging convention that mirrors that of GBBopen.  This will be discussed
 shortly in conjunction with using a \reflink{personal \code{gbbopen-modules}
   directory}{sec:personal-gbbopen-modules-directory}.
 
-Next, we show how to add convenient GBBopen keyword commands to the
-read-eval-print loop (REPL) in your Common Lisp environment and how to
-define a personal top-level command that makes it easy to compile and load
-the \code{:my-app} module---even if GBBopen has not yet been loaded into
+Next, we show how to add convenient GBBopen \glref{keyword~commands} to the
+top level read-eval-print loop (REPL) in your Common Lisp environment and how
+to define a personal REPL \glref{command} that makes it easy to compile and
+load the \code{:my-app} module---even if GBBopen has not yet been loaded into
 your Common Lisp image.
 
-\ppar{GBBopen top-level commands}
-\index{GBBopen!top-level (keyword) commands}%
-
-\index{SLIME!top-level keyword commands}%
-The file \code{\var{<install-directory>\/}/initiate.lisp} is an alternative
-for \code{\var{<install-directory>\/}/startup.lisp} that adds some handy
-GBBopen keyword commands to the top-level REPL listener for
+\ppar{Top-level REPL commands}
+\index{REPL, top-level (keyword) commands}%
+\index{SLIME!REPL keyword commands}%
+%
+The file \code{\var{<install-directory>\/}/initiate.lisp} is a highly
+recommended alternative for \code{\var{<install-directory>\/}/startup.lisp}
+that adds some handy \glref{keyword~commands} to the top-level REPL listener
+for
 %
 \xsitelink{Allegro CL}{http://www.franz.com},
 \xsitelink{CLISP}{http://clisp.cons.org/},
@@ -1213,12 +1214,12 @@ GBBopen keyword commands to the top-level REPL listener for
 users.  Some interaction interfaces, such as
 \xsitelink{SLIME}{http://common-lisp.net/project/slime/}, use their own REPL
 rather than the top-level listener provided by the Common Lisp implementation
-and, therefore, may not support keyword top-level command processing.  GBBopen
-does provide a swank extension in the
+and, therefore, may not support \glref{keyword} \glref{REPL~command}
+processing.  GBBopen does provide a Swank extension to the
 \xsitelink{SLIME}{http://common-lisp.net/project/slime/} REPL that supports
-GBBopen keyword commands.
+REPL \glref{keyword~commands}.
 
-To make GBBopen keyword commands available, simply load
+To make GBBopen's \glref{REPL~commands} available, simply load
 \code{\var{<install-directory>\/}/initiate.lisp} from your personal Common
 Lisp initialization file.  (You should not explicitly load the
 \code{\var{<install-directory>\/}/startup.lisp} file when using
@@ -1226,12 +1227,12 @@ Lisp initialization file.  (You should not explicitly load the
 \code{\var{<install-directory>\/}/startup.lisp} file loading for you at the
 appropriate time.)
 
-The standard GBBopen top-level commands are defined in the file
+Built-in and GBBopen \glref{REPL~commands} are defined in the file
 \code{\var{<install-directory>\/}/commands.lisp}.  In many Common Lisp
 implementations and in the
 \xsitelink{SLIME}{http://common-lisp.net/project/slime/} REPL interface,
-top-level keyword commands that have arguments can be specified using either a
-list or a spread representation.  For example:
+\glref{REPL~commands} that have arguments can be specified using either a list
+or a spread representation.  For example:
 %
 \W\supp
 \begin{example}
@@ -1252,24 +1253,24 @@ notation.  CLISP versions prior to 2.45 only support the spread notation---but
 without arguments.
 
 Equivalent functions in the \code{:common-lisp-user} package are always
-defined for each GBBopen top-level keyword command, and these functions can be
-used when top-level keyword processing is not fully supported.
+defined for each \glref{REPL~command}, and these functions can be used when
+REPL \glref{keyword-command} processing is not fully supported.
 
-\ppar{Personal gbbopen-commands.lisp file}
+\ppar{Personal \texttt{gbbopen-commands.lisp} file}
 \index{initialization, personal
   gbbopen-commands.lisp@\code{gbbopen-commands.lisp} file}%
 \index{gbbopen-commands.lisp@\code{gbbopen-commands.lisp}, personal
   initializations file}%
-\index{loading!user-specific, top-level command definitions}%
-\index{top-level command definitions, loading user-specific}%
+\index{loading!user-specific, REPL command definitions}%
+\index{REPL command definitions, loading user-specific}%
 \bfindexit{user-homedir-pathname}%
 %
-You can add your own top-level commands by defining them in a personal
+You can create your own \glref{REPL~commands} by defining them in a personal
 \code{gbbopen-commands.lisp} file.  If a \code{gbbopen-commands} file (source
 or compiled) is present in the user's ``homedir'' home directory (as defined
 by \textbf{user-homedir-pathname}), it is loaded automatically by GBBopen's
 \code{initiate.lisp} file.  For example, the following personal
-\code{gbbopen-commands.lisp} file defines a top-level keyword command (named
+\code{gbbopen-commands.lisp} file defines a \glref{REPL~command} (named
 \code{:my-app}) and an equivalent \glref{function} (\code{cl-user::my-app})
 for compiling and loading the \code{:my-app} \glref{module} that was defined
 above:
@@ -1280,7 +1281,7 @@ above:
 
   (in-package :cl-user)
 
-  (\entlink{define-tll-command} :my-app (&rest options)
+  (\entlink{define-repl-command} :my-app (&rest options)
     "Compile and load my GBBopen application module"
     (\entlink{startup-module} :my-app options :gbbopen-user))
 
@@ -1289,17 +1290,17 @@ above:
   ;;; ===============================================
 \end{example}
 %
-The macro \code{define-tll-command} and the \glref{function}
+The macro \code{define-repl-command} and the \glref{function}
 \code{startup-module} that are used in this example are both defined in the
 file \code{\var{<install-directory>\/}/initiate.lisp}.  Experienced GBBopen
 users prefer to have their Common Lisp initialization file load
 \code{\var{<install-directory>\/}/initiate.lisp} rather than
 \code{\var{<install-directory>\/}/startup.lisp} in order to use the standard
-keyword commands for GBBopen---and their own, personalized extensions---in the
-Lisp listener.  See the ``Enhancing Your Development Environment'' exercise in
-the GBBopen Tutorial for details.
+\glref{REPL~commands} for GBBopen---as well as their own, personalized
+extensions---in the Lisp listener.  See the ``Enhancing Your Development
+Environment'' exercise in the GBBopen Tutorial for details.
 
-\ppar{Personal gbbopen-modules directory}
+\ppar{Personal \texttt{gbbopen-modules} directory}
 \label{sec:personal-gbbopen-modules-directory}
 
 \index{initialization, personal gbbopen-modules@\code{gbbopen-modules}
@@ -1332,8 +1333,8 @@ Each application directory can contain:
   the user's ``homedir'')
 \item a directory named \code{source} containing all the source files for the
   \glref{module} or application
-\item an optional \code{commands.lisp} file that specifies top-level commands
-  for the \glref{module} (loaded after the personal
+\item an optional \code{commands.lisp} file that specifies
+  \glref{REPL~commands} for the \glref{module} (loaded after the personal
   \code{gbbopen-commands.lisp} file if there is one in the user's ``homedir'')
 \end{tightitemize}
 
@@ -1345,6 +1346,24 @@ the exception to this as Windows does not provide symbolic links.  GBBopen
 users running on Windows must create a text file of type \code{.sym} (that
 contains the target directory path as its sole line) as a stand-in for the
 symbolic link.
+
+\ppar{Installation-wide \texttt{shared-gbbopen-modules} directory}
+\label{sec:shared-gbbopen-modules-directory}
+
+\index{initialization, shared-gbbopen-modules@\code{shared-gbbopen-modules}
+  directory files}%
+\index{shared-gbbopen-modules@\code{shared-gbbopen-modules}, shared module definitions}%
+\index{loading!installation-wide, shared module definitions}%
+\index{module definitions, loading installation-wide, shared}%
+%
+There is also an \code{\var{<install-directory>\/}/shared-gbbopen-modules}
+directory.  As with a user's \code{gbbopen-modules} directory (discussed
+above), the \code{shared-gbbopen-modules} directory is assumed to contain
+symbolic links (or ``pseudo-symbolic-link'' files on Windows) to individual
+GBBopen module directory trees.
+
+This is the recommended mechanism for installation-wide managing and sharing
+of modules and applications.
 
 \ppar{GBBopen Hyperdoc}
 \label{sec:hyperdoc}
@@ -1369,7 +1388,6 @@ value can be specified in either your Common Lisp initialization file or,
 preferably, in your personal \code{gbbopen-init.lisp} file.  Changing the
 default setting in \code{startup.lisp} is not recommended.
 
-\index{SLIME, and top-level keyword commands}%
 \xsitelink{Emacs}{http://www.gnu.org/software/emacs/emacs.html} access to the
 GBBopen Hyperdoc is provided by
 \code{\var{<install-directory>\/}/browse-hyperdoc.el}.  This file defines the
@@ -1469,20 +1487,21 @@ included in the preferred browser setting.
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Macro}{define-tll-command}{\var{command-name-spec 
+\begin{functiondoc}{Macro}{define-repl-command}{\var{command-name-spec 
      lambda-list\/} [\var{declaration\/}\superstar{} \vbar{}
      \var{documentation\/}] \var{form\/}\superstar}
-\index{startup!defining top-level-loop commands}%
+\index{startup!defining REPL commands}%
 \index{command, top-level loop, defining}%
-\index{defining!a top-level-loop command}%
+\index{defining!a REPL command}%
   
 \fnsyntax
 
-\fnpurpose Define a top-level-loop command.
+\fnpurpose Define a top-level REPL (read-eval-print loop) \glref{command}.
 
-\fnpackage \code{:common-lisp-user} (not exported)
+\fnpackage \code{:common-lisp-user}
+(also imported into and exported from \code{:mini-module})
 
-\fnmodule Defined in \code{initiate.lisp}
+\fnmodule Defined in \code{extended-repl.lisp}
 
 \fnargs
 \begin{args}{command-name-spec}
@@ -1503,55 +1522,55 @@ included in the preferred browser setting.
 
 \fnterms
 \begin{args}{command-name}
-\arg[command-name] A keyword symbol naming the command
+\arg[command-name] A \glref{keyword~symbol} naming the \glref{command}
 \end{args}
 
-\fndescription 
-The arguments to the command are not evaluated before the command is
-invoked; it is up to the command to perform argument evaluation if
-needed (see the example, below).
+\fndescription The arguments to the \glref{command} are not evaluated before
+the command is invoked; it is up to the command to perform argument evaluation
+if needed (see the example, below).
 
-If the \code{:add-to-native-help} option is specified, then the command and
-its \var{documentation\/} string are added to the Common Lisp implementation's
-primary REPL help; otherwise the command is only added to the extended-REPL
-commands help that is displayed by the \code{:commands} top-level command.
-(Not all Common Lisp implementations distinguish primary and secondary
-command-help levels.)
+If the \code{:add-to-native-help} option is specified, then the
+\glref{command} and its \var{documentation\/} string are added to the Common
+Lisp implementation's primary REPL help; otherwise the command is only added
+to the extended-REPL commands help that is displayed by the \code{:commands}
+REPL command.  (Not all Common Lisp implementations distinguish primary and
+secondary command-help levels.)
 
-If the \code{:no-help} option is specified, then the command is not added to
-either the primary or secondary help displays.
+If the \code{:no-help} option is specified, then the \glref{command} is not
+added to either the primary or secondary help displays.
 
 An equivalent function in the \code{:common-lisp-user} package is normally
-defined for the \var{command-name\/} keyword command, and this function can be
-used when top-level keyword command processing is not fully supported.
-However, a \code{:common-lisp-user} functional version of the command is not
-defined if the \code{:no-cl-user-function} option is specified.
+defined for the \var{command-name\/} \glref{keyword~command}, and this
+function can be used when REPL keyword-command processing is not fully
+supported.  However, a \code{:common-lisp-user} functional version of the
+\glref{command} is not defined if the \code{:no-cl-user-function} option is
+specified.
 
 \var{Documentation\/} is a documentation string to be associated
-with the top-level-loop command \var{command-name}.
+with the \glref{REPL~command} \var{command-name}.
 
 \begin{alsos}{startup-module}
 \also[startup-module]
 \end{alsos}
 
 \fnexamples
-Define a top-level-loop command named \code{:ds} to be a handy
+Define a \glref{REPL~command} named \code{:ds} to be a handy
 shortcut to the Common Lisp \code{describe} function:
 %
 \W\supp
 \begin{example}
-  (define-tll-command (:ds :add-to-native-help) (obj)
+  (define-repl-command (:ds :add-to-native-help) (obj)
     "Describe object"
     (describe (eval obj)))
 \end{example}
 
-Define a top-level command named \code{:my-app} that compiles and loads the
+Define a \glref{REPL~command} named \code{:my-app} that compiles and loads the
 \glref{module} \code{:my-app} and sets the current package to the
 \code{:gbbopen-user} package:
 %
 \W\supp
 \begin{example}
-  (define-tll-command :my-app (&rest options)
+  (define-repl-command :my-app (&rest options)
     "Compile and load my GBBopen application module"
     (\entlink{startup-module} :my-app options :gbbopen-user))
 \end{example} 
@@ -1582,8 +1601,8 @@ set the current package.
 
 \fnargs
 \begin{args}{package-name}
-\arg[module-name] A keyword symbol naming a \glref{module}
-\arg[option] Any of the following keywords: 
+\arg[module-name] A \glref{keyword~symbol} naming a \glref{module}
+\arg[option] Any of the following \glref{keywords}: 
 \compilemoduleoptions
 \arg[package-name] A package name (default is \nil)
 \end{args}
@@ -1602,24 +1621,105 @@ defined at the conclusion of \glref{module} compilation and loading.
 \var{options}.  If this propagation behavior is not desired, the
 \code{:nopropagate} option can be specified to override (cancel) propagation.
 
-\begin{alsos}{define-tll-command}
+\begin{alsos}{define-repl-command}
 \also[compile-module]
 \also[define-module]
-\also[define-tll-command]
+\also[define-repl-command]
 \end{alsos}
 
 \fnexample
 %
-Define a top-level command named \code{:my-app} that compiles and loads the
+Define a \glref{REPL~command} named \code{:my-app} that compiles and loads the
 \glref{module} \code{:my-app} and sets the current package to the
 \code{:gbbopen-user} package:
 %
 \W\supp
 \begin{example}
-  (\entlink{define-tll-command} :my-app (&rest options)
+  (\entlink{define-repl-command} :my-app (&rest options)
     "Compile and load my GBBopen application module"
     (startup-module :my-app options :gbbopen-user))
 \end{example} 
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Macro}{with-system-name}%
+  {\code{(}\var{system-name\/}\code{)} \var{form\/}\superstar}
+\index{compiling, a module, and also loading module}%
+\index{loading!a module}% 
+\index{module!compiling, recompiling, and loading}%
+\index{module!directory}%
+\index{recompiling, a module, and also loading module}%
+\index{startup!compiling a module and also loading}%
+\index{startup!setting current package}%
+
+\fnsyntax 
+
+\fnpurpose Associate \var{system-name} with \glref{REPL~commands}, directory
+definitions, and module definitions defined in \var{forms}.
+
+\fnpackage \code{:common-lisp-user}
+(also imported into and exported from \code{:mini-module})
+
+\fnmodule Defined in \code{extended-repl.lisp}
+
+\fnargs
+\begin{args}{system-name}
+\arg[system-name] A \glref{keyword~symbol} identifying a \glref{system}
+\arg[form] A \glref{form}
+\end{args}
+
+\begin{alsos}{define-relative-directory}
+\also[define-relative-directory]
+\also[define-root-directory]
+\also[define-module]
+\also[define-repl-command]
+\end{alsos}
+
+\fnexamples
+%
+Define a \glref{REPL~command} named \code{:my-app} associated with system
+\code{:my-app} that compiles and loads the \glref{module} \code{:my-app} and
+sets the current package to the \code{:gbbopen-user} package:
+%
+\W\supp
+\begin{example}
+  (with-system-name (:my-app)
+    (\entlink{define-repl-command} :my-app (&rest options)
+      "Compile and load my GBBopen application module"
+      (\entlink{startup-module} :my-app options :gbbopen-user)))
+\end{example} 
+
+Now, show the \glref{commands} associated with \glref{system} \code{:my-app}:
+%
+\W\supp
+\begin{example}
+  > :commands :my-app
+  Command           Description
+  -------           -----------
+  :my-app           Compile and load my GBBopen application module
+  >
+\end{example}
+
+Now, undefine all the \glref{commands}, directories, and module definitions
+associated with \glref{system} \code{:my-app}: 
+%
+\W\supp
+\begin{example}
+  > :undefine-system :my-app
+  Really undefine commands, directories, & modules of :my-app?  y
+  ;; System :my-app undefined.
+  > :commands :my-app
+  ;; System :my-app was not found.
+  >
+\end{example}
+
+\fnnotes A developer will typically wrap the
+\textbf{\entlink{define-repl-command}} forms in an application's
+\code{commands.lisp} file with a single \textbf{with-system-name} macro and
+the definitions in the application's \code{modules.lisp} file with a second
+\textbf{with-system-name} macro.
 
 \end{functiondoc}
 
@@ -1823,8 +1923,8 @@ Conditionally evaluate the \code{http-test} function when the file
 
 \fnargs
 \begin{args}{module-name}
-\arg[module-name] A keyword symbol naming a \glref{module}
-\arg[option] Any of the following keywords: 
+\arg[module-name] A \glref{keyword~symbol} naming a \glref{module}
+\arg[option] Any of the following \glref{keywords}: 
 \compilemoduleoptions
 \end{args}
 
@@ -1853,6 +1953,16 @@ exist already:
   (compile-module :gbbopen-user :propagate :create-dirs)
 \end{example}
 
+\fnnote \textbf{Compile-module} can be invoked using the \glref{REPL~command}:
+%
+\W\supp
+\begin{example}
+  :cm \textrm{[}\var{module-name\/} \textrm{[}\var{option\/}\superstar\textrm{]]}
+\end{example}
+%
+which remembers the last specified \var{module-name\/} and \var{options} as
+default values for the command.
+
 \end{functiondoc}
 
 %% ------------------------------------------------------------------------
@@ -1873,11 +1983,11 @@ exist already:
 
 \fnargs
 \begin{args}{module-options}
-\arg[module-name] A keyword symbol naming a \glref{module}
+\arg[module-name] A \glref{keyword~symbol} naming a \glref{module}
 \arg[module-options] See below
 \end{args}
 
-\fnerrors The value \code{:requires} module option specifies a fully expanded
+\fnerrors The \code{:requires} module option specifies a fully expanded
 \glref{required-module} order that conflicts with the fully expanded
 \glref{required-module} order in a previously defined \glref{module}.
 
@@ -1908,13 +2018,13 @@ exist already:
 
 \fnterms
 \begin{args}{root-or-relative-directory}
-\arg[root-or-relative-directory] A keyword naming a \glref{root} or
-  \glref{relative~directory}, a keyword naming another \glref{module}, or
+\arg[root-or-relative-directory] A \glref{keyword} naming a \glref{root} or
+  \glref{relative~directory}, a \glref{keyword} naming another \glref{module}, or
   \nil{}, indicating that the module is rooted at the \code{*load-truename*}
   value in effect when the module definition is loaded
 \arg[subdirectory] A string naming a subdirectory
 \arg[file-name] A string naming a file
-\arg[module-name] A keyword symbol naming a \glref{module}
+\arg[module-name] A \glref{keyword~symbol} naming a \glref{module}
 \end{args}
 
 \fndescription The \var{module-options} \code{:requires},
@@ -1924,7 +2034,7 @@ but at most one of each is allowed.
 If a \code{:directory} module option is not specified, an implicit root
 directory for the \glref{module} (at the \code{*load-truename*} of the file
 containing the \textbf{define-module} form) is used.  If the \code{:directory}
-module option specifies a keyword naming another \glref{module}, the directory
+module option specifies a \glref{keyword} naming another \glref{module}, the directory
 specification of the named module is used as the base (root or relative)
 directory for the module that is being defined.  If both a \glref{module} and
 a \glref{root} or \glref{relative~directory} definition have the same name,
@@ -1952,6 +2062,8 @@ the files specified for this \glref{module}).
 \also[compile-module]
 \also[load-module]
 \also[load-module-file]
+\also[with-system-name]
+\also[with-module-redefinitions]
 \end{alsos}
 
 \fnexamples
@@ -2011,12 +2123,12 @@ containing the \textbf{define-module} form:
 
 \fnargs
 \begin{args}{subdirectories}
-\arg[name] A keyword symbol naming the \glref{relative~directory}
-\arg[directory] The keyword symbol name of a \glref{root} or 
+\arg[name] A \glref{keyword~symbol} naming the \glref{relative~directory}
+\arg[directory] The \glref{keyword~symbol} name of a \glref{root} or 
   \glref{relative~directory} or the name of a \glref{module}
 \arg[subdirectories] One or more strings specifying, in order,
   subdirectories from \var{directory\/} to the relative directory. (The
-  keyword \code{:up} or \code{:back} can also be supplied in addition to any
+  \glref{keyword} \code{:up} or \code{:back} can also be supplied in addition to any
   of these strings, indicating to go upward one semantic or syntactic level of
   directory structure, respectively.)
 \end{args}
@@ -2032,6 +2144,7 @@ every \glref{relative~directory} associated with it is adjusted automatically.
 \begin{alsos}{show-defined-directories}
 \also[define-root-directory]
 \also[show-defined-directories]
+\also[with-system-name]
 \end{alsos}
 
 \fnexamples Define a relative directory below \code{:my-app-root} named
@@ -2080,19 +2193,19 @@ Define a data directory sibling to the \code{source} directory of
 
 \fnargs
 \begin{args}{directory-specification}
-\arg[name] A keyword symbol naming the \glref{root~directory} or a list
+\arg[name] A \glref{keyword~symbol} naming the \glref{root~directory} or a list
   containing the keyword-symbol name and, optionally, an
   application-version-identifier string
 \arg[directory-specification] One of the following:
 \begin{tightitemize}
 \item A string specifying the \glref{root~directory}
 \item A pathname specifying the \glref{root~directory}
-\item A keyword naming a previously defined \glref{root~directory}
+\item A \glref{keyword} naming a previously defined \glref{root~directory}
 \item A symbol whose value is one of the above
 \end{tightitemize}
 \arg[subdirectories] One or more strings specifying, in order, subdirectories
 from \var{directory-specification\/} to the \glref{root~directory}. (The
-keyword \code{:up} or \code{:back} can also be supplied in addition to any of
+\glref{keyword} \code{:up} or \code{:back} can also be supplied in addition to any of
 these strings, indicating to go upward one semantic or syntactic level of
 directory structure, respectively.)
 \end{args}
@@ -2119,6 +2232,7 @@ for all compiled module files that are defined relative to this
 \also[get-directory]
 \also[get-root-directory]
 \also[show-defined-directories]
+\also[with-system-name]
 \end{alsos}
 
 \fnexamples Define a \glref{root~directory} named \code{:my-app-root}:
@@ -2167,7 +2281,7 @@ a separate ``beta'' compile tree:
 
 \fnargs
 \begin{args}{module-name}
-\arg[module-name] A keyword symbol naming a \glref{module}
+\arg[module-name] A \glref{keyword~symbol} naming a \glref{module}
 \end{args}
 
 \fnerrors
@@ -2221,7 +2335,7 @@ Module :gbbopen-tools (loaded)
 
 \fnargs
 \begin{args}{directory-specification}
-\arg[name] A keyword symbol naming a \glref{root~directory}, a
+\arg[name] A \glref{keyword~symbol} naming a \glref{root~directory}, a
 \glref{relative~directory}, or a \glref{module}.
 \end{args}
 
@@ -2285,7 +2399,7 @@ Return the pathname of the \code{:gbbopen-user} \glref{module}:
 
 \fnargs
 \begin{args}{directory-specification}
-\arg[name] A keyword symbol naming a \glref{root~directory}, a
+\arg[name] A \glref{keyword~symbol} naming a \glref{root~directory}, a
 \glref{relative~directory}, or a \glref{module}.
 \end{args}
 
@@ -2351,8 +2465,8 @@ Return the \glref{root-directory} pathname of the \code{:gbbopen-user}
 
 \fnargs
 \begin{args}{module-name}
-\arg[module-name] A keyword symbol naming a \glref{module}
-\arg[option] Any of the following keywords: 
+\arg[module-name] A \glref{keyword~symbol} naming a \glref{module}
+\arg[option] Any of the following \glref{keywords}: 
 \loadmoduleoptions
 \end{args}
 
@@ -2380,6 +2494,16 @@ Load the GBBopen User \glref{module} and all its \glref{required~modules}:
   (load-module :gbbopen-user)
 \end{example}
 
+\fnnote \textbf{Load-module} can be invoked using the \glref{REPL~command}:
+%
+\W\supp
+\begin{example}
+  :lm \textrm{[}\var{module-name\/} \textrm{[}\var{option\/}\superstar\textrm{]]}
+\end{example}
+%
+which remembers the last specified \var{module-name\/} and \var{options} as
+default values for the command.
+
 \end{functiondoc}
 
 %% ------------------------------------------------------------------------
@@ -2401,9 +2525,9 @@ Load the GBBopen User \glref{module} and all its \glref{required~modules}:
 
 \fnargs
 \begin{args}{module-name}
-\arg[module-name] A keyword symbol naming a \glref{module}
+\arg[module-name] A \glref{keyword~symbol} naming a \glref{module}
 \arg[file-name] A string naming a file in the \glref{module}
-\arg[option] Any of the following keywords: 
+\arg[option] Any of the following \glref{keywords}: 
 \loadonefilemoduleoptions
 \end{args}
 
@@ -2451,7 +2575,7 @@ Tools \glref{module}:
 
 \fnargs
 \begin{args}{module-name}
-\arg[module-name] A keyword symbol naming a \glref{module}
+\arg[module-name] A \glref{keyword~symbol} naming a \glref{module}
 \end{args}
 
 \fnreturns Two values: the source directory and the compiled directory.
@@ -2495,7 +2619,7 @@ loaded into Common Lisp.
 
 \fnargs
 \begin{args}{module-name}
-\arg[module-name] A keyword symbol naming a \glref{module}
+\arg[module-name] A \glref{keyword~symbol} naming a \glref{module}
 \end{args}
 
 \fnreturns True if the \glref{module} has been fully loaded; \nil{} otherwise.
@@ -2559,6 +2683,58 @@ List the currently defined \glref{root} and \glref{relative~directories}:
     Subdirectories: ("tools")
 :mini-module-root
     Root: \var{<install-dir>\/}
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Macro}{with-module-redefinitions}%
+  {\var{form\/}\superstar} 
+\index{module!defining or redefining}%
+\index{defining!a module}%
+\index{redefining!a module}%
+
+\fnsyntax 
+
+\fnpurpose Defer \glref{required-module} order checking of \glref{module}
+definitions in \var{forms} until all \var{forms} have been processed.
+
+\fnpackage \code{:mini-module}
+
+\fnmodule \code{:mini-module}
+
+\fnargs
+\begin{args}{form}
+\arg[form] A \glref{form}
+\end{args}
+
+\fnerrors The fully expanded \glref{required-module} order of a module
+redefined in \var{forms} conflicts with the fully expanded
+\glref{required-module} order of another \glref{module}.
+
+\fndescription Normally, the fully expanded \glref{required-module} order
+specified by the \code{:requires} option is checked immediately for conflicts
+with previously defined \glref{modules} by \textbf{\entlink{define-module}}.
+Wrapping several \textbf{\entlink{define-module}} forms with
+\textbf{with-module-redefinitions} allows the definitions to be conflicting
+temporarily, until all the \var{forms} have been processed.
+
+\begin{alsos}{define-module}
+\also[define-module]
+\end{alsos}
+
+\fnexample
+\bfindexit{define-module}%
+Redefine several modules with deferred conflict checking:
+%
+\W\supp
+\begin{example}
+  (with-module-redefinitions
+    (\entlink{define-module} :alpha \textrm{...})
+    (\entlink{define-module} :beta \textrm{...}))
+            \textbf{...}
+    (\entlink{define-module} :omega \textrm{...})))
 \end{example}
 
 \end{functiondoc}
@@ -2958,9 +3134,9 @@ structure of \var{list\/} in constructing the \var{result-list}.
 
 \fnargs
 \begin{args}{superclass-name}
-\arg[class-name] A non-\nil, non-keyword symbol that names the
+\arg[class-name] A non-\nil, \glref{non-keyword~symbol} that names the
 \glref{class} 
-\arg[superclass-name] A non-\nil, non-keyword symbol that specifies a
+\arg[superclass-name] A non-\nil, \glref{non-keyword~symbol} that specifies a
 direct superclass of the \glref{class} \var{class-name\/}  
 \arg[documentation] A documentation string
 \arg[slot-specifiers] See below
@@ -3013,10 +3189,10 @@ direct superclass of the \glref{class} \var{class-name\/}
 
 \fnterms
 \begin{args}{initarg-list}
-\arg[class-name] A non-\nil, non-keyword symbol that names a
+\arg[class-name] A non-\nil, \glref{non-keyword~symbol} that names a
 \glref{class} 
 \arg[initarg-list] An \glref{initialization~argument~list}
-\arg[slot-name] A non-\nil, non-keyword symbol
+\arg[slot-name] A non-\nil, \glref{non-keyword~symbol}
 \end{args}
 
 \fndescription 
@@ -3472,7 +3648,7 @@ t
 \arg[x] A string, symbol, or character
 \end{args}
 
-\fnreturns The keyword symbol.
+\fnreturns The \glref{keyword~symbol}.
 
 \fnexamples
 %
@@ -4726,7 +4902,7 @@ invocation and argument-checking optimizations:
 
 \fnargs
 \begin{args}{error-forms}
-\arg[format] Either the keyword \code{:prefix} or \code{:suffix}
+\arg[format] Either the \glref{keyword} \code{:prefix} or \code{:suffix}
 \arg[prefix/suffix-name] One of the following (evaluated):
 \begin{tightitemize}
 \item A string 
@@ -6316,7 +6492,7 @@ connection, but without hostname resolution:
 \fnargs
 \begin{args}{socket-stream}
 \arg[socket-stream] A socket stream
-\arg[direction] The keyword symbol \code{:input} or \code{:output} 
+\arg[direction] The \glref{keyword~symbol} \code{:input} or \code{:output} 
 specifying the direction to be closed
 \end{args}
 
@@ -6988,9 +7164,9 @@ Return the count of all \glref{space~instance}:
 
 \fnargs
 \begin{args}{superclass-name}
-\arg[unit-class-name] A non-\nil, non-keyword symbol that names the
+\arg[unit-class-name] A non-\nil, \glref{non-keyword~symbol} that names the
 \glref{unit~class} 
-\arg[superclass-name] A non-\nil, non-keyword symbol that specifies a
+\arg[superclass-name] A non-\nil, \glref{non-keyword~symbol} that specifies a
 direct superclass of the \glref{unit~class} \var{unit-class-name\/}  
 \arg[documentation] A documentation string
 \arg[slot-specifiers] See below
@@ -7095,10 +7271,10 @@ one \glref{unit~class} name.  This error is signaled on class finalization.
 
 \fnterms
 \begin{args}{instance-name-comparison-test}
-\arg[class-name] A non-\nil, non-keyword symbol that names a
+\arg[class-name] A non-\nil, \glref{non-keyword~symbol} that names a
 \glref{class} 
 \arg[initarg-list] An \glref{initialization~argument~list}
-\arg[slot-name] A non-\nil, non-keyword symbol
+\arg[slot-name] A non-\nil, \glref{non-keyword~symbol}
 \arg[instance-name-comparison-test] One of the four standardized hash
 table test function names: \code{eq}, \code{eql}, \code{equal}, or
 \code{equalp} (default for classes of
@@ -9010,9 +9186,9 @@ to be invoked when \code{create-instance-event} is signaled on a
 
 \fnargs
 \begin{args}{event-class-name}
-\arg[event-class-name] A non-\nil, non-keyword symbol that names the
+\arg[event-class-name] A non-\nil, \glref{non-keyword~symbol} that names the
 \glref{event~class} 
-\arg[superclass-name] A non-\nil, non-keyword symbol that specifies a
+\arg[superclass-name] A non-\nil, \glref{non-keyword~symbol} that specifies a
 direct superclass of the \glref{event~class} \var{event-class-name\/}  
 \arg[documentation] A documentation string
 \arg[slot-specifiers] See below
@@ -9075,10 +9251,10 @@ direct superclass of the \glref{event~class} \var{event-class-name\/}
 
 \fnterms
 \begin{args}{class-name}
-\arg[class-name] A non-\nil, non-keyword symbol that names a
+\arg[class-name] A non-\nil, \glref{non-keyword~symbol} that names a
 \glref{class} 
 \arg[initarg-list] An \glref{initialization~argument~list}
-\arg[slot-name] A non-\nil, non-keyword symbol
+\arg[slot-name] A non-\nil, \glref{non-keyword~symbol}
 \end{args}
 
 \fndescription 
@@ -9629,7 +9805,7 @@ Resuming event printing does not enable event printing that is disabled.
 
 \fnargs
 \begin{args}{initargs}
-\arg[event-class] An \glref{event~class} or a non-\nil, non-keyword symbol that 
+\arg[event-class] An \glref{event~class} or a non-\nil, \glref{non-keyword~symbol} that 
 names an \glref{event~class} 
 \arg[initargs] An \glref{initialization~argument~list}
 \end{args}
@@ -10183,9 +10359,9 @@ or
 
 \fnargs
 \begin{args}{space-class-name}
-\arg[space-class-name] A non-\nil, non-keyword symbol that names the
+\arg[space-class-name] A non-\nil, \glref{non-keyword~symbol} that names the
 \glref{space~class} 
-\arg[superclass-name] A non-\nil, non-keyword symbol that specifies a
+\arg[superclass-name] A non-\nil, \glref{non-keyword~symbol} that specifies a
 direct superclass of the \glref{space~class} \var{space-class-name\/}  
 \arg[documentation] A documentation string
 \arg[slot-specifiers] See below
@@ -10290,10 +10466,10 @@ one \glref{space~class} name.  This error is signaled on class finalization.
 
 \fnterms
 \begin{args}{instance-name-comparison-test}
-\arg[class-name] A non-\nil, non-keyword symbol that names a
+\arg[class-name] A non-\nil, \glref{non-keyword~symbol} that names a
 \glref{class} 
 \arg[initarg-list] An \glref{initialization~argument~list}
-\arg[slot-name] A non-\nil, non-keyword symbol
+\arg[slot-name] A non-\nil, \glref{non-keyword~symbol}
 \arg[instance-name-comparison-test] One of the four standardized hash table
 test function names: \code{eq}, \code{eql}, \code{equal}, or \code{equalp}
 (default for classes of metaclass \textbf{\entlinknoex{standard-unit-class}}
@@ -10647,6 +10823,9 @@ standard-space-instance               3
                               ---------
                                   16350 instances
 \end{example}
+
+\fnnote \textbf{Describe-blackboard-repository} can be invoked using the
+\glref{REPL~command} \code{:dsbb}.
 
 \end{functiondoc}
 
@@ -11865,6 +12044,16 @@ Find the \code{hyp} \glref{unit~instance} 419:
 > (find-instance-by-name 419 'hyp)
 #<hyp 419 (1835 4791) 0.85 [5..35]>
 \end{example}
+
+\fnnote \textbf{Find-instance-by-name} can be invoked using the
+\glref{REPL~command}:
+%
+\W\supp
+\begin{example}
+  :fi \textrm{[}\var{instance-name\/} \textrm{[}\var{class-name\/}\textrm{]]}
+\end{example}
+%
+which sets \code{*} to be the found \glref{unit~instance}.
 
 \end{functiondoc}
 
@@ -13144,7 +13333,7 @@ many situations.
 \fnargs
 \begin{args}{stream}
 \arg[instance] A \glref{unit~instance} (or \glref{space~instance})
-\arg[slot-name] A non-\nil, non-keyword symbol
+\arg[slot-name] A non-\nil, \glref{non-keyword~symbol}
 \arg[stream] A stream
 \end{args}
 
@@ -14541,9 +14730,9 @@ Define a \glref{KS} named \code{aggregate-hyps} that is triggered whenever a
 
 \fnargs
 \begin{args}{ks-class-name}
-\arg[ks-class-name] A non-\nil, non-keyword symbol that names the
+\arg[ks-class-name] A non-\nil, \glref{non-keyword~symbol} that names the
 \glref{ks~class} 
-\arg[superclass-name] A non-\nil, non-keyword symbol that specifies a
+\arg[superclass-name] A non-\nil, \glref{non-keyword~symbol} that specifies a
 direct superclass of the \glref{ks~class} \var{ks-class-name\/}  
 \arg[documentation] A documentation string
 \arg[slot-specifiers] See below
@@ -14648,10 +14837,10 @@ one \glref{ks~class} name.  This error is signaled on class finalization.
 
 \fnterms
 \begin{args}{instance-name-comparison-test}
-\arg[class-name] A non-\nil, non-keyword symbol that names a
+\arg[class-name] A non-\nil, \glref{non-keyword~symbol} that names a
 \glref{class} 
 \arg[initarg-list] An \glref{initialization~argument~list}
-\arg[slot-name] A non-\nil, non-keyword symbol
+\arg[slot-name] A non-\nil, \glref{non-keyword~symbol}
 \arg[instance-name-comparison-test] One of the four standardized hash table
 test function names: \code{eq}, \code{eql}, \code{equal}, or \code{equalp}
 (default for classes of metaclass \textbf{\entlinknoex{standard-unit-class}}
@@ -14732,9 +14921,9 @@ Do the same, but with a mixin class:
 
 \fnargs
 \begin{args}{ksa-class-name}
-\arg[ksa-class-name] A non-\nil, non-keyword symbol that names the
+\arg[ksa-class-name] A non-\nil, \glref{non-keyword~symbol} that names the
 \glref{ksa~class} 
-\arg[superclass-name] A non-\nil, non-keyword symbol that specifies a
+\arg[superclass-name] A non-\nil, \glref{non-keyword~symbol} that specifies a
 direct superclass of the \glref{ksa~class} \var{ksa-class-name\/}  
 \arg[documentation] A documentation string
 \arg[slot-specifiers] See below
@@ -14839,10 +15028,10 @@ one \glref{ksa~class} name.  This error is signaled on class finalization.
 
 \fnterms
 \begin{args}{instance-name-comparison-test}
-\arg[class-name] A non-\nil, non-keyword symbol that names a
+\arg[class-name] A non-\nil, \glref{non-keyword~symbol} that names a
 \glref{class} 
 \arg[initarg-list] An \glref{initialization~argument~list}
-\arg[slot-name] A non-\nil, non-keyword symbol
+\arg[slot-name] A non-\nil, \glref{non-keyword~symbol}
 \arg[instance-name-comparison-test] One of the four standardized hash table
 test function names: \code{eq}, \code{eql}, \code{equal}, or \code{equalp}
 (default for classes of metaclass \textbf{\entlinknoex{standard-unit-class}}

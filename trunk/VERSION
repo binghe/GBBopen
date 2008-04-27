@@ -1,6 +1,6 @@
 ;;; ---------------------------------------------------------------------------
 ;;;   The GBBopen version string is specified here 
-;;;   (and read by gbbopan.asd and by source/gbbopen/preamble.lisp)
+;;;   (and read by gbbopen.asd and by source/gbbopen/preamble.lisp)
 ;;; ---------------------------------------------------------------------------
-"0.9.9"
+"1.0"
 

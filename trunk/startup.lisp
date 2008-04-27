@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/startup.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Apr 23 19:13:17 2008 *-*
+;;;; *-* Last-Edit: Sun Apr 27 10:58:39 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -35,6 +35,7 @@
 ;;;  03-11-06 Added *mini-module-compile-verbose* and 
 ;;;           *mini-module-load-verbose*.  (Corkill)
 ;;;  04-07-06 Added gbbopen-modules directory support.  (Corkill)
+;;;  04-27-08 Added shared-gbbopen-modules directory support.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -133,6 +134,13 @@
 	   :name "gbbopen-modules-directory"
 	   :type "lisp"
 	   :defaults truename))))
+
+;;; ---------------------------------------------------------------------------
+;;;  Process the modules.lisp file (if present) from each module directory
+;;;  that is linked from GBBopen's shared-gbbopen-modules directory:
+
+(unless *skip-gbbopen-modules-directory-processing*
+  (process-shared-gbbopen-modules-directory "modules"))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  If there is a gbbopen-modules directory in the users "home" directory,

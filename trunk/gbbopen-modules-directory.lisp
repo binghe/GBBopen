@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/gbbopen-modules-directory.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Apr 25 01:55:12 2008 *-*
+;;;; *-* Last-Edit: Sun Apr 27 12:45:01 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -73,34 +73,28 @@
 (compile-if-advantageous 'read-target-directory-specification)
 
 ;;; ---------------------------------------------------------------------------
-
-(defun process-gbbopen-modules-directory (filename &optional load-only-if-new)
-  (let* ((user-homedir-pathname
-	  ;; CMUCL uses a search list in (user-homedir-pathname), so we must
-	  ;; fixate it using truename before proceeding:
-	  (make-pathname :defaults (truename (user-homedir-pathname))))
-	 (user-modules-dir
-	  (make-pathname
-	   :directory (append (pathname-directory user-homedir-pathname)
-			      '("gbbopen-modules"))
-	   :defaults user-homedir-pathname))
-	 (subdirs-pathname
+                  
+(defun process-the-gbbopen-modules-directory (modules-dir filename
+                                              load-only-if-new)
+  ;;; Common function to process GBBopen's shared-gbbopen-modules directory
+  ;;; and a user's personal gbbopen-modules directory.
+  (let* ((subdirs-pathname
 	  #-clozure
 	  (make-pathname
-	   :directory (append (pathname-directory user-modules-dir)
+	   :directory (append (pathname-directory modules-dir)
 			      #-(or allegro cmu scl)
 			      '(:wild))
-	   :defaults user-modules-dir)
+	   :defaults modules-dir)
 	  #+clozure
 	  (make-pathname
 	   :name ':wild
-	   :defaults user-modules-dir))
+	   :defaults modules-dir))
 	 (pseudo-sym-link-paths
 	  (directory 
 	   (make-pathname
 	    :name ':wild
 	    :type "sym"
-	    :defaults user-modules-dir)))
+	    :defaults modules-dir)))
 	 (module-dirs
 	  (append
 	   #-clozure
@@ -119,7 +113,7 @@
                       ((string= filename "commands")
                        "module command definitions")
                       (t filename))
-                (namestring user-modules-dir)))
+                (namestring modules-dir)))
       (dolist (dir module-dirs)
 	(let* ((dir-pathname-name (pathname-name dir))
                (pathname (make-pathname 
@@ -153,6 +147,42 @@
                                now
                                *loaded-gbbopen-modules-directory-files*)))))))
         ))))
+
+(compile-if-advantageous 'process-the-gbbopen-modules-directory)
+
+;;; ---------------------------------------------------------------------------
+
+(let ((truename *load-truename*))
+  (defun process-shared-gbbopen-modules-directory (filename
+                                                 &optional load-only-if-new)
+  (let ((shared-modules-dir
+         (make-pathname
+          :name nil
+          :type nil
+          :directory (append (pathname-directory truename)
+                             '("shared-gbbopen-modules"))
+          :defaults truename)))
+    (process-the-gbbopen-modules-directory
+     shared-modules-dir filename load-only-if-new))))
+
+;; CMUCL and Lispworks can't compile the interpreted closure:
+#-(or cmu lispworks)
+(compile-if-advantageous 'process-shared-gbbopen-modules-directory)
+
+;;; ---------------------------------------------------------------------------
+
+(defun process-gbbopen-modules-directory (filename &optional load-only-if-new)
+  (let* ((user-homedir-pathname
+	  ;; CMUCL uses a search list in (user-homedir-pathname), so we must
+	  ;; fixate it using truename before proceeding:
+	  (make-pathname :defaults (truename (user-homedir-pathname))))
+	 (user-modules-dir
+	  (make-pathname
+	   :directory (append (pathname-directory user-homedir-pathname)
+			      '("gbbopen-modules"))
+	   :defaults user-homedir-pathname)))
+    (process-the-gbbopen-modules-directory
+     user-modules-dir filename load-only-if-new)))
 
 (compile-if-advantageous 'process-gbbopen-modules-directory)
 
