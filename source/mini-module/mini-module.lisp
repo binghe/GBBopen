@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/mini-module/mini-module.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Apr 27 14:06:08 2008 *-*
+;;;; *-* Last-Edit: Mon Apr 28 10:59:17 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -1485,13 +1485,14 @@
 (load-module :mini-module-user)
 
 ;;; ===========================================================================
-;;;  Mini Module REPL Commands (requires extended-REPL command support)
+;;;  Mini Module REPL-commands support
 
 (defvar *last-lm/cm-module* nil)
 (defvar *last-lm-options* nil)
 (defvar *last-cm-options* nil)
 
-(defun do-mini-module-repl-command (cmd module-and-options)
+(defun do-mini-module-repl-command (cmd module-and-options 
+                                    &optional dont-remember)
   (let ((recalled-options nil))
     (destructuring-bind (&optional module-name &rest options)
         module-and-options
@@ -1509,15 +1510,16 @@
         (let ((fn (ecase cmd
                     (:cm 'compile-module)
                     (:lm 'load-module))))
-          (setf *last-lm/cm-module* module-name)
-          (cond 
-           ;; :cm command:
-           ((eq cmd ':cm)
-            (setf *last-cm-options* options)
-            (setf *last-lm-options* (intersection options *load-module-options*
-                                                  :test #'eq)))
-           ;; :lm command:
-           (t (setf *last-lm-options* options)))
+          (unless dont-remember
+            (setf *last-lm/cm-module* module-name)
+            (cond 
+             ;; :cm command:
+             ((eq cmd ':cm)
+              (setf *last-cm-options* options)
+              (setf *last-lm-options* 
+                    (intersection options *load-module-options* :test #'eq)))
+             ;; :lm command:
+             (t (setf *last-lm-options* options))))
           (when recalled-options
             (format *trace-output* "~&;; ~(~s ~s~)~{ ~(~s~)~}~%"
                     cmd module-name options))
@@ -1527,21 +1529,6 @@
                   "~&;; ~(~s~) -- No previous module specified."
                   cmd))))))
 
-;;; ---------------------------------------------------------------------------
-
-(when (fboundp 'define-repl-command)
-  (let ((*current-system-name* ':mini-module))
-    
-    (define-repl-command (:lm :add-to-native-help) 
-        (&rest module-name-and-options)
-      "Load module"
-      (do-mini-module-repl-command ':lm module-name-and-options))
-  
-    (define-repl-command (:cm :add-to-native-help)
-        (&rest module-name-and-options)
-      "Compile and load module"
-      (do-mini-module-repl-command ':cm module-name-and-options))))
-  
 ;;; ===========================================================================
 ;;;   Mini Module system is fully loaded:
 
