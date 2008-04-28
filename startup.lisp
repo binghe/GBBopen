@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/startup.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Apr 28 17:22:09 2008 *-*
+;;;; *-* Last-Edit: Mon Apr 28 17:36:19 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -62,12 +62,12 @@
                      :defaults *load-truename*))
 
 ;;; ---------------------------------------------------------------------------
-;;;  See if ECL MOP patches are needed (out-of-date ECL)
+;;;  Cerror if ECL's MOP is out of date
 
 #+ecl
 (unless (find-class 'clos:standard-writer-method nil)
-  (warn "You are not running ECL with the ECL updates ~
-         (using GBBopen's MOP patches).")
+  (cerror "Continue and use GBBopen's MOP patches for older ECL versions."
+          "The latest CVS checkout of ECL is highly recommended.")
   (pushnew ':ecl-mop-patches-needed *features*))
 
 ;;; ---------------------------------------------------------------------------
