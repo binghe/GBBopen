@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/commands.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Apr 27 04:53:51 2008 *-*
+;;;; *-* Last-Edit: Mon Apr 28 10:58:19 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -170,6 +170,28 @@
     "Compile and load Web inspector (under construction)"
     (startup-module :web-inspector options nil))
 
+  ;; end with-system-name
+  )
+
+;;; ===========================================================================
+;;;   Mini Module Commands
+  
+(with-system-name (:mini-module)
+  
+  (define-repl-command (:lm :add-to-native-help)
+      (&rest module-name-and-options)
+    "Load module"
+    (startup-module :mini-module nil nil 't)
+    (funcall (intern (symbol-name '#:do-mini-module-repl-command) :mini-module)
+             ':lm module-name-and-options))
+  
+  (define-repl-command (:cm :add-to-native-help)
+      (&rest module-name-and-options)
+    "Compile and load module"
+    (startup-module :mini-module nil nil 't)
+    (funcall (intern (symbol-name '#:do-mini-module-repl-command) :mini-module)
+             ':cm module-name-and-options))
+  
   ;; end with-system-name
   )
 

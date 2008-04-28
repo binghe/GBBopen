@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/initiate.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Apr 27 12:43:29 2008 *-*
+;;;; *-* Last-Edit: Mon Apr 28 10:58:03 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -163,11 +163,14 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun startup-module (module-name options &optional package)
+(defun startup-module (module-name options &optional package 
+                                                     ;; not documented
+                                                     dont-remember)
   (startup-gbbopen)
   (funcall (intern (symbol-name '#:do-mini-module-repl-command) :mini-module)
            ':cm
-           (list* module-name ':propagate options))
+           (list* module-name ':propagate options)
+           dont-remember)
   (when package 
     (set-repl-package package)
     (import '(common-lisp-user::gbbopen-tools 
