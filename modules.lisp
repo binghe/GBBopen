@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/modules.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Apr 26 11:31:39 2008 *-*
+;;;; *-* Last-Edit: Mon Apr 28 17:19:40 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -60,7 +60,7 @@
             ("defflags" :forces-recompile)
             ("tools" :forces-recompile)
             ("define-class" :forces-recompile)
-            #+ecl
+            #+ecl-mop-patches-needed
             ("ecl-mop-patches" :forces-recompile)
             "mop-interface"
             "gbbopen-instance"
