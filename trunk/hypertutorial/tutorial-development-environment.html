@@ -143,10 +143,11 @@ or
 <p>However, <a target="_top" href="http://www.franz.com">Allegro CL</a>,
 <a target="_top" href="http://clisp.cons.org/">CLISP</a>, and
 <a target="_top" href="http://www.lispworks.com">LispWorks</a> do not support the list
-notation.  CLISP versions prior to 2.45 only support the spread notation&mdash;but
-without arguments.  So, a CLISP user running a version prior to 2.45 must use
-the <code>:common-lisp-user</code> functions rather than a REPL command when the
-command requires arguments:
+notation.  CLISP versions prior to 2.45 and
+<a target="_top" href="http://common-lisp.net/project/ecl/">ECL</a> only support the spread
+notation&mdash;but without arguments.  So, a user running on these Common
+Lisp implementations must use the <code>:common-lisp-user</code> functions rather
+than a REPL command when the command requires arguments:
 <pre class="pretop">
 <font color="#667f66">  cl-user&gt; <font color="#000000">(cl-user:gbbopen-user :create-dirs)</font>
   ;; Loading <var>&lt;install-dir&gt;</var>/startup.lisp

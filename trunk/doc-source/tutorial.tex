@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/tutorial.tex *-*
-%% *-* Last-Edit: Sun Apr 27 11:30:23 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Tue Apr 29 10:25:26 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2005-2008, Dan Corkill <corkill@GBBopen.org>
@@ -2226,10 +2226,11 @@ or
 However, \xsitelink{Allegro CL}{http://www.franz.com},
 \xsitelink{CLISP}{http://clisp.cons.org/}, and
 \xsitelink{LispWorks}{http://www.lispworks.com} do not support the list
-notation.  CLISP versions prior to 2.45 only support the spread notation---but
-without arguments.  So, a CLISP user running a version prior to 2.45 must use
-the \code{:common-lisp-user} functions rather than a REPL command when the
-command requires arguments:
+notation.  CLISP versions prior to 2.45 and
+\xsitelink{ECL}{http://common-lisp.net/project/ecl/} only support the spread
+notation---but without arguments.  So, a user running on these Common
+Lisp implementations must use the \code{:common-lisp-user} functions rather
+than a REPL command when the command requires arguments:
 %
 \W\supp
 \begin{example}
