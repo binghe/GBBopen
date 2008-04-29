@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/basic-tests.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Apr 27 04:19:59 2008 *-*
+;;;; *-* Last-Edit: Tue Apr 29 06:08:50 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -284,7 +284,11 @@
   ;; Basic creation/deletion checks:
   (unless (standard-unit-class.abstract (find-class 'abstract))
     (error "Abstract class was not set"))
-  (when (with-error-handling (make-instance 'abstract))
+  (when (with-error-handling (make-instance 'abstract)
+          ;; ECL thinks the with-error-handling returned value is t (the
+          ;; default is no values) unless specified explicitly (an ECL bug to
+          ;; track down!):
+          #+ecl (values))
     (error "Abstract class allowed instance creation"))
   (when (standard-unit-class.abstract (find-class 'uc-1))
     (error "Abstract class was incorrectly set"))
@@ -995,7 +999,11 @@
   ;; Simple time test:
   (progn
     (reset-gbbopen)
-    (do-time-tests 1000))
+    (do-time-tests 
+      ;; ECL generates a bus error at higher iterations (track down this ECL
+      ;; bug!):
+      #+ecl 500
+      #-ecl 1000))
   
   ;; Common Lisp capability tests:
   (lisp-capability-tests))
