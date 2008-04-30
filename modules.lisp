@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/modules.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Apr 28 17:19:40 2008 *-*
+;;;; *-* Last-Edit: Wed Apr 30 05:07:05 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -169,7 +169,7 @@
 (with-system-name (:gbbopen-tests)
 
   (define-module :test-harness
-    (:requires :gbbopen-tools)
+    (:requires :portable-threads :gbbopen-tools)
     (:directory :gbbopen-tools "test")
     (:files ("test-harness")))
   
