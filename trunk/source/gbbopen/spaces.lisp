@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/spaces.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Apr 26 11:26:46 2008 *-*
+;;;; *-* Last-Edit: Fri May  2 05:18:33 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -170,6 +170,7 @@
     ;; actually, this slot contains a list of <unit-classes-spec>s
     :initform t
     :reader allowed-unit-classes-of)
+   (instance-counts :initform nil)
    (%%storage-spec%%)
    (%%storage%%
     :initform nil)
@@ -677,9 +678,13 @@
       ;; do the add:
       (dolist (storage (storage-objects-for-add/move/remove
                         (class-of instance) space-instance))
-        (add-instance-to-storage instance storage nil))
+        (add-instance-to-storage instance storage nil))      
       (push space-instance 
             (standard-unit-instance.%%space-instances%% instance))
+      (pushnew/incf-acons 
+       (type-of instance) 1 
+       (standard-space-instance.instance-counts space-instance)
+       :test #'eq)
       (signal-event-using-class
        (load-time-value (find-class 'add-instance-to-space-instance-event))
        :instance instance
@@ -731,6 +736,11 @@
        (t (dolist (storage (storage-objects-for-add/move/remove
                             (class-of instance) space-instance))
             (remove-instance-from-storage instance storage nil nil nil))
+          ;; Decf/delete the instance-count:
+          (decf/delete-acons (type-of instance) 1
+                             (standard-space-instance.instance-counts
+                              space-instance)
+                             :test #'eq)
           (signal-event-using-class
            (load-time-value
             (find-class 'remove-instance-from-space-instance-event))

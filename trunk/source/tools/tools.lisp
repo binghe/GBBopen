@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Apr 27 14:02:00 2008 *-*
+;;;; *-* Last-Edit: Thu May  1 13:26:54 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -57,6 +57,7 @@
 ;;;  02-29-08 Added handler-forms and error-condition lexical function to 
 ;;;           with-error-handling.  (Corkill)
 ;;;  02-09-08 Added nicer-y-or-n-p and nicer-yes-or-no-p.  (Corkill)
+;;;  05-01-08 Added decf/delete-acons.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -268,6 +269,11 @@
             copy-file                   ; not yet documented
 	    counted-delete
 	    decf-after			; not yet finished or documented
+	    decf/delete-acons
+	    decf/delete&-acons
+	    decf/delete$-acons
+	    decf/delete$$-acons
+	    decf/delete$$$-acons
 	    define-directory		; in mini-module, but part of tools
 	    delq
 	    do-until
@@ -303,7 +309,6 @@
 	    pushnew/incf&-acons
 	    pushnew/incf$-acons
 	    pushnew/incf$$-acons
-	    #+(and scl long-float)
 	    pushnew/incf$$$-acons
 	    pushnew-elements
 	    read-char-immediately	; not yet documented
@@ -850,7 +855,7 @@
 		  (rplacd ,assoc-result 
 			  (,incf-fn-sym (cdr ,assoc-result) ,incr))
 		  ,(first store-vars))
-		 (t (setq ,(first store-vars)
+		 (t (setf ,(first store-vars)
 		      (acons ,key ,incr ,(first store-vars)))))
 	   ,writer-form)))))
 
@@ -882,6 +887,70 @@
 #+(and scl long-float)
 (defmacro pushnew/incf$$$-acons (key incr place &rest keys &environment env)
   (pushnew/incf-acons-expander '+$$$ key incr place keys env))
+
+;;; ---------------------------------------------------------------------------
+;;;  decf/delete-acons (inverse of pushnew/incf-acons)
+
+(defun acons-not-found-error (key place)
+  (error "Item ~s was not found in the alist in ~w." key place))
+
+;;; ---------------------------------------------------------------------------
+
+(defun decf/delete-acons-expander (decf-fn-sym key decr place keys env)
+  (let ((keyword-key-value (getf keys ':key)))
+    (with-once-only-bindings (key decr)
+      (multiple-value-bind (vars vals store-vars writer-form reader-form)
+          (get-setf-expansion place env)
+        (with-gensyms (assoc-result new-value)
+          `(let* (,@(mapcar #'list vars vals)
+                  (,(first store-vars) ,reader-form)
+                  (,assoc-result (assoc ,key ,(first store-vars) ,@keys)))
+             (cond (,assoc-result
+                    (let ((,new-value 
+                           (,decf-fn-sym (cdr ,assoc-result) ,decr)))
+                      (if (zerop ,new-value)
+                          ;; Remove the acons:
+                          (setf ,(first store-vars)
+                                (delete ,key ,(first store-vars)
+                                        :key ,(if keyword-key-value
+                                                  `#'(lambda (,new-value)
+                                                       (funcall
+                                                        ,keyword-key-value
+                                                        (car ,new-value)))
+                                                  '#'car)
+                                        ,@(remove-property keys ':key)))
+                          ;; Update the value:
+                          (rplacd ,assoc-result ,new-value))))
+                   (t (acons-not-found-error ,key ',place)))
+             ,writer-form))))))
+
+;;; ---------------------------------------------------------------------------
+
+(defmacro decf/delete-acons (key decr place &rest keys &environment env)
+  ;;; Decrements the value of key by decr, if it is present; otherwise
+  ;;; performs a push-acons of place, key, and decr.  Returns the updated
+  ;;; alist."
+  (decf/delete-acons-expander '- key decr place keys env))
+
+;;; ---------------------------------------------------------------------------
+
+(defmacro decf/delete&-acons (key decr place &rest keys &environment env)
+  (decf/delete-acons-expander '-& key decr place keys env))
+
+;;; ---------------------------------------------------------------------------
+
+(defmacro decf/delete$-acons (key decr place &rest keys &environment env)
+  (decf/delete-acons-expander '-$ key decr place keys env))
+
+;;; ---------------------------------------------------------------------------
+
+(defmacro decf/delete$$-acons (key decr place &rest keys &environment env)
+  (decf/delete-acons-expander '-$$ key decr place keys env))
+
+;;; ---------------------------------------------------------------------------
+
+(defmacro decf/delete$$$-acons (key decr place &rest keys &environment env)
+  (decf/delete-acons-expander '-$$$ key decr place keys env))
 
 ;;; ===========================================================================
 ;;;   Pushnew-elements

@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/units.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Apr  9 23:48:18 2008 *-*
+;;;; *-* Last-Edit: Tue Apr 29 17:33:46 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -434,25 +434,36 @@
   ;; fixup canonicalized :dimensional-values option:  
   (dolist (cdv-spec (standard-unit-class.dimensional-values unit-class))
     (let ((maybe-fn (fourth cdv-spec)))
-      ;; NOTE: CLISP sometimes looses eq-ness of the uninterned fixup-symbols
-      ;; (last observed in CLISP 2.44).  As a work-around until this is
-      ;; tracked down, we look up the symbol in fixup-symbols by comparing the
-      ;; symbol-name and then using the symbol from fixup-symbols:
-      (when #-clisp (memq maybe-fn fixup-symbols)
-            #+clisp (setf maybe-fn 
-                          (find maybe-fn fixup-symbols :test #'string=))
+      (when (or (memq maybe-fn fixup-symbols)
+                ;; NOTE: CLISP looses eq-ness of the uninterned fixup-symbols
+                ;; when loading the compiled file into the compiling image
+                ;; (still observed in CLISP 2.45).  As a work-around until
+                ;; this is tracked down, we look up the symbol in
+                ;; fixup-symbols by comparing the symbol-name (if the eq check
+                ;; fails) and then using the symbol from fixup-symbols:
+                #+clisp
+                (setf maybe-fn 
+                      (find maybe-fn fixup-symbols :test #'string=)))
         (setf (fourth cdv-spec)
               (symbol-value maybe-fn)))))
   ;; fixup :initial-space-instances option
   (let* ((initial-space-instances-spec
           (standard-unit-class.initial-space-instances unit-class))
-         (maybe-fn (car initial-space-instances-spec)))
-    (when (memq maybe-fn fixup-symbols)
+         (maybe-fn (first initial-space-instances-spec)))
+    (when (and (symbolp maybe-fn)
+               (or (memq maybe-fn fixup-symbols)
+                   ;; NOTE: CLISP looses eq-ness of the uninterned
+                   ;; fixup-symbols when loading the compiled file into the
+                   ;; compiling image (still observed in CLISP 2.45).  As a
+                   ;; work-around until this is tracked down, we look up the
+                   ;; symbol in fixup-symbols by comparing the symbol-name (if
+                   ;; the eq check fails) and then using the symbol from
+                   ;; fixup-symbols:
+                   #+clisp
+                   (setf maybe-fn 
+                         (find maybe-fn fixup-symbols :test #'string=))))
       (setf (standard-unit-class.initial-space-instances unit-class)
-            (symbol-value 
-             ;; check that the initial-space-instances specification contains
-             ;; only a single function object!
-             (sole-element initial-space-instances-spec))))))
+            (symbol-value maybe-fn)))))
   
 ;;; ---------------------------------------------------------------------------
 
@@ -487,7 +498,7 @@
 	(:dimensional-values 
 	 (setq dimensional-values-seen 't)
 	 (setf (cdr option)
-	       ;; allow (:dimensional-values nil) to mean none:
+               ;; allow (:dimensional-values nil) to mean none:
 	       (if (equal (cdr option) '(nil))
 		   nil
 		   (mapcar #'(lambda (dv-spec)
@@ -496,18 +507,29 @@
 			   (cdr option)))))
 	(:initial-space-instances
 	 (setq initial-space-instances-seen 't)
+         (let ((initial-space-instances-option-values (cdr option)))
+           ;; check that the initial-space-instances specification contains
+           ;; only a single function object!
+           (when (and (list-length>1 initial-space-instances-option-values)
+                    (some #'(lambda (elt)
+                              (eq (car elt) 'function))
+                          initial-space-instances-option-values))
+             (error "The option: ~s in the definition of unit-class ~s ~
+                     contains more than a single function object."
+                    option
+                    unit-class-name))
 	 (setf (cdr option)
 	       ;; allow (:initial-space-instances nil) to mean none:
-	       (if (equal (cdr option) '(nil))
+	       (if (equal initial-space-instances-option-values '(nil))
 		   nil
 		   (mapcar #'fixup-function-value-part1 
-			   (cdr option)))))
-	;; Check that class option is valid (not mis-named or misspelled);
+			   initial-space-instances-option-values)))))
+	;; Check that the class option is valid (not mis-named or misspelled);
 	;; this is a heavy-handed approach that doesn't pass through unknown
 	;; options without using the validate-class-option API.
 	(otherwise 
 	 (unless (validate-class-option metaclass option)
-	   (error "~s is an invalid option in the definition of ~s"
+	   (error "~s is an invalid option in the definition of unit-class ~s."
 		  option unit-class-name)))))
     ;; We want to clear these in reinitialized class objects, if they
     ;; weren't explicitly specified:
@@ -543,7 +565,7 @@
   (unless (every #'(lambda (element)
 		     (and (symbolp element) (not (keywordp element))))
 		 direct-superclass-names)
-    (error "Illegal direct-superclasses syntax in define-unit-class: ~s"
+    (error "Illegal direct-superclasses syntax in define-unit-class: ~s."
 	   direct-superclass-names))
   ;; To support function objects and closures in :initial-space-instances and
   ;; in :sort-function and :sort-key for links we create a let binding with
@@ -569,8 +591,10 @@
       (setq clos-class-options 
         (cons '(:optimize-slot-access nil) clos-class-options))
       `(#-clisp progn
-	;; CLISP requires let (rather than progn) to work around
-	;; CLISP's non-eq uninterned symbols bug
+	;; CLISP requires let (rather than progn) to work around CLISP's
+	;; non-eq uninterned symbols bug (still observed in CLISP 2.45); even
+	;; so, more eq-lossage handling is required in
+	;; fixup-function-objects-part2:
 	#+clisp let #+clisp ()
 	#+sbcl
 	(eval-when (:compile-toplevel :load-toplevel :execute)
@@ -812,7 +836,7 @@
                               :test #'eq)))
               (if slot 
                   (funcall (the function fn) slot)
-                  (error "Slot ~s does not exist in ~s"
+                  (error "Slot ~s does not exist in ~s."
                          slot-name 
                          unit-class))))))))
 

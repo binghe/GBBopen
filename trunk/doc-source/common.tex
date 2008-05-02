@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/common.tex *-*
-%% *-* Last-Edit: Sat Apr 26 12:18:02 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Fri May  2 04:56:19 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -34,6 +34,7 @@
 \definecolor{rulegray}{gray}{.75}
 \definecolor{darkergray}{rgb}{.4,.5,.4}
 \definecolor{darkgreen}{rgb}{.0,.7,.0}
+\definecolor{verydarkgreen}{rgb}{.0,.5,.0}
 \definecolor{caution}{rgb}{.8,.6,.0}
 
 %% ----------------------------------------------------------------------------
@@ -161,8 +162,40 @@
     \endgroup
     \addvspace{.2em \@plus\p@}%
   \fi}
+
 % from article.cls - Decrease TOC leftmargin for subsubsections
 \renewcommand*\l@subsubsection{\@dottedtocline{3}{3.3em}{2.3em}}
+
+% from index.sty - Remove section* and more
+\renewenvironment{theindex}{%
+% \edef\indexname{\the\@nameuse{idxtitle@\@indextype}}%
+  \if@twocolumn
+  \@restonecolfalse
+  \else
+  \@restonecoltrue
+  \fi
+  \columnseprule \z@
+  \columnsep 35\p@
+% \twocolumn[%
+% \section*{\indexname}%
+% \ifx\index@prologue\@empty\else
+%     \index@prologue
+%     \bigskip
+% \fi
+% ]%
+  \@mkboth{\MakeUppercase\indexname}%
+          {\MakeUppercase\indexname}%
+% \thispagestyle{plain}%
+  \parindent\z@
+  \parskip\z@ \@plus .3\p@\relax
+  \let\item\@idxitem
+}{%
+  \if@restonecol
+    \onecolumn
+  \else
+    \clearpage
+  \fi
+}
 
 \makeatother
 \W\end{iftex}
@@ -274,19 +307,23 @@
 \T\newcommand{\entlinknoex}[1]{\hyperref[ent:#1]{#1}}
 \W\newcommand{\entlinknoex}[1]{\entlink{#1}}
 %
+\newcommand{\indexit}[1]{\index{#1|itidx}}
 \newcommand{\bfindex}[1]{\index{#1@\textbf{#1}}}
+\newcommand{\bfindexit}[1]{\index{#1@\textbf{#1}|itidx}}
 \T\newcommand{\bfindexstart}[1]{\index{#1@\textbf{#1}|(}} %match |
 \T\newcommand{\bfindexend}[1]{\index{#1@\textbf{#1}|)}}
 \newcommand{\codeindex}[1]{\cindex[#1]{\code{#1}}}
 \newcommand{\codeindexqual}[2]{\index{#1, #2@\code{#1}, #2}}
 \newcommand{\codeindexsub}[2]{\index{#1,#2@\code{#1}!#2}}
-\newcommand{\indexit}[1]{\index{#1|itidx}}
-\newcommand{\bfindexit}[1]{\index{#1@\textbf{#1}|itidx}}
 \newcommand{\codeindexit}[1]{\index{#1@\code{#1}|itidx}}
 \newcommand{\codeindexqualit}[2]{\index{#1, #2@\code{#1}, #2|itidx}}
 \newcommand{\codeindexsubit}[2]{\index{#1,#2@\code{#1}!#2|itidx}}
-\W\newcommand{\itidx}[2]{\xlink{\textit{#1}}{#2}}
-\T\newcommand{\itidx}[1]{\textit{#1}}
+\newcommand{\REPLindex}[1]{\index{#1@\textbf{#1} REPL command}%
+                           \index{REPL command!#1@\textbf{#1}}}
+\newcommand{\REPLindexit}[1]{\index{#1@\textbf{#1} REPL command|itidx}
+                             \index{REPL command!#1@\textbf{#1}|itidx}}
+\W\newcommand{\itidx}[2]{\xlink{\textcolor{verydarkgreen}{\textit{#1}}}{#2}}
+\T\newcommand{\itidx}[1]{\textcolor{verydarkgreen}{\textit{#1}}}
 
 %% Internal links (includes paper-format \ref references)
 \W\newcommand{\reflink}[2]{\link{#1}{#2}}

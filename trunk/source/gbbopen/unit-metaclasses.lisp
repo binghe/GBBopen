@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/unit-metaclasses.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Apr 25 01:58:22 2008 *-*
+;;;; *-* Last-Edit: Tue Apr 29 17:00:37 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -59,8 +59,8 @@
               (otherwise hash-table-test))))
 
 ;;; ===========================================================================
-;;;   Define variable for standard-unit-instance internal (regular) slot names 
-;;;     (declared nil here, but added to in instances.lisp and spaces.lisp)
+;;;   Global variable for standard-unit-instance internal (regular) slot names
+;;;   (declared nil here, but added to in instances.lisp and spaces.lisp)
 
 (defvar *internal-unit-instance-slot-names* nil)
 
@@ -228,9 +228,9 @@
   't)
 
 ;;; ---------------------------------------------------------------------------
+;;;  Check upon finalization that a unit-class inherits from
+;;;  standard-unit-instance
 
-;;; Check on finalization that a unit-class inherits from 
-;;; standard-unit-instance:
 (defmethod finalize-inheritance :after ((class standard-unit-class))
   (let ((standard-ui-class (find-class 'standard-unit-instance nil)))
     ;; check that the standard-unit-instance class is present (it may not be
@@ -247,9 +247,9 @@
                'define-class)))))
 
 ;;; ---------------------------------------------------------------------------
+;;;  Handle Lispwork's non-standard use of slot-name rather than slot-object.
+;;;  (Setf forms are handled individually in instances.lisp and links.lisp.)
 
-;;; Handle Lispwork's non-standard use of slot-name rather than slot-object.
-;;; (Setf forms are handled individually in instances.lisp and links.lisp.)
 #+lispworks
 (defmethod slot-value-using-class ((class standard-unit-class)
                                    instance 
@@ -337,8 +337,8 @@
   (:generate-accessors-format :prefix))
   
 ;;; ---------------------------------------------------------------------------
+;;;  Check for accidentally quoted :singular values in link slots:
 
-;;; Check for accidentally quoted :singular values in link slots:
 (defmethod shared-initialize :before ((slotd direct-link-definition)
                                       slot-names &rest initargs 
                                       &key singular name link)
@@ -396,14 +396,14 @@
 ;;; ===========================================================================
 ;;;   Effective link and non-link slot definitions
 ;;;
-;;; Dynamic binding hack to make effective-link-definition inheritance passing
-;;; work properly (bound in compute-effective-slot-definition).
+;;;  Dynamic binding hack to make effective-link-definition inheritance passing
+;;;  work properly (bound in compute-effective-slot-definition).
 
 (defvar *%%inherited-link-slot%%* nil)
 
 ;;; ---------------------------------------------------------------------------
+;;;  Common class for GBBopen effective link and non-link slots:
 
-;; Common class for GBBopen effective link and non-link slots
 (define-class gbbopen-effective-slot-definition
     (standard-effective-slot-definition)
   ((evfn-blks :initform nil))
@@ -473,12 +473,12 @@
 ;;; ===========================================================================
 ;;;   Link and Nonlink Slot Writer Method Classes
 ;;;
-;;; CMU and SBCL provide the writer-method-class GF, but they don't actually
-;;; use it. (!).
+;;;  CMU and SBCL provide the writer-method-class GF, but they don't actually
+;;;  use it. (!).
 ;;;
-;;; Currently, we only use GBBopen writer methods as an informative class name
-;;; when supported (unfortunate, as specific writer methods would support some
-;;; clean event-signaling interfaces...)
+;;;  Currently, we only use GBBopen writer methods as an informative class
+;;;  name when supported (unfortunate, as specific writer methods would
+;;;  support some clean event-signaling interfaces...)
 
 (define-class nonlink-writer-method (standard-writer-method)
   ())
