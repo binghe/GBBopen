@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/tutorial.tex *-*
-%% *-* Last-Edit: Tue Apr 29 10:25:26 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Fri May  2 04:30:55 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2005-2008, Dan Corkill <corkill@GBBopen.org>
@@ -446,6 +446,7 @@ short).
 \subsection*{Step 4: Interact with the REPL}
 
 \index{REPL}%
+%
 This tutorial assumes that you have a basic understanding of Common Lisp and,
 in particular, how to interact with the Common Lisp implementation that you
 are using.  Thus, you should be able to start up your Common Lisp system and
@@ -569,7 +570,7 @@ with semicolon value-separator characters:
 
 \subsection*{Step 5: Recover from an error}
 
-\index{error!recovering from}%
+\index{errors!recovering from}%
 \index{Common Lisp!debugger}%
 Even you are a very careful typist, sooner or later you will enter a Common
 Lisp expression that signals an error.  Therefore, it is important that you
@@ -757,7 +758,6 @@ of the tutorial.
 
 \subsection*{Step 6: Load the \code{:gbbopen-user} module}
 
-\index{error!recovering from}%
 GBBopen is packaged with its own \xreflink{module system}{sec:mini-module}
 that supports compiling and loading GBBopen components.
 
@@ -802,6 +802,8 @@ may vary somewhat from that shown above.
 
 \subsubsection*{File protection problems?}
 
+\index{errors!file protection}%
+\index{compiling!all of GBBopen}%
 \codeindex{compile-gbbopen}%
 If one or more GBBopen files needs to be compiled, you must have write
 permission for those files and directories on your file system.  If you do not
@@ -838,7 +840,9 @@ will be detailed soon in the \reflink{Enhancing Your Development Environment
 
 \subsection*{Step 7: Change to the \code{:gbbopen-user} package}
 
-\codeindexit{in-package}%
+\index{package}%
+\codeindex{in-package}%
+%
 Now that the \code{:gbbopen-user} module is loaded, change the current
 package to the \code{:gbbopen-user} package:
 %
@@ -2142,7 +2146,8 @@ Common Lisp session and enter the following form in the REPL:
   cl-user>}
 \end{example}
 
-\index{:gbbopen-user@\textbf{:gbbopen-user} REPL command|itidx}%
+\REPLindex{:gbbopen-user}%
+%
 Note that the \xreflink{Mini Module system}{sec:mini-module} and GBBopen
 module definitions have not been loaded.  Now enter the REPL
 command, \textbf{:gbbopen-user}:
@@ -2986,7 +2991,7 @@ instance.  Enter the following form in the REPL:
   gbbopen-user>}
 \end{example}
 %
-\bfindexit{:dsbb}%
+\REPLindex{:dsbb}%
 %
 and confirm that the new \code{location} is on the \code{known-world}:
 %
@@ -3028,6 +3033,8 @@ Now, let's populate the \code{known-world} with a few more \code{locations}s:
   #<location 5>
   gbbopen-user>}
 \end{example}
+%
+\REPLindexit{:dsbb}%
 %
 and verify that they are all on the \code{known-world}:
 %
@@ -3394,6 +3401,10 @@ Now, start the Agenda Shell:
   gbbopen-user>}
 \end{example}
 
+\index{quiescence}%
+\index{knowledge~source}%
+\index{knowledge-source activation}%
+%
 What just happened?  The Agenda Shell began executing and looked for something
 to do.  However, we have not yet defined any knowledge sources (KSs), so the
 Agenda Shell indicates that it did not find any executable KSAs in its initial
@@ -3511,6 +3522,8 @@ Start the Agenda Shell again:
   gbbopen-user>}
 \end{example}
 
+\REPLindexit{:dsbb}%
+%
 Did it work?  Let's describe the blackboard repository:
 %
 \W\supp
@@ -3553,6 +3566,8 @@ indicates that the retention attribute will be propagated to all subclasses of
 those unit classes; retained, but not propagated, would be shown by an
 asterisk (\code{*}).
 
+\REPLindexit{:dsbb}%
+%
 Let's verify this behavior by calling \code{delete-blackboard-repository} and
 then describe the blackboard repository:
 %
@@ -4357,7 +4372,8 @@ Shell:
   gbbopen-user>}
 \end{example}
 
-\bfindexit{:dsbb}%
+\REPLindexit{:dsbb}%
+%
 It looks like something happened! (Again, because \code{add-linear-variance}
 is stochastic, your results will be similar but not identical.)  Let's look at
 the blackboard repository and see how many \code{location} unit instances were
@@ -5496,6 +5512,8 @@ Note that when the Mini Module system was loaded as part of loading the
 GBBopen modules were loaded automatically.  (In this case, the
 \code{\var{<homedir>\/}/tutorial/modules.lisp} file.)  
 
+\REPLindex{:cm}%
+%
 Now that we have defined our \code{:tutorial} module, we can use the
 \textbf{compile-module} REPL command, \code{:cm}, to compile (if needed) and
 load it:
@@ -5565,6 +5583,8 @@ Use your Common Lisp editor to create a new file named \code{commands.lisp} in
 the \code{tutorial} directory. Type the following two forms into the new
 \code{commands.lisp} file:
 %
+\bfindex{define-repl-command}%
+%
 \W\supp
 \begin{example}
 (in-package :common-lisp-user)
@@ -5586,7 +5606,8 @@ command.  The first argument to \textbf{startup-module} specifies that the
 command is issued.  The second, \code{options}, argument passes any options
 given with the command to a \textbf{compile-module} call that is performed by
 \textbf{startup-module}.  The third argument, \code{:gbbopen-user} is optional
-and specifies that the REPL's current package should be changed to \code{:gbbopen-user} after the \code{:tutorial} module is loaded. 
+and specifies that the REPL's current package should be changed to
+\code{:gbbopen-user} after the \code{:tutorial} module is loaded.
 
 \subsection*{Step 6: Try the \code{:tutorial} command}
 
@@ -5953,7 +5974,7 @@ occurs when executing the ``autorun'' form.
 
 \subsection*{Step 11: Try it out}
 
-Enter the \code{:tutorial} REPL command; the modified
+Enter the \code{:tutorial} REPL command. The modified
 \code{tutorial-example.lisp} file should compile and load, followed by a
 random walk:
 %
@@ -6321,10 +6342,6 @@ directory in the GBBopen distribution and at
 %% ========================================================================
 %%  Index
 
-\renewcommand{\printindex}{%
-  \htmlonly{\HlxSection{-5}{}*{\indexname}\label{hlxindex}}%
-  \texorhtml{\input{tutorial.ind}}{\htmlprintindex}}
-
 \T\markright{}
 \T\pagestyle{plain}
 \T\cleardoublepage
@@ -6334,7 +6351,21 @@ directory in the GBBopen distribution and at
 \T\fancyhead[er,ol]{}
 \T\small
 \T\addcontentsline{toc}{section}{\textbf{Index}}%
-\printindex
+
+\T\twocolumn
+%\printindex standin:
+\htmlonly{\HlxSection{-5}{}*{\indexname}\label{hlxindex}}%
+\texonly{\section*{\indexname}}%
+% 
+Page references are shown in \textbf{bold} when they refer to the definition
+or main source of information on the entry. A page reference that is given in
+\textit{\textcolor{verydarkgreen}{green italics}\/} indicates an instructive
+example of the use of that entity.
+%
+\W\\~\\
+\T\bigskip
+%
+\texorhtml{\input{tutorial.ind}}{\htmlprintindex}
 
 %% ========================================================================
 

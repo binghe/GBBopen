@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/source/gbbopen/storage.lisp *-*
+;;;; *-* File: /usr/local/gbbopen/source/gbbopen/storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jan 30 03:31:05 2008 *-*
-;;;; *-* Machine: whirlwind.corkills.org *-*
+;;;; *-* Last-Edit: Fri May  2 05:18:11 2008 *-*
+;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -19,7 +19,7 @@
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
-;;;  11-18-03 File Created.  (Corkill)
+;;;  11-18-03 File created.  (Corkill)
 ;;;  03-17-04 Fix applicable-storage-object-p.  (Corkill)
 ;;;  05-04-04 Converted unstructured storage to use an eq hash table rather
 ;;;           than a simple list.  (Corkill)
@@ -35,9 +35,6 @@
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 (in-package :gbbopen)
-
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (import '(gbbopen-tools::set-flag)))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(boolean
@@ -110,12 +107,9 @@
 					   storage
 					   verbose)
   (declare (ignore verbose))
-  (let* ((unit-class-name (type-of instance))
-	 (count-acons (assoc unit-class-name (instance-counts-of storage)
-			     :test #'eq)))
-    (if count-acons
-	(incf& (cdr count-acons))
-	(push-acons unit-class-name 1 (instance-counts-of storage)))))
+  (let ((unit-class-name (type-of instance)))
+    (pushnew/incf-acons unit-class-name 1 (instance-counts-of storage)
+                        :test #'eq)))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -123,14 +117,9 @@
 	   ((instance standard-unit-instance)
 	    storage old-dimension-values dimensions-being-changed verbose)
   (declare (ignore old-dimension-values dimensions-being-changed verbose))
-  (let* ((unit-class-name (type-of instance))
-	 (count-acons (assoc unit-class-name (instance-counts-of storage)
-			     :test #'eq)))
-    (unless (plusp& (decf& (cdr count-acons)))
-      (setf (instance-counts-of storage)
-	    (delete unit-class-name 
-		    (the list (instance-counts-of storage))
-		    :test #'eq :key #'car)))))    
+  ;; Decf/delete the instance-count:
+  (decf/delete-acons (type-of instance) 1 (instance-counts-of storage)
+                     :test #'eq))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -240,7 +229,7 @@
 	     ;; see if this one's better:
 	     (exact-unit-storage nil)
 	     ;; a new exact match:
-	     (t (setq exact-unit-storage storage))))
+	     (t (setf exact-unit-storage storage))))
 	   )))))
 		
 
@@ -415,7 +404,7 @@
       storage-spec
     (declare (dynamic-extent args))
     (unless (eq dimension-names 't)
-      (setq dimension-names (ensure-list dimension-names)))
+      (setf dimension-names (ensure-list dimension-names)))
     (let ((stores-classes (parse-unit-classes-specifier unit-classes-spec)))
       (apply #'make-instance
 	     (case storage-class
@@ -467,25 +456,25 @@
   ;;; Internal function called by describe-blackboard-repository
   (when (allowed-unit-classes-of space-instance)
     (let ((total 0)
-	  (class-counts nil))
-      (dolist (storage (standard-space-instance.%%storage%% space-instance))
-        (dolist (class-count (instance-counts-of storage))
-          (pushnew/incf-acons (car class-count) (cdr class-count)
-			      class-counts)))
-      (setq total (if class-counts
-		      (reduce #'(lambda (a b) (+& a b))
-			      class-counts :key #'cdr)
-		      0))
-      (setq class-counts (sort class-counts #'string< :key #'car))
-      (cond ((zerop total) (format t "Empty"))
-            (t (format t "~s instance~:p (" total)
-               (let ((first-time-p t))
-                 (dolist (class-count class-counts)
-                   (if first-time-p (setq first-time-p nil) (format t "; "))
-                   (format t "~s ~s"
-                           (cdr class-count) 
-                           (car class-count))))
-               (format t ")"))))))
+          (instance-counts (standard-space-instance.instance-counts
+                         space-instance)))
+      (when instance-counts
+        (setf total (reduce #'(lambda (a b) (+& a b))
+                            instance-counts 
+                            :key #'cdr)))
+      (cond 
+       ;; Empty space:
+       ((zerop total) (format t "Empty"))
+       ;; Show what we've got:
+       (t (format t "~s instance~:p (" total)
+          (let ((first-time-p t))
+            (dolist (count-acons 
+                        (sort instance-counts #'string< :key #'car)) 
+              (if first-time-p (setf first-time-p nil) (format t "; "))
+              (format t "~s ~s"
+                      (cdr count-acons) 
+                      (car count-acons))))
+          (format t ")"))))))
 
 ;;; ===========================================================================
 ;;;				  End of File

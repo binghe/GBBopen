@@ -278,7 +278,8 @@ created and deleted as intended.
   #&lt;location 5&gt;
   gbbopen-user&gt;</font>
 </pre>
-and verify that they are all on the <code>known-world</code>:
+<a name="id17">
+and</a> verify that they are all on the <code>known-world</code>:
 <pre>
 <font color="#667f66">  gbbopen-user&gt; <font color="#000000">:dsbb</font>
   
@@ -295,7 +296,7 @@ and verify that they are all on the <code>known-world</code>:
   gbbopen-user&gt;</font>
 </pre>
 </p>
-<h2><a name="id17">Step 10: Dimensional retrieval</a></h2><p>
+<h2><a name="id18">Step 10: Dimensional retrieval</a></h2><p>
 We have seen how we can use <b>find-instances</b> to retrieve all
 <code>location</code> unit instances from the <code>known-world</code>:
 <pre class="pretop">
@@ -315,7 +316,7 @@ positioned at (20,20):
   gbbopen-user&gt;</font>
 </pre>
 </p>
-<p><a name="id18">We</a> can use <b>describe-instance</b> to verify that we found the desired
+<p><a name="id19">We</a> can use <b>describe-instance</b> to verify that we found the desired
 <code>location</code> unit instance:
 <pre class="pretop">
 <font color="#667f66">  gbbopen-user&gt; <font color="#000000">(find-instances 'location '(known-world)
@@ -338,14 +339,14 @@ Note that we used Common Lisp's REPL <code>*</code> variable that is always set 
 the value returned by evaluating the last REPL expression (in this case, the
 result of <b>find-instances</b>).
 </p>
-<h2><a name="id19">Step 11: Customize the display of <code>location</code> unit instances</a></h2><p>
+<h2><a name="id20">Step 11: Customize the display of <code>location</code> unit instances</a></h2><p>
 It would be convenient if we could easily see the coordinates of
 <code>location</code> unit instances without having to describe them.  Fortunately,
 GBBopen makes this is easy to do by providing the
 <b>print-instance-slots</b> generic function that allows us to extend how
 Common Lisp's <code>print-object</code> displays <code>location</code> unit instances.
 </p>
-<p><a name="id20">Add</a> the following <b>print-instance-slots</b> method <u>after</u> the
+<p><a name="id21">Add</a> the following <b>print-instance-slots</b> method <u>after</u> the
 <code>location</code> unit-class definition in your <code>tutorial-example.lisp</code>
 file:
 <pre class="pretop">
@@ -373,7 +374,7 @@ are bound is necessary to avoid generating an error in the
 should always perform this safety check in any <b>print-instance-slots</b>
 methods.
 </p>
-<p><a name="id21">Now,</a> compile and load the <b>print-instance-slots</b> method and try it
+<p><a name="id22">Now,</a> compile and load the <b>print-instance-slots</b> method and try it
 out:
 <pre class="pretop">
 <font color="#667f66">  gbbopen-user&gt; <font color="#000000">(find-instances 'location '(known-world)
@@ -389,7 +390,7 @@ higher-dimensional pattern may be more convenient than a conjunction.  Also
 note that we can see immediately that we retrieved the desired
 <code>location</code>.
 </p>
-<h2><a name="id22">Step 12: More dimensional retrievals</a></h2><p>
+<h2><a name="id23">Step 12: More dimensional retrievals</a></h2><p>
 Let's try some additional dimensional retrievals.  First, find all
 <code>location</code>s with an <code>x</code> position of 20:
 <pre class="pretop">
@@ -424,7 +425,7 @@ region:
   gbbopen-user&gt;</font>
 </pre>
 </p>
-<h2><a name="id23">Step 13: Change a dimensional value</a></h2><p>
+<h2><a name="id24">Step 13: Change a dimensional value</a></h2><p>
 Recall that we assigned <code>location</code> <code>1</code> to the global variable
 <code>ui</code>:
 <pre class="pretop">
@@ -440,7 +441,7 @@ and we can retrieve it by its <code>x</code> and <code>y</code> coordinates:
   gbbopen-user&gt;</font>
 </pre>
 </p>
-<p><a name="id24">Let's</a> change its <code>x</code> position to <code>80</code> and try retrieving it again:
+<p><a name="id25">Let's</a> change its <code>x</code> position to <code>80</code> and try retrieving it again:
 <pre class="pretop">
 <font color="#667f66">  gbbopen-user&gt; <font color="#000000">(setf (x-of ui) 80)</font>
   80

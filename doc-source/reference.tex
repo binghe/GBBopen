@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Tue Apr 29 10:11:00 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Fri May  2 05:12:20 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -1956,6 +1956,8 @@ exist already:
 
 \fnnote \textbf{Compile-module} can be invoked using the \glref{REPL~command}:
 %
+\REPLindex{:cm}%
+%
 \W\supp
 \begin{example}
   :cm \textrm{[}\var{module-name\/} \textrm{[}\var{option\/}\superstar\textrm{]]}
@@ -2497,6 +2499,8 @@ Load the GBBopen User \glref{module} and all its \glref{required~modules}:
 
 \fnnote \textbf{Load-module} can be invoked using the \glref{REPL~command}:
 %
+\REPLindex{:lm}%
+%
 \W\supp
 \begin{example}
   :lm \textrm{[}\var{module-name\/} \textrm{[}\var{option\/}\superstar\textrm{]]}
@@ -2887,6 +2891,19 @@ and maximum value.
 3
 \end{example}
 
+\fnnote
+%
+\bfindex{bounded-value\&}%
+\bfindex{bounded-value\$\&}%
+\bfindex{bounded-value\$}%
+\bfindex{bounded-value\$\$}%
+\bfindex{bounded-value\$\$\$}%
+%
+\reflink{Declared numeric}{sec:declared-numerics} versions of
+\textbf{bounded-value} are also provided: \textbf{bounded-value\&},
+\textbf{bounded-value\$\&}, \textbf{bounded-value\$},
+\textbf{bounded-value\$\$}, and \textbf{bounded-value\$\$\$}.
+
 \end{functiondoc}
 
 %% ------------------------------------------------------------------------
@@ -3067,6 +3084,78 @@ the \var{count\/} is provided, and in that case only the rightmost
 
 \fnnote This is what \textbf{delete} should have been (and was on the
 Lisp Machines). 
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}[decf-delete-acons]{Macro}{decf/delete-acons}{\var{item
+      decrement place\/}
+    \code{\&key} \var{key test test-not\/}
+    \returns{} \var{new-place-value\/}}
+\index{pushing!a new pair onto an association list}%
+\index{decrementing, the value of an association-list pair}%
+\index{association list!pushing a new pair onto}%
+\index{association list!decrementing the value of a pair}%
+  
+\fnsyntax
+
+\fnpurpose Decrement by \var{decrement\/} the value associated with
+\var{item\/} in an \glref{association~list} stored in \var{place\/}, deleting
+the \glref{cons} associated with \var{item\/} if the value becomes zero.
+
+\fnpackage \code{:gbbopen-tools}
+
+\fnmodule \code{:gbbopen-tools}
+
+\fnargs
+\begin{args}{decrement}
+\arg[item] An object
+\arg[decrement] A number
+\arg[place] A form which is suitable for use as a
+\glref{generalized~reference} 
+\arg[key] A \glref{function} of one argument, or \nil{} (default is \nil)
+\arg[test] A \glref{function} of two arguments that returns a
+\glref{generalized~boolean} (default is \code{\#'eql}) 
+\arg[test-not] A \glref{function} of two arguments that returns a
+\glref{generalized~boolean} (use of \code{:test-not} is deprecated)
+\end{args}
+
+\fnreturns An \glref{association~list} (the new value of \var{place}). 
+
+\fndescription
+This is the inverse of \textbf{\entlink{pushnew/incf-acons}}.
+
+\begin{alsos}{pushnew/incf-acons}
+\also[pushnew/incf-acons]
+\end{alsos}
+
+\fnexamples
+%
+\W\supp
+\begin{example}
+> (setf alist '((x . 2)(y . 2))
+((x . 2)(y . 2))
+> (decf/delete-acons 'x 1 alist)
+((x . 1)(y . 2))
+> (decf/delete-acons 'x 1 alist)
+((y . 2))\goodpagebreak
+> (decf/delete-acons 'y 2 alist)
+nil
+\end{example}
+
+\fnnote
+%
+\bfindex{decf/delete\&-acons}%
+\bfindex{decf/delete\$\&-acons}%
+\bfindex{decf/delete\$-acons}%
+\bfindex{decf/delete\$\$-acons}%
+\bfindex{decf/delete\$\$\$-acons}%
+%
+\reflink{Declared numeric}{sec:declared-numerics} versions of
+\textbf{decf/delete-acons} are also provided: \textbf{decf/delete\&-acons},
+\textbf{decf/delete\$\&-acons}, \textbf{decf/delete\$-acons},
+\textbf{decf/delete\$\$-acons}, and \textbf{decf/delete\$\$\$-acons}.
 
 \end{functiondoc}
 
@@ -4107,12 +4196,12 @@ add a new \var{item increment\/} \glref{cons} to the
 \glref{generalized~boolean} (use of \code{:test-not} is deprecated)
 \end{args}
 
-\fnreturns An \glref{association~list} (the new value of
-\var{place}). 
+\fnreturns An \glref{association~list} (the new value of \var{place}). 
 
-\begin{alsos}{pushnew-acons}
+\begin{alsos}{decf/delete-acons}
 \also[push-acons]
 \also[pushnew-acons]
+\also[decf/delete-acons]
 \end{alsos}
 
 \fnexamples
@@ -4132,6 +4221,19 @@ nil
 > alist
 ((y . 2) (x . 1))
 \end{example}
+
+\fnnote
+%
+\bfindex{pushnew/incf\&-acons}%
+\bfindex{pushnew/incf\$\&-acons}%
+\bfindex{pushnew/incf\$-acons}%
+\bfindex{pushnew/incf\$\$-acons}%
+\bfindex{pushnew/incf\$\$\$-acons}%
+%
+\reflink{Declared numeric}{sec:declared-numerics} versions of
+\textbf{pushnew/incf-acons} are also provided: \textbf{pushnew/incf\&-acons},
+\textbf{pushnew/incf\$\&-acons}, \textbf{pushnew/incf\$-acons},
+\textbf{pushnew/incf\$\$-acons}, and \textbf{pushnew/incf\$\$\$-acons}.
 
 \end{functiondoc}
 
@@ -5217,15 +5319,16 @@ single format).
 \bfindex{=\&}% 
 \bfindex{$>$\&}%
 \bfindex{$>$=\&}%
-\bfindex{bounded-value\&}% 
+\bfindexit{bounded-value\&}% 
 \bfindex{ceiling\&}%
 \bfindex{decf\&}%
 %\bfindex{decf\&-after}%
+\bfindexit{decf/delete\&-acons}%
 \bfindex{evenp\&}% 
 \bfindex{floor\&}%
 \bfindex{incf\&}% 
 %\bfindex{incf\&-after}%
-\bfindex{pushnew/incf\&-acons}% 
+\bfindexit{pushnew/incf\&-acons}% 
 \bfindex{max\&}%
 \bfindex{min\&}% 
 \bfindex{minusp\&}%
@@ -5263,6 +5366,9 @@ These \glref{fixnum} numeric-operation macros are defined in the
     ceiling\& & & ceiling       & & (ceiling\& x divisor)\\
     decf\&   & & decf           & & (decf\& x delta)\\
 %   decf-\&after & & decf-after & & (decf\&-after x delta)\\
+    decf/delete\&-acons & & \entlink{decf/delete-acons}
+    & & (decf/delete\&-acons\\
+    & & & & ~~~ 'x delta alist)\\
     evenp\&  & & evenp          & & (evenp\& x)\\
     floor\&  & & floor          & & (floor\& x divisor)\\
     incf\&   & & incf           & & (incf\& x delta)\\
@@ -5309,15 +5415,16 @@ The one-argument \glref{function} \textbf{coerce\&} provides convenient
 \bfindex{=\$\&}% 
 \bfindex{$>$\$\&}%
 \bfindex{$>$=\$\&}%
-\bfindex{bounded-value\$\&}% 
+\bfindexit{bounded-value\$\&}% 
 \bfindex{ceiling\$\&}%
 \bfindex{decf\$\&}%
 %\bfindex{decf\$\&-after}%
+\bfindexit{decf/delete\$\&-acons}%
 \bfindex{evenp\$\&}% 
 \bfindex{floor\$\&}%
 \bfindex{incf\$\&}% 
 %\bfindex{incf\$\&-after}%
-\bfindex{pushnew/incf\$\&-acons}% 
+\bfindexit{pushnew/incf\$\&-acons}% 
 \bfindex{max\$\&}%
 \bfindex{min\$\&}% 
 \bfindex{minusp\$\&}%
@@ -5355,6 +5462,9 @@ These short-float numeric operation macros are defined in the
     ceiling\$\& & & ceiling       & & (ceiling\$\& x divisor)\\
     decf\$\&   & & decf           & & (decf\$\& x delta)\\
 %   decf-\$\&after & & decf-after & & (decf\$\&-after x delta)\\
+    decf/delete\$\&-acons & & \entlink{decf/delete-acons}
+    & & (decf/delete\$\&-acons\\
+    & & & & ~~~ 'x delta alist)\\
     evenp\$\&  & & evenp          & & (evenp\$\& x)\\
     floor\$\&  & & floor          & & (floor\$\& x divisor)\\
     incf\$\&   & & incf           & & (incf\$\& x delta)\\
@@ -5401,15 +5511,16 @@ short-float coercion:
 \bfindex{=\$}% 
 \bfindex{$>$\$}%
 \bfindex{$>$=\$}%
-\bfindex{bounded-value\$}% 
+\bfindexit{bounded-value\$}% 
 \bfindex{ceiling\$}%
 \bfindex{decf\$}%
 %\bfindex{decf\$-after}%
+\bfindexit{decf/delete\$-acons}%
 \bfindex{evenp\$}% 
 \bfindex{floor\$}%
 \bfindex{incf\$}% 
 %\bfindex{incf\$-after}%
-\bfindex{pushnew/incf\$-acons}% 
+\bfindexit{pushnew/incf\$-acons}% 
 \bfindex{max\$}%
 \bfindex{min\$}% 
 \bfindex{minusp\$}%
@@ -5447,6 +5558,9 @@ These single-float numeric operation macros are defined in the
     ceiling\$ & & ceiling       & & (ceiling\$ x divisor)\\
     decf\$   & & decf           & & (decf\$ x delta)\\
 %   decf-\$after & & decf-after & & (decf\$-after x delta)\\
+    decf/delete\$-acons & & \entlink{decf/delete-acons}
+    & & (decf/delete\$-acons\\
+    & & & & ~~~ 'x delta alist)\\
     evenp\$  & & evenp          & & (evenp\$ x)\\
     floor\$  & & floor          & & (floor\$ x divisor)\\
     incf\$   & & incf           & & (incf\$ x delta)\\
@@ -5493,15 +5607,16 @@ single-float coercion:
 \bfindex{=\$\$}% 
 \bfindex{$>$\$\$}%
 \bfindex{$>$=\$\$}%
-\bfindex{bounded-value\$\$}% 
+\bfindexit{bounded-value\$\$}% 
 \bfindex{ceiling\$\$}%
 \bfindex{decf\$\$}%
 %\bfindex{decf\$\$-after}%
+\bfindexit{decf/delete\$\$-acons}%
 \bfindex{evenp\$\$}% 
 \bfindex{floor\$\$}%
 \bfindex{incf\$\$}% 
 %\bfindex{incf\$\$-after}%
-\bfindex{pushnew/incf\$\$-acons}% 
+\bfindexit{pushnew/incf\$\$-acons}% 
 \bfindex{max\$\$}%
 \bfindex{min\$\$}% 
 \bfindex{minusp\$\$}%
@@ -5539,6 +5654,9 @@ These double-float numeric operation macros are defined in the
     ceiling\$\$ & & ceiling       & & (ceiling\$\$ x divisor)\\
     decf\$\$   & & decf           & & (decf\$\$ x delta)\\
 %   decf-\$\$after & & decf-after & & (decf\$\$-after x delta)\\
+    decf/delete\$\$-acons & & \entlink{decf/delete-acons}
+    & & (decf/delete\$\$-acons\\
+    & & & & ~~~ 'x delta alist)\\
     evenp\$\$  & & evenp          & & (evenp\$\$ x)\\
     floor\$\$  & & floor          & & (floor\$\$ x divisor)\\
     incf\$\$   & & incf           & & (incf\$\$ x delta)\\
@@ -5585,15 +5703,16 @@ double-float coercion:
 \bfindex{=\$\$\$}% 
 \bfindex{$>$\$\$\$}%
 \bfindex{$>$=\$\$\$}%
-\bfindex{bounded-value\$\$\$}% 
+\bfindexit{bounded-value\$\$\$}% 
 \bfindex{ceiling\$\$\$}%
 \bfindex{decf\$\$\$}%
 %\bfindex{decf\$\$\$-after}%
+\bfindexit{decf/delete\$\$\$-acons}%
 \bfindex{evenp\$\$\$}% 
 \bfindex{floor\$\$\$}%
 \bfindex{incf\$\$\$}% 
 %\bfindex{incf\$\$\$-after}%
-\bfindex{pushnew/incf\$\$\$-acons}%
+\bfindexit{pushnew/incf\$\$\$-acons}%
 \bfindex{max\$\$\$}%
 \bfindex{min\$\$\$}%
 \bfindex{minusp\$\$\$}%
@@ -5631,6 +5750,9 @@ These long-float numeric operation macros are defined in the
     ceiling\$\$\$ & & ceiling       & & (ceiling\$\$\$ x divisor)\\
     decf\$\$\$   & & decf           & & (decf\$\$\$ x delta)\\
 %   decf-\$\$\$after & & decf-after & & (decf\$\$\$-after x delta)\\
+    decf/delete\$\$\$-acons & & \entlink{decf/delete-acons}
+    & & (decf/delete\$\$\$-acons\\
+    & & & & ~~~ 'x delta alist)\\
     evenp\$\$\$  & & evenp          & & (evenp\$\$\$ x)\\
     floor\$\$\$  & & floor          & & (floor\$\$\$ x divisor)\\
     incf\$\$\$   & & incf           & & (incf\$\$\$ x delta)\\
@@ -10825,7 +10947,11 @@ standard-space-instance               3
                                   16350 instances
 \end{example}
 
-\fnnote \textbf{Describe-blackboard-repository} can be invoked using the
+\fnnote 
+%
+\REPLindex{:dsbb}%
+%
+\textbf{Describe-blackboard-repository} can be invoked using the
 \glref{REPL~command} \code{:dsbb}.
 
 \end{functiondoc}
@@ -12046,8 +12172,11 @@ Find the \code{hyp} \glref{unit~instance} 419:
 #<hyp 419 (1835 4791) 0.85 [5..35]>
 \end{example}
 
-\fnnote \textbf{Find-instance-by-name} can be invoked using the
-\glref{REPL~command}:
+\fnnote 
+%
+\REPLindex{:fi}%
+%
+\textbf{Find-instance-by-name} can be invoked using the \glref{REPL~command}:
 %
 \W\supp
 \begin{example}
@@ -16290,10 +16419,6 @@ equivalent:
 %% ========================================================================
 %%  Index
 
-\renewcommand{\printindex}{%
-  \htmlonly{\HlxSection{-5}{}*{\indexname}\label{hlxindex}}%
-  \texorhtml{\input{reference.ind}}{\htmlprintindex}}
-
 \T\markright{}%
 \T\pagestyle{plain}
 \T\cleardoublepage
@@ -16303,7 +16428,21 @@ equivalent:
 \T\fancyhead[er,ol]{}
 \T\small
 \T\addcontentsline{toc}{section}{\textbf{Index}}%
-\printindex
+
+\T\twocolumn
+%\printindex standin:
+\htmlonly{\HlxSection{-5}{}*{\indexname}\label{hlxindex}}%
+\texonly{\section*{\indexname}}%
+% 
+Page references are shown in \textbf{bold} when they refer to the definition
+or main source of information on the entry. A page reference that is given in
+\textit{\textcolor{verydarkgreen}{green italics}\/} indicates an instructive
+example of the use of that entity.
+%
+\W\\~\\
+\T\bigskip
+%
+\texorhtml{\input{reference.ind}}{\htmlprintindex}
 
 %% ========================================================================
 
