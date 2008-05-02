@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/current/source/gbbopen/event-metaclasses.lisp *-*
+;;;; *-* File: /usr/local/gbbopen/source/gbbopen/event-metaclasses.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Sep 23 15:12:53 2006 *-*
-;;;; *-* Machine: ruby.corkills.org *-*
+;;;; *-* Last-Edit: Thu May  1 10:36:15 2008 *-*
+;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -26,7 +26,9 @@
 (in-package :gbbopen)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (import '(gbbopen-tools::class-finalized-p)))
+  (import '(gbbopen-tools::class-finalized-p
+            gbbopen-tools::clear-flag
+            gbbopen-tools::set-flag)))
 
 ;;; ===========================================================================
 ;;;   EVFN-BLK -- Event-Function-Block
@@ -112,14 +114,14 @@
     (ecase flags
       (#.printing-enabled-mask
        (when plus-subevents
-	 (setq flags (logior #.propagate-enabled-to-subevents-mask flags)))
+	 (setf flags (logior #.propagate-enabled-to-subevents-mask flags)))
        (when plus-subclasses
-	 (setq flags (logior #.propagate-enabled-to-subclasses-mask flags))))
+	 (setf flags (logior #.propagate-enabled-to-subclasses-mask flags))))
       (#.printing-suspended-mask
        (when plus-subevents
-	 (setq flags (logior #.propagate-suspended-to-subevents-mask flags)))
+	 (setf flags (logior #.propagate-suspended-to-subevents-mask flags)))
        (when plus-subclasses
-	 (setq flags (logior #.propagate-suspended-to-subclasses-mask 
+	 (setf flags (logior #.propagate-suspended-to-subclasses-mask 
 			     flags)))))
     (setf (evfn-blk.printing-flags evfn-blk)
 	  (logior (evfn-blk.printing-flags evfn-blk) 
