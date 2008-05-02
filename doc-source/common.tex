@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/common.tex *-*
-%% *-* Last-Edit: Fri May  2 04:56:19 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Fri May  2 11:45:32 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -322,6 +322,9 @@
                            \index{REPL command!#1@\textbf{#1}}}
 \newcommand{\REPLindexit}[1]{\index{#1@\textbf{#1} REPL command|itidx}
                              \index{REPL command!#1@\textbf{#1}|itidx}}
+\newcommand{\REPLindexnd}[2]{%
+  \index{#1@\textbf{#1} REPL command (#2)|see{the GBBopen Tutorial}}%
+  \index{REPL command!#1@\textbf{#1} (#2)|see{the GBBopen Tutorial}}}
 \W\newcommand{\itidx}[2]{\xlink{\textcolor{verydarkgreen}{\textit{#1}}}{#2}}
 \T\newcommand{\itidx}[1]{\textcolor{verydarkgreen}{\textit{#1}}}
 
@@ -1377,7 +1380,8 @@
   (if (not hyperlatex-final-pass)
       ()
     (setq hyperlatex-index
-          (sort hyperlatex-index 'hyperlatex-se-index-compare))
+          (sort (reverse hyperlatex-index)  ; Make sort more stable
+               'hyperlatex-se-index-compare))
     (let ((indexelts hyperlatex-index)
           (used-chars (make-vector 256 nil))
           (toc-num    0)

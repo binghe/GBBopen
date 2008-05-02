@@ -117,7 +117,7 @@ instruct you on what to do if this is not the case.)
 <h2><a name="id5">Step 3: Define a KS</a></h2><p>
 So let's define a KS!
 </p>
-<p>Edit your <code>tutorial-example.lisp</code> file and add the following function
+<p><a name="id6">Edit</a> your <code>tutorial-example.lisp</code> file and add the following function
 and KS definition to the end of the <code>tutorial-example.lisp</code> file:
 <pre class="pretop">
 <font color="#667f66">  (define-unit-class location ()
@@ -175,7 +175,7 @@ define:
 </pre>
 Note that the name of the <code>ks</code> unit instance is the name of the KS.
 </p>
-<h2><a name="id6">Step 4: Make the <code>known-world</code></a></h2><p>
+<h2><a name="id7">Step 4: Make the <code>known-world</code></a></h2><p>
 Before we can run our KS, we must make the <code>known-world</code> space
 instance:
 <pre class="pretop">
@@ -185,7 +185,7 @@ instance:
   gbbopen-user&gt;</font>
 </pre>
 </p>
-<h2><a name="id7">Step 5: Start the control shell</a></h2><p>
+<h2><a name="id8">Step 5: Start the control shell</a></h2><p>
 Start the Agenda Shell again:
 <pre class="pretop">
 <font color="#667f66">  gbbopen-user&gt; <font color="#000000">(start-control-shell)</font>
@@ -198,7 +198,7 @@ Start the Agenda Shell again:
   gbbopen-user&gt;</font>
 </pre>
 </p>
-<p><a name="id8">
+<p><a name="id9">
 Did</a> it work?  Let's describe the blackboard repository:
 <pre class="pretop">
 <font color="#667f66">  gbbopen-user&gt; <font color="#000000">:dsbb</font>
@@ -237,7 +237,7 @@ indicates that the retention attribute will be propagated to all subclasses of
 those unit classes; retained, but not propagated, would be shown by an
 asterisk (<code>*</code>).
 </p>
-<p><a name="id9">
+<p><a name="id10">
 Let's</a> verify this behavior by calling <code>delete-blackboard-repository</code> and
 then describe the blackboard repository:
 <pre class="pretop">
@@ -255,7 +255,7 @@ then describe the blackboard repository:
   gbbopen-user&gt;</font>
 </pre>
 </p>
-<h2><a name="id10">Step 6: Display control shell activities</a></h2><p>
+<h2><a name="id11">Step 6: Display control shell activities</a></h2><p>
 With all but the retained unit instances deleted from the blackboard
 repository, let's rerun the control shell.  However, this time we will ask
 GBBopen to display more of what the control shell is doing. First, enable
@@ -270,7 +270,7 @@ display of all control-shell and instance-creation events:
 We will cover events, event printing, and event functions in greater
 detail in a later exercise.
 </p>
-<p><a name="id11">Start</a> the Agenda Shell once again:
+<p><a name="id12">Start</a> the Agenda Shell once again:
 <pre class="pretop">
 <font color="#667f66">  gbbopen-user&gt; <font color="#000000">(start-control-shell)</font>
   ;; Control shell 1 started
@@ -300,7 +300,7 @@ detail in a later exercise.
   gbbopen-user&gt;</font>
 </pre>
 </p>
-<h2><a name="id12">Step 7: Control-shell stepping</a></h2><p>
+<h2><a name="id13">Step 7: Control-shell stepping</a></h2><p>
 Let's rerun the control shell once again, but this time we will enable
 control-shell stepping. Again, delete the blackboard repository:
 <pre class="pretop">
@@ -315,7 +315,7 @@ and disable the event printing that we enabled in the last step:
   gbbopen-user&gt;</font>
 </pre>
 </p>
-<p><a name="id13">Now</a> start the Agenda Shell, this time with stepping enabled:
+<p><a name="id14">Now</a> start the Agenda Shell, this time with stepping enabled:
 <pre class="pretop">
 <font color="#667f66">  gbbopen-user&gt; <font color="#000000">(start-control-shell :stepping 't)</font>
   ;; Control shell 1 started
