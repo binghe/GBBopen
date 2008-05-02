@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/commands.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Apr 28 10:58:19 2008 *-*
+;;;; *-* Last-Edit: Fri May  2 11:51:41 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -246,14 +246,14 @@
 ;;;   Undefine system-name (commands, directories, & modules)
   
   (define-repl-command :undefine-system (&optional system-name)
-    "Undefine system commands, directories, & modules"
+    "Undefine a system (commands, directories, & modules)"
     (do-undefine-system-repl-command system-name))
   
 ;;; ===========================================================================
 ;;;   Help commands for all Extended REPL systems
   
   (define-repl-command (:systems :add-to-native-help) ()
-    "Show extended-REPL systems"
+    "Show all systems"
     (show-all-extended-repl-systems))
   
 ;;; ---------------------------------------------------------------------------

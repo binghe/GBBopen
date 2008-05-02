@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/tutorial.tex *-*
-%% *-* Last-Edit: Fri May  2 04:30:55 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Fri May  2 10:12:23 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2005-2008, Dan Corkill <corkill@GBBopen.org>
@@ -780,7 +780,7 @@ installed:
   cl-user>}
 \end{example}
 %
-\bfindexit{compile-module}%
+\bfindex{compile-module}%
 Then compile and load the \code{:gbbopen-user} module and all the
 GBBopen modules it requires by evaluating:
 %
@@ -805,6 +805,7 @@ may vary somewhat from that shown above.
 \index{errors!file protection}%
 \index{compiling!all of GBBopen}%
 \codeindex{compile-gbbopen}%
+%
 If one or more GBBopen files needs to be compiled, you must have write
 permission for those files and directories on your file system.  If you do not
 have write permission and someone else is maintaining your GBBopen
@@ -935,7 +936,8 @@ session and evaluate the following forms:
 \subsection*{Step 1: Define the \code{location} unit class}
 
 \index{unit class!defining}%
-\bfindexit{define-unit-class}%
+\bfindex{define-unit-class}%
+%
 We begin by defining a unit class \code{location} that has two slots,
 named \code{x} and \code{y}.
 %
@@ -977,7 +979,8 @@ by entering the following form:
   gbbopen-user>}
 \end{example}
 
-\bfindexit{make-instance}%
+\bfindex{make-instance}%
+%
 Now, create a unit instance and assign it to the variable \code{ui} by
 entering the form:
 %
@@ -997,7 +1000,8 @@ is then assigned to the variable \code{ui}.
 \subsection*{Step 3: Display a description of the unit instance}
 
 \index{unit instance!displaying a description of}%
-\bfindexit{describe-instance}%
+\bfindex{describe-instance}%
+%
 Now, display a description of the unit instance by using GBBopen's
 \textbf{describe-instance} function.  Enter the following form:
 %
@@ -1026,7 +1030,8 @@ named within the class.
 \subsection*{Step 4: Find a unit instance by its name}
 
 \index{unit instance!finding!by name}%
-\bfindexit{find-instance-by-name}%
+\bfindex{find-instance-by-name}%
+%
 You can look up a particular unit instance by its name. For example, to
 find the \code{location} \code{1} unit instance by name, enter the form:
 %
@@ -1196,7 +1201,8 @@ global variable called \code{si} by entering the following form:
   gbbopen-user>}
 \end{example}
 
-\bfindexit{make-space-instance}%
+\bfindex{make-space-instance}%
+%
 Now, create the space instance and assign it to the variable \code{si} by
 entering the form:
 %
@@ -1218,7 +1224,8 @@ so its path is simply \code{(known-world)}.
 \subsection*{Step 2: Display a description of the blackboard repository}
 
 \index{blackboard repository, describing}%
-\bfindexit{describe-blackboard-repository}%
+\bfindex{describe-blackboard-repository}%
+%
 Display a description of the blackboard repository, which now contains the
 \code{known-world} space instance:
 %
@@ -1255,7 +1262,8 @@ The description indicates that:
 \subsection*{Step 3: Find a space instance by its path}
 
 \index{space instance!finding by path}%
-\bfindexit{find-space-instance-by-path}%
+\bfindex{find-space-instance-by-path}%
+%
 You can look up a particular space instance by its space-instance path:
 %
 \W\supp
@@ -1273,7 +1281,8 @@ path.
 \subsection*{Step 4: Add the unit instance to the space instance}
 
 \index{unit instance!adding to a space instance}%
-\bfindexit{add-instance-to-space-instance}%
+\bfindex{add-instance-to-space-instance}%
+%
 Now, add the \code{location} unit instance to the space instance.
 Enter the following form:
 %
@@ -1335,7 +1344,8 @@ observing the change in the space instances from the last exercise:
 \subsection*{Step 7: Find the unit instance on the space instance}
 
 \index{unit instance!finding!on a space instance}%
-\bfindexit{find-instances}%
+\bfindex{find-instances}%
+%
 Now that the \code{location} unit instance is on the \code{known-world} space
 instance, we can find it on the space instance. The form is as follows,
 where \code{:all} is a very basic retrieval pattern specifying that all unit
@@ -1594,8 +1604,9 @@ them?  If we know the names of the new unit instances, we can use the
   gbbopen-user>}
 \end{example}
 
-\bfindexit{map-instances-of-class}%
+\bfindex{map-instances-of-class}%
 \codeindexit{print}%
+%
 It is often useful to perform some action on all instances of a unit class.
 GBBopen provides a \textit{mapping function}, or ``iterator,'' that repeatedly
 calls a function with each instance of a unit class as the argument to the
@@ -1682,7 +1693,8 @@ stylistic, the choice is yours.
 \subsection*{Step 3: Delete a unit instance}
 
 \index{unit instance!deleting}%
-\bfindexit{delete-instance}%
+\bfindex{delete-instance}%
+%
 Let's delete the first \code{location} unit instance that we created:
 %
 \W\supp
@@ -1774,7 +1786,8 @@ instance.  This is not true of all operations, however:
   gbbopen-user>}
 \end{example}
 
-\bfindexit{instance-deleted-p}%
+\bfindex{instance-deleted-p}%
+%
 Typically, blackboard applications obtain unit instances from the blackboard
 repository rather than maintaining references to them in variables.  This
 limits the possibility of obtaining a deleted unit instance and performing
@@ -1946,7 +1959,8 @@ on the \code{east-side}:
 \subsection*{Step 6: Delete a space instance}
 
 \index{space instance!deleting}%
-\bfindexit{delete-space-instance}%
+\bfindex{delete-space-instance}%
+%
 Now let's delete some of what we just created.  Let's delete the
 \code{my-town} space instance:
 %
@@ -1986,6 +2000,7 @@ recursive over children and should be performed with caution.
 
 \bfindex{map-instances-on-space-instances}%
 \bfindexit{delete-instance}%
+%
 Also note that deleting space instances did not delete any of the unit
 instances that were stored on them.  If we want to delete a space instance
 \textit{and\/} all the unit instances that are stored on it, we must
@@ -2006,7 +2021,8 @@ that a unit instance can reside on multiple space instances; so deleting a
 unit instance that is on other space instances might not be the desired
 action.
 
-\bfindexit{do-instances-on-space-instances}%
+\bfindex{do-instances-on-space-instances}%
+%
 As is the case with \textbf{map-instances-of-class}, GBBopen provides a
 \textbf{do-instances-on-space-instances} macro as an alternative to
 \textbf{map-instances-on-space-instances}.  So we could have chosen to use the
@@ -2912,7 +2928,7 @@ We have specified \code{x} and \code{y} as ordered dimensions, making the
 \code{known-world} a two-dimensional Euclidean plane.  (Flatlanders would be
 proud!)
 
-\bfindexit{describe-space-instance}%
+\bfindex{describe-space-instance}%
 %
 Verify the dimensionality of the \code{known-world} space instance by
 evaluating:
@@ -3116,14 +3132,14 @@ result of \textbf{find-instances}).
 
 \subsection*{Step 11: Customize the display of \code{location} unit instances}
 
+\bfindex{print-instance-slots}%
+%
 It would be convenient if we could easily see the coordinates of
 \code{location} unit instances without having to describe them.  Fortunately,
 GBBopen makes this is easy to do by providing the
 \textbf{print-instance-slots} generic function that allows us to extend how
 Common Lisp's \code{print-object} displays \code{location} unit instances.
 
-\bfindex{print-instance-slots}%
-%
 Add the following \textbf {print-instance-slots} method \underline{after} the
 \code{location} unit-class definition in your \code{tutorial-example.lisp}
 file:
@@ -3402,6 +3418,7 @@ Now, start the Agenda Shell:
 \end{example}
 
 \index{quiescence}%
+\codeindex{quiescence-event}%
 \index{knowledge~source}%
 \index{knowledge-source activation}%
 %
@@ -3424,6 +3441,8 @@ instruct you on what to do if this is not the case.)
 
 So let's define a KS!
 
+\bfindex{define-ks}%
+%
 Edit your \code{tutorial-example.lisp} file and add the following function
 and KS definition to the end of the \code{tutorial-example.lisp} file:
 %
@@ -3505,7 +3524,7 @@ instance:
 
 \subsection*{Step 5: Start the control shell}
 
-\bfindex{start-control-shell}%
+\bfindexit{start-control-shell}%
 %
 Start the Agenda Shell again:
 %
@@ -3608,7 +3627,7 @@ display of all control-shell and instance-creation events:
 We will cover events, event printing, and event functions in greater
 detail in a later exercise.
 
-\bfindex{start-control-shell}%
+\bfindexit{start-control-shell}%
 %
 Start the Agenda Shell once again:
 %
@@ -3668,7 +3687,7 @@ and disable the event printing that we enabled in the last step:
   gbbopen-user>}
 \end{example}
 
-\bfindex{start-control-shell}%
+\bfindexit{start-control-shell}%
 %
 Now start the Agenda Shell, this time with stepping enabled:
 %
@@ -3876,7 +3895,7 @@ placed anywhere relative to the function definition.)
 
 \subsection*{Step 3: Run the application}
 
-\bfindex{start-control-shell}%
+\bfindexit{start-control-shell}%
 %
 Start a fresh Common Lisp session, compile and load the
 \code{tutorial-example.lisp} file directly from the editor buffer (using
@@ -3904,7 +3923,7 @@ repository before running the application another time.
 
 \subsection*{Step 4: Run it Again}
 
-\bfindex{start-control-shell}%
+\bfindexit{start-control-shell}%
 %
 Let's verify that we can re-run our application. Without doing anything else,
 start the Agenda Shell again:
@@ -4341,7 +4360,7 @@ Finally, add this \code{define-ks} form to the end of your
 definition:
 %
 \bfindexit{define-ks}%
-\codeindex{quiescence-event}%
+%
 \W\supp
 \begin{example}
   (define-ks random-walk-ks
@@ -4451,7 +4470,7 @@ Unfortunately, the order that unit instances are supplied to the \code{print}
 function is not controllable.  Our walk would be much clearer if we printed
 the \code{location}s in time order.
 
-\bfindexit{map-sorted-instances-of-class}%
+\bfindex{map-sorted-instances-of-class}%
 %
 We might consider taking advantage of the instance names that GBBopen assigns
 to unit instances.  We could do something like the following:
@@ -5096,8 +5115,9 @@ We can now follow the links to display the random walk:
 
 \bfindexit{define-ks}%
 \codeindex{:stop}%
-\codeindex{quiescence-event}%
+\codeindexit{quiescence-event}%
 \bfindexit{find-instance-by-name}%
+%
 Let's add a new KS, \code{print-walk-ks}, that displays the random walk once
 it is completed. Add the following KS to the end of your
 \code{tutorial-example.lisp} file:
@@ -5790,7 +5810,7 @@ Save the file.
 
 \subsubsection*{Change \code{modules.lisp}}
 
-\bfindexit{describe-module}%
+\bfindex{describe-module}%
 %
 Finally, we no longer need the \code{:gbbopen-user} package that is created by
 requiring the \code{:agenda-shell-user} module.  Let's take a closer look at the \code{:tutorial} module that we defined:

@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/epilogue.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Apr 27 13:56:51 2008 *-*
+;;;; *-* Last-Edit: Fri May  2 11:22:56 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -24,6 +24,7 @@
 ;;;  11-07-07 Retain the root-space-instance when resetting GBBopen.  (Corkill)
 ;;;  01-28-08 Added load-blackboard-repository and save-blackboard-repository.
 ;;;           (Corkill)
+;;;  05-02-08 Added :di and :dsi REPL commands.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -239,9 +240,55 @@
   (let ((common-lisp-user::*current-system-name* ':gbbopen))
     (declare (special common-lisp-user::*current-system-name*))
 
+    (define-repl-command :di (&rest args)
+      "Describe instance"
+      (let ((maybe-instance 
+             ;; Handle evaluating REPLs:
+             (if (typep (first args) 'standard-unit-instance)
+                 ;; Already evaluated:
+                 (first args)
+                 ;; Try evaluating:
+                 (ignore-errors (eval (first args))))))
+        (cond 
+         ;; We're given a unit instance:
+         ((typep maybe-instance 'standard-unit-instance)
+          (describe-instance maybe-instance))
+         ;; Look it up
+         (t (let ((instance (apply 'find-instance-by-name args)))
+              (cond
+               (instance 
+                (describe-instance instance))
+               (t (format t "~&No unit instance named ~s~@[ of class ~s~] ~
+                             was found~%"
+                          (first args)
+                          (second args))
+                  (force-output))))))))
+
     (define-repl-command (:dsbb :add-to-native-help) ()
       "Describe blackboard repository"
       (describe-blackboard-repository))
+
+    (define-repl-command :dsi (&rest args)
+      "Describe space instance"
+      (let ((maybe-instance 
+             ;; Handle evaluating REPLs:
+             (if (typep (first args) 'standard-space-instance)
+                 ;; Already evaluated:
+                 (first args)
+                 ;; Try evaluating:
+                 (ignore-errors (eval (first args))))))
+        (cond 
+         ;; We're given a unit instance:
+         ((typep maybe-instance 'standard-space-instance)
+          (describe-space-instance maybe-instance))
+         ;; Look it up
+         (t (let ((instance (apply 'find-space-instance-by-path args)))
+              (cond
+               (instance 
+                (describe-space-instance instance))
+               (t (format t "~&No space instance named ~s was found~%"
+                          (first args))
+                  (force-output))))))))
 
     (define-repl-command :fi (&rest args)
       "Find instance by name"
