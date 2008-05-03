@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:SWANK; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/slime-extended-repl.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Apr 26 10:22:56 2008 *-*
+;;;; *-* Last-Edit: Sat May  3 06:02:54 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -55,6 +55,7 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun repl-command-form (string)
+  (format t "~&;; => ~s~%" *package*)
   (setf string (string-left-trim '(#\space #\tab) string))
   (when (or 
          ;; Check for 'spread' command syntax:
@@ -115,6 +116,9 @@
           ;; Don't return the results:
           (*send-repl-results-function* #'identity))
       (repl-eval (format nil "(in-package ~s)" package-name))
+      (let ((package (find-package package-name)))
+        (when package
+          (setf *package* package)))
       ;; Return success:
       't)))
 
