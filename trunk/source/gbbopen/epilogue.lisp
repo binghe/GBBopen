@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/epilogue.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri May  2 11:22:56 2008 *-*
+;;;; *-* Last-Edit: Sat May  3 05:50:12 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -49,6 +49,24 @@
 ;;;  Save-blackboard-repository format version
 
 (defparameter *save-blackboard-repository-format-version* 2)
+
+;;; ---------------------------------------------------------------------------
+;;;  Result-passing variable (used by :fi REPL command), with a bit of
+;;;  effort to make use of the = symbol where necessary...
+
+#-(or lispworks sbcl)
+(defvar = nil)
+
+#+lispworks
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (declaim (special =))
+  (unless (boundp '=)
+    (setf = nil)))
+
+#+sbcl
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (sb-ext::without-package-locks
+   (defvar = nil)))
 
 ;;; ===========================================================================
 ;;;  Miscellaneous Entities
@@ -234,7 +252,55 @@
                  (multiple-value-list (funcall after-loading-function))))))))
   
 ;;; ---------------------------------------------------------------------------
-;;;  Add :dsbb REPL command (available if using GBBopen's initiate.lisp)
+;;;  Add :di, :dsbb, :dsi, and :fi REPL commands (available if using GBBopen's
+;;;  initiate.lisp)
+
+(defun do-di/dsi-repl-command (type find-fn describe-fn args)
+      (let ((maybe-instance 
+             ;; Handle evaluating REPLs:
+             (if (typep (first args) type)
+                 ;; Already evaluated:
+                 (first args)
+                 ;; Try evaluating:
+                 (ignore-errors (eval (first args))))))
+        (cond 
+         ;; We're given a unit instance:
+         ((typep maybe-instance type)
+          (setf = maybe-instance)
+          (funcall describe-fn maybe-instance))
+         ;; Look it up
+         (t (let ((instance (apply find-fn args)))
+              (cond
+               (instance 
+                (setf = instance)
+                (funcall describe-fn instance))
+               (t (case type
+                    (standard-unit-instance
+                     (format t "~&No unit instance named ~s~@[ of class ~s~] ~
+                             was found~%"
+                             (first args)
+                             (second args)))
+                    (standard-space-instance
+                     (format t "~&No space instance named ~s was found~%"
+                             (first args))))
+                  (force-output))))))))
+
+;;; ---------------------------------------------------------------------------
+
+(defun do-fi-repl-command (args)
+  (let ((instance (apply 'find-instance-by-name args)))
+    (cond 
+     (instance
+      (setf = instance)
+      (format t "~&Found ~s (assigned to =)~%" instance)
+      (force-output)
+      instance)
+     (t (format t "~&No unit instance named ~s~@[ of class ~s~] was found~%"
+                (first args)
+                (second args))
+        (force-output)))))
+  
+;;; ---------------------------------------------------------------------------
 
 (when (fboundp 'define-repl-command)
   (let ((common-lisp-user::*current-system-name* ':gbbopen))
@@ -242,27 +308,9 @@
 
     (define-repl-command :di (&rest args)
       "Describe instance"
-      (let ((maybe-instance 
-             ;; Handle evaluating REPLs:
-             (if (typep (first args) 'standard-unit-instance)
-                 ;; Already evaluated:
-                 (first args)
-                 ;; Try evaluating:
-                 (ignore-errors (eval (first args))))))
-        (cond 
-         ;; We're given a unit instance:
-         ((typep maybe-instance 'standard-unit-instance)
-          (describe-instance maybe-instance))
-         ;; Look it up
-         (t (let ((instance (apply 'find-instance-by-name args)))
-              (cond
-               (instance 
-                (describe-instance instance))
-               (t (format t "~&No unit instance named ~s~@[ of class ~s~] ~
-                             was found~%"
-                          (first args)
-                          (second args))
-                  (force-output))))))))
+      (do-di/dsi-repl-command 'standard-unit-instance 
+        'find-instance-by-name
+        'describe-instance args))
 
     (define-repl-command (:dsbb :add-to-native-help) ()
       "Describe blackboard repository"
@@ -270,41 +318,13 @@
 
     (define-repl-command :dsi (&rest args)
       "Describe space instance"
-      (let ((maybe-instance 
-             ;; Handle evaluating REPLs:
-             (if (typep (first args) 'standard-space-instance)
-                 ;; Already evaluated:
-                 (first args)
-                 ;; Try evaluating:
-                 (ignore-errors (eval (first args))))))
-        (cond 
-         ;; We're given a unit instance:
-         ((typep maybe-instance 'standard-space-instance)
-          (describe-space-instance maybe-instance))
-         ;; Look it up
-         (t (let ((instance (apply 'find-space-instance-by-path args)))
-              (cond
-               (instance 
-                (describe-space-instance instance))
-               (t (format t "~&No space instance named ~s was found~%"
-                          (first args))
-                  (force-output))))))))
+      (do-di/dsi-repl-command 'standard-space-instance 
+        'find-space-instance-by-path
+        'describe-space-instance args))
 
     (define-repl-command :fi (&rest args)
       "Find instance by name"
-      (let ((instance (apply 'find-instance-by-name args)))
-        (cond 
-         (instance
-          ;; Note: * is not set in SBCL's REPL:
-          (setf * instance)
-          (format t "~&Found ~s (assigned to ~s)~%" instance '*)
-          (force-output)
-          instance)
-         (t (format t "~&No unit instance named ~s~@[ of class ~s~] was ~
-                         found~%"
-                    (first args)
-                    (second args))
-            (force-output)))))))
+      (do-fi-repl-command args))))
   
 ;;; ===========================================================================
 ;;;  GBBopen is fully loaded
