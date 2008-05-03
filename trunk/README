@@ -44,16 +44,16 @@ The latest source-repository snapshot archive (containing the files in the
 GBBopen repository as well as the GBBopen hyperdoc files and the GBBopen
 Reference Manual) can be found in the "Downloads" section of the GBBopen web
 site (http://GBBopen.org). The repository is maintained using Subversion,
-which is available at http://subversion.tigris.org/.  The SVN snapshot
-archive includes .svn administrative directories, so a subversion update
-command can be used to freshen sources obtained from a snapshot archive.
+which is available at http://subversion.tigris.org/.  The snapshot archive
+includes .svn administrative directories, so a Subversion update command can
+be used to freshen sources obtained from a snapshot archive.
 
 
-SVN Access
-----------
+Subversion Access
+-----------------
 
-You can also get the very latest GBBopen sources directly via SVN by issuing
-the following command:
+You can also get the very latest GBBopen sources directly via Subversion by
+issuing the following command:
 
   $ svn co http://GBBopen.org/svn/GBBopen/trunk/ gbbopen
 
@@ -63,6 +63,12 @@ any later time, you can issue the command:
   $ svn update
 
 from within that directory tree.  
+
+GBBopen development is ongoing, and you should update your GBBopen
+installation regularly in order to obtain the latest capabilities and
+enhancements.  Using Subversion is the easiest way to keep current, and you
+are strongly encouraged to install a Subversion client and use it perform
+frequent updates.
 
 
 Browsing the GBBopen Repository
