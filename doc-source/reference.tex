@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Fri May  2 11:50:55 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Sat May  3 06:11:21 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -3129,6 +3129,9 @@ the \glref{cons} associated with \var{item\/} if the value becomes zero.
 \end{args}
 
 \fnreturns An \glref{association~list} (the new value of \var{place}). 
+
+\fnerrors Item \var{item\/} is not present in the \glref{association~list}
+stored in \var{place\/}.
 
 \fndescription
 This is the inverse of \textbf{\entlink{pushnew/incf-acons}}.
@@ -7642,7 +7645,7 @@ Hyp #<hyp 419 (1835 4791) 0.85 [5..35]>
 \REPLindex{:di}%
 %
 \textbf{Describe-instance} can be invoked using the \glref{REPL~command}
-\code{:di}.
+\code{:di}, which also sets \code{=} to the described \glref{unit~instance}.
 
 \end{functiondoc}
 
@@ -11024,7 +11027,7 @@ Describe the \code{hyps} \glref{space~instance}:
 \REPLindex{:dsi}%
 %
 \textbf{Describe-space-instance} can be invoked using the \glref{REPL~command}
-\code{:dsi}.
+\code{:dsi}, which also sets \code{=} to the described \glref{space~instance}.
 
 \end{functiondoc}
 
@@ -12204,7 +12207,7 @@ Find the \code{hyp} \glref{unit~instance} 419:
   :fi \textrm{[}\var{instance-name\/} \textrm{[}\var{class-name\/}\textrm{]]}
 \end{example}
 %
-which sets \code{*} to be the found \glref{unit~instance}.
+which sets \code{=} to be the found \glref{unit~instance}.
 
 \end{functiondoc}
 
