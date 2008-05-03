@@ -18,23 +18,33 @@ span.fndoclabel {
           font-weight: bold;
           color: #3333AA}
 pre.pretop {
-          margin-top: -10px;
           margin-bottom: 6px;
-          color: #000033}
+          color: #000033;
+          margin-top: -10px;
+         #margin-top: 0px;/* Override for MS IE*/    
+         _margin-top: 0px;/* Override for MS IE6 and older*/    
+}
 pre      {margin-top: 6px;
           margin-bottom: 6px;
           color: #000033}
-ol.tight {margin-top: -12px}
-ul.tight {margin-top: -12px}
+ol.tight {margin-top: -12px
+         #margin-top: 0px}/* Override for MS IE*/
+ul.tight {margin-top: -12px;
+         #margin-top: 0px;/* Override for MS IE*/
+         _margin-top: 0px;/* Override for MS IE6 and older*/    
+}       
 table.tight {
           margin: 0pt; 
           padding: 0pt; 
           border-spacing: 0pt}
 table.tighttop {
           margin: 0pt; 
-          margin-top: -12px;
           padding: 0pt; 
-          border-spacing: 0pt}
+          border-spacing: 0pt;
+          margin-top: -12px;
+         #margin-top: 0px;/* Override for MS IE*/    
+         _margin-top: 0px;/* Override for MS IE6 and older*/    
+}
 p.tiny   {font-family: "sans-serif"; 
           font-size: 7pt;
           color: #0099FF}
