@@ -28,7 +28,7 @@ Requirements:
    See PORTING for information on porting GBBopen to other Common Lisp
    implementations.
 
-Current Status Notes (April 27, 2008):
+Current Status Notes (May 3, 2008):
 
  - Implementation work is progressing on a regular basis.  See the list of
    pending development activities maintained on the "Development Activities"
@@ -55,9 +55,9 @@ SVN Access
 You can also get the very latest GBBopen sources directly via SVN by issuing
 the following command:
 
-  $ svn co http://GBBopen.org/svn/GBBopen/trunk/ GBBopen
+  $ svn co http://GBBopen.org/svn/GBBopen/trunk/ gbbopen
 
-A directory tree rooted at the directory named 'GBBopen' will be created. At
+A directory tree rooted at the directory named 'gbbopen' will be created. At
 any later time, you can issue the command:
 
   $ svn update
