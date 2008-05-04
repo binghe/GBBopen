@@ -43,13 +43,11 @@ direct superclass of the <a href="ref-glossary.html#id189">space&nbsp;class</a> 
 <p><span class="fndoclabel">Errors</span> <br />The specified <var>superclass-names</var> do not include at least
 one <a href="ref-glossary.html#id189">space&nbsp;class</a> name.  This error is signaled on class finalization.
 </p>
-<p><table class="tighttop" width="100%"></table>
-<span class="fndoclabel">Detailed syntax</span><br /><img height=14 width=0 src="shim.gif">
+<p><span class="fndoclabel">Detailed syntax</span><br /><img height=14 width=0 src="shim.gif">
 <span 
     style="font-family: sans-serif; font-style: normal"><font size="-1"><font color="#667f66">[Syntax shown in gray is
 not supported in GBBopen Version&nbsp;1.0, but will become
-available in a future release.]</font></font></span></p>
-<table class="tight"><table><tbody><tr>
+available in a future release.]</font></font></span><table class="tighttop"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>slot-specifier</var>&nbsp;::=
 </td><td valign="baseline" colspan="1" align="left"> <var>slot-name</var> |</td></tr>
@@ -60,17 +58,18 @@ available in a future release.]</font></font></span></p>
 <td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code>(</code><var>link-slot-name</var> [[<var>link-slot-option</var>]]<code>)</code> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
-<table class="tight"><table><tbody><tr>
+</p>
+<table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>nonlink-slot-name</var>&nbsp;::= </td><td valign="baseline" colspan="1" align="left"> <var>slot-name</var></td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
-<table class="tight"><table><tbody><tr>
+<table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>link-slot-name</var>&nbsp;::= </td><td valign="baseline" colspan="1" align="left"> <var>slot-name</var></td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
-<table class="tight"><table><tbody><tr>
+<table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>link-slot-option</var>&nbsp;::=
 </td><td valign="baseline" colspan="1" align="left"> <var>slot-option</var> |</td></tr>
@@ -84,7 +83,7 @@ available in a future release.]</font></font></span></p>
 <td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> &#123;<code>:sort-key</code> <var>function</var>&#125; </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
-<table class="tight"><table><tbody><tr>
+<table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>inverse-link-slot-specifier</var>&nbsp;::= </td><td valign="baseline" colspan="1" align="left"> 
 <code>(</code><var>unit-class-name link-slot-name</var> 
@@ -93,7 +92,7 @@ available in a future release.]</font></font></span></p>
 <td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code>:reflexive</code> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
-<table class="tight"><table><tbody><tr>
+<table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>nonlink-slot-option</var>&nbsp;::=
 </td><td valign="baseline" colspan="1" align="left"> <var>slot-option</var> |</td></tr>
@@ -103,7 +102,7 @@ available in a future release.]</font></font></span></p>
 <td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> &#123;<code>:writer</code> <var>writer-function-name</var>&#125;* </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
-<table class="tight"><table><tbody><tr>
+<table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>slot-option</var>&nbsp;::=
 </td><td valign="baseline" colspan="1" align="left"> &#123;<code>:accessor</code> <var>reader-function-name</var>&#125;* |</td></tr>
@@ -119,7 +118,7 @@ available in a future release.]</font></font></span></p>
 <td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> &#123;<code>:type</code> <var>type-specifier</var>&#125; </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
-<table class="tight"><table><tbody><tr>
+<table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>class-option</var>&nbsp;::=
 </td><td valign="baseline" colspan="1" align="left"> <code>(:abstract</code> <var>boolean</var><code>)</code> |</td></tr>
@@ -159,27 +158,27 @@ available in a future release.]</font></font></span></p>
 <td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code>(:retain</code> &#123;<var>boolean</var> | <code>:propagate</code>&#125;<code>)</code> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
-<table class="tight"><table><tbody><tr>
+<table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>initial-space-instance-specifier</var>&nbsp;::=
 </td><td valign="baseline" colspan="1" align="left"> &#123;<var>space-instance-path</var><sup>+</sup> |
 <var>function</var>&#125; </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
-<table class="tight"><table><tbody><tr>
+<table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>dimensional-value-specifier</var>&nbsp;::=
 </td><td valign="baseline" colspan="1" align="left"> <var>incomposite-dv-specifier</var> | <var>composite-dv-specifier</var> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
-<table class="tight"><table><tbody><tr>
+<table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>incomposite-dv-specifier</var>&nbsp;::=
 </td><td valign="baseline" colspan="1" align="left"> <code>(</code><var>dimension-name dimension-value-spec 
 dimension-value-place</var><code>)</code> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
-<table class="tight"><table><tbody><tr>
+<table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>composite-dv-specifier</var>&nbsp;::=
 </td><td valign="baseline" colspan="1" align="left"> <code>(</code><var>dimension-name dimension-value-specifier</var> </td></tr>
@@ -187,7 +186,7 @@ dimension-value-place</var><code>)</code> </td></tr>
 <td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> &nbsp; <var>composite-type dimension-value-place</var><code>)</code> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
-<table class="tight"><table><tbody><tr>
+<table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>composite-type</var>&nbsp;::=
 </td><td valign="baseline" colspan="1" align="left"> <code>:set</code> | <font color="#667f66"><code>:sequence</code></font> | </td></tr>
@@ -197,7 +196,7 @@ dimension-value-place</var><code>)</code> </td></tr>
 <td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <font color="#667f66">&#123;<code>:descending-series</code> <var>ordering-dimension-name</var>&#125;</font> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
-<table class="tight"><table><tbody><tr>
+<table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>dimension-value-specifier</var>&nbsp;::=
 </td><td valign="baseline" colspan="1" align="left"> <var>dimension-value-type</var> | </td></tr>
@@ -212,7 +211,7 @@ dimension-value-place</var><code>)</code> </td></tr>
 [<var>boolean-comparison-type</var>]<code>)</code> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
-<table class="tight"><table><tbody><tr>
+<table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>dimension-value-type</var>&nbsp;::=
 </td><td valign="baseline" colspan="1" align="left"> <var>ordered-dimension-value-type</var> | </td></tr>
@@ -222,25 +221,25 @@ dimension-value-place</var><code>)</code> </td></tr>
 <td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <var>boolean-dimension-value-type</var> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
-<table class="tight"><table><tbody><tr>
+<table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>ordered-dimension-value-type</var>&nbsp;::=
 <a name="id1"></a></td><td valign="baseline" colspan="1" align="left"> <code>:point</code> | <code>:interval</code> | <code>:mixed</code></td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
-<table class="tight"><table><tbody><tr>
+<table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>enumerated-dimension-value-type</var>&nbsp;::=
 <a name="id2"></a></td><td valign="baseline" colspan="1" align="left"> <code>:element</code> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
-<table class="tight"><table><tbody><tr>
+<table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>boolean-dimension-value-type</var>&nbsp;::=
 <a name="id3"></a></td><td valign="baseline" colspan="1" align="left">  <code>:boolean</code></td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
-<table class="tight"><table><tbody><tr>
+<table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>ordered-comparison-type</var>&nbsp;::=
 <a name="id4"></a></td><td valign="baseline" colspan="1" align="left"> <code>number</code> | <code>fixnum</code> |
@@ -249,27 +248,27 @@ dimension-value-place</var><code>)</code> </td></tr>
 <td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code>double-float</code> | <code>long-float</code> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
-<table class="tight"><table><tbody><tr>
+<table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>enumerated-comparison-type</var>&nbsp;::=
 <a name="id5"></a></td><td valign="baseline" colspan="1" align="left"> <code>eq</code> | <code>eql</code> |
 <code>equal</code> | <code>equalp</code> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
-<table class="tight"><table><tbody><tr>
+<table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>boolean-comparison-type</var>&nbsp;::=
 </td><td valign="baseline" colspan="1" align="left"> <code>t</code> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
-<table class="tight"><table><tbody><tr>
+<table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>dimension-value-place</var>&nbsp;::=
 </td><td valign="baseline" colspan="1" align="left"> &#123;<var>slot-name</var> [<var>slot-name</var>]&#125; | 
 &#123;<var>function</var> [<var>slot-name</var>]&#125; </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
-<table class="tight"><table><tbody><tr>
+<table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>direct-slots-specifier</var>&nbsp;::= </td><td valign="baseline" colspan="1" align="left"> <code>nil</code> | <code>t</code> |
 <var>included-slot-name</var>* |</td></tr>

@@ -39,16 +39,15 @@ applied after pattern-matching tests occur
 <a name="id1"></a><p><span class="fndoclabel">Returns</span> <br />A newly consed list of <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a> that satisfy
 the specified pattern and predicate filters.
 </p>
-<p><table class="tighttop" width="100%"></table>
-<span class="fndoclabel">Detailed syntax</span><br /></p>
-<table class="tight"><table><tbody><tr>
+<p><span class="fndoclabel">Detailed syntax</span><table class="tighttop"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>pattern</var>&nbsp;::=
 <a name="id2"></a></td><td valign="baseline" colspan="1" align="left"> <var>subpattern</var> | <code>t</code> <p><span class="fndoclabel">Terms</span></p>
 </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
-<table class="tight"><table><tbody><tr>
+</p>
+<table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>subpattern</var>&nbsp;::= 
 <a name="id3"></a></td><td valign="baseline" colspan="1" align="left"> <var>pattern-element</var> |</td></tr>
@@ -60,7 +59,7 @@ the specified pattern and predicate filters.
 <td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code>(or</code> <var>subpattern</var>*<code>)</code></td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
-<table class="tight"><table><tbody><tr>
+<table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>pattern-element</var>&nbsp;::= </td><td valign="baseline" colspan="1" align="left"> <code>(</code><var>pattern-op dimension-names</var>
 <var>pattern-values</var> <var>option</var>*<code>)</code> | </td></tr>
@@ -69,7 +68,7 @@ the specified pattern and predicate filters.
 <var>option</var>*<code>)</code> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
-<table class="tight"><table><tbody><tr>
+<table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>pattern-op</var>&nbsp;::= </td><td valign="baseline" colspan="1" align="left"> <var>ordered-dimension-pattern-op</var> | </td></tr>
 <tr>
@@ -78,7 +77,7 @@ the specified pattern and predicate filters.
 <td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <var>boolean-dimension-binary-pattern-op</var> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
-<table class="tight"><table><tbody><tr>
+<table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>ordered-dimension-pattern-op</var>&nbsp;::=
 <a name="id4"></a></td><td valign="baseline" colspan="1" align="left"> <var>ordered-dimension-any-numeric-value-pattern-op</var> | </td></tr>
@@ -86,7 +85,7 @@ the specified pattern and predicate filters.
 <td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <var>ordered-dimension-explicit-type-pattern-op</var> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
-<table class="tight"><table><tbody><tr>
+<table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>ordered-dimension-explicit-type-pattern-op</var>&nbsp;::=
 <a name="id5"></a></td><td valign="baseline" colspan="1" align="left"> <var>ordered-dimension-fixnum-pattern-op</var> | </td></tr>
@@ -100,7 +99,7 @@ the specified pattern and predicate filters.
 <td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <var>ordered-dimension-long-float-pattern-op</var> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
-<table class="tight"><table><tbody><tr>
+<table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>ordered-dimension-any-numeric-value-pattern-op</var>&nbsp;::=
 <a name="id6"></a></td><td valign="baseline" colspan="1" align="left"> <code><i>&lt;</i></code> | <code><i>&lt;</i>=</code> | <code><i>&gt;</i>=</code> | 
@@ -110,7 +109,7 @@ the specified pattern and predicate filters.
 <code>starts</code> | <code>ends</code> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
-<table class="tight"><table><tbody><tr>
+<table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>ordered-dimension-fixnum-pattern-op</var>&nbsp;::=
 <a name="id7"></a></td><td valign="baseline" colspan="1" align="left"> <code><i>&lt;</i>&#38;</code> | <code><i>&lt;</i>=&#38;</code> | <code><i>&gt;</i>=&#38;</code> | 
@@ -120,7 +119,7 @@ the specified pattern and predicate filters.
 <code>starts&#38;</code> | <code>ends&#38;</code> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
-<table class="tight"><table><tbody><tr>
+<table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>ordered-dimension-short-float-pattern-op</var>&nbsp;::=
 <a name="id8"></a></td><td valign="baseline" colspan="1" align="left"> <code><i>&lt;</i>&#36;&#38;</code> | <code><i>&lt;</i>=&#36;&#38;</code> | <code><i>&gt;</i>=&#36;&#38;</code> | 
@@ -132,7 +131,7 @@ the specified pattern and predicate filters.
 <td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code>starts&#36;&#38;</code> | <code>ends&#36;&#38;</code> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
-<table class="tight"><table><tbody><tr>
+<table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>ordered-dimension-single-float-pattern-op</var>&nbsp;::=
 <a name="id9"></a></td><td valign="baseline" colspan="1" align="left"> <code><i>&lt;</i>&#36;</code> | <code><i>&lt;</i>=&#36;</code> | <code><i>&gt;</i>=&#36;</code> | 
@@ -144,7 +143,7 @@ the specified pattern and predicate filters.
 <td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code>starts&#36;</code> | <code>ends&#36;</code> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
-<table class="tight"><table><tbody><tr>
+<table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>ordered-dimension-double-float-pattern-op</var>&nbsp;::=
 <a name="id10"></a></td><td valign="baseline" colspan="1" align="left"> <code><i>&lt;</i>&#36;&#36;</code> | <code><i>&lt;</i>=&#36;&#36;</code> | <code><i>&gt;</i>=&#36;&#36;</code> | 
@@ -156,7 +155,7 @@ the specified pattern and predicate filters.
 <td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code>starts&#36;&#36;</code> | <code>ends&#36;&#36;</code> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
-<table class="tight"><table><tbody><tr>
+<table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>ordered-dimension-long-float-pattern-op</var>&nbsp;::=
 <a name="id11"></a></td><td valign="baseline" colspan="1" align="left"> <code><i>&lt;</i>&#36;&#36;&#36;</code> | <code><i>&lt;</i>=&#36;&#36;&#36;</code> |
@@ -170,38 +169,38 @@ the specified pattern and predicate filters.
 <td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code>starts&#36;&#36;&#36;</code> | <code>ends&#36;&#36;&#36;</code> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
-<table class="tight"><table><tbody><tr>
+<table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>enumerated-dimension-pattern-op</var>&nbsp;::= 
 <a name="id12"></a></td><td valign="baseline" colspan="1" align="left"> <code>is</code> | <var>enumerated-dimension-explicit-test-pattern-op</var> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
-<table class="tight"><table><tbody><tr>
+<table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>enumerated-dimension-explicit-test-pattern-op</var>&nbsp;::= 
 <a name="id13"></a></td><td valign="baseline" colspan="1" align="left"> <code>is-eq</code> | <code>is-eql</code> | <code>is-equal</code> |
 <code>is-equalp</code> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
-<table class="tight"><table><tbody><tr>
+<table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>boolean-dimension-binary-pattern-op</var>&nbsp;::= 
 <a name="id14"></a></td><td valign="baseline" colspan="1" align="left"> <code>eqv</code> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
-<table class="tight"><table><tbody><tr>
+<table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>boolean-dimension-unary-pattern-op</var>&nbsp;::= 
 <a name="id15"></a></td><td valign="baseline" colspan="1" align="left"> <code>true</code> | <code>false</code> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
-<table class="tight"><table><tbody><tr>
+<table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>dimension-names</var>&nbsp;::= </td><td valign="baseline" colspan="1" align="left"> <var>dimension-name</var> | 
 <code>(</code><var>dimension-name</var><sup>+</sup><code>)</code> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
-<table class="tight"><table><tbody><tr>
+<table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>pattern-values</var>&nbsp;::= 
 <a name="id16"></a></td><td valign="baseline" colspan="1" align="left"> <var>pattern-value</var> | </td></tr>
@@ -214,21 +213,21 @@ the specified pattern and predicate filters.
 <td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code>&#35;(</code><var>pattern-value</var><sup>+</sup><code>)</code> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
-<table class="tight"><table><tbody><tr>
+<table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>pattern-value</var>&nbsp;::= 
 <a name="id17"></a></td><td valign="baseline" colspan="1" align="left"> <var>point</var> | <var>interval</var> |
 <var>element</var> | <var>set</var> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
-<table class="tight"><table><tbody><tr>
+<table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>interval</var>&nbsp;::= </td><td valign="baseline" colspan="1" align="left"> <code>(</code><var>start end</var><code>)</code> | 
 <code>(</code><var>start</var> <code>.</code> <var>end</var><code>)</code> | 
 <code>&#35;(</code><var>start end</var><code>)</code> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
-<table class="tight"><table><tbody><tr>
+<table class="tighttop"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>point</var>
 <a name="id18"></a></td><td valign="baseline" colspan="1" align="left"> </td><td valign="baseline" colspan="1" align="left"> A number, <code>infinity</code>, or <code>-infinity</code></td></tr>

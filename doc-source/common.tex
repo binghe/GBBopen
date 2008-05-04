@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/common.tex *-*
-%% *-* Last-Edit: Sat May  3 23:59:04 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Sun May  4 06:13:51 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -663,7 +663,6 @@
 
 \T\begin{ifhtml}
 \newcommand{\separ}{\par\endpar}
-\newcommand{\emptytable}{\xml{table class="tighttop" width="100%"}\xml{/table}}
 
 \newcommand{\fnpurpose}{\par
   \xml{span class="fndoclabel"}Purpose\xml{/span} \\}
@@ -688,9 +687,9 @@
   \xml{span class="fndoclabel"}Events\xml{/span} \\} 
 \newcommand{\fnerrors}{\par
   \xml{span class="fndoclabel"}Errors\xml{/span} \\} 
-\newcommand{\fndsyntax}{\emptytable{}
-  \xml{span class="fndoclabel"}Detailed syntax\xml{/span}\\}  
-\newcommand{\fndsyntaxwgray}{\emptytable{}
+\newcommand{\fndsyntax}{\par
+  \xml{span class="fndoclabel"}Detailed syntax\xml{/span}}  
+\newcommand{\fndsyntaxwgray}{\par
   \xml{span class="fndoclabel"}Detailed syntax\xml{/span}\\
   \xml{img height=14 width=0 src="shim.gif"}
   \textsf{\small\textcolor{darkergray}{[Syntax shown in gray is
@@ -1111,12 +1110,12 @@
   (hyperlatex-format-endpar)
   (hyperlatex-blk)
   ;; Add "tight" class DDC
+  ; (hyperlatex-gen (hyperlatex-get-attributes "table"))
   (hyperlatex-gen (concat (hyperlatex-get-attributes "table")
-                          (if tabletop " class=\"tight\""
+                          (if tabletop " class=\"tighttop\""
                                        " class=\"tight\"")))
   (setq tabletop nil)
   ;; End "tight" class mod DDC
-  (hyperlatex-gen (hyperlatex-get-attributes "table"))
   (hyperlatex-gen (hyperlatex-get-attributes "tbody"))
   (hyperlatex-gen "tr" "\n")
   ;; Do not put "\n" after <td> because it disturbs paragraph recognition.
