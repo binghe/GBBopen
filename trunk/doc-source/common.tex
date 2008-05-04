@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/common.tex *-*
-%% *-* Last-Edit: Fri May  2 11:45:32 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Sat May  3 23:59:04 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -257,14 +257,29 @@
 
   \newcommand{\HlxAddressDatetime}{}
 
-  %% Add logo to Navigation Panel
+  %% Rename frames as "left" and "right"):
+  \renewcommand{\HlxFramesDescription}[2]{
+  \xml{frameset rows="100%" cols="25%,75%"}
+    \xml{frame src="#1_toc#2" name="left" marginwidth="5"
+      marginheight="5" scrolling="auto" border="0"}
+    \xml{frame src="#1_0#2" name="right" marginwidth="20" 
+      marginheight="20"}
+    \xml{noframes}
+    This document uses frames to assist navigation.
+    Your browser is currently not supporting the use of frames, but you 
+    may still access the 
+    \xml{a target="_top" href="#1_0#2"}non-framed version\xml{/a}.
+    \xml{/noframes}
+    \xml{/frameset}}
+  
+  %% Add logo to Navigation Panel (and rename frame as "left"):
   \renewcommand{\HlxFramesNavigation}{%
     \HlxTocName
     \htmlpanel{0}%
     \HlxSection{-5}{}*{\xml{img align="left" src="GBBopen-logo-sm.png"}%
       \xml{br clear="both"}%
       {\large \navigationname}}%
-    \xml{base target="main"}%
+    % \xml{base target="right"}% IE requires base to be in <HEAD>
     \htmlmenu[0]{1}
     \renewcommand{\HlxAddressDatetime}{,\xml{nobr}~\today{}\xml{/nobr}
       \xml{nobr}\hhmm~\timezone\xml{/nobr}}
@@ -906,6 +921,13 @@
     (if hyperlatex-final-pass
 	(let ((start (point)))
 	  (insert "\\HlxStyleSheet{}\n\\HlxMetaFields{}\n")
+          (let ((nav-string "\274img"))
+            ;; add base to the Navigation (TOC) section:
+            (if (equal (and (>= (length head) 4)
+                            (substring head 0 4))
+                            nav-string)
+               ;; IE requires base to be in <HEAD>
+               (hyperlatex-gen "base target=\"right\"\n")))
 	  (hyperlatex-format-region start (point))))
     (hyperlatex-gen "/head" "\n")
     (hyperlatex-gen (hyperlatex-get-attributes "body") "\n"))
