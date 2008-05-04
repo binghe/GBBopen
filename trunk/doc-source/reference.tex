@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Sat May  3 06:11:21 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Sun May  4 06:02:59 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -749,15 +749,15 @@ reload all subsequent files and \glref{modules}\\[2pt]
 }
 
 \newcommand{\patternterms}{%
-  \begin{tabular}{@{}l@{}l@{}l@{}}
-  \var{point\/}
-  \codeindexqualit{infinity}{interval end value}%
-  \codeindexqualit{-infinity}{interval start value}%
+\begin{tabular}{@{}l@{}l@{}l@{}}
+\var{point\/}
+\codeindexqualit{infinity}{interval end value}%
+\codeindexqualit{-infinity}{interval start value}%
  & & A number, \code{infinity}, or \code{-infinity}\\
-  \var{start\/} & & A number or \code{infinity}\\
-  \var{end\/} & & A number or \code{-infinity}\\
-  \var{element\/} & ~~ & An object\\
-  \end{tabular}
+\var{start\/} & & A number or \code{infinity}\\
+\var{end\/} & & A number or \code{-infinity}\\
+\var{element\/} & ~~ & An object\\
+\end{tabular}
 }
 
 %% ---------------------------------------------------------------------------
@@ -1048,7 +1048,7 @@ A \var{dimension-value-place\/} with two
 \index{*@\code{*} (path-expression match character)}%
 \index{\^@\code{\^} (path-expression match character)}%
 \index{path!expression!match characters}%
-
+%
 \begin{tabular}{@{}l@{}c@{}l@{}l@{}}
    & \code{=} & & matches one occurrence in a 
       \glref{space-instance\/} path \\ 
@@ -1522,6 +1522,7 @@ included in the preferred browser setting.
 \end{args}
 
 \fndsyntax
+\W\supp\tabletop
 \begin{tabular}{@{~}l@{~}l}
 \mbox{\var{option\/} ::=}
   & \code{:add-to-native-help} \vbar{} \code{:no-help} \vbar{}
@@ -2002,6 +2003,7 @@ default values for the command.
 \glref{required-module} order in a previously defined \glref{module}.
 
 \fndsyntax
+\W\supp\tabletop
 \begin{tabular}{@{~}l@{~}l}
 \mbox{\var{module-option\/} ::=}
   & \code{(:requires} \var{module-name\/}\superstar\code{)} \vbar{} \\
@@ -3246,6 +3248,7 @@ direct superclass of the \glref{class} \var{class-name\/}
 \fnreturns The newly defined \glref{class} object.
 
 \fndsyntax
+\W\supp\tabletop
 \begin{tabular}{@{~}l@{~}l}
 \mbox{\var{slot-specifier\/} ::=}
  & \var{slot-name\/} \vbar \\
@@ -5258,7 +5261,7 @@ declarations.
 
 The names of the declared-numeric macros include these ``type-indicator''
 characters:
-
+%
 \begin{tabular}{l@{}l@{}l}
   \textbf{Characters} & ~~~ & \textbf{Declared Type} \\
   \&     & & \code{fixnum} \\
@@ -5269,6 +5272,7 @@ characters:
 \end{tabular}
 
 Thus, the declared-numeric \code{+} macros are:
+%
 \begin{tabular}{l@{}l@{}l}
   +\&     & ~~~  & \code{fixnum} addition \\
   +\$\&   & & \code{short-float} addition \\
@@ -5355,8 +5359,8 @@ These \glref{fixnum} numeric-operation macros are defined in the
 
 \code{%
   \begin{tabular}{l@{}l@{}l@{}l@{}l}
-    \textbf{\small Macro} & ~~~ & \textbf{\small Operator} 
-    & ~~~ & \textbf{\small Example} \\ \hline
+    \textbf{Macro} & ~~~ & \textbf{Operator}  & ~~~ & 
+    \textbf{Example} \\ \hline
     \&       & & the fixnum     & & (\& x)\\
     +\&      & & +              & & (+\& x y z)\\
     -\&      & & -              & & (-\& x y z)\\
@@ -5451,8 +5455,8 @@ These short-float numeric operation macros are defined in the
 
 \code{%
   \begin{tabular}{l@{}l@{}l@{}l@{}l}
-    \textbf{\small Macro} & ~~~ & \textbf{\small Operator} 
-    & ~~~ & \textbf{\small Example} \\ \hline
+    \textbf{Macro} & ~~~ & \textbf{Operator}  & ~~~ & 
+    \textbf{Example} \\ \hline
     \$\&       & & the short-float & & (\$\& x)\\
     +\$\&      & & +              & & (+\$\& x y z)\\
     -\$\&      & & -              & & (-\$\& x y z)\\
@@ -5547,8 +5551,8 @@ These single-float numeric operation macros are defined in the
 
 \code{%
   \begin{tabular}{l@{}l@{}l@{}l@{}l}
-    \textbf{\small Macro} & ~~~ & \textbf{\small Operator} 
-    & ~~~ & \textbf{\small Example} \\ \hline
+    \textbf{Macro} & ~~~ & \textbf{Operator}  & ~~~ & 
+    \textbf{Example} \\ \hline
     \$       & & the single-float & & (\$ x)\\
     +\$      & & +              & & (+\$ x y z)\\
     -\$      & & -              & & (-\$ x y z)\\
@@ -5643,8 +5647,8 @@ These double-float numeric operation macros are defined in the
 
 \code{%
   \begin{tabular}{l@{}l@{}l@{}l@{}l}
-    \textbf{\small Macro} & ~~~ & \textbf{\small Operator} 
-    & ~~~ & \textbf{\small Example} \\ \hline
+    \textbf{Macro} & ~~~ & \textbf{Operator}  & ~~~ & 
+    \textbf{Example} \\ \hline
     \$\$       & & the double-float & & (\$\$ x)\\
     +\$\$      & & +              & & (+\$\$ x y z)\\
     -\$\$      & & -              & & (-\$\$ x y z)\\
@@ -5739,8 +5743,8 @@ These long-float numeric operation macros are defined in the
 
 \code{%
   \begin{tabular}{l@{}l@{}l@{}l@{}l}
-    \textbf{\small Macro} & ~~~ & \textbf{\small Operator} 
-    & ~~~ & \textbf{\small Example} \\ \hline
+    \textbf{Macro} & ~~~ & \textbf{Operator}  & ~~~ & 
+    \textbf{Example} \\ \hline
     \$\$\$       & & the long-float & & (\$\$\$ x)\\
     +\$\$\$      & & +              & & (+\$\$\$ x y z)\\
     -\$\$\$      & & -              & & (-\$\$\$ x y z)\\
@@ -7312,6 +7316,7 @@ direct superclass of the \glref{unit~class} \var{unit-class-name\/}
 one \glref{unit~class} name.  This error is signaled on class finalization.
 
 \fndsyntaxwgray
+\W\supp\tabletop
 \begin{tabular}{@{~}l@{~}l}
 \mbox{\var{slot-specifier\/} ::=}
  & \var{slot-name\/} \vbar \\
@@ -7680,6 +7685,7 @@ Print information about a \glref{unit~class}.
 \end{args}
 
 \fndsyntax
+\W\supp\tabletop
 \unitclassesspec
 \subclassingspec
 
@@ -9254,6 +9260,7 @@ regular expression
 \end{args}
 
 \fndsyntax
+\W\supp\tabletop
 \eventclassspec
 \subeventingspec
 \syntaxsep
@@ -9338,6 +9345,7 @@ direct superclass of the \glref{event~class} \var{event-class-name\/}
 \fnreturns The newly defined \glref{event~class} object. 
 
 \fndsyntax
+\W\supp\tabletop
 \begin{tabular}{@{~}l@{~}l}
 \mbox{\var{slot-specifier\/} ::=}
  & \var{slot-name\/} \vbar{}
@@ -9494,6 +9502,7 @@ expression (default is \code{(*)})
 \end{args}
 
 \fndsyntax
+\W\supp\tabletop
 \eventclassspec
 \subeventingspec
 \syntaxsep
@@ -9573,6 +9582,7 @@ instance-event
 \end{args}
 
 \fndsyntax
+\W\supp\tabletop
 \eventclassspec
 \subeventingspec
 \syntaxsep
@@ -9640,6 +9650,7 @@ Disable all event printing:
 \end{args}
 
 \fndsyntax
+\W\supp\tabletop
 \eventclassspec
 \subeventingspec
 \syntaxsep
@@ -9751,6 +9762,7 @@ to be invoked when \code{create-instance-event} is signaled on a
 \end{args}
 
 \fndsyntax
+\W\supp\tabletop
 \eventclassspec
 \subeventingspec
 \syntaxsep
@@ -9822,6 +9834,7 @@ its subclasses:
 \end{args}
 
 \fndsyntax
+\W\supp\tabletop
 \eventclassspec
 \subeventingspec
 \syntaxsep
@@ -9893,6 +9906,7 @@ functions to be invoked when \code{create-instance-event} is signaled on a
 \end{args}
 
 \fndsyntax
+\W\supp\tabletop
 \eventclassspec
 \subeventingspec
 \syntaxsep
@@ -10076,6 +10090,7 @@ of \textbf{\glref{standard-gbbopen-instance}}.
 \end{args}
 
 \fndsyntax
+\W\supp\tabletop
 \eventclassspec
 \subeventingspec
 \syntaxsep
@@ -10514,6 +10529,7 @@ direct superclass of the \glref{space~class} \var{space-class-name\/}
 one \glref{space~class} name.  This error is signaled on class finalization.
 
 \fndsyntaxwgray
+\W\supp\tabletop
 \begin{tabular}{@{~}l@{~}l}
 \mbox{\var{slot-specifier\/} ::=}
  & \var{slot-name\/} \vbar \\
@@ -10711,6 +10727,7 @@ If \var{disable-events} is \nil, the following events may be signaled as
 \end{tightitemize}
 
 \fndsyntax
+\W\supp\tabletop
 \unitclassesspec
 
 \fndescription Calling \textbf{delete-blackboard-repository} deletes all
@@ -11258,6 +11275,7 @@ following sequence:
 \end{tightenumerate}
 
 \fndsyntax
+\W\supp\tabletop
 \begin{tabular}{@{~}l@{~}l}
 \mbox{\var{allowed-unit-classes\/} ::=} \var{unit-classes-specifier\/}
   \vbar{} \nil\\
@@ -11770,6 +11788,7 @@ nil
 \end{args}
 
 \fndsyntax
+\W\supp\tabletop
 \unitclassesspec
 \subclassingspec
 
@@ -11870,14 +11889,19 @@ optionally selected by a \glref{retrieval~pattern}.
 \fndsyntax
 \index{pattern!specification!map-instances-on-space-instances@\textbf{map-instances-on-instances}}%
 \index{map-instances-on-space-instances@\textbf{map-instances-on-space-instances}!pattern specification}%
+%
+\W\supp\tabletop
 \unitclassesspec
 \subclassingspec
 \syntaxsep
+%
 \index{pattern!:all@\code{:all}}%
 \index{:all@\code{:all} pattern|itidx}%
+%
 \patternspec{\vbar{} \code{:all}}
 
 \fnterms
+\W\supp\tabletop
 \patternterms
 
 \fndescription The iteration is performed only once for each selected
@@ -11974,6 +11998,7 @@ have a belief value of less than 0.5:
 \end{args}
 
 \fndsyntax
+\W\supp\tabletop
 \unitclassesspec
 \subclassingspec
 
@@ -12034,9 +12059,11 @@ applied after pattern-matching tests occur
 the specified pattern and predicate filters.
 
 \fndsyntax
+\W\supp\tabletop
 \patternspec
 
 \fnterms
+\W\supp\tabletop
 \patternterms
 
 \fndescription If a \glref{unit~instance} appears more than once in
@@ -12100,6 +12127,7 @@ and \code{=\$\$\$} and \code{within\&}, \code{within\$\&}, \code{within\$},
 \var{name\/} of the specified \var{classes\/} if any exist; \nil{} otherwise.
 
 \fndsyntax
+\W\supp\tabletop
 \unitclassspec
 \subclassingspec
 
@@ -12169,6 +12197,7 @@ Find all \glref{unit~instances} (of any \glref{unit~class}) that are named
 \nil{} otherwise.
 
 \fndsyntax
+\W\supp\tabletop
 \unitclassspec
 \subclassingspec
 
@@ -12238,12 +12267,9 @@ which sets \code{=} to be the found \glref{unit~instance}.
 \arg[space-instances] A \glref{space~instance}, a list of
   \glref{space~instances}, a \glref{space-instance~path} regular expression,
   or \code{t} (indicating all \glref{space~instances})
-
 \arg[pattern] A \glref{retrieval~pattern} (see below)
-
 \arg[filter-before] A single-argument predicate to be applied before
   pattern-matching tests occur
-
 \arg[filter-after] A single-argument predicate to be applied after
   pattern-matching tests occur
 \end{args}
@@ -12256,6 +12282,7 @@ A newly consed list of \glref{unit~instances} specified by
 satisfy the specified \var{pattern\/} and any predicate filters.
 
 \fndsyntax
+\W\supp\tabletop
 \unitclassesspec
 \subclassingspec
 \syntaxsep
@@ -12264,6 +12291,7 @@ satisfy the specified \var{pattern\/} and any predicate filters.
 \patternspec{\vbar{} \code{:all}}
 
 \fnterms
+\W\supp\tabletop
 \patternterms
 
 \fndescription The \var{pattern\/} \code{t} matches all
@@ -12418,6 +12446,7 @@ A newly consed list of all \glref{unit~instances} of the
 whether or not they reside on any \glref{space~instance}.
 
 \fndsyntax
+\W\supp\tabletop
 \unitclassesspec
 \subclassingspec
 
@@ -12477,6 +12506,7 @@ specified \glref{unit~classes}.
 \end{args}
 
 \fndsyntax
+\W\supp\tabletop
 \unitclassesspec
 \subclassingspec
 
@@ -12571,8 +12601,11 @@ deleting all \glref{space~instances} without violating this rule.
 \end{args}
 
 \fndsyntax
+%
 \index{pattern!specification!map-instances-on-space-instances@\textbf{map-instances-on-instances}}%
 \index{map-instances-on-space-instances@\textbf{map-instances-on-space-instances}!pattern specification}%
+%
+\W\supp\tabletop
 \unitclassesspec
 \subclassingspec
 \syntaxsep
@@ -12581,6 +12614,7 @@ deleting all \glref{space~instances} without violating this rule.
 \patternspec{\vbar{} \code{:all}}
 
 \fnterms
+\W\supp\tabletop
 \patternterms
 
 \fndescription The \var{function\/} will be applied only once to each
@@ -12677,6 +12711,7 @@ of the specified \glref{unit~classes}, in sorted order.
 \end{args}
 
 \fndsyntax
+\W\supp\tabletop
 \unitclassesspec
 \subclassingspec
 
@@ -14687,6 +14722,7 @@ not evaluated)
 \fnreturns The \glref{unit~instance} representing the \glref{KS}
 
 \fndsyntax
+\W\supp\tabletop
 \begin{tabular}{@{~}l@{~}l}
 \mbox{\var{event-specification\/} ::=}
   & \code{(}\var{event-signature\/}\superstar\code{)} \\
@@ -14899,6 +14935,7 @@ direct superclass of the \glref{ks~class} \var{ks-class-name\/}
 one \glref{ks~class} name.  This error is signaled on class finalization.
 
 \fndsyntaxwgray
+\W\supp\tabletop
 \begin{tabular}{@{~}l@{~}l}
 \mbox{\var{slot-specifier\/} ::=}
  & \var{slot-name\/} \vbar \\
@@ -15090,6 +15127,7 @@ direct superclass of the \glref{ksa~class} \var{ksa-class-name\/}
 one \glref{ksa~class} name.  This error is signaled on class finalization.
 
 \fndsyntax
+\W\supp\tabletop
 \begin{tabular}{@{~}l@{~}l}
 \mbox{\var{slot-specifier\/} ::=}
  & \var{slot-name\/} \vbar \\
@@ -15349,6 +15387,7 @@ KS: start-control-shell-ks
 \fnreturns The \glref{unit~instance} representing the \glref{KS}
 
 \fndsyntax
+\W\supp\tabletop
 \begin{tabular}{@{~}l@{~}l}
 \mbox{\var{event-specification\/} ::=}
   & \code{(}\var{event-signature\/}\superstar\code{)} \\

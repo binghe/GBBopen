@@ -34,9 +34,7 @@ module-option</var>*</td><td valign="baseline" align="right">[<i>Macro</i>]
 <a href="ref-glossary.html#gl:required-module">required-module</a> order that conflicts with the fully expanded
 <a href="ref-glossary.html#gl:required-module">required-module</a> order in a previously defined <a href="ref-glossary.html#gl:module">module</a>.
 </p>
-<p><table class="tighttop" width="100%"></table>
-<span class="fndoclabel">Detailed syntax</span><br /></p>
-<table class="tight"><table><tbody><tr>
+<p><span class="fndoclabel">Detailed syntax</span><table class="tighttop"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>module-option</var>&nbsp;::=
 </td><td valign="baseline" colspan="1" align="left"> <code>(:requires</code> <var>module-name</var>*<code>)</code> | </td></tr>
@@ -46,13 +44,14 @@ module-option</var>*</td><td valign="baseline" align="right">[<i>Macro</i>]
 <td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code>(:files</code> <var>file-specifier</var>*<code>)</code></td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
-<table class="tight"><table><tbody><tr>
+</p>
+<table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>directory-specifier</var>&nbsp;::=
 </td><td valign="baseline" colspan="1" align="left"> <var>root-or-relative-directory subdirectory</var>* </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
-<table class="tight"><table><tbody><tr>
+<table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>file-specifier</var>&nbsp;::= 
 </td><td valign="baseline" colspan="1" align="left"> <var>file-name</var> | </td></tr>
@@ -60,7 +59,7 @@ module-option</var>*</td><td valign="baseline" align="right">[<i>Macro</i>]
 <td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code>(</code><var>file-name file-option</var>*<code>)</code> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
-<table class="tight"><table><tbody><tr>
+<table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>file-option</var>&nbsp;::= </td><td valign="baseline" colspan="1" align="left"> <code>:recompile</code> | 
 <code>:reload</code> | <code>:source</code> | 
@@ -105,7 +104,7 @@ the files specified for this <a href="ref-glossary.html#gl:module">module</a>).
 </p>
 <p><var>File-options</var> have the following effects: 
 </p>
-<table class="tight"><table><tbody><tr>
+<table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <code>:forces-recompile</code>&nbsp;&nbsp;&nbsp; </td><td valign="baseline" colspan="1" align="left"> If the file has changed, recompile and
 reload all subsequent files and <a href="ref-glossary.html#gl:modules">modules</a></td></tr>
