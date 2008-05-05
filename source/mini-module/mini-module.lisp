@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/mini-module/mini-module.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Apr 28 10:59:17 2008 *-*
+;;;; *-* Last-Edit: Mon May  5 04:07:32 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -758,15 +758,22 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun determine-modules (module-names &optional skip-undefined-modules-p)
-  (let ((result nil))
+  (let ((result nil)
+        (in-process nil))
     (labels ((maybe-add-module (name)
                (let ((module (get-module name (not skip-undefined-modules-p))))
                  (when module
+                   (when (member name in-process :test #'eq)
+                     (error "Circularity in :requires option:~
+                             ~%~3t~{~s -> ~}~s"
+                            (reverse in-process) name))
+                   (push name in-process)
                    (dolist (name (mm-module.requires module))
                      (maybe-add-module name))
-                   (pushnew module result :test #'eq :key #'mm-module.name)))))
-      (dolist (name module-names)
-        (maybe-add-module name)))
+                   (pushnew module result :test #'eq :key #'mm-module.name)
+                   (setf in-process (delete name in-process :test #'eq))))))
+      (dolist (module-name module-names)
+        (maybe-add-module module-name)))
     ;; Maintain precedence order...
     (nreverse result)))
 
@@ -788,18 +795,18 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun check-requires-ordering (new-module-name new-module-requires)
-  ;; Require `new-module-requires' to expand into a complete module
-  ;; :requires list that is compatible with all existing module definitions.
-  ;; This requirement ensures that module files will not be recompiled
-  ;; solely due to a different relative ordering among defined modules.
-  (let ((new-requires-list (determine-modules new-module-requires 't)))
+(defun check-requires-ordering (module-name)
+  ;; Check that the :requires list of `module-name' is compatible with all
+  ;; existing module definitions.  This requirement ensures that module files
+  ;; will not be recompiled solely due to a different relative ordering among
+  ;; defined modules.
+  (let ((module-requires-list (determine-modules (list module-name) 't)))
     (maphash
      #'(lambda (name module)
-         (unless (eq name new-module-name)
-           (let ((requires-list (determine-modules
-                                 (mm-module.requires module) 't)))
-             (unless (compatible-ordering-p new-requires-list requires-list)
+         (unless (eq name module-name)
+           (let ((requires-list 
+                  (determine-modules (mm-module.requires module) 't)))
+             (unless (compatible-ordering-p module-requires-list requires-list)
                ;; TODO: Someday add a wizard to suggest a compatible
                ;;       :requires list for the new module...
                (error "Module ~s is being defined with a fully expanded ~
@@ -807,23 +814,25 @@
                        with the fully expanded :requires order: ~:@_~s~
                        ~:@_of the defined module ~s. ~:@_The :requires ~
                        value that was specified for module ~s was: ~:@_~s."
-                      new-module-name
-                      (mapcar #'mm-module.name new-requires-list)
+                      module-name
+                      (mapcar #'mm-module.name module-requires-list)
                       (mapcar #'mm-module.name requires-list)
                       name
-                      new-module-name
-                      new-module-requires)))))
+                      module-name
+                      (mapcar #'mm-module.name
+                              (mm-module.requires 
+                               (get-module module-name t))))))))
      *mm-modules*)))
 
 ;;; ---------------------------------------------------------------------------
 
 (defun check-all-module-requires-orderings (&key module-names silent)
-  (maphash
-   #'(lambda (name module)
-       (when (or (not module-names)
-                 (member name module-names :test #'eq))
-         (check-requires-ordering name (mm-module.requires module))))
-   *mm-modules*)
+  (maphash #'(lambda (name module)
+               (declare (ignore module))
+               (when (or (not module-names)
+                         (member name module-names :test #'eq))
+                 (check-requires-ordering name)))
+           *mm-modules*)
   (unless silent
     (format t "~&;; The :requires option in all module definitions are ~
                     consistent.~%")))
@@ -831,10 +840,11 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun ensure-module (name directory subdirectories requires files after-form)
+  (unless (every #'keywordp requires)
+    (error "The ~s option for module ~s contains a non-keyword module name."
+           (cons ':requires requires)
+           name))
   (let ((existing-module (gethash name *mm-modules*)))
-    (if *skip-requires-ordering-check*
-        (check-requires-ordering name requires)
-        (push name *deferred-requires-ordering-check-module-names*))
     (setf (gethash name *mm-modules*)
           (make-mm-module 
            :name name 
@@ -848,7 +858,11 @@
                         ;; reload them all...
                         (equal files (mm-module.files existing-module)))
                (mm-module.files-loaded existing-module))
-           :after-form after-form)))
+             :after-form after-form)))
+  ;; Check requires ordering for consistency with other modules:
+  (if *skip-requires-ordering-check*
+      (push name *deferred-requires-ordering-check-module-names*)
+      (check-requires-ordering name))
   ;; Add an ADSF component definition, if gbbopen.asd has been loaded:
   (when (fboundp 'mm-component-defsystem)
     (funcall 'mm-component-defsystem name))

@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Sun May  4 06:02:59 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Mon May  5 04:13:55 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -1998,7 +1998,11 @@ default values for the command.
 \arg[module-options] See below
 \end{args}
 
-\fnerrors The \code{:requires} module option specifies a fully expanded
+\fnerrors 
+The \code{:requires} module option specifies a fully expanded
+\glref{required-module} order that contains a circularity.
+
+The \code{:requires} module option specifies a fully expanded
 \glref{required-module} order that conflicts with the fully expanded
 \glref{required-module} order in a previously defined \glref{module}.
 
