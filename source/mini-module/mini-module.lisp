@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/mini-module/mini-module.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon May  5 04:07:32 2008 *-*
+;;;; *-* Last-Edit: Mon May  5 10:48:44 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -562,45 +562,57 @@
                 mm-module.subdirectories))
 
 (defun compute-relative-directory (name subdirectories compiled?)
-  (cond
-   ((null name) nil)
-   ;; `Name' can be a pathname if a *load-truename*-relative :directory
-   ;; option was used in define-module:
-   ((pathnamep name)
-    (make-and-check-directory-pathname name subdirectories compiled? nil))
-   (t (let ((mm-dir (gethash name *mm-directories*)))
-        (typecase mm-dir
-          (mm-relative-directory
-           (compute-relative-directory
-            (mm-relative-directory.root mm-dir)
-            (append-subdirectories
-             (mm-relative-directory.subdirectories mm-dir)
-             subdirectories)
-            compiled?))
-          (mm-root-directory
-           (let ((root-path (mm-root-directory.path mm-dir))
-                 (application-version-modifier
-                  (mm-root-directory.application-version-modifier mm-dir)))
-             (make-and-check-directory-pathname 
-              root-path subdirectories compiled?
-              application-version-modifier)))
-          (otherwise
-           (let ((module 
-                  ;; Check if we have a module reference (look without the
-                  ;; get-module error check):
-                  (gethash name *mm-modules*)))
-             (cond 
-              ;; The reference is module relative:
-              (module
-               (when (eq name (mm-module.directory module))
-                 (error "Directory ~s is defined in terms of itself" name))
-               (compute-relative-directory
-                (mm-module.directory module)
-                (append-subdirectories 
-                 (mm-module.subdirectories module)
-                 subdirectories)
-                compiled?))
-              (t (error "Directory ~s is not defined." name))))))))))
+  (let ((in-process nil))
+    (labels 
+        ((compute-it (name subdirectories)
+           (cond
+            ((null name) nil)
+            ;; `Name' can be a pathname if a *load-truename*-relative
+            ;; :directory option was used in define-module:
+            ((pathnamep name)
+             (make-and-check-directory-pathname
+              name subdirectories compiled? nil))
+            (t (let ((mm-dir (gethash name *mm-directories*)))
+                 (typecase mm-dir
+                   (mm-relative-directory
+                    (when (member name in-process :test #'eq)
+                      (error "Circularity in relative-directory relation:~
+                             ~%~3t~{~s -> ~}~s"
+                             (reverse in-process) name))
+                    (push name in-process)
+                    (compute-it
+                     (mm-relative-directory.root mm-dir)
+                     (append-subdirectories
+                      (mm-relative-directory.subdirectories mm-dir)
+                      subdirectories)))
+                   (mm-root-directory
+                    (let ((root-path (mm-root-directory.path mm-dir))
+                          (application-version-modifier
+                           (mm-root-directory.application-version-modifier
+                            mm-dir)))
+                      (make-and-check-directory-pathname 
+                       root-path subdirectories compiled?
+                       application-version-modifier)))
+                   (otherwise
+                    (let ((module 
+                           ;; Check if we have a module reference (look
+                           ;; without the get-module error check):
+                           (gethash name *mm-modules*)))
+                      (cond 
+                       ;; The reference is module relative:
+                       (module
+                        (when (eq name (mm-module.directory module))
+                          (error "Directory ~s is defined in terms of itself" 
+                                 name))
+                        (compute-relative-directory
+                         (mm-module.directory module)
+                         (append-subdirectories 
+                          (mm-module.subdirectories module)
+                          subdirectories)
+                         compiled?))
+                       (t (error "Directory ~s is not defined."
+                                 name)))))))))))
+      (compute-it name subdirectories))))
            
 ;;; ---------------------------------------------------------------------------
 

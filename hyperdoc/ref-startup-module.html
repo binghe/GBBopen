@@ -66,6 +66,9 @@ is newer than the source file (implies <code>:reload</code>)</td></tr>
 <a name="id1"></a></td></tr><tr valign="top"><td valign="baseline"><i><p>package-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A package name (default is <code>nil</code>)
 </td></tr></table>
 </p>
+<p><span class="fndoclabel">Errors</span> <br />Module <var>module-name</var> has not been defined.<br />A <a href="ref-glossary.html#id165">relative&nbsp;directory</a>
+specification contains a circularity.
+</p>
 <p><span class="fndoclabel">Description</span> <br />This function bootstraps GBBopen loading, if needed, before
 calling <b><a href="ref-compile-module.html">compile-module</a></b> on <var>module-name</var> with
 <var>options</var>.  Then, unless <var>package-name</var> is <code>nil</code>, the current package
