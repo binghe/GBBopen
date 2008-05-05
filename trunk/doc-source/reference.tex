@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Mon May  5 04:13:55 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Mon May  5 11:17:35 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -1021,6 +1021,12 @@ A \var{dimension-value-place\/} with two
   value.
 }
 
+%% ========================================================================
+%%  Errors & notes
+
+\newcommand{\relativedircircularity}{A \glref{relative~directory}
+  specification contains a circularity.}
+
 \newcommand{\nothreads}{Threads (multiprocessing) is not supported on the
   Common Lisp implementation.}
 
@@ -1616,6 +1622,9 @@ set the current package.
 \arg[package-name] A package name (default is \nil)
 \end{args}
 
+\fnerrors Module \var{module-name\/} has not been defined.\\
+\relativedircircularity
+
 \fndescription This function bootstraps GBBopen loading, if needed, before
 calling \textbf{\entlinknoex{compile-module}} on \var{module-name\/} with
 \var{options}.  Then, unless \var{package-name\/} is \nil, the current package
@@ -1806,7 +1815,9 @@ Project software tree), do the following:
   (for example: \code{\$ cd my-tree ; mkdir -p source/mini-module})
 \item copy the
   \xsitelink{\code{mini-module-loader.lisp}}{http://gbbopen.org/svn/GBBopen/trunk/source/mini-module/mini-module-loader.lisp},
+  \W~
   \xsitelink{\code{mini-module.lisp}}{http://gbbopen.org/svn/GBBopen/trunk/source/mini-module/mini-module.lisp},
+  \W~
   and
   \xsitelink{\code{mini-module-user.lisp}}{http://gbbopen.org/svn/GBBopen/trunk/source/mini-module/mini-module-user.lisp}
   files into the\\
@@ -1937,12 +1948,16 @@ Conditionally evaluate the \code{http-test} function when the file
 \compilemoduleoptions
 \end{args}
 
-\fnerrors Module \var{module-name\/} has not been defined.
+\fnerrors Module \var{module-name\/} has not been defined.\\
+\relativedircircularity
 
 \fndescription These file options, when specified for individual files in the
 \glref{module} definition (see \textbf{\entlinknoex{define-module}}), have the
 following effects (overriding the behavior of \var{options\/} supplied to
-\textbf{compile-module}): \compilemodulefileoptions
+\textbf{compile-module}): 
+%
+\W\supp\tabletop
+\compilemodulefileoptions
 
 \begin{alsos}{*automatically-create-missing-directories-modules*}
 \also[*automatically-create-missing-directories*]
@@ -2000,8 +2015,8 @@ default values for the command.
 
 \fnerrors 
 The \code{:requires} module option specifies a fully expanded
-\glref{required-module} order that contains a circularity.
-
+\glref{required-module} order that contains a circularity.\\
+%
 The \code{:requires} module option specifies a fully expanded
 \glref{required-module} order that conflicts with the fully expanded
 \glref{required-module} order in a previously defined \glref{module}.
@@ -2070,6 +2085,8 @@ a total ordering of all the files that must be loaded for this \glref{module}
 the files specified for this \glref{module}).
 
 \var{File-options\/} have the following effects: 
+%
+\W\supp\tabletop
 \compilemodulefileoptions
 
 \begin{alsos}{define-relative-directory}
@@ -2301,7 +2318,8 @@ a separate ``beta'' compile tree:
 \end{args}
 
 \fnerrors
-Module \var{module-name\/} has not been defined.
+Module \var{module-name\/} has not been defined.\\
+\relativedircircularity
 
 \fndescription
 \bfindexit{*standard-output*}%
@@ -2356,6 +2374,9 @@ Module :gbbopen-tools (loaded)
 \end{args}
 
 \fnreturns The pathname of the defined directory or module.
+
+\fnerrors
+\relativedircircularity
 
 \fndescription \glref{Root} and \glref{relative-directory} definitions are
 searched first.  If no \var{name\/} directory definition is found,
@@ -2486,12 +2507,15 @@ Return the \glref{root-directory} pathname of the \code{:gbbopen-user}
 \loadmoduleoptions
 \end{args}
 
-\fnerrors Module \var{module-name\/} has not been defined.
+\fnerrors Module \var{module-name\/} has not been defined.\\
+\relativedircircularity
 
 \fndescription These file options, when specified for individual files in the
 \glref{module} definition (see \textbf{\entlinknoex{define-module}}), have the
 following effects (overriding the behavior of \var{options\/} supplied to
 \textbf{load-module}):
+%
+\W\supp\tabletop
 \loadmodulefileoptions
 
 \begin{alsos}{*autorun-modules*}
@@ -2551,8 +2575,11 @@ default values for the command.
 
 \fnreturns The pathname of the loaded file.
 
-\fnerrors Module \var{module-name\/} has not been defined.  File
-\var{file-name\/} is not associated with the module.
+\fnerrors Module \var{module-name\/} has not been defined.\\
+%
+File \var{file-name\/} is not associated with the module.
+
+\relativedircircularity
 
 \fndescription File options specified for individual files in the
 \glref{module} definition (see \textbf{\entlinknoex{define-module}}) are
@@ -2599,7 +2626,8 @@ Tools \glref{module}:
 \fnreturns Two values: the source directory and the compiled directory.
 
 \fnerrors
-Module \var{module-name\/} has not been defined.
+Module \var{module-name\/} has not been defined.\\
+\relativedircircularity
 
 \begin{alsos}{load-module-file}
 \also[define-module]
