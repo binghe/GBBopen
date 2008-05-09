@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/extended-repl.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Apr 27 15:28:33 2008 *-*
+;;;; *-* Last-Edit: Fri May  9 07:40:29 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -390,17 +390,16 @@
                 (command-fn-pair
                  `(,command-name 
                    . ,#'(lambda (&optional .string.)
-                          (let ((args nil))
-                            ;; Pre-2.45 CLISP's will not have a
-                            ;; .string. argument:
-                            (if .string.
-                                (apply function
-                                       (with-input-from-string (stream .string.)
-                                         (loop
-                                             for form = (read stream nil stream)
-                                             until (eq form stream)
-                                             collect form)))
-                                (funcall function)))))))
+                          ;; Pre-2.45 CLISP's will not have a
+                          ;; .string. argument:
+                          (if .string.
+                              (apply function
+                                     (with-input-from-string (stream .string.)
+                                       (loop
+                                           for form = (read stream nil stream)
+                                           until (eq form stream)
+                                           collect form)))
+                              (funcall function))))))
            `(,command-fn-pair
              ;; native-help command documentation:
              ,@(when (eq help-control ':add-to-native-help)
