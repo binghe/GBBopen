@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Apr  5 22:12:43 2008 *-*
+;;;; *-* Last-Edit: Sat May 10 03:51:01 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -777,7 +777,7 @@
 
 ;;; ---------------------------------------------------------------------------
 ;;;  CMUCL can't handle the above :before/:after combination, so we must use a
-;;;  combined :around method until it is fixed (remains broken in 19d)
+;;;  combined :around method until it is fixed (remains broken in 19e)
 
 #+cmu
 (defmethod (setf slot-value-using-class) :around

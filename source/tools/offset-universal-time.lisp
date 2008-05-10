@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/offset-universal-time.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Apr 27 14:05:43 2008 *-*
+;;;; *-* Last-Edit: Fri May  9 12:01:50 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -64,14 +64,21 @@
 ;;; ---------------------------------------------------------------------------
 ;;; Warn if the CL implementation doesn't have at least 25-bit fixnums:
 
-(let ((fixnum-size (1+ (integer-length most-positive-fixnum))))
-  (when (< fixnum-size 25)
+(defun small-fixnum-ot-warning ()
+  (let ((fixnum-size #.(1+ (integer-length most-positive-fixnum))))
     (warn "The ~s-bit fixnums on ~a (~a) provide only ~,1f days of fixnum ~
            OT values."
           fixnum-size
           (lisp-implementation-type) 
           (machine-type)
           (/ (expt 2 fixnum-size) #.(float (* 60 60 24))))))
+
+(let ((fixnum-size (1+ (integer-length most-positive-fixnum))))
+  ;; Suppress unreachable code warning in CMUCL
+  #+cmu
+  (declare (optimize (extensions:inhibit-warnings 3)))
+  (when (< fixnum-size 25)
+    (small-fixnum-ot-warning)))
 
 ;;; ---------------------------------------------------------------------------
 

@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:AGENDA-SHELL; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/control-shells/agenda-shell.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Apr 25 01:57:42 2008 *-*
+;;;; *-* Last-Edit: Fri May  9 12:24:00 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -60,7 +60,7 @@
 	    gbbopen::standard-unit-class.instance-hash-table
             ;; Threading checkers for CMUCL and LispWorks:
             #+(and cmu mp)
-            portable-threads::check-idle-loop-process
+            portable-threads::check-idle-process
             #+lispworks
             portable-threads::check-for-multiprocessing-started)))
 
@@ -1449,9 +1449,10 @@
                             (save-obviated-ksas nil)
                             (stepping nil)
                             (stepping-stream *query-io*))
-  ;; Check that threading is running on CMUCL & LispWorks:
+  ;; Check that the idle process is running on CMUCL:
   #+(and cmu mp)
-  (check-idle-loop-process 't)
+  (check-idle-process 't)
+    ;; Check that threading is running on LispWorks:
   #+lispworks
   (check-for-multiprocessing-started 't)
   ;; There is a control shell that is running in this thread:
@@ -1524,7 +1525,7 @@
 (defun restart-control-shell (&key (instance-name 1))
   ;; Check that threading is running on CMUCL & LispWorks:
   #+(and cmu mp)
-  (check-idle-loop-process 't)
+  (check-idle-process 't)
   #+lispworks
   (check-for-multiprocessing-started 't)
   (let ((cs (find-instance-by-name instance-name 'control-shell)))
