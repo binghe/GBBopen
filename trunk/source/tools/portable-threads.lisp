@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/portable-threads.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat May 10 03:47:18 2008 *-*
+;;;; *-* Last-Edit: Sat May 10 05:27:30 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -98,7 +98,7 @@
     (pushnew :new-locks *features*)))
 
 ;;; ---------------------------------------------------------------------------
-;;;  Warn if sb-thread support is missing on SBC/Linux
+;;;  Warn if sb-thread support is missing on SBCL/Linux
 
 #+(and sbcl linux (not sb-thread))
 (warn "Thread support on ~a is not present.~@
