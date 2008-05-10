@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri May  2 05:18:11 2008 *-*
+;;;; *-* Last-Edit: Sat May 10 04:00:27 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -169,44 +169,30 @@
     
 ;;; ---------------------------------------------------------------------------
 
-(defun applicable-storage-object-p (storage unit-class plus-subclasses
-                                    disjunctive-dimensional-extents)
+(defun applicable-storage-object-p (storage unit-class plus-subclasses)
   ;;; Returns true if the storage object `storage' is relevant given
-  ;;; `unit-class', `plus-subclasses' and `dimensional-extents'
-  (declare (ignore disjunctive-dimensional-extents))
+  ;;; `unit-class' and `plus-subclasses'
   (declare (inline class-name))
   (let* ((unit-class-name (class-name unit-class))
-         (stores-classes (stores-classes-of storage))
-	 #+ignore-for-now
-         (dimension-names (dimension-names-of storage)))
-    (and
-     ;; `storage' is a candidate if it:
-     (member-if 
-      #'(lambda (class-spec)
-	  (declare (inline class-name))
-	  (destructuring-bind (stores-class . stores-subclasses-p)
-	      class-spec
-	    (or
-	     ;; * stores the unit class:
-	     (eq unit-class stores-class)
-	     ;; * stores a parent class plus subclasses:
-	     (and stores-subclasses-p
-		  (subtypep unit-class-name (class-name stores-class)))
-	     ;; * subclasses are desired (:plus-subclasses was specified for
-	     ;;   retrieval) and `storage' stores a subclasses of
-	     ;;   `unit-class':
-	     (and plus-subclasses 
-		  (subtypep (class-name stores-class) unit-class-name)))))
-      stores-classes)
-     ;; check dimension applicability:
-     #+ignore-for-now
-     (or (eq disjunctive-dimensional-extents 't)
-         (eq dimension-names 't)
-	 (some #'(lambda (dimensional-extents)
-		   (some #'(lambda (extent)
-			     (memq (car extent) (the list dimension-names)))
-			 dimensional-extents))
-	       disjunctive-dimensional-extents)))))
+         (stores-classes (stores-classes-of storage)))
+    ;; `storage' is a candidate if it:
+    (member-if 
+     #'(lambda (class-spec)
+         (declare (inline class-name))
+         (destructuring-bind (stores-class . stores-subclasses-p)
+             class-spec
+           (or
+            ;; * stores the unit class:
+            (eq unit-class stores-class)
+            ;; * stores a parent class plus subclasses:
+            (and stores-subclasses-p
+                 (subtypep unit-class-name (class-name stores-class)))
+            ;; * subclasses are desired (:plus-subclasses was specified for
+            ;;   retrieval) and `storage' stores a subclasses of
+            ;;   `unit-class':
+            (and plus-subclasses 
+                 (subtypep (class-name stores-class) unit-class-name)))))
+     stores-classes)))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -229,10 +215,8 @@
 	     ;; see if this one's better:
 	     (exact-unit-storage nil)
 	     ;; a new exact match:
-	     (t (setf exact-unit-storage storage))))
-	   )))))
+	     (t (setf exact-unit-storage storage)))))))))
 		
-
 ;;; ---------------------------------------------------------------------------
 
 (defun storage-objects-for-retrieval (unit-classes-spec space-instances
@@ -259,8 +243,7 @@
 			 (dolist (storage (standard-space-instance.%%storage%%
 					   space-instance))
 			   (when (applicable-storage-object-p 
-				  storage unit-class plus-subclasses 
-				  disjunctive-dimensional-extents)
+				  storage unit-class plus-subclasses)
 			     (pushnew storage result))))))))
 	    (cond ((eq space-instances 't)
 		   (map-space-instances #'do-si '(*) invoking-fn-name))
@@ -429,7 +412,8 @@
 ;;; ===========================================================================
 ;;;  Space-Instance Description
 
-(defun describe-space-instance-storage (space-instance)
+(defmethod describe-space-instance-storage
+    ((space-instance standard-space-instance))
   (dolist (storage (standard-space-instance.%%storage%% space-instance))
     (let* ((instance-counts (instance-counts-of storage))
 	   (sorted-instance-counts 
@@ -449,6 +433,12 @@
 		  (/ (+& total-instances (excess-locators-of storage))
 		     (float total-instances)))
 	      sorted-instance-counts))))
+
+;;; ---------------------------------------------------------------------------
+
+(defmethod describe-space-instance-storage ((space-instance cons))
+  (describe-space-instance-storage
+   (find-space-instance-by-path space-instance ':with-error)))
 
 ;;; ---------------------------------------------------------------------------
 

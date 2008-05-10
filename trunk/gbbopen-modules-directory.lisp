@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/gbbopen-modules-directory.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Apr 27 12:45:01 2008 *-*
+;;;; *-* Last-Edit: Sat May 10 04:09:38 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -154,16 +154,16 @@
 
 (let ((truename *load-truename*))
   (defun process-shared-gbbopen-modules-directory (filename
-                                                 &optional load-only-if-new)
-  (let ((shared-modules-dir
-         (make-pathname
-          :name nil
-          :type nil
-          :directory (append (pathname-directory truename)
-                             '("shared-gbbopen-modules"))
-          :defaults truename)))
-    (process-the-gbbopen-modules-directory
-     shared-modules-dir filename load-only-if-new))))
+                                                   &optional load-only-if-new)
+    (let ((shared-modules-dir
+           (make-pathname
+            :name nil
+            :type nil
+            :directory (append (pathname-directory truename)
+                               '("shared-gbbopen-modules"))
+            :defaults truename)))
+      (process-the-gbbopen-modules-directory
+       shared-modules-dir filename load-only-if-new))))
 
 ;; CMUCL and Lispworks can't compile the interpreted closure:
 #-(or cmu lispworks)

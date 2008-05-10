@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/preamble.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Mar 23 07:46:57 2008 *-*
-;;;; *-* Machine: cyclone.local *-*
+;;;; *-* Last-Edit: Tue May  6 19:20:03 2008 *-*
+;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -115,7 +115,8 @@
 
 (defgeneric addto-evfn-using-class (fn event-class plus-subevents 
                                     unit-class/instance plus-subclasses
-                                    slot-names paths permanent priority printing 
+                                    slot-names paths 
+                                    permanent priority printing 
                                     evfn-blk-fn evfn-blk-fn-args))
 (defgeneric add-instance-to-space-instance (instance space-instance))
 (defgeneric add-instance-to-storage (instance storage verbose))
@@ -124,6 +125,7 @@
 (defgeneric delete-space-instance (space-instance))
 (defgeneric describe-instance (instance))
 (defgeneric describe-space-instance (space-instance))
+(defgeneric describe-space-instance-storage (space-instance))
 (defgeneric describe-unit-class (unit-class-name-or-class))
 (defgeneric describe-unit-slot (unit-class slot))
 (defgeneric ds-evfn-using-class (fn event-class &rest args))

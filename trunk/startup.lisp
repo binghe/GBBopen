@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/startup.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Apr 28 17:36:19 2008 *-*
+;;;; *-* Last-Edit: Wed May  7 03:14:28 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -60,15 +60,6 @@
 (load (make-pathname :name "corman-patches"
                      :type "lisp" 
                      :defaults *load-truename*))
-
-;;; ---------------------------------------------------------------------------
-;;;  Cerror if ECL's MOP is out of date
-
-#+ecl
-(unless (find-class 'clos:standard-writer-method nil)
-  (cerror "Continue and use GBBopen's MOP patches for older ECL versions."
-          "The latest CVS checkout of ECL is highly recommended.")
-  (pushnew ':ecl-mop-patches-needed *features*))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Control gbbopen-modules directory processing (defvar is in initiate.lisp)

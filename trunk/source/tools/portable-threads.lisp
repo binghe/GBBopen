@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/portable-threads.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Apr 27 14:04:49 2008 *-*
+;;;; *-* Last-Edit: Sat May 10 03:47:18 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -143,6 +143,7 @@
      mp:atomic-pop
      mp:atomic-push
      mp::recursive-lock
+     mp::startup-idle-and-top-level-loops
      mp:with-timeout)
    #+(and cmu (not mp))
    '()
@@ -157,7 +158,8 @@
    #+gcl
    '()
    #+lispworks
-   '(mp:make-lock)
+   '(mp:make-lock
+     mp::initialize-multiprocessing)
    #+(and sbcl sb-thread)
    '(sb-thread:thread-alive-p
      sb-thread:thread-name
@@ -199,6 +201,8 @@
             current-thread
             encode-time-of-day
 	    hibernate-thread
+            #+lispworks
+            initialize-multiprocessing
             kill-periodic-function      ; new (document soon)
             kill-thread
 	    make-condition-variable
@@ -215,6 +219,8 @@
             scheduled-function-repeat-interval
             spawn-periodic-function     ; new (document soon)
             spawn-thread
+            #+(and cmu mp)
+            startup-idle-and-top-level-loops
             symbol-value-in-thread
             threadp
             threads-not-available       ; not documented
@@ -231,22 +237,20 @@
 	    )))
 
 ;;; ---------------------------------------------------------------------------
-;;;  Warn if the idle-loop process is not running on CMUCL
+;;;  Warn if the idle process is not running on CMUCL
 
 #+(and cmu mp)
-(defun check-idle-loop-process (&optional errorp)
-  (unless (member-if #'(lambda (process)
-                         (string= "Idle Loop" (mp:process-name process)))
-                     (mp:all-processes))
+(defun check-idle-process (&optional errorp)
+  (unless mp::*idle-process*
     (funcall (if errorp 'error 'warn)
-             "You must start CMUCL's idle-loop process by calling~
-              ~%~3t~s~
+             "You must start CMUCL's idle process by calling~
+              ~%~3t(~s)~
               ~%for ~s and other thread operations to function properly."
-             '(mp::startup-idle-and-top-level-loops)
+             'startup-idle-and-top-level-loops
              'with-timeout)))
 
 #+(and cmu mp)
-(check-idle-loop-process)
+(check-idle-process)
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Warn if multiprocessing is not running on Lispworks
@@ -256,10 +260,10 @@
   (unless mp:*current-process*
     (funcall (if errorp 'error 'warn)
              "You must start multiprocessing on Lispworks by calling~
-              ~%~3t~s~
+              ~%~3t(~s)~
               ~%for ~s, locks, and other thread operations to function ~
               properly."
-             '(mp::initialize-multiprocessing)
+             'initialize-multiprocessing
              'with-timeout)))
 
 #+lispworks

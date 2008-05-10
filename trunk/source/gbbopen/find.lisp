@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/find.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Apr  5 23:17:25 2008 *-*
+;;;; *-* Last-Edit: Fri May  9 20:52:23 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -512,6 +512,8 @@
 
 (with-full-optimization ()
   (defun match-is (instance-value pattern-value comparison-type)
+    ;; Inhibit CMUCL optimization warnings:
+    #+cmu (declare (optimize (extensions:inhibit-warnings 3)))
     ;; general enumerated match operator:
     (funcall (the symbol comparison-type) instance-value pattern-value)))
            
@@ -522,6 +524,8 @@
        `(with-full-optimization ()
           (defun ,name (instance-value pattern-value comparison-type)
             (declare (ignore comparison-type))
+            ;; Inhibit CMUCL optimization warnings:
+            #+cmu (declare (optimize (extensions:inhibit-warnings 3)))
             ;; Eliminate SBCL optimization warnings:
             #+sbcl (declare (optimize (speed 1)))
             (,comparison-test instance-value pattern-value)))))
@@ -1359,11 +1363,11 @@
 (defun mark-based-retrieval (fn unit-classes-spec space-instances pattern 
                              filter-before filter-after verbose
                              invoking-fn-name)
-  ;;; This retrieval approach uses instance marking to determine
-  ;;; selected instances.  It requires a full marking sweep of candidate 
-  ;;; instances, so it works best with tight instance mappings on
-  ;;; tight dimensional ranges.  Performance is tightly coupled with
-  ;;; the speed of mark-slot access (level of CLOS optimization).
+  ;;; This retrieval approach uses instance marking to determine selected
+  ;;; instances.  It requires a full marking sweep of candidate instances, so
+  ;;; it works best with tight instance mappings on tight dimensional ranges.
+  ;;; Performance is highly dependent on the speed of mark-slot access (level
+  ;;; of CLOS optimization).
   (let* ((find-stats *find-stats*)
          (run-time (if find-stats (get-internal-run-time) 0))
          (optimized-pattern (optimize-pattern pattern))

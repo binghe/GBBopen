@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/mini-module/mini-module.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon May  5 10:48:44 2008 *-*
+;;;; *-* Last-Edit: Sat May 10 04:02:33 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -557,6 +557,8 @@
 
 ;;; ---------------------------------------------------------------------------
 
+;; CMUCL 19e complains about the following declaration:
+#-cmu
 (declaim (ftype (function (mm-module) (values t &optional)) 
                 mm-module.directory
                 mm-module.subdirectories))

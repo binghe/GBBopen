@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/unit-metaclasses.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Apr 29 17:00:37 2008 *-*
+;;;; *-* Last-Edit: Sat May 10 03:57:37 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -383,13 +383,16 @@
 (defmethod direct-slot-definition-class ((class standard-unit-class)
                                          &rest initargs)
   (declare (dynamic-extent initargs))
+  ;; CMUCL 19e can't handle these load-time-values:
   (cond
    ;; Direct link slot
    ((getf initargs ':link)
-    (load-time-value (find-class 'direct-link-definition)))
+    (#-cmu load-time-value
+     #+cmu progn (find-class 'direct-link-definition)))
    ;; Direct non-link slot     
    ((not (memq (getf initargs ':name) *internal-unit-instance-slot-names*))
-    (load-time-value (find-class 'direct-nonlink-slot-definition)))
+    (#-cmu load-time-value
+     #+cmu progn (find-class 'direct-nonlink-slot-definition)))
    ;; Internal (regular CL) slot
    (t (call-next-method))))
 
