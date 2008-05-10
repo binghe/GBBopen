@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/extended-repl.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri May  9 07:40:29 2008 *-*
+;;;; *-* Last-Edit: Fri May  9 20:32:52 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -549,7 +549,7 @@
 ;;; ===========================================================================
 ;;;  SLIME REPL Interface Setup
 
-(defvar *slime-extended-repl-file*
+(defparameter *slime-extended-repl-file*
     (make-pathname :name "slime-extended-repl"
                    :type "lisp"
                    :defaults *load-truename*))
