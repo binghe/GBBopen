@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:SWANK; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/slime-extended-repl.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat May  3 06:02:54 2008 *-*
+;;;; *-* Last-Edit: Fri May  9 11:29:38 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -55,7 +55,6 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun repl-command-form (string)
-  (format t "~&;; => ~s~%" *package*)
   (setf string (string-left-trim '(#\space #\tab) string))
   (when (or 
          ;; Check for 'spread' command syntax:
