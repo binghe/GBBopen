@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/extended-repl.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri May  9 20:32:52 2008 *-*
+;;;; *-* Last-Edit: Sat May 10 04:17:22 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -549,14 +549,16 @@
 ;;; ===========================================================================
 ;;;  SLIME REPL Interface Setup
 
-(defparameter *slime-extended-repl-file*
-    (make-pathname :name "slime-extended-repl"
-                   :type "lisp"
-                   :defaults *load-truename*))
+(let ((truename *load-truename*))
+  (defun load-slime-extended-repl ()
+    (format t "~&;; Loading extended REPL command processing for SLIME...~%")
+    (load (make-pathname :name "slime-extended-repl"
+                         :type "lisp"
+                         :defaults truename))))
 
-(defun load-slime-extended-repl ()
-  (format t "~&;; Loading extended REPL command processing for SLIME...~%")
-  (load *slime-extended-repl-file*))  
+;; CMUCL and Lispworks can't compile the interpreted closure:
+#-(or cmu lispworks)
+(compile-if-advantageous 'load-slime-extended-repl)
 
 ;;;  *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 ;;;  SLIME doesn't provide an easy means of using its *after-init-hook*
