@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Tue May  6 09:51:07 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Thu May 15 06:12:04 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -887,6 +887,43 @@ reload all subsequent files and \glref{modules}\\[2pt]
 
 %% ---------------------------------------------------------------------------
 
+\newcommand{\comparisontypespecs}{%
+\begin{tabular}{@{~}l@{~}l}
+\mbox{\var{ordered-comparison-type\/} ::=}
+\codeindexit{number}%
+\codeindexit{fixnum}%
+\codeindexit{short-float}%
+\codeindexit{single-float}%
+\codeindexit{double-float}%
+\codeindexit{long-float}%
+  & \code{number} \vbar{} \code{fixnum} \vbar{}
+    \code{short-float} \vbar{} \code{single-float} \vbar{} \\
+  & \code{double-float} \vbar{} \code{long-float} \\
+\end{tabular}
+\T\\
+\begin{tabular}{@{~}l@{~}l}
+\mbox{\var{enumerated-comparison-type\/} ::=}
+\codeindexit{eq}%
+\codeindexit{eql}%
+\codeindexit{equal}%
+\codeindexit{equalp}%
+  & \code{eq} \vbar{} \code{eql} \vbar{}
+    \code{equal} \vbar{} \code{equalp} \\
+\end{tabular}
+\T\\
+\begin{tabular}{@{~}l@{~}l}
+\mbox{\var{boolean-comparison-type\/} ::=}
+  & \code{t} \\
+\end{tabular}
+}
+
+\newcommand{\comparisontypenote}{%
+The default \var{ordered-comparison-type\/}, if unspecified, is \code{number}. 
+The default \var{enumerated-comparison-type\/}, if unspecified, is \code{eql}. 
+The default \var{boolean-comparison-type\/} is \code{t}.}
+
+%% ---------------------------------------------------------------------------
+
 \newcommand{\dimensionalvaluesspec}{%
 \begin{tabular}{@{~}l@{~}l}
 \mbox{\var{dimensional-value-specifier\/} ::=}
@@ -950,33 +987,7 @@ reload all subsequent files and \glref{modules}\\[2pt]
   &  \code{:boolean}\\
 \end{tabular}
 \T\\
-\begin{tabular}{@{~}l@{~}l}
-\mbox{\var{ordered-comparison-type\/} ::=}
-\codeindexit{number}%
-\codeindexit{fixnum}%
-\codeindexit{short-float}%
-\codeindexit{single-float}%
-\codeindexit{double-float}%
-\codeindexit{long-float}%
-  & \code{number} \vbar{} \code{fixnum} \vbar{}
-    \code{short-float} \vbar{} \code{single-float} \vbar{} \\
-  & \code{double-float} \vbar{} \code{long-float} \\
-\end{tabular}
-\T\\
-\begin{tabular}{@{~}l@{~}l}
-\mbox{\var{enumerated-comparison-type\/} ::=}
-\codeindexit{eq}%
-\codeindexit{eql}%
-\codeindexit{equal}%
-\codeindexit{equalp}%
-  & \code{eq} \vbar{} \code{eql} \vbar{}
-    \code{equal} \vbar{} \code{equalp} \\
-\end{tabular}
-\T\\
-\begin{tabular}{@{~}l@{~}l}
-\mbox{\var{boolean-comparison-type\/} ::=}
-  & \code{t} \\
-\end{tabular}
+\comparisontypespecs
 \T\\
 \begin{tabular}{@{~}l@{~}l}
 \mbox{\var{dimension-value-place\/} ::=}
@@ -985,11 +996,7 @@ reload all subsequent files and \glref{modules}\\[2pt]
 \end{tabular}
 }
 
-\newcommand{\dimensionalvaluesspecnote}{%
-The default \var{ordered-comparison-type\/}, if unspecified, is \code{number}. 
-The default \var{enumerated-comparison-type\/}, if unspecified, is \code{eql}. 
-The default \var{boolean-comparison-type\/} is \code{t}. 
-
+\newcommand{\dimensionalspecnote}{%
 A \var{dimension-value-place\/} with two
   \var{slot-names\/} is allowed only for an \code{:interval} dimension-value
   specification.}
@@ -7437,18 +7444,24 @@ one \glref{unit~class} name.  This error is signaled on class finalization.
   & \{\code{t :exclude} \var{excluded-slot-name\/}\superstar{}\} \\
 \end{tabular}
 \T\\[4pt]
-\dimensionalvaluesspecnote
+\comparisontypenote
+\\ % in both LaTeX and Hyperlatex
+\dimensionalspecnote
 
 \fnterms
 \begin{args}{instance-name-comparison-test}
 \arg[class-name] A non-\nil, \glref{non-keyword~symbol} that names a
 \glref{class} 
+\arg[dimension-name] A symbol specifying a \glref{dimension} 
 \arg[initarg-list] An \glref{initialization~argument~list}
-\arg[slot-name] A non-\nil, \glref{non-keyword~symbol}
 \arg[instance-name-comparison-test] One of the four standardized hash
 table test function names: \code{eq}, \code{eql}, \code{equal}, or
 \code{equalp} (default for classes of
-metaclass \textbf{\entlinknoex{standard-unit-class}} is \code{eql}) 
+metaclass \textbf{\entlinknoex{standard-unit-class}} is \code{eql})
+\arg[\textcolor{darkergray}{ordering-dimension-name}] \textcolor{darkergray}{A 
+  symbol specifying the \glref{ordering~dimension} used to order 
+  \glref{series-composite~dimension~values}}
+\arg[slot-name] A non-\nil, \glref{non-keyword~symbol}
 \end{args}
 
 \fndescription A \var{dimension-value-place\/} with two
@@ -8151,12 +8164,13 @@ t
 \item the \glref{dimension~value} of the \var{unit-instance} in the specified
   \glref{dimension}
 \item the dimension-value type of the specified \glref{dimension}
-\item the comparision type of the specified \glref{dimension}
+\item the comparison type of the specified \glref{dimension}
 \item the composite type of the \glref{dimension~value} if it is a
   \glref{composite~dimension~value}; \nil{} if it is an
   \glref{incomposite~dimension~value}
-\item the name of the ordering dimension, if the \glref{dimension~value}
-  is a \glref{series-composite~dimension~value}; \nil{} otherwise
+\item the name of the \glref{ordering~dimension}, if the 
+  \glref{dimension~value} is a \glref{series-composite~dimension~value};
+  \nil{} otherwise
 \end{tightitemize}
 
 \fnerrors The \glref{dimension} \var{dimension-name\/} is not defined for
@@ -10650,7 +10664,9 @@ one \glref{space~class} name.  This error is signaled on class finalization.
   & \{\code{t :exclude} \var{excluded-slot-name\/}\superstar{}\} \\
 \end{tabular}
 \T\\[4pt]
-\dimensionalvaluesspecnote
+\comparisontypenote
+\T\\
+\dimensionalspecnote
 
 \fnterms
 \begin{args}{instance-name-comparison-test}
@@ -11268,8 +11284,8 @@ is to be created
 \arg[storage] A \glref{storage~specification}
 (see below; default is \mbox{\code{(t t unstructured)}} or \nil{} if
 \var{allowed-unit-classes\/} is \nil) 
-\arg[dimensions] A list of \glref{dimension~name},
-\glref{dimension~type} pairs (default is \nil)  
+\arg[dimensions] A list of \code{(}\var{\glref{dimension-name}}
+ \var{dimension-type-specifier\/}\code{)} pairs (default is \nil)  
 \arg[make-parents] A \glref{generalized~boolean} (default is \nil)
 \arg[class] The name of the \glref{space~class} for the created
 \glref{space~instance} (default is \code{standard-space-instance})
@@ -11312,15 +11328,36 @@ following sequence:
 \mbox{\var{allowed-unit-classes\/} ::=} \var{unit-classes-specifier\/}
   \vbar{} \nil\\
 \end{tabular}
+\T\\[4pt]
+\begin{tabular}{@{~}l@{~}l}
+\mbox{\var{dimension-type-specifier\/} ::=}
+  & \code{:ordered} \vbar{} 
+    \code{(:ordered} [\var{ordered-comparison-type\/}]\code{)} \vbar{} \\
+  & \code{:enumerated} \vbar{}
+    \code{(:enumerated} [\var{enumerated-comparison-type\/}]\code{)} \vbar{} \\
+  & \code{:boolean} \vbar{}
+    \code{(:boolean} [\var{boolean-comparison-type\/}]\code{)} \\
+\end{tabular}
 \T\\
+\comparisontypespecs
+\T\\[4pt]
 \unitclassesspec
 \syntaxsep
 \storagespec
+\T\\[4pt]
+\comparisontypenote
 
+\fnterms
+\begin{args}{dimension-name}
+\arg[dimension-name] A symbol specifying a \glref{dimension} 
+\end{args}
+
+\fndescription 
+%
 \codeindexit{:space-instances}%
 \codeindexit{:initial-space-instances}%
-
-\fndescription Specifying a \code{:space-instances} initialization argument
+%
+Specifying a \code{:space-instances} initialization argument
 causes that value to be used instead of any \code{:initial-space-instances}
 specification associated with the \glref{space~class}.  However, note that
 placing a \glref{space~instance} on other \glref{space~instances} is unrelated
@@ -15056,7 +15093,9 @@ one \glref{ks~class} name.  This error is signaled on class finalization.
   & \{\code{t :exclude} \var{excluded-slot-name\/}\superstar{}\} \\
 \end{tabular}
 \T\\[4pt]
-\dimensionalvaluesspecnote
+\comparisontypenote
+\T\\
+\dimensionalspecnote
 
 \fnterms
 \begin{args}{instance-name-comparison-test}
@@ -15248,7 +15287,9 @@ one \glref{ksa~class} name.  This error is signaled on class finalization.
   & \{\code{t :exclude} \var{excluded-slot-name\/}\superstar{}\} \\
 \end{tabular}
 \T\\[4pt]
-\dimensionalvaluesspecnote
+\comparisontypenote
+\T\\
+\dimensionalspecnote
 
 \fnterms
 \begin{args}{instance-name-comparison-test}

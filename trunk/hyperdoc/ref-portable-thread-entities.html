@@ -67,7 +67,7 @@ awakened by another thread.  Once awakened, the lock that it was holding is
 reacquired atomically before the thread is allowed to do anything else.
 </p>
 <p>A condition variable must always be associated with a <a href="ref-glossary.html#gl:lock">lock</a> (or
-<a href="ref-glossary.html#id163">recursive&nbsp;lock</a>) in order to avoid a race condition created when one
+<a href="ref-glossary.html#id165">recursive&nbsp;lock</a>) in order to avoid a race condition created when one
 thread signals a condition while another thread is preparing to wait on it.
 In this situation, the second thread would be perpetually waiting for the
 signal that has already been sent.  In the POSIX model, there is no explicit
@@ -92,12 +92,12 @@ operations as well as to be awakened by a dynamically surrounding
 </p>
 <p>Thread coordination functions, such as <code>process-wait</code>, are expensive to
 implement with operating-system threads.  Such functions stop the executing
-thread until a Common Lisp <a href="ref-glossary.html#id147">predicate&nbsp;function</a> returns a true value.
+thread until a Common Lisp <a href="ref-glossary.html#id149">predicate&nbsp;function</a> returns a true value.
 With application-level threads, the Lisp-based scheduler evaluates the
-<a href="ref-glossary.html#id147">predicate&nbsp;function</a> periodically when looking for other threads that
+<a href="ref-glossary.html#id149">predicate&nbsp;function</a> periodically when looking for other threads that
 can be run.  With operating-system threads, however, thread scheduling is
 performed by the operating system and evaluating a Common Lisp
-<a href="ref-glossary.html#id147">predicate&nbsp;function</a> requires complex and expensive interaction between
+<a href="ref-glossary.html#id149">predicate&nbsp;function</a> requires complex and expensive interaction between
 the operating-system thread scheduling and the Common Lisp implementation.
 Given this cost and complexity, many Common Lisp implementations that use
 operating-system threads have elected not to provide <code>process-wait</code>-style
@@ -106,7 +106,7 @@ Interface as well.
 </p>
 <p>Fortunately, most uses of <code>process-wait</code> can be replaced by a different
 strategy that relies on the producer of a change that would affect the
-<code>process-wait</code> <a href="ref-glossary.html#id147">predicate&nbsp;function</a> to signal the event rather than
+<code>process-wait</code> <a href="ref-glossary.html#id149">predicate&nbsp;function</a> to signal the event rather than
 having the consumers of the change use predicate functions to poll for it.
 Condition variables, the Portable Threads <b><a href="ref-hibernate-thread.html">hibernate-thread</a></b>
 and <b><a href="ref-awaken-thread.html">awaken-thread</a></b> mechanism, or blocking I/O functions
@@ -114,12 +114,12 @@ cover most of the typical uses of <code>process-wait</code>.
 </p>
 <p><h4>Scheduled Functions</h4>
 </p>
-<p>A <a href="ref-glossary.html#id175">scheduled&nbsp;function</a> is an object that contains a <a href="ref-glossary.html#gl:function">function</a> to
+<p>A <a href="ref-glossary.html#id177">scheduled&nbsp;function</a> is an object that contains a <a href="ref-glossary.html#gl:function">function</a> to
 be run at a specified time. When that specified time arrives, the
 <a href="ref-glossary.html#gl:function">function</a> is invoked with a single argument: the
-<a href="ref-glossary.html#id175">scheduled&nbsp;function</a> object. A repeat interval (in seconds) can also be
-specified for the <a href="ref-glossary.html#id175">scheduled&nbsp;function</a>. This value is used whenever the
-<a href="ref-glossary.html#id175">scheduled&nbsp;function</a> is invoked to schedule itself again at a new time
+<a href="ref-glossary.html#id177">scheduled&nbsp;function</a> object. A repeat interval (in seconds) can also be
+specified for the <a href="ref-glossary.html#id177">scheduled&nbsp;function</a>. This value is used whenever the
+<a href="ref-glossary.html#id177">scheduled&nbsp;function</a> is invoked to schedule itself again at a new time
 relative to the current invocation.  <a href="ref-glossary.html#gl:scheduled-function">Scheduled&nbsp;functions</a> can be
 scheduled to a resolution of one second.
 </p>
@@ -127,15 +127,15 @@ scheduled to a resolution of one second.
 <code>"Scheduled-Function Scheduler"</code> <a href="ref-glossary.html#gl:thread">thread</a>.  Unless the run time of
 the invoked <a href="ref-glossary.html#gl:function">function</a> is brief, the <a href="ref-glossary.html#gl:function">function</a> should spawn a new
 <a href="ref-glossary.html#gl:thread">thread</a> in which to perform its activities so as to avoid delaying the
-invocation of a subsequent <a href="ref-glossary.html#id175">scheduled&nbsp;function</a>.
+invocation of a subsequent <a href="ref-glossary.html#id177">scheduled&nbsp;function</a>.
 </p>
 <p><h4>Periodic Functions</h4> 
 </p>
-<p>A <a href="ref-glossary.html#id145">periodic&nbsp;function</a> is a <a href="ref-glossary.html#gl:function">function</a> to be run repeatedly at a
+<p>A <a href="ref-glossary.html#id147">periodic&nbsp;function</a> is a <a href="ref-glossary.html#gl:function">function</a> to be run repeatedly at a
 specified interval.  Unlike <a href="ref-glossary.html#gl:scheduled-function">scheduled&nbsp;functions</a>, which can be
-scheduled only to a resolution of one second, a <a href="ref-glossary.html#id145">periodic&nbsp;function</a> can
+scheduled only to a resolution of one second, a <a href="ref-glossary.html#id147">periodic&nbsp;function</a> can
 be repeated at intervals as brief as is supported by the <code>sleep</code> function
-of the Common Lisp implementation.  A <a href="ref-glossary.html#id145">periodic&nbsp;function</a> is scheduled
+of the Common Lisp implementation.  A <a href="ref-glossary.html#id147">periodic&nbsp;function</a> is scheduled
 and executed in its own <a href="ref-glossary.html#gl:thread">thread</a>.  As with <a href="ref-glossary.html#gl:scheduled-function">scheduled&nbsp;functions</a>,
 however, <a href="ref-glossary.html#gl:function">function</a> should spawn a new <a href="ref-glossary.html#gl:thread">thread</a> in which to
 perform its activities, unless its run time is brief.
