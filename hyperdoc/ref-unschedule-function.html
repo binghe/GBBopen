@@ -21,7 +21,7 @@
 <i> =&gt; </i> <var>boolean</var></td><td valign="baseline" align="right">[<i>Function</i>]
 </td></tr></table></p>
 <p><span class="fndoclabel">Purpose</span> <br />Cancel the upcoming invocation of a currently scheduled
-<a href="ref-glossary.html#id175">scheduled&nbsp;function</a>.
+<a href="ref-glossary.html#id177">scheduled&nbsp;function</a>.
 </p>
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:portable-threads</code>
 </p>
@@ -29,14 +29,14 @@
 </p>
 <p><span class="fndoclabel">Arguments</span><table class="tighttop">
 <tr valign="top"><td valign="baseline"><i>name-or-scheduled-function</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An object (typically a string or a
-symbol) naming a currently scheduled <a href="ref-glossary.html#id175">scheduled&nbsp;function</a> or a
+symbol) naming a currently scheduled <a href="ref-glossary.html#id177">scheduled&nbsp;function</a> or a
 <code>scheduled-function</code> object
 </td></tr><tr valign="top"><td valign="baseline"><i>verbose</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> 
 (default is <b><a href="ref-schedule-function-verbose.html">*schedule-function-verbose*</a></b>)
 </td></tr></table>
 </p>
-<p><span class="fndoclabel">Returns</span> <br />The <a href="ref-glossary.html#id175">scheduled&nbsp;function</a> if it was unscheduled; <code>nil</code> if the 
-<a href="ref-glossary.html#id175">scheduled&nbsp;function</a> was not currently scheduled or was not found.
+<p><span class="fndoclabel">Returns</span> <br />The <a href="ref-glossary.html#id177">scheduled&nbsp;function</a> if it was unscheduled; <code>nil</code> if the 
+<a href="ref-glossary.html#id177">scheduled&nbsp;function</a> was not currently scheduled or was not found.
 </p>
 <p><span class="fndoclabel">Errors</span> <br />Threads (multiprocessing) is not supported on the
 Common Lisp implementation.
@@ -51,7 +51,7 @@ removed from the list of currently scheduled <a href="ref-glossary.html#gl:sched
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-schedule-function.html"><b>schedule-function</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-schedule-function-relative.html"><b>schedule-function-relative</b></a>
 </p>
-<p><span class="fndoclabel">Examples</span> <br />Unschedule the <code>quitting-time</code> <a href="ref-glossary.html#id175">scheduled&nbsp;function</a>:
+<p><span class="fndoclabel">Examples</span> <br />Unschedule the <code>quitting-time</code> <a href="ref-glossary.html#id177">scheduled&nbsp;function</a>:
 <pre class="pretop">
 &gt; (unschedule-function 'quitting-time)
 #&lt;scheduled-function quitting-time [unscheduled]&gt;
@@ -65,7 +65,7 @@ removed from the list of currently scheduled <a href="ref-glossary.html#gl:sched
 &gt; (<a href="ref-all-scheduled-functions.html">all-scheduled-functions</a>)
 nil
 </pre>
-Unschedule a non-existent <a href="ref-glossary.html#id175">scheduled&nbsp;function</a>:
+Unschedule a non-existent <a href="ref-glossary.html#id177">scheduled&nbsp;function</a>:
 <pre>
 &gt;(unschedule-function 'non-existent)
 Warning: Scheduled-function non-existent was not scheduled; no action taken.
