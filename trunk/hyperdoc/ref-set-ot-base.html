@@ -52,10 +52,17 @@ dates or save or communicate Offset Universal Time values.
 <p><span class="fndoclabel">Examples</span> <br />Set the time base for Offset Universal Time to today:
 <pre class="pretop">
 &gt; (set-ot-base)
-3410655616
+3436662016
 </pre>
-Set the time base for Offset Universal Time to July 1, 2007:
+Note that the returned Offset Universal Time time-base value (above) is not
+the current Universal Time value:
 <pre>
+&gt; (get-universal-time)
+3419947437
+</pre>
+</p>
+<p>Set the time base for Offset Universal Time to July 1, 2007:
+<pre class="pretop">
 &gt; (set-ot-base 1 7 2007)
 3409014016
 </pre>

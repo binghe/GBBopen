@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Thu May 15 06:12:04 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Fri May 16 15:04:37 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -2812,7 +2812,10 @@ The GBBopen Tools \glref{module}, \code{:gbbopen-tools}, contains useful
 Common Lisp additions and utilities.  Convenient (\reflink{shorthand
   macros}{sec:declared-numerics} for declared \glref{fixnum}, short-float,
 single-float, double-float, and long-float numeric operators are also provided
-by the \code{:gbbopen-tools} \glref{module}.
+by the \code{:gbbopen-tools} module.  Date and time \reflink{parsing and
+  formatting entities}{sec:dateandtime} and efficient
+\reflink{offset-universal-time functions}{sec:offsettime} are also included in
+GBBopen Tools.
 
 Uniform interfaces to implementation-specific thread (multiprocessing)
 capabilities are provided by the \reflink{\code{:portable-threads}
@@ -2852,49 +2855,6 @@ optimizations disabled:
   (pushnew :full-safety *features*)
   (\entlink{compile-module} :my-app :recompile :propagate)
 \end{example}
-
-\end{functiondoc}
-
-%% ------------------------------------------------------------------------
-
-\begin{functiondoc}[month-precedes-date-var]{Variable}%
-{*month-precedes-date*}{}%
-
-\fnsyntax
-
-\fnpurpose Control month and date ordering for GBBopen date formatting.
-
-\fnpackage \code{:gbbopen-tools} (home package is \code{:mini-module})
-
-\fnmodule \code{:mini-module}
-
-\fnvaluetype A \glref{generalized~boolean}
-
-\fninitialvalue True
-
-\begin{alsos}{brief-date-and-time}
-\also[brief-date-and-time]
-\end{alsos}
-
-\fnexamples
-Toggle between date formatting options:
-%
-\W\supp
-\begin{example}
-> (let ((*month-precedes-date* t))
-    (brief-date-and-time))
-"Feb 16 12:11"
-> (let ((*month-precedes-date* nil))
-    (brief-date-and-time))
-"16 Feb 12:11"
-\end{example}
-
-\fnnote
-\indexit{module!:mini-module@\code{:mini-module}}%
-\indexit{:mini-module@\code{:mini-module} module}%
-%
-This variable is defined in the \code{:mini-module} \glref{module} in order to
-make it available as early as possible.
 
 \end{functiondoc}
 
@@ -2951,113 +2911,6 @@ and maximum value.
 \textbf{bounded-value} are also provided: \textbf{bounded-value\&},
 \textbf{bounded-value\$\&}, \textbf{bounded-value\$},
 \textbf{bounded-value\$\$}, and \textbf{bounded-value\$\$\$}.
-
-\end{functiondoc}
-
-%% ------------------------------------------------------------------------
-
-\begin{functiondoc}{Function}{brief-date-and-time}{\code{\&optional}
-    \var{universal-time time-zone include-seconds\/}
-    \returns{} \var{string\/}}
-\index{date, formatted}% 
-\index{time, formatted}% 
-
-\fnsyntax
-
-\fnpurpose Return a brief date-and-time string.
-
-\fnpackage \code{:gbbopen-tools  (home package is \code{:mini-module})}
-
-\fnmodule \code{:mini-module}
-
-\fnargs
-\begin{args}{universal-time}
-\arg[universal-time] A \glref{universal~time} (default is \nil,
-  which is equivalent to the value returned by
-  \code{(get-universal-time)})
-\arg[time-zone] A \glref{time~zone} (default is \nil,
-  which is equivalent to the current time zone adjusted for daylight
-  saving time)
-\arg[include-seconds] A \glref{generalized~boolean} (default is \nil)
-\end{args}
-
-\fnreturns A 12-character string (15-characters if \var{include-seconds\/} is non-\nil{}) 
-
-\fndescription If the \var{universal-time\/} value is within 120 days
-of the current time, the result \var{string\/} includes the time of
-day but not the year; otherwise, the year is included but not the time
-of day.
-
-\W\xml{p}
-\bfindexit{get-universal-time}%
-If \var{universal-time\/} is not supplied or is \nil, the current time
-(as returned by \textbf{get-universal-time} is used.  
-
-\W\xml{p}
-If \var{time-zone\/} is not supplied or is \nil, it defaults to the
-current time zone adjusted for daylight saving time. If
-\var{time-zone} is supplied, it is assumed to include any adjustment
-for daylight saving time.
-
-\begin{alsos}{*month-precedes-date*}
-\also[*month-precedes-date*]
-\end{alsos}
-
-\fnexamples
-Display the current date and time: 
-%
-\W\supp
-\begin{example}
-> (brief-date-and-time)
-"Feb 16 12:11"
-\end{example}
-%
-Display the current date and time (with seconds):
-%
-\W\supp\notpretop
-\begin{example}
-> (brief-date-and-time nil nil 't)
-"Feb 16 12:11:38"
-\end{example}
-%
-Display the current date and time as GMT: 
-%
-\W\supp\notpretop
-\begin{example}
-> (brief-date-and-time nil 0)
-"Feb 16 17:11"
-\end{example}
-%
-The date and time 10 days ago:
-%
-\W\supp\notpretop
-\begin{example}
-> (brief-date-and-time (- (get-universal-time) (* 60 60 24 10)))
-"Feb 6 12:11"
-\end{example}
-%
-The date and time 100 days ago:
-%
-\W\supp\notpretop
-\begin{example}
-> (brief-date-and-time (- (get-universal-time) (* 60 60 24 100)))
-"Nov  8, 2004"
-\end{example}
-%
-The date and time 100 days ago (with seconds):
-%
-\W\supp\notpretop
-\begin{example}
-> (brief-date-and-time (- (get-universal-time) (* 60 60 24 100)))
-"Nov  8, 2004   "
-\end{example}
-
-\fnnote
-\indexit{module!:mini-module@\code{:mini-module}}%
-\indexit{:mini-module@\code{:mini-module} module}%
-%
-This function is loaded with the \code{:mini-module} \glref{module} in order
-to to make it available as early as possible.
 
 \end{functiondoc}
 
@@ -4633,7 +4486,7 @@ elements.
   {\var{character-bag string\/} 
     \code{\&optional} \var{start end\/}
     \returns{} \var{string\/}}
-\index{date, formatted}% 
+\index{date!formatted}% 
 
 \fnsyntax
 
@@ -5840,6 +5693,261 @@ long-float coercion:
 \T\markright{}%
 \T\pagestyle{plain}
 \T\clearpage
+\W\xname{ref-date-and-time-entities}
+\T\pagestyle{fancy}
+\T\thispagestyle{fancybottom}
+\T\global\def\fnlastname{ }%
+
+\subsection{Date and Time}
+\label{sec:dateandtime}%
+
+\index{date and time entities}%
+The \code{:gbbopen-tools} module includes useful (and specialized) date and
+time parsing and formatting entities.
+
+\W\entities
+\T\clearpage
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}[month-precedes-date-var]{Variable}%
+{*month-precedes-date*}{}%
+
+\fnsyntax
+
+\fnpurpose Control month and date ordering for GBBopen Tools date and time
+entities.
+
+\fnpackage \code{:gbbopen-tools} (home package is \code{:mini-module})
+
+\fnmodule \code{:mini-module}
+
+\fnvaluetype A \glref{generalized~boolean}
+
+\fninitialvalue True
+
+\begin{alsos}{brief-date-and-time}
+\also[brief-date-and-time]
+\also[parse-date]
+\end{alsos}
+
+\fnexamples
+Toggle between date formatting options:
+%
+\W\supp
+\begin{example}
+> (let ((*month-precedes-date* t))
+    (brief-date-and-time))
+"Feb 16 12:11"
+> (let ((*month-precedes-date* nil))
+    (brief-date-and-time))
+"16 Feb 12:11"
+\end{example}
+
+\fnnote
+\indexit{module!:mini-module@\code{:mini-module}}%
+\indexit{:mini-module@\code{:mini-module} module}%
+%
+This variable is defined in the \code{:mini-module} \glref{module} in order to
+make it available as early as possible.
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{brief-date-and-time}{\code{\&optional}
+    \var{universal-time time-zone include-seconds\/}
+    \returns{} \var{string\/}}
+\index{date!formatted}% 
+\index{time, formatted}% 
+
+\fnsyntax
+
+\fnpurpose Return a brief date-and-time string.
+
+\fnpackage \code{:gbbopen-tools} (home package is \code{:mini-module})
+
+\fnmodule \code{:mini-module}
+
+\fnargs
+\begin{args}{universal-time}
+\arg[universal-time] A \glref{universal~time} (default is \nil,
+  which is equivalent to the value returned by
+  \code{(get-universal-time)})
+\arg[time-zone] A \glref{time~zone} (default is \nil,
+  which is equivalent to the current time zone adjusted for daylight
+  saving time)
+\arg[include-seconds] A \glref{generalized~boolean} (default is \nil)
+\end{args}
+
+\fnreturns A 12-character string (15-characters if \var{include-seconds\/} is non-\nil{}) 
+
+\fndescription If the \var{universal-time\/} value is within 120 days
+of the current time, the result \var{string\/} includes the time of
+day but not the year; otherwise, the year is included but not the time
+of day.
+
+\W\xml{p}
+\bfindexit{get-universal-time}%
+If \var{universal-time\/} is not supplied or is \nil, the current time
+(as returned by \textbf{get-universal-time} is used.  
+
+\W\xml{p}
+If \var{time-zone\/} is not supplied or is \nil, it defaults to the
+current time zone adjusted for daylight saving time. If
+\var{time-zone} is supplied, it is assumed to include any adjustment
+for daylight saving time.
+
+\begin{alsos}{*month-precedes-date*}
+\also[*month-precedes-date*]
+\end{alsos}
+
+\fnexamples
+Display the current date and time: 
+%
+\W\supp
+\begin{example}
+> (brief-date-and-time)
+"Feb 16 12:11"
+\end{example}
+%
+Display the current date and time (with seconds):
+%
+\W\supp\notpretop
+\begin{example}
+> (brief-date-and-time nil nil 't)
+"Feb 16 12:11:38"
+\end{example}
+%
+Display the current date and time as GMT: 
+%
+\W\supp\notpretop
+\begin{example}
+> (brief-date-and-time nil 0)
+"Feb 16 17:11"
+\end{example}
+%
+The date and time 10 days ago:
+%
+\W\supp\notpretop
+\begin{example}
+> (brief-date-and-time (- (get-universal-time) (* 60 60 24 10)))
+"Feb 6 12:11"
+\end{example}
+%
+The date and time 100 days ago:
+%
+\W\supp\notpretop
+\begin{example}
+> (brief-date-and-time (- (get-universal-time) (* 60 60 24 100)))
+"Nov  8, 2004"
+\end{example}
+%
+The date and time 100 days ago (with seconds):
+%
+\W\supp\notpretop
+\begin{example}
+> (brief-date-and-time (- (get-universal-time) (* 60 60 24 100)))
+"Nov  8, 2004   "
+\end{example}
+
+\fnnote
+\indexit{module!:mini-module@\code{:mini-module}}%
+\indexit{:mini-module@\code{:mini-module} module}%
+%
+This function is loaded with the \code{:mini-module} \glref{module} in order
+to to make it available as early as possible.
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{parse-date}{%
+    \var{string\/}
+    \code{\&key} \var{start end junk-allowed separators month-precedes-date\/}
+    \returns{} \mbox{\var{date, month, year\/}}}
+\index{date!parsing}% 
+
+\fnsyntax
+
+\fnpurpose Parse a date-specification string.
+
+\fnpackage \code{:gbbopen-tools}
+
+\fnmodule \code{:gbbopen-tools}
+
+\fnargs
+\begin{args}{month-precedes-date}
+\arg[start] Starting index into \var{string\/} (default is \code{0})
+\arg[end] Ending index into \var{string\/} (default is \nil, meaning
+end of \var{string\/})
+\arg[junk-allowed] A \glref{generalized~boolean} (default is \nil)
+\arg[separators] A sequence of characters that are skipped and separate the
+ date, month, and year fields in \var{string\/}, if needed (default is 
+ \code{"-/ ,"})
+\arg[month-precedes-date] A \glref{generalized~boolean} (default is 
+\textbf{\entlink{*month-precedes-date*}})
+\end{args}
+
+\fnreturns Three values: \var{date}, \var{month}, and \var{year}
+
+\fnerrors
+%
+If \var{junk-allowed\/} is false, an error is signaled if a numeric field in
+\var{string\/} does not consist entirely of the representation of a integer,
+possibly surrounded on either side by characters in \var{separators}.
+
+\fndescription
+%
+Both the month and date must be specified in \var{string\/},
+optionally followed by the year. The month can be a numeric value (1--12), a
+three-letter abbreviation, or the full month name.  If the month is specified
+numerically, then the value of \var{month-precedes-date\/} is used to
+determine the month and date ordering. If no year is specified in
+\var{string}, the current year is assumed, unless the specified month and date
+have passed, in which case next year is assumed.
+
+\begin{alsos}{*month-precedes-date*}
+\also[*month-precedes-date*]
+\end{alsos}
+
+\fnexamples
+%
+\W\supp
+\begin{example}
+> (parse-date "1 Apr 2010")
+1
+4
+2010
+> (parse-date "April 1, 2010")
+1
+4
+2010\goodpagebreak
+> (parse-date "1-4-10" :month-precedes-date 't)
+4
+1
+2010
+> (parse-date "1-4-10" :month-precedes-date nil)
+1
+4
+2010\goodpagebreak
+> (parse-date "4 Jul") \textcolor{darkergray}{;; entered before July 4, 2008}
+4
+7
+2008
+> (parse-date "4/7" :month-precedes-date nil)
+4
+7
+2008
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\T\markright{}%
+\T\pagestyle{plain}
+\T\clearpage
 \W\xname{ref-offset-universal-time-entities}
 \T\pagestyle{fancy}
 \T\thispagestyle{fancybottom}
@@ -6025,12 +6133,20 @@ Set the time base for Offset Universal Time to today:
 \W\supp
 \begin{example}
 > (set-ot-base)
-3410655616
+3436662016
 \end{example}
-%
-Set the time base for Offset Universal Time to July 1, 2007:
+Note that the returned Offset Universal Time time-base value (above) is not
+the current Universal Time value:
 %
 \W\supp\notpretop
+\begin{example}
+> (get-universal-time)
+3419947437
+\end{example}
+
+Set the time base for Offset Universal Time to July 1, 2007:
+%
+\W\supp
 \begin{example}
 > (set-ot-base 1 7 2007)
 3409014016
@@ -6047,8 +6163,8 @@ Set the time base for Offset Universal Time to July 1, 2007:
 
 \fnsyntax
 
-\fnpurpose Convert a Offset Universal Time value to an Offset Universal 
-Time value.
+\fnpurpose Convert a Universal Time value to an Offset Universal Time 
+value.
 
 \fnpackage \code{:gbbopen-tools}
 
