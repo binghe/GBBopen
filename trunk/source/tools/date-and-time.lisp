@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/date-and-time.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri May 16 10:46:21 2008 *-*
+;;;; *-* Last-Edit: Fri May 16 13:46:57 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -31,7 +31,8 @@
 ;;;  Exported tools entities
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (export '(brief-date-and-time		; in mini-module, but part of tools
+  (export '(brief-date-and-time         ; in mini-module.lisp, but part of
+                                        ; :gbbopen-tools
 	    internet-text-date-and-time ; not yet documented
 	    iso8661-date-and-time	; not yet documented
 	    message-log-date-and-time   ; not yet documented
@@ -98,22 +99,38 @@
                      (error "Unable to determine the month in ~s" string))
                    (incf& month)
                    (incf& start (length month-string))))))
-           (skip-separator ()
-             (when (find (schar string start) separators)
+           (skip-separators ()
+             (while (find (schar string start) separators)
                (incf& start))))
+      (skip-separators)
       (cond
-       (month-precedes-date
+       ((or (alpha-char-p (schar string start))
+            month-precedes-date)
         (process-month)
-        (skip-separator)
+        (skip-separators)
         (process-date))
        (t (process-date)
-          (skip-separator)
+          (skip-separators)
           (process-month)))
-      (skip-separator)
-      (skip-separator))                 ; allow another here: "June 15, 1952"
+      (skip-separators))
     ;; Process year:
-    (multiple-value-setq (year start)
-      (parse-integer string :start start :end end :junk-allowed junk-allowed))
+    (cond 
+     ;; Assumed year, if omitted:
+     ((=& start end)
+      (multiple-value-bind (seconds minutes hours 
+                            current-date current-month current-year)
+          (get-decoded-time)
+        (declare (ignore seconds minutes hours))
+        (setf year current-year)
+        ;; Assume next year, if the date is past in the current year:
+        (when (or (<& month current-month)
+                  (and (=& month current-month)
+                       (<& date current-date)))
+          (incf& year))))
+     ;; Otherwise, process the specified year:
+     (t (multiple-value-setq (year start)
+          (parse-integer string :start start :end end 
+                         :junk-allowed junk-allowed))))
     (check-type year (integer 0 #.most-positive-fixnum))
     ;; Upgrade YY to YYYY -- YY assumed within +/- 50 years from current time
     ;; (if year < 100):
@@ -122,8 +139,8 @@
                 ((>=& year 100) year)
                 ;; Do the upgrade:
                 (t (let ((current-century
-                          (*& 100 (floor& (nth-value 5 (get-decoded-time))
-                                          100))))
+                          (*& 100 (truncate& (nth-value 5 (get-decoded-time))
+                                             100))))
                      (if (>=& year 50) 
                          (+& year current-century -100)
                          (+& year current-century))))))
@@ -165,8 +182,8 @@
 ;;;  Internet-text-date-and-time
 
 (defun time-zone-abbreviation (zone daylight-savings-p)
-  ;;; Return a string of typical time-zone abbreviations;
-  ;;; zone is an integer with decode-universal-time semantics.
+  ;;; Return a time-zone abbreviation string for `zone;'
+  ;;; `zone' is an integer with decode-universal-time semantics.
   (cdr (assoc zone			
 	      (if daylight-savings-p
 		  '((4 . "ADT")
@@ -189,6 +206,8 @@
 		    (-1 . "CET")	; Central Europe
 		    (-2 . "EET")	; Eastern Europe
 		    (-10 . "AEST"))))))	; Australian Eastern
+
+;;; ---------------------------------------------------------------------------
 
 (defun internet-text-date-and-time (&optional (time (get-universal-time))
                                               time-zone)
