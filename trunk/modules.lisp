@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/modules.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu May 15 18:05:02 2008 *-*
+;;;; *-* Last-Edit: Fri May 16 09:34:53 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -63,6 +63,7 @@
             ("define-class" :forces-recompile)
             "mop-interface"
             "gbbopen-instance"
+            "date-and-time"
             "offset-universal-time"
             "print-object-for"
             "read-object"
