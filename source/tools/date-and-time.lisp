@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/date-and-time.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri May 16 13:46:57 2008 *-*
+;;;; *-* Last-Edit: Fri May 16 14:37:40 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -62,25 +62,19 @@
                                (junk-allowed nil)
                                (separators "-/ ,")
                                (month-precedes-date *month-precedes-date*))
-  ;;; Parses the following date formats (sensitive to month-precedes-date):
-  ;;;  DD-Mon-YYYY ("-" can also be "/" or " ")
-  ;;;  
-  ;;;  DDMonYYYY
-  ;;;  DD-Month-YY
-  ;;;  DDMonthYY
+  ;;; Parses many intuitive date formats (sensitive to month-precedes-date,
+  ;;; if needed):
   (declare (simple-string string))
-  (let (date month year)
+  (let (date month year month-preceded-date)
     (flet ((process-date ()
              (multiple-value-setq (date start)
-               (parse-integer string :start start :end end :junk-allowed t))
-             (check-type date (integer 1 31)))
+               (parse-integer string :start start :end end :junk-allowed t)))
            (process-month ()
              (cond
               ;; Numeric month:
               ((digit-char-p (schar string start))
                (multiple-value-setq (month start)
-                 (parse-integer string :start start :end end :junk-allowed t))
-               (check-type month (integer 1 12)))
+                 (parse-integer string :start start :end end :junk-allowed t)))
               ;; Month name:
               (t (let* (month-string
                         (month-equal-fn
@@ -100,19 +94,33 @@
                    (incf& month)
                    (incf& start (length month-string))))))
            (skip-separators ()
-             (while (find (schar string start) separators)
+             (while (and (<& start end)
+                         (find (schar string start) separators))
                (incf& start))))
       (skip-separators)
+      ;; If we have a month name, then we know the month-date order; otherwise
+      ;; we'll assume month-first for until we process the second field:
+      (when (alpha-char-p (schar string start))
+        (setf month-preceded-date 't))
+      (process-month)
+      (skip-separators)
       (cond
-       ((or (alpha-char-p (schar string start))
-            month-precedes-date)
-        (process-month)
-        (skip-separators)
-        (process-date))
-       (t (process-date)
-          (skip-separators)
-          (process-month)))
+       ((and (not month-preceded-date)
+             (or
+              ;; We have a month name in the second field:
+              (alpha-char-p (schar string start))
+              ;; Use the month-precedes-date value to decide the order:
+              (not month-precedes-date)))
+        ;; We actually have the date value from the first field (rather than
+        ;; the month), so set the date from the assumed month value and then
+        ;; proceed with month processing:
+        (setf date month)
+        (process-month))
+       ;; Simply continue, as we have month then date order:
+       (t (process-date)))
       (skip-separators))
+    (check-type month (integer 1 12))
+    (check-type date (integer 1 31))
     ;; Process year:
     (cond 
      ;; Assumed year, if omitted:
