@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/commands.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri May  2 11:51:41 2008 *-*
+;;;; *-* Last-Edit: Fri May 16 09:57:22 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -181,14 +181,14 @@
   (define-repl-command (:lm :add-to-native-help)
       (&rest module-name-and-options)
     "Load module"
-    (startup-module :mini-module nil nil 't)
+    (startup-module :mini-module (rest module-name-and-options) nil 't)
     (funcall (intern (symbol-name '#:do-mini-module-repl-command) :mini-module)
              ':lm module-name-and-options))
   
   (define-repl-command (:cm :add-to-native-help)
       (&rest module-name-and-options)
     "Compile and load module"
-    (startup-module :mini-module nil nil 't)
+    (startup-module :mini-module (rest module-name-and-options) nil 't)
     (funcall (intern (symbol-name '#:do-mini-module-repl-command) :mini-module)
              ':cm module-name-and-options))
   
