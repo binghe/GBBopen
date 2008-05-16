@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/date-and-time.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri May 16 09:32:01 2008 *-*
+;;;; *-* Last-Edit: Fri May 16 10:46:21 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -54,19 +54,16 @@
 (defparameter *weekday-name-vector*
     #("Mon" "Tue" "Wed" "Thu" "Fri" "Sat" "Sun"))
 
-(defconstant current-century
-    (* 100 (floor (nth-value 5 (decode-universal-time (get-universal-time)))
-		  100)))
-
 ;;; ---------------------------------------------------------------------------
 
 (defun parse-date (string &key (start 0) 
                                (end (length string))
                                (junk-allowed nil)
                                (separators "-/ ,")
-                               (month-preceeds-date *month-precedes-date*))
-  ;;; Parses the following date formats:
+                               (month-precedes-date *month-precedes-date*))
+  ;;; Parses the following date formats (sensitive to month-precedes-date):
   ;;;  DD-Mon-YYYY ("-" can also be "/" or " ")
+  ;;;  
   ;;;  DDMonYYYY
   ;;;  DD-Month-YY
   ;;;  DDMonthYY
@@ -77,28 +74,35 @@
                (parse-integer string :start start :end end :junk-allowed t))
              (check-type date (integer 1 31)))
            (process-month ()
-             (let* (month-string
-                    (month-equal-fn
-                     #'(lambda (month-name)
-                         (when (string-equal 
-                                string month-name
-                                :start1 start
-                                :end1 (min& end
-                                            (+& start (length month-name))))
-                           (setf month-string month-name)))))
-               (setf month (or (position-if month-equal-fn 
-                                            *month-full-name-vector*)
-                               (position-if month-equal-fn *month-name-vector*)))
-
-               (unless month
-                 (error "Unable to determine the month in ~s" string))
-               (incf& month)
-               (incf& start (length month-string))))
+             (cond
+              ;; Numeric month:
+              ((digit-char-p (schar string start))
+               (multiple-value-setq (month start)
+                 (parse-integer string :start start :end end :junk-allowed t))
+               (check-type month (integer 1 12)))
+              ;; Month name:
+              (t (let* (month-string
+                        (month-equal-fn
+                         #'(lambda (month-name)
+                             (when (string-equal 
+                                    string month-name
+                                    :start1 start
+                                    :end1 (min& end
+                                                (+& start (length month-name))))
+                               (setf month-string month-name)))))
+                   (setf month (or (position-if month-equal-fn 
+                                                *month-full-name-vector*)
+                                   (position-if month-equal-fn
+                                                *month-name-vector*)))
+                   (unless month
+                     (error "Unable to determine the month in ~s" string))
+                   (incf& month)
+                   (incf& start (length month-string))))))
            (skip-separator ()
              (when (find (schar string start) separators)
                (incf& start))))
       (cond
-       (month-preceeds-date
+       (month-precedes-date
         (process-month)
         (skip-separator)
         (process-date))
@@ -113,9 +117,16 @@
     (check-type year (integer 0 #.most-positive-fixnum))
     ;; Upgrade YY to YYYY -- YY assumed within +/- 50 years from current time
     ;; (if year < 100):
-    (setf year (cond ((>=& year 100) year)
-                     ((>=& year 50) (+& year current-century -100))
-                     (t (+& year current-century))))
+    (setf year (cond 
+                ;; No year upgrade needed:
+                ((>=& year 100) year)
+                ;; Do the upgrade:
+                (t (let ((current-century
+                          (*& 100 (floor& (nth-value 5 (get-decoded-time))
+                                          100))))
+                     (if (>=& year 50) 
+                         (+& year current-century -100)
+                         (+& year current-century))))))
     (values date month year)))
 
 ;;; ---------------------------------------------------------------------------
