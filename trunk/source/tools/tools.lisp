@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu May  1 13:26:54 2008 *-*
+;;;; *-* Last-Edit: Fri May 16 06:32:17 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -58,160 +58,11 @@
 ;;;           with-error-handling.  (Corkill)
 ;;;  02-09-08 Added nicer-y-or-n-p and nicer-yes-or-no-p.  (Corkill)
 ;;;  05-01-08 Added decf/delete-acons.  (Corkill)
+;;;  05-15-08 Added parse-date.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 (in-package :gbbopen-tools)
-
-;;; ---------------------------------------------------------------------------
-;;;  Create CLOS package nickname (or package!) where needed
-
-#+(or clozure digitool-mcl)
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (unless (find-package ':clos)
-    (make-package ':clos
-                  :use '(:common-lisp)))
-  
-  (defparameter *clos-symbols*
-      '(ccl:accessor-method-slot-definition
-        ccl:add-dependent
-        ccl:add-direct-method
-        ccl:add-direct-subclass 
-        ccl:class-default-initargs
-        ccl:class-direct-default-initargs 
-        ccl:class-direct-slots 
-        ccl:class-direct-subclasses
-        ccl:class-direct-superclasses
-        ccl:class-finalized-p 
-        ccl:class-precedence-list
-        ccl:class-prototype 
-        ccl:class-slots
-        ccl:compute-applicable-methods-using-classes
-        ccl:compute-class-precedence-list
-        ccl:compute-default-initargs
-        ccl:compute-discriminating-function 
-        ccl:compute-effective-method
-        ccl:compute-effective-slot-definition
-        ccl:compute-slots
-        ;; Not exported in Digitool MCL:
-        ccl::direct-slot-definition 
-        ccl:direct-slot-definition-class
-        ;; Not exported in Digitool MCL:
-        ccl::effective-slot-definition
-        ccl:effective-slot-definition-class
-        ccl:ensure-class 
-        ccl:ensure-class-using-class
-        ccl:ensure-generic-function-using-class
-        ccl::eql-specializer
-        ccl:eql-specializer-object
-        ccl:extract-lambda-list
-        ccl:extract-specializer-names
-        ccl:finalize-inheritance
-        ccl:find-method-combination
-        ccl:forward-referenced-class
-        ccl:funcallable-standard-class 
-        ccl:funcallable-standard-instance-access
-        ccl::funcallable-standard-object
-        ccl:generic-function-argument-precedence-order
-        ccl:generic-function-declarations
-        ccl:generic-function-lambda-list
-        ccl:generic-function-method-class
-        ccl:generic-function-method-combination
-        ccl:generic-function-methods
-        ccl:generic-function-name
-        ccl:intern-eql-specializer
-        ccl:make-method-lambda
-        ccl:map-dependents
-        ccl:metaobject 
-        ccl:method-function
-        ccl:method-generic-function
-        ccl:method-lambda-list
-        ccl:method-specializers 
-        ccl:reader-method-class
-        ccl:remove-dependent
-        ccl:remove-direct-method
-        ccl:remove-direct-subclass
-        ccl:set-funcallable-instance-function
-        ccl:slot-boundp-using-class
-        ;; Not exported in Digitool MCL:
-        ccl::slot-definition
-        ccl:slot-definition-allocation
-        ccl:slot-definition-initargs
-        ccl:slot-definition-initform
-        ccl:slot-definition-initfunction
-        ccl:slot-definition-location
-        ccl:slot-definition-name
-        ccl:slot-definition-readers
-        ccl:slot-definition-type
-        ccl:slot-definition-writers
-        ccl:slot-makunbound-using-class 
-        ccl:slot-value-using-class
-        ccl:specializer
-        ccl:specializer-direct-generic-functions
-        ccl:specializer-direct-methods
-        ccl:standard-accessor-method
-        ccl:standard-direct-slot-definition
-        ccl:standard-effective-slot-definition
-        ccl:standard-instance-access
-        ccl:standard-reader-method
-        ;; Not exported in Digitool MCL:
-        ccl::standard-slot-definition
-        ccl:standard-writer-method
-        ccl:update-dependent
-        ccl:validate-superclass
-        ccl:writer-method-class)))
-
-#+(or clozure digitool-mcl)
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (import *clos-symbols* :clos)
-  (export *clos-symbols* :clos))
-  
-#+cmu
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (ext::without-package-locks
-   (add-package-nickname "CLOS" :pcl)))
-  
-#+cormanlisp
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (add-package-nickname "CLOS" :common-lisp))
-
-#+gcl
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (add-package-nickname "CLOS" :pcl))
-
-#+sbcl
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (sb-ext::without-package-locks
-   (add-package-nickname "CLOS" :sb-pcl)))
-
-;;; ---------------------------------------------------------------------------
-;;;  Import MOP symbols, as needed
-
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (import '(#-cormanlisp
-	    clos::class-finalized-p 	; missing in CormanLisp 3.0
-	    #-(or cormanlisp ecl)
-	    clos:extract-specializer-names
-	    clos::finalize-inheritance 	; not exported in ECL
-	    #-(or cormanlisp ecl lispworks)
-	    clos::intern-eql-specializer)))
-
-;;; CormanLisp 3.0 is missing extract-specializer-names:
-#+cormanlisp
-(defun extract-specializer-names (specialized-lambda-list)
-  (lisp::extract-specializers specialized-lambda-list))
-
-;;; CormanLisp 3.0 is missing class-finalized-p, so we always assume a class
-;;; is finalized:
-#+cormanlisp
-(defun class-finalized-p (class)
-  (declare (ignore class))
-  't)
-
-;;; Lispworks and CormanLisp are missing intern-eql-specializer:
-#+(or cormanlisp lispworks)
-(defun intern-eql-specializer (x)
-  `(eql ,x))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Import routinely available entities, whenever possible
@@ -293,15 +144,16 @@
 	    list-length-2-p
 	    list-length>
 	    list-length>1
-	    macrolet-debug		; not documented
+	    macrolet-debug              ; not documented
 	    make-keyword
 	    memq
 	    message-log-date-and-time   ; not yet documented
             nicer-y-or-n-p              ; not-documented
             nicer-yes-or-no-p           ; not-documented
 	    nsorted-insert
-	    pretty-time-interval	; not yet documented
-	    pretty-run-time-interval	; not yet documented
+            parse-date                  ; not yet documented
+	    pretty-time-interval        ; not yet documented
+	    pretty-run-time-interval    ; not yet documented
 	    print-pretty-function-object ; not yet documented
 	    push-acons
 	    pushnew-acons
@@ -1107,14 +959,83 @@
 		  (return list))))))))))
 
 ;;; ===========================================================================
-;;;  Time formatting
+;;;  Time parsing and formatting
 
 (defparameter *month-name-vector*
     #("Jan" "Feb" "Mar" "Apr" "May" "Jun"
       "Jul" "Aug" "Sep" "Oct" "Nov" "Dec"))
 
+(defparameter *month-full-name-vector*
+    #("January" "February" "March" "April" "May" "June"
+      "July" "August" "September" "October" "November" "December"))
+
 (defparameter *weekday-name-vector*
     #("Mon" "Tue" "Wed" "Thu" "Fri" "Sat" "Sun"))
+
+(defconstant current-century
+    (* 100 (floor (nth-value 5 (decode-universal-time (get-universal-time)))
+		  100)))
+
+;;; ---------------------------------------------------------------------------
+
+(defun parse-date (string &key (start 0) 
+                               (end (length string))
+                               (junk-allowed nil)
+                               (separators "-/ ,")
+                               (month-preceeds-date *month-precedes-date*))
+  ;;; Parses the following date formats:
+  ;;;  DD-Mon-YYYY ("-" can also be "/" or " ")
+  ;;;  DDMonYYYY
+  ;;;  DD-Month-YY
+  ;;;  DDMonthYY
+  (declare (simple-string string))
+  (let (date month year)
+    (flet ((process-date ()
+             (multiple-value-setq (date start)
+               (parse-integer string :start start :end end :junk-allowed t))
+             (check-type date (integer 1 31)))
+           (process-month ()
+             (let* (month-string
+                    (month-equal-fn
+                     #'(lambda (month-name)
+                         (when (string-equal 
+                                string month-name
+                                :start1 start
+                                :end1 (min& end
+                                            (+& start (length month-name))))
+                           (setf month-string month-name)))))
+               (setf month (or (position-if month-equal-fn 
+                                            *month-full-name-vector*)
+                               (position-if month-equal-fn *month-name-vector*)))
+
+               (unless month
+                 (error "Unable to determine the month in ~s" string))
+               (incf& month)
+               (printv month-string)
+               (incf& start (length month-string))))
+           (skip-separator ()
+             (when (find (schar string start) separators)
+               (incf& start))))
+      (cond
+       (month-preceeds-date
+        (process-month)
+        (skip-separator)
+        (process-date))
+       (t (process-date)
+          (skip-separator)
+          (process-month)))
+      (skip-separator)
+      (skip-separator))                 ; allow another here: "June 15, 1952"
+    ;; Process year:
+    (multiple-value-setq (year start)
+      (parse-integer string :start start :end end :junk-allowed junk-allowed))
+    (check-type year (integer 0 #.most-positive-fixnum))
+    ;; Upgrade YY to YYYY -- YY assumed within +/- 50 years from current time
+    ;; (if year < 100):
+    (setf year (cond ((>=& year 100) year)
+                     ((>=& year 50) (+& year current-century -100))
+                     (t (+& year current-century))))
+    (values date month year)))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  message-log-date-and-time

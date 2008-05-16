@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/modules.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed May  7 03:14:07 2008 *-*
+;;;; *-* Last-Edit: Thu May 15 18:05:02 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -58,6 +58,7 @@
             ("declarations" :forces-recompile)
             ("declared-numerics" :forces-recompile)
             ("defflags" :forces-recompile)
+            "clos-interface" 
             ("tools" :forces-recompile)
             ("define-class" :forces-recompile)
             "mop-interface"
