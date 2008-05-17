@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Fri May 16 15:04:37 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Sat May 17 04:43:19 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -5798,8 +5798,11 @@ current time zone adjusted for daylight saving time. If
 \var{time-zone} is supplied, it is assumed to include any adjustment
 for daylight saving time.
 
-\begin{alsos}{*month-precedes-date*}
+\begin{alsos}{internet-text-date-and-time}
 \also[*month-precedes-date*]
+\also[internet-text-date-and-time]
+\also[iso8661-date-and-time]
+\also[message-log-date-and-time]
 \end{alsos}
 
 \fnexamples
@@ -5857,6 +5860,138 @@ The date and time 100 days ago (with seconds):
 %
 This function is loaded with the \code{:mini-module} \glref{module} in order
 to to make it available as early as possible.
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{internet-text-date-and-time}{%
+    \code{\&optional} \var{universal-time time-zone destination\/} 
+    \returns{} \var{result\/}}
+\index{time!formatting}% 
+
+\fnsyntax
+
+\fnpurpose Convert a universal time into Internet Text Message format.
+
+\fnpackage \code{:gbbopen-tools}
+
+\fnmodule \code{:gbbopen-tools}
+
+\fnargs
+\begin{args}{maximum-fields}
+\arg[universal-time] A \glref{universal~time} (default is \nil,
+  which is equivalent to the value returned by
+  \code{(get-universal-time)})
+\arg[time-zone] A \glref{time~zone} (default is \nil,
+  which is equivalent to the current time zone adjusted for daylight
+  saving time)
+\arg[destination] Either \nil, \code{t}, a stream, or a string with a fill 
+pointer (default is \nil)
+\end{args}
+
+\fnreturns If \var{destination\/} is non-\nil, then \nil; otherwise, a string.
+
+\begin{alsos}{iso8661-date-and-time}
+\also[brief-date-and-time]
+\also[iso8661-date-and-time]
+\also[message-log-date-and-time]
+\end{alsos}
+
+\fnexamples
+%
+\W\supp
+\begin{example}
+> (internet-text-date-and-time)
+"Sat, 17 May 2008 04:02:49 -0400 (EDT)"
+> (internet-text-date-and-time (get-universal-time) 0)
+"Sat, 17 May 2008 08:02:49 -0000 (GMT)"
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{iso8661-date-and-time}{%
+    \code{\&optional} \var{universal-time destination\/} 
+    \returns{} \var{result\/}}
+\index{time!formatting}% 
+
+\fnsyntax
+
+\fnpurpose Convert a universal time into ISO8661 (XML dateTime) format.
+
+\fnpackage \code{:gbbopen-tools}
+
+\fnmodule \code{:gbbopen-tools}
+
+\fnargs
+\begin{args}{maximum-fields}
+\arg[universal-time] A \glref{universal~time} (default is \nil,
+  which is equivalent to the value returned by
+  \code{(get-universal-time)})
+\arg[destination] Either \nil, \code{t}, a stream, or a string with a fill 
+pointer (default is \nil)
+\end{args}
+
+\fnreturns If \var{destination\/} is non-\nil, then \nil; otherwise, a string.
+
+\begin{alsos}{internet-text-date-and-time}
+\also[brief-date-and-time]
+\also[internet-text-date-and-time]
+\also[message-log-date-and-time]
+\end{alsos}
+
+\fnexample
+%
+\W\supp
+\begin{example}
+> (iso8661-date-and-time)
+"2008-05-17T08:02:49Z"
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{message-log-date-and-time}{%
+    \code{\&optional} \var{universal-time destination\/} 
+    \returns{} \var{result\/}}
+\index{time!formatting}% 
+
+\fnsyntax
+
+\fnpurpose Convert a universal time into ``message log''
+(\code{MMM DD HH:MM:SS}) format.
+
+\fnpackage \code{:gbbopen-tools}
+
+\fnmodule \code{:gbbopen-tools}
+
+\fnargs
+\begin{args}{maximum-fields}
+\arg[universal-time] A \glref{universal~time} (default is \nil,
+  which is equivalent to the value returned by
+  \code{(get-universal-time)})
+\arg[destination] Either \nil, \code{t}, a stream, or a string with a fill 
+pointer (default is \nil)
+\end{args}
+
+\fnreturns If \var{destination\/} is non-\nil, then \nil; otherwise, a string.
+
+\begin{alsos}{internet-text-date-and-time}
+\also[brief-date-and-time]
+\also[internet-text-date-and-time]
+\also[iso8661-date-and-time]
+\end{alsos}
+
+\fnexample
+%
+\W\supp
+\begin{example}
+> (message-log-date-and-time)
+"May 17 04:02:49"
+\end{example}
 
 \end{functiondoc}
 
@@ -5939,6 +6074,128 @@ have passed, in which case next year is assumed.
 4
 7
 2008
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{pretty-run-time-interval}{%
+    \var{internal-time-units\/}
+    \code{\&optional} \var{maximum-fields destination\/} 
+    \returns{} \var{result\/}}
+  \index{interval!time, formatting}% 
+\index{time interval!formatting}% 
+\index{internal time units, formatting}% 
+
+\fnsyntax
+
+\fnpurpose Format a run-time interval (in \var{internal-time-units\/}) into
+descriptive text.
+
+\fnpackage \code{:gbbopen-tools}
+
+\fnmodule \code{:gbbopen-tools}
+
+\fnargs
+\begin{args}{internal-time-units}
+\arg[internal-time-units] A number
+\arg[maximum-fields] An integer from 1--5 indicating maximum number of fields 
+to include in the descriptive \var{string\/} (default is 5, indicating all 
+fields should be included)
+\arg[destination] Either \nil, \code{t}, a stream, or a string with a fill 
+pointer (default is \nil)
+\end{args}
+
+\fnreturns If \var{destination\/} is non-\nil, then \nil; otherwise, a string.
+
+\fndescription The \var{internal-time-units\/} run-time interval is rounded to
+the nearest 100$^{th}$ of a second before conversion. Fields omitted by
+\var{maximum-fields\/} cause appropriate rounding of the generated description.
+
+\begin{alsos}{pretty-time-interval}
+\also[pretty-time-interval]
+\end{alsos}
+
+\fnexamples
+%
+\W\supp
+\begin{example}
+> internal-time-units-per-second
+1000
+> (pretty-run-time-interval 1000)
+"1 second"
+> (pretty-run-time-interval 5)
+"0 seconds"
+> (pretty-run-time-interval 6)
+"0.01 seconds"
+> (pretty-run-time-interval most-positive-fixnum)
+"6 days, 5 hours, 7 minutes, 50.94 seconds"
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{pretty-time-interval}{%
+    \var{seconds\/}
+    \code{\&optional} \var{maximum-fields destination\/} 
+    \returns{} \var{result\/}}
+  \index{interval!time, formatting}% 
+\index{time interval!formatting}% 
+
+\fnsyntax
+
+\fnpurpose Format a numeric time interval (in \var{seconds\/}) into
+descriptive text.
+
+\fnpackage \code{:gbbopen-tools}
+
+\fnmodule \code{:gbbopen-tools}
+
+\fnargs
+\begin{args}{maximum-fields}
+\arg[seconds] A number
+\arg[maximum-fields] An integer from 1--5 indicating maximum number of fields 
+to include in the descriptive \var{string\/} (default is 5, indicating all 
+fields should be included)
+\arg[destination] Either \nil, \code{t}, a stream, or a string with a fill 
+pointer (default is \nil)
+\end{args}
+
+\fnreturns If \var{destination\/} is non-\nil, then \nil; otherwise, a string.
+
+\fndescription The value of \var{seconds\/} is rounded to the nearest
+100$^{th}$ of a second before conversion.  Fields omitted by
+\var{maximum-fields\/} cause appropriate rounding of the generated
+description.
+
+\begin{alsos}{pretty-run-time-interval}
+\also[pretty-run-time-interval]
+\end{alsos}
+
+\fnexamples
+%
+\W\supp
+\begin{example}
+> (pretty-time-interval 1000)
+"16 minutes, 40 seconds"
+> (pretty-time-interval -1000)
+"minus 16 minutes, 40 seconds"
+> (pretty-time-interval -1000.12345)
+"minus 16 minutes, 40.12 seconds"
+> (pretty-time-interval -1000.12543)
+"minus 16 minutes, 40.13 seconds"\goodpagebreak
+> (pretty-time-interval 166611.9)
+"1 day, 22 hours, 16 minutes, 51.91 seconds"
+> (pretty-time-interval 166611.9 4)
+"1 day, 22 hours, 16 minutes, 52 seconds"
+> (pretty-time-interval 166611.9 3)
+"1 day, 22 hours, 17 minutes"
+> (pretty-time-interval 166611.9 2)
+"1 day, 22 hours"
+> (pretty-time-interval 166611.9 1)
+"2 days"
 \end{example}
 
 \end{functiondoc}

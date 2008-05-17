@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/date-and-time.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri May 16 14:37:40 2008 *-*
+;;;; *-* Last-Edit: Sat May 17 04:35:56 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -33,13 +33,12 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(brief-date-and-time         ; in mini-module.lisp, but part of
                                         ; :gbbopen-tools
-	    internet-text-date-and-time ; not yet documented
-	    iso8661-date-and-time	; not yet documented
-	    message-log-date-and-time   ; not yet documented
-            parse-date                  ; not yet documented
-	    pretty-time-interval        ; not yet documented
-	    pretty-run-time-interval    ; not yet documented
-	    )))
+	    internet-text-date-and-time
+	    iso8661-date-and-time
+	    message-log-date-and-time
+            parse-date
+	    pretty-time-interval
+	    pretty-run-time-interval)))
 
 ;;; ===========================================================================
 ;;;  Time parsing and formatting
@@ -157,12 +156,13 @@
 ;;; ---------------------------------------------------------------------------
 ;;;  message-log-date-and-time
 
-(defun message-log-date-and-time (&optional (time (get-universal-time)))
-  ;; Returns a string representing local time in "message log" format:
-  ;; MMM DD HH:MM:SS
+(defun message-log-date-and-time (&optional (time (get-universal-time))
+                                            (destination nil))
+  ;; Writes or returns a string representing local time in "message log"
+  ;; format: MMM DD HH:MM:SS
   (multiple-value-bind (second minute hour date month)
       (decode-universal-time time)
-    (format nil 
+    (format destination
             "~a ~2,'0d ~2,'0d:~2,'0d:~2,'0d"
             (svref *month-name-vector* (1-& month))
             date
@@ -173,11 +173,13 @@
 ;;; ---------------------------------------------------------------------------
 ;;;  ISO8661-date-and-time
 
-(defun iso8661-date-and-time (&optional (time (get-universal-time)))
-  ;; Returns a string representing time in ISO8661 (XML dateTime) format
+(defun iso8661-date-and-time (&optional (time (get-universal-time))
+                                        (destination nil))
+  ;; Writes or returns a string representing time in ISO8661 (XML dateTime) 
+  ;; format
   (multiple-value-bind (second minute hour date month year)
       (decode-universal-time time 0)
-    (format nil 
+    (format destination
             "~4,'0d-~2,'0d-~2,'0dT~2,'0d:~2,'0d:~2,'0dZ"
             year
             month
@@ -218,7 +220,8 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun internet-text-date-and-time (&optional (time (get-universal-time))
-                                              time-zone)
+                                              time-zone
+                                              (destination nil))
   ;;; Returns a string representing time in Internet Text Message format
   (multiple-value-bind (second minute hour date month year 
                         day daylight-savings-p zone)
@@ -228,7 +231,7 @@
     (let ((zone-value (*& -100 (if daylight-savings-p
                                    (1-& zone)
                                    zone))))
-      (format nil 
+      (format destination
               "~a, ~2,'0d ~a ~a ~2,'0d:~2,'0d:~2,'0d ~a~4,'0d~@[ (~a)~]"
               (svref *weekday-name-vector* day)
               date
@@ -245,60 +248,126 @@
 ;;; ---------------------------------------------------------------------------
 ;;;   Pretty time-interval conversions
 
-(defun pretty-time-interval (interval-in-seconds)
-  ;;; Converts `seconds' to a time interval string (rounded to nearest 
-  ;;; 100th of a second).
+(defun pretty-time-interval (interval-in-seconds 
+                             &optional (maximum-fields 5)
+                                       (destination nil))
+  ;;; Converts `seconds' to a time interval string (rounded to the nearest
+  ;;; 100th of a second):
+  (check-type maximum-fields (integer 1 5))
   (let ((negative-p nil))
     (when (minusp interval-in-seconds)
-      (setq negative-p 't
-            interval-in-seconds (abs interval-in-seconds)))
+      (setf negative-p 't)
+      (setf interval-in-seconds (abs interval-in-seconds)))
     (multiple-value-bind (seconds remainder)
-        (floor interval-in-seconds)
+        (truncate interval-in-seconds)
       (multiple-value-bind (hundreds)
           (round (* remainder 100))
         ;; handle roundup!
-        (when (= 100 hundreds)
+        (when (=& 100 hundreds)
           (incf seconds)
-          (setq hundreds 0))
+          (setf hundreds 0))
         (multiple-value-bind (minutes seconds)
             (floor seconds 60)
           (multiple-value-bind (hours minutes)
               (floor minutes 60)
             (multiple-value-bind (days hours)
                 (floor hours 24)
-              (let ((days-p (not (zerop days)))
-                    (hours-p (not (zerop hours)))
-                    (minutes-p (not (zerop minutes)))
-                    (seconds-p (not (zerop seconds)))
-                    (hundreds-p (not (zerop hundreds))))
-                (with-output-to-string (stream)
-                  (when negative-p (format stream "-"))
-                  (when days-p
-                    (format stream "~s day~:p~@[~*, ~]"
-                            days (or hours-p minutes-p seconds-p hundreds-p)))
-                  (when hours-p
-                    (format stream "~s hour~:p~@[~*, ~]"
-                            hours (or minutes-p seconds-p hundreds-p)))
-                  (when minutes-p
-                    (format stream "~s minute~:p~@[~*, ~]"
-                            minutes (or seconds-p hundreds-p))) 
-                  (when (or seconds-p
-                            hundreds-p
-                            (and (not minutes-p)
-                                 (not hours-p)
-                                 (not days-p)))
-                    (format stream "~s~:[~*~;.~2,'0d~] second~p" 
-                            seconds
-                            hundreds-p hundreds 
-                            seconds)))))))))))
+              ;; Determine likely field usage:
+              (when (or (plusp& hundreds)
+                        (plusp& seconds))
+                (decf& maximum-fields 2))
+              (when (plusp& hours) (decf& maximum-fields))
+              (when (plusp& minutes) (decf& maximum-fields))
+              (when (plusp days) (decf& maximum-fields))
+              (incf& maximum-fields)    ; adjust for easy plusp& checks below
+              ;; Determine the actual fields to include, rounding for excluded
+              ;; fields as needed:
+              (let* ((hundreds-p (and (not (zerop& hundreds))
+                                      (plusp& maximum-fields)))
+                     (seconds-p (progn
+                                  (unless hundreds-p
+                                    (incf& maximum-fields)
+                                    (when (>=& hundreds 50)
+                                      (incf& seconds)
+                                      (when (=& seconds 60)
+                                        (setf seconds 0)
+                                        (incf& minutes)
+                                        (when (=& minutes 60)
+                                          (setf minutes 0)
+                                          (incf& hours)
+                                          (when (=& hours 24)
+                                            (setf hours 0)
+                                            (incf days))))))
+                                  (and (not (zerop& seconds))
+                                       (plusp& maximum-fields))))
+                     (minutes-p (progn
+                                  (unless seconds-p 
+                                    (incf& maximum-fields)
+                                    (when (>=& seconds 30)
+                                      (incf& minutes)
+                                      (when (=& minutes 60)
+                                        (setf minutes 0)
+                                        (incf& hours)
+                                        (when (=& hours 24)
+                                          (setf hours 0)
+                                          (incf days)))))
+                                  (and (not (zerop& minutes))
+                                       (plusp& maximum-fields))))
+                     (hours-p (progn 
+                                (unless minutes-p
+                                  (incf& maximum-fields)
+                                  (when (>=& minutes 30)
+                                    (incf& hours)
+                                    (when (=& hours 24)
+                                      (setf hours 0)
+                                      (incf days))))
+                                (and (not (zerop& hours))
+                                     (plusp& maximum-fields))))
+                     (days-p (progn
+                               (unless hours-p
+                                 (when (>=& hours 12)
+                                   (incf days)))
+                               (not (zerop days)))))
+                (flet ((write-it (stream)
+                         (when negative-p (format stream "minus "))
+                         (when days-p
+                           (format stream "~s day~:p~@[~*, ~]"
+                                   days 
+                                   (or hours-p minutes-p seconds-p hundreds-p)))
+                         (when hours-p 
+                           (format stream "~s hour~:p~@[~*, ~]"
+                                   hours 
+                                   (or minutes-p seconds-p hundreds-p)))
+                         (when minutes-p
+                           (format stream "~s minute~:p~@[~*, ~]"
+                                   minutes 
+                                   (or seconds-p hundreds-p)))
+                         (cond
+                          ((or seconds-p hundreds-p)
+                           (format stream "~s~:[~*~;.~2,'0d~] second~p" 
+                                   seconds
+                                   hundreds-p
+                                   hundreds 
+                                   seconds))
+                          ;; Should only occur when interval-in-seconds is zero:
+                          ((not (or days-p hours-p minutes-p))
+                           (format stream "0 seconds")))))
+                  (if destination
+                      (write-it destination)
+                      (with-output-to-string (stream)
+                        (write-it stream))))))))))))
 
 ;;; ---------------------------------------------------------------------------
 
-(defun pretty-run-time-interval (internal-run-time)
+(defun pretty-run-time-interval (internal-run-time 
+                                 &optional (maximum-fields 5)
+                                           (destination nil))
   ;;; Converts `internal-run-time' to a time interval string (rounded to
   ;;; nearest 100th of a second).
   (pretty-time-interval (/ internal-run-time 
-                           #.(float internal-time-units-per-second))))
+                           #.(float internal-time-units-per-second))
+                        maximum-fields
+                        destination))
 
 ;;; ===========================================================================
 ;;;				  End of File
