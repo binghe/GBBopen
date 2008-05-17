@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Sat May 17 10:52:39 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Sat May 17 17:53:53 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -1669,8 +1669,9 @@ Define a \glref{REPL~command} named \code{:my-app} that compiles and loads the
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Macro}{with-system-name}%
-  {\code{(}\var{system-name\/}\code{)} \var{form\/}\superstar}
+\begin{functiondoc}{Macro}{with-system-name}{%
+    \code{(}\var{system-name\/}\code{)} \var{form\/}\superstar{}
+    \returns{} \var{result\/}\superstar}
 \index{compiling, a module, and also loading module}%
 \index{loading!a module}% 
 \index{module!compiling, recompiling, and loading}%
@@ -1694,6 +1695,8 @@ definitions, and module definitions defined in \var{forms}.
 \arg[system-name] A \glref{keyword~symbol} identifying a \glref{system}
 \arg[form] A \glref{form}
 \end{args}
+
+\fnreturns The values returned by evaluating the last \var{form}.
 
 \begin{alsos}{define-relative-directory}
 \also[define-relative-directory]
@@ -2854,6 +2857,46 @@ optimizations disabled:
 \begin{example}
   (pushnew :full-safety *features*)
   (\entlink{compile-module} :my-app :recompile :propagate)
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Macro}{allow-redefinition}{%
+    \var{form\/}\superstar{}
+    \returns{} \var{result\/}\superstar}
+\index{redefining!functions without warnings}%
+\index{redefining!classes without warnings}%
+
+\fnsyntax 
+
+\fnpurpose Suppress redefinition warnings associated with processing 
+\var{forms}.
+
+\fnpackage \code{:gbbopen-tools}
+
+\fnmodule \code{:gbbopen-tools}
+
+\fnargs
+\begin{args}{form}
+\arg[form] A \glref{form}
+\end{args}
+
+\fnreturns The values returned by evaluating the last \var{form}.
+
+\fnexample
+%
+\W\supp
+\begin{example}
+> (defun redefined-function () "Silly.")
+silly
+> (defclass also-silly () ())
+also-silly
+> (allow-redefinition
+     (defun redefined-function "Even more silliness.")
+     (\entlink{define-unit-class} also-silly () ()))
+also-silly
 \end{example}
 
 \end{functiondoc}
