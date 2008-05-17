@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/spaces.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri May  2 05:18:33 2008 *-*
+;;;; *-* Last-Edit: Sat May 17 12:40:02 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -19,7 +19,7 @@
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
-;;;  06-06-03 File Created.  (Corkill)
+;;;  06-06-03 File created.  (Corkill)
 ;;;  05-27-04 Added clear-space-instances.  (Corkill)
 ;;;  07-07-04 Renamed define-space-instance-class to define-space-class and
 ;;;           standard-space-instance-class to standard-space-class.  (Corkill)
@@ -46,6 +46,7 @@
             all-space-instances
             allowed-unit-classes-of
             clear-space-instances
+            change-space-instance-storage
             children                    ; standard-space-instance slot name
             children-of
             define-space-class
@@ -174,7 +175,7 @@
    (%%storage-spec%%)
    (%%storage%%
     :initform nil)
-   (%%evfn-unit-ht%% :initform (make-hash-table :test 'eq))
+   (%%evfn-unit-ht%% :initform (make-hash-table :size 0 :test 'eq))
    (%%bb-widgets%% :initform nil)
    (parent 
     :link (root-space-instance children)
@@ -311,7 +312,6 @@
       (setf (slot-value instance 'allowed-unit-classes)
             (ensure-unit-classes-specifiers allowed-unit-classes))
       (setf (standard-space-instance.space-name instance) space-name)
-      (setf (standard-space-instance.%%storage-spec%% instance) storage)
       (linkf (slot-value instance 'parent)
              (if parent-space-instance
                  parent-space-instance
@@ -411,11 +411,28 @@
          (remove-instance-from-space-instance instance space-instance)))
    't space-instances))
 
+;;; ---------------------------------------------------------------------------
+;;;   Change-space-instance-storage
+
+(defun change-space-instance-storage (space-instance storage-spec)
+  (unless (typep space-instance 'standard-space-instance)
+    (setf space-instance (find-space-instance-by-path space-instance 't)))
+  (let ((old-storage (standard-space-instance.%%storage%% space-instance)))
+    (setup-instance-storage space-instance storage-spec)
+    (dolist (storage old-storage)
+      (map-all-instances-on-storage
+       #'(lambda (instance)
+           (dolist (storage (storage-objects-for-add/move/remove
+                             (class-of instance) space-instance))
+             (add-instance-to-storage instance storage nil)))      
+       storage 't nil))))
+
 ;;; ===========================================================================
 ;;;   Saving/Sending Space Instances
 
 (defmethod omitted-slots-for-saving/sending ((instance standard-space-instance))
-  (list* 'space-name                  ; recomputed from instance-name
+  (list* 'instance-counts
+         'space-name                    ; recomputed from instance-name
          '%%storage%%
          '%%bb-widgets%%
          (call-next-method)))

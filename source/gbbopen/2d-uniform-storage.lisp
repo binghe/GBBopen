@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/current/source/gbbopen/2d-uniform-storage.lisp *-*
+;;;; *-* File: /usr/local/gbbopen/source/gbbopen/2d-uniform-storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Jul  3 10:20:46 2007 *-*
-;;;; *-* Machine: ruby.corkills.org *-*
+;;;; *-* Last-Edit: Thu May 15 09:42:37 2008 *-*
+;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -55,7 +55,7 @@
                                      slot-names &rest initargs
 				     &key layout)
   (declare (ignore slot-names))
-  (unless layout (missing-layout-option storage initargs))
+  (unless layout (missing-bucket-option-error storage ':layout initargs))
   (let ((layout (ensure-list-of-lists layout)))
     (check-storage-dimensions/layout-lengths storage layout initargs)
     ;; 1st dimension:

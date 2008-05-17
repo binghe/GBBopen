@@ -1,7 +1,10 @@
 Important changes since GBBopen 1.0:
 
-  * New DECF/DELETE-ACONS :gbbopen-tools function
-  * New PARSE-DATE :gbbopen-tools function
+  * New CHANGE-SPACE-INSTANCE-STORAGE function
+
+  * New :gbbopen-tools functions
+     - DECF/DELETE-ACONS
+     - PARSE-DATE
 
 
 Important changes in GBBopen 1.0:
