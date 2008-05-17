@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/declarations.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Mar 20 10:58:18 2008 *-*
-;;;; *-* Machine: cyclone.local *-*
+;;;; *-* Last-Edit: Sat May 17 16:59:07 2008 *-*
+;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -19,7 +19,7 @@
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
-;;;  07-18-02 File Created.  (Corkill)
+;;;  07-18-02 File created.  (Corkill)
 ;;;  01-18-04 Added NYI error signalling.  (Corkill)
 ;;;  06-22-04 Added (debug 0) to with-full-optimization.  (Corkill)
 ;;;  01-26-08 Added make-keys-only-hash-table-if-supported.  (Corkill)
@@ -30,7 +30,7 @@
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(*generate-nyi-errors*	; not documented
-	    allow-redefinition		; not documented
+	    allow-redefinition
             make-keys-only-hash-table-if-supported ; not documented
 	    nyi                         ; not documented
 	    unbound-value-indicator
@@ -42,9 +42,11 @@
 (defmacro allow-redefinition (&body body)
   `(#+allegro excl:without-redefinition-warnings
     #+lispworks system::without-warning-on-redefinition
-    #-(or allegro lispworks)
+    #+clisp handler-case
+    #-(or allegro clisp lispworks)
     progn
-    ,@body))
+    (progn ,@body)
+    #+clisp (clos:clos-warning ())))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -58,14 +60,14 @@
 ;;; ---------------------------------------------------------------------------
 
 (defmacro without-cmu/sbcl-optimization-warnings (&body body)
-  ;;  Suppress CMUCL and SBCL compilation notes on failed optimizations by
-  ;;  lowering the speed setting.  (It would be better to find a good way to
-  ;;  supress these--and only these--optimization warnings.)
-  #+(or cmu sbcl)
-  `(locally (declare (optimize (speed 1)))
-     ,@body)
-  #-(or cmu sbcl)
-  `(progn ,@body))
+  ;;  Suppress CMUCL and SBCL compilation notes on failed optimizations:
+  `(locally 
+     ;; Inhibit CMUCL optimization warnings:
+     #+cmu (declare (optimize (extensions:inhibit-warnings 3)))
+     ;; Eliminate SBCL optimization warnings by lowering the speed setting.
+     ;; (It would be better to find a direct way to suppress these.)
+     #+sbcl (declare (optimize (speed 1)))
+     ,@body))
 
 ;;; ---------------------------------------------------------------------------
 ;;;   NYI wrapper (for use with code that is not yet ready for prime time)
