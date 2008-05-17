@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/mini-module/mini-module.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat May 10 04:02:33 2008 *-*
+;;;; *-* Last-Edit: Sat May 17 10:23:13 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -189,7 +189,7 @@
             *current-system-name*       ; re-exported from :cl-user
             *mini-module-compile-verbose* ; not yet documented
             *mini-module-load-verbose*  ; not yet documented
-            *month-precedes-date*
+            *month-precedes-date*       ; part of tools, but placed here
             brief-date-and-time         ; part of tools, but placed here
             check-all-module-requires-orderings ; not yet documented
             compile-module
@@ -273,11 +273,13 @@
 
 (defvar *month-precedes-date* 't)
 
-(defvar *month-name-vector* 
-    (vector "Jan" "Feb" "Mar" "Apr" "May" "Jun"
-            "Jul" "Aug" "Sep" "Oct" "Nov" "Dec"))
+(defparameter *month-name-vector*
+    #("Jan" "Feb" "Mar" "Apr" "May" "Jun"
+      "Jul" "Aug" "Sep" "Oct" "Nov" "Dec"))
 
-(defun brief-date-and-time (&optional time time-zone include-seconds)
+(defun brief-date-and-time (&optional time time-zone include-seconds
+                                      (destination nil))
+
   (let ((current-time (get-universal-time))
         time-difference)
     (if time
@@ -294,14 +296,14 @@
                ;; 120 days:
                #.(* 60 60 24 120))
             (if *month-precedes-date*
-                (format nil "~a ~2d ~2,'0d:~2,'0d~:[~;:~2,'0d~]"
+                (format destination "~a ~2d ~2,'0d:~2,'0d~:[~;:~2,'0d~]"
                         month-name
                         date
                         hour
                         minute
                         include-seconds
                         second)
-                (format nil "~2d ~a ~2,'0d:~2,'0d~:[~;:~2,'0d~]"
+                (format destination "~2d ~a ~2,'0d:~2,'0d~:[~;:~2,'0d~]"
                         date
                         month-name
                         hour
@@ -309,12 +311,12 @@
                         include-seconds
                         second))
             (if *month-precedes-date*     
-                (format nil "~a ~2d, ~a~@[   ~]"
+                (format destination "~a ~2d, ~a~@[   ~]"
                         month-name
                         date
                         year
                         include-seconds)
-                (format nil "~2d ~a, ~a~@[   ~]"
+                (format destination "~2d ~a, ~a~@[   ~]"
                         date
                         month-name
                         year

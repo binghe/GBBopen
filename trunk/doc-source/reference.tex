@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Sat May 17 04:43:19 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Sat May 17 10:52:39 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -5755,15 +5755,16 @@ make it available as early as possible.
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Function}{brief-date-and-time}{\code{\&optional}
-    \var{universal-time time-zone include-seconds\/}
-    \returns{} \var{string\/}}
+\begin{functiondoc}{Function}{brief-date-and-time}{%
+    \code{\&optional} \var{universal-time time-zone include-seconds
+      destination\/}
+    \returns{} \var{result\/}}
 \index{date!formatted}% 
 \index{time, formatted}% 
 
 \fnsyntax
 
-\fnpurpose Return a brief date-and-time string.
+\fnpurpose Generate a brief date-and-time description.
 
 \fnpackage \code{:gbbopen-tools} (home package is \code{:mini-module})
 
@@ -5778,11 +5779,14 @@ make it available as early as possible.
   which is equivalent to the current time zone adjusted for daylight
   saving time)
 \arg[include-seconds] A \glref{generalized~boolean} (default is \nil)
+\arg[destination] Either \nil, \code{t}, a stream, or a string with a fill 
+pointer (default is \nil)
 \end{args}
 
-\fnreturns A 12-character string (15-characters if \var{include-seconds\/} is non-\nil{}) 
+\fnreturns If \var{destination\/} is non-\nil, then \nil; otherwise, a string.
 
-\fndescription If the \var{universal-time\/} value is within 120 days
+\fndescription 
+A 12-character description (15-characters if \var{include-seconds\/} is non-\nil{}) is generated.  If the \var{universal-time\/} value is within 120 days
 of the current time, the result \var{string\/} includes the time of
 day but not the year; otherwise, the year is included but not the time
 of day.
@@ -6245,6 +6249,31 @@ value is changed.
 
 %% ------------------------------------------------------------------------
 
+\begin{functiondoc}[ot-base-var]{Variable}{*ot-base*}{}%
+
+\fnsyntax
+
+\fnpurpose Holds the Offset Universal Time time-base value.
+
+\fnpackage \code{:gbbopen-tools} 
+
+\fnmodule \code{:gbbopen-tools}
+
+\fnvaluetype An Offset Universal Time time-base value
+
+\fninitialvalue Must be set by using \textbf{\entlink{set-ot-base}}
+
+\begin{alsos}{check-ot-base}
+\also[check-ot-base]
+\also[ot2ut]
+\also[set-ot-base]
+\also[ut2ot]
+\end{alsos}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
 \begin{functiondoc}{Function}{check-ot-base}{\code{\&optional}
     \var{suppress-warning\/}
     \returns{} \var{boolean\/}}
@@ -6271,6 +6300,7 @@ Offset Universal Time value; nil otherwise.
 \fnerrors The Offset Universal Time time-base value has not been set.
 
 \begin{alsos}{set-ot-base}
+\also[*ot-base*]
 \also[ot2ut]
 \also[set-ot-base]
 \also[ut2ot]
@@ -6327,6 +6357,7 @@ value.
 \fnerrors The Offset Universal Time time-base value has not been set.
 
 \begin{alsos}{check-ot-base}
+\also[*ot-base*]
 \also[check-ot-base]
 \also[ut2ot]
 \also[set-ot-base]
@@ -6379,6 +6410,7 @@ initializing applications that do not need to represent historical
 dates or save or communicate Offset Universal Time values.
 
 \begin{alsos}{check-ot-base}
+\also[*ot-base*]
 \also[check-ot-base]
 \also[ot2ut]
 \also[ut2ot]
@@ -6438,12 +6470,16 @@ value.
 \fnerrors The Offset Universal Time time-base value has not been set.
 
 \begin{alsos}{check-ot-base}
+\also[*ot-base*]
 \also[check-ot-base]
 \also[ot2ut]
 \also[set-ot-base]
 \end{alsos}
 
 \fnexamples
+%
+codeindexit{multiple-value-call}%
+codeindexit{encode-universal-time}%
 %
 \W\supp
 \begin{example}
@@ -6453,6 +6489,10 @@ value.
 -15071348
 > (ut2ot 3393942668)
 -15071348
+> (ut2ot (multiple-value-call #'encode-universal-time 
+           ;; noon on the Fourth of July, 2008:
+           0 0 12 (parse-date "July 4, 2008")))
+15161984
 \end{example}
 
 \end{functiondoc}

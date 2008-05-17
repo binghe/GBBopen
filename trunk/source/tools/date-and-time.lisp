@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/date-and-time.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat May 17 04:35:56 2008 *-*
+;;;; *-* Last-Edit: Sat May 17 10:22:46 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -27,12 +27,14 @@
 
 (in-package :gbbopen-tools)
 
-;;; ---------------------------------------------------------------------------
-;;;  Exported tools entities
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (import '(mini-module:*month-precedes-date*
+            mini-module::*month-name-vector*
+            mini-module:brief-date-and-time)))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (export '(brief-date-and-time         ; in mini-module.lisp, but part of
-                                        ; :gbbopen-tools
+  (export '(*month-precedes-date*       ; both of these are in mini-module.lisp, 
+            brief-date-and-time         ; but part of :gbbopen-tools
 	    internet-text-date-and-time
 	    iso8661-date-and-time
 	    message-log-date-and-time
@@ -43,9 +45,8 @@
 ;;; ===========================================================================
 ;;;  Time parsing and formatting
 
-(defparameter *month-name-vector*
-    #("Jan" "Feb" "Mar" "Apr" "May" "Jun"
-      "Jul" "Aug" "Sep" "Oct" "Nov" "Dec"))
+;;; (defvar *month-precedes-date* 't) and 
+;;; (defparameter *month-name-vector* ...) are defined in mini-module.lisp
 
 (defparameter *month-full-name-vector*
     #("January" "February" "March" "April" "May" "June"
