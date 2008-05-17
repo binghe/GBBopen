@@ -16,11 +16,11 @@
 
 <p><table class="tight" width="100%">
 <tr valign="top"><td valign="baseline" align="left"%>
-<nobr><b><font color="#000000">brief-date-and-time</font></b></nobr></td><td valign="baseline"> &nbsp; </td><td valign="baseline" align="left" width="99%"><code>&#38;optional</code>
-<var>universal-time time-zone include-seconds</var>
-<i> =&gt; </i> <var>string</var></td><td valign="baseline" align="right">[<i>Function</i>]
+<nobr><b><font color="#000000">brief-date-and-time</font></b></nobr></td><td valign="baseline"> &nbsp; </td><td valign="baseline" align="left" width="99%"><code>&#38;optional</code> <var>universal-time time-zone include-seconds
+destination</var>
+<i> =&gt; </i> <var>result</var></td><td valign="baseline" align="right">[<i>Function</i>]
 </td></tr></table></p>
-<p><span class="fndoclabel">Purpose</span> <br />Return a brief date-and-time string.
+<p><span class="fndoclabel">Purpose</span> <br />Generate a brief date-and-time description.
 </p>
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-tools</code> (home package is <code>:mini-module</code>)
 </p>
@@ -34,11 +34,13 @@ which is equivalent to the value returned by
 which is equivalent to the current time zone adjusted for daylight
 saving time)
 </td></tr><tr valign="top"><td valign="baseline"><i>include-seconds</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> (default is <code>nil</code>)
+</td></tr><tr valign="top"><td valign="baseline"><i>destination</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> Either <code>nil</code>, <code>t</code>, a stream, or a string with a fill 
+pointer (default is <code>nil</code>)
 </td></tr></table>
 </p>
-<p><span class="fndoclabel">Returns</span> <br />A 12-character string (15-characters if <var>include-seconds</var> is non-<code>nil</code>) 
+<p><span class="fndoclabel">Returns</span> <br />If <var>destination</var> is non-<code>nil</code>, then <code>nil</code>; otherwise, a string.
 </p>
-<p><span class="fndoclabel">Description</span> <br />If the <var>universal-time</var> value is within 120 days
+<p><span class="fndoclabel">Description</span> <br />A 12-character description (15-characters if <var>include-seconds</var> is non-<code>nil</code>) is generated.  If the <var>universal-time</var> value is within 120 days
 of the current time, the result <var>string</var> includes the time of
 day but not the year; otherwise, the year is included but not the time
 of day.
