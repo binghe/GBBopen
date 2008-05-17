@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/find.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri May  9 20:52:23 2008 *-*
+;;;; *-* Last-Edit: Sat May 17 16:54:12 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -19,7 +19,7 @@
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
-;;;  11-21-03 File Created.  (Corkill)
+;;;  11-21-03 File created.  (Corkill)
 ;;;  03-10-04 Simple find/filter patterns completed.  (Corkill)
 ;;;  03-15-04 Range find/filter patterns completed.  (Corkill)
 ;;;  03-17-04 Added missing unit-classes-spec checks to map & finds.  (Corkill)
@@ -524,11 +524,8 @@
        `(with-full-optimization ()
           (defun ,name (instance-value pattern-value comparison-type)
             (declare (ignore comparison-type))
-            ;; Inhibit CMUCL optimization warnings:
-            #+cmu (declare (optimize (extensions:inhibit-warnings 3)))
-            ;; Eliminate SBCL optimization warnings:
-            #+sbcl (declare (optimize (speed 1)))
-            (,comparison-test instance-value pattern-value)))))
+            (without-cmu/sbcl-optimization-warnings
+             (,comparison-test instance-value pattern-value))))))
   (generate-match-is match-is-eq eq)
   (generate-match-is match-is-eql eql)
   (generate-match-is match-is-equal equal)

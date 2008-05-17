@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat May 10 04:00:27 2008 *-*
+;;;; *-* Last-Edit: Sat May 17 17:32:33 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -196,27 +196,28 @@
 
 ;;; ---------------------------------------------------------------------------
 
-#+under-development
-(defun best-retrieval-storage (unit-class plus-subclasses space-instance
-			       disjunctive-dimensional-extents)
-  (let ((retrieval-dimensions
-	 (determine-retrieval-dimensions 
-	  space-instance disjunctive-dimensional-extents))
-	(exact-unit-storage nil)
-	(best-dimensions nil)
-	(subclass-unit-storage nil))
-    (when retrieval-dimensions
-      (dolist (storage (standard-space-instance.%%storage%% space-instance))
-	(let ((stores-classes (stores-classes-of storage))
-	      (dimension-names (dimension-names-of storage)))
-	  ;; exact class match:
-	  (when (eq unit-class stores-class)
-	    (cond
-	     ;; see if this one's better:
-	     (exact-unit-storage nil)
-	     ;; a new exact match:
-	     (t (setf exact-unit-storage storage)))))))))
-		
+(defun best-retrieval-storage (space-instance unit-class-specs
+                               retrieval-dimensions result-so-far)
+  (or
+   ;; A single unit-class spec was specified:
+   #+developing
+   (when (list-length-1-p unit-class-specs)
+     (destructuring-bind (unit-class . plus-subclasses)
+         (car unit-class-specs)
+       (ensure-finalized-class unit-class)
+       (printv (storage-objects-for-add/move/remove 
+                unit-class space-instance))))
+
+   ;; Everything else:
+   (dolist (storage (standard-space-instance.%%storage%% space-instance))
+     (dolist (unit-class-spec unit-class-specs)
+       (destructuring-bind (unit-class . plus-subclasses)
+           unit-class-spec
+         (when (applicable-storage-object-p 
+                storage unit-class plus-subclasses)
+           (pushnew storage result-so-far))))))
+  result-so-far)
+	
 ;;; ---------------------------------------------------------------------------
 
 (defun storage-objects-for-retrieval (unit-classes-spec space-instances
@@ -226,33 +227,28 @@
   ;;; `unit-classes-spec' on `space-instances' given 
   ;;; `disjunctive-dimensional-extents'
   (when space-instances
-    (let ((result nil))
-      (dolist (unit-class-spec (parse-unit-classes-specifier 
-				unit-classes-spec))
-	(destructuring-bind (unit-class . plus-subclasses)
-	    unit-class-spec
-	  (flet ((do-si (space-instance)
-		   (when (allowed-unit-classes-of space-instance)
-		     (let ((retrieval-dimensions
-			    (unless mapping-only
-			      (determine-retrieval-dimensions 
-			       space-instance 
-			       disjunctive-dimensional-extents))))
-		       (when (or mapping-only
-				 retrieval-dimensions)
-			 (dolist (storage (standard-space-instance.%%storage%%
-					   space-instance))
-			   (when (applicable-storage-object-p 
-				  storage unit-class plus-subclasses)
-			     (pushnew storage result))))))))
-	    (cond ((eq space-instances 't)
-		   (map-space-instances #'do-si '(*) invoking-fn-name))
-		  (t (map-space-instances
-		      #'do-si
-		      (ensure-list space-instances)
-		      invoking-fn-name))))))
+    (let ((result nil)
+          (unit-class-specs (parse-unit-classes-specifier unit-classes-spec)))
+      (flet ((do-si (space-instance)
+               (when (allowed-unit-classes-of space-instance)
+                 (let ((retrieval-dimensions
+                        (unless mapping-only
+                          (determine-retrieval-dimensions 
+                           space-instance 
+                           disjunctive-dimensional-extents))))
+                   (when (or mapping-only retrieval-dimensions)
+                     (setf result 
+                           (best-retrieval-storage
+                            space-instance unit-class-specs
+                            retrieval-dimensions result)))))))
+        (cond ((eq space-instances 't)
+               (map-space-instances #'do-si '(*) invoking-fn-name))
+              (t (map-space-instances
+                  #'do-si
+                  (ensure-list space-instances)
+                  invoking-fn-name))))
       (when (and (null result) (not mapping-only)
-		 *warn-about-unusual-requests*)
+                 *warn-about-unusual-requests*)
 	(warn "None of the retrieval dimensions of pattern ~w ~_overlap with ~
                those of unit ~:[class~;classes~] ~s on ~s."
 	      pattern
@@ -290,20 +286,11 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun missing-layout-option (storage initargs)
+(defun missing-bucket-option-error (storage missing-option initargs)
+  ;; (used in 1d-uniform-buckets.lisp and 2d-uniform-buckets.lisp):
   (error "Required storage ~s option was not specified ~
-                   for dimension~p~:* ~s of unit-class ~s on ~s."
-	 ':layout
-	 (dimension-names-of storage)
-	 (getf initargs ':stores-classes)
-	 (instance-name-of (space-instance-of storage))))
-
-;;; ---------------------------------------------------------------------------
-
-(defun missing-test-option (storage initargs)
-  (error "Required storage ~s option was not specified ~
-                   for dimension~p~:* ~s of unit-class ~s on ~s."
-	 ':test
+          for dimension~p~:* ~s of unit-class ~s on ~s."
+         missing-option
 	 (dimension-names-of storage)
 	 (getf initargs ':stores-classes)
 	 (instance-name-of (space-instance-of storage))))
@@ -316,7 +303,7 @@
 	 (layout-length (length layout)))
     (flet ((the-error (many/few-string)
 	     (error "Too ~a layout specifications supplied in ~w ~
-                   for dimension~p~:* ~s of unit-class ~s on ~s."
+                     for dimension~p~:* ~s of unit-class ~s on ~s."
 		    many/few-string
 		    layout
 		    dimension-names
@@ -335,7 +322,7 @@
   ;;; Sets up the default storage for `space-instance', when none was
   ;;; specified.  No storage is created for space instances that
   ;;; cannot store any unit instances.
-  #+ecl (declare (ignore storage-spec))
+  (setf (standard-space-instance.%%storage-spec%% space-instance) storage-spec)
   (setf (standard-space-instance.%%storage%% space-instance)
 	(if (allowed-unit-classes-of space-instance)
 	    (list (do-storage space-instance '(t t unstructured)))
@@ -349,6 +336,7 @@
   (unless (allowed-unit-classes-of space-instance)
     (error "Space instance ~s does not allow any unit instances."
 	   space-instance))	 
+  (setf (standard-space-instance.%%storage-spec%% space-instance) storage-spec)
   (let ((result nil))
     (cond
      ;; single storage specification:
@@ -418,7 +406,7 @@
     (let* ((instance-counts (instance-counts-of storage))
 	   (sorted-instance-counts 
 	    (and instance-counts
-		 (sort instance-counts #'string< :key #'car)))
+		 (sort (copy-list instance-counts) #'string< :key #'car)))
 	   (total-instances (if instance-counts
 				(reduce #'(lambda (a b) (+& a b))
 					instance-counts
@@ -459,7 +447,7 @@
        (t (format t "~s instance~:p (" total)
           (let ((first-time-p t))
             (dolist (count-acons 
-                        (sort instance-counts #'string< :key #'car)) 
+                        (sort (copy-list instance-counts) #'string< :key #'car)) 
               (if first-time-p (setf first-time-p nil) (format t "; "))
               (format t "~s ~s"
                       (cdr count-acons) 
