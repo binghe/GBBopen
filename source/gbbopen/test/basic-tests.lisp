@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/basic-tests.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Apr 29 06:08:50 2008 *-*
+;;;; *-* Last-Edit: Sat May 17 16:47:37 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -19,7 +19,7 @@
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
-;;;  07-20-02 File Created.  (Corkill)
+;;;  07-20-02 File created.  (Corkill)
 ;;;  06-08-04 Added additional find-instances tests.  (Corkill)
 ;;;  06-11-07 Converted :prefix format accessors to "-of" format.  (Corkill)
 ;;;
@@ -603,6 +603,18 @@
 		(string-equal infinity-string "#@double-float-infinity"))
       (format t "~&;; ** Infinity is printed as: ~a~%"
 	      infinity-string)))
+  ;; Check if a redefined unit-class remains eq:
+  (let ((old-u1-class (find-unit-class 'uc-1))
+        (old-u2-class (find-unit-class 'uc-2)))
+    (allow-redefinition
+     (eval '(define-unit-class uc-1 (abstract) 
+             ;; Need to explore why the following breaks ECL:
+             (#-ecl redefined)))
+     (eval '(define-unit-class uc-2 (uc-1 not-a-unit) 
+             (also-redefined))))
+    (unless (and (eq old-u1-class (find-unit-class 'uc-1))
+                 (eq old-u2-class (find-unit-class 'uc-2)))
+      (format t "~&;; ** Redefined unit-classes are not eq.~%")))
   ;; Check if writer-method-class is actually called to determine the
   ;; class of writer methods:
   (let* ((unit-class (find-unit-class 'uc-1))
