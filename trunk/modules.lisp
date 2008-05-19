@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/modules.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri May 16 09:34:53 2008 *-*
+;;;; *-* Last-Edit: Mon May 19 04:28:53 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -67,6 +67,7 @@
             "offset-universal-time"
             "print-object-for"
             "read-object"
+            "duplicate-instance"
             "epilogue"))
   
   (define-module :portable-threads

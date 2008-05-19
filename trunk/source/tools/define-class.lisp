@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/current/source/tools/define-class.lisp *-*
+;;;; *-* File: /usr/local/gbbopen/source/tools/define-class.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Sep 26 13:36:31 2006 *-*
-;;;; *-* Machine: ruby.corkills.org *-*
+;;;; *-* Last-Edit: Mon May 19 04:12:29 2008 *-*
+;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -84,7 +84,8 @@
 ;;;  into the separation mechanism (parse-define-class) for others to use.
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (export '(parse-define-class *standard-define-class-options*)))
+  (export '(*standard-define-class-options* 
+            parse-define-class)))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  These are the extended class-options supported in define-class.

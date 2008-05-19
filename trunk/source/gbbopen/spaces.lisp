@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/spaces.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat May 17 12:40:02 2008 *-*
+;;;; *-* Last-Edit: Mon May 19 05:10:21 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -267,20 +267,11 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defmethod initialize-instance ((instance standard-space-instance)
-                                &rest initargs
-                                &key instance-name 
-                                     make-parents 
-                                     dimensions
-                                     storage
-                                     (allowed-unit-classes 't))
-  (declare (inline class-of))
-  ;; Verify that user-defined space-classes have the correct metaclass:
-  (let ((metaclass (class-of instance)))
-    (check-type metaclass standard-space-class))
-  ;; Verify that the path (instance-name) is at least a cons:
-  (check-type instance-name cons)
-  (check-type allowed-unit-classes (or symbol list))
+(defun prepare-space-name-and-parents (instance-name make-parents 
+                                       allowed-unit-classes)
+  ;;; Check that space-name and parents are AOK.
+  ;;; Return the space-name and parent-space-instance.
+  (check-type instance-name cons)  ;; the path (instance-name) must be a cons
   (multiple-value-bind (parent-path space-name)
       (splitting-butlast instance-name)
     ;; space-name is the car of the space-name butlast tail
@@ -296,26 +287,45 @@
         (unless parent-space-instance
           (if make-parents
               (setf parent-space-instance
-                (make-space-instance 
-                 parent-path
-                 :allowed-unit-classes allowed-unit-classes
-                 :make-parents t))
+                    (make-space-instance 
+                        parent-path
+                        :allowed-unit-classes allowed-unit-classes
+                        :make-parents t))
               (error "A parent space instance for ~s does not exist."
                      instance-name))))
-      ;; Canonicalize the syntax of supplied dimensions:
-      (setf dimensions
-            (canonicalize-space-dimensions instance-name dimensions))
-      ;; Now do the normal unit-instance work:
-      (apply #'call-next-method instance 
-             :dimensions dimensions initargs)
-      ;; Fixup a single extended-unit-class specification:
-      (setf (slot-value instance 'allowed-unit-classes)
-            (ensure-unit-classes-specifiers allowed-unit-classes))
-      (setf (standard-space-instance.space-name instance) space-name)
-      (linkf (slot-value instance 'parent)
-             (if parent-space-instance
-                 parent-space-instance
-                 *root-space-instance*))))
+      (values space-name parent-space-instance))))
+
+;;; ---------------------------------------------------------------------------
+
+(defmethod initialize-instance ((instance standard-space-instance)
+                                &rest initargs
+                                &key instance-name 
+                                     make-parents 
+                                     dimensions
+                                     storage
+                                     (allowed-unit-classes 't))
+  (declare (inline class-of))
+  ;; Verify that user-defined space-classes have the correct metaclass:
+  (let ((metaclass (class-of instance)))
+    (check-type metaclass standard-space-class))
+  (check-type allowed-unit-classes (or symbol list))
+  (multiple-value-bind (space-name parent-space-instance)
+      (prepare-space-name-and-parents 
+       instance-name make-parents allowed-unit-classes)
+    ;; Canonicalize the syntax of supplied dimensions:
+    (setf dimensions
+          (canonicalize-space-dimensions instance-name dimensions))
+    ;; Now do the normal unit-instance work:
+    (apply #'call-next-method instance 
+           :dimensions dimensions initargs)
+    ;; Fixup a single extended-unit-class specification:
+    (setf (slot-value instance 'allowed-unit-classes)
+          (ensure-unit-classes-specifiers allowed-unit-classes))
+    (setf (standard-space-instance.space-name instance) space-name)
+    (linkf (slot-value instance 'parent)
+           (if parent-space-instance
+               parent-space-instance
+               *root-space-instance*)))
   (setup-instance-storage instance storage))
 
 ;;; ---------------------------------------------------------------------------
@@ -426,6 +436,40 @@
                              (class-of instance) space-instance))
              (add-instance-to-storage instance storage nil)))      
        storage 't nil))))
+
+;;; ===========================================================================
+;;;  Making Duplicate Unit Instances
+
+(defmethod unduplicated-slot-names ((instance standard-space-instance))
+  (list* 'instance-counts
+         'space-name                    ; recomputed from instance-name
+         '%%storage%%
+         '%%bb-widgets%%
+         (call-next-method)))
+
+;;; ---------------------------------------------------------------------------
+
+(defmethod make-duplicate-instance ((instance standard-space-instance)
+                                    unduplicated-slot-names
+                                    &rest initargs
+                                    &key instance-name 
+                                         make-parents 
+                                         storage
+                                         (allowed-unit-classes 't))
+
+  (declare (dynamic-extent initargs))
+  (multiple-value-bind (space-name parent-space-instance)
+      (prepare-space-name-and-parents 
+       instance-name make-parents allowed-unit-classes)
+    (multiple-value-bind (new-instance slots)
+        (apply #'call-next-method instance unduplicated-slot-names initargs)
+      (setf (standard-space-instance.space-name new-instance) space-name)
+      (linkf (slot-value instance 'parent)
+             (if parent-space-instance
+                 parent-space-instance
+                 *root-space-instance*))
+      (setup-instance-storage new-instance storage)
+      (values new-instance slots))))
 
 ;;; ===========================================================================
 ;;;   Saving/Sending Space Instances

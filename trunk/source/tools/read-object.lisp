@@ -1,13 +1,13 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/source/tools/read-object.lisp *-*
+;;;; *-* File: /usr/local/gbbopen/source/tools/read-object.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Mar  4 02:24:17 2008 *-*
-;;;; *-* Machine: whirlwind.corkills.org *-*
+;;;; *-* Last-Edit: Mon May 19 04:27:44 2008 *-*
+;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
 ;;;; *
-;;;; *                 Read Saved/Sent Object Support
+;;;; *                    Read Saved/Sent Object Support
 ;;;; *
 ;;;; **************************************************************************
 ;;;; **************************************************************************
