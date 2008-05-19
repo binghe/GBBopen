@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon May 19 11:22:18 2008 *-*
+;;;; *-* Last-Edit: Mon May 19 13:59:41 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -130,8 +130,7 @@
   (let ((*%%allow-setf-on-link%%* 't))
     (multiple-value-bind (new-instance slots)
         (apply #'call-next-method instance unduplicated-slot-names initargs)
-      (post-initialize-instance-slots 
-       new-instance (mapcar #'slot-definition-name slots))
+      (post-initialize-instance-slots new-instance nil slots)
       (with-lock-held (*master-instance-lock*)
         (maybe-initialize-instance-name-slot
          (class-of new-instance) new-instance)
@@ -352,14 +351,20 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun post-initialize-instance-slots (instance slot-names)
+(defun post-initialize-instance-slots (instance slot-names slots)
+  ;; Performs post-initialization slot processing. At least one of
+  ;; `slot-names' or `slots' must be nil (dealing with the different between
+  ;; having the slot-names in initialize-instance or the actual slots in
+  ;; make-duplicate-instance).
   (let ((unit-class (class-of instance)))
     ;; Link slot processing: fix atomic, non-singular link-slot values and
     ;; create link inverse pointers:
     (dolist (eslotd (class-slots unit-class))
       ;; Only process specified slots:
       (when (or (eq slot-names 't)
-                (memq (slot-definition-name eslotd) slot-names))
+                (when slot-names 
+                  (memq (slot-definition-name eslotd) slot-names))
+                (when slots (memq eslotd slots)))
         (cond 
          ;; link slot:
          ((typep eslotd 'effective-link-definition)
@@ -448,7 +453,7 @@
                                      &key space-instances)  
   (declare (inline class-of))
   (unless *%%skip-gbbopen-shared-initialize-method-processing%%*
-    (post-initialize-instance-slots instance slot-names)
+    (post-initialize-instance-slots instance slot-names nil)
     ;; Add this instance to the explicitly-specified space instances.  This
     ;; is ugly, but we first remove the supplied space instances stored in
     ;; the %%space-instances%% slot, and then we re-add them either directly
