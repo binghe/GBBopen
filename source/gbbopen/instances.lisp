@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon May 19 04:43:59 2008 *-*
+;;;; *-* Last-Edit: Mon May 19 11:22:18 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -144,6 +144,10 @@
                                       space-instances
                                       original-space-instances))
             (add-instance-to-space-instance new-instance space-instance))))
+      ;; signal the creation event:
+      (signal-event-using-class
+       (load-time-value (find-class 'create-instance-event))
+       :instance new-instance)
       (values new-instance slots))))
 
 ;;; ===========================================================================
