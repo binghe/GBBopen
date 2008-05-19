@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon May 19 13:59:41 2008 *-*
+;;;; *-* Last-Edit: Mon May 19 15:52:30 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -143,11 +143,23 @@
                                       space-instances
                                       original-space-instances))
             (add-instance-to-space-instance new-instance space-instance))))
-      ;; signal the creation event:
-      (signal-event-using-class
-       (load-time-value (find-class 'create-instance-event))
-       :instance new-instance)
       (values new-instance slots))))
+
+;;; ---------------------------------------------------------------------------
+;;; Create-instance-event signaling is done in this :around method to follow
+;;; activities performed by primary and :before/:after methods.
+
+(defmethod make-duplicate-instance :around ((instance standard-unit-instance)
+                                    unduplicated-slot-names
+                                    &rest initargs)
+  (declare (dynamic-extent initargs))
+  (multiple-value-bind (new-instance slots)
+      (apply #'call-next-method instance unduplicated-slot-names initargs)
+    ;; signal the creation event:
+    (signal-event-using-class
+     (load-time-value (find-class 'create-instance-event))
+     :instance new-instance)
+    (values new-instance slots)))
 
 ;;; ===========================================================================
 ;;;  Saving/Sending Unit Instances

@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Mon May 19 12:26:19 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Mon May 19 15:53:58 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -9152,6 +9152,12 @@ Return the names of the link slots of the \code{hyp} \glref{unit~class}:
   \code{\&rest} \var{initargs\/}
   \mbox{\returns{} \var{new-instance, slots\/}}}
 \fnalternate{make-duplicate-instance}{%
+  \code{(}\var{instance\/} \code{standard-unit-instance)}
+  \var{unduplicated-slot-names\/}
+  \code{\&rest} \var{initargs\/}
+  \mbox{\returns{} \var{new-instance, slots\/}}}
+\fnalternate{make-duplicate-instance}{%
+  \code{:around}
   \code{(}\var{instance\/} \code{standard-unit-instance)}
   \var{unduplicated-slot-names\/}
   \code{\&rest} \var{initargs\/}
