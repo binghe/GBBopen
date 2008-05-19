@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat May 17 17:32:33 2008 *-*
+;;;; *-* Last-Edit: Mon May 19 15:57:37 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -127,7 +127,8 @@
   ;;; Finds all storage objects for instances of `unit-class' on 
   ;;; `space-instance'.  Used for add/move/remove unit-instance operations.
   (let ((result nil)
-	(plus-subclasses-storage nil))
+	(plus-subclasses-storage nil)
+        (unit-class-name (type-of unit-class)))
     (dolist (storage (standard-space-instance.%%storage%% space-instance))
       (dolist (class-spec (stores-classes-of storage))
 	(destructuring-bind (stores-class . plus-subclasses)
@@ -139,8 +140,7 @@
 	   ;; also include first ("best") plus-subclasses match:
 	   ((and (not plus-subclasses-storage)
 		 plus-subclasses
-		 (memq stores-class
-		       (the list (class-precedence-list unit-class))))
+                 (subtypep (type-of stores-class) unit-class-name))
 	    (push storage plus-subclasses-storage))))))
     (or result
 	plus-subclasses-storage
