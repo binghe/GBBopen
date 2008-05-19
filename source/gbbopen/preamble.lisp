@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/preamble.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue May  6 19:20:03 2008 *-*
+;;;; *-* Last-Edit: Mon May 19 04:21:57 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -19,7 +19,7 @@
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
-;;;  07-17-02 File Created.  (Corkill)
+;;;  07-17-02 File created.  (Corkill)
 ;;;  09-26-04 Renamed instance-hash-table-test to more descriptive
 ;;;           instance-name-comparison-test.  (Corkill)
 ;;;  11-05-05 Added *coerce-interval-rationals-to-floats*.  (Corkill)

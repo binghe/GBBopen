@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat May 10 03:51:01 2008 *-*
+;;;; *-* Last-Edit: Mon May 19 04:43:59 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -19,7 +19,7 @@
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
-;;;  09-18-02 File Created.  (Corkill)
+;;;  09-18-02 File created.  (Corkill)
 ;;;  01-21-04 Added instance-space-instances.  (Corkill)
 ;;;  05-07-04 Added with-changing-dimension-values.  (Corkill)
 ;;;  01-06-05 Support :space-instances initarg values when initializing
@@ -58,18 +58,19 @@
             do-instances-of-class
             do-sorted-instances-of-class
             find-instance-by-name
-            find-all-instance-by-name   ; not documented (yet...)
+            find-all-instances-by-name
             find-instances-of-class
             instance-dimension-value
             instance-dimension-values
             instance-deleted-p
-            instance-name               ; export the slot name
+            instance-name               ; re-export
 	    instance-name-of
+            make-duplicate-instance     ; not yet documented
             map-instances-of-class
             map-sorted-instances-of-class
 	    space-instances-of
-            with-changing-dimension-values ; not documented (yet...)
-            )))
+            unduplicated-slot-names     ; re-export
+            with-changing-dimension-values)))
 
 ;;; ===========================================================================
 ;;;   Unit Instances
@@ -108,6 +109,42 @@
 #+cmu-possible-optimization
 (declaim (pcl::slots (slot-boundp standard-unit-instance)
                      (inline standard-unit-instance)))
+
+;;; ===========================================================================
+;;;  Making Duplicate Unit Instances
+
+(defmethod unduplicated-slot-names ((instance standard-unit-instance))
+  (list* '%%marks%%
+         'instance-name 
+         (call-next-method)))
+
+;;; ---------------------------------------------------------------------------
+
+(defmethod make-duplicate-instance ((instance standard-unit-instance)
+                                    unduplicated-slot-names
+                                    &rest initargs
+                                    &key (space-instances 
+                                          nil space-instances-p))
+  (declare (dynamic-extent initargs))
+  ;; Allow setf setting of link-slot pointers:
+  (let ((*%%allow-setf-on-link%%* 't))
+    (multiple-value-bind (new-instance slots)
+        (apply #'call-next-method instance unduplicated-slot-names initargs)
+      (post-initialize-instance-slots 
+       new-instance (mapcar #'slot-definition-name slots))
+      (with-lock-held (*master-instance-lock*)
+        (maybe-initialize-instance-name-slot
+         (class-of new-instance) new-instance)
+        (let ((original-space-instances
+               (standard-unit-instance.%%space-instances%% new-instance)))
+          ;; Clear the old %%space-instances%% value:
+          (setf (standard-unit-instance.%%space-instances%% new-instance)
+                nil)
+          (dolist (space-instance (if space-instances-p
+                                      space-instances
+                                      original-space-instances))
+            (add-instance-to-space-instance new-instance space-instance))))
+      (values new-instance slots))))
 
 ;;; ===========================================================================
 ;;;  Saving/Sending Unit Instances
@@ -311,115 +348,120 @@
 
 ;;; ---------------------------------------------------------------------------
 
+(defun post-initialize-instance-slots (instance slot-names)
+  (let ((unit-class (class-of instance)))
+    ;; Link slot processing: fix atomic, non-singular link-slot values and
+    ;; create link inverse pointers:
+    (dolist (eslotd (class-slots unit-class))
+      ;; Only process specified slots:
+      (when (or (eq slot-names 't)
+                (memq (slot-definition-name eslotd) slot-names))
+        (cond 
+         ;; link slot:
+         ((typep eslotd 'effective-link-definition)
+          (let ((current-value
+                 (slot-value-using-class unit-class instance eslotd)))
+            (when current-value
+              (let* ((dslotd
+                      (effective-link-definition.direct-slot-definition
+                       eslotd))
+                     (sort-function 
+                      (direct-link-definition.sort-function dslotd))
+                     (sort-key
+                      (or (direct-link-definition.sort-key dslotd)
+                          #'identity))) 
+                (cond
+                 ;; Singular link slot:
+                 ((direct-link-definition.singular dslotd)
+                  ;; fix-up non-atomic singular link slot initialization
+                  ;; values here; pretty late, but OK for now:
+                  (when (consp current-value)
+                    (with-events-disabled ()
+                      (setf (slot-value-using-class
+                             unit-class instance
+                             #-lispworks
+                             eslotd
+                             #+lispworks
+                             (slot-definition-name eslotd))
+                            (sole-element current-value)))))
+                 ;; Non-singular link slot:
+                 (t (let ((rewrite-slot nil))
+                      ;; fix-up atomic non-singular link slot initialization
+                      ;; values here; pretty late, but OK for now:
+                      (unless (consp current-value)
+                        (setf current-value (list current-value)
+                              rewrite-slot 't))
+                      ;; Make sure the direct link-slot value is sorted, if so
+                      ;; specified:
+                      (when (and sort-function
+                                 ;; length > 1
+                                 (cdr current-value))
+                        (setf current-value (sort (copy-list current-value)
+                                                  sort-function
+                                                  :key sort-key)
+                              rewrite-slot 't))
+                      (when rewrite-slot
+                        (with-events-disabled ()
+                          (setf (slot-value-using-class 
+                                 unit-class instance 
+                                 #-lispworks
+                                 eslotd
+                                 #+lispworks
+                                 (slot-definition-name eslotd))
+                                current-value))))))
+                ;; do the inverse pointers for this link slot:
+                (%do-ilinks dslotd instance (ensure-list current-value) 't)
+                ;; signal the direct link event:
+                (%signal-direct-link-event 
+                 instance dslotd current-value current-value)))))
+         ;; nonlink slot:
+         #+(or digitool-mcl lispworks)
+         ;; In implementations that don't use (setf slot-value-using-class)
+         ;; to initialize slots, we must signal the nonlink-slot update
+         ;; event ourselves:
+         (t (let ((slot-name/def
+                   #+lispworks
+                   (slot-definition-name eslotd)
+                   #+digitool-mcl
+                   eslotd))
+              (when (and (typep eslotd 'gbbopen-effective-slot-definition)
+                         (slot-boundp-using-class unit-class instance 
+                                                  slot-name/def))
+                ;; signal the update-nonlink-slot event:
+                (signal-event-using-class
+                 (load-time-value (find-class 'update-nonlink-slot-event))
+                 :instance instance
+                 :slot eslotd
+                 :current-value (slot-value-using-class 
+                                 unit-class instance 
+                                 slot-name/def)
+                 :initialization 't)))))))))
+
+;;; ---------------------------------------------------------------------------
+
 (defmethod shared-initialize :after ((instance standard-unit-instance)
                                      slot-names 
                                      &key space-instances)  
   (declare (inline class-of))
   (unless *%%skip-gbbopen-shared-initialize-method-processing%%*
-    (let ((unit-class (class-of instance)))
-      ;; Link slot processing: fix atomic, non-singular link-slot values and
-      ;; create link inverse pointers:
-      (dolist (eslotd (class-slots unit-class))
-        ;; Only process specified slots:
-        (when (or (eq slot-names 't)
-                  (memq (slot-definition-name eslotd) slot-names))
-          (cond 
-           ;; link slot:
-           ((typep eslotd 'effective-link-definition)
-            (let ((current-value
-                   (slot-value-using-class unit-class instance eslotd)))
-              (when current-value
-                (let* ((dslotd
-                        (effective-link-definition.direct-slot-definition
-                         eslotd))
-                       (sort-function 
-                        (direct-link-definition.sort-function dslotd))
-                       (sort-key
-                        (or (direct-link-definition.sort-key dslotd)
-                            #'identity))) 
-                  (cond
-                   ;; Singular link slot:
-                   ((direct-link-definition.singular dslotd)
-                    ;; fix-up non-atomic singular link slot initialization
-                    ;; values here; pretty late, but OK for now:
-                    (when (consp current-value)
-                      (with-events-disabled ()
-                        (setf (slot-value-using-class
-                               unit-class instance
-                               #-lispworks
-                               eslotd
-                               #+lispworks
-                               (slot-definition-name eslotd))
-                              (sole-element current-value)))))
-                   ;; Non-singular link slot:
-                   (t (let ((rewrite-slot nil))
-                        ;; fix-up atomic non-singular link slot initialization
-                        ;; values here; pretty late, but OK for now:
-                        (unless (consp current-value)
-                          (setf current-value (list current-value)
-                                rewrite-slot 't))
-                        ;; Make sure the direct link-slot value is sorted, if so
-                        ;; specified:
-                        (when (and sort-function
-                                   ;; length > 1
-                                   (cdr current-value))
-                          (setf current-value (sort (copy-list current-value)
-                                                    sort-function
-                                                    :key sort-key)
-                                rewrite-slot 't))
-                        (when rewrite-slot
-                          (with-events-disabled ()
-                            (setf (slot-value-using-class 
-                                   unit-class instance 
-                                   #-lispworks
-                                   eslotd
-                                   #+lispworks
-                                   (slot-definition-name eslotd))
-                                  current-value))))))
-                  ;; do the inverse pointers for this link slot:
-                  (%do-ilinks dslotd instance (ensure-list current-value) 't)
-                  ;; signal the direct link event:
-                  (%signal-direct-link-event 
-                   instance dslotd current-value current-value)))))
-           ;; nonlink slot:
-           #+(or digitool-mcl lispworks)
-           ;; In implementations that don't use (setf slot-value-using-class)
-           ;; to initialize slots, we must signal the nonlink-slot update
-           ;; event ourselves:
-           (t (let ((slot-name/def
-                     #+lispworks
-                     (slot-definition-name eslotd)
-                     #+digitool-mcl
-                     eslotd))
-                (when (and (typep eslotd 'gbbopen-effective-slot-definition)
-                           (slot-boundp-using-class unit-class instance 
-                                                    slot-name/def))
-                  ;; signal the update-nonlink-slot event:
-                  (signal-event-using-class
-                   (load-time-value (find-class 'update-nonlink-slot-event))
-                   :instance instance
-                   :slot eslotd
-                   :current-value (slot-value-using-class 
-                                   unit-class instance 
-                                   slot-name/def)
-                   :initialization 't)))))))
-      ;; Add this instance to the explicitly-specified space instances.  This
-      ;; is ugly, but we first remove the supplied space instances stored in
-      ;; the %%space-instances%% slot, and then we re-add them either directly
-      ;; or via add-instance-to-space-instance based on the state kept in
-      ;; *%%existing-space-instances%%* (set in the shared-initialize :before
-      ;; method).
-      (when (and (or (eq slot-names 't)
-                     (memq '%%space-instances%% slot-names))
-                 space-instances)
-        (setf (standard-unit-instance.%%space-instances%% instance) nil)
-        (dolist (space-instance space-instances)
-          (if (memq space-instance 
-                    (locally (declare (special *%%existing-space-instances%%*))
-                      *%%existing-space-instances%%*))
-              (push space-instance
-                    (standard-unit-instance.%%space-instances%% instance))
-              (add-instance-to-space-instance instance space-instance)))))))
+    (post-initialize-instance-slots instance slot-names)
+    ;; Add this instance to the explicitly-specified space instances.  This
+    ;; is ugly, but we first remove the supplied space instances stored in
+    ;; the %%space-instances%% slot, and then we re-add them either directly
+    ;; or via add-instance-to-space-instance based on the state kept in
+    ;; *%%existing-space-instances%%* (set in the shared-initialize :before
+    ;; method).
+    (when (and (or (eq slot-names 't)
+                   (memq '%%space-instances%% slot-names))
+               space-instances)
+      (setf (standard-unit-instance.%%space-instances%% instance) nil)
+      (dolist (space-instance space-instances)
+        (if (memq space-instance 
+                  (locally (declare (special *%%existing-space-instances%%*))
+                    *%%existing-space-instances%%*))
+            (push space-instance
+                  (standard-unit-instance.%%space-instances%% instance))
+            (add-instance-to-space-instance instance space-instance))))))
 
 ;;; ---------------------------------------------------------------------------
 ;;; This :around method permits shared-initialize to set link slots without
@@ -482,26 +524,33 @@
 
 ;;; ---------------------------------------------------------------------------
 
+(defun maybe-initialize-instance-name-slot (unit-class instance)
+  ;; If the instance-name slot is unbound in instance, generate it; then add
+  ;; instance to the instance-name hash table:
+  (let* ((slotd (find-effective-slot-definition-by-name
+                 unit-class 'instance-name))
+         (instance-name 
+          (if (slot-boundp-using-class unit-class instance slotd)
+              (slot-value-using-class unit-class instance slotd)
+              (setf (slot-value-using-class 
+                     unit-class instance 
+                     #-lispworks
+                     slotd
+                     #+lispworks
+                     (slot-definition-name slotd))
+                    (incf (standard-unit-class.instance-name-counter
+                           unit-class))))))
+    (add-instance-to-instance-hash-table unit-class instance instance-name)))
+
+;;; ---------------------------------------------------------------------------
+
 (defmethod initialize-instance :after ((instance %%gbbopen-unit-instance%%) 
                                        &key (space-instances 
                                              nil space-instances-p))
   (declare (ignore space-instances))
   (declare (inline class-of))
   (let ((unit-class (class-of instance)))
-    (let* ((slotd (find-effective-slot-definition-by-name
-                   unit-class 'instance-name))
-           (instance-name
-            (if (slot-boundp-using-class unit-class instance slotd)
-                (slot-value-using-class unit-class instance slotd)
-                (setf (slot-value-using-class 
-                       unit-class instance 
-                       #-lispworks
-                       slotd
-                       #+lispworks
-                       (slot-definition-name slotd))
-                      (incf (standard-unit-class.instance-name-counter
-                             unit-class))))))
-      (add-instance-to-instance-hash-table unit-class instance instance-name))
+    (maybe-initialize-instance-name-slot unit-class instance)
     ;; add the unit instance to initial space instances, unless
     ;; :initial-space-instances was overridden by an explicit :space-instances
     ;; value:
