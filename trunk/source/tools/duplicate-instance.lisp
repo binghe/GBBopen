@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/duplicate-instance.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon May 19 04:32:21 2008 *-*
+;;;; *-* Last-Edit: Mon May 19 09:53:37 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -88,9 +88,9 @@
          (slot-values nil)
          (missing-slot-names nil)
          (not-found-value ""))
-    (when (eq unduplicated-slot-names 't)
-      (setf unduplicated-slot-names 
-            (unduplicated-slot-names instance)))
+    (setf unduplicated-slot-names 
+          (append unduplicated-slot-names
+                  (unduplicated-slot-names instance)))
     (dolist (slot (class-slots class))
       (let ((slot-name (slot-definition-name slot))
             ;; See if we are setting via an initarg:
