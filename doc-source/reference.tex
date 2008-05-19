@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Sat May 17 17:53:53 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Mon May 19 12:26:19 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -2616,7 +2616,7 @@ Tools \glref{module}:
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{module-directories}{\var{module-name\/}
-    \returns{} \mbox{\var{source-directory, compiled-directory\/}}}
+    \mbox{\returns{} \var{source-directory, compiled-directory\/}}}
 \index{module!directories}%
 \index{directories, of a module}%
 
@@ -2831,6 +2831,21 @@ provided by the \reflink{\code{:portable-sockets}
 system are provided by the \reflink{\code{:os-interface}
   module}{sec:os-interface}.
 
+Several entities in the \code{:gbbopen-tools} module that are extended by
+additional methods in the \code{:gbbopen-core} module are documented in the
+\reflink{GBBopen Core section}{sec:gbbopen-core}
+ of this Reference.  These and related entities that are
+documented in the GBBopen Core section are:
+\textbf{\entlink{*print-object-for-sending*}},
+\textbf{\entlink{*save/send-references-only*}},
+\textbf{\entlink{initialize-saved/sent-instance}}, 
+\textbf{\entlink{make-duplicate-instance}},
+\textbf{\entlink{omitted-slots-for-saving/sending}},
+\textbf{\entlink{print-object-for-saving/sending}},
+\textbf{\entlink{print-slot-for-saving/sending}},
+\textbf{\entlink{with-reading-saved/sent-objects-block}},
+and \textbf{\entlink{with-saving/sending-block}}.
+
 \W\entities
 \T\clearpage
 \T\renewcommand{\headrulewidth}{0.01pt}
@@ -2961,7 +2976,7 @@ and maximum value.
 
 \begin{functiondoc}{Function}{counted-delete}{\var{item sequence\/}
     \code{\&key} \var{from-end test test-not start end count key\/}
-    \returns{} \var{result-sequence, count\/}}
+    \mbox{\returns{} \var{result-sequence, count\/}}}
 
 \fnsyntax
 
@@ -4454,7 +4469,7 @@ Error: The list (a b) contains more than 1 element.
 
 \begin{functiondoc}{Function}{splitting-butlast}{\var{list\/}
     \code{\&optional} \var{n\/} 
-    \returns{} \var{result-list, tail\/}} 
+    \mbox{\returns{} \var{result-list, tail\/}}}
 \index{list!splitting into two sublists}%
 \index{splitting a list}%
   
@@ -6047,7 +6062,7 @@ pointer (default is \nil)
 \begin{functiondoc}{Function}{parse-date}{%
     \var{string\/}
     \code{\&key} \var{start end junk-allowed separators month-precedes-date\/}
-    \returns{} \mbox{\var{date, month, year\/}}}
+    \mbox{\returns{} \var{date, month, year\/}}}
 \index{date!parsing}% 
 
 \fnsyntax
@@ -6873,7 +6888,7 @@ Close a passive socket:
 \begin{functiondoc}{Function}{local-hostname-and-port}%
   {\var{socket-stream\/}
     \code{\&optional} \var{do-not-resolve\/} 
-    \returns{} \var{hostname}, \var{port}}
+    \mbox{\returns{} \var{hostname, port}}}
 \index{socket stream!local hostname}%
 \index{socket stream!local port}%
 \index{local hostname!of an open socket stream}%
@@ -7050,7 +7065,7 @@ resources.
 \begin{functiondoc}{Function}{remote-hostname-and-port}%
   {\var{socket-stream\/} 
     \code{\&optional} \var{do-not-resolve\/} 
-    \returns{} \var{hostname}, \var{port}}
+    \mbox{\returns{} \var{hostname, port}}}
 \index{socket stream!remote hostname}%
 \index{socket stream!remote port}%
 \index{remote hostname!of an open socket stream}%
@@ -7401,7 +7416,7 @@ t
 
 \begin{functiondoc}{Function}{run-external-program}{\var{program args\/}
   \&key \var{input output wait\/}
-  \returns{} \var{bidirectional-stream}, \var{process-id}}
+  \mbox{\returns{} \var{bidirectional-stream, process-id}}}
 \index{external-program!running}%
 \index{invoking an external program}%
 
@@ -7480,7 +7495,7 @@ string.
 \T\global\def\fnlastname{ }%
 \T\renewcommand{\headrulewidth}{0pt}
 \section{GBBopen Core}
-
+\label{sec:gbbopen-core}%
 \index{module!:gbbopen-core@\code{:gbbopen-core}}%
 \index{:gbbopen-core@\code{:gbbopen-core} module}%
 %
@@ -7558,7 +7573,7 @@ well as general-purpose \code{:gbbopen-core} entities, is \texorhtml{included
 
 \fnargs
 \begin{args}{instance}
-\arg[instance] An \glref{instance}
+\arg[instance] A \code{standard-object} \glref{instance}
 \arg[new-class] A \glref{class~designator}
 \end{args}
 
@@ -8595,7 +8610,7 @@ t
 
 \begin{functiondoc}{Function}{instance-dimension-value}%
   {\var{unit-instance dimension-name\/}
-    \returns{} \mbox{\var{dimension-value, dimension-value-type,
+    \mbox{\returns{} \var{dimension-value, dimension-value-type,
         comparison-type, composite-type, ordering-dimension-name\/}}}
 \index{unit instance!obtaining a dimension value of}%
 \index{dimension value!of a unit instance}%
@@ -9113,6 +9128,165 @@ Return the names of the link slots of the \code{hyp} \glref{unit~class}:
 
 %% ------------------------------------------------------------------------
 
+\begin{functiondoc}{Generic~Function}{make-duplicate-instance}{%
+    \var{instance unduplicated-slot-names\/}
+    \code{\&rest} \var{initargs\/}
+    \code{\&key} \code{\&allow-other-keys}
+    \mbox{\returns{} \var{new-instance, slots\/}}}
+\index{duplicating!an instance}%
+\index{unit instance!duplicating}%
+
+\fnsyntax
+
+\fnpurpose Create a duplicate \glref{instance} of \var{instance}.
+
+\fnmethods
+\fnalternate{make-duplicate-instance}{%
+  \code{(}\var{instance\/} \code{standard-object)}
+  \var{unduplicated-slot-names\/}
+  \code{\&rest} \var{initargs\/}
+  \mbox{\returns{} \var{new-instance, slots\/}}}
+\fnalternate{make-duplicate-instance}{%
+  \code{(}\var{instance\/} \code{standard-space-instance)}
+  \var{unduplicated-slot-names\/}
+  \code{\&rest} \var{initargs\/}
+  \mbox{\returns{} \var{new-instance, slots\/}}}
+\fnalternate{make-duplicate-instance}{%
+  \code{(}\var{instance\/} \code{standard-unit-instance)}
+  \var{unduplicated-slot-names\/}
+  \code{\&rest} \var{initargs\/}
+  \mbox{\returns{} \var{new-instance, slots\/}}}
+
+\fnpackage \code{:gbbopen-tools} (re-exported by \code{:gbbopen-core})
+
+\fnmodule \code{:gbbopen-tools} (the \glref{unit-instance} and
+\glref{space-instance} methods are added by \code{:gbbopen-core})
+
+\fnargs
+\begin{args}{initargs}
+\arg[instance] A \code{standard-object} \glref{instance}
+\arg[unduplicated-slot-names] A list of slot names
+\arg[initargs] An \glref{initialization~argument~list}
+\end{args}
+
+\fnreturns Two values: the (newly created) duplicate \glref{instance} and a
+list of the slots that were duplicated or explicitly initialized.
+
+\fnevents
+\index{events!generated by!make-duplicate-instance@\textbf{make-duplicate-instance}}%
+%
+\codeindexit{add-instance-to-space-instance-event}%
+\codeindexit{create-instance-event}%
+\codeindexit{link-event}%
+\codeindexit{update-nonlink-slot-event}%
+%
+\index{events!add-instance-to-space-instance-event@\code{add-instance-to-space-instance-event}|itidx}%
+\index{events!create-instance-event@\code{create-instance-event}|itidx}%
+\index{events!link-event@\code{link-event}|itidx}%
+\index{events!update-nonlink-slot-event@\code{update-nonlink-slot-event}|itidx}%
+%
+When a \glref{unit~instance} is duplicated, events are signaled in the
+following sequence: 
+\begin{tightenumerate}
+\item An \code{update-nonlink-slot-event} or \code{link-event} is
+  signaled for each initialized slot in the duplicated
+  \glref{unit~instance}.  A \code{link-event} is also signaled for
+  each inverse pointer from an existing \glref{unit~instance} to the
+  (newly created) duplicate \glref{unit~instance}.
+\item An \code{add-instance-to-space-instance-event} is signaled
+  for each \glref{space~instance} on which the duplicate
+  \glref{unit~instance} is added.
+\item A \code{create-instance-event} is signaled.
+\end{tightenumerate}
+
+\fnerrors
+Use of an initialization argument that has not been declared as valid.
+
+\codeindexit{:space-instances}%
+\codeindexit{:initial-space-instances}%
+\codeindexit{:instance-name}%
+\fndescription 
+%
+Slot initialization during instance duplication behaves as follows, regardless
+of whether the slots are local or shared:
+%
+\begin{tightitemize}
+\item If an initarg in \var{initargs\/} specifies a value for a slot, that
+  value is stored into the slot.
+\item All slots that are still unbound at this point and that are not named in
+  \var{unduplicated-slot-names\/} or in the list of slot-names returned from
+  calling \textbf{\entlink{unduplicated-slot-names}} on \var{instance\/} are
+  set to the value of the slot in \var{instance}.
+\item Any slots indicated by slot-names that are still unbound at this point
+  are initialized according to their \code{:initform} forms. 
+\end{tightitemize}
+
+Specifying a \code{:instance-name} initialization argument
+causes that value to be used as the \glref{instance~name} of the newly created
+\glref{unit~instance} instead of the instance-name counter value associated
+with the \glref{unit~class}. 
+
+A \code{:space-instances} initialization argument must be provided when
+duplicating a \glref{space~instance}.
+
+\begin{alsos}{next-class-instance-number}
+\also[delete-instance]
+\also[describe-instance]
+\also[instance-name-of]
+\also[make-instance]
+\also[make-space-instance]
+\also[next-class-instance-number]
+\also[unduplicated-slot-names]
+\end{alsos}
+
+\fnexamples
+Create some simple duplicate \glref{instances}:
+%
+\bfindexit{define-class}%
+\bfindexit{make-instance}%
+%
+\W\supp
+\begin{example}
+> (\entlink{define-class} foo () 
+     ((a :initform 1)
+      (b :initform 2)))
+#<standard-class foo>
+> (defparameter *x* (\entlink{make-instance} 'foo :a 11 :b 12))
+*x*
+> :ds *x*
+#<foo #x110fe6ea> is an instance of #<standard-class foo>:
+ The following slots have :instance allocation:
+  a   11
+  b   12
+> :ds (make-duplicate-instance *x* nil :a -1)
+#<foo #x110ff93a> is an instance of #<standard-class foo>:
+ The following slots have :instance allocation:
+  a   -1
+  b   12\goodpagebreak
+> :ds (make-duplicate-instance *x* '(b) :a -1)
+#<foo #x11104542> is an instance of #<standard-class foo>:
+ The following slots have :instance allocation:
+  a   -1
+  b   2
+> :ds (make-duplicate-instance *x* '(b))
+#<foo #x11108c82> is an instance of #<standard-class foo>:
+ The following slots have :instance allocation:
+  a   11
+  b   2
+\end{example}
+
+Create a duplicate of the \code{hyp} \code{419} \glref{unit~instance}:
+%
+\W\supp
+\begin{example}
+> (make-duplicate-instance (find-instance-by-name 19 'hyp) nil)
+#<hyp 681 (1835 4791) 0.85 [5..35]>
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
 \begin{functiondoc}{Generic~Function}{make-instance}{\var{class\/}
     \code{\&rest} \var{initargs\/}
     \code{\&key} \code{\&allow-other-keys}
@@ -9193,6 +9367,7 @@ of the instance-name counter value associated with the \glref{unit~class}.
 \also[delete-instance]
 \also[describe-instance]
 \also[instance-name-of]
+\also[make-duplicate-instance]
 \also[make-space-instance]
 \also[next-class-instance-number]
 \end{alsos}
@@ -9479,6 +9654,62 @@ A \glref{space~instance} is also a \glref{unit~instance}, so
 \also[standard-space-instance]
 \also[standard-unit-class]
 \end{alsos}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Generic~Function}{unduplicated-slot-names}{%
+    \var{instance\/}
+    \returns{} \var{unduplicated-slot-names\/}}
+\index{instance!duplicating!unduplicated slots}%
+\index{unit instance!duplicating!unduplicated slots}%
+\index{duplicating!unit instance!specifying unduplicated slots}%
+
+\fnsyntax
+
+\fnpurpose Add slot names of a \glref{class} to the list of slots that
+are not duplicated by \textbf{\entlink{make-duplicate-instance}}.
+
+\fnmethods
+\fnalternate{unduplicated-slot-names}%
+  {\code{(}\var{instance\/} \code{standard-object)}
+    \returns{} \nil}
+\fnalternate{unduplicated-slot-names}%
+  {\code{(}\var{instance\/} \code{standard-space-instance)}
+    \returns{} \var{unduplicated-slot-names\/}}
+\fnalternate{unduplicated-slot-names}%
+  {\code{(}\var{instance\/} \code{standard-unit-instance)}
+    \returns{} \var{unduplicated-slot-names\/}}
+
+\fnpackage \code{:gbbopen-tools} (re-exported by \code{:gbbopen-core})
+
+\fnmodule \code{:gbbopen-tools} (the \glref{unit-instance} and
+\glref{space-instance} methods are added by \code{:gbbopen-core})
+
+\fnargs
+\begin{args}{instance}
+\arg[instance] A \code{standard-object} \glref{instance}
+\end{args}
+
+\fnreturns A list of unduplicated slot names for the \glref{class} of 
+\var{instance}.
+
+\begin{alsos}{make-duplicate-instance}
+\also[make-duplicate-instance]
+\end{alsos}
+
+\fnexample
+%
+Specify that slot \code{complex-unsaved-slot} in \code{my-unit-instance}
+should be added to the list of slots that are not duplicated by
+\textbf{\entlink{make-duplicate-instance}}:
+%
+\W\supp
+\begin{example}
+  (defmethod unduplicated-slot-names ((instance my-unit-instance))
+    (cons 'complex-unsaved-slot (call-next-method)))
+\end{example}
 
 \end{functiondoc}
 
@@ -13593,7 +13824,7 @@ nil
 
 \fnargs
 \begin{args}{missing-slot-names}
-\arg[instance] A \code{standard-object}
+\arg[instance] A \code{standard-object} \glref{instance}
 \arg[slots] A list of \code{effective-slot-definition} objects
 \arg[slot-values] A list of values (corresponding to the slots in \var{slots\/})
 \arg[missing-slot-names] A list of symbols naming slots and slot values that
@@ -13813,17 +14044,17 @@ repository again, translating all \code{location} \glref{unit~instances} to
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}[omitted-slots-for-saving-sending]{Generic~Function}%
-  {omitted-slots-for-saving/sending}%
-  {\var{instance\/}
+  {omitted-slots-for-saving/sending}{%
+    \var{instance\/}
     \returns{} \var{omitted-slot-names\/}}
-
+\index{instance!saving and sending!specifying omitted slots}%
 \index{unit instance!saving and sending!specifying omitted slots}%
-\index{saving!unit instance!specifying omitted slots}%
-\index{sending!unit instance!specifying omitted slots}%
+\index{saving!instance!specifying omitted slots}%
+\index{sending!instance!specifying omitted slots}%
 
 \fnsyntax
 
-\fnpurpose Add slot names of a \glref{unit~class} to the list of slots that
+\fnpurpose Add slot names of a \glref{class} to the list of slots that
 are not saved or sent.
 
 \fnmethods
@@ -13844,10 +14075,11 @@ are not saved or sent.
 
 \fnargs
 \begin{args}{instance}
-\arg[instance] A \glref{unit~instance} (or \glref{space~instance})
+\arg[instance] An \glref{instance}
 \end{args}
 
-\fnreturns A list of omitted slot names.
+\fnreturns A list of omitted slot names for the \glref{class} of 
+\var{instance}.
 
 \begin{alsos}{save-blackboard-repository}
 \also[*print-object-for-sending*]
@@ -14046,7 +14278,7 @@ many situations.
 
 \fnargs
 \begin{args}{stream}
-\arg[instance] A \glref{unit~instance} (or \glref{space~instance})
+\arg[instance] A \code{standard-object} \glref{instance}
 \arg[slot-name] A non-\nil, \glref{non-keyword~symbol}
 \arg[stream] A stream
 \end{args}
