@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Mon May 19 15:53:58 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Wed May 21 18:10:22 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -857,7 +857,7 @@ reload all subsequent files and \glref{modules}\\[2pt]
 \begin{tabular}{@{~}l@{~}l}
 \mbox{\var{storage\/} ::=} 
   & \code{(}\var{unit-class-specifier dimension-names 
-                 storage-specification\/}\code{)}\\
+                 storage-specification\/}\code{)\superstar{}}\\
 \end{tabular}
 \T\\
 \begin{tabular}{@{~}l@{~}l}
@@ -11117,6 +11117,68 @@ classes that can have their \glref{unit~instances} stored on the \code{(bb
 
 %% ------------------------------------------------------------------------
 
+\begin{functiondoc}{Function}{change-space-instance-storage}{%
+    \var{space-instance storage\/}}
+ 
+\fnsyntax
+
+\fnpurpose Change the storage of a \glref{space~instance}.
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:gbbopen-core}
+
+\fnargs
+\begin{args}{allowed-unit-classes}
+\arg[space-instance-or-path] The \glref{space~instance} or
+  \glref{space-instance~path} to be deleted
+\arg[storage] A \glref{storage~specification}
+\end{args}
+
+\fndsyntax
+\W\supp\tabletop
+\storagespec
+
+\fnterms
+\begin{args}{dimension-name}
+\arg[dimension-name] A symbol specifying a \glref{dimension} 
+\end{args}
+
+\begin{alsos}{make-space-instance}
+\also[make-space-instance]
+\end{alsos}
+
+\fnexamples
+%
+Change the storage of \glref{space~instance} \code{(bb hyp}) to the default
+unstructured storage for all \glref{unit~instances}:
+%
+\W\supp
+\begin{example}
+> (change-space-instance-storage '(bb hyps) nil)
+nil
+>
+\end{example}
+%
+Now change it to store \code{hyp} \glref{unit~instances} with uniform-bucket
+storage for indexing in the \code{x} and \code{y} dimensions and hashed
+storage in the \code{classification} dimension:
+%
+\W\supp\notpretop
+\begin{example}
+> (change-space-instance-storage '(bb hyps)
+     '(((hyp :plus-subclasses) (x y) 
+         uniform-buckets :layout ((0 10000 100)
+                                  (0 10000 100)))
+       ((hyp :plus-subclasses) (classification) 
+         hashed)))
+nil
+>
+\end{example}
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
 \begin{functiondoc}{Generic~Function}{children-of}%
   {\var{space-instance\/}
     \returns{} \var{space-instances\/}}
@@ -12061,6 +12123,7 @@ placing any other \glref{unit~instance} on a \glref{space~instance}.
 
 \begin{alsos}{delete-all-space-instances}
 \also[allowed-unit-classes-of]
+\also[change-space-instance-storage]
 \also[children-of]
 \also[define-space-class]
 \also[delete-all-space-instances]
