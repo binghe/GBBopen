@@ -1,7 +1,7 @@
 ;;;; -*- Mode:COMMON-LISP; Package:TUTORIAL; Base:10 -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/examples/tutorial.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Apr 27 14:10:14 2008 *-*
+;;;; *-* Last-Edit: Thu May 22 01:40:00 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -82,17 +82,10 @@
 ;;; ------------------------------------------------------------------------
 
 (define-unit-class path ()
-  (time
-   x
-   y
-   (locations
+  ((locations
     :link (location path :singular t)
     :sort-function #'<
     :sort-key #'time-of))
-  (:dimensional-values
-   (time :point locations)
-   (x :point locations)
-   (y :point locations))
   (:initial-space-instances (known-world)))
 
 ;;; ===========================================================================
