@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/units.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Apr 29 17:33:46 2008 *-*
+;;;; *-* Last-Edit: Thu May 22 01:25:18 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -22,7 +22,7 @@
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
-;;;  07-18-02 File Created.  (Corkill)
+;;;  07-18-02 File created.  (Corkill)
 ;;;  09-15-02 Moved extended class functions into ../tools/define-class.lisp.
 ;;;           (Corkill)
 ;;;  01-21-04 Added class-instances-count.  (Corkill)
@@ -110,7 +110,7 @@
                  (standard-unit-class.effective-initial-space-instances
                   super)))
             (when inherited-value
-              (setq initial-space-instances inherited-value)
+              (setf initial-space-instances inherited-value)
               (return))))))
     ;; Add dimensional-values from supers:
     (dolist (super (class-direct-superclasses unit-class))
@@ -496,7 +496,7 @@
     (dolist (option options)
       (case (car option)
 	(:dimensional-values 
-	 (setq dimensional-values-seen 't)
+	 (setf dimensional-values-seen 't)
 	 (setf (cdr option)
                ;; allow (:dimensional-values nil) to mean none:
 	       (if (equal (cdr option) '(nil))
@@ -506,7 +506,7 @@
 				unit-class-name dv-spec))
 			   (cdr option)))))
 	(:initial-space-instances
-	 (setq initial-space-instances-seen 't)
+	 (setf initial-space-instances-seen 't)
          (let ((initial-space-instances-option-values (cdr option)))
            ;; check that the initial-space-instances specification contains
            ;; only a single function object!
@@ -561,7 +561,7 @@
   ;; () value for direct-superclass-names is (standard-unit-instance):
   (when (and (null direct-superclass-names)
              (not (eq unit-class-name 'standard-unit-instance)))
-    (setq direct-superclass-names '(standard-unit-instance)))
+    (setf direct-superclass-names '(standard-unit-instance)))
   (unless (every #'(lambda (element)
 		     (and (symbolp element) (not (keywordp element))))
 		 direct-superclass-names)
@@ -588,7 +588,7 @@
       ;; (ECL 0.9i *must* optimize slot access, as non-optimized accessors
       ;; always return nil):
       #+(or ecl lispworks)
-      (setq clos-class-options 
+      (setf clos-class-options 
         (cons '(:optimize-slot-access nil) clos-class-options))
       `(#-clisp progn
 	;; CLISP requires let (rather than progn) to work around CLISP's
@@ -688,13 +688,21 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun ensure-unit-classes-specifiers (unit-classes-specifiers)
-  (if (and (consp unit-classes-specifiers)
-           (list-length-2-p unit-classes-specifiers)
-           (let ((maybe-subclass-indicator (second unit-classes-specifiers)))
-             (or (eq maybe-subclass-indicator :plus-subclasses)
-                 (eq maybe-subclass-indicator :no-subclasses))))
-      (list unit-classes-specifiers)
-      unit-classes-specifiers))
+  ;;; If given <unit-class-name> or <unit-instance>, return 
+  ;;;   (<unit-class-name>);
+  ;;; else if given (<unit-class-name> <subclasses-indicator>), return
+  ;;;   ((<unit-class-name> <subclasses-indicator>))
+  ;;; else return unchanged `unit-classes-specifiers':
+  (etypecase unit-classes-specifiers
+    (standard-unit-instance (list (type-of unit-classes-specifiers)))
+    (cons (if (and (list-length-2-p unit-classes-specifiers)
+                   (let ((maybe-subclass-indicator 
+                          (second unit-classes-specifiers)))
+                     (or (eq maybe-subclass-indicator :plus-subclasses)
+                         (eq maybe-subclass-indicator :no-subclasses))))
+              (list unit-classes-specifiers)
+              unit-classes-specifiers))
+    (symbol (list unit-classes-specifiers))))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Unit-class-in-specifier-p
@@ -708,9 +716,9 @@
 	     (when (consp specifier)
 	       (destructuring-bind (unit-class-name subclass-indicator)
 		   specifier
-		 (setq specifier unit-class-name)
+		 (setf specifier unit-class-name)
 		 (ecase subclass-indicator
-		   (:plus-subclasses (setq plus-subclasses? 't))
+		   (:plus-subclasses (setf plus-subclasses? 't))
 		   (:no-subclasses))))
 	     (if (typep specifier 'standard-unit-class)
 		 ;; we have a unit-class object

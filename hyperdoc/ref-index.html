@@ -486,15 +486,15 @@ example of the use of that entity.
 <a href="ref-find-space-instances.html#id2">223</a>, 
 <a href="ref-map-space-instances.html#id1">225</a><br /><b>1-&#36;&#36;&#36;</b>, 
 <a href="ref-long-float-macros.html">76</a><br /><b>1+&#36;&#36;&#36;</b>, 
-<a href="ref-long-float-macros.html">76</a><br /><b>&#36;&#36;&#36;</b>, 
+<a href="ref-long-float-macros.html">76</a><br /><b>=&#36;&#38;</b>, 
+<a href="ref-short-float-macros.html">73</a><br /><b>=&#38;</b>, 
+<a href="ref-fixnum-macros.html">72</a><br /><b>&#36;&#36;</b>, 
+<a href="ref-double-float-macros.html">75</a><br /><b>&#36;&#36;&#36;</b>, 
 <a href="ref-long-float-macros.html">76</a><br /><b>1-&#36;&#36;</b>, 
 <a href="ref-double-float-macros.html">75</a><br /><b>1+&#36;&#36;</b>, 
-<a href="ref-double-float-macros.html">75</a><br /><b>&#36;&#36;</b>, 
 <a href="ref-double-float-macros.html">75</a><br /><b>1-&#36;</b>, 
 <a href="ref-single-float-macros.html">74</a><br /><b>1+&#36;</b>, 
-<a href="ref-single-float-macros.html">74</a><br /><b>=&#36;&#38;</b>, 
-<a href="ref-short-float-macros.html">73</a><br /><b>=&#38;</b>, 
-<a href="ref-fixnum-macros.html">72</a><br /><b>&#36;</b>, 
+<a href="ref-single-float-macros.html">74</a><br /><b>&#36;</b>, 
 <a href="ref-single-float-macros.html">74</a><br /><b>1-&#36;&#38;</b>, 
 <a href="ref-short-float-macros.html">73</a><br /><b>1+&#36;&#38;</b>, 
 <a href="ref-short-float-macros.html">73</a><br /><b>&#36;&#38;</b>, 
@@ -543,7 +543,10 @@ example of the use of that entity.
 <br /><b>all-threads</b>, 
 <a href="ref-all-threads.html">96</a>, <a href="ref-threadp.html#id1"><font color="#007f00"><i>133</i></font></a>
 <br /><b>allow-redefinition</b>, 
-<a href="ref-allow-redefinition.html">27</a><br /><b>allowed-unit-classes-of</b>, 
+<a href="ref-allow-redefinition.html">27</a><br />allowed unit classes
+<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;of a space instance
+<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;changing, 
+<a href="ref-change-space-instance.html">212</a><br /><b>allowed-unit-classes-of</b>, 
 <a href="ref-allowed-unit-classes-of.html">211</a><br /><code>and</code> &nbsp;(conjunctive-pattern operator), <a href="ref-do-instances-on-space-instances.html#id5"><font color="#007f00"><i>234</i></font></a>
 , <a href="ref-filter-instances.html#id3"><font color="#007f00"><i>236</i></font></a>
 , <a href="ref-find-instances.html#id5"><font color="#007f00"><i>239</i></font></a>
@@ -621,9 +624,10 @@ backslash character, in Windows file specifications,
 <a href="ref-fixnum-macros.html">72</a><br /><b>change-class</b>, 
 <a href="ref-change-class.html">159</a>, <a href="ref-next-class-instance-number.html#id1"><font color="#007f00"><i>183</i></font></a>
 <br /><code>change-instance-class-event</code>, <a href="ref-change-class.html#id1"><font color="#007f00"><i>159</i></font></a>
-<br /><b>change-space-instance-storage</b>, 
-<a href="ref-change-space-instance-storage.html">212</a><br />changing
-<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name of a scheduled function, 
+<br /><b>change-space-instance</b>, 
+<a href="ref-change-space-instance.html">212</a><br />changing
+<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a space instance characteristics, 
+<a href="ref-change-space-instance.html">212</a><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name of a scheduled function, 
 <a href="ref-scheduled-function-name.html">124</a><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;repeat-interval, of a scheduled function, 
 <a href="ref-scheduled-function-repeat-interval.html">125</a><br /><b>check-link-consistency</b>, 
 <a href="ref-check-link-consistency.html">160</a><br /><b>check-ot-base</b>, 
@@ -888,7 +892,9 @@ date and time entities,
 <a href="ref-define-ksa-class.html#id8">282</a><br />dimensions
 <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;inquiring, of a space instance, 
 <a href="ref-dimensions-of.html">166</a><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;inquiring, of a unit class, 
-<a href="ref-dimensions-of.html">166</a><br /><b>dimensions-of</b>, 
+<a href="ref-dimensions-of.html">166</a><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;of a space instance
+<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;changing, 
+<a href="ref-change-space-instance.html">212</a><br /><b>dimensions-of</b>, 
 <a href="ref-dimensions-of.html">166</a>, <a href="ref-make-space-instance.html#id6"><font color="#007f00"><i>224</i></font></a>
 <br />directories, of a module, 
 <a href="ref-module-directories.html">21</a><br />directory
@@ -932,6 +938,7 @@ date and time entities,
 <a href="ref-dotted-length.html">35</a><br />double format
 <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IEEE 754, 
 <a href="ref-declared-numerics.html#id1">71</a><br /><code>double-float</code>, <a href="ref-define-unit-class.html#id4"><font color="#007f00"><i>162</i></font></a>
+, <a href="ref-change-space-instance.html#id2"><font color="#007f00"><i>212</i></font></a>
 , <a href="ref-define-space-class.html#id4"><font color="#007f00"><i>215</i></font></a>
 , <a href="ref-make-space-instance.html#id2"><font color="#007f00"><i>224</i></font></a>
 , <a href="ref-define-ks-class.html#id4"><font color="#007f00"><i>281</i></font></a>
@@ -1002,24 +1009,28 @@ date and time entities,
 <a href="ref-filter-instances.html#id12">236</a>, 
 <a href="ref-find-instances.html#id14">239</a>, 
 <a href="ref-map-instances-on-space-instances.html#id14">242</a><br /><code>eq</code>, <a href="ref-define-unit-class.html#id5"><font color="#007f00"><i>162</i></font></a>
+, <a href="ref-change-space-instance.html#id3"><font color="#007f00"><i>212</i></font></a>
 , <a href="ref-define-space-class.html#id5"><font color="#007f00"><i>215</i></font></a>
 , <a href="ref-make-space-instance.html#id3"><font color="#007f00"><i>224</i></font></a>
 , <a href="ref-define-ks-class.html#id5"><font color="#007f00"><i>281</i></font></a>
 , <a href="ref-define-ksa-class.html#id5"><font color="#007f00"><i>282</i></font></a>
 , <a href="ref-glossary.html#gl:comparison-type"><font color="#007f00"><i>304</i></font></a>
 <br /><code>eql</code>, <a href="ref-define-unit-class.html#id5"><font color="#007f00"><i>162</i></font></a>
+, <a href="ref-change-space-instance.html#id3"><font color="#007f00"><i>212</i></font></a>
 , <a href="ref-define-space-class.html#id5"><font color="#007f00"><i>215</i></font></a>
 , <a href="ref-make-space-instance.html#id3"><font color="#007f00"><i>224</i></font></a>
 , <a href="ref-define-ks-class.html#id5"><font color="#007f00"><i>281</i></font></a>
 , <a href="ref-define-ksa-class.html#id5"><font color="#007f00"><i>282</i></font></a>
 , <a href="ref-glossary.html#gl:comparison-type"><font color="#007f00"><i>304</i></font></a>
 <br /><code>equal</code>, <a href="ref-define-unit-class.html#id5"><font color="#007f00"><i>162</i></font></a>
+, <a href="ref-change-space-instance.html#id3"><font color="#007f00"><i>212</i></font></a>
 , <a href="ref-define-space-class.html#id5"><font color="#007f00"><i>215</i></font></a>
 , <a href="ref-make-space-instance.html#id3"><font color="#007f00"><i>224</i></font></a>
 , <a href="ref-define-ks-class.html#id5"><font color="#007f00"><i>281</i></font></a>
 , <a href="ref-define-ksa-class.html#id5"><font color="#007f00"><i>282</i></font></a>
 , <a href="ref-glossary.html#gl:comparison-type"><font color="#007f00"><i>304</i></font></a>
 <br /><code>equalp</code>, <a href="ref-define-unit-class.html#id5"><font color="#007f00"><i>162</i></font></a>
+, <a href="ref-change-space-instance.html#id3"><font color="#007f00"><i>212</i></font></a>
 , <a href="ref-define-space-class.html#id5"><font color="#007f00"><i>215</i></font></a>
 , <a href="ref-make-space-instance.html#id3"><font color="#007f00"><i>224</i></font></a>
 , <a href="ref-define-ks-class.html#id5"><font color="#007f00"><i>281</i></font></a>
@@ -1084,7 +1095,8 @@ date and time entities,
 <a href="ref-with-events-enabled.html">208</a><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;generated by
 <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>add-instance-to-space-instance</b>, 
 <a href="ref-add-instance-to-space-instance.html#id1">210</a><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>change-class</b>, 
-<a href="ref-change-class.html#id1">159</a><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>delete-all-space-instances</b>, 
+<a href="ref-change-class.html#id1">159</a><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>change-space-instance</b>, 
+<a href="ref-change-space-instance.html#id1">212</a><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>delete-all-space-instances</b>, 
 <a href="ref-delete-all-space-instances.html#id1">217</a><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>delete-blackboard-repository</b>, 
 <a href="ref-delete-blackboard-repository.html#id1">216</a><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>delete-instance</b>, 
 <a href="ref-delete-instance.html#id1">163</a><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>delete-space-instance</b>, 
@@ -1116,6 +1128,7 @@ date and time entities,
 , <a href="ref-make-space-instance.html#id1"><font color="#007f00"><i>224</i></font></a>
 <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>remove-instance-from-space-instance-event</code>, <a href="ref-change-class.html#id1"><font color="#007f00"><i>159</i></font></a>
 , <a href="ref-delete-instance.html#id1"><font color="#007f00"><i>163</i></font></a>
+, <a href="ref-change-space-instance.html#id1"><font color="#007f00"><i>212</i></font></a>
 , <a href="ref-clear-space-instances.html#id1"><font color="#007f00"><i>214</i></font></a>
 , <a href="ref-clear-space-instances.html#id2"><font color="#007f00"><i>214</i></font></a>
 , <a href="ref-delete-blackboard-repository.html#id1"><font color="#007f00"><i>216</i></font></a>
@@ -1222,6 +1235,7 @@ date and time entities,
 <a href="ref-first-queue-element.html">260</a><br /><b>first-queue-element</b>, 
 <a href="ref-first-queue-element.html">260</a>, <a href="ref-nth-queue-element.html#id1"><font color="#007f00"><i>266</i></font></a>
 <br /><code>fixnum</code>, <a href="ref-define-unit-class.html#id4"><font color="#007f00"><i>162</i></font></a>
+, <a href="ref-change-space-instance.html#id2"><font color="#007f00"><i>212</i></font></a>
 , <a href="ref-define-space-class.html#id4"><font color="#007f00"><i>215</i></font></a>
 , <a href="ref-make-space-instance.html#id2"><font color="#007f00"><i>224</i></font></a>
 , <a href="ref-define-ks-class.html#id4"><font color="#007f00"><i>281</i></font></a>
@@ -1533,6 +1547,7 @@ keyword symbol,
 <a href="ref-glossary.html#gl:locks">304</a><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;recursive, 
 <a href="ref-glossary.html#gl:recursive-lock">304</a><br />lock, held by current thread, 
 <a href="ref-thread-holds-lock-p.html">134</a><br /><code>long-float</code>, <a href="ref-define-unit-class.html#id4"><font color="#007f00"><i>162</i></font></a>
+, <a href="ref-change-space-instance.html#id2"><font color="#007f00"><i>212</i></font></a>
 , <a href="ref-define-space-class.html#id4"><font color="#007f00"><i>215</i></font></a>
 , <a href="ref-make-space-instance.html#id2"><font color="#007f00"><i>224</i></font></a>
 , <a href="ref-define-ks-class.html#id4"><font color="#007f00"><i>281</i></font></a>
@@ -1680,6 +1695,7 @@ name-based retrieval,
 <br /><b>nsorted-insert</b>, 
 <a href="ref-nsorted-insert.html">44</a><br /><b>nth-queue-element</b>, 
 <a href="ref-nth-queue-element.html">266</a><br /><code>number</code>, <a href="ref-define-unit-class.html#id4"><font color="#007f00"><i>162</i></font></a>
+, <a href="ref-change-space-instance.html#id2"><font color="#007f00"><i>212</i></font></a>
 , <a href="ref-define-space-class.html#id4"><font color="#007f00"><i>215</i></font></a>
 , <a href="ref-make-space-instance.html#id2"><font color="#007f00"><i>224</i></font></a>
 , <a href="ref-define-ks-class.html#id4"><font color="#007f00"><i>281</i></font></a>
@@ -1972,6 +1988,7 @@ package
 , <a href="ref-map-instances-on-space-instances.html#id21"><font color="#007f00"><i>242</i></font></a>
 <br /><code>remove-instance-from-space-instance-event</code>, <a href="ref-change-class.html#id1"><font color="#007f00"><i>159</i></font></a>
 , <a href="ref-delete-instance.html#id1"><font color="#007f00"><i>163</i></font></a>
+, <a href="ref-change-space-instance.html#id1"><font color="#007f00"><i>212</i></font></a>
 , <a href="ref-clear-space-instances.html#id1"><font color="#007f00"><i>214</i></font></a>
 , <a href="ref-delete-blackboard-repository.html#id1"><font color="#007f00"><i>216</i></font></a>
 , <a href="ref-delete-all-space-instances.html#id1"><font color="#007f00"><i>217</i></font></a>
@@ -2090,6 +2107,7 @@ safety, disabling optimizations,
 <a href="ref-starting-up.html#id9">4</a><br />shift, an interval, 
 <a href="ref-shift-interval.html">185</a><br /><b>shift-interval</b>, 
 <a href="ref-shift-interval.html">185</a><br /><code>short-float</code>, <a href="ref-define-unit-class.html#id4"><font color="#007f00"><i>162</i></font></a>
+, <a href="ref-change-space-instance.html#id2"><font color="#007f00"><i>212</i></font></a>
 , <a href="ref-define-space-class.html#id4"><font color="#007f00"><i>215</i></font></a>
 , <a href="ref-make-space-instance.html#id2"><font color="#007f00"><i>224</i></font></a>
 , <a href="ref-define-ks-class.html#id4"><font color="#007f00"><i>281</i></font></a>
@@ -2112,6 +2130,7 @@ safety, disabling optimizations,
 <a href="ref-condition-variable-signal.html">108</a><br />single format
 <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IEEE 754, 
 <a href="ref-declared-numerics.html#id1">71</a><br /><code>single-float</code>, <a href="ref-define-unit-class.html#id4"><font color="#007f00"><i>162</i></font></a>
+, <a href="ref-change-space-instance.html#id2"><font color="#007f00"><i>212</i></font></a>
 , <a href="ref-define-space-class.html#id4"><font color="#007f00"><i>215</i></font></a>
 , <a href="ref-make-space-instance.html#id2"><font color="#007f00"><i>224</i></font></a>
 , <a href="ref-define-ks-class.html#id4"><font color="#007f00"><i>281</i></font></a>
@@ -2155,7 +2174,11 @@ safety, disabling optimizations,
 <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;adding unit instance to, 
 <a href="ref-add-instance-to-space-instance.html">210</a><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;allowed unit classes, 
 <a href="ref-allowed-unit-classes-of.html">211</a><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;applying a function to unit instances on, 
-<a href="ref-map-instances-on-space-instances.html">242</a><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;creating, 
+<a href="ref-map-instances-on-space-instances.html">242</a><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;changing
+<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;allowed unit classes, 
+<a href="ref-change-space-instance.html">212</a><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dimensions, 
+<a href="ref-change-space-instance.html">212</a><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;storage, 
+<a href="ref-change-space-instance.html">212</a><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;creating, 
 <a href="ref-make-space-instance.html">224</a><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;deleting, 
 <a href="ref-delete-all-space-instances.html">217</a>, 
 <a href="ref-delete-space-instance.html">218</a><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;deleting all, 
@@ -2268,7 +2291,10 @@ safety, disabling optimizations,
 <a href="ref-start-control-shell.html#id3">301</a><br />stopping, agenda shell, 
 <a href="ref-define-ks.html#id4">280</a>, 
 <a href="ref-exit-control-shell.html">286</a><br />storage specification, 
-<a href="ref-glossary.html#id200">304</a><br />stream, closing external program, 
+<a href="ref-glossary.html#id200">304</a><br />storage
+<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;of a space instance
+<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;changing, 
+<a href="ref-change-space-instance.html">212</a><br />stream, closing external program, 
 <a href="ref-close-external-program-stream.html">156</a><br />string designator, 
 <a href="ref-glossary.html#id202">304</a><br /><b>suspend-event-printing</b>, 
 <a href="ref-suspend-event-printing.html">206</a><br />symbol
@@ -2408,13 +2434,13 @@ safety, disabling optimizations,
 <a href="ref-omitted-slots-for-saving-sending.html">252</a><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;specification, 
 <a href="ref-glossary.html#id66">304</a><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;storage repositioning, 
 <a href="ref-with-changing-dimension-values.html">192</a><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;storage specification
-<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>boolean</code>, <a href="ref-change-space-instance-storage.html#id1"><font color="#007f00"><i>212</i></font></a>
+<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>boolean</code>, <a href="ref-change-space-instance.html#id4"><font color="#007f00"><i>212</i></font></a>
 , <a href="ref-make-space-instance.html#id4"><font color="#007f00"><i>224</i></font></a>
-<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>hashed</code>, <a href="ref-change-space-instance-storage.html#id1"><font color="#007f00"><i>212</i></font></a>
+<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>hashed</code>, <a href="ref-change-space-instance.html#id4"><font color="#007f00"><i>212</i></font></a>
 , <a href="ref-make-space-instance.html#id4"><font color="#007f00"><i>224</i></font></a>
-<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>uniform-buckets</code>, <a href="ref-change-space-instance-storage.html#id1"><font color="#007f00"><i>212</i></font></a>
+<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>uniform-buckets</code>, <a href="ref-change-space-instance.html#id4"><font color="#007f00"><i>212</i></font></a>
 , <a href="ref-make-space-instance.html#id4"><font color="#007f00"><i>224</i></font></a>
-<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>unstructured</code>, <a href="ref-change-space-instance-storage.html#id1"><font color="#007f00"><i>212</i></font></a>
+<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>unstructured</code>, <a href="ref-change-space-instance.html#id4"><font color="#007f00"><i>212</i></font></a>
 , <a href="ref-make-space-instance.html#id4"><font color="#007f00"><i>224</i></font></a>
 <br />unit
 <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;class, 
