@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/unit-metaclasses.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat May 10 03:57:37 2008 *-*
+;;;; *-* Last-Edit: Thu May 22 03:01:54 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -70,7 +70,7 @@
 (define-class standard-unit-class (standard-class)
   ((abstract :initform nil :type boolean)
    (instance-hash-table)
-   (instance-name-counter :initform 0)
+   (instance-name-counter)
    (instance-name-comparison-test :initform 'eql)
    (initial-space-instances 
     :type (or function list)
@@ -180,6 +180,12 @@
                         ((:abstract :instance-name-comparison-test :retain)
                          (list indicator (sole-element value)))
                         (otherwise (list indicator value)))))))
+    ;; initialize the instance-counter, if needed:
+    (when (and (or (eq slot-names 't)
+                   (memq 'instance-name-counter slot-names))
+               (not (slot-boundp class 'instance-name-counter)))
+      (setf (standard-unit-class.instance-name-counter class)
+            (1- (initial-class-instance-number class))))
     ;; create/copy appropriate type of instance-hash-table:
     (cond 
      ;; must create a new instance-hash-table:

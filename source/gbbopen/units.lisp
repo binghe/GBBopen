@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/units.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu May 22 01:25:18 2008 *-*
+;;;; *-* Last-Edit: Thu May 22 03:03:26 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -59,6 +59,7 @@
             find-effective-slot-definition-by-name ; not documented (yet...)
             find-unit-class             ; not documented (at least yet...)
             gbbopen-effective-slot-definition
+            initial-class-instance-number
             next-class-instance-number
             reset-unit-class)))
 
@@ -872,6 +873,14 @@
     
 ;;; ---------------------------------------------------------------------------
 
+(defmethod initial-class-instance-number ((unit-class standard-unit-class))
+  0)
+
+(defmethod initial-class-instance-number ((unit-class-name symbol))
+  (initial-class-instance-number (find-unit-class unit-class-name)))
+
+;;; ---------------------------------------------------------------------------
+
 (defmethod next-class-instance-number ((unit-class standard-unit-class))
   (with-lock-held (*master-instance-lock*)
     (incf (standard-unit-class.instance-name-counter unit-class))))
@@ -925,7 +934,8 @@
     (let ((count (class-instances-count unit-class)))
       (cond
        ((zerop count)
-        (setf (standard-unit-class.instance-name-counter unit-class) 0)
+        (setf (standard-unit-class.instance-name-counter unit-class)
+              (1- (initial-class-instance-number unit-class)))
         (setf (standard-unit-class.instance-hash-table unit-class)
               (make-hash-table
                :test (standard-unit-class.instance-name-comparison-test 

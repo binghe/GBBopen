@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Thu May 22 02:30:36 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Thu May 22 03:27:36 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -3792,7 +3792,7 @@ nil
 \arg[key] A \glref{function} of one argument, or \nil{} (default is \nil)
 \end{args}
 
-\fnreturns Returns a list into which item has been inserted.
+\fnreturns A list into which item has been inserted.
 
 \fndescription The supplied \var{list\/} may be modified in
 constructing the result; however, modification of the supplied
@@ -7577,7 +7577,7 @@ well as general-purpose \code{:gbbopen-core} entities, is \texorhtml{included
 \arg[new-class] A \glref{class~designator}
 \end{args}
 
-\fnreturns Returns the destructively modified \var{instance}.
+\fnreturns The destructively modified \var{instance}.
 
 \fnevents
 %
@@ -7760,7 +7760,7 @@ t
 \glref{unit~class} 
 \end{args}
 
-\fnreturns Returns the count of \glref{unit~instances} of the
+\fnreturns The count of \glref{unit~instances} of the
 specified \glref{unit~class}.  If an
 \glref{extended~unit-classes~specification} is supplied, the sum of the
 \glref{unit~instance} counts of the specified classes is returned.
@@ -8571,6 +8571,56 @@ Return the GBBopen implementation-version string:
 
 %% ------------------------------------------------------------------------
 
+\begin{functiondoc}{Generic~Function}{initial-class-instance-number}%
+  {\var{unit-class-or-name\/} 
+    \returns{} \var{integer\/}}
+\index{unit class!instance number, initial}%
+\index{unit instance!instance number}%
+
+\fnsyntax
+
+\fnpurpose Return the initial instance-name counter value associated with the
+\glref{unit~class}.
+
+\fnmethods
+\fnalternate{initial-class-instance-number}%
+  {\code{(}\var{unit-class-name\/} \code{symbol)}
+  \returns{} \var{integer\/}} 
+\fnalternate{initial-class-instance-number}%
+  {\code{(}\var{unit-class\/} \code{standard-unit-class)}
+  \returns{} \code{0}}
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:gbbopen-core}
+
+\fnargs
+\begin{args}{unit-class-or-name}
+\arg[unit-class-or-name] A \glref{unit~class} or a symbol naming a
+\glref{unit~class} 
+\end{args}
+
+\fnreturns The initial instance-name counter value
+associated with the \glref{unit~class}.
+
+\begin{alsos}{next-class-instance-number}
+\also[next-class-instance-number]
+\also[make-instance]
+\end{alsos}
+
+\fnexamples Return the initial instance-name value associated with
+\glref{unit~class} \code{ksa}:
+%
+\W\supp
+\begin{example}
+> (initial-class-instance-number 'ksa)
+0
+\end{example} 
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
 \begin{functiondoc}{Function}{instance-deleted-p}{\var{unit-instance\/}
     \returns{} \var{boolean\/}}
 
@@ -9235,9 +9285,10 @@ with the \glref{unit~class}.
 A \code{:space-instances} initialization argument must be provided when
 duplicating a \glref{space~instance}.
 
-\begin{alsos}{next-class-instance-number}
+\begin{alsos}{initial-class-instance-number}
 \also[delete-instance]
 \also[describe-instance]
+\also[initial-class-instance-number]
 \also[instance-name-of]
 \also[make-instance]
 \also[make-space-instance]
@@ -9366,12 +9417,13 @@ specification associated with the \glref{unit~class}. Similarly, specifying a
 the \glref{instance~name} of the newly created \glref{unit~instance} instead
 of the instance-name counter value associated with the \glref{unit~class}.
 
-\begin{alsos}{next-class-instance-number}
+\begin{alsos}{initial-class-instance-number}
 \also[define-event-class]
 \also[define-unit-class]
 \also[define-space-class]
 \also[delete-instance]
 \also[describe-instance]
+\also[initial-class-instance-number]
 \also[instance-name-of]
 \also[make-duplicate-instance]
 \also[make-space-instance]
@@ -9431,21 +9483,24 @@ associated with the \glref{unit~class}.
 \glref{unit~class} 
 \end{args}
 
-\fnreturns Returns the incremented instance-name counter value
+\fnreturns The incremented instance-name counter value
 associated with the \glref{unit~class}.
 
-\begin{alsos}{class-instances-count}
+\begin{alsos}{initial-class-instance-number}
 \also[change-class]
 \also[class-instances-count]
+\also[initial-class-instance-number]
 \also[make-instance]
 \end{alsos}
 
 \fnexamples
- Return the next instance-name number of \glref{unit~instances} of \code{ksa}: 
+%
+Increment and return the next instance-name number of \glref{unit~instances}
+of \code{ksa}:
 %
 \W\supp
 \begin{example}
-> (next-class-instance-count 'ksa)
+> (next-class-instance-number 'ksa)
 8
 \end{example} 
 
@@ -9471,7 +9526,7 @@ Change the class of \glref{unit~instance} \code{hyp} from
 \fnsyntax
 
 \fnpurpose Resets the \glref{unit-class} instance-name counter of
-\var{unit-class\/} to 1.
+\var{unit-class\/} to its initial value.
 
 \fnmethods
 \fnalternate{reset-unit-class}%
@@ -9490,18 +9545,19 @@ Change the class of \glref{unit~instance} \code{hyp} from
 \arg[unit-class] A \glref{unit~class}
 \end{args}
 
-\fndescription The \glref{unit-class} instance-name counter is reset to 0,
-but only if the \glref{unit~class} is not abstract and if there are no
-existing instances of that class.  If instances do exist, a warning is
-issued.
+\fndescription The \glref{unit-class} instance-name counter of
+\var{unit-class\/} is reset to the value returned by calling
+\textbf{\entlink{initial-class-instance-number}} with \var{unit-class}, but
+only if the \glref{unit~class} is not abstract and if there are no existing
+instances of that class.  If instances do exist, a warning is issued.
 
-\begin{alsos}{delete-blackboard-repository}
+\begin{alsos}{initial-class-instance-number}
 \also[delete-blackboard-repository]
+\also[initial-class-instance-number]
 \also[reset-gbbopen]
 \end{alsos}
 
-\fnexample Reset the instance-name counters of all \glref{unit~classes}
-to 1:
+\fnexample Reset the instance-name counters of all \glref{unit~classes}:
 %
 \W\supp
 \begin{example}
@@ -11615,15 +11671,16 @@ All \glref{unit~instances} of \glref{unit~classes} specified by
 \var{retain-classes\/} are specified, the classes specified
 \var{retain-classes\/} are retained, but all other \glref{unit~instances} are
 deleted.  The instance-name counters of all non-retained \glref{unit~classes}
-are reset to 1.
+are reset to their initial values.
 
 \textbf{Delete-blackboard-repository} does not undefine any class
 definitions, functions, methods, etc.
 
-\begin{alsos}{delete-all-space-instances}
+\begin{alsos}{initial-class-instance-number}
 \also[delete-instance]
 \also[delete-all-space-instances]
 \also[delete-space-instance]
+\also[initial-class-instance-number]
 \end{alsos}
 
 \fnexamples 
@@ -12507,11 +12564,11 @@ order) as \glref{unit~instances} and \glref{space~instances} are deleted:
 
 \fndescription Calling \textbf{reset-gbbopen} deletes all
 \glref{unit~instances} and \glref{space~instances}, disables all event
-printing, removes all event functions, and resets all
-\glref{unit-class} instance-name counters to 1.  \textbf{Reset-gbbopen}
-does not undefine any class definitions, functions, methods, etc.
+printing, removes all event functions, and resets all \glref{unit-class}
+instance-name counters to their initial values.  \textbf{Reset-gbbopen} does
+not undefine any class definitions, functions, methods, etc.
 
-\begin{alsos}{delete-blackboard-repository}
+\begin{alsos}{initial-class-instance-number}
 \also[delete-all-space-instances]
 \also[delete-instance]
 \also[delete-space-instance]
@@ -12519,6 +12576,7 @@ does not undefine any class definitions, functions, methods, etc.
 \also[define-ksa-class]
 \also[define-space-class]
 \also[define-unit-class]
+\also[initial-class-instance-number]
 \also[reset-gbbopen]
 \also[reset-unit-class]
 \end{alsos}

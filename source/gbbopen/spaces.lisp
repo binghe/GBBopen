@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/spaces.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu May 22 02:03:42 2008 *-*
+;;;; *-* Last-Edit: Thu May 22 02:36:51 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -34,6 +34,7 @@
 ;;;  02-24-06 Added allowed-unit-classes reader.  (Corkill)
 ;;;  08-20-06 Added do-space-instances syntactic sugar.  (Corkill)
 ;;;  10-05-06 Added space-class metaclass check.  (Corkill)
+;;;  05-21-06 Added change-space-instance.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 

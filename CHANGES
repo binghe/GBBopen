@@ -1,13 +1,14 @@
 Important changes since GBBopen 1.0:
 
-  * New CHANGE-SPACE-INSTANCE function
-
-  * New MAKE-DUPLICATED-INSTANCE and UNDUPLICATED-SLOT-NAMES generic 
-    functions
-
   * New :gbbopen-tools functions
      - DECF/DELETE-ACONS
      - PARSE-DATE
+
+  * New :gbbopen-core functions
+    - CHANGE-SPACE-INSTANCE
+    - INITIAL-CLASS-INSTANCE-NUMBER
+    - MAKE-DUPLICATED-INSTANCE
+    - UNDUPLICATED-SLOT-NAMES
 
 
 Important changes in GBBopen 1.0:
