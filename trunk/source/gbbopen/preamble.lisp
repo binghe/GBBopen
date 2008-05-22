@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/preamble.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon May 19 04:21:57 2008 *-*
+;;;; *-* Last-Edit: Thu May 22 02:49:36 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -134,6 +134,7 @@
 (defgeneric event-printer (class stream &rest args))
 (defgeneric evfn-describer (evfn-blk fn))
 (defgeneric hidden-nonlink-slot-names (instance))
+(defgeneric initial-class-instance-number (unit-class-name-or-class))
 (defgeneric instance-name-comparison-test (unit-class))
 (defgeneric link-slot-p (slot))
 (defgeneric map-all-instances-on-storage (fn storage 
