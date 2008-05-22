@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/spaces.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon May 19 05:10:21 2008 *-*
+;;;; *-* Last-Edit: Thu May 22 02:03:42 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -46,7 +46,8 @@
             all-space-instances
             allowed-unit-classes-of
             clear-space-instances
-            change-space-instance-storage
+            change-space-instance
+            change-space-instance-storage ; remove in 1.1
             children                    ; standard-space-instance slot name
             children-of
             define-space-class
@@ -308,7 +309,7 @@
   ;; Verify that user-defined space-classes have the correct metaclass:
   (let ((metaclass (class-of instance)))
     (check-type metaclass standard-space-class))
-  (check-type allowed-unit-classes (or symbol list))
+  (check-type allowed-unit-classes (or symbol list standard-unit-instance))
   (multiple-value-bind (space-name parent-space-instance)
       (prepare-space-name-and-parents 
        instance-name make-parents allowed-unit-classes)
@@ -318,7 +319,6 @@
     ;; Now do the normal unit-instance work:
     (apply #'call-next-method instance 
            :dimensions dimensions initargs)
-    ;; Fixup a single extended-unit-class specification:
     (setf (slot-value instance 'allowed-unit-classes)
           (ensure-unit-classes-specifiers allowed-unit-classes))
     (setf (standard-space-instance.space-name instance) space-name)
@@ -422,20 +422,57 @@
    't space-instances))
 
 ;;; ---------------------------------------------------------------------------
-;;;   Change-space-instance-storage
+;;;   Change-space-instance
 
-(defun change-space-instance-storage (space-instance storage-spec)
+(defun change-space-instance (space-instance
+                              &key (allowed-unit-classes
+                                    't allowed-unit-classes-p)
+                                   (dimensions nil dimensions-p)
+                                   (storage nil storage-p))
   (unless (typep space-instance 'standard-space-instance)
     (setf space-instance (find-space-instance-by-path space-instance 't)))
-  (let ((old-storage (standard-space-instance.%%storage%% space-instance)))
-    (setup-instance-storage space-instance storage-spec)
-    (dolist (storage old-storage)
-      (map-all-instances-on-storage
-       #'(lambda (instance)
-           (dolist (storage (storage-objects-for-add/move/remove
-                             (class-of instance) space-instance))
-             (add-instance-to-storage instance storage nil)))      
-       storage 't nil))))
+  ;; Change the space instance's dimensions, if specified:
+  (when dimensions-p
+    ;; Canonicalize the syntax of supplied dimensions:
+    (setf (slot-value space-instance 'dimensions)
+          (canonicalize-space-dimensions 
+           (instance-name-of space-instance) dimensions)))
+  ;; Change the allowed unit classes, if specified:
+  (when allowed-unit-classes-p
+    (check-type allowed-unit-classes (or symbol list standard-unit-instance))
+    (let ((new-allowed-unit-class-names 
+           (ensure-unit-classes-specifiers allowed-unit-classes)))
+      (unless (eq new-allowed-unit-class-names 't)
+        ;; Remove any existing unit instances are no longer allowed:
+        (map-instances-on-space-instances ; no do-instances macro yet
+         #'(lambda (instance)
+             (unless (some 
+                      #'(lambda (unit-class-name)
+                          (extended-unit-type-p instance unit-class-name))
+                      new-allowed-unit-class-names)
+               (remove-instance-from-space-instance-internal 
+                instance space-instance)))
+         't space-instance))
+      (setf (slot-value space-instance 'allowed-unit-classes)
+            new-allowed-unit-class-names)))
+  ;; Change the storage, if specified:
+  (when storage-p
+    (let ((old-storage (standard-space-instance.%%storage%% space-instance)))
+      (setup-instance-storage space-instance storage)
+      (dolist (storage old-storage)
+        (map-all-instances-on-storage
+         #'(lambda (instance)
+             (dolist (storage (storage-objects-for-add/move/remove
+                               (class-of instance) space-instance))
+               (add-instance-to-storage instance storage nil)))      
+         storage 't nil))))
+  space-instance)
+  
+;;; ---------------------------------------------------------------------------
+
+;;; Brief (initial) name and signature, remove in 1.1:
+(defun change-space-instance-storage (space-instance storage-spec)
+  (change-space-instance space-instance :key storage-spec))
 
 ;;; ===========================================================================
 ;;;  Making Duplicate Unit Instances
