@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/mini-module/mini-module.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat May 17 10:23:13 2008 *-*
+;;;; *-* Last-Edit: Thu May 22 14:14:15 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -126,6 +126,15 @@
 (declaim (special *current-system-name*))
 (unless (boundp '*current-system-name*)
   (setf *current-system-name* nil))
+
+(unless (macro-function 'with-system-name)
+  ;; This is a copy of the definition in ../../extended-repl.lisp.  It is
+  ;; needed to support startup.lisp only invocation.
+  (defmacro with-system-name ((&optional system-name) &body body)
+    (unless (keywordp system-name)
+      (error "System name, ~s, must be a keyword." system-name))
+    `(let ((*current-system-name* ',system-name))
+       ,@body)))
 
 ;;; ===========================================================================
 ;;;   CL-User Global Variables

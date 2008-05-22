@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/extended-repl.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat May 10 04:17:22 2008 *-*
+;;;; *-* Last-Edit: Thu May 22 14:15:58 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -29,7 +29,7 @@
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
-;;;  06-04-05 File Created.  (Corkill)
+;;;  06-04-05 File created.  (Corkill)
 ;;;  02-02-06 Added ECL support.  (Corkill)
 ;;;  02-04-06 Added SLIME (Emacs->Swank) support.  (Corkill)
 ;;;  04-17-08 Reworked SLIME mechanism.  (Corkill)
@@ -68,6 +68,8 @@
        'filtered-get-commands-list-wrap)
 
 ;;; ---------------------------------------------------------------------------
+;;;  With-system-name (copied in mini-module/mini-module.lisp for startup.lisp
+;;;                    only invocation)
 
 (defvar *current-system-name* nil)
 
