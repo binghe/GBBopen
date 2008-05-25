@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri May 16 09:33:54 2008 *-*
+;;;; *-* Last-Edit: Sun May 25 09:59:13 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -57,6 +57,7 @@
 ;;;           with-error-handling.  (Corkill)
 ;;;  02-09-08 Added nicer-y-or-n-p and nicer-yes-or-no-p.  (Corkill)
 ;;;  05-01-08 Added decf/delete-acons.  (Corkill)
+;;;  05-25-08 Added mulitple-value-setf.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -142,6 +143,7 @@
 	    macrolet-debug              ; not documented
 	    make-keyword
 	    memq
+            multiple-value-setf         ; not yet documented
             nicer-y-or-n-p              ; not-documented
             nicer-yes-or-no-p           ; not-documented
 	    nsorted-insert
@@ -185,6 +187,24 @@
 
 (defmacro do-until (form test)
   `(loop ,form (when ,test (return))))
+
+;;; ===========================================================================
+;;;  Multiple-value-setf
+
+(defmacro multiple-value-setf (places form)
+  ;; Like multiple-value-setq, but works with places;  a "place" of nil means
+  ;; to ignore the corresponding value from `form':
+  (loop 
+      for place in places
+      for name = (gensym)
+      collect name into bindings
+      if (eql 'nil place)
+        collect `(declare (ignore ,name)) into ignores
+      else
+        collect `(setf ,place ,name) into body
+      finally (return `(multiple-value-bind ,bindings ,form
+                         ,@ignores
+                         ,@body))))
 
 ;;; ===========================================================================
 ;;;  Memq (lists only)
