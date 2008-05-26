@@ -12,7 +12,7 @@
 </head>
 <body>
 <table width="100%" cellpadding="0" cellspacing="2"><tr>
-<td bgcolor="#99ccff"><a href="ref-describe-blackboard-repository.html"><img border="0" alt="describe-blackboard-repository" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="ref-bb-repository-entities.html"><img border="0" alt="Blackboard Repository" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-do-space-instances.html"><img border="0" alt="do-space-instances" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">describe-space-instance</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table>
+<td bgcolor="#99ccff"><a href="ref-describe-blackboard-repository.html"><img border="0" alt="describe-blackboard-repository" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="ref-bb-repository-entities.html"><img border="0" alt="Blackboard Repository" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-describe-space-instance-storage.html"><img border="0" alt="describe-space-instance-storage" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">describe-space-instance</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table>
 
 <p><table class="tight" width="100%">
 <tr valign="top"><td valign="baseline" align="left"%>
@@ -42,16 +42,23 @@
 </p>
 <p><span class="fndoclabel">See also</span>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-describe-instance.html"><b>describe-instance</b></a>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-describe-space-instance-storage.html"><b>describe-space-instance-storage</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-make-space-instance.html"><b>make-space-instance</b></a>
 </p>
 <p><span class="fndoclabel">Example</span> <br />Describe the <code>hyps</code> <a href="ref-glossary.html#id193">space&nbsp;instance</a>:
 <pre class="pretop">
-&gt; (describe-space-instance '(hyps))
+&gt; (describe-space-instance '(bb hyps))
   Standard-space-instance #&lt;standard-space-instance (bb hyps)&gt;
     Path: (bb hyps)
     Allowed unit classes:
       (hyp :plus-subclasses)
-    Dimensions: None
+    Dimensions:
+      (belief (:ordered number))
+      (velocity-range (:ordered number))
+      (color (:enumerated eq))
+      (classification (:enumerated eq))
+      (x (:ordered fixnum))
+      (y (:ordered fixnum))
 </pre>
 </p>
 <p><span class="fndoclabel">Note</span> <br /><a name="id2"></a><b>Describe-space-instance</b> can be invoked using the <a href="ref-glossary.html#id169">REPL&nbsp;command</a>
@@ -60,4 +67,4 @@
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
 <table width="100%" cellpadding="0" cellspacing="2"><tr>
-<td bgcolor="#99ccff"><a href="ref-describe-blackboard-repository.html"><img border="0" alt="describe-blackboard-repository" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="ref-bb-repository-entities.html"><img border="0" alt="Blackboard Repository" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-do-space-instances.html"><img border="0" alt="do-space-instances" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">describe-space-instance</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table></body></html>
+<td bgcolor="#99ccff"><a href="ref-describe-blackboard-repository.html"><img border="0" alt="describe-blackboard-repository" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="ref-bb-repository-entities.html"><img border="0" alt="Blackboard Repository" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-describe-space-instance-storage.html"><img border="0" alt="describe-space-instance-storage" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">describe-space-instance</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table></body></html>

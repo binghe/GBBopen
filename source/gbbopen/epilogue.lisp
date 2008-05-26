@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/epilogue.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat May  3 05:50:12 2008 *-*
+;;;; *-* Last-Edit: Mon May 26 12:55:27 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -25,6 +25,7 @@
 ;;;  01-28-08 Added load-blackboard-repository and save-blackboard-repository.
 ;;;           (Corkill)
 ;;;  05-02-08 Added :di and :dsi REPL commands.  (Corkill)
+;;;  05-25-08 Added :dsis REPL command.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -252,8 +253,8 @@
                  (multiple-value-list (funcall after-loading-function))))))))
   
 ;;; ---------------------------------------------------------------------------
-;;;  Add :di, :dsbb, :dsi, and :fi REPL commands (available if using GBBopen's
-;;;  initiate.lisp)
+;;;  Add :di, :dsbb, :dsi, :dsis, and :fi REPL commands (available if using
+;;;  GBBopen's initiate.lisp)
 
 (defun do-di/dsi-repl-command (type find-fn describe-fn args)
       (let ((maybe-instance 
@@ -321,6 +322,12 @@
       (do-di/dsi-repl-command 'standard-space-instance 
         'find-space-instance-by-path
         'describe-space-instance args))
+
+    (define-repl-command :dsis (&rest args)
+      "Describe space instance storage"
+      (do-di/dsi-repl-command 'standard-space-instance 
+        'find-space-instance-by-path
+        'describe-space-instance-storage args))
 
     (define-repl-command :fi (&rest args)
       "Find instance by name"

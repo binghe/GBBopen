@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/spaces.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat May 24 11:17:19 2008 *-*
+;;;; *-* Last-Edit: Mon May 26 12:57:12 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -878,7 +878,7 @@
                ~%  Allowed unit classes:~
                      ~:[~:[ None~;~:*~{~%~4t~s~}~]~; ~s~]~
                ~%  Dimensions:~:[ None~;~:*~{~%    ~s~}~]~%"
-            (class-name (class-of space-instance))
+            (type-of space-instance)
             space-instance
             (eq allowed-unit-classes 't)
             allowed-unit-classes

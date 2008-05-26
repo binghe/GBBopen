@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/2d-uniform-storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu May 15 09:42:37 2008 *-*
+;;;; *-* Last-Edit: Mon May 26 12:45:59 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -209,7 +209,7 @@
 			(aref buckets 1st-d-bucket-index 2nd-d-bucket-index)))
 	    (decf& excess-count)))
     ;; save the excess count:
-    (incf& (excess-locators-of storage) 
+    (decf& (excess-locators-of storage) 
            ;; add back in the non-excess count for this instance:
 	   (1+& excess-count))))
 

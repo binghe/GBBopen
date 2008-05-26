@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/units.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun May 25 18:31:05 2008 *-*
+;;;; *-* Last-Edit: Mon May 26 12:58:34 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -962,7 +962,7 @@
 (defmethod describe-unit-class ((unit-class standard-unit-class))
   (ensure-finalized-class unit-class)
   (format t "~&~@(~s~) ~s~:[~; (abstract)~]" 
-          (class-name (class-of unit-class))
+          (type-of unit-class)
           unit-class
           (standard-unit-class.abstract unit-class))
   (let* ((supers (class-direct-superclasses unit-class))
