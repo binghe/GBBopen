@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/links.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Mar 10 18:25:02 2008 *-*
-;;;; *-* Machine: vagabond.cs.umass.edu *-*
+;;;; *-* Last-Edit: Mon May 26 12:57:50 2008 *-*
+;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -119,7 +119,7 @@
            link-slot
            #-(or ecl lispworks)
            (slot-definition-name link-slot)
-           (class-name (class-of instance)))))
+           (type-of instance))))
 
 ;;; ---------------------------------------------------------------------------
 

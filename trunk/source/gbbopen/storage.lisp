@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun May 25 09:22:54 2008 *-*
+;;;; *-* Last-Edit: Mon May 26 13:27:46 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -38,7 +38,7 @@
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(boolean
-	    describe-space-instance-storage ; not yet documented
+	    describe-space-instance-storage
             describe-storage                ; not yet documented
 	    hashed
 	    quadtree
@@ -74,27 +74,46 @@
 
 ;;; ---------------------------------------------------------------------------
 
+(defun pretty-unit-classes-spec (unit-classes-spec)
+  ;;; Return a pretty (legal) list representation for `unit-classes-spec' with 
+  ;;; class-names rather than class objects and :plus-subclasses only when 
+  ;;; needed.  Often used with the format-control-string "~{~{~s~@[+~*~]~}~}".
+  (mapcar 
+   #'(lambda (class-spec)
+       (destructuring-bind (unit-class . plus-subclasses)
+           class-spec
+         (let ((class-name (class-name unit-class)))
+           (if (and (eq class-name 'standard-unit-instance)
+                    plus-subclasses)
+               '(t)
+               `(,class-name ,@(when plus-subclasses '(:plus-subclasses)))))))
+   unit-classes-spec))
+
+;;; ---------------------------------------------------------------------------
+
 (defmethod print-object ((storage storage) stream)
   (cond 
    (*print-readably* (call-next-method))
    (t (print-unreadable-object (storage stream :type nil)
 	(let ((classes (when (slot-boundp storage 'stores-classes)
 			 (stores-classes-of storage))))
-	  (format stream "~:(~s ~s~) ~:[???~;(~:*~{~{~s~@[+~*~]~}~})~] ~s ~s"
+	  (format stream "~:(~s~) ~s ~:[???~;(~:*~{~{~s~@[+~*~]~}~})~] ~s ~s"
 		  (type-of storage)
                   (let ((space-instance (space-instance-of storage)))
                     (if space-instance 
                         (instance-name-of space-instance) 
                         "???"))
-		  (mapcar 
-		   #'(lambda (class-spec)
-		       (destructuring-bind (unit-class . plus-subclasses)
-			   class-spec
-			 `(,(class-name unit-class) ,plus-subclasses)))
-		   classes)
+		  (pretty-unit-classes-spec classes)
 		  (and (slot-boundp storage 'dimension-names)
 		       (dimension-names-of storage))
-                  (instance-counts-of storage))))
+                  (if (slot-boundp storage 'instance-counts)
+                      (let ((instance-counts (instance-counts-of storage)))
+                        (if instance-counts
+                            (reduce #'(lambda (a b) (+& a b))
+                                    instance-counts
+                                    :key #'cdr)
+                            0))
+                      0))))
       ;; Print-object must return object:
       storage)))
 
@@ -389,6 +408,29 @@
 ;;;   Describe Storage 
 
 (defun describe-storage (storage)
+  (let* ((instance-counts (instance-counts-of storage))
+         (sorted-instance-counts 
+          (and instance-counts
+               (sort (copy-list instance-counts) #'string< :key #'car)))
+         (total-instances (if instance-counts
+                              (reduce #'(lambda (a b) (+& a b))
+                                      instance-counts
+                                      :key #'cdr)
+                              0))
+         (total-locators (+ total-instances (excess-locators-of storage))))
+    (format t "~&~:(~s~) ~{~{~s~@[+~*~]~}~} ~s ~:[N/A~;~:*~,1f (~s/~s)~]~%"
+            (type-of storage)
+            (pretty-unit-classes-spec (stores-classes-of storage))
+            (dimension-names-of storage)
+            ;; Excess-locator ratio:
+            (unless (zerop total-instances) 
+              (/ (float total-locators) (float total-instances)))
+            total-locators
+            total-instances)
+    (dolist (instance-count sorted-instance-counts)
+      (format t "~3t~s~14t~6d~%"
+              (car instance-count)
+              (cdr instance-count))))
   (values))
 
 ;;; ===========================================================================
@@ -396,25 +438,12 @@
 
 (defmethod describe-space-instance-storage
     ((space-instance standard-space-instance))
+  (format t "~&~@(~s~) ~s~%"
+          (type-of space-instance)
+          space-instance)
   (dolist (storage (standard-space-instance.%%storage%% space-instance))
-    (let* ((instance-counts (instance-counts-of storage))
-	   (sorted-instance-counts 
-	    (and instance-counts
-		 (sort (copy-list instance-counts) #'string< :key #'car)))
-	   (total-instances (if instance-counts
-				(reduce #'(lambda (a b) (+& a b))
-					instance-counts
-					:key #'cdr)
-				0)))
-      (format t "~&~s ~s ~s ~s~%~{~4t~s~%~}"
-	      (class-name (class-of storage))
-	      (stores-classes-of storage)
-	      (dimension-names-of storage)
-	      (if (zerop total-instances) 
-		  1.0
-		  (/ (+& total-instances (excess-locators-of storage))
-		     (float total-instances)))
-	      sorted-instance-counts))))
+    (describe-storage storage))
+  (values))
 
 ;;; ---------------------------------------------------------------------------
 

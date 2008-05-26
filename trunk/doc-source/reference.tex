@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Mon May 26 04:38:16 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Mon May 26 13:29:14 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -8230,8 +8230,9 @@ Create, then delete, a \code{hyp} \glref{unit~instance}:
 \bfindexit{*standard-output*}%
 The description is printed to the {\bf *standard-output*} stream.
 
-\begin{alsos}{make-space-instance}
+\begin{alsos}{describe-space-instance-storage}
 \also[describe-space-instance]
+\also[describe-space-instance-storage]
 \also[make-instance]
 \also[make-space-instance]
 \end{alsos}
@@ -12456,8 +12457,9 @@ standard-space-instance               3
 \bfindexit{*standard-output*}%
 The description is printed to the {\bf *standard-output*} stream.
 
-\begin{alsos}{make-space-instance}
+\begin{alsos}{describe-space-instance-storage}
 \also[describe-instance]
+\also[describe-space-instance-storage]
 \also[make-space-instance]
 \end{alsos}
 
@@ -12466,12 +12468,18 @@ Describe the \code{hyps} \glref{space~instance}:
 %
 \W\supp
 \begin{example}
-> (describe-space-instance '(hyps))
+> (describe-space-instance '(bb hyps))
   Standard-space-instance #<standard-space-instance (bb hyps)>
     Path: (bb hyps)
     Allowed unit classes:
       (hyp :plus-subclasses)
-    Dimensions: None
+    Dimensions:
+      (belief (:ordered number))
+      (velocity-range (:ordered number))
+      (color (:enumerated eq))
+      (classification (:enumerated eq))
+      (x (:ordered fixnum))
+      (y (:ordered fixnum))
 \end{example}
 
 \fnnote 
@@ -12480,6 +12488,66 @@ Describe the \code{hyps} \glref{space~instance}:
 %
 \textbf{Describe-space-instance} can be invoked using the \glref{REPL~command}
 \code{:dsi}, which also sets \code{=} to the described \glref{space~instance}.
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Generic~Function}{describe-space-instance-storage}%
+  {\var{space-instance-or-path\/}}
+\index{space instance!printing information about}%
+\index{printing!information about!space instance}%
+
+\fnsyntax
+
+\fnpurpose Describe the storage structure of a \glref{space~instance}.
+
+\fnmethods
+\fnalternate{describe-space-instance-storage}%
+  {\code{(}\var{space-instance-path\/} \code{cons)}}
+\fnalternate{describe-space-instance-storage}%
+  {\code{(}\var{space-instance\/} \code{standard-space-instance)}}
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:gbbopen-core}
+
+\fnargs
+\begin{args}{space-instance}
+\arg[space-instance-or-path] A \glref{space~instance} or a 
+  \glref{space-instance~path}
+\end{args}
+
+\fndescription
+\bfindexit{*standard-output*}%
+The description is printed to the {\bf *standard-output*} stream.
+
+\begin{alsos}{describe-space-instance}
+\also[describe-space-instance]
+\also[describe-instance]
+\also[make-space-instance]
+\end{alsos}
+
+\fnexample
+Describe the storage structure of the \code{hyps} \glref{space~instance}:
+%
+\W\supp
+\begin{example}
+> (describe-space-instance-storage '(bb hyps))
+  Standard-space-instance #<standard-space-instance (bb hyps)>
+  2d-Uniform-Buckets (hyp+) (x y) 1.4 (857/611)
+     hyp             479
+     sub-hyp         132
+  Unstructured-Storage (t) t N/A
+\end{example}
+
+\fnnote 
+%
+\REPLindex{:dsis}%
+%
+\textbf{Describe-space-instance-storage} can be invoked using the
+\glref{REPL~command} \code{:dsis}, which also sets \code{=} to the described
+\glref{space~instance}.
 
 \end{functiondoc}
 
@@ -12754,7 +12822,7 @@ by the \code{:paths} initialization argument.  Placing a
 \glref{space~instance} on other \glref{space~instances} is no different from
 placing any other \glref{unit~instance} on a \glref{space~instance}.
 
-\begin{alsos}{delete-all-space-instances}
+\begin{alsos}{describe-space-instance-storage}
 \also[allowed-unit-classes-of]
 \also[change-space-instance]
 \also[children-of]
@@ -12763,6 +12831,7 @@ placing any other \glref{unit~instance} on a \glref{space~instance}.
 \also[delete-space-instance]
 \also[describe-instance]
 \also[describe-space-instance]
+\also[describe-space-instance-storage]
 \also[dimensions-of]
 \also[make-instance]
 \also[parent-of]
