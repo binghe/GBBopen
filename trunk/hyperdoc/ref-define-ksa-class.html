@@ -338,10 +338,10 @@ operations on each <a href="ref-glossary.html#gl:activations">KSA</a> of that cl
 </pre>
 Do the same, but with a mixin class:
 <pre>
-&gt; (define-unit-class lock-mixin (ks my-mixin)
-    ((lock :initform (<a href="ref-make-lock.html">make-lock</a> :name "KS Lock"))))
-#&lt;standard-unit-class lock-mixin&gt;
-&gt; (define-ksa-class ksa-with-lock (ksa lock-mixin)
+&gt; (define-unit-class ksa-lock-mixin ()
+    ((lock :initform (<a href="ref-make-lock.html">make-lock</a> :name "KSA Lock"))))
+#&lt;standard-unit-class ksa-lock-mixin&gt;
+&gt; (define-ksa-class ksa-with-lock (ksa ksa-lock-mixin)
     ())
 #&lt;standard-ksa-class ksa-with-lock&gt;
 </pre>

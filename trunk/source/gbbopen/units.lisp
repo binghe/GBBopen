@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/units.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu May 22 03:03:26 2008 *-*
+;;;; *-* Last-Edit: Sun May 25 18:31:05 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -820,7 +820,7 @@
         :key #'slot-definition-name
         :test #'eq))
 
-#-full-safety
+#-(or full-safety disable-compiler-macros)
 (define-compiler-macro find-effective-slot-definition-by-name (class slot-name)
   (let ((class-var '#:class))
     `(let ((,class-var (the list (class-slots ,class))))

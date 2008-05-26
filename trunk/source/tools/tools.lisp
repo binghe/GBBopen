@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun May 25 09:59:13 2008 *-*
+;;;; *-* Last-Edit: Sun May 25 18:15:44 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -27,7 +27,7 @@
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
-;;;  07-04-02 File Created.  (Corkill)
+;;;  07-04-02 File created.  (Corkill)
 ;;;  03-10-04 Added pushnew/incf-acons.  (Corkill)
 ;;;  03-21-04 Added remove-properties.  (Corkill)
 ;;;  04-30-04 Added set-equal.  (Corkill)
@@ -143,9 +143,9 @@
 	    macrolet-debug              ; not documented
 	    make-keyword
 	    memq
-            multiple-value-setf         ; not yet documented
-            nicer-y-or-n-p              ; not-documented
-            nicer-yes-or-no-p           ; not-documented
+            multiple-value-setf
+            nicer-y-or-n-p              ; not yet documented
+            nicer-yes-or-no-p           ; not yet documented
 	    nsorted-insert
 	    print-pretty-function-object ; not yet documented
 	    push-acons
@@ -192,19 +192,24 @@
 ;;;  Multiple-value-setf
 
 (defmacro multiple-value-setf (places form)
-  ;; Like multiple-value-setq, but works with places;  a "place" of nil means
-  ;; to ignore the corresponding value from `form':
+  ;;; Like multiple-value-setq, but works with places.  A "place" of nil means
+  ;;; to ignore the corresponding value from `form'.  Returns the primarly
+  ;;; value of evaluating `form'.
   (loop 
       for place in places
       for name = (gensym)
       collect name into bindings
       if (eql 'nil place)
-        collect `(declare (ignore ,name)) into ignores
+        unless (eq place (first places))
+          collect `(declare (ignore ,name)) into ignores
+        end                                         
       else
         collect `(setf ,place ,name) into body
       finally (return `(multiple-value-bind ,bindings ,form
                          ,@ignores
-                         ,@body))))
+                         ,@body
+                         ;; Return the primary value (like multiple-value-setq)
+                         ,(first bindings)))))
 
 ;;; ===========================================================================
 ;;;  Memq (lists only)
@@ -223,7 +228,7 @@
     (declare (list list))
     (member item list :test #'eq))
   
-  #-full-safety
+  #-(or full-safety disable-compiler-macros)
   (define-compiler-macro memq (item list)
     `(member ,item (the ,list ,list) :test #'eq)))
 
@@ -235,7 +240,7 @@
   (defun delq (item list)
     (excl::list-delete-eq item list))
   
-  #-full-safety
+  #-(or full-safety disable-compiler-macros)
   (define-compiler-macro delq (item list)
     `(excl::list-delete-eq ,item ,list)))
 
@@ -245,7 +250,7 @@
     (declare (list list))
     (delete item list :test #'eq))
   
-  #-full-safety
+  #-(or full-safety disable-compiler-macros)
   (define-compiler-macro delq (item list)
     `(delete ,item (the list ,list) :test #'eq)))
 
@@ -409,7 +414,7 @@
     (finalize-inheritance class))
   class)
 
-#-full-safety
+#-(or full-safety disable-compiler-macros)
 (define-compiler-macro ensure-finalized-class (class)
   (with-once-only-bindings (class)
     `(progn
@@ -424,7 +429,7 @@
   (intern (string string-symbol-or-character)  
 	  (load-time-value (find-package 'keyword))))
 
-#-full-safety
+#-(or full-safety disable-compiler-macros)
 (define-compiler-macro make-keyword (string-symbol-or-character)
   `(intern (string ,string-symbol-or-character) 
 	   (load-time-value (find-package 'keyword))))
@@ -435,7 +440,7 @@
 (defun ensure-list (x)
   (if (listp x) x (list x)))
 
-#-full-safety
+#-(or full-safety disable-compiler-macros)
 (define-compiler-macro ensure-list (x)
   (with-once-only-bindings (x)
     `(if (listp ,x) ,x (list ,x))))
@@ -447,7 +452,7 @@
   (let ((x (ensure-list x)))
     (if (listp (car x)) x (list x))))
 
-#-full-safety
+#-(or full-safety disable-compiler-macros)
 (define-compiler-macro ensure-list-of-lists (x)
   (with-once-only-bindings (x)
     `(if (listp (car ,x)) ,x (list ,x))))
@@ -463,7 +468,7 @@
     (when (rest list)
       (sole-element-violation list))))
 
-#-full-safety
+#-(or full-safety disable-compiler-macros)
 (define-compiler-macro sole-element (list)
   (with-once-only-bindings (list)
     `(prog1 (first ,list)
@@ -504,7 +509,7 @@
   #+scl
   (common-lisp::shrink-vector vector length))
 
-#-full-safety 
+#-(or full-safety disable-compiler-macros) 
 (define-compiler-macro shrink-vector (vector length)
   #+allegro
   `(excl::.primcall 'sys::shrink-svector ,vector ,length)
@@ -553,7 +558,7 @@
 (defun list-length-1-p (list)
   (and (consp list) (null (cdr list))))
 
-#-full-safety
+#-(or full-safety disable-compiler-macros)
 (define-compiler-macro list-length-1-p (list)
   (with-once-only-bindings (list)
     `(and (consp ,list) (null (cdr ,list)))))
@@ -566,7 +571,7 @@
 	 (and (consp rest)
 	      (null (cdr rest))))))
 
-#-full-safety
+#-(or full-safety disable-compiler-macros)
 (define-compiler-macro list-length-2-p (list)
   (with-once-only-bindings (list)
     `(and (consp ,list)
@@ -588,7 +593,7 @@
 (defun list-length>1 (list)
   (and (consp list) (consp (cdr list))))
 
-#-full-safety
+#-(or full-safety disable-compiler-macros)
 (define-compiler-macro list-length>1 (list)
   (with-once-only-bindings (list)
     `(and (consp ,list) (consp (cdr ,list)))))
@@ -666,7 +671,7 @@
   (declare (dynamic-extent args))
   (let ((result nil))
     (dolist (arg args result)
-      (when arg (setq result (not result))))))
+      (when arg (setf result (not result))))))
 
 ;;; ===========================================================================
 ;;;   Association-list extensions
@@ -675,7 +680,7 @@
   ;;; Pushes an acons of key and datum onto the place alist (whether or not a
   ;;; matching key exists in the place alist.  Returns the updated alist.
   (if (symbolp place)
-      `(setq ,place (acons ,key ,datum ,place))
+      `(setf ,place (acons ,key ,datum ,place))
       (with-once-only-bindings (key datum)
 	(multiple-value-bind (vars vals store-vars writer-form reader-form)
 	    (get-setf-expansion place env)
@@ -700,7 +705,7 @@
 	   (cond (,assoc-result
 		  (rplacd ,assoc-result ,datum)
 		  ,(first store-vars))
-		 (t (setq ,(first store-vars)
+		 (t (setf ,(first store-vars)
 		      (acons ,key ,datum ,(first store-vars)))))
 	   ,writer-form)))))
 
@@ -926,7 +931,7 @@
 	   (error "~s is a malformed property list." plist))
 	  ((eq ind indicator)
 	   (return (nreconc result (cddr ptr)))))
-    (setq result (list* (second ptr) ind result))))
+    (setf result (list* (second ptr) ind result))))
         
 ;;; ===========================================================================
 ;;;   Remove-properties
@@ -975,9 +980,9 @@
 (defun print-pretty-function-object (fn &optional (stream *standard-output*))
   (let ((name (nth-value 2 (function-lambda-expression fn))))
     #+allegro
-    (when (consp name) (setq name (second name)))
+    (when (consp name) (setf name (second name)))
     #+lispworks
-    (when (consp name) (setq name (third name)))
+    (when (consp name) (setf name (third name)))
     (if name
 	(print-unreadable-object (fn stream)
 	  (format stream "~s ~s" 'function name))

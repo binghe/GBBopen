@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/declared-numerics.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Apr 25 02:04:49 2008 *-*
+;;;; *-* Last-Edit: Sun May 25 18:14:11 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -68,7 +68,7 @@
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
-;;;  07-04-02 File Created.  (Corkill)
+;;;  07-04-02 File created.  (Corkill)
 ;;;  02-20-04 Added full-safety escape feature.  (Corkill)
 ;;;  03-13-04 Added infinity values.  (Corkill)
 ;;;  04-13-04 Added SBCL & CMUCL infinity values.  (Corkill)
@@ -132,7 +132,8 @@
 (defun short-float-p (obj)
   (typep obj 'short-float))
 
-#+(and (or allegro ecl gcl) (not full-safety))
+#+(and (or allegro ecl gcl) 
+       (not (or full-safety disable-compiler-macros)))
 (define-compiler-macro short-float-p (obj)
   `(typep ,obj 'short-float))
 
@@ -142,7 +143,7 @@
   (typep obj 'single-float))
 
 #+(and (or clozure digitool-mcl ecl gcl)
-       (not full-safety))
+       (not (or full-safety disable-compiler-macros)))
 (define-compiler-macro single-float-p (obj)
   `(typep ,obj 'single-float))
 
@@ -151,7 +152,8 @@
 (defun double-float-p (obj)
   (typep obj 'double-float))
 
-#+(and (or ecl gcl) (not full-safety))
+#+(and (or ecl gcl) 
+       (not (or full-safety disable-compiler-macros)))
 (define-compiler-macro double-float-p (obj)
   `(typep ,obj 'double-float))
 
@@ -161,7 +163,7 @@
   (typep obj 'long-float))
 
 #+(and (or allegro clozure ecl gcl)
-       (not full-safety))
+       (not (or full-safety disable-compiler-macros)))
 (define-compiler-macro long-float-p (obj)
   `(typep ,obj 'long-float))
 
@@ -252,7 +254,7 @@
 
 (defun coerce& (arg) (coerce arg 'fixnum))
 
-#-full-safety
+#-(or full-safety disable-compiler-macros)
 (define-compiler-macro coerce& (arg)
   (with-once-only-bindings (arg)
     ;; avoid coercion if not required (some CLs will coerce anyway):
@@ -344,7 +346,7 @@
 
 (defun coerce$& (arg) (coerce arg 'short-float))
 
-#-full-safety
+#-(or full-safety disable-compiler-macros)
 (define-compiler-macro coerce$& (arg) 
   (with-once-only-bindings (arg)
     ;; avoid coercion if not required (some CLs will coerce anyway):
@@ -436,7 +438,7 @@
 
 (defun coerce$ (arg) (coerce arg 'single-float))
 
-#-full-safety
+#-(or full-safety disable-compiler-macros)
 (define-compiler-macro coerce$ (arg) 
   (with-once-only-bindings (arg)
     ;; avoid coercion if not required (some CLs will coerce anyway):
@@ -528,7 +530,7 @@
 
 (defun coerce$$ (arg) (coerce arg 'double-float))
 
-#-full-safety
+#-(or full-safety disable-compiler-macros)
 (define-compiler-macro coerce$$ (arg)
   (with-once-only-bindings (arg)
     ;; avoid coercion if not required (some CLs will coerce anyway):
@@ -620,7 +622,7 @@
 
 (defun coerce$$$ (arg) (coerce arg 'long-float))
 
-#-full-safety
+#-(or full-safety disable-compiler-macros)
 (define-compiler-macro coerce$$$ (arg)
   (with-once-only-bindings (arg)
     ;; avoid coercion if not required (some CLs will coerce anyway):

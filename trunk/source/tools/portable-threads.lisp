@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/portable-threads.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat May 10 05:27:30 2008 *-*
+;;;; *-* Last-Edit: Sun May 25 18:18:47 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -37,7 +37,7 @@
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
-;;;  11-21-03 File Created.  (Corkill)
+;;;  11-21-03 File created.  (Corkill)
 ;;;  03-20-04 Added process-yield, kill, hibernate/awaken.  (Corkill)
 ;;;  03-21-04 Added atomic operations.  (Corkill)
 ;;;  06-11-05 Clean up best attempts for non-threaded CLs.  (Corkill)
@@ -457,7 +457,7 @@
   #+threads-not-available
   (mapc #'funcall *non-threaded-polling-function-hook*))
 
-#-(or full-safety (and sbcl sb-thread))
+#-(or full-safety disable-compiler-macros (and sbcl sb-thread))
 (define-compiler-macro thread-yield ()
   #+allegro  
   '(mp:process-allow-schedule)
@@ -749,7 +749,7 @@
     #+threads-not-available
     (plusp (the fixnum (lock-count lock)))))
 
-#-full-safety
+#-(or full-safety disable-compiler-macros)
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (define-compiler-macro thread-holds-lock-p (lock)
     (let ((lock-sym (gensym)))
@@ -905,7 +905,7 @@
   #+threads-not-available
   ':threads-not-available)
 
-#-full-safety
+#-(or full-safety disable-compiler-macros)
 (define-compiler-macro current-thread ()
   #+allegro
   'mp:*current-process*
@@ -949,7 +949,7 @@
   #+threads-not-available
   nil)
   
-#-full-safety
+#-(or full-safety disable-compiler-macros)
 (define-compiler-macro all-threads ()
   #+allegro
   'mp:*all-processes*
@@ -995,7 +995,7 @@
   #+threads-not-available
   nil)
 
-#-full-safety
+#-(or full-safety disable-compiler-macros)
 (define-compiler-macro threadp (obj)
   #+allegro
   `(mp:process-p ,obj)
@@ -1042,7 +1042,8 @@
   #+threads-not-available
   nil)
 
-#-(or full-safety threads-not-available (and sbcl sb-thread))
+#-(or full-safety disable-compiler-macros threads-not-available 
+      (and sbcl sb-thread))
 (define-compiler-macro thread-alive-p (obj)
   #+allegro
   `(mp:process-alive-p ,obj)
@@ -1085,7 +1086,8 @@
   #+threads-not-available
   (not-a-thread thread))
 
-#-(or full-safety threads-not-available (and sbcl sb-thread))
+#-(or full-safety disable-compiler-macros threads-not-available
+      (and sbcl sb-thread))
 (define-compiler-macro thread-name (thread)
   #+allegro
   `(mp:process-name ,thread)
@@ -1226,7 +1228,7 @@
   #+threads-not-available
   (threads-not-available 'kill-thread))
 
-#-full-safety
+#-(or full-safety disable-compiler-macros)
 (define-compiler-macro kill-thread (thread)
   #+allegro
   `(mp:process-kill ,thread)

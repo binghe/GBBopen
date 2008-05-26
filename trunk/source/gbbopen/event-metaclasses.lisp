@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/event-metaclasses.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu May  1 10:36:15 2008 *-*
+;;;; *-* Last-Edit: Sun May 25 18:29:20 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2003-2006, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -65,7 +65,7 @@
             (declare (type evfn-blk evfn-blk))
             (flag-set-p (evfn-blk.printing-flags evfn-blk) ,index))
 
-          #-full-safety
+          #-(or full-safety disable-compiler-macros)
           (define-compiler-macro ,flag (evfn-blk)
             `(flag-set-p (evfn-blk.printing-flags (the evfn-blk ,evfn-blk))
                          ,,index))
@@ -98,7 +98,8 @@
 (defun do-event-printing (evfn-blk)
   (declare (type evfn-blk evfn-blk))
   (=& 1 (logand (evfn-blk.printing-flags evfn-blk) #.do-printing-mask)))
-#-full-safety
+
+#-(or full-safety disable-compiler-macros)
 (define-compiler-macro do-event-printing (evfn-blk)
   `(=& 1 (logand (evfn-blk.printing-flags (the evfn-blk ,evfn-blk)) 
 		 #.do-printing-mask)))

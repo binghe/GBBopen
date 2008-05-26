@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon May 19 15:57:37 2008 *-*
+;;;; *-* Last-Edit: Sun May 25 09:22:54 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -39,19 +39,11 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(boolean
 	    describe-space-instance-storage ; not yet documented
+            describe-storage                ; not yet documented
 	    hashed
-	    infinite-interval		; not yet documented
 	    quadtree
 	    uniform-buckets
 	    unstructured)))
-
-;;; ---------------------------------------------------------------------------
-
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  ;; Some implementations (SBCL) are very strict on eql constant redefinition,
-  ;; so avoid redefinition by checking for a bound value:
-  (unless (boundp 'infinite-interval)
-    (defconstant infinite-interval '#.(list -infinity infinity))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -88,8 +80,12 @@
    (t (print-unreadable-object (storage stream :type nil)
 	(let ((classes (when (slot-boundp storage 'stores-classes)
 			 (stores-classes-of storage))))
-	  (format stream "~:(~s~) ~:[???~;(~:*~{~{~s~@[+~*~]~}~})~] ~s"
+	  (format stream "~:(~s ~s~) ~:[???~;(~:*~{~{~s~@[+~*~]~}~})~] ~s ~s"
 		  (type-of storage)
+                  (let ((space-instance (space-instance-of storage)))
+                    (if space-instance 
+                        (instance-name-of space-instance) 
+                        "???"))
 		  (mapcar 
 		   #'(lambda (class-spec)
 		       (destructuring-bind (unit-class . plus-subclasses)
@@ -97,7 +93,8 @@
 			 `(,(class-name unit-class) ,plus-subclasses)))
 		   classes)
 		  (and (slot-boundp storage 'dimension-names)
-		       (dimension-names-of storage)))))
+		       (dimension-names-of storage))
+                  (instance-counts-of storage))))
       ;; Print-object must return object:
       storage)))
 
@@ -198,24 +195,14 @@
 
 (defun best-retrieval-storage (space-instance unit-class-specs
                                retrieval-dimensions result-so-far)
-  (or
-   ;; A single unit-class spec was specified:
-   #+developing
-   (when (list-length-1-p unit-class-specs)
-     (destructuring-bind (unit-class . plus-subclasses)
-         (car unit-class-specs)
-       (ensure-finalized-class unit-class)
-       (printv (storage-objects-for-add/move/remove 
-                unit-class space-instance))))
-
-   ;; Everything else:
-   (dolist (storage (standard-space-instance.%%storage%% space-instance))
-     (dolist (unit-class-spec unit-class-specs)
-       (destructuring-bind (unit-class . plus-subclasses)
-           unit-class-spec
-         (when (applicable-storage-object-p 
-                storage unit-class plus-subclasses)
-           (pushnew storage result-so-far))))))
+  (declare (ignore retrieval-dimensions))
+  (dolist (storage (standard-space-instance.%%storage%% space-instance))
+    (dolist (unit-class-spec unit-class-specs)
+      (destructuring-bind (unit-class . plus-subclasses)
+          unit-class-spec
+        (when (applicable-storage-object-p 
+               storage unit-class plus-subclasses)
+          (pushnew storage result-so-far)))))
   result-so-far)
 	
 ;;; ---------------------------------------------------------------------------
@@ -363,6 +350,7 @@
       (push (do-storage space-instance '(t t unstructured))
 	    result))
     (setf (standard-space-instance.%%storage%% space-instance)
+          ;; Maintain in original specification order:
 	  (nreverse result))))
 
 ;;; ---------------------------------------------------------------------------
@@ -398,7 +386,13 @@
 	     args))))
 
 ;;; ===========================================================================
-;;;  Space-Instance Description
+;;;   Describe Storage 
+
+(defun describe-storage (storage)
+  (values))
+
+;;; ===========================================================================
+;;;  Space-Instance Storage Description
 
 (defmethod describe-space-instance-storage
     ((space-instance standard-space-instance))
@@ -427,32 +421,6 @@
 (defmethod describe-space-instance-storage ((space-instance cons))
   (describe-space-instance-storage
    (find-space-instance-by-path space-instance ':with-error)))
-
-;;; ---------------------------------------------------------------------------
-
-(defun print-space-instance-storage-summary (space-instance)
-  ;;; Internal function called by describe-blackboard-repository
-  (when (allowed-unit-classes-of space-instance)
-    (let ((total 0)
-          (instance-counts (standard-space-instance.instance-counts
-                         space-instance)))
-      (when instance-counts
-        (setf total (reduce #'(lambda (a b) (+& a b))
-                            instance-counts 
-                            :key #'cdr)))
-      (cond 
-       ;; Empty space:
-       ((zerop total) (format t "Empty"))
-       ;; Show what we've got:
-       (t (format t "~s instance~:p (" total)
-          (let ((first-time-p t))
-            (dolist (count-acons 
-                        (sort (copy-list instance-counts) #'string< :key #'car)) 
-              (if first-time-p (setf first-time-p nil) (format t "; "))
-              (format t "~s ~s"
-                      (cdr count-acons) 
-                      (car count-acons))))
-          (format t ")"))))))
 
 ;;; ===========================================================================
 ;;;				  End of File

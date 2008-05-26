@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Thu May 22 03:27:36 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Mon May 26 04:38:16 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -1970,6 +1970,8 @@ following effects (overriding the behavior of \var{options\/} supplied to
 \compilemodulefileoptions
 
 \begin{alsos}{*automatically-create-missing-directories-modules*}
+\also[:disable-compiler-macros]
+\also[:full-safety]
 \also[*automatically-create-missing-directories*]
 \also[*autorun-modules*]
 \also[define-module]
@@ -2852,6 +2854,37 @@ and \textbf{\entlink{with-saving/sending-block}}.
 
 %% ------------------------------------------------------------------------
 
+\begin{functiondoc}[disable-compiler-macros]{Feature}%
+  {:disable-compiler-macros}{}%
+\index{compiler macros!disabling}%
+\index{disabling!compiler macros}%
+\index{compiler, disabling compiler macros}%
+
+\fnsyntax
+
+\fnpurpose Disable GBBopen compiler macros.
+
+\begin{alsos}{:full-safety}
+\also[:full-safety]
+\end{alsos}
+
+\fnexample
+\bfindexit{compile-module}%
+\codeindexsubit{:recompile}{compile/load-module option}%
+\codeindexqualit{:propagate}{compile/load-module option}%
+Recompile a GBBopen application (and GBBopen itself) with all GBBopen
+compiler macros disabled:
+%
+\W\supp
+\begin{example}
+  (pushnew :disable-compiler-macros *features*)
+  (\entlink{compile-module} :my-app :recompile :propagate)
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
 \begin{functiondoc}[full-safety]{Feature}{:full-safety}{}%
 \index{optimizations!disabling}%
 \index{disabling!optimizations}%
@@ -2859,7 +2892,18 @@ and \textbf{\entlink{with-saving/sending-block}}.
 
 \fnsyntax
 
-\fnpurpose Disable GBBopen optimizations.
+\fnpurpose Disable GBBopen compile-time optimizations.
+
+\fndescription
+%
+The \textbf{:full-safety} feature disables all compile-time optimizations,
+including the use of compiler macros.  Compiler macros can be disabled without
+disabling other compile-time optimizations with the feature
+\textbf{\entlink{:disable-compiler-macros}}.
+
+\begin{alsos}{:disable-compiler-macros}
+\also[:disable-compiler-macros]
+\end{alsos}
 
 \fnexample
 \bfindexit{compile-module}%
@@ -3762,6 +3806,65 @@ comparison function.
 (b c b)
 > (memq 'x '(a b c b))
 nil
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Macro}{multiple-value-setf}{%
+ \code{(\var{place\/}\superstar)} \var{form\/}
+ \returns{} \var{primary-value\/}} 
+  
+\fnsyntax
+
+\fnpurpose Assign values to \var{places}.
+
+\fnpackage \code{:gbbopen-tools}
+
+\fnmodule \code{:gbbopen-tools}
+
+\fnargs
+\begin{args}{test-form}
+\arg[place] A form which is suitable for use as a
+  \glref{generalized~reference} or \nil 
+\arg[form] A \glref{form}
+\end{args}
+
+\fnreturns The primary value returned by \var{form}.
+
+\fndescription
+% 
+The \var{form\/} is evaluated, and each \var{place\/} is assigned to the
+corresponding value returned by \var{form\/}.  If \nil{} is used one or more
+\var{places\/}, no assignment is made to the \nil{} ``place,'' but the
+corresponding value is consumed (ignored). If there are more \var{places\/}
+than values returned, \nil{} is assigned to the extra \var{places}. If there
+are more values than \var{places}, the extra values are discarded.
+
+\fnexamples
+%
+\W\supp
+\begin{example}
+> (setf *x* (cons 0 0))
+(0 . 0)
+> (multiple-value-setf ((car *x*) (cdr *x*)) (values 1 2 3))
+1
+> *x*
+(1 . 2)\goodpagebreak
+> (multiple-value-setf (nil nil (cdr *x*)) (values -1 -2 -3))
+-1
+> *x*
+(1 . -3)\goodpagebreak
+> (multiple-value-setf ((car *x*) (cdr *x*)) 100)
+100
+> *x*
+(100)\goodpagebreak
+> (multiple-value-setf ((car *x*) (cdr *x*)) nil)
+nil
+> *x*
+(nil)\goodpagebreak
+
 \end{example}
 
 \end{functiondoc}
@@ -7512,6 +7615,7 @@ well as general-purpose \code{:gbbopen-core} entities, is \texorhtml{included
 \begin{tightitemize}
 \item \refsectionlink{event, event function, event printing, and event
     signaling entities}{sec:events}
+\item \refsectionlink{interval manipluation entities}{sec:interval}
 \item \refsectionlink{space-instance and blackboard-repository
     entities}{sec:bb-repository}
 \item \refsectionlink{instance retrieval and iteration/mapping
@@ -8467,60 +8571,6 @@ default effective nonlink-slot-definition \glref{metaobject~class} of
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Function}{expand-interval}%
-  {\var{interval amount\/}
-    \returns{} \var{new-interval\/}}
-\index{expand, an interval}%
-\index{interval!expanding}%
-
-\fnsyntax
-
-\fnpurpose Expand an \glref{interval} by \var{amount}.
-
-\fnpackage \code{:gbbopen}
-
-\fnmodule \code{:gbbopen-core}
-
-\fnargs
-\begin{args}{interval}
-\arg[interval] An \glref{interval}
-\arg[amount] A number
-\end{args}
-
-\fnreturns A new, expanded \glref{interval}.
-
-\fndescription The structure of the original \var{interval\/}
-(\glref{cons}, two-element list, or two-element array) is maintained in the
-newly allocated, expanded \var{new-interval}.
-
-An interval that is contracted (expanded negatively) by an amount
-greater than one-half of its width will always result in a zero-width
-\var{new-interval\/} at the center point of the original \var{interval}.
-
-\begin{alsos}{interval-start}
-\also[interval-start]
-\also[interval-end]
-\also[shift-interval]
-\end{alsos}
-
-\fnexamples
-%
-\W\supp
-\begin{example}
-> (expand-interval '(2 5) 2)
-(0 7)
-> (expand-interval '(2 . 5) -1)
-(3 . 4)\goodpagebreak
-> (expand-interval #(2 5) .5)
-#(1.5 5.5)
-> (expand-interval '(2 5) -3)
-(3.5 3.5)
-\end{example}
-
-\end{functiondoc}
-
-%% ------------------------------------------------------------------------
-
 \begin{functiondoc}{Metaobject~Class}{gbbopen-effective-slot-definition}{}
 \index{class!gbbopen-effective-slot-definition@\textbf{gbbopen-effective-slot-definition}}%
 
@@ -8886,100 +8936,6 @@ Change the \glref{instance~name} of \code{hyp} \code{180} to
 \begin{example}
 > (setf (instance-name-of (\entlink{find-instance-by-name} 180 'hyp)) "bogus-180")
 "bogus-180"
-\end{example}
-
-\end{functiondoc}
-
-%% ------------------------------------------------------------------------
-
-\begin{functiondoc}{Function}{interval-end}%
-  {\var{interval\/}
-    \returns{} \var{end-value\/}}
-\index{end value, of an interval}%
-\index{interval!obtaining the end value}%
-
-\fnsyntax
-
-\fnpurpose Obtain the end value of an \glref{interval}.
-
-\fnsetf
-\fnsetfsyntax{interval-end}{\var{interval\/}}{\var{end-value\/}}
-
-\fnpackage \code{:gbbopen}
-
-\fnmodule \code{:gbbopen-core}
-
-\fnargs
-\begin{args}{interval}
-\arg[interval] An \glref{interval}
-\arg[end-value] A number
-\end{args}
-
-\fnreturns The end value of the \glref{interval}.
-
-\begin{alsos}{expand-interval}
-\also[expand-interval]
-\also[interval-end]
-\also[shift-interval]
-\end{alsos}
-
-\fnexamples
-%
-\W\supp
-\begin{example}
-> (interval-end '(1 2))
-2
-> (interval-end '(1 . 2))
-2
-> (interval-end #(1  2))
-2
-\end{example}
-
-\end{functiondoc}
-
-%% ------------------------------------------------------------------------
-
-\begin{functiondoc}{Function}{interval-start}%
-  {\var{interval\/} 
-    \returns{} \var{start-value\/}}
-\index{start value, of an interval}%
-\index{interval!obtaining the start value}%
-
-\fnsyntax
-
-\fnpurpose Obtain the start value of an \glref{interval}.
-
-\fnsetf
-\fnsetfsyntax{interval-start}{\var{interval\/}}{\var{start-value\/}}
-
-\fnpackage \code{:gbbopen}
-
-\fnmodule \code{:gbbopen-core}
-
-\fnargs
-\begin{args}{interval}
-\arg[interval] An \glref{interval}
-\arg[start-value] A number
-\end{args}
-
-\fnreturns The start value of the \glref{interval}.
-
-\begin{alsos}{expand-interval}
-\also[expand-interval]
-\also[interval-start]
-\also[shift-interval]
-\end{alsos}
-
-\fnexamples
-%
-\W\supp
-\begin{example}
-> (interval-start '(1 2))
-1
-> (interval-start '(1 . 2))
-1
-> (interval-start #(1  2))
-1
 \end{example}
 
 \end{functiondoc}
@@ -9568,54 +9524,6 @@ Warning: Unit class standard-space-instance has 4 instances; not reset
 Note that a warning was issued when resetting
 \textbf{\entlinknoex{standard-space-instance}} because 4 space instances of
 that class exist.
-
-\end{functiondoc}
-
-%% ------------------------------------------------------------------------
-
-\begin{functiondoc}{Function}{shift-interval}%
-  {\var{interval amount\/}
-    \returns{} \var{new-interval\/}}
-\index{shift, an interval}%
-\index{interval!shifting}%
-
-\fnsyntax
-
-\fnpurpose Shift an \glref{interval} by \var{amount}.
-
-\fnpackage \code{:gbbopen}
-
-\fnmodule \code{:gbbopen-core}
-
-\fnargs
-\begin{args}{interval}
-\arg[interval] An \glref{interval}
-\arg[amount] A number
-\end{args}
-
-\fnreturns A new, shifted \glref{interval}.
-
-\fndescription The structure of the original \var{interval\/}
-(\glref{cons}, two-element list, or two-element array) is maintained in the
-newly allocated, shifted \var{new-interval}.
-
-\begin{alsos}{expand-interval}
-\also[expand-interval]
-\also[interval-end]
-\also[interval-start]
-\end{alsos}
-
-\fnexamples
-%
-\W\supp
-\begin{example}
-> (shift-interval '(2 5) 2)
-(4 7)
-> (shift-interval '(2 . 5) -1)
-(1 . 4)
-> (shift-interval #(2 5) .5)
-#(2.5 5.5)
-\end{example}
 
 \end{functiondoc}
 
@@ -11026,6 +10934,599 @@ supporting-hypothesis links with events enabled:
            (linkf (supporting-hyps-of hyp) supporting-hyps))
         hyp))
 #<hyp 419 (1835 4791) 0.85 [5..35]>
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\T\markright{}%
+\T\pagestyle{plain}
+\T\clearpage
+\W\xname{ref-interval-entities}
+\T\pagestyle{fancy}
+\T\thispagestyle{fancybottom}
+\T\global\def\fnlastname{ }%
+
+\subsection{Intervals}
+\label{sec:interval}%
+
+This section contains \code{:gbbopen-core} entities that pertain to
+\glref{intervals}. An interval $[a,b]$ is the set of real numbers between the
+start value of the interval, $a$, and the end value, $b$, inclusive. The
+interval $[x,x]$ represents the single point $x$.
+
+An interval is represented as either a \glref{cons}, a two-element list, or a
+two-element array containing the start and end values of the interval.  So, a
+representation for the interval $[0,100]$ can be created as any of the
+following:
+\begin{tightitemize}
+\item \code{(cons 0 100)}
+\item \code{(list 0 100)}
+\item \code{(vector 0 100)}
+\end{tightitemize}
+%
+The function \textbf{\entlink{make-interval}} is provided for stylistic
+clarity in creating an interval.
+
+\bfindexit{make-interval}%
+%
+Intervals also include the unbounded intervals:
+\begin{tightitemize}
+\item $(-\infty,\infty)$ ~ (provided as the constant 
+  \textbf{\entlink{infinite-interval}})
+\item $(-\infty,x]$      ~ (for example, 
+   \code{(\entlink{make-interval} x infinity)})
+\item $[x,\infty)$       ~ (for example, 
+   \code{(\entlink{make-interval} -infinity x)})
+\end{tightitemize}
+
+It is an error for the start value of an interval to be greater than the end
+value.
+
+\W\entities
+\T\clearpage
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{copy-interval}%
+  {\var{interval\/}
+    \returns{} \var{new-interval\/}}
+\index{copy, an interval}%
+\index{interval!copying}%
+
+\fnsyntax
+
+\fnpurpose Create a new \glref{interval} by copying \var{interval}.
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:gbbopen-core}
+
+\fnargs
+\begin{args}{interval}
+\arg[interval] An \glref{interval}
+\end{args}
+
+\fnreturns The new \glref{interval}.
+
+\fndescription The structure of the original \var{interval\/} (\glref{cons},
+two-element list, or two-element array) is maintained in the newly allocated
+\var{new-interval}.
+
+\begin{alsos}{infinite-interval}
+\also[expand-interval]
+\also[infinite-interval]
+\also[interval-start]
+\also[interval-end]
+\also[make-interval]
+\also[nexpand-interval]
+\also[nshift-interval]
+\also[shift-interval]
+\end{alsos}
+
+\fnexamples
+%
+\W\supp
+\begin{example}
+> (copy-interval '(2 5))
+(2 5)
+> (copy-interval '(2 . 5))
+(2 . 5)
+> (expand-interval #(2 5))
+#(2 5)
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{expand-interval}%
+  {\var{interval amount\/}
+    \returns{} \var{new-interval\/}}
+\index{expand, an interval}%
+\index{interval!expanding}%
+
+\fnsyntax
+
+\fnpurpose Create a new \glref{interval} by expanding \var{interval\/} by
+\var{amount}.
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:gbbopen-core}
+
+\fnargs
+\begin{args}{interval}
+\arg[interval] An \glref{interval}
+\arg[amount] A number
+\end{args}
+
+\fnreturns A new, expanded \glref{interval}.
+
+\fndescription The structure of the original \var{interval\/}
+(\glref{cons}, two-element list, or two-element array) is maintained in the
+newly allocated, expanded \var{new-interval}.
+
+An interval that is contracted (expanded negatively) by an amount greater than
+one-half of its width will result in a zero-width \var{new-interval\/} at the
+center point of the original \var{interval}.
+
+\begin{alsos}{infinite-interval}
+\also[copy-interval]
+\also[infinite-interval]
+\also[interval-start]
+\also[interval-end]
+\also[interval-values]
+\also[make-interval]
+\also[nexpand-interval]
+\also[nshift-interval]
+\also[shift-interval]
+\end{alsos}
+
+\fnexamples
+%
+\W\supp
+\begin{example}
+> (expand-interval '(2 5) 2)
+(0 7)
+> (expand-interval '(2 . 5) -1)
+(3 . 4)\goodpagebreak
+> (expand-interval #(2 5) .5)
+#(1.5 5.5)
+> (expand-interval '(2 5) -3)
+(3.5 3.5)
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Constant}{infinite-interval}{}%
+
+\fnsyntax
+
+\fnpurpose An interval (represented as a cons) from \code{-infinity} to
+\code{infinity}.
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:gbbopen-core}
+
+\begin{alsos}{nexpand-interval}
+\also[copy-interval]
+\also[expand-interval]
+\also[interval-end]
+\also[interval-start]
+\also[interval-values]
+\also[make-interval]
+\also[nexpand-interval]
+\also[nshift-interval]
+\also[shift-interval]
+\end{alsos}
+
+\fnexample
+%
+\bfindexit{define-unit-class}%
+\bfindexit{copy-interval}%
+%
+Define a \glref{unit~class}, \code{temporal-duration-mixin}, that contains a
+\code{temporal-duration} slot and \glref{dimension~value} declaration:
+%
+\W\supp
+\begin{example}
+> (define-unit-class temporal-duration-mixin ()
+    ((temporal-duration 
+       ;; Copy the interval to allow destructive changes by
+       ;; GBBopen's interval operators:
+       :initform (copy-interval infinite-interval)))
+    (:dimensional-values
+     (temporal-duration :interval temporal-duration)))
+#<standard-unit-class temporal-duration-mixin>
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{interval-end}%
+  {\var{interval\/}
+    \returns{} \var{end-value\/}}
+\index{end value, of an interval}%
+\index{interval!obtaining the end value}%
+
+\fnsyntax
+
+\fnpurpose Obtain the end value of an \glref{interval}.
+
+\fnsetf
+\fnsetfsyntax{interval-end}{\var{interval\/}}{\var{end-value\/}}
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:gbbopen-core}
+
+\fnargs
+\begin{args}{interval}
+\arg[interval] An \glref{interval}
+\arg[end-value] A number
+\end{args}
+
+\fnreturns The end value of the \glref{interval}.
+
+\begin{alsos}{interval-values}
+\also[interval-start]
+\also[interval-values]
+\end{alsos}
+
+\fnexamples
+%
+\bfindexit{make-interval}
+%
+\W\supp
+\begin{example}
+> (interval-end '(1 2))
+2
+> (interval-end '(1 . 2))
+2
+> (interval-end #(1  2))
+2\goodpagebreak
+> (defparameter *x* (\entlink{make-interval} 1 2))
+(1 . 2)
+> (setf (interval-end *x*) 4)
+4
+> *x*
+(1 . 4)
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{interval-start}%
+  {\var{interval\/} 
+    \returns{} \var{start-value\/}}
+\index{start value, of an interval}%
+\index{interval!obtaining the start value}%
+
+\fnsyntax
+
+\fnpurpose Obtain the start value of an \glref{interval}.
+
+\fnsetf
+\fnsetfsyntax{interval-start}{\var{interval\/}}{\var{start-value\/}}
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:gbbopen-core}
+
+\fnargs
+\begin{args}{interval}
+\arg[interval] An \glref{interval}
+\arg[start-value] A number
+\end{args}
+
+\fnreturns The start value of the \glref{interval}.
+
+\begin{alsos}{interval-values}
+\also[interval-end]
+\also[interval-values]
+\end{alsos}
+
+\fnexamples
+%
+\bfindexit{make-interval}
+%
+\W\supp
+\begin{example}
+> (interval-start '(1 2))
+1
+> (interval-start '(1 . 2))
+1
+> (interval-start #(1 2))
+1\goodpagebreak
+> (defparameter *x* (\entlink{make-interval} 1 2))
+(1 . 2)
+> (setf (interval-start *x*) -1)
+-1
+> *x*
+(-1 . 4)
+
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{interval-values}%
+  {\var{interval\/} 
+    \returns{} \var{start-value, end-value\/}}
+\index{start value, of an interval}%
+\index{end value, of an interval}%
+\index{values, start and end, of an interval}%
+\index{interval!obtaining the start value}%
+\index{interval!obtaining the end value}%
+\index{interval!obtaining the start and end values}%
+
+\fnsyntax
+
+\fnpurpose Obtain the start and end values of an \glref{interval}.
+
+\fnsetf
+\fnsetfsyntax{interval-values}{\var{interval\/}}{\var{source-interval\/}}
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:gbbopen-core}
+
+\fnargs
+\begin{args}{source-interval}
+\arg[interval] An \glref{interval}
+\arg[source-interval] An \glref{interval}
+\end{args}
+
+\fnreturns Two values: the start value and the end value of the \glref{interval}.
+
+\begin{alsos}{interval-start}
+\also[interval-end]
+\also[interval-start]
+\end{alsos}
+
+\fnexamples
+%
+\bfindexit{make-interval}
+%
+\W\supp
+\begin{example}
+> (interval-values '(1 2))
+1
+2
+> (interval-values '(1 . 2))
+1
+2
+> (interval-values #(1  2))
+1
+2\goodpagebreak
+> (defparameter *x* (\entlink{make-interval} 1 2))
+(1 . 2)
+> (setf (interval-values *x*) #(3 4))
+#(3 4)
+> *x*
+(3 . 4)
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{make-interval}%
+  {\var{start end\/} \code{\&optional} \var{type-specifier\/} 
+    \returns{} \var{new-interval\/}}
+\index{make, an interval}%
+\index{interval!making}%
+
+\fnsyntax
+
+\fnpurpose Create a new \glref{interval} of type \var{type-specifier}.
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:gbbopen-core}
+
+\fnargs
+\begin{args}{type-specifier}
+\arg[start] A number
+\arg[end] A number
+\arg[type-specifier] One of: \code{cons}, \code{list}, or \code{array}.
+  (Default is \code{cons}.)
+\end{args}
+
+\fnreturns The new \glref{interval}.
+
+\begin{alsos}{infinite-interval}
+\also[copy-interval]
+\also[expand-interval]
+\also[infinite-interval]
+\also[interval-start]
+\also[interval-end]
+\also[nexpand-interval]
+\also[nshift-interval]
+\also[shift-interval]
+\end{alsos}
+
+\fnexamples
+%
+\W\supp
+\begin{example}
+> (make-interval 2 5)
+(2 . 5)
+> (make-interval 2 5 'list)
+(2 5)
+> (make-interval 2 5 'cons)
+(2 . 5)
+> (make-interval 2 5 'array)
+#(2 5)
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{nexpand-interval}%
+  {\var{interval amount\/}
+    \returns{} \var{interval\/}}
+\index{expand, an interval}%
+\index{interval!expanding}%
+
+\fnsyntax
+
+\fnpurpose Expand an \glref{interval} by \var{amount}.
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:gbbopen-core}
+
+\fnargs
+\begin{args}{interval}
+\arg[interval] An \glref{interval}
+\arg[amount] A number
+\end{args}
+
+\fnreturns The expanded \var{interval}.
+
+\fndescription An interval that is contracted (expanded negatively) by an
+amount greater than one-half of its width will result in a zero-width
+\var{interval\/} at the center point of the original \var{interval}.
+
+\begin{alsos}{infinite-interval}
+\also[copy-interval]
+\also[expand-interval]
+\also[infinite-interval]
+\also[interval-start]
+\also[interval-values]
+\also[interval-end]
+\also[make-interval]
+\also[nshift-interval]
+\also[shift-interval]
+\end{alsos}
+
+\fnexamples
+%
+\W\supp
+\begin{example}
+> (nexpand-interval '(2 5) 2)
+(0 7)
+> (nexpand-interval '(2 . 5) -1)
+(3 . 4)\goodpagebreak
+> (nexpand-interval #(2 5) .5)
+#(1.5 5.5)
+> (nexpand-interval '(2 5) -3)
+(3.5 3.5)
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{nshift-interval}%
+  {\var{interval amount\/}
+    \returns{} \var{new-interval\/}}
+\index{shift, an interval}%
+\index{interval!shifting}%
+
+\fnsyntax
+
+\fnpurpose Shift an \glref{interval} by \var{amount}.
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:gbbopen-core}
+
+\fnargs
+\begin{args}{interval}
+\arg[interval] An \glref{interval}
+\arg[amount] A number
+\end{args}
+
+\fnreturns The shifted \var{interval}.
+
+\begin{alsos}{infinite-interval}
+\also[copy-interval]
+\also[expand-interval]
+\also[infinite-interval]
+\also[interval-end]
+\also[interval-start]
+\also[interval-values]
+\also[make-interval]
+\also[nexpand-interval]
+\also[shift-interval]
+\end{alsos}
+
+\fnexamples
+%
+\W\supp
+\begin{example}
+> (nshift-interval '(2 5) 2)
+(4 7)
+> (nshift-interval '(2 . 5) -1)
+(1 . 4)
+> (nshift-interval #(2 5) .5)
+#(2.5 5.5)
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{shift-interval}%
+  {\var{interval amount\/}
+    \returns{} \var{new-interval\/}}
+\index{shift, an interval}%
+\index{interval!shifting}%
+
+\fnsyntax
+
+\fnpurpose Create a new \glref{interval} by shifting \var{interval\/} by
+\var{amount}.
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:gbbopen-core}
+
+\fnargs
+\begin{args}{interval}
+\arg[interval] An \glref{interval}
+\arg[amount] A number
+\end{args}
+
+\fnreturns A new, shifted \glref{interval}.
+
+\fndescription The structure of the original \var{interval\/}
+(\glref{cons}, two-element list, or two-element array) is maintained in the
+newly allocated, shifted \var{new-interval}.
+
+\begin{alsos}{infinite-interval}
+\also[copy-interval]
+\also[expand-interval]
+\also[infinite-interval]
+\also[interval-end]
+\also[interval-start]
+\also[interval-values]
+\also[make-interval]
+\also[nexpand-interval]
+\also[nshift-interval]
+\end{alsos}
+
+\fnexamples
+%
+\W\supp
+\begin{example}
+> (shift-interval '(2 5) 2)
+(4 7)
+> (shift-interval '(2 . 5) -1)
+(1 . 4)
+> (shift-interval #(2 5) .5)
+#(2.5 5.5)
 \end{example}
 
 \end{functiondoc}
@@ -16040,10 +16541,10 @@ Do the same, but with a mixin class:
 %
 \W\supp\notpretop
 \begin{example}
-> (define-unit-class lock-mixin (ks my-mixin)
+> (define-unit-class ks-lock-mixin ()
     ((lock :initform (\entlink{make-lock} :name "KS Lock"))))
-#<standard-unit-class lock-mixin>
-> (define-ks-class ks-with-lock (ks lock-mixin)
+#<standard-unit-class ks-lock-mixin>
+> (define-ks-class ks-with-lock (ks ks-lock-mixin)
     ())
 #<standard-unit-class ks-with-lock>
 \end{example}
@@ -16234,10 +16735,10 @@ Do the same, but with a mixin class:
 %
 \W\supp\notpretop
 \begin{example}
-> (define-unit-class lock-mixin (ks my-mixin)
-    ((lock :initform (\entlink{make-lock} :name "KS Lock"))))
-#<standard-unit-class lock-mixin>
-> (define-ksa-class ksa-with-lock (ksa lock-mixin)
+> (define-unit-class ksa-lock-mixin ()
+    ((lock :initform (\entlink{make-lock} :name "KSA Lock"))))
+#<standard-unit-class ksa-lock-mixin>
+> (define-ksa-class ksa-with-lock (ksa ksa-lock-mixin)
     ())
 #<standard-ksa-class ksa-with-lock>
 \end{example}
@@ -16845,13 +17346,17 @@ Agenda Shell to determine when to execute the \glref{KSA}.
 \also[ksa]
 \end{alsos}
 
-\fnexample
+\fnexamples
 Return the rating of a \glref{KSA}:
 %
 \W\supp
 \begin{example}
 > (rating-of ksa)
 58
+> (setf (rating-of ksa) 80)
+80
+> (rating-of ksa)
+80
 \end{example}
 
 \fnnote 

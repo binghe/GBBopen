@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/source/tools/polling-functions.lisp *-*
+;;;; *-* File: /usr/local/gbbopen/source/tools/polling-functions.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Feb 11 08:25:07 2008 *-*
-;;;; *-* Machine: whirlwind.corkills.org *-*
+;;;; *-* Last-Edit: Sun May 25 18:11:57 2008 *-*
+;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -92,7 +92,7 @@
             do (sleep poll-interval)
                (thread-yield)))))
 
-#-(or full-safety threads-not-available)
+#-(or full-safety disable-compiler-macros threads-not-available)
 (define-compiler-macro polling-sleep (seconds &optional poll-interval)
   (declare (ignore poll-interval))
   `(sleep ,seconds))
