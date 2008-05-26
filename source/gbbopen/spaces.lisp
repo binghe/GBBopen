@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/spaces.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu May 22 02:36:51 2008 *-*
+;;;; *-* Last-Edit: Sat May 24 11:17:19 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -888,6 +888,33 @@
 (defmethod describe-space-instance ((space-instance cons))
   (describe-space-instance 
    (find-space-instance-by-path space-instance ':with-error)))
+
+;;; ---------------------------------------------------------------------------
+;;;   Describe blackboard repository
+
+(defun print-space-instance-storage-summary (space-instance)
+  ;;; Internal function called by describe-blackboard-repository
+  (when (allowed-unit-classes-of space-instance)
+    (let ((total 0)
+          (instance-counts (standard-space-instance.instance-counts
+                         space-instance)))
+      (when instance-counts
+        (setf total (reduce #'(lambda (a b) (+& a b))
+                            instance-counts 
+                            :key #'cdr)))
+      (cond 
+       ;; Empty space:
+       ((zerop total) (format t "Empty"))
+       ;; Show what we've got:
+       (t (format t "~s instance~:p (" total)
+          (let ((first-time-p t))
+            (dolist (count-acons 
+                        (sort (copy-list instance-counts) #'string< :key #'car)) 
+              (if first-time-p (setf first-time-p nil) (format t "; "))
+              (format t "~s ~s"
+                      (cdr count-acons) 
+                      (car count-acons))))
+          (format t ")"))))))
 
 ;;; ---------------------------------------------------------------------------
 

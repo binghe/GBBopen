@@ -65,10 +65,14 @@ Agenda Shell to determine when to execute the <a href="ref-glossary.html#gl:acti
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-ks.html"><b>ks</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-ksa.html"><b>ksa</b></a>
 </p>
-<p><span class="fndoclabel">Example</span> <br />Return the rating of a <a href="ref-glossary.html#gl:activations">KSA</a>:
+<p><span class="fndoclabel">Examples</span> <br />Return the rating of a <a href="ref-glossary.html#gl:activations">KSA</a>:
 <pre class="pretop">
 &gt; (rating-of ksa)
 58
+&gt; (setf (rating-of ksa) 80)
+80
+&gt; (rating-of ksa)
+80
 </pre>
 </p>
 <p><span class="fndoclabel">Note</span> <br />The rating of a <a href="ref-glossary.html#id146">pending&nbsp;KSA</a> can be changed by using <b>setf</b> or

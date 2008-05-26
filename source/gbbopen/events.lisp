@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/current/source/gbbopen/events.lisp *-*
+;;;; *-* File: /usr/local/gbbopen/source/gbbopen/events.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Oct  3 22:08:32 2007 *-*
-;;;; *-* Machine: ruby.corkills.org *-*
+;;;; *-* Last-Edit: Sun May 25 18:30:17 2008 *-*
+;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -14,12 +14,12 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2003-2007, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
-;;;  05-04-03 File Created.  (Corkill)
+;;;  05-04-03 File created.  (Corkill)
 ;;;  03-17-04 Added with-events-disabled/enabled.  (Corkill)
 ;;;  06-22-04 Initial instance-event functions/signaling.  (Corkill)
 ;;;  07-07-04 Added evfn-printv.  (Corkill)
@@ -97,7 +97,8 @@
 
 (defun evfn.function (evfn)
   (car evfn))
-#-full-safety
+
+#-(or full-safety disable-compiler-macros)
 (define-compiler-macro evfn.function (evfn)
   `(car (the cons ,evfn)))
 
@@ -106,7 +107,8 @@
 
 (defun evfn.priority (evfn)
   (-& (ldb (byte 8 0) (cdr evfn)) 127))
-#-full-safety
+
+#-(or full-safety disable-compiler-macros)
 (define-compiler-macro evfn.priority (evfn)
   `(-& (ldb (byte 8 0) (cdr (the cons ,evfn))) 127))
 
@@ -123,7 +125,8 @@
           (defun ,flag (evfn)
             (declare (cons evfn))
             (flag-set-p (cdr evfn) ,index))
-          #-full-safety
+
+          #-(or full-safety disable-compiler-macros)
           (define-compiler-macro ,flag (evfn)
             `(flag-set-p (cdr (the cons ,evfn)) ,,index))
           

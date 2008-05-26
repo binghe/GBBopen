@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:AGENDA-SHELL; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/control-shells/agenda-shell.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri May  9 12:24:00 2008 *-*
+;;;; *-* Last-Edit: Mon May 26 02:19:33 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -19,7 +19,7 @@
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
-;;;  03-07-04 File Created.  (Corkill)
+;;;  03-07-04 File created.  (Corkill)
 ;;;  07-15-04 Added control-shell stepping.  (Corkill)
 ;;;  07-22-04 Added KS trigger removal.  (Corkill)
 ;;;  07-26-04 Added control-shell step result reporting.  (Corkill)
@@ -159,7 +159,8 @@
 
 (defun kst.ks (kst)
   (car kst))
-#-full-safety
+
+#-(or full-safety disable-compiler-macros)
 (define-compiler-macro kst.ks (kst)
   `(car (the cons ,kst)))
 
@@ -172,7 +173,8 @@
           (defun ,flag (kst)
             (declare (cons kst))
             (flag-set-p (cdr kst) ,index))
-          #-full-safety
+          
+          #-(or full-safety disable-compiler-macros)
           (define-compiler-macro ,flag (kst)
             `(flag-set-p (cdr (the cons ,kst)) ,,index))
           

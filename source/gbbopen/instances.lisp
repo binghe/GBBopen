@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon May 19 15:52:30 2008 *-*
+;;;; *-* Last-Edit: Sun May 25 18:30:45 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -286,7 +286,7 @@
 (defun instance-deleted-p (instance)
   (eq (standard-unit-instance.%%space-instances%% instance) ':deleted))
 
-#-full-safety
+#-(or full-safety disable-compiler-macros)
 (define-compiler-macro instance-deleted-p (instance)
   `(eq (standard-unit-instance.%%space-instances%% ,instance) ':deleted))
 
@@ -304,7 +304,7 @@
   (when (instance-deleted-p instance)
     (operation-on-deleted-instance operation instance)))
 
-#-full-safety
+#-(or full-safety disable-compiler-macros)
 (define-compiler-macro check-for-deleted-instance (instance operation)
   (with-once-only-bindings (instance operation)
     `(when (eq (standard-unit-instance.%%space-instances%% ,instance) 
@@ -913,21 +913,21 @@
 (defun set-mbr-instance-mark (instance)
   (setf (standard-unit-instance.%%marks%% instance) 1))
 
-#-full-safety
+#-(or full-safety disable-compiler-macros)
 (define-compiler-macro set-mbr-instance-mark (instance)
   `(setf (standard-unit-instance.%%marks%% ,instance) 1))
 
 (defun clear-mbr-instance-mark (instance)
   (setf (standard-unit-instance.%%marks%% instance) 0))
 
-#-full-safety
+#-(or full-safety disable-compiler-macros)
 (define-compiler-macro clear-mbr-instance-mark (instance)
   `(setf (standard-unit-instance.%%marks%% ,instance) 0))
 
 (defun mbr-instance-mark-set-p (instance)
   (=& (standard-unit-instance.%%marks%% instance) 1))
 
-#-full-safety
+#-(or full-safety disable-compiler-macros)
 (define-compiler-macro mbr-instance-mark-set-p (instance)
   `(=& (standard-unit-instance.%%marks%% ,instance) 1))
 

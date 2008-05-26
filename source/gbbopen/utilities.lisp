@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/utilities.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Mar 13 00:40:19 2008 *-*
-;;;; *-* Machine: vagabond.cs.umass.edu *-*
+;;;; *-* Last-Edit: Mon May 26 04:21:32 2008 *-*
+;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -14,12 +14,12 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2003-2007, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
-;;;  09-18-03 File Created.  (Corkill)
+;;;  09-18-03 File created.  (Corkill)
 ;;;  05-21-04 Export interval-start, -end, and -values.  (Corkill)
 ;;;  06-07-04 Added bounded-uniform-bucket-index and
 ;;;           bounded-uniform-bucket-interval-indexes.  (Corkill)
@@ -32,13 +32,26 @@
 (in-package :gbbopen)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (export '(expand-interval
+  (export '(copy-interval
+            expand-interval
+	    infinite-interval
 	    interval-start
 	    interval-end
-	    interval-values		; not yet documented
+	    interval-values
+            make-interval
+            nexpand-interval
+            nshift-interval
 	    shift-interval)))
 
 ;;; ---------------------------------------------------------------------------
+
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  ;; Some implementations (SBCL) are very strict on eql constant redefinition,
+  ;; so avoid redefinition by checking for a bound value:
+  (unless (boundp 'infinite-interval)
+    (defconstant infinite-interval '#.(cons -infinity infinity))))
+
+;;; ===========================================================================
 ;;;  Interval Functions:
 ;;;
 ;;;  Intervals are one of: (start end), (start . end), or #(start end).
@@ -95,73 +108,189 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun expand-interval (interval amount)
-  (flet ((expand (start end amount)
-	   (let ((new-start (- start amount))
-		 (new-end (+ end amount)))
-	     (if (> new-start new-end)
-		 (let ((point-value (/ (+ new-start new-end) 2)))
-		   ;; Coerce non-integral rationals, if requested:
-		   (when (and (not (integerp point-value))
-			      (rationalp point-value)
-			      (integerp new-start)
-			      (integerp new-end)
-			      *coerce-interval-rationals-to-floats*)
-		     (setq point-value (coerce point-value 'float)))
-		   (values point-value point-value))
-		 (values new-start new-end)))))
+(with-full-optimization ()
+  (defun make-interval (start end &optional (type-specifier 'cons))
+    (ecase type-specifier
+      (cons (cons start end))
+      (list (list start end))
+      (array
+       (without-cmu/sbcl-optimization-warnings
+        (let ((array (make-array '(2))))
+          (setf (elt (the (simple-array * (2)) array) 0) start)
+          (setf (elt (the (simple-array * (2)) array) 1) end)
+          array))))))
+
+#-(or full-safety disable-compiler-macros)
+(define-compiler-macro make-interval (&whole whole
+                                             start end 
+                                      &optional (type-specifier ''cons))
+  ;; In-line when `type-specifier' is a compile-time constant:
+  (if (and (consp type-specifier)
+           (eq (first type-specifier) 'quote))
+      (ecase (sole-element (rest type-specifier))
+        (cons `(cons ,start ,end))
+        (list `(list ,start ,end))
+        (array `(vector ,start ,end)))
+      ;; otherwise, compile the normal make-interval call:
+      whole))
+
+;;; ---------------------------------------------------------------------------
+
+(with-full-optimization ()
+  (defun copy-interval (interval)
     (if (consp interval)
-	(let ((maybe-end (cdr (the cons interval))))
-	  (if (consp maybe-end)
-	      (multiple-value-call 
-		  #'list 
-		(expand (car interval) (sole-element maybe-end) amount))
-	      (multiple-value-call
-	       #'cons (expand (car interval) maybe-end amount))))
-	(make-array 
-	 '(2) 
-	 :element-type (array-element-type interval)
-	 :initial-contents (multiple-value-call
-			       #'list
-			     (expand (elt (the (simple-array * (2)) interval) 0)
-				     (elt (the (simple-array * (2)) interval) 1)
-				     amount))))))
+        (let ((maybe-end (cdr (the cons interval))))
+          (if (consp maybe-end)
+              (list (car interval) (sole-element maybe-end))
+              (cons (car interval) maybe-end)))
+        (without-cmu/sbcl-optimization-warnings
+         (let ((array
+                (make-array '(2) :element-type (array-element-type interval))))
+           (setf (elt (the (simple-array * (2)) array) 0)
+                 (elt (the (simple-array * (2)) interval) 0))
+           (setf (elt (the (simple-array * (2)) array) 1)
+                 (elt (the (simple-array * (2)) interval) 1))
+           array)))))
+
+;;; ---------------------------------------------------------------------------
+
+(defun compute-expand-interval-values (start end expand-amount)
+  (let ((new-start (- start expand-amount))
+        (new-end (+ end expand-amount)))
+    (if (> new-start new-end)
+        (let ((point-value (/ (+ new-start new-end) 2)))
+          ;; Coerce non-integral rationals, if requested:
+          (when (and (not (integerp point-value))
+                     (rationalp point-value)
+                     (integerp new-start)
+                     (integerp new-end)
+                     *coerce-interval-rationals-to-floats*)
+            (setf point-value (coerce point-value 'float)))
+          (values point-value point-value))
+        (values new-start new-end))))
+
+;;; ---------------------------------------------------------------------------
+
+(defun expand-interval (interval expand-amount)
+  (if (consp interval)
+      (let ((maybe-end (cdr (the cons interval))))
+        (if (consp maybe-end)
+            (multiple-value-call 
+                #'list (compute-expand-interval-values 
+                        (car interval) (sole-element maybe-end) expand-amount))
+            (multiple-value-call
+                #'cons (compute-expand-interval-values
+                        (car interval) maybe-end expand-amount))))
+      (let ((array 
+             (make-array '(2) :element-type (array-element-type interval))))
+        (multiple-value-setf ((elt (the (simple-array * (2)) array) 0)
+                              (elt (the (simple-array * (2)) array) 1))
+          (compute-expand-interval-values
+           (elt (the (simple-array * (2)) interval) 0)
+           (elt (the (simple-array * (2)) interval) 1)
+           expand-amount))
+        array)))
       
 ;;; ---------------------------------------------------------------------------
 
-(defun shift-interval (interval amount)
+(defun nexpand-interval (interval expand-amount)
+  ;; Destructive version of expand-interval:
+  (if (consp interval)
+      (let ((maybe-end (cdr (the cons interval))))
+        (if (consp maybe-end)
+            (multiple-value-setf ((first interval) (second interval))
+              (compute-expand-interval-values 
+               (car interval) (sole-element maybe-end) expand-amount))
+            (multiple-value-setf ((car interval) (cdr interval))
+              (compute-expand-interval-values
+               (car interval) maybe-end expand-amount))))
+      (multiple-value-setf ((elt (the (simple-array * (2)) interval) 0)
+                            (elt (the (simple-array * (2)) interval) 1))
+        (compute-expand-interval-values
+         (elt (the (simple-array * (2)) interval) 0)
+         (elt (the (simple-array * (2)) interval) 1)
+         expand-amount)))
+  ;; Return the expanded interval:
+  interval)
+      
+;;; ---------------------------------------------------------------------------
+
+(defun shift-interval (interval shift-amount)
   (if (consp interval)
       (let ((maybe-end (cdr (the cons interval))))
 	(if (consp maybe-end)
-	    (list (+ (car interval) amount)
-		  (+ (sole-element maybe-end) amount))
-	    (cons (+ (car interval) amount)
-		  (+ maybe-end amount))))
-      (make-array 
-       '(2) 
-       :element-type (array-element-type interval)
-       :initial-contents (list (+ (elt (the (simple-array * (2)) interval) 0)
-				  amount)
-			       (+ (elt (the (simple-array * (2)) interval) 1)
-				  amount)))))
+	    (list (+ (car interval) shift-amount)
+		  (+ (sole-element maybe-end) shift-amount))
+	    (cons (+ (car interval) shift-amount)
+		  (+ maybe-end shift-amount))))
+      (let ((array 
+             (make-array '(2) :element-type (array-element-type interval))))
+        (setf (elt (the (simple-array * (2)) array) 0) 
+              (+ (elt (the (simple-array * (2)) interval) 0) shift-amount))
+        (setf (elt (the (simple-array * (2)) array) 1) 
+              (+ (elt (the (simple-array * (2)) interval) 1) shift-amount))
+        array)))
 
 ;;; ---------------------------------------------------------------------------
 
-(defun interval-values (interval)
-  ;;; Returns the start and end values of `interval' as multiple value:
-  (cond ((consp interval)
-	 (values (car (the cons interval))
-		 (let ((maybe-end (cdr (the cons interval))))
-		   (if (consp maybe-end)
-		       (sole-element maybe-end)
-		       maybe-end))))
-	(t (without-cmu/sbcl-optimization-warnings
-	       (values 
-		(elt (the (simple-array * (2)) interval) 0) 
-		(elt (the (simple-array * (2)) interval) 1))))))
-  
+(defun nshift-interval (interval shift-amount)
+  ;; Destructive version of shift-interval:
+  (cond 
+   ((consp interval)
+    (let ((maybe-end (cdr (the cons interval))))
+      (cond 
+       ((consp maybe-end)
+        (incf (first interval) shift-amount)
+        (setf (second interval) (+ (sole-element maybe-end) shift-amount)))
+       (t
+        (incf (car interval) shift-amount)
+        (setf (cdr interval) (+ maybe-end shift-amount))))))
+   (t (incf (elt (the (simple-array * (2)) interval) 0) shift-amount)
+      (incf (elt (the (simple-array * (2)) interval) 1) shift-amount)))
+  ;; Return the shifted interval:
+  interval)
+
 ;;; ---------------------------------------------------------------------------
-;;;   Uniform-bucket index computation:
+
+(with-full-optimization ()
+  (defun interval-values (interval)
+    ;;; Return the start and end values of `interval' as multiple values
+    ;;; (facilitates interval processing):
+    (cond ((consp interval)
+           (values (car (the cons interval))
+                   (let ((maybe-end (cdr (the cons interval))))
+                     (if (consp maybe-end)
+                         (sole-element maybe-end)
+                         maybe-end))))
+          (t (without-cmu/sbcl-optimization-warnings
+              (values 
+               (elt (the (simple-array * (2)) interval) 0) 
+               (elt (the (simple-array * (2)) interval) 1)))))))
+
+;;; ---------------------------------------------------------------------------
+
+(with-full-optimization ()
+  (defun %set-interval-values (destination-interval source-interval)
+    ;;; Setter for (setf (interval-values <place>) interval)
+    (multiple-value-bind (start end)
+        (interval-values source-interval)
+      (cond 
+       ((consp destination-interval)
+        (setf (car destination-interval) start)
+        (let ((maybe-end (cdr (the cons destination-interval))))
+          (if (consp maybe-end)
+              (setf (car maybe-end) end)
+              (setf (cdr destination-interval) end))))
+       (t (without-cmu/sbcl-optimization-warnings
+           (setf (elt (the (simple-array * (2)) destination-interval) 0) start)
+           (setf (elt (the (simple-array * (2)) destination-interval) 1) end)))))
+    ;; Return the original format `interval values':
+    source-interval))
+
+(defsetf interval-values %set-interval-values)
+
+;;; ===========================================================================
+;;;   Uniform-bucket index computations:
 
 (defun uniform-bucket-index (value start size)
   ;;; Compute the bucket index for `value' for uniform buckets of `size':
@@ -225,7 +354,7 @@
      (bounded-uniform-bucket-index start-value start size number-of-buckets)
      (bounded-uniform-bucket-index end-value start size number-of-buckets))))
   
-;;; ---------------------------------------------------------------------------
+;;; ===========================================================================
 ;;;  Formatted output helpers:
 
 (defun format-column (tab-column values &optional (ctrl-string "~s")
