@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/1d-uniform-storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon May 26 12:45:12 2008 *-*
+;;;; *-* Last-Edit: Tue May 27 04:39:45 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -204,7 +204,7 @@
           ;; sort by increasing interval starts:
           (setf extents (sort extents #'< :key #'car)))))
     (or extents 
-        (values (list infinite-interval) 't))))
+        (values (list infinite-extent) 't))))
   
 ;;; ---------------------------------------------------------------------------
 

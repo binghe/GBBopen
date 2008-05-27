@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/find.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat May 17 16:54:12 2008 *-*
+;;;; *-* Last-Edit: Tue May 27 04:41:58 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -123,6 +123,14 @@
 
 (defvar *processed-hash-table-size* 1000)
 (defvar *processed-hash-table-rehash-size* 1.6)
+
+;;; ---------------------------------------------------------------------------
+
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  ;; Some implementations (SBCL) are very strict on eql constant redefinition,
+  ;; so avoid redefinition by checking for a bound value:
+  (unless (boundp 'infinite-extent)
+    (defconstant infinite-extent '#.(list -infinity infinity))))
 
 ;;; ---------------------------------------------------------------------------
 
