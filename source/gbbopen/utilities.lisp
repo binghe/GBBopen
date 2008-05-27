@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/utilities.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon May 26 04:21:32 2008 *-*
+;;;; *-* Last-Edit: Mon May 26 22:04:09 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -49,7 +49,7 @@
   ;; Some implementations (SBCL) are very strict on eql constant redefinition,
   ;; so avoid redefinition by checking for a bound value:
   (unless (boundp 'infinite-interval)
-    (defconstant infinite-interval '#.(cons -infinity infinity))))
+    (defconstant infinite-interval '#.(list -infinity infinity))))
 
 ;;; ===========================================================================
 ;;;  Interval Functions:
