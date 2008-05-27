@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/2d-uniform-storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon May 26 12:45:59 2008 *-*
+;;;; *-* Last-Edit: Tue May 27 04:40:29 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2003-2007, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -252,16 +252,16 @@
 	    (unless (or (equal 1st-d-new-extents '(:infeasible))
 			(equal 2nd-d-new-extents '(:infeasible)))
 	      (push (list (or 1st-d-new-extents 
-			      (list infinite-interval))
+			      (list infinite-extent))
 			  (or 2nd-d-new-extents 
-			      (list infinite-interval)))
+			      (list infinite-extent)))
 		    extents))))))
     (or
      ;; TODO: Someday add in 2D-extent merging, for now we'll simply
      ;;       delete obvious duplicates:
      (delete-duplicates (the list extents) :test #'equal)
-     (values (list (list (list infinite-interval)
-			 (list infinite-interval)))
+     (values (list (list (list infinite-extent)
+			 (list infinite-extent)))
 	     't))))
 
 ;;; ---------------------------------------------------------------------------
