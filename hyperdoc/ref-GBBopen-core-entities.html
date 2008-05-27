@@ -16,14 +16,15 @@
 <h1>GBBopen Core</h1>
 <p>The GBBopen Core <a href="ref-glossary.html#gl:module">module</a>, <code>:gbbopen-core</code>, provides support for
 the <a href="ref-glossary.html#id9">blackboard&nbsp;repository</a>, <a href="ref-glossary.html#gl:unit">unit</a> and <a href="ref-glossary.html#gl:space">space</a> classes and
-instances, and <a href="ref-glossary.html#gl:event">event</a> signaling.
+instances, inter-instance <a href="ref-glossary.html#gl:links">links</a>, and <a href="ref-glossary.html#gl:event">event</a> signaling.
 </p>
 <p>Documentation for <a href="ref-glossary.html#gl:unit-class">unit-class</a> and <a href="ref-glossary.html#gl:instances">unit-instance</a> entities, as
 well as general-purpose <code>:gbbopen-core</code> entities, is available below.  Documentation for the remaining
 <code>:gbbopen-core</code> entities is arranged into the following
 groups:
 </p>
-<p><ul class="tight"><li><a href="ref-event-entities.html">event, event function, event printing, and event
+<p><ul class="tight"><li><a href="ref-link-entities.html">link entities</a>
+<li><a href="ref-event-entities.html">event, event function, event printing, and event
 signaling entities</a>
 <li><a href="ref-interval-entities.html">interval manipluation entities</a>
 <li><a href="ref-bb-repository-entities.html">space-instance and blackboard-repository
@@ -39,15 +40,15 @@ entities</a>
 </p>
 <ul>
 <li><a href="ref-change-class.html"><font color="#000000">change-class</font></a></li>
-<li><a href="ref-check-link-consistency.html"><font color="#000000">check-link-consistency</font></a></li>
 <li><a href="ref-class-instances-count.html"><font color="#000000">class-instances-count</font></a></li>
 <li><a href="ref-define-unit-class.html"><font color="#000000">define-unit-class</font></a></li>
 <li><a href="ref-delete-instance.html"><font color="#000000">delete-instance</font></a></li>
 <li><a href="ref-describe-instance.html"><font color="#000000">describe-instance</font></a></li>
 <li><a href="ref-describe-unit-class.html"><font color="#000000">describe-unit-class</font></a></li>
 <li><a href="ref-dimensions-of.html"><font color="#000000">dimensions-of</font></a></li>
-<li><a href="ref-effective-link-definition.html"><font color="#000000">effective-link-definition</font></a></li>
+<li><a href="ref-direct-nonlink-slot-definition.html"><font color="#000000">direct-nonlink-slot-definition</font></a></li>
 <li><a href="ref-effective-nonlink-slot-definition.html"><font color="#000000">effective-nonlink-slot-definition</font></a></li>
+<li><a href="ref-gbbopen-direct-slot-definition.html"><font color="#000000">gbbopen-direct-slot-definition</font></a></li>
 <li><a href="ref-gbbopen-effective-slot-definition.html"><font color="#000000">gbbopen-effective-slot-definition</font></a></li>
 <li><a href="ref-gbbopen-implementation-version.html"><font color="#000000">gbbopen-implementation-version</font></a></li>
 <li><a href="ref-initial-class-instance-number.html"><font color="#000000">initial-class-instance-number</font></a></li>
@@ -55,9 +56,6 @@ entities</a>
 <li><a href="ref-instance-dimension-value.html"><font color="#000000">instance-dimension-value</font></a></li>
 <li><a href="ref-instance-dimension-values.html"><font color="#000000">instance-dimension-values</font></a></li>
 <li><a href="ref-instance-name-of.html"><font color="#000000">instance-name-of</font></a></li>
-<li><a href="ref-linkf.html"><font color="#000000">linkf</font></a></li>
-<li><a href="ref-link-setf.html"><font color="#000000">link-setf</font></a></li>
-<li><a href="ref-link-slot-p.html"><font color="#000000">link-slot-p</font></a></li>
 <li><a href="ref-make-duplicate-instance.html"><font color="#000000">make-duplicate-instance</font></a></li>
 <li><a href="ref-make-instance.html"><font color="#000000">make-instance</font></a></li>
 <li><a href="ref-next-class-instance-number.html"><font color="#000000">next-class-instance-number</font></a></li>
@@ -66,8 +64,6 @@ entities</a>
 <li><a href="ref-standard-unit-class.html"><font color="#000000">standard-unit-class</font></a></li>
 <li><a href="ref-standard-unit-instance.html"><font color="#000000">standard-unit-instance</font></a></li>
 <li><a href="ref-unduplicated-slot-names.html"><font color="#000000">unduplicated-slot-names</font></a></li>
-<li><a href="ref-unlinkf.html"><font color="#000000">unlinkf</font></a></li>
-<li><a href="ref-unlinkf-all.html"><font color="#000000">unlinkf-all</font></a></li>
 <li><a href="ref-with-changing-dimension-values.html"><font color="#000000">with-changing-dimension-values</font></a></li>
 </ul>
 <hr /><address><a target="_top" class="address"

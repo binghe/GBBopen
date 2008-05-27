@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/common.tex *-*
-%% *-* Last-Edit: Sun May 25 12:02:35 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Tue May 27 16:08:20 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -752,14 +752,14 @@
     \itemsep=0pt
     \parskip=0pt
     \let\makelabel=\textbf}}{\endlist}
-\newcommand{\glent}[1][]{\item[#1]}
+\newcommand{\glent}[1][]{\item[#1]~\\}
 \newcommand{\glref}[1]{#1}
 \newcommand{\gllabel}[1]{}
 \W\end{iftex}
 
 \T\begin{ifhtml}
 \newenvironment{glossary-list}{\begin{description}}{\end{description}}
-\newcommand{\glent}[1][]{\item [\label{gl:#1}#1]}
+\newcommand{\glent}[1][]{\xml{p}\item [\label{gl:#1}\textbf{#1}]}
 \newcommand{\glref}[1]{\link{#1}{gl:#1}}
 \newcommand{\gllabel}[1]{\label{gl:#1}}
 \T\end{ifhtml}
@@ -1157,6 +1157,7 @@
 	    "Portable Sockets"
 	    "OS Interface"
             ;; :gbbopen-core
+            "Links"
             "Events"
             "Intervals"
             "Blackboard Repository"

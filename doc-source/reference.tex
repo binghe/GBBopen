@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Mon May 26 13:29:14 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Tue May 27 15:39:03 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -7604,7 +7604,7 @@ string.
 %
 The GBBopen Core \glref{module}, \code{:gbbopen-core}, provides support for
 the \glref{blackboard~repository}, \glref{unit} and \glref{space} classes and
-instances, and \glref{event} signaling.
+instances, inter-instance \glref{links}, and \glref{event} signaling.
 
 Documentation for \glref{unit-class} and \glref{unit-instance} entities, as
 well as general-purpose \code{:gbbopen-core} entities, is \texorhtml{included
@@ -7613,6 +7613,7 @@ well as general-purpose \code{:gbbopen-core} entities, is \texorhtml{included
 \texorhtml{sections}{groups}:
 
 \begin{tightitemize}
+\item \refsectionlink{link entities}{sec:links}
 \item \refsectionlink{event, event function, event printing, and event
     signaling entities}{sec:events}
 \item \refsectionlink{interval manipluation entities}{sec:interval}
@@ -7734,99 +7735,6 @@ to \code{rejected-hyp}:
     :instance-name (\entlink{next-class-instance-number} 'rejected-hyp))
 #<rejected-hyp 1409 (896 388) .68>
 \end{example} 
-
-\end{functiondoc}
-
-%% ------------------------------------------------------------------------
-
-\begin{functiondoc}{Function}{check-link-consistency}{\code{\&optional}
-    \var{silent\/}
-    \returns{} \var{boolean\/}}
-\index{link!definitions, checking consistency of}%
-
-\fnsyntax
-
-\fnpurpose Check for consistency in \glref{link-slot} definitions of
-\glref{unit~classes} to be linked.
-
-\fnpackage \code{:gbbopen}
-
-\fnmodule \code{:gbbopen-core}
-
-\fnargs
-\begin{args}{silent}
-\arg[silent] If true, suppress warning/success printing (default is \nil) 
-\end{args}
-
-\fnreturns True if all \glref{link-slot} definitions are consistent; \nil{}
-otherwise. 
-
-\fndescription If a link inconsistency is found, details of the
-inconsistency are printed to \code{*standard-output*}.  For clarity,
-only the first inconsistency is displayed.  After the inconsistency
-has been repaired, \textbf{check-link-consistency} should be used
-again to check for additional inconsistencies.
-
-\begin{alsos}{define-unit-class}
-\also[define-unit-class]
-\end{alsos}
-
-\fnexamples
-Check for consistency in \glref{link-slot} definitions in all
-\glref{unit~classes}: 
-%
-\W\supp
-\begin{example}
-> (check-link-consistency)
-;; All link definitions are consistent.
-t
-\end{example}
-%
-\bfindexit{define-unit-class}%
-%
-Create a \glref{link-slot} inconsistency:
-%
-\W\supp\notpretop
-\begin{example}
-> (\entlink{define-unit-class} bad () 
-     ((mismatched-link :link (missing inverse))))
-bad
-> (check-link-consistency)
-Warning: The inverse of link MISMATCHED-LINK in unit-class BAD refers
-         to unit-class MISSING, which is not defined.
-nil
-\end{example}
-%
-Define the missing \glref{unit~class}, but incorrectly:
-%
-\W\supp\notpretop
-\begin{example}
-(\entlink{define-unit-class} missing () ((mismatched-link :link (missing bad))))
-missing
-> (check-link-consistency)
-Warning: The inverse of link MISMATCHED-LINK in unit-class MISSING
-         refers to link BAD which is not present in unit-class MISSING.
-nil
-\end{example}
-%
-Fix the definition and check again:
-%
-\W\supp\notpretop
-\begin{example}
-> (\entlink{define-unit-class} missing () ((inverse :link (bad mismatched-link))))
-#<standard-unit-class missing>
-> (check-link-consistency)
-;; All link definitions are consistent.
-t
-\end{example}
-%
-Check again, but silently:
-%
-\W\supp\notpretop
-\begin{example}
-> (check-link-consistency 't)
-t
-\end{example}
 
 \end{functiondoc}
 
@@ -8524,8 +8432,8 @@ altered.
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Metaobject~Class}{effective-link-definition}{}
-\index{class!effective-link-definition@\textbf{effective-link-definition}}%
+\begin{functiondoc}{Metaobject~Class}{direct-nonlink-slot-definition}{}
+\index{class!direct-nonlink-slot-definition@\textbf{direct-nonlink-slot-definition}}%
 
 \fnsyntax
 
@@ -8533,15 +8441,16 @@ altered.
 
 \fnmodule \code{:gbbopen-core}
 
-\fndescription The class \textbf{effective-link-definition} is the default
-effective link-definition \glref{metaobject~class} of \glref{unit~classes}
-created by \textbf{\entlinknoex{define-unit-class}}.
-\textbf{Effective-link-definition} is a subclass of
-\textbf{\entlinknoex{gbbopen-effective-slot-definition}}.
+\fndescription The class \textbf{direct-nonlink-slot-definition} is the
+default direct nonlink-slot-definition \glref{metaobject~class} of
+\glref{unit~classes} created by \textbf{\entlinknoex{define-unit-class}}.
+\textbf{Direct-nonlink-slot-definition} is a subclass of
+\textbf{\entlinknoex{gbbopen-direct-slot-definition}}.
 
-\begin{alsos}{gbbopen-effective-slot-definition}
+\begin{alsos}{effective-nonlink-slot-definition}
+\also[direct-link-definition]
 \also[effective-nonlink-slot-definition]
-\also[gbbopen-effective-slot-definition]
+\also[gbbopen-direct-slot-definition]
 \end{alsos}
 
 \end{functiondoc}
@@ -8563,8 +8472,32 @@ default effective nonlink-slot-definition \glref{metaobject~class} of
 \textbf{Effective-nonlink-slot-definition} is a subclass of
 \textbf{\entlinknoex{gbbopen-effective-slot-definition}}.
 
-\begin{alsos}{effective-nonlink-slot-definition}
+\begin{alsos}{gbbopen-effective-slot-definition}
+\also[direct-nonlink-slot-definition]
 \also[effective-link-definition]
+\also[gbbopen-effective-slot-definition]
+\end{alsos}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Metaobject~Class}{gbbopen-direct-slot-definition}{}
+\index{class!gbbopen-direct-slot-definition@\textbf{gbbopen-direct-slot-definition}}%
+
+\fnsyntax
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:gbbopen-core}
+
+\fndescription The class \textbf{gbbopen-direct-slot-definition} is the
+parent \glref{class} of \textbf{\entlinknoex{direct-link-definition}} and
+\textbf{\entlinknoex{direct-nonlink-slot-definition}}.
+ 
+\begin{alsos}{gbbopen-effective-slot-definition}
+\also[direct-link-definition]
+\also[direct-nonlink-slot-definition]
 \also[gbbopen-effective-slot-definition]
 \end{alsos}
 
@@ -8588,6 +8521,7 @@ parent \glref{class} of \textbf{\entlinknoex{effective-link-definition}} and
 \begin{alsos}{effective-nonlink-slot-definition}
 \also[effective-link-definition]
 \also[effective-nonlink-slot-definition]
+\also[gbbopen-direct-slot-definition]
 \end{alsos}
 
 \end{functiondoc}
@@ -8937,198 +8871,6 @@ Change the \glref{instance~name} of \code{hyp} \code{180} to
 \begin{example}
 > (setf (instance-name-of (\entlink{find-instance-by-name} 180 'hyp)) "bogus-180")
 "bogus-180"
-\end{example}
-
-\end{functiondoc}
-
-%% ------------------------------------------------------------------------
-
-\begin{functiondoc}{Macro}{linkf}%
- {\var{\glref{link-slot-place} unit-instance-or-instances\/}
-   \returns{} \var{unit-instance-or-instances\/}} 
-\index{unit instance!adding links between}%
-\index{link!adding}%
-
-\fnsyntax
-
-\fnpurpose Add a \glref{link} between a \glref{unit~instance} and one
-or more \glref{unit~instances}.
-
-\fnpackage \code{:gbbopen}
-
-\fnmodule \code{:gbbopen-core}
-
-\fnargs
-\begin{args}{unit-instance-or-instances}
-\arg[\glref{link-slot-place}] A form which is suitable for use as a
-\glref{generalized~reference} to a \glref{link~slot}
-\arg[unit-instance-or-instances] A \glref{unit~instance} or a
-list of \glref{unit~instances}
-\end{args}
-
-\fnreturns The supplied \var{unit-instance-or-instances}.
-
-\fnevents
-\index{events!generated by!linkf@\textbf{linkf}}%
-%
-\codeindexit{link-event}%
-%
-\index{events!link-event@\code{link-event}|itidx}%
-%
-A \code{link-event} is signaled for:
-\begin{tightitemize}
-\item all pointers that are added to the specified
-  \glref{link-slot-place}
-\item  each inverse pointer of the \glref{link} that is added to
-  another \glref{unit~instance}
-\end{tightitemize}
-
-\begin{alsos}{unlinkf-all}
-\also[link-setf]
-\also[unlinkf]
-\also[unlinkf-all]
-\end{alsos}
-
-\fnexample Add \code{support-hyp} to the \code{supporting-hyps}
-\glref{link~slot} of the \code{hyp} \glref{unit~instance}
-\code{unit-instance}:
-%
-\W\supp
-\begin{example}
-> (linkf (supporting-hyps-of unit-instance) support-hyp)
-#<hyp 231 (1488 7405) 0.63 [0..8]>
-\end{example}
-
-\end{functiondoc}
-
-%% ------------------------------------------------------------------------
-
-\nofndocindex
-\begin{functiondoc}{Macro}{link-setf}%
- {\var{\glref{link-slot-place} unit-instance-or-instances\/}
-   \returns{} \var{unit-instance-or-instances\/}} 
-\index{unit instance!adding links between}%
-\index{unit instance!adding links between after removing}%
-\index{link!adding}%
-\index{link!adding after removing}%
-
-\fnsyntax
-
-\fnpurpose Set \var{\glref{link-slot-place}\/} to be precisely
-\var{unit-instance-or-instances\/} \glref{links} between
-\glref{unit~instance} and \var{unit-instance-or-instances}.
-
-\fnpackage \code{:gbbopen}
-
-\fnmodule \code{:gbbopen-core}
-
-\fnargs
-\begin{args}{unit-instance-or-instances}
-\arg[\glref{link-slot-place}] A form which is suitable for use as a
-\glref{generalized~reference} to a \glref{link~slot}
-\arg[unit-instance-or-instances] A \glref{unit~instance} or a
-list of \glref{unit~instances}
-\end{args}
-
-\fnreturns The supplied \var{unit-instance-or-instances}.
-
-\fnevents
-\index{events!generated by!linkf"!@\textbf{linkf"!}}%
-%
-\codeindexit{link-event}%
-\codeindexit{unlink-event}%
-%
-\index{events!link-event@\code{link-event}|itidx}%
-\index{events!unlink-event@\code{unlink-event}|itidx}%
-%
-An \code{unlink-event} is signaled for:
-\begin{tightitemize}
-\item all pointers that are removed from the specified
-  \glref{link-slot-place}
-\item each inverse pointer of the \glref{link} that is removed-from
-  another \glref{unit~instance}
-\end{tightitemize}
-A \code{link-event} is signaled for:
-\begin{tightitemize}
-\item all pointers that are added to the specified
-  \glref{link-slot-place}
-\item each inverse pointer of the \glref{link} that is added to
-  another \glref{unit~instance}
-\end{tightitemize}
-
-\fndescription Any existing \glref{links} in
-\var{\glref{link-slot-place}} that do not involve
-\var{unit-instance-or-instances\/} are unlinked.  Then \glref{links}
-to any additional \glref{unit~instances} in
-\var{unit-instance-or-instances\/} are added.
-
-\begin{alsos}{unlinkf-all}
-\also[linkf]
-\also[unlinkf]
-\also[unlinkf-all]
-\end{alsos}
-
-\fnexample Set the \code{supporting-hyps} \glref{link~slot} of the
-\code{hyp} \glref{unit~instance} to the \glref{unit~instances} in
-\code{supporting-hyps}:
-%
-\W\supp
-\begin{example}
-> (link-setf (supporting-hyps-of unit-instance) supporting-hyps)
-#<hyp 231 (1488 7405) 0.63 [0..8]>
-\end{example}
-
-\fnnote 
-\bfindexit{unlinkf-all}%
-The form \mbox{\code{(link-setf} \var{\glref{link-slot-place}\/}
-  \code{nil)}} is semantically equivalent to
-\mbox{\code{(\entlinknoex{unlinkf-all}}
-  \var{\glref{link-slot-place}\/}\code{)}}.  However, using
-\textbf{\entlinknoex{unlinkf-all}} is preferable stylistically and
-slightly faster.
-
-\end{functiondoc}
-
-%% ------------------------------------------------------------------------
-
-\begin{functiondoc}{Generic~Function}{link-slot-p}{\var{slot\/}
-    \returns{} \var{slot-or-nil\/}}
-
-\fnsyntax
-
-\fnpurpose Determine if a slot meta-object is a \glref{link~slot}.
-
-\fnmethods
-\fnalternate{link-slot-p}{\code{(}\var{slot\/} \code{direct-link-definition)}
-  \returns{} \var{slot\/}}
-\fnalternate{link-slot-p}{\code{(}\var{slot\/} \code{effective-link-definition)}
-  \returns{} \var{slot\/}}
-\fnalternate{link-slot-p}{\code{(}\var{slot\/} \code{slot-definition)}
-  \returns{} \nil{}}
-
-\fnpackage \code{:gbbopen}
-
-\fnmodule \code{:gbbopen-core}
-
-\fnargs
-\begin{args}{initargs}
-\arg[slot] A slot meta object
-\end{args}
-
-\fnreturns The \var{slot} if it is a \glref{link~slot}; nil otherwise.
-
-\begin{alsos}{define-unit-class}
-\also[define-unit-class]
-\end{alsos}
-
-\fnexample
-Return the names of the link slots of the \code{hyp} \glref{unit~class}:
-%
-\W\supp
-\begin{example}
-> (loop for slot in (class-slots (find-class 'hyp)) 
-     if (link-slot-p slot) collect (slot-definition-name slot))
-(supporting-hyps supported-hyps)
 \end{example}
 
 \end{functiondoc}
@@ -9686,6 +9428,427 @@ should be added to the list of slots that are not duplicated by
 
 %% ------------------------------------------------------------------------
 
+\begin{functiondoc}{Macro}{with-changing-dimension-values}%
+  {\code{(}\var{unit-instance\/} 
+         [\var{dimension-name\/}\superstar{}]\code{)}
+    \var{declaration\/}\superstar{}
+    \var{form\/}\superstar{}
+    \returns{} \var{result\/}\superstar}
+\index{unit instance!storage repositioning}%
+  
+\fnsyntax
+
+\fnpurpose Inform GBBopen that the dimensional values of a
+\glref{unit~instance} will potentially be changed by the evaluation of
+\var{forms}.
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:gbbopen-core}
+
+\fnargs
+\begin{args}{dimension-name}
+\arg[unit-instance] A \glref{unit~instance}
+\arg[dimension-name] A symbol specifying a \glref{dimension} of
+  \var{unit-instance} 
+\arg[declaration] A declare expression
+\arg[forms] An implicit \textbf{progn} of \glref{forms} to be evaluated
+\end{args}
+
+\fnreturns The values returned by evaluating the last \var{form}.
+
+\fndescription The indexing for \var{unit-instance\/} is updated following the
+evaluation of the last \var{form}.  Any retrieval operations performed during
+the evaluation of \var{forms\/} may operate with indexes as they existed
+before evaluation of the first \var{form}; therefore, retrievals should not be
+included within the scope of \textbf{with-changing-dimension-values}.
+Retrievals performed by separate threads also should be synchronized with
+\textbf{with-changing-dimension-values}.
+
+If \var{dimension-names\/} are specified, only the indexes for those
+\glref{dimensions} of \var{unit-instance\/} will be updated. If no
+\var{dimension-names\/} are specified, the values of any or all
+\glref{dimensions} of \var{unit-instance\/} are assumed to have been
+potentially changed by \var{forms}.
+
+\fnexamples Notify GBBopen that the \code{x}, \code{y}, and \code{belief}
+dimension values of \code{hyp} might be changed:
+%
+\W\supp
+\begin{example}
+> (with-changing-dimension-values (hyp x y belief)
+    (setf (location-of hyp) '(30 40))
+    (setf (belief-of hyp) 0.78))
+\end{example}
+%
+Notify GBBopen that \textit{some\/} dimension values of \code{hyp} might be
+changed:
+%
+\W\supp\notpretop
+\begin{example}
+> (with-changing-dimension-values (hyp)
+    (setf (location-of hyp) '(36 52))
+    (incf (belief-of hyp) 0.05))
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+% Set subsubentities indicator
+\W\renewcommand{\subsubentities}{1}
+
+\T\markright{}%
+\T\pagestyle{plain}
+\T\clearpage
+\W\xname{ref-link-entities}
+\T\pagestyle{fancy}
+\T\thispagestyle{fancybottom}
+\T\global\def\fnlastname{ }%
+
+\subsection{Links}
+\label{sec:links}%
+
+This section contains \code{:gbbopen-core} entities that pertain to
+\glref{links}.
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{check-link-consistency}{\code{\&optional}
+    \var{silent\/}
+    \returns{} \var{boolean\/}}
+\index{link!definitions, checking consistency of}%
+
+\fnsyntax
+
+\fnpurpose Check for consistency in \glref{link-slot} definitions of
+\glref{unit~classes} to be linked.
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:gbbopen-core}
+
+\fnargs
+\begin{args}{silent}
+\arg[silent] If true, suppress warning/success printing (default is \nil) 
+\end{args}
+
+\fnreturns True if all \glref{link-slot} definitions are consistent; \nil{}
+otherwise. 
+
+\fndescription If a link inconsistency is found, details of the
+inconsistency are printed to \code{*standard-output*}.  For clarity,
+only the first inconsistency is displayed.  After the inconsistency
+has been repaired, \textbf{check-link-consistency} should be used
+again to check for additional inconsistencies.
+
+\begin{alsos}{define-unit-class}
+\also[define-unit-class]
+\end{alsos}
+
+\fnexamples
+Check for consistency in \glref{link-slot} definitions in all
+\glref{unit~classes}: 
+%
+\W\supp
+\begin{example}
+> (check-link-consistency)
+;; All link definitions are consistent.
+t
+\end{example}
+%
+\bfindexit{define-unit-class}%
+%
+Create a \glref{link-slot} inconsistency:
+%
+\W\supp\notpretop
+\begin{example}
+> (\entlink{define-unit-class} bad () 
+     ((mismatched-link :link (missing inverse))))
+bad
+> (check-link-consistency)
+Warning: The inverse of link MISMATCHED-LINK in unit-class BAD refers
+         to unit-class MISSING, which is not defined.
+nil
+\end{example}
+%
+Define the missing \glref{unit~class}, but incorrectly:
+%
+\W\supp\notpretop
+\begin{example}
+(\entlink{define-unit-class} missing () ((mismatched-link :link (missing bad))))
+missing
+> (check-link-consistency)
+Warning: The inverse of link MISMATCHED-LINK in unit-class MISSING
+         refers to link BAD which is not present in unit-class MISSING.
+nil
+\end{example}
+%
+Fix the definition and check again:
+%
+\W\supp\notpretop
+\begin{example}
+> (\entlink{define-unit-class} missing () ((inverse :link (bad mismatched-link))))
+#<standard-unit-class missing>
+> (check-link-consistency)
+;; All link definitions are consistent.
+t
+\end{example}
+%
+Check again, but silently:
+%
+\W\supp\notpretop
+\begin{example}
+> (check-link-consistency 't)
+t
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Metaobject~Class}{direct-link-definition}{}
+\index{class!direct-link-definition@\textbf{direct-link-definition}}%
+
+\fnsyntax
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:gbbopen-core}
+
+\fndescription The class \textbf{direct-link-definition} is the default
+direct link-definition \glref{metaobject~class} of \glref{unit~classes}
+created by \textbf{\entlinknoex{define-unit-class}}.
+\textbf{Direct-link-definition} is a subclass of
+\textbf{\entlinknoex{gbbopen-direct-slot-definition}}.
+
+\begin{alsos}{gbbopen-direct-slot-definition}
+\also[effective-link-definition]
+\also[direct-nonlink-slot-definition]
+\also[gbbopen-direct-slot-definition]
+\end{alsos}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Metaobject~Class}{effective-link-definition}{}
+\index{class!effective-link-definition@\textbf{effective-link-definition}}%
+
+\fnsyntax
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:gbbopen-core}
+
+\fndescription The class \textbf{effective-link-definition} is the default
+effective link-definition \glref{metaobject~class} of \glref{unit~classes}
+created by \textbf{\entlinknoex{define-unit-class}}.
+\textbf{Effective-link-definition} is a subclass of
+\textbf{\entlinknoex{gbbopen-effective-slot-definition}}.
+
+\begin{alsos}{gbbopen-effective-slot-definition}
+\also[direct-link-definition]
+\also[effective-nonlink-slot-definition]
+\also[gbbopen-effective-slot-definition]
+\end{alsos}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Macro}{linkf}%
+ {\var{\glref{link-slot-place} unit-instance-or-instances\/}
+   \returns{} \var{unit-instance-or-instances\/}} 
+\index{unit instance!adding links between}%
+\index{link!adding}%
+
+\fnsyntax
+
+\fnpurpose Add a \glref{link} between a \glref{unit~instance} and one
+or more \glref{unit~instances}.
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:gbbopen-core}
+
+\fnargs
+\begin{args}{unit-instance-or-instances}
+\arg[\glref{link-slot-place}] A form which is suitable for use as a
+\glref{generalized~reference} to a \glref{link~slot}
+\arg[unit-instance-or-instances] A \glref{unit~instance} or a
+list of \glref{unit~instances}
+\end{args}
+
+\fnreturns The supplied \var{unit-instance-or-instances}.
+
+\fnevents
+\index{events!generated by!linkf@\textbf{linkf}}%
+%
+\codeindexit{link-event}%
+%
+\index{events!link-event@\code{link-event}|itidx}%
+%
+A \code{link-event} is signaled for:
+\begin{tightitemize}
+\item all pointers that are added to the specified
+  \glref{link-slot-place}
+\item  each inverse pointer of the \glref{link} that is added to
+  another \glref{unit~instance}
+\end{tightitemize}
+
+\begin{alsos}{unlinkf-all}
+\also[link-setf]
+\also[unlinkf]
+\also[unlinkf-all]
+\end{alsos}
+
+\fnexample Add \code{support-hyp} to the \code{supporting-hyps}
+\glref{link~slot} of the \code{hyp} \glref{unit~instance}
+\code{unit-instance}:
+%
+\W\supp
+\begin{example}
+> (linkf (supporting-hyps-of unit-instance) support-hyp)
+#<hyp 231 (1488 7405) 0.63 [0..8]>
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\nofndocindex
+\begin{functiondoc}{Macro}{link-setf}%
+ {\var{\glref{link-slot-place} unit-instance-or-instances\/}
+   \returns{} \var{unit-instance-or-instances\/}} 
+\index{unit instance!adding links between}%
+\index{unit instance!adding links between after removing}%
+\index{link!adding}%
+\index{link!adding after removing}%
+
+\fnsyntax
+
+\fnpurpose Set \var{\glref{link-slot-place}\/} to be precisely
+\var{unit-instance-or-instances\/} \glref{links} between
+\glref{unit~instance} and \var{unit-instance-or-instances}.
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:gbbopen-core}
+
+\fnargs
+\begin{args}{unit-instance-or-instances}
+\arg[\glref{link-slot-place}] A form which is suitable for use as a
+\glref{generalized~reference} to a \glref{link~slot}
+\arg[unit-instance-or-instances] A \glref{unit~instance} or a
+list of \glref{unit~instances}
+\end{args}
+
+\fnreturns The supplied \var{unit-instance-or-instances}.
+
+\fnevents
+\index{events!generated by!linkf"!@\textbf{linkf"!}}%
+%
+\codeindexit{link-event}%
+\codeindexit{unlink-event}%
+%
+\index{events!link-event@\code{link-event}|itidx}%
+\index{events!unlink-event@\code{unlink-event}|itidx}%
+%
+An \code{unlink-event} is signaled for:
+\begin{tightitemize}
+\item all pointers that are removed from the specified
+  \glref{link-slot-place}
+\item each inverse pointer of the \glref{link} that is removed-from
+  another \glref{unit~instance}
+\end{tightitemize}
+A \code{link-event} is signaled for:
+\begin{tightitemize}
+\item all pointers that are added to the specified
+  \glref{link-slot-place}
+\item each inverse pointer of the \glref{link} that is added to
+  another \glref{unit~instance}
+\end{tightitemize}
+
+\fndescription Any existing \glref{links} in
+\var{\glref{link-slot-place}} that do not involve
+\var{unit-instance-or-instances\/} are unlinked.  Then \glref{links}
+to any additional \glref{unit~instances} in
+\var{unit-instance-or-instances\/} are added.
+
+\begin{alsos}{unlinkf-all}
+\also[linkf]
+\also[unlinkf]
+\also[unlinkf-all]
+\end{alsos}
+
+\fnexample Set the \code{supporting-hyps} \glref{link~slot} of the
+\code{hyp} \glref{unit~instance} to the \glref{unit~instances} in
+\code{supporting-hyps}:
+%
+\W\supp
+\begin{example}
+> (link-setf (supporting-hyps-of unit-instance) supporting-hyps)
+#<hyp 231 (1488 7405) 0.63 [0..8]>
+\end{example}
+
+\fnnote 
+\bfindexit{unlinkf-all}%
+The form \mbox{\code{(link-setf} \var{\glref{link-slot-place}\/}
+  \code{nil)}} is semantically equivalent to
+\mbox{\code{(\entlinknoex{unlinkf-all}}
+  \var{\glref{link-slot-place}\/}\code{)}}.  However, using
+\textbf{\entlinknoex{unlinkf-all}} is preferable stylistically and
+slightly faster.
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Generic~Function}{link-slot-p}{\var{slot\/}
+    \returns{} \var{slot-or-nil\/}}
+
+\fnsyntax
+
+\fnpurpose Determine if a slot meta-object is a \glref{link~slot}.
+
+\fnmethods
+\fnalternate{link-slot-p}{\code{(}\var{slot\/} \code{direct-link-definition)}
+  \returns{} \var{slot\/}}
+\fnalternate{link-slot-p}{\code{(}\var{slot\/} \code{effective-link-definition)}
+  \returns{} \var{slot\/}}
+\fnalternate{link-slot-p}{\code{(}\var{slot\/} \code{slot-definition)}
+  \returns{} \nil{}}
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:gbbopen-core}
+
+\fnargs
+\begin{args}{initargs}
+\arg[slot] A slot meta object
+\end{args}
+
+\fnreturns The \var{slot} if it is a \glref{link~slot}; nil otherwise.
+
+\begin{alsos}{define-unit-class}
+\also[define-unit-class]
+\end{alsos}
+
+\fnexample
+Return the names of the link slots of the \code{hyp} \glref{unit~class}:
+%
+\W\supp
+\begin{example}
+> (loop for slot in (class-slots (find-class 'hyp)) 
+     if (link-slot-p slot) collect (slot-definition-name slot))
+(supporting-hyps supported-hyps)
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
 \begin{functiondoc}{Macro}{unlinkf}%
   {\var{\glref{link-slot-place} unit-instance-or-instances\/}
     \returns{} \var{unit-instance-or-instances\/}} 
@@ -9794,73 +9957,6 @@ Remove all supporting hypothesis \glref{links} from the
 \W\supp
 \begin{example}
   (unlinkf-all (supporting-hyps-of unit-instance))
-\end{example}
-
-\end{functiondoc}
-
-%% ------------------------------------------------------------------------
-
-\begin{functiondoc}{Macro}{with-changing-dimension-values}%
-  {\code{(}\var{unit-instance\/} 
-         [\var{dimension-name\/}\superstar{}]\code{)}
-    \var{declaration\/}\superstar{}
-    \var{form\/}\superstar{}
-    \returns{} \var{result\/}\superstar}
-\index{unit instance!storage repositioning}%
-  
-\fnsyntax
-
-\fnpurpose Inform GBBopen that the dimensional values of a
-\glref{unit~instance} will potentially be changed by the evaluation of
-\var{forms}.
-
-\fnpackage \code{:gbbopen}
-
-\fnmodule \code{:gbbopen-core}
-
-\fnargs
-\begin{args}{dimension-name}
-\arg[unit-instance] A \glref{unit~instance}
-\arg[dimension-name] A symbol specifying a \glref{dimension} of
-  \var{unit-instance} 
-\arg[declaration] A declare expression
-\arg[forms] An implicit \textbf{progn} of \glref{forms} to be evaluated
-\end{args}
-
-\fnreturns The values returned by evaluating the last \var{form}.
-
-\fndescription The indexing for \var{unit-instance\/} is updated following the
-evaluation of the last \var{form}.  Any retrieval operations performed during
-the evaluation of \var{forms\/} may operate with indexes as they existed
-before evaluation of the first \var{form}; therefore, retrievals should not be
-included within the scope of \textbf{with-changing-dimension-values}.
-Retrievals performed by separate threads also should be synchronized with
-\textbf{with-changing-dimension-values}.
-
-If \var{dimension-names\/} are specified, only the indexes for those
-\glref{dimensions} of \var{unit-instance\/} will be updated. If no
-\var{dimension-names\/} are specified, the values of any or all
-\glref{dimensions} of \var{unit-instance\/} are assumed to have been
-potentially changed by \var{forms}.
-
-\fnexamples Notify GBBopen that the \code{x}, \code{y}, and \code{belief}
-dimension values of \code{hyp} might be changed:
-%
-\W\supp
-\begin{example}
-> (with-changing-dimension-values (hyp x y belief)
-    (setf (location-of hyp) '(30 40))
-    (setf (belief-of hyp) 0.78))
-\end{example}
-%
-Notify GBBopen that \textit{some\/} dimension values of \code{hyp} might be
-changed:
-%
-\W\supp\notpretop
-\begin{example}
-> (with-changing-dimension-values (hyp)
-    (setf (location-of hyp) '(36 52))
-    (incf (belief-of hyp) 0.05))
 \end{example}
 
 \end{functiondoc}
@@ -10689,7 +10785,7 @@ are required for specific event metaclasses:
   & \code{:slot} \var{effective-nonlink-slot-definition\/} \\
   \code{link-slot-event-class}
   & \code{:instance} \var{unit-instance\/} \\
-  & \code{:slot} \var{effective-link-slot-definition\/} \\ \hline
+  & \code{:slot} \var{effective-link-definition\/} \\ \hline
 \end{tabular}
 \end{center}
 

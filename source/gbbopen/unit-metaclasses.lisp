@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/unit-metaclasses.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu May 22 03:01:54 2008 *-*
+;;;; *-* Last-Edit: Tue May 27 15:31:32 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -36,12 +36,14 @@
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(dimensions-of
-            direct-nonlink-slot-definition ; not yet documented
-            direct-link-definition      ; not yet documented
-            effective-link-definition   ; not yet documented
-            effective-nonlink-slot-definition ; not yet documented
+            direct-nonlink-slot-definition
+            direct-link-definition
+            effective-link-definition
+            effective-nonlink-slot-definition
+            gbbopen-direct-slot-definition
+            gbbopen-effective-slot-definition
             gbbopen-node-state          ; not yet documented
-            link-slot-p                 ; not yet documented
+            link-slot-p
             restore-gbbopen-node-state  ; not yet documented
             save-gbbopen-node-state     ; not yet documented
             standard-space-class)))
