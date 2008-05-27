@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/glossary.tex *-*
-%% *-* Last-Edit: Sun May 25 11:59:25 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Tue May 27 16:00:35 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 \begin{glossary-list}
@@ -75,7 +75,7 @@ An object that uniquely (directly or indirectly) determines the structure and
 behavior of a set of other objects. Members of this set are called
 \glref{instances} of the class.
 
-;;; ---------------------------------------------------------------------------
+%% ------------------------------------------------------------------------
 
 \glent[class~designator]
 \index{class designator}%
@@ -651,12 +651,14 @@ associated with that \glref{slot}.
 A form which is suitable for use as a \glref{generalized~reference} to
 a \glref{link~slot}.  Typical examples of link-slot-place forms
 include:
-\T\vspace{2pt}
+\W\supp\notpretop
+\T\vspace{4pt}
 \begin{example}
   (\var{slot-accessor unit-instance\/})
   (slot-value \var{unit-instance slot-name\/})
 \end{example}
 where:
+\W\\~\\
 \begin{args}{unit-instance}
 \arg[slot-accessor] is a symbol specifying an accessor \glref{function} for a
 link slot 
