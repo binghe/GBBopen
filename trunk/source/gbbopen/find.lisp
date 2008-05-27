@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/find.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue May 27 05:56:27 2008 *-*
+;;;; *-* Last-Edit: Tue May 27 10:44:32 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -603,6 +603,14 @@
 
 ;;; ---------------------------------------------------------------------------
 
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defmacro destructure-extent ((start end) form &body body)
+    `(destructuring-bind (,start . ,end)
+         ,form
+       ,@body)))
+
+;;; ---------------------------------------------------------------------------
+
 (with-full-optimization ()
   (defun extent-start (extent)
     (car (the cons extent))))
@@ -611,7 +619,7 @@
 (define-compiler-macro extent-start (extent)
   `(car (the cons ,extent)))
 
-(defsetf extent-start rplaca)
+(defsetf extent-start #.(first (nth-value 3 (get-setf-expansion '(car x)))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -623,7 +631,7 @@
 (define-compiler-macro extent-end (extent)
   `(cdr (the cons ,extent)))
 
-(defsetf extent-end rplacd)
+(defsetf extent-end #.(first (nth-value 3 (get-setf-expansion '(cdr x)))))
 
  ;;; ---------------------------------------------------------------------------
 
@@ -1050,11 +1058,11 @@
   ;;; processed using separate extents.
   (if (eq new-extent ':infeasible) 
       extents
-      (destructuring-bind (new-start . new-end)
+      (destructure-extent (new-start new-end)
           new-extent
         (cond 
          ((null extents) (list new-extent))
-         (t (destructuring-bind (existing-start . existing-end)
+         (t (destructure-extent (existing-start existing-end)
                 (first extents)
               (cond 
                ;; `new-extent' ends before the first extent:
@@ -1086,13 +1094,13 @@
 
 (defun intersect-ordered-extent (new-extent extents)
   ;;; Intersects a conjunctive ordered `new-extent' with `extents'
-  (destructuring-bind (new-start . new-end)
+  (destructure-extent (new-start new-end)
       new-extent
     (cond 
      ((equal extents ':infeasible) extents)
      (t (let ((new-extents nil))
           (dolist (extent extents)
-            (destructuring-bind (existing-start . existing-end)
+            (destructure-extent (existing-start existing-end)
                 extent
               (unless (or (< new-end existing-start)
                           (> new-start existing-end))
