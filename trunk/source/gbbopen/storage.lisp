@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon May 26 13:27:46 2008 *-*
+;;;; *-* Last-Edit: Tue May 27 05:32:04 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -44,21 +44,6 @@
 	    quadtree
 	    uniform-buckets
 	    unstructured)))
-
-;;; ---------------------------------------------------------------------------
-
-(defstruct (find-stats
-            (:conc-name #.(dotted-conc-name 'find-stats))
-            (:copier nil))
-  (number-of-finds 0 :type integer)
-  (number-using-marking 0 :type integer)
-  (run-time 0 :type integer)
-  (bucket-count 0 :type integer)
-  (instances-touched 0 :type integer)
-  (instances-considered 0 :type integer)
-  (instances-accepted 0 :type integer))
-
-(defvar *find-stats* nil)
 
 ;;; ===========================================================================
 ;;;   Storage objects
