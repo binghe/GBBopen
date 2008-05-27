@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/1d-uniform-storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue May 27 04:39:45 2008 *-*
+;;;; *-* Last-Edit: Tue May 27 05:28:33 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -230,8 +230,8 @@
       (dolist (region disjunctive-storage-extents)
         (multiple-value-bind (start-index end-index)
             (bounded-uniform-bucket-interval-indexes
-             (first region)
-             (second region)
+             (extent-start region)
+             (extent-end region)
              start size number-of-buckets)
           (when verbose
             (print-1d-uniform-buckets-usage-message

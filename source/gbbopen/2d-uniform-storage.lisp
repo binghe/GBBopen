@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/2d-uniform-storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue May 27 04:40:29 2008 *-*
+;;;; *-* Last-Edit: Tue May 27 05:29:13 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -293,13 +293,13 @@
 	  (dolist (2nd-d-region (second storage-extents))
 	    (multiple-value-bind (1st-d-start-index 1st-d-end-index)
 		(bounded-uniform-bucket-interval-indexes
-		 (first 1st-d-region)
-		 (second 1st-d-region)
+		 (extent-start 1st-d-region)
+		 (extent-end 1st-d-region)
 		 1st-d-start 1st-d-size number-of-1st-d-buckets)
 	      (multiple-value-bind (2nd-d-start-index 2nd-d-end-index)
 		  (bounded-uniform-bucket-interval-indexes
-		   (first 2nd-d-region)
-		   (second 2nd-d-region)
+		   (extent-start 2nd-d-region)
+		   (extent-end 2nd-d-region)
 		   2nd-d-start 2nd-d-size number-of-2nd-d-buckets)
 		(when verbose
 		  (print-2d-uniform-buckets-usage-message

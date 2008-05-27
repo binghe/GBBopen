@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/find.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue May 27 04:41:58 2008 *-*
+;;;; *-* Last-Edit: Tue May 27 05:56:27 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -130,7 +130,22 @@
   ;; Some implementations (SBCL) are very strict on eql constant redefinition,
   ;; so avoid redefinition by checking for a bound value:
   (unless (boundp 'infinite-extent)
-    (defconstant infinite-extent '#.(list -infinity infinity))))
+    (defconstant infinite-extent '#.(cons -infinity infinity))))
+
+;;; ---------------------------------------------------------------------------
+
+(defstruct (find-stats
+            (:conc-name #.(dotted-conc-name 'find-stats))
+            (:copier nil))
+  (number-of-finds 0 :type integer)
+  (number-using-marking 0 :type integer)
+  (run-time 0 :type integer)
+  (bucket-count 0 :type integer)
+  (instances-touched 0 :type integer)
+  (instances-considered 0 :type integer)
+  (instances-accepted 0 :type integer))
+
+(defvar *find-stats* nil)
 
 ;;; ---------------------------------------------------------------------------
 
@@ -576,23 +591,58 @@
     (nyi instance-value pattern-value)))
            
 ;;; ---------------------------------------------------------------------------
+;;;  Extent operators
+
+(with-full-optimization ()
+  (defun make-extent (start end)
+    (cons start end)))
+
+#-(or full-safety no-compiler-macros)
+(define-compiler-macro make-extent (start end)
+  `(cons ,start ,end))
+
+;;; ---------------------------------------------------------------------------
+
+(with-full-optimization ()
+  (defun extent-start (extent)
+    (car (the cons extent))))
+
+#-(or full-safety no-compiler-macros)
+(define-compiler-macro extent-start (extent)
+  `(car (the cons ,extent)))
+
+(defsetf extent-start rplaca)
+
+;;; ---------------------------------------------------------------------------
+
+(with-full-optimization ()
+  (defun extent-end (extent)
+    (cdr (the cons extent))))
+
+#-(or full-safety no-compiler-macros)
+(define-compiler-macro extent-end (extent)
+  `(cdr (the cons ,extent)))
+
+(defsetf extent-end rplacd)
+
+ ;;; ---------------------------------------------------------------------------
 
 (with-full-optimization ()
   (defun extent-< (value)
-    `(,-infinity ,value)))
+    (cons -infinity value)))
 
 ;;; ---------------------------------------------------------------------------
 
 (with-full-optimization ()
   (defun extent-> (value)
-    `(,value ,infinity)))
+    (cons value infinity)))
 
 ;;; ---------------------------------------------------------------------------
 
 (with-full-optimization ()
   (defun extent-/= (value)
     (declare (ignore value))
-    `(,-infinity ,infinity)))
+    infinite-extent))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -1000,12 +1050,12 @@
   ;;; processed using separate extents.
   (if (eq new-extent ':infeasible) 
       extents
-      (destructuring-bind (new-start new-end)
+      (destructuring-bind (new-start . new-end)
           new-extent
         (cond 
          ((null extents) (list new-extent))
-         (t (destructuring-bind (existing-start existing-end)
-                (car extents)
+         (t (destructuring-bind (existing-start . existing-end)
+                (first extents)
               (cond 
                ;; `new-extent' ends before the first extent:
                ((< new-end existing-start)
@@ -1014,44 +1064,44 @@
                ((<= new-start existing-end)
                 ;; Extend first extent earlier:
                 (when (< new-start existing-start)
-                  (setf (first (car extents)) new-start))
+                  (setf (extent-start (first extents)) new-start))
                 ;; extend first extent later (possibly merging):
-                (let ((updated-start (first (car extents))))
+                (let ((updated-start (extent-start (first extents))))
                   (while (> new-end existing-end)
                     ;; extension without merge:
-                    (when (or (null (cdr extents)) ; no more extents?
-                              (< new-end (first (second extents))))
-                      (setf (car extents) (list updated-start new-end))
-                      (setf (second (car extents)) new-end)
+                    (when (or (null (rest extents)) ; no more extents?
+                              (< new-end (extent-start (second extents))))
+                      (setf (car extents) (make-extent updated-start new-end))
+                      (setf (extent-end (first extents)) new-end)
                       (return))
                     (pop extents)))
                 ;; existing extents are now correct:
                 extents)
                ;; `new-extent' follows the first extent:
-               (t (cons (car extents)
-                        (merge-ordered-extent 
-                         new-extent (cdr extents)))))))))))
+               (t (cons (first extents) 
+                        (merge-ordered-extent
+                         new-extent (rest extents)))))))))))
   
 ;;; ---------------------------------------------------------------------------
 
 (defun intersect-ordered-extent (new-extent extents)
   ;;; Intersects a conjunctive ordered `new-extent' with `extents'
-  (destructuring-bind (new-start new-end)
+  (destructuring-bind (new-start . new-end)
       new-extent
     (cond 
      ((equal extents ':infeasible) extents)
      (t (let ((new-extents nil))
           (dolist (extent extents)
-            (destructuring-bind (existing-start existing-end)
+            (destructuring-bind (existing-start . existing-end)
                 extent
               (unless (or (< new-end existing-start)
                           (> new-start existing-end))
                 ;; `new-extent' overlaps the  extent:
                 (when (> new-start existing-start)
-                  (setf (first extent) new-start))
+                  (setf (extent-start extent) new-start))
                 ;; end extent earlier:
                 (when (< new-end existing-end)
-                  (setf (second extent) new-end))
+                  (setf (extent-end extent) new-end))
                 ;; first extent is now correct:
                 (push extent new-extents))))
           (cond (new-extents
@@ -1071,8 +1121,8 @@
            (new-extents (if (numberp value)
                             (if negated 
                                 ;; (not <point>) requires looking everywhere!
-                                `((,-infinity ,infinity))
-                                `((,value ,value)))
+                                `(,infinite-extent)
+                                `(,(make-extent value value)))
                             (multiple-value-bind (start end)
                                 (interval-values value)
                               (if negated 
@@ -1082,14 +1132,15 @@
                                   ;; lower-right and upper-left quadrants
                                   ;; bounding the "hole".
                                   #+wrong
-                                  `((,-infinity ,start) (,end ,infinity))
+                                  `(,(make-extent -infinity start) 
+                                    ,(make-extent end infinity))
                                   ;; To fix this issue, we need to consider
                                   ;; each disjunct in all pattern dimensions
                                   ;; (not individually.  For now, we'll look
                                   ;; everywhere!
                                   #-wrong
-                                  `((,-infinity ,infinity))
-                                  `((,start ,end)))))))
+                                  `(,infinite-extent)
+                                  `(,(make-extent start end)))))))
        (cond 
         ;; update existing extent for `dimension':
         (extent-acons
@@ -1244,10 +1295,13 @@
                                    ((null vals) (too-few-values-error))
                                    (t (prog1 vals (setf vals nil))))))
                   (add-dimension-extent
-                   (pop dims) dimension-type
+                   (pop dims)
+                   dimension-type
                    (if extent-generator-fn
                        (funcall (the function extent-generator-fn) value)
-                       value)  anding negated)))
+                       value)
+                   anding 
+                   negated)))
               ;; dotted dimensions are not allowed!
               (when dims (dotted-pattern-error))             
               ;; Too many dimension values provided:

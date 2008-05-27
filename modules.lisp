@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/modules.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon May 19 04:28:53 2008 *-*
+;;;; *-* Last-Edit: Tue May 27 05:30:28 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -116,12 +116,12 @@
             ("instances" :forces-recompile)
             "spaces"
             "storage"
+            ("find" :forces-recompile)
             "unstructured-storage"
             "boolean-storage"
             "hashed-storage"
             "1d-uniform-storage"
             "2d-uniform-storage"
-            ("find" :forces-recompile)
             "epilogue"))
   
   (define-module :gbbopen-user
