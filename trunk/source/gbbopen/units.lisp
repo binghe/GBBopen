@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/units.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon May 26 12:58:34 2008 *-*
+;;;; *-* Last-Edit: Wed May 28 05:23:31 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -685,25 +685,6 @@
          (t (mapcar #'do-one-spec unit-classes-spec))))))
    ;; anything else we assume is a unit-class-name or unit-class:
    (t `((,(find-unit-class unit-classes-spec) . nil)))))
-
-;;; ---------------------------------------------------------------------------
-
-(defun ensure-unit-classes-specifiers (unit-classes-specifiers)
-  ;;; If given <unit-class-name> or <unit-instance>, return 
-  ;;;   (<unit-class-name>);
-  ;;; else if given (<unit-class-name> <subclasses-indicator>), return
-  ;;;   ((<unit-class-name> <subclasses-indicator>))
-  ;;; else return unchanged `unit-classes-specifiers':
-  (etypecase unit-classes-specifiers
-    (standard-unit-instance (list (type-of unit-classes-specifiers)))
-    (cons (if (and (list-length-2-p unit-classes-specifiers)
-                   (let ((maybe-subclass-indicator 
-                          (second unit-classes-specifiers)))
-                     (or (eq maybe-subclass-indicator :plus-subclasses)
-                         (eq maybe-subclass-indicator :no-subclasses))))
-              (list unit-classes-specifiers)
-              unit-classes-specifiers))
-    (symbol (list unit-classes-specifiers))))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Unit-class-in-specifier-p

@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/spaces.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon May 26 12:57:12 2008 *-*
+;;;; *-* Last-Edit: Wed May 28 11:51:38 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -299,6 +299,64 @@
 
 ;;; ---------------------------------------------------------------------------
 
+(defun canonicalize-allowed-unit-classes (unit-classes-specifiers)
+  (cond
+   ;; Everything is allowed:
+   ((eq unit-classes-specifiers 't) t)
+   (t (etypecase unit-classes-specifiers
+        ;; Return a list of the singleton specifier:
+        (symbol (list unit-classes-specifiers))
+        ;; Either a singleton specifier (list form) or a list of specifiers:
+        (cons 
+         (flet ((do-spec (spec)
+                  (etypecase spec
+                    (symbol spec)
+                    (cons 
+                     (destructuring-bind (unit-class
+                                          &optional subclass-indicator)
+                         spec
+                       (etypecase unit-class
+                         (symbol)
+                         (standard-unit-instance
+                          (setf unit-class (type-of unit-class))))
+                       (when subclass-indicator
+                         (ecase subclass-indicator
+                           (:plus-subclasses)
+                           (:no-subclasses
+                            (setf subclass-indicator nil))))
+                       (if subclass-indicator
+                           (list unit-class subclass-indicator)
+                           unit-class)))
+                    (standard-unit-instance (type-of spec))))
+                (check-for-allows-everything (result)
+                  ;; Can we subsume with 't?
+                  (if (member '(standard-unit-instance :plus-subclasses)
+                              result
+                              :test #'equal)
+                      't
+                      result)))
+           (if (and (list-length-2-p unit-classes-specifiers)
+                    (let ((maybe-subclass-indicator 
+                           (second unit-classes-specifiers)))
+                      (or (eq maybe-subclass-indicator ':plus-subclasses)
+                          (eq maybe-subclass-indicator ':no-subclasses))))
+               ;; Make a list of the singleton specifier:
+               (check-for-allows-everything
+                (list (do-spec unit-classes-specifiers)))
+               ;; Otherwise, process the list of specifiers:
+               (let ((result (loop for spec in unit-classes-specifiers
+                                 collect (do-spec spec))))
+                 (check-for-allows-everything
+                  (sort result 
+                        #'(lambda (a b)
+                            (when (consp a) (setf a (first a)))
+                            (when (consp b) (setf b (first b)))
+                            (string< a b))))))))
+        ;; Return a list of the singleton specifier's class-name:
+        (standard-unit-instance (list (type-of unit-classes-specifiers)))))))
+
+;;; ---------------------------------------------------------------------------
+
 (defmethod initialize-instance ((instance standard-space-instance)
                                 &rest initargs
                                 &key instance-name 
@@ -321,7 +379,7 @@
     (apply #'call-next-method instance 
            :dimensions dimensions initargs)
     (setf (slot-value instance 'allowed-unit-classes)
-          (ensure-unit-classes-specifiers allowed-unit-classes))
+          (canonicalize-allowed-unit-classes allowed-unit-classes))
     (setf (standard-space-instance.space-name instance) space-name)
     (linkf (slot-value instance 'parent)
            (if parent-space-instance
@@ -429,7 +487,8 @@
                               &key (allowed-unit-classes
                                     't allowed-unit-classes-p)
                                    (dimensions nil dimensions-p)
-                                   (storage nil storage-p))
+                                   (storage nil storage-p)
+                              &aux (allowed-unit-classes-changed-p nil))
   (unless (typep space-instance 'standard-space-instance)
     (setf space-instance (find-space-instance-by-path space-instance 't)))
   ;; Change the space instance's dimensions, if specified:
@@ -442,22 +501,27 @@
   (when allowed-unit-classes-p
     (check-type allowed-unit-classes (or symbol list standard-unit-instance))
     (let ((new-allowed-unit-class-names 
-           (ensure-unit-classes-specifiers allowed-unit-classes)))
-      (unless (eq new-allowed-unit-class-names 't)
-        ;; Remove any existing unit instances are no longer allowed:
-        (map-instances-on-space-instances ; no do-instances macro yet
-         #'(lambda (instance)
-             (unless (some 
-                      #'(lambda (unit-class-name)
-                          (extended-unit-type-p instance unit-class-name))
-                      new-allowed-unit-class-names)
-               (remove-instance-from-space-instance-internal 
-                instance space-instance)))
-         't space-instance))
-      (setf (slot-value space-instance 'allowed-unit-classes)
-            new-allowed-unit-class-names)))
-  ;; Change the storage, if specified:
-  (when storage-p
+           (canonicalize-allowed-unit-classes allowed-unit-classes)))
+      ;; An actual change in allowed-unit-classes?
+      (unless (equal (allowed-unit-classes-of space-instance)
+                     new-allowed-unit-class-names)
+        (setf allowed-unit-classes-changed-p 't)
+        (unless (eq new-allowed-unit-class-names 't)
+          ;; Remove any existing unit instances that are no longer allowed:
+          (map-instances-on-space-instances ; do-instances macro is not
+                                            ; defined yet
+           #'(lambda (instance)
+               (unless (some 
+                        #'(lambda (unit-class-name)
+                            (extended-unit-type-p instance unit-class-name))
+                        new-allowed-unit-class-names)
+                 (remove-instance-from-space-instance-internal 
+                  instance space-instance)))
+           't space-instance))
+        (setf (slot-value space-instance 'allowed-unit-classes)
+              new-allowed-unit-class-names))))
+  ;; Change the storage, if specified or if allowed-unit-classes have changed:
+  (when (or storage-p allowed-unit-classes-changed-p)
     (let ((old-storage (standard-space-instance.%%storage%% space-instance)))
       (setup-instance-storage space-instance storage)
       (dolist (storage old-storage)
