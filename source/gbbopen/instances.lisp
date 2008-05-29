@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu May 29 16:28:24 2008 *-*
+;;;; *-* Last-Edit: Thu May 29 16:50:00 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -213,15 +213,16 @@
     (call-next-method)
     ;; Address any changes that need to be made to the direct link-slot, but
     ;; not on incomplete, forward-referenced instances:
-    (unless (slot-boundp instance '%%space-instances%%)
-      (let ((unit-class (class-of instance)))
-        ;; Link slot processing: fix atomic, non-singular link-slot values and
-        ;; sort if needed:
-        (dolist (eslotd slots)
-          (when (typep eslotd 'effective-link-definition)
-            (post-initialize-direct-link-slot 
-             unit-class instance eslotd 
-             (slot-value-using-class unit-class instance eslotd)))))))
+    (let ((unit-class (class-of instance)))
+      ;; Link slot processing: fix atomic, non-singular link-slot values and
+      ;; sort if needed:
+      (dolist (eslotd slots)
+        (when (typep eslotd 'effective-link-definition)
+          (post-initialize-direct-link-slot 
+           unit-class instance eslotd 
+           (slot-value-using-class unit-class instance eslotd) 
+           ;; can't sort yet!
+           nil)))))
   ;; Add it to space instances:
   (with-lock-held (*master-instance-lock*)
     (let ((space-instance-paths
@@ -376,7 +377,7 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun post-initialize-direct-link-slot (unit-class instance eslotd 
-                                         current-value)
+                                         current-value do-sort-p)
   ;;; Fix the direct slot's current value to match the link slot definition
   ;;; and return the dslotd of the link slot
   (when current-value
@@ -410,7 +411,8 @@
                     rewrite-slot 't))
             ;; Make sure the direct link-slot value is sorted, if so
             ;; specified:
-            (when (and sort-function
+            (when (and do-sort-p
+                       sort-function
                        ;; length > 1
                        (cdr current-value))
               (setf current-value (sort (copy-list current-value)
@@ -453,7 +455,7 @@
             (when current-value
               (multiple-value-bind (current-value dslotd)
                   (post-initialize-direct-link-slot 
-                   unit-class instance eslotd current-value)
+                   unit-class instance eslotd current-value 't)
                 ;; do the inverse pointers for this link slot:
                 (%do-ilinks dslotd instance (ensure-list current-value) 't)
                 ;; signal the direct link event:
