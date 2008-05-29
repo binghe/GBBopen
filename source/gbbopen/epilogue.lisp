@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/epilogue.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon May 26 12:55:27 2008 *-*
+;;;; *-* Last-Edit: Thu May 29 17:14:03 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -244,6 +244,10 @@
         ;; Now read everything else:
         (let ((eof-marker '#:eof))
           (until (eq eof-marker (read file nil eof-marker))))
+        ;; Process all unit instances, in case any link-slot arity or sorting
+        ;; has changed (FUTURE ENHANCEMENT: It would be nice to skip this
+        ;; unless such has happened):
+        (map-instances-of-class #'reconcile-direct-link-values 't)
         ;; Return the pathname and values from executing the
         ;; after-loading-function:
         (apply #'values
