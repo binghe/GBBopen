@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/portable-threads.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun May 25 18:18:47 2008 *-*
+;;;; *-* Last-Edit: Fri May 30 03:49:33 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -180,7 +180,7 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(*nearly-forever-seconds*             ; not documented
             *non-threaded-polling-function-hook* ; not documented
-            *periodic-function-verbose* ; new (document soon)
+            *periodic-function-verbose*
             *schedule-function-verbose*
             all-scheduled-functions
             all-threads
@@ -203,7 +203,7 @@
 	    hibernate-thread
             #+lispworks
             initialize-multiprocessing
-            kill-periodic-function      ; new (document soon)
+            kill-periodic-function
             kill-thread
 	    make-condition-variable
             make-lock
@@ -217,7 +217,7 @@
             scheduled-function          ; structure (not documented)
             scheduled-function-name
             scheduled-function-repeat-interval
-            spawn-periodic-function     ; new (document soon)
+            spawn-periodic-function
             spawn-thread
             #+(and cmu mp)
             startup-idle-and-top-level-loops
@@ -1816,8 +1816,8 @@
 
 #-threads-not-available
 (defun scheduled-function-scheduler ()
-  ;;; The scheduled-function scheduler (run by the
-  ;;; scheduled-function-scheduler thread).
+  ;;; The scheduled-function scheduler (run by the scheduled-function-scheduler
+  ;;; thread)
   (let ((scheduled-function-to-run nil))
     (loop
       (with-lock-held (*scheduled-functions-cv*)
@@ -1830,59 +1830,67 @@
                                     (first *scheduled-functions*)))
                   (now (get-universal-time)))
               (cond 
-               ;; wait until the next scheduled function (or until signaled):
+               ;; wait until invocation-time arrives or until signaled:
                ((> invocation-time now)
                 (condition-variable-wait-with-timeout 
                  *scheduled-functions-cv*
                  (- invocation-time now))
-                ;; recheck that it's time to run the first scheduled function
-                ;; before running the scheduled-function (in case we have been
-                ;; awakened due to a schedule change rather than due to the
-                ;; scheduled time of the next scheduled-function):
-                (let ((invocation-time (scheduled-function-invocation-time
-                                        (first *scheduled-functions*)))
-                      (now (get-universal-time)))
-                  (when (<= invocation-time now)
-                    (setf scheduled-function-to-run
-                          (pop *scheduled-functions*)))))
+                ;; recheck that any scheduled functions remain (in case we
+                ;; have been awakened due to unscheduling the only
+                ;; scheduled-function)--thanks to Wendall Marvel for reporting
+                ;; this bug:
+                (when *scheduled-functions* 
+                  ;; recheck that it's actually time to run the first
+                  ;; scheduled function (in case we have been awakened due to
+                  ;; a schedule change rather than due to reaching the
+                  ;; originally scheduled time of the next
+                  ;; scheduled-function):
+                  (let ((invocation-time (scheduled-function-invocation-time
+                                          (first *scheduled-functions*)))
+                        (now (get-universal-time)))
+                    (when (<= invocation-time now)
+                      (setf scheduled-function-to-run
+                            (pop *scheduled-functions*))))))
                ;; no need to wait:
                (t (setf scheduled-function-to-run
                         (pop *scheduled-functions*))))))))
       ;; funcall the scheduled function (outside of the CV lock):
       (when scheduled-function-to-run
         (unwind-protect (invoke-scheduled-function scheduled-function-to-run)
-          (let ((repeat-interval (scheduled-function-repeat-interval
-                                  scheduled-function-to-run)))
-            (cond 
-             ;; reschedule, if a repeat interval was specified:
-             (repeat-interval
-              ;; The following keeps invocations closest to intended, but
-              ;; leads to rapidly repeating "catch up" invocations if the
-              ;; scheduler has been blocked or terminated/restarted:
-              #+this-keeps-times-in-alignment
-              (incf (scheduled-function-invocation-time
-                     scheduled-function-to-run)
-                    repeat-interval)
-              ;; This version avoids "catch up" invocations, but can
-              ;; drift over time:
-              #-this-keeps-times-in-alignment
-              (setf (scheduled-function-invocation-time
-                     scheduled-function-to-run)
-                    (+ (get-universal-time) repeat-interval))
-              (when (or *schedule-function-verbose*
-                        (scheduled-function-verbose scheduled-function-to-run))
-                (format *trace-output* 
-                        "~&;; Scheduling ~s at repeat-interval ~s...~%"
-                        scheduled-function-to-run
-                        repeat-interval)
-                (force-output *trace-output*))
-              (with-lock-held (*scheduled-functions-cv*)
-                (insert-scheduled-function scheduled-function-to-run nil)))
-             ;; otherwise, clear the invocation time:
-             (t (setf (scheduled-function-invocation-time 
+          (with-lock-held (*scheduled-functions-cv*)
+            (let ((repeat-interval (scheduled-function-repeat-interval
+                                    scheduled-function-to-run)))
+              (cond 
+               ;; reschedule, if a repeat interval was specified:
+               (repeat-interval
+                ;; The following keeps invocations closest to intended, but
+                ;; leads to rapidly repeating "catch up" invocations if the
+                ;; scheduler has been blocked or terminated/restarted:
+                #+this-keeps-times-in-alignment
+                (incf (scheduled-function-invocation-time
                        scheduled-function-to-run)
-                      nil))))
-          (setf scheduled-function-to-run nil))))))
+                      repeat-interval)
+                ;; This version avoids "catch up" invocations, but can drift
+                ;; over time (we use this version):
+                #-this-keeps-times-in-alignment
+                (setf (scheduled-function-invocation-time
+                       scheduled-function-to-run)
+                      (+ (get-universal-time) repeat-interval))
+                ;; Be verbose (it would be better to do this output outside of
+                ;; the CV lock):
+                (when (or *schedule-function-verbose*
+                          (scheduled-function-verbose scheduled-function-to-run))
+                  (format *trace-output* 
+                          "~&;; Scheduling ~s at repeat-interval ~s...~%"
+                          scheduled-function-to-run
+                          repeat-interval)
+                  (force-output *trace-output*))
+                (insert-scheduled-function scheduled-function-to-run nil))
+               ;; otherwise, clear the invocation time:
+               (t (setf (scheduled-function-invocation-time 
+                         scheduled-function-to-run)
+                        nil))))
+            (setf scheduled-function-to-run nil)))))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -1984,28 +1992,29 @@
 #-threads-not-available
 (defun schedule-function-internal (name-or-scheduled-function invocation-time
                                    repeat-interval verbose)
-  (with-lock-held (*scheduled-functions-cv*)
-    (let* ((next-scheduled-function (first *scheduled-functions*))
-           (unscheduled-scheduled-function 
-            (delete-scheduled-function name-or-scheduled-function verbose))
-           (scheduled-function 
-            (or unscheduled-scheduled-function name-or-scheduled-function)))
-      (cond
-       ((scheduled-function-p scheduled-function)
-        (setf (scheduled-function-invocation-time scheduled-function)
-              invocation-time)
-        (setf (scheduled-function-repeat-interval scheduled-function)
-              repeat-interval)
-        (setf (scheduled-function-verbose scheduled-function) verbose)
-        (insert-scheduled-function scheduled-function verbose)
-        ;; awaken scheduler if this scheduled-function was the next to be
-        ;; run and now it is not the next to be run:
-        (when (and (eq next-scheduled-function scheduled-function)
-                   (not (eq (first *scheduled-functions*) scheduled-function)))
-          (awaken-scheduled-function-scheduler)))                   
-       ;; unable to find the requested scheduled-function:
-       (t (warn "Unable to find scheduled-function ~s."
-                name-or-scheduled-function))))))
+  (or (with-lock-held (*scheduled-functions-cv*)
+        (let* ((next-scheduled-function (first *scheduled-functions*))
+               (unscheduled-scheduled-function 
+                (delete-scheduled-function name-or-scheduled-function verbose))
+               (scheduled-function (or unscheduled-scheduled-function 
+                                       name-or-scheduled-function)))
+          ;; Was the specified function scheduled?
+          (when (scheduled-function-p scheduled-function)
+            (setf (scheduled-function-invocation-time scheduled-function)
+                  invocation-time)
+            (setf (scheduled-function-repeat-interval scheduled-function)
+                  repeat-interval)
+            (setf (scheduled-function-verbose scheduled-function) verbose)
+            (insert-scheduled-function scheduled-function verbose)
+            ;; awaken scheduler if this scheduled-function was the next to be
+            ;; run and now it is not the next to be run:
+            (when (and (eq next-scheduled-function scheduled-function)
+                       (not (eq (first *scheduled-functions*)
+                                scheduled-function)))
+              (awaken-scheduled-function-scheduler)))))
+      ;; warn if unable to find the scheduled function (outside of the lock):
+      (warn "Unable to find scheduled-function ~s."
+            name-or-scheduled-function)))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -2051,20 +2060,19 @@
 (defun unschedule-function (name-or-scheduled-function 
                             &key (verbose *schedule-function-verbose*))
   #-threads-not-available
-  (with-lock-held (*scheduled-functions-cv*)
-    (let ((next-scheduled-function (first *scheduled-functions*)))
-      (cond
-       ;; unscheduled successfully: 
-       ((delete-scheduled-function name-or-scheduled-function verbose)
-        ;; awaken the scheduler if the next scheduled-function was the one
-        ;; that was unscheduled:
-        (unless (eq next-scheduled-function (first *scheduled-functions*))
-          (awaken-scheduled-function-scheduler))
-        ;; return t if unscheduled:
-        't)
-       ;; unable to find it:
-       (t (warn "Scheduled-function ~s was not scheduled; no action taken."
-                name-or-scheduled-function)))))
+  (or (with-lock-held (*scheduled-functions-cv*)
+        (let ((next-scheduled-function (first *scheduled-functions*)))
+          ;; when unscheduled successfully: 
+          (when (delete-scheduled-function name-or-scheduled-function verbose)
+            ;; awaken the scheduler if the next scheduled-function was the one
+            ;; that was unscheduled:
+            (unless (eq next-scheduled-function (first *scheduled-functions*))
+              (awaken-scheduled-function-scheduler))
+            ;; return t if we unscheduled:
+            't)))
+      ;; warn if unable to find the scheduled function (outside of the lock):
+      (warn "Scheduled-function ~s was not scheduled; no action taken."
+            name-or-scheduled-function))
   #+threads-not-available
   (declare (ignore name-or-scheduled-function verbose))
   #+threads-not-available
