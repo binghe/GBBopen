@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:Portable-Threads-System; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/current/portable-threads.asd *-*
+;;;; *-* File: /usr/local/gbbopen/portable-threads.asd *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Nov 23 09:13:10 2007 *-*
-;;;; *-* Machine: ruby.corkills.org *-*
+;;;; *-* Last-Edit: Tue May 27 23:18:00 2008 *-*
+;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -12,7 +12,7 @@
 ;;;; **************************************************************************
 ;;;; **************************************************************************
 ;;;
-;;; Written by: Attila Lendval
+;;; Written by: Attila Lendvai
 ;;;
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
@@ -22,7 +22,7 @@
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
-;;;  11-15-07 File created.  (Lendval)
+;;;  11-15-07 File created.  (Lendvai)
 ;;;  11-23-07 Replaced non-portable :pathnames with :modules.  (Costanza)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
