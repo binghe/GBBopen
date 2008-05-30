@@ -14,10 +14,16 @@ Individual Contributors
 =======================
 
   * Dan Corkill
+  * Douglas Crosher (Scieneer CL porting)
   * Gary King (initial Digitool MCL and OpenMCL porting)
   * Christian Lynbech (initial CMUCL porting)
   * Sam Steingold (initiated CLISP porting)
   * <Your name could be here!>
+
+Questioners, bug reporters, capability demanders, and great idea suggesters
+include: Pascal Costanza, Matthew Danish, Susan Lander, Attila Lendvai,
+Wendall Marvel, Clayton Morrison, Zack Rubinstein, Earl Wagner, Paul
+Werkowski, and Huzaifa Zafar.
   
 
 Historical Acknowledgments
