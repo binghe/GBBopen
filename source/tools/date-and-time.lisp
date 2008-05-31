@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/date-and-time.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat May 17 10:22:46 2008 *-*
+;;;; *-* Last-Edit: Sat May 31 09:50:10 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -268,11 +268,11 @@
           (incf seconds)
           (setf hundreds 0))
         (multiple-value-bind (minutes seconds)
-            (floor seconds 60)
+            (truncate seconds 60)
           (multiple-value-bind (hours minutes)
-              (floor minutes 60)
+              (truncate minutes 60)
             (multiple-value-bind (days hours)
-                (floor hours 24)
+                (truncate hours 24)
               ;; Determine likely field usage:
               (when (or (plusp& hundreds)
                         (plusp& seconds))
