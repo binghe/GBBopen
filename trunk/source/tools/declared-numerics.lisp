@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/declared-numerics.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun May 25 18:14:11 2008 *-*
+;;;; *-* Last-Edit: Sat May 31 06:29:01 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -252,15 +252,36 @@
 ;;; ===========================================================================
 ;;;   Fixnum Operations
 
-(defun coerce& (arg) (coerce arg 'fixnum))
+(defun unable-to-coerce-to-fixnum-error (value)
+  (error "Unable to coerce ~s to a fixnum" value))
+
+(defun coerce& (arg) 
+  ;; avoid rounding if not required:
+  (if (typep arg 'fixnum)
+      arg
+      ;; Allow (coerce& 1.0) for symmetry with other declared-numeric coerce
+      ;; operators, even though CL doesn't allow either (coerce 1.0 'integer)
+      ;; or (coerce 1.0 'fixnum):
+      (multiple-value-bind (result remainder)
+          (round arg)
+        (unless (and (zerop remainder)
+                     (typep result 'fixnum))
+          (unable-to-coerce-to-fixnum-error arg))
+        result)))
 
 #-(or full-safety disable-compiler-macros)
 (define-compiler-macro coerce& (arg)
   (with-once-only-bindings (arg)
-    ;; avoid coercion if not required (some CLs will coerce anyway):
-    `(if (typep ,arg 'fixnum)
-	 ,arg
-	 (coerce ,arg 'fixnum))))
+    (with-gensyms (result remainder)
+      ;; avoid rounding if not required:
+      `(if (typep ,arg 'fixnum)
+           ,arg
+           (multiple-value-bind (,result ,remainder)
+               (round ,arg)
+             (unless (and (zerop ,remainder)
+                          (typep ,result 'fixnum))
+               (unable-to-coerce-to-fixnum-error ,arg))
+             ,result)))))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defmacro & (arg)
