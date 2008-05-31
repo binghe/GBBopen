@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/declared-numerics.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat May 31 06:29:01 2008 *-*
+;;;; *-* Last-Edit: Sat May 31 09:48:25 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -256,14 +256,14 @@
   (error "Unable to coerce ~s to a fixnum" value))
 
 (defun coerce& (arg) 
-  ;; avoid rounding if not required:
+  ;; avoid truncate call if not required:
   (if (typep arg 'fixnum)
       arg
       ;; Allow (coerce& 1.0) for symmetry with other declared-numeric coerce
       ;; operators, even though CL doesn't allow either (coerce 1.0 'integer)
       ;; or (coerce 1.0 'fixnum):
       (multiple-value-bind (result remainder)
-          (round arg)
+          (truncate arg)
         (unless (and (zerop remainder)
                      (typep result 'fixnum))
           (unable-to-coerce-to-fixnum-error arg))
@@ -273,11 +273,11 @@
 (define-compiler-macro coerce& (arg)
   (with-once-only-bindings (arg)
     (with-gensyms (result remainder)
-      ;; avoid rounding if not required:
+      ;; avoid truncate call if not required:
       `(if (typep ,arg 'fixnum)
            ,arg
            (multiple-value-bind (,result ,remainder)
-               (round ,arg)
+               (truncate ,arg)
              (unless (and (zerop ,remainder)
                           (typep ,result 'fixnum))
                (unable-to-coerce-to-fixnum-error ,arg))
