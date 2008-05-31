@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Tue May 27 15:39:03 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Sat May 31 12:46:42 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -5464,6 +5464,11 @@ The one-argument \glref{function} \textbf{coerce\&} provides convenient
 \begin{example}
   (setf x (coerce& x))
 \end{example}
+%
+Although \mbox{\code{(coerce x 'fixnum)}} is not permitted in Common Lisp,
+\mbox{\code{(coerce\& x)}} is equivalent to \mbox{\code{(truncate x)}} when
+the remainder is zero and the returned quotient is a \glref{fixnum}.  Otherwise,
+\mbox{\code{(coerce\& x)}} signals an error.
 
 \T\clearpage
 \W\xname{ref-short-float-macros}
