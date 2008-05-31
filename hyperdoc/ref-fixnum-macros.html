@@ -98,6 +98,10 @@
 <pre class="pretop">
   (setf x (coerce&amp; x))
 </pre>
+Although <code>(coerce&nbsp;x&nbsp;'fixnum)</code> is not permitted in Common Lisp,
+<code>(coerce&#38;&nbsp;x)</code> is equivalent to <code>(truncate&nbsp;x)</code> when
+the remainder is zero and the returned quotient is a <a href="ref-glossary.html#gl:fixnum">fixnum</a>.  Otherwise,
+<code>(coerce&#38;&nbsp;x)</code> signals an error.
 </p>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
