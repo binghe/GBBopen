@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Sat May 31 12:46:42 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Sun Jun  1 19:02:10 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -3013,6 +3013,119 @@ and maximum value.
 \textbf{bounded-value} are also provided: \textbf{bounded-value\&},
 \textbf{bounded-value\$\&}, \textbf{bounded-value\$},
 \textbf{bounded-value\$\$}, and \textbf{bounded-value\$\$\$}.
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{compiler-macroexpand}{%
+    \var{form\/} \code{\&optional} \var{env\/} 
+    \mbox{\returns{} \var{expansion, expanded-p\/}}}
+\index{compiler macro!expanding}%
+\index{macroexpand!compiler macro}%
+  
+\fnsyntax
+
+\fnpurpose Expand \var{form\/} until it is no longer a compiler-macro form.
+
+\fnpackage \code{:gbbopen-tools}
+
+\fnmodule \code{:gbbopen-tools}
+
+\fnargs
+\begin{args}{form}
+\arg[form] A \glref{form}
+\arg[env] An environment object (default is \nil)
+\arg[expansion] A \glref{form}
+\arg[expanded-p] A \glref{generalized~boolean}
+\end{args}
+
+\fnreturns
+Two values:
+\begin{tightitemize}
+\item if \var{form\/} is a compiler-macro form, then return the 
+  repeatedly expanded compiler-macro form and true
+\item otherwise, return the given \var{form} and \nil{}
+\end{tightitemize}
+
+\fndescription
+%
+\var{Form\/} is expanded repeatedly by calling
+\textbf{\entlink{compiler-macroexpand-1}} until it is no longer a
+compiler-macro form.
+
+\begin{alsos}{compiler-macroexpand-1}
+\also[compiler-macroexpand-1]
+\end{alsos}
+
+\fnexamples
+%
+\W\supp
+\begin{example}
+> (compiler-macroexpand '(ensure-list x))
+(let ((#:g7105 x)) (if (listp #:g7105) #:g7105 (list #:g7105)))
+t
+> (compiler-macroexpand '(cons x nil))
+(cons x nil)
+nil
+>
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{compiler-macroexpand-1}{%
+    \var{form\/} \code{\&optional} \var{env\/} 
+    \mbox{\returns{} \var{expansion, expanded-p\/}}}
+\index{compiler macro!expanding}%
+\index{macroexpand!compiler macro}%
+  
+\fnsyntax
+
+\fnpurpose Expand \var{form\/} if it is a compiler-macro form.
+
+\fnpackage \code{:gbbopen-tools}
+
+\fnmodule \code{:gbbopen-tools}
+
+\fnargs
+\begin{args}{form}
+\arg[form] A \glref{form}
+\arg[env] An environment object (default is \nil)
+\arg[expansion] A \glref{form}
+\arg[expanded-p] A \glref{generalized~boolean}
+\end{args}
+
+\fnreturns
+Two values:
+\begin{tightitemize}
+\item if \var{form\/} is a compiler-macro form, then return the compiler-macro
+  expansion of \var{form\/} and true
+\item otherwise, return the given \var{form} and \nil{}
+\end{tightitemize}
+
+\fndescription 
+%
+If \var{form\/} is a compiler-macro form, then \textbf{compiler-macroexpand-1}
+expands the compiler-macro-form call once.
+
+\begin{alsos}{compiler-macroexpand}
+\also[compiler-macroexpand]
+\end{alsos}
+
+\fnexamples
+%
+\W\supp
+\begin{example}
+> (compiler-macroexpand-1 '(ensure-list x))
+(let ((#:g7105 x)) (if (listp #:g7105) #:g7105 (list #:g7105)))
+t
+> (compiler-macroexpand-1 '(cons x nil))
+(cons x nil)
+nil
+>
+\end{example}
 
 \end{functiondoc}
 

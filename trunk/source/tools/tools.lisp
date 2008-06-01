@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun May 25 18:15:44 2008 *-*
+;;;; *-* Last-Edit: Sun Jun  1 17:35:06 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -58,6 +58,7 @@
 ;;;  02-09-08 Added nicer-y-or-n-p and nicer-yes-or-no-p.  (Corkill)
 ;;;  05-01-08 Added decf/delete-acons.  (Corkill)
 ;;;  05-25-08 Added mulitple-value-setf.  (Corkill)
+;;;  06-01-08 Added compiler-macroexpand-1 and compiler-macroexpand.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -79,16 +80,22 @@
    '(posix::copy-file
      system::memq)
    #+clozure
-   '(ccl:copy-file
+   '(ccl:compiler-macroexpand
+     ccl:compiler-macroexpand-1
+     ccl:copy-file
      ccl:memq
      ccl:delq)
    #+cmu
-   '(ext:memq
+   '(ext:compiler-macroexpand
+     ext:compiler-macroexpand-1
+     ext:memq
      ext:delq)
    #+cormanlisp
    '()
    #+digitool-mcl
-   '(ccl:copy-file
+   '(ccl:compiler-macroexpand
+     ccl:compiler-macroexpand-1
+     ccl:copy-file
      ccl:memq
      ccl:delq)
    ;; Note: ECL's while doesn't include a NIL block, so we can't use it
@@ -97,14 +104,18 @@
    #+gcl
    '()
    #+lispworks
-   '(system::copy-file
+   '(harlequin-common-lisp:compiler-macroexpand
+     harlequin-common-lisp:compiler-macroexpand-1
+     system::copy-file
      system:memq
      system:delq)
    #+sbcl
    '(sb-int:memq
      sb-int:delq)
    #+scl
-   '(ext:memq
+   '(ext:compiler-macroexpand
+     ext:compiler-macroexpand-1
+     ext:memq
      ext:delq)
    #-(or allegro clisp clozure cmu cormanlisp digitool-mcl ecl gcl 
          lispworks sbcl scl)
@@ -116,6 +127,8 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(bounded-value
             copy-file                   ; not yet documented
+            compiler-macroexpand
+            compiler-macroexpand-1
 	    counted-delete
 	    decf-after			; not yet finished or documented
 	    decf/delete-acons
@@ -176,17 +189,45 @@
 ;;;  Basic while and until macros
 
 #-allegro
-(defmacro while (test &body body)
-  `(loop (unless ,test (return))
-     ,@body))
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defmacro while (test &body body)
+    `(loop (unless ,test (return))
+       ,@body)))
 
 #-allegro
-(defmacro until (test &body body)
-  `(loop (when ,test (return))
-     ,@body))
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defmacro until (test &body body)
+    `(loop (when ,test (return))
+       ,@body)))
 
 (defmacro do-until (form test)
   `(loop ,form (when ,test (return))))
+
+;;; ===========================================================================
+;;;  Compiler-macroexpand (for those CL's that don't provide it)
+
+#-(or clozure cmu digitool-mcl lispworks scl)
+(defun compiler-macroexpand-1 (form &optional env)
+  (let ((compiler-macro-function 
+         (and (consp form)
+              (symbolp (car form))
+              (compiler-macro-function (car form)))))
+    (if compiler-macro-function
+        (let ((expansion (funcall compiler-macro-function form env)))
+          (values expansion (not (eq form expansion))))
+        (values form nil))))
+
+;;; ---------------------------------------------------------------------------
+
+#-(or clozure cmu digitool-mcl lispworks scl)
+(defun compiler-macroexpand (form &optional env)
+  (multiple-value-bind (expansion expanded-p)
+      (compiler-macroexpand-1 form env)
+    (let ((expanded-at-least-once expanded-p))
+      (while expanded-p
+        (multiple-value-setq (expansion expanded-p)
+          (compiler-macroexpand-1 expansion env)))
+      (values expansion expanded-at-least-once))))
 
 ;;; ===========================================================================
 ;;;  Multiple-value-setf
