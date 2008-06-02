@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/units.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed May 28 05:23:31 2008 *-*
+;;;; *-* Last-Edit: Mon Jun  2 11:01:51 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -544,6 +544,12 @@
 
 (defun finish-unit-class-loading (unit-class fixup-symbols)
   (fixup-function-objects-part2 unit-class fixup-symbols)
+  ;; Clear space-instance storage caches (can't use do-space-instances yet):
+  (when (fboundp 'map-space-instances) ;; don't run when loading GBBopen!
+    (map-space-instances 
+     #'(lambda (space-instance)
+         (delete-space-instance-caches space-instance (class-name unit-class)))
+     '(*)))
   (compute-inherited-unit-class-values unit-class))
 
 ;;; ---------------------------------------------------------------------------
@@ -916,7 +922,7 @@
       (cond
        ((zerop count)
         (setf (standard-unit-class.instance-name-counter unit-class)
-              (1- (initial-class-instance-number unit-class)))
+              (initial-class-instance-number unit-class))
         (setf (standard-unit-class.instance-hash-table unit-class)
               (make-hash-table
                :test (standard-unit-class.instance-name-comparison-test 
