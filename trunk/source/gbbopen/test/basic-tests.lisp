@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/basic-tests.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat May 17 16:47:37 2008 *-*
+;;;; *-* Last-Edit: Sun Jun  1 12:06:15 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -41,12 +41,12 @@
   (non-unit-slot))
 
 (define-unit-class abstract ()
-  ()
+  ;; An inherited slot:
+  (x) 
   (:abstract t))
 
 (define-unit-class uc-1 (abstract) 
-  (x
-   (y :initarg :zzz
+  ((y :initarg :zzz
       :documentation "Another basic slot with an add'l initarg.")
    (slot-3 :initarg :z 
            :accessor z-of)
@@ -64,7 +64,7 @@
   (:documentation "This is uc-1")
   (:dimensional-values
    (x :mixed x)
-   (y :point #'identity y)
+   (y (:point number) #'identity y)
    (z :point #'(lambda (instance)
                  (if (slot-boundp instance 'slot-3) 
                      (z-of instance)
@@ -132,9 +132,16 @@
 ;;;  Basic timing functions
 
 (defun time-test-1 (n)
-  (let ((x (make-instance 'uc-1)))
+  (let ((x (make-instance 'uc-1 :x 0 :y 0)))
     (dotimes (i n)
-      (linkf (link-2-of x) (make-instance 'uc-2 :x i :y i)))))
+      (linkf (link-2-of x) (make-instance 'uc-2 :x i :y i))))
+  (map-instances-on-space-instances 
+   #'delete-instance 
+   't
+   '(bb sub-bb space-1))
+  (dotimes (i n)
+    (find-instances 'uc-1 '(bb sub-bb space-1) 
+                    `(=& y ,(expand-point& n 3)))))
 
 #+not-timed
 (defun time-test-1-sorted (n)
@@ -150,13 +157,18 @@
   (make-space-instance 
    '(bb sub-bb space-1) 
    :dimensions (dimensions-of 'uc-1)
-   :storage '((t t unstructured) 
-	      (uc-1 t unstructured))
+   :storage `(((uc-1 :plus-subclasses) y uniform-buckets :layout (0 ,n 25)))
    :make-parents t)
   (map-instances-of-class #'delete-instance '(abstract :plus-subclasses))
   (reset-unit-class 't)
-  (format t "~&;; Running timing test (~s instances)...~%" n)
-  (time (time-test-1 n))
+  (progn
+    (format t "~&;; Running marking timing test (~s instances)...~%" n)
+    (let ((*use-marking* t))
+      (time (time-test-1 n))))
+  (progn
+    (format t "~&;; Running hashing timing test (~s instances)...~%" n)
+    (let ((*use-marking* nil))
+      (time (time-test-1 n))))
   (reset-gbbopen))
   
 ;;; ===========================================================================
@@ -1015,7 +1027,7 @@
       ;; ECL generates a bus error at higher iterations (track down this ECL
       ;; bug!):
       #+ecl 500
-      #-ecl 1000))
+      #-ecl 10000))
   
   ;; Common Lisp capability tests:
   (lisp-capability-tests))
