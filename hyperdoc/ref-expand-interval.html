@@ -12,7 +12,7 @@
 </head>
 <body>
 <table width="100%" cellpadding="0" cellspacing="2"><tr>
-<td bgcolor="#99ccff"><a href="ref-copy-interval.html"><img border="0" alt="copy-interval" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="ref-interval-entities.html"><img border="0" alt="Intervals" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-infinite-interval.html"><img border="0" alt="infinite-interval" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">expand-interval</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table>
+<td bgcolor="#99ccff"><a href="ref-copy-interval.html"><img border="0" alt="copy-interval" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="ref-interval-entities.html"><img border="0" alt="Intervals" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-expand-point.html"><img border="0" alt="expand-point" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">expand-interval</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table>
 
 <p><table class="tight" width="100%">
 <tr valign="top"><td valign="baseline" align="left"%>
@@ -26,9 +26,10 @@
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-core</code>
 </p>
-<p><span class="fndoclabel">Arguments</span><table class="tighttop">
+<p><span class="fndoclabel">Arguments and values</span><table class="tighttop">
 <tr valign="top"><td valign="baseline"><i>interval</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An <a href="ref-glossary.html#gl:interval">interval</a>
-</td></tr><tr valign="top"><td valign="baseline"><i>amount</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A number
+</td></tr><tr valign="top"><td valign="baseline"><i>amount</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A numbe
+</td></tr><tr valign="top"><td valign="baseline"><i>new-interval</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An <a href="ref-glossary.html#gl:interval">interval</a>
 </td></tr></table>
 </p>
 <p><span class="fndoclabel">Returns</span> <br />A new, expanded <a href="ref-glossary.html#gl:interval">interval</a>.
@@ -42,6 +43,7 @@ one-half of its width will result in a zero-width <var>new-interval</var> at the
 center point of the original <var>interval</var>.
 </p>
 <p><span class="fndoclabel">See also</span>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-coerce-contracted-interval-rationals-to-floats-var.html"><b>*coerce-contracted-interval-rationals-to-floats*</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-copy-interval.html"><b>copy-interval</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-infinite-interval.html"><b>infinite-interval</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-interval-start.html"><b>interval-start</b></a>
@@ -59,11 +61,11 @@ center point of the original <var>interval</var>.
 (3 . 4)
 &gt; (expand-interval #(2 5) .5)
 #(1.5 5.5)
-&gt; (expand-interval '(2 5) -3)
-(3.5 3.5)
+&gt; (expand-interval '(2 . 5) -3)
+(3.5 . 3.5)
 </pre>
 </p>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
 <table width="100%" cellpadding="0" cellspacing="2"><tr>
-<td bgcolor="#99ccff"><a href="ref-copy-interval.html"><img border="0" alt="copy-interval" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="ref-interval-entities.html"><img border="0" alt="Intervals" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-infinite-interval.html"><img border="0" alt="infinite-interval" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">expand-interval</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table></body></html>
+<td bgcolor="#99ccff"><a href="ref-copy-interval.html"><img border="0" alt="copy-interval" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="ref-interval-entities.html"><img border="0" alt="Intervals" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-expand-point.html"><img border="0" alt="expand-point" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">expand-interval</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table></body></html>

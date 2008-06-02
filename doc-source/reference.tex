@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Sun Jun  1 19:02:10 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Mon Jun  2 11:46:49 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -1694,6 +1694,7 @@ definitions, and module definitions defined in \var{forms}.
 \begin{args}{system-name}
 \arg[system-name] A \glref{keyword~symbol} identifying a \glref{system}
 \arg[form] A \glref{form}
+\arg[results] The values returned by evaluating the last \var{form}
 \end{args}
 
 \fnreturns The values returned by evaluating the last \var{form}.
@@ -2383,6 +2384,7 @@ Module :gbbopen-tools (loaded)
 \begin{args}{directory-specification}
 \arg[name] A \glref{keyword~symbol} naming a \glref{root~directory}, a
 \glref{relative~directory}, or a \glref{module}.
+\arg[pathname] A \glref{pathname}
 \end{args}
 
 \fnreturns The pathname of the defined directory or module.
@@ -2447,9 +2449,10 @@ Return the pathname of the \code{:gbbopen-user} \glref{module}:
 \fnmodule \code{:mini-module}
 
 \fnargs
-\begin{args}{directory-specification}
+\begin{args}{pathname}
 \arg[name] A \glref{keyword~symbol} naming a \glref{root~directory}, a
 \glref{relative~directory}, or a \glref{module}.
+\arg[pathname] A \glref{pathname}
 \end{args}
 
 \fnreturns The \glref{root-directory} pathname of the defined directory or
@@ -2583,6 +2586,7 @@ default values for the command.
 \arg[file-name] A string naming a file in the \glref{module}
 \arg[option] Any of the following \glref{keywords}: 
 \loadonefilemoduleoptions
+\arg[pathname] A \glref{pathname}
 \end{args}
 
 \fnreturns The pathname of the loaded file.
@@ -2633,9 +2637,12 @@ Tools \glref{module}:
 \fnargs
 \begin{args}{module-name}
 \arg[module-name] A \glref{keyword~symbol} naming a \glref{module}
+\arg[source-directory] A \glref{pathname}
+\arg[compiled-directory] A \glref{pathname}
 \end{args}
 
-\fnreturns Two values: the source directory and the compiled directory.
+\fnreturns Two values: the source directory \glref{pathname} and the compiled
+directory \glref{pathname}.
 
 \fnerrors
 Module \var{module-name\/} has not been defined.\\
@@ -2678,6 +2685,7 @@ loaded into Common Lisp.
 \fnargs
 \begin{args}{module-name}
 \arg[module-name] A \glref{keyword~symbol} naming a \glref{module}
+\arg[boolean] A \glref{generalized~boolean}
 \end{args}
 
 \fnreturns True if the \glref{module} has been fully loaded; \nil{} otherwise.
@@ -2940,6 +2948,7 @@ optimizations disabled:
 \fnargs
 \begin{args}{form}
 \arg[form] A \glref{form}
+\arg[results] The values returned by evaluating the last \var{form}
 \end{args}
 
 \fnreturns The values returned by evaluating the last \var{form}.
@@ -2980,6 +2989,7 @@ and maximum value.
 \arg[min] A number (the minimum bound)
 \arg[number] A number
 \arg[max] A number (the maximum bound)
+\arg[bounded-number] A number
 \end{args}
 
 \fnreturns One of the following values:
@@ -3158,6 +3168,7 @@ that were deleted as a second value.
 end of \var{sequence\/})
 \arg[count] An integer or \nil{} (default is \nil)
 \arg[key] A \glref{function} of one argument, or \nil{} (default is \nil)
+\arg[result-sequence] A sequence
 \end{args}
 
 \fnreturns Two values: 
@@ -3225,7 +3236,7 @@ the \glref{cons} associated with \var{item\/} if the value becomes zero.
 \fnmodule \code{:gbbopen-tools}
 
 \fnargs
-\begin{args}{decrement}
+\begin{args}{new-place-value}
 \arg[item] An object
 \arg[decrement] A number
 \arg[place] A form which is suitable for use as a
@@ -3235,6 +3246,7 @@ the \glref{cons} associated with \var{item\/} if the value becomes zero.
 \glref{generalized~boolean} (default is \code{\#'eql}) 
 \arg[test-not] A \glref{function} of two arguments that returns a
 \glref{generalized~boolean} (use of \code{:test-not} is deprecated)
+\arg[new-place-value] An \glref{association~list} 
 \end{args}
 
 \fnreturns An \glref{association~list} (the new value of \var{place}). 
@@ -3281,13 +3293,13 @@ nil
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{delq}{\var{item list\/}
-    \returns{} \var{result-list\/}} 
+    \returns{} \var{list\/}} 
 \index{deleting!an item from a list}%
   
 \fnsyntax
 
-\fnpurpose Destructively delete all \var{item}s from \var{list\/} using \code{eq}
-as the comparison function.
+\fnpurpose Destructively delete all \var{item}s from \var{list\/} using
+\code{eq} as the comparison function.
 
 \fnpackage \code{:gbbopen-tools}
 
@@ -3350,9 +3362,10 @@ direct superclass of the \glref{class} \var{class-name\/}
 \arg[documentation] A documentation string
 \arg[slot-specifiers] See below
 \arg[class-options] See below
+\arg[new-class] A new or modified \glref{class} object
 \end{args}
 
-\fnreturns The newly defined \glref{class} object.
+\fnreturns The newly defined or modified \glref{class} object.
 
 \fndsyntax
 \W\supp\tabletop
@@ -3513,6 +3526,7 @@ nil
 \arg[declarations] A declare expression (not evaluated)
 \arg[tag] A \code{go} tag (not evaluated)
 \arg[form] A \glref{form}
+\arg[results] The values returned by evaluating the last \var{form}
 \end{args}
 
 \fnreturns If a \code{return} or \code{return-from} form is executed, then
@@ -3564,6 +3578,7 @@ nil
 \fnargs
 \begin{args}{list}
 \arg[list] A \glref{proper~list} or a \glref{dotted~list}
+\arg[n] An integer
 \end{args}
 
 \fnreturns The length of \var{list\/}.
@@ -3585,7 +3600,7 @@ nil
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{ensure-finalized-class}{\var{class\/} 
-    \returns{} \var{class\/}}
+    \returns{} \var{finalized-class\/}}
 \index{class!finalization}%
 \index{finalizing, a class}%
 
@@ -3598,11 +3613,12 @@ nil
 \fnmodule \code{:gbbopen-tools}
 
 \fnargs
-\begin{args}{class}
+\begin{args}{finalized-class}
 \arg[class] A \glref{class~designator}
+\arg[finalized-class] A \glref{class} object
 \end{args}
 
-\fnreturns The supplied \var{class\/}.
+\fnreturns The finalized \var{class\/}.
 
 \fnexample
 %
@@ -3634,6 +3650,7 @@ already a list.
 \fnargs
 \begin{args}{object}
 \arg[object] An object
+\arg[list] A list
 \end{args}
 
 \fnreturns The \var{object\/} if it is a list or, if \var{object\/} is
@@ -3672,8 +3689,9 @@ nil
 \fnmodule \code{:gbbopen-tools}
 
 \fnargs
-\begin{args}{list}
+\begin{args}{boolean}
 \arg[list] A \glref{proper~list} or a \glref{dotted~list}
+\arg[boolean] A \glref{generalized~boolean}
 \end{args}
 
 \fnreturns True if \var{list\/} has length 1; \nil{} otherwise.
@@ -3717,8 +3735,9 @@ nil
 \fnmodule \code{:gbbopen-tools}
 
 \fnargs
-\begin{args}{list}
+\begin{args}{boolean}
 \arg[list] A \glref{proper~list} or a \glref{dotted~list}
+\arg[boolean] A \glref{generalized~boolean}
 \end{args}
 
 \fnreturns True if \var{list\/} has length 2; \nil{} otherwise.
@@ -3762,9 +3781,10 @@ nil
 \fnmodule \code{:gbbopen-tools}
 
 \fnargs
-\begin{args}{list}
+\begin{args}{boolean}
 \arg[n] A non-negative \glref{fixnum}
 \arg[list] A \glref{proper~list} or a \glref{dotted~list}
+\arg[boolean] A \glref{generalized~boolean}
 \end{args}
 
 \fnreturns True if \var{list\/} has length > $n$; \nil{} otherwise.
@@ -3810,8 +3830,9 @@ t
 \fnmodule \code{:gbbopen-tools}
 
 \fnargs
-\begin{args}{list}
+\begin{args}{boolean}
 \arg[list] A \glref{proper~list} or a \glref{dotted~list}
+\arg[boolean] A \glref{generalized~boolean}
 \end{args}
 
 \fnreturns True if \var{list\/} has length > 1; \nil{} otherwise.
@@ -3854,8 +3875,9 @@ t
 \fnmodule \code{:gbbopen-tools}
 
 \fnargs
-\begin{args}{x}
+\begin{args}{keyword}
 \arg[x] A string, symbol, or character
+\arg[keyword] A \glref{keyword~symbol}
 \end{args}
 
 \fnreturns The \glref{keyword~symbol}.
@@ -3895,6 +3917,7 @@ comparison function.
 \begin{args}{symbol}
 \arg[item] An object
 \arg[list] A \glref{proper~list}
+\arg[tail] A \glref{proper~list}
 \end{args}
 
 \fnreturns The tail of \var{list\/} beginning with \var{item\/} if
@@ -3942,6 +3965,7 @@ nil
 \arg[place] A form which is suitable for use as a
   \glref{generalized~reference} or \nil 
 \arg[form] A \glref{form}
+\arg[primary-value] The first value returned by evaluating \var{form}
 \end{args}
 
 \fnreturns The primary value returned by \var{form}.
@@ -4000,15 +4024,16 @@ nil
 \fnmodule \code{:gbbopen-tools}
 
 \fnargs
-\begin{args}{predicate}
+\begin{args}{result-list}
 \arg[item] An object
 \arg[list] A \glref{proper~list}
 \arg[predicate] A \glref{function} of two arguments that returns a
 \glref{generalized~boolean} (default is \code{\#'$<$})
 \arg[key] A \glref{function} of one argument, or \nil{} (default is \nil)
+\arg[result-list] A \glref{proper~list}
 \end{args}
 
-\fnreturns A list into which item has been inserted.
+\fnreturns A list into which \var{item\/} has been inserted.
 
 \fndescription The supplied \var{list\/} may be modified in
 constructing the result; however, modification of the supplied
@@ -4043,6 +4068,7 @@ constructing the result; however, modification of the supplied
 \begin{args}{hex-string-p}
 \arg[object] An object
 \arg[hex-string-p] A \glref{generalized~boolean} (default is \nil)
+\arg[address] An integer or a string
 \end{args}
 
 \fnreturns The integer internal address of \var{object\/} or a string
@@ -4146,6 +4172,7 @@ evaluating them to \code{*trace-output*}.
 \begin{args}{results}
 \arg[forms] An implicit \textbf{progn} of \glref{forms} to be
 evaluated and printed  
+\arg[results] The values returned by evaluating the last \var{form}
 \end{args}
 
 \fnreturns The values returned by evaluating the last \var{form}.
@@ -4198,11 +4225,12 @@ double-quote characters.
 \fnmodule \code{:gbbopen-tools}
 
 \fnargs
-\begin{args}{place}
+\begin{args}{new-place-value}
 \arg[item] An object
 \arg[value] An object
 \arg[place] A form which is suitable for use as a
 \glref{generalized~reference} 
+\arg[new-place-value] An \glref{association~list}
 \end{args}
 
 \fnreturns An \glref{association~list} (the new value of
@@ -4251,7 +4279,7 @@ existing association for \var{item}.
 \fnmodule \code{:gbbopen-tools}
 
 \fnargs
-\begin{args}{test-not}
+\begin{args}{new-place-value}
 \arg[item] An object
 \arg[value] An object
 \arg[place] A form which is suitable for use as a
@@ -4261,6 +4289,7 @@ existing association for \var{item}.
 \glref{generalized~boolean} (default is \code{\#'eql}) 
 \arg[test-not] A \glref{function} of two arguments that returns a
 \glref{generalized~boolean} (use of \code{:test-not} is deprecated)
+\arg[new-place-value] An \glref{association~list}
 \end{args}
 
 \fnreturns An \glref{association~list} (the new value of
@@ -4307,7 +4336,7 @@ nil
 \fnmodule \code{:gbbopen-tools}
 
 \fnargs
-\begin{args}{test-not}
+\begin{args}{new-place-value}
 \arg[list] A \glref{proper~list}
 \arg[place] A form which is suitable for use as a
 \glref{generalized~reference} 
@@ -4316,6 +4345,7 @@ nil
 \glref{generalized~boolean} (default is \code{\#'eql}) 
 \arg[test-not] A \glref{function} of two arguments that returns a
 \glref{generalized~boolean} (use of \code{:test-not} is deprecated)
+\arg[new-place-value] An \glref{association~list}
 \end{args}
 
 \fnreturns The new value of \var{place}. 
@@ -4363,7 +4393,7 @@ add a new \var{item increment\/} \glref{cons} to the
 \fnmodule \code{:gbbopen-tools}
 
 \fnargs
-\begin{args}{increment}
+\begin{args}{new-place-value}
 \arg[item] An object
 \arg[increment] A number
 \arg[place] A form which is suitable for use as a
@@ -4373,6 +4403,7 @@ add a new \var{item increment\/} \glref{cons} to the
 \glref{generalized~boolean} (default is \code{\#'eql}) 
 \arg[test-not] A \glref{function} of two arguments that returns a
 \glref{generalized~boolean} (use of \code{:test-not} is deprecated)
+\arg[new-place-value] An \glref{association~list}
 \end{args}
 
 \fnreturns An \glref{association~list} (the new value of \var{place}). 
@@ -4436,6 +4467,7 @@ nil
 \begin{args}{indicator}
 \arg[plist] A \glref{property~list}
 \arg[indicator] An object
+\arg[new-plist] A \glref{property~list}
 \end{args}
 
 \fnreturns The new \glref{property~list}. 
@@ -4481,6 +4513,7 @@ removed.
 \arg[test-not] A \glref{function} of two arguments that returns a
 \glref{generalized~boolean} (use of \code{:test-not} is deprecated)
 \arg[key] A \glref{function} of one argument, or \nil{} (default is \nil)
+\arg[boolean] A \glref{generalized~boolean}
 \end{args}
 
 \fnreturns True if all elements in \var{list-1\/} are also in
@@ -4532,6 +4565,7 @@ t
 \arg[test-not] A \glref{function} of two arguments that returns a
 \glref{generalized~boolean} (use of \code{:test-not} is deprecated)
 \arg[key] A \glref{function} of one argument, or \nil{} (default is \nil)
+\arg[boolean] A \glref{generalized~boolean}
 \end{args}
 
 \fnreturns True if any element in \var{list-1\/} is also in
@@ -4568,8 +4602,9 @@ t
 \fnmodule \code{:gbbopen-tools}
 
 \fnargs
-\begin{args}{list}
+\begin{args}{shuffled-list}
 \arg[list] A \glref{proper~list}
+\arg[shuffled-list] A \glref{proper~list}
 \end{args}
 
 \fnreturns The shuffled copy of \var{list\/}.
@@ -4628,7 +4663,7 @@ implementation's low-level truncation operation.
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{sole-element}{\var{list\/}
-    \returns{} \var{object\/}} 
+    \returns{} \var{element\/}} 
 \index{list!returning first element of}%
 \index{first element! of a list, returning}%
   
@@ -4641,11 +4676,12 @@ implementation's low-level truncation operation.
 \fnmodule \code{:gbbopen-tools}
 
 \fnargs
-\begin{args}{list}
+\begin{args}{object}
 \arg[list] A \glref{proper~list}
+\arg[element] An object
 \end{args}
 
-\fnreturns The sole element of \var{list}.
+\fnreturns The sole element of \var{list} or \nil.
 
 \fnerrors
 \var{List\/} contains more than one element.
@@ -4700,9 +4736,11 @@ elements.
 \fnmodule \code{:gbbopen-tools}
 
 \fnargs
-\begin{args}{list}
+\begin{args}{result-list}
 \arg[list] A \glref{proper~list} or a \glref{dotted~list}
 \arg[n] A non-negative integer (default is \code{1})
+\arg[result-list] A \glref{proper~list}
+\arg[tail] A \glref{proper~list} or a \glref{dotted~list}
 \end{args}
 
 \fnreturns Two values:
@@ -4759,7 +4797,7 @@ elements.
 \begin{functiondoc}{Function}{trimmed-substring}%
   {\var{character-bag string\/} 
     \code{\&optional} \var{start end\/}
-    \returns{} \var{string\/}}
+    \returns{} \var{trimmed-substring\/}}
 \index{date!formatted}% 
 
 \fnsyntax
@@ -4777,6 +4815,7 @@ elements.
 \arg[start] Starting index into \var{string\/} (default is \code{0})
 \arg[end] Ending index into \var{string\/} (default is \nil, meaning
 end of \var{string\/})
+\arg[trimmed-substring] A string
 \end{args}
 
 \fnreturns The extracted, trimmed string
@@ -5010,6 +5049,7 @@ occurs while evaluating \var{form}.
 \arg[form] A \glref{form}
 \arg[handler-forms] Zero or more \glref{forms}
 \arg[error-forms] Zero or more \glref{forms}
+\arg[results] The values returned by evaluating the last \var{form}
 \end{args}
 
 \fnreturns The values returned by evaluating \var{form\/} unless an
@@ -5131,6 +5171,7 @@ settings.
 \arg[option] No options are currently supported
 \arg[declaration] A declare expression
 \arg[forms] An implicit \textbf{progn} of \glref{forms} to be evaluated
+\arg[results] The values returned by evaluating the last \var{form}
 \end{args}
 
 \fnreturns The values returned by evaluating \var{form\/}.
@@ -5193,6 +5234,7 @@ invocation and argument-checking optimizations:
   slot-name, that returns the complete string to be used for the accessor name
 \end{tightitemize}
 \arg[forms] An implicit \textbf{progn} of \glref{forms}
+\arg[results] The values returned by evaluating the last \var{form}
 \end{args}
 
 \fnreturns The values returned by evaluating the last \var{form}.
@@ -5294,6 +5336,7 @@ strange-name-string
 \arg[symbols] Zero or more symbols to be bound to gensyms
 \arg[declaration] A declare expression
 \arg[forms] An implicit \textbf{progn} of \glref{forms} to be evaluated
+\arg[results] The values returned by evaluating the last \var{form}
 \end{args}
 
 \fnreturns The values returned by evaluating the last \var{form}.
@@ -5332,6 +5375,7 @@ value.
 \arg[symbols] Zero or more symbols to be evaluated once only
 \arg[declaration] A declare expression
 \arg[forms] An implicit \textbf{progn} of \glref{forms} to be evaluated
+\arg[results] The values returned by evaluating the last \var{form}
 \end{args}
 
 \fnreturns The values returned by evaluating the last \var{form}.
@@ -5366,8 +5410,9 @@ only evaluated once and in the specified order.
 \fnmodule \code{:gbbopen-tools}
 
 \fnargs
-\begin{args}{arg}
+\begin{args}{boolean}
 \arg[arg] A \glref{generalized~boolean} (an object)
+\arg[boolean] A \glref{generalized~boolean}
 \end{args}
 
 \fnreturns True if there are an even odd number of true arguments; \nil{}
@@ -6060,6 +6105,7 @@ make it available as early as possible.
 \arg[include-seconds] A \glref{generalized~boolean} (default is \nil)
 \arg[destination] Either \nil, \code{t}, a stream, or a string with a fill 
 pointer (default is \nil)
+\arg[result] A string or \nil{}
 \end{args}
 
 \fnreturns If \var{destination\/} is non-\nil, then \nil; otherwise, a string.
@@ -6171,6 +6217,7 @@ to to make it available as early as possible.
   saving time)
 \arg[destination] Either \nil, \code{t}, a stream, or a string with a fill 
 pointer (default is \nil)
+\arg[result] A string or \nil{}
 \end{args}
 
 \fnreturns If \var{destination\/} is non-\nil, then \nil; otherwise, a string.
@@ -6215,6 +6262,7 @@ pointer (default is \nil)
   \code{(get-universal-time)})
 \arg[destination] Either \nil, \code{t}, a stream, or a string with a fill 
 pointer (default is \nil)
+\arg[result] A string or \nil{}
 \end{args}
 
 \fnreturns If \var{destination\/} is non-\nil, then \nil; otherwise, a string.
@@ -6258,6 +6306,7 @@ pointer (default is \nil)
   \code{(get-universal-time)})
 \arg[destination] Either \nil, \code{t}, a stream, or a string with a fill 
 pointer (default is \nil)
+\arg[result] A string or \nil{}
 \end{args}
 
 \fnreturns If \var{destination\/} is non-\nil, then \nil; otherwise, a string.
@@ -6305,6 +6354,10 @@ end of \var{string\/})
  \code{"-/ ,"})
 \arg[month-precedes-date] A \glref{generalized~boolean} (default is 
 \textbf{\entlink{*month-precedes-date*}})
+\arg[date] An integer between 1 and up to 31, inclusive, depending
+  on the month and year
+\arg[month] An integer between 1 and 12, inclusive
+\arg[year] An integer
 \end{args}
 
 \fnreturns Three values: \var{date}, \var{month}, and \var{year}
@@ -6388,6 +6441,7 @@ to include in the descriptive \var{string\/} (default is 5, indicating all
 fields should be included)
 \arg[destination] Either \nil, \code{t}, a stream, or a string with a fill 
 pointer (default is \nil)
+\arg[result] A string or \nil{}
 \end{args}
 
 \fnreturns If \var{destination\/} is non-\nil, then \nil; otherwise, a string.
@@ -6444,6 +6498,7 @@ to include in the descriptive \var{string\/} (default is 5, indicating all
 fields should be included)
 \arg[destination] Either \nil, \code{t}, a stream, or a string with a fill 
 pointer (default is \nil)
+\arg[result] A string or \nil{}
 \end{args}
 
 \fnreturns If \var{destination\/} is non-\nil, then \nil; otherwise, a string.
@@ -6571,6 +6626,7 @@ given the current Offset Universal Time time-base value.
 \fnargs
 \begin{args}{universal-time}
 \arg[suppress-warning] A \glref{generalized~boolean} (default is \nil)
+\arg[boolean] A \glref{generalized~boolean}
 \end{args}
 
 \fnreturns True if the current time can be represented as a \glref{fixnum}
@@ -6629,6 +6685,7 @@ value.
 \fnargs
 \begin{args}{offset-universal-time}
 \arg[offset-universal-time] An Offset Universal Time value
+\arg[universal-time] A \glref{universal~time}
 \end{args}
 
 \fnreturns The equivalent Universal Time value
@@ -6739,9 +6796,10 @@ value.
 \fnmodule \code{:gbbopen-tools}
 
 \fnargs
-\begin{args}{universal-time}
+\begin{args}{offset-universal-time}
 \arg[universal-time] A Universal Time value (default is the current
    Universal Time)
+\arg[offset-universal-time] An Offset Universal Time value
 \end{args}
 
 \fnreturns The equivalent Offset Universal Time value
@@ -7042,6 +7100,7 @@ commonly used socket entities.
 \begin{args}{passive-socket}
 \arg[passive-socket] A \glref{passive~socket}
 \arg[wait] A \glref{generalized~boolean} (default is \code{t})
+\arg[socket-stream] A socket stream
 \end{args}
 
 \fnreturns A socket stream.
@@ -7128,6 +7187,8 @@ Close a passive socket:
 \begin{args}{socket-stream}
 \arg[socket-stream] A socket stream
 \arg[do-not-resolve] A \glref{generalized~boolean} (default is \nil)
+\arg[hostname] A string
+\arg[port] An integer
 \end{args}
 
 \fnreturns Two values:
@@ -7189,6 +7250,7 @@ connection, but without hostname resolution:
 \arg[interface] A 32-bit internet address or a string specifying a network 
 interface on the local machine or \nil 
 \arg[reuse-address] A \glref{generalized~boolean} (default is \nil)
+\arg[passive-socket] A \glref{passive~socket}
 \end{args}
 
 \fnreturns The new \glref{passive~socket}.
@@ -7245,9 +7307,10 @@ needed in order to free up operating system resources.
 \fnmodule \code{:portable-sockets}
 
 \fnargs
-\begin{args}{host}
+\begin{args}{socket-stream}
 \arg[host] A 32-bit internet address or a string specifying the remote host
 \arg[port] An integer or a string specifying the service port
+\arg[socket-stream] A socket stream
 \end{args}
 
 \fnreturns A socket stream.
@@ -7305,6 +7368,8 @@ resources.
 \begin{args}{socket-stream}
 \arg[socket-stream] A socket stream
 \arg[do-not-resolve] A \glref{generalized~boolean} (default is \nil)
+\arg[hostname] A string
+\arg[port] An integer
 \end{args}
 
 \fnreturns Two values:
@@ -7415,6 +7480,7 @@ and processes them according to \var{function}.
 interface on the local machine or \nil 
 \arg[name] A string (default is \code{"Connection Server"})
 \arg[reuse-address] A \glref{generalized~boolean} (default is \nil)
+\arg[thread] A \glref{thread}
 \end{args}
 
 \fnreturns The new connection-server \glref{thread}.
@@ -7569,8 +7635,9 @@ browser window.
 \fnmodule \code{:os-interface}
 
 \fnargs
-\begin{args}{symbol}
+\begin{args}{boolean}
 \arg[symbol] A symbol
+\arg[boolean] A \glref{generalized~boolean}
 \end{args}
 
 \fnreturns True if the Hyperdoc file associated with \var{symbol\/} is
@@ -7650,12 +7717,14 @@ t
 \fnmodule \code{:os-interface}
 
 \fnargs
-\begin{args}{arguments}
+\begin{args}{bidirectional-stream}
 \arg[program] A string specifying the name of the program to be run
 \arg[arguments] A list of strings passed to \var{program\/} as arguments
 \arg[input] A stream specification (default is \code{:stream}, see below)
 \arg[output] A stream specification (default is \code{:stream}, see below)
 \arg[wait] A \glref{generalized~boolean} (default is \nil)
+\arg[bidirectional-stream] A stream or \nil{}
+\arg[process-id] A number or \nil{}
 \end{args}
 
 \fnreturns Two values:
@@ -7753,7 +7822,7 @@ well as general-purpose \code{:gbbopen-core} entities, is \texorhtml{included
 \begin{functiondoc}{Generic~Function}{change-class}%
   {\var{instance new-class\/} 
     \code{\&key} \code{\&allow-other-keys}
-    \returns{} \var{instance\/}}
+    \returns{} \var{changed-instance\/}}
 \index{class!changing, of a unit instance}%
 \index{unit instance!changing class}%
 
@@ -7795,9 +7864,10 @@ well as general-purpose \code{:gbbopen-core} entities, is \texorhtml{included
 \fnmodule \code{:gbbopen-core}
 
 \fnargs
-\begin{args}{instance}
+\begin{args}{changed-instance}
 \arg[instance] A \code{standard-object} \glref{instance}
 \arg[new-class] A \glref{class~designator}
+\arg[changed-instance] A \code{standard-object} \glref{instance}
 \end{args}
 
 \fnreturns The destructively modified \var{instance}.
@@ -7887,7 +7957,8 @@ to \code{rejected-hyp}:
 \fnargs
 \begin{args}{unit-class-or-name}
 \arg[unit-class-or-name] A \glref{unit~class} or a symbol naming a
-\glref{unit~class} 
+\glref{unit~class}
+\arg[count] An integer
 \end{args}
 
 \fnreturns The count of \glref{unit~instances} of the
@@ -7948,9 +8019,10 @@ direct superclass of the \glref{unit~class} \var{unit-class-name\/}
 \arg[documentation] A documentation string
 \arg[slot-specifiers] See below
 \arg[class-options] See below
+\arg[new-unit-class] A new or modified \glref{unit~class} object
 \end{args}
 
-\fnreturns The newly defined \glref{unit~class} object.
+\fnreturns The newly defined or modified \glref{unit~class} object.
 
 \fnerrors The specified \var{superclass-names\/} do not include at least
 one \glref{unit~class} name.  This error is signaled on class finalization.
@@ -8484,6 +8556,7 @@ Standard-unit-class #<standard-unit-class hyp>
 \arg[space-instance-or-unit-classes-specifier] A \glref{space~instance}, 
   an \glref{extended~unit-classes~specification}
   or a list of \glref{extended~unit-classes~specifications}
+\arg[dimension-specifications-list] A proper list
 \end{args}
 
 \fnreturns A list of \code{(\glref{dimension-name} (\glref{dimension-type}
@@ -8659,6 +8732,11 @@ parent \glref{class} of \textbf{\entlinknoex{effective-link-definition}} and
 
 \fnmodule \code{:gbbopen-core}
 
+\fnargs
+\begin{args}{string}
+\arg[string] A string
+\end{args}
+
 \fnreturns The GBBopen implementation-version string
 
 \fnexample
@@ -8667,7 +8745,7 @@ Return the GBBopen implementation-version string:
 \W\supp
 \begin{example}
 > (gbbopen-implementation-version)
-"0.9.3"
+"1.0"
 \end{example}
 
 \end{functiondoc}
@@ -8701,6 +8779,7 @@ Return the GBBopen implementation-version string:
 \begin{args}{unit-class-or-name}
 \arg[unit-class-or-name] A \glref{unit~class} or a symbol naming a
 \glref{unit~class} 
+\arg[integer] An integer
 \end{args}
 
 \fnreturns The initial instance-name counter value
@@ -8738,6 +8817,7 @@ associated with the \glref{unit~class}.
 \fnargs
 \begin{args}{unit-instance}
 \arg[unit-instance] A \glref{unit~instance}
+\arg[boolean] A \glref{generalized~boolean}
 \end{args}
 
 \fnreturns True if the \glref{unit~instance} is deleted; \nil{} otherwise.
@@ -8781,6 +8861,19 @@ t
 \arg[unit-instance] A \glref{unit~instance}
 \arg[dimension-name] A symbol specifying a \glref{dimension} of
   \var{unit-instance} 
+\arg[dimension-value] An object
+\arg[dimension-value-type] One of: \code{:point}, \code{:interval}, 
+  \code{:mixed}, \code{:element}, or \code{:boolean}
+\arg[comparison-type] One of: \code{number}, \code{fixnum},
+  \code{short-float}, \code{single-float}, \code{double-float}, or
+  \code{long-float}
+\arg[composite-type] One of \code{:set},
+  \textcolor{darkergray}{\code{:sequence}},
+  \textcolor{darkergray}{(\code{:ascending-series} 
+     \var{ordering-dimension-name\/})},
+  \textcolor{darkergray}{(\code{:descending-series} 
+     \var{ordering-dimension-name\/}0} or \nil{}
+\arg[ordering-dimension-name] A \glref{non-keyword~symbol} or \nil{}
 \end{args}
 
 \fnreturns Five values: 
@@ -8878,11 +8971,12 @@ nil
 \fnmodule \code{:gbbopen-core}
 
 \fnargs
-\begin{args}{dimension-names}
+\begin{args}{dimension-values-alist}
 \arg[unit-instance] A \glref{unit~instance}
 \arg[dimension-names] A list of symbols naming \glref{dimensions} of
   \var{unit-instance} or \code{t}, indicating all \glref{dimensions} of 
   \var{unit-instance} (default is \code{t})
+\arg[dimension-values-alist] An \glref{association~list}
 \end{args}
 
 \fnreturns An \glref{association~list} of \glref{dimension~name} and
@@ -9036,10 +9130,12 @@ Change the \glref{instance~name} of \code{hyp} \code{180} to
 \glref{space-instance} methods are added by \code{:gbbopen-core})
 
 \fnargs
-\begin{args}{initargs}
+\begin{args}{new-instance}
 \arg[instance] A \code{standard-object} \glref{instance}
 \arg[unduplicated-slot-names] A list of slot names
 \arg[initargs] An \glref{initialization~argument~list}
+\arg[new-instance] A \code{standard-object} \glref{instance}
+\arg[slots] A proper list of slot objects
 \end{args}
 
 \fnreturns Two values: the (newly created) duplicate \glref{instance} and a
@@ -9147,6 +9243,10 @@ Create some simple duplicate \glref{instances}:
  The following slots have :instance allocation:
   a   11
   b   2
+> (make-duplicate-instance *x* nil)
+#<foo @ #x1110a0e2>
+(#<standard-effective-slot-definition b>
+ #<standard-effective-slot-definition a>)
 \end{example}
 
 Create a duplicate of the \code{hyp} \code{419} \glref{unit~instance}:
@@ -9187,9 +9287,10 @@ Create a duplicate of the \code{hyp} \code{419} \glref{unit~instance}:
 \fnmodule \code{:gbbopen-core}
 
 \fnargs
-\begin{args}{initargs}
+\begin{args}{instance}
 \arg[class] A \glref{class~designator}
 \arg[initargs] An \glref{initialization~argument~list}
+\arg[instance] A \code{standard-object} \glref{instance}
 \end{args}
 
 \fnreturns The newly created \glref{instance} of \var{class}.
@@ -9297,7 +9398,8 @@ associated with the \glref{unit~class}.
 \fnargs
 \begin{args}{unit-class-or-name}
 \arg[unit-class-or-name] A \glref{unit~class} or a symbol naming a
-\glref{unit~class} 
+\glref{unit~class}
+\arg[integer] An integer
 \end{args}
 
 \fnreturns The incremented instance-name counter value
@@ -9408,6 +9510,7 @@ that class exist.
 \fnargs
 \begin{args}{unit-instance}
 \arg[unit-instance] A \glref{unit~instance}
+\arg[space-instances] A proper list
 \end{args}
 
 \fnreturns The list of \glref{space~instances} on which
@@ -9519,8 +9622,9 @@ are not duplicated by \textbf{\entlink{make-duplicate-instance}}.
 \glref{space-instance} methods are added by \code{:gbbopen-core})
 
 \fnargs
-\begin{args}{instance}
+\begin{args}{unduplicated-slot-names}
 \arg[instance] A \code{standard-object} \glref{instance}
+\arg[unduplicated-slot-names] A proper list
 \end{args}
 
 \fnreturns A list of unduplicated slot names for the \glref{class} of 
@@ -9571,6 +9675,7 @@ should be added to the list of slots that are not duplicated by
   \var{unit-instance} 
 \arg[declaration] A declare expression
 \arg[forms] An implicit \textbf{progn} of \glref{forms} to be evaluated
+\arg[results] The values returned by evaluating the last \var{form}
 \end{args}
 
 \fnreturns The values returned by evaluating the last \var{form}.
@@ -9649,6 +9754,7 @@ This section contains \code{:gbbopen-core} entities that pertain to
 \fnargs
 \begin{args}{silent}
 \arg[silent] If true, suppress warning/success printing (default is \nil) 
+\arg[boolean] A \glref{generalized~boolean}
 \end{args}
 
 \fnreturns True if all \glref{link-slot} definitions are consistent; \nil{}
@@ -9943,8 +10049,9 @@ slightly faster.
 \fnmodule \code{:gbbopen-core}
 
 \fnargs
-\begin{args}{initargs}
+\begin{args}{slot-or-nil}
 \arg[slot] A slot meta object
+\arg[slot-or-nil] A slot meta object or \nil{}
 \end{args}
 
 \fnreturns The \var{slot} if it is a \glref{link~slot}; nil otherwise.
@@ -10258,9 +10365,10 @@ direct superclass of the \glref{event~class} \var{event-class-name\/}
 \arg[documentation] A documentation string
 \arg[slot-specifiers] See below
 \arg[class-options] See below
+\arg[new-event-class] A new or modified \glref{event~class} object. 
 \end{args}
 
-\fnreturns The newly defined \glref{event~class} object. 
+\fnreturns The newly defined or modified \glref{event~class} object. 
 
 \fndsyntax
 \W\supp\tabletop
@@ -11071,6 +11179,7 @@ Suspend all event printing associated with \code{possible-hyp}
 \arg[option] No options are currently supported
 \arg[declaration] A declare expression
 \arg[forms] An implicit \textbf{progn} of \glref{forms} to be evaluated
+\arg[results] The values returned by evaluating the last \var{form}
 \end{args}
 
 \fnreturns The values returned by evaluating the last \var{form}.
@@ -11122,6 +11231,7 @@ Create a \code{hyp} without signaling any events:
 \arg[option] No options are currently supported
 \arg[declaration] A declare expression
 \arg[forms] An implicit \textbf{progn} of \glref{forms} to be evaluated
+\arg[results] The values returned by evaluating the last \var{form}
 \end{args}
 
 \fnreturns The values returned by evaluating the last \var{form}.
@@ -11204,6 +11314,48 @@ value.
 
 %% ------------------------------------------------------------------------
 
+\begin{functiondoc}[coerce-contracted-interval-rationals-to-floats-var]%
+  {Variable}%
+  {*coerce-contracted-interval-rationals-to-floats*}{}%
+
+\fnsyntax
+
+\fnpurpose Control automatic coercion of non-integer rationals to floats when
+an interval is contracted into a non-integral point range by
+\textbf{\entlink{expand-interval}} and \textbf{\entlink{nexpand-interval}}.
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:gbbopen-core}
+
+\fnvaluetype A \glref{generalized~boolean}
+
+\fninitialvalue \nil{}
+
+\begin{alsos}{nexpand-interval}
+\also[expand-interval]
+\also[nexpand-interval]
+\end{alsos}
+
+\fnexamples
+%
+\bfindexit{expand-interval}%
+%
+\W\supp
+\begin{example}
+> (let ((*coerce-contracted-interval-rationals-to-floats* 't))
+     (expand-interval '(2 . 5) -3))
+(3.5 . 3.5)
+> (let ((*coerce-contracted-interval-rationals-to-floats* nil))
+     (expand-interval '(2 . 5) -3))
+(7/2 . 7/2)
+>
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
 \begin{functiondoc}{Function}{copy-interval}%
   {\var{interval\/}
     \returns{} \var{new-interval\/}}
@@ -11219,8 +11371,9 @@ value.
 \fnmodule \code{:gbbopen-core}
 
 \fnargs
-\begin{args}{interval}
+\begin{args}{new-interval}
 \arg[interval] An \glref{interval}
+\arg[new-interval] An \glref{interval}
 \end{args}
 
 \fnreturns The new \glref{interval}.
@@ -11272,9 +11425,10 @@ two-element list, or two-element array) is maintained in the newly allocated
 \fnmodule \code{:gbbopen-core}
 
 \fnargs
-\begin{args}{interval}
+\begin{args}{new-interval}
 \arg[interval] An \glref{interval}
-\arg[amount] A number
+\arg[amount] A numbe
+\arg[new-interval] An \glref{interval}
 \end{args}
 
 \fnreturns A new, expanded \glref{interval}.
@@ -11287,7 +11441,8 @@ An interval that is contracted (expanded negatively) by an amount greater than
 one-half of its width will result in a zero-width \var{new-interval\/} at the
 center point of the original \var{interval}.
 
-\begin{alsos}{infinite-interval}
+\begin{alsos}{*coerce-contracted-interval-rationals-to-floats*}
+\also[*coerce-contracted-interval-rationals-to-floats*]
 \also[copy-interval]
 \also[infinite-interval]
 \also[interval-start]
@@ -11309,9 +11464,78 @@ center point of the original \var{interval}.
 (3 . 4)\goodpagebreak
 > (expand-interval #(2 5) .5)
 #(1.5 5.5)
-> (expand-interval '(2 5) -3)
-(3.5 3.5)
+> (expand-interval '(2 . 5) -3)
+(3.5 . 3.5)
 \end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{expand-point}%
+  {\var{point amount\/}
+    \code{\&optional} \var{type-specifier\/} 
+    \returns{} \var{new-interval\/}}
+\index{expand, a point into an interval}%
+\index{point!expanding into an interval}%
+
+\fnsyntax
+
+\fnpurpose Create a new \glref{interval} by expanding \var{point\/} by
+\var{amount}.
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:gbbopen-core}
+
+\fnargs
+\begin{args}{type-specifier}
+\arg[point] A number
+\arg[amount] A number
+\arg[type-specifier] One of: \code{cons}, \code{list}, or \code{array}.
+  (Default is \code{cons}.)
+\arg[new-interval] An \glref{interval}
+\end{args}
+
+\fnreturns The new \glref{interval}.
+
+\begin{alsos}{nexpand-interval}
+\also[expand-interval]
+\also[interval-start]
+\also[interval-end]
+\also[interval-values]
+\also[make-interval]
+\also[nexpand-interval]
+\also[nshift-interval]
+\also[shift-interval]
+\end{alsos}
+
+\fnexamples
+%
+\W\supp
+\begin{example}
+> (expand-point 3 2)
+(1 . 5)
+> (expand-point 3 2 'cons)
+(1 . 5)
+> (expand-point 3 2 'list)
+(1 5)
+> (expand-point 3 2 'array)
+#(1 5)
+\end{example}
+
+\fnnote
+%
+\bfindex{expand-point\&}%
+\bfindex{expand-point\$\&}%
+\bfindex{expand-point\$}%
+\bfindex{expand-point\$\$}%
+\bfindex{expand-point\$\$\$}%
+%
+\reflink{Declared numeric}{sec:declared-numerics} versions of
+\textbf{expand-point} are also provided: \textbf{expand-point\&},
+\textbf{expand-point\$\&}, \textbf{expand-point\$},
+\textbf{expand-point\$\$}, and \textbf{expand-point\$\$\$}.
 
 \end{functiondoc}
 
@@ -11498,6 +11722,8 @@ Define a \glref{unit~class}, \code{temporal-duration-mixin}, that contains a
 \begin{args}{source-interval}
 \arg[interval] An \glref{interval}
 \arg[source-interval] An \glref{interval}
+\arg[start-value] A number
+\arg[end-value] A number
 \end{args}
 
 \fnreturns Two values: the start value and the end value of the \glref{interval}.
@@ -11535,7 +11761,8 @@ Define a \glref{unit~class}, \code{temporal-duration-mixin}, that contains a
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{make-interval}%
-  {\var{start end\/} \code{\&optional} \var{type-specifier\/} 
+  {\var{start end\/} 
+    \code{\&optional} \var{type-specifier\/} 
     \returns{} \var{new-interval\/}}
 \index{make, an interval}%
 \index{interval!making}%
@@ -11554,6 +11781,7 @@ Define a \glref{unit~class}, \code{temporal-duration-mixin}, that contains a
 \arg[end] A number
 \arg[type-specifier] One of: \code{cons}, \code{list}, or \code{array}.
   (Default is \code{cons}.)
+\arg[new-interval] An \glref{interval}
 \end{args}
 
 \fnreturns The new \glref{interval}.
@@ -11561,6 +11789,7 @@ Define a \glref{unit~class}, \code{temporal-duration-mixin}, that contains a
 \begin{alsos}{infinite-interval}
 \also[copy-interval]
 \also[expand-interval]
+\also[expand-point]
 \also[infinite-interval]
 \also[interval-start]
 \also[interval-end]
@@ -11613,9 +11842,11 @@ Define a \glref{unit~class}, \code{temporal-duration-mixin}, that contains a
 amount greater than one-half of its width will result in a zero-width
 \var{interval\/} at the center point of the original \var{interval}.
 
-\begin{alsos}{infinite-interval}
+\begin{alsos}{*coerce-contracted-interval-rationals-to-floats*}
+\also[*coerce-contracted-interval-rationals-to-floats*]
 \also[copy-interval]
 \also[expand-interval]
+\also[expand-point]
 \also[infinite-interval]
 \also[interval-start]
 \also[interval-values]
@@ -11635,8 +11866,8 @@ amount greater than one-half of its width will result in a zero-width
 (3 . 4)\goodpagebreak
 > (nexpand-interval #(2 5) .5)
 #(1.5 5.5)
-> (nexpand-interval '(2 5) -3)
-(3.5 3.5)
+> (nexpand-interval '(2 . 5) -3)
+(3.5 . 3.5)
 \end{example}
 
 \end{functiondoc}
@@ -11645,7 +11876,7 @@ amount greater than one-half of its width will result in a zero-width
 
 \begin{functiondoc}{Function}{nshift-interval}%
   {\var{interval amount\/}
-    \returns{} \var{new-interval\/}}
+    \returns{} \var{interval\/}}
 \index{shift, an interval}%
 \index{interval!shifting}%
 
@@ -11668,6 +11899,7 @@ amount greater than one-half of its width will result in a zero-width
 \begin{alsos}{infinite-interval}
 \also[copy-interval]
 \also[expand-interval]
+\also[expand-point]
 \also[infinite-interval]
 \also[interval-end]
 \also[interval-start]
@@ -11709,9 +11941,10 @@ amount greater than one-half of its width will result in a zero-width
 \fnmodule \code{:gbbopen-core}
 
 \fnargs
-\begin{args}{interval}
+\begin{args}{new-interval}
 \arg[interval] An \glref{interval}
 \arg[amount] A number
+\arg[new-interval] An \glref{interval}
 \end{args}
 
 \fnreturns A new, shifted \glref{interval}.
@@ -11723,6 +11956,7 @@ newly allocated, shifted \var{new-interval}.
 \begin{alsos}{infinite-interval}
 \also[copy-interval]
 \also[expand-interval]
+\also[expand-point]
 \also[infinite-interval]
 \also[interval-end]
 \also[interval-start]
@@ -11861,8 +12095,9 @@ or
 \fnmodule \code{:gbbopen-core}
 
 \fnargs
-\begin{args}{space-instance}
+\begin{args}{extended-unit-classes-specification-list}
 \arg[space-instance] A \glref{space~instance}
+\arg[extended-unit-classes-specification-list] A proper list
 \end{args}
 
 \fnreturns A list of \glref{extended~unit-classes~specifications}; \code{t},
@@ -11913,7 +12148,7 @@ classes that can have their \glref{unit~instances} stored on the \code{(bb
 \fnargs
 \begin{args}{allowed-unit-classes}
 \arg[space-instance-or-path] The \glref{space~instance} or
-  \glref{space-instance~path} to be deleted
+  \glref{space-instance~path} to be changed
 \arg[allowed-unit-classes] An \glref{extended~unit-classes~specification} 
   or \nil{} (see below; default is \code{t})
 \arg[dimensions] A list of \code{(}\var{\glref{dimension-name}}
@@ -11921,6 +12156,7 @@ classes that can have their \glref{unit~instances} stored on the \code{(bb
 \arg[storage] A \glref{storage~specification}
 (see below; default is \mbox{\code{(t t unstructured)}} or \nil{} if
 \var{allowed-unit-classes\/} is \nil) 
+\arg[space-instance] The \glref{space~instance}
 \end{args}
 
 \fnreturns
@@ -12044,8 +12280,9 @@ unit classes.
 \fnmodule \code{:gbbopen-core}
 
 \fnargs
-\begin{args}{space-instance}
+\begin{args}{space-instances}
 \arg[space-instance] A \glref{space~instance}
+\arg[space-instances] A proper list
 \end{args}
 
 \fnreturns A list of the child space instances.
@@ -12168,9 +12405,10 @@ direct superclass of the \glref{space~class} \var{space-class-name\/}
 \arg[documentation] A documentation string
 \arg[slot-specifiers] See below
 \arg[class-options] See below
+\arg[new-space-class] A new or modified \glref{space~class} object
 \end{args}
 
-\fnreturns The newly defined \glref{space~class} object.
+\fnreturns The newly defined or modified \glref{space~class} object.
 
 \fnerrors The specified \var{superclass-names\/} do not include at least
 one \glref{space~class} name.  This error is signaled on class finalization.
@@ -12513,12 +12751,13 @@ Delete every space instance:
 \fnmodule \code{:gbbopen-core}
 
 \fnargs
-\begin{args}{space-instance}
+\begin{args}{space-instance-or-path}
 \arg[space-instance-or-path] The \glref{space~instance} or
   \glref{space-instance~path} to be deleted
+\arg[deleted-space-instance] A \glref{space~instance}
 \end{args}
 
-\fnreturns The (deleted) \glref{space~instance}.
+\fnreturns The deleted \glref{space~instance}.
 
 \fnevents
 \index{events!generated by!delete-space-instance@\textbf{delete-space-instance}}%
@@ -12839,6 +13078,7 @@ Remove all \code{hyp} \glref{unit~instances} from
 \begin{args}{space-instance-path}
 \arg[space-instance-path] A \glref{space-instance~path} specifying the
 \glref{space~instance} to be returned 
+\arg[space-instance] A \glref{space~instance} or \nil{}
 \end{args}
 
 \fnreturns The specified \glref{space~instance} if it exists; \nil{}
@@ -12878,6 +13118,7 @@ Find the \glref{space~instance} with path \code{(bb hyps)}:
 \begin{args}{space-instance-regexp}
 \arg[space-instance-regexp] A \glref{space-instance~path} regular expression
 specifying the \glref{space~instances} to be returned 
+\arg[space-instances] A proper list
 \end{args}
 
 \fnreturns The specified \glref{space~instances}.
@@ -12959,6 +13200,7 @@ is to be created
 \arg[make-parents] A \glref{generalized~boolean} (default is \nil)
 \arg[class] The name of the \glref{space~class} for the created
 \glref{space~instance} (default is \code{standard-space-instance})
+\arg[space-instance] A \glref{space~instance}
 \end{args}
 
 \fnreturns
@@ -13184,8 +13426,9 @@ Remove all \code{hyp} \glref{unit~instances} from
 \fnmodule \code{:gbbopen-core}
 
 \fnargs
-\begin{args}{space-instance}
+\begin{args}{space-instances}
 \arg[space-instance] A \glref{space~instance}
+\arg[space-instances] A proper list
 \end{args}
 
 \fnreturns The parent space instance or the special
@@ -13786,13 +14029,14 @@ Print a list of all \code{hyp} \glref{instance~names}, in ascending order:
 \fnmodule \code{:gbbopen-core}
 
 \fnargs
-\begin{args}{unit-instances}
+\begin{args}{matching-unit-instances}
 \arg[unit-instances] A list of \glref{unit~instances}
 \arg[pattern] A \glref{retrieval~pattern} (see below)
 \arg[filter-before] A single-argument predicate to be applied before
 pattern-matching tests occur
 \arg[filter-after] A single-argument predicate to be
 applied after pattern-matching tests occur
+\arg[matching-unit-instances] A proper list of \glref{unit~instances}
 \end{args}
 
 \index{pattern!specification!filter-instances@\textbf{filter-instances}}%
@@ -13863,6 +14107,7 @@ and \code{=\$\$\$} and \code{within\&}, \code{within\$\&}, \code{within\$},
 \arg[instance-name] The \glref{instance~name} for the retrieval
 \arg[unit-class-specifier] An \glref{extended~unit-class~specification}
 (see below; default is \code{t})
+\arg[unit-instances] A proper list of \glref{unit~instances}
 \end{args}
 
 \fnreturns A list of the \glref{unit~instances} with the specified
@@ -13932,6 +14177,7 @@ Find all \glref{unit~instances} (of any \glref{unit~class}) that are named
 \arg[instance-name] The \glref{instance~name} for the retrieval
 \arg[unit-class-specifier] An \glref{extended~unit-class~specification}
 (see below; default is \code{t})
+\arg[unit-instance] A \glref{unit~instance} or \nil{}
 \end{args}
 
 \fnreturns The first \glref{unit~instance} found of the specified
@@ -14014,6 +14260,7 @@ which sets \code{=} to be the found \glref{unit~instance}.
   pattern-matching tests occur
 \arg[filter-after] A single-argument predicate to be applied after
   pattern-matching tests occur
+\arg[unit-instances] A proper list of \glref{unit~instances}
 \end{args}
 
 \fnreturns 
@@ -14178,6 +14425,7 @@ specified \glref{unit~classes}.
 \begin{args}{unit-classes-specifier}
 \arg[unit-classes-specifier] An \glref{extended~unit-classes~specification}
 (see below)
+\arg[unit-instances] A proper list of \glref{unit~instances}
 \end{args}
 
 \fnreturns
@@ -14579,6 +14827,7 @@ Record and optionally display retrieval statistics for
 \arg[report] A \glref{generalized~boolean}(default is \code{t})
 \arg[declaration] A declare expression
 \arg[forms] An implicit \textbf{progn} of \glref{forms} to be evaluated
+\arg[results] The values returned by evaluating the last \var{form}
 \end{args}
 
 \fnreturns The values returned by evaluating the last \var{form}.
@@ -14637,6 +14886,7 @@ Disable the collecting of retrieval statistics while executing \var{forms}.
 \begin{args}{forms}
 \arg[declaration] A declare expression
 \arg[forms] An implicit \textbf{progn} of \glref{forms} to be evaluated
+\arg[results] The values returned by evaluating the last \var{form}
 \end{args}
 
 \fnreturns The values returned by evaluating the last \var{form}.
@@ -14906,6 +15156,9 @@ to the slot named \code{new-slot} in the current class definition of
   (see below)
 \arg[retain-event-functions] A \glref{generalized~boolean} (default is \nil)
 \arg[retain-event-printing] A \glref{generalized~boolean} (default is \nil)
+\arg[pathname] A \glref{pathname}
+\arg[results] The values returned by evaluating the after-loading function, 
+if one was specified when the repository was saved
 \end{args}
 
 \fnreturns The pathname of the saved blackboard-repository data file
@@ -15060,8 +15313,9 @@ are not saved or sent.
 \glref{space-instance} methods are added by \code{:gbbopen-core})
 
 \fnargs
-\begin{args}{instance}
+\begin{args}{omitted-slot-names}
 \arg[instance] An \glref{instance}
+\arg[omitted-slot-names] A proper list
 \end{args}
 
 \fnreturns A list of omitted slot names for the \glref{class} of 
@@ -15302,7 +15556,7 @@ Write the binary value of slot \code{song} in \glref{unit~instances} of
 \begin{functiondoc}{Function}{save-blackboard-repository}%
   {\var{after-loading-function pathname\/}
     \code{\&key} \var{external-format package read-default-float-format\/} 
-    \returns{} \var{pathname\/}}
+    \returns{} \var{saved-repository-pathname\/}}
 \index{blackboard repository!saving to a file}%
 \index{saving!the blackboard repository to a file}% 
 
@@ -15329,6 +15583,7 @@ when saving and loading the blackboard repository (default is
 \code{short-float}, \code{single-float}, \code{double-float}, or
 \code{long-float} to be used when saving and loading the blackboard repository
 (default is \code{single-float})
+\arg[saved-repository-pathname] A \glref{pathname}
 \end{args}
 
 \fnreturns The pathname of the saved blackboard-repository data file.
@@ -15398,6 +15653,7 @@ reading-saved/sent-objects behavior when evaluating \var{forms}.
   \code{*reading-saved/sent-objects-readtable*})
 \arg[read-eval] A \glref{generalized~boolean} (default is \nil)
 \arg[forms] An implicit \textbf{progn} of \glref{forms} to be evaluated
+\arg[results] The values returned by evaluating the last \var{form}
 \end{args}
 
 \fnreturns The values returned by evaluating the last \var{form}.
@@ -15455,6 +15711,7 @@ be used when saving/sending and when loading/receiving (default is
 \code{short-float}, \code{single-float}, \code{double-float}, or
 \code{long-float} (default is \code{single-float})
 \arg[forms] An implicit \textbf{progn} of \glref{forms} to be evaluated
+\arg[results] The values returned by evaluating the last \var{form}
 \end{args}
 
 \fnreturns The values returned by evaluating the last \var{form}.
@@ -15572,8 +15829,9 @@ Count the number of \glref{pending~KSAs} that were triggered by \code{hyp}:
 \fnmodule \code{:queue}
 
 \fnargs
-\begin{args}{queue}
+\begin{args}{queue-element}
 \arg[queue] A GBBopen \glref{queue}
+\arg[queue-element] A GBBopen \glref{queue~element} object
 \end{args}
 
 \fnreturns The first \glref{queue~element} on \var{queue}.
@@ -15668,8 +15926,9 @@ queue was created.  If \var{queue} is a standard \glref{queue},
 \fnmodule \code{:queue}
 
 \fnargs
-\begin{args}{queue}
+\begin{args}{queue-element}
 \arg[queue] A GBBopen \glref{queue}
+\arg[queue-element] A GBBopen \glref{queue~element} object
 \end{args}
 
 \fnreturns The last \glref{queue~element} on \var{queue}.
@@ -15708,6 +15967,7 @@ queue was created.  If \var{queue} is a standard \glref{queue},
 \fnargs
 \begin{args}{initargs}
 \arg[initargs] An \glref{initialization~argument~list}
+\arg[queue] A GBBopen \glref{queue}
 \end{args}
 
 \fnreturns The newly created \glref{queue}.
@@ -15806,8 +16066,9 @@ on a GBBopen queue.
 \fnmodule \code{:queue}
 
 \fnargs
-\begin{args}{queue-element}
+\begin{args}{next-queue-element}
 \arg[queue-element] A GBBopen \glref{queue~element} object
+\arg[next-queue-element] A GBBopen \glref{queue~element} object
 \end{args}
 
 \fnreturns The \glref{queue~element} that follows
@@ -15847,9 +16108,10 @@ on a GBBopen queue.
 \fnmodule \code{:queue}
 
 \fnargs
-\begin{args}{queue}
+\begin{args}{queue-element}
 \arg[n] A \glref{fixnum}
 \arg[queue] A GBBopen \glref{queue}
+\arg[queue-element] A GBBopen \glref{queue~element} objec
 \end{args}
 
 \fnreturns The specified \glref{queue~element} or \nil{} if none exists.
@@ -15910,6 +16172,7 @@ Return the last element on \code{pending-ksas} (equivalent to
 \fnargs
 \begin{args}{queue}
 \arg[queue-element] A GBBopen \glref{queue~element} object
+\arg[queue] A GBBopen \glref{queue}
 \end{args}
 
 \fnreturns The \glref{queue} queue on which \var{queue-element\/}
@@ -15978,8 +16241,9 @@ as the header of ordered (sorted) GBBopen queues.
 \fnmodule \code{:queue}
 
 \fnargs
-\begin{args}{queue-element}
+\begin{args}{previous-queue-element}
 \arg[queue-element] A GBBopen \glref{queue~element} object
+\arg[previuos-queue-element] A GBBopen \glref{queue~element} object
 \end{args}
 
 \fnreturns The \glref{queue~element} that precedes
@@ -16088,6 +16352,7 @@ queue of \glref{pending~KSAs}:
 \arg[queue] A GBBopen \glref{queue}
 \arg[recount-p] If true, actually counts the individual
 \glref{queue~elements} (default is \nil) 
+\arg[integer] An integer
 \end{args}
 
 \fnreturns The \var{queue\/} length.
@@ -16291,8 +16556,9 @@ Abort the currently executing KSA::
 \fnmodule \code{:agenda-shell}
 
 \fnargs
-\begin{args}{ksa}
+\begin{args}{cycle-number}
 \arg[ksa] A \glref{KSA}
+\arg[cycle-number] An integer
 \end{args}
 
 \fnreturns The activation cycle number of \var{ksa}
@@ -16327,7 +16593,7 @@ Return the activation cycle of \code{ksa}:
 
 \fnsyntax
 
-\fnpurpose Return the trigger \glref{unit~instances} of a \glref{KSA},
+\fnpurpose Return the trigger \glref{unit~instances} of a \glref{KSA}, an
 \glref{event}, or a list of \glref{KSAs} or \glref{events}
 
 \fnmethods
@@ -16352,9 +16618,10 @@ Return the activation cycle of \code{ksa}:
 \fnmodule \code{:agenda-shell}
 
 \fnargs
-\begin{args}{source}
+\begin{args}{trigger-instances}
 \arg[source] A \glref{KSA}, \glref{event},
 or a list of \glref{KSAs} or \glref{events}
+\arg[trigger-instances] A proper list
 \end{args}
 
 \fnreturns The list of trigger \glref{unit~instances}
@@ -16387,6 +16654,11 @@ Return the trigger \glref{unit~instances} of a KSA:
 \fnpackage \code{:agenda-shell}
 
 \fnmodule \code{:agenda-shell}
+
+\fnargs
+\begin{args}{boolean}
+\arg[boolean] A \glref{generalized~boolean}
+\end{args}
 
 \fnreturns True if the control shell is running; \nil{} otherwise.
 
@@ -16459,7 +16731,7 @@ not evaluated)
 \glref{KSA} \glref{unit~instance}) that returns a
 \glref{generalized~boolean} or \nil{} (default is \nil)
 \arg[trigger-events] An \var{event-specification\/} (see below, not evaluated)
-
+\arg[ks] A \glref{KS}
 \end{args}
 
 \fnreturns The \glref{unit~instance} representing the \glref{KS}
@@ -16670,9 +16942,10 @@ direct superclass of the \glref{ks~class} \var{ks-class-name\/}
 \arg[documentation] A documentation string
 \arg[slot-specifiers] See below
 \arg[class-options] See below
+\arg[new-ks-class] A new or modified \glref{ks~class} object
 \end{args}
 
-\fnreturns The newly defined \glref{ks~class} object.
+\fnreturns The newly defined or modified \glref{ks~class} object.
 
 \fnerrors The specified \var{superclass-names\/} do not include at least
 one \glref{ks~class} name.  This error is signaled on class finalization.
@@ -16864,9 +17137,10 @@ direct superclass of the \glref{ksa~class} \var{ksa-class-name\/}
 \arg[documentation] A documentation string
 \arg[slot-specifiers] See below
 \arg[class-options] See below
+\arg[new-ksa-class] A new or modified \glref{ksa~class} object
 \end{args}
 
-\fnreturns The newly defined \glref{ksa~class} object.
+\fnreturns The newly defined or modified \glref{ksa~class} object.
 
 \fnerrors The specified \var{superclass-names\/} do not include at least
 one \glref{ksa~class} name.  This error is signaled on class finalization.
@@ -17128,7 +17402,7 @@ KS: start-control-shell-ks
 \glref{KSA} \glref{unit~instance}) that returns a
 \glref{generalized~boolean} or \nil{} (default is \nil)
 \arg[trigger-events] An \var{event-specification\/} (see below)
-
+\arg[ks] A \glref{KS}
 \end{args}
 
 \fnreturns The \glref{unit~instance} representing the \glref{KS}
@@ -17203,8 +17477,9 @@ started:
 \fnmodule \code{:agenda-shell}
 
 \fnargs
-\begin{args}{ksa}
+\begin{args}{cycle-number}
 \arg[ksa] A \glref{KSA}
+\arg[cycle-number] An integer or \nil{}
 \end{args}
 
 \fnreturns The execution cycle number of \var{ksa\/} or \nil, if \var{ksa\/} has
@@ -17289,6 +17564,7 @@ executing control shell.
 \fnargs
 \begin{args}{ks-name}
 \arg[ks-name] A symbol naming the \glref{KS}.
+\arg[ks] A \glref{KS}
 \end{args}
 
 \fnreturns The \glref{KS} \glref{unit~instance} named \var{ks-name\/}
@@ -17425,6 +17701,7 @@ of a \glref{KSA}
 \fnargs
 \begin{args}{ksa}
 \arg[ksa] A \glref{KSA}
+\arg[ks] A \glref{KS}
 \end{args}
 
 \fnreturns The \glref{KS} \glref{unit~instance} of \var{ksa}
@@ -17517,8 +17794,9 @@ the header of \glref{KSA} queues.
 \fnmodule \code{:agenda-shell}
 
 \fnargs
-\begin{args}{ksa}
+\begin{args}{cycle-number}
 \arg[ksa] A \glref{KSA}
+\arg[cycle-number] An integer or \nil{}
 \end{args}
 
 \fnreturns The \glref{obviation} cycle number of \var{ksa\/} or \nil,
@@ -17652,7 +17930,7 @@ related macros with this accessor.
 
 \begin{functiondoc}{Function}{restart-control-shell}{%
     \code{\&key} \var{instance-name\/}
-    \returns{} \var{value\/}\superstar}
+    \returns{} \var{result\/}\superstar}
 \index{agenda shell, restarting}%
 \index{control shell!restarting}%
 \index{restart, agenda shell}%
@@ -17670,10 +17948,11 @@ related macros with this accessor.
 \begin{args}{instance-name}
 \arg[instance-name] An object naming a control-shell instance (default is 
 \code{1}) 
+\arg[results] (see below)
 \end{args}
 
 \fnreturns
-One of the following values: 
+One of the following sets of multiple values: 
 \begin{tightitemize}
 \item \code{:quiescence}---If the control-shell scheduling loop is terminated
   due to \glref{quiescence} (that is, no more \glref{executable~KSAs} remain 
@@ -17751,8 +18030,9 @@ Restart the Agenda Shell (in this case, without any \glref{KSs} defined):
 \fnmodule \code{:agenda-shell}
 
 \fnargs
-\begin{args}{ksa}
+\begin{args}{event}
 \arg[ksa] A \glref{KSA}
+\arg[event] An \glref{event} object or \nil{}
 \end{args}
 
 \fnreturns The trigger \glref{event} or \nil, if one was not found for
@@ -17812,9 +18092,10 @@ Return the (sole) trigger \glref{event} of a \glref{KSA}:
 \fnmodule \code{:agenda-shell}
 
 \fnargs
-\begin{args}{source}
-\arg[source] A \glref{KSA}, \glref{event},
-or a list of \glref{KSAs} or \glref{events}
+\begin{args}{trigger-instance}
+\arg[source] A \glref{KSA}, \glref{event}, or a list of \glref{KSAs} or
+  \glref{events}
+\arg[trigger-instance] A \glref{unit~instance} or \nil{}
 \end{args}
 
 \fnreturns The trigger \glref{unit~instance} or \nil, if one was not found in
@@ -17871,7 +18152,7 @@ It is a subclass of \textbf{\entlinknoex{standard-unit-class}}.
 
 \begin{functiondoc}{Function}{start-control-shell}%
   {\code{\&rest} \var{initargs\/}
-    \returns{} \var{value\/}\superstar}
+    \returns{} \var{result\/}\superstar}
 \index{agenda shell!starting}%
 \index{control shell!starting}%
 \index{starting!agenda shell}%
@@ -17888,10 +18169,11 @@ It is a subclass of \textbf{\entlinknoex{standard-unit-class}}.
 \fnargs
 \begin{args}{initargs}
 \arg[initargs] An \glref{initialization~argument~list} (see below)
+\arg[results] (See below)
 \end{args}
 
 \fnreturns
-One of the following values: 
+One of the following sets of multiple values: 
 
 \begin{tightitemize}
 \item \code{:quiescence}---If the control-shell scheduling loop is terminated
@@ -18129,8 +18411,9 @@ All stepping disabled
 \fnmodule \code{:agenda-shell}
 
 \fnargs
-\begin{args}{ksa}
+\begin{args}{events}
 \arg[ksa] A \glref{KSA}
+\arg[events] A proper list
 \end{args}
 
 \fnreturns The list of events that triggered \var{ksa}
@@ -18174,13 +18457,14 @@ Return the events that triggered a \glref{KSA}:
 \fnmodule \code{:agenda-shell}
 
 \fnargs
-\begin{args}{ignored-initargs}
+\begin{args}{deleted-ks-unit-instance}
 \arg[ks-name] A symbol naming the \glref{KS} (not evaluated, but the remaining
 arguments are evaluated)
 \arg[ignored-initargs] The remaining initialization arguments are ignored
+\arg[deleted-ks-unit-instance] A \glref{KS} \glref{unit~instance} or \nil{}
 \end{args}
 
-\fnreturns The (deleted) \glref{KS} \glref{unit~instance}, if
+\fnreturns The deleted \glref{KS} \glref{unit~instance}, if
 \glref{KS} \var{ks-name\/} was undefined (deleted).
 
 \fndescription A \glref{KS} is undefined by deleting the \glref{unit~instance}

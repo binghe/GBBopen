@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/find.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue May 27 10:44:32 2008 *-*
+;;;; *-* Last-Edit: Sun Jun  1 11:35:02 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -51,6 +51,7 @@
   (export '(*find-verbose*              ; not documented, yet
             *processed-hash-table-size* ; not documented, yet
             *processed-hash-table-rehash-size* ; not documented, yet
+            *use-marking*               ; not documented, yet
             covers
             ;; --- declared-type operators:
             covers&
@@ -112,6 +113,8 @@
 ;;; ---------------------------------------------------------------------------
 
 (defvar *find-verbose* nil)
+
+(defvar *use-marking* 't)
 
 ;;; Dynamic bindings used during pattern optimization
 
@@ -1442,13 +1445,18 @@
           (optimized-pattern.disjunctive-dimensional-extents
            optimized-pattern))
          (storage-objects
-          (storage-objects-for-retrieval
-           unit-classes-spec space-instances
-           (optimized-pattern.disjunctive-dimensional-extents 
-            optimized-pattern)
-           pattern
-           (eq pattern ':all)
-           invoking-fn-name))
+          (if (eq pattern ':all)
+              (storage-objects-for-mapping
+               unit-classes-spec 
+               space-instances
+               invoking-fn-name)
+              (storage-objects-for-retrieval
+               unit-classes-spec 
+               space-instances
+               (optimized-pattern.disjunctive-dimensional-extents 
+                optimized-pattern)
+               pattern
+               invoking-fn-name)))
          (unit-class-check-fn (determine-unit-class-check unit-classes-spec))
          (into-cons (cons nil nil)))
     (when verbose 
@@ -1515,13 +1523,18 @@
           (optimized-pattern.disjunctive-dimensional-extents 
            optimized-pattern))
          (storage-objects
-          (storage-objects-for-retrieval
-           unit-classes-spec space-instances
-           (optimized-pattern.disjunctive-dimensional-extents
-            optimized-pattern)
-           pattern
-           (eq pattern ':all)
-           invoking-fn-name))
+          (if (eq pattern ':all)
+              (storage-objects-for-mapping
+               unit-classes-spec 
+               space-instances
+               invoking-fn-name)
+              (storage-objects-for-retrieval
+               unit-classes-spec
+               space-instances
+               (optimized-pattern.disjunctive-dimensional-extents
+                optimized-pattern)
+               pattern
+               invoking-fn-name)))
          (unit-class-check-fn (determine-unit-class-check unit-classes-spec))
          (processed-ht (make-keys-only-hash-table-if-supported
                         :test 'eq
@@ -1546,31 +1559,30 @@
       (dolist (storage storage-objects)
         (map-all-instances-on-storage 
          #'(lambda (instance)
-             (when (and (not (gethash instance processed-ht))
-                        (progn
-                          (when find-stats 
-                            (incf (find-stats.instances-touched find-stats)))
-                          't)
-                        (funcall (the function unit-class-check-fn) instance)
-                        (progn 
-                          (when find-stats 
-                            (incf (find-stats.instances-considered find-stats)))
-                          't)
-                        (or (null filter-before)
-                            (funcall (the function filter-before) instance))
-                        (match-instance-to-pattern 
-                         instance
-                         (optimized-pattern.pattern optimized-pattern)
-                         into-cons
-                         verbose)
-                        (or (null filter-after)
-                            (funcall (the function filter-after) instance)))
-               ;; the instance is accepted:
+             (unless (gethash instance processed-ht)
                (when find-stats 
-                 (incf (find-stats.instances-accepted find-stats)))
-               (funcall (the function fn) instance))
-             ;; we have accepted or rejected this instance:
-             (setf (gethash instance processed-ht) 't))
+                 (incf (find-stats.instances-touched find-stats)))
+               (when (and (funcall (the function unit-class-check-fn) instance)
+                          (progn 
+                            (when find-stats 
+                              (incf (find-stats.instances-considered 
+                                     find-stats)))
+                            't)
+                          (or (null filter-before)
+                              (funcall (the function filter-before) instance))
+                          (match-instance-to-pattern 
+                           instance
+                           (optimized-pattern.pattern optimized-pattern)
+                           into-cons
+                           verbose)
+                          (or (null filter-after)
+                              (funcall (the function filter-after) instance)))
+                 ;; the instance is accepted:
+                 (when find-stats 
+                   (incf (find-stats.instances-accepted find-stats)))
+                 (funcall (the function fn) instance))
+               ;; we have accepted or rejected this instance:
+               (setf (gethash instance processed-ht) 't)))
          storage
          disjunctive-dimensional-extents
          verbose)))
@@ -1588,23 +1600,21 @@
 ;;;                    (not <subpattern>)
 ;;;   <pattern-element> :== (<op> <dims> <values> <option>*)
 
-(defun map-all-instances-on-space-instances (fn unit-classes-spec
-                                             space-instances 
-                                             filter-before filter-after
-                                             verbose
-                                             invoking-fn-name)
-  ;;; This internal function is optimized for mapping all unit instances on
-  ;;; `space-instances' (one call per unit instance is guaranteed, even if it
-  ;;; resides on multiple space instances).
+(defun mark-based-sweep (fn unit-classes-spec space-instances 
+                         filter-before filter-after
+                         verbose invoking-fn-name)  
+  ;;; This internal mark-based function is optimized for mapping all unit
+  ;;; instances on `space-instances' (one call per unit instance is
+  ;;; guaranteed, even if it resides on multiple space instances).
   (let ((storage-objects
-         (storage-objects-for-retrieval
-          unit-classes-spec space-instances 't 't 't invoking-fn-name))
+         (storage-objects-for-mapping unit-classes-spec space-instances
+                                      invoking-fn-name))
         (unit-class-check-fn (determine-unit-class-check unit-classes-spec)))
     (with-lock-held (*master-instance-lock*)
       ;; set all flags:
       (dolist (storage storage-objects)
         (set-all-mbr-instance-marks storage 't))
-      ;; map:
+      ;; sweep:
       (dolist (storage storage-objects)
         (map-marked-instances-on-storage
          #'(lambda (instance)
@@ -1617,7 +1627,41 @@
                             (funcall (the function filter-after) instance)))
                (funcall (the function fn) instance)))
          storage 't verbose)))))
-  
+
+;;; ---------------------------------------------------------------------------
+
+(defun hash-based-sweep (fn unit-classes-spec space-instances 
+                         filter-before filter-after
+                         verbose invoking-fn-name)  
+  ;;; This internal hash-based function is optimized for mapping all unit
+  ;;; instances on `space-instances' (one call per unit instance is
+  ;;; guaranteed, even if it resides on multiple space instances).
+  (let ((storage-objects
+         (storage-objects-for-mapping unit-classes-spec space-instances
+                                      invoking-fn-name))
+        (unit-class-check-fn (determine-unit-class-check unit-classes-spec))
+        (processed-ht (make-keys-only-hash-table-if-supported
+                       :test 'eq
+                       ;; we'll be a bit aggressive here:
+                       :size *processed-hash-table-size*
+                       ;; and here:
+                       :rehash-size *processed-hash-table-rehash-size*)))
+    (with-lock-held (*master-instance-lock*)
+      (dolist (storage storage-objects)
+        (map-all-instances-on-storage
+         #'(lambda (instance)
+             (unless (gethash instance processed-ht)
+               (when (and (funcall (the function unit-class-check-fn) instance)
+                          (or (null filter-before)
+                              (funcall (the function filter-before) instance))
+                          ;; there is no pattern here...
+                          (or (null filter-after)
+                              (funcall (the function filter-after) instance)))
+                 (funcall (the function fn) instance))
+               ;; we have accepted or rejected this instance:
+               (setf (gethash instance processed-ht) 't)))
+         storage 't verbose)))))
+
 ;;; ---------------------------------------------------------------------------
 
 (defun map-selected-instances-on-space-instances (fn unit-classes-spec 
@@ -1638,7 +1682,7 @@
                                          &key (pattern ':all)
                                               filter-before filter-after
                                               ;; not documented, yet
-                                              use-marking
+                                              (use-marking *use-marking*)
                                               (verbose *find-verbose*))
   ;;; Note that checking for deleted instances is not done here, the
   ;;; check must be added to `fn', if desired.
@@ -1650,10 +1694,12 @@
                         (coerce filter-after 'function))))
     (if (eq pattern ':all)
         ;; full mapping (pass-thru 't `space-instances' value):
-        (map-all-instances-on-space-instances 
-         fn unit-classes-spec space-instances 
-         filter-before filter-after verbose 
-         'map-instances-on-space-instances)
+        (funcall (if use-marking
+                     #'mark-based-sweep
+                     #'hash-based-sweep)
+                 fn unit-classes-spec space-instances 
+                 filter-before filter-after verbose 
+                 'map-instances-on-space-instances)
         ;; pattern-selected mapping:
         (map-selected-instances-on-space-instances
          fn unit-classes-spec 
@@ -1670,7 +1716,7 @@
                                             &key (pattern ':all)
                                                  filter-before filter-after
                                                  ;; not documented, yet
-                                                 use-marking
+                                                 (use-marking *use-marking*)
                                                  (verbose *find-verbose*))
                                            &body body)
    ;;; Do-xxx variant of map-instances-on-space-instances.
@@ -1698,7 +1744,7 @@
 (defun find-instances (unit-classes-spec space-instances pattern
                        &key filter-before filter-after
                             ;; not documented, yet:
-                            use-marking
+                            (use-marking *use-marking*)
                             (verbose *find-verbose*))
   (when verbose (find-verbose-operation 'find-instances))
   (let* ((result nil)
@@ -1710,10 +1756,12 @@
     (cond 
      ;; full space-instance sweep:
      ((eq pattern ':all)
-      (map-all-instances-on-space-instances 
-       fn unit-classes-spec space-instances 
-       filter-before filter-after verbose
-       'find-instances))
+      (funcall (if use-marking 
+                   #'mark-based-sweep
+                   #'hash-based-sweep)
+               fn unit-classes-spec space-instances 
+               filter-before filter-after verbose
+               'find-instances))
      ;; pattern-based retrieval:
      (t (funcall (if use-marking 
                      #'mark-based-retrieval

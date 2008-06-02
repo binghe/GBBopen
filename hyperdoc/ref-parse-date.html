@@ -26,7 +26,7 @@
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-tools</code>
 </p>
-<p><span class="fndoclabel">Arguments</span><table class="tighttop">
+<p><span class="fndoclabel">Arguments and values</span><table class="tighttop">
 <tr valign="top"><td valign="baseline"><i>start</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> Starting index into <var>string</var> (default is <code>0</code>)
 </td></tr><tr valign="top"><td valign="baseline"><i>end</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> Ending index into <var>string</var> (default is <code>nil</code>, meaning
 end of <var>string</var>)
@@ -36,6 +36,10 @@ date, month, and year fields in <var>string</var>, if needed (default is
 <code>"-/ ,"</code>)
 </td></tr><tr valign="top"><td valign="baseline"><i>month-precedes-date</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> (default is 
 <b><a href="ref-month-precedes-date-var.html">*month-precedes-date*</a></b>)
+</td></tr><tr valign="top"><td valign="baseline"><i>date</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An integer between 1 and up to 31, inclusive, depending
+on the month and year
+</td></tr><tr valign="top"><td valign="baseline"><i>month</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An integer between 1 and 12, inclusive
+</td></tr><tr valign="top"><td valign="baseline"><i>year</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An integer
 </td></tr></table>
 </p>
 <p><span class="fndoclabel">Returns</span> <br />Three values: <var>date</var>, <var>month</var>, and <var>year</var>

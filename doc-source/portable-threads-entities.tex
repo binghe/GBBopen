@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/portable-threads-entities.tex *-*
-%% *-* Last-Edit: Mon Apr 14 16:00:25 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Mon Jun  2 10:03:13 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 \index{module!:portable-threads@\code{:portable-threads}}%
@@ -243,6 +243,11 @@ currently scheduled.
 
 \fnmodule \code{:portable-threads}
 
+\fnargs
+\begin{args}{list-of-scheduled-functions}
+\arg[list-of-scheduled-functions] A proper list
+\end{args}
+
 \fnreturns A list of \code{scheduled-function} objects. 
 
 \begin{alsos}{schedule-function-relative}
@@ -281,6 +286,11 @@ destructively altered.
 
 \fnmodule \code{:portable-threads}
 
+\fnargs
+\begin{args}{list-of-threads}
+\arg[list-of-threads] A proper list
+\end{args}
+
 \fnreturns A list of objects representing the \glref{threads}. 
 
 \begin{alsos}{thread-alive-p}
@@ -309,7 +319,7 @@ altered.
 
 \begin{functiondoc}{Macro}{as-atomic-operation}%
   {\var{form\/}\superstar{} 
-    \returns{} \var{value\/}}
+    \returns{} \var{primary-value\/}}
 
 \fnsyntax
 
@@ -321,10 +331,11 @@ altered.
 
 \fnargs
 \begin{args}{form}
-\arg[form] A \glref{form}
+\arg[primary-value] The first value returned by evaluating the last 
+\var{form}
 \end{args}
 
-\fnreturns The single value returned by evaluating the last \var{form}.
+\fnreturns The primary value returned by evaluating the last \var{form}.
 
 \fndescription This macro provides atomicity in the following entities:
 \textbf{\entlink{atomic-decf}}, \textbf{\entlink{atomic-delete}},
@@ -377,6 +388,7 @@ Define an atomic \textbf{\entlink{nsorted-insert}}:
 \arg[place] A form which is suitable for use as a
 \glref{generalized~reference} 
 \arg[delta-form] A form that is evaluated to produce a delta value (default is 1).
+\arg[new-place-value] A number
 \end{args}
 
 \fnreturns The new value of \var{place\/}. 
@@ -408,7 +420,7 @@ Define an atomic \textbf{\entlink{nsorted-insert}}:
 
 \begin{functiondoc}{Macro}{atomic-delete}{\var{item place\/}
     \code{\&key} \var{from-end test test-not start end count key\/}
-    \returns{} \var{result-sequence\/}}
+    \returns{} \var{sequence\/}}
 \index{atomic operations!delete@\textbf{delete}}%
 
 \fnsyntax
@@ -436,6 +448,7 @@ sequence in \var{place\/} from which the elements that satisfy the
 end of \var{sequence\/})
 \arg[count] An integer or \nil{} (default is \nil)
 \arg[key] A \glref{function} of one argument, or \nil{} (default is \nil)
+\arg[sequence] A sequence
 \end{args}
 
 \fnreturns The sequence in \var{place\/} from which the elements that
@@ -491,9 +504,10 @@ being set.
 \fnmodule \code{:portable-threads}
 
 \fnargs
-\begin{args}{place}
+\begin{args}{old-place-value}
 \arg[place] A form which is suitable for use as a
 \glref{generalized~reference} 
+\arg[old-place-value] An object
 \end{args}
 
 \fnreturns The \var{place\/} value prior to being set to \nil.
@@ -534,10 +548,11 @@ nil
 \fnmodule \code{:portable-threads}
 
 \fnargs
-\begin{args}{place}
+\begin{args}{new-place-value}
 \arg[place] A form which is suitable for use as a
 \glref{generalized~reference} 
 \arg[delta-form] A form that is evaluated to produce a delta value (default is 1).
+\arg[new-place-value] An object
 \end{args}
 
 \fnreturns The new value of \var{place\/}. 
@@ -578,10 +593,11 @@ from the list stored in \var{place\/}, store the updated list in
 \fnmodule \code{:portable-threads}
 
 \fnargs
-\begin{args}{place}
+\begin{args}{element}
 \arg[place] A form which is suitable for use as a
   \glref{generalized~reference} that contains a \glref{proper~list} or
    a \glref{dotted~list}
+\arg[element] An object
 \end{args}
 
 \fnreturns The first element (the \glref{car}) of the list stored in
@@ -626,10 +642,11 @@ list stored in \var{place\/} and store the updated list in
 \fnmodule \code{:portable-threads}
 
 \fnargs
-\begin{args}{place}
+\begin{args}{new-place-value}
 \arg[item] An object
 \arg[place] A form which is suitable for use as a
 \glref{generalized~reference} 
+\arg[new-place-value] A proper list
 \end{args}
 
 \fnreturns The new value of \var{place\/}. 
@@ -672,7 +689,7 @@ the same as any element in the list stored in \var{place\/}, prepend
 \fnmodule \code{:portable-threads}
 
 \fnargs
-\begin{args}{place}
+\begin{args}{new-place-value}
 \arg[item] An object
 \arg[place] A form which is suitable for use as a
 \glref{generalized~reference} that contains a \glref{proper~list} 
@@ -681,6 +698,7 @@ the same as any element in the list stored in \var{place\/}, prepend
 \glref{generalized~boolean} (default is \code{\#'eql}) 
 \arg[test-not] A \glref{function} of two arguments that returns a
 \glref{generalized~boolean} (use of \code{:test-not} is deprecated)
+\arg[new-place-value] A proper list
 \end{args}
 
 \fnreturns The new value of \var{place\/}. 
@@ -923,6 +941,7 @@ signaled by another \glref{thread}:
 \begin{args}{condition-variable}
 \arg[condition-variable] A \glref{condition~variable}
 \arg[seconds] A number
+\arg[boolean] A \glref{generalized~boolean}
 \end{args}
 
 \fnreturns True if \var{condition-variable} is unblocked before
@@ -965,6 +984,11 @@ signaled by another \glref{thread} or until 5 seconds have elapsed:
 \fnpackage \code{:portable-threads}
 
 \fnmodule \code{:portable-threads}
+
+\fnargs
+\begin{args}{thread}
+\arg[thread] A \glref{thread}
+\end{args}
 
 \fnreturns The object representing the current \glref{thread}. 
 
@@ -1188,12 +1212,13 @@ half-second-timer
 \fnmodule \code{:portable-threads}
 
 \fnargs
-\begin{args}{initargs}
+\begin{args}{condition-variable}
 \arg[initargs] An \glref{initialization~argument~list}
 \arg[class] The name of the \glref{class} for the created
 \glref{condition-variable} instance (default is \code{condition-variable})
 \arg[lock] A \glref{lock}, a \glref{recursive~lock}, or a 
 \glref{condition~variable} (default is a non-recursive lock)
+\arg[condition-variable] A \glref{condition~variable}
 \end{args}
 
 \fnreturns
@@ -1268,6 +1293,7 @@ created \glref{condition-variable} instance.  However, using
 \fnargs
 \begin{args}{name}
 \arg[name] A string.
+\arg[lock] A \glref{lock}
 \end{args}
 
 \fnreturns The newly created \glref{lock}. 
@@ -1311,6 +1337,7 @@ created \glref{condition-variable} instance.  However, using
 \fnargs
 \begin{args}{name}
 \arg[name] A string.
+\arg[lock] A \glref{recursive~lock}
 \end{args}
 
 \fnreturns The newly created \glref{recursive~lock}. 
@@ -1354,11 +1381,12 @@ created \glref{condition-variable} instance.  However, using
 \fnmodule \code{:portable-threads}
 
 \fnargs
-\begin{args}{function}
+\begin{args}{scheduled-function}
 \arg[function] A \glref{function~designator} specifying a
  \glref{function~object} of one argument
 \arg[name] An object (typically a string or a symbol; default is
 \var{function\/}, if \var{function\/} is a symbol, otherwise \nil)
+\arg[scheduled-function] A \glref{scheduled~function}
 \end{args}
 
 \fnreturns The newly created \glref{scheduled~function}. 
@@ -1435,6 +1463,11 @@ complex-function
 \fnpackage \code{:portable-threads}
 
 \fnmodule \code{:portable-threads}
+
+\fnargs
+\begin{args}{thread}
+\arg[thread] A \glref{thread} or \nil{}
+\end{args}
 
 \fnreturns The object representing the newly spawned
 \glref{scheduled-function} scheduler \glref{thread} or \nil{} if the
@@ -1851,6 +1884,7 @@ randomly sets whether to reschedule itself (and at what interval):
 \var{function\/}, if \var{function\/} is a symbol, otherwise \nil)
 \arg[verbose] A \glref{generalized~boolean}
   (default is \textbf{\entlink{*periodic-function-verbose*}})
+\arg[thread] A \glref{thread}
 \end{args}
 
 \fnreturns The object representing the \glref{thread} associated with the
@@ -1965,6 +1999,7 @@ half-second-timer
 \arg[name] A string
 \arg[function] A \glref{function~designator}
 \arg[args] Arguments to the function
+\arg[thread] A \glref{thread}
 \end{args}
 
 \fnreturns The object representing the new \glref{thread}.
@@ -2016,6 +2051,8 @@ half-second-timer
 \begin{args}{function}
 \arg[symbol] A symbol
 \arg[thread] A \glref{thread}
+\arg[object] An object
+\arg[boundp] A \glref{generalized~boolean}
 \end{args}
 
 \fnreturns Two values:
@@ -2069,6 +2106,7 @@ the global symbol value.
 \fnargs
 \begin{args}{thread}
 \arg[thread] A \glref{thread}
+\arg[boolean] A \glref{generalized~boolean}
 \end{args}
 
 \fnreturns True if \var{thread} is alive; \nil{} otherwise.
@@ -2163,8 +2201,9 @@ does not support changing the thread name via \textbf{setf}.
 \fnmodule \code{:portable-threads}
 
 \fnargs
-\begin{args}{thread}
+\begin{args}{whostate}
 \arg[thread] A \glref{thread}
+\arg[whostate] A string or \nil{}
 \end{args}
 
 \fnreturns The whostate string of the \glref{thread} or \nil.
@@ -2237,6 +2276,7 @@ non-threaded implementations.
 \fnargs
 \begin{args}{object}
 \arg[object] An object
+\arg[boolean] A \glref{generalized~boolean}
 \end{args}
 
 \fnreturns True if \var{object\/} is an object representing a 
@@ -2274,9 +2314,10 @@ t
 \fnmodule \code{:portable-threads}
 
 \fnargs
-\begin{args}{lock}
+\begin{args}{boolean}
 \arg[lock] A \glref{lock}, a \glref{recursive~lock}, or a 
 \glref{condition~variable}
+\arg[boolean] A \glref{generalized~boolean}
 \end{args}
 
 \fnreturns True if the current thread holds \var{lock}; \nil{} otherwise.
@@ -2341,6 +2382,7 @@ t
   \code{scheduled-function} object
 \arg[verbose] A \glref{generalized~boolean} 
   (default is \textbf{\entlink{*schedule-function-verbose*}})
+\arg[boolean] A \glref{generalized~boolean}
 \end{args}
 
 \fnreturns The \glref{scheduled~function} if it was unscheduled; \nil{} if the 
@@ -2400,7 +2442,7 @@ nil
     \code{\&key}
     \var{whostate\/}\code{)}
     \var{form\/}\superstar{} 
-    \returns{} \var{value\/}\superstar}
+    \returns{} \var{result\/}\superstar}
 \index{lock!acquiring}%
 \index{acquiring!a lock}%
 \index{recursive lock!acquiring}%
@@ -2421,6 +2463,7 @@ execute forms and then release the lock.
 \glref{condition~variable}
 \arg[whostate] A string (default \code{"With Lock Held"})
 \arg[forms] An implicit \textbf{progn} of \glref{forms} to be evaluated
+\arg[results] The values returned by evaluating the last \var{form}
 \end{args}
 
 \fnreturns The values returned by evaluating the last \var{form}.
@@ -2481,7 +2524,7 @@ signal all blocked \glref{threads} that are waiting on it:
 \begin{functiondoc}{Macro}{with-timeout}{\code{(}\var{seconds\/} 
     \var{timeout-form\/}\superstar{}\code{)}
     \var{form\/}\superstar{} 
-    \returns{} \var{value\/}\superstar}
+    \returns{} \var{result\/}\superstar}
 \fnsyntax
 
 \fnpurpose Bound the time allowed to evaluate \var{forms\/} to
@@ -2498,6 +2541,7 @@ signal all blocked \glref{threads} that are waiting on it:
 evaluated if the timed \var{forms} do not completed before \var{seconds\/}
 seconds have elapsed
 \arg[forms] An implicit \textbf{progn} of \glref{forms} to be evaluated
+\arg[results] The values returned by evaluating the last \var{form}
 \end{args}
 
 \fnreturns The values returned by evaluating the last \var{form\/} if
