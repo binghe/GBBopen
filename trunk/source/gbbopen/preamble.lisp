@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/preamble.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu May 22 02:49:36 2008 *-*
+;;;; *-* Last-Edit: Mon Jun  2 03:41:54 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -32,8 +32,7 @@
   (use-package :portable-threads))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (export '(*coerce-interval-rationals-to-floats* ; not yet documented
-	    *warn-about-unusual-requests*
+  (export '(*warn-about-unusual-requests*
      	    draw-instance-on-bb-widget  ; used for bb-widget drawing
 	    gbbopen-graphics-started-p
 	    gbbopen-implementation-version
@@ -67,12 +66,6 @@
 ;;;      with it
 
 (defvar *warn-about-unusual-requests* 't)
-
-;;; ---------------------------------------------------------------------------
-;;;  Control automatic coercion of non-integer rationals (that are created
-;;;  while manipulating intervals) to floats:
-
-(defvar *coerce-interval-rationals-to-floats* 't)
 
 ;;; ---------------------------------------------------------------------------
 

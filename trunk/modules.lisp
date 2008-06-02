@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/modules.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue May 27 05:30:28 2008 *-*
+;;;; *-* Last-Edit: Sun Jun  1 12:07:19 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -19,7 +19,7 @@
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
-;;;  07-17-02 File Created. (Corkill)
+;;;  07-17-02 File created. (Corkill)
 ;;;  03-07-04 Added :queue module. (Corkill)
 ;;;  03-21-04 Added :agenda-shell-test module. (Corkill)
 ;;;  06-17-05 Added :os-interface module. (Corkill)
@@ -106,7 +106,7 @@
     (:requires :portable-threads :gbbopen-tools)
     (:directory :gbbopen)
     (:files "preamble"
-            "utilities"                   
+            ("utilities" :forces-recompile)
             ("unit-metaclasses" :forces-recompile)
             ("units" :forces-recompile)
             ("event-metaclasses" :forces-recompile)
@@ -116,6 +116,8 @@
             ("instances" :forces-recompile)
             "spaces"
             "storage"
+            #+developing
+            "new-storage"
             ("find" :forces-recompile)
             "unstructured-storage"
             "boolean-storage"

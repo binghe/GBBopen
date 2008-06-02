@@ -58,10 +58,12 @@
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-tools</code> (the <a href="ref-glossary.html#gl:instances">unit-instance</a> and
 <a href="ref-glossary.html#gl:space-instance">space-instance</a> methods are added by <code>:gbbopen-core</code>)
 </p>
-<p><span class="fndoclabel">Arguments</span><table class="tighttop">
+<p><span class="fndoclabel">Arguments and values</span><table class="tighttop">
 <tr valign="top"><td valign="baseline"><i>instance</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <code>standard-object</code> <a href="ref-glossary.html#gl:instances">instance</a>
 </td></tr><tr valign="top"><td valign="baseline"><i>unduplicated-slot-names</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A list of slot names
 </td></tr><tr valign="top"><td valign="baseline"><i>initargs</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An <a href="ref-glossary.html#id89">initialization&nbsp;argument&nbsp;list</a>
+</td></tr><tr valign="top"><td valign="baseline"><i>new-instance</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <code>standard-object</code> <a href="ref-glossary.html#gl:instances">instance</a>
+</td></tr><tr valign="top"><td valign="baseline"><i>slots</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A proper list of slot objects
 </td></tr></table>
 </p>
 <p><span class="fndoclabel">Returns</span> <br />Two values: the (newly created) duplicate <a href="ref-glossary.html#gl:instances">instance</a> and a
@@ -142,6 +144,10 @@ duplicating a <a href="ref-glossary.html#id193">space&nbsp;instance</a>.
  The following slots have :instance allocation:
   a   11
   b   2
+&gt; (make-duplicate-instance *x* nil)
+#&lt;foo @ #x1110a0e2&gt;
+(#&lt;standard-effective-slot-definition b&gt;
+ #&lt;standard-effective-slot-definition a&gt;)
 </pre>
 </p>
 <p>Create a duplicate of the <code>hyp</code> <code>419</code> <a href="ref-glossary.html#id217">unit&nbsp;instance</a>:

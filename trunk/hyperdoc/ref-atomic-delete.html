@@ -18,7 +18,7 @@
 <tr valign="top"><td valign="baseline" align="left"%>
 <nobr><b><font color="#000000">atomic-delete</font></b></nobr></td><td valign="baseline"> &nbsp; </td><td valign="baseline" align="left" width="99%"><var>item place</var>
 <code>&#38;key</code> <var>from-end test test-not start end count key</var>
-<i> =&gt; </i> <var>result-sequence</var></td><td valign="baseline" align="right">[<i>Macro</i>]
+<i> =&gt; </i> <var>sequence</var></td><td valign="baseline" align="right">[<i>Macro</i>]
 </td></tr></table></p>
 <p><span class="fndoclabel">Purpose</span> <br />As an <a href="ref-glossary.html#id5">atomic&nbsp;operation</a>, set <var>place</var> to the
 sequence in <var>place</var> from which the elements that satisfy the
@@ -28,7 +28,7 @@ sequence in <var>place</var> from which the elements that satisfy the
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:portable-threads</code>
 </p>
-<p><span class="fndoclabel">Arguments</span><table class="tighttop">
+<p><span class="fndoclabel">Arguments and values</span><table class="tighttop">
 <tr valign="top"><td valign="baseline"><i>item</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An object
 </td></tr><tr valign="top"><td valign="baseline"><i>place</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A form which is suitable for use as a
 <a href="ref-glossary.html#id83">generalized&nbsp;reference</a> that contains a proper sequence
@@ -42,6 +42,7 @@ sequence in <var>place</var> from which the elements that satisfy the
 end of <var>sequence</var>)
 </td></tr><tr valign="top"><td valign="baseline"><i>count</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An integer or <code>nil</code> (default is <code>nil</code>)
 </td></tr><tr valign="top"><td valign="baseline"><i>key</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#gl:function">function</a> of one argument, or <code>nil</code> (default is <code>nil</code>)
+</td></tr><tr valign="top"><td valign="baseline"><i>sequence</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A sequence
 </td></tr></table>
 </p>
 <p><span class="fndoclabel">Returns</span> <br />The sequence in <var>place</var> from which the elements that

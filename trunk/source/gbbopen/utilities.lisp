@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/utilities.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue May 27 04:39:28 2008 *-*
+;;;; *-* Last-Edit: Mon Jun  2 04:18:49 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -26,14 +26,23 @@
 ;;;  11-05-05 Added expand-interval and shift-interval.  (Corkill)
 ;;;  06-13-07 Extend bounded-uniform-bucket-interval to handle unbound
 ;;;           value indexing.  (Corkill)
+;;;  06-01-08 Added expand-point.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 (in-package :gbbopen)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (export '(copy-interval
+  (export '(*coerce-contracted-interval-rationals-to-floats*
+	    copy-interval
             expand-interval
+            expand-point
+            ;; --- declared-type operators:
+            expand-point&
+            expand-point$&
+            expand-point$
+            expand-point$$
+            expand-point$$$
 	    infinite-interval
 	    interval-start
 	    interval-end
@@ -50,6 +59,13 @@
   ;; so avoid redefinition by checking for a bound value:
   (unless (boundp 'infinite-interval)
     (defconstant infinite-interval '#.(cons -infinity infinity))))
+
+;;; ---------------------------------------------------------------------------
+;; Control automatic coercion of non-integer rationals to floats when an
+;; interval is contracted into a non-integral point range by expand-interval
+;; and nexpand-interval:
+
+(defvar *coerce-contracted-interval-rationals-to-floats* 't)
 
 ;;; ===========================================================================
 ;;;  Interval Functions:
@@ -160,11 +176,8 @@
     (if (> new-start new-end)
         (let ((point-value (/ (+ new-start new-end) 2)))
           ;; Coerce non-integral rationals, if requested:
-          (when (and (not (integerp point-value))
-                     (rationalp point-value)
-                     (integerp new-start)
-                     (integerp new-end)
-                     *coerce-interval-rationals-to-floats*)
+          (when (and (typep point-value 'ratio)
+                     *coerce-contracted-interval-rationals-to-floats*)
             (setf point-value (coerce point-value 'float)))
           (values point-value point-value))
         (values new-start new-end))))
@@ -177,10 +190,14 @@
         (if (consp maybe-end)
             (multiple-value-call 
                 #'list (compute-expand-interval-values 
-                        (car interval) (sole-element maybe-end) expand-amount))
+                        (car interval)
+                        (sole-element maybe-end)
+                        expand-amount))
             (multiple-value-call
                 #'cons (compute-expand-interval-values
-                        (car interval) maybe-end expand-amount))))
+                        (car interval)
+                        maybe-end
+                        expand-amount))))
       (let ((array 
              (make-array '(2) :element-type (array-element-type interval))))
         (multiple-value-setf ((elt (the (simple-array * (2)) array) 0)
@@ -200,10 +217,14 @@
         (if (consp maybe-end)
             (multiple-value-setf ((first interval) (second interval))
               (compute-expand-interval-values 
-               (car interval) (sole-element maybe-end) expand-amount))
+               (car interval)
+               (sole-element maybe-end)
+               expand-amount))
             (multiple-value-setf ((car interval) (cdr interval))
               (compute-expand-interval-values
-               (car interval) maybe-end expand-amount))))
+               (car interval)
+               maybe-end
+               expand-amount))))
       (multiple-value-setf ((elt (the (simple-array * (2)) interval) 0)
                             (elt (the (simple-array * (2)) interval) 1))
         (compute-expand-interval-values
@@ -289,6 +310,88 @@
 
 (defsetf interval-values %set-interval-values)
 
+;;; ---------------------------------------------------------------------------
+
+(defun expand-point (point expand-amount &optional (type-specifier 'cons))
+  (make-interval (- point expand-amount)
+                 (+ point expand-amount)
+                 type-specifier))
+
+;;; ---------------------------------------------------------------------------
+
+(defun expand-point& (point expand-amount &optional (type-specifier 'cons))
+  (make-interval (-& point expand-amount)
+                 (+& point expand-amount)
+                 type-specifier))
+
+#-(or full-safety disable-compiler-macros)
+(define-compiler-macro expand-point& (point expand-amount
+                                      &optional (type-specifier ''cons))
+  (with-once-only-bindings (point expand-amount)
+    `(make-interval (-& ,point ,expand-amount) 
+                    (+& ,point ,expand-amount)
+                    ,type-specifier)))
+  
+;;; ---------------------------------------------------------------------------
+
+(defun expand-point$& (point expand-amount &optional (type-specifier 'cons))
+  (make-interval (-$& point expand-amount)
+                 (+$& point expand-amount)
+                 type-specifier))
+
+#-(or full-safety disable-compiler-macros)
+(define-compiler-macro expand-point$& (point expand-amount
+                                       &optional (type-specifier ''cons))
+  (with-once-only-bindings (point expand-amount)
+    `(make-interval (-$& ,point ,expand-amount) 
+                    (+$& ,point ,expand-amount)
+                    ,type-specifier)))
+  
+;;; ---------------------------------------------------------------------------
+
+(defun expand-point$ (point expand-amount &optional (type-specifier 'cons))
+  (make-interval (-$ point expand-amount) 
+                 (+$ point expand-amount)
+                 type-specifier))
+
+#-(or full-safety disable-compiler-macros)
+(define-compiler-macro expand-point$ (point expand-amount
+                                      &optional (type-specifier ''cons))
+  (with-once-only-bindings (point expand-amount)
+    `(make-interval (-$ ,point ,expand-amount)
+                    (+$ ,point ,expand-amount)
+                    ,type-specifier)))
+  
+;;; ---------------------------------------------------------------------------
+
+(defun expand-point$$ (point expand-amount &optional (type-specifier 'cons))
+  (make-interval (-$$ point expand-amount) 
+                 (+$$ point expand-amount)
+                 type-specifier))
+
+#-(or full-safety disable-compiler-macros)
+(define-compiler-macro expand-point$$ (point expand-amount 
+                                       &optional (type-specifier ''cons))
+  (with-once-only-bindings (point expand-amount)
+    `(make-interval (-$$ ,point ,expand-amount) 
+                    (+$$ ,point ,expand-amount)
+                    ,type-specifier)))
+  
+;;; ---------------------------------------------------------------------------
+
+(defun expand-point$$$ (point expand-amount &optional (type-specifier 'cons))
+  (make-interval (-$$$ point expand-amount) 
+                 (+$$$ point expand-amount)
+                 type-specifier))
+
+#-(or full-safety disable-compiler-macros)
+(define-compiler-macro expand-point$$$ (point expand-amount 
+                                        &optional (type-specifier ''cons))
+  (with-once-only-bindings (point expand-amount)
+    `(make-interval (-$$$ ,point ,expand-amount) 
+                    (+$$$ ,point ,expand-amount)
+                    ,type-specifier)))
+  
 ;;; ===========================================================================
 ;;;   Uniform-bucket index computations:
 
