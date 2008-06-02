@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/spaces.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed May 28 11:51:38 2008 *-*
+;;;; *-* Last-Edit: Thu May 29 01:43:12 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -168,21 +168,35 @@
 (define-space-class standard-space-instance (root-space-instance)
   ((dimensions 
     :initform nil
-    :reader dimensions-of)
+    :reader dimensions-of
+    :writer (setf standard-space-instance.%%dimensions%%))
    (allowed-unit-classes
     ;; actually, this slot contains a list of <unit-classes-spec>s
-    :initform t
-    :reader allowed-unit-classes-of)
+    :initform t    
+    :reader allowed-unit-classes-of
+    :writer (setf standard-space-instance.%%allowed-unit-classes%%))
    (instance-counts :initform nil)
+   ;; the specified storage specs:
    (%%storage-spec%%)
-   (%%storage%%
-    :initform nil)
+   ;; all storage objects generated from storage-specs:
+   (%%storage%% :initform nil)
+   ;; cached by-unit-class storage objects:
+   (%%by-unit-class-storage%% :initform nil)
+   ;; cached mapping storage objects (best for each unit class):
+   (%%mapping-storage%% :initform nil)
+   ;; cached retrieval storage objects (best for each (unit-class dimensions)
+   ;; pair:
+   (%%retrieval-storage%% :initform nil)
    (%%evfn-unit-ht%% :initform (make-hash-table :size 0 :test 'eq))
    (%%bb-widgets%% :initform nil)
    (parent 
     :link (root-space-instance children)
     :singular t
-    :reader parent-of))
+    :reader parent-of
+    ;;; We can't use a :writer here until links are redone to not use
+    ;;; reader-based lookup of slot definitions:
+    ;;    :writer (setf standard-space-instance.%%parent%%)
+    ))
   (:generate-accessors-format :prefix)
   (:generate-accessors t :exclude allowed-unit-classes dimensions parent))
 
@@ -198,6 +212,40 @@
          '%%storage-spec%% 
          '%%storage%%
          (call-next-method)))
+
+;;; ---------------------------------------------------------------------------
+
+(defun delete-space-instance-caches (space-instance unit-class-spec)
+  (cond
+   ;; delete all cached storage objects:
+   ((eq unit-class-spec ':all)
+    (setf (standard-space-instance.%%by-unit-class-storage%% space-instance)
+          nil)
+    (setf (standard-space-instance.%%mapping-storage%% space-instance) nil)
+    (setf (standard-space-instance.%%retrieval-storage%% space-instance) nil))
+   ;; delete only the given unit-class-spec caches:
+   (t (let ((unit-class (find-unit-class 
+                         (if (symbolp unit-class-spec)
+                             unit-class-spec
+                             (sole-element unit-class-spec)))))
+        (setf (standard-space-instance.%%by-unit-class-storage%% 
+               space-instance)
+              (delete-if
+               #'(lambda (acons)
+                   (eq (car acons) unit-class))
+               (standard-space-instance.%%by-unit-class-storage%% 
+                space-instance))))
+      (flet ((unit-class-match-p (acons)
+               (equal (car acons) unit-class-spec)))
+        (setf (standard-space-instance.%%mapping-storage%% space-instance)
+              (delete-if
+               #'unit-class-match-p
+               (standard-space-instance.%%mapping-storage%% space-instance)))
+        (setf (standard-space-instance.%%retrieval-storage%% space-instance)
+              (delete-if
+               #'unit-class-match-p
+               (standard-space-instance.%%retrieval-storage%% 
+                space-instance)))))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -378,7 +426,7 @@
     ;; Now do the normal unit-instance work:
     (apply #'call-next-method instance 
            :dimensions dimensions initargs)
-    (setf (slot-value instance 'allowed-unit-classes)
+    (setf (standard-space-instance.%%allowed-unit-classes%% instance)
           (canonicalize-allowed-unit-classes allowed-unit-classes))
     (setf (standard-space-instance.space-name instance) space-name)
     (linkf (slot-value instance 'parent)
@@ -494,7 +542,7 @@
   ;; Change the space instance's dimensions, if specified:
   (when dimensions-p
     ;; Canonicalize the syntax of supplied dimensions:
-    (setf (slot-value space-instance 'dimensions)
+    (setf (standard-space-instance.%%dimensions%% space-instance)
           (canonicalize-space-dimensions 
            (instance-name-of space-instance) dimensions)))
   ;; Change the allowed unit classes, if specified:
@@ -518,7 +566,7 @@
                  (remove-instance-from-space-instance-internal 
                   instance space-instance)))
            't space-instance))
-        (setf (slot-value space-instance 'allowed-unit-classes)
+        (setf (standard-space-instance.%%allowed-unit-classes%% space-instance)
               new-allowed-unit-class-names))))
   ;; Change the storage, if specified or if allowed-unit-classes have changed:
   (when (or storage-p allowed-unit-classes-changed-p)
@@ -537,7 +585,7 @@
 
 ;;; Brief (initial) name and signature, remove in 1.1:
 (defun change-space-instance-storage (space-instance storage-spec)
-  (change-space-instance space-instance :key storage-spec))
+  (change-space-instance space-instance :storage storage-spec))
 
 ;;; ===========================================================================
 ;;;  Making Duplicate Unit Instances
@@ -594,7 +642,7 @@
   ;; Translate allowed-unit-classes:
   (let ((allowed-unit-classes (allowed-unit-classes-of instance)))
     (when (consp allowed-unit-classes)
-      (setf (slot-value instance 'allowed-unit-classes)
+      (setf (standard-space-instance.%%allowed-unit-classes%% instance)
             (mapcar #'(lambda (unit-class-spec)
                         (if (consp unit-class-spec)
                             (cons (possibly-translate-class-name

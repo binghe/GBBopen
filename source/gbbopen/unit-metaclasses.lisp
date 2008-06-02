@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/unit-metaclasses.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue May 27 15:31:32 2008 *-*
+;;;; *-* Last-Edit: Mon Jun  2 11:00:58 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -187,7 +187,7 @@
                    (memq 'instance-name-counter slot-names))
                (not (slot-boundp class 'instance-name-counter)))
       (setf (standard-unit-class.instance-name-counter class)
-            (1- (initial-class-instance-number class))))
+            (initial-class-instance-number class)))
     ;; create/copy appropriate type of instance-hash-table:
     (cond 
      ;; must create a new instance-hash-table:

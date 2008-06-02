@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue May 27 05:32:04 2008 *-*
+;;;; *-* Last-Edit: Thu May 29 08:00:38 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -211,9 +211,31 @@
 	
 ;;; ---------------------------------------------------------------------------
 
+(defun storage-objects-for-mapping (unit-classes-spec space-instances
+                                    invoking-fn-name)
+  ;;; Returns the best storage objects for mapping instances of
+  ;;; `unit-classes-spec' on `space-instances'
+  (when space-instances
+    (let ((result nil)
+          (unit-class-specs (parse-unit-classes-specifier unit-classes-spec)))
+      (flet ((do-si (space-instance)
+               (when (allowed-unit-classes-of space-instance)
+                 (setf result (best-retrieval-storage
+                               space-instance unit-class-specs
+                               nil result)))))
+        (cond ((eq space-instances 't)
+               (map-space-instances #'do-si '(*) invoking-fn-name))
+              (t (map-space-instances
+                  #'do-si
+                  (ensure-list space-instances)
+                  invoking-fn-name))))
+      result)))
+
+;;; ---------------------------------------------------------------------------
+
 (defun storage-objects-for-retrieval (unit-classes-spec space-instances
 				      disjunctive-dimensional-extents
-				      pattern mapping-only invoking-fn-name)
+				      pattern invoking-fn-name)
   ;;; Returns the best storage objects for retrieving instances of 
   ;;; `unit-classes-spec' on `space-instances' given 
   ;;; `disjunctive-dimensional-extents'
@@ -223,11 +245,10 @@
       (flet ((do-si (space-instance)
                (when (allowed-unit-classes-of space-instance)
                  (let ((retrieval-dimensions
-                        (unless mapping-only
-                          (determine-retrieval-dimensions 
-                           space-instance 
-                           disjunctive-dimensional-extents))))
-                   (when (or mapping-only retrieval-dimensions)
+                        (determine-retrieval-dimensions 
+                         space-instance 
+                         disjunctive-dimensional-extents)))
+                   (when retrieval-dimensions
                      (setf result 
                            (best-retrieval-storage
                             space-instance unit-class-specs
@@ -238,7 +259,7 @@
                   #'do-si
                   (ensure-list space-instances)
                   invoking-fn-name))))
-      (when (and (null result) (not mapping-only)
+      (when (and (null result)
                  *warn-about-unusual-requests*)
 	(warn "None of the retrieval dimensions of pattern ~w ~_overlap with ~
                those of unit ~:[class~;classes~] ~s on ~s."
