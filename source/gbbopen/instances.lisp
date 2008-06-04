@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu May 29 17:14:30 2008 *-*
+;;;; *-* Last-Edit: Wed Jun  4 07:02:41 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -590,8 +590,7 @@
                      slotd
                      #+lispworks
                      (slot-definition-name slotd))
-                    (incf (standard-unit-class.instance-name-counter
-                           unit-class))))))
+                    (next-class-instance-number unit-class)))))
     (add-instance-to-instance-hash-table unit-class instance instance-name)))
 
 ;;; ---------------------------------------------------------------------------

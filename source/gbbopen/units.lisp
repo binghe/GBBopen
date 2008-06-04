@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/units.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Jun  2 11:01:51 2008 *-*
+;;;; *-* Last-Edit: Wed Jun  4 07:04:24 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -869,8 +869,8 @@
 ;;; ---------------------------------------------------------------------------
 
 (defmethod next-class-instance-number ((unit-class standard-unit-class))
-  (with-lock-held (*master-instance-lock*)
-    (incf (standard-unit-class.instance-name-counter unit-class))))
+  ;; The *master-instance-lock* is held whenever this is called:
+  (incf (standard-unit-class.instance-name-counter unit-class)))
 
 (defmethod next-class-instance-number ((unit-class-name symbol))
   (next-class-instance-number (find-unit-class unit-class-name)))
