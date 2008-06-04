@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Mon Jun  2 11:46:49 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Wed Jun  4 10:38:36 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -8753,14 +8753,14 @@ Return the GBBopen implementation-version string:
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Generic~Function}{initial-class-instance-number}%
-  {\var{unit-class-or-name\/} 
+  {\var{unit-class-name-or-instance\/} 
     \returns{} \var{integer\/}}
 \index{unit class!instance number, initial}%
 \index{unit instance!instance number}%
 
 \fnsyntax
 
-\fnpurpose Return the initial instance-name counter value associated with the
+\fnpurpose Return the initial instance-name counter value associated with a
 \glref{unit~class}.
 
 \fnmethods
@@ -8768,7 +8768,7 @@ Return the GBBopen implementation-version string:
   {\code{(}\var{unit-class-name\/} \code{symbol)}
   \returns{} \var{integer\/}} 
 \fnalternate{initial-class-instance-number}%
-  {\code{(}\var{unit-class\/} \code{standard-unit-class)}
+  {\code{(}\var{unit-instance\/} \code{standard-unit-instance)}
   \returns{} \code{0}}
 
 \fnpackage \code{:gbbopen}
@@ -8777,7 +8777,7 @@ Return the GBBopen implementation-version string:
 
 \fnargs
 \begin{args}{unit-class-or-name}
-\arg[unit-class-or-name] A \glref{unit~class} or a symbol naming a
+\arg[unit-class-name-or-instance] A \glref{unit~instance} or a symbol naming a
 \glref{unit~class} 
 \arg[integer] An integer
 \end{args}
@@ -9373,7 +9373,7 @@ clear and convenient shorthand for creating \glref{space~instances}.
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Generic~Function}{next-class-instance-number}%
-  {\var{unit-class-or-name\/} 
+  {\var{unit-class-name-or-instance\/} 
     \returns{} \var{integer\/}}
 \index{unit class!instance number, next}%
 \index{unit instance!instance number}%
@@ -9381,14 +9381,14 @@ clear and convenient shorthand for creating \glref{space~instances}.
 \fnsyntax
 
 \fnpurpose Increment and return the instance-name counter value
-associated with the \glref{unit~class}.
+associated with a \glref{unit~class}.
 
 \fnmethods
 \fnalternate{next-class-instance-number}%
   {\code{(}\var{unit-class-name\/} \code{symbol)}
   \returns{} \var{integer\/}} 
 \fnalternate{next-class-instance-number}%
-  {\code{(}\var{unit-class\/} \code{standard-unit-class)}
+  {\code{(}\var{unit-instance\/} \code{standard-unit-instance)}
   \returns{} \var{integer\/}}
 
 \fnpackage \code{:gbbopen}
@@ -9397,8 +9397,8 @@ associated with the \glref{unit~class}.
 
 \fnargs
 \begin{args}{unit-class-or-name}
-\arg[unit-class-or-name] A \glref{unit~class} or a symbol naming a
-\glref{unit~class}
+\arg[unit-class-name-or-instance] A \glref{unit~instance} or a symbol naming a
+\glref{unit~class} 
 \arg[integer] An integer
 \end{args}
 

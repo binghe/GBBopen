@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/units.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jun  4 07:04:24 2008 *-*
+;;;; *-* Last-Edit: Wed Jun  4 10:04:27 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -59,8 +59,6 @@
             find-effective-slot-definition-by-name ; not documented (yet...)
             find-unit-class             ; not documented (at least yet...)
             gbbopen-effective-slot-definition
-            initial-class-instance-number
-            next-class-instance-number
             reset-unit-class)))
 
 ;;; ---------------------------------------------------------------------------
@@ -860,23 +858,6 @@
     
 ;;; ---------------------------------------------------------------------------
 
-(defmethod initial-class-instance-number ((unit-class standard-unit-class))
-  0)
-
-(defmethod initial-class-instance-number ((unit-class-name symbol))
-  (initial-class-instance-number (find-unit-class unit-class-name)))
-
-;;; ---------------------------------------------------------------------------
-
-(defmethod next-class-instance-number ((unit-class standard-unit-class))
-  ;; The *master-instance-lock* is held whenever this is called:
-  (incf (standard-unit-class.instance-name-counter unit-class)))
-
-(defmethod next-class-instance-number ((unit-class-name symbol))
-  (next-class-instance-number (find-unit-class unit-class-name)))
-
-;;; ---------------------------------------------------------------------------
-
 (defmethod class-instances-summary ((unit-class-name symbol))
   (if (eq unit-class-name 't)
       (class-instances-summary '(standard-unit-instance :plus-subclasses))
@@ -917,12 +898,13 @@
   ;;; Resets the instance count of a unit-class-name-or-class and creates a new
   ;;; instance hash table, but only if the class is non-abstract
   ;;; and has no existing instances
-  (unless (standard-unit-class.abstract unit-class)
+  (when (and (class-finalized-p unit-class)
+             (not (standard-unit-class.abstract unit-class)))
     (let ((count (class-instances-count unit-class)))
       (cond
        ((zerop count)
         (setf (standard-unit-class.instance-name-counter unit-class)
-              (initial-class-instance-number unit-class))
+              (initial-class-instance-number (class-prototype unit-class)))
         (setf (standard-unit-class.instance-hash-table unit-class)
               (make-hash-table
                :test (standard-unit-class.instance-name-comparison-test 
