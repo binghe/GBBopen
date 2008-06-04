@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jun  4 07:02:41 2008 *-*
+;;;; *-* Last-Edit: Wed Jun  4 13:47:44 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -60,14 +60,16 @@
             find-instance-by-name
             find-all-instances-by-name
             find-instances-of-class
+            initial-class-instance-number
             instance-dimension-value
             instance-dimension-values
             instance-deleted-p
             instance-name               ; re-export
 	    instance-name-of
-            make-duplicate-instance     ; not yet documented
+            make-duplicate-instance
             map-instances-of-class
             map-sorted-instances-of-class
+            next-class-instance-number
 	    space-instances-of
             unduplicated-slot-names     ; re-export
             with-changing-dimension-values)))
@@ -109,6 +111,25 @@
 #+cmu-possible-optimization
 (declaim (pcl::slots (slot-boundp standard-unit-instance)
                      (inline standard-unit-instance)))
+
+;;; ---------------------------------------------------------------------------
+
+(defmethod initial-class-instance-number ((instance standard-unit-instance))
+  0)
+
+(defmethod initial-class-instance-number ((unit-class-name symbol))
+  (initial-class-instance-number 
+   (class-prototype (find-unit-class unit-class-name))))
+
+;;; ---------------------------------------------------------------------------
+
+(defmethod next-class-instance-number ((instance standard-unit-instance))
+  ;; The *master-instance-lock* is held whenever this is called:
+  (incf (standard-unit-class.instance-name-counter (class-of instance))))
+
+(defmethod next-class-instance-number ((unit-class-name symbol))
+  (next-class-instance-number 
+   (class-prototype (find-unit-class unit-class-name))))
 
 ;;; ===========================================================================
 ;;;  Making Duplicate Unit Instances
@@ -582,15 +603,26 @@
   (let* ((slotd (find-effective-slot-definition-by-name
                  unit-class 'instance-name))
          (instance-name 
-          (if (slot-boundp-using-class unit-class instance slotd)
-              (slot-value-using-class unit-class instance slotd)
-              (setf (slot-value-using-class 
-                     unit-class instance 
-                     #-lispworks
-                     slotd
-                     #+lispworks
-                     (slot-definition-name slotd))
-                    (next-class-instance-number unit-class)))))
+          (cond 
+           ;; We already have an instance-name:
+           ((slot-boundp-using-class unit-class instance slotd)
+            (slot-value-using-class unit-class instance slotd))
+           (t
+            ;; Initialize counter, if needed:
+            (when (eq (standard-unit-class.instance-name-counter unit-class)
+                      unbound-value-indicator)
+              (setf (standard-unit-class.instance-name-counter unit-class)
+                    (initial-class-instance-number
+                     (class-prototype unit-class))))
+            ;; Increment and use the counter value:
+            (setf (slot-value-using-class 
+                   unit-class instance 
+                   #-lispworks
+                   slotd
+                   #+lispworks
+                   (slot-definition-name slotd))
+                  ;; initialize the instance-name counter, if needed:
+                  (next-class-instance-number instance))))))
     (add-instance-to-instance-hash-table unit-class instance instance-name)))
 
 ;;; ---------------------------------------------------------------------------
@@ -639,15 +671,7 @@
 		(type-of existing-instance)
 		(instance-name-of existing-instance))
 	(delete-instance existing-instance))
-      (setf (gethash instance-name instance-hash-table) instance)
-      ;; If instance-name is an integer larger than the current counter for
-      ;; the class, set the counter just in case the user is mixing setting
-      ;; and defaulting models:
-      (when (and (integerp instance-name)
-                 (> instance-name 
-                    (standard-unit-class.instance-name-counter unit-class)))
-        (setf (standard-unit-class.instance-name-counter unit-class)
-              instance-name)))))
+      (setf (gethash instance-name instance-hash-table) instance))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -1036,7 +1060,7 @@
            (if (slot-boundp instance 'instance-name)
                (instance-name-of instance)
                (setf (instance-name-of instance)
-                     (next-class-instance-number new-class)))))
+                     (next-class-instance-number instance)))))
       (add-instance-to-instance-hash-table 
        new-class instance instance-name))
     ;; Add instance to appropriate space instances:

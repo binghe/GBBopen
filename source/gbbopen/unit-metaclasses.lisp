@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/unit-metaclasses.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Jun  2 11:00:58 2008 *-*
+;;;; *-* Last-Edit: Wed Jun  4 12:01:21 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -72,7 +72,7 @@
 (define-class standard-unit-class (standard-class)
   ((abstract :initform nil :type boolean)
    (instance-hash-table)
-   (instance-name-counter)
+   (instance-name-counter :initform unbound-value-indicator)
    (instance-name-comparison-test :initform 'eql)
    (initial-space-instances 
     :type (or function list)
@@ -173,6 +173,9 @@
 
 (defmethod shared-initialize :around ((class standard-unit-class) slot-names
                                       &rest initargs &key)
+  ;; Note: instance-name counter initialization is done in
+  ;; maybe-initialize-instance-name-slot to avoid issues in class-finalization
+  ;; timing
   (let ((class
          (apply #'call-next-method class slot-names
                 (loop for (indicator value) on initargs by #'cddr
@@ -182,12 +185,6 @@
                         ((:abstract :instance-name-comparison-test :retain)
                          (list indicator (sole-element value)))
                         (otherwise (list indicator value)))))))
-    ;; initialize the instance-counter, if needed:
-    (when (and (or (eq slot-names 't)
-                   (memq 'instance-name-counter slot-names))
-               (not (slot-boundp class 'instance-name-counter)))
-      (setf (standard-unit-class.instance-name-counter class)
-            (initial-class-instance-number class)))
     ;; create/copy appropriate type of instance-hash-table:
     (cond 
      ;; must create a new instance-hash-table:

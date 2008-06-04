@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/events.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun May 25 18:30:17 2008 *-*
+;;;; *-* Last-Edit: Wed Jun  4 13:25:10 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -32,9 +32,6 @@
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 (in-package :gbbopen)
-
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (import '(gbbopen-tools::class-finalized-p)))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(add-event-function

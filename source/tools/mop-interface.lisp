@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/mop-interface.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Apr 24 09:47:08 2008 *-*
+;;;; *-* Last-Edit: Wed Jun  4 13:27:09 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -55,6 +55,7 @@
 	clos:class-direct-slots
 	clos:class-direct-subclasses
 	clos:class-direct-superclasses
+        clos:class-finalized-p
 	clos:class-precedence-list
 	clos:class-prototype
 	clos:class-slots

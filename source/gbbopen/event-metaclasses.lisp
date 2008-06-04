@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/event-metaclasses.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun May 25 18:29:20 2008 *-*
+;;;; *-* Last-Edit: Wed Jun  4 13:24:23 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -26,8 +26,7 @@
 (in-package :gbbopen)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (import '(gbbopen-tools::class-finalized-p
-            gbbopen-tools::clear-flag
+  (import '(gbbopen-tools::clear-flag
             gbbopen-tools::set-flag)))
 
 ;;; ===========================================================================
