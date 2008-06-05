@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jun  4 13:47:44 2008 *-*
+;;;; *-* Last-Edit: Thu Jun  5 12:17:00 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -202,10 +202,10 @@
       (prin1 (instance-name-of (car slot-value)) stream)
       ;; print any remaining space-instance paths:
       (dolist (space-instance (cdr slot-value))
-        (princ " ")
+        ;; (princ " " stream) <-- we don't require a <space> character here
         (prin1 (instance-name-of space-instance) stream))
       (princ ")" stream))
-     ;; Otherwise, check for delete instance; otherwise, simply print nil
+     ;; Otherwise, simply print nil:
      (t (prin1 slot-value stream)))))
 
 ;;; ---------------------------------------------------------------------------
