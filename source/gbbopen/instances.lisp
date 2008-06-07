@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Jun  5 12:17:00 2008 *-*
+;;;; *-* Last-Edit: Sat Jun  7 11:44:25 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -197,14 +197,14 @@
     (cond 
      ;; We have some space-instances:
      ((consp slot-value)
-      (princ "(" stream)
+      (write-char #\( stream)
       ;; print the first space-instance path:
       (prin1 (instance-name-of (car slot-value)) stream)
       ;; print any remaining space-instance paths:
       (dolist (space-instance (cdr slot-value))
-        ;; (princ " " stream) <-- we don't require a <space> character here
+        ;; (write-char #\space stream) <-- we don't require a <space> character here
         (prin1 (instance-name-of space-instance) stream))
-      (princ ")" stream))
+      (write-char #\) stream))
      ;; Otherwise, simply print nil:
      (t (prin1 slot-value stream)))))
 

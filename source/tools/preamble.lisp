@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/preamble.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Apr 27 14:04:17 2008 *-*
+;;;; *-* Last-Edit: Sat Jun  7 11:41:41 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -60,22 +60,12 @@
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(add-package-nickname        ; not documented
-            delete-instance             ; needed for :queue module (see below)
             hyperdoc-filename           ; not yet documented
 	    hyperdoc-url		; not yet documented
-            insert-on-queue             ; needed for :queue module (see below)
             object-address
 	    printv
 	    with-gensyms
 	    with-once-only-bindings)))	; not yet documented
-
-;;; ---------------------------------------------------------------------------
-;;; To allow the :queue module to be used with or without :gbbopen-core, we
-;;; have to export the symbols delete-instance and insert-on-queue (above)
-;;; from :gbbopen-tools.  We define the delete-instance generic function here
-;;; as well:
-
-(defgeneric delete-instance (instance))
 
 ;;; ===========================================================================
 ;;;  Ensure package (find-package with error check)
