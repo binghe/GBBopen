@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/print-object-for.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Mar 25 04:58:28 2008 *-*
-;;;; *-* Machine: cyclone.local *-*
+;;;; *-* Last-Edit: Thu Jun  5 12:59:24 2008 *-*
+;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -146,7 +146,7 @@
       (dolist (slot slots-for-saving/sending)
         (let ((slot-name (slot-definition-name slot)))
           (format stream " ~s" slot-name)))
-      (princ ")" stream)))
+      (write-char #\) stream)))
   class)
 
 ;;; ===========================================================================
@@ -202,20 +202,22 @@
    ((and (eq (first cons) 'quote)
          (null (cddr cons))
          (not (null (cdr cons))))
-    (princ "'" stream)
+    (write-char #\' stream)
     (print-object-for-saving/sending (second cons) stream))
    ;; Regular list printing:
    (t (let ((ptr cons))
-        (princ "(" stream)
+        (write-char #\( stream)
         (print-object-for-saving/sending (car ptr) stream)
         (loop
           (when (atom (setf ptr (cdr ptr))) (return))
-          (princ " " stream)
+          (write-char #\space stream)
           (print-object-for-saving/sending (car ptr) stream))
         (unless (null ptr)
-          (princ " . " stream)
+          (write-char #\space stream)
+          (write-char #\. stream)
+          (write-char #\space stream)
           (print-object-for-saving/sending ptr stream))
-        (princ ")" stream))))
+        (write-char #\) stream))))
   cons)
 
 ;;; ---------------------------------------------------------------------------
@@ -231,9 +233,9 @@
   (format stream "#(")
   (dotimes (i (length vector))
     (declare (fixnum i))
-    (unless (zerop i) (princ " " stream))
+    (unless (zerop i) (write-char #\space stream))
     (print-object-for-saving/sending (aref vector i) stream))
-  (princ ")" stream)
+  (write-char #\) stream)
   vector)
 
 ;;; ---------------------------------------------------------------------------
@@ -257,15 +259,15 @@
              (print-object-for-saving/sending
               (row-major-aref array (the fixnum (incf index))) stream))
             (t (let ((dimension (first dimensions)))
-                 (princ "(" stream)
+                 (write-char #\( stream)
                  (dotimes (i dimension)
                    (declare (fixnum i))
-                   (unless (zerop i) (princ " " stream))
+                   (unless (zerop i) (write-char #\space stream))
                    (helper (rest dimensions)))
-                 (princ ")" stream))))))
+                 (write-char #\) stream))))))
       (format stream "#~sA" (array-rank array))
       (helper dimensions)
-      (princ " " stream)))
+      (write-char #\space stream)))
   array)
 
 ;;; ---------------------------------------------------------------------------
@@ -283,7 +285,7 @@
         (format stream " :~a " slot-name)
         (print-object-for-saving/sending
          (slot-value structure slot-name) stream)))
-    (princ ")" stream))
+    (write-char #\) stream))
   structure)
 
 ;;; ---------------------------------------------------------------------------
@@ -310,13 +312,13 @@
          (slots-for-saving/sending instance stream)))
     (format stream "~&#GI(~s" (type-of instance))
     (dolist (slot slots-for-saving/sending)
-      (princ " " stream)
+      (write-char #\space stream)      
       (if (slot-boundp-using-class (class-of instance) instance slot)
           (print-slot-for-saving/sending 
            instance (slot-definition-name slot) stream)
           ;; Unbound value indicator:
           (format stream "#GU")))
-    (princ ")" stream))
+    (write-char #\) stream))
   instance)
 
 ;;; ---------------------------------------------------------------------------
@@ -338,17 +340,17 @@
     (maphash 
      (if keys-and-values-hash-table? 
          #'(lambda (key value)
-             (format stream " ")
+             (write-char #\space stream)
              (print-object-for-saving/sending key stream)
-             (format stream " ")
+             (write-char #\space stream)
              (print-object-for-saving/sending value stream))
          #+has-keys-only-hash-tables
          #'(lambda (key value)
              (declare (ignore value))
-             (format stream " ")
+             (write-char #\space stream)
              (print-object-for-saving/sending key stream)))
      hash-table)
-    (princ ")" stream)
+    (write-char #\) stream)
     hash-table))
 
 ;;; ---------------------------------------------------------------------------

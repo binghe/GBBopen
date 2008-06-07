@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/queue.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Mar 13 00:39:57 2008 *-*
-;;;; *-* Machine: vagabond.cs.umass.edu *-*
+;;;; *-* Last-Edit: Sat Jun  7 11:42:46 2008 *-*
+;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -25,7 +25,7 @@
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
-;;;  03-07-04 File Created.  (Corkill)
+;;;  03-07-04 File created.  (Corkill)
 ;;;  03-15-04 Added unordered queue.  (Corkill)
 ;;;  03-21-04 Added on-queue-p.  (Corkill)
 ;;;  08-20-06 Added do-queue syntactic sugar.  (Corkill)
@@ -42,7 +42,7 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(do-queue
             first-queue-element
-            insert-on-queue             ; already exported by tools/preamble
+            insert-on-queue
             last-queue-element
             ordered-queue
             make-queue
