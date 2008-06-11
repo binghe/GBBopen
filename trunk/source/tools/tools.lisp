@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Jun  1 17:35:06 2008 *-*
+;;;; *-* Last-Edit: Wed Jun 11 04:58:49 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -1111,18 +1111,18 @@
 
 (defun find-and-remove-method (generic-function method-qualifiers
                                specialized-lambda-list)
-  (flet ((make-qualifier (name)
+  (flet ((make-specializer (name)
            (if (and (consp name) (eq (first name) 'eql))
                (intern-eql-specializer (eval (second name)))
                (find-class name))))           
     #-gcl
-    (declare (dynamic-extent #'make-qualifier))
+    (declare (dynamic-extent #'make-specializer))
     (let* ((specializer-names
             (extract-specializer-names specialized-lambda-list))
            (method-object
             (find-method generic-function 
                          (ensure-list method-qualifiers)
-                         (mapcar #'make-qualifier specializer-names)
+                         (mapcar #'make-specializer specializer-names)
                          ;; don't signal errors
                          nil)))
       (if method-object
