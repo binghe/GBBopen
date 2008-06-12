@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/read-object.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon May 19 04:27:44 2008 *-*
+;;;; *-* Last-Edit: Mon Jun  9 05:28:33 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -166,11 +166,12 @@
                   slot-name class-name))
           (push slot supplied-slots)
           (setf class-slots (delq slot class-slots))))
-      ;; Save the incoming class-slots and the missing slot-names for this
+      ;; Save the incoming class, class-slots, and the missing slot-names for this
       ;; class:
       (setf (gethash class-name *read-class-descriptions-ht*)
-            (list (nreverse supplied-slots)
-                  (mapcar #'slot-definition-name class-slots)))))
+            (list* (find-class class-name 't)
+                   (nreverse supplied-slots)
+                   (mapcar #'slot-definition-name class-slots)))))
   ;; The next form should always be the object that triggered the class
   ;; definition, so we read it here (to "hide" the class-definition and return
   ;; the object in its place):
@@ -247,15 +248,14 @@
       (read stream 't nil 't)
     (declare (dynamic-extent slot-values))    
     (setf class-name (possibly-translate-class-name class-name))
-    (destructuring-bind (incoming-slots missing-slot-names)
+    (destructuring-bind (unit-class incoming-slots . missing-slot-names)
         (or (gethash class-name *read-class-descriptions-ht*)
             (error "No class description has been read for class ~s"
                    class-name))
-      (let* ((unit-class (find-class class-name 't))
-             (instance (allocate-saved/sent-instance 
-                        (class-prototype unit-class)
-                        incoming-slots
-                        slot-values)))
+      (let ((instance (allocate-saved/sent-instance 
+                       (class-prototype unit-class)
+                       incoming-slots
+                       slot-values)))
         (initialize-saved/sent-instance 
          instance incoming-slots slot-values missing-slot-names)
         instance))))
