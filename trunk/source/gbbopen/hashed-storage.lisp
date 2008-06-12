@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/hashed-storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Apr 14 10:02:59 2008 *-*
+;;;; *-* Last-Edit: Thu Jun 12 09:43:00 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -22,6 +22,7 @@
 ;;;  04-23-06 Split out from storage.lisp.  (Corkill)
 ;;;  06-11-07 Converted hashed-storage accessors from :prefix to modern
 ;;;           "-of" format.  (Corkill)
+;;;  06-12-08 Add :size option.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -113,8 +114,9 @@
 
 (defmethod shared-initialize :after ((storage hashed-storage)
                                      slot-names
+                                     &key (size nil size-specified-p)
                                      ;; test is deprecated in 0.9.9:
-                                     &key (test 'eql test-specified-p))
+                                          (test 'eql test-specified-p))
   (declare (ignore slot-names))
   (let ((determined-test (determine-hash-table-test storage)))
     (unless determined-test
@@ -125,8 +127,11 @@
     (when test-specified-p 
       (setf determined-test (most-general-hash-table-test 
                              test determined-test)))
-    (setf (bound-instances-of storage) 
-          (make-hash-table :test determined-test))))
+    (setf (bound-instances-of storage)
+          (if size-specified-p
+              (make-hash-table :size size
+                               :test determined-test)
+              (make-hash-table :test determined-test)))))
   
 ;;; ---------------------------------------------------------------------------
 

@@ -10,10 +10,13 @@ Important changes since GBBopen 1.0:
     - MAKE-DUPLICATED-INSTANCE
     - UNDUPLICATED-SLOT-NAMES
 
-  * New class options in define-unit-class, define-space-class, 
-    define-ks-class, and define-ksa-class
-    - :estimated-instances
-    - :use-global-instance-name-counter
+  * New class options in DEFINE-UNIT-CLASS, DEFINE-SPACE-CLASS, 
+    DEFINE-KS-CLASS, and DEFINE-KSA-CLASS
+    - :ESTIMATED-INSTANCES
+    - :USE-GLOBAL-INSTANCE-NAME-COUNTER
+
+  * New :SIZE option for a hashed-storage specification to
+    MAKE-SPACE-INSTANCE
 
 
 Important changes in GBBopen 1.0:
