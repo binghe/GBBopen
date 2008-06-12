@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Jun  7 11:44:25 2008 *-*
+;;;; *-* Last-Edit: Thu Jun 12 01:34:21 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -347,8 +347,7 @@
 #-(or full-safety disable-compiler-macros)
 (define-compiler-macro check-for-deleted-instance (instance operation)
   (with-once-only-bindings (instance operation)
-    `(when (eq (standard-unit-instance.%%space-instances%% ,instance) 
-               ':deleted)
+    `(when (instance-deleted-p ,instance) 
        (operation-on-deleted-instance ,operation ,instance))))
 
 ;;; ---------------------------------------------------------------------------
@@ -607,6 +606,16 @@
            ;; We already have an instance-name:
            ((slot-boundp-using-class unit-class instance slotd)
             (slot-value-using-class unit-class instance slotd))
+           ;; Using global instance-name counter?
+           ((standard-unit-class.use-global-instance-name-counter unit-class)
+            (setf (slot-value-using-class 
+                   unit-class instance 
+                   #-lispworks
+                   slotd
+                   #+lispworks
+                   (slot-definition-name slotd))
+                  (incf *global-instance-name-counter*)))
+           ;; Otherwise, use normal per-unit-class counter:
            (t
             ;; Initialize counter, if needed:
             (when (eq (standard-unit-class.instance-name-counter unit-class)

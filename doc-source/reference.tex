@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Tue Jun 10 05:51:33 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Thu Jun 12 03:02:09 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -8085,6 +8085,7 @@ one \glref{unit~class} name.  This error is signaled on class finalization.
  & \code{(:dimensional-values} 
    \var{dimensional-value-specifier\/}\superstar\code{)} \vbar \\
  & \code{(:documentation} \var{string\/}\code{)} \vbar \\
+ & \code{(:estimated-instances} \var{integer\/}\code{)} \vbar \\
  & \code{(:export-class-name} \var{boolean\/}\code{)} \vbar \\
  & \code{(:export-accessors} \var{boolean\/}\code{)} \vbar \\
  & \code{(:generate-accessors} \var{direct-slots-specifier\/}\code{)} \vbar \\
@@ -8100,7 +8101,9 @@ one \glref{unit~class} name.  This error is signaled on class finalization.
  & \code{(:instance-name-comparison-test}
      \var{instance-name-comparison-test\/}\code{)} \vbar \\
  & \code{(:metaclass} \var{class-name\/}\code{)}  \vbar \\
- & \code{(:retain} \{\var{boolean\/} \vbar{} \code{:propagate}\}\code{)} \\
+ & \code{(:retain} \{\var{boolean\/} 
+             \vbar{} \code{:propagate}\}\code{)} \vbar \\
+ & \code{(:use-global-instance-name-counter} \var{boolean\/}\code{)} \\
 \end{tabular}
 \T\\
 \begin{tabular}{@{~}l@{~}l}
@@ -8797,7 +8800,15 @@ associated with the \glref{unit~class}.
 \begin{example}
 > (initial-class-instance-number 'ksa)
 0
-\end{example} 
+\end{example}
+
+\fnnote
+%
+\codeindexit{:use-global-instance-name-counter}
+%
+The initial instance-name value associated with a \glref{unit~class} is not
+used if the \code{:use-global-instance-name-counter} class option is true for
+the unit class.
 
 \end{functiondoc}
 
@@ -9193,7 +9204,11 @@ of whether the slots are local or shared:
 Specifying a \code{:instance-name} initialization argument
 causes that value to be used as the \glref{instance~name} of the newly created
 \glref{unit~instance} instead of the instance-name counter value associated
-with the \glref{unit~class}. 
+with the \glref{unit~class} (if
+the \code{:use-global-instance-name-counter} class option is \nil{} or was not
+specified for the unit class) or the global instance-name counter value (if
+the \code{:use-global-instance-name-counter} class option is true for the unit
+class).
 
 A \code{:space-instances} initialization argument must be provided when
 duplicating a \glref{space~instance}.
@@ -9328,12 +9343,20 @@ Use of an initialization argument that has not been declared as valid.
 \codeindexit{:space-instances}%
 \codeindexit{:initial-space-instances}%
 \codeindexit{:instance-name}%
-\fndescription Specifying a \code{:space-instances} initialization argument
+\codeindexit{:use-global-instance-name-counter}%
+%
+\fndescription 
+%
+Specifying a \code{:space-instances} initialization argument
 causes that value to be used instead of the \code{:initial-space-instances}
 specification associated with the \glref{unit~class}. Similarly, specifying a
 \code{:instance-name} initialization argument causes that value to be used as
 the \glref{instance~name} of the newly created \glref{unit~instance} instead
-of the instance-name counter value associated with the \glref{unit~class}.
+of the instance-name counter value associated with the \glref{unit~class} (if
+the \code{:use-global-instance-name-counter} class option is \nil{} or was not
+specified for the unit class) or the global instance-name counter value (if
+the \code{:use-global-instance-name-counter} class option is true for the unit
+class).
 
 \begin{alsos}{initial-class-instance-number}
 \also[define-event-class]
@@ -9435,6 +9458,14 @@ Change the class of \glref{unit~instance} \code{hyp} from
 #<rejected-hyp 1409 (896 388) .68>
 \end{example} 
 
+\fnnote
+%
+\codeindexit{:use-global-instance-name-counter}
+%
+The \textbf{next-class-instance-number} function is not called if the
+\code{:use-global-instance-name-counter} class option is true for the unit
+class.
+
 \end{functiondoc}
 
 %% ------------------------------------------------------------------------
@@ -9464,11 +9495,17 @@ Change the class of \glref{unit~instance} \code{hyp} from
 \arg[unit-class] A \glref{unit~class}
 \end{args}
 
-\fndescription The \glref{unit-class} instance-name counter of
-\var{unit-class\/} is reset to the value returned by calling
-\textbf{\entlink{initial-class-instance-number}} with \var{unit-class}, but
-only if the \glref{unit~class} is not abstract and if there are no existing
-instances of that class.  If instances do exist, a warning is issued.
+\codeindexit{:use-global-instance-name-counter}%
+%
+\fndescription
+%
+The \glref{unit-class} instance-name counter of \var{unit-class\/} is reset to
+the value returned by calling \textbf{\entlink{initial-class-instance-number}}
+with \var{unit-class}, but only if the \glref{unit~class} is not abstract, if
+the \code{:use-global-instance-name-counter} class option is \nil{} or was not
+specified for the unit class, and if there are no existing instances of that
+class.  If instances do exist and the global instance-name counter is not
+being used for the unit class, a warning is issued.
 
 \begin{alsos}{initial-class-instance-number}
 \also[delete-blackboard-repository]
@@ -12471,6 +12508,7 @@ one \glref{space~class} name.  This error is signaled on class finalization.
  & \code{(:dimensional-values} 
    \var{dimensional-value-specifier\/}\superstar\code{)} \vbar \\
  & \code{(:documentation} \var{string\/}\code{)} \vbar \\
+ & \code{(:estimated-instances} \var{integer\/}\code{)} \vbar \\
  & \code{(:export-class-name} \var{boolean\/}\code{)} \vbar \\
  & \code{(:export-accessors} \var{boolean\/}\code{)} \vbar \\
  & \code{(:generate-accessors} \var{direct-slots-specifier\/}\code{)} \vbar \\
@@ -12486,7 +12524,9 @@ one \glref{space~class} name.  This error is signaled on class finalization.
  & \code{(:instance-name-comparison-test}
      \var{instance-name-comparison-test\/}\code{)} \vbar \\
  & \code{(:metaclass} \var{class-name\/}\code{)}  \vbar \\
- & \code{(:retain} \{\var{boolean\/} \vbar{} \code{:propagate}\}\code{)} \\
+ & \code{(:retain} \{\var{boolean\/} 
+             \vbar{} \code{:propagate}\}\code{)} \vbar \\
+ & \code{(:use-global-instance-name-counter} \var{boolean\/}\code{)} \\
 \end{tabular}
 \T\\
 \begin{tabular}{@{~}l@{~}l}
@@ -17008,6 +17048,7 @@ one \glref{ks~class} name.  This error is signaled on class finalization.
  & \code{(:dimensional-values} 
    \var{dimensional-value-specifier\/}\superstar\code{)} \vbar \\
  & \code{(:documentation} \var{string\/}\code{)} \vbar \\
+ & \code{(:estimated-instances} \var{integer\/}\code{)} \vbar \\
  & \code{(:export-class-name} \var{boolean\/}\code{)} \vbar \\
  & \code{(:export-accessors} \var{boolean\/}\code{)} \vbar \\
  & \code{(:generate-accessors} \var{direct-slots-specifier\/}\code{)} \vbar \\
@@ -17023,7 +17064,9 @@ one \glref{ks~class} name.  This error is signaled on class finalization.
  & \code{(:instance-name-comparison-test}
      \var{instance-name-comparison-test\/}\code{)} \vbar \\
  & \code{(:metaclass} \var{class-name\/}\code{)}  \vbar \\
- & \code{(:retain} \{\var{boolean\/} \vbar{} \code{:propagate}\}\code{)} \\
+ & \code{(:retain} \{\var{boolean\/} 
+             \vbar{} \code{:propagate}\}\code{)} \vbar \\
+ & \code{(:use-global-instance-name-counter} \var{boolean\/}\code{)} \\
 \end{tabular}
 \T\\
 \begin{tabular}{@{~}l@{~}l}
@@ -17203,6 +17246,7 @@ one \glref{ksa~class} name.  This error is signaled on class finalization.
  & \code{(:dimensional-values} 
    \var{dimensional-value-specifier\/}\superstar\code{)} \vbar \\
  & \code{(:documentation} \var{string\/}\code{)} \vbar \\
+ & \code{(:estimated-instances} \var{integer\/}\code{)} \vbar \\
  & \code{(:export-class-name} \var{boolean\/}\code{)} \vbar \\
  & \code{(:export-accessors} \var{boolean\/}\code{)} \vbar \\
  & \code{(:generate-accessors} \var{direct-slots-specifier\/}\code{)} \vbar \\
@@ -17218,7 +17262,9 @@ one \glref{ksa~class} name.  This error is signaled on class finalization.
  & \code{(:instance-name-comparison-test}
      \var{instance-name-comparison-test\/}\code{)} \vbar \\
  & \code{(:metaclass} \var{class-name\/}\code{)}  \vbar \\
- & \code{(:retain} \{\var{boolean\/} \vbar{} \code{:propagate}\}\code{)} \\
+ & \code{(:retain} \{\var{boolean\/} 
+             \vbar{} \code{:propagate}\}\code{)} \vbar \\
+ & \code{(:use-global-instance-name-counter} \var{boolean\/}\code{)} \\
 \end{tabular}
 \T\\
 \begin{tabular}{@{~}l@{~}l}

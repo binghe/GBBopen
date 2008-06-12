@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/units.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jun  4 10:04:27 2008 *-*
+;;;; *-* Last-Edit: Thu Jun 12 01:34:11 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -899,16 +899,25 @@
   ;;; instance hash table, but only if the class is non-abstract
   ;;; and has no existing instances
   (when (and (class-finalized-p unit-class)
-             (not (standard-unit-class.abstract unit-class)))
+             (not (or (standard-unit-class.abstract unit-class)
+                      (standard-unit-class.use-global-instance-name-counter
+                       unit-class))))
     (let ((count (class-instances-count unit-class)))
       (cond
        ((zerop count)
         (setf (standard-unit-class.instance-name-counter unit-class)
               (initial-class-instance-number (class-prototype unit-class)))
-        (setf (standard-unit-class.instance-hash-table unit-class)
-              (make-hash-table
-               :test (standard-unit-class.instance-name-comparison-test 
-                      unit-class))))
+        (let ((estimated-instances
+               (standard-unit-class.estimated-instances unit-class)))
+          (setf (standard-unit-class.instance-hash-table unit-class)
+                (if estimated-instances
+                    (make-hash-table
+                     :size estimated-instances
+                     :test (standard-unit-class.instance-name-comparison-test 
+                            unit-class))
+                    (make-hash-table
+                     :test (standard-unit-class.instance-name-comparison-test 
+                            unit-class))))))
        (t (warn "Unit class ~s has ~s instance~:p; not reset"
                 (class-name unit-class)
                 count))))))

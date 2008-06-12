@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/basic-tests.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Jun  1 12:06:15 2008 *-*
+;;;; *-* Last-Edit: Thu Jun 12 01:35:27 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -88,7 +88,9 @@
 (define-unit-class uc-2 (uc-1 not-a-unit) 
   ((backlink-2 :link (uc-1 link-2 :singular nil)
 	       :singular nil)
-   (backlink-3 :link (uc-1 link-3))))
+   (backlink-3 :link (uc-1 link-3)))
+  (:estimated-instances 10)
+  (:use-global-instance-name-counter t))
 
 (define-unit-class uc-3 (uc-1) 
   ((link-1 :documentation "Added doc for link-1.")))

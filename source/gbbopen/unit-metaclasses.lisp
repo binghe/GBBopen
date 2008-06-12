@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/unit-metaclasses.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jun  4 12:01:21 2008 *-*
+;;;; *-* Last-Edit: Thu Jun 12 01:30:31 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -27,8 +27,9 @@
 ;;;           into it when instance-name-comparison-test function is changed.
 ;;;           (Corkill)
 ;;;  06-06-06 Rename conflicting instances resulting from a change to
-;;;           instance-name-comparison-test (rather than asking for one to
-;;;           be deleted), as suggested by Susan Lander. (Corkill)
+;;;           instance-name-comparison-test (rather than asking for one of 
+;;;           them to be deleted), as suggested by Susan Lander.  (Corkill)
+;;;  06-10-08 Global instance-name counter.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -61,6 +62,11 @@
               (otherwise hash-table-test))))
 
 ;;; ===========================================================================
+;;;   Global instance-name counter
+
+(defvar *global-instance-name-counter* 0)
+
+;;; ---------------------------------------------------------------------------
 ;;;   Global variable for standard-unit-instance internal (regular) slot names
 ;;;   (declared nil here, but added to in instances.lisp and spaces.lisp)
 
@@ -73,6 +79,8 @@
   ((abstract :initform nil :type boolean)
    (instance-hash-table)
    (instance-name-counter :initform unbound-value-indicator)
+   (estimated-instances :initform nil)
+   (use-global-instance-name-counter :initform nil :type boolean)
    (instance-name-comparison-test :initform 'eql)
    (initial-space-instances 
     :type (or function list)
@@ -182,7 +190,11 @@
                     nconc
                       (case indicator
                         ;; single-value class options:
-                        ((:abstract :instance-name-comparison-test :retain)
+                        ((:abstract 
+                          :estimated-instances
+                          :instance-name-comparison-test
+                          :retain
+                          :use-global-instance-name-counter)
                          (list indicator (sole-element value)))
                         (otherwise (list indicator value)))))))
     ;; create/copy appropriate type of instance-hash-table:
@@ -190,27 +202,37 @@
      ;; must create a new instance-hash-table:
      ((or (eq slot-names 't)
           (memq 'instance-name-comparison-test slot-names))
-      (setf (standard-unit-class.instance-hash-table class)
-            (make-hash-table 
-             :test (standard-unit-class.instance-name-comparison-test
-                    class))))
+      (let ((estimated-instances
+             (standard-unit-class.estimated-instances class)))
+        (setf (standard-unit-class.instance-hash-table class)
+              (if estimated-instances
+                  (make-hash-table 
+                   :size estimated-instances
+                   :test (standard-unit-class.instance-name-comparison-test
+                          class))
+                  (make-hash-table 
+                   :test (standard-unit-class.instance-name-comparison-test
+                          class))))))
      ;; must copy instances into a new instance-hash-table (due to a change in
      ;; instance-name-comparison-test):
      ((not (eq (standard-unit-class.instance-name-comparison-test class)
                (cannonical-hash-table-test
                 (standard-unit-class.instance-hash-table class))))
-      (let ((hash-table-count
-             (hash-table-count
-              (standard-unit-class.instance-hash-table class))))
-        (unless (zerop hash-table-count)
-          (format t "~&;; Converting instance-name comparison test of ~s ~
-                          to ~s (do not interrupt)...~%"
-                  (class-name class)
-                  (standard-unit-class.instance-name-comparison-test class)))
-        (with-lock-held (*master-instance-lock*)
+      (with-lock-held (*master-instance-lock*)
+        (let ((hash-table-count
+               (hash-table-count
+                (standard-unit-class.instance-hash-table class))))
+          (unless (zerop hash-table-count)
+            (format t "~&;; Converting instance-name comparison test of ~s ~
+                            to ~s (do not interrupt)...~%"
+                    (class-name class)
+                    (standard-unit-class.instance-name-comparison-test class)))
           (let ((old-ht (standard-unit-class.instance-hash-table class))
                 (new-ht 
                  (make-hash-table 
+                  :size (or
+                         (standard-unit-class.estimated-instances class)
+                         hash-table-count)
                   :test (standard-unit-class.instance-name-comparison-test
                          class))))
             (setf (standard-unit-class.instance-hash-table class) new-ht)
@@ -218,10 +240,10 @@
              #'(lambda (instance-name instance)
                  (reinsert-instance-into-hash-table
                   instance-name instance new-ht))
-             old-ht)))
-        (unless (zerop hash-table-count)
-          (format t "~&;; Conversion of instance-name comparison test ~
-                          completed.~%")))))
+             old-ht))
+          (unless (zerop hash-table-count)
+            (format t "~&;; Conversion of instance-name comparison test ~
+                            completed.~%"))))))
     ;; Return the class:
     class))
 
@@ -521,7 +543,11 @@
 (defmethod validate-class-option ((metaclass standard-unit-class) option)
   #+ecl (declare (ignore metaclass))
   (or (memq (car option) 
-            '(:abstract :instance-name-comparison-test :retain))
+            '(:abstract 
+              :estimated-instances
+              :instance-name-comparison-test
+              :retain 
+              :use-global-instance-name-counter))
       (call-next-method)))
 
 ;;; ===========================================================================
