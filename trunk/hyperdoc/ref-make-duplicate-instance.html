@@ -101,7 +101,11 @@ are initialized according to their <code>:initform</code> forms.
 <p>Specifying a <code>:instance-name</code> initialization argument
 causes that value to be used as the <a href="ref-glossary.html#id93">instance&nbsp;name</a> of the newly created
 <a href="ref-glossary.html#id217">unit&nbsp;instance</a> instead of the instance-name counter value associated
-with the <a href="ref-glossary.html#id215">unit&nbsp;class</a>. 
+with the <a href="ref-glossary.html#id215">unit&nbsp;class</a> (if
+the <code>:use-global-instance-name-counter</code> class option is <code>nil</code> or was not
+specified for the unit class) or the global instance-name counter value (if
+the <code>:use-global-instance-name-counter</code> class option is true for the unit
+class).
 </p>
 <p>A <code>:space-instances</code> initialization argument must be provided when
 duplicating a <a href="ref-glossary.html#id193">space&nbsp;instance</a>.
