@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/basic-tests.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Jun 12 01:35:27 2008 *-*
+;;;; *-* Last-Edit: Thu Jun 12 09:40:55 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -996,7 +996,7 @@
   
   (find-tests '((uc-1 x unstructured)))
   (find-tests '((uc-1 amphibious boolean)))
-  (find-tests '((uc-1 classification hashed)))
+  (find-tests '((uc-1 classification hashed :size 20)))
   (find-tests '((uc-1 x uniform-buckets :layout (0 10 3))))
   (find-tests '(((uc-1 :plus-subclasses) x uniform-buckets :layout (0 10 3))))
   (find-tests '(((uc-1 uc-2) x uniform-buckets :layout (0 10 3))))
