@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Thu Jun 12 10:56:58 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Sat Jun 14 12:24:01 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -1224,7 +1224,7 @@ for
 %
 \xsitelink{Allegro CL}{http://www.franz.com},
 \xsitelink{CLISP}{http://clisp.cons.org/},
-\xsitelink{Clozure CL}{http://trac.clozure.com/openmcl/},
+\xsitelink{Clozure CL}{http://clozure.com/clozurecl.html},
 \xsitelink{CMUCL}{http://www.cons.org/cmucl/},
 \xsitelink{ECL}{http://common-lisp.net/project/ecl/},
 \xsitelink{LispWorks}{http://www.lispworks.com},
@@ -1529,8 +1529,8 @@ included in the preferred browser setting.
 \arg[command-name-spec] A \var{command-name\/} or a list
   \mbox{\code{(}\var{command-name} \var{option\/}\superstar\code{)}}
 \arg[lambda-list] A lambda-list
-\arg[declaration] A declare expression
-\arg[documentation] A string
+\arg[declaration] A declare expression (not evaluated)
+\arg[documentation] A documentation string (not evaluated)
 \arg[form] A \glref{form}
 \end{args}
 
@@ -2874,6 +2874,7 @@ and \textbf{\entlink{with-saving/sending-block}}.
 
 \begin{alsos}{:full-safety}
 \also[:full-safety]
+\also[defcm]
 \end{alsos}
 
 \fnexample
@@ -2910,6 +2911,7 @@ disabling other compile-time optimizations with the feature
 \textbf{\entlink{:disable-compiler-macros}}.
 
 \begin{alsos}{:disable-compiler-macros}
+\also[defcm]
 \also[:disable-compiler-macros]
 \end{alsos}
 
@@ -3335,6 +3337,81 @@ structure of \var{list\/} in constructing the \var{result-list}.
 
 %% ------------------------------------------------------------------------
 
+\begin{functiondoc}{Macro}{defcm}{\var{name lambda-list\/} 
+    \mbox{[[\var{declaration\/}\superstar{} \vbar{} \var{documentation\/}]]}
+    \var{form\/}\superstar
+    \returns{} \var{name\/}}
+\index{compiler macro!defining}%
+\index{defining!a compiler macro}%
+
+\fnsyntax
+
+\fnpurpose Define a read-time conditional compiler macro.
+
+\fnpackage \code{:gbbopen-tools}
+
+\fnmodule \code{:gbbopen-tools}
+
+\fnargs
+\begin{args}{documentation}
+\arg[name] A non-\nil, \glref{non-keyword~symbol} that names a function or macro
+\arg[lambda-list] A lambda-list
+\arg[declaration] A declare expression (not evaluated)
+\arg[documentation] A documentation string (not evaluated)
+\arg[form] A \glref{form}
+\end{args}
+
+\fnreturns The supplied \var{name}.
+
+\fndescription 
+%
+\textbf{Defcm} is a read-time conditional version of Common Lisp's
+\code{define-compiler-macro}.  As with \code{define-compiler-macro}:
+%
+\begin{tightitemize}
+\item The expander function is installed as a compiler macro function for
+  \var{name}.
+\item The \code{\&whole} argument is bound to the form argument that is passed
+  to \textbf{defcm}. The remaining \var{lambda-list\/} parameters are
+  specified as if this form contained the function name in the car and the
+  actual arguments in the cdr.  However, if the car of the actual form is the
+  symbol \code{funcall}, then the destructuring of the arguments is actually
+  performed using its cddr instead.
+\item Documentation is attached as a documentation string to name (as kind
+  \code{compiler-macro}) and to the compiler macro function.
+\item A compiler macro can decline to provide an expansion merely by returning
+  the original form (which can be obtained by using \code{\&whole}).
+\end{tightitemize}
+%
+A compiler macro is not defined if the feature
+\textbf{\entlink{:disable-compiler-macros}} or the feature
+\textbf{\entlink{:full-safety}} is present when the expander function is
+executed on a form.
+
+\begin{alsos}{:disable-compiler-macros}
+\also[:disable-compiler-macros]
+\also[:full-safety]
+\end{alsos}
+
+\fnexample
+%
+\bfindexit{ensure-list}%
+\bfindexit{with-once-only-bindings}%
+%
+Here is the compiler macro defined for \textbf{\entlink{ensure-list}}:
+%
+\W\supp
+\begin{example}
+> (defcm ensure-list (x)
+    (\entlink{with-once-only-bindings} (x)
+      `(if (listp ,x) ,x (list ,x))))
+ensure-list
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
 \begin{functiondoc}{Macro}{define-class}{\var{class-name\/} 
    \code{(}\{\var{superclass-name\/}\}\superstar\code{)}
    [\var{documentation\/}] \\
@@ -3359,7 +3436,7 @@ structure of \var{list\/} in constructing the \var{result-list}.
 \glref{class} 
 \arg[superclass-name] A non-\nil, \glref{non-keyword~symbol} that specifies a
 direct superclass of the \glref{class} \var{class-name\/}  
-\arg[documentation] A documentation string
+\arg[documentation] A documentation string (not evaluated)
 \arg[slot-specifiers] See below
 \arg[class-options] See below
 \arg[new-class] A new or modified \glref{class} object
@@ -4876,7 +4953,7 @@ but avoids allocating an intermediate substring.
 \arg[specialized-lambda-list] A specialized lambda list (as per
 \textbf{defmethod}) 
 \arg[declarations] A declare expression (not evaluated)
-\arg[documentation] A string (not evaluated)
+\arg[documentation] A documentation string (not evaluated)
 \arg[forms] Zero or more \glref{forms}
 \end{args}
 
@@ -4954,7 +5031,7 @@ as long as \var{test-form\/} evaluates to \nil.
 \fnargs
 \begin{args}{test-form}
 \arg[test-form] A \glref{form}
-\arg[declaration] A declare expression
+\arg[declaration] A declare expression (not evaluated)
 \arg[forms] An implicit \textbf{progn} of \glref{forms} to be evaluated
 \end{args}
 
@@ -4999,7 +5076,7 @@ until \var{test-form\/} evaluates to \nil.
 \fnargs
 \begin{args}{test-form}
 \arg[test-form] A \glref{form}
-\arg[declaration] A declare expression
+\arg[declaration] A declare expression (not evaluated)
 \arg[forms] An implicit \textbf{progn} of \glref{forms} to be evaluated
 \end{args}
 
@@ -5169,7 +5246,7 @@ settings.
 \fnargs
 \begin{args}{options}
 \arg[option] No options are currently supported
-\arg[declaration] A declare expression
+\arg[declaration] A declare expression (not evaluated)
 \arg[forms] An implicit \textbf{progn} of \glref{forms} to be evaluated
 \arg[results] The values returned by evaluating the last \var{form}
 \end{args}
@@ -5334,7 +5411,7 @@ strange-name-string
 \fnargs
 \begin{args}{error-forms}
 \arg[symbols] Zero or more symbols to be bound to gensyms
-\arg[declaration] A declare expression
+\arg[declaration] A declare expression (not evaluated)
 \arg[forms] An implicit \textbf{progn} of \glref{forms} to be evaluated
 \arg[results] The values returned by evaluating the last \var{form}
 \end{args}
@@ -5373,7 +5450,7 @@ value.
 \fnargs
 \begin{args}{error-forms}
 \arg[symbols] Zero or more symbols to be evaluated once only
-\arg[declaration] A declare expression
+\arg[declaration] A declare expression (not evaluated)
 \arg[forms] An implicit \textbf{progn} of \glref{forms} to be evaluated
 \arg[results] The values returned by evaluating the last \var{form}
 \end{args}
@@ -7553,7 +7630,7 @@ connection.
 \arg[var] A \glref{variable~symbol}
 \arg[host] A 32-bit internet address or a string specifying the remote host
 \arg[port] An integer or a string specifying the service port
-\arg[declaration] A declare expression
+\arg[declaration] A declare expression (not evaluated)
 \arg[forms] An implicit \textbf{progn} of \glref{forms} to be evaluated
 \end{args}
 
@@ -8016,7 +8093,7 @@ Return the count of all \glref{space~instance}:
 \glref{unit~class} 
 \arg[superclass-name] A non-\nil, \glref{non-keyword~symbol} that specifies a
 direct superclass of the \glref{unit~class} \var{unit-class-name\/}  
-\arg[documentation] A documentation string
+\arg[documentation] A documentation string (not evaluated)
 \arg[slot-specifiers] See below
 \arg[class-options] See below
 \arg[new-unit-class] A new or modified \glref{unit~class} object
@@ -9710,7 +9787,7 @@ should be added to the list of slots that are not duplicated by
 \arg[unit-instance] A \glref{unit~instance}
 \arg[dimension-name] A symbol specifying a \glref{dimension} of
   \var{unit-instance} 
-\arg[declaration] A declare expression
+\arg[declaration] A declare expression (not evaluated)
 \arg[forms] An implicit \textbf{progn} of \glref{forms} to be evaluated
 \arg[results] The values returned by evaluating the last \var{form}
 \end{args}
@@ -10399,7 +10476,7 @@ to be invoked when \code{create-instance-event} is signaled on a
 \glref{event~class} 
 \arg[superclass-name] A non-\nil, \glref{non-keyword~symbol} that specifies a
 direct superclass of the \glref{event~class} \var{event-class-name\/}  
-\arg[documentation] A documentation string
+\arg[documentation] A documentation string (not evaluated)
 \arg[slot-specifiers] See below
 \arg[class-options] See below
 \arg[new-event-class] A new or modified \glref{event~class} object. 
@@ -11214,7 +11291,7 @@ Suspend all event printing associated with \code{possible-hyp}
 \fnargs
 \begin{args}{options}
 \arg[option] No options are currently supported
-\arg[declaration] A declare expression
+\arg[declaration] A declare expression (not evaluated)
 \arg[forms] An implicit \textbf{progn} of \glref{forms} to be evaluated
 \arg[results] The values returned by evaluating the last \var{form}
 \end{args}
@@ -11266,7 +11343,7 @@ Create a \code{hyp} without signaling any events:
 \fnargs
 \begin{args}{options}
 \arg[option] No options are currently supported
-\arg[declaration] A declare expression
+\arg[declaration] A declare expression (not evaluated)
 \arg[forms] An implicit \textbf{progn} of \glref{forms} to be evaluated
 \arg[results] The values returned by evaluating the last \var{form}
 \end{args}
@@ -12439,7 +12516,7 @@ or
 \glref{space~class} 
 \arg[superclass-name] A non-\nil, \glref{non-keyword~symbol} that specifies a
 direct superclass of the \glref{space~class} \var{space-class-name\/}  
-\arg[documentation] A documentation string
+\arg[documentation] A documentation string (not evaluated)
 \arg[slot-specifiers] See below
 \arg[class-options] See below
 \arg[new-space-class] A new or modified \glref{space~class} object
@@ -13064,7 +13141,7 @@ Describe the storage structure of the \code{hyps} \glref{space~instance}:
 \arg[var] A \glref{variable~symbol}
 \arg[space-instance-regexp] A \glref{space-instance~path} regular expression
 specifying the \glref{space~instances} to be mapped over
-\arg[declaration] A declare expression
+\arg[declaration] A declare expression (not evaluated)
 \arg[tag] A \code{go} tag (not evaluated)
 \arg[form] A \glref{form}
 \end{args}
@@ -13807,7 +13884,7 @@ nil
 \arg[var] A \glref{variable~symbol}
 \arg[unit-classes-specifier] An \glref{extended~unit-classes~specification}
 (see below)
-\arg[declaration] A declare expression
+\arg[declaration] A declare expression (not evaluated)
 \arg[tag] A \code{go} tag (not evaluated)
 \arg[form] A \glref{form}
 \end{args}
@@ -13906,7 +13983,7 @@ optionally selected by a \glref{retrieval~pattern}.
   pattern-matching tests occur
 \arg[filter-after] A single-argument predicate to be
   applied after pattern-matching tests occur
-\arg[declaration] A declare expression
+\arg[declaration] A declare expression (not evaluated)
 \arg[tag] A \code{go} tag (not evaluated)
 \arg[form] A \glref{form}
 \end{args}
@@ -14017,7 +14094,7 @@ have a belief value of less than 0.5:
 \arg[predicate] A \glref{function} of two arguments that returns a
 \glref{generalized~boolean}
 \arg[key] A \glref{function} of one argument, or \nil{} (default is \nil)
-\arg[declaration] A declare expression
+\arg[declaration] A declare expression (not evaluated)
 \arg[tag] A \code{go} tag (not evaluated)
 \arg[form] A \glref{form}
 \end{args}
@@ -14865,7 +14942,7 @@ Record and optionally display retrieval statistics for
 \begin{args}{initialize}
 \arg[initialize] A \glref{generalized~boolean}(default is \code{t})
 \arg[report] A \glref{generalized~boolean}(default is \code{t})
-\arg[declaration] A declare expression
+\arg[declaration] A declare expression (not evaluated)
 \arg[forms] An implicit \textbf{progn} of \glref{forms} to be evaluated
 \arg[results] The values returned by evaluating the last \var{form}
 \end{args}
@@ -14924,7 +15001,7 @@ Disable the collecting of retrieval statistics while executing \var{forms}.
 
 \fnargs
 \begin{args}{forms}
-\arg[declaration] A declare expression
+\arg[declaration] A declare expression (not evaluated)
 \arg[forms] An implicit \textbf{progn} of \glref{forms} to be evaluated
 \arg[results] The values returned by evaluating the last \var{form}
 \end{args}
@@ -15816,7 +15893,7 @@ specified \var{queue\/}.
 \begin{args}{function}
 \arg[var] A \glref{variable~symbol}
 \arg[queue] A GBBopen \glref{queue}
-\arg[declaration] A declare expression
+\arg[declaration] A declare expression (not evaluated)
 \arg[tag] A \code{go} tag (not evaluated)
 \arg[form] A \glref{form}
 \end{args}
@@ -16979,7 +17056,7 @@ Define a \glref{KS} named \code{aggregate-hyps} that is triggered whenever a
 \glref{ks~class} 
 \arg[superclass-name] A non-\nil, \glref{non-keyword~symbol} that specifies a
 direct superclass of the \glref{ks~class} \var{ks-class-name\/}  
-\arg[documentation] A documentation string
+\arg[documentation] A documentation string (not evaluated)
 \arg[slot-specifiers] See below
 \arg[class-options] See below
 \arg[new-ks-class] A new or modified \glref{ks~class} object
@@ -17177,7 +17254,7 @@ Do the same, but with a mixin class:
 \glref{ksa~class} 
 \arg[superclass-name] A non-\nil, \glref{non-keyword~symbol} that specifies a
 direct superclass of the \glref{ksa~class} \var{ksa-class-name\/}  
-\arg[documentation] A documentation string
+\arg[documentation] A documentation string (not evaluated)
 \arg[slot-specifiers] See below
 \arg[class-options] See below
 \arg[new-ksa-class] A new or modified \glref{ksa~class} object

@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:AGENDA-SHELL; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/control-shells/agenda-shell.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon May 26 02:19:33 2008 *-*
+;;;; *-* Last-Edit: Thu Jun 12 20:49:50 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -27,15 +27,15 @@
 ;;;  01-24-05 Added continue-past-quiescence option [dangerous!].  (Corkill)
 ;;;  01-25-05 Added :quiescence stepping and stepping-type-specific
 ;;;           disabling command.  (Corkill)
-;;;  04-03-05 Added undefine-ks macro.  (Corkill)
+;;;  04-03-05 Added UNDEFINE-KS macro.  (Corkill)
 ;;;  04-25-05 Added control-shell output stream control.  (Corkill)
 ;;;  10-21-05 Added polling-function "hibernation" support for uniprocessing
 ;;;           CLs.  (Corkill)
 ;;;  12-20-05 Added control-shell pause.  (Corkill)
 ;;;  03-24-06 Added control-shell-cycle-event.  (Corkill)
 ;;;  10-05-06 Added ksa-class metaclass check.  (Corkill)
-;;;  11-13-06 Added abort-ks-execution.  (Corkill)
-;;;  08-27-07 Renamed control-shell-started-p to control-shell-running-p.
+;;;  11-13-06 Added ABORT-KS-EXECUTION.  (Corkill)
+;;;  08-27-07 Renamed CONTROL-SHELL-STARTED-P to CONTROL-SHELL-RUNNING-P.
 ;;;           (Corkill)
 ;;;  04-15-08 Add threading-started checks for CMUCL and LispWorks.  (Corkill)
 ;;;
@@ -160,8 +160,7 @@
 (defun kst.ks (kst)
   (car kst))
 
-#-(or full-safety disable-compiler-macros)
-(define-compiler-macro kst.ks (kst)
+(defcm kst.ks (kst)
   `(car (the cons ,kst)))
 
 ;;; ---------------------------------------------------------------------------
@@ -174,8 +173,7 @@
             (declare (cons kst))
             (flag-set-p (cdr kst) ,index))
           
-          #-(or full-safety disable-compiler-macros)
-          (define-compiler-macro ,flag (kst)
+          (defcm ,flag (kst)
             `(flag-set-p (cdr (the cons ,kst)) ,,index))
           
           (defun (setf ,flag) (nv kst)

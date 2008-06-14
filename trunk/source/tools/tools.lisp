@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jun 11 04:58:49 2008 *-*
+;;;; *-* Last-Edit: Thu Jun 12 21:00:16 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -28,37 +28,37 @@
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
 ;;;  07-04-02 File created.  (Corkill)
-;;;  03-10-04 Added pushnew/incf-acons.  (Corkill)
-;;;  03-21-04 Added remove-properties.  (Corkill)
-;;;  04-30-04 Added set-equal.  (Corkill)
-;;;  05-10-04 Added do-until.  (Corkill)
-;;;  05-24-04 Added macrolet-debug.  (Corkill)
-;;;  05-31-04 Improve counted-delete and set-equal.  (Corkill)
-;;;  06-06-04 Added ensure-list-of-lists.  (Corkill)
-;;;  07-08-04 Added xor.  (Corkill)
-;;;  07-15-04 Added read-char-immediately.  (Corkill)
-;;;  05-27-04 Added sets-overlap-p.  (Corkill)
-;;;  06-01-05 Added print-pretty-function-object.  (Corkill)
+;;;  03-10-04 Added PUSHNEW/INCF-ACONS.  (Corkill)
+;;;  03-21-04 Added REMOVE-PROPERTIES.  (Corkill)
+;;;  04-30-04 Added SET-EQUAL.  (Corkill)
+;;;  05-10-04 Added DO-UNTIL.  (Corkill)
+;;;  05-24-04 Added MACROLET-DEBUG.  (Corkill)
+;;;  05-31-04 Improve COUNTED-DELETE and SET-EQUAL.  (Corkill)
+;;;  06-06-04 Added ENSURE-LIST-OF-LISTS.  (Corkill)
+;;;  07-08-04 Added XOR.  (Corkill)
+;;;  07-15-04 Added READ-CHAR-IMMEDIATELY.  (Corkill)
+;;;  05-27-04 Added SETS-OVERLAP-P.  (Corkill)
+;;;  06-01-05 Added PRINT-PRETTY-FUNCTION-OBJECT.  (Corkill)
 ;;;  06-08-05 Added CLISP support.  (sds)
 ;;;  11-02-05 Added CormanLisp support.  (Corkill)
-;;;  11-30-05 Rewrote list-length=1 as list-length-1-p.  (Corkill)
+;;;  11-30-05 Rewrote LIST-LENGTH=1 as LIST-LENGTH-1-P.  (Corkill)
 ;;;  02-13-06 Added GCL support.  (Corkill)
-;;;  03-11-06 Depreciated assure-list.  (Corkill)
-;;;  03-12-06 Added list-length-2-p.  (Corkill)
-;;;  03-18-06 Added dosequence.  (Corkill)
-;;;  04-07-06 Added shuffle-list.  (Corkill)
+;;;  03-11-06 Depreciated ASSURE-LIST.  (Corkill)
+;;;  03-12-06 Added LIST-LENGTH-2-P.  (Corkill)
+;;;  03-18-06 Added DOSEQUENCE.  (Corkill)
+;;;  04-07-06 Added SHUFFLE-LIST.  (Corkill)
 ;;;  05-08-06 Added support for the Scieneer CL. (dtc)
-;;;  08-20-06 Added extract-declarations.  (Corkill)
+;;;  08-20-06 Added EXTRACT-DECLARATIONS.  (Corkill)
 ;;;  09-22-06 Added CormanLisp 3.0 support.  (Corkill)
-;;;  12-05-07 Added shrink-vector.  (Corkill)
-;;;  01-06-08 Added list-length>1.  (Corkill)
-;;;  01-09-08 Added list-length> and trimmed-substring.  (Corkill)
+;;;  12-05-07 Added SHRINK-VECTOR.  (Corkill)
+;;;  01-06-08 Added LIST-LENGTH>1.  (Corkill)
+;;;  01-09-08 Added LIST-LENGTH> and TRIMMED-SUBSTRING.  (Corkill)
 ;;;  02-29-08 Added handler-forms and error-condition lexical function to 
-;;;           with-error-handling.  (Corkill)
-;;;  02-09-08 Added nicer-y-or-n-p and nicer-yes-or-no-p.  (Corkill)
-;;;  05-01-08 Added decf/delete-acons.  (Corkill)
-;;;  05-25-08 Added mulitple-value-setf.  (Corkill)
-;;;  06-01-08 Added compiler-macroexpand-1 and compiler-macroexpand.  (Corkill)
+;;;           WITH-ERROR-HANDLING.  (Corkill)
+;;;  02-09-08 Added NICER-Y-OR-N-P and NICER-YES-OR-NO-P.  (Corkill)
+;;;  05-01-08 Added DECF/DELETE-ACONS.  (Corkill)
+;;;  05-25-08 Added MULITPLE-VALUE-SETF.  (Corkill)
+;;;  06-01-08 Added COMPILER-MACROEXPAND-1 and COMPILER-MACROEXPAND.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -269,8 +269,7 @@
     (declare (list list))
     (member item list :test #'eq))
   
-  #-(or full-safety disable-compiler-macros)
-  (define-compiler-macro memq (item list)
+  (defcm memq (item list)
     `(member ,item (the ,list ,list) :test #'eq)))
 
 ;;; ===========================================================================
@@ -281,8 +280,7 @@
   (defun delq (item list)
     (excl::list-delete-eq item list))
   
-  #-(or full-safety disable-compiler-macros)
-  (define-compiler-macro delq (item list)
+  (defcm delq (item list)
     `(excl::list-delete-eq ,item ,list)))
 
 #-(or allegro clozure cmu digitool-mcl lispworks sbcl scl)
@@ -291,8 +289,7 @@
     (declare (list list))
     (delete item list :test #'eq))
   
-  #-(or full-safety disable-compiler-macros)
-  (define-compiler-macro delq (item list)
+  (defcm delq (item list)
     `(delete ,item (the list ,list) :test #'eq)))
 
 ;;; ===========================================================================
@@ -455,8 +452,7 @@
     (finalize-inheritance class))
   class)
 
-#-(or full-safety disable-compiler-macros)
-(define-compiler-macro ensure-finalized-class (class)
+(defcm ensure-finalized-class (class)
   (with-once-only-bindings (class)
     `(progn
        (unless (class-finalized-p ,class)
@@ -470,8 +466,7 @@
   (intern (string string-symbol-or-character)  
 	  (load-time-value (find-package 'keyword))))
 
-#-(or full-safety disable-compiler-macros)
-(define-compiler-macro make-keyword (string-symbol-or-character)
+(defcm make-keyword (string-symbol-or-character)
   `(intern (string ,string-symbol-or-character) 
 	   (load-time-value (find-package 'keyword))))
 
@@ -481,8 +476,7 @@
 (defun ensure-list (x)
   (if (listp x) x (list x)))
 
-#-(or full-safety disable-compiler-macros)
-(define-compiler-macro ensure-list (x)
+(defcm ensure-list (x)
   (with-once-only-bindings (x)
     `(if (listp ,x) ,x (list ,x))))
 
@@ -493,8 +487,7 @@
   (let ((x (ensure-list x)))
     (if (listp (car x)) x (list x))))
 
-#-(or full-safety disable-compiler-macros)
-(define-compiler-macro ensure-list-of-lists (x)
+(defcm ensure-list-of-lists (x)
   (with-once-only-bindings (x)
     `(if (listp (car ,x)) ,x (list ,x))))
 
@@ -509,8 +502,7 @@
     (when (rest list)
       (sole-element-violation list))))
 
-#-(or full-safety disable-compiler-macros)
-(define-compiler-macro sole-element (list)
+(defcm sole-element (list)
   (with-once-only-bindings (list)
     `(prog1 (first ,list)
        (when (rest ,list)
@@ -550,8 +542,7 @@
   #+scl
   (common-lisp::shrink-vector vector length))
 
-#-(or full-safety disable-compiler-macros) 
-(define-compiler-macro shrink-vector (vector length)
+(defcm shrink-vector (vector length)
   #+allegro
   `(excl::.primcall 'sys::shrink-svector ,vector ,length)
   #+clisp
@@ -599,8 +590,7 @@
 (defun list-length-1-p (list)
   (and (consp list) (null (cdr list))))
 
-#-(or full-safety disable-compiler-macros)
-(define-compiler-macro list-length-1-p (list)
+(defcm list-length-1-p (list)
   (with-once-only-bindings (list)
     `(and (consp ,list) (null (cdr ,list)))))
 
@@ -612,8 +602,7 @@
 	 (and (consp rest)
 	      (null (cdr rest))))))
 
-#-(or full-safety disable-compiler-macros)
-(define-compiler-macro list-length-2-p (list)
+(defcm list-length-2-p (list)
   (with-once-only-bindings (list)
     `(and (consp ,list)
 	  (let ((rest (cdr, list)))
@@ -634,8 +623,7 @@
 (defun list-length>1 (list)
   (and (consp list) (consp (cdr list))))
 
-#-(or full-safety disable-compiler-macros)
-(define-compiler-macro list-length>1 (list)
+(defcm list-length>1 (list)
   (with-once-only-bindings (list)
     `(and (consp ,list) (consp (cdr ,list)))))
 

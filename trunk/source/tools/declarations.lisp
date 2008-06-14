@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/declarations.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat May 17 16:59:07 2008 *-*
+;;;; *-* Last-Edit: Fri Jun 13 10:09:13 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -21,8 +21,9 @@
 ;;;
 ;;;  07-18-02 File created.  (Corkill)
 ;;;  01-18-04 Added NYI error signalling.  (Corkill)
-;;;  06-22-04 Added (debug 0) to with-full-optimization.  (Corkill)
-;;;  01-26-08 Added make-keys-only-hash-table-if-supported.  (Corkill)
+;;;  06-22-04 Added (debug 0) to WITH-FULL-OPTIMIZATION.  (Corkill)
+;;;  01-26-08 Added MAKE-KEYS-ONLY-HASH-TABLE-IF-SUPPORTED.  (Corkill)
+;;;  06-12-08 Added DEFCM.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -31,6 +32,7 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(*generate-nyi-errors*	; not documented
 	    allow-redefinition
+            defcm
             make-keys-only-hash-table-if-supported ; not documented
 	    nyi                         ; not documented
 	    unbound-value-indicator
@@ -68,6 +70,17 @@
      ;; (It would be better to find a direct way to suppress these.)
      #+sbcl (declare (optimize (speed 1)))
      ,@body))
+
+;;; ---------------------------------------------------------------------------
+;;;  Defcm (also copied in portable-threads.lisp--duplicate any changes there)
+
+(defmacro defcm (&body body)
+  ;;; Shorthand conditional compiler-macro:
+  (unless (or (member (symbol-name '#:full-safety) *features*
+                      :test 'string=)
+              (member (symbol-name '#:disable-compiler-macros) *features*
+                      :test 'string=))
+    `(define-compiler-macro ,@body)))
 
 ;;; ---------------------------------------------------------------------------
 ;;;   NYI wrapper (for use with code that is not yet ready for prime time)

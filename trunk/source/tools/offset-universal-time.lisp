@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/offset-universal-time.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun May 25 18:12:23 2008 *-*
+;;;; *-* Last-Edit: Thu Jun 12 20:28:46 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2007, Dan Corkill <corkill@GBBopen.org> 
+;;; Copyright (C) 2007-2008, Dan Corkill <corkill@GBBopen.org> 
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; This file is self-contained and can be used stand alone.
@@ -85,8 +85,7 @@
 (defun ut2ot (&optional (universal-time (get-universal-time)))
   (- universal-time *ot-base*))
 
-#-(or full-safety disable-compiler-macros)
-(define-compiler-macro ut2ot (&optional (universal-time '(get-universal-time)))
+(defcm ut2ot (&optional (universal-time '(get-universal-time)))
   `(- ,universal-time *ot-base*))
 
 ;;; ---------------------------------------------------------------------------
@@ -94,8 +93,7 @@
 (defun ot2ut (offset-universal-time)
   (+ offset-universal-time *ot-base*))
 
-#-(or full-safety disable-compiler-macros)
-(define-compiler-macro ot2ut (offset-universal-time)
+(defcm ot2ut (offset-universal-time)
   `(+ ,offset-universal-time *ot-base*))
 
 ;;; ---------------------------------------------------------------------------

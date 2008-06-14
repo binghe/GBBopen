@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/events.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jun  4 13:25:10 2008 *-*
+;;;; *-* Last-Edit: Thu Jun 12 20:52:47 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -20,9 +20,9 @@
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
 ;;;  05-04-03 File created.  (Corkill)
-;;;  03-17-04 Added with-events-disabled/enabled.  (Corkill)
+;;;  03-17-04 Added wITH-EVENTS-DISABLED/ENABLED.  (Corkill)
 ;;;  06-22-04 Initial instance-event functions/signaling.  (Corkill)
-;;;  07-07-04 Added evfn-printv.  (Corkill)
+;;;  07-07-04 Added EVFN-PRINTV.  (Corkill)
 ;;;  07-15-04 Core space-instance-event functions/signaling.  (Corkill)
 ;;;  07-22-04 Support control-shell trigger removal.  (Corkill)
 ;;;  07-23-04 Event printing.  (Corkill)
@@ -95,8 +95,7 @@
 (defun evfn.function (evfn)
   (car evfn))
 
-#-(or full-safety disable-compiler-macros)
-(define-compiler-macro evfn.function (evfn)
+(defcm evfn.function (evfn)
   `(car (the cons ,evfn)))
 
 ;;; ---------------------------------------------------------------------------
@@ -105,8 +104,7 @@
 (defun evfn.priority (evfn)
   (-& (ldb (byte 8 0) (cdr evfn)) 127))
 
-#-(or full-safety disable-compiler-macros)
-(define-compiler-macro evfn.priority (evfn)
+(defcm evfn.priority (evfn)
   `(-& (ldb (byte 8 0) (cdr (the cons ,evfn))) 127))
 
 (defun (setf evfn.priority) (nv evfn)
@@ -123,8 +121,7 @@
             (declare (cons evfn))
             (flag-set-p (cdr evfn) ,index))
 
-          #-(or full-safety disable-compiler-macros)
-          (define-compiler-macro ,flag (evfn)
+          (defcm ,flag (evfn)
             `(flag-set-p (cdr (the cons ,evfn)) ,,index))
           
           (defun (setf ,flag) (nv evfn)
@@ -146,10 +143,10 @@
                   all-slots-p permanent priority)
   (check-type priority evfn-priority)
   (let ((flags (+& priority 127)))
-    (when propagate-event-classes (setq flags (set-flag flags 8)))
-    (when propagate-unit-classes (setq flags (set-flag flags 9)))
-    (when all-slots-p (setq flags (set-flag flags 10)))
-    (when permanent (setq flags (set-flag flags 11)))
+    (when propagate-event-classes (setf flags (set-flag flags 8)))
+    (when propagate-unit-classes (setf flags (set-flag flags 9)))
+    (when all-slots-p (setf flags (set-flag flags 10)))
+    (when permanent (setf flags (set-flag flags 11)))
     (cons function flags)))
 
 ;;; ===========================================================================
@@ -256,7 +253,7 @@
                 definition."
                (class-name event-class)
                super-event-metaclasses))
-      (setq event-metaclass-name (car super-event-metaclasses)))
+      (setf event-metaclass-name (car super-event-metaclasses)))
     ;; Check that `event-metaclass-name' is consistent with its supers:
     (unless (validate-event-metaclass event-metaclass-name
                                       super-event-metaclasses)    
@@ -298,7 +295,7 @@
   ;; () value for direct-superclass-names is (standard-event-instance):
   (when (and (null direct-superclass-names)
              (not (eq event-class-name 'standard-event-instance)))
-    (setq direct-superclass-names '(standard-event-instance)))
+    (setf direct-superclass-names '(standard-event-instance)))
   (multiple-value-bind (clos-direct-slots clos-class-options exports)
       (parse-define-class 
        event-class-name direct-slots 
@@ -514,7 +511,7 @@
     (when args
       ;; a unit-classes-spec was supplied:
       (unless (keywordp (first args))
-        (setq unit-classes-spec (pop args)))
+        (setf unit-classes-spec (pop args)))
       ;; keyword processing:
       (let ((key-slot-names unbound-value-indicator)
             (key-paths unbound-value-indicator))
@@ -525,12 +522,12 @@
           (case (first ptr)
             ((:slot-name :slot-names)
              (if (eq key-slot-names unbound-value-indicator)
-                 (setq key-slot-names (second ptr))
+                 (setf key-slot-names (second ptr))
                  (error "Multiple ~s or ~s keyword arguments were specified."
                         ':slot-name ':slot-names)))
             ((:path :paths)
              (if (eq key-paths unbound-value-indicator)
-                 (setq key-paths (second ptr))
+                 (setf key-paths (second ptr))
                  (error "Multiple ~s or ~s keyword arguments were specified."
                         ':path ':paths)))
             (otherwise
@@ -540,11 +537,11 @@
                           supplied-additional-args))
                    (t (error "Illegal keyword argument: ~s" (first ptr)))))))
         (unless (eq unbound-value-indicator key-slot-names)
-          (setq slot-names key-slot-names))
+          (setf slot-names key-slot-names))
         (unless (eq unbound-value-indicator key-paths)
-          (setq paths key-paths)))
-      (setq supplied-additional-args (nreverse supplied-additional-args)))
-    (setq additional-arg-values 
+          (setf paths key-paths)))
+      (setf supplied-additional-args (nreverse supplied-additional-args)))
+    (setf additional-arg-values 
       (mapcar #'(lambda (arg-spec)
                   (let ((supplied-value-pair
                          (find (first arg-spec) supplied-additional-args
@@ -1130,13 +1127,13 @@
 (defun show-evfn-describer-headers ()
   (when *%%event-class-name%%*
     (format t "~2&~s" *%%event-class-name%%*)
-    (setq *%%event-class-name%%* nil))
+    (setf *%%event-class-name%%* nil))
   (when *%%unit-class-name%%*
     (format t "~&~2t~s" *%%unit-class-name%%*)
-    (setq *%%unit-class-name%%* nil))
+    (setf *%%unit-class-name%%* nil))
   (when *%%slot-or-space-instance-name%%*
     (format t "~&~4t~s" *%%slot-or-space-instance-name%%*)
-    (setq *%%slot-or-space-instance-name%%* nil)))
+    (setf *%%slot-or-space-instance-name%%* nil)))
 
 ;;; ---------------------------------------------------------------------------
 

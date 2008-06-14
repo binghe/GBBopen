@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/polling-functions.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun May 25 18:11:57 2008 *-*
+;;;; *-* Last-Edit: Thu Jun 12 20:57:39 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -20,7 +20,7 @@
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
 ;;;  01-02-06 Split out from multiprocessing.lisp.  (Corkill)
-;;;  11-15-06 Added polling-sleep.  (Corkill)
+;;;  11-15-06 Added POLLING-SLEEP.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -92,8 +92,8 @@
             do (sleep poll-interval)
                (thread-yield)))))
 
-#-(or full-safety disable-compiler-macros threads-not-available)
-(define-compiler-macro polling-sleep (seconds &optional poll-interval)
+#-threads-not-available
+(defcm polling-sleep (seconds &optional poll-interval)
   (declare (ignore poll-interval))
   `(sleep ,seconds))
 

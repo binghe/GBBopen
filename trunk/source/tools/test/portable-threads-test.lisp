@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/test/portable-threads-test.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Apr 27 14:03:07 2008 *-*
+;;;; *-* Last-Edit: Sat Jun 14 09:59:27 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -19,7 +19,7 @@
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
-;;;  08-21-05 File Created.  (Corkill)
+;;;  08-21-05 File created.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -78,6 +78,23 @@
              ~&;; ~73,,,'*<*~>"
           control-string
           args))
+
+;;; ---------------------------------------------------------------------------
+
+(defun check-counter-value (counter expected)
+  (unless (= counter expected)
+    (log-error "Unexpected ~s value: ~s (~s expected)" 
+               'counter
+               counter
+               expected)))
+                                 
+;;; ---------------------------------------------------------------------------
+
+(defun check-cv-state (cv expected)
+  (unless (eq (state-of cv) expected)
+    (log-error "Unexpected CV state: ~s (~s expected)."
+               (state-of cv)
+               expected)))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -198,7 +215,7 @@
                'with-lock-held
                returned-values)))
     (forced-format
-     "~&;; Basic lock tests completed (~,2f seconds real time).~%"
+     "~&;; Completed basic lock tests (~,2f seconds real time).~%"
      (/ (float (- (get-internal-real-time) start-real-time))
         (float internal-time-units-per-second)))))
   
@@ -255,7 +272,7 @@
           (warn "~s throwable (sleep 0)s took ~s seconds" 
                 iterations run-time))))
     (forced-format 
-     "~&;; Basic thread tests completed  (~,2f seconds real time).~%"
+     "~&;; Completed basic thread tests (~,2f seconds real time).~%"
      (/ (float (- (get-internal-real-time) start-real-time))
         (float internal-time-units-per-second)))))
 
@@ -330,7 +347,7 @@
     (unless (= thread-count (length (all-threads)))
       (log-error "A spawn-and-die thread is still a member of (all-threads)"))
     (forced-format
-     "~&;; Thread timing tests completed (~,2f seconds real time).~%"
+     "~&;; Completed thread timing tests (~,2f seconds real time).~%"
      (/ (float (- (get-internal-real-time) start-real-time))
         (float internal-time-units-per-second)))))
 
@@ -354,7 +371,7 @@
       (log-error "With-timeout did not return the correct timeout-body values ~
                   (3 4): ~s"
                  values)))
-  (forced-format "~&;; With-timeout tests completed~%"))
+  (forced-format "~&;; Completed with-timeout tests~%"))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -378,89 +395,64 @@
      (kill-thread nil)
    warning
    "(kill-thread) did not generate a warning")
-  (forced-format "~&;; Basic nonthreaded thread tests completed~%"))
+  (forced-format "~&;; Completed basic nonthreaded thread tests~%"))
 
 ;;; ---------------------------------------------------------------------------
 
 #-threads-not-available
-(defun nonrecursive-lock-contention-tests ()
-  (forced-format "~&;; Performing nonrecursive lock contention tests...")
-  (let ((nonrecursive-lock (make-lock :name "Nonrecursive lock"))
-        (counter 0))
+(defun lock-contention-tests (lock lock-type-string)
+  (forced-format "~&;; Performing ~a lock contention tests..."
+                 lock-type-string)
+  (let ((counter 0))
     (spawn-thread
      "Lock contender"
      #'(lambda (lock)
          (with-lock-held (lock :whostate "Held by contender")
-           (unless (oddp (incf counter))
-             (log-error "Unexpected ~s value: ~s" 
-                        'counter
-                        counter))
+           (check-counter-value (incf counter) 1)
            (sleepy-time))
          (sleepy-time)
          (with-lock-held (lock :whostate "Held again by contender")
-           (unless (oddp (incf counter))
-             (log-error "Unexpected ~s value: ~s" 
-                        'counter
-                        counter))
+           (check-counter-value (incf counter) 3)
            (sleepy-time)))
-     nonrecursive-lock)
+     lock)
     ;; Let the lock contender thread get started:
     (sleepy-time)
-    (with-lock-held (nonrecursive-lock
-                     :whostate "Held by main thread")
-      (unless (evenp (incf counter))
-        (log-error "Unexpected ~s value: ~s" 
-                   'counter
-                   counter))
+    (with-lock-held (lock :whostate "Held by main thread")
+      (check-counter-value (incf counter) 2)
       (sleepy-time))
     (sleepy-time)
-    (with-lock-held (nonrecursive-lock
-                     :whostate "Held by main thread")
-      (unless (evenp (incf counter))
-        (log-error "Unexpected ~s value: ~s" 
-                   'counter
-                   counter))))
-  (forced-format "~&;; Nonrecursive lock contention tests completed~%"))
+    (with-lock-held (lock :whostate "Held by main thread")
+      (check-counter-value (incf counter) 4)))
+  (forced-format "~&;; Completed ~a lock contention tests~%"
+                 lock-type-string))
 
 ;;; ---------------------------------------------------------------------------
 
 #-threads-not-available
-(defun recursive-lock-contention-tests ()
-  (forced-format "~&;; Performing recursive lock contention tests...")
-  (let ((recursive-lock (make-recursive-lock :name "Recursive lock"))
-        (counter 0))
-    (spawn-thread
-     "Lock contender"
-     #'(lambda (lock)
-         (with-lock-held (lock :whostate "Held by contender")
-           (unless (oddp (incf counter))
-             (log-error "Unexpected ~s value: ~s" 
-                        'counter
-                        counter))
-           (sleepy-time))
-         (sleepy-time)
-         (with-lock-held (lock :whostate "Held again by contender")
-           (unless (oddp (incf counter))
-             (log-error "Unexpected ~s value: ~s" 
-                        'counter
-                        counter))
-           (sleepy-time)))
-     recursive-lock)
-    ;; Let the lock contender thread get started:
-    (sleepy-time)
-    (with-lock-held (recursive-lock :whostate "Held by main thread")
-      (unless (evenp (incf counter))
-        (log-error "Unexpected ~s value: ~s" 
-                   'counter
-                   counter))
-      (sleepy-time))
-    (sleepy-time)
-    (with-lock-held (recursive-lock :whostate "Held by main thread")
-      (unless (evenp (incf counter))
-        (log-error "Unexpected ~s value: ~s" 
-                   'counter
-                   counter))))
-  (forced-format "~&;; Recursive lock contention tests completed~%"))
+(defun without-lock-held-contention-tests (lock lock-type-string)
+  (forced-format "~&;; Performing ~a without-lock-held contention tests..."
+                 lock-type-string)
+  (let ((counter 0))
+    (with-lock-held (lock :whostate "Held by main thread")
+      (spawn-thread
+       "Lock contender"
+       #'(lambda (lock)
+           (with-lock-held (lock :whostate "Held by contender")
+             (check-counter-value (incf counter) 2)
+             (sleepy-time))
+           (sleepy-time)
+           (with-lock-held (lock :whostate "Held again by contender")
+             (check-counter-value (incf counter) 4)
+             (sleepy-time)))
+       lock)
+      ;; Let the lock contender thread get started:
+      (sleepy-time)
+      (check-counter-value (incf counter) 1)
+      (without-lock-held (lock :whostate "Released by main thread")
+          (sleepy-time))
+      (check-counter-value (incf counter) 3)))
+  (forced-format "~&;; Completed ~a without-lock-held contention tests~%"
+                 lock-type-string))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -500,7 +492,7 @@
           do (condition-variable-wait cv))
       (setf (state-of cv) nil))
     (forced-format "~&;;    Continuing on CV...~%"))
-  (forced-format "~&;; Condition-variable wait & signal tests completed~%")
+  (forced-format "~&;; Completed condition-variable wait & signal tests~%")
   ;;;
   ;;; Condition-variable wait test with broadcast:
   (forced-format 
@@ -530,7 +522,7 @@
           do (condition-variable-wait cv)))
     (forced-format "~&;;    Also continuing on broadcast CV...~%"))
   (forced-format 
-   "~&;; Condition-variable wait & broadcast tests completed~%")
+   "~&;; Completed condition-variable wait & broadcast tests~%")
   ;;;
   ;;; Non-timeout test of condition-variable-wait-with-timeout:
   (forced-format
@@ -565,7 +557,7 @@
       (condition-variable-wait-with-timeout cv *nearly-forever-seconds*))
     (forced-format "~&;;    Continuing on waiting-with-timout CV...~%"))
   (forced-format 
-   "~&;; Condition-variable wait-with-timeout (non-timeout) tests completed~%")
+   "~&;; Completed condition-variable wait-with-timeout (non-timeout) tests~%")
   ;;;
   ;;; Timeout test of condition-variable-wait-with-timeout:
   (forced-format 
@@ -578,7 +570,7 @@
                    'condition-variable-wait-with-timeout)))      
     (forced-format "~&;;    Continuing without CV...~%"))
   (forced-format
-   "~&;; Condition-variable wait-with-timeout (timeout) tests completed~%"))
+   "~&;; Completed condition-variable wait-with-timeout (timeout) tests~%"))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -620,7 +612,7 @@
                   (decf (state-of cv))
                   (funcall signal-fn cv))))
              (forced-format
-              "~&;;   Condition-variable wait & ~a timing test completed~
+              "~&;;   Completed condition-variable wait & ~a timing test~
                ~%;;      (~,2f seconds real time).~%"
               signal-fn-label
               (/ (float (- (get-internal-real-time) start-real-time))
@@ -629,7 +621,7 @@
     (test #'condition-variable-signal "signal")
     ;; Wait & broadcast timing:
     (test #'condition-variable-broadcast "broadcast"))
-  (forced-format "~&;; Condition-variable timing tests completed~%"))
+  (forced-format "~&;; Completed condition-variable timing tests~%"))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -654,7 +646,7 @@
     (with-lock-held (cv)
       (condition-variable-wait cv)
       (forced-format "~&;;   *X* = ~s~%" *x*)))
-  (forced-format "~&;; Run-in-Thread tests completed~%"))
+  (forced-format "~&;; Completed run-in-Thread tests~%"))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -682,10 +674,7 @@
                  (with-lock-held (cv)
                    (unless (eq (state-of cv) ':proceed)
                      (condition-variable-wait cv)
-                     (unless (eq (state-of cv) ':proceed)
-                       (log-error "Unexpected CV state: ~s (~s expected)."
-                                  (state-of cv)
-                                  ':proceed))))
+                     (check-cv-state cv ':proceed)))
                  (forced-format
                   "~&;;     Proceed signal received, signaling rehibernate.~%")
                  (with-lock-held (cv)
@@ -701,10 +690,7 @@
     (with-lock-held (cv)
       (unless (eq (state-of cv) ':ready-to-hibernate)
         (condition-variable-wait cv)
-        (unless (eq (state-of cv) ':ready-to-hibernate)
-          (log-error "Unexpected CV state: ~s (~s expected)."
-                     (state-of cv)
-                     ':ready-to-hibernate))))
+        (check-cv-state cv ':ready-to-hibernate)))
     (forced-format "~&;;   Hibernate ready signal received.~%")
     ;; Allow process to hibernate:
     (sleepy-time)
@@ -713,10 +699,7 @@
     (with-lock-held (cv)
       (unless (eq (state-of cv) ':awake)
         (condition-variable-wait cv)
-        (unless (eq (state-of cv) ':awake)
-          (log-error "Unexpected CV state: ~s (~s expected)."
-                     (state-of cv)
-                     ':awake))))
+        (check-cv-state cv ':awake)))
     (forced-format "~&;;   Awake signal received, signaling proceed.~%") 
     (with-lock-held (cv)
       (setf (state-of cv) ':proceed)
@@ -725,10 +708,7 @@
     (with-lock-held (cv)
       (unless (eq (state-of cv) ':ready-to-rehibernate)
         (condition-variable-wait cv)
-        (unless (eq (state-of cv) ':ready-to-rehibernate)
-          (log-error "Unexpected CV state: ~s (~s expected)."
-                     (state-of cv)
-                     ':ready-to-rehibernate))))
+        (check-cv-state cv ':ready-to-rehibernate)))
     (forced-format "~&;;   Rehibernate ready signal received.~%")
     ;; Allow process to hibernate:
     (sleepy-time)
@@ -741,16 +721,13 @@
     (with-lock-held (cv)
       (unless (eq (state-of cv) ':reawake)
         (condition-variable-wait cv)
-        (unless (eq (state-of cv) ':reawake)
-          (log-error "Unexpected CV state: ~s (~s expected)."
-                     (state-of cv)
-                     ':reawake)))))
+        (check-cv-state cv ':reawake))))
   (forced-format "~&;;   Trying with-timeout on a hibernating thread...~%")
   (let ((result (with-timeout (0.1 ':timed-out)
                   (hibernate-thread))))
     (unless (eq result ':timed-out)
       (log-error "Unexpected with-timeout value from a hibernating thread.")))
-  (forced-format "~&;; Hibernate/awaken thread tests completed~%"))
+  (forced-format "~&;; Completed hibernate/awaken thread tests~%"))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -801,7 +778,7 @@
     (with-lock-held (cv)
       (unless (eq (state-of cv) ':awake)
         (condition-variable-wait cv)))
-    (forced-format "~&;; Symbol-value-in-thread tests completed~%")))
+    (forced-format "~&;; Completed symbol-value-in-thread tests~%")))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -815,7 +792,7 @@
     (unless (= x 1)
       (log-error "Incorrect atomic-incf/decf result: ~s"
                  x)))
-  (forced-format "~&;; Atomic-incf/decf test completed.~%"))
+  (forced-format "~&;; Completed atomic-incf/decf test~%"))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -830,8 +807,19 @@
     (let ((all-threads (all-threads)))
       (with-timeout-tests)
       (basic-thread-tests)
-      (nonrecursive-lock-contention-tests)
-      (recursive-lock-contention-tests)
+      (lock-contention-tests
+       (make-lock :name "Nonrecursive lock") 
+       "nonrecursive")
+      (lock-contention-tests
+       (make-recursive-lock :name "Recursive lock") 
+       "recursive")
+      (without-lock-held-contention-tests
+       (make-lock :name "Nonrecursive lock") 
+       "nonrecursive-lock")
+      (let ((recursive-lock (make-recursive-lock :name "Recursive lock")))
+        (without-lock-held-contention-tests 
+         recursive-lock
+         "recursive-lock"))
       (condition-variables-tests)
       (hibernate/awaken-thread-tests)
       (symbol-value-in-thread-tests)
@@ -853,7 +841,7 @@
       (thread-timing-tests)
       (condition-variable-timing-tests))
     (forced-format
-     "~&;; Portable threads tests completed (~,2f seconds real time).~%"
+     "~&;; Completed portable threads tests (~,2f seconds real time).~%"
      (/ (float (- (get-internal-real-time) start-real-time))
         (float internal-time-units-per-second)))))
 
@@ -865,5 +853,3 @@
 ;;; ===========================================================================
 ;;;				  End of File
 ;;; ===========================================================================
-
-

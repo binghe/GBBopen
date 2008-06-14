@@ -22,6 +22,18 @@
 <p><span class="fndoclabel">Purpose</span> <br />Return a string that describes the current state of a 
 <a href="ref-glossary.html#gl:thread">thread</a>.
 </p>
+<p><span class="fndoclabel">Setf syntax</span><table class="tighttop" width="100%">
+<tr valign="top">
+<td valign="baseline" align="left">
+<nobr>(setf (thread-whostate</nobr>
+</td>
+<td valign="baseline">&nbsp; </td>
+<td valign="baseline" align="left" width="99%">
+<var>thread</var>) <var>whostate</var>)
+</td>
+</tr>
+</table>
+</p>
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:portable-threads</code>
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:portable-threads</code>
@@ -48,6 +60,11 @@ Common Lisp implementation.
 information when debugging, specific <var>whostate</var> values and their
 meanings vary among Common Lisp implementations and should not be used
 programmatically.
+</p>
+<p>Only <a target="_top" href="http://www.franz.com">Allegro CL</a>, <a target="_top" href="http://clozure.com/clozurecl.html">Clozure
+CL</a>, and Digitool's <a target="_top" href="http://www.digitool.com">Macintosh
+Common Lisp</a> support user-settable whostates;
+<b>(setf&nbsp;whostate)</b> is a no-op on other Common Lisp implementations.
 </p>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
