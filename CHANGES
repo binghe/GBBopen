@@ -1,19 +1,23 @@
 Important changes since GBBopen 1.0:
 
-  * New :gbbopen-tools functions
+  * New :gbbopen-tools functions and macros
      - DECF/DELETE-ACONS
+     - DEFCM
      - PARSE-DATE
 
+  * New :portable-threads macro
+     - WITHOUT-LOCK-HELD
+
   * New :gbbopen-core functions
-    - CHANGE-SPACE-INSTANCE
-    - INITIAL-CLASS-INSTANCE-NUMBER
-    - MAKE-DUPLICATED-INSTANCE
-    - UNDUPLICATED-SLOT-NAMES
+     - CHANGE-SPACE-INSTANCE
+     - INITIAL-CLASS-INSTANCE-NUMBER
+     - MAKE-DUPLICATED-INSTANCE
+     - UNDUPLICATED-SLOT-NAMES
 
   * New class options in DEFINE-UNIT-CLASS, DEFINE-SPACE-CLASS, 
     DEFINE-KS-CLASS, and DEFINE-KSA-CLASS
-    - :ESTIMATED-INSTANCES
-    - :USE-GLOBAL-INSTANCE-NAME-COUNTER
+     - :ESTIMATED-INSTANCES
+     - :USE-GLOBAL-INSTANCE-NAME-COUNTER
 
   * New :SIZE option for a hashed-storage specification to
     MAKE-SPACE-INSTANCE
@@ -36,14 +40,14 @@ Important changes in GBBopen 1.0:
      - DEFINE-TLL-COMMAND renamed to DEFINE-REPL-COMMAND (DEFINE-TLL-COMMAND
        is deprecated and will be removed in GBBopen 1.1)
      - New built-in extended-REPL commands:
-        :systems   Shows all system-names used in commands, directory 
-                   definitions, and module definitions
+        :systems  Shows all system-names used in commands, directory 
+                  definitions, and module definitions
         :commands [<system-name>] 
-                   Shows all extended-REPL commands; if system-name is
-                   specified, then only those commands are displayed
+                  Shows all extended-REPL commands; if system-name is
+                  specified, then only those commands are displayed
         :undefine-system <system-name>
-                   Removes all commands, directory definitions, and 
-                   module definitions associated with <system-name>
+                  Removes all commands, directory definitions, and 
+                  module definitions associated with <system-name>
 
   * Changes to Mini Module system:
      - Added Mini Module support for "Source" and "SOURCE" directory-name
@@ -115,25 +119,25 @@ Important changes in GBBopen 0.9.8:
 
   * INCOMPATIBLE CHANGE: New DELETE-BLACKBOARD-REPOSITORY function
     replaces typical uses of RESET-GBBOPEN:
-    - RESET-GBBOPEN now unconditionally deletes/resets all instances,
-      event functions, and event printing
+     - RESET-GBBOPEN now unconditionally deletes/resets all instances,
+       event functions, and event printing
 
   * New :RETAIN class option in DEFINE-UNIT-CLASS (and DEFINE-SPACE-CLASS,
     DEFINE-KS-CLASS, and DEFINE-KSA-CLASS), controls default
     DELETE-BLACKBOARD-REPOSITORY behavior on instances of that class:
-      nil  = don't retain 
-      true = retain (a value of :PROPAGATE indicates propagation of
-                     :PROPAGATE retention value (as default) to subclasses)
-    - The :RETAIN class option is overridden if DELETE-BLACKBOARD-REPOSITORY
-      is invoked with a true :ALL-CLASSES keyword value
+       nil  = don't retain 
+       true = retain (a value of :PROPAGATE indicates propagation of
+                      :PROPAGATE retention value (as default) to subclasses)
+     - The :RETAIN class option is overridden if DELETE-BLACKBOARD-REPOSITORY
+       is invoked with a true :ALL-CLASSES keyword value
 
   * POTENTIALLY INCOMPATIBLE CHANGE: Queue objects (headers, elements) are now
     unit instances, all queue-management entities have been moved from the
     :GBBOPEN-TOOLS package to the :GBBOPEN package; new Agenda Shell unit
     classes KSA-QUEUE and ORDERED-KSA-QUEUE
-    - Any subclasses of ORDERED-QUEUE, QUEUE, and QUEUE-ELEMENT that were
-      defined previously to be unit instances should no longer include
-      STANDARD-UNIT-INSTANCE in their direct superclasses
+     - Any subclasses of ORDERED-QUEUE, QUEUE, and QUEUE-ELEMENT that were
+       defined previously to be unit instances should no longer include
+       STANDARD-UNIT-INSTANCE in their direct superclasses
 
   * New :instance-name argument for START-CONTROL-SHELL and 
     RESUME-CONTROL-SHELL
@@ -152,25 +156,25 @@ Important changes in GBBopen 0.9.7:
     protocol
 
   * Version 1.2 of the Mini-Module System
-    - Support for module-relative directory specifications; implicit module
-      rooting
+     - Support for module-relative directory specifications; implicit module
+       rooting
 
   * Added LIST-LENGTH>1, LIST-LENGTH>, SHRINK-VECTOR, and TRIMMED-SUBSTRING to
     GBBopen-tools
  
   * Version 2.2 of the Portable Threads Interface
-    - Periodic functions
+     - Periodic functions
 
   * Version 2.1 of the Portable Threads Interface
-    - Scheduled functions, new THREAD-ALIVE-P and ENCODE-TIME-OF-DAY functions
+     - Scheduled functions, new THREAD-ALIVE-P and ENCODE-TIME-OF-DAY functions
 
   * Version 2.0 of the Portable Threads Interface
-    - Recursive and nonrecursive locks, with stronger enforcement of usage
-      violations (to reduce the potential for different behavior on different
-      CL implementations).
-    - Use of condition variables for thread waiting/notification
-    - Improved hibernation behavior
-    - New WITH-TIMEOUT function
+     - Recursive and nonrecursive locks, with stronger enforcement of usage
+       violations (to reduce the potential for different behavior on different
+       CL implementations).
+     - Use of condition variables for thread waiting/notification
+     - Improved hibernation behavior
+     - New WITH-TIMEOUT function
 
     The names of many Portable Threads functions were changed (for
     consistency with new capabilities and to make the portable-threads

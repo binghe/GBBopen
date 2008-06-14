@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/portable-threads-entities.tex *-*
-%% *-* Last-Edit: Mon Jun  2 10:03:13 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Sat Jun 14 10:32:39 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 \index{module!:portable-threads@\code{:portable-threads}}%
@@ -813,6 +813,8 @@ function is a no-op.
 \also[condition-variable-wait]
 \also[condition-variable-wait-with-timeout]
 \also[make-condition-variable]
+\also[with-lock-held]
+\also[without-lock-held]
 \end{alsos}
 
 \bfindexit{with-lock-held}%
@@ -860,6 +862,8 @@ function is a no-op.
 \also[condition-variable-wait]
 \also[condition-variable-wait-with-timeout]
 \also[make-condition-variable]
+\also[with-lock-held]
+\also[without-lock-held]
 \end{alsos}
 
 \bfindexit{with-lock-held}%
@@ -906,6 +910,8 @@ nothing.
 \also[condition-variable-signal]
 \also[condition-variable-wait-with-timeout]
 \also[make-condition-variable]
+\also[with-lock-held]
+\also[without-lock-held]
 \end{alsos}
 
 \bfindexit{with-lock-held}%
@@ -957,6 +963,8 @@ signaled by another \glref{thread}:
 \also[condition-variable-signal]
 \also[condition-variable-wait]
 \also[make-condition-variable]
+\also[with-lock-held]
+\also[without-lock-held]
 \end{alsos}
 
 \bfindexit{with-lock-held}%
@@ -1224,8 +1232,12 @@ half-second-timer
 \fnreturns
 The created \textbf{\entlink{condition-variable}}.
 
-\begin{alsos}{make-instance}
+\begin{alsos}{make-recursive-lock}
 \also[make-instance]
+\also[make-lock]
+\also[make-recursive-lock]
+\also[with-lock-held]
+\also[without-lock-held]
 \end{alsos}
 
 \fnexamples
@@ -1303,6 +1315,7 @@ created \glref{condition-variable} instance.  However, using
 \also[make-recursive-lock]
 \also[thread-holds-lock-p]
 \also[with-lock-held]
+\also[without-lock-held]
 \end{alsos}
 
 \fnexample
@@ -1347,6 +1360,7 @@ created \glref{condition-variable} instance.  However, using
 \also[make-lock]
 \also[thread-holds-lock-p]
 \also[with-lock-held]
+\also[without-lock-held]
 \end{alsos}
 
 \fnexample
@@ -2196,6 +2210,10 @@ does not support changing the thread name via \textbf{setf}.
 \fnpurpose Return a string that describes the current state of a 
 \glref{thread}.
 
+\fnsetf
+\fnsetfsyntax{thread-whostate}%
+  {\var{thread\/}}{\var{whostate\/}}
+
 \fnpackage \code{:portable-threads}
 
 \fnmodule \code{:portable-threads}
@@ -2227,6 +2245,11 @@ does not support changing the thread name via \textbf{setf}.
 information when debugging, specific \var{whostate\/} values and their
 meanings vary among Common Lisp implementations and should not be used
 programmatically.
+
+Only \xsitelink{Allegro CL}{http://www.franz.com}, \xsitelink{Clozure
+  CL}{http://clozure.com/clozurecl.html}, and Digitool's \xsitelink{Macintosh
+  Common Lisp}{http://www.digitool.com} support user-settable whostates;
+\textbf{(setf~whostate)} is a no-op on other Common Lisp implementations.
 
 \end{functiondoc}
 
@@ -2327,6 +2350,7 @@ t
 \also[make-lock]
 \also[make-recursive-lock]
 \also[with-lock-held]
+\also[without-lock-held]
 \end{alsos}
 
 \bfindexit{with-lock-held}%
@@ -2482,6 +2506,7 @@ simply proceeds as if it had acquired the lock.
 \also[make-recursive-lock]
 \also[thread-holds-lock-p]
 \also[thread-whostate]
+\also[without-lock-held]
 \end{alsos}
 
 \fnexamples
@@ -2581,6 +2606,71 @@ Again, but this time sleep for two seconds to cause a time out:
      ':did-not-time-out)
 :timed-out              \textrm{\textcolor{green}{; (after 2 seconds)}}
 \end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Macro}{without-lock-held}{\code{(}\var{lock\/} 
+    \code{\&key}
+    \var{whostate\/}\code{)}
+    \var{form\/}\superstar{} 
+    \returns{} \var{result\/}\superstar}
+\index{lock!releaseing temporarily}%
+\index{releasing!a lock, temporarily}%
+\index{recursive lock!releasing temporarily}%
+\index{releasing!a recursive lock, temporarily}%
+
+\fnsyntax
+
+\fnpurpose Temporarily release a \glref{lock} or a \glref{recursive~lock},
+execute forms and then reacquire the lock.
+
+\fnpackage \code{:portable-threads}
+
+\fnmodule \code{:portable-threads}
+
+\fnargs
+\begin{args}{whostate}
+\arg[lock] A \glref{lock}, a \glref{recursive~lock}, or a 
+\glref{condition~variable}
+\arg[whostate] A string (default \code{"Without Lock Held"})
+\arg[forms] An implicit \textbf{progn} of \glref{forms} to be evaluated
+\arg[results] The values returned by evaluating the last \var{form}
+\end{args}
+
+\fnreturns The values returned by evaluating the last \var{form}.
+
+\fnerrors A \glref{thread} attempts to release a \glref{lock} that it does not
+hold.
+  
+\begin{alsos}{thread-holds-lock-p}
+\also[make-condition-variable]
+\also[make-lock]
+\also[make-recursive-lock]
+\also[thread-holds-lock-p]
+\also[thread-whostate]
+\also[with-lock-held]
+\end{alsos}
+
+\fnexample 
+%
+\bfindexit{with-lock-held}%
+%
+Acquire and temporarily release a lock controlling access to several
+critical sections of code:
+%
+\W\supp
+\begin{example}
+  (\entlink{with-lock-held} (lock :whostate "Waiting for Critical Lock")
+    (critical-section-1)
+    (without-lock-held (lock :whostate "Doing non-critical stuff")
+      (non-critical-section))
+    (critical-section-2))
+\end{example}
+
+\fnnote The \var{whostate\/} value is ignored by
+\xsitelink{SBCL}{http://sbcl.sourceforge.net}.
 
 \end{functiondoc}
 

@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Jun 12 01:34:21 2008 *-*
+;;;; *-* Last-Edit: Thu Jun 12 20:56:02 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -20,24 +20,24 @@
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
 ;;;  09-18-02 File created.  (Corkill)
-;;;  01-21-04 Added instance-space-instances.  (Corkill)
-;;;  05-07-04 Added with-changing-dimension-values.  (Corkill)
+;;;  01-21-04 Added INSTANCE-SPACE-INSTANCES.  (Corkill)
+;;;  05-07-04 Added WITH-CHANGING-DIMENSION-VALUES.  (Corkill)
 ;;;  01-06-05 Support :space-instances initarg values when initializing
 ;;;           standard-unit-instances.  (Corkill)
 ;;;  11-22-05 Move deletion-event signaling into an :around method.  (Corkill)
 ;;;  05-08-06 Added support for the Scieneer CL. (dtc)
 ;;;  07-27-06 Move unit-class locking to the shared-initialize :around method.
 ;;;           (Corkill)
-;;;  08-20-06 Added do-instances-of-class & do-sorted-instances-of-class
+;;;  08-20-06 Added DO-INSTANCES-OF-CLASS & DO-SORTED-INSTANCES-OF-CLASS
 ;;;           syntactic sugar.  (Corkill)
-;;;  09-04-06 Added instance-name-of and space-instances-of in place of
-;;;           instance-name and instance-space-instances.  (Corkill)
+;;;  09-04-06 Added INSTANCE-NAME-OF and SPACE-INSTANCES-OF in place of
+;;;           INSTANCE-NAME and INSTANCE-SPACE-INSTANCES.  (Corkill)
 ;;;  09-06-06 Completed change-class support.  (Corkill)
-;;;  03-09-07 Added find-instances-of-class (please don't abuse!).  (Corkill)
-;;;  06-14-07 Removed instance-name and instance-space-instances.  (Corkill)
+;;;  03-09-07 Added FIND-INSTANCES-OF-CLASS (please don't abuse!).  (Corkill)
+;;;  06-14-07 Removed INSTANCE-NAME and INSTANCE-SPACE-INSTANCES.  (Corkill)
 ;;;  07-03-07 Reworked instance-marks and locking to use only a single
 ;;;           mark-based-retrieval mark.  (Corkill)
-;;;  04-04-08 Added find-all-instances-by-name (please don't abuse!). 
+;;;  04-04-08 Added FIND-ALL-INSTANCES-BY-NAME (please don't abuse!). 
 ;;;           (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -326,8 +326,7 @@
 (defun instance-deleted-p (instance)
   (eq (standard-unit-instance.%%space-instances%% instance) ':deleted))
 
-#-(or full-safety disable-compiler-macros)
-(define-compiler-macro instance-deleted-p (instance)
+(defcm instance-deleted-p (instance)
   `(eq (standard-unit-instance.%%space-instances%% ,instance) ':deleted))
 
 ;;; ---------------------------------------------------------------------------
@@ -344,8 +343,7 @@
   (when (instance-deleted-p instance)
     (operation-on-deleted-instance operation instance)))
 
-#-(or full-safety disable-compiler-macros)
-(define-compiler-macro check-for-deleted-instance (instance operation)
+(defcm check-for-deleted-instance (instance operation)
   (with-once-only-bindings (instance operation)
     `(when (instance-deleted-p ,instance) 
        (operation-on-deleted-instance ,operation ,instance))))
@@ -976,22 +974,19 @@
 (defun set-mbr-instance-mark (instance)
   (setf (standard-unit-instance.%%marks%% instance) 1))
 
-#-(or full-safety disable-compiler-macros)
-(define-compiler-macro set-mbr-instance-mark (instance)
+(defcm set-mbr-instance-mark (instance)
   `(setf (standard-unit-instance.%%marks%% ,instance) 1))
 
 (defun clear-mbr-instance-mark (instance)
   (setf (standard-unit-instance.%%marks%% instance) 0))
 
-#-(or full-safety disable-compiler-macros)
-(define-compiler-macro clear-mbr-instance-mark (instance)
+(defcm clear-mbr-instance-mark (instance)
   `(setf (standard-unit-instance.%%marks%% ,instance) 0))
 
 (defun mbr-instance-mark-set-p (instance)
   (=& (standard-unit-instance.%%marks%% instance) 1))
 
-#-(or full-safety disable-compiler-macros)
-(define-compiler-macro mbr-instance-mark-set-p (instance)
+(defcm mbr-instance-mark-set-p (instance)
   `(=& (standard-unit-instance.%%marks%% ,instance) 1))
 
 ;;; ===========================================================================

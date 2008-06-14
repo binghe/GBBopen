@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/utilities.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Jun  2 04:18:49 2008 *-*
+;;;; *-* Last-Edit: Thu Jun 12 20:44:02 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -20,13 +20,13 @@
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
 ;;;  09-18-03 File created.  (Corkill)
-;;;  05-21-04 Export interval-start, -end, and -values.  (Corkill)
-;;;  06-07-04 Added bounded-uniform-bucket-index and
-;;;           bounded-uniform-bucket-interval-indexes.  (Corkill)
-;;;  11-05-05 Added expand-interval and shift-interval.  (Corkill)
-;;;  06-13-07 Extend bounded-uniform-bucket-interval to handle unbound
+;;;  05-21-04 Export INTERVAL-START, -END, and -VALUES.  (Corkill)
+;;;  06-07-04 Added BOUNDED-UNIFORM-BUCKET-INDEX and
+;;;           BOUNDED-UNIFORM-BUCKET-INTERVAL-INDEXES.  (Corkill)
+;;;  11-05-05 Added EXPAND-INTERVAL and SHIFT-INTERVAL.  (Corkill)
+;;;  06-13-07 Extend BOUNDED-UNIFORM-BUCKET-INTERVAL to handle unbound
 ;;;           value indexing.  (Corkill)
-;;;  06-01-08 Added expand-point.  (Corkill)
+;;;  06-01-08 Added EXPAND-POINT.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -136,10 +136,8 @@
           (setf (elt (the (simple-array * (2)) array) 1) end)
           array))))))
 
-#-(or full-safety disable-compiler-macros)
-(define-compiler-macro make-interval (&whole whole
-                                             start end 
-                                      &optional (type-specifier ''cons))
+(defcm make-interval (&whole whole start end 
+                             &optional (type-specifier ''cons))
   ;; In-line when `type-specifier' is a compile-time constant:
   (if (and (consp type-specifier)
            (eq (first type-specifier) 'quote))
@@ -324,9 +322,8 @@
                  (+& point expand-amount)
                  type-specifier))
 
-#-(or full-safety disable-compiler-macros)
-(define-compiler-macro expand-point& (point expand-amount
-                                      &optional (type-specifier ''cons))
+(defcm expand-point& (point expand-amount
+                            &optional (type-specifier ''cons))
   (with-once-only-bindings (point expand-amount)
     `(make-interval (-& ,point ,expand-amount) 
                     (+& ,point ,expand-amount)
@@ -339,9 +336,8 @@
                  (+$& point expand-amount)
                  type-specifier))
 
-#-(or full-safety disable-compiler-macros)
-(define-compiler-macro expand-point$& (point expand-amount
-                                       &optional (type-specifier ''cons))
+(defcm expand-point$& (point expand-amount
+                             &optional (type-specifier ''cons))
   (with-once-only-bindings (point expand-amount)
     `(make-interval (-$& ,point ,expand-amount) 
                     (+$& ,point ,expand-amount)
@@ -354,9 +350,8 @@
                  (+$ point expand-amount)
                  type-specifier))
 
-#-(or full-safety disable-compiler-macros)
-(define-compiler-macro expand-point$ (point expand-amount
-                                      &optional (type-specifier ''cons))
+(defcm expand-point$ (point expand-amount
+                            &optional (type-specifier ''cons))
   (with-once-only-bindings (point expand-amount)
     `(make-interval (-$ ,point ,expand-amount)
                     (+$ ,point ,expand-amount)
@@ -369,9 +364,8 @@
                  (+$$ point expand-amount)
                  type-specifier))
 
-#-(or full-safety disable-compiler-macros)
-(define-compiler-macro expand-point$$ (point expand-amount 
-                                       &optional (type-specifier ''cons))
+(defcm expand-point$$ (point expand-amount 
+                             &optional (type-specifier ''cons))
   (with-once-only-bindings (point expand-amount)
     `(make-interval (-$$ ,point ,expand-amount) 
                     (+$$ ,point ,expand-amount)
@@ -384,9 +378,8 @@
                  (+$$$ point expand-amount)
                  type-specifier))
 
-#-(or full-safety disable-compiler-macros)
-(define-compiler-macro expand-point$$$ (point expand-amount 
-                                        &optional (type-specifier ''cons))
+(defcm expand-point$$$ (point expand-amount 
+                              &optional (type-specifier ''cons))
   (with-once-only-bindings (point expand-amount)
     `(make-interval (-$$$ ,point ,expand-amount) 
                     (+$$$ ,point ,expand-amount)

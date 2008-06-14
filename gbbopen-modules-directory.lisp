@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/gbbopen-modules-directory.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat May 10 04:09:38 2008 *-*
+;;;; *-* Last-Edit: Sat Jun 14 12:25:49 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -25,7 +25,7 @@
 ;;;  12-08-02 Split out from startup.lisp and initiate.lisp.  (Corkill)
 ;;;  06-20-06 Add "pseudo symbolic-link" support (for operating systems that
 ;;;           do not provide symbolic links).  (Corkill)
-;;;  03-29-08 Add process-gbbopen-modules-directory rescanning.  (Corkill)
+;;;  03-29-08 Add PROCESS-GBBOPEN-MODULES-DIRECTORY rescanning.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -47,7 +47,6 @@
 	(unless line
 	  (return-from read-target-directory-specification nil))
 	(locally (declare (simple-string line))
-	  (setf line (string-trim '(#\Space #\Tab #\Newline) line))
 	  (when (plusp (length line))
 	    (case (aref line 0)
 	      ;; Skip comment lines:

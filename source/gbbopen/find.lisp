@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/find.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Jun  1 11:35:02 2008 *-*
+;;;; *-* Last-Edit: Thu Jun 12 20:53:58 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -36,7 +36,7 @@
 ;;;  04-25-05 Fix interval instance, interval pattern operator.  (Corkill)
 ;;;  05-26-05 Add :all pattern support for find-instances and
 ;;;           map-instances-on-space-instances.  (Corkill)
-;;;  08-20-06 Added do-instances-on-space-instances syntactic sugar.  (Corkill)
+;;;  08-20-06 Added DO-INSTANCES-ON-SPACE-INSTANCES syntactic sugar.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -600,8 +600,7 @@
   (defun make-extent (start end)
     (cons start end)))
 
-#-(or full-safety no-compiler-macros)
-(define-compiler-macro make-extent (start end)
+(defcm make-extent (start end)
   `(cons ,start ,end))
 
 ;;; ---------------------------------------------------------------------------
@@ -618,8 +617,7 @@
   (defun extent-start (extent)
     (car (the cons extent))))
 
-#-(or full-safety no-compiler-macros)
-(define-compiler-macro extent-start (extent)
+(defcm extent-start (extent)
   `(car (the cons ,extent)))
 
 (defsetf extent-start #.(first (nth-value 3 (get-setf-expansion '(car x)))))
@@ -630,8 +628,7 @@
   (defun extent-end (extent)
     (cdr (the cons extent))))
 
-#-(or full-safety no-compiler-macros)
-(define-compiler-macro extent-end (extent)
+(defcm extent-end (extent)
   `(cdr (the cons ,extent)))
 
 (defsetf extent-end #.(first (nth-value 3 (get-setf-expansion '(cdr x)))))

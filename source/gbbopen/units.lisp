@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/units.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Jun 12 01:34:11 2008 *-*
+;;;; *-* Last-Edit: Thu Jun 12 20:45:34 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -25,19 +25,19 @@
 ;;;  07-18-02 File created.  (Corkill)
 ;;;  09-15-02 Moved extended class functions into ../tools/define-class.lisp.
 ;;;           (Corkill)
-;;;  01-21-04 Added class-instances-count.  (Corkill)
+;;;  01-21-04 Added CLASS-INSTANCES-COUNT.  (Corkill)
 ;;;  03-11-04 Added inheritance of initial-space-instances and
 ;;;           dimensional-values (no inheritance prevention yet).  (Corkill)
 ;;;  03-16-04 Changed dimension-value-type :label to :element.  (Corkill)
 ;;;  04-20-04 MOP imports separated into mop-interface.lisp.  (Corkill)
-;;;  05-27-04 Added unit-class-dimensions.  (Corkill)
-;;;  06-08-04 Added parse-unit-classes-specifier.  (Corkill)
+;;;  05-27-04 Added UNIT-CLASS-DIMENSIONS.  (Corkill)
+;;;  06-08-04 Added PARSE-UNIT-CLASSES-SPECIFIER.  (Corkill)
 ;;;  08-05-04 Removed hacks supporting CMUCL-18e non-compliances.  (Corkill)
 ;;;  08-16-04 Added check for accidentally quoted :singular values 
 ;;;           in link-slot options.  (Corkill)
 ;;;  09-01-04 Added check on finalization that a unit-class inherits from
 ;;;           standard-unit-instance.  (Corkill)
-;;;  09-27-04 Removed all-unit-class-names.  (Corkill)
+;;;  09-27-04 Removed ALL-UNIT-CLASS-NAMES.  (Corkill)
 ;;;  12-21-04 Remove instance-name-comparison-test GF mechanism.  (Corkill)
 ;;;  06-01-05 Support two-slot :interval dimensional-values.  (Corkill)
 ;;;  06-08-05 Added CLISP support. (sds)
@@ -805,8 +805,7 @@
         :key #'slot-definition-name
         :test #'eq))
 
-#-(or full-safety disable-compiler-macros)
-(define-compiler-macro find-effective-slot-definition-by-name (class slot-name)
+(defcm find-effective-slot-definition-by-name (class slot-name)
   (let ((class-var '#:class))
     `(let ((,class-var (the list (class-slots ,class))))
        (find ,slot-name ,class-var :key #'slot-definition-name :test #'eq))))

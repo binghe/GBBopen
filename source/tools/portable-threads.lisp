@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/portable-threads.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri May 30 03:49:33 2008 *-*
+;;;; *-* Last-Edit: Sat Jun 14 10:18:27 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -126,6 +126,21 @@
 (unless (fboundp 'mp::process-yield)
   (error "The latest CVS checkout of ECL is required."))
 
+;;; ---------------------------------------------------------------------------
+;;;  Defcm (conditional define-compiler-macro form)
+;;;  (Copied from GBBopen Tools declarations.lisp to allow stand-alone 
+;;;   portable threads)
+
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (unless (macro-function 'defcm)
+    (defmacro defcm (&body body)
+      ;;; Shorthand conditional compiler-macro:
+      (unless (or (member (symbol-name '#:full-safety) *features*
+                          :test 'string=)
+                  (member (symbol-name '#:disable-compiler-macros) *features*
+                          :test 'string=))
+        `(define-compiler-macro ,@body)))))
+
 ;;; ===========================================================================
 ;;; Import the CL-implementation's threading symbols, as needed:
 
@@ -143,7 +158,6 @@
      mp:atomic-pop
      mp:atomic-push
      mp::recursive-lock
-     mp::startup-idle-and-top-level-loops
      mp:with-timeout)
    #+(and cmu (not mp))
    '()
@@ -220,7 +234,7 @@
             spawn-periodic-function
             spawn-thread
             #+(and cmu mp)
-            startup-idle-and-top-level-loops
+            start-multiprocessing       ; easier to remember/type!
             symbol-value-in-thread
             threadp
             threads-not-available       ; not documented
@@ -234,10 +248,17 @@
             with-lock-held
             with-timeout
 	    with-timeout-not-available	; not documented
-	    )))
+            without-lock-held))
+  #+(and cmu mp)
+  (import '(start-multiprocessing) ':cl-user))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Warn if the idle process is not running on CMUCL
+
+#+(and cmu mp)
+(defun start-multiprocessing ()
+  ;; easier to remember and type than the following:
+  (mp::startup-idle-and-top-level-loops))
 
 #+(and cmu mp)
 (defun check-idle-process (&optional errorp)
@@ -246,7 +267,7 @@
              "You must start CMUCL's idle process by calling~
               ~%~3t(~s)~
               ~%for ~s and other thread operations to function properly."
-             'startup-idle-and-top-level-loops
+             'start-multiprocessing
              'with-timeout)))
 
 #+(and cmu mp)
@@ -350,6 +371,326 @@
 
 #+threads-not-available
 (defvar *non-threaded-polling-function-hook* nil)
+
+;;; ===========================================================================
+;;;   Current-Thread (returns :threads-not-available on CLs without threads)
+
+(defun current-thread ()
+  #+allegro
+  mp:*current-process*
+  #+clozure
+  ccl:*current-process*
+  #+(and cmu mp)
+  mp:*current-process*
+  #+(and ecl threads)
+  mp:*current-process*
+  #+digitool-mcl
+  ccl:*current-process*
+  #+lispworks
+  mp:*current-process*
+  #+(and sbcl sb-thread)
+  sb-thread:*current-thread*
+  #+scl
+  (mp:current-process)
+  #+threads-not-available
+  ':threads-not-available)
+
+(defcm current-thread ()
+  #+allegro
+  'mp:*current-process*
+  #+clozure
+  'ccl:*current-process*
+  #+(and cmu mp)
+  'mp:*current-process*
+  #+digitool-mcl
+  'ccl:*current-process*
+  #+(and ecl threads)
+  'mp:*current-process*
+  #+lispworks
+  'mp:*current-process*
+  #+(and sbcl sb-thread)
+  'sb-thread:*current-thread*
+  #+scl
+  '(mp:current-process)
+  #+threads-not-available
+  ':threads-not-available)
+ 
+;;; ===========================================================================
+;;;   All-Threads (returns nil on CLs without threads)
+
+(defun all-threads ()
+  #+allegro
+  mp:*all-processes*
+  #+clozure
+  (ccl:all-processes)
+  #+(and cmu mp)
+  (mp:all-processes)
+  #+digitool-mcl
+  ccl:*all-processes*
+  #+(and ecl threads)
+  (mp:all-processes)
+  #+lispworks
+  (mp:list-all-processes)
+  #+(and sbcl sb-thread)
+  sb-thread::*all-threads*
+  #+scl
+  (mp:all-processes)
+  #+threads-not-available
+  nil)
+  
+(defcm all-threads ()
+  #+allegro
+  'mp:*all-processes*
+  #+clozure
+  '(ccl:all-processes)
+  #+(and cmu mp)
+  '(mp:all-processes)
+  #+digitool-mcl
+  'ccl:*all-processes*
+  #+(and ecl threads)
+  '(mp:all-processes)
+  #+lispworks
+  '(mp:list-all-processes)
+  #+(and sbcl sb-thread)
+  'sb-thread::*all-threads*
+  #+scl
+  '(mp:all-processes)
+  #+threads-not-available
+  nil)
+
+;;; ---------------------------------------------------------------------------
+;;;   Threadp
+
+(defun threadp (obj)
+  #+allegro
+  (mp:process-p obj)
+  #+clozure
+  (ccl::processp obj)
+  #+(and cmu mp)
+  (mp:processp obj)
+  #+digitool-mcl
+  (ccl::processp obj)
+  #+(and ecl threads)
+  (typep obj 'mp:process)
+  #+lispworks
+  (mp:process-p obj)
+  #+(and sbcl sb-thread)
+  (sb-thread::thread-p obj)
+  #+scl
+  (mp:processp obj)
+  #+threads-not-available
+  (declare (ignore obj))
+  #+threads-not-available
+  nil)
+
+(defcm threadp (obj)
+  #+allegro
+  `(mp:process-p ,obj)
+  #+clozure
+  `(ccl::processp ,obj)
+  #+(and cmu mp)
+  `(mp:processp ,obj)
+  #+digitool-mcl
+  `(ccl::processp ,obj)
+  #+(and ecl threads)
+  `(typep ,obj 'mp:process)
+  #+lispworks
+  `(mp:process-p ,obj)
+  #+(and sbcl sb-thread)
+  `(sb-thread::thread-p ,obj)
+  #+scl
+  `(mp:processp ,obj)
+  #+threads-not-available
+  (declare (ignore obj))
+  #+threads-not-available
+  nil)
+
+;;; ---------------------------------------------------------------------------
+;;;   Thread-alive-p (threaded SBCL is native)
+
+#-(and sbcl sb-thread)
+(defun thread-alive-p (obj)
+  #+allegro
+  (mp:process-alive-p obj)
+  #+clozure
+  (ccl::process-active-p obj)
+  #+(and cmu mp)
+  (mp:process-alive-p obj)
+  #+digitool-mcl
+  (ccl::process-active-p obj)
+  #+(and ecl threads)
+  (mp:process-active-p obj)
+  #+lispworks
+  (mp:process-alive-p obj)
+  #+scl
+  (mp:process-alive-p obj)
+  #+threads-not-available
+  (declare (ignore obj))
+  #+threads-not-available
+  nil)
+
+#-(or threads-not-available 
+      (and sbcl sb-thread))
+(defcm thread-alive-p (obj)
+  #+allegro
+  `(mp:process-alive-p ,obj)
+  #+clozure
+  `(ccl::process-active-p ,obj)
+  #+(and cmu mp)
+  `(mp:process-alive-p ,obj)
+  #+digitool-mcl
+  `(ccl::process-active-p ,obj)
+  #+(and ecl threads)
+  `(mp:process-active-p ,obj)
+  #+lispworks
+  `(mp:process-alive-p ,obj)
+  #+scl
+  `(mp:process-alive-p ,obj)
+  #+threads-not-available
+  (declare (ignore obj))
+  #+threads-not-available
+  nil)
+
+;;; ---------------------------------------------------------------------------
+;;;   Thread-name (threaded SBCL is native)
+
+#-(and sbcl sb-thread)
+(defun thread-name (thread)
+  #+allegro
+  (mp:process-name thread)
+  #+clozure
+  (ccl:process-name thread)
+  #+(and cmu mp)
+  (mp:process-name thread)
+  #+digitool-mcl
+  (ccl:process-name thread)
+  #+(and ecl threads)
+  (mp:process-name thread)
+  #+lispworks
+  (mp:process-name thread)
+  #+scl
+  (mp:process-name thread)
+  #+threads-not-available
+  (not-a-thread thread))
+
+#-(or threads-not-available 
+      (and sbcl sb-thread))
+(defcm thread-name (thread)
+  #+allegro
+  `(mp:process-name ,thread)
+  #+clozure
+  `(ccl:process-name ,thread)
+  #+(and cmu mp)
+  `(mp:process-name ,thread)
+  #+digitool-mcl
+  `(ccl:process-name ,thread)
+  #+(and ecl threads)
+  `(mp:process-name ,thread)
+  #+lispworks
+  `(mp:process-name ,thread)
+  #+scl
+  `(mp:process-name ,thread))
+
+;;; ---------------------------------------------------------------------------
+
+#-(and sbcl sb-thread)
+(defun (setf thread-name) (name thread)
+  #+allegro
+  (setf (mp:process-name thread) name)
+  #+clozure
+  (setf (ccl:process-name thread) name)
+  #+(and cmu mp)
+  (setf (mp:process-name thread) name)
+  #+digitool-mcl
+  (setf (ccl::process.name thread) name)
+  #+(and ecl threads)
+  (setf (mp:process-name thread) name)
+  #+lispworks
+  (setf (mp:process-name thread) name)
+  #+scl
+  (setf (mp:process-name thread) name)
+  #+threads-not-available
+  (declare (ignore name))
+  #+threads-not-available
+  (not-a-thread thread))
+
+;;; ---------------------------------------------------------------------------
+;;;   Thread-whostate (values and capabilities vary among CLs)
+
+(defun thread-whostate (thread)
+  #+allegro
+  (mp:process-whostate thread)
+  #+clozure
+  (ccl:process-whostate thread)     
+  #+(and cmu mp)
+  (mp:process-whostate thread)
+  #+digitool-mcl
+  (ccl:process-whostate thread)
+  ;; We fake a basic whostate for ECL/threads:
+  #+(and ecl threads)
+  (if (mp:process-active-p thread) "Active" "Inactive")
+  #+lispworks
+  (mp:process-whostate thread)  
+  ;; We fake a basic whostate for SBCL/sb-threads:
+  #+(and sbcl sb-thread)
+  (if (sb-thread:thread-alive-p thread) "Alive" "Dead")
+  #+scl
+  (mp:process-whostate thread)
+  #+threads-not-available
+  (not-a-thread thread))
+
+#-(or threads-not-available
+      (and ecl threads)
+      (and sbcl sb-thread))
+(defcm thread-whostate (thread)
+  #+allegro
+  `(mp:process-whostate ,thread)
+  #+clozure
+  `(ccl:process-whostate ,thread)     
+  #+(and cmu mp)
+  `(mp:process-whostate ,thread)
+  #+digitool-mcl
+  `(ccl:process-whostate ,thread)
+  #+lispworks
+  `(mp:process-whostate ,thread)
+  #+scl
+  `(mp:process-whostate ,thread))
+
+(defun (setf thread-whostate) (whostate thread)
+  ;;; Only Allegro, Clozure CL, and Digitool MCL support user-settable 
+  ;;; whostates; this function is a NOOP on other CLs.
+  #+allegro
+  (setf (mp:process-whostate thread) whostate)
+  #+clozure
+  (setf (ccl:process-whostate thread) whostate)
+  #+(and cmu mp)
+  (declare (ignore thread))
+  #+(and cmu mp)
+  whostate                              ; no-op
+  #+digitool-mcl
+  (setf (ccl:process-whostate thread) whostate)
+  ;; We fake a basic whostate for ECL/threads:
+  #+(and ecl threads)
+  (declare (ignore thread))
+  #+(and ecl threads)
+  whostate                              ; no-op
+  #+lispworks
+  (declare (ignore thread))
+  #+lispworks
+  whostate                              ; no-op
+  ;; We fake a basic whostate for SBCL/sb-threads:
+  #+(and sbcl sb-thread)
+  (declare (ignore thread))
+  #+(and sbcl sb-thread)
+  whostate                              ; no-op
+  #+scl
+  (declare (ignore thread))
+  #+scl
+  whostate                              ; no-op
+  #+threads-not-available
+  (declare (ignore whostate))
+  #+threads-not-available
+  (not-a-thread thread))
 
 ;;; ===========================================================================
 ;;;  With-timeout
@@ -457,8 +798,8 @@
   #+threads-not-available
   (mapc #'funcall *non-threaded-polling-function-hook*))
 
-#-(or full-safety disable-compiler-macros (and sbcl sb-thread))
-(define-compiler-macro thread-yield ()
+#-(and sbcl sb-thread)
+(defcm thread-yield ()
   #+allegro  
   '(mp:process-allow-schedule)
   #+clozure
@@ -590,6 +931,17 @@
          lock
          holding-thread))
          
+;;; ---------------------------------------------------------------------------
+
+#-threads-not-available
+(defun non-holder-lock-release-error (lock requesting-thread holding-thread)
+  (error "An attempt was made by ~s to release lock ~s (held by ~s)"
+         requesting-thread
+         lock
+         holding-thread))
+         
+;;; ---------------------------------------------------------------------------
+
 #+threads-not-available
 (defun non-threaded-lock-deadlock-error (lock)
   (error "Attempt to grab the locked lock ~s on a non-threaded Common Lisp"
@@ -749,9 +1101,8 @@
     #+threads-not-available
     (plusp (the fixnum (lock-count lock)))))
 
-#-(or full-safety disable-compiler-macros)
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (define-compiler-macro thread-holds-lock-p (lock)
+  (defcm thread-holds-lock-p (lock)
     (let ((lock-sym (gensym)))
       `(let ((,lock-sym (%%get-lock%% ,lock)))
          #+allegro
@@ -882,298 +1233,138 @@
        (when (eq (kernel:setf-conditional ,place value nil) value)
          (return value)))))
 
-;;; ===========================================================================
-;;;   Current-Thread (returns :threads-not-available on CLs without threads)
-
-(defun current-thread ()
-  #+allegro
-  mp:*current-process*
-  #+clozure
-  ccl:*current-process*
-  #+(and cmu mp)
-  mp:*current-process*
-  #+(and ecl threads)
-  mp:*current-process*
-  #+digitool-mcl
-  ccl:*current-process*
-  #+lispworks
-  mp:*current-process*
-  #+(and sbcl sb-thread)
-  sb-thread:*current-thread*
-  #+scl
-  (mp:current-process)
-  #+threads-not-available
-  ':threads-not-available)
-
-#-(or full-safety disable-compiler-macros)
-(define-compiler-macro current-thread ()
-  #+allegro
-  'mp:*current-process*
-  #+clozure
-  'ccl:*current-process*
-  #+(and cmu mp)
-  'mp:*current-process*
-  #+digitool-mcl
-  'ccl:*current-process*
-  #+(and ecl threads)
-  'mp:*current-process*
-  #+lispworks
-  'mp:*current-process*
-  #+(and sbcl sb-thread)
-  'sb-thread:*current-thread*
-  #+scl
-  '(mp:current-process)
-  #+threads-not-available
-  ':threads-not-available)
- 
-;;; ===========================================================================
-;;;   All-Threads (returns nil on CLs without threads)
-
-(defun all-threads ()
-  #+allegro
-  mp:*all-processes*
-  #+clozure
-  (ccl:all-processes)
-  #+(and cmu mp)
-  (mp:all-processes)
-  #+digitool-mcl
-  ccl:*all-processes*
-  #+(and ecl threads)
-  (mp:all-processes)
-  #+lispworks
-  (mp:list-all-processes)
-  #+(and sbcl sb-thread)
-  sb-thread::*all-threads*
-  #+scl
-  (mp:all-processes)
-  #+threads-not-available
-  nil)
-  
-#-(or full-safety disable-compiler-macros)
-(define-compiler-macro all-threads ()
-  #+allegro
-  'mp:*all-processes*
-  #+clozure
-  '(ccl:all-processes)
-  #+(and cmu mp)
-  '(mp:all-processes)
-  #+digitool-mcl
-  'ccl:*all-processes*
-  #+(and ecl threads)
-  '(mp:all-processes)
-  #+lispworks
-  '(mp:list-all-processes)
-  #+(and sbcl sb-thread)
-  'sb-thread::*all-threads*
-  #+scl
-  '(mp:all-processes)
-  #+threads-not-available
-  nil)
-
 ;;; ---------------------------------------------------------------------------
-;;;   Threadp
+;;;   Without-Lock-held
 
-(defun threadp (obj)
-  #+allegro
-  (mp:process-p obj)
-  #+clozure
-  (ccl::processp obj)
-  #+(and cmu mp)
-  (mp:processp obj)
-  #+digitool-mcl
-  (ccl::processp obj)
-  #+(and ecl threads)
-  (typep obj 'mp:process)
-  #+lispworks
-  (mp:process-p obj)
-  #+(and sbcl sb-thread)
-  (sb-thread::thread-p obj)
-  #+scl
-  (mp:processp obj)
-  #+threads-not-available
-  (declare (ignore obj))
-  #+threads-not-available
-  nil)
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defmacro without-lock-held ((lock &key (whostate "Without Lock Held"))
+                               &body body)
+    #-(or allegro
+          closure
+          digitool-mcl)
+    (declare (ignore whostate))
+    (let ((lock-sym (gensym))
+          #+(or allegro
+                clozure
+                digitool-mcl)
+          (saved-whostate (gensym)))
+      `(let ((,lock-sym (%%get-lock%% ,lock)))
+         #+allegro
+         (let ((.current-thread. system:*current-process*)
+               ,saved-whostate)
+           (excl:without-interrupts
+             (let ((.holding-thread. (mp:process-lock-locker ,lock-sym)))
+               (unless (eq .current-thread. .holding-thread.)
+                 (non-holder-lock-release-error
+                  ,lock-sym .current-thread. .holding-thread.))
+               (setf ,saved-whostate (thread-whostate .current-thread.))
+               (setf (thread-whostate .current-thread.) ,whostate)
+               (mp:process-unlock ,lock-sym)))
+           (multiple-value-prog1
+               (progn ,@body)
+             (mp:process-lock ,lock-sym .current-thread. ,saved-whostate)))
+         #+clozure
+         (let ((.ccl-lock. (and (lock-p ,lock-sym)
+                                (lock-ccl-lock (the lock ,lock-sym))))
+               (.current-thread. ccl:*current-process*)
+               ,saved-whostate)
+           (ccl:without-interrupts
+             (let ((.holding-thread. (ccl::%%lock-owner .ccl-lock.)))
+               (unless (eq .current-thread. .holding-thread.)
+                 (non-holder-lock-release-error
+                  ,lock-sym .current-thread. .holding-thread.))
+               (setf ,saved-whostate (thread-whostate .current-thread.))
+               (setf (thread-whostate .current-thread.) ,whostate)
+               (ccl:release-lock .ccl-lock.)))
+           (multiple-value-prog1
+               (progn ,@body)
+             (ccl:without-interrupts
+               (ccl:grab-lock .ccl-lock.)
+               (setf (thread-whostate .current-thread.) ,saved-whostate))))
+         #+(and cmu mp)
+         (progn
+           (mp:without-scheduling
+             (let ((.current-thread. mp:*current-process*)
+                   (.holding-thread. (mp::lock-process ,lock-sym)))
+               (unless (eq .current-thread. .holding-thread.)
+                 (non-holder-lock-release-error
+                  ,lock-sym .current-thread. .holding-thread.))
+               (%%lock-release ,lock-sym)))
+           (multiple-value-prog1
+               (progn ,@body)
+             (mp::lock-wait ,lock-sym "Reaquiring lock")))
+         #+digitool-mcl
+         (let ((.ccl-lock. (and (lock-p ,lock-sym)
+                                (lock-ccl-lock (the lock ,lock-sym))))
+               (.current-thread. ccl:*current-process*)
+               ,saved-whostate)
+           (ccl:without-interrupts
+             (let ((.holding-thread. (ccl::%%lock-owner .ccl-lock.)))
+               (unless (eq .current-thread. .holding-thread.)
+                 (non-holder-lock-release-error
+                  ,lock-sym .current-thread. .holding-thread.))
+               (setf ,saved-whostate (thread-whostate .current-thread.))
+               (setf (thread-whostate .current-thread.) ,whostate)
+               (ccl:release-lock .ccl-lock.)))
+           (multiple-value-prog1
+               (progn ,@body)
+             (ccl:without-interrupts
+               (ccl:grab-lock .ccl-lock.)
+               (setf (thread-whostate .current-thread.) ,saved-whostate))))
+         #+(and ecl threads)
+         (progn
+           (mp:giveup-lock ,lock-sym)   ; performs valid holder check
+           (multiple-value-prog1
+               (progn ,@body)
+             (mp:get-lock ,lock-sym)))
+         #+lispworks
+         (progn
+           (mp:without-preemption
+             (let ((.current-thread. mp:*current-process*)
+                   (.holding-thread. (mp:lock-owner ,lock-sym)))
+               (unless (eq .current-thread. .holding-thread.)
+                 (non-holder-lock-release-error
+                  ,lock-sym .current-thread. .holding-thread.))
+               (mp::in-process-unlock ,lock-sym)))
+           (multiple-value-prog1
+               (progn ,@body)
+             (mp:process-lock ,lock-sym)))
+         #+(and sbcl sb-thread)
+         (progn
+           (as-atomic-operation
+             (let ((.current-thread. sb-thread::*current-thread*)
+                   (.holding-thread. (sb-thread:mutex-value ,lock-sym)))
+               (unless (eq .current-thread. .holding-thread.)
+                 (non-holder-lock-release-error
+                  ,lock-sym .current-thread. .holding-thread.))
+               (sb-thread:release-mutex ,lock-sym)))
+           (multiple-value-prog1
+               (progn ,@body)
+             (sb-thread:get-mutex ,lock-sym)))
+         #+scl
+         (progn
+           (mp:without-scheduling
+             (let ((.current-thread. mp:*current-process*)
+                   (.holding-thread. (mp::lock-process ,lock-sym)))
+               (unless (eq .current-thread. .holding-thread.)
+                 (non-holder-lock-release-error
+                  ,lock-sym .current-thread. .holding-thread.))
+               (%%lock-release ,lock-sym)))
+           (multiple-value-prog1
+               (progn ,@body)
+             (mp::lock-wait ,lock-sym "Reaquiring lock")))
+         #+threads-not-available
+         (progn ,@body)))))
 
-#-(or full-safety disable-compiler-macros)
-(define-compiler-macro threadp (obj)
-  #+allegro
-  `(mp:process-p ,obj)
-  #+clozure
-  `(ccl::processp ,obj)
-  #+(and cmu mp)
-  `(mp:processp ,obj)
-  #+digitool-mcl
-  `(ccl::processp ,obj)
-  #+(and ecl threads)
-  `(typep ,obj 'mp:process)
-  #+lispworks
-  `(mp:process-p ,obj)
-  #+(and sbcl sb-thread)
-  `(sb-thread::thread-p ,obj)
-  #+scl
-  `(mp:processp ,obj)
-  #+threads-not-available
-  (declare (ignore obj))
-  #+threads-not-available
-  nil)
-
-;;; ---------------------------------------------------------------------------
-;;;   Thread-alive-p
-
-#-(and sbcl sb-thread)
-(defun thread-alive-p (obj)
-  #+allegro
-  (mp:process-alive-p obj)
-  #+clozure
-  (ccl::process-active-p obj)
-  #+(and cmu mp)
-  (mp:process-alive-p obj)
-  #+digitool-mcl
-  (ccl::process-active-p obj)
-  #+(and ecl threads)
-  (mp:process-active-p obj)
-  #+lispworks
-  (mp:process-alive-p obj)
-  #+scl
-  (mp:process-alive-p obj)
-  #+threads-not-available
-  (declare (ignore obj))
-  #+threads-not-available
-  nil)
-
-#-(or full-safety disable-compiler-macros threads-not-available 
-      (and sbcl sb-thread))
-(define-compiler-macro thread-alive-p (obj)
-  #+allegro
-  `(mp:process-alive-p ,obj)
-  #+clozure
-  `(ccl::process-active-p ,obj)
-  #+(and cmu mp)
-  `(mp:process-alive-p ,obj)
-  #+digitool-mcl
-  `(ccl::process-active-p ,obj)
-  #+(and ecl threads)
-  `(mp:process-active-p ,obj)
-  #+lispworks
-  `(mp:process-alive-p ,obj)
-  #+scl
-  `(mp:process-alive-p ,obj)
-  #+threads-not-available
-  (declare (ignore obj))
-  #+threads-not-available
-  nil)
-
-;;; ---------------------------------------------------------------------------
-;;;   Thread-name
-
-#-(and sbcl sb-thread)
-(defun thread-name (thread)
-  #+allegro
-  (mp:process-name thread)
-  #+clozure
-  (ccl:process-name thread)
-  #+(and cmu mp)
-  (mp:process-name thread)
-  #+digitool-mcl
-  (ccl:process-name thread)
-  #+(and ecl threads)
-  (mp:process-name thread)
-  #+lispworks
-  (mp:process-name thread)
-  #+scl
-  (mp:process-name thread)
-  #+threads-not-available
-  (not-a-thread thread))
-
-#-(or full-safety disable-compiler-macros threads-not-available
-      (and sbcl sb-thread))
-(define-compiler-macro thread-name (thread)
-  #+allegro
-  `(mp:process-name ,thread)
-  #+clozure
-  `(ccl:process-name ,thread)
-  #+(and cmu mp)
-  `(mp:process-name ,thread)
-  #+digitool-mcl
-  `(ccl:process-name ,thread)
-  #+(and ecl threads)
-  `(mp:process-name ,thread)
-  #+lispworks
-  `(mp:process-name ,thread)
-  #+scl
-  `(mp:process-name ,thread))
-
-;;; ---------------------------------------------------------------------------
-
-#-(and sbcl sb-thread)
-(defun (setf thread-name) (name thread)
-  #+allegro
-  (setf (mp:process-name thread) name)
-  #+clozure
-  (setf (ccl:process-name thread) name)
-  #+(and cmu mp)
-  (setf (mp:process-name thread) name)
-  #+digitool-mcl
-  (setf (ccl::process.name thread) name)
-  #+(and ecl threads)
-  (setf (mp:process-name thread) name)
-  #+lispworks
-  (setf (mp:process-name thread) name)
-  #+scl
-  (setf (mp:process-name thread) name)
-  #+threads-not-available
-  (declare (ignore name))
-  #+threads-not-available
-  (not-a-thread thread))
-
-;;; ---------------------------------------------------------------------------
-;;;   Thread-whostate (values and capabilities vary among CLs)
-
-(defun thread-whostate (thread)
-  #+allegro
-  (mp:process-whostate thread)
-  #+clozure
-  (ccl:process-whostate thread)     
-  #+(and cmu mp)
-  (mp:process-whostate thread)
-  #+digitool-mcl
-  (ccl:process-whostate thread)
-  ;; We fake a basic whostate for ECL/threads:
-  #+(and ecl threads)
-  (if (mp:process-active-p thread) "Active" "Inactive")
-  #+lispworks
-  (mp:process-whostate thread)  
-  ;; We fake a basic whostate for SBCL/sb-threads:
-  #+(and sbcl sb-thread)
-  (if (sb-thread:thread-alive-p thread) "Alive" "Dead")
-  #+scl
-  (mp:process-whostate thread)    
-  #+threads-not-available
-  (not-a-thread thread))
-
-#+threads-not-available
-(define-compiler-macro thread-whostate (thread)
-  #+allegro
-  `(mp:process-whostate ,thread)
-  #+clozure
-  `(ccl:process-whostate ,thread)     
-  #+(and cmu mp)
-  `(mp:process-whostate ,thread)
-  #+digitool-mcl
-  `(ccl:process-whostate ,thread)
-  ;; We fake a basic whostate for ECL/threads:
-  #+(and ecl threads)
-  `(if (mp:process-active-p ,thread) "Active" "Inactive")
-  #+lispworks
-  `(mp:process-whostate ,thread)  
-  ;; We fake a basic whostate for SBCL/sb-threads:
-  #+(and sbcl sb-thread)
-  `(if (sb-thread:thread-alive-p ,thread) "Alive" "Dead")
-  #+scl
-  `(mp:process-whostate ,thread)
-  #+threads-not-available
-  `(not-a-thread ,thread))
+;;; Internal release-lock function for CMUCL:
+#+(and cmu mp)
+(defun %%lock-release (lock)
+  (declare (type mp:lock lock))
+  #-i486
+  (setf (mp:lock-process lock) nil)
+  #+i486
+  (null (kernel:%instance-set-conditional
+         lock 2 mp:*current-process* nil)))
 
 ;;; ===========================================================================
 ;;;   Spawn-Thread
@@ -1228,8 +1419,7 @@
   #+threads-not-available
   (threads-not-available 'kill-thread))
 
-#-(or full-safety disable-compiler-macros)
-(define-compiler-macro kill-thread (thread)
+(defcm kill-thread (thread)
   #+allegro
   `(mp:process-kill ,thread)
   #+clozure
