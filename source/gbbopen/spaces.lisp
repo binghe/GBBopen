@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/spaces.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu May 29 01:43:12 2008 *-*
+;;;; *-* Last-Edit: Sat Jun 14 15:26:39 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -977,8 +977,9 @@
                    (apply (the function (symbol-function add/remove-fn-name))
                           event-class
                           args))))))
-      (map-event-classes #'do-event-class 
-                         (find-class 'space-instance-event)))))
+      (map-event-classes 
+       #'do-event-class 
+       (load-time-value (find-class 'space-instance-event))))))
 
 ;;; ===========================================================================
 ;;;  Describers

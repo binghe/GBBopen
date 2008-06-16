@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/preamble.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Jun  7 11:41:41 2008 *-*
+;;;; *-* Last-Edit: Sun Jun 15 20:30:07 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -60,12 +60,47 @@
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(add-package-nickname        ; not documented
+	    gbbopen-tools-implementation-version
             hyperdoc-filename           ; not yet documented
 	    hyperdoc-url		; not yet documented
             object-address
 	    printv
 	    with-gensyms
 	    with-once-only-bindings)))	; not yet documented
+
+;;; ---------------------------------------------------------------------------
+;;;  GBBopen Tools version (read from ../../VERSION file)
+
+(let ((truename *load-truename*))
+  (defun gbbopen-tools-implementation-version ()
+    (with-open-file (version-file 
+                     (make-pathname
+                      :directory (append (pathname-directory truename)
+                                         '(:up :up))
+                      :name "VERSION"
+                      :type nil
+                      :defaults truename))
+      (read version-file))))
+
+;;; Added to *features* in epilogue.lisp:
+(defparameter *gbbopen-tools-version-keyword* 
+    ;; Support cross-case mode CLs:
+    (read-from-string (format nil ":gbbopen-tools-~a" 
+                              (gbbopen-tools-implementation-version))))
+
+;;; ---------------------------------------------------------------------------
+
+(defun print-gbbopen-tools-herald ()
+  (format t "~%;;; ~72,,,'-<-~>
+;;;  GBBopen Tools ~a~@
+;;;
+;;;    Developed and supported by the GBBopen Project (http:/GBBopen.org/)
+;;;    (See http://GBBopen.org/downloads/LICENSE for license details.)
+;;; ~72,,,'-<-~>~2%"
+          (gbbopen-tools-implementation-version)))
+  
+(eval-when (:load-toplevel)
+  (print-gbbopen-tools-herald))
 
 ;;; ===========================================================================
 ;;;  Ensure package (find-package with error check)

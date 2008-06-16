@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/mop-interface.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jun  4 13:27:09 2008 *-*
+;;;; *-* Last-Edit: Sun Jun 15 06:53:12 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -24,30 +24,17 @@
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
 ;;;  04-20-04 Split out from units.lisp.  (Corkill)
-;;;  12-04-04 Added missing standard-reader-method and reader-method-class
-;;;           imports.  (Corkill)
-;;;  12-10-04 Updated for Lispworks 4.4.  (Corkill)
 ;;;  06-15-05 Consolidated interface.  (Corkill)
 ;;;  09-22-06 Updated for CormanLisp 3.0, but MOP is still incomplete.
 ;;;           (Corkill)
 ;;;  01-15-08 Moved into :gbbopen-tools.  (Corkill)
+;;;  06-15-08 Removed non-AMOP CLASS-DIRECT-METHODS in favor of
+;;;           SPECIALIZER-DIRECT-METHODS (thanks to Bruno Haible).  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 (in-package :gbbopen-tools)
   
-#+lispworks
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (import '(clos::canonicalize-defclass-slot
-	    clos:class-direct-methods
-	    clos:process-a-slot-option)))
-
-;;; Class-direct-methods is not AMOP.  Lispworks provides it, and we provide
-;;; a portable one for convenience (and possible use in the future):
-#-ecl
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (export '(class-direct-methods)))
-
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defparameter *mop-symbols*
       '(#-cormanlisp
@@ -81,6 +68,11 @@
 	clos:slot-definition-writers
 	clos:slot-value-using-class
 	#-cormanlisp
+        clos:specializer-direct-methods ; ECL has the symbol, but no function
+	#-cormanlisp
+        clos:specializer-direct-generic-functions ; ECL has the symbol, but no
+                                                  ; function
+	#-cormanlisp
 	clos:standard-direct-slot-definition
 	#-cormanlisp
 	clos:standard-effective-slot-definition
@@ -98,36 +90,6 @@
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (import *mop-symbols*))
-
-;;; ---------------------------------------------------------------------------
-;;;  Note: class-direct-methods is not currently used by GBBopen, it is here
-;;;  for convenience and possible use in the future...
-;;;  
-;;;  Lispworks provides class-direct-methods already.
-;;;
-;;;  ECL 0.9i currently does not record direct-methods of a class, so we can't
-;;;  implement class-direct-methods on ECL.
-
-#-(or ecl lispworks)
-(defun class-direct-methods (class)
-  (let ((direct-methods 
-	 (slot-value class 
-		     #+allegro 'excl::direct-methods
-		     #+clisp 'clos::$direct-methods
-		     #-(or allegro clisp) 'clos::direct-methods)))
-    ;; the direct-methods slot value is a list of the methods
-    ;; list, except in Lispworks:
-    #-clisp
-    (when (consp (car direct-methods))
-      (setf direct-methods (sole-element direct-methods)))
-    ;; and in CLISP:
-    #+clisp
-    (let ((result nil))
-      (maphash #'(lambda (key value)
-		   (declare (ignore key))
-		   value)
-	       direct-methods)
-      result)))
 
 ;;; ---------------------------------------------------------------------------
 

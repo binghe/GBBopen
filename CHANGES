@@ -1,4 +1,9 @@
-Important changes since GBBopen 1.0:
+Important changes since GBBopen 1.1:
+
+  * None yet
+
+
+Important changes in GBBopen 1.1:
 
   * New :gbbopen-tools functions and macros
      - DECF/DELETE-ACONS
@@ -22,6 +27,9 @@ Important changes since GBBopen 1.0:
   * New :SIZE option for a hashed-storage specification to
     MAKE-SPACE-INSTANCE
 
+  * CLASS-DIRECT-METHODS removed from MOP interface (use 
+    SPECIALIZER-DIRECT-METHODS instead)
+
 
 Important changes in GBBopen 1.0:
   
@@ -37,8 +45,7 @@ Important changes in GBBopen 1.0:
      - New WITH-SYSTEM-NAME macro added to support this
 
   * Changes to extended-REPL commands:
-     - DEFINE-TLL-COMMAND renamed to DEFINE-REPL-COMMAND (DEFINE-TLL-COMMAND
-       is deprecated and will be removed in GBBopen 1.1)
+     - DEFINE-TLL-COMMAND renamed to DEFINE-REPL-COMMAND
      - New built-in extended-REPL commands:
         :systems  Shows all system-names used in commands, directory 
                   definitions, and module definitions
@@ -76,16 +83,16 @@ Important changes in GBBopen 0.9.9:
        EQL    -> IS-EQL
        EQUAL  -> IS-EQUAL
        EQUALP -> IS-EQUALP 
-    The old operator names are deprecated, but will remain available until the
-    next release
+    The old operator names are deprecated, but will remain available through 
+    GBBopen 1.1
 
   * New comparison-type specification support for DEFINE-UNIT-CLASS
     :DIMENSIONAL-VALUES class option
 
-  * The :TEST option for a hashed-storage specification to
-    MAKE-SPACE-INSTANCE is deprecated, as the comparison test is now
-    determined from the dimension comparison-type specifications of
-    the unit classes associated with the hashed storage
+  * The :TEST option for a hashed-storage specification to MAKE-SPACE-INSTANCE
+    has been eliminated, as the comparison test is now determined from the
+    dimension comparison-type specifications of the unit classes associated
+    with the hashed storage
 
   * <install-dir>/gbbopen-init.lisp renamed to more intuitive
     <install-dir>/initiate.lisp

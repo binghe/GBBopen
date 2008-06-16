@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/extended-repl.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu May 22 14:15:58 2008 *-*
+;;;; *-* Last-Edit: Sat Jun 14 16:51:29 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -204,10 +204,6 @@
 
 #-cmu
 (compile-if-advantageous 'define-repl-command)
-
-;;; Deprecated name, remove in 1.1:
-(defmacro define-tll-command (command lambda-list &rest body)
-  `(define-repl-command ,command ,lambda-list ,@body))
 
 ;;; ---------------------------------------------------------------------------
 

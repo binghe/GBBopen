@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/find.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Jun 12 20:53:58 2008 *-*
+;;;; *-* Last-Edit: Sun Jun 15 14:27:53 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -275,8 +275,8 @@
       `(case comparison-type
          ;; Ordered by likely frequency/effect:
          (fixnum ,(do-type "&"))
-         (number)                       ; no dispatch on number
          (single-float ,(do-type "$"))
+         (number)                       ; no dispatch on number
          (short-float ,(do-type "$&"))
          (double-float ,(do-type "$$"))
          (long-float ,(do-type "$$$"))))))

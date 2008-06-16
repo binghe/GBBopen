@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/hashed-storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Jun 12 09:43:00 2008 *-*
+;;;; *-* Last-Edit: Sat Jun 14 16:38:08 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -114,19 +114,12 @@
 
 (defmethod shared-initialize :after ((storage hashed-storage)
                                      slot-names
-                                     &key (size nil size-specified-p)
-                                     ;; test is deprecated in 0.9.9:
-                                          (test 'eql test-specified-p))
+                                     &key (size 0 size-specified-p))
   (declare (ignore slot-names))
   (let ((determined-test (determine-hash-table-test storage)))
     (unless determined-test
       (internal-error "Unable to determine the hash-table test for ~s"
                       storage))
-    ;; Remove this next (when) form when removing deprecated test argument
-    ;; after version 0.9.9:
-    (when test-specified-p 
-      (setf determined-test (most-general-hash-table-test 
-                             test determined-test)))
     (setf (bound-instances-of storage)
           (if size-specified-p
               (make-hash-table :size size
