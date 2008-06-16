@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/basic-tests.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Jun 12 09:40:55 2008 *-*
+;;;; *-* Last-Edit: Sun Jun 15 12:54:38 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -631,12 +631,16 @@
       (format t "~&;; ** Redefined unit-classes are not eq.~%")))
   ;; Check if writer-method-class is actually called to determine the
   ;; class of writer methods:
-  (let* ((unit-class (find-unit-class 'uc-1))
-	 (direct-methods (and (fboundp 'class-direct-method)
-			      (class-direct-methods unit-class))))
+  (let* ((unit-class (find-unit-class 'standard-unit-instance))
+	 (direct-methods 
+          (cond ((fboundp 'specializer-direct-methods)
+                 (specializer-direct-methods unit-class))
+                (t (format t "~&;; ** ~s is not supported.~%" 
+                           'specializer-direct-methods)
+                   nil))))
     (unless (member-if 
 	     #'(lambda (method)
-		 (typep method 'gbbopen::link-writer-method))
+		 (typep method 'gbbopen::nonlink-writer-method))
 	     direct-methods)
       (format t "~&;; ** ~s is not supported.~%" 
 	      'writer-method-class))))
@@ -1003,14 +1007,6 @@
   (find-tests '((uc-1 x uniform-buckets :layout (0 10 3))
 		(uc-2 x uniform-buckets :layout (0 10 2.5))))
   (find-tests '((uc-1 x uniform-buckets :layout (0 10 1))))
-  ;; Pre-0.9.9 (deprecated) syntax:
-  (find-tests '((uc-1 classification hashed :test eq)))
-  ;; Pre-0.9.9 (deprecated) syntax:
-  (find-tests '((uc-1 classification hashed 
-                      ;; it's OK to use a more general :test predicate than
-                      ;; the pattern predicate (but not the other way
-                      ;; round!):
-		      :test equalp)))
   (find-tests '((uc-1 (x y) uniform-buckets 
 		      :layout ((0 10 3)
                                ;; to be different, start y at 1:

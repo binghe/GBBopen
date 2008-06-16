@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/unit-metaclasses.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Jun 12 01:30:31 2008 *-*
+;;;; *-* Last-Edit: Sun Jun 15 12:58:31 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -35,6 +35,11 @@
 
 (in-package :gbbopen)
 
+;;; Import needed Lispworks-specific functions: 
+#+lispworks
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (import '(clos::canonicalize-defclass-slot
+	    clos:process-a-slot-option)))
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(dimensions-of
             direct-nonlink-slot-definition
@@ -410,16 +415,15 @@
 (defmethod direct-slot-definition-class ((class standard-unit-class)
                                          &rest initargs)
   (declare (dynamic-extent initargs))
-  ;; CMUCL 19e can't handle these load-time-values:
   (cond
-   ;; Direct link slot
+   ;; Direct link slot:
    ((getf initargs ':link)
-    (#-cmu load-time-value
-     #+cmu progn (find-class 'direct-link-definition)))
-   ;; Direct non-link slot     
+    ;; We can't use load-time-value here, as links are not defined yet:
+    (find-class 'direct-link-definition))
+   ;; Direct non-link slot:     
    ((not (memq (getf initargs ':name) *internal-unit-instance-slot-names*))
-    (#-cmu load-time-value
-     #+cmu progn (find-class 'direct-nonlink-slot-definition)))
+    ;; We can't use load-time-value here, as links are not defined yet:
+    (find-class 'direct-nonlink-slot-definition))
    ;; Internal (regular CL) slot
    (t (call-next-method))))
 
@@ -495,10 +499,12 @@
                                             &rest initargs)
   (declare (dynamic-extent #+ecl class initargs))
   (if *%%inherited-link-slot%%*
-      (load-time-value (find-class 'effective-link-definition))
+      ;; We can't use load-time-value here, as links are not defined yet:
+      (find-class 'effective-link-definition)
       (if (memq (getf initargs ':name) *internal-unit-instance-slot-names*)
           (call-next-method)
-          (load-time-value (find-class 'effective-nonlink-slot-definition)))))
+          ;; We can't use load-time-value here, as links are not defined yet:
+          (find-class 'effective-nonlink-slot-definition))))
 
 ;;; ===========================================================================
 ;;;   Link and Nonlink Slot Writer Method Classes
@@ -518,10 +524,10 @@
                                 &rest initargs)
   #+(or clisp clozure cmu digitool-mcl ecl sbcl scl)
   (declare (ignore #+ecl class #+ecl slot initargs))
-  #+(or cmu sbcl)
-  (find-class 'nonlink-writer-method)
-  #-(or cmu sbcl)
-  (load-time-value (find-class 'nonlink-writer-method)))
+  ;; CMUCL doesn't allow load-time-value here, without an compile-time
+  ;; evaluation of the above nonlink-writer-method--we opt for the runtime
+  ;; lookup:
+  (find-class 'nonlink-writer-method))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -533,10 +539,10 @@
                                 &rest initargs)
   #+(or clisp clozure cmu digitool-mcl ecl sbcl scl)
   (declare (ignore #+ecl class #+ecl slot initargs))
-  #+(or cmu sbcl)
-  (find-class 'link-writer-method)
-  #-(or cmu sbcl)
-  (load-time-value (find-class 'link-writer-method))) 
+  ;; CMUCL doesn't allow load-time-value here, without an compile-time
+  ;; evaluation of the above link-writer-method--we opt for the runtime
+  ;; lookup:
+  (find-class 'link-writer-method))
   
 ;;; ---------------------------------------------------------------------------
   

@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/mini-module/mini-module.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu May 22 14:14:15 2008 *-*
+;;;; *-* Last-Edit: Sat Jun 14 16:49:48 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -54,35 +54,35 @@
 ;;;
 ;;;  07-13-02 File created.  (Corkill)
 ;;;  01-12-04 Added :create-dirs option to compile-module.  (Corkill)
-;;;  01-29-04 Exported module-loaded-p.  (Corkill)
-;;;  02-01-04 Support use of existing root-directory in define-root-directory.
+;;;  01-29-04 Exported MODULE-LOADED-P.  (Corkill)
+;;;  02-01-04 Support use of existing root-directory in DEFINE-ROOT-DIRECTORY.
 ;;;           (Corkill)
 ;;;  03-19-04 Added top-level Mini Module commands for Lispworks.  (Corkill)
 ;;;  03-19-04 Added file-options checking.  (Corkill)
 ;;;  06-10-04 Added proper :forces-recompile date checking and warning
 ;;;           messages.  (Corkill)
 ;;;  06-11-04 Moved to separate package (for stand-alone use).  (Corkill)
-;;;  08-10-04 Removed make-directory in favor of ensure-directories-exist.
+;;;  08-10-04 Removed MAKE-DIRECTORY in favor of ENSURE-DIRECTORIES-EXIST.
 ;;;           (Corkill)
 ;;;  08-18-04 Add missing slot-definition documentation method for Digitool
 ;;;           MCL.  (Corkill)
-;;;  02-06-05 Added load-module-file.  (Corkill)
-;;;  02-08-05 Added describe-module and brief-date-and-time.  (Corkill)
+;;;  02-06-05 Added LOAD-MODULE-FILE.  (Corkill)
+;;;  02-08-05 Added DESCRIBE-MODULE and BRIEF-DATE-AND-TIME.  (Corkill)
 ;;;  05-22-05 Added ECL support.  (Corkill)
 ;;;  06-08-05 Added CLISP support.  (sds)
-;;;  06-18-05 Added module-directories.  (Corkill)
+;;;  06-18-05 Added MODULE-DIRECTORIES.  (Corkill)
 ;;;  02-13-06 Added GCL support.  (Corkill)
 ;;;  04-11-06 Added *load-pathname* relative :directory option to
-;;;           define-module.  (Corkill)
+;;;           DEFINE-MODULE.  (Corkill)
 ;;;  05-08-06 Added support for the Scieneer CL. (dtc)
-;;;  11-21-06 Added get-directory.  (Corkill)
+;;;  11-21-06 Added GET-DIRECTORY.  (Corkill)
 ;;;  06-06-07 Added :after-form support for modules (somewhat reluctantly,
 ;;;           as putting forms in a module's files is preferable to having
 ;;;           them in the module definition).  (Corkill)
-;;;  07-14-07 Added subdirectories support to define-root-directory.  (Corkill)
+;;;  07-14-07 Added subdirectories support to DEFINE-ROOT-DIRECTORY.  (Corkill)
 ;;;  07-14-07 Added :noautorun compile/load-module option.  (Corkill)
-;;;  12-19-07 Added module-relative support to compute-relative-directory and
-;;;           incremented version to 1.2.  (Corkill)
+;;;  12-19-07 Added module-relative support to COMPUTE-RELATIVE-DIRECTORY and
+;;;           incremented Mini Module version to 1.2.  (Corkill)
 ;;;  01-05-08 Skip undefined modules when performing compatiblity-ordering
 ;;;           check of a module.  (Corkill) 
 ;;;  03-29-08 Added :nopropagate (:propagate canceling) compile/load-module 
@@ -119,8 +119,6 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (import '(common-lisp-user::*current-system-name*
             common-lisp-user::define-repl-command
-            ;; deprecated, remove in 1.1:
-            common-lisp-user::define-tll-command
             common-lisp-user::with-system-name)))
 
 (declaim (special *current-system-name*))
@@ -206,7 +204,6 @@
             define-relative-directory
             define-root-directory
             define-repl-command         ; re-exported from :cl-user
-            define-tll-command          ; deprecated, remove in 1.1
             define-module
             describe-module
             dotted-conc-name            ; part of tools, but placed here; not

@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/units.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Jun 12 20:45:34 2008 *-*
+;;;; *-* Last-Edit: Sat Jun 14 15:39:28 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -639,56 +639,6 @@
         (unless (typep unit-class 'standard-unit-class)
           (error "~s does not name a unit class." unit-class-name))
         unit-class)))
-
-;;; ---------------------------------------------------------------------------
-
-(defun parse-unit-class-specifier (unit-class-spec)
-  (with-full-optimization ()
-    (cond
-     ;; 't is shorthand for '(standard-unit-instance :plus-subclasses):
-     ((eq unit-class-spec 't) 
-      (values (find-class 'standard-unit-instance) 't))
-     ;; extended unit-class specification:
-     ((consp unit-class-spec)
-      (destructuring-bind (unit-class-name subclass-indicator)
-          unit-class-spec
-        (let ((unit-class (find-unit-class unit-class-name)))
-          (values unit-class 
-                  (ecase subclass-indicator
-                    (:plus-subclasses 't)
-                    (:no-subclasses nil))))))
-     ;; anything else we assume is a unit-class-name or unit-class:
-     (t (values (find-unit-class unit-class-spec) nil)))))
-
-;;; ---------------------------------------------------------------------------
-
-(defun parse-unit-classes-specifier (unit-classes-spec)
-  (cond
-   ;; 't is shorthand for '(standard-unit-instance :plus-subclasses):
-   ((eq unit-classes-spec 't) 
-    `((,(find-class 'standard-unit-instance) . t)))
-   ((consp unit-classes-spec)
-    (flet ((do-one-spec (unit-class-spec)
-             (if (consp unit-class-spec)
-                 (destructuring-bind (unit-class-name subclass-indicator)
-                     unit-class-spec
-                   (let ((unit-class (find-unit-class unit-class-name)))
-                     `(,unit-class . ,(ecase subclass-indicator
-                                        (:plus-subclasses 't)
-                                        (:no-subclasses nil)))))
-                 ;; anything else we assume is a unit-class-name or
-                 ;; unit-class:
-                 `(,(find-unit-class unit-class-spec) . nil))))
-      (let ((possible-subclass-indicator (second unit-classes-spec)))
-        (cond 
-         ;; simply an extended unit-class specification?
-         ((or (eq possible-subclass-indicator :plus-subclasses)
-              (eq possible-subclass-indicator :no-subclasses))
-          (list (do-one-spec unit-classes-spec)))
-         ;; a list of specifications:
-         (t (mapcar #'do-one-spec unit-classes-spec))))))
-   ;; anything else we assume is a unit-class-name or unit-class:
-   (t `((,(find-unit-class unit-classes-spec) . nil)))))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Unit-class-in-specifier-p

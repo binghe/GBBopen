@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/epilogue.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Jun 12 02:50:12 2008 *-*
+;;;; *-* Last-Edit: Sat Jun 14 15:19:12 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -81,7 +81,7 @@
        (unless (eq (class-name class) 'root-space-instance)
          (when (plusp& (class-instances-count class))
            (return-from empty-blackboard-repository-p nil))))
-   (find-class 'standard-unit-instance))
+   (load-time-value (find-class 'standard-unit-instance)))
   ;; The repository is empty:
   't)
 

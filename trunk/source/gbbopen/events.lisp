@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/events.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Jun 12 20:52:47 2008 *-*
+;;;; *-* Last-Edit: Sat Jun 14 15:20:34 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -444,7 +444,7 @@
     (cond
      ;; 't is shorthand for '(standard-event-instance :plus-subevents):
      ((eq event-class-spec 't) 
-      (values (find-class 'standard-event-instance) 't))
+      (values (load-time-value (find-class 'standard-event-instance)) 't))
      ;; extended event-class specification:
      ((consp event-class-spec)
       (destructuring-bind (event-class-name subclass-indicator)
@@ -460,7 +460,7 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun map-event-classes (fn &optional 
-                            (class (find-class 'standard-event-instance)))
+                            (class (load-time-value (find-class 'standard-event-instance))))
   ;;; Applies `fn' to `class' and all its subclasses.  The order is undefined,
   ;;; but `fn' will not be applied more than once to a class.
   (with-full-optimization ()

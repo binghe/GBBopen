@@ -2,5 +2,5 @@
 ;;;   The GBBopen version string is specified here 
 ;;;   (and read by gbbopen.asd and by source/gbbopen/preamble.lisp)
 ;;; ---------------------------------------------------------------------------
-"1.0"
+"1.1"
 
