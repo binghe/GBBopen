@@ -441,19 +441,15 @@ applications in the <code>:gbbopen-user</code> package and load several of them 
 the same time, symbol-name clashes could occur.
 </p>
 <p>To eliminate this possibility, we can create our own package for the
-random-walk application.  First, let's determine what packages are being used by GBBopen's <code>:gbbopen-user</code> package.  Evaluate the following:
+random-walk application.  First, let's determine what packages are being used
+by GBBopen's <code>:gbbopen-user</code> package.  Evaluate the following:
 <pre class="pretop">
 <font color="#667f66">  gbbopen-user&gt; <font color="#000000">(package-use-list :gbbopen-user)</font>
   (#&lt;package PORTABLE-THREADS&gt; #&lt;package AGENDA-SHELL&gt;
-   #&lt;package MINI-MODULE&gt; #&lt;package COMMON-LISP&gt; #&lt;package CLOS&gt;
+   #&lt;package MINI-MODULE&gt; #&lt;package COMMON-LISP&gt;
    #&lt;package GBBOPEN-TOOLS&gt; #&lt;package GBBOPEN&gt;)
   gbbopen-user&gt;</font>
 </pre>
-The <code>CLOS</code> package does not have a standard name in Common Lisp, so the
-package that you see listed may be named differently (such as <code>ACLMOP</code> or
-<code>SB-PCL</code>).  GBBopen provides the <code>:clos</code> nickname when necessary, so
-that you can reference the &#8220;<code>CLOS</code>&#8221; package using <code>:clos</code> on any
-supported Common Lisp implementation.
 </p>
 <h3><a name="id13">Change <code>tutorial-example.lisp</code></a></h3><p>We want our new <code>:tutorial</code> package to use the same packages that the
 <code>:agenda-shell-user</code> package used. Edit your <code>tutorial-example.lisp</code>
@@ -466,7 +462,7 @@ with the following:
   (eval-when (:compile-toplevel :load-toplevel :execute)
     (unless (find-package :tutorial)
       (defpackage :tutorial
-        (:use :common-lisp :clos :mini-module :gbbopen-tools :gbbopen 
+        (:use :common-lisp :mini-module :gbbopen-tools :gbbopen 
               :portable-threads :agenda-shell))))
 
   (in-package :tutorial)
@@ -507,7 +503,8 @@ Save the file.
 </p>
 <h3><a name="id16">Change <code>modules.lisp</code></a></h3><p>
 Finally, we no longer need the <code>:gbbopen-user</code> package that is created by
-requiring the <code>:agenda-shell-user</code> module.  Let's take a closer look at the <code>:tutorial</code> module that we defined:
+requiring the <code>:agenda-shell-user</code> module.  Let's take a closer look at
+the <code>:tutorial</code> module that we defined:
 <pre class="pretop">
 <font color="#667f66">  gbbopen-user&gt; <font color="#000000">(describe-module :tutorial)</font>
   Module :tutorial (loaded)

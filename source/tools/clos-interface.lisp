@@ -1,13 +1,13 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/clos-interface.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu May 15 18:03:33 2008 *-*
+;;;; *-* Last-Edit: Tue Jun 17 16:26:15 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
 ;;;; *
-;;;; *                     CLOS Uniform-Access Interface 
+;;;; *                   CLOS/MOP Uniform-Access Interface 
 ;;;; *
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -20,160 +20,143 @@
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
 ;;;  05-15-08 Split from tools.lisp.  (Corkill)
+;;;  06-17-08 Rewritten to eliminate separate mop-interface.lisp file; :clos 
+;;;           package nicknaming eliminated.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 (in-package :gbbopen-tools)
 
-;;; ---------------------------------------------------------------------------
-;;;  Create CLOS package nickname (or package!) where needed
+;;; ===========================================================================
+;;;   Import into & export from the :gbbopen-tools package the MOP symbols
 
-#+(or clozure digitool-mcl)
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (unless (find-package ':clos)
-    (make-package ':clos
-                  :use '(:common-lisp)))
-  
-  (defparameter *clos-symbols*
-      '(ccl:accessor-method-slot-definition
-        ccl:add-dependent
-        ccl:add-direct-method
-        ccl:add-direct-subclass 
-        ccl:class-default-initargs
-        ccl:class-direct-default-initargs 
-        ccl:class-direct-slots 
-        ccl:class-direct-subclasses
-        ccl:class-direct-superclasses
-        ccl:class-finalized-p 
-        ccl:class-precedence-list
-        ccl:class-prototype 
-        ccl:class-slots
-        ccl:compute-applicable-methods-using-classes
-        ccl:compute-class-precedence-list
-        ccl:compute-default-initargs
-        ccl:compute-discriminating-function 
-        ccl:compute-effective-method
-        ccl:compute-effective-slot-definition
-        ccl:compute-slots
-        ;; Not exported in Digitool MCL:
-        ccl::direct-slot-definition 
-        ccl:direct-slot-definition-class
-        ;; Not exported in Digitool MCL:
-        ccl::effective-slot-definition
-        ccl:effective-slot-definition-class
-        ccl:ensure-class 
-        ccl:ensure-class-using-class
-        ccl:ensure-generic-function-using-class
-        ccl::eql-specializer
-        ccl:eql-specializer-object
-        ccl:extract-lambda-list
-        ccl:extract-specializer-names
-        ccl:finalize-inheritance
-        ccl:find-method-combination
-        ccl:forward-referenced-class
-        ccl:funcallable-standard-class 
-        ccl:funcallable-standard-instance-access
-        ccl::funcallable-standard-object
-        ccl:generic-function-argument-precedence-order
-        ccl:generic-function-declarations
-        ccl:generic-function-lambda-list
-        ccl:generic-function-method-class
-        ccl:generic-function-method-combination
-        ccl:generic-function-methods
-        ccl:generic-function-name
-        ccl:intern-eql-specializer
-        ccl:make-method-lambda
-        ccl:map-dependents
-        ccl:metaobject 
-        ccl:method-function
-        ccl:method-generic-function
-        ccl:method-lambda-list
-        ccl:method-specializers 
-        ccl:reader-method-class
-        ccl:remove-dependent
-        ccl:remove-direct-method
-        ccl:remove-direct-subclass
-        ccl:set-funcallable-instance-function
-        ccl:slot-boundp-using-class
-        ;; Not exported in Digitool MCL:
-        ccl::slot-definition
-        ccl:slot-definition-allocation
-        ccl:slot-definition-initargs
-        ccl:slot-definition-initform
-        ccl:slot-definition-initfunction
-        ccl:slot-definition-location
-        ccl:slot-definition-name
-        ccl:slot-definition-readers
-        ccl:slot-definition-type
-        ccl:slot-definition-writers
-        ccl:slot-makunbound-using-class 
-        ccl:slot-value-using-class
-        ccl:specializer
-        ccl:specializer-direct-generic-functions
-        ccl:specializer-direct-methods
-        ccl:standard-accessor-method
-        ccl:standard-direct-slot-definition
-        ccl:standard-effective-slot-definition
-        ccl:standard-instance-access
-        ccl:standard-reader-method
-        ;; Not exported in Digitool MCL:
-        ccl::standard-slot-definition
-        ccl:standard-writer-method
-        ccl:update-dependent
-        ccl:validate-superclass
-        ccl:writer-method-class)))
-
-#+(or clozure digitool-mcl)
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (import *clos-symbols* :clos)
-  (export *clos-symbols* :clos))
-  
-#+cmu
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (ext::without-package-locks
-   (add-package-nickname "CLOS" :pcl)))
-  
-#+cormanlisp
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (add-package-nickname "CLOS" :common-lisp))
-
-#+gcl
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (add-package-nickname "CLOS" :pcl))
-
-#+sbcl
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (sb-ext::without-package-locks
-   (add-package-nickname "CLOS" :sb-pcl)))
+(defparameter *clos/mop-symbols*
+    '(#:accessor-method-slot-definition
+      #:add-dependent
+      #:add-direct-method
+      #:add-direct-subclass
+      #:class-default-initargs
+      #:class-direct-default-initargs 
+      #:class-direct-slots
+      #:class-direct-subclasses
+      #:class-direct-superclasses
+      #:class-finalized-p
+      #:class-precedence-list
+      #:class-prototype
+      #:class-slots
+      #:compute-applicable-methods-using-classes
+      #:compute-class-precedence-list
+      #:compute-default-initargs
+      #:compute-discriminating-function 
+      #:compute-effective-method
+      #:compute-effective-slot-definition
+      #:compute-slots
+      #:direct-slot-definition 
+      #:direct-slot-definition-class
+      #:effective-slot-definition
+      #:effective-slot-definition-class
+      #:ensure-class
+      #:ensure-class-using-class
+      #:ensure-generic-function-using-class
+      #:eql-specializer
+      #:eql-specializer-object
+      #:extract-lambda-list
+      #:extract-specializer-names
+      #:finalize-inheritance
+      #:find-method-combination
+      #:forward-referenced-class
+      #:funcallable-standard-class 
+      #:funcallable-standard-instance-access
+      #:funcallable-standard-object
+      #:generic-function-argument-precedence-order
+      #:generic-function-declarations
+      #:generic-function-lambda-list
+      #:generic-function-method-class
+      #:generic-function-method-combination
+      #:generic-function-methods
+      #:generic-function-name
+      #:intern-eql-specializer
+      #:make-method-lambda              ; not provided in CLISP
+      #:map-dependents
+      #:metaobject 
+      #:method-function
+      #:method-generic-function
+      #:method-lambda-list
+      #:method-specializers 
+      #:reader-method-class
+      #:remove-dependent
+      #:remove-direct-method
+      #:remove-direct-subclass
+      #:set-funcallable-instance-function
+      #:slot-boundp-using-class
+      #:slot-definition
+      #:slot-definition-allocation
+      #:slot-definition-initargs
+      #:slot-definition-initform
+      #:slot-definition-initfunction
+      #:slot-definition-location
+      #:slot-definition-name
+      #:slot-definition-readers
+      #:slot-definition-type
+      #:slot-definition-writers
+      #:slot-makunbound-using-class 
+      #:slot-value-using-class
+      #:specializer
+      ;; ECL has the symbol, but no function
+      #:specializer-direct-generic-functions
+      ;; ECL has the symbol, but no function:
+      #:specializer-direct-methods
+      #:standard-accessor-method
+      #:standard-direct-slot-definition
+      #:standard-effective-slot-definition
+      #:standard-instance-access
+      #:standard-reader-method
+      #:standard-slot-definition
+      #:standard-writer-method
+      #:update-dependent
+      #:validate-superclass
+      #:writer-method-class))
 
 ;;; ---------------------------------------------------------------------------
-;;;  Import MOP symbols, as needed
 
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (import '(#-cormanlisp
-	    clos::class-finalized-p 	; missing in CormanLisp 3.0
-	    #-(or cormanlisp ecl)
-	    clos:extract-specializer-names
-	    clos::finalize-inheritance 	; not exported in ECL
-	    #-(or cormanlisp ecl lispworks)
-	    clos::intern-eql-specializer)))
-
-;;; CormanLisp 3.0 is missing extract-specializer-names:
-#+cormanlisp
-(defun extract-specializer-names (specialized-lambda-list)
-  (lisp::extract-specializers specialized-lambda-list))
-
-;;; CormanLisp 3.0 is missing class-finalized-p, so we always assume a class
-;;; is finalized:
-#+cormanlisp
-(defun class-finalized-p (class)
-  (declare (ignore class))
-  't)
-
-;;; Lispworks and CormanLisp are missing intern-eql-specializer:
+;; Lispworks is missing intern-eql-specializer:
 #+(or cormanlisp lispworks)
 (defun intern-eql-specializer (x)
   `(eql ,x))
+
+;;; ---------------------------------------------------------------------------
+
+(let ((clos-package (find-package 
+                     #+allegro ':clos
+                     #+clisp ':clos
+                     #+clozure ':ccl
+                     #+cmu ':pcl
+                     #+cormanlisp ':common-lisp ; Not supported yet!
+                     #+digitool-mcl ':ccl
+                     #+gcl ':pcl
+                     #+lispworks ':clos
+                     #+sbcl ':sb-pcl))
+      (gbbopen-tools-package (find-package ':gbbopen-tools)))
+  (dolist (uninterned-symbol *clos/mop-symbols*)
+    (let* ((symbol-name (symbol-name uninterned-symbol))
+           (symbol (find-symbol symbol-name clos-package)))
+      (cond
+       ;; Good to go:
+       (symbol
+        (import symbol gbbopen-tools-package)
+        (export symbol gbbopen-tools-package))
+       ;; Unsupported CLOS/MOP symbol:
+       (t (warn "CLOS/MOP ~a is not supported on ~a~@[ running on ~a~]."
+                      uninterned-symbol
+                      (lisp-implementation-type) 
+                      (machine-type))
+          (let ((gbbopen-tools-symbol
+                 (find-symbol symbol-name gbbopen-tools-package)))
+            ;; GBBopen Tools is providing its own version:
+            (when gbbopen-tools-symbol
+              (warn "Defining :gbbopen-tools equivalent for ~a."
+                    uninterned-symbol)
+              (export gbbopen-tools-symbol gbbopen-tools-package))))))))
 
 ;;; ===========================================================================
 ;;;				  End of File

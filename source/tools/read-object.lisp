@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/read-object.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Jun  9 05:28:33 2008 *-*
+;;;; *-* Last-Edit: Tue Jun 17 15:04:33 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -25,10 +25,6 @@
 
 (in-package :gbbopen-tools)
 
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (import '(clos:class-slots
-            clos:slot-definition-name)))
-  
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(*forward-referenced-saved/sent-instances* ; not yet documented
             *reading-saved/sent-objects-readtable*  ; not yet documented

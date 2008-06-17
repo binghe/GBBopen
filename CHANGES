@@ -1,6 +1,7 @@
 Important changes since GBBopen 1.1:
 
-  * None yet
+  * The :clos package nickname is no longer added by GBBopen, use the
+    :gbbopen-tools package rather than :clos for CLOS/MOP entities
 
 
 Important changes in GBBopen 1.1:

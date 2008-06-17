@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/tutorial.tex *-*
-%% *-* Last-Edit: Sat Jun 14 04:08:34 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Tue Jun 17 15:54:25 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2005-2008, Dan Corkill <corkill@GBBopen.org>
@@ -888,7 +888,7 @@ member of a (possibly non-direct) subclass of GBBopen's unit class,
 GBBopen unit class is an instance of the GBBopen metaclass,
 \code{standard-unit-class}, which is a subclass of Common Lisp's
 \code{standard-class} metaclass.  In other words, GBBopen unit instances fit
-naturally into the CLOS an MOP hierarchies. Fortunately, understanding such
+naturally into the CLOS and MOP hierarchies. Fortunately, understanding such
 details is not required to put GBBopen to use.
 
 The word ``unit'' is used in GBBopen because it has a very neutral meaning
@@ -5717,23 +5717,18 @@ applications in the \code{:gbbopen-user} package and load several of them at
 the same time, symbol-name clashes could occur.
 
 To eliminate this possibility, we can create our own package for the
-random-walk application.  First, let's determine what packages are being used by GBBopen's \code{:gbbopen-user} package.  Evaluate the following:
+random-walk application.  First, let's determine what packages are being used
+by GBBopen's \code{:gbbopen-user} package.  Evaluate the following:
 %
 \W\supp
 \begin{example}
 \textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(package-use-list :gbbopen-user)}
   (#<package PORTABLE-THREADS> #<package AGENDA-SHELL>
-   #<package MINI-MODULE> #<package COMMON-LISP> #<package CLOS>
+   #<package MINI-MODULE> #<package COMMON-LISP>
    #<package GBBOPEN-TOOLS> #<package GBBOPEN>)
   gbbopen-user>}
 \end{example}
-%
-The \code{CLOS} package does not have a standard name in Common Lisp, so the
-package that you see listed may be named differently (such as \code{ACLMOP} or
-\code{SB-PCL}).  GBBopen provides the \code{:clos} nickname when necessary, so
-that you can reference the ``\code{CLOS}'' package using \code{:clos} on any
-supported Common Lisp implementation.
 
 \subsubsection*{Change \code{tutorial-example.lisp}}
 %
@@ -5753,7 +5748,7 @@ with the following:
   (eval-when (:compile-toplevel :load-toplevel :execute)
     (unless (find-package :tutorial)
       (defpackage :tutorial
-        (:use :common-lisp :clos :mini-module :gbbopen-tools :gbbopen 
+        (:use :common-lisp :mini-module :gbbopen-tools :gbbopen 
               :portable-threads :agenda-shell))))
 
   (in-package :tutorial)
@@ -5813,7 +5808,8 @@ Save the file.
 \bfindex{describe-module}%
 %
 Finally, we no longer need the \code{:gbbopen-user} package that is created by
-requiring the \code{:agenda-shell-user} module.  Let's take a closer look at the \code{:tutorial} module that we defined:
+requiring the \code{:agenda-shell-user} module.  Let's take a closer look at
+the \code{:tutorial} module that we defined:
 %
 \W\supp
 \begin{example}
