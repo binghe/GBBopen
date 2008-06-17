@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/print-object-for.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Jun  5 12:59:24 2008 *-*
+;;;; *-* Last-Edit: Tue Jun 17 15:03:56 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -25,10 +25,6 @@
 
 (in-package :gbbopen-tools)
 
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (import '(clos:class-slots
-            clos:slot-definition-name)))
-  
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(*print-object-for-sending*
             *save/send-references-only*

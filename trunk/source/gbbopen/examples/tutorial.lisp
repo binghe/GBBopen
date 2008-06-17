@@ -1,7 +1,7 @@
 ;;;; -*- Mode:COMMON-LISP; Package:TUTORIAL; Base:10 -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/examples/tutorial.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu May 22 01:40:00 2008 *-*
+;;;; *-* Last-Edit: Tue Jun 17 14:40:37 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -36,7 +36,7 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (unless (find-package ':tutorial)
     (make-package ':tutorial
-                  :use '(:common-lisp :clos :mini-module :portable-threads
+                  :use '(:common-lisp :mini-module :portable-threads
                          :gbbopen-tools :gbbopen :agenda-shell))))
 
 (in-package :tutorial)
