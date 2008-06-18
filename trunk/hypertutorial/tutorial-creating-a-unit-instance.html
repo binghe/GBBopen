@@ -23,9 +23,11 @@ member of a (possibly non-direct) subclass of GBBopen's unit class,
 <code>standard-object</code> class.  Even more technically, the metaclass of each
 GBBopen unit class is an instance of the GBBopen metaclass,
 <code>standard-unit-class</code>, which is a subclass of Common Lisp's
-<code>standard-class</code> metaclass.  In other words, GBBopen unit instances fit
-naturally into the CLOS and MOP hierarchies. Fortunately, understanding such
-details is not required to put GBBopen to use.
+<code>standard-class</code> metaclass.  In other words, GBBopen classes and unit
+instances fit naturally into the CLOS (the Common Lisp Object System) and MOP
+(<a target="_top" href="http://www.lisp.org/mop/index.html">Metaobject Protocol</a>)
+hierarchies. Fortunately, understanding such details is not required to put
+GBBopen to use.
 </p>
 <p>The word &#8220;unit&#8221; is used in GBBopen because it has a very neutral meaning
 that is unlikely to be confused with programming terminology, such as

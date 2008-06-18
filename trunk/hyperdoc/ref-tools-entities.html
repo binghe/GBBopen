@@ -5,15 +5,15 @@
 <!-- XML file produced from file: reference.tex
      using Hyperlatex v 2.9-in-waiting-rk (c) Otfried Cheong -->
 <head>
-<title>GBBopen 1.1 Reference -- Tools</title>
+<title>GBBopen 1.1 Reference -- GBBopen Tools</title>
 </p>
 <link rel="SHORTCUT ICON" href="favicon.ico"><link rel=stylesheet
         href="gbbopen.css" type="text/css" />
 </head>
 <body>
 <table width="100%" cellpadding="0" cellspacing="2"><tr>
-<td bgcolor="#99ccff"><a href="ref-mini-module-entities.html"><img border="0" alt="Mini-Module Facility" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="reference_0.html"><img border="0" alt="Top" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-GBBopen-core-entities.html"><img border="0" alt="GBBopen Core" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b>Tools</b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table>
-<h1>Tools</h1>
+<td bgcolor="#99ccff"><a href="ref-mini-module-entities.html"><img border="0" alt="Mini-Module Facility" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="reference_0.html"><img border="0" alt="Top" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-GBBopen-core-entities.html"><img border="0" alt="GBBopen Core" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b>GBBopen Tools</b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table>
+<h1>GBBopen Tools</h1>
 <p>The GBBopen Tools <a href="ref-glossary.html#gl:module">module</a>, <code>:gbbopen-tools</code>, contains useful
 Common Lisp additions and utilities.  Convenient (<a href="ref-declared-numerics.html">shorthand
 macros</a> for declared <a href="ref-glossary.html#gl:fixnum">fixnum</a>, short-float,
@@ -33,6 +33,57 @@ provided by the <a href="ref-portable-socket-entities.html"><code>:portable-sock
 module</a>, and uniform interfaces to the operating
 system are provided by the <a href="ref-os-interface-entities.html"><code>:os-interface</code>
 module</a>.
+</p>
+<p><a name="id1">The</a> GBBopen Tools <a href="ref-glossary.html#gl:module">module</a> imports commonly used CLOS and MOP symbols
+into the <code>:gbbopen-tools</code> package and then exports them, making it easy
+to use CLOS and MOP entities by simply using the <code>:gbbopen-tools</code>
+package.  The following CLOS and MOP symbols are exported by
+<code>:gbbopen-tools</code>: <code>accessor-method-slot-definition</code>,
+<code>add-dependent</code>, <code>add-direct-method</code>, <code>add-direct-subclass</code>,
+<code>class-default-initargs</code>, <code>class-direct-default-initargs</code>,
+<code>class-direct-slots</code>, <code>class-direct-subclasses</code>,
+<code>class-direct-superclasses</code>, <code>class-finalized-p</code>,
+<code>class-precedence-list</code>, <code>class-prototype</code>, <code>class-slots</code>,
+<code>compute-applicable-methods-using-classes</code>,
+<code>compute-class-precedence-list</code>, <code>compute-default-initargs</code>,
+<code>compute-discriminating-function</code>, <code>compute-effective-method</code>,
+<code>compute-effective-slot-definition</code>, <code>compute-slots</code>,
+<code>direct-slot-definition</code>, <code>direct-slot-definition-class</code>,
+<code>effective-slot-definition</code>, <code>effective-slot-definition-class</code>,
+<code>ensure-class</code>, <code>ensure-class-using-class</code>,
+<code>ensure-generic-function-using-class</code>, <code>eql-specializer</code>,
+<code>eql-specializer-object</code>, <code>extract-lambda-list</code>,
+<code>extract-specializer-names</code>, <code>finalize-inheritance</code>,
+<code>find-method-combination</code>, <code>forward-referenced-class</code>,
+<code>funcallable-standard-class</code>,
+<code>funcallable-standard-instance-access</code>,
+<code>funcallable-standard-object</code>,
+<code>generic-function-argument-precedence-order</code>,
+<code>generic-function-declarations</code>, <code>generic-function-lambda-list</code>,
+<code>generic-function-method-class</code>,
+<code>generic-function-method-combination</code>, <code>generic-function-methods</code>,
+<code>generic-function-name</code>, <code>intern-eql-specializer</code>,
+<code>make-method-lambda</code>, <code>map-dependents</code>, <code>metaobject</code>,
+<code>method-function</code>, <code>method-generic-function</code>,
+<code>method-lambda-list</code>, <code>method-specializers</code>,
+<code>reader-method-class</code>, <code>remove-dependent</code>,
+<code>remove-direct-method</code>, <code>remove-direct-subclass</code>,
+<code>set-funcallable-instance-function</code>, <code>slot-boundp-using-class</code>,
+<code>slot-definition</code>, <code>slot-definition-allocation</code>,
+<code>slot-definition-initargs</code>, <code>slot-definition-initform</code>,
+<code>slot-definition-initfunction</code>, <code>slot-definition-location</code>,
+<code>slot-definition-name</code>, <code>slot-definition-readers</code>,
+<code>slot-definition-type</code>, <code>slot-definition-writers</code>,
+<code>slot-makunbound-using-class</code>, <code>slot-value-using-class</code>,
+<code>specializer</code>, <code>specializer-direct-generic-functions</code>,
+<code>specializer-direct-methods</code>, <code>standard-accessor-method</code>,
+<code>standard-direct-slot-definition</code>,
+<code>standard-effective-slot-definition</code>, <code>standard-instance-access</code>,
+<code>standard-reader-method</code>, <code>standard-slot-definition</code>,
+<code>standard-writer-method</code>, <code>update-dependent</code>,
+<code>validate-superclass</code>, <code>writer-method-class</code>.  Load-time warning
+messages are displayed if the Common Lisp implementation does not have one of
+these symbols in its CLOS or MOP implementation.
 </p>
 <p>Several entities in the <code>:gbbopen-tools</code> module that are extended by
 additional methods in the <code>:gbbopen-core</code> module are documented in the
@@ -102,8 +153,15 @@ and <b><a href="ref-with-saving-sending-block.html">with-saving/sending-block</a
 <li><a href="ref-with-gensyms.html"><font color="#000000">with-gensyms</font></a></li>
 <li><a href="ref-with-once-only-bindings.html"><font color="#000000">with-once-only-bindings</font></a></li>
 <li><a href="ref-xor.html"><font color="#000000">xor</font></a></li>
+<li><a href="ref-declared-numerics.html">Declared Numerics</a></li>
+<li><a href="ref-date-and-time-entities.html">Date and Time</a></li>
+<li><a href="ref-offset-universal-time-entities.html">Offset Universal Time</a></li>
+<li><a href="ref-portable-thread-entities.html">Portable Threads</a></li>
+<li><a href="ref-polling-function-entities.html">Polling Functions</a></li>
+<li><a href="ref-portable-socket-entities.html">Portable Sockets</a></li>
+<li><a href="ref-os-interface-entities.html">OS Interface</a></li>
 </ul>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
 <table width="100%" cellpadding="0" cellspacing="2"><tr>
-<td bgcolor="#99ccff"><a href="ref-mini-module-entities.html"><img border="0" alt="Mini-Module Facility" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="reference_0.html"><img border="0" alt="Top" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-GBBopen-core-entities.html"><img border="0" alt="GBBopen Core" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b>Tools</b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table></body></html>
+<td bgcolor="#99ccff"><a href="ref-mini-module-entities.html"><img border="0" alt="Mini-Module Facility" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="reference_0.html"><img border="0" alt="Top" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-GBBopen-core-entities.html"><img border="0" alt="GBBopen Core" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b>GBBopen Tools</b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table></body></html>
