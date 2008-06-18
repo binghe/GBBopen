@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/tutorial.tex *-*
-%% *-* Last-Edit: Tue Jun 17 15:54:25 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Tue Jun 17 20:02:36 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2005-2008, Dan Corkill <corkill@GBBopen.org>
@@ -887,9 +887,11 @@ member of a (possibly non-direct) subclass of GBBopen's unit class,
 \code{standard-object} class.  Even more technically, the metaclass of each
 GBBopen unit class is an instance of the GBBopen metaclass,
 \code{standard-unit-class}, which is a subclass of Common Lisp's
-\code{standard-class} metaclass.  In other words, GBBopen unit instances fit
-naturally into the CLOS and MOP hierarchies. Fortunately, understanding such
-details is not required to put GBBopen to use.
+\code{standard-class} metaclass.  In other words, GBBopen classes and unit
+instances fit naturally into the CLOS (the Common Lisp Object System) and MOP
+(\xsitelink{Metaobject Protocol}{http://www.lisp.org/mop/index.html})
+hierarchies. Fortunately, understanding such details is not required to put
+GBBopen to use.
 
 The word ``unit'' is used in GBBopen because it has a very neutral meaning
 that is unlikely to be confused with programming terminology, such as

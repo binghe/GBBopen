@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Sat Jun 14 12:24:01 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Tue Jun 17 20:25:45 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -2816,7 +2816,7 @@ Redefine several modules with deferred conflict checking:
 \T\thispagestyle{fancybottom}
 \T\global\def\fnlastname{ }%
 \T\renewcommand{\headrulewidth}{0pt}
-\section{Tools}
+\section{GBBopen Tools}
 
 \index{module!:gbbopen-tools@\code{:gbbopen-tools}}%
 \index{:gbbopen-tools@\code{:gbbopen-tools} module}%
@@ -2840,6 +2840,141 @@ provided by the \reflink{\code{:portable-sockets}
   module}{sec:portablesockets}, and uniform interfaces to the operating
 system are provided by the \reflink{\code{:os-interface}
   module}{sec:os-interface}.
+
+\codeindexit{accessor-method-slot-definition}%
+\codeindexit{add-dependent}%
+\codeindexit{add-direct-method}%
+\codeindexit{add-direct-subclass}%
+\codeindexit{class-default-initargs}%
+\codeindexit{class-direct-default-initargs}%
+\codeindexit{class-direct-slots}%
+\codeindexit{class-direct-subclasses}%
+\codeindexit{class-direct-superclasses}%
+\codeindexit{class-finalized-p}%
+\codeindexit{class-precedence-list}%
+\codeindexit{class-prototype}%
+\codeindexit{class-slots}%
+\codeindexit{compute-applicable-methods-using-classes}%
+\codeindexit{compute-class-precedence-list}%
+\codeindexit{compute-default-initargs}%
+\codeindexit{compute-discriminating-function}%
+\codeindexit{compute-effective-method}%
+\codeindexit{compute-effective-slot-definition}%
+\codeindexit{compute-slots}%
+\codeindexit{direct-slot-definition}%
+\codeindexit{direct-slot-definition-class}%
+\codeindexit{effective-slot-definition}%
+\codeindexit{effective-slot-definition-class}%
+\codeindexit{ensure-class}%
+\codeindexit{ensure-class-using-class}%
+\codeindexit{ensure-generic-function-using-class}%
+\codeindexit{eql-specializer}%
+\codeindexit{eql-specializer-object}%
+\codeindexit{extract-lambda-list}%
+\codeindexit{extract-specializer-names}%
+\codeindexit{finalize-inheritance}%
+\codeindexit{find-method-combination}%
+\codeindexit{forward-referenced-class}%
+\codeindexit{funcallable-standard-class}%
+\codeindexit{funcallable-standard-instance-access}%
+\codeindexit{funcallable-standard-object}%
+\codeindexit{generic-function-argument-precedence-order}%
+\codeindexit{generic-function-declarations}%
+\codeindexit{generic-function-lambda-list}%
+\codeindexit{generic-function-method-class}%
+\codeindexit{generic-function-method-combination}%
+\codeindexit{generic-function-methods}%
+\codeindexit{generic-function-name}%
+\codeindexit{intern-eql-specializer}%
+\codeindexit{make-method-lambda}%
+\codeindexit{map-dependents}%
+\codeindexit{metaobject}%
+\codeindexit{method-function}%
+\codeindexit{method-generic-function}%
+\codeindexit{method-lambda-list}%
+\codeindexit{method-specializers}%
+\codeindexit{reader-method-class}%
+\codeindexit{remove-dependent}%
+\codeindexit{remove-direct-method}%
+\codeindexit{remove-direct-subclass}%
+\codeindexit{set-funcallable-instance-function}%
+\codeindexit{slot-boundp-using-class}%
+\codeindexit{slot-definition}%
+\codeindexit{slot-definition-allocation}%
+\codeindexit{slot-definition-initargs}%
+\codeindexit{slot-definition-initform}%
+\codeindexit{slot-definition-initfunction}%
+\codeindexit{slot-definition-location}%
+\codeindexit{slot-definition-name}%
+\codeindexit{slot-definition-readers}%
+\codeindexit{slot-definition-type}%
+\codeindexit{slot-definition-writers}%
+\codeindexit{slot-makunbound-using-class}%
+\codeindexit{slot-value-using-class}%
+\codeindexit{specializer}%
+\codeindexit{specializer-direct-generic-functions}%
+\codeindexit{specializer-direct-methods}%
+\codeindexit{standard-accessor-method}%
+\codeindexit{standard-direct-slot-definition}%
+\codeindexit{standard-effective-slot-definition}%
+\codeindexit{standard-instance-access}%
+\codeindexit{standard-reader-method}%
+\codeindexit{standard-slot-definition}%
+\codeindexit{standard-writer-method}%
+\codeindexit{update-dependent}%
+\codeindexit{validate-superclass}%
+\codeindexit{writer-method-class}%
+%
+The GBBopen Tools \glref{module} imports commonly used CLOS and MOP symbols
+into the \code{:gbbopen-tools} package and then exports them, making it easy
+to use CLOS and MOP entities by simply using the \code{:gbbopen-tools}
+package.  The following CLOS and MOP symbols are exported by
+\code{:gbbopen-tools}: \code{accessor-method-slot-definition},
+\code{add-dependent}, \code{add-direct-method}, \code{add-direct-subclass},
+\code{class-default-initargs}, \code{class-direct-default-initargs},
+\code{class-direct-slots}, \code{class-direct-subclasses},
+\code{class-direct-superclasses}, \code{class-finalized-p},
+\code{class-precedence-list}, \code{class-prototype}, \code{class-slots},
+\code{compute-applicable-methods-using-classes},
+\code{compute-class-precedence-list}, \code{compute-default-initargs},
+\code{compute-discriminating-function}, \code{compute-effective-method},
+\code{compute-effective-slot-definition}, \code{compute-slots},
+\code{direct-slot-definition}, \code{direct-slot-definition-class},
+\code{effective-slot-definition}, \code{effective-slot-definition-class},
+\code{ensure-class}, \code{ensure-class-using-class},
+\code{ensure-generic-function-using-class}, \code{eql-specializer},
+\code{eql-specializer-object}, \code{extract-lambda-list},
+\code{extract-specializer-names}, \code{finalize-inheritance},
+\code{find-method-combination}, \code{forward-referenced-class},
+\code{funcallable-standard-class},
+\code{funcallable-standard-instance-access},
+\code{funcallable-standard-object},
+\code{generic-function-argument-precedence-order},
+\code{generic-function-declarations}, \code{generic-function-lambda-list},
+\code{generic-function-method-class},
+\code{generic-function-method-combination}, \code{generic-function-methods},
+\code{generic-function-name}, \code{intern-eql-specializer},
+\code{make-method-lambda}, \code{map-dependents}, \code{metaobject},
+\code{method-function}, \code{method-generic-function},
+\code{method-lambda-list}, \code{method-specializers},
+\code{reader-method-class}, \code{remove-dependent},
+\code{remove-direct-method}, \code{remove-direct-subclass},
+\code{set-funcallable-instance-function}, \code{slot-boundp-using-class},
+\code{slot-definition}, \code{slot-definition-allocation},
+\code{slot-definition-initargs}, \code{slot-definition-initform},
+\code{slot-definition-initfunction}, \code{slot-definition-location},
+\code{slot-definition-name}, \code{slot-definition-readers},
+\code{slot-definition-type}, \code{slot-definition-writers},
+\code{slot-makunbound-using-class}, \code{slot-value-using-class},
+\code{specializer}, \code{specializer-direct-generic-functions},
+\code{specializer-direct-methods}, \code{standard-accessor-method},
+\code{standard-direct-slot-definition},
+\code{standard-effective-slot-definition}, \code{standard-instance-access},
+\code{standard-reader-method}, \code{standard-slot-definition},
+\code{standard-writer-method}, \code{update-dependent},
+\code{validate-superclass}, \code{writer-method-class}.  Load-time warning
+messages are displayed if the Common Lisp implementation does not have one of
+these symbols in its CLOS or MOP implementation.
 
 Several entities in the \code{:gbbopen-tools} module that are extended by
 additional methods in the \code{:gbbopen-core} module are documented in the
