@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/clos-interface.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Jun 17 16:26:15 2008 *-*
+;;;; *-* Last-Edit: Wed Jun 18 21:38:26 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -133,6 +133,7 @@
                      #+cmu ':pcl
                      #+cormanlisp ':common-lisp ; Not supported yet!
                      #+digitool-mcl ':ccl
+                     #+ecl ':clos
                      #+gcl ':pcl
                      #+lispworks ':clos
                      #+sbcl ':sb-pcl))
