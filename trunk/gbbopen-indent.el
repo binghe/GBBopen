@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Emacs-Lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/gbbopen-indent.el *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Jun 13 13:46:10 2008 *-*
+;;;; *-* Last-Edit: Mon Jun 23 12:25:17 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -36,6 +36,8 @@
   (set-indent-hook 'define-module 1)
   (set-indent-hook 'destructure-extent 2)
   (set-indent-hook 'make-space-instance 2)
+  (set-indent-hook 'patch 2)
+  (set-indent-hook 'start-patch 2)
   (set-indent-hook 'without-lock-held 2))
 
 (add-hook 'lisp-mode-hook (function gbbopen:add-indentation))

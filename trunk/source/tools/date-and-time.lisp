@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/date-and-time.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat May 31 09:50:10 2008 *-*
+;;;; *-* Last-Edit: Mon Jun 23 09:37:02 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -21,7 +21,6 @@
 ;;;
 ;;;  05-16-08 File split from tools.lisp.  (Corkill)
 ;;;  03-20-04 Added pretty time-interval functions.  (Corkill)
-;;;  05-15-08 Added parse-date.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -30,129 +29,30 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (import '(mini-module:*month-precedes-date*
             mini-module::*month-name-vector*
-            mini-module:brief-date-and-time)))
+            mini-module:brief-date
+            mini-module:brief-date-and-time
+            mini-module:parse-date)))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (export '(*month-precedes-date*       ; both of these are in mini-module.lisp, 
-            brief-date-and-time         ; but part of :gbbopen-tools
+  (export '(*month-precedes-date*       ; these three entities are defined in 
+            bried-date                  ; ../mini-module/mini-module.lisp, 
+            brief-date-and-time         ; but are part of :gbbopen-tools
 	    internet-text-date-and-time
 	    iso8661-date-and-time
 	    message-log-date-and-time
-            parse-date
+            parse-date                  ; also from mini-module.lisp
 	    pretty-time-interval
 	    pretty-run-time-interval)))
 
 ;;; ===========================================================================
 ;;;  Time parsing and formatting
 
-;;; (defvar *month-precedes-date* 't) and 
-;;; (defparameter *month-name-vector* ...) are defined in mini-module.lisp
-
-(defparameter *month-full-name-vector*
-    #("January" "February" "March" "April" "May" "June"
-      "July" "August" "September" "October" "November" "December"))
+;;; Defined in ../mini-module/mini-module.lisp:
+;;;  (defvar *month-precedes-date* 't) and 
+;;;   (defparameter *month-name-vector* ...)
 
 (defparameter *weekday-name-vector*
     #("Mon" "Tue" "Wed" "Thu" "Fri" "Sat" "Sun"))
-
-;;; ---------------------------------------------------------------------------
-
-(defun parse-date (string &key (start 0) 
-                               (end (length string))
-                               (junk-allowed nil)
-                               (separators "-/ ,")
-                               (month-precedes-date *month-precedes-date*))
-  ;;; Parses many intuitive date formats (sensitive to month-precedes-date,
-  ;;; if needed):
-  (declare (simple-string string))
-  (let (date month year month-preceded-date)
-    (flet ((process-date ()
-             (multiple-value-setq (date start)
-               (parse-integer string :start start :end end :junk-allowed t)))
-           (process-month ()
-             (cond
-              ;; Numeric month:
-              ((digit-char-p (schar string start))
-               (multiple-value-setq (month start)
-                 (parse-integer string :start start :end end :junk-allowed t)))
-              ;; Month name:
-              (t (let* (month-string
-                        (month-equal-fn
-                         #'(lambda (month-name)
-                             (when (string-equal 
-                                    string month-name
-                                    :start1 start
-                                    :end1 (min& end
-                                                (+& start (length month-name))))
-                               (setf month-string month-name)))))
-                   (setf month (or (position-if month-equal-fn 
-                                                *month-full-name-vector*)
-                                   (position-if month-equal-fn
-                                                *month-name-vector*)))
-                   (unless month
-                     (error "Unable to determine the month in ~s" string))
-                   (incf& month)
-                   (incf& start (length month-string))))))
-           (skip-separators ()
-             (while (and (<& start end)
-                         (find (schar string start) separators))
-               (incf& start))))
-      (skip-separators)
-      ;; If we have a month name, then we know the month-date order; otherwise
-      ;; we'll assume month-first for until we process the second field:
-      (when (alpha-char-p (schar string start))
-        (setf month-preceded-date 't))
-      (process-month)
-      (skip-separators)
-      (cond
-       ((and (not month-preceded-date)
-             (or
-              ;; We have a month name in the second field:
-              (alpha-char-p (schar string start))
-              ;; Use the month-precedes-date value to decide the order:
-              (not month-precedes-date)))
-        ;; We actually have the date value from the first field (rather than
-        ;; the month), so set the date from the assumed month value and then
-        ;; proceed with month processing:
-        (setf date month)
-        (process-month))
-       ;; Simply continue, as we have month then date order:
-       (t (process-date)))
-      (skip-separators))
-    (check-type month (integer 1 12))
-    (check-type date (integer 1 31))
-    ;; Process year:
-    (cond 
-     ;; Assumed year, if omitted:
-     ((=& start end)
-      (multiple-value-bind (seconds minutes hours 
-                            current-date current-month current-year)
-          (get-decoded-time)
-        (declare (ignore seconds minutes hours))
-        (setf year current-year)
-        ;; Assume next year, if the date is past in the current year:
-        (when (or (<& month current-month)
-                  (and (=& month current-month)
-                       (<& date current-date)))
-          (incf& year))))
-     ;; Otherwise, process the specified year:
-     (t (multiple-value-setq (year start)
-          (parse-integer string :start start :end end 
-                         :junk-allowed junk-allowed))))
-    (check-type year (integer 0 #.most-positive-fixnum))
-    ;; Upgrade YY to YYYY -- YY assumed within +/- 50 years from current time
-    ;; (if year < 100):
-    (setf year (cond 
-                ;; No year upgrade needed:
-                ((>=& year 100) year)
-                ;; Do the upgrade:
-                (t (let ((current-century
-                          (*& 100 (truncate& (nth-value 5 (get-decoded-time))
-                                             100))))
-                     (if (>=& year 50) 
-                         (+& year current-century -100)
-                         (+& year current-century))))))
-    (values date month year)))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  message-log-date-and-time

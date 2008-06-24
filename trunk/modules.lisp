@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/modules.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Jun 17 15:46:21 2008 *-*
+;;;; *-* Last-Edit: Tue Jun 24 13:09:28 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -180,7 +180,9 @@
   (define-module :gbbopen-test
     (:requires :gbbopen-user)
     (:directory :gbbopen "test")
-    (:files ("basic-tests" :reload)))
+    (:files ("basic-tests" :reload))
+    (:patches "basic-tests-p001"
+              "basic-tests-p002"))
   
 ;;; ---------------------------------------------------------------------------
 

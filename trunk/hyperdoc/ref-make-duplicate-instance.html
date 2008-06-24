@@ -69,17 +69,17 @@
 <p><span class="fndoclabel">Returns</span> <br />Two values: the (newly created) duplicate <a href="ref-glossary.html#gl:instances">instance</a> and a
 list of the slots that were duplicated or explicitly initialized.
 </p>
-<p><span class="fndoclabel">Events</span> <br /><a name="id1">When</a> a <a href="ref-glossary.html#id217">unit&nbsp;instance</a> is duplicated, events are signaled in the
+<p><span class="fndoclabel">Events</span> <br /><a name="id1">When</a> a <a href="ref-glossary.html#id219">unit&nbsp;instance</a> is duplicated, events are signaled in the
 following sequence: 
 </p>
 <p><ol class="tight"><li>An <code>update-nonlink-slot-event</code> or <code>link-event</code> is
 signaled for each initialized slot in the duplicated
-<a href="ref-glossary.html#id217">unit&nbsp;instance</a>.  A <code>link-event</code> is also signaled for
-each inverse pointer from an existing <a href="ref-glossary.html#id217">unit&nbsp;instance</a> to the
-(newly created) duplicate <a href="ref-glossary.html#id217">unit&nbsp;instance</a>.
+<a href="ref-glossary.html#id219">unit&nbsp;instance</a>.  A <code>link-event</code> is also signaled for
+each inverse pointer from an existing <a href="ref-glossary.html#id219">unit&nbsp;instance</a> to the
+(newly created) duplicate <a href="ref-glossary.html#id219">unit&nbsp;instance</a>.
 <li>An <code>add-instance-to-space-instance-event</code> is signaled
-for each <a href="ref-glossary.html#id193">space&nbsp;instance</a> on which the duplicate
-<a href="ref-glossary.html#id217">unit&nbsp;instance</a> is added.
+for each <a href="ref-glossary.html#id195">space&nbsp;instance</a> on which the duplicate
+<a href="ref-glossary.html#id219">unit&nbsp;instance</a> is added.
 <li>A <code>create-instance-event</code> is signaled.
 </ol>
 </p>
@@ -100,15 +100,15 @@ are initialized according to their <code>:initform</code> forms.
 </p>
 <p>Specifying a <code>:instance-name</code> initialization argument
 causes that value to be used as the <a href="ref-glossary.html#id93">instance&nbsp;name</a> of the newly created
-<a href="ref-glossary.html#id217">unit&nbsp;instance</a> instead of the instance-name counter value associated
-with the <a href="ref-glossary.html#id215">unit&nbsp;class</a> (if
+<a href="ref-glossary.html#id219">unit&nbsp;instance</a> instead of the instance-name counter value associated
+with the <a href="ref-glossary.html#id217">unit&nbsp;class</a> (if
 the <code>:use-global-instance-name-counter</code> class option is <code>nil</code> or was not
 specified for the unit class) or the global instance-name counter value (if
 the <code>:use-global-instance-name-counter</code> class option is true for the unit
 class).
 </p>
 <p>A <code>:space-instances</code> initialization argument must be provided when
-duplicating a <a href="ref-glossary.html#id193">space&nbsp;instance</a>.
+duplicating a <a href="ref-glossary.html#id195">space&nbsp;instance</a>.
 </p>
 <p><span class="fndoclabel">See also</span>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-delete-instance.html"><b>delete-instance</b></a>
@@ -154,7 +154,7 @@ duplicating a <a href="ref-glossary.html#id193">space&nbsp;instance</a>.
  #&lt;standard-effective-slot-definition a&gt;)
 </pre>
 </p>
-<p>Create a duplicate of the <code>hyp</code> <code>419</code> <a href="ref-glossary.html#id217">unit&nbsp;instance</a>:
+<p>Create a duplicate of the <code>hyp</code> <code>419</code> <a href="ref-glossary.html#id219">unit&nbsp;instance</a>:
 <pre class="pretop">
 &gt; (make-duplicate-instance (find-instance-by-name 19 'hyp) nil)
 #&lt;hyp 681 (1835 4791) 0.85 [5..35]&gt;
