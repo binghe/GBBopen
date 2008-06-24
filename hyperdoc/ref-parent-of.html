@@ -19,7 +19,7 @@
 <nobr><b><font color="#000000">parent-of</font></b></nobr></td><td valign="baseline"> &nbsp; </td><td valign="baseline" align="left" width="99%"><var>space-instance</var>
 <i> =&gt; </i> <var>space-instances</var></td><td valign="baseline" align="right">[<i>Generic&nbsp;Function</i>]
 </td></tr></table></p>
-<p><span class="fndoclabel">Purpose</span> <br />Return the parent space instance of a <a href="ref-glossary.html#id193">space&nbsp;instance</a>.
+<p><span class="fndoclabel">Purpose</span> <br />Return the parent space instance of a <a href="ref-glossary.html#id195">space&nbsp;instance</a>.
 </p>
 <p><span class="fndoclabel">Method signatures</span><table class="tighttop" width="100%">
 <tr valign="top"><td valign="baseline" align="left"><nobr>parent-of</nobr></td><td valign="baseline">&nbsp; </td><td valign="baseline" align="left" width="99%">
@@ -32,7 +32,7 @@
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-core</code>
 </p>
 <p><span class="fndoclabel">Arguments and values</span><table class="tighttop">
-<tr valign="top"><td valign="baseline"><i>space-instance</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id193">space&nbsp;instance</a>
+<tr valign="top"><td valign="baseline"><i>space-instance</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id195">space&nbsp;instance</a>
 </td></tr><tr valign="top"><td valign="baseline"><i>space-instances</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A proper list
 </td></tr></table>
 </p>
@@ -51,18 +51,18 @@ parent.
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-make-space-instance.html"><b>make-space-instance</b></a>
 </p>
 <p><span class="fndoclabel">Examples</span> <br /><a name="id1">Return</a> the parent space instances of the <code>(bb hyp)</code> 
-<a href="ref-glossary.html#id193">space&nbsp;instance</a>:
+<a href="ref-glossary.html#id195">space&nbsp;instance</a>:
 <pre class="pretop">
 &gt; (parent-of (<a href="ref-find-space-instance-by-path.html">find-space-instance-by-path</a> '(bb hyp))
 #&lt;standard-space-instance (bb)&gt;
 </pre>
 Return the parent space instances (the <code>root-space-instance</code>) of
-the <code>(bb)</code> <a href="ref-glossary.html#id193">space&nbsp;instance</a>:
+the <code>(bb)</code> <a href="ref-glossary.html#id195">space&nbsp;instance</a>:
 <pre>
 &gt; (parent-of (<a href="ref-find-space-instance-by-path.html">find-space-instance-by-path</a> '(bb))
 #&lt;root-space-instance root-space-instance&gt;
 </pre>
-Return the siblings of the <code>(bb)</code> <a href="ref-glossary.html#id193">space&nbsp;instance</a>:
+Return the siblings of the <code>(bb)</code> <a href="ref-glossary.html#id195">space&nbsp;instance</a>:
 <pre>
 &gt; (children-of
     (<a href="ref-parent-of.html">parent-of</a> (<a href="ref-find-space-instance-by-path.html">find-space-instance-by-path</a> '(bb))

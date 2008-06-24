@@ -31,11 +31,17 @@
 </p>
 <table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
-<code>:noautorun</code>&nbsp;&nbsp;&nbsp; </td><td valign="baseline" colspan="1" align="left"> Binds <b><a href="ref-autorun-modules-var.html">*autorun-modules*</a></b> to nil
+<code>:noautorun</code> </td><td valign="baseline" colspan="1" align="left"> Binds <b><a href="ref-autorun-modules-var.html">*autorun-modules*</a></b> to nil
 during compilation and loading</td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left">
-<code>:nopropagate</code> </td><td valign="baseline" colspan="1" align="left"> Cancels (overrides) a specified :propagate option</td></tr>
+<code>:nopatches</code> </td><td valign="baseline" colspan="1" align="left"> Do not load any <a href="ref-glossary.html#gl:patches">patches</a></td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left">
+<code>:nopropagate</code>&nbsp;&nbsp;&nbsp; </td><td valign="baseline" colspan="1" align="left"> Cancels (overrides) a specified :propagate option</td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left">
+<code>:patches-only</code>&nbsp;&nbsp;&nbsp; </td><td valign="baseline" colspan="1" align="left"> Do not reload any non-<a href="ref-glossary.html#gl:patch">patch</a> files</td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left">
 <code>:print</code> </td><td valign="baseline" colspan="1" align="left"> Incrementally prints information during compilation and
@@ -55,7 +61,7 @@ is newer than the source file (implies <code>:reload</code>)</td></tr>
 <td valign="baseline" colspan="1" align="left">
 </td></tr></tbody></table>
 <a name="id1"></a></td></tr></table>
-<p><span class="fndoclabel">Errors</span> <br />Module <var>module-name</var> has not been defined.<br />A <a href="ref-glossary.html#id167">relative&nbsp;directory</a>
+<p><span class="fndoclabel">Errors</span> <br />Module <var>module-name</var> has not been defined.<br />A <a href="ref-glossary.html#id169">relative&nbsp;directory</a>
 specification contains a circularity.
 </p>
 <p><span class="fndoclabel">Description</span> <br />These file options, when specified for individual files in the
@@ -95,7 +101,7 @@ loading</td></tr>
   (load-module :gbbopen-user)
 </pre>
 </p>
-<p><span class="fndoclabel">Note</span> <br /><b>Load-module</b> can be invoked using the <a href="ref-glossary.html#id169">REPL&nbsp;command</a>:
+<p><span class="fndoclabel">Note</span> <br /><b>Load-module</b> can be invoked using the <a href="ref-glossary.html#id171">REPL&nbsp;command</a>:
 <a name="id3"></a><pre class="pretop">
   :lm <span 
     style="font-family: serif; font-style: normal">[</span><var>module-name</var> <span 

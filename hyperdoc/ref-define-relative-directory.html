@@ -20,7 +20,7 @@
 <code>&#38;rest</code> <var>subdirectories</var></td><td valign="baseline" align="right">[<i>Function</i>]
 </td></tr></table></p>
 <p><span class="fndoclabel">Purpose</span> <br />Defines a directory relative to a <a href="ref-glossary.html#gl:Root">root</a> or
-<a href="ref-glossary.html#id167">relative&nbsp;directory</a> or to the directory specification of a
+<a href="ref-glossary.html#id169">relative&nbsp;directory</a> or to the directory specification of a
 <a href="ref-glossary.html#gl:module">module</a> definition.
 </p>
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:mini-module</code>
@@ -28,9 +28,9 @@
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:mini-module</code>
 </p>
 <p><span class="fndoclabel">Arguments and values</span><table class="tighttop">
-<tr valign="top"><td valign="baseline"><i>name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id97">keyword&nbsp;symbol</a> naming the <a href="ref-glossary.html#id167">relative&nbsp;directory</a>
+<tr valign="top"><td valign="baseline"><i>name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id97">keyword&nbsp;symbol</a> naming the <a href="ref-glossary.html#id169">relative&nbsp;directory</a>
 </td></tr><tr valign="top"><td valign="baseline"><i>directory</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> The <a href="ref-glossary.html#id97">keyword&nbsp;symbol</a> name of a <a href="ref-glossary.html#gl:Root">root</a> or 
-<a href="ref-glossary.html#id167">relative&nbsp;directory</a> or the name of a <a href="ref-glossary.html#gl:module">module</a>
+<a href="ref-glossary.html#id169">relative&nbsp;directory</a> or the name of a <a href="ref-glossary.html#gl:module">module</a>
 </td></tr><tr valign="top"><td valign="baseline"><i>subdirectories</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> One or more strings specifying, in order,
 subdirectories from <var>directory</var> to the relative directory. (The
 <a href="ref-glossary.html#gl:keywords">keyword</a> <code>:up</code> or <code>:back</code> can also be supplied in addition to any
@@ -38,13 +38,13 @@ of these strings, indicating to go upward one semantic or syntactic level of
 directory structure, respectively.)
 </td></tr></table>
 </p>
-<p><span class="fndoclabel">Description</span> <br /><a href="ref-glossary.html#gl:Root">Root</a> and <a href="ref-glossary.html#id167">relative&nbsp;directory</a> definitions are
+<p><span class="fndoclabel">Description</span> <br /><a href="ref-glossary.html#gl:Root">Root</a> and <a href="ref-glossary.html#id169">relative&nbsp;directory</a> definitions are
 used to isolate file-system details from <a href="ref-glossary.html#gl:module">module</a> definitions.  A
-<a href="ref-glossary.html#id167">relative&nbsp;directory</a> is defined in relation to another directory
-definition, that is either a <a href="ref-glossary.html#id175">root&nbsp;directory</a> or another
-<a href="ref-glossary.html#id167">relative&nbsp;directory</a> (which itself is eventually associated with a
-<a href="ref-glossary.html#id175">root&nbsp;directory</a>).  If this <a href="ref-glossary.html#gl:Root">root</a> directory location changes,
-every <a href="ref-glossary.html#id167">relative&nbsp;directory</a> associated with it is adjusted automatically.
+<a href="ref-glossary.html#id169">relative&nbsp;directory</a> is defined in relation to another directory
+definition, that is either a <a href="ref-glossary.html#id177">root&nbsp;directory</a> or another
+<a href="ref-glossary.html#id169">relative&nbsp;directory</a> (which itself is eventually associated with a
+<a href="ref-glossary.html#id177">root&nbsp;directory</a>).  If this <a href="ref-glossary.html#gl:Root">root</a> directory location changes,
+every <a href="ref-glossary.html#id169">relative&nbsp;directory</a> associated with it is adjusted automatically.
 </p>
 <p><span class="fndoclabel">See also</span>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-define-root-directory.html"><b>define-root-directory</b></a>

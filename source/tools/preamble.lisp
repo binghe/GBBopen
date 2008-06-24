@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/preamble.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Jun 15 20:30:07 2008 *-*
+;;;; *-* Last-Edit: Mon Jun 23 16:27:08 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -56,7 +56,8 @@
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (import '(common-lisp-user::*preferred-browser*
-	    common-lisp-user::*inf-reader-escape-hook*)))
+	    common-lisp-user::*inf-reader-escape-hook*
+            mini-module:printv)))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(add-package-nickname        ; not documented
@@ -64,7 +65,7 @@
             hyperdoc-filename           ; not yet documented
 	    hyperdoc-url		; not yet documented
             object-address
-	    printv
+	    printv                      ; in mini-module, but part of tools
 	    with-gensyms
 	    with-once-only-bindings)))	; not yet documented
 
@@ -197,30 +198,6 @@
     (if hex-string-p
         (format nil "~x" address)
         address)))
-
-;;; ===========================================================================
-;;;  Printv
-;;;
-;;;  A handy debugging macro
-;;;
-;;; Placed here to make this macro available ASAP
-
-(defmacro printv (&rest forms)
-  (with-gensyms (values)
-    `(let* ((*print-readably* nil)
-            (,values (list ,@(mapcar #'(lambda (form)
-					 `(multiple-value-list ,form))
-				     forms))))
-       (declare (dynamic-extent ,values))
-       (loop for form in ',forms
-	   and value in ,values
-	   do (typecase form
-		(keyword (format *trace-output* "~&;; ~s~%" form))
-		(string (format *trace-output* "~&;; ~a~%" form))
-		(t (format *trace-output* 
-			   "~&;;  ~w =>~{ ~w~^;~}~%" form value))))
-       (force-output *trace-output*)
-       (values-list (first (last ,values))))))
 
 ;;; ===========================================================================
 ;;;   Dispatch-macro-character conflict checker

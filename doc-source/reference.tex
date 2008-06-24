@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Tue Jun 17 20:25:45 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Tue Jun 24 15:17:30 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -350,11 +350,14 @@ and \xsitelink{Hyperlatex}{http://hyperlatex.sourceforge.net/} 2.9a.
 
 \newcommand{\compilemoduleoptions}{\T\\[4pt]
 \begin{tabular}{@{~~~}l@{}l@{}}
-\code{:create-dirs}~~~ & Creates any needed directories that are missing in the
+\code{:create-dirs} & Creates any needed directories that are missing in the
   compiled-file tree\\[2pt]
 \code{:noautorun} & Binds \textbf{\entlink{*autorun-modules*}} to nil
   during compilation and loading\\[2pt]
+\code{:nopatches} & Do not compile or load any \glref{patches}\\[2pt]
 \code{:nopropagate} & Cancels (overrides) a specified :propagate option\\[2pt]
+\code{:patches-only}~~~ & Do not compile or reload any non-\glref{patch} 
+  files\\[2pt]
 \code{:print} & Incrementally prints information during compilation and
   loading\\[2pt]
 \code{:propagate} & Applies the specified options to all 
@@ -368,6 +371,7 @@ and \xsitelink{Hyperlatex}{http://hyperlatex.sourceforge.net/} 2.9a.
 %
 \codeindexqual{:create-dirs}{compile/load-module option}%
 \codeindexqual{:noautorun}{compile/load-module option}%
+\codeindexqual{:nopatches}{compile/load-module option}%
 \codeindexqual{:nopropagate}{compile/load-module option}%
 \codeindexqual{:print}{compile/load-module option}%
 \codeindexqual{:propagate}{compile/load-module option}%
@@ -378,9 +382,11 @@ and \xsitelink{Hyperlatex}{http://hyperlatex.sourceforge.net/} 2.9a.
 
 \newcommand{\loadmoduleoptions}{\T\\[4pt]
 \begin{tabular}{@{~~~}l@{}l@{}}
-\code{:noautorun}~~~ & Binds \textbf{\entlink{*autorun-modules*}} to nil
+\code{:noautorun} & Binds \textbf{\entlink{*autorun-modules*}} to nil
   during compilation and loading\\[2pt]
-\code{:nopropagate} & Cancels (overrides) a specified :propagate option\\[2pt]
+\code{:nopatches} & Do not load any \glref{patches}\\[2pt]
+\code{:nopropagate}~~~ & Cancels (overrides) a specified :propagate option\\[2pt]
+\code{:patches-only}~~~ & Do not reload any non-\glref{patch} files\\[2pt]
 \code{:print} & Incrementally prints information during compilation and
   loading\\[2pt]
 \code{:propagate} & Applies the specified options to all 
@@ -391,6 +397,7 @@ and \xsitelink{Hyperlatex}{http://hyperlatex.sourceforge.net/} 2.9a.
 \end{tabular}
 %
 \codeindexqual{:noautorun}{compile/load-module option}%
+\codeindexqual{:nopatches}{compile/load-module option}%
 \codeindexqual{:nopropagate}{compile/load-module option}%
 \codeindexqual{:print}{compile/load-module option}%
 \codeindexqual{:propagate}{compile/load-module option}%
@@ -2006,6 +2013,100 @@ default values for the command.
 
 %% ------------------------------------------------------------------------
 
+\begin{functiondoc}{Macro}{continue-patch}{\var{form\/}\superstar}
+\index{module!patching}%
+\index{patching!a module}%
+
+\fnsyntax 
+
+\fnpurpose Continue the definition of a multiple top-level form \glref{patch} to
+a \glref{module}.
+
+\fnpackage \code{:mini-module}
+
+\fnmodule \code{:mini-module}
+
+\fnargs
+\begin{args}{description}
+\arg[form] A \glref{form}
+\end{args}
+
+\fnerrors
+A patch has not been started with \textbf{\entlink{start-patch}}.
+
+\fndescription 
+%
+The \textbf{continue-patch} macro, along with \textbf{\entlink{start-patch}}
+and \textbf{\entlink{finish-patch}}, can be used to define a patch as multiple
+top-level forms in the same patch file if a patch cannot be defined as a
+single \textbf{\entlink{patch}} form.
+
+\begin{alsos}{get-patch-description}
+\also[allow-redefinition]
+\also[define-module]
+\also[describe-module]
+\also[describe-patches]
+\also[finish-patch]
+\also[get-patch-description]
+\also[parse-date]
+\also[patch]
+\also[patch-loaded-p]
+\also[start-patch]
+\also[undefmethod]
+\end{alsos}
+
+\fnexample 
+%
+Define a more complex \glref{patch} (in a file named \code{my-app-p002.lisp}
+in the \code{patches} subdirectory of the module):
+%
+\bfindexit{printv}%
+\bfindexit{start-patch}%
+\bfindexit{finish-patch}%
+%
+\W\supp
+\begin{example}
+  (eval-when (:compile-toplevel :load-toplevel :execute)
+    (\entlink{start-patch} (2 "06-23-08" 
+                    :author "Corkill"
+                    :description "A more complex patch example")
+        (\entlink{printv} "More complex example patch started!")))
+
+  (eval-when (:compile-toplevel)
+    (continue-patch
+     (\entlink{printv} "Defining compile-time-only-macro-for-patch...")
+     (defmacro compile-time-only-macro-for-patch (x)
+       `',x)))
+
+  (eval-when (:compile-toplevel :load-toplevel :execute)
+    (continue-patch
+     (\entlink{printv} "Defining macro-for-patch...")
+     (defmacro macro-for-patch (x)
+       `',x)))\goodpagebreak
+
+  (continue-patch
+   (\entlink{printv} "Using macro-for-patch at load time...")
+   (macro-for-patch abc))
+
+  (eval-when (:compile-toplevel :load-toplevel :execute)
+    (continue-patch
+     (\entlink{printv} "Using macro-for-patch at compile & load time...")
+     (macro-for-patch xyz)))\goodpagebreak
+
+  (eval-when (:compile-toplevel)
+    (continue-patch
+     (\entlink{printv} "Using compile-time-only-macro-for-patch...")
+     (compile-time-only-macro-for-patch abc)))
+
+  (eval-when (:compile-toplevel :load-toplevel :execute)
+    (\entlink{finish-patch}
+     (\entlink{printv} "More complex example patch finished!")))
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
 \begin{functiondoc}{Macro}{define-module}{\var{module-name
       module-option\/}\superstar} 
 \index{module!defining or redefining}%
@@ -2040,7 +2141,8 @@ The \code{:requires} module option specifies a fully expanded
 \mbox{\var{module-option\/} ::=}
   & \code{(:requires} \var{module-name\/}\superstar\code{)} \vbar{} \\
   & \code{(:directory} \var{directory-specifier\/}\code{)} \vbar{} \\
-  & \code{(:files} \var{file-specifier\/}\superstar\code{)}\\
+  & \code{(:files} \var{file-specifier\/}\superstar\code{)} \vbar{} \\
+  & \code{(:patches} \var{file-specifier\/}\superstar\code{)} \\
 \end{tabular}
 \T\\
 \begin{tabular}{@{~}l@{~}l}
@@ -2071,19 +2173,19 @@ The \code{:requires} module option specifies a fully expanded
 \arg[module-name] A \glref{keyword~symbol} naming a \glref{module}
 \end{args}
 
-\fndescription The \var{module-options} \code{:requires},
-\code{:directory}, and \code{:files} can be specified in any order,
-but at most one of each is allowed.
+\fndescription The \var{module-options} \code{:requires}, \code{:directory},
+\code{:files}, and \code{:patches} can be specified in any order, but at most
+one of each is allowed.
 
 If a \code{:directory} module option is not specified, an implicit root
 directory for the \glref{module} (at the \code{*load-truename*} of the file
 containing the \textbf{define-module} form) is used.  If the \code{:directory}
-module option specifies a \glref{keyword} naming another \glref{module}, the directory
-specification of the named module is used as the base (root or relative)
-directory for the module that is being defined.  If both a \glref{module} and
-a \glref{root} or \glref{relative~directory} definition have the same name,
-the directory definition takes precedence over the module directory
-specification.
+module option specifies a \glref{keyword} naming another \glref{module}, the
+directory specification of the named module is used as the base (root or
+relative) directory for the module that is being defined.  If both a
+\glref{module} and a \glref{root} or \glref{relative~directory} definition
+have the same name, the directory definition takes precedence over the module
+directory specification.
 
 The \code{:requires} module option specifies, in order, the \glref{modules}
 that must be loaded before this \glref{module}.  The fully expanded
@@ -2091,11 +2193,19 @@ that must be loaded before this \glref{module}.  The fully expanded
 module option must be consistent with all previously defined modules.
 
 The \code{:files} module option specifies, in order, the files that are
-compiled (when appropriate) and loaded for this \glref{module}.  The
-combination of the \code{:requires} and \code{:files} module options specifies
-a total ordering of all the files that must be loaded for this \glref{module}
-(the files associated with each of the \glref{required~modules} followed by
-the files specified for this \glref{module}).
+compiled (when appropriate) and loaded for this \glref{module}.  Similarly,
+the \code{:patches} module option specifies, in order, the \glref{patch} files
+that are compiled (when appropriate) and loaded for this \glref{module}.  The
+combination of the \code{:requires}, \code{:files}, and \code{:patches} module
+options specifies a total ordering of all the files that must be compiled and
+loaded for this \glref{module} (the files associated with each of the
+\glref{required~modules} followed by the files specified for this
+\glref{module} followed by the patch files associated with each of the
+\glref{required~modules} followed by the patch files specified for this
+\glref{module}).In order to maintain an invariant patch ordering, patches
+should be added sequentially to the main (last loaded) module of an
+application. The source files for patches should be placed in a subdirectory
+named \code{patches} in the module's source-file directory.
 
 \var{File-options\/} have the following effects: 
 %
@@ -2105,9 +2215,17 @@ the files specified for this \glref{module}).
 \begin{alsos}{define-relative-directory}
 \also[define-relative-directory]
 \also[define-root-directory]
+\also[describe-module]
+\also[describe-patches]
 \also[compile-module]
+\also[continue-patch]
+\also[get-patch-description]
+\also[finish-patch]
 \also[load-module]
 \also[load-module-file]
+\also[patch]
+\also[patch-loaded-p]
+\also[start-patch]
 \also[with-system-name]
 \also[with-module-redefinitions]
 \end{alsos}
@@ -2143,6 +2261,21 @@ containing the \textbf{define-module} form:
             "classes"
             "my-app"
             "epilogue"))
+\end{example}
+
+Add two \glref{patch} files to the \code{:my-app} \glref{module}:
+%
+\W\supp
+\begin{example}
+  (define-module :my-app
+    (:requires :gbbopen-user)
+    (:files "preamble"
+            ("macros" :forces-recompile)
+            "classes"
+            "my-app"
+            "epilogue")
+    (:patches "my-app-p001"
+              "my-app-p002"))
 \end{example}
 
 \end{functiondoc}
@@ -2354,14 +2487,171 @@ Module :gbbopen-tools (loaded)
   Source directory: \var{<install-dir>\/}/source/tools/
   Compiled directory: \var{<install-dir>\/}/linux86-allegro-8.1/tools/
   Forces recompile date: Jan 15 17:11
-  Files: Jan 15 17:11 preamble 
-         Jan 15 17:11 declarations (:forces-recompile)
-         Jan 15 17:11 declared-numerics (:forces-recompile)
-         Jan 15 17:11 defflags (:forces-recompile)
-         Jan 15 17:11 tools (:forces-recompile)
-         Jan 15 17:11 define-class (:forces-recompile)
-         Jan 15 17:11 epilogue 
+  Files:   Jun 22 16:23 preamble 
+           Jun 22 16:23 declarations (:forces-recompile)
+           Jun 22 16:23 declared-numerics (:forces-recompile)
+           Jun 22 16:23 defflags (:forces-recompile)
+           Jun 22 16:23 clos-interface 
+           Jun 22 16:23 tools (:forces-recompile)
+           Jun 22 16:23 define-class (:forces-recompile)
+           Jun 22 16:23 gbbopen-instance 
+           Jun 22 16:23 date-and-time 
+           Jun 22 16:23 offset-universal-time 
+           Jun 22 16:23 print-object-for 
+           Jun 22 16:23 read-object 
+           Jun 22 16:23 duplicate-instance 
+           Jun 22 16:23 epilogue 
 \end{example} 
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{describe-patches}{\var{module-name\/}}
+\index{patch!describing}%
+
+\fnsyntax 
+
+\fnpurpose Print information about \glref{patch} \var{id\/} to a \var{module}.
+
+\fnpackage \code{:mini-module}
+
+\fnmodule \code{:mini-module}
+
+\fnargs
+\begin{args}{module-name}
+\arg[module-name] A \glref{keyword~symbol} naming a \glref{module}
+\end{args}
+
+\fnerrors Module \var{module-name\/} has not been defined.\\
+
+\begin{alsos}{get-patch-description}
+\also[continue-patch]
+\also[define-module]
+\also[describe-module]
+\also[finish-patch]
+\also[get-patch-description]
+\also[parse-date]
+\also[patch]
+\also[patch-loaded-p]
+\also[start-patch]
+\end{alsos}
+
+\fnexamples
+%
+Display the \glref{patches} to \glref{module} \code{:my-app}:
+%
+\W\supp
+\begin{example}
+> (describe-patches ':my-app)
+;; 1      Jun 22, 2008 Corkill (loaded Jun 24 13:08)
+;;           A simple example patch
+;; 2      Jun 23, 2008 Corkill (loaded Jun 24 13:08)
+;;           A more complex patch example
+\end{example}
+
+Display the \glref{patches} to \glref{module} \code{:gbbopen-test} (when that
+module has not been loaded):
+%
+\W\supp
+\begin{example}
+> (describe-patches ':gbbopen-test)
+;; Module :gbbopen-test is not loaded
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Macro}{finish-patch}{\var{form\/}\superstar}
+\index{module!patching}%
+\index{patching!a module}%
+
+\fnsyntax 
+
+\fnpurpose Finish the definition of a multiple top-level form \glref{patch} to
+a \glref{module}.
+
+\fnpackage \code{:mini-module}
+
+\fnmodule \code{:mini-module}
+
+\fnargs
+\begin{args}{description}
+\arg[form] A \glref{form}
+\end{args}
+
+\fnerrors
+A patch has not been started with \textbf{\entlink{start-patch}}.
+
+\fndescription 
+%
+The \textbf{start-patch} macro, along with \textbf{\entlink{continue-patch}}
+and \textbf{\entlink{finish-patch}}, can be used to define a patch as multiple
+top-level forms in the same patch file if a patch cannot be defined as a
+single \textbf{\entlink{patch}} form.
+
+\begin{alsos}{get-patch-description}
+\also[allow-redefinition]
+\also[continue-patch]
+\also[define-module]
+\also[describe-module]
+\also[describe-patches]
+\also[get-patch-description]
+\also[parse-date]
+\also[patch]
+\also[patch-loaded-p]
+\also[start-patch]
+\also[undefmethod]
+\end{alsos}
+
+\fnexample 
+%
+Define a more complex \glref{patch} (in a file named \code{my-app-p002.lisp}
+in the \code{patches} subdirectory of the module):
+%
+\bfindexit{printv}%
+\bfindexit{start-patch}%
+\bfindexit{continue-patch}%
+%
+\W\supp
+\begin{example}
+  (eval-when (:compile-toplevel :load-toplevel :execute)
+    (\entlink{start-patch} (2 "06-23-08" 
+                    :author "Corkill"
+                    :description "A more complex patch example")
+        (\entlink{printv} "More complex example patch started!")))
+
+  (eval-when (:compile-toplevel)
+    (\entlink{continue-patch}
+     (\entlink{printv} "Defining compile-time-only-macro-for-patch...")
+     (defmacro compile-time-only-macro-for-patch (x)
+       `',x)))
+
+  (eval-when (:compile-toplevel :load-toplevel :execute)
+    (\entlink{continue-patch}
+     (\entlink{printv} "Defining macro-for-patch...")
+     (defmacro macro-for-patch (x)
+       `',x)))\goodpagebreak
+
+  (\entlink{continue-patch}
+   (\entlink{printv} "Using macro-for-patch at load time...")
+   (macro-for-patch abc))
+
+  (eval-when (:compile-toplevel :load-toplevel :execute)
+    (\entlink{continue-patch}
+     (\entlink{printv} "Using macro-for-patch at compile & load time...")
+     (macro-for-patch xyz)))\goodpagebreak
+
+  (eval-when (:compile-toplevel)
+    (\entlink{continue-patch}
+     (\entlink{printv} "Using compile-time-only-macro-for-patch...")
+     (compile-time-only-macro-for-patch abc)))
+
+  (eval-when (:compile-toplevel :load-toplevel :execute)
+    (finish-patch
+     (\entlink{printv} "More complex example patch finished!")))
+\end{example}
 
 \end{functiondoc}
 
@@ -2429,6 +2719,82 @@ Return the pathname of the \code{:gbbopen-user} \glref{module}:
 \begin{example}
 > (get-directory :gbbopen-user)
 #P"\var{<install-dir>\/}/source/gbbopen/"
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{get-patch-description}%
+  {\var{id module-name\/}
+    \mbox{\returns{} \var{id, date, author, description, date-loaded\/}}}
+\index{patch!description, getting}%
+
+\fnsyntax 
+
+\fnpurpose Return the information describing \glref{patch} \var{id\/} to a
+\var{module}.
+
+\fnpackage \code{:mini-module}
+
+\fnmodule \code{:mini-module}
+
+\fnargs
+\begin{args}{module-name}
+\arg[id] An object
+\arg[module-name] A \glref{keyword~symbol} naming a \glref{module}
+\arg[date] A \glref{universal~time}
+\arg[author] A string
+\arg[description] A string or a list of strings or \nil
+\arg[date-loaded] A \glref{universal~time}
+\end{args}
+
+\fnreturns Five values: \var{id}, \var{date}, \var{author}, \var{description},
+and \var{date-loaded\/}, or \nil{} if the patch has not been loaded.
+
+\fnerrors Module \var{module-name\/} has not been defined.\\
+
+\begin{alsos}{describe-patches}
+\also[continue-patch]
+\also[define-module]
+\also[describe-module]
+\also[describe-patches]
+\also[finish-patch]
+\also[parse-date]
+\also[patch]
+\also[patch-loaded-p]
+\also[start-patch]
+\end{alsos}
+
+\fnexamples
+%
+Get the description values for \glref{patch} \code{1} to \glref{module} \code{:my-app}:
+%
+\W\supp
+\begin{example}
+> (get-patch-description 1 ':my-app)
+1
+3423139200
+"Corkill"
+"A simple example patch"
+3423316130
+\end{example}
+%
+and for non-existent patch \code{3}:
+%
+\W\supp\notpretop
+\begin{example}
+> (get-patch-description 3 ':my-app)
+nil
+\end{example}
+%
+and for patch \code{1} in \glref{module} \code{:gbbopen-test} (when that
+module has not been loaded):
+%
+\W\supp\notpretop
+\begin{example}
+> (get-patch-description 1 ':gbbopen-test)
+nil
 \end{example}
 
 \end{functiondoc}
@@ -2711,6 +3077,164 @@ t
 
 %% ------------------------------------------------------------------------
 
+\begin{functiondoc}{Macro}{patch}%
+  {\code{(}\var{id date\/}
+    \code{\&key} \var{author description reload\/}\code{)}
+    \var{form\/}\superstar} 
+\index{module!patching}%
+\index{patching!a module}%
+
+\fnsyntax 
+
+\fnpurpose Define a \glref{patch} to a \glref{module}.
+
+\fnpackage \code{:mini-module}
+
+\fnmodule \code{:mini-module}
+
+\fnargs
+\begin{args}{description}
+\arg[id] An object
+\arg[date] A string representing a date (parsed by 
+  \textbf{\entlink{parse-date}})
+\arg[author] A string (default is \code{"Anonymous"})
+\arg[description] A string or a list of strings (default is \nil)
+\arg[reload] A \glref{generalized~boolean} (default is \nil)
+\arg[form] A \glref{form}
+\end{args}
+
+\fndescription 
+%
+The source file for a patch should be placed in a subdirectory named
+\code{patches} in the module's source-files directory.
+
+Unless \var{reload} is true, the \glref{patch} \var{forms} are
+only executed at load time if the patch has not been loaded.  (Reloading a
+patch is only recommended when a patch is being developed.)
+
+If a patch cannot be defined as a single \textbf{patch} form, the more
+primitive \textbf{\entlink{start-patch}}, \textbf{\entlink{continue-patch}},
+and \textbf{\entlink{finish-patch}} macros can be used to separate the patch
+into multiple top-level forms in the same patch file.
+
+\begin{alsos}{get-patch-description}
+\also[allow-redefinition]
+\also[continue-patch]
+\also[define-module]
+\also[describe-module]
+\also[describe-patches]
+\also[finish-patch]
+\also[get-patch-description]
+\also[parse-date]
+\also[patch-loaded-p]
+\also[start-patch]
+\also[undefmethod]
+\end{alsos}
+
+\fnexample 
+%
+Define a simple \glref{patch} (in a file named \code{my-app-p001.lisp} in the
+\code{patches} subdirectory of the module):
+%
+\bfindexit{printv}%
+\bfindexit{define-module}%
+%
+\W\supp
+\begin{example}
+  (patch (1 "06-22-08" 
+            :author "Corkill"
+            :description "A simple example patch")
+      (\entlink{printv} "Simple example patch loaded!"))
+\end{example}
+%
+and add the patch file to the \code{:my-app} \glref{module}:
+%
+\W\supp\notpretop
+\begin{example}
+  (\entlink{define-module} :my-app
+    (:requires :gbbopen-user)
+    (:files "preamble"
+            ("macros" :forces-recompile)
+            "classes"
+            "my-app"
+            "epilogue")
+    (:patches "my-app-p001"))
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{patch-loaded-p}%
+  {\var{id module-name\/}
+    \returns{} \var{boolean\/}}
+\index{patch!checking if loaded}%
+\index{loaded patch, checking for}%
+
+\fnsyntax 
+
+\fnpurpose Determine if \glref{patch} \var{id\/} to \var{module} has been
+loaded.
+
+\fnpackage \code{:mini-module}
+
+\fnmodule \code{:mini-module}
+
+\fnargs
+\begin{args}{module-name}
+\arg[id] An object
+\arg[module-name] A \glref{keyword~symbol} naming a \glref{module}
+\arg[boolean] A \glref{generalized~boolean}
+\end{args}
+
+\fnreturns True if the \glref{patch} has been loaded; \nil{} otherwise.
+
+\fnerrors Module \var{module-name\/} has not been defined.\\
+
+\begin{alsos}{get-patch-description}
+\also[continue-patch]
+\also[define-module]
+\also[describe-module]
+\also[describe-patches]
+\also[finish-patch]
+\also[get-patch-description]
+\also[parse-date]
+\also[patch]
+\also[start-patch]
+\end{alsos}
+
+\fnexamples
+%
+Check if \glref{patch} \code{1} to \glref{module} \code{:my-app} has been
+loaded:
+%
+\W\supp
+\begin{example}
+> (patch-loaded-p 1 ':my-app)
+t
+\end{example}
+
+Check for non-existent patch \code{3}:
+%
+\W\supp
+\begin{example}
+> (patch-loaded-p 3 ':my-app)
+nil
+\end{example}
+
+Check for patch \code{1} in \glref{module} \code{:gbbopen-test} (when that
+module has not been loaded):
+%
+\W\supp
+\begin{example}
+> (patch-loaded-p 1 ':gbbopen-test)
+nil
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
 \begin{functiondoc}{Function}{show-defined-directories}{\noargs}
 \index{directory!show defined}%
 \index{relative directory!show defined}
@@ -2749,6 +3273,113 @@ List the currently defined \glref{root} and \glref{relative~directories}:
     Subdirectories: ("tools")
 :mini-module-root
     Root: \var{<install-dir>\/}
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Macro}{start-patch}%
+  {\code{(}\var{id date\/}
+    \code{\&key} \var{author description reload\/}\code{)}
+    \var{form\/}\superstar} 
+\index{module!patching}%
+\index{patching!a module}%
+
+\fnsyntax 
+
+\fnpurpose Start the definition of a multiple top-level form \glref{patch} to
+a \glref{module}.
+
+\fnpackage \code{:mini-module}
+
+\fnmodule \code{:mini-module}
+
+\fnargs
+\begin{args}{description}
+\arg[id] An object
+\arg[date] A string representing a date (parsed by 
+  \textbf{\entlink{parse-date}})
+\arg[author] A string (default is \code{"Anonymous"})
+\arg[description] A string or a list of strings (default is \nil)
+\arg[reload] A \glref{generalized~boolean} (default is \nil)
+\arg[form] A \glref{form}
+\end{args}
+
+\fndescription 
+%
+The source file for a patch should be placed in a subdirectory named
+\code{patches} in the module's source-files directory.
+
+Unless \var{reload} is true, the \glref{patch} \var{forms} are only executed
+at load time if the patch has not been loaded.  (Reloading a patch is only
+recommended when a patch is being developed.)
+
+The \textbf{start-patch} macro, along with \textbf{\entlink{continue-patch}}
+and \textbf{\entlink{finish-patch}}, can be used to define a patch as multiple
+top-level forms in the same patch file if a patch cannot be defined as a
+single \textbf{\entlink{patch}} form.
+
+\begin{alsos}{get-patch-description}
+\also[allow-redefinition]
+\also[continue-patch]
+\also[define-module]
+\also[describe-module]
+\also[describe-patches]
+\also[finish-patch]
+\also[get-patch-description]
+\also[parse-date]
+\also[patch]
+\also[patch-loaded-p]
+\also[undefmethod]
+\end{alsos}
+
+\fnexample 
+%
+Define a more complex \glref{patch} (in a file named \code{my-app-p002.lisp}
+in the \code{patches} subdirectory of the module):
+%
+\bfindexit{printv}%
+\bfindexit{continue-patch}%
+\bfindexit{finish-patch}%
+%
+\W\supp
+\begin{example}
+  (eval-when (:compile-toplevel :load-toplevel :execute)
+    (start-patch (2 "06-23-08" 
+                    :author "Corkill"
+                    :description "A more complex patch example")
+        (\entlink{printv} "More complex example patch started!")))
+
+  (eval-when (:compile-toplevel)
+    (\entlink{continue-patch}
+     (\entlink{printv} "Defining compile-time-only-macro-for-patch...")
+     (defmacro compile-time-only-macro-for-patch (x)
+       `',x)))
+
+  (eval-when (:compile-toplevel :load-toplevel :execute)
+    (\entlink{continue-patch}
+     (\entlink{printv} "Defining macro-for-patch...")
+     (defmacro macro-for-patch (x)
+       `',x)))\goodpagebreak
+
+  (\entlink{continue-patch}
+   (\entlink{printv} "Using macro-for-patch at load time...")
+   (macro-for-patch abc))
+
+  (eval-when (:compile-toplevel :load-toplevel :execute)
+    (\entlink{continue-patch}
+     (\entlink{printv} "Using macro-for-patch at compile & load time...")
+     (macro-for-patch xyz)))\goodpagebreak
+
+  (eval-when (:compile-toplevel)
+    (\entlink{continue-patch}
+     (\entlink{printv} "Using compile-time-only-macro-for-patch...")
+     (compile-time-only-macro-for-patch abc)))
+
+  (eval-when (:compile-toplevel :load-toplevel :execute)
+    (\entlink{finish-patch}
+     (\entlink{printv} "More complex example patch finished!")))
 \end{example}
 
 \end{functiondoc}
@@ -3089,6 +3720,13 @@ optimizations disabled:
 \end{args}
 
 \fnreturns The values returned by evaluating the last \var{form}.
+
+\begin{alsos}{continue-patch}
+\also[continue-patch]
+\also[finish-patch]
+\also[patch]
+\also[start-patch]
+\end{alsos}
 
 \fnexample
 %
@@ -5092,6 +5730,13 @@ but avoids allocating an intermediate substring.
 \arg[forms] Zero or more \glref{forms}
 \end{args}
 
+\begin{alsos}{continue-patch}
+\also[continue-patch]
+\also[finish-patch]
+\also[patch]
+\also[start-patch]
+\end{alsos}
+
 \fnexample
 \bfindexit{instance-name-of}%
 \bfindexit{find-instance-by-name}%
@@ -6263,6 +6908,7 @@ entities.
 \fninitialvalue True
 
 \begin{alsos}{brief-date-and-time}
+\also[brief-date]
 \also[brief-date-and-time]
 \also[parse-date]
 \end{alsos}
@@ -6286,6 +6932,85 @@ Toggle between date formatting options:
 %
 This variable is defined in the \code{:mini-module} \glref{module} in order to
 make it available as early as possible.
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{brief-date}{%
+    \code{\&optional} \var{universal-time time-zone destination\/}
+    \returns{} \var{result\/}}
+\index{date!formatted}% 
+\index{time, formatted}% 
+
+\fnsyntax
+
+\fnpurpose Generate a brief date description.
+
+\fnpackage \code{:gbbopen-tools} (home package is \code{:mini-module})
+
+\fnmodule \code{:mini-module}
+
+\fnargs
+\begin{args}{universal-time}
+\arg[universal-time] A \glref{universal~time} (default is \nil,
+  which is equivalent to the value returned by
+  \code{(get-universal-time)})
+\arg[time-zone] A \glref{time~zone} (default is \nil,
+  which is equivalent to the current time zone adjusted for daylight
+  saving time)
+\arg[destination] Either \nil, \code{t}, a stream, or a string with a fill 
+pointer (default is \nil)
+\arg[result] A string or \nil{}
+\end{args}
+
+\fnreturns If \var{destination\/} is non-\nil, then \nil; otherwise, a string.
+
+\fndescription 
+A 12-character description is generated.
+
+\W\xml{p}
+\bfindexit{get-universal-time}%
+If \var{universal-time\/} is not supplied or is \nil, the current time
+(as returned by \textbf{get-universal-time} is used.  
+
+\W\xml{p}
+If \var{time-zone\/} is not supplied or is \nil, it defaults to the
+current time zone adjusted for daylight saving time. If
+\var{time-zone} is supplied, it is assumed to include any adjustment
+for daylight saving time.
+
+\begin{alsos}{internet-text-date-and-time}
+\also[*month-precedes-date*]
+\also[brief-date-and-time]
+\also[internet-text-date-and-time]
+\also[iso8661-date-and-time]
+\also[message-log-date-and-time]
+\end{alsos}
+
+\fnexamples
+Display the current date: 
+%
+\W\supp
+\begin{example}
+> (brief-date)
+"Feb 16, 2008"
+\end{example}
+%
+Display the date 10 days ago:
+%
+\W\supp\notpretop
+\begin{example}
+> (brief-date (- (get-universal-time) (* 60 60 24 10)))
+"Feb 6, 2008"
+\end{example}
+
+\fnnote
+\indexit{module!:mini-module@\code{:mini-module}}%
+\indexit{:mini-module@\code{:mini-module} module}%
+%
+This function is loaded with the \code{:mini-module} \glref{module} in order
+to to make it available as early as possible.
 
 \end{functiondoc}
 
@@ -6341,6 +7066,7 @@ for daylight saving time.
 
 \begin{alsos}{internet-text-date-and-time}
 \also[*month-precedes-date*]
+\also[brief-date]
 \also[internet-text-date-and-time]
 \also[iso8661-date-and-time]
 \also[message-log-date-and-time]
@@ -6435,6 +7161,7 @@ pointer (default is \nil)
 \fnreturns If \var{destination\/} is non-\nil, then \nil; otherwise, a string.
 
 \begin{alsos}{iso8661-date-and-time}
+\also[brief-date]
 \also[brief-date-and-time]
 \also[iso8661-date-and-time]
 \also[message-log-date-and-time]
@@ -6480,6 +7207,7 @@ pointer (default is \nil)
 \fnreturns If \var{destination\/} is non-\nil, then \nil; otherwise, a string.
 
 \begin{alsos}{internet-text-date-and-time}
+\also[brief-date]
 \also[brief-date-and-time]
 \also[internet-text-date-and-time]
 \also[message-log-date-and-time]
@@ -6524,6 +7252,7 @@ pointer (default is \nil)
 \fnreturns If \var{destination\/} is non-\nil, then \nil; otherwise, a string.
 
 \begin{alsos}{internet-text-date-and-time}
+\also[brief-date]
 \also[brief-date-and-time]
 \also[internet-text-date-and-time]
 \also[iso8661-date-and-time]
@@ -6551,12 +7280,13 @@ pointer (default is \nil)
 
 \fnpurpose Parse a date-specification string.
 
-\fnpackage \code{:gbbopen-tools}
+\fnpackage \code{:gbbopen-tools} (home package is \code{:mini-module})
 
-\fnmodule \code{:gbbopen-tools}
+\fnmodule \code{:mini-module}
 
 \fnargs
 \begin{args}{month-precedes-date}
+\arg[string] A string
 \arg[start] Starting index into \var{string\/} (default is \code{0})
 \arg[end] Ending index into \var{string\/} (default is \nil, meaning
 end of \var{string\/})
@@ -6624,6 +7354,12 @@ have passed, in which case next year is assumed.
 2008
 \end{example}
 
+\fnnote
+\indexit{module!:mini-module@\code{:mini-module}}%
+\indexit{:mini-module@\code{:mini-module} module}%
+%
+This function is loaded with the \code{:mini-module} \glref{module} in order
+to to make it available as early as possible.
 \end{functiondoc}
 
 %% ------------------------------------------------------------------------

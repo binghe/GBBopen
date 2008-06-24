@@ -32,7 +32,7 @@ set the current package.
 </p>
 <table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
-<code>:create-dirs</code>&nbsp;&nbsp;&nbsp; </td><td valign="baseline" colspan="1" align="left"> Creates any needed directories that are missing in the
+<code>:create-dirs</code> </td><td valign="baseline" colspan="1" align="left"> Creates any needed directories that are missing in the
 compiled-file tree</td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left">
@@ -40,7 +40,14 @@ compiled-file tree</td></tr>
 during compilation and loading</td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left">
+<code>:nopatches</code> </td><td valign="baseline" colspan="1" align="left"> Do not compile or load any <a href="ref-glossary.html#gl:patches">patches</a></td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left">
 <code>:nopropagate</code> </td><td valign="baseline" colspan="1" align="left"> Cancels (overrides) a specified :propagate option</td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left">
+<code>:patches-only</code>&nbsp;&nbsp;&nbsp; </td><td valign="baseline" colspan="1" align="left"> Do not compile or reload any non-<a href="ref-glossary.html#gl:patch">patch</a> 
+files</td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left">
 <code>:print</code> </td><td valign="baseline" colspan="1" align="left"> Incrementally prints information during compilation and
@@ -66,7 +73,7 @@ is newer than the source file (implies <code>:reload</code>)</td></tr>
 <a name="id1"></a></td></tr><tr valign="top"><td valign="baseline"><i><p>package-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A package name (default is <code>nil</code>)
 </td></tr></table>
 </p>
-<p><span class="fndoclabel">Errors</span> <br />Module <var>module-name</var> has not been defined.<br />A <a href="ref-glossary.html#id167">relative&nbsp;directory</a>
+<p><span class="fndoclabel">Errors</span> <br />Module <var>module-name</var> has not been defined.<br />A <a href="ref-glossary.html#id169">relative&nbsp;directory</a>
 specification contains a circularity.
 </p>
 <p><span class="fndoclabel">Description</span> <br />This function bootstraps GBBopen loading, if needed, before
@@ -85,7 +92,7 @@ defined at the conclusion of <a href="ref-glossary.html#gl:module">module</a> co
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-define-module.html"><b>define-module</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-define-repl-command.html"><b>define-repl-command</b></a>
 </p>
-<p><span class="fndoclabel">Example</span> <br />Define a <a href="ref-glossary.html#id169">REPL&nbsp;command</a> named <code>:my-app</code> that compiles and loads the
+<p><span class="fndoclabel">Example</span> <br />Define a <a href="ref-glossary.html#id171">REPL&nbsp;command</a> named <code>:my-app</code> that compiles and loads the
 <a href="ref-glossary.html#gl:module">module</a> <code>:my-app</code> and sets the current package to the
 <code>:gbbopen-user</code> package:
 <pre class="pretop">
