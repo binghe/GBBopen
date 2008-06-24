@@ -3,7 +3,7 @@ Important changes since GBBopen 1.1:
   * The :clos package nickname is no longer added by GBBopen, use the
     :gbbopen-tools package rather than :clos for CLOS/MOP entities
 
-  * Changes to Mini Module system:
+  * Changes to Mini Module Facility:
      - Support for patches added (PATCH macro and friends)
      - Incremented Mini Module version to 1.4
 
