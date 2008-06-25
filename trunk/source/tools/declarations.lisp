@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/declarations.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Jun 13 10:09:13 2008 *-*
+;;;; *-* Last-Edit: Wed Jun 25 13:59:07 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -31,24 +31,13 @@
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(*generate-nyi-errors*	; not documented
-	    allow-redefinition
+	    allow-redefinition		; in mini-module, but part of tools
             defcm
             make-keys-only-hash-table-if-supported ; not documented
 	    nyi                         ; not documented
 	    unbound-value-indicator
 	    without-cmu/sbcl-optimization-warnings ; not documented
 	    with-full-optimization)))
-
-;;; ---------------------------------------------------------------------------
-
-(defmacro allow-redefinition (&body body)
-  `(#+allegro excl:without-redefinition-warnings
-    #+lispworks system::without-warning-on-redefinition
-    #+clisp handler-case
-    #-(or allegro clisp lispworks)
-    progn
-    (progn ,@body)
-    #+clisp (clos:clos-warning ())))
 
 ;;; ---------------------------------------------------------------------------
 

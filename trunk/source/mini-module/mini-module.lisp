@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/mini-module/mini-module.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Jun 24 13:44:27 2008 *-*
+;;;; *-* Last-Edit: Wed Jun 25 14:04:09 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -116,6 +116,19 @@
   (check-var '*compiled-file-type*))
 
 ;;; ===========================================================================
+;;;  Allow-redefinition (placed here for vary early use)
+
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defmacro allow-redefinition (&body body)
+    `(#+allegro excl:without-redefinition-warnings
+      #+lispworks system::without-warning-on-redefinition
+      #+clisp handler-case
+      #-(or allegro clisp lispworks)
+      progn
+      (progn ,@body)
+      #+clisp (clos:clos-warning ()))))
+
+;;; ===========================================================================
 ;;;   Imports to support using extended REPL commands:
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
@@ -130,11 +143,12 @@
 (unless (macro-function 'with-system-name)
   ;; This is a copy of the definition in ../../extended-repl.lisp.  It is
   ;; needed to support startup.lisp only invocation.
-  (defmacro with-system-name ((&optional system-name) &body body)
-    (unless (keywordp system-name)
-      (error "System name, ~s, must be a keyword." system-name))
-    `(let ((*current-system-name* ',system-name))
-       ,@body)))
+  (allow-redefinition
+   (defmacro with-system-name ((&optional system-name) &body body)
+     (unless (keywordp system-name)
+       (error "System name, ~s, must be a keyword." system-name))
+     `(let ((*current-system-name* ',system-name))
+        ,@body))))
 
 ;;; ===========================================================================
 ;;;   CL-User Global Variables
@@ -200,6 +214,7 @@
             *mini-module-compile-verbose* ; not yet documented
             *mini-module-load-verbose*  ; not yet documented
             *month-precedes-date*       ; part of tools, but placed here
+            allow-redefinition          ; part of tools, but placed here
             brief-date                  ; part of tools, but placed here
             brief-date-and-time         ; part of tools, but placed here
             check-all-module-requires-orderings ; not yet documented
@@ -240,8 +255,9 @@
 
 ;;; ===========================================================================
 
-(defun mini-module-implementation-version ()
-  "1.4")
+(allow-redefinition
+ (defun mini-module-implementation-version ()
+   "1.4"))
 
 ;;; Added to *features* at the end of this file:
 (defparameter *mini-module-version-keyword* 
@@ -251,17 +267,18 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun print-mini-module-herald ()
-  (format t "~%;;; ~72,,,'-<-~>
+(allow-redefinition
+ (defun print-mini-module-herald ()
+   (format t "~%;;; ~72,,,'-<-~>
 ;;;  Mini-Module System ~a~@
 ;;;
 ;;;    Developed and supported by the GBBopen Project (http:/GBBopen.org/)
 ;;;    (See http://GBBopen.org/downloads/LICENSE for license details.)
 ;;; ~72,,,'-<-~>~2%"
-          (mini-module-implementation-version)))
-  
-(eval-when (:load-toplevel)
-  (print-mini-module-herald))
+           (mini-module-implementation-version)))
+ 
+ (eval-when (:load-toplevel)
+   (print-mini-module-herald)))
 
 ;;; ===========================================================================
 ;;;  Add missing slot-definition documentation method to Digitool MCL:
@@ -316,18 +333,19 @@
 
   ;; CLISP can't handle compile-time (flet (...) (defmacro ...)) forms, so we
   ;; define fixnum-up as a full function here:
-  (defun fixnum-op (op args &optional result values-types)
-    ;; Builds a form declaring all the arguments to OP to be fixnums.  If
-    ;; `result' is true then the result of the operation is also a fixnum
-    ;; unless `values-types' is specified.
-    (let ((form `(,op ,@(mapcar #'(lambda (x) `(& ,x)) args))))
-      (if result
-          `(the #-full-safety ,(if values-types
-                                   (cons 'values values-types)
-                                   'fixnum)
-                #+full-safety t
-                ,form)
-          form)))
+  (allow-redefinition
+   (defun fixnum-op (op args &optional result values-types)
+     ;; Builds a form declaring all the arguments to OP to be fixnums.  If
+     ;; `result' is true then the result of the operation is also a fixnum
+     ;; unless `values-types' is specified.
+     (let ((form `(,op ,@(mapcar #'(lambda (x) `(& ,x)) args))))
+       (if result
+           `(the #-full-safety ,(if values-types
+                                    (cons 'values values-types)
+                                    'fixnum)
+                 #+full-safety t
+                 ,form)
+           form))))
   
   (defmacro +& (&rest args) (fixnum-op '+ args t))
   (defmacro 1-& (&rest args) (fixnum-op '1- args t))
@@ -1122,6 +1140,109 @@
   (remhash name *mm-modules*))
 
 ;;; ===========================================================================
+;;;  Patch primitives (placed here to avoid forward references)
+
+(defvar *current-module* nil)
+;; True when compiling a file:
+(defvar *compiling-file* nil)
+;; Holds the description of the patch currently being loaded:
+(defvar *loading-patch* nil)
+
+;;; ---------------------------------------------------------------------------
+
+(defstruct (patch-description
+            (:conc-name #.(dotted-conc-name 'patch-description))
+            (:copier nil))
+  id 
+  date
+  date-loaded 
+  author 
+  description
+  ;; Used to maintain module reference when loading patch:
+  module)
+
+;;; ---------------------------------------------------------------------------
+
+(defmethod print-object ((object patch-description) stream)
+  (cond
+   (*print-readably* (call-next-method))
+   (t (print-unreadable-object (object stream :type t)
+        (format stream "~a~@[ ~s~]"
+                (patch-description.id object)
+                (let ((module (patch-description.module object)))
+                  (when (mm-module-p module)
+                    (mm-module.name module)))))
+      ;; Print-object must return object:
+      object)))
+
+;;; ---------------------------------------------------------------------------
+
+(defun %find-patch-desc (id &optional (module *current-module*))
+  (find id (mm-module.patch-descriptions module) 
+        :test #'equal
+        :key #'patch-description.id))
+
+;;; ---------------------------------------------------------------------------
+
+(defun %make-patch (id date author description reload)
+  (cond 
+   ((or reload *compiling-file* (not (%find-patch-desc id)))
+    (setf *loading-patch* (make-patch-description
+                           :id id
+                           :date date
+                           :date-loaded (get-universal-time)
+                           :author author
+                           :description description
+                           :module *current-module*)))
+   ;; Skip this patch: 
+   (t (setf *loading-patch* ':skip)
+      ;; Return nil
+      nil)))
+
+;;; ---------------------------------------------------------------------------
+
+(defun %commit-patch ()
+  (when (patch-description-p *loading-patch*)
+    (unless *compiling-file*
+      (let* ((module (patch-description.module *loading-patch*))
+             (id (patch-description.id *loading-patch*))
+             (existing-description-sublist 
+              (member id (mm-module.patch-descriptions module)
+                      :test #'equal
+                      :key #'patch-description.id)))
+        (if existing-description-sublist
+            ;; Replace the existing patch description:
+            (setf (car existing-description-sublist)
+                  *loading-patch*)
+            ;; Add a new patch description to the end:
+            (setf (mm-module.patch-descriptions module)
+                  (nconc (mm-module.patch-descriptions module)
+                         (list *loading-patch*))))
+        (format t "~&;; Applied patch ~s to module ~s~%"
+                id
+                (mm-module.name module))))
+    (setf *loading-patch* nil)))
+
+;;; ---------------------------------------------------------------------------
+
+(defun %check-patch ()
+  ;; Checks that there is an open patch
+  (unless *loading-patch*
+    (error "No patch has been started."))
+  (not (eq *loading-patch* ':skip)))
+
+;;; ---------------------------------------------------------------------------
+
+(defun %check-no-patch ()
+  ;; Checks that there no patch open
+  (when *loading-patch*
+    (unless (eq *loading-patch* ':skip)
+      (warn "Patch ~a of module ~s was not completed"
+            (patch-description.id *loading-patch*)
+            (mm-module.name (patch-description.module *loading-patch*))))
+    (setf *loading-patch* nil)))
+
+;;; ===========================================================================
 ;;;   Module compile/load functions
 
 ;; Dynamic binding used in support of :forces-recompile file option:
@@ -1158,14 +1279,6 @@
 
 (defparameter *compile/load-file-options*
     '(:recompile :reload :source :forces-recompile :noload))
-
-;;; ---------------------------------------------------------------------------
-
-(defvar *current-module* nil)
-;; True when compiling a file:
-(defvar *compiling-file* nil)
-;; Holds the description of the patch currently being loaded:
-(defvar *loading-patch* nil)
 
 ;;; ---------------------------------------------------------------------------
 
@@ -1317,9 +1430,20 @@
   (multiple-value-bind (source-directory compiled-directory)
       (module-source/compiled-directories module patches?)
     (when compiled-directory
-      ;; Check if the compiled-directory exists; create it if automatically
-      ;; creating missing directories  or if the user so directs:
-      (unless (probe-directory compiled-directory)
+      ;; Check if the compiled-directory exists or if it is not needed.  If it
+      ;; is needed and missing, create it if automatically creating missing
+      ;; directories or if the user so directs:
+      (unless (or (probe-directory compiled-directory)
+                  ;; Compiled directory is not needed:
+                  (flet ((all-source-p (file-specs)
+                           (every #'(lambda (file-spec)
+                                      (let ((file-options (when (consp file-spec) 
+                                                            (rest file-spec))))
+                                        (member ':source file-options :test #'eq)))
+                                  file-specs)))
+                    (if patches?
+                        (all-source-p (mm-module.patches module))
+                        (all-source-p (mm-module.files module)))))
         (when (or *automatically-create-missing-directories*
                   (restart-case
                       (error "Directory ~a in module ~s doesn't exist."
@@ -1565,33 +1689,34 @@
 
 #+sbcl
 (sb-ext::without-package-locks
- (defun sb-impl::unparse-unix-piece (thing)
-   (etypecase thing
-     ((member :wild) "*")
-     ((member :unspecific)              ; Added by DDC
-      ;; CLHS 19.2.2.2.3.1 says "That is, both nil and :unspecific
-      ;; cause the component not to appear in the namestring."
-      "")
-     (simple-string
-      (let* ((srclen (length thing))
-             (dstlen srclen))
-        (dotimes (i srclen)
-          (case (schar thing i)
-            ((#\* #\? #\[)
-             (incf dstlen))))
-        (let ((result (make-string dstlen))
-              (dst 0))
-          (dotimes (src srclen)
-            (let ((char (schar thing src)))
-              (case char
-                ((#\* #\? #\[)
-                 (setf (schar result dst) #\\)
-                 (incf dst)))
-              (setf (schar result dst) char)
-              (incf dst)))
-          result)))
-     (sb-impl::pattern
-      (sb-impl::collect ((strings))
+ (allow-redefinition
+  (defun sb-impl::unparse-unix-piece (thing)
+    (etypecase thing
+      ((member :wild) "*")
+      ((member :unspecific)             ; Added by DDC
+       ;; CLHS 19.2.2.2.3.1 says "That is, both nil and :unspecific
+       ;; cause the component not to appear in the namestring."
+       "")
+      (simple-string
+       (let* ((srclen (length thing))
+              (dstlen srclen))
+         (dotimes (i srclen)
+           (case (schar thing i)
+             ((#\* #\? #\[)
+              (incf dstlen))))
+         (let ((result (make-string dstlen))
+               (dst 0))
+           (dotimes (src srclen)
+             (let ((char (schar thing src)))
+               (case char
+                 ((#\* #\? #\[)
+                  (setf (schar result dst) #\\)
+                  (incf dst)))
+               (setf (schar result dst) char)
+               (incf dst)))
+           result)))
+      (sb-impl::pattern
+       (sb-impl::collect ((strings))
          (dolist (piece (sb-impl::pattern-pieces thing))
            (etypecase piece
              (simple-string
@@ -1611,7 +1736,7 @@
                 (t (error "invalid pattern piece: ~S" piece))))))
          (apply #'concatenate
                 'simple-base-string
-                (strings)))))))
+                (strings))))))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -1779,101 +1904,7 @@
       do (undefine-module module-name)))
 
 ;;; ===========================================================================
-;;;  Patch
-
-(defstruct (patch-description
-            (:conc-name #.(dotted-conc-name 'patch-description))
-            (:copier nil))
-  id 
-  date
-  date-loaded 
-  author 
-  description
-  ;; Used to maintain module reference when loading patch:
-  module)
-
-;;; ---------------------------------------------------------------------------
-
-(defmethod print-object ((object patch-description) stream)
-  (cond
-   (*print-readably* (call-next-method))
-   (t (print-unreadable-object (object stream :type t)
-        (format stream "~a~@[ ~s~]"
-                (patch-description.id object)
-                (let ((module (patch-description.module object)))
-                  (when (mm-module-p module)
-                    (mm-module.name module)))))
-      ;; Print-object must return object:
-      object)))
-
-;;; ---------------------------------------------------------------------------
-
-(defun %find-patch-desc (id &optional (module *current-module*))
-  (find id (mm-module.patch-descriptions module) 
-        :test #'equal
-        :key #'patch-description.id))
-
-;;; ---------------------------------------------------------------------------
-
-(defun %make-patch (id date author description reload)
-  (cond 
-   ((or reload *compiling-file* (not (%find-patch-desc id)))
-    (setf *loading-patch* (make-patch-description
-                           :id id
-                           :date date
-                           :date-loaded (get-universal-time)
-                           :author author
-                           :description description
-                           :module *current-module*)))
-   ;; Skip this patch: 
-   (t (setf *loading-patch* ':skip)
-      ;; Return nil
-      nil)))
-
-;;; ---------------------------------------------------------------------------
-
-(defun %commit-patch ()
-  (when (patch-description-p *loading-patch*)
-    (unless *compiling-file*
-      (let* ((module (patch-description.module *loading-patch*))
-             (id (patch-description.id *loading-patch*))
-             (existing-description-sublist 
-              (member id (mm-module.patch-descriptions module)
-                      :test #'equal
-                      :key #'patch-description.id)))
-        (if existing-description-sublist
-            ;; Replace the existing patch description:
-            (setf (car existing-description-sublist)
-                  *loading-patch*)
-            ;; Add a new patch description to the end:
-            (setf (mm-module.patch-descriptions module)
-                  (nconc (mm-module.patch-descriptions module)
-                         (list *loading-patch*))))
-        (format t "~&;; Applied patch ~s to module ~s~%"
-                id
-                (mm-module.name module))))
-    (setf *loading-patch* nil)))
-
-;;; ---------------------------------------------------------------------------
-
-(defun %check-patch ()
-  ;; Checks that there is an open patch
-  (unless *loading-patch*
-    (error "No patch has been started."))
-  (not (eq *loading-patch* ':skip)))
-
-;;; ---------------------------------------------------------------------------
-
-(defun %check-no-patch ()
-  ;; Checks that there no patch open
-  (when *loading-patch*
-    (unless (eq *loading-patch* ':skip)
-      (warn "Patch ~a of module ~s was not completed"
-            (patch-description.id *loading-patch*)
-            (mm-module.name (patch-description.module *loading-patch*))))
-    (setf *loading-patch* nil)))
-
-;;; ---------------------------------------------------------------------------
+;;;  Patch entities
 
 (defmacro start-patch ((id date &key (author "Anonymous") description reload)
                        &body body)
