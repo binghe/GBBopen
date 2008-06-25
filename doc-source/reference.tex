@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Wed Jun 25 11:07:26 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Wed Jun 25 14:12:03 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -3709,9 +3709,9 @@ optimizations disabled:
 \fnpurpose Suppress redefinition warnings associated with processing 
 \var{forms}.
 
-\fnpackage \code{:gbbopen-tools}
+\fnpackage \code{:gbbopen-tools} (home package is \code{:mini-module})
 
-\fnmodule \code{:gbbopen-tools}
+\fnmodule \code{:mini-module}
 
 \fnargs
 \begin{args}{form}
@@ -3741,6 +3741,13 @@ also-silly
      (\entlink{define-unit-class} also-silly () ()))
 also-silly
 \end{example}
+
+\fnnote
+\indexit{module!:mini-module@\code{:mini-module}}%
+\indexit{:mini-module@\code{:mini-module} module}%
+%
+This variable is defined in the \code{:mini-module} \glref{module} in order to
+make it available as early as possible.
 
 \end{functiondoc}
 
@@ -5014,9 +5021,9 @@ information.
 \fnpurpose Assist debugging by printing forms and the results of
 evaluating them to \code{*trace-output*}.
 
-\fnpackage \code{:gbbopen-tools}
+\fnpackage \code{:gbbopen-tools} (home package is \code{:mini-module})
 
-\fnmodule \code{:gbbopen-tools}
+\fnmodule \code{:mini-module}
 
 \fnargs
 \begin{args}{results}
@@ -5055,6 +5062,13 @@ double-quote characters.
 ;;  (object-address *package* 't) => "71b32f5a"
 "71b32f5a"
 \end{example}
+
+\fnnote
+\indexit{module!:mini-module@\code{:mini-module}}%
+\indexit{:mini-module@\code{:mini-module} module}%
+%
+This variable is defined in the \code{:mini-module} \glref{module} in order to
+make it available as early as possible.
 
 \end{functiondoc}
 
