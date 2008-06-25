@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Jun 12 21:00:16 2008 *-*
+;;;; *-* Last-Edit: Wed Jun 25 05:55:28 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -59,6 +59,8 @@
 ;;;  05-01-08 Added DECF/DELETE-ACONS.  (Corkill)
 ;;;  05-25-08 Added MULITPLE-VALUE-SETF.  (Corkill)
 ;;;  06-01-08 Added COMPILER-MACROEXPAND-1 and COMPILER-MACROEXPAND.  (Corkill)
+;;;  06-25-08 Added :conditions option to WITH-ERROR-HANDLING and exclude
+;;;           handling EXCL::INTERRUPT-SIGNAL on Allegro by default.  (Corkill) 
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -71,6 +73,7 @@
   (import 
    #+allegro 
    '(excl::extract-declarations
+     excl:interrupt-signal
      excl::memq
      excl:until
      excl:while
@@ -389,61 +392,75 @@
 ;;; ---------------------------------------------------------------------------
 
 (defmacro with-error-handling (form-and-handler &body error-body)
-  ;; Determine if form-and-handler is form or (form &body handler-body):
-  (unless (and (consp form-and-handler)
-               (consp (car form-and-handler))
-               ;; Support CLHS 3.1.2.1.2.4 lambda form:
-               (not (eq (caar form-and-handler) 'lambda)))
-    ;; Convert a simple form to a form with (null) handler-body:
-    (setf form-and-handler (list form-and-handler)))
-  (destructuring-bind (form &body handler-body)
-      form-and-handler
-    (let ((block (gensym))
-          (condition/tag (when error-body (gensym))))
-      `(block ,block
-         (let (,@(when error-body (list condition/tag)))
-           (tagbody
-             (handler-bind
-                 ((error
-                   #'(lambda (condition)
-                       ,@(if handler-body
-                             `((flet ((error-message ()
-                                        (error-message-string condition))
-                                      (error-condition ()
-                                        condition))
-                                 (declare (dynamic-extent error-message
-                                                          error-condition))
-                                 #-sbcl
-                                 (declare (ignorable error-message
-                                                     error-condition))
-                                 ,@(if error-body
+  ;;; Full signature:
+  ;;;  (with-error-handling {form | 
+  ;;;                        (form [(:conditions condition*)] handler-form*)}
+  ;;;      error-form*)
+  (let ((conditions 
+         #+allegro '(and error (not interrupt-signal))
+         #-allegro 'error))
+    ;; Determine if form-and-handler is form or (form &body handler-body):
+    (unless (and (consp form-and-handler)
+                 (consp (car form-and-handler))
+                 ;; Support CLHS 3.1.2.1.2.4 lambda form:
+                 (not (eq (caar form-and-handler) 'lambda)))
+      ;; Convert a simple form to a form with (null) handler-body:
+      (setf form-and-handler (list form-and-handler)))
+    (destructuring-bind (form &body handler-body)
+        form-and-handler
+      ;; Check handler-body for :conditions option:
+      (when (and handler-body
+                 (consp (first handler-body))
+                 (eq ':conditions (first (first handler-body))))
+        (setf conditions (rest (first handler-body)))
+        (setf handler-body (rest handler-body)))
+      ;; Now generate the handler:
+      (let ((block (gensym))
+            (condition/tag (when error-body (gensym))))
+        `(block ,block
+           (let (,@(when error-body (list condition/tag)))
+             (tagbody
+               (handler-bind
+                   ((,conditions
+                     #'(lambda (condition)
+                         ,@(if handler-body
+                               `((flet ((error-message ()
+                                          (error-message-string condition))
+                                        (error-condition ()
+                                          condition))
+                                   (declare (dynamic-extent error-message
+                                                            error-condition))
+                                   #-sbcl
+                                   (declare (ignorable error-message
+                                                       error-condition))
+                                   ,@(if error-body
+                                         `(,@handler-body
+                                           ;; Save the condition for use
+                                           ;; by (error-message) in error-body:
+                                           (setf ,condition/tag condition)
+                                           (go ,condition/tag))
+                                         `((return-from ,block 
+                                             (progn ,@handler-body))))))
+                               `(,@(if error-body
                                        `(,@handler-body
-                                         ;; Save the condition for use
-                                         ;; by (error-message) in error-body:
+                                         ;; Save the condition for use by
+                                         ;; (error-message) in error-body:
                                          (setf ,condition/tag condition)
                                          (go ,condition/tag))
-                                       `((return-from ,block 
-                                           (progn ,@handler-body))))))
-                             `(,@(if error-body
-                                     `(,@handler-body
-                                       ;; Save the condition for use by
-                                       ;; (error-message) in error-body:
-                                       (setf ,condition/tag condition)
-                                       (go ,condition/tag))
-                                     `((declare (ignore condition))
-                                       (return-from ,block (values)))))))))
-               (return-from ,block ,form))
-             ,@(when error-body (list condition/tag))
-             ,@(when error-body
-                 `((flet ((error-message ()
-                            (error-message-string ,condition/tag))
-                          (error-condition ()
-                            ,condition/tag))
-                     (declare (dynamic-extent error-message error-condition))
-                     #-sbcl
-                     (declare (ignorable error-message error-condition))
-                     (return-from ,block (progn ,@error-body)))))))))))
-
+                                       `((declare (ignore condition))
+                                         (return-from ,block (values)))))))))
+                 (return-from ,block ,form))
+               ,@(when error-body (list condition/tag))
+               ,@(when error-body
+                   `((flet ((error-message ()
+                              (error-message-string ,condition/tag))
+                            (error-condition ()
+                              ,condition/tag))
+                       (declare (dynamic-extent error-message error-condition))
+                       #-sbcl
+                       (declare (ignorable error-message error-condition))
+                       (return-from ,block (progn ,@error-body))))))))))))
+  
 ;;; ===========================================================================
 ;;;  Ensure-finalized-class
 
