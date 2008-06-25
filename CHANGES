@@ -7,6 +7,8 @@ Important changes since GBBopen 1.1:
      - Support for patches added (PATCH macro and friends)
      - Incremented Mini Module version to 1.4
 
+  * New :conditions option in WITH-ERROR-HANDLING
+
 
 Important changes in GBBopen 1.1:
 
