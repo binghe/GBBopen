@@ -57,8 +57,8 @@ t
      ((mismatched-link :link (missing inverse))))
 bad
 &gt; (check-link-consistency)
-Warning: The inverse of link MISMATCHED-LINK in unit-class BAD refers
-         to unit-class MISSING, which is not defined.
+; Warning: The inverse of link MISMATCHED-LINK in unit-class BAD refers
+;          to unit-class MISSING, which is not defined.
 nil
 </pre>
 Define the missing <a href="ref-glossary.html#id217">unit&nbsp;class</a>, but incorrectly:
@@ -66,8 +66,8 @@ Define the missing <a href="ref-glossary.html#id217">unit&nbsp;class</a>, but in
 (<a href="ref-define-unit-class.html">define-unit-class</a> missing () ((mismatched-link :link (missing bad))))
 missing
 &gt; (check-link-consistency)
-Warning: The inverse of link MISMATCHED-LINK in unit-class MISSING
-         refers to link BAD which is not present in unit-class MISSING.
+; Warning: The inverse of link MISMATCHED-LINK in unit-class MISSING
+;          refers to link BAD which is not present in unit-class MISSING.
 nil
 </pre>
 Fix the definition and check again:

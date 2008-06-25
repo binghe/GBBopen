@@ -36,7 +36,7 @@ requests that are likely to be mistakes.
 <p><span class="fndoclabel">Example</span> <br />Suppress the warning message associated with an unachievable retrieval pattern:
 <pre class="pretop">
 &gt; (<a href="ref-filter-instances.html">filter-instances</a> nil '(and (&gt; x 3) (&lt; x 2)))
-Warning: Pattern (and (&gt; X 3) (&lt; X 2)) can not be satisfied.
+; Warning: Pattern (and (&gt; X 3) (&lt; X 2)) can not be satisfied.
 nil
 &gt; (let ((*warn-about-unusual-requests* nil))
     (<a href="ref-filter-instances.html">filter-instances</a> nil '(and (&gt; x 3) (&lt; x 2))))

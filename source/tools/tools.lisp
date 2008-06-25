@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jun 25 05:55:28 2008 *-*
+;;;; *-* Last-Edit: Wed Jun 25 10:37:46 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -151,7 +151,8 @@
 	    ensure-list
 	    ensure-list-of-lists	; not yet documented
 	    extract-declarations	; not documented
-	    incf-after			; not yet finished or documented
+	    incf-after                  ; not yet finished or documented
+            interrupt-signal
 	    list-length-1-p
 	    list-length-2-p
 	    list-length>
@@ -412,7 +413,7 @@
       (when (and handler-body
                  (consp (first handler-body))
                  (eq ':conditions (first (first handler-body))))
-        (setf conditions (rest (first handler-body)))
+        (setf conditions (sole-element (rest (first handler-body))))
         (setf handler-body (rest handler-body)))
       ;; Now generate the handler:
       (let ((block (gensym))
