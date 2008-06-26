@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Wed Jun 25 14:12:03 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Thu Jun 26 16:51:00 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -10428,15 +10428,18 @@ Change the class of \glref{unit~instance} \code{hyp} from
 > (\entlink{change-class} hyp 'rejected-hyp 
     :instance-name (next-class-instance-number 'rejected-hyp))
 #<rejected-hyp 1409 (896 388) .68>
-\end{example} 
+\end{example}
+%
+Note that the \code{:instance-name} initarg can be eliminated if both the old
+and new classes for \var{hyp\/} are using the global instance-name counter.
 
 \fnnote
 %
 \codeindexit{:use-global-instance-name-counter}
 %
-The \textbf{next-class-instance-number} function is not called if the
-\code{:use-global-instance-name-counter} class option is true for the unit
-class.
+The \textbf{next-class-instance-number} function increments the global
+instance-name counter value if the \code{:use-global-instance-name-counter}
+class option is true for the unit class.
 
 \end{functiondoc}
 

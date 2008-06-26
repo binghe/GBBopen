@@ -65,12 +65,14 @@ of <code>ksa</code>:
 &gt; (<a href="ref-change-class.html">change-class</a> hyp 'rejected-hyp 
     :instance-name (next-class-instance-number 'rejected-hyp))
 #&lt;rejected-hyp 1409 (896 388) .68&gt;
-</pre> 
+</pre>
+Note that the <code>:instance-name</code> initarg can be eliminated if both the old
+and new classes for <var>hyp</var> are using the global instance-name counter.
 </p>
 <p><span class="fndoclabel">Note</span> <br /><a name="id2">
-The</a> <b>next-class-instance-number</b> function is not called if the
-<code>:use-global-instance-name-counter</code> class option is true for the unit
-class.
+The</a> <b>next-class-instance-number</b> function increments the global
+instance-name counter value if the <code>:use-global-instance-name-counter</code>
+class option is true for the unit class.
 </p>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
