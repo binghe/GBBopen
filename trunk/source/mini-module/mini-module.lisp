@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/mini-module/mini-module.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jun 25 14:04:09 2008 *-*
+;;;; *-* Last-Edit: Thu Jun 26 11:15:51 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -741,16 +741,19 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun make-and-check-directory-pathname (name subdirectories compiled?
-                                          application-version-modifier)
+                                          application-version-modifier patches?)
   ;;; Used by compute-relative-directory to handle various "source" 
   ;;; directory-name conventions:
   (labels ((make-directory-pathname (subtree-name 
                                      &optional skip-subdirectories?)
              (make-pathname 
-              :directory (append-subdirectories (pathname-directory name)
-                                                (list subtree-name)
-                                                (unless skip-subdirectories?
-                                                  subdirectories))
+              :directory (append-subdirectories 
+                          (pathname-directory name)
+                          (list subtree-name)
+                          (unless skip-subdirectories?
+                            (if patches?
+                                (append subdirectories '("patches"))
+                                subdirectories)))
               :defaults name)))
     (cond
      ;; If compiled?, make and return the pathname (concatenating
@@ -796,7 +799,7 @@
             ;; :directory option was used in define-module:
             ((pathnamep name)
              (make-and-check-directory-pathname
-              name subdirectories compiled? nil))
+              name subdirectories compiled? nil patches?))
             (t (let ((mm-dir (gethash name *mm-directories*)))
                  (typecase mm-dir
                    (mm-relative-directory
@@ -809,8 +812,7 @@
                      (mm-relative-directory.root mm-dir)
                      (append-subdirectories
                       (mm-relative-directory.subdirectories mm-dir)
-                      subdirectories
-                      (when patches? '("patches")))))
+                      subdirectories)))
                    (mm-root-directory
                     (let ((root-path (mm-root-directory.path mm-dir))
                           (application-version-modifier
@@ -818,7 +820,7 @@
                             mm-dir)))
                       (make-and-check-directory-pathname 
                        root-path subdirectories compiled?
-                       application-version-modifier)))
+                       application-version-modifier patches?)))
                    (otherwise
                     (let ((module 
                            ;; Check if we have a module reference (look
