@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Jun 14 15:39:58 2008 *-*
+;;;; *-* Last-Edit: Thu Jun 26 16:33:00 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -125,7 +125,12 @@
 
 (defmethod next-class-instance-number ((instance standard-unit-instance))
   ;; The *master-instance-lock* is held whenever this is called:
-  (incf (standard-unit-class.instance-name-counter (class-of instance))))
+  (let ((unit-class (class-of instance)))
+    (if (standard-unit-class.use-global-instance-name-counter unit-class)
+        ;; Using global instance-name counter?
+        (incf *global-instance-name-counter*)
+        ;; Otherwise, use normal per-unit-class counter:
+        (incf (standard-unit-class.instance-name-counter unit-class)))))
 
 (defmethod next-class-instance-number ((unit-class-name symbol))
   (next-class-instance-number 
@@ -604,18 +609,10 @@
            ;; We already have an instance-name:
            ((slot-boundp-using-class unit-class instance slotd)
             (slot-value-using-class unit-class instance slotd))
-           ;; Using global instance-name counter?
-           ((standard-unit-class.use-global-instance-name-counter unit-class)
-            (setf (slot-value-using-class 
-                   unit-class instance 
-                   #-lispworks
-                   slotd
-                   #+lispworks
-                   (slot-definition-name slotd))
-                  (incf *global-instance-name-counter*)))
            ;; Otherwise, use normal per-unit-class counter:
            (t
-            ;; Initialize counter, if needed:
+            ;; Initialize class counter, if needed (even if the class is using
+            ;; the global counter):
             (when (eq (standard-unit-class.instance-name-counter unit-class)
                       unbound-value-indicator)
               (setf (standard-unit-class.instance-name-counter unit-class)
