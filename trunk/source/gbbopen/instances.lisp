@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Jun 26 16:33:00 2008 *-*
+;;;; *-* Last-Edit: Thu Jun 26 17:25:16 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -517,7 +517,7 @@
 (defmethod shared-initialize :after ((instance standard-unit-instance)
                                      slot-names 
                                      &key space-instances)  
-  (declare (inline class-of))
+  (declare (inline class-of))  
   (unless *%%skip-gbbopen-shared-initialize-method-processing%%*
     (post-initialize-instance-slots instance slot-names nil)
     ;; Add this instance to the explicitly-specified space instances.  This
@@ -530,7 +530,7 @@
                    (memq '%%space-instances%% slot-names))
                space-instances)
       (setf (standard-unit-instance.%%space-instances%% instance) nil)
-      (dolist (space-instance space-instances)
+      (dolist (space-instance (printv space-instances))
         (if (memq space-instance 
                   (locally (declare (special *%%existing-space-instances%%*))
                     *%%existing-space-instances%%*))
@@ -1045,7 +1045,10 @@
       (add-instance-to-space-instance instance space-instance)))
    ;; No :space-instances have been specified, so add `instance' to the
    ;; initial space instances:
-   (t (add-instance-to-initial-space-instances instance new-class))))
+   (t (let ((*warn-about-unusual-requests* nil)) ;; Don't complain if the
+                                                 ;; instance is already on the
+                                                 ;; space instance
+      (add-instance-to-initial-space-instances instance new-class)))))
 
 ;;; ---------------------------------------------------------------------------
 
