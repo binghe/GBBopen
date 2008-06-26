@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/basic-tests.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Jun 26 04:37:56 2008 *-*
+;;;; *-* Last-Edit: Thu Jun 26 04:48:33 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -235,11 +235,7 @@
 
 (defvar *method-trail* nil)
 
-;; Clozure 1.2-pre1 has a bug that requires checker-metaclass in the
-;; compile-time environment; remove eval-when wrapper once Clozure has fixed
-;; the bug:
-(eval-when (#+ccl-1.2 :compile-toplevel :load-toplevel :execute)
-  (define-class checker-metaclass (standard-class) ()))
+(define-class checker-metaclass (standard-class) ())
   
 (defmethod validate-superclass ((class checker-metaclass) 
                                 (superclass standard-class))
