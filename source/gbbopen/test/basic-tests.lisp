@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/basic-tests.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Jun 15 12:54:38 2008 *-*
+;;;; *-* Last-Edit: Thu Jun 26 04:37:56 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -1021,11 +1021,7 @@
   ;; Simple time test:
   (progn
     (reset-gbbopen)
-    (do-time-tests 
-      ;; ECL generates a bus error at higher iterations (track down this ECL
-      ;; bug!):
-      #+ecl 500
-      #-ecl 10000))
+    (do-time-tests 10000))
   
   ;; Common Lisp capability tests:
   (lisp-capability-tests))
