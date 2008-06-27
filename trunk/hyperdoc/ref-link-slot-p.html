@@ -53,9 +53,10 @@
 </p>
 <p><span class="fndoclabel">Example</span> <br />Return the names of the link slots of the <code>hyp</code> <a href="ref-glossary.html#id217">unit&nbsp;class</a>:
 <pre class="pretop">
-&gt; (loop for slot in (class-slots (find-class 'hyp)) 
-     if (link-slot-p slot) collect (slot-definition-name slot))
-(supporting-hyps supported-hyps)
+  &gt; (loop for slot in (class-slots (find-class 'hyp)) 
+       if (link-slot-p slot) collect (slot-definition-name slot))
+  (supporting-hyps supported-hyps)
+  &gt;
 </pre>
 </p>
 <hr /><address><a target="_top" class="address"

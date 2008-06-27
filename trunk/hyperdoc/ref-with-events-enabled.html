@@ -43,17 +43,18 @@
 <p><span class="fndoclabel">Example</span> <br /><a name="id1">Create</a> a <code>hyp</code> without signaling any events, then add
 supporting-hypothesis links with events enabled:
 <pre class="pretop">
-&gt; (<a href="ref-with-events-disabled.html">with-events-disabled</a>
-     (let ((hyp (<a href="ref-make-instance.html">make-instance</a> 'hyp 
-                   :location (list x y)
-                   :classification '(:car :truck)
-                   :color ':red
-                   :belief .85
-                   :velocity-range '(5 35))))
-        (with-events-enabled ()
-           (linkf (supporting-hyps-of hyp) supporting-hyps))
-        hyp))
-#&lt;hyp 419 (1835 4791) 0.85 [5..35]&gt;
+  &gt; (<a href="ref-with-events-disabled.html">with-events-disabled</a>
+       (let ((hyp (<a href="ref-make-instance.html">make-instance</a> 'hyp 
+                     :location (list x y)
+                     :classification '(:car :truck)
+                     :color ':red
+                     :belief .85
+                     :velocity-range '(5 35))))
+          (with-events-enabled ()
+             (linkf (supporting-hyps-of hyp) supporting-hyps))
+          hyp))
+  #&lt;hyp 419 (1835 4791) 0.85 [5..35]&gt;
+  &gt;
 </pre>
 </p>
 <hr /><address><a target="_top" class="address"

@@ -42,15 +42,16 @@
 </p>
 <p><span class="fndoclabel">Example</span> <br /><a name="id1">Create</a> a <code>hyp</code> without signaling any events:
 <pre class="pretop">
-&gt; (with-events-disabled ()
-     (<a href="ref-make-instance.html">make-instance</a> 'hyp 
-        :location (list x y)
-        :classification '(:car :truck)
-        :color ':red
-        :belief .85
-        :velocity-range '(5 35)
-        :supporting-hyps supporting-hyps))
-#&lt;hyp 419 (1835 4791) 0.85 [5..35]&gt;
+  &gt; (with-events-disabled ()
+       (<a href="ref-make-instance.html">make-instance</a> 'hyp 
+          :location (list x y)
+          :classification '(:car :truck)
+          :color ':red
+          :belief .85
+          :velocity-range '(5 35)
+          :supporting-hyps supporting-hyps))
+  #&lt;hyp 419 (1835 4791) 0.85 [5..35]&gt;
+  &gt;
 </pre>
 </p>
 <hr /><address><a target="_top" class="address"

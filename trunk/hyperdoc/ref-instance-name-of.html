@@ -65,15 +65,17 @@ same <a href="ref-glossary.html#gl:class">class</a> as <var>instance</var>.
 <p><span class="fndoclabel">Examples</span> <br /><a name="id1">Return</a> the <a href="ref-glossary.html#gl:instance-name">instance&nbsp;names</a> of the <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a> supporting
 <code>hyp</code> <a href="ref-glossary.html#id219">unit&nbsp;instance</a> <code>180</code>:
 <pre class="pretop">
-&gt; (mapcar #'instance-name-of 
-          (supporting-hyps-of (<a href="ref-find-instance-by-name.html">find-instance-by-name</a> 'hyp 180)))
-(123 158 94)
+  &gt; (mapcar #'instance-name-of 
+            (supporting-hyps-of (<a href="ref-find-instance-by-name.html">find-instance-by-name</a> 'hyp 180)))
+  (123 158 94)
+  &gt;
 </pre>
 <a name="id2">Change</a> the <a href="ref-glossary.html#id93">instance&nbsp;name</a> of <code>hyp</code> <code>180</code> to 
 <code>"bogus-180"</code>:
 <pre>
-&gt; (setf (instance-name-of (<a href="ref-find-instance-by-name.html">find-instance-by-name</a> 180 'hyp)) "bogus-180")
-"bogus-180"
+  &gt; (setf (instance-name-of (<a href="ref-find-instance-by-name.html">find-instance-by-name</a> 180 'hyp)) "bogus-180")
+  "bogus-180"
+  &gt;
 </pre>
 </p>
 <hr /><address><a target="_top" class="address"

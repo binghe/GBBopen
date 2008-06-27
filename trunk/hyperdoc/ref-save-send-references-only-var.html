@@ -35,12 +35,13 @@ prints references to instances or the instance contents.
 </p>
 <p><span class="fndoclabel">Example</span> <br /><a name="id1">Send</a> some <code>hyp</code> <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a> to another agent:
 <pre class="pretop">
-&gt; (let ((<a href="ref-print-object-for-sending-var.html">*print-object-for-sending*</a> 't))
-    (<a href="ref-with-saving-sending-block.html">with-saving/sending-block</a> (stream :package ':my-app)
-      (let ((*save/send-references-only* nil))
-        (<a href="ref-do-instances-of-class.html">do-instances-of-class</a> (instance 'hyp :plus-subclasses)
-          (<a href="ref-print-object-for-saving-sending.html">print-object-for-saving/sending</a> instance stream)))))
-nil
+ &gt; (let ((<a href="ref-print-object-for-sending-var.html">*print-object-for-sending*</a> 't))
+      (<a href="ref-with-saving-sending-block.html">with-saving/sending-block</a> (stream :package ':my-app)
+        (let ((*save/send-references-only* nil))
+          (<a href="ref-do-instances-of-class.html">do-instances-of-class</a> (instance 'hyp :plus-subclasses)
+            (<a href="ref-print-object-for-saving-sending.html">print-object-for-saving/sending</a> instance stream)))))
+  nil
+  &gt;
 </pre>
 </p>
 <hr /><address><a target="_top" class="address"

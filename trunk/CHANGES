@@ -3,11 +3,17 @@ Important changes since GBBopen 1.1:
   * The :clos package nickname is no longer added by GBBopen, use the
     :gbbopen-tools package rather than :clos for CLOS/MOP entities
 
-  * Changes to Mini Module Facility:
+  * Changes to Mini Module Facility
      - Support for patches added (PATCH macro and friends)
      - Incremented Mini Module version to 1.4
 
   * New :conditions option in WITH-ERROR-HANDLING
+
+  * New Agenda Shell functions
+     - CURRENT-CONTROL-SHELL
+     - EXECUTED-KSAS-OF
+     - OBVIATED-KSAS-OF
+     - PENDING-KSAS-OF
 
 
 Important changes in GBBopen 1.1:
@@ -51,9 +57,9 @@ Important changes in GBBopen 1.0:
     definitions, and module definitions
      - New WITH-SYSTEM-NAME macro added to support this
 
-  * Changes to extended-REPL commands:
+  * Changes to extended-REPL commands
      - DEFINE-TLL-COMMAND renamed to DEFINE-REPL-COMMAND
-     - New built-in extended-REPL commands:
+     - New built-in extended-REPL commands
         :systems  Shows all system-names used in commands, directory 
                   definitions, and module definitions
         :commands [<system-name>] 
@@ -63,7 +69,7 @@ Important changes in GBBopen 1.0:
                   Removes all commands, directory definitions, and 
                   module definitions associated with <system-name>
 
-  * Changes to Mini Module system:
+  * Changes to Mini Module system
      - Added Mini Module support for "Source" and "SOURCE" directory-name
        conventions (in addition to the recommended "source")
      - Added application-version modifier support to DEFINE-ROOT-DIRECTORY
@@ -85,7 +91,7 @@ Important changes in GBBopen 0.9.9:
     The third value is new in GBBopen 0.9.9.
 
   * Renamed "specified comparison test" element (enumerated dimension) 
-    pattern operators:
+    pattern operators
        EQ     -> IS-EQ
        EQL    -> IS-EQL
        EQUAL  -> IS-EQUAL
@@ -132,7 +138,7 @@ Important changes in GBBopen 0.9.9:
 Important changes in GBBopen 0.9.8:
 
   * INCOMPATIBLE CHANGE: New DELETE-BLACKBOARD-REPOSITORY function
-    replaces typical uses of RESET-GBBOPEN:
+    replaces typical uses of RESET-GBBOPEN
      - RESET-GBBOPEN now unconditionally deletes/resets all instances,
        event functions, and event printing
 
@@ -159,7 +165,7 @@ Important changes in GBBopen 0.9.8:
 
 Important changes in GBBopen 0.9.7:
 
-  * Renamed functions:
+  * Renamed functions
        ALLOWED-UNIT-CLASSES      -> ALLOWED-UNIT-CLASSES-OF
        SPACE-INSTANCE-CHILDREN   -> CHILDREN-OF
        SPACE-INSTANCE-DIMENSIONS -> DIMENSIONS-OF
@@ -192,7 +198,7 @@ Important changes in GBBopen 0.9.7:
 
     The names of many Portable Threads functions were changed (for
     consistency with new capabilities and to make the portable-threads
-    interface names more "thread-centric" rather than "process-centric"):
+    interface names more "thread-centric" rather than "process-centric")
        ALL-PROCESSES             -> ALL-THREADS
        AWAKEN-PROCESS            -> AWAKEN-THREAD
        CURRENT-PROCESS           -> CURRENT-THREAD

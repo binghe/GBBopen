@@ -296,71 +296,72 @@ and <code>=&#36;&#36;&#36;</code> and <code>within&#38;</code>, <code>within&#36
 </p>
 <p><span class="fndoclabel">Examples</span> <br /><a name="id21">Here</a> are some basic examples of finding <code>hyp</code> <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a>:
 <pre class="pretop">
-&gt; (find-instances 'hyp (<a href="ref-find-space-instance-by-path.html">find-space-instance-by-path</a> '(bb hyps)) 
-    '(and (= x 1835) (&gt; belief .8)))
-(#&lt;hyp 319 (1835 8419) 0.91 [4..12]&gt;
- #&lt;hyp 331 (1835 8419) 0.88 [15..30]&gt;
- #&lt;hyp 335 (1835 8419) 0.92 [15..35]&gt;
- #&lt;hyp 183 (1835 4791) 0.82 [0..35]&gt;
- #&lt;hyp 233 (1835 4791) 0.89 [5..35]&gt;
- #&lt;hyp 419 (1835 4791) 0.85 [5..35]&gt;)
-&gt; (find-instances 'hyp '(bb hyps)
-    `(and (= x 1835) 
-          (&gt; belief ,(belief-of (<a href="ref-find-instance-by-name.html">find-instance-by-name</a> 331 'hyp)))))
-(#&lt;hyp 319 (1835 8419) 0.91 [4..12]&gt;
- #&lt;hyp 335 (1835 8419) 0.92 [15..35]&gt;
- #&lt;hyp 233 (1835 4791) 0.89 [5..35]&gt;)
-&gt; (find-instances '(hyp :no-subclasses) '(bb hyps)
-    '(=&#38; (x y) (1835 8419)))
-(#&lt;hyp 319 (1835 8419) 0.91 [4..12]&gt;
- #&lt;hyp 331 (1835 8419) 0.88 [15..30]&gt;
- #&lt;hyp 335 (1835 8419) 0.92 [15..35]&gt;)
-&gt; (find-instances 'hyp '(bb hyps) 
-    '(and (= x 1835) (within belief (.85 .9))))
-(#&lt;hyp 331 (1835 8419) 0.88 [15..30]&gt;
- #&lt;hyp 233 (1835 4791) 0.89 [5..35]&gt;
- #&lt;hyp 419 (1835 4791) 0.85 [5..35]&gt;)
-&gt; (find-instances 'hyp '(bb hyps) 
-    '(and (= x 1835) (overlaps velocity-range (0 10))))
-(#&lt;hyp 319 (1835 8419) 0.91 [4..12]&gt;
- #&lt;hyp 183 (1835 4791) 0.82 [0..35]&gt;
- #&lt;hyp 233 (1835 4791) 0.89 [5..35]&gt;
- #&lt;hyp 419 (1835 4791) 0.85 [5..35]&gt;)
-&gt; (find-instances 'hyp '(bb hyps) 
-    '(and (= x 1835) (overlaps velocity-range (35 40))))
-(#&lt;hyp 335 (1835 8419) 0.92 [15..35]&gt;
- #&lt;hyp 183 (1835 4791) 0.82 [0..35]&gt;
- #&lt;hyp 233 (1835 4791) 0.89 [5..35]&gt;
- #&lt;hyp 419 (1835 4791) 0.85 [5..35]&gt;)
-&gt; (find-instances 'hyp '(bb hyps) 
-    '(and (= x 1835) (covers velocity-range (0 10))))
-(#&lt;hyp 183 (1835 4791) 0.82 [0..35]&gt;)
-&gt; (find-instances 'hyp '(bb hyps) 
-    '(and (= x 1835) (covers velocity-range (4 10))))
-(#&lt;hyp 319 (1835 8419) 0.91 [4..12]&gt;
- #&lt;hyp 183 (1835 4791) 0.82 [0..35]&gt;)
-&gt; (find-instances 'hyp '(bb hyps) 
-    '(and (= x 1835) (within velocity-range (0 10))))
-nil
-&gt; (find-instances 'hyp '(bb hyps) 
-    '(and (= x 1835) (within velocity-range (0 20))))
-(#&lt;hyp 319 (1835 8419) 0.91 [4..12]&gt;)
-&gt; (find-instances 'hyp '(bb hyps) 
-    '(and (= x 1835) (starts velocity-range 5)))
-(#&lt;hyp 233 (1835 4791) 0.89 [5..35]&gt;
- #&lt;hyp 419 (1835 4791) 0.85 [5..35]&gt;)
-&gt; (find-instances 'hyp '(bb hyps) 
-    '(and (= x 1835) (ends velocity-range 30)))
-(#&lt;hyp 331 (1835 8419) 0.88 [15..30]&gt;)
-&gt; (find-instances 'hyp '(bb hyps) 
-    '(is color :silver))
-(#&lt;hyp 183 (1835 4791) 0.82 [0..35]&gt; 
- #&lt;hyp 233 (1835 4791) 0.89 [5..35]&gt;
- #&lt;hyp 231 (1488 7405) 0.63 [0..8]&gt;)
-&gt; (find-instances 'hyp '(bb hyps) 
-    '(is-eq color :yellow))
-(#&lt;hyp 331 (1835 8419) 0.88 [15..30]&gt; 
- #&lt;hyp 311 (896 388) 0.68 [0..6]&gt;)
+  &gt; (find-instances 'hyp (<a href="ref-find-space-instance-by-path.html">find-space-instance-by-path</a> '(bb hyps)) 
+      '(and (= x 1835) (&gt; belief .8)))
+  (#&lt;hyp 319 (1835 8419) 0.91 [4..12]&gt;
+   #&lt;hyp 331 (1835 8419) 0.88 [15..30]&gt;
+   #&lt;hyp 335 (1835 8419) 0.92 [15..35]&gt;
+   #&lt;hyp 183 (1835 4791) 0.82 [0..35]&gt;
+   #&lt;hyp 233 (1835 4791) 0.89 [5..35]&gt;
+   #&lt;hyp 419 (1835 4791) 0.85 [5..35]&gt;)
+  &gt; (find-instances 'hyp '(bb hyps)
+      `(and (= x 1835) 
+            (&gt; belief ,(belief-of (<a href="ref-find-instance-by-name.html">find-instance-by-name</a> 331 'hyp)))))
+  (#&lt;hyp 319 (1835 8419) 0.91 [4..12]&gt;
+   #&lt;hyp 335 (1835 8419) 0.92 [15..35]&gt;
+   #&lt;hyp 233 (1835 4791) 0.89 [5..35]&gt;)
+  &gt; (find-instances '(hyp :no-subclasses) '(bb hyps)
+      '(=&#38; (x y) (1835 8419)))
+  (#&lt;hyp 319 (1835 8419) 0.91 [4..12]&gt;
+   #&lt;hyp 331 (1835 8419) 0.88 [15..30]&gt;
+   #&lt;hyp 335 (1835 8419) 0.92 [15..35]&gt;)
+  &gt; (find-instances 'hyp '(bb hyps) 
+      '(and (= x 1835) (within belief (.85 .9))))
+  (#&lt;hyp 331 (1835 8419) 0.88 [15..30]&gt;
+   #&lt;hyp 233 (1835 4791) 0.89 [5..35]&gt;
+   #&lt;hyp 419 (1835 4791) 0.85 [5..35]&gt;)
+  &gt; (find-instances 'hyp '(bb hyps) 
+      '(and (= x 1835) (overlaps velocity-range (0 10))))
+  (#&lt;hyp 319 (1835 8419) 0.91 [4..12]&gt;
+   #&lt;hyp 183 (1835 4791) 0.82 [0..35]&gt;
+   #&lt;hyp 233 (1835 4791) 0.89 [5..35]&gt;
+   #&lt;hyp 419 (1835 4791) 0.85 [5..35]&gt;)
+  &gt; (find-instances 'hyp '(bb hyps) 
+      '(and (= x 1835) (overlaps velocity-range (35 40))))
+  (#&lt;hyp 335 (1835 8419) 0.92 [15..35]&gt;
+   #&lt;hyp 183 (1835 4791) 0.82 [0..35]&gt;
+   #&lt;hyp 233 (1835 4791) 0.89 [5..35]&gt;
+   #&lt;hyp 419 (1835 4791) 0.85 [5..35]&gt;)
+  &gt; (find-instances 'hyp '(bb hyps) 
+      '(and (= x 1835) (covers velocity-range (0 10))))
+  (#&lt;hyp 183 (1835 4791) 0.82 [0..35]&gt;)
+  &gt; (find-instances 'hyp '(bb hyps) 
+      '(and (= x 1835) (covers velocity-range (4 10))))
+  (#&lt;hyp 319 (1835 8419) 0.91 [4..12]&gt;
+   #&lt;hyp 183 (1835 4791) 0.82 [0..35]&gt;)
+  &gt; (find-instances 'hyp '(bb hyps) 
+      '(and (= x 1835) (within velocity-range (0 10))))
+  nil
+  &gt; (find-instances 'hyp '(bb hyps) 
+      '(and (= x 1835) (within velocity-range (0 20))))
+  (#&lt;hyp 319 (1835 8419) 0.91 [4..12]&gt;)
+  &gt; (find-instances 'hyp '(bb hyps) 
+      '(and (= x 1835) (starts velocity-range 5)))
+  (#&lt;hyp 233 (1835 4791) 0.89 [5..35]&gt;
+   #&lt;hyp 419 (1835 4791) 0.85 [5..35]&gt;)
+  &gt; (find-instances 'hyp '(bb hyps) 
+      '(and (= x 1835) (ends velocity-range 30)))
+  (#&lt;hyp 331 (1835 8419) 0.88 [15..30]&gt;)
+  &gt; (find-instances 'hyp '(bb hyps) 
+      '(is color :silver))
+  (#&lt;hyp 183 (1835 4791) 0.82 [0..35]&gt; 
+   #&lt;hyp 233 (1835 4791) 0.89 [5..35]&gt;
+   #&lt;hyp 231 (1488 7405) 0.63 [0..8]&gt;)
+  &gt; (find-instances 'hyp '(bb hyps) 
+      '(is-eq color :yellow))
+  (#&lt;hyp 331 (1835 8419) 0.88 [15..30]&gt; 
+   #&lt;hyp 311 (896 388) 0.68 [0..6]&gt;)
+  &gt;
 </pre>
 </p>
 <p>Some examples finding a <code>word</code> <a href="ref-glossary.html#id219">unit&nbsp;instance</a>:
@@ -372,8 +373,9 @@ nil
 </pre>
 Find <code>word</code> <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a> with special characters in them:
 <pre>
-&gt; (find-instances 'word '(words) '(overlaps char-code (0 64)))
-(#&lt;word 1&gt;)
+  &gt; (find-instances 'word '(words) '(overlaps char-code (0 64)))
+  (#&lt;word 1&gt;)
+  &gt;
 </pre>
 </p>
 <hr /><address><a target="_top" class="address"

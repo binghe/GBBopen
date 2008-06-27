@@ -50,19 +50,19 @@
 </p>
 <p><span class="fndoclabel">Examples</span> <br /><a name="id1"></a>
 <pre class="pretop">
-&gt; (interval-start '(1 2))
-1
-&gt; (interval-start '(1 . 2))
-1
-&gt; (interval-start #(1 2))
-1
-&gt; (defparameter *x* (<a href="ref-make-interval.html">make-interval</a> 1 2))
-(1 . 2)
-&gt; (setf (interval-start *x*) -1)
--1
-&gt; *x*
-(-1 . 4)
-
+  &gt; (interval-start '(1 2))
+  1
+  &gt; (interval-start '(1 . 2))
+  1
+  &gt; (interval-start #(1 2))
+  1
+  &gt; (defparameter *x* (<a href="ref-make-interval.html">make-interval</a> 1 2))
+  (1 . 2)
+  &gt; (setf (interval-start *x*) -1)
+  -1
+  &gt; *x*
+  (-1 . 4)
+  &gt;
 </pre>
 </p>
 <hr /><address><a target="_top" class="address"

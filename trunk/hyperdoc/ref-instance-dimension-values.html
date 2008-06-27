@@ -47,21 +47,24 @@ defined for <var>unit-instance</var>.
 </p>
 <p><span class="fndoclabel">Examples</span> <br />Return all <a href="ref-glossary.html#id36">dimension&nbsp;values</a> of the <a href="ref-glossary.html#id219">unit&nbsp;instance</a>, <code>hyp</code>:
 <pre class="pretop">
-&gt; (instance-dimension-values hyp)
-((belief . 0.85) (velocity-range 5 35) (color . :red)
- (classification :car :truck) (x . 1835) (y . 4791))
+  &gt; (instance-dimension-values hyp)
+  ((belief . 0.85) (velocity-range 5 35) (color . :red)
+   (classification :car :truck) (x . 1835) (y . 4791))
+  &gt;
 </pre>
 Return the <code>x</code> and <code>y</code> <a href="ref-glossary.html#id36">dimension&nbsp;values</a> of the
 <a href="ref-glossary.html#id219">unit&nbsp;instance</a>, <code>hyp</code>:
 <pre>
-&gt; (instance-dimension-values hyp '(x y))
-((x . 1835) (y . 4791))
+  &gt; (instance-dimension-values hyp '(x y))
+  ((x . 1835) (y . 4791))
+  &gt;
 </pre>
 </p>
 <p>Return all <a href="ref-glossary.html#id36">dimension&nbsp;values</a> of the <a href="ref-glossary.html#id219">unit&nbsp;instance</a>, <code>word</code>:
 <pre class="pretop">
-&gt; (instance-dimension-values word)
-((character . "what's") (char-code 119 104 97 116 39 115))
+  &gt; (instance-dimension-values word)
+  ((character . "what's") (char-code 119 104 97 116 39 115))
+  &gt;
 </pre>
 </p>
 <p><span class="fndoclabel">Note</span> <br />Using <b><a href="ref-instance-dimension-value.html">instance-dimension-value</a></b> is preferable to

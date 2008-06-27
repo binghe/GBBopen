@@ -38,14 +38,15 @@
 <p><span class="fndoclabel">Example</span> <br /><a name="id1">Define</a> a <a href="ref-glossary.html#id217">unit&nbsp;class</a>, <code>temporal-duration-mixin</code>, that contains a
 <code>temporal-duration</code> slot and <a href="ref-glossary.html#id35">dimension&nbsp;value</a> declaration:
 <pre class="pretop">
-&gt; (define-unit-class temporal-duration-mixin ()
-    ((temporal-duration 
-       ;; Copy the interval to allow destructive changes by
-       ;; GBBopen's interval operators:
-       :initform (copy-interval infinite-interval)))
-    (:dimensional-values
-     (temporal-duration :interval temporal-duration)))
-#&lt;standard-unit-class temporal-duration-mixin&gt;
+  &gt; (define-unit-class temporal-duration-mixin ()
+      ((temporal-duration 
+         ;; Copy the interval to allow destructive changes by
+         ;; GBBopen's interval operators:
+         :initform (copy-interval infinite-interval)))
+      (:dimensional-values
+       (temporal-duration :interval temporal-duration)))
+  #&lt;standard-unit-class temporal-duration-mixin&gt;
+  &gt;
 </pre>
 </p>
 <hr /><address><a target="_top" class="address"

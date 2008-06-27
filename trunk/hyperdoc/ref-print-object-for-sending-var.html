@@ -35,12 +35,13 @@ printing customization for sending versus for saving.
 </p>
 <p><span class="fndoclabel">Example</span> <br /><a name="id1">Send</a> some <code>hyp</code> <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a> to another agent:
 <pre class="pretop">
-&gt; (let ((*print-object-for-sending* 't))
-    (<a href="ref-with-saving-sending-block.html">with-saving/sending-block</a> (stream :package ':my-app)
-      (let ((<a href="ref-save-send-references-only-var.html">*save/send-references-only*</a> nil))
-        (<a href="ref-do-instances-of-class.html">do-instances-of-class</a> (instance 'hyp :plus-subclasses)
-          (<a href="ref-print-object-for-saving-sending.html">print-object-for-saving/sending</a> instance stream)))))
-nil
+  &gt; (let ((*print-object-for-sending* 't))
+      (<a href="ref-with-saving-sending-block.html">with-saving/sending-block</a> (stream :package ':my-app)
+        (let ((<a href="ref-save-send-references-only-var.html">*save/send-references-only*</a> nil))
+          (<a href="ref-do-instances-of-class.html">do-instances-of-class</a> (instance 'hyp :plus-subclasses)
+            (<a href="ref-print-object-for-saving-sending.html">print-object-for-saving/sending</a> instance stream)))))
+  nil
+  &gt;
 </pre>
 </p>
 <hr /><address><a target="_top" class="address"

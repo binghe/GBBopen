@@ -53,14 +53,16 @@
 <p><span class="fndoclabel">Examples</span> <br /><a name="id2">Add</a> a highly plausible hypothesis <a href="ref-glossary.html#id219">unit&nbsp;instance</a>,
 <code>good-hyp</code>, to the <code>hyps</code> <a href="ref-glossary.html#id195">space&nbsp;instance</a>:
 <pre class="pretop">
-&gt; (add-instance-to-space-instance 
-    good-hyp (<a href="ref-find-space-instance-by-path.html">find-space-instance-by-path</a> '(bb hyps)))
-#&lt;hyp 419 (1835 4791) 0.85 [5..35]&gt;
+  &gt; (add-instance-to-space-instance 
+      good-hyp (<a href="ref-find-space-instance-by-path.html">find-space-instance-by-path</a> '(bb hyps)))
+  #&lt;hyp 419 (1835 4791) 0.85 [5..35]&gt;
+  &gt;
 </pre>
 or
 <pre>
-&gt; (add-instance-to-space-instance good-hyp '(bb hyps))
-#&lt;hyp 419 (1835 4791) 0.85 [5..35]&gt;
+  &gt; (add-instance-to-space-instance good-hyp '(bb hyps))
+  #&lt;hyp 419 (1835 4791) 0.85 [5..35]&gt;
+  &gt;
 </pre>
 </p>
 <hr /><address><a target="_top" class="address"

@@ -53,21 +53,24 @@ parent.
 <p><span class="fndoclabel">Examples</span> <br /><a name="id1">Return</a> the parent space instances of the <code>(bb hyp)</code> 
 <a href="ref-glossary.html#id195">space&nbsp;instance</a>:
 <pre class="pretop">
-&gt; (parent-of (<a href="ref-find-space-instance-by-path.html">find-space-instance-by-path</a> '(bb hyp))
-#&lt;standard-space-instance (bb)&gt;
+  &gt; (parent-of (<a href="ref-find-space-instance-by-path.html">find-space-instance-by-path</a> '(bb hyp))
+  #&lt;standard-space-instance (bb)&gt;
+  &gt;
 </pre>
 Return the parent space instances (the <code>root-space-instance</code>) of
 the <code>(bb)</code> <a href="ref-glossary.html#id195">space&nbsp;instance</a>:
 <pre>
-&gt; (parent-of (<a href="ref-find-space-instance-by-path.html">find-space-instance-by-path</a> '(bb))
-#&lt;root-space-instance root-space-instance&gt;
+  &gt; (parent-of (<a href="ref-find-space-instance-by-path.html">find-space-instance-by-path</a> '(bb))
+  #&lt;root-space-instance root-space-instance&gt;
+  &gt;
 </pre>
 Return the siblings of the <code>(bb)</code> <a href="ref-glossary.html#id195">space&nbsp;instance</a>:
 <pre>
-&gt; (children-of
-    (<a href="ref-parent-of.html">parent-of</a> (<a href="ref-find-space-instance-by-path.html">find-space-instance-by-path</a> '(bb))
-(#&lt;standard-space-instance (bb)&gt;
- #&lt;standard-space-instance (control-shell)&gt;)
+  &gt; (children-of
+      (<a href="ref-parent-of.html">parent-of</a> (<a href="ref-find-space-instance-by-path.html">find-space-instance-by-path</a> '(bb))
+  (#&lt;standard-space-instance (bb)&gt;
+   #&lt;standard-space-instance (control-shell)&gt;)
+  &gt;
 </pre>
 </p>
 <hr /><address><a target="_top" class="address"

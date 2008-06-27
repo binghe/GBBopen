@@ -194,22 +194,24 @@ placing any other <a href="ref-glossary.html#id219">unit&nbsp;instance</a> on a 
 <p><span class="fndoclabel">Examples</span> <br />Create a top-level <a href="ref-glossary.html#id195">space&nbsp;instance</a>, <code>bb</code>,
 that cannot store any <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a>:
 <pre class="pretop">
-&gt; (make-space-instance '(bb) 
-     :allowed-unit-classes nil)
-#&lt;standard-space-instance (bb)&gt;
+  &gt; (make-space-instance '(bb) 
+       :allowed-unit-classes nil)
+  #&lt;standard-space-instance (bb)&gt;
+  &gt; 
 </pre>
 <a name="id6">Now</a> create a <a href="ref-glossary.html#id195">space&nbsp;instance</a> for <code>hyp</code> <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a>,
 named <code>hyps</code>, as a child of <code>bb</code>, with uniform, 100-wide, bucket
 storage for indexing <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a> with dimensional values between 
 0&ndash;10,000 in the <code>x</code> and <code>y</code> dimensions:
 <pre>
-&gt; (make-space-instance '(bb hyps)
-     :dimensions (<a href="ref-dimensions-of.html">dimensions-of</a> 'hyp)
-     :allowed-unit-classes '((hyp :plus-subclasses))
-     :storage '(((hyp :plus-subclasses) (x y) 
-                 uniform-buckets :layout ((0 10000 100)
-                                          (0 10000 100)))))
-#&lt;standard-space-instance (bb hyps)&gt;
+  &gt; (make-space-instance '(bb hyps)
+       :dimensions (<a href="ref-dimensions-of.html">dimensions-of</a> 'hyp)
+       :allowed-unit-classes '((hyp :plus-subclasses))
+       :storage '(((hyp :plus-subclasses) (x y) 
+                   uniform-buckets :layout ((0 10000 100)
+                                            (0 10000 100)))))
+  #&lt;standard-space-instance (bb hyps)&gt;
+  &gt;
 </pre>
 </p>
 <p>Here is an improved <a href="ref-glossary.html#id195">space&nbsp;instance</a> for <code>hyp</code>
@@ -217,15 +219,16 @@ storage for indexing <a href="ref-glossary.html#gl:instances">unit&nbsp;instance
 indexing in the <code>x</code> and <code>y</code> dimensions and hashed storage to
 retrieve match candidates via <code>classification</code> dimensional values:
 <pre class="pretop">
-&gt; (make-space-instance '(bb hyps)
-     :dimensions (<a href="ref-dimensions-of.html">dimensions-of</a> 'hyp)
-     :allowed-unit-classes '((hyp :plus-subclasses))
-     :storage '(((hyp :plus-subclasses) (x y) 
-                 uniform-buckets :layout ((0 10000 100)
-                                          (0 10000 100)))
-                ((hyp :plus-subclasses) (classification) 
-                 hashed)))
-#&lt;standard-space-instance (bb hyps)&gt;
+  &gt; (make-space-instance '(bb hyps)
+       :dimensions (<a href="ref-dimensions-of.html">dimensions-of</a> 'hyp)
+       :allowed-unit-classes '((hyp :plus-subclasses))
+       :storage '(((hyp :plus-subclasses) (x y) 
+                   uniform-buckets :layout ((0 10000 100)
+                                            (0 10000 100)))
+                  ((hyp :plus-subclasses) (classification) 
+                   hashed)))
+  #&lt;standard-space-instance (bb hyps)&gt;
+  &gt;
 </pre>
 </p>
 <p><span class="fndoclabel">Note</span> <br />The <b>make-space-instance</b> function is equivalent to using

@@ -48,14 +48,16 @@ removed
 <p><span class="fndoclabel">Examples</span> <br /><a name="id2">Remove</a> an incorrect hypothesis <a href="ref-glossary.html#id219">unit&nbsp;instance</a>,
 <code>incorrect-hyp</code>, from the <code>hyps</code> <a href="ref-glossary.html#id195">space&nbsp;instance</a>:
 <pre class="pretop">
-&gt; (remove-instance-from-space-instance 
-    incorrect-hyp (<a href="ref-find-space-instance-by-path.html">find-space-instance-by-path</a> '(bb hyps)))
-#&lt;hyp 311 (896 388) 0.68 [0..6]&gt;
+  &gt; (remove-instance-from-space-instance 
+      incorrect-hyp (<a href="ref-find-space-instance-by-path.html">find-space-instance-by-path</a> '(bb hyps)))
+  #&lt;hyp 311 (896 388) 0.68 [0..6]&gt;
+  &gt;
 </pre>
 or 
 <pre>
-&gt; (remove-instance-from-space-instance incorrect-hyp '(bb hyps))
-#&lt;hyp 311 (896 388) 0.68 [0..6]&gt;
+  &gt; (remove-instance-from-space-instance incorrect-hyp '(bb hyps))
+  #&lt;hyp 311 (896 388) 0.68 [0..6]&gt;
+  &gt;
 </pre>
 </p>
 <hr /><address><a target="_top" class="address"

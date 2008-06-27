@@ -100,6 +100,7 @@ and then load a blackboard repository that was saved previously:
   &gt; (load-blackboard-repository "tutorial")
   #P"<var>&lt;homedir&gt;</var>/tutorial.bb"
   #&lt;path 1&gt;
+  &gt;
 </pre>
 Try loading the repository again:
 <pre>
@@ -107,6 +108,7 @@ Try loading the repository again:
   The blackboard repository is not empty.
   Continue anyway (the current contents will be deleted) [y or n]? n
   nil
+  &gt;
 </pre>
 Load the repository again, but without executing its
 <var>after-loading-function</var>:
@@ -115,6 +117,7 @@ Load the repository again, but without executing its
       :confirm-if-not-empty nil
       :ignore-after-loading-function 't)
   #P"<var>&lt;homedir&gt;</var>/tutorial.bb"
+  &gt;
 </pre>
 Define a new <a href="ref-glossary.html#id217">unit&nbsp;class</a>, <code>new-location</code>, and then load the
 repository again, translating all <code>location</code> <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a> to
@@ -143,6 +146,7 @@ repository again, translating all <code>location</code> <a href="ref-glossary.ht
   standard-space-instance               1  
                                 ---------
                                        63 instances
+  &gt;
 </pre>
 </p>
 <hr /><address><a target="_top" class="address"

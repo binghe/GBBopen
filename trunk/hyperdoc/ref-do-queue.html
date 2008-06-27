@@ -45,12 +45,13 @@ in queue order (first to last).
 </p>
 <p><span class="fndoclabel">Example</span> <br /><a name="id1">Count</a> the number of <a href="ref-glossary.html#id148">pending&nbsp;KSAs</a> that were triggered by <code>hyp</code>:
 <pre class="pretop">
-&gt; (let ((count 0))
-    (do-queue (ksa pending-ksas)
-      (when (<a href="ref-memq.html">memq</a> hyp (collect-trigger-instances ksa))
-        (<a href="ref-declared-numerics.html">incf&amp;</a> count)))
-     count)
-31
+  &gt; (let ((count 0))
+      (do-queue (ksa pending-ksas)
+        (when (<a href="ref-memq.html">memq</a> hyp (collect-trigger-instances ksa))
+          (<a href="ref-declared-numerics.html">incf&amp;</a> count)))
+       count)
+  31
+  &gt;
 </pre>
 </p>
 <hr /><address><a target="_top" class="address"

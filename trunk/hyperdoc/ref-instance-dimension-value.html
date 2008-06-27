@@ -69,41 +69,45 @@
 <p><span class="fndoclabel">Examples</span> <br />Return the <code>x</code> <a href="ref-glossary.html#id35">dimension&nbsp;value</a> of the <a href="ref-glossary.html#id219">unit&nbsp;instance</a>,
 <code>hyp</code>:
 <pre class="pretop">
-&gt; (instance-dimension-value hyp 'x)
-1835
-:point
-:fixnum
-nil
-nil
+  &gt; (instance-dimension-value hyp 'x)
+  1835
+  :point
+  :fixnum
+  nil
+  nil
+  &gt;
 </pre>
 and its <code>classification</code> <a href="ref-glossary.html#id35">dimension&nbsp;value</a>:
 <pre>
-&gt; (instance-dimension-value hyp 'classification)
-(:car :truck)
-:element
-eq
-:set
-nil
+  &gt; (instance-dimension-value hyp 'classification)
+  (:car :truck)
+  :element
+  eq
+  :set
+  nil
+  &gt;
 </pre>
 </p>
 <p>Return the <code>character</code> <a href="ref-glossary.html#id35">dimension&nbsp;value</a> of the
 <a href="ref-glossary.html#id219">unit&nbsp;instance</a>, <code>word</code>:
 <pre class="pretop">
-&gt; (instance-dimension-value w 'character)
-"what's"
-:element
-eql
-:set
-nil
+  &gt; (instance-dimension-value w 'character)
+  "what's"
+  :element
+  eql
+  :set
+  nil
+  &gt;
 </pre>
 and its <code>char-code</code> <a href="ref-glossary.html#id35">dimension&nbsp;value</a>:
 <pre>
-&gt; (instance-dimension-value word 'char-code)
-(119 104 97 116 39 115)
-:point
-fixnum
-:set
-nil
+  &gt; (instance-dimension-value word 'char-code)
+  (119 104 97 116 39 115)
+  :point
+  fixnum
+  :set
+  nil
+  &gt;
 </pre>
 </p>
 <hr /><address><a target="_top" class="address"
