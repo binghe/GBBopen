@@ -57,30 +57,32 @@ so as to avoid delaying the invocation of a subsequent
 <p><span class="fndoclabel">Examples</span> <br />Create a <a href="ref-glossary.html#id179">scheduled&nbsp;function</a> that simply prints <code>"Hello"</code> when
 invoked:
 <pre class="pretop">
-&gt; (make-scheduled-function 
-    #'(lambda (scheduled-function)
-        (declare (ignore scheduled-function))
-        (print "Hello"))
-    :name 'hello)
-#&lt;scheduled-function hello [unscheduled]&gt;
+  &gt; (make-scheduled-function 
+      #'(lambda (scheduled-function)
+          (declare (ignore scheduled-function))
+          (print "Hello"))
+      :name 'hello)
+  #&lt;scheduled-function hello [unscheduled]&gt;
+  &gt;
 </pre>
 </p>
 <p><a name="id1">A</a> more complex <a href="ref-glossary.html#id179">scheduled&nbsp;function</a> that spawns a new <a href="ref-glossary.html#gl:thread">thread</a> to
 do its work and randomly sets whether to reschedule itself (and at what
 interval):
 <pre class="pretop">
-&gt; (defun complex-function (scheduled-function)
-    (let ((interval (random 100)))
-      (setf (<a href="ref-scheduled-function-repeat-interval.html">scheduled-function-repeat-interval</a> scheduled-function)
-            (if (plusp interval) 
-                ;; repeat 1-99 seconds from now:
-                interval
-                ;; don't repeat 1&#37; of the time:
-                nil)))
-    (<a href="ref-spawn-thread.html">spawn-thread</a> "Lots of stuff doer" #'do-lots-of-stuff))
-complex-function
-&gt; (make-scheduled-function 'complex-function)
-#&lt;scheduled-function complex-function [unscheduled]&gt;
+  &gt; (defun complex-function (scheduled-function)
+      (let ((interval (random 100)))
+        (setf (<a href="ref-scheduled-function-repeat-interval.html">scheduled-function-repeat-interval</a> scheduled-function)
+              (if (plusp interval) 
+                  ;; repeat 1-99 seconds from now:
+                  interval
+                  ;; don't repeat 1&#37; of the time:
+                  nil)))
+      (<a href="ref-spawn-thread.html">spawn-thread</a> "Lots of stuff doer" #'do-lots-of-stuff))
+  complex-function
+  &gt; (make-scheduled-function 'complex-function)
+  #&lt;scheduled-function complex-function [unscheduled]&gt;
+  &gt;
 </pre>
 </p>
 <hr /><address><a target="_top" class="address"

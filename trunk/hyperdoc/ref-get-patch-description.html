@@ -51,23 +51,26 @@ and <var>date-loaded</var>, or <code>nil</code> if the patch has not been loaded
 </p>
 <p><span class="fndoclabel">Examples</span> <br />Get the description values for <a href="ref-glossary.html#gl:patch">patch</a> <code>1</code> to <a href="ref-glossary.html#gl:module">module</a> <code>:my-app</code>:
 <pre class="pretop">
-&gt; (get-patch-description 1 ':my-app)
-1
-3423139200
-"Corkill"
-"A simple example patch"
-3423316130
+  &gt; (get-patch-description 1 ':my-app)
+  1
+  3423139200
+  "Corkill"
+  "A simple example patch"
+  3423316130
+  &gt;
 </pre>
 and for non-existent patch <code>3</code>:
 <pre>
-&gt; (get-patch-description 3 ':my-app)
-nil
+  &gt; (get-patch-description 3 ':my-app)
+  nil
+  &gt;
 </pre>
 and for patch <code>1</code> in <a href="ref-glossary.html#gl:module">module</a> <code>:gbbopen-test</code> (when that
 module has not been loaded):
 <pre>
-&gt; (get-patch-description 1 ':gbbopen-test)
-nil
+  &gt; (get-patch-description 1 ':gbbopen-test)
+  nil
+  &gt;
 </pre>
 </p>
 <hr /><address><a target="_top" class="address"

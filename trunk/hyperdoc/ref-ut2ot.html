@@ -44,16 +44,17 @@ Universal Time)
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-set-ot-base.html"><b>set-ot-base</b></a>
 </p>
 <p><span class="fndoclabel">Examples</span> <br />codeindexitmultiple-value-callcodeindexitencode-universal-time<pre class="pretop">
-&gt; (<a href="ref-set-ot-base.html">set-ot-base</a> 1 7 2007)
-3409014016
-&gt; (ut2ot)
--15071348
-&gt; (ut2ot 3393942668)
--15071348
-&gt; (ut2ot (multiple-value-call #'encode-universal-time 
-           ;; noon on the Fourth of July, 2008:
-           0 0 12 (parse-date "July 4, 2008")))
-15161984
+  &gt; (<a href="ref-set-ot-base.html">set-ot-base</a> 1 7 2007)
+  3409014016
+  &gt; (ut2ot)
+  -15071348
+  &gt; (ut2ot 3393942668)
+  -15071348
+  &gt; (ut2ot (multiple-value-call #'encode-universal-time 
+             ;; noon on the Fourth of July, 2008:
+             0 0 12 (parse-date "July 4, 2008")))
+  15161984
+  &gt;
 </pre>
 </p>
 <hr /><address><a target="_top" class="address"

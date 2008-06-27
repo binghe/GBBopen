@@ -47,16 +47,17 @@ the nearest 100<i><sup>th</sup></i> of a second before conversion. Fields omitte
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-pretty-time-interval.html"><b>pretty-time-interval</b></a>
 </p>
 <p><span class="fndoclabel">Examples</span> <br /><pre class="pretop">
-&gt; internal-time-units-per-second
-1000
-&gt; (pretty-run-time-interval 1000)
-"1 second"
-&gt; (pretty-run-time-interval 5)
-"0 seconds"
-&gt; (pretty-run-time-interval 6)
-"0.01 seconds"
-&gt; (pretty-run-time-interval most-positive-fixnum)
-"6 days, 5 hours, 7 minutes, 50.94 seconds"
+  &gt; internal-time-units-per-second
+  1000
+  &gt; (pretty-run-time-interval 1000)
+  "1 second"
+  &gt; (pretty-run-time-interval 5)
+  "0 seconds"
+  &gt; (pretty-run-time-interval 6)
+  "0.01 seconds"
+  &gt; (pretty-run-time-interval most-positive-fixnum)
+  "6 days, 5 hours, 7 minutes, 50.94 seconds"
+  &gt;
 </pre>
 </p>
 <hr /><address><a target="_top" class="address"

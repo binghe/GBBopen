@@ -68,46 +68,49 @@ concatenated after the slot name.
 <code>rectangle</code>, generating GBB-style
 &#8220;<var>class-name</var><code>.</code><var>slot-name</var>&#8221; slot accessors:
 <pre class="pretop">
-&gt; (with-generate-accessors-format (:prefix)
-    (define-class point ()
-      (x y))
-    (define-class circle (point)
-      (radius))
-    (define-class rectangle (point)
-      (length width)))
-#&lt;standard-class rectangle&gt;
+  &gt; (with-generate-accessors-format (:prefix)
+      (define-class point ()
+        (x y))
+      (define-class circle (point)
+        (radius))
+      (define-class rectangle (point)
+        (length width)))
+  #&lt;standard-class rectangle&gt;
+  &gt;
 </pre>
 Re-define the classes, generating &#8220;<var>slot-name</var>&#8221;-only slot accessors:
 <pre>
-&gt; (with-generate-accessors-format (:suffix "")
-    (define-class point ()
-      (x y))
-    (define-class circle (point)
-      (radius))
-    (define-class rectangle (point)
-      (length width)))
-#&lt;standard-class rectangle&gt;
+  &gt; (with-generate-accessors-format (:suffix "")
+      (define-class point ()
+        (x y))
+      (define-class circle (point)
+        (radius))
+      (define-class rectangle (point)
+        (length width)))
+  #&lt;standard-class rectangle&gt;
+  &gt;
 </pre>
 Re-define the classes, generating
 &#8220;<var>slot-name</var><code>-of-</code><var>class-name</var>&#8221; slot accessors (note that the
 <code>strange-name-string</code> name-generation <a href="ref-glossary.html#gl:function">function</a> must be available
 at compile time):
 <pre>
-&gt; (eval-when (:compile-toplevel :load-toplevel :execute)
-    (defun strange-name-string (class-name slot-name)
-      (concatenate 'simple-string
-        (symbol-name class-name) "-" 
-        (symbol-name '#:of) "-" 
-        (symbol-name slot-name))))
-strange-name-string
-&gt; (with-generate-accessors-format (:prefix (symbol-function 'strange-name-string))
-    (define-class point ()
-      (x y))
-    (define-class circle (point)
-      (radius))
-    (define-class rectangle (point)
-      (length width)))
-#&lt;standard-class rectangle&gt;
+  &gt; (eval-when (:compile-toplevel :load-toplevel :execute)
+      (defun strange-name-string (class-name slot-name)
+        (concatenate 'simple-string
+          (symbol-name class-name) "-" 
+          (symbol-name '#:of) "-" 
+          (symbol-name slot-name))))
+  strange-name-string
+  &gt; (with-generate-accessors-format (:prefix (symbol-function 'strange-name-string))
+      (define-class point ()
+        (x y))
+      (define-class circle (point)
+        (radius))
+      (define-class rectangle (point)
+        (length width)))
+  #&lt;standard-class rectangle&gt;
+  &gt;
 </pre>
 </p>
 <hr /><address><a target="_top" class="address"

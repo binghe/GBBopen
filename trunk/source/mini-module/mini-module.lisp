@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/mini-module/mini-module.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Jun 26 11:15:51 2008 *-*
+;;;; *-* Last-Edit: Fri Jun 27 04:56:06 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -116,17 +116,22 @@
   (check-var '*compiled-file-type*))
 
 ;;; ===========================================================================
-;;;  Allow-redefinition (placed here for vary early use)
+;;;  Allow-redefinition (placed here for very early use)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defmacro allow-redefinition (&body body)
+    ;;; Still need to support CMUCL, ECL, SBCL, and SCL
     `(#+allegro excl:without-redefinition-warnings
+      #+clisp let
+      #+clisp ((custom:*suppress-check-redefinition* 't))
+      #+closure let
+      #+closure ((ccl:*warn-if-redefine*) nil)
+      #+digitool-mcl let
+      #+digitool-mcl ((ccl:*warn-if-redefine*) nil)
       #+lispworks system::without-warning-on-redefinition
-      #+clisp handler-case
-      #-(or allegro clisp lispworks)
+      #-(or allegro clisp closure digitool-mcl lispworks)
       progn
-      (progn ,@body)
-      #+clisp (clos:clos-warning ()))))
+      (progn ,@body))))
 
 ;;; ===========================================================================
 ;;;   Imports to support using extended REPL commands:

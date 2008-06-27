@@ -40,11 +40,12 @@
 </p>
 <a name="id1"></a><p><span class="fndoclabel">Example</span> <br />Accept a connection made to a newly created passive socket:
 <pre class="pretop">
-&gt; (let* ((passive-socket (<a href="ref-make-passive-socket.html">make-passive-socket</a> 5555))
-         (connection (accept-connection passive-socket)))
-     (<a href="ref-close-passive-socket.html">close-passive-socket</a> passive-socket)
-     connection)
-#&lt;stream socket connected from localhost/5555 to localhost/59946&gt;
+  &gt; (let* ((passive-socket (<a href="ref-make-passive-socket.html">make-passive-socket</a> 5555))
+           (connection (accept-connection passive-socket)))
+       (<a href="ref-close-passive-socket.html">close-passive-socket</a> passive-socket)
+       connection)
+  #&lt;stream socket connected from localhost/5555 to localhost/59946&gt;
+  &gt;
 </pre>
 </p>
 <p><span class="fndoclabel">Note</span> <br />Connections should always be closed using <b>close</b>

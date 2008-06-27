@@ -37,10 +37,11 @@
 <p><span class="fndoclabel">Returns</span> <br />The values returned by evaluating the last <var>form</var>.
 </p>
 <p><span class="fndoclabel">Examples</span> <br /><pre class="pretop">
-&gt; (pprint (macroexpand '(with-gensyms (a b) (form))))
-(let ((a (gensym))
-      (b (gensym)))
-  (form))
+  &gt; (pprint (macroexpand '(with-gensyms (a b) (form))))
+  (let ((a (gensym))
+        (b (gensym)))
+    (form))
+  &gt;
 </pre>
 </p>
 <hr /><address><a target="_top" class="address"

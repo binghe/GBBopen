@@ -357,26 +357,27 @@ value.
 <p><span class="fndoclabel">Examples</span> <br />Define a unit class, <code>hyp</code>, that illustrates a number of
 <b>define-unit-class</b> capabilities:
 <pre class="pretop">
-&gt; (define-unit-class hyp ()
-    ((belief :initform 0.0)
-     (location :initform nil)
-     (velocity-range)
-     (color)
-     (classification :initform '(:car :truck :bus :motorcycle :train :duck-boat 
-                                 :lawn-mower :anything))
-     (supporting-hyps 
-      :link (hyp supported-hyps))
-     (supported-hyps 
-      :link (hyp supporting-hyps)))
-    (:dimensional-values 
-     (belief :point belief)
-     (velocity-range :interval velocity-range)
-     (color (:element eq) color)
-     (classification (:element eq) :set classification)
-     (x (:point fixnum) #'location.x location)
-     (y (:point fixnum) #'location.y location))
-    (:initial-space-instances (bb hyps)))
-#&lt;standard-unit-class hyp&gt;
+  &gt; (define-unit-class hyp ()
+      ((belief :initform 0.0)
+       (location :initform nil)
+       (velocity-range)
+       (color)
+       (classification :initform '(:car :truck :bus :motorcycle :train :duck-boat 
+                                   :lawn-mower :anything))
+       (supporting-hyps 
+        :link (hyp supported-hyps))
+       (supported-hyps 
+        :link (hyp supporting-hyps)))
+      (:dimensional-values 
+       (belief :point belief)
+       (velocity-range :interval velocity-range)
+       (color (:element eq) color)
+       (classification (:element eq) :set classification)
+       (x (:point fixnum) #'location.x location)
+       (y (:point fixnum) #'location.y location))
+      (:initial-space-instances (bb hyps)))
+  #&lt;standard-unit-class hyp&gt;
+  &gt;
 </pre>
 </p>
 <p>Define a unit class, <code>word</code>, whose <a href="ref-glossary.html#gl:instances">instances</a> are indexed by the
@@ -384,16 +385,17 @@ word's individual characters in an <a href="ref-glossary.html#id43">enumerated&n
 <b>code-char</b> values of the individual characters in an
 <a href="ref-glossary.html#id129">ordered&nbsp;dimension</a>:
 <pre class="pretop">
-&gt; (define-unit-class word ()
-    ((string :initform "what's"))
-    (:dimensional-values
-     (character :element :set string)
-     (char-code (:point fixnum) :set 
-                #'(lambda (string)
-                    (map 'list #'char-code string))
-                string))
-    (:initial-space-instances (words)))
-#&lt;standard-unit-class word&gt;
+  &gt; (define-unit-class word ()
+      ((string :initform "what's"))
+      (:dimensional-values
+       (character :element :set string)
+       (char-code (:point fixnum) :set 
+                  #'(lambda (string)
+                      (map 'list #'char-code string))
+                  string))
+      (:initial-space-instances (words)))
+  #&lt;standard-unit-class word&gt;
+  &gt;
 </pre>
 </p>
 <hr /><address><a target="_top" class="address"

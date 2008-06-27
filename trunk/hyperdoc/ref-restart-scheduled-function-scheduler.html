@@ -46,15 +46,17 @@ been killed accidentally, this function can be used to start a new scheduler
 </p>
 <p><span class="fndoclabel">Examples</span> <br />Restart the <a href="ref-glossary.html#gl:scheduled-function">scheduled-function</a> scheduler:
 <pre class="pretop">
-&gt; (restart-scheduled-function-scheduler)
-#&lt;thread Scheduled-Function Scheduler&gt;
+  &gt; (restart-scheduled-function-scheduler)
+  #&lt;thread Scheduled-Function Scheduler&gt;
+  &gt;
 </pre>
 Restarting a <a href="ref-glossary.html#gl:scheduled-function">scheduled-function</a> scheduler that is already running has
 no effect:
 <pre>
-&gt; (restart-scheduled-function-scheduler)
-;; The scheduled-function scheduler is already running.
-nil
+  &gt; (restart-scheduled-function-scheduler)
+  ;; The scheduled-function scheduler is already running.
+  nil
+  &gt;
 </pre>
 </p>
 <hr /><address><a target="_top" class="address"

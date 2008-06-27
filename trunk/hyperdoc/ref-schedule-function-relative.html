@@ -61,23 +61,25 @@ specified <var>repeat-interval</var>.
 <a name="id1"></a><p><span class="fndoclabel">Examples</span> <br />Schedule a <a href="ref-glossary.html#id179">scheduled&nbsp;function</a> that simply prints <code>"Hello!"</code> 
 5 seconds from now:
 <pre class="pretop">
-&gt; (schedule-function-relative
-    (<a href="ref-make-scheduled-function.html">make-scheduled-function</a>
-      #'(lambda (scheduled-function)
-          (declare (ignore scheduled-function))
-          (print "Hello!")))
-     5)
+  &gt; (schedule-function-relative
+      (<a href="ref-make-scheduled-function.html">make-scheduled-function</a>
+        #'(lambda (scheduled-function)
+            (declare (ignore scheduled-function))
+            (print "Hello!")))
+       5)
+  &gt;
 </pre>
 <a name="id2">Schedule</a> a <a href="ref-glossary.html#id179">scheduled&nbsp;function</a> that signals a GBBopen
 <code>timer-interrupt-event</code> every 30 seconds:
 <pre>
-&gt; (schedule-function-relative
-    (<a href="ref-make-scheduled-function.html">make-scheduled-function</a>
-      #'(lambda (scheduled-function)
-          (declare (ignore scheduled-function))
-          (<a href="ref-signal-event.html">signal-event</a> 'timer-interrupt-event)))
-    30
-    :repeat-interval 30)
+  &gt; (schedule-function-relative
+      (<a href="ref-make-scheduled-function.html">make-scheduled-function</a>
+        #'(lambda (scheduled-function)
+            (declare (ignore scheduled-function))
+            (<a href="ref-signal-event.html">signal-event</a> 'timer-interrupt-event)))
+      30
+      :repeat-interval 30)
+  &gt;
 </pre>
 </p>
 <p><span class="fndoclabel">Note</span> <br />The form <code>(schedule-function-relative</code>&nbsp;<var>scheduled-function</var>&nbsp;<code>10)</code> is equivalent to

@@ -38,15 +38,16 @@ until <var>test-form</var> evaluates to <code>nil</code>.
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-until.html"><b>until</b></a>
 </p>
 <p><span class="fndoclabel">Examples</span> <br /><pre class="pretop">
-&gt; (let ((i 0)) 
-    (while (&lt;= (incf i) 3) 
-       (print i)))
-1 
-2 
-3 
-nil
-&gt; (while nil (print "No"))
-nil
+  &gt; (let ((i 0)) 
+      (while (&lt;= (incf i) 3) 
+         (print i)))
+  1 
+  2 
+  3 
+  nil
+  &gt; (while nil (print "No"))
+  nil
+  &gt;
 </pre>
 </p>
 <hr /><address><a target="_top" class="address"

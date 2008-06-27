@@ -50,16 +50,17 @@ existing association for <var>item</var>.
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-pushnew-incf-acons.html"><b>pushnew/incf-acons</b></a>
 </p>
 <p><span class="fndoclabel">Examples</span> <br /><pre class="pretop">
-&gt; (setf alist nil)
-nil
-&gt; (pushnew-acons 'x 1 alist)
-((x . 1))
-&gt; (pushnew-acons 'y 2 alist)
-((y . 2) (x . 1))
-&gt; (pushnew-acons 'x -1 alist)
-((y . 2) (x . -1))
-&gt; alist
-((y . 2) (x . -1))
+  &gt; (setf alist nil)
+  nil
+  &gt; (pushnew-acons 'x 1 alist)
+  ((x . 1))
+  &gt; (pushnew-acons 'y 2 alist)
+  ((y . 2) (x . 1))
+  &gt; (pushnew-acons 'x -1 alist)
+  ((y . 2) (x . -1))
+  &gt; alist
+  ((y . 2) (x . -1))
+  &gt;
 </pre>
 </p>
 <hr /><address><a target="_top" class="address"

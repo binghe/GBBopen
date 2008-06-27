@@ -40,13 +40,14 @@ scheduler.
 <a name="id1"></a><p><span class="fndoclabel">Example</span> <br />Change the invocation time of <a href="ref-glossary.html#id179">scheduled&nbsp;function</a> <code>quitting-time</code>
 from 5pm to 5:30pm with verbose printing enabled:
 <pre class="pretop">
-&gt; (setf *schedule-function-verbose* 't)
-t
-&gt; (schedule-function 'quitting-time (<a href="ref-encode-time-of-day.html">encode-time-of-day</a> 17 30 0)
-    :repeat-interval #.(* 24 60 60))
-;; Unscheduling #&lt;scheduled-function quitting-time [17:00:00]&gt;...
-;; Scheduling #&lt;scheduled-function quitting-time [17:30:00]&gt; 
-   as the next scheduled-function...
+  &gt; (setf *schedule-function-verbose* 't)
+  t
+  &gt; (schedule-function 'quitting-time (<a href="ref-encode-time-of-day.html">encode-time-of-day</a> 17 30 0)
+      :repeat-interval #.(* 24 60 60))
+  ;; Unscheduling #&lt;scheduled-function quitting-time [17:00:00]&gt;...
+  ;; Scheduling #&lt;scheduled-function quitting-time [17:30:00]&gt; 
+  ;; as the next scheduled-function...
+  &gt;
 </pre>
 </p>
 <hr /><address><a target="_top" class="address"

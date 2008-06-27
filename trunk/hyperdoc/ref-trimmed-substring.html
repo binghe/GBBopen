@@ -38,18 +38,19 @@ end of <var>string</var>)
 <p><span class="fndoclabel">Returns</span> <br />The extracted, trimmed string
 </p>
 <p><span class="fndoclabel">Examples</span> <br /><pre class="pretop">
-&gt; (trimmed-substring '(#\space #\tab) "xxx   abc   yyy" 3 12)
-"abc"
-&gt; (trimmed-substring " " "xxx   abc   yyy" 3 12)
-"abc"
-&gt; (trimmed-substring " " "xxx   abc   yyy" 3)
-"abc   yyy"
-&gt; (trimmed-substring " " "xxx   abc   yyy" 3 13)
-"abc   y"
-&gt; (trimmed-substring " " "xxx   abc   yyy" 2 12)
-"x   abc"
-&gt; (trimmed-substring " " "   abc   ")
-"abc"
+  &gt; (trimmed-substring '(#\space #\tab) "xxx   abc   yyy" 3 12)
+  "abc"
+  &gt; (trimmed-substring " " "xxx   abc   yyy" 3 12)
+  "abc"
+  &gt; (trimmed-substring " " "xxx   abc   yyy" 3)
+  "abc   yyy"
+  &gt; (trimmed-substring " " "xxx   abc   yyy" 3 13)
+  "abc   y"
+  &gt; (trimmed-substring " " "xxx   abc   yyy" 2 12)
+  "x   abc"
+  &gt; (trimmed-substring " " "   abc   ")
+  "abc"
+  &gt;
 </pre>
 </p>
 <p><span class="fndoclabel">Note</span> <br />The function <b>trimmed-substring</b> is semantically equivalent to

@@ -47,15 +47,16 @@ thread-local value is bound.
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-spawn-thread.html"><b>spawn-thread</b></a>
 </p>
 <p><span class="fndoclabel">Examples</span> <br /><pre class="pretop">
-&gt; (symbol-value-in-thread '*x* thread)
-33
-t
-&gt; (symbol-value-in-thread 'pi thread)
-3.141592653589793d0
-t
-&gt; (symbol-value-in-thread '*unbound* thread)
-nil
-nil
+  &gt; (symbol-value-in-thread '*x* thread)
+  33
+  t
+  &gt; (symbol-value-in-thread 'pi thread)
+  3.141592653589793d0
+  t
+  &gt; (symbol-value-in-thread '*unbound* thread)
+  nil
+  nil
+  &gt;
 </pre>
 </p>
 <p><span class="fndoclabel">Note</span> <br />On Common Lisp implementations without threads, this function obtains

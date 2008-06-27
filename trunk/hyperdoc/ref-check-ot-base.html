@@ -45,20 +45,22 @@ Offset Universal Time value; nil otherwise.
 </p>
 <p><span class="fndoclabel">Examples</span> <br />Set the time base for Offset Universal Time to today and check:
 <pre class="pretop">
-&gt; (<a href="ref-set-ot-base.html">set-ot-base</a>)
-3410655616
-&gt; (check-ot-base)
-t
+  &gt; (<a href="ref-set-ot-base.html">set-ot-base</a>)
+  3410655616
+  &gt; (check-ot-base)
+  t
+  &gt;
 </pre>
 Set the time base for Offset Universal Time to January 1, 1900 and check:
 <pre>
-&gt; (<a href="ref-set-ot-base.html">set-ot-base</a> 1 1 1900)
-16777216
-&gt; (check-ot-base)
-; Warning: The current time represented as an Offset Universal Time is not a fixnum.
-nil
-&gt; (check-ot-base 't)
-nil
+  &gt; (<a href="ref-set-ot-base.html">set-ot-base</a> 1 1 1900)
+  16777216
+  &gt; (check-ot-base)
+  ;; Warning: The current time represented as an Offset Universal Time is not a fixnum.
+  nil
+  &gt; (check-ot-base 't)
+  nil
+  &gt;
 </pre>
 </p>
 <hr /><address><a target="_top" class="address"

@@ -57,17 +57,19 @@ last <var>form</var> is returned.
 </p>
 <p><span class="fndoclabel">Examples</span> <br />Evaluate a simple form, with a one-second time out:
 <pre class="pretop">
-&gt; (with-timeout (1 ':timed-out) 
-     ':did-not-time-out)
-:did-not-time-out
+  &gt; (with-timeout (1 ':timed-out) 
+       ':did-not-time-out)
+  :did-not-time-out
+  &gt;
 </pre>
 Again, but this time sleep for two seconds to cause a time out:
 <pre>
-&gt; (with-timeout (1 ':timed-out)
-     (sleep 2) 
-     ':did-not-time-out)
-:timed-out              <span 
+  &gt; (with-timeout (1 ':timed-out)
+       (sleep 2) 
+       ':did-not-time-out)
+  :timed-out              <span 
     style="font-family: serif; font-style: normal"><font color="#00ff00">; (after 2 seconds)</font></span>
+  &gt;
 </pre>
 </p>
 <hr /><address><a target="_top" class="address"

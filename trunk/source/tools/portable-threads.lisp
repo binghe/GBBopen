@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/portable-threads.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Jun 14 10:18:27 2008 *-*
+;;;; *-* Last-Edit: Fri Jun 27 06:12:47 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -2251,15 +2251,17 @@
                             &key (verbose *schedule-function-verbose*))
   #-threads-not-available
   (or (with-lock-held (*scheduled-functions-cv*)
-        (let ((next-scheduled-function (first *scheduled-functions*)))
+        (let* ((next-scheduled-function (first *scheduled-functions*))
+               (unscheduled-function
+                (delete-scheduled-function name-or-scheduled-function verbose)))
           ;; when unscheduled successfully: 
-          (when (delete-scheduled-function name-or-scheduled-function verbose)
-            ;; awaken the scheduler if the next scheduled-function was the one
-            ;; that was unscheduled:
+          (when unscheduled-function
+            ;; awaken the scheduler if the next-scheduled-function became the
+            ;; first one due to the unscheduling:
             (unless (eq next-scheduled-function (first *scheduled-functions*))
               (awaken-scheduled-function-scheduler))
-            ;; return t if we unscheduled:
-            't)))
+            ;; return the unscheduled function if we unscheduled:
+            unscheduled-function)))
       ;; warn if unable to find the scheduled function (outside of the lock):
       (warn "Scheduled-function ~s was not scheduled; no action taken."
             name-or-scheduled-function))

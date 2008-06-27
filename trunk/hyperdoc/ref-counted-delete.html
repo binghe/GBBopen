@@ -64,18 +64,19 @@ the <var>count</var> is provided, and in that case only the rightmost
 <p><span class="fndoclabel">Examples</span> <br /></p>
 <pre class="pretop">
 
-&gt; (counted-delete 'a '(a b c a b c))
-(b c b c)
-2
-&gt; (counted-delete #\a "abcabc")
-"bcbc"
-2
-&gt; (counted-delete 'z '(a b c a b c))
-(a b c a b c)
-0
-&gt; (counted-delete #\a "abcabc" :from-end 't :count 1)
-"abcbc"
-1
+  &gt; (counted-delete 'a '(a b c a b c))
+  (b c b c)
+  2
+  &gt; (counted-delete #\a "abcabc")
+  "bcbc"
+  2
+  &gt; (counted-delete 'z '(a b c a b c))
+  (a b c a b c)
+  0
+  &gt; (counted-delete #\a "abcabc" :from-end 't :count 1)
+  "abcbc"
+  1
+  &gt;
 </pre>
 <p><span class="fndoclabel">Note</span> <br />This is what <b>delete</b> should have been (and was on the
 Lisp Machines). 

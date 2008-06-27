@@ -36,30 +36,37 @@ specification contains a circularity.
 <p><span class="fndoclabel">See also</span>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-define-module.html"><b>define-module</b></a>
 </p>
-<p><span class="fndoclabel">Example</span> <br />Describe the <code>:gbbopen-tools</code> <a href="ref-glossary.html#gl:module">module</a>:
+<p><span class="fndoclabel">Examples</span> <br />Describe the <code>:gbbopen-test</code> <a href="ref-glossary.html#gl:module">module</a> before it has been loaded:
 <pre class="pretop">
-&gt; (describe-module :gbbopen-tools)
-Module :gbbopen-tools (loaded)
-  Requires: (:mini-module)
-  Fully expanded requires: (:mini-module)
-  Source directory: <var>&lt;install-dir&gt;</var>/source/tools/
-  Compiled directory: <var>&lt;install-dir&gt;</var>/linux86-allegro-8.1/tools/
-  Forces recompile date: Jan 15 17:11
-  Files:   Jun 22 16:23 preamble 
-           Jun 22 16:23 declarations (:forces-recompile)
-           Jun 22 16:23 declared-numerics (:forces-recompile)
-           Jun 22 16:23 defflags (:forces-recompile)
-           Jun 22 16:23 clos-interface 
-           Jun 22 16:23 tools (:forces-recompile)
-           Jun 22 16:23 define-class (:forces-recompile)
-           Jun 22 16:23 gbbopen-instance 
-           Jun 22 16:23 date-and-time 
-           Jun 22 16:23 offset-universal-time 
-           Jun 22 16:23 print-object-for 
-           Jun 22 16:23 read-object 
-           Jun 22 16:23 duplicate-instance 
-           Jun 22 16:23 epilogue 
-</pre> 
+  &gt; (describe-module :gbbopen-test)
+  Module :gbbopen-test (loaded)
+    Requires: (:gbbopen-user)
+    Fully expanded requires: (:mini-module :mini-module-user :portable-threads
+                              :gbbopen-tools :gbbopen-core :os-interface :gbbopen-user)
+    Source directory: <var>&lt;install-dir&gt;</var>/source/gbbopen/test/
+    Compiled directory: <var>&lt;install-dir&gt;</var>/<var>&lt;platform-dir&gt;</var>/gbbopen/test/
+    Forces recompile date: None
+    Files:              basic-tests (:reload)
+    Patches:            basic-tests-p001 
+                        basic-tests-p002 
+  &gt;
+</pre>
+</p>
+<p>Describe the <code>:gbbopen-test</code> <a href="ref-glossary.html#gl:module">module</a> after it has been loaded:
+<pre class="pretop">
+  &gt; (describe-module :gbbopen-test)
+  Module :gbbopen-test (loaded)
+    Requires: (:gbbopen-user)
+    Fully expanded requires: (:mini-module :mini-module-user :portable-threads
+                              :gbbopen-tools :gbbopen-core :os-interface :gbbopen-user)
+    Source directory: <var>&lt;install-dir&gt;</var>/source/gbbopen/test/
+    Compiled directory: <var>&lt;install-dir&gt;</var>/<var>&lt;platform-dir&gt;</var>/gbbopen/test/
+    Forces recompile date: None
+    Files:   Jun 27 05:22 basic-tests (:reload)
+    Patches: Jun 27 05:22 basic-tests-p001 
+             Jun 27 05:22 basic-tests-p002 
+  &gt;
+</pre>
 </p>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />

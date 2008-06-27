@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/portable-threads-entities.tex *-*
-%% *-* Last-Edit: Sat Jun 14 10:32:39 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Fri Jun 27 06:04:14 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 \index{module!:portable-threads@\code{:portable-threads}}%
@@ -169,13 +169,14 @@ from 5pm to 5:30pm with verbose printing enabled:
 %
 \W\supp
 \begin{example}
-> (setf *schedule-function-verbose* 't)
-t
-> (schedule-function 'quitting-time (\entlink{encode-time-of-day} 17 30 0)
-    :repeat-interval #.(* 24 60 60))
-;; Unscheduling #<scheduled-function quitting-time [17:00:00]>...
-;; Scheduling #<scheduled-function quitting-time [17:30:00]> 
-   as the next scheduled-function...
+  > (setf *schedule-function-verbose* 't)
+  t
+  > (schedule-function 'quitting-time (\entlink{encode-time-of-day} 17 30 0)
+      :repeat-interval #.(* 24 60 60))
+  ;; Unscheduling #<scheduled-function quitting-time [17:00:00]>...
+  ;; Scheduling #<scheduled-function quitting-time [17:30:00]> 
+  ;; as the next scheduled-function...
+  >
 \end{example}
 
 \end{functiondoc}
@@ -212,17 +213,18 @@ Schedule a simple \glref{periodic~function} with verbose printing enabled:
 %
 \W\supp
 \begin{example}
-> (setf *periodic-function-verbose* 't)
-t
-> (\entlink{spawn-periodic-function} #'(lambda () (print "Hello!")) 0.1 
-    :name 'hello
-    :count 2)
-;; Spawning periodic-function thread for hello...
-#<thread Periodic Function hello>
->
-"Hello!" 
-"Hello!" 
-;; Exiting periodic-function thread hello
+  > (setf *periodic-function-verbose* 't)
+  t
+  > (\entlink{spawn-periodic-function} #'(lambda () (print "Hello!")) 0.1 
+      :name 'hello
+      :count 2)
+  ;; Spawning periodic-function thread for hello...
+  #<thread Periodic Function hello>
+  >
+  "Hello!" 
+  "Hello!" 
+  ;; Exiting periodic-function thread hello
+  >
 \end{example}
 
 \end{functiondoc}
@@ -261,8 +263,9 @@ currently scheduled.
 %
 \W\supp
 \begin{example}
-> (all-threads)
-(#<thread Listener 1>)
+  > (all-threads)
+  (#<thread Listener 1>)
+  >
 \end{example}
 
 \fnnotes On Common Lisp implementations without threads, \nil{} is returned.
@@ -304,8 +307,9 @@ destructively altered.
 %
 \W\supp
 \begin{example}
-> (all-threads)
-(#<thread Listener 1>)
+  > (all-threads)
+  (#<thread Listener 1>)
+  >
 \end{example}
 
 \fnnotes On Common Lisp implementations without threads, \nil{} is returned.
@@ -406,12 +410,13 @@ Define an atomic \textbf{\entlink{nsorted-insert}}:
 %
 \W\supp
 \begin{example}
-> x
-5
-> (atomic-decf x)
-4
-> (atomic-decf x 1.5)
-2.5
+  > x
+  5
+  > (atomic-decf x)
+  4
+  > (atomic-decf x 1.5)
+  2.5
+  >
 \end{example}
 
 \end{functiondoc}
@@ -477,12 +482,13 @@ the \var{count\/} is provided, and in that case only the rightmost
 %
 \W\supp
 \begin{example}
-> list
-(1 2 3)
-> (atomic-delete 2 list)
-(2 3)
-> list
-(2 3)
+  > list
+  (1 2 3)
+  > (atomic-delete 2 list)
+  (2 3)
+  > list
+  (2 3)
+  >
 \end{example}
 
 \end{functiondoc}
@@ -524,12 +530,13 @@ being set.
 %
 \W\supp
 \begin{example}
-> list
-(1 2 3)
-> (atomic-flush list)
-(1 2 3)
-> list
-nil
+  > list
+  (1 2 3)
+  > (atomic-flush list)
+  (1 2 3)
+  > list
+  nil
+  >
 \end{example}
 
 \end{functiondoc}
@@ -566,12 +573,13 @@ nil
 %
 \W\supp
 \begin{example}
-> x
-2
-> (atomic-incf x)
-3
-> (atomic-incf x 1.5)
-4.5
+  > x
+  2
+  > (atomic-incf x)
+  3
+  > (atomic-incf x 1.5)
+  4.5
+  >
 \end{example}
 
 \end{functiondoc}
@@ -615,12 +623,13 @@ from the list stored in \var{place\/}, store the updated list in
 %
 \W\supp
 \begin{example}
-> list
-(1 2 3)
-> (atomic-pop list)
-1
-> list
-(2 3)
+  > list
+  (1 2 3)
+  > (atomic-pop list)
+  1
+  > list
+  (2 3)
+  >
 \end{example}
 
 \end{functiondoc}
@@ -663,10 +672,11 @@ list stored in \var{place\/} and store the updated list in
 %
 \W\supp
 \begin{example}
-> list
-(1 2 3)
-> (atomic-push 10 list)
-(10 1 2 3)
+  > list
+  (1 2 3)
+  > (atomic-push 10 list)
+  (10 1 2 3)
+  >
 \end{example}
 
 \end{functiondoc}
@@ -715,12 +725,13 @@ the same as any element in the list stored in \var{place\/}, prepend
 %
 \W\supp
 \begin{example}
-> list
-(1 2 3)
-> (atomic-pushnew 2 list)
-(1 2 3)
-> (atomic-pushnew 10 list)
-(10 1 2 3)
+  > list
+  (1 2 3)
+  > (atomic-pushnew 2 list)
+  (1 2 3)
+  > (atomic-pushnew 10 list)
+  (10 1 2 3)
+  >
 \end{example}
 
 \end{functiondoc}
@@ -1009,8 +1020,9 @@ signaled by another \glref{thread} or until 5 seconds have elapsed:
 %
 \W\supp
 \begin{example}
-> (current-thread)
-#<thread Listener 1>
+  > (current-thread)
+  #<thread Listener 1>
+  >
 \end{example}
 
 \fnnote On Common Lisp implementations without threads,
@@ -1059,13 +1071,14 @@ every day at 5pm:
 %
 \W\supp
 \begin{example}
-> (\entlink{schedule-function}
-    (\entlink{make-scheduled-function}
-      #'(lambda (scheduled-function)
-          (declare (ignore scheduled-function))
-          (print "It's quitting time!"))
-      :name 'quitting-time)
-     (encode-time-of-day 17 0 0) :repeat-interval #.(* 24 60 60))
+  > (\entlink{schedule-function}
+      (\entlink{make-scheduled-function}
+        #'(lambda (scheduled-function)
+            (declare (ignore scheduled-function))
+            (print "It's quitting time!"))
+        :name 'quitting-time)
+       (encode-time-of-day 17 0 0) :repeat-interval #.(* 24 60 60))
+  >
 \end{example}
 
 \bfindexit{encode-time-of-day}%
@@ -1073,12 +1086,13 @@ Verbosely change \code{quitting-time} to 5:30pm every day:
 %
 \W\supp
 \begin{example}
-> (\entlink{schedule-function} 'quitting-time (encode-time-of-day 17 30 0)
-    :repeat-interval #.(* 24 60 60)
-    :verbose 't)
-;; Unscheduling #<scheduled-function quitting-time [17:00:00]>...
-;; Scheduling #<scheduled-function quitting-time [17:30:00]> 
-   as the next scheduled-function...
+  > (\entlink{schedule-function} 'quitting-time (encode-time-of-day 17 30 0)
+      :repeat-interval #.(* 24 60 60)
+      :verbose 't)
+  ;; Unscheduling #<scheduled-function quitting-time [17:00:00]>...
+  ;; Scheduling #<scheduled-function quitting-time [17:30:00]> 
+  ;; as the next scheduled-function...
+  >
 \end{example}
 
 \end{functiondoc}
@@ -1151,16 +1165,17 @@ control shell is running:
 %
 \W\supp
 \begin{example}
-> (\entlink{define-event-class} half-second-timer-event (timer-interrupt-event)
-    ())
-half-second-timer-event
-> (defun half-second-timer ()
-    (unless (\entlink{control-shell-running-p})
-      (kill-periodic-function))
-    (\entlink{signal-event} 'half-second-timer-event))
-half-second-timer
-> (\entlink{spawn-periodic-function} 'half-second-timer 0.5)
-#<thread Periodic Function half-second-timer>
+  > (\entlink{define-event-class} half-second-timer-event (timer-interrupt-event)
+      ())
+  half-second-timer-event
+  > (defun half-second-timer ()
+      (unless (\entlink{control-shell-running-p})
+        (kill-periodic-function))
+      (\entlink{signal-event} 'half-second-timer-event))
+  half-second-timer
+  > (\entlink{spawn-periodic-function} 'half-second-timer 0.5)
+  #<thread Periodic Function half-second-timer>
+  >
 \end{example}
 
 \end{functiondoc}
@@ -1246,8 +1261,9 @@ Make a \textbf{condition-variable} instance with a non-recursive
 %
 \W\supp
 \begin{example}
-> (make-condition-variable)
-#<condition-variable>
+  > (make-condition-variable)
+  #<condition-variable>
+  >
 \end{example}
 %
 Make a \textbf{condition-variable} instance with a
@@ -1255,8 +1271,9 @@ Make a \textbf{condition-variable} instance with a
 %
 \W\supp\notpretop
 \begin{example}
-> (make-condition-variable :lock (\entlink{make-recursive-lock}))
-#<condition-variable>
+  > (make-condition-variable :lock (\entlink{make-recursive-lock}))
+  #<condition-variable>
+  >
 \end{example}
 %
 Define a subclass of \textbf{condition-variable} that includes a 
@@ -1274,9 +1291,10 @@ and then create a \code{state-cv} instance with a \glref{recursive~lock}:
 %
 \W\supp\notpretop
 \begin{example}
-> (make-condition-variable :class 'state-cv
-                           :lock (\entlink{make-recursive-lock}))
-#<state-cv>
+  > (make-condition-variable :class 'state-cv
+                             :lock (\entlink{make-recursive-lock}))
+  #<state-cv>
+  >
 \end{example}
 
 \fnnote The \textbf{make-condition-variable} function is equivalent to using
@@ -1322,8 +1340,9 @@ created \glref{condition-variable} instance.  However, using
 %
 \W\supp
 \begin{example}
-> (make-lock :name "Priority Queue")
-#<lock Priority Queue>
+  > (make-lock :name "Priority Queue")
+  #<lock Priority Queue>
+  >
 \end{example}
 
 \fnnote On Common Lisp implementations without threads, a
@@ -1367,8 +1386,9 @@ created \glref{condition-variable} instance.  However, using
 %
 \W\supp
 \begin{example}
-> (make-recursive-lock :name "Priority Queue")
-#<recursive-lock Priority Queue>
+  > (make-recursive-lock :name "Priority Queue")
+  #<recursive-lock Priority Queue>
+  >
 \end{example}
 
 \fnnote On Common Lisp implementations without threads, a
@@ -1431,12 +1451,13 @@ invoked:
 %
 \W\supp
 \begin{example}
-> (make-scheduled-function 
-    #'(lambda (scheduled-function)
-        (declare (ignore scheduled-function))
-        (print "Hello"))
-    :name 'hello)
-#<scheduled-function hello [unscheduled]>
+  > (make-scheduled-function 
+      #'(lambda (scheduled-function)
+          (declare (ignore scheduled-function))
+          (print "Hello"))
+      :name 'hello)
+  #<scheduled-function hello [unscheduled]>
+  >
 \end{example}
 
 \bfindexit{scheduled-function-repeat-interval}%
@@ -1448,18 +1469,19 @@ interval):
 %
 \W\supp
 \begin{example}
-> (defun complex-function (scheduled-function)
-    (let ((interval (random 100)))
-      (setf (\entlink{scheduled-function-repeat-interval} scheduled-function)
-            (if (plusp interval) 
-                ;; repeat 1-99 seconds from now:
-                interval
-                ;; don't repeat 1\% of the time:
-                nil)))
-    (\entlink{spawn-thread} "Lots of stuff doer" #'do-lots-of-stuff))
-complex-function
-> (make-scheduled-function 'complex-function)
-#<scheduled-function complex-function [unscheduled]>
+  > (defun complex-function (scheduled-function)
+      (let ((interval (random 100)))
+        (setf (\entlink{scheduled-function-repeat-interval} scheduled-function)
+              (if (plusp interval) 
+                  ;; repeat 1-99 seconds from now:
+                  interval
+                  ;; don't repeat 1\% of the time:
+                  nil)))
+      (\entlink{spawn-thread} "Lots of stuff doer" #'do-lots-of-stuff))
+  complex-function
+  > (make-scheduled-function 'complex-function)
+  #<scheduled-function complex-function [unscheduled]>
+  >
 \end{example}
 
 \end{functiondoc}
@@ -1505,8 +1527,9 @@ Restart the \glref{scheduled-function} scheduler:
 %
 \W\supp
 \begin{example}
-> (restart-scheduled-function-scheduler)
-#<thread Scheduled-Function Scheduler>
+  > (restart-scheduled-function-scheduler)
+  #<thread Scheduled-Function Scheduler>
+  >
 \end{example}
 %
 Restarting a \glref{scheduled-function} scheduler that is already running has
@@ -1514,9 +1537,10 @@ no effect:
 %
 \W\supp\notpretop
 \begin{example}
-> (restart-scheduled-function-scheduler)
-;; The scheduled-function scheduler is already running.
-nil
+  > (restart-scheduled-function-scheduler)
+  ;; The scheduled-function scheduler is already running.
+  nil
+  >
 \end{example}
 
 \end{functiondoc}
@@ -1618,14 +1642,15 @@ at midnight (local time) on January 1, 2010:
 %
 \W\supp
 \begin{example}
-> (schedule-function
-    (\entlink{make-scheduled-function}
-      #'(lambda (scheduled-function)
-          (declare (ignore scheduled-function))
-          (print "Happy New Year!")))
-     (encode-universal-time 0 0 0 1 1 2010))
-> (all-scheduled-functions)
-(#<scheduled-function nil [Jan 1, 2010 00:00:00]>)
+  > (schedule-function
+      (\entlink{make-scheduled-function}
+        #'(lambda (scheduled-function)
+            (declare (ignore scheduled-function))
+            (print "Happy New Year!")))
+       (encode-universal-time 0 0 0 1 1 2010))
+  > (all-scheduled-functions)
+  (#<scheduled-function nil [Jan 1, 2010 00:00:00]>)
+  >
 \end{example}
 %
 \bfindexit{make-scheduled-function}%
@@ -1636,13 +1661,14 @@ every day at 5pm:
 %
 \W\supp\notpretop
 \begin{example}
-> (schedule-function
-    (\entlink{make-scheduled-function}
-      #'(lambda (scheduled-function)
-          (declare (ignore scheduled-function))
-          (print "It's quitting time!"))
-      :name 'quitting-time)
-     (\entlink{encode-time-of-day} 17 0 0) :repeat-interval #.(* 24 60 60))
+  > (schedule-function
+      (\entlink{make-scheduled-function}
+        #'(lambda (scheduled-function)
+            (declare (ignore scheduled-function))
+            (print "It's quitting time!"))
+        :name 'quitting-time)
+       (\entlink{encode-time-of-day} 17 0 0) :repeat-interval #.(* 24 60 60))
+  >
 \end{example}
 %
 \bfindexit{encode-time-of-day}%
@@ -1651,12 +1677,13 @@ Verbosely change \code{quitting-time} to 5:30pm every day:
 %
 \W\supp\notpretop
 \begin{example}
-> (schedule-function 'quitting-time (\entlink{encode-time-of-day} 17 30 0)
-    :repeat-interval #.(* 24 60 60)
-    :verbose 't)
-;; Unscheduling #<scheduled-function quitting-time [17:00:00]>...
-;; Scheduling #<scheduled-function quitting-time [17:30:00]> 
-   as the next scheduled-function...
+  > (schedule-function 'quitting-time (\entlink{encode-time-of-day} 17 30 0)
+      :repeat-interval #.(* 24 60 60)
+      :verbose 't)
+  ;; Unscheduling #<scheduled-function quitting-time [17:00:00]>...
+  ;; Scheduling #<scheduled-function quitting-time [17:30:00]> 
+  ;; as the next scheduled-function...
+  >
 \end{example}
 
 \end{functiondoc}
@@ -1721,12 +1748,13 @@ Schedule a \glref{scheduled~function} that simply prints \code{"Hello!"}
 %
 \W\supp
 \begin{example}
-> (schedule-function-relative
-    (\entlink{make-scheduled-function}
-      #'(lambda (scheduled-function)
-          (declare (ignore scheduled-function))
-          (print "Hello!")))
-     5)
+  > (schedule-function-relative
+      (\entlink{make-scheduled-function}
+        #'(lambda (scheduled-function)
+            (declare (ignore scheduled-function))
+            (print "Hello!")))
+       5)
+  >
 \end{example}
 %
 \bfindexit{make-scheduled-function}%
@@ -1737,13 +1765,14 @@ Schedule a \glref{scheduled~function} that signals a GBBopen
 %
 \W\supp\notpretop
 \begin{example}
-> (schedule-function-relative
-    (\entlink{make-scheduled-function}
-      #'(lambda (scheduled-function)
-          (declare (ignore scheduled-function))
-          (\entlink{signal-event} 'timer-interrupt-event)))
-    30
-    :repeat-interval 30)
+  > (schedule-function-relative
+      (\entlink{make-scheduled-function}
+        #'(lambda (scheduled-function)
+            (declare (ignore scheduled-function))
+            (\entlink{signal-event} 'timer-interrupt-event)))
+      30
+      :repeat-interval 30)
+  >
 \end{example}
 
 \fnnote The form \mbox{\code{(schedule-function-relative}
@@ -1795,8 +1824,9 @@ Return the names of all currently scheduled \glref{scheduled~functions}:
 %
 \W\supp
 \begin{example}
-> (mapcar #'scheduled-function-name (\entlink{all-scheduled-functions}))
-(quitting-time)
+  > (mapcar #'scheduled-function-name (\entlink{all-scheduled-functions}))
+  (quitting-time)
+  >
 \end{example}
 
 \end{functiondoc}
@@ -1844,12 +1874,13 @@ currently scheduled \glref{scheduled~function}:
 %
 \W\supp
 \begin{example}
-> (dolist (scheduled-function (\entlink{all-scheduled-functions}))
-   (format t "~&;; ~s ~s~%"
-           scheduled-function
-           (scheduled-function-repeat-interval scheduled-function)))
-;; #<scheduled-function quitting-time [17:00:00]> 86400
-nil
+  > (dolist (scheduled-function (\entlink{all-scheduled-functions}))
+     (format t "~&;; ~s ~s~%"
+             scheduled-function
+             (scheduled-function-repeat-interval scheduled-function)))
+  ;; #<scheduled-function quitting-time [17:00:00]> 86400
+  nil
+  >
 \end{example}
 
 Define a \glref{function} to be used as a \glref{scheduled~function} that
@@ -1930,13 +1961,13 @@ but that only runs twice:
 %
 \W\supp
 \begin{example}
-> (spawn-periodic-function #'(lambda () (print "Hello!")) 0.1 
-    :name 'hello
-    :count 2)
-#<thread Periodic Function hello>
->
-"Hello!" 
-"Hello!" 
+  > (spawn-periodic-function #'(lambda () (print "Hello!")) 0.1 
+      :name 'hello
+      :count 2)
+  #<thread Periodic Function hello>
+  >
+  "Hello!" 
+  "Hello!" 
 \end{example}
 %
 \bfindexit{kill-periodic-function}%
@@ -1947,23 +1978,23 @@ terminating early:
 %
 \W\supp\notpretop
 \begin{example}
-> (spawn-periodic-function 
-     #'(lambda ()
-         (when (zerop (random 10))
-           (kill-periodic-function))
-         (print "Hello!")) 
-     0.1
-     :count 20
-     :verbose 't)
-;; Spawning periodic-function thread for...
-#<thread Periodic Function>
->
-"Hello!" 
-"Hello!" 
-"Hello!" 
-"Hello!" 
-;; Killing periodic-function...
-;; Exiting periodic-function thread
+  > (spawn-periodic-function 
+       #'(lambda ()
+           (when (zerop (random 10))
+             (kill-periodic-function))
+           (print "Hello!")) 
+       0.1
+       :count 20
+       :verbose 't)
+  ;; Spawning periodic-function thread for...
+  #<thread Periodic Function>
+  >
+  "Hello!" 
+  "Hello!" 
+  "Hello!" 
+  "Hello!" 
+  ;; Killing periodic-function...
+  ;; Exiting periodic-function thread
 \end{example}
 %
 \bfindexit{define-event-class}%
@@ -1977,16 +2008,17 @@ control shell is running:
 %
 \W\supp\notpretop
 \begin{example}
-> (\entlink{define-event-class} half-second-timer-event (timer-interrupt-event)
-    ())
-half-second-timer-event
-> (defun half-second-timer ()
-    (unless (\entlink{control-shell-running-p})
-      (\entlink{kill-periodic-function}))
-    (\entlink{signal-event} 'half-second-timer-event))
-half-second-timer
-> (spawn-periodic-function 'half-second-timer 0.5)
-#<thread Periodic Function half-second-timer>
+  > (\entlink{define-event-class} half-second-timer-event (timer-interrupt-event)
+      ())
+  half-second-timer-event
+  > (defun half-second-timer ()
+      (unless (\entlink{control-shell-running-p})
+        (\entlink{kill-periodic-function}))
+      (\entlink{signal-event} 'half-second-timer-event))
+  half-second-timer
+  > (spawn-periodic-function 'half-second-timer 0.5)
+  #<thread Periodic Function half-second-timer>
+  >
 \end{example}
 
 \end{functiondoc}
@@ -2039,8 +2071,9 @@ half-second-timer
 %
 \W\supp
 \begin{example}
-> (spawn-thread "Sleepy" #'sleep 60)
-#<thread Sleepy>
+  > (spawn-thread "Sleepy" #'sleep 60)
+  #<thread Sleepy>
+  >
 \end{example}
 
 \end{functiondoc}
@@ -2088,15 +2121,16 @@ thread-local value is bound.
 %
 \W\supp
 \begin{example}
-> (symbol-value-in-thread '*x* thread)
-33
-t
-> (symbol-value-in-thread 'pi thread)
-3.141592653589793d0
-t
-> (symbol-value-in-thread '*unbound* thread)
-nil
-nil
+  > (symbol-value-in-thread '*x* thread)
+  33
+  t
+  > (symbol-value-in-thread 'pi thread)
+  3.141592653589793d0
+  t
+  > (symbol-value-in-thread '*unbound* thread)
+  nil
+  nil
+  >
 \end{example}
 
 \fnnote On Common Lisp implementations without threads, this function obtains
@@ -2140,14 +2174,15 @@ the global symbol value.
 %
 \W\supp
 \begin{example}
-> (defparameter *silly-thread* (\entlink{spawn-thread} "Sleeper" 'sleep 10000))
-#<thread Sleeper>
-> (thread-alive-p *silly-thread*)
-t
-> (\entlink{kill-thread} *silly-thread*)
-t
-> (thread-alive-p *silly-thread*)
-nil
+  > (defparameter *silly-thread* (\entlink{spawn-thread} "Sleeper" 'sleep 10000))
+  #<thread Sleeper>
+  > (thread-alive-p *silly-thread*)
+  t
+  > (\entlink{kill-thread} *silly-thread*)
+  t
+  > (thread-alive-p *silly-thread*)
+  nil
+  >
 \end{example}
 
 \end{functiondoc}
@@ -2187,12 +2222,13 @@ nil
 %
 \W\supp
 \begin{example}
-> (thread-name thread)
-"Initial"
-> (setf (thread-name thread) "Version 2")
-"Version 2"
-> (thread-name thread)
-"Version 2"
+  > (thread-name thread)
+  "Initial"
+  > (setf (thread-name thread) "Version 2")
+  "Version 2"
+  > (thread-name thread)
+  "Version 2"
+  >
 \end{example}
 
 \fnnote Digitool's \xsitelink{Macintosh Common Lisp}{http://www.digitool.com}
@@ -2237,8 +2273,9 @@ does not support changing the thread name via \textbf{setf}.
 %
 \W\supp
 \begin{example}
-> (thread-whostate thread)
-"Running"
+  > (thread-whostate thread)
+  "Running"
+  >
 \end{example}
 
 \fnnote Although the \var{whostate\/} value can provide helpful
@@ -2316,8 +2353,9 @@ non-threaded implementations.
 %
 \W\supp
 \begin{example}
-> (threadp (car (\entlink{all-threads})))
-t
+  > (threadp (car (\entlink{all-threads})))
+  t
+  >
 \end{example}
 
 \end{functiondoc}
@@ -2359,22 +2397,24 @@ Two simple examples using a \glref{lock}:
 %
 \W\supp
 \begin{example}
-> (thread-holds-lock-p lock)
-nil
-> (\entlink{with-lock-held} (lock)
-    (thread-holds-lock-p lock))
-t
+  > (thread-holds-lock-p lock)
+  nil
+  > (\entlink{with-lock-held} (lock)
+      (thread-holds-lock-p lock))
+  t
+  >
 \end{example}
 %
 Two more simple examples using a \glref{condition~variable}:
 %
 \W\supp\notpretop
 \begin{example}
-> (thread-holds-lock-p condition-variable)
-nil
-> (\entlink{with-lock-held} (condition-variable)
-    (thread-holds-lock-p condition-variable))
-t
+  > (thread-holds-lock-p condition-variable)
+  nil
+  > (\entlink{with-lock-held} (condition-variable)
+      (thread-holds-lock-p condition-variable))
+  t
+  >
 \end{example}
 
 \end{functiondoc}
@@ -2431,8 +2471,9 @@ Unschedule the \code{quitting-time} \glref{scheduled~function}:
 %
 \W\supp
 \begin{example}
-> (unschedule-function 'quitting-time)
-#<scheduled-function quitting-time [unscheduled]>
+  > (unschedule-function 'quitting-time)
+  #<scheduled-function quitting-time [unscheduled]>
+  >
 \end{example}
 %
 \bfindexit{all-scheduled-functions}%
@@ -2441,21 +2482,23 @@ Unschedule all currently scheduled \glref{scheduled~functions}:
 %
 \W\supp\notpretop
 \begin{example}
-> (\entlink{all-scheduled-functions})
-(#<scheduled-function nil [Jan 1, 2010 00:00:00]>)
-> (mapc #'unschedule-function (\entlink{all-scheduled-functions}))
-(#<scheduled-function nil [unscheduled]>)
-> (\entlink{all-scheduled-functions})
-nil
+  > (\entlink{all-scheduled-functions})
+  (#<scheduled-function nil [Jan 1, 2010 00:00:00]>)
+  > (mapc #'unschedule-function (\entlink{all-scheduled-functions}))
+  (#<scheduled-function nil [unscheduled]>)
+  > (\entlink{all-scheduled-functions})
+  nil
+  >
 \end{example}
 %
 Unschedule a non-existent \glref{scheduled~function}:
 %
 \W\supp\notpretop
 \begin{example}
->(unschedule-function 'non-existent)
-Warning: Scheduled-function non-existent was not scheduled; no action taken.
-nil
+  > (unschedule-function 'non-existent)
+  ;; Warning: Scheduled-function non-existent was not scheduled; no action taken.
+  nil
+  >
 \end{example}
 
 \end{functiondoc}
@@ -2592,19 +2635,21 @@ Evaluate a simple form, with a one-second time out:
 %
 \W\supp
 \begin{example}
-> (with-timeout (1 ':timed-out) 
-     ':did-not-time-out)
-:did-not-time-out
+  > (with-timeout (1 ':timed-out) 
+       ':did-not-time-out)
+  :did-not-time-out
+  >
 \end{example}
 %
 Again, but this time sleep for two seconds to cause a time out:
 %
 \W\supp\notpretop
 \begin{example}
-> (with-timeout (1 ':timed-out)
-     (sleep 2) 
-     ':did-not-time-out)
-:timed-out              \textrm{\textcolor{green}{; (after 2 seconds)}}
+  > (with-timeout (1 ':timed-out)
+       (sleep 2) 
+       ':did-not-time-out)
+  :timed-out              \textrm{\textcolor{green}{; (after 2 seconds)}}
+  >
 \end{example}
 
 \end{functiondoc}

@@ -127,18 +127,20 @@ of <code>standard-class</code>.  The default metaclass value is
 </p>
 <p><span class="fndoclabel">Examples</span> <br />Define a class, <code>rectangle</code>, generating &#8220;<code>-of</code>&#8221; slot accessors:
 <pre class="pretop">
-&gt; (define-class rectangle (point)
-    (length width))
-#&lt;standard-class rectangle&gt;
+  &gt; (define-class rectangle (point)
+      (length width))
+  #&lt;standard-class rectangle&gt;
+  &gt;
 </pre>
 </p>
 <p>Define a class, <code>foo</code>, generating
 &#8220;<var>class-name</var><code>.</code><var>slot-name</var>&#8221; slot accessors:
 <pre class="pretop">
-&gt; (define-class foo ()
-    ((slot :initform ':uninitialized))
-    (:generate-accessors-format :prefix))
-#&lt;standard-class foo&gt;
+  &gt; (define-class foo ()
+      ((slot :initform ':uninitialized))
+      (:generate-accessors-format :prefix))
+  #&lt;standard-class foo&gt;
+  &gt;
 </pre>
 </p>
 <hr /><address><a target="_top" class="address"

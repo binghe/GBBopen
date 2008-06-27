@@ -46,13 +46,13 @@ expands the compiler-macro-form call once.
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-compiler-macroexpand.html"><b>compiler-macroexpand</b></a>
 </p>
 <p><span class="fndoclabel">Examples</span> <br /><pre class="pretop">
-&gt; (compiler-macroexpand-1 '(ensure-list x))
-(let ((#:g7105 x)) (if (listp #:g7105) #:g7105 (list #:g7105)))
-t
-&gt; (compiler-macroexpand-1 '(cons x nil))
-(cons x nil)
-nil
-&gt;
+  &gt; (compiler-macroexpand-1 '(ensure-list x))
+  (let ((#:g7105 x)) (if (listp #:g7105) #:g7105 (list #:g7105)))
+  t
+  &gt; (compiler-macroexpand-1 '(cons x nil))
+  (cons x nil)
+  nil
+  &gt;
 </pre>
 </p>
 <hr /><address><a target="_top" class="address"

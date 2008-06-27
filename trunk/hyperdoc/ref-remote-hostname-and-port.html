@@ -48,16 +48,18 @@
 <p><span class="fndoclabel">Examples</span> <br />Return the remote hostname and port of an open socket-stream
 connection to the <code>wiki.alu.org</code> web server:
 <pre class="pretop">
-&gt; (remote-hostname-and-port connection)
-"206.169.106.4 (bibop.alu.org)"
-80
+  &gt; (remote-hostname-and-port connection)
+  "206.169.106.4 (bibop.alu.org)"
+  80
+  &gt;
 </pre>
 Return the remote hostname and port of the open socket-stream
 connection, but without hostname resolution:
 <pre>
-&gt; (remote-hostname-and-port connection 't)
-"206.169.106.4"
-80
+  &gt; (remote-hostname-and-port connection 't)
+  "206.169.106.4"
+  80
+  &gt;
 </pre>
 </p>
 <hr /><address><a target="_top" class="address"

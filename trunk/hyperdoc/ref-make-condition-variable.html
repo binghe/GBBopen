@@ -45,14 +45,16 @@
 <p><span class="fndoclabel">Examples</span> <br />Make a <b>condition-variable</b> instance with a non-recursive 
 <a href="ref-glossary.html#gl:lock">lock</a>:
 <pre class="pretop">
-&gt; (make-condition-variable)
-#&lt;condition-variable&gt;
+  &gt; (make-condition-variable)
+  #&lt;condition-variable&gt;
+  &gt;
 </pre>
 Make a <b>condition-variable</b> instance with a
 <a href="ref-glossary.html#id167">recursive&nbsp;lock</a>:
 <pre>
-&gt; (make-condition-variable :lock (<a href="ref-make-recursive-lock.html">make-recursive-lock</a>))
-#&lt;condition-variable&gt;
+  &gt; (make-condition-variable :lock (<a href="ref-make-recursive-lock.html">make-recursive-lock</a>))
+  #&lt;condition-variable&gt;
+  &gt;
 </pre>
 Define a subclass of <b>condition-variable</b> that includes a 
 <code>state</code> slot:
@@ -64,9 +66,10 @@ Define a subclass of <b>condition-variable</b> that includes a
 </pre>
 and then create a <code>state-cv</code> instance with a <a href="ref-glossary.html#id167">recursive&nbsp;lock</a>:
 <pre>
-&gt; (make-condition-variable :class 'state-cv
-                           :lock (<a href="ref-make-recursive-lock.html">make-recursive-lock</a>))
-#&lt;state-cv&gt;
+  &gt; (make-condition-variable :class 'state-cv
+                             :lock (<a href="ref-make-recursive-lock.html">make-recursive-lock</a>))
+  #&lt;state-cv&gt;
+  &gt;
 </pre>
 </p>
 <p><span class="fndoclabel">Note</span> <br />The <b>make-condition-variable</b> function is equivalent to using

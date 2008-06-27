@@ -65,33 +65,39 @@ for daylight saving time.
 </p>
 <p><span class="fndoclabel">Examples</span> <br />Display the current date and time: 
 <pre class="pretop">
-&gt; (brief-date-and-time)
-"Feb 16 12:11"
+  &gt; (brief-date-and-time)
+  "Feb 16 12:11"
+  &gt;
 </pre>
 Display the current date and time (with seconds):
 <pre>
-&gt; (brief-date-and-time nil nil 't)
-"Feb 16 12:11:38"
+  &gt; (brief-date-and-time nil nil 't)
+  "Feb 16 12:11:38"
+  &gt;
 </pre>
 Display the current date and time as GMT: 
 <pre>
-&gt; (brief-date-and-time nil 0)
-"Feb 16 17:11"
+  &gt; (brief-date-and-time nil 0)
+  "Feb 16 17:11"
+  &gt;
 </pre>
 The date and time 10 days ago:
 <pre>
-&gt; (brief-date-and-time (- (get-universal-time) (* 60 60 24 10)))
-"Feb 6 12:11"
+  &gt; (brief-date-and-time (- (get-universal-time) (* 60 60 24 10)))
+  "Feb 6 12:11"
+  &gt;
 </pre>
 The date and time 100 days ago:
 <pre>
-&gt; (brief-date-and-time (- (get-universal-time) (* 60 60 24 100)))
-"Nov  8, 2004"
+  &gt; (brief-date-and-time (- (get-universal-time) (* 60 60 24 100)))
+  "Nov  8, 2004"
+  &gt;
 </pre>
 The date and time 100 days ago (with seconds):
 <pre>
-&gt; (brief-date-and-time (- (get-universal-time) (* 60 60 24 100)))
-"Nov  8, 2004   "
+  &gt; (brief-date-and-time (- (get-universal-time) (* 60 60 24 100)))
+  "Nov  8, 2004   "
+  &gt;
 </pre>
 </p>
 <p><span class="fndoclabel">Note</span> <br /><a name="id2">This</a> function is loaded with the <code>:mini-module</code> <a href="ref-glossary.html#gl:module">module</a> in order

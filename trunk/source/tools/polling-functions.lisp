@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/polling-functions.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Jun 12 20:57:39 2008 *-*
+;;;; *-* Last-Edit: Fri Jun 27 05:54:17 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -48,9 +48,9 @@
 ;;;   Polling Functions (primarily for non-threaded CLs)
 
 (defun describe-all-polling-functions ()
-  (format t "~&; Polling functions:~:[  None~;~]~%" *polling-functions*)
+  (format t "~&;; Polling functions:~:[  None~;~]~%" *polling-functions*)
   (dolist (item *polling-functions*)
-    (format t "; ~6d ~s~%" (cdr item) (car item)))
+    (format t ";; ~6d ~s~%" (cdr item) (car item)))
   (values))
 
 (defun remove-all-polling-functions ()

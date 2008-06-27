@@ -52,11 +52,12 @@
 <a name="id1"></a><p><span class="fndoclabel">Examples</span> <br />Display the <code>scheduled-function</code> object and its repeat interval for each
 currently scheduled <a href="ref-glossary.html#id179">scheduled&nbsp;function</a>:
 <pre class="pretop">
-&gt; (dolist (scheduled-function (<a href="ref-all-scheduled-functions.html">all-scheduled-functions</a>))
-   (format t "~&amp;;; ~s ~s~           scheduled-function
-           (scheduled-function-repeat-interval scheduled-function)))
-;; #&lt;scheduled-function quitting-time [17:00:00]&gt; 86400
-nil
+  &gt; (dolist (scheduled-function (<a href="ref-all-scheduled-functions.html">all-scheduled-functions</a>))
+     (format t "~&amp;;; ~s ~s~             scheduled-function
+             (scheduled-function-repeat-interval scheduled-function)))
+  ;; #&lt;scheduled-function quitting-time [17:00:00]&gt; 86400
+  nil
+  &gt;
 </pre>
 </p>
 <p>Define a <a href="ref-glossary.html#gl:function">function</a> to be used as a <a href="ref-glossary.html#id179">scheduled&nbsp;function</a> that

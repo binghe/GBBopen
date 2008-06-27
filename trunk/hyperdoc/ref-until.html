@@ -38,15 +38,16 @@ as long as <var>test-form</var> evaluates to <code>nil</code>.
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-while.html"><b>while</b></a>
 </p>
 <p><span class="fndoclabel">Examples</span> <br /><pre class="pretop">
-&gt; (let ((i 0)) 
-    (until (&gt; (incf i) 3) 
-       (print i)))
-1 
-2 
-3 
-nil
-&gt; (until 't (print "No"))
-nil
+  &gt; (let ((i 0)) 
+      (until (&gt; (incf i) 3) 
+         (print i)))
+  1 
+  2 
+  3 
+  nil
+  &gt; (until 't (print "No"))
+  nil
+  &gt;
 </pre>
 </p>
 <hr /><address><a target="_top" class="address"
