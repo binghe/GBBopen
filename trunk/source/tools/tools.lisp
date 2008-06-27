@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jun 25 13:58:59 2008 *-*
+;;;; *-* Last-Edit: Fri Jun 27 04:21:42 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -429,11 +429,10 @@
                                           (error-message-string condition))
                                         (error-condition ()
                                           condition))
-                                   (declare (dynamic-extent error-message
-                                                            error-condition))
-                                   #-sbcl
-                                   (declare (ignorable error-message
-                                                       error-condition))
+                                   (declare (dynamic-extent (function error-message)
+                                                            (function error-condition)))
+                                   (declare (ignorable (function error-message)
+                                                       (function error-condition)))
                                    ,@(if error-body
                                          `(,@handler-body
                                            ;; Save the condition for use
@@ -457,9 +456,10 @@
                               (error-message-string ,condition/tag))
                             (error-condition ()
                               ,condition/tag))
-                       (declare (dynamic-extent error-message error-condition))
-                       #-sbcl
-                       (declare (ignorable error-message error-condition))
+                       (declare (dynamic-extent (function error-message)
+                                                (function error-condition)))
+                       (declare (ignorable (function error-message)
+                                           (function error-condition)))
                        (return-from ,block (progn ,@error-body))))))))))))
   
 ;;; ===========================================================================
