@@ -48,15 +48,16 @@ defining form (such as from within an editor buffer).
 <p><span class="fndoclabel">Examples</span> <br />Undefine the <a href="ref-glossary.html#gl:KSs">KS</a> named <code>initial</code>. The following forms are all
 equivalent:
 <pre class="pretop">
-&gt; (undefine-ks initial
-     :trigger-events '((start-control-shell-event)) 
-     :execution-function #'initial-ks-function)
-#&lt;ks initial [Deleted]&gt;
-&gt; (undefine-ks initial)
-#&lt;ks initial [Deleted]&gt;
-&gt; (<a href="ref-delete-instance.html">delete-instance</a> 
-     (<a href="ref-find-instance-by-name.html">find-instance-by-name</a> 'initial '(ks :plus-subclasses)))
-#&lt;ks initial [Deleted]&gt;
+  &gt; (undefine-ks initial
+       :trigger-events '((start-control-shell-event)) 
+       :execution-function #'initial-ks-function)
+  #&lt;ks initial [Deleted]&gt;
+  &gt; (undefine-ks initial)
+  #&lt;ks initial [Deleted]&gt;
+  &gt; (<a href="ref-delete-instance.html">delete-instance</a> 
+       (<a href="ref-find-instance-by-name.html">find-instance-by-name</a> 'initial '(ks :plus-subclasses)))
+  #&lt;ks initial [Deleted]&gt;
+  &gt;
 </pre>
 </p>
 <hr /><address><a target="_top" class="address"

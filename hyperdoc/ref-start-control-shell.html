@@ -53,7 +53,7 @@ calling <b><a href="ref-exit-control-shell.html">exit-control-shell</a></b>.
 <a target="_top" href="http://www.cons.org/cmucl/">CMUCL</a>.  Multiprocessing has not been
 started on <a target="_top" href="http://www.lispworks.com">LispWorks</a>.
 </p>
-<p><span class="fndoclabel">Detailed syntax</span>Available <var>initargs</var> are:
+<p><span class="fndoclabel">Detailed syntax</span><br />Available <var>initargs</var> are:
 <br />&nbsp;<br /><table class="tighttop">
 <a name="id2"></a><tr valign="top"><td valign="baseline"><i>awaken-on-event</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> (default is <code>t</code>) 
 </td></tr><tr valign="top"><td valign="baseline"><i>continue-past-quiescence</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> (default
@@ -157,51 +157,54 @@ of a <a href="ref-glossary.html#gl:KSs">KS</a>
 </p>
 <p><span class="fndoclabel">See also</span>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-control-shell-running-p.html"><b>control-shell-running-p</b></a>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-current-control-shell.html"><b>current-control-shell</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-exit-control-shell.html"><b>exit-control-shell</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-run-polling-functions.html"><b>run-polling-functions</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-restart-control-shell.html"><b>restart-control-shell</b></a>
 </p>
 <p><span class="fndoclabel">Examples</span> <br />Start the Agenda Shell (in this case, without any <a href="ref-glossary.html#gl:KSs">KSs</a> defined):
 <pre class="pretop">
-&gt; (start-control-shell)
-;; Control shell 1 started
-;; No executable KSAs remain, exiting control shell
-;; Control shell 1 exited: 2 cycles completed
-;; Run time: 0 seconds
-;; Elapsed time: 0 seconds
-:quiescence
+  &gt; (start-control-shell)
+  ;; Control shell 1 started
+  ;; No executable KSAs remain, exiting control shell
+  ;; Control shell 1 exited: 2 cycles completed
+  ;; Run time: 0 seconds
+  ;; Elapsed time: 0 seconds
+  :quiescence
+  &gt;
 </pre>
 </p>
 <p>Start the Agenda Shell (again without any <a href="ref-glossary.html#gl:KSs">KSs</a> defined, but with
 stepping enabled):
 <pre class="pretop">
-&gt; (start-control-shell :stepping 't)
-;; Control shell 1 started
-&gt;&gt; CS Step (cycle 1):
-   About to signal quiescence... <font color="#00b200">[<i>? entered</i>]</font>
-Stepping commands (follow with &lt;Return&gt;):
-   d       Disable this kind of stepping (:quiescence)
-   e       Enable another kind of stepping
-   f       Evaluate a form
-   h or ?  Help (this text)
-   q       Quit (disable all stepping and continue)
-   s       Show enabled stepping kinds
-   x       Exit control shell
-   =       Describe the object of interest (bound to ==)
-   +       Enable all stepping
-   -       Disable all stepping
-   &lt;Space&gt; Continue (resume processing)
-&gt;&gt; CS Step (cycle 1):
-   About to signal quiescence... <font color="#00b200">[<i>d entered</i>]</font>
-:quiescence stepping disabled
-&gt;&gt; CS Step (cycle 1):
-   About to signal quiescence... <font color="#00b200">[<i>q entered</i>]</font>
-All stepping disabled
-;; No executable KSAs remain, exiting control shell
-;; Control shell 1 exited: 2 cycles completed
-;; Run time: 0 seconds
-;; Elapsed time: 54 seconds
-:quiescence
+  &gt; (start-control-shell :stepping 't)
+  ;; Control shell 1 started
+  &gt;&gt; CS Step (cycle 1):
+     About to signal quiescence... <font color="#00b200">[<i>? entered</i>]</font>
+  Stepping commands (follow with &lt;Return&gt;):
+     d       Disable this kind of stepping (:quiescence)
+     e       Enable another kind of stepping
+     f       Evaluate a form
+     h or ?  Help (this text)
+     q       Quit (disable all stepping and continue)
+     s       Show enabled stepping kinds
+     x       Exit control shell
+     =       Describe the object of interest (bound to ==)
+     +       Enable all stepping
+     -       Disable all stepping
+     &lt;Space&gt; Continue (resume processing)
+  &gt;&gt; CS Step (cycle 1):
+     About to signal quiescence... <font color="#00b200">[<i>d entered</i>]</font>
+  :quiescence stepping disabled
+  &gt;&gt; CS Step (cycle 1):
+     About to signal quiescence... <font color="#00b200">[<i>q entered</i>]</font>
+  All stepping disabled
+  ;; No executable KSAs remain, exiting control shell
+  ;; Control shell 1 exited: 2 cycles completed
+  ;; Run time: 0 seconds
+  ;; Elapsed time: 54 seconds
+  :quiescence
+  &gt;
 </pre>
 </p>
 <a name="id4"></a><p><span class="fndoclabel">Note</span> <br />When a non-<code>nil</code> <code>:run-polling-functions</code>

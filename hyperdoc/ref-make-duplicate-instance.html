@@ -123,42 +123,44 @@ duplicating a <a href="ref-glossary.html#id195">space&nbsp;instance</a>.
 </p>
 <p><span class="fndoclabel">Examples</span> <br />Create some simple duplicate <a href="ref-glossary.html#gl:instances">instances</a>:
 <a name="id3"></a><pre class="pretop">
-&gt; (<a href="ref-define-class.html">define-class</a> foo () 
-     ((a :initform 1)
-      (b :initform 2)))
-#&lt;standard-class foo&gt;
-&gt; (defparameter *x* (<a href="ref-make-instance.html">make-instance</a> 'foo :a 11 :b 12))
-*x*
-&gt; :ds *x*
-#&lt;foo #x110fe6ea&gt; is an instance of #&lt;standard-class foo&gt;:
- The following slots have :instance allocation:
-  a   11
-  b   12
-&gt; :ds (make-duplicate-instance *x* nil :a -1)
-#&lt;foo #x110ff93a&gt; is an instance of #&lt;standard-class foo&gt;:
- The following slots have :instance allocation:
-  a   -1
-  b   12
-&gt; :ds (make-duplicate-instance *x* '(b) :a -1)
-#&lt;foo #x11104542&gt; is an instance of #&lt;standard-class foo&gt;:
- The following slots have :instance allocation:
-  a   -1
-  b   2
-&gt; :ds (make-duplicate-instance *x* '(b))
-#&lt;foo #x11108c82&gt; is an instance of #&lt;standard-class foo&gt;:
- The following slots have :instance allocation:
-  a   11
-  b   2
-&gt; (make-duplicate-instance *x* nil)
-#&lt;foo @ #x1110a0e2&gt;
-(#&lt;standard-effective-slot-definition b&gt;
- #&lt;standard-effective-slot-definition a&gt;)
+  &gt; (<a href="ref-define-class.html">define-class</a> foo () 
+       ((a :initform 1)
+        (b :initform 2)))
+  #&lt;standard-class foo&gt;
+  &gt; (defparameter *x* (<a href="ref-make-instance.html">make-instance</a> 'foo :a 11 :b 12))
+  *x*
+  &gt; :ds *x*
+  #&lt;foo #x110fe6ea&gt; is an instance of #&lt;standard-class foo&gt;:
+   The following slots have :instance allocation:
+    a   11
+    b   12
+  &gt; :ds (make-duplicate-instance *x* nil :a -1)
+  #&lt;foo #x110ff93a&gt; is an instance of #&lt;standard-class foo&gt;:
+   The following slots have :instance allocation:
+    a   -1
+    b   12
+  &gt; :ds (make-duplicate-instance *x* '(b) :a -1)
+  #&lt;foo #x11104542&gt; is an instance of #&lt;standard-class foo&gt;:
+   The following slots have :instance allocation:
+    a   -1
+    b   2
+  &gt; :ds (make-duplicate-instance *x* '(b))
+  #&lt;foo #x11108c82&gt; is an instance of #&lt;standard-class foo&gt;:
+   The following slots have :instance allocation:
+    a   11
+    b   2
+  &gt; (make-duplicate-instance *x* nil)
+  #&lt;foo @ #x1110a0e2&gt;
+  (#&lt;standard-effective-slot-definition b&gt;
+   #&lt;standard-effective-slot-definition a&gt;)
+  &gt;
 </pre>
 </p>
 <p>Create a duplicate of the <code>hyp</code> <code>419</code> <a href="ref-glossary.html#id219">unit&nbsp;instance</a>:
 <pre class="pretop">
-&gt; (make-duplicate-instance (find-instance-by-name 19 'hyp) nil)
-#&lt;hyp 681 (1835 4791) 0.85 [5..35]&gt;
+  &gt; (make-duplicate-instance (find-instance-by-name 19 'hyp) nil)
+  #&lt;hyp 681 (1835 4791) 0.85 [5..35]&gt;
+  &gt;
 </pre>
 </p>
 <hr /><address><a target="_top" class="address"

@@ -68,18 +68,20 @@ are interpreted as follows:
 </p>
 <p><span class="fndoclabel">Examples</span> <br />Return the <a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a> that are rooted at <code>(bb)</code>:
 <pre class="pretop">
-&gt; (find-space-instances '(bb +))
-(#&lt;standard-space-instance (bb hyps)&gt;
- #&lt;standard-space-instance (bb probable-hyps)&gt;)
- #&lt;standard-space-instance (bb rejected-hyps)&gt;)
+  &gt; (find-space-instances '(bb +))
+  (#&lt;standard-space-instance (bb hyps)&gt;
+   #&lt;standard-space-instance (bb probable-hyps)&gt;)
+   #&lt;standard-space-instance (bb rejected-hyps)&gt;)
+  &gt;
 </pre>
 Return all the <a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a> <code>(bb)</code> and below:
 <pre>
-&gt; (find-space-instances '(bb *))
-(#&lt;standard-space-instance (bb hyps)&gt;
- #&lt;standard-space-instance (bb probable-hyps)&gt;)
- #&lt;standard-space-instance (bb rejected-hyps)&gt;
- #&lt;standard-space-instance (bb)&gt;)
+  &gt; (find-space-instances '(bb *))
+  (#&lt;standard-space-instance (bb hyps)&gt;
+   #&lt;standard-space-instance (bb probable-hyps)&gt;)
+   #&lt;standard-space-instance (bb rejected-hyps)&gt;
+   #&lt;standard-space-instance (bb)&gt;)
+  &gt;
 </pre>
 </p>
 <hr /><address><a target="_top" class="address"

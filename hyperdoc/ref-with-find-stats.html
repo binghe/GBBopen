@@ -48,17 +48,18 @@
 <p><span class="fndoclabel">Example</span> <br /><a name="id2">Collect</a> and display the retrieval statistics associated with
 running an application <a href="ref-glossary.html#gl:function">function</a> <code>scanner</code>:
 <pre class="pretop">
-&gt; (with-find-stats ()
-     (scanner (<a href="ref-find-instance-by-name.html">find-instance-by-name</a> 471 'hyp)))
-;; Find/Map Statistics:
-;;        20 find/map operations (0 using marking, 20 using hashing)
-;;       100 buckets scanned
-;;      9240 instances touched
-;;      9240 instances considered
-;;       521 instances accepted
-;;      0.16 seconds (0.80 msec/operation)
-(#&lt;hyp 419 (1835 4791) 0.85 [5..35]&gt;
- #&lt;hyp 233 (1835 4791) 0.89 [5..35]&gt;)
+  &gt; (with-find-stats ()
+       (scanner (<a href="ref-find-instance-by-name.html">find-instance-by-name</a> 471 'hyp)))
+  ;; Find/Map Statistics:
+  ;;        20 find/map operations (0 using marking, 20 using hashing)
+  ;;       100 buckets scanned
+  ;;      9240 instances touched
+  ;;      9240 instances considered
+  ;;       521 instances accepted
+  ;;      0.16 seconds (0.80 msec/operation)
+  (#&lt;hyp 419 (1835 4791) 0.85 [5..35]&gt;
+   #&lt;hyp 233 (1835 4791) 0.89 [5..35]&gt;)
+  &gt;
 </pre>
 </p>
 <hr /><address><a target="_top" class="address"

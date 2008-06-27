@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:AGENDA-SHELL; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/control-shells/agenda-shell.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Jun 12 20:49:50 2008 *-*
+;;;; *-* Last-Edit: Fri Jun 27 14:35:58 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -38,6 +38,9 @@
 ;;;  08-27-07 Renamed CONTROL-SHELL-STARTED-P to CONTROL-SHELL-RUNNING-P.
 ;;;           (Corkill)
 ;;;  04-15-08 Add threading-started checks for CMUCL and LispWorks.  (Corkill)
+;;;  06-27-08 Add user-accessable PENDING-KSAS-OF, EXECUTED-KSAS-OF, and
+;;;           OBVIATED-KSAS-OF control-shell-object readers, 
+;;;           & CURRENT-CONTROL-SHELL.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -68,18 +71,20 @@
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(==                          ; not yet documented
-            abort-ks-execution          ; not yet documented
+            abort-ks-execution
             activation-cycle-of
 	    agenda-shell-node-state     ; not yet documented
 	    awaken-control-shell	; not yet documented
             collect-trigger-instances
             control-shell               ; class not yet documented
 	    control-shell-running-p
-	    cs.pause			; not documented
+	    cs.pause                    ; not documented
+            current-control-shell
             define-ks
             describe-ks
 	    ensure-ks
             execute-ksa                 ; not yet documented
+            executed-ksas-of
             execution-cycle-of
             exit-all-control-shell-threads ; not yet documented
             exit-control-shell
@@ -94,8 +99,10 @@
             most-positive-rating
             most-negative-rating
             obviate-ksa                 ; not yet documented
+            obviated-ksas-of
             obviation-cycle
-            ordered-ksa-queue           ; not documented
+            ordered-ksa-queue
+            pending-ksas-of
             rating
             rating-of
             restart-control-shell
@@ -132,7 +139,7 @@
 (defvar *control-shell-threads* nil)
 
 ;;; ---------------------------------------------------------------------------
-;;;  *CS* is used to hold the control-shell unit instance for a control shell
+;;;  *CS* is used to hold the "current" control-shell unit instance
 
 (defvar *cs* nil)
 
@@ -219,9 +226,15 @@
    (events-being-processed :initform nil)
    (event-buffer-lock :initform (make-lock :name "event-buffer"))
    (pending-ksas :initform (make-queue :class 'ordered-ksa-queue
-                                       :key #'rating-of))
-   (executed-ksas :initform (make-queue :class 'ksa-queue))
-   (obviated-ksas :initform (make-queue :class 'ksa-queue))
+                                       :key #'rating-of)
+                 :reader pending-ksas-of
+                 :writer (setf control-shell.pending-ksas))
+   (executed-ksas :initform (make-queue :class 'ksa-queue)
+                  :reader executed-ksas-of
+                  :writer (setf control-shell.executed-ksas))
+   (obviated-ksas :initform (make-queue :class 'ksa-queue)
+                  :reader obviated-ksas-of
+                  :writer (setf control-shell.obviated-ksas))
    (fifo-queue-ordering :initform 't :type boolean)
    (hibernating :initform nil :type boolean)
    (hibernating-cv :initform (make-condition-variable))
@@ -243,6 +256,7 @@
    (in-control-shell-loop-p :initform nil))
   (:retain t)
   (:instance-name-comparison-test equal)
+  (:generate-accessors t :exclude pending-ksas executed-ksas obviated-ksas)
   (:generate-accessors-format :prefix)
   (:generate-accessors-prefix #.(dotted-conc-name '#:cs)))
 
@@ -270,14 +284,29 @@
 
 (defmethod delete-instance ((control-shell control-shell))
   ;; delete ksa-queue elements:
-  (map-queue #'delete-instance (cs.pending-ksas control-shell))
-  (map-queue #'delete-instance (cs.executed-ksas control-shell))
-  (map-queue #'delete-instance (cs.obviated-ksas control-shell))
+  (map-queue #'delete-instance (pending-ksas-of control-shell))
+  (map-queue #'delete-instance (executed-ksas-of control-shell))
+  (map-queue #'delete-instance (obviated-ksas-of control-shell))
   ;; delete ksa-queue headers:
-  (delete-instance (cs.pending-ksas control-shell))
-  (delete-instance (cs.executed-ksas control-shell))
-  (delete-instance (cs.obviated-ksas control-shell))
+  (delete-instance (pending-ksas-of control-shell))
+  (delete-instance (executed-ksas-of control-shell))
+  (delete-instance (obviated-ksas-of control-shell))
   (call-next-method))
+
+;;; ---------------------------------------------------------------------------
+
+(defun current-control-shell ()
+  (let ((cs *cs*))
+    (and (typep cs 'control-shell)
+         (not (instance-deleted-p cs))
+         cs)))
+
+(defcm current-control-shell ()
+  (with-gensyms (cs)
+    `(let ((,cs *cs*))
+       (and (typep ,cs 'control-shell)
+            (not (instance-deleted-p ,cs))
+            ,cs))))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Multinode support
@@ -440,7 +469,7 @@
         (error "KSA ~s is no longer pending." ksa))
       (let ((queue (on-queue-p ksa)))
         ;; Should be on the pending-ksas queue, but we'll check just in case:
-        (when (eq queue (cs.pending-ksas *cs*))
+        (when (eq queue (pending-ksas-of *cs*))
           (with-lock-held ((queue.lock queue))
             (call-next-method)
             (move-ksa-on-queue ksa))))
@@ -502,7 +531,7 @@
       (let ((event (apply #'make-instance (class-name event-class)
                           :ks-triggers ks-triggers
                           args))
-            (cs (or *cs*
+            (cs (or (current-control-shell)
 		    ;; Look for a control-shell thread:
 		    #-threads-not-available
 		    (some #'(lambda (thread)
@@ -652,7 +681,7 @@
 (defun abort-ks-execution 
     (&optional 
      #-threads-not-available
-     (cs (or *cs*
+     (cs (or (current-control-shell)
              ;; Look for a control-shell thread:
              (some #'(lambda (thread)
                        (symbol-value-in-thread '*cs* thread))
@@ -1094,7 +1123,7 @@
 		     :trigger-events events
 		     initargs)))
     (check-type ksa ksa)
-    (insert-on-queue ksa (cs.pending-ksas cs))
+    (insert-on-queue ksa (pending-ksas-of cs))
     (incf (cs.ks-activations-count cs))
     (with-update-stat (agenda-shell-ks-stats.activation ks))
     (signal-event 'ksa-activation-event :instance ksa :cycle cycle)
@@ -1103,7 +1132,7 @@
 ;;; ---------------------------------------------------------------------------
 
 (defmethod select-ksa-to-execute (cs)
-  (let ((ksa (first-queue-element (cs.pending-ksas cs))))
+  (let ((ksa (first-queue-element (pending-ksas-of cs))))
     (when (and ksa (>=& (rating-of ksa)
                         (cs.minimum-ksa-execution-rating cs)))
       ksa)))
@@ -1134,7 +1163,7 @@
     (unlinkf (pending-activations-of ks) ksa)
     (signal-event 'ksa-obviation-event :instance ksa :cycle cycle)
     (if (cs.save-obviated-ksas cs)
-	(insert-on-queue ksa (cs.obviated-ksas cs))
+	(insert-on-queue ksa (obviated-ksas-of cs))
 	(delete-instance ksa))))
 
 ;;; --------------------------------------------------------------------------
@@ -1380,7 +1409,7 @@
                                (setf (cs.current-ksa cs) nil)))
 			    (cond 
 			     ((cs.save-executed-ksas cs)
-			      (insert-on-queue ksa (cs.executed-ksas cs)))
+			      (insert-on-queue ksa (executed-ksas-of cs)))
 			     (t (delete-instance ksa)))
 			    (when (eq (car result-values) ':stop)
 			      (when (cs.print cs)
@@ -1404,7 +1433,7 @@
 		     (- (get-internal-run-time) start-runtime))
 		    (pretty-time-interval
 		     (- (get-universal-time) start-time))))
-	  (let ((pending-ksa-count (queue-length (cs.pending-ksas cs))))
+	  (let ((pending-ksa-count (queue-length (pending-ksas-of cs))))
 	    (when (and (cs.print cs) (plusp pending-ksa-count))
 	      (format (cs.output-stream cs)
 		      "~&;; ~s pending KSA~:p remain~@[s~] on the queue~%"
@@ -1425,7 +1454,7 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun control-shell-running-p (&optional (cs *cs*))
+(defun control-shell-running-p (&optional (cs (current-control-shell)))
   (and (typep cs 'control-shell)
        (not (instance-deleted-p cs))
        (cs.in-control-shell-loop-p cs)))
@@ -1456,9 +1485,7 @@
   #+lispworks
   (check-for-multiprocessing-started 't)
   ;; There is a control shell that is running in this thread:
-  (when (and (typep *cs* 'control-shell)
-             (not (instance-deleted-p *cs*))
-             (control-shell-running-p *cs*))
+  (when (control-shell-running-p)
     (unless (nicer-y-or-n-p "A running control-shell instance named ~s is ~
                              associated with this thread.~%Delete it and ~
                              start the new one in its place? "

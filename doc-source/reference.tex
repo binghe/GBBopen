@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Fri Jun 27 06:17:40 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Fri Jun 27 17:49:08 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -9922,8 +9922,9 @@ associated with the \glref{unit~class}.
 %
 \W\supp
 \begin{example}
-> (initial-class-instance-number 'ksa)
-0
+  > (initial-class-instance-number 'ksa)
+  0
+  >
 \end{example}
 
 \fnnote
@@ -9968,8 +9969,9 @@ Create, then delete, then check, a \code{hyp} \glref{unit~instance}:
 %
 \W\supp
 \begin{example}
-> (instance-deleted-p (\entlink{delete-instance} (\entlink{make-instance} 'hyp)))
-t
+  > (instance-deleted-p (\entlink{delete-instance} (\entlink{make-instance} 'hyp)))
+  t
+  >
 \end{example}
 
 \end{functiondoc}
@@ -10041,24 +10043,26 @@ Return the \code{x} \glref{dimension~value} of the \glref{unit~instance},
 %
 \W\supp
 \begin{example}
-> (instance-dimension-value hyp 'x)
-1835
-:point
-:fixnum
-nil
-nil
+  > (instance-dimension-value hyp 'x)
+  1835
+  :point
+  :fixnum
+  nil
+  nil
+  >
 \end{example}
 %
 and its \code{classification} \glref{dimension~value}:
 %
 \W\supp\notpretop
 \begin{example}
-> (instance-dimension-value hyp 'classification)
-(:car :truck)
-:element
-eq
-:set
-nil
+  > (instance-dimension-value hyp 'classification)
+  (:car :truck)
+  :element
+  eq
+  :set
+  nil
+  >
 \end{example}
 
 Return the \code{character} \glref{dimension~value} of the
@@ -10066,24 +10070,26 @@ Return the \code{character} \glref{dimension~value} of the
 %
 \W\supp
 \begin{example}
-> (instance-dimension-value w 'character)
-"what's"
-:element
-eql
-:set
-nil
+  > (instance-dimension-value w 'character)
+  "what's"
+  :element
+  eql
+  :set
+  nil
+  >
 \end{example}
 %
 and its \code{char-code} \glref{dimension~value}:
 %
 \W\supp\notpretop
 \begin{example}
-> (instance-dimension-value word 'char-code)
-(119 104 97 116 39 115)
-:point
-fixnum
-:set
-nil
+  > (instance-dimension-value word 'char-code)
+  (119 104 97 116 39 115)
+  :point
+  fixnum
+  :set
+  nil
+  >
 \end{example}
 
 \end{functiondoc}
@@ -10132,9 +10138,10 @@ Return all \glref{dimension~values} of the \glref{unit~instance}, \code{hyp}:
 %
 \W\supp
 \begin{example}
-> (instance-dimension-values hyp)
-((belief . 0.85) (velocity-range 5 35) (color . :red)
- (classification :car :truck) (x . 1835) (y . 4791))
+  > (instance-dimension-values hyp)
+  ((belief . 0.85) (velocity-range 5 35) (color . :red)
+   (classification :car :truck) (x . 1835) (y . 4791))
+  >
 \end{example}
 %
 Return the \code{x} and \code{y} \glref{dimension~values} of the
@@ -10142,16 +10149,18 @@ Return the \code{x} and \code{y} \glref{dimension~values} of the
 %
 \W\supp\notpretop
 \begin{example}
-> (instance-dimension-values hyp '(x y))
-((x . 1835) (y . 4791))
+  > (instance-dimension-values hyp '(x y))
+  ((x . 1835) (y . 4791))
+  >
 \end{example}
 
 Return all \glref{dimension~values} of the \glref{unit~instance}, \code{word}:
 %
 \W\supp
 \begin{example}
-> (instance-dimension-values word)
-((character . "what's") (char-code 119 104 97 116 39 115))
+  > (instance-dimension-values word)
+  ((character . "what's") (char-code 119 104 97 116 39 115))
+  >
 \end{example}
 
 \fnnote Using \textbf{\entlink{instance-dimension-value}} is preferable to
@@ -10210,9 +10219,10 @@ Return the \glref{instance~names} of the \glref{unit~instances} supporting
 %
 \W\supp
 \begin{example}
-> (mapcar #'instance-name-of 
-          (supporting-hyps-of (\entlink{find-instance-by-name} 'hyp 180)))
-(123 158 94)
+  > (mapcar #'instance-name-of 
+            (supporting-hyps-of (\entlink{find-instance-by-name} 'hyp 180)))
+  (123 158 94)
+  >
 \end{example}
 %
 \bfindexit{find-instance-by-name}%
@@ -10222,8 +10232,9 @@ Change the \glref{instance~name} of \code{hyp} \code{180} to
 %
 \W\supp\notpretop
 \begin{example}
-> (setf (instance-name-of (\entlink{find-instance-by-name} 180 'hyp)) "bogus-180")
-"bogus-180"
+  > (setf (instance-name-of (\entlink{find-instance-by-name} 180 'hyp)) "bogus-180")
+  "bogus-180"
+  >
 \end{example}
 
 \end{functiondoc}
@@ -10363,44 +10374,46 @@ Create some simple duplicate \glref{instances}:
 %
 \W\supp
 \begin{example}
-> (\entlink{define-class} foo () 
-     ((a :initform 1)
-      (b :initform 2)))
-#<standard-class foo>
-> (defparameter *x* (\entlink{make-instance} 'foo :a 11 :b 12))
-*x*
-> :ds *x*
-#<foo #x110fe6ea> is an instance of #<standard-class foo>:
- The following slots have :instance allocation:
-  a   11
-  b   12
-> :ds (make-duplicate-instance *x* nil :a -1)
-#<foo #x110ff93a> is an instance of #<standard-class foo>:
- The following slots have :instance allocation:
-  a   -1
-  b   12\goodpagebreak
-> :ds (make-duplicate-instance *x* '(b) :a -1)
-#<foo #x11104542> is an instance of #<standard-class foo>:
- The following slots have :instance allocation:
-  a   -1
-  b   2
-> :ds (make-duplicate-instance *x* '(b))
-#<foo #x11108c82> is an instance of #<standard-class foo>:
- The following slots have :instance allocation:
-  a   11
-  b   2
-> (make-duplicate-instance *x* nil)
-#<foo @ #x1110a0e2>
-(#<standard-effective-slot-definition b>
- #<standard-effective-slot-definition a>)
+  > (\entlink{define-class} foo () 
+       ((a :initform 1)
+        (b :initform 2)))
+  #<standard-class foo>
+  > (defparameter *x* (\entlink{make-instance} 'foo :a 11 :b 12))
+  *x*
+  > :ds *x*
+  #<foo #x110fe6ea> is an instance of #<standard-class foo>:
+   The following slots have :instance allocation:
+    a   11
+    b   12
+  > :ds (make-duplicate-instance *x* nil :a -1)
+  #<foo #x110ff93a> is an instance of #<standard-class foo>:
+   The following slots have :instance allocation:
+    a   -1
+    b   12\goodpagebreak
+  > :ds (make-duplicate-instance *x* '(b) :a -1)
+  #<foo #x11104542> is an instance of #<standard-class foo>:
+   The following slots have :instance allocation:
+    a   -1
+    b   2
+  > :ds (make-duplicate-instance *x* '(b))
+  #<foo #x11108c82> is an instance of #<standard-class foo>:
+   The following slots have :instance allocation:
+    a   11
+    b   2
+  > (make-duplicate-instance *x* nil)
+  #<foo @ #x1110a0e2>
+  (#<standard-effective-slot-definition b>
+   #<standard-effective-slot-definition a>)
+  >
 \end{example}
 
 Create a duplicate of the \code{hyp} \code{419} \glref{unit~instance}:
 %
 \W\supp
 \begin{example}
-> (make-duplicate-instance (find-instance-by-name 19 'hyp) nil)
-#<hyp 681 (1835 4791) 0.85 [5..35]>
+  > (make-duplicate-instance (find-instance-by-name 19 'hyp) nil)
+  #<hyp 681 (1835 4791) 0.85 [5..35]>
+  >
 \end{example}
 
 \end{functiondoc}
@@ -10512,14 +10525,15 @@ Create a new \code{hyp} \glref{unit~instance}:
 %
 \W\supp
 \begin{example}
-> (make-instance 'hyp 
-     :location (list x y)
-     :classification '(:car :truck)
-     :color ':gray
-     :belief .85
-     :velocity-range '(5 35)
-     :supporting-hyps supporting-hyps)
-#<hyp 419 (1835 4791) 0.85 [5..35]>
+  > (make-instance 'hyp 
+       :location (list x y)
+       :classification '(:car :truck)
+       :color ':gray
+       :belief .85
+       :velocity-range '(5 35)
+       :supporting-hyps supporting-hyps)
+  #<hyp 419 (1835 4791) 0.85 [5..35]>
+  >
 \end{example}
 
 \fnnote 
@@ -10578,8 +10592,9 @@ of \code{ksa}:
 %
 \W\supp
 \begin{example}
-> (next-class-instance-number 'ksa)
-8
+  > (next-class-instance-number 'ksa)
+  8
+  >
 \end{example} 
 
 \bfindexit{change-class}%
@@ -10589,9 +10604,10 @@ Change the class of \glref{unit~instance} \code{hyp} from
 %
 \W\supp
 \begin{example}
-> (\entlink{change-class} hyp 'rejected-hyp 
-    :instance-name (next-class-instance-number 'rejected-hyp))
-#<rejected-hyp 1409 (896 388) .68>
+  > (\entlink{change-class} hyp 'rejected-hyp 
+      :instance-name (next-class-instance-number 'rejected-hyp))
+  #<rejected-hyp 1409 (896 388) .68>
+  >
 \end{example}
 %
 Note that the \code{:instance-name} initarg can be eliminated if both the old
@@ -10656,8 +10672,9 @@ being used for the unit class, a warning is issued.
 %
 \W\supp
 \begin{example}
-> (reset-unit-class 't)
-;; Warning: Unit class standard-space-instance has 4 instances; not reset
+  > (reset-unit-class 't)
+  ;; Warning: Unit class standard-space-instance has 4 instances; not reset
+  >
 \end{example}
 %
 Note that a warning was issued when resetting
@@ -10698,8 +10715,9 @@ Return the \glref{space~instances} on which the \glref{unit~instance},
 %
 \W\supp
 \begin{example}
-> (space-instances-of unit-instance)
-(#<standard-space-instance (bb hyps)>)
+  > (space-instances-of unit-instance)
+  (#<standard-space-instance (bb hyps)>)
+  >
 \end{example}
 
 \fnnote The returned list of \glref{space~instances} should not be
@@ -10875,9 +10893,11 @@ dimension values of \code{hyp} might be changed:
 %
 \W\supp
 \begin{example}
-> (with-changing-dimension-values (hyp x y belief)
-    (setf (location-of hyp) '(30 40))
-    (setf (belief-of hyp) 0.78))
+  > (with-changing-dimension-values (hyp x y belief)
+      (setf (location-of hyp) '(30 40))
+      (setf (belief-of hyp) 0.78))
+  0.78
+  >
 \end{example}
 %
 Notify GBBopen that \textit{some\/} dimension values of \code{hyp} might be
@@ -10885,9 +10905,11 @@ changed:
 %
 \W\supp\notpretop
 \begin{example}
-> (with-changing-dimension-values (hyp)
-    (setf (location-of hyp) '(36 52))
-    (incf (belief-of hyp) 0.05))
+  > (with-changing-dimension-values (hyp)
+      (setf (location-of hyp) '(36 52))
+      (incf (belief-of hyp) 0.05))
+  0.83
+  >
 \end{example}
 
 \end{functiondoc}
@@ -10952,9 +10974,10 @@ Check for consistency in \glref{link-slot} definitions in all
 %
 \W\supp
 \begin{example}
-> (check-link-consistency)
-;; All link definitions are consistent.
-t
+  > (check-link-consistency)
+  ;; All link definitions are consistent.
+  t
+  >
 \end{example}
 %
 \bfindexit{define-unit-class}%
@@ -10963,44 +10986,48 @@ Create a \glref{link-slot} inconsistency:
 %
 \W\supp\notpretop
 \begin{example}
-> (\entlink{define-unit-class} bad () 
-     ((mismatched-link :link (missing inverse))))
-bad
-> (check-link-consistency)
-;; Warning: The inverse of link MISMATCHED-LINK in unit-class BAD refers
-;           to unit-class MISSING, which is not defined.
-nil
+  > (\entlink{define-unit-class} bad () 
+       ((mismatched-link :link (missing inverse))))
+  bad
+  > (check-link-consistency)
+  ;; Warning: The inverse of link MISMATCHED-LINK in unit-class BAD refers
+  ;           to unit-class MISSING, which is not defined.
+  nil
+  >
 \end{example}
 %
 Define the missing \glref{unit~class}, but incorrectly:
 %
 \W\supp\notpretop
 \begin{example}
-(\entlink{define-unit-class} missing () ((mismatched-link :link (missing bad))))
-missing
-> (check-link-consistency)
-;; Warning: The inverse of link MISMATCHED-LINK in unit-class MISSING
-;;          refers to link BAD which is not present in unit-class MISSING.
-nil
+  > (\entlink{define-unit-class} missing () ((mismatched-link :link (missing bad))))
+  missing
+  > (check-link-consistency)
+  ;; Warning: The inverse of link MISMATCHED-LINK in unit-class MISSING
+  ;;          refers to link BAD which is not present in unit-class MISSING.
+  nil
+  >
 \end{example}
 %
 Fix the definition and check again:
 %
 \W\supp\notpretop
 \begin{example}
-> (\entlink{define-unit-class} missing () ((inverse :link (bad mismatched-link))))
-#<standard-unit-class missing>
-> (check-link-consistency)
-;; All link definitions are consistent.
-t
+  > (\entlink{define-unit-class} missing () ((inverse :link (bad mismatched-link))))
+  #<standard-unit-class missing>
+  > (check-link-consistency)
+  ;; All link definitions are consistent.
+  t
+  >
 \end{example}
 %
 Check again, but silently:
 %
 \W\supp\notpretop
 \begin{example}
-> (check-link-consistency 't)
-t
+  > (check-link-consistency 't)
+  t
+  > 
 \end{example}
 
 \end{functiondoc}
@@ -11109,8 +11136,9 @@ A \code{link-event} is signaled for:
 %
 \W\supp
 \begin{example}
-> (linkf (supporting-hyps-of unit-instance) support-hyp)
-#<hyp 231 (1488 7405) 0.63 [0..8]>
+  > (linkf (supporting-hyps-of unit-instance) support-hyp)
+  #<hyp 231 (1488 7405) 0.63 [0..8]>
+  >
 \end{example}
 
 \end{functiondoc}
@@ -11188,8 +11216,9 @@ to any additional \glref{unit~instances} in
 %
 \W\supp
 \begin{example}
-> (link-setf (supporting-hyps-of unit-instance) supporting-hyps)
-#<hyp 231 (1488 7405) 0.63 [0..8]>
+  > (link-setf (supporting-hyps-of unit-instance) supporting-hyps)
+  #<hyp 231 (1488 7405) 0.63 [0..8]>
+  >
 \end{example}
 
 \fnnote 
@@ -11241,9 +11270,10 @@ Return the names of the link slots of the \code{hyp} \glref{unit~class}:
 %
 \W\supp
 \begin{example}
-> (loop for slot in (class-slots (find-class 'hyp)) 
-     if (link-slot-p slot) collect (slot-definition-name slot))
-(supporting-hyps supported-hyps)
+  > (loop for slot in (class-slots (find-class 'hyp)) 
+       if (link-slot-p slot) collect (slot-definition-name slot))
+  (supporting-hyps supported-hyps)
+  >
 \end{example}
 
 \end{functiondoc}
@@ -11302,8 +11332,9 @@ An \code{unlink-event} is signaled for:
 %
 \W\supp
 \begin{example}
-> (unlinkf (supporting-hyps-of unit-instance) support-hyp)
-#<hyp 231 (1488 7405) 0.63 [0..8]>
+  > (unlinkf (supporting-hyps-of unit-instance) support-hyp)
+  #<hyp 231 (1488 7405) 0.63 [0..8]>
+  >
 \end{example}
 
 \end{functiondoc}
@@ -11357,7 +11388,9 @@ Remove all supporting hypothesis \glref{links} from the
 %
 \W\supp
 \begin{example}
-  (unlinkf-all (supporting-hyps-of unit-instance))
+  > (unlinkf-all (supporting-hyps-of unit-instance))
+  nil
+  >
 \end{example}
 
 \end{functiondoc}
@@ -11660,10 +11693,11 @@ the \glref{event} that is being signaled.
 %
 \W\supp
 \begin{example}
-> (define-event-class my-event (non-instance-event)
-    ((my-event-arg1 :initform nil)
-     (my-event-arg2 :initform nil)))
-#<non-instance-event-class my-event>
+  > (define-event-class my-event (non-instance-event)
+      ((my-event-arg1 :initform nil)
+       (my-event-arg2 :initform nil)))
+  #<non-instance-event-class my-event>
+  >
 \end{example}
 
 \end{functiondoc}
@@ -11732,15 +11766,16 @@ Describe all event printing:
 %
 \W\supp
 \begin{example}
-> (describe-event-printing 'instance-event)
-instance-event
-  standard-unit-instance
-  uc-2 [suspended]
-  uc-1 [suspended]
-  ksa
-  ks
-  root-space-instance
-  standard-space-instance
+  > (describe-event-printing 'instance-event)
+  instance-event
+    standard-unit-instance
+    uc-2 [suspended]
+    uc-1 [suspended]
+    ksa
+    ks
+    root-space-instance
+    standard-space-instance
+  >
 \end{example}
 
 \fnnote
@@ -12371,15 +12406,16 @@ Create a \code{hyp} without signaling any events:
 %
 \W\supp
 \begin{example}
-> (with-events-disabled ()
-     (\entlink{make-instance} 'hyp 
-        :location (list x y)
-        :classification '(:car :truck)
-        :color ':red
-        :belief .85
-        :velocity-range '(5 35)
-        :supporting-hyps supporting-hyps))
-#<hyp 419 (1835 4791) 0.85 [5..35]>
+  > (with-events-disabled ()
+       (\entlink{make-instance} 'hyp 
+          :location (list x y)
+          :classification '(:car :truck)
+          :color ':red
+          :belief .85
+          :velocity-range '(5 35)
+          :supporting-hyps supporting-hyps))
+  #<hyp 419 (1835 4791) 0.85 [5..35]>
+  >
 \end{example}
 
 \end{functiondoc}
@@ -12424,17 +12460,18 @@ supporting-hypothesis links with events enabled:
 %
 \W\supp
 \begin{example}
-> (\entlink{with-events-disabled}
-     (let ((hyp (\entlink{make-instance} 'hyp 
-                   :location (list x y)
-                   :classification '(:car :truck)
-                   :color ':red
-                   :belief .85
-                   :velocity-range '(5 35))))
-        (with-events-enabled ()
-           (linkf (supporting-hyps-of hyp) supporting-hyps))
-        hyp))
-#<hyp 419 (1835 4791) 0.85 [5..35]>
+  > (\entlink{with-events-disabled}
+       (let ((hyp (\entlink{make-instance} 'hyp 
+                     :location (list x y)
+                     :classification '(:car :truck)
+                     :color ':red
+                     :belief .85
+                     :velocity-range '(5 35))))
+          (with-events-enabled ()
+             (linkf (supporting-hyps-of hyp) supporting-hyps))
+          hyp))
+  #<hyp 419 (1835 4791) 0.85 [5..35]>
+  >
 \end{example}
 
 \end{functiondoc}
@@ -12519,13 +12556,13 @@ an interval is contracted into a non-integral point range by
 %
 \W\supp
 \begin{example}
-> (let ((*coerce-contracted-interval-rationals-to-floats* 't))
-     (expand-interval '(2 . 5) -3))
-(3.5 . 3.5)
-> (let ((*coerce-contracted-interval-rationals-to-floats* nil))
-     (expand-interval '(2 . 5) -3))
-(7/2 . 7/2)
->
+  > (let ((*coerce-contracted-interval-rationals-to-floats* 't))
+       (expand-interval '(2 . 5) -3))
+  (3.5 . 3.5)
+  > (let ((*coerce-contracted-interval-rationals-to-floats* nil))
+       (expand-interval '(2 . 5) -3))
+  (7/2 . 7/2)
+  >
 \end{example}
 
 \end{functiondoc}
@@ -12573,12 +12610,13 @@ two-element list, or two-element array) is maintained in the newly allocated
 %
 \W\supp
 \begin{example}
-> (copy-interval '(2 5))
-(2 5)
-> (copy-interval '(2 . 5))
-(2 . 5)
-> (expand-interval #(2 5))
-#(2 5)
+  > (copy-interval '(2 5))
+  (2 5)
+  > (copy-interval '(2 . 5))
+  (2 . 5)
+  > (expand-interval #(2 5))
+  #(2 5)
+  >
 \end{example}
 
 \end{functiondoc}
@@ -12634,14 +12672,15 @@ center point of the original \var{interval}.
 %
 \W\supp
 \begin{example}
-> (expand-interval '(2 5) 2)
-(0 7)
-> (expand-interval '(2 . 5) -1)
-(3 . 4)\goodpagebreak
-> (expand-interval #(2 5) .5)
-#(1.5 5.5)
-> (expand-interval '(2 . 5) -3)
-(3.5 . 3.5)
+  > (expand-interval '(2 5) 2)
+  (0 7)
+  > (expand-interval '(2 . 5) -1)
+  (3 . 4)\goodpagebreak
+  > (expand-interval #(2 5) .5)
+  #(1.5 5.5)
+  > (expand-interval '(2 . 5) -3)
+  (3.5 . 3.5)
+  >
 \end{example}
 
 \end{functiondoc}
@@ -12690,14 +12729,15 @@ center point of the original \var{interval}.
 %
 \W\supp
 \begin{example}
-> (expand-point 3 2)
-(1 . 5)
-> (expand-point 3 2 'cons)
-(1 . 5)
-> (expand-point 3 2 'list)
-(1 5)
-> (expand-point 3 2 'array)
-#(1 5)
+  > (expand-point 3 2)
+  (1 . 5)
+  > (expand-point 3 2 'cons)
+  (1 . 5)
+  > (expand-point 3 2 'list)
+  (1 5)
+  > (expand-point 3 2 'array)
+  #(1 5)
+  >
 \end{example}
 
 \fnnote
@@ -12750,14 +12790,15 @@ Define a \glref{unit~class}, \code{temporal-duration-mixin}, that contains a
 %
 \W\supp
 \begin{example}
-> (define-unit-class temporal-duration-mixin ()
-    ((temporal-duration 
-       ;; Copy the interval to allow destructive changes by
-       ;; GBBopen's interval operators:
-       :initform (copy-interval infinite-interval)))
-    (:dimensional-values
-     (temporal-duration :interval temporal-duration)))
-#<standard-unit-class temporal-duration-mixin>
+  > (define-unit-class temporal-duration-mixin ()
+      ((temporal-duration 
+         ;; Copy the interval to allow destructive changes by
+         ;; GBBopen's interval operators:
+         :initform (copy-interval infinite-interval)))
+      (:dimensional-values
+       (temporal-duration :interval temporal-duration)))
+  #<standard-unit-class temporal-duration-mixin>
+  >
 \end{example}
 
 \end{functiondoc}
@@ -12800,18 +12841,19 @@ Define a \glref{unit~class}, \code{temporal-duration-mixin}, that contains a
 %
 \W\supp
 \begin{example}
-> (interval-end '(1 2))
-2
-> (interval-end '(1 . 2))
-2
-> (interval-end #(1  2))
-2\goodpagebreak
-> (defparameter *x* (\entlink{make-interval} 1 2))
-(1 . 2)
-> (setf (interval-end *x*) 4)
-4
-> *x*
-(1 . 4)
+  > (interval-end '(1 2))
+  2
+  > (interval-end '(1 . 2))
+  2
+  > (interval-end #(1  2))
+  2\goodpagebreak
+  > (defparameter *x* (\entlink{make-interval} 1 2))
+  (1 . 2)
+  > (setf (interval-end *x*) 4)
+  4
+  > *x*
+  (1 . 4)
+  >
 \end{example}
 
 \end{functiondoc}
@@ -12854,19 +12896,19 @@ Define a \glref{unit~class}, \code{temporal-duration-mixin}, that contains a
 %
 \W\supp
 \begin{example}
-> (interval-start '(1 2))
-1
-> (interval-start '(1 . 2))
-1
-> (interval-start #(1 2))
-1\goodpagebreak
-> (defparameter *x* (\entlink{make-interval} 1 2))
-(1 . 2)
-> (setf (interval-start *x*) -1)
--1
-> *x*
-(-1 . 4)
-
+  > (interval-start '(1 2))
+  1
+  > (interval-start '(1 . 2))
+  1
+  > (interval-start #(1 2))
+  1\goodpagebreak
+  > (defparameter *x* (\entlink{make-interval} 1 2))
+  (1 . 2)
+  > (setf (interval-start *x*) -1)
+  -1
+  > *x*
+  (-1 . 4)
+  >
 \end{example}
 
 \end{functiondoc}
@@ -12915,21 +12957,22 @@ Define a \glref{unit~class}, \code{temporal-duration-mixin}, that contains a
 %
 \W\supp
 \begin{example}
-> (interval-values '(1 2))
-1
-2
-> (interval-values '(1 . 2))
-1
-2
-> (interval-values #(1  2))
-1
-2\goodpagebreak
-> (defparameter *x* (\entlink{make-interval} 1 2))
-(1 . 2)
-> (setf (interval-values *x*) #(3 4))
-#(3 4)
-> *x*
-(3 . 4)
+  > (interval-values '(1 2))
+  1
+  2
+  > (interval-values '(1 . 2))
+  1
+  2
+  > (interval-values #(1  2))
+  1
+  2\goodpagebreak
+  > (defparameter *x* (\entlink{make-interval} 1 2))
+  (1 . 2)
+  > (setf (interval-values *x*) #(3 4))
+  #(3 4)
+  > *x*
+  (3 . 4)
+  >
 \end{example}
 
 \end{functiondoc}
@@ -12978,14 +13021,15 @@ Define a \glref{unit~class}, \code{temporal-duration-mixin}, that contains a
 %
 \W\supp
 \begin{example}
-> (make-interval 2 5)
-(2 . 5)
-> (make-interval 2 5 'list)
-(2 5)
-> (make-interval 2 5 'cons)
-(2 . 5)
-> (make-interval 2 5 'array)
-#(2 5)
+  > (make-interval 2 5)
+  (2 . 5)
+  > (make-interval 2 5 'list)
+  (2 5)
+  > (make-interval 2 5 'cons)
+  (2 . 5)
+  > (make-interval 2 5 'array)
+  #(2 5)
+  >
 \end{example}
 
 \end{functiondoc}
@@ -13036,14 +13080,15 @@ amount greater than one-half of its width will result in a zero-width
 %
 \W\supp
 \begin{example}
-> (nexpand-interval '(2 5) 2)
-(0 7)
-> (nexpand-interval '(2 . 5) -1)
-(3 . 4)\goodpagebreak
-> (nexpand-interval #(2 5) .5)
-#(1.5 5.5)
-> (nexpand-interval '(2 . 5) -3)
-(3.5 . 3.5)
+  > (nexpand-interval '(2 5) 2)
+  (0 7)
+  > (nexpand-interval '(2 . 5) -1)
+  (3 . 4)\goodpagebreak
+  > (nexpand-interval #(2 5) .5)
+  #(1.5 5.5)
+  > (nexpand-interval '(2 . 5) -3)
+  (3.5 . 3.5)
+  >
 \end{example}
 
 \end{functiondoc}
@@ -13089,12 +13134,13 @@ amount greater than one-half of its width will result in a zero-width
 %
 \W\supp
 \begin{example}
-> (nshift-interval '(2 5) 2)
-(4 7)
-> (nshift-interval '(2 . 5) -1)
-(1 . 4)
-> (nshift-interval #(2 5) .5)
-#(2.5 5.5)
+  > (nshift-interval '(2 5) 2)
+  (4 7)
+  > (nshift-interval '(2 . 5) -1)
+  (1 . 4)
+  > (nshift-interval #(2 5) .5)
+  #(2.5 5.5)
+  >
 \end{example}
 
 \end{functiondoc}
@@ -13146,12 +13192,13 @@ newly allocated, shifted \var{new-interval}.
 %
 \W\supp
 \begin{example}
-> (shift-interval '(2 5) 2)
-(4 7)
-> (shift-interval '(2 . 5) -1)
-(1 . 4)
-> (shift-interval #(2 5) .5)
-#(2.5 5.5)
+  > (shift-interval '(2 5) 2)
+  (4 7)
+  > (shift-interval '(2 . 5) -1)
+  (1 . 4)
+  > (shift-interval #(2 5) .5)
+  #(2.5 5.5)
+  >
 \end{example}
 
 \end{functiondoc}
@@ -13233,17 +13280,19 @@ Add a highly plausible hypothesis \glref{unit~instance},
 %
 \W\supp
 \begin{example}
-> (add-instance-to-space-instance 
-    good-hyp (\entlink{find-space-instance-by-path} '(bb hyps)))
-#<hyp 419 (1835 4791) 0.85 [5..35]>
+  > (add-instance-to-space-instance 
+      good-hyp (\entlink{find-space-instance-by-path} '(bb hyps)))
+  #<hyp 419 (1835 4791) 0.85 [5..35]>
+  >
 \end{example}
 %
 or
 %
 \W\supp\notpretop
 \begin{example}
-> (add-instance-to-space-instance good-hyp '(bb hyps))
-#<hyp 419 (1835 4791) 0.85 [5..35]>
+  > (add-instance-to-space-instance good-hyp '(bb hyps))
+  #<hyp 419 (1835 4791) 0.85 [5..35]>
+  >
 \end{example}
 
 \end{functiondoc}
@@ -13292,8 +13341,9 @@ classes that can have their \glref{unit~instances} stored on the \code{(bb
 %
 \W\supp
 \begin{example}
-> (allowed-unit-classes-of '(bb hyps))
-((hyp :plus-subclasses))
+  > (allowed-unit-classes-of '(bb hyps))
+  ((hyp :plus-subclasses))
+  >
 \end{example}
 
 \end{functiondoc}
@@ -13392,9 +13442,9 @@ unstructured storage for all \glref{unit~instances}:
 %
 \W\supp
 \begin{example}
-> (change-space-instance '(bb hyps) :storage nil)
-#<standard-space-instance (bb hyps)>
->
+  > (change-space-instance '(bb hyps) :storage nil)
+  #<standard-space-instance (bb hyps)>
+  >
 \end{example}
 %
 Now change it to store \code{hyp} \glref{unit~instances} with uniform-bucket
@@ -13403,14 +13453,14 @@ storage in the \code{classification} dimension:
 %
 \W\supp\notpretop
 \begin{example}
-> (change-space-instance-storage '(bb hyps)
-     :storage '(((hyp :plus-subclasses) (x y) 
-                  uniform-buckets :layout ((0 10000 100)
-                                           (0 10000 100)))
-                ((hyp :plus-subclasses) (classification) 
-                  hashed)))
-#<standard-space-instance (bb hyps)>
->
+  > (change-space-instance-storage '(bb hyps)
+       :storage '(((hyp :plus-subclasses) (x y) 
+                    uniform-buckets :layout ((0 10000 100)
+                                             (0 10000 100)))
+                  ((hyp :plus-subclasses) (classification) 
+                    hashed)))
+  #<standard-space-instance (bb hyps)>
+  >
 \end{example}
 %
 Now change it to store only \code{hyp} \glref{unit~instances} (no subclasses)
@@ -13419,14 +13469,14 @@ dimensions and hashed storage in the \code{classification} dimension:
 %
 \W\supp\notpretop
 \begin{example}
-> (change-space-instance-storage '(bb hyps)
-     :allowed-unit-classes 'hyp     
-     :storage '((hyp (x y) 
-                 uniform-buckets :layout ((0 10000 100)
-                                          (0 10000 100)))
-                (hyp (classification) hashed)))
-#<standard-space-instance (bb hyps)>
-> 
+  > (change-space-instance-storage '(bb hyps)
+       :allowed-unit-classes 'hyp     
+       :storage '((hyp (x y) 
+                   uniform-buckets :layout ((0 10000 100)
+                                            (0 10000 100)))
+                  (hyp (classification) hashed)))
+  #<standard-space-instance (bb hyps)>
+  > 
 \end{example}
 %
 Any \glref{unit~instances} that are subclasses of \code{hyp} are removed from
@@ -13474,10 +13524,11 @@ Return the child space instances  of the \code{(bb)} \glref{space~instance}:
 %
 \W\supp
 \begin{example}
-> (children-of (\entlink{find-space-instance-by-path} '(bb))
-(#<standard-space-instance (bb hyps)>
- #<standard-space-instance (bb probable-hyps)>
- #<standard-space-instance (bb rejected-hyps)>)
+  > (children-of (\entlink{find-space-instance-by-path} '(bb))
+  (#<standard-space-instance (bb hyps)>
+   #<standard-space-instance (bb probable-hyps)>
+   #<standard-space-instance (bb rejected-hyps)>)
+  >
 \end{example}
 
 \fnnote The returned list of child \glref{space~instances} should not be
@@ -13735,12 +13786,13 @@ one \glref{instance} of the \code{space-instance-with-lock}
 %
 \W\supp
 \begin{example}
-> (define-space-class space-with-lock ()
-    ((lock :initform (\entlink{make-lock} :name "Space-Instance Lock"))))
-#<standard-space-class space-with-lock>
-> (\entlink{make-space-instance} '(bb hyps) 
-    :class 'space-with-lock)
-#<space-with-lock (bb hyps)>
+  > (define-space-class space-with-lock ()
+      ((lock :initform (\entlink{make-lock} :name "Space-Instance Lock"))))
+  #<standard-space-class space-with-lock>
+  > (\entlink{make-space-instance} '(bb hyps) 
+      :class 'space-with-lock)
+  #<space-with-lock (bb hyps)>
+  >
 \end{example}
 
 \end{functiondoc}
@@ -13976,16 +14028,18 @@ Delete the \code{(bb hyps)} \glref{space~instance}:
 %
 \W\supp
 \begin{example}
-> (delete-space-instance (\entlink{find-space-instance-by-path} '(bb hyps))
-#<standard-space-instance (bb hyps) [Deleted]>
+  > (delete-space-instance (\entlink{find-space-instance-by-path} '(bb hyps))
+  #<standard-space-instance (bb hyps) [Deleted]>
+  >
 \end{example}
 %
 or simply
 %
 \W\supp\notpretop
 \begin{example}
-> (delete-space-instance '(bb hyps)
-#<standard-space-instance (bb hyps) [Deleted]>
+  > (delete-space-instance '(bb hyps)
+  #<standard-space-instance (bb hyps) [Deleted]>
+  >
 \end{example}
 
 \end{functiondoc}
@@ -14026,27 +14080,28 @@ The description is printed to the {\bf *standard-output*} stream.
 %
 \W\supp
 \begin{example}
-> (describe-blackboard-repository)
+  > (describe-blackboard-repository)
 
-Space Instance                Contents
---------------                --------
-bb                            
-   hyps                       15223 Instances (hyp 1479; sensor-report 13744)
-   probable-hyps              Empty
-   rejected-hyps              216 Instances (hyp 216)
+  Space Instance              Contents
+  --------------              --------
+  bb                            
+     hyps                     15223 Instances (hyp 1479; sensor-report 13744)
+     probable-hyps            Empty
+     rejected-hyps            216 Instances (hyp 216)
 
-Unit Class                    Instances
-----------                    ---------
-control-shell                         1 *
-hyp                                1695
-ks                                   13 + 
-ksa                                 891 +
-ksa-queue                             2 +
-ordered-ksa-queue                     1 +
-sensor-report                     13744
-standard-space-instance               3
+  Unit Class                  Instances
+  ----------                  ---------
+  control-shell                       1 *
+  hyp                              1695
+  ks                                 13 + 
+  ksa                               891 +
+  ksa-queue                           2 +
+  ordered-ksa-queue                   1 +
+  sensor-report                   13744
+  standard-space-instance             3
                               ---------
                                   16350 instances
+>
 \end{example}
 
 \fnnote 
@@ -14100,18 +14155,19 @@ Describe the \code{hyps} \glref{space~instance}:
 %
 \W\supp
 \begin{example}
-> (describe-space-instance '(bb hyps))
-  Standard-space-instance #<standard-space-instance (bb hyps)>
-    Path: (bb hyps)
-    Allowed unit classes:
-      (hyp :plus-subclasses)
-    Dimensions:
-      (belief (:ordered number))
-      (velocity-range (:ordered number))
-      (color (:enumerated eq))
-      (classification (:enumerated eq))
-      (x (:ordered fixnum))
-      (y (:ordered fixnum))
+  > (describe-space-instance '(bb hyps))
+    Standard-space-instance #<standard-space-instance (bb hyps)>
+      Path: (bb hyps)
+      Allowed unit classes:
+        (hyp :plus-subclasses)
+      Dimensions:
+        (belief (:ordered number))
+        (velocity-range (:ordered number))
+        (color (:enumerated eq))
+        (classification (:enumerated eq))
+        (x (:ordered fixnum))
+        (y (:ordered fixnum))
+  >
 \end{example}
 
 \fnnote 
@@ -14165,12 +14221,13 @@ Describe the storage structure of the \code{hyps} \glref{space~instance}:
 %
 \W\supp
 \begin{example}
-> (describe-space-instance-storage '(bb hyps))
-  Standard-space-instance #<standard-space-instance (bb hyps)>
-  2d-Uniform-Buckets (hyp+) (x y) 1.4 (857/611)
-     hyp             479
-     sub-hyp         132
-  Unstructured-Storage (t) t N/A
+  > (describe-space-instance-storage '(bb hyps))
+    Standard-space-instance #<standard-space-instance (bb hyps)>
+    2d-Uniform-Buckets (hyp+) (x y) 1.4 (857/611)
+       hyp             479
+       sub-hyp         132
+    Unstructured-Storage (t) t N/A
+  >
 \end{example}
 
 \fnnote 
@@ -14272,8 +14329,9 @@ Find the \glref{space~instance} with path \code{(bb hyps)}:
 %
 \W\supp
 \begin{example}
-> (find-space-instance-by-path '(bb hyps))
-#<standard-space-instance (bb hyps)>
+  > (find-space-instance-by-path '(bb hyps))
+  #<standard-space-instance (bb hyps)>
+  >
 \end{example}
 
 \end{functiondoc}
@@ -14325,21 +14383,23 @@ Return the \glref{space~instances} that are rooted at \code{(bb)}:
 %
 \W\supp
 \begin{example}
-> (find-space-instances '(bb +))
-(#<standard-space-instance (bb hyps)>
- #<standard-space-instance (bb probable-hyps)>)
- #<standard-space-instance (bb rejected-hyps)>)
+  > (find-space-instances '(bb +))
+  (#<standard-space-instance (bb hyps)>
+   #<standard-space-instance (bb probable-hyps)>)
+   #<standard-space-instance (bb rejected-hyps)>)
+  >
 \end{example}
 %
 Return all the \glref{space~instances} \code{(bb)} and below:
 %
 \W\supp\notpretop
 \begin{example}
-> (find-space-instances '(bb *))
-(#<standard-space-instance (bb hyps)>
- #<standard-space-instance (bb probable-hyps)>)
- #<standard-space-instance (bb rejected-hyps)>
- #<standard-space-instance (bb)>)
+  > (find-space-instances '(bb *))
+  (#<standard-space-instance (bb hyps)>
+   #<standard-space-instance (bb probable-hyps)>)
+   #<standard-space-instance (bb rejected-hyps)>
+   #<standard-space-instance (bb)>)
+  >
 \end{example}
 
 \end{functiondoc}
@@ -14484,9 +14544,10 @@ that cannot store any \glref{unit~instances}:
 %
 \W\supp
 \begin{example}
-> (make-space-instance '(bb) 
-     :allowed-unit-classes nil)
-#<standard-space-instance (bb)>
+  > (make-space-instance '(bb) 
+       :allowed-unit-classes nil)
+  #<standard-space-instance (bb)>
+  > 
 \end{example}
 %
 \bfindexit{dimensions-of}%
@@ -14498,13 +14559,14 @@ storage for indexing \glref{unit~instances} with dimensional values between
 %
 \W\supp\notpretop
 \begin{example}
-> (make-space-instance '(bb hyps)
-     :dimensions (\entlink{dimensions-of} 'hyp)
-     :allowed-unit-classes '((hyp :plus-subclasses))
-     :storage '(((hyp :plus-subclasses) (x y) 
-                 uniform-buckets :layout ((0 10000 100)
-                                          (0 10000 100)))))
-#<standard-space-instance (bb hyps)>
+  > (make-space-instance '(bb hyps)
+       :dimensions (\entlink{dimensions-of} 'hyp)
+       :allowed-unit-classes '((hyp :plus-subclasses))
+       :storage '(((hyp :plus-subclasses) (x y) 
+                   uniform-buckets :layout ((0 10000 100)
+                                            (0 10000 100)))))
+  #<standard-space-instance (bb hyps)>
+  >
 \end{example}
 
 Here is an improved \glref{space~instance} for \code{hyp}
@@ -14514,15 +14576,16 @@ retrieve match candidates via \code{classification} dimensional values:
 %
 \W\supp
 \begin{example}
-> (make-space-instance '(bb hyps)
-     :dimensions (\entlink{dimensions-of} 'hyp)
-     :allowed-unit-classes '((hyp :plus-subclasses))
-     :storage '(((hyp :plus-subclasses) (x y) 
-                 uniform-buckets :layout ((0 10000 100)
-                                          (0 10000 100)))
-                ((hyp :plus-subclasses) (classification) 
-                 hashed)))
-#<standard-space-instance (bb hyps)>
+  > (make-space-instance '(bb hyps)
+       :dimensions (\entlink{dimensions-of} 'hyp)
+       :allowed-unit-classes '((hyp :plus-subclasses))
+       :storage '(((hyp :plus-subclasses) (x y) 
+                   uniform-buckets :layout ((0 10000 100)
+                                            (0 10000 100)))
+                  ((hyp :plus-subclasses) (classification) 
+                   hashed)))
+  #<standard-space-instance (bb hyps)>
+  >
 \end{example}
 
 \fnnote The \textbf{make-space-instance} function is equivalent to using
@@ -14639,8 +14702,9 @@ Return the parent space instances of the \code{(bb hyp)}
 %
 \W\supp
 \begin{example}
-> (parent-of (\entlink{find-space-instance-by-path} '(bb hyp))
-#<standard-space-instance (bb)>
+  > (parent-of (\entlink{find-space-instance-by-path} '(bb hyp))
+  #<standard-space-instance (bb)>
+  >
 \end{example}
 %
 Return the parent space instances (the \code{root-space-instance}) of
@@ -14648,18 +14712,20 @@ the \code{(bb)} \glref{space~instance}:
 %
 \W\supp\notpretop
 \begin{example}
-> (parent-of (\entlink{find-space-instance-by-path} '(bb))
-#<root-space-instance root-space-instance>
+  > (parent-of (\entlink{find-space-instance-by-path} '(bb))
+  #<root-space-instance root-space-instance>
+  >
 \end{example}
 %
 Return the siblings of the \code{(bb)} \glref{space~instance}:
 %
 \W\supp\notpretop
 \begin{example}
-> (children-of
-    (\entlink{parent-of} (\entlink{find-space-instance-by-path} '(bb))
-(#<standard-space-instance (bb)>
- #<standard-space-instance (control-shell)>)
+  > (children-of
+      (\entlink{parent-of} (\entlink{find-space-instance-by-path} '(bb))
+  (#<standard-space-instance (bb)>
+   #<standard-space-instance (control-shell)>)
+  >
 \end{example}
 
 \end{functiondoc}
@@ -14715,17 +14781,19 @@ Remove an incorrect hypothesis \glref{unit~instance},
 %
 \W\supp
 \begin{example}
-> (remove-instance-from-space-instance 
-    incorrect-hyp (\entlink{find-space-instance-by-path} '(bb hyps)))
-#<hyp 311 (896 388) 0.68 [0..6]>
+  > (remove-instance-from-space-instance 
+      incorrect-hyp (\entlink{find-space-instance-by-path} '(bb hyps)))
+  #<hyp 311 (896 388) 0.68 [0..6]>
+  >
 \end{example}
 %
 or 
 %
 \W\supp\notpretop
 \begin{example}
-> (remove-instance-from-space-instance incorrect-hyp '(bb hyps))
-#<hyp 311 (896 388) 0.68 [0..6]>
+  > (remove-instance-from-space-instance incorrect-hyp '(bb hyps))
+  #<hyp 311 (896 388) 0.68 [0..6]>
+  >
 \end{example}
 
 \end{functiondoc}
@@ -14799,7 +14867,9 @@ Prepare for a new application by resetting GBBopen:
 %
 \W\supp
 \begin{example}
-  (reset-gbbopen)
+  > (reset-gbbopen)
+  t
+  >
 \end{example}
 
 \fnnote 
@@ -14919,12 +14989,13 @@ Suppress the warning message associated with an unachievable retrieval pattern:
 %
 \W\supp
 \begin{example}
-> (\entlink{filter-instances} nil '(and (> x 3) (< x 2)))
-;; Warning: Pattern (and (> X 3) (< X 2)) can not be satisfied.
-nil
-> (let ((*warn-about-unusual-requests* nil))
-    (\entlink{filter-instances} nil '(and (> x 3) (< x 2))))
-nil
+  > (\entlink{filter-instances} nil '(and (> x 3) (< x 2)))
+  ;; Warning: Pattern (and (> X 3) (< X 2)) can not be satisfied.
+  nil
+  > (let ((*warn-about-unusual-requests* nil))
+      (\entlink{filter-instances} nil '(and (> x 3) (< x 2))))
+  nil
+  >
 \end{example}
 
 \end{functiondoc}
@@ -15258,13 +15329,14 @@ and \code{=\$\$\$} and \code{within\&}, \code{within\$\&}, \code{within\$},
 %
 \W\supp
 \begin{example}
-> (filter-instances (supporting-hyps-of hyp) '(> belief .8))
-(#<hyp 183 (1835 4791) 0.82 [0..35]>
- #<hyp 233 (1835 4791) 0.89 [5..35]>
- #<hyp 419 (1835 4791) 0.85 [5..35]>)\goodpagebreak
-> (filter-instances (supporting-hyps-of hyp) `(within belief (.85 ,infinity)))
-(#<hyp 233 (1835 4791) 0.89 [5..35]>
- #<hyp 419 (1835 4791) 0.85 [5..35]>)
+  > (filter-instances (supporting-hyps-of hyp) '(> belief .8))
+  (#<hyp 183 (1835 4791) 0.82 [0..35]>
+   #<hyp 233 (1835 4791) 0.89 [5..35]>
+   #<hyp 419 (1835 4791) 0.85 [5..35]>)\goodpagebreak
+  > (filter-instances (supporting-hyps-of hyp) `(within belief (.85 ,infinity)))
+  (#<hyp 233 (1835 4791) 0.89 [5..35]>
+   #<hyp 419 (1835 4791) 0.85 [5..35]>)
+  >
 \end{example}
 
 \end{functiondoc}
@@ -15325,8 +15397,9 @@ Find all \glref{unit~instances} (of any \glref{unit~class}) that are named
 %
 \W\supp
 \begin{example}
-> (find-instances-by-name 419 't)
-(#<hyp 419 (1835 4791) 0.85 [5..35]>)
+  > (find-instances-by-name 419 't)
+  (#<hyp 419 (1835 4791) 0.85 [5..35]>)
+  >
 \end{example}
 %
 Find all \glref{unit~instances} (of any \glref{unit~class}) that are named
@@ -15334,8 +15407,9 @@ Find all \glref{unit~instances} (of any \glref{unit~class}) that are named
 %
 \W\supp\notpretop
 \begin{example}
-> (find-instances-by-name 419 '(hyp :plus-subclasses))
-(#<hyp 419 (1835 4791) 0.85 [5..35]>)
+  > (find-instances-by-name 419 '(hyp :plus-subclasses))
+  (#<hyp 419 (1835 4791) 0.85 [5..35]>)
+  >
 \end{example}
 
 \end{functiondoc}
@@ -15394,8 +15468,9 @@ Find the \code{hyp} \glref{unit~instance} 419:
 %
 \W\supp
 \begin{example}
-> (find-instance-by-name 419 'hyp)
-#<hyp 419 (1835 4791) 0.85 [5..35]>
+  > (find-instance-by-name 419 'hyp)
+  #<hyp 419 (1835 4791) 0.85 [5..35]>
+  >
 \end{example}
 
 \fnnote 
@@ -15501,71 +15576,72 @@ Here are some basic examples of finding \code{hyp} \glref{unit~instances}:
 %
 \W\supp
 \begin{example}
-> (find-instances 'hyp (\entlink{find-space-instance-by-path} '(bb hyps)) 
-    '(and (= x 1835) (> belief .8)))
-(#<hyp 319 (1835 8419) 0.91 [4..12]>
- #<hyp 331 (1835 8419) 0.88 [15..30]>
- #<hyp 335 (1835 8419) 0.92 [15..35]>
- #<hyp 183 (1835 4791) 0.82 [0..35]>
- #<hyp 233 (1835 4791) 0.89 [5..35]>
- #<hyp 419 (1835 4791) 0.85 [5..35]>)\goodpagebreak
-> (find-instances 'hyp '(bb hyps)
-    `(and (= x 1835) 
-          (> belief ,(belief-of (\entlink{find-instance-by-name} 331 'hyp)))))
-(#<hyp 319 (1835 8419) 0.91 [4..12]>
- #<hyp 335 (1835 8419) 0.92 [15..35]>
- #<hyp 233 (1835 4791) 0.89 [5..35]>)\goodpagebreak
-> (find-instances '(hyp :no-subclasses) '(bb hyps)
-    '(=\& (x y) (1835 8419)))
-(#<hyp 319 (1835 8419) 0.91 [4..12]>
- #<hyp 331 (1835 8419) 0.88 [15..30]>
- #<hyp 335 (1835 8419) 0.92 [15..35]>)\goodpagebreak
-> (find-instances 'hyp '(bb hyps) 
-    '(and (= x 1835) (within belief (.85 .9))))
-(#<hyp 331 (1835 8419) 0.88 [15..30]>
- #<hyp 233 (1835 4791) 0.89 [5..35]>
- #<hyp 419 (1835 4791) 0.85 [5..35]>)\goodpagebreak
-> (find-instances 'hyp '(bb hyps) 
-    '(and (= x 1835) (overlaps velocity-range (0 10))))
-(#<hyp 319 (1835 8419) 0.91 [4..12]>
- #<hyp 183 (1835 4791) 0.82 [0..35]>
- #<hyp 233 (1835 4791) 0.89 [5..35]>
- #<hyp 419 (1835 4791) 0.85 [5..35]>)\goodpagebreak
-> (find-instances 'hyp '(bb hyps) 
-    '(and (= x 1835) (overlaps velocity-range (35 40))))
-(#<hyp 335 (1835 8419) 0.92 [15..35]>
- #<hyp 183 (1835 4791) 0.82 [0..35]>
- #<hyp 233 (1835 4791) 0.89 [5..35]>
- #<hyp 419 (1835 4791) 0.85 [5..35]>)\goodpagebreak
-> (find-instances 'hyp '(bb hyps) 
-    '(and (= x 1835) (covers velocity-range (0 10))))
-(#<hyp 183 (1835 4791) 0.82 [0..35]>)
-> (find-instances 'hyp '(bb hyps) 
-    '(and (= x 1835) (covers velocity-range (4 10))))
-(#<hyp 319 (1835 8419) 0.91 [4..12]>
- #<hyp 183 (1835 4791) 0.82 [0..35]>)\goodpagebreak
-> (find-instances 'hyp '(bb hyps) 
-    '(and (= x 1835) (within velocity-range (0 10))))
-nil
-> (find-instances 'hyp '(bb hyps) 
-    '(and (= x 1835) (within velocity-range (0 20))))
-(#<hyp 319 (1835 8419) 0.91 [4..12]>)\goodpagebreak
-> (find-instances 'hyp '(bb hyps) 
-    '(and (= x 1835) (starts velocity-range 5)))
-(#<hyp 233 (1835 4791) 0.89 [5..35]>
- #<hyp 419 (1835 4791) 0.85 [5..35]>)\goodpagebreak
-> (find-instances 'hyp '(bb hyps) 
-    '(and (= x 1835) (ends velocity-range 30)))
-(#<hyp 331 (1835 8419) 0.88 [15..30]>)
-> (find-instances 'hyp '(bb hyps) 
-    '(is color :silver))
-(#<hyp 183 (1835 4791) 0.82 [0..35]> 
- #<hyp 233 (1835 4791) 0.89 [5..35]>
- #<hyp 231 (1488 7405) 0.63 [0..8]>)
-> (find-instances 'hyp '(bb hyps) 
-    '(is-eq color :yellow))
-(#<hyp 331 (1835 8419) 0.88 [15..30]> 
- #<hyp 311 (896 388) 0.68 [0..6]>)
+  > (find-instances 'hyp (\entlink{find-space-instance-by-path} '(bb hyps)) 
+      '(and (= x 1835) (> belief .8)))
+  (#<hyp 319 (1835 8419) 0.91 [4..12]>
+   #<hyp 331 (1835 8419) 0.88 [15..30]>
+   #<hyp 335 (1835 8419) 0.92 [15..35]>
+   #<hyp 183 (1835 4791) 0.82 [0..35]>
+   #<hyp 233 (1835 4791) 0.89 [5..35]>
+   #<hyp 419 (1835 4791) 0.85 [5..35]>)\goodpagebreak
+  > (find-instances 'hyp '(bb hyps)
+      `(and (= x 1835) 
+            (> belief ,(belief-of (\entlink{find-instance-by-name} 331 'hyp)))))
+  (#<hyp 319 (1835 8419) 0.91 [4..12]>
+   #<hyp 335 (1835 8419) 0.92 [15..35]>
+   #<hyp 233 (1835 4791) 0.89 [5..35]>)\goodpagebreak
+  > (find-instances '(hyp :no-subclasses) '(bb hyps)
+      '(=\& (x y) (1835 8419)))
+  (#<hyp 319 (1835 8419) 0.91 [4..12]>
+   #<hyp 331 (1835 8419) 0.88 [15..30]>
+   #<hyp 335 (1835 8419) 0.92 [15..35]>)\goodpagebreak
+  > (find-instances 'hyp '(bb hyps) 
+      '(and (= x 1835) (within belief (.85 .9))))
+  (#<hyp 331 (1835 8419) 0.88 [15..30]>
+   #<hyp 233 (1835 4791) 0.89 [5..35]>
+   #<hyp 419 (1835 4791) 0.85 [5..35]>)\goodpagebreak
+  > (find-instances 'hyp '(bb hyps) 
+      '(and (= x 1835) (overlaps velocity-range (0 10))))
+  (#<hyp 319 (1835 8419) 0.91 [4..12]>
+   #<hyp 183 (1835 4791) 0.82 [0..35]>
+   #<hyp 233 (1835 4791) 0.89 [5..35]>
+   #<hyp 419 (1835 4791) 0.85 [5..35]>)\goodpagebreak
+  > (find-instances 'hyp '(bb hyps) 
+      '(and (= x 1835) (overlaps velocity-range (35 40))))
+  (#<hyp 335 (1835 8419) 0.92 [15..35]>
+   #<hyp 183 (1835 4791) 0.82 [0..35]>
+   #<hyp 233 (1835 4791) 0.89 [5..35]>
+   #<hyp 419 (1835 4791) 0.85 [5..35]>)\goodpagebreak
+  > (find-instances 'hyp '(bb hyps) 
+      '(and (= x 1835) (covers velocity-range (0 10))))
+  (#<hyp 183 (1835 4791) 0.82 [0..35]>)
+  > (find-instances 'hyp '(bb hyps) 
+      '(and (= x 1835) (covers velocity-range (4 10))))
+  (#<hyp 319 (1835 8419) 0.91 [4..12]>
+   #<hyp 183 (1835 4791) 0.82 [0..35]>)\goodpagebreak
+  > (find-instances 'hyp '(bb hyps) 
+      '(and (= x 1835) (within velocity-range (0 10))))
+  nil
+  > (find-instances 'hyp '(bb hyps) 
+      '(and (= x 1835) (within velocity-range (0 20))))
+  (#<hyp 319 (1835 8419) 0.91 [4..12]>)\goodpagebreak
+  > (find-instances 'hyp '(bb hyps) 
+      '(and (= x 1835) (starts velocity-range 5)))
+  (#<hyp 233 (1835 4791) 0.89 [5..35]>
+   #<hyp 419 (1835 4791) 0.85 [5..35]>)\goodpagebreak
+  > (find-instances 'hyp '(bb hyps) 
+      '(and (= x 1835) (ends velocity-range 30)))
+  (#<hyp 331 (1835 8419) 0.88 [15..30]>)
+  > (find-instances 'hyp '(bb hyps) 
+      '(is color :silver))
+  (#<hyp 183 (1835 4791) 0.82 [0..35]> 
+   #<hyp 233 (1835 4791) 0.89 [5..35]>
+   #<hyp 231 (1488 7405) 0.63 [0..8]>)
+  > (find-instances 'hyp '(bb hyps) 
+      '(is-eq color :yellow))
+  (#<hyp 331 (1835 8419) 0.88 [15..30]> 
+   #<hyp 311 (896 388) 0.68 [0..6]>)
+  >
 \end{example}
 
 Some examples finding a \code{word} \glref{unit~instance}:
@@ -15582,8 +15658,9 @@ Find \code{word} \glref{unit~instances} with special characters in them:
 %
 \W\supp\notpretop
 \begin{example}
-> (find-instances 'word '(words) '(overlaps char-code (0 64)))
-(#<word 1>)
+  > (find-instances 'word '(words) '(overlaps char-code (0 64)))
+  (#<word 1>)
+  >
 \end{example}
 
 \end{functiondoc}
@@ -15638,16 +15715,17 @@ Return the list of all \code{hyp} \glref{unit~instances}:
 %
 \W\supp
 \begin{example}
-> (find-instances-of-class 'hyp)
-(#<hyp 233 (1835 4791) 0.89 [5..35]>
- #<hyp 319 (1835 8419) 0.91 [4..12]>
- #<hyp 419 (1835 4791) 0.85 [5..35]>
- #<hyp 231 (1488 7405) 0.63 [0..8]>
- #<hyp 311 (896 388) 0.68 [0..6]> 
-   \textrm{\ldots{}}
- #<hyp 331 (1835 8419) 0.88 [15..30]>
- #<hyp 183 (1835 4791) 0.82 [0..35]>
- #<hyp 335 (1835 8419) 0.92 [15..35]>)
+  > (find-instances-of-class 'hyp)
+  (#<hyp 233 (1835 4791) 0.89 [5..35]>
+   #<hyp 319 (1835 8419) 0.91 [4..12]>
+   #<hyp 419 (1835 4791) 0.85 [5..35]>
+   #<hyp 231 (1488 7405) 0.63 [0..8]>
+   #<hyp 311 (896 388) 0.68 [0..6]> 
+     \textrm{\ldots{}}
+   #<hyp 331 (1835 8419) 0.88 [15..30]>
+   #<hyp 183 (1835 4791) 0.82 [0..35]>
+   #<hyp 335 (1835 8419) 0.92 [15..35]>)
+  >
 \end{example} 
 
 \fnnote In general, \textbf{\entlink{do-instances-of-class}} or
@@ -15955,28 +16033,29 @@ report is displayed.
 %
 \W\supp
 \begin{example}
-> (\entlink{with-find-stats} ()
-    (scanner (\entlink{find-instance-by-name} 471 'hyp))
-    (report-find-stats)
-    (scanner (\entlink{find-instance-by-name} 632 'hyp)))
-;; Find/Map Statistics:
-;;        20 find/map operations (0 using marking, 20 using hashing)
-;;       100 buckets scanned
-;;      9240 instances touched
-;;      9240 instances considered
-;;       521 instances accepted
-;;      0.16 seconds (0.80 msec/operation)
-;; Find/Map Statistics:
-;;        40 find/map operations (0 using marking, 40 using hashing)
-;;       200 buckets scanned
-;;     18480 instances touched
-;;     18480 instances considered
-;;      1042 instances accepted
-;;      0.32 seconds (0.80 msec/operation)
-(#<hyp 319 (1835 8419) 0.91 [4..12]>
- #<hyp 331 (1835 8419) 0.88 [15..30]>)
-> (report-find-stats)
-;; No find/map statistics are available.
+  > (\entlink{with-find-stats} ()
+      (scanner (\entlink{find-instance-by-name} 471 'hyp))
+      (report-find-stats)
+      (scanner (\entlink{find-instance-by-name} 632 'hyp)))
+  ;; Find/Map Statistics:
+  ;;        20 find/map operations (0 using marking, 20 using hashing)
+  ;;       100 buckets scanned
+  ;;      9240 instances touched
+  ;;      9240 instances considered
+  ;;       521 instances accepted
+  ;;      0.16 seconds (0.80 msec/operation)
+  ;; Find/Map Statistics:
+  ;;        40 find/map operations (0 using marking, 40 using hashing)
+  ;;       200 buckets scanned
+  ;;     18480 instances touched
+  ;;     18480 instances considered
+  ;;      1042 instances accepted
+  ;;      0.32 seconds (0.80 msec/operation)
+  (#<hyp 319 (1835 8419) 0.91 [4..12]>
+   #<hyp 331 (1835 8419) 0.88 [15..30]>)
+  > (report-find-stats)
+  ;; No find/map statistics are available.
+  >
 \end{example}
 
 \end{functiondoc}
@@ -16031,17 +16110,18 @@ running an application \glref{function} \code{scanner}:
 %
 \W\supp
 \begin{example}
-> (with-find-stats ()
-     (scanner (\entlink{find-instance-by-name} 471 'hyp)))
-;; Find/Map Statistics:
-;;        20 find/map operations (0 using marking, 20 using hashing)
-;;       100 buckets scanned
-;;      9240 instances touched
-;;      9240 instances considered
-;;       521 instances accepted
-;;      0.16 seconds (0.80 msec/operation)
-(#<hyp 419 (1835 4791) 0.85 [5..35]>
- #<hyp 233 (1835 4791) 0.89 [5..35]>)
+  > (with-find-stats ()
+       (scanner (\entlink{find-instance-by-name} 471 'hyp)))
+  ;; Find/Map Statistics:
+  ;;        20 find/map operations (0 using marking, 20 using hashing)
+  ;;       100 buckets scanned
+  ;;      9240 instances touched
+  ;;      9240 instances considered
+  ;;       521 instances accepted
+  ;;      0.16 seconds (0.80 msec/operation)
+  (#<hyp 419 (1835 4791) 0.85 [5..35]>
+   #<hyp 233 (1835 4791) 0.89 [5..35]>)
+  >
 \end{example}
 
 \end{functiondoc}
@@ -16092,15 +16172,16 @@ running an application \glref{function} \code{scanner}:
      (scanner (\entlink{find-instance-by-name} 471 'hyp))
      (without-find-stats
         (scanner (\entlink{find-instance-by-name} 632 'hyp))))
-;; Find/Map Statistics:
-;;        20 find/map operations (0 using marking, 20 using hashing)
-;;       100 buckets scanned
-;;      9240 instances touched
-;;      9240 instances considered
-;;       521 instances accepted
-;;      0.16 seconds (0.80 msec/operation)
-(#<hyp 319 (1835 8419) 0.91 [4..12]>
- #<hyp 331 (1835 8419) 0.88 [15..30]>)
+  ;; Find/Map Statistics:
+  ;;        20 find/map operations (0 using marking, 20 using hashing)
+  ;;       100 buckets scanned
+  ;;      9240 instances touched
+  ;;      9240 instances considered
+  ;;       521 instances accepted
+  ;;      0.16 seconds (0.80 msec/operation)
+  (#<hyp 319 (1835 8419) 0.91 [4..12]>
+   #<hyp 331 (1835 8419) 0.88 [15..30]>)
+  >
 \end{example}
 
 \end{functiondoc}
@@ -16157,12 +16238,13 @@ Send some \code{hyp} \glref{unit~instances} to another agent:
 %
 \W\supp
 \begin{example}
-> (let ((*print-object-for-sending* 't))
-    (\entlink{with-saving/sending-block} (stream :package ':my-app)
-      (let ((\entlink{*save/send-references-only*} nil))
-        (\entlink{do-instances-of-class} (instance 'hyp :plus-subclasses)
-          (\entlink{print-object-for-saving/sending} instance stream)))))
-nil
+  > (let ((*print-object-for-sending* 't))
+      (\entlink{with-saving/sending-block} (stream :package ':my-app)
+        (let ((\entlink{*save/send-references-only*} nil))
+          (\entlink{do-instances-of-class} (instance 'hyp :plus-subclasses)
+            (\entlink{print-object-for-saving/sending} instance stream)))))
+  nil
+  >
 \end{example}
 
 \end{functiondoc}
@@ -16200,12 +16282,13 @@ Send some \code{hyp} \glref{unit~instances} to another agent:
 %
 \W\supp
 \begin{example}
-> (let ((\entlink{*print-object-for-sending*} 't))
-    (\entlink{with-saving/sending-block} (stream :package ':my-app)
-      (let ((*save/send-references-only* nil))
-        (\entlink{do-instances-of-class} (instance 'hyp :plus-subclasses)
-          (\entlink{print-object-for-saving/sending} instance stream)))))
-nil
+ > (let ((\entlink{*print-object-for-sending*} 't))
+      (\entlink{with-saving/sending-block} (stream :package ':my-app)
+        (let ((*save/send-references-only* nil))
+          (\entlink{do-instances-of-class} (instance 'hyp :plus-subclasses)
+            (\entlink{print-object-for-saving/sending} instance stream)))))
+  nil
+  >
 \end{example}
 
 \end{functiondoc}
@@ -16409,6 +16492,7 @@ and then load a blackboard repository that was saved previously:
   > (load-blackboard-repository "tutorial")
   #P"\var{<homedir>\/}/tutorial.bb"
   #<path 1>
+  >
 \end{example}
 %
 Try loading the repository again:
@@ -16419,6 +16503,7 @@ Try loading the repository again:
   The blackboard repository is not empty.
   Continue anyway (the current contents will be deleted) [y or n]? n
   nil
+  >
 \end{example}
 %
 Load the repository again, but without executing its
@@ -16430,6 +16515,7 @@ Load the repository again, but without executing its
       :confirm-if-not-empty nil
       :ignore-after-loading-function 't)
   #P"\var{<homedir>\/}/tutorial.bb"
+  >
 \end{example}
 %
 Define a new \glref{unit~class}, \code{new-location}, and then load the
@@ -16461,6 +16547,7 @@ repository again, translating all \code{location} \glref{unit~instances} to
   standard-space-instance               1  
                                 ---------
                                        63 instances
+  >
 \end{example}
 
 \end{functiondoc}
@@ -16807,6 +16894,7 @@ resulting blackboard repository:
   :quiescence
   > (save-blackboard-repository "tutorial" :package ':gbbopen-user)
   #P"\var{<homedir>\/}/tutorial.bb"
+  >
 \end{example}
 
 \end{functiondoc}
@@ -16984,12 +17072,13 @@ Count the number of \glref{pending~KSAs} that were triggered by \code{hyp}:
 %
 \W\supp
 \begin{example}
-> (let ((count 0))
-    (do-queue (ksa pending-ksas)
-      (when (\entlink{memq} hyp (collect-trigger-instances ksa))
-        (\link{incf&}{ent:incfAMP} count)))
-     count)
-31
+  > (let ((count 0))
+      (do-queue (ksa pending-ksas)
+        (when (\entlink{memq} hyp (collect-trigger-instances ksa))
+          (\link{incf&}{ent:incfAMP} count)))
+       count)
+  31
+  >
 \end{example}
 
 \end{functiondoc}
@@ -17030,8 +17119,9 @@ Count the number of \glref{pending~KSAs} that were triggered by \code{hyp}:
 %
 \W\supp
 \begin{example}
-> (first-queue-element pending-ksas)
-#<ksa 2217>
+  > (first-queue-element pending-ksas)
+  #<ksa 2217>
+  >
 \end{example}
 
 \end{functiondoc}
@@ -17086,8 +17176,9 @@ queue was created.  If \var{queue} is a standard \glref{queue},
 %
 \W\supp
 \begin{example}
-> (insert-on-queue ksa pending-ksas)
-#<ksa 2372>
+  > (insert-on-queue ksa pending-ksas)
+  #<ksa 2372>
+  >
 \end{example}
 
 \end{functiondoc}
@@ -17127,8 +17218,9 @@ queue was created.  If \var{queue} is a standard \glref{queue},
 %
 \W\supp
 \begin{example}
-> (last-queue-element pending-ksas)
-#<ksa 2372>
+  > (last-queue-element pending-ksas)
+  #<ksa 2372>
+  >
 \end{example}
 
 \end{functiondoc}
@@ -17163,20 +17255,23 @@ Use of an initialization argument that has not been declared as valid.
 The supplied or generated instance name is identical to the instance name of
 an existing \glref{unit~instance} of \var{class}.
 
-\begin{alsos}{ordered-queue}
+\begin{alsos}{ordered-ksa-queue}
 \also[queue]
+\also[ksa-queue]
 \also[ordered-queue]
+\also[ordered-ksa-queue]
 \end{alsos}
 
 \fnexample
-\bfindexit{ordered-queue}%
+\bfindexit{ordered-ksa-queue}%
 \bfindexit{rating-of}%
 %
 \W\supp
 \begin{example}
-> (setf pending-ksas (make-queue :class '\entlink{ordered-queue}
-                                 :key #'\entlink{rating-of}))
-#<ordered-queue>
+  > (setf pending-ksas (make-queue :class '\entlink{ordered-ksa-queue}
+                                   :key #'\entlink{rating-of}))
+  #<ordered-ksa-queue>
+  >
 \end{example}
 
 \end{functiondoc}
@@ -17225,13 +17320,14 @@ Count the number of \glref{pending~KSAs} that were triggered by
 %
 \W\supp
 \begin{example}
-> (let ((count 0))
-    (map-queue #'(lambda (ksa)
-                   (when (\entlink{memq} hyp (\entlink{collect-trigger-instances} ksa))
-                     (\link{incf&}{ent:incfAMP} count)))
-               pending-ksas)
-     count)
-31
+  > (let ((count 0))
+      (map-queue #'(lambda (ksa)
+                     (when (\entlink{memq} hyp (\entlink{collect-trigger-instances} ksa))
+                       (\link{incf&}{ent:incfAMP} count)))
+                 pending-ksas)
+       count)
+  31
+  >
 \end{example}
 
 \end{functiondoc}
@@ -17273,8 +17369,9 @@ on a GBBopen queue.
 %
 \W\supp
 \begin{example}
-> (next-queue-element ksa)
-#<ksa 2166>
+  > (next-queue-element ksa)
+  #<ksa 2166>
+  >
 \end{example}
 
 \end{functiondoc}
@@ -17325,8 +17422,9 @@ Return the first element on \code{pending-ksas} (equivalent to
 %
 \W\supp
 \begin{example}
-> (nth-queue-element 0 pending-ksas)
-#<ksa 2217>
+  > (nth-queue-element 0 pending-ksas)
+  #<ksa 2217>
+  >
 \end{example}
 %
 Return the last element on \code{pending-ksas} (equivalent to
@@ -17334,8 +17432,9 @@ Return the last element on \code{pending-ksas} (equivalent to
 %
 \W\supp\notpretop
 \begin{example}
-> (nth-queue-element -1 pending-ksas)
-#<ksa 2372>
+  > (nth-queue-element -1 pending-ksas)
+  #<ksa 2372>
+  >
 \end{example}
 
 \end{functiondoc}
@@ -17379,8 +17478,9 @@ Return the queue on which \code{ksa} resides:
 %
 \W\supp
 \begin{example}
-> (on-queue-p ksa)
-#<ordered-queue>
+  > (on-queue-p ksa)
+  #<ordered-queue>
+  >
 \end{example}
 
 \end{functiondoc}
@@ -17400,9 +17500,12 @@ Return the queue on which \code{ksa} resides:
 \fndescription The \glref{unit~class} whose \glref{instances} are used 
 as the header of ordered (sorted) GBBopen queues.
 
-\begin{alsos}{queue-element}
-\also[ordered-ksa-queue]
+\begin{alsos}{executed-ksas-of}
+\also[executed-ksas-of]
 \also[make-queue]
+\also[obviated-ksas-of]
+\also[on-queue-p]
+\also[ordered-ksa-queue]
 \also[queue]
 \also[queue-element]
 \also[show-queue]
@@ -17448,8 +17551,9 @@ as the header of ordered (sorted) GBBopen queues.
 %
 \W\supp
 \begin{example}
-> (previous-queue-element ksa)
-#<ksa 2166>
+  > (previous-queue-element ksa)
+  #<ksa 2166>
+  >
 \end{example}
 
 \end{functiondoc}
@@ -17560,8 +17664,9 @@ Return the number of \glref{KSAs} in the queue \code{pending-ksas}:
 %
 \W\supp
 \begin{example}
-> (queue-length pending-ksas)
-896
+  > (queue-length pending-ksas)
+  896
+  >
 \end{example}
 %
 Count and then return the actual number of \glref{KSAs} in the
@@ -17569,8 +17674,9 @@ queue \code{pending-ksas}:
 %
 \W\supp\notpretop
 \begin{example}
-> (queue-length pending-ksas 't)
-896
+  > (queue-length pending-ksas 't)
+  896
+  >
 \end{example}
 
 \end{functiondoc}
@@ -17610,8 +17716,9 @@ queue \code{pending-ksas}:
 %
 \W\supp
 \begin{example}
-> (remove-from-queue ksa)
-#<ksa 2372>
+  > (remove-from-queue ksa)
+  #<ksa 2372>
+  >
 \end{example}
 
 \end{functiondoc}
@@ -17648,21 +17755,34 @@ to be shown (default is \nil)
 \glref{queue~element} line (default is \code{\#'standard-show-queue-element})
 \end{args}
 
-\begin{alsos}{on-queue-p}
+\begin{alsos}{pending-ksas-of}
+\also[executed-ksas-of]
+\also[make-queue]
+\also[obviated-ksas-of]
+\also[ordered-ksa-queue]
+\also[ordered-queue]
+\also[queue]
+\also[queue-element]
 \also[on-queue-p]
+\also[pending-ksas-of]
 \end{alsos}
 
 \fnexample
-Show the first five \glref{KSAs} on the queue \code{pending-ksas}:
+%
+\bfindexit{current-control-shell}%
+\bfindexit{pending-ksas-of}%
+\bfindexit{find-instance-by-name}%
+%
+Show the control shell's pending \glref{KSAs} queue (early in a
+\code{:tutorial-example} run):
 %
 \W\supp
 \begin{example}
-> (show-queue pending-ksas :end 5)
-    0. #<ksa 2217>
-    1. #<ksa 2293>
-    2. #<ksa 2303>
-    3. #<ksa 2280>
-    4. #<ksa 2249>
+  >  (show-queue (\entlink{pending-ksas-of} (\entlink{current-control-shell})))
+      0. #<ksa 7 random-walk-ks 100>
+      1. #<ksa 1 count-center-locations-ks 90>
+      2. #<ksa 4 print-walk-ks 80>(show-queue pending-ksas :end 5)
+  >
 \end{example}
 
 \end{functiondoc}
@@ -17768,8 +17888,9 @@ Return the activation cycle of \code{ksa}:
 %
 \W\supp
 \begin{example}
-> (activation-cycle-of ksa)
-1192
+  > (activation-cycle-of ksa)
+  1192
+  >
 \end{example}
 
 \end{functiondoc}
@@ -17826,9 +17947,10 @@ Return the trigger \glref{unit~instances} of a KSA:
 %
 \W\supp
 \begin{example}
-> (collect-trigger-instances ksa)
-(#<hyp 419 (1835 4791) 0.85 [5..35]>
- #<hyp 233 (1835 4791) 0.89 [5..35]>)
+  > (collect-trigger-instances ksa)
+  (#<hyp 419 (1835 4791) 0.85 [5..35]>
+   #<hyp 233 (1835 4791) 0.89 [5..35]>)
+  >
 \end{example}
 
 \end{functiondoc}
@@ -17863,8 +17985,47 @@ See if the control shell is running:
 %
 \W\supp
 \begin{example}
-> (control-shell-running-p)
-nil
+  > (control-shell-running-p)
+  nil
+  >
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{current-control-shell}{\noargs{} 
+    \returns{} \var{control-shell-or-nil\/}}
+\index{control shell!obtaining the current}%
+
+\fnsyntax
+
+\fnpurpose Return the object representing the current control shell.
+
+\fnpackage \code{:agenda-shell}
+
+\fnmodule \code{:agenda-shell}
+
+\fnargs
+\begin{args}{control-shell-or-nil}
+\arg[control-shell-or-nil] A \code{control-shell} object or \nil{}
+\end{args}
+
+\fnreturns The object representing the current control shell (in the current
+\glref{thread}), if one can be determined; otherwise \nil.
+
+\begin{alsos}{control-shell-running-p}
+\also[control-shell-running-p]
+\also[start-control-shell]
+\end{alsos}
+
+\fnexample
+%
+\W\supp
+\begin{example}
+  > (current-control-shell)
+  #<control-shell 1>
+  >
 \end{example}
 
 \end{functiondoc}
@@ -18282,21 +18443,23 @@ operations on each defined \glref{KS} of that class.
 %
 \W\supp
 \begin{example}
-> (define-ks-class ks-with-lock ()
-    ((lock :initform (\entlink{make-lock} :name "KS Lock"))))
-#<standard-unit-class ks-with-lock>
+  > (define-ks-class ks-with-lock ()
+      ((lock :initform (\entlink{make-lock} :name "KS Lock"))))
+  #<standard-unit-class ks-with-lock>
+  >
 \end{example}
 %
 Do the same, but with a mixin class:
 %
 \W\supp\notpretop
 \begin{example}
-> (define-unit-class ks-lock-mixin ()
-    ((lock :initform (\entlink{make-lock} :name "KS Lock"))))
-#<standard-unit-class ks-lock-mixin>
-> (define-ks-class ks-with-lock (ks ks-lock-mixin)
-    ())
-#<standard-unit-class ks-with-lock>
+  > (define-unit-class ks-lock-mixin ()
+      ((lock :initform (\entlink{make-lock} :name "KS Lock"))))
+  #<standard-unit-class ks-lock-mixin>
+  > (define-ks-class ks-with-lock (ks ks-lock-mixin)
+      ())
+  #<standard-unit-class ks-with-lock>
+  >
 \end{example}
 
 \end{functiondoc}
@@ -18480,21 +18643,23 @@ operations on each \glref{KSA} of that class.
 %
 \W\supp
 \begin{example}
-> (define-ksa-class ksa-with-lock ()
-    ((lock :initform (\entlink{make-lock} :name "KSA Lock"))))
-#<standard-ksa-class ksa-with-lock>
+  > (define-ksa-class ksa-with-lock ()
+      ((lock :initform (\entlink{make-lock} :name "KSA Lock"))))
+  #<standard-ksa-class ksa-with-lock>
+  >
 \end{example}
 %
 Do the same, but with a mixin class:
 %
 \W\supp\notpretop
 \begin{example}
-> (define-unit-class ksa-lock-mixin ()
-    ((lock :initform (\entlink{make-lock} :name "KSA Lock"))))
-#<standard-unit-class ksa-lock-mixin>
-> (define-ksa-class ksa-with-lock (ksa ksa-lock-mixin)
-    ())
-#<standard-ksa-class ksa-with-lock>
+  > (define-unit-class ksa-lock-mixin ()
+      ((lock :initform (\entlink{make-lock} :name "KSA Lock"))))
+  #<standard-unit-class ksa-lock-mixin>
+  > (define-ksa-class ksa-with-lock (ksa ksa-lock-mixin)
+      ())
+  #<standard-ksa-class ksa-with-lock>
+  >
 \end{example}
 
 \end{functiondoc}
@@ -18538,12 +18703,13 @@ The description is printed to the {\bf *standard-output*} stream.
 %
 \W\supp
 \begin{example}
-> (describe-ks 'start-control-shell-ks)
+  > (describe-ks 'start-control-shell-ks)
 
-KS: start-control-shell-ks
-  Trigger events:        ((start-control-shell-event))
-  Precondition function: #<Function scse-precondition>
-  Execution function:    #<Function scse-fn>
+  KS: start-control-shell-ks
+    Trigger events:        ((start-control-shell-event))
+    Precondition function: #<Function scse-precondition>
+    Execution function:    #<Function scse-fn>
+  >
 \end{example}
 
 \end{functiondoc}
@@ -18656,6 +18822,72 @@ started:
 
 %% ------------------------------------------------------------------------
 
+\begin{functiondoc}{Generic~Reader}{executed-ksas-of}{\var{control-shell\/} 
+    \returns{} \var{ksa-queue\/}}
+\index{executed KSAs, of a control shell}%
+\index{control shell!executed KSAs of}%
+
+\fnsyntax
+
+\fnpurpose Returns the executed \glref{KSAs} queue of \var{control-shell}.
+
+\fnmethods
+\fnalternate{executed-ksas-of}{\code{(}\var{control-shell\/} \code{control-shell)}
+  \returns{} \var{ksa-queue\/}}
+
+\fnpackage \code{:agenda-shell}
+
+\fnmodule \code{:agenda-shell}
+
+\fnargs
+\begin{args}{control-shell}
+\arg[control-shell] A \code{control-shell} object
+\arg[ksa-queue] A \textbf{\entlink{ksa-queue}} object
+\end{args}
+
+\fnreturns The executed \glref{KSAs} queue object.
+
+\fndescription 
+%
+This \glref{generic~function} accesses the \textbf{\entlink{ksa-queue}} stored
+in the \code{executed-ksas} link slot of \var{ksa}. This value is maintained
+by the Agenda Shell and should not be changed.
+
+\begin{alsos}{ordered-ksa-queue}
+\also[ksa]
+\also[ksa-queue]
+\also[make-queue]
+\also[obviated-ksas-of]
+\also[on-queue-p]
+\also[pending-ksas-of]
+\also[queue]
+\also[queue-element]
+\also[show-queue]
+\end{alsos}
+
+\fnexample
+%
+\bfindexit{current-control-shell}%
+\bfindexit{show-queue}%
+\bfindexit{find-instance-by-name}%
+%
+Show the control shell's pending \glref{KSAs} queue (early in a
+\code{:tutorial-example} run):
+%
+\W\supp
+\begin{example}
+  >  (\entlink{show-queue} (executed-ksas-of (\entlink{current-control-shell})))
+      0. #<ksa 2 startup-ks 100>
+      1. #<ksa 3 random-walk-ks 100>
+      2. #<ksa 5 random-walk-ks 100>
+      3. #<ksa 6 random-walk-ks 100>
+  >
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
 \begin{functiondoc}{Generic~Reader}{execution-cycle-of}{\var{ksa\/} 
     \returns{} \var{cycle-number\/}}
 \index{execution cycle, of a KSA}%
@@ -18696,8 +18928,9 @@ Return the execution cycle of \code{ksa}:
 %
 \W\supp
 \begin{example}
-> (execution-cycle-of ksa)
-1237
+  > (execution-cycle-of ksa)
+  1237
+  >
 \end{example}
 
 \end{functiondoc}
@@ -18730,6 +18963,7 @@ executing control shell.
 \begin{alsos}{control-shell-running-p}
 \also[abort-ks-execution]
 \also[control-shell-running-p]
+\also[current-control-shell]
 \also[restart-control-shell]
 \also[start-control-shell]
 \end{alsos}
@@ -18776,8 +19010,9 @@ or \nil, if none has been defined.
 %
 \W\supp
 \begin{example}
-> (find-ks-by-name 'start-control-shell-ks)
-#<ks start-control-shell-ks>
+  > (find-ks-by-name 'start-control-shell-ks)
+  #<ks start-control-shell-ks>
+  >
 \end{example}
 
 \end{functiondoc}
@@ -18853,8 +19088,9 @@ See if \glref{KS} \var{ks} is enabled for execution:
 %
 \W\supp
 \begin{example}
-> (ks-enabled-p ks)
-t
+  > (ks-enabled-p ks)
+  t
+  >
 \end{example}
 %
 Now disable \glref{KS} \code{ks}:
@@ -18868,8 +19104,9 @@ Check once again:
 %
 \W\supp\notpretop
 \begin{example}
-> (ks-enabled-p ks)
-nil
+  > (ks-enabled-p ks)
+  nil
+  >
 \end{example}
 
 \end{functiondoc}
@@ -18918,8 +19155,9 @@ Return the \glref{KS} of a \glref{KSA}:
 %
 \W\supp
 \begin{example}
-> (ks-of ksa)
-#<ks start-control-shell-ks>
+  > (ks-of ksa)
+  #<ks start-control-shell-ks>
+  >
 \end{example}
 
 \end{functiondoc}
@@ -18961,14 +19199,81 @@ The class \textbf{ksa} is the default \glref{class} of
 \fndescription The \glref{unit~class} whose \glref{instances} are used as
 the header of \glref{KSA} queues.
 
-\begin{alsos}{queue-element}
+\begin{alsos}{ordered-ksa-queue}
+\also[executed-ksas-of]
+\also[ksa]
 \also[make-queue]
+\also[obviated-ksas-of]
+\also[on-queue-p]
 \also[ordered-ksa-queue]
 \also[ordered-queue]
 \also[queue]
 \also[queue-element]
 \also[show-queue]
 \end{alsos}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Generic~Reader}{obviated-ksas-of}{\var{control-shell\/} 
+    \returns{} \var{ksa-queue\/}}
+\index{obviated KSAs, of a control shell}%
+\index{control shell!obviated KSAs of}%
+
+\fnsyntax
+
+\fnpurpose Returns the obviated \glref{KSAs} queue of \var{control-shell}.
+
+\fnmethods
+\fnalternate{obviated-ksas-of}{\code{(}\var{control-shell\/} \code{control-shell)}
+  \returns{} \var{ksa-queue\/}}
+
+\fnpackage \code{:agenda-shell}
+
+\fnmodule \code{:agenda-shell}
+
+\fnargs
+\begin{args}{control-shell}
+\arg[control-shell] A \code{control-shell} object
+\arg[ksa-queue] A \textbf{\entlink{ksa-queue}} object
+\end{args}
+
+\fnreturns The obviated \glref{KSAs} queue object.
+
+\fndescription 
+%
+This \glref{generic~function} accesses the \textbf{\entlink{ksa-queue}} stored
+in the \code{obviated-ksas} link slot of \var{ksa}. This value is maintained
+by the Agenda Shell and should not be changed.
+
+\begin{alsos}{ordered-ksa-queue}
+\also[executed-ksas-of]
+\also[ksa]
+\also[ksa-queue]
+\also[make-queue]
+\also[on-queue-p]
+\also[pending-ksas-of]
+\also[queue]
+\also[queue-element]
+\also[show-queue]
+\end{alsos}
+
+\fnexample
+%
+\bfindexit{current-control-shell}%
+\bfindexit{show-queue}%
+\bfindexit{find-instance-by-name}%
+%
+Show the control shell's obviated \glref{KSAs} queue (early in a
+\code{:tutorial-example} run):
+%
+\W\supp
+\begin{example}
+  >  (\entlink{show-queue} (obviated-ksas-of (\entlink{current-control-shell})))
+  The queue is empty.
+  >
+\end{example}
 
 \end{functiondoc}
 
@@ -19013,8 +19318,9 @@ Return the \glref{obviation} cycle of \code{ksa}:
 %
 \W\supp
 \begin{example}
-> (obviation-cycle-of ksa)
-1211
+  > (obviation-cycle-of ksa)
+  1211
+  >
 \end{example}
 
 \end{functiondoc}
@@ -19034,13 +19340,83 @@ Return the \glref{obviation} cycle of \code{ksa}:
 \fndescription The \glref{unit~class} whose \glref{instances} are used as
 the header of ordered (sorted) \glref{KSA} queues.
 
-\begin{alsos}{queue-element}
+\begin{alsos}{pending-ksas-of}
+\also[ksa]
 \also[ksa-queue]
 \also[make-queue]
+\also[on-queue-p]
+\also[ordered-queue]
+\also[pending-ksas-of]
 \also[queue]
 \also[queue-element]
 \also[show-queue]
 \end{alsos}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Generic~Reader}{pending-ksas-of}{\var{control-shell\/} 
+    \returns{} \var{ordered-ksa-queue\/}}
+\index{pending KSAs, of a control shell}%
+\index{control shell!pending KSAs of}%
+
+\fnsyntax
+
+\fnpurpose Returns the pending \glref{KSAs} queue of \var{control-shell}.
+
+\fnmethods
+\fnalternate{pending-ksas-of}{\code{(}\var{control-shell\/} \code{control-shell)}
+  \returns{} \var{ordered-ksa-queue\/}}
+
+\fnpackage \code{:agenda-shell}
+
+\fnmodule \code{:agenda-shell}
+
+\fnargs
+\begin{args}{control-shell}
+\arg[control-shell] A \code{control-shell} object
+\arg[ordered-ksa-queue] An \textbf{\entlink{ordered-ksa-queue}} object
+\end{args}
+
+\fnreturns The pending \glref{KSAs} queue object.
+
+\fndescription 
+%
+This \glref{generic~function} accesses the
+\textbf{\entlink{ordered-ksa-queue}} stored in the \code{pending-ksas} link
+slot of \var{ksa}. This value is maintained by the Agenda Shell and should not
+be changed.
+
+\begin{alsos}{ordered-ksa-queue}
+\also[executed-ksas-of]
+\also[ksa]
+\also[make-queue]
+\also[obviated-ksas-of]
+\also[on-queue-p]
+\also[ordered-ksa-queue]
+\also[ordered-queue]
+\also[queue-element]
+\also[show-queue]
+\end{alsos}
+
+\fnexample
+%
+\bfindexit{current-control-shell}%
+\bfindexit{show-queue}%
+\bfindexit{find-instance-by-name}%
+%
+Show the control shell's pending \glref{KSAs} queue (early in a
+\code{:tutorial-example} run):
+%
+\W\supp
+\begin{example}
+  >  (\entlink{show-queue} (pending-ksas-of (\entlink{current-control-shell})))
+      0. #<ksa 7 random-walk-ks 100>
+      1. #<ksa 1 count-center-locations-ks 90>
+      2. #<ksa 4 print-walk-ks 80>(show-queue pending-ksas :end 5)
+  >
+\end{example}
 
 \end{functiondoc}
 
@@ -19109,12 +19485,13 @@ Return the rating of a \glref{KSA}:
 %
 \W\supp
 \begin{example}
-> (rating-of ksa)
-58
-> (setf (rating-of ksa) 80)
-80
-> (rating-of ksa)
-80
+  > (rating-of ksa)
+  58
+  > (setf (rating-of ksa) 80)
+  80
+  > (rating-of ksa)
+  80
+  >
 \end{example}
 
 \fnnote 
@@ -19181,6 +19558,7 @@ A \code{restart-control-shell-event} is signaled.
 \begin{alsos}{control-shell-running-p}
 \also[abort-ks-execution]
 \also[control-shell-running-p]
+\also[current-control-shell]
 \also[exit-control-shell]
 \also[run-polling-functions]
 \also[start-control-shell]
@@ -19191,13 +19569,14 @@ Restart the Agenda Shell (in this case, without any \glref{KSs} defined):
 %
 \W\supp
 \begin{example}
-> (restart-control-shell)
-;; Control shell 1 restarting after cycle 2
-;; No executable KSAs remain, exiting control shell
-;; Control shell 1 exited: 4 cycles completed
-;; Run time: 0 seconds
-;; Elapsed time: 0 seconds
-:quiescence
+  > (restart-control-shell)
+  ;; Control shell 1 restarting after cycle 2
+  ;; No executable KSAs remain, exiting control shell
+  ;; Control shell 1 exited: 4 cycles completed
+  ;; Run time: 0 seconds
+  ;; Elapsed time: 0 seconds
+  :quiescence
+  >
 \end{example}
 
 \bfindexit{run-polling-functions}%
@@ -19247,8 +19626,9 @@ Return the (sole) trigger \glref{event} of a \glref{KSA}:
 %
 \W\supp
 \begin{example}
-> (sole-trigger-event-of ksa)
-#<create-instance-event hyp>
+  > (sole-trigger-event-of ksa)
+  #<create-instance-event hyp>
+  >
 \end{example}
 
 \end{functiondoc}
@@ -19312,8 +19692,9 @@ Return the (sole) trigger \glref{unit~instance} of a \glref{KSA}:
 %
 \W\supp
 \begin{example}
-> (sole-trigger-instance-of ksa)
-#<hyp 419 (1835 4791) 0.85 [5..35]>
+  > (sole-trigger-instance-of ksa)
+  #<hyp 419 (1835 4791) 0.85 [5..35]>
+  >
 \end{example}
 
 \end{functiondoc}
@@ -19401,6 +19782,7 @@ A \code{start-control-shell-event} is signaled.
 \threadsnotstarted
 
 \fndsyntax
+\W\\
 Available \var{initargs\/} are:
 \W\\~\\
 \begin{args}{minimum-ksa-execution-rating}
@@ -19527,9 +19909,9 @@ function of a \glref{KS}
 of a \glref{KS} 
 \end{keywords}
 
-
 \begin{alsos}{control-shell-running-p}
 \also[control-shell-running-p]
+\also[current-control-shell]
 \also[exit-control-shell]
 \also[run-polling-functions]
 \also[restart-control-shell]
@@ -19540,13 +19922,14 @@ Start the Agenda Shell (in this case, without any \glref{KSs} defined):
 %
 \W\supp
 \begin{example}
-> (start-control-shell)
-;; Control shell 1 started
-;; No executable KSAs remain, exiting control shell
-;; Control shell 1 exited: 2 cycles completed
-;; Run time: 0 seconds
-;; Elapsed time: 0 seconds
-:quiescence
+  > (start-control-shell)
+  ;; Control shell 1 started
+  ;; No executable KSAs remain, exiting control shell
+  ;; Control shell 1 exited: 2 cycles completed
+  ;; Run time: 0 seconds
+  ;; Elapsed time: 0 seconds
+  :quiescence
+  >
 \end{example}
 
 Start the Agenda Shell (again without any \glref{KSs} defined, but with
@@ -19554,33 +19937,34 @@ stepping enabled):
 %
 \W\supp
 \begin{example}
-> (start-control-shell :stepping 't)
-;; Control shell 1 started
->> CS Step (cycle 1):
-   About to signal quiescence... \entered{?}
-Stepping commands (follow with <Return>):
-   d       Disable this kind of stepping (:quiescence)
-   e       Enable another kind of stepping
-   f       Evaluate a form
-   h or ?  Help (this text)
-   q       Quit (disable all stepping and continue)
-   s       Show enabled stepping kinds
-   x       Exit control shell
-   =       Describe the object of interest (bound to ==)
-   +       Enable all stepping
-   -       Disable all stepping
-   <Space> Continue (resume processing)
->> CS Step (cycle 1):
-   About to signal quiescence... \entered{d}
-:quiescence stepping disabled
->> CS Step (cycle 1):
-   About to signal quiescence... \entered{q}
-All stepping disabled
-;; No executable KSAs remain, exiting control shell
-;; Control shell 1 exited: 2 cycles completed
-;; Run time: 0 seconds
-;; Elapsed time: 54 seconds
-:quiescence
+  > (start-control-shell :stepping 't)
+  ;; Control shell 1 started
+  >> CS Step (cycle 1):
+     About to signal quiescence... \entered{?}
+  Stepping commands (follow with <Return>):
+     d       Disable this kind of stepping (:quiescence)
+     e       Enable another kind of stepping
+     f       Evaluate a form
+     h or ?  Help (this text)
+     q       Quit (disable all stepping and continue)
+     s       Show enabled stepping kinds
+     x       Exit control shell
+     =       Describe the object of interest (bound to ==)
+     +       Enable all stepping
+     -       Disable all stepping
+     <Space> Continue (resume processing)
+  >> CS Step (cycle 1):
+     About to signal quiescence... \entered{d}
+  :quiescence stepping disabled
+  >> CS Step (cycle 1):
+     About to signal quiescence... \entered{q}
+  All stepping disabled
+  ;; No executable KSAs remain, exiting control shell
+  ;; Control shell 1 exited: 2 cycles completed
+  ;; Run time: 0 seconds
+  ;; Elapsed time: 54 seconds
+  :quiescence
+  >
 \end{example}
 
 \bfindexit{run-polling-functions}%
@@ -19630,8 +20014,9 @@ Return the events that triggered a \glref{KSA}:
 %
 \W\supp
 \begin{example}
-> (trigger-events-of ksa)
-(#<create-instance-event #<hyp 233 (1835 4791) 0.89 [5..35]>)
+  > (trigger-events-of ksa)
+  (#<create-instance-event #<hyp 233 (1835 4791) 0.89 [5..35]>)
+  >
 \end{example}
 
 \end{functiondoc}
@@ -19680,15 +20065,16 @@ equivalent:
 %
 \W\supp
 \begin{example}
-> (undefine-ks initial
-     :trigger-events '((start-control-shell-event)) 
-     :execution-function #'initial-ks-function)
-#<ks initial [Deleted]>\goodpagebreak
-> (undefine-ks initial)
-#<ks initial [Deleted]>\goodpagebreak
-> (\entlink{delete-instance} 
-     (\entlink{find-instance-by-name} 'initial '(ks :plus-subclasses)))
-#<ks initial [Deleted]>
+  > (undefine-ks initial
+       :trigger-events '((start-control-shell-event)) 
+       :execution-function #'initial-ks-function)
+  #<ks initial [Deleted]>\goodpagebreak
+  > (undefine-ks initial)
+  #<ks initial [Deleted]>\goodpagebreak
+  > (\entlink{delete-instance} 
+       (\entlink{find-instance-by-name} 'initial '(ks :plus-subclasses)))
+  #<ks initial [Deleted]>
+  >
 \end{example}
 
 \end{functiondoc}

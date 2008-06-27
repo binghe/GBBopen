@@ -156,35 +156,35 @@ The default <var>boolean-comparison-type</var> is <code>t</code>.
 <p><span class="fndoclabel">Examples</span> <br />Change the storage of <a href="ref-glossary.html#id195">space&nbsp;instance</a> <code>(bb hyp</code>) to the default
 unstructured storage for all <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a>:
 <pre class="pretop">
-&gt; (change-space-instance '(bb hyps) :storage nil)
-#&lt;standard-space-instance (bb hyps)&gt;
-&gt;
+  &gt; (change-space-instance '(bb hyps) :storage nil)
+  #&lt;standard-space-instance (bb hyps)&gt;
+  &gt;
 </pre>
 Now change it to store <code>hyp</code> <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a> with uniform-bucket
 storage for indexing in the <code>x</code> and <code>y</code> dimensions and hashed
 storage in the <code>classification</code> dimension:
 <pre>
-&gt; (change-space-instance-storage '(bb hyps)
-     :storage '(((hyp :plus-subclasses) (x y) 
-                  uniform-buckets :layout ((0 10000 100)
-                                           (0 10000 100)))
-                ((hyp :plus-subclasses) (classification) 
-                  hashed)))
-#&lt;standard-space-instance (bb hyps)&gt;
-&gt;
+  &gt; (change-space-instance-storage '(bb hyps)
+       :storage '(((hyp :plus-subclasses) (x y) 
+                    uniform-buckets :layout ((0 10000 100)
+                                             (0 10000 100)))
+                  ((hyp :plus-subclasses) (classification) 
+                    hashed)))
+  #&lt;standard-space-instance (bb hyps)&gt;
+  &gt;
 </pre>
 Now change it to store only <code>hyp</code> <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a> (no subclasses)
 with uniform-bucket storage for indexing in the <code>x</code> and <code>y</code>
 dimensions and hashed storage in the <code>classification</code> dimension:
 <pre>
-&gt; (change-space-instance-storage '(bb hyps)
-     :allowed-unit-classes 'hyp     
-     :storage '((hyp (x y) 
-                 uniform-buckets :layout ((0 10000 100)
-                                          (0 10000 100)))
-                (hyp (classification) hashed)))
-#&lt;standard-space-instance (bb hyps)&gt;
-&gt; 
+  &gt; (change-space-instance-storage '(bb hyps)
+       :allowed-unit-classes 'hyp     
+       :storage '((hyp (x y) 
+                   uniform-buckets :layout ((0 10000 100)
+                                            (0 10000 100)))
+                  (hyp (classification) hashed)))
+  #&lt;standard-space-instance (bb hyps)&gt;
+  &gt; 
 </pre>
 Any <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a> that are subclasses of <code>hyp</code> are removed from
 the <code>(bb hyps)</code> <a href="ref-glossary.html#id195">space&nbsp;instance</a> by the above change in allowed

@@ -257,13 +257,14 @@ and <code>=&#36;&#36;&#36;</code> and <code>within&#38;</code>, <code>within&#36
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-declared-numerics.html">Declared numerics</a>
 </p>
 <p><span class="fndoclabel">Examples</span> <br /><pre class="pretop">
-&gt; (filter-instances (supporting-hyps-of hyp) '(&gt; belief .8))
-(#&lt;hyp 183 (1835 4791) 0.82 [0..35]&gt;
- #&lt;hyp 233 (1835 4791) 0.89 [5..35]&gt;
- #&lt;hyp 419 (1835 4791) 0.85 [5..35]&gt;)
-&gt; (filter-instances (supporting-hyps-of hyp) `(within belief (.85 ,infinity)))
-(#&lt;hyp 233 (1835 4791) 0.89 [5..35]&gt;
- #&lt;hyp 419 (1835 4791) 0.85 [5..35]&gt;)
+  &gt; (filter-instances (supporting-hyps-of hyp) '(&gt; belief .8))
+  (#&lt;hyp 183 (1835 4791) 0.82 [0..35]&gt;
+   #&lt;hyp 233 (1835 4791) 0.89 [5..35]&gt;
+   #&lt;hyp 419 (1835 4791) 0.85 [5..35]&gt;)
+  &gt; (filter-instances (supporting-hyps-of hyp) `(within belief (.85 ,infinity)))
+  (#&lt;hyp 233 (1835 4791) 0.89 [5..35]&gt;
+   #&lt;hyp 419 (1835 4791) 0.85 [5..35]&gt;)
+  &gt;
 </pre>
 </p>
 <hr /><address><a target="_top" class="address"

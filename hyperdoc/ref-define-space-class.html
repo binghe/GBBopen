@@ -346,12 +346,13 @@ operations on each <a href="ref-glossary.html#id195">space&nbsp;instance</a> of 
 one <a href="ref-glossary.html#gl:instances">instance</a> of the <code>space-instance-with-lock</code>
 <a href="ref-glossary.html#id193">space&nbsp;class</a>.
 <pre class="pretop">
-&gt; (define-space-class space-with-lock ()
-    ((lock :initform (<a href="ref-make-lock.html">make-lock</a> :name "Space-Instance Lock"))))
-#&lt;standard-space-class space-with-lock&gt;
-&gt; (<a href="ref-make-space-instance.html">make-space-instance</a> '(bb hyps) 
-    :class 'space-with-lock)
-#&lt;space-with-lock (bb hyps)&gt;
+  &gt; (define-space-class space-with-lock ()
+      ((lock :initform (<a href="ref-make-lock.html">make-lock</a> :name "Space-Instance Lock"))))
+  #&lt;standard-space-class space-with-lock&gt;
+  &gt; (<a href="ref-make-space-instance.html">make-space-instance</a> '(bb hyps) 
+      :class 'space-with-lock)
+  #&lt;space-with-lock (bb hyps)&gt;
+  &gt;
 </pre>
 </p>
 <hr /><address><a target="_top" class="address"

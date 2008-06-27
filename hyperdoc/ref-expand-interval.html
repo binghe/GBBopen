@@ -55,14 +55,15 @@ center point of the original <var>interval</var>.
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-shift-interval.html"><b>shift-interval</b></a>
 </p>
 <p><span class="fndoclabel">Examples</span> <br /><pre class="pretop">
-&gt; (expand-interval '(2 5) 2)
-(0 7)
-&gt; (expand-interval '(2 . 5) -1)
-(3 . 4)
-&gt; (expand-interval #(2 5) .5)
-#(1.5 5.5)
-&gt; (expand-interval '(2 . 5) -3)
-(3.5 . 3.5)
+  &gt; (expand-interval '(2 5) 2)
+  (0 7)
+  &gt; (expand-interval '(2 . 5) -1)
+  (3 . 4)
+  &gt; (expand-interval #(2 5) .5)
+  #(1.5 5.5)
+  &gt; (expand-interval '(2 . 5) -3)
+  (3.5 . 3.5)
+  &gt;
 </pre>
 </p>
 <hr /><address><a target="_top" class="address"

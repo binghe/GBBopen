@@ -44,10 +44,11 @@
 </p>
 <p><span class="fndoclabel">Example</span> <br /><a name="id1">Return</a> the child space instances  of the <code>(bb)</code> <a href="ref-glossary.html#id195">space&nbsp;instance</a>:
 <pre class="pretop">
-&gt; (children-of (<a href="ref-find-space-instance-by-path.html">find-space-instance-by-path</a> '(bb))
-(#&lt;standard-space-instance (bb hyps)&gt;
- #&lt;standard-space-instance (bb probable-hyps)&gt;
- #&lt;standard-space-instance (bb rejected-hyps)&gt;)
+  &gt; (children-of (<a href="ref-find-space-instance-by-path.html">find-space-instance-by-path</a> '(bb))
+  (#&lt;standard-space-instance (bb hyps)&gt;
+   #&lt;standard-space-instance (bb probable-hyps)&gt;
+   #&lt;standard-space-instance (bb rejected-hyps)&gt;)
+  &gt;
 </pre>
 </p>
 <p><span class="fndoclabel">Note</span> <br />The returned list of child <a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a> should not be

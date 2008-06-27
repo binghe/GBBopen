@@ -34,13 +34,13 @@ an interval is contracted into a non-integral point range by
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-nexpand-interval.html"><b>nexpand-interval</b></a>
 </p>
 <p><span class="fndoclabel">Examples</span> <br /><a name="id1"></a><pre class="pretop">
-&gt; (let ((*coerce-contracted-interval-rationals-to-floats* 't))
-     (expand-interval '(2 . 5) -3))
-(3.5 . 3.5)
-&gt; (let ((*coerce-contracted-interval-rationals-to-floats* nil))
-     (expand-interval '(2 . 5) -3))
-(7/2 . 7/2)
-&gt;
+  &gt; (let ((*coerce-contracted-interval-rationals-to-floats* 't))
+       (expand-interval '(2 . 5) -3))
+  (3.5 . 3.5)
+  &gt; (let ((*coerce-contracted-interval-rationals-to-floats* nil))
+       (expand-interval '(2 . 5) -3))
+  (7/2 . 7/2)
+  &gt;
 </pre>
 </p>
 <hr /><address><a target="_top" class="address"

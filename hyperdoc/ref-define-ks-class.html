@@ -342,18 +342,20 @@ value.
 containing a <a href="ref-glossary.html#gl:lock">lock</a> that can be used to synchronize
 operations on each defined <a href="ref-glossary.html#gl:KSs">KS</a> of that class.
 <pre class="pretop">
-&gt; (define-ks-class ks-with-lock ()
-    ((lock :initform (<a href="ref-make-lock.html">make-lock</a> :name "KS Lock"))))
-#&lt;standard-unit-class ks-with-lock&gt;
+  &gt; (define-ks-class ks-with-lock ()
+      ((lock :initform (<a href="ref-make-lock.html">make-lock</a> :name "KS Lock"))))
+  #&lt;standard-unit-class ks-with-lock&gt;
+  &gt;
 </pre>
 Do the same, but with a mixin class:
 <pre>
-&gt; (define-unit-class ks-lock-mixin ()
-    ((lock :initform (<a href="ref-make-lock.html">make-lock</a> :name "KS Lock"))))
-#&lt;standard-unit-class ks-lock-mixin&gt;
-&gt; (define-ks-class ks-with-lock (ks ks-lock-mixin)
-    ())
-#&lt;standard-unit-class ks-with-lock&gt;
+  &gt; (define-unit-class ks-lock-mixin ()
+      ((lock :initform (<a href="ref-make-lock.html">make-lock</a> :name "KS Lock"))))
+  #&lt;standard-unit-class ks-lock-mixin&gt;
+  &gt; (define-ks-class ks-with-lock (ks ks-lock-mixin)
+      ())
+  #&lt;standard-unit-class ks-with-lock&gt;
+  &gt;
 </pre>
 </p>
 <hr /><address><a target="_top" class="address"

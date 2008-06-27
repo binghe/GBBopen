@@ -58,16 +58,20 @@ potentially changed by <var>forms</var>.
 <p><span class="fndoclabel">Examples</span> <br />Notify GBBopen that the <code>x</code>, <code>y</code>, and <code>belief</code>
 dimension values of <code>hyp</code> might be changed:
 <pre class="pretop">
-&gt; (with-changing-dimension-values (hyp x y belief)
-    (setf (location-of hyp) '(30 40))
-    (setf (belief-of hyp) 0.78))
+  &gt; (with-changing-dimension-values (hyp x y belief)
+      (setf (location-of hyp) '(30 40))
+      (setf (belief-of hyp) 0.78))
+  0.78
+  &gt;
 </pre>
 Notify GBBopen that <i>some</i> dimension values of <code>hyp</code> might be
 changed:
 <pre>
-&gt; (with-changing-dimension-values (hyp)
-    (setf (location-of hyp) '(36 52))
-    (incf (belief-of hyp) 0.05))
+  &gt; (with-changing-dimension-values (hyp)
+      (setf (location-of hyp) '(36 52))
+      (incf (belief-of hyp) 0.05))
+  0.83
+  &gt;
 </pre>
 </p>
 <hr /><address><a target="_top" class="address"
