@@ -50,16 +50,17 @@ with <var>var</var> bound to the element.
 <var>sequence-form</var>, but it does include the <var>result-form</var>.
 </p>
 <p><span class="fndoclabel">Examples</span> <br /><pre class="pretop">
-&gt; (dosequence (elt #(1 2 3)) (print elt))
-1 
-2 
-3 
-nil
-&gt; (dosequence (char "abc") (print char))
-#<i>\</i>a 
-#<i>\</i>b 
-#<i>\</i>c
-nil
+  &gt; (dosequence (elt #(1 2 3)) (print elt))
+  1 
+  2 
+  3 
+  nil
+  &gt; (dosequence (char "abc") (print char))
+  #<i>\</i>a 
+  #<i>\</i>b 
+  #<i>\</i>c
+  nil
+  &gt;
 </pre>
 </p>
 <hr /><address><a target="_top" class="address"

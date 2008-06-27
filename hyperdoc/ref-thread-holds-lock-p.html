@@ -42,19 +42,21 @@
 </p>
 <a name="id1"></a><p><span class="fndoclabel">Examples</span> <br />Two simple examples using a <a href="ref-glossary.html#gl:lock">lock</a>:
 <pre class="pretop">
-&gt; (thread-holds-lock-p lock)
-nil
-&gt; (<a href="ref-with-lock-held.html">with-lock-held</a> (lock)
-    (thread-holds-lock-p lock))
-t
+  &gt; (thread-holds-lock-p lock)
+  nil
+  &gt; (<a href="ref-with-lock-held.html">with-lock-held</a> (lock)
+      (thread-holds-lock-p lock))
+  t
+  &gt;
 </pre>
 Two more simple examples using a <a href="ref-glossary.html#id25">condition&nbsp;variable</a>:
 <pre>
-&gt; (thread-holds-lock-p condition-variable)
-nil
-&gt; (<a href="ref-with-lock-held.html">with-lock-held</a> (condition-variable)
-    (thread-holds-lock-p condition-variable))
-t
+  &gt; (thread-holds-lock-p condition-variable)
+  nil
+  &gt; (<a href="ref-with-lock-held.html">with-lock-held</a> (condition-variable)
+      (thread-holds-lock-p condition-variable))
+  t
+  &gt;
 </pre>
 </p>
 <hr /><address><a target="_top" class="address"

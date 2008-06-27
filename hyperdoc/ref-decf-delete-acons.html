@@ -53,14 +53,15 @@ stored in <var>place</var>.
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-pushnew-incf-acons.html"><b>pushnew/incf-acons</b></a>
 </p>
 <p><span class="fndoclabel">Examples</span> <br /><pre class="pretop">
-&gt; (setf alist '((x . 2)(y . 2))
-((x . 2)(y . 2))
-&gt; (decf/delete-acons 'x 1 alist)
-((x . 1)(y . 2))
-&gt; (decf/delete-acons 'x 1 alist)
-((y . 2))
-&gt; (decf/delete-acons 'y 2 alist)
-nil
+  &gt; (setf alist '((x . 2)(y . 2))
+  ((x . 2)(y . 2))
+  &gt; (decf/delete-acons 'x 1 alist)
+  ((x . 1)(y . 2))
+  &gt; (decf/delete-acons 'x 1 alist)
+  ((y . 2))
+  &gt; (decf/delete-acons 'y 2 alist)
+  nil
+  &gt;
 </pre>
 </p>
 <p><span class="fndoclabel">Note</span> <br /><a name="id1"></a><a href="ref-declared-numerics.html">Declared numeric</a> versions of

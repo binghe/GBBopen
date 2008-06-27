@@ -48,16 +48,18 @@
 <p><span class="fndoclabel">Examples</span> <br />Return the local hostname and port of an open socket-stream
 connection to the <code>wiki.alu.org</code> web server:
 <pre class="pretop">
-&gt; (local-hostname-and-port connection)
-"192.168.240.104 (ruby.gbbopen.org)"
-56833
+  &gt; (local-hostname-and-port connection)
+  "192.168.240.104 (ruby.gbbopen.org)"
+  56833
+  &gt;
 </pre>
 Return the local hostname and port of the open socket-stream
 connection, but without hostname resolution:
 <pre>
-&gt; (local-hostname-and-port connection 't)
-"192.168.240.104"
-56833
+  &gt; (local-hostname-and-port connection 't)
+  "192.168.240.104"
+  56833
+  &gt;
 </pre>
 </p>
 <hr /><address><a target="_top" class="address"

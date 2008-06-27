@@ -63,10 +63,11 @@ executed on a form.
 </p>
 <p><span class="fndoclabel">Example</span> <br /><a name="id1">Here</a> is the compiler macro defined for <b><a href="ref-ensure-list.html">ensure-list</a></b>:
 <pre class="pretop">
-&gt; (defcm ensure-list (x)
-    (<a href="ref-with-once-only-bindings.html">with-once-only-bindings</a> (x)
-      `(if (listp ,x) ,x (list ,x))))
-ensure-list
+  &gt; (defcm ensure-list (x)
+      (<a href="ref-with-once-only-bindings.html">with-once-only-bindings</a> (x)
+        `(if (listp ,x) ,x (list ,x))))
+  ensure-list
+  &gt;
 </pre>
 </p>
 <hr /><address><a target="_top" class="address"

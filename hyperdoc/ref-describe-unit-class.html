@@ -72,107 +72,108 @@
 <p><span class="fndoclabel">Description</span> <br /><a name="id3">The</a> description is printed to the <b>*standard-output*</b> stream.
 </p>
 <p><span class="fndoclabel">Example</span> <br /><pre class="pretop">
-&gt; (describe-unit-class 'hyp)
-Standard-unit-class #&lt;standard-unit-class hyp&gt;
-  Direct superclasses:
-    standard-unit-instance (abstract)
-  Direct subclasses: None
-  Direct nonlink slots:
-    belief
-      :allocation :instance
-      :initargs (:belief)
-      :initform 0.0
-      :readers (belief-of)
-      :writers ((setf belief-of))
-    classification
-      :allocation :instance
-      :initargs (:classification)
-      :initform '(:car :truck :bus :motorcycle :train :duck-boat :lawn-mower
-                  :anything)
-      :readers (classification-of)
-      :writers ((setf classification-of))
-    color
-      :allocation :instance
-      :initargs (:color)
-      :readers (color-of)
-      :writers ((setf color-of))
-    location
-      :allocation :instance
-      :initargs (:location)
-      :initform nil
-      :readers (location-of)
-      :writers ((setf location-of))
-    velocity-range
-      :allocation :instance
-      :initargs (:velocity-range)
-      :readers (velocity-range-of)
-      :writers ((setf velocity-range-of))
-  Direct link slots:
-    supported-hyps
-      :allocation :instance
-      :initargs (:supported-hyps)
-      :initform nil
-      :readers (supported-hyps-of)
-      :writers ((setf supported-hyps-of))
-      :link (hyp supporting-hyps)
-    supporting-hyps
-      :allocation :instance
-      :initargs (:supporting-hyps)
-      :initform nil
-      :readers (supporting-hyps-of)
-      :writers ((setf supporting-hyps-of))
-      :link (hyp supported-hyps)
-  Effective nonlink slots:
-    belief
-      :allocation :instance
-      :initargs (:belief)
-      :initform 0.0
-    classification
-      :allocation :instance
-      :initargs (:classification)
-      :initform '(:car :truck :bus :motorcycle :train :duck-boat :lawn-mower
-                  :anything)
-    color
-      :allocation :instance
-      :initargs (:color)
-    instance-name
-      :allocation :instance
-      :initargs (:instance-name)
-    location
-      :allocation :instance
-      :initargs (:location)
-      :initform nil
-    velocity-range
-      :allocation :instance
-      :initargs (:velocity-range)
-  Effective link slots:
-    supported-hyps
-      :allocation :instance
-      :initargs (:supported-hyps)
-      :initform nil
-    supporting-hyps
-      :allocation :instance
-      :initargs (:supporting-hyps)
-      :initform nil
-  Dimensional values:
-    belief (:point number)
-    classification (:element eq) :set
-    color (:element eq)
-    velocity-range (:interval number)
-    x (:point fixnum)
-    y (:point fixnum)
-  Effective dimensional values:
-    belief (:point number)
-    classification (:element eq) :set
-    color (:element eq)
-    velocity-range (:interval number)
-    x (:point fixnum)
-    y (:point fixnum)
-  Initial space instances:
-    (bb hyps)
-  Effective initial space instances:
-    (bb hyps)
-  Retain: nil
+  &gt; (describe-unit-class 'hyp)
+  Standard-unit-class #&lt;standard-unit-class hyp&gt;
+    Direct superclasses:
+      standard-unit-instance (abstract)
+    Direct subclasses: None
+    Direct nonlink slots:
+      belief
+        :allocation :instance
+        :initargs (:belief)
+        :initform 0.0
+        :readers (belief-of)
+        :writers ((setf belief-of))
+      classification
+        :allocation :instance
+        :initargs (:classification)
+        :initform '(:car :truck :bus :motorcycle :train :duck-boat :lawn-mower
+                    :anything)
+        :readers (classification-of)
+       :writers ((setf classification-of))
+      color
+        :allocation :instance
+        :initargs (:color)
+        :readers (color-of)
+        :writers ((setf color-of))
+      location
+        :allocation :instance
+        :initargs (:location)
+        :initform nil
+        :readers (location-of)
+        :writers ((setf location-of))
+      velocity-range
+        :allocation :instance
+        :initargs (:velocity-range)
+        :readers (velocity-range-of)
+        :writers ((setf velocity-range-of))
+    Direct link slots:
+      supported-hyps
+        :allocation :instance
+        :initargs (:supported-hyps)
+        :initform nil
+        :readers (supported-hyps-of)
+        :writers ((setf supported-hyps-of))
+        :link (hyp supporting-hyps)
+      supporting-hyps
+        :allocation :instance
+        :initargs (:supporting-hyps)
+        :initform nil
+        :readers (supporting-hyps-of)
+        :writers ((setf supporting-hyps-of))
+        :link (hyp supported-hyps)
+    Effective nonlink slots:
+      belief
+        :allocation :instance
+        :initargs (:belief)
+        :initform 0.0
+      classification
+        :allocation :instance
+        :initargs (:classification)
+        :initform '(:car :truck :bus :motorcycle :train :duck-boat :lawn-mower
+                    :anything)
+      color
+        :allocation :instance
+        :initargs (:color)
+      instance-name
+        :allocation :instance
+        :initargs (:instance-name)
+      location
+        :allocation :instance
+        :initargs (:location)
+        :initform nil
+      velocity-range
+        :allocation :instance
+        :initargs (:velocity-range)
+    Effective link slots:
+      supported-hyps
+        :allocation :instance
+        :initargs (:supported-hyps)
+        :initform nil
+      supporting-hyps
+        :allocation :instance
+        :initargs (:supporting-hyps)
+        :initform nil
+    Dimensional values:
+      belief (:point number)
+      classification (:element eq) :set
+      color (:element eq)
+      velocity-range (:interval number)
+      x (:point fixnum)
+      y (:point fixnum)
+    Effective dimensional values:
+      belief (:point number)
+      classification (:element eq) :set
+      color (:element eq)
+      velocity-range (:interval number)
+      x (:point fixnum)
+      y (:point fixnum)
+    Initial space instances:
+      (bb hyps)
+    Effective initial space instances:
+      (bb hyps)
+    Retain: nil
+  &gt;
 </pre>
 </p>
 <hr /><address><a target="_top" class="address"

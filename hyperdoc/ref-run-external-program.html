@@ -64,10 +64,11 @@ string.
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-close-external-program-stream.html"><b>close-external-program-stream</b></a>
 </p>
 <a name="id1"></a><p><span class="fndoclabel">Example</span> <br /><pre class="pretop">
-&gt; (let ((stream (run-external-program "date" nil)))
-     (print (read-line stream))
-     (<a href="ref-close-external-program-stream.html">close-external-program-stream</a> stream))
-"Mon Jul  4 14:06:04 EDT 2005" 
+  &gt; (let ((stream (run-external-program "date" nil)))
+       (print (read-line stream))
+       (<a href="ref-close-external-program-stream.html">close-external-program-stream</a> stream))
+  "Mon Jul  4 14:06:04 EDT 2005" 
+  &gt;
 </pre>
 </p>
 <hr /><address><a target="_top" class="address"

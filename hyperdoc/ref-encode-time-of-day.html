@@ -45,23 +45,25 @@ the <var>universal-time</var> value), the next day is assumed.
 <a name="id1"></a><p><span class="fndoclabel">Examples</span> <br />Schedule a <a href="ref-glossary.html#id179">scheduled&nbsp;function</a> that prints <code>"It's quitting time!"</code> 
 every day at 5pm:
 <pre class="pretop">
-&gt; (<a href="ref-schedule-function.html">schedule-function</a>
-    (<a href="ref-make-scheduled-function.html">make-scheduled-function</a>
-      #'(lambda (scheduled-function)
-          (declare (ignore scheduled-function))
-          (print "It's quitting time!"))
-      :name 'quitting-time)
-     (encode-time-of-day 17 0 0) :repeat-interval #.(* 24 60 60))
+  &gt; (<a href="ref-schedule-function.html">schedule-function</a>
+      (<a href="ref-make-scheduled-function.html">make-scheduled-function</a>
+        #'(lambda (scheduled-function)
+            (declare (ignore scheduled-function))
+            (print "It's quitting time!"))
+        :name 'quitting-time)
+       (encode-time-of-day 17 0 0) :repeat-interval #.(* 24 60 60))
+  &gt;
 </pre>
 </p>
 <p><a name="id2">Verbosely</a> change <code>quitting-time</code> to 5:30pm every day:
 <pre class="pretop">
-&gt; (<a href="ref-schedule-function.html">schedule-function</a> 'quitting-time (encode-time-of-day 17 30 0)
-    :repeat-interval #.(* 24 60 60)
-    :verbose 't)
-;; Unscheduling #&lt;scheduled-function quitting-time [17:00:00]&gt;...
-;; Scheduling #&lt;scheduled-function quitting-time [17:30:00]&gt; 
-   as the next scheduled-function...
+  &gt; (<a href="ref-schedule-function.html">schedule-function</a> 'quitting-time (encode-time-of-day 17 30 0)
+      :repeat-interval #.(* 24 60 60)
+      :verbose 't)
+  ;; Unscheduling #&lt;scheduled-function quitting-time [17:00:00]&gt;...
+  ;; Scheduling #&lt;scheduled-function quitting-time [17:30:00]&gt; 
+  ;; as the next scheduled-function...
+  &gt;
 </pre>
 </p>
 <hr /><address><a target="_top" class="address"

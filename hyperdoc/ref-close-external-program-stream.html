@@ -33,10 +33,11 @@
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-run-external-program.html"><b>run-external-program</b></a>
 </p>
 <a name="id2"></a><p><span class="fndoclabel">Example</span> <br /><pre class="pretop">
-&gt; (let ((stream (<a href="ref-run-external-program.html">run-external-program</a> "date" nil)))
-     (print (read-line stream))
-     (close-external-program-stream stream))
-"Mon Jul  4 14:06:04 EDT 2005" 
+  &gt; (let ((stream (<a href="ref-run-external-program.html">run-external-program</a> "date" nil)))
+       (print (read-line stream))
+       (close-external-program-stream stream))
+  "Mon Jul  4 14:06:04 EDT 2005" 
+  &gt;
 </pre>
 </p>
 <hr /><address><a target="_top" class="address"

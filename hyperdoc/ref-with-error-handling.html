@@ -70,67 +70,67 @@ in the REPL) as <code>error</code> conditions.  Interrupt signals are excluded b
 default on Allegro CL.
 </p>
 <a name="id1"></a><p><span class="fndoclabel">Examples</span> <br /><pre class="pretop">
-&gt; (with-error-handling (values 1 2 3) ':error-occurred)
-1
-2
-3
-&gt; (with-error-handling (values 1 2 (error "Bad")) ':error-occurred)
-:error-occurred
-&gt; (with-error-handling (values 1 2 (/ 10 0)) (<a href="ref-printv.html">printv</a> (error-message)) nil)
-;;  (error-message) =&gt; "Attempt to divide 10 by zero."
-nil
-&gt; (defparameter *x* 0)
-*x*
-&gt; (with-error-handling 
-      ((let ((*x* 1))
-         (error "A silly error has occurred."))
-       (<a href="ref-printv.html">printv</a> "Handler form" (error-message) *x*)
-       (values :c :b :a))
-    (<a href="ref-printv.html">printv</a> "Error form" (error-message) *x*)
-    (values :a :b :c))
-;; Handler form
-;;  (error-message) =&gt; "A silly error has occurred."
-;;  *x* =&gt; 1
-;; Error form
-;;  (error-message) =&gt; "A silly error has occurred."
-;;  *x* =&gt; 0
-:a
-:b
-:c
-&gt; (with-error-handling 
-      ((let ((*x* 1))
-         (error "A silly error has occurred."))
-       (<a href="ref-printv.html">printv</a> "Handler form" (error-message) *x*)
-       (values :c :b :a)))          ; No error forms
-;; Handler form
-;;  (error-message) =&gt; "A silly error has occurred."
-;;  *x* =&gt; 1
-:c
-:b
-:a
-&gt; (with-error-handling 
-      ;; No handler-forms:
-      ((let ((*x* 1))
-         (error "A silly error has occurred.")))
-    (<a href="ref-printv.html">printv</a> "Error form" (error-message) *x*)
-    (values :a :b :c))
-;; Error form
-;;  (error-message) =&gt; "A silly error has occurred."
-;;  *x* =&gt; 0
-:a
-:b
-:c
-&gt; (with-error-handling (warn "Not too bad") ':error-occurred)
-; Warning: Not too bad
-nil
-&gt; (with-error-handling ((warn "Not too bad")
-                        (:conditions (or (and error
-                                              #+allegro
-                                              (not interrupt-signal))
-                                         warning))) 
-    :error-occurred)
-:error-occurred
-&gt;
+  &gt; (with-error-handling (values 1 2 3) ':error-occurred)
+  1
+  2
+  3
+  &gt; (with-error-handling (values 1 2 (error "Bad")) ':error-occurred)
+  :error-occurred
+  &gt; (with-error-handling (values 1 2 (/ 10 0)) (<a href="ref-printv.html">printv</a> (error-message)) nil)
+  ;;  (error-message) =&gt; "Attempt to divide 10 by zero."
+  nil
+  &gt; (defparameter *x* 0)
+  *x*
+  &gt; (with-error-handling 
+        ((let ((*x* 1))
+           (error "A silly error has occurred."))
+         (<a href="ref-printv.html">printv</a> "Handler form" (error-message) *x*)
+         (values :c :b :a))
+      (<a href="ref-printv.html">printv</a> "Error form" (error-message) *x*)
+      (values :a :b :c))
+  ;; Handler form
+  ;;  (error-message) =&gt; "A silly error has occurred."
+  ;;  *x* =&gt; 1
+  ;; Error form
+  ;;  (error-message) =&gt; "A silly error has occurred."
+  ;;  *x* =&gt; 0
+  :a
+  :b
+  :c
+  &gt; (with-error-handling 
+        ((let ((*x* 1))
+           (error "A silly error has occurred."))
+         (<a href="ref-printv.html">printv</a> "Handler form" (error-message) *x*)
+         (values :c :b :a)))          ; No error forms
+  ;; Handler form
+  ;;  (error-message) =&gt; "A silly error has occurred."
+  ;;  *x* =&gt; 1
+  :c
+  :b
+  :a
+  &gt; (with-error-handling 
+        ;; No handler-forms:
+        ((let ((*x* 1))
+           (error "A silly error has occurred.")))
+      (<a href="ref-printv.html">printv</a> "Error form" (error-message) *x*)
+      (values :a :b :c))
+  ;; Error form
+  ;;  (error-message) =&gt; "A silly error has occurred."
+  ;;  *x* =&gt; 0
+  :a
+  :b
+  :c
+  &gt; (with-error-handling (warn "Not too bad") ':error-occurred)
+  ;; Warning: Not too bad
+  nil
+  &gt; (with-error-handling ((warn "Not too bad")
+                          (:conditions (or (and error
+                                                #+allegro
+                                                (not interrupt-signal))
+                                           warning))) 
+      :error-occurred)
+  :error-occurred
+  &gt;
 </pre>
 </p>
 <hr /><address><a target="_top" class="address"

@@ -46,17 +46,17 @@
 </p>
 <p><span class="fndoclabel">Example</span> <br /><a name="id1">After</a> creating an undesired method, use <b>undefmethod</b> to remove it:
 <pre class="pretop">
-&gt; (defmethod instance-name-of :before ((instance standard-unit-instance))
-     (print "Opps"))
-#&lt;standard-method instance-name-of :before (standard-unit-instance)&gt;
-&gt; (<a href="ref-instance-name-of.html">instance-name-of</a> (<a href="ref-find-instance-by-name.html">find-instance-by-name</a> 112 'hyp))
-"Opps" 
-112
-&gt; (undefmethod instance-name-of :before ((instance standard-unit-instance))
-     (print "Opps"))
-#&lt;standard-generic-function instance-name-of&gt;
-&gt; (<a href="ref-instance-name-of.html">instance-name-of</a> (<a href="ref-find-instance-by-name.html">find-instance-by-name</a> 112 'hyp))
-112
+  &gt; (defmethod instance-name-of :before ((instance standard-unit-instance))
+       (print "Oops"))
+  #&lt;standard-method instance-name-of :before (standard-unit-instance)&gt;
+  &gt; (<a href="ref-instance-name-of.html">instance-name-of</a> (<a href="ref-find-instance-by-name.html">find-instance-by-name</a> 112 'hyp))
+  "Oops" 
+  112
+  &gt; (undefmethod instance-name-of :before ((instance standard-unit-instance)))
+  #&lt;standard-generic-function instance-name-of&gt;
+  &gt; (<a href="ref-instance-name-of.html">instance-name-of</a> (<a href="ref-find-instance-by-name.html">find-instance-by-name</a> 112 'hyp))
+  112
+  &gt;
 </pre>
 </p>
 <p><span class="fndoclabel">Note</span> <br />This macro may not be able to locate and undefine some methods with

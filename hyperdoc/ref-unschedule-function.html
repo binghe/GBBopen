@@ -54,23 +54,26 @@ removed from the list of currently scheduled <a href="ref-glossary.html#gl:sched
 </p>
 <p><span class="fndoclabel">Examples</span> <br />Unschedule the <code>quitting-time</code> <a href="ref-glossary.html#id179">scheduled&nbsp;function</a>:
 <pre class="pretop">
-&gt; (unschedule-function 'quitting-time)
-#&lt;scheduled-function quitting-time [unscheduled]&gt;
+  &gt; (unschedule-function 'quitting-time)
+  #&lt;scheduled-function quitting-time [unscheduled]&gt;
+  &gt;
 </pre>
 <a name="id1">Unschedule</a> all currently scheduled <a href="ref-glossary.html#gl:scheduled-function">scheduled&nbsp;functions</a>:
 <pre>
-&gt; (<a href="ref-all-scheduled-functions.html">all-scheduled-functions</a>)
-(#&lt;scheduled-function nil [Jan 1, 2010 00:00:00]&gt;)
-&gt; (mapc #'unschedule-function (<a href="ref-all-scheduled-functions.html">all-scheduled-functions</a>))
-(#&lt;scheduled-function nil [unscheduled]&gt;)
-&gt; (<a href="ref-all-scheduled-functions.html">all-scheduled-functions</a>)
-nil
+  &gt; (<a href="ref-all-scheduled-functions.html">all-scheduled-functions</a>)
+  (#&lt;scheduled-function nil [Jan 1, 2010 00:00:00]&gt;)
+  &gt; (mapc #'unschedule-function (<a href="ref-all-scheduled-functions.html">all-scheduled-functions</a>))
+  (#&lt;scheduled-function nil [unscheduled]&gt;)
+  &gt; (<a href="ref-all-scheduled-functions.html">all-scheduled-functions</a>)
+  nil
+  &gt;
 </pre>
 Unschedule a non-existent <a href="ref-glossary.html#id179">scheduled&nbsp;function</a>:
 <pre>
-&gt;(unschedule-function 'non-existent)
-Warning: Scheduled-function non-existent was not scheduled; no action taken.
-nil
+  &gt; (unschedule-function 'non-existent)
+  ;; Warning: Scheduled-function non-existent was not scheduled; no action taken.
+  nil
+  &gt;
 </pre>
 </p>
 <hr /><address><a target="_top" class="address"

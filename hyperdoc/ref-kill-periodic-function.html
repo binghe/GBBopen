@@ -40,16 +40,17 @@ Common Lisp implementation.
 to signal a <code>half-second-interrupt-event</code>, continuing as long as the
 control shell is running:
 <pre class="pretop">
-&gt; (<a href="ref-define-event-class.html">define-event-class</a> half-second-timer-event (timer-interrupt-event)
-    ())
-half-second-timer-event
-&gt; (defun half-second-timer ()
-    (unless (<a href="ref-control-shell-running-p.html">control-shell-running-p</a>)
-      (kill-periodic-function))
-    (<a href="ref-signal-event.html">signal-event</a> 'half-second-timer-event))
-half-second-timer
-&gt; (<a href="ref-spawn-periodic-function.html">spawn-periodic-function</a> 'half-second-timer 0.5)
-#&lt;thread Periodic Function half-second-timer&gt;
+  &gt; (<a href="ref-define-event-class.html">define-event-class</a> half-second-timer-event (timer-interrupt-event)
+      ())
+  half-second-timer-event
+  &gt; (defun half-second-timer ()
+      (unless (<a href="ref-control-shell-running-p.html">control-shell-running-p</a>)
+        (kill-periodic-function))
+      (<a href="ref-signal-event.html">signal-event</a> 'half-second-timer-event))
+  half-second-timer
+  &gt; (<a href="ref-spawn-periodic-function.html">spawn-periodic-function</a> 'half-second-timer 0.5)
+  #&lt;thread Periodic Function half-second-timer&gt;
+  &gt;
 </pre>
 </p>
 <hr /><address><a target="_top" class="address"

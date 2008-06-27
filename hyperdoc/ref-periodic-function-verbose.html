@@ -37,17 +37,18 @@ changed globally to display the management of <a href="ref-glossary.html#gl:peri
 </p>
 <a name="id1"></a><p><span class="fndoclabel">Example</span> <br />Schedule a simple <a href="ref-glossary.html#id149">periodic&nbsp;function</a> with verbose printing enabled:
 <pre class="pretop">
-&gt; (setf *periodic-function-verbose* 't)
-t
-&gt; (<a href="ref-spawn-periodic-function.html">spawn-periodic-function</a> #'(lambda () (print "Hello!")) 0.1 
-    :name 'hello
-    :count 2)
-;; Spawning periodic-function thread for hello...
-#&lt;thread Periodic Function hello&gt;
-&gt;
-"Hello!" 
-"Hello!" 
-;; Exiting periodic-function thread hello
+  &gt; (setf *periodic-function-verbose* 't)
+  t
+  &gt; (<a href="ref-spawn-periodic-function.html">spawn-periodic-function</a> #'(lambda () (print "Hello!")) 0.1 
+      :name 'hello
+      :count 2)
+  ;; Spawning periodic-function thread for hello...
+  #&lt;thread Periodic Function hello&gt;
+  &gt;
+  "Hello!" 
+  "Hello!" 
+  ;; Exiting periodic-function thread hello
+  &gt;
 </pre>
 </p>
 <hr /><address><a target="_top" class="address"

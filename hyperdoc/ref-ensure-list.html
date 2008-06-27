@@ -35,12 +35,13 @@ already a list.
 an atom, a newly consed list containing <var>object</var> as its sole element.
 </p>
 <p><span class="fndoclabel">Examples</span> <br /><pre class="pretop">
-&gt; (ensure-list 'x)
-(x)
-&gt; (ensure-list '(x))
-(x)
-&gt; (ensure-list nil)
-nil
+  &gt; (ensure-list 'x)
+  (x)
+  &gt; (ensure-list '(x))
+  (x)
+  &gt; (ensure-list nil)
+  nil
+  &gt;
 </pre>
 </p>
 <p><span class="fndoclabel">Note</span> <br />This function is compiled in-line for top performance.

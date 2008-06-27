@@ -52,18 +52,19 @@ add a new <var>item increment</var> <a href="ref-glossary.html#gl:cons">cons</a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-decf-delete-acons.html"><b>decf/delete-acons</b></a>
 </p>
 <p><span class="fndoclabel">Examples</span> <br /><pre class="pretop">
-&gt; (setf alist nil)
-nil
-&gt; (pushnew/incf-acons 'x 1 alist)
-((x . 1))
-&gt; (pushnew/incf-acons 'x 1 alist)
-((x . 2))
-&gt; (pushnew/incf-acons 'y 2 alist)
-((y . 2) (x . 2))
-&gt; (pushnew/incf-acons 'x -1 alist)
-((y . 2) (x . 1))
-&gt; alist
-((y . 2) (x . 1))
+  &gt; (setf alist nil)
+  nil
+  &gt; (pushnew/incf-acons 'x 1 alist)
+  ((x . 1))
+  &gt; (pushnew/incf-acons 'x 1 alist)
+  ((x . 2))
+  &gt; (pushnew/incf-acons 'y 2 alist)
+  ((y . 2) (x . 2))
+  &gt; (pushnew/incf-acons 'x -1 alist)
+  ((y . 2) (x . 1))
+  &gt; alist
+  ((y . 2) (x . 1))
+  &gt;
 </pre>
 </p>
 <p><span class="fndoclabel">Note</span> <br /><a name="id1"></a><a href="ref-declared-numerics.html">Declared numeric</a> versions of

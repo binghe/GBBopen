@@ -47,13 +47,13 @@ compiler-macro form.
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-compiler-macroexpand-1.html"><b>compiler-macroexpand-1</b></a>
 </p>
 <p><span class="fndoclabel">Examples</span> <br /><pre class="pretop">
-&gt; (compiler-macroexpand '(ensure-list x))
-(let ((#:g7105 x)) (if (listp #:g7105) #:g7105 (list #:g7105)))
-t
-&gt; (compiler-macroexpand '(cons x nil))
-(cons x nil)
-nil
-&gt;
+  &gt; (compiler-macroexpand '(ensure-list x))
+  (let ((#:g7105 x)) (if (listp #:g7105) #:g7105 (list #:g7105)))
+  t
+  &gt; (compiler-macroexpand '(cons x nil))
+  (cons x nil)
+  nil
+  &gt;
 </pre>
 </p>
 <hr /><address><a target="_top" class="address"

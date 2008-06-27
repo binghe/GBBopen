@@ -42,18 +42,20 @@
 </p>
 <p><span class="fndoclabel">Examples</span> <br />Display the <a href="ref-glossary.html#gl:patches">patches</a> to <a href="ref-glossary.html#gl:module">module</a> <code>:my-app</code>:
 <pre class="pretop">
-&gt; (describe-patches ':my-app)
-;; 1      Jun 22, 2008 Corkill (loaded Jun 24 13:08)
-;;           A simple example patch
-;; 2      Jun 23, 2008 Corkill (loaded Jun 24 13:08)
-;;           A more complex patch example
+  &gt; (describe-patches ':my-app)
+  ;; 1      Jun 22, 2008 Corkill (loaded Jun 24 13:08)
+  ;;           A simple example patch
+  ;; 2      Jun 23, 2008 Corkill (loaded Jun 24 13:08)
+  ;;           A more complex patch example
+  &gt;
 </pre>
 </p>
 <p>Display the <a href="ref-glossary.html#gl:patches">patches</a> to <a href="ref-glossary.html#gl:module">module</a> <code>:gbbopen-test</code> (when that
 module has not been loaded):
 <pre class="pretop">
-&gt; (describe-patches ':gbbopen-test)
-;; Module :gbbopen-test is not loaded
+  &gt; (describe-patches ':gbbopen-test)
+  ;; Module :gbbopen-test is not loaded
+  &gt;
 </pre>
 </p>
 <hr /><address><a target="_top" class="address"

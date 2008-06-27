@@ -47,13 +47,14 @@ used on the results of calling <b><a href="ref-find-instances.html">find-instanc
 <a href="ref-glossary.html#id219">unit&nbsp;instance</a> is expected in the result list.
 </p>
 <p><span class="fndoclabel">Examples</span> <br /><pre class="pretop">
-&gt; (sole-element '(a))
-a
-&gt; (sole-element nil)
-nil
-&gt; (sole-element '(a b))
-Error: The list (a b) contains more than 1 element.
-       If continued - Ignore the remaining elements.
+  &gt; (sole-element '(a))
+  a
+  &gt; (sole-element nil)
+  nil
+  &gt; (sole-element '(a b))
+  Error: The list (a b) contains more than 1 element.
+         If continued - Ignore the remaining elements.
+  &gt;&gt;
 </pre>
 </p>
 <p><span class="fndoclabel">Note</span> <br />This function is compiled in-line for top performance.

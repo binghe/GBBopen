@@ -64,50 +64,51 @@ negative, the <a href="ref-glossary.html#id149">periodic&nbsp;function</a> is te
 <p><span class="fndoclabel">Examples</span> <br />Spawn a simple <a href="ref-glossary.html#id149">periodic&nbsp;function</a> that is invoked every 0.1 seconds,
 but that only runs twice:
 <pre class="pretop">
-&gt; (spawn-periodic-function #'(lambda () (print "Hello!")) 0.1 
-    :name 'hello
-    :count 2)
-#&lt;thread Periodic Function hello&gt;
-&gt;
-"Hello!" 
-"Hello!" 
+  &gt; (spawn-periodic-function #'(lambda () (print "Hello!")) 0.1 
+      :name 'hello
+      :count 2)
+  #&lt;thread Periodic Function hello&gt;
+  &gt;
+  "Hello!" 
+  "Hello!" 
 </pre>
 <a name="id1">Spawn</a> a simple <a href="ref-glossary.html#id149">periodic&nbsp;function</a> that is invoked every 0.1 seconds
 that runs up to 20 times, but with a 10&#37; chance on each invocation of
 terminating early:
 <pre>
-&gt; (spawn-periodic-function 
-     #'(lambda ()
-         (when (zerop (random 10))
-           (kill-periodic-function))
-         (print "Hello!")) 
-     0.1
-     :count 20
-     :verbose 't)
-;; Spawning periodic-function thread for...
-#&lt;thread Periodic Function&gt;
-&gt;
-"Hello!" 
-"Hello!" 
-"Hello!" 
-"Hello!" 
-;; Killing periodic-function...
-;; Exiting periodic-function thread
+  &gt; (spawn-periodic-function 
+       #'(lambda ()
+           (when (zerop (random 10))
+             (kill-periodic-function))
+           (print "Hello!")) 
+       0.1
+       :count 20
+       :verbose 't)
+  ;; Spawning periodic-function thread for...
+  #&lt;thread Periodic Function&gt;
+  &gt;
+  "Hello!" 
+  "Hello!" 
+  "Hello!" 
+  "Hello!" 
+  ;; Killing periodic-function...
+  ;; Exiting periodic-function thread
 </pre>
 <a name="id2">Define</a> and spawn a <a href="ref-glossary.html#id149">periodic&nbsp;function</a> that is invoked every 0.5 seconds
 to signal a <code>half-second-interrupt-event</code>, continuing as long as the
 control shell is running:
 <pre>
-&gt; (<a href="ref-define-event-class.html">define-event-class</a> half-second-timer-event (timer-interrupt-event)
-    ())
-half-second-timer-event
-&gt; (defun half-second-timer ()
-    (unless (<a href="ref-control-shell-running-p.html">control-shell-running-p</a>)
-      (<a href="ref-kill-periodic-function.html">kill-periodic-function</a>))
-    (<a href="ref-signal-event.html">signal-event</a> 'half-second-timer-event))
-half-second-timer
-&gt; (spawn-periodic-function 'half-second-timer 0.5)
-#&lt;thread Periodic Function half-second-timer&gt;
+  &gt; (<a href="ref-define-event-class.html">define-event-class</a> half-second-timer-event (timer-interrupt-event)
+      ())
+  half-second-timer-event
+  &gt; (defun half-second-timer ()
+      (unless (<a href="ref-control-shell-running-p.html">control-shell-running-p</a>)
+        (<a href="ref-kill-periodic-function.html">kill-periodic-function</a>))
+      (<a href="ref-signal-event.html">signal-event</a> 'half-second-timer-event))
+  half-second-timer
+  &gt; (spawn-periodic-function 'half-second-timer 0.5)
+  #&lt;thread Periodic Function half-second-timer&gt;
+  &gt;
 </pre>
 </p>
 <hr /><address><a target="_top" class="address"
