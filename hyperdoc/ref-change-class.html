@@ -87,7 +87,29 @@ completed.
 <li><code>add-instance-to-space-instance-event</code>
 </ul>
 </p>
+<p><span class="fndoclabel">Errors</span> <br />The existing or supplied instance name of <var>instance</var> is
+identical to the instance name of an existing <a href="ref-glossary.html#id219">unit&nbsp;instance</a> of
+<var>new-class</var>.
+</p>
+<p><span class="fndoclabel">Description</span> <br />When <var>new-class</var> is a <a href="ref-glossary.html#id217">unit&nbsp;class</a>, an instance-name conflict with
+an existing <a href="ref-glossary.html#id219">unit&nbsp;instance</a> of <var>new-class</var> must be avoided.  If
+the old <a href="ref-glossary.html#gl:class">class</a> of <var>instance</var> and <var>new-class</var> are both unit
+classes that use the global instance-name counter, the old instance-name value
+can be retained safetly.  If <var>new-class</var> is a unit class with a
+class-based counter, specifying a new instance-name value (using
+<b><a href="ref-next-class-instance-number.html">next-class-instance-number</a></b>) is recommended.
+</p>
+<p>When the old class and <var>new-class</var> are both <a href="ref-glossary.html#gl:unit-class">unit&nbsp;classes</a> and no
+space-instances value is supplied to <b>change-class</b>, the changed
+<var>instance</var> remains on all <a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a> that allow
+<var>new-class</var> <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a>.  In addition, <var>instance</var> is
+also added to all space instances defined as initial-space-instances for
+<var>new-class</var>.  If a space-instances value is supplied, <var>instance</var> is
+removed from all space instances and then added to the supplied space
+instances.
+</p>
 <p><span class="fndoclabel">See also</span>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-define-unit-class.html"><b>define-unit-class</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-next-class-instance-number.html"><b>next-class-instance-number</b></a>
 </p>
 <p><span class="fndoclabel">Example</span> <br /><a name="id2">Change</a> the class of <a href="ref-glossary.html#id219">unit&nbsp;instance</a> <code>hyp</code> from <code>probable-hyp</code>
@@ -97,6 +119,8 @@ to <code>rejected-hyp</code>:
     :instance-name (<a href="ref-next-class-instance-number.html">next-class-instance-number</a> 'rejected-hyp))
 #&lt;rejected-hyp 1409 (896 388) .68&gt;
 </pre> 
+Note that the <code>:instance-name</code> initarg can be eliminated if both the old
+and new classes for <var>hyp</var> are using the global instance-name counter.
 </p>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />

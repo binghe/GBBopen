@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Thu Jun 26 16:51:00 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Thu Jun 26 23:06:10 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -8879,7 +8879,31 @@ The following events may also be signaled:
 \item \code{add-instance-to-space-instance-event}
 \end{tightitemize}
 
+\fnerrors The existing or supplied instance name of \var{instance\/} is
+identical to the instance name of an existing \glref{unit~instance} of
+\var{new-class}.
+
+\fndescription
+%
+When \var{new-class\/} is a \glref{unit~class}, an instance-name conflict with
+an existing \glref{unit~instance} of \var{new-class\/} must be avoided.  If
+the old \glref{class} of \var{instance\/} and \var{new-class\/} are both unit
+classes that use the global instance-name counter, the old instance-name value
+can be retained safetly.  If \var{new-class\/} is a unit class with a
+class-based counter, specifying a new instance-name value (using
+\textbf{\entlink{next-class-instance-number}}) is recommended.
+
+When the old class and \var{new-class\/} are both \glref{unit~classes} and no
+space-instances value is supplied to \textbf{change-class}, the changed
+\var{instance\/} remains on all \glref{space~instances} that allow
+\var{new-class\/} \glref{unit~instances}.  In addition, \var{instance\/} is
+also added to all space instances defined as initial-space-instances for
+\var{new-class}.  If a space-instances value is supplied, \var{instance} is
+removed from all space instances and then added to the supplied space
+instances.
+
 \begin{alsos}{next-class-instance-number}
+\also[define-unit-class]
 \also[next-class-instance-number]
 \end{alsos}
 
@@ -8895,6 +8919,9 @@ to \code{rejected-hyp}:
     :instance-name (\entlink{next-class-instance-number} 'rejected-hyp))
 #<rejected-hyp 1409 (896 388) .68>
 \end{example} 
+%
+Note that the \code{:instance-name} initarg can be eliminated if both the old
+and new classes for \var{hyp\/} are using the global instance-name counter.
 
 \end{functiondoc}
 
@@ -10041,6 +10068,12 @@ Return the \glref{instance~name} of a \glref{unit~instance}.
 
 \fnreturns The \glref{instance~name} of the \var{instance}.
 
+\fnerrors
+%
+The supplied \var{instance-name\/} provided to \textbf{(setf instance-name-of}
+is identical to the instance name of an existing \glref{unit~instance} of the
+same \glref{class} as \var{instance}.
+
 \begin{alsos}{make-instance}
 \also[make-instance]
 \end{alsos}
@@ -10186,6 +10219,7 @@ A \code{:space-instances} initialization argument must be provided when
 duplicating a \glref{space~instance}.
 
 \begin{alsos}{initial-class-instance-number}
+\also[change-class]
 \also[delete-instance]
 \also[describe-instance]
 \also[initial-class-instance-number]
@@ -10312,6 +10346,10 @@ following sequence:
 \fnerrors
 Use of an initialization argument that has not been declared as valid.
 
+If \var{class\/} is a \glref{unit~class} and the supplied or generated
+instance name is identical to the instance name of an existing
+\glref{unit~instance} of \var{class}.
+
 \codeindexit{:space-instances}%
 \codeindexit{:initial-space-instances}%
 \codeindexit{:instance-name}%
@@ -10331,6 +10369,7 @@ the \code{:use-global-instance-name-counter} class option is true for the unit
 class).
 
 \begin{alsos}{initial-class-instance-number}
+\also[change-class]
 \also[define-event-class]
 \also[define-unit-class]
 \also[define-space-class]
@@ -14249,6 +14288,12 @@ following sequence:
 \item A \code{create-instance-event} is signaled.
 \end{tightenumerate}
 
+\fnerrors
+Use of an initialization argument that has not been declared as valid.
+
+The supplied or generated instance name is identical to the instance name of
+an existing \glref{unit~instance} of \var{class}.
+
 \fndsyntax
 \W\supp\tabletop
 \begin{tabular}{@{~}l@{~}l}
@@ -16987,6 +17032,12 @@ queue was created.  If \var{queue} is a standard \glref{queue},
 
 \fnreturns The newly created \glref{queue}.
   
+\fnerrors
+Use of an initialization argument that has not been declared as valid.
+
+The supplied or generated instance name is identical to the instance name of
+an existing \glref{unit~instance} of \var{class}.
+
 \begin{alsos}{ordered-queue}
 \also[queue]
 \also[ordered-queue]
