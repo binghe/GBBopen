@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Fri Jun 27 17:49:08 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Sat Jun 28 10:26:34 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -352,12 +352,13 @@ and \xsitelink{Hyperlatex}{http://hyperlatex.sourceforge.net/} 2.9a.
 \begin{tabular}{@{~~~}l@{}l@{}}
 \code{:create-dirs} & Creates any needed directories that are missing in the
   compiled-file tree\\[2pt]
-\code{:noautorun} & Binds \textbf{\entlink{*autorun-modules*}} to nil
+\code{:noautorun} & Binds \textbf{\entlink{*autorun-modules*}} to \nil{}
   during compilation and loading\\[2pt]
 \code{:nopatches} & Do not compile or load any \glref{patches}\\[2pt]
 \code{:nopropagate} & Cancels (overrides) a specified :propagate option\\[2pt]
 \code{:patches-only}~~~ & Do not compile or reload any non-\glref{patch} 
-  files\\[2pt]
+  files (binds \textbf{\entlink{*patches-only*}} to \code{t} during 
+  compilation and loading)\\[2pt]
 \code{:print} & Incrementally prints information during compilation and
   loading\\[2pt]
 \code{:propagate} & Applies the specified options to all 
@@ -382,11 +383,12 @@ and \xsitelink{Hyperlatex}{http://hyperlatex.sourceforge.net/} 2.9a.
 
 \newcommand{\loadmoduleoptions}{\T\\[4pt]
 \begin{tabular}{@{~~~}l@{}l@{}}
-\code{:noautorun} & Binds \textbf{\entlink{*autorun-modules*}} to nil
+\code{:noautorun} & Binds \textbf{\entlink{*autorun-modules*}} to \nil{}
   during compilation and loading\\[2pt]
 \code{:nopatches} & Do not load any \glref{patches}\\[2pt]
 \code{:nopropagate}~~~ & Cancels (overrides) a specified :propagate option\\[2pt]
-\code{:patches-only}~~~ & Do not reload any non-\glref{patch} files\\[2pt]
+\code{:patches-only}~~~ & Do not reload any non-\glref{patch} files (binds 
+  \textbf{\entlink{*patches-only*}} to \code{t} during loading)\\[2pt]
 \code{:print} & Incrementally prints information during compilation and
   loading\\[2pt]
 \code{:propagate} & Applies the specified options to all 
@@ -407,7 +409,7 @@ and \xsitelink{Hyperlatex}{http://hyperlatex.sourceforge.net/} 2.9a.
 
 \newcommand{\loadonefilemoduleoptions}{\T\\[4pt]
 \begin{tabular}{@{~~~}l@{}l@{}}
-\code{:noautorun}~~~ & Binds \textbf{\entlink{*autorun-modules*}} to nil
+\code{:noautorun}~~~ & Binds \textbf{\entlink{*autorun-modules*}} to \nil{}
   during compilation and loading\\[2pt]
 \code{:print} & Incrementally prints information during compilation and
   loading\\[2pt]
@@ -441,7 +443,7 @@ reload all subsequent files and \glref{modules}\\[2pt]
 \begin{tabular}{@{~~~}l@{}l@{}}
 \code{:forces-recompile}~~~ & If the file has changed, recompile and
 reload all subsequent files and \glref{modules}\\[2pt]
-\code{:noautorun}~~~ & Binds \textbf{\entlink{*autorun-modules*}} to nil
+\code{:noautorun}~~~ & Binds \textbf{\entlink{*autorun-modules*}} to \nil{}
   during compilation and loading\\[2pt]
 \code{:print} & Incrementally prints information during compilation and
   loading\\[2pt]
@@ -1038,8 +1040,15 @@ A \var{dimension-value-place\/} with two
 %% ========================================================================
 %%  Errors & notes
 
+\newcommand{\modulenotdefined}{Module \var{module-name\/} has not been 
+  defined.}
+
 \newcommand{\relativedircircularity}{A \glref{relative~directory}
   specification contains a circularity.}
+
+\newcommand{\patchesonlymodulenotloaded}{Module \var{module-name\/} or one of
+  its required modules has not been loaded and
+  \textbf{\entlink{*patches-only*}} is true.}
 
 \newcommand{\nothreads}{Threads (multiprocessing) is not supported on the
   Common Lisp implementation.}
@@ -1641,7 +1650,8 @@ set the current package.
 \arg[package-name] A package name (default is \nil)
 \end{args}
 
-\fnerrors Module \var{module-name\/} has not been defined.\\
+\fnerrors
+\modulenotdefined\\
 \relativedircircularity
 
 \fndescription This function bootstraps GBBopen loading, if needed, before
@@ -1864,6 +1874,9 @@ initialization.
 
 \begin{functiondoc}[automatically-create-missing-directories-var]{Variable}%
   {*automatically-create-missing-directories*}{}%
+\index{compiling, a module, and also loading module!creating missing directories}%
+\index{module!compiling, recompiling, and loading!creating missing directories}%
+\index{recompiling, a module, and also loading module!creating missing directories}%
 
 \fnsyntax
 
@@ -1877,10 +1890,10 @@ in the compiled-file tree should be created when needed.
 
 \fnvaluetype A \glref{generalized~boolean}
 
-\fninitialvalue \code{nil}
+\fninitialvalue \nil
 
 \fndescription By default, \textbf{*automatically-create-missing-directories*}
-is set to \code{nil}, but it can be set or bound to true to instruct
+is set to \nil, but it can be set or bound to true to instruct
 \textbf{\entlink{compile-module}} to create any needed directories in the
 compiled-file tree rather than generating a continuable error. The
 compile-module option \code{:create-dirs} can also be specified to bind
@@ -1905,6 +1918,7 @@ tree, rather than generating a continuable error:
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}[autorun-modules-var]{Variable}{*autorun-modules*}{}%
+\index{loading!a module!controlling autorun forms}% 
 
 \fnsyntax
 
@@ -1923,9 +1937,9 @@ tree, rather than generating a continuable error:
 \fndescription The value of \textbf{*autorun-modules*} can be used to
 conditionally evaluate forms when \glref{module} files are loaded.  By
 default, the value of \textbf{*autorun-modules*} is set to true, but it can be
-set or bound to \code{nil} to disable conditional \glref{autorun~forms}.  The
+set or bound to \nil{} to disable conditional \glref{autorun~forms}.  The
 compile-module or load-module option \code{:noautorun} can also be specified
-to bind \textbf{*autorun-modules*} to \code{nil} during module compilation and
+to bind \textbf{*autorun-modules*} to \nil{} during module compilation and
 loading.
 
 \begin{alsos}{load-module-file}
@@ -1942,6 +1956,57 @@ Conditionally evaluate the \code{http-test} function when the file
 \begin{example}
   (when common-lisp-user::*autorun-modules*
     (http-test "GBBopen.org" 80))
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}[patches-only-var]{Variable}{*patches-only*}{}%
+\index{compiling, a module, and also loading module!patches only}%
+\index{loading!a module!patches only}% 
+\index{module!compiling, recompiling, and loading!patches only}%
+\index{recompiling, a module, and also loading module!patches only}%
+
+\fnsyntax
+
+\fnpurpose Controls whether regular files (non-\glref{patch} files) in
+\glref{modules} are compiled and loaded by the Mini Module Facility.
+
+\fnpackage \code{:common-lisp-user} 
+(also imported into and exported from \code{:mini-module})
+
+\fnmodule \code{:mini-module}
+
+\fnvaluetype A \glref{generalized~boolean}
+
+\fninitialvalue \nil
+
+\fndescription By default, \textbf{*patches-only*} is set to \nil, but it can
+be set to true to instruct \textbf{\entlink{compile-module}} and
+\textbf{\entlink{load-module}} to bypass compiling and loading regular files
+(non-\glref{patch} files) in \glref{modules}.  By setting
+\textbf{*patches-only*} to true after loading an application, the image is
+``frozen'' so that only patches will be applied by subsequent uses of
+\textbf{\entlink{compile-module}} or \textbf{\entlink{load-module}}.
+
+\begin{alsos}{compile-module}
+\also[compile-module]
+\also[load-module]
+\end{alsos}
+
+\fnexample
+\bfindexit{compile-module}
+%
+Compile, load, and freeze the GBBopen application defined by \glref{module}
+\code{:my-app}:
+%
+\W\supp
+\begin{example}
+  > (progn (\entlink{compile-module} :my-app :propagate)
+           (setf *patches-only* 't))
+  t
+  >
 \end{example}
 
 \end{functiondoc}
@@ -1971,8 +2036,10 @@ Conditionally evaluate the \code{http-test} function when the file
 \compilemoduleoptions
 \end{args}
 
-\fnerrors Module \var{module-name\/} has not been defined.\\
-\relativedircircularity
+\fnerrors
+\modulenotdefined\\
+\relativedircircularity\\
+\patchesonlymodulenotloaded
 
 \fndescription These file options, when specified for individual files in the
 \glref{module} definition (see \textbf{\entlinknoex{define-module}}), have the
@@ -1987,6 +2054,7 @@ following effects (overriding the behavior of \var{options\/} supplied to
 \also[:full-safety]
 \also[*automatically-create-missing-directories*]
 \also[*autorun-modules*]
+\also[*patches-only*]
 \also[define-module]
 \also[load-module]
 \also[load-module-file]
@@ -2469,7 +2537,7 @@ a separate ``beta'' compile tree:
 \end{args}
 
 \fnerrors
-Module \var{module-name\/} has not been defined.\\
+\modulenotdefined\\
 \relativedircircularity
 
 \fndescription
@@ -2537,7 +2605,8 @@ Describe the \code{:gbbopen-test} \glref{module} after it has been loaded:
 \arg[module-name] A \glref{keyword~symbol} naming a \glref{module}
 \end{args}
 
-\fnerrors Module \var{module-name\/} has not been defined.\\
+\fnerrors
+\modulenotdefined
 
 \begin{alsos}{get-patch-description}
 \also[continue-patch]
@@ -2771,7 +2840,8 @@ Return the pathname of the \code{:gbbopen-user} \glref{module}:
 \fnreturns Five values: \var{id}, \var{date}, \var{author}, \var{description},
 and \var{date-loaded\/}, or \nil{} if the patch has not been loaded.
 
-\fnerrors Module \var{module-name\/} has not been defined.\\
+\fnerrors
+\modulenotdefined
 
 \begin{alsos}{describe-patches}
 \also[continue-patch]
@@ -2913,8 +2983,10 @@ Return the \glref{root-directory} pathname of the \code{:gbbopen-user}
 \loadmoduleoptions
 \end{args}
 
-\fnerrors Module \var{module-name\/} has not been defined.\\
-\relativedircircularity
+\fnerrors 
+\modulenotdefined\\
+\relativedircircularity\\
+\patchesonlymodulenotloaded
 
 \fndescription These file options, when specified for individual files in the
 \glref{module} definition (see \textbf{\entlinknoex{define-module}}), have the
@@ -2926,6 +2998,7 @@ following effects (overriding the behavior of \var{options\/} supplied to
 
 \begin{alsos}{*autorun-modules*}
 \also[*autorun-modules*]
+\also[*patches-only*]
 \also[compile-module]
 \also[define-module]
 \also[load-module-file]
@@ -2982,7 +3055,8 @@ default values for the command.
 
 \fnreturns The pathname of the loaded file.
 
-\fnerrors Module \var{module-name\/} has not been defined.\\
+\fnerrors 
+\modulenotdefined\\
 %
 File \var{file-name\/} is not associated with the module.
 
@@ -3037,7 +3111,7 @@ Tools \glref{module}:
 directory \glref{pathname}.
 
 \fnerrors
-Module \var{module-name\/} has not been defined.\\
+\modulenotdefined\\
 \relativedircircularity
 
 \begin{alsos}{load-module-file}
@@ -3084,7 +3158,7 @@ loaded into Common Lisp.
 \fnreturns True if the \glref{module} has been fully loaded; \nil{} otherwise.
 
 \fnerrors
-Module \var{module-name\/} has not been defined.
+\modulenotdefined
 
 \begin{alsos}{define-module}
 \also[define-module]
@@ -3217,7 +3291,8 @@ loaded.
 
 \fnreturns True if the \glref{patch} has been loaded; \nil{} otherwise.
 
-\fnerrors Module \var{module-name\/} has not been defined.\\
+\fnerrors
+\modulenotdefined
 
 \begin{alsos}{get-patch-description}
 \also[continue-patch]
@@ -19071,7 +19146,7 @@ execution
 \arg[boolean] A \glref{generalized~boolean}
 \end{args}
 
-\fnreturns True if the \glref{KS} is enabled for execution; nil otherwise.
+\fnreturns True if the \glref{KS} is enabled for execution; \nil{} otherwise.
   
 \fndescription 
 This \glref{generic~function} accesses the value stored in the 

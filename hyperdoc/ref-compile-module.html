@@ -12,7 +12,7 @@
 </head>
 <body>
 <table width="100%" cellpadding="0" cellspacing="2"><tr>
-<td bgcolor="#99ccff"><a href="ref-autorun-modules-var.html"><img border="0" alt="*autorun-modules*" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="ref-mini-module-entities.html"><img border="0" alt="Mini-Module Facility" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-continue-patch.html"><img border="0" alt="continue-patch" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">compile-module</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table>
+<td bgcolor="#99ccff"><a href="ref-patches-only-var.html"><img border="0" alt="*patches-only*" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="ref-mini-module-entities.html"><img border="0" alt="Mini-Module Facility" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-continue-patch.html"><img border="0" alt="continue-patch" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">compile-module</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table>
  
 <p><table class="tight" width="100%">
 <tr valign="top"><td valign="baseline" align="left"%>
@@ -35,7 +35,7 @@
 compiled-file tree</td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left">
-<code>:noautorun</code> </td><td valign="baseline" colspan="1" align="left"> Binds <b><a href="ref-autorun-modules-var.html">*autorun-modules*</a></b> to nil
+<code>:noautorun</code> </td><td valign="baseline" colspan="1" align="left"> Binds <b><a href="ref-autorun-modules-var.html">*autorun-modules*</a></b> to <code>nil</code>
 during compilation and loading</td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left">
@@ -46,7 +46,8 @@ during compilation and loading</td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left">
 <code>:patches-only</code>&nbsp;&nbsp;&nbsp; </td><td valign="baseline" colspan="1" align="left"> Do not compile or reload any non-<a href="ref-glossary.html#gl:patch">patch</a> 
-files</td></tr>
+files (binds <b><a href="ref-patches-only-var.html">*patches-only*</a></b> to <code>t</code> during 
+compilation and loading)</td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left">
 <code>:print</code> </td><td valign="baseline" colspan="1" align="left"> Incrementally prints information during compilation and
@@ -70,8 +71,11 @@ is newer than the source file (implies <code>:reload</code>)</td></tr>
 <td valign="baseline" colspan="1" align="left">
 </td></tr></tbody></table>
 <a name="id1"></a></td></tr></table>
-<p><span class="fndoclabel">Errors</span> <br />Module <var>module-name</var> has not been defined.<br />A <a href="ref-glossary.html#id169">relative&nbsp;directory</a>
-specification contains a circularity.
+<p><span class="fndoclabel">Errors</span> <br />Module <var>module-name</var> has not been 
+defined.<br />A <a href="ref-glossary.html#id169">relative&nbsp;directory</a>
+specification contains a circularity.<br />Module <var>module-name</var> or one of
+its required modules has not been loaded and
+<b><a href="ref-patches-only-var.html">*patches-only*</a></b> is true.
 </p>
 <p><span class="fndoclabel">Description</span> <br />These file options, when specified for individual files in the
 <a href="ref-glossary.html#gl:module">module</a> definition (see <b><a href="ref-define-module.html">define-module</a></b>), have the
@@ -102,6 +106,7 @@ reload all subsequent files and <a href="ref-glossary.html#gl:modules">modules</
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-full-safety.html"><b>:full-safety</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-automatically-create-missing-directories-var.html"><b>*automatically-create-missing-directories*</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-autorun-modules-var.html"><b>*autorun-modules*</b></a>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-patches-only-var.html"><b>*patches-only*</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-define-module.html"><b>define-module</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-load-module.html"><b>load-module</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-load-module-file.html"><b>load-module-file</b></a>
@@ -127,4 +132,4 @@ default values for the command.
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
 <table width="100%" cellpadding="0" cellspacing="2"><tr>
-<td bgcolor="#99ccff"><a href="ref-autorun-modules-var.html"><img border="0" alt="*autorun-modules*" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="ref-mini-module-entities.html"><img border="0" alt="Mini-Module Facility" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-continue-patch.html"><img border="0" alt="continue-patch" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">compile-module</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table></body></html>
+<td bgcolor="#99ccff"><a href="ref-patches-only-var.html"><img border="0" alt="*patches-only*" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="ref-mini-module-entities.html"><img border="0" alt="Mini-Module Facility" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-continue-patch.html"><img border="0" alt="continue-patch" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">compile-module</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table></body></html>
