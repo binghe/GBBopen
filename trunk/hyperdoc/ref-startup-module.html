@@ -36,7 +36,7 @@ set the current package.
 compiled-file tree</td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left">
-<code>:noautorun</code> </td><td valign="baseline" colspan="1" align="left"> Binds <b><a href="ref-autorun-modules-var.html">*autorun-modules*</a></b> to nil
+<code>:noautorun</code> </td><td valign="baseline" colspan="1" align="left"> Binds <b><a href="ref-autorun-modules-var.html">*autorun-modules*</a></b> to <code>nil</code>
 during compilation and loading</td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left">
@@ -47,7 +47,8 @@ during compilation and loading</td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left">
 <code>:patches-only</code>&nbsp;&nbsp;&nbsp; </td><td valign="baseline" colspan="1" align="left"> Do not compile or reload any non-<a href="ref-glossary.html#gl:patch">patch</a> 
-files</td></tr>
+files (binds <b><a href="ref-patches-only-var.html">*patches-only*</a></b> to <code>t</code> during 
+compilation and loading)</td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left">
 <code>:print</code> </td><td valign="baseline" colspan="1" align="left"> Incrementally prints information during compilation and
@@ -73,7 +74,8 @@ is newer than the source file (implies <code>:reload</code>)</td></tr>
 <a name="id1"></a></td></tr><tr valign="top"><td valign="baseline"><i><p>package-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A package name (default is <code>nil</code>)
 </td></tr></table>
 </p>
-<p><span class="fndoclabel">Errors</span> <br />Module <var>module-name</var> has not been defined.<br />A <a href="ref-glossary.html#id169">relative&nbsp;directory</a>
+<p><span class="fndoclabel">Errors</span> <br />Module <var>module-name</var> has not been 
+defined.<br />A <a href="ref-glossary.html#id169">relative&nbsp;directory</a>
 specification contains a circularity.
 </p>
 <p><span class="fndoclabel">Description</span> <br />This function bootstraps GBBopen loading, if needed, before

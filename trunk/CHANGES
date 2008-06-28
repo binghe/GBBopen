@@ -4,7 +4,12 @@ Important changes since GBBopen 1.1:
     :gbbopen-tools package rather than :clos for CLOS/MOP entities
 
   * Changes to Mini Module Facility
-     - Support for patches added (PATCH macro and friends)
+     - Support for patches added
+         *PATCHES-ONLY*
+         DESCRIBE-PATCHES
+         GET-PATCH-DESCRIPTION
+         PATCH (also START-PATCH, CONTINUE-PATCH, FINISH-PATCH)
+         PATCH-LOADED-P
      - Incremented Mini Module version to 1.4
 
   * New :conditions option in WITH-ERROR-HANDLING

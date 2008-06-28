@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/mini-module/mini-module.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Jun 27 04:56:06 2008 *-*
+;;;; *-* Last-Edit: Sat Jun 28 10:03:21 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -166,7 +166,8 @@
   (import '(common-lisp-user::*automatically-create-missing-directories*
             common-lisp-user::*autorun-modules*
             common-lisp-user::*mini-module-compile-verbose*
-            common-lisp-user::*mini-module-load-verbose*)))
+            common-lisp-user::*mini-module-load-verbose*
+            common-lisp-user::*patches-only*)))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Controls whether the Mini Module system automatically creates missing 
@@ -175,6 +176,13 @@
 (declaim (special *automatically-create-missing-directories*))
 (unless (boundp '*automatically-create-missing-directories*)
   (setf *automatically-create-missing-directories* nil))
+
+;;; ---------------------------------------------------------------------------
+;;;  Controls whether the Mini Module system compiles/loads patches only:
+
+(declaim (special *patches-only*))
+(unless (boundp '*patches-only*)
+  (setf *patches-only* nil))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  When true, the Mini Module system will generate its own compile & load
@@ -219,6 +227,7 @@
             *mini-module-compile-verbose* ; not yet documented
             *mini-module-load-verbose*  ; not yet documented
             *month-precedes-date*       ; part of tools, but placed here
+            *patches-only*              ; re-exported from :cl-user
             allow-redefinition          ; part of tools, but placed here
             brief-date                  ; part of tools, but placed here
             brief-date-and-time         ; part of tools, but placed here
@@ -1322,8 +1331,12 @@
                                          source-directory
                                          compiled-directory compile?
                                          recompile? reload? source? print?
-                                         propagate? patches? patches-only?
+                                         propagate? patches?
                                          &aux (module *current-module*))
+  (when (and *patches-only* (not (module-fully-loaded? *current-module*)))
+    (error "Module ~s has not been loaded and ~s is true."
+           (mm-module.name *current-module*)
+           '*patches-only*))
   (with-compilation-unit ()
     (dolist (file (if patches?
                       (mm-module.patches module)
@@ -1358,7 +1371,7 @@
                 (mm-module.name module)
                 bad-options))           
         (flet ((load-it (path date)
-                 (when (and (or patches? (not patches-only?))
+                 (when (and (or patches? (not *patches-only*))
                             (or reload?
                                 (member ':reload file-options :test #'eq)
                                 (not file-loaded-acons)
@@ -1386,7 +1399,7 @@
                             (not (member ':source file-options :test #'eq)))
                    (format t "~&; File ~a in ~s needs to be recompiled.~%"
                            file-name (mm-module.name module)))))
-          (when (and (or patches? (not patches-only?))
+          (when (and (or patches? (not *patches-only*))
                      (not (member ':source file-options :test #'eq))
                      (or recompile? 
                          (member ':recompile file-options :test #'eq)
@@ -1433,7 +1446,7 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun compile-module-files (module recompile? reload? source? print? 
-                             propagate? patches? patches-only?)
+                             propagate? patches?)
   (multiple-value-bind (source-directory compiled-directory)
       (module-source/compiled-directories module patches?)
     (when compiled-directory
@@ -1466,16 +1479,16 @@
           (ensure-directories-exist compiled-directory))))
     (compile/load-module-files-helper 
      module source-directory compiled-directory
-     't recompile? reload? source? print? propagate? patches? patches-only?)))
+     't recompile? reload? source? print? propagate? patches?)))
 
 ;;; ---------------------------------------------------------------------------
 
-(defun load-module-files (module reload? source? print? patches? patches-only?)
+(defun load-module-files (module reload? source? print? patches?)
   (multiple-value-bind (source-directory compiled-directory)
       (module-source/compiled-directories module patches?)
     (compile/load-module-files-helper 
      module source-directory compiled-directory
-     nil nil reload? source? print? nil patches? patches-only?)))
+     nil nil reload? source? print? nil patches?)))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -1510,7 +1523,8 @@
          (source? (member ':source options :test #'eq))
          (print? (member ':print options :test #'eq))
          (nopatches? (member ':nopatches options :test #'eq))
-         (patches-only? (member ':patches-only options :test #'eq))
+         (*patches-only* (or *patches-only*
+                             (member ':patches-only options :test #'eq)))
          (*automatically-create-missing-directories*
           (or *automatically-create-missing-directories*
               (member ':create-dirs options :test #'eq)
@@ -1529,12 +1543,12 @@
         (if (or propagate? specified-module?)              
             (multiple-value-setq (recompile? propagate?)
               (compile-module-files module recompile? reload? source? 
-                                    print? propagate? nil patches-only?))
+                                    print? propagate? nil))
             (load-module-files
              module 
              (and reload? propagate?) 
              (and source? (or propagate? specified-module?))
-             print? nil patches-only?))))
+             print? nil))))
     ;; Compile & load patches as needed (in module order):
     (unless nopatches?
       (dolist (module modules-to-load)
@@ -1543,12 +1557,12 @@
           (if (or propagate? specified-module?)              
               (multiple-value-setq (recompile? propagate?)
                 (compile-module-files module recompile? reload? source? 
-                                      print? propagate? 't patches-only?))
+                                      print? propagate? 't))
               (load-module-files
                module 
                (and reload? propagate?) 
                (and source? (or propagate? specified-module?))
-               print? 't patches-only?)))))
+               print? 't)))))
     ;; Now do any after forms (in module order):
     (dolist (module modules-to-load)
       (let ((after-form (mm-module.after-form module)))
@@ -1582,7 +1596,8 @@
         (source? (member ':source options :test #'eq))
         (print? (member ':print options :test #'eq))
         (nopatches? (member ':nopatches options :test #'eq))
-        (patches-only? (member ':patches-only options :test #'eq))
+        (*patches-only* (or *patches-only*
+                            (member ':patches-only options :test #'eq)))
         (*autorun-modules*
          (if (member ':noautorun options :test #'eq) nil *autorun-modules*))
         (modules-to-load (determine-modules module-names))
@@ -1599,7 +1614,7 @@
               (or propagate? specified-module?))
          (and source? 
               (or propagate? specified-module?))
-         print? nil patches-only?)))
+         print? nil)))
     ;; Load patches as needed (in module order):
     (unless nopatches?
       (dolist (module modules-to-load)
@@ -1611,7 +1626,7 @@
                 (or propagate? specified-module?))
            (and source? 
                 (or propagate? specified-module?))
-           print? 't patches-only?))))
+           print? 't))))
     ;; Now do any after forms (in module order):
     (dolist (module modules-to-load)
       (let ((after-form (mm-module.after-form module)))
