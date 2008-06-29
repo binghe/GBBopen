@@ -15,7 +15,7 @@ Requirements:
        Digitool MCL Version 5.1
        ECL          Version 0.9k (configure with --enable-threads if possible)
        Lispworks    Version 5.1.1
-       SBCL         Version 1.0.17 (use sb-threads if possible)
+       SBCL         Version 1.0.18 (use sb-threads if possible)
        Scieneer CL  Version 1.3.2
 
    Ports of GBBopen to Corman Common Lisp (Version 3.0), and GCL
@@ -28,7 +28,7 @@ Requirements:
    See PORTING for information on porting GBBopen to other Common Lisp
    implementations.
 
-Current Status Notes (June 24, 2008):
+Current Status Notes (June 29, 2008):
 
  - Implementation work is progressing on a regular basis.  See the list of
    pending development activities maintained on the "Development Activities"
