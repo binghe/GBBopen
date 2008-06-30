@@ -17,7 +17,7 @@
 <p><table class="tight" width="100%">
 <tr valign="top"><td valign="baseline" align="left"%>
 <nobr><b><font color="#000000">get-patch-description</font></b></nobr></td><td valign="baseline"> &nbsp; </td><td valign="baseline" align="left" width="99%"><var>id module-name</var>
-<i> =&gt; </i>&nbsp;<var>id,&nbsp;date,&nbsp;author,&nbsp;description,&nbsp;date-loaded</var></td><td valign="baseline" align="right">[<i>Function</i>]
+<i> =&gt; </i>&nbsp;<var>id,&nbsp;date,&nbsp;author,&nbsp;description,&nbsp;date-loaded,&nbsp;file-name</var></td><td valign="baseline" align="right">[<i>Function</i>]
 </td></tr></table></p>
 <p><span class="fndoclabel">Purpose</span> <br />Return the information describing <a href="ref-glossary.html#gl:patch">patch</a> <var>id</var> to a
 <var>module</var>.
@@ -32,10 +32,12 @@
 </td></tr><tr valign="top"><td valign="baseline"><i>date</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id221">universal&nbsp;time</a>
 </td></tr><tr valign="top"><td valign="baseline"><i>author</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A string
 </td></tr><tr valign="top"><td valign="baseline"><i>description</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A string or a list of strings or <code>nil</code></td></tr><tr valign="top"><td valign="baseline"><i>date-loaded</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id221">universal&nbsp;time</a>
+</td></tr><tr valign="top"><td valign="baseline"><i>file-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A string
 </td></tr></table>
 </p>
-<p><span class="fndoclabel">Returns</span> <br />Five values: <var>id</var>, <var>date</var>, <var>author</var>, <var>description</var>,
-and <var>date-loaded</var>, or <code>nil</code> if the patch has not been loaded.
+<p><span class="fndoclabel">Returns</span> <br />Six values: <var>id</var>, <var>date</var>, <var>author</var>, <var>description</var>,
+<var>date-loaded</var>, and <var>file-name</var>, or <code>nil</code> if the patch has not been
+loaded.
 </p>
 <p><span class="fndoclabel">Errors</span> <br />Module <var>module-name</var> has not been 
 defined.
@@ -59,6 +61,7 @@ defined.
   "Corkill"
   "A simple example patch"
   3423316130
+  "my-app-p001"
   &gt;
 </pre>
 and for non-existent patch <code>3</code>:

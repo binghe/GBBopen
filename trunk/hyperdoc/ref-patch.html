@@ -17,7 +17,7 @@
 <p><table class="tight" width="100%">
 <tr valign="top"><td valign="baseline" align="left"%>
 <nobr><b><font color="#000000">patch</font></b></nobr></td><td valign="baseline"> &nbsp; </td><td valign="baseline" align="left" width="99%"><code>(</code><var>id date</var>
-<code>&#38;key</code> <var>author description reload</var><code>)</code>
+<code>&#38;key</code> <var>author description</var><code>)</code>
 <var>form</var>*</td><td valign="baseline" align="right">[<i>Macro</i>]
 </td></tr></table></p>
 <p><span class="fndoclabel">Purpose</span> <br />Define a <a href="ref-glossary.html#gl:patch">patch</a> to a <a href="ref-glossary.html#gl:module">module</a>.
@@ -32,16 +32,11 @@
 <b><a href="ref-parse-date.html">parse-date</a></b>)
 </td></tr><tr valign="top"><td valign="baseline"><i>author</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A string (default is <code>"Anonymous"</code>)
 </td></tr><tr valign="top"><td valign="baseline"><i>description</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A string or a list of strings (default is <code>nil</code>)
-</td></tr><tr valign="top"><td valign="baseline"><i>reload</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> (default is <code>nil</code>)
 </td></tr><tr valign="top"><td valign="baseline"><i>form</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#gl:form">form</a>
 </td></tr></table>
 </p>
 <p><span class="fndoclabel">Description</span> <br />The source file for a patch should be placed in a subdirectory named
 <code>patches</code> in the module's source-files directory.
-</p>
-<p>Unless <var>reload</var> is true, the <a href="ref-glossary.html#gl:patch">patch</a> <var>forms</var> are
-only executed at load time if the patch has not been loaded.  (Reloading a
-patch is only recommended when a patch is being developed.)
 </p>
 <p>If a patch cannot be defined as a single <b>patch</b> form, the more
 primitive <b><a href="ref-start-patch.html">start-patch</a></b>, <b><a href="ref-continue-patch.html">continue-patch</a></b>,
