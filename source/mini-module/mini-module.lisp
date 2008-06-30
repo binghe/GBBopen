@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/mini-module/mini-module.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Jun 30 00:27:47 2008 *-*
+;;;; *-* Last-Edit: Mon Jun 30 11:16:59 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -1159,6 +1159,8 @@
 ;;;  Patch primitives (placed here to avoid forward references)
 
 (defvar *current-module* nil)
+;; Set to the file-name of the file being loaded:
+(defvar *current-file-name* nil)
 ;; True when compiling a file:
 (defvar *compiling-file* nil)
 ;; Holds the description of the patch currently being loaded:
@@ -1175,7 +1177,9 @@
   author 
   description
   ;; Used to maintain module reference when loading patch:
-  module)
+  module
+  ;; Remember the file containing the patch:
+  file-name)
 
 ;;; ---------------------------------------------------------------------------
 
@@ -1200,25 +1204,22 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun %make-patch (id date author description reload)
+(defun %make-patch (id date author description &optional reload)
+  (declare (ignore reload))             ; reload is deprecated, remove soon!!!
   (cond
-   (*compiling-file*
-    (setf *loading-patch* ':compiling))
-   ((or reload (not (%find-patch-desc id)))
-    (setf *loading-patch* (make-patch-description
-                           :id id
-                           :date date
-                           :date-loaded (get-universal-time)
-                           :author author
-                           :description description
-                           :module *current-module*)))
-   ;; Skip this patch: 
-   (t (format t "~&;; Skipping already loaded patch ~s to module ~s~%"
-              id
-              (mm-module.name *current-module*))
-      (setf *loading-patch* ':skip)
-      ;; Return nil
-      nil)))
+   (*compiling-file*)
+   (t (when (%find-patch-desc id)
+        (format t "~&;; Reloading previously loaded patch ~s to module ~s~%"
+                id
+                (mm-module.name *current-module*)))
+      (setf *loading-patch* (make-patch-description
+                             :id id
+                             :date date
+                             :date-loaded (get-universal-time)
+                             :author author
+                             :description description
+                             :module *current-module*
+                             :file-name *current-file-name*)))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -1248,16 +1249,17 @@
 
 (defun %check-patch ()
   ;; Checks that there is an open patch
-  (unless (or *compiling-file* *loading-patch*)
-    (error "No patch has been started."))
-  (not (eq *loading-patch* ':skip)))
+  (if (or *compiling-file* *loading-patch*)
+      ;; Return value is deprecated, remove on next release (change to unless)!
+      't
+      (error "No patch has been started.")))
 
 ;;; ---------------------------------------------------------------------------
 
 (defun %check-no-patch ()
   ;; Checks that there no patch open
   (when *loading-patch*
-    (unless (or *compiling-file* (eq *loading-patch* ':skip))
+    (unless *compiling-file* 
       (warn "Patch ~a of module ~s was not completed"
             (patch-description.id *loading-patch*)
             (mm-module.name (patch-description.module *loading-patch*))))
@@ -1319,6 +1321,8 @@
 ;;; ---------------------------------------------------------------------------
 
 (defparameter *compile/load-file-options*
+    ;; A patch files can also have the option :developing, which is added
+    ;; contextually in COMPILE/LOAD-MODULE-FILES-HELPER:
     '(:recompile :reload :source :forces-recompile :noload))
 
 ;;; ---------------------------------------------------------------------------
@@ -1340,13 +1344,14 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun load-file (path print?)
+(defun %load-file (file-name path print?)
   ;; Generate our own load-verbose message:
   (when (and (not *load-verbose*)
              *mini-module-load-verbose*)
     (format t "~&;;; loading file ~a...~%"
             (namestring path)))
-  (let ((*loading-patch* nil))
+  (let ((*loading-patch* nil)
+        (*current-file-name* file-name))
     (prog1 (load path :print print?)
       (%check-no-patch))))
 
@@ -1369,7 +1374,9 @@
       (let* ((file-options (when (consp file) 
                              (rest file)))
              (bad-options (set-difference file-options 
-                                          *compile/load-file-options*
+                                          (if patches?
+                                              (cons ':developing *compile/load-file-options*)
+                                              *compile/load-file-options*)
                                           :test #'eq))
              (file-name (if (consp file) (first file) file))
              (source-path (make-pathname
@@ -1395,73 +1402,95 @@
                 file-name
                 (mm-module.name module)
                 bad-options))           
-        (flet ((load-it (path date)
-                 (when (and (or patches? (not *patches-only*))
-                            (or reload?
-                                (member ':reload file-options :test #'eq)
-                                (not file-loaded-acons)
-                                (> date (cdr file-loaded-acons))))
-                   (load-file path print?)
-                   (when (member ':forces-recompile file-options :test #'eq)
-                     (let ((latest-source/compiled-file-date 
-                            (max source-file-date compiled-file-date)))
-                       (maybe-update-forces-recompile-date 
-                        latest-source/compiled-file-date))
-                     (setf (mm-module.latest-forces-recompiled-date module)
-                           (max compiled-file-date
-                                (mm-module.latest-forces-recompiled-date
-                                 module))))
-                   (if file-loaded-acons
-                       ;; update the date in the existing acons:
-                       (setf (cdr file-loaded-acons) date)
-                       ;; add file and date as a new acons in files-loaded:
-                       (setf (mm-module.files-loaded module)
-                             (acons file-name date files-loaded))))
-                 ;; warn that recompilation is needed:
-                 (when (and (plusp compiled-file-date)
-                            (> *latest-forces-recompile-date*
-                               compiled-file-date)
-                            (not (member ':source file-options :test #'eq)))
-                   (format t "~&; File ~a in ~s needs to be recompiled.~%"
-                           file-name (mm-module.name module)))))
-          (when (and (or patches? (not *patches-only*))
-                     (not (member ':source file-options :test #'eq))
-                     (or recompile? 
-                         (member ':recompile file-options :test #'eq)
-                         (and compile?
-                              (or (> source-file-date compiled-file-date)
-                                  (> *latest-forces-recompile-date* 
-                                     compiled-file-date)))))
-            ;; Delete the old compiled file, if it exists:
-            (when (plusp compiled-file-date)
-              (delete-file compiled-path))
-            ;; Generate our own compile-verbose message:
-            (when (and (not *compile-verbose*)
-                       *mini-module-compile-verbose*)
-              (format t "~&;;; Compiling file ~a...~%"
-                      (namestring source-path)))
-            (let ((*compiling-file* 't)
-                  (*loading-patch* nil))
-              (compile-file source-path 
-                            :print print?
-                            :output-file compiled-path)
-              (%check-no-patch))
-            (setf compiled-file-date 
-              (or (and (probe-file compiled-path)
-                       (file-write-date compiled-path))
-                  ;; Compiled file can be missing if compilation was
-                  ;; aborted:
-                  -1))
-            (when (member ':forces-recompile file-options :test #'eq)
-              (maybe-update-forces-recompile-date compiled-file-date)
-              (setf (mm-module.latest-forces-recompiled-date module)
-                    (max compiled-file-date
-                         (mm-module.latest-forces-recompiled-date module)))
-              (setf recompile? 't propagate? 't)))
-          (unless (member ':noload file-options :test #'eq)
-            (if (or source? (> source-file-date compiled-file-date))
-                (load-it source-path source-file-date)
-                (load-it compiled-path compiled-file-date)))))))
+        (labels ((consider-file-p (compile? date)
+                   (if patches? 
+                       (or (member ':developing file-options :test #'eq)
+                           ;; Patch hasn't been loaded?
+                           (not (member-if
+                                 #'(lambda (patch-description)
+                                     (equal (patch-description.file-name
+                                             patch-description)
+                                            file-name))
+                                 (mm-module.patch-descriptions module)))
+                           ;; Warn that we are skipping this patch:
+                           (when (and date (> date (cdr file-loaded-acons)))
+                             (format t "~&;; Not ~:[reloading~;recompiling~] ~
+                                             patch file ~s in module ~s~%"
+                                     compile?
+                                     file-name
+                                     (mm-module.name *current-module*))
+                             ;; return nil:
+                             nil))
+                       (not *patches-only*)))
+                 (load-it (path date)
+                   (when (and (consider-file-p nil date)
+                              (or reload?
+                                  (member ':reload file-options :test #'eq)
+                                  (not file-loaded-acons)
+                                  (> date (cdr file-loaded-acons))))
+                     (%load-file file-name path print?)
+                     (when (member ':forces-recompile file-options :test #'eq)
+                       (let ((latest-source/compiled-file-date 
+                              (max source-file-date compiled-file-date)))
+                         (maybe-update-forces-recompile-date 
+                          latest-source/compiled-file-date))
+                       (setf (mm-module.latest-forces-recompiled-date module)
+                             (max compiled-file-date
+                                  (mm-module.latest-forces-recompiled-date
+                                   module))))
+                     (if file-loaded-acons
+                         ;; update the date in the existing acons:
+                         (setf (cdr file-loaded-acons) date)
+                         ;; add file and date as a new acons in files-loaded:
+                         (setf (mm-module.files-loaded module)
+                               (acons file-name date files-loaded))))
+                   ;; warn that recompilation is needed:
+                   (when (and (plusp compiled-file-date)
+                              (> *latest-forces-recompile-date*
+                                 compiled-file-date)
+                              (not (member ':source file-options :test #'eq)))
+                     (format t "~&; File ~a in ~s needs to be recompiled.~%"
+                             file-name (mm-module.name module)))))
+          (let ((recompile-needed 
+                 (and compile?
+                      (or (> source-file-date compiled-file-date)
+                          (> *latest-forces-recompile-date* 
+                             compiled-file-date)))))
+            (when (and (consider-file-p 't (when recompile-needed source-file-date))
+                       (not (member ':source file-options :test #'eq))
+                       (or recompile? 
+                           (member ':recompile file-options :test #'eq)
+                           recompile-needed))
+              ;; Delete the old compiled file, if it exists:
+              (when (plusp compiled-file-date)
+                (delete-file compiled-path))
+              ;; Generate our own compile-verbose message:
+              (when (and (not *compile-verbose*)
+                         *mini-module-compile-verbose*)
+                (format t "~&;;; Compiling file ~a...~%"
+                        (namestring source-path)))
+              (let ((*compiling-file* 't)
+                    (*loading-patch* nil))
+                (compile-file source-path 
+                              :print print?
+                              :output-file compiled-path)
+                (%check-no-patch))
+              (setf compiled-file-date 
+                    (or (and (probe-file compiled-path)
+                             (file-write-date compiled-path))
+                        ;; Compiled file can be missing if compilation was
+                        ;; aborted:
+                        -1))
+              (when (member ':forces-recompile file-options :test #'eq)
+                (maybe-update-forces-recompile-date compiled-file-date)
+                (setf (mm-module.latest-forces-recompiled-date module)
+                      (max compiled-file-date
+                           (mm-module.latest-forces-recompiled-date module)))
+                (setf recompile? 't propagate? 't)))
+            (unless (member ':noload file-options :test #'eq)
+              (if (or source? (> source-file-date compiled-file-date))
+                  (load-it source-path source-file-date)
+                  (load-it compiled-path compiled-file-date))))))))
   (setf (mm-module.load-completed? module) 't)
   (maybe-update-forces-recompile-date 
    (mm-module.latest-forces-recompiled-date module))
@@ -1694,7 +1723,7 @@
                   nil
                   *autorun-modules*)))
         (flet ((load-it (path date)
-                 (load-file path print?)
+                 (%load-file file-name path print?)
                  (if file-loaded-acons
                      ;; update the date in the existing acons:
                      (setf (cdr file-loaded-acons) date)
@@ -1800,32 +1829,39 @@
                   "[Undefined]")
               (if (zerop forces-recompile-date)
                   "None"
-                  (brief-date-and-time forces-recompile-date))))
-    (dolist (file (mm-module.files module))
-      (multiple-value-bind (file-name options)
-          (if (consp file)
-              (values (car file) (cdr file))
-              file)
-        (let ((loaded-date (cdr (assoc file-name files-loaded 
-                                       :test #'string=))))
-          (format t "~11t~@[~a~]~24t~a ~@[~w~]~%" 
-                  (and loaded-date (brief-date-and-time loaded-date)) 
-                  file-name
-                  options))))
-    (let ((patches (mm-module.patches module)))
-      (when patches
-        (format t "~&  Patches:")
-        (dolist (patch patches)
+                  (brief-date-and-time forces-recompile-date)))
+      (flet ((show-file (file-name options)
+               (let ((loaded-date (cdr (assoc file-name files-loaded 
+                                              :test #'string=))))
+                 (format t "~11t~@[~a~]~@[*~*~]~25t~a~@[ ~w~]~%" 
+                         (and loaded-date (brief-date-and-time loaded-date)) 
+                         (when loaded-date
+                           (let* ((source-path (make-pathname
+                                                :name file-name
+                                                :type "lisp"
+                                                :defaults source-directory))
+                                  (source-file-date 
+                                   (or (and (probe-file source-path)
+                                            (file-write-date source-path)) 0)))
+                             (> source-file-date loaded-date)))
+                         file-name
+                         options))))
+        (dolist (file (mm-module.files module))
           (multiple-value-bind (file-name options)
-              (if (consp patch) 
-                  (values (car patch) (cdr patch))
-                  patch)
-            (let ((loaded-date (cdr (assoc file-name files-loaded 
-                                           :test #'string=))))
-              (format t "~11t~@[~a~]~24t~a ~@[~w~]~%" 
-                      (and loaded-date (brief-date-and-time loaded-date)) 
-                      file-name
-                      options)))))))
+              (if (consp file)
+                  (values (car file) (cdr file))
+                  file)
+            (show-file file-name options)))
+        (let ((patches (mm-module.patches module)))
+          (when patches
+            (format t "~&  Patches:")
+            (setf source-directory (module-source/compiled-directories module 't))
+            (dolist (patch patches)
+              (multiple-value-bind (file-name options)
+                  (if (consp patch) 
+                      (values (car patch) (cdr patch))
+                      patch)
+                (show-file file-name options))))))))
   (values))
 
 ;;; ---------------------------------------------------------------------------
@@ -1935,27 +1971,28 @@
 
 (defmacro start-patch ((id date &key (author "Anonymous") description reload)
                        &body body)
+  (declare (ignore reload))             ; :reload is deprecated, remove soon!!
   (let ((date (multiple-value-call 
                   #'encode-universal-time 
                 ;; noon on the given date
                 0 0 12 (parse-date date))))
     `(progn
        (%check-no-patch)
-       (when (%make-patch ,id ,date ,author ,description ,reload)
-         ,@body))))
+       (%make-patch ,id ,date ,author ,description)
+       ,@body)))
 
 ;;; ---------------------------------------------------------------------------
 
 (defmacro continue-patch (&body body)
-  `(when (%check-patch)
-     ,@body))
+  `(progn (%check-patch)
+          ,@body))
 
 ;;; ---------------------------------------------------------------------------
 
 (defmacro finish-patch (&body body)
-  `(when (%check-patch)
-     ,@body
-     (%commit-patch)))
+  `(progn (%check-patch)
+          ,@body
+          (%commit-patch)))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -1973,7 +2010,8 @@
               (patch-description.date description)
               (patch-description.author description)
               (patch-description.description description)
-              (patch-description.date-loaded description)))))
+              (patch-description.date-loaded description)
+              (patch-description.file-name description)))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -2013,7 +2051,7 @@
   
   (define-module :mini-module
     (:directory :mini-module-root "mini-module")
-    (:files "mini-module"))
+    (:files ("mini-module" :forces-recompile)))
   
   (define-module :mini-module-user
     (:requires :mini-module)

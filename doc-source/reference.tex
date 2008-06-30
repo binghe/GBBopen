@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Mon Jun 30 00:38:27 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Mon Jun 30 11:22:24 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -424,6 +424,8 @@ and \xsitelink{Hyperlatex}{http://hyperlatex.sourceforge.net/} 2.9a.
 
 \newcommand{\compilemodulefileoptions}{\T\\[4pt] 
 \begin{tabular}{@{~~~}l@{}l@{}}
+\code{:developing} & If the patch file has changed, recompile and
+reload it (patch files only) \\[2pt]
 \code{:forces-recompile}~~~ & If the file has changed, recompile and
 reload all subsequent files and \glref{modules}\\[2pt]
 \code{:noload} & Compile, but do not load the file \\[2pt]
@@ -432,6 +434,7 @@ reload all subsequent files and \glref{modules}\\[2pt]
 \code{:source} & Do not compile the file (load the source instead) \\
 \end{tabular}
 %
+\codeindexsub{:developing}{define-module file option (patch files only)}%
 \codeindexqual{:forces-recompile}{define-module file option}%
 \codeindexqual{:noload}{define-module file option}%
 \codeindexsub{:recompile}{define-module file option}%
@@ -441,6 +444,8 @@ reload all subsequent files and \glref{modules}\\[2pt]
 
 \newcommand{\loadmodulefileoptions}{\T\\[4pt] 
 \begin{tabular}{@{~~~}l@{}l@{}}
+\code{:developing} & If the compiled patch file has changed, 
+reload it (patch files only) \\[2pt]
 \code{:forces-recompile}~~~ & If the file has changed, recompile and
 reload all subsequent files and \glref{modules}\\[2pt]
 \code{:noautorun}~~~ & Binds \textbf{\entlink{*autorun-modules*}} to \nil{}
@@ -451,6 +456,7 @@ reload all subsequent files and \glref{modules}\\[2pt]
 \code{:source} & Do not compile the file (load the source instead) \\
 \end{tabular}
 %
+\codeindexsub{:developing}{define-module file option (patch files only)}%
 \codeindexqual{:noautorun}{compile/load-module option}%
 \codeindexqual{:print}{compile/load-module option}%
 \codeindexsub{:reload}{define-module file option}%
@@ -2542,6 +2548,9 @@ a separate ``beta'' compile tree:
 \bfindexit{*standard-output*}%
 The description is printed to the {\bf *standard-output*} stream.
 
+Files and patch files shown with an asterisk following their load time
+indicate that the source file has been modified since that file was loaded.
+
 \begin{alsos}{define-module}
 \also[define-module]
 \end{alsos}
@@ -2552,16 +2561,16 @@ Describe the \code{:gbbopen-test} \glref{module} before it has been loaded:
 \W\supp
 \begin{example}
   > (describe-module :gbbopen-test)
-  Module :gbbopen-test (loaded)
+  Module :gbbopen-test (not loaded)
     Requires: (:gbbopen-user)
     Fully expanded requires: (:mini-module :mini-module-user :portable-threads
                               :gbbopen-tools :gbbopen-core :os-interface :gbbopen-user)
     Source directory: \var{<install-dir>\/}/source/gbbopen/test/
     Compiled directory: \var{<install-dir>\/}/\var{<platform-dir>\/}/gbbopen/test/
     Forces recompile date: None
-    Files:              basic-tests (:reload)
-    Patches:            basic-tests-p001 
-                        basic-tests-p002 
+    Files:                 basic-tests (:reload)
+    Patches:               basic-tests-p001 
+                           basic-tests-p002 (:developing)
   >
 \end{example}
 
@@ -2577,9 +2586,9 @@ Describe the \code{:gbbopen-test} \glref{module} after it has been loaded:
     Source directory: \var{<install-dir>\/}/source/gbbopen/test/
     Compiled directory: \var{<install-dir>\/}/\var{<platform-dir>\/}/gbbopen/test/
     Forces recompile date: None
-    Files:   Jun 27 05:22 basic-tests (:reload)
-    Patches: Jun 27 05:22 basic-tests-p001 
-             Jun 27 05:22 basic-tests-p002 
+    Files:   Jun 27 05:22  basic-tests (:reload)
+    Patches: Jun 27 05:22  basic-tests-p001 
+             Jun 27 05:22* basic-tests-p002 (:developing)
   >
 \end{example}
 
@@ -2811,7 +2820,7 @@ Return the pathname of the \code{:gbbopen-user} \glref{module}:
 
 \begin{functiondoc}{Function}{get-patch-description}%
   {\var{id module-name\/}
-    \mbox{\returns{} \var{id, date, author, description, date-loaded\/}}}
+    \mbox{\returns{} \var{id, date, author, description, date-loaded, file-name\/}}}
 \index{patch!description, getting}%
 
 \fnsyntax 
@@ -2831,10 +2840,12 @@ Return the pathname of the \code{:gbbopen-user} \glref{module}:
 \arg[author] A string
 \arg[description] A string or a list of strings or \nil
 \arg[date-loaded] A \glref{universal~time}
+\arg[file-name] A string
 \end{args}
 
-\fnreturns Five values: \var{id}, \var{date}, \var{author}, \var{description},
-and \var{date-loaded\/}, or \nil{} if the patch has not been loaded.
+\fnreturns Six values: \var{id}, \var{date}, \var{author}, \var{description},
+\var{date-loaded}, and \var{file-name\/}, or \nil{} if the patch has not been
+loaded.
 
 \fnerrors
 \modulenotdefined
@@ -2863,6 +2874,7 @@ Get the description values for \glref{patch} \code{1} to \glref{module} \code{:m
   "Corkill"
   "A simple example patch"
   3423316130
+  "my-app-p001"
   >
 \end{example}
 %
@@ -3177,7 +3189,7 @@ Check if the Agenda Shell \glref{module} has been loaded:
 
 \begin{functiondoc}{Macro}{patch}%
   {\code{(}\var{id date\/}
-    \code{\&key} \var{author description reload\/}\code{)}
+    \code{\&key} \var{author description\/}\code{)}
     \var{form\/}\superstar} 
 \index{module!patching}%
 \index{patching!a module}%
@@ -3197,7 +3209,6 @@ Check if the Agenda Shell \glref{module} has been loaded:
   \textbf{\entlink{parse-date}})
 \arg[author] A string (default is \code{"Anonymous"})
 \arg[description] A string or a list of strings (default is \nil)
-\arg[reload] A \glref{generalized~boolean} (default is \nil)
 \arg[form] A \glref{form}
 \end{args}
 
@@ -3205,10 +3216,6 @@ Check if the Agenda Shell \glref{module} has been loaded:
 %
 The source file for a patch should be placed in a subdirectory named
 \code{patches} in the module's source-files directory.
-
-Unless \var{reload} is true, the \glref{patch} \var{forms} are
-only executed at load time if the patch has not been loaded.  (Reloading a
-patch is only recommended when a patch is being developed.)
 
 If a patch cannot be defined as a single \textbf{patch} form, the more
 primitive \textbf{\entlink{start-patch}}, \textbf{\entlink{continue-patch}},
@@ -3384,7 +3391,7 @@ List the currently defined \glref{root} and \glref{relative~directories}:
 
 \begin{functiondoc}{Macro}{start-patch}%
   {\code{(}\var{id date\/}
-    \code{\&key} \var{author description reload\/}\code{)}
+    \code{\&key} \var{author description\/}\code{)}
     \var{form\/}\superstar} 
 \index{module!patching}%
 \index{patching!a module}%
@@ -3405,7 +3412,6 @@ a \glref{module}.
   \textbf{\entlink{parse-date}})
 \arg[author] A string (default is \code{"Anonymous"})
 \arg[description] A string or a list of strings (default is \nil)
-\arg[reload] A \glref{generalized~boolean} (default is \nil)
 \arg[form] A \glref{form}
 \end{args}
 
@@ -3413,10 +3419,6 @@ a \glref{module}.
 %
 The source file for a patch should be placed in a subdirectory named
 \code{patches} in the module's source-files directory.
-
-Unless \var{reload} is true, the \glref{patch} \var{forms} are only executed
-at load time if the patch has not been loaded.  (Reloading a patch is only
-recommended when a patch is being developed.)
 
 The \textbf{start-patch} macro, along with \textbf{\entlink{continue-patch}}
 and \textbf{\entlink{finish-patch}}, can be used to define a patch as multiple
