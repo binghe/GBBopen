@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/mini-module/mini-module.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Jun 29 19:45:10 2008 *-*
+;;;; *-* Last-Edit: Mon Jun 30 00:27:47 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -1201,8 +1201,10 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun %make-patch (id date author description reload)
-  (cond 
-   ((or reload *compiling-file* (not (%find-patch-desc id)))
+  (cond
+   (*compiling-file*
+    (setf *loading-patch* ':compiling))
+   ((or reload (not (%find-patch-desc id)))
     (setf *loading-patch* (make-patch-description
                            :id id
                            :date date
@@ -1211,7 +1213,10 @@
                            :description description
                            :module *current-module*)))
    ;; Skip this patch: 
-   (t (setf *loading-patch* ':skip)
+   (t (format t "~&;; Skipping already loaded patch ~s to module ~s~%"
+              id
+              (mm-module.name *current-module*))
+      (setf *loading-patch* ':skip)
       ;; Return nil
       nil)))
 
@@ -1243,7 +1248,7 @@
 
 (defun %check-patch ()
   ;; Checks that there is an open patch
-  (unless *loading-patch*
+  (unless (or *compiling-file* *loading-patch*)
     (error "No patch has been started."))
   (not (eq *loading-patch* ':skip)))
 
@@ -1252,7 +1257,7 @@
 (defun %check-no-patch ()
   ;; Checks that there no patch open
   (when *loading-patch*
-    (unless (eq *loading-patch* ':skip)
+    (unless (or *compiling-file* (eq *loading-patch* ':skip))
       (warn "Patch ~a of module ~s was not completed"
             (patch-description.id *loading-patch*)
             (mm-module.name (patch-description.module *loading-patch*))))
