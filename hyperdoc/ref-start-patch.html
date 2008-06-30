@@ -65,11 +65,10 @@ single <b><a href="ref-patch.html">patch</a></b> form.
 <p><span class="fndoclabel">Example</span> <br />Define a more complex <a href="ref-glossary.html#gl:patch">patch</a> (in a file named <code>my-app-p002.lisp</code>
 in the <code>patches</code> subdirectory of the module):
 <a name="id1"></a><pre class="pretop">
-  (eval-when (:compile-toplevel :load-toplevel :execute)
-    (start-patch (2 "06-23-08" 
-                    :author "Corkill"
-                    :description "A more complex patch example")
-        (<a href="ref-printv.html">printv</a> "More complex example patch started!")))
+  (start-patch (2 "06-23-08" 
+                  :author "Corkill"
+                  :description "A more complex patch example")
+      (<a href="ref-printv.html">printv</a> "More complex example patch started!"))
 
   (eval-when (:compile-toplevel)
     (<a href="ref-continue-patch.html">continue-patch</a>
@@ -79,7 +78,7 @@ in the <code>patches</code> subdirectory of the module):
 
   (eval-when (:compile-toplevel :load-toplevel :execute)
     (<a href="ref-continue-patch.html">continue-patch</a>
-     (<a href="ref-printv.html">printv</a> "Defining macro-for-patch...")
+     (<a href="ref-printv.html">printv</a> "Defining macro-for-patch at compile &amp; load time...")
      (defmacro macro-for-patch (x)
        `',x)))
 
@@ -97,9 +96,8 @@ in the <code>patches</code> subdirectory of the module):
      (<a href="ref-printv.html">printv</a> "Using compile-time-only-macro-for-patch...")
      (compile-time-only-macro-for-patch abc)))
 
-  (eval-when (:compile-toplevel :load-toplevel :execute)
-    (<a href="ref-finish-patch.html">finish-patch</a>
-     (<a href="ref-printv.html">printv</a> "More complex example patch finished!")))
+  (<a href="ref-finish-patch.html">finish-patch</a>
+   (<a href="ref-printv.html">printv</a> "More complex example patch finished!"))
 </pre>
 </p>
 <hr /><address><a target="_top" class="address"

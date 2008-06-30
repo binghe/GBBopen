@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Sat Jun 28 10:26:34 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Mon Jun 30 00:38:27 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -2139,11 +2139,10 @@ in the \code{patches} subdirectory of the module):
 %
 \W\supp
 \begin{example}
-  (eval-when (:compile-toplevel :load-toplevel :execute)
-    (\entlink{start-patch} (2 "06-23-08" 
-                    :author "Corkill"
-                    :description "A more complex patch example")
-        (\entlink{printv} "More complex example patch started!")))
+  (\entlink{start-patch} (2 "06-23-08" 
+                  :author "Corkill"
+                  :description "A more complex patch example")
+      (\entlink{printv} "More complex example patch started!"))
 
   (eval-when (:compile-toplevel)
     (continue-patch
@@ -2153,7 +2152,7 @@ in the \code{patches} subdirectory of the module):
 
   (eval-when (:compile-toplevel :load-toplevel :execute)
     (continue-patch
-     (\entlink{printv} "Defining macro-for-patch...")
+     (\entlink{printv} "Defining macro-for-patch at compile & load time...")
      (defmacro macro-for-patch (x)
        `',x)))\goodpagebreak
 
@@ -2171,9 +2170,8 @@ in the \code{patches} subdirectory of the module):
      (\entlink{printv} "Using compile-time-only-macro-for-patch...")
      (compile-time-only-macro-for-patch abc)))
 
-  (eval-when (:compile-toplevel :load-toplevel :execute)
-    (\entlink{finish-patch}
-     (\entlink{printv} "More complex example patch finished!")))
+  (\entlink{finish-patch}
+   (\entlink{printv} "More complex example patch finished!"))
 \end{example}
 
 \end{functiondoc}
@@ -2701,11 +2699,10 @@ in the \code{patches} subdirectory of the module):
 %
 \W\supp
 \begin{example}
-  (eval-when (:compile-toplevel :load-toplevel :execute)
-    (\entlink{start-patch} (2 "06-23-08" 
-                    :author "Corkill"
-                    :description "A more complex patch example")
-        (\entlink{printv} "More complex example patch started!")))
+  (\entlink{start-patch} (2 "06-23-08" 
+                  :author "Corkill"
+                  :description "A more complex patch example")
+      (\entlink{printv} "More complex example patch started!"))
 
   (eval-when (:compile-toplevel)
     (\entlink{continue-patch}
@@ -2715,7 +2712,7 @@ in the \code{patches} subdirectory of the module):
 
   (eval-when (:compile-toplevel :load-toplevel :execute)
     (\entlink{continue-patch}
-     (\entlink{printv} "Defining macro-for-patch...")
+     (\entlink{printv} "Defining macro-for-patch at compile & load time...")
      (defmacro macro-for-patch (x)
        `',x)))\goodpagebreak
 
@@ -2733,9 +2730,8 @@ in the \code{patches} subdirectory of the module):
      (\entlink{printv} "Using compile-time-only-macro-for-patch...")
      (compile-time-only-macro-for-patch abc)))
 
-  (eval-when (:compile-toplevel :load-toplevel :execute)
-    (finish-patch
-     (\entlink{printv} "More complex example patch finished!")))
+  (finish-patch
+   (\entlink{printv} "More complex example patch finished!"))
 \end{example}
 
 \end{functiondoc}
@@ -3452,11 +3448,10 @@ in the \code{patches} subdirectory of the module):
 %
 \W\supp
 \begin{example}
-  (eval-when (:compile-toplevel :load-toplevel :execute)
-    (start-patch (2 "06-23-08" 
-                    :author "Corkill"
-                    :description "A more complex patch example")
-        (\entlink{printv} "More complex example patch started!")))
+  (start-patch (2 "06-23-08" 
+                  :author "Corkill"
+                  :description "A more complex patch example")
+      (\entlink{printv} "More complex example patch started!"))
 
   (eval-when (:compile-toplevel)
     (\entlink{continue-patch}
@@ -3466,7 +3461,7 @@ in the \code{patches} subdirectory of the module):
 
   (eval-when (:compile-toplevel :load-toplevel :execute)
     (\entlink{continue-patch}
-     (\entlink{printv} "Defining macro-for-patch...")
+     (\entlink{printv} "Defining macro-for-patch at compile & load time...")
      (defmacro macro-for-patch (x)
        `',x)))\goodpagebreak
 
@@ -3484,9 +3479,8 @@ in the \code{patches} subdirectory of the module):
      (\entlink{printv} "Using compile-time-only-macro-for-patch...")
      (compile-time-only-macro-for-patch abc)))
 
-  (eval-when (:compile-toplevel :load-toplevel :execute)
-    (\entlink{finish-patch}
-     (\entlink{printv} "More complex example patch finished!")))
+  (\entlink{finish-patch}
+   (\entlink{printv} "More complex example patch finished!"))
 \end{example}
 
 \end{functiondoc}

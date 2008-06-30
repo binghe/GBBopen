@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-USER; Syntax:common-lisp -*-
-;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/basic-tests-p002.lisp *-*
+;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/patches/basic-tests-p002.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Jun 24 04:02:32 2008 *-*
+;;;; *-* Last-Edit: Mon Jun 30 00:34:55 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -25,21 +25,20 @@
 
 (in-package :gbbopen-user)
 
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (start-patch (2 "06-23-08" 
-                  :author "Corkill"
-                  :description "A more complex patch example")
-      (printv "More complex example patch started!")))
+(start-patch (2 "06-23-08" 
+                :author "Corkill"
+                :description "A more complex patch example")
+    (printv "More complex example patch started!"))
 
 (eval-when (:compile-toplevel)
   (continue-patch
-   (printv "Defining compile-time-only-macro-for-patch...")
-   (defmacro compile-time-only-macro-for-patch (x)
-     `',x)))
+    (printv "Defining compile-time-only-macro-for-patch...")
+    (defmacro compile-time-only-macro-for-patch (x)
+      `',x)))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (continue-patch
-   (printv "Defining macro-for-patch...")
+   (printv "Defining macro-for-patch at compile & load time...")
    (defmacro macro-for-patch (x)
      `',x)))
 
@@ -57,9 +56,8 @@
    (printv "Using compile-time-only-macro-for-patch...")
    (compile-time-only-macro-for-patch abc)))
 
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (finish-patch
-   (printv "More complex example patch finished!")))
+(finish-patch
+ (printv "More complex example patch finished!"))
 
 ;;; ===========================================================================
 ;;;				  End of File
