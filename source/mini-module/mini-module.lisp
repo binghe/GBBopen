@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/mini-module/mini-module.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Jun 30 11:16:59 2008 *-*
+;;;; *-* Last-Edit: Tue Jul  1 05:56:09 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -904,6 +904,7 @@
 (defstruct (mm-module
             (:conc-name #.(dotted-conc-name 'mm-module))
             (:copier nil))
+  :;; NOTE: Changes to slots must be reflected in ENSURE-MODULE:
   name
   (directory nil)
   (subdirectories)
@@ -1121,21 +1122,31 @@
            (cons ':requires requires)
            name))
   (let ((existing-module (gethash name *mm-modules*)))
-    (setf (gethash name *mm-modules*)
-          (make-mm-module 
-           :name name 
-           :directory directory
+    (cond 
+     ;; Update existing module definition:
+     (existing-module
+      ;; if the files specification has changed at all, reload them all...
+      (unless (equal files (mm-module.files existing-module))
+        (setf (mm-module.files-loaded existing-module) nil))
+      ;; Update module with the given arguments:      
+      (setf (mm-module.directory existing-module) directory)
+      (setf (mm-module.subdirectories existing-module) subdirectories)
+      (setf (mm-module.requires existing-module) requires)
+      (setf (mm-module.files existing-module) files)
+      (setf (mm-module.patches existing-module) patches)
+      (setf (mm-module.after-form existing-module) after-form)
+      ;; Also update system-name:
+      (setf (mm-module.system-name existing-module) *current-system-name*))
+     ;; Create a new module definition:
+     (t (setf (gethash name *mm-modules*)
+              (make-mm-module 
+               :name name 
+               :directory directory
            :subdirectories subdirectories
            :requires requires
            :files files 
            :patches patches
-           :files-loaded 
-             (when (and existing-module
-                        ;; if the files specification has changed at all,
-                        ;; reload them all...
-                        (equal files (mm-module.files existing-module)))
-               (mm-module.files-loaded existing-module))
-             :after-form after-form)))
+           :after-form after-form)))))
   ;; Check requires ordering for consistency with other modules:
   (if *skip-requires-ordering-check*
       (push name *deferred-requires-ordering-check-module-names*)
