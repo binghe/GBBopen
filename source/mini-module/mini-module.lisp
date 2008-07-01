@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/mini-module/mini-module.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Jul  1 06:00:01 2008 *-*
+;;;; *-* Last-Edit: Tue Jul  1 09:23:34 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -904,7 +904,7 @@
 (defstruct (mm-module
             (:conc-name #.(dotted-conc-name 'mm-module))
             (:copier nil))
-  :;; NOTE: Changes to slots must be reflected in ENSURE-MODULE:
+  ;;; NOTE: Changes to slots must be reflected in ENSURE-MODULE:
   name
   (directory nil)
   (subdirectories)
