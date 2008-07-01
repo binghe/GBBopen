@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/mini-module/mini-module.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Jul  1 05:56:09 2008 *-*
+;;;; *-* Last-Edit: Tue Jul  1 06:00:01 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -1133,8 +1133,8 @@
       (setf (mm-module.subdirectories existing-module) subdirectories)
       (setf (mm-module.requires existing-module) requires)
       (setf (mm-module.files existing-module) files)
-      (setf (mm-module.patches existing-module) patches)
       (setf (mm-module.after-form existing-module) after-form)
+      (setf (mm-module.patches existing-module) patches)
       ;; Also update system-name:
       (setf (mm-module.system-name existing-module) *current-system-name*))
      ;; Create a new module definition:
@@ -1142,11 +1142,11 @@
               (make-mm-module 
                :name name 
                :directory directory
-           :subdirectories subdirectories
-           :requires requires
-           :files files 
-           :patches patches
-           :after-form after-form)))))
+               :subdirectories subdirectories
+               :requires requires
+               :files files 
+               :after-form after-form
+               :patches patches)))))
   ;; Check requires ordering for consistency with other modules:
   (if *skip-requires-ordering-check*
       (push name *deferred-requires-ordering-check-module-names*)
