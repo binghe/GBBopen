@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/gbbopen.asd *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Mar 25 11:38:54 2008 *-*
+;;;; *-* Last-Edit: Tue Jul  1 09:22:24 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -22,7 +22,7 @@
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
-;;;  12-12-05 File Created.  (Corkill)
+;;;  12-12-05 File created.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -117,7 +117,7 @@
 ;;; ===========================================================================
 ;;;  Generate an asdf:defsystem for each defined module
 
-(format t "~&;; Defining ASDF defsystems...~%")
+(format t "~&;; Defining an ASDF defsystem for each MMF module...~%")
 
 (dolist (module-name (list-modules 't))
   (mm-component-defsystem module-name))
