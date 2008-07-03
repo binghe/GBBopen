@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/source/compile-all.lisp *-*
+;;;; *-* File: /usr/local/gbbopen/source/compile-all.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Feb 24 09:56:01 2008 *-*
-;;;; *-* Machine: whirlwind.corkills.org *-*
+;;;; *-* Last-Edit: Thu Jul  3 03:11:35 2008 *-*
+;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -19,13 +19,14 @@
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
-;;;  03-22-06 File Created.  (Corkill)
+;;;  03-22-06 File created.  (Corkill)
 ;;;  06-06-07 Quit Common Lisp when finished.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 (in-package :gbbopen-tools)
 
+#+still-needed?
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (import '(mini-module::compile-module)))
 
@@ -48,6 +49,7 @@
 (compile-it :http-test :dont-reset 't)
 (compile-it :multinode :dont-reset 't)
 (compile-it :portable-threads-test :dont-reset 't)
+(compile-it :cl-timing :dont-reset 't)
 (compile-it :abort-ks-execution-example)
 
 (format t "~2&;;; ~72,,,'-<-~>~

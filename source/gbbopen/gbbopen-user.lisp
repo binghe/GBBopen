@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/gbbopen-user.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Jun 17 14:40:17 2008 *-*
+;;;; *-* Last-Edit: Wed Jul  2 09:46:41 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -19,7 +19,7 @@
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
-;;;  01-08-04 File Created.  (Corkill)
+;;;  01-08-04 File created.  (Corkill)
 ;;;  01-17-06 Use :mini-module package.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -31,7 +31,7 @@
 
 (in-package :gbbopen-user)
 
-(pushnew :gbbopen-user *features*)
+(pushnew ':gbbopen-user *features*)
 
 ;;; ===========================================================================
 ;;;				  End of File

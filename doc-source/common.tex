@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/common.tex *-*
-%% *-* Last-Edit: Sat Jun 14 16:42:44 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Wed Jul  2 11:53:06 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -553,8 +553,10 @@
 
 %% ----------------------------------------------------------------------------
 
-\newcommand{\returns}{$\Rightarrow${}}
-\newcommand{\expands}{$\Longrightarrow${}}
+\T\newcommand{\returns}{$\Rightarrow${}}
+\W\newcommand{\returns}{\textrm{=>}}
+\T\newcommand{\expands}{$\Longrightarrow${}}
+\W\newcommand{\expands}{\textrm{==>}}
 \newcommand{\nil}{\code{nil}}
 
 

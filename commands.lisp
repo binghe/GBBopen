@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/commands.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Jul  1 09:30:02 2008 *-*
+;;;; *-* Last-Edit: Wed Jul  2 16:46:51 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -65,10 +65,9 @@
     "Load GBBopen startup.lisp file"
     (startup-gbbopen))
   
-    (define-repl-command :mini-module-user (&rest options)
+    (define-repl-command (:mini-module-user :no-help) (&rest options)
     "Compile and load Mini Module Facility (MMF) User module"
     (startup-module :mini-module-user options)))
-
 
 ;;; ===========================================================================
 ;;;   Useful GBBopen Commands
@@ -174,6 +173,18 @@
   (define-repl-command :web-inspector (&rest options)
     "Compile and load Web inspector (under construction)"
     (startup-module :web-inspector options nil))
+
+  ;; end with-system-name
+  )
+
+;;; ---------------------------------------------------------------------------
+;;;  Timing (not yet completed or documented)
+
+(with-system-name (:timing)
+
+  (define-repl-command :cl-timing (&rest options)
+    "Compile and load CL timing tests (under construction)"
+    (startup-module :cl-timing options :gbbopen-user))
 
   ;; end with-system-name
   )

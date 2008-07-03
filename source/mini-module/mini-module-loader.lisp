@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/mini-module/mini-module-loader.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Apr 27 14:15:20 2008 *-*
+;;;; *-* Last-Edit: Wed Jul  2 17:36:41 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -62,23 +62,35 @@
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (unless (find-package ':mini-module)
-    (make-package ':mini-module 
-                  :use '(:common-lisp))))
+(unless (find-package ':mini-module)
+  (make-package ':mini-module 
+                :use '(:common-lisp)))
 
 (in-package :mini-module)
 
+(export '(need-to-port                  ; not documented
+          ))
+
+;;; ===========================================================================
+;;;  Need-to-port reporting
+
+(defun need-to-port-warning/error (entity error)
+  (funcall (if error 'error 'warn)
+           "~s needs to be defined for ~a~@[ running on ~a~].~
+            ~@[~%(Please send this error message and the result of ~
+               ~% evaluating (pprint *features*) to bugs@gbbopen.org.)~]"
+           entity
+           (lisp-implementation-type) 
+           (machine-type)
+           error))
+
 ;;; ---------------------------------------------------------------------------
 
-(defun must-port (entity &optional ask-for-features-p)
-  (error "You must specify ~s for ~a running on ~a.~
-          ~@[~%(Please send this error message and end the result of ~
-                (pprint *features*) to bugs@gbbopen.org.)~]"
-         entity
-         (lisp-implementation-type) 
-         (machine-type)
-         ask-for-features-p))
+(defmacro need-to-port (entity)
+  ;; Generate compile-time warnings of needed porting:
+  (need-to-port-warning/error entity nil)
+  ;; Error if called at run time:
+  `(need-to-port-warning/error ',entity t))
 
 ;;; ===========================================================================
 ;;; Add a single feature to identify sufficiently new Digitool MCL
@@ -87,14 +99,14 @@
 
 #+(and digitool ccl-5.1)
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (pushnew :digitool-mcl *features*))
+  (pushnew ':digitool-mcl *features*))
 
 ;;; ---------------------------------------------------------------------------
 ;;; Add clozure feature to legacy OpenMCL:
 
 #+(and openmcl (not clozure))
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (pushnew :clozure *features*))
+  (pushnew ':clozure *features*))
 
 ;;; ===========================================================================
 ;;; The mini-module system uses a separate compiled directory tree for each CL
@@ -126,7 +138,7 @@
                     (and x86-64 linux) 
                     (and x86 macosx)
                     (and x86 (not linux86)))
-              (must-port '*compiled-directory-name* 't))
+              (need-to-port *compiled-directory-name*))
 	     (eq excl:*current-case-mode* ':case-sensitive-lower) 
              excl::*common-lisp-version-number*)
      ;; CLISP:
@@ -144,7 +156,7 @@
               #+(and x86 linux) "linux86"
               #+(and x86 (not linux)) "windows"
               #-(or darwin sparc x86)
-              (must-port '*compiled-directory-name* 't))
+              (need-to-port *compiled-directory-name*))
              (let ((version (lisp-implementation-version)))
                (subseq version 0 (position #\Space version))))	       
      ;; Clozure Common Lisp:
@@ -155,7 +167,7 @@
               #+darwinx8664-target "macosx86-64"
               #+linuxx8664-target "linux86-64" ; Thanks to Matthew Danish
               #-(or darwin darwinx8664-target linuxx8664-target) 
-              (must-port '*compiled-directory-name* 't))
+              (need-to-port *compiled-directory-name*))
              ccl::*openmcl-major-version*
              ccl::*openmcl-minor-version*)
      ;; Corman Common Lisp:
@@ -167,7 +179,7 @@
      (format nil "~a-mcl-~a"
              (or #+powerpc "darwin" 
                  #-powerpc
-                 (must-port '*compiled-directory-name* 't))
+                 (need-to-port *compiled-directory-name*))
              (ccl::lisp-implementation-short-version))
      ;; ECL (Embedable Common Lisp):
      #+ecl
@@ -177,7 +189,7 @@
                  #+(and (or pentium3 pentium4) (not (or linux darwin))) "windows"
                  #+(and (not (or pentium3 pentium4)) darwin) "darwin"
 		 #-(or pentium3 pentium4)
-                 (must-port '*compiled-directory-name* 't))
+                 (need-to-port *compiled-directory-name*))
              ;; Strip away any CVS info:
              (let ((full-version (lisp-implementation-version)))
                (subseq full-version 0 (position '#\space full-version))))
@@ -187,7 +199,7 @@
              (or #+linux "linux86" 
 		 #+sparc "sparc"
 		 #-(or linux sparc)
-                 (must-port '*compiled-directory-name* 't))
+                 (need-to-port *compiled-directory-name*))
 	     system::*gcl-major-version*
 	     system::*gcl-minor-version*)
      ;; Lispworks:
@@ -202,7 +214,7 @@
 	      #+(and (not iapx386) darwin) "darwin"
               #+(and iapx386 darwin) "macosx86"
               #-(or alpha darwin prism sparc iapx386)
-              (must-port '*compiled-directory-name* 't))
+              (need-to-port *compiled-directory-name*))
              system::*major-version-number*
              system::*minor-version-number*)
      ;; SBCL:
@@ -216,7 +228,7 @@
               #+(and x86-64 linux) "linux86-64" ; Thanks to Eric Menard
               #+(and x86 (not linux)) "windows"
               #-(or darwin sparc x86 (and x86-64 linux))
-              (must-port '*compiled-directory-name* 't))
+              (need-to-port *compiled-directory-name*))
              (lisp-implementation-version))
      ;; The Scieneer CL:
      #+scl
@@ -238,7 +250,7 @@
            lispworks
 	   sbcl 
            scl)
-     (must-port '*compiled-directory-name* 't)))
+     (need-to-port *compiled-directory-name*)))
 
 ;;; ===========================================================================
 ;;;  Compiled File Type
@@ -296,7 +308,7 @@
            lispworks
 	   sbcl
            scl)
-     (must-port '*compiled-file-type*)))
+     (need-to-port *compiled-file-type*)))
 
 ;;; ===========================================================================
 ;;;  Load the mini-module system (source or compiled file)

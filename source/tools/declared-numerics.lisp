@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/declared-numerics.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Jun 12 20:27:30 2008 *-*
+;;;; *-* Last-Edit: Thu Jul  3 03:49:14 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -87,6 +87,8 @@
 ;;;  03-24-06 Added infinity-not-available feature.  (Corkill)
 ;;;  05-08-06 Added support for the Scieneer CL. (dtc)
 ;;;  11-15-06 Added short-float support.  (Corkill)
+;;;  06-29-08 Changed most operators from macros to functions with 
+;;;           compiler-macros.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -166,38 +168,44 @@
 ;;; ---------------------------------------------------------------------------
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (export '(fixnump short-float-p single-float-p double-float-p long-float-p
+  (export '(;; Numeric types
+            fixnump short-float-p single-float-p double-float-p long-float-p
 	    ;; Coercion:
 	    coerce& coerce$& coerce$ coerce$$ coerce$$$
 	    ;; Declared fixnum ops:
 	    & /& *& +& -& 1+& 1-& 
 	    /=& <& <=& =& >& >=& 
 	    bounded-value& ceiling& decf& decf&-after evenp& 
-	    floor& incf& incf&-after max& min& minusp& 
+	    floor& fceiling& ffloor& fround& ftruncate& 
+            incf& incf&-after max& min& minusp& 
 	    abs& mod& oddp& plusp& round& truncate& zerop&
 	    ;; Declared short-float ops:
 	    $& /$& *$& +$& -$& 1+$& 1-$&
 	    /=$& <$& <=$& =$& >$& >=$& 
 	    bounded-value$& ceiling$& decf$& decf$&-after evenp$& 
-	    floor$& incf$& incf$&-after max$& min$& minusp$& 
+	    floor$& fceiling$& ffloor$& fround$& ftruncate$& 
+            incf$& incf$&-after max$& min$& minusp$& 
 	    abs$& mod$& oddp$& plusp$& round$& truncate$& zerop$&
 	    ;; Declared single-float ops:
 	    $ /$ *$ +$ -$ 1+$ 1-$
 	    /=$ <$ <=$ =$ >$ >=$ 
 	    bounded-value$ ceiling$ decf$ decf$-after evenp$ 
-	    floor$ incf$ incf$-after max$ min$ minusp$ 
+	    floor$ fceiling$ ffloor$ fround$ ftruncate$
+            incf$ incf$-after max$ min$ minusp$ 
 	    abs$ mod$ oddp$ plusp$ round$ truncate$ zerop$
 	    ;; Declared double-float ops:
 	    $$ /$$ *$$ +$$ -$$ 1+$$ 1-$$ 
 	    /=$$ <$$ <=$$ =$$ >$$ >=$$ 
 	    bounded-value$$ ceiling$$ decf$$ decf$$-after evenp$$ 
-	    floor$$ incf$$ incf$$-after max$$ min$$ minusp$$ 
+	    floor$$ fceiling$$ ffloor$$ fround$$ ftruncate$$
+            incf$$ incf$$-after max$$ min$$ minusp$$ 
 	    abs$$ mod$$ oddp$$ plusp$$ round$$ truncate$$ zerop$$
 	    ;; Declared long-float ops:
 	    $$$ /$$$ *$$$ +$$$ -$$$ 1+$$$ 1-$$$ 
 	    /=$$$ <$$$ <=$$$ =$$$ >$$$ >=$$$ 
 	    bounded-value$$$ ceiling$$$ decf$$$ decf$$$-after evenp$$$ 
-	    floor$$$ incf$$$ incf$$$-after max$$$ min$$$ minusp$$$ 
+	    floor$$$ fceiling$$$ ffloor$$$ fround$$$ ftruncate$$$
+            incf$$$ incf$$$-after max$$$ min$$$ minusp$$$ 
 	    abs$$$ mod$$$ oddp$$$ plusp$$$ round$$$ truncate$$$ zerop$$$
 	    ;; Infinite values:
 	    infinity -infinity infinity& -infinity&
@@ -207,8 +215,35 @@
 	    *inf-reader-escape-hook*)))
 
 ;;; ---------------------------------------------------------------------------
-;;;  Check if various floats are not implemented distinctly (run at compile
-;;;  time in order to push features)
+;;;  The fastest (/ fixnum fixnum)=>fixnum (full-fixnum division) operator for
+;;;  each CL (determined by :cl-timing tests):
+
+(defconstant fastest-fixnum-div-operator
+    ;; Care must be taken to use /& only where non-rational results will be
+    ;; created.  When timings are very close, truncate& is preferred.
+    (or #+allegro '/&
+        #+clisp 'truncate&
+        #+clozure '/&
+        #+cmu '/&
+        #+digitool-mcl '/&
+        #+ecl '/&
+        #+lispworks 'truncate&
+        #+sbcl 'truncate&
+        #+scl '/&
+        #-(or :allegro
+              :clisp 
+              :clozure
+              :cmu
+              :digitool-mcl
+              :ecl
+              :lispworks
+              :sbcl
+              :scl)
+        (need-to-port fastest-fixnum-div-operator)))
+
+;;; ---------------------------------------------------------------------------
+;;;  Check if various floats are not implemented distinctly (also run at
+;;;  compile time in order to push features)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defun check-for-numeric-type (declared-type feature)
@@ -245,9 +280,49 @@
 (unless (boundp '*inf-reader-escape-hook*)
   (setf *inf-reader-escape-hook* nil))
 
+;;; ---------------------------------------------------------------------------
+
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defun dn-defcm-expander (type op args result values-types)
+    ;;; Builds a form declaring all the arguments to `op' to be `type.'  If
+    ;;; `result' is true then the type of the result of the operation is also
+    ;;; declared.
+    (let ((form `(,op ,@(mapcar #'(lambda (x) `(the ,type ,x)) args))))
+      (if (and result
+               (not (member ':full-safety *features* :test #'eq)))
+          `(the ,(if values-types
+                     (cons 'values values-types)
+                     type) 
+             ,form)
+          form)))
+
+  (defmacro defdn (dn-symbol op &optional result values-types)
+    (let ((type (ecase dn-symbol
+                  (& 'fixnum)
+                  ($& 'short-float)
+                  ($ 'single-float)
+                  ($$ 'double-float)
+                  ($$$ 'long-float)))
+          (dn-op (intern (concatenate 'simple-string
+                           (symbol-name op)
+                           (symbol-name dn-symbol)))))
+      `(progn
+         (defcm ,dn-op (&rest args)            
+           (dn-defcm-expander ',type ',op  args ',result ',values-types))
+         (defun ,dn-op (&rest args) 
+           (declare (dynamic-extent args))
+           ;; optimize this someday
+           (apply ',op args))))))
+
 ;;; ===========================================================================
 ;;;   Fixnum Operations
 
+(defmacro & (arg)
+  ;;; Wraps (the fixnum ...) around `arg'
+  (if  (feature-present-p ':full-safety)
+      `,arg
+      `(the fixnum ,arg)))
+  
 (defun unable-to-coerce-to-fixnum-error (value)
   (error "Unable to coerce ~s to a fixnum" value))
 
@@ -278,89 +353,71 @@
                (unable-to-coerce-to-fixnum-error ,arg))
              ,result)))))
 
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (defmacro & (arg)
-    ;;; Wraps (the fixnum ...) around `arg'
-    `(the #-full-safety fixnum #+full-safety t ,arg))
-  
-  (flet ((fixnum-op (op args &optional result values-types)
-	   ;;; Builds a form declaring all the arguments to OP to be
-           ;;; fixnums.  If `result' is true then the result of the
-           ;;; operation is also a fixnum unless `values-types' is
-	   ;;; specified.
-           (let ((form `(,op ,@(mapcar #'(lambda (x) `(& ,x)) args))))
-             (if result
-                 `(the #-full-safety ,(if values-types
-                                          (cons 'values values-types)
-                                          'fixnum)
-                       #+full-safety t
-                    ,form)
-                 form))))
-    (defmacro +& (&rest args) (fixnum-op '+ args t))
-    (defmacro 1+& (&rest args) (fixnum-op '1+ args t))
-    (defmacro -& (&rest args) (fixnum-op '- args t))
-    (defmacro 1-& (&rest args) (fixnum-op '1- args t))
-    (defmacro *& (&rest args) (fixnum-op '* args t))
-    (defmacro /& (&rest args) (fixnum-op '/ args t))
-    (defmacro =& (&rest args) (fixnum-op '= args))
-    (defmacro /=& (&rest args) (fixnum-op '/= args))
-    (defmacro <& (&rest args) (fixnum-op '< args))
-    (defmacro <=& (&rest args) (fixnum-op '<= args))
-    (defmacro >& (&rest args) (fixnum-op '> args))
-    (defmacro >=& (&rest args) (fixnum-op '>= args))
-    (defmacro min& (&rest args) (fixnum-op 'min args t))
-    (defmacro max& (&rest args) (fixnum-op 'max args t))
-    (defmacro zerop& (&rest args) (fixnum-op 'zerop args))
-    (defmacro plusp& (&rest args) (fixnum-op 'plusp args))
-    (defmacro minusp& (&rest args) (fixnum-op 'minusp args))
-    (defmacro evenp& (&rest args) (fixnum-op 'evenp args))
-    (defmacro oddp& (&rest args) (fixnum-op 'oddp args))
-    (defmacro abs& (&rest args) (fixnum-op 'abs args t))
-    (defmacro mod& (&rest args) (fixnum-op 'mod args t))
-    (defmacro floor& (&rest args) 
-      (fixnum-op 'floor args t '(fixnum fixnum)))
-    (defmacro ceiling& (&rest args) 
-      (fixnum-op 'ceiling args t '(fixnum fixnum)))
-    (defmacro truncate& (&rest args)
-      (fixnum-op 'truncate args t '(fixnum fixnum)))
-    (defmacro round& (&rest args) 
-      (fixnum-op 'round args t '(fixnum fixnum))))
-  
-  (define-modify-macro incf& (&optional (increment 1)) +&)
+(defdn & + t)
+(defdn & 1+  t)
+(defdn & - t)
+(defdn & 1- t)
+(defdn & * t)
+(defdn & / t)
+(defdn & =)
+(defdn & /=)
+(defdn & <)
+(defdn & <=)
+(defdn & >)
+(defdn & >=)
+(defdn & min t)
+(defdn & max t)
+(defdn & zerop)
+(defdn & plusp)
+(defdn & minusp)
+(defdn & evenp)
+(defdn & oddp)
+(defdn & abs t)
+(defdn & mod t)
+(defdn & floor t (fixnum fixnum))
+(defdn & ceiling t (fixnum fixnum))
+(defdn & truncate t (fixnum fixnum))
+(defdn & round t (fixnum fixnum))
+(defdn & ffloor t (float fixnum))
+(defdn & fceiling t (float fixnum))
+(defdn & ftruncate t (float fixnum))
+(defdn & fround t (float fixnum))
 
-  (define-modify-macro decf& (&optional (increment 1)) -&)
+(define-modify-macro incf& (&optional (increment 1)) +&)
+(define-modify-macro decf& (&optional (increment 1)) -&)
 
-  (defmacro incf&-after (place &optional (increment 1))
-    ;;; Returns the current value of `place' (before the incf is done)
-    `(let ((%old-value% ,place))
-       (setf ,place (+& %old-value% ,increment))
-       %old-value%))
+(defmacro incf&-after (place &optional (increment 1))
+  ;;; Returns the current value of `place' (before the incf is done)
+  `(let ((%old-value% ,place))
+     (setf ,place (+& %old-value% ,increment))
+     %old-value%))
+
+(defmacro decf&-after (place &optional (increment 1))
+  ;;; Returns the current value of `place' (before the decf is done)
+  `(let ((%old-value% ,place))
+     (setf ,place (-& %old-value% ,increment))
+     %old-value%))
   
-  (defmacro decf&-after (place &optional (increment 1))
-    ;;; Returns the current value of `place' (before the decf is done)
-    `(let ((%old-value% ,place))
-       (setf ,place (-& %old-value% ,increment))
-       %old-value%))
-  
-  (defmacro bounded-value& (min n max)
-    `(max& ,min (min& ,n ,max))))
- 
-;; Until GCL fixes local function capture by defmacro:
-#+gcl
-(defun fixnum-op (op args &optional result values-types)
-  (let ((form `(,op ,@(mapcar #'(lambda (x) `(& ,x)) args))))
-    (if result
-	`(the #-full-safety ,(if values-types
-				 (cons 'values values-types)
-				 'fixnum)
-	      #+full-safety t
-	      ,form)
-	form)))
+(defun bounded-value& (min n max)
+  (max& min (min& n max)))
+
+(defcm bounded-value& (min n max)
+  `(max& ,min (min& ,n ,max)))
 
 ;;; ===========================================================================
 ;;;   Short-Float Operations
 
-(defun coerce$& (arg) (coerce arg 'short-float))
+(defmacro $& (arg)
+  ;;; Wraps (the short-float ...) around `arg'
+  (if (feature-present-p ':full-safety)
+      `,arg
+      `(the short-float ,arg)))
+
+(defun coerce$& (arg) 
+  ;; avoid coercion if not required (some CLs will coerce anyway):
+  (if (typep arg 'short-float)
+      arg
+      (coerce arg 'short-float)))
 
 (defcm coerce$& (arg) 
   (with-once-only-bindings (arg)
@@ -369,87 +426,65 @@
 	 ,arg
 	 (coerce ,arg 'short-float))))
 
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (defmacro $& (arg)
-    ;;; Wraps (the short-float ...) around `arg'
-    `(the #-full-safety short-float #+full-safety t ,arg))
-  
-  (flet ((short-float-op (op args &optional result values-types)
-	   ;;; Builds a form declaring all the arguments to `op' to be
-           ;;; short-floats.  If `result' is true then the result of the
-           ;;; operation is also a short-float unless `values-types'
-           ;;; is specified.
-           (let ((form `(,op ,@(mapcar #'(lambda (x) `($& ,x)) args))))
-             (if result
-                 `(the #-full-safety ,(if values-types
-                                          (cons 'values values-types)
-                                          'short-float)
-                       #+full-safety t
-                    ,form)
-                 form))))
-    (defmacro +$& (&rest args) (short-float-op '+ args t))
-    (defmacro 1+$& (&rest args) (short-float-op '1+ args t))
-    (defmacro -$& (&rest args) (short-float-op '- args t))
-    (defmacro 1-$& (&rest args) (short-float-op '1- args t))
-    (defmacro *$& (&rest args) (short-float-op '* args t))
-    (defmacro /$& (&rest args) (short-float-op '/ args t))
-    (defmacro =$& (&rest args) (short-float-op '= args))
-    (defmacro /=$& (&rest args) (short-float-op '/= args))
-    (defmacro <$& (&rest args) (short-float-op '< args))
-    (defmacro <=$& (&rest args) (short-float-op '<= args))
-    (defmacro >$& (&rest args) (short-float-op '> args))
-    (defmacro >=$& (&rest args) (short-float-op '>= args))
-    (defmacro min$& (&rest args) (short-float-op 'min args t))
-    (defmacro max$& (&rest args) (short-float-op 'max args t))
-    (defmacro zerop$& (&rest args) (short-float-op 'zerop args))
-    (defmacro plusp$& (&rest args) (short-float-op 'plusp args))
-    (defmacro minusp$& (&rest args) (short-float-op 'minusp args))
-    (defmacro evenp$& (&rest args) (short-float-op 'evenp args))
-    (defmacro oddp$& (&rest args) (short-float-op 'oddp args))
-    (defmacro abs$& (&rest args) (short-float-op 'abs args t))
-    (defmacro mod$& (&rest args) (short-float-op 'mod args t))
-    (defmacro floor$& (&rest args) 
-      (short-float-op 'floor args t '(fixnum short-float)))
-    (defmacro ceiling$& (&rest args) 
-      (short-float-op 'ceiling args t '(fixnum short-float)))
-    (defmacro truncate$& (&rest args)
-      (short-float-op 'truncate args t '(fixnum short-float)))
-    (defmacro round$& (&rest args) 
-      (short-float-op 'round args t '(fixnum short-float))))
-   
-  (define-modify-macro incf$& (&optional (increment 1.0s0)) +$&)
+(defdn $& + t)
+(defdn $& 1+  t)
+(defdn $& - t)
+(defdn $& 1- t)
+(defdn $& * t)
+(defdn $& / t)
+(defdn $& =)
+(defdn $& /=)
+(defdn $& <)
+(defdn $& <=)
+(defdn $& >)
+(defdn $& >=)
+(defdn $& min t)
+(defdn $& max t)
+(defdn $& zerop)
+(defdn $& plusp)
+(defdn $& minusp)
+(defdn $& evenp)
+(defdn $& oddp)
+(defdn $& abs t)
+(defdn $& mod t)
+(defdn $& floor t (fixnum short-float))
+(defdn $& ceiling t (fixnum short-float))
+(defdn $& truncate t (fixnum short-float))
+(defdn $& round t (fixnum short-float))
+(defdn $& ffloor t (short-float short-float))
+(defdn $& fceiling t (short-float short-float))
+(defdn $& ftruncate t (short-float short-float))
+(defdn $& fround t (short-float short-float))
 
-  (define-modify-macro decf$& (&optional (increment 1.0s0)) -$&)
+(define-modify-macro incf$& (&optional (increment 1.0s0)) +$&)
+(define-modify-macro decf$& (&optional (increment 1.0s0)) -$&)
 
-  (defmacro incf$&-after (place &optional (increment 1.0s0))
-    ;;; Returns the current value of `place' (before the incf is done)
-    `(let ((%old-value% ,place))
-       (setf ,place (+$& %old-value% ,increment))
-       %old-value%))
+(defmacro incf$&-after (place &optional (increment 1.0s0))
+  ;;; Returns the current value of `place' (before the incf is done)
+  `(let ((%old-value% ,place))
+     (setf ,place (+$& %old-value% ,increment))
+     %old-value%))
   
-  (defmacro decf$&-after (place &optional (increment 1.0s0))
-    ;;; Returns the current value of `place' (before the decf is done)
-    `(let ((%old-value% ,place))
-       (setf ,place (-$& %old-value% ,increment))
-       %old-value%))
+(defmacro decf$&-after (place &optional (increment 1.0s0))
+  ;;; Returns the current value of `place' (before the decf is done)
+  `(let ((%old-value% ,place))
+     (setf ,place (-$& %old-value% ,increment))
+     %old-value%))
   
-  (defmacro bounded-value$& (min n max)
-    `(max$& ,min (min$& ,n ,max))))
- 
-;; Until GCL fixes local function capture by defmacro:
-#+gcl
-(defun short-float-op (op args &optional result values-types)
-  (let ((form `(,op ,@(mapcar #'(lambda (x) `($& ,x)) args))))
-    (if result
-	`(the #-full-safety ,(if values-types
-				 (cons 'values values-types)
-				 'short-float)
-	      #+full-safety t
-	      ,form)
-	form)))
+(defun bounded-value$& (min n max)
+  (max$& min (min$& n max)))
+
+(defcm bounded-value$& (min n max)
+  `(max$& ,min (min$& ,n ,max)))
 
 ;;; ===========================================================================
 ;;;   Single-Float Operations
+
+(defmacro $ (arg)
+  ;;; Wraps (the single-float ...) around `arg'
+  (if (feature-present-p ':full-safety)
+      `,arg
+      `(the single-float ,arg)))
 
 (defun coerce$ (arg) (coerce arg 'single-float))
 
@@ -460,87 +495,65 @@
 	 ,arg
 	 (coerce ,arg 'single-float))))
 
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (defmacro $ (arg)
-    ;;; Wraps (the single-float ...) around `arg'
-    `(the #-full-safety single-float #+full-safety t ,arg))
-  
-  (flet ((single-float-op (op args &optional result values-types)
-	   ;;; Builds a form declaring all the arguments to `op' to be
-           ;;; single-floats.  If `result' is true then the result of the
-           ;;; operation is also a single-float unless `values-types'
-           ;;; is specified.
-           (let ((form `(,op ,@(mapcar #'(lambda (x) `($ ,x)) args))))
-             (if result
-                 `(the #-full-safety ,(if values-types
-                                          (cons 'values values-types)
-                                          'single-float)
-                       #+full-safety t
-                    ,form)
-                 form))))
-    (defmacro +$ (&rest args) (single-float-op '+ args t))
-    (defmacro 1+$ (&rest args) (single-float-op '1+ args t))
-    (defmacro -$ (&rest args) (single-float-op '- args t))
-    (defmacro 1-$ (&rest args) (single-float-op '1- args t))
-    (defmacro *$ (&rest args) (single-float-op '* args t))
-    (defmacro /$ (&rest args) (single-float-op '/ args t))
-    (defmacro =$ (&rest args) (single-float-op '= args))
-    (defmacro /=$ (&rest args) (single-float-op '/= args))
-    (defmacro <$ (&rest args) (single-float-op '< args))
-    (defmacro <=$ (&rest args) (single-float-op '<= args))
-    (defmacro >$ (&rest args) (single-float-op '> args))
-    (defmacro >=$ (&rest args) (single-float-op '>= args))
-    (defmacro min$ (&rest args) (single-float-op 'min args t))
-    (defmacro max$ (&rest args) (single-float-op 'max args t))
-    (defmacro zerop$ (&rest args) (single-float-op 'zerop args))
-    (defmacro plusp$ (&rest args) (single-float-op 'plusp args))
-    (defmacro minusp$ (&rest args) (single-float-op 'minusp args))
-    (defmacro evenp$ (&rest args) (single-float-op 'evenp args))
-    (defmacro oddp$ (&rest args) (single-float-op 'oddp args))
-    (defmacro abs$ (&rest args) (single-float-op 'abs args t))
-    (defmacro mod$ (&rest args) (single-float-op 'mod args t))
-    (defmacro floor$ (&rest args) 
-      (single-float-op 'floor args t '(fixnum single-float)))
-    (defmacro ceiling$ (&rest args) 
-      (single-float-op 'ceiling args t '(fixnum single-float)))
-    (defmacro truncate$ (&rest args)
-      (single-float-op 'truncate args t '(fixnum single-float)))
-    (defmacro round$ (&rest args) 
-      (single-float-op 'round args t '(fixnum single-float))))
-   
-  (define-modify-macro incf$ (&optional (increment 1.0f0)) +$)
+(defdn $ + t)
+(defdn $ 1+  t)
+(defdn $ - t)
+(defdn $ 1- t)
+(defdn $ * t)
+(defdn $ / t)
+(defdn $ =)
+(defdn $ /=)
+(defdn $ <)
+(defdn $ <=)
+(defdn $ >)
+(defdn $ >=)
+(defdn $ min t)
+(defdn $ max t)
+(defdn $ zerop)
+(defdn $ plusp)
+(defdn $ minusp)
+(defdn $ evenp)
+(defdn $ oddp)
+(defdn $ abs t)
+(defdn $ mod t)
+(defdn $ floor t (fixnum single-float))
+(defdn $ ceiling t (fixnum single-float))
+(defdn $ truncate t (fixnum single-float))
+(defdn $ round t (fixnum single-float))
+(defdn $ ffloor t (single-float single-float))
+(defdn $ fceiling t (single-float single-float))
+(defdn $ ftruncate t (single-float single-float))
+(defdn $ fround t (single-float single-float))
 
-  (define-modify-macro decf$ (&optional (increment 1.0f0)) -$)
+(define-modify-macro incf$ (&optional (increment 1.0f0)) +$)
+(define-modify-macro decf$ (&optional (increment 1.0f0)) -$)
 
-  (defmacro incf$-after (place &optional (increment 1.0f0))
-    ;;; Returns the current value of `place' (before the incf is done)
-    `(let ((%old-value% ,place))
-       (setf ,place (+$ %old-value% ,increment))
-       %old-value%))
+(defmacro incf$-after (place &optional (increment 1.0f0))
+  ;;; Returns the current value of `place' (before the incf is done)
+  `(let ((%old-value% ,place))
+     (setf ,place (+$ %old-value% ,increment))
+     %old-value%))
   
-  (defmacro decf$-after (place &optional (increment 1.0f0))
-    ;;; Returns the current value of `place' (before the decf is done)
-    `(let ((%old-value% ,place))
-       (setf ,place (-$ %old-value% ,increment))
-       %old-value%))
+(defmacro decf$-after (place &optional (increment 1.0f0))
+  ;;; Returns the current value of `place' (before the decf is done)
+  `(let ((%old-value% ,place))
+     (setf ,place (-$ %old-value% ,increment))
+     %old-value%))
   
-  (defmacro bounded-value$ (min n max)
-    `(max$ ,min (min$ ,n ,max))))
- 
-;; Until GCL fixes local function capture by defmacro:
-#+gcl
-(defun single-float-op (op args &optional result values-types)
-  (let ((form `(,op ,@(mapcar #'(lambda (x) `($ ,x)) args))))
-    (if result
-	`(the #-full-safety ,(if values-types
-				 (cons 'values values-types)
-				 'single-float)
-	      #+full-safety t
-	      ,form)
-	form)))
+(defun bounded-value$ (min n max)
+  (max$ min (min$ n max)))
+
+(defcm bounded-value$ (min n max)
+  `(max$ ,min (min$ ,n ,max)))
 
 ;;; ===========================================================================
 ;;;   Double-Float Operations
+
+(defmacro $% (arg)
+  ;;; Wraps (the double-float ...) around `arg'
+  (if (feature-present-p ':full-safety)
+      `,arg
+      `(the double-float ,arg)))
 
 (defun coerce$$ (arg) (coerce arg 'double-float))
 
@@ -551,87 +564,65 @@
 	 ,arg
 	 (coerce ,arg 'double-float))))
 
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (defmacro $$ (arg)
-    ;;; Wraps (the double-float ...) around `arg'
-    `(the #-full-safety double-float #+full-safety t ,arg))
-  
-  (flet ((double-float-op (op args &optional result values-types)
-           ;;; Builds a form declaring all the arguments to `op' to be
-           ;;; double-floats.  If `result' is true then the result of the
-           ;;; operation is also a double-float unless `values-types'
-           ;;; is specified.
-           (let ((form `(,op ,@(mapcar #'(lambda (x) `($$ ,x)) args))))
-             (if result
-                 `(the #-full-safety ,(if values-types
-                                          (cons 'values values-types)
-                                          'double-float)
-                       #+full-safety t
-                    ,form)
-                 form))))
-    (defmacro +$$ (&rest args) (double-float-op '+ args t))
-    (defmacro 1+$$ (&rest args) (double-float-op '1+ args t))
-    (defmacro -$$ (&rest args) (double-float-op '- args t))
-    (defmacro 1-$$ (&rest args) (double-float-op '1- args t))
-    (defmacro *$$ (&rest args) (double-float-op '* args t))
-    (defmacro /$$ (&rest args) (double-float-op '/ args t))
-    (defmacro =$$ (&rest args) (double-float-op '= args))
-    (defmacro /=$$ (&rest args) (double-float-op '/= args))
-    (defmacro <$$ (&rest args) (double-float-op '< args))
-    (defmacro <=$$ (&rest args) (double-float-op '<= args))
-    (defmacro >$$ (&rest args) (double-float-op '> args))
-    (defmacro >=$$ (&rest args) (double-float-op '>= args))
-    (defmacro min$$ (&rest args) (double-float-op 'min args t))
-    (defmacro max$$ (&rest args) (double-float-op 'max args t))
-    (defmacro zerop$$ (&rest args) (double-float-op 'zerop args))
-    (defmacro plusp$$ (&rest args) (double-float-op 'plusp args))
-    (defmacro minusp$$ (&rest args) (double-float-op 'minusp args))
-    (defmacro evenp$$ (&rest args) (double-float-op 'evenp args))
-    (defmacro oddp$$ (&rest args) (double-float-op 'oddp args))
-    (defmacro abs$$ (&rest args) (double-float-op 'abs args t))
-    (defmacro mod$$ (&rest args) (double-float-op 'mod args t))
-    (defmacro floor$$ (&rest args) 
-      (double-float-op 'floor args t '(fixnum double-float)))
-    (defmacro ceiling$$ (&rest args) 
-      (double-float-op 'ceiling args t '(fixnum double-float)))
-    (defmacro truncate$$ (&rest args)
-      (double-float-op 'truncate args t '(fixnum double-float)))
-    (defmacro round$$ (&rest args) 
-      (double-float-op 'round args t '(fixnum double-float))))
-  
-  (define-modify-macro incf$$ (&optional (increment 1.0d0)) +$$)
+(defdn $$ + t)
+(defdn $$ 1+  t)
+(defdn $$ - t)
+(defdn $$ 1- t)
+(defdn $$ * t)
+(defdn $$ / t)
+(defdn $$ =)
+(defdn $$ /=)
+(defdn $$ <)
+(defdn $$ <=)
+(defdn $$ >)
+(defdn $$ >=)
+(defdn $$ min t)
+(defdn $$ max t)
+(defdn $$ zerop)
+(defdn $$ plusp)
+(defdn $$ minusp)
+(defdn $$ evenp)
+(defdn $$ oddp)
+(defdn $$ abs t)
+(defdn $$ mod t)
+(defdn $$ floor t (fixnum double-float))
+(defdn $$ ceiling t (fixnum double-float))
+(defdn $$ truncate t (fixnum double-float))
+(defdn $$ round t (fixnum double-float))
+(defdn $$ ffloor t (double-float double-float))
+(defdn $$ fceiling t (double-float double-float))
+(defdn $$ ftruncate t (double-float double-float))
+(defdn $$ fround t (double-float double-float))
 
-  (define-modify-macro decf$$ (&optional (increment 1.0d0)) -$$)
+(define-modify-macro incf$$ (&optional (increment 1.0d0)) +$$)
+(define-modify-macro decf$$ (&optional (increment 1.0d0)) -$$)
  
-  (defmacro incf$$-after (place &optional (increment 1.0d0))
-    ;;; Returns the current value of `place' (before the incf is done)
-    `(let ((%old-value% ,place))
-       (setf ,place (+$$ %old-value% ,increment))
-       %old-value%))
+(defmacro incf$$-after (place &optional (increment 1.0d0))
+  ;;; Returns the current value of `place' (before the incf is done)
+  `(let ((%old-value% ,place))
+     (setf ,place (+$$ %old-value% ,increment))
+     %old-value%))
   
-  (defmacro decf$$-after (place &optional (increment 1.0d0))
-    ;;; Returns the current value of `place' (before the decf is done)
-    `(let ((%old-value% ,place))
-       (setf ,place (-$$ %old-value% ,increment))
-       %old-value%))
+(defmacro decf$$-after (place &optional (increment 1.0d0))
+  ;;; Returns the current value of `place' (before the decf is done)
+  `(let ((%old-value% ,place))
+     (setf ,place (-$$ %old-value% ,increment))
+     %old-value%))
   
-  (defmacro bounded-value$$ (min n max)
-    `(max$$ ,min (min$$ ,n ,max))))
- 
-;; Until GCL fixes local function capture by defmacro:
-#+gcl
-(defun double-float-op (op args &optional result values-types)
-  (let ((form `(,op ,@(mapcar #'(lambda (x) `($$ ,x)) args))))
-    (if result
-	`(the #-full-safety ,(if values-types
-				 (cons 'values values-types)
-				 'double-float)
-	      #+full-safety t
-	      ,form)
-	form)))
+(defun bounded-value$$ (min n max)
+  (max$$ min (min$$ n max)))
+
+(defcm bounded-value$$ (min n max)
+  `(max$$ ,min (min$$ ,n ,max)))
 
 ;;; ===========================================================================
 ;;;   Long-Float Operations
+
+(defmacro $$$ (arg)
+  ;;; Wraps (the long-float ...) around `arg'
+  (if (feature-present-p ':full-safety)
+      `,arg
+      `(the long-float ,arg)))
 
 (defun coerce$$$ (arg) (coerce arg 'long-float))
 
@@ -642,72 +633,56 @@
 	 ,arg
 	 (coerce ,arg 'long-float))))
 
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (defmacro $$$ (arg)
-    ;;; Wraps (the long-float ...) around `arg'
-    `(the #-full-safety long-float #+full-safety t ,arg))
+(defdn $$$ + t)
+(defdn $$$ 1+  t)
+(defdn $$$ - t)
+(defdn $$$ 1- t)
+(defdn $$$ * t)
+(defdn $$$ / t)
+(defdn $$$ =)
+(defdn $$$ /=)
+(defdn $$$ <)
+(defdn $$$ <=)
+(defdn $$$ >)
+(defdn $$$ >=)
+(defdn $$$ min t)
+(defdn $$$ max t)
+(defdn $$$ zerop)
+(defdn $$$ plusp)
+(defdn $$$ minusp)
+(defdn $$$ evenp)
+(defdn $$$ oddp)
+(defdn $$$ abs t)
+(defdn $$$ mod t)
+(defdn $$$ floor t (fixnum long-float))
+(defdn $$$ ceiling t (fixnum long-float))
+(defdn $$$ truncate t (fixnum long-float))
+(defdn $$$ round t (fixnum long-float))
+(defdn $$$ ffloor t (long-float long-float))
+(defdn $$$ fceiling t (long-float long-float))
+(defdn $$$ ftruncate t (long-float long-float))
+(defdn $$$ fround t (long-float long-float))
   
-  (flet ((long-float-op (op args &optional result values-types)
-           ;;; Builds a form declaring all the arguments to `op' to be
-           ;;; long-floats.  If `result' is true then the result of the
-           ;;; operation is also a long-float unless `values-types'
-           ;;; is specified.
-           (let ((form `(,op ,@(mapcar #'(lambda (x) `($$$ ,x)) args))))
-             (if result
-                 `(the #-full-safety ,(if values-types
-                                          (cons 'values values-types)
-                                          'long-float)
-                       #+full-safety t
-                    ,form)
-                 form))))
-    (defmacro +$$$ (&rest args) (long-float-op '+ args t))
-    (defmacro 1+$$$ (&rest args) (long-float-op '1+ args t))
-    (defmacro -$$$ (&rest args) (long-float-op '- args t))
-    (defmacro 1-$$$ (&rest args) (long-float-op '1- args t))
-    (defmacro *$$$ (&rest args) (long-float-op '* args t))
-    (defmacro /$$$ (&rest args) (long-float-op '/ args t))
-    (defmacro =$$$ (&rest args) (long-float-op '= args))
-    (defmacro /=$$$ (&rest args) (long-float-op '/= args))
-    (defmacro <$$$ (&rest args) (long-float-op '< args))
-    (defmacro <=$$$ (&rest args) (long-float-op '<= args))
-    (defmacro >$$$ (&rest args) (long-float-op '> args))
-    (defmacro >=$$$ (&rest args) (long-float-op '>= args))
-    (defmacro min$$$ (&rest args) (long-float-op 'min args t))
-    (defmacro max$$$ (&rest args) (long-float-op 'max args t))
-    (defmacro zerop$$$ (&rest args) (long-float-op 'zerop args))
-    (defmacro plusp$$$ (&rest args) (long-float-op 'plusp args))
-    (defmacro minusp$$$ (&rest args) (long-float-op 'minusp args))
-    (defmacro evenp$$$ (&rest args) (long-float-op 'evenp args))
-    (defmacro oddp$$$ (&rest args) (long-float-op 'oddp args))
-    (defmacro abs$$$ (&rest args) (long-float-op 'abs args t))
-    (defmacro mod$$$ (&rest args) (long-float-op 'mod args t))
-    (defmacro floor$$$ (&rest args) 
-      (long-float-op 'floor args t '(fixnum long-float)))
-    (defmacro ceiling$$$ (&rest args) 
-      (long-float-op 'ceiling args t '(fixnum long-float)))
-    (defmacro truncate$$$ (&rest args)
-      (long-float-op 'truncate args t '(fixnum long-float)))
-    (defmacro round$$$ (&rest args) 
-      (long-float-op 'round args t '(fixnum long-float))))
-  
-  (define-modify-macro incf$$$ (&optional (increment 1.0l0)) +$$$)
+(define-modify-macro incf$$$ (&optional (increment 1.0l0)) +$$$)
+(define-modify-macro decf$$$ (&optional (increment 1.0l0)) -$$$)
 
-  (define-modify-macro decf$$$ (&optional (increment 1.0l0)) -$$$)
- 
-  (defmacro incf$$$-after (place &optional (increment 1.0l0))
-    ;;; Returns the current value of `place' (before the incf is done)
-    `(let ((%old-value% ,place))
-       (setf ,place (+$$$ %old-value% ,increment))
-       %old-value%))
+(defmacro incf$$$-after (place &optional (increment 1.0l0))
+  ;;; Returns the current value of `place' (before the incf is done)
+  `(let ((%old-value% ,place))
+     (setf ,place (+$$$ %old-value% ,increment))
+     %old-value%))
   
-  (defmacro decf$$$-after (place &optional (increment 1.0l0))
-    ;;; Returns the current value of `place' (before the decf is done)
-    `(let ((%old-value% ,place))
-       (setf ,place (-$$$ %old-value% ,increment))
-       %old-value%))
+(defmacro decf$$$-after (place &optional (increment 1.0l0))
+  ;;; Returns the current value of `place' (before the decf is done)
+  `(let ((%old-value% ,place))
+     (setf ,place (-$$$ %old-value% ,increment))
+     %old-value%))
   
-  (defmacro bounded-value$$$ (min n max)
-    `(max$$$ ,min (min$$$ ,n ,max))))
+(defun bounded-value$$$ (min n max)
+  (max$$$ min (min$$$ n max)))
+
+(defcm bounded-value$$$ (min n max)
+  `(max$$$ ,min (min$$$ ,n ,max)))
  
 ;;; ===========================================================================
 ;;;   Infinity Values
@@ -732,7 +707,7 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   
   #+(or clisp cormanlisp ecl gcl)
-  (pushnew :infinity-not-available *features*))
+  (pushnew ':infinity-not-available *features*))
   
 (eval-when (:compile-toplevel :load-toplevel :execute)
     

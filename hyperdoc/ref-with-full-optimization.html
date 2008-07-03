@@ -19,7 +19,8 @@
 <nobr><b><font color="#000000">with-full-optimization</font></b></nobr></td><td valign="baseline"> &nbsp; </td><td valign="baseline" align="left" width="99%"><code>(</code><var>option</var>*<code>)</code>
 <var>declaration</var>*
 <var>form</var>* 
-<i> =&gt; </i> <var>result</var>*</td><td valign="baseline" align="right">[<i>Macro</i>]
+<span 
+    style="font-family: serif; font-style: normal">=&gt;</span> <var>result</var>*</td><td valign="baseline" align="right">[<i>Macro</i>]
 </td></tr></table></p>
 <p><span class="fndoclabel">Purpose</span> <br />Compile <var>forms</var> with <code>(speed 3)</code>, <code>(safety
 0)</code>, <code>(debug 0)</code>, and <code>(compilation-speed 0)</code> optimization
@@ -38,7 +39,7 @@ settings.
 </p>
 <p><span class="fndoclabel">Returns</span> <br />The values returned by evaluating <var>form</var>.
 </p>
-<p><span class="fndoclabel">Description</span> <br /><a name="id1">This</a> macro provides a convenient means of declaring small code fragments for
+<p><span class="fndoclabel">Description</span> <br />This macro provides a convenient means of declaring small code fragments for
 fastest (and least safe) compiler optimizations.  If the <a href="ref-glossary.html#gl:feature">feature</a>
 <b><a href="ref-full-safety.html">:full-safety</a></b> is present at compile time, this macro
 has no effect on optimization settings.

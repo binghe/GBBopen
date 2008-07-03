@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/epilogue.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Jun 14 15:19:12 2008 *-*
+;;;; *-* Last-Edit: Wed Jul  2 09:44:40 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -360,7 +360,7 @@
 ;;; ===========================================================================
 ;;;  GBBopen is fully loaded
 
-(pushnew :gbbopen *features*)
+(pushnew ':gbbopen *features*)
 (pushnew *gbbopen-version-keyword* *features*)
 
 ;;; ===========================================================================

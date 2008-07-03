@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Jun 27 04:21:42 2008 *-*
+;;;; *-* Last-Edit: Wed Jul  2 12:37:25 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -143,7 +143,8 @@
 	    delq
 	    do-until
 	    dosequence
-	    dotted-conc-name		; in mini-module, but part of tools
+	    dotted-conc-name		; in mini-module, but part of tools;
+                                        ; not documented
 	    dotted-length
 	    error-condition             ; lexical fn in with-error-handling
             error-message               ; lexical fn in with-error-handling

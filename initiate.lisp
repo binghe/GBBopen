@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/initiate.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Apr 28 10:58:03 2008 *-*
+;;;; *-* Last-Edit: Tue Jul  1 09:41:02 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -38,7 +38,7 @@
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
-;;;  12-08-02 File Created (originally named gbbopen-init.lisp).  (Corkill)
+;;;  12-08-02 File created (originally named gbbopen-init.lisp).  (Corkill)
 ;;;  03-21-04 Added :agenda-shell-test.  (Corkill)
 ;;;  05-04-04 Added :timing-test.  (Corkill)
 ;;;  06-10-04 Added :multiprocesing.  (Corkill)
@@ -50,7 +50,7 @@
 ;;;           available.  (Corkill)
 ;;;  04-07-06 Added gbbopen-modules directory support.  (Corkill)
 ;;;  03-25-08 Renamed to more intuitive initiate.lisp.  (Corkill)
-;;;  03-29-08 Add process-gbbopen-modules-directory rescanning.  (Corkill)
+;;;  03-29-08 Add PROCESS-GBBOPEN-MODULES-DIRECTORY rescanning.  (Corkill)
 ;;;  04-27-08 Added shared-gbbopen-modules directory support.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -79,8 +79,10 @@
 (defvar *skip-gbbopen-modules-directory-processing* nil)
 
 ;;; ---------------------------------------------------------------------------
-;;;  Used to indicate if GBBopen's startup.lisp file has been loaded:
+;;;  Used to indicate if this file and if GBBopen's startup.lisp file have been
+;;;  loaded:
 
+(defvar *gbbopen-initiate-loaded* nil)
 (defvar *gbbopen-startup-loaded* nil)
 
 ;;; ---------------------------------------------------------------------------
@@ -224,6 +226,11 @@
 ;;;  that is linked from the gbbopen-modules directory. 
 
 (process-gbbopen-modules-directory "commands")
+
+;;; ===========================================================================
+;;;  Record that this GBBopen initiate file has been loaded:
+
+(setf *gbbopen-initiate-loaded* 't)
 
 ;;; ===========================================================================
 ;;;				  End of File
