@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-SOCKETS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/portable-sockets.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Apr 27 14:05:10 2008 *-*
+;;;; *-* Last-Edit: Wed Jul  2 17:37:28 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -53,7 +53,7 @@
 #+clisp
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (when (= (length (ext:arglist 'socket:socket-server)) 2)
-    (pushnew :old-clisp-version *features*)))
+    (pushnew ':old-clisp-version *features*)))
 
 ;;; ---------------------------------------------------------------------------
 ;;; Add a single feature to identify sufficiently new Digitool MCL
@@ -62,14 +62,14 @@
 
 #+(and digitool ccl-5.1)
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (pushnew :digitool-mcl *features*))
+  (pushnew ':digitool-mcl *features*))
 
 ;;; ---------------------------------------------------------------------------
 ;;; Add clozure feature to legacy OpenMCL:
 
 #+(and openmcl (not clozure))
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (pushnew :clozure *features*))
+  (pushnew ':clozure *features*))
 
 ;;; ===========================================================================
 
@@ -140,24 +140,25 @@
 ;;; ===========================================================================
 ;;;  Need-to-port reporting
 
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (defun need-to-port-warning/error (obj &optional error)
-    (funcall (if error 'error 'warn)
-             "~s needs to be defined for ~a~@[ running on ~a~]."
-             obj
-             (lisp-implementation-type) 
-             (machine-type))))
+(defun need-to-port-warning/error (entity error)
+  (funcall (if error 'error 'warn)
+           "~s needs to be defined for ~a~@[ running on ~a~].~
+            ~@[~%(Please send this error message and the result of ~
+               ~% evaluating (pprint *features*) to bugs@gbbopen.org.)~]"
+           entity
+           (lisp-implementation-type) 
+           (machine-type)
+           error))
 
 ;;; ---------------------------------------------------------------------------
 
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (defmacro need-to-port (obj)
-    ;;; Generate compile-time warnings of needed porting:
-    (need-to-port-warning/error obj)
-    ;; Error if called at run time:
-    `(need-to-port-warning/error ',obj t)))
+(defmacro need-to-port (entity)
+  ;; Generate compile-time warnings of needed porting:
+  (need-to-port-warning/error entity nil)
+  ;; Error if called at run time:
+  `(need-to-port-warning/error ',entity t))
 
-;;; ---------------------------------------------------------------------------
+;;; ===========================================================================
 ;;;  Passive-socket class for CLs without one
 
 #+(or cmu
@@ -852,7 +853,7 @@
 ;;; ===========================================================================
 ;;;  Portable sockets interface is fully loaded:
 
-(pushnew :portable-sockets *features*)
+(pushnew ':portable-sockets *features*)
 (pushnew *portable-sockets-version-keyword* *features*)
 
 ;;; ===========================================================================

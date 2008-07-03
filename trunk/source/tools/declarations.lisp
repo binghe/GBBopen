@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/declarations.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jun 25 13:59:07 2008 *-*
+;;;; *-* Last-Edit: Wed Jul  2 17:18:39 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -33,7 +33,10 @@
   (export '(*generate-nyi-errors*	; not documented
 	    allow-redefinition		; in mini-module, but part of tools
             defcm
+	    feature-present-p           ; in mini-module, but part of tools;
+                                        ; not documented
             make-keys-only-hash-table-if-supported ; not documented
+            need-to-port                ; in mini-module-loader, not documented
 	    nyi                         ; not documented
 	    unbound-value-indicator
 	    without-cmu/sbcl-optimization-warnings ; not documented
@@ -65,10 +68,8 @@
 
 (defmacro defcm (&body body)
   ;;; Shorthand conditional compiler-macro:
-  (unless (or (member (symbol-name '#:full-safety) *features*
-                      :test 'string=)
-              (member (symbol-name '#:disable-compiler-macros) *features*
-                      :test 'string=))
+  (unless (or (feature-present-p ':full-safety)
+              (feature-present-p ':disable-compiler-macros))
     `(define-compiler-macro ,@body)))
 
 ;;; ---------------------------------------------------------------------------

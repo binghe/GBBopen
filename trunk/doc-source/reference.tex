@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Mon Jun 30 11:22:24 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Wed Jul  2 11:34:17 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -3557,12 +3557,12 @@ Redefine several modules with deferred conflict checking:
 %
 The GBBopen Tools \glref{module}, \code{:gbbopen-tools}, contains useful
 Common Lisp additions and utilities.  Convenient (\reflink{shorthand
-  macros}{sec:declared-numerics} for declared \glref{fixnum}, short-float,
-single-float, double-float, and long-float numeric operators are also provided
-by the \code{:gbbopen-tools} module.  Date and time \reflink{parsing and
-  formatting entities}{sec:dateandtime} and efficient
-\reflink{offset-universal-time functions}{sec:offsettime} are also included in
-GBBopen Tools.
+  operators}{sec:declared-numerics} for declared \code{\glref{fixnum}},
+\code{short-float}, \code{single-float}, \code{double-float}, and
+\code{long-float} numeric operators are also provided by the
+\code{:gbbopen-tools} module.  Date and time \reflink{parsing and formatting
+  entities}{sec:dateandtime} and efficient \reflink{offset-universal-time
+  functions}{sec:offsettime} are also included in GBBopen Tools.
 
 Uniform interfaces to implementation-specific thread (multiprocessing)
 capabilities are provided by the \reflink{\code{:portable-threads}
@@ -3777,7 +3777,7 @@ compiler macros disabled:
 The \textbf{:full-safety} feature disables all compile-time optimizations,
 including the use of compiler macros.  Compiler macros can be disabled without
 disabling other compile-time optimizations with the feature
-\textbf{\entlink{:disable-compiler-macros}}.
+\textbf{\entlinknoex{:disable-compiler-macros}}.
 
 \begin{alsos}{:disable-compiler-macros}
 \also[defcm]
@@ -4278,8 +4278,8 @@ structure of \var{list\/} in constructing the \var{result-list}.
 \end{tightitemize}
 %
 A compiler macro is not defined if the feature
-\textbf{\entlink{:disable-compiler-macros}} or the feature
-\textbf{\entlink{:full-safety}} is present when the expander function is
+\textbf{\entlinknoex{:disable-compiler-macros}} or the feature
+\textbf{\entlinknoex{:full-safety}} is present when the expander function is
 executed on a form.
 
 \begin{alsos}{:disable-compiler-macros}
@@ -6203,7 +6203,6 @@ settings.
 \fnreturns The values returned by evaluating \var{form\/}.
 
 \fndescription
-\bfindexit{:full-safety}%
 This macro provides a convenient means of declaring small code fragments for
 fastest (and least safe) compiler optimizations.  If the \glref{feature}
 \textbf{\entlinknoex{:full-safety}} is present at compile time, this macro
@@ -6485,23 +6484,22 @@ otherwise.
 \label{sec:declared-numerics}%
 \label{ent:incfAMP}%
 
-\index{declared numeric macros}%
-\index{macro!declared numerics}%
-\index{fixnum!declared-numeric macros}%
-\index{single-float!declared-numeric macros}%
-\index{double-float!declared-numeric macros}%
+\index{declared-numeric operators}%
+\index{fixnum!declared-numeric operators}%
+\index{single-float!declared-numeric operators}%
+\index{double-float!declared-numeric operators}%
 \index{module!:gbbopen-tools@\code{:gbbopen-tools}|itidx}%
 \index{:gbbopen-tools@\code{:gbbopen-tools} module|itidx}%
-\bfindexit{:full-safety}%
-The \code{:gbbopen-tools} \glref{module} contains a set of
-numeric-operation macros that provide convenient shorthands for
-declaring \glref{fixnum}, short-float, single-float, double-float, and
-long-float numeric operators. If the \glref{feature}
-\textbf{\entlinknoex{:full-safety}} is present at compile time, these
-macros do not make their fixnum, single-float, double-float, and long-float
-declarations.
+%
+The \code{:gbbopen-tools} \glref{module} contains a set of declared-numeric
+operators that provide convenient shorthands for declaring
+\code{\glref{fixnum}}, \code{short-float}, \code{single-float},
+\code{double-float}, and \code{long-float} numeric operations. If the
+\glref{feature} \textbf{\entlinknoex{:full-safety}} is present at compile
+time, these operators do not make their \code{fixnum}, \code{single-float},
+\code{double-float}, and \code{long-float} declarations.
 
-The names of the declared-numeric macros include these ``type-indicator''
+The names of the declared-numeric operators include these ``type-indicator''
 characters:
 %
 \begin{tabular}{l@{}l@{}l}
@@ -6513,7 +6511,7 @@ characters:
   \$\$\$ & & \code{long-float} \\
 \end{tabular}
 
-Thus, the declared-numeric \code{+} macros are:
+Thus, the declared-numeric \code{+} operators are:
 %
 \begin{tabular}{l@{}l@{}l}
   +\&     & ~~~  & \code{fixnum} addition \\
@@ -6523,7 +6521,7 @@ Thus, the declared-numeric \code{+} macros are:
   +\$\$\$ & & \code{long-float} addition\\
 \end{tabular}
 
-Some examples of declared-numeric macros include:
+Some examples of declared-numeric operators include:
 %
 \W\supp
 \begin{example}
@@ -6534,7 +6532,7 @@ Some examples of declared-numeric macros include:
   (truncate\& x y)) \expands (the (values fixnum fixnum) (truncate (& x) (& y)))
 \end{example}
 %
-The complete set of macros for each declared numeric type are listed in the
+The complete set of operators for each declared numeric type are listed in the
 following sections.
 
 \fnnotes 
@@ -6559,8 +6557,8 @@ double format (\textit{only\/} the short-float type maps to the
 single format).  
 
 \T\clearpage
-\W\xname{ref-fixnum-macros}
-\subsubsection{Fixnum  numeric-operation macros}
+\W\xname{ref-fixnum-operators}
+\subsubsection{Fixnum  operators}
 
 \bfindex{\&}%
 \bfindex{/\&}%
@@ -6581,7 +6579,11 @@ single format).
 %\bfindex{decf\&-after}%
 \bfindexit{decf/delete\&-acons}%
 \bfindex{evenp\&}% 
+\bfindex{fceiling\&}%
+\bfindex{ffloor\&}%
 \bfindex{floor\&}%
+\bfindex{fround\&}%
+\bfindex{ftruncate\&}%
 \bfindex{incf\&}% 
 %\bfindex{incf\&-after}%
 \bfindexit{pushnew/incf\&-acons}% 
@@ -6596,12 +6598,12 @@ single format).
 \bfindex{truncate\&}%
 \bfindex{zerop\&}%
 %
-These \glref{fixnum} numeric-operation macros are defined in the
+These \code{\glref{fixnum}} declared-numeric operators are defined in the
 \code{:gbbopen-tools} \glref{module}:
 
 \code{%
   \begin{tabular}{l@{}l@{}l@{}l@{}l}
-    \textbf{Macro} & ~~~ & \textbf{Operator}  & ~~~ & 
+    \textbf{Operator} & ~~~ & \textbf{Operation}  & ~~~ & 
     \textbf{Example} \\ \hline
     \&       & & the fixnum     & & (\& x)\\
     +\&      & & +              & & (+\& x y z)\\
@@ -6626,7 +6628,11 @@ These \glref{fixnum} numeric-operation macros are defined in the
     & & (decf/delete\&-acons\\
     & & & & ~~~ 'x delta alist)\\
     evenp\&  & & evenp          & & (evenp\& x)\\
+    fceiling\& & & fceiling     & & (fceiling\& x divisor)\\
     floor\&  & & floor          & & (floor\& x divisor)\\
+    ffloor\& & & ffloor         & & (ffloor\& x divisor)\\
+    fround\& & & fround         & & (fround\& x divisor)\\
+    ftruncate\& & & ftruncate   & & (ftruncate\& x divisor)\\
     incf\&   & & incf           & & (incf\& x delta)\\
 %   incf\&-after & & incf-after & & (incf\&-after x delta)\\
     max\&    & & max            & & (max\& x y z)\\
@@ -6660,8 +6666,8 @@ the remainder is zero and the returned quotient is a \glref{fixnum}.  Otherwise,
 \mbox{\code{(coerce\& x)}} signals an error.
 
 \T\clearpage
-\W\xname{ref-short-float-macros}
-\subsubsection{Short-float macros}
+\W\xname{ref-short-float-operators}
+\subsubsection{Short-float operators}
 
 \bfindex{\$\&}%
 \bfindex{/\$\&}%
@@ -6682,7 +6688,11 @@ the remainder is zero and the returned quotient is a \glref{fixnum}.  Otherwise,
 %\bfindex{decf\$\&-after}%
 \bfindexit{decf/delete\$\&-acons}%
 \bfindex{evenp\$\&}% 
+\bfindex{fceiling\$\&}%
+\bfindex{ffloor\$\&}%
 \bfindex{floor\$\&}%
+\bfindex{fround\$\&}%
+\bfindex{ftruncate\$\&}%
 \bfindex{incf\$\&}% 
 %\bfindex{incf\$\&-after}%
 \bfindexit{pushnew/incf\$\&-acons}% 
@@ -6697,12 +6707,12 @@ the remainder is zero and the returned quotient is a \glref{fixnum}.  Otherwise,
 \bfindex{truncate\$\&}%
 \bfindex{zerop\$\&}%
 %
-These short-float numeric operation macros are defined in the
+These \code{short-float} declared-numeric operators are defined in the
 \code{:gbbopen-tools} \glref{module}:
 
 \code{%
   \begin{tabular}{l@{}l@{}l@{}l@{}l}
-    \textbf{Macro} & ~~~ & \textbf{Operator}  & ~~~ & 
+    \textbf{Operator} & ~~~ & \textbf{Operation}  & ~~~ & 
     \textbf{Example} \\ \hline
     \$\&       & & the short-float & & (\$\& x)\\
     +\$\&      & & +              & & (+\$\& x y z)\\
@@ -6727,7 +6737,11 @@ These short-float numeric operation macros are defined in the
     & & (decf/delete\$\&-acons\\
     & & & & ~~~ 'x delta alist)\\
     evenp\$\&  & & evenp          & & (evenp\$\& x)\\
+    fceiling\$\& & & fceiling     & & (fceiling\$\& x divisor)\\
     floor\$\&  & & floor          & & (floor\$\& x divisor)\\
+    ffloor\$\& & & ffloor         & & (ffloor\$\& x divisor)\\
+    fround\$\& & & fround         & & (fround\$\& x divisor)\\
+    ftruncate\$\& & & ftruncate   & & (ftruncate\$\& x divisor)\\
     incf\$\&   & & incf           & & (incf\$\& x delta)\\
 %   incf\$\&-after & & incf-after & & (incf\$\&-after x delta)\\
     max\$\&    & & max            & & (max\$\& x y z)\\
@@ -6756,8 +6770,8 @@ short-float coercion:
 \end{example}
 
 \T\clearpage
-\W\xname{ref-single-float-macros}
-\subsubsection{Single-float macros}
+\W\xname{ref-single-float-operators}
+\subsubsection{Single-float operators}
 
 \bfindex{\$}%
 \bfindex{/\$}%
@@ -6778,7 +6792,11 @@ short-float coercion:
 %\bfindex{decf\$-after}%
 \bfindexit{decf/delete\$-acons}%
 \bfindex{evenp\$}% 
+\bfindex{fceiling\$}%
+\bfindex{ffloor\$}%
 \bfindex{floor\$}%
+\bfindex{fround\$}%
+\bfindex{ftruncate\$}%
 \bfindex{incf\$}% 
 %\bfindex{incf\$-after}%
 \bfindexit{pushnew/incf\$-acons}% 
@@ -6793,12 +6811,12 @@ short-float coercion:
 \bfindex{truncate\$}%
 \bfindex{zerop\$}%
 %
-These single-float numeric operation macros are defined in the
+These \code{single-float} declared-numeric operators are defined in the
 \code{:gbbopen-tools} \glref{module}:
 
 \code{%
   \begin{tabular}{l@{}l@{}l@{}l@{}l}
-    \textbf{Macro} & ~~~ & \textbf{Operator}  & ~~~ & 
+    \textbf{Operator} & ~~~ & \textbf{Operation}  & ~~~ & 
     \textbf{Example} \\ \hline
     \$       & & the single-float & & (\$ x)\\
     +\$      & & +              & & (+\$ x y z)\\
@@ -6823,7 +6841,11 @@ These single-float numeric operation macros are defined in the
     & & (decf/delete\$-acons\\
     & & & & ~~~ 'x delta alist)\\
     evenp\$  & & evenp          & & (evenp\$ x)\\
+    fceiling\$ & & fceiling     & & (fceiling\$ x divisor)\\
     floor\$  & & floor          & & (floor\$ x divisor)\\
+    ffloor\$ & & ffloor         & & (ffloor\$ x divisor)\\
+    fround\$ & & fround         & & (fround\$ x divisor)\\
+    ftruncate\$ & & ftruncate   & & (ftruncate\$ x divisor)\\
     incf\$   & & incf           & & (incf\$ x delta)\\
 %   incf\$-after & & incf-after & & (incf\$-after x delta)\\
     max\$    & & max            & & (max\$ x y z)\\
@@ -6852,8 +6874,8 @@ single-float coercion:
 \end{example}
 
 \T\clearpage
-\W\xname{ref-double-float-macros}
-\subsubsection{Double-float macros}
+\W\xname{ref-double-float-operators}
+\subsubsection{Double-float operators}
 
 \bfindex{\$\$}%
 \bfindex{/\$\$}%
@@ -6874,7 +6896,11 @@ single-float coercion:
 %\bfindex{decf\$\$-after}%
 \bfindexit{decf/delete\$\$-acons}%
 \bfindex{evenp\$\$}% 
+\bfindex{fceiling\$\$}%
+\bfindex{ffloor\$\$}%
 \bfindex{floor\$\$}%
+\bfindex{fround\$\$}%
+\bfindex{ftruncate\$\$}%
 \bfindex{incf\$\$}% 
 %\bfindex{incf\$\$-after}%
 \bfindexit{pushnew/incf\$\$-acons}% 
@@ -6889,12 +6915,12 @@ single-float coercion:
 \bfindex{truncate\$\$}%
 \bfindex{zerop\$\$}% 
 %
-These double-float numeric operation macros are defined in the
+These \code{double-float} declared-numeric operators are defined in the
 \code{:gbbopen-tools} \glref{module}:
 
 \code{%
   \begin{tabular}{l@{}l@{}l@{}l@{}l}
-    \textbf{Macro} & ~~~ & \textbf{Operator}  & ~~~ & 
+    \textbf{Operator} & ~~~ & \textbf{Operation}  & ~~~ & 
     \textbf{Example} \\ \hline
     \$\$       & & the double-float & & (\$\$ x)\\
     +\$\$      & & +              & & (+\$\$ x y z)\\
@@ -6919,7 +6945,11 @@ These double-float numeric operation macros are defined in the
     & & (decf/delete\$\$-acons\\
     & & & & ~~~ 'x delta alist)\\
     evenp\$\$  & & evenp          & & (evenp\$\$ x)\\
+    fceiling\$\$ & & fceiling     & & (fceiling\$\$ x divisor)\\
     floor\$\$  & & floor          & & (floor\$\$ x divisor)\\
+    ffloor\$\$ & & ffloor         & & (ffloor\$\$ x divisor)\\
+    fround\$\$ & & fround         & & (fround\$\$ x divisor)\\
+    ftruncate\$\$ & & ftruncate   & & (ftruncate\$\$ x divisor)\\
     incf\$\$   & & incf           & & (incf\$\$ x delta)\\
 %   incf\$\$-after & & incf-after & & (incf\$\$-after x delta)\\
     max\$\$    & & max            & & (max\$\$ x y z)\\
@@ -6948,8 +6978,8 @@ double-float coercion:
 \end{example}
 
 \T\clearpage
-\W\xname{ref-long-float-macros}
-\subsubsection{Long-float macros}
+\W\xname{ref-long-float-operators}
+\subsubsection{Long-float operators}
 
 \bfindex{\$\$\$}%
 \bfindex{/\$\$\$}%
@@ -6970,7 +7000,11 @@ double-float coercion:
 %\bfindex{decf\$\$\$-after}%
 \bfindexit{decf/delete\$\$\$-acons}%
 \bfindex{evenp\$\$\$}% 
+\bfindex{fceiling\$\$\$}%
+\bfindex{ffloor\$\$\$}%
 \bfindex{floor\$\$\$}%
+\bfindex{fround\$\$\$}%
+\bfindex{ftruncate\$\$\$}%
 \bfindex{incf\$\$\$}% 
 %\bfindex{incf\$\$\$-after}%
 \bfindexit{pushnew/incf\$\$\$-acons}%
@@ -6985,12 +7019,12 @@ double-float coercion:
 \bfindex{truncate\$\$\$}%
 \bfindex{zerop\$\$\$}%
 %
-These long-float numeric operation macros are defined in the
+These \code{long-float} declared-numeric operators are defined in the
 \code{:gbbopen-tools} \glref{module}:
 
 \code{%
   \begin{tabular}{l@{}l@{}l@{}l@{}l}
-    \textbf{Macro} & ~~~ & \textbf{Operator}  & ~~~ & 
+    \textbf{Operator} & ~~~ & \textbf{Operation}  & ~~~ & 
     \textbf{Example} \\ \hline
     \$\$\$       & & the long-float & & (\$\$\$ x)\\
     +\$\$\$      & & +              & & (+\$\$\$ x y z)\\
@@ -7015,7 +7049,11 @@ These long-float numeric operation macros are defined in the
     & & (decf/delete\$\$\$-acons\\
     & & & & ~~~ 'x delta alist)\\
     evenp\$\$\$  & & evenp          & & (evenp\$\$\$ x)\\
+    fceiling\$\$\$ & & fceiling     & & (fceiling\$\$\$ x divisor)\\
     floor\$\$\$  & & floor          & & (floor\$\$\$ x divisor)\\
+    ffloor\$\$\$ & & ffloor         & & (ffloor\$\$\$ x divisor)\\
+    fround\$\$\$ & & fround         & & (fround\$\$\$ x divisor)\\
+    ftruncate\$\$\$ & & ftruncate   & & (ftruncate\$\$\$ x divisor)\\
     incf\$\$\$   & & incf           & & (incf\$\$\$ x delta)\\
 %   incf\$\$\$-after & & incf-after & & (incf\$\$\$-after x delta)\\
     max\$\$\$    & & max            & & (max\$\$\$ x y z)\\

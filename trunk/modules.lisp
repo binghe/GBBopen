@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/modules.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Jun 24 13:09:28 2008 *-*
+;;;; *-* Last-Edit: Wed Jul  2 16:45:25 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -60,6 +60,7 @@
             ("defflags" :forces-recompile)
             "clos-interface" 
             ("tools" :forces-recompile)
+            ("pseudo-probabilities" :forces-recompile)
             ("define-class" :forces-recompile)
             "gbbopen-instance"
             "date-and-time"
@@ -248,7 +249,20 @@
     (:requires :portable-sockets :gbbopen-core)
     (:directory :gbbopen "extensions")
     (:files "web-inspector"))
+  
+  ;; end of with-system-name
+  )
 
+;;; ===========================================================================
+;;;  Timing
+  
+(with-system-name (:timing)
+
+  (define-module :cl-timing
+    (:requires :gbbopen-user)
+    (:directory :gbbopen-tools "timing")
+    (:files "cl-timing"))
+  
   ;; end of with-system-name
   )
 

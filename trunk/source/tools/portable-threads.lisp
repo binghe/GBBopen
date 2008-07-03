@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/portable-threads.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Jun 27 06:12:47 2008 *-*
+;;;; *-* Last-Edit: Wed Jul  2 09:48:30 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -80,14 +80,14 @@
 
 #+(and digitool ccl-5.1)
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (pushnew :digitool-mcl *features*))
+  (pushnew ':digitool-mcl *features*))
 
 ;;; ---------------------------------------------------------------------------
 ;;; Add clozure feature to legacy OpenMCL:
 
 #+(and openmcl (not clozure))
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (pushnew :clozure *features*))
+  (pushnew ':clozure *features*))
 
 ;;; ---------------------------------------------------------------------------
 ;;; Add a feature to identify new lock structure for Lispworks:
@@ -95,7 +95,7 @@
 #+lispworks
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (when (fboundp 'mp::lock-i-name)
-    (pushnew :new-locks *features*)))
+    (pushnew ':new-locks *features*)))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Warn if sb-thread support is missing on SBCL/Linux
@@ -135,9 +135,9 @@
   (unless (macro-function 'defcm)
     (defmacro defcm (&body body)
       ;;; Shorthand conditional compiler-macro:
-      (unless (or (member (symbol-name '#:full-safety) *features*
+      (unless (or (member (symbol-name ':full-safety) *features*
                           :test 'string=)
-                  (member (symbol-name '#:disable-compiler-macros) *features*
+                  (member (symbol-name ':disable-compiler-macros) *features*
                           :test 'string=))
         `(define-compiler-macro ,@body)))))
 
@@ -300,7 +300,7 @@
       gcl
       (and sbcl (not sb-thread)))
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (pushnew :threads-not-available *features*))
+  (pushnew ':threads-not-available *features*))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -329,7 +329,7 @@
        ;; With-timeout is supported on non-threaded SBCL
        (not sbcl))
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (pushnew :with-timeout-not-available *features*))
+  (pushnew ':with-timeout-not-available *features*))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -1945,9 +1945,11 @@
   (if ut
       (multiple-value-bind (isecond iminute ihour idate imonth iyear)
           (decode-universal-time ut)
+        (declare (fixnum isecond iminute ihour idate imonth iyear))
         (multiple-value-bind (second minute hour date month year)
             (decode-universal-time (get-universal-time))
-          (declare (ignore second minute hour))
+          (declare (ignore second minute hour)
+                   (fixnum date month year))
           (cond 
            ;; today?
            ((and (= date idate)
@@ -1958,7 +1960,9 @@
                     iminute
                     isecond))
            ;; someday:
-           (t (let ((imonth-name (svref *month-name-vector* (1- imonth))))
+           (t (let ((imonth-name (svref (the (simple-array t (*))
+                                          *month-name-vector*)
+                                        (the fixnum (1- imonth)))))
                 (format stream "~a ~d, ~d ~2,'0d:~2,'0d:~2,'0d"
                         imonth-name
                         idate
@@ -2355,7 +2359,8 @@
     (handler-case 
         (progn
           (when *periodic-function-verbose*
-            (format *trace-output* "~&;; Killing periodic-function~@[ ~s~]...~%"
+            (format *trace-output* 
+                    "~&;; Killing periodic-function~@[ ~s~]...~%"
                     (and (boundp '*periodic-function-name*)
                          *periodic-function-name*))
             (force-output *trace-output*))
@@ -2369,7 +2374,7 @@
 ;;; ===========================================================================
 ;;;  Portable threads interface is fully loaded:
 
-(pushnew :portable-threads *features*)
+(pushnew ':portable-threads *features*)
 (pushnew *portable-threads-version-keyword* *features*)
 
 ;;; ===========================================================================

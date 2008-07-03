@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/mini-module/mini-module-user.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Jul  1 09:26:25 2008 *-*
+;;;; *-* Last-Edit: Wed Jul  2 09:38:44 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -35,7 +35,7 @@
     (when mini-module-package
       (use-package (list mini-module-package)))))
 
-(pushnew :mini-module-user *features*)
+(pushnew ':mini-module-user *features*)
 
 ;;; ===========================================================================
 ;;;				  End of File

@@ -5,21 +5,21 @@
 <!-- XML file produced from file: reference.tex
      using Hyperlatex v 2.9-in-waiting-rk (c) Otfried Cheong -->
 <head>
-<title>GBBopen 1.1 Reference -- Fixnum  numeric-operation macros</title>
+<title>GBBopen 1.1 Reference -- Fixnum  operators</title>
 </p>
 <link rel="SHORTCUT ICON" href="favicon.ico"><link rel=stylesheet
         href="gbbopen.css" type="text/css" />
 </head>
 <body>
 <table width="100%" cellpadding="0" cellspacing="2"><tr>
-<td bgcolor="#99ccff"><img alt="" src="blank.png"/></td><td bgcolor="#99ccff"><a href="ref-declared-numerics.html"><img border="0" alt="Declared Numerics" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-short-float-macros.html"><img border="0" alt="Short-float macros" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b>Fixnum  numeric-operation macros</b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table>
-<h3>Fixnum  numeric-operation macros</h3>
-<p>These <a href="ref-glossary.html#gl:fixnum">fixnum</a> numeric-operation macros are defined in the
+<td bgcolor="#99ccff"><img alt="" src="blank.png"/></td><td bgcolor="#99ccff"><a href="ref-declared-numerics.html"><img border="0" alt="Declared Numerics" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-short-float-operators.html"><img border="0" alt="Short-float operators" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b>Fixnum  operators</b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table>
+<h3>Fixnum  operators</h3>
+<p>These <code><a href="ref-glossary.html#gl:fixnum">fixnum</a></code> declared-numeric operators are defined in the
 <code>:gbbopen-tools</code> <a href="ref-glossary.html#gl:module">module</a>:
 </p>
 <code><table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
-<b>Macro</b> </td><td valign="baseline" colspan="1" align="left"> &nbsp;&nbsp;&nbsp; </td><td valign="baseline" colspan="1" align="left"> <b>Operator</b>  </td><td valign="baseline" colspan="1" align="left"> &nbsp;&nbsp;&nbsp; </td><td valign="baseline" colspan="1" align="left"> 
+<b>Operator</b> </td><td valign="baseline" colspan="1" align="left"> &nbsp;&nbsp;&nbsp; </td><td valign="baseline" colspan="1" align="left"> <b>Operation</b>  </td><td valign="baseline" colspan="1" align="left"> &nbsp;&nbsp;&nbsp; </td><td valign="baseline" colspan="1" align="left"> 
 <b>Example</b> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left">&#38;       </td><td valign="baseline" colspan="1" align="left"> </td><td valign="baseline" colspan="1" align="left"> the fixnum     </td><td valign="baseline" colspan="1" align="left"> </td><td valign="baseline" colspan="1" align="left"> (&#38; x)</td></tr>
@@ -64,7 +64,15 @@
 <tr>
 <td valign="baseline" colspan="1" align="left">evenp&#38;  </td><td valign="baseline" colspan="1" align="left"> </td><td valign="baseline" colspan="1" align="left"> evenp          </td><td valign="baseline" colspan="1" align="left"> </td><td valign="baseline" colspan="1" align="left"> (evenp&#38; x)</td></tr>
 <tr>
+<td valign="baseline" colspan="1" align="left">fceiling&#38; </td><td valign="baseline" colspan="1" align="left"> </td><td valign="baseline" colspan="1" align="left"> fceiling     </td><td valign="baseline" colspan="1" align="left"> </td><td valign="baseline" colspan="1" align="left"> (fceiling&#38; x divisor)</td></tr>
+<tr>
 <td valign="baseline" colspan="1" align="left">floor&#38;  </td><td valign="baseline" colspan="1" align="left"> </td><td valign="baseline" colspan="1" align="left"> floor          </td><td valign="baseline" colspan="1" align="left"> </td><td valign="baseline" colspan="1" align="left"> (floor&#38; x divisor)</td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left">ffloor&#38; </td><td valign="baseline" colspan="1" align="left"> </td><td valign="baseline" colspan="1" align="left"> ffloor         </td><td valign="baseline" colspan="1" align="left"> </td><td valign="baseline" colspan="1" align="left"> (ffloor&#38; x divisor)</td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left">fround&#38; </td><td valign="baseline" colspan="1" align="left"> </td><td valign="baseline" colspan="1" align="left"> fround         </td><td valign="baseline" colspan="1" align="left"> </td><td valign="baseline" colspan="1" align="left"> (fround&#38; x divisor)</td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left">ftruncate&#38; </td><td valign="baseline" colspan="1" align="left"> </td><td valign="baseline" colspan="1" align="left"> ftruncate   </td><td valign="baseline" colspan="1" align="left"> </td><td valign="baseline" colspan="1" align="left"> (ftruncate&#38; x divisor)</td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left">incf&#38;   </td><td valign="baseline" colspan="1" align="left"> </td><td valign="baseline" colspan="1" align="left"> incf           </td><td valign="baseline" colspan="1" align="left"> </td><td valign="baseline" colspan="1" align="left"> (incf&#38; x delta)</td></tr>
 <tr>
@@ -106,4 +114,4 @@ the remainder is zero and the returned quotient is a <a href="ref-glossary.html#
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
 <table width="100%" cellpadding="0" cellspacing="2"><tr>
-<td bgcolor="#99ccff"><img alt="" src="blank.png"/></td><td bgcolor="#99ccff"><a href="ref-declared-numerics.html"><img border="0" alt="Declared Numerics" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-short-float-macros.html"><img border="0" alt="Short-float macros" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b>Fixnum  numeric-operation macros</b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table></body></html>
+<td bgcolor="#99ccff"><img alt="" src="blank.png"/></td><td bgcolor="#99ccff"><a href="ref-declared-numerics.html"><img border="0" alt="Declared Numerics" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-short-float-operators.html"><img border="0" alt="Short-float operators" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b>Fixnum  operators</b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table></body></html>

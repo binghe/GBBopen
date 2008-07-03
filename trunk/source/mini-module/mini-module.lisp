@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/mini-module/mini-module.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Jul  1 09:23:34 2008 *-*
+;;;; *-* Last-Edit: Thu Jul  3 03:08:16 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -244,6 +244,8 @@
             dotted-conc-name            ; part of tools, but placed here; not
                                         ; documented
             finish-patch
+            feature-present-p           ; part of tools, but placed here; not
+                                        ; documented
             get-directory
             get-patch-description
             get-root-directory          ; not yet documented
@@ -253,7 +255,6 @@
             mini-module-implementation-version ; not documented
             module-directories          ; not yet documented
             module-loaded-p
-            need-to-port                ; not documented
             parse-date                  ; part of tools, but placed here
             patch
             patch-loaded-p
@@ -331,46 +332,32 @@
        (values-list (first (last ,values))))))
 
 ;;; ===========================================================================
-;;;  Dotted-conc-name
+;;;  Feature-present-p and dotted-conc-name
+
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defun feature-present-p (feature-symbol)
+    ;; Checks if :full-safety is on the *features* list (used at execution
+    ;; time to conditionalize generated code, in place of read-time
+    ;; conditionals)
+    (member (symbol-name feature-symbol) *features* :test #'string=)))
+
+;;; ---------------------------------------------------------------------------
 
 (defun dotted-conc-name (symbol)
   ;; Support reader-case-preserving CLs
   (concatenate 'simple-string (symbol-name symbol) "."))
 
 ;;; ===========================================================================
-;;;  Declared numerics that are used in this file
+;;;  Basic declared numerics for use in this file
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defmacro & (arg)
     ;;; Wraps (the fixnum ...) around `arg'
-    `(the #-full-safety fixnum #+full-safety t ,arg))
-
-  ;; CLISP can't handle compile-time (flet (...) (defmacro ...)) forms, so we
-  ;; define fixnum-up as a full function here:
-  (allow-redefinition
-   (defun fixnum-op (op args &optional result values-types)
-     ;; Builds a form declaring all the arguments to OP to be fixnums.  If
-     ;; `result' is true then the result of the operation is also a fixnum
-     ;; unless `values-types' is specified.
-     (let ((form `(,op ,@(mapcar #'(lambda (x) `(& ,x)) args))))
-       (if result
-           `(the #-full-safety ,(if values-types
-                                    (cons 'values values-types)
-                                    'fixnum)
-                 #+full-safety t
-                 ,form)
-           form))))
-  
-  (defmacro +& (&rest args) (fixnum-op '+ args t))
-  (defmacro 1-& (&rest args) (fixnum-op '1- args t))
-  (defmacro *& (&rest args) (fixnum-op '* args t))
-  (defmacro =& (&rest args) (fixnum-op '= args))
-  (defmacro <& (&rest args) (fixnum-op '< args))
-  (defmacro >=& (&rest args) (fixnum-op '>= args))
-  (defmacro min& (&rest args) (fixnum-op 'min args t))
-  (defmacro truncate& (&rest args)
-    (fixnum-op 'truncate args t '(fixnum fixnum)))
-
+    (if (feature-present-p ':full-safety)
+        `,arg
+        `(the fixnum ,arg)))
+  (defmacro +& (&rest args)
+    `(the fixnum (+ ,@(mapcar #'(lambda (x) `(the fixnum ,x)) args))))
   (define-modify-macro incf& (&optional (increment 1)) +&))
 
 ;;; ===========================================================================
@@ -398,7 +385,9 @@
           (decode-universal-time time time-zone)
           (decode-universal-time time))
     (declare (ignore second minute hour))
-    (let ((month-name (svref *month-name-vector* (1-& month))))
+    (let ((month-name (svref (the (simple-array t (*))
+                               *month-name-vector*)
+                             (& (1- (& month))))))
       (if *month-precedes-date*     
           (format destination "~a ~2d, ~s"
                   month-name
@@ -424,10 +413,12 @@
         (if time-zone 
             (decode-universal-time time time-zone)
             (decode-universal-time time))
-      (let ((month-name (svref *month-name-vector* (1-& month))))
-        (if (<& time-difference
-                ;; 120 days:
-                #.(* 60 60 24 120))
+      (let ((month-name (svref (the (simple-array t (*))
+                                 *month-name-vector*)
+                               (& (1- (& month))))))
+        (if (< (& time-difference)
+               ;; 120 days:
+               #.(* 60 60 24 120))
             (if *month-precedes-date*
                 (format destination "~a ~2d ~2,'0d:~2,'0d~:[~;:~2,'0d~]"
                         month-name
@@ -482,9 +473,10 @@
                              (when (string-equal 
                                     string month-name
                                     :start1 start
-                                    :end1 (min& end
-                                                (+& start 
-                                                    (length month-name))))
+                                    :end1 (& (min (& end)
+                                                  (& (+ (& start)
+                                                        (& (length
+                                                            month-name)))))))
                                (setf month-string month-name)))))
                    (setf month (or (position-if month-equal-fn 
                                                 *month-full-name-vector*)
@@ -493,10 +485,10 @@
                    (unless month
                      (error "Unable to determine the month in ~s" string))
                    (incf& month)
-                   (incf& start (length month-string))))))
+                   (incf& start (& (length month-string)))))))
            (skip-separators ()
              (loop 
-                 while (and (<& start end)
+                 while (and (< (& start) (& end))
                             (find (schar string start) separators))
                  do (incf& start))))
       (skip-separators)
@@ -526,16 +518,16 @@
     ;; Process year:
     (cond 
      ;; Assumed year, if omitted:
-     ((=& start end)
+     ((= (& start) (& end))
       (multiple-value-bind (seconds minutes hours 
                             current-date current-month current-year)
           (get-decoded-time)
         (declare (ignore seconds minutes hours))
         (setf year current-year)
         ;; Assume next year, if the date is past in the current year:
-        (when (or (<& month current-month)
-                  (and (=& month current-month)
-                       (<& date current-date)))
+        (when (or (< (& month) (& current-month))
+                  (and (= (& month) (& current-month))
+                       (< (& date) (& current-date))))
           (incf& year))))
      ;; Otherwise, process the specified year:
      (t (multiple-value-setq (year start)
@@ -546,34 +538,16 @@
     ;; (if year < 100):
     (setf year (cond 
                 ;; No year upgrade needed:
-                ((>=& year 100) year)
+                ((>= (& year) 100) year)
                 ;; Do the upgrade:
                 (t (let ((current-century
-                          (*& 100 (truncate& (nth-value 5 (get-decoded-time))
-                                             100))))
-                     (if (>=& year 50) 
-                         (+& year current-century -100)
-                         (+& year current-century))))))
+                          (& (* 100 
+                                (& (truncate (& (nth-value 5 (get-decoded-time)))
+                                             100))))))
+                     (if (>= (& year) 50) 
+                         (& (+ (& year) (& current-century) -100))
+                         (& (+ (& year) (& current-century))))))))
     (values date month year)))
-
-;;; ===========================================================================
-;;;  Need-to-port reporting
-
-(defun need-to-port-warning/error (obj &optional error)
-  (funcall (if error 'error 'warn)
-           "~s needs to be defined for ~a~@[ running on ~a~]."
-           obj
-           (lisp-implementation-type) 
-           (machine-type)))
-
-;;; ---------------------------------------------------------------------------
-
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (defmacro need-to-port (obj)
-    ;;; Generate compile-time warnings of needed porting:
-    (need-to-port-warning/error obj)
-    ;; Error if called at run time:
-    `(need-to-port-warning/error ',obj t)))
 
 ;;; ===========================================================================
 ;;;  Directories and modules hash tables
@@ -1378,135 +1352,136 @@
     (error "Module ~s has not been loaded and ~s is true."
            (mm-module.name *current-module*)
            '*patches-only*))
-  (with-compilation-unit ()
-    (dolist (file (if patches?
-                      (mm-module.patches module)
-                      (mm-module.files module)))
-      (let* ((file-options (when (consp file) 
-                             (rest file)))
-             (bad-options (set-difference file-options 
-                                          (if patches?
-                                              (cons ':developing *compile/load-file-options*)
-                                              *compile/load-file-options*)
-                                          :test #'eq))
-             (file-name (if (consp file) (first file) file))
-             (source-path (make-pathname
+  (dolist (file (if patches?
+                    (mm-module.patches module)
+                    (mm-module.files module)))
+    (let* ((file-options (when (consp file) 
+                           (rest file)))
+           (bad-options 
+            (set-difference file-options 
+                            (if patches?
+                                (cons ':developing *compile/load-file-options*)
+                                *compile/load-file-options*)
+                            :test #'eq))
+           (file-name (if (consp file) (first file) file))
+           (source-path (make-pathname
+                         :name file-name
+                         :type "lisp"
+                         :defaults source-directory))
+           (source-file-date (or (and (probe-file source-path)
+                                      (file-write-date source-path)) 0))
+           (compiled-path (make-pathname
                            :name file-name
-                           :type "lisp"
-                           :defaults source-directory))
-             (source-file-date (or (and (probe-file source-path)
-                                        (file-write-date source-path)) 0))
-             (compiled-path (make-pathname
-                             :name file-name
-                             :type *compiled-file-type*
-                             :defaults compiled-directory))
-             (compiled-file-date
-              (or (and (probe-file compiled-path)
-                       (file-write-date compiled-path))
-                  -1))
-             (files-loaded (mm-module.files-loaded module))
-             (file-loaded-acons (assoc file-name files-loaded
-                                       :test #'string=)))
-        (when bad-options
-          (warn "Invalid file option~p for ~s in module ~s: ~s"
-                bad-options
-                file-name
-                (mm-module.name module)
-                bad-options))           
-        (labels ((consider-file-p (compile? date)
-                   (if patches? 
-                       (or (member ':developing file-options :test #'eq)
-                           ;; Patch hasn't been loaded?
-                           (not (member-if
-                                 #'(lambda (patch-description)
-                                     (equal (patch-description.file-name
-                                             patch-description)
-                                            file-name))
-                                 (mm-module.patch-descriptions module)))
-                           ;; Warn that we are skipping this patch:
-                           (when (and date (> date (cdr file-loaded-acons)))
-                             (format t "~&;; Not ~:[reloading~;recompiling~] ~
+                           :type *compiled-file-type*
+                           :defaults compiled-directory))
+           (compiled-file-date
+            (or (and (probe-file compiled-path)
+                     (file-write-date compiled-path))
+                -1))
+           (files-loaded (mm-module.files-loaded module))
+           (file-loaded-acons (assoc file-name files-loaded
+                                     :test #'string=)))
+      (when bad-options
+        (warn "Invalid file option~p for ~s in module ~s: ~s"
+              bad-options
+              file-name
+              (mm-module.name module)
+              bad-options))           
+      (labels ((consider-file-p (compile? date)
+                 (if patches? 
+                     (or (member ':developing file-options :test #'eq)
+                         ;; Patch hasn't been loaded?
+                         (not (member-if
+                               #'(lambda (patch-description)
+                                   (equal (patch-description.file-name
+                                           patch-description)
+                                          file-name))
+                               (mm-module.patch-descriptions module)))
+                         ;; Warn that we are skipping this patch:
+                         (when (and date (> date (cdr file-loaded-acons)))
+                           (format t "~&;; Not ~:[reloading~;recompiling~] ~
                                              patch file ~s in module ~s~%"
-                                     compile?
-                                     file-name
-                                     (mm-module.name *current-module*))
-                             ;; return nil:
-                             nil))
-                       (not *patches-only*)))
-                 (load-it (path date)
-                   (when (and (consider-file-p nil date)
-                              (or reload?
-                                  (member ':reload file-options :test #'eq)
-                                  (not file-loaded-acons)
-                                  (> date (cdr file-loaded-acons))))
-                     (%load-file file-name path print?)
-                     (when (member ':forces-recompile file-options :test #'eq)
-                       (let ((latest-source/compiled-file-date 
-                              (max source-file-date compiled-file-date)))
-                         (maybe-update-forces-recompile-date 
-                          latest-source/compiled-file-date))
-                       (setf (mm-module.latest-forces-recompiled-date module)
-                             (max compiled-file-date
-                                  (mm-module.latest-forces-recompiled-date
-                                   module))))
-                     (if file-loaded-acons
-                         ;; update the date in the existing acons:
-                         (setf (cdr file-loaded-acons) date)
-                         ;; add file and date as a new acons in files-loaded:
-                         (setf (mm-module.files-loaded module)
-                               (acons file-name date files-loaded))))
-                   ;; warn that recompilation is needed:
-                   (when (and (plusp compiled-file-date)
-                              (> *latest-forces-recompile-date*
-                                 compiled-file-date)
-                              (not (member ':source file-options :test #'eq)))
-                     (format t "~&; File ~a in ~s needs to be recompiled.~%"
-                             file-name (mm-module.name module)))))
-          (let ((recompile-needed 
-                 (and compile?
-                      (or (> source-file-date compiled-file-date)
-                          (> *latest-forces-recompile-date* 
-                             compiled-file-date)))))
-            (when (and (consider-file-p 't (when recompile-needed source-file-date))
-                       (not (member ':source file-options :test #'eq))
-                       (or recompile? 
-                           (member ':recompile file-options :test #'eq)
-                           recompile-needed))
-              ;; Delete the old compiled file, if it exists:
-              (when (plusp compiled-file-date)
-                (delete-file compiled-path))
-              ;; Generate our own compile-verbose message:
-              (when (and (not *compile-verbose*)
-                         *mini-module-compile-verbose*)
-                (format t "~&;;; Compiling file ~a...~%"
-                        (namestring source-path)))
-              (let ((*compiling-file* 't)
-                    (*loading-patch* nil))
-                (compile-file source-path 
-                              :print print?
-                              :output-file compiled-path)
-                (%check-no-patch))
-              (setf compiled-file-date 
-                    (or (and (probe-file compiled-path)
-                             (file-write-date compiled-path))
-                        ;; Compiled file can be missing if compilation was
-                        ;; aborted:
-                        -1))
-              (when (member ':forces-recompile file-options :test #'eq)
-                (maybe-update-forces-recompile-date compiled-file-date)
-                (setf (mm-module.latest-forces-recompiled-date module)
-                      (max compiled-file-date
-                           (mm-module.latest-forces-recompiled-date module)))
-                (setf recompile? 't propagate? 't)))
-            (unless (member ':noload file-options :test #'eq)
-              (if (or source? (> source-file-date compiled-file-date))
-                  (load-it source-path source-file-date)
-                  (load-it compiled-path compiled-file-date))))))))
+                                   compile?
+                                   file-name
+                                   (mm-module.name *current-module*))
+                           ;; return nil:
+                           nil))
+                     (not *patches-only*)))
+               (load-it (path date)
+                 (when (and (consider-file-p nil date)
+                            (or reload?
+                                (member ':reload file-options :test #'eq)
+                                (not file-loaded-acons)
+                                (> date (cdr file-loaded-acons))))
+                   (%load-file file-name path print?)
+                   (when (member ':forces-recompile file-options :test #'eq)
+                     (let ((latest-source/compiled-file-date 
+                            (max source-file-date compiled-file-date)))
+                       (maybe-update-forces-recompile-date 
+                        latest-source/compiled-file-date))
+                     (setf (mm-module.latest-forces-recompiled-date module)
+                           (max compiled-file-date
+                                (mm-module.latest-forces-recompiled-date
+                                 module))))
+                   (if file-loaded-acons
+                       ;; update the date in the existing acons:
+                       (setf (cdr file-loaded-acons) date)
+                       ;; add file and date as a new acons in files-loaded:
+                       (setf (mm-module.files-loaded module)
+                             (acons file-name date files-loaded))))
+                 ;; warn that recompilation is needed:
+                 (when (and (plusp compiled-file-date)
+                            (> *latest-forces-recompile-date*
+                               compiled-file-date)
+                            (not (member ':source file-options :test #'eq)))
+                   (format t "~&; File ~a in ~s needs to be recompiled.~%"
+                           file-name (mm-module.name module)))))
+        (let ((recompile-needed 
+               (and compile?
+                    (or (> source-file-date compiled-file-date)
+                        (> *latest-forces-recompile-date* 
+                           compiled-file-date)))))
+          (when (and (consider-file-p 't (when recompile-needed source-file-date))
+                     (not (member ':source file-options :test #'eq))
+                     (or recompile? 
+                         (member ':recompile file-options :test #'eq)
+                         recompile-needed))
+            ;; Delete the old compiled file, if it exists:
+            (when (plusp compiled-file-date)
+              (delete-file compiled-path))
+            ;; Generate our own compile-verbose message:
+            (when (and (not *compile-verbose*)
+                       *mini-module-compile-verbose*)
+              (format t "~&;;; Compiling file ~a...~%"
+                      (namestring source-path)))
+            (let ((*compiling-file* 't)
+                  (*loading-patch* nil))
+              (compile-file source-path 
+                            :print print?
+                            :output-file compiled-path)
+              (%check-no-patch))
+            (setf compiled-file-date 
+                  (or (and (probe-file compiled-path)
+                           (file-write-date compiled-path))
+                      ;; Compiled file can be missing if compilation was
+                      ;; aborted:
+                      -1))
+            (when (member ':forces-recompile file-options :test #'eq)
+              (maybe-update-forces-recompile-date compiled-file-date)
+              (setf (mm-module.latest-forces-recompiled-date module)
+                    (max compiled-file-date
+                         (mm-module.latest-forces-recompiled-date module)))
+              (setf recompile? 't propagate? 't)))
+          (unless (member ':noload file-options :test #'eq)
+            (if (or source? (> source-file-date compiled-file-date))
+                (load-it source-path source-file-date)
+                (load-it compiled-path compiled-file-date)))))))
   (setf (mm-module.load-completed? module) 't)
   (maybe-update-forces-recompile-date 
    (mm-module.latest-forces-recompiled-date module))
   ;; return recompile? & propagate? values to use with remaining modules:
   (values recompile? propagate?))
+
 
 ;;; ---------------------------------------------------------------------------
 
@@ -1606,9 +1581,10 @@
       (let ((specified-module? 
              (member (mm-module.name module) module-names :test #'eq)))
         (if (or propagate? specified-module?)              
-            (multiple-value-setq (recompile? propagate?)
-              (compile-module-files module recompile? reload? source? 
-                                    print? propagate? nil))
+            (with-compilation-unit ()
+              (multiple-value-setq (recompile? propagate?)
+                (compile-module-files module recompile? reload? source? 
+                                      print? propagate? nil)))
             (load-module-files
              module 
              (and reload? propagate?) 
@@ -2143,7 +2119,7 @@
 ;;; ===========================================================================
 ;;;   Mini Module system is fully loaded:
 
-(pushnew :mini-module *features*)
+(pushnew ':mini-module *features*)
 (pushnew *mini-module-version-keyword* *features*)
 
 ;;; ===========================================================================

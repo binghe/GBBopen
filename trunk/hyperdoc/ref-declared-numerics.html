@@ -14,15 +14,15 @@
 <table width="100%" cellpadding="0" cellspacing="2"><tr>
 <td bgcolor="#99ccff"><a href="ref-xor.html"><img border="0" alt="xor" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="ref-tools-entities.html"><img border="0" alt="GBBopen Tools" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-date-and-time-entities.html"><img border="0" alt="Date and Time" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b>Declared Numerics</b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table>
 <h2>Declared Numerics</h2>
-<p>The <code>:gbbopen-tools</code> <a href="ref-glossary.html#gl:module">module</a> contains a set of
-numeric-operation macros that provide convenient shorthands for
-declaring <a href="ref-glossary.html#gl:fixnum">fixnum</a>, short-float, single-float, double-float, and
-long-float numeric operators. If the <a href="ref-glossary.html#gl:feature">feature</a>
-<b><a href="ref-full-safety.html">:full-safety</a></b> is present at compile time, these
-macros do not make their fixnum, single-float, double-float, and long-float
-declarations.
+<p>The <code>:gbbopen-tools</code> <a href="ref-glossary.html#gl:module">module</a> contains a set of declared-numeric
+operators that provide convenient shorthands for declaring
+<code><a href="ref-glossary.html#gl:fixnum">fixnum</a></code>, <code>short-float</code>, <code>single-float</code>,
+<code>double-float</code>, and <code>long-float</code> numeric operations. If the
+<a href="ref-glossary.html#gl:feature">feature</a> <b><a href="ref-full-safety.html">:full-safety</a></b> is present at compile
+time, these operators do not make their <code>fixnum</code>, <code>single-float</code>,
+<code>double-float</code>, and <code>long-float</code> declarations.
 </p>
-<p>The names of the declared-numeric macros include these &#8220;type-indicator&#8221;
+<p>The names of the declared-numeric operators include these &#8220;type-indicator&#8221;
 characters:
 </p>
 <table class="tight"><tbody><tr>
@@ -40,7 +40,7 @@ characters:
 <td valign="baseline" colspan="1" align="left">&#36;&#36;&#36; </td><td valign="baseline" colspan="1" align="left"> </td><td valign="baseline" colspan="1" align="left"> <code>long-float</code> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
-<p>Thus, the declared-numeric <code>+</code> macros are:
+<p>Thus, the declared-numeric <code>+</code> operators are:
 </p>
 <table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
@@ -55,15 +55,20 @@ characters:
 <td valign="baseline" colspan="1" align="left">+&#36;&#36;&#36; </td><td valign="baseline" colspan="1" align="left"> </td><td valign="baseline" colspan="1" align="left"> <code>long-float</code> addition</td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
-<p>Some examples of declared-numeric macros include:
+<p>Some examples of declared-numeric operators include:
 <pre class="pretop">
-  (&#38; x) $ ==&gt; $ (the fixnum x)
-  (+&#38; x y) $ ==&gt; $ (the fixnum (+ (the fixnum x) (the fixnum y))
-  (&gt;&#36; a b) $ ==&gt; $ (&gt; (the single-float a) (the single-float b))
-  (minusp$$ value) $ ==&gt; $ (minusp (the double-float value))
-  (truncate&#38; x y)) $ ==&gt; $ (the (values fixnum fixnum) (truncate (&amp; x) (&amp; y)))
+  (&#38; x) <span 
+    style="font-family: serif; font-style: normal">==&gt;</span> (the fixnum x)
+  (+&#38; x y) <span 
+    style="font-family: serif; font-style: normal">==&gt;</span> (the fixnum (+ (the fixnum x) (the fixnum y))
+  (&gt;&#36; a b) <span 
+    style="font-family: serif; font-style: normal">==&gt;</span> (&gt; (the single-float a) (the single-float b))
+  (minusp$$ value) <span 
+    style="font-family: serif; font-style: normal">==&gt;</span> (minusp (the double-float value))
+  (truncate&#38; x y)) <span 
+    style="font-family: serif; font-style: normal">==&gt;</span> (the (values fixnum fixnum) (truncate (&amp; x) (&amp; y)))
 </pre>
-The complete set of macros for each declared numeric type are listed in the
+The complete set of operators for each declared numeric type are listed in the
 following sections.
 </p>
 <p><span class="fndoclabel">Notes</span> <br /><a name="id1">Most</a> Common Lisp implementations map double-float numbers to the
@@ -81,11 +86,11 @@ double format (<i>only</i> the short-float type maps to the
 single format).  
 </p>
 <ul>
-<li><a href="ref-fixnum-macros.html">Fixnum  numeric-operation macros</a></li>
-<li><a href="ref-short-float-macros.html">Short-float macros</a></li>
-<li><a href="ref-single-float-macros.html">Single-float macros</a></li>
-<li><a href="ref-double-float-macros.html">Double-float macros</a></li>
-<li><a href="ref-long-float-macros.html">Long-float macros</a></li>
+<li><a href="ref-fixnum-operators.html">Fixnum  operators</a></li>
+<li><a href="ref-short-float-operators.html">Short-float operators</a></li>
+<li><a href="ref-single-float-operators.html">Single-float operators</a></li>
+<li><a href="ref-double-float-operators.html">Double-float operators</a></li>
+<li><a href="ref-long-float-operators.html">Long-float operators</a></li>
 </ul>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />

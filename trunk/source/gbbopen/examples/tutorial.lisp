@@ -1,7 +1,7 @@
 ;;;; -*- Mode:COMMON-LISP; Package:TUTORIAL; Base:10 -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/examples/tutorial.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Jun 17 14:40:37 2008 *-*
+;;;; *-* Last-Edit: Wed Jul  2 09:47:02 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -259,7 +259,7 @@
 ;;; ===========================================================================
 ;;;  Indicate successful loading
 
-(pushnew :tutorial *features*)
+(pushnew ':tutorial *features*)
 
 ;;; ===========================================================================
 ;;;  Autorun actions

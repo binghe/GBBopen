@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:AGENDA-SHELL; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/control-shells/agenda-shell.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Jun 27 14:35:58 2008 *-*
+;;;; *-* Last-Edit: Wed Jul  2 09:44:53 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -1650,7 +1650,7 @@
 ;;; ===========================================================================
 ;;;  The Agenda Shell is fully loaded
 
-(pushnew :agenda-shell *features*)
+(pushnew ':agenda-shell *features*)
 
 ;;; ===========================================================================
 ;;;                               End of File
