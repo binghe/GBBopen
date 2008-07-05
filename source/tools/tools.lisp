@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jul  2 12:37:25 2008 *-*
+;;;; *-* Last-Edit: Sat Jul  5 06:17:49 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -133,12 +133,13 @@
             compiler-macroexpand
             compiler-macroexpand-1
 	    counted-delete
-	    decf-after			; not yet finished or documented
+	    decf-after
 	    decf/delete-acons
-	    decf/delete&-acons
-	    decf/delete$-acons
-	    decf/delete$$-acons
-	    decf/delete$$$-acons
+	    decf&/delete-acons
+	    decf$/delete-acons
+	    decf$&/delete-acons
+	    decf$$/delete-acons
+	    decf$$$/delete-acons
 	    define-directory		; in mini-module, but part of tools
 	    delq
 	    do-until
@@ -146,13 +147,13 @@
 	    dotted-conc-name		; in mini-module, but part of tools;
                                         ; not documented
 	    dotted-length
-	    error-condition             ; lexical fn in with-error-handling
-            error-message               ; lexical fn in with-error-handling
+	    error-condition             ; lexical fn in WITH-ERROR-HANDLING
+            error-message               ; lexical fn in WITH-ERROR-HANDLING
 	    ensure-finalized-class
 	    ensure-list
 	    ensure-list-of-lists	; not yet documented
 	    extract-declarations	; not documented
-	    incf-after                  ; not yet finished or documented
+	    incf-after
             interrupt-signal
 	    list-length-1-p
 	    list-length-2-p
@@ -171,6 +172,7 @@
 	    pushnew/incf-acons
 	    pushnew/incf&-acons
 	    pushnew/incf$-acons
+	    pushnew/incf$&-acons
 	    pushnew/incf$$-acons
 	    pushnew/incf$$$-acons
 	    pushnew-elements
@@ -800,7 +802,6 @@
 
 ;;; ---------------------------------------------------------------------------
 
-#+(and scl long-float)
 (defmacro pushnew/incf$$$-acons (key incr place &rest keys &environment env)
   (pushnew/incf-acons-expander '+$$$ key incr place keys env))
 
@@ -850,22 +851,27 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defmacro decf/delete&-acons (key decr place &rest keys &environment env)
+(defmacro decf&/delete-acons (key decr place &rest keys &environment env)
   (decf/delete-acons-expander '-& key decr place keys env))
 
 ;;; ---------------------------------------------------------------------------
 
-(defmacro decf/delete$-acons (key decr place &rest keys &environment env)
+(defmacro decf$&/delete-acons (key decr place &rest keys &environment env)
   (decf/delete-acons-expander '-$ key decr place keys env))
 
 ;;; ---------------------------------------------------------------------------
 
-(defmacro decf/delete$$-acons (key decr place &rest keys &environment env)
+(defmacro decf$/delete-acons (key decr place &rest keys &environment env)
+  (decf/delete-acons-expander '-$ key decr place keys env))
+
+;;; ---------------------------------------------------------------------------
+
+(defmacro decf$$/delete-acons (key decr place &rest keys &environment env)
   (decf/delete-acons-expander '-$$ key decr place keys env))
 
 ;;; ---------------------------------------------------------------------------
 
-(defmacro decf/delete$$$-acons (key decr place &rest keys &environment env)
+(defmacro decf$$$/delete-acons (key decr place &rest keys &environment env)
   (decf/delete-acons-expander '-$$$ key decr place keys env))
 
 ;;; ===========================================================================
@@ -888,13 +894,19 @@
 ;;;
 ;;;   Like incf & decf, but returns the original value.
 
-(defun incf-after (place &optional (increment 1))
-  (declare (ignore place increment))
-  (error "Write a better version of INCF-AFTER!"))
+(defmacro incf-after (place &optional (increment 1))
+  ;;; Returns the current value of `place' (before the incf is done)
+  (with-gensyms (old-value)
+    `(let ((,old-value ,place))
+       (setf ,place (+ ,old-value ,increment))
+       ,old-value)))
 
-(defun decf-after (place &optional (decrement 1))
-  (declare (ignore place decrement))
-  (error "Write a better version of DECF-AFTER!"))
+(defmacro decf-after (place &optional (increment 1))
+  ;;; Returns the current value of `place' (before the decf is done)
+  (with-gensyms (old-value)
+    `(let ((,old-value ,place))
+       (setf ,place (- ,old-value ,increment))
+       ,old-value)))
 
 ;;; ===========================================================================
 ;;;   Bounded-value
@@ -906,6 +918,12 @@
   (cond ((< n min) min)
         ((> n max) max)
         (t n)))
+
+(defcm bounded-value (min n max)
+  (with-once-only-bindings (min n max)
+    `(cond ((< ,n ,min) ,min)
+           ((> ,n ,max) ,max)
+           (t ,n))))
 
 ;;; ===========================================================================
 ;;;   Counted-delete

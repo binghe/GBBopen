@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/pseudo-probabilities.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Jul  3 12:50:35 2008 *-*
+;;;; *-* Last-Edit: Sat Jul  5 06:22:21 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -26,14 +26,31 @@
 (in-package :gbbopen-tools)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  ;; Generated fixnum-equivalent operators are exported by DEFDN% (below):
-  (export '(*%                          ; normalizing *&
+  ;; Generated fully-fixnum-equivalent operators are automatically exported by
+  ;; DEFDN%
+  (export '(%
+            *%                          ; normalizing *&
             /%                          ; normalizing /&
-            exp%
+            ceiling%                    ; normalizing ceiling&
+            decf%                       ; the same as decf&
+            decf%-after                 ; the same as decf&-after
+            decf%/delete-acons          ; the same as decf&/delete-acons
+            exp%                        ; normalizing exp
+            floor%                      ; normalizing floor&
+            fceiling%                   ; normalizing fceiling&
+            ffloor%                     ; normalizing ffloor&
+            fround%                     ; normalizing fround&
+            ftruncate%                  ; normalizing ftruncate&
+            incf%                       ; the same as incf&
+            incf%-after                 ; the same as incf&-after
+            ln%                         ; normalizing (log n)
             pprob2prob
             prob2pprob
             pseudo-probability
-            ln%)))
+            pushnew/incf%-acons         ; the same as pushnew/incf&-acons
+            round%                      ; normalizing round&
+            truncate%                   ; normalizing truncate&
+            )))
 
 ;;; ===========================================================================
 ;;;   Pseudo-Probabilities
@@ -56,25 +73,12 @@
   (deftype pseudo-probability () `(integer 0 ,max-pprob)))
   
 ;;; ---------------------------------------------------------------------------
-
-(defun prob2pprob (prob)
-  (round$ (*$ (float prob) max-pprob$)))
-
-(defcm prob2pprob (prob)
-  `(round$ (*$ (float ,prob) ,max-pprob$)))
-
-;;; ---------------------------------------------------------------------------
-
-(defun pprob2prob (pprob)
-  (/$ (float pprob) max-pprob$))
-
-(defcm pprob2prob (pprob)
-  `(/$ (float ,pprob) ,max-pprob$))
-
-;;; ---------------------------------------------------------------------------
+;;;  Generated fully-fixnum-equivalent pseudo-probability operators
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defmacro defdn% (op &optional result values-types)
+    ;; We keep the same signature as declared-numeric.lisp's DEFDN, but ignore
+    ;; the optional arguments here:
     (declare (ignore result values-types))
     (let ((pprob-op (intern (concatenate 'simple-string
                               (symbol-name op) "%")
@@ -87,7 +91,7 @@
            (export '(,pprob-op)))
          
          (defun ,pprob-op (&rest args)
-           (declare (dynamic-extent args0))
+           (declare (dynamic-extent args))
            (apply #',fixnum-op args))
          
          (defcm ,pprob-op (&rest args)
@@ -111,16 +115,49 @@
 (defdn% evenp)
 (defdn% oddp)
 (defdn% abs t)
-;; Not yet available:
-;; (defdn% mod t)
-;; (defdn% floor t (fixnum fixnum))
-;; (defdn% ceiling t (fixnum fixnum))
-;; (defdn% truncate t (fixnum fixnum))
-;; (defdn% round t (fixnum fixnum))
-;; (defdn% ffloor t (float fixnum))
-;; (defdn% fceiling t (float fixnum))
-;; (defdn% ftruncate t (float fixnum))
-;; (defdn% fround t (float fixnum))
+(defdn% mod t)
+(defdn% bounded-value t)
+
+;;; ---------------------------------------------------------------------------
+
+(defmacro % (arg)
+  ;;; Wraps (the pseudo-probability ...) around `arg'
+  (if  (feature-present-p ':full-safety)
+      `,arg
+      `(the pseudo-probability ,arg)))
+
+(define-modify-macro incf% (&optional (increment 1)) +&)
+(define-modify-macro decf% (&optional (increment 1)) -&)
+
+(defmacro incf%-after (place &optional (increment 1))
+  ;;; Returns the current value of `place' (before the incf is done)
+  (with-gensyms (old-value)
+    `(let ((,old-value ,place))
+       (setf ,place (+& ,old-value ,increment))
+       ,old-value)))
+
+(defmacro decf%-after (place &optional (increment 1))
+  ;;; Returns the current value of `place' (before the decf is done)
+  (with-gensyms (old-value)
+    `(let ((,old-value ,place))
+       (setf ,place (-& ,old-value ,increment))
+       ,old-value)))
+  
+;;; ---------------------------------------------------------------------------
+
+(defun prob2pprob (prob)
+  (round$ (*$ (float prob) max-pprob$)))
+
+(defcm prob2pprob (prob)
+  `(round$ (*$ (float ,prob) ,max-pprob$)))
+
+;;; ---------------------------------------------------------------------------
+
+(defun pprob2prob (pprob)
+  (/$ (float pprob) max-pprob$))
+
+(defcm pprob2prob (pprob)
+  `(/$ (float ,pprob) ,max-pprob$))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -251,6 +288,99 @@
        ;; Search in upper half:
        ((>=& pprob-ln result)
         (setf min i)))))))
+
+;;; ---------------------------------------------------------------------------
+
+(defun ceiling% (pprob &optional (pprob-divisor 1000))
+  (multiple-value-bind (quotient remainder)
+      (ceiling& pprob pprob-divisor)
+    (values (*& quotient max-pprob) remainder)))
+
+(defcm ceiling% (pprob &optional (pprob-divisor 1000))
+  (with-gensyms (quotient remainder)
+    `(multiple-value-bind (,quotient ,remainder)
+         (ceiling& ,pprob ,pprob-divisor)
+       (values (*& ,quotient ,max-pprob) ,remainder))))
+
+;;; ---------------------------------------------------------------------------
+
+(defun floor% (pprob &optional (pprob-divisor 1000))
+  (multiple-value-bind (quotient remainder)
+      (floor& pprob pprob-divisor)
+    (values (*& quotient max-pprob) remainder)))
+
+(defcm floor% (pprob &optional (pprob-divisor 1000))
+  (with-gensyms (quotient remainder)
+    `(multiple-value-bind (,quotient ,remainder)
+         (floor& ,pprob ,pprob-divisor)
+       (values (*& ,quotient ,max-pprob) ,remainder))))
+
+;;; ---------------------------------------------------------------------------
+
+(defun round% (pprob &optional (pprob-divisor 1000))
+  (multiple-value-bind (quotient remainder)
+      (round& pprob pprob-divisor)
+    (values (*& quotient max-pprob) remainder)))
+
+(defcm round% (pprob &optional (pprob-divisor 1000))
+  (with-gensyms (quotient remainder)
+    `(multiple-value-bind (,quotient ,remainder)
+         (round& ,pprob ,pprob-divisor)
+       (values (*& ,quotient ,max-pprob) ,remainder))))
+
+;;; ---------------------------------------------------------------------------
+
+(defun truncate% (pprob &optional (pprob-divisor 1000))
+  (multiple-value-bind (quotient remainder)
+      (truncate& pprob pprob-divisor)
+    (values (*& quotient max-pprob) remainder)))
+
+(defcm truncate% (pprob &optional (pprob-divisor 1000))
+  (with-gensyms (quotient remainder)
+    `(multiple-value-bind (,quotient ,remainder)
+         (truncate& ,pprob ,pprob-divisor)
+       (values (*& ,quotient ,max-pprob) ,remainder))))
+
+;;; ---------------------------------------------------------------------------
+
+(defun fceiling% (pprob &optional (pprob-divisor 1000))
+  (fceiling& pprob pprob-divisor))
+
+(defcm fceiling% (pprob &optional (pprob-divisor 1000))
+  `(fceiling& ,pprob ,pprob-divisor))
+
+;;; ---------------------------------------------------------------------------
+
+(defun ffloor% (pprob &optional (pprob-divisor 1000))
+  (ffloor& pprob pprob-divisor))
+
+(defcm ffloor% (pprob &optional (pprob-divisor 1000))
+  `(ffloor& ,pprob ,pprob-divisor))
+
+;;; ---------------------------------------------------------------------------
+
+(defun fround% (pprob &optional (pprob-divisor 1000))
+  (fround& pprob pprob-divisor))
+
+(defcm fround% (pprob &optional (pprob-divisor 1000))
+  `(fround& ,pprob ,pprob-divisor))
+
+;;; ---------------------------------------------------------------------------
+
+(defun ftruncate% (pprob &optional (pprob-divisor 1000))
+  (ftruncate& pprob pprob-divisor))
+
+(defcm ftruncate% (pprob &optional (pprob-divisor 1000))
+  `(ftruncate& ,pprob ,pprob-divisor))
+
+;;; ---------------------------------------------------------------------------
+;;;  Using expanders defined in tools.lisp...
+
+(defmacro decf%/delete-acons (key decr place &rest keys &environment env)
+  (decf/delete-acons-expander '-& key decr place keys env))
+
+(defmacro pushnew/incf%-acons (key incr place &rest keys &environment env)
+  (pushnew/incf-acons-expander '+& key incr place keys env))
 
 ;;; ===========================================================================
 ;;;				  End of File

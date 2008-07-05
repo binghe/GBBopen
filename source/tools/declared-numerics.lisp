@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/declared-numerics.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Jul  3 03:49:14 2008 *-*
+;;;; *-* Last-Edit: Sat Jul  5 06:21:45 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -216,12 +216,14 @@
 
 ;;; ---------------------------------------------------------------------------
 ;;;  The fastest (/ fixnum fixnum)=>fixnum (full-fixnum division) operator for
-;;;  each CL (determined by :cl-timing tests):
+;;;  each CL (determined by :cl-timing tests).
 
 (defconstant fastest-fixnum-div-operator
     ;; Care must be taken to use /& only where non-rational results will be
-    ;; created.  When timings are very close, truncate& is preferred.
-    (or #+allegro '/&
+    ;; created.  When timings are very close, truncate& is preferred.  Tested
+    ;; on x86 and PPC architectures (could vary on others--reports welcomed!).
+    (or #+(and :allegro (not :64-bit)) '/&
+        #+(and :allegro :64-bit) 'truncate&
         #+clisp 'truncate&
         #+clozure '/&
         #+cmu '/&
@@ -388,15 +390,17 @@
 
 (defmacro incf&-after (place &optional (increment 1))
   ;;; Returns the current value of `place' (before the incf is done)
-  `(let ((%old-value% ,place))
-     (setf ,place (+& %old-value% ,increment))
-     %old-value%))
+  (with-gensyms (old-value)
+    `(let ((,old-value ,place))
+       (setf ,place (+& ,old-value ,increment))
+       ,old-value)))
 
 (defmacro decf&-after (place &optional (increment 1))
   ;;; Returns the current value of `place' (before the decf is done)
-  `(let ((%old-value% ,place))
-     (setf ,place (-& %old-value% ,increment))
-     %old-value%))
+  (with-gensyms (old-value)
+    `(let ((,old-value ,place))
+       (setf ,place (-& ,old-value ,increment))
+       ,old-value)))
   
 (defun bounded-value& (min n max)
   (max& min (min& n max)))
@@ -461,15 +465,17 @@
 
 (defmacro incf$&-after (place &optional (increment 1.0s0))
   ;;; Returns the current value of `place' (before the incf is done)
-  `(let ((%old-value% ,place))
-     (setf ,place (+$& %old-value% ,increment))
-     %old-value%))
+  (with-gensyms (old-value)
+    `(let ((,old-value ,place))
+       (setf ,place (+$& ,old-value ,increment))
+       ,old-value)))
   
 (defmacro decf$&-after (place &optional (increment 1.0s0))
   ;;; Returns the current value of `place' (before the decf is done)
-  `(let ((%old-value% ,place))
-     (setf ,place (-$& %old-value% ,increment))
-     %old-value%))
+  (with-gensyms (old-value)
+    `(let ((,old-value ,place))
+       (setf ,place (-$& ,old-value ,increment))
+       ,old-value)))
   
 (defun bounded-value$& (min n max)
   (max$& min (min$& n max)))
@@ -530,15 +536,17 @@
 
 (defmacro incf$-after (place &optional (increment 1.0f0))
   ;;; Returns the current value of `place' (before the incf is done)
-  `(let ((%old-value% ,place))
-     (setf ,place (+$ %old-value% ,increment))
-     %old-value%))
-  
+  (with-gensyms (old-value)
+    `(let ((,old-value ,place))
+       (setf ,place (+$ ,old-value ,increment))
+       ,old-value)))
+
 (defmacro decf$-after (place &optional (increment 1.0f0))
   ;;; Returns the current value of `place' (before the decf is done)
-  `(let ((%old-value% ,place))
-     (setf ,place (-$ %old-value% ,increment))
-     %old-value%))
+  (with-gensyms (old-value)
+    `(let ((,old-value ,place))
+       (setf ,place (-$ ,old-value ,increment))
+       ,old-value)))
   
 (defun bounded-value$ (min n max)
   (max$ min (min$ n max)))
@@ -599,15 +607,17 @@
  
 (defmacro incf$$-after (place &optional (increment 1.0d0))
   ;;; Returns the current value of `place' (before the incf is done)
-  `(let ((%old-value% ,place))
-     (setf ,place (+$$ %old-value% ,increment))
-     %old-value%))
-  
+  (with-gensyms (old-value)
+    `(let ((,old-value ,place))
+       (setf ,place (+$$ ,old-value ,increment))
+       ,old-value)))
+
 (defmacro decf$$-after (place &optional (increment 1.0d0))
   ;;; Returns the current value of `place' (before the decf is done)
-  `(let ((%old-value% ,place))
-     (setf ,place (-$$ %old-value% ,increment))
-     %old-value%))
+  (with-gensyms (old-value)
+    `(let ((,old-value ,place))
+       (setf ,place (-$$ ,old-value ,increment))
+       ,old-value)))
   
 (defun bounded-value$$ (min n max)
   (max$$ min (min$$ n max)))
@@ -668,15 +678,17 @@
 
 (defmacro incf$$$-after (place &optional (increment 1.0l0))
   ;;; Returns the current value of `place' (before the incf is done)
-  `(let ((%old-value% ,place))
-     (setf ,place (+$$$ %old-value% ,increment))
-     %old-value%))
+  (with-gensyms (old-value)
+    `(let ((,old-value ,place))
+       (setf ,place (+$$$ ,old-value ,increment))
+       ,old-value)))
   
 (defmacro decf$$$-after (place &optional (increment 1.0l0))
   ;;; Returns the current value of `place' (before the decf is done)
-  `(let ((%old-value% ,place))
-     (setf ,place (-$$$ %old-value% ,increment))
-     %old-value%))
+  (with-gensyms (old-value)
+    `(let ((,old-value ,place))
+       (setf ,place (-$$$ ,old-value ,increment))
+       ,old-value)))
   
 (defun bounded-value$$$ (min n max)
   (max$$$ min (min$$$ n max)))
