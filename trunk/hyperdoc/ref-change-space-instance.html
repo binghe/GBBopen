@@ -22,30 +22,30 @@
     style="font-family: serif; font-style: normal">=&gt;</span> <var>space-instance</var></td><td valign="baseline" align="right">[<i>Function</i>]
 </td></tr></table></p>
 <p><span class="fndoclabel">Purpose</span> <br />Change the dimensions, allowed unit classes, and storage of a
-<a href="ref-glossary.html#id195">space&nbsp;instance</a>.
+<a href="ref-glossary.html#id197">space&nbsp;instance</a>.
 </p>
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen</code>
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-core</code>
 </p>
 <p><span class="fndoclabel">Arguments and values</span><table class="tighttop">
-<tr valign="top"><td valign="baseline"><i>space-instance-or-path</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> The <a href="ref-glossary.html#id195">space&nbsp;instance</a> or
-<a href="ref-glossary.html#id197">space-instance&nbsp;path</a> to be changed
+<tr valign="top"><td valign="baseline"><i>space-instance-or-path</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> The <a href="ref-glossary.html#id197">space&nbsp;instance</a> or
+<a href="ref-glossary.html#id199">space-instance&nbsp;path</a> to be changed
 </td></tr><tr valign="top"><td valign="baseline"><i>allowed-unit-classes</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An <a href="ref-glossary.html#id68">extended&nbsp;unit-classes&nbsp;specification</a> 
 or <code>nil</code> (see below; default is <code>t</code>)
 </td></tr><tr valign="top"><td valign="baseline"><i>dimensions</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A list of <code>(</code><var><a href="ref-glossary.html#gl:dimension-name">dimension-name</a></var>
 <var>dimension-type-specifier</var><code>)</code> pairs (default is <code>nil</code>)  
-</td></tr><tr valign="top"><td valign="baseline"><i>storage</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id201">storage&nbsp;specification</a>
+</td></tr><tr valign="top"><td valign="baseline"><i>storage</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id203">storage&nbsp;specification</a>
 (see below; default is <code>(t&nbsp;t&nbsp;unstructured)</code> or <code>nil</code> if
 <var>allowed-unit-classes</var> is <code>nil</code>) 
-</td></tr><tr valign="top"><td valign="baseline"><i>space-instance</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> The <a href="ref-glossary.html#id195">space&nbsp;instance</a>
+</td></tr><tr valign="top"><td valign="baseline"><i>space-instance</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> The <a href="ref-glossary.html#id197">space&nbsp;instance</a>
 </td></tr></table>
 </p>
-<p><span class="fndoclabel">Returns</span> <br />The <a href="ref-glossary.html#id195">space&nbsp;instance</a> that was changed.
+<p><span class="fndoclabel">Returns</span> <br />The <a href="ref-glossary.html#id197">space&nbsp;instance</a> that was changed.
 </p>
 <p><span class="fndoclabel">Events</span> <br /><a name="id1">When</a> the allowed unit classes of <var>space-instance</var> are made more
 restrictive, <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a> that are no longer allowed on the
-<a href="ref-glossary.html#id195">space&nbsp;instance</a> are removed from <var>space-instance</var>, signaling a
+<a href="ref-glossary.html#id197">space&nbsp;instance</a> are removed from <var>space-instance</var>, signaling a
 <code>remove-instance-from-space-instance-event</code> for each removed unit
 instance.
 </p>
@@ -75,7 +75,9 @@ instance.
 <a name="id2"></a></td><td valign="baseline" colspan="1" align="left"> <code>number</code> | <code>fixnum</code> |
 <code>short-float</code> | <code>single-float</code> | </td></tr>
 <tr>
-<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code>double-float</code> | <code>long-float</code> </td></tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code>double-float</code> | <code>long-float</code> | </td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code>pseudo-probability</code> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
 <table class="tight"><tbody><tr>
@@ -154,7 +156,7 @@ The default <var>boolean-comparison-type</var> is <code>t</code>.
 <p><span class="fndoclabel">See also</span>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-make-space-instance.html"><b>make-space-instance</b></a>
 </p>
-<p><span class="fndoclabel">Examples</span> <br />Change the storage of <a href="ref-glossary.html#id195">space&nbsp;instance</a> <code>(bb hyp</code>) to the default
+<p><span class="fndoclabel">Examples</span> <br />Change the storage of <a href="ref-glossary.html#id197">space&nbsp;instance</a> <code>(bb hyp</code>) to the default
 unstructured storage for all <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a>:
 <pre class="pretop">
   &gt; (change-space-instance '(bb hyps) :storage nil)
@@ -188,7 +190,7 @@ dimensions and hashed storage in the <code>classification</code> dimension:
   &gt; 
 </pre>
 Any <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a> that are subclasses of <code>hyp</code> are removed from
-the <code>(bb hyps)</code> <a href="ref-glossary.html#id195">space&nbsp;instance</a> by the above change in allowed
+the <code>(bb hyps)</code> <a href="ref-glossary.html#id197">space&nbsp;instance</a> by the above change in allowed
 unit classes.
 </p>
 <hr /><address><a target="_top" class="address"

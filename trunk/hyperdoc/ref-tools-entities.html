@@ -18,87 +18,49 @@
 Common Lisp additions and utilities.  Convenient (<a href="ref-declared-numerics.html">shorthand
 operators</a> for declared <code><a href="ref-glossary.html#gl:fixnum">fixnum</a></code>,
 <code>short-float</code>, <code>single-float</code>, <code>double-float</code>, and
-<code>long-float</code> numeric operators are also provided by the
-<code>:gbbopen-tools</code> module.  Date and time <a href="ref-date-and-time-entities.html">parsing and formatting
-entities</a> and efficient <a href="ref-offset-universal-time-entities.html">offset-universal-time
+<code>long-float</code> numeric operators are provided by the <code>:gbbopen-tools</code>
+module, as are efficient <a href="ref-pseudo-probability-entities.html">pseudo probability</a> operators.
+Date and time <a href="ref-date-and-time-entities.html">parsing and formatting entities</a> and
+<code><a href="ref-glossary.html#gl:fixnum">fixnum</a></code>-based <a href="ref-offset-universal-time-entities.html">offset-universal-time
 functions</a> are also included in GBBopen Tools.
 </p>
-<p>Uniform interfaces to implementation-specific thread (multiprocessing)
-capabilities are provided by the <a href="ref-portable-thread-entities.html"><code>:portable-threads</code>
-module</a>, polling functions for Common Lisp
-implementations that do not provide thread capabilities are
-provided by the <a href="ref-polling-function-entities.html"><code>:polling-functions</code>
-module</a>, uniform socket interfaces are
-provided by the <a href="ref-portable-socket-entities.html"><code>:portable-sockets</code>
-module</a>, and uniform interfaces to the operating
-system are provided by the <a href="ref-os-interface-entities.html"><code>:os-interface</code>
-module</a>.
-</p>
-<p><a name="id1">The</a> GBBopen Tools <a href="ref-glossary.html#gl:module">module</a> imports commonly used CLOS and MOP symbols
-into the <code>:gbbopen-tools</code> package and then exports them, making it easy
-to use CLOS and MOP entities by simply using the <code>:gbbopen-tools</code>
-package.  The following CLOS and MOP symbols are exported by
-<code>:gbbopen-tools</code>: <code>accessor-method-slot-definition</code>,
-<code>add-dependent</code>, <code>add-direct-method</code>, <code>add-direct-subclass</code>,
-<code>class-default-initargs</code>, <code>class-direct-default-initargs</code>,
-<code>class-direct-slots</code>, <code>class-direct-subclasses</code>,
-<code>class-direct-superclasses</code>, <code>class-finalized-p</code>,
-<code>class-precedence-list</code>, <code>class-prototype</code>, <code>class-slots</code>,
-<code>compute-applicable-methods-using-classes</code>,
-<code>compute-class-precedence-list</code>, <code>compute-default-initargs</code>,
-<code>compute-discriminating-function</code>, <code>compute-effective-method</code>,
-<code>compute-effective-slot-definition</code>, <code>compute-slots</code>,
-<code>direct-slot-definition</code>, <code>direct-slot-definition-class</code>,
-<code>effective-slot-definition</code>, <code>effective-slot-definition-class</code>,
-<code>ensure-class</code>, <code>ensure-class-using-class</code>,
-<code>ensure-generic-function-using-class</code>, <code>eql-specializer</code>,
-<code>eql-specializer-object</code>, <code>extract-lambda-list</code>,
-<code>extract-specializer-names</code>, <code>finalize-inheritance</code>,
-<code>find-method-combination</code>, <code>forward-referenced-class</code>,
-<code>funcallable-standard-class</code>,
-<code>funcallable-standard-instance-access</code>,
-<code>funcallable-standard-object</code>,
-<code>generic-function-argument-precedence-order</code>,
-<code>generic-function-declarations</code>, <code>generic-function-lambda-list</code>,
-<code>generic-function-method-class</code>,
-<code>generic-function-method-combination</code>, <code>generic-function-methods</code>,
-<code>generic-function-name</code>, <code>intern-eql-specializer</code>,
-<code>make-method-lambda</code>, <code>map-dependents</code>, <code>metaobject</code>,
-<code>method-function</code>, <code>method-generic-function</code>,
-<code>method-lambda-list</code>, <code>method-specializers</code>,
-<code>reader-method-class</code>, <code>remove-dependent</code>,
-<code>remove-direct-method</code>, <code>remove-direct-subclass</code>,
-<code>set-funcallable-instance-function</code>, <code>slot-boundp-using-class</code>,
-<code>slot-definition</code>, <code>slot-definition-allocation</code>,
-<code>slot-definition-initargs</code>, <code>slot-definition-initform</code>,
-<code>slot-definition-initfunction</code>, <code>slot-definition-location</code>,
-<code>slot-definition-name</code>, <code>slot-definition-readers</code>,
-<code>slot-definition-type</code>, <code>slot-definition-writers</code>,
-<code>slot-makunbound-using-class</code>, <code>slot-value-using-class</code>,
-<code>specializer</code>, <code>specializer-direct-generic-functions</code>,
-<code>specializer-direct-methods</code>, <code>standard-accessor-method</code>,
-<code>standard-direct-slot-definition</code>,
-<code>standard-effective-slot-definition</code>, <code>standard-instance-access</code>,
-<code>standard-reader-method</code>, <code>standard-slot-definition</code>,
-<code>standard-writer-method</code>, <code>update-dependent</code>,
-<code>validate-superclass</code>, <code>writer-method-class</code>.  Load-time warning
-messages are displayed if the Common Lisp implementation does not have one of
-these symbols in its CLOS or MOP implementation.
+<p>Uniform access to <a href="ref-clos-and-mop-entities.html">commonly used CLOS and MOP symbols</a> is
+provided by the <code>:gbbopen-tools</code> package.  Uniform interfaces to
+implementation-specific thread (multiprocessing) capabilities are provided by
+the <a href="ref-portable-thread-entities.html"><code>:portable-threads</code> module</a>, polling
+functions for Common Lisp implementations that do not provide thread
+capabilities are provided by the <a href="ref-polling-function-entities.html"><code>:polling-functions</code>
+module</a>, uniform socket interfaces are provided by the
+<a href="ref-portable-socket-entities.html"><code>:portable-sockets</code> module</a>, and uniform
+interfaces to the operating system are provided by the
+<a href="ref-os-interface-entities.html"><code>:os-interface</code> module</a>.
 </p>
 <p>Several entities in the <code>:gbbopen-tools</code> module that are extended by
 additional methods in the <code>:gbbopen-core</code> module are documented in the
-<a href="ref-GBBopen-core-entities.html">GBBopen Core section</a>
-of this Reference.  These and related entities that are
-documented in the GBBopen Core section are:
-<b><a href="ref-print-object-for-sending-var.html">*print-object-for-sending*</a></b>,
-<b><a href="ref-save-send-references-only-var.html">*save/send-references-only*</a></b>,
-<b><a href="ref-initialize-saved-sent-instance.html">initialize-saved/sent-instance</a></b>, 
-<b><a href="ref-make-duplicate-instance.html">make-duplicate-instance</a></b>,
-<b><a href="ref-omitted-slots-for-saving-sending.html">omitted-slots-for-saving/sending</a></b>,
-<b><a href="ref-print-object-for-saving-sending.html">print-object-for-saving/sending</a></b>,
-<b><a href="ref-print-slot-for-saving-sending.html">print-slot-for-saving/sending</a></b>,
-<b><a href="ref-with-reading-saved-sent-objects-block.html">with-reading-saved/sent-objects-block</a></b>,
-and <b><a href="ref-with-saving-sending-block.html">with-saving/sending-block</a></b>.
+<a href="ref-GBBopen-core-entities.html">GBBopen Core section</a> of this Reference.  These
+entities are:
+<table class="tighttop"><tbody><tr>
+<td valign="baseline" colspan="1" align="left">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+</td><td valign="baseline" colspan="1" align="left"> <code><a href="ref-print-object-for-sending-var.html">*print-object-for-sending*</a></code> </td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code><a href="ref-save-send-references-only-var.html">*save/send-references-only*</a></code> </td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code><a href="ref-initialize-saved-sent-instance.html">initialize-saved/sent-instance</a></code> </td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code><a href="ref-make-duplicate-instance.html">make-duplicate-instance</a></code> </td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code><a href="ref-omitted-slots-for-saving-sending.html">omitted-slots-for-saving/sending</a></code> </td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code><a href="ref-print-object-for-saving-sending.html">print-object-for-saving/sending</a></code> </td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code><a href="ref-print-slot-for-saving-sending.html">print-slot-for-saving/sending</a></code> </td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code><a href="ref-with-reading-saved-sent-objects-block.html">with-reading-saved/sent-objects-block</a></code> </td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code><a href="ref-with-saving-sending-block.html">with-saving/sending-block</a></code> </td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
 </p>
 <p><b><font size="+1">Entities</font></b>
 </p>
@@ -153,7 +115,9 @@ and <b><a href="ref-with-saving-sending-block.html">with-saving/sending-block</a
 <li><a href="ref-with-gensyms.html"><font color="#000000">with-gensyms</font></a></li>
 <li><a href="ref-with-once-only-bindings.html"><font color="#000000">with-once-only-bindings</font></a></li>
 <li><a href="ref-xor.html"><font color="#000000">xor</font></a></li>
+<li><a href="ref-clos-and-mop-entities.html">CLOS and MOP</a></li>
 <li><a href="ref-declared-numerics.html">Declared Numerics</a></li>
+<li><a href="ref-pseudo-probability-entities.html">Pseudo Probabilities</a></li>
 <li><a href="ref-date-and-time-entities.html">Date and Time</a></li>
 <li><a href="ref-offset-universal-time-entities.html">Offset Universal Time</a></li>
 <li><a href="ref-portable-thread-entities.html">Portable Threads</a></li>

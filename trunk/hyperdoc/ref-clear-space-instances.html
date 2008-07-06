@@ -26,20 +26,20 @@
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-core</code>
 </p>
 <p><span class="fndoclabel">Arguments and values</span><table class="tighttop">
-<tr valign="top"><td valign="baseline"><i>space-instances</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id195">space&nbsp;instance</a>, a list of
-<a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a>, a <a href="ref-glossary.html#id197">space-instance&nbsp;path</a> regular
+<tr valign="top"><td valign="baseline"><i>space-instances</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id197">space&nbsp;instance</a>, a list of
+<a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a>, a <a href="ref-glossary.html#id199">space-instance&nbsp;path</a> regular
 expression, or <code>t</code> (indicating all space instances)
 </td></tr></table>
 </p>
 <p><span class="fndoclabel">Events</span> <br /><a name="id1">A</a> <code>remove-instance-from-space-instance-event</code> is signaled
-for each <a href="ref-glossary.html#id219">unit&nbsp;instance</a> that is removed from a <a href="ref-glossary.html#id195">space&nbsp;instance</a>.
+for each <a href="ref-glossary.html#id221">unit&nbsp;instance</a> that is removed from a <a href="ref-glossary.html#id197">space&nbsp;instance</a>.
 </p>
 <p><span class="fndoclabel">See also</span>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-do-instances-on-space-instances.html"><b>do-instances-on-space-instances</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-map-instances-on-space-instances.html"><b>map-instances-on-space-instances</b></a>
 </p>
 <p><span class="fndoclabel">Examples</span> <br /><a name="id2">Remove</a> all the <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a> that
-reside on the <code>(bb probable-hyps)</code> <a href="ref-glossary.html#id195">space&nbsp;instance</a>:
+reside on the <code>(bb probable-hyps)</code> <a href="ref-glossary.html#id197">space&nbsp;instance</a>:
 <pre class="pretop">
   (clear-space-instances
     (<a href="ref-find-space-instance-by-path.html">find-space-instance-by-path</a> '(bb probable-hyps)))

@@ -12,49 +12,54 @@
 </head>
 <body>
 <table width="100%" cellpadding="0" cellspacing="2"><tr>
-<td bgcolor="#99ccff"><a href="ref-xor.html"><img border="0" alt="xor" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="ref-tools-entities.html"><img border="0" alt="GBBopen Tools" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-date-and-time-entities.html"><img border="0" alt="Date and Time" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b>Declared Numerics</b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table>
+<td bgcolor="#99ccff"><a href="ref-clos-and-mop-entities.html"><img border="0" alt="CLOS and MOP" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="ref-tools-entities.html"><img border="0" alt="GBBopen Tools" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-pseudo-probability-entities.html"><img border="0" alt="Pseudo Probabilities" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b>Declared Numerics</b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table>
 <h2>Declared Numerics</h2>
 <p>The <code>:gbbopen-tools</code> <a href="ref-glossary.html#gl:module">module</a> contains a set of declared-numeric
-operators that provide convenient shorthands for declaring
-<code><a href="ref-glossary.html#gl:fixnum">fixnum</a></code>, <code>short-float</code>, <code>single-float</code>,
-<code>double-float</code>, and <code>long-float</code> numeric operations. If the
-<a href="ref-glossary.html#gl:feature">feature</a> <b><a href="ref-full-safety.html">:full-safety</a></b> is present at compile
-time, these operators do not make their <code>fixnum</code>, <code>single-float</code>,
+and <a href="ref-pseudo-probability-entities.html">pseudo probability</a> operators that provide convenient
+shorthands for declaring <code><a href="ref-glossary.html#gl:fixnum">fixnum</a></code>, <code>short-float</code>,
+<code>single-float</code>, <code>double-float</code>, <code>long-float</code>, and
+<code>pseudo-probability</code> numeric operations. If the <a href="ref-glossary.html#gl:feature">feature</a>
+<b><a href="ref-full-safety.html">:full-safety</a></b> is present at compile time, these
+operators do not make their <code>fixnum</code>, <code>single-float</code>,
 <code>double-float</code>, and <code>long-float</code> declarations.
 </p>
-<p>The names of the declared-numeric operators include these &#8220;type-indicator&#8221;
-characters:
-</p>
-<table class="tight"><tbody><tr>
+<p>The names of the declared-numeric and <a href="ref-glossary.html#gl:pseudo-probability">pseudo-probability</a> operators
+include these &#8220;type-indicator&#8221; characters:
+<table class="tighttop"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
-<b>Characters</b> </td><td valign="baseline" colspan="1" align="left"> &nbsp;&nbsp;&nbsp; </td><td valign="baseline" colspan="1" align="left"> <b>Declared Type</b> </td></tr>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  </td><td valign="baseline" colspan="1" align="left"> <b>Characters</b> </td><td valign="baseline" colspan="1" align="left"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </td><td valign="baseline" colspan="1" align="left"> <b>Declared Type</b> </td></tr>
 <tr>
-<td valign="baseline" colspan="1" align="left">&#38;     </td><td valign="baseline" colspan="1" align="left"> </td><td valign="baseline" colspan="1" align="left"> <code>fixnum</code> </td></tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code>&#38;</code>     </td><td valign="baseline" colspan="1" align="left"> </td><td valign="baseline" colspan="1" align="left"> <code>fixnum</code> </td></tr>
 <tr>
-<td valign="baseline" colspan="1" align="left">&#36;&#38;   </td><td valign="baseline" colspan="1" align="left"> </td><td valign="baseline" colspan="1" align="left"> <code>short-float</code> </td></tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code>&#36;&#38;</code>   </td><td valign="baseline" colspan="1" align="left"> </td><td valign="baseline" colspan="1" align="left"> <code>short-float</code> </td></tr>
 <tr>
-<td valign="baseline" colspan="1" align="left">&#36;     </td><td valign="baseline" colspan="1" align="left"> </td><td valign="baseline" colspan="1" align="left"> <code>single-float</code> </td></tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code>&#36;</code>     </td><td valign="baseline" colspan="1" align="left"> </td><td valign="baseline" colspan="1" align="left"> <code>single-float</code> </td></tr>
 <tr>
-<td valign="baseline" colspan="1" align="left">&#36;&#36;   </td><td valign="baseline" colspan="1" align="left"> </td><td valign="baseline" colspan="1" align="left"> <code>double-float</code> </td></tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code>&#36;&#36;</code>   </td><td valign="baseline" colspan="1" align="left"> </td><td valign="baseline" colspan="1" align="left"> <code>double-float</code> </td></tr>
 <tr>
-<td valign="baseline" colspan="1" align="left">&#36;&#36;&#36; </td><td valign="baseline" colspan="1" align="left"> </td><td valign="baseline" colspan="1" align="left"> <code>long-float</code> </td></tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code>&#36;&#36;&#36;</code> </td><td valign="baseline" colspan="1" align="left"> </td><td valign="baseline" colspan="1" align="left"> <code>long-float</code> </td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code>&#37;</code>     </td><td valign="baseline" colspan="1" align="left"> </td><td valign="baseline" colspan="1" align="left"> <code>pseudo-probability</code> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
+</p>
 <p>Thus, the declared-numeric <code>+</code> operators are:
-</p>
-<table class="tight"><tbody><tr>
+<table class="tighttop"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
-+&#38;     </td><td valign="baseline" colspan="1" align="left"> &nbsp;&nbsp;&nbsp;  </td><td valign="baseline" colspan="1" align="left"> <code>fixnum</code> addition </td></tr>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  </td><td valign="baseline" colspan="1" align="left"> <code>+&#38;</code>  </td><td valign="baseline" colspan="1" align="left"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  </td><td valign="baseline" colspan="1" align="left"> <code>fixnum</code> addition </td></tr>
 <tr>
-<td valign="baseline" colspan="1" align="left">+&#36;&#38;   </td><td valign="baseline" colspan="1" align="left"> </td><td valign="baseline" colspan="1" align="left"> <code>short-float</code> addition </td></tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code>+&#36;&#38;</code>   </td><td valign="baseline" colspan="1" align="left"> </td><td valign="baseline" colspan="1" align="left"> <code>short-float</code> addition </td></tr>
 <tr>
-<td valign="baseline" colspan="1" align="left">+&#36;     </td><td valign="baseline" colspan="1" align="left"> </td><td valign="baseline" colspan="1" align="left"> <code>single-float</code> addition </td></tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code>+&#36;</code>     </td><td valign="baseline" colspan="1" align="left"> </td><td valign="baseline" colspan="1" align="left"> <code>single-float</code> addition </td></tr>
 <tr>
-<td valign="baseline" colspan="1" align="left">+&#36;&#36;   </td><td valign="baseline" colspan="1" align="left"> </td><td valign="baseline" colspan="1" align="left"> <code>double-float</code> addition </td></tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code>+&#36;&#36;</code>   </td><td valign="baseline" colspan="1" align="left"> </td><td valign="baseline" colspan="1" align="left"> <code>double-float</code> addition </td></tr>
 <tr>
-<td valign="baseline" colspan="1" align="left">+&#36;&#36;&#36; </td><td valign="baseline" colspan="1" align="left"> </td><td valign="baseline" colspan="1" align="left"> <code>long-float</code> addition</td></tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code>+&#36;&#36;&#36;</code> </td><td valign="baseline" colspan="1" align="left"> </td><td valign="baseline" colspan="1" align="left"> <code>long-float</code> addition </td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code>+&#37;</code>     </td><td valign="baseline" colspan="1" align="left"> </td><td valign="baseline" colspan="1" align="left"> <code>pseudo-probability</code> addition </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
+</p>
 <p>Some examples of declared-numeric operators include:
 <pre class="pretop">
   (&#38; x) <span 
@@ -66,7 +71,7 @@ characters:
   (minusp$$ value) <span 
     style="font-family: serif; font-style: normal">==&gt;</span> (minusp (the double-float value))
   (truncate&#38; x y)) <span 
-    style="font-family: serif; font-style: normal">==&gt;</span> (the (values fixnum fixnum) (truncate (&amp; x) (&amp; y)))
+    style="font-family: serif; font-style: normal">==&gt;</span> (the (values fixnum fixnum) (truncate (&#38; x) (&#38; y)))
 </pre>
 The complete set of operators for each declared numeric type are listed in the
 following sections.
@@ -95,4 +100,4 @@ single format).
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
 <table width="100%" cellpadding="0" cellspacing="2"><tr>
-<td bgcolor="#99ccff"><a href="ref-xor.html"><img border="0" alt="xor" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="ref-tools-entities.html"><img border="0" alt="GBBopen Tools" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-date-and-time-entities.html"><img border="0" alt="Date and Time" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b>Declared Numerics</b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table></body></html>
+<td bgcolor="#99ccff"><a href="ref-clos-and-mop-entities.html"><img border="0" alt="CLOS and MOP" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="ref-tools-entities.html"><img border="0" alt="GBBopen Tools" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-pseudo-probability-entities.html"><img border="0" alt="Pseudo Probabilities" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b>Declared Numerics</b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table></body></html>

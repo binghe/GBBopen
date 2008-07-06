@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/common.tex *-*
-%% *-* Last-Edit: Wed Jul  2 11:53:06 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Sat Jul  5 11:47:19 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -312,6 +312,11 @@
 %%  Note that \entlink and index commands can insert a space in hyperlatex
 %%  format
 
+\T\newcommand{\removePct}[1]{\convertchar[q]{#1}{\%}{Pct}}%
+\T\newcommand{\safelabel}[1]{\removePct{#1}\label{\thestring}}
+\T\newcommand{\safepageref}[1]{\removePct{#1}\pageref{\thestring}}
+\W\newcommand{\safepageref}[1]{\pageref{#1}}
+
 % The following doesn't work in LaTeX example environments, due to 
 % kerning/hyphenation:
 %\T\newcommand{\entlink}[1]{\hyperref[ent:#1]{#1}}
@@ -319,6 +324,8 @@
 % kerned hyphen in the example environment:
 %\T\newcommand{\entlink}[1]{\bgroup\let\-\@@hyph\typeout{ent:#1}#1\egroup}
 \newcommand{\entlink}[1]{\link{#1}{ent:#1}}
+\T\newcommand{\safeentlink}[1]{\removePct{#1}\link{#1}{ent:\thestring}}
+\W\newcommand{\safeentlink}[1]{\link{#1}{ent:#1}}
 % Special non-example \entlink for LaTeX:
 \T\newcommand{\entlinknoex}[1]{\hyperref[ent:#1]{#1}}
 \W\newcommand{\entlinknoex}[1]{\entlink{#1}}
@@ -469,6 +476,7 @@
 \newcommand{\nofndocindex}{\fnidxfalse}
 
 \newcommand{\dofndoc}[5][]{\thispagestyle{fancybottom}%
+% \global\def\fnfile{#1}%
   \global\def\fntype{#2}%
   \global\def\fnname{#3}%
   \global\def\fnarglist{#4}%
@@ -498,7 +506,14 @@
       {\nohyphenation\raggedright\textrm{\frenchspacing\fnarglist\hfil}}}%
   \fi
   \hfill[\textit{\fntype\/}]\\[2pt]\fndocrule\\
-  \label{ent:\fnname}}%
+  %% Optimize by only using safelabel scanning for percent characters when
+  %% an alternate html filename was specified:
+  %\ifx\fnfile\@undefined
+  %  \label{ent:\fnname}
+  %\else
+  %  \safelabel{ent:\fnname}
+  %\fi
+  \safelabel{ent:\fnname}}%
 
 \def\fnalternate#1#2{%
   \settowidth{\tlengtha}{#1}%                    % length of function-name
@@ -558,6 +573,7 @@
 \T\newcommand{\expands}{$\Longrightarrow${}}
 \W\newcommand{\expands}{\textrm{==>}}
 \newcommand{\nil}{\code{nil}}
+\newcommand{\percent}{{\char 58}}
 
 
 \W\begin{iftex}
@@ -652,7 +668,7 @@
     \leftmargin=\tlengthb
     \let\makelabel=\textbf}}{\endlist}
 
-\newcommand{\also}[1][]{\item[#1] (page~\pageref{ent:#1})}%
+\newcommand{\also}[1][]{\item[#1] (page~\safepageref{ent:#1})}%
 
 \newcommand{\secalso}[2][]{\item[\rm #1\hfil] (page~\pageref{#2})}%
 
@@ -1151,7 +1167,9 @@
   "DDC added predicate for GBBopen Reference `special' subsections" 
   (member secname
 	  '(;; :gbbopen-tools
+            "CLOS and MOP"
             "Declared Numerics"
+            "Pseudo Probabilities"
             "Date and Time"
             "Offset Universal Time"
 	    "Portable Threads"

@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Wed Jul  2 11:34:17 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Sun Jul  6 03:35:47 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -28,6 +28,8 @@
 \usepackage{color}
 \usepackage{makeidx}
 \T\usepackage{atbeginend}
+\T\usepackage{stringstrings}
+\T\usepackage{longtable}
 \T\usepackage{newcent}
 % Use smaller TT font throughout
 \W\begin{iftex}
@@ -517,7 +519,8 @@ reload all subsequent files and \glref{modules}\\[2pt]
     & \var{ordered-dimension-short-float-pattern-op\/} \vbar{} \\
     & \var{ordered-dimension-single-float-pattern-op\/} \vbar{} \\
     & \var{ordered-dimension-double-float-pattern-op\/} \vbar{} \\
-    & \var{ordered-dimension-long-float-pattern-op\/} \\
+    & \var{ordered-dimension-long-float-pattern-op\/} \vbar{} \\
+    & \var{ordered-dimension-pseudo-probability-pattern-op\/} \\
 \end{tabular}
 \T\\
 \begin{tabular}{@{~}l@{~}l}
@@ -693,6 +696,39 @@ reload all subsequent files and \glref{modules}\\[2pt]
      & \code{within\$\$\$} \vbar{} \code{covers\$\$\$} \vbar{} 
        \code{overlaps\$\$\$} \vbar{} \\
      & \code{starts\$\$\$} \vbar{} \code{ends\$\$\$} \\
+\end{tabular}
+\T\\
+\begin{tabular}{@{~}l@{~}l}
+\mbox{\var{ordered-dimension-pseudo-probability-pattern-op\/} ::=}
+\index{$<$\%@\code{$<$\%} ~(ordered-dimension pseudo-probability
+  pattern operator)|itidx}%
+\index{$<$\%=@\code{$<$=\%} ~(ordered-dimension pseudo-probability
+  pattern operator)|itidx}%
+\index{$>$\%=@\code{$>$=\%} ~(ordered-dimension pseudo-probability
+  pattern operator)|itidx}%
+\index{$>$\%@\code{$>$\%} ~(ordered-dimension pseudo-probability
+  pattern operator)|itidx}%
+\index{=\%@\code{=\%} ~(ordered-dimension pseudo-probability
+  pattern operator)|itidx}%
+\index{/=\%@\code{/=\%} ~(ordered-dimension pseudo-probability
+  pattern operator)|itidx}%
+\index{within\%@\code{within\%} ~(ordered-dimension pseudo-probability
+  pattern operator)|itidx}%
+\index{covers\%@\code{covers\%} ~(ordered-dimension pseudo-probability
+  pattern operator)|itidx}%
+\index{overlaps\%@\code{overlaps\%} ~(ordered-dimension pseudo-probability
+  pattern operator)|itidx}%
+\index{starts\%@\code{starts\%} ~(ordered-dimension pseudo-probability
+  pattern operator)|itidx}%
+\index{ends\%@\code{ends\%} ~(ordered-dimension pseudo-probability
+  pattern operator)|itidx}%
+     & \code{$<$\%} \vbar{} \code{$<$=\%} \vbar{}
+       \code{$>$=\%} \vbar{} 
+       \code{$>$\%} \vbar{} \code{=\%} \vbar{}
+       \code{/=\%} \vbar{} \\
+     & \code{within\%} \vbar{} \code{covers\%} \vbar{} 
+       \code{overlaps\%} \vbar{} \\
+     & \code{starts\%} \vbar{} \code{ends\%} \\
 \end{tabular}
 \T\\
 \begin{tabular}{@{~}l@{~}l}
@@ -911,9 +947,11 @@ reload all subsequent files and \glref{modules}\\[2pt]
 \codeindexit{single-float}%
 \codeindexit{double-float}%
 \codeindexit{long-float}%
+\codeindexit{pseudo-probability}%
   & \code{number} \vbar{} \code{fixnum} \vbar{}
     \code{short-float} \vbar{} \code{single-float} \vbar{} \\
-  & \code{double-float} \vbar{} \code{long-float} \\
+  & \code{double-float} \vbar{} \code{long-float} \vbar{} \\
+  & \code{pseudo-probability} \\
 \end{tabular}
 \T\\
 \begin{tabular}{@{~}l@{~}l}
@@ -3559,171 +3597,42 @@ The GBBopen Tools \glref{module}, \code{:gbbopen-tools}, contains useful
 Common Lisp additions and utilities.  Convenient (\reflink{shorthand
   operators}{sec:declared-numerics} for declared \code{\glref{fixnum}},
 \code{short-float}, \code{single-float}, \code{double-float}, and
-\code{long-float} numeric operators are also provided by the
-\code{:gbbopen-tools} module.  Date and time \reflink{parsing and formatting
-  entities}{sec:dateandtime} and efficient \reflink{offset-universal-time
+\code{long-float} numeric operators are provided by the \code{:gbbopen-tools}
+module, as are efficient \reflink{pseudo probability}{sec:pprob} operators.
+Date and time \reflink{parsing and formatting entities}{sec:dateandtime} and
+\code{\glref{fixnum}}-based \reflink{offset-universal-time
   functions}{sec:offsettime} are also included in GBBopen Tools.
 
-Uniform interfaces to implementation-specific thread (multiprocessing)
-capabilities are provided by the \reflink{\code{:portable-threads}
-  module}{sec:portablethreads}, polling functions for Common Lisp
-implementations that do not provide thread capabilities are
-provided by the \reflink{\code{:polling-functions}
-  module}{sec:pollingfunctions}, uniform socket interfaces are
-provided by the \reflink{\code{:portable-sockets}
-  module}{sec:portablesockets}, and uniform interfaces to the operating
-system are provided by the \reflink{\code{:os-interface}
-  module}{sec:os-interface}.
-
-\codeindexit{accessor-method-slot-definition}%
-\codeindexit{add-dependent}%
-\codeindexit{add-direct-method}%
-\codeindexit{add-direct-subclass}%
-\codeindexit{class-default-initargs}%
-\codeindexit{class-direct-default-initargs}%
-\codeindexit{class-direct-slots}%
-\codeindexit{class-direct-subclasses}%
-\codeindexit{class-direct-superclasses}%
-\codeindexit{class-finalized-p}%
-\codeindexit{class-precedence-list}%
-\codeindexit{class-prototype}%
-\codeindexit{class-slots}%
-\codeindexit{compute-applicable-methods-using-classes}%
-\codeindexit{compute-class-precedence-list}%
-\codeindexit{compute-default-initargs}%
-\codeindexit{compute-discriminating-function}%
-\codeindexit{compute-effective-method}%
-\codeindexit{compute-effective-slot-definition}%
-\codeindexit{compute-slots}%
-\codeindexit{direct-slot-definition}%
-\codeindexit{direct-slot-definition-class}%
-\codeindexit{effective-slot-definition}%
-\codeindexit{effective-slot-definition-class}%
-\codeindexit{ensure-class}%
-\codeindexit{ensure-class-using-class}%
-\codeindexit{ensure-generic-function-using-class}%
-\codeindexit{eql-specializer}%
-\codeindexit{eql-specializer-object}%
-\codeindexit{extract-lambda-list}%
-\codeindexit{extract-specializer-names}%
-\codeindexit{finalize-inheritance}%
-\codeindexit{find-method-combination}%
-\codeindexit{forward-referenced-class}%
-\codeindexit{funcallable-standard-class}%
-\codeindexit{funcallable-standard-instance-access}%
-\codeindexit{funcallable-standard-object}%
-\codeindexit{generic-function-argument-precedence-order}%
-\codeindexit{generic-function-declarations}%
-\codeindexit{generic-function-lambda-list}%
-\codeindexit{generic-function-method-class}%
-\codeindexit{generic-function-method-combination}%
-\codeindexit{generic-function-methods}%
-\codeindexit{generic-function-name}%
-\codeindexit{intern-eql-specializer}%
-\codeindexit{make-method-lambda}%
-\codeindexit{map-dependents}%
-\codeindexit{metaobject}%
-\codeindexit{method-function}%
-\codeindexit{method-generic-function}%
-\codeindexit{method-lambda-list}%
-\codeindexit{method-specializers}%
-\codeindexit{reader-method-class}%
-\codeindexit{remove-dependent}%
-\codeindexit{remove-direct-method}%
-\codeindexit{remove-direct-subclass}%
-\codeindexit{set-funcallable-instance-function}%
-\codeindexit{slot-boundp-using-class}%
-\codeindexit{slot-definition}%
-\codeindexit{slot-definition-allocation}%
-\codeindexit{slot-definition-initargs}%
-\codeindexit{slot-definition-initform}%
-\codeindexit{slot-definition-initfunction}%
-\codeindexit{slot-definition-location}%
-\codeindexit{slot-definition-name}%
-\codeindexit{slot-definition-readers}%
-\codeindexit{slot-definition-type}%
-\codeindexit{slot-definition-writers}%
-\codeindexit{slot-makunbound-using-class}%
-\codeindexit{slot-value-using-class}%
-\codeindexit{specializer}%
-\codeindexit{specializer-direct-generic-functions}%
-\codeindexit{specializer-direct-methods}%
-\codeindexit{standard-accessor-method}%
-\codeindexit{standard-direct-slot-definition}%
-\codeindexit{standard-effective-slot-definition}%
-\codeindexit{standard-instance-access}%
-\codeindexit{standard-reader-method}%
-\codeindexit{standard-slot-definition}%
-\codeindexit{standard-writer-method}%
-\codeindexit{update-dependent}%
-\codeindexit{validate-superclass}%
-\codeindexit{writer-method-class}%
-%
-The GBBopen Tools \glref{module} imports commonly used CLOS and MOP symbols
-into the \code{:gbbopen-tools} package and then exports them, making it easy
-to use CLOS and MOP entities by simply using the \code{:gbbopen-tools}
-package.  The following CLOS and MOP symbols are exported by
-\code{:gbbopen-tools}: \code{accessor-method-slot-definition},
-\code{add-dependent}, \code{add-direct-method}, \code{add-direct-subclass},
-\code{class-default-initargs}, \code{class-direct-default-initargs},
-\code{class-direct-slots}, \code{class-direct-subclasses},
-\code{class-direct-superclasses}, \code{class-finalized-p},
-\code{class-precedence-list}, \code{class-prototype}, \code{class-slots},
-\code{compute-applicable-methods-using-classes},
-\code{compute-class-precedence-list}, \code{compute-default-initargs},
-\code{compute-discriminating-function}, \code{compute-effective-method},
-\code{compute-effective-slot-definition}, \code{compute-slots},
-\code{direct-slot-definition}, \code{direct-slot-definition-class},
-\code{effective-slot-definition}, \code{effective-slot-definition-class},
-\code{ensure-class}, \code{ensure-class-using-class},
-\code{ensure-generic-function-using-class}, \code{eql-specializer},
-\code{eql-specializer-object}, \code{extract-lambda-list},
-\code{extract-specializer-names}, \code{finalize-inheritance},
-\code{find-method-combination}, \code{forward-referenced-class},
-\code{funcallable-standard-class},
-\code{funcallable-standard-instance-access},
-\code{funcallable-standard-object},
-\code{generic-function-argument-precedence-order},
-\code{generic-function-declarations}, \code{generic-function-lambda-list},
-\code{generic-function-method-class},
-\code{generic-function-method-combination}, \code{generic-function-methods},
-\code{generic-function-name}, \code{intern-eql-specializer},
-\code{make-method-lambda}, \code{map-dependents}, \code{metaobject},
-\code{method-function}, \code{method-generic-function},
-\code{method-lambda-list}, \code{method-specializers},
-\code{reader-method-class}, \code{remove-dependent},
-\code{remove-direct-method}, \code{remove-direct-subclass},
-\code{set-funcallable-instance-function}, \code{slot-boundp-using-class},
-\code{slot-definition}, \code{slot-definition-allocation},
-\code{slot-definition-initargs}, \code{slot-definition-initform},
-\code{slot-definition-initfunction}, \code{slot-definition-location},
-\code{slot-definition-name}, \code{slot-definition-readers},
-\code{slot-definition-type}, \code{slot-definition-writers},
-\code{slot-makunbound-using-class}, \code{slot-value-using-class},
-\code{specializer}, \code{specializer-direct-generic-functions},
-\code{specializer-direct-methods}, \code{standard-accessor-method},
-\code{standard-direct-slot-definition},
-\code{standard-effective-slot-definition}, \code{standard-instance-access},
-\code{standard-reader-method}, \code{standard-slot-definition},
-\code{standard-writer-method}, \code{update-dependent},
-\code{validate-superclass}, \code{writer-method-class}.  Load-time warning
-messages are displayed if the Common Lisp implementation does not have one of
-these symbols in its CLOS or MOP implementation.
+Uniform access to \reflink{commonly used CLOS and MOP symbols}{sec:CLOS} is
+provided by the \code{:gbbopen-tools} package.  Uniform interfaces to
+implementation-specific thread (multiprocessing) capabilities are provided by
+the \reflink{\code{:portable-threads} module}{sec:portablethreads}, polling
+functions for Common Lisp implementations that do not provide thread
+capabilities are provided by the \reflink{\code{:polling-functions}
+  module}{sec:pollingfunctions}, uniform socket interfaces are provided by the
+\reflink{\code{:portable-sockets} module}{sec:portablesockets}, and uniform
+interfaces to the operating system are provided by the
+\reflink{\code{:os-interface} module}{sec:os-interface}.
 
 Several entities in the \code{:gbbopen-tools} module that are extended by
 additional methods in the \code{:gbbopen-core} module are documented in the
-\reflink{GBBopen Core section}{sec:gbbopen-core}
- of this Reference.  These and related entities that are
-documented in the GBBopen Core section are:
-\textbf{\entlink{*print-object-for-sending*}},
-\textbf{\entlink{*save/send-references-only*}},
-\textbf{\entlink{initialize-saved/sent-instance}}, 
-\textbf{\entlink{make-duplicate-instance}},
-\textbf{\entlink{omitted-slots-for-saving/sending}},
-\textbf{\entlink{print-object-for-saving/sending}},
-\textbf{\entlink{print-slot-for-saving/sending}},
-\textbf{\entlink{with-reading-saved/sent-objects-block}},
-and \textbf{\entlink{with-saving/sending-block}}.
+\reflink{GBBopen Core section}{sec:gbbopen-core} of this Reference.  These
+entities are:
+%
+\T\\[3pt]
+\W\supp\tabletop
+\begin{tabular}{@{}l@{}l@{}}
+  ~~~~~ 
+  & \code{\entlink{*print-object-for-sending*}} \\
+  & \code{\entlink{*save/send-references-only*}} \\
+  & \code{\entlink{initialize-saved/sent-instance}} \\ 
+  & \code{\entlink{make-duplicate-instance}} \\
+  & \code{\entlink{omitted-slots-for-saving/sending}} \\
+  & \code{\entlink{print-object-for-saving/sending}} \\
+  & \code{\entlink{print-slot-for-saving/sending}} \\
+  & \code{\entlink{with-reading-saved/sent-objects-block}} \\
+  & \code{\entlink{with-saving/sending-block}} \\
+\end{tabular}
 
 \W\entities
 \T\clearpage
@@ -3911,11 +3820,13 @@ and maximum value.
 \bfindex{bounded-value\$}%
 \bfindex{bounded-value\$\$}%
 \bfindex{bounded-value\$\$\$}%
+\bfindex{bounded-value\%}%
 %
-\reflink{Declared numeric}{sec:declared-numerics} versions of
-\textbf{bounded-value} are also provided: \textbf{bounded-value\&},
-\textbf{bounded-value\$\&}, \textbf{bounded-value\$},
-\textbf{bounded-value\$\$}, and \textbf{bounded-value\$\$\$}.
+\reflink{Declared numeric}{sec:declared-numerics} and \reflink{pseudo
+  probability}{sec:pprob} versions of \textbf{bounded-value} are also
+provided: \textbf{bounded-value\&}, \textbf{bounded-value\$\&},
+\textbf{bounded-value\$}, \textbf{bounded-value\$\$},
+\textbf{bounded-value\$\$\$}, and \textbf{bounded-value\%}.
 
 \end{functiondoc}
 
@@ -4172,16 +4083,18 @@ This is the inverse of \textbf{\entlink{pushnew/incf-acons}}.
 
 \fnnote
 %
-\bfindex{decf/delete\&-acons}%
-\bfindex{decf/delete\$\&-acons}%
-\bfindex{decf/delete\$-acons}%
-\bfindex{decf/delete\$\$-acons}%
-\bfindex{decf/delete\$\$\$-acons}%
+\bfindex{decf\&/delete-acons}%
+\bfindex{decf\$\&/delete-acons}%
+\bfindex{decf\$/delete-acons}%
+\bfindex{decf\$\$/delete-acons}%
+\bfindex{decf\$\$\$/delete-acons}%
+\bfindex{decf\%/delete-acons}%
 %
-\reflink{Declared numeric}{sec:declared-numerics} versions of
-\textbf{decf/delete-acons} are also provided: \textbf{decf/delete\&-acons},
-\textbf{decf/delete\$\&-acons}, \textbf{decf/delete\$-acons},
-\textbf{decf/delete\$\$-acons}, and \textbf{decf/delete\$\$\$-acons}.
+\reflink{Declared numeric}{sec:declared-numerics} and \reflink{pseudo
+  probability}{sec:pprob} versions of \textbf{decf/delete-acons} are also
+provided: \textbf{decf\&/delete-acons}, \textbf{decf\$\&/delete-acons},
+\textbf{decf\$/delete-acons}, \textbf{decf\$\$/delete-acons},
+\textbf{decf\$\$\$/delete-acons}, and \textbf{decf\%/delete-acons},
 
 \end{functiondoc}
 
@@ -4763,7 +4676,7 @@ an atom, a newly consed list containing \var{object\/} as its sole element.
 
 \fnargs
 \begin{args}{boolean}
-\arg[n] A non-negative \glref{fixnum}
+\arg[n] A non-negative \code{\glref{fixnum}}
 \arg[list] A \glref{proper~list} or a \glref{dotted~list}
 \arg[boolean] A \glref{generalized~boolean}
 \end{args}
@@ -5438,11 +5351,13 @@ add a new \var{item increment\/} \glref{cons} to the
 \bfindex{pushnew/incf\$-acons}%
 \bfindex{pushnew/incf\$\$-acons}%
 \bfindex{pushnew/incf\$\$\$-acons}%
+\bfindex{pushnew/incf\%-acons}%
 %
-\reflink{Declared numeric}{sec:declared-numerics} versions of
-\textbf{pushnew/incf-acons} are also provided: \textbf{pushnew/incf\&-acons},
-\textbf{pushnew/incf\$\&-acons}, \textbf{pushnew/incf\$-acons},
-\textbf{pushnew/incf\$\$-acons}, and \textbf{pushnew/incf\$\$\$-acons}.
+\reflink{Declared numeric}{sec:declared-numerics} and \reflink{pseudo
+  probability}{sec:pprob} versions of \textbf{pushnew/incf-acons} are also
+provided: \textbf{pushnew/incf\&-acons}, \textbf{pushnew/incf\$\&-acons},
+\textbf{pushnew/incf\$-acons}, \textbf{pushnew/incf\$\$-acons},
+\textbf{pushnew/incf\$\$\$-acons}, and \textbf{pushnew/incf\%-acons}.
 
 \end{functiondoc}
 
@@ -6473,6 +6388,207 @@ otherwise.
 % Set subsubentities indicator
 \W\renewcommand{\subsubentities}{1}
 
+
+\T\markright{}%
+\T\pagestyle{plain}
+\T\clearpage
+\W\xname{ref-clos-and-mop-entities}
+\T\pagestyle{fancy}
+\T\thispagestyle{fancybottom}
+\T\global\def\fnlastname{ }%
+
+\subsection{CLOS and MOP}
+\label{sec:CLOS}%
+
+\index{CLOS entities}%
+\index{MOP entities}%
+\codeindexit{accessor-method-slot-definition}%
+\codeindexit{add-dependent}%
+\codeindexit{add-direct-method}%
+\codeindexit{add-direct-subclass}%
+\codeindexit{class-default-initargs}%
+\codeindexit{class-direct-default-initargs}%
+\codeindexit{class-direct-slots}%
+\codeindexit{class-direct-subclasses}%
+\codeindexit{class-direct-superclasses}%
+\codeindexit{class-finalized-p}%
+\codeindexit{class-precedence-list}%
+\codeindexit{class-prototype}%
+\codeindexit{class-slots}%
+\codeindexit{compute-applicable-methods-using-classes}%
+\codeindexit{compute-class-precedence-list}%
+\codeindexit{compute-default-initargs}%
+\codeindexit{compute-discriminating-function}%
+\codeindexit{compute-effective-method}%
+\codeindexit{compute-effective-slot-definition}%
+\codeindexit{compute-slots}%
+\codeindexit{direct-slot-definition}%
+\codeindexit{direct-slot-definition-class}%
+\codeindexit{effective-slot-definition}%
+\codeindexit{effective-slot-definition-class}%
+\codeindexit{ensure-class}%
+\codeindexit{ensure-class-using-class}%
+\codeindexit{ensure-generic-function-using-class}%
+\codeindexit{eql-specializer}%
+\codeindexit{eql-specializer-object}%
+\codeindexit{extract-lambda-list}%
+\codeindexit{extract-specializer-names}%
+\codeindexit{finalize-inheritance}%
+\codeindexit{find-method-combination}%
+\codeindexit{forward-referenced-class}%
+\codeindexit{funcallable-standard-class}%
+\codeindexit{funcallable-standard-instance-access}%
+\codeindexit{funcallable-standard-object}%
+\codeindexit{generic-function-argument-precedence-order}%
+\codeindexit{generic-function-declarations}%
+\codeindexit{generic-function-lambda-list}%
+\codeindexit{generic-function-method-class}%
+\codeindexit{generic-function-method-combination}%
+\codeindexit{generic-function-methods}%
+\codeindexit{generic-function-name}%
+\codeindexit{intern-eql-specializer}%
+\codeindexit{make-method-lambda}%
+\codeindexit{map-dependents}%
+\codeindexit{metaobject}%
+\codeindexit{method-function}%
+\codeindexit{method-generic-function}%
+\codeindexit{method-lambda-list}%
+\codeindexit{method-specializers}%
+\codeindexit{reader-method-class}%
+\codeindexit{remove-dependent}%
+\codeindexit{remove-direct-method}%
+\codeindexit{remove-direct-subclass}%
+\codeindexit{set-funcallable-instance-function}%
+\codeindexit{slot-boundp-using-class}%
+\codeindexit{slot-definition}%
+\codeindexit{slot-definition-allocation}%
+\codeindexit{slot-definition-initargs}%
+\codeindexit{slot-definition-initform}%
+\codeindexit{slot-definition-initfunction}%
+\codeindexit{slot-definition-location}%
+\codeindexit{slot-definition-name}%
+\codeindexit{slot-definition-readers}%
+\codeindexit{slot-definition-type}%
+\codeindexit{slot-definition-writers}%
+\codeindexit{slot-makunbound-using-class}%
+\codeindexit{slot-value-using-class}%
+\codeindexit{specializer}%
+\codeindexit{specializer-direct-generic-functions}%
+\codeindexit{specializer-direct-methods}%
+\codeindexit{standard-accessor-method}%
+\codeindexit{standard-direct-slot-definition}%
+\codeindexit{standard-effective-slot-definition}%
+\codeindexit{standard-instance-access}%
+\codeindexit{standard-reader-method}%
+\codeindexit{standard-slot-definition}%
+\codeindexit{standard-writer-method}%
+\codeindexit{update-dependent}%
+\codeindexit{validate-superclass}%
+\codeindexit{writer-method-class}%
+%
+The GBBopen Tools \glref{module} imports commonly used CLOS and MOP symbols
+into the \code{:gbbopen-tools} package and then exports them, making it easy
+to use CLOS and MOP entities (without worrying about each Common Lisp
+implementation's package structure) by simply using the \code{:gbbopen-tools}
+package.  The following CLOS and MOP symbols are exported by
+\code{:gbbopen-tools}:
+%
+\T\\[3pt]
+\W\supp\tabletop
+\T\begin{longtable}[l]{@{}l@{}l@{}}
+\W\begin{tabular}{@{}l@{}l@{}}
+  ~~~~~ 
+  & \code{accessor-method-slot-definition} \\
+  & \code{add-dependent} \\ 
+  & \code{add-direct-method} \\ 
+  & \code{add-direct-subclass} \\
+  & \code{class-default-initargs} \\ 
+  & \code{class-direct-default-initargs} \\
+  & \code{class-direct-slots} \\ 
+  & \code{class-direct-subclasses} \\
+  & \code{class-direct-superclasses} \\ 
+  & \code{class-finalized-p} \\
+  & \code{class-precedence-list} \\ 
+  & \code{class-prototype} \\ 
+  & \code{class-slots} \\
+  & \code{compute-applicable-methods-using-classes} \\
+  & \code{compute-class-precedence-list} \\ 
+  & \code{compute-default-initargs} \\
+  & \code{compute-discriminating-function} \\ 
+  & \code{compute-effective-method} \\
+  & \code{compute-effective-slot-definition} \\ 
+  & \code{compute-slots} \\ \goodpagebreak
+  & \code{direct-slot-definition} \\ 
+  & \code{direct-slot-definition-class} \\
+  & \code{effective-slot-definition} \\ 
+  & \code{effective-slot-definition-class} \\
+  & \code{ensure-class} \\ 
+  & \code{ensure-class-using-class} \\
+  & \code{ensure-generic-function-using-class} \\ 
+  & \code{eql-specializer} \\
+  & \code{eql-specializer-object} \\ 
+  & \code{extract-lambda-list} \\
+  & \code{extract-specializer-names} \\ \goodpagebreak
+  & \code{finalize-inheritance} \\
+  & \code{find-method-combination} \\ 
+  & \code{forward-referenced-class} \\
+  & \code{funcallable-standard-class} \\
+  & \code{funcallable-standard-instance-access} \\
+  & \code{funcallable-standard-object} \\ \goodpagebreak
+  & \code{generic-function-argument-precedence-order} \\
+  & \code{generic-function-declarations} \\ 
+  & \code{generic-function-lambda-list} \\
+  & \code{generic-function-method-class} \\
+  & \code{generic-function-method-combination} \\ 
+  & \code{generic-function-methods} \\
+  & \code{generic-function-name} \\ \goodpagebreak
+  & \code{intern-eql-specializer} \\
+  & \code{make-method-lambda} \\ 
+  & \code{map-dependents} \\ 
+  & \code{metaobject} \\
+  & \code{method-function} \\ 
+  & \code{method-generic-function} \\
+  & \code{method-lambda-list} \\ 
+  & \code{method-specializers} \\ \goodpagebreak
+  & \code{reader-method-class} \\ 
+  & \code{remove-dependent} \\
+  & \code{remove-direct-method} \\ 
+  & \code{remove-direct-subclass} \\ \goodpagebreak
+  & \code{set-funcallable-instance-function} \\ 
+  & \code{slot-boundp-using-class} \\
+  & \code{slot-definition} \\ 
+  & \code{slot-definition-allocation} \\
+  & \code{slot-definition-initargs} \\ 
+  & \code{slot-definition-initform} \\
+  & \code{slot-definition-initfunction} \\ 
+  & \code{slot-definition-location} \\
+  & \code{slot-definition-name} \\ 
+  & \code{slot-definition-readers} \\
+  & \code{slot-definition-type} \\ 
+  & \code{slot-definition-writers} \\
+  & \code{slot-makunbound-using-class} \\ 
+  & \code{slot-value-using-class} \\ \goodpagebreak
+  & \code{specializer} \\ 
+  & \code{specializer-direct-generic-functions} \\
+  & \code{specializer-direct-methods} \\ \goodpagebreak
+  & \code{standard-accessor-method} \\
+  & \code{standard-direct-slot-definition} \\
+  & \code{standard-effective-slot-definition} \\ 
+  & \code{standard-instance-access} \\
+  & \code{standard-reader-method} \\ 
+  & \code{standard-slot-definition} \\
+  & \code{standard-writer-method} \\ 
+  & \code{update-dependent} \\
+  & \code{validate-superclass} \\ 
+  & \code{writer-method-class} \\
+\T\end{longtable}
+\W\end{tabular}
+% 
+Load-time warning messages are displayed if the Common Lisp implementation
+does not have one of these symbols in its CLOS or MOP implementation.
+
+%% ------------------------------------------------------------------------
+
 \T\markright{}%
 \T\pagestyle{plain}
 \T\clearpage
@@ -6492,33 +6608,40 @@ otherwise.
 \index{:gbbopen-tools@\code{:gbbopen-tools} module|itidx}%
 %
 The \code{:gbbopen-tools} \glref{module} contains a set of declared-numeric
-operators that provide convenient shorthands for declaring
-\code{\glref{fixnum}}, \code{short-float}, \code{single-float},
-\code{double-float}, and \code{long-float} numeric operations. If the
-\glref{feature} \textbf{\entlinknoex{:full-safety}} is present at compile
-time, these operators do not make their \code{fixnum}, \code{single-float},
+and \reflink{pseudo probability}{sec:pprob} operators that provide convenient
+shorthands for declaring \code{\glref{fixnum}}, \code{short-float},
+\code{single-float}, \code{double-float}, \code{long-float}, and
+\code{pseudo-probability} numeric operations. If the \glref{feature}
+\textbf{\entlinknoex{:full-safety}} is present at compile time, these
+operators do not make their \code{fixnum}, \code{single-float},
 \code{double-float}, and \code{long-float} declarations.
 
-The names of the declared-numeric operators include these ``type-indicator''
-characters:
+The names of the declared-numeric and \glref{pseudo-probability} operators
+include these ``type-indicator'' characters:
 %
-\begin{tabular}{l@{}l@{}l}
-  \textbf{Characters} & ~~~ & \textbf{Declared Type} \\
-  \&     & & \code{fixnum} \\
-  \$\&   & & \code{short-float} \\
-  \$     & & \code{single-float} \\
-  \$\$   & & \code{double-float} \\
-  \$\$\$ & & \code{long-float} \\
+\T\\[3pt]
+\W\supp\tabletop
+\begin{tabular}{@{}l@{}l@{}l@{}l@{}}
+  ~~~~~  & \textbf{Characters} & ~~~~~ & \textbf{Declared Type} \\
+  & \code{\&}     & & \code{fixnum} \\
+  & \code{\$\&}   & & \code{short-float} \\
+  & \code{\$}     & & \code{single-float} \\
+  & \code{\$\$}   & & \code{double-float} \\
+  & \code{\$\$\$} & & \code{long-float} \\
+  & \code{\%}     & & \code{pseudo-probability} \\
 \end{tabular}
 
 Thus, the declared-numeric \code{+} operators are:
 %
-\begin{tabular}{l@{}l@{}l}
-  +\&     & ~~~  & \code{fixnum} addition \\
-  +\$\&   & & \code{short-float} addition \\
-  +\$     & & \code{single-float} addition \\
-  +\$\$   & & \code{double-float} addition \\
-  +\$\$\$ & & \code{long-float} addition\\
+\T\\[3pt]
+\W\supp\tabletop
+\begin{tabular}{@{}l@{}l@{}l@{}l@{}}
+  ~~~~~  & \code{+\&}  & ~~~~~  & \code{fixnum} addition \\
+  & \code{+\$\&}   & & \code{short-float} addition \\
+  & \code{+\$}     & & \code{single-float} addition \\
+  & \code{+\$\$}   & & \code{double-float} addition \\
+  & \code{+\$\$\$} & & \code{long-float} addition \\
+  & \code{+\%}     & & \code{pseudo-probability} addition \\
 \end{tabular}
 
 Some examples of declared-numeric operators include:
@@ -6529,7 +6652,7 @@ Some examples of declared-numeric operators include:
   (+\& x y) \expands (the fixnum (+ (the fixnum x) (the fixnum y))
   (>\$ a b) \expands (> (the single-float a) (the single-float b))
   (minusp$$ value) \expands (minusp (the double-float value))
-  (truncate\& x y)) \expands (the (values fixnum fixnum) (truncate (& x) (& y)))
+  (truncate\& x y)) \expands (the (values fixnum fixnum) (truncate (\& x) (\& y)))
 \end{example}
 %
 The complete set of operators for each declared numeric type are listed in the
@@ -6576,7 +6699,7 @@ single format).
 \bfindexit{bounded-value\&}% 
 \bfindex{ceiling\&}%
 \bfindex{decf\&}%
-%\bfindex{decf\&-after}%
+\bfindex{decf\&-after}%
 \bfindexit{decf/delete\&-acons}%
 \bfindex{evenp\&}% 
 \bfindex{fceiling\&}%
@@ -6585,7 +6708,7 @@ single format).
 \bfindex{fround\&}%
 \bfindex{ftruncate\&}%
 \bfindex{incf\&}% 
-%\bfindex{incf\&-after}%
+\bfindex{incf\&-after}%
 \bfindexit{pushnew/incf\&-acons}% 
 \bfindex{max\&}%
 \bfindex{min\&}% 
@@ -6600,60 +6723,60 @@ single format).
 %
 These \code{\glref{fixnum}} declared-numeric operators are defined in the
 \code{:gbbopen-tools} \glref{module}:
-
-\code{%
-  \begin{tabular}{l@{}l@{}l@{}l@{}l}
-    \textbf{Operator} & ~~~ & \textbf{Operation}  & ~~~ & 
+%
+\T\\[6pt]
+\W\supp\tabletop
+\begin{tabular}{@{}l@{}l@{}l@{}l@{}l@{}l@{}}
+  ~~~~~  & \textbf{Operator} & ~~~~~ & \textbf{Operation}  & ~~~~~ & 
     \textbf{Example} \\ \hline
-    \&       & & the fixnum     & & (\& x)\\
-    +\&      & & +              & & (+\& x y z)\\
-    -\&      & & -              & & (-\& x y z)\\
-    1+\&     & & 1+             & & (1+\& x)\\
-    1-\&     & & 1-             & & (1-\& x)\\
-    $*$\&    & & $*$            & & (*\& x y z)\\
-    /\&      & & /              & & (/\& x y z)\\
-    =\&      & & =              & & (=\& x y z)\\
-    /=\&     & & /=             & & (/=\& x y z)\\
-    $<$\&    & & $<$            & & ($<$\& x y z)\\
-    $<$=\&   & & $<$=           & & ($<$=\& x y z)\\
-    $>$\&    & & $>$            & & ($>$\& x y z)\\
-    $>$=\&   & & $>$=           & & ($>$=\& x y z)\\
-    abs\&    & & abs            & & (abs\& x)\\
-    bounded-value\& & & \entlink{bounded-value} 
-    & & (bounded-value\& x y z)\\
-    ceiling\& & & ceiling       & & (ceiling\& x divisor)\\
-    decf\&   & & decf           & & (decf\& x delta)\\
-%   decf-\&after & & decf-after & & (decf\&-after x delta)\\
-    decf/delete\&-acons & & \entlink{decf/delete-acons}
-    & & (decf/delete\&-acons\\
-    & & & & ~~~ 'x delta alist)\\
-    evenp\&  & & evenp          & & (evenp\& x)\\
-    fceiling\& & & fceiling     & & (fceiling\& x divisor)\\
-    floor\&  & & floor          & & (floor\& x divisor)\\
-    ffloor\& & & ffloor         & & (ffloor\& x divisor)\\
-    fround\& & & fround         & & (fround\& x divisor)\\
-    ftruncate\& & & ftruncate   & & (ftruncate\& x divisor)\\
-    incf\&   & & incf           & & (incf\& x delta)\\
-%   incf\&-after & & incf-after & & (incf\&-after x delta)\\
-    max\&    & & max            & & (max\& x y z)\\
-    min\&    & & min            & & (min\& x y z)\\
-    minusp\& & & minusp         & & (minusp\& x)\\
-    mod\&    & & mod            & & (mod\& x divisor)\\
-    oddp\&   & & oddp           & & (oddp\& x)\\
-    plusp\&  & & plusp          & & (plusp\& x)\\
-    pushnew/incf\&-acons & & \entlink{pushnew/incf-acons}
-    & & (pushnew/incf\&-acons\\
-    & & & & ~~~ 'x delta alist)\\
-    round\&  & & round          & & (round\& x divisor)\\
-    truncate\& & & truncate     & & (truncate\& x divisor)\\
-    zerop\&  & & zerop          & & (zerop\& x)\\ \hline
-  \end{tabular}}
-
+  & \code{\&}      & & \code{the fixnum} & & \code{(\& x)}\\
+  & \code{+\&}     & & \code{+}       & & \code{(+\& x y z)}\\
+  & \code{-\&}     & & \code{-}       & & \code{(-\& x y z)}\\
+  & \code{1+\&}    & & \code{1+}      & & \code{(1+\& x)}\\
+  & \code{1-\&}    & & \code{1-}      & & \code{(1-\& x)}\\
+  & \code{*\&}     & & \code{*}       & & \code{(*\& x y z)}\\
+  & \code{/\&}     & & \code{/}       & & \code{(/\& x y z)}\\
+  & \code{=\&}     & & \code{=}       & & \code{(=\& x y z)}\\
+  & \code{/=\&}    & & \code{/=}      & & \code{(/=\& x y z)}\\
+  & \code{<\&}     & & \code{<}       & & \code{(<\& x y z)}\\
+  & \code{<=\&}    & & \code{<=}      & & \code{(<=\& x y z)}\\
+  & \code{>\&}     & & \code{>}       & & \code{(>\& x y z)}\\
+  & \code{>=\&}    & & \code{>=}      & & \code{(>=\& x y z)}\\
+  & \code{abs\&}   & & \code{abs}     & & \code{(abs\& x)}\\
+  & \code{bounded-value\&} & & \code{\entlink{bounded-value}}
+    & & \code{(bounded-value\& x y z)}\\
+  & \code{ceiling\&} & & \code{ceiling} & & \code{(ceiling\& x divisor)}\\
+  & \code{decf\&}  & & \code{decf}      & & \code{(decf\& x delta)}\\
+  & \code{decf-\&after} & & \code{decf-after} & & \code{(decf\&-after x delta)}\\
+  & \code{decf/delete\&-acons} & & \code{\entlink{decf/delete-acons}}
+    & & \code{(decf/delete\&-acons}\\
+    & & & & & ~~~ \code{x delta alist)}\\
+  & \code{evenp\&} & & \code{evenp}   & & \code{(evenp\& x)}\\
+  & \code{fceiling\&} & & \code{fceiling} & & \code{(fceiling\& x divisor)}\\
+  & \code{floor\&} & & \code{floor}   & & \code{(floor\& x divisor)}\\
+  & \code{ffloor\&} & & \code{ffloor} & & \code{(ffloor\& x divisor)}\\
+  & \code{fround\&} & & \code{fround} & & \code{(fround\& x divisor)}\\
+  & \code{ftruncate\&} & & \code{ftruncate} & & \code{(ftruncate\& x divisor)}\\
+  & \code{incf\&}  & & \code{incf}    & & \code{(incf\& x delta)}\\
+  & \code{incf\&-after} & & \code{incf-after} & & \code{(incf\&-after x delta)}\\
+  & \code{max\&}   & & \code{max}     & & \code{(max\& x y z)}\\
+  & \code{min\&}   & & \code{min}     & & \code{(min\& x y z)}\\
+  & \code{minusp\&} & & \code{minusp} & & \code{(minusp\& x)}\\
+  & \code{mod\&}   & & \code{mod}     & & \code{(mod\& x divisor)}\\
+  & \code{oddp\&}  & & \code{oddp}    & & \code{(oddp\& x)}\\
+  & \code{plusp\&} & & \code{plusp}   & & \code{(plusp\& x)}\\
+  & \code{pushnew/incf\&-acons} & & \code{\entlink{pushnew/incf-acons}}
+    & & \code{(pushnew/incf\&-acons}\\
+    & & & & & ~~~ \code{'x delta alist)}\\
+  & \code{round\&} & & \code{round}   & & \code{(round\& x divisor)}\\
+  & \code{truncate\&} & & \code{truncate} & & \code{(truncate\& x divisor)}\\
+  & \code{zerop\&} & & \code{zerop}   & & \code{(zerop\& x)} \\[2pt] \hline
+\end{tabular}
 \T\medskip
 
 \bfindex{coerce\&}%
 The one-argument \glref{function} \textbf{coerce\&} provides convenient 
-\glref{fixnum} coercion:
+\code{\glref{fixnum}} coercion:
 %
 \W\supp
 \begin{example}
@@ -6662,8 +6785,8 @@ The one-argument \glref{function} \textbf{coerce\&} provides convenient
 %
 Although \mbox{\code{(coerce x 'fixnum)}} is not permitted in Common Lisp,
 \mbox{\code{(coerce\& x)}} is equivalent to \mbox{\code{(truncate x)}} when
-the remainder is zero and the returned quotient is a \glref{fixnum}.  Otherwise,
-\mbox{\code{(coerce\& x)}} signals an error.
+the remainder is zero and the returned quotient is a \code{\glref{fixnum}}.
+Otherwise, \mbox{\code{(coerce\& x)}} signals an error.
 
 \T\clearpage
 \W\xname{ref-short-float-operators}
@@ -6685,7 +6808,7 @@ the remainder is zero and the returned quotient is a \glref{fixnum}.  Otherwise,
 \bfindexit{bounded-value\$\&}% 
 \bfindex{ceiling\$\&}%
 \bfindex{decf\$\&}%
-%\bfindex{decf\$\&-after}%
+\bfindex{decf\$\&-after}%
 \bfindexit{decf/delete\$\&-acons}%
 \bfindex{evenp\$\&}% 
 \bfindex{fceiling\$\&}%
@@ -6694,7 +6817,7 @@ the remainder is zero and the returned quotient is a \glref{fixnum}.  Otherwise,
 \bfindex{fround\$\&}%
 \bfindex{ftruncate\$\&}%
 \bfindex{incf\$\&}% 
-%\bfindex{incf\$\&-after}%
+\bfindex{incf\$\&-after}%
 \bfindexit{pushnew/incf\$\&-acons}% 
 \bfindex{max\$\&}%
 \bfindex{min\$\&}% 
@@ -6709,60 +6832,60 @@ the remainder is zero and the returned quotient is a \glref{fixnum}.  Otherwise,
 %
 These \code{short-float} declared-numeric operators are defined in the
 \code{:gbbopen-tools} \glref{module}:
-
-\code{%
-  \begin{tabular}{l@{}l@{}l@{}l@{}l}
-    \textbf{Operator} & ~~~ & \textbf{Operation}  & ~~~ & 
+%
+\T\\[6pt]
+\W\supp\tabletop
+\begin{tabular}{@{}l@{}l@{}l@{}l@{}l@{}l@{}}
+  ~~~~~  & \textbf{Operator} & ~~~~~ & \textbf{Operation}  & ~~~~~ & 
     \textbf{Example} \\ \hline
-    \$\&       & & the short-float & & (\$\& x)\\
-    +\$\&      & & +              & & (+\$\& x y z)\\
-    -\$\&      & & -              & & (-\$\& x y z)\\
-    1+\$\&     & & 1+             & & (1+\$\& x)\\
-    1-\$\&     & & 1-             & & (1-\$\& x)\\
-    $*$\$\&    & & $*$            & & (*\$\& x y z)\\
-    /\$\&      & & /              & & (/\$\& x y z)\\
-    =\$\&      & & =              & & (=\$\& x y z)\\
-    /=\$\&     & & /=             & & (/=\$\& x y z)\\
-    $<$\$\&    & & $<$            & & ($<$\$\& x y z)\\
-    $<$=\$\&   & & $<$=           & & ($<$=\$\& x y z)\\
-    $>$\$\&    & & $>$            & & ($>$\$\& x y z)\\
-    $>$=\$\&   & & $>$=           & & ($>$=\$\& x y z)\\
-    abs\$\&    & & abs            & & (abs\$\& x)\\
-    bounded-value\$\& & & \entlink{bounded-value} 
-    & & (bounded-value\$\& x y z)\\
-    ceiling\$\& & & ceiling       & & (ceiling\$\& x divisor)\\
-    decf\$\&   & & decf           & & (decf\$\& x delta)\\
-%   decf-\$\&after & & decf-after & & (decf\$\&-after x delta)\\
-    decf/delete\$\&-acons & & \entlink{decf/delete-acons}
-    & & (decf/delete\$\&-acons\\
-    & & & & ~~~ 'x delta alist)\\
-    evenp\$\&  & & evenp          & & (evenp\$\& x)\\
-    fceiling\$\& & & fceiling     & & (fceiling\$\& x divisor)\\
-    floor\$\&  & & floor          & & (floor\$\& x divisor)\\
-    ffloor\$\& & & ffloor         & & (ffloor\$\& x divisor)\\
-    fround\$\& & & fround         & & (fround\$\& x divisor)\\
-    ftruncate\$\& & & ftruncate   & & (ftruncate\$\& x divisor)\\
-    incf\$\&   & & incf           & & (incf\$\& x delta)\\
-%   incf\$\&-after & & incf-after & & (incf\$\&-after x delta)\\
-    max\$\&    & & max            & & (max\$\& x y z)\\
-    min\$\&    & & min            & & (min\$\& x y z)\\
-    minusp\$\& & & minusp         & & (minusp\$\& x)\\
-    mod\$\&    & & mod            & & (mod\$\& x divisor)\\
-    oddp\$\&   & & oddp           & & (oddp\$\& x)\\
-    plusp\$\&  & & plusp          & & (plusp\$\& x)\\
-    pushnew/incf\$\&-acons & & \entlink{pushnew/incf-acons}
-    & & (pushnew/incf\$\&-acons\\
-    & & & & ~~~ 'x delta alist)\\
-    round\$\&  & & round          & & (round\$\& x divisor)\\
-    truncate\$\& & & truncate     & & (truncate\$\& x divisor)\\
-    zerop\$\&  & & zerop          & & (zerop\$\& x)\\ \hline
-  \end{tabular}}
-  
+  & \code{\$\&}      & & \code{the short-float} & & \code{(\$\& x)}\\
+  & \code{+\$\&}     & & \code{+}       & & \code{(+\$\& x y z)}\\
+  & \code{-\$\&}     & & \code{-}       & & \code{(-\$\& x y z)}\\
+  & \code{1+\$\&}    & & \code{1+}      & & \code{(1+\$\& x)}\\
+  & \code{1-\$\&}    & & \code{1-}      & & \code{(1-\$\& x)}\\
+  & \code{*\$\&}     & & \code{*}       & & \code{(*\$\& x y z)}\\
+  & \code{/\$\&}     & & \code{/}       & & \code{(/\$\& x y z)}\\
+  & \code{=\$\&}     & & \code{=}       & & \code{(=\$\& x y z)}\\
+  & \code{/=\$\&}    & & \code{/=}      & & \code{(/=\$\& x y z)}\\
+  & \code{<\$\&}     & & \code{<}       & & \code{(<\$\& x y z)}\\
+  & \code{<=\$\&}    & & \code{<=}      & & \code{(<=\$\& x y z)}\\
+  & \code{>\$\&}     & & \code{>}       & & \code{(>\$\& x y z)}\\
+  & \code{>=\$\&}    & & \code{>=}      & & \code{(>=\$\& x y z)}\\
+  & \code{abs\$\&}   & & \code{abs}     & & \code{(abs\$\& x)}\\
+  & \code{bounded-value\$\&} & & \code{\entlink{bounded-value}}
+    & & \code{(bounded-value\$\& x y z)}\\
+  & \code{ceiling\$\&} & & \code{ceiling} & & \code{(ceiling\$\& x divisor)}\\
+  & \code{decf\$\&}  & & \code{decf}      & & \code{(decf\$\& x delta)}\\
+  & \code{decf-\$\&after} & & \code{decf-after} & & \code{(decf\$\&-after x delta)}\\
+  & \code{decf/delete\$\&-acons} & & \code{\entlink{decf/delete-acons}}
+    & & \code{(decf/delete\$\&-acons}\\
+    & & & & & ~~~ \code{x delta alist)}\\
+  & \code{evenp\$\&} & & \code{evenp}   & & \code{(evenp\$\& x)}\\
+  & \code{fceiling\$\&} & & \code{fceiling} & & \code{(fceiling\$\& x divisor)}\\
+  & \code{floor\$\&} & & \code{floor}   & & \code{(floor\$\& x divisor)}\\
+  & \code{ffloor\$\&} & & \code{ffloor} & & \code{(ffloor\$\& x divisor)}\\
+  & \code{fround\$\&} & & \code{fround} & & \code{(fround\$\& x divisor)}\\
+  & \code{ftruncate\$\&} & & \code{ftruncate} & & \code{(ftruncate\$\& x divisor)}\\
+  & \code{incf\$\&}  & & \code{incf}    & & \code{(incf\$\& x delta)}\\
+  & \code{incf\$\&-after} & & \code{incf-after} & & \code{(incf\$\&-after x delta)}\\
+  & \code{max\$\&}   & & \code{max}     & & \code{(max\$\& x y z)}\\
+  & \code{min\$\&}   & & \code{min}     & & \code{(min\$\& x y z)}\\
+  & \code{minusp\$\&} & & \code{minusp} & & \code{(minusp\$\& x)}\\
+  & \code{mod\$\&}   & & \code{mod}     & & \code{(mod\$\& x divisor)}\\
+  & \code{oddp\$\&}  & & \code{oddp}    & & \code{(oddp\$\& x)}\\
+  & \code{plusp\$\&} & & \code{plusp}   & & \code{(plusp\$\& x)}\\
+  & \code{pushnew/incf\$\&-acons} & & \code{\entlink{pushnew/incf-acons}}
+    & & \code{(pushnew/incf\$\&-acons}\\
+    & & & & & ~~~ \code{'x delta alist)}\\
+  & \code{round\$\&} & & \code{round}   & & \code{(round\$\& x divisor)}\\
+  & \code{truncate\$\&} & & \code{truncate} & & \code{(truncate\$\& x divisor)}\\
+  & \code{zerop\$\&} & & \code{zerop}   & & \code{(zerop\$\& x)} \\[2pt] \hline
+\end{tabular}
 \T\medskip
 
 \bfindex{coerce\$\&}%
 The one-argument \glref{function} \textbf{coerce\$\&} provides convenient 
-short-float coercion:
+\code{short-float} coercion:
 %
 \W\supp
 \begin{example}
@@ -6789,7 +6912,7 @@ short-float coercion:
 \bfindexit{bounded-value\$}% 
 \bfindex{ceiling\$}%
 \bfindex{decf\$}%
-%\bfindex{decf\$-after}%
+\bfindex{decf\$-after}%
 \bfindexit{decf/delete\$-acons}%
 \bfindex{evenp\$}% 
 \bfindex{fceiling\$}%
@@ -6798,7 +6921,7 @@ short-float coercion:
 \bfindex{fround\$}%
 \bfindex{ftruncate\$}%
 \bfindex{incf\$}% 
-%\bfindex{incf\$-after}%
+\bfindex{incf\$-after}%
 \bfindexit{pushnew/incf\$-acons}% 
 \bfindex{max\$}%
 \bfindex{min\$}% 
@@ -6813,60 +6936,60 @@ short-float coercion:
 %
 These \code{single-float} declared-numeric operators are defined in the
 \code{:gbbopen-tools} \glref{module}:
-
-\code{%
-  \begin{tabular}{l@{}l@{}l@{}l@{}l}
-    \textbf{Operator} & ~~~ & \textbf{Operation}  & ~~~ & 
+%
+\T\\[6pt]
+\W\supp\tabletop
+\begin{tabular}{@{}l@{}l@{}l@{}l@{}l@{}l@{}}
+  ~~~~~  & \textbf{Operator} & ~~~~~ & \textbf{Operation}  & ~~~~~ & 
     \textbf{Example} \\ \hline
-    \$       & & the single-float & & (\$ x)\\
-    +\$      & & +              & & (+\$ x y z)\\
-    -\$      & & -              & & (-\$ x y z)\\
-    1+\$     & & 1+             & & (1+\$ x)\\
-    1-\$     & & 1-             & & (1-\$ x)\\
-    $*$\$    & & $*$            & & (*\$ x y z)\\
-    /\$      & & /              & & (/\$ x y z)\\
-    =\$      & & =              & & (=\$ x y z)\\
-    /=\$     & & /=             & & (/=\$ x y z)\\
-    $<$\$    & & $<$            & & ($<$\$ x y z)\\
-    $<$=\$   & & $<$=           & & ($<$=\$ x y z)\\
-    $>$\$    & & $>$            & & ($>$\$ x y z)\\
-    $>$=\$   & & $>$=           & & ($>$=\$ x y z)\\
-    abs\$    & & abs            & & (abs\$ x)\\
-    bounded-value\$ & & \entlink{bounded-value} 
-    & & (bounded-value\$ x y z)\\
-    ceiling\$ & & ceiling       & & (ceiling\$ x divisor)\\
-    decf\$   & & decf           & & (decf\$ x delta)\\
-%   decf-\$after & & decf-after & & (decf\$-after x delta)\\
-    decf/delete\$-acons & & \entlink{decf/delete-acons}
-    & & (decf/delete\$-acons\\
-    & & & & ~~~ 'x delta alist)\\
-    evenp\$  & & evenp          & & (evenp\$ x)\\
-    fceiling\$ & & fceiling     & & (fceiling\$ x divisor)\\
-    floor\$  & & floor          & & (floor\$ x divisor)\\
-    ffloor\$ & & ffloor         & & (ffloor\$ x divisor)\\
-    fround\$ & & fround         & & (fround\$ x divisor)\\
-    ftruncate\$ & & ftruncate   & & (ftruncate\$ x divisor)\\
-    incf\$   & & incf           & & (incf\$ x delta)\\
-%   incf\$-after & & incf-after & & (incf\$-after x delta)\\
-    max\$    & & max            & & (max\$ x y z)\\
-    min\$    & & min            & & (min\$ x y z)\\
-    minusp\$ & & minusp         & & (minusp\$ x)\\
-    mod\$    & & mod            & & (mod\$ x divisor)\\
-    oddp\$   & & oddp           & & (oddp\$ x)\\
-    plusp\$  & & plusp          & & (plusp\$ x)\\
-    pushnew/incf\$-acons & & \entlink{pushnew/incf-acons}
-    & & (pushnew/incf\$-acons\\
-    & & & & ~~~ 'x delta alist)\\
-    round\$  & & round          & & (round\$ x divisor)\\
-    truncate\$ & & truncate     & & (truncate\$ x divisor)\\
-    zerop\$  & & zerop          & & (zerop\$ x)\\ \hline
-  \end{tabular}}
-  
+  & \code{\$}      & & \code{the single-float} & & \code{(\$ x)}\\
+  & \code{+\$}     & & \code{+}       & & \code{(+\$ x y z)}\\
+  & \code{-\$}     & & \code{-}       & & \code{(-\$ x y z)}\\
+  & \code{1+\$}    & & \code{1+}      & & \code{(1+\$ x)}\\
+  & \code{1-\$}    & & \code{1-}      & & \code{(1-\$ x)}\\
+  & \code{*\$}     & & \code{*}       & & \code{(*\$ x y z)}\\
+  & \code{/\$}     & & \code{/}       & & \code{(/\$ x y z)}\\
+  & \code{=\$}     & & \code{=}       & & \code{(=\$ x y z)}\\
+  & \code{/=\$}    & & \code{/=}      & & \code{(/=\$ x y z)}\\
+  & \code{<\$}     & & \code{<}       & & \code{(<\$ x y z)}\\
+  & \code{<=\$}    & & \code{<=}      & & \code{(<=\$ x y z)}\\
+  & \code{>\$}     & & \code{>}       & & \code{(>\$ x y z)}\\
+  & \code{>=\$}    & & \code{>=}      & & \code{(>=\$ x y z)}\\
+  & \code{abs\$}   & & \code{abs}     & & \code{(abs\$ x)}\\
+  & \code{bounded-value\$} & & \code{\entlink{bounded-value}}
+    & & \code{(bounded-value\$ x y z)}\\
+  & \code{ceiling\$} & & \code{ceiling} & & \code{(ceiling\$ x divisor)}\\
+  & \code{decf\$}  & & \code{decf}      & & \code{(decf\$ x delta)}\\
+  & \code{decf-\$after} & & \code{decf-after} & & \code{(decf\$-after x delta)}\\
+  & \code{decf/delete\$-acons} & & \code{\entlink{decf/delete-acons}}
+    & & \code{(decf/delete\$-acons}\\
+    & & & & & ~~~ \code{x delta alist)}\\
+  & \code{evenp\$} & & \code{evenp}   & & \code{(evenp\$ x)}\\
+  & \code{fceiling\$} & & \code{fceiling} & & \code{(fceiling\$ x divisor)}\\
+  & \code{floor\$} & & \code{floor}   & & \code{(floor\$ x divisor)}\\
+  & \code{ffloor\$} & & \code{ffloor} & & \code{(ffloor\$ x divisor)}\\
+  & \code{fround\$} & & \code{fround} & & \code{(fround\$ x divisor)}\\
+  & \code{ftruncate\$} & & \code{ftruncate} & & \code{(ftruncate\$ x divisor)}\\
+  & \code{incf\$}  & & \code{incf}    & & \code{(incf\$ x delta)}\\
+  & \code{incf\$-after} & & \code{incf-after} & & \code{(incf\$-after x delta)}\\
+  & \code{max\$}   & & \code{max}     & & \code{(max\$ x y z)}\\
+  & \code{min\$}   & & \code{min}     & & \code{(min\$ x y z)}\\
+  & \code{minusp\$} & & \code{minusp} & & \code{(minusp\$ x)}\\
+  & \code{mod\$}   & & \code{mod}     & & \code{(mod\$ x divisor)}\\
+  & \code{oddp\$}  & & \code{oddp}    & & \code{(oddp\$ x)}\\
+  & \code{plusp\$} & & \code{plusp}   & & \code{(plusp\$ x)}\\
+  & \code{pushnew/incf\$-acons} & & \code{\entlink{pushnew/incf-acons}}
+    & & \code{(pushnew/incf\$-acons}\\
+    & & & & & ~~~ \code{'x delta alist)}\\
+  & \code{round\$} & & \code{round}   & & \code{(round\$ x divisor)}\\
+  & \code{truncate\$} & & \code{truncate} & & \code{(truncate\$ x divisor)}\\
+  & \code{zerop\$} & & \code{zerop}   & & \code{(zerop\$ x)} \\[2pt] \hline
+\end{tabular}
 \T\medskip
 
 \bfindex{coerce\$}%
 The one-argument \glref{function} \textbf{coerce\$} provides convenient 
-single-float coercion:
+\code{single-float} coercion:
 %
 \W\supp
 \begin{example}
@@ -6893,7 +7016,7 @@ single-float coercion:
 \bfindexit{bounded-value\$\$}% 
 \bfindex{ceiling\$\$}%
 \bfindex{decf\$\$}%
-%\bfindex{decf\$\$-after}%
+\bfindex{decf\$\$-after}%
 \bfindexit{decf/delete\$\$-acons}%
 \bfindex{evenp\$\$}% 
 \bfindex{fceiling\$\$}%
@@ -6902,7 +7025,7 @@ single-float coercion:
 \bfindex{fround\$\$}%
 \bfindex{ftruncate\$\$}%
 \bfindex{incf\$\$}% 
-%\bfindex{incf\$\$-after}%
+\bfindex{incf\$\$-after}%
 \bfindexit{pushnew/incf\$\$-acons}% 
 \bfindex{max\$\$}%
 \bfindex{min\$\$}% 
@@ -6917,60 +7040,60 @@ single-float coercion:
 %
 These \code{double-float} declared-numeric operators are defined in the
 \code{:gbbopen-tools} \glref{module}:
-
-\code{%
-  \begin{tabular}{l@{}l@{}l@{}l@{}l}
-    \textbf{Operator} & ~~~ & \textbf{Operation}  & ~~~ & 
+%
+\T\\[6pt]
+\W\supp\tabletop
+\begin{tabular}{@{}l@{}l@{}l@{}l@{}l@{}l@{}}
+  ~~~~~  & \textbf{Operator} & ~~~~~ & \textbf{Operation}  & ~~~~~ & 
     \textbf{Example} \\ \hline
-    \$\$       & & the double-float & & (\$\$ x)\\
-    +\$\$      & & +              & & (+\$\$ x y z)\\
-    -\$\$      & & -              & & (-\$\$ x y z)\\
-    1+\$\$     & & 1+             & & (1+\$\$ x)\\
-    1-\$\$     & & 1-             & & (1-\$\$ x)\\
-    $*$\$\$    & & $*$            & & (*\$\$ x y z)\\
-    /\$\$      & & /              & & (/\$\$ x y z)\\
-    =\$\$      & & =              & & (=\$\$ x y z)\\
-    /=\$\$     & & /=             & & (/=\$\$ x y z)\\
-    $<$\$\$    & & $<$            & & ($<$\$\$ x y z)\\
-    $<$=\$\$   & & $<$=           & & ($<$=\$\$ x y z)\\
-    $>$\$\$    & & $>$            & & ($>$\$\$ x y z)\\
-    $>$=\$\$   & & $>$=           & & ($>$=\$\$ x y z)\\
-    abs\$\$    & & abs            & & (abs\$\$ x)\\
-    bounded-value\$\$ & & \entlink{bounded-value} 
-    & & (bounded-value\$\$ x y z)\\
-    ceiling\$\$ & & ceiling       & & (ceiling\$\$ x divisor)\\
-    decf\$\$   & & decf           & & (decf\$\$ x delta)\\
-%   decf-\$\$after & & decf-after & & (decf\$\$-after x delta)\\
-    decf/delete\$\$-acons & & \entlink{decf/delete-acons}
-    & & (decf/delete\$\$-acons\\
-    & & & & ~~~ 'x delta alist)\\
-    evenp\$\$  & & evenp          & & (evenp\$\$ x)\\
-    fceiling\$\$ & & fceiling     & & (fceiling\$\$ x divisor)\\
-    floor\$\$  & & floor          & & (floor\$\$ x divisor)\\
-    ffloor\$\$ & & ffloor         & & (ffloor\$\$ x divisor)\\
-    fround\$\$ & & fround         & & (fround\$\$ x divisor)\\
-    ftruncate\$\$ & & ftruncate   & & (ftruncate\$\$ x divisor)\\
-    incf\$\$   & & incf           & & (incf\$\$ x delta)\\
-%   incf\$\$-after & & incf-after & & (incf\$\$-after x delta)\\
-    max\$\$    & & max            & & (max\$\$ x y z)\\
-    min\$\$    & & min            & & (min\$\$ x y z)\\
-    minusp\$\$ & & minusp         & & (minusp\$\$ x)\\
-    mod\$\$    & & mod            & & (mod\$\$ x divisor)\\
-    oddp\$\$   & & oddp           & & (oddp\$\$ x)\\
-    plusp\$\$  & & plusp          & & (plusp\$\$ x)\\
-    pushnew/incf\$\$-acons & & \entlink{pushnew/incf-acons}
-    & & (pushnew/incf\$\$-acons\\
-    & & & & ~~~ 'x delta alist)\\
-    round\$\$  & & round          & & (round\$\$ x divisor)\\
-    truncate\$\$ & & truncate     & & (truncate\$\$ x divisor)\\
-    zerop\$\$  & & zerop          & & (zerop\$\$ x)\\ \hline
-  \end{tabular}}
-  
+  & \code{\$\$}      & & \code{the double-float} & & \code{(\$\$ x)}\\
+  & \code{+\$\$}     & & \code{+}       & & \code{(+\$\$ x y z)}\\
+  & \code{-\$\$}     & & \code{-}       & & \code{(-\$\$ x y z)}\\
+  & \code{1+\$\$}    & & \code{1+}      & & \code{(1+\$\$ x)}\\
+  & \code{1-\$\$}    & & \code{1-}      & & \code{(1-\$\$ x)}\\
+  & \code{*\$\$}     & & \code{*}       & & \code{(*\$\$ x y z)}\\
+  & \code{/\$\$}     & & \code{/}       & & \code{(/\$\$ x y z)}\\
+  & \code{=\$\$}     & & \code{=}       & & \code{(=\$\$ x y z)}\\
+  & \code{/=\$\$}    & & \code{/=}      & & \code{(/=\$\$ x y z)}\\
+  & \code{<\$\$}     & & \code{<}       & & \code{(<\$\$ x y z)}\\
+  & \code{<=\$\$}    & & \code{<=}      & & \code{(<=\$\$ x y z)}\\
+  & \code{>\$\$}     & & \code{>}       & & \code{(>\$\$ x y z)}\\
+  & \code{>=\$\$}    & & \code{>=}      & & \code{(>=\$\$ x y z)}\\
+  & \code{abs\$\$}   & & \code{abs}     & & \code{(abs\$\$ x)}\\
+  & \code{bounded-value\$\$} & & \code{\entlink{bounded-value}}
+    & & \code{(bounded-value\$\$ x y z)}\\
+  & \code{ceiling\$\$} & & \code{ceiling} & & \code{(ceiling\$\$ x divisor)}\\
+  & \code{decf\$\$}  & & \code{decf}      & & \code{(decf\$\$ x delta)}\\
+  & \code{decf-\$\$after} & & \code{decf-after} & & \code{(decf\$\$-after x delta)}\\
+  & \code{decf/delete\$\$-acons} & & \code{\entlink{decf/delete-acons}}
+    & & \code{(decf/delete\$\$-acons}\\
+    & & & & & ~~~ \code{x delta alist)}\\
+  & \code{evenp\$\$} & & \code{evenp}   & & \code{(evenp\$\$ x)}\\
+  & \code{fceiling\$\$} & & \code{fceiling} & & \code{(fceiling\$\$ x divisor)}\\
+  & \code{floor\$\$} & & \code{floor}   & & \code{(floor\$\$ x divisor)}\\
+  & \code{ffloor\$\$} & & \code{ffloor} & & \code{(ffloor\$\$ x divisor)}\\
+  & \code{fround\$\$} & & \code{fround} & & \code{(fround\$\$ x divisor)}\\
+  & \code{ftruncate\$\$} & & \code{ftruncate} & & \code{(ftruncate\$\$ x divisor)}\\
+  & \code{incf\$\$}  & & \code{incf}    & & \code{(incf\$\$ x delta)}\\
+  & \code{incf\$\$-after} & & \code{incf-after} & & \code{(incf\$\$-after x delta)}\\
+  & \code{max\$\$}   & & \code{max}     & & \code{(max\$\$ x y z)}\\
+  & \code{min\$\$}   & & \code{min}     & & \code{(min\$\$ x y z)}\\
+  & \code{minusp\$\$} & & \code{minusp} & & \code{(minusp\$\$ x)}\\
+  & \code{mod\$\$}   & & \code{mod}     & & \code{(mod\$\$ x divisor)}\\
+  & \code{oddp\$\$}  & & \code{oddp}    & & \code{(oddp\$\$ x)}\\
+  & \code{plusp\$\$} & & \code{plusp}   & & \code{(plusp\$\$ x)}\\
+  & \code{pushnew/incf\$\$-acons} & & \code{\entlink{pushnew/incf-acons}}
+    & & \code{(pushnew/incf\$\$-acons}\\
+    & & & & & ~~~ \code{'x delta alist)}\\
+  & \code{round\$\$} & & \code{round}   & & \code{(round\$\$ x divisor)}\\
+  & \code{truncate\$\$} & & \code{truncate} & & \code{(truncate\$\$ x divisor)}\\
+  & \code{zerop\$\$} & & \code{zerop}   & & \code{(zerop\$\$ x)} \\[2pt] \hline
+\end{tabular}
 \T\medskip
 
 \bfindex{coerce\$\$}%
 The one-argument \glref{function} \textbf{coerce\$\$} provides convenient 
-double-float coercion:
+\code{double-float} coercion:
 %
 \W\supp
 \begin{example}
@@ -6997,7 +7120,7 @@ double-float coercion:
 \bfindexit{bounded-value\$\$\$}% 
 \bfindex{ceiling\$\$\$}%
 \bfindex{decf\$\$\$}%
-%\bfindex{decf\$\$\$-after}%
+\bfindex{decf\$\$\$-after}%
 \bfindexit{decf/delete\$\$\$-acons}%
 \bfindex{evenp\$\$\$}% 
 \bfindex{fceiling\$\$\$}%
@@ -7006,7 +7129,7 @@ double-float coercion:
 \bfindex{fround\$\$\$}%
 \bfindex{ftruncate\$\$\$}%
 \bfindex{incf\$\$\$}% 
-%\bfindex{incf\$\$\$-after}%
+\bfindex{incf\$\$\$-after}%
 \bfindexit{pushnew/incf\$\$\$-acons}%
 \bfindex{max\$\$\$}%
 \bfindex{min\$\$\$}%
@@ -7021,65 +7144,497 @@ double-float coercion:
 %
 These \code{long-float} declared-numeric operators are defined in the
 \code{:gbbopen-tools} \glref{module}:
-
-\code{%
-  \begin{tabular}{l@{}l@{}l@{}l@{}l}
-    \textbf{Operator} & ~~~ & \textbf{Operation}  & ~~~ & 
+%
+\T\\[6pt]
+\W\supp\tabletop
+\begin{tabular}{@{}l@{}l@{}l@{}l@{}l@{}l@{}}
+  ~~~~~  & \textbf{Operator} & ~~~~~ & \textbf{Operation}  & ~~~~~ & 
     \textbf{Example} \\ \hline
-    \$\$\$       & & the long-float & & (\$\$\$ x)\\
-    +\$\$\$      & & +              & & (+\$\$\$ x y z)\\
-    -\$\$\$      & & -              & & (-\$\$\$ x y z)\\
-    1+\$\$\$     & & 1+             & & (1+\$\$\$ x)\\
-    1-\$\$\$     & & 1-             & & (1-\$\$\$ x)\\
-    $*$\$\$\$    & & $*$            & & (*\$\$\$ x y z)\\
-    /\$\$\$      & & /              & & (/\$\$\$ x y z)\\
-    =\$\$\$      & & =              & & (=\$\$\$ x y z)\\
-    /=\$\$\$     & & /=             & & (/=\$\$\$ x y z)\\
-    $<$\$\$\$    & & $<$            & & ($<$\$\$\$ x y z)\\
-    $<$=\$\$\$   & & $<$=           & & ($<$=\$\$\$ x y z)\\
-    $>$\$\$\$    & & $>$            & & ($>$\$\$\$ x y z)\\
-    $>$=\$\$\$   & & $>$=           & & ($>$=\$\$\$ x y z)\\
-    abs\$\$\$    & & abs            & & (abs\$\$\$ x)\\
-    bounded-value\$\$\$ & & \entlink{bounded-value} 
-    & & (bounded-value\$\$\$ x y z)\\
-    ceiling\$\$\$ & & ceiling       & & (ceiling\$\$\$ x divisor)\\
-    decf\$\$\$   & & decf           & & (decf\$\$\$ x delta)\\
-%   decf-\$\$\$after & & decf-after & & (decf\$\$\$-after x delta)\\
-    decf/delete\$\$\$-acons & & \entlink{decf/delete-acons}
-    & & (decf/delete\$\$\$-acons\\
-    & & & & ~~~ 'x delta alist)\\
-    evenp\$\$\$  & & evenp          & & (evenp\$\$\$ x)\\
-    fceiling\$\$\$ & & fceiling     & & (fceiling\$\$\$ x divisor)\\
-    floor\$\$\$  & & floor          & & (floor\$\$\$ x divisor)\\
-    ffloor\$\$\$ & & ffloor         & & (ffloor\$\$\$ x divisor)\\
-    fround\$\$\$ & & fround         & & (fround\$\$\$ x divisor)\\
-    ftruncate\$\$\$ & & ftruncate   & & (ftruncate\$\$\$ x divisor)\\
-    incf\$\$\$   & & incf           & & (incf\$\$\$ x delta)\\
-%   incf\$\$\$-after & & incf-after & & (incf\$\$\$-after x delta)\\
-    max\$\$\$    & & max            & & (max\$\$\$ x y z)\\
-    min\$\$\$    & & min            & & (min\$\$\$ x y z)\\
-    minusp\$\$\$ & & minusp         & & (minusp\$\$\$ x)\\
-    mod\$\$\$    & & mod            & & (mod\$\$\$ x divisor)\\
-    oddp\$\$\$   & & oddp           & & (oddp\$\$\$ x)\\
-    plusp\$\$\$  & & plusp          & & (plusp\$\$\$ x)\\
-    pushnew/incf\$\$\$-acons & & \entlink{pushnew/incf-acons}
-    & & (pushnew/incf\$\$\$-acons\\
-    & & & & ~~~ 'x delta alist)\\
-    round\$\$\$  & & round          & & (round\$\$\$ x divisor)\\
-    truncate\$\$\$ & & truncate     & & (truncate\$\$\$ x divisor)\\
-    zerop\$\$\$  & & zerop          & & (zerop\$\$\$ x)\\ \hline
-  \end{tabular}}
-
+  & \code{\$\$\$}      & & \code{the long-float} & & \code{(\$\$\$ x)}\\
+  & \code{+\$\$\$}     & & \code{+}       & & \code{(+\$\$\$ x y z)}\\
+  & \code{-\$\$\$}     & & \code{-}       & & \code{(-\$\$\$ x y z)}\\
+  & \code{1+\$\$\$}    & & \code{1+}      & & \code{(1+\$\$\$ x)}\\
+  & \code{1-\$\$\$}    & & \code{1-}      & & \code{(1-\$\$\$ x)}\\
+  & \code{*\$\$\$}     & & \code{*}       & & \code{(*\$\$\$ x y z)}\\
+  & \code{/\$\$\$}     & & \code{/}       & & \code{(/\$\$\$ x y z)}\\
+  & \code{=\$\$\$}     & & \code{=}       & & \code{(=\$\$\$ x y z)}\\
+  & \code{/=\$\$\$}    & & \code{/=}      & & \code{(/=\$\$\$ x y z)}\\
+  & \code{<\$\$\$}     & & \code{<}       & & \code{(<\$\$\$ x y z)}\\
+  & \code{<=\$\$\$}    & & \code{<=}      & & \code{(<=\$\$\$ x y z)}\\
+  & \code{>\$\$\$}     & & \code{>}       & & \code{(>\$\$\$ x y z)}\\
+  & \code{>=\$\$\$}    & & \code{>=}      & & \code{(>=\$\$\$ x y z)}\\
+  & \code{abs\$\$\$}   & & \code{abs}     & & \code{(abs\$\$\$ x)}\\
+  & \code{bounded-value\$\$\$} & & \code{\entlink{bounded-value}}
+    & & \code{(bounded-value\$\$\$ x y z)}\\
+  & \code{ceiling\$\$\$} & & \code{ceiling} & & \code{(ceiling\$\$\$ x divisor)}\\
+  & \code{decf\$\$\$}  & & \code{decf}      & & \code{(decf\$\$\$ x delta)}\\
+  & \code{decf-\$\$\$after} & & \code{decf-after} & & \code{(decf\$\$\$-after x delta)}\\
+  & \code{decf/delete\$\$\$-acons} & & \code{\entlink{decf/delete-acons}}
+    & & \code{(decf/delete\$\$\$-acons}\\
+    & & & & & ~~~ \code{x delta alist)}\\
+  & \code{evenp\$\$\$} & & \code{evenp}   & & \code{(evenp\$\$\$ x)}\\
+  & \code{fceiling\$\$\$} & & \code{fceiling} & & \code{(fceiling\$\$\$ x divisor)}\\
+  & \code{floor\$\$\$} & & \code{floor}   & & \code{(floor\$\$\$ x divisor)}\\
+  & \code{ffloor\$\$\$} & & \code{ffloor} & & \code{(ffloor\$\$\$ x divisor)}\\
+  & \code{fround\$\$\$} & & \code{fround} & & \code{(fround\$\$\$ x divisor)}\\
+  & \code{ftruncate\$\$\$} & & \code{ftruncate} & & \code{(ftruncate\$\$\$ x divisor)}\\
+  & \code{incf\$\$\$}  & & \code{incf}    & & \code{(incf\$\$\$ x delta)}\\
+  & \code{incf\$\$\$-after} & & \code{incf-after} & & \code{(incf\$\$\$-after x delta)}\\
+  & \code{max\$\$\$}   & & \code{max}     & & \code{(max\$\$\$ x y z)}\\
+  & \code{min\$\$\$}   & & \code{min}     & & \code{(min\$\$\$ x y z)}\\
+  & \code{minusp\$\$\$} & & \code{minusp} & & \code{(minusp\$\$\$ x)}\\
+  & \code{mod\$\$\$}   & & \code{mod}     & & \code{(mod\$\$\$ x divisor)}\\
+  & \code{oddp\$\$\$}  & & \code{oddp}    & & \code{(oddp\$\$\$ x)}\\
+  & \code{plusp\$\$\$} & & \code{plusp}   & & \code{(plusp\$\$\$ x)}\\
+  & \code{pushnew/incf\$\$\$-acons} & & \code{\entlink{pushnew/incf-acons}}
+    & & \code{(pushnew/incf\$\$\$-acons}\\
+    & & & & & ~~~ \code{'x delta alist)}\\
+  & \code{round\$\$\$} & & \code{round}   & & \code{(round\$\$\$ x divisor)}\\
+  & \code{truncate\$\$\$} & & \code{truncate} & & \code{(truncate\$\$\$ x divisor)}\\
+  & \code{zerop\$\$\$} & & \code{zerop}   & & \code{(zerop\$\$\$ x)} \\[2pt] \hline
+\end{tabular}
 \T\medskip
 
 \bfindex{coerce\$\$\$}%
 The one-argument \glref{function} \textbf{coerce\$\$\$} provides convenient 
-long-float coercion:
+\code{long-float} coercion:
 %
 \W\supp
 \begin{example}
-  (setf x (coerce\$ x))
+  (setf x (coerce\$\$\$ x))
 \end{example}
+
+%% ------------------------------------------------------------------------
+
+\T\markright{}%
+\T\pagestyle{plain}
+\T\clearpage
+\W\xname{ref-pseudo-probability-entities}
+\T\pagestyle{fancy}
+\T\thispagestyle{fancybottom}
+\T\global\def\fnlastname{ }%
+
+\subsection{Pseudo Probabilities}
+\label{sec:pprob}%
+
+\index{pseudo-probability entities}%
+The \code{:gbbopen-tools} module provides a discretized \code{\glref{fixnum}}
+representation for probability values in which probability values in the range
+[0.0..1.0] are represented as the nearest integers in the range [0..1000].
+
+The following \code{\glref{pseudo-probability}} operators are provided:
+%
+\bfindex{\%}%
+\bfindex{/\%}%
+\bfindex{$*$\%}%
+\bfindex{+\%}%
+\bfindex{-\%}%
+\bfindex{/=\%}%
+\bfindex{1+\%}%
+\bfindex{1-\%}%
+\bfindex{$<$\%}%
+\bfindex{$<$=\%}%
+\bfindex{=\%}% 
+\bfindex{$>$\%}%
+\bfindex{$>$=\%}%
+\bfindexit{bounded-value\%}% 
+\bfindex{ceiling\%}%
+\bfindex{decf\%}%
+\bfindex{decf\%-after}%
+\bfindexit{decf/delete\%-acons}%
+\bfindex{evenp\%}% 
+\bfindex{fceiling\%}%
+\bfindex{ffloor\%}%
+\bfindex{floor\%}%
+\bfindex{fround\%}%
+\bfindex{ftruncate\%}%
+\bfindex{incf\%}% 
+\bfindex{incf\%-after}%
+\bfindexit{pushnew/incf\%-acons}% 
+\bfindex{max\%}%
+\bfindex{min\%}% 
+\bfindex{minusp\%}%
+\bfindex{abs\%}% 
+\bfindex{mod\%}% 
+\bfindex{oddp\%}% 
+\bfindex{plusp\%}% 
+\bfindex{round\%}%
+\bfindex{truncate\%}%
+\bfindex{zerop\%}%
+%
+\T\\[6pt]
+\W\supp\tabletop
+\begin{tabular}{@{}l@{}l@{}l@{}l@{}l@{}l@{}}
+  ~~~~~  & \textbf{Operator} & ~~~~~ & \textbf{Operation}  & ~~~~~ & 
+    \textbf{Example} \\ \hline
+  & \code{\%}      & & \code{the pseudo-probability} & & \code{(\% x)}\\
+  & \code{+\%}     & & \code{+\&}     & & \code{(+\% x y z)}\\
+  & \code{-\%}     & & \code{-\&}     & & \code{(-\% x y z)}\\
+  & \code{1+\%}    & & \code{1+\&}    & & \code{(1+\% x)}\\
+  & \code{1-\%}    & & \code{1-\&}    & & \code{(1-\% x)}\\
+  & \code{\entlink{*\%}} & & normalizing \code{*\&} & & \code{(*\% x y z)}\\
+  & \code{\entlink{/\%}} & & normalizing \code{/\&} & & \code{(/\% x y z)}\\
+  & \code{=\%}     & & \code{=\&}     & & \code{(=\% x y z)}\\
+  & \code{/=\%}    & & \code{/=\&}    & & \code{(/=\% x y z)}\\
+  & \code{<\%}     & & \code{<\&}     & & \code{(<\% x y z)}\\
+  & \code{<=\%}    & & \code{<=\&}    & & \code{(<=\% x y z)}\\
+  & \code{>\%}     & & \code{>\&}     & & \code{(>\% x y z)}\\
+  & \code{>=\%}    & & \code{>=\&}    & & \code{(>=\% x y z)}\\
+  & \code{abs\%}   & & \code{abs\&}   & & \code{(abs\% x)}\\
+  & \code{bounded-value\%} & & \code{bounded-value\&}
+    & & \code{(bounded-value\% x y z)}\\
+  & \code{ceiling\%} & & normalizing \code{ceiling\&}
+    & & \code{(ceiling\% x divisor)}\\
+  & \code{decf\%}  & & \code{decf\&}  & & \code{(decf\% x delta)}\\
+  & \code{decf-\%after} & & \code{decf-after\&} 
+    & & \code{(decf\%-after x delta)}\\
+  & \code{decf/delete\%-acons} & & \code{decf/delete-acons\&}
+    & & \code{(decf/delete\%-acons}\\
+    & & & & & ~~~ \code{x delta alist)}\\
+  & \code{evenp\%} & & \code{evenp\&} & & \code{(evenp\% x)}\\
+  & \code{fceiling\%} & & normalizing \code{fceiling\&}
+    & & \code{(fceiling\% x divisor)}\\
+  & \code{floor\%} & & normalizing \code{floor\&} 
+    & & \code{(floor\% x divisor)}\\
+  & \code{ffloor\%} & & normalizing \code{ffloor\&} 
+    & & \code{(ffloor\% x divisor)}\\
+  & \code{fround\%} & & normalizing \code{fround\&}
+    & & \code{(fround\% x divisor)}\\
+  & \code{ftruncate\%} & & normalizing \code{ftruncate\&}
+     & & \code{(ftruncate\% x divisor)}\\
+  & \code{incf\%}  & & \code{incf\&}  & & \code{(incf\% x delta)}\\
+  & \code{incf\%-after} & & \code{incf-after\&} 
+    & & \code{(incf\%-after x delta)}\\
+  & \code{max\%}   & & \code{max\&}   & & \code{(max\% x y z)}\\
+  & \code{min\%}   & & \code{min\&}   & & \code{(min\% x y z)}\\
+  & \code{minusp\%} & & \code{minusp\&} & & \code{(minusp\% x)}\\
+  & \code{mod\%}   & & \code{mod\&}   & & \code{(mod\% x divisor)}\\
+  & \code{oddp\%}  & & \code{oddp\&}  & & \code{(oddp\% x)}\\
+  & \code{plusp\%} & & \code{plusp\&} & & \code{(plusp\% x)}\\
+  & \code{pushnew/incf\%-acons} & & \code{pushnew/incf-acons\&}
+    & & \code{(pushnew/incf\%-acons}\\
+    & & & & & ~~~ \code{'x delta alist)}\\
+  & \code{round\%} & & normalizing \code{round\&} 
+    & & \code{(round\% x divisor)}\\
+  & \code{truncate\%} & & normalizing \code{truncate\&}
+    & & \code{(truncate\% x divisor)}\\
+  & \code{zerop\%} & & \code{zerop\&} & & \code{(zerop\% x)} \\[2pt] \hline
+\end{tabular}
+\T\medskip
+
+\W\entities
+\T\clearpage
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}[multiply-pprob]{Function}{*\%}%
+  {\var{pseudo-probability\/}\superstar{}
+    \returns{} \var{pseudo-probability-product\/}}
+\index{pseudo-probability!multiplication}%
+
+\fnsyntax
+
+\fnpurpose Returns the product of \var{numbers}, performing
+\glref{pseudo-probability}-normalization in the process.
+
+\fnpackage \code{:gbbopen-tools}
+
+\fnmodule \code{:gbbopen-tools}
+
+\fnargs
+\begin{args}{pseudo-probability-ln}
+\arg[pseudo-probability] A \code{\glref{fixnum}} \glref{pseudo-probability}
+\arg[pseudo-probability-product] A \code{\glref{fixnum}} \glref{pseudo-probability}
+\end{args}
+
+\fnreturns The \code{\glref{fixnum}} \glref{pseudo-probability} product of
+\var{numbers} or 1000 if no \var{numbers\/} are supplied.
+
+\begin{alsos}{pprob2prob}
+\also[/\%]
+\also[pprob2prob]
+\also[prob2pprob]
+\end{alsos}
+
+\fnexamples
+\begin{example}
+%
+\W\supp
+  > (* 0.6 0.7)
+  0.42000002
+  > (*/% 600 700)
+  420
+  > (* 0.6 0.7 0.8)
+  0.33600003
+  > (*/% 600 700 800)
+  336
+  > (*/%)
+  1000
+  > 
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}[divide-pprob]{Function}{/\%}%
+  {\var{pseudo-probability-numerator 
+      pseudo-probability-denominator\/}\superstar{}
+    \returns{} \var{quotient\/}}
+\index{pseudo-probability!division}%
+
+\fnsyntax
+\fnalternate{\textbf{/\%}}%
+  {\var{pseudo-probability-numerator\/}
+    \returns{} \var{reciprocal\/}}
+
+\fnpurpose Returns the quotient of dividing
+\var{pseudo-probability-numerator\/} by all of the
+\var{pseudo-probability-denominators}, performing
+\glref{pseudo-probability}-normalization in the process.
+
+\fnpackage \code{:gbbopen-tools}
+
+\fnmodule \code{:gbbopen-tools}
+
+\fnargs
+\begin{args}{pseudo-probability-ln}
+\arg[pseudo-probability-numerator] A \code{\glref{fixnum}} \glref{pseudo-probability}
+\arg[pseudo-probability-denominator] A \code{\glref{fixnum}} \glref{pseudo-probability}
+\arg[quotient] A \glref{pseudo-probability}-normalized \code{\glref{fixnum}} 
+\arg[reciprocal] A \glref{pseudo-probability}-normalized \code{\glref{fixnum}}
+\end{args}
+
+\fnreturns The \glref{pseudo-probability}-normalized \code{\glref{fixnum}}
+quotient (if one or more \var{pseudo-probability-denominators\/} is specified;
+otherwise the \glref{pseudo-probability}-normalized \code{\glref{fixnum}}
+reciprocal of \var{pseudo-probability-numerator}.
+
+\fndescription
+%
+\glref{pseudo-probability}-normalization is performed by \textbf{/\%}, but the
+\code{\glref{fixnum}} result may not be a \glref{pseudo-probability}.  It is
+an error to specify more than one \var{pseudo-probability-denominator\/} value
+that leads to an intermediate result that is larger than a
+\code{\glref{fixnum}}.
+
+\begin{alsos}{pprob2prob}
+\also[*\%]
+\also[pprob2prob]
+\also[prob2pprob]
+\end{alsos}
+
+\fnexamples
+\begin{example}
+%
+\W\supp
+  > (/ 0.6 0.8)
+  0.75
+  > (/% 600 800)
+  750
+  > (/ 0.6 0.8 0.9)
+  0.8333334
+  > (/% 600 800 900)
+  833
+  > (/ 0.8 0.5)
+  1.6          ; not a probability
+  > (/% 800 500)
+  1600         ; not a \glref{pseudo-probability}
+  > (/ 5.0)    ; not a probability
+  0.2
+  > (/% 5000)
+  200
+  > (/ 0.5)
+  2.0
+  > (/% 500)
+  2000         ; not a \glref{pseudo-probability}
+  > 
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}[ln-pprob]{Function}{ln\%}%
+  {\var{pseudo-probability\/}\superstar{}
+    \returns{} \var{pseudo-probability-ln\/}}
+\index{pseudo-probability!ln (natural log)}%
+
+\fnsyntax
+
+\fnpurpose Return the ``pseudo natural logarithm''
+(\glref{pseudo-probability-ln}) of a \glref{pseudo-probability} value.
+
+\fnpackage \code{:gbbopen-tools}
+
+\fnmodule \code{:gbbopen-tools}
+
+\fnargs
+\begin{args}{pseudo-probability-ln}
+\arg[pseudo-probability] A \code{\glref{fixnum}} \glref{pseudo-probability}
+\arg[pseudo-probability-ln] A \code{\glref{fixnum}} 
+  \glref{pseudo-probability-ln}
+\end{args}
+
+\fnreturns The \code{\glref{fixnum}} \glref{pseudo-probability-ln} of
+\var{pseudo-probability}.
+
+\begin{alsos}{pprob2prob}
+\also[exp\%]
+\also[pprob2prob]
+\also[prob2pprob]
+\end{alsos}
+
+\fnexamples
+\begin{example}
+%
+\W\supp
+  > (log 1.0)
+  0.0
+  > (ln\% 1000)
+  0
+  > (log 0.001)
+  -6.9077554
+  > (ln\% 1)
+  -6907756
+  >
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}[exp-pprob]{Function}{exp\%}%
+  {\var{pseudo-probability-ln\/}
+    \returns{} \var{pseudo-probability\/}}
+%\index{pseudo-probability!ln (natural log)}%
+
+\fnsyntax
+
+\fnpurpose Return the ``pseudo natural logarithm''
+(\glref{pseudo-probability-ln}) of a \glref{pseudo-probability} value.
+
+\fnpackage \code{:gbbopen-tools}
+
+\fnmodule \code{:gbbopen-tools}
+
+\fnargs
+\begin{args}{pseudo-probability-ln}
+\arg[pseudo-probability] A \code{\glref{fixnum}} \glref{pseudo-probability}
+\arg[pseudo-probability-ln] A \code{\glref{fixnum}} 
+  \glref{pseudo-probability-ln}
+\end{args}
+
+\fnreturns The \code{\glref{fixnum}} \glref{pseudo-probability-ln} of
+\var{pseudo-probability}.
+
+\begin{alsos}{prob2pprob}
+\also[ln\%]
+\also[pprob2prob]
+\also[prob2pprob]
+\end{alsos}
+
+\fnexamples
+\begin{example}
+%
+\W\supp
+  > (exp 0.0)
+  1.0
+  > (exp\% 0)
+  1000
+  > (exp -6.907756)
+  9.999995e-4
+  > (exp\% -6907756)
+  1
+  >
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{pprob2prob}%
+  {\var{pseudo-probability\/} \returns{} \var{probability\/}}
+\index{pseudo-probability!converting to a probability}%
+\index{probability!converting from a pseudo-probability}%
+
+\fnsyntax
+
+\fnpurpose Returns the value of \var{pseudo-probability\/} as a probability.
+
+\fnpackage \code{:gbbopen-tools}
+
+\fnmodule \code{:gbbopen-tools}
+
+\fnargs
+\begin{args}{pseudo-probability}
+\arg[pseudo-probability] A \code{\glref{fixnum}} \glref{pseudo-probability}
+\arg[probability] A [0.0..1.0] probability
+\end{args}
+
+\fnreturns The converted \var{probability\/}.
+
+\begin{alsos}{prob2pprob}
+\also[prob2pprob]
+\end{alsos}
+
+\fnexamples
+\begin{example}
+%
+\W\supp
+  > (pprob2prob 0)
+  0.0
+  > (pprob2prob 1000)
+  1.0
+  > (pprob2prob 800)
+  0.8
+  > 
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{prob2pprob}%
+  {\var{probability\/} \returns{} \var{pseudo-probability\/}}
+\index{pseudo-probability!converting from a probability}%
+\index{probability!converting to a pseudo-probability}%
+
+\fnsyntax
+
+\fnpurpose Returns the value of \var{probability\/} as a
+\glref{pseudo-probability}.
+
+\fnpackage \code{:gbbopen-tools}
+
+\fnmodule \code{:gbbopen-tools}
+
+\fnargs
+\begin{args}{pseudo-probability}
+\arg[probability] A [0.0..1.0] probability
+\arg[pseudo-probability] A \code{\glref{fixnum}} \glref{pseudo-probability}
+\end{args}
+
+\fnreturns The converted \var{pseudo-probability\/}.
+
+\begin{alsos}{pprob2prob}
+\also[pprob2prob]
+\end{alsos}
+
+\fnexamples
+\begin{example}
+%
+\W\supp
+  > (prob2pprob 0.0)
+  0
+  > (prob2pprob 1.0)
+  1000
+  > (prob2pprob 0.8)
+  800
+  > 
+\end{example}
+
+\end{functiondoc}
 
 %% ------------------------------------------------------------------------
 
@@ -7791,7 +8346,7 @@ value is changed.
 
 \fnsyntax
 
-\fnpurpose Check if the current time can be represented as a \glref{fixnum}
+\fnpurpose Check if the current time can be represented as a \code{\glref{fixnum}}
 given the current Offset Universal Time time-base value.
 
 \fnpackage \code{:gbbopen-tools}
@@ -7804,7 +8359,7 @@ given the current Offset Universal Time time-base value.
 \arg[boolean] A \glref{generalized~boolean}
 \end{args}
 
-\fnreturns True if the current time can be represented as a \glref{fixnum}
+\fnreturns True if the current time can be represented as a \code{\glref{fixnum}}
 Offset Universal Time value; nil otherwise.
 
 \fnerrors The Offset Universal Time time-base value has not been set.
@@ -8075,7 +8630,7 @@ position indicated by \var{priority\/}.
 \begin{args}{priority}
 \arg[function] A \glref{function~designator} specifying a 
  \glref{function~object} of no arguments
-\arg[priority] A \glref{fixnum} (default is \code{0})
+\arg[priority] A \code{\glref{fixnum}} (default is \code{0})
 \end{args}
 
 \fndescription
@@ -10111,8 +10666,8 @@ Create, then delete, then check, a \code{hyp} \glref{unit~instance}:
 \arg[dimension-value-type] One of: \code{:point}, \code{:interval}, 
   \code{:mixed}, \code{:element}, or \code{:boolean}
 \arg[comparison-type] One of: \code{number}, \code{fixnum},
-  \code{short-float}, \code{single-float}, \code{double-float}, or
-  \code{long-float}
+  \code{short-float}, \code{single-float}, \code{double-float},
+  \code{long-float}, or \code{pseudo-probability}
 \arg[composite-type] One of \code{:set},
   \textcolor{darkergray}{\code{:sequence}},
   \textcolor{darkergray}{(\code{:ascending-series} 
@@ -11763,26 +12318,26 @@ metaclass value is the metaclass of the event superclasses of
 superclasses have multiple metaclasses, the metaclass of
 \var{event-class-name} must be provided. The following table lists the
 compatible event-superclass metaclasses for each \glref{event~metaclass}:
-
-\begin{center}
-\begin{tabular}{@{}l@{}l@{}c@{}l@{}c@{}l@{}c@{}l@{}c@{}l@{}c@{}}
-& & \multicolumn{9}{c}{\textbf{Compatible Event-Superclass Metaclasses}}\\[4pt]
-\multicolumn{1}{c}{\textbf{Event}}&~~~~~~&\code{non-}&~~&&~~&\code{space-}&~~& 
-  \code{nonlink-}&~~&\code{link-}\\
-\multicolumn{1}{c}{\textbf{Metaclass}}&&\code{instance}&&\code{instance}&&
+%
+\T\\[6pt]
+\W\supp\tabletop
+\begin{tabular}{@{}l@{}l@{}l@{}c@{}l@{}c@{}l@{}c@{}l@{}c@{}l@{}c@{}}
+ ~~~~~ & & & \multicolumn{9}{c}{\textbf{Compatible Event-Superclass Metaclasses}}\\[4pt]
+ & \multicolumn{1}{c}{\textbf{Event}}&~~~~~~&\code{non-}&~~~~&&~~~~&\code{space-}&~~~~& 
+  \code{nonlink-}&~~~~&\code{link-}\\
+ & \multicolumn{1}{c}{\textbf{Metaclass}}&&\code{instance}&&\code{instance}&&
    \code{instance}&&\code{slot}&&\code{slot}\\[4pt]
-\code{non-instance-event-class}
-   &&\textbf{X}&&          &&          &&          &&          \\
-\code{instance-event-class}
-   &&\textbf{X}&&\textbf{X}&&          &&          &&          \\
-\code{space-instance-event-class}
-   &&\textbf{X}&&\textbf{X}&&\textbf{X}&&          &&          \\
-\code{nonlink-slot-event-class}
-   &&\textbf{X}&&\textbf{X}&&          &&\textbf{X}&&          \\
-\code{link-slot-event-class}
-   &&\textbf{X}&&\textbf{X}&&          &&          &&\textbf{X}\\
+ & \code{non-instance-event-class}
+    &&\textbf{X}&&          &&          &&          &&          \\
+ & \code{instance-event-class}
+    &&\textbf{X}&&\textbf{X}&&          &&          &&          \\
+ & \code{space-instance-event-class}
+    &&\textbf{X}&&\textbf{X}&&\textbf{X}&&          &&          \\
+ & \code{nonlink-slot-event-class}
+    &&\textbf{X}&&\textbf{X}&&          &&\textbf{X}&&          \\
+ & \code{link-slot-event-class}
+    &&\textbf{X}&&\textbf{X}&&          &&          &&\textbf{X}\\
 \end{tabular}
-\end{center}
 
 The table in the documentation for \textbf{signal-event}
 lists the \glref{initialization~arguments} that are required when
@@ -12316,24 +12871,20 @@ names an \glref{event~class}
 \index{function!event!required arguments}%
 The following table lists the \glref{initialization~arguments} that
 are required for specific event metaclasses:
-\begin{center}
-  \begin{tabular}{@{}l@{}l@{}}
-  \textbf{Event metaclass} & \textbf{Required initargs} \\ \hline
-  \code{non-instance-event-class} 
-  & None \\
-  \code{instance-event-class} 
-  & \code{:instance} \var{unit-instance\/} \\
-  \code{space-instance-event-class}~~~~~
-  & \code{:instance} \var{unit-instance\/} \\
-  & \code{:space-instance} \var{space-instance\/} \\ 
-  \code{nonlink-slot-event-class}
-  & \code{:instance} \var{unit-instance\/} \\
-  & \code{:slot} \var{effective-nonlink-slot-definition\/} \\
-  \code{link-slot-event-class}
-  & \code{:instance} \var{unit-instance\/} \\
-  & \code{:slot} \var{effective-link-definition\/} \\ \hline
+%
+\T\\[6pt]
+\W\supp\tabletop
+\begin{tabular}{@{}l@{}l@{}l@{}}
+ ~~~~~ &  \textbf{Event metaclass} & \textbf{Required initargs} \\ 
+ & \code{non-instance-event-class} & None \\
+ & \code{instance-event-class} & \code{:instance} \var{unit-instance\/} \\
+ & \code{space-instance-event-class}~~~~~& \code{:instance} \var{unit-instance\/} \\
+ & & \code{:space-instance} \var{space-instance\/} \\ 
+ & \code{nonlink-slot-event-class} & \code{:instance} \var{unit-instance\/} \\
+ & & \code{:slot} \var{effective-nonlink-slot-definition\/} \\
+ & \code{link-slot-event-class} & \code{:instance} \var{unit-instance\/} \\
+ & & \code{:slot} \var{effective-link-definition\/} \\ 
 \end{tabular}
-\end{center}
 
 \begin{alsos}{with-events-disabled}
 \also[define-event-class]
@@ -12856,11 +13407,13 @@ center point of the original \var{interval}.
 \bfindex{expand-point\$}%
 \bfindex{expand-point\$\$}%
 \bfindex{expand-point\$\$\$}%
+\bfindex{expand-point\%}%
 %
-\reflink{Declared numeric}{sec:declared-numerics} versions of
-\textbf{expand-point} are also provided: \textbf{expand-point\&},
-\textbf{expand-point\$\&}, \textbf{expand-point\$},
-\textbf{expand-point\$\$}, and \textbf{expand-point\$\$\$}.
+\reflink{Declared numeric}{sec:declared-numerics} and \reflink{pseudo
+  probability}{sec:pprob} versions of \textbf{expand-point} are also
+provided: \textbf{expand-point\&}, \textbf{expand-point\$\&},
+\textbf{expand-point\$}, \textbf{expand-point\$\$},
+\textbf{expand-point\$\$\$}, and \textbf{expand-point\%}.
 
 \end{functiondoc}
 
@@ -15264,10 +15817,11 @@ one \glref{space~instance} in \var{space-instances}. The \var{pattern\/}
 \code{:all} matches every \glref{unit~instance} on a \glref{space~instance} in
 \var{space-instances}, regardless of dimensional overlap.
 
-\reflink{Declared numeric}{sec:declared-numerics} pattern operators are also
-supported, for example: \code{=\&}, \code{=\$\&}, \code{=\$}, \code{=\$\$},
-and \code{=\$\$\$} and \code{within\&}, \code{within\$\&}, \code{within\$},
-\code{within\$\$}, and \code{within\$\$\$}.
+\reflink{Declared numeric}{sec:declared-numerics} and \reflink{pseudo
+  probability}{sec:pprob} pattern operators are also supported, for example:
+\code{=\&}, \code{=\$\&}, \code{=\$}, \code{=\$\$}, \code{=\$\$\$}, and
+\code{=\%} and \code{within\&}, \code{within\$\&}, \code{within\$},
+\code{within\$\$}, \code{within\$\$\$}, and \code{within\%}.
 
 \begin{alsos}{map-instances-of-class}
 \also[do-instances-of-class]
@@ -15421,10 +15975,11 @@ the specified pattern and predicate filters.
 \var{unit-instances}, it will be checked for selection---and potentially
 included in the result---multiple times.
 
-\reflink{Declared numeric}{sec:declared-numerics} pattern operators are also
-supported, for example: \code{=\&}, \code{=\$\&}, \code{=\$}, \code{=\$\$},
-and \code{=\$\$\$} and \code{within\&}, \code{within\$\&}, \code{within\$},
-\code{within\$\$}, and \code{within\$\$\$}.
+\reflink{Declared numeric}{sec:declared-numerics} and \reflink{pseudo
+  probability}{sec:pprob} pattern operators are also supported, for example:
+\code{=\&}, \code{=\$\&}, \code{=\$}, \code{=\$\$}, \code{=\$\$\$}, and
+\code{=\%} and \code{within\&}, \code{within\$\&}, \code{within\$},
+\code{within\$\$}, \code{within\$\$\$}, and \code{within\%}.
 
 \begin{alsos}{*warn-about-unusual-requests*}
 \also[*warn-about-unusual-requests*]
@@ -15659,10 +16214,11 @@ satisfy the specified \var{pattern\/} and any predicate filters.
 \glref{unit~instance} on a \glref{space~instance} in
 \var{space-instances}, regardless of dimensional overlap.
 
-\reflink{Declared numeric}{sec:declared-numerics} pattern operators are also
-supported, for example: \code{=\&}, \code{=\$\&}, \code{=\$}, \code{=\$\$},
-and \code{=\$\$\$} and \code{within\&}, \code{within\$\&}, \code{within\$},
-\code{within\$\$}, and \code{within\$\$\$}.
+\reflink{Declared numeric}{sec:declared-numerics} and \reflink{pseudo
+  probability}{sec:pprob} pattern operators are also supported, for example:
+\code{=\&}, \code{=\$\&}, \code{=\$}, \code{=\$\$}, \code{=\$\$\$}, and
+\code{=\%} and \code{within\&}, \code{within\$\&}, \code{within\$},
+\code{within\$\$}, \code{within\$\$\$}, and \code{within\%}.
 
 \begin{alsos}{map-sorted-instances-of-class}
 \also[*warn-about-unusual-requests*]
@@ -15990,10 +16546,11 @@ least one \glref{space~instance} in \var{space-instances}. The
 \glref{space~instance} in \var{space-instances}, regardless of
 dimensional overlap.
 
-\reflink{Declared numeric}{sec:declared-numerics} pattern operators are also
-supported, for example: \code{=\&}, \code{=\$\&}, \code{=\$}, \code{=\$\$},
-and \code{=\$\$\$} and \code{within\&}, \code{within\$\&}, \code{within\$},
-\code{within\$\$}, and \code{within\$\$\$}.
+\reflink{Declared numeric}{sec:declared-numerics} and \reflink{pseudo
+  probability}{sec:pprob} pattern operators are also supported, for example:
+\code{=\&}, \code{=\$\&}, \code{=\$}, \code{=\$\$}, \code{=\$\$\$}, and
+\code{=\%} and \code{within\&}, \code{within\$\&}, \code{within\$},
+\code{within\$\$}, \code{within\$\$\$}, and \code{within\%}.
 
 \begin{alsos}{map-instances-of-class}
 \also[do-instances-of-class]
@@ -17506,7 +18063,7 @@ on a GBBopen queue.
 
 \fnargs
 \begin{args}{queue-element}
-\arg[n] A \glref{fixnum}
+\arg[n] A \code{\glref{fixnum}}
 \arg[queue] A GBBopen \glref{queue}
 \arg[queue-element] A GBBopen \glref{queue~element} objec
 \end{args}
