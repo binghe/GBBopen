@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/mini-module/mini-module.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Jul  3 03:08:16 2008 *-*
+;;;; *-* Last-Edit: Sun Jul  6 12:03:26 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -1473,7 +1473,9 @@
                          (mm-module.latest-forces-recompiled-date module)))
               (setf recompile? 't propagate? 't)))
           (unless (member ':noload file-options :test #'eq)
-            (if (or source? (> source-file-date compiled-file-date))
+            (if (or source? 
+                    (member ':source file-options :test #'eq)
+                    (> source-file-date compiled-file-date))
                 (load-it source-path source-file-date)
                 (load-it compiled-path compiled-file-date)))))))
   (setf (mm-module.load-completed? module) 't)
@@ -1481,7 +1483,6 @@
    (mm-module.latest-forces-recompiled-date module))
   ;; return recompile? & propagate? values to use with remaining modules:
   (values recompile? propagate?))
-
 
 ;;; ---------------------------------------------------------------------------
 
