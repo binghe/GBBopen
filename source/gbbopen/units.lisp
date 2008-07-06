@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/units.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Jun 14 15:39:28 2008 *-*
+;;;; *-* Last-Edit: Sat Jul  5 10:30:07 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -67,7 +67,8 @@
     '(:point :interval :mixed :element :boolean))
 
 (defparameter *ordered-comparison-types*
-    '(number fixnum short-float single-float double-float long-float))
+    '(number fixnum short-float single-float double-float long-float
+      pseudo-probability))
 
 (defparameter *enumerated-comparison-types*
     '(eq eql equal equalp))
@@ -200,7 +201,8 @@
 ;;; <boolean-dimension-value-type> :== :boolean
 ;;; <ordered-comparison-type> :== number | fixnum | 
 ;;;                               short-float | single-float |
-;;;                               double-float | long-float
+;;;                               double-float | long-float |
+;;;                               pseudo-probability
 ;;; <enumerated-comparison-type> :== eq | eql | equal | equalp
 ;;; <boolean-comparison-type> :== t
 ;;; <dimension-value-place> :== {<slot-name> [<slot-name>]} |

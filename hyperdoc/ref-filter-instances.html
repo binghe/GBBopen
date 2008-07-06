@@ -22,7 +22,7 @@
     style="font-family: serif; font-style: normal">=&gt;</span> <var>matching-unit-instances</var></td><td valign="baseline" align="right">[<i>Function</i>]
 </td></tr></table></p>
 <p><span class="fndoclabel">Purpose</span> <br />Select matching <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a> from a list of
-<a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a> based on a <a href="ref-glossary.html#id173">retrieval&nbsp;pattern</a>.
+<a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a> based on a <a href="ref-glossary.html#id175">retrieval&nbsp;pattern</a>.
 </p>
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen</code>
 </p>
@@ -30,7 +30,7 @@
 </p>
 <p><span class="fndoclabel">Arguments and values</span><table class="tighttop">
 <tr valign="top"><td valign="baseline"><i>unit-instances</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A list of <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a>
-</td></tr><tr valign="top"><td valign="baseline"><i>pattern</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id173">retrieval&nbsp;pattern</a> (see below)
+</td></tr><tr valign="top"><td valign="baseline"><i>pattern</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id175">retrieval&nbsp;pattern</a> (see below)
 </td></tr><tr valign="top"><td valign="baseline"><i>filter-before</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A single-argument predicate to be applied before
 pattern-matching tests occur
 </td></tr><tr valign="top"><td valign="baseline"><i>filter-after</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A single-argument predicate to be
@@ -97,7 +97,9 @@ the specified pattern and predicate filters.
 <tr>
 <td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <var>ordered-dimension-double-float-pattern-op</var> | </td></tr>
 <tr>
-<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <var>ordered-dimension-long-float-pattern-op</var> </td></tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <var>ordered-dimension-long-float-pattern-op</var> | </td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <var>ordered-dimension-pseudo-probability-pattern-op</var> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
 <table class="tight"><tbody><tr>
@@ -172,27 +174,41 @@ the specified pattern and predicate filters.
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
 <table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
+<var>ordered-dimension-pseudo-probability-pattern-op</var>&nbsp;::=
+<a name="id12"></a></td><td valign="baseline" colspan="1" align="left"> <code><i>&lt;</i>&#37;</code> | <code><i>&lt;</i>=&#37;</code> |
+<code><i>&gt;</i>=&#37;</code> | 
+<code><i>&gt;</i>&#37;</code> | <code>=&#37;</code> |
+<code>/=&#37;</code> | </td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code>within&#37;</code> | <code>covers&#37;</code> | 
+<code>overlaps&#37;</code> | </td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code>starts&#37;</code> | <code>ends&#37;</code> </td></tr>
+<tr>
+<td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
+<table class="tight"><tbody><tr>
+<td valign="baseline" colspan="1" align="left">
 <var>enumerated-dimension-pattern-op</var>&nbsp;::= 
-<a name="id12"></a></td><td valign="baseline" colspan="1" align="left"> <code>is</code> | <var>enumerated-dimension-explicit-test-pattern-op</var> </td></tr>
+<a name="id13"></a></td><td valign="baseline" colspan="1" align="left"> <code>is</code> | <var>enumerated-dimension-explicit-test-pattern-op</var> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
 <table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>enumerated-dimension-explicit-test-pattern-op</var>&nbsp;::= 
-<a name="id13"></a></td><td valign="baseline" colspan="1" align="left"> <code>is-eq</code> | <code>is-eql</code> | <code>is-equal</code> |
+<a name="id14"></a></td><td valign="baseline" colspan="1" align="left"> <code>is-eq</code> | <code>is-eql</code> | <code>is-equal</code> |
 <code>is-equalp</code> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
 <table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>boolean-dimension-binary-pattern-op</var>&nbsp;::= 
-<a name="id14"></a></td><td valign="baseline" colspan="1" align="left"> <code>eqv</code> </td></tr>
+<a name="id15"></a></td><td valign="baseline" colspan="1" align="left"> <code>eqv</code> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
 <table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>boolean-dimension-unary-pattern-op</var>&nbsp;::= 
-<a name="id15"></a></td><td valign="baseline" colspan="1" align="left"> <code>true</code> | <code>false</code> </td></tr>
+<a name="id16"></a></td><td valign="baseline" colspan="1" align="left"> <code>true</code> | <code>false</code> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
 <table class="tight"><tbody><tr>
@@ -204,7 +220,7 @@ the specified pattern and predicate filters.
 <table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>pattern-values</var>&nbsp;::= 
-<a name="id16"></a></td><td valign="baseline" colspan="1" align="left"> <var>pattern-value</var> | </td></tr>
+<a name="id17"></a></td><td valign="baseline" colspan="1" align="left"> <var>pattern-value</var> | </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code>(</code><var>pattern-value</var><sup>+</sup><code>)</code> | </td></tr>
 <tr>
@@ -217,7 +233,7 @@ the specified pattern and predicate filters.
 <table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>pattern-value</var>&nbsp;::= 
-<a name="id17"></a></td><td valign="baseline" colspan="1" align="left"> <var>point</var> | <var>interval</var> |
+<a name="id18"></a></td><td valign="baseline" colspan="1" align="left"> <var>point</var> | <var>interval</var> |
 <var>element</var> | <var>set</var> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
@@ -231,7 +247,7 @@ the specified pattern and predicate filters.
 <p><span class="fndoclabel">Terms</span><table class="tighttop"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <var>point</var>
-<a name="id18"></a></td><td valign="baseline" colspan="1" align="left"> </td><td valign="baseline" colspan="1" align="left"> A number, <code>infinity</code>, or <code>-infinity</code></td></tr>
+<a name="id19"></a></td><td valign="baseline" colspan="1" align="left"> </td><td valign="baseline" colspan="1" align="left"> A number, <code>infinity</code>, or <code>-infinity</code></td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"><var>start</var> </td><td valign="baseline" colspan="1" align="left"> </td><td valign="baseline" colspan="1" align="left"> A number or <code>infinity</code></td></tr>
 <tr>
@@ -241,14 +257,15 @@ the specified pattern and predicate filters.
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
 </p>
-<p><span class="fndoclabel">Description</span> <br />If a <a href="ref-glossary.html#id219">unit&nbsp;instance</a> appears more than once in
+<p><span class="fndoclabel">Description</span> <br />If a <a href="ref-glossary.html#id221">unit&nbsp;instance</a> appears more than once in
 <var>unit-instances</var>, it will be checked for selection&mdash;and potentially
 included in the result&mdash;multiple times.
 </p>
-<p><a href="ref-declared-numerics.html">Declared numeric</a> pattern operators are also
-supported, for example: <code>=&#38;</code>, <code>=&#36;&#38;</code>, <code>=&#36;</code>, <code>=&#36;&#36;</code>,
-and <code>=&#36;&#36;&#36;</code> and <code>within&#38;</code>, <code>within&#36;&#38;</code>, <code>within&#36;</code>,
-<code>within&#36;&#36;</code>, and <code>within&#36;&#36;&#36;</code>.
+<p><a href="ref-declared-numerics.html">Declared numeric</a> and <a href="ref-pseudo-probability-entities.html">pseudo
+probability</a> pattern operators are also supported, for example:
+<code>=&#38;</code>, <code>=&#36;&#38;</code>, <code>=&#36;</code>, <code>=&#36;&#36;</code>, <code>=&#36;&#36;&#36;</code>, and
+<code>=&#37;</code> and <code>within&#38;</code>, <code>within&#36;&#38;</code>, <code>within&#36;</code>,
+<code>within&#36;&#36;</code>, <code>within&#36;&#36;&#36;</code>, and <code>within&#37;</code>.
 </p>
 <p><span class="fndoclabel">See also</span>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-warn-about-unusual-requests-var.html"><b>*warn-about-unusual-requests*</b></a>

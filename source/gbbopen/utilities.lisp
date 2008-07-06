@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/utilities.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Jun 12 20:44:02 2008 *-*
+;;;; *-* Last-Edit: Sat Jul  5 11:14:04 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -43,6 +43,7 @@
             expand-point$
             expand-point$$
             expand-point$$$
+            expand-point%
 	    infinite-interval
 	    interval-start
 	    interval-end
@@ -315,76 +316,44 @@
                  (+ point expand-amount)
                  type-specifier))
 
+(defcm expand-point (point expand-amount &optional (type-specifier ''cons))
+  (with-once-only-bindings (point expand-amount)
+    `(make-interval (- ,point ,expand-amount)
+                    (+ ,point ,expand-amount)
+                    ,type-specifier)))
+
 ;;; ---------------------------------------------------------------------------
 
-(defun expand-point& (point expand-amount &optional (type-specifier 'cons))
-  (make-interval (-& point expand-amount)
-                 (+& point expand-amount)
-                 type-specifier))
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defmacro %def-expand-point (dn-op)
+    (let ((op (intern (concatenate 'simple-string
+                        (symbol-name 'expand-point) (symbol-name dn-op))
+                      ':gbbopen))
+          (+-op (intern (concatenate 'simple-string
+                          "+" (symbol-name dn-op))
+                        ':gbbopen))
+          (--op (intern (concatenate 'simple-string
+                          "-" (symbol-name dn-op))
+                        ':gbbopen)))
+      `(progn
+         (defun ,op (point expand-amount &optional (type-specifier 'cons))
+           (make-interval (,--op point expand-amount)
+                          (,+-op point expand-amount)
+                          type-specifier))
+      
+         (defcm ,op (point expand-amount &optional (type-specifier ''cons))
+           (with-once-only-bindings (point expand-amount)
+             `(make-interval (,',--op ,point ,expand-amount) 
+                             (,',+-op ,point ,expand-amount)
+                             ,type-specifier)))))))
 
-(defcm expand-point& (point expand-amount
-                            &optional (type-specifier ''cons))
-  (with-once-only-bindings (point expand-amount)
-    `(make-interval (-& ,point ,expand-amount) 
-                    (+& ,point ,expand-amount)
-                    ,type-specifier)))
-  
-;;; ---------------------------------------------------------------------------
+(%def-expand-point &)
+(%def-expand-point $&)
+(%def-expand-point $)
+(%def-expand-point $$)
+(%def-expand-point $$$)
+(%def-expand-point %)
 
-(defun expand-point$& (point expand-amount &optional (type-specifier 'cons))
-  (make-interval (-$& point expand-amount)
-                 (+$& point expand-amount)
-                 type-specifier))
-
-(defcm expand-point$& (point expand-amount
-                             &optional (type-specifier ''cons))
-  (with-once-only-bindings (point expand-amount)
-    `(make-interval (-$& ,point ,expand-amount) 
-                    (+$& ,point ,expand-amount)
-                    ,type-specifier)))
-  
-;;; ---------------------------------------------------------------------------
-
-(defun expand-point$ (point expand-amount &optional (type-specifier 'cons))
-  (make-interval (-$ point expand-amount) 
-                 (+$ point expand-amount)
-                 type-specifier))
-
-(defcm expand-point$ (point expand-amount
-                            &optional (type-specifier ''cons))
-  (with-once-only-bindings (point expand-amount)
-    `(make-interval (-$ ,point ,expand-amount)
-                    (+$ ,point ,expand-amount)
-                    ,type-specifier)))
-  
-;;; ---------------------------------------------------------------------------
-
-(defun expand-point$$ (point expand-amount &optional (type-specifier 'cons))
-  (make-interval (-$$ point expand-amount) 
-                 (+$$ point expand-amount)
-                 type-specifier))
-
-(defcm expand-point$$ (point expand-amount 
-                             &optional (type-specifier ''cons))
-  (with-once-only-bindings (point expand-amount)
-    `(make-interval (-$$ ,point ,expand-amount) 
-                    (+$$ ,point ,expand-amount)
-                    ,type-specifier)))
-  
-;;; ---------------------------------------------------------------------------
-
-(defun expand-point$$$ (point expand-amount &optional (type-specifier 'cons))
-  (make-interval (-$$$ point expand-amount) 
-                 (+$$$ point expand-amount)
-                 type-specifier))
-
-(defcm expand-point$$$ (point expand-amount 
-                              &optional (type-specifier ''cons))
-  (with-once-only-bindings (point expand-amount)
-    `(make-interval (-$$$ ,point ,expand-amount) 
-                    (+$$$ ,point ,expand-amount)
-                    ,type-specifier)))
-  
 ;;; ===========================================================================
 ;;;   Uniform-bucket index computations:
 

@@ -20,22 +20,22 @@
 <span 
     style="font-family: serif; font-style: normal">=&gt;</span>&nbsp;<var>dimension-value,&nbsp;dimension-value-type,&nbsp;comparison-type,&nbsp;composite-type,&nbsp;ordering-dimension-name</var></td><td valign="baseline" align="right">[<i>Function</i>]
 </td></tr></table></p>
-<p><span class="fndoclabel">Purpose</span> <br />Obtain a <a href="ref-glossary.html#id35">dimension&nbsp;value</a> of a <a href="ref-glossary.html#id219">unit&nbsp;instance</a>.
+<p><span class="fndoclabel">Purpose</span> <br />Obtain a <a href="ref-glossary.html#id35">dimension&nbsp;value</a> of a <a href="ref-glossary.html#id221">unit&nbsp;instance</a>.
 </p>
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen</code>
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-core</code>
 </p>
 <p><span class="fndoclabel">Arguments and values</span><table class="tighttop">
-<tr valign="top"><td valign="baseline"><i>unit-instance</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id219">unit&nbsp;instance</a>
+<tr valign="top"><td valign="baseline"><i>unit-instance</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id221">unit&nbsp;instance</a>
 </td></tr><tr valign="top"><td valign="baseline"><i>dimension-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A symbol specifying a <a href="ref-glossary.html#gl:dimension">dimension</a> of
 <var>unit-instance</var> 
 </td></tr><tr valign="top"><td valign="baseline"><i>dimension-value</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An object
 </td></tr><tr valign="top"><td valign="baseline"><i>dimension-value-type</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> One of: <code>:point</code>, <code>:interval</code>, 
 <code>:mixed</code>, <code>:element</code>, or <code>:boolean</code>
 </td></tr><tr valign="top"><td valign="baseline"><i>comparison-type</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> One of: <code>number</code>, <code>fixnum</code>,
-<code>short-float</code>, <code>single-float</code>, <code>double-float</code>, or
-<code>long-float</code>
+<code>short-float</code>, <code>single-float</code>, <code>double-float</code>,
+<code>long-float</code>, or <code>pseudo-probability</code>
 </td></tr><tr valign="top"><td valign="baseline"><i>composite-type</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> One of <code>:set</code>,
 <font color="#667f66"><code>:sequence</code></font>,
 <font color="#667f66">(<code>:ascending-series</code> 
@@ -55,7 +55,7 @@
 <a href="ref-glossary.html#id23">composite&nbsp;dimension&nbsp;value</a>; <code>nil</code> if it is an
 <a href="ref-glossary.html#id87">incomposite&nbsp;dimension&nbsp;value</a>
 <li>the name of the <a href="ref-glossary.html#id131">ordering&nbsp;dimension</a>, if the 
-<a href="ref-glossary.html#id35">dimension&nbsp;value</a> is a <a href="ref-glossary.html#id181">series-composite&nbsp;dimension&nbsp;value</a>;
+<a href="ref-glossary.html#id35">dimension&nbsp;value</a> is a <a href="ref-glossary.html#id183">series-composite&nbsp;dimension&nbsp;value</a>;
 <code>nil</code> otherwise
 </ul>
 </p>
@@ -67,7 +67,7 @@
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-instance-dimension-values.html"><b>instance-dimension-values</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-make-instance.html"><b>make-instance</b></a>
 </p>
-<p><span class="fndoclabel">Examples</span> <br />Return the <code>x</code> <a href="ref-glossary.html#id35">dimension&nbsp;value</a> of the <a href="ref-glossary.html#id219">unit&nbsp;instance</a>,
+<p><span class="fndoclabel">Examples</span> <br />Return the <code>x</code> <a href="ref-glossary.html#id35">dimension&nbsp;value</a> of the <a href="ref-glossary.html#id221">unit&nbsp;instance</a>,
 <code>hyp</code>:
 <pre class="pretop">
   &gt; (instance-dimension-value hyp 'x)
@@ -90,7 +90,7 @@ and its <code>classification</code> <a href="ref-glossary.html#id35">dimension&n
 </pre>
 </p>
 <p>Return the <code>character</code> <a href="ref-glossary.html#id35">dimension&nbsp;value</a> of the
-<a href="ref-glossary.html#id219">unit&nbsp;instance</a>, <code>word</code>:
+<a href="ref-glossary.html#id221">unit&nbsp;instance</a>, <code>word</code>:
 <pre class="pretop">
   &gt; (instance-dimension-value w 'character)
   "what's"

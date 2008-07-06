@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/find.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Jun 15 14:27:53 2008 *-*
+;;;; *-* Last-Edit: Sat Jul  5 10:27:44 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -59,6 +59,7 @@
             covers$&
             covers$$
             covers$$$
+            covers%
             ;; ---
             do-instances-on-space-instances
             ends
@@ -68,6 +69,7 @@
             ends$
             ends$$
             ends$$$
+            ends%
             ;; ---
             eqv
             false
@@ -88,6 +90,7 @@
             overlaps$
             overlaps$$
             overlaps$$$
+            overlaps%
             ;; ---
             report-find-stats
             starts
@@ -97,6 +100,7 @@
             starts$
             starts$$
             starts$$$
+            starts%
             ;; ---
             true
             with-find-stats
@@ -107,6 +111,7 @@
             within$
             within$$
             within$$$
+            within%
             ;; ---
             without-find-stats)))
 
@@ -267,7 +272,8 @@
   (defun generate-numeric-dispatch (match-op-name)
     (labels ((specific-match-op-name (suffix)
                (intern (concatenate 'simple-string 
-                         (string match-op-name) suffix)))
+                         (symbol-name match-op-name) suffix)
+                       ':gbbopen))
              (do-type (suffix)
                `(return-from ,match-op-name
                   (,(specific-match-op-name suffix) 
@@ -277,6 +283,7 @@
          (fixnum ,(do-type "&"))
          (single-float ,(do-type "$"))
          (number)                       ; no dispatch on number
+         (pseudo-probability ,(do-type "%"))
          (short-float ,(do-type "$&"))
          (double-float ,(do-type "$$"))
          (long-float ,(do-type "$$$"))))))
@@ -328,7 +335,11 @@
   ;; declared long-floats:
   (generate-match-< match-<$$$ long-float-p <$$$)
   (generate-match-< match-<=$$$ long-float-p <=$$$)
-  (generate-match-< match-ends$$$ long-float-p =$$$))
+  (generate-match-< match-ends$$$ long-float-p =$$$)
+  ;; declared pseudo-probabilities:
+  (generate-match-< match-<% pseudo-probability-p <%)
+  (generate-match-< match-<=% pseudo-probability-p <=%)
+  (generate-match-< match-ends% pseudo-probability-p =%))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -377,7 +388,11 @@
   ;; declared long-floats:
   (generate-match-> match->$$$ long-float-p >$$$)
   (generate-match-> match->=$$$ long-float-p >=$$$)
-  (generate-match-> match-starts$$$ long-float-p =$$$))
+  (generate-match-> match-starts$$$ long-float-p =$$$)
+  ;; declared pseudo-probabilities:
+  (generate-match-> match->% pseudo-probability-p >%)
+  (generate-match-> match->=% pseudo-probability-p >=%)
+  (generate-match-> match-starts% pseudo-probability-p =%))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -428,7 +443,10 @@
   (generate-match-within match-within$$ double-float-p =$$ <=$$)
   ;; declared long-floats:
   (generate-match-within match-=$$$ long-float-p =$$$ =$$$)
-  (generate-match-within match-within$$$ long-float-p =$$$ <=$$$))
+  (generate-match-within match-within$$$ long-float-p =$$$ <=$$$)
+  ;; declared pseudo-probabilities:
+  (generate-match-within match-=% pseudo-probability-p =% =%)
+  (generate-match-within match-within% pseudo-probability-p =% <=%))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -473,7 +491,9 @@
   ;; declared double-floats:
   (generate-match-covers match-covers$$ double-float-p =$$ <=$$)
   ;; declared long-floats:
-  (generate-match-covers match-covers$$$ long-float-p =$$$ <=$$$))
+  (generate-match-covers match-covers$$$ long-float-p =$$$ <=$$$)
+  ;; declared pseudo-probabilities:
+  (generate-match-covers match-covers% pseudo-probability-p =% <=%))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -532,7 +552,9 @@
   ;; declared double-floats:
   (generate-match-overlaps match-overlaps$$ double-float-p =$$ <=$$ -$$)
   ;; declared long-floats:
-  (generate-match-overlaps match-overlaps$$$ long-float-p =$$$ <=$$$ -$$$))
+  (generate-match-overlaps match-overlaps$$$ long-float-p =$$$ <=$$$ -$$$)
+  ;; declared pseudo-probabilities:
+  (generate-match-overlaps match-overlaps% pseudo-probability-p =% <=% -%))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -655,6 +677,7 @@
 ;;; ---------------------------------------------------------------------------
 
 (defparameter *ordered-match-op-fns*
+    ;; Ordered by expected declaration-type frequency:
     `((= ,#'match-=)
       (< ,#'match-< ,#'extent-<)
       (> ,#'match-> ,#'extent->)
@@ -678,18 +701,6 @@
       (overlaps& ,#'match-overlaps&)
       (starts& ,#'match-starts& ,#'extent->)
       (ends& ,#'match-ends& ,#'extent-<)
-      ;; declared short-floats 
-      (=$& ,#'match-=$&)
-      (<$& ,#'match-<$& ,#'extent-<)
-      (>$& ,#'match->$& ,#'extent->)
-      (<=$& ,#'match-<=$& ,#'extent-<)
-      (>=$& ,#'match->=$& ,#'extent->)
-      (/=$& ,(complement #'match-=$&) ,#'extent-/=)
-      (within$& ,#'match-within$&)
-      (covers$& ,#'match-covers$&)
-      (overlaps$& ,#'match-overlaps$&)
-      (starts$& ,#'match-starts$& ,#'extent->)
-      (ends$& ,#'match-ends$& ,#'extent-<)
       ;; declared single-floats:
       (=$ ,#'match-=$)
       (<$ ,#'match-<$ ,#'extent-<)
@@ -702,6 +713,30 @@
       (overlaps$ ,#'match-overlaps$)
       (starts$ ,#'match-starts$ ,#'extent->)
       (ends$ ,#'match-ends$ ,#'extent-<)
+      ;; declared pseudo-probabilities:
+      (=% ,#'match-=%)
+      (<% ,#'match-<% ,#'extent-<)
+      (>% ,#'match->% ,#'extent->)
+      (<=% ,#'match-<=% ,#'extent-<)
+      (>=% ,#'match->=% ,#'extent->)    
+      (/=% ,(complement #'match-=%) ,#'extent-/=)
+      (within% ,#'match-within%)
+      (covers% ,#'match-covers%)
+      (overlaps% ,#'match-overlaps%)
+      (starts% ,#'match-starts% ,#'extent->)
+      (ends% ,#'match-ends% ,#'extent-<)
+      ;; declared short-floats 
+      (=$& ,#'match-=$&)
+      (<$& ,#'match-<$& ,#'extent-<)
+      (>$& ,#'match->$& ,#'extent->)
+      (<=$& ,#'match-<=$& ,#'extent-<)
+      (>=$& ,#'match->=$& ,#'extent->)
+      (/=$& ,(complement #'match-=$&) ,#'extent-/=)
+      (within$& ,#'match-within$&)
+      (covers$& ,#'match-covers$&)
+      (overlaps$& ,#'match-overlaps$&)
+      (starts$& ,#'match-starts$& ,#'extent->)
+      (ends$& ,#'match-ends$& ,#'extent-<)
       ;; declared double-floats:
       (=$$ ,#'match-=$$)
       (<$$ ,#'match-<$$ ,#'extent-<)
@@ -731,7 +766,7 @@
 
 (defparameter *enumerated-match-op-fns*
     ;; TODO: finish moving from having to specify the match type in the pattern
-    ;;       operator to the generic is enumerated operator:
+    ;;       operator to the generic IS enumerated operator:
     `((is ,#'match-is)
       ;; Strong-type matches:
       (is-eq ,#'match-is-eq)

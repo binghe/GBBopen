@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/pseudo-probabilities.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Jul  5 06:22:21 2008 *-*
+;;;; *-* Last-Edit: Sat Jul  5 10:18:38 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -47,6 +47,7 @@
             pprob2prob
             prob2pprob
             pseudo-probability
+            pseudo-probability-p
             pushnew/incf%-acons         ; the same as pushnew/incf&-acons
             round%                      ; normalizing round&
             truncate%                   ; normalizing truncate&
@@ -71,7 +72,13 @@
   (defconstant max-pprob 1000)
   (defconstant max-pprob$ (float max-pprob))
   (deftype pseudo-probability () `(integer 0 ,max-pprob)))
-  
+
+(defun pseudo-probability-p (obj)
+  (typep obj 'pseudo-probability))
+
+(defcm pseudo-probability-p (obj)
+  `(typep ,obj 'pseudo-probability))
+
 ;;; ---------------------------------------------------------------------------
 ;;;  Generated fully-fixnum-equivalent pseudo-probability operators
 

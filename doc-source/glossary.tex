@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/glossary.tex *-*
-%% *-* Last-Edit: Tue Jun 24 09:49:50 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Thu Jul  3 15:02:26 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 \begin{glossary-list}
@@ -876,6 +876,22 @@ a property.
 \index{list!property list}%
 A list containing an even number of elements that represent alternating names
 (sometimes called indicators or keys) and their associated values.
+
+%% ------------------------------------------------------------------------
+
+\glent[pseudo-probability]
+
+A discretized \code{\glref{fixnum}} representation for probability values that
+maps probability values in the range [0.0..1.0] to integers in the range
+[0..1000].
+
+%% ------------------------------------------------------------------------
+
+\glent[pseudo-probability-ln]
+
+A discretized \code{\glref{fixnum}} representation for the natural logarithm
+of a \glref{pseudo-probability} value.  Pseudo-probability-ln values range
+from [-6907756..0].
 
 %% ------------------------------------------------------------------------
 
