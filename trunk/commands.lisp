@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/commands.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jul  2 16:46:51 2008 *-*
+;;;; *-* Last-Edit: Sun Jul  6 15:07:32 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -61,9 +61,9 @@
 ;;;   Mini-Module Bootstrapping Commands
 
 (with-system-name (:mini-module)
-  (define-repl-command :startup ()
+  (define-repl-command :startup (&rest args)
     "Load GBBopen startup.lisp file"
-    (startup-gbbopen))
+    (apply 'startup-gbbopen args))
   
     (define-repl-command (:mini-module-user :no-help) (&rest options)
     "Compile and load Mini Module Facility (MMF) User module"
