@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/extended-repl.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Jun 14 16:51:29 2008 *-*
+;;;; *-* Last-Edit: Sun Jul  6 13:32:10 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -86,7 +86,7 @@
 (defun get-extended-repl-command (command)
   (assoc command *extended-repl-commands* :test #'eq))
 
-(compile-if-advantageous 'get-extended-repl-command)
+(compile-if-advantageous 'get-extended-repl-command 't)
 
 ;;; ===========================================================================
 ;;;   Define-repl-command
@@ -98,7 +98,7 @@
     (format t "~&;; Redefining ~s function for REPL-command ~s~%"
             fn command)))
 
-(compile-if-advantageous 'redefining-cl-user-repl-command-warning)
+(compile-if-advantageous 'redefining-cl-user-repl-command-warning 't)
 
 ;;; ---------------------------------------------------------------------------
 
@@ -109,7 +109,7 @@
                                    :test #'eq
                                    :key #'car))))
 
-(compile-if-advantageous 'add-repl-command-spec)
+(compile-if-advantageous 'add-repl-command-spec 't)
 
 ;;; ---------------------------------------------------------------------------
 
@@ -225,7 +225,7 @@
                                             ':mini-module)))))
     result))
 
-(compile-if-advantageous 'list-all-extended-repl-systems)
+(compile-if-advantageous 'list-all-extended-repl-systems 't)
 
 ;;; ---------------------------------------------------------------------------
 
@@ -247,7 +247,7 @@
              (the simple-base-string (symbol-name b))))
         :key #'first))
 
-(compile-if-advantageous 'sorted/filtered-extended-repl-commands)
+(compile-if-advantageous 'sorted/filtered-extended-repl-commands 't)
 
 ;;; ---------------------------------------------------------------------------
 
@@ -281,7 +281,7 @@
                       2nd-column
                       doc))))))))
 
-(compile-if-advantageous 'show-all-extended-repl-commands)
+(compile-if-advantageous 'show-all-extended-repl-commands 't)
 
 ;;; ---------------------------------------------------------------------------
 
@@ -292,7 +292,7 @@
     (format t "~&~s~%" system-name))
   (values))
 
-(compile-if-advantageous 'show-all-extended-repl-systems)
+(compile-if-advantageous 'show-all-extended-repl-systems 't)
 
 ;;; ---------------------------------------------------------------------------
 
@@ -339,7 +339,7 @@
                  't)))
          (the list *extended-repl-commands*))))
 
-(compile-if-advantageous 'undefine-system-repl-commands)
+(compile-if-advantageous 'undefine-system-repl-commands 't)
 
 ;;; ---------------------------------------------------------------------------
 
@@ -365,7 +365,7 @@
     (format t "~&;; System ~s undefined.~%" system-name))
    (t (format t "~&;; Nothing was undefined.~%"))))
 
-(compile-if-advantageous 'do-undefine-system-repl-command)
+(compile-if-advantageous 'do-undefine-system-repl-command 't)
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Interface into CLISP's *user-commands* facility
@@ -412,7 +412,7 @@
          :key #'first)))
 
 #+clisp
-(compile-if-advantageous 'user-commands)
+(compile-if-advantageous 'user-commands 't)
 
 #+clisp
 (pushnew #'user-commands custom:*user-commands*)
@@ -451,7 +451,7 @@
 	      (values))
 	     (t (original-interactive-eval form))))))
  
- (compile-if-advantageous 'ext:interactive-eval))
+ (compile-if-advantageous 'ext:interactive-eval 't))
 
 ;;; ---------------------------------------------------------------------------
 ;;; The Scieneer CL 1.3 doesn't provide an extension hook in either %top-level
@@ -487,7 +487,7 @@
 	    (t (original-interactive-eval form))))))
 
 #+scl
-(compile-if-advantageous 'ext:interactive-eval)
+(compile-if-advantageous 'ext:interactive-eval 't)
 
 ;;; ---------------------------------------------------------------------------
 ;;; Extend SBCL's default form reader, SB-IMPL::REPL-READ-FORM-FUN, with a
@@ -523,7 +523,7 @@
               '(values))
              (t form))))))))
 
-  (compile-if-advantageous 'extended-repl-read-form-fun)
+  (compile-if-advantageous 'extended-repl-read-form-fun 't)
   (setf sb-int:*repl-read-form-fun* #'extended-repl-read-form-fun))
 
 ;;; ---------------------------------------------------------------------------
@@ -542,7 +542,7 @@
    #-allegro #'quit
    args))
   
-(compile-if-advantageous 'extended-repl-quit-lisp)
+(compile-if-advantageous 'extended-repl-quit-lisp 't)
 
 ;;; ===========================================================================
 ;;;  SLIME REPL Interface Setup
@@ -554,8 +554,6 @@
                          :type "lisp"
                          :defaults truename))))
 
-;; CMUCL and Lispworks can't compile the interpreted closure:
-#-(or cmu lispworks)
 (compile-if-advantageous 'load-slime-extended-repl)
 
 ;;;  *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*

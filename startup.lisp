@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/startup.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed May  7 03:14:28 2008 *-*
+;;;; *-* Last-Edit: Sun Jul  6 13:35:31 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -23,7 +23,7 @@
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
-;;;  07-08-02 File Created.  (Corkill)
+;;;  07-08-02 File created.  (Corkill)
 ;;;  04-14-04 Added MCL feature hacking to keep things simpler 
 ;;;           throughout.  (Corkill)
 ;;;  06-09-04 Added <homedir>/gbbopen-init.lisp file loading. (Corkill)
@@ -69,15 +69,22 @@
     (setf *skip-gbbopen-modules-directory-processing* nil)))
 
 ;;; ---------------------------------------------------------------------------
-;;;  Define compile-if-advantageous if it is not already present (from loading
+;;;  Define COMPILE-IF-ADVANTAGEOUS if it is not already present (from loading
 ;;;  initiate.lisp)
 
 (unless (fboundp 'compile-if-advantageous)
-  (defun compile-if-advantageous (fn-name)
-    ;;; Compile bootstrap-loaded function or macro on CLs where this is
-    ;;; desirable
+  (defun compile-if-advantageous (fn-name &optional simple-enough-to-be-safe?)
+    ;;;  CMUCL, Lispworks, and SBCL running in :interpret *evaluator-mode*
+    ;;;  can't compile interpreted closures
+    ;;; 
+    ;;;  ECL has to create temp files, so we don't bother
     #+ecl (declare (ignore fn-name))
-    #-ecl (compile fn-name)))
+    #-ecl (unless (or #+(or cmu lispworks)
+                      (not simple-enough-to-be-safe?) 
+                      #+sbcl 
+                      (and (eq *evaluator-mode* ':interpret)
+                           (not simple-enough-to-be-safe?)))
+            (compile fn-name))))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Bootstrap-load the mini-module system from its location relative to this
@@ -115,8 +122,8 @@
   (make-package ':gbbopen :use '(:common-lisp :mini-module :gbbopen-tools)))
 
 ;;; ---------------------------------------------------------------------------
-;;;  If there is a gbbopen-init.lisp file (or compiled version) in the
-;;;  users "home" directory, load it now:
+;;;  If there is a gbbopen-init.lisp file (or compiled version) in the users
+;;;  "home" directory, load it now:
 
 (load (namestring (make-pathname :name "gbbopen-init"
 				 :type #-(or clisp ecl) ':unspecific 
@@ -144,8 +151,8 @@
 
 ;;; ---------------------------------------------------------------------------
 ;;;  If there is a gbbopen-modules directory in the users "home" directory,
-;;;  load the modules.lisp file (if present) from each module directory
-;;;  that is linked from the gbbopen-modules directory:
+;;;  load the modules.lisp file (if present) from each module directory that
+;;;  is linked from the gbbopen-modules directory:
 
 (unless *skip-gbbopen-modules-directory-processing*
   (process-gbbopen-modules-directory "modules"))
