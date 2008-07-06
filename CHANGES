@@ -12,7 +12,11 @@ Important changes since GBBopen 1.1:
          PATCH-LOADED-P
      - Incremented Mini Module version to 1.4
 
-  * New :conditions option in WITH-ERROR-HANDLING
+  * Changes to GBBopen Tools
+     - New :conditions option in WITH-ERROR-HANDLING
+     - Most declared-numeric operators are now functions with 
+       compiler-macros
+     - New pseudo-probability operators
 
   * New Agenda Shell functions
      - CURRENT-CONTROL-SHELL
