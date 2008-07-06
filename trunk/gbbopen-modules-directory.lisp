@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/gbbopen-modules-directory.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Jun 14 12:25:49 2008 *-*
+;;;; *-* Last-Edit: Sun Jul  6 13:50:10 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -69,12 +69,11 @@
 	       (return-from read-target-directory-specification 
 		 (list line))))))))))
 
-(compile-if-advantageous 'read-target-directory-specification)
+(compile-if-advantageous 'read-target-directory-specification 't)
 
 ;;; ---------------------------------------------------------------------------
                   
-(defun process-the-gbbopen-modules-directory (modules-dir filename
-                                              load-only-if-new)
+(defun process-the-gbbopen-modules-directory (modules-dir filename)
   ;;; Common function to process GBBopen's shared-gbbopen-modules directory
   ;;; and a user's personal gbbopen-modules directory.
   (let* ((subdirs-pathname
@@ -104,15 +103,7 @@
 	   (mapcan 'read-target-directory-specification
 		   pseudo-sym-link-paths)))
          (now (get-universal-time)))
-    (when module-dirs 
-      (unless load-only-if-new
-        (format t "~&;; Loading ~a from ~a...~%" 
-                (cond ((string= filename "modules")
-                       "module definitions")
-                      ((string= filename "commands")
-                       "module command definitions")
-                      (t filename))
-                (namestring modules-dir)))
+    (let ((message-printed? nil))
       (dolist (dir module-dirs)
 	(let* ((dir-pathname-name (pathname-name dir))
                (pathname (make-pathname 
@@ -136,24 +127,31 @@
                                   (declare (optimize (speed 1)))
                                 (not (> file-write-date 
                                         previous-load-time))))))
+            (unless (or message-printed? (not (probe-file pathname)))
+              (format t "~&;; Loading ~a from ~a...~%" 
+                      (cond ((string= filename "modules")
+                             "module definitions")
+                            ((string= filename "commands")
+                             "module command definitions")
+                            (t filename))
+                      (namestring modules-dir))
+              (setf message-printed? 't))
             (when (load (namestring pathname)
                         :if-does-not-exist nil)
               (cond 
                (previous-load-time-acons
                 (setf (cdr previous-load-time-acons) now))
                (t (setf *loaded-gbbopen-modules-directory-files*
-                        (acons pathname
-                               now
+                        (acons pathname now
                                *loaded-gbbopen-modules-directory-files*)))))))
         ))))
 
-(compile-if-advantageous 'process-the-gbbopen-modules-directory)
+(compile-if-advantageous 'process-the-gbbopen-modules-directory 't)
 
 ;;; ---------------------------------------------------------------------------
 
 (let ((truename *load-truename*))
-  (defun process-shared-gbbopen-modules-directory (filename
-                                                   &optional load-only-if-new)
+  (defun process-shared-gbbopen-modules-directory (filename)
     (let ((shared-modules-dir
            (make-pathname
             :name nil
@@ -161,16 +159,13 @@
             :directory (append (pathname-directory truename)
                                '("shared-gbbopen-modules"))
             :defaults truename)))
-      (process-the-gbbopen-modules-directory
-       shared-modules-dir filename load-only-if-new))))
+      (process-the-gbbopen-modules-directory shared-modules-dir filename))))
 
-;; CMUCL and Lispworks can't compile the interpreted closure:
-#-(or cmu lispworks)
 (compile-if-advantageous 'process-shared-gbbopen-modules-directory)
 
 ;;; ---------------------------------------------------------------------------
 
-(defun process-gbbopen-modules-directory (filename &optional load-only-if-new)
+(defun process-gbbopen-modules-directory (filename)
   (let* ((user-homedir-pathname
 	  ;; CMUCL uses a search list in (user-homedir-pathname), so we must
 	  ;; fixate it using truename before proceeding:
@@ -180,10 +175,9 @@
 	   :directory (append (pathname-directory user-homedir-pathname)
 			      '("gbbopen-modules"))
 	   :defaults user-homedir-pathname)))
-    (process-the-gbbopen-modules-directory
-     user-modules-dir filename load-only-if-new)))
+    (process-the-gbbopen-modules-directory user-modules-dir filename)))
 
-(compile-if-advantageous 'process-gbbopen-modules-directory)
+(compile-if-advantageous 'process-gbbopen-modules-directory 't)
 
 ;;; ===========================================================================
 ;;;				  End of File

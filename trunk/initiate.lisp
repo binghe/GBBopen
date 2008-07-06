@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/initiate.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Jul  1 09:41:02 2008 *-*
+;;;; *-* Last-Edit: Sun Jul  6 13:47:30 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -86,11 +86,22 @@
 (defvar *gbbopen-startup-loaded* nil)
 
 ;;; ---------------------------------------------------------------------------
+;;;  Compile bootstrap-loaded function or macro on CLs where this is
+;;;  desirable:
 
-(defun compile-if-advantageous (fn-name)
-  ;;; Compile bootstrap-loaded function or macro on CLs where this is desirable
+;;;  NOTE: Copy all changes to COMPILE-IF-ADVANTAGEOUS to startup.lisp:
+(defun compile-if-advantageous (fn-name &optional simple-enough-to-be-safe?)
+  ;;;  CMUCL, Lispworks, and SBCL running in :interpret *evaluator-mode*
+  ;;;  can't compile interpreted closures
+  ;;; 
+  ;;;  ECL has to create temp files, so we don't bother
   #+ecl (declare (ignore fn-name))
-  #-ecl (compile fn-name))
+  #-ecl (unless (or #+(or cmu lispworks)
+                    (not simple-enough-to-be-safe?) 
+                    #+sbcl 
+                    (and (eq *evaluator-mode* ':interpret)
+                         (not simple-enough-to-be-safe?)))
+          (compile fn-name)))
 
 ;;; ---------------------------------------------------------------------------
 ;;; Load top-level REPL extensions for CLISP, CMUCL, SCL, ECL, and SBCL and
@@ -119,18 +130,18 @@
      ;; Scan for changes if startup.lisp has been loaded:
      ((and (not force) *gbbopen-startup-loaded*)
       (unless *skip-gbbopen-modules-directory-processing*
-        (funcall 'process-shared-gbbopen-modules-directory "commands" 't)
-        (funcall 'process-gbbopen-modules-directory "commands" 't)
-        (funcall 'process-shared-gbbopen-modules-directory "modules" 't)
-        (funcall 'process-gbbopen-modules-directory "modules" 't)))
+        ;; Use funcall in order to avoid forward-referenced "undefined
+        ;; function" warnings:
+        (funcall 'process-shared-gbbopen-modules-directory "commands")
+        (funcall 'process-gbbopen-modules-directory "commands")
+        (funcall 'process-shared-gbbopen-modules-directory "modules")
+        (funcall 'process-gbbopen-modules-directory "modules")))
      ;; Load startup.lisp:
      (t (load (make-pathname 
                :name "startup"
                :type "lisp"
                :defaults truename))))))
   
-;; CMUCL and Lispworks can't compile the interpreted closure:
-#-(or cmu lispworks)
 (compile-if-advantageous 'startup-gbbopen)
 
 ;;; ---------------------------------------------------------------------------
@@ -161,7 +172,7 @@
            (format nil "(setq fi:package ~s)"
                    (package-name requested-package))))))))
 
-(compile-if-advantageous 'set-repl-package)
+(compile-if-advantageous 'set-repl-package 't)
 
 ;;; ---------------------------------------------------------------------------
 
@@ -182,7 +193,7 @@
             *package*))
   (values))
 
-(compile-if-advantageous 'startup-module)
+(compile-if-advantageous 'startup-module 't)
 
 ;;; ===========================================================================
 ;;;  Load GBBopen's standard REPL commands
