@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/epilogue.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jul  2 09:44:40 2008 *-*
+;;;; *-* Last-Edit: Mon Jul  7 14:06:25 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -325,37 +325,38 @@
                 (second args))
         (force-output)))))
   
-;;; ---------------------------------------------------------------------------
+;;; ===========================================================================
+;;;  If DEFINE-REPL-COMMAND is available, define these GBBopen commands:
 
 (when (fboundp 'define-repl-command)
-  (let ((common-lisp-user::*current-system-name* ':gbbopen))
-    (declare (special common-lisp-user::*current-system-name*))
-
-    (define-repl-command :di (&rest args)
-      "Describe instance"
-      (do-di/dsi-repl-command 'standard-unit-instance 
-        'find-instance-by-name
-        'describe-instance args))
-
-    (define-repl-command (:dsbb :add-to-native-help) ()
-      "Describe blackboard repository"
-      (describe-blackboard-repository))
-
-    (define-repl-command :dsi (&rest args)
-      "Describe space instance"
-      (do-di/dsi-repl-command 'standard-space-instance 
-        'find-space-instance-by-path
-        'describe-space-instance args))
-
-    (define-repl-command :dsis (&rest args)
-      "Describe space instance storage"
-      (do-di/dsi-repl-command 'standard-space-instance 
-        'find-space-instance-by-path
-        'describe-space-instance-storage args))
-
-    (define-repl-command :fi (&rest args)
-      "Find instance by name"
-      (do-fi-repl-command args))))
+  (eval `(let ((*current-system-name* ':gbbopen))
+           (declare (special *current-system-name*))
+           
+           (define-repl-command :di (&rest args)
+             "Describe instance"
+             (do-di/dsi-repl-command 'standard-unit-instance 
+               'find-instance-by-name
+               'describe-instance args))
+           
+           (define-repl-command (:dsbb :add-to-native-help) ()
+             "Describe blackboard repository"
+             (describe-blackboard-repository))
+           
+           (define-repl-command :dsi (&rest args)
+             "Describe space instance"
+             (do-di/dsi-repl-command 'standard-space-instance 
+               'find-space-instance-by-path
+               'describe-space-instance args))
+           
+           (define-repl-command :dsis (&rest args)
+             "Describe space instance storage"
+             (do-di/dsi-repl-command 'standard-space-instance 
+               'find-space-instance-by-path
+               'describe-space-instance-storage args))
+           
+           (define-repl-command :fi (&rest args)
+             "Find instance by name"
+             (do-fi-repl-command args)))))
   
 ;;; ===========================================================================
 ;;;  GBBopen is fully loaded
