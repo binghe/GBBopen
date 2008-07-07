@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/initiate.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Jul  6 13:47:30 2008 *-*
+;;;; *-* Last-Edit: Mon Jul  7 04:35:00 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -63,15 +63,13 @@
 ;;; feature mcl):
 
 #+(and digitool ccl-5.1)
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (pushnew :digitool-mcl *features*))
+(pushnew :digitool-mcl *features*)
 
 ;;; ---------------------------------------------------------------------------
 ;;; Add clozure feature to legacy OpenMCL:
 
 #+(and openmcl (not clozure))
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (pushnew :clozure *features*))
+(pushnew :clozure *features*)
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Used to control gbbopen-modules directory processing by startup.lisp:
@@ -86,33 +84,42 @@
 (defvar *gbbopen-startup-loaded* nil)
 
 ;;; ---------------------------------------------------------------------------
+;;;  The GBBopen install directory:
+
+(defvar *gbbopen-install-root* nil)
+
+;; This file establishes the GBBopen install directory:
+(setf *gbbopen-install-root* 
+      (make-pathname :name nil
+                     :type nil
+                     :defaults *load-truename*))
+
+;;; ---------------------------------------------------------------------------
 ;;;  Compile bootstrap-loaded function or macro on CLs where this is
 ;;;  desirable:
-
+;;;
 ;;;  NOTE: Copy all changes to COMPILE-IF-ADVANTAGEOUS to startup.lisp:
-(defun compile-if-advantageous (fn-name &optional simple-enough-to-be-safe?)
-  ;;;  CMUCL, Lispworks, and SBCL running in :interpret *evaluator-mode*
-  ;;;  can't compile interpreted closures
+
+(defun compile-if-advantageous (fn-name)
+  ;;;  CMUCL, Lispworks, and SBCL running in :interpret *evaluator-mode* can't
+  ;;;  compile interpreted closures (so we avoid having `fn-name' any
+  ;;;  definitions that are closures)
+  ;;;
+  ;;;  CMUCL can't compile macro definitions (so we skip compiling them)
   ;;; 
-  ;;;  ECL has to create temp files, so we don't bother
+  ;;;  ECL's compiler is slow and creates temporary files, so we don't bother
   #+ecl (declare (ignore fn-name))
-  #-ecl (unless (or #+(or cmu lispworks)
-                    (not simple-enough-to-be-safe?) 
-                    #+sbcl 
-                    (and (eq *evaluator-mode* ':interpret)
-                         (not simple-enough-to-be-safe?)))
+  #-ecl (unless (or #+cmu (macro-function fn-name))
           (compile fn-name)))
 
 ;;; ---------------------------------------------------------------------------
 ;;; Load top-level REPL extensions for CLISP, CMUCL, SCL, ECL, and SBCL and
 ;;; SLIME command extensions for all:
 
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (let ((truename *load-truename*))
-    (load (make-pathname 
-	   :name "extended-repl"
-	   :type "lisp"
-	   :defaults truename))))
+(load (make-pathname 
+       :name "extended-repl"
+       :type "lisp"
+       :defaults *gbbopen-install-root*))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  GBBopen's startup.lisp loader
@@ -120,27 +127,26 @@
 ;;;    :skip-gbbopen-modules-directory-processing -> controls whether 
 ;;;                 <homedir>/gbbopen-modules/ processing is performed
 
-(let ((truename *load-truename*))
-  (defun startup-gbbopen (&key                         
-                          force
-                          ((:skip-gbbopen-modules-directory-processing
-                            *skip-gbbopen-modules-directory-processing*)
-                           *skip-gbbopen-modules-directory-processing*))
-    (cond 
-     ;; Scan for changes if startup.lisp has been loaded:
-     ((and (not force) *gbbopen-startup-loaded*)
-      (unless *skip-gbbopen-modules-directory-processing*
-        ;; Use funcall in order to avoid forward-referenced "undefined
-        ;; function" warnings:
-        (funcall 'process-shared-gbbopen-modules-directory "commands")
-        (funcall 'process-gbbopen-modules-directory "commands")
-        (funcall 'process-shared-gbbopen-modules-directory "modules")
-        (funcall 'process-gbbopen-modules-directory "modules")))
-     ;; Load startup.lisp:
-     (t (load (make-pathname 
-               :name "startup"
-               :type "lisp"
-               :defaults truename))))))
+(defun startup-gbbopen (&key                         
+                        force
+                        ((:skip-gbbopen-modules-directory-processing
+                          *skip-gbbopen-modules-directory-processing*)
+                         *skip-gbbopen-modules-directory-processing*))
+  (cond 
+   ;; Scan for changes if startup.lisp has been loaded:
+   ((and (not force) *gbbopen-startup-loaded*)
+    (unless *skip-gbbopen-modules-directory-processing*
+      ;; Use funcall in order to avoid forward-referenced "undefined
+      ;; function" warnings:
+      (funcall 'process-shared-gbbopen-modules-directory "commands")
+      (funcall 'process-gbbopen-modules-directory "commands")
+      (funcall 'process-shared-gbbopen-modules-directory "modules")
+      (funcall 'process-gbbopen-modules-directory "modules")))
+   ;; Load startup.lisp:
+   (t (load (make-pathname 
+             :name "startup"
+             :type "lisp"
+             :defaults *gbbopen-install-root*)))))
   
 (compile-if-advantageous 'startup-gbbopen)
 
@@ -172,7 +178,7 @@
            (format nil "(setq fi:package ~s)"
                    (package-name requested-package))))))))
 
-(compile-if-advantageous 'set-repl-package 't)
+(compile-if-advantageous 'set-repl-package)
 
 ;;; ---------------------------------------------------------------------------
 
@@ -193,16 +199,15 @@
             *package*))
   (values))
 
-(compile-if-advantageous 'startup-module 't)
+(compile-if-advantageous 'startup-module)
 
 ;;; ===========================================================================
 ;;;  Load GBBopen's standard REPL commands
 
-(let ((truename *load-truename*))
-  (load (make-pathname 
-	 :name "commands"
-	 :type "lisp"
-	 :defaults truename)))
+(load (make-pathname 
+       :name "commands"
+       :type "lisp"
+       :defaults *gbbopen-install-root*))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  If there is a gbbopen-commands.lisp file (or compiled version) in the
@@ -219,11 +224,10 @@
 ;;; ===========================================================================
 ;;;  Load gbbopen-modules-directory processing, if needed:
 
-(let ((truename *load-truename*))
-  (load (make-pathname 
-         :name "gbbopen-modules-directory"
-         :type "lisp"
-         :defaults truename)))
+(load (make-pathname 
+       :name "gbbopen-modules-directory"
+       :type "lisp"
+       :defaults *gbbopen-install-root*))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Load the commands.lisp file (if present) from each module directory

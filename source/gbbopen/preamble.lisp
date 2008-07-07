@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/preamble.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Jun 15 14:29:04 2008 *-*
+;;;; *-* Last-Edit: Sun Jul  6 23:30:20 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -32,25 +32,26 @@
   (use-package :portable-threads))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (export '(*warn-about-unusual-requests*
+  (export '(*gbbopen-install-root*      ; re-export, not documented
+            *warn-about-unusual-requests*
      	    draw-instance-on-bb-widget  ; used for bb-widget drawing
 	    gbbopen-graphics-started-p
 	    gbbopen-implementation-version
 	    instance-name-comparison-test)))
 
+(unless (boundp '*gbbopen-install-root*)
+  (error "~s was not set." '*gbbopen-install-root*))
+
 ;;; ---------------------------------------------------------------------------
 ;;;  GBBopen version (read from ../../VERSION file)
 
-(let ((truename *load-truename*))
-  (defun gbbopen-implementation-version ()
-    (with-open-file (version-file 
-                     (make-pathname
-                      :directory (append (pathname-directory truename)
-                                         '(:up :up))
-                      :name "VERSION"
-                      :type nil
-                      :defaults truename))
-      (read version-file))))
+(defun gbbopen-implementation-version ()
+  (with-open-file (version-file 
+                   (make-pathname
+                    :name "VERSION"
+                    :type nil
+                    :defaults *gbbopen-install-root*))
+    (read version-file)))
 
 ;;; Added to *features* in epilogue.lisp:
 (defparameter *gbbopen-version-keyword* 

@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/compile-all.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Jul  3 03:11:35 2008 *-*
+;;;; *-* Last-Edit: Mon Jul  7 04:57:35 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -26,15 +26,11 @@
 
 (in-package :gbbopen-tools)
 
-#+still-needed?
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (import '(mini-module::compile-module)))
-
 ;;; ---------------------------------------------------------------------------
 
 (defun compile-it (module-name &key (dont-reset nil))
   (format t "~%;;; ~72,,,'-<-~>~%;;; Compiling ~s...~%" module-name)
-  (compile-module module-name :propagate :create-dirs)
+  (compile-module module-name :propagate :create-dirs :noautorun)
   (unless dont-reset
     (funcall (intern (symbol-name :reset-gbbopen) :gbbopen))))
 

@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/gbbopen-modules-directory.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Jul  6 13:50:10 2008 *-*
+;;;; *-* Last-Edit: Mon Jul  7 03:21:28 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -69,7 +69,7 @@
 	       (return-from read-target-directory-specification 
 		 (list line))))))))))
 
-(compile-if-advantageous 'read-target-directory-specification 't)
+(compile-if-advantageous 'read-target-directory-specification)
 
 ;;; ---------------------------------------------------------------------------
                   
@@ -146,20 +146,19 @@
                                *loaded-gbbopen-modules-directory-files*)))))))
         ))))
 
-(compile-if-advantageous 'process-the-gbbopen-modules-directory 't)
+(compile-if-advantageous 'process-the-gbbopen-modules-directory)
 
 ;;; ---------------------------------------------------------------------------
 
-(let ((truename *load-truename*))
-  (defun process-shared-gbbopen-modules-directory (filename)
-    (let ((shared-modules-dir
-           (make-pathname
-            :name nil
-            :type nil
-            :directory (append (pathname-directory truename)
-                               '("shared-gbbopen-modules"))
-            :defaults truename)))
-      (process-the-gbbopen-modules-directory shared-modules-dir filename))))
+(defun process-shared-gbbopen-modules-directory (filename)
+  (let ((shared-modules-dir
+         (make-pathname
+          :name nil
+          :type nil
+          :directory (append (pathname-directory *gbbopen-install-root*)
+                             '("shared-gbbopen-modules"))
+          :defaults *gbbopen-install-root*)))
+      (process-the-gbbopen-modules-directory shared-modules-dir filename)))
 
 (compile-if-advantageous 'process-shared-gbbopen-modules-directory)
 
@@ -177,7 +176,7 @@
 	   :defaults user-homedir-pathname)))
     (process-the-gbbopen-modules-directory user-modules-dir filename)))
 
-(compile-if-advantageous 'process-gbbopen-modules-directory 't)
+(compile-if-advantageous 'process-gbbopen-modules-directory)
 
 ;;; ===========================================================================
 ;;;				  End of File
