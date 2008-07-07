@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/preamble.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Jun 23 16:27:08 2008 *-*
+;;;; *-* Last-Edit: Sun Jul  6 23:30:38 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -55,12 +55,14 @@
 ;;;  Import user's preferred browser setting
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (import '(common-lisp-user::*preferred-browser*
+  (import '(common-lisp-user::*gbbopen-install-root*
+            common-lisp-user::*preferred-browser*
 	    common-lisp-user::*inf-reader-escape-hook*
             mini-module:printv)))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (export '(add-package-nickname        ; not documented
+  (export '(*gbbopen-install-root*      ; re-export, not documented
+            add-package-nickname        ; not documented
 	    gbbopen-tools-implementation-version
             hyperdoc-filename           ; not yet documented
 	    hyperdoc-url		; not yet documented
@@ -69,19 +71,19 @@
 	    with-gensyms
 	    with-once-only-bindings)))	; not yet documented
 
+(unless (boundp '*gbbopen-install-root*)
+  (error "~s was not set." '*gbbopen-install-root*))
+
 ;;; ---------------------------------------------------------------------------
 ;;;  GBBopen Tools version (read from ../../VERSION file)
 
-(let ((truename *load-truename*))
-  (defun gbbopen-tools-implementation-version ()
-    (with-open-file (version-file 
-                     (make-pathname
-                      :directory (append (pathname-directory truename)
-                                         '(:up :up))
-                      :name "VERSION"
-                      :type nil
-                      :defaults truename))
-      (read version-file))))
+(defun gbbopen-tools-implementation-version ()
+  (with-open-file (version-file 
+                   (make-pathname
+                    :name "VERSION"
+                    :type nil
+                    :defaults *gbbopen-install-root*))
+    (read version-file)))
 
 ;;; Added to *features* in epilogue.lisp:
 (defparameter *gbbopen-tools-version-keyword* 

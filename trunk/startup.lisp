@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/startup.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Jul  6 13:35:31 2008 *-*
+;;;; *-* Last-Edit: Mon Jul  7 04:51:16 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -54,50 +54,80 @@
     #-(or macosx darwin (and lispworks (not win32)) sbcl) "firefox")
 
 ;;; ---------------------------------------------------------------------------
+;;;  Set/reset GBBopen install root (defvar is in initiate.lisp)
+
+(declaim (special *gbbopen-install-root*))
+
+;; This file also can establish the GBBopen install directory:
+(unless (boundp '*gbbopen-install-root*)
+  (setf *gbbopen-install-root* 
+        (make-pathname :name nil
+                       :type nil
+                       :defaults *load-truename*)))
+
+;;; ---------------------------------------------------------------------------
+;;;  Control gbbopen-modules directory processing (defvar is in initiate.lisp)
+
+(declaim (special *skip-gbbopen-modules-directory-processing*))
+(unless (boundp '*skip-gbbopen-modules-directory-processing*)
+  (setf *skip-gbbopen-modules-directory-processing* nil))
+
+;;; ---------------------------------------------------------------------------
 ;;;  Load required Corman Common Lisp patches
 
 #+cormanlisp
 (load (make-pathname :name "corman-patches"
                      :type "lisp" 
-                     :defaults *load-truename*))
-
-;;; ---------------------------------------------------------------------------
-;;;  Control gbbopen-modules directory processing (defvar is in initiate.lisp)
-
-(unless (boundp '*skip-gbbopen-modules-directory-processing*)
-  (locally (declare (special *skip-gbbopen-modules-directory-processing*))
-    (setf *skip-gbbopen-modules-directory-processing* nil)))
+                     :defaults *gbbopen-install-root*))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Define COMPILE-IF-ADVANTAGEOUS if it is not already present (from loading
 ;;;  initiate.lisp)
 
 (unless (fboundp 'compile-if-advantageous)
-  (defun compile-if-advantageous (fn-name &optional simple-enough-to-be-safe?)
-    ;;;  CMUCL, Lispworks, and SBCL running in :interpret *evaluator-mode*
-    ;;;  can't compile interpreted closures
+  (defun compile-if-advantageous (fn-name)
+    ;;;  CMUCL, Lispworks, and SBCL running in :interpret *evaluator-mode* can't
+    ;;;  compile interpreted closures (so we avoid having `fn-name' any
+    ;;;  definitions that are closures)
+    ;;;
+    ;;;  CMUCL can't compile macro definitions (so we skip compiling them)
     ;;; 
-    ;;;  ECL has to create temp files, so we don't bother
+    ;;;  ECL's compiler is slow and creates temporary files, so we don't bother
     #+ecl (declare (ignore fn-name))
-    #-ecl (unless (or #+(or cmu lispworks)
-                      (not simple-enough-to-be-safe?) 
-                      #+sbcl 
-                      (and (eq *evaluator-mode* ':interpret)
-                           (not simple-enough-to-be-safe?)))
+    #-ecl (unless (or #+cmu (macro-function fn-name))
             (compile fn-name))))
 
 ;;; ---------------------------------------------------------------------------
-;;;  Bootstrap-load the mini-module system from its location relative to this
-;;;  file.
+;;;  Define EXTENDED-REPL-QUIT-LISP if it is not already present (from loading
+;;;  extended-repl.lisp)
 
-(let ((startup-file-truename *load-truename*))
-  (load (make-pathname
-         :name "mini-module-loader"
-         :type "lisp"
-         :directory `(,@(pathname-directory startup-file-truename)
-                        "source" "mini-module")
-         :version :newest
-         :defaults startup-file-truename)))
+(unless (fboundp 'extended-repl-quit-lisp)
+  (defun extended-repl-quit-lisp (&rest args)
+    #+sbcl
+    (let ((swank-package (find-package :swank)))
+      (when swank-package
+        (let ((quit-lisp-fn (intern (symbol-name 'quit-lisp) swank-package)))
+          (when (fboundp quit-lisp-fn)
+            (funcall quit-lisp-fn)))))
+    (apply
+     ;; Avoid infinite #'quit recursion in Allegro:
+     #+allegro #'exit
+     #-allegro #'quit
+     args))
+  
+  (compile-if-advantageous 'extended-repl-quit-lisp))
+
+;;; ---------------------------------------------------------------------------
+;;;  Bootstrap-load the mini-module system from its location relative to the
+;;;  GBBopen install root:
+
+(load (make-pathname
+       :name "mini-module-loader"
+       :type "lisp"
+       :directory `(,@(pathname-directory *gbbopen-install-root*)
+                      "source" "mini-module")
+       :version :newest
+       :defaults *gbbopen-install-root*))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Define and load the remaining GBBopen module definitions from
@@ -136,11 +166,10 @@
 ;;;  Load gbbopen-modules-directory processing, if needed:
 
 (unless (fboundp 'process-gbbopen-modules-directory)
-  (let ((truename *load-truename*))
-    (load (make-pathname 
-	   :name "gbbopen-modules-directory"
-	   :type "lisp"
-	   :defaults truename))))
+  (load (make-pathname 
+         :name "gbbopen-modules-directory"
+         :type "lisp"
+         :defaults *gbbopen-install-root*)))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Process the modules.lisp file (if present) from each module directory

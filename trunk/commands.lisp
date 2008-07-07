@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/commands.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Jul  6 15:07:32 2008 *-*
+;;;; *-* Last-Edit: Mon Jul  7 04:58:18 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -108,11 +108,8 @@
 
   (define-repl-command :compile-gbbopen (&rest options)
     "Compile all GBBopen modules and exit Common Lisp"
-    (let ((*automatically-create-missing-directories* 't)
-          (*autorun-modules* nil))
-      (declare (special *automatically-create-missing-directories*
-                        *autorun-modules*))
-      (startup-module :compile-gbbopen options :gbbopen-user)))
+    (startup-module :compile-gbbopen 
+                    (list* ':create-dirs ':noautorun options) :gbbopen-user))
 
   ;; end with-system-name
   )
