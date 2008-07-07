@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Sun Jul  6 03:35:47 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Mon Jul  7 10:35:07 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -4021,6 +4021,68 @@ Lisp Machines).
 
 %% ------------------------------------------------------------------------
 
+\begin{functiondoc}{Macro}{decf-after}{\var{place\/}
+    \code{\&optional} \var{decrement\/}
+    \returns{} \var{original-value\/}}
+\index{place!decrementing numeric value of}%
+
+\fnsyntax
+
+\fnpurpose Decrement the value of \var{place}, returning the original value of
+\var{place}.
+
+\fnpackage \code{:gbbopen-tools}
+
+\fnmodule \code{:gbbopen-tools}
+
+\fnargs
+\begin{args}{original-value}
+\arg[place] A form which is suitable for use as a \glref{generalized~reference}
+\arg[decrement] A number (default is \code{1})
+\arg[original-value] A number
+\end{args}
+
+\fnreturns The original value of \var{place\/}.
+
+\begin{alsos}{incf-after}
+\also[incf-after]
+\end{alsos}
+
+\fnexamples
+\begin{example}
+%
+\W\supp
+  > (defparameter *x* 4)
+  > (decf-after *x*)
+  4 
+  > *x*
+  3
+  > (decf-after *x* 3)
+  3
+  > *x*
+  0
+  >
+\end{example}
+
+\fnnote
+%
+\bfindex{decf-after\&}%
+\bfindex{decf-after\$\&}%
+\bfindex{decf-after\$}%
+\bfindex{decf-after\$\$}%
+\bfindex{decf-after\$\$\$}%
+\bfindex{decf-after\%}%
+%
+\reflink{Declared numeric}{sec:declared-numerics} and \reflink{pseudo
+  probability}{sec:pprob} versions of \textbf{decf-after} are also
+provided: \textbf{decf-after\&}, \textbf{decf-after\$\&},
+\textbf{decf-after\$}, \textbf{decf-after\$\$},
+\textbf{decf-after\$\$\$}, and \textbf{decf-after\%}.
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
 \begin{functiondoc}[decf-delete-acons]{Macro}{decf/delete-acons}{\var{item
       decrement place\/}
     \code{\&key} \var{key test test-not\/}
@@ -4561,6 +4623,68 @@ an atom, a newly consed list containing \var{object\/} as its sole element.
 \end{example}
 
 \fnnote \inline
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Macro}{incf-after}{\var{place\/}
+    \code{\&optional} \var{increment\/}
+    \returns{} \var{original-value\/}}
+\index{place!incrementing numeric value of}%
+
+\fnsyntax
+
+\fnpurpose Increment the value of \var{place}, returning the original value of
+\var{place}.
+
+\fnpackage \code{:gbbopen-tools}
+
+\fnmodule \code{:gbbopen-tools}
+
+\fnargs
+\begin{args}{original-value}
+\arg[place] A form which is suitable for use as a \glref{generalized~reference}
+\arg[increment] A number  (default is \code{1})
+\arg[original-value] A number
+\end{args}
+
+\fnreturns The original value of \var{place\/}.
+
+\begin{alsos}{decf-after}
+\also[decf-after]
+\end{alsos}
+
+\fnexamples
+\begin{example}
+%
+\W\supp
+  > (defparameter *x* 0)
+  > (incf-after *x*)
+  0 
+  > *x*
+  1
+  > (incf-after *x* 3)
+  1
+  > *x*
+  4
+  >
+\end{example}
+
+\fnnote
+%
+\bfindex{incf-after\&}%
+\bfindex{incf-after\$\&}%
+\bfindex{incf-after\$}%
+\bfindex{incf-after\$\$}%
+\bfindex{incf-after\$\$\$}%
+\bfindex{incf-after\%}%
+%
+\reflink{Declared numeric}{sec:declared-numerics} and \reflink{pseudo
+  probability}{sec:pprob} versions of \textbf{incf-after} are also
+provided: \textbf{incf-after\&}, \textbf{incf-after\$\&},
+\textbf{incf-after\$}, \textbf{incf-after\$\$},
+\textbf{incf-after\$\$\$}, and \textbf{incf-after\%}.
 
 \end{functiondoc}
 
@@ -6747,7 +6871,8 @@ These \code{\glref{fixnum}} declared-numeric operators are defined in the
     & & \code{(bounded-value\& x y z)}\\
   & \code{ceiling\&} & & \code{ceiling} & & \code{(ceiling\& x divisor)}\\
   & \code{decf\&}  & & \code{decf}      & & \code{(decf\& x delta)}\\
-  & \code{decf-\&after} & & \code{decf-after} & & \code{(decf\&-after x delta)}\\
+  & \code{decf-\&after} & & \code{\entlink{decf-after}}
+    & & \code{(decf\&-after x delta)}\\
   & \code{decf/delete\&-acons} & & \code{\entlink{decf/delete-acons}}
     & & \code{(decf/delete\&-acons}\\
     & & & & & ~~~ \code{x delta alist)}\\
@@ -6758,7 +6883,8 @@ These \code{\glref{fixnum}} declared-numeric operators are defined in the
   & \code{fround\&} & & \code{fround} & & \code{(fround\& x divisor)}\\
   & \code{ftruncate\&} & & \code{ftruncate} & & \code{(ftruncate\& x divisor)}\\
   & \code{incf\&}  & & \code{incf}    & & \code{(incf\& x delta)}\\
-  & \code{incf\&-after} & & \code{incf-after} & & \code{(incf\&-after x delta)}\\
+  & \code{incf\&-after} & & \code{\entlink{incf-after}}
+    & & \code{(incf\&-after x delta)}\\
   & \code{max\&}   & & \code{max}     & & \code{(max\& x y z)}\\
   & \code{min\&}   & & \code{min}     & & \code{(min\& x y z)}\\
   & \code{minusp\&} & & \code{minusp} & & \code{(minusp\& x)}\\
@@ -6856,7 +6982,8 @@ These \code{short-float} declared-numeric operators are defined in the
     & & \code{(bounded-value\$\& x y z)}\\
   & \code{ceiling\$\&} & & \code{ceiling} & & \code{(ceiling\$\& x divisor)}\\
   & \code{decf\$\&}  & & \code{decf}      & & \code{(decf\$\& x delta)}\\
-  & \code{decf-\$\&after} & & \code{decf-after} & & \code{(decf\$\&-after x delta)}\\
+  & \code{decf-\$\&after} & & \code{\entlink{decf-after}}
+    & & \code{(decf\$\&-after x delta)}\\
   & \code{decf/delete\$\&-acons} & & \code{\entlink{decf/delete-acons}}
     & & \code{(decf/delete\$\&-acons}\\
     & & & & & ~~~ \code{x delta alist)}\\
@@ -6867,7 +6994,8 @@ These \code{short-float} declared-numeric operators are defined in the
   & \code{fround\$\&} & & \code{fround} & & \code{(fround\$\& x divisor)}\\
   & \code{ftruncate\$\&} & & \code{ftruncate} & & \code{(ftruncate\$\& x divisor)}\\
   & \code{incf\$\&}  & & \code{incf}    & & \code{(incf\$\& x delta)}\\
-  & \code{incf\$\&-after} & & \code{incf-after} & & \code{(incf\$\&-after x delta)}\\
+  & \code{incf\$\&-after} & & \code{\entlink{incf-after}}
+    & & \code{(incf\$\&-after x delta)}\\
   & \code{max\$\&}   & & \code{max}     & & \code{(max\$\& x y z)}\\
   & \code{min\$\&}   & & \code{min}     & & \code{(min\$\& x y z)}\\
   & \code{minusp\$\&} & & \code{minusp} & & \code{(minusp\$\& x)}\\
@@ -6960,7 +7088,8 @@ These \code{single-float} declared-numeric operators are defined in the
     & & \code{(bounded-value\$ x y z)}\\
   & \code{ceiling\$} & & \code{ceiling} & & \code{(ceiling\$ x divisor)}\\
   & \code{decf\$}  & & \code{decf}      & & \code{(decf\$ x delta)}\\
-  & \code{decf-\$after} & & \code{decf-after} & & \code{(decf\$-after x delta)}\\
+  & \code{decf-\$after} & & \code{\entlink{decf-after}}
+    & & \code{(decf\$-after x delta)}\\
   & \code{decf/delete\$-acons} & & \code{\entlink{decf/delete-acons}}
     & & \code{(decf/delete\$-acons}\\
     & & & & & ~~~ \code{x delta alist)}\\
@@ -6971,7 +7100,8 @@ These \code{single-float} declared-numeric operators are defined in the
   & \code{fround\$} & & \code{fround} & & \code{(fround\$ x divisor)}\\
   & \code{ftruncate\$} & & \code{ftruncate} & & \code{(ftruncate\$ x divisor)}\\
   & \code{incf\$}  & & \code{incf}    & & \code{(incf\$ x delta)}\\
-  & \code{incf\$-after} & & \code{incf-after} & & \code{(incf\$-after x delta)}\\
+  & \code{incf\$-after} & & \code{\entlink{incf-after}}
+    & & \code{(incf\$-after x delta)}\\
   & \code{max\$}   & & \code{max}     & & \code{(max\$ x y z)}\\
   & \code{min\$}   & & \code{min}     & & \code{(min\$ x y z)}\\
   & \code{minusp\$} & & \code{minusp} & & \code{(minusp\$ x)}\\
@@ -7064,7 +7194,8 @@ These \code{double-float} declared-numeric operators are defined in the
     & & \code{(bounded-value\$\$ x y z)}\\
   & \code{ceiling\$\$} & & \code{ceiling} & & \code{(ceiling\$\$ x divisor)}\\
   & \code{decf\$\$}  & & \code{decf}      & & \code{(decf\$\$ x delta)}\\
-  & \code{decf-\$\$after} & & \code{decf-after} & & \code{(decf\$\$-after x delta)}\\
+  & \code{decf-\$\$after} & & \code{\entlink{decf-after}}
+    & & \code{(decf\$\$-after x delta)}\\
   & \code{decf/delete\$\$-acons} & & \code{\entlink{decf/delete-acons}}
     & & \code{(decf/delete\$\$-acons}\\
     & & & & & ~~~ \code{x delta alist)}\\
@@ -7075,7 +7206,8 @@ These \code{double-float} declared-numeric operators are defined in the
   & \code{fround\$\$} & & \code{fround} & & \code{(fround\$\$ x divisor)}\\
   & \code{ftruncate\$\$} & & \code{ftruncate} & & \code{(ftruncate\$\$ x divisor)}\\
   & \code{incf\$\$}  & & \code{incf}    & & \code{(incf\$\$ x delta)}\\
-  & \code{incf\$\$-after} & & \code{incf-after} & & \code{(incf\$\$-after x delta)}\\
+  & \code{incf\$\$-after} & & \code{\entlink{incf-after}}
+    & & \code{(incf\$\$-after x delta)}\\
   & \code{max\$\$}   & & \code{max}     & & \code{(max\$\$ x y z)}\\
   & \code{min\$\$}   & & \code{min}     & & \code{(min\$\$ x y z)}\\
   & \code{minusp\$\$} & & \code{minusp} & & \code{(minusp\$\$ x)}\\
@@ -7168,7 +7300,8 @@ These \code{long-float} declared-numeric operators are defined in the
     & & \code{(bounded-value\$\$\$ x y z)}\\
   & \code{ceiling\$\$\$} & & \code{ceiling} & & \code{(ceiling\$\$\$ x divisor)}\\
   & \code{decf\$\$\$}  & & \code{decf}      & & \code{(decf\$\$\$ x delta)}\\
-  & \code{decf-\$\$\$after} & & \code{decf-after} & & \code{(decf\$\$\$-after x delta)}\\
+  & \code{decf-\$\$\$after} & & \code{\entlink{decf-after}}
+    & & \code{(decf\$\$\$-after x delta)}\\
   & \code{decf/delete\$\$\$-acons} & & \code{\entlink{decf/delete-acons}}
     & & \code{(decf/delete\$\$\$-acons}\\
     & & & & & ~~~ \code{x delta alist)}\\
@@ -7179,7 +7312,8 @@ These \code{long-float} declared-numeric operators are defined in the
   & \code{fround\$\$\$} & & \code{fround} & & \code{(fround\$\$\$ x divisor)}\\
   & \code{ftruncate\$\$\$} & & \code{ftruncate} & & \code{(ftruncate\$\$\$ x divisor)}\\
   & \code{incf\$\$\$}  & & \code{incf}    & & \code{(incf\$\$\$ x delta)}\\
-  & \code{incf\$\$\$-after} & & \code{incf-after} & & \code{(incf\$\$\$-after x delta)}\\
+  & \code{incf\$\$\$-after} & & \code{\entlink{incf-after}}
+    & & \code{(incf\$\$\$-after x delta)}\\
   & \code{max\$\$\$}   & & \code{max}     & & \code{(max\$\$\$ x y z)}\\
   & \code{min\$\$\$}   & & \code{min}     & & \code{(min\$\$\$ x y z)}\\
   & \code{minusp\$\$\$} & & \code{minusp} & & \code{(minusp\$\$\$ x)}\\

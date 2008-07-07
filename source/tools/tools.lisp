@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Jul  5 06:17:49 2008 *-*
+;;;; *-* Last-Edit: Mon Jul  7 10:31:25 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -135,6 +135,7 @@
 	    counted-delete
 	    decf-after
 	    decf/delete-acons
+            ;; --- declared-type operators:
 	    decf&/delete-acons
 	    decf$/delete-acons
 	    decf$&/delete-acons
@@ -170,6 +171,7 @@
 	    push-acons
 	    pushnew-acons
 	    pushnew/incf-acons
+            ;; --- declared-type operators:
 	    pushnew/incf&-acons
 	    pushnew/incf$-acons
 	    pushnew/incf$&-acons
