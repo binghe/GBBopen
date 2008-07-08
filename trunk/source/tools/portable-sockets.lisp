@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-SOCKETS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/portable-sockets.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jul  2 17:37:28 2008 *-*
+;;;; *-* Last-Edit: Tue Jul  8 05:55:04 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -89,17 +89,17 @@
 ;;; ---------------------------------------------------------------------------
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (export '(*localhost*			; not documented
-	    accept-connection
-	    close-passive-socket
-	    local-hostname-and-port
-	    make-passive-socket
-	    open-connection
-	    remote-hostname-and-port
-	    shutdown-socket-stream
-	    start-connection-server
-	    with-open-connection
-	    write-crlf)))		; not yet documented
+  (export '(*localhost*                 ; not documented
+            accept-connection
+            close-passive-socket
+            local-hostname-and-port
+            make-passive-socket
+            open-connection
+            remote-hostname-and-port
+            shutdown-socket-stream
+            start-connection-server
+            with-open-connection
+            write-crlf)))               ; not yet documented
 
 ;;; ===========================================================================
 
@@ -170,10 +170,10 @@
        :accessor passive-socket.fd)
    (element-type :type (member signed-byte unsigned-byte base-char)
                  :initarg :element-type
-		 :accessor passive-socket.element-type)
+                 :accessor passive-socket.element-type)
    (port :type fixnum
          :initarg :port
-	 :accessor passive-socket.port)))
+         :accessor passive-socket.port)))
 
 #+(or cmu
       lispworks
@@ -181,7 +181,7 @@
 (defmethod print-object ((passive-socket passive-socket) stream)
   (print-unreadable-object (passive-socket stream :type nil)
     (format stream "passive socket at 0.0.0.0/~s"
-	    (passive-socket.port passive-socket)))
+            (passive-socket.port passive-socket)))
   ;; Print-object must return object:
   passive-socket)
 
@@ -193,7 +193,7 @@
     :after ((socket sb-bsd-sockets::socket) &rest args)
   (declare (ignore args))
   (setf (sb-impl::fd-stream-name (slot-value socket 'sb-bsd-sockets::stream))
-	socket))
+        socket))
 
 ;;; ---------------------------------------------------------------------------
 ;;;   Add missing shutdown to Lispworks
@@ -243,10 +243,10 @@
 (defun ipaddr-to-dotted (ipaddr)
   (declare (type (unsigned-byte 32) ipaddr))
   (format nil "~d.~d.~d.~d"
-	  (ldb (byte 8 24) ipaddr)
-	  (ldb (byte 8 16) ipaddr)
-	  (ldb (byte 8 8) ipaddr)
-	  (ldb (byte 8 0) ipaddr)))
+          (ldb (byte 8 24) ipaddr)
+          (ldb (byte 8 16) ipaddr)
+          (ldb (byte 8 8) ipaddr)
+          (ldb (byte 8 0) ipaddr)))
 
 #+(or cmu
       scl)
@@ -254,24 +254,24 @@
   (declare (optimize (ext:inhibit-warnings 3)))
   (alien:with-alien 
       ((hostent (* ext::hostent) 
-		(ext::gethostbyaddr (ext:htonl ipaddr) 4 ext::af-inet)))
+                (ext::gethostbyaddr (ext:htonl ipaddr) 4 ext::af-inet)))
     (unless (zerop (sys:sap-int (alien:alien-sap hostent)))
       (alien:slot hostent 'ext::name))))
 
 #+sbcl
 (defun ipvector-to-dotted (ipvector)
   (format nil "~d.~d.~d.~d"
-	  (aref ipvector 0)
-	  (aref ipvector 1)
-	  (aref ipvector 2)
-	  (aref ipvector 3)))
+          (aref ipvector 0)
+          (aref ipvector 1)
+          (aref ipvector 2)
+          (aref ipvector 3)))
 
 #+sbcl
 (defun ipvector-to-hostname (ipvector)
   (let ((hostent
-	 (handler-case (sb-bsd-sockets:get-host-by-address ipvector)
-	   (sb-bsd-sockets:name-service-error (condition)
-	     (values nil condition)))))
+         (handler-case (sb-bsd-sockets:get-host-by-address ipvector)
+           (sb-bsd-sockets:name-service-error (condition)
+             (values nil condition)))))
     (when hostent
       (sb-bsd-sockets::host-ent-name hostent))))
 
@@ -312,8 +312,8 @@
   (comm:open-tcp-stream host port :timeout timeout)
   #+sbcl
   (let ((socket (make-instance 'sb-bsd-sockets:inet-socket
-		  :protocol ':tcp
-		  :type ':stream)))
+                  :protocol ':tcp
+                  :type ':stream)))
     (sb-bsd-sockets:socket-connect 
      socket 
      (sb-bsd-sockets:host-ent-address
@@ -357,47 +357,47 @@
 (defmacro with-open-connection ((connection host port) &body body)
   `(let ((,connection (open-connection ,host ,port)))
      (unwind-protect
-	 (progn ,@body)
+         (progn ,@body)
        (when ,connection
-	 (close ,connection)))))
+         (close ,connection)))))
 
 ;;; ---------------------------------------------------------------------------
 
 (defun make-passive-socket (port &key (backlog 5)
-				      interface
-				      reuse-address)
+                                      interface
+                                      reuse-address)
   #+old-clisp-version
   (declare (ignore backlog interface))
   #+allegro 
   (socket:make-socket :connect ':passive 
-		      :local-port port
-		      :local-host interface
-		      :backlog backlog
-		      :reuse-address reuse-address)
+                      :local-port port
+                      :local-host interface
+                      :backlog backlog
+                      :reuse-address reuse-address)
   #+clisp
   (let ((passive-socket 
-	 #-old-clisp-version
-	 (socket:socket-server port
-			       :interface interface
-			       :backlog backlog)
-	 #+old-clisp-version
-	 (socket:socket-server port)))
+         #-old-clisp-version
+         (socket:socket-server port
+                               :interface interface
+                               :backlog backlog)
+         #+old-clisp-version
+         (socket:socket-server port)))
     (socket:socket-options passive-socket
-			   :so-reuseaddr reuse-address)
+                           :so-reuseaddr reuse-address)
     passive-socket)
   #+clozure
   (ccl:make-socket :connect ':passive
                    :type ':stream
-		   :backlog backlog
+                   :backlog backlog
                    :reuse-address reuse-address
                    :local-port port
-		   :local-host interface)  
+                   :local-host interface)  
   #+cmu
   (make-instance 'passive-socket
     :fd (ext:create-inet-listener port ':stream 
-				  :backlog backlog
-				  :host (or interface 0)
-				  :reuse-address reuse-address)
+                                  :backlog backlog
+                                  :host (or interface 0)
+                                  :reuse-address reuse-address)
     :element-type 'base-char
     :port port)    
   #+digitool-mcl
@@ -405,16 +405,16 @@
                         :reuse-local-port-p reuse-address)
   #+ecl
   (let ((passive-socket (make-instance 'sb-bsd-sockets:inet-socket
-			  :protocol ':tcp
-			  :type ':stream)))
+                          :protocol ':tcp
+                          :type ':stream)))
     (when reuse-address
       (setf (sb-bsd-sockets:sockopt-reuse-address passive-socket) 't))
     (sb-bsd-sockets:socket-bind 
      passive-socket
      (if interface
-	 (sb-bsd-sockets:host-ent-address
-	  (sb-bsd-sockets:get-host-by-name interface))
-	 #(0 0 0 0))
+         (sb-bsd-sockets:host-ent-address
+          (sb-bsd-sockets:get-host-by-name interface))
+         #(0 0 0 0))
      port)
     (sb-bsd-sockets:socket-listen passive-socket backlog)
     passive-socket)
@@ -422,35 +422,35 @@
   (let ((comm::*use_so_reuseaddr* reuse-address))
     (prog1
       (make-instance 'passive-socket
-	:fd (comm::create-tcp-socket-for-service port 
-						 :address (or interface 0)
-						 :backlog backlog)
-	:element-type 'base-char
-	:port port)
+        :fd (comm::create-tcp-socket-for-service port 
+                                                 :address (or interface 0)
+                                                 :backlog backlog)
+        :element-type 'base-char
+        :port port)
       ;; Avoid Lispworks race condition on filling in the passive 
       ;; socket fd value (still exists in LW 4.4.6):
       (thread-yield)))
   #+sbcl
   (let ((passive-socket (make-instance 'sb-bsd-sockets:inet-socket
-			  :protocol ':tcp
-			  :type ':stream)))
+                          :protocol ':tcp
+                          :type ':stream)))
     (when reuse-address
       (setf (sb-bsd-sockets:sockopt-reuse-address passive-socket) 't))
     (sb-bsd-sockets:socket-bind 
      passive-socket
      (if interface
-	 (sb-bsd-sockets:host-ent-address
-	  (sb-bsd-sockets:get-host-by-name interface))
-	 #(0 0 0 0))
+         (sb-bsd-sockets:host-ent-address
+          (sb-bsd-sockets:get-host-by-name interface))
+         #(0 0 0 0))
      port)
     (sb-bsd-sockets:socket-listen passive-socket backlog)
     passive-socket)
   #+scl
   (make-instance 'passive-socket
     :fd (ext:create-inet-listener port ':stream 
-				  :backlog backlog
-				  :host (or interface 0)
-				  :reuse-address reuse-address)
+                                  :backlog backlog
+                                  :host (or interface 0)
+                                  :reuse-address reuse-address)
     :element-type 'base-char
     :port port)    
   #-(or allegro
@@ -554,21 +554,21 @@
   (socket:accept-connection passive-socket :wait wait)
   #+clisp
   (when (cond ((numberp wait)
-	       (socket:socket-wait passive-socket wait))
-	      (wait 
-	       (socket:socket-wait passive-socket))
-	      (t (socket:socket-wait passive-socket 0)))
+               (socket:socket-wait passive-socket wait))
+              (wait 
+               (socket:socket-wait passive-socket))
+              (t (socket:socket-wait passive-socket 0)))
     (socket:socket-accept passive-socket :external-format ':unix))
   #+clozure
   (ccl:accept-connection passive-socket :wait wait)
   #+cmu
   (let ((fd (passive-socket.fd passive-socket)))
     (when (sys:wait-until-fd-usable 
-	   fd ':input
-	   ;; convert :wait to timeout:
-	   (cond ((eq wait 't) nil)
-		 ((not wait) 0)
-		 (t wait)))
+           fd ':input
+           ;; convert :wait to timeout:
+           (cond ((eq wait 't) nil)
+                 ((not wait) 0)
+                 (t wait)))
       (sys:make-fd-stream
        (ext:accept-tcp-connection fd)
        :input 't
@@ -578,12 +578,12 @@
        :auto-close 't)))
   #+ecl
   (when (progn ; need something like wait-until-fd-usable 
-	 (sb-bsd-sockets:socket-file-descriptor passive-socket) 
-	 ':input
+         (sb-bsd-sockets:socket-file-descriptor passive-socket) 
+         ':input
          ;; convert :wait to timeout:
-	 (cond ((eq wait 't) nil)
-	       ((not wait) 0)
-	       (t wait)))
+         (cond ((eq wait 't) nil)
+               ((not wait) 0)
+               (t wait)))
     (sb-bsd-sockets:socket-make-stream 
      (sb-bsd-sockets:socket-accept passive-socket)
      :input 't :output 't
@@ -598,12 +598,12 @@
         :element-type (passive-socket.element-type passive-socket))))
   #+sbcl
   (when (sb-sys:wait-until-fd-usable 
-	 (sb-bsd-sockets:socket-file-descriptor passive-socket) 
-	 ':input
-	 ;; convert :wait to timeout:
-	 (cond ((eq wait 't) nil)
-	       ((not wait) 0)
-	       (t wait)))
+         (sb-bsd-sockets:socket-file-descriptor passive-socket) 
+         ':input
+         ;; convert :wait to timeout:
+         (cond ((eq wait 't) nil)
+               ((not wait) 0)
+               (t wait)))
     (sb-bsd-sockets:socket-make-stream 
      (sb-bsd-sockets:socket-accept passive-socket)
      :input 't :output 't
@@ -612,11 +612,11 @@
   #+scl
   (let ((fd (passive-socket.fd passive-socket)))
     (when (sys:wait-until-fd-usable 
-	   fd ':input
-	   ;; convert :wait to timeout:
-	   (cond ((eq wait 't) nil)
-		 ((not wait) 0)
-		 (t wait)))
+           fd ':input
+           ;; convert :wait to timeout:
+           (cond ((eq wait 't) nil)
+                 ((not wait) 0)
+                 (t wait)))
       (sys:make-fd-stream
        (ext:accept-tcp-connection fd)
        :input 't
@@ -638,10 +638,10 @@
 ;;;  Connection Server
   
 (defun start-connection-server (function port 
-				&key (name "Connection Server") 
-				     (backlog 5)
-				     interface
-				     reuse-address)
+                                &key (name "Connection Server") 
+                                     (backlog 5)
+                                     interface
+                                     reuse-address)
   #+threads-not-available
   (declare (ignore function port name backlog interface reuse-address))
   #-threads-not-available
@@ -649,15 +649,15 @@
    name 
    #'(lambda (function port interface backlog reuse-address)
        (let ((passive-socket 
-	      (make-passive-socket port 
-				   :backlog backlog
-				   :interface interface
-				   :reuse-address reuse-address)))
-	 (unwind-protect
-	     (loop
-	       (let ((connection (accept-connection passive-socket)))
-		 (funcall function connection)))
-	   (close-passive-socket passive-socket))))
+              (make-passive-socket port 
+                                   :backlog backlog
+                                   :interface interface
+                                   :reuse-address reuse-address)))
+         (unwind-protect
+             (loop
+               (let ((connection (accept-connection passive-socket)))
+                 (funcall function connection)))
+           (close-passive-socket passive-socket))))
    function port interface backlog reuse-address)
   #+threads-not-available
   (threads-not-available 'start-connection-server))
@@ -676,73 +676,73 @@
   (declare (ignore connection do-not-resolve))
   #+allegro
   (let* ((ipaddr (socket:local-host connection))
-	 (dotted (socket:ipaddr-to-dotted ipaddr)))
+         (dotted (socket:ipaddr-to-dotted ipaddr)))
     (values (if do-not-resolve
-		dotted
-		(let ((resolved (socket:ipaddr-to-hostname ipaddr)))
-		  (if resolved
-		      (format nil "~a (~a)" dotted resolved)
-		      dotted)))
-	    (socket:local-port connection)))
+                dotted
+                (let ((resolved (socket:ipaddr-to-hostname ipaddr)))
+                  (if resolved
+                      (format nil "~a (~a)" dotted resolved)
+                      dotted)))
+            (socket:local-port connection)))
   #+clisp
   (socket:socket-stream-local connection (not do-not-resolve))
   #+clozure
   (let* ((ipaddr (ccl:local-host connection))
-	 (dotted (ccl:ipaddr-to-dotted ipaddr)))
+         (dotted (ccl:ipaddr-to-dotted ipaddr)))
     (values (if do-not-resolve
-		dotted
-		(let ((resolved (ccl:ipaddr-to-hostname ipaddr)))
-		  (if resolved
-		      (format nil "~a (~a)" dotted resolved))))
-	    (ccl:local-port connection)))
+                dotted
+                (let ((resolved (ccl:ipaddr-to-hostname ipaddr)))
+                  (if resolved
+                      (format nil "~a (~a)" dotted resolved))))
+            (ccl:local-port connection)))
   #+cmu
   (let ((fd (sys:fd-stream-fd connection)))
     (multiple-value-bind (ipaddr port)
-	(ext:get-socket-host-and-port fd)
+        (ext:get-socket-host-and-port fd)
       (let ((dotted (ipaddr-to-dotted ipaddr)))
-	(values (if do-not-resolve
-		    dotted
-		    (let ((resolved (ipaddr-to-hostname ipaddr)))
-		      (if resolved
-			  (format nil "~a (~a)" dotted resolved)
-			  dotted)))
-		port))))   
+        (values (if do-not-resolve
+                    dotted
+                    (let ((resolved (ipaddr-to-hostname ipaddr)))
+                      (if resolved
+                          (format nil "~a (~a)" dotted resolved)
+                          dotted)))
+                port))))   
   #+lispworks
   (multiple-value-bind (ipaddr port)
       (comm:socket-stream-address connection)
     (let ((dotted (comm:ip-address-string ipaddr)))
       (values (if do-not-resolve
-		  dotted
-		  (let ((resolved (comm::get-host-entry ipaddr
-							:fields '(:name))))
-		    (if resolved
-			(format nil "~a (~a)" dotted resolved)
-			dotted)))
-	    port)))
+                  dotted
+                  (let ((resolved (comm::get-host-entry ipaddr
+                                                        :fields '(:name))))
+                    (if resolved
+                        (format nil "~a (~a)" dotted resolved)
+                        dotted)))
+            port)))
   #+sbcl
   (let ((socket (sb-impl::fd-stream-name connection)))
     (multiple-value-bind (ipvector port)
-	(sb-bsd-sockets:socket-name socket)
+        (sb-bsd-sockets:socket-name socket)
       (let ((dotted (ipvector-to-dotted ipvector)))
-	(values (if do-not-resolve
-		    dotted
-		    (let ((resolved (ipvector-to-hostname ipvector)))
-		      (if resolved
-			  (format nil "~a (~a)" dotted resolved)
-			  dotted)))
-		port)))) 	
+        (values (if do-not-resolve
+                    dotted
+                    (let ((resolved (ipvector-to-hostname ipvector)))
+                      (if resolved
+                          (format nil "~a (~a)" dotted resolved)
+                          dotted)))
+                port))))        
   #+scl
   (let ((fd (sys:fd-stream-fd connection)))
     (multiple-value-bind (ipaddr port)
-	(ext:get-socket-host-and-port fd)
+        (ext:get-socket-host-and-port fd)
       (let ((dotted (ipaddr-to-dotted ipaddr)))
-	(values (if do-not-resolve
-		    dotted
-		    (let ((resolved (ipaddr-to-hostname ipaddr)))
-		      (if resolved
-			  (format nil "~a (~a)" dotted resolved)
-			  dotted)))
-		port))))   
+        (values (if do-not-resolve
+                    dotted
+                    (let ((resolved (ipaddr-to-hostname ipaddr)))
+                      (if resolved
+                          (format nil "~a (~a)" dotted resolved)
+                          dotted)))
+                port))))   
   #-(or allegro
         clisp 
         clozure
@@ -765,74 +765,74 @@
   (declare (ignore connection do-not-resolve))
   #+allegro
   (let* ((ipaddr (socket:remote-host connection))
-	 (dotted (socket:ipaddr-to-dotted ipaddr)))
+         (dotted (socket:ipaddr-to-dotted ipaddr)))
     (values (if do-not-resolve
-		dotted
-		(let ((resolved (socket:ipaddr-to-hostname ipaddr)))
-		  (if resolved
-		      (format nil "~a (~a)" dotted resolved)
-		      dotted)))
-	    (socket:remote-port connection)))
+                dotted
+                (let ((resolved (socket:ipaddr-to-hostname ipaddr)))
+                  (if resolved
+                      (format nil "~a (~a)" dotted resolved)
+                      dotted)))
+            (socket:remote-port connection)))
   #+clisp
   (socket:socket-stream-peer connection (not do-not-resolve))
   #+clozure
   (let* ((ipaddr (ccl:remote-host connection))
-	 (dotted (ccl:ipaddr-to-dotted ipaddr)))
+         (dotted (ccl:ipaddr-to-dotted ipaddr)))
     (values (if do-not-resolve
-		dotted
-		(let ((resolved (ccl:ipaddr-to-hostname ipaddr)))
-		  (if resolved
-		      (format nil "~a (~a)" dotted resolved)
-		      dotted)))
-	    (ccl:remote-port connection)))
+                dotted
+                (let ((resolved (ccl:ipaddr-to-hostname ipaddr)))
+                  (if resolved
+                      (format nil "~a (~a)" dotted resolved)
+                      dotted)))
+            (ccl:remote-port connection)))
   #+cmu
   (let ((fd (sys:fd-stream-fd connection)))
     (multiple-value-bind (ipaddr port)
-	(ext:get-peer-host-and-port fd)
+        (ext:get-peer-host-and-port fd)
       (let ((dotted (ipaddr-to-dotted ipaddr)))
-	(values (if do-not-resolve
-		    dotted
-		    (let ((resolved (ipaddr-to-hostname ipaddr)))
-		      (if resolved
-			  (format nil "~a (~a)" dotted resolved)
-			  dotted)))
-		port))))   
+        (values (if do-not-resolve
+                    dotted
+                    (let ((resolved (ipaddr-to-hostname ipaddr)))
+                      (if resolved
+                          (format nil "~a (~a)" dotted resolved)
+                          dotted)))
+                port))))   
   #+lispworks
   (multiple-value-bind (ipaddr port)
       (comm:socket-stream-peer-address connection)
     (let ((dotted (comm:ip-address-string ipaddr)))
       (values (if do-not-resolve
-		  dotted
-		  (let ((resolved (comm::get-host-entry ipaddr
-							:fields '(:name))))
-		    (if resolved
-			(format nil "~a (~a)" dotted resolved)
-			dotted)))
-	    port)))
+                  dotted
+                  (let ((resolved (comm::get-host-entry ipaddr
+                                                        :fields '(:name))))
+                    (if resolved
+                        (format nil "~a (~a)" dotted resolved)
+                        dotted)))
+            port)))
   #+sbcl
   (let ((socket (sb-impl::fd-stream-name connection)))
     (multiple-value-bind (ipvector port)
-	(sb-bsd-sockets:socket-peername socket)
+        (sb-bsd-sockets:socket-peername socket)
       (let ((dotted (ipvector-to-dotted ipvector)))
-	(values (if do-not-resolve
-		    dotted
-		    (let ((resolved (ipvector-to-hostname ipvector)))
-		      (if resolved
-			  (format nil "~a (~a)" dotted resolved)
-			  dotted)))
-		port)))) 	
+        (values (if do-not-resolve
+                    dotted
+                    (let ((resolved (ipvector-to-hostname ipvector)))
+                      (if resolved
+                          (format nil "~a (~a)" dotted resolved)
+                          dotted)))
+                port))))        
   #+scl
   (let ((fd (sys:fd-stream-fd connection)))
     (multiple-value-bind (ipaddr port)
-	(ext:get-peer-host-and-port fd)
+        (ext:get-peer-host-and-port fd)
       (let ((dotted (ipaddr-to-dotted ipaddr)))
-	(values (if do-not-resolve
-		    dotted
-		    (let ((resolved (ipaddr-to-hostname ipaddr)))
-		      (if resolved
-			  (format nil "~a (~a)" dotted resolved)
-			  dotted)))
-		port))))   
+        (values (if do-not-resolve
+                    dotted
+                    (let ((resolved (ipaddr-to-hostname ipaddr)))
+                      (if resolved
+                          (format nil "~a (~a)" dotted resolved)
+                          dotted)))
+                port))))   
   #-(or allegro
         clisp
         clozure
@@ -857,7 +857,5 @@
 (pushnew *portable-sockets-version-keyword* *features*)
 
 ;;; ===========================================================================
-;;;				  End of File
+;;;                               End of File
 ;;; ===========================================================================
-
-

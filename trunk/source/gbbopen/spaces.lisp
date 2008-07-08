@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/spaces.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Jun 14 15:26:39 2008 *-*
+;;;; *-* Last-Edit: Tue Jul  8 05:47:17 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -48,14 +48,14 @@
             allowed-unit-classes-of
             clear-space-instances
             change-space-instance
-            change-space-instance-storage ; remove in 1.1
+            change-space-instance-storage ; remove in 1.2
             children                    ; standard-space-instance slot name
             children-of
             define-space-class
             delete-all-space-instances
             delete-space-instance
             describe-blackboard-repository
-            describe-space-instance     ; not yet documented
+            describe-space-instance
             dimensions                  ; standard-space-instance slot name
             dimensions-of
             do-space-instances

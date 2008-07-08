@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/polling-functions.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Jun 27 05:54:17 2008 *-*
+;;;; *-* Last-Edit: Tue Jul  8 05:54:52 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -32,11 +32,11 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(*polling-sleep-poll-interval* ; not yet documented
             add-polling-function 
-	    describe-all-polling-functions
+            describe-all-polling-functions
             polling-sleep               ; not yet documented
-	    remove-all-polling-functions
-	    remove-polling-function
-	    run-polling-functions)))
+            remove-all-polling-functions
+            remove-polling-function
+            run-polling-functions)))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -64,15 +64,15 @@
     ;; Do the user a favor, and delete an existing copy, if present:
     (remove-polling-function function)
     (setq *polling-functions* (nsorted-insert (cons function priority)
-					      *polling-functions*
-					      #'>
-					      #'cdr))
+                                              *polling-functions*
+                                              #'>
+                                              #'cdr))
     function)
   
 (defun run-polling-functions ()
   (dolist (item *polling-functions*)
     (with-simple-restart
-	(:abort "Continue with the next polling function")
+        (:abort "Continue with the next polling function")
       (funcall (car item)))))
 
 ;;; ---------------------------------------------------------------------------
@@ -104,7 +104,5 @@
 (pushnew 'run-polling-functions *non-threaded-polling-function-hook*)
 
 ;;; ===========================================================================
-;;;				  End of File
+;;;                               End of File
 ;;; ===========================================================================
-
-

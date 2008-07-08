@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/read-object.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Jun 17 15:04:33 2008 *-*
+;;;; *-* Last-Edit: Tue Jul  8 05:56:02 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -285,5 +285,5 @@
       *readtable*))
 
 ;;; ===========================================================================
-;;;				  End of File
+;;;                               End of File
 ;;; ===========================================================================

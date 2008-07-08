@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/duplicate-instance.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon May 19 09:53:37 2008 *-*
+;;;; *-* Last-Edit: Tue Jul  8 05:53:58 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -26,9 +26,8 @@
 (in-package :gbbopen-tools)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (export '(make-duplicate-instance     ; not yet documented
-            unduplicated-slot-names     ; not yet documented
-            )))
+  (export '(make-duplicate-instance
+            unduplicated-slot-names)))
 
 ;;; ===========================================================================
 
@@ -116,5 +115,5 @@
     (values new-instance slots)))
 
 ;;; ===========================================================================
-;;;				  End of File
+;;;                               End of File
 ;;; ===========================================================================

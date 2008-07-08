@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/declared-numerics.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Jul  5 06:21:45 2008 *-*
+;;;; *-* Last-Edit: Tue Jul  8 05:53:32 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -170,49 +170,49 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(;; Numeric types
             fixnump short-float-p single-float-p double-float-p long-float-p
-	    ;; Coercion:
-	    coerce& coerce$& coerce$ coerce$$ coerce$$$
-	    ;; Declared fixnum ops:
-	    & /& *& +& -& 1+& 1-& 
-	    /=& <& <=& =& >& >=& 
-	    bounded-value& ceiling& decf& decf&-after evenp& 
-	    floor& fceiling& ffloor& fround& ftruncate& 
+            ;; Coercion:
+            coerce& coerce$& coerce$ coerce$$ coerce$$$
+            ;; Declared fixnum ops:
+            & /& *& +& -& 1+& 1-& 
+            /=& <& <=& =& >& >=& 
+            bounded-value& ceiling& decf& decf&-after evenp& 
+            floor& fceiling& ffloor& fround& ftruncate& 
             incf& incf&-after max& min& minusp& 
-	    abs& mod& oddp& plusp& round& truncate& zerop&
-	    ;; Declared short-float ops:
-	    $& /$& *$& +$& -$& 1+$& 1-$&
-	    /=$& <$& <=$& =$& >$& >=$& 
-	    bounded-value$& ceiling$& decf$& decf$&-after evenp$& 
-	    floor$& fceiling$& ffloor$& fround$& ftruncate$& 
+            abs& mod& oddp& plusp& round& truncate& zerop&
+            ;; Declared short-float ops:
+            $& /$& *$& +$& -$& 1+$& 1-$&
+            /=$& <$& <=$& =$& >$& >=$& 
+            bounded-value$& ceiling$& decf$& decf$&-after evenp$& 
+            floor$& fceiling$& ffloor$& fround$& ftruncate$& 
             incf$& incf$&-after max$& min$& minusp$& 
-	    abs$& mod$& oddp$& plusp$& round$& truncate$& zerop$&
-	    ;; Declared single-float ops:
-	    $ /$ *$ +$ -$ 1+$ 1-$
-	    /=$ <$ <=$ =$ >$ >=$ 
-	    bounded-value$ ceiling$ decf$ decf$-after evenp$ 
-	    floor$ fceiling$ ffloor$ fround$ ftruncate$
+            abs$& mod$& oddp$& plusp$& round$& truncate$& zerop$&
+            ;; Declared single-float ops:
+            $ /$ *$ +$ -$ 1+$ 1-$
+            /=$ <$ <=$ =$ >$ >=$ 
+            bounded-value$ ceiling$ decf$ decf$-after evenp$ 
+            floor$ fceiling$ ffloor$ fround$ ftruncate$
             incf$ incf$-after max$ min$ minusp$ 
-	    abs$ mod$ oddp$ plusp$ round$ truncate$ zerop$
-	    ;; Declared double-float ops:
-	    $$ /$$ *$$ +$$ -$$ 1+$$ 1-$$ 
-	    /=$$ <$$ <=$$ =$$ >$$ >=$$ 
-	    bounded-value$$ ceiling$$ decf$$ decf$$-after evenp$$ 
-	    floor$$ fceiling$$ ffloor$$ fround$$ ftruncate$$
+            abs$ mod$ oddp$ plusp$ round$ truncate$ zerop$
+            ;; Declared double-float ops:
+            $$ /$$ *$$ +$$ -$$ 1+$$ 1-$$ 
+            /=$$ <$$ <=$$ =$$ >$$ >=$$ 
+            bounded-value$$ ceiling$$ decf$$ decf$$-after evenp$$ 
+            floor$$ fceiling$$ ffloor$$ fround$$ ftruncate$$
             incf$$ incf$$-after max$$ min$$ minusp$$ 
-	    abs$$ mod$$ oddp$$ plusp$$ round$$ truncate$$ zerop$$
-	    ;; Declared long-float ops:
-	    $$$ /$$$ *$$$ +$$$ -$$$ 1+$$$ 1-$$$ 
-	    /=$$$ <$$$ <=$$$ =$$$ >$$$ >=$$$ 
-	    bounded-value$$$ ceiling$$$ decf$$$ decf$$$-after evenp$$$ 
-	    floor$$$ fceiling$$$ ffloor$$$ fround$$$ ftruncate$$$
+            abs$$ mod$$ oddp$$ plusp$$ round$$ truncate$$ zerop$$
+            ;; Declared long-float ops:
+            $$$ /$$$ *$$$ +$$$ -$$$ 1+$$$ 1-$$$ 
+            /=$$$ <$$$ <=$$$ =$$$ >$$$ >=$$$ 
+            bounded-value$$$ ceiling$$$ decf$$$ decf$$$-after evenp$$$ 
+            floor$$$ fceiling$$$ ffloor$$$ fround$$$ ftruncate$$$
             incf$$$ incf$$$-after max$$$ min$$$ minusp$$$ 
-	    abs$$$ mod$$$ oddp$$$ plusp$$$ round$$$ truncate$$$ zerop$$$
-	    ;; Infinite values:
-	    infinity -infinity infinity& -infinity&
-	    infinity$ -infinity$ infinity$& -infinity$&
+            abs$$$ mod$$$ oddp$$$ plusp$$$ round$$$ truncate$$$ zerop$$$
+            ;; Infinite values:
+            infinity -infinity infinity& -infinity&
+            infinity$ -infinity$ infinity$& -infinity$&
             infinity$$ -infinity$$ infinity$$$ -infinity$$$
-	    ;; Infinity reader escape hook (undocumented):
-	    *inf-reader-escape-hook*)))
+            ;; Infinity reader escape hook (undocumented):
+            *inf-reader-escape-hook*)))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  The fastest (/ fixnum fixnum)=>fixnum (full-fixnum division) operator for
@@ -427,8 +427,8 @@
   (with-once-only-bindings (arg)
     ;; avoid coercion if not required (some CLs will coerce anyway):
     `(if (typep ,arg 'short-float)
-	 ,arg
-	 (coerce ,arg 'short-float))))
+         ,arg
+         (coerce ,arg 'short-float))))
 
 (defdn $& + t)
 (defdn $& 1+  t)
@@ -498,8 +498,8 @@
   (with-once-only-bindings (arg)
     ;; avoid coercion if not required (some CLs will coerce anyway):
     `(if (typep ,arg 'single-float)
-	 ,arg
-	 (coerce ,arg 'single-float))))
+         ,arg
+         (coerce ,arg 'single-float))))
 
 (defdn $ + t)
 (defdn $ 1+  t)
@@ -569,8 +569,8 @@
   (with-once-only-bindings (arg)
     ;; avoid coercion if not required (some CLs will coerce anyway):
     `(if (typep ,arg 'double-float)
-	 ,arg
-	 (coerce ,arg 'double-float))))
+         ,arg
+         (coerce ,arg 'double-float))))
 
 (defdn $$ + t)
 (defdn $$ 1+  t)
@@ -640,8 +640,8 @@
   (with-once-only-bindings (arg)
     ;; avoid coercion if not required (some CLs will coerce anyway):
     `(if (typep ,arg 'long-float)
-	 ,arg
-	 (coerce ,arg 'long-float))))
+         ,arg
+         (coerce ,arg 'long-float))))
 
 (defdn $$$ + t)
 (defdn $$$ 1+  t)
@@ -742,10 +742,10 @@
                     (ccl:set-fpu-mode :division-by-zero t))
       #+cmu ext:double-float-positive-infinity
       #+digitool-mcl #.(unwind-protect
-			   (progn
-			     (ccl:set-fpu-mode :division-by-zero nil)
-			     (/ 0d0))
-			 (ccl:set-fpu-mode :division-by-zero t))
+                           (progn
+                             (ccl:set-fpu-mode :division-by-zero nil)
+                             (/ 0d0))
+                         (ccl:set-fpu-mode :division-by-zero t))
       #+lispworks #.(read-from-string "10E999")
       #+sbcl sb-ext:double-float-positive-infinity
       #+scl ext:double-float-positive-infinity
@@ -764,10 +764,10 @@
                     (ccl:set-fpu-mode :division-by-zero t))
       #+cmu ext:double-float-negative-infinity
       #+digitool-mcl #.(unwind-protect
-			   (progn
-			     (ccl:set-fpu-mode :division-by-zero nil)
-			     (/ -0d0))
-			 (ccl:set-fpu-mode :division-by-zero t))
+                           (progn
+                             (ccl:set-fpu-mode :division-by-zero nil)
+                             (/ -0d0))
+                         (ccl:set-fpu-mode :division-by-zero t))
       #+lispworks #.(read-from-string "-10E999")
       #+sbcl sb-ext:double-float-negative-infinity
       #+scl ext:double-float-negative-infinity
@@ -892,39 +892,39 @@
 
 (defun inf-reader (stream sub-char infix-parameter)
   (declare (ignore sub-char infix-parameter))
-  (let ((what (with-standard-io-syntax	; protect against foolery
-		(read stream t nil 't))))
+  (let ((what (with-standard-io-syntax  ; protect against foolery
+                (read stream t nil 't))))
     (flet ((illegal-value-error (what)
-	     (error "Illegal infinite-value specifier: #@~s" what)))	 
+             (error "Illegal infinite-value specifier: #@~s" what)))     
       (typecase what
-	;; Maintain Digitool MCL's #@(<big point>) extension:      
-	#+digitool-mcl
-	(cons (apply #'ccl::make-big-point what))     
-	(symbol 
-	 (flet ((symbol-equal (a b)
-		  (string-equal (symbol-name a) (symbol-name b))))
-	   (cond
-	    ((symbol-equal what 'short-float-infinity) infinity$&)
-	    ((symbol-equal what 'single-float-infinity) infinity$)
-	    ((symbol-equal what 'double-float-infinity) infinity$$)
-	    ((symbol-equal what 'long-float-infinity) infinity$$$)
-	    ((symbol-equal what 'short-float-negative-infinity) -infinity$&)
-	    ((symbol-equal what 'single-float-negative-infinity) -infinity$)
-	    ((symbol-equal what 'double-float-negative-infinity) -infinity$$)
-	    ((symbol-equal what 'long-float-negative-infinity) -infinity$$$)
-	    (*inf-reader-escape-hook*
-	     (funcall *inf-reader-escape-hook* what))
-	    (t (illegal-value-error what)))))
-	(otherwise
-	 (if *inf-reader-escape-hook*
-	     (funcall *inf-reader-escape-hook* what)
-	     (illegal-value-error what)))))))
+        ;; Maintain Digitool MCL's #@(<big point>) extension:      
+        #+digitool-mcl
+        (cons (apply #'ccl::make-big-point what))     
+        (symbol 
+         (flet ((symbol-equal (a b)
+                  (string-equal (symbol-name a) (symbol-name b))))
+           (cond
+            ((symbol-equal what 'short-float-infinity) infinity$&)
+            ((symbol-equal what 'single-float-infinity) infinity$)
+            ((symbol-equal what 'double-float-infinity) infinity$$)
+            ((symbol-equal what 'long-float-infinity) infinity$$$)
+            ((symbol-equal what 'short-float-negative-infinity) -infinity$&)
+            ((symbol-equal what 'single-float-negative-infinity) -infinity$)
+            ((symbol-equal what 'double-float-negative-infinity) -infinity$$)
+            ((symbol-equal what 'long-float-negative-infinity) -infinity$$$)
+            (*inf-reader-escape-hook*
+             (funcall *inf-reader-escape-hook* what))
+            (t (illegal-value-error what)))))
+        (otherwise
+         (if *inf-reader-escape-hook*
+             (funcall *inf-reader-escape-hook* what)
+             (illegal-value-error what)))))))
 
 ;;; ---------------------------------------------------------------------------
 
 (safely-set-dispatch-macro-character #\# #\@ 
-				     #-cormanlisp 'inf-reader
-				     #+cormanlisp #'inf-reader)
+                                     #-cormanlisp 'inf-reader
+                                     #+cormanlisp #'inf-reader)
 
 ;;; ---------------------------------------------------------------------------
 
@@ -985,6 +985,5 @@
    (print-object x stream)))
 
 ;;; ===========================================================================
-;;;				  End of File
+;;;                               End of File
 ;;; ===========================================================================
-
