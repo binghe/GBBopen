@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/epilogue.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Jul  7 14:06:25 2008 *-*
+;;;; *-* Last-Edit: Mon Jul  7 20:13:36 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -200,14 +200,18 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun confirm-if-blackboard-repository-not-empty-p ()
+(defun confirm-if-blackboard-repository-not-empty-p
+    (&optional show-non-empty-repository?)
   ;; Returns true unless the blackboard-repository is not empty and the user
   ;; doesn't confirm continuing:
-  (if (empty-blackboard-repository-p)
-      't
+  (cond
+   ((empty-blackboard-repository-p) 't)
+   (t (when show-non-empty-repository?
+        (describe-blackboard-repository))
       (nicer-y-or-n-p 
-       "The blackboard repository is not empty.~%Continue anyway ~
-        (the current contents will be deleted)? ")))
+       "The~@[ above~] blackboard repository is not empty.~%Continue anyway ~
+        (the current contents will be deleted)? "
+       show-non-empty-repository?))))
 
 ;;; ---------------------------------------------------------------------------
 
