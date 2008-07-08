@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Mon Jul  7 10:35:07 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Tue Jul  8 04:56:33 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -14657,7 +14657,8 @@ are reset to their initial values.
 \textbf{Delete-blackboard-repository} does not undefine any class
 definitions, functions, methods, etc.
 
-\begin{alsos}{initial-class-instance-number}
+\begin{alsos}{confirm-if-blackboard-repository-not-empty-p}
+\also[confirm-if-blackboard-repository-not-empty-p]
 \also[delete-instance]
 \also[delete-all-space-instances]
 \also[delete-space-instance]
@@ -15644,7 +15645,8 @@ printing, removes all event functions, and resets all \glref{unit-class}
 instance-name counters to their initial values.  \textbf{Reset-gbbopen} does
 not undefine any class definitions, functions, methods, etc.
 
-\begin{alsos}{initial-class-instance-number}
+\begin{alsos}{confirm-if-blackboard-repository-not-empty-p}
+\also[confirm-if-blackboard-repository-not-empty-p]
 \also[delete-all-space-instances]
 \also[delete-instance]
 \also[delete-space-instance]
@@ -17182,6 +17184,125 @@ to the slot named \code{new-slot} in the current class definition of
 
 %% ------------------------------------------------------------------------
 
+\begin{functiondoc}{Function}{confirm-if-blackboard-repository-not-empty-p}{%
+    \code{\&key} \var{describe-non-empty-repository pending-action\/} 
+    \returns{} \var{boolean}}
+\index{blackboard repository!checking if empty}%
+
+\fnsyntax 
+
+\fnpurpose Obtain confirmation if the blackboard repository is not empty.
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:gbbopen-core}
+
+\fnargs
+\begin{args}{describe-non-empty-repository}
+\arg[describe-non-empty-repository] A \glref{generalized~boolean} (default is \nil)
+\arg[pending-action] A string (default is \code{"deleted"})
+\arg[boolean] A \glref{generalized~boolean}
+\end{args}
+
+\fnreturns True if the blackboard repository is empty or the user has
+confirmed positively; otherwise \nil.
+
+\fndescription
+%
+If the blackboard repository is not empty and
+\var{describe-non-empty-repository\/} is true, the blackboard repository is
+described (using \textbf{\entlink{describe-blackboard-repository}}) when
+asking for confirmation.
+
+The \var{pending-action\/} string is used to indicate to the user what is to
+happen if confirmed positively.
+
+\begin{alsos}{empty-blackboard-repository-p}
+\also[empty-blackboard-repository-p]
+\end{alsos}
+
+\fnexamples 
+%
+\W\supp
+\begin{example}
+  > (confirm-if-blackboard-repository-not-empty-p)
+  The blackboard repository is not empty.
+  Continue anyway (the current contents will be deleted) [y or n]? n
+  nil
+  > (confirm-if-blackboard-repository-not-empty-p 
+       describe-non-empty-repository 't)
+
+  Space Instance                        Contents
+  --------------                        --------
+  known-world                           53 instances (52 location; 1 path)
+
+  Unit Class                            Instances
+  ----------                            ---------
+  control-shell                                 1 *
+  ks                                            4 +
+  ksa-queue                                     2 +
+  location                                     52  
+  ordered-ksa-queue                             1 +
+  path                                          1  
+  standard-space-instance                       1  
+                                        ---------
+                                               62 instances
+  The above blackboard repository is not empty.
+  Continue anyway (the current contents will be deleted) [y or n]? n
+  nil
+  > (confirm-if-blackboard-repository-not-empty-p :pending-action "happy")
+  The blackboard repository is not empty.
+  Continue anyway (the current contents will be happy) [y or n]? y
+  t
+  >
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{empty-blackboard-repository-p}{%
+    \returns{} \var{boolean}}
+\index{blackboard repository!checking if empty}%
+
+\fnsyntax 
+
+\fnpurpose Determine if the blackboard repository is empty.
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:gbbopen-core}
+
+\fnargs
+\begin{args}{boolean}
+\arg[boolean] A \glref{generalized~boolean}
+\end{args}
+
+\fnreturns True if the blackboard repository is empty; otherwise \nil.
+
+\begin{alsos}{confirm-if-blackboard-repository-not-empty-p}
+\also[confirm-if-blackboard-repository-not-empty-p]
+\end{alsos}
+
+\fnexamples 
+%
+\bfindexit{delete-blackboard-repository}%
+%
+\W\supp
+\begin{example}
+  > (empty-blackboard-repository-p)
+  nil
+  > (\entlink{delete-blackboard-repository} :all-classes 't)
+  t
+  > (empty-blackboard-repository-p)
+  t
+  >
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
 \begin{functiondoc}{Function}{load-blackboard-repository}{\var{pathname\/}
     \code{\&key} \var{class-name-translations
                       confirm-if-not-empty
@@ -17278,7 +17399,8 @@ If \var{ignore-after-loading-function\/} is true, the
 saved) is not executed.  Otherwise, the \var{after-loading-function\/} is
 executed at the conclusion of repository loading.
 
-\begin{alsos}{with-reading-saved/sent-objects-block}
+\begin{alsos}{confirm-if-blackboard-repository-not-empty-p}
+\also[confirm-if-blackboard-repository-not-empty-p]
 \also[save-blackboard-repository]
 \also[with-reading-saved/sent-objects-block]
 \end{alsos}
