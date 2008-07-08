@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/os-interface.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Apr 25 02:05:28 2008 *-*
+;;;; *-* Last-Edit: Tue Jul  8 05:54:43 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -28,9 +28,9 @@
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(browse-hyperdoc
-	    close-external-program-stream
-	    kill-external-program	; not yet documented
-	    run-external-program)))
+            close-external-program-stream
+            kill-external-program       ; not yet documented
+            run-external-program)))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Unify some implementation differences
@@ -90,8 +90,8 @@
 ;;;  Support for Corman Common Lisp and Digitool MCL is incomplete.
 
 (defun run-external-program (program args &key (input ':stream)
-					       (output ':stream)
-					       wait)
+                                               (output ':stream)
+                                               wait)
   #+(or cormanlisp digitool-mcl)
   (declare (ignore input output wait))  
   #+allegro
@@ -111,10 +111,10 @@
   #+clisp
   (values
    (run-program program 
-		:arguments args
-		:input input
-		:output output
-		:wait (or wait (eq input ':stream) (eq output ':stream)))
+                :arguments args
+                :input input
+                :output output
+                :wait (or wait (eq input ':stream) (eq output ':stream)))
    ;; no process id is available in CLISP:
    nil)
   #+cormanlisp
@@ -128,12 +128,12 @@
   (progn
     (when wait
       (error "~s on ECL does not support :wait ~s"
-	     'run-external-program 't))
+             'run-external-program 't))
     (values (si:run-program program args
-			    :input input
-			    :output output)
-	    ;; no process id is available in ECL:
-	    nil))
+                            :input input
+                            :output output)
+            ;; no process id is available in ECL:
+            nil))
   #+(and lispworks (not win32))
   (multiple-value-bind (io-stream error-stream process)
       (system:run-shell-command 
@@ -150,9 +150,9 @@
   (system:open-pipe `(,program ,program ,@args) :direction :io)
   #+(or clozure cmu sbcl scl)
   (let ((process (run-program program args
-			      :input input
-			      :output output
-			      :wait wait)))
+                              :input input
+                              :output output
+                              :wait wait)))
     (values
      (when (or input output)
        (make-two-way-stream 
@@ -192,9 +192,9 @@
   (let ((url (hyperdoc-url symbol)))
     (cond 
      (url (run-external-program *preferred-browser* (list url))
-	  't)
+          't)
      (t (values)))))
 
 ;;; ===========================================================================
-;;;				  End of File
+;;;                               End of File
 ;;; ===========================================================================

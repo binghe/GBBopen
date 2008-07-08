@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/current/source/tools/gbbopen-instance.lisp *-*
+;;;; *-* File: /usr/local/gbbopen/source/tools/gbbopen-instance.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Dec 27 10:16:05 2006 *-*
-;;;; *-* Machine: ruby.corkills.org *-*
+;;;; *-* Last-Edit: Tue Jul  8 05:54:19 2008 *-*
+;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -41,10 +41,10 @@
 
 (defmethod print-object ((instance standard-gbbopen-instance) stream)
   (cond (*print-readably* (call-next-method))
-	(t (print-unreadable-object (instance stream :type nil)
-	     (print-instance-slots instance stream))
-	   ;; Print-object must return object:
-	   instance)))
+        (t (print-unreadable-object (instance stream :type nil)
+             (print-instance-slots instance stream))
+           ;; Print-object must return object:
+           instance)))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Print instance slots (extension of print-object method for
@@ -55,7 +55,5 @@
   nil)
 
 ;;; ===========================================================================
-;;;				  End of File
+;;;                               End of File
 ;;; ===========================================================================
-
-

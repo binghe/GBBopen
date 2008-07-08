@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/epilogue.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Jul  8 04:25:38 2008 *-*
+;;;; *-* Last-Edit: Tue Jul  8 05:46:02 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -39,9 +39,9 @@
   (import '(gbbopen-tools::*recorded-class-descriptions-ht*)))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (export '(confirm-if-blackboard-repository-not-empty-p ; not yet documented
+  (export '(confirm-if-blackboard-repository-not-empty-p
             delete-blackboard-repository
-            empty-blackboard-repository-p ; not yet documented
+            empty-blackboard-repository-p
             load-blackboard-repository
             save-blackboard-repository
             reset-gbbopen)))

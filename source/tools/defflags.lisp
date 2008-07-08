@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/current/source/tools/defflags.lisp *-*
+;;;; *-* File: /usr/local/gbbopen/source/tools/defflags.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Aug 19 22:23:08 2005 *-*
-;;;; *-* Machine: ruby.corkills.org *-*
+;;;; *-* Last-Edit: Tue Jul  8 05:53:42 2008 *-*
+;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -27,9 +27,9 @@
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(clear-flag 
-	    #+unused defflags 
-	    flag-set-p 
-	    set-flag)))
+            #+unused defflags 
+            flag-set-p 
+            set-flag)))
 
 ;;; ===========================================================================
 ;;;
@@ -140,7 +140,7 @@
                    value))))))))
 
 ;;; ===========================================================================
-;;;				  End of File
+;;;                               End of File
 ;;; ===========================================================================
 
 

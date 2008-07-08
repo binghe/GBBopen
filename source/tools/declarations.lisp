@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/declarations.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jul  2 17:18:39 2008 *-*
+;;;; *-* Last-Edit: Tue Jul  8 05:53:17 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -30,17 +30,17 @@
 (in-package :gbbopen-tools)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (export '(*generate-nyi-errors*	; not documented
-	    allow-redefinition		; in mini-module, but part of tools
+  (export '(*generate-nyi-errors*       ; not documented
+            allow-redefinition          ; in mini-module, but part of tools
             defcm
-	    feature-present-p           ; in mini-module, but part of tools;
+            feature-present-p           ; in mini-module, but part of tools;
                                         ; not documented
             make-keys-only-hash-table-if-supported ; not documented
             need-to-port                ; in mini-module-loader, not documented
-	    nyi                         ; not documented
-	    unbound-value-indicator
-	    without-cmu/sbcl-optimization-warnings ; not documented
-	    with-full-optimization)))
+            nyi                         ; not documented
+            unbound-value-indicator
+            without-cmu/sbcl-optimization-warnings ; not documented
+            with-full-optimization)))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -48,7 +48,7 @@
   ;;  The feature :full-safety disables with-full-optimization optimizations:
   `(locally #+full-safety ()
             #-full-safety (declare (optimize (speed 3) (safety 0) (debug 0)
-					     (compilation-speed 0)))
+                                             (compilation-speed 0)))
             ,@body))
 
 ;;; ---------------------------------------------------------------------------
@@ -106,7 +106,5 @@
 (pushnew ':has-keys-only-hash-tables *features*)
 
 ;;; ===========================================================================
-;;;				  End of File
+;;;                               End of File
 ;;; ===========================================================================
-
-

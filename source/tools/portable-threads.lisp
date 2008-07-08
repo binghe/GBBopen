@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/portable-threads.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jul  2 09:48:30 2008 *-*
+;;;; *-* Last-Edit: Tue Jul  8 05:55:15 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -198,28 +198,28 @@
             *schedule-function-verbose*
             all-scheduled-functions
             all-threads
-	    as-atomic-operation
-	    atomic-decf
-	    atomic-delete
-	    atomic-flush
-	    atomic-incf
-	    atomic-pop
-	    atomic-push
-	    atomic-pushnew
-	    awaken-thread
-	    condition-variable
-	    condition-variable-broadcast
+            as-atomic-operation
+            atomic-decf
+            atomic-delete
+            atomic-flush
+            atomic-incf
+            atomic-pop
+            atomic-push
+            atomic-pushnew
+            awaken-thread
+            condition-variable
+            condition-variable-broadcast
             condition-variable-signal
             condition-variable-wait
-	    condition-variable-wait-with-timeout
+            condition-variable-wait-with-timeout
             current-thread
             encode-time-of-day
-	    hibernate-thread
+            hibernate-thread
             #+lispworks
             initialize-multiprocessing
             kill-periodic-function
             kill-thread
-	    make-condition-variable
+            make-condition-variable
             make-lock
             make-recursive-lock
             make-scheduled-function
@@ -239,7 +239,7 @@
             threadp
             threads-not-available       ; not documented
             thread-alive-p
-	    thread-condition-variables-not-available ; not documented
+            thread-condition-variables-not-available ; not documented
             thread-holds-lock-p
             thread-name
             thread-whostate
@@ -247,7 +247,7 @@
             unschedule-function
             with-lock-held
             with-timeout
-	    with-timeout-not-available	; not documented
+            with-timeout-not-available  ; not documented
             without-lock-held))
   #+(and cmu mp)
   (import '(start-multiprocessing) ':cl-user))
@@ -307,17 +307,17 @@
 #+threads-not-available
 (defun threads-not-available (operation)
   (warn "Threads are not available in ~a running on ~a; ~s was used."
-	(lisp-implementation-type) 
-	(machine-type)
-	operation))
+        (lisp-implementation-type) 
+        (machine-type)
+        operation))
 
 #+threads-not-available
 (defun thread-condition-variables-not-available (operation)
   (warn "Thread condition variables are not available in ~a running on ~a; ~
         ~s was used."
-	(lisp-implementation-type) 
-	(machine-type)
-	operation))
+        (lisp-implementation-type) 
+        (machine-type)
+        operation))
 
 #+threads-not-available
 (defun not-a-thread (thread)
@@ -336,9 +336,9 @@
 #+with-timeout-not-available
 (defun with-timeout-not-available ()
   (warn "~s is not available in ~a running on ~a."
-	'with-timeout
-	(lisp-implementation-type) 
-	(machine-type)))
+        'with-timeout
+        (lisp-implementation-type) 
+        (machine-type)))
 
 ;;; ===========================================================================
 
@@ -876,14 +876,14 @@
 (defstruct (nonrecursive-lock
             (:include mp:lock)
             (:copier nil)
-	    (:constructor %make-nonrecursive-lock)))
+            (:constructor %make-nonrecursive-lock)))
 
 #+lispworks
 (defstruct (recursive-lock
             (:include mp:lock)
             (:copier nil)
-	    #+new-locks
-	    (:constructor %make-recursive-lock)))
+            #+new-locks
+            (:constructor %make-recursive-lock)))
 
 #+(and sbcl sb-thread)
 (defstruct (recursive-lock 
@@ -950,7 +950,7 @@
 ;;; ---------------------------------------------------------------------------
 ;;;   Make-lock
 
-#-(or lispworks				; simply imported
+#-(or lispworks                         ; simply imported
       threads-not-available
       cormanlisp)                       ; CLL 3.0 can't handle this one
 (defun make-lock (&key name)
@@ -995,7 +995,7 @@
   (defmacro with-lock-held ((lock &key (whostate "With Lock Held"))
                             &body body)
     #+(or (and ecl threads)
-	  (and sbcl sb-thread)
+          (and sbcl sb-thread)
           threads-not-available)
     (declare (ignore whostate))
     (let ((lock-sym (gensym)))
@@ -1186,9 +1186,9 @@
   (let ((list (gensym)))
     (ext:once-only ((value value))
       `(kernel:with-atomic-modification (,list ,place)
-	 (if (member ,value ,list ,@args)
-	     ,list
-	     (cons ,value ,list))))))
+         (if (member ,value ,list ,@args)
+             ,list
+             (cons ,value ,list))))))
 
 #-(or (and cmu mp) scl)
 (defmacro atomic-pop (place)
@@ -1206,22 +1206,22 @@
   #-scl
   (if (symbolp place)
       `(as-atomic-operation
-	 (setf ,place (delete ,item ,place ,@args)))
+         (setf ,place (delete ,item ,place ,@args)))
       (multiple-value-bind (vars vals store-vars writer-form reader-form)
-	  (get-setf-expansion place env)
-	(let ((item-var (gensym)))
-	  `(as-atomic-operation
-	     (let* ((,item-var ,item)
-		    ,@(mapcar #'list vars vals)
-		    (,(first store-vars)
-		     (delete ,item-var ,reader-form ,@args)))
-	       ,writer-form)))))
+          (get-setf-expansion place env)
+        (let ((item-var (gensym)))
+          `(as-atomic-operation
+             (let* ((,item-var ,item)
+                    ,@(mapcar #'list vars vals)
+                    (,(first store-vars)
+                     (delete ,item-var ,reader-form ,@args)))
+               ,writer-form)))))
   #+scl
   (let ((list (gensym)))
     (ext:once-only ((item item))
       `(kernel:with-atomic-modification (,list ,place)
          ;; Question for dtc: Why is remove used rather than delete?
-	 (remove ,item ,list ,@args)))))
+         (remove ,item ,list ,@args)))))
 
 (defmacro atomic-flush (place)
   ;;; Set place to nil, returning the original value:
@@ -1386,7 +1386,7 @@
   (apply #'mp:process-run-function name nil function args)
   #+(and sbcl sb-thread)
   (sb-thread:make-thread #'(lambda () (apply function args))
-			 :name name)
+                         :name name)
   #+scl
   (mp:make-process #'(lambda () (apply function args)) :name name)
   #+threads-not-available
@@ -1467,7 +1467,7 @@
   (sb-thread:interrupt-thread thread #'(lambda () (apply function args)))
   #+scl
   (multiprocessing:process-interrupt thread
-				     #'(lambda () (apply function args)))
+                                     #'(lambda () (apply function args)))
   #+threads-not-available
   (declare (ignore thread function args))
   #+threads-not-available
@@ -1486,15 +1486,15 @@
   (multiple-value-bind (value boundp)
       (mp:symeval-in-process symbol thread)
     (if boundp
-	(values value (eq boundp 't))
-	(if (boundp symbol)
-	    (values (symbol-value symbol) 't)
-	    (values nil nil))))
+        (values value (eq boundp 't))
+        (if (boundp symbol)
+            (values (symbol-value symbol) 't)
+            (values nil nil))))
   #+clozure
   (let ((value (ccl:symbol-value-in-process symbol thread)))
     (if (eq value (ccl::%unbound-marker))
-	(values nil nil)
-	(values value 't)))
+        (values nil nil)
+        (values value 't)))
   #+(and cmu mp)
   (let ((result nil))
     (mp:process-interrupt
@@ -1509,9 +1509,9 @@
   #+digitool-mcl
   (handler-case
       (let ((value (ccl:symbol-value-in-process symbol thread)))
-	(if (eq value (ccl::%unbound-marker))
-	    (values nil nil)
-	    (values value 't)))
+        (if (eq value (ccl::%unbound-marker))
+            (values nil nil)
+            (values value 't)))
     (error (condition)
       (declare (ignore condition))
       (values nil nil)))
@@ -1546,8 +1546,8 @@
     (unbound-variable (condition)
       (declare (ignore condition))
       (handler-case
-	  (values (kernel:symbol-global-value symbol) t)
-	(unbound-variable () (values nil nil)))))
+          (values (kernel:symbol-global-value symbol) t)
+        (unbound-variable () (values nil nil)))))
   #+threads-not-available
   (declare (ignore thread))
   #+threads-not-available
@@ -1937,7 +1937,7 @@
 
 (defvar *month-name-vector* 
     (vector "Jan" "Feb" "Mar" "Apr" "May" "Jun"
-	    "Jul" "Aug" "Sep" "Oct" "Nov" "Dec"))
+            "Jul" "Aug" "Sep" "Oct" "Nov" "Dec"))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -2378,5 +2378,5 @@
 (pushnew *portable-threads-version-keyword* *features*)
 
 ;;; ===========================================================================
-;;;				  End of File
+;;;                               End of File
 ;;; ===========================================================================

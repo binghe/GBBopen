@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/date-and-time.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Jun 23 09:37:02 2008 *-*
+;;;; *-* Last-Edit: Tue Jul  8 05:52:56 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -37,12 +37,12 @@
   (export '(*month-precedes-date*       ; these three entities are defined in 
             bried-date                  ; ../mini-module/mini-module.lisp, 
             brief-date-and-time         ; but are part of :gbbopen-tools
-	    internet-text-date-and-time
-	    iso8661-date-and-time
-	    message-log-date-and-time
+            internet-text-date-and-time
+            iso8661-date-and-time
+            message-log-date-and-time
             parse-date                  ; also from mini-module.lisp
-	    pretty-time-interval
-	    pretty-run-time-interval)))
+            pretty-time-interval
+            pretty-run-time-interval)))
 
 ;;; ===========================================================================
 ;;;  Time parsing and formatting
@@ -95,28 +95,28 @@
 (defun time-zone-abbreviation (zone daylight-savings-p)
   ;;; Return a time-zone abbreviation string for `zone;'
   ;;; `zone' is an integer with decode-universal-time semantics.
-  (cdr (assoc zone			
-	      (if daylight-savings-p
-		  '((4 . "ADT")
-		    (5 . "EDT")
-		    (6 . "CDT")
-		    (7 . "MDT")
-		    (8 . "PDT")
-		    (9 . "AKDT")	; Alaska
-		    (-1 . "BST")	; British Summer (IST is Irish Summer) 
-		    (-2 . "CEST")	; Central Europe
-		    (-3 . "EEST"))	; Eastern Europe
-		  '((0 . "GMT")
-		    (4 . "AST")
-		    (5 . "EST")
-		    (6 . "CST")
-		    (7 . "MST")
-		    (8 . "PST")
-		    (9 . "AKST")	; Alaska
-		    (10 . "HST")	; Hawaii
-		    (-1 . "CET")	; Central Europe
-		    (-2 . "EET")	; Eastern Europe
-		    (-10 . "AEST"))))))	; Australian Eastern
+  (cdr (assoc zone                      
+              (if daylight-savings-p
+                  '((4 . "ADT")
+                    (5 . "EDT")
+                    (6 . "CDT")
+                    (7 . "MDT")
+                    (8 . "PDT")
+                    (9 . "AKDT")        ; Alaska
+                    (-1 . "BST")        ; British Summer (IST is Irish Summer) 
+                    (-2 . "CEST")       ; Central Europe
+                    (-3 . "EEST"))      ; Eastern Europe
+                  '((0 . "GMT")
+                    (4 . "AST")
+                    (5 . "EST")
+                    (6 . "CST")
+                    (7 . "MST")
+                    (8 . "PST")
+                    (9 . "AKST")        ; Alaska
+                    (10 . "HST")        ; Hawaii
+                    (-1 . "CET")        ; Central Europe
+                    (-2 . "EET")        ; Eastern Europe
+                    (-10 . "AEST")))))) ; Australian Eastern
 
 ;;; ---------------------------------------------------------------------------
 
@@ -271,7 +271,7 @@
                         destination))
 
 ;;; ===========================================================================
-;;;				  End of File
+;;;                               End of File
 ;;; ===========================================================================
 
 

@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Jul  7 10:31:25 2008 *-*
+;;;; *-* Last-Edit: Tue Jul  8 05:51:05 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -132,67 +132,67 @@
             copy-file                   ; not yet documented
             compiler-macroexpand
             compiler-macroexpand-1
-	    counted-delete
-	    decf-after
-	    decf/delete-acons
+            counted-delete
+            decf-after
+            decf/delete-acons
             ;; --- declared-type operators:
-	    decf&/delete-acons
-	    decf$/delete-acons
-	    decf$&/delete-acons
-	    decf$$/delete-acons
-	    decf$$$/delete-acons
-	    define-directory		; in mini-module, but part of tools
-	    delq
-	    do-until
-	    dosequence
-	    dotted-conc-name		; in mini-module, but part of tools;
+            decf&/delete-acons
+            decf$/delete-acons
+            decf$&/delete-acons
+            decf$$/delete-acons
+            decf$$$/delete-acons
+            define-directory            ; in mini-module, but part of tools
+            delq
+            do-until
+            dosequence
+            dotted-conc-name            ; in mini-module, but part of tools;
                                         ; not documented
-	    dotted-length
-	    error-condition             ; lexical fn in WITH-ERROR-HANDLING
+            dotted-length
+            error-condition             ; lexical fn in WITH-ERROR-HANDLING
             error-message               ; lexical fn in WITH-ERROR-HANDLING
-	    ensure-finalized-class
-	    ensure-list
-	    ensure-list-of-lists	; not yet documented
-	    extract-declarations	; not documented
-	    incf-after
+            ensure-finalized-class
+            ensure-list
+            ensure-list-of-lists        ; not yet documented
+            extract-declarations        ; not documented
+            incf-after
             interrupt-signal
-	    list-length-1-p
-	    list-length-2-p
-	    list-length>
-	    list-length>1
-	    macrolet-debug              ; not documented
-	    make-keyword
-	    memq
+            list-length-1-p
+            list-length-2-p
+            list-length>
+            list-length>1
+            macrolet-debug              ; not documented
+            make-keyword
+            memq
             multiple-value-setf
             nicer-y-or-n-p              ; not yet documented
             nicer-yes-or-no-p           ; not yet documented
-	    nsorted-insert
-	    print-pretty-function-object ; not yet documented
-	    push-acons
-	    pushnew-acons
-	    pushnew/incf-acons
+            nsorted-insert
+            print-pretty-function-object ; not yet documented
+            push-acons
+            pushnew-acons
+            pushnew/incf-acons
             ;; --- declared-type operators:
-	    pushnew/incf&-acons
-	    pushnew/incf$-acons
-	    pushnew/incf$&-acons
-	    pushnew/incf$$-acons
-	    pushnew/incf$$$-acons
-	    pushnew-elements
-	    read-char-immediately	; not yet documented
-	    remove-property
-	    remove-properties
-	    set-equal
-	    sets-overlap-p
-	    shuffle-list
+            pushnew/incf&-acons
+            pushnew/incf$-acons
+            pushnew/incf$&-acons
+            pushnew/incf$$-acons
+            pushnew/incf$$$-acons
+            pushnew-elements
+            read-char-immediately       ; not yet documented
+            remove-property
+            remove-properties
+            set-equal
+            sets-overlap-p
+            shuffle-list
             shrink-vector
-	    sole-element
-	    splitting-butlast
-	    trimmed-substring
-	    undefmethod
-	    until
-	    while
-	    with-error-handling
-	    xor)))
+            sole-element
+            splitting-butlast
+            trimmed-substring
+            undefmethod
+            until
+            while
+            with-error-handling
+            xor)))
 
 ;;; ===========================================================================
 ;;;  Basic while and until macros
@@ -332,14 +332,14 @@
         (declarations nil))
     (loop
       (let ((elt (first body)))
-	(cond ((and (consp elt) (eq (first elt) 'declare))
-	       (push (pop body) declarations))
-	      ((and (null doc-string)
-		    (stringp elt)
-		    ;; to be a doc string, there must be another form in body:
-		    (cdr body))
-	       (setf doc-string (pop body)))
-	      (t (return)))))
+        (cond ((and (consp elt) (eq (first elt) 'declare))
+               (push (pop body) declarations))
+              ((and (null doc-string)
+                    (stringp elt)
+                    ;; to be a doc string, there must be another form in body:
+                    (cdr body))
+               (setf doc-string (pop body)))
+              (t (return)))))
     (values doc-string (nreverse declarations) body)))
 
 ;;; ===========================================================================
@@ -479,7 +479,7 @@
   (with-once-only-bindings (class)
     `(progn
        (unless (class-finalized-p ,class)
-	 (finalize-inheritance ,class))
+         (finalize-inheritance ,class))
        ,class)))
 
 ;;; ===========================================================================
@@ -487,11 +487,11 @@
 
 (defun make-keyword (string-symbol-or-character)
   (intern (string string-symbol-or-character)  
-	  (load-time-value (find-package 'keyword))))
+          (load-time-value (find-package 'keyword))))
 
 (defcm make-keyword (string-symbol-or-character)
   `(intern (string ,string-symbol-or-character) 
-	   (load-time-value (find-package 'keyword))))
+           (load-time-value (find-package 'keyword))))
 
 ;;; =========================================================================== 
 ;;;  Ensure-list 
@@ -529,7 +529,7 @@
   (with-once-only-bindings (list)
     `(prog1 (first ,list)
        (when (rest ,list)
-	 (sole-element-violation ,list)))))
+         (sole-element-violation ,list)))))
   
 (defun sole-element-violation (list)
   (cerror "Ignore the remaining elements."
@@ -592,18 +592,18 @@
 ;;;  Trimmed-substring
 
 (defun trimmed-substring (character-bag string 
-			  &optional (start 0) (end (length string)))
+                          &optional (start 0) (end (length string)))
   (declare (fixnum start end))
   ;; Allow string-designator:
   (unless (stringp string)
     (setf string (string string)))
   ;; Return extracted substring with `char-bag' trimming:
   (while (and (<& start end)
-	      (find (char (the simple-string string) start) character-bag))
+              (find (char (the simple-string string) start) character-bag))
     (incf& start))
   (decf& end)
   (while (and (<& start end)
-	      (find (char (the simple-string string) end) character-bag))
+              (find (char (the simple-string string) end) character-bag))
     (decf& end))
   (subseq string start (1+& end)))
 
@@ -622,15 +622,15 @@
 (defun list-length-2-p (list)
   (and (consp list)
        (let ((rest (cdr list)))
-	 (and (consp rest)
-	      (null (cdr rest))))))
+         (and (consp rest)
+              (null (cdr rest))))))
 
 (defcm list-length-2-p (list)
   (with-once-only-bindings (list)
     `(and (consp ,list)
-	  (let ((rest (cdr, list)))
-	    (and (consp rest)
-		 (null (cdr rest)))))))
+          (let ((rest (cdr, list)))
+            (and (consp rest)
+                 (null (cdr rest)))))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -656,39 +656,39 @@
 (defun shuffle-list (list)
   (when list
     (let ((random-bound 1)
-	  (result (list (pop list))))
+          (result (list (pop list))))
       (dolist (item list)
-	(let ((position (random (incf& random-bound))))
-	  (if (zerop& position)
-	      (push item result)
-	      (let ((tail (nthcdr (1-& position) result)))
-		(setf (cdr tail) (cons item (cdr tail)))))))
+        (let ((position (random (incf& random-bound))))
+          (if (zerop& position)
+              (push item result)
+              (let ((tail (nthcdr (1-& position) result)))
+                (setf (cdr tail) (cons item (cdr tail)))))))
       result)))
 
 ;;; ===========================================================================
 ;;;  Set-equal
 
 (defun set-equal (list1 list2 &key key
-				   (test #'eql test-supplied-p)
-				   (test-not nil test-not-supplied-p))
+                                   (test #'eql test-supplied-p)
+                                   (test-not nil test-not-supplied-p))
   ;;; Return 't if all elements in `list1' appear in `list2' (and vice
   ;;; versa).  Does not worry about duplicates in either list.
   (when (and test-supplied-p test-not-supplied-p)
     (error "Both ~s and ~s were supplied." ':test ':test-not))
   (let ((key (when key (coerce key 'function)))
         (test (if test-not 
-		  (complement (coerce test-not 'function))
-		  (coerce test 'function))))
+                  (complement (coerce test-not 'function))
+                  (coerce test 'function))))
     (declare (type (or function null) key)
              (type function test))
     (dolist (element list1)
       (unless (member (if key (funcall key element) element)
-		      list2 :key key :test test)
-	(return-from set-equal nil)))
+                      list2 :key key :test test)
+        (return-from set-equal nil)))
     (dolist (element list2)
       (unless (member (if key (funcall key element) element)
-		      list1 :key key :test test)
-	(return-from set-equal nil)))
+                      list1 :key key :test test)
+        (return-from set-equal nil)))
     ;; return success:
     't))
 
@@ -696,22 +696,22 @@
 ;;;  Sets-overlap-p
 
 (defun sets-overlap-p (list1 list2 &key key
-					(test #'eql test-supplied-p)
-					(test-not nil test-not-supplied-p))
+                                        (test #'eql test-supplied-p)
+                                        (test-not nil test-not-supplied-p))
   ;;; Return 't if any element in `list1' appears in `list2'. 
   ;;; Does not worry about duplicates in either list.
   (when (and test-supplied-p test-not-supplied-p)
     (error "Both ~s and ~s were supplied." ':test ':test-not))
   (let ((key (when key (coerce key 'function)))
         (test (if test-not 
-		  (complement (coerce test-not 'function))
-		  (coerce test 'function))))
+                  (complement (coerce test-not 'function))
+                  (coerce test 'function))))
     (declare (type (or function null) key)
              (type function test))
     (dolist (element list1)
       (when (member (if key (funcall key element) element)
-		    list2 :key key :test test)
-	(return-from sets-overlap-p 't)))
+                    list2 :key key :test test)
+        (return-from sets-overlap-p 't)))
     ;; return failure:
     nil))
 
@@ -734,10 +734,10 @@
   (if (symbolp place)
       `(setf ,place (acons ,key ,datum ,place))
       (with-once-only-bindings (key datum)
-	(multiple-value-bind (vars vals store-vars writer-form reader-form)
-	    (get-setf-expansion place env)
-	  `(let* (,@(mapcar #'list vars vals)
-		  (,(first store-vars)
+        (multiple-value-bind (vars vals store-vars writer-form reader-form)
+            (get-setf-expansion place env)
+          `(let* (,@(mapcar #'list vars vals)
+                  (,(first store-vars)
                    (acons ,key ,datum ,reader-form)))
              ,writer-form)))))
 
@@ -749,35 +749,35 @@
   ;;; the updated alist."
   (with-once-only-bindings (key datum)
     (multiple-value-bind (vars vals store-vars writer-form reader-form)
-	(get-setf-expansion place env)
+        (get-setf-expansion place env)
       (with-gensyms (assoc-result)
-	`(let* (,@(mapcar #'list vars vals)
-		(,(first store-vars) ,reader-form)
-		(,assoc-result (assoc ,key ,(first store-vars) ,@keys)))
-	   (cond (,assoc-result
-		  (rplacd ,assoc-result ,datum)
-		  ,(first store-vars))
-		 (t (setf ,(first store-vars)
-		      (acons ,key ,datum ,(first store-vars)))))
-	   ,writer-form)))))
+        `(let* (,@(mapcar #'list vars vals)
+                (,(first store-vars) ,reader-form)
+                (,assoc-result (assoc ,key ,(first store-vars) ,@keys)))
+           (cond (,assoc-result
+                  (rplacd ,assoc-result ,datum)
+                  ,(first store-vars))
+                 (t (setf ,(first store-vars)
+                      (acons ,key ,datum ,(first store-vars)))))
+           ,writer-form)))))
 
 ;;; ---------------------------------------------------------------------------
 
 (defun pushnew/incf-acons-expander (incf-fn-sym key incr place keys env)
   (with-once-only-bindings (key incr)
     (multiple-value-bind (vars vals store-vars writer-form reader-form)
-	(get-setf-expansion place env)
+        (get-setf-expansion place env)
       (with-gensyms (assoc-result)
-	`(let* (,@(mapcar #'list vars vals)
-		(,(first store-vars) ,reader-form)
-		(,assoc-result (assoc ,key ,(first store-vars) ,@keys)))
-	   (cond (,assoc-result
-		  (rplacd ,assoc-result 
-			  (,incf-fn-sym (cdr ,assoc-result) ,incr))
-		  ,(first store-vars))
-		 (t (setf ,(first store-vars)
-		      (acons ,key ,incr ,(first store-vars)))))
-	   ,writer-form)))))
+        `(let* (,@(mapcar #'list vars vals)
+                (,(first store-vars) ,reader-form)
+                (,assoc-result (assoc ,key ,(first store-vars) ,@keys)))
+           (cond (,assoc-result
+                  (rplacd ,assoc-result 
+                          (,incf-fn-sym (cdr ,assoc-result) ,incr))
+                  ,(first store-vars))
+                 (t (setf ,(first store-vars)
+                      (acons ,key ,incr ,(first store-vars)))))
+           ,writer-form)))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -884,7 +884,7 @@
 (defmacro pushnew-elements (list place &rest keys &environment env)
   (with-once-only-bindings (list)
     (multiple-value-bind (vars vals store-vars writer-form reader-form)
-	(get-setf-expansion place env)
+        (get-setf-expansion place env)
       `(let* (,@(mapcar #'list vars vals)
               (,(first store-vars) ,reader-form))
          (dolist (element ,list)
@@ -934,16 +934,16 @@
 ;;;   the number of items that were deleted as a second value.
 
 (defun counted-delete (item seq &rest args 
-		       &key (test #'eql) 
-			    (test-not nil test-not-supplied-p)
-		       &allow-other-keys)
+                       &key (test #'eql) 
+                            (test-not nil test-not-supplied-p)
+                       &allow-other-keys)
   (declare (dynamic-extent args))
   ;; no need to check for both test and test-not, delete should do it for us
   ;; (but doesn't in most implementations...):
   (let ((items-deleted 0)
-	(test (if test-not 
-		  (coerce test-not 'function) 
-		  (coerce test 'function))))
+        (test (if test-not 
+                  (coerce test-not 'function) 
+                  (coerce test 'function))))
     (declare (type function test))
     (flet ((new-test (a b)
              (when (funcall test a b)
@@ -951,9 +951,9 @@
       #-gcl
       (declare (dynamic-extent #'new-test))
       (values (apply #'delete item seq 
-		     (if test-not-supplied-p ':test-not ':test)
-		     #'new-test 
-		     args)
+                     (if test-not-supplied-p ':test-not ':test)
+                     #'new-test 
+                     args)
               items-deleted))))
 
 ;;; ===========================================================================
@@ -980,7 +980,7 @@
       (unless (<& length n)
         (let ((result nil))
           (dotimes (i (-& length n))
-	    (declare (fixnum i))
+            (declare (fixnum i))
             (push (pop list) result))
           (values (nreverse result) list))))))             
 
@@ -996,9 +996,9 @@
       ;; Only when nothing was found:
       ((null ptr) plist)
     (cond ((atom (cdr ptr))
-	   (error "~s is a malformed property list." plist))
-	  ((eq ind indicator)
-	   (return (nreconc result (cddr ptr)))))
+           (error "~s is a malformed property list." plist))
+          ((eq ind indicator)
+           (return (nreconc result (cddr ptr)))))
     (setf result (list* (second ptr) ind result))))
         
 ;;; ===========================================================================
@@ -1021,26 +1021,26 @@
 (defun nsorted-insert (item list &optional (predicate #'<)
                                            (key #'identity))
   (let ((predicate (coerce predicate 'function))
-	(key (coerce key 'function)))
+        (key (coerce key 'function)))
     (declare (type function predicate key))
     (cond
      ;; empty list
      ((null list) (list item))
      ;; destructive insert
      (t (let ((item-key (funcall key item)))
-	  (cond 
-	   ;; handle front insertion specially
-	   ((funcall predicate item-key (funcall key (car list)))
-	    (cons item list))
-	   (t (do ((sublist list (cdr sublist)))
-		  ((null (cdr sublist))
-		   (setf (cdr sublist) (list item))
-		   list)
-		(when (funcall predicate 
-			       item-key
-			       (funcall key (cadr sublist)))
-		  (setf (cdr sublist) (cons item (cdr sublist)))
-		  (return list))))))))))
+          (cond 
+           ;; handle front insertion specially
+           ((funcall predicate item-key (funcall key (car list)))
+            (cons item list))
+           (t (do ((sublist list (cdr sublist)))
+                  ((null (cdr sublist))
+                   (setf (cdr sublist) (list item))
+                   list)
+                (when (funcall predicate 
+                               item-key
+                               (funcall key (cadr sublist)))
+                  (setf (cdr sublist) (cons item (cdr sublist)))
+                  (return list))))))))))
 
 ;;; ===========================================================================
 ;;;   Print-pretty-function-object
@@ -1052,9 +1052,9 @@
     #+lispworks
     (when (consp name) (setf name (third name)))
     (if name
-	(print-unreadable-object (fn stream)
-	  (format stream "~s ~s" 'function name))
-	(prin1 name stream))))
+        (print-unreadable-object (fn stream)
+          (format stream "~s ~s" 'function name))
+        (prin1 name stream))))
 
 ;;; ===========================================================================
 ;;;   Read-char immediately
@@ -1070,8 +1070,8 @@
   (let ((line (handler-case (read-line stream)
                 (stream-error () nil))))
     (if (plusp& (length line))
-	(elt line 0)
-	#\SPACE)))
+        (elt line 0)
+        #\SPACE)))
 
 ;;; ===========================================================================
 ;;;   Add missing extract-specializer-names
@@ -1082,53 +1082,53 @@
   ;;; would be to simply include extract-specializer-names in method.lsp
   (let* (parameters lambda-list specializers)
     (do ((arg (first arglist) (first arglist)))
-	((or (null arglist)
-	     (memq arg '(&optional &rest &key &allow-other-keys &aux))))
+        ((or (null arglist)
+             (memq arg '(&optional &rest &key &allow-other-keys &aux))))
       (pop arglist)
       (push (if (listp arg) (first arg) arg) parameters)
       (push (if (listp arg) (first arg) arg) lambda-list)
       (push (if (listp arg) 
-		(if (consp (second arg))
-		    `(eql ,(eval (cadadr arg)))
-		    (second arg))
-		())
-	    specializers))
+                (if (consp (second arg))
+                    `(eql ,(eval (cadadr arg)))
+                    (second arg))
+                ())
+            specializers))
     (when (eq (first arglist) '&optional)
       (push (pop arglist) lambda-list)
       (do ((arg (first arglist) (first arglist)))
-	  ((or (null arglist)
-	       (memq arg '(&optional &rest &key &allow-other-keys &aux))))
-	(pop arglist)
-	(push (if (listp arg) (first arg) arg) parameters)
-	(push arg lambda-list)))
+          ((or (null arglist)
+               (memq arg '(&optional &rest &key &allow-other-keys &aux))))
+        (pop arglist)
+        (push (if (listp arg) (first arg) arg) parameters)
+        (push arg lambda-list)))
     (when (eq (first arglist) '&rest)
       (push (pop arglist) lambda-list)
       (when (not (symbolp (first arglist)))
-	(error "~s in the lambda-list is not a symbol."
-	       (first arglist)))
+        (error "~s in the lambda-list is not a symbol."
+               (first arglist)))
       (push (pop arglist) lambda-list))
     (when (eq (first arglist) '&key)
       (push (pop arglist) lambda-list)
       (do ((arg (first arglist) (first arglist)))
-	  ((or (null arglist)
-	       (memq arg '(&optional &rest &key &aux))))
-	(pop arglist)
-	(when (eq arg '&allow-other-keys)
-	  (push arg lambda-list)
-	  (return))
-	(push (if (listp arg) (first arg) arg) parameters)
-	(push arg lambda-list)))
+          ((or (null arglist)
+               (memq arg '(&optional &rest &key &aux))))
+        (pop arglist)
+        (when (eq arg '&allow-other-keys)
+          (push arg lambda-list)
+          (return))
+        (push (if (listp arg) (first arg) arg) parameters)
+        (push arg lambda-list)))
     (when (eq (first arglist) '&aux)
       (push (pop arglist) lambda-list)
       (do ((arg (first arglist) (first arglist)))
-	  ((or (null arglist)
-	       (memq arg '(&optional &rest &key &allow-other-keys &aux))))
-	(pop arglist)
-	(push (if (listp arg) (first arg) arg) parameters)
-	(push arg lambda-list)))
+          ((or (null arglist)
+               (memq arg '(&optional &rest &key &allow-other-keys &aux))))
+        (pop arglist)
+        (push (if (listp arg) (first arg) arg) parameters)
+        (push arg lambda-list)))
     (when arglist (error "The position of the lambda-list keyword ~s~%~
                           is not correct."
-			 (first arglist)))
+                         (first arglist)))
     (nreverse specializers)))
 
 ;;; ===========================================================================
@@ -1182,13 +1182,13 @@
   ;;; the `body' forms)
   `(progn
      ,@(mapcar
-	#'(lambda (macro)
-	    `(defmacro ,@macro))
-	macrobindings)
+        #'(lambda (macro)
+            `(defmacro ,@macro))
+        macrobindings)
      ,@body))
 
 ;;; ===========================================================================
-;;;				  End of File
+;;;                               End of File
 ;;; ===========================================================================
 
 
