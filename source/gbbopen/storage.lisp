@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu May 29 08:00:38 2008 *-*
+;;;; *-* Last-Edit: Thu Jul 10 10:31:38 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -62,7 +62,7 @@
 (defun pretty-unit-classes-spec (unit-classes-spec)
   ;;; Return a pretty (legal) list representation for `unit-classes-spec' with 
   ;;; class-names rather than class objects and :plus-subclasses only when 
-  ;;; needed.  Often used with the format-control-string "~{~{~s~@[+~*~]~}~}".
+  ;;; needed.  Often used with the format-control-string "~{~{~s~^~@[+~*~]~}~}".
   (mapcar 
    #'(lambda (class-spec)
        (destructuring-bind (unit-class . plus-subclasses)
@@ -82,7 +82,7 @@
    (t (print-unreadable-object (storage stream :type nil)
 	(let ((classes (when (slot-boundp storage 'stores-classes)
 			 (stores-classes-of storage))))
-	  (format stream "~:(~s~) ~s ~:[???~;(~:*~{~{~s~@[+~*~]~}~})~] ~s ~s"
+	  (format stream "~:(~s~) ~s ~:[???~;(~:*~{~{~s~^~@[+~*~]~}~})~] ~s ~s"
 		  (type-of storage)
                   (let ((space-instance (space-instance-of storage)))
                     (if space-instance 
@@ -424,7 +424,7 @@
                                       :key #'cdr)
                               0))
          (total-locators (+ total-instances (excess-locators-of storage))))
-    (format t "~&~:(~s~) ~{~{~s~@[+~*~]~}~} ~s ~:[N/A~;~:*~,1f (~s/~s)~]~%"
+    (format t "~&~:(~s~) ~{~{~s~^~@[+~*~]~}~} ~s ~:[N/A~;~:*~,1f (~s/~s)~]~%"
             (type-of storage)
             (pretty-unit-classes-spec (stores-classes-of storage))
             (dimension-names-of storage)
