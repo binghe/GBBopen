@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Jul 10 10:31:38 2008 *-*
+;;;; *-* Last-Edit: Thu Jul 10 11:55:01 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -141,7 +141,7 @@
 	   ;; also include first ("best") plus-subclasses match:
 	   ((and (not plus-subclasses-storage)
 		 plus-subclasses
-                 (subtypep (type-of stores-class) unit-class-name))
+                 (subtypep unit-class-name (type-of stores-class)))
 	    (push storage plus-subclasses-storage))))))
     (or result
 	plus-subclasses-storage
