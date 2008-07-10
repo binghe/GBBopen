@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Jun 26 17:25:16 2008 *-*
+;;;; *-* Last-Edit: Thu Jul 10 09:49:47 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -530,7 +530,7 @@
                    (memq '%%space-instances%% slot-names))
                space-instances)
       (setf (standard-unit-instance.%%space-instances%% instance) nil)
-      (dolist (space-instance (printv space-instances))
+      (dolist (space-instance space-instances)
         (if (memq space-instance 
                   (locally (declare (special *%%existing-space-instances%%*))
                     *%%existing-space-instances%%*))
