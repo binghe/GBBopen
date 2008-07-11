@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/os-interface.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Jul  8 05:54:43 2008 *-*
+;;;; *-* Last-Edit: Fri Jul 11 10:18:43 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -21,16 +21,21 @@
 ;;;
 ;;;  06-17-05 File created.  (Corkill)
 ;;;  05-08-06 Added support for the Scieneer CL. (dtc)
+;;;  07-10-08 Added SVN-VERSION.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 (in-package :gbbopen-tools)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
+  (import '(common-lisp-user::*gbbopen-install-root*)))
+
+(eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(browse-hyperdoc
             close-external-program-stream
             kill-external-program       ; not yet documented
-            run-external-program)))
+            run-external-program
+            svn-version)))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Unify some implementation differences
@@ -99,9 +104,9 @@
   #+allegro
   (multiple-value-bind (io-stream error-stream process)
       (excl:run-shell-command 
-       #+(and x86 (not linux86))
-       (apply #'concatenate #'string program args)
-       #-(and x86 (not linux86))
+       #+(and x86 (not unix))
+       (apply #'concatenate 'string program args)
+       #-(and x86 (not unix))
        (apply #'vector program program args)
        :input input
        :output output
@@ -194,6 +199,20 @@
      (url (run-external-program *preferred-browser* (list url))
           't)
      (t (values)))))
+
+;;; ---------------------------------------------------------------------------
+
+(defun svn-version (&key (directory (namestring *gbbopen-install-root*))
+                         (program "svnversion"))
+  (let ((stream (run-external-program 
+                 program 
+                 (list (etypecase directory
+                         (string directory)
+                         (pathname (namestring directory))
+                         (keyword 
+                          (namestring (get-root-directory directory))))))))
+    (prog1 (when stream (string-trim " " (read-line stream nil nil)))
+      (close-external-program-stream stream))))
 
 ;;; ===========================================================================
 ;;;                               End of File
