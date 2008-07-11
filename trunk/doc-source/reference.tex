@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Tue Jul  8 04:56:33 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Fri Jul 11 10:40:17 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -9600,7 +9600,7 @@ available and has been passed to the preferred browser; no value otherwise.
 \fnargs
 \begin{args}{bidirectional-stream}
 \arg[program] A string specifying the name of the program to be run
-\arg[arguments] A list of strings passed to \var{program\/} as arguments
+\arg[args] A list of strings passed to \var{program\/} as arguments
 \arg[input] A stream specification (default is \code{:stream}, see below)
 \arg[output] A stream specification (default is \code{:stream}, see below)
 \arg[wait] A \glref{generalized~boolean} (default is \nil)
@@ -9647,6 +9647,62 @@ string.
        (print (read-line stream))
        (\entlink{close-external-program-stream} stream))
   "Mon Jul  4 14:06:04 EDT 2005" 
+  >
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{svn-version}{%
+    \code{\&key} \var{directory program\/}
+    \returns{} \var{version-string-or-nil}}
+\index{subversion!obtain working-copy version number}%
+
+\fnsyntax
+
+\fnpurpose Obtain the subversion compact version number of a working copy.
+
+\fnpackage \code{:gbbopen-tools}
+
+\fnmodule \code{:os-interface}
+
+\fnargs
+\begin{args}{version-string-or-nil}
+\arg[directory] One of the following:
+\begin{tightitemize}
+\item A string specifying a directory
+\item A pathname specifying a directory
+\item A \glref{keyword} naming a \glref{root~directory}
+\end{tightitemize}
+(default is the GBBopen install directory)
+\arg[program] A string specifying the name of the program to be run (default
+is \code{"svnversion"})
+\arg[version-string-or-nil] A string or \nil{}
+\end{args}
+
+\fnreturns A string containing the compact version number or \nil{} if the
+program \code{svnversion} cannot be found or the specified directory is not
+in a subversion working copy.
+  
+\fndescription
+%
+\xsitelink{LispWorks}{http://www.lispworks.com} (non-Windows platforms) and
+\xsitelink{SBCL}{http://sbcl.sourceforge.net} do not use a search path for
+locating \var{program}, the full path must be specified in the \var{program\/}
+string.
+
+
+\fnexamples
+%
+\W\supp
+\begin{example}
+  > (svn-version)
+  "525" 
+  > (svn-version :program "/usr/bin/svnversion")
+  "525" 
+  > (svn-version :directory ':my-app-root)
+  "73:76M" 
   >
 \end{example}
 
