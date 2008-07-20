@@ -17,6 +17,7 @@ Important changes since GBBopen 1.1:
      - Most declared-numeric operators are now functions with 
        compiler-macros
      - New pseudo-probability operators
+     - New CASE-USING, CCASE-USING, and ECASE-USING macros
 
   * New Agenda Shell functions
      - CURRENT-CONTROL-SHELL

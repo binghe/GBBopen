@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/preamble.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Jul  8 05:55:25 2008 *-*
+;;;; *-* Last-Edit: Sun Jul 20 02:36:51 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -128,15 +128,14 @@
 ;;; ===========================================================================
 ;;;  With-gensyms
 ;;;
-;;;  GBBopen-tools version of the widely used gensym binding macro
+;;; GBBopen-tools version of the widely used gensym binding macro
 ;;;
 ;;; Placed here to make this macro available ASAP
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defmacro with-gensyms ((&rest symbols) &body body)
-    `(let ,(mapcar
-            #'(lambda (symbol) `(,symbol (gensym)))
-            symbols)
+    `(let ,(mapcar #'(lambda (symbol) `(,symbol (gensym)))
+                   symbols)
        ,@body)))
 
 ;;; ===========================================================================
@@ -163,10 +162,8 @@
                            gensyms))
              ,@body)))))
 
-
 ;;; ===========================================================================
 ;;;  Object-address (can be useful in conjunction with printv)
-;;;
 
 (defun object-address (obj &optional hex-string-p)
   (let ((address #+allegro
