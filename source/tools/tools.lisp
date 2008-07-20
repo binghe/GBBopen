@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Jul  8 05:51:05 2008 *-*
+;;;; *-* Last-Edit: Sun Jul 20 15:37:43 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -61,6 +61,7 @@
 ;;;  06-01-08 Added COMPILER-MACROEXPAND-1 and COMPILER-MACROEXPAND.  (Corkill)
 ;;;  06-25-08 Added :conditions option to WITH-ERROR-HANDLING and exclude
 ;;;           handling EXCL::INTERRUPT-SIGNAL on Allegro by default.  (Corkill) 
+;;;  07-20-08 Added CASE-USING, CCASE-USING, and ECASE-USING macros.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -129,6 +130,8 @@
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(bounded-value
+            case-using
+            ccase-using
             copy-file                   ; not yet documented
             compiler-macroexpand
             compiler-macroexpand-1
@@ -148,6 +151,7 @@
             dotted-conc-name            ; in mini-module, but part of tools;
                                         ; not documented
             dotted-length
+            ecase-using
             error-condition             ; lexical fn in WITH-ERROR-HANDLING
             error-message               ; lexical fn in WITH-ERROR-HANDLING
             ensure-finalized-class
@@ -204,13 +208,182 @@
        ,@body)))
 
 #-allegro
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (defmacro until (test &body body)
-    `(loop (when ,test (return))
-       ,@body)))
+(defmacro until (test &body body)
+  `(loop (when ,test (return))
+     ,@body))
 
 (defmacro do-until (form test)
   `(loop ,form (when ,test (return))))
+
+;;; ===========================================================================
+;;;  With-error-handling
+;;;
+;;;  Evaluates body if an error occurs while evaluating form
+
+(defun error-message-string (condition)                            
+  (let ((*print-readably* nil))
+    (handler-case (format nil "~a" condition)
+      (error () "<error: unprintable condition>"))))
+
+;;; ---------------------------------------------------------------------------
+
+(defmacro with-error-handling (form-and-handler &body error-body)
+  ;;; Full signature:
+  ;;;  (with-error-handling {form | 
+  ;;;                        (form [(:conditions condition*)] handler-form*)}
+  ;;;      error-form*)
+  (let ((conditions 
+         #+allegro '(and error (not interrupt-signal))
+         #-allegro 'error))
+    ;; Determine if form-and-handler is form or (form &body handler-body):
+    (unless (and (consp form-and-handler)
+                 (consp (car form-and-handler))
+                 ;; Support CLHS 3.1.2.1.2.4 lambda form:
+                 (not (eq (caar form-and-handler) 'lambda)))
+      ;; Convert a simple form to a form with (null) handler-body:
+      (setf form-and-handler (list form-and-handler)))
+    (destructuring-bind (form &body handler-body)
+        form-and-handler
+      ;; Check handler-body for :conditions option:
+      (when (and handler-body
+                 (consp (first handler-body))
+                 (eq ':conditions (first (first handler-body))))
+        (setf conditions (sole-element (rest (first handler-body))))
+        (setf handler-body (rest handler-body)))
+      ;; Now generate the handler:
+      (let ((block (gensym))
+            (condition/tag (when error-body (gensym))))
+        `(block ,block
+           (let (,@(when error-body (list condition/tag)))
+             (tagbody
+               (handler-bind
+                   ((,conditions
+                     #'(lambda (condition)
+                         ,@(if handler-body
+                               `((flet ((error-message ()
+                                          (error-message-string condition))
+                                        (error-condition ()
+                                          condition))
+                                   (declare (dynamic-extent (function error-message)
+                                                            (function error-condition)))
+                                   (declare (ignorable (function error-message)
+                                                       (function error-condition)))
+                                   ,@(if error-body
+                                         `(,@handler-body
+                                           ;; Save the condition for use
+                                           ;; by (error-message) in error-body:
+                                           (setf ,condition/tag condition)
+                                           (go ,condition/tag))
+                                         `((return-from ,block 
+                                             (progn ,@handler-body))))))
+                               `(,@(if error-body
+                                       `(,@handler-body
+                                         ;; Save the condition for use by
+                                         ;; (error-message) in error-body:
+                                         (setf ,condition/tag condition)
+                                         (go ,condition/tag))
+                                       `((declare (ignore condition))
+                                         (return-from ,block (values)))))))))
+                 (return-from ,block ,form))
+               ,@(when error-body (list condition/tag))
+               ,@(when error-body
+                   `((flet ((error-message ()
+                              (error-message-string ,condition/tag))
+                            (error-condition ()
+                              ,condition/tag))
+                       (declare (dynamic-extent (function error-message)
+                                                (function error-condition)))
+                       (declare (ignorable (function error-message)
+                                           (function error-condition)))
+                       (return-from ,block (progn ,@error-body))))))))))))
+  
+;;; ===========================================================================
+;;;  Case-using
+
+(defun case-using-failure (case-form exp test keys)
+  (error "~s fell through ~:[a~;an~] ~s ~s form; ~
+         ~[there are no valid keys~;~
+           the only valid key is~{ ~s~}~;~
+           the valid keys are~{ ~s~^ and~}~:;~
+           the valid keys are~{~#[~; and~] ~s~^,~}~]."
+         exp
+         (eq case-form 'ecase-using)
+         case-form
+         test
+         (length keys)
+         keys))
+
+;;; ---------------------------------------------------------------------------
+
+(defun ccase-using-failure (exp-form exp test keys)
+  (restart-case  (case-using-failure 'ccase-using exp test keys)
+    (store-value (value)
+        :report (lambda (stream)
+                  (format stream "Supply a new value for ~s." exp-form))
+        :interactive (lambda ()
+                       (format *query-io*
+                               "~&Enter a form to evaluate as the new value for ~s: " 
+                               exp-form)
+                       (multiple-value-list (eval (read *query-io*))))
+      (format *query-io* "~&~s is now ~s" exp-form value)
+      value)))
+
+;;; ---------------------------------------------------------------------------
+
+(defun case-using-expander (test exp clauses ecase? ccase-tag exp-form)
+  (let ((all-keys nil))
+    (with-once-only-bindings (exp)
+      `(declare (ignorable ,exp))
+      `(cond ,@(mapcan 
+                #'(lambda (clause)
+                    (destructuring-bind (keys . clause-forms) clause
+                      (cond 
+                       ;; no keys
+                       ((not keys) 
+                        `((nil ,@clause-forms)))
+                       ;; otherwise clause:
+                       ((eq keys 'otherwise)
+                        `((t ,@clause-forms)))
+                       ;; normal clause (including t clause):
+                       (t `((,(cond
+                               ((atom keys)
+                                (pushnew keys all-keys :test test)
+                                `(,test ,exp ',keys))
+                               (t `(or ,@(mapcar 
+                                          #'(lambda (key)
+                                              (pushnew key all-keys :test test)
+                                              `(,test ,exp ',key))
+                                          keys))))
+                             ,@clause-forms))))))
+                clauses)
+             ,@(when ccase-tag
+                 `((t (setf ,exp-form 
+                            (ccase-using-failure 
+                             ',exp-form ,exp ',test ',(nreverse all-keys)))
+                      (go ,ccase-tag))))
+             ,@(when ecase?
+                 `((t (case-using-failure 
+                       'ecase-using ,exp ',test ',(nreverse all-keys)))))))))
+
+;;; ---------------------------------------------------------------------------
+
+(defmacro case-using (test exp &body clauses)
+  (case-using-expander test exp clauses nil nil nil))
+
+(defmacro ccase-using (test exp &body clauses)
+  (let ((tag (gensym "CUTag")))
+    `(block ,tag
+       (tagbody ,tag
+         (return-from ,tag 
+           ,(case-using-expander test exp clauses nil tag exp))))))
+
+(defmacro ecase-using (test exp &body clauses)
+  (case-using-expander test exp clauses 't nil nil))
+
+#+ignore
+(ccase-using equalp *x* (a 1))
+#+ignore
+(ccase *x* (a 1))
 
 ;;; ===========================================================================
 ;;;  Compiler-macroexpand (for those CL's that don't provide it)
@@ -385,88 +558,6 @@
          control-string
          args))
 
-;;; ===========================================================================
-;;;  With-error-handling
-;;;
-;;;  Evaluates body if an error occurs while evaluating form
-
-(defun error-message-string (condition)                            
-  (let ((*print-readably* nil))
-    (handler-case (format nil "~a" condition)
-      (error () "<error: unprintable condition>"))))
-
-;;; ---------------------------------------------------------------------------
-
-(defmacro with-error-handling (form-and-handler &body error-body)
-  ;;; Full signature:
-  ;;;  (with-error-handling {form | 
-  ;;;                        (form [(:conditions condition*)] handler-form*)}
-  ;;;      error-form*)
-  (let ((conditions 
-         #+allegro '(and error (not interrupt-signal))
-         #-allegro 'error))
-    ;; Determine if form-and-handler is form or (form &body handler-body):
-    (unless (and (consp form-and-handler)
-                 (consp (car form-and-handler))
-                 ;; Support CLHS 3.1.2.1.2.4 lambda form:
-                 (not (eq (caar form-and-handler) 'lambda)))
-      ;; Convert a simple form to a form with (null) handler-body:
-      (setf form-and-handler (list form-and-handler)))
-    (destructuring-bind (form &body handler-body)
-        form-and-handler
-      ;; Check handler-body for :conditions option:
-      (when (and handler-body
-                 (consp (first handler-body))
-                 (eq ':conditions (first (first handler-body))))
-        (setf conditions (sole-element (rest (first handler-body))))
-        (setf handler-body (rest handler-body)))
-      ;; Now generate the handler:
-      (let ((block (gensym))
-            (condition/tag (when error-body (gensym))))
-        `(block ,block
-           (let (,@(when error-body (list condition/tag)))
-             (tagbody
-               (handler-bind
-                   ((,conditions
-                     #'(lambda (condition)
-                         ,@(if handler-body
-                               `((flet ((error-message ()
-                                          (error-message-string condition))
-                                        (error-condition ()
-                                          condition))
-                                   (declare (dynamic-extent (function error-message)
-                                                            (function error-condition)))
-                                   (declare (ignorable (function error-message)
-                                                       (function error-condition)))
-                                   ,@(if error-body
-                                         `(,@handler-body
-                                           ;; Save the condition for use
-                                           ;; by (error-message) in error-body:
-                                           (setf ,condition/tag condition)
-                                           (go ,condition/tag))
-                                         `((return-from ,block 
-                                             (progn ,@handler-body))))))
-                               `(,@(if error-body
-                                       `(,@handler-body
-                                         ;; Save the condition for use by
-                                         ;; (error-message) in error-body:
-                                         (setf ,condition/tag condition)
-                                         (go ,condition/tag))
-                                       `((declare (ignore condition))
-                                         (return-from ,block (values)))))))))
-                 (return-from ,block ,form))
-               ,@(when error-body (list condition/tag))
-               ,@(when error-body
-                   `((flet ((error-message ()
-                              (error-message-string ,condition/tag))
-                            (error-condition ()
-                              ,condition/tag))
-                       (declare (dynamic-extent (function error-message)
-                                                (function error-condition)))
-                       (declare (ignorable (function error-message)
-                                           (function error-condition)))
-                       (return-from ,block (progn ,@error-body))))))))))))
-  
 ;;; ===========================================================================
 ;;;  Ensure-finalized-class
 
