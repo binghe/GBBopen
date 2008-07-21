@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Jul 10 09:49:47 2008 *-*
+;;;; *-* Last-Edit: Mon Jul 21 16:52:49 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -998,6 +998,12 @@
 ;;; change.
 ;;;
 
+;; Holds the prior space-instances of a unit-instance during a change-class
+;; operation:
+(defvar *%changing-class-space-instances%* nil)
+
+;;; ---------------------------------------------------------------------------
+
 (defmethod change-class :before ((instance standard-unit-instance)
 				 (new-class class) 
                                  &key)
@@ -1041,7 +1047,9 @@
     ;; slot, and then we re-add them using add-instance-to-space-instance to
     ;; do the storage and event signaling.
     (setf (standard-unit-instance.%%space-instances%% instance) nil)
-    (dolist (space-instance space-instances)
+    (dolist (space-instance 
+                ;; Maintain the order:
+                (reverse space-instances))
       (add-instance-to-space-instance instance space-instance)))
    ;; No :space-instances have been specified, so add `instance' to the
    ;; initial space instances:
@@ -1091,7 +1099,10 @@
                   nil)))
   ;; Add the changed-class instance to its space instances:
   (add-changed-class-instance-to-space-instances 
-   instance new-class space-instances space-instances-p))
+   instance new-class 
+   ;; Use space-instances, if specified, or the remembered ones:
+   (or space-instances *%changing-class-space-instances%*)
+   (or space-instances-p *%changing-class-space-instances%*)))
 
 ;;; ---------------------------------------------------------------------------
 ;;; Event signaling is done in this :around method to surround activities
@@ -1110,7 +1121,10 @@
      :instance instance
      :new-class new-class)
     (with-lock-held (*master-instance-lock*)
-      (call-next-method))
+      ;; Remember the current space-instances of instance (for re-addition
+      ;; later in the protocol):
+      (let ((*%changing-class-space-instances%* (space-instances-of instance)))
+        (call-next-method)))
     ;; Only signal the instance-changed event if new-class is a unit class:
     (when (typep new-class 'standard-unit-class)
       (signal-event-using-class
