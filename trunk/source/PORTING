@@ -40,6 +40,8 @@ tools/tools.lisp
   - import specialized MEMQ, DELQ, UNTIL, and WHILE, where available
   - import EXTRACT-DECLARATIONS, where available
   - print-pretty-function-object can be customized for each CL implementation
+  - make CASE-USING-FAILURE a direct subclass of the condition used to signal
+    CCASE and ECASE failures
 ------------------------------------------------------------------------------
 tools/mop-interface.lisp
   - import required MOP symbols

@@ -12,14 +12,14 @@
 </head>
 <body>
 <table width="100%" cellpadding="0" cellspacing="2"><tr>
-<td bgcolor="#99ccff"><a href="ref-close-external-program-stream.html"><img border="0" alt="close-external-program-stream" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="ref-os-interface-entities.html"><img border="0" alt="OS Interface" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-svn-version.html"><img border="0" alt="svn-version" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">run-external-program</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table>
+<td bgcolor="#99ccff"><a href="ref-kill-external-program.html"><img border="0" alt="kill-external-program" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="ref-os-interface-entities.html"><img border="0" alt="OS Interface" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-svn-version.html"><img border="0" alt="svn-version" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">run-external-program</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table>
 
 <p><table class="tight" width="100%">
 <tr valign="top"><td valign="baseline" align="left"%>
 <nobr><b><font color="#000000">run-external-program</font></b></nobr></td><td valign="baseline"> &nbsp; </td><td valign="baseline" align="left" width="99%"><var>program args</var>
 &#38;key <var>input output wait</var>
 <span 
-    style="font-family: serif; font-style: normal">=&gt;</span>&nbsp;<var>bidirectional-stream,&nbsp;process-id</var></td><td valign="baseline" align="right">[<i>Function</i>]
+    style="font-family: serif; font-style: normal">=&gt;</span>&nbsp;<var>bidirectional-stream,&nbsp;os-process</var></td><td valign="baseline" align="right">[<i>Function</i>]
 </td></tr></table></p>
 <p><span class="fndoclabel">Purpose</span> <br />Run an external program.
 </p>
@@ -34,13 +34,13 @@
 </td></tr><tr valign="top"><td valign="baseline"><i>output</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A stream specification (default is <code>:stream</code>, see below)
 </td></tr><tr valign="top"><td valign="baseline"><i>wait</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> (default is <code>nil</code>)
 </td></tr><tr valign="top"><td valign="baseline"><i>bidirectional-stream</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A stream or <code>nil</code>
-</td></tr><tr valign="top"><td valign="baseline"><i>process-id</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A number or <code>nil</code>
+</td></tr><tr valign="top"><td valign="baseline"><i>os-process</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An implementation-dependent process representation or <code>nil</code>
 </td></tr></table>
 </p>
 <p><span class="fndoclabel">Returns</span> <br />Two values:
 </p>
 <p><ul class="tight"><li>an input, output, or bi-directional stream or <code>nil</code>
-<li>a process identifier, if available, or <code>nil</code>
+<li>an operating-system process representation, if available, or <code>nil</code>
 </ul>
 </p>
 <p><span class="fndoclabel">Errors</span> <br />Use of a true value for <var>wait</var> and a <code>:stream</code> value for
@@ -75,4 +75,4 @@ string.
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
 <table width="100%" cellpadding="0" cellspacing="2"><tr>
-<td bgcolor="#99ccff"><a href="ref-close-external-program-stream.html"><img border="0" alt="close-external-program-stream" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="ref-os-interface-entities.html"><img border="0" alt="OS Interface" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-svn-version.html"><img border="0" alt="svn-version" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">run-external-program</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table></body></html>
+<td bgcolor="#99ccff"><a href="ref-kill-external-program.html"><img border="0" alt="kill-external-program" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="ref-os-interface-entities.html"><img border="0" alt="OS Interface" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-svn-version.html"><img border="0" alt="svn-version" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">run-external-program</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table></body></html>
