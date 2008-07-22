@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Fri Jul 11 10:40:17 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Tue Jul 22 19:47:46 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -1068,7 +1068,8 @@ A \var{dimension-value-place\/} with two
 
   The effective \var{initial-space-instances\/} value for a \glref{unit~class}
   is the value specified in the definition of the most specific
-  \glref{unit~class}. If no definitions specify an
+  \glref{unit~class}. (No additive inheritance of
+  \var{initial-space-instances\/} is performed.) If no definitions specify an
   \var{initial-space-instances\/} value, \nil{} is used.
 
   The \var{instance-name-comparison-test\/} value is not inherited.  If no
@@ -3832,6 +3833,242 @@ provided: \textbf{bounded-value\&}, \textbf{bounded-value\$\&},
 
 %% ------------------------------------------------------------------------
 
+\begin{functiondoc}{Macro}{case-using}{%
+    \var{test keyform\/} 
+    \mbox{\{\var{normal-clause\/}\}\superstar{}}
+    \mbox{[\var{otherwise-clause\/}]}
+    \mbox{\returns{} \var{result\/}\superstar}}
+  
+\fnsyntax
+
+\fnpurpose Conditionally execute the forms in a clause that is selected by
+matching the result of evaluating \var{keyform\/} according to \var{test}.
+
+\fnpackage \code{:gbbopen-tools}
+
+\fnmodule \code{:gbbopen-tools}
+
+\fnargs
+\begin{args}{keyform}
+\arg[test] A symbol designating a comparison predicate (not evaluated)
+\arg[keyform] A \glref{form}; evaluated to produce a \var{test-key} (see below)
+\arg[results] The values returned by evaluating the last \var{form} in the
+selected clause or \nil{}
+\end{args}
+
+\fnreturns The values returned by the last form in the matching
+\var{normal-clause}; otherwise the values returned by the last form in the
+\var{otherwise-clause}, if specified; otherwise \nil.
+
+\fndsyntax
+\W\supp\tabletop
+\begin{tabular}{@{~}l@{~}l}
+\mbox{\var{normal-clause\/} ::=}
+ & \code{(}\var{keys form\/}\superstar\code{)} \\
+\mbox{\var{otherwise-clause\/} ::=}
+ & \code{(}\{\code{otherwise} \vbar{} \code{t}\} \var{form\/}\superstar\code{)} \\
+\end{tabular}
+
+\fnterms
+\begin{args}{test-key}
+\arg[test-key] An object produced by evaluating \var{keyform}
+\arg[keys] An object or a list of objects. To refer to the symbols \code{t}
+and \code{otherwise} by themselves as the sole key object for a
+\var{normal-clause}, \code{(t)} and \code{(otherwise)}, respectively, must be
+specified as the \var{keys\/} for the clause.
+\arg[form] A \glref{form}
+\end{args}
+
+\fndescription
+%
+The specified \var{test} symbol is not evaluated; however the comparison predicate that
+it designates must be available during expansion of the \textbf{case-using}
+form.
+
+The \var{keyform\/} is first evaluated to produce the \var{test-key}. 
+
+Each of the \var{normal-clauses\/} is then considered in turn. If the \var{test-key\/}
+matches that clause according to \var{test}, then the forms in that clause are evaluated
+as an implicit \code{progn}, and the values it returns are returned as the value of
+the \textbf{case-using} form.
+
+\textbf{Case-using} is a generalization of Common Lisp's \code{case} macro.
+
+\begin{alsos}{ecase-using}
+\also[ccase-using]
+\also[ecase-using]
+\end{alsos}
+
+\fnexamples
+%
+\W\supp
+\begin{example}
+  > (case-using string= "a"
+      ("a" 1)
+      (("b" "c" "d") 2))
+  1
+  > (case-using string= "d"
+      ("a" 1)
+      (("b" "c" "d") 2))
+  2\goodpagebreak
+  > (case-using string= "C"
+      ("a" 1)
+      (("b" "c" "d") 2))
+  nil\goodpagebreak
+  > (case-using string= "C"
+      ("a" 1)
+      (("b" "c" "d") 2)
+      (otherwise -1))
+  -1
+  > (case-using equalp "C"
+      ("a" 1)
+      (("b" "c" "d") 2)
+      (otherwise -1))
+  2
+  >
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Condition}{case-using-failure}{}
+\index{condition!case-using-failure@\textbf{case-using-failure}}%
+  
+\fnsyntax
+
+\fnpackage \code{:gbbopen-tools}
+
+\fnmodule \code{:gbbopen-tools}
+
+\codeindexit{type-error}%
+%
+\fndescription
+%
+The condition \textbf{case-using-failure} is a subclass of \code{type-error}.
+
+\begin{alsos}{ecase-using}
+\also[case-using]
+\also[ccase-using]
+\also[ecase-using]
+\end{alsos}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Macro}{ccase-using}{%
+    \var{test keyplace\/} 
+    \mbox{\{\var{clause\/}\}\superstar{}}
+    \mbox{\returns{} \var{result\/}\superstar}}
+  
+\fnsyntax
+
+\fnpurpose Conditionally execute the forms in a clause that is selected by
+matching the result of evaluating \var{keyplace\/} according to \var{test},
+generating a correctable error if no clause is selected.
+
+\fnpackage \code{:gbbopen-tools}
+
+\fnmodule \code{:gbbopen-tools}
+
+\fnargs
+\begin{args}{keyplace}
+\arg[test] A symbol designating a comparison predicate (not evaluated)
+\arg[keyplace] A \glref{form}; evaluated to produce a \var{test-key} and
+possibly also used later as a place if no \var{keys\/} match (see below)
+\arg[results] The values returned by evaluating the last \var{form} in the
+selected \var{clause}
+\end{args}
+
+\fnreturns The values returned by the last form in the selected \var{clause}.
+
+\fnerrors
+No \var{clause\/} was selected.
+
+\fndsyntax
+\W\supp\tabletop
+\begin{tabular}{@{~}l@{~}l}
+\mbox{\var{clause\/} ::=}
+ & \code{(}\var{keys form\/}\superstar\code{)} \\
+\end{tabular}
+
+\fnterms
+\begin{args}{test-key}
+\arg[test-key] An object produced by evaluating \var{keyplace}
+\arg[keys] An object or a list of objects. 
+\arg[form] A \glref{form}
+\end{args}
+
+\fndescription
+%
+The specified \var{test} symbol is not evaluated; however the comparison predicate that
+it designates must be available during expansion of the \textbf{case-using}
+form.
+
+The \var{keyplace\/} is first evaluated to produce the \var{test-key}. 
+
+Each of the \var{clauses\/} is then considered in turn. If the \var{test-key\/}
+matches that clause according to \var{test}, then the forms in that clause are evaluated
+as an implicit \code{progn}, and the values it returns are returned as the value of
+the \textbf{ccase-using} form.
+
+\codeindexit{store-value}%
+\codeindexit{type-error}%
+\bfindexit{case-using-failure}%
+%
+If no \var{clause\/} is selected, a correctable error of type
+\code{case-using-failure} (a subclass of \code{type-error}) is signaled. The
+offending datum is the \var{test-key\/} and the expected type is type
+equivalent to \mbox{\code{(member (union} \var{keys\/} \code{:test}
+  \var{test\/}\code{)}}. Common Lisp's \code{store-value} restart can be used
+to correct the error.
+
+\textbf{Ccase-using} is a generalization of Common Lisp's \code{ccase} macro.
+
+\begin{alsos}{case-using-failure}
+\also[case-using-failure]
+\also[case-using]
+\also[ecase-using]
+\end{alsos}
+
+\fnexamples
+%
+\W\supp
+\begin{example}
+  > (defparameter *x* "a")
+  *x*
+  > (ccase-using string= *x*
+      ("a" 1)
+      (("b" "c" "d") 2))
+  1
+  > (setf *x* "d")
+  "d"
+  > (ccase-using string= *x*
+      ("a" 1)
+      (("b" "c" "d") 2))
+  2\goodpagebreak
+  > (setf *x* "C")
+  "C"\goodpagebreak
+  > (ccase-using string= *x*
+      ("a" 1)
+      (("b" "c" "d") 2))
+  Error: "C" fell through an ecase-using string= form; 
+         the valid keys are "a", "b", "c", and "d".
+
+  Restart actions (select using :c n):
+    0: Supply a new value for *x*.
+  >> :c 0
+  Enter a form to evaluate as the new value for *x*: "a"
+  *x* is now "a"
+  1
+  >
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
 \begin{functiondoc}{Function}{compiler-macroexpand}{%
     \var{form\/} \code{\&optional} \var{env\/} 
     \mbox{\returns{} \var{expansion, expanded-p\/}}}
@@ -4546,6 +4783,101 @@ The scope of the binding of \var{var\/} does not include the
 \end{example}
 
 \fnnote This \glref{function} will not work on a \glref{circular~list}.
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Macro}{ecase-using}{%
+    \var{test keyform\/} 
+    \mbox{\{\var{clause\/}\}\superstar{}}
+    \mbox{\returns{} \var{result\/}\superstar}}
+  
+\fnsyntax
+
+\fnpurpose Conditionally execute the forms in a clause that is selected by
+matching the result of evaluating \var{keyform\/} according to \var{test},
+generating an error if no clause is selected.
+
+\fnpackage \code{:gbbopen-tools}
+
+\fnmodule \code{:gbbopen-tools}
+
+\fnargs
+\begin{args}{keyform}
+\arg[test] A symbol designating a comparison predicate (not evaluated)
+\arg[keyform] A \glref{form}; evaluated to produce a \var{test-key} (see below)
+\arg[results] The values returned by evaluating the last \var{form} in the
+selected \var{clause}
+\end{args}
+
+\fnreturns The values returned by the last form in the selected \var{clause}.
+
+\fnerrors
+No \var{clause\/} was selected.
+
+\fndsyntax
+\W\supp\tabletop
+\begin{tabular}{@{~}l@{~}l}
+\mbox{\var{clause\/} ::=}
+ & \code{(}\var{keys form\/}\superstar\code{)} \\
+\end{tabular}
+
+\fnterms
+\begin{args}{test-key}
+\arg[test-key] An object produced by evaluating \var{keyform}
+\arg[keys] An object or a list of objects. 
+\arg[form] A \glref{form}
+\end{args}
+
+\fndescription
+%
+The specified \var{test} symbol is not evaluated; however the comparison predicate that
+it designates must be available during expansion of the \textbf{case-using}
+form.
+
+The \var{keyform\/} is first evaluated to produce the \var{test-key}. 
+
+Each of the \var{clauses\/} is then considered in turn. If the \var{test-key\/}
+matches that clause according to \var{test}, then the forms in that clause are evaluated
+as an implicit \code{progn}, and the values it returns are returned as the value of
+the \textbf{ecase-using} form.
+
+\codeindexit{type-error}%
+\bfindexit{case-using-failure}%
+%
+If no \var{clause\/} is selected, a non-correctable error of type
+\code{case-using-failure} (a subclass of \code{type-error}) is signaled. The
+offending datum is the \var{test-key\/} and the expected type is type
+equivalent to \mbox{\code{(member (union} \var{keys\/} \code{:test} \var{test\/}\code{)}}.
+
+\textbf{Ecase-using} is a generalization of Common Lisp's \code{ecase} macro.
+
+\begin{alsos}{case-using-failure}
+\also[case-using-failure]
+\also[case-using]
+\also[ccase-using]
+\end{alsos}
+
+\fnexamples
+%
+\W\supp
+\begin{example}
+  > (ecase-using string= "a"
+      ("a" 1)
+      (("b" "c" "d") 2))
+  1
+  > (ecase-using string= "d"
+      ("a" 1)
+      (("b" "c" "d") 2))
+  2\goodpagebreak
+  > (ecase-using string= "C"
+      ("a" 1)
+      (("b" "c" "d") 2))
+  Error: "C" fell through an ecase-using string= form; 
+         the valid keys are "a", "b", "c", and "d".
+  >>\goodpagebreak
+\end{example}
 
 \end{functiondoc}
 
@@ -9583,9 +9915,55 @@ available and has been passed to the preferred browser; no value otherwise.
 
 %% ------------------------------------------------------------------------
 
+\begin{functiondoc}{Function}{kill-external-program}{\var{os-process\/}
+  \&optional \var{signal-number\/}}
+\index{external-program!terminating}%
+\index{external-program!signaling}%
+\index{signaling an external program}%
+\index{terminating an external program}%
+
+\fnsyntax
+
+\fnpurpose Terminate or signal an external program.
+
+\fnpackage \code{:gbbopen-tools}
+
+\fnmodule \code{:os-interface}
+
+\fnargs
+\begin{args}{signal-number}
+\arg[os-process] An implementation-dependent process representation or \nil{}
+\arg[signal-number] A small integer (default is \code{15}, the software
+termination signal)
+\end{args}
+  
+\fnerrors
+This function is not supported on Windows platforms.
+
+\begin{alsos}{run-external-program}
+\also[run-external-program]
+\end{alsos}
+
+\bfindexit{run-external-program}%
+\fnexample
+%
+\W\supp
+\begin{example}
+  > (multiple-value-bind (stream os-process)
+         (\entlink{run-external-program} "sleep" '("120"))
+       (sleep 10)
+       (kill-external-program os-process))
+  t
+  >
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
 \begin{functiondoc}{Function}{run-external-program}{\var{program args\/}
   \&key \var{input output wait\/}
-  \mbox{\returns{} \var{bidirectional-stream, process-id}}}
+  \mbox{\returns{} \var{bidirectional-stream, os-process}}}
 \index{external-program!running}%
 \index{invoking an external program}%
 
@@ -9605,13 +9983,13 @@ available and has been passed to the preferred browser; no value otherwise.
 \arg[output] A stream specification (default is \code{:stream}, see below)
 \arg[wait] A \glref{generalized~boolean} (default is \nil)
 \arg[bidirectional-stream] A stream or \nil{}
-\arg[process-id] A number or \nil{}
+\arg[os-process] An implementation-dependent process representation or \nil{}
 \end{args}
 
 \fnreturns Two values:
 \begin{tightitemize}
 \item an input, output, or bi-directional stream or \nil{}
-\item a process identifier, if available, or \nil{}
+\item an operating-system process representation, if available, or \nil{}
 \end{tightitemize}
   
 \fnerrors

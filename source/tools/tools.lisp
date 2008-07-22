@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Jul 20 15:37:43 2008 *-*
+;;;; *-* Last-Edit: Tue Jul 22 16:12:39 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -73,7 +73,8 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (import 
    #+allegro 
-   '(excl::extract-declarations
+   '(excl:case-failure
+     excl::extract-declarations
      excl:interrupt-signal
      excl::memq
      excl:until
@@ -90,7 +91,8 @@
      ccl:memq
      ccl:delq)
    #+cmu
-   '(ext:compiler-macroexpand
+   '(conditions::case-failure
+     ext:compiler-macroexpand
      ext:compiler-macroexpand-1
      ext:memq
      ext:delq)
@@ -104,20 +106,24 @@
      ccl:delq)
    ;; Note: ECL's while doesn't include a NIL block, so we can't use it
    #+ecl
-   '(si:memq)
+   '(si::case-failure
+     si:memq)
    #+gcl
    '()
    #+lispworks
-   '(harlequin-common-lisp:compiler-macroexpand
+   '(conditions:case-failure
+     harlequin-common-lisp:compiler-macroexpand
      harlequin-common-lisp:compiler-macroexpand-1
      system::copy-file
      system:memq
      system:delq)
    #+sbcl
    '(sb-int:memq
-     sb-int:delq)
+     sb-int:delq
+     sb-kernel:case-failure)
    #+scl
-   '(ext:compiler-macroexpand
+   '(conditions::case-failure
+     ext:compiler-macroexpand
      ext:compiler-macroexpand-1
      ext:memq
      ext:delq)
@@ -131,6 +137,7 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(bounded-value
             case-using
+            case-using-failure
             ccase-using
             copy-file                   ; not yet documented
             compiler-macroexpand
@@ -300,18 +307,74 @@
 ;;; ===========================================================================
 ;;;  Case-using
 
+;;; We define our own CASE-USING-FAILURE condition as a subclass of the CL's
+;;; own condition for CCASE and ECASE failures (all are subclasses of
+;;; TYPE-ERROR):
+(define-condition case-using-failure (#+allegro case-failure
+                                      #+clisp simple-type-error
+                                      #+clozure type-error
+                                      #+cmu case-failure
+                                      #+digitool-mcl type-error
+                                      #+ecl case-failure
+                                      #+lispworks case-failure
+                                      #+sbcl case-failure
+                                      #+scl case-failure
+                                      #-(or allegro 
+                                            clisp
+                                            clozure
+                                            cmu
+                                            digitool-mcl
+                                            ecl
+                                            lispworks
+                                            sbcl
+                                            scl) type-error)
+  ((case-using-form :reader case-using-form :initarg :case-using-form)
+   (case-using-test :reader case-using-test :initarg :case-using-test))
+  (:report
+   (lambda (condition stream)
+     (let ((case-using-form (case-using-form condition))
+           (keys (rest (type-error-expected-type condition))))
+       (format stream "~s fell through ~:[a~;an~] ~s ~s form; ~
+                       ~[there are no valid keys~;~
+                         the only valid key is~{ ~s~}~;~
+                         the valid keys are~{ ~s~^ and~}~:;~
+                         the valid keys are~{~#[~; and~] ~s~^,~}~]."
+               (type-error-datum condition)
+               (eq case-using-form 'ecase-using)
+               case-using-form
+               (case-using-test condition)
+               (length keys)
+               keys)))))
+
+;;; ---------------------------------------------------------------------------
+
 (defun case-using-failure (case-form exp test keys)
-  (error "~s fell through ~:[a~;an~] ~s ~s form; ~
-         ~[there are no valid keys~;~
-           the only valid key is~{ ~s~}~;~
-           the valid keys are~{ ~s~^ and~}~:;~
-           the valid keys are~{~#[~; and~] ~s~^,~}~]."
-         exp
-         (eq case-form 'ecase-using)
-         case-form
-         test
-         (length keys)
-         keys))
+  ;; We add initialization for NAME and POSSIBILITIES slots for CLs that
+  ;; use them in their own CASE-FAILURE condition:
+  (error 'case-using-failure 
+         :datum exp 
+         :expected-type (cons 'member keys)
+         ;; Allegro's CASE-USING slots:
+         #+allegro :name #+allegro case-form
+         #+allegro :possibilities #+allegro keys
+         ;; CMU's CASE-USING slots:
+         #+cmu :name #+cmu case-form
+         #+cmu :possibilities #+cmu keys
+         ;; ECL's CASE-USING slots:
+         #+ecl :name #+ecl case-form
+         #+ecl :possibilities #+ecl keys
+         ;; Lispworks's CASE-USING slots:
+         #+lispworks :name #+lispworks case-form
+         #+lispworks :possibilities #+lispworks keys
+         ;; SBCL's CASE-USING slots:
+         #+sbcl :name #+sbcl case-form
+         #+sbcl :possibilities #+sbcl keys
+         ;; SCL's CASE-USING slots:
+         #+scl :name #+scl case-form
+         #+scl :possibilities #+scl keys
+         ;; Our CASE-USING-FAILURE slots: 
+         :case-using-test test
+         :case-using-form case-form))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -332,58 +395,60 @@
 
 (defun case-using-expander (test exp clauses ecase? ccase-tag exp-form)
   (let ((all-keys nil))
-    (with-once-only-bindings (exp)
-      `(declare (ignorable ,exp))
-      `(cond ,@(mapcan 
-                #'(lambda (clause)
-                    (destructuring-bind (keys . clause-forms) clause
-                      (cond 
-                       ;; no keys
-                       ((not keys) 
-                        `((nil ,@clause-forms)))
-                       ;; otherwise clause:
-                       ((eq keys 'otherwise)
-                        `((t ,@clause-forms)))
-                       ;; normal clause (including t clause):
-                       (t `((,(cond
-                               ((atom keys)
-                                (pushnew keys all-keys :test test)
-                                `(,test ,exp ',keys))
-                               (t `(or ,@(mapcar 
-                                          #'(lambda (key)
-                                              (pushnew key all-keys :test test)
-                                              `(,test ,exp ',key))
-                                          keys))))
-                             ,@clause-forms))))))
-                clauses)
-             ,@(when ccase-tag
-                 `((t (setf ,exp-form 
-                            (ccase-using-failure 
-                             ',exp-form ,exp ',test ',(nreverse all-keys)))
-                      (go ,ccase-tag))))
-             ,@(when ecase?
-                 `((t (case-using-failure 
-                       'ecase-using ,exp ',test ',(nreverse all-keys)))))))))
-
+    (flet ((maybe-downgrade-test (key)
+             ;; If key is a symbol, use eq when reasonable:
+             (if (and (symbolp key)
+                      (memq test '(eql equal equalp)))
+                 'eq 
+                 test)))
+      (with-once-only-bindings (exp)
+        `(declare (ignorable ,exp))
+        `(cond ,@(mapcan 
+                  #'(lambda (clause)
+                      (destructuring-bind (keys . clause-forms) clause
+                        (cond 
+                         ;; no keys
+                         ((not keys) 
+                          `((nil ,@clause-forms)))
+                         ;; otherwise clause:
+                         ((eq keys 'otherwise)
+                          `((t ,@clause-forms)))
+                         ;; normal clause (including t clause):
+                         (t `((,(cond
+                                 ((atom keys)
+                                  (pushnew keys all-keys :test test)
+                                  `(,(maybe-downgrade-test keys) ,exp ',keys))
+                                 (t `(or ,@(mapcar 
+                                            #'(lambda (key)
+                                                (pushnew key all-keys :test test)
+                                                `(,(maybe-downgrade-test key)
+                                                  ,exp ',key))
+                                            keys))))
+                               ,@clause-forms))))))
+                  clauses)
+               ,@(when ccase-tag
+                   `((t (setf ,exp-form 
+                              (ccase-using-failure 
+                               ',exp-form ,exp ',test ',(nreverse all-keys)))
+                        (go ,ccase-tag))))
+               ,@(when ecase?
+                   `((t (case-using-failure 
+                         'ecase-using ,exp ',test ',(nreverse all-keys))))))))))
+  
 ;;; ---------------------------------------------------------------------------
 
-(defmacro case-using (test exp &body clauses)
-  (case-using-expander test exp clauses nil nil nil))
+(defmacro case-using (test keyform &body clauses)
+  (case-using-expander test keyform clauses nil nil nil))
 
-(defmacro ccase-using (test exp &body clauses)
+(defmacro ccase-using (test keyplace &body clauses)
   (let ((tag (gensym "CUTag")))
     `(block ,tag
        (tagbody ,tag
          (return-from ,tag 
-           ,(case-using-expander test exp clauses nil tag exp))))))
+           ,(case-using-expander test keyplace clauses nil tag keyplace))))))
 
-(defmacro ecase-using (test exp &body clauses)
-  (case-using-expander test exp clauses 't nil nil))
-
-#+ignore
-(ccase-using equalp *x* (a 1))
-#+ignore
-(ccase *x* (a 1))
+(defmacro ecase-using (test keyform &body clauses)
+  (case-using-expander test keyform clauses 't nil nil))
 
 ;;; ===========================================================================
 ;;;  Compiler-macroexpand (for those CL's that don't provide it)
