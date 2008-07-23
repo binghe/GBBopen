@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-SOCKETS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/portable-sockets.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Jul  8 05:55:04 2008 *-*
+;;;; *-* Last-Edit: Sun Jul 13 10:46:05 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -140,23 +140,25 @@
 ;;; ===========================================================================
 ;;;  Need-to-port reporting
 
-(defun need-to-port-warning/error (entity error)
-  (funcall (if error 'error 'warn)
-           "~s needs to be defined for ~a~@[ running on ~a~].~
-            ~@[~%(Please send this error message and the result of ~
-               ~% evaluating (pprint *features*) to bugs@gbbopen.org.)~]"
-           entity
-           (lisp-implementation-type) 
-           (machine-type)
-           error))
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defun need-to-port-warning/error (entity error)
+    (funcall (if error 'error 'warn)
+             "~s needs to be defined for ~a~@[ running on ~a~].~
+              ~@[~%(Please send this error message and the result of ~
+              ~% evaluating (pprint *features*) to bugs@gbbopen.org.)~]"
+             entity
+             (lisp-implementation-type) 
+             (machine-type)
+             error)))
 
 ;;; ---------------------------------------------------------------------------
 
-(defmacro need-to-port (entity)
-  ;; Generate compile-time warnings of needed porting:
-  (need-to-port-warning/error entity nil)
-  ;; Error if called at run time:
-  `(need-to-port-warning/error ',entity t))
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defmacro need-to-port (entity)
+    ;; Generate compile-time warnings of needed porting:
+    (need-to-port-warning/error entity nil)
+    ;; Error if called at run time:
+    `(need-to-port-warning/error ',entity t)))
 
 ;;; ===========================================================================
 ;;;  Passive-socket class for CLs without one
