@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Jul 21 16:52:49 2008 *-*
+;;;; *-* Last-Edit: Mon Jul 28 05:01:23 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -71,6 +71,7 @@
             map-sorted-instances-of-class
             next-class-instance-number
 	    space-instances-of
+            standard-unit-instance
             unduplicated-slot-names     ; re-export
             with-changing-dimension-values)))
 
@@ -103,8 +104,7 @@
     (:abstract t)
     (:generate-accessors-format :prefix)
     (:generate-accessors t :exclude instance-name)
-    (:generate-initargs t :exclude %%marks%% %%space-instances%%)
-    (:export-class-name t)))
+    (:generate-initargs t :exclude %%marks%% %%space-instances%%)))
 
 ;;; Promise that the above slots will not be unbound or their position
 ;;; modified:
