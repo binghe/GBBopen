@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Tue Jul 22 19:47:46 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Tue Jul 29 04:40:33 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -2438,6 +2438,7 @@ every \glref{relative~directory} associated with it is adjusted automatically.
 
 \begin{alsos}{show-defined-directories}
 \also[define-root-directory]
+\also[get-directory]
 \also[show-defined-directories]
 \also[with-system-name]
 \end{alsos}
@@ -2787,12 +2788,13 @@ in the \code{patches} subdirectory of the module):
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{get-directory}{\var{name\/}
+    \code{\&rest} \var{subdirectories\/}
     \returns{} \var{pathname\/}}
 \index{directory!getting pathname from name}%
 
 \fnsyntax 
 
-\fnpurpose Return the pathname of \glref{root~directory}, a
+\fnpurpose Return the pathname based on a \glref{root~directory}, a
 \glref{relative~directory}, or a \glref{module}.
 
 \fnpackage \code{:mini-module}
@@ -2803,10 +2805,15 @@ in the \code{patches} subdirectory of the module):
 \begin{args}{directory-specification}
 \arg[name] A \glref{keyword~symbol} naming a \glref{root~directory}, a
 \glref{relative~directory}, or a \glref{module}.
+\arg[subdirectories] One or more strings specifying, in order, subdirectories
+to be appended to the \glref{root~directory}, \glref{relative~directory}, or
+\glref{module} directory. (The \glref{keyword} \code{:up} or \code{:back} can
+also be supplied in addition to any of these strings, indicating to go upward
+one semantic or syntactic level of directory structure, respectively.)
 \arg[pathname] A \glref{pathname}
 \end{args}
 
-\fnreturns The pathname of the defined directory or module.
+\fnreturns The pathname.
 
 \fnerrors
 \relativedircircularity
@@ -2815,7 +2822,7 @@ in the \code{patches} subdirectory of the module):
 searched first.  If no \var{name\/} directory definition is found,
 \glref{module} definitions are searched.  \glref{Root~directories} specify a
 fixed anchor directory for a tree of \glref{relative~directory} definitions.
-The pathname returned for relative directories is the source pathname.
+The pathname returned for relative directories is based on the source pathname.
 
 \begin{alsos}{show-defined-directories}
 \also[define-relative-directory]
@@ -2841,6 +2848,15 @@ Return the pathname of the \code{:gbbopen-tools} \glref{relative~directory}:
 \begin{example}
   > (get-directory :gbbopen-tools)
   #P"\var{<install-dir>\/}/source/tools/"
+  >
+\end{example}
+Return this same pathname, this time computed from the \code{:gbbopen-root}
+\glref{root~directory}:
+%
+\W\supp\notpretop
+\begin{example}
+  > (get-directory :gbbopen-root "tools")
+  #P"\var{<install-dir>\/}/source/tools/" 
   >
 \end{example}
 %
