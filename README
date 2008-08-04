@@ -13,7 +13,7 @@ Requirements:
        Clozure CL   Version 1.2-rc1 (r10280)
        CMUCL        Version 19E
        Digitool MCL Version 5.1
-       ECL          Version 0.9k (configure with --enable-threads if possible;
+       ECL          Version 0.9l (configure with --enable-threads if possible;
                                   --enable-smallcons & --enable-gengc are
                                   also recommended)
        Lispworks    Version 5.1.1
@@ -30,7 +30,7 @@ Requirements:
    See PORTING for information on porting GBBopen to other Common Lisp
    implementations.
 
-Current Status Notes (August 3, 2008):
+Current Status Notes (August 4, 2008):
 
  - Implementation work is progressing on a regular basis.  See the list of
    pending development activities maintained on the "Development Activities"
