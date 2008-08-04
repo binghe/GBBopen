@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Jul 22 16:12:39 2008 *-*
+;;;; *-* Last-Edit: Wed Jul 23 03:27:26 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -676,6 +676,11 @@
 ;;;   Like first, but signals an error of more than 1 element is present
 ;;;   in the list.
 
+(defun sole-element-violation (list)
+  (cerror "Ignore the remaining elements."
+          "The list ~s contains more than 1 element."
+          list))
+
 (defun sole-element (list)
   (prog1 (first list)
     (when (rest list)
@@ -687,11 +692,6 @@
        (when (rest ,list)
          (sole-element-violation ,list)))))
   
-(defun sole-element-violation (list)
-  (cerror "Ignore the remaining elements."
-          "The list ~s contains more than 1 element."
-          list))
-
 ;;; ===========================================================================
 ;;;   Shrink-vector
 ;;;
