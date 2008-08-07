@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Tue Jul 29 04:40:33 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Thu Aug  7 04:50:42 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -23,7 +23,7 @@
 %%        \indexit doesn't play well with @\xxx{} formating, so use
 %%        the basic \index{...|itidx} rather than \indexit shorthand.
         
-\documentclass[10pt,twoside,english,pdftex]{article} 
+\documentclass[10pt,twoside,english,pdftex]{article}
 \usepackage{hyperlatex}
 \usepackage{color}
 \usepackage{makeidx}
@@ -31,6 +31,7 @@
 \T\usepackage{stringstrings}
 \T\usepackage{longtable}
 \T\usepackage{newcent}
+\T\usepackage[T1]{fontenc}
 % Use smaller TT font throughout
 \W\begin{iftex}
   \makeatletter
@@ -1060,6 +1061,8 @@ A \var{dimension-value-place\/} with two
   \index{initial space instances!inheritance}%
   \index{retention, of unit instances!inheritance}%
   \index{unit instance!retaining, by delete-blackboard-repository!inheritance}%
+  \index{instance-name comparison test!inheritance}%
+  \index{use global instance-name counter!inheritance}%
   %
   The set of \var{dimensional-values\/} for a \glref{unit~class} is the union
   of the sets specified in the \var{dimensional-values\/} options of the class
@@ -1080,7 +1083,10 @@ A \var{dimension-value-place\/} with two
   used as the default if any parent \glref{unit~classes} have a
   \code{:propagate} retention value; otherwise \nil{} is used as the default
   value.
-}
+
+  The \var{use-global-instance-name-counter\/} value is not inherited. If no
+  value is specified in the \glref{unit-class} definition, the default
+  initialization value associated with the metaclass is used.}
 
 %% ========================================================================
 %%  Errors & notes
@@ -3803,7 +3809,7 @@ and maximum value.
 \fnmodule \code{:gbbopen-tools}
 
 \fnargs
-\begin{args}{number}
+\begin{args}{bounded-number}
 \arg[min] A number (the minimum bound)
 \arg[number] A number
 \arg[max] A number (the maximum bound)
@@ -4597,9 +4603,9 @@ direct superclass of the \glref{class} \var{class-name\/}
  & \code{(:generate-accessors-format} 
      \{\code{:prefix} \vbar{} \code{:suffix}\} \vbar \\
  & \code{(:generate-accessors-prefix} \{\var{string\/} \vbar{}
-     \var{symbol\/}\}\var\code{)} \vbar \\
+     \var{symbol\/}\}\code{)} \vbar \\
  & \code{(:generate-accessors-suffix} \{\var{string\/} \vbar{}
-     \var{symbol\/}\}\var\code{)} \vbar \\
+     \var{symbol\/}\}\code{)} \vbar \\
  & \code{(:generate-initargs} \var{slots-specifier\/}\code{)} \vbar \\
  & \code{(:metaclass} \var{class-name\/}\code{)} \\
 \end{tabular}
@@ -10454,9 +10460,9 @@ one \glref{unit~class} name.  This error is signaled on class finalization.
  & \code{(:generate-accessors-format} 
      \{\code{:prefix} \vbar{} \code{:suffix}\} \vbar \\
  & \code{(:generate-accessors-prefix} \{\var{string\/} \vbar{}
-     \var{symbol\/}\}\var\code{)} \vbar \\
+     \var{symbol\/}\}\code{)} \vbar \\
  & \code{(:generate-accessors-suffix} \{\var{string\/} \vbar{}
-     \var{symbol\/}\}\var\code{)} \vbar \\
+     \var{symbol\/}\}\code{)} \vbar \\
  & \code{(:generate-initargs} \var{direct-slots-specifier\/}\code{)} \vbar \\
  & \code{(:initial-space-instances}
      \var{initial-space-instance-specifier\/}\code{)} \vbar \\
@@ -10483,7 +10489,7 @@ one \glref{unit~class} name.  This error is signaled on class finalization.
 \end{tabular}
 \T\\[4pt]
 \comparisontypenote
-\\ % in both LaTeX and Hyperlatex
+\par % in both LaTeX and Hyperlatex
 \dimensionalspecnote
 
 \fnterms
@@ -12860,9 +12866,9 @@ direct superclass of the \glref{event~class} \var{event-class-name\/}
  & \code{(:generate-accessors-format} 
      \{\code{:prefix} \vbar{} \code{:suffix}\} \vbar \\
  & \code{(:generate-accessors-prefix} \{\var{string\/} \vbar{}
-     \var{symbol\/}\}\var\code{)} \vbar \\
+     \var{symbol\/}\}\code{)} \vbar \\
  & \code{(:generate-accessors-suffix} \{\var{string\/} \vbar{}
-     \var{symbol\/}\}\var\code{)} \vbar \\
+     \var{symbol\/}\}\code{)} \vbar \\
  & \code{(:generate-initargs} \var{direct-slots-specifier\/}\code{)} \vbar \\
  & \code{(:metaclass} \var{class-name\/}\code{)} \\
 \end{tabular}
@@ -14951,9 +14957,9 @@ one \glref{space~class} name.  This error is signaled on class finalization.
  & \code{(:generate-accessors-format} 
      \{\code{:prefix} \vbar{} \code{:suffix}\} \vbar \\
  & \code{(:generate-accessors-prefix} \{\var{string\/} \vbar{}
-     \var{symbol\/}\}\var\code{)} \vbar \\
+     \var{symbol\/}\}\code{)} \vbar \\
  & \code{(:generate-accessors-suffix} \{\var{string\/} \vbar{}
-     \var{symbol\/}\}\var\code{)} \vbar \\
+     \var{symbol\/}\}\code{)} \vbar \\
  & \code{(:generate-initargs} \var{direct-slots-specifier\/}\code{)} \vbar \\
  & \code{(:initial-space-instances}
      \var{initial-space-instance-specifier\/}\code{)} \vbar \\
@@ -14980,7 +14986,7 @@ one \glref{space~class} name.  This error is signaled on class finalization.
 \end{tabular}
 \T\\[4pt]
 \comparisontypenote
-\T\\
+\par % in both LaTeX and Hyperlatex
 \dimensionalspecnote
 
 \fnterms
@@ -19739,9 +19745,9 @@ one \glref{ks~class} name.  This error is signaled on class finalization.
  & \code{(:generate-accessors-format} 
      \{\code{:prefix} \vbar{} \code{:suffix}\} \vbar \\
  & \code{(:generate-accessors-prefix} \{\var{string\/} \vbar{}
-     \var{symbol\/}\}\var\code{)} \vbar \\
+     \var{symbol\/}\}\code{)} \vbar \\
  & \code{(:generate-accessors-suffix} \{\var{string\/} \vbar{}
-     \var{symbol\/}\}\var\code{)} \vbar \\
+     \var{symbol\/}\}\code{)} \vbar \\
  & \code{(:generate-initargs} \var{direct-slots-specifier\/}\code{)} \vbar \\
  & \code{(:initial-space-instances}
      \var{initial-space-instance-specifier\/}\code{)} \vbar \\
@@ -19768,7 +19774,7 @@ one \glref{ks~class} name.  This error is signaled on class finalization.
 \end{tabular}
 \T\\[4pt]
 \comparisontypenote
-\T\\
+\par % in both LaTeX and Hyperlatex
 \dimensionalspecnote
 
 \fnterms
@@ -19939,9 +19945,9 @@ one \glref{ksa~class} name.  This error is signaled on class finalization.
  & \code{(:generate-accessors-format} 
      \{\code{:prefix} \vbar{} \code{:suffix}\} \vbar \\
  & \code{(:generate-accessors-prefix} \{\var{string\/} \vbar{}
-     \var{symbol\/}\}\var\code{)} \vbar \\
+     \var{symbol\/}\}\code{)} \vbar \\
  & \code{(:generate-accessors-suffix} \{\var{string\/} \vbar{}
-     \var{symbol\/}\}\var\code{)} \vbar \\
+     \var{symbol\/}\}\code{)} \vbar \\
  & \code{(:generate-initargs} \var{direct-slots-specifier\/}\code{)} \vbar \\
  & \code{(:initial-space-instances}
      \var{initial-space-instance-specifier\/}\code{)} \vbar \\
@@ -19968,7 +19974,7 @@ one \glref{ksa~class} name.  This error is signaled on class finalization.
 \end{tabular}
 \T\\[4pt]
 \comparisontypenote
-\T\\
+\par % in both LaTeX and Hyperlatex
 \dimensionalspecnote
 
 \fnterms
