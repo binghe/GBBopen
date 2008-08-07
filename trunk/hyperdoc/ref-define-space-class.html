@@ -144,10 +144,10 @@ available in a future release.]</font></font></span><table class="tighttop"><tbo
 &#123;<code>:prefix</code> | <code>:suffix</code>&#125; |</td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code>(:generate-accessors-prefix</code> &#123;<var>string</var> |
-<var>symbol</var>&#125;<var><code></code></var>) |</td></tr>
+<var>symbol</var>&#125;<code>)</code> |</td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code>(:generate-accessors-suffix</code> &#123;<var>string</var> |
-<var>symbol</var>&#125;<var><code></code></var>) |</td></tr>
+<var>symbol</var>&#125;<code>)</code> |</td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code>(:generate-initargs</code> <var>direct-slots-specifier</var><code>)</code> |</td></tr>
 <tr>
@@ -287,7 +287,8 @@ dimension-value-place</var><code>)</code> </td></tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
 <p>The default <var>ordered-comparison-type</var>, if unspecified, is <code>number</code>. 
 The default <var>enumerated-comparison-type</var>, if unspecified, is <code>eql</code>. 
-The default <var>boolean-comparison-type</var> is <code>t</code>.A <var>dimension-value-place</var> with two
+The default <var>boolean-comparison-type</var> is <code>t</code>.</p>
+<p>A <var>dimension-value-place</var> with two
 <var>slot-names</var> is allowed only for an <code>:interval</code> dimension-value
 specification.
 </p>
@@ -334,6 +335,10 @@ initialization value associated with the metaclass is used.
 used as the default if any parent <a href="ref-glossary.html#gl:unit-class">unit&nbsp;classes</a> have a
 <code>:propagate</code> retention value; otherwise <code>nil</code> is used as the default
 value.
+</p>
+<p>The <var>use-global-instance-name-counter</var> value is not inherited. If no
+value is specified in the <a href="ref-glossary.html#gl:unit-class">unit-class</a> definition, the default
+initialization value associated with the metaclass is used.
 </p>
 <p><span class="fndoclabel">See also</span>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-define-unit-class.html"><b>define-unit-class</b></a>
