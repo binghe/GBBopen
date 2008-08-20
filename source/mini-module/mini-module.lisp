@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/mini-module/mini-module.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Jul  6 12:03:26 2008 *-*
+;;;; *-* Last-Edit: Wed Aug 20 09:41:45 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -1252,7 +1252,7 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun %module-fully-loaded? (module)
+(defun %module-fully-loaded? (module check-for-new-patches?)
   ;;; Internal function that returns true if `module' is fully loaded
   (let ((files-loaded (mm-module.files-loaded module)))
     (flet ((check-file (file) 
@@ -1262,13 +1262,15 @@
            ;; Check that no new files have been specified for the module since
            ;; we last compiled/loaded:
            (every #'check-file (mm-module.files module))
-           ;; or new patches:
-           (every #'check-file (mm-module.patches module))))))
+           (or (not check-for-new-patches?)
+               ;; Also check that no new patches have been specified for the
+               ;; module:
+               (every #'check-file (mm-module.patches module)))))))
       
 ;;; ---------------------------------------------------------------------------
 
 (defun module-loaded-p (module-name)
-  (%module-fully-loaded? (get-module module-name)))
+  (%module-fully-loaded? (get-module module-name) 't))
 
 ;;; ===========================================================================
 ;;;   Module compile/load functions
@@ -1348,7 +1350,7 @@
                                          recompile? reload? source? print?
                                          propagate? patches?
                                          &aux (module *current-module*))
-  (when (and *patches-only* (not (%module-fully-loaded? *current-module*)))
+  (when (and *patches-only* (not (%module-fully-loaded? *current-module* nil)))
     (error "Module ~s has not been loaded and ~s is true."
            (mm-module.name *current-module*)
            '*patches-only*))
@@ -1862,7 +1864,7 @@
         (maphash #'(lambda (key module)
                      (declare (ignore key))
                      (when (or all-modules?
-                               (%module-fully-loaded? module))
+                               (%module-fully-loaded? module 't))
                        (push module modules)))
                  *mm-modules*)
         (cond 
@@ -1874,7 +1876,7 @@
             (format t "~%  ~s~:[~; [~a]~]"
                     (mm-module.name module)
                     all-modules?
-                    (if (%module-fully-loaded? module)
+                    (if (%module-fully-loaded? module 't)
                         "Loaded"
                         "Not loaded")))
           (terpri))
@@ -1887,7 +1889,7 @@
 (defun list-modules (&optional all-modules?)
   (loop for module being each hash-value in *mm-modules*
       when (or all-modules?
-                (%module-fully-loaded? module))
+                (%module-fully-loaded? module 't))
       collect (mm-module.name module)))
 
 ;;; ===========================================================================
