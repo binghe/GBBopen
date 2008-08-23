@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/read-object.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Aug 23 11:11:37 2008 *-*
+;;;; *-* Last-Edit: Sat Aug 23 12:07:54 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -57,8 +57,9 @@
 (defvar *reading-saved/sent-class-name-translations*)
 
 ;; Dynamically bound in with-reading-saved/sent-objects-block to hold the
-;; string coalescing hash table:
+;; string coalescing hash table and duplicate count:
 (defvar *coalesce-save/sent-strings-ht*)
+(defvar *duplicate-string-count*)
 
  ;;; ---------------------------------------------------------------------------
 
@@ -69,10 +70,12 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun show-coalescing (ht)
+(defun show-coalescing (ht duplicate-string-count)
   (when *string-coalescing-verbose*
-    (format t "~&;; ~s distinct equal strings read~%"
-            (hash-table-count ht))))
+    (format t "~&;; ~:d distinct equal strings read~
+               ~%;; ~:d duplicate strings coalesced~%"
+            (hash-table-count ht)
+            duplicate-string-count)))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -114,6 +117,7 @@
            (*reading-saved/sent-class-name-translations* 
             ,class-name-translations)
            (*read-class-descriptions-ht* (make-hash-table :test 'eq))
+           (*duplicate-string-count* 0)
            (*coalesce-save/sent-strings-ht* 
             (let ((.coalesce-strings. ,coalesce-strings))
               (when .coalesce-strings.
@@ -129,7 +133,8 @@
        (multiple-value-prog1
            (progn ,@body)
          (when *coalesce-save/sent-strings-ht*
-           (show-coalescing *coalesce-save/sent-strings-ht*))
+           (show-coalescing *coalesce-save/sent-strings-ht* 
+                            *duplicate-string-count*))
          (check-for-undefined-instance-references)))))
 
 ;;; ===========================================================================
@@ -163,9 +168,13 @@
   (unread-char #\" stream)
   (let ((string (read stream)))
     (if *coalesce-save/sent-strings-ht*
-        (let ((coalesced-string (gethash string *coalesce-save/sent-strings-ht*)))
-          (or coalesced-string 
-              (setf (gethash string *coalesce-save/sent-strings-ht*) string)))
+        (let ((coalesced-string 
+               (gethash string *coalesce-save/sent-strings-ht*)))
+          (cond (coalesced-string 
+                 (incf *duplicate-string-count*)
+                 coalesced-string )
+                (t (setf (gethash string *coalesce-save/sent-strings-ht*)
+                         string))))
         string)))
 
 ;;; ---------------------------------------------------------------------------
