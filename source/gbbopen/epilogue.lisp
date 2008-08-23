@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/epilogue.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Jul  8 05:46:02 2008 *-*
+;;;; *-* Last-Edit: Sat Aug 23 06:35:51 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -217,15 +217,16 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun load-blackboard-repository (pathname 
-                                   &rest reset-gbbopen-args
-                                   &key (class-name-translations nil)
-                                        (confirm-if-not-empty 't)
-                                        (external-format ':default)
-                                        (ignore-after-loading-function nil)
-                                        (readtable
-                                         *reading-saved/sent-objects-readtable*)
-                                        (read-eval nil))
+(defun load-blackboard-repository
+    (pathname 
+     &rest reset-gbbopen-args
+     &key (class-name-translations nil)
+          (coalesce-strings nil)
+          (confirm-if-not-empty 't)
+          (external-format ':default)
+          (ignore-after-loading-function nil)
+          (readtable *reading-saved/sent-objects-readtable*)
+          (read-eval nil))
   (declare (dynamic-extent reset-gbbopen-args))
   (when confirm-if-not-empty
     (unless (confirm-if-blackboard-repository-not-empty-p)
@@ -237,6 +238,7 @@
            :all-classes 't
            (remove-properties reset-gbbopen-args 
                               '(:class-name-translations
+                                :coalesce-strings
                                 :confirm-if-not-empty
                                 :external-format
                                 :ignore-after-loading-function
@@ -244,6 +246,7 @@
                                 :read-eval)))
     (with-reading-saved/sent-objects-block 
         (file :class-name-translations class-name-translations
+              :coalesce-strings coalesce-strings
               :readtable readtable
               :read-eval read-eval)
       (let ((format-version (read file)))

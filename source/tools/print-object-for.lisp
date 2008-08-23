@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/print-object-for.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Jul  8 05:55:35 2008 *-*
+;;;; *-* Last-Edit: Fri Aug 22 15:32:14 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -190,6 +190,13 @@
   (prin1 object stream))
 
 ;;; ---------------------------------------------------------------------------
+;;;  Unbound value indicator
+
+(defmethod print-object-for-saving/sending ((obj (eql unbound-value-indicator))
+                                            stream)
+  (princ "#GU" stream))
+
+;;; ---------------------------------------------------------------------------
 ;;;  Lists
 
 (defmethod print-object-for-saving/sending ((cons cons) stream)
@@ -220,6 +227,7 @@
 ;;;  Strings
 
 (defmethod print-object-for-saving/sending ((string string) stream)
+  (princ "#G" stream)
   (prin1 string stream))
 
 ;;; ---------------------------------------------------------------------------

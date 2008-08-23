@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/unit-metaclasses.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Jun 15 12:58:31 2008 *-*
+;;;; *-* Last-Edit: Fri Aug 22 13:05:36 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -130,9 +130,13 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun print-unit-class-state-for-saving/sending (unit-class stream)
-  (format stream "~&#GM(~s ~s)"
-          (class-name unit-class)
-          (standard-unit-class.instance-name-counter unit-class)))
+  (fresh-line stream)
+  (princ "#GM(" stream)
+  (prin1 (class-name unit-class) stream)
+  (write-char #\space stream)
+  (print-object-for-saving/sending
+   (standard-unit-class.instance-name-counter unit-class) stream)
+  (write-char #\) stream))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Standard-unit-instance-updater reader

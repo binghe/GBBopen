@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/read-object.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Jul  8 05:56:02 2008 *-*
+;;;; *-* Last-Edit: Sat Aug 23 09:51:40 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -52,7 +52,11 @@
 ;; user-specified alist of class-name translations:
 (defvar *reading-saved/sent-class-name-translations*)
 
-;;; ---------------------------------------------------------------------------
+;; Dynamically bound in with-reading-saved/sent-objects-block to hold the
+;; string coalescing hash table:
+(defvar *coalesce-save/sent-strings-ht*)
+
+ ;;; ---------------------------------------------------------------------------
 
 (defun outside-reading-saved/sent-objects-block-error (function-name)
   (error "Call to ~s is not within a ~s form"
@@ -83,6 +87,7 @@
 (defmacro with-reading-saved/sent-objects-block 
     ((stream 
       &key (class-name-translations nil)
+           (coalesce-strings nil)
            (readtable
             '*reading-saved/sent-objects-readtable*)
            (read-eval nil))
@@ -98,6 +103,16 @@
            (*reading-saved/sent-class-name-translations* 
             ,class-name-translations)
            (*read-class-descriptions-ht* (make-hash-table :test 'eq))
+           (*coalesce-save/sent-strings-ht* 
+            (let ((.coalesce-strings. ,coalesce-strings))
+              (when .coalesce-strings.
+                (if (integerp .coalesce-strings.) 
+                    ;; User specified the initial size:
+                    (make-keys-only-hash-table-if-supported 
+                     :test 'equal 
+                     :size .coalesce-strings.)
+                    ;; No size was specified:
+                    (make-keys-only-hash-table-if-supported :test 'equal)))))
            (*forward-referenced-saved/sent-instances* 
             (make-keys-only-hash-table-if-supported :test 'equal)))
        (multiple-value-prog1
@@ -127,6 +142,18 @@
 (defmethod saved/sent-object-reader ((char (eql #\U)) stream)
   (declare (ignore stream))
   unbound-value-indicator)
+
+;;; ---------------------------------------------------------------------------
+;;;  Special string reader
+         
+(defmethod saved/sent-object-reader ((char (eql #\")) stream)
+  (unread-char #\" stream)
+  (let ((string (read stream)))
+    (if *coalesce-save/sent-strings-ht*
+        (let ((coalesced-string (gethash string *coalesce-save/sent-strings-ht*)))
+          (or coalesced-string 
+              (setf (gethash string *coalesce-save/sent-strings-ht*) string)))
+        string)))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Class (reference) reader
