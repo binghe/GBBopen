@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/modules.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jul  2 16:45:25 2008 *-*
+;;;; *-* Last-Edit: Sat Aug 23 10:49:23 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -65,8 +65,8 @@
             "gbbopen-instance"
             "date-and-time"
             "offset-universal-time"
-            "print-object-for"
-            "read-object"
+            ("print-object-for" :forces-recompile)
+            ("read-object" :forces-recompile)
             "duplicate-instance"
             "epilogue"))
   
@@ -103,7 +103,7 @@
   (define-relative-directory :gbbopen :gbbopen-root "gbbopen")
   
   (define-module :gbbopen-core
-    (:requires :portable-threads :gbbopen-tools)
+    (:requires :portable-threads :gbbopen-tools :os-interface)
     (:directory :gbbopen)
     (:files "preamble"
             ("utilities" :forces-recompile)
@@ -127,7 +127,7 @@
             "epilogue"))
   
   (define-module :gbbopen-user
-    (:requires :gbbopen-core :os-interface)
+    (:requires :gbbopen-core)
     (:directory :gbbopen)
     (:files "gbbopen-user"))
 
@@ -206,6 +206,13 @@
     (:requires :portable-sockets)
     (:directory :gbbopen-tools "test")
     (:files ("http-test" :reload)))
+  
+;;; ---------------------------------------------------------------------------
+
+  (define-module :os-interface-test
+    (:requires :os-interface)
+    (:directory :gbbopen-tools "test")
+    (:files ("os-interface-test" :reload)))
   
 ;;; ---------------------------------------------------------------------------
 
