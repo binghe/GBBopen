@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/read-object.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Aug 23 09:51:40 2008 *-*
+;;;; *-* Last-Edit: Sat Aug 23 11:11:37 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -27,7 +27,8 @@
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(*forward-referenced-saved/sent-instances* ; not yet documented
-            *reading-saved/sent-objects-readtable*  ; not yet documented
+            *reading-saved/sent-objects-readtable* ; not yet documented
+            *string-coalescing-verbose* ; not yet documented
             allocate-saved/sent-instance ; not yet documented
             saved/sent-object-reader    ; not yet documented
             initialize-saved/sent-instance
@@ -35,6 +36,9 @@
 
 ;;; ===========================================================================
 ;;;  With-reading-saved/sent-objects-block
+
+;; Controls printing of string-coalescing information:
+(defvar *string-coalescing-verbose* 't)
 
 ;; Dynamically bound in with-reading-saved/sent-objects-block to maintain class
 ;; descriptions that have been read:
@@ -62,6 +66,13 @@
   (error "Call to ~s is not within a ~s form"
          function-name
          'with-reading-saved/sent-objects-block))
+
+;;; ---------------------------------------------------------------------------
+
+(defun show-coalescing (ht)
+  (when *string-coalescing-verbose*
+    (format t "~&;; ~s distinct equal strings read~%"
+            (hash-table-count ht))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -117,6 +128,8 @@
             (make-keys-only-hash-table-if-supported :test 'equal)))
        (multiple-value-prog1
            (progn ,@body)
+         (when *coalesce-save/sent-strings-ht*
+           (show-coalescing *coalesce-save/sent-strings-ht*))
          (check-for-undefined-instance-references)))))
 
 ;;; ===========================================================================
