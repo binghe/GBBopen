@@ -18,6 +18,9 @@ Important changes since GBBopen 1.1:
        compiler-macros
      - New pseudo-probability operators
      - New CASE-USING, CCASE-USING, and ECASE-USING macros
+     - Added :coalesce-strings keyword to 
+       WITH-READING-SAVED/SENT-OBJECTS-BLOCK (and indirectly to 
+       LOAD-BLACKBOARD-REPOSITORY)
 
   * New Agenda Shell functions
      - CURRENT-CONTROL-SHELL

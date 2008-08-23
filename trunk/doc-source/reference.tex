@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Wed Aug 20 07:23:31 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Sat Aug 23 10:01:33 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -17761,6 +17761,7 @@ happen if confirmed positively.
 
 \begin{functiondoc}{Function}{load-blackboard-repository}{\var{pathname\/}
     \code{\&key} \var{class-name-translations
+                      coalesce-strings
                       confirm-if-not-empty
                       disable-events 
                       external-format
@@ -17789,6 +17790,7 @@ happen if confirmed positively.
 \begin{args}{ignore-after-loading-function}
 \arg[pathname] A \glref{pathname~designator}
 \arg[class-name-translations] An \glref{association~list} (default is \nil)
+\arg[coalesce-strings] A \glref{generalized~boolean} (default is \nil)
 \arg[confirm-if-not-empty] A \glref{generalized~boolean} (default is true)
 \arg[disable-events] A \glref{generalized~boolean} (default is \code{t})
 \arg[external-format] An external-file-format designator (default is
@@ -17847,8 +17849,12 @@ should contain \glref{conses} of the form:\\
 for any \glref{class} translations that should occur during repository
 loading.
 
-If \var{confirm-if-not-empty} is true, the user must confirm loading when the
-current blackboard repository contains \glref{unit~instances}.
+If \var{coalesce-strings\/} is true, loaded strings that are \code{equal}
+become shared (\code{eq}).  This coalescing is performed using a temporary
+hash-table whose initial size can be specified by providing an integer value
+for \var{coalesce-strings}.  If \var{confirm-if-not-empty} is true, the user
+must confirm loading when the current blackboard repository contains
+\glref{unit~instances}.
 
 If \var{ignore-after-loading-function\/} is true, the
 \var{after-loading-function\/} (if one was specified when the repository was
@@ -18282,7 +18288,8 @@ resulting blackboard repository:
 \begin{functiondoc}[with-reading-saved-sent-objects-block]{Macro}%
   {with-reading-saved/sent-objects-block}%
   {\code{(}\var{stream\/} 
-    \code{\&key} \var{class-name-translations readtable read-eval\/}\code{)}
+    \code{\&key} \var{class-name-translations coalesce-strings 
+      readtable read-eval\/}\code{)}
     \var{form\/}\superstar
     \returns{} \var{result\/}\superstar}
   
@@ -18300,6 +18307,7 @@ reading-saved/sent-objects behavior when evaluating \var{forms}.
 \begin{args}{read-default-float-format}
 \arg[stream] A stream
 \arg[class-name-translations] An \glref{association~list} (default is \nil)
+\arg[coalesce-strings] A \glref{generalized~boolean} (default is \nil)
 \arg[readtable] A readtable (default is 
   \code{*reading-saved/sent-objects-readtable*})
 \arg[read-eval] A \glref{generalized~boolean} (default is \nil)
@@ -18325,6 +18333,11 @@ should contain \glref{conses} of the form:\\
 ~~~~~~~~\texttt{(\var{class-name\/} . \var{new-class-name\/})}\\
 %
 for any \glref{class} translations that should occur during reading.
+
+If \var{coalesce-strings\/} is true, strings read within the dynamic extent of
+the body of \var{forms} that are \code{equal} become shared (\code{eq}).  This
+coalescing is performed using a temporary hash-table whose initial size can be
+specified by providing an integer value for \var{coalesce-strings}.
 
 \begin{alsos}{load-blackboard-repository}
 \also[load-blackboard-repository]
