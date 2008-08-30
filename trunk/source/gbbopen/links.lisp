@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/links.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon May 26 12:57:50 2008 *-*
+;;;; *-* Last-Edit: Sat Aug 30 09:30:15 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -14,26 +14,26 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2002-2007, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2008, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
-;;;  11-16-02 File Created.  (Corkill)
-;;;  03-02-04 Ensure that linkf! updates the link slot when no new links are 
+;;;  11-16-02 File created.  (Corkill)
+;;;  03-02-04 Ensure that LINKF! updates the link slot when no new links are 
 ;;;           added.  (Corkill)
 ;;;  03-09-04 Fix incorrect delete-all incoming pointers code.  (Corkill)
-;;;  07-08-04 Fix check-link-consistency singular-link comparison.  (Corkill)
-;;;  08-16-04 Allow %do-iunlinks to delete links even when the link
+;;;  07-08-04 Fix CHECK-LINK-DEFINITIONS singular-link comparison.  (Corkill)
+;;;  08-16-04 Allow %DO-IUNLINKS to delete links even when the link
 ;;;           singularity has been redefined.  (Corkill)
 ;;;  12-04-04 Fix to handle some link/non-link shadowing (not a general
 ;;;           solution, however).  (Corkill)
 ;;;  12-10-04 Updated for Lispworks 4.4. (Corkill)
-;;;  01-06-05 Fix find-class failure in set-inverse-link-definition for
+;;;  01-06-05 Fix FIND-CLASS failure in set-inverse-link-definition for
 ;;;           inverse links in the class that is being defined (thanks to 
 ;;;           Earl Wagner for finding this problem!).  (Corkill)
-;;;  03-23-05 Fix incorrect mapping class in check-link-consistency.  (Corkill)
-;;;  07-30-05 Rename linkf! to link-setf.  (Corkill)
+;;;  03-23-05 Fix incorrect mapping class in CHECK-LINK-DEFINITIONS.  (Corkill)
+;;;  07-30-05 Rename LINKF! to LINK-SETF.  (Corkill)
 ;;;  03-11-06 Add ECL support.  (Corkill)
 ;;;  06-24-06 Finally rewrote get-dlslotd-from-reader to handle object-specific
 ;;;           lookups.  (Corkill)
@@ -43,7 +43,8 @@
 (in-package :gbbopen)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (export '(check-link-consistency
+  (export '(check-link-consistency      ; deprecated, remove in 1.3
+            check-link-definitions
 	    link-setf
 	    linkf
 	    unlinkf
@@ -619,7 +620,7 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun check-link-consistency (&optional silent)
+(defun check-link-definitions (&optional silent)
   (let ((result 't))
     (map-unit-classes
      #'(lambda (class plus-subclasses)
@@ -629,7 +630,7 @@
               (unless (check-a-link class link silent)
                 (if silent 
                     (setf result nil)
-                    (return-from check-link-consistency nil))))
+                    (return-from check-link-definitions nil))))
 	  (ensure-finalized-class class)))
      ;; Note: standard-unit-instance isn't defined until after this file is
      ;;       loaded, so we can't use load-time-value on this class "constant"
@@ -637,6 +638,10 @@
     (when (and result (not silent))
       (format t "~&;; All link definitions are consistent.~%"))
     result))
+
+;; Deprecated name, remove in 1.3:
+(defun check-link-consistency (&optional silent)
+  (check-link-definitions silent))
 
 ;;; ===========================================================================
 ;;;				  End of File
