@@ -197,14 +197,14 @@ The concise inverse-link-slot specification supplied by the
 is useful when links are between instances of different unit classes,
 as the link can be understood by viewing either class definition.  The
 redundancy also helps GBBopen recognize inconsistencies in link
-specifications.  The function <b>check-link-consistency</b> asks
+specifications.  The function <b>check-link-definitions</b> asks
 GBBopen to validate that all link definitions are consistent.  Let's
 try it on our current random-walk application.  Compile and load the
 latest changes in your <code>tutorial-example.lisp</code> file (including
 the new <code>next-location</code> and <code>previous-location</code> link slots).
 Then check link consistency:
 <pre class="pretop">
-<font color="#667f66">  gbbopen-user&gt; <font color="#000000">(check-link-consistency)</font>
+<font color="#667f66">  gbbopen-user&gt; <font color="#000000">(check-link-definitions)</font>
   ;; All link definitions are consistent.
   t
   gbbopen-user&gt;</font>
@@ -243,7 +243,7 @@ for temporarily &#8220;commenting out&#8221; a single form.
 <p>Compile the now-defective definition (using <code>C-c C-c</code> in SLIME or
 <code>C-c C-x</code> in ELI) and then recheck link consistency:
 <pre class="pretop">
-<font color="#667f66">  gbbopen-user&gt; <font color="#000000">(check-link-consistency)</font>
+<font color="#667f66">  gbbopen-user&gt; <font color="#000000">(check-link-definitions)</font>
   Warning: The inverse of link slot next-location in unit class location 
            refers to link slot previous-location which is not present in 
            unit class location.
@@ -275,7 +275,7 @@ As expected, GBBopen alerts us to the problem.
 Compile the again-defective definition (using <code>C-c C-c</code> in SLIME or
 <code>C-c C-x</code> in ELI) and then recheck link consistency:
 <pre>
-<font color="#667f66">  gbbopen-user&gt; <font color="#000000">(check-link-consistency)</font>
+<font color="#667f66">  gbbopen-user&gt; <font color="#000000">(check-link-definitions)</font>
   Warning: Link slot next-location in unit class location incorrectly 
            declares its inverse link slot previous-location in unit 
            class location as not singular.
@@ -304,7 +304,7 @@ specification in <code>next-location</code> that we just commented out:
 </pre>
 Then recompile and recheck link consistency:
 <pre>
-<font color="#667f66">  gbbopen-user&gt; <font color="#000000">(check-link-consistency)</font>
+<font color="#667f66">  gbbopen-user&gt; <font color="#000000">(check-link-definitions)</font>
   ;; All link definitions are consistent.
   t
   gbbopen-user&gt;</font>

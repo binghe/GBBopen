@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/tutorial.tex *-*
-%% *-* Last-Edit: Thu Aug  7 04:52:34 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Sat Aug 30 09:33:15 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2005-2008, Dan Corkill <corkill@GBBopen.org>
@@ -4839,7 +4839,7 @@ The concise inverse-link-slot specification supplied by the
 is useful when links are between instances of different unit classes,
 as the link can be understood by viewing either class definition.  The
 redundancy also helps GBBopen recognize inconsistencies in link
-specifications.  The function \textbf{check-link-consistency} asks
+specifications.  The function \textbf{check-link-definitions} asks
 GBBopen to validate that all link definitions are consistent.  Let's
 try it on our current random-walk application.  Compile and load the
 latest changes in your \code{tutorial-example.lisp} file (including
@@ -4849,7 +4849,7 @@ Then check link consistency:
 \W\supp
 \begin{example}
 \textcolor{darkergray}{%
-  gbbopen-user> \textcolor{black}{(check-link-consistency)}
+  gbbopen-user> \textcolor{black}{(check-link-definitions)}
   ;; All link definitions are consistent.
   t
   gbbopen-user>}
@@ -4895,7 +4895,7 @@ Compile the now-defective definition (using \code{C-c C-c} in SLIME or
 \W\supp
 \begin{example}
 \textcolor{darkergray}{%
-  gbbopen-user> \textcolor{black}{(check-link-consistency)}
+  gbbopen-user> \textcolor{black}{(check-link-definitions)}
   Warning: The inverse of link slot next-location in unit class location 
            refers to link slot previous-location which is not present in 
            unit class location.
@@ -4935,7 +4935,7 @@ Compile the again-defective definition (using \code{C-c C-c} in SLIME or
 \W\supp\notpretop
 \begin{example}
 \textcolor{darkergray}{%
-  gbbopen-user> \textcolor{black}{(check-link-consistency)}
+  gbbopen-user> \textcolor{black}{(check-link-definitions)}
   Warning: Link slot next-location in unit class location incorrectly 
            declares its inverse link slot previous-location in unit 
            class location as not singular.
@@ -4972,7 +4972,7 @@ Then recompile and recheck link consistency:
 \W\supp\notpretop
 \begin{example}
 \textcolor{darkergray}{%
-  gbbopen-user> \textcolor{black}{(check-link-consistency)}
+  gbbopen-user> \textcolor{black}{(check-link-definitions)}
   ;; All link definitions are consistent.
   t
   gbbopen-user>}

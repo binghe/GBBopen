@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Sat Aug 23 10:01:33 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Sat Aug 30 09:34:01 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -12189,7 +12189,7 @@ This section contains \code{:gbbopen-core} entities that pertain to
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Function}{check-link-consistency}{\code{\&optional}
+\begin{functiondoc}{Function}{check-link-definitions}{\code{\&optional}
     \var{silent\/}
     \returns{} \var{boolean\/}}
 \index{link!definitions, checking consistency of}%
@@ -12215,7 +12215,7 @@ otherwise.
 \fndescription If a link inconsistency is found, details of the
 inconsistency are printed to \code{*standard-output*}.  For clarity,
 only the first inconsistency is displayed.  After the inconsistency
-has been repaired, \textbf{check-link-consistency} should be used
+has been repaired, \textbf{check-link-definitions} should be used
 again to check for additional inconsistencies.
 
 \begin{alsos}{define-unit-class}
@@ -12228,7 +12228,7 @@ Check for consistency in \glref{link-slot} definitions in all
 %
 \W\supp
 \begin{example}
-  > (check-link-consistency)
+  > (check-link-definitions)
   ;; All link definitions are consistent.
   t
   >
@@ -12243,7 +12243,7 @@ Create a \glref{link-slot} inconsistency:
   > (\entlink{define-unit-class} bad () 
        ((mismatched-link :link (missing inverse))))
   bad
-  > (check-link-consistency)
+  > (check-link-definitions)
   ;; Warning: The inverse of link MISMATCHED-LINK in unit-class BAD refers
   ;           to unit-class MISSING, which is not defined.
   nil
@@ -12256,7 +12256,7 @@ Define the missing \glref{unit~class}, but incorrectly:
 \begin{example}
   > (\entlink{define-unit-class} missing () ((mismatched-link :link (missing bad))))
   missing
-  > (check-link-consistency)
+  > (check-link-definitions)
   ;; Warning: The inverse of link MISMATCHED-LINK in unit-class MISSING
   ;;          refers to link BAD which is not present in unit-class MISSING.
   nil
@@ -12269,7 +12269,7 @@ Fix the definition and check again:
 \begin{example}
   > (\entlink{define-unit-class} missing () ((inverse :link (bad mismatched-link))))
   #<standard-unit-class missing>
-  > (check-link-consistency)
+  > (check-link-definitions)
   ;; All link definitions are consistent.
   t
   >
@@ -12279,7 +12279,7 @@ Check again, but silently:
 %
 \W\supp\notpretop
 \begin{example}
-  > (check-link-consistency 't)
+  > (check-link-definitions 't)
   t
   > 
 \end{example}

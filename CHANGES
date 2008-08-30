@@ -22,6 +22,9 @@ Important changes since GBBopen 1.1:
        WITH-READING-SAVED/SENT-OBJECTS-BLOCK (and indirectly to 
        LOAD-BLACKBOARD-REPOSITORY)
 
+  * Renamed functions
+       CHECK-LINK-CONSISTENCY -> CHECK-LINK-DEFINITIONS
+
   * New Agenda Shell functions
      - CURRENT-CONTROL-SHELL
      - EXECUTED-KSAS-OF
