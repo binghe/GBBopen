@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/commands.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Jul  7 04:58:18 2008 *-*
+;;;; *-* Last-Edit: Sun Jul 13 10:02:37 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -150,6 +150,10 @@
   (define-repl-command :http-test (&rest options)
     "Compile and load Socket/HTTP-Test module"
     (startup-module :http-test options :portable-sockets-user))
+
+  (define-repl-command :os-interface-test (&rest options)
+    "Compile and load OS-Interface-Test module"
+    (startup-module :os-interface-test options :os-interface-user))
 
   (define-repl-command :agenda-shell-test (&rest options)
     "Compile and load Agenda-Shell-Test module"
