@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/read-object.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Aug 23 12:07:54 2008 *-*
+;;;; *-* Last-Edit: Sun Aug 31 11:16:31 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -26,7 +26,9 @@
 (in-package :gbbopen-tools)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (export '(*forward-referenced-saved/sent-instances* ; not yet documented
+  (export '(*block-saved/sent-time*
+            *block-saved/sent-value*
+            *forward-referenced-saved/sent-instances* ; not yet documented
             *reading-saved/sent-objects-readtable* ; not yet documented
             *string-coalescing-verbose* ; not yet documented
             allocate-saved/sent-instance ; not yet documented
@@ -48,9 +50,10 @@
 ;; maintain instances that have been referenced but not yet read:
 (defvar *forward-referenced-saved/sent-instances*)
 
-;; Dynamically bound in with-reading-saved/sent-objects-block to hold
-;; the universal-time value recorded by with-saving/sending-block:
-(defvar *block-written-time*)
+;; Dynamically bound in with-reading-saved/sent-objects-block to hold the
+;; saved/sent time & value associated with the block:
+(defvar *block-saved/sent-time*)
+(defvar *block-saved/sent-value*)
 
 ;; Dynamically bound in with-reading-saved/sent-objects-block to hold the
 ;; user-specified alist of class-name translations:
@@ -98,6 +101,28 @@
 
 ;;; ---------------------------------------------------------------------------
 
+(defun read-saving/sending-block-info (stream class-name-translations)
+  ;; Read the format-version, time, *package*, and *read-default-float-format*
+  ;; recorded by with-saving/sending-block, returning the saved/sent value:
+  (destructuring-bind (format-version saved/sent-time package-name 
+                       read-default-float-format)
+      (read stream)
+    (unless (= format-version *saving/sending-block-format-version*)
+      (warn "Reading old ~s format version ~a (the current version is ~a)"
+            'with-saving/sending-block
+            format-version
+            *saving/sending-block-format-version*))
+    (setf *package* (ensure-package package-name))
+    (setf *read-default-float-format* read-default-float-format)
+    (values saved/sent-time 
+            ;; Read the saved/sent value:
+            (when (>= format-version 3)
+              (setf *reading-saved/sent-class-name-translations* 
+                    class-name-translations)
+              (read stream)))))
+
+;;; ---------------------------------------------------------------------------
+
 (defmacro with-reading-saved/sent-objects-block 
     ((stream 
       &key (class-name-translations nil)
@@ -110,12 +135,7 @@
      (setf *print-readably* nil)        ; We don't need readably-printing
      (setf *readtable* ,readtable)           
      (setf *read-eval* ,read-eval)
-     (let ((*block-written-time*
-            ;; Note that read-saving/sending-block-info also sets
-            ;; *package* and *read-default-float-format*:
-            (read-saving/sending-block-info ,stream))
-           (*reading-saved/sent-class-name-translations* 
-            ,class-name-translations)
+     (let (*reading-saved/sent-class-name-translations* 
            (*read-class-descriptions-ht* (make-hash-table :test 'eq))
            (*duplicate-string-count* 0)
            (*coalesce-save/sent-strings-ht* 
@@ -130,12 +150,17 @@
                     (make-keys-only-hash-table-if-supported :test 'equal)))))
            (*forward-referenced-saved/sent-instances* 
             (make-keys-only-hash-table-if-supported :test 'equal)))
-       (multiple-value-prog1
-           (progn ,@body)
-         (when *coalesce-save/sent-strings-ht*
-           (show-coalescing *coalesce-save/sent-strings-ht* 
-                            *duplicate-string-count*))
-         (check-for-undefined-instance-references)))))
+       (multiple-value-bind (*block-saved/sent-time* *block-saved/sent-value*)
+           ;; Note that read-saving/sending-block-info also sets *package*,
+           ;; *read-default-float-format*, and
+           ;; *reading-saved/sent-class-name-translations* :
+           (read-saving/sending-block-info ,stream ,class-name-translations)
+         (multiple-value-prog1
+             (progn ,@body)
+           (when *coalesce-save/sent-strings-ht*
+             (show-coalescing *coalesce-save/sent-strings-ht* 
+                              *duplicate-string-count*))
+           (check-for-undefined-instance-references))))))
 
 ;;; ===========================================================================
 ;;;  Standard GBBopen save/send reader methods
@@ -165,7 +190,7 @@
 ;;;  Special string reader
          
 (defmethod saved/sent-object-reader ((char (eql #\")) stream)
-  (unread-char #\" stream)
+  (unread-char char stream)
   (let ((string (read stream)))
     (if *coalesce-save/sent-strings-ht*
         (let ((coalesced-string 

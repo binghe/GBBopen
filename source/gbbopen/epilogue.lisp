@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/epilogue.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Aug 23 06:35:51 2008 *-*
+;;;; *-* Last-Edit: Sun Aug 31 09:25:17 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -49,7 +49,7 @@
 ;;; ---------------------------------------------------------------------------
 ;;;  Save-blackboard-repository format version
 
-(defparameter *save-blackboard-repository-format-version* 3)
+(defparameter *save-blackboard-repository-format-version* 4)
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Result-passing variable (used by :fi REPL command), with a bit of
@@ -145,11 +145,11 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun save-blackboard-repository (pathname
-                                   &key (after-loading-function nil)
-                                        (package ':cl-user)
+                                   &key (package ':cl-user)
                                         (read-default-float-format
                                          'single-float)
-                                        (external-format ':default))
+                                        (external-format ':default)
+                                        (value))
   (with-open-file (file (make-bb-pathname pathname)
                    :direction ':output
                    :if-exists ':supersede
@@ -158,16 +158,14 @@
             (internet-text-date-and-time))
     (with-saving/sending-block (file :package package
                                      :read-default-float-format 
-                                     read-default-float-format)
+                                     read-default-float-format
+                                     :value value)
       ;; Save repository-format version:
       (format file "~&;;; Saved repository format version:~%~s~%"
               *save-blackboard-repository-format-version*)
       ;; Save important values:
       (format file "~&;;; Important values:~%~s~%"
               (list *global-instance-name-counter*))
-      ;; Save after-loading-function:
-      (format file "~&;;; After-loading function:~%")
-      (print-object-for-saving/sending after-loading-function file)
       ;; Save space instances:
       (let ((root-space-instance-children (children-of *root-space-instance*)))
         (format file "~&;;; Space instances:~%")
@@ -224,7 +222,6 @@
           (coalesce-strings nil)
           (confirm-if-not-empty 't)
           (external-format ':default)
-          (ignore-after-loading-function nil)
           (readtable *reading-saved/sent-objects-readtable*)
           (read-eval nil))
   (declare (dynamic-extent reset-gbbopen-args))
@@ -241,7 +238,6 @@
                                 :coalesce-strings
                                 :confirm-if-not-empty
                                 :external-format
-                                :ignore-after-loading-function
                                 :readtable
                                 :read-eval)))
     (with-reading-saved/sent-objects-block 
@@ -264,10 +260,12 @@
                  *save-blackboard-repository-format-version*))
         (when (>=& format-version 3)
           (let ((values (read file)))
-            (setf *global-instance-name-counter* (first values)))))
-      (let ((after-loading-function (read file))
-            ;; Read top-level (root children) space-instance references:
-            (root-children (read file))
+            (setf *global-instance-name-counter* (first values))))
+        ;; Skip after-loading-function, if an old format version:
+        (when (<& format-version 4)
+          (read file)))
+      ;; Read top-level (root children) space-instance references:
+      (let ((root-children (read file))
             (*%%allow-setf-on-link%%* 't))
         (setf (slot-value *root-space-instance* 'children) root-children)
         ;; Now read everything else:
@@ -275,16 +273,13 @@
           (until (eq eof-marker (read file nil eof-marker))))
         ;; Process all unit instances, in case any link-slot arity or sorting
         ;; has changed (FUTURE ENHANCEMENT: It would be nice to skip this
-        ;; unless such has happened):
-        (map-instances-of-class #'reconcile-direct-link-values 't)
-        ;; Return the pathname and values from executing the
-        ;; after-loading-function:
-        (apply #'values
-               (pathname file)
-               (when (and after-loading-function
-                          (not ignore-after-loading-function))
-                 (multiple-value-list (funcall after-loading-function))))))))
-  
+        ;; unless such has truly happened):
+        (map-instances-of-class #'reconcile-direct-link-values 't))
+      ;; Return the pathname, saved/sent-time, and saved/sent-value:
+      (values (pathname file)
+              *block-saved/sent-time* 
+              *block-saved/sent-value*))))
+
 ;;; ---------------------------------------------------------------------------
 ;;;  Add :di, :dsbb, :dsi, :dsis, and :fi REPL commands (available if using
 ;;;  GBBopen's initiate.lisp)

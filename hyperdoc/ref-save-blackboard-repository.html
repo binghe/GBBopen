@@ -16,8 +16,9 @@
 
 <p><table class="tight" width="100%">
 <tr valign="top"><td valign="baseline" align="left"%>
-<nobr><b><font color="#000000">save-blackboard-repository</font></b></nobr></td><td valign="baseline"> &nbsp; </td><td valign="baseline" align="left" width="99%"><var>after-loading-function pathname</var>
-<code>&#38;key</code> <var>external-format package read-default-float-format</var> 
+<nobr><b><font color="#000000">save-blackboard-repository</font></b></nobr></td><td valign="baseline"> &nbsp; </td><td valign="baseline" align="left" width="99%"><var>pathname</var>
+<code>&#38;key</code> <var>external-format package read-default-float-format 
+value</var> 
 <span 
     style="font-family: serif; font-style: normal">=&gt;</span> <var>saved-repository-pathname</var></td><td valign="baseline" align="right">[<i>Function</i>]
 </td></tr></table></p>
@@ -32,8 +33,6 @@
 <tr valign="top"><td valign="baseline" nowrap><i>pathname</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id145">pathname&nbsp;designator</a>
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>external-format</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An external-file-format designator (default is
 <code>:default</code>)
-</td></tr><tr valign="top"><td valign="baseline" nowrap><i>after-loading-function</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#gl:function">function</a> of no arguments, or
-<code>nil</code> (default is <code>nil</code>)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>package</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id135">package&nbsp;designator</a> indicating the package to be used
 when saving and loading the blackboard repository (default is
 <code>:common-lisp-user</code>)
@@ -41,6 +40,8 @@ when saving and loading the blackboard repository (default is
 <code>short-float</code>, <code>single-float</code>, <code>double-float</code>, or
 <code>long-float</code> to be used when saving and loading the blackboard repository
 (default is <code>single-float</code>)
+</td></tr><tr valign="top"><td valign="baseline" nowrap><i>value</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An object to be saved with the repository and returned when the
+repository is loaded (default is <code>nil</code>)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>saved-repository-pathname</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#gl:pathname">pathname</a>
 </td></tr></table>
 </p>
@@ -76,7 +77,16 @@ resulting blackboard repository:
   ;; Run time: 0.04 seconds
   ;; Elapsed time: 0 seconds
   :quiescence
-  &gt; (save-blackboard-repository "tutorial" :package ':gbbopen-user)
+  &gt; (save-blackboard-repository "tutorial" :package ':tutorial)
+  #P"<var>&lt;homedir&gt;</var>/tutorial.bb"
+  &gt;
+</pre>
+Save the repository again, this time with a value to be returned when the
+repository is loaded:
+<a name="id1"></a><pre>
+  &gt; (save-blackboard-repository "tutorial" 
+      :package ':tutorial
+      :value (<a href="ref-find-instance-by-name.html">find-instance-by-name</a> 1 'path))
   #P"<var>&lt;homedir&gt;</var>/tutorial.bb"
   &gt;
 </pre>
