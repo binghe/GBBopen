@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Sat Aug 30 09:34:01 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Sun Aug 31 11:34:15 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -2881,7 +2881,8 @@ Return the pathname of the \code{:gbbopen-user} \glref{module}:
 
 \begin{functiondoc}{Function}{get-patch-description}%
   {\var{id module-name\/}
-    \mbox{\returns{} \var{id, date, author, description, date-loaded, file-name\/}}}
+    \mbox{\returns{} \var{id, date, author, description, date-loaded,
+        file-name\/} or \nil}}
 \index{patch!description, getting}%
 
 \fnsyntax 
@@ -3859,7 +3860,7 @@ provided: \textbf{bounded-value\&}, \textbf{bounded-value\$\&},
     \var{test keyform\/} 
     \mbox{\{\var{normal-clause\/}\}\superstar{}}
     \mbox{[\var{otherwise-clause\/}]}
-    \mbox{\returns{} \var{result\/}\superstar}}
+    \mbox{\returns{} \var{result\/}\superstar} or \nil}
   
 \fnsyntax
 
@@ -4716,7 +4717,7 @@ repeatedly, as long as \var{test-form\/} evaluates to \nil.
 \begin{functiondoc}{Macro}{dosequence}{(\var{var sequence-form\/} 
   [\var{result-form\/}]) \var{declaration\/}\superstar{} 
   \mbox{\{\var{tag\/} \vbar{} \var{form\/}\}\superstar}
-  \returns{} \var{result\/}\superstar}
+  \returns{} \var{result\/}\superstar or \nil}
 \index{iteration!dosequence@\textbf{dosequence}}%
   
 \fnsyntax
@@ -6060,7 +6061,7 @@ implementation's low-level truncation operation.
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{sole-element}{\var{list\/}
-    \returns{} \var{element\/}} 
+    \returns{} \var{element\/} or \nil} 
 \index{list!returning first element of}%
 \index{first element! of a list, returning}%
   
@@ -11263,7 +11264,7 @@ Create, then delete, then check, a \code{hyp} \glref{unit~instance}:
   \textcolor{darkergray}{(\code{:ascending-series} 
      \var{ordering-dimension-name\/})},
   \textcolor{darkergray}{(\code{:descending-series} 
-     \var{ordering-dimension-name\/}0} or \nil{}
+     \var{ordering-dimension-name\/})} or \nil{}
 \arg[ordering-dimension-name] A \glref{non-keyword~symbol} or \nil{}
 \end{args}
 
@@ -12196,8 +12197,8 @@ This section contains \code{:gbbopen-core} entities that pertain to
 
 \fnsyntax
 
-\fnpurpose Check for consistency in \glref{link-slot} definitions of
-\glref{unit~classes} to be linked.
+\fnpurpose Check for consistency among \glref{link-slot} definitions of
+\glref{unit~classes}.
 
 \fnpackage \code{:gbbopen}
 
@@ -15552,7 +15553,7 @@ Remove all \code{hyp} \glref{unit~instances} from
 
 \begin{functiondoc}{Function}{find-space-instance-by-path}%
   {\var{space-instance-path\/}
-    \returns{} \var{space-instance\/}}
+    \returns{} \var{space-instance\/} or \nil}
 
 \fnsyntax
 
@@ -17465,6 +17466,56 @@ saving/sending and loading/reading objects.
 
 %% ------------------------------------------------------------------------
 
+\begin{functiondoc}[block-saved-sent-time-var]{Variable}%
+{*block-saved/sent-time*}{}%
+
+\fnsyntax
+
+\fnpurpose Dynamically bound in
+\textbf{\entlink{with-reading-saved/sent-objects-block}} to the universal time
+when the block was saved/sent.
+
+\fnpackage \code{:gbbopen-tools}
+
+\fnmodule \code{:gbbopen-tools}
+
+\fninitialvalue Unbound
+
+\begin{alsos}{with-reading-saved/sent-objects-block}
+\also[*block-saved/sent-value*]
+\also[with-reading-saved/sent-objects-block]
+\also[with-saving/sending-block]
+\end{alsos}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}[block-saved-sent-value-var]{Variable}%
+{*block-saved/sent-value*}{}%
+
+\fnsyntax
+
+\fnpurpose Dynamically bound in
+\textbf{\entlink{with-reading-saved/sent-objects-block}} to the saved/sent
+value associated with the block.
+
+\fnpackage \code{:gbbopen-tools}
+
+\fnmodule \code{:gbbopen-tools}
+
+\fninitialvalue Unbound
+
+\begin{alsos}{with-reading-saved/sent-objects-block}
+\also[*block-saved/sent-time*]
+\also[with-reading-saved/sent-objects-block]
+\also[with-saving/sending-block]
+\end{alsos}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
 \begin{functiondoc}[print-object-for-sending-var]{Variable}%
 {*print-object-for-sending*}{}%
 
@@ -17765,13 +17816,12 @@ happen if confirmed positively.
                       confirm-if-not-empty
                       disable-events 
                       external-format
-                      ignore-after-loading-function
                       readtable
                       read-eval
                       retain-classes 
                       retain-event-functions
                       retain-event-printing\/} 
-    \returns{} \var{pathname, result\/}\superstar}
+    \returns{} \var{pathname, saved-time, saved-value\/}}
 \index{blackboard repository!loading from a file}%
 \index{loading!the blackboard repository from a file}% 
 \index{restoring!the blackboard repository from a file}% 
@@ -17787,7 +17837,7 @@ happen if confirmed positively.
 \fnmodule \code{:gbbopen-core}
 
 \fnargs
-\begin{args}{ignore-after-loading-function}
+\begin{args}{class-name-translations}
 \arg[pathname] A \glref{pathname~designator}
 \arg[class-name-translations] An \glref{association~list} (default is \nil)
 \arg[coalesce-strings] A \glref{generalized~boolean} (default is \nil)
@@ -17795,7 +17845,6 @@ happen if confirmed positively.
 \arg[disable-events] A \glref{generalized~boolean} (default is \code{t})
 \arg[external-format] An external-file-format designator (default is
   \code{:default})
-\arg[ignore-after-loading-function] A \glref{generalized~boolean} (default is \nil)
 \arg[readtable] A readtable (default is 
   \code{*reading-saved/sent-objects-readtable*})
 \arg[read-eval] A \glref{generalized~boolean} (default is \nil)
@@ -17804,15 +17853,14 @@ happen if confirmed positively.
 \arg[retain-event-functions] A \glref{generalized~boolean} (default is \nil)
 \arg[retain-event-printing] A \glref{generalized~boolean} (default is \nil)
 \arg[pathname] A \glref{pathname}
-\arg[results] The values returned by evaluating the after-loading function, 
-if one was specified when the repository was saved
+\arg[saved-time] A \glref{universal~time}
+\arg[saved-value] An object
 \end{args}
 
-\fnreturns The pathname of the saved blackboard-repository data file
-(or \nil{} if replacing a non-empty blackboard repository is not
-confirmed) followed by the values returned by evaluating the
-\var{after-loading-function\/}, if one was specified when the
-repository was saved by using \textbf{\entlink{save-blackboard-repository}}.
+\fnreturns Three values: the pathname of the saved blackboard-repository data
+file, the time when the blackboard-repository data file was saved, and the
+save value specified when the repository was saved. If replacing a non-empty
+blackboard repository is not confirmed, \nil{} is returned.
 
 \fnevents
 \index{events!generated by!load-blackboard-repository@\textbf{load-blackboard-repository}}%
@@ -17856,11 +17904,6 @@ for \var{coalesce-strings}.  If \var{confirm-if-not-empty} is true, the user
 must confirm loading when the current blackboard repository contains
 \glref{unit~instances}.
 
-If \var{ignore-after-loading-function\/} is true, the
-\var{after-loading-function\/} (if one was specified when the repository was
-saved) is not executed.  Otherwise, the \var{after-loading-function\/} is
-executed at the conclusion of repository loading.
-
 \begin{alsos}{confirm-if-blackboard-repository-not-empty-p}
 \also[confirm-if-blackboard-repository-not-empty-p]
 \also[save-blackboard-repository]
@@ -17875,6 +17918,7 @@ and then load a blackboard repository that was saved previously:
   > :tutorial-example :noautorun 
   > (load-blackboard-repository "tutorial")
   #P"\var{<homedir>\/}/tutorial.bb"
+  3429178245
   #<path 1>
   >
 \end{example}
@@ -17890,18 +17934,6 @@ Try loading the repository again:
   >
 \end{example}
 %
-Load the repository again, but without executing its
-\var{after-loading-function\/}:
-%
-\W\supp\notpretop
-\begin{example}
-  > (load-blackboard-repository "tutorial" 
-      :confirm-if-not-empty nil
-      :ignore-after-loading-function 't)
-  #P"\var{<homedir>\/}/tutorial.bb"
-  >
-\end{example}
-%
 Define a new \glref{unit~class}, \code{new-location}, and then load the
 repository again, translating all \code{location} \glref{unit~instances} to
 \code{new-location} \glref{unit~instances}:
@@ -17914,6 +17946,8 @@ repository again, translating all \code{location} \glref{unit~instances} to
       :class-name-translations '((location . new-location))
       :confirm-if-not-empty nil)
   #P"\var{<homedir>\/}/tutorial.bb"
+  3429178245
+  #<path 1>
   > :dsbb
 
   Space Instance                Contents
@@ -18210,8 +18244,9 @@ Write the binary value of slot \code{song} in \glref{unit~instances} of
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{save-blackboard-repository}%
-  {\var{after-loading-function pathname\/}
-    \code{\&key} \var{external-format package read-default-float-format\/} 
+  {\var{pathname\/}
+    \code{\&key} \var{external-format package read-default-float-format 
+                      value\/} 
     \returns{} \var{saved-repository-pathname\/}}
 \index{blackboard repository!saving to a file}%
 \index{saving!the blackboard repository to a file}% 
@@ -18230,8 +18265,6 @@ Write the binary value of slot \code{song} in \glref{unit~instances} of
 \arg[pathname] A \glref{pathname~designator}
 \arg[external-format] An external-file-format designator (default is
   \code{:default})
-\arg[after-loading-function] A \glref{function} of no arguments, or
-  \nil{} (default is \nil)
 \arg[package] A \glref{package~designator} indicating the package to be used
 when saving and loading the blackboard repository (default is
 \code{:common-lisp-user})
@@ -18239,6 +18272,8 @@ when saving and loading the blackboard repository (default is
 \code{short-float}, \code{single-float}, \code{double-float}, or
 \code{long-float} to be used when saving and loading the blackboard repository
 (default is \code{single-float})
+\arg[value] An object to be saved with the repository and returned when the
+repository is loaded (default is \nil)
 \arg[saved-repository-pathname] A \glref{pathname}
 \end{args}
 
@@ -18276,7 +18311,20 @@ resulting blackboard repository:
   ;; Run time: 0.04 seconds
   ;; Elapsed time: 0 seconds
   :quiescence
-  > (save-blackboard-repository "tutorial" :package ':gbbopen-user)
+  > (save-blackboard-repository "tutorial" :package ':tutorial)
+  #P"\var{<homedir>\/}/tutorial.bb"
+  >
+\end{example}
+Save the repository again, this time with a value to be returned when the
+repository is loaded:
+%
+\bfindexit{find-instance-by-name}%
+%
+\W\supp\notpretop
+\begin{example}
+  > (save-blackboard-repository "tutorial" 
+      :package ':tutorial
+      :value (\entlink{find-instance-by-name} 1 'path))
   #P"\var{<homedir>\/}/tutorial.bb"
   >
 \end{example}
@@ -18340,6 +18388,8 @@ coalescing is performed using a temporary hash-table whose initial size can be
 specified by providing an integer value for \var{coalesce-strings}.
 
 \begin{alsos}{load-blackboard-repository}
+\also[*block-saved/sent-time*]
+\also[*block-saved/sent-value*]
 \also[load-blackboard-repository]
 \also[with-saving/sending-block]
 \end{alsos}
@@ -18351,7 +18401,7 @@ specified by providing an integer value for \var{coalesce-strings}.
 \begin{functiondoc}[with-saving-sending-block]{Macro}%
   {with-saving/sending-block}%
   {\code{(}\var{stream\/} 
-    \code{\&key} \var{package read-default-float-format\/}\code{)}
+    \code{\&key} \var{package read-default-float-format value\/}\code{)}
     \var{form\/}\superstar
     \returns{} \var{result\/}\superstar}
   
@@ -18374,6 +18424,9 @@ be used when saving/sending and when loading/receiving (default is
 \arg[read-default-float-format] One of the atomic type specifiers
 \code{short-float}, \code{single-float}, \code{double-float}, or
 \code{long-float} (default is \code{single-float})
+\arg[value] An object to be saved/sent and bound to
+\textbf{\entlink{*block-saved/sent-value*}} when loading/receiving with
+\textbf{\entlink{with-reading-saved/sent-objects-block}} (default is \nil)
 \arg[forms] An implicit \textbf{progn} of \glref{forms} to be evaluated
 \arg[results] The values returned by evaluating the last \var{form}
 \end{args}
@@ -18780,7 +18833,7 @@ on a GBBopen queue.
 \fnmethods
 \fnalternate{nth-queue-element}{\code{(}\var{n} \code{fixnum)}
   \code{(}\var{queue\/} \code{queue)}
-  \returns{} \var{queue-element}}
+  \returns{} \var{queue-element} or \nil}
 
 \fnpackage \code{:gbbopen}
 
@@ -18833,7 +18886,7 @@ Return the last element on \code{pending-ksas} (equivalent to
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Generic~Function}{on-queue-p}{\var{queue-element\/} 
-    \returns{} \var{queue\/}}
+    \returns{} \var{queue\/} or \nil}
 \index{queue!determining membership on}%
 \index{queue element!determining queue membership of}%
 
@@ -20280,7 +20333,7 @@ Show the control shell's pending \glref{KSAs} queue (early in a
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Generic~Reader}{execution-cycle-of}{\var{ksa\/} 
-    \returns{} \var{cycle-number\/}}
+    \returns{} \var{cycle-number\/} or \nil}
 \index{execution cycle, of a KSA}%
 \index{KSA!execution cycle of}%
 
@@ -20372,7 +20425,7 @@ executing control shell.
 %% ------------------------------------------------------------------------
  
 \begin{functiondoc}{Function}{find-ks-by-name}{\var{ks-name\/} 
-  \returns{} \var{ks\/}}
+  \returns{} \var{ks\/} or \nil}
 \index{KS!finding by name}%
 
 \fnsyntax
@@ -20671,7 +20724,7 @@ Show the control shell's obviated \glref{KSAs} queue (early in a
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Generic~Reader}{obviation-cycle-of}{\var{ksa\/} 
-    \returns{} \var{cycle-number\/}}
+    \returns{} \var{cycle-number\/} or \nil}
 \index{KSA!obviation cycle of}%
 
 \fnsyntax
@@ -20978,7 +21031,7 @@ Restart the Agenda Shell (in this case, without any \glref{KSs} defined):
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Generic~Function}{sole-trigger-event-of}{\var{ksa\/} 
-    \returns{} \var{event\/}}
+    \returns{} \var{event\/} or \nil}
 \index{trigger event, of a KSA or event}%
 \index{KSA!trigger event of}%
 \index{event!trigger event of}%
@@ -21028,7 +21081,7 @@ Return the (sole) trigger \glref{event} of a \glref{KSA}:
 
 \begin{functiondoc}{Generic~Function}{sole-trigger-instance-of}%
   {\var{source\/} 
-    \returns{} \var{trigger-instance\/}}
+    \returns{} \var{trigger-instance\/} or \nil}
 \index{trigger unit instance, of a KSA or event}%
 \index{KSA!trigger unit instance of}%
 \index{event!trigger unit instance of}%

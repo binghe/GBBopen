@@ -22,8 +22,10 @@ Important changes since GBBopen 1.1:
        WITH-READING-SAVED/SENT-OBJECTS-BLOCK (and indirectly to 
        LOAD-BLACKBOARD-REPOSITORY)
 
-  * Renamed functions
-       CHECK-LINK-CONSISTENCY -> CHECK-LINK-DEFINITIONS
+  * Changes to GBBopen Core       
+     - Renamed CHECK-LINK-CONSISTENCY to CHECK-LINK-DEFINITIONS
+     - Replaced SAVE-BLACKBOARD-REPOSITORY :after-load-function with
+       :value
 
   * New Agenda Shell functions
      - CURRENT-CONTROL-SHELL

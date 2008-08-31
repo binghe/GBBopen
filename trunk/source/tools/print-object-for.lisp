@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/print-object-for.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Aug 22 15:32:14 2008 *-*
+;;;; *-* Last-Edit: Sun Aug 31 09:29:02 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -55,39 +55,23 @@
 ;;; ---------------------------------------------------------------------------
 ;;;  Saving/sending-block format version
 
-(defparameter *saving/sending-block-format-version* 2)
+(defparameter *saving/sending-block-format-version* 3)
 
 ;;; ---------------------------------------------------------------------------
 
-(defun write-saving/sending-block-info (stream)
-  ;; Record the format-version, time, *package*, and
-  ;; *read-default-float-format* for reading by read-saving/sending-block-info
-  ;; (below) which is called by with-reading-object-block:
-  (format stream "(~s ~s ~s ~s)~%" 
+(defun write-saving/sending-block-info (stream &optional saved/sent-value)
+  ;; Record the format-version, saved/sent-time, *package*,
+  ;; *read-default-float-format*, and saved/sent-value for reading by
+  ;; read-saving/sending-block-info (in read-object.lisp) which is called by
+  ;; with-reading-object-block:
+  (format stream "(~s ~s :~a ~s)~%" 
           *saving/sending-block-format-version*
           (get-universal-time)
-          ;; save package-name as keyword symbol, to avoid package/modern-mode
+          ;; We write package-name as keyword symbol, to avoid package/modern-mode
           ;; issues:
-          (make-keyword (package-name *package*))
-          *read-default-float-format*))
-
-;;; ---------------------------------------------------------------------------
-
-(defun read-saving/sending-block-info (stream)
-  ;; Read the format-version, time, *package*, and *read-default-float-format*
-  ;; recorded by with-saving/sending-block, returning the time:
-  (destructuring-bind (format-version date-written package-name 
-                       read-default-float-format)
-      (read stream)
-    ;; Note: change eql to = in 0.9.9:
-    (unless (eql format-version *saving/sending-block-format-version*)
-      (warn "Reading old ~s format version ~a (the current version is ~a)"
-            'with-saving/sending-block
-            format-version
-            *saving/sending-block-format-version*))
-    (setf *package* (ensure-package package-name))
-    (setf *read-default-float-format* read-default-float-format)
-    date-written))
+          (package-name *package*)
+          *read-default-float-format*)
+  (print-object-for-saving/sending saved/sent-value stream))
 
 ;;; ===========================================================================
 ;;;  With-sending/saving-block
@@ -97,7 +81,8 @@
 (defmacro with-saving/sending-block ((stream 
                                       &key (package '':cl-user)
                                            (read-default-float-format 
-                                            ''single-float))
+                                            ''single-float)
+                                           (value nil))
                                      &body body)
   (with-gensyms (package-sym)
     `(with-standard-io-syntax 
@@ -109,7 +94,7 @@
                      ,package-sym
                      (ensure-package ,package-sym))))
          (setf *read-default-float-format* ,read-default-float-format)
-         (write-saving/sending-block-info stream)
+         (write-saving/sending-block-info stream ,value)
                ,@body))))
 
 ;;; ---------------------------------------------------------------------------
@@ -407,8 +392,7 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defmethod print-object-for-saving/sending ((fn function)
-                                            stream)
+(defmethod print-object-for-saving/sending ((fn function) stream)
   (print-function-for-saving/sending fn stream))
 
 ;;; ===========================================================================

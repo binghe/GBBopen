@@ -17,7 +17,7 @@
 <p><table class="tight" width="100%">
 <tr valign="top"><td valign="baseline" align="left"%>
 <nobr><b><font color="#000000">with-saving/sending-block</font></b></nobr></td><td valign="baseline"> &nbsp; </td><td valign="baseline" align="left" width="99%"><code>(</code><var>stream</var> 
-<code>&#38;key</code> <var>package read-default-float-format</var><code>)</code>
+<code>&#38;key</code> <var>package read-default-float-format value</var><code>)</code>
 <var>form</var>*<span 
     style="font-family: serif; font-style: normal">=&gt;</span> <var>result</var>*</td><td valign="baseline" align="right">[<i>Macro</i>]
 </td></tr></table></p>
@@ -37,6 +37,9 @@ be used when saving/sending and when loading/receiving (default is
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>read-default-float-format</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> One of the atomic type specifiers
 <code>short-float</code>, <code>single-float</code>, <code>double-float</code>, or
 <code>long-float</code> (default is <code>single-float</code>)
+</td></tr><tr valign="top"><td valign="baseline" nowrap><i>value</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An object to be saved/sent and bound to
+<b><a href="ref-block-saved-sent-value-var.html">*block-saved/sent-value*</a></b> when loading/receiving with
+<b><a href="ref-with-reading-saved-sent-objects-block.html">with-reading-saved/sent-objects-block</a></b> (default is <code>nil</code>)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>forms</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An implicit <b>progn</b> of <a href="ref-glossary.html#gl:forms">forms</a> to be evaluated
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>results</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> The values returned by evaluating the last <var>form</var>
 </td></tr></table>

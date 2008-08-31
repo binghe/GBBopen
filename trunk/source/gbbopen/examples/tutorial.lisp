@@ -1,7 +1,7 @@
 ;;;; -*- Mode:COMMON-LISP; Package:TUTORIAL; Base:10 -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/examples/tutorial.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jul  2 09:47:02 2008 *-*
+;;;; *-* Last-Edit: Sun Aug 31 10:33:13 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -229,16 +229,21 @@
   (apply #'start-control-shell initargs))
 
 ;;; ===========================================================================
-;;;   After load-blackboard-repository actions
+;;;   Save/load repository
 ;;;
-;;;   Usage:
-;;;    (save-blackboard-repository "tutorial" 
-;;;       :package :tutorial 
-;;;       :after-loading-function 'after-loading-actions) 
 
-(defun after-loading-actions ()
-  ;; Assign the path unit-instance to the *the-random-walk* global variable:
-  (setf *the-random-walk* (find-instance-by-name 1 'path)))
+(defun save-tutorial-repository (&optional (pathname "tutorial"))
+  (save-blackboard-repository pathname
+                              :package ':tutorial 
+                              :value *the-random-walk*))
+
+;;; ---------------------------------------------------------------------------
+
+(defun load-tutorial-repository (&optional (pathname "tutorial"))
+  (multiple-value-bind (loaded-pathname saved-time saved-value)
+      (load-blackboard-repository pathname)
+    (setf *the-random-walk* saved-value)
+    (values loaded-pathname saved-time)))
 
 ;;; ===========================================================================
 ;;;   Event printing control:
