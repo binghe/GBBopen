@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/os-interface.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Jul 11 10:18:43 2008 *-*
+;;;; *-* Last-Edit: Fri Jul 18 06:12:47 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -30,26 +30,29 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (import '(common-lisp-user::*gbbopen-install-root*)))
 
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (export '(browse-hyperdoc
-            close-external-program-stream
-            kill-external-program       ; not yet documented
-            run-external-program
-            svn-version)))
-
 ;;; ---------------------------------------------------------------------------
 ;;;  Unify some implementation differences
+
+#+allegro
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (require :osi))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (import
    #+allegro
-   '()
+   '(excl.osi:kill
+     excl.osi:setenv
+     system:getenv
+     system:reap-os-subprocess)
    #+clisp
    '(ext:run-program)
    #+clozure
-   '(ccl:run-program 
-     ccl:external-process-output-stream 
-     ccl:external-process-input-stream)
+   '(ccl:external-process-input-stream
+     ccl:external-process-output-stream
+     ccl:getenv     
+     ccl:run-program 
+     ccl:setenv
+     ccl:signal-external-process)
    #+cmu
    '(ext:run-program
      ext:process-input
@@ -58,13 +61,16 @@
    #+cormanlisp
    '()
    #+digitool-mcl
-   '()
+   '(ccl:getenv
+     ccl:setenv)
    #+ecl
-   '()
+   '(si:getenv
+     si:setenv)
    #+lispworks
-   '()
+   '(system::environment-variable)
    #+sbcl
    '(sb-ext:run-program 
+     sb-ext:posix-getenv
      sb-ext:process-input 
      sb-ext:process-kill 
      sb-ext:process-output)
@@ -74,6 +80,18 @@
      ext:process-kill
      ext:process-output)))
 
+;;; ---------------------------------------------------------------------------
+
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (export '(browse-hyperdoc
+            close-external-program-stream
+            getenv                      ; not yet documented
+            kill-external-program       ; not yet documented
+            run-external-program
+            svn-version)))
+
+;;; ---------------------------------------------------------------------------
+
 #+(or cmu sbcl scl)
 (progn
   (defun external-process-input-stream (process)
@@ -81,6 +99,55 @@
  
   (defun external-process-output-stream (process)
     (process-output process)))
+
+;;; ===========================================================================
+;;;  Environment variables
+
+#-(or allegro clozure ecl digitool-mcl lispworks sbcl)
+(defun getenv (string)
+  (declare (ignore string))
+  (need-to-port 'getenv))
+
+#+lispworks
+(progn
+  (defun getenv (string)
+    (environment-variable string))
+  
+  (defcm getenv (string)
+    `(environment-variable ,string)))
+
+#+sbcl
+(progn
+  (defun getenv (string)
+    (posix-getenv string))
+
+  (defcm getenv (string)
+    `(posix-getenv ,string)))
+
+;; Allegro already defines (setf getenv), but it doesn't do unset (it fakes it
+;; with a null string); we could write (setf getenv) to call unsetenv on those
+;; Allegro CL platforms where it is available
+
+#+(or clozure digitool-mcl)
+(progn
+  (defun %setenv (string nv)
+    ;; Can't unset with nil, so we fake it with a null string:
+    (setenv string (or nv ""))
+    string)
+  (defsetf getenv %setenv))
+
+#+ecl
+(defsetf getenv setenv)
+
+#+lispworks
+(defun (setf getenv) (nv string)
+  (setf (environment-variable string) nv))
+
+#+sbcl
+(defun (setf getenv) (nv string)
+  (declare (ignore nv string))
+  ;; SBCL doesn't provide an ENV setter
+  (need-to-port '(setf getenv)))
 
 ;;; ===========================================================================
 ;;;  Run-external-program
@@ -100,19 +167,25 @@
   #+(or cormanlisp digitool-mcl)
   (declare (ignore input output wait))  
   #+allegro
-  (system:reap-os-subprocess)
-  #+allegro
-  (multiple-value-bind (io-stream error-stream process)
-      (excl:run-shell-command 
-       #+(and x86 (not unix))
-       (apply #'concatenate 'string program args)
-       #-(and x86 (not unix))
-       (apply #'vector program program args)
-       :input input
-       :output output
-       :wait wait)
-    (declare (ignore error-stream))
-    (values io-stream process))
+  (progn
+    ;; Clean up any stray processes (up to 5 -- aggressive, but usually what
+    ;; the user needs):
+    #+ignore
+    (dotimes (i 5)
+      (declare (fixnum i))
+      (unless (reap-os-subprocess)
+        (return)))
+    (multiple-value-bind (io-stream error-stream process)
+        (excl:run-shell-command 
+         #+(and x86 (not unix))
+         (apply #'concatenate 'string program args)
+         #-(and x86 (not unix))
+         (apply #'vector program program args)
+         :input input
+         :output output
+         :wait wait)
+      (declare (ignore error-stream))
+      (values io-stream process)))
   #+clisp
   (values
    (run-program program 
@@ -164,7 +237,7 @@
         (external-process-output-stream process)              
         (external-process-input-stream process)))
      process))
-  #-(or allegro clisp clozure cmu digitool-mcl ecl lispworks sbcl scl)
+  #-(or allegro clisp cmu digitool-mcl ecl lispworks sbcl scl)
   (need-to-port run-external-program))
 
 ;;; ---------------------------------------------------------------------------
@@ -181,14 +254,25 @@
    
 ;;; ---------------------------------------------------------------------------
 
-(defun kill-external-program (os-process)
-  #-(or cmu sbcl scl)
+(defun kill-external-program (os-process &optional (signal-number 15))
+  ;;; Note: user is responsbile for closing any external program streams of
+  ;;; `os-process'
+  #-(or allegro clozure cmu sbcl scl)
   (declare (ignore os-process))
+  #+allegro
+  (progn
+    ;; Not supported on Windows, but we'll let Allegro generate the error:
+    (kill os-process signal-number)
+    (system:reap-os-subprocess :pid os-process))
+  #+clozure
+  (signal-external-process os-process signal-number)
   #+(or cmu scl)
-  (process-kill os-process ':sigint)
+  (process-kill os-process signal-number)
   #+sbcl
-  (process-kill os-process)
-  #-(or cmu sbcl scl)
+  (process-kill os-process signal-number)
+  ;; Return t:
+  't
+  #-(or allegro clozure cmu sbcl scl)
   (need-to-port kill-external-program))
 
 ;;; ---------------------------------------------------------------------------
