@@ -5,7 +5,7 @@
 <!-- XML file produced from file: tutorial.tex
      using Hyperlatex v 2.9-in-waiting-rk (c) Otfried Cheong -->
 <head>
-<title>GBBopen 1.1 Tutorial -- Creating a Unit Instance</title>
+<title>GBBopen 1.2 Tutorial -- Creating a Unit Instance</title>
 </p>
 <link rel="SHORTCUT ICON" href="favicon.ico"><link rel=stylesheet
         href="gbbopen.css" type="text/css" />
@@ -56,7 +56,7 @@ session and evaluate the following forms:
 <pre class="pretop">
 <font color="#667f66">  cl-user&gt; <font color="#000000">(load "<var>&lt;install-dir&gt;</var>/startup.lisp")</font>
      ...
-  cl-user&gt; <font color="#000000">(mini-module:compile-module :gbbopen-user :propagate :create-dirs)</font>
+  cl-user&gt; <font color="#000000">(module-manager:compile-module :gbbopen-user :propagate :create-dirs)</font>
      ...
   cl-user&gt; <font color="#000000">(in-package :gbbopen-user)</font>
   #&lt;package GBBOPEN-USER&gt;

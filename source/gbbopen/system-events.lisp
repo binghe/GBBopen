@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/current/source/gbbopen/system-events.lisp *-*
+;;;; *-* File: /usr/local/gbbopen/source/gbbopen/system-events.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Oct  3 22:11:48 2007 *-*
-;;;; *-* Machine: ruby.corkills.org *-*
+;;;; *-* Last-Edit: Sun Aug 31 16:37:23 2008 *-*
+;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -19,7 +19,7 @@
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
-;;;  03-16-04 File Created.  (Corkill)
+;;;  03-16-04 File created.  (Corkill)
 ;;;  03-19-04 Moved standard-event-instance to events.lisp.  (Corkill)
 ;;;  07-05-04 Remove link/nonlink-slot initialization events.  (Corkill)
 ;;;  07-20-04 Add :metaclass specifiers to all system event-class definitions

@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/tutorial.tex *-*
-%% *-* Last-Edit: Sat Aug 30 09:33:15 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Mon Sep  1 05:18:44 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2005-2008, Dan Corkill <corkill@GBBopen.org>
@@ -759,7 +759,7 @@ of the tutorial.
 
 \subsection*{Step 6: Load the \code{:gbbopen-user} module}
 
-GBBopen is packaged with its own \xreflink{module system}{sec:mini-module}
+GBBopen is packaged with its own \xreflink{module system}{sec:module-manager}
 that supports compiling and loading GBBopen components.
 
 To compile and load the \code{:gbbopen-user} module and all the GBBopen
@@ -773,9 +773,9 @@ installed:
 \textcolor{darkergray}{%
   cl-user> \textcolor{black}{(load "\var{<install-dir>\/}/startup.lisp")}
   ;; Loading \var{<install-dir>\/}/startup.lisp
-  ;;  Loading \var{<install-dir>\/}/source/mini-module/mini-module-loader.lisp
-  ;;   Loading \var{<install-dir>\/}/source/mini-module/mini-module.lisp
-  ;;     Loading \var{<install-dir>\/}/source/mini-module/mini-module-user.lisp
+  ;;  Loading \var{<install-dir>\/}/source/module-manager/module-manager-loader.lisp
+  ;;   Loading \var{<install-dir>\/}/source/module-manager/module-manager.lisp
+  ;;     Loading \var{<install-dir>\/}/source/module-manager/module-manager-user.lisp
   ;;  Loading \var{<install-dir>\/}/source/modules.lisp
   t
   cl-user>}
@@ -788,9 +788,9 @@ GBBopen modules it requires by evaluating:
 \W\supp\notpretop
 \begin{example}
 \textcolor{darkergray}{%
-  cl-user> \textcolor{black}{(mini-module:compile-module :gbbopen-user :propagate :create-dirs)}
-  ;; Compiling \var{<install-dir>\/}/source/mini-module/mini-module.lisp
-  ;; Loading \var{<install-dir>\/}/\var{<platform-dir>\/}/mini-module/mini-module.fasl
+  cl-user> \textcolor{black}{(module-manager:compile-module :gbbopen-user :propagate :create-dirs)}
+  ;; Compiling \var{<install-dir>\/}/source/module-manager/module-manager.lisp
+  ;; Loading \var{<install-dir>\/}/\var{<platform-dir>\/}/module-manager/module-manager.fasl
        ...
   ;; Compiling \var{<install-dir>\/}/source/gbbopen/gbbopen-user.lisp
   ;; Loading \var{<install-dir>\/}/\var{<platform-dir>\/}/gbbopen/gbbopen-user.fasl
@@ -929,7 +929,7 @@ session and evaluate the following forms:
 \textcolor{darkergray}{%
   cl-user> \textcolor{black}{(load "\var{<install-dir>\/}/startup.lisp")}
      ...
-  cl-user> \textcolor{black}{(mini-module:compile-module :gbbopen-user :propagate :create-dirs)}
+  cl-user> \textcolor{black}{(module-manager:compile-module :gbbopen-user :propagate :create-dirs)}
      ...
   cl-user> \textcolor{black}{(in-package :gbbopen-user)}
   #<package GBBOPEN-USER>
@@ -1176,7 +1176,7 @@ session and evaluate the following forms:
 \textcolor{darkergray}{%
   cl-user> \textcolor{black}{(load "\var{<install-dir>\/}/startup.lisp")}
      ...
-  cl-user> \textcolor{black}{(mini-module:compile-module :gbbopen-user :propagate :create-dirs)}
+  cl-user> \textcolor{black}{(module-manager:compile-module :gbbopen-user :propagate :create-dirs)}
      ...
   cl-user> \textcolor{black}{(in-package :gbbopen-user)}
   #<package GBBOPEN-USER>
@@ -1528,7 +1528,7 @@ session and evaluate the following forms:
 \textcolor{darkergray}{%
   cl-user> \textcolor{black}{(load "\var{<install-dir>\/}/startup.lisp")}
      ...
-  cl-user> \textcolor{black}{(mini-module:compile-module :gbbopen-user :propagate :create-dirs)}
+  cl-user> \textcolor{black}{(module-manager:compile-module :gbbopen-user :propagate :create-dirs)}
      ...
   cl-user> \textcolor{black}{(in-package :gbbopen-user)}
   #<package GBBOPEN-USER>
@@ -2119,7 +2119,7 @@ Thus far, we have entered the forms:
 \textcolor{darkergray}{%
   cl-user> \textcolor{black}{(load "\var{<install-dir>\/}/startup.lisp")}
      ...
-  cl-user> \textcolor{black}{(mini-module:compile-module :gbbopen-user :propagate :create-dirs)}
+  cl-user> \textcolor{black}{(module-manager:compile-module :gbbopen-user :propagate :create-dirs)}
      ...
   cl-user> \textcolor{black}{(in-package :gbbopen-user)}
   #<package GBBOPEN-USER>
@@ -2167,7 +2167,7 @@ Common Lisp session and enter the following form in the REPL:
 
 \REPLindex{:gbbopen-user}%
 %
-Note that the \xreflink{Mini Module system}{sec:mini-module} and GBBopen
+Note that the \xreflink{Module Manager Facility}{sec:module-manager} and GBBopen
 module definitions have not been loaded.  Now enter the REPL
 command, \textbf{:gbbopen-user}:
 %
@@ -2193,7 +2193,7 @@ current package is set to \code{:gbbopen-user}:
 \end{example}
 
 Module-compilation REPL commands, such as \code{:gbbopen-user},
-always include the \code{:propagate} option when they call the Mini Module
+always include the \code{:propagate} option when they call the Module Manager's
 \textbf{compile-module} function.  We don't need to specify it as a command
 option.
 
@@ -5218,15 +5218,15 @@ Let's compile our latest changes and then run our application with the new
 \section{Creating a GBBopen Application}
 \label{sec:application}%
 
-GBBopen's \xreflink{Mini Module system}{sec:mini-module} provides facilities
-that make it easy to define and use your own GBBopen applications.
+GBBopen's \xreflink{Module Manager}{sec:module-manager} Facility provides
+mechanisms that make it easy to define and use your own GBBopen applications.
 
 \fndocrule
 
 This exercise shows you how to:
 \begin{tightitemize}
-\item Structure an application using the \xreflink{Mini Module
-    system}{sec:mini-module}
+\item Structure an application using the \xreflink{Module Manager 
+Facility}{sec:module-manager}
 \item Define a REPL command for your application
 \item Compile and load your application using your REPL command
 \item Create and use an application-specific package
@@ -5439,7 +5439,7 @@ and then save the file.
 
 Recall that the \code{in-package} form specifies the Common Lisp package that
 is made current when the file is compiled or loaded.  A \code{modules.lisp}
-file should always specify the \code{:mini-module-user} package as the first
+file should always specify the \code{:module-manager-user} package as the first
 form in the file.
 
 The second form defines our application module, which we will name
@@ -5448,8 +5448,8 @@ The second form defines our application module, which we will name
 loaded before our \code{:tutorial} module.  The \code{:files} subform
 specified the files that comprise the module. In our case, there is one file:
 \code{tutorial-example.lisp}.  We leave off the \code{.lisp} file extension,
-as the \xreflink{Mini Module system}{sec:mini-module} will add the appropriate
-source or compiled file extension for us.
+as the \xreflink{Module Manager}{sec:module-manager} will add the
+appropriate source or compiled file extension for us.
 
 \subsection*{Step 3: Add the random-walk application to your personal
   \code{gbbopen-modules} directory}
@@ -5511,27 +5511,27 @@ the following files should be loaded:
 \end{example}
 
 Note that some basic GBBopen initialization files have been loaded for us (but
-no command definitions yet) and that GBBopen itself (or even the Mini Module
-system) are not loaded by \code{\var{<install-dir>\/}/initiate.lisp}.
+no command definitions yet) and that GBBopen itself (or even the Module
+Manager Facility) are not loaded by \code{\var{<install-dir>\/}/initiate.lisp}.
 
 Now, instead of loading the \code{:agenda-shell-user} module, let's load only
-the \code{:mini-module-user} module:
+the \code{:module-manager-user} module:
 %
 \W\supp
 \begin{example}
 \textcolor{darkergray}{%
-  cl-user> \textcolor{black}{:mini-module-user}
+  cl-user> \textcolor{black}{:module-manager-user}
   ;; Loading \var{<install-dir>\/}/startup.lisp
      ...
-  ;;     Loading \var{<install-dir>\/}/\var{<platform-dir>\/}/mini-module/mini-module-user.fasl
+  ;;     Loading \var{<install-dir>\/}/\var{<platform-dir>\/}/module-manager/module-manager-user.fasl
   ;;   Loading \var{<install-dir>\/}/modules.lisp
   ;; Loading module definitions from \var{<homedir>\/}/gbbopen-modules/...
   ;;     Loading \var{<homedir>\/}/tutorial/modules.lisp
-  mini-module-user>}
+  module-manager-user>}
 \end{example}
 %
-Note that when the Mini Module system was loaded as part of loading the
-\code{:mini-module-user} module, the module definitions for our personal
+Note that when the Module Manager was loaded as part of loading the
+\code{:module-manager-user} module, the module definitions for our personal
 GBBopen modules were loaded automatically.  (In this case, the
 \code{\var{<homedir>\/}/tutorial/modules.lisp} file.)  
 
@@ -5544,7 +5544,7 @@ load it:
 \W\supp
 \begin{example}
 \textcolor{darkergray}{%
-  mini-module-user> \textcolor{black}{:cm :tutorial}
+  module-manager-user> \textcolor{black}{:cm :tutorial}
   ;;   Loading \var{<install-dir>\/}/\var{<platform-dir>\/}/tools/portable-threads.fasl
      ...
   ;;   Loading .../gbbopen/control-shells/agenda-shell-user.fasl
@@ -5555,12 +5555,12 @@ load it:
   Restart actions (select using :c n):
     0: Create this directory.
     1: Create this directory and any future missing directories.
-  mini-module-user>>}
+  module-manager-user>>}
 \end{example}
 %
 The \code{:requires} in our \code{:tutorial} module definition causes the
 \code{:agenda-shell-user} module (and its required modules) to be loaded for
-us.  Then the Mini Module system stops with a continuable error, telling us
+us.  Then the Module Manager stops with a continuable error, telling us
 that the directory to hold the compiled application files does not exist.  The
 compiled files are put in a Common Lisp and platform-specific subdirectory,
 \code{<\var{platform-dir>\/}}, in our \code{tutorial} directory that mirrors
@@ -5574,10 +5574,10 @@ We could have avoided this continuable error by providing the
 \W\supp
 \begin{example}
 \textcolor{darkergray}{%
-  mini-module-user> :cm :tutorial :create-dirs}
+  module-manager-user> :cm :tutorial :create-dirs}
 \end{example}
 %
-to allow the Mini Module system to create the \code{<\var{platform-dir>\/}}
+to allow the Module Manager to create the \code{<\var{platform-dir>\/}}
 subdirectory automatically for us.  Since we did not do this, we can still
 continue from the error:
 %
@@ -5587,10 +5587,10 @@ continue from the error:
   Restart actions (select using :c n):
     0: Create this directory.
     1: Create this directory and any future missing directories.
-  mini-module-user>> \textcolor{black}{:c 0}
+  module-manager-user>> \textcolor{black}{:c 0}
   ;; Compiling file \var{<homedir>\/}/tutorial/source/tutorial-example.lisp
   ;; Loading \var{<homedir>\/}/tutorial/\var{<platform-dir>\/}/tutorial-example.fasl
-  mini-module-user>}
+  module-manager-user>}
 \end{example}
 
 At this point, we've compiled and loaded our \code{:tutorial} application
@@ -5625,7 +5625,7 @@ The \textbf{define-repl-command} form adds a REPL command, named
 \textbf{startup-module} call does all the work associated with executing the
 command.  The first argument to \textbf{startup-module} specifies that the
 \code{:tutorial} module will be compiled (if necessary) and then loaded by the
-\xreflink{Mini Module system}{sec:mini-module} when the \code:{tutorial}
+\xreflink{Module Manager}{sec:module-manager} when the \code:{tutorial}
 command is issued.  The second, \code{options}, argument passes any options
 given with the command to a \textbf{compile-module} call that is performed by
 \textbf{startup-module}.  The third argument, \code{:gbbopen-user} is optional
@@ -5682,7 +5682,7 @@ the \code{:create-dirs} option to the \code{:tutorial} command:
   gbbopen-user> :tutorial :create-dirs}
 \end{example}
 %
-to allow the Mini Module system to create the \code{\var{<platform-dir>\/}}
+to allow the Module Manager to create the \code{\var{<platform-dir>\/}}
 subdirectory automatically for us.  However, since we created
 \code{\var{<platform-dir>\/}} in Step 4, we did not need to specify the
 \code{:create-dirs} option again in this step.
@@ -5691,7 +5691,7 @@ subdirectory automatically for us.  However, since we created
 
 \bfindex{*automatically-create-missing-directories*} 
 %
-If you prefer, you can specify that the Mini Module system should always
+If you prefer, you can specify that the Module Manager should always
 create missing \code{\var{<platform-dir>\/}} directories and subdirectories
 instead of signaling an continuable error if one is missing (and
 \code{:create-dirs} was not specified).  This behavior is controlled by the
@@ -5705,7 +5705,7 @@ your ``homedir'' directory):
   (defparameter *automatically-create-missing-directories* 't)
 \end{example}
 
-I actually prefer to have the Mini Module system generate the continuable
+I actually prefer to have the Module Manager generate the continuable
 error if it has to create a \code{\var{<platform-dir>\/}} directory and I
 didn't specify \code{:create-dirs}, so I leave
 \textbf{*automatically-create-missing-directories*} set to the default \nil{}
@@ -5728,7 +5728,7 @@ by GBBopen's \code{:gbbopen-user} package.  Evaluate the following:
 \textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(package-use-list :gbbopen-user)}
   (#<package PORTABLE-THREADS> #<package AGENDA-SHELL>
-   #<package MINI-MODULE> #<package COMMON-LISP>
+   #<package MODULE-MANAGER> #<package COMMON-LISP>
    #<package GBBOPEN-TOOLS> #<package GBBOPEN>)
   gbbopen-user>}
 \end{example}
@@ -5751,7 +5751,7 @@ with the following:
   (eval-when (:compile-toplevel :load-toplevel :execute)
     (unless (find-package :tutorial)
       (defpackage :tutorial
-        (:use :common-lisp :mini-module :gbbopen-tools :gbbopen 
+        (:use :common-lisp :module-manager :gbbopen-tools :gbbopen 
               :portable-threads :agenda-shell))))
 
   (in-package :tutorial)
@@ -5820,7 +5820,7 @@ the \code{:tutorial} module that we defined:
   gbbopen-user> \textcolor{black}{(describe-module :tutorial)}
   Module :tutorial (loaded)
     Requires: (:agenda-shell-user)
-    Fully expanded requires: (:mini-module :mini-module-user :portable-threads
+    Fully expanded requires: (:module-manager :module-manager-user :portable-threads
                               :gbbopen-tools :gbbopen-core :polling-functions
                               :queue :agenda-shell :os-interface :gbbopen-user
                               :agenda-shell-user)
@@ -5844,7 +5844,7 @@ If we look at the details of the \code{:agenda-shell-user} module we see:
   gbbopen-user> \textcolor{black}{(describe-module :agenda-shell-user)}
   Module :agenda-shell-user (loaded)
     Requires: (:agenda-shell :gbbopen-user)
-    Fully expanded requires: (:mini-module :mini-module-user :portable-threads
+    Fully expanded requires: (:module-manager :module-manager-user :portable-threads
                               :gbbopen-tools :gbbopen-core :polling-functions
                               :queue :agenda-shell :os-interface :gbbopen-user)
     Source directory: \var{<install-dir>\/}/source/gbbopen/control-shells/
@@ -5965,7 +5965,7 @@ as a top-level form at the end of your \code{tutorial-example.lisp} file.  The
 problem with this is that sometimes you may want to compile and load the
 application without running it.  
 
-GBBopen's Mini Module system supports a convention that makes it easy to
+GBBopen's Module Manager Facility supports a convention that makes it easy to
 conditionalize load-time action execution via the value of
 \textbf{*autorun-modules*}.  Normally, \code{*autorun-modules*} will be
 true, but it can be set to \nil{} when a module is loaded with the
@@ -6037,12 +6037,12 @@ Let's try it again:
 %
 This time, nothing happened.  Why?
 
-Since no source files were modified, the Mini Module system knows that the
+Since no source files were modified, the Module Manager knows that the
 latest compiled files for the \code{:tutorial} module and its required modules
 have all been loaded.  So, because the \code{tutorial-example} file is not
 loaded, its ``autorun'' conditional form is not evaluated.
 
-We can tell the Mini Module system to always reload the
+We can tell the Module Manager to always reload the
 \code{tutorial-example} file by editing our \code{modules.lisp} file and
 adding the \code{:reload} file option to the \code{:tutorial} module
 definition:
@@ -6073,7 +6073,7 @@ loaded and its ``autorun'' form evaluated:
   tutorial>}
 \end{example}
 %
-The Mini Module system noticed our updated \code{modules.lisp} file and loaded
+The Module Manager noticed our updated \code{modules.lisp} file and loaded
 it, redefining the \code{:tutorial} module definition, and then followed our
 \code{:reload} specification.
 
@@ -6090,9 +6090,9 @@ Let's try the \code{:tutorial} command one more time, just to be certain that
   tutorial>}
 \end{example}
 
-\subsubsection*{Mini Module propagation}
+\subsubsection*{Module Manager propagation}
 
-The Mini Module's \textbf{compile-module} function also accepts a
+The Module Manager's \textbf{compile-module} function also accepts a
 \code{:reload} option, so we might be tempted to simply add that option when
 we specify our \code{:tutorial} command:
 %
@@ -6100,8 +6100,9 @@ we specify our \code{:tutorial} command:
 \begin{example}
 \textcolor{darkergray}{%
   tutorial> :tutorial :reload
-  ;;   Loading \var{<install-dir>\/}/\var{<platform-dir>\/}/mini-module/mini-module.fasl
-  ;;     Loading \var{<install-dir>\/}/\var{<platform-dir>\/}/mini-module/mini-module-user.fasl
+  ;;   Loading \var{<install-dir>\/}/\var{<platform-dir>\/}/module-manager/module-manager.fasl
+  ;;     Loading
+  \var{<install-dir>\/}/\var{<platform-dir>\/}/module-manager/module-manager-user.fasl
 
      ...
   ;; Control shell 1 started
@@ -6133,9 +6134,9 @@ convenient, than specifying the \code{:reload} file option to our
 \code{tutorial-example} file in the module definition.  If we had a number of
 files, however, we would probably only want the last one reloaded every time.
 
-\subsubsection*{Mini Module memories}
+\subsubsection*{Module Manager memories}
 
-The Mini Module system also remembers the last module (and any provided
+The Module Manager also remembers the last module (and any provided
 options, such as \code{:create-dirs}) that was specified to a \code{:cm}
 (textbf{compile-module}) or \code{:lm} (\textbf{load-module}) command.  The
 \textbf{startup-module} function that we used in defining our \code{:tutorial}

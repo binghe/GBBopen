@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:AGENDA-SHELL; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/current/source/gbbopen/control-shells/agenda-shell-metering.lisp *-*
+;;;; *-* File: /usr/local/gbbopen/source/gbbopen/control-shells/agenda-shell-metering.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Sep 23 23:00:41 2006 *-*
-;;;; *-* Machine: ruby.corkills.org *-*
+;;;; *-* Last-Edit: Sun Aug 31 16:38:45 2008 *-*
+;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -19,7 +19,7 @@
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
-;;;  05-22-06 File Created.  (Corkill)
+;;;  05-22-06 File created.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 

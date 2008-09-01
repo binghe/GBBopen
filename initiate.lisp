@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/initiate.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Jul  7 04:35:00 2008 *-*
+;;;; *-* Last-Edit: Mon Sep  1 10:04:13 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -164,9 +164,10 @@
      ;; If we are SLIME'ing:
      ((and swank-package 
            ;; Returns true if successful:
-           (funcall (intern (symbol-name '#:set-slime-repl-package)
-                            swank-package)
-                    (package-name requested-package)))
+           (funcall 
+            (fdefinition (intern (symbol-name '#:set-slime-repl-package)
+                                 swank-package))
+            (package-name requested-package)))
       ;; in SLIME, we're done:
       't)
      ;; Not SLIME:
@@ -186,10 +187,12 @@
                                                      ;; not documented
                                                      dont-remember)
   (startup-gbbopen)
-  (funcall (intern (symbol-name '#:do-mini-module-repl-command) :mini-module)
-           ':cm
-           (list* module-name ':propagate options)
-           dont-remember)
+  (funcall 
+   (fdefinition (intern (symbol-name '#:do-module-manager-repl-command)
+                        ':module-manager))
+   ':cm
+   (list* module-name ':propagate options)
+   dont-remember)
   (when package 
     (set-repl-package package)
     (import '(common-lisp-user::gbbopen-tools 

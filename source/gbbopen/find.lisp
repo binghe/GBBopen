@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/find.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Jul  5 10:27:44 2008 *-*
+;;;; *-* Last-Edit: Mon Sep  1 10:05:41 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -563,7 +563,7 @@
     ;; Inhibit CMUCL optimization warnings:
     #+cmu (declare (optimize (extensions:inhibit-warnings 3)))
     ;; general enumerated match operator:
-    (funcall (the symbol comparison-type) instance-value pattern-value)))
+    (funcall (fdefinition comparison-type) instance-value pattern-value)))
            
 ;;; ---------------------------------------------------------------------------
 

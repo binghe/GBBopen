@@ -5,17 +5,17 @@
 <!-- XML file produced from file: reference.tex
      using Hyperlatex v 2.9-in-waiting-rk (c) Otfried Cheong -->
 <head>
-<title>GBBopen 1.1 Reference -- Starting Up</title>
+<title>GBBopen 1.2 Reference -- Starting Up</title>
 </p>
 <link rel="SHORTCUT ICON" href="favicon.ico"><link rel=stylesheet
         href="gbbopen.css" type="text/css" />
 </head>
 <body>
 <table width="100%" cellpadding="0" cellspacing="2"><tr>
-<td bgcolor="#99ccff"><a href="ref-acknowledgments.html"><img border="0" alt="Acknowledgments" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="reference_0.html"><img border="0" alt="Top" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-mini-module-entities.html"><img border="0" alt="Mini-Module Facility" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b>Starting Up</b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table>
+<td bgcolor="#99ccff"><a href="ref-acknowledgments.html"><img border="0" alt="Acknowledgments" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="reference_0.html"><img border="0" alt="Top" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-module-manager-entities.html"><img border="0" alt="Module Manager Facility" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b>Starting Up</b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table>
 <h1>Starting Up</h1>
-<p>GBBopen is packaged with its own <a href="ref-mini-module-entities.html">module system</a> that
-supports compiling and loading GBBopen components.  The Mini Module system
+<p>GBBopen is packaged with its own <a href="ref-module-manager-entities.html">module system</a> that
+supports compiling and loading GBBopen components.  The Module Manager Facility
 is designed for ease of use and for simplicity in porting to Common Lisp
 implementations.  For example, to compile all core GBBopen <a href="ref-glossary.html#gl:modules">modules</a> and
 execute a basic trip-tests file, you only need to evaluate the following forms
@@ -23,13 +23,13 @@ within your Common Lisp environment:
 <pre class="pretop">
   &gt; (load "<var>&lt;install-dir&gt;</var>/startup.lisp")
   ;; Loading <var>&lt;install-dir&gt;</var>/startup.lisp
-  ;;  Loading <var>&lt;install-dir&gt;</var>/source/mini-module/mini-module-loader.lisp
-  ;;   Loading <var>&lt;install-dir&gt;</var>/source/mini-module/mini-module.lisp
-  ;;     Loading <var>&lt;install-dir&gt;</var>/source/mini-module/mini-module-user.lisp
+  ;;  Loading <var>&lt;install-dir&gt;</var>/source/module-manager/module-manager-loader.lisp
+  ;;   Loading <var>&lt;install-dir&gt;</var>/source/module-manager/module-manager.lisp
+  ;;     Loading <var>&lt;install-dir&gt;</var>/source/module-manager/module-manager-user.lisp
   ;;  Loading <var>&lt;install-dir&gt;</var>/source/modules.lisp
   T
-  &gt; (mini-module:<a href="ref-compile-module.html">compile-module</a> :gbbopen-test :propagate :create-dirs)
-  ;; Compiling <var>&lt;install-dir&gt;</var>/source/mini-module/mini-module.lisp
+  &gt; (module-manager:<a href="ref-compile-module.html">compile-module</a> :gbbopen-test :propagate :create-dirs)
+  ;; Compiling <var>&lt;install-dir&gt;</var>/source/module-manager/module-manager.lisp
        ...
   ;; Running basic GBBopen tests...
        ...
@@ -47,11 +47,12 @@ For example:
   &gt; (load "c:\\GBBopen\\startup.lisp")
 </pre>
 As can be seen from the file-loading messages, the <code>startup.lisp</code> file
-loads a bootstrap loader file for the <a href="ref-mini-module-entities.html">Mini Module
-system</a> (the file
-<code>source/mini-module/mini-module-loader.lisp</code>).  This bootstrap file then
-loads the mini-module files (<code>source/mini-module/mini-module.lisp</code> and
-<code>source/mini-module/mini-module-user.lisp</code>) followed by the module
+loads a bootstrap loader file for the <a href="ref-module-manager-entities.html">Module Manager
+Facility</a> (the file
+<code>source/module-manager/module-manager-loader.lisp</code>).  This bootstrap file
+then loads the Module Manager files
+(<code>source/module-manager/module-manager.lisp</code> and
+<code>source/module-manager/module-manager-user.lisp</code>) followed by the module
 definitions for all GBBopen <a href="ref-glossary.html#gl:modules">modules</a> (contained in the file
 <code>source/modules.lisp</code>).
 </p>
@@ -66,7 +67,7 @@ directory tree.
 <p><a name="id3">If</a> a <code>gbbopen-init.lisp</code> file (source or compiled) is present in the
 user's &#8220;home&#8221; directory (as defined by <b>user-homedir-pathname</b>), it
 is loaded by the <code><var>&lt;install-directory&gt;</var>/startup.lisp</code> file after
-the <a href="ref-mini-module-entities.html">Mini Module system</a> and definitions have been
+the <a href="ref-module-manager-entities.html">Module Manager Facility</a> and definitions have been
 loaded.  A personal <code><var>&lt;homedir&gt;</var>/gbbopen-init.lisp</code> file is a handy
 mechanism for defining user-specific modules, application <a href="ref-glossary.html#gl:modules">modules</a>,
 GBBopen parameters, and other personalizations.
@@ -79,10 +80,10 @@ named <code>:my-app-root</code> and the <a href="ref-glossary.html#gl:module">mo
 
   (in-package :cl-user)
 
-  (mini-module:<a href="ref-define-root-directory.html">define-root-directory</a> :my-app-root 
+  (module-manager:<a href="ref-define-root-directory.html">define-root-directory</a> :my-app-root 
       (make-pathname :directory "~/my-app"))    
 
-  (mini-module:<a href="ref-define-module.html">define-module</a> :my-app
+  (module-manager:<a href="ref-define-module.html">define-module</a> :my-app
     (:requires :gbbopen-user)
     (:directory :my-app-root)
     (:files "my-file"))
@@ -293,4 +294,4 @@ example:
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
 <table width="100%" cellpadding="0" cellspacing="2"><tr>
-<td bgcolor="#99ccff"><a href="ref-acknowledgments.html"><img border="0" alt="Acknowledgments" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="reference_0.html"><img border="0" alt="Top" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-mini-module-entities.html"><img border="0" alt="Mini-Module Facility" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b>Starting Up</b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table></body></html>
+<td bgcolor="#99ccff"><a href="ref-acknowledgments.html"><img border="0" alt="Acknowledgments" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="reference_0.html"><img border="0" alt="Top" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-module-manager-entities.html"><img border="0" alt="Module Manager Facility" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b>Starting Up</b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table></body></html>

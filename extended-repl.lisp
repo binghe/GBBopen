@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/extended-repl.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Jul  7 04:20:34 2008 *-*
+;;;; *-* Last-Edit: Mon Sep  1 10:01:35 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -68,8 +68,8 @@
        'filtered-get-commands-list-wrap)
 
 ;;; ---------------------------------------------------------------------------
-;;;  With-system-name (copied in mini-module/mini-module.lisp for startup.lisp
-;;;                    only invocation)
+;;;  With-system-name (copied in module-manager/module-manager.lisp for
+;;;                    startup.lisp only invocation)
 
 (defvar *current-system-name* nil)
 
@@ -207,7 +207,7 @@
 
 (defun list-all-extended-repl-systems ()
   ;;; Return a list of all extended-REPL systems, as computed from REPL
-  ;;; commands and Mini Module definitions.
+  ;;; commands and Module Manager definitions.
   (let ((result nil))
     (dolist (command-spec *extended-repl-commands*)
       (destructuring-bind (command function doc help-control 
@@ -215,12 +215,15 @@
                            &optional cl-user-fn-name command-system-name)
           command-spec
         (declare (ignore command function doc help-control cl-user-fn-name))
+        (declare (keyword command-system-name))
         (when command-system-name
           (pushnew command-system-name result))))
-    (when (find-package ':mini-module)
-      (setf result (nunion result
-                           (funcall (intern (symbol-name '#:list-all-systems)
-                                            ':mini-module)))))
+    (when (find-package ':module-manager)
+      (setf result 
+            (nunion result
+                    (funcall 
+                     (fdefinition (intern (symbol-name '#:list-all-systems)
+                                          ':module-manager))))))
     result))
 
 (compile-if-advantageous 'list-all-extended-repl-systems)
@@ -285,7 +288,7 @@
 
 (defun show-all-extended-repl-systems ()
   ;;; Display all extended-REPL systems, as computed from REPL commands
-  ;;; and Mini Module definitions.
+  ;;; and Module Manager definitions.
   (dolist (system-name (sort (list-all-extended-repl-systems) #'string<))
     (format t "~&~s~%" system-name))
   (values))
@@ -346,7 +349,8 @@
   (cond
    ((and system-name
          (cond 
-          ((not (member system-name (list-all-extended-repl-systems)))
+          ((not (member (the symbol system-name)
+                        (list-all-extended-repl-systems)))
            (format t "~&;; System ~s was not found.~%"
                    system-name)
            ;; don't proceed further:
@@ -356,10 +360,12 @@
                           of ~s?  "
                      system-name))))
     (undefine-system-repl-commands system-name)
-    (when (find-package ':mini-module)
-      (funcall (intern (symbol-name '#:undefine-system-directories-and-modules)
-                       ':mini-module)
-               system-name))
+    (when (find-package ':module-manager)
+      (funcall 
+       (fdefinition
+        (intern (symbol-name '#:undefine-system-directories-and-modules)
+                ':module-manager))
+       system-name))
     (format t "~&;; System ~s undefined.~%" system-name))
    (t (format t "~&;; Nothing was undefined.~%"))))
 
@@ -533,7 +539,7 @@
     (when swank-package
       (let ((quit-lisp-fn (intern (symbol-name 'quit-lisp) swank-package)))
         (when (fboundp quit-lisp-fn)
-          (funcall quit-lisp-fn)))))
+          (funcall (fdefinition quit-lisp-fn))))))
   (apply
    ;; Avoid infinite #'quit recursion in Allegro:
    #+allegro #'exit

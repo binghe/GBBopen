@@ -5,7 +5,7 @@
 <!-- XML file produced from file: tutorial.tex
      using Hyperlatex v 2.9-in-waiting-rk (c) Otfried Cheong -->
 <head>
-<title>GBBopen 1.1 Tutorial -- Creating a GBBopen Application</title>
+<title>GBBopen 1.2 Tutorial -- Creating a GBBopen Application</title>
 </p>
 <link rel="SHORTCUT ICON" href="favicon.ico"><link rel=stylesheet
         href="gbbopen.css" type="text/css" />
@@ -14,14 +14,14 @@
 <table width="100%" cellpadding="0" cellspacing="2"><tr>
 <td bgcolor="#99ccff"><a href="tutorial-connections.html"><img border="0" alt="Making Connections" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="tutorial_0.html"><img border="0" alt="Top" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="tutorial-multiple-walkers.html"><img border="0" alt="Multiple Walkers" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b>Creating a GBBopen Application</b></td><td bgcolor="#99ccff"><a target="_top" href="tutorial.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table>
 <h1>Creating a GBBopen Application</h1>
-<p>GBBopen's Mini Module system provides facilities
-that make it easy to define and use your own GBBopen applications.
+<p>GBBopen's Module Manager Facility provides
+mechanisms that make it easy to define and use your own GBBopen applications.
 </p>
 <p><hr color="99CCCC">
 This exercise shows you how to:
 </p>
-<p><ul class="tight"><li>Structure an application using the Mini Module
-system
+<p><ul class="tight"><li>Structure an application using the Module Manager 
+Facility
 <li>Define a REPL command for your application
 <li>Compile and load your application using your REPL command
 <li>Create and use an application-specific package
@@ -215,7 +215,7 @@ and then save the file.
 </p>
 <p>Recall that the <code>in-package</code> form specifies the Common Lisp package that
 is made current when the file is compiled or loaded.  A <code>modules.lisp</code>
-file should always specify the <code>:mini-module-user</code> package as the first
+file should always specify the <code>:module-manager-user</code> package as the first
 form in the file.
 </p>
 <p>The second form defines our application module, which we will name
@@ -224,8 +224,8 @@ form in the file.
 loaded before our <code>:tutorial</code> module.  The <code>:files</code> subform
 specified the files that comprise the module. In our case, there is one file:
 <code>tutorial-example.lisp</code>.  We leave off the <code>.lisp</code> file extension,
-as the Mini Module system will add the appropriate
-source or compiled file extension for us.
+as the Module Manager will add the
+appropriate source or compiled file extension for us.
 </p>
 <h2><a name="id4">Step 3: Add the random-walk application to your personal
 <code>gbbopen-modules</code> directory</a></h2><p>
@@ -274,23 +274,23 @@ the following files should be loaded:
 </pre>
 </p>
 <p>Note that some basic GBBopen initialization files have been loaded for us (but
-no command definitions yet) and that GBBopen itself (or even the Mini Module
-system) are not loaded by <code><var>&lt;install-dir&gt;</var>/initiate.lisp</code>.
+no command definitions yet) and that GBBopen itself (or even the Module
+Manager Facility) are not loaded by <code><var>&lt;install-dir&gt;</var>/initiate.lisp</code>.
 </p>
 <p>Now, instead of loading the <code>:agenda-shell-user</code> module, let's load only
-the <code>:mini-module-user</code> module:
+the <code>:module-manager-user</code> module:
 <pre class="pretop">
-<font color="#667f66">  cl-user&gt; <font color="#000000">:mini-module-user</font>
+<font color="#667f66">  cl-user&gt; <font color="#000000">:module-manager-user</font>
   ;; Loading <var>&lt;install-dir&gt;</var>/startup.lisp
      ...
-  ;;     Loading <var>&lt;install-dir&gt;</var>/<var>&lt;platform-dir&gt;</var>/mini-module/mini-module-user.fasl
+  ;;     Loading <var>&lt;install-dir&gt;</var>/<var>&lt;platform-dir&gt;</var>/module-manager/module-manager-user.fasl
   ;;   Loading <var>&lt;install-dir&gt;</var>/modules.lisp
   ;; Loading module definitions from <var>&lt;homedir&gt;</var>/gbbopen-modules/...
   ;;     Loading <var>&lt;homedir&gt;</var>/tutorial/modules.lisp
-  mini-module-user&gt;</font>
+  module-manager-user&gt;</font>
 </pre>
-Note that when the Mini Module system was loaded as part of loading the
-<code>:mini-module-user</code> module, the module definitions for our personal
+Note that when the Module Manager was loaded as part of loading the
+<code>:module-manager-user</code> module, the module definitions for our personal
 GBBopen modules were loaded automatically.  (In this case, the
 <code><var>&lt;homedir&gt;</var>/tutorial/modules.lisp</code> file.)  
 </p>
@@ -298,7 +298,7 @@ GBBopen modules were loaded automatically.  (In this case, the
 <b>compile-module</b> REPL command, <code>:cm</code>, to compile (if needed) and
 load it:
 <pre class="pretop">
-<font color="#667f66">  mini-module-user&gt; <font color="#000000">:cm :tutorial</font>
+<font color="#667f66">  module-manager-user&gt; <font color="#000000">:cm :tutorial</font>
   ;;   Loading <var>&lt;install-dir&gt;</var>/<var>&lt;platform-dir&gt;</var>/tools/portable-threads.fasl
      ...
   ;;   Loading .../gbbopen/control-shells/agenda-shell-user.fasl
@@ -309,11 +309,11 @@ load it:
   Restart actions (select using :c n):
     0: Create this directory.
     1: Create this directory and any future missing directories.
-  mini-module-user&gt;&gt;</font>
+  module-manager-user&gt;&gt;</font>
 </pre>
 The <code>:requires</code> in our <code>:tutorial</code> module definition causes the
 <code>:agenda-shell-user</code> module (and its required modules) to be loaded for
-us.  Then the Mini Module system stops with a continuable error, telling us
+us.  Then the Module Manager stops with a continuable error, telling us
 that the directory to hold the compiled application files does not exist.  The
 compiled files are put in a Common Lisp and platform-specific subdirectory,
 <code>&lt;<var>platform-dir&gt;</var></code>, in our <code>tutorial</code> directory that mirrors
@@ -324,19 +324,19 @@ shared with a number of different hosts and operating systems.
 <p>We could have avoided this continuable error by providing the
 <code>:create-dirs</code> option to the <code>:cm</code> command:
 <pre class="pretop">
-<font color="#667f66">  mini-module-user&gt; :cm :tutorial :create-dirs</font>
+<font color="#667f66">  module-manager-user&gt; :cm :tutorial :create-dirs</font>
 </pre>
-to allow the Mini Module system to create the <code>&lt;<var>platform-dir&gt;</var></code>
+to allow the Module Manager to create the <code>&lt;<var>platform-dir&gt;</var></code>
 subdirectory automatically for us.  Since we did not do this, we can still
 continue from the error:
 <pre>
 <font color="#667f66">  Restart actions (select using :c n):
     0: Create this directory.
     1: Create this directory and any future missing directories.
-  mini-module-user&gt;&gt; <font color="#000000">:c 0</font>
+  module-manager-user&gt;&gt; <font color="#000000">:c 0</font>
   ;; Compiling file <var>&lt;homedir&gt;</var>/tutorial/source/tutorial-example.lisp
   ;; Loading <var>&lt;homedir&gt;</var>/tutorial/<var>&lt;platform-dir&gt;</var>/tutorial-example.fasl
-  mini-module-user&gt;</font>
+  module-manager-user&gt;</font>
 </pre>
 </p>
 <p>At this point, we've compiled and loaded our <code>:tutorial</code> application
@@ -365,7 +365,7 @@ and then save the file.  A <code>commands.lisp</code> file should always specify
 <b>startup-module</b> call does all the work associated with executing the
 command.  The first argument to <b>startup-module</b> specifies that the
 <code>:tutorial</code> module will be compiled (if necessary) and then loaded by the
-Mini Module system when the <code>:</code>tutorial
+Module Manager when the <code>:</code>tutorial
 command is issued.  The second, <code>options</code>, argument passes any options
 given with the command to a <b>compile-module</b> call that is performed by
 <b>startup-module</b>.  The third argument, <code>:gbbopen-user</code> is optional
@@ -409,13 +409,13 @@ the <code>:create-dirs</code> option to the <code>:tutorial</code> command:
 <pre class="pretop">
 <font color="#667f66">  gbbopen-user&gt; :tutorial :create-dirs</font>
 </pre>
-to allow the Mini Module system to create the <code><var>&lt;platform-dir&gt;</var></code>
+to allow the Module Manager to create the <code><var>&lt;platform-dir&gt;</var></code>
 subdirectory automatically for us.  However, since we created
 <code><var>&lt;platform-dir&gt;</var></code> in Step 4, we did not need to specify the
 <code>:create-dirs</code> option again in this step.
 </p>
 <h2><a name="id11">Step 7: Create missing subdirectories automatically</a></h2>
-<p>If you prefer, you can specify that the Mini Module system should always
+<p>If you prefer, you can specify that the Module Manager should always
 create missing <code><var>&lt;platform-dir&gt;</var></code> directories and subdirectories
 instead of signaling an continuable error if one is missing (and
 <code>:create-dirs</code> was not specified).  This behavior is controlled by the
@@ -427,7 +427,7 @@ your &#8220;homedir&#8221; directory):
   (defparameter *automatically-create-missing-directories* 't)
 </pre>
 </p>
-<p>I actually prefer to have the Mini Module system generate the continuable
+<p>I actually prefer to have the Module Manager generate the continuable
 error if it has to create a <code><var>&lt;platform-dir&gt;</var></code> directory and I
 didn't specify <code>:create-dirs</code>, so I leave
 <b>*automatically-create-missing-directories*</b> set to the default <code>nil</code>
@@ -446,7 +446,7 @@ by GBBopen's <code>:gbbopen-user</code> package.  Evaluate the following:
 <pre class="pretop">
 <font color="#667f66">  gbbopen-user&gt; <font color="#000000">(package-use-list :gbbopen-user)</font>
   (#&lt;package PORTABLE-THREADS&gt; #&lt;package AGENDA-SHELL&gt;
-   #&lt;package MINI-MODULE&gt; #&lt;package COMMON-LISP&gt;
+   #&lt;package MODULE-MANAGER&gt; #&lt;package COMMON-LISP&gt;
    #&lt;package GBBOPEN-TOOLS&gt; #&lt;package GBBOPEN&gt;)
   gbbopen-user&gt;</font>
 </pre>
@@ -462,7 +462,7 @@ with the following:
   (eval-when (:compile-toplevel :load-toplevel :execute)
     (unless (find-package :tutorial)
       (defpackage :tutorial
-        (:use :common-lisp :mini-module :gbbopen-tools :gbbopen 
+        (:use :common-lisp :module-manager :gbbopen-tools :gbbopen 
               :portable-threads :agenda-shell))))
 
   (in-package :tutorial)
@@ -509,7 +509,7 @@ the <code>:tutorial</code> module that we defined:
 <font color="#667f66">  gbbopen-user&gt; <font color="#000000">(describe-module :tutorial)</font>
   Module :tutorial (loaded)
     Requires: (:agenda-shell-user)
-    Fully expanded requires: (:mini-module :mini-module-user :portable-threads
+    Fully expanded requires: (:module-manager :module-manager-user :portable-threads
                               :gbbopen-tools :gbbopen-core :polling-functions
                               :queue :agenda-shell :os-interface :gbbopen-user
                               :agenda-shell-user)
@@ -529,7 +529,7 @@ required packages.  These are shown as the &#8220;Fully expanded requires&#8221;
 <font color="#667f66">  gbbopen-user&gt; <font color="#000000">(describe-module :agenda-shell-user)</font>
   Module :agenda-shell-user (loaded)
     Requires: (:agenda-shell :gbbopen-user)
-    Fully expanded requires: (:mini-module :mini-module-user :portable-threads
+    Fully expanded requires: (:module-manager :module-manager-user :portable-threads
                               :gbbopen-tools :gbbopen-core :polling-functions
                               :queue :agenda-shell :os-interface :gbbopen-user)
     Source directory: <var>&lt;install-dir&gt;</var>/source/gbbopen/control-shells/
@@ -624,7 +624,7 @@ as a top-level form at the end of your <code>tutorial-example.lisp</code> file. 
 problem with this is that sometimes you may want to compile and load the
 application without running it.  
 </p>
-<p>GBBopen's Mini Module system supports a convention that makes it easy to
+<p>GBBopen's Module Manager Facility supports a convention that makes it easy to
 conditionalize load-time action execution via the value of
 <b>*autorun-modules*</b>.  Normally, <code>*autorun-modules*</code> will be
 true, but it can be set to <code>nil</code> when a module is loaded with the
@@ -685,12 +685,12 @@ random walk:
 </pre>
 This time, nothing happened.  Why?
 </p>
-<p>Since no source files were modified, the Mini Module system knows that the
+<p>Since no source files were modified, the Module Manager knows that the
 latest compiled files for the <code>:tutorial</code> module and its required modules
 have all been loaded.  So, because the <code>tutorial-example</code> file is not
 loaded, its &#8220;autorun&#8221; conditional form is not evaluated.
 </p>
-<p>We can tell the Mini Module system to always reload the
+<p>We can tell the Module Manager to always reload the
 <code>tutorial-example</code> file by editing our <code>modules.lisp</code> file and
 adding the <code>:reload</code> file option to the <code>:tutorial</code> module
 definition:
@@ -713,7 +713,7 @@ loaded and its &#8220;autorun&#8221; form evaluated:
      ...
   tutorial&gt;</font>
 </pre>
-The Mini Module system noticed our updated <code>modules.lisp</code> file and loaded
+The Module Manager noticed our updated <code>modules.lisp</code> file and loaded
 it, redefining the <code>:tutorial</code> module definition, and then followed our
 <code>:reload</code> specification.
 </p>
@@ -727,14 +727,15 @@ it, redefining the <code>:tutorial</code> module definition, and then followed o
   tutorial&gt;</font>
 </pre>
 </p>
-<h3><a name="id21">Mini Module propagation</a></h3><p>
-The Mini Module's <b>compile-module</b> function also accepts a
+<h3><a name="id21">Module Manager propagation</a></h3><p>
+The Module Manager's <b>compile-module</b> function also accepts a
 <code>:reload</code> option, so we might be tempted to simply add that option when
 we specify our <code>:tutorial</code> command:
 <pre class="pretop">
 <font color="#667f66">  tutorial&gt; :tutorial :reload
-  ;;   Loading <var>&lt;install-dir&gt;</var>/<var>&lt;platform-dir&gt;</var>/mini-module/mini-module.fasl
-  ;;     Loading <var>&lt;install-dir&gt;</var>/<var>&lt;platform-dir&gt;</var>/mini-module/mini-module-user.fasl
+  ;;   Loading <var>&lt;install-dir&gt;</var>/<var>&lt;platform-dir&gt;</var>/module-manager/module-manager.fasl
+  ;;     Loading
+  <var>&lt;install-dir&gt;</var>/<var>&lt;platform-dir&gt;</var>/module-manager/module-manager-user.fasl
 
      ...
   ;; Control shell 1 started
@@ -761,8 +762,8 @@ convenient, than specifying the <code>:reload</code> file option to our
 <code>tutorial-example</code> file in the module definition.  If we had a number of
 files, however, we would probably only want the last one reloaded every time.
 </p>
-<h3><a name="id22">Mini Module memories</a></h3><p>
-The Mini Module system also remembers the last module (and any provided
+<h3><a name="id22">Module Manager memories</a></h3><p>
+The Module Manager also remembers the last module (and any provided
 options, such as <code>:create-dirs</code>) that was specified to a <code>:cm</code>
 (textbfcompile-module) or <code>:lm</code> (<b>load-module</b>) command.  The
 <b>startup-module</b> function that we used in defining our <code>:tutorial</code>

@@ -1,7 +1,7 @@
 ;;;; -*- Mode:COMMON-LISP; Package:TUTORIAL; Base:10 -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/examples/tutorial.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Aug 31 10:33:13 2008 *-*
+;;;; *-* Last-Edit: Sun Aug 31 16:43:23 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
-;;; Runs once (automatically) when loaded using the mini-module system.
+;;; Runs once (automatically) when loaded using the module-manager system.
 ;;;
 ;;; To run manually:
 ;;;   1. Compile and load the :tutorial-example module
@@ -27,16 +27,14 @@
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
 ;;;  10-08-05 Adapted from the `Getting Started with GBB' example.  (Corkill)
-;;;  09-22-06 Converted to GBBopen 0.9.5.  (Corkill)
-;;;  01-30-08 Converted to GBBopen 0.9.7.  (Corkill)
-;;;  02-12-08 Converted to GBBopen 0.9.8.  (Corkill)
+;;;  08-31-08 Converted to GBBopen 1.2.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (unless (find-package ':tutorial)
     (make-package ':tutorial
-                  :use '(:common-lisp :mini-module :portable-threads
+                  :use '(:common-lisp :module-manager :portable-threads
                          :gbbopen-tools :gbbopen :agenda-shell))))
 
 (in-package :tutorial)

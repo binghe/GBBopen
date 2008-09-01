@@ -1,13 +1,13 @@
-;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE-USER; Syntax:common-lisp -*-
-;;;; *-* File: /usr/local/gbbopen/source/mini-module/mini-module-user.lisp *-*
+;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER-USER; Syntax:common-lisp -*-
+;;;; *-* File: /usr/local/gbbopen/source/module-manager/module-manager-user.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jul  2 09:38:44 2008 *-*
+;;;; *-* Last-Edit: Sun Aug 31 14:55:06 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
 ;;;; *
-;;;; *                       Mini-Module-User Package
+;;;; *                       Module-Manager-User Package
 ;;;; *
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -24,18 +24,19 @@
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (unless (find-package ':mini-module-user)
-    (make-package ':mini-module-user
-                  :use '(:common-lisp :mini-module))))
+  (unless (find-package ':module-manager-user)
+    (make-package ':module-manager-user
+                  :use '(:common-lisp :module-manager)
+                  :nicknames '(:mini-module-user))))
 
-(in-package :mini-module-user)
+(in-package :module-manager-user)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (let ((mini-module-package (find-package ':mini-module)))
-    (when mini-module-package
-      (use-package (list mini-module-package)))))
+  (let ((module-manager-package (find-package ':module-manager)))
+    (when module-manager-package
+      (use-package (list module-manager-package)))))
 
-(pushnew ':mini-module-user *features*)
+(pushnew ':module-manager-user *features*)
 
 ;;; ===========================================================================
 ;;;				  End of File

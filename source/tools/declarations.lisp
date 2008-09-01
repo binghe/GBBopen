@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/declarations.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Jul  8 05:53:17 2008 *-*
+;;;; *-* Last-Edit: Sun Aug 31 16:29:47 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -31,12 +31,12 @@
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(*generate-nyi-errors*       ; not documented
-            allow-redefinition          ; in mini-module, but part of tools
+            allow-redefinition          ; in module-manager, but part of tools
             defcm
-            feature-present-p           ; in mini-module, but part of tools;
+            feature-present-p           ; in module-manager, but part of tools;
                                         ; not documented
             make-keys-only-hash-table-if-supported ; not documented
-            need-to-port                ; in mini-module-loader, not documented
+            need-to-port                ; in module-manager-loader, not documented
             nyi                         ; not documented
             unbound-value-indicator
             without-cmu/sbcl-optimization-warnings ; not documented

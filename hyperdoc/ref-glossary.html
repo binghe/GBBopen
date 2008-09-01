@@ -5,7 +5,7 @@
 <!-- XML file produced from file: reference.tex
      using Hyperlatex v 2.9-in-waiting-rk (c) Otfried Cheong -->
 <head>
-<title>GBBopen 1.1 Reference -- Glossary</title>
+<title>GBBopen 1.2 Reference -- Glossary</title>
 </p>
 <link rel="SHORTCUT ICON" href="favicon.ico"><link rel=stylesheet
         href="gbbopen.css" type="text/css" />
@@ -27,7 +27,7 @@ another <a href="#gl:thread">thread</a>.
 <p></dd><dt><a name="id7"></a><b>autorun&nbsp;forms</b></dt><dd>
 <a name="id8">Forms</a> in a <a href="#gl:module">module</a> file that are to be evaluated conditionally when the
 file is loaded based on the value of <b><a href="ref-autorun-modules-var.html">*autorun-modules*</a></b>.
-Part of the <a href="ref-mini-module-entities.html">Mini Module system</a>.
+Part of the <a href="ref-module-manager-entities.html">Module Manager Facility</a>.
 <p></dd><dt><a name="id9"></a><b>blackboard&nbsp;repository</b></dt><dd>
 <a name="id10">The</a> internal storage containing all <a href="#id221">unit&nbsp;instance</a> and
 <a href="#id197">space&nbsp;instance</a> objects and associated retrieval data structures.
@@ -293,7 +293,7 @@ classes: <code>class</code>, <code>slot-definition</code>, <code>generic-functio
 <code>method</code>, and <code>method-combination</code>.
 <p></dd><dt><a name="gl:module"></a><b>module</b></dt><dd>
 <a name="gl:modules">A</a> set of related files that form a component, library, or application.
-Part of the <a href="ref-mini-module-entities.html">Mini Module system</a>.
+Part of the <a href="ref-module-manager-entities.html">Module Manager Facility</a>.
 <p></dd><dt><a name="gl:namestring"></a><b>namestring</b></dt><dd>
 <a name="id124">A</a> string that represents a filename.
 <p></dd><dt><a name="id125"></a><b>non-keyword&nbsp;symbol</b></dt><dd>
@@ -387,7 +387,7 @@ re-acquire it, that <a href="#gl:thread">thread</a> is allowed to proceed as if 
 the lock (without error or blocking, see <a href="#gl:lock">lock</a>).
 <p></dd><dt><a name="id171"></a><b>relative&nbsp;directory</b></dt><dd>
 <a name="gl:relative-directory">A</a> directory defined in relation to another directory definition.
-Part of the <a href="ref-mini-module-entities.html">Mini Module system</a>.
+Part of the <a href="ref-module-manager-entities.html">Module Manager Facility</a>.
 <p></dd><dt><a name="id173"></a><b>REPL&nbsp;command</b></dt><dd> 
 <a name="gl:keyword-command">A</a> <a href="#gl:keywords">keyword</a> command that can be entered at the top level read-eval-print
 loop (REPL) in your Common Lisp environment.  REPL commands (some with
@@ -401,10 +401,10 @@ be returned.
 <p></dd><dt><a name="id177"></a><b>required&nbsp;module</b></dt><dd>
 <a name="gl:required-module">A</a> sequence of <a href="#gl:modules">modules</a> that must be compiled (if needed) and loaded, in
 order, before the requiring <a href="#gl:module">module</a> is compiled (if needed) and loaded.
-Part of the <a href="ref-mini-module-entities.html">Mini Module system</a>.
+Part of the <a href="ref-module-manager-entities.html">Module Manager Facility</a>.
 <p></dd><dt><a name="id179"></a><b>root&nbsp;directory</b></dt><dd>
 <a name="gl:Root">A</a> fixed anchor directory for a tree of relative directory definitions.
-Part of the <a href="ref-mini-module-entities.html">Mini Module system</a>.
+Part of the <a href="ref-module-manager-entities.html">Module Manager Facility</a>.
 <p></dd><dt><a name="id181"></a><b>scheduled&nbsp;function</b></dt><dd>
 <a name="gl:scheduled-function">An</a> object that contains a <a href="#gl:function">function</a> that may be scheduled to run at an
 absolute or relative time. When that specified time arrives, the function
