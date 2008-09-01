@@ -1,7 +1,7 @@
-;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE-USER; Syntax:common-lisp -*-
+;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/modules.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Aug 23 10:49:23 2008 *-*
+;;;; *-* Last-Edit: Sun Aug 31 14:57:08 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -36,7 +36,7 @@
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-(in-package :mini-module-user)
+(in-package :module-manager-user)
 
 (with-system-name (:gbbopen)
 
@@ -52,7 +52,7 @@
   (define-relative-directory :gbbopen-tools :gbbopen-root "tools")
   
   (define-module :gbbopen-tools
-    (:requires :mini-module-user)       ; required only for brief-date-and-time
+    (:requires :module-manager-user)    ; required only for brief-date-and-time
     (:directory :gbbopen-tools)
     (:files "preamble"
             ("declarations" :forces-recompile)
@@ -71,9 +71,10 @@
             "epilogue"))
   
   (define-module :portable-threads
-    (:requires :mini-module-user)       ; not really required, but we want
-                                        ; :mini-module-user compiled/loaded if
-                                        ; we are using the mini-module system
+    (:requires :module-manager-user)       ; not really required, but we want
+                                           ; :module-manager-user
+                                           ; compiled/loaded if we are using
+                                           ; the Module Manager Facility
     (:directory :gbbopen-tools)
     (:files ("portable-threads" :forces-recompile)))
   
@@ -150,7 +151,7 @@
 ;;;  Compile All of GBBopen
 
   (define-module :compile-gbbopen
-    (:requires :mini-module)
+    (:requires :module-manager)
     (:directory :gbbopen-root)
     (:files ("compile-all" :source))
     ;; The following undocumented capability is used to cleanly exit Common

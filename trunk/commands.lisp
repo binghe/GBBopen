@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/commands.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Jul 13 10:02:37 2008 *-*
+;;;; *-* Last-Edit: Mon Sep  1 11:35:33 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -58,16 +58,16 @@
 (in-package :common-lisp-user)
 
 ;;; ===========================================================================
-;;;   Mini-Module Bootstrapping Commands
+;;;   Module Manager Bootstrapping Commands
 
-(with-system-name (:mini-module)
+(with-system-name (:module-manager)
   (define-repl-command :startup (&rest args)
     "Load GBBopen startup.lisp file"
     (apply 'startup-gbbopen args))
   
-    (define-repl-command (:mini-module-user :no-help) (&rest options)
-    "Compile and load Mini Module Facility (MMF) User module"
-    (startup-module :mini-module-user options)))
+    (define-repl-command (:module-manager-user :no-help) (&rest options)
+    "Compile and load Module Manager Facility (MMF) User module"
+    (startup-module :module-manager-user options)))
 
 ;;; ===========================================================================
 ;;;   Useful GBBopen Commands
@@ -191,23 +191,27 @@
   )
 
 ;;; ===========================================================================
-;;;   Mini Module Commands
+;;;   Module Manager Commands
   
-(with-system-name (:mini-module)
+(with-system-name (:module-manager)
   
   (define-repl-command (:lm :add-to-native-help)
       (&rest module-name-and-options)
     "Load module"
-    (startup-module :mini-module (rest module-name-and-options) nil 't)
-    (funcall (intern (symbol-name '#:do-mini-module-repl-command) :mini-module)
-             ':lm module-name-and-options))
+    (startup-module :module-manager (rest module-name-and-options) nil 't)
+    (funcall 
+     (fdefinition (intern (symbol-name '#:do-module-manager-repl-command) 
+                          ':module-manager))
+     ':lm module-name-and-options))
   
   (define-repl-command (:cm :add-to-native-help)
       (&rest module-name-and-options)
     "Compile and load module"
-    (startup-module :mini-module (rest module-name-and-options) nil 't)
-    (funcall (intern (symbol-name '#:do-mini-module-repl-command) :mini-module)
-             ':cm module-name-and-options))
+    (startup-module :module-manager (rest module-name-and-options) nil 't)
+    (funcall
+     (fdefinition (intern (symbol-name '#:do-module-manager-repl-command) 
+                          ':module-manager))
+     ':cm module-name-and-options))
   
   ;; end with-system-name
   )

@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/date-and-time.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Jul  8 05:52:56 2008 *-*
+;;;; *-* Last-Edit: Sun Aug 31 16:29:29 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -27,27 +27,27 @@
 (in-package :gbbopen-tools)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (import '(mini-module:*month-precedes-date*
-            mini-module::*month-name-vector*
-            mini-module:brief-date
-            mini-module:brief-date-and-time
-            mini-module:parse-date)))
+  (import '(module-manager:*month-precedes-date*
+            module-manager::*month-name-vector*
+            module-manager:brief-date
+            module-manager:brief-date-and-time
+            module-manager:parse-date)))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(*month-precedes-date*       ; these three entities are defined in 
-            bried-date                  ; ../mini-module/mini-module.lisp, 
+            bried-date                  ; ../module-manager/module-manager.lisp, 
             brief-date-and-time         ; but are part of :gbbopen-tools
             internet-text-date-and-time
             iso8661-date-and-time
             message-log-date-and-time
-            parse-date                  ; also from mini-module.lisp
+            parse-date                  ; also from module-manager.lisp
             pretty-time-interval
             pretty-run-time-interval)))
 
 ;;; ===========================================================================
 ;;;  Time parsing and formatting
 
-;;; Defined in ../mini-module/mini-module.lisp:
+;;; Defined in ../module-manager/module-manager.lisp:
 ;;;  (defvar *month-precedes-date* 't) and 
 ;;;   (defparameter *month-name-vector* ...)
 

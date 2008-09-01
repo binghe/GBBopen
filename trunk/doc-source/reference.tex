@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Sun Aug 31 11:34:15 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Mon Sep  1 05:26:46 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -1164,7 +1164,7 @@ A \var{dimension-value-place\/} with two
 \T\markright{}%
 \T\pagestyle{plain}
 \T\cleardoublepage
-\W\xname{ref-mini-module-entities}
+\W\xname{ref-module-manager-entities}
 \T\pagestyle{fancy}
 \T\thispagestyle{fancybottom}
 \W\xname{ref-starting-up}
@@ -1172,8 +1172,8 @@ A \var{dimension-value-place\/} with two
 \section{Starting Up}
 \label{sec:startup}%
 
-GBBopen is packaged with its own \reflink{module system}{sec:mini-module} that
-supports compiling and loading GBBopen components.  The Mini Module system
+GBBopen is packaged with its own \reflink{module system}{sec:module-manager} that
+supports compiling and loading GBBopen components.  The Module Manager Facility
 is designed for ease of use and for simplicity in porting to Common Lisp
 implementations.  For example, to compile all core GBBopen \glref{modules} and
 execute a basic trip-tests file, you only need to evaluate the following forms
@@ -1183,13 +1183,13 @@ within your Common Lisp environment:
 \begin{example}
   > (load "\var{<install-dir>\/}/startup.lisp")
   ;; Loading \var{<install-dir>\/}/startup.lisp
-  ;;  Loading \var{<install-dir>\/}/source/mini-module/mini-module-loader.lisp
-  ;;   Loading \var{<install-dir>\/}/source/mini-module/mini-module.lisp
-  ;;     Loading \var{<install-dir>\/}/source/mini-module/mini-module-user.lisp
+  ;;  Loading \var{<install-dir>\/}/source/module-manager/module-manager-loader.lisp
+  ;;   Loading \var{<install-dir>\/}/source/module-manager/module-manager.lisp
+  ;;     Loading \var{<install-dir>\/}/source/module-manager/module-manager-user.lisp
   ;;  Loading \var{<install-dir>\/}/source/modules.lisp
   T
-  > (mini-module:\entlink{compile-module} :gbbopen-test :propagate :create-dirs)
-  ;; Compiling \var{<install-dir>\/}/source/mini-module/mini-module.lisp
+  > (module-manager:\entlink{compile-module} :gbbopen-test :propagate :create-dirs)
+  ;; Compiling \var{<install-dir>\/}/source/module-manager/module-manager.lisp
        ...
   ;; Running basic GBBopen tests...
        ...
@@ -1213,11 +1213,12 @@ For example:
 \end{verbatim}
 %
 As can be seen from the file-loading messages, the \code{startup.lisp} file
-loads a bootstrap loader file for the \reflink{Mini Module
-  system}{sec:mini-module} (the file
-\code{source/mini-module/mini-module-loader.lisp}).  This bootstrap file then
-loads the mini-module files (\code{source/mini-module/mini-module.lisp} and
-\code{source/mini-module/mini-module-user.lisp}) followed by the module
+loads a bootstrap loader file for the \reflink{Module Manager
+  Facility}{sec:module-manager} (the file
+\code{source/module-manager/module-manager-loader.lisp}).  This bootstrap file
+then loads the Module Manager files
+(\code{source/module-manager/module-manager.lisp} and
+\code{source/module-manager/module-manager-user.lisp}) followed by the module
 definitions for all GBBopen \glref{modules} (contained in the file
 \code{source/modules.lisp}).
 
@@ -1242,7 +1243,7 @@ directory tree.
 If a \code{gbbopen-init.lisp} file (source or compiled) is present in the
 user's ``home'' directory (as defined by \textbf{user-homedir-pathname}), it
 is loaded by the \code{\var{<install-directory>\/}/startup.lisp} file after
-the \reflink{Mini Module system}{sec:mini-module} and definitions have been
+the \reflink{Module Manager Facility}{sec:module-manager} and definitions have been
 loaded.  A personal \code{\var{<homedir>\/}/gbbopen-init.lisp} file is a handy
 mechanism for defining user-specific modules, application \glref{modules},
 GBBopen parameters, and other personalizations.
@@ -1257,10 +1258,10 @@ named \code{:my-app-root} and the \glref{module} \code{:my-app}:
 
   (in-package :cl-user)
 
-  (mini-module:\entlink{define-root-directory} :my-app-root 
+  (module-manager:\entlink{define-root-directory} :my-app-root 
       (make-pathname :directory "~/my-app"))    
 
-  (mini-module:\entlink{define-module} :my-app
+  (module-manager:\entlink{define-module} :my-app
     (:requires :gbbopen-user)
     (:directory :my-app-root)
     (:files "my-file"))
@@ -1592,7 +1593,7 @@ included in the preferred browser setting.
 \fnpurpose Define a top-level REPL (read-eval-print loop) \glref{command}.
 
 \fnpackage \code{:common-lisp-user}
-(also imported into and exported from \code{:mini-module})
+(also imported into and exported from \code{:module-manager})
 
 \fnmodule Defined in \code{extended-repl.lisp}
 
@@ -1686,8 +1687,8 @@ Define a \glref{REPL~command} named \code{:my-app} that compiles and loads the
 \fnsyntax 
 
 \fnpurpose Compile and load a GBBopen \glref{module}, even if the
-\reflink{Mini Module system}{sec:mini-module}is not yet loaded, and optionally
-set the current package.
+\reflink{Module Manager Facility}{sec:module-manager} is not yet loaded, and
+optionally set the current package.
 
 \fnpackage \code{:common-lisp-user} (not exported)
 
@@ -1759,7 +1760,7 @@ Define a \glref{REPL~command} named \code{:my-app} that compiles and loads the
 definitions, and module definitions defined in \var{forms}.
 
 \fnpackage \code{:common-lisp-user}
-(also imported into and exported from \code{:mini-module})
+(also imported into and exported from \code{:module-manager})
 
 \fnmodule Defined in \code{extended-repl.lisp}
 
@@ -1826,37 +1827,37 @@ the definitions in the application's \code{modules.lisp} file with a second
 \end{functiondoc}
 
 %% ========================================================================
-%%  Mini-Module Facility
+%%  Module Manager Facility
 
 \T\markright{}%
 \T\pagestyle{plain}
 \T\cleardoublepage
-\W\xname{ref-mini-module-entities}
+\W\xname{ref-module-manager-entities}
 \T\pagestyle{fancy}
 \T\thispagestyle{fancybottom}
 \T\global\def\fnlastname{ }%
 \T\renewcommand{\headrulewidth}{0pt}
-\section{Mini-Module Facility}
-\label{sec:mini-module}%
+\section{Module Manager Facility}
+\label{sec:module-manager}%
 
-\index{module!:mini-module@\code{:mini-module}}%
-\index{:mini-module@\code{:mini-module} module}%
-\index{:mini-module@\code{:mini-module} module!loading}%
-\index{module!:mini-module@\code{:mini-module}!loading}%
-\index{loading!:mini-module@\code{:mini-module} module}%
-\index{module!loading!:mini-module@\code{:mini-module} module}%
+\index{module!:module-manager@\code{:module-manager}}%
+\index{:module-manager@\code{:module-manager} module}%
+\index{:module-manager@\code{:module-manager} module!loading}%
+\index{module!:module-manager@\code{:module-manager}!loading}%
+\index{loading!:module-manager@\code{:module-manager} module}%
+\index{module!loading!:module-manager@\code{:module-manager} module}%
 \index{startup.lisp@\code{startup.lisp} file|itidx}%
 \index{defsystem packages}%
 \index{ASDF (Another System Definition Facility)}%
 %
-The Mini Module facility provides a lightweight and easy to use mechanism for
+The Module Manager Facility provides a lightweight and easy to use mechanism for
 compiling and loading \glref{module} files.  The facility keeps track of the
 dependencies between modules and the modules that have been compiled and
-loaded. The Mini Module facility was designed for simplicity and portability,
+loaded. The Module Manager Facility was designed for simplicity and portability,
 yet it is powerful enough to manage substantial software projects, each
 operating on multiple hardware platforms and Common Lisp implementations.
 
-The Mini Module facility is sufficient for many situations, and if not,
+The Module Manager Facility is sufficient for many situations, and if not,
 there are more complex open-source \textbf{defsystem} packages, such as ASDF
 (\xsitelink{http://constantly.at/lisp/asdf/}%
 {http://constantly.at/lisp/asdf/}), that are available.
@@ -1869,12 +1870,12 @@ there are more complex open-source \textbf{defsystem} packages, such as ASDF
 \index{module definitions, loading user-specific}%
 \bfindexit{user-homedir-pathname}%
 %
-The \code{:mini-module} \glref{module} is automatically loaded by the GBBopen
+The \code{:module-manager} \glref{module} is automatically loaded by the GBBopen
 \mbox{\code{\var{<install-directory>\/}/startup.lisp}} file (via the
-\code{mini-module-loader.lisp} file located in the \code{mini-module}
+\code{module-manager-loader.lisp} file located in the \code{module-manager}
 subdirectory). If a \code{gbbopen-init.lisp} file (source or compiled) is
 present in the user's ``home'' directory, it is loaded immediately following
-the loading of the Mini Module facility by the
+the loading of the Module Manager Facility by the
 \code{\var{<install-directory>\/}/startup.lisp} file.  A personal
 \code{\var{<homedir>\/}/gbbopen-init.lisp} file is very useful for defining
 GBBopen parameters and other personalizations
@@ -1889,32 +1890,32 @@ GBBopen parameters and other personalizations
 \T\subsubsection*{Stand-alone usage}
 \W\xml{h3}Stand-alone usage\xml{/h3}
 
-To bootstrap the Mini Module facility stand-alone (separate from the GBBopen
+To bootstrap the Module Manager Facility stand-alone (separate from the GBBopen
 Project software tree), do the following:
 \begin{tightitemize}
-\item create a ``root'' directory to contain the mini-module software tree\\
+\item create a ``root'' directory to contain the Module Manager software tree\\
   (for example: \code{\$ mkdir my-tree})
-\item create the mini-module portion of the source tree in the newly created
+\item create the Module Manager portion of the source tree in the newly created
   ``root'' directory\\
-  (for example: \code{\$ cd my-tree ; mkdir -p source/mini-module})
+  (for example: \code{\$ cd my-tree ; mkdir -p source/module-manager})
 \item copy the
-  \xsitelink{\code{mini-module-loader.lisp}}{http://gbbopen.org/svn/GBBopen/trunk/source/mini-module/mini-module-loader.lisp},
+  \xsitelink{\code{module-manager-loader.lisp}}{http://gbbopen.org/svn/GBBopen/trunk/source/module-manager/module-manager-loader.lisp},
   \W~
-  \xsitelink{\code{mini-module.lisp}}{http://gbbopen.org/svn/GBBopen/trunk/source/mini-module/mini-module.lisp},
+  \xsitelink{\code{module-manager.lisp}}{http://gbbopen.org/svn/GBBopen/trunk/source/module-manager/module-manager.lisp},
   \W~
   and
-  \xsitelink{\code{mini-module-user.lisp}}{http://gbbopen.org/svn/GBBopen/trunk/source/mini-module/mini-module-user.lisp}
+  \xsitelink{\code{module-manager-user.lisp}}{http://gbbopen.org/svn/GBBopen/trunk/source/module-manager/module-manager-user.lisp}
   files into the\\
-  \code{source/mini-module} directory
+  \code{source/module-manager} directory
 \item start your Common Lisp implementation and then load the
-  \code{mini-module-loader.lisp} file\\
-~~~\code{> (load "my-tree/source/mini-module/mini-module-loader")}
-\item compile the \code{:mini-module} and \code{:mini-module-user} modules:\\
-~~~\code{> (mini-module:\entlink{compile-module} :mini-module-user :create-dirs :propagate)}
+  \code{module-manager-loader.lisp} file\\
+~~~\code{> (load "my-tree/source/module-manager/module-manager-loader")}
+\item compile the \code{:module-manager} and \code{:module-manager-user} modules:\\
+~~~\code{> (module-manager:\entlink{compile-module} :module-manager-user :create-dirs :propagate)}
 \end{tightitemize}
 %
-The Mini Module facility can now be used stand-alone by loading
-\code{source/mini-module-loader.lisp} as part of your Common Lisp
+The Module Manager can now be used stand-alone by loading
+\code{source/module-manager-loader.lisp} as part of your Common Lisp
 initialization.
 
 \W\entities
@@ -1935,9 +1936,9 @@ initialization.
 in the compiled-file tree should be created when needed.
 
 \fnpackage \code{:common-lisp-user} 
-(also imported into and exported from \code{:mini-module})
+(also imported into and exported from \code{:module-manager})
 
-\fnmodule \code{:mini-module}
+\fnmodule \code{:module-manager}
 
 \fnvaluetype A \glref{generalized~boolean}
 
@@ -1977,9 +1978,9 @@ tree, rather than generating a continuable error:
 \glref{autorun~forms} when it is loaded.
 
 \fnpackage \code{:common-lisp-user}
-(also imported into and exported from \code{:mini-module})
+(also imported into and exported from \code{:module-manager})
 
-\fnmodule \code{:mini-module}
+\fnmodule \code{:module-manager}
 
 \fnvaluetype A \glref{generalized~boolean}
 
@@ -2022,12 +2023,12 @@ Conditionally evaluate the \code{http-test} function when the file
 \fnsyntax
 
 \fnpurpose Controls whether regular files (non-\glref{patch} files) in
-\glref{modules} are compiled and loaded by the Mini Module Facility.
+\glref{modules} are compiled and loaded by the Module Manager.
 
 \fnpackage \code{:common-lisp-user} 
-(also imported into and exported from \code{:mini-module})
+(also imported into and exported from \code{:module-manager})
 
-\fnmodule \code{:mini-module}
+\fnmodule \code{:module-manager}
 
 \fnvaluetype A \glref{generalized~boolean}
 
@@ -2076,9 +2077,9 @@ Compile, load, and freeze the GBBopen application defined by \glref{module}
 
 \fnpurpose Compiles and loads the files in a \glref{module}.
 
-\fnpackage \code{:mini-module}
+\fnpackage \code{:module-manager}
 
-\fnmodule \code{:mini-module}
+\fnmodule \code{:module-manager}
 
 \fnargs
 \begin{args}{module-name}
@@ -2146,9 +2147,9 @@ default values for the command.
 \fnpurpose Continue the definition of a multiple top-level form \glref{patch} to
 a \glref{module}.
 
-\fnpackage \code{:mini-module}
+\fnpackage \code{:module-manager}
 
-\fnmodule \code{:mini-module}
+\fnmodule \code{:module-manager}
 
 \fnargs
 \begin{args}{description}
@@ -2237,11 +2238,11 @@ in the \code{patches} subdirectory of the module):
 
 \fnsyntax 
 
-\fnpurpose Defines a \glref{module} to the Mini Module facility.
+\fnpurpose Defines a \glref{module} to the Module Manager Facility.
 
-\fnpackage \code{:mini-module}
+\fnpackage \code{:module-manager}
 
-\fnmodule \code{:mini-module}
+\fnmodule \code{:module-manager}
 
 \fnargs
 \begin{args}{module-options}
@@ -2418,9 +2419,9 @@ Add two \glref{patch} files to the \code{:my-app} \glref{module}:
 \glref{relative~directory} or to the directory specification of a
 \glref{module} definition.
 
-\fnpackage \code{:mini-module}
+\fnpackage \code{:module-manager}
 
-\fnmodule \code{:mini-module}
+\fnmodule \code{:module-manager}
 
 \fnargs
 \begin{args}{subdirectories}
@@ -2489,9 +2490,9 @@ Define a data directory sibling to the \code{source} directory of
 
 \fnpurpose Define a \glref{root~directory}.
 
-\fnpackage \code{:mini-module}
+\fnpackage \code{:module-manager}
 
-\fnmodule \code{:mini-module}
+\fnmodule \code{:module-manager}
 
 \fnargs
 \begin{args}{directory-specification}
@@ -2577,9 +2578,9 @@ a separate ``beta'' compile tree:
 
 \fnpurpose Print information about a \glref{module}.
 
-\fnpackage \code{:mini-module}
+\fnpackage \code{:module-manager}
 
-\fnmodule \code{:mini-module}
+\fnmodule \code{:module-manager}
 
 \fnargs
 \begin{args}{module-name}
@@ -2609,7 +2610,7 @@ Describe the \code{:gbbopen-test} \glref{module} before it has been loaded:
   > (describe-module :gbbopen-test)
   Module :gbbopen-test (not loaded)
     Requires: (:gbbopen-user)
-    Fully expanded requires: (:mini-module :mini-module-user :portable-threads
+    Fully expanded requires: (:module-manager :module-manager-user :portable-threads
                               :gbbopen-tools :gbbopen-core :os-interface :gbbopen-user)
     Source directory: \var{<install-dir>\/}/source/gbbopen/test/
     Compiled directory: \var{<install-dir>\/}/\var{<platform-dir>\/}/gbbopen/test/
@@ -2627,7 +2628,7 @@ Describe the \code{:gbbopen-test} \glref{module} after it has been loaded:
   > (describe-module :gbbopen-test)
   Module :gbbopen-test (loaded)
     Requires: (:gbbopen-user)
-    Fully expanded requires: (:mini-module :mini-module-user :portable-threads
+    Fully expanded requires: (:module-manager :module-manager-user :portable-threads
                               :gbbopen-tools :gbbopen-core :os-interface :gbbopen-user)
     Source directory: \var{<install-dir>\/}/source/gbbopen/test/
     Compiled directory: \var{<install-dir>\/}/\var{<platform-dir>\/}/gbbopen/test/
@@ -2649,9 +2650,9 @@ Describe the \code{:gbbopen-test} \glref{module} after it has been loaded:
 
 \fnpurpose Print information about \glref{patch} \var{id\/} to a \var{module}.
 
-\fnpackage \code{:mini-module}
+\fnpackage \code{:module-manager}
 
-\fnmodule \code{:mini-module}
+\fnmodule \code{:module-manager}
 
 \fnargs
 \begin{args}{module-name}
@@ -2710,9 +2711,9 @@ module has not been loaded):
 \fnpurpose Finish the definition of a multiple top-level form \glref{patch} to
 a \glref{module}.
 
-\fnpackage \code{:mini-module}
+\fnpackage \code{:module-manager}
 
-\fnmodule \code{:mini-module}
+\fnmodule \code{:module-manager}
 
 \fnargs
 \begin{args}{description}
@@ -2803,9 +2804,9 @@ in the \code{patches} subdirectory of the module):
 \fnpurpose Return the pathname based on a \glref{root~directory}, a
 \glref{relative~directory}, or a \glref{module}.
 
-\fnpackage \code{:mini-module}
+\fnpackage \code{:module-manager}
 
-\fnmodule \code{:mini-module}
+\fnmodule \code{:module-manager}
 
 \fnargs
 \begin{args}{directory-specification}
@@ -2890,9 +2891,9 @@ Return the pathname of the \code{:gbbopen-user} \glref{module}:
 \fnpurpose Return the information describing \glref{patch} \var{id\/} to a
 \var{module}.
 
-\fnpackage \code{:mini-module}
+\fnpackage \code{:module-manager}
 
-\fnmodule \code{:mini-module}
+\fnmodule \code{:module-manager}
 
 \fnargs
 \begin{args}{module-name}
@@ -2972,9 +2973,9 @@ module has not been loaded):
 \fnpurpose Return the pathname of the \glref{root~directory} of a
 \glref{root~directory}, a \glref{relative~directory}, or a \glref{module}.
 
-\fnpackage \code{:mini-module}
+\fnpackage \code{:module-manager}
 
-\fnmodule \code{:mini-module}
+\fnmodule \code{:module-manager}
 
 \fnargs
 \begin{args}{pathname}
@@ -3042,9 +3043,9 @@ Return the \glref{root-directory} pathname of the \code{:gbbopen-user}
 
 \fnpurpose Load the files in a \glref{module}.
 
-\fnpackage \code{:mini-module}
+\fnpackage \code{:module-manager}
 
-\fnmodule \code{:mini-module}
+\fnmodule \code{:module-manager}
 
 \fnargs
 \begin{args}{module-name}
@@ -3110,9 +3111,9 @@ default values for the command.
 
 \fnpurpose Load a single file from a \glref{module}.
 
-\fnpackage \code{:mini-module}
+\fnpackage \code{:module-manager}
 
-\fnmodule \code{:mini-module}
+\fnmodule \code{:module-manager}
 
 \fnargs
 \begin{args}{module-name}
@@ -3166,9 +3167,9 @@ Tools \glref{module}:
 
 \fnpurpose Return the source and compiled directories of a \glref{module}.
 
-\fnpackage \code{:mini-module}
+\fnpackage \code{:module-manager}
 
-\fnmodule \code{:mini-module}
+\fnmodule \code{:module-manager}
 
 \fnargs
 \begin{args}{module-name}
@@ -3215,9 +3216,9 @@ Return the source and compiled directories of the Agenda Shell \glref{module}:
 \fnpurpose Return a value indicating whether a \glref{module} has been fully
 loaded into Common Lisp.
 
-\fnpackage \code{:mini-module}
+\fnpackage \code{:module-manager}
 
-\fnmodule \code{:mini-module}
+\fnmodule \code{:module-manager}
 
 \fnargs
 \begin{args}{module-name}
@@ -3260,9 +3261,9 @@ Check if the Agenda Shell \glref{module} has been loaded:
 
 \fnpurpose Define a \glref{patch} to a \glref{module}.
 
-\fnpackage \code{:mini-module}
+\fnpackage \code{:module-manager}
 
-\fnmodule \code{:mini-module}
+\fnmodule \code{:module-manager}
 
 \fnargs
 \begin{args}{description}
@@ -3343,9 +3344,9 @@ and add the patch file to the \code{:my-app} \glref{module}:
 \fnpurpose Determine if \glref{patch} \var{id\/} to \var{module} has been
 loaded.
 
-\fnpackage \code{:mini-module}
+\fnpackage \code{:module-manager}
 
-\fnmodule \code{:mini-module}
+\fnmodule \code{:module-manager}
 
 \fnargs
 \begin{args}{module-name}
@@ -3415,9 +3416,9 @@ module has not been loaded):
 
 \fnpurpose Show all \glref{root} and \glref{relative-directory} definitions.
 
-\fnpackage \code{:mini-module}
+\fnpackage \code{:module-manager}
 
-\fnmodule \code{:mini-module}
+\fnmodule \code{:module-manager}
 
 \begin{alsos}{define-relative-directory}
 \also[define-relative-directory]
@@ -3442,7 +3443,7 @@ List the currently defined \glref{root} and \glref{relative~directories}:
   :gbbopen-tools
       Relative to :gbbopen-root
       Subdirectories: ("tools")
-  :mini-module-root
+  :module-manager-root
       Root: \var{<install-dir>\/}
   >
 \end{example}
@@ -3463,9 +3464,9 @@ List the currently defined \glref{root} and \glref{relative~directories}:
 \fnpurpose Start the definition of a multiple top-level form \glref{patch} to
 a \glref{module}.
 
-\fnpackage \code{:mini-module}
+\fnpackage \code{:module-manager}
 
-\fnmodule \code{:mini-module}
+\fnmodule \code{:module-manager}
 
 \fnargs
 \begin{args}{description}
@@ -3562,9 +3563,9 @@ in the \code{patches} subdirectory of the module):
 \fnpurpose Defer \glref{required-module} order checking of \glref{module}
 definitions in \var{forms} until all \var{forms} have been processed.
 
-\fnpackage \code{:mini-module}
+\fnpackage \code{:module-manager}
 
-\fnmodule \code{:mini-module}
+\fnmodule \code{:module-manager}
 
 \fnargs
 \begin{args}{form}
@@ -3745,9 +3746,9 @@ optimizations disabled:
 \fnpurpose Suppress redefinition warnings associated with processing 
 \var{forms} when possible.
 
-\fnpackage \code{:gbbopen-tools} (home package is \code{:mini-module})
+\fnpackage \code{:gbbopen-tools} (home package is \code{:module-manager})
 
-\fnmodule \code{:mini-module}
+\fnmodule \code{:module-manager}
 
 \fnargs
 \begin{args}{form}
@@ -3780,10 +3781,10 @@ optimizations disabled:
 \end{example}
 
 \fnnote
-\indexit{module!:mini-module@\code{:mini-module}}%
-\indexit{:mini-module@\code{:mini-module} module}%
+\indexit{module!:module-manager@\code{:module-manager}}%
+\indexit{:module-manager@\code{:module-manager} module}%
 %
-This variable is defined in the \code{:mini-module} \glref{module} in order to
+This variable is defined in the \code{:module-manager} \glref{module} in order to
 make it available as early as possible.
 
 At present, redefinition warnings are not suppressed on
@@ -5543,9 +5544,9 @@ information.
 \fnpurpose Assist debugging by printing forms and the results of
 evaluating them to \code{*trace-output*}.
 
-\fnpackage \code{:gbbopen-tools} (home package is \code{:mini-module})
+\fnpackage \code{:gbbopen-tools} (home package is \code{:module-manager})
 
-\fnmodule \code{:mini-module}
+\fnmodule \code{:module-manager}
 
 \fnargs
 \begin{args}{results}
@@ -5587,10 +5588,10 @@ double-quote characters.
 \end{example}
 
 \fnnote
-\indexit{module!:mini-module@\code{:mini-module}}%
-\indexit{:mini-module@\code{:mini-module} module}%
+\indexit{module!:module-manager@\code{:module-manager}}%
+\indexit{:module-manager@\code{:module-manager} module}%
 %
-This variable is defined in the \code{:mini-module} \glref{module} in order to
+This variable is defined in the \code{:module-manager} \glref{module} in order to
 make it available as early as possible.
 
 \end{functiondoc}
@@ -8155,9 +8156,9 @@ time parsing and formatting entities.
 \fnpurpose Control month and date ordering for GBBopen Tools date and time
 entities.
 
-\fnpackage \code{:gbbopen-tools} (home package is \code{:mini-module})
+\fnpackage \code{:gbbopen-tools} (home package is \code{:module-manager})
 
-\fnmodule \code{:mini-module}
+\fnmodule \code{:module-manager}
 
 \fnvaluetype A \glref{generalized~boolean}
 
@@ -8184,10 +8185,10 @@ Toggle between date formatting options:
 \end{example}
 
 \fnnote
-\indexit{module!:mini-module@\code{:mini-module}}%
-\indexit{:mini-module@\code{:mini-module} module}%
+\indexit{module!:module-manager@\code{:module-manager}}%
+\indexit{:module-manager@\code{:module-manager} module}%
 %
-This variable is defined in the \code{:mini-module} \glref{module} in order to
+This variable is defined in the \code{:module-manager} \glref{module} in order to
 make it available as early as possible.
 
 \end{functiondoc}
@@ -8204,9 +8205,9 @@ make it available as early as possible.
 
 \fnpurpose Generate a brief date description.
 
-\fnpackage \code{:gbbopen-tools} (home package is \code{:mini-module})
+\fnpackage \code{:gbbopen-tools} (home package is \code{:module-manager})
 
-\fnmodule \code{:mini-module}
+\fnmodule \code{:module-manager}
 
 \fnargs
 \begin{args}{universal-time}
@@ -8265,10 +8266,10 @@ Display the date 10 days ago:
 \end{example}
 
 \fnnote
-\indexit{module!:mini-module@\code{:mini-module}}%
-\indexit{:mini-module@\code{:mini-module} module}%
+\indexit{module!:module-manager@\code{:module-manager}}%
+\indexit{:module-manager@\code{:module-manager} module}%
 %
-This function is loaded with the \code{:mini-module} \glref{module} in order
+This function is loaded with the \code{:module-manager} \glref{module} in order
 to to make it available as early as possible.
 
 \end{functiondoc}
@@ -8286,9 +8287,9 @@ to to make it available as early as possible.
 
 \fnpurpose Generate a brief date-and-time description.
 
-\fnpackage \code{:gbbopen-tools} (home package is \code{:mini-module})
+\fnpackage \code{:gbbopen-tools} (home package is \code{:module-manager})
 
-\fnmodule \code{:mini-module}
+\fnmodule \code{:module-manager}
 
 \fnargs
 \begin{args}{universal-time}
@@ -8387,10 +8388,10 @@ The date and time 100 days ago (with seconds):
 \end{example}
 
 \fnnote
-\indexit{module!:mini-module@\code{:mini-module}}%
-\indexit{:mini-module@\code{:mini-module} module}%
+\indexit{module!:module-manager@\code{:module-manager}}%
+\indexit{:module-manager@\code{:module-manager} module}%
 %
-This function is loaded with the \code{:mini-module} \glref{module} in order
+This function is loaded with the \code{:module-manager} \glref{module} in order
 to to make it available as early as possible.
 
 \end{functiondoc}
@@ -8548,9 +8549,9 @@ pointer (default is \nil)
 
 \fnpurpose Parse a date-specification string.
 
-\fnpackage \code{:gbbopen-tools} (home package is \code{:mini-module})
+\fnpackage \code{:gbbopen-tools} (home package is \code{:module-manager})
 
-\fnmodule \code{:mini-module}
+\fnmodule \code{:module-manager}
 
 \fnargs
 \begin{args}{month-precedes-date}
@@ -8624,10 +8625,10 @@ have passed, in which case next year is assumed.
 \end{example}
 
 \fnnote
-\indexit{module!:mini-module@\code{:mini-module}}%
-\indexit{:mini-module@\code{:mini-module} module}%
+\indexit{module!:module-manager@\code{:module-manager}}%
+\indexit{:module-manager@\code{:module-manager} module}%
 %
-This function is loaded with the \code{:mini-module} \glref{module} in order
+This function is loaded with the \code{:module-manager} \glref{module} in order
 to to make it available as early as possible.
 \end{functiondoc}
 

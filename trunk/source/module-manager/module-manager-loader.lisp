@@ -1,13 +1,13 @@
-;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE; Syntax:common-lisp -*-
-;;;; *-* File: /usr/local/gbbopen/source/mini-module/mini-module-loader.lisp *-*
+;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER; Syntax:common-lisp -*-
+;;;; *-* File: /usr/local/gbbopen/source/module-manager/module-manager-loader.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jul  2 17:36:41 2008 *-*
+;;;; *-* Last-Edit: Sun Aug 31 14:49:42 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
 ;;;; *
-;;;; *                 Mini-Module System Bootstrap Loader
+;;;; *                 Module-Manager System Bootstrap Loader
 ;;;; *
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -20,21 +20,21 @@
 ;;;
 ;;; Stand-alone Use:
 ;;;
-;;;    To use the Mini-Module System separate from the GBBopen Project
+;;;    To use the Module-Manager System separate from the GBBopen Project
 ;;;    software tree, do the following:
-;;;      1. Create a "root" directory to contain the mini-module software tree
+;;;      1. Create a "root" directory to contain the module-manager software tree
 ;;;         (e.g., $ mkdir my-tree)
-;;;      2. Create the mini-module portion of the source tree in that 
-;;;         "root" directory  (e.g., $ cd my-tree; mkdir -p source/mini-module)
-;;;      3. Copy the mini-module-loader.lisp, mini-module.lisp, and
-;;;         mini-module-user.lisp files into the source/mini-module directory
-;;;      4. Start your CL and then load the mini-module-loader.lisp file:
-;;;          > (load "my-tree/source/mini-module/mini-module-loader")
-;;;      5. Compile the :mini-module and :mini-module-user modules:
-;;;          > (mini-module:compile-module :mini-module-user
+;;;      2. Create the module-manager portion of the source tree in that 
+;;;         "root" directory  (e.g., $ cd my-tree; mkdir -p source/module-manager)
+;;;      3. Copy the module-manager-loader.lisp, module-manager.lisp, and
+;;;         module-manager-user.lisp files into the source/module-manager directory
+;;;      4. Start your CL and then load the module-manager-loader.lisp file:
+;;;          > (load "my-tree/source/module-manager/module-manager-loader")
+;;;      5. Compile the :module-manager and :module-manager-user modules:
+;;;          > (module-manager:compile-module :module-manager-user
 ;;;                                        :create-dirs :propagate)
-;;;    The Mini-Module Facility can now be used stand-alone by loading
-;;;    source/mini-module-loader.lisp as part of your Common Lisp
+;;;    The Module-Manager Facility can now be used stand-alone by loading
+;;;    source/module-manager-loader.lisp as part of your Common Lisp
 ;;;    initialization.
 ;;;
 ;;; Porting Notice:
@@ -44,9 +44,9 @@
 ;;;       *compiled-file-type*
 ;;;    must be extended when porting to a new CL implementation.
 ;;;
-;;;  This file defines the :mini-module package and the global variables
+;;;  This file defines the :module-manager package and the global variables
 ;;;  *compiled-directory-name* and *compiled-file-type*.  It then loads either
-;;;  the source or compiled mini-module file (whichever is more recent).
+;;;  the source or compiled module-manager file (whichever is more recent).
 ;;;
 ;;;  This file is used as source only.
 ;;;
@@ -62,11 +62,12 @@
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-(unless (find-package ':mini-module)
-  (make-package ':mini-module 
-                :use '(:common-lisp)))
+(unless (find-package ':module-manager)
+  (make-package ':module-manager 
+                :use '(:common-lisp)
+                :nicknames '(:mini-module)))
 
-(in-package :mini-module)
+(in-package :module-manager)
 
 (export '(need-to-port                  ; not documented
           ))
@@ -109,10 +110,10 @@
   (pushnew ':clozure *features*))
 
 ;;; ===========================================================================
-;;; The mini-module system uses a separate compiled directory tree for each CL
+;;; The module-manager system uses a separate compiled directory tree for each CL
 ;;; implementation and version.  The following form creates a unique name for
 ;;; the root of this tree for a number of CL implementations.  If you use the
-;;; mini-module system with another CL implementation, you should add that
+;;; module-manager system with another CL implementation, you should add that
 ;;; implementation to the *compiled-directory-name* form and e-mail the
 ;;; modified form to the GBBopen Project (bugs@GBBopen.org) for inclusion in
 ;;; future releases.
@@ -255,9 +256,9 @@
 ;;; ===========================================================================
 ;;;  Compiled File Type
 ;;;
-;;; The mini-module system needs to know the file type of compiled files.  The
+;;; The module-manager system needs to know the file type of compiled files.  The
 ;;; following form specifies the compiled-file type for a number of CL
-;;; implementations. If you use the mini-module system with another CL
+;;; implementations. If you use the module-manager system with another CL
 ;;; implementation, you should add that implementation to the
 ;;; *compiled-file-type* form and e-mail the modified form to the GBBopen
 ;;; Project (bugs@GBBopen.org) for inclusion in future releases.
@@ -311,7 +312,7 @@
      (need-to-port *compiled-file-type*)))
 
 ;;; ===========================================================================
-;;;  Load the mini-module system (source or compiled file)
+;;;  Load the module-manager system (source or compiled file)
 
 (let* ((this-file-truename *load-truename*)
        (root-pathname
@@ -332,7 +333,7 @@
                     :name name
                     :type "lisp"
                     :directory `(,@(pathname-directory root-pathname)
-                                   "source" "mini-module")
+                                   "source" "module-manager")
                     :version :newest
                     :defaults root-pathname))
                   (compiled-path
@@ -340,7 +341,7 @@
                     :type *compiled-file-type*
                     :directory `(,@(pathname-directory root-pathname)
                                    ,*compiled-directory-name* 
-                                   "mini-module")
+                                   "module-manager")
                     :defaults source-path))
                   (source-file-date 
                    (or (file-write-date source-path) 0))
@@ -352,7 +353,7 @@
              (load (if (> compiled-file-date source-file-date)
                        compiled-path
                        source-path)))))
-    (load-source-or-compiled-file "mini-module")))
+    (load-source-or-compiled-file "module-manager")))
 
 ;;; ===========================================================================
 ;;;				  End of File

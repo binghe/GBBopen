@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/events.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Jun 14 15:20:34 2008 *-*
+;;;; *-* Last-Edit: Sun Aug 31 16:35:30 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -20,7 +20,7 @@
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
 ;;;  05-04-03 File created.  (Corkill)
-;;;  03-17-04 Added wITH-EVENTS-DISABLED/ENABLED.  (Corkill)
+;;;  03-17-04 Added WITH-EVENTS-DISABLED/ENABLED.  (Corkill)
 ;;;  06-22-04 Initial instance-event functions/signaling.  (Corkill)
 ;;;  07-07-04 Added EVFN-PRINTV.  (Corkill)
 ;;;  07-15-04 Core space-instance-event functions/signaling.  (Corkill)

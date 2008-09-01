@@ -5,7 +5,7 @@
 <!-- XML file produced from file: tutorial.tex
      using Hyperlatex v 2.9-in-waiting-rk (c) Otfried Cheong -->
 <head>
-<title>GBBopen 1.1 Tutorial -- Starting GBBopen</title>
+<title>GBBopen 1.2 Tutorial -- Starting GBBopen</title>
 </p>
 <link rel="SHORTCUT ICON" href="favicon.ico"><link rel=stylesheet
         href="gbbopen.css" type="text/css" />
@@ -378,9 +378,9 @@ installed:
 <pre class="pretop">
 <font color="#667f66">  cl-user&gt; <font color="#000000">(load "<var>&lt;install-dir&gt;</var>/startup.lisp")</font>
   ;; Loading <var>&lt;install-dir&gt;</var>/startup.lisp
-  ;;  Loading <var>&lt;install-dir&gt;</var>/source/mini-module/mini-module-loader.lisp
-  ;;   Loading <var>&lt;install-dir&gt;</var>/source/mini-module/mini-module.lisp
-  ;;     Loading <var>&lt;install-dir&gt;</var>/source/mini-module/mini-module-user.lisp
+  ;;  Loading <var>&lt;install-dir&gt;</var>/source/module-manager/module-manager-loader.lisp
+  ;;   Loading <var>&lt;install-dir&gt;</var>/source/module-manager/module-manager.lisp
+  ;;     Loading <var>&lt;install-dir&gt;</var>/source/module-manager/module-manager-user.lisp
   ;;  Loading <var>&lt;install-dir&gt;</var>/source/modules.lisp
   t
   cl-user&gt;</font>
@@ -388,9 +388,9 @@ installed:
 <a name="id13">Then</a> compile and load the <code>:gbbopen-user</code> module and all the
 GBBopen modules it requires by evaluating:
 <pre>
-<font color="#667f66">  cl-user&gt; <font color="#000000">(mini-module:compile-module :gbbopen-user :propagate :create-dirs)</font>
-  ;; Compiling <var>&lt;install-dir&gt;</var>/source/mini-module/mini-module.lisp
-  ;; Loading <var>&lt;install-dir&gt;</var>/<var>&lt;platform-dir&gt;</var>/mini-module/mini-module.fasl
+<font color="#667f66">  cl-user&gt; <font color="#000000">(module-manager:compile-module :gbbopen-user :propagate :create-dirs)</font>
+  ;; Compiling <var>&lt;install-dir&gt;</var>/source/module-manager/module-manager.lisp
+  ;; Loading <var>&lt;install-dir&gt;</var>/<var>&lt;platform-dir&gt;</var>/module-manager/module-manager.fasl
        ...
   ;; Compiling <var>&lt;install-dir&gt;</var>/source/gbbopen/gbbopen-user.lisp
   ;; Loading <var>&lt;install-dir&gt;</var>/<var>&lt;platform-dir&gt;</var>/gbbopen/gbbopen-user.fasl

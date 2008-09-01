@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jul 23 03:27:26 2008 *-*
+;;;; *-* Last-Edit: Sun Aug 31 16:33:49 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -151,11 +151,11 @@
             decf$&/delete-acons
             decf$$/delete-acons
             decf$$$/delete-acons
-            define-directory            ; in mini-module, but part of tools
+            define-directory            ; in module-manager, but part of tools
             delq
             do-until
             dosequence
-            dotted-conc-name            ; in mini-module, but part of tools;
+            dotted-conc-name            ; in module-manager, but part of tools;
                                         ; not documented
             dotted-length
             ecase-using

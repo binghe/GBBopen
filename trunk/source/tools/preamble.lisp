@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/preamble.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Jul 20 02:36:51 2008 *-*
+;;;; *-* Last-Edit: Sun Aug 31 16:28:47 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -36,18 +36,18 @@
 
 (in-package :gbbopen-tools)
 
-;;; We require the :mini-module package for a few entities (see
-;;; ../mini-module/mini-module.lisp for details):
+;;; We require the :module-manager package for a few entities (see
+;;; ../module-manager/module-manager.lisp for details):
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (let ((mini-module-package (find-package ':mini-module)))
-    (if mini-module-package
-        (use-package (list mini-module-package))
+  (let ((module-manager-package (find-package ':module-manager)))
+    (if module-manager-package
+        (use-package (list module-manager-package))
         (let ((truename *load-truename*))
           (error "The file ~s is required by ~s"
                  (make-pathname 
                   :directory (append (butlast (pathname-directory truename)) 
-                                     '("mini-module"))
-                  :name "mini-module"
+                                     '("module-manager"))
+                  :name "module-manager"
                   :defaults truename)
                  truename)))))
 
@@ -58,7 +58,7 @@
   (import '(common-lisp-user::*gbbopen-install-root*
             common-lisp-user::*preferred-browser*
             common-lisp-user::*inf-reader-escape-hook*
-            mini-module:printv)))
+            module-manager:printv)))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(*gbbopen-install-root*      ; re-export, not documented
@@ -67,7 +67,7 @@
             hyperdoc-filename           ; not yet documented
             hyperdoc-url                ; not yet documented
             object-address
-            printv                      ; in mini-module, but part of tools
+            printv                      ; in module-manager, but part of tools
             with-gensyms
             with-once-only-bindings)))  ; not yet documented
 

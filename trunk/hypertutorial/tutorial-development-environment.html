@@ -5,7 +5,7 @@
 <!-- XML file produced from file: tutorial.tex
      using Hyperlatex v 2.9-in-waiting-rk (c) Otfried Cheong -->
 <head>
-<title>GBBopen 1.1 Tutorial -- Enhancing Your Development Environment</title>
+<title>GBBopen 1.2 Tutorial -- Enhancing Your Development Environment</title>
 </p>
 <link rel="SHORTCUT ICON" href="favicon.ico"><link rel=stylesheet
         href="gbbopen.css" type="text/css" />
@@ -37,7 +37,7 @@ Thus far, we have entered the forms:
 <pre class="pretop">
 <font color="#667f66">  cl-user&gt; <font color="#000000">(load "<var>&lt;install-dir&gt;</var>/startup.lisp")</font>
      ...
-  cl-user&gt; <font color="#000000">(mini-module:compile-module :gbbopen-user :propagate :create-dirs)</font>
+  cl-user&gt; <font color="#000000">(module-manager:compile-module :gbbopen-user :propagate :create-dirs)</font>
      ...
   cl-user&gt; <font color="#000000">(in-package :gbbopen-user)</font>
   #&lt;package GBBOPEN-USER&gt;
@@ -79,7 +79,7 @@ Common Lisp session and enter the following form in the REPL:
   cl-user&gt;</font>
 </pre>
 </p>
-<p><a name="id2">Note</a> that the Mini Module system and GBBopen
+<p><a name="id2">Note</a> that the Module Manager Facility and GBBopen
 module definitions have not been loaded.  Now enter the REPL
 command, <b>:gbbopen-user</b>:
 <pre class="pretop">
@@ -98,7 +98,7 @@ current package is set to <code>:gbbopen-user</code>:
 </pre>
 </p>
 <p>Module-compilation REPL commands, such as <code>:gbbopen-user</code>,
-always include the <code>:propagate</code> option when they call the Mini Module
+always include the <code>:propagate</code> option when they call the Module Manager's
 <b>compile-module</b> function.  We don't need to specify it as a command
 option.
 </p>

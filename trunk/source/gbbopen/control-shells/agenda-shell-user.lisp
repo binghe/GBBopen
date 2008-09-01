@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-USER; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/source/gbbopen/control-shells/agenda-shell-user.lisp *-*
+;;;; *-* File: /usr/local/gbbopen/source/gbbopen/control-shells/agenda-shell-user.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Feb 16 11:50:10 2008 *-*
-;;;; *-* Machine: whirlwind.corkills.org *-*
+;;;; *-* Last-Edit: Sun Aug 31 16:39:24 2008 *-*
+;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -19,16 +19,16 @@
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
-;;;  08-20-05 File Created.  (Corkill)
+;;;  08-20-05 File created.  (Corkill)
 ;;;  02-15-08 Add :portable-threads use.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 (in-package :gbbopen-user)
 
-;;; This file (and the :agenda-shell-user module), simply adds the
-;;; :portable-threads and :agenda-shell package use to the
-;;; :gbbopen-user module.
+;;; This file (and the :agenda-shell-user module), simply adds
+;;; :portable-threads and :agenda-shell package use to the :gbbopen-user
+;;; module.
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (use-package '(:portable-threads :agenda-shell)))

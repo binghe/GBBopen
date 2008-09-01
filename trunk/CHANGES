@@ -1,31 +1,30 @@
-Important changes since GBBopen 1.1:
+Important changes since GBBopen 1.2:
+
+None yet
+
+
+Important changes in GBBopen 1.2:
 
   * The :clos package nickname is no longer added by GBBopen, use the
     :gbbopen-tools package rather than :clos for CLOS/MOP entities
 
-  * Changes to Mini Module Facility
+  * The Mini Module Facility has been renamed to Module Manager Facility
+     - Module and package names have been renamed, as appropriate
+         :mini-module -> :module-manager
+         :mini-module-user -> :module-manager-user
+         (the old names are defined as package nicknames)
      - Support for patches added
          *PATCHES-ONLY*
          DESCRIBE-PATCHES
          GET-PATCH-DESCRIPTION
          PATCH (also START-PATCH, CONTINUE-PATCH, FINISH-PATCH)
          PATCH-LOADED-P
-     - Incremented Mini Module version to 1.4
-
-  * Changes to GBBopen Tools
-     - New :conditions option in WITH-ERROR-HANDLING
-     - Most declared-numeric operators are now functions with 
-       compiler-macros
-     - New pseudo-probability operators
-     - New CASE-USING, CCASE-USING, and ECASE-USING macros
-     - Added :coalesce-strings keyword to 
-       WITH-READING-SAVED/SENT-OBJECTS-BLOCK (and indirectly to 
-       LOAD-BLACKBOARD-REPOSITORY)
 
   * Changes to GBBopen Core       
      - Renamed CHECK-LINK-CONSISTENCY to CHECK-LINK-DEFINITIONS
-     - Replaced SAVE-BLACKBOARD-REPOSITORY :after-load-function with
-       :value
+     - New :value argument to SAVE-BLACKBOARD-REPOSITORY replaces
+       :after-load-function mechanism (this :value argument is also
+       new in GBBopen Tool's WITH-SAVING/SENDING-BLOCK)
 
   * New Agenda Shell functions
      - CURRENT-CONTROL-SHELL
@@ -87,13 +86,13 @@ Important changes in GBBopen 1.0:
                   Removes all commands, directory definitions, and 
                   module definitions associated with <system-name>
 
-  * Changes to Mini Module system
-     - Added Mini Module support for "Source" and "SOURCE" directory-name
-       conventions (in addition to the recommended "source")
+  * Changes to Module Manager Facility
+     - Added support for "Source" and "SOURCE" directory-name conventions
+       (in addition to the recommended "source")
      - Added application-version modifier support to DEFINE-ROOT-DIRECTORY
-     - New GET-ROOT-DIRECTORY Mini Module function
+     - New GET-ROOT-DIRECTORY function
      - New WITH-MODULE-REDEFINITIONS macro
-     - Incremented Mini Module version to 1.3
+     - Incremented version to 1.3
 
 
 Important changes in GBBopen 0.9.9:
@@ -134,7 +133,7 @@ Important changes in GBBopen 0.9.9:
   * New :nopropagate option to COMPILE-MODULE and LOAD-MODULE; improved
     remembering of REPL :cm and :lm command parameters 
 
-  * New :MINI-MODULE-USER package
+  * New :MODULE-MANAGER-USER package
 
   * New :CLASS-NAME-TRANSLATIONS argument added to LOAD-BLACKBOARD-REPOSITORY
     and WITH-READING-SAVED/SENT-OBJECTS-BLOCK
@@ -193,7 +192,7 @@ Important changes in GBBopen 0.9.7:
   * Save & load blackboard repository support; PRINT-OBJECT-FOR-SAVING/SENDING
     protocol
 
-  * Version 1.2 of the Mini-Module System
+  * Version 1.2 of the Module Manager Facility
      - Support for module-relative directory specifications; implicit module
        rooting
 

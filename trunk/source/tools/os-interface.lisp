@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/os-interface.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Jul 18 06:12:47 2008 *-*
+;;;; *-* Last-Edit: Mon Sep  1 06:18:36 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -258,7 +258,7 @@
   ;;; Note: user is responsbile for closing any external program streams of
   ;;; `os-process'
   #-(or allegro clozure cmu sbcl scl)
-  (declare (ignore os-process))
+  (declare (ignore os-process signal-number))
   #+allegro
   (progn
     ;; Not supported on Windows, but we'll let Allegro generate the error:

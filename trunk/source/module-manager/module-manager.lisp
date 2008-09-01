@@ -1,13 +1,13 @@
-;;;; -*- Mode:Common-Lisp; Package:MINI-MODULE; Syntax:common-lisp -*-
-;;;; *-* File: /usr/local/gbbopen/source/mini-module/mini-module.lisp *-*
+;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER; Syntax:common-lisp -*-
+;;;; *-* File: /usr/local/gbbopen/source/module-manager/module-manager.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Aug 20 09:41:45 2008 *-*
+;;;; *-* Last-Edit: Mon Sep  1 05:53:24 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
 ;;;; *
-;;;; *                         Mini Module System
+;;;; *                         Module Manager Facility
 ;;;; *
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -25,14 +25,14 @@
 ;;;
 ;;; --------------------------------------------------------------------------
 ;;;
-;;;  This Mini Module system provides a lightweight and easy to use
+;;;  This Module Manager Facility provides a lightweight and easy to use
 ;;;  mechanism for maintaining (compiling and loading) module files.
 ;;;
 ;;;  This file assumes the global variables *compiled-directory-name* and
 ;;;  *compiled-file-type* have been defined by loading
-;;;  mini-module-loader.lisp.
+;;;  module-manager-loader.lisp.
 ;;;
-;;;  The Mini Module system supports the following directory layout:
+;;;  The Module Manager Facility supports the following directory layout:
 ;;;
 ;;;                             <root-directory>
 ;;;                               /          \
@@ -40,15 +40,15 @@
 ;;;                           source    <compiled-cl-1>   ...
 ;;;                            / \            / \
 ;;;                           /  ..          ..  \
-;;;                     mini-module           mini-module
+;;;                    module-manager        module-manager
 ;;;                         /                      \
 ;;;                        /                        \
-;;;                mini-module.lisp            mini-module.<fasl>
+;;;               module-manager.lisp         module-manager.<fasl>
 ;;;
 ;;;  This file can be used as a stand-alone system (when loaded by its
-;;;  companion file, mini-module-loader.lisp).  Instructions for stand-alone
-;;;  usage of the Mini Module system are provided in the
-;;;  mini-module-startup.lisp file.
+;;;  companion file, module-manager-loader.lisp).  Instructions for stand-alone
+;;;  usage of the Module Manager Facility are provided in the
+;;;  module-manager-startup.lisp file.
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
@@ -57,7 +57,7 @@
 ;;;  01-29-04 Exported MODULE-LOADED-P.  (Corkill)
 ;;;  02-01-04 Support use of existing root-directory in DEFINE-ROOT-DIRECTORY.
 ;;;           (Corkill)
-;;;  03-19-04 Added top-level Mini Module commands for Lispworks.  (Corkill)
+;;;  03-19-04 Added top-level Module Manager commands for Lispworks.  (Corkill)
 ;;;  03-19-04 Added file-options checking.  (Corkill)
 ;;;  06-10-04 Added proper :forces-recompile date checking and warning
 ;;;           messages.  (Corkill)
@@ -82,7 +82,7 @@
 ;;;  07-14-07 Added subdirectories support to DEFINE-ROOT-DIRECTORY.  (Corkill)
 ;;;  07-14-07 Added :noautorun compile/load-module option.  (Corkill)
 ;;;  12-19-07 Added module-relative support to COMPUTE-RELATIVE-DIRECTORY and
-;;;           incremented Mini Module version to 1.2.  (Corkill)
+;;;           incremented Module Manager version to 1.2.  (Corkill)
 ;;;  01-05-08 Skip undefined modules when performing compatiblity-ordering
 ;;;           check of a module.  (Corkill) 
 ;;;  03-29-08 Added :nopropagate (:propagate canceling) compile/load-module 
@@ -97,11 +97,11 @@
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (unless (find-package ':mini-module)
+  (unless (find-package ':module-manager)
     (error "This file should be loaded using the file ~
-            mini-module-loader.lisp")))
+            module-manager-loader.lisp")))
          
-(in-package :mini-module)
+(in-package :module-manager)
 
 ;;; ---------------------------------------------------------------------------
 ;;;   Check if we are good to go:
@@ -110,7 +110,7 @@
          (unless (boundp var)
            (error "~s is not defined.~
                    (This file should be loaded using the file ~
-                    mini-module-loader.lisp)"
+                    module-manager-loader.lisp)"
                   var))))
   (check-var '*compiled-directory-name*)
   (check-var '*compiled-file-type*))
@@ -165,12 +165,12 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (import '(common-lisp-user::*automatically-create-missing-directories*
             common-lisp-user::*autorun-modules*
-            common-lisp-user::*mini-module-compile-verbose*
-            common-lisp-user::*mini-module-load-verbose*
+            common-lisp-user::*module-manager-compile-verbose*
+            common-lisp-user::*module-manager-load-verbose*
             common-lisp-user::*patches-only*)))
 
 ;;; ---------------------------------------------------------------------------
-;;;  Controls whether the Mini Module system automatically creates missing 
+;;;  Controls whether the Module Manager Facility automatically creates missing 
 ;;;  directories (without asking the user):
 
 (declaim (special *automatically-create-missing-directories*))
@@ -178,24 +178,24 @@
   (setf *automatically-create-missing-directories* nil))
 
 ;;; ---------------------------------------------------------------------------
-;;;  Controls whether the Mini Module system compiles/loads patches only:
+;;;  Controls whether the Module Manager Facility compiles/loads patches only:
 
 (declaim (special *patches-only*))
 (unless (boundp '*patches-only*)
   (setf *patches-only* nil))
 
 ;;; ---------------------------------------------------------------------------
-;;;  When true, the Mini Module system will generate its own compile & load
-;;;  messages if the corresponding *compile-verbose* or *load-verbose* values
-;;;  are nil.
+;;;  When true, the Module Manager Facility will generate its own compile &
+;;;  load messages if the corresponding *compile-verbose* or *load-verbose*
+;;;  values are nil.
 
-(declaim (special *mini-module-compile-verbose*))
-(unless (boundp '*mini-module-compile-verbose*)
-  (setf *mini-module-compile-verbose* nil))
+(declaim (special *module-manager-compile-verbose*))
+(unless (boundp '*module-manager-compile-verbose*)
+  (setf *module-manager-compile-verbose* nil))
 
-(declaim (special *mini-module-load-verbose*))
-(unless (boundp '*mini-module-load-verbose*)
-  (setf *mini-module-load-verbose* nil))
+(declaim (special *module-manager-load-verbose*))
+(unless (boundp '*module-manager-load-verbose*)
+  (setf *module-manager-load-verbose* nil))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Controls whether modules (such as GBBopen example and tests) autorun
@@ -215,8 +215,8 @@
   (sb-impl::enter-new-nicknames (find-package "SB-UNIX") '("UNIX")))
 
 ;;; ===========================================================================
-;;;  Export user-level Mini Module names.  (Some of these names could collide
-;;;  with similar names in other packages, but we export them anyway.)
+;;;  Export user-level Module Manager names.  (Some of these names could
+;;;  collide with similar names in other packages, but we export them anyway.)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(*automatically-create-missing-directories*  ; re-exported from
@@ -224,8 +224,8 @@
             *autorun-modules*           ; re-exported from :cl-user
             *current-module*            ; not documented
             *current-system-name*       ; re-exported from :cl-user
-            *mini-module-compile-verbose* ; not yet documented
-            *mini-module-load-verbose*  ; not yet documented
+            *module-manager-compile-verbose* ; not yet documented
+            *module-manager-load-verbose*  ; not yet documented
             *month-precedes-date*       ; part of tools, but placed here
             *patches-only*              ; re-exported from :cl-user
             allow-redefinition          ; part of tools, but placed here
@@ -252,7 +252,7 @@
             list-modules                ; not yet documented
             load-module
             load-module-file
-            mini-module-implementation-version ; not documented
+            module-manager-implementation-version ; not documented
             module-directories          ; not yet documented
             module-loaded-p
             parse-date                  ; part of tools, but placed here
@@ -271,29 +271,29 @@
 ;;; ===========================================================================
 
 (allow-redefinition
- (defun mini-module-implementation-version ()
-   "1.4"))
+ (defun module-manager-implementation-version ()
+   "1.5"))
 
 ;;; Added to *features* at the end of this file:
-(defparameter *mini-module-version-keyword* 
+(defparameter *module-manager-version-keyword* 
     ;; Support cross-case mode CLs:
-    (read-from-string (format nil ":mini-module-~a" 
-                              (mini-module-implementation-version))))
+    (read-from-string (format nil ":module-manager-~a" 
+                              (module-manager-implementation-version))))
 
 ;;; ---------------------------------------------------------------------------
 
 (allow-redefinition
- (defun print-mini-module-herald ()
+ (defun print-module-manager-herald ()
    (format t "~%;;; ~72,,,'-<-~>
-;;;  Mini-Module System ~a~@
+;;;  Module-Manager System ~a~@
 ;;;
 ;;;    Developed and supported by the GBBopen Project (http:/GBBopen.org/)
 ;;;    (See http://GBBopen.org/downloads/LICENSE for license details.)
 ;;; ~72,,,'-<-~>~2%"
-           (mini-module-implementation-version)))
+           (module-manager-implementation-version)))
  
  (eval-when (:load-toplevel)
-   (print-mini-module-herald)))
+   (print-module-manager-herald)))
 
 ;;; ===========================================================================
 ;;;  Add missing slot-definition documentation method to Digitool MCL:
@@ -362,7 +362,7 @@
 
 ;;; ===========================================================================
 ;;;  BRIEF-DATE, BRIEF-DATE-AND-TIME, and PARSE-DATE--part of the
-;;;  GBBopen-tools module.  They are placed here to use with the :mini-module
+;;;  GBBopen-tools module.  They are placed here to use with the :module-manager
 ;;;  package.
 
 (defvar *month-precedes-date* 't)
@@ -1334,7 +1334,7 @@
 (defun %load-file (file-name path print?)
   ;; Generate our own load-verbose message:
   (when (and (not *load-verbose*)
-             *mini-module-load-verbose*)
+             *module-manager-load-verbose*)
     (format t "~&;;; loading file ~a...~%"
             (namestring path)))
   (let ((*loading-patch* nil)
@@ -1453,7 +1453,7 @@
               (delete-file compiled-path))
             ;; Generate our own compile-verbose message:
             (when (and (not *compile-verbose*)
-                       *mini-module-compile-verbose*)
+                       *module-manager-compile-verbose*)
               (format t "~&;;; Compiling file ~a...~%"
                       (namestring source-path)))
             (let ((*compiling-file* 't)
@@ -2032,27 +2032,27 @@
   (values))
   
 ;;; ===========================================================================
-;;;  Define the Mini Module directory root and the :mini-module and
-;;;  :mini-module-user modules
+;;;  Define the Module Manager directory root and the :module-manager and
+;;;  :module-manager-user modules
 
-(let ((*current-system-name* ':mini-module))
+(let ((*current-system-name* ':module-manager))
     
-  (define-root-directory :mini-module-root *load-truename* :up :up)
+  (define-root-directory :module-manager-root *load-truename* :up :up)
   
-  (define-module :mini-module
-    (:directory :mini-module-root "mini-module")
-    (:files ("mini-module" :forces-recompile)))
+  (define-module :module-manager
+    (:directory :module-manager-root "module-manager")
+    (:files ("module-manager" :forces-recompile)))
   
-  (define-module :mini-module-user
-    (:requires :mini-module)
-    (:directory :mini-module-root "mini-module")
-    (:files "mini-module-user")))
+  (define-module :module-manager-user
+    (:requires :module-manager)
+    (:directory :module-manager-root "module-manager")
+    (:files "module-manager-user")))
 
 ;;; ---------------------------------------------------------------------------
-;;;  Record this file as loaded in the Mini Module hash table (due to bootstrap
+;;;  Record this file as loaded in the modules hash table (due to bootstrap
 ;;;  loading)
 
-(let* ((mini-module (gethash :mini-module *mm-modules*))
+(let* ((module-manager (gethash :module-manager *mm-modules*))
        (this-file (or *load-truename*
                       ;; CormanLisp doesn't bind *load-truename* properly 
                       ;; during bootstrapping, so we hardcode the pathname
@@ -2060,28 +2060,28 @@
                       #+cormanlisp
                       #.*compile-file-truename*))
        (this-file-name (pathname-name this-file))
-       (files-loaded (mm-module.files-loaded mini-module))
+       (files-loaded (mm-module.files-loaded module-manager))
        (file-loaded-acons (assoc this-file-name files-loaded 
                                  :test #'string=))
        (date (file-write-date this-file)))
   (if file-loaded-acons
       (setf (rest file-loaded-acons) date)
-      (setf (mm-module.files-loaded mini-module)
+      (setf (mm-module.files-loaded module-manager)
             (acons this-file-name date files-loaded))))
   
 ;;; ===========================================================================
-;;;  :mini-module-user Module
+;;;  :module-manager-user Module
 
-(load-module :mini-module-user)
+(load-module :module-manager-user)
 
 ;;; ===========================================================================
-;;;  Mini Module REPL-commands support
+;;;  Module Manager REPL-commands support
 
 (defvar *last-lm/cm-module* nil)
 (defvar *last-lm-options* nil)
 (defvar *last-cm-options* nil)
 
-(defun do-mini-module-repl-command (cmd module-and-options 
+(defun do-module-manager-repl-command (cmd module-and-options 
                                     &optional dont-remember)
   (let ((recalled-options nil))
     (destructuring-bind (&optional module-name &rest options)
@@ -2120,10 +2120,10 @@
                   cmd))))))
 
 ;;; ===========================================================================
-;;;   Mini Module system is fully loaded:
+;;;   Module Manager Facility is fully loaded:
 
-(pushnew ':mini-module *features*)
-(pushnew *mini-module-version-keyword* *features*)
+(pushnew ':module-manager *features*)
+(pushnew *module-manager-version-keyword* *features*)
 
 ;;; ===========================================================================
 ;;;                               End of File

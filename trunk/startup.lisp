@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/startup.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Jul  7 04:51:16 2008 *-*
+;;;; *-* Last-Edit: Sun Aug 31 14:43:40 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -32,8 +32,8 @@
 ;;;           in a user's <homedir>/gbbopen-init.lisp file.  (Corkill)
 ;;;  06-08-05 Added CLISP support.  (sds)
 ;;;  09-28-05 Added *preferred-browser*.  (Corkill)
-;;;  03-11-06 Added *mini-module-compile-verbose* and 
-;;;           *mini-module-load-verbose*.  (Corkill)
+;;;  03-11-06 Added *module-manager-compile-verbose* and 
+;;;           *module-manager-load-verbose*.  (Corkill)
 ;;;  04-07-06 Added gbbopen-modules directory support.  (Corkill)
 ;;;  04-27-08 Added shared-gbbopen-modules directory support.  (Corkill)
 ;;;
@@ -118,14 +118,14 @@
   (compile-if-advantageous 'extended-repl-quit-lisp))
 
 ;;; ---------------------------------------------------------------------------
-;;;  Bootstrap-load the mini-module system from its location relative to the
+;;;  Bootstrap-load the module-manager system from its location relative to the
 ;;;  GBBopen install root:
 
 (load (make-pathname
-       :name "mini-module-loader"
+       :name "module-manager-loader"
        :type "lisp"
        :directory `(,@(pathname-directory *gbbopen-install-root*)
-                      "source" "mini-module")
+                      "source" "module-manager")
        :version :newest
        :defaults *gbbopen-install-root*))
 
@@ -133,12 +133,12 @@
 ;;;  Define and load the remaining GBBopen module definitions from
 ;;;  modules.lisp:
 
-(mini-module:define-module :gbbopen-modules
-  (:requires :mini-module)
+(module-manager:define-module :gbbopen-modules
+  (:requires :module-manager)
   (:directory nil :up)
   (:files ("modules" :source)))
 
-(mini-module:load-module :gbbopen-modules)
+(module-manager:load-module :gbbopen-modules)
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Define the :gbbopen-tools and :gbbopen packages here, to allow a user to
@@ -146,10 +146,10 @@
 ;;;  (loaded below):
 
 (unless (find-package :gbbopen-tools)
-  (make-package ':gbbopen-tools :use '(:common-lisp :mini-module)))
+  (make-package ':gbbopen-tools :use '(:common-lisp :module-manager)))
 
 (unless (find-package :gbbopen)
-  (make-package ':gbbopen :use '(:common-lisp :mini-module :gbbopen-tools)))
+  (make-package ':gbbopen :use '(:common-lisp :module-manager :gbbopen-tools)))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  If there is a gbbopen-init.lisp file (or compiled version) in the users
