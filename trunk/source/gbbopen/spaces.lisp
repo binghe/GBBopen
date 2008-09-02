@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/spaces.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Jul  8 05:47:17 2008 *-*
+;;;; *-* Last-Edit: Tue Sep  2 02:37:53 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -521,7 +521,6 @@
 
 (defun clear-space-instances (space-instances)
   ;;; Removes (but does not delete) all unit instances from `space-instances'
-  (declare (dynamic-extent args))
   (map-instances-on-space-instances
    #'(lambda (instance)
        (dolist (space-instance (space-instances-of instance))
