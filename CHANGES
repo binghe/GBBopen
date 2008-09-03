@@ -1,6 +1,9 @@
 Important changes since GBBopen 1.2:
 
-None yet
+  * Changes to GBBopen Core
+     - new function, MAKE-INSTANCES-OF-CLASS-VECTOR
+     - speed/allocation optimizations to MAP-SORTED-INSTANCES-OF-CLASS
+       and DO-SORTED-INSTANCES-OF-CLASS
 
 
 Important changes in GBBopen 1.2:
