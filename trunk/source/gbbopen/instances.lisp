@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Jul 28 05:01:23 2008 *-*
+;;;; *-* Last-Edit: Wed Sep  3 16:10:44 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -39,6 +39,8 @@
 ;;;           mark-based-retrieval mark.  (Corkill)
 ;;;  04-04-08 Added FIND-ALL-INSTANCES-BY-NAME (please don't abuse!). 
 ;;;           (Corkill)
+;;;  09-03-08 Added MAKE-INSTANCES-OF-CLASS-VECTOR (please don't abuse!). 
+;;;           (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -67,6 +69,7 @@
             instance-name               ; re-export
 	    instance-name-of
             make-duplicate-instance
+            make-instances-of-class-vector ; not yet documented
             map-instances-of-class
             map-sorted-instances-of-class
             next-class-instance-number
@@ -1197,15 +1200,30 @@
 
 ;;; ---------------------------------------------------------------------------
 
+(defun make-instances-of-class-vector (unit-class-name &key adjustable)
+  ;; Returns a newly allocated vector (adjustable, if desired) with pointers
+  ;; to all unit instances of unit-class-name.  Note that this vector is not
+  ;; maintained with newly created/deleted unit instances.
+  (let* ((size (class-instances-count unit-class-name))
+         (vector (make-array  (list size) 
+                              :fill-pointer 0 
+                              :adjustable adjustable)))
+    (do-instances-of-class (instance unit-class-name)
+      (vector-push instance vector))
+    vector))
+
+;;; ---------------------------------------------------------------------------
+
 (defun map-sorted-instances-of-class (fn unit-class-name predicate &key key)
   ;;; This function is convenient for occasional presentation purposes;
-  ;;; it creates and sorts the list of all instances, so it is expensive!
-  (let ((instances (find-instances-of-class unit-class-name))
-        (fn (coerce fn 'function)))
-    (setf instances
-      (sort instances predicate :key key))
-    (dolist (instance instances)
-     (funcall (the function fn) instance))))
+  ;;; it creates and sorts a vector of all instances, so it is expensive!
+  (let ((vector (make-instances-of-class-vector unit-class-name))
+        (fn (coerce fn 'function))
+        (predicate (coerce predicate 'function)))
+    (map nil (the function fn) 
+         (if key 
+             (sort vector predicate :key key)
+             (sort vector predicate)))))
 
 ;;; ---------------------------------------------------------------------------
 
