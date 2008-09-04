@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/epilogue.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Aug 31 09:25:17 2008 *-*
+;;;; *-* Last-Edit: Thu Sep  4 09:06:37 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -21,7 +21,6 @@
 ;;;
 ;;;  01-16-04 File created.  (Corkill)
 ;;;  05-03-04 Added reset-gbbopen.  (Corkill)
-;;;  11-07-07 Retain the root-space-instance when resetting GBBopen.  (Corkill)
 ;;;  01-28-08 Added load-blackboard-repository and save-blackboard-repository.
 ;;;           (Corkill)
 ;;;  05-02-08 Added :di and :dsi REPL commands.  (Corkill)
@@ -73,14 +72,12 @@
 ;;;  Miscellaneous Entities
 
 (defun empty-blackboard-repository-p ()
-  ;; Returns t if there are no unit instances (other than the
-  ;; root-space-instance) in the blackboard repository
+  ;; Returns t if there are no unit instances in the blackboard repository
   (map-unit-classes
    #'(lambda (class plus-subclasses-p)
        (declare (ignore plus-subclasses-p))
-       (unless (eq (class-name class) 'root-space-instance)
-         (when (plusp& (class-instances-count class))
-           (return-from empty-blackboard-repository-p nil))))
+       (when (plusp& (class-instances-count class))
+         (return-from empty-blackboard-repository-p nil)))
    (load-time-value (find-class 'standard-unit-instance)))
   ;; The repository is empty:
   't)
@@ -94,38 +91,39 @@
     (warn "~s is being overridden by ~s ~s."
           ':all-classes ':retain-classes retain-classes))
   ;;; Deletes all unit and space instances; resets instance counters to 1.
-  (let ((*%%events-enabled%%* (not disable-events)))
-    (map-extended-unit-classes 
-     #'(lambda (unit-class plus-subclasses)
-	 (declare (ignore plus-subclasses))
-	 (unless (or 
-                  ;; Retain the root-space-instance
-                  (eq (class-name unit-class) 'root-space-instance)
-                  ;; Explicitly retained:
-                  (and retain-classes
-                       (unit-class-in-specifier-p
-                        unit-class retain-classes))
-                  ;; :all-classes specified or a retained unit class:
-                  (not (or all-classes
-                           (not (or (standard-unit-class.retain unit-class))))))
-	   ;; We must practice safe delete-instance:
-	   (let ((instances nil))
-	     (map-instances-given-class 
-	      #'(lambda (instance) (push instance instances)) unit-class)
-	     (mapc #'delete-instance instances)
-	     (reset-unit-class unit-class))))
-     't))
-  ;; Reset the global instance-name counter, if possible:
-  (when (empty-blackboard-repository-p)
-    (setf *global-instance-name-counter* 0))
+  (with-lock-held (*master-instance-lock*)
+    (let ((*%%events-enabled%%* (not disable-events)))
+      (map-extended-unit-classes 
+       #'(lambda (unit-class plus-subclasses)
+           (declare (ignore plus-subclasses))
+           (unless (or 
+                    ;; Explicitly retained:
+                    (and retain-classes
+                         (unit-class-in-specifier-p
+                          unit-class retain-classes))
+                    ;; :all-classes specified or a retained unit class:
+                    (not (or all-classes
+                             (not (or (standard-unit-class.retain unit-class))))))
+             ;; We must practice safe delete-instance:
+             (let ((instances nil))
+               (map-instances-given-class 
+                #'(lambda (instance) (push instance instances)) unit-class)
+               (mapc #'delete-instance instances)
+               (reset-unit-class unit-class))))
+       't))
+    ;; Reset the global instance-name counter, if possible:
+    (when (empty-blackboard-repository-p)
+      (setf *global-instance-name-counter* 0)))
   ;; Return a polite success:
   't)
   
 ;;; ---------------------------------------------------------------------------
 
 (defun reset-gbbopen (&key (disable-events t))
-  (delete-blackboard-repository :all-classes 't
-                                :disable-events disable-events)
+  (with-lock-held (*master-instance-lock*)
+    (delete-blackboard-repository :all-classes 't
+                                  :disable-events disable-events)
+    (setf *top-level-space-instances* nil))
   (disable-event-printing)
   (remove-all-event-functions)
   ;; Return a polite success:
@@ -160,39 +158,40 @@
                                      :read-default-float-format 
                                      read-default-float-format
                                      :value value)
-      ;; Save repository-format version:
-      (format file "~&;;; Saved repository format version:~%~s~%"
-              *save-blackboard-repository-format-version*)
-      ;; Save important values:
-      (format file "~&;;; Important values:~%~s~%"
-              (list *global-instance-name-counter*))
-      ;; Save space instances:
-      (let ((root-space-instance-children (children-of *root-space-instance*)))
-        (format file "~&;;; Space instances:~%")
-        ;; Save top-level (root children) space-instance references:
-        (let ((*save/send-references-only* 't))
-          (print-object-for-saving/sending root-space-instance-children file))
-        ;; Now save the space-instances in the repository forest:
-        (let ((*save/send-references-only* nil))
-          (dolist (child root-space-instance-children)
-            (traverse-space-instance-tree 
-             #'(lambda (space-instance)
-                 (print-object-for-saving/sending space-instance file))
-             child))
-          ;; Save non-space unit instances:
-          (format file "~&;;; Other unit instances:~%")
-          (do-instances-of-class (instance t)
-            ;; Skip space instances (root-space-instance :plus-subclasses):
-            (unless (typep instance 'root-space-instance)
-              (print-object-for-saving/sending instance file)))
-          ;; Save unit-class states:
-          (format file "~&;;; Unit-class states:~%")
-          (loop for class-name being the hash-keys
-              of *recorded-class-descriptions-ht* do
-                (let ((class (find-class class-name)))
-                  (when (typep class 'standard-unit-class)
-                    (print-unit-class-state-for-saving/sending
-                     class stream)))))))
+      (with-lock-held (*master-instance-lock*)
+        ;; Save repository-format version:
+        (format file "~&;;; Saved repository format version:~%~s~%"
+                *save-blackboard-repository-format-version*)
+        ;; Save important values:
+        (format file "~&;;; Important values:~%~s~%"
+                (list *global-instance-name-counter*))
+        ;; Save space instances:
+        (let ((top-level-space-instances *top-level-space-instances*))
+          (format file "~&;;; Space instances:~%")
+          ;; Save top-level (root children) space-instance references:
+          (let ((*save/send-references-only* 't))
+            (print-object-for-saving/sending top-level-space-instances file))
+          ;; Now save the space-instances in the repository forest:
+          (let ((*save/send-references-only* nil))
+            (dolist (child top-level-space-instances)
+              (traverse-space-instance-tree 
+               #'(lambda (space-instance)
+                   (print-object-for-saving/sending space-instance file))
+               child))
+            ;; Save non-space unit instances:
+            (format file "~&;;; Other unit instances:~%")
+            (do-instances-of-class (instance t)
+              ;; Skip space instances (standard-space-instance :plus-subclasses):
+              (unless (typep instance 'standard-space-instance)
+                (print-object-for-saving/sending instance file)))
+            ;; Save unit-class states:
+            (format file "~&;;; Unit-class states:~%")
+            (loop for class-name being the hash-keys
+                of *recorded-class-descriptions-ht* do
+                  (let ((class (find-class class-name)))
+                    (when (typep class 'standard-unit-class)
+                      (print-unit-class-state-for-saving/sending
+                       class stream))))))))
     (format file "~&;;; End of file~%")
     (pathname file)))
 
@@ -231,54 +230,55 @@
   (with-open-file (file (make-bb-pathname pathname)
                    :direction ':input
                    :external-format external-format)
-    (apply 'delete-blackboard-repository
-           :all-classes 't
-           (remove-properties reset-gbbopen-args 
-                              '(:class-name-translations
-                                :coalesce-strings
-                                :confirm-if-not-empty
-                                :external-format
-                                :readtable
-                                :read-eval)))
-    (with-reading-saved/sent-objects-block 
-        (file :class-name-translations class-name-translations
-              :coalesce-strings coalesce-strings
-              :readtable readtable
-              :read-eval read-eval)
-      (let ((format-version (read file)))
-        (when (>& format-version *save-blackboard-repository-format-version*)
-          (error "Incompatible ~s format version ~a ~
-                  (the current version is ~a, generated by a newer version ~
+    (with-lock-held (*master-instance-lock*)
+      (apply 'delete-blackboard-repository
+             :all-classes 't
+             (remove-properties reset-gbbopen-args 
+                                '(:class-name-translations
+                                  :coalesce-strings
+                                  :confirm-if-not-empty
+                                  :external-format
+                                  :readtable
+                                  :read-eval)))
+      (with-reading-saved/sent-objects-block 
+          (file :class-name-translations class-name-translations
+                :coalesce-strings coalesce-strings
+                :readtable readtable
+                :read-eval read-eval)
+        (let ((format-version (read file)))
+          (when (>& format-version *save-blackboard-repository-format-version*)
+            (error "Incompatible ~s format version ~a ~
+                    (the current version is ~a, generated by a newer version ~
                    of GBBopen)"
-                 'save-blackboard-repository
-                 format-version
-                 *save-blackboard-repository-format-version*))
-        (unless (>=& format-version 2)
-          (error "Incompatible ~s format version ~a (the current version is ~a)"
-                 'save-blackboard-repository
-                 format-version
-                 *save-blackboard-repository-format-version*))
-        (when (>=& format-version 3)
-          (let ((values (read file)))
-            (setf *global-instance-name-counter* (first values))))
-        ;; Skip after-loading-function, if an old format version:
-        (when (<& format-version 4)
-          (read file)))
-      ;; Read top-level (root children) space-instance references:
-      (let ((root-children (read file))
-            (*%%allow-setf-on-link%%* 't))
-        (setf (slot-value *root-space-instance* 'children) root-children)
-        ;; Now read everything else:
-        (let ((eof-marker '#:eof))
-          (until (eq eof-marker (read file nil eof-marker))))
-        ;; Process all unit instances, in case any link-slot arity or sorting
-        ;; has changed (FUTURE ENHANCEMENT: It would be nice to skip this
-        ;; unless such has truly happened):
-        (map-instances-of-class #'reconcile-direct-link-values 't))
-      ;; Return the pathname, saved/sent-time, and saved/sent-value:
-      (values (pathname file)
-              *block-saved/sent-time* 
-              *block-saved/sent-value*))))
+                   'save-blackboard-repository
+                   format-version
+                   *save-blackboard-repository-format-version*))
+          (unless (>=& format-version 2)
+            (error "Incompatible ~s format version ~a (the current version is ~a)"
+                   'save-blackboard-repository
+                   format-version
+                   *save-blackboard-repository-format-version*))
+          (when (>=& format-version 3)
+            (let ((values (read file)))
+              (setf *global-instance-name-counter* (first values))))
+          ;; Skip after-loading-function, if an old format version:
+          (when (<& format-version 4)
+            (read file)))
+        ;; Read top-level (root children) space-instance references:
+        (let ((root-children (read file))
+              (*%%allow-setf-on-link%%* 't))
+          (setf *top-level-space-instances* root-children)
+          ;; Now read everything else:
+          (let ((eof-marker '#:eof))
+            (until (eq eof-marker (read file nil eof-marker))))
+          ;; Process all unit instances, in case any link-slot arity or sorting
+          ;; has changed (FUTURE ENHANCEMENT: It would be nice to skip this
+          ;; unless such has truly happened):
+          (map-instances-of-class #'reconcile-direct-link-values 't))
+        ;; Return the pathname, saved/sent-time, and saved/sent-value:
+        (values (pathname file)
+                *block-saved/sent-time* 
+                *block-saved/sent-value*)))))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Add :di, :dsbb, :dsi, :dsis, and :fi REPL commands (available if using

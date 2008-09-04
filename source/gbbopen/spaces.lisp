@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/spaces.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Sep  2 02:37:53 2008 *-*
+;;;; *-* Last-Edit: Thu Sep  4 09:43:47 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -68,7 +68,6 @@
             parent                      ; standard-space-instance slot name
             parent-of
             remove-instance-from-space-instance
-            root-space-instance         ; not documented
             show-forward-path-event-functions ; debugging only; not documented
             space-name                  ; standard-space-instance slot name
             standard-space-instance)))
@@ -76,7 +75,7 @@
 ;;; ---------------------------------------------------------------------------
 ;;;  Symbols that cannot be used as space names
 
-(defparameter *illegal-space-names* '(= ? + * ^ t nil root-space-instance))
+(defparameter *illegal-space-names* '(= ? + * ^ t nil)) 
 
 ;;; ===========================================================================
 ;;;   Space Instances
@@ -96,59 +95,9 @@
            options
            (cons `(:metaclass standard-space-class) options))))
 
-;;; ===========================================================================
-;;;   Root Space Instance
-
-(define-space-class root-space-instance (standard-unit-instance)
-  ;;; The class of the unique root space-instance.  A unique instance of this
-  ;;; class is created automatically as the parent of all top-level space
-  ;;; instances.  This is also the base class for standard-space-instance.
-  ((space-name
-    :accessor standard-space-instance.space-name)
-   (children 
-    :link (standard-space-instance parent :singular t)
-    :reader children-of))
-  (:generate-accessors nil))
-
-;;; ===========================================================================
-;;;   Space-instance renaming
-;;;
-;;; This doesn't work on Lisps that optimize defclass slot-writer methods
-;;; rather than calling the (setf slot-value-using-class) method.  With such
-;;; Lisps, we would have to attach to all the slot writer methods.
-;;;
-;;; Note that Lispworks uses the :optimize-slot-access class option to control
-;;; the use of slot reader/writer methods (so GBBopen must set this option to
-;;; nil for unit classes--done in define-unit-class).
-
-#-cmu
-(defmethod (setf slot-value-using-class) :before
-           (nv
-            (class standard-unit-class)
-            (instance root-space-instance)
-            ;; instead of the effective-slot-definition, Lispworks provides
-            ;; the slot name:
-            (slot #+lispworks (eql 'instance-name)
-                  #-lispworks effective-nonlink-slot-definition))
-  (when #-lispworks (eq (slot-definition-name slot) 'instance-name)
-        #+lispworks 't
-     (when (and (slot-boundp-using-class class instance
-                                         #+lispworks 'instance-name
-                                         #-lispworks slot)
-                (not (equal (slot-value-using-class class instance 
-                                                    #+lispworks 'instance-name
-                                                    #-lispworks slot)
-                            nv)))
-       (error "Attempt to rename the space-instance ~s as ~s.  ~
-               Space-instance renaming is not currently supported in GBBopen."
-              instance
-              nv))))
-
 ;;; ---------------------------------------------------------------------------
 
-(defvar *root-space-instance*   
-    (make-instance 'root-space-instance 
-      :instance-name 'root-space-instance))
+(defvar *top-level-space-instances* nil)
 
 ;;; ===========================================================================
 ;;;   Add hidden slots to standard-unit-instance internal slot names 
@@ -165,8 +114,10 @@
 ;;; ===========================================================================
 ;;;   Standard Space Instance
 
-(define-space-class standard-space-instance (root-space-instance)
-  ((dimensions 
+(define-space-class standard-space-instance (standard-unit-instance)
+  ((space-name
+    :accessor standard-space-instance.space-name)
+   (dimensions 
     :initform nil
     :reader dimensions-of
     :writer (setf standard-space-instance.%%dimensions%%))
@@ -189,8 +140,11 @@
    (%%retrieval-storage%% :initform nil)
    (%%evfn-unit-ht%% :initform (make-hash-table :size 0 :test 'eq))
    (%%bb-widgets%% :initform nil)
+   (children 
+    :link (standard-space-instance parent :singular t)
+    :reader children-of)
    (parent 
-    :link (root-space-instance children)
+    :link (standard-space-instance children)
     :singular t
     :reader parent-of
     ;;; We can't use a :writer here until links are redone to not use
@@ -198,7 +152,10 @@
     ;;    :writer (setf standard-space-instance.%%parent%%)
     ))
   (:generate-accessors-format :prefix)
-  (:generate-accessors t :exclude allowed-unit-classes dimensions parent))
+  (:generate-accessors t :exclude space-name allowed-unit-classes dimensions
+                       children parent))
+
+;;; ---------------------------------------------------------------------------
 
 (defmethod allowed-unit-classes-of ((space-instance cons))
   (allowed-unit-classes-of 
@@ -429,10 +386,11 @@
     (setf (standard-space-instance.%%allowed-unit-classes%% instance)
           (canonicalize-allowed-unit-classes allowed-unit-classes))
     (setf (standard-space-instance.space-name instance) space-name)
-    (linkf (slot-value instance 'parent)
-           (if parent-space-instance
-               parent-space-instance
-               *root-space-instance*)))
+    (if parent-space-instance
+        ;; Link to parent space instance:
+        (linkf (slot-value instance 'parent) parent-space-instance)
+        ;; Add to the top-level space-instances list:
+        (push instance *top-level-space-instances*)))
   (setup-instance-storage instance storage))
 
 ;;; ---------------------------------------------------------------------------
@@ -449,15 +407,53 @@
   (map-instances-on-space-instances
    #'(lambda (instance)
        ;; Inconsistent locators can result in storage pointers to deleted unit
-       ;; instances, so we check for deletion before attempting removal:
+       ;; instances, so we check the instance's deletion status before
+       ;; attempting removal:
        (unless (instance-deleted-p instance)
          (remove-instance-from-space-instance instance space-instance)))
    't
    space-instance)
+  ;; Delete all child space instances:
   (mapc #'delete-space-instance (children-of space-instance))
+  ;; Remove from top level space-instances list, if top-level:
+  (unless (parent-of space-instance)
+    (setf *top-level-space-instances* 
+          (delq space-instance *top-level-space-instances*)))
   (call-next-method))
   
-;;; ---------------------------------------------------------------------------
+;;; ===========================================================================
+;;;   Space-instance renaming
+;;;
+;;; This doesn't work on Lisps that optimize defclass slot-writer methods
+;;; rather than calling the (setf slot-value-using-class) method.  With such
+;;; Lisps, we would have to attach to all the slot writer methods.
+;;;
+;;; Note that Lispworks uses the :optimize-slot-access class option to control
+;;; the use of slot reader/writer methods (so GBBopen must set this option to
+;;; nil for unit classes--done in define-unit-class).
+
+#-cmu
+(defmethod (setf slot-value-using-class) :before 
+           (nv (class standard-unit-class) (instance standard-space-instance)
+            ;; instead of the effective-slot-definition, Lispworks provides
+            ;; the slot name:
+            (slot #+lispworks (eql 'instance-name)
+                  #-lispworks effective-nonlink-slot-definition))
+  (when #-lispworks (eq (slot-definition-name slot) 'instance-name)
+        #+lispworks 't
+     (when (and (slot-boundp-using-class class instance
+                                         #+lispworks 'instance-name
+                                         #-lispworks slot)
+                (not (equal (slot-value-using-class class instance 
+                                                    #+lispworks 'instance-name
+                                                    #-lispworks slot)
+                            nv)))
+       (error "Attempt to rename the space-instance ~s as ~s.  ~
+               Space-instance renaming is not currently supported in GBBopen."
+              instance
+              nv))))
+
+;;; ===========================================================================
 ;;; Syntactic sugar space-instance functions...
 
 (defun make-space-instance (path 
@@ -497,10 +493,8 @@
 ;;; ---------------------------------------------------------------------------
 ;;;   Delete-all-space-instances
 ;;;
-;;; Deletes all space instances (except for the "hidden" root-space-instance).
-;;;
-;;; Care must be taken when deleting instances that delete other instances
-;;; by side-effect.  For example:
+;;; Deletes all space instances. Care must be taken when deleting instances
+;;; that delete other instances by side-effect.  For example:
 ;;;   (map-instances-of-class #'delete-space-instance
 ;;;                           '(standard-space-instance :plus-subclasses))
 ;;; will most likely violate the bottom-up deletion contract for space
@@ -513,7 +507,7 @@
 ;;; more efficient:
 
 (defun delete-all-space-instances ()
-  (dolist (space-instance (children-of *root-space-instance*))
+  (dolist (space-instance *top-level-space-instances*)
     (delete-space-instance space-instance)))
 
 ;;; ---------------------------------------------------------------------------
@@ -613,10 +607,11 @@
     (multiple-value-bind (new-instance slots)
         (apply #'call-next-method instance unduplicated-slot-names initargs)
       (setf (standard-space-instance.space-name new-instance) space-name)
-      (linkf (slot-value instance 'parent)
-             (if parent-space-instance
-                 parent-space-instance
-                 *root-space-instance*))
+      (if parent-space-instance
+          ;; Link to parent space instance:
+          (linkf (slot-value instance 'parent) parent-space-instance)
+          ;; Add to the top-level space-instances list:
+          (push instance *top-level-space-instances*))
       (setup-instance-storage new-instance storage)
       (values new-instance slots))))
 
@@ -632,8 +627,8 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defmethod initialize-saved/sent-instance
-    ((instance standard-space-instance) slots slot-values missing-slot-names)
+(defmethod initialize-saved/sent-instance ((instance standard-space-instance) 
+                                           slots slot-values missing-slot-names)
   (declare (ignore slots slot-values missing-slot-names))
   (setf (standard-space-instance.space-name instance)
         (car (last (instance-name-of instance))))
@@ -748,6 +743,8 @@
              (warn "No space instances were specified to ~s."
                    invoking-fn-name))))
     (cond 
+     ((not pattern) 
+      (no-space-instances-mapped))
      ((and (consp pattern)
            (typep (car pattern) 'standard-space-instance))
       (cond 
@@ -755,8 +752,7 @@
        ((every #'(lambda (element)
                    (typep element 'standard-space-instance))
                (cdr pattern))
-        (mapc fn pattern)
-        (unless pattern (no-space-instances-mapped)))
+        (mapc fn pattern))
        ;; relative-path pattern:
        (t (map-space-instances fn (path-relative-match pattern)
                                invoking-fn-name))))
@@ -765,12 +761,11 @@
           (map-unit-classes
            #'(lambda (space-class plus-subclasses)
                (declare (ignore plus-subclasses))
-               (maphash
-                #'(lambda (key value)             
-                    (when (path-match pattern key)
-                      (setf found-a-space 't)
-                      (funcall fn value)))
-                (standard-unit-class.instance-hash-table space-class)))
+               (maphash #'(lambda (key value)             
+                            (when (path-match pattern key)
+                              (setf found-a-space 't)
+                              (funcall fn value)))
+                        (standard-unit-class.instance-hash-table space-class)))
            (load-time-value (find-class 'standard-space-instance)))
           (unless found-a-space (no-space-instances-mapped)))))))
 
@@ -790,32 +785,32 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun traverse-space-instance-tree (fn &optional 
-                                        (space-instance *root-space-instance*))
+(defun traverse-space-instance-tree (fn &optional space-instance)
   ;;; Call `fn' on all space-instances in the subtree rooted by
-  ;;; `space-instance' (the root, if not specified), in parent-first order
-  ;;; (beginning with `space-instance')
+  ;;; `space-instance' (the virtual "root" space-instance, if not specified),
+  ;;; in parent-first order (beginning with `space-instance')
   (labels ((do-node (space-instance)
              (funcall fn space-instance)
              (dolist (child (children-of space-instance))
                (do-node child))))
-    (do-node space-instance)))
+    (if space-instance
+        (do-node space-instance)
+        (dolist (space-instance *top-level-space-instances*)
+          (do-node space-instance)))))
 
 ;;; ===========================================================================
 ;;;   Add/remove unit instances to/from a space instance
 
-(defmethod add-instance-to-space-instance 
-    ((instance standard-unit-instance)
-     (space-instance-path cons))
+(defmethod add-instance-to-space-instance ((instance standard-unit-instance)
+                                           (space-instance-path cons))
   (add-instance-to-space-instance-internal
    instance
    (find-space-instance-by-path space-instance-path ':with-error)))
 
 ;;; ---------------------------------------------------------------------------
 
-(defmethod add-instance-to-space-instance 
-    ((instance standard-unit-instance)
-     (space-instance standard-space-instance))
+(defmethod add-instance-to-space-instance ((instance standard-unit-instance)
+                                           (space-instance standard-space-instance))
   (add-instance-to-space-instance-internal instance space-instance))
 
 ;;; ---------------------------------------------------------------------------
@@ -899,6 +894,7 @@
        (load-time-value (find-class 'add-instance-to-space-instance-event))
        :instance instance
        :space-instance space-instance)
+      #+someday
       (dolist (bb-widget 
                   (standard-space-instance.%%bb-widgets%% space-instance))
         (draw-instance-on-bb-widget instance bb-widget)))))
@@ -906,18 +902,16 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defmethod remove-instance-from-space-instance 
-    ((instance standard-unit-instance)
-     (space-instance-path cons))
+(defmethod remove-instance-from-space-instance ((instance standard-unit-instance)
+                                                (space-instance-path cons))
   (remove-instance-from-space-instance-internal
    instance
    (find-space-instance-by-path space-instance-path ':with-error)))
 
 ;;; ---------------------------------------------------------------------------
 
-(defmethod remove-instance-from-space-instance
-    ((instance standard-unit-instance)
-     (space-instance standard-space-instance))
+(defmethod remove-instance-from-space-instance ((instance standard-unit-instance)
+                                                (space-instance standard-space-instance))
   (remove-instance-from-space-instance-internal instance space-instance))
 
 ;;; ---------------------------------------------------------------------------
@@ -1032,10 +1026,8 @@
 
 (defun describe-blackboard-repository ()
   ;;; Print a description of the blackboard repository to *standard-output*
-  (let* ((2nd-column-indent 40)
-         (root-space-instance *root-space-instance*)
-         (top-level-space-instances 
-          (and root-space-instance (children-of root-space-instance))))
+  (let ((2nd-column-indent 40)
+        (top-level-space-instances *top-level-space-instances*))
     (labels 
         ((do-instances (list indent)
            (dolist (instance (sort (copy-list list) #'string<
@@ -1056,29 +1048,27 @@
       (map-extended-unit-classes-sorted
        #'(lambda (unit-class plus-subclasses)
            (declare (ignore plus-subclasses))
-           ;; Don't show root-space-instance in this summary:
-           (unless (eq (class-name unit-class) 'root-space-instance)
-             (let ((count (class-instances-count unit-class)))
-               (when (plusp& count)
-                 (incf total-instances count)
-                 (unless header-displayed?
-                   (setf header-displayed? 't)
-                   (unless top-level-space-instances
-                     (format t "~&There are no space instances in the ~
+           (let ((count (class-instances-count unit-class)))
+             (when (plusp& count)
+               (incf total-instances count)
+               (unless header-displayed?
+                 (setf header-displayed? 't)
+                 (unless top-level-space-instances
+                   (format t "~&There are no space instances in the ~
                                   blackboard repository.~%"))
-                   (format t "~2&Unit Class~vtInstances~
+                 (format t "~2&Unit Class~vtInstances~
                                ~%----------~:*~vt---------~%"
-                           2nd-column-indent))
-                 (format t "~s~vt~9d ~c~%" 
-                         (class-name unit-class)
-                         2nd-column-indent
-                         count
-                         (case (standard-unit-class.retain unit-class)
-                           ((nil) #\space)
-                           (:propagate #\+)
-                           (otherwise #\*)))))))
+                         2nd-column-indent))
+               (format t "~s~vt~9d ~c~%" 
+                       (class-name unit-class)
+                       2nd-column-indent
+                       count
+                       (case (standard-unit-class.retain unit-class)
+                         ((nil) #\space)
+                         (:propagate #\+)
+                         (otherwise #\*))))))
        't)
-      (if header-displayed?
+    (if header-displayed?
           (format t "~&~vt---------~%~:*~vt~9d instance~:p"
                   2nd-column-indent
                   total-instances)                
