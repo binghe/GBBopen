@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Sep  3 16:10:44 2008 *-*
+;;;; *-* Last-Edit: Thu Sep  4 04:17:49 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -73,6 +73,7 @@
             map-instances-of-class
             map-sorted-instances-of-class
             next-class-instance-number
+            root-space-instance         ; for old .bb support, delete eventually
 	    space-instances-of
             standard-unit-instance
             unduplicated-slot-names     ; re-export
@@ -306,6 +307,10 @@
 (defmethod saved/sent-object-reader ((char (eql #\R)) stream)
   (destructuring-bind (class-name instance-name)
       (read stream t nil 't)
+    ;; Handle old .bb files that used root-space-instance (remove eventually):
+    (when (and (eq class-name 'root-space-instance)
+               (eq instance-name 'root-space-instance))
+      (return-from saved/sent-object-reader nil))
     (setf class-name (possibly-translate-class-name class-name))
     (or 
      ;; Instance is already present or has been forward referenced before:
