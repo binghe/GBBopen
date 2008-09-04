@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Sep  4 04:17:49 2008 *-*
+;;;; *-* Last-Edit: Thu Sep  4 15:33:43 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -69,7 +69,7 @@
             instance-name               ; re-export
 	    instance-name-of
             make-duplicate-instance
-            make-instances-of-class-vector ; not yet documented
+            make-instances-of-class-vector
             map-instances-of-class
             map-sorted-instances-of-class
             next-class-instance-number
