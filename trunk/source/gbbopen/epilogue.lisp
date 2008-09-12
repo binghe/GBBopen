@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/epilogue.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Sep  4 09:06:37 2008 *-*
+;;;; *-* Last-Edit: Fri Sep 12 12:16:20 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -48,7 +48,7 @@
 ;;; ---------------------------------------------------------------------------
 ;;;  Save-blackboard-repository format version
 
-(defparameter *save-blackboard-repository-format-version* 4)
+(defparameter *save-blackboard-repository-format-version* 5)
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Result-passing variable (used by :fi REPL command), with a bit of
@@ -142,6 +142,19 @@
 
 ;;; ---------------------------------------------------------------------------
 
+(defun make-unit-instance-count-alist ()
+  (let ((result nil))
+    (map-extended-unit-classes
+     #'(lambda (unit-class plus-subclasses)
+         (declare (ignore plus-subclasses))
+         (let ((count (class-instances-count unit-class)))
+           (when (plusp& count)
+             (push `(,(class-name unit-class) . ,count) result))))
+     't)
+    result))
+
+;;; ---------------------------------------------------------------------------
+
 (defun save-blackboard-repository (pathname
                                    &key (package ':cl-user)
                                         (read-default-float-format
@@ -164,7 +177,7 @@
                 *save-blackboard-repository-format-version*)
         ;; Save important values:
         (format file "~&;;; Important values:~%~s~%"
-                (list *global-instance-name-counter*))
+                (list *global-instance-name-counter* (make-unit-instance-count-alist)))
         ;; Save space instances:
         (let ((top-level-space-instances *top-level-space-instances*))
           (format file "~&;;; Space instances:~%")
@@ -259,8 +272,20 @@
                    format-version
                    *save-blackboard-repository-format-version*))
           (when (>=& format-version 3)
-            (let ((values (read file)))
-              (setf *global-instance-name-counter* (first values))))
+            (destructuring-bind (global-instance-name-counter 
+                                 &optional unit-instance-count-alist)
+                ;; Read important values:
+                (read file)
+              (setf *global-instance-name-counter* global-instance-name-counter)
+              ;; Resize instance hash-tables:
+              (dolist (acons unit-instance-count-alist)
+                (destructuring-bind (class-name . count)
+                    acons
+                  (let ((unit-class 
+                         (find-unit-class 
+                          (possibly-translate-class-name class-name))))
+                    (when unit-class
+                      (resize-instance-hash-table unit-class count)))))))
           ;; Skip after-loading-function, if an old format version:
           (when (<& format-version 4)
             (read file)))
