@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/module-manager/module-manager-loader.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Aug 31 14:49:42 2008 *-*
+;;;; *-* Last-Edit: Fri Sep 12 11:08:58 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -87,11 +87,12 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defmacro need-to-port (entity)
+(defmacro need-to-port (entity &optional only-warn)
   ;; Generate compile-time warnings of needed porting:
   (need-to-port-warning/error entity nil)
   ;; Error if called at run time:
-  `(need-to-port-warning/error ',entity t))
+  (unless only-warn
+    `(need-to-port-warning/error ',entity t)))
 
 ;;; ===========================================================================
 ;;; Add a single feature to identify sufficiently new Digitool MCL
