@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/units.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Sep  4 04:02:54 2008 *-*
+;;;; *-* Last-Edit: Fri Sep 12 11:31:59 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -784,6 +784,14 @@
                   (error "Slot ~s does not exist in ~s."
                          slot-name 
                          unit-class))))))))
+
+;;; ---------------------------------------------------------------------------
+
+(defun resize-instance-hash-table (unit-class new-size)
+  ;;; Resize the instance-hash-table of `unit-class' to `new-size' if supported
+  ;;; by the CL implementation 
+  (resize-hash-table (standard-unit-class.instance-hash-table unit-class)
+                     new-size))
 
 ;;; ---------------------------------------------------------------------------
 

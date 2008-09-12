@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Aug 31 16:33:49 2008 *-*
+;;;; *-* Last-Edit: Fri Sep 12 11:26:01 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -192,6 +192,7 @@
             read-char-immediately       ; not yet documented
             remove-property
             remove-properties
+            resize-hash-table           ; not yet documented
             set-equal
             sets-overlap-p
             shuffle-list
@@ -692,6 +693,21 @@
        (when (rest ,list)
          (sole-element-violation ,list)))))
   
+;;; ===========================================================================
+;;;   Resize-hash-table
+;;;
+;;;   Resizes (grows) a hash table, based on `new-size' when supported by the 
+;;;   CL.  As with the size argument to MAKE-HASH-TABLE, the actual new size may
+;;;   be larger than the supplied value (implementation dependent).
+
+(defun resize-hash-table (hash-table new-size)
+  #+allegro
+  (excl::do-rehash hash-table (excl::hash-primify new-size))
+  #-(or allegro)
+  (declare (ignore hash-table new-size))
+  #-(or allegro)
+  (need-to-port 'resize-hash-table t))
+
 ;;; ===========================================================================
 ;;;   Shrink-vector
 ;;;
