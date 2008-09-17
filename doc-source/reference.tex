@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Thu Sep  4 15:33:05 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Wed Sep 17 06:16:00 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -7920,13 +7920,13 @@ The following \code{\glref{pseudo-probability}} operators are provided:
 \W\supp
   > (* 0.6 0.7)
   0.42000002
-  > (*/% 600 700)
+  > (*\% 600 700)
   420
   > (* 0.6 0.7 0.8)
   0.33600003
-  > (*/% 600 700 800)
+  > (*\% 600 700 800)
   336
-  > (*/%)
+  > (*\%)
   1000
   > 
 \end{example}
@@ -7988,23 +7988,23 @@ that leads to an intermediate result that is larger than a
 \W\supp
   > (/ 0.6 0.8)
   0.75
-  > (/% 600 800)
+  > (/\% 600 800)
   750
   > (/ 0.6 0.8 0.9)
   0.8333334
-  > (/% 600 800 900)
+  > (/\% 600 800 900)
   833
   > (/ 0.8 0.5)
   1.6          ; not a probability
-  > (/% 800 500)
+  > (/\% 800 500)
   1600         ; not a \glref{pseudo-probability}
   > (/ 5.0)    ; not a probability
-  0.2
-  > (/% 5000)
-  200
+  0.2          
+  > (/\% 5000)  ; not a \glref{pseudo-probability}
+  200          
   > (/ 0.5)
-  2.0
-  > (/% 500)
+  2.0          ; not a probability
+  > (/\% 500)
   2000         ; not a \glref{pseudo-probability}
   > 
 \end{example}
