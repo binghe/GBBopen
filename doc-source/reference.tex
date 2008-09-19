@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Wed Sep 17 06:16:00 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Fri Sep 19 14:57:03 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -17925,6 +17925,7 @@ happen if confirmed positively.
                       coalesce-strings
                       confirm-if-not-empty
                       disable-events 
+                      estimated-peak-forward-references
                       external-format
                       readtable
                       read-eval
@@ -17947,12 +17948,14 @@ happen if confirmed positively.
 \fnmodule \code{:gbbopen-core}
 
 \fnargs
-\begin{args}{class-name-translations}
+\begin{args}{estimated-peak-forward-references}
 \arg[pathname] A \glref{pathname~designator}
 \arg[class-name-translations] An \glref{association~list} (default is \nil)
 \arg[coalesce-strings] A \glref{generalized~boolean} (default is \nil)
 \arg[confirm-if-not-empty] A \glref{generalized~boolean} (default is true)
 \arg[disable-events] A \glref{generalized~boolean} (default is \code{t})
+\arg[estimated-peak-forward-references] An integer (default is
+  \code{*default-estimated-peak-forward-references*})
 \arg[external-format] An external-file-format designator (default is
   \code{:default})
 \arg[readtable] A readtable (default is 
@@ -18009,10 +18012,14 @@ loading.
 
 If \var{coalesce-strings\/} is true, loaded strings that are \code{equal}
 become shared (\code{eq}).  This coalescing is performed using a temporary
-hash-table whose initial size can be specified by providing an integer value
+hash table whose initial size can be specified by providing an integer value
 for \var{coalesce-strings}.  If \var{confirm-if-not-empty} is true, the user
 must confirm loading when the current blackboard repository contains
 \glref{unit~instances}.
+
+\glref{Unit~instances} that are referenced before they are defined are
+recorded using a temporary hash table whose initial size can be specified by
+providing an integer value for \var{estimated-peak-forward-references}.
 
 \begin{alsos}{confirm-if-blackboard-repository-not-empty-p}
 \also[confirm-if-blackboard-repository-not-empty-p]
@@ -18027,6 +18034,7 @@ and then load a blackboard repository that was saved previously:
 \begin{example}
   > :tutorial-example :noautorun 
   > (load-blackboard-repository "tutorial")
+  ;; 35 temporarily forward-referenced instances (peak count)
   #P"\var{<homedir>\/}/tutorial.bb"
   3429178245
   #<path 1>
@@ -18055,6 +18063,7 @@ repository again, translating all \code{location} \glref{unit~instances} to
   > (load-blackboard-repository "tutorial"
       :class-name-translations '((location . new-location))
       :confirm-if-not-empty nil)
+  ;; 35 temporarily forward-referenced instances (peak count)
   #P"\var{<homedir>\/}/tutorial.bb"
   3429178245
   #<path 1>
@@ -18446,8 +18455,11 @@ repository is loaded:
 \begin{functiondoc}[with-reading-saved-sent-objects-block]{Macro}%
   {with-reading-saved/sent-objects-block}%
   {\code{(}\var{stream\/} 
-    \code{\&key} \var{class-name-translations coalesce-strings 
-      readtable read-eval\/}\code{)}
+    \code{\&key} \var{class-name-translations 
+                      coalesce-strings 
+                      estimated-peak-forward-references
+                      readtable 
+                      read-eval\/}\code{)}
     \var{form\/}\superstar
     \returns{} \var{result\/}\superstar}
   
@@ -18462,10 +18474,12 @@ reading-saved/sent-objects behavior when evaluating \var{forms}.
 \fnmodule \code{:gbbopen-tools}
 
 \fnargs
-\begin{args}{read-default-float-format}
+\begin{args}{estimated-peak-forward-references}
 \arg[stream] A stream
 \arg[class-name-translations] An \glref{association~list} (default is \nil)
 \arg[coalesce-strings] A \glref{generalized~boolean} (default is \nil)
+\arg[estimated-peak-forward-references] An integer (default is
+  \code{*default-estimated-peak-forward-references*})
 \arg[readtable] A readtable (default is 
   \code{*reading-saved/sent-objects-readtable*})
 \arg[read-eval] A \glref{generalized~boolean} (default is \nil)
@@ -18496,6 +18510,10 @@ If \var{coalesce-strings\/} is true, strings read within the dynamic extent of
 the body of \var{forms} that are \code{equal} become shared (\code{eq}).  This
 coalescing is performed using a temporary hash-table whose initial size can be
 specified by providing an integer value for \var{coalesce-strings}.
+
+\glref{Unit~instances} that are referenced before they are defined are
+recorded using a temporary hash table whose initial size can be specified by
+providing an integer value for \var{estimated-peak-forward-references}.
 
 \begin{alsos}{load-blackboard-repository}
 \also[*block-saved/sent-time*]

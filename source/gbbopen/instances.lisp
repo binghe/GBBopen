@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Sep  4 15:33:43 2008 *-*
+;;;; *-* Last-Edit: Fri Sep 19 14:12:57 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -48,6 +48,7 @@
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (import '(gbbopen-tools::*%%skip-gbbopen-shared-initialize-method-processing%%*
+            gbbopen-tools::*forward-referenced-peak-count*
             gbbopen-tools::clear-flag
             gbbopen-tools::outside-reading-saved/sent-objects-block-error
             gbbopen-tools::possibly-translate-class-name
@@ -329,6 +330,11 @@
        ;; hash table of the class:
        (setf (gethash instance *forward-referenced-saved/sent-instances*)
              't)
+       ;; Update the peak count, if needed:
+       (let ((count
+              (hash-table-count *forward-referenced-saved/sent-instances*)))
+         (when (>& count *forward-referenced-peak-count*)
+           (setf *forward-referenced-peak-count* count)))
        (with-lock-held (*master-instance-lock*)
          (add-instance-to-instance-hash-table class instance instance-name))
        instance))))
