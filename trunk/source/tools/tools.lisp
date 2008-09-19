@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Sep 12 11:26:01 2008 *-*
+;;;; *-* Last-Edit: Fri Sep 19 09:30:10 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -77,56 +77,65 @@
      excl::extract-declarations
      excl:interrupt-signal
      excl::memq
+     excl::simple-array-p
      excl:until
      excl:while
      excl::xor
      sys:copy-file)
    #+clisp
    '(posix::copy-file
-     system::memq)
+     system::memq
+     system::simple-array-p)
    #+clozure
    '(ccl:compiler-macroexpand
      ccl:compiler-macroexpand-1
      ccl:copy-file
+     ccl:delq
      ccl:memq
-     ccl:delq)
+     ccl::simple-array-p)
    #+cmu
    '(conditions::case-failure
      ext:compiler-macroexpand
      ext:compiler-macroexpand-1
+     ext:delq
      ext:memq
-     ext:delq)
+     kernel:simple-array-p)
    #+cormanlisp
    '()
    #+digitool-mcl
    '(ccl:compiler-macroexpand
      ccl:compiler-macroexpand-1
      ccl:copy-file
+     ccl:delq
      ccl:memq
-     ccl:delq)
+     ccl::simple-array-p)
    ;; Note: ECL's while doesn't include a NIL block, so we can't use it
    #+ecl
    '(si::case-failure
-     si:memq)
+     si:memq
+     si::simple-array-p)
    #+gcl
    '()
    #+lispworks
    '(conditions:case-failure
      harlequin-common-lisp:compiler-macroexpand
      harlequin-common-lisp:compiler-macroexpand-1
+     harlequin-common-lisp:simple-array-p
      system::copy-file
      system:memq
      system:delq)
    #+sbcl
    '(sb-int:memq
      sb-int:delq
-     sb-kernel:case-failure)
+     sb-kernel:case-failure
+     sb-kernel:simple-array-p)
    #+scl
    '(conditions::case-failure
      ext:compiler-macroexpand
      ext:compiler-macroexpand-1
      ext:memq
-     ext:delq)
+     ext:delq
+     kernel:simple-array-p)
    #-(or allegro clisp clozure cmu cormanlisp digitool-mcl ecl gcl 
          lispworks sbcl scl)
    '()))
@@ -197,6 +206,7 @@
             sets-overlap-p
             shuffle-list
             shrink-vector
+            simple-array-p              ; not yet documented
             sole-element
             splitting-butlast
             trimmed-substring
