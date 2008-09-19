@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/print-object-for.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Aug 31 09:29:02 2008 *-*
+;;;; *-* Last-Edit: Fri Sep 19 12:53:40 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -165,6 +165,12 @@
   (declare (ignore object))
   nil)
 
+;;; ---------------------------------------------------------------------------
+
+(defun check-for-displaced-array (array)
+  (when (array-displacement array)
+    (error "Saving/sending a displaced array is not supported.")))
+
 ;;; ===========================================================================
 ;;;  Standard print-object-for-saving/sending methods
 ;;;
@@ -219,7 +225,18 @@
 ;;;  Vectors
 
 (defmethod print-object-for-saving/sending ((vector vector) stream)
-  (format stream "#(")
+  (typecase vector
+    ;; A simple vector:
+    (simple-vector (format stream "#("))
+    ;; A complex vector:
+    (t (check-for-displaced-array vector)
+       (let ((has-fill-pointer? (array-has-fill-pointer-p vector)))
+         (format stream "#G(~s ~s ~s ~s "
+                 (sole-element (array-dimensions vector))
+                 (adjustable-array-p vector)
+                 (when has-fill-pointer? (fill-pointer vector))
+                 (array-element-type vector)))))
+  ;; Print the elements:
   (dotimes (i (length vector))
     (declare (fixnum i))
     (unless (zerop i) (write-char #\space stream))
@@ -228,14 +245,28 @@
   vector)
 
 ;;; ---------------------------------------------------------------------------
-;;;  Bit-vectors
+;;;  Bit-vectors 
 
 (defmethod print-object-for-saving/sending ((bit-vector bit-vector) stream)
-  (prin1 bit-vector stream))
+  (typecase bit-vector
+    ;; A simple bit-vector:
+    (simple-bit-vector (prin1 bit-vector stream))
+    ;; A complex bit-vector:
+    (t (check-for-displaced-array bit-vector)
+       (let ((has-fill-pointer? (array-has-fill-pointer-p bit-vector))
+             (adjustable? (adjustable-array-p bit-vector)))
+         (format stream "#G*(~s ~s ~s "
+                 (sole-element (array-dimensions bit-vector))
+                 adjustable?              
+                 (when has-fill-pointer? (fill-pointer bit-vector))))
+       (dotimes (i (length bit-vector))
+         (declare (fixnum i))
+         (prin1 (aref bit-vector i) stream))
+       (write-char #\) stream)))
+  bit-vector)
 
 ;;; ---------------------------------------------------------------------------
-;;;  Arrays (simple only--someday support extended syntax for arrays with
-;;;          a fill-pointer, specialized element-type, etc.)
+;;;  Arrays
 
 (defmethod print-object-for-saving/sending ((array array) stream)
   (let ((dimensions (array-dimensions array))
@@ -248,15 +279,32 @@
              (print-object-for-saving/sending
               (row-major-aref array (the fixnum (incf index))) stream))
             (t (let ((dimension (first dimensions)))
+                 (declare (fixnum dimension))
                  (write-char #\( stream)
                  (dotimes (i dimension)
                    (declare (fixnum i))
-                   (unless (zerop i) (write-char #\space stream))
+                   (unless (zerop i)
+                     (write-char #\space stream))
                    (helper (rest dimensions)))
                  (write-char #\) stream))))))
-      (format stream "#~sA" (array-rank array))
-      (helper dimensions)
-      (write-char #\space stream)))
+      (cond 
+        ;; A simple array:
+       ((and (simple-array-p array)
+             ;; A simple-array is not required to hold all element types (unlike a simple-vector):
+             (eq (array-element-type array) 't))
+        (format stream "#~sA" (array-rank array))
+        (helper dimensions))
+       ;; A complex array:
+       (t (check-for-displaced-array array)
+          (format stream "#GA(~s ~s ~s "
+                  (array-dimensions array)                   
+                  (adjustable-array-p array)
+                  (array-element-type array))
+          (dotimes (i (array-total-size array))
+            (declare (fixnum i))
+            (unless (zerop i) (write-char #\space stream))
+            (print-object-for-saving/sending (row-major-aref array i) stream))
+          (write-char #\) stream)))))
   array)
 
 ;;; ---------------------------------------------------------------------------

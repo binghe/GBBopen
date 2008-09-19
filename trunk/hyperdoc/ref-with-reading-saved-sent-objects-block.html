@@ -17,8 +17,11 @@
 <p><table class="tight" width="100%">
 <tr valign="top"><td valign="baseline" align="left"%>
 <nobr><b><font color="#000000">with-reading-saved/sent-objects-block</font></b></nobr></td><td valign="baseline"> &nbsp; </td><td valign="baseline" align="left" width="99%"><code>(</code><var>stream</var> 
-<code>&#38;key</code> <var>class-name-translations coalesce-strings 
-readtable read-eval</var><code>)</code>
+<code>&#38;key</code> <var>class-name-translations 
+coalesce-strings 
+estimated-peak-forward-references
+readtable 
+read-eval</var><code>)</code>
 <var>form</var>*<span 
     style="font-family: serif; font-style: normal">=&gt;</span> <var>result</var>*</td><td valign="baseline" align="right">[<i>Macro</i>]
 </td></tr></table></p>
@@ -34,6 +37,8 @@ reading-saved/sent-objects behavior when evaluating <var>forms</var>.
 <tr valign="top"><td valign="baseline" nowrap><i>stream</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A stream
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>class-name-translations</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An <a href="ref-glossary.html#id3">association&nbsp;list</a> (default is <code>nil</code>)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>coalesce-strings</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> (default is <code>nil</code>)
+</td></tr><tr valign="top"><td valign="baseline" nowrap><i>estimated-peak-forward-references</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An integer (default is
+<code>*default-estimated-peak-forward-references*</code>)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>readtable</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A readtable (default is 
 <code>*reading-saved/sent-objects-readtable*</code>)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>read-eval</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> (default is <code>nil</code>)
@@ -60,6 +65,10 @@ should contain <a href="ref-glossary.html#gl:conses">conses</a> of the form:<br 
 the body of <var>forms</var> that are <code>equal</code> become shared (<code>eq</code>).  This
 coalescing is performed using a temporary hash-table whose initial size can be
 specified by providing an integer value for <var>coalesce-strings</var>.
+</p>
+<p><a href="ref-glossary.html#gl:instances">Unit&nbsp;instances</a> that are referenced before they are defined are
+recorded using a temporary hash table whose initial size can be specified by
+providing an integer value for <var>estimated-peak-forward-references</var>.
 </p>
 <p><span class="fndoclabel">See also</span>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-block-saved-sent-time-var.html"><b>*block-saved/sent-time*</b></a>

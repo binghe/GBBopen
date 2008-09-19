@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/read-object.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Aug 31 11:16:31 2008 *-*
+;;;; *-* Last-Edit: Fri Sep 19 14:34:20 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -28,9 +28,10 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(*block-saved/sent-time*
             *block-saved/sent-value*
+            *default-estimated-peak-forward-references* ; not yet documented
             *forward-referenced-saved/sent-instances* ; not yet documented
+            *reading-saved/sent-statistics-verbose* ; not yet documented
             *reading-saved/sent-objects-readtable* ; not yet documented
-            *string-coalescing-verbose* ; not yet documented
             allocate-saved/sent-instance ; not yet documented
             saved/sent-object-reader    ; not yet documented
             initialize-saved/sent-instance
@@ -39,8 +40,10 @@
 ;;; ===========================================================================
 ;;;  With-reading-saved/sent-objects-block
 
-;; Controls printing of string-coalescing information:
-(defvar *string-coalescing-verbose* 't)
+
+;; Controls printing of string-coalescing information and forward-referenced
+;; instances peak count:
+(defvar *reading-saved/sent-statistics-verbose* 't)
 
 ;; Dynamically bound in with-reading-saved/sent-objects-block to maintain class
 ;; descriptions that have been read:
@@ -49,6 +52,12 @@
 ;; Dynamically bound in with-reading-saved/sent-objects-block to
 ;; maintain instances that have been referenced but not yet read:
 (defvar *forward-referenced-saved/sent-instances*)
+;; Controls initial size of *forward-referenced-saved/sent-instances* hash
+;; table:
+(defvar *default-estimated-peak-forward-references* 1000)
+;; Dynamically bound in with-reading-saved/sent-objects-block to determine the
+;; peak count of instances that are referenced before they are read:
+(defvar *forward-referenced-peak-count*)
 
 ;; Dynamically bound in with-reading-saved/sent-objects-block to hold the
 ;; saved/sent time & value associated with the block:
@@ -74,11 +83,20 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun show-coalescing (ht duplicate-string-count)
-  (when *string-coalescing-verbose*
+  (when *reading-saved/sent-statistics-verbose*
     (format t "~&;; ~:d distinct equal strings read~
                ~%;; ~:d duplicate strings coalesced~%"
             (hash-table-count ht)
             duplicate-string-count)))
+
+;;; ---------------------------------------------------------------------------
+
+(defun show-forward-referenced-peak-count (peak-count)
+  (when (and *reading-saved/sent-statistics-verbose*
+             (not (zerop& peak-count)))
+    (format t "~&;; ~:d temporarily forward-referenced instance~:p ~
+                    (peak count)~%"
+            peak-count)))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -127,6 +145,8 @@
     ((stream 
       &key (class-name-translations nil)
            (coalesce-strings nil)
+           (estimated-peak-forward-references 
+            *default-estimated-peak-forward-references*)
            (readtable
             '*reading-saved/sent-objects-readtable*)
            (read-eval nil))
@@ -138,6 +158,7 @@
      (let (*reading-saved/sent-class-name-translations* 
            (*read-class-descriptions-ht* (make-hash-table :test 'eq))
            (*duplicate-string-count* 0)
+           (*forward-referenced-peak-count* 0)
            (*coalesce-save/sent-strings-ht* 
             (let ((.coalesce-strings. ,coalesce-strings))
               (when .coalesce-strings.
@@ -149,7 +170,9 @@
                     ;; No size was specified:
                     (make-keys-only-hash-table-if-supported :test 'equal)))))
            (*forward-referenced-saved/sent-instances* 
-            (make-keys-only-hash-table-if-supported :test 'equal)))
+            (make-keys-only-hash-table-if-supported 
+             :test 'eq
+             :size ,estimated-peak-forward-references)))
        (multiple-value-bind (*block-saved/sent-time* *block-saved/sent-value*)
            ;; Note that read-saving/sending-block-info also sets *package*,
            ;; *read-default-float-format*, and
@@ -160,6 +183,8 @@
            (when *coalesce-save/sent-strings-ht*
              (show-coalescing *coalesce-save/sent-strings-ht* 
                               *duplicate-string-count*))
+           (show-forward-referenced-peak-count
+            *forward-referenced-peak-count*)
            (check-for-undefined-instance-references))))))
 
 ;;; ===========================================================================
@@ -202,6 +227,62 @@
                          string))))
         string)))
 
+;;; ---------------------------------------------------------------------------
+;;;  Non-simple vector reader
+         
+(defmethod saved/sent-object-reader ((char (eql #\()) stream)
+  (let* ((dimension (read stream))
+         (adjustable? (read stream))
+         (fill-pointer (read stream))
+         (element-type (read stream))
+         (vector (make-array (list dimension)
+                             :adjustable adjustable? 
+                             :fill-pointer fill-pointer
+                             :element-type element-type)))
+    (dotimes (i (or fill-pointer dimension))
+      (declare (fixnum i))
+      (setf (aref vector i) (read stream)))
+    (read-char stream)                  ; skip close parenthesis
+    vector))
+  
+;;; ---------------------------------------------------------------------------
+;;;  Non-simple bit-vector reader
+         
+(defmethod saved/sent-object-reader ((char (eql #\*)) stream)
+  (read-char stream)                    ; skip open parenthesis
+  (let* ((dimension (read stream))
+         (adjustable? (read stream))
+         (fill-pointer (read stream))
+         (bit-vector (make-array (list dimension)
+                                 :adjustable adjustable? 
+                                 :fill-pointer fill-pointer
+                                 :element-type 'bit)))
+    (dotimes (i (or fill-pointer dimension))
+      (declare (fixnum i))
+      (setf (aref bit-vector i) 
+            (ecase (read-char stream)
+              (#\0 0)
+              (#\1 1))))
+    (read-char stream)                  ; skip close parenthesis
+    bit-vector))
+  
+;;; ---------------------------------------------------------------------------
+;;;  Non-simple array reader
+         
+(defmethod saved/sent-object-reader  ((char (eql #\A)) stream)
+  (read-char stream)                    ; skip open parenthesis
+  (let* ((dimensions (read stream))
+         (adjustable? (read stream))
+         (element-type (read stream))
+         (array (make-array dimensions
+                            :adjustable adjustable? 
+                            :element-type element-type)))
+    (dotimes (i (apply #'* dimensions))
+      (declare (fixnum i))
+      (setf (row-major-aref array i) (read stream)))
+    (read-char stream)                  ; skip close parenthesis
+    array))
+  
 ;;; ---------------------------------------------------------------------------
 ;;;  Class (reference) reader
          
@@ -262,13 +343,8 @@
   (destructuring-bind (ht-test ht-count ht-values &rest keys-and-values)
       (read stream 't nil 't)
     (declare (dynamic-extent keys-and-values))
-    (let ((ht 
-           #+has-keys-only-hash-tables
-           (if ht-values 
-               (make-hash-table :test ht-test :size ht-count)
-               (make-hash-table :test ht-test :size ht-count :values nil))
-           #-has-keys-only-hash-tables
-           (make-hash-table :test ht-test :size ht-count)))
+    (let ((ht (make-keys-only-hash-table-if-supported
+               :test ht-test :size ht-count)))
       (if ht-values 
           (loop for (key value) on keys-and-values by #'cddr
               do (setf (gethash key ht) value))

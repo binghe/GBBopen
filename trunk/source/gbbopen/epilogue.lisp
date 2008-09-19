@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/epilogue.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Sep 12 12:16:20 2008 *-*
+;;;; *-* Last-Edit: Fri Sep 19 14:27:02 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -233,6 +233,8 @@
      &key (class-name-translations nil)
           (coalesce-strings nil)
           (confirm-if-not-empty 't)
+          (estimated-peak-forward-references 
+            *default-estimated-peak-forward-references*)
           (external-format ':default)
           (readtable *reading-saved/sent-objects-readtable*)
           (read-eval nil))
@@ -250,12 +252,15 @@
                                 '(:class-name-translations
                                   :coalesce-strings
                                   :confirm-if-not-empty
+                                  :estimated-peak-forward-references
                                   :external-format
                                   :readtable
                                   :read-eval)))
       (with-reading-saved/sent-objects-block 
           (file :class-name-translations class-name-translations
                 :coalesce-strings coalesce-strings
+                :estimated-peak-forward-references 
+                   estimated-peak-forward-references
                 :readtable readtable
                 :read-eval read-eval)
         (let ((format-version (read file)))

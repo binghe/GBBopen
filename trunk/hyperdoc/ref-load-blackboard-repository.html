@@ -21,6 +21,7 @@
 coalesce-strings
 confirm-if-not-empty
 disable-events 
+estimated-peak-forward-references
 external-format
 readtable
 read-eval
@@ -44,6 +45,8 @@ retain-event-printing</var>
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>coalesce-strings</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> (default is <code>nil</code>)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>confirm-if-not-empty</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> (default is true)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>disable-events</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> (default is <code>t</code>)
+</td></tr><tr valign="top"><td valign="baseline" nowrap><i>estimated-peak-forward-references</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An integer (default is
+<code>*default-estimated-peak-forward-references*</code>)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>external-format</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An external-file-format designator (default is
 <code>:default</code>)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>readtable</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A readtable (default is 
@@ -83,10 +86,14 @@ loading.
 </p>
 <p>If <var>coalesce-strings</var> is true, loaded strings that are <code>equal</code>
 become shared (<code>eq</code>).  This coalescing is performed using a temporary
-hash-table whose initial size can be specified by providing an integer value
+hash table whose initial size can be specified by providing an integer value
 for <var>coalesce-strings</var>.  If <var>confirm-if-not-empty</var> is true, the user
 must confirm loading when the current blackboard repository contains
 <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a>.
+</p>
+<p><a href="ref-glossary.html#gl:instances">Unit&nbsp;instances</a> that are referenced before they are defined are
+recorded using a temporary hash table whose initial size can be specified by
+providing an integer value for <var>estimated-peak-forward-references</var>.
 </p>
 <p><span class="fndoclabel">See also</span>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-confirm-if-blackboard-repository-not-empty-p.html"><b>confirm-if-blackboard-repository-not-empty-p</b></a>
@@ -98,6 +105,7 @@ and then load a blackboard repository that was saved previously:
 <pre class="pretop">
   &gt; :tutorial-example :noautorun 
   &gt; (load-blackboard-repository "tutorial")
+  ;; 35 temporarily forward-referenced instances (peak count)
   #P"<var>&lt;homedir&gt;</var>/tutorial.bb"
   3429178245
   #&lt;path 1&gt;
@@ -120,6 +128,7 @@ repository again, translating all <code>location</code> <a href="ref-glossary.ht
   &gt; (load-blackboard-repository "tutorial"
       :class-name-translations '((location . new-location))
       :confirm-if-not-empty nil)
+  ;; 35 temporarily forward-referenced instances (peak count)
   #P"<var>&lt;homedir&gt;</var>/tutorial.bb"
   3429178245
   #&lt;path 1&gt;

@@ -1,9 +1,16 @@
 Important changes since GBBopen 1.2:
 
+  * Changes to GBBopen Tools
+     - Saving/sending support for adjustable, fill-pointer, and 
+       element-typed vectors, bit-vectors, and arrays
+
   * Changes to GBBopen Core
      - new function, MAKE-INSTANCES-OF-CLASS-VECTOR
      - speed/allocation optimizations to MAP-SORTED-INSTANCES-OF-CLASS
        and DO-SORTED-INSTANCES-OF-CLASS
+     - New :coalesce-strings and :estimated-peak-forward-references
+       arguments to LOAD-BLACKBOARD-REPOSITORY (these arguments are also
+       new in GBBopen Tool's WITH-READING-SAVED/SENT-OBJECTS-BLOCK)
 
 
 Important changes in GBBopen 1.2:
