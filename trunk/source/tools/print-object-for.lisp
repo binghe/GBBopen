@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/print-object-for.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Sep 19 12:53:40 2008 *-*
+;;;; *-* Last-Edit: Fri Sep 19 15:07:49 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -55,7 +55,7 @@
 ;;; ---------------------------------------------------------------------------
 ;;;  Saving/sending-block format version
 
-(defparameter *saving/sending-block-format-version* 3)
+(defparameter *saving/sending-block-format-version* 4)
 
 ;;; ---------------------------------------------------------------------------
 
