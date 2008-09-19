@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/extended-repl.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Sep  1 10:01:35 2008 *-*
+;;;; *-* Last-Edit: Fri Sep 19 09:44:24 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -215,7 +215,7 @@
                            &optional cl-user-fn-name command-system-name)
           command-spec
         (declare (ignore command function doc help-control cl-user-fn-name))
-        (declare (keyword command-system-name))
+        (declare (symbol command-system-name))
         (when command-system-name
           (pushnew command-system-name result))))
     (when (find-package ':module-manager)
