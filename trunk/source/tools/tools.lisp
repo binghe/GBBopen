@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Sep 19 09:30:10 2008 *-*
+;;;; *-* Last-Edit: Sun Sep 21 07:22:44 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -713,9 +713,14 @@
 (defun resize-hash-table (hash-table new-size)
   #+allegro
   (excl::do-rehash hash-table (excl::hash-primify new-size))
-  #-(or allegro)
+  #+lispworks
+  (system:with-hash-table-locked hash-table
+    (when (> new-size (hash-table-size hash-table))
+      (system::rehash hash-table (system::almost-primify new-size))
+      't))
+  #-(or allegro lispworks)
   (declare (ignore hash-table new-size))
-  #-(or allegro)
+  #-(or allegro lispworks)
   (need-to-port 'resize-hash-table t))
 
 ;;; ===========================================================================
