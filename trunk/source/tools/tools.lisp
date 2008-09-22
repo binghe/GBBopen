@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Sep 22 09:19:38 2008 *-*
+;;;; *-* Last-Edit: Mon Sep 22 12:15:53 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -718,29 +718,46 @@
     (when (> new-size (hash-table-size hash-table))
       (system::rehash hash-table (system::almost-primify new-size))
       't))
-  ;; SBCL doesn't provide a direct interface for resizing a hash table to a
-  ;; specific size, so we fake such an interface by temporarily "advising"
-  ;; POWER-OF-TWO-CEILING (called by SBCL's REHASH function) to use `new-size'
-  ;; instead of its normal argument.
+  ;; CMUCL doesn't provide a direct interface for resizing a hash table, so we
+  ;; fake such an interface by temporarily setting the REHASH-SIZE of the hash
+  ;; table to (- `new-size' old-size).  [We also assume that SCL's hash-table
+  ;; mechanism is implemented similarly, but that is unverified and risky WRT
+  ;; locking.]
+  #+(or cmu scl)
+  (when (> new-size (hash-table-size hash-table))
+    (system:without-gcing
+     (let ((old-rehash-size (hash-table-rehash-size hash-table))
+           (old-size (length (lisp::hash-table-next-vector hash-table))))
+       (unwind-protect
+           (progn
+             (setf (slot-value hash-table 'lisp::rehash-size)
+                   ;; Compute the incremental value (to be added back to
+                   ;; old-size in REHASH):
+                   (-& new-size old-size))
+             (lisp::rehash hash-table))
+        (setf (slot-value hash-table 'lisp::rehash-size) old-rehash-size))))
+    't)
+  ;; SBCL doesn't provide a direct interface for resizing a hash table, so we
+  ;; fake such an interface by temporarily setting the REHASH-SIZE of the hash
+  ;; table to (- `new-size' old-size).
   #+sbcl
-  (sb-thread::with-recursive-system-spinlock
-      ((sb-impl::hash-table-spinlock hash-table) :without-gcing t)
-    (when (> new-size (hash-table-size hash-table))
-      (flet ((faked-power-of-two-ceiling (x)
-               (declare (ignore x))
-               (ash 1 (integer-length (1-& new-size)))))
-        (let ((old-fdefinition (fdefinition 'sb-impl::power-of-two-ceiling)))
-          (sb-ext::without-package-locks
-           (unwind-protect 
-               (progn (setf (fdefinition 'sb-impl::power-of-two-ceiling)
-                            #'faked-power-of-two-ceiling)
-                      (sb-impl::rehash hash-table))
-             (setf (fdefinition 'sb-impl::power-of-two-ceiling) 
-                   old-fdefinition)))))
-      't))    
-  #-(or allegro lispworks sbcl)
+  (when (> new-size (hash-table-size hash-table))
+    (sb-thread::with-recursive-system-spinlock
+        ((sb-impl::hash-table-spinlock hash-table) :without-gcing t)
+      (let ((old-rehash-size (hash-table-rehash-size hash-table))
+            (old-size (length (sb-impl::hash-table-next-vector hash-table))))
+        (unwind-protect
+            (progn
+              (setf (slot-value hash-table 'sb-impl::rehash-size)
+                    ;; Compute the incremental value (to be added back to
+                    ;; old-size in REHASH):
+                    (-& new-size old-size))
+              (sb-impl::rehash hash-table))
+          (setf (slot-value hash-table 'sb-impl::rehash-size) old-rehash-size))))
+      't)
+  #-(or allegro cmu lispworks sbcl scl)
   (declare (ignore hash-table new-size))
-  #-(or allegro lispworks sbcl)
+  #-(or allegro cmu lispworks sbcl scl)
   (need-to-port 'resize-hash-table t))
 
 ;;; ===========================================================================
