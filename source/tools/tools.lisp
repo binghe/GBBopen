@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Sep 22 12:15:53 2008 *-*
+;;;; *-* Last-Edit: Mon Sep 22 14:56:39 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -713,6 +713,24 @@
 (defun resize-hash-table (hash-table new-size)
   #+allegro
   (excl::do-rehash hash-table (excl::hash-primify new-size))
+  ;; Clozure CL doesn't provide a direct interface for resizing a hash table,
+  ;; so we fake such an interface by temporarily setting the REHASH-SIZE of
+  ;; the hash table to `new-size' and the internal grow-threshold to zero
+  ;; (allowing the resize to be performed by %GROW-HASH-TABLE).
+  #+clozure
+  (ccl::with-lock-context
+      (ccl::without-interrupts
+        (when (> new-size (hash-table-size hash-table))
+          (ccl::write-lock-hash-table hash-table)
+          (let ((old-rehash-size (ccl::nhash.rehash-size hash-table)))
+            (unwind-protect
+                (progn
+                  (setf (ccl::nhash.rehash-size hash-table) new-size)
+                  (setf (ccl::nhash.grow-threshold hash-table) 0)
+                  (ccl::%grow-hash-table hash-table))
+              (setf (ccl::nhash.rehash-size hash-table) old-rehash-size)))
+          (ccl::unlock-hash-table hash-table nil)
+          't)))
   #+lispworks
   (system:with-hash-table-locked hash-table
     (when (> new-size (hash-table-size hash-table))
@@ -724,8 +742,8 @@
   ;; mechanism is implemented similarly, but that is unverified and risky WRT
   ;; locking.]
   #+(or cmu scl)
-  (when (> new-size (hash-table-size hash-table))
-    (system:without-gcing
+  (system:without-gcing
+   (when (> new-size (hash-table-size hash-table))
      (let ((old-rehash-size (hash-table-rehash-size hash-table))
            (old-size (length (lisp::hash-table-next-vector hash-table))))
        (unwind-protect
@@ -735,15 +753,15 @@
                    ;; old-size in REHASH):
                    (-& new-size old-size))
              (lisp::rehash hash-table))
-        (setf (slot-value hash-table 'lisp::rehash-size) old-rehash-size))))
-    't)
+        (setf (slot-value hash-table 'lisp::rehash-size) old-rehash-size)))
+     't))
   ;; SBCL doesn't provide a direct interface for resizing a hash table, so we
   ;; fake such an interface by temporarily setting the REHASH-SIZE of the hash
   ;; table to (- `new-size' old-size).
   #+sbcl
-  (when (> new-size (hash-table-size hash-table))
-    (sb-thread::with-recursive-system-spinlock
-        ((sb-impl::hash-table-spinlock hash-table) :without-gcing t)
+  (sb-thread::with-recursive-system-spinlock
+      ((sb-impl::hash-table-spinlock hash-table) :without-gcing t)
+    (when (> new-size (hash-table-size hash-table))
       (let ((old-rehash-size (hash-table-rehash-size hash-table))
             (old-size (length (sb-impl::hash-table-next-vector hash-table))))
         (unwind-protect
@@ -753,11 +771,11 @@
                     ;; old-size in REHASH):
                     (-& new-size old-size))
               (sb-impl::rehash hash-table))
-          (setf (slot-value hash-table 'sb-impl::rehash-size) old-rehash-size))))
-      't)
-  #-(or allegro cmu lispworks sbcl scl)
+          (setf (slot-value hash-table 'sb-impl::rehash-size) old-rehash-size)))
+      't))
+  #-(or allegro clozure cmu lispworks sbcl scl)
   (declare (ignore hash-table new-size))
-  #-(or allegro cmu lispworks sbcl scl)
+  #-(or allegro clozure cmu lispworks sbcl scl)
   (need-to-port 'resize-hash-table t))
 
 ;;; ===========================================================================
