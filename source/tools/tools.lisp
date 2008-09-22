@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Sep 21 07:22:44 2008 *-*
+;;;; *-* Last-Edit: Mon Sep 22 09:14:34 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -718,9 +718,25 @@
     (when (> new-size (hash-table-size hash-table))
       (system::rehash hash-table (system::almost-primify new-size))
       't))
-  #-(or allegro lispworks)
+  #+sbcl
+  (sb-thread::with-recursive-system-spinlock
+      ((sb-impl::hash-table-spinlock hash-table) :without-gcing t)
+    (when (> new-size (hash-table-size hash-table))
+      (flet ((faked-power-of-two-ceiling (x)
+               (declare (ignore x))
+               (ash 1 (integer-length (1-& new-size)))))
+        (let ((old-fdefinition (fdefinition 'sb-impl::power-of-two-ceiling)))
+          (sb-ext::without-package-locks
+           (unwind-protect 
+               (progn (setf (fdefinition 'sb-impl::power-of-two-ceiling)
+                            #'faked-power-of-two-ceiling)
+                      (sb-impl::rehash hash-table))
+             (setf (fdefinition 'sb-impl::power-of-two-ceiling) 
+                   old-fdefinition)))))
+      't))    
+  #-(or allegro lispworks sbcl)
   (declare (ignore hash-table new-size))
-  #-(or allegro lispworks)
+  #-(or allegro lispworks sbcl)
   (need-to-port 'resize-hash-table t))
 
 ;;; ===========================================================================
