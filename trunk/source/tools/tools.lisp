@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Sep 22 09:14:34 2008 *-*
+;;;; *-* Last-Edit: Mon Sep 22 09:19:38 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -718,6 +718,10 @@
     (when (> new-size (hash-table-size hash-table))
       (system::rehash hash-table (system::almost-primify new-size))
       't))
+  ;; SBCL doesn't provide a direct interface for resizing a hash table to a
+  ;; specific size, so we fake such an interface by temporarily "advising"
+  ;; POWER-OF-TWO-CEILING (called by SBCL's REHASH function) to use `new-size'
+  ;; instead of its normal argument.
   #+sbcl
   (sb-thread::with-recursive-system-spinlock
       ((sb-impl::hash-table-spinlock hash-table) :without-gcing t)
