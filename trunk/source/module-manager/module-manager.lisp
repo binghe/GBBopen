@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/module-manager/module-manager.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Sep  1 05:53:24 2008 *-*
+;;;; *-* Last-Edit: Mon Sep 22 04:52:43 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -1052,7 +1052,7 @@
   ;; defined modules.
   (let ((module-requires-list (determine-modules (list module-name) 't)))
     (maphash
-     #'(lambda (name module)
+     #'(lambda (name module)         
          (unless (eq name module-name)
            (let ((requires-list 
                   (determine-modules (mm-module.requires module) 't)))
@@ -1069,9 +1069,8 @@
                       (mapcar #'mm-module.name requires-list)
                       name
                       module-name
-                      (mapcar #'mm-module.name
-                              (mm-module.requires 
-                               (get-module module-name t))))))))
+                      (mm-module.requires 
+                       (get-module module-name t)))))))
      *mm-modules*)))
 
 ;;; ---------------------------------------------------------------------------
