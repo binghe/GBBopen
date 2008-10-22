@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/test/portable-threads-test.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Jun 14 09:59:27 2008 *-*
+;;;; *-* Last-Edit: Wed Oct 22 06:44:16 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -140,7 +140,13 @@
     (with-lock-held (nonrecursive-lock
                      :whostate "Waiting on nonrecursive lock")
       (unless (thread-holds-lock-p nonrecursive-lock)
-        (log-error "Incorrect thread-holds-lock-p value on held lock")))
+        (log-error "Incorrect thread-holds-lock-p value on held lock"))
+      (without-lock-held (nonrecursive-lock)
+          (when (thread-holds-lock-p nonrecursive-lock)
+            (log-error "Incorrect thread-holds-lock-p value on unheld lock")))
+      ;; Check lock re-aquisition:
+      (unless (thread-holds-lock-p nonrecursive-lock)
+        (log-error "Incorrect thread-holds-lock-p value on reheld lock")))
     (when (thread-holds-lock-p recursive-lock)
       (log-error "Incorrect thread-holds-lock-p value on free recursive lock"))
     (with-lock-held (recursive-lock 
@@ -214,6 +220,21 @@
         (error "Incorrect ~s returned values: ~s"
                'with-lock-held
                returned-values)))
+    ;; Check recursive locking:
+    (forced-format 
+     "~&;;   Testing with/without-lock-held forms and throws...~%")
+    (catch :not-held
+      (with-lock-held (nonrecursive-lock :whostate "Locked")
+        (catch :held
+          (without-lock-held (nonrecursive-lock :whostate "Unlocked")
+              (throw :held nil)))
+        (unless (thread-holds-lock-p nonrecursive-lock)
+          (log-error "Incorrect thread-holds-lock-p value on throw from ~
+                      within without-lock-held"))
+        (throw :not-held nil)))
+    (when (thread-holds-lock-p nonrecursive-lock)
+      (log-error "Incorrect thread-holds-lock-p value on throw from ~
+                      within with-lock-held"))
     (forced-format
      "~&;; Completed basic lock tests (~,2f seconds real time).~%"
      (/ (float (- (get-internal-real-time) start-real-time))
