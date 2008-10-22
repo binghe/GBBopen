@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Sep 22 14:56:39 2008 *-*
+;;;; *-* Last-Edit: Wed Oct 22 17:10:45 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -805,7 +805,7 @@
   #+sbcl
   (sb-kernel:shrink-vector vector length)
   #+scl
-  (common-lisp::shrink-vector vector length))
+  (lisp::shrink-vector vector length))
 
 (defcm shrink-vector (vector length)
   #+allegro
