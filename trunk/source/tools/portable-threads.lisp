@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/portable-threads.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Jul  8 05:55:15 2008 *-*
+;;;; *-* Last-Edit: Wed Oct 22 06:51:24 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -1260,7 +1260,7 @@
                (setf ,saved-whostate (thread-whostate .current-thread.))
                (setf (thread-whostate .current-thread.) ,whostate)
                (mp:process-unlock ,lock-sym)))
-           (multiple-value-prog1
+           (unwind-protect
                (progn ,@body)
              (mp:process-lock ,lock-sym .current-thread. ,saved-whostate)))
          #+clozure
@@ -1276,7 +1276,7 @@
                (setf ,saved-whostate (thread-whostate .current-thread.))
                (setf (thread-whostate .current-thread.) ,whostate)
                (ccl:release-lock .ccl-lock.)))
-           (multiple-value-prog1
+           (unwind-protect
                (progn ,@body)
              (ccl:without-interrupts
                (ccl:grab-lock .ccl-lock.)
@@ -1290,9 +1290,9 @@
                  (non-holder-lock-release-error
                   ,lock-sym .current-thread. .holding-thread.))
                (%%lock-release ,lock-sym)))
-           (multiple-value-prog1
+           (unwind-protect
                (progn ,@body)
-             (mp::lock-wait ,lock-sym "Reaquiring lock")))
+             (mp::lock-wait ,lock-sym "Reacquiring lock")))
          #+digitool-mcl
          (let ((.ccl-lock. (and (lock-p ,lock-sym)
                                 (lock-ccl-lock (the lock ,lock-sym))))
@@ -1306,7 +1306,7 @@
                (setf ,saved-whostate (thread-whostate .current-thread.))
                (setf (thread-whostate .current-thread.) ,whostate)
                (ccl:release-lock .ccl-lock.)))
-           (multiple-value-prog1
+           (unwind-protect
                (progn ,@body)
              (ccl:without-interrupts
                (ccl:grab-lock .ccl-lock.)
@@ -1314,7 +1314,7 @@
          #+(and ecl threads)
          (progn
            (mp:giveup-lock ,lock-sym)   ; performs valid holder check
-           (multiple-value-prog1
+           (unwind-protect
                (progn ,@body)
              (mp:get-lock ,lock-sym)))
          #+lispworks
@@ -1326,7 +1326,7 @@
                  (non-holder-lock-release-error
                   ,lock-sym .current-thread. .holding-thread.))
                (mp::in-process-unlock ,lock-sym)))
-           (multiple-value-prog1
+           (unwind-protect
                (progn ,@body)
              (mp:process-lock ,lock-sym)))
          #+(and sbcl sb-thread)
@@ -1338,7 +1338,7 @@
                  (non-holder-lock-release-error
                   ,lock-sym .current-thread. .holding-thread.))
                (sb-thread:release-mutex ,lock-sym)))
-           (multiple-value-prog1
+           (unwind-protect
                (progn ,@body)
              (sb-thread:get-mutex ,lock-sym)))
          #+scl
@@ -1350,14 +1350,24 @@
                  (non-holder-lock-release-error
                   ,lock-sym .current-thread. .holding-thread.))
                (%%lock-release ,lock-sym)))
-           (multiple-value-prog1
+           (unwind-protect
                (progn ,@body)
-             (mp::lock-wait ,lock-sym "Reaquiring lock")))
+             (mp::lock-wait ,lock-sym "Reacquiring lock")))
          #+threads-not-available
          (progn ,@body)))))
 
 ;;; Internal release-lock function for CMUCL:
 #+(and cmu mp)
+(defun %%lock-release (lock)
+  (declare (type mp:lock lock))
+  #-i486
+  (setf (mp:lock-process lock) nil)
+  #+i486
+  (null (kernel:%instance-set-conditional
+         lock 2 mp:*current-process* nil)))
+
+;;; Internal release-lock function for SCL (needs to be verified):
+#+scl
 (defun %%lock-release (lock)
   (declare (type mp:lock lock))
   #-i486
