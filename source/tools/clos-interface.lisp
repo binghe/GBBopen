@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/clos-interface.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Jul  8 05:52:42 2008 *-*
+;;;; *-* Last-Edit: Wed Oct 22 17:08:15 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -136,7 +136,8 @@
                      #+ecl ':clos
                      #+gcl ':pcl
                      #+lispworks ':clos
-                     #+sbcl ':sb-pcl))
+                     #+sbcl ':sb-pcl
+                     #+scl ':clos))
       (gbbopen-tools-package (find-package ':gbbopen-tools)))
   (dolist (uninterned-symbol *clos/mop-symbols*)
     (let* ((symbol-name (symbol-name uninterned-symbol))

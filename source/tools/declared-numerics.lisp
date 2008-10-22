@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/declared-numerics.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Jul  8 05:53:32 2008 *-*
+;;;; *-* Last-Edit: Wed Oct 22 17:03:47 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -122,7 +122,7 @@
    '(sb-int:fixnump sb-int:short-float-p sb-int:single-float-p
      sb-int:double-float-p sb-int:long-float-p)
    #+scl
-   '(ext:fixnump kernel:short-float-p kernel:single-float-p
+   '(ext:fixnump lisp::short-float-p kernel:single-float-p
      kernel:double-float-p kernel:long-float-p)
    #-(or allegro clisp clozure cmu cormanlisp digitool-mcl ecl gcl 
          lispworks sbcl scl)
@@ -867,7 +867,7 @@
       ;; We have to fake negative infinity
       #+infinity-not-available most-positive-long-float
       #-(or allegro clozure cmu digitool-mcl lispworks
-            sbcl sl infinity-not-available)
+            sbcl scl infinity-not-available)
       (need-to-port -infinity$$$))
   
   ;; --------------------------------------------------------------------------
