@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/initiate.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Sep  1 10:04:13 2008 *-*
+;;;; *-* Last-Edit: Wed Oct 22 16:54:08 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -105,11 +105,12 @@
   ;;;  compile interpreted closures (so we avoid having `fn-name' any
   ;;;  definitions that are closures)
   ;;;
-  ;;;  CMUCL can't compile macro definitions (so we skip compiling them)
+  ;;;  CMUCL and SCL can't compile macro definitions (so we skip compiling
+  ;;;  them)
   ;;; 
   ;;;  ECL's compiler is slow and creates temporary files, so we don't bother
   #+ecl (declare (ignore fn-name))
-  #-ecl (unless (or #+cmu (macro-function fn-name))
+  #-ecl (unless (or #+(or cmu scl) (macro-function fn-name))
           (compile fn-name)))
 
 ;;; ---------------------------------------------------------------------------
