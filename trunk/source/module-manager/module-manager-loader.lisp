@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/module-manager/module-manager-loader.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Sep 12 11:08:58 2008 *-*
+;;;; *-* Last-Edit: Wed Oct 22 18:47:22 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -234,13 +234,20 @@
              (lisp-implementation-version))
      ;; The Scieneer CL:
      #+scl
-     (format nil "~(~a~)-scl-~a-~(~a~)"
-	     (c:backend-name c:*backend*)
-	     #+linux "linux"
-	     #+solaris "solaris"
-	     #+hpux "hpux"
-	     ext:*case-mode*
-             (lisp-implementation-version))
+     (let ((case-mode ext::*case-mode*))
+       (format nil "~a-scl~:[~;-~(~a~)~]-~a"
+               (or #+(and x86 linux (not 64-bit)) "linux86"
+                   #+(and x86 linux 64-bit) "linux86-64"
+                   #+(and x86 solaris (not 64-bit)) "solaris-x86"
+                   #+(and x86 solaris 64-bit) "solaris-x86-64"
+                   #+(and sparc solaris (not 64-bit)) "sparc"
+                   #+(and sparc solaris 64-bit) "sparc64"
+                   #+(and hpux (not 64-bit)) "hpux"
+                   #+(and hpux 64-bit) "hpux-64"
+                   (need-to-port *compiled-directory-name*))
+               (not (eq case-mode ':upper))
+               case-mode
+               (lisp-implementation-version)))
      ;; Unknown CL:
      #-(or allegro 
            clisp 
