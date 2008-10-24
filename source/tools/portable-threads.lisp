@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/portable-threads.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Oct 22 06:51:24 2008 *-*
+;;;; *-* Last-Edit: Fri Oct 24 14:31:29 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -1740,7 +1740,10 @@
             (ccl:release-lock ccl-lock)
             (ccl:wait-on-semaphore 
              (condition-variable-semaphore condition-variable)))
-        (ccl:grab-lock ccl-lock)))
+        (ccl:grab-lock ccl-lock)
+        (setf (condition-variable-queue condition-variable)
+              (remove ccl:*current-process*
+                      (condition-variable-queue condition-variable)))))
     #+(and cmu mp)
     (progn
       (push mp:*current-process*
@@ -1888,7 +1891,8 @@
     (when (and thread (thread-alive-p thread))
       (awaken-throwable-sleeper thread)))
   #+clozure
-  (ccl:signal-semaphore (condition-variable-semaphore condition-variable))
+  (when (condition-variable-queue condition-variable)
+    (ccl:signal-semaphore (condition-variable-semaphore condition-variable)))
   #+(and ecl threads)
   (mp:condition-variable-signal (condition-variable-cv condition-variable))
   #+(and sbcl sb-thread)
