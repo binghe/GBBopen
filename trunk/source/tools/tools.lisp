@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Oct 22 17:10:45 2008 *-*
+;;;; *-* Last-Edit: Thu Oct 30 16:09:37 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -738,10 +738,8 @@
       't))
   ;; CMUCL doesn't provide a direct interface for resizing a hash table, so we
   ;; fake such an interface by temporarily setting the REHASH-SIZE of the hash
-  ;; table to (- `new-size' old-size).  [We also assume that SCL's hash-table
-  ;; mechanism is implemented similarly, but that is unverified and risky WRT
-  ;; locking.]
-  #+(or cmu scl)
+  ;; table to (- `new-size' old-size). 
+  #+cmu
   (system:without-gcing
    (when (> new-size (hash-table-size hash-table))
      (let ((old-rehash-size (hash-table-rehash-size hash-table))
@@ -773,6 +771,26 @@
               (sb-impl::rehash hash-table))
           (setf (slot-value hash-table 'sb-impl::rehash-size) old-rehash-size)))
       't))
+  #+scl
+  (flet ((%resize ()
+	   (when (> new-size (hash-table-size hash-table))
+	     (let ((old-rehash-size (hash-table-rehash-size hash-table))
+		   (old-size (length (lisp::hash-table-next-vector hash-table))))
+	       (unwind-protect
+                   (progn
+                     (setf (slot-value hash-table 'lisp::rehash-size)
+                           ;; Compute the incremental value (to be added back to
+                           ;; old-size in REHASH):
+                           (-& new-size old-size))
+                     (lisp::rehash hash-table))
+		 (setf (slot-value hash-table 'lisp::rehash-size) old-rehash-size)))
+	     t)))
+    (let ((lock (lisp::hash-table-lock hash-table)))
+      (system:without-interrupts
+	  (if lock
+	      (thread:with-lock-held (lock "Resize hash table")
+		(%resize))
+	      (%resize)))))
   #-(or allegro clozure cmu lispworks sbcl scl)
   (declare (ignore hash-table new-size))
   #-(or allegro clozure cmu lispworks sbcl scl)
@@ -828,7 +846,7 @@
   #+sbcl
   `(sb-kernel:shrink-vector ,vector ,length)
   #+scl
-  `(common-lisp::shrink-vector ,vector ,length))
+  `(lisp::shrink-vector ,vector ,length))
 
 ;;; ===========================================================================
 ;;;  Trimmed-substring
