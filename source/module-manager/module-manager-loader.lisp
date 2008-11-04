@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/module-manager/module-manager-loader.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Oct 22 18:47:22 2008 *-*
+;;;; *-* Last-Edit: Tue Nov  4 06:31:41 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -235,7 +235,7 @@
      ;; The Scieneer CL:
      #+scl
      (let ((case-mode ext::*case-mode*))
-       (format nil "~a-scl~:[~;-~(~a~)~]-~a"
+       (format nil "~a-scl~:[-~(~a~)~;~*~]-~a"
                (or #+(and x86 linux (not 64-bit)) "linux86"
                    #+(and x86 linux 64-bit) "linux86-64"
                    #+(and x86 solaris (not 64-bit)) "solaris-x86"
@@ -245,7 +245,7 @@
                    #+(and hpux (not 64-bit)) "hpux"
                    #+(and hpux 64-bit) "hpux-64"
                    (need-to-port *compiled-directory-name*))
-               (not (eq case-mode ':upper))
+               (eq case-mode ':upper)
                case-mode
                (lisp-implementation-version)))
      ;; Unknown CL:
