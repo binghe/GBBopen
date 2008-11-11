@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/module-manager/module-manager-loader.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Nov  4 06:31:41 2008 *-*
+;;;; *-* Last-Edit: Tue Nov 11 12:08:12 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -58,7 +58,8 @@
 ;;;  02-13-06 Added GCL support.  (Corkill)
 ;;;  05-08-06 Added support for the Scieneer CL. (dtc)
 ;;;  09-27-06 Added Intel Mac *compiled-directory-name* features (sometimes
-;;;           best guesses). (Corkill)
+;;;           best guesses).  (Corkill)
+;;;  11-11-08 Unified compiled-directory naming.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -79,7 +80,7 @@
   (funcall (if error 'error 'warn)
            "~s needs to be defined for ~a~@[ running on ~a~].~
             ~@[~%(Please send this error message and the result of ~
-               ~% evaluating (pprint *features*) to bugs@gbbopen.org.)~]"
+             ~% evaluating (pprint *features*) to bugs@gbbopen.org.)~]"
            entity
            (lisp-implementation-type) 
            (machine-type)
@@ -111,155 +112,224 @@
   (pushnew ':clozure *features*))
 
 ;;; ===========================================================================
-;;; The module-manager system uses a separate compiled directory tree for each CL
-;;; implementation and version.  The following form creates a unique name for
-;;; the root of this tree for a number of CL implementations.  If you use the
-;;; module-manager system with another CL implementation, you should add that
-;;; implementation to the *compiled-directory-name* form and e-mail the
-;;; modified form to the GBBopen Project (bugs@GBBopen.org) for inclusion in
-;;; future releases.
+;;;  Compiled Directory Name
+;;;
+;;; The module-manager system uses a separate compiled directory tree for each
+;;; CL implementation and version.  The following code creates a unique name
+;;; for the root of this tree for a number of CL implementations.  If you use
+;;; the module-manager system with another CL implementation, you should add
+;;; that implementation to the CL-IMPLEMENTATION-VALUES function and e-mail
+;;; the modifications to the GBBopen Project (bugs@GBBopen.org) for inclusion
+;;; in future releases.
+;;;
+;;; The form of the compiled directory name is:
+;;;        [<OS/platform>-]<cl-implementation>-[m-]-<cl-version-number>
+;;; where:
+;;;  * the optional OS/platform is present unless the compiled files are
+;;;    identical on all platforms (e.g., CLISP)
+;;;  * the optional "modern mode" indicator (m) is present if the CL
+;;;    implementation is operating in non-ANSI case mode (case-sensitive
+;;;    lower)
+;;;
+;;; OS/platform names:
+;;;
+;;;   "windows"       Windows/X86 (32-bit)
+;;;   "windows-64"    Windows/X86 (64-bit)
+;;;
+;;;   "mac86"         Macintosh/X86 (32-bit) 
+;;;   "mac86-64"      Macintosh/X86 (32-bit) 
+;;;   "macppc"        Macintosh/PowerPC (32-bit) 
+;;;   "macppc-64"     Macintosh/PowerPC (64-bit) 
+;;;
+;;;   "freebsd"       FreeBSD/X86 (32-bit)
+;;;   "linux86"       Linux/X86 (32-bit)
+;;;   "linux86-64"    Linux/X86 (64-bit)
+;;;
+;;;   "alpha"         Unix 5.1/HP Tru64 (Alpha) (32-bit)
+;;;   "alpha-64"      Unix 5.1/HP Tru64 (Alpha) (64-bit)
+;;;   "aix"           IBM AIX 5.1/PowerPC (32-bit)
+;;;   "aix-64"        IBM AIX 5.1/PowerPC (64-bit)
+;;;   "hpux"          HP-UX 11.00/PA-RISC (32-bit)
+;;;   "hpux-64"       HP-UX 11.00/PA-RISC (64-bit)
+;;;   "solaris86"     Solaris/X86 (32-bit)
+;;;   "solaris86-64"  Solaris/X86 (64-bit)
+;;;   "sparc"         Solaris/Sparc (32-bit)
+;;;   "sparc-64"      Solaris/Sparc (64-bit)
+
+(defun cl-implementation-values ()
+  ;;; Returns 4 values:
+  ;;;   1. OS/platform (string)
+  ;;;   2. CL-implementation (string)
+  ;;;   3. modern-mode-p indicator (boolean)
+  ;;;   4. version (string or number)
+  (flet ((check (&rest args)
+           ;; Ensure that only one string matched:
+           (when (cdr args)
+             (error
+              "Multiple OS/platform strings, ~s, were defined ~
+               for ~a~@[ running on ~a~]."
+              args
+              (lisp-implementation-type) 
+              (machine-type)))
+           ;; Return the sole-element string:
+           (first args)))
+    ;; Franz Allegro:
+    #+allegro
+    (values (check                      ; ensure one feature match
+             #+alpha "alpha"
+             #+alpha-64 "alpha-64"      ; just a guess
+             #+prism "hpux"
+             #+prism-64 "hpux-64"       ; just a guess
+             #+sparc "sparc"
+             #+sparc-64 "sparc-64"      ; just a guess
+             #+(and x86 freebsd) "freebsd" ; just a guess
+             #+(and x86 linux86) "linux86"
+             #+(and x86-64 linux) "linux86-64" ; Thanks to Raymond de Lacaze
+             #+(and x86 macosx) "mac86"
+             #+(and x86-64 macosx) "mac86-64" ; just a guess
+             #+(and x86 (not macosx) (not linux86) (not freebsd)) "windows"
+             #+powerpc "macppc"
+             #+powerpc-64 "macppc-64")  ; just a guess
+            "allegro"
+            (eq excl:*current-case-mode* ':case-sensitive-lower) 
+            excl::*common-lisp-version-number*)
+    ;; CLISP:
+    #+clisp
+    (values nil
+            "clisp"
+            nil
+            (let ((version (lisp-implementation-version)))
+              (subseq version 0 (position #\Space version))))
+    ;; CMUCL:
+    #+cmu
+    (values (check                      ; ensure one feature match
+             #+(and (not x86) darwin) "macppc"
+             #+(and x86 darwin) "mac86"
+             #+(and x86 linux) "linux86"
+             #+(and x86 (not linux) (not darwin)) "windows"
+             #+sparc "sparc")
+            "cmucl"
+            nil
+            (let ((version (lisp-implementation-version)))
+              (subseq version 0 (position #\Space version))))
+    ;; Clozure Common Lisp:
+    #+clozure
+    (values (check                      ; ensure one feature match
+             #+darwinppc-target "macppc"
+             #+darwinx8664-target "mac86-64"
+             #+linuxx8664-target "linux86-64") ; Thanks to Matthew Danish
+            "clozure"
+            nil
+            (format nil "~a.~a"
+                    ccl::*openmcl-major-version*
+                    ccl::*openmcl-minor-version*))
+    ;; Corman Common Lisp:
+    #+cormanlisp
+    (values "windows"
+            "corman"
+            nil
+            (lisp-implementation-version))
+    ;; Digitool MCL:
+    #+digitool-mcl
+    (values (check                      ; ensure one feature match
+             #+powerpc "macppc")
+            "mcl"
+            nil
+            (ccl::lisp-implementation-short-version))
+    ;; ECL (Embedable Common Lisp):
+    #+ecl
+    (values (check                      ; ensure one feature match
+             #+(and (or pentium3 pentium4) linux) "linux86" 
+             #+(and (or pentium3 pentium4) darwin) "mac86" 
+             #+(and (or pentium3 pentium4) (not (or linux darwin))) "windows"
+             #+(and (not (or pentium3 pentium4)) darwin) "macppc")
+            "ecl"
+            nil
+            ;; Strip away any CVS info:
+            (let ((full-version (lisp-implementation-version)))
+              (subseq full-version 0 (position '#\space full-version))))
+    ;; GCL:
+    #+gcl
+    (values (check                      ; ensure one feature match
+             #+linux "linux86" 
+             #+sparc "sparc")
+            "gcl"
+            nil
+            (format nil "~s.~s"
+                    system::*gcl-major-version*
+                    system::*gcl-minor-version*))
+    ;; Lispworks:
+    #+lispworks
+    (values (check                      ; ensure one feature match   
+             ;; LispWorks for HP PA:
+             #+hppa "hpux"
+             ;; LispWorks (32-bit) for Solaris/Sparc:
+             #+(and sparc lispworks-32bit) "sparc"
+             ;; LispWorks (64-bit) for Solaris/Sparc:
+             #+(and sparc lispworks-64bit) "sparc-64"
+             ;; LispWorks (32-bit) for Linux:
+             #+(and :linux :lispworks-32bit) "linux86"
+             ;; LispWorks (64-bit) for Linux:
+             #+(and :linux :lispworks-64bit) "linux86-64"
+             ;; LispWorks for FreeBSD:
+             #+freebsd "freebsd"
+             ;; LispWorks (32-bit) for Windows:
+             #+(and :mswindows :lispworks-32bit) "windows"
+             ;; LispWorks (64-bit) for Windows:
+             #+(and :mswindows :lispworks-64bit) "windows-64"
+             ;; LispWorks (32-bit) for Macintosh (running on X86):
+             #+(and :darwin :x86 :lispworks-32bit) "mac86"
+             ;; LispWorks (64-bit) for Macintosh (running on X86):
+             #+(and :darwin :x86 :lispworks-64bit) "mac86-64"
+             ;; LispWorks (32-bit) for Macintosh (running on PowerPC):
+             #+(and :darwin :powerpc :lispworks-32bit) "macppc"
+             ;; LispWorks (64-bit) for Macintosh (running on PowerPC):
+             #+(and :darwin :powerpc :lispworks-64bit) "macppc-64")
+            "lispworks"
+            nil
+            (format nil "~s.~s"
+                    system::*major-version-number*
+                    system::*minor-version-number*))
+    ;; SBCL:
+    #+sbcl
+    (values (check                      ; ensure one feature match   
+             #+(and (not x86) darwin) "macppc"
+             #+(and x86 darwin) "mac86"
+             #+sparc "sparc"
+             #+(and x86 linux) "linux86"
+             #+(and x86-64 linux) "linux86-64" ; Thanks to Eric Menard
+             #+(and x86 (not linux) (not darwin)) "windows")
+            "sbcl"
+            nil
+            (lisp-implementation-version))
+    ;; The Scieneer CL:
+    #+scl
+    (values (check                      ; ensure one feature match   
+             #+(and x86 linux (not 64-bit)) "linux86"
+             #+(and x86 linux 64-bit) "linux86-64"
+             #+(and sparc solaris (not 64-bit)) "sparc"
+             #+(and sparc solaris 64-bit) "sparc-64"
+             #+(and x86 solaris (not 64-bit)) "solaris86"
+             #+(and x86 solaris 64-bit) "solaris86-64"
+             #+(and hpux (not 64-bit)) "hpux"
+             #+(and hpux 64-bit) "hpux-64")
+            "scl"
+            (not (eq ext::*case-mode* ':upper))
+            (lisp-implementation-version))))
+  
+;;; ---------------------------------------------------------------------------
 
 (defparameter *compiled-directory-name*
-    (or
-     ;; Franz Allegro:
-     #+allegro
-     (format nil "~a-allegro~:[~;-m~]-~a"
-             (or
-              #+alpha "alpha"
-              #+prism "prism"
-              #+sgi "sgi"
-              #+sparc "sparc"
-              #+rs6000 "rs6000"
-              #+(and x86 linux86) "linux86"
-              #+(and x86-64 linux) "linux86-64" ; Thanks to Raymond de Lacaze
-              #+(and x86 macosx) "macosx86"
-              #+(and x86 (not linux86)) "windows"
-	      #+powerpc "darwin"
-              #-(or alpha prism sgi sparc rs6000 powerpc
-                    (and x86 linux86)
-                    (and x86-64 linux) 
-                    (and x86 macosx)
-                    (and x86 (not linux86)))
-              (need-to-port *compiled-directory-name*))
-	     (eq excl:*current-case-mode* ':case-sensitive-lower) 
-             excl::*common-lisp-version-number*)
-     ;; CLISP:
-     #+clisp
-     (format nil "clisp-~a"
-             (let ((version (lisp-implementation-version)))
-               (subseq version 0 (position #\Space version))))
-     ;; CMUCL:
-     #+cmu
-     (format nil "~a-cmucl-~a" 
-             (or 
-              #+(and (not x86) darwin) "darwin"
-              #+(and x86 darwin) "macosx86"
-              #+sparc "sparc"
-              #+(and x86 linux) "linux86"
-              #+(and x86 (not linux)) "windows"
-              #-(or darwin sparc x86)
-              (need-to-port *compiled-directory-name*))
-             (let ((version (lisp-implementation-version)))
-               (subseq version 0 (position #\Space version))))	       
-     ;; Clozure Common Lisp:
-     #+clozure
-     (format nil "~a-clozure-~a.~a"
-             (or
-              #+darwinppc-target "darwin"
-              #+darwinx8664-target "macosx86-64"
-              #+linuxx8664-target "linux86-64" ; Thanks to Matthew Danish
-              #-(or darwin darwinx8664-target linuxx8664-target) 
-              (need-to-port *compiled-directory-name*))
-             ccl::*openmcl-major-version*
-             ccl::*openmcl-minor-version*)
-     ;; Corman Common Lisp:
-     #+cormanlisp
-     (format nil "windows-corman-~a"
-	     (lisp-implementation-version))
-     ;; Digitool MCL:
-     #+digitool-mcl
-     (format nil "~a-mcl-~a"
-             (or #+powerpc "darwin" 
-                 #-powerpc
-                 (need-to-port *compiled-directory-name*))
-             (ccl::lisp-implementation-short-version))
-     ;; ECL (Embedable Common Lisp):
-     #+ecl
-     (format nil "~a-ecl-~a"
-             (or #+(and (or pentium3 pentium4) linux) "linux86" 
-                 #+(and (or pentium3 pentium4) darwin) "macosx86" 
-                 #+(and (or pentium3 pentium4) (not (or linux darwin))) "windows"
-                 #+(and (not (or pentium3 pentium4)) darwin) "darwin"
-		 #-(or pentium3 pentium4)
-                 (need-to-port *compiled-directory-name*))
-             ;; Strip away any CVS info:
-             (let ((full-version (lisp-implementation-version)))
-               (subseq full-version 0 (position '#\space full-version))))
-     ;; GCL:
-     #+gcl
-     (format nil "~a-gcl-~s.~s"
-             (or #+linux "linux86" 
-		 #+sparc "sparc"
-		 #-(or linux sparc)
-                 (need-to-port *compiled-directory-name*))
-	     system::*gcl-major-version*
-	     system::*gcl-minor-version*)
-     ;; Lispworks:
-     #+lispworks
-     (format nil "~a-lispworks-~s.~s" 
-             (or 
-              #+alpha "alpha"
-              #+prism "prism"
-              #+sparc "sparc"
-              #+(and iapx386 linux) "linux86"
-              #+(and iapx386 (not (or linux darwin))) "windows"
-	      #+(and (not iapx386) darwin) "darwin"
-              #+(and iapx386 darwin) "macosx86"
-              #-(or alpha darwin prism sparc iapx386)
-              (need-to-port *compiled-directory-name*))
-             system::*major-version-number*
-             system::*minor-version-number*)
-     ;; SBCL:
-     #+sbcl
-     (format nil "~a-sbcl-~a" 
-             (or 
-              #+(and (not x86) darwin) "darwin"
-              #+(and x86 darwin) "macosx86"
-              #+sparc "sparc"
-              #+(and x86 linux) "linux86"
-              #+(and x86-64 linux) "linux86-64" ; Thanks to Eric Menard
-              #+(and x86 (not linux)) "windows"
-              #-(or darwin sparc x86 (and x86-64 linux))
-              (need-to-port *compiled-directory-name*))
-             (lisp-implementation-version))
-     ;; The Scieneer CL:
-     #+scl
-     (let ((case-mode ext::*case-mode*))
-       (format nil "~a-scl~:[-~(~a~)~;~*~]-~a"
-               (or #+(and x86 linux (not 64-bit)) "linux86"
-                   #+(and x86 linux 64-bit) "linux86-64"
-                   #+(and x86 solaris (not 64-bit)) "solaris-x86"
-                   #+(and x86 solaris 64-bit) "solaris-x86-64"
-                   #+(and sparc solaris (not 64-bit)) "sparc"
-                   #+(and sparc solaris 64-bit) "sparc64"
-                   #+(and hpux (not 64-bit)) "hpux"
-                   #+(and hpux 64-bit) "hpux-64"
-                   (need-to-port *compiled-directory-name*))
-               (eq case-mode ':upper)
-               case-mode
-               (lisp-implementation-version)))
-     ;; Unknown CL:
-     #-(or allegro 
-           clisp 
-           clozure
-           cmu
-           cormanlisp 
-           digitool-mcl
-           ecl
-           lispworks
-	   sbcl 
-           scl)
-     (need-to-port *compiled-directory-name*)))
+    (multiple-value-bind (os/platform cl-implementation modern-mode-p version)
+        (cl-implementation-values)
+      (unless os/platform
+        ;; Unknown CL:
+        (need-to-port-warning/error '*compiled-directory-name* nil))
+      (format nil "~@[~a-~]~a-~:[~;m-~]~a"
+              os/platform
+              cl-implementation
+              modern-mode-p
+              version)))
 
 ;;; ===========================================================================
 ;;;  Compiled File Type
@@ -348,7 +418,7 @@
                    (make-pathname
                     :type *compiled-file-type*
                     :directory `(,@(pathname-directory root-pathname)
-                                   ,*compiled-directory-name* 
+                                   ,*compiled-directory-name*
                                    "module-manager")
                     :defaults source-path))
                   (source-file-date 

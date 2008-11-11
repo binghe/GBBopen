@@ -1,5 +1,8 @@
 Important changes since GBBopen 1.2:
 
+  * Changes to Module Manager
+     - Use more consistent OS/platform compile-directory naming
+
   * Changes to GBBopen Tools
      - Saving/sending support for adjustable, fill-pointer, and 
        element-typed vectors, bit-vectors, and arrays
