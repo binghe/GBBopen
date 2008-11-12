@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/module-manager/module-manager-loader.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Nov 11 12:25:12 2008 *-*
+;;;; *-* Last-Edit: Wed Nov 12 04:21:58 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -195,11 +195,13 @@
             excl::*common-lisp-version-number*)
     ;; CLISP:
     #+clisp
-    (values nil
-            "clisp"
-            nil
-            (let ((version (lisp-implementation-version)))
-              (subseq version 0 (position #\Space version))))
+    (values 
+     ;; Compiled files in CLISP are OS/platform independent
+     nil         
+     "clisp"
+     nil
+     (let ((version (lisp-implementation-version)))
+       (subseq version 0 (position #\Space version))))
     ;; CMUCL:
     #+cmu
     (values (check                      ; ensure one feature match
@@ -322,7 +324,9 @@
 (defparameter *compiled-directory-name*
     (multiple-value-bind (os/platform cl-implementation modern-mode-p version)
         (cl-implementation-values)
-      (unless (or (string= cl-implementation "clisp") os/platform)
+      ;; CLISP compiled files are OS/platform independent:
+      #-clisp
+      (unless os/platform
         ;; Unknown CL:
         (need-to-port-warning/error '*compiled-directory-name* nil))
       (format nil "~@[~a-~]~a-~:[~;m-~]~a"
