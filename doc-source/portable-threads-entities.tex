@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/portable-threads-entities.tex *-*
-%% *-* Last-Edit: Fri Jun 27 06:04:14 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Wed Nov 12 04:58:46 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 \index{module!:portable-threads@\code{:portable-threads}}%
@@ -283,7 +283,7 @@ destructively altered.
 
 \fnsyntax
 
-\fnpurpose Return a list of all \glref{threads}.
+\fnpurpose Return a list of all known \glref{threads}.
 
 \fnpackage \code{:portable-threads}
 
@@ -294,7 +294,12 @@ destructively altered.
 \arg[list-of-threads] A proper list
 \end{args}
 
-\fnreturns A list of objects representing the \glref{threads}. 
+\fnreturns A list of objects representing the \glref{threads}.
+
+\fndescription The returned list of \glref{threads} is accurate only at the
+precise instant the \textbf{all-threads} function is called.  New threads may
+be created or existing threads killed at any time, so the returned list is
+always potentially outdated.
 
 \begin{alsos}{thread-alive-p}
 \also[current-thread]
