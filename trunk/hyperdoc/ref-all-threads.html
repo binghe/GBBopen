@@ -20,7 +20,7 @@
 <span 
     style="font-family: serif; font-style: normal">=&gt;</span> <var>list-of-threads</var></td><td valign="baseline" align="right">[<i>Function</i>]
 </td></tr></table></p>
-<p><span class="fndoclabel">Purpose</span> <br />Return a list of all <a href="ref-glossary.html#gl:threads">threads</a>.
+<p><span class="fndoclabel">Purpose</span> <br />Return a list of all known <a href="ref-glossary.html#gl:threads">threads</a>.
 </p>
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:portable-threads</code>
 </p>
@@ -30,7 +30,12 @@
 <tr valign="top"><td valign="baseline" nowrap><i>list-of-threads</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A proper list
 </td></tr></table>
 </p>
-<p><span class="fndoclabel">Returns</span> <br />A list of objects representing the <a href="ref-glossary.html#gl:threads">threads</a>. 
+<p><span class="fndoclabel">Returns</span> <br />A list of objects representing the <a href="ref-glossary.html#gl:threads">threads</a>.
+</p>
+<p><span class="fndoclabel">Description</span> <br />The returned list of <a href="ref-glossary.html#gl:threads">threads</a> is accurate only at the
+precise instant the <b>all-threads</b> function is called.  New threads may
+be created or existing threads killed at any time, so the returned list is
+always potentially outdated.
 </p>
 <p><span class="fndoclabel">See also</span>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-current-thread.html"><b>current-thread</b></a>

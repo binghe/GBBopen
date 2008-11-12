@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/tutorial.tex *-*
-%% *-* Last-Edit: Mon Sep  1 05:18:44 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Wed Nov 12 04:54:11 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2005-2008, Dan Corkill <corkill@GBBopen.org>
@@ -799,7 +799,9 @@ GBBopen modules it requires by evaluating:
 
 GBBopen should compile (if necessary) and load all the files needed for the
 next exercise without error.  The output on your Common Lisp implementation
-may vary somewhat from that shown above.
+may vary somewhat from that shown above.  For example, the file extension for
+compiled files, shown as \code{.fasl} throughout this tutorial, is dependent on
+your Common Lisp implementation and platform.
 
 \subsubsection*{File protection problems?}
 
@@ -5478,9 +5480,9 @@ Unless you are running Windows, add the random-walk application to your
 
 Instead of creating a symbolic link, GBBopen also supports a special ``pseudo
 symbolic-link'' file that can be used with Windows.  This is simply a text
-file of type \code{.sym} that contains the target directory path as the sole
-line in the file.  For example, you could create the file \code{tutorial.sym}
-in your \code{gbbopen-modules} directory with:
+file with the file extension \code{.sym} that contains the target directory
+path as the sole line in the file.  For example, you could create the file
+\code{tutorial.sym} in your \code{gbbopen-modules} directory with:
 %
 \W\supp
 \begin{example}
