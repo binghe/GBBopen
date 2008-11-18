@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/module-manager/module-manager-loader.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Nov 12 04:21:58 2008 *-*
+;;;; *-* Last-Edit: Tue Nov 18 05:41:06 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -144,6 +144,8 @@
 ;;;   "freebsd"       FreeBSD/X86 (32-bit)
 ;;;   "linux86"       Linux/X86 (32-bit)
 ;;;   "linux86-64"    Linux/X86 (64-bit)
+;;;   "linuxppc"      Linux/PowerPC (32-bit) 
+;;;   "linuxppc-64"   Linux/PowerPC (64-bit) 
 ;;;
 ;;;   "alpha"         Unix 5.1/HP Tru64 (Alpha) (32-bit)
 ;;;   "alpha-64"      Unix 5.1/HP Tru64 (Alpha) (64-bit)
@@ -219,6 +221,7 @@
     (values (check                      ; ensure one feature match
              #+darwinppc-target "macppc"
              #+darwinx8664-target "mac86-64"
+             #+linuxppc-target "linuxppc"
              #+linuxx8664-target "linux86-64") ; Thanks to Matthew Danish
             "clozure"
             nil
