@@ -8,6 +8,8 @@ Important changes since GBBopen 1.2:
        element-typed vectors, bit-vectors, and arrays
 
   * Changes to GBBopen Core
+     - new class, DELETED-UNIT-INSTANCE, now used to represent deleted 
+       unit and space instances
      - new function, MAKE-INSTANCES-OF-CLASS-VECTOR
      - speed/allocation optimizations to MAP-SORTED-INSTANCES-OF-CLASS
        and DO-SORTED-INSTANCES-OF-CLASS

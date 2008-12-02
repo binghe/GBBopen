@@ -124,14 +124,20 @@ Now, display a description of the unit instance by using GBBopen's
   gbbopen-user&gt;</font>
 </pre>
 </p>
-<p>Note that you didn't specify a name for the unit instance when you created it.
+<p><a name="id6">Note</a> that you didn't specify a name for the unit instance when you created it.
 In fact, there is often no natural reason to name each unit instance you
 create. By default, GBBopen names unit instances by giving it a sequentially
 increasing number.  (For example, the unit instance you just created is named
 <code>1</code>.)  GBBopen requires that each instance of a unit class is uniquely
-named within the class.
+named within the class and the accessor <b>instance-name-of</b> can be used
+to access this name:
+<pre class="pretop">
+<font color="#667f66">  gbbopen-user&gt; <font color="#000000">(instance-name-of ui)</font>
+  1
+  gbbopen-user&gt;</font>
+</pre>
 </p>
-<h2><a name="id6">Step 4: Find a unit instance by its name</a></h2><p>
+<h2><a name="id7">Step 4: Find a unit instance by its name</a></h2><p>
 You can look up a particular unit instance by its name. For example, to
 find the <code>location</code> <code>1</code> unit instance by name, enter the form:
 <pre class="pretop">
@@ -144,7 +150,7 @@ find the <code>location</code> <code>1</code> unit instance by name, enter the f
 variable <code>ui</code>, but it is nice to know that we can always find our unit
 instance using its name.
 </p>
-<h2><a name="id7">Step 5: Change the <code>x</code> slot value</a></h2><p>
+<h2><a name="id8">Step 5: Change the <code>x</code> slot value</a></h2><p>
 Use the <code>x-of</code> reader and writer methods GBBopen defined for the <code>x</code>
 slot (in Step 3 above) to get the value of the <code>x</code> slot of the unit
 instance:
@@ -166,7 +172,7 @@ and then get the (new) value of the <code>x</code> slot:
   gbbopen-user&gt;</font>
 </pre>
 </p>
-<p><a name="id8">Display</a> the description of the <code>location</code> unit instance again, observing the
+<p><a name="id9">Display</a> the description of the <code>location</code> unit instance again, observing the
 changed <code>x</code> slot value:
 </p>
 <pre class="pretop">

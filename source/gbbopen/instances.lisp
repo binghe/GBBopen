@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Sep 19 14:12:57 2008 *-*
+;;;; *-* Last-Edit: Tue Dec  2 03:21:41 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -81,15 +81,63 @@
             with-changing-dimension-values)))
 
 ;;; ===========================================================================
-;;;   Unit Instances
 
-;;; This internal class allows us to hang methods on all unit classes
-;;; without scarfing them from standard-unit-instance:
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (define-class %%gbbopen-unit-instance%% (standard-gbbopen-instance)
-    ()))
+  (define-class %%deleted/non-deleted-unit-instance%% 
+      (standard-gbbopen-instance)
+    (instance-name)
+    (:export-class-name t)
+    (:export-accessors t)))
+
+;;; ===========================================================================
+;;;   Deleted Unit Instances
+
+(defun operation-on-deleted-instance (operation instance)
+  (error "~s attempted with a deleted instance: ~s"
+         operation 
+         instance))
 
 ;;; ---------------------------------------------------------------------------
+
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (define-class deleted-unit-instance (%%deleted/non-deleted-unit-instance%%)
+    (original-class)
+    (:export-class-name t)
+    (:export-accessors t)))
+
+(defmethod delete-instance ((instance deleted-unit-instance))
+  ;; Deleting a deleted-unit-instance is a no-op:
+  instance)
+
+(defmethod print-instance-slots ((instance deleted-unit-instance) stream)
+  (call-next-method)
+  (format stream " ~s ~s" 
+          (class-name (original-class-of instance))
+          (if (slot-boundp instance 'instance-name)
+              (instance-name-of instance)
+              "Uninitialized")))
+
+(defmethod make-duplicate-instance ((instance deleted-unit-instance)
+                                    unduplicated-slot-names
+                                    &rest initargs)
+  (declare (ignore unduplicated-slot-names initargs))
+  (declare (dynamic-extent initargs))
+  (operation-on-deleted-instance 'make-duplicate-instance instance))
+
+(defmethod print-object-for-saving/sending ((instance deleted-unit-instance)
+                                            stream)
+  (declare (ignore stream))
+  (operation-on-deleted-instance 'print-object-for-saving/sending instance))
+
+(defmethod print-slot-for-saving/sending ((instance deleted-unit-instance)
+                                          slot-name 
+                                          stream)
+  (declare (ignore slot-name stream))
+  (operation-on-deleted-instance 'print-slot-for-saving/sending instance))
+  
+;;; ===========================================================================
+;;;   Unit Instances
+;;;
 ;;;   Add %%marks%% slot to standard-unit-instance internal slot names 
 ;;;   (added to *internal-unit-instance-slot-names* here, but defined in
 ;;;    unit-metaclasses.lisp)
@@ -100,7 +148,8 @@
 ;; compile-time evaluation required for fast typep check in 
 ;; parse-unit-class/instance-specifier (below):
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (define-unit-class standard-unit-instance (%%gbbopen-unit-instance%%)
+  (define-unit-class standard-unit-instance
+      (%%deleted/non-deleted-unit-instance%%)
     ((instance-name :accessor instance-name-of)
      (%%marks%% :initform 0 :type fixnum)
      ;; %%space-instances%% slot also indicates deleted unit instances
@@ -222,7 +271,6 @@
 
 (defmethod print-object-for-saving/sending ((instance standard-unit-instance)
                                             stream)
-  (check-for-deleted-instance instance 'print-object-for/saving/sending)
   (cond
    ;; Unit-instance references only:
    (*save/send-references-only*
@@ -343,17 +391,10 @@
 ;;;  Unit-instance utility funtions
 
 (defun instance-deleted-p (instance)
-  (eq (standard-unit-instance.%%space-instances%% instance) ':deleted))
+  (typep instance 'deleted-unit-instance))
 
 (defcm instance-deleted-p (instance)
-  `(eq (standard-unit-instance.%%space-instances%% ,instance) ':deleted))
-
-;;; ---------------------------------------------------------------------------
-
-(defun operation-on-deleted-instance (operation instance)
-  (error "~s attempted with a deleted instance: ~s"
-         operation 
-         instance))
+  `(typep ,instance 'deleted-unit-instance))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -385,15 +426,6 @@
           (if (slot-boundp instance 'instance-name)
               (instance-name-of instance)
               "Uninitialized")))
-
-;;; ---------------------------------------------------------------------------
-
-(defmethod print-instance-slots :after ((instance standard-unit-instance)
-                                        stream)
-  ;;; This :after method places "[Deleted]" after all slots are printed.
-  (when (and (slot-boundp instance '%%space-instances%%)
-             (instance-deleted-p instance))
-    (format stream " [Deleted]")))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -557,7 +589,7 @@
 ;;; triggering errors by binding *%%allow-setf-on-link%%* and the 
 ;;; *%%existing-space-instances%%* placeholder.
 
-(defmethod shared-initialize :around ((instance %%gbbopen-unit-instance%%)
+(defmethod shared-initialize :around ((instance standard-unit-instance)
                                       slot-names &key)
   (declare (ignore slot-names))
   (cond 
@@ -603,7 +635,7 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defmethod initialize-instance :before ((instance %%gbbopen-unit-instance%%) 
+(defmethod initialize-instance :before ((instance standard-unit-instance) 
                                         &key)
   (declare (inline class-of))
   (let ((unit-class (class-of instance)))
@@ -645,7 +677,7 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defmethod initialize-instance :after ((instance %%gbbopen-unit-instance%%) 
+(defmethod initialize-instance :after ((instance standard-unit-instance) 
                                        &key (space-instances 
                                              nil space-instances-p))
   (declare (ignore space-instances))
@@ -662,7 +694,7 @@
 ;;; Create-instance-event signaling is done in this :around method to follow
 ;;; activities performed by primary and :before/:after methods.
 
-(defmethod initialize-instance :around ((instance %%gbbopen-unit-instance%%) 
+(defmethod initialize-instance :around ((instance standard-unit-instance) 
                                         &key)
   (let ((*%%doing-initialize-instance%%* 't))
     (with-lock-held (*master-instance-lock*)
@@ -801,27 +833,26 @@
     (dolist (space-instance 
                 (standard-unit-instance.%%space-instances%% instance))
       (remove-instance-from-space-instance instance space-instance)))
-  ;; mark instance as deleted:
-  (setf (standard-unit-instance.%%space-instances%% instance) :deleted)
+  (change-class instance 'deleted-unit-instance 
+                :original-class (class-of instance))
   instance)
 
 ;;; ---------------------------------------------------------------------------
 
-(defmethod delete-instance :around ((instance %%gbbopen-unit-instance%%))
+(defmethod delete-instance :around ((instance standard-unit-instance))
   ;;; Deletion-event signaling is done in this :around method to surround 
   ;;; activities performed by primary and :before/:after methods
   (with-lock-held (*master-instance-lock*)
-    (unless (instance-deleted-p instance)
-      ;; signal the delete-instance event:
-      (signal-event-using-class
-       (load-time-value (find-class 'delete-instance-event))
-       :instance instance)
-      (call-next-method)
-      ;; signal the instance-deleted event:
-      (signal-event-using-class
-       (load-time-value (find-class 'instance-deleted-event))
-       :instance instance)))
-    ;; Return the instance:
+    ;; signal the delete-instance event:
+    (signal-event-using-class
+     (load-time-value (find-class 'delete-instance-event))
+     :instance instance)
+    (call-next-method)
+    ;; signal the instance-deleted event:
+    (signal-event-using-class
+     (load-time-value (find-class 'instance-deleted-event))
+     :instance instance))
+  ;; Return the instance:
   instance)
 
 ;;; ---------------------------------------------------------------------------
@@ -1020,11 +1051,11 @@
 
 (defmethod change-class :before ((instance standard-unit-instance)
 				 (new-class class) 
-                                 &key)
+                                 &key
+                                 &allow-other-keys)
   ;;l This :before method (with typep tests below) handles class changes from a
   ;;; unit class to a unit class or from a unit class to a non-unit class.
   (declare (inline class-of))
-  (check-for-deleted-instance instance 'change-class)
   ;; We must ensure finalization, as the changed instance could be the first
   ;; instance of `new-class':
   (ensure-finalized-class new-class)

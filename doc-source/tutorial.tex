@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/tutorial.tex *-*
-%% *-* Last-Edit: Wed Nov 12 04:54:11 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Tue Dec  2 05:00:33 2008; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2005-2008, Dan Corkill <corkill@GBBopen.org>
@@ -1025,12 +1025,22 @@ Now, display a description of the unit instance by using GBBopen's
   gbbopen-user>}
 \end{example}
 
+\bfindex{instance-name-of}%
 Note that you didn't specify a name for the unit instance when you created it.
 In fact, there is often no natural reason to name each unit instance you
 create. By default, GBBopen names unit instances by giving it a sequentially
 increasing number.  (For example, the unit instance you just created is named
 \code{1}.)  GBBopen requires that each instance of a unit class is uniquely
-named within the class.
+named within the class and the accessor \textbf{instance-name-of} can be used
+to access this name:
+%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
+  gbbopen-user> \textcolor{black}{(instance-name-of ui)}
+  1
+  gbbopen-user>}
+\end{example}
 
 \subsection*{Step 4: Find a unit instance by its name}
 
@@ -1706,12 +1716,12 @@ Let's delete the first \code{location} unit instance that we created:
 \begin{example}
 \textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(delete-instance ui)}
-  #<location 1 [Deleted]>
+  #<deleted-unit-instance location 1>
   gbbopen-user>}
 \end{example}
 %
-Note that the displayed representation of the unit instance now includes
-\code{[Deleted]} to let us know that the unit instance has been deleted.
+Note that the displayed representation indicates that the unit instance has
+been deleted.
 
 \bfindexit{find-instance-by-name}%
 \bfindexit{map-instances-of-class}%
@@ -1763,7 +1773,7 @@ However, the deleted \code{location} unit instance is still assigned to the
 \begin{example}
 \textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{ui}
-  #<location 1 [Deleted]>
+  #<deleted-unit-class location 1>
   gbbopen-user>}
 \end{example}
 %
@@ -1774,32 +1784,68 @@ unit instance on the \code{known-world} space instance:
 \begin{example}
 \textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(add-instance-to-space-instance ui si)}
-  Error: add-instance-to-space-instance attempted with a deleted instance:
-         #<location 1 [Deleted]>
+  Error: No methods applicable for generic function
+         #<standard-generic-function add-instance-to-space-instance> with args
+         (#<deleted-unit-instance location 1> #<standard-space-instance (known-world)>)
+         of classes (deleted-unit-instance standard-space-instance)
   gbbopen-user>> \textcolor{black}{:a}
   gbbopen-user>}
 \end{example}
 
-Many of GBBopen's operations signal an error if they are given a deleted unit
-instance.  This is not true of all operations, however:
+Most of GBBopen's operations signal an error if they are given a deleted unit
+instance.  This is because \textbf{delete-instance} changes the class of the
+deleted unit instance to \code{deleted-unit-instance} which, despite its name,
+is not a \code{standard-unit-instance}.  We cannot use
+\textbf{describe-instance} to verify this, because the deleted unit instance
+is no longer a unit instance, but we can use Common Lisp's \code{describe}
+function:
 %
 \W\supp
 \begin{example}
 \textcolor{darkergray}{%
-  gbbopen-user> \textcolor{black}{(x-of ui)}
-  50
+  gbbopen-user> \textcolor{black}{(describe ui)}
+  #<deleted-unit-instance location 1> is an instance of
+    #<standard-class deleted-unit-instance>:
+  The following slots have :instance allocation:
+    instance-name   1
+    original-class  #<standard-unit-class location>
   gbbopen-user>}
 \end{example}
+%
+Note that the slots that we defined for \code{location} unit instances are not
+present in the \code{deleted-unit-instance} object.  A deleted unit instance
+has only two slots, \code{instance-name} and \code{original-class}, which are
+set when the class of the deleted unit instance is changed to
+\code{deleted-unit-instance}.
+
+Several GBBopen operations on a deleted unit instance do not signal errors.
+In particular:
+%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
+  gbbopen-user> \textcolor{black}{(instance-name-of ui)}
+  1
+  gbbopen-user>}
+\end{example}
+%
+\bfindexit{instance-name-of}%
+\bfindex{original-class-of}%
+The value returned by \textbf{instance-name-of}, along with that by
+\textbf{original-class-of}, can be used to identify the unit instance that,
+when deleted, became the \code{deleted-unit-instance}.
 
 \bfindex{instance-deleted-p}%
 %
 Typically, blackboard applications obtain unit instances from the blackboard
-repository rather than maintaining references to them in variables.  This
-limits the possibility of obtaining a deleted unit instance and performing
-GBBopen operations on it.  Regular CLOS operations on a deleted unit instance,
-such as reading and writing slot values, function normally.  The deletion
-status of a unit instance can be determined using the
-\textbf{instance-deleted-p} predicate:
+repository (or as we will see in
+\texorhtml{Exercise~\ref{sec:control-shell}}{the \link{Using a Control
+    Shell}{sec:control-shell} exercise},
+%
+as an event argument) rather than maintaining references to them in variables.
+This limits the possibility of retaining a deleted unit instance and
+performing GBBopen operations on it.  The deletion status of a unit instance
+can be determined using the \textbf{instance-deleted-p} predicate:
 %
 \W\supp
 \begin{example}
@@ -1973,7 +2019,7 @@ Now let's delete some of what we just created.  Let's delete the
 \begin{example}
 \textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(delete-space-instance '(known-world my-town))}
-  #<standard-space-instance (known-world my-town) [Deleted]>
+  #<deleted-unit-instance standard-space-instance (known-world my-town)>
   gbbopen-user>}
 \end{example}
 %
@@ -2922,7 +2968,7 @@ Let's delete the \code{known-world} and create another one---this time with
 \begin{example}
 \textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(delete-space-instance si)}
-  #<standard-space-instance (known-world) [Deleted]>
+  #<deleted-unit-instance standard-space-instance (known-world)>
   gbbopen-user> \textcolor{black}{(setf si (make-space-instance '(known-world)
               :dimensions '((x :ordered) (y :ordered))))}
   #<standard-space-instance (known-world)>

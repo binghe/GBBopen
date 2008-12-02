@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/events.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Aug 31 16:35:30 2008 *-*
+;;;; *-* Last-Edit: Sun Nov 30 05:26:41 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -395,14 +395,9 @@
 ;;;   Standard-event-instance is defined here rather than in
 ;;;   system-events.lisp to support mappers, etc., below.
 
-;;; This internal class allows us to hang methods on all event instances
-;;; without scarfing them from standard-event-instance:
-(define-class %%gbbopen-event-instance%% (standard-gbbopen-instance)
-  ())
-
 (with-generate-accessors-format (:prefix)
 
-  (define-event-class standard-event-instance (%%gbbopen-event-instance%%)
+  (define-event-class standard-event-instance (standard-gbbopen-instance)
     (;; used in control shells to hold triggering context information:
      (ks-triggers :initform nil))
     (:abstract t)
@@ -1382,7 +1377,10 @@
 				     &allow-other-keys)
   (declare (dynamic-extent args))
   (when *%%events-enabled%%*
-    (let* ((unit-class (class-of instance))
+    (let* ((unit-class 
+            (if (instance-deleted-p instance)
+                (original-class-of instance)
+                (class-of instance)))
 	   (evfn-blks (standard-unit-class.evfn-blks unit-class))
 	   (evfn-blk (cdr (assoc event-class evfn-blks :test #'eq))))
       (when evfn-blk
@@ -1442,7 +1440,7 @@
 ;;; ===========================================================================
 ;;;   Event Printing
 
-(defmethod event-printer :before ((event %%gbbopen-event-instance%%)
+(defmethod event-printer :before ((event standard-event-instance)
 				  stream &rest args)
   (declare (ignore args))
   ;;; Prints the standard event signature line for all event printing:
@@ -1451,7 +1449,7 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defmethod event-printer ((event %%gbbopen-event-instance%%)
+(defmethod event-printer ((event standard-event-instance)
 			  stream &rest args)
   ;;; Performs the standard `args' printing for all events.  Printing of
   ;;; `args' for specific events can be customized by defining more specific
