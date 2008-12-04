@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/portable-threads.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Dec  4 13:55:00 2008 *-*
+;;;; *-* Last-Edit: Thu Dec  4 14:07:37 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -635,7 +635,7 @@
   #+(and sbcl sb-thread)
   (if (sb-thread:thread-alive-p thread) "Alive" "Dead")
   #+scl
-  (mp:process-whostate thread)
+  (nth-value 1 (mp:process-whostate thread))
   #+threads-not-available
   (not-a-thread thread))
 
@@ -654,7 +654,7 @@
   #+lispworks
   `(mp:process-whostate ,thread)
   #+scl
-  `(mp:process-whostate ,thread))
+  `(nth-value 1 (mp:process-whostate ,thread)))
 
 (defun (setf thread-whostate) (whostate thread)
   ;;; Only Allegro, Clozure CL, and Digitool MCL support user-settable 
