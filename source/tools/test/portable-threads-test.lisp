@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/test/portable-threads-test.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Oct 22 06:44:16 2008 *-*
+;;;; *-* Last-Edit: Thu Dec  4 13:35:56 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -134,29 +134,37 @@
         (start-real-time (get-internal-real-time)))
     (declare (fixnum iterations))
     ;; Try each type of locking:
+    #-scl
     (when (thread-holds-lock-p nonrecursive-lock)
       (log-error 
        "Incorrect thread-holds-lock-p value on free nonrecursive lock"))
     (with-lock-held (nonrecursive-lock
                      :whostate "Waiting on nonrecursive lock")
+      #-scl
       (unless (thread-holds-lock-p nonrecursive-lock)
         (log-error "Incorrect thread-holds-lock-p value on held lock"))
       (without-lock-held (nonrecursive-lock)
+          #-scl
           (when (thread-holds-lock-p nonrecursive-lock)
             (log-error "Incorrect thread-holds-lock-p value on unheld lock")))
       ;; Check lock re-aquisition:
+      #-scl
       (unless (thread-holds-lock-p nonrecursive-lock)
         (log-error "Incorrect thread-holds-lock-p value on reheld lock")))
+    #-scl
     (when (thread-holds-lock-p recursive-lock)
       (log-error "Incorrect thread-holds-lock-p value on free recursive lock"))
     (with-lock-held (recursive-lock 
                      :whostate "Waiting on recursive lock")
+      #-scl
       (unless (thread-holds-lock-p recursive-lock)
         (log-error "Incorrect thread-holds-lock-p value on recursive lock")))
+    #-scl
     (when (thread-holds-lock-p cv)
       (log-error 
        "Incorrect thread-holds-lock-p value on condition-variable lock"))
     (with-lock-held (cv :whostate "Waiting on condition-variable lock")
+      #-scl
       (unless (thread-holds-lock-p cv)
         (log-error 
          "Incorrect thread-holds-lock-p value on condition-variable lock")))
@@ -228,10 +236,12 @@
         (catch :held
           (without-lock-held (nonrecursive-lock :whostate "Unlocked")
               (throw :held nil)))
+        #-scl
         (unless (thread-holds-lock-p nonrecursive-lock)
           (log-error "Incorrect thread-holds-lock-p value on throw from ~
                       within without-lock-held"))
         (throw :not-held nil)))
+    #-scl
     (when (thread-holds-lock-p nonrecursive-lock)
       (log-error "Incorrect thread-holds-lock-p value on throw from ~
                       within with-lock-held"))
