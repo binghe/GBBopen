@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/module-manager/module-manager.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Sep 22 04:52:43 2008 *-*
+;;;; *-* Last-Edit: Thu Dec  4 13:19:21 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -246,6 +246,7 @@
             finish-patch
             feature-present-p           ; part of tools, but placed here; not
                                         ; documented
+            freeze-module               ; not yet documented
             get-directory
             get-patch-description
             get-root-directory          ; not yet documented
@@ -264,6 +265,7 @@
             start-patch
             undefine-directory          ; not yet documented
             undefine-module             ; not yet documented
+            unfreeze-module             ; not yet documented
             with-system-name            ; re-exported from :cl-user
             with-module-redefinitions   ; not yet documented
             )))
@@ -770,8 +772,8 @@
 
 ;;; ---------------------------------------------------------------------------
 
-;; CMUCL 19e complains about the following declaration:
-#-cmu
+;; CMUCL 19e and SCL complain about the following declaration:
+#-(or cmu scl)
 (declaim (ftype (function (mm-module) (values t &optional)) 
                 mm-module.directory
                 mm-module.subdirectories))
@@ -891,7 +893,8 @@
   ;; undocumented (used for compile-gbbopen exit):
   (after-form nil)
   (system-name *current-system-name*)
-  (patch-descriptions nil))
+  (patch-descriptions nil)
+  (frozen? nil))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -899,7 +902,8 @@
   (cond
    (*print-readably* (call-next-method))
    (t (print-unreadable-object (object stream :type t)
-        (format stream "~s"
+        (format stream "~:[~;% ~]~s"
+                (mm-module.frozen? object)
                 (mm-module.name object)))
       ;; Print-object must return object:
       object)))
@@ -1139,6 +1143,18 @@
     (funcall 'mm-component-undefsystem name))
   (remhash name *mm-modules*))
 
+;;; ---------------------------------------------------------------------------
+
+(defun freeze-module (module)
+  (setf module (get-module module 't))
+  (setf (mm-module.frozen? module) 't))
+
+;;; ---------------------------------------------------------------------------
+
+(defun unfreeze-module (module)
+  (setf module (get-module module 't))
+  (setf (mm-module.frozen? module) nil))
+
 ;;; ===========================================================================
 ;;;  Patch primitives (placed here to avoid forward references)
 
@@ -1343,6 +1359,11 @@
 
 ;;; ---------------------------------------------------------------------------
 
+(defun module-warning (&rest args)
+  (apply 'warn args))
+
+;;; ---------------------------------------------------------------------------
+
 (defun compile/load-module-files-helper (*current-module*
                                          source-directory
                                          compiled-directory compile?
@@ -1489,40 +1510,48 @@
 
 (defun compile-module-files (module recompile? reload? source? print? 
                              propagate? patches?)
-  (multiple-value-bind (source-directory compiled-directory)
-      (module-source/compiled-directories module patches?)
-    (when compiled-directory
-      ;; Check if the compiled-directory exists or if it is not needed.  If it
-      ;; is needed and missing, create it if automatically creating missing
-      ;; directories or if the user so directs:
-      (unless (or (probe-directory compiled-directory)
-                  ;; Compiled directory is not needed:
-                  (flet ((all-source-p (file-specs)
-                           (every #'(lambda (file-spec)
-                                      (let ((file-options (when (consp file-spec) 
-                                                            (rest file-spec))))
-                                        (member ':source file-options :test #'eq)))
-                                  file-specs)))
-                    (if patches?
-                        (all-source-p (mm-module.patches module))
-                        (all-source-p (mm-module.files module)))))
-        (when (or *automatically-create-missing-directories*
-                  (restart-case
-                      (error "Directory ~a in module ~s doesn't exist."
-                             compiled-directory (mm-module.name module))
-                    (create-it ()
-                        :report "Create this directory."
-                      't)
-                    (create-all ()
-                        :report #.(format nil 
-                                          "Create this directory and ~
-                                           any future missing directories.")
-                      (setf *automatically-create-missing-directories* 't))))
-          (ensure-directories-exist compiled-directory))))
-    (compile/load-module-files-helper 
-     module source-directory compiled-directory
-     't recompile? reload? source? print? propagate? patches?)))
-
+  (cond
+   ;; The module is frozen:
+   ((mm-module.frozen? module)
+    (when recompile?
+      (module-warning "Module ~s needs to be recompiled but is frozen."
+                      (mm-module.name module)))
+    (values recompile? propagate?))
+   (t (multiple-value-bind (source-directory compiled-directory)
+          (module-source/compiled-directories module patches?)
+        (when compiled-directory
+          ;; Check if the compiled-directory exists or if it is not needed.
+          ;; If it is needed and missing, create it if automatically creating
+          ;; missing directories or if the user so directs:
+          (unless (or (probe-directory compiled-directory)
+                      ;; Compiled directory is not needed:
+                      (flet ((all-source-p (file-specs)
+                               (every 
+                                #'(lambda (file-spec)
+                                    (let ((file-options (when (consp file-spec) 
+                                                          (rest file-spec))))
+                                      (member ':source file-options :test #'eq)))
+                                file-specs)))
+                        (if patches?
+                            (all-source-p (mm-module.patches module))
+                            (all-source-p (mm-module.files module)))))
+            (when (or *automatically-create-missing-directories*
+                      (restart-case
+                          (error "Directory ~a in module ~s doesn't exist."
+                                 compiled-directory (mm-module.name module))
+                        (create-it ()
+                            :report "Create this directory."
+                          't)
+                        (create-all ()
+                            :report #.(format nil 
+                                              "Create this directory and ~
+                                               any future missing directories.")
+                          (setf *automatically-create-missing-directories* 't))))
+              (ensure-directories-exist compiled-directory))))
+        (compile/load-module-files-helper 
+         module source-directory compiled-directory
+         't recompile? reload? source? print? propagate? patches?)))))
+  
 ;;; ---------------------------------------------------------------------------
 
 (defun load-module-files (module reload? source? print? patches?)
@@ -1798,7 +1827,7 @@
           (mm-module.latest-forces-recompiled-date module)))
     (multiple-value-bind (source-directory compiled-directory)
         (module-source/compiled-directories module)
-      (format t "~&Module ~s (~:[not ~;~]loaded)~
+      (format t "~&Module ~s (~:[not ~;~]loaded~@[, frozen~])~
                  ~%  Requires: ~w~
                  ~%  Fully expanded requires: ~w~
                  ~%  Source directory: ~a~
@@ -1807,6 +1836,7 @@
                  ~%  Files:  "          ; 2 trailing spaces req'd
               module-name
               (mm-module.load-completed? module)
+              (mm-module.frozen? module)
               (mm-module.requires module)
               (mapcar #'mm-module.name 
                       (determine-modules (mm-module.requires module) 't))
@@ -1872,7 +1902,8 @@
               (format t "~&Defined Modules:")
               (format t "~&Loaded Modules:"))
           (dolist (module (sort modules #'string-lessp :key #'mm-module.name))
-            (format t "~%  ~s~:[~; [~a]~]"
+            (format t "~%  ~:[ ~;%~] ~s~:[~; [~a]~]"
+                    (mm-module.frozen? module)
                     (mm-module.name module)
                     all-modules?
                     (if (%module-fully-loaded? module 't)
