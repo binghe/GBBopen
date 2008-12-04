@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/offset-universal-time.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Jul  8 05:54:31 2008 *-*
+;;;; *-* Last-Edit: Thu Dec  4 12:44:46 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -74,8 +74,8 @@
           (/ (expt 2 fixnum-size) #.(float (* 60 60 24))))))
 
 (let ((fixnum-size (1+ (integer-length most-positive-fixnum))))
-  ;; Suppress unreachable code warning in CMUCL
-  #+cmu
+  ;; Suppress unreachable code warning in CMUCL and SCL:
+  #+(or cmu scl)
   (declare (optimize (extensions:inhibit-warnings 3)))
   (when (< fixnum-size 25)
     (small-fixnum-ot-warning)))
