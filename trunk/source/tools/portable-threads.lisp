@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/portable-threads.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Oct 24 14:31:29 2008 *-*
+;;;; *-* Last-Edit: Thu Dec  4 13:55:00 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -966,7 +966,7 @@
   #+(and sbcl sb-thread)
   (sb-thread:make-mutex :name name)
   #+scl
-  (mp:make-lock name :type :recursive))
+  (mp:make-lock name :type ':error-check))
 
 ;;; ---------------------------------------------------------------------------
 ;;;   Make-recursive-lock
@@ -986,7 +986,7 @@
   #+(and lispworks new-locks)
   (%make-recursive-lock :i-name name)
   #+scl
-  (mp:make-lock name :type :recursive))
+  (mp:make-lock name :type ':recursive))
   
 ;;; ---------------------------------------------------------------------------
 ;;;   With-Lock-held
@@ -1096,6 +1096,9 @@
     (eq (mp:lock-owner lock) mp:*current-process*)
     #+(and sbcl sb-thread)
     (eq (sb-thread:mutex-value lock) sb-thread:*current-thread*)
+    ;; Checking the lock holder is not supported on SCL:
+    #+scl
+    nil
     ;; Note that polling functions complicate non-threaded CL locking;
     ;; the following does not deal with polling functions:
     #+threads-not-available
@@ -1121,6 +1124,9 @@
          (eq (mp:lock-owner ,lock-sym) mp:*current-process*)
          #+(and sbcl sb-thread)
          (eq (sb-thread:mutex-value ,lock-sym) sb-thread:*current-thread*)
+         ;; Checking the lock holder is not supported on SCL:
+         #+scl
+         nil
          #+threads-not-available
          (plusp (the fixnum (lock-count ,lock-sym)))))))
 
@@ -1203,7 +1209,6 @@
   `(as-atomic-operation (decf ,place ,delta)))
 
 (defmacro atomic-delete (item place &rest args &environment env)
-  #-scl
   (if (symbolp place)
       `(as-atomic-operation
          (setf ,place (delete ,item ,place ,@args)))
@@ -1215,13 +1220,7 @@
                     ,@(mapcar #'list vars vals)
                     (,(first store-vars)
                      (delete ,item-var ,reader-form ,@args)))
-               ,writer-form)))))
-  #+scl
-  (let ((list (gensym)))
-    (ext:once-only ((item item))
-      `(kernel:with-atomic-modification (,list ,place)
-         ;; Question for dtc: Why is remove used rather than delete?
-         (remove ,item ,list ,@args)))))
+               ,writer-form))))))
 
 (defmacro atomic-flush (place)
   ;;; Set place to nil, returning the original value:
@@ -1241,7 +1240,8 @@
                                &body body)
     #-(or allegro
           closure
-          digitool-mcl)
+          digitool-mcl
+          scl)
     (declare (ignore whostate))
     (let ((lock-sym (gensym))
           #+(or allegro
@@ -1343,31 +1343,16 @@
              (sb-thread:get-mutex ,lock-sym)))
          #+scl
          (progn
-           (mp:without-scheduling
-             (let ((.current-thread. mp:*current-process*)
-                   (.holding-thread. (mp::lock-process ,lock-sym)))
-               (unless (eq .current-thread. .holding-thread.)
-                 (non-holder-lock-release-error
-                  ,lock-sym .current-thread. .holding-thread.))
-               (%%lock-release ,lock-sym)))
+           ;; Hoping that RELEASE-LOCK checks the owner...
+           (thread::release-lock ,lock-sym)
            (unwind-protect
                (progn ,@body)
-             (mp::lock-wait ,lock-sym "Reacquiring lock")))
+             (thread::acquire-lock ,lock-sym ,whostate)))
          #+threads-not-available
          (progn ,@body)))))
 
 ;;; Internal release-lock function for CMUCL:
 #+(and cmu mp)
-(defun %%lock-release (lock)
-  (declare (type mp:lock lock))
-  #-i486
-  (setf (mp:lock-process lock) nil)
-  #+i486
-  (null (kernel:%instance-set-conditional
-         lock 2 mp:*current-process* nil)))
-
-;;; Internal release-lock function for SCL (needs to be verified):
-#+scl
 (defun %%lock-release (lock)
   (declare (type mp:lock lock))
   #-i486
@@ -1551,13 +1536,17 @@
     (loop until result do (sleep 0.05))
     (apply #'values result))
   #+scl
-  (handler-case 
-      (values (kernel:thread-symbol-dynamic-value thread symbol) t)
-    (unbound-variable (condition)
-      (declare (ignore condition))
-      (handler-case
-          (values (kernel:symbol-global-value symbol) t)
-        (unbound-variable () (values nil nil)))))
+  (multiple-value-bind (value boundp)
+      (kernel:thread-symbol-dynamic-value thread symbol)
+    (ecase boundp
+      ((t) (values value t))
+      (:unbound (values nil nil))
+      ((nil)
+       (handler-case
+	   (values (kernel:symbol-global-value symbol) t)
+	 (unbound-variable (condition)
+	   (declare (ignore condition))
+	   (values nil nil))))))
   #+threads-not-available
   (declare (ignore thread))
   #+threads-not-available
@@ -1680,6 +1669,14 @@
    (cv :initform (sb-thread:make-waitqueue)
        :reader condition-variable-cv)))
 
+#+scl
+(defclass condition-variable ()
+  ((lock :initarg :lock
+         :initform (mp:make-lock "CV Lock" :type ':error-check)
+         :reader condition-variable-lock)
+   (cv :initform (thread:make-cond-var "Anonymous CV")
+       :accessor condition-variable-cv)))
+
 #+threads-not-available
 (defclass condition-variable ()
   ((lock :initarg :lock
@@ -1721,6 +1718,8 @@
 (defun condition-variable-wait (condition-variable)
   #-threads-not-available
   (let ((lock (condition-variable-lock condition-variable)))
+    ;; No lock-owner checking under SCL:
+    #-scl
     (unless (thread-holds-lock-p lock)
       (condition-variable-lock-needed-error
        condition-variable 'condition-variable-wait))
@@ -1769,7 +1768,9 @@
       (mp:process-allow-scheduling)
       (mp:process-lock lock))
     #+(and sbcl sb-thread)
-    (sb-thread:condition-wait (condition-variable-cv condition-variable) lock))
+    (sb-thread:condition-wait (condition-variable-cv condition-variable) lock)
+    #+scl
+    (thread:cond-var-wait (condition-variable-cv condition-variable) lock))
   #+threads-not-available
   (declare (ignore condition-variable))
   #+threads-not-available
@@ -1780,6 +1781,7 @@
 (defun condition-variable-wait-with-timeout (condition-variable seconds)
   #-threads-not-available
   (let ((lock (condition-variable-lock condition-variable)))
+    #-scl
     (unless (thread-holds-lock-p lock)
       (condition-variable-lock-needed-error
        condition-variable 'condition-variable-wait-with-timeout))
@@ -1870,7 +1872,10 @@
                       (sb-thread:condition-wait 
                        (condition-variable-cv condition-variable) lock)
                       't)
-        (sb-ext:timeout () nil))))
+        (sb-ext:timeout () nil)))
+    #+scl
+    (thread:cond-var-timedwait (condition-variable-cv condition-variable) lock
+			       seconds))
   #+threads-not-available
   (declare (ignore condition-variable seconds))
   #+threads-not-available
@@ -1880,6 +1885,7 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun condition-variable-signal (condition-variable)
+  #-scl
   (unless (thread-holds-lock-p (condition-variable-lock condition-variable))
     (condition-variable-lock-needed-error
      condition-variable 'condition-variable-signal))
@@ -1896,11 +1902,14 @@
   #+(and ecl threads)
   (mp:condition-variable-signal (condition-variable-cv condition-variable))
   #+(and sbcl sb-thread)
-  (sb-thread:condition-notify (condition-variable-cv condition-variable)))
+  (sb-thread:condition-notify (condition-variable-cv condition-variable))
+  #+scl
+  (thread:cond-var-signal (condition-variable-cv condition-variable)))
   
 ;;; ---------------------------------------------------------------------------
 
 (defun condition-variable-broadcast (condition-variable)
+  #-scl
   (unless (thread-holds-lock-p (condition-variable-lock condition-variable))
     (condition-variable-lock-needed-error
      condition-variable 'condition-variable-broadcast))
@@ -1924,7 +1933,9 @@
   #+(and ecl threads)
   (mp:condition-variable-broadcast (condition-variable-cv condition-variable))
   #+(and sbcl sb-thread)
-  (sb-thread:condition-broadcast (condition-variable-cv condition-variable)))
+  (sb-thread:condition-broadcast (condition-variable-cv condition-variable))
+  #+scl
+  (thread:cond-var-broadcast (condition-variable-cv condition-variable)))
 
 ;;; ===========================================================================
 ;;;  Scheduled Functions (built entirely on top of Portable Threads substrate)
