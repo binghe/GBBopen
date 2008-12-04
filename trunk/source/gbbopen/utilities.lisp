@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/utilities.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Jul  5 11:14:04 2008 *-*
+;;;; *-* Last-Edit: Thu Dec  4 12:51:05 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -84,7 +84,7 @@
     ;;; Returns the start value of `interval'
     (if (consp interval)
 	(car (the cons interval)) 
-	(without-cmu/sbcl-optimization-warnings
+	(without-cmucl/sbcl/scl-optimization-warnings
 	  (elt (the (simple-array * (2)) interval) 0)))))
 
 ;;; ---------------------------------------------------------------------------
@@ -94,7 +94,7 @@
     ;;; Sets the start value of `interval'
     (if (consp interval)
 	(setf (car (the cons interval)) nv)
-	(without-cmu/sbcl-optimization-warnings
+	(without-cmucl/sbcl/scl-optimization-warnings
  	  (setf (elt (the (simple-array * (2)) interval) 0) nv)))))
 
 ;;; ---------------------------------------------------------------------------
@@ -107,7 +107,7 @@
 	  (if (consp maybe-end)
 	      (sole-element maybe-end)
 	      maybe-end))
-	(without-cmu/sbcl-optimization-warnings
+	(without-cmucl/sbcl/scl-optimization-warnings
 	    (elt (the (simple-array * (2)) interval) 1)))))
 
 ;;; ---------------------------------------------------------------------------
@@ -120,7 +120,7 @@
 	  (if (consp maybe-end)
 	      (setf (car maybe-end) nv)
 	      (setf (cdr interval) nv)))
-	(without-cmu/sbcl-optimization-warnings
+	(without-cmucl/sbcl/scl-optimization-warnings
 	   (setf (elt (the (simple-array * (2)) interval) 1) nv)))))
 
 ;;; ---------------------------------------------------------------------------
@@ -131,7 +131,7 @@
       (cons (cons start end))
       (list (list start end))
       (array
-       (without-cmu/sbcl-optimization-warnings
+       (without-cmucl/sbcl/scl-optimization-warnings
         (let ((array (make-array '(2))))
           (setf (elt (the (simple-array * (2)) array) 0) start)
           (setf (elt (the (simple-array * (2)) array) 1) end)
@@ -158,7 +158,7 @@
           (if (consp maybe-end)
               (list (car interval) (sole-element maybe-end))
               (cons (car interval) maybe-end)))
-        (without-cmu/sbcl-optimization-warnings
+        (without-cmucl/sbcl/scl-optimization-warnings
          (let ((array
                 (make-array '(2) :element-type (array-element-type interval))))
            (setf (elt (the (simple-array * (2)) array) 0)
@@ -282,7 +282,7 @@
                      (if (consp maybe-end)
                          (sole-element maybe-end)
                          maybe-end))))
-          (t (without-cmu/sbcl-optimization-warnings
+          (t (without-cmucl/sbcl/scl-optimization-warnings
               (values 
                (elt (the (simple-array * (2)) interval) 0) 
                (elt (the (simple-array * (2)) interval) 1)))))))
@@ -301,7 +301,7 @@
           (if (consp maybe-end)
               (setf (car maybe-end) end)
               (setf (cdr destination-interval) end))))
-       (t (without-cmu/sbcl-optimization-warnings
+       (t (without-cmucl/sbcl/scl-optimization-warnings
            (setf (elt (the (simple-array * (2)) destination-interval) 0) start)
            (setf (elt (the (simple-array * (2)) destination-interval) 1) end)))))
     ;; Return the original format `interval values':
