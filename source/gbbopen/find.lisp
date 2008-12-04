@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/find.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Sep  1 10:05:41 2008 *-*
+;;;; *-* Last-Edit: Thu Dec  4 12:51:23 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -560,8 +560,9 @@
 
 (with-full-optimization ()
   (defun match-is (instance-value pattern-value comparison-type)
-    ;; Inhibit CMUCL optimization warnings:
-    #+cmu (declare (optimize (extensions:inhibit-warnings 3)))
+    ;; Inhibit CMUCL and SCL optimization warnings:
+    #+(or cmu scl)
+    (declare (optimize (extensions:inhibit-warnings 3)))
     ;; general enumerated match operator:
     (funcall (fdefinition comparison-type) instance-value pattern-value)))
            
@@ -572,7 +573,7 @@
        `(with-full-optimization ()
           (defun ,name (instance-value pattern-value comparison-type)
             (declare (ignore comparison-type))
-            (without-cmu/sbcl-optimization-warnings
+            (without-cmucl/sbcl/scl-optimization-warnings
              (,comparison-test instance-value pattern-value))))))
   (generate-match-is match-is-eq eq)
   (generate-match-is match-is-eql eql)

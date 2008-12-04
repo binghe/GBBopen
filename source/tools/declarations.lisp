@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/declarations.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Aug 31 16:29:47 2008 *-*
+;;;; *-* Last-Edit: Thu Dec  4 12:50:22 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -39,7 +39,7 @@
             need-to-port                ; in module-manager-loader, not documented
             nyi                         ; not documented
             unbound-value-indicator
-            without-cmu/sbcl-optimization-warnings ; not documented
+            without-cmucl/sbcl/scl-optimization-warnings ; not documented
             with-full-optimization)))
 
 ;;; ---------------------------------------------------------------------------
@@ -53,11 +53,11 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defmacro without-cmu/sbcl-optimization-warnings (&body body)
-  ;;  Suppress CMUCL and SBCL compilation notes on failed optimizations:
+(defmacro without-cmucl/sbcl/scl-optimization-warnings (&body body)
+  ;;  Suppress CMUCL, SBCL, and SCL compilation notes on failed optimizations:
   `(locally 
-     ;; Inhibit CMUCL optimization warnings:
-     #+cmu (declare (optimize (extensions:inhibit-warnings 3)))
+     ;; Inhibit CMUCL and SCL optimization warnings:
+     #+(or cmu scl) (declare (optimize (extensions:inhibit-warnings 3)))
      ;; Eliminate SBCL optimization warnings by lowering the speed setting.
      ;; (It would be better to find a direct way to suppress these.)
      #+sbcl (declare (optimize (speed 1)))
