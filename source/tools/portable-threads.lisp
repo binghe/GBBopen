@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/portable-threads.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Dec  4 14:07:37 2008 *-*
+;;;; *-* Last-Edit: Tue Jan 27 19:39:10 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -768,6 +768,29 @@
          (sb-ext:schedule-timer ,timer-sym ,seconds)
          (unwind-protect (progn ,@timed-body)
            (sb-ext:unschedule-timer ,timer-sym)))))
+  #+scl
+  (let ((timer-process-sym (gensym)))
+    ;; Simple version for SCL, we sleep in a separate "timer" process:
+    `(catch 'with-timeout
+       (let ((,timer-process-sym
+              (mp:make-process 
+               #'(lambda ()
+                   (funcall 
+                    #'(lambda (process seconds)
+                        (sleep seconds)
+                        (mp:process-interrupt
+                         process
+                         #'(lambda ()
+                             (ignore-errors
+                              (throw 'with-timeout
+                                (progn ,@timeout-body))))))
+                    (mp:current-process)
+                    ,seconds))
+               :name "with-timeout timer")))
+         (mp:process-yield)
+         (unwind-protect (progn ,@timed-body)
+           (mp:destroy-process ,timer-process-sym)
+           (mp:process-yield)))))
   #+with-timeout-not-available
   (declare (ignore seconds timeout-body timed-body))
   #+with-timeout-not-available
@@ -2230,9 +2253,11 @@
             (when (and (eq next-scheduled-function scheduled-function)
                        (not (eq (first *scheduled-functions*)
                                 scheduled-function)))
-              (awaken-scheduled-function-scheduler)))))
+              (awaken-scheduled-function-scheduler))
+            ;; success:
+            't)))
       ;; warn if unable to find the scheduled function (outside of the lock):
-      (warn "Unable to find scheduled-function ~s."
+      (warn "Unable to find scheduled-function: ~s."
             name-or-scheduled-function)))
 
 ;;; ---------------------------------------------------------------------------
