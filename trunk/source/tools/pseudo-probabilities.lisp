@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/pseudo-probabilities.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Jul  8 05:55:54 2008 *-*
+;;;; *-* Last-Edit: Sat Jan 31 06:35:18 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2008, Dan Corkill <corkill@GBBopen.org> 
+;;; Copyright (C) 2008-2009, Dan Corkill <corkill@GBBopen.org> 
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -265,7 +265,9 @@
     `(with-full-optimization ()
          (unless (<& 0 ,pprob #.(1+ max-pprob))
            (ln%-error ,pprob))
-       (svref (the (simple-array t (*)) *ln%-vector*) ,pprob))))
+         (svref (the (simple-array t (*)) (locally (declare (special *ln%-vector*))
+                                            *ln%-vector*))
+                ,pprob))))
 
 ;;; ---------------------------------------------------------------------------
 
