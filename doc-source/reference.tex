@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Thu Jan  1 08:16:59 2009; Edited-By: cork *-*
+%% *-* Last-Edit: Mon Feb  9 11:56:41 2009; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2009, Dan Corkill <corkill@GBBopen.org>
@@ -8663,6 +8663,7 @@ have passed, in which case next year is assumed.
 
 \begin{alsos}{*month-precedes-date*}
 \also[*month-precedes-date*]
+\also[parse-time-interval]
 \end{alsos}
 
 \fnexamples
@@ -8702,6 +8703,89 @@ have passed, in which case next year is assumed.
 %
 This function is loaded with the \code{:module-manager} \glref{module} in order
 to to make it available as early as possible.
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{parse-time-interval}{%
+    \var{string\/}
+    %% units keyword is not documented:
+    \code{\&key} \var{start end separators\/}
+    \mbox{\returns{} \var{seconds\/}}}
+\index{time interval!parsing}% 
+
+\fnsyntax
+
+\fnpurpose Parse a time-interval-specification string.
+
+\fnpackage \code{:gbbopen-tools}
+
+\fnmodule \code{:gbbopen-tools}
+
+\fnargs
+\begin{args}{month-precedes-date}
+\arg[string] A string
+\arg[start] Starting index into \var{string\/} (default is \code{0})
+\arg[end] Ending index into \var{string\/} (default is \nil, meaning
+end of \var{string\/})
+\arg[separators] A sequence of characters that are skipped between
+specification items (default is \code{" ,"})
+\end{args}
+
+\fnreturns The time-interval duration, in seconds
+
+\fndescription
+%
+The following time-interval unit specifiers are recognized (both singular and
+plural): 
+\W\supp\tabletop
+\begin{tabular}{@{}llll@{}}
+~~~~~ & \code{"second"} & ~~ & (or \code{"sec"} or \code{"s"}) \\
+      & \code{"minute"} &    & (or \code{"min"} or \code{"m"}) \\
+      & \code{"hour"}   &    & (or \code{"hr"} or \code{"h"}) \\
+      & \code{"day"}    &    & (or \code{"d"}) \\
+      & \code{"week"}   &    & (or \code{"wk"}) \\
+      & \code{"month"}  &    & (or \code{"mon"}) \\
+      & \code{"year"}   &    & (or \code{"yr"}) \\
+\end{tabular}
+\T\\
+A \code{"month"} is interpreted as exactly 30 days; a \code{"year"} as 365 days.
+
+\begin{alsos}{pretty-time-interval}
+\also[parse-date]
+\also[pretty-time-interval]
+\end{alsos}
+
+\fnexamples
+%
+\W\supp
+\begin{example}
+  > (parse-time-interval "2 minutes")
+  60
+  > (parse-time-interval "-2min")
+  -60
+  > (parse-time-interval "2m")
+  60\goodpagebreak
+  > (parse-time-interval "365 days, 5 hours, 49 minutes, 12 seconds"
+  31556952
+  > (parse-time-interval "365d 5h 49m 12s")
+  31556952
+  > (parse-time-interval "365d5h49m12s")
+  31556952\goodpagebreak
+  > (parse-time-interval "1min -2secs")
+  58
+  > (parse-time-interval "1m-2s")
+  58\goodpagebreak
+  > (parse-time-interval "1/2hr")
+  1800
+  > (parse-time-interval "0.5hr")
+  1800.0\goodpagebreak
+  > (parse-time-interval "2 months")
+  5184000
+  > (parse-time-interval "3 wks")
+  1814400
+\end{example}
+
 \end{functiondoc}
 
 %% ------------------------------------------------------------------------
@@ -8800,6 +8884,7 @@ pointer (default is \nil)
 description.
 
 \begin{alsos}{pretty-run-time-interval}
+\also[parse-time-interval]
 \also[pretty-run-time-interval]
 \end{alsos}
 
@@ -8825,6 +8910,8 @@ description.
   "1 day, 22 hours"
   > (pretty-time-interval 166611.9 1)
   "2 days"
+  > (pretty-time-interval 31556952)
+  "365 days, 5 hours, 49 minutes, 12 seconds"
   >
 \end{example}
 

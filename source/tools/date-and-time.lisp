@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/date-and-time.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Aug 31 16:29:29 2008 *-*
+;;;; *-* Last-Edit: Mon Feb  9 11:51:48 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -14,13 +14,14 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2002-2008, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2009, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
 ;;;  05-16-08 File split from tools.lisp.  (Corkill)
 ;;;  03-20-04 Added pretty time-interval functions.  (Corkill)
+;;;  02-08-09 Added PARSE-TIME-INTERVAL.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -41,6 +42,7 @@
             iso8661-date-and-time
             message-log-date-and-time
             parse-date                  ; also from module-manager.lisp
+            parse-time-interval
             pretty-time-interval
             pretty-run-time-interval)))
 
@@ -269,6 +271,124 @@
                            #.(float internal-time-units-per-second))
                         maximum-fields
                         destination))
+
+;;; ===========================================================================
+
+(defparameter *time-interval-units-alist*
+    ;; Plurals are handled automatically:
+    `(("second"        . 1)
+      ("sec"           . 1)
+      ("s"             . 1)
+      ("minute"        . 60)
+      ("min"           . 60)
+      ("m"             . 60)
+      ("hour"          . #.(* 60 60))
+      ("hr"            . #.(* 60 60))
+      ("h"             . #.(* 60 60))
+      ("day"           . #.(* 24 60 60))
+      ("d"             . #.(* 24 60 60))
+      ("week"          . #.(* 7 24 60 60))
+      ("wk"            . #.(* 7 24 60 60))
+      ("month"         . #.(* 30 24 60 60))
+      ("mon"           . #.(* 30 24 60 60))
+      ("year"          . #.(* 365 24 60 60))
+      ("yr"            . #.(* 365 24 60 60))))
+
+;;; ---------------------------------------------------------------------------
+
+(defun parse-time-interval (string &key (start 0) 
+                                        (end (length string))
+                                        (separators " ,")
+                                        ;; units keyword is not documented:
+                                        (units *time-interval-units-alist*))
+  ;; Returns the number of seconds representing the time interval specified in
+  ;; string:
+  (declare (simple-string string))
+  (flet ((skip-separators ()
+           (loop 
+               while (and (< (& start) (& end))
+                          (find (schar string start) separators))
+               do (incf& start)))
+         (skip-to-a-separator-minus-or-digit ()
+           (loop 
+               while (and (< (& start) (& end))
+                          (let ((char (schar string start)))
+                            (not (or (digit-char-p char)
+                                     (char= char #\-)
+                                     (find char separators)))))
+               do (incf& start)))
+         (negative-sign-p ()
+           ;; When string[start] is #\-, increment start and return true:
+           (when (and (<& start end)
+                      (char= #\- (schar string start)))
+             (incf& start)))
+         (no-numeric-value-error (start end)
+           (error "No interval numeric value found prior to ~s"
+                  (subseq string start end))))
+    (let ((result 0))
+      (while (<& start end)
+        (skip-separators)
+        (let (value
+              (negative? (negative-sign-p)))
+          (multiple-value-setq (value start)
+            (parse-integer string :start start :end end :junk-allowed 't))
+          ;; Check for decimal-pointed fraction or ratio (we don't support all
+          ;; CL numbers here):
+          (when (<& start end)
+            (let ((indicator-char (schar string start)))
+              (cond 
+               ;; decimal-pointed fraction:
+               ((char= #\. indicator-char)
+                (unless (=& *read-base* 10)
+                  (error "Only a decimal number can contain a decimal point"))
+                (incf& start)
+                (let (fraction
+                      (fraction-start start)
+                      (negative? (negative-sign-p)))
+                  (multiple-value-setq (fraction start)
+                    (parse-integer string :start fraction-start :end end :junk-allowed 't))
+                  (unless (and (or value fraction) (not negative?))
+                    (no-numeric-value-error start end))
+                  (setf value (+$ (if value (float value) 0.0f0)
+                                  (if fraction 
+                                      (/$ (float fraction) 
+                                          (expt 10.0f0 (-& start fraction-start)))
+                                      0.0f0)))))
+               ;; ratio:
+               ((char= #\/ indicator-char)
+                (incf& start)
+                (let (denominator
+                      (negative? (negative-sign-p)))
+                  (multiple-value-setq (denominator start)
+                    (parse-integer string :start start :end end :junk-allowed 't))
+                  (unless (and value denominator (not negative?))
+                    (no-numeric-value-error start end))
+                  (setf value (/ value denominator)))))))
+          (unless value 
+            (when (=& start end)
+              (return-from parse-time-interval result))
+            (no-numeric-value-error start end))
+          (skip-separators)
+          (let ((token-start start))
+            (skip-to-a-separator-minus-or-digit)
+            (let ((token-end start))
+              ;; Ignore plural "s" character at end:
+              (let ((1-token-end (1-& token-end)))
+                (when (and (char= (schar string 1-token-end) #\s)
+                           (/=& token-start 1-token-end))
+                  (setf token-end 1-token-end)))
+              (let ((unit-acons (assoc-if #'(lambda (key) 
+                                              (string-equal string key
+                                                            :start1 token-start
+                                                            :end1 token-end))
+                                          units)))
+                (unless unit-acons 
+                  (error "Unknown time-interval unit ~s following value ~s"
+                         (subseq string token-start start)
+                         value))
+                (setf value (* value (cdr unit-acons)))
+                (if negative? (decf result value) (incf result value)))))))
+      result)))
 
 ;;; ===========================================================================
 ;;;                               End of File
