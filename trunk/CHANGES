@@ -6,11 +6,12 @@ Important changes since GBBopen 1.2:
   * Changes to GBBopen Tools
      - Saving/sending support for adjustable, fill-pointer, and 
        element-typed vectors, bit-vectors, and arrays
+     - New PARSE-TIME-INTERVAL function 
 
   * Changes to GBBopen Core
-     - new class, DELETED-UNIT-INSTANCE, now used to represent deleted 
+     - New class, DELETED-UNIT-INSTANCE, now used to represent deleted 
        unit and space instances
-     - new function, MAKE-INSTANCES-OF-CLASS-VECTOR
+     - New function, MAKE-INSTANCES-OF-CLASS-VECTOR
      - speed/allocation optimizations to MAP-SORTED-INSTANCES-OF-CLASS
        and DO-SORTED-INSTANCES-OF-CLASS
      - New :coalesce-strings and :estimated-peak-forward-references
