@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/portable-threads.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Feb 10 15:26:06 2009 *-*
+;;;; *-* Last-Edit: Tue Feb 10 15:35:05 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -1594,7 +1594,7 @@
            (1- (expt 2 29))
            ;; Clozure CL on Windows needs a smaller value:
            #+(and clozure windows-target)
-           (1- (expt 2 23))))
+           (1- (expt 2 22))))
 
 ;;; ---------------------------------------------------------------------------
 
