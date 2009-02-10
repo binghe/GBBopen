@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/portable-threads.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Jan 27 19:39:10 2009 *-*
+;;;; *-* Last-Edit: Tue Feb 10 15:23:58 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org> 
+;;; Copyright (C) 2003-2009, Dan Corkill <corkill@GBBopen.org> 
 ;;;
 ;;; Developed and supported by the GBBopen Project (http://GBBopen.org) and
 ;;; donated to the CL Gardeners portable threads initiative
@@ -1262,7 +1262,7 @@
   (defmacro without-lock-held ((lock &key (whostate "Without Lock Held"))
                                &body body)
     #-(or allegro
-          closure
+          clozure
           digitool-mcl
           scl)
     (declare (ignore whostate))
@@ -1591,7 +1591,10 @@
 (defparameter *nearly-forever-seconds* 
     #.(min most-positive-fixnum
            ;; Keep well within a 32-bit word on 64-bit CLs:
-           (1- (expt 2 29))))
+           (1- (expt 2 29))
+           ;; Clozure CL on Windows needs a smaller value:
+           #+(and clozure windows-target)
+           (-1 (expt 2 23))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -2254,7 +2257,7 @@
                        (not (eq (first *scheduled-functions*)
                                 scheduled-function)))
               (awaken-scheduled-function-scheduler))
-            ;; success:
+            ;; return success (outside of the lock):
             't)))
       ;; warn if unable to find the scheduled function (outside of the lock):
       (warn "Unable to find scheduled-function: ~s."
