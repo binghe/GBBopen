@@ -44,33 +44,30 @@ Thus far, we have entered the forms:
   gbbopen-user&gt;</font>
 </pre>
 to compile and load needed GBBopen components and to set the current package
-to <code>:gbbopen-user</code>.  We can set up our Common Lisp environment so that we
-can do this (and eventually compile and load our random-walk application) by
-issuing only a single command.
+to <nobr><code>:gbbopen-user</code></nobr>.  We can set up our Common Lisp environment so
+that we can do this (and eventually compile and load our random-walk
+application) by issuing only a single command.
 </p>
-<p>The file <code><var>&lt;install-dir&gt;</var>/initiate.lisp</code> is an
-alternative for <code><var>&lt;install-dir&gt;</var>/startup.lisp</code> that adds
-handy GBBopen keyword commands to the top-level REPL listener for
-<a target="_top" href="http://www.franz.com">Allegro CL</a>,
-<a target="_top" href="http://clisp.cons.org/">CLISP</a>,
+<p>The file <nobr><code><var>&lt;install-dir&gt;</var>/initiate.lisp</code></nobr> is an alternative
+for <nobr><code><var>&lt;install-dir&gt;</var>/startup.lisp</code></nobr> that adds handy GBBopen
+keyword commands to the top-level REPL listener for <a target="_top" href="http://www.franz.com">Allegro
+CL</a>, <a target="_top" href="http://clisp.cons.org/">CLISP</a>,
 <a target="_top" href="http://clozure.com/clozurecl.html">Clozure CL</a>,
 <a target="_top" href="http://www.cons.org/cmucl/">CMUCL</a>,
 <a target="_top" href="http://common-lisp.net/project/ecl/">ECL</a>,
 <a target="_top" href="http://www.lispworks.com">LispWorks</a>,
-<a target="_top" href="http://sbcl.sourceforge.net">SBCL</a> and
-<a target="_top" href="http://www.scieneer.com/scl/">Scieneer CL</a>
-users.  GBBopen keyword commands
-are also supported in
-<a target="_top" href="http://common-lisp.net/project/slime/">SLIME</a>'s Emacs-based REPL.
-Other interaction interfaces that use their own REPL, rather than the one
-provided by Common Lisp, may not support keyword REPL command processing
-(see below).
+<a target="_top" href="http://sbcl.sourceforge.net">SBCL</a> and <a target="_top" href="http://www.scieneer.com/scl/">Scieneer
+CL</a> users.  GBBopen keyword commands are also
+supported in <a target="_top" href="http://common-lisp.net/project/slime/">SLIME</a>'s
+Emacs-based REPL.  Other interaction interfaces that use their own REPL,
+rather than the one provided by Common Lisp, may not support keyword REPL
+command processing (see below).
 </p>
 <p>To make these GBBopen keyword commands available, simply load the file
-<code><var>&lt;install-dir&gt;</var>/initiate.lisp</code> rather than
-<code><var>&lt;install-dir&gt;</var>/startup.lisp</code>.  Let's try it.  Start up a fresh
-Common Lisp session and enter the following form in the REPL:
-<pre class="pretop">
+<nobr><code><var>&lt;install-dir&gt;</var>/initiate.lisp</code></nobr> rather than
+<nobr><code><var>&lt;install-dir&gt;</var>/startup.lisp</code></nobr>.  Let's try it.  Start up a
+fresh Common Lisp session and enter the following form in the REPL:
+<pre>
 <font color="#667f66">  cl-user&gt; <font color="#000000">(load "<var>&lt;install-dir&gt;</var>/initiate.lisp")</font>
   ;; Loading <var>&lt;install-dir&gt;</var>/initiate.lisp
   ;;  Loading <var>&lt;install-dir&gt;</var>/extended-repl.lisp
@@ -81,7 +78,7 @@ Common Lisp session and enter the following form in the REPL:
 </p>
 <p><a name="id2">Note</a> that the Module Manager Facility and GBBopen
 module definitions have not been loaded.  Now enter the REPL
-command, <b>:gbbopen-user</b>:
+command, <nobr><code>:gbbopen-user</code></nobr>:
 <pre class="pretop">
 <font color="#667f66">  cl-user&gt; <font color="#000000">:gbbopen-user</font>
   ;; Loading <var>&lt;install-dir&gt;</var>/startup.lisp
@@ -89,26 +86,26 @@ command, <b>:gbbopen-user</b>:
   ;; Loading <var>&lt;install-dir&gt;</var>/<var>&lt;platform-dir&gt;</var>/gbbopen/gbbopen-user.fasl
   gbbopen-user&gt;</font>
 </pre>
-The <code>:gbbopen-user</code> module (and supporting modules) are loaded, and the
-current package is set to <code>:gbbopen-user</code>:
+The <code>:gbbopen-user</code> module (and supporting modules) are loaded,
+and the current package is set to <nobr><code>:gbbopen-user</code></nobr>:
 <pre>
 <font color="#667f66">  gbbopen-user&gt; <font color="#000000">*package*</font>
   #&lt;package GBBOPEN-USER&gt;
   gbbopen-user&gt;</font>
 </pre>
 </p>
-<p>Module-compilation REPL commands, such as <code>:gbbopen-user</code>,
-always include the <code>:propagate</code> option when they call the Module Manager's
-<b>compile-module</b> function.  We don't need to specify it as a command
-option.
+<p>Module-compilation REPL commands, such as <nobr><code>:gbbopen-user</code></nobr>, always
+include the <nobr><code>:propagate</code></nobr> option when they call the Module
+Manager's <nobr><b>compile-module</b></nobr> function.  We don't need to specify
+it as a command option.
 </p>
 </p>
 <h3><a name="id3">If it didn't work<i>...</i></a></h3><p>
 If you are running GBBopen in a Common Lisp environment that doesn't support
-REPL commands and the <b>:gbbopen-user</b> REPL command didn't
-work, all is not lost.  Loading <code><var>&lt;install-dir&gt;</var>/initiate.lisp</code>
-also defines functions in the <code>:common-lisp-user</code> package with the same
-name as the REPL command:
+REPL commands and the <nobr><code>:gbbopen-user</code></nobr> REPL command didn't work,
+all is not lost.  Loading <nobr><code><var>&lt;install-dir&gt;</var>/initiate.lisp</code></nobr>
+also defines functions in the <nobr><code>:common-lisp-user</code></nobr> package with the
+same name as the REPL command:
 <pre class="pretop">
 <font color="#667f66">  cl-user&gt; <font color="#000000">(gbbopen-user)</font>
   ;; Loading <var>&lt;install-dir&gt;</var>/startup.lisp
@@ -145,8 +142,8 @@ or
 <a target="_top" href="http://www.lispworks.com">LispWorks</a> do not support the list
 notation.  CLISP versions prior to 2.45 and
 <a target="_top" href="http://common-lisp.net/project/ecl/">ECL</a> only support the spread
-notation&mdash;but without arguments.  So, a user running on these Common
-Lisp implementations must use the <code>:common-lisp-user</code> functions rather
+notation&mdash;but without arguments.  So, a user running on these Common Lisp
+implementations must use the <nobr><code>:common-lisp-user</code></nobr> functions rather
 than a REPL command when the command requires arguments:
 <pre class="pretop">
 <font color="#667f66">  cl-user&gt; <font color="#000000">(cl-user:gbbopen-user :create-dirs)</font>
@@ -161,7 +158,7 @@ interface.
 <p>We will show the <a href="#sec:REPL-command-syntax">spread command syntax</a>
 throughout the rest of the Tutorial.  If you are running a
 <a target="_top" href="http://clisp.cons.org/">CLISP</a> version prior to 2.45, remember to
-use the <code>:common-lisp-user</code> function rather than the REPL command when
+use the <nobr><code>:common-lisp-user</code></nobr> function rather than the REPL command when
 the command requires arguments.  (Equivalent functions in the
 <code>:common-lisp-user</code> package are always defined for each REPL
 keyword command, and these functions can be used when REPL keyword
@@ -169,13 +166,13 @@ processing is not fully supported.)
 </p>
 <h2><a name="id5">Step 2: Customizing your Common Lisp initialization file</a></h2><p>
 I'm lazy and would rather not have to explicitly load the
-<code><var>&lt;install-dir&gt;</var>/initiate.lisp</code> file each time I start a new
+<nobr><code><var>&lt;install-dir&gt;</var>/initiate.lisp</code></nobr> file each time I start a new
 Common Lisp session.  So, I have my Common Lisp's initialization file load it
 for me.  To make it easy to similarly customize different Common Lisp
 implementations, I use the following strategy:
 </p>
 <ol>
-<li>I create a file, <code>shared-init.lisp</code>, in my home directory,
+<li>I create a file, <nobr><code>shared-init.lisp</code></nobr>, in my home directory,
 containing the following:
 <pre>
   (in-package :common-lisp-user)
@@ -195,17 +192,17 @@ containing the following:
             :type "lisp"
             :defaults defaults)))
 </pre>
-<p>The <code>:directory</code> argument to <code>make-pathname</code> is a Common Lisp
+<p>The <code>:directory</code> argument to <nobr><code>make-pathname</code></nobr> is a Common Lisp
 <i>absolute pathname</i> that is portable across all operating systems.  I
-installed my GBBopen in <code>/usr/local/gbbopen/</code>, and I specified this with
-the <code>"usr"</code>, <code>"local"</code>, and <code>"gbbopen"</code> elements in the
-<code>:directory</code> argument.  Change these elements as appropriate for the
+installed my GBBopen in <nobr><code>/usr/local/gbbopen/</code></nobr>, and I specified
+this with the <code>"usr"</code>, <code>"local"</code>, and <code>"gbbopen"</code> elements in
+the <code>:directory</code> argument.  Change these elements as appropriate for the
 location of your GBBopen installation.
 </p>
 </li><li>For each Common Lisp implementation that I use, I create a personal
 initialization file that performs any implementation-specific
-initializations and then loads <code>shared-init.lisp</code>.  For example, here
-is the <code>.clisprc</code> initialization file that I use for
+initializations and then loads <nobr><code>shared-init.lisp</code></nobr>.  For example,
+here is the <code>.clisprc</code> initialization file that I use for
 <a target="_top" href="http://clisp.cons.org/">CLISP</a>:
 <pre>
   (in-package :common-lisp-user)
@@ -220,8 +217,8 @@ is the <code>.clisprc</code> initialization file that I use for
             :defaults defaults)))
 </pre>
 <p><a target="_top" href="http://sbcl.sourceforge.net">SBCL</a> has a very strict interpretation
-of <code>*load-truename*</code> semantics, so my <code>.sbclrc</code> initialization file
-is:
+of <nobr><code>*load-truename*</code></nobr> semantics, so my <code>.sbclrc</code>
+initialization file is:
 <pre class="pretop">
   (in-package :common-lisp-user)
 
@@ -234,7 +231,7 @@ is:
             :defaults defaults)))
 </pre>
 </p>
-<p>Here is my <code>.clinit.cl</code> initialization file for
+<p>Here is my <nobr><code>.clinit.cl</code></nobr> initialization file for
 <a target="_top" href="http://www.franz.com">Allegro CL</a>:
 <pre class="pretop">
   (in-package :common-lisp-user)
@@ -286,9 +283,10 @@ is:
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
 <p><a target="_top" href="http://www.digitool.com">Digitool MCL</a> does not look for an
 initialization file in the user's home directory.  Instead it loads the file
-<code>init.lisp</code> in it's installation directory.  One approach is to have that
-file load a personal initialization file, say <code>mcl-init.lisp</code>, from the
-user's home directory, if a <code>mcl-init.lisp</code> file is present.
+<nobr><code>init.lisp</code></nobr> in it's installation directory.  One approach is to
+have that file load a personal initialization file, say
+<nobr><code>mcl-init.lisp</code></nobr>, from the user's home directory, if a
+<nobr><code>mcl-init.lisp</code></nobr> file is present.
 </p>
 <p>The Personal Edition of <a target="_top" href="http://www.lispworks.com">LispWorks</a> does
 not load initialization files, requiring you to manually load your
@@ -296,14 +294,14 @@ not load initialization files, requiring you to manually load your
 <a target="_top" href="http://www.lispworks.com">LispWorks</a>.
 </p>
 <p>The interpretation of where a user's &#8220;home&#8221; directory is located is
-inconsistent on Windows.  Ideally, the &#8220;home directory&#8221; location
-used for the Common Lisp implementation's initialization file and the
-result of the Common Lisp function <code>user-homedir-pathname</code> should
-be consistent.  Then, by using the <code>shared-init.lisp</code> scheme, you
-only need to determine where the initialization file should be for
-each Common Lisp implementation that you use, and then you can have
-those implementation-specific initialization files load your
-<code>shared-init.lisp</code> file from whichever directory <u>you</u>
+inconsistent on Windows.  Ideally, the &#8220;home directory&#8221; location used for
+the Common Lisp implementation's initialization file and the result of the
+Common Lisp function <nobr><code>user-homedir-pathname</code></nobr> should be consistent.
+Then, by using the <nobr><code>shared-init.lisp</code></nobr> scheme, you only need to
+determine where the initialization file should be for each Common Lisp
+implementation that you use, and then you can have those
+implementation-specific initialization files load your
+<nobr><code>shared-init.lisp</code></nobr> file from whichever directory <u>you</u>
 deem as your &#8220;home&#8221; directory.
 </p>
 <p><a name="ref:your-homedir">Here</a> is a quick way to have Common Lisp tell you where it thinks your &#8220;home&#8221;
@@ -317,18 +315,19 @@ We will refer to this directory from now on as your &#8220;homedir&#8221; direct
 </p>
 <br />&nbsp;<br /></li><li>With this setup in place, all that is needed to use GBBopen is
 to start up a Common Lisp and type a GBBopen command, such as
-<code>:gbbopen-user</code>.  My fingers thank me!
+<nobr><code>:gbbopen-user</code></nobr>.  My fingers thank me!
 </li></ol>
 <h2><a name="id7">Step 3: Set up  HyperDoc and HyperSpec access</a></h2><p>
 If you are using
 <a target="_top" href="http://www.gnu.org/software/emacs/emacs.html">Emacs</a> in your Common
 Lisp development environment, you can make it easy to bring up appropriate
 Common Lisp and GBBopen documentation in your browser.  The file
-<code><var>&lt;install-dir&gt;</var>/browse-hyperdoc.el</code> defines an interactive Emacs
-command named <code>browse-hyperdoc</code> and binds it to <code>META-?</code> (on most
-keyboards, <code>META-?</code> means pressing both <code>Alt</code> and <code>?</code> keys at
-the same time) .  To enable this Emacs command, add a command to load
-<code><var>&lt;install-dir&gt;</var>/browse-hyperdoc.el</code> in your <code>.emacs</code>
+<nobr><code><var>&lt;install-dir&gt;</var>/browse-hyperdoc.el</code></nobr> defines an interactive
+Emacs command named <nobr><code>browse-hyperdoc</code></nobr> and binds it to
+<nobr><code>META-?</code></nobr> (on most keyboards, <nobr><code>META-?</code></nobr> means pressing
+both <code>Alt</code> and <code>?</code> keys at the same time) .  To enable this Emacs
+command, add a command to load
+<nobr><code><var>&lt;install-dir&gt;</var>/browse-hyperdoc.el</code></nobr> in your <code>.emacs</code>
 initialization file:
 <pre class="pretop">
   ;; GBBopen hyperdoc (where GBBopen was installed):
@@ -350,19 +349,21 @@ command to load GBBopen's Emacs indentation customizations:
 <a target="_top" href="http://www.gigamonkeys.com/book/lispbox/"><i>Lispbox</i></a>, you
 will have to enable loading of the <code>.emacs</code> initialization file, as it is
 disabled in the Lispbox startup file.  Edit the Lispbox startup file
-(<code>lispbox.bat</code> on Windows, <code>lispbox.sh</code> on Unix, and
-<code>/Applications/Lispbox/Emacs.app/Contents/MacOS/lispbox.sh</code> on Mac OS)
-and remove the <code>--no-init-file</code> option from the Emacs invocation line.
+(<nobr><code>lispbox.bat</code></nobr> on Windows, <nobr><code>lispbox.sh</code></nobr> on Unix, and
+<nobr><code>/Applications/Lispbox/Emacs.app/Contents/MacOS/lispbox.sh</code></nobr> on Mac
+OS) and remove the <nobr><code>--no-init-file</code></nobr> option from the Emacs
+invocation line.
 </p>
 <h3><a name="id8">Adding the Common Lisp HyperSpec</a></h3><p>
 The <a target="_top" href="http://GBBopen.org/downloads/hyperspec.el">hyperspec.el</a>
 utility is included in the
 <a target="_top" href="http://common-lisp.net/project/slime/">SLIME</a> and
 <a target="_top" href="http://sourceforge.net/projects/ilisp/">ILISP</a> distributions.
-However, if <code>hyperspec.el</code> is not already part of your Emacs, you can
-download it and explicitly load it from your <code>.emacs</code> initialization
-file.  Once <code>hyperspec.el</code> is present, GBBopen's <code>browse-hyperdoc</code>
-Emacs command will automatically defer to the <a target="_top" href="http://www.lispworks.com/documentation/HyperSpec/">Common Lisp
+However, if <nobr><code>hyperspec.el</code></nobr> is not already part of your Emacs, you
+can download it and explicitly load it from your <code>.emacs</code> initialization
+file.  Once <nobr><code>hyperspec.el</code></nobr> is present, GBBopen's
+<nobr><code>browse-hyperdoc</code></nobr> Emacs command will automatically defer to the
+<a target="_top" href="http://www.lispworks.com/documentation/HyperSpec/">Common Lisp
 HyperSpec</a> when given a
 non-GBBopen entity.
 </p>
@@ -371,17 +372,18 @@ non-GBBopen entity.
 archive</a>
 provided by <a target="_top" href="http://www.lispworks.com">LispWorks</a>, LTD.  This allows
 me to quickly reference the HyperSpec without a network connection.  I set the
-value of <code>common-lisp-hyperspec-root</code> in my <code>.emacs</code> initialization
-file to a URL that points to my local copy of the HyperSpec:
+value of <nobr><code>common-lisp-hyperspec-root</code></nobr> in my <code>.emacs</code>
+initialization file to a URL that points to my local copy of the HyperSpec:
 <pre class="pretop">
   (setf common-lisp-hyperspec-root "file:/usr/local/CLHS/")
 </pre>
 </p>
 <h3><a name="id9">Non-Emacs access</a></h3><p>
 If you are not using an Emacs-based environment, GBBopen provides a Common
-Lisp function, <b>browse-hyperdoc</b>, that can be used to access GBBopen
-HyperDoc pages from Common Lisp.  GBBopen's <code>:os-interface</code> module must
-be loaded to make <b>browse-hyperdoc</b> available.  For example:
+Lisp function, <nobr><b>browse-hyperdoc</b></nobr>, that can be used to access
+GBBopen HyperDoc pages from Common Lisp.  GBBopen's
+<nobr><code>:os-interface</code></nobr> module must be loaded to make
+<nobr><b>browse-hyperdoc</b></nobr> available.  For example:
 <pre class="pretop">
 <font color="#667f66">  cl-user&gt; <font color="#000000">:os-interface</font>
   ;; Loading <var>&lt;install-dir&gt;</var>/startup.lisp
@@ -392,10 +394,10 @@ be loaded to make <b>browse-hyperdoc</b> available.  For example:
   gbbopen-tools&gt;</font>
 </pre>
 will display the GBBopen HyperDoc page for <b>define-unit-class</b> in your
-browser.  Note that the <code>:gbbopen-user</code> module requires (and therefore
-loads) the <code>:os-interface</code> module, so if you have loaded
-<code>:gbbopen-user</code>, you do not need to do anything further in order to call
-<b>browse-hyperdoc</b>.
+browser.  Note that the <nobr><code>:gbbopen-user</code></nobr> module requires (and
+therefore loads) the <nobr><code>:os-interface</code></nobr> module, so if you have loaded
+<nobr><code>:gbbopen-user</code></nobr>, you do not need to do anything further in order
+to call <nobr><b>browse-hyperdoc</b></nobr>.
 </p>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />

@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/tutorial.tex *-*
-%% *-* Last-Edit: Thu Jan  1 08:11:29 2009; Edited-By: cork *-*
+%% *-* Last-Edit: Mon Feb 16 11:53:26 2009; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2005-2009, Dan Corkill <corkill@GBBopen.org>
@@ -314,8 +314,8 @@ This initial exercise requires that you:
 \item Interact with Common Lisp's read-eval-print loop (REPL)
 \item Recover from errors
 \item Prepare to use GBBopen in the next exercises by loading the
-  \code{:gbbopen-user} module and changing to the \code{:gbbopen-user}
-  package
+  \nobr{\code{:gbbopen-user}} module and changing to the
+  \nobr{\code{:gbbopen-user}} package
 \end{tightitemize}
 
 \fndocrule
@@ -432,13 +432,14 @@ from a snapshot archive.
 
 \index{GBBopen!mailing lists}%
 I strongly recommend that you subscribe to the GBBopen Announcements
-(\code{gbbopen-announce}) and the GBBopen Users (\code{gbbopen-list}) mailing
-lists.  To subscribe, go to the ``Mailing Lists'' page on the
-\xsitelink{GBBopen web site}{http://GBBopen.org/} and click on the appropriate
-\code{subscribe} links.  The traffic is low, and the messages and advice will
-save you time and frustration and get you writing quality GBBopen applications
-easier and sooner.  (You might even want to browse the archived messages that
-are accessible from the ``Mailing Lists'' page.)
+(\nobr{\code{gbbopen-announce}}) and the GBBopen Users
+(\nobr{\code{gbbopen-list}}) mailing lists.  To subscribe, go to the ``Mailing
+Lists'' page on the \xsitelink{GBBopen web site}{http://GBBopen.org/} and
+click on the appropriate \code{subscribe} links.  The traffic is low, and the
+messages and advice will save you time and frustration and get you writing
+quality GBBopen applications easier and sooner.  (You might even want to
+browse the archived messages that are accessible from the ``Mailing Lists''
+page.)
 
 If you need help or advice, the GBBopen Users list is the place to ask (should
 this tutorial and archived messages from the GBBopen Users list come up
@@ -762,11 +763,11 @@ of the tutorial.
 GBBopen is packaged with its own \xreflink{module system}{sec:module-manager}
 that supports compiling and loading GBBopen components.
 
-To compile and load the \code{:gbbopen-user} module and all the GBBopen
+To compile and load the \nobr{\code{:gbbopen-user}} module and all the GBBopen
 modules it requires, you need to evaluate the following forms within your
 Common Lisp environment.  First, load GBBopen's
-\code{\var{<install-dir>\/}/startup.lisp} file from wherever GBBopen has been
-installed:
+\nobr{\code{\var{<install-dir>\/}/startup.lisp}} file from wherever GBBopen
+has been installed:
 %
 \W\supp
 \begin{example}
@@ -782,7 +783,7 @@ installed:
 \end{example}
 %
 \bfindex{compile-module}%
-Then compile and load the \code{:gbbopen-user} module and all the
+Then compile and load the \nobr{\code{:gbbopen-user}} module and all the
 GBBopen modules it requires by evaluating:
 %
 \W\supp\notpretop
@@ -835,8 +836,8 @@ been compiled.
 
 \subsubsection*{Beyond \code{\var{<install-dir>\/}/startup.lisp}}
 
-Although loading GBBopen's \code{\var{<install-dir>\/}/startup.lisp} file is a
-very easy way to get started with GBBopen, setting up your computing
+Although loading GBBopen's \nobr{\code{\var{<install-dir>\/}/startup.lisp}}
+file is a very easy way to get started with GBBopen, setting up your computing
 environment for serious GBBopen development requires only a few moments that
 will be recouped almost immediately.  The steps needed to set everything up
 will be detailed soon in the \reflink{Enhancing Your Development Environment
@@ -847,8 +848,8 @@ will be detailed soon in the \reflink{Enhancing Your Development Environment
 \index{package}%
 \codeindex{in-package}%
 %
-Now that the \code{:gbbopen-user} module is loaded, change the current
-package to the \code{:gbbopen-user} package:
+Now that the \code{:gbbopen-user} module is loaded, change the current package
+to the \nobr{\code{:gbbopen-user}} package:
 %
 \W\supp
 \begin{example}
@@ -862,11 +863,12 @@ In Common Lisp, a \textit{package\/} is a namespace that maps names to
 symbols.  One package is always designated as the ``current'' package, and it
 is this package that is used by default for creating and finding symbols by
 their names.  Initially, the current package is set to the
-\code{:common-lisp-user} package.  The \code{:gbbopen-user} module creates a
-new package, named \code{:gbbopen-user}, that includes GBBopen Tools and
-GBBopen Core symbols in addition to the standard Common Lisp symbols.  If you
-do not set the current package to the \code{:gbbopen-user} package, references
-to GBBopen functions and variables will not map to the proper symbols.
+\nobr{\code{:common-lisp-user}} package.  The \nobr{\code{:gbbopen-user}}
+module creates a new package, named \nobr{\code{:gbbopen-user}}, that includes
+GBBopen Tools and GBBopen Core symbols in addition to the standard Common Lisp
+symbols.  If you do not set the current package to the
+\nobr{\code{:gbbopen-user}} package, references to GBBopen functions and
+variables will not map to the proper symbols.
 
 %% ========================================================================
 %%  Creating a Unit Instance
@@ -886,13 +888,13 @@ instance is a member of a \textit{unit class}.  The unit class defines the
 structure of all instances of the unit class, such as the slots in each unit
 instance.  At a more precise Common Lisp level, every GBBopen unit instance is
 member of a (possibly non-direct) subclass of GBBopen's unit class,
-\code{standard-unit-instance}, which is itself a subclass of Common Lisp's
-\code{standard-object} class.  Even more technically, the metaclass of each
-GBBopen unit class is an instance of the GBBopen metaclass,
-\code{standard-unit-class}, which is a subclass of Common Lisp's
-\code{standard-class} metaclass.  In other words, GBBopen classes and unit
-instances fit naturally into the CLOS (the Common Lisp Object System) and MOP
-(\xsitelink{Metaobject Protocol}{http://www.lisp.org/mop/index.html})
+\nobr{\code{standard-unit-instance}}, which is itself a subclass of Common
+Lisp's \nobr{\code{standard-object}} class.  Even more technically, the
+metaclass of each GBBopen unit class is an instance of the GBBopen metaclass,
+\nobr{\code{standard-unit-class}}, which is a subclass of Common Lisp's
+\nobr{\code{standard-class}} metaclass.  In other words, GBBopen classes and
+unit instances fit naturally into the CLOS (the Common Lisp Object System) and
+MOP (\xsitelink{Metaobject Protocol}{http://www.lisp.org/mop/index.html})
 hierarchies. Fortunately, understanding such details is not required to put
 GBBopen to use.
 
@@ -943,7 +945,7 @@ session and evaluate the following forms:
 \index{unit class!defining}%
 \bfindex{define-unit-class}%
 %
-We begin by defining a unit class \code{location} that has two slots,
+We begin by defining a unit class \nobr{\code{location}} that has two slots,
 named \code{x} and \code{y}.
 %
 \W\supp
@@ -962,19 +964,19 @@ This unit-class definition instructs GBBopen to:
   and \code{:y} for the \code{y} slot.  You will use these
   initialization arguments in the next step, to specify initial slot
   values for an instance.
-\item Define reader and writer methods for the \code{x-of} and
-  \code{y-of} generic slot-accessor functions, used to reading
-  and modifying the \code{x} and \code{y} slot values.
+\item Define reader and writer methods for the \nobr{\code{x-of}} and
+  \nobr{\code{y-of}} generic slot-accessor functions, used to reading and
+  modifying the \code{x} and \code{y} slot values.
 \end{tightitemize}
 
 \subsection*{Step 2: Create a unit instance}
 
 \index{unit instance!creating}%
 \codeindexit{defvar}%
-Next, you can create a \textit{unit instance\/} for the \code{location}
+Next, you can create a \textit{unit instance\/} for the \nobr{\code{location}}
 unit class.  To simplify access to the unit instance during subsequent
-activities, first define a global variable called \code{ui}
-by entering the following form:
+activities, first define a global variable called \code{ui} by entering the
+following form:
 %
 \W\supp
 \begin{example}
@@ -997,8 +999,8 @@ entering the form:
   gbbopen-user>}
 \end{example}
 
-This creates a unit instance of the \code{location} class, initializes the
-instance's \code{x} and \code{y} slots with the values specified by the
+This creates a unit instance of the \nobr{\code{location}} class, initializes
+the instance's \code{x} and \code{y} slots with the values specified by the
 \code{:x} and \code{:y} initialization arguments.  The created unit instance
 is then assigned to the variable \code{ui}.
 
@@ -1008,7 +1010,7 @@ is then assigned to the variable \code{ui}.
 \bfindex{describe-instance}%
 %
 Now, display a description of the unit instance by using GBBopen's
-\textbf{describe-instance} function.  Enter the following form:
+\nobr{\textbf{describe-instance}} function.  Enter the following form:
 %
 \W\supp
 \begin{example}
@@ -1031,8 +1033,8 @@ In fact, there is often no natural reason to name each unit instance you
 create. By default, GBBopen names unit instances by giving it a sequentially
 increasing number.  (For example, the unit instance you just created is named
 \code{1}.)  GBBopen requires that each instance of a unit class is uniquely
-named within the class and the accessor \textbf{instance-name-of} can be used
-to access this name:
+named within the class and the accessor \nobr{\textbf{instance-name-of}} can
+be used to access this name:
 %
 \W\supp
 \begin{example}
@@ -1047,8 +1049,8 @@ to access this name:
 \index{unit instance!finding!by name}%
 \bfindex{find-instance-by-name}%
 %
-You can look up a particular unit instance by its name. For example, to
-find the \code{location} \code{1} unit instance by name, enter the form:
+You can look up a particular unit instance by its name. For example, to find
+the \nobr{\code{location}} \code{1} unit instance by name, enter the form:
 %
 \W\supp
 \begin{example}
@@ -1058,7 +1060,7 @@ find the \code{location} \code{1} unit instance by name, enter the form:
   gbbopen-user>}
 \end{example}
 
-Of course, we assigned the \code{location} unit instance to the global
+Of course, we assigned the \nobr{\code{location}} unit instance to the global
 variable \code{ui}, but it is nice to know that we can always find our unit
 instance using its name.
 
@@ -1072,9 +1074,9 @@ instance using its name.
 \index{(setf x-of)@\code{(setf x-of)} slot writer method|itidx}%
 \codeindexit{(setf x-of)}%
 %
-Use the \code{x-of} reader and writer methods GBBopen defined for the \code{x}
-slot (in Step 3 above) to get the value of the \code{x} slot of the unit
-instance:
+Use the \code{x-of} reader and writer methods GBBopen defined for the
+\code{x} slot (in Step 3 above) to get the value of the \code{x} slot of the
+unit instance:
 %
 \W\supp
 \begin{example}
@@ -1105,8 +1107,8 @@ and then get the (new) value of the \code{x} slot:
 \end{example}
 
 \bfindexit{describe-instance}%
-Display the description of the \code{location} unit instance again, observing the
-changed \code{x} slot value:
+Display the description of the \nobr{\code{location}} unit instance again,
+observing the changed \code{x} slot value:
 %
 \begin{example}
 \W\supp
@@ -1150,8 +1152,8 @@ As with unit instances, each space instance is a member of a \textit{space
   class}.  The space class defines the structure of all instances of the space
 class, such as any slots associated with each space instance.  Unlike unit
 instances, however, the standard GBBopen space class,
-\code{standard-space-instance}, is often sufficient for most applications.
-Therefore, space-instance subclasses rarely need to be defined.
+\nobr{\code{standard-space-instance}}, is often sufficient for most
+applications.  Therefore, space-instance subclasses rarely need to be defined.
 
 Space instances can be organized into hierarchical structures, much like the
 directories in a hierarchical file system.  A useful, but not exact, analogy
@@ -1204,9 +1206,9 @@ session and evaluate the following forms:
 
 \index{space instance!creating}%
 \codeindexit{defvar}%
-Create a \textit{space instance\/} named \code{known-world}.  To simplify
-access to the space instance during subsequent activities, first define a
-global variable called \code{si} by entering the following form:
+Create a \textit{space instance\/} named \nobr{\code{known-world}}.  To
+simplify access to the space instance during subsequent activities, first
+define a global variable called \code{si} by entering the following form:
 %
 \W\supp
 \begin{example}
@@ -1229,12 +1231,12 @@ entering the form:
   gbbopen-user>}
 \end{example}
 
-The argument to the \textbf{make-space-instance} is the ``path'' to be used
-for the created space instance.  A \textit{space-instance path} is the
+The argument to the \nobr{\textbf{make-space-instance}} is the ``path'' to be
+used for the created space instance.  A \textit{space-instance path} is the
 complete list of space-instance names, starting with the name of the most
 distant indirect parent, that uniquely identifies a space instance in the
-blackboard repository.  Our \code{known-world} space does not have a parent,
-so its path is simply \code{(known-world)}.
+blackboard repository.  Our \nobr{\code{known-world}} space instance does not
+have a parent, so its path is simply \nobr{\code{(known-world)}}.
 
 \subsection*{Step 2: Display a description of the blackboard repository}
 
@@ -1242,7 +1244,7 @@ so its path is simply \code{(known-world)}.
 \bfindex{describe-blackboard-repository}%
 %
 Display a description of the blackboard repository, which now contains the
-\code{known-world} space instance:
+\nobr{\code{known-world}} space instance:
 %
 \W\supp
 \begin{example}
@@ -1267,11 +1269,11 @@ The description indicates that:
 \item One space instance, \code{known-world}, exists in the repository
 \item The \code{known-world} space instance is empty; there are no unit
   instances stored in it
-\item The \code{location} unit instance exists, but it does not reside
+\item The \nobr{\code{location}} unit instance exists, but it does not reside
   on any space instance
 \item There is one \code{standard-space-instance}, our
-  \code{known-world} space instance, which also does not reside
-  on any space instance
+  \nobr{\code{known-world}} space instance, which also does not reside on any
+  space instance
 \end{tightitemize}
  
 \subsection*{Step 3: Find a space instance by its path}
@@ -1298,7 +1300,7 @@ path.
 \index{unit instance!adding to a space instance}%
 \bfindex{add-instance-to-space-instance}%
 %
-Now, add the \code{location} unit instance to the space instance.
+Now, add the \nobr{\code{location}} unit instance to the space instance.
 Enter the following form:
 %
 \W\supp
@@ -1332,14 +1334,15 @@ Display the description of the blackboard repository again:
   gbbopen-user>}
 \end{example}
 
-This time the description indicates that the \code{known-world} space instance
-has one instance of the \code{location} unit class stored on it.
+This time the description indicates that the \nobr{\code{known-world}} space
+instance has one instance of the \nobr{\code{location}} unit class stored on
+it.
 
 \subsection*{Step 6: Display the description of the unit instance}
 
 \bfindexit{describe-instance}%
-Display the description of the \code{location} unit instance once again,
-observing the change in the space instances from the last exercise:
+Display the description of the \nobr{\code{location}} unit instance once
+again, observing the change in the space instances from the last exercise:
 %
 \W\supp
 \begin{example}
@@ -1361,10 +1364,11 @@ observing the change in the space instances from the last exercise:
 \index{unit instance!finding!on a space instance}%
 \bfindex{find-instances}%
 %
-Now that the \code{location} unit instance is on the \code{known-world} space
-instance, we can find it on the space instance. The form is as follows,
-where \code{:all} is a very basic retrieval pattern specifying that all unit
-instances on the \code{known-world} space instance are to be returned:
+Now that the \nobr{\code{location}} unit instance is on the
+\nobr{\code{known-world}} space instance, we can find it on the space
+instance. The form is as follows, where \code{:all} is a very basic retrieval
+pattern specifying that all unit instances on the \nobr{\code{known-world}}
+space instance are to be returned:
 %
 \W\supp
 \begin{example}
@@ -1385,9 +1389,9 @@ upcoming exercises.
 
 \bfindexit{make-instance}%
 \bfindexit{add-instance-to-space-instance}%
-Create a second instance of the \code{location} unit class, with \code{x} and
-\code{y} slot values 80 and 90, respectively, and add it to the
-\code{known-world} space instance:
+Create a second instance of the \nobr{\code{location}} unit class, with
+\code{x} and \code{y} slot values 80 and 90, respectively, and add it to the
+\nobr{\code{known-world}} space instance:
 %
 \W\supp
 \begin{example}
@@ -1400,8 +1404,9 @@ Create a second instance of the \code{location} unit class, with \code{x} and
 \end{example}
 
 \bfindexit{find-instance-by-name}%
-This time we did not assign the new \code{location} unit instance to a global
-variable but, as before, we can find the unit instance by its name:
+This time we did not assign the new \nobr{\nobr{\code{location}}} unit
+instance to a global variable but, as before, we can find the unit instance by
+its name:
 %
 \W\supp
 \begin{example}
@@ -1413,8 +1418,9 @@ variable but, as before, we can find the unit instance by its name:
 
 \bfindexit{find-instance-by-name}%
 \bfindexit{find-instances}%
-As you would expect, we can retrieve both \code{location} unit instances from the
-\code{known-world} space instance using \textbf{find-instances}:
+As you would expect, we can retrieve both \nobr{\code{location}} unit
+instances from the \nobr{\code{known-world}} space instance using
+\nobr{\textbf{find-instances}}:
 %
 \W\supp
 \begin{example}
@@ -1447,15 +1453,16 @@ Display the description of the blackboard repository again:
   gbbopen-user>}
 \end{example}
 
-This time the description indicates that the \code{known-world} space instance
-has both instances of the \code{location} unit class stored on it.
+This time the description indicates that the \nobr{\code{known-world}} space
+instance has both instances of the \nobr{\code{location}} unit class stored on
+it.
 
 \subsection*{Step 10:  Remove a unit instance from the space instance}
 
 \index{unit instance!removing from a space instance}%
 \bfindexit{remove-instance-from-space-instance}%
-Now, remove the first \code{location} unit instance from the
-\code{known-world} space instance.  Enter the following form:
+Now, remove the first \nobr{\code{location}} unit instance from the
+\nobr{\code{known-world}} space instance.  Enter the following form:
 %
 \W\supp
 \begin{example}
@@ -1466,8 +1473,8 @@ Now, remove the first \code{location} unit instance from the
 \end{example}
 %
 \bfindexit{find-instances}%
-As you would expect, only the second \code{location} unit instance remains on the
-\code{known-world} space instance:
+As you would expect, only the second \nobr{\code{location}} unit instance
+remains on the \nobr{\code{known-world}} space instance:
 %
 \W\supp\notpretop
 \begin{example}
@@ -1477,7 +1484,7 @@ As you would expect, only the second \code{location} unit instance remains on th
   gbbopen-user>}
 \end{example}
 %
-and describing the \code{location} unit instance confirms this:
+and describing the \nobr{\code{location}} unit instance confirms this:
 %
 \W\supp\notpretop
 \begin{example}
@@ -1560,9 +1567,9 @@ session and evaluate the following forms:
 
 \subsection*{Step 1: Create a few more unit instances}
 
-Just to review, we created two \code{location} unit instances.  The unit
-instance named \code{1} is no longer on the \code{known-world} space instance,
-but it is still assigned to the global variable \code{ui}:
+Just to review, we created two \nobr{\code{location}} unit instances.  The
+unit instance named \code{1} is no longer on the \nobr{\code{known-world}}
+space instance, but it is still assigned to the global variable \code{ui}:
 %
 \codeindexit{print}%
 \W\supp
@@ -1573,8 +1580,9 @@ but it is still assigned to the global variable \code{ui}:
   gbbopen-user>}
 \end{example}
 %
-The \code{location} unit instance named \code{2} is the only \code{location}
-unit instance on the \code{known-world} space instance:
+The \nobr{\code{location}} unit instance named \code{2} is the only
+\nobr{\code{location}} unit instance on the \nobr{\code{known-world}} space
+instance:
 %
 \bfindexit{find-instances}%
 \W\supp\notpretop
@@ -1585,7 +1593,7 @@ unit instance on the \code{known-world} space instance:
   gbbopen-user>}
 \end{example}
 
-Now, let's create five more \code{location} unit instances.  Enter:
+Now, let's create five more \nobr{\code{location}} unit instances.  Enter:
 %
 \bfindexit{make-instance}%
 \codeindexit{dotimes}%
@@ -1606,10 +1614,12 @@ unit instances.  We will explore the implications of this shortly.
 \index{unit instance!applying a function to all instances of a class}%
 \index{applying a function to all instances of a class}%
 \bfindexit{find-instance-by-name}%
-We did not assign the new \code{location} unit instances to global variables
-or add them to the \code{known-world} space instance.  Can we still reference
-them?  If we know the names of the new unit instances, we can use the
-\textbf{find-instance-by-name} function that we learned earlier.  For example:
+%
+We did not assign the new \nobr{\code{location}} unit instances to global
+variables or add them to the \nobr{\code{known-world}} space instance.  Can we
+still reference them?  If we know the names of the new unit instances, we can
+use the \nobr{\textbf{find-instance-by-name}} function that we learned
+earlier.  For example:
 %
 \W\supp
 \begin{example}
@@ -1643,14 +1653,15 @@ function.  For example:
   gbbopen-user>}
 \end{example}
 %
-displays each of our \code{location} unit instances.  Note that the exact
-order that \code{location} unit instances are supplied to the \code{print}
-function may differ from the above example in your Common Lisp implementation.
+displays each of our \nobr{\code{location}} unit instances.  Note that the
+exact order that \nobr{\code{location}} unit instances are supplied to the
+\code{print} function may differ from the above example in your Common Lisp
+implementation.
 
 \bfindexit{find-instances}%
 \bfindexit{map-instances-of-class}%
-Currently, there is only one \code{location} unit instance on the
-\code{known-world} space instance:
+Currently, there is only one \nobr{\code{location}} unit instance on the
+\nobr{\code{known-world}} space instance:
 %
 \W\supp
 \begin{example}
@@ -1660,8 +1671,8 @@ Currently, there is only one \code{location} unit instance on the
   gbbopen-user>}
 \end{example}
 
-Let's use \textbf{map-instances-of-class} to add all the \code{location} unit
-instances to the \code{known-world}:
+Let's use \nobr{\textbf{map-instances-of-class}} to add all the
+\nobr{\code{location}} unit instances to the \nobr{\code{known-world}}:
 %
 \W\supp
 \begin{example}
@@ -1676,9 +1687,10 @@ instances to the \code{known-world}:
   gbbopen-user>}
 \end{example}
 %
-GBBopen warns us that the \code{location} \code{2} unit instance is already on
-the \code{known-world} and adds all the other \code{location} instances.  We
-can verify this by using \textbf{find-instances}:
+GBBopen warns us that the \nobr{\code{location}} \code{2} unit instance is
+already on the \nobr{\code{known-world}} and adds all the other
+\nobr{\code{location}} instances.  We can verify this by using
+\nobr{\textbf{find-instances}}:
 %
 \W\supp\notpretop
 \begin{example}
@@ -1691,9 +1703,10 @@ can verify this by using \textbf{find-instances}:
 
 \bfindexit{map-instances-of-class}%
 For those who prefer a more iterative programming style, GBBopen provides a
-\texttt{dolist}-style macro, \textbf{do-instances-of-class}, as an alternative
-to \textbf{map-instances-of-class}.  So, to add all the \code{location} unit
-instances to the \code{known-world}, we could have chosen to use the form:
+\texttt{dolist}-style macro, \nobr{\textbf{do-instances-of-class}}, as an
+alternative to \nobr{\textbf{map-instances-of-class}}.  So, to add all the
+\nobr{\code{location}} unit instances to the \nobr{\code{known-world}}, we
+could have chosen to use the form:
 %
 \W\supp
 \begin{example}
@@ -1702,7 +1715,7 @@ instances to the \code{known-world}, we could have chosen to use the form:
      (add-instance-to-space-instance instance si))}
 \end{example}
 %
-instead of the \textbf{map-instances-of-class} version.  As with things
+instead of the \nobr{\textbf{map-instances-of-class}} version.  As with things
 stylistic, the choice is yours.
 
 \subsection*{Step 3: Delete a unit instance}
@@ -1710,7 +1723,7 @@ stylistic, the choice is yours.
 \index{unit instance!deleting}%
 \bfindex{delete-instance}%
 %
-Let's delete the first \code{location} unit instance that we created:
+Let's delete the first \nobr{\code{location}} unit instance that we created:
 %
 \W\supp
 \begin{example}
@@ -1737,7 +1750,8 @@ We can no longer find the deleted unit instance by its name:
   gbbopen-user>}
 \end{example}
 %
-and it is no longer included in a \textbf{map-instances-of-class} iteration:
+and it is no longer included in a \nobr{\textbf{map-instances-of-class}}
+iteration:
 %
 \W\supp\notpretop
 \begin{example}
@@ -1754,7 +1768,7 @@ and it is no longer included in a \textbf{map-instances-of-class} iteration:
   gbbopen-user>}
 \end{example}
 %
-and it is no longer on the \code{known-world} space instance:
+and it is no longer on the \nobr{\code{known-world}} space instance:
 %
 \W\supp\notpretop
 \begin{example}
@@ -1766,8 +1780,8 @@ and it is no longer on the \code{known-world} space instance:
 \end{example}
 
 \bfindexit{add-instance-to-space-instance}%
-However, the deleted \code{location} unit instance is still assigned to the
-\code{ui} global variable:
+However, the deleted \nobr{\code{location}} unit instance is still assigned to
+the \code{ui} global variable:
 %
 \W\supp
 \begin{example}
@@ -1777,8 +1791,9 @@ However, the deleted \code{location} unit instance is still assigned to the
   gbbopen-user>}
 \end{example}
 %
-and that can lead to problems.  Let's try to place the deleted \code{location}
-unit instance on the \code{known-world} space instance:
+and that can lead to problems.  Let's try to place the deleted
+\nobr{\code{location}} unit instance on the \nobr{\code{known-world}} space
+instance:
 %
 \W\supp\notpretop
 \begin{example}
@@ -1793,12 +1808,12 @@ unit instance on the \code{known-world} space instance:
 \end{example}
 
 Most of GBBopen's operations signal an error if they are given a deleted unit
-instance.  This is because \textbf{delete-instance} changes the class of the
-deleted unit instance to \code{deleted-unit-instance} which, despite its name,
-is not a \code{standard-unit-instance}.  We cannot use
-\textbf{describe-instance} to verify this, because the deleted unit instance
-is no longer a unit instance, but we can use Common Lisp's \code{describe}
-function:
+instance.  This is because \nobr{\textbf{delete-instance}} changes the class
+of the deleted unit instance to \nobr{\code{deleted-unit-instance}} which,
+despite its name, is not a \nobr{\code{standard-unit-instance}}.  We cannot
+use \nobr{\textbf{describe-instance}} to verify this, because the deleted unit
+instance is no longer a unit instance, but we can use Common Lisp's
+\code{describe} function:
 %
 \W\supp
 \begin{example}
@@ -1812,11 +1827,11 @@ function:
   gbbopen-user>}
 \end{example}
 %
-Note that the slots that we defined for \code{location} unit instances are not
-present in the \code{deleted-unit-instance} object.  A deleted unit instance
-has only two slots, \code{instance-name} and \code{original-class}, which are
-set when the class of the deleted unit instance is changed to
-\code{deleted-unit-instance}.
+Note that the slots that we defined for \nobr{\code{location}} unit instances
+are not present in the \nobr{\code{deleted-unit-instance}} object.  A deleted
+unit instance has only two slots, \nobr{\code{instance-name}} and
+\nobr{\code{original-class}}, which are set when the class of the deleted unit
+instance is changed to \nobr{\code{deleted-unit-instance}}.
 
 Several GBBopen operations on a deleted unit instance do not signal errors.
 In particular:
@@ -1831,9 +1846,9 @@ In particular:
 %
 \bfindexit{instance-name-of}%
 \bfindex{original-class-of}%
-The value returned by \textbf{instance-name-of}, along with that by
-\textbf{original-class-of}, can be used to identify the unit instance that,
-when deleted, became the \code{deleted-unit-instance}.
+The value returned by \nobr{\textbf{instance-name-of}}, along with that by
+\nobr{\textbf{original-class-of}}, can be used to identify the unit instance
+that, when deleted, became the \nobr{\code{deleted-unit-instance}}.
 
 \bfindex{instance-deleted-p}%
 %
@@ -1845,7 +1860,7 @@ repository (or as we will see in
 as an event argument) rather than maintaining references to them in variables.
 This limits the possibility of retaining a deleted unit instance and
 performing GBBopen operations on it.  The deletion status of a unit instance
-can be determined using the \textbf{instance-deleted-p} predicate:
+can be determined using the \nobr{\textbf{instance-deleted-p}} predicate:
 %
 \W\supp
 \begin{example}
@@ -1876,12 +1891,13 @@ instances:
 \end{example}
 
 \bfindexit{describe-blackboard-repository}%
-Recall that the \var{space-instance-path} argument to
-\textbf{make-space-instance} is the complete list of space-instance names,
-starting with the name of the most distant indirect parent.  So, the
-\code{my-town} space instance has the \code{known-world} as it's parent and
-the \code{east-side} and \code{west-side} as children.  We can use
-\textbf{describe-blackboard-repository} to see this organization:
+Recall that the \nobr{\var{space-instance-path\/}} argument to
+\nobr{\textbf{make-space-instance}} is the complete list of space-instance
+names, starting with the name of the most distant indirect parent.  So, the
+\nobr{\code{my-town}} space instance has the \nobr{\code{known-world}} as it's
+parent and the \nobr{\code{east-side}} and \nobr{\code{west-side}} as
+children.  We can use \nobr{\textbf{describe-blackboard-repository}} to see
+this organization:
 %
 \W\supp
 \begin{example}
@@ -1911,15 +1927,15 @@ are not placed on their parent.  Unlike the directories in a file system in
 the analogy that we presented in the last exercise, in GBBopen a
 space-instance hierarchy is orthogonal to containment.  In fact, space
 instances are actually unit instances (of the class
-\textbf{standard-space-instance}, by default) and a space instance can be
-placed on other space instances---or even on itself.  Typical blackboard
+\nobr{\textbf{standard-space-instance}}, by default) and a space instance can
+be placed on other space instances---or even on itself.  Typical blackboard
 applications do not involve using space instances as unit instances, but this
 property of space instances is very powerful when it is needed.
 
 \bfindex{parent-of}%
 \bfindex{children-of}%
-The functions \textbf{parent-of} and \textbf{children-of} are provided to
-traverse the space-instance hierarchy.  For example:
+The functions \nobr{\textbf{parent-of}} and \nobr{\textbf{children-of}} are
+provided to traverse the space-instance hierarchy.  For example:
 %
 \W\supp
 \begin{example}
@@ -1935,8 +1951,8 @@ traverse the space-instance hierarchy.  For example:
 
 \bfindexit{add-instance-to-space-instance}%
 \bfindexit{find-instance-by-name}%
-Now, let's add \code{location} \code{2} to the \code{my-town} and 
-\code{east-side} space instances:
+Now, let's add \nobr{\code{location}} \code{2} to the \nobr{\code{my-town}}
+and \nobr{\code{east-side}} space instances:
 %
 \W\supp
 \begin{example}
@@ -1950,7 +1966,7 @@ Now, let's add \code{location} \code{2} to the \code{my-town} and
 %
 \bfindexit{find-instance-by-name}%
 \bfindexit{describe-blackboard-repository}%
-As we expect, \code{location} \code{2} is now on three space instances:
+As we expect, \nobr{\code{location}} \code{2} is now on three space instances:
 %
 \W\supp\notpretop
 \begin{example}
@@ -1994,8 +2010,8 @@ and the description of the blackboard repository is:
 
 Placing a unit instance on multiple space instances is useful when each space
 instance represents a different view of unit instances.  In this case,
-\code{location} \code{2} is in the \code{known-world}, in \code{my-town}, and
-on the \code{east-side}:
+\nobr{\code{location}} \code{2} is in the \nobr{\code{known-world}}, in
+\nobr{\code{my-town}}, and on the \nobr{\code{east-side}}:
 %
 \W\supp
 \begin{example}
@@ -2013,7 +2029,7 @@ on the \code{east-side}:
 \bfindex{delete-space-instance}%
 %
 Now let's delete some of what we just created.  Let's delete the
-\code{my-town} space instance:
+\nobr{\code{my-town}} space instance:
 %
 \W\supp
 \begin{example}
@@ -2045,9 +2061,10 @@ and describe the blackboard repository:
 \end{example}
 %
 Notice that GBBopen has also deleted all the child space instances of
-\code{my-town}: both \code{east-side} and \code{west-side} were also deleted.
-So, just as with our file-system directory analogy, space-instance deletion is
-recursive over children and should be performed with caution.  
+\nobr{\code{my-town}}: both \nobr{\code{east-side}} and
+\nobr{\code{west-side}} were also deleted.  So, just as with our file-system
+directory analogy, space-instance deletion is recursive over children and
+should be performed with caution.
 
 \bfindex{map-instances-on-space-instances}%
 \bfindexit{delete-instance}%
@@ -2067,17 +2084,17 @@ For example, we could do:
   gbbopen-user>}
 \end{example}
 %
-to delete the unit instances in \code{my-town}.  However, we must keep in mind
-that a unit instance can reside on multiple space instances; so deleting a
-unit instance that is on other space instances might not be the desired
-action.
+to delete the unit instances in \nobr{\code{my-town}}.  However, we must keep
+in mind that a unit instance can reside on multiple space instances; so
+deleting a unit instance that is on other space instances might not be the
+desired action.
 
 \bfindex{do-instances-on-space-instances}%
 %
-As is the case with \textbf{map-instances-of-class}, GBBopen provides a
-\textbf{do-instances-on-space-instances} macro as an alternative to
-\textbf{map-instances-on-space-instances}.  So we could have chosen to use the
-form:
+As is the case with \nobr{\textbf{map-instances-of-class}}, GBBopen provides a
+\nobr{\textbf{do-instances-on-space-instances}} macro as an alternative to
+\nobr{\textbf{map-instances-on-space-instances}}.  So we could have chosen to
+use the form:
 %
 \W\supp
 \begin{example}
@@ -2086,7 +2103,8 @@ form:
     (delete-instance instance))}
 \end{example}
 %
-to explicitly delete the \code{location} unit instances in \code{my-town}.
+to explicitly delete the \nobr{\code{location}} unit instances in
+\nobr{\code{my-town}}.
 
 \subsection*{Step 7: Delete the Blackboard Repository}
 
@@ -2094,7 +2112,7 @@ to explicitly delete the \code{location} unit instances in \code{my-town}.
 \bfindexit{describe-blackboard-repository}%
 \bfindexit{map-instances-of-class}%
 If we really want to get rid of all our unit and space instances, we can use
-the \textbf{delete-blackboard-repository} function:
+the \nobr{\textbf{delete-blackboard-repository}} function:
 %
 \W\supp
 \begin{example}
@@ -2109,9 +2127,10 @@ the \textbf{delete-blackboard-repository} function:
 \end{example}
 
 \bfindexit{make-instance}%
-\textbf{delete-blackboard-repository} has deleted every space and unit
-instance, but it has not eliminated our \code{location} unit class definition.
-Let's create a \code{location} unit instance once again:
+Calling \nobr{\textbf{delete-blackboard-repository}} has deleted every space
+and unit instance, but it has not eliminated our \nobr{\code{location}} unit
+class definition.  Let's create a \nobr{\code{location}} unit instance once
+again:
 %
 \W\supp
 \begin{example}
@@ -2122,8 +2141,8 @@ Let's create a \code{location} unit instance once again:
 \end{example}
 %
 Note that deleting the blackboard repository also reset the counter for
-\code{location} instance names, so the created unit instance is again named
-\code{1}.
+\nobr{\code{location}} instance names, so the created unit instance is again
+named \code{1}.
 
 %% ========================================================================
 %%  Enhancing Your Development Environment
@@ -2175,34 +2194,31 @@ Thus far, we have entered the forms:
 \end{example}
 %
 to compile and load needed GBBopen components and to set the current package
-to \code{:gbbopen-user}.  We can set up our Common Lisp environment so that we
-can do this (and eventually compile and load our random-walk application) by
-issuing only a single command.
+to \nobr{\code{:gbbopen-user}}.  We can set up our Common Lisp environment so
+that we can do this (and eventually compile and load our random-walk
+application) by issuing only a single command.
 
-The file \code{\var{<install-dir>\/}/initiate.lisp} is an
-alternative for \code{\var{<install-dir>\/}/startup.lisp} that adds
-handy GBBopen keyword commands to the top-level REPL listener for
-\xsitelink{Allegro CL}{http://www.franz.com},
-\xsitelink{CLISP}{http://clisp.cons.org/},
+The file \nobr{\code{\var{<install-dir>\/}/initiate.lisp}} is an alternative
+for \nobr{\code{\var{<install-dir>\/}/startup.lisp}} that adds handy GBBopen
+keyword commands to the top-level REPL listener for \xsitelink{Allegro
+  CL}{http://www.franz.com}, \xsitelink{CLISP}{http://clisp.cons.org/},
 \xsitelink{Clozure CL}{http://clozure.com/clozurecl.html},
 \xsitelink{CMUCL}{http://www.cons.org/cmucl/},
 \xsitelink{ECL}{http://common-lisp.net/project/ecl/},
 \xsitelink{LispWorks}{http://www.lispworks.com},
-\xsitelink{SBCL}{http://sbcl.sourceforge.net} and
-\xsitelink{Scieneer CL}{http://www.scieneer.com/scl/}
-users.  GBBopen keyword commands
-are also supported in
-\xsitelink{SLIME}{http://common-lisp.net/project/slime/}'s Emacs-based REPL.
-Other interaction interfaces that use their own REPL, rather than the one
-provided by Common Lisp, may not support keyword REPL command processing
-(see below).
+\xsitelink{SBCL}{http://sbcl.sourceforge.net} and \xsitelink{Scieneer
+  CL}{http://www.scieneer.com/scl/} users.  GBBopen keyword commands are also
+supported in \xsitelink{SLIME}{http://common-lisp.net/project/slime/}'s
+Emacs-based REPL.  Other interaction interfaces that use their own REPL,
+rather than the one provided by Common Lisp, may not support keyword REPL
+command processing (see below).
 
 To make these GBBopen keyword commands available, simply load the file
-\code{\var{<install-dir>\/}/initiate.lisp} rather than
-\code{\var{<install-dir>\/}/startup.lisp}.  Let's try it.  Start up a fresh
-Common Lisp session and enter the following form in the REPL:
+\nobr{\code{\var{<install-dir>\/}/initiate.lisp}} rather than
+\nobr{\code{\var{<install-dir>\/}/startup.lisp}}.  Let's try it.  Start up a
+fresh Common Lisp session and enter the following form in the REPL:
 %
-\W\supp
+\W\supp\notpretop
 \begin{example}
 \textcolor{darkergray}{%
   cl-user> \textcolor{black}{(load "\var{<install-dir>\/}/initiate.lisp")}
@@ -2217,7 +2233,7 @@ Common Lisp session and enter the following form in the REPL:
 %
 Note that the \xreflink{Module Manager Facility}{sec:module-manager} and GBBopen
 module definitions have not been loaded.  Now enter the REPL
-command, \textbf{:gbbopen-user}:
+command, \nobr{\code{:gbbopen-user}}:
 %
 \W\supp
 \begin{example}
@@ -2229,8 +2245,8 @@ command, \textbf{:gbbopen-user}:
   gbbopen-user>}
 \end{example}
 %
-The \code{:gbbopen-user} module (and supporting modules) are loaded, and the
-current package is set to \code{:gbbopen-user}:
+The \code{:gbbopen-user} module (and supporting modules) are loaded,
+and the current package is set to \nobr{\code{:gbbopen-user}}:
 %
 \W\supp\notpretop
 \begin{example}
@@ -2240,18 +2256,18 @@ current package is set to \code{:gbbopen-user}:
   gbbopen-user>}
 \end{example}
 
-Module-compilation REPL commands, such as \code{:gbbopen-user},
-always include the \code{:propagate} option when they call the Module Manager's
-\textbf{compile-module} function.  We don't need to specify it as a command
-option.
+Module-compilation REPL commands, such as \nobr{\code{:gbbopen-user}}, always
+include the \nobr{\code{:propagate}} option when they call the Module
+Manager's \nobr{\textbf{compile-module}} function.  We don't need to specify
+it as a command option.
 
 \subsubsection*{If it didn't work$\ldots$}
 
 If you are running GBBopen in a Common Lisp environment that doesn't support
-REPL commands and the \textbf{:gbbopen-user} REPL command didn't
-work, all is not lost.  Loading \code{\var{<install-dir>\/}/initiate.lisp}
-also defines functions in the \code{:common-lisp-user} package with the same
-name as the REPL command:
+REPL commands and the \nobr{\code{:gbbopen-user}} REPL command didn't work,
+all is not lost.  Loading \nobr{\code{\var{<install-dir>\/}/initiate.lisp}}
+also defines functions in the \nobr{\code{:common-lisp-user}} package with the
+same name as the REPL command:
 %
 \W\supp
 \begin{example}
@@ -2300,8 +2316,8 @@ However, \xsitelink{Allegro CL}{http://www.franz.com},
 \xsitelink{LispWorks}{http://www.lispworks.com} do not support the list
 notation.  CLISP versions prior to 2.45 and
 \xsitelink{ECL}{http://common-lisp.net/project/ecl/} only support the spread
-notation---but without arguments.  So, a user running on these Common
-Lisp implementations must use the \code{:common-lisp-user} functions rather
+notation---but without arguments.  So, a user running on these Common Lisp
+implementations must use the \nobr{\code{:common-lisp-user}} functions rather
 than a REPL command when the command requires arguments:
 %
 \W\supp
@@ -2320,7 +2336,7 @@ interface.
 We will show the \reflink{spread command syntax}{sec:REPL-command-syntax}
 throughout the rest of the Tutorial.  If you are running a
 \xsitelink{CLISP}{http://clisp.cons.org/} version prior to 2.45, remember to
-use the \code{:common-lisp-user} function rather than the REPL command when
+use the \nobr{\code{:common-lisp-user}} function rather than the REPL command when
 the command requires arguments.  (Equivalent functions in the
 \code{:common-lisp-user} package are always defined for each REPL
 keyword command, and these functions can be used when REPL keyword
@@ -2329,15 +2345,15 @@ processing is not fully supported.)
 \subsection*{Step 2: Customizing your Common Lisp initialization file}
 
 I'm lazy and would rather not have to explicitly load the
-\code{\var{<install-dir>\/}/initiate.lisp} file each time I start a new
+\nobr{\code{\var{<install-dir>\/}/initiate.lisp}} file each time I start a new
 Common Lisp session.  So, I have my Common Lisp's initialization file load it
 for me.  To make it easy to similarly customize different Common Lisp
 implementations, I use the following strategy:
 
 \begin{enumerate}
 
-\item I create a file, \code{shared-init.lisp}, in my home directory,
-containing the following:
+\item I create a file, \nobr{\code{shared-init.lisp}}, in my home directory,
+  containing the following:
 %
 \W\supp\notpretop
 \begin{example}
@@ -2359,17 +2375,17 @@ containing the following:
             :defaults defaults)))
 \end{example}
 
-The \code{:directory} argument to \code{make-pathname} is a Common Lisp
+The \code{:directory} argument to \nobr{\code{make-pathname}} is a Common Lisp
 \textit{absolute pathname} that is portable across all operating systems.  I
-installed my GBBopen in \code{/usr/local/gbbopen/}, and I specified this with
-the \code{"usr"}, \code{"local"}, and \code{"gbbopen"} elements in the
-\code{:directory} argument.  Change these elements as appropriate for the
+installed my GBBopen in \nobr{\code{/usr/local/gbbopen/}}, and I specified
+this with the \code{"usr"}, \code{"local"}, and \code{"gbbopen"} elements in
+the \code{:directory} argument.  Change these elements as appropriate for the
 location of your GBBopen installation.
 
 \item For each Common Lisp implementation that I use, I create a personal
   initialization file that performs any implementation-specific
-  initializations and then loads \code{shared-init.lisp}.  For example, here
-  is the \code{.clisprc} initialization file that I use for
+  initializations and then loads \nobr{\code{shared-init.lisp}}.  For example,
+  here is the \code{.clisprc} initialization file that I use for
   \xsitelink{CLISP}{http://clisp.cons.org/}:
 %
 \W\supp\notpretop
@@ -2387,8 +2403,8 @@ location of your GBBopen installation.
 \end{example}
 
 \xsitelink{SBCL}{http://sbcl.sourceforge.net} has a very strict interpretation
-of \code{*load-truename*} semantics, so my \code{.sbclrc} initialization file
-is:
+of \nobr{\code{*load-truename*}} semantics, so my \code{.sbclrc}
+initialization file is:
 %
 \W\supp
 \begin{example}
@@ -2403,7 +2419,7 @@ is:
             :defaults defaults)))
 \end{example}
 
-Here is my \code{.clinit.cl} initialization file for
+Here is my \nobr{\code{.clinit.cl}} initialization file for
 \xsitelink{Allegro CL}{http://www.franz.com}:
 %
 \W\supp
@@ -2448,9 +2464,10 @@ The initialization file names for supported GBBopen ports are:
 
 \xsitelink{Digitool MCL}{http://www.digitool.com} does not look for an
 initialization file in the user's home directory.  Instead it loads the file
-\code{init.lisp} in it's installation directory.  One approach is to have that
-file load a personal initialization file, say \code{mcl-init.lisp}, from the
-user's home directory, if a \code{mcl-init.lisp} file is present.
+\nobr{\code{init.lisp}} in it's installation directory.  One approach is to
+have that file load a personal initialization file, say
+\nobr{\code{mcl-init.lisp}}, from the user's home directory, if a
+\nobr{\code{mcl-init.lisp}} file is present.
 
 The Personal Edition of \xsitelink{LispWorks}{http://www.lispworks.com} does
 not load initialization files, requiring you to manually load your
@@ -2458,14 +2475,14 @@ not load initialization files, requiring you to manually load your
 \xsitelink{LispWorks}{http://www.lispworks.com}.
 
 The interpretation of where a user's ``home'' directory is located is
-inconsistent on Windows.  Ideally, the ``home directory'' location
-used for the Common Lisp implementation's initialization file and the
-result of the Common Lisp function \code{user-homedir-pathname} should
-be consistent.  Then, by using the \code{shared-init.lisp} scheme, you
-only need to determine where the initialization file should be for
-each Common Lisp implementation that you use, and then you can have
-those implementation-specific initialization files load your
-\code{shared-init.lisp} file from whichever directory \underline{you}
+inconsistent on Windows.  Ideally, the ``home directory'' location used for
+the Common Lisp implementation's initialization file and the result of the
+Common Lisp function \nobr{\code{user-homedir-pathname}} should be consistent.
+Then, by using the \nobr{\code{shared-init.lisp}} scheme, you only need to
+determine where the initialization file should be for each Common Lisp
+implementation that you use, and then you can have those
+implementation-specific initialization files load your
+\nobr{\code{shared-init.lisp}} file from whichever directory \underline{you}
 deem as your ``home'' directory.
 
 \label{ref:your-homedir}%
@@ -2485,7 +2502,7 @@ We will refer to this directory from now on as your ``homedir'' directory.
 
 \item With this setup in place, all that is needed to use GBBopen is
   to start up a Common Lisp and type a GBBopen command, such as
-  \code{:gbbopen-user}.  My fingers thank me!
+  \nobr{\code{:gbbopen-user}}.  My fingers thank me!
 
 \end{enumerate}
 
@@ -2496,11 +2513,12 @@ If you are using
 \xsitelink{Emacs}{http://www.gnu.org/software/emacs/emacs.html} in your Common
 Lisp development environment, you can make it easy to bring up appropriate
 Common Lisp and GBBopen documentation in your browser.  The file
-\code{\var{<install-dir>\/}/browse-hyperdoc.el} defines an interactive Emacs
-command named \code{browse-hyperdoc} and binds it to \code{META-?} (on most
-keyboards, \code{META-?} means pressing both \code{Alt} and \code{?} keys at
-the same time) .  To enable this Emacs command, add a command to load
-\code{\var{<install-dir>\/}/browse-hyperdoc.el} in your \code{.emacs}
+\nobr{\code{\var{<install-dir>\/}/browse-hyperdoc.el}} defines an interactive
+Emacs command named \nobr{\code{browse-hyperdoc}} and binds it to
+\nobr{\code{META-?}} (on most keyboards, \nobr{\code{META-?}} means pressing
+both \code{Alt} and \code{?} keys at the same time) .  To enable this Emacs
+command, add a command to load
+\nobr{\code{\var{<install-dir>\/}/browse-hyperdoc.el}} in your \code{.emacs}
 initialization file:
 %
 \W\supp
@@ -2526,9 +2544,10 @@ If you are using
 \xsitelink{\textit{Lispbox}}{http://www.gigamonkeys.com/book/lispbox/}, you
 will have to enable loading of the \code{.emacs} initialization file, as it is
 disabled in the Lispbox startup file.  Edit the Lispbox startup file
-(\code{lispbox.bat} on Windows, \code{lispbox.sh} on Unix, and
-\code{/Applications/Lispbox/Emacs.app/Contents/MacOS/lispbox.sh} on Mac OS)
-and remove the \code{-{}-no-init-file} option from the Emacs invocation line.
+(\nobr{\code{lispbox.bat}} on Windows, \nobr{\code{lispbox.sh}} on Unix, and
+\nobr{\code{/Applications/Lispbox/Emacs.app/Contents/MacOS/lispbox.sh}} on Mac
+OS) and remove the \nobr{\code{-{}-no-init-file}} option from the Emacs
+invocation line.
 
 \subsubsection*{Adding the Common Lisp HyperSpec}
 
@@ -2536,10 +2555,11 @@ The \xsitelink{hyperspec.el}{http://GBBopen.org/downloads/hyperspec.el}
 utility is included in the
 \xsitelink{SLIME}{http://common-lisp.net/project/slime/} and
 \xsitelink{ILISP}{http://sourceforge.net/projects/ilisp/} distributions.
-However, if \code{hyperspec.el} is not already part of your Emacs, you can
-download it and explicitly load it from your \code{.emacs} initialization
-file.  Once \code{hyperspec.el} is present, GBBopen's \code{browse-hyperdoc}
-Emacs command will automatically defer to the \xsitelink{Common Lisp
+However, if \nobr{\code{hyperspec.el}} is not already part of your Emacs, you
+can download it and explicitly load it from your \code{.emacs} initialization
+file.  Once \nobr{\code{hyperspec.el}} is present, GBBopen's
+\nobr{\code{browse-hyperdoc}} Emacs command will automatically defer to the
+\xsitelink{Common Lisp
   HyperSpec}{http://www.lispworks.com/documentation/HyperSpec/} when given a
 non-GBBopen entity.
 
@@ -2548,8 +2568,8 @@ I prefer to download a local copy of the Common Lisp HyperSpec using the
   archive}{ftp://ftp.lispworks.com/pub/software_tools/reference/HyperSpec-7-0.tar.gz}
 provided by \xsitelink{LispWorks}{http://www.lispworks.com}, LTD.  This allows
 me to quickly reference the HyperSpec without a network connection.  I set the
-value of \code{common-lisp-hyperspec-root} in my \code{.emacs} initialization
-file to a URL that points to my local copy of the HyperSpec:
+value of \nobr{\code{common-lisp-hyperspec-root}} in my \code{.emacs}
+initialization file to a URL that points to my local copy of the HyperSpec:
 %
 \W\supp
 \begin{example}
@@ -2560,9 +2580,10 @@ file to a URL that points to my local copy of the HyperSpec:
 
 \bfindex{browse-hyperdoc}%
 If you are not using an Emacs-based environment, GBBopen provides a Common
-Lisp function, \textbf{browse-hyperdoc}, that can be used to access GBBopen
-HyperDoc pages from Common Lisp.  GBBopen's \code{:os-interface} module must
-be loaded to make \textbf{browse-hyperdoc} available.  For example:
+Lisp function, \nobr{\textbf{browse-hyperdoc}}, that can be used to access
+GBBopen HyperDoc pages from Common Lisp.  GBBopen's
+\nobr{\code{:os-interface}} module must be loaded to make
+\nobr{\textbf{browse-hyperdoc}} available.  For example:
 %
 \W\supp
 \begin{example}
@@ -2577,10 +2598,10 @@ be loaded to make \textbf{browse-hyperdoc} available.  For example:
 \end{example}
 %
 will display the GBBopen HyperDoc page for \textbf{define-unit-class} in your
-browser.  Note that the \code{:gbbopen-user} module requires (and therefore
-loads) the \code{:os-interface} module, so if you have loaded
-\code{:gbbopen-user}, you do not need to do anything further in order to call
-\textbf{browse-hyperdoc}.
+browser.  Note that the \nobr{\code{:gbbopen-user}} module requires (and
+therefore loads) the \nobr{\code{:os-interface}} module, so if you have loaded
+\nobr{\code{:gbbopen-user}}, you do not need to do anything further in order
+to call \nobr{\textbf{browse-hyperdoc}}.
 
 %% ========================================================================
 %%  Working Within a File
@@ -2628,7 +2649,7 @@ that I used to create my directories:
 
 \subsection*{Step 2: Create the tutorial-example file}
 
-Start up a fresh Common Lisp session and load the \code{:gbbopen-user}
+Start up a fresh Common Lisp session and load the \nobr{\code{:gbbopen-user}}
 module, using the REPL command we set up in the last exercise:
 %
 \W\supp
@@ -2641,19 +2662,19 @@ module, using the REPL command we set up in the last exercise:
   gbbopen-user>}
 \end{example}
 
-Next, begin editing a new file named \code{tutorial-example.lisp} in the
-\code{source} subdirectory that you just created.  Even if you are more
+Next, begin editing a new file named \nobr{\code{tutorial-example.lisp}} in
+the \code{source} subdirectory that you just created.  Even if you are more
 comfortable using another editor, use the editing facilities that are provided
 by your Common Lisp environment.  The development features of a quality Common
 Lisp environment are well worth the price of learning a new editor.  In an
 Emacs-based environment, such as
 \xsitelink{SLIME}{http://common-lisp.net/project/slime/} or \xsitelink{Allegro
-  CL}{http://www.franz.com}'s ELI, typing \code{C-x C-f} will prompt you for
-the name of a file to editor or create.  (We will use Emacs key-binding
-notation, where \code{C-x C-f} means typing \code{\ctrl{c}} followed by
-{\ctrl{f}}.)
+  CL}{http://www.franz.com}'s ELI, typing \nobr{\code{C-x C-f}} will prompt
+you for the name of a file to editor or create.  (We will use Emacs
+key-binding notation, where \nobr{\code{C-x C-f}} means typing \code{\ctrl{c}}
+followed by {\ctrl{f}}.)
 
-Type the following two forms into the \code{tutorial-example.lisp} file
+Type the following two forms into the \nobr{\code{tutorial-example.lisp}} file
 buffer:
 %
 \W\supp
@@ -2664,15 +2685,16 @@ buffer:
     (x y))
 \end{example}
 
-The \code{in-package} form specifies the Common Lisp package that is made
-current when the file is compiled or loaded.  The first form in every Common
-Lisp source file that you create should begin with an \code{in-package} form.
-This form is also used by most Common Lisp editing environments to set the
-package associated with development operations.
+The \nobr{\code{in-package}} form specifies the Common Lisp package that is
+made current when the file is compiled or loaded.  The first form in every
+Common Lisp source file that you create should begin with an
+\nobr{\code{in-package}} form.  This form is also used by most Common Lisp
+editing environments to set the package associated with development
+operations.
 
-The \textbf{define-unit-class} definition is the same one we used in
-\texorhtml{Exercise~\ref{sec:unit-instance}.}{the \link{Creating a
-    Unit instance}{sec:unit-instance} exercise.}
+The \nobr{\textbf{define-unit-class}} definition is the same one we used in
+\texorhtml{Exercise~\ref{sec:unit-instance}.}{the \link{Creating a Unit
+    instance}{sec:unit-instance} exercise.}
 
 Now, save the file.  
 
@@ -2691,7 +2713,7 @@ into Common Lisp:
   gbbopen-user>}
 \end{example}
 
-We could use Common Lisp's \code{compile-file} to compile the file and
+We could use Common Lisp's \nobr{\code{compile-file}} to compile the file and
 then \code{load} to load the resulting compiled file. For example:
 %
 \W\supp
@@ -2704,13 +2726,13 @@ then \code{load} to load the resulting compiled file. For example:
   gbbopen-user>}
 \end{example}
 %
-but you should be able to compile and load the file directly from the
-editor buffer.  In SLIME, the command \code{C-c C-k} will compile and
-load the file currently being edited.  Allegro's ELI interface
-compile-and-load command is \code{C-c C-b}.  Identify and use the
-compile-and-load-file command in your editing environment.
+but you should be able to compile and load the file directly from the editor
+buffer.  In SLIME, the command \nobr{\code{C-c C-k}} will compile and load the
+file currently being edited.  Allegro's ELI interface compile-and-load command
+is \nobr{\code{C-c C-b}}.  Identify and use the compile-and-load-file command
+in your editing environment.
 
-Verify that all is well by creating a \code{location} unit instance in
+Verify that all is well by creating a \nobr{\code{location}} unit instance in
 the REPL:
 %
 \W\supp
@@ -2769,12 +2791,12 @@ GBBopen supports three types of dimensions:
 Determining the dimensionality of space and unit instances is an
 important part of designing a blackboard application.
 
-In this exercise, we will redefine the \code{location} unit class to
-have two ordered dimensions, \code{x} and \code{y}, that represent
-Euclidean positions on a two-dimensional plane.  Then we will create a
-two-dimensional \code{known-world} space instance, create some
-\code{location} unit instances on the \code{known-world}, and retrieve
-the instances based on their two-dimensional positions.
+In this exercise, we will redefine the \nobr{\code{location}} unit class to
+have two ordered dimensions, \code{x} and \code{y}, that represent Euclidean
+positions on a two-dimensional plane.  Then we will create a two-dimensional
+\nobr{\code{known-world}} space instance, create some \nobr{\code{location}}
+unit instances on the \nobr{\code{known-world}}, and retrieve the instances
+based on their two-dimensional positions.
 
 \fndocrule
 
@@ -2793,7 +2815,8 @@ This exercise shows you how to:
 \subsection*{Prerequisites}
 
 \begin{tightitemize}
-\item The \code{tutorial-example.lisp} file created in the last exercise, containing:
+\item The \nobr{\code{tutorial-example.lisp}} file created in the last
+  exercise, containing:
 %
 \W\supp\notpretop
 \begin{example}
@@ -2805,13 +2828,13 @@ This exercise shows you how to:
 \end{example}
 \W\\
 
-\item The \code{:gbbopen-user} module is loaded
+\item The \nobr{\code{:gbbopen-user}} module is loaded
 \end{tightitemize}
 
 \subsection*{Step 1: Add dimensions to the \code{location} unit class}
 
-Edit your \code{tutorial-example.lisp} file, and change the
-\code{location} unit-class definition as follows:
+Edit your \nobr{\code{tutorial-example.lisp}} file, and change the
+\nobr{\code{location}} unit-class definition as follows:
 %
 \W\supp
 \begin{example}
@@ -2826,15 +2849,14 @@ Edit your \code{tutorial-example.lisp} file, and change the
 In this tutorial, we will highlight code additions and changes using a
 black font.
 
-The \code{:dimensional-values} unit-class option specifies that
-\code{location} unit instances have two ordered dimensions, \code{x}
-and \code{y}, and that the value of each dimension will be a single
-numeric value obtained from the slots \code{x} and \code{y},
-respectively.
+The \nobr{\code{:dimensional-values}} unit-class option specifies that
+\nobr{\code{location}} unit instances have two ordered dimensions, \code{x}
+and \code{y}, and that the value of each dimension will be a single numeric
+value obtained from the slots \code{x} and \code{y}, respectively.
 
-Because we chose to use the same name for each dimension and its
-associated slot value, our \code{:dimensional-values} option might
-appear to be double-talk.  We could have defined our class as:
+Because we chose to use the same name for each dimension and its associated
+slot value, our \nobr{\code{:dimensional-values}} option might appear to be
+double-talk.  We could have defined our class as:
 %
 \W\supp
 \begin{example}
@@ -2846,27 +2868,27 @@ appear to be double-talk.  We could have defined our class as:
       (y :point y-slot)))}
 \end{example}
 %
-which clarifies the semantics of the \code{:dimensional-values}
+which clarifies the semantics of the \nobr{\code{:dimensional-values}}
 option.  Often, however, it is most convenient to use the same name
 for a slot and the dimension associated with the slot's value, so we
 will stick with our original definition.
 
 \subsection*{Step 2: Compile and load the new definition}
 
-We could compile and load the entire \code{tutorial-example.lisp} file
-just as we did in the last exercise.  However, as we develop our
-application it can be convenient to compile and load (and debug) each
-form as we write it.  Your Common Lisp development environment should
-provide this capability.  In SLIME, the command to compile the current
-top-level form is \code{C-c C-c}.  In Allegro's ELI, the command is
-\code{C-c C-x}.  Try compiling and loading just the new
-\code{location} unit-class definition.
+We could compile and load the entire \nobr{\code{tutorial-example.lisp}} file
+just as we did in the last exercise.  However, as we develop our application
+it can be convenient to compile and load (and debug) each form as we write it.
+Your Common Lisp development environment should provide this capability.  In
+SLIME, the command to compile the current top-level form is \nobr{\code{C-c
+    C-c}}.  In Allegro's ELI, the command is \nobr{\code{C-c C-x}}.  Try
+compiling and loading just the new \nobr{\code{location}} unit-class
+definition.
 
 \subsection*{Step 3: Make  a \code{location} unit instance}
 
 \bfindexit{make-instance}%
 \codeindexit{defparameter}%
-Let's test our new \code{location} unit class definition by making an
+Let's test our new \nobr{\code{location}} unit class definition by making an
 instance.  Enter the following form in the REPL:
 %
 \W\supp
@@ -2902,7 +2924,7 @@ Note the dimensional values for the \code{x} and \code{y} dimensions.
 \subsection*{Step 4: Make  the \code{known-world} space instance}
 
 \bfindexit{make-space-instance}%
-Create the \code{known-world} space instance by evaluating:
+Create the \nobr{\code{known-world}} space instance by evaluating:
 %
 \W\supp
 \begin{example}
@@ -2915,7 +2937,7 @@ Create the \code{known-world} space instance by evaluating:
 \subsection*{Step 5: Add the unit instance to the space instance}
 
 \bfindexit{add-instance-to-space-instance}%
-Now, add the \code{location} unit instance to the space instance:
+Now, add the \nobr{\code{location}} unit instance to the space instance:
 %
 \W\supp
 \begin{example}
@@ -2929,11 +2951,11 @@ Now, add the \code{location} unit instance to the space instance:
 \end{example}
 
 \bfindexit{describe-blackboard-repository}%
-GBBopen has warned us that our \code{location} unit instance does not
-have any dimensions in common with the \code{known-world} space
+GBBopen has warned us that our \nobr{\code{location}} unit instance does not
+have any dimensions in common with the \nobr{\code{known-world}} space
 instance (because we didn't specify any dimensions for the
-\code{known-world}).  GBBopen dutifully added the unit instance, as
-shown by \textbf{describe-blackboard-repository}:
+\nobr{\code{known-world}}).  GBBopen dutifully added the unit instance, as
+shown by \nobr{\textbf{describe-blackboard-repository}}:
 %
 \W\supp
 \begin{example}
@@ -2953,16 +2975,16 @@ shown by \textbf{describe-blackboard-repository}:
   gbbopen-user>}
 \end{example}
 %
-but we cannot perform dimension-based retrieval of our \code{location}
-unit instance on the \code{known-world}.
+but we cannot perform dimension-based retrieval of our \nobr{\code{location}}
+unit instance on the \nobr{\code{known-world}}.
 
 \subsection*{Step 6: Create a dimensioned \code{known-world}}
 
 \bfindexit{delete-space-instance}%
 \bfindexit{make-space-instance}%
 %
-Let's delete the \code{known-world} and create another one---this time with
-\code{x} and \code{y} dimensions:
+Let's delete the \nobr{\code{known-world}} and create another one---this time
+with \code{x} and \code{y} dimensions:
 %
 \W\supp
 \begin{example}
@@ -2976,12 +2998,12 @@ Let's delete the \code{known-world} and create another one---this time with
 \end{example}
 %
 We have specified \code{x} and \code{y} as ordered dimensions, making the
-\code{known-world} a two-dimensional Euclidean plane.  (Flatlanders would be
-proud!)
+\nobr{\code{known-world}} a two-dimensional Euclidean plane.  (Flatlanders
+would be proud!)
 
 \bfindex{describe-space-instance}%
 %
-Verify the dimensionality of the \code{known-world} space instance by
+Verify the dimensionality of the \nobr{\code{known-world}} space instance by
 evaluating:
 %
 \W\supp
@@ -3001,8 +3023,8 @@ evaluating:
 
 \bfindexit{add-instance-to-space-instance}%
 %
-Add the \code{location} unit instance to the new \code{known-world} space
-instance:
+Add the \nobr{\code{location}} unit instance to the new \nobr{\code{known-world}}
+space instance:
 %
 \W\supp
 \begin{example}
@@ -3017,17 +3039,18 @@ The dimension warning is gone.
 \subsection*{Step 8: Adding every \code{location} to the \code{known-world}
   automatically}
 
-Up to this point, we have used \textbf{add-instance-to-space-instance} to add
-each \code{location} unit instance to the \code{known-world} space instance.
-We can tell GBBopen to automatically add new unit instances to one or more
-space instances by using the \code{:initial-space-instances} class option in
-\textbf{define-unit-class}.
+Up to this point, we have used \nobr{\textbf{add-instance-to-space-instance}}
+to add each \nobr{\code{location}} unit instance to the
+\nobr{\code{known-world}} space instance.  We can tell GBBopen to
+automatically add new unit instances to one or more space instances by using
+the \nobr{\code{:initial-space-instances}} class option in
+\nobr{\textbf{define-unit-class}}.
 
 \bfindexit{define-unit-class}%
 %
-Add the following \code{:initial-space-instances} class option to the
-\code{location} unit-class definition in your \code{tutorial-example.lisp}
-file:
+Add the following \nobr{\code{:initial-space-instances}} class option to the
+\nobr{\code{location}} unit-class definition in your
+\nobr{\code{tutorial-example.lisp}} file:
 %
 \W\supp
 \begin{example}
@@ -3040,15 +3063,15 @@ file:
     \textcolor{black}{(:initial-space-instances (known-world))})}
 \end{example}
 
-Compile and load the new \code{location} unit-class definition.
+Compile and load the new \nobr{\code{location}} unit-class definition.
 
 \subsection*{Step 9: Create more \code{location} unit instances}
 
 \bfindexit{make-instance}%
 \codeindexit{defparameter}%
 %
-Let's test our new \code{location} unit class definition by making another
-instance.  Enter the following form in the REPL:
+Let's test our new \nobr{\code{location}} unit class definition by making
+another instance.  Enter the following form in the REPL:
 %
 \W\supp
 \begin{example}
@@ -3060,7 +3083,8 @@ instance.  Enter the following form in the REPL:
 %
 \REPLindex{:dsbb}%
 %
-and confirm that the new \code{location} is on the \code{known-world}:
+and confirm that the new \nobr{\code{location}} is on the
+\nobr{\code{known-world}}:
 %
 \W\supp\notpretop
 \begin{example}
@@ -3081,13 +3105,13 @@ and confirm that the new \code{location} is on the \code{known-world}:
 \end{example}
 %
 Here we used GBBopen's \code{:dsbb} REPL command, which is equivalent to
-evaluating \code{(describe-blackboard-repository)}.  Describing the repository
-is a useful check that our unit instances and space instances are being
-created and deleted as intended.
+evaluating \nobr{\code{(describe-blackboard-repository)}}.  Describing the
+repository is a useful check that our unit instances and space instances are
+being created and deleted as intended.
 
 \bfindexit{make-instance}%
 %
-Now, let's populate the \code{known-world} with a few more \code{locations}s:
+Now, let's populate the \nobr{\code{known-world}} with a few more locations:
 %
 \W\supp
 \begin{example}
@@ -3103,7 +3127,7 @@ Now, let's populate the \code{known-world} with a few more \code{locations}s:
 %
 \REPLindexit{:dsbb}%
 %
-and verify that they are all on the \code{known-world}:
+and verify that they are all on the \nobr{\code{known-world}}:
 %
 \W\supp\notpretop
 \begin{example}
@@ -3127,8 +3151,8 @@ and verify that they are all on the \code{known-world}:
 
 \bfindexit{find-instances}%
 %
-We have seen how we can use \textbf{find-instances} to retrieve all
-\code{location} unit instances from the \code{known-world}:
+We have seen how we can use \nobr{\textbf{find-instances}} to retrieve all
+\nobr{\code{location}} unit instances from the \nobr{\code{known-world}}:
 %
 \W\supp
 \begin{example}
@@ -3138,10 +3162,10 @@ We have seen how we can use \textbf{find-instances} to retrieve all
   gbbopen-user>}
 \end{example}
 
-Now that we have added \code{x} and \code{y} dimensions to \code{location}s
-and the \code{known-world}, we can retrieve \code{location} unit instances
-using dimensional patterns.  For example, let's retrieve the unit instance
-positioned at (20,20):
+Now that we have added \code{x} and \code{y} dimensions to
+\nobr{\code{location}} unit instances and to the \nobr{\code{known-world}}, we
+can retrieve \nobr{\code{location}} unit instances using dimensional patterns.
+For example, let's retrieve the unit instance positioned at (20,20):
 %
 \W\supp
 \begin{example}
@@ -3154,8 +3178,8 @@ positioned at (20,20):
 
 \bfindexit{describe-instance}%
 %
-We can use \textbf{describe-instance} to verify that we found the desired
-\code{location} unit instance:
+We can use \nobr{\textbf{describe-instance}} to verify that we found the
+desired \nobr{\code{location}} unit instance:
 %
 \W\supp
 \begin{example}
@@ -3179,21 +3203,22 @@ We can use \textbf{describe-instance} to verify that we found the desired
 %
 Note that we used Common Lisp's REPL \code{*} variable that is always set to
 the value returned by evaluating the last REPL expression (in this case, the
-result of \textbf{find-instances}).
+result of \nobr{\textbf{find-instances}}).
 
 \subsection*{Step 11: Customize the display of \code{location} unit instances}
 
 \bfindex{print-instance-slots}%
 %
 It would be convenient if we could easily see the coordinates of
-\code{location} unit instances without having to describe them.  Fortunately,
-GBBopen makes this is easy to do by providing the
-\textbf{print-instance-slots} generic function that allows us to extend how
-Common Lisp's \code{print-object} displays \code{location} unit instances.
+\nobr{\code{location}} unit instances without having to describe them.
+Fortunately, GBBopen makes this is easy to do by providing the
+\nobr{\textbf{print-instance-slots}} generic function that allows us to extend
+how Common Lisp's \nobr{\code{print-object}} displays \nobr{\code{location}}
+unit instances.
 
-Add the following \textbf {print-instance-slots} method \underline{after} the
-\code{location} unit-class definition in your \code{tutorial-example.lisp}
-file:
+Add the following \nobr{\textbf{print-instance-slots}} method
+\underline{after} the \nobr{\code{location}} unit-class definition in your
+\nobr{\code{tutorial-example.lisp}} file:
 %
 \W\supp
 \begin{example}
@@ -3214,19 +3239,19 @@ file:
               (y-of location))))}}
 \end{example}
 %
-The method first performs a \code{(call-next-method)} to produce the initial
-printed representation of the \code{location} unit instance.  It then checks
-that both \code{x} and \code{y} slots are bound and, if so, writes the
-\code{location}'s coordinates to the output stream.  Checking that the slots
-are bound is necessary to avoid generating an error in the
-\textbf{print-instance-slots} if the slots have not been given a value.  You
-should always perform this safety check in any \textbf{print-instance-slots}
-methods.
+The method first performs a \nobr{\code{(call-next-method)}} to produce the
+initial printed representation of the \nobr{\code{location}} unit instance.
+It then checks that both \code{x} and \code{y} slots are bound and, if so,
+writes the \nobr{\code{location}}'s coordinates to the output stream.
+Checking that the slots are bound is necessary to avoid generating an error in
+the \nobr{\textbf{print-instance-slots}} if the slots have not been given a
+value.  You should always perform this safety check in any
+\nobr{\textbf{print-instance-slots}} methods.
 
 \bfindexit{find-instances}%
 %
-Now, compile and load the \textbf {print-instance-slots} method and try it
-out:
+Now, compile and load the \nobr{\textbf{print-instance-slots}} method and try
+it out:
 %
 \W\supp
 \begin{example}
@@ -3242,14 +3267,14 @@ pattern rather than the conjunction of two one-dimensional patterns that we
 used previously.  The two patterns are equivalent, but often a
 higher-dimensional pattern may be more convenient than a conjunction.  Also
 note that we can see immediately that we retrieved the desired
-\code{location}.
+\nobr{\code{location}}.
 
 \subsection*{Step 12: More dimensional retrievals}
 
 \bfindexit{find-instances}%
 %
 Let's try some additional dimensional retrievals.  First, find all
-\code{location}s with an \code{x} position of 20:
+\nobr{\code{location}} unit instances with an \code{x} position of 20:
 %
 \W\supp
 \begin{example}
@@ -3260,8 +3285,8 @@ Let's try some additional dimensional retrievals.  First, find all
   gbbopen-user>}
 \end{example}
 %
-Find all \code{location}s with whose \code{x} and \code{y} coordinates
-are less than or equal to 25:
+Find all \nobr{\code{location}} unit instances whose \code{x} and \code{y}
+coordinates are less than or equal to 25:
 %
 \W\supp\notpretop
 \begin{example}
@@ -3272,8 +3297,9 @@ are less than or equal to 25:
   gbbopen-user>}
 \end{example}
 %
-Find all \code{location}s with whose \code{x} coordinates are between 0 and 40
-(inclusive) and whose \code{y} coordinates are between 60 and 100 (inclusive):
+Find all \nobr{\code{location}} unit instances whose \code{x} coordinates are
+between 0 and 40 (inclusive) and whose \code{y} coordinates are between 60 and
+100 (inclusive):
 %
 \W\supp\notpretop
 \begin{example}
@@ -3284,8 +3310,8 @@ Find all \code{location}s with whose \code{x} coordinates are between 0 and 40
   gbbopen-user>}
 \end{example}
 %
-Find all \code{location}s with whose coordinates are not within the above
-region:
+Find all \nobr{\code{location}} unit instances whose coordinates are not
+within the above region:
 %
 \W\supp\notpretop
 \begin{example}
@@ -3301,7 +3327,7 @@ region:
 
 \bfindexit{find-instances}%
 %
-Recall that we assigned \code{location} \code{1} to the global variable
+Recall that we assigned \nobr{\code{location}} \code{1} to the global variable
 \code{ui}:
 %
 \W\supp
@@ -3338,8 +3364,8 @@ Let's change its \code{x} position to \code{80} and try retrieving it again:
   gbbopen-user>}
 \end{example}
 %
-It has moved on the \code{known-world}.  As expected, the \code{location}
-\code{1} unit instance is now at (80, 60):
+It has moved on the \nobr{\code{known-world}}.  As expected, the
+\nobr{\code{location}} \code{1} unit instance is now at (80, 60):
 %
 \W\supp\notpretop
 \begin{example}
@@ -3350,7 +3376,7 @@ It has moved on the \code{known-world}.  As expected, the \code{location}
   gbbopen-user>}
 \end{example}
 %
-Also note that the textual representation of \code{location} \code{1}
+Also note that the textual representation of \nobr{\code{location}} \code{1}
 shows the new \code{x} slot value.
 
 %% ========================================================================
@@ -3406,7 +3432,7 @@ This exercise shows you how to:
 
 \subsection*{Prerequisites}
 
-The \code{tutorial-example.lisp} file as modified thus far:
+The \nobr{\code{tutorial-example.lisp}} file as modified thus far:
 %
 \W\supp
 \begin{example}
@@ -3430,8 +3456,9 @@ The \code{tutorial-example.lisp} file as modified thus far:
 
 \subsection*{Step 1: Load the Agenda Shell}
 
-Start up a fresh Common Lisp session and load the \code{:agenda-shell-user}
-module, using the \code{:agenda-shell-user} REPL command:
+Start up a fresh Common Lisp session and load the
+\nobr{\code{:agenda-shell-user}} module, using the
+\nobr{\code{:agenda-shell-user}} REPL command:
 %
 \W\supp
 \begin{example}
@@ -3444,10 +3471,10 @@ module, using the \code{:agenda-shell-user} REPL command:
   gbbopen-user>}
 \end{example}
 
-This loads everything that we've been loading with the \code{:gbbopen-user}
-module and, additionally, GBBopen's Agenda Shell control shell. As with the
-\code{:gbbopen-user} REPL command, the current package in the REPL is set to
-the \code{:gbbopen-user} package.
+This loads everything that we've been loading with the
+\nobr{\code{:gbbopen-user}} module and, additionally, GBBopen's Agenda Shell
+control shell. As with the \nobr{\code{:gbbopen-user}} REPL command, the current
+package in the REPL is set to the \nobr{\code{:gbbopen-user}} package.
 
 \subsection*{Step 2: Run the control shell}
 
@@ -3494,8 +3521,9 @@ So let's define a KS!
 
 \bfindex{define-ks}%
 %
-Edit your \code{tutorial-example.lisp} file and add the following function
-and KS definition to the end of the \code{tutorial-example.lisp} file:
+Edit your \nobr{\code{tutorial-example.lisp}} file and add the following
+function and KS definition to the end of the
+\nobr{\code{tutorial-example.lisp}} file:
 %
 \W\supp
 \begin{example}
@@ -3528,22 +3556,24 @@ and KS definition to the end of the \code{tutorial-example.lisp} file:
       :execution-function 'startup-ks-function)}}
 \end{example}
 
-The function \code{startup-ks-function} implements the KS.  The Agenda Shell
-always calls a KS's execution function with a single argument, a \code{ksa}
-unit instance that represents the activation of the KS.  For the present, we
-will ignore the \code{ksa} argument.  Our simple \code{startup-ks-function}
-creates a \code{location} unit instance at the center of the
-\code{known-world}, coordinate (0,0).
+The function \nobr{\code{startup-ks-function}} implements the KS.  The Agenda
+Shell always calls a KS's execution function with a single argument, a
+\code{ksa} unit instance that represents the activation of the KS.  For the
+present, we will ignore the \code{ksa} argument.  Our simple
+\nobr{\code{startup-ks-function}} creates a \nobr{\code{location}} unit
+instance at the center of the \nobr{\code{known-world}}, coordinate (0,0).
 
-The \textbf{define-ks} form defines a KS named \code{startup-ks} to the
-Agenda Shell.  The \code{:trigger-events} value indicates that the KS should
-be triggered when an event called \code{start-control-shell-event} is
-signaled.  The Agenda Shell signals \code{start-control-shell-event} once,
-when the control shell is started.  The \code{:execution-function} names the
-function (that we just defined) that implements the KS.
+The \nobr{\textbf{define-ks}} form defines a KS named \nobr{\code{startup-ks}}
+to the Agenda Shell.  The \nobr{\code{:trigger-events}} value indicates that
+the KS should be triggered when an event called
+\nobr{\code{start-control-shell-event}} is signaled.  The Agenda Shell signals
+\nobr{\code{start-control-shell-event}} once, when the control shell is
+started.  The \nobr{\code{:execution-function}} names the function (that we
+just defined) that implements the KS.
 
-Compile and load the entire \code{tutorial-example.lisp} file directly from
-the editor buffer (using \code{C-c C-k} in SLIME; \code{C-c C-b} in ELI).
+Compile and load the entire \nobr{\code{tutorial-example.lisp}} file directly
+from the editor buffer (using \nobr{\code{C-c C-k}} in SLIME; \nobr{\code{C-c
+    C-b}} in ELI).
 
 The Agenda Shell creates a \code{ks} unit instance for each KS that we
 define:
@@ -3561,7 +3591,7 @@ Note that the name of the \code{ks} unit instance is the name of the KS.
 
 \subsection*{Step 4: Make the \code{known-world}}
 
-Before we can run our KS, we must make the \code{known-world} space
+Before we can run our KS, we must make the \nobr{\code{known-world}} space
 instance:
 %
 \W\supp
@@ -3618,28 +3648,31 @@ Did it work?  Let's describe the blackboard repository:
   gbbopen-user>}
 \end{example}
 %
-The initial \code{location} unit instance is there!
+The initial \nobr{\code{location}} unit instance is there!
 
 Note that some other unit instances have been created by the control shell.
-There is one \code{ks} unit instance, our \code{startup-ks} KS, as well as two
-\code{ksa-queue} and one \code{ordered-ksa-queue} unit instances.  The
-\code{ordered-ksa-queue} is the rating-based queue of pending KSAs (no pending
-KSAs remain on it) and the two \code{ksa-queue} queues are the Agenda Shell's
-executed KSAs and obviated KSAs queues (both empty).  We will discuss these
-queues in a later exercise.
+There is one \code{ks} unit instance, our \nobr{\code{startup-ks}} KS, as well
+as two \nobr{\code{ksa-queue}} and one \nobr{\code{ordered-ksa-queue}} unit
+instances.  The \nobr{\code{ordered-ksa-queue}} is the rating-based queue of
+pending KSAs (no pending KSAs remain on it) and the two
+\nobr{\code{ksa-queue}} queues are the Agenda Shell's executed KSAs and
+obviated KSAs queues (both empty).  We will discuss these queues in a later
+exercise.
 
-The \code{ks}, \code{ksa-queue}, \code{ordered-ksa-queue} unit-instance counts
-are followed by plus signs (\code{+}).  This indicates that these unit classes
-have been defined to be \textit{retained}, meaning that their instances are
-not deleted by our call to \code{delete-blackboard-repository}.  The plus sign
-indicates that the retention attribute will be propagated to all subclasses of
-those unit classes; retained, but not propagated, would be shown by an
-asterisk (\code{*}).
+The \code{ks}, \nobr{\code{ksa-queue}}, \nobr{\code{ordered-ksa-queue}}
+unit-instance counts are followed by plus signs (\code{+}).  This indicates
+that these unit classes have been defined to be \textit{retained}, meaning
+that their instances are not deleted by our call to
+\nobr{\textbf{delete-blackboard-repository}}.  The plus sign indicates that
+the retention attribute will be propagated to all subclasses of those unit
+classes; retained, but not propagated, would be shown by an asterisk
+(\code{*}).
 
 \REPLindexit{:dsbb}%
 %
-Let's verify this behavior by calling \code{delete-blackboard-repository} and
-then describe the blackboard repository:
+Let's verify this behavior by calling
+\nobr{\textbf{delete-blackboard-repository}} and then describe the blackboard
+repository:
 %
 \W\supp
 \begin{example}
@@ -3794,13 +3827,13 @@ Now start the Agenda Shell, this time with stepping enabled:
 \section{Application Startup and Event Functions}
 \label{sec:application-startup}%
 
-In the last exercise, we needed to create the \code{known-world} space
+In the last exercise, we needed to create the \nobr{\code{known-world}} space
 instance, with \code{x} and \code{y} dimensions, before we started the Agenda
-Shell.  We also needed to call \textbf{delete-blackboard-repository} before
-calling \textbf{start-control-shell} to execute another run of our developing
-application.  It is convenient to have these activities performed
-automatically whenever the control shell is started, so we'll do so in this
-exercise.
+Shell.  We also needed to call \nobr{\textbf{delete-blackboard-repository}}
+before calling \nobr{\textbf{start-control-shell}} to execute another run of
+our developing application.  It is convenient to have these activities
+performed automatically whenever the control shell is started, so we'll do so
+in this exercise.
 
 \fndocrule
 
@@ -3821,7 +3854,7 @@ This exercise shows you how to:
 \subsection*{Prerequisites}
 
 \begin{tightitemize}
-\item The \code{tutorial-example.lisp} file as modified thus far:
+\item The \nobr{\code{tutorial-example.lisp}} file as modified thus far:
 \end{tightitemize}
 %
 \W\supp
@@ -3857,13 +3890,13 @@ This exercise shows you how to:
 \end{example}
 
 \begin{tightitemize}
-\item The \code{:agenda-shell-user} module is loaded
+\item The \nobr{\code{:agenda-shell-user}} module is loaded
 \end{tightitemize}
 
 \subsection*{Step 1: Define an initialization function}
 
-Edit your \code{tutorial-example.lisp} file and add the following function
-definition at the end of the file:
+Edit your \nobr{\code{tutorial-example.lisp}} file and add the following
+function definition at the end of the file:
 %
 \W\supp
 \begin{example}
@@ -3878,29 +3911,29 @@ definition at the end of the file:
 \end{example}
 
 The first thing to note about the function definition is the argument
-signature: \code{initializations} is to be invoked with an event name (which
-is ignored in our function) and possibly other keyword arguments (indicated by
-the \code{\&key} and \code{\&allow-other-keys} lambda list keywords).  This
-argument signature conforms to GBBopen's event-function capabilities, which
-will be introduced in the next step in this exercise.
+signature: \nobr{\code{initializations}} is to be invoked with an event name
+(which is ignored in our function) and possibly other keyword arguments
+(indicated by the \code{\&key} and \nobr{\code{\&allow-other-keys}} lambda
+list keywords).  This argument signature conforms to GBBopen's event-function
+capabilities, which will be introduced in the next step in this exercise.
 
-When \code{initializations} executes, it deletes all of our application unit
-and space instances from the blackboard repository.  Only \code{ks},
-\code{ksa-queue}, and \code{ordered-ksa-queue} unit instances, which are
-defined by the control shell as retained, are not deleted by
-\code{delete-blackboard-repository}.  Then \code{initializations} creates a
-new \code{(known-world)} space instance with ordered dimensions \code{x} and
-\code{y}.
+When \nobr{\code{initializations}} executes, it deletes all of our application
+unit and space instances from the blackboard repository.  Only \code{ks},
+\nobr{\code{ksa-queue}}, and \nobr{\code{ordered-ksa-queue}} unit instances,
+which are defined by the control shell as retained, are not deleted by
+\nobr{\textbf{delete-blackboard-repository}}.  Then
+\nobr{\code{initializations}} creates a new \nobr{\code{(known-world)}} space
+instance with ordered dimensions \code{x} and \code{y}.
 
 \subsection*{Step 2: Add an event function}
 
-GBBopen allows you to attach functions, called \textit{event
-  functions}, that are called whenever a specific event is signaled.
-Each event function must accept the arguments associated with every
-event class to which it is added. In addition, the function should
-accept additional arguments that are associated with all subevents of
-the specified event classes. This is achieved by specifying
-\code{\&allow-other-keys} in the lambda list of the function.
+GBBopen allows you to attach functions, called \textit{event functions}, that
+are called whenever a specific event is signaled.  Each event function must
+accept the arguments associated with every event class to which it is
+added. In addition, the function should accept additional arguments that are
+associated with all subevents of the specified event classes. This is achieved
+by specifying \nobr{\code{\&allow-other-keys}} in the lambda list of the
+function.
 
 Here are GBBopen's defined event classes when the Agenda Shell has
 been loaded:
@@ -3930,7 +3963,8 @@ all control-shell events by evaluating:
   gbbopen-user>}
 \end{example}
 
-Add the following form at the end of your \code{tutorial-example.lisp} file:
+Add the following form at the end of your \nobr{\code{tutorial-example.lisp}}
+file:
 %
 \W\supp
 \begin{example}
@@ -3939,19 +3973,19 @@ Add the following form at the end of your \code{tutorial-example.lisp} file:
                       :priority 100)
 \end{example}
 %
-(We'll place the \textbf{add-event-function} form immediately after the
-\code{initializations} function definition in our file, but this choice of
-location is purely a code organizational style preference---the form could be
-placed anywhere relative to the function definition.)
+(We'll place the \nobr{\textbf{add-event-function}} form immediately after the
+\nobr{\code{initializations}} function definition in our file, but this choice
+of location is purely a code organizational style preference---the form could
+be placed anywhere relative to the function definition.)
 
 \subsection*{Step 3: Run the application}
 
 \bfindexit{start-control-shell}%
 %
 Start a fresh Common Lisp session, compile and load the
-\code{tutorial-example.lisp} file directly from the editor buffer (using
-\code{C-c C-k} in SLIME; \code{C-c C-b} in ELI) and start the Agenda Shell
-again:
+\nobr{\code{tutorial-example.lisp}} file directly from the editor buffer
+(using \nobr{\code{C-c C-k}} in SLIME; \nobr{\code{C-c C-b}} in ELI) and start
+the Agenda Shell again:
 %
 \W\supp
 \begin{example}
@@ -3967,10 +4001,10 @@ again:
 \end{example}
 
 Note that our developing application performs the same as it did in the last
-exercise, but now our \code{initializations} event function is taking care of
-all the details of starting up our application.  We no longer have to remember
-to create the \code{known-world} space instance or to delete the blackboard
-repository before running the application another time.
+exercise, but now our \nobr{\code{initializations}} event function is taking
+care of all the details of starting up our application.  We no longer have to
+remember to create the \nobr{\code{known-world}} space instance or to delete
+the blackboard repository before running the application another time.
 
 \subsection*{Step 4: Run it Again}
 
@@ -3992,17 +4026,18 @@ start the Agenda Shell again:
   gbbopen-user>}
 \end{example}
 
-As before, our \code{initializations} event function took care of all the
-details of starting up our application.
+As before, our \nobr{\code{initializations}} event function took care of all
+the details of starting up our application.
 
 \subsection*{Step 5: It's a new world$\ldots$}
 
 \bfindexit{make-space-instance}%
 %
 GBBopen allows us to restrict the classes of unit instances that can be stored
-on a space instance.  For example, we can limit the \code{known-world} to
-\code{location} unit instances by specifying an \code{:allowed-unit-classes}
-value to \code{make-space-instance}:
+on a space instance.  For example, we can limit the \nobr{\code{known-world}}
+to \nobr{\code{location}} unit instances by specifying an
+\nobr{\code{:allowed-unit-classes}} value to
+\nobr{\textbf{make-space-instance}}:
 %
 \W\supp
 \begin{example}
@@ -4018,12 +4053,12 @@ value to \code{make-space-instance}:
      :dimensions '((x :ordered) (y :ordered))))}
 \end{example}
 %
-Attempting to add any unit-instance that is not a \code{location} to
-\code{known-world} will now generate an error.
+Attempting to add any unit-instance that is not a \nobr{\code{location}} to
+\nobr{\code{known-world}} will now generate an error.
 
 It is often convenient to specify the dimensions of a space-instance relative
 to those of one or more unit classes.  Edit the definition of
-\code{initializations}, removing the \code{x} and \code{y} dimensions
+\nobr{\code{initializations}}, removing the \code{x} and \code{y} dimensions
 specification:
 %
 \W\supp
@@ -4040,9 +4075,8 @@ specification:
      :dimensions \textcolor{red}{'((x :ordered) (y :ordered))}))}
 \end{example}
 %
-and replacing it with a call of \textbf{dimensions-of} to
-obtain the dimensions associated with instances of the \code{location}
-unit class:
+and replacing it with a call of \nobr{\textbf{dimensions-of}} to obtain the
+dimensions associated with instances of the \nobr{\code{location}} unit class:
 %
 \W\supp\notpretop
 \begin{example}
@@ -4060,9 +4094,9 @@ unit class:
 
 \subsection*{Step 6: Run the application again}
 
-Compile and load the \code{tutorial-example.lisp} file directly from the
-editor buffer (using \code{C-c C-k} in SLIME; \code{C-c C-b} in ELI) and start
-the Agenda Shell again:
+Compile and load the \nobr{\code{tutorial-example.lisp}} file directly from
+the editor buffer (using \nobr{\code{C-c C-k}} in SLIME; \nobr{\code{C-c C-b}}
+in ELI) and start the Agenda Shell again:
 %
 \W\supp
 \begin{example}
@@ -4078,7 +4112,7 @@ the Agenda Shell again:
 \end{example}
 
 \bfindexit{describe-space-instance}%
-Verify the dimensionality of the \code{known-world} space instance by
+Verify the dimensionality of the \nobr{\code{known-world}} space instance by
 evaluating:
 %
 \W\supp
@@ -4108,10 +4142,10 @@ evaluating:
 
 The last exercise made it easy to initialize and run our application
 repeatedly by simply starting the Agenda Shell.  We also specified the
-dimensionality of our \code{known-world} space instance relative to the
-dimensional specifications of the \code{location} unit class.  With these
-niceties in place, its time to move beyond our initial \code{location} unit
-instance.
+dimensionality of our \nobr{\code{known-world}} space instance relative to the
+dimensional specifications of the \nobr{\code{location}} unit class.  With
+these niceties in place, its time to move beyond our initial
+\nobr{\code{location}} unit instance.
 
 \fndocrule
 
@@ -4129,7 +4163,7 @@ This exercise shows you how to:
 \subsection*{Prerequisites}
 
 \begin{tightitemize}
-\item The \code{tutorial-example.lisp} file as modified thus far:
+\item The \nobr{\code{tutorial-example.lisp}} file as modified thus far:
 \end{tightitemize}
 %
 \W\supp
@@ -4181,15 +4215,16 @@ This exercise shows you how to:
 \end{example}
 
 \begin{tightitemize}
-\item The \code{:agenda-shell-user} module is loaded
+\item The \nobr{\code{:agenda-shell-user}} module is loaded
 \end{tightitemize}
 
 \subsection*{Step 1: Add  another dimension}
 
 It's time we introduce the notion of time to our application.  Edit the
-\code{location} unit-class definition in \code{tutorial-example.lisp}, adding
-a new slot, \code{time}, to the \code{location} unit class definition and a
-corresponding \code{time} dimensional value:
+\nobr{\code{location}} unit-class definition in
+\nobr{\code{tutorial-example.lisp}}, adding a new slot, \code{time}, to the
+\nobr{\code{location}} unit class definition and a corresponding \code{time}
+dimensional value:
 %
 \W\supp
 \begin{example}
@@ -4204,9 +4239,9 @@ corresponding \code{time} dimensional value:
     (:initial-space-instances (known-world)))}
 \end{example}
 
-Recall that we specified that the dimensions of the \code{known-world} space
-instance that is created by our \code{initializations} function relative to
-the dimensions of the \code{location} unit class:
+Recall that we specified that the dimensions of the \nobr{\code{known-world}}
+space instance that is created by our \nobr{\code{initializations}} function
+relative to the dimensions of the \nobr{\code{location}} unit class:
 %
 \W\supp
 \begin{example}
@@ -4216,11 +4251,13 @@ the dimensions of the \code{location} unit class:
       :dimensions (dimensions-of 'location)))}
 \end{example}
 %
-Therefore, we don't need to modify our call to \code{make-space-instance} in
-order to add \code{time} as a dimension of \code{known-world}.
+Therefore, we don't need to modify our call to
+\nobr{\code{make-space-instance}} in order to add \code{time} as a dimension
+of \nobr{\code{known-world}}.
 
-Next, modify \code{startup-ks-function} in \code{tutorial-example.lisp} so
-that it creates the initial \code{location} unit instance at time 0:
+Next, modify \nobr{\code{startup-ks-function}} in
+\nobr{\code{tutorial-example.lisp}} so that it creates the initial
+\nobr{\code{location}} unit instance at time 0:
 %
 \W\supp
 \begin{example}
@@ -4233,9 +4270,10 @@ that it creates the initial \code{location} unit instance at time 0:
 
 \subsection*{Step 2: A test of time}
 
-Let's verify our work.  Compile and load the \code{tutorial-example.lisp} file
-directly from the editor buffer (using \code{C-c C-k} in SLIME; \code{C-c C-b}
-in ELI) and start the Agenda Shell:
+Let's verify our work.  Compile and load the
+\nobr{\code{tutorial-example.lisp}} file directly from the editor buffer
+(using \nobr{\code{C-c C-k}} in SLIME; \nobr{\code{C-c C-b}} in ELI) and start
+the Agenda Shell:
 %
 \W\supp
 \begin{example}
@@ -4252,7 +4290,8 @@ in ELI) and start the Agenda Shell:
 
 \bfindexit{describe-instance}%
 \bfindexit{find-instance-by-name}%
-Check that the initial \code{location} unit instance is at \code{time} zero:
+Check that the initial \nobr{\code{location}} unit instance is at \code{time}
+zero:
 %
 \W\supp
 \begin{example}
@@ -4275,12 +4314,13 @@ Check that the initial \code{location} unit instance is at \code{time} zero:
 
 \subsection*{Step 3: Define another KS}
 
-Define a KS called \code{random-walk-ks} that:
+Define a KS called \nobr{\code{random-walk-ks}} that:
 %
 \begin{tightitemize}
-\item Is triggered when a \code{location} unit instance is created
+\item Is triggered when a \nobr{\code{location}} unit instance is created
 \item Has a constant KSA rating of 100
-\item Has an execution function called \code{random-walk-ks-function}, which:
+\item Has an execution function called \nobr{\code{random-walk-ks-function}},
+  which:
 \begin{tightitemize}
 \item Checks if we've already walked for 75 locations and prints a message if
   we have. 
@@ -4288,19 +4328,20 @@ Define a KS called \code{random-walk-ks} that:
 \begin{tightitemize}
 \item Determines a random location for which the x and y values are within 10
   of the x and y values of the triggering unit instance (that is, the
-  \code{location} instance whose creation triggered the \code{random-walk-ks}
-  KS)
+  \nobr{\code{location}} instance whose creation triggered the
+  \nobr{\code{random-walk-ks}} KS)
 \item If both of the x and y values for the new random location are between
-  -50 and 50, creates a \code{location} unit instance at the random location;
-  otherwise, prints a message indicating that we've walked off the world
+  -50 and 50, creates a \nobr{\code{location}} unit instance at the random
+  location; otherwise, prints a message indicating that we've walked off the
+  world
 \end{tightitemize}
 \end{tightitemize}
 \end{tightitemize}
 
 \subsubsection*{Step 3a: Define a utility function}
 
-Begin implementing the \code{random-walk-ks} by adding the following
-utility function to the end of your \code{tutorial-example.lisp} file:
+Begin implementing the \nobr{\code{random-walk-ks}} by adding the following
+utility function to the end of your \nobr{\code{tutorial-example.lisp}} file:
 %
 \W\supp
 \begin{example}
@@ -4313,8 +4354,8 @@ utility function to the end of your \code{tutorial-example.lisp} file:
     (+ value (- (random (1+ (* max-variance 2))) max-variance)))
 \end{example}
 %
-Then compile the definition (using \code{C-c C-c} in SLIME or \code{C-c
-  C-x} in ELI) and evaluate the following test in the REPL:
+Then compile the definition (using \nobr{\code{C-c C-c}} in SLIME or
+\nobr{\code{C-c C-x}} in ELI) and evaluate the following test in the REPL:
 %
 \bfindex{printv}%
 %
@@ -4341,7 +4382,7 @@ Then compile the definition (using \code{C-c C-c} in SLIME or \code{C-c
   gbbopen-user>}
 \end{example}
 
-Because \code{add-linear-variance} is stochastic, your results will be
+Because \nobr{\code{add-linear-variance}} is stochastic, your results will be
 similar but not identical.  Note that we used GBBopen's \textbf{printv}
 macro to display the result of each generated value.  \textbf{Printv} can
 greatly assist debugging by printing forms and the results of evaluating
@@ -4366,7 +4407,7 @@ its body and returns the values resulting from evaluating the last form:
 \subsubsection*{Step 3b: Define the \code{random-walk-ks} execution function}
 
 Next add the following KS-execution function to the end of your
-\code{tutorial-example.lisp} file:
+\nobr{\code{tutorial-example.lisp}} file:
 %
 \W\supp
 \begin{example}
@@ -4397,18 +4438,18 @@ Next add the following KS-execution function to the end of your
 \bfindex{sole-trigger-instance-of}%
 %
 Unlike the KS-execution functions that we have defined previously,
-\code{random-walk-ks-function} does not ignore its \code{ksa} argument.
-Instead, it calls \textbf{sole-trigger-instance-of} with the \code{ksa}
-unit-instance argument in order to obtain the \code{location} unit instance
-whose creation triggered the KSA.  This pattern of obtaining the unit instance
-that triggered a KSA and then using that triggering unit instance as the
-context for the KS execution is typical of many KSs. 
+\nobr{\code{random-walk-ks-function}} does not ignore its \code{ksa} argument.
+Instead, it calls \nobr{\textbf{sole-trigger-instance-of}} with the \code{ksa}
+unit-instance argument in order to obtain the \nobr{\code{location}} unit
+instance whose creation triggered the KSA.  This pattern of obtaining the unit
+instance that triggered a KSA and then using that triggering unit instance as
+the context for the KS execution is typical of many KSs.
 
 \subsubsection*{Step 3c: Add the \code{random-walk-ks} definition}
 
-Finally, add this \code{define-ks} form to the end of your
-\code{tutorial-example.lisp} file to complete the \code{random-walk-ks}
-definition:
+Finally, add this \nobr{\code{define-ks}} form to the end of your
+\nobr{\code{tutorial-example.lisp}} file to complete the
+\nobr{\code{random-walk-ks}} definition:
 %
 \bfindexit{define-ks}%
 %
@@ -4424,8 +4465,8 @@ definition:
 
 \bfindexit{start-control-shell}%
 %
-Compile and load the \code{random-walk-ks} forms, and then start the Agenda
-Shell:
+Compile and load the \nobr{\code{random-walk-ks}} forms, and then start the
+Agenda Shell:
 %
 \W\supp
 \begin{example}
@@ -4444,10 +4485,10 @@ Shell:
 
 \REPLindexit{:dsbb}%
 %
-It looks like something happened! (Again, because \code{add-linear-variance}
-is stochastic, your results will be similar but not identical.)  Let's look at
-the blackboard repository and see how many \code{location} unit instances were
-created:
+It looks like something happened! (Again, because
+\nobr{\code{add-linear-variance}} is stochastic, your results will be similar
+but not identical.)  Let's look at the blackboard repository and see how many
+\nobr{\code{location}} unit instances were created:
 %
 \W\supp
 \begin{example}
@@ -4471,21 +4512,22 @@ created:
   gbbopen-user>}
 \end{example}
 
-The 61 \code{location} instances makes sense.  Previously, it required 3
-control-shell cycles to create the initial \code{location} unit instance (one
-to execute the \code{initial-ks} KSA followed by two additional cycles of
-quiescence before the Agenda Shell exits).  We now create one additional
-\code{location} unit instance with every execution of \code{random-walk-ks},
-so we always create 3 fewer \code{location} instances than the total
-number of control-shell cycles.
+The 61 \nobr{\code{location}} instances makes sense.  Previously, it required
+3 control-shell cycles to create the initial \nobr{\code{location}} unit
+instance (one to execute the \nobr{\code{initial-ks}} KSA followed by two
+additional cycles of quiescence before the Agenda Shell exits).  We now create
+one additional \nobr{\code{location}} unit instance with every execution of
+\nobr{\code{random-walk-ks}}, so we always create 3 fewer
+\nobr{\code{location}} instances than the total number of control-shell
+cycles.
 
 \subsection*{Step 5:  Where have we been?}
 
 \bfindexit{map-instances-of-class}%
 %
 It would be interesting to see where our random walk has taken us.  We could
-use GBBopen's \textbf{map-instances-of-class} iterator to print each of the
-\code{location} unit instances:
+use GBBopen's \nobr{\textbf{map-instances-of-class}} iterator to print each of
+the \nobr{\code{location}} unit instances:
 %
 \W\supp
 \begin{example}
@@ -4519,7 +4561,7 @@ use GBBopen's \textbf{map-instances-of-class} iterator to print each of the
 %
 Unfortunately, the order that unit instances are supplied to the \code{print}
 function is not controllable.  Our walk would be much clearer if we printed
-the \code{location}s in time order.
+the \nobr{\code{location}} unit instances in time order.
 
 \bfindex{map-sorted-instances-of-class}%
 %
@@ -4562,21 +4604,22 @@ to unit instances.  We could do something like the following:
 \end{example}
 
 This is a bad idea for several reasons.  First, we are looking up every
-\code{location} unit instance by its instance name, which is less efficient
-than operating on \code{location} instances directly.  While this isn't an
-significant issue in expressions that we evaluate in the REPL to investigate
-our application, we should seek to avoid such inefficiencies in application
-code.  More importantly, however, the \code{location} instance name just
-happens to mirror the sequencing that we really want to display---the
-\code{time} value of the \code{location}s.  We should find a way to sequence
-\code{location} printing that relies on the \code{time} values directly.
+\nobr{\code{location}} unit instance by its instance name, which is less
+efficient than operating on \nobr{\code{location}} instances directly.  While
+this isn't an significant issue in expressions that we evaluate in the REPL to
+investigate our application, we should seek to avoid such inefficiencies in
+application code.  More importantly, however, the \nobr{\code{location}}
+instance name just happens to mirror the sequencing that we really want to
+display: the \code{time} value of the locations.  We should find a way to
+sequence \nobr{\code{location}} printing that relies on the \code{time} values
+directly.
 
 \bfindex{map-sorted-instances-of-class}%
 %
-GBBopen provides a variant of \textbf{map-instances-of-class}, called
-\textbf{map-sorted-instances-of-class}, that sorts the unit instances based on
-a comparison predicate and an optional \code{:key} accessor function that
-suits our needs:
+GBBopen provides a variant of \nobr{\textbf{map-instances-of-class}}, called
+\nobr{\textbf{map-sorted-instances-of-class}}, that sorts the unit instances
+based on a comparison predicate and an optional \code{:key} accessor function
+that suits our needs:
 %
 \W\supp
 \begin{example}
@@ -4613,20 +4656,20 @@ suits our needs:
 
 \bfindex{do-sorted-instances-of-class}%
 %
-Using \textbf{map-sorted-instances-of-class} involves a sorting operation, so
-this approach still has some efficiency concerns for use in application code.
-However, it suits our REPL-exploration needs just fine.  (There is a
-\textbf{do-sorted-instances-of-class} macro, if an iterative style is
-preferred over a mapper.)  We will explore a more efficient approach to
-displaying the random walk in the next exercise.
+Using \nobr{\textbf{map-sorted-instances-of-class}} involves a sorting
+operation, so this approach still has some efficiency concerns for use in
+application code.  However, it suits our REPL-exploration needs just fine.
+(There is a \nobr{\textbf{do-sorted-instances-of-class}} macro, if an
+iterative style is preferred over a mapper.)  We will explore a more efficient
+approach to displaying the random walk in the next exercise.
 
 \subsection*{Step 6:  Run the application a few more times}
 
 \bfindexit{start-control-shell}%
 %
 If we run the application a few more times, we eventually encounter a case
-where we create the allotted 75 \code{location} unit instances without walking
-off the \code{known-world}:
+where we create the allotted 75 \nobr{\code{location}} unit instances without
+walking off the \nobr{\code{known-world}}:
 %
 \W\supp
 \begin{example}
@@ -4691,10 +4734,11 @@ Here is one such random walk:
 %\end{center}
 
 We finally did some walking in the last exercise and learned how to display
-the \code{location}s in our walk from the REPL.  In this exercise, we learn
-how to use GBBopen's link capabilities to represent relationships among unit
-instances.  Links are an important aspect of almost every GBBopen application,
-so it's time that we started taking advantage of them.
+the \nobr{\code{location}} unit instances in our walk from the REPL.  In this
+exercise, we learn how to use GBBopen's link capabilities to represent
+relationships among unit instances.  Links are an important aspect of almost
+every GBBopen application, so it's time that we started taking advantage of
+them.
 
 \fndocrule
 
@@ -4709,7 +4753,7 @@ This exercise shows you how to:
 \subsection*{Prerequisites}
 
 \begin{tightitemize}
-\item The \code{tutorial-example.lisp} file as modified thus far:
+\item The \nobr{\code{tutorial-example.lisp}} file as modified thus far:
 \end{tightitemize}
 %
 \begin{example}
@@ -4799,15 +4843,15 @@ This exercise shows you how to:
 \end{example}
 
 \begin{tightitemize}
-\item The \code{:agenda-shell-user} module is loaded
+\item The \nobr{\code{:agenda-shell-user}} module is loaded
 \end{tightitemize}
 
 \subsection*{Step 1: Add  a link}
 
-In the last exercise, we used \textbf{map-sorted-instances-of-class} to
+In the last exercise, we used \nobr{\textbf{map-sorted-instances-of-class}} to
 display the random walk.  Another way that we could represent the walk is by
-connect each newly created \code{location} unit instance to the
-\code{location} unit instance that preceded it in the walk.  We'll use
+connect each newly created \nobr{\code{location}} unit instance to the
+\nobr{\code{location}} unit instance that preceded it in the walk.  We'll use
 GBBopen's link capabilities to do this.
 
 A \textit{link} is a bidirectional relationship between two unit instances
@@ -4820,9 +4864,10 @@ when creating new links, deleting existing links, or deleting unit instances.
 Links remove the possibility of ``one-sided'' relationships or ``dangling''
 pointers to deleted unit instances.
 
-Edit the \code{location} unit-class definition in your
-\code{tutorial-example.lisp} file, adding two link slots, \code{next-location}
-and \code{previous-location}, to the \code{location} unit class definition:
+Edit the \nobr{\code{location}} unit-class definition in your
+\nobr{\code{tutorial-example.lisp}} file, adding two link slots,
+\nobr{\code{next-location}} and \nobr{\code{previous-location}}, to the
+\nobr{\code{location}} unit class definition:
 %
 \W\supp
 \begin{example}
@@ -4846,18 +4891,19 @@ and \code{previous-location}, to the \code{location} unit class definition:
 Each link-slot specification is a list whose first element is the name of the
 link slot.  This is followed by the link slot option \code{:link} and a
 concise specification of the inverse link slot associated with that link slot.
-In this case, the \code{next-location}/\code{previous-location} link is
-between instances of the same (\code{location}) unit class, but often links
-are between instances of different unit classes. 
+In this case, the \nobr{\code{next-location}/\code{previous-location}} link is
+between instances of the same (\nobr{\code{location}}) unit class, but often
+links are between instances of different unit classes.
 
 Links can be many-to-many, many-to-one, one-to-many, or one-to-one.  In this
-case, the \code{next-location}/\code{previous-location} link is one-to-one,
-which is specified by including the \code{:singular t} slot option in the
-link-slot definition (and the corresponding \code{:singular t} specification
-in the concise inverse-link-slot specification).  To help clarify the
-specification of link slot arity, let's temporarily assume that we want a
-\code{location} instance that can have many next locations, but only a single
-previous location.  This link relation would be specified as follows:
+case, the \nobr{\code{next-location}/\code{previous-location}} link is
+one-to-one, which is specified by including the \nobr{\code{:singular t}} slot
+option in the link-slot definition (and the corresponding
+\nobr{\code{:singular t}} specification in the concise inverse-link-slot
+specification).  To help clarify the specification of link slot arity, let's
+temporarily assume that we want a \nobr{\code{location}} instance that can
+have many next locations, but only a single previous location.  This link
+relation would be specified as follows:
 %
 \W\supp
 \begin{example}
@@ -4871,27 +4917,27 @@ previous location.  This link relation would be specified as follows:
       ...}
 \end{example}
 
-We've followed the natural GBBopen convention of giving singular link
-slots a singular name (such as \code{previous-location}) and link
-slots that can contain multiple links a plural name (such as
-\code{next-locations}).  Note that the \code{:singular} option is
-associated with the \code{previous-location} link slot as both a slot
-option in the \code{previous-location} link-slot definition and in the
-concise inverse-link-slot specification for \code{previous-location}
-in the \code{next-locations} link-slot definition.
+We've followed the natural GBBopen convention of giving singular link slots a
+singular name (such as \nobr{\code{previous-location}}) and link slots that
+can contain multiple links a plural name (such as
+\nobr{\code{next-locations}}).  Note that the \code{:singular} option is
+associated with the \nobr{\code{previous-location}} link slot as both a slot
+option in the \nobr{\code{previous-location}} link-slot definition and in the
+concise inverse-link-slot specification for \nobr{\code{previous-location}} in
+the \nobr{\code{next-locations}} link-slot definition.
 
 \subsection*{Step 2: Break some links}
 
-The concise inverse-link-slot specification supplied by the
-\code{:link} slot option provides a ``double entry'' redundancy that
-is useful when links are between instances of different unit classes,
-as the link can be understood by viewing either class definition.  The
-redundancy also helps GBBopen recognize inconsistencies in link
-specifications.  The function \textbf{check-link-definitions} asks
-GBBopen to validate that all link definitions are consistent.  Let's
-try it on our current random-walk application.  Compile and load the
-latest changes in your \code{tutorial-example.lisp} file (including
-the new \code{next-location} and \code{previous-location} link slots).
+The concise inverse-link-slot specification supplied by the \code{:link} slot
+option provides a ``double entry'' redundancy that is useful when links are
+between instances of different unit classes, as the link can be understood by
+viewing either class definition.  The redundancy also helps GBBopen recognize
+inconsistencies in link specifications.  The function
+\nobr{\textbf{check-link-definitions}} asks GBBopen to validate that all link
+definitions are consistent.  Let's try it on our current random-walk
+application.  Compile and load the latest changes in your
+\nobr{\code{tutorial-example.lisp}} file (including the new
+\nobr{\code{next-location}} and \nobr{\code{previous-location}} link slots).
 Then check link consistency:
 %
 \W\supp
@@ -4905,11 +4951,12 @@ Then check link consistency:
 %
 GBBopen reports that all link definitions are consistent.
 
-Suppose that we had forgotten to add the \code{previous-location} end
-of the link in our \code{location} unit-class definition. Edit the
-\code{location} unit-class definition in your
-\code{tutorial-example.lisp} file, adding the line \code{\#+ignore}
-immediately before the \code{previous-location} link-slot definition:
+Suppose that we had forgotten to add the \nobr{\code{previous-location}} end
+of the link in our \nobr{\code{location}} unit-class definition. Edit the
+\nobr{\code{location}} unit-class definition in your
+\nobr{\code{tutorial-example.lisp}} file, adding the line
+\nobr{\code{\#+ignore}} immediately before the \nobr{\code{previous-location}}
+link-slot definition:
 %
 \W\supp
 \begin{example}
@@ -4931,14 +4978,14 @@ immediately before the \code{previous-location} link-slot definition:
     (:initial-space-instances (known-world)))}
 \end{example}
 
-The \code{\#+ignore} read-time conditionalization tells Common Lisp to
-skip over the next form if \code{ignore} is not an element of the
-feature list \code{*features*}.  By convention, \code{ignore} is never
-added to \code{*features*}, so \code{\#+ignore} is a handy mechanism
-for temporarily ``commenting out'' a single form.
+The \nobr{\code{\#+ignore}} read-time conditionalization tells Common Lisp to
+skip over the next form if \code{ignore} is not an element of the feature list
+\nobr{\code{*features*}}.  By convention, \code{ignore} is never added to
+\nobr{\code{*features*}}, so nobr{\code{\#+ignore}} is a handy mechanism for
+temporarily ``commenting out'' a single form.
 
-Compile the now-defective definition (using \code{C-c C-c} in SLIME or
-\code{C-c C-x} in ELI) and then recheck link consistency:
+Compile the now-defective definition (using \nobr{\code{C-c C-c}} in SLIME or
+\nobr{\code{C-c C-x}} in ELI) and then recheck link consistency:
 %
 \W\supp
 \begin{example}
@@ -4953,9 +5000,9 @@ Compile the now-defective definition (using \code{C-c C-c} in SLIME or
 %
 As expected, GBBopen alerts us to the problem.
 
-Remove the \code{\#+ignore} that we just added and comment out the
-\code{:singular t} portion of the inverse link-slot specification in 
-\code{next-location}:
+Remove the \nobr{\code{\#+ignore}} that we just added and comment out the
+\nobr{\code{:singular t}} portion of the inverse link-slot specification in 
+\nobr{\code{next-location}}:
 %
 \W\supp
 \begin{example}
@@ -4977,8 +5024,8 @@ Remove the \code{\#+ignore} that we just added and comment out the
     (:initial-space-instances (known-world)))}
 \end{example}
 %
-Compile the again-defective definition (using \code{C-c C-c} in SLIME or
-\code{C-c C-x} in ELI) and then recheck link consistency:
+Compile the again-defective definition (using \nobr{\code{C-c C-c}} in SLIME or
+\nobr{\code{C-c C-x}} in ELI) and then recheck link consistency:
 %
 \W\supp\notpretop
 \begin{example}
@@ -4993,8 +5040,8 @@ Compile the again-defective definition (using \code{C-c C-c} in SLIME or
 %
 Once again, GBBopen has alerted us to the problem.
 
-Restore the \code{:singular t} portion of the inverse link-slot
-specification in \code{next-location} that we just commented out:
+Restore the \nobr{\code{:singular t}} portion of the inverse link-slot
+specification in \nobr{\code{next-location}} that we just commented out:
 %
 \W\supp
 \begin{example}
@@ -5028,11 +5075,12 @@ Then recompile and recheck link consistency:
 
 \subsection*{Step 3: Create some links}
 
-Let's use our newly defined \code{next-location}/\code{previous-location} link
-to connect our \code{location} unit instances.  Edit the
-\code{random-walk-ks-function} definition in your \code{tutorial-example.lisp}
-file, adding the trigger instance as a new \code{:previous-location} argument
-to \code{make-instance}:
+Let's use our newly defined
+\nobr{\code{next-location}/\code{previous-location}} link to connect our
+\nobr{\code{location}} unit instances.  Edit the
+\nobr{\code{random-walk-ks-function}} definition in your
+\nobr{\code{tutorial-example.lisp}} file, adding the trigger instance as a new
+\nobr{\code{:previous-location}} argument to \nobr{\textbf{make-instance}}:
 %
 \W\supp
 \begin{example}
@@ -5062,8 +5110,8 @@ to \code{make-instance}:
            (t (format t "~2&Walked off the world: (~d, ~d).~\%" x y))))))))}
 \end{example}
 
-Compile the \code{random-walk-ks-function} (using \code{C-c C-c} in SLIME or
-\code{C-c C-x} in ELI) and then run the application:
+Compile the \nobr{\code{random-walk-ks-function}} (using \nobr{\code{C-c C-c}}
+in SLIME or \nobr{\code{C-c C-x}} in ELI) and then run the application:
 %
 \W\supp
 \begin{example}
@@ -5080,8 +5128,8 @@ Compile the \code{random-walk-ks-function} (using \code{C-c C-c} in SLIME or
   gbbopen-user>}
 \end{example}
 
-Let's describe a couple of \code{location} unit instances to check our work.
-First, the initial \code{location} unit instance:
+Let's describe a couple of \nobr{\code{location}} unit instances to check our
+work.  First, the initial \nobr{\code{location}} unit instance:
 %
 \W\supp
 \begin{example}
@@ -5104,8 +5152,8 @@ First, the initial \code{location} unit instance:
   gbbopen-user>}
 \end{example}
 %
-Note that the \code{next-location} link slot points to the next
-\code{location} unit instance in our random walk.  Let's describe that
+Note that the \nobr{\code{next-location}} link slot points to the next
+\nobr{\code{location}} unit instance in our random walk.  Let's describe that
 unit instance:
 %
 \W\supp\notpretop
@@ -5129,10 +5177,10 @@ unit instance:
   gbbopen-user>}
 \end{example}
 %
-The \code{next-location} link slot in \code{location} \code{2} points to the
-third \code{location} unit instance in our random walk and its
-\code{previous-location} link slot points back to the initial \code{location}
-unit instance.
+The \nobr{\code{next-location}} link slot in \nobr{\code{location}} \code{2}
+points to the third \nobr{\code{location}} unit instance in our random walk
+and its \nobr{\code{previous-location}} link slot points back to the initial
+\nobr{\code{location}} unit instance.
 
 We can now follow the links to display the random walk:
 %
@@ -5169,9 +5217,9 @@ We can now follow the links to display the random walk:
 \codeindexit{quiescence-event}%
 \bfindexit{find-instance-by-name}%
 %
-Let's add a new KS, \code{print-walk-ks}, that displays the random walk once
-it is completed. Add the following KS to the end of your
-\code{tutorial-example.lisp} file:
+Let's add a new KS, \nobr{\code{print-walk-ks}}, that displays the random walk
+once it is completed. Add the following KS to the end of your
+\nobr{\code{tutorial-example.lisp}} file:
 %
 \W\supp
 \begin{example}
@@ -5199,27 +5247,28 @@ it is completed. Add the following KS to the end of your
     :execution-function 'print-walk-ks-function)
 \end{example}
 %
-The \code{print-walk-ks} is triggered by a \code{quiescence-event}.  Recall
-that the Agenda Shell signals that quiescence has occurred when no
-executable KSAs are available to be executed and then it continues for an
-additional KS-execution cycle in case any executable KSAs resulted from the
-quiescence event.  So, \code{print-walk-ks} will be triggered once no
-\code{random-walk-ks} KSAs are triggered by newly created \code{location} unit
-instances.
+The \nobr{\code{print-walk-ks}} is triggered by a
+\nobr{\code{quiescence-event}}.  Recall that the Agenda Shell signals that
+quiescence has occurred when no executable KSAs are available to be executed
+and then it continues for an additional KS-execution cycle in case any
+executable KSAs resulted from the quiescence event.  So,
+\nobr{\code{print-walk-ks}} will be triggered once no
+\nobr{\code{random-walk-ks}} KSAs are triggered by newly created
+\nobr{\code{location}} unit instances.
 
-The \code{print-walk-ks-function} follows the
-\code{next-location}/\code{previous-location} link to display the walk.  More
-importantly, the function returns the keyword symbol \code{:stop}.  The Agenda
-Shell checks the value returned by a KS execution function for this special
-indicator and, if it is returned, the control shell is exited.  If we did not
-return \code{:stop}, the \code{print-walk-ks} KS would be triggered and
-activated on the first \code{quiescence-event}, the KSA would execute, then
-the Agenda Shell would detect another quiescence condition, signal a new
-\code{quiescence-event}, and our application would print the random walk over
-and over again.
+The \nobr{\code{print-walk-ks-function}} follows the
+\nobr{\code{next-location}/\code{previous-location}} link to display the walk.
+More importantly, the function returns the keyword symbol \code{:stop}.  The
+Agenda Shell checks the value returned by a KS execution function for this
+special indicator and, if it is returned, the control shell is exited.  If we
+did not return \code{:stop}, the \nobr{\code{print-walk-ks}} KS would be
+triggered and activated on the first \nobr{\code{quiescence-event}}, the KSA
+would execute, then the Agenda Shell would detect another quiescence
+condition, signal a new \nobr{\code{quiescence-event}}, and our application
+would print the random walk over and over again.
 
 Let's compile our latest changes and then run our application with the new
-\code{print-walk-ks} KS in place:
+\nobr{\code{print-walk-ks}} KS in place:
 %
 \W\supp
 \begin{example}
@@ -5286,7 +5335,7 @@ Facility}{sec:module-manager}
 \subsection*{Prerequisites}
 
 \begin{tightitemize}
-\item The \code{tutorial-example.lisp} file as modified thus far:
+\item The \nobr{\code{tutorial-example.lisp}} file as modified thus far:
 %
 \W\supp\notpretop
 \begin{example}
@@ -5405,15 +5454,15 @@ Facility}{sec:module-manager}
 \end{example}
 
 \item The GBBopen environment setup using
-  \code{\var{<install-dir>\/}/initiate.lisp} as described in Steps 1 and 2
-  of the \reflink{Enhancing Your Development Environment
+  \nobr{\code{\var{<install-dir>\/}/initiate.lisp}} as described in Steps 1
+  and 2 of the \reflink{Enhancing Your Development Environment
     exercise}{sec:environment}
 \end{tightitemize}
 
 \subsection*{Step 1: Create your personal \code{gbbopen-modules} directory}
 
-Create a directory named \code{gbbopen-modules} in your \reflink{``homedir''
-  directory}{ref:your-homedir}.  For example:
+Create a directory named \nobr{\code{gbbopen-modules}} in your
+\reflink{``homedir'' directory}{ref:your-homedir}.  For example:
 %
 \W\supp
 \begin{example}
@@ -5424,8 +5473,8 @@ Create a directory named \code{gbbopen-modules} in your \reflink{``homedir''
 %
 This is a special directory that is read by used by GBBopen to find
 applications when GBBopen is started using
-\code{\var{<install-dir>\/}/initiate.lisp}, as described in Steps 1 and 2
-of the \reflink{Enhancing Your Development Environment
+\nobr{\code{\var{<install-dir>\/}/initiate.lisp}}, as described in Steps 1 and
+2 of the \reflink{Enhancing Your Development Environment
   exercise}{sec:environment}.
 
 \subsection*{Step 2: Create a module-definition file for the random-walk application}
@@ -5443,35 +5492,36 @@ shell commands to create my directories:
   [~/tutorial]\$}
 \end{example}
 %
-Then you created the \code{tutorial-example.lisp} file in this \code{source}
-subdirectory. We said that we would explain why we created the \code{source}
-directory in a later exercise.  Well, later has arrived.
+Then you created the \nobr{\code{tutorial-example.lisp}} file in this
+\code{source} subdirectory. We said that we would explain why we created the
+\code{source} directory in a later exercise.  Well, later has arrived.
 
 Each GBBopen application is packaged in a directory that contains:
 \begin{tightitemize}
-\item a \code{modules.lisp} file that contains module definitions (loaded
-  after the personal \code{gbbopen-init.lisp} file if
-  there is one in the user's ``homedir'')
+\item a \nobr{\code{modules.lisp}} file that contains module definitions
+  (loaded after the personal \nobr{code{gbbopen-init.lisp}} file if there is
+  one in the user's ``homedir'')
 \item a directory named \code{source} containing all the source files for the
   module or application
-\item an optional \code{commands.lisp} file that specifies REPL commands
-  for the module (loaded after the personal \code{gbbopen-commands.lisp} file
-  if there is one in the user's ``homedir'')
+\item an optional \nobr{\code{commands.lisp}} file that specifies REPL
+  commands for the module (loaded after the personal
+  \nobr{\code{gbbopen-commands.lisp}} file if there is one in the user's
+  ``homedir'')
 \end{tightitemize}
 %
 You already have the \code{source} directory and the
-\code{tutorial-example.lisp} source file.  Next, we create the
-\code{modules.lisp} file for the application.  (We will create a
-\code{commands.lisp} file for the random-walk application in Step 5.)
+\nobr{\code{tutorial-example.lisp}} source file.  Next, we create the
+\nobr{\code{modules.lisp}} file for the application.  (We will create a
+\nobr{\code{commands.lisp}} file for the random-walk application in Step 5.)
 
-Use your Common Lisp editor to create a new file named \code{modules.lisp} in
-the \code{tutorial} directory (just as you created the
-\code{tutorial-example.lisp} file in Step 2 of \reflink{Working Within a File
-  exercise}{sec:file}.  Note that this file is \textit{not\/} in the
-\code{source} subdirectory, but in the \code{tutorial} directory that contains
-the \code{source} subdirectory.
+Use your Common Lisp editor to create a new file named
+\nobr{\code{modules.lisp}} in the \code{tutorial} directory (just as you
+created the \nobr{\code{tutorial-example.lisp}} file in Step 2 of
+\reflink{Working Within a File exercise}{sec:file}.  Note that this file is
+\textit{not\/} in the \code{source} subdirectory, but in the \code{tutorial}
+directory that contains the \code{source} subdirectory.
 
-Type the following two forms into the new \code{modules.lisp}
+Type the following two forms into the new \nobr{\code{modules.lisp}}
 file:
 %
 \W\supp
@@ -5485,34 +5535,35 @@ file:
 %
 and then save the file.
 
-Recall that the \code{in-package} form specifies the Common Lisp package that
-is made current when the file is compiled or loaded.  A \code{modules.lisp}
-file should always specify the \code{:module-manager-user} package as the first
-form in the file.
+Recall that the \nobr{\code{in-package}} form specifies the Common Lisp
+package that is made current when the file is compiled or loaded.  A
+\nobr{\code{modules.lisp}} file should always specify the
+\nobr{\code{:module-manager-user}} package as the first form in the file.
 
 The second form defines our application module, which we will name
 \code{:tutorial}.  The \code{:requires} subform specifies that the
-\code{:agenda-shell-user} module must be compiled (if necessary) and then
-loaded before our \code{:tutorial} module.  The \code{:files} subform
+\nobr{\code{:agenda-shell-user}} module must be compiled (if necessary) and
+then loaded before our \code{:tutorial} module.  The \code{:files} subform
 specified the files that comprise the module. In our case, there is one file:
-\code{tutorial-example.lisp}.  We leave off the \code{.lisp} file extension,
-as the \xreflink{Module Manager}{sec:module-manager} will add the
+\nobr{\code{tutorial-example.lisp}}.  We leave off the \code{.lisp} file
+extension, as the \xreflink{Module Manager}{sec:module-manager} will add the
 appropriate source or compiled file extension for us.
 
 \subsection*{Step 3: Add the random-walk application to your personal
   \code{gbbopen-modules} directory}
 
-The \code{gbbopen-modules} directory in your ``homedir'' is expected to
+The \nobr{\code{gbbopen-modules}} directory in your ``homedir'' is expected to
 consist of directories each containing an individual GBBopen application.  We
-could place the random-walk application directly in the \code{gbbopen-modules}
-directory by moving the \code{tutorial} directory there.  However, it is
-generally more convenient to use a symbolic link to point to the actual
-application directory.  For example, an application can be provided to a
-number of users by creating a symbolic link to the application directory in
-each user's \code{gbbopen-modules} directory.
+could place the random-walk application directly in the
+\nobr{\code{gbbopen-modules}} directory by moving the \code{tutorial}
+directory there.  However, it is generally more convenient to use a symbolic
+link to point to the actual application directory.  For example, an
+application can be provided to a number of users by creating a symbolic link
+to the application directory in each user's \nobr{\code{gbbopen-modules}}
+directory.
 
 Unless you are running Windows, add the random-walk application to your
-\code{gbbopen-applications} by creating a symbolic link.  For example:
+\nobr{\code{gbbopen-applications}} by creating a symbolic link.  For example:
 %
 \W\supp
 \begin{example}
@@ -5528,7 +5579,8 @@ Instead of creating a symbolic link, GBBopen also supports a special ``pseudo
 symbolic-link'' file that can be used with Windows.  This is simply a text
 file with the file extension \code{.sym} that contains the target directory
 path as the sole line in the file.  For example, you could create the file
-\code{tutorial.sym} in your \code{gbbopen-modules} directory with:
+\nobr{\code{tutorial.sym}} in your \nobr{\code{gbbopen-modules}} directory
+with:
 %
 \W\supp
 \begin{example}
@@ -5558,12 +5610,15 @@ the following files should be loaded:
   cl-user>}
 \end{example}
 
-Note that some basic GBBopen initialization files have been loaded for us (but
-no command definitions yet) and that GBBopen itself (or even the Module
-Manager Facility) are not loaded by \code{\var{<install-dir>\/}/initiate.lisp}.
+Note that some basic GBBopen initialization files have been loaded for us as
+well as GBBopen's command definitions and any command definitions for
+applications linked from our \nobr{\code{\var{<homedir>\/}/gbbopen-modules/}}
+directory. No module definitions have been defined yet, and GBBopen itself (or
+even the Module Manager Facility) were not loaded by
+\nobr{\code{\var{\mbox{<install-dir>\/}}/initiate.lisp}.}
 
-Now, instead of loading the \code{:agenda-shell-user} module, let's load only
-the \code{:module-manager-user} module:
+Now, instead of loading the \nobr{\code{:agenda-shell-user}} module, let's
+load only the \nobr{\code{:module-manager-user}} module:
 %
 \W\supp
 \begin{example}
@@ -5579,15 +5634,15 @@ the \code{:module-manager-user} module:
 \end{example}
 %
 Note that when the Module Manager was loaded as part of loading the
-\code{:module-manager-user} module, the module definitions for our personal
-GBBopen modules were loaded automatically.  (In this case, the
-\code{\var{<homedir>\/}/tutorial/modules.lisp} file.)  
+\nobr{\code{:module-manager-user}} module, the module definitions for our
+personal GBBopen modules were loaded automatically.  (In this case, the
+\nobr{\code{\var{<homedir>\/}/tutorial/modules.lisp}} file.)
 
 \REPLindex{:cm}%
 %
 Now that we have defined our \code{:tutorial} module, we can use the
-\textbf{compile-module} REPL command, \code{:cm}, to compile (if needed) and
-load it:
+\nobr{\textbf{compile-module}} REPL command, \code{:cm}, to compile (if
+needed) and load it:
 %
 \W\supp
 \begin{example}
@@ -5607,17 +5662,18 @@ load it:
 \end{example}
 %
 The \code{:requires} in our \code{:tutorial} module definition causes the
-\code{:agenda-shell-user} module (and its required modules) to be loaded for
-us.  Then the Module Manager stops with a continuable error, telling us
-that the directory to hold the compiled application files does not exist.  The
-compiled files are put in a Common Lisp and platform-specific subdirectory,
-\code{<\var{platform-dir>\/}}, in our \code{tutorial} directory that mirrors
-the \code{source} directory.  This organization makes it easy to use the
-application with a number of Common Lisp implementations and on a file system
-shared with a number of different hosts and operating systems.
+\nobr{\code{:agenda-shell-user}} module (and its required modules) to be
+loaded for us.  Then the Module Manager stops with a continuable error,
+telling us that the directory to hold the compiled application files does not
+exist.  The compiled files are put in a Common Lisp and platform-specific
+subdirectory, \nobr{\code{<\var{platform-dir>\/}}}, in our \code{tutorial}
+directory that mirrors the \code{source} directory.  This organization makes
+it easy to use the application with a number of Common Lisp implementations
+and on a file system shared with a number of different hosts and operating
+systems.
 
 We could have avoided this continuable error by providing the
-\code{:create-dirs} option to the \code{:cm} command:
+\nobr{\code{:create-dirs}} option to the \code{:cm} command:
 %
 \W\supp
 \begin{example}
@@ -5625,7 +5681,7 @@ We could have avoided this continuable error by providing the
   module-manager-user> :cm :tutorial :create-dirs}
 \end{example}
 %
-to allow the Module Manager to create the \code{<\var{platform-dir>\/}}
+to allow the Module Manager to create the \nobr{\code{<\var{platform-dir>\/}}}
 subdirectory automatically for us.  Since we did not do this, we can still
 continue from the error:
 %
@@ -5650,35 +5706,37 @@ module.
 It is convenient to define a REPL command to compile and load you application
 (and any required GBBopen modules).  
 
-Use your Common Lisp editor to create a new file named \code{commands.lisp} in
-the \code{tutorial} directory. Type the following two forms into the new
-\code{commands.lisp} file:
+Use your Common Lisp editor to create a new file named
+\nobr{\code{commands.lisp}} in the \code{tutorial} directory. Type the
+following two forms into the new \nobr{\code{commands.lisp}} file:
 %
 \bfindex{define-repl-command}%
 %
 \W\supp
 \begin{example}
-(in-package :common-lisp-user)
+  (in-package :common-lisp-user)
 
-(define-repl-command :tutorial (\&rest options)
-  "Compile and load the Random-Walk Tutorial Application Module"
-  (startup-module :tutorial options :gbbopen-user))
+  (define-repl-command :tutorial (\&rest options)
+    "Compile and load the Random-Walk Tutorial Application Module"
+    (startup-module :tutorial options :gbbopen-user))
 \end{example}
 %
-and then save the file.  A \code{commands.lisp} file should always specify the
-\code{:common-lisp-user} package as the first form in the file.
+and then save the file.  A \nobr{\code{commands.lisp}} file should always
+specify the \nobr{\code{:common-lisp-user}} package as the first form in the
+file.
 
-The \textbf{define-repl-command} form adds a REPL command, named
-\code{:tutorial}, to the set of handy REPL commands.  The
-\textbf{startup-module} call does all the work associated with executing the
-command.  The first argument to \textbf{startup-module} specifies that the
-\code{:tutorial} module will be compiled (if necessary) and then loaded by the
-\xreflink{Module Manager}{sec:module-manager} when the \code:{tutorial}
-command is issued.  The second, \code{options}, argument passes any options
-given with the command to a \textbf{compile-module} call that is performed by
-\textbf{startup-module}.  The third argument, \code{:gbbopen-user} is optional
-and specifies that the REPL's current package should be changed to
-\code{:gbbopen-user} after the \code{:tutorial} module is loaded.
+The \nobr{\textbf{define-repl-command}} form adds a REPL command, named
+\nobr{\code{:tutorial}}, to the set of handy REPL commands.  The
+\nobr{\textbf{startup-module}} call does all the work associated with
+executing the command.  The first argument to \nobr{\textbf{startup-module}}
+specifies that the \code{:tutorial} module will be compiled (if necessary) and
+then loaded by the \xreflink{Module Manager}{sec:module-manager} when the
+\code:{tutorial} command is issued.  The second, \code{options}, argument
+passes any options given with the command to a \nobr{\textbf{compile-module}}
+call that is performed by \nobr{\textbf{startup-module}}.  The third argument,
+\nobr{\code{:gbbopen-user}} is optional and specifies that the REPL's current
+package should be changed to \nobr{\code{:gbbopen-user}} after the
+\code{:tutorial} module is loaded.
 
 \subsection*{Step 6: Try the \code{:tutorial} command}
 
@@ -5701,8 +5759,9 @@ the following files should be loaded:
   cl-user>}
 \end{example}
 %
-Note that the \code{commands.lisp} file from the \code{tutorial} directory has
-been loaded by \code{\var{<install-dir>\/}/initiate.lisp}.
+Note that the \nobr{\code{commands.lisp}} file from the \code{tutorial}
+directory has been loaded by
+\nobr{\code{\var{<install-dir>\/}/initiate.lisp}}.
 
 Now, we can compile and load the \code{:tutorial} module by simply issuing the
 \code{:tutorial} REPL command:
@@ -5721,8 +5780,8 @@ With the command definition in place, we are able to compile and load our
 random-walk application by issuing a single command, \code{:tutorial}.
 
 Note a potential continuable error due to a missing
-\code{\var{<platform-dir>\/}} subdirectory can always be avoided by providing
-the \code{:create-dirs} option to the \code{:tutorial} command:
+\nobr{\code{\var{<platform-dir>\/}}} subdirectory can always be avoided by
+providing the \nobr{\code{:create-dirs}} option to the \code{:tutorial} command:
 %
 \W\supp
 \begin{example}
@@ -5730,46 +5789,47 @@ the \code{:create-dirs} option to the \code{:tutorial} command:
   gbbopen-user> :tutorial :create-dirs}
 \end{example}
 %
-to allow the Module Manager to create the \code{\var{<platform-dir>\/}}
+to allow the Module Manager to create the \nobr{\code{\var{<platform-dir>\/}}}
 subdirectory automatically for us.  However, since we created
-\code{\var{<platform-dir>\/}} in Step 4, we did not need to specify the
-\code{:create-dirs} option again in this step.
+\nobr{\code{\var{<platform-dir>\/}}} in Step 4, we did not need to specify the
+\nobr{\code{:create-dirs}} option again in this step.
 
 \subsection*{Step 7: Create missing subdirectories automatically}
 
 \bfindex{*automatically-create-missing-directories*} 
 %
-If you prefer, you can specify that the Module Manager should always
-create missing \code{\var{<platform-dir>\/}} directories and subdirectories
+If you prefer, you can specify that the Module Manager should always create
+missing \nobr{\code{\var{<platform-dir>\/}}} directories and subdirectories
 instead of signaling an continuable error if one is missing (and
-\code{:create-dirs} was not specified).  This behavior is controlled by the
-value of the symbol \textbf{*automatically-create-missing-directories*}, which
-is in the \code{:common-lisp-user} package and is set to \nil{} by default.
-If you wish, add the following form to your \code{shared-init.lisp} file (in
-your ``homedir'' directory):
+\nobr{\code{:create-dirs}} was not specified).  This behavior is controlled by
+the value of the symbol
+\nobr{\textbf{*automatically-create-missing-directories*}}, which is in the
+\nobr{\code{:common-lisp-user}} package and is set to \nil{} by default.  If
+you wish, add the following form to your \nobr{\code{shared-init.lisp}} file
+(in your ``homedir'' directory):
 %
 \W\supp
 \begin{example}
   (defparameter *automatically-create-missing-directories* 't)
 \end{example}
 
-I actually prefer to have the Module Manager generate the continuable
-error if it has to create a \code{\var{<platform-dir>\/}} directory and I
-didn't specify \code{:create-dirs}, so I leave
-\textbf{*automatically-create-missing-directories*} set to the default \nil{}
-value.
+I actually prefer to have the Module Manager generate the continuable error if
+it has to create a \nobr{\code{\var{<platform-dir>\/}}} directory and I didn't
+specify \nobr{\code{:create-dirs}}, so I leave
+\nobr{\textbf{*automatically-create-missing-directories*}} set to the default
+\nil{} value.
 
 \subsection*{Step 8: Create and use an application-specific package}
 
 We have been developing our random-walk application in GBBopen's
-\code{:gbbopen-user} package.  The \code{:gbbopen-user} package is convenient,
-and we could continue using it.  However, if we develop multiple GBBopen
-applications in the \code{:gbbopen-user} package and load several of them at
-the same time, symbol-name clashes could occur.
+\nobr{\code{:gbbopen-user}} package.  The \nobr{\code{:gbbopen-user}} package
+is convenient, and we could continue using it.  However, if we develop
+multiple GBBopen applications in the \nobr{\code{:gbbopen-user}} package and
+load several of them at the same time, symbol-name clashes could occur.
 
 To eliminate this possibility, we can create our own package for the
 random-walk application.  First, let's determine what packages are being used
-by GBBopen's \code{:gbbopen-user} package.  Evaluate the following:
+by GBBopen's \nobr{\code{:gbbopen-user}} package.  Evaluate the following:
 %
 \W\supp
 \begin{example}
@@ -5784,8 +5844,9 @@ by GBBopen's \code{:gbbopen-user} package.  Evaluate the following:
 \subsubsection*{Change \code{tutorial-example.lisp}}
 %
 We want our new \code{:tutorial} package to use the same packages that the
-\code{:agenda-shell-user} package used. Edit your \code{tutorial-example.lisp}
-file and replace the \code{:gbbopen-user} package specification:
+\nobr{\code{:agenda-shell-user}} package used. Edit your
+\nobr{\code{tutorial-example.lisp}} file and replace the
+\nobr{\code{:gbbopen-user}} package specification:
 %
 \W\supp
 \begin{example}
@@ -5807,20 +5868,20 @@ with the following:
 %
 and save the file.
 
-Note the use of \code{eval-when} in the first form above.  Normally, top-level
-forms in a file are not evaluated at compile time.  In this case, however, we
-want to define the \code{:tutorial} package when needed, whether the file is
-being compiled or loaded.  The \code{eval-when} special operator with the
-three situations (\code{:compile-toplevel}, \code{:load-toplevel}, and \code{
-  :execute}) provides this behavior to the forms that it contains.  Such
-\code{eval-when} forms are a standard Common Lisp idiom for compile-time and
-load-time evaluation.
+Note the use of \nobr{\code{eval-when}} in the first form above.  Normally,
+top-level forms in a file are not evaluated at compile time.  In this case,
+however, we want to define the \code{:tutorial} package when needed, whether
+the file is being compiled or loaded.  The \nobr{\code{eval-when}} special
+operator with the three situations (\nobr{\code{:compile-toplevel}},
+\nobr{\code{:load-toplevel}}, and \code{ :execute}) provides this behavior to
+the forms that it contains.  Such \nobr{\code{eval-when}} forms are a standard
+Common Lisp idiom for compile-time and load-time evaluation.
 
 \subsubsection*{An application feature}
 %
 In my applications, I also add a feature to Common Lisp's \code{*features*}
 list to indicate that the application has been fully loaded.  To do this, add
-the following at the end of your \code{tutorial-example.lisp} file:
+the following at the end of your \nobr{\code{tutorial-example.lisp}} file:
 %
 \W\supp
 \begin{example}
@@ -5831,8 +5892,9 @@ and save the file.
 
 \subsubsection*{Change \code{commands.lisp}}
 %
-Next, edit your \code{commands.lisp} file and delete the \code{:gbbopen-user}
-package-name argument to \textbf{startup-module}:
+Next, edit your \nobr{\code{commands.lisp}} file and delete the
+\nobr{\code{:gbbopen-user}} package-name argument to
+\nobr{\textbf{startup-module}}:
 %
 \W\supp
 \begin{example}
@@ -5858,9 +5920,9 @@ Save the file.
 
 \bfindex{describe-module}%
 %
-Finally, we no longer need the \code{:gbbopen-user} package that is created by
-requiring the \code{:agenda-shell-user} module.  Let's take a closer look at
-the \code{:tutorial} module that we defined:
+Finally, we no longer need the \nobr{\code{:gbbopen-user}} package that is
+created by requiring the \nobr{\code{:agenda-shell-user}} module.  Let's take
+a closer look at the \code{:tutorial} module that we defined:
 %
 \W\supp
 \begin{example}
@@ -5879,12 +5941,14 @@ the \code{:tutorial} module that we defined:
   gbbopen-user>}
 \end{example}
 %
-Although we only specified that the \code{:agenda-shell-user} module was
-required, our \code{:tutorial} module implicitly requires a number of packages
-that are required by the \code{:agenda-shell-user} module and its implicitly
-required packages.  These are shown as the ``Fully expanded requires'' value.
+Although we only specified that the \nobr{\code{:agenda-shell-user}} module
+was required, our \code{:tutorial} module implicitly requires a number of
+packages that are required by the \nobr{\code{:agenda-shell-user}} module and
+its implicitly required packages.  These are shown as the ``Fully expanded
+requires'' value.
 
-If we look at the details of the \code{:agenda-shell-user} module we see:
+If we look at the details of the \nobr{\code{:agenda-shell-user}} module we
+see:
 %
 \W\supp
 \begin{example}
@@ -5902,11 +5966,11 @@ If we look at the details of the \code{:agenda-shell-user} module we see:
   gbbopen-user>}
 \end{example}
 %
-Note that the \code{:agenda-shell-user} module requires two modules:
-\code{:agenda-shell} and \code{:gbbopen-user}. We can eliminate the loading of
-the \code{:gbbopen-user} module by editing our \code{modules.lisp} file and
-delete \code{:agenda-shell-user} in the \code{:requires} option in our
-\code{:tutorial} module definition:
+Note that the \nobr{\code{:agenda-shell-user}} module requires two modules:
+\nobr{\code{:agenda-shell}} and \nobr{\code{:gbbopen-user}}. We can eliminate
+the loading of the \nobr{\code{:gbbopen-user}} module by editing our
+\nobr{\code{modules.lisp}} file and delete \nobr{\code{:agenda-shell-user}} in
+the \code{:requires} option in our \code{:tutorial} module definition:
 %
 \W\supp\notpretop
 \begin{example}
@@ -5918,7 +5982,7 @@ delete \code{:agenda-shell-user} in the \code{:requires} option in our
     (:files "tutorial-example"))}
 \end{example}
 %
-and replace it with \code{:agenda-shell}:
+and replace it with \nobr{\code{:agenda-shell}}:
 %
 \W\supp\notpretop
 \begin{example}
@@ -5986,17 +6050,18 @@ still be able to run the random-walk application:
 %
 \index{shared-gbbopen-modules@\code{shared-gbbopen-modules}, installation-wide application sharing}%
 
-GBBopen also has an \code{\var{<install-directory>\/}/shared-gbbopen-modules}
-directory.  As with our personal \code{gbbopen-modules} directory, this
-\code{shared-gbbopen-modules} directory is assumed to contain symbolic links
-(or ``pseudo-symbolic-link'' files on Windows) to individual GBBopen module
-directory trees.
+GBBopen also has an
+\nobr{\code{\var{<install-directory>\/}/shared-gbbopen-modules}} directory.
+As with our personal \nobr{\code{gbbopen-modules}} directory, this
+\nobr{\code{shared-gbbopen-modules}} directory is assumed to contain symbolic
+links (or ``pseudo-symbolic-link'' files on Windows) to individual GBBopen
+module directory trees.
 
 This is the recommended mechanism for installation-wide managing and sharing
 of modules and applications, and if we wanted to share our random-walk
 application to everyone using our GBBopen installation, we could create our
 symbolic link (or ``pseudo-symbolic-link'' file) in the
-\code{shared-gbbopen-modules} directory.
+\nobr{\code{shared-gbbopen-modules}} directory.
 
 \subsection*{Step 10: Add an ``autorun'' action}
 
@@ -6009,18 +6074,17 @@ loaded.  You could simply add:
   (start-control-shell)}
 \end{example}
 %
-as a top-level form at the end of your \code{tutorial-example.lisp} file.  The
-problem with this is that sometimes you may want to compile and load the
-application without running it.  
+as a top-level form at the end of your \nobr{\code{tutorial-example.lisp}}
+file.  The problem with this is that sometimes you may want to compile and
+load the application without running it.
 
 GBBopen's Module Manager Facility supports a convention that makes it easy to
 conditionalize load-time action execution via the value of
-\textbf{*autorun-modules*}.  Normally, \code{*autorun-modules*} will be
-true, but it can be set to \nil{} when a module is loaded with the
-\code{:noautorun} option.
+\nobr{\textbf{*autorun-modules*}}.  Normally,
+\nobr{\textbf{*autorun-modules*}} will be true, but it can be set to \nil{}
+when a module is loaded with the \code{:noautorun} option.
 
-Add the following at the end of your \code{tutorial-example.lisp}
-file:
+Add the following at the end of your \nobr{\code{tutorial-example.lisp}} file:
 % 
 \W\supp
 \begin{example}
@@ -6028,10 +6092,11 @@ file:
     (format t "~\{~\&~s~\%~\}" (multiple-value-list (start-control-shell))))
 \end{example}
 %
-and save the file.  We could have simply called \textbf{start-control-shell}
-when \code{*autorun-modules*} is true, but then we would not be able to see
-what values are returned by the Agenda Shell.  The \code{format} form above
-prints each returned value on a separate output line.
+and save the file.  We could have simply called
+\nobr{\textbf{start-control-shell}} when \nobr{\code{*autorun-modules*}} is
+true, but then we would not be able to see what values are returned by the
+Agenda Shell.  The \code{format} form above prints each returned value on a
+separate output line.
 
 By convention, the ``autorun'' form is placed at the very end of the file,
 immediately after the form to add \code{:tutorial} to Common Lisp's
@@ -6042,8 +6107,8 @@ occurs when executing the ``autorun'' form.
 \subsection*{Step 11: Try it out}
 
 Enter the \code{:tutorial} REPL command. The modified
-\code{tutorial-example.lisp} file should compile and load, followed by a
-random walk:
+\nobr{\code{tutorial-example.lisp}} file should compile and load, followed by
+a random walk:
 %
 \W\supp
 \begin{example}
@@ -6085,14 +6150,14 @@ Let's try it again:
 %
 This time, nothing happened.  Why?
 
-Since no source files were modified, the Module Manager knows that the
-latest compiled files for the \code{:tutorial} module and its required modules
-have all been loaded.  So, because the \code{tutorial-example} file is not
+Since no source files were modified, the Module Manager knows that the latest
+compiled files for the \code{:tutorial} module and its required modules have
+all been loaded.  So, because the \nobr{\code{tutorial-example}} file is not
 loaded, its ``autorun'' conditional form is not evaluated.
 
 We can tell the Module Manager to always reload the
-\code{tutorial-example} file by editing our \code{modules.lisp} file and
-adding the \code{:reload} file option to the \code{:tutorial} module
+\nobr{\code{tutorial-example}} file by editing our \nobr{\code{modules.lisp}}
+file and adding the \code{:reload} file option to the \code{:tutorial} module
 definition:
 %
 \W\supp
@@ -6106,9 +6171,9 @@ definition:
 Note that once a file has one or more options, the file name and its options
 are enclosed in parentheses.
 
-Save the modified \code{modules.lisp} file. Now, if you try the
-\code{:tutorial} command, the \code{tutorial-example} file will always be
-loaded and its ``autorun'' form evaluated:
+Save the modified \nobr{\code{modules.lisp}} file. Now, if you try the
+\code{:tutorial} command, the \nobr{\code{tutorial-example}} file will always
+be loaded and its ``autorun'' form evaluated:
 %
 \W\supp
 \begin{example}
@@ -6121,9 +6186,9 @@ loaded and its ``autorun'' form evaluated:
   tutorial>}
 \end{example}
 %
-The Module Manager noticed our updated \code{modules.lisp} file and loaded
-it, redefining the \code{:tutorial} module definition, and then followed our
-\code{:reload} specification.
+The Module Manager noticed our updated \nobr{\code{modules.lisp}} file and
+loaded it, redefining the \code{:tutorial} module definition, and then
+followed our \code{:reload} specification.
 
 Let's try the \code{:tutorial} command one more time, just to be certain that
 \code{:reload} is happening when no files have been updated:
@@ -6140,7 +6205,7 @@ Let's try the \code{:tutorial} command one more time, just to be certain that
 
 \subsubsection*{Module Manager propagation}
 
-The Module Manager's \textbf{compile-module} function also accepts a
+The Module Manager's \nobr{\textbf{compile-module}} function also accepts a
 \code{:reload} option, so we might be tempted to simply add that option when
 we specify our \code{:tutorial} command:
 %
@@ -6159,11 +6224,12 @@ we specify our \code{:tutorial} command:
 \end{example}
 %
 however, this would also reload all the files of very module required by the
-\code{:tutorial} module, as the \textbf{startup-module} function that we used
-in defining our \code{:tutorial} REPL command always adds a \code{:propagate}
-option to the options that we provide to the command.  We could override
-(cancel) this propagation behavior by adding the \code{:nopropagate} option
-when we specify our \code{:tutorial} command:
+\code{:tutorial} module, as the \nobr{\textbf{startup-module}} function that
+we used in defining our \nobr{\code{:tutorial}} REPL command always adds a
+\nobr{\code{:propagate}} option to the options that we provide to the command.
+We could override (cancel) this propagation behavior by adding the
+\nobr{\code{:nopropagate}} option when we specify our \nobr{\code{:tutorial}}
+command:
 %
 \W\supp\notpretop
 \begin{example}
@@ -6179,18 +6245,19 @@ which would eliminate reloading of all but the files in the \code{:tutorial}
 module.  Since we only have one file (at the moment) specified in our
 \code{:tutorial} module definition, this behavior is equivalent, but less
 convenient, than specifying the \code{:reload} file option to our
-\code{tutorial-example} file in the module definition.  If we had a number of
-files, however, we would probably only want the last one reloaded every time.
+\nobr{\code{tutorial-example}} file in the module definition.  If we had a
+number of files, however, we would probably only want the last one reloaded
+every time.
 
 \subsubsection*{Module Manager memories}
 
-The Module Manager also remembers the last module (and any provided
-options, such as \code{:create-dirs}) that was specified to a \code{:cm}
-(textbf{compile-module}) or \code{:lm} (\textbf{load-module}) command.  The
-\textbf{startup-module} function that we used in defining our \code{:tutorial}
-REPL command performs an implicit \code{:cm} command for us, so we could have
-alternatively typed the \code{:cm} REPL command rather than \code{:tutorial}
-once we have issued the first \code{:tutorial} REPL command:
+The Module Manager also remembers the last module (and any provided options,
+such as \nobr{\code{:create-dirs}}) that was specified to a \code{:cm}
+(textbf{compile-module}) or \code{:lm} (\nobr{\textbf{load-module}}) command.
+The \nobr{\textbf{startup-module}} function that we used in defining our
+\code{:tutorial} REPL command performs an implicit \code{:cm} command for us,
+so we could have alternatively typed the \code{:cm} REPL command rather than
+\code{:tutorial} once we have issued the first \code{:tutorial} REPL command:
 %
 \W\supp
 \begin{example}
@@ -6209,13 +6276,13 @@ and any remembered options.
 
 \subsection*{Step 12: Add a second source file}
 
-Reloading the entire \code{tutorial-application} file in order to evaluate our
-``autorun'' form is still a bit heavy handed.  There are two ways to improve
-this situation, and both involve placing the ``autorun'' form in a separate
-file.  Use your Common Lisp editor to create a new file named
-\code{autorun.lisp} in the \code{source} subdirectory of the \code{tutorial}
-directory. Type (or copy) the following two forms into the new
-\code{autorun.lisp} file:
+Reloading the entire \nobr{\code{tutorial-application}} file in order to
+evaluate our ``autorun'' form is still a bit heavy handed.  There are two ways
+to improve this situation, and both involve placing the ``autorun'' form in a
+separate file.  Use your Common Lisp editor to create a new file named
+\nobr{\code{autorun.lisp}} in the \code{source} subdirectory of the
+\code{tutorial} directory. Type (or copy) the following two forms into the new
+\nobr{\code{autorun.lisp}} file:
 %
 \W\supp
 \begin{example}
@@ -6227,8 +6294,8 @@ directory. Type (or copy) the following two forms into the new
 %
 and save the file.  
 
-Next, edit the \code{tutorial-example.lisp} file and remove the ``autorun''
-form from the end of the file:
+Next, edit the \nobr{\code{tutorial-example.lisp}} file and remove the
+``autorun'' form from the end of the file:
 % 
 \W\supp
 \begin{example}
@@ -6240,9 +6307,9 @@ form from the end of the file:
 Save the file. 
 
 We could define a second random-walk application module, say
-\code{:run-tutorial}, in our \code{modules.lisp} file that contains the new
-\code{autorun.lisp} file and requires our current \code{:tutorial} module.
-This definition would look like:
+\nobr{\code{:run-tutorial}}, in our \nobr{\code{modules.lisp}} file that
+contains the new \nobr{\code{autorun.lisp}} file and requires our current
+\code{:tutorial} module.  This definition would look like:
 %
 \W\supp
 \begin{example}
@@ -6255,9 +6322,9 @@ This definition would look like:
 However, we can avoid creating a new module by simply adding the
 \code{autorun} file to our current \code{:tutorial} module definition.  
 
-Edit the \code{modules.lisp} file in the \code{tutorial} directory and remove
-the \code{:reload} file option from the \code{:tutorial-example} file
-specification:
+Edit the \nobr{\code{modules.lisp}} file in the \code{tutorial} directory and
+remove the \code{:reload} file option from the \nobr{\code{:tutorial-example}}
+file specification:
 %
 \W\supp
 \begin{example}
@@ -6403,9 +6470,9 @@ Congratulations!  It's time to move to the next exercise.
 \label{sec:completed}%
 
 The complete, finished code for the random walk application is in the
-\code{tutorial.lisp} file in the \code{source/gbbopen/examples/}
+\nobr{\code{tutorial.lisp}} file in the \nobr{\code{source/gbbopen/examples/}}
 directory in the GBBopen distribution and at
-\xsitelink{\code{http://gbbopen.org/svn/GBBopen/trunk/source/gbbopen/examples/tutorial.lisp}}{http://gbbopen.org/svn/GBBopen/trunk/source/gbbopen/examples/tutorial.lisp}.
+\xsitelink{\nobr{\code{http://gbbopen.org/svn/GBBopen/trunk/source/gbbopen/examples/tutorial.lisp}}}{http://gbbopen.org/svn/GBBopen/trunk/source/gbbopen/examples/tutorial.lisp}.
 
 %% ========================================================================
 %%  Index
@@ -6438,3 +6505,4 @@ example of the use of that entity.
 %% ========================================================================
 
 \end{document}
+\code

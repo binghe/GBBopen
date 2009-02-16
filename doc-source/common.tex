@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/common.tex *-*
-%% *-* Last-Edit: Mon Nov  3 10:23:48 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Mon Feb 16 04:41:22 2009; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
@@ -378,6 +378,11 @@
 \T\newlength{\tlengtha}  %% These are temporaries used in 
 \T\newlength{\tlengthb}  %% functiondoc environment and
 \T\newlength{\tlengthc}  %% elsewhere.
+
+%% ----------------------------------------------------------------------------
+%% nobr
+\T\newcommand{\nobr}[1]{\mbox{#1}}
+\W\newcommand{\nobr}[1]{\xml{nobr}#1\xml{/nobr}}
 
 %% ----------------------------------------------------------------------------
 %% ppar

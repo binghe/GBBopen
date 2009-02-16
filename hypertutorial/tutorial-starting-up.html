@@ -22,8 +22,8 @@
 <li>Interact with Common Lisp's read-eval-print loop (REPL)
 <li>Recover from errors
 <li>Prepare to use GBBopen in the next exercises by loading the
-<code>:gbbopen-user</code> module and changing to the <code>:gbbopen-user</code>
-package
+<nobr><code>:gbbopen-user</code></nobr> module and changing to the
+<nobr><code>:gbbopen-user</code></nobr> package
 </ul>
 </p>
 <hr color="99CCCC">
@@ -117,13 +117,14 @@ from a snapshot archive.
 </p>
 <h2><a name="id5">Step 3: Subscribe to the GBBopen mailing lists</a></h2><p>
 I strongly recommend that you subscribe to the GBBopen Announcements
-(<code>gbbopen-announce</code>) and the GBBopen Users (<code>gbbopen-list</code>) mailing
-lists.  To subscribe, go to the &#8220;Mailing Lists&#8221; page on the
-<a target="_top" href="http://GBBopen.org/">GBBopen web site</a> and click on the appropriate
-<code>subscribe</code> links.  The traffic is low, and the messages and advice will
-save you time and frustration and get you writing quality GBBopen applications
-easier and sooner.  (You might even want to browse the archived messages that
-are accessible from the &#8220;Mailing Lists&#8221; page.)
+(<nobr><code>gbbopen-announce</code></nobr>) and the GBBopen Users
+(<nobr><code>gbbopen-list</code></nobr>) mailing lists.  To subscribe, go to the &#8220;Mailing
+Lists&#8221; page on the <a target="_top" href="http://GBBopen.org/">GBBopen web site</a> and
+click on the appropriate <code>subscribe</code> links.  The traffic is low, and the
+messages and advice will save you time and frustration and get you writing
+quality GBBopen applications easier and sooner.  (You might even want to
+browse the archived messages that are accessible from the &#8220;Mailing Lists&#8221;
+page.)
 </p>
 <p>If you need help or advice, the GBBopen Users list is the place to ask (should
 this tutorial and archived messages from the GBBopen Users list come up
@@ -370,11 +371,11 @@ of the tutorial.
 GBBopen is packaged with its own module system
 that supports compiling and loading GBBopen components.
 </p>
-<p>To compile and load the <code>:gbbopen-user</code> module and all the GBBopen
+<p>To compile and load the <nobr><code>:gbbopen-user</code></nobr> module and all the GBBopen
 modules it requires, you need to evaluate the following forms within your
 Common Lisp environment.  First, load GBBopen's
-<code><var>&lt;install-dir&gt;</var>/startup.lisp</code> file from wherever GBBopen has been
-installed:
+<nobr><code><var>&lt;install-dir&gt;</var>/startup.lisp</code></nobr> file from wherever GBBopen
+has been installed:
 <pre class="pretop">
 <font color="#667f66">  cl-user&gt; <font color="#000000">(load "<var>&lt;install-dir&gt;</var>/startup.lisp")</font>
   ;; Loading <var>&lt;install-dir&gt;</var>/startup.lisp
@@ -385,7 +386,7 @@ installed:
   t
   cl-user&gt;</font>
 </pre>
-<a name="id13">Then</a> compile and load the <code>:gbbopen-user</code> module and all the
+<a name="id13">Then</a> compile and load the <nobr><code>:gbbopen-user</code></nobr> module and all the
 GBBopen modules it requires by evaluating:
 <pre>
 <font color="#667f66">  cl-user&gt; <font color="#000000">(module-manager:compile-module :gbbopen-user :propagate :create-dirs)</font>
@@ -425,16 +426,16 @@ every time they update GBBopen to ensure that all GBBopen modules have
 been compiled.
 </p>
 <h3><a name="id15">Beyond <code><var>&lt;install-dir&gt;</var>/startup.lisp</code></a></h3><p>
-Although loading GBBopen's <code><var>&lt;install-dir&gt;</var>/startup.lisp</code> file is a
-very easy way to get started with GBBopen, setting up your computing
+Although loading GBBopen's <nobr><code><var>&lt;install-dir&gt;</var>/startup.lisp</code></nobr>
+file is a very easy way to get started with GBBopen, setting up your computing
 environment for serious GBBopen development requires only a few moments that
 will be recouped almost immediately.  The steps needed to set everything up
 will be detailed soon in the <a href="tutorial-development-environment.html">Enhancing Your Development Environment
 exercise</a>.
 </p>
 <h2><a name="id16">Step 7: Change to the <code>:gbbopen-user</code> package</a></h2><p>
-Now that the <code>:gbbopen-user</code> module is loaded, change the current
-package to the <code>:gbbopen-user</code> package:
+Now that the <code>:gbbopen-user</code> module is loaded, change the current package
+to the <nobr><code>:gbbopen-user</code></nobr> package:
 <pre class="pretop">
 <font color="#667f66">  cl-user&gt; <font color="#000000">(in-package :gbbopen-user)</font>
   #&lt;package GBBOPEN-USER&gt;
@@ -445,11 +446,12 @@ package to the <code>:gbbopen-user</code> package:
 symbols.  One package is always designated as the &#8220;current&#8221; package, and it
 is this package that is used by default for creating and finding symbols by
 their names.  Initially, the current package is set to the
-<code>:common-lisp-user</code> package.  The <code>:gbbopen-user</code> module creates a
-new package, named <code>:gbbopen-user</code>, that includes GBBopen Tools and
-GBBopen Core symbols in addition to the standard Common Lisp symbols.  If you
-do not set the current package to the <code>:gbbopen-user</code> package, references
-to GBBopen functions and variables will not map to the proper symbols.
+<nobr><code>:common-lisp-user</code></nobr> package.  The <nobr><code>:gbbopen-user</code></nobr>
+module creates a new package, named <nobr><code>:gbbopen-user</code></nobr>, that includes
+GBBopen Tools and GBBopen Core symbols in addition to the standard Common Lisp
+symbols.  If you do not set the current package to the
+<nobr><code>:gbbopen-user</code></nobr> package, references to GBBopen functions and
+variables will not map to the proper symbols.
 </p>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />

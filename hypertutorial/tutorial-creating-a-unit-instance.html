@@ -19,13 +19,13 @@ instance is a member of a <i>unit class</i>.  The unit class defines the
 structure of all instances of the unit class, such as the slots in each unit
 instance.  At a more precise Common Lisp level, every GBBopen unit instance is
 member of a (possibly non-direct) subclass of GBBopen's unit class,
-<code>standard-unit-instance</code>, which is itself a subclass of Common Lisp's
-<code>standard-object</code> class.  Even more technically, the metaclass of each
-GBBopen unit class is an instance of the GBBopen metaclass,
-<code>standard-unit-class</code>, which is a subclass of Common Lisp's
-<code>standard-class</code> metaclass.  In other words, GBBopen classes and unit
-instances fit naturally into the CLOS (the Common Lisp Object System) and MOP
-(<a target="_top" href="http://www.lisp.org/mop/index.html">Metaobject Protocol</a>)
+<nobr><code>standard-unit-instance</code></nobr>, which is itself a subclass of Common
+Lisp's <nobr><code>standard-object</code></nobr> class.  Even more technically, the
+metaclass of each GBBopen unit class is an instance of the GBBopen metaclass,
+<nobr><code>standard-unit-class</code></nobr>, which is a subclass of Common Lisp's
+<nobr><code>standard-class</code></nobr> metaclass.  In other words, GBBopen classes and
+unit instances fit naturally into the CLOS (the Common Lisp Object System) and
+MOP (<a target="_top" href="http://www.lisp.org/mop/index.html">Metaobject Protocol</a>)
 hierarchies. Fortunately, understanding such details is not required to put
 GBBopen to use.
 </p>
@@ -64,7 +64,7 @@ session and evaluate the following forms:
 </pre>
 </p>
 <h2><a name="id2">Step 1: Define the <code>location</code> unit class</a></h2><p>
-We begin by defining a unit class <code>location</code> that has two slots,
+We begin by defining a unit class <nobr><code>location</code></nobr> that has two slots,
 named <code>x</code> and <code>y</code>.
 <pre class="pretop">
 <font color="#667f66">  gbbopen-user&gt; <font color="#000000">(define-unit-class location ()
@@ -79,16 +79,16 @@ named <code>x</code> and <code>y</code>.
 and <code>:y</code> for the <code>y</code> slot.  You will use these
 initialization arguments in the next step, to specify initial slot
 values for an instance.
-<li>Define reader and writer methods for the <code>x-of</code> and
-<code>y-of</code> generic slot-accessor functions, used to reading
-and modifying the <code>x</code> and <code>y</code> slot values.
+<li>Define reader and writer methods for the <nobr><code>x-of</code></nobr> and
+<nobr><code>y-of</code></nobr> generic slot-accessor functions, used to reading and
+modifying the <code>x</code> and <code>y</code> slot values.
 </ul>
 </p>
 <h2><a name="id3">Step 2: Create a unit instance</a></h2><p>
-Next, you can create a <i>unit instance</i> for the <code>location</code>
+Next, you can create a <i>unit instance</i> for the <nobr><code>location</code></nobr>
 unit class.  To simplify access to the unit instance during subsequent
-activities, first define a global variable called <code>ui</code>
-by entering the following form:
+activities, first define a global variable called <code>ui</code> by entering the
+following form:
 <pre class="pretop">
 <font color="#667f66">  gbbopen-user&gt; <font color="#000000">(defvar ui)</font>
   ui
@@ -103,14 +103,14 @@ entering the form:
   gbbopen-user&gt;</font>
 </pre>
 </p>
-<p>This creates a unit instance of the <code>location</code> class, initializes the
-instance's <code>x</code> and <code>y</code> slots with the values specified by the
+<p>This creates a unit instance of the <nobr><code>location</code></nobr> class, initializes
+the instance's <code>x</code> and <code>y</code> slots with the values specified by the
 <code>:x</code> and <code>:y</code> initialization arguments.  The created unit instance
 is then assigned to the variable <code>ui</code>.
 </p>
 <h2><a name="id5">Step 3: Display a description of the unit instance</a></h2><p>
 Now, display a description of the unit instance by using GBBopen's
-<b>describe-instance</b> function.  Enter the following form:
+<nobr><b>describe-instance</b></nobr> function.  Enter the following form:
 <pre class="pretop">
 <font color="#667f66">  gbbopen-user&gt; <font color="#000000">(describe-instance ui)</font>
   Location #&lt;location 1&gt;
@@ -129,8 +129,8 @@ In fact, there is often no natural reason to name each unit instance you
 create. By default, GBBopen names unit instances by giving it a sequentially
 increasing number.  (For example, the unit instance you just created is named
 <code>1</code>.)  GBBopen requires that each instance of a unit class is uniquely
-named within the class and the accessor <b>instance-name-of</b> can be used
-to access this name:
+named within the class and the accessor <nobr><b>instance-name-of</b></nobr> can
+be used to access this name:
 <pre class="pretop">
 <font color="#667f66">  gbbopen-user&gt; <font color="#000000">(instance-name-of ui)</font>
   1
@@ -138,22 +138,22 @@ to access this name:
 </pre>
 </p>
 <h2><a name="id7">Step 4: Find a unit instance by its name</a></h2><p>
-You can look up a particular unit instance by its name. For example, to
-find the <code>location</code> <code>1</code> unit instance by name, enter the form:
+You can look up a particular unit instance by its name. For example, to find
+the <nobr><code>location</code></nobr> <code>1</code> unit instance by name, enter the form:
 <pre class="pretop">
 <font color="#667f66">  gbbopen-user&gt; <font color="#000000">(find-instance-by-name 1 'location)</font>
   #&lt;location 1&gt;
   gbbopen-user&gt;</font>
 </pre>
 </p>
-<p>Of course, we assigned the <code>location</code> unit instance to the global
+<p>Of course, we assigned the <nobr><code>location</code></nobr> unit instance to the global
 variable <code>ui</code>, but it is nice to know that we can always find our unit
 instance using its name.
 </p>
 <h2><a name="id8">Step 5: Change the <code>x</code> slot value</a></h2><p>
-Use the <code>x-of</code> reader and writer methods GBBopen defined for the <code>x</code>
-slot (in Step 3 above) to get the value of the <code>x</code> slot of the unit
-instance:
+Use the <code>x-of</code> reader and writer methods GBBopen defined for the
+<code>x</code> slot (in Step 3 above) to get the value of the <code>x</code> slot of the
+unit instance:
 <pre class="pretop">
 <font color="#667f66">  gbbopen-user&gt; <font color="#000000">(x-of ui)</font>
   40
@@ -172,8 +172,8 @@ and then get the (new) value of the <code>x</code> slot:
   gbbopen-user&gt;</font>
 </pre>
 </p>
-<p><a name="id9">Display</a> the description of the <code>location</code> unit instance again, observing the
-changed <code>x</code> slot value:
+<p><a name="id9">Display</a> the description of the <nobr><code>location</code></nobr> unit instance again,
+observing the changed <code>x</code> slot value:
 </p>
 <pre class="pretop">
 
