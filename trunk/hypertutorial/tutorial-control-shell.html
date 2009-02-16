@@ -49,7 +49,7 @@ This exercise shows you how to:
 </p>
 <hr color="99CCCC">
 <h2><a name="id1">Prerequisites</a></h2><p>
-The <code>tutorial-example.lisp</code> file as modified thus far:
+The <nobr><code>tutorial-example.lisp</code></nobr> file as modified thus far:
 <pre class="pretop">
   (in-package :gbbopen-user)
 
@@ -70,8 +70,9 @@ The <code>tutorial-example.lisp</code> file as modified thus far:
 </pre>
 </p>
 <h2><a name="id2">Step 1: Load the Agenda Shell</a></h2><p>
-Start up a fresh Common Lisp session and load the <code>:agenda-shell-user</code>
-module, using the <code>:agenda-shell-user</code> REPL command:
+Start up a fresh Common Lisp session and load the
+<nobr><code>:agenda-shell-user</code></nobr> module, using the
+<nobr><code>:agenda-shell-user</code></nobr> REPL command:
 <pre class="pretop">
 <font color="#667f66">  cl-user&gt; <font color="#000000">:agenda-shell-user</font>
   ;; Loading <var>&lt;install-dir&gt;</var>/startup.lisp
@@ -81,10 +82,10 @@ module, using the <code>:agenda-shell-user</code> REPL command:
   gbbopen-user&gt;</font>
 </pre>
 </p>
-<p>This loads everything that we've been loading with the <code>:gbbopen-user</code>
-module and, additionally, GBBopen's Agenda Shell control shell. As with the
-<code>:gbbopen-user</code> REPL command, the current package in the REPL is set to
-the <code>:gbbopen-user</code> package.
+<p>This loads everything that we've been loading with the
+<nobr><code>:gbbopen-user</code></nobr> module and, additionally, GBBopen's Agenda Shell
+control shell. As with the <nobr><code>:gbbopen-user</code></nobr> REPL command, the current
+package in the REPL is set to the <nobr><code>:gbbopen-user</code></nobr> package.
 </p>
 <h2><a name="id3">Step 2: Run the control shell</a></h2><p>
 Now, start the Agenda Shell:
@@ -117,8 +118,9 @@ instruct you on what to do if this is not the case.)
 <h2><a name="id5">Step 3: Define a KS</a></h2><p>
 So let's define a KS!
 </p>
-<p><a name="id6">Edit</a> your <code>tutorial-example.lisp</code> file and add the following function
-and KS definition to the end of the <code>tutorial-example.lisp</code> file:
+<p><a name="id6">Edit</a> your <nobr><code>tutorial-example.lisp</code></nobr> file and add the following
+function and KS definition to the end of the
+<nobr><code>tutorial-example.lisp</code></nobr> file:
 <pre class="pretop">
 <font color="#667f66">  (define-unit-class location ()
     (x y)
@@ -148,22 +150,24 @@ and KS definition to the end of the <code>tutorial-example.lisp</code> file:
       :execution-function 'startup-ks-function)</font></font>
 </pre>
 </p>
-<p>The function <code>startup-ks-function</code> implements the KS.  The Agenda Shell
-always calls a KS's execution function with a single argument, a <code>ksa</code>
-unit instance that represents the activation of the KS.  For the present, we
-will ignore the <code>ksa</code> argument.  Our simple <code>startup-ks-function</code>
-creates a <code>location</code> unit instance at the center of the
-<code>known-world</code>, coordinate (0,0).
+<p>The function <nobr><code>startup-ks-function</code></nobr> implements the KS.  The Agenda
+Shell always calls a KS's execution function with a single argument, a
+<code>ksa</code> unit instance that represents the activation of the KS.  For the
+present, we will ignore the <code>ksa</code> argument.  Our simple
+<nobr><code>startup-ks-function</code></nobr> creates a <nobr><code>location</code></nobr> unit
+instance at the center of the <nobr><code>known-world</code></nobr>, coordinate (0,0).
 </p>
-<p>The <b>define-ks</b> form defines a KS named <code>startup-ks</code> to the
-Agenda Shell.  The <code>:trigger-events</code> value indicates that the KS should
-be triggered when an event called <code>start-control-shell-event</code> is
-signaled.  The Agenda Shell signals <code>start-control-shell-event</code> once,
-when the control shell is started.  The <code>:execution-function</code> names the
-function (that we just defined) that implements the KS.
+<p>The <nobr><b>define-ks</b></nobr> form defines a KS named <nobr><code>startup-ks</code></nobr>
+to the Agenda Shell.  The <nobr><code>:trigger-events</code></nobr> value indicates that
+the KS should be triggered when an event called
+<nobr><code>start-control-shell-event</code></nobr> is signaled.  The Agenda Shell signals
+<nobr><code>start-control-shell-event</code></nobr> once, when the control shell is
+started.  The <nobr><code>:execution-function</code></nobr> names the function (that we
+just defined) that implements the KS.
 </p>
-<p>Compile and load the entire <code>tutorial-example.lisp</code> file directly from
-the editor buffer (using <code>C-c C-k</code> in SLIME; <code>C-c C-b</code> in ELI).
+<p>Compile and load the entire <nobr><code>tutorial-example.lisp</code></nobr> file directly
+from the editor buffer (using <nobr><code>C-c C-k</code></nobr> in SLIME; <nobr><code>C-c
+C-b</code></nobr> in ELI).
 </p>
 <p>The Agenda Shell creates a <code>ks</code> unit instance for each KS that we
 define:
@@ -176,7 +180,7 @@ define:
 Note that the name of the <code>ks</code> unit instance is the name of the KS.
 </p>
 <h2><a name="id7">Step 4: Make the <code>known-world</code></a></h2><p>
-Before we can run our KS, we must make the <code>known-world</code> space
+Before we can run our KS, we must make the <nobr><code>known-world</code></nobr> space
 instance:
 <pre class="pretop">
 <font color="#667f66">  gbbopen-user&gt; <font color="#000000">(make-space-instance '(known-world)
@@ -219,27 +223,30 @@ Did</a> it work?  Let's describe the blackboard repository:
                                         7 instances
   gbbopen-user&gt;</font>
 </pre>
-The initial <code>location</code> unit instance is there!
+The initial <nobr><code>location</code></nobr> unit instance is there!
 </p>
 <p>Note that some other unit instances have been created by the control shell.
-There is one <code>ks</code> unit instance, our <code>startup-ks</code> KS, as well as two
-<code>ksa-queue</code> and one <code>ordered-ksa-queue</code> unit instances.  The
-<code>ordered-ksa-queue</code> is the rating-based queue of pending KSAs (no pending
-KSAs remain on it) and the two <code>ksa-queue</code> queues are the Agenda Shell's
-executed KSAs and obviated KSAs queues (both empty).  We will discuss these
-queues in a later exercise.
+There is one <code>ks</code> unit instance, our <nobr><code>startup-ks</code></nobr> KS, as well
+as two <nobr><code>ksa-queue</code></nobr> and one <nobr><code>ordered-ksa-queue</code></nobr> unit
+instances.  The <nobr><code>ordered-ksa-queue</code></nobr> is the rating-based queue of
+pending KSAs (no pending KSAs remain on it) and the two
+<nobr><code>ksa-queue</code></nobr> queues are the Agenda Shell's executed KSAs and
+obviated KSAs queues (both empty).  We will discuss these queues in a later
+exercise.
 </p>
-<p>The <code>ks</code>, <code>ksa-queue</code>, <code>ordered-ksa-queue</code> unit-instance counts
-are followed by plus signs (<code>+</code>).  This indicates that these unit classes
-have been defined to be <i>retained</i>, meaning that their instances are
-not deleted by our call to <code>delete-blackboard-repository</code>.  The plus sign
-indicates that the retention attribute will be propagated to all subclasses of
-those unit classes; retained, but not propagated, would be shown by an
-asterisk (<code>*</code>).
+<p>The <code>ks</code>, <nobr><code>ksa-queue</code></nobr>, <nobr><code>ordered-ksa-queue</code></nobr>
+unit-instance counts are followed by plus signs (<code>+</code>).  This indicates
+that these unit classes have been defined to be <i>retained</i>, meaning
+that their instances are not deleted by our call to
+<nobr><b>delete-blackboard-repository</b></nobr>.  The plus sign indicates that
+the retention attribute will be propagated to all subclasses of those unit
+classes; retained, but not propagated, would be shown by an asterisk
+(<code>*</code>).
 </p>
 <p><a name="id10">
-Let's</a> verify this behavior by calling <code>delete-blackboard-repository</code> and
-then describe the blackboard repository:
+Let's</a> verify this behavior by calling
+<nobr><b>delete-blackboard-repository</b></nobr> and then describe the blackboard
+repository:
 <pre class="pretop">
 <font color="#667f66">  gbbopen-user&gt; <font color="#000000">(delete-blackboard-repository)</font>
   t

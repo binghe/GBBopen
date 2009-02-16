@@ -40,7 +40,7 @@ that I used to create my directories:
 </pre>
 </p>
 <h2><a name="id2">Step 2: Create the tutorial-example file</a></h2><p>
-Start up a fresh Common Lisp session and load the <code>:gbbopen-user</code>
+Start up a fresh Common Lisp session and load the <nobr><code>:gbbopen-user</code></nobr>
 module, using the REPL command we set up in the last exercise:
 <pre class="pretop">
 <font color="#667f66">  cl-user&gt; <font color="#000000">:gbbopen-user</font>
@@ -50,19 +50,19 @@ module, using the REPL command we set up in the last exercise:
   gbbopen-user&gt;</font>
 </pre>
 </p>
-<p>Next, begin editing a new file named <code>tutorial-example.lisp</code> in the
-<code>source</code> subdirectory that you just created.  Even if you are more
+<p>Next, begin editing a new file named <nobr><code>tutorial-example.lisp</code></nobr> in
+the <code>source</code> subdirectory that you just created.  Even if you are more
 comfortable using another editor, use the editing facilities that are provided
 by your Common Lisp environment.  The development features of a quality Common
 Lisp environment are well worth the price of learning a new editor.  In an
 Emacs-based environment, such as
 <a target="_top" href="http://common-lisp.net/project/slime/">SLIME</a> or <a target="_top" href="http://www.franz.com">Allegro
-CL</a>'s ELI, typing <code>C-x C-f</code> will prompt you for
-the name of a file to editor or create.  (We will use Emacs key-binding
-notation, where <code>C-x C-f</code> means typing <code>^c</code> followed by
-^f.)
+CL</a>'s ELI, typing <nobr><code>C-x C-f</code></nobr> will prompt
+you for the name of a file to editor or create.  (We will use Emacs
+key-binding notation, where <nobr><code>C-x C-f</code></nobr> means typing <code>^c</code>
+followed by ^f.)
 </p>
-<p>Type the following two forms into the <code>tutorial-example.lisp</code> file
+<p>Type the following two forms into the <nobr><code>tutorial-example.lisp</code></nobr> file
 buffer:
 <pre class="pretop">
   (in-package :gbbopen-user)
@@ -71,15 +71,16 @@ buffer:
     (x y))
 </pre>
 </p>
-<p>The <code>in-package</code> form specifies the Common Lisp package that is made
-current when the file is compiled or loaded.  The first form in every Common
-Lisp source file that you create should begin with an <code>in-package</code> form.
-This form is also used by most Common Lisp editing environments to set the
-package associated with development operations.
+<p>The <nobr><code>in-package</code></nobr> form specifies the Common Lisp package that is
+made current when the file is compiled or loaded.  The first form in every
+Common Lisp source file that you create should begin with an
+<nobr><code>in-package</code></nobr> form.  This form is also used by most Common Lisp
+editing environments to set the package associated with development
+operations.
 </p>
-<p>The <b>define-unit-class</b> definition is the same one we used in
-the <a href="tutorial-creating-a-unit-instance.html">Creating a
-Unit instance</a> exercise.
+<p>The <nobr><b>define-unit-class</b></nobr> definition is the same one we used in
+the <a href="tutorial-creating-a-unit-instance.html">Creating a Unit
+instance</a> exercise.
 </p>
 <p>Now, save the file.  
 </p>
@@ -94,7 +95,7 @@ into Common Lisp:
   gbbopen-user&gt;</font>
 </pre>
 </p>
-<p>We could use Common Lisp's <code>compile-file</code> to compile the file and
+<p>We could use Common Lisp's <nobr><code>compile-file</code></nobr> to compile the file and
 then <code>load</code> to load the resulting compiled file. For example:
 <pre class="pretop">
 <font color="#667f66">  gbbopen-user&gt; <font color="#000000">(load (compile-file "~/tutorial/source/tutorial-example.lisp"))</font>
@@ -103,13 +104,13 @@ then <code>load</code> to load the resulting compiled file. For example:
   t
   gbbopen-user&gt;</font>
 </pre>
-but you should be able to compile and load the file directly from the
-editor buffer.  In SLIME, the command <code>C-c C-k</code> will compile and
-load the file currently being edited.  Allegro's ELI interface
-compile-and-load command is <code>C-c C-b</code>.  Identify and use the
-compile-and-load-file command in your editing environment.
+but you should be able to compile and load the file directly from the editor
+buffer.  In SLIME, the command <nobr><code>C-c C-k</code></nobr> will compile and load the
+file currently being edited.  Allegro's ELI interface compile-and-load command
+is <nobr><code>C-c C-b</code></nobr>.  Identify and use the compile-and-load-file command
+in your editing environment.
 </p>
-<p>Verify that all is well by creating a <code>location</code> unit instance in
+<p>Verify that all is well by creating a <nobr><code>location</code></nobr> unit instance in
 the REPL:
 <pre class="pretop">
 <font color="#667f66">  gbbopen-user&gt; <font color="#000000">(make-instance 'location)</font>
