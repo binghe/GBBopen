@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Dec  2 03:21:41 2008 *-*
+;;;; *-* Last-Edit: Tue Feb 17 17:23:27 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -57,6 +57,7 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(check-for-deleted-instance  ; not documented (yet...)
             delete-instance
+            deleted-instance-class
             describe-instance
             do-instances-of-class
             do-sorted-instances-of-class
@@ -74,6 +75,7 @@
             map-instances-of-class
             map-sorted-instances-of-class
             next-class-instance-number
+            original-class              ; slot-name in a deleted-unit-instance
             root-space-instance         ; for old .bb support, delete eventually
 	    space-instances-of
             standard-unit-instance
@@ -821,6 +823,11 @@
 ;;; ===========================================================================
 ;;;  Delete instace
 
+(defmethod deleted-instance-class ((instance standard-unit-instance))
+  (load-time-value (find-class 'deleted-unit-instance)))
+
+;;; ---------------------------------------------------------------------------
+
 (defmethod delete-instance ((instance standard-unit-instance))
   (declare (inline class-of))
   ;; unlink `instance' from other unit instances:
@@ -833,7 +840,7 @@
     (dolist (space-instance 
                 (standard-unit-instance.%%space-instances%% instance))
       (remove-instance-from-space-instance instance space-instance)))
-  (change-class instance 'deleted-unit-instance 
+  (change-class instance (deleted-instance-class instance)
                 :original-class (class-of instance))
   instance)
 
