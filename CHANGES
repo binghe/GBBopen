@@ -11,6 +11,8 @@ Important changes since GBBopen 1.2:
   * Changes to GBBopen Core
      - New class, DELETED-UNIT-INSTANCE, now used to represent deleted 
        unit and space instances
+     - New generic function, DELETED-INSTANCE-CLASS, and default method
+       for STANDARD-UNIT-INSTANCE
      - New function, MAKE-INSTANCES-OF-CLASS-VECTOR
      - speed/allocation optimizations to MAP-SORTED-INSTANCES-OF-CLASS
        and DO-SORTED-INSTANCES-OF-CLASS
