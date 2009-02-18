@@ -34,16 +34,16 @@ time-of-day.
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>second</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An integer between 0 and 59, inclusive
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>universal-time</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id223">universal&nbsp;time</a> (default is <code>nil</code>,
 which is equivalent to the value returned by
-<code>(get-universal-time)</code>)
+<nobr><code>(get-universal-time)</code></nobr>)
 </td></tr></table>
 </p>
 <p><span class="fndoclabel">Description</span> <br />If the specified time-of-date has already passed (relative to
-the <var>universal-time</var> value), the next day is assumed.
+the <nobr><var>universal-time</var></nobr> value), the next day is assumed.
 </p>
 <p><span class="fndoclabel">See also</span>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-schedule-function.html"><b>schedule-function</b></a>
 </p>
-<a name="id1"></a><p><span class="fndoclabel">Examples</span> <br />Schedule a <a href="ref-glossary.html#id181">scheduled&nbsp;function</a> that prints <code>"It's quitting time!"</code> 
+<a name="id1"></a><p><span class="fndoclabel">Examples</span> <br />Schedule a <a href="ref-glossary.html#id181">scheduled&nbsp;function</a> that prints <nobr><code>"It's quitting time!"</code></nobr> 
 every day at 5pm:
 <pre class="pretop">
   &gt; (<a href="ref-schedule-function.html">schedule-function</a>
@@ -56,7 +56,7 @@ every day at 5pm:
   &gt;
 </pre>
 </p>
-<p><a name="id2">Verbosely</a> change <code>quitting-time</code> to 5:30pm every day:
+<p><a name="id2">Verbosely</a> change <nobr><code>quitting-time</code></nobr> to 5:30pm every day:
 <pre class="pretop">
   &gt; (<a href="ref-schedule-function.html">schedule-function</a> 'quitting-time (encode-time-of-day 17 30 0)
       :repeat-interval #.(* 24 60 60)

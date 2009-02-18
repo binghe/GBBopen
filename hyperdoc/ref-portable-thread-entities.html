@@ -19,14 +19,15 @@
 do something reasonable in Common Lisp implementations that do not provide
 threads. However, entities that make no sense without threads signal errors in
 non-threaded implementations (as noted with each entity).  The <a href="ref-glossary.html#gl:feature">feature</a>
-<code>:threads-not-available</code> is added on Common Lisp implementations without
-thread support, and the <a href="ref-glossary.html#gl:feature">feature</a> <code>:with-timeout-not-available</code> is
-added on implementations that do not support <b><a href="ref-with-timeout.html">with-timeout</a></b>.
+<nobr><code>:threads-not-available</code></nobr> is added on Common Lisp implementations
+without thread support, and the <a href="ref-glossary.html#gl:feature">feature</a>
+<nobr><code>:with-timeout-not-available</code></nobr> is added on implementations that do
+not support <nobr><b><a href="ref-with-timeout.html">with-timeout</a></b></nobr>.
 </p>
-<p>Portable Threads entities are provided by the <code>:portable-threads</code> module
-in GBBopen.  Stand-alone use of the Portable Threads interface is also easy,
-requiring only the
-<a target="_top" href="http://gbbopen.org/svn/GBBopen/trunk/source/tools/portable-threads.lisp"><code>portable-threads.lisp</code></a>
+<p>Portable Threads entities are provided by the <nobr><code>:portable-threads</code></nobr>
+module in GBBopen.  Stand-alone use of the Portable Threads interface is also
+easy, requiring only the
+<a target="_top" href="http://gbbopen.org/svn/GBBopen/trunk/source/tools/portable-threads.lisp"><nobr><code>portable-threads.lisp</code></nobr></a>
 file.
 </p>
 <p><h4>Threads and Processes</h4>
@@ -54,9 +55,9 @@ mutual-exclusion locks that are acquired recursively by the same
 &#8220;recursive&#8221; lock objects in addition to non-recursive locks, and still
 others allow recursive use to be specified at the time that a lock is being
 acquired.  To enable behavioral consistency in all Common Lisp
-implementations, the <code>:portable-threads</code> interface module provides
+implementations, the <nobr><code>:portable-threads</code></nobr> interface module provides
 (non-recursive) <a href="ref-glossary.html#gl:locks">locks</a> and <a href="ref-glossary.html#gl:recursive-lock">recursive&nbsp;locks</a> and a single
-acquisition form, <b><a href="ref-with-lock-held.html">with-lock-held</a></b>, that behaves
+acquisition form, <nobr><b><a href="ref-with-lock-held.html">with-lock-held</a></b></nobr>, that behaves
 appropriately for each lock type.
 </p>
 <p><h4>Condition Variables</h4>
@@ -73,44 +74,47 @@ In this situation, the second thread would be perpetually waiting for the
 signal that has already been sent.  In the POSIX model, there is no explicit
 link between the lock used to control access to the condition variable and the
 condition variable.  The Portable Threads Interface makes this association
-explicit by bundling the lock with the <b><a href="ref-condition-variable.html">condition-variable</a></b>
-CLOS object instance and allowing the <b><a href="ref-condition-variable.html">condition-variable</a></b>
-object to be used directly in lock entities.
+explicit by bundling the lock with the
+<nobr><b><a href="ref-condition-variable.html">condition-variable</a></b></nobr> CLOS object instance and allowing
+the <nobr><b><a href="ref-condition-variable.html">condition-variable</a></b></nobr> object to be used directly in
+lock entities.
 </p>
 <p><h4>Hibernation</h4>
 </p>
 <p>Sometimes it is desirable to put a thread to sleep (perhaps for a long time)
 until some event has occurred.  The Portable Threads Interface provides two
 entities that make this situation easy to code:
-<b><a href="ref-hibernate-thread.html">hibernate-thread</a></b> and <b><a href="ref-awaken-thread.html">awaken-thread</a></b>.
-Note that when a thread is hibernating, it remains available to respond to
-<b><a href="ref-run-in-thread.html">run-in-thread</a></b> and <b><a href="ref-symbol-value-in-thread.html">symbol-value-in-thread</a></b>
-operations as well as to be awakened by a dynamically surrounding
-<b><a href="ref-with-timeout.html">with-timeout</a></b>.
+<nobr><b><a href="ref-hibernate-thread.html">hibernate-thread</a></b></nobr> and
+<nobr><b><a href="ref-awaken-thread.html">awaken-thread</a></b></nobr>.  Note that when a thread is
+hibernating, it remains available to respond to
+<nobr><b><a href="ref-run-in-thread.html">run-in-thread</a></b></nobr> and
+<nobr><b><a href="ref-symbol-value-in-thread.html">symbol-value-in-thread</a></b></nobr> operations as well as to be
+awakened by a dynamically surrounding <nobr><b><a href="ref-with-timeout.html">with-timeout</a></b></nobr>.
 </p>
 <p><h4>What about Process Wait?</h4>
 </p>
-<p>Thread coordination functions, such as <code>process-wait</code>, are expensive to
-implement with operating-system threads.  Such functions stop the executing
-thread until a Common Lisp <a href="ref-glossary.html#id151">predicate&nbsp;function</a> returns a true value.
-With application-level threads, the Lisp-based scheduler evaluates the
+<p>Thread coordination functions, such as <nobr><code>process-wait</code></nobr>, are
+expensive to implement with operating-system threads.  Such functions stop the
+executing thread until a Common Lisp <a href="ref-glossary.html#id151">predicate&nbsp;function</a> returns a true
+value.  With application-level threads, the Lisp-based scheduler evaluates the
 <a href="ref-glossary.html#id151">predicate&nbsp;function</a> periodically when looking for other threads that
 can be run.  With operating-system threads, however, thread scheduling is
 performed by the operating system and evaluating a Common Lisp
 <a href="ref-glossary.html#id151">predicate&nbsp;function</a> requires complex and expensive interaction between
 the operating-system thread scheduling and the Common Lisp implementation.
 Given this cost and complexity, many Common Lisp implementations that use
-operating-system threads have elected not to provide <code>process-wait</code>-style
-coordination functions, and this issue extends to the Portable Threads
-Interface as well.
+operating-system threads have elected not to provide
+<nobr><code>process-wait</code></nobr>-style coordination functions, and this issue
+extends to the Portable Threads Interface as well.
 </p>
-<p>Fortunately, most uses of <code>process-wait</code> can be replaced by a different
-strategy that relies on the producer of a change that would affect the
-<code>process-wait</code> <a href="ref-glossary.html#id151">predicate&nbsp;function</a> to signal the event rather than
-having the consumers of the change use predicate functions to poll for it.
-Condition variables, the Portable Threads <b><a href="ref-hibernate-thread.html">hibernate-thread</a></b>
-and <b><a href="ref-awaken-thread.html">awaken-thread</a></b> mechanism, or blocking I/O functions
-cover most of the typical uses of <code>process-wait</code>.
+<p>Fortunately, most uses of <nobr><code>process-wait</code></nobr> can be replaced by a
+different strategy that relies on the producer of a change that would affect
+the <nobr><code>process-wait</code></nobr> <a href="ref-glossary.html#id151">predicate&nbsp;function</a> to signal the event
+rather than having the consumers of the change use predicate functions to poll
+for it.  Condition variables, the Portable Threads
+<nobr><b><a href="ref-hibernate-thread.html">hibernate-thread</a></b></nobr> and
+<nobr><b><a href="ref-awaken-thread.html">awaken-thread</a></b></nobr> mechanism, or blocking I/O functions
+cover most of the typical uses of <nobr><code>process-wait</code></nobr>.
 </p>
 <p><h4>Scheduled Functions</h4>
 </p>
@@ -124,21 +128,22 @@ relative to the current invocation.  <a href="ref-glossary.html#gl:scheduled-fun
 scheduled to a resolution of one second.
 </p>
 <p><a href="ref-glossary.html#gl:scheduled-function">Scheduled&nbsp;functions</a> are scheduled and invoked by a separate
-<code>"Scheduled-Function Scheduler"</code> <a href="ref-glossary.html#gl:thread">thread</a>.  Unless the run time of
-the invoked <a href="ref-glossary.html#gl:function">function</a> is brief, the <a href="ref-glossary.html#gl:function">function</a> should spawn a new
-<a href="ref-glossary.html#gl:thread">thread</a> in which to perform its activities so as to avoid delaying the
-invocation of a subsequent <a href="ref-glossary.html#id181">scheduled&nbsp;function</a>.
+<nobr><code>"Scheduled-Function Scheduler"</code></nobr> <a href="ref-glossary.html#gl:thread">thread</a>.  Unless the run
+time of the invoked <a href="ref-glossary.html#gl:function">function</a> is brief, the <a href="ref-glossary.html#gl:function">function</a> should
+spawn a new <a href="ref-glossary.html#gl:thread">thread</a> in which to perform its activities so as to avoid
+delaying the invocation of a subsequent <a href="ref-glossary.html#id181">scheduled&nbsp;function</a>.
 </p>
 <p><h4>Periodic Functions</h4> 
 </p>
 <p>A <a href="ref-glossary.html#id149">periodic&nbsp;function</a> is a <a href="ref-glossary.html#gl:function">function</a> to be run repeatedly at a
 specified interval.  Unlike <a href="ref-glossary.html#gl:scheduled-function">scheduled&nbsp;functions</a>, which can be
 scheduled only to a resolution of one second, a <a href="ref-glossary.html#id149">periodic&nbsp;function</a> can
-be repeated at intervals as brief as is supported by the <code>sleep</code> function
-of the Common Lisp implementation.  A <a href="ref-glossary.html#id149">periodic&nbsp;function</a> is scheduled
-and executed in its own <a href="ref-glossary.html#gl:thread">thread</a>.  As with <a href="ref-glossary.html#gl:scheduled-function">scheduled&nbsp;functions</a>,
-however, <a href="ref-glossary.html#gl:function">function</a> should spawn a new <a href="ref-glossary.html#gl:thread">thread</a> in which to
-perform its activities, unless its run time is brief.
+be repeated at intervals as brief as is supported by the <nobr><code>sleep</code></nobr>
+function of the Common Lisp implementation.  A <a href="ref-glossary.html#id149">periodic&nbsp;function</a> is
+scheduled and executed in its own <a href="ref-glossary.html#gl:thread">thread</a>.  As with
+<a href="ref-glossary.html#gl:scheduled-function">scheduled&nbsp;functions</a>, however, <a href="ref-glossary.html#gl:function">function</a> should spawn a new
+<a href="ref-glossary.html#gl:thread">thread</a> in which to perform its activities, unless its run time is
+brief.
 </p>
 <p><b><font size="+1">Entities</font></b>
 </p>

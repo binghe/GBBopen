@@ -19,7 +19,7 @@
 <nobr><b><font color="#000000">symbol-value-in-thread</font></b></nobr></td><td valign="baseline"> &nbsp; </td><td valign="baseline" align="left" width="99%"><var>symbol 
 thread</var>
 <span 
-    style="font-family: serif; font-style: normal">=&gt;</span> <var>object,&nbsp;boundp</var></td><td valign="baseline" align="right">[<i>Function</i>]
+    style="font-family: serif; font-style: normal">=&gt;</span> <nobr><var>object, boundp</var></nobr></td><td valign="baseline" align="right">[<i>Function</i>]
 </td></tr></table></p>
 <p><span class="fndoclabel">Purpose</span> <br />Return the value of <var>symbol</var> in a <a href="ref-glossary.html#gl:thread">thread</a>.
 </p>
@@ -36,10 +36,10 @@ thread</var>
 </p>
 <p><span class="fndoclabel">Returns</span> <br />Two values:
 </p>
-<p><ul class="tight"><li>the value of <var>symbol</var> in <var>thread</var> or nil if no value is
-bound
+<p><ul class="tight"><li>the value of <var>symbol</var> in <nobr><var>thread</var></nobr> or nil if no value
+is bound
 <li><code>t</code> if <var>symbol</var> is specially or globally bound in 
-<var>thread</var>; otherwise <code>nil</code></ul>
+<nobr><var>thread</var></nobr>; otherwise <code>nil</code></ul>
 </p>
 <p><span class="fndoclabel">Description</span> <br />The global symbol value is returned as the first value if no
 thread-local value is bound.

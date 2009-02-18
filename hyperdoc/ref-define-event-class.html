@@ -44,7 +44,7 @@ direct superclass of the <a href="ref-glossary.html#id47">event&nbsp;class</a> <
 </p>
 <p><span class="fndoclabel">Detailed syntax</span><table class="tighttop"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
-<var>slot-specifier</var>&nbsp;::=
+<nobr><var>slot-specifier</var> ::=</nobr>
 </td><td valign="baseline" colspan="1" align="left"> <var>slot-name</var> |
 <code>(</code><var>slot-name</var> [[<var>slot-option</var>]]<code>)</code> </td></tr>
 <tr>
@@ -52,7 +52,7 @@ direct superclass of the <a href="ref-glossary.html#id47">event&nbsp;class</a> <
 </p>
 <table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
-<var>slot-option</var>&nbsp;::=
+<nobr><var>slot-option</var> ::=</nobr>
 </td><td valign="baseline" colspan="1" align="left"> &#123;<code>:accessor</code> <var>reader-function-name</var>&#125;* |</td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> &#123;<code>:allocation</code> <var>allocation-type</var>&#125; |</td></tr>
@@ -72,7 +72,7 @@ direct superclass of the <a href="ref-glossary.html#id47">event&nbsp;class</a> <
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
 <table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
-<var>class-option</var>&nbsp;::=
+<nobr><var>class-option</var> ::=</nobr>
 </td><td valign="baseline" colspan="1" align="left"> <code>(:abstract</code> <var>boolean</var><code>)</code> |</td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code>(:default-initargs .</code> <var>initarg-list</var><code>)</code> |</td></tr>
@@ -105,7 +105,7 @@ direct superclass of the <a href="ref-glossary.html#id47">event&nbsp;class</a> <
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
 <table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
-<var>event-metaclass-specifier</var>&nbsp;::=
+<nobr><var>event-metaclass-specifier</var> ::=</nobr>
 </td><td valign="baseline" colspan="1" align="left"> non-instance-event-class | instance-event-class | </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> space-instance-event-class | </td></tr>
@@ -115,7 +115,7 @@ direct superclass of the <a href="ref-glossary.html#id47">event&nbsp;class</a> <
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
 <table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
-<var>direct-slots-specifier</var>&nbsp;::= </td><td valign="baseline" colspan="1" align="left"> <code>nil</code> | <code>t</code> |
+<nobr><var>direct-slots-specifier</var> ::=</nobr> </td><td valign="baseline" colspan="1" align="left"> <code>nil</code> | <code>t</code> |
 <var>included-slot-name</var>* |</td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> &#123;<code>t :exclude</code> <var>excluded-slot-name</var>*&#125; </td></tr>
@@ -129,11 +129,11 @@ direct superclass of the <a href="ref-glossary.html#id47">event&nbsp;class</a> <
 </td></tr></table>
 </p>
 <p><span class="fndoclabel">Description</span> <br /><a name="id1">Each</a> <var>superclass-name</var> argument specifies a direct superclass of the new
-class. If the superclass list is empty, then the direct superclass defaults to the
-single class <b><a href="ref-standard-event-instance.html">standard-event-instance</a></b>.
+class. If the superclass list is empty, then the direct superclass defaults to
+the single class <nobr><b><a href="ref-standard-event-instance.html">standard-event-instance</a></b></nobr>.
 </p>
 <p><a name="id2">The</a> <code>:metaclass</code> <var>class-name</var> class option, if specified, must be a
-subclass of <b><a href="ref-standard-event-class.html">standard-event-class</a></b>.  The default
+subclass of <nobr><b><a href="ref-standard-event-class.html">standard-event-class</a></b></nobr>.  The default
 metaclass value is the metaclass of the event superclasses of
 <var>event-class-name</var> if they all have the same metaclass.  If the event
 superclasses have multiple metaclasses, the metaclass of
@@ -168,7 +168,7 @@ compatible event-superclass metaclasses for each <a href="ref-glossary.html#id53
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
 </p>
-<p>The table in the documentation for <b>signal-event</b>
+<p>The table in the documentation for <nobr><b>signal-event</b></nobr>
 lists the <a href="ref-glossary.html#id90">initialization&nbsp;arguments</a> that are required when
 signaling an event.  These required <a href="ref-glossary.html#id90">initialization&nbsp;arguments</a>
 are based on the <a href="ref-glossary.html#id53">event&nbsp;metaclass</a> of the <a href="ref-glossary.html#id47">event&nbsp;class</a> of

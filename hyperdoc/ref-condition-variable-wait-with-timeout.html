@@ -20,8 +20,9 @@
 <span 
     style="font-family: serif; font-style: normal">=&gt;</span> <var>boolean</var></td><td valign="baseline" align="right">[<i>Function</i>]
 </td></tr></table></p>
-<p><span class="fndoclabel">Purpose</span> <br />Block the current <a href="ref-glossary.html#gl:thread">thread</a> on <var>condition-variable</var> or until
-<var>seconds</var> seconds have elapsed.
+<p><span class="fndoclabel">Purpose</span> <br />Block the current <a href="ref-glossary.html#gl:thread">thread</a> on
+<nobr><var>condition-variable</var></nobr> or until <nobr><var>seconds</var></nobr> seconds have
+elapsed.
 </p>
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:portable-threads</code>
 </p>
@@ -33,11 +34,11 @@
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>boolean</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a>
 </td></tr></table>
 </p>
-<p><span class="fndoclabel">Returns</span> <br />True if <var>condition-variable</var> is unblocked before
-<var>seconds</var> seconds have elapsed; <code>nil</code> if the timeout has occurred.
+<p><span class="fndoclabel">Returns</span> <br />True if <nobr><var>condition-variable</var></nobr> is unblocked before
+<nobr><var>seconds</var></nobr> seconds have elapsed; <code>nil</code> if the timeout has occurred.
 </p>
 <p><span class="fndoclabel">Errors</span> <br />The <a href="ref-glossary.html#gl:lock">lock</a> (or <a href="ref-glossary.html#id169">recursive&nbsp;lock</a>) associated
-with <var>condition-variable</var> is not held by the executing process.
+with <nobr><var>condition-variable</var></nobr> is not held by the executing process.
 </p>
 <p>Threads (multiprocessing) is not supported on the
 Common Lisp implementation.

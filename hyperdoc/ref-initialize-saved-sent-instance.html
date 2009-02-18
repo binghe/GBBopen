@@ -23,7 +23,7 @@ missing-slot-names</var>
 </td></tr></table></p>
 <p><span class="fndoclabel">Purpose</span> <br />Load the blackboard repository (all <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a> and
 <a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a>) that has been saved to a file previously by
-<b><a href="ref-save-blackboard-repository.html">save-blackboard-repository</a></b>.
+<nobr><b><a href="ref-save-blackboard-repository.html">save-blackboard-repository</a></b></nobr>.
 </p>
 <p><span class="fndoclabel">Method signatures</span><table class="tighttop" width="100%">
 <tr valign="top"><td valign="baseline" align="left"><nobr>initialize-saved/sent-instance</nobr></td><td valign="baseline">&nbsp; </td><td valign="baseline" align="left" width="99%">
@@ -50,7 +50,7 @@ missing-slot-names</var>
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-tools</code>
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-tools</code> (the <a href="ref-glossary.html#gl:instances">unit-instance</a> and
-<a href="ref-glossary.html#gl:space-instance">space-instance</a> methods are added by <code>:gbbopen-core</code>)
+<a href="ref-glossary.html#gl:space-instance">space-instance</a> methods are added by <nobr><code>:gbbopen-core</code></nobr>)
 </p>
 <p><span class="fndoclabel">Arguments and values</span><table class="tighttop">
 <tr valign="top"><td valign="baseline" nowrap><i>instance</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <code>standard-object</code> <a href="ref-glossary.html#gl:instances">instance</a>
@@ -58,7 +58,7 @@ missing-slot-names</var>
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>slot-values</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A list of values (corresponding to the slots in <var>slots</var>)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>missing-slot-names</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A list of symbols naming slots and slot values that
 were saved/sent, but which are no longer present in the class definition of
-<var>instance</var>.
+<nobr><var>instance</var></nobr>.
 </p>
 </td></tr></table>
 <p><span class="fndoclabel">Returns</span> <br />The <var>instance</var>.
@@ -79,9 +79,9 @@ example</a>):
     (declare (ignore slots slot-values missing-slot-names))
     (setf (song-of bird) (base64-decode (song-of bird))))
 </pre>
-Transfer the slot value that was saved/sent as the slot named <code>old-slot</code>
-to the slot named <code>new-slot</code> in the current class definition of
-<code>hyp</code>:
+Transfer the slot value that was saved/sent as the slot named
+<nobr><code>old-slot</code></nobr> to the slot named <nobr><code>new-slot</code></nobr> in the current
+class definition of <code>hyp</code>:
 <pre>
   (defmethod initialize-saved/sent-instance :after ((hyp hyp)
                                                     slots slot-values 

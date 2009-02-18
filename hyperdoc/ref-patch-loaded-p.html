@@ -20,8 +20,8 @@
 <span 
     style="font-family: serif; font-style: normal">=&gt;</span> <var>boolean</var></td><td valign="baseline" align="right">[<i>Function</i>]
 </td></tr></table></p>
-<p><span class="fndoclabel">Purpose</span> <br />Determine if <a href="ref-glossary.html#gl:patch">patch</a> <var>id</var> to <var>module</var> has been
-loaded.
+<p><span class="fndoclabel">Purpose</span> <br />Determine if <a href="ref-glossary.html#gl:patch">patch</a> <var>id</var> to <nobr><var>module</var></nobr> has
+been loaded.
 </p>
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:module-manager</code>
 </p>
@@ -49,8 +49,8 @@ defined.
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-patch.html"><b>patch</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-start-patch.html"><b>start-patch</b></a>
 </p>
-<p><span class="fndoclabel">Examples</span> <br />Check if <a href="ref-glossary.html#gl:patch">patch</a> <code>1</code> to <a href="ref-glossary.html#gl:module">module</a> <code>:my-app</code> has been
-loaded:
+<p><span class="fndoclabel">Examples</span> <br />Check if <a href="ref-glossary.html#gl:patch">patch</a> <code>1</code> to <a href="ref-glossary.html#gl:module">module</a> <nobr><code>:my-app</code></nobr> has
+been loaded:
 <pre class="pretop">
   &gt; (patch-loaded-p 1 ':my-app)
   t
@@ -64,8 +64,8 @@ loaded:
   &gt;
 </pre>
 </p>
-<p>Check for patch <code>1</code> in <a href="ref-glossary.html#gl:module">module</a> <code>:gbbopen-test</code> (when that
-module has not been loaded):
+<p>Check for patch <code>1</code> in <a href="ref-glossary.html#gl:module">module</a> <nobr><code>:gbbopen-test</code></nobr> (when
+that module has not been loaded):
 <pre class="pretop">
   &gt; (patch-loaded-p 1 ':gbbopen-test)
   nil

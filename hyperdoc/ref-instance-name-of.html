@@ -58,9 +58,9 @@
 </p>
 <p><span class="fndoclabel">Returns</span> <br />The <a href="ref-glossary.html#id93">instance&nbsp;name</a> of the <var>instance</var>.
 </p>
-<p><span class="fndoclabel">Errors</span> <br />The supplied <var>instance-name</var> provided to <b>(setf instance-name-of</b>
-is identical to the instance name of an existing <a href="ref-glossary.html#id221">unit&nbsp;instance</a> of the
-same <a href="ref-glossary.html#gl:class">class</a> as <var>instance</var>.
+<p><span class="fndoclabel">Errors</span> <br />The supplied <var>instance-name</var> provided to <nobr><b>(setf
+instance-name-of)</b></nobr> is identical to the instance name of an existing
+<a href="ref-glossary.html#id221">unit&nbsp;instance</a> of the same <a href="ref-glossary.html#gl:class">class</a> as <var>instance</var>.
 </p>
 <p><span class="fndoclabel">See also</span>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-make-instance.html"><b>make-instance</b></a>
@@ -74,7 +74,7 @@ same <a href="ref-glossary.html#gl:class">class</a> as <var>instance</var>.
   &gt;
 </pre>
 <a name="id2">Change</a> the <a href="ref-glossary.html#id93">instance&nbsp;name</a> of <code>hyp</code> <code>180</code> to 
-<code>"bogus-180"</code>:
+<nobr><code>"bogus-180"</code></nobr>:
 <pre>
   &gt; (setf (instance-name-of (<a href="ref-find-instance-by-name.html">find-instance-by-name</a> 180 'hyp)) "bogus-180")
   "bogus-180"

@@ -29,12 +29,13 @@ a <a href="ref-glossary.html#gl:module">module</a>.
 <tr valign="top"><td valign="baseline" nowrap><i>form</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#gl:form">form</a>
 </td></tr></table>
 </p>
-<p><span class="fndoclabel">Errors</span> <br />A patch has not been started with <b><a href="ref-start-patch.html">start-patch</a></b>.
+<p><span class="fndoclabel">Errors</span> <br />A patch has not been started with <nobr><b><a href="ref-start-patch.html">start-patch</a></b></nobr>.
 </p>
-<p><span class="fndoclabel">Description</span> <br />The <b>continue-patch</b> macro, along with <b><a href="ref-start-patch.html">start-patch</a></b>
-and <b><a href="ref-finish-patch.html">finish-patch</a></b>, can be used to define a patch as multiple
-top-level forms in the same patch file if a patch cannot be defined as a
-single <b><a href="ref-patch.html">patch</a></b> form.
+<p><span class="fndoclabel">Description</span> <br />The <b>continue-patch</b> macro, along with
+<nobr><b><a href="ref-start-patch.html">start-patch</a></b></nobr> and
+<nobr><b><a href="ref-finish-patch.html">finish-patch</a></b></nobr>, can be used to define a patch as
+multiple top-level forms in the same patch file if a patch cannot be defined
+as a single <nobr><b><a href="ref-patch.html">patch</a></b></nobr> form.
 </p>
 <p><span class="fndoclabel">See also</span>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-allow-redefinition.html"><b>allow-redefinition</b></a>
@@ -49,8 +50,9 @@ single <b><a href="ref-patch.html">patch</a></b> form.
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-start-patch.html"><b>start-patch</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-undefmethod.html"><b>undefmethod</b></a>
 </p>
-<p><span class="fndoclabel">Example</span> <br />Define a more complex <a href="ref-glossary.html#gl:patch">patch</a> (in a file named <code>my-app-p002.lisp</code>
-in the <code>patches</code> subdirectory of the module):
+<p><span class="fndoclabel">Example</span> <br />Define a more complex <a href="ref-glossary.html#gl:patch">patch</a> (in a file named
+<nobr><code>my-app-p002.lisp</code></nobr> in the <nobr><code>patches</code></nobr> subdirectory of
+the module):
 <a name="id1"></a><pre class="pretop">
   (<a href="ref-start-patch.html">start-patch</a> (2 "06-23-08" 
                   :author "Corkill"

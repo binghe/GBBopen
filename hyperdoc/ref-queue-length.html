@@ -21,7 +21,7 @@
 <span 
     style="font-family: serif; font-style: normal">=&gt;</span> <var>integer</var></td><td valign="baseline" align="right">[<i>Generic&nbsp;Function</i>]
 </td></tr></table></p>
-<p><span class="fndoclabel">Purpose</span> <br />Return the length of <var>queue</var>.
+<p><span class="fndoclabel">Purpose</span> <br />Return the length of <nobr><var>queue</var></nobr>.
 </p>
 <p><span class="fndoclabel">Method signatures</span><table class="tighttop" width="100%">
 <tr valign="top"><td valign="baseline" align="left"><nobr>queue-length</nobr></td><td valign="baseline">&nbsp; </td><td valign="baseline" align="left" width="99%">
@@ -44,21 +44,21 @@
 </p>
 <p><span class="fndoclabel">Returns</span> <br />The <var>queue</var> length.
 </p>
-<p><span class="fndoclabel">Description</span> <br />Normally <b>queue-length</b> simply returns a count
-that is maintained with the queue.  Although highly unlikely, this
-count could become inaccurate if <a href="ref-glossary.html#gl:queue-element">queue-element</a> insertion or
-deletion operations are aborted in process. If <var>recount-p</var> is
-true, the elements are actually counted and then the count maintained
-with the queue is updated and returned.
+<p><span class="fndoclabel">Description</span> <br />Normally <nobr><b>queue-length</b></nobr> simply returns a count
+that is maintained with the queue.  Although highly unlikely, this count could
+become inaccurate if <a href="ref-glossary.html#gl:queue-element">queue-element</a> insertion or deletion operations
+are aborted in process. If <nobr><var>recount-p</var></nobr> is true, the elements are
+actually counted and then the count maintained with the queue is updated and
+returned.
 </p>
-<p><span class="fndoclabel">Examples</span> <br />Return the number of <a href="ref-glossary.html#gl:activations">KSAs</a> in the queue <code>pending-ksas</code>:
+<p><span class="fndoclabel">Examples</span> <br />Return the number of <a href="ref-glossary.html#gl:activations">KSAs</a> in the queue <nobr><code>pending-ksas</code></nobr>:
 <pre class="pretop">
   &gt; (queue-length pending-ksas)
   896
   &gt;
 </pre>
 Count and then return the actual number of <a href="ref-glossary.html#gl:activations">KSAs</a> in the
-queue <code>pending-ksas</code>:
+queue <nobr><code>pending-ksas</code></nobr>:
 <pre>
   &gt; (queue-length pending-ksas 't)
   896

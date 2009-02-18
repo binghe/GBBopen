@@ -36,9 +36,9 @@ Common Lisp implementation.
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-kill-thread.html"><b>kill-thread</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-spawn-periodic-function.html"><b>spawn-periodic-function</b></a>
 </p>
-<a name="id1"></a><p><span class="fndoclabel">Example</span> <br />Define and spawn a <a href="ref-glossary.html#id149">periodic&nbsp;function</a> that is invoked every 0.5 seconds
-to signal a <code>half-second-interrupt-event</code>, continuing as long as the
-control shell is running:
+<a name="id1"></a><p><span class="fndoclabel">Example</span> <br />Define and spawn a <a href="ref-glossary.html#id149">periodic&nbsp;function</a> that is invoked every
+0.5 seconds to signal a <nobr><code>half-second-interrupt-event</code></nobr>, continuing
+as long as the control shell is running:
 <pre class="pretop">
   &gt; (<a href="ref-define-event-class.html">define-event-class</a> half-second-timer-event (timer-interrupt-event)
       ())

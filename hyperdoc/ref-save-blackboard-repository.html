@@ -32,14 +32,14 @@ value</var>
 <p><span class="fndoclabel">Arguments and values</span><table class="tighttop">
 <tr valign="top"><td valign="baseline" nowrap><i>pathname</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id145">pathname&nbsp;designator</a>
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>external-format</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An external-file-format designator (default is
-<code>:default</code>)
+<nobr><code>:default</code></nobr>)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>package</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id135">package&nbsp;designator</a> indicating the package to be used
 when saving and loading the blackboard repository (default is
-<code>:common-lisp-user</code>)
+<nobr><code>:common-lisp-user</code></nobr>)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>read-default-float-format</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> One of the atomic type specifiers
-<code>short-float</code>, <code>single-float</code>, <code>double-float</code>, or
-<code>long-float</code> to be used when saving and loading the blackboard repository
-(default is <code>single-float</code>)
+<nobr><code>short-float</code></nobr>, <nobr><code>single-float</code></nobr>,
+<nobr><code>double-float</code></nobr>, or <nobr><code>long-float</code></nobr> to be used when saving
+and loading the blackboard repository (default is <nobr><code>single-float</code></nobr>)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>value</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An object to be saved with the repository and returned when the
 repository is loaded (default is <code>nil</code>)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>saved-repository-pathname</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#gl:pathname">pathname</a>
@@ -48,15 +48,15 @@ repository is loaded (default is <code>nil</code>)
 <p><span class="fndoclabel">Returns</span> <br />The pathname of the saved blackboard-repository data file.
 </p>
 <p><span class="fndoclabel">Description</span> <br />If <var>pathname</var> does not specify a file type, the type
-<code>bb</code> is added to it.  Then, <code>(user-homedir-pathname)</code> is used to
-supply any missing components to <var>pathname</var>.
+<code>bb</code> is added to it.  Then, <nobr><code>(user-homedir-pathname)</code></nobr> is used
+to supply any missing components to <nobr><var>pathname</var></nobr>.
 </p>
 <p>The size of the blackboard-repository data file can be reduced by specifying a
-<var>package</var> containing the majority of the symbols that are written to the
-file.
+<nobr><var>package</var></nobr> containing the majority of the symbols that are written
+to the file.
 </p>
-<p>A <b><a href="ref-with-saving-sending-block.html">with-saving/sending-block</a></b>, with the
-<var>package</var> and <var>read-default-float-format</var> values, is
+<p>A <nobr><b><a href="ref-with-saving-sending-block.html">with-saving/sending-block</a></b></nobr>, with the
+<nobr><var>package</var></nobr> and <nobr><var>read-default-float-format</var></nobr> values, is
 established when saving the blackboard repository.
 </p>
 <p><span class="fndoclabel">See also</span>

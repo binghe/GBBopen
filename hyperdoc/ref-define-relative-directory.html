@@ -32,7 +32,7 @@
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>directory</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> The <a href="ref-glossary.html#id97">keyword&nbsp;symbol</a> name of a <a href="ref-glossary.html#gl:Root">root</a> or 
 <a href="ref-glossary.html#id171">relative&nbsp;directory</a> or the name of a <a href="ref-glossary.html#gl:module">module</a>
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>subdirectories</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> One or more strings specifying, in order,
-subdirectories from <var>directory</var> to the relative directory. (The
+subdirectories from <nobr><var>directory</var></nobr> to the relative directory. (The
 <a href="ref-glossary.html#gl:keywords">keyword</a> <code>:up</code> or <code>:back</code> can also be supplied in addition to any
 of these strings, indicating to go upward one semantic or syntactic level of
 directory structure, respectively.)
@@ -52,18 +52,18 @@ every <a href="ref-glossary.html#id171">relative&nbsp;directory</a> associated w
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-show-defined-directories.html"><b>show-defined-directories</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-with-system-name.html"><b>with-system-name</b></a>
 </p>
-<p><span class="fndoclabel">Examples</span> <br />Define a relative directory below <code>:my-app-root</code> named
-<code>:my-tests</code>:
+<p><span class="fndoclabel">Examples</span> <br />Define a relative directory below <nobr><code>:my-app-root</code></nobr> named
+<nobr><code>:my-tests</code></nobr>:
 <pre class="pretop">
   (define-relative-directory :my-tests :my-app-root "tests")
 </pre>
-Define another relative directory named <code>:my-performance-tests</code> below
-<code>:my-tests</code>:
+Define another relative directory named <nobr><code>:my-performance-tests</code></nobr>
+below <nobr><code>:my-tests</code></nobr>:
 <pre>
   (define-relative-directory :my-performance-tests :my-tests "performance") 
 </pre>
-Define a data directory sibling to the <code>source</code> directory of
-<code>:my-app</code> <a href="ref-glossary.html#gl:module">module</a>:
+Define a data directory sibling to the <nobr><code>source</code></nobr> directory of
+<nobr><code>:my-app</code></nobr> <a href="ref-glossary.html#gl:module">module</a>:
 <pre>
   (define-relative-directory :app-data :my-app :up "data") 
 </pre>

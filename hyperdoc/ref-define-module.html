@@ -37,7 +37,7 @@ module-option</var>*</td><td valign="baseline" align="right">[<i>Macro</i>]
 </p>
 <p><span class="fndoclabel">Detailed syntax</span><table class="tighttop"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
-<var>module-option</var>&nbsp;::=
+<nobr><var>module-option</var> ::=</nobr>
 </td><td valign="baseline" colspan="1" align="left"> <code>(:requires</code> <var>module-name</var>*<code>)</code> | </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code>(:directory</code> <var>directory-specifier</var><code>)</code> | </td></tr>
@@ -50,13 +50,13 @@ module-option</var>*</td><td valign="baseline" align="right">[<i>Macro</i>]
 </p>
 <table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
-<var>directory-specifier</var>&nbsp;::=
+<nobr><var>directory-specifier</var> ::=</nobr>
 </td><td valign="baseline" colspan="1" align="left"> <var>root-or-relative-directory subdirectory</var>* </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
 <table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
-<var>file-specifier</var>&nbsp;::= 
+<nobr><var>file-specifier</var> ::=</nobr> 
 </td><td valign="baseline" colspan="1" align="left"> <var>file-name</var> | </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code>(</code><var>file-name file-option</var>*<code>)</code> </td></tr>
@@ -64,54 +64,57 @@ module-option</var>*</td><td valign="baseline" align="right">[<i>Macro</i>]
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
 <table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
-<var>file-option</var>&nbsp;::= </td><td valign="baseline" colspan="1" align="left"> <code>:recompile</code> | 
+<nobr><var>file-option</var> ::=</nobr> </td><td valign="baseline" colspan="1" align="left"> <code>:recompile</code> | 
 <code>:reload</code> | <code>:source</code> | 
 <code>:forces-recompile</code> | <code>:noload</code> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
 <p><span class="fndoclabel">Terms</span><table class="tighttop">
 <tr valign="top"><td valign="baseline" nowrap><i>root-or-relative-directory</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#gl:keywords">keyword</a> naming a <a href="ref-glossary.html#gl:Root">root</a> or
-<a href="ref-glossary.html#id171">relative&nbsp;directory</a>, a <a href="ref-glossary.html#gl:keywords">keyword</a> naming another <a href="ref-glossary.html#gl:module">module</a>, or
-<code>nil</code>, indicating that the module is rooted at the <code>*load-truename*</code>
-value in effect when the module definition is loaded
+<a href="ref-glossary.html#id171">relative&nbsp;directory</a>, a <a href="ref-glossary.html#gl:keywords">keyword</a> naming another <a href="ref-glossary.html#gl:module">module</a>,
+or <code>nil</code>, indicating that the module is rooted at the
+<nobr><code>*load-truename*</code></nobr> value in effect when the module definition is
+loaded
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>subdirectory</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A string naming a subdirectory
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>file-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A string naming a file
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>module-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id97">keyword&nbsp;symbol</a> naming a <a href="ref-glossary.html#gl:module">module</a>
 </td></tr></table>
 </p>
-<p><span class="fndoclabel">Description</span> <br />The <var>module-options</var> <code>:requires</code>, <code>:directory</code>,
-<code>:files</code>, and <code>:patches</code> can be specified in any order, but at most
-one of each is allowed.
+<p><span class="fndoclabel">Description</span> <br />The <var>module-options</var> <nobr><code>:requires</code></nobr>,
+<nobr><code>:directory</code></nobr>, <code>:files</code>, and <code>:patches</code> can be specified
+in any order, but at most one of each is allowed.
 </p>
 <p>If a <code>:directory</code> module option is not specified, an implicit root
-directory for the <a href="ref-glossary.html#gl:module">module</a> (at the <code>*load-truename*</code> of the file
-containing the <b>define-module</b> form) is used.  If the <code>:directory</code>
-module option specifies a <a href="ref-glossary.html#gl:keywords">keyword</a> naming another <a href="ref-glossary.html#gl:module">module</a>, the
-directory specification of the named module is used as the base (root or
-relative) directory for the module that is being defined.  If both a
-<a href="ref-glossary.html#gl:module">module</a> and a <a href="ref-glossary.html#gl:Root">root</a> or <a href="ref-glossary.html#id171">relative&nbsp;directory</a> definition
-have the same name, the directory definition takes precedence over the module
-directory specification.
+directory for the <a href="ref-glossary.html#gl:module">module</a> (at the <nobr><code>*load-truename*</code></nobr> of the
+file containing the <nobr><b>define-module</b></nobr> form) is used.  If the
+<nobr><code>:directory</code></nobr> module option specifies a <a href="ref-glossary.html#gl:keywords">keyword</a> naming
+another <a href="ref-glossary.html#gl:module">module</a>, the directory specification of the named module is
+used as the base (root or relative) directory for the module that is being
+defined.  If both a <a href="ref-glossary.html#gl:module">module</a> and a <a href="ref-glossary.html#gl:Root">root</a> or
+<a href="ref-glossary.html#id171">relative&nbsp;directory</a> definition have the same name, the directory
+definition takes precedence over the module directory specification.
 </p>
 <p>The <code>:requires</code> module option specifies, in order, the <a href="ref-glossary.html#gl:modules">modules</a>
 that must be loaded before this <a href="ref-glossary.html#gl:module">module</a>.  The fully expanded
-<a href="ref-glossary.html#gl:required-module">required-module</a> order determined from the specified <code>:requires</code>
-module option must be consistent with all previously defined modules.
+<a href="ref-glossary.html#gl:required-module">required-module</a> order determined from the specified
+<nobr><code>:requires</code></nobr> module option must be consistent with all previously
+defined modules.
 </p>
 <p>The <code>:files</code> module option specifies, in order, the files that are
 compiled (when appropriate) and loaded for this <a href="ref-glossary.html#gl:module">module</a>.  Similarly,
-the <code>:patches</code> module option specifies, in order, the <a href="ref-glossary.html#gl:patch">patch</a> files
-that are compiled (when appropriate) and loaded for this <a href="ref-glossary.html#gl:module">module</a>.  The
-combination of the <code>:requires</code>, <code>:files</code>, and <code>:patches</code> module
-options specifies a total ordering of all the files that must be compiled and
-loaded for this <a href="ref-glossary.html#gl:module">module</a> (the files associated with each of the
-<a href="ref-glossary.html#gl:required-module">required&nbsp;modules</a> followed by the files specified for this
-<a href="ref-glossary.html#gl:module">module</a> followed by the patch files associated with each of the
-<a href="ref-glossary.html#gl:required-module">required&nbsp;modules</a> followed by the patch files specified for this
-<a href="ref-glossary.html#gl:module">module</a>).In order to maintain an invariant patch ordering, patches
-should be added sequentially to the main (last loaded) module of an
-application. The source files for patches should be placed in a subdirectory
-named <code>patches</code> in the module's source-file directory.
+the <nobr><code>:patches</code></nobr> module option specifies, in order, the
+<a href="ref-glossary.html#gl:patch">patch</a> files that are compiled (when appropriate) and loaded for this
+<a href="ref-glossary.html#gl:module">module</a>.  The combination of the <nobr><code>:requires</code></nobr>,
+<code>:files</code>, and <nobr><code>:patches</code></nobr> module options specifies a total
+ordering of all the files that must be compiled and loaded for this
+<a href="ref-glossary.html#gl:module">module</a> (the files associated with each of the <a href="ref-glossary.html#gl:required-module">required&nbsp;modules</a>
+followed by the files specified for this <a href="ref-glossary.html#gl:module">module</a> followed by the patch
+files associated with each of the <a href="ref-glossary.html#gl:required-module">required&nbsp;modules</a> followed by the
+patch files specified for this <a href="ref-glossary.html#gl:module">module</a>).In order to maintain an
+invariant patch ordering, patches should be added sequentially to the main
+(last loaded) module of an application. The source files for patches should be
+placed in a subdirectory named <nobr><code>patches</code></nobr> in the module's
+source-file directory.
 </p>
 <p><var>File-options</var> have the following effects: 
 <table class="tighttop"><tbody><tr>
@@ -155,7 +158,7 @@ reload all subsequent files and <a href="ref-glossary.html#gl:modules">modules</
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-with-system-name.html"><b>with-system-name</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-with-module-redefinitions.html"><b>with-module-redefinitions</b></a>
 </p>
-<p><span class="fndoclabel">Examples</span> <br /><a name="id2">Define</a> a <a href="ref-glossary.html#id179">root&nbsp;directory</a> and <a href="ref-glossary.html#gl:module">module</a> for <code>:my-app</code>:
+<p><span class="fndoclabel">Examples</span> <br /><a name="id2">Define</a> a <a href="ref-glossary.html#id179">root&nbsp;directory</a> and <a href="ref-glossary.html#gl:module">module</a> for <nobr><code>:my-app</code></nobr>:
 <pre class="pretop">
   (<a href="ref-define-root-directory.html">define-root-directory</a> :my-app-root 
     (make-pathname :directory "~/my-app"))
@@ -170,8 +173,8 @@ reload all subsequent files and <a href="ref-glossary.html#gl:modules">modules</
             "epilogue"))
 </pre>
 </p>
-<p>Define a <a href="ref-glossary.html#gl:module">module</a> for <code>:my-app</code> rooted relative to the file 
-containing the <b>define-module</b> form:
+<p>Define a <a href="ref-glossary.html#gl:module">module</a> for <nobr><code>:my-app</code></nobr> rooted relative to the file
+containing the <nobr><b>define-module</b></nobr> form:
 <pre class="pretop">
   (define-module :my-app
     (:requires :gbbopen-user)
@@ -182,7 +185,7 @@ containing the <b>define-module</b> form:
             "epilogue"))
 </pre>
 </p>
-<p>Add two <a href="ref-glossary.html#gl:patch">patch</a> files to the <code>:my-app</code> <a href="ref-glossary.html#gl:module">module</a>:
+<p>Add two <a href="ref-glossary.html#gl:patch">patch</a> files to the <nobr><code>:my-app</code></nobr> <a href="ref-glossary.html#gl:module">module</a>:
 <pre class="pretop">
   (define-module :my-app
     (:requires :gbbopen-user)

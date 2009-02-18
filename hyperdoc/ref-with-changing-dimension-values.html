@@ -36,7 +36,7 @@
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>dimension-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A symbol specifying a <a href="ref-glossary.html#gl:dimension">dimension</a> of
 <var>unit-instance</var> 
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>declaration</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A declare expression (not evaluated)
-</td></tr><tr valign="top"><td valign="baseline" nowrap><i>forms</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An implicit <b>progn</b> of <a href="ref-glossary.html#gl:forms">forms</a> to be evaluated
+</td></tr><tr valign="top"><td valign="baseline" nowrap><i>forms</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An implicit <nobr><b>progn</b></nobr> of <a href="ref-glossary.html#gl:forms">forms</a> to be evaluated
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>results</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> The values returned by evaluating the last <var>form</var>
 </td></tr></table>
 </p>
@@ -46,9 +46,9 @@
 evaluation of the last <var>form</var>.  Any retrieval operations performed during
 the evaluation of <var>forms</var> may operate with indexes as they existed
 before evaluation of the first <var>form</var>; therefore, retrievals should not be
-included within the scope of <b>with-changing-dimension-values</b>.
+included within the scope of <nobr><b>with-changing-dimension-values</b></nobr>.
 Retrievals performed by separate threads also should be synchronized with
-<b>with-changing-dimension-values</b>.
+<nobr><b>with-changing-dimension-values</b></nobr>.
 </p>
 <p>If <var>dimension-names</var> are specified, only the indexes for those
 <a href="ref-glossary.html#gl:dimensions">dimensions</a> of <var>unit-instance</var> will be updated. If no
@@ -56,8 +56,8 @@ Retrievals performed by separate threads also should be synchronized with
 <a href="ref-glossary.html#gl:dimensions">dimensions</a> of <var>unit-instance</var> are assumed to have been
 potentially changed by <var>forms</var>.
 </p>
-<p><span class="fndoclabel">Examples</span> <br />Notify GBBopen that the <code>x</code>, <code>y</code>, and <code>belief</code>
-dimension values of <code>hyp</code> might be changed:
+<p><span class="fndoclabel">Examples</span> <br />Notify GBBopen that the <code>x</code>, <code>y</code>, and
+<nobr><code>belief</code></nobr> dimension values of <code>hyp</code> might be changed:
 <pre class="pretop">
   &gt; (with-changing-dimension-values (hyp x y belief)
       (setf (location-of hyp) '(30 40))

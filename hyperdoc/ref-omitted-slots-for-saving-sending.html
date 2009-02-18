@@ -44,7 +44,7 @@ are not saved or sent.
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-tools</code>
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-tools</code> (the <a href="ref-glossary.html#gl:instances">unit-instance</a> and
-<a href="ref-glossary.html#gl:space-instance">space-instance</a> methods are added by <code>:gbbopen-core</code>)
+<a href="ref-glossary.html#gl:space-instance">space-instance</a> methods are added by <nobr><code>:gbbopen-core</code></nobr>)
 </p>
 <p><span class="fndoclabel">Arguments and values</span><table class="tighttop">
 <tr valign="top"><td valign="baseline" nowrap><i>instance</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An <a href="ref-glossary.html#gl:instances">instance</a>
@@ -52,7 +52,7 @@ are not saved or sent.
 </td></tr></table>
 </p>
 <p><span class="fndoclabel">Returns</span> <br />A list of omitted slot names for the <a href="ref-glossary.html#gl:class">class</a> of 
-<var>instance</var>.
+<nobr><var>instance</var></nobr>.
 </p>
 <p><span class="fndoclabel">See also</span>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-print-object-for-sending-var.html"><b>*print-object-for-sending*</b></a>
@@ -61,8 +61,9 @@ are not saved or sent.
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-print-slot-for-saving-sending.html"><b>print-slot-for-saving/sending</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-save-blackboard-repository.html"><b>save-blackboard-repository</b></a>
 </p>
-<p><span class="fndoclabel">Example</span> <br />Specify that slot <code>complex-unsaved-slot</code> in <code>my-unit-instance</code>
-should be added to the list of slots that are not saved or sent:
+<p><span class="fndoclabel">Example</span> <br />Specify that slot <nobr><code>complex-unsaved-slot</code></nobr> in
+<nobr><code>my-unit-instance</code></nobr> should be added to the list of slots that are
+not saved or sent:
 <pre class="pretop">
   (defmethod omitted-slots-for-saving/sending ((instance my-unit-instance))
     (cons 'complex-unsaved-slot (call-next-method)))

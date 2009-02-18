@@ -22,7 +22,7 @@ decrement place</var>
 <span 
     style="font-family: serif; font-style: normal">=&gt;</span> <var>new-place-value</var></td><td valign="baseline" align="right">[<i>Macro</i>]
 </td></tr></table></p>
-<p><span class="fndoclabel">Purpose</span> <br />Decrement by <var>decrement</var> the value associated with
+<p><span class="fndoclabel">Purpose</span> <br />Decrement by <nobr><var>decrement</var></nobr> the value associated with
 <var>item</var> in an <a href="ref-glossary.html#id3">association&nbsp;list</a> stored in <var>place</var>, deleting
 the <a href="ref-glossary.html#gl:cons">cons</a> associated with <var>item</var> if the value becomes zero.
 </p>
@@ -37,9 +37,9 @@ the <a href="ref-glossary.html#gl:cons">cons</a> associated with <var>item</var>
 <a href="ref-glossary.html#id83">generalized&nbsp;reference</a> 
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>key</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#gl:function">function</a> of one argument, or <code>nil</code> (default is <code>nil</code>)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>test</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#gl:function">function</a> of two arguments that returns a
-<a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> (default is <code>&#35;'eql</code>) 
+<a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> (default is <nobr><code>&#35;'eql</code></nobr>) 
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>test-not</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#gl:function">function</a> of two arguments that returns a
-<a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> (use of <code>:test-not</code> is deprecated)
+<a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> (use of <nobr><code>:test-not</code></nobr> is deprecated)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>new-place-value</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An <a href="ref-glossary.html#id3">association&nbsp;list</a> 
 </td></tr></table>
 </p>
@@ -48,7 +48,7 @@ the <a href="ref-glossary.html#gl:cons">cons</a> associated with <var>item</var>
 <p><span class="fndoclabel">Errors</span> <br />Item <var>item</var> is not present in the <a href="ref-glossary.html#id3">association&nbsp;list</a>
 stored in <var>place</var>.
 </p>
-<p><span class="fndoclabel">Description</span> <br />This is the inverse of <b><a href="ref-pushnew-incf-acons.html">pushnew/incf-acons</a></b>.
+<p><span class="fndoclabel">Description</span> <br />This is the inverse of <nobr><b><a href="ref-pushnew-incf-acons.html">pushnew/incf-acons</a></b></nobr>.
 </p>
 <p><span class="fndoclabel">See also</span>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-pushnew-incf-acons.html"><b>pushnew/incf-acons</b></a>
@@ -66,10 +66,12 @@ stored in <var>place</var>.
 </pre>
 </p>
 <p><span class="fndoclabel">Note</span> <br /><a name="id1"></a><a href="ref-declared-numerics.html">Declared numeric</a> and <a href="ref-pseudo-probability-entities.html">pseudo
-probability</a> versions of <b>decf/delete-acons</b> are also
-provided: <b>decf&#38;/delete-acons</b>, <b>decf&#36;&#38;/delete-acons</b>,
-<b>decf&#36;/delete-acons</b>, <b>decf&#36;&#36;/delete-acons</b>,
-<b>decf&#36;&#36;&#36;/delete-acons</b>, and <b>decf&#37;/delete-acons</b>,
+probability</a> versions of <nobr><b>decf/delete-acons</b></nobr> are
+also provided: <nobr><b>decf&#38;/delete-acons</b></nobr>,
+<nobr><b>decf&#36;&#38;/delete-acons</b></nobr>, <nobr><b>decf&#36;/delete-acons</b></nobr>,
+<nobr><b>decf&#36;&#36;/delete-acons</b></nobr>,
+<nobr><b>decf&#36;&#36;&#36;/delete-acons</b></nobr>, and
+<nobr><b>decf&#37;/delete-acons</b></nobr>,
 </p>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />

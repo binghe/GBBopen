@@ -21,7 +21,7 @@
 <a href="ref-glossary.html#gl:modules">modules</a> are compiled and loaded by the Module Manager.
 </p>
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:common-lisp-user</code> 
-(also imported into and exported from <code>:module-manager</code>)
+(also imported into and exported from <nobr><code>:module-manager</code></nobr>)
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:module-manager</code>
 </p>
@@ -29,13 +29,14 @@
 </p>
 <p><span class="fndoclabel">Initial value</span>&nbsp;&nbsp;&nbsp;<code>nil</code>
 </p>
-<p><span class="fndoclabel">Description</span> <br />By default, <b>*patches-only*</b> is set to <code>nil</code>, but it can
-be set to true to instruct <b><a href="ref-compile-module.html">compile-module</a></b> and
-<b><a href="ref-load-module.html">load-module</a></b> to bypass compiling and loading regular files
-(non-<a href="ref-glossary.html#gl:patch">patch</a> files) in <a href="ref-glossary.html#gl:modules">modules</a>.  By setting
-<b>*patches-only*</b> to true after loading an application, the image is
-&#8220;frozen&#8221; so that only patches will be applied by subsequent uses of
-<b><a href="ref-compile-module.html">compile-module</a></b> or <b><a href="ref-load-module.html">load-module</a></b>.
+<p><span class="fndoclabel">Description</span> <br />By default, <nobr><b>*patches-only*</b></nobr> is set to <code>nil</code>, but
+it can be set to true to instruct <nobr><b><a href="ref-compile-module.html">compile-module</a></b></nobr> and
+<nobr><b><a href="ref-load-module.html">load-module</a></b></nobr> to bypass compiling and loading regular
+files (non-<a href="ref-glossary.html#gl:patch">patch</a> files) in <a href="ref-glossary.html#gl:modules">modules</a>.  By setting
+<nobr><b>*patches-only*</b></nobr> to true after loading an application, the image
+is &#8220;frozen&#8221; so that only patches will be applied by subsequent uses of
+<nobr><b><a href="ref-compile-module.html">compile-module</a></b></nobr> or
+<nobr><b><a href="ref-load-module.html">load-module</a></b></nobr>.
 </p>
 <p><span class="fndoclabel">See also</span>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-compile-module.html"><b>compile-module</b></a>
@@ -43,7 +44,7 @@ be set to true to instruct <b><a href="ref-compile-module.html">compile-module</
 </p>
 <p><span class="fndoclabel">Example</span> <br /><a name="id1">
 Compile,</a> load, and freeze the GBBopen application defined by <a href="ref-glossary.html#gl:module">module</a>
-<code>:my-app</code>:
+<nobr><code>:my-app</code></nobr>:
 <pre class="pretop">
   &gt; (progn (<a href="ref-compile-module.html">compile-module</a> :my-app :propagate)
            (setf *patches-only* 't))

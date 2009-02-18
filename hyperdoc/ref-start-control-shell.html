@@ -39,16 +39,16 @@ in the queue of <a href="ref-glossary.html#id148">pending&nbsp;KSAs</a>)
 <li><code>:stop</code> and (optionally) associated reasons, as multiple
 values&mdash;If one of the following conditions occurs:
 </p>
-<p><ul class="tight"><li>The <b><a href="ref-exit-control-shell.html">exit-control-shell</a></b> <a href="ref-glossary.html#gl:function">function</a> is
+<p><ul class="tight"><li>The <nobr><b><a href="ref-exit-control-shell.html">exit-control-shell</a></b></nobr> <a href="ref-glossary.html#gl:function">function</a> is
 called.
 <li>A precondition <a href="ref-glossary.html#gl:function">function</a> or <a href="ref-glossary.html#gl:KS-execution">KS-execution</a> <a href="ref-glossary.html#gl:function">function</a>
 returns <code>:stop</code> and, optionally, associated reasons.
 </ul>
 <li><var>Result-values</var>&mdash;If the control-shell is terminated by
-calling <b><a href="ref-exit-control-shell.html">exit-control-shell</a></b>.
+calling <nobr><b><a href="ref-exit-control-shell.html">exit-control-shell</a></b></nobr>.
 </ul>
 </p>
-<p><span class="fndoclabel">Events</span> <br /><a name="id1">A</a> <code>start-control-shell-event</code> is signaled.
+<p><span class="fndoclabel">Events</span> <br /><a name="id1">A</a> <nobr><code>start-control-shell-event</code></nobr> is signaled.
 </p>
 <p><span class="fndoclabel">Errors</span> <br />The idle-loop process has not been started on
 <a target="_top" href="http://www.cons.org/cmucl/">CMUCL</a>.  Multiprocessing has not been
@@ -65,7 +65,7 @@ is <code>nil</code>)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>instance-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An object naming this control-shell instance (default is 
 <code>1</code>) 
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>output-stream</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> Control-shell output stream (default is
-<code>*trace-output*</code>) 
+<nobr><code>*trace-output*</code></nobr>) 
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>pause</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> (default is <code>nil</code>) 
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>print</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> (default is <code>t</code>) 
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>run-polling-functions</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> (default is 
@@ -74,11 +74,11 @@ is <code>nil</code>)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>save-obviated-ksas</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> (default is <code>nil</code>) 
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>stepping</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> Control-shell stepping options (default is <code>nil</code>) 
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>stepping-stream</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> Control-shell stepping stream (default is
-<code>*query-io*</code>) 
+<nobr><code>*query-io*</code></nobr>) 
 </td></tr></table>
 </p>
 <p><span class="fndoclabel">Description</span> <br />Many Agenda Shell behaviors can be customized by providing
-non-default values for the following <var>initargs</var>:
+non-default values for the following <nobr><var>initargs</var></nobr>:
 <table class="tight">
 </p>
 <tr valign="top"><td valign="baseline"><code><p>:awaken-on-event</code></td><td valign="baseline">&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> value indicating
@@ -89,16 +89,16 @@ is signaled
 indicating whether the control shell loop should continue even when
 quiescence-event processing has failed to produce any
 <a href="ref-glossary.html#id56">executable&nbsp;KSAs</a>; use with caution, as the control shell will only
-exit by an explicit call to <b><a href="ref-exit-control-shell.html">exit-control-shell</a></b>
+exit by an explicit call to <nobr><b><a href="ref-exit-control-shell.html">exit-control-shell</a></b></nobr>
 </p>
 </td></tr><tr valign="top"><td valign="baseline"><code><p>:fifo-queue-ordering</code></td><td valign="baseline">&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> value that
 indicates a newly rated <a href="ref-glossary.html#id148">pending&nbsp;KSA</a> is to be placed ahead of equally
 rated <a href="ref-glossary.html#gl:activations">KSAs</a> (first-in, first out) or after them (last-in, first out)
 </p>
 </td></tr><tr valign="top"><td valign="baseline"><code><p>:hibernate-on-quiescence</code></td><td valign="baseline">&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> value that
-determines whether the control-shell will hibernate rather than exit
-when no executable <a href="ref-glossary.html#gl:activations">KSA</a> exists; this decision point is never reached when
-<code>:continue-past-quiescence</code> is true
+determines whether the control-shell will hibernate rather than exit when no
+executable <a href="ref-glossary.html#gl:activations">KSA</a> exists; this decision point is never reached when
+<nobr><code>:continue-past-quiescence</code></nobr> is true
 </p>
 </td></tr><tr valign="top"><td valign="baseline"><code><p>:minimum-ksa-execution-rating</code></td><td valign="baseline">&nbsp;</td><td valign="baseline"> The minimum <a href="ref-glossary.html#gl:rating">rating</a> value
 that a <a href="ref-glossary.html#id148">pending&nbsp;KSA</a> must have to be executed
@@ -116,7 +116,7 @@ control shell
 </p>
 </td></tr><tr valign="top"><td valign="baseline"><code><p>:run-polling-functions</code></td><td valign="baseline">&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> that
 determines whether polling functions (provided by the
-<a href="ref-polling-function-entities.html"><code>:polling-functions</code> module</a>)
+<a href="ref-polling-function-entities.html"><nobr><code>:polling-functions</code></nobr> module</a>)
 are to be run at the start of each control-shell cycle
 </p>
 </td></tr><tr valign="top"><td valign="baseline"><code><p>:save-executed-ksas</code></td><td valign="baseline">&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> that determines
@@ -208,12 +208,13 @@ stepping enabled):
   &gt;
 </pre>
 </p>
-<a name="id4"></a><p><span class="fndoclabel">Note</span> <br />When a non-<code>nil</code> <code>:run-polling-functions</code>
-value is supplied to <b><a href="ref-start-control-shell.html">start-control-shell</a></b> (the default on
-Common Lisp implementations without threads),
-<b><a href="ref-run-polling-functions.html">run-polling-functions</a></b> is called at the beginning of every
-control-shell-cycle and at one-half-second intervals when the Agenda Shell
-is hibernating due to <a href="ref-glossary.html#gl:quiescence">quiescence</a>.
+<a name="id4"></a><p><span class="fndoclabel">Note</span> <br />When a non-<code>nil</code>
+<nobr><code>:run-polling-functions</code></nobr> value is supplied to
+<nobr><b><a href="ref-start-control-shell.html">start-control-shell</a></b></nobr> (the default on Common Lisp
+implementations without threads),
+<nobr><b><a href="ref-run-polling-functions.html">run-polling-functions</a></b></nobr> is called at the beginning
+of every control-shell-cycle and at one-half-second intervals when the
+Agenda Shell is hibernating due to <a href="ref-glossary.html#gl:quiescence">quiescence</a>.
 </p>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />

@@ -28,15 +28,16 @@
 <p><span class="fndoclabel">Initial value</span>&nbsp;&nbsp;&nbsp;(see the first example below)
 </p>
 <p><span class="fndoclabel">Description</span> <br />To change the preferred browser, set the value of
-<code>*preferred-browser*</code> in either your Common Lisp initialization
-file or your personal <code>gbbopen-init.lisp</code> file.  Because
-<code>startup.lisp</code> is under Subversion source control, changing
-<code>startup.lisp</code> directly is not recommended.
+<nobr><code>*preferred-browser*</code></nobr> in either your Common Lisp initialization
+file or your personal <nobr><code>gbbopen-init.lisp</code></nobr> file.  Because
+<nobr><code>startup.lisp</code></nobr> is under
+<a target="_top" href="http://subversion.tigris.org">Subversion</a> source control, changing
+<nobr><code>startup.lisp</code></nobr> directly is not recommended.
 </p>
 <p><span class="fndoclabel">See also</span>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-browse-hyperdoc.html"><b>browse-hyperdoc</b></a>
 </p>
-<p><span class="fndoclabel">Examples</span> <br />Here is the setting that is made in <code>startup.lisp</code>:
+<p><span class="fndoclabel">Examples</span> <br />Here is the setting that is made in <nobr><code>startup.lisp</code></nobr>:
 <pre class="pretop">
   (defvar *preferred-browser* 
       ;; On Mac OSX we defer to the OS default browser:
@@ -48,7 +49,7 @@ file or your personal <code>gbbopen-init.lisp</code> file.  Because
       #-(or macosx darwin (and lispworks (not win32)) sbcl) "firefox")
 </pre>
 </p>
-<p>Specify a different browser (in a personal <code>gbbopen-init.lisp</code>
+<p>Specify a different browser (in a personal <nobr><code>gbbopen-init.lisp</code></nobr>
 file) on Linux machines:
 <pre class="pretop">
   (in-package :common-lisp-user)

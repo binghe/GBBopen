@@ -20,7 +20,7 @@
 <span 
     style="font-family: serif; font-style: normal">=&gt;</span> <var>queue-element</var></td><td valign="baseline" align="right">[<i>Generic&nbsp;Function</i>]
 </td></tr></table></p>
-<p><span class="fndoclabel">Purpose</span> <br />Return the nth <a href="ref-glossary.html#id163">queue&nbsp;element</a> on <var>queue</var>.
+<p><span class="fndoclabel">Purpose</span> <br />Return the nth <a href="ref-glossary.html#id163">queue&nbsp;element</a> on <nobr><var>queue</var></nobr>.
 </p>
 <p><span class="fndoclabel">Method signatures</span><table class="tighttop" width="100%">
 <tr valign="top"><td valign="baseline" align="left"><nobr>nth-queue-element</nobr></td><td valign="baseline">&nbsp; </td><td valign="baseline" align="left" width="99%">
@@ -41,8 +41,8 @@
 </p>
 <p><span class="fndoclabel">Returns</span> <br />The specified <a href="ref-glossary.html#id163">queue&nbsp;element</a> or <code>nil</code> if none exists.
 </p>
-<p><span class="fndoclabel">Description</span> <br />Returns the nth element in <var>queue</var> (zero origin) or
-<code>nil</code> if the queue is shorter than <var>n</var>.  If <var>n</var> is negative,
+<p><span class="fndoclabel">Description</span> <br />Returns the nth element in <nobr><var>queue</var></nobr> (zero origin)
+or <code>nil</code> if the queue is shorter than <var>n</var>.  If <var>n</var> is negative,
 return the nth element counting backward from the end of the queue (one
 origin).
 </p>
@@ -50,15 +50,15 @@ origin).
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-first-queue-element.html"><b>first-queue-element</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-last-queue-element.html"><b>last-queue-element</b></a>
 </p>
-<a name="id1"></a><p><span class="fndoclabel">Examples</span> <br />Return the first element on <code>pending-ksas</code> (equivalent to
-<b><a href="ref-first-queue-element.html">first-queue-element</a></b>):
+<a name="id1"></a><p><span class="fndoclabel">Examples</span> <br />Return the first element on <nobr><code>pending-ksas</code></nobr> (equivalent to
+<nobr><b><a href="ref-first-queue-element.html">first-queue-element</a></b></nobr>):
 <pre class="pretop">
   &gt; (nth-queue-element 0 pending-ksas)
   #&lt;ksa 2217&gt;
   &gt;
 </pre>
-Return the last element on <code>pending-ksas</code> (equivalent to
-<b><a href="ref-last-queue-element.html">last-queue-element</a></b>):
+Return the last element on <nobr><code>pending-ksas</code></nobr> (equivalent to
+<nobr><b><a href="ref-last-queue-element.html">last-queue-element</a></b></nobr>):
 <pre>
   &gt; (nth-queue-element -1 pending-ksas)
   #&lt;ksa 2372&gt;

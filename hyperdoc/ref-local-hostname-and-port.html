@@ -18,11 +18,11 @@
 <tr valign="top"><td valign="baseline" align="left"%>
 <nobr><b><font color="#000000">local-hostname-and-port</font></b></nobr></td><td valign="baseline"> &nbsp; </td><td valign="baseline" align="left" width="99%"><var>socket-stream</var>
 <code>&#38;optional</code> <var>do-not-resolve</var> 
-<span 
-    style="font-family: serif; font-style: normal">=&gt;</span>&nbsp;<var>hostname,&nbsp;port</var></td><td valign="baseline" align="right">[<i>Function</i>]
+<nobr><span 
+    style="font-family: serif; font-style: normal">=&gt;</span> <var>hostname, port</var></nobr></td><td valign="baseline" align="right">[<i>Function</i>]
 </td></tr></table></p>
 <p><span class="fndoclabel">Purpose</span> <br />Return the name of the host on the local side of the
-<var>socket-stream</var> connection and its port number.
+<nobr><var>socket-stream</var></nobr> connection and its port number.
 </p>
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:portable-sockets</code>
 </p>
@@ -47,7 +47,7 @@
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-with-open-connection.html"><b>with-open-connection</b></a>
 </p>
 <p><span class="fndoclabel">Examples</span> <br />Return the local hostname and port of an open socket-stream
-connection to the <code>wiki.alu.org</code> web server:
+connection to the <nobr><code>wiki.alu.org</code></nobr> web server:
 <pre class="pretop">
   &gt; (local-hostname-and-port connection)
   "192.168.240.104 (ruby.gbbopen.org)"
