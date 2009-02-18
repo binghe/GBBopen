@@ -18,7 +18,7 @@
 <tr valign="top"><td valign="baseline" align="left"%>
 <nobr><b><font color="#000000">undefmethod</font></b></nobr></td><td valign="baseline"> &nbsp; </td><td valign="baseline" align="left" width="99%"><var>function-name</var>
 &#123;<var>method-qualifier</var>&#125;* <var>specialized-lambda-list</var> 
-[[<var>declaration</var>*&nbsp;|&nbsp;<var>documentation</var>]]
+<nobr>[[<var>declaration</var>* | <var>documentation</var>]]</nobr>
 <var>form</var>*</td><td valign="baseline" align="right">[<i>Macro</i>]
 </td></tr></table></p>
 <p><span class="fndoclabel">Purpose</span> <br />Locate and undefine a method.
@@ -28,11 +28,11 @@
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-tools</code>
 </p>
 <p><span class="fndoclabel">Arguments and values</span><table class="tighttop">
-<tr valign="top"><td valign="baseline" nowrap><i>function-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> Either a symbol or <code>(setf <var>symbol</var>)</code>
+<tr valign="top"><td valign="baseline" nowrap><i>function-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> Either a symbol or <nobr><code>(setf <var>symbol</var>)</code></nobr>
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>method-qualifier</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A non-list method qualifier object (such as
-<code>:before</code>, <code>:after</code>, or <code>:around</code>)
+<nobr><code>:before</code></nobr>, <nobr><code>:after</code></nobr>, or <nobr><code>:around</code></nobr>)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>specialized-lambda-list</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A specialized lambda list (as per
-<b>defmethod</b>) 
+<nobr><code>defmethod</code></nobr>) 
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>declarations</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A declare expression (not evaluated)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>documentation</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A documentation string (not evaluated)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>forms</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> Zero or more <a href="ref-glossary.html#gl:forms">forms</a>
@@ -44,7 +44,7 @@
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-patch.html"><b>patch</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-start-patch.html"><b>start-patch</b></a>
 </p>
-<p><span class="fndoclabel">Example</span> <br /><a name="id1">After</a> creating an undesired method, use <b>undefmethod</b> to remove it:
+<p><span class="fndoclabel">Example</span> <br /><a name="id1">After</a> creating an undesired method, use <nobr><b>undefmethod</b></nobr> to remove it:
 <pre class="pretop">
   &gt; (defmethod instance-name-of :before ((instance standard-unit-instance))
        (print "Oops"))

@@ -45,7 +45,7 @@ regular expression
 </p>
 <p><span class="fndoclabel">Detailed syntax</span><table class="tighttop"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
-<var>event-class-specifier</var>&nbsp;::= </td><td valign="baseline" colspan="1" align="left"> <var>atomic-event-class</var> |
+<nobr><var>event-class-specifier</var> ::=</nobr> </td><td valign="baseline" colspan="1" align="left"> <var>atomic-event-class</var> |
 <code>(</code><var>atomic-event-class subeventing-specifier</var><code>)</code>
 | <code>t</code></td></tr>
 <tr>
@@ -53,19 +53,19 @@ regular expression
 </p>
 <table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
-<var>atomic-event-class</var>&nbsp;::= </td><td valign="baseline" colspan="1" align="left"> <var>event-class</var> | 
+<nobr><var>atomic-event-class</var> ::=</nobr> </td><td valign="baseline" colspan="1" align="left"> <var>event-class</var> | 
 <var>event-class-name</var> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
 <table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
-<var>subeventing-specifier</var>&nbsp;::= 
+<nobr><var>subeventing-specifier</var> ::=</nobr> 
 <a name="id1"></a></td><td valign="baseline" colspan="1" align="left"> <code>:plus-subevents</code> | <code>:no-subevents</code> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
 <br /><table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
-<var>unit-class-or-instance-specifier</var>&nbsp;::= 
+<nobr><var>unit-class-or-instance-specifier</var> ::=</nobr> 
 </td><td valign="baseline" colspan="1" align="left"> <var>unit-instance</var> | 
 <code>(</code><var>unit-instance</var>*<code>)</code> | </td></tr>
 <tr>
@@ -77,13 +77,13 @@ regular expression
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
 <table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
-<var>atomic-unit-class</var>&nbsp;::=&nbsp; </td><td valign="baseline" colspan="1" align="left"> <var>unit-class</var> | 
+<nobr><var>atomic-unit-class</var> ::= </nobr> </td><td valign="baseline" colspan="1" align="left"> <var>unit-class</var> | 
 <var>unit-class-name</var> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
 <table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
-<var>subclassing-specifier</var>&nbsp;::= 
+<nobr><var>subclassing-specifier</var> ::=</nobr> 
 <a name="id2"></a></td><td valign="baseline" colspan="1" align="left"> <code>:plus-subclasses</code> | <code>:no-subclasses</code> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
@@ -91,7 +91,7 @@ regular expression
 <a href="ref-glossary.html#id47">event&nbsp;class</a> to which it is added.  In addition, <var>function</var>
 should accept additional arguments that are associated with all
 <a href="ref-glossary.html#gl:subevents">subevents</a> of the specified <a href="ref-glossary.html#gl:event-class">event&nbsp;classes</a>. (This can be
-achieved by specifying <code>&#38;allow-other-keys</code> in the lambda list of
+achieved by specifying <nobr><code>&#38;allow-other-keys</code></nobr> in the lambda list of
 <var>function</var>.)
 </p>
 <p>The <var>paths</var> argument is either the symbol <code>t</code> (indicating
@@ -121,13 +121,13 @@ follows:
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-remove-all-event-functions.html"><b>remove-all-event-functions</b></a>
 </p>
 <p><span class="fndoclabel">Examples</span> <br /><a name="id4">Add</a> the event <a href="ref-glossary.html#gl:function">function</a> <a href="ref-evfn-printv.html">evfn-printv</a> to the set of functions
-to be invoked when <code>create-instance-event</code> is signaled on a
+to be invoked when <nobr><code>create-instance-event</code></nobr> is signaled on a
 <code>hyp</code> <a href="ref-glossary.html#id221">unit&nbsp;instance</a>:
 <pre class="pretop">
   (add-event-function 'evfn-printv 'create-instance-event 'hyp)
 </pre>
 Add the event <a href="ref-glossary.html#gl:function">function</a> <a href="ref-evfn-printv.html">evfn-printv</a> to the set of functions
-to be invoked when <code>create-instance-event</code> is signaled on a
+to be invoked when <nobr><code>create-instance-event</code></nobr> is signaled on a
 <code>hyp</code> <a href="ref-glossary.html#id221">unit&nbsp;instance</a> or its subclasses:
 <pre>
   (add-event-function 'evfn-printv 'create-instance-event '(hyp :plus-subclasses))

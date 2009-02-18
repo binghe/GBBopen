@@ -20,11 +20,11 @@
 <span 
     style="font-family: serif; font-style: normal">=&gt;</span> <var>result</var>*</td><td valign="baseline" align="right">[<i>Macro</i>]
 </td></tr></table></p>
-<p><span class="fndoclabel">Purpose</span> <br />Associate <var>system-name</var> with <a href="ref-glossary.html#gl:keyword-command">REPL&nbsp;commands</a>, directory
-definitions, and module definitions defined in <var>forms</var>.
+<p><span class="fndoclabel">Purpose</span> <br />Associate <nobr><var>system-name</var></nobr> with <a href="ref-glossary.html#gl:keyword-command">REPL&nbsp;commands</a>,
+directory definitions, and module definitions defined in <var>forms</var>.
 </p>
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:common-lisp-user</code>
-(also imported into and exported from <code>:module-manager</code>)
+(also imported into and exported from <nobr><code>:module-manager</code></nobr>)
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;Defined in <code>extended-repl.lisp</code>
 </p>
@@ -42,9 +42,10 @@ definitions, and module definitions defined in <var>forms</var>.
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-define-module.html"><b>define-module</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-define-repl-command.html"><b>define-repl-command</b></a>
 </p>
-<p><span class="fndoclabel">Examples</span> <br />Define a <a href="ref-glossary.html#id173">REPL&nbsp;command</a> named <code>:my-app</code> associated with system
-<code>:my-app</code> that compiles and loads the <a href="ref-glossary.html#gl:module">module</a> <code>:my-app</code> and
-sets the current package to the <code>:gbbopen-user</code> package:
+<p><span class="fndoclabel">Examples</span> <br />Define a <a href="ref-glossary.html#id173">REPL&nbsp;command</a> named <nobr><code>:my-app</code></nobr> associated with
+system <nobr><code>:my-app</code></nobr> that compiles and loads the <a href="ref-glossary.html#gl:module">module</a>
+<nobr><code>:my-app</code></nobr> and sets the current package to the
+<nobr><code>:gbbopen-user</code></nobr> package:
 <pre class="pretop">
   (with-system-name (:my-app)
     (<a href="ref-define-repl-command.html">define-repl-command</a> :my-app (&amp;rest options)
@@ -52,7 +53,8 @@ sets the current package to the <code>:gbbopen-user</code> package:
       (<a href="ref-startup-module.html">startup-module</a> :my-app options :gbbopen-user)))
 </pre> 
 </p>
-<p>Now, show the <a href="ref-glossary.html#gl:keyword-command">commands</a> associated with <a href="ref-glossary.html#gl:system">system</a> <code>:my-app</code>:
+<p>Now, show the <a href="ref-glossary.html#gl:keyword-command">commands</a> associated with <a href="ref-glossary.html#gl:system">system</a>
+<nobr><code>:my-app</code></nobr>:
 <pre class="pretop">
   &gt; :commands :my-app
   Command           Description
@@ -62,7 +64,7 @@ sets the current package to the <code>:gbbopen-user</code> package:
 </pre>
 </p>
 <p>Now, undefine all the <a href="ref-glossary.html#gl:keyword-command">commands</a>, directories, and module definitions
-associated with <a href="ref-glossary.html#gl:system">system</a> <code>:my-app</code>: 
+associated with <a href="ref-glossary.html#gl:system">system</a> <nobr><code>:my-app</code></nobr>: 
 <pre class="pretop">
   &gt; :undefine-system :my-app
   Really undefine commands, directories, &amp; modules of :my-app?  y
@@ -73,10 +75,11 @@ associated with <a href="ref-glossary.html#gl:system">system</a> <code>:my-app</
 </pre>
 </p>
 <p><span class="fndoclabel">Notes</span> <br />A developer will typically wrap the
-<b><a href="ref-define-repl-command.html">define-repl-command</a></b> forms in an application's
-<code>commands.lisp</code> file with a single <b>with-system-name</b> macro and
-the definitions in the application's <code>modules.lisp</code> file with a second
-<b>with-system-name</b> macro.
+<nobr><b><a href="ref-define-repl-command.html">define-repl-command</a></b></nobr> forms in an application's
+<nobr><code>commands.lisp</code></nobr> file with a single
+<nobr><b>with-system-name</b></nobr> macro and the definitions in the
+application's <nobr><code>modules.lisp</code></nobr> file with a second
+<nobr><b>with-system-name</b></nobr> macro.
 </p>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />

@@ -64,20 +64,22 @@ of <code>ksa</code>:
 </pre> 
 </p>
 <p><a name="id1">Change</a> the class of <a href="ref-glossary.html#id221">unit&nbsp;instance</a> <code>hyp</code> from
-<code>probable-hyp</code> to <code>rejected-hyp</code>:
+<nobr><code>probable-hyp</code></nobr> to <nobr><code>rejected-hyp</code></nobr>:
 <pre class="pretop">
   &gt; (<a href="ref-change-class.html">change-class</a> hyp 'rejected-hyp 
       :instance-name (next-class-instance-number 'rejected-hyp))
   #&lt;rejected-hyp 1409 (896 388) .68&gt;
   &gt;
 </pre>
-Note that the <code>:instance-name</code> initarg can be eliminated if both the old
-and new classes for <var>hyp</var> are using the global instance-name counter.
+Note that the <nobr><code>:instance-name</code></nobr> initarg can be eliminated if both
+the old and new classes for <var>hyp</var> are using the global instance-name
+counter.
 </p>
 <p><span class="fndoclabel">Note</span> <br /><a name="id2">
-The</a> <b>next-class-instance-number</b> function increments the global
-instance-name counter value if the <code>:use-global-instance-name-counter</code>
-class option is true for the unit class.
+The</a> <nobr><b>next-class-instance-number</b></nobr> function increments the global
+instance-name counter value if the
+<nobr><code>:use-global-instance-name-counter</code></nobr> class option is true for the
+unit class.
 </p>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />

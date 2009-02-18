@@ -17,8 +17,8 @@
 <p><table class="tight" width="100%">
 <tr valign="top"><td valign="baseline" align="left"%>
 <nobr><b><font color="#000000">module-directories</font></b></nobr></td><td valign="baseline"> &nbsp; </td><td valign="baseline" align="left" width="99%"><var>module-name</var>
-<span 
-    style="font-family: serif; font-style: normal">=&gt;</span>&nbsp;<var>source-directory,&nbsp;compiled-directory</var></td><td valign="baseline" align="right">[<i>Function</i>]
+<nobr><span 
+    style="font-family: serif; font-style: normal">=&gt;</span> <var>source-directory, compiled-directory</var></nobr></td><td valign="baseline" align="right">[<i>Function</i>]
 </td></tr></table></p>
 <p><span class="fndoclabel">Purpose</span> <br />Return the source and compiled directories of a <a href="ref-glossary.html#gl:module">module</a>.
 </p>
@@ -46,8 +46,8 @@ specification contains a circularity.
 <p><span class="fndoclabel">Example</span> <br />Return the source and compiled directories of the Agenda Shell <a href="ref-glossary.html#gl:module">module</a>:
 <pre class="pretop">
   &gt; (module-directories :agenda-shell)
-  #P"<var>&lt;install-dir&gt;</var>/source/gbbopen/control-shells"
-  #P"<var>&lt;install-dir&gt;</var>/<var>&lt;platform-dir&gt;</var>/gbbopen/control-shells"
+  <nobr>#P"<var>&lt;install-dir&gt;</var>/source/gbbopen/control-shells"</nobr>
+  <nobr>#P"<var>&lt;install-dir&gt;</var>/<var>&lt;platform-dir&gt;</var>/gbbopen/control-shells"</nobr>
   &gt;
 </pre> 
 </p>

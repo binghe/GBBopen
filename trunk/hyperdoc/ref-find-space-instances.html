@@ -57,8 +57,8 @@ are interpreted as follows:
 <td valign="baseline" colspan="1" align="left">&nbsp;&nbsp; </td><td valign="baseline" colspan="1" align="center"> <code>&#94;</code> </td><td valign="baseline" colspan="1" align="left"> &nbsp;&nbsp; </td><td valign="baseline" colspan="1" align="left"> move to parent </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
-<p>Thus both <code>(find-space-instances '(*))</code> and
-<code>(find-space-instances 't)</code> return all <a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a>.
+<p>Thus both <nobr><code>(find-space-instances '(*))</code></nobr> and
+<nobr><code>(find-space-instances 't)</code></nobr> return all <a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a>.
 </p>
 <p>A <var>space-instance-regexp</var> value consisting of a list of
 <a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a> is returned unchanged.
@@ -67,7 +67,7 @@ are interpreted as follows:
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-find-space-instance-by-path.html"><b>find-space-instance-by-path</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-map-space-instances.html"><b>map-space-instances</b></a>
 </p>
-<p><span class="fndoclabel">Examples</span> <br />Return the <a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a> that are rooted at <code>(bb)</code>:
+<p><span class="fndoclabel">Examples</span> <br />Return the <a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a> that are rooted at <nobr><code>(bb)</code></nobr>:
 <pre class="pretop">
   &gt; (find-space-instances '(bb +))
   (#&lt;standard-space-instance (bb hyps)&gt;
@@ -75,7 +75,7 @@ are interpreted as follows:
    #&lt;standard-space-instance (bb rejected-hyps)&gt;)
   &gt;
 </pre>
-Return all the <a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a> <code>(bb)</code> and below:
+Return all the <a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a> <nobr><code>(bb)</code></nobr> and below:
 <pre>
   &gt; (find-space-instances '(bb *))
   (#&lt;standard-space-instance (bb hyps)&gt;

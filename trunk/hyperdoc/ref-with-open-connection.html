@@ -33,19 +33,19 @@ connection.
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>host</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A 32-bit internet address or a string specifying the remote host
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>port</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An integer or a string specifying the service port
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>declaration</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A declare expression (not evaluated)
-</td></tr><tr valign="top"><td valign="baseline" nowrap><i>forms</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An implicit <b>progn</b> of <a href="ref-glossary.html#gl:forms">forms</a> to be evaluated
+</td></tr><tr valign="top"><td valign="baseline" nowrap><i>forms</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An implicit <nobr><b>progn</b></nobr> of <a href="ref-glossary.html#gl:forms">forms</a> to be evaluated
 </td></tr></table>
 </p>
 <p><span class="fndoclabel">Description</span> <br />This macro ensures that the opened connection is closed when
 control leaves the body of the macro.
 </p>
 <p>A <var>host</var> string can be either a host name or a &#8220;dotted&#8221; IP address,
-such as <code>"127.0.0.1"</code>.
+such as <nobr><code>"127.0.0.1"</code></nobr>.
 </p>
 <p>String values available for specifying <var>port</var> are found in the operating
 system's services file and labeled as being <code>tcp</code> services. On Unix
-systems, the services file is <code>/etc/services</code>. On Windows, it is the file
-<code>services</code> in the <code>Windows</code> directory.
+systems, the services file is <nobr><code>/etc/services</code></nobr>. On Windows, it is
+the file <nobr><code>services</code></nobr> in the <nobr><code>Windows</code></nobr> directory.
 </p>
 <p><span class="fndoclabel">See also</span>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-open-connection.html"><b>open-connection</b></a>

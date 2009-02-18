@@ -55,12 +55,12 @@
 <p><span class="fndoclabel">Events</span> <br /><a name="id1">When</a> a <a href="ref-glossary.html#id221">unit&nbsp;instance</a> is created, events are signaled in the
 following sequence: 
 </p>
-<p><ol class="tight"><li>An <code>update-nonlink-slot-event</code> or <code>link-event</code> is
-signaled for each initialized slot in the newly created
-<a href="ref-glossary.html#id221">unit&nbsp;instance</a>.  A <code>link-event</code> is also signaled for
-each inverse pointer from an existing <a href="ref-glossary.html#id221">unit&nbsp;instance</a> to the
-newly created <a href="ref-glossary.html#id221">unit&nbsp;instance</a>.
-<li>An <code>add-instance-to-space-instance-event</code> is signaled
+<p><ol class="tight"><li>An <nobr><code>update-nonlink-slot-event</code></nobr> or <nobr><code>link-event</code></nobr>
+is signaled for each initialized slot in the newly created
+<a href="ref-glossary.html#id221">unit&nbsp;instance</a>.  A <nobr><code>link-event</code></nobr> is also signaled for each
+inverse pointer from an existing <a href="ref-glossary.html#id221">unit&nbsp;instance</a> to the newly created
+<a href="ref-glossary.html#id221">unit&nbsp;instance</a>.
+<li>An <nobr><code>add-instance-to-space-instance-event</code></nobr> is signaled
 for each <a href="ref-glossary.html#id197">space&nbsp;instance</a> on which the newly created
 <a href="ref-glossary.html#id221">unit&nbsp;instance</a> is added.
 <li>A <code>create-instance-event</code> is signaled.
@@ -72,16 +72,17 @@ for each <a href="ref-glossary.html#id197">space&nbsp;instance</a> on which the 
 instance name is identical to the instance name of an existing
 <a href="ref-glossary.html#id221">unit&nbsp;instance</a> of <var>class</var>.
 </p>
-<a name="id2"></a><p><span class="fndoclabel">Description</span> <br />Specifying a <code>:space-instances</code> initialization argument
-causes that value to be used instead of the <code>:initial-space-instances</code>
+<a name="id2"></a><p><span class="fndoclabel">Description</span> <br />Specifying a <nobr><code>:space-instances</code></nobr> initialization argument causes
+that value to be used instead of the <nobr><code>:initial-space-instances</code></nobr>
 specification associated with the <a href="ref-glossary.html#id219">unit&nbsp;class</a>. Similarly, specifying a
-<code>:instance-name</code> initialization argument causes that value to be used as
-the <a href="ref-glossary.html#id93">instance&nbsp;name</a> of the newly created <a href="ref-glossary.html#id221">unit&nbsp;instance</a> instead
-of the instance-name counter value associated with the <a href="ref-glossary.html#id219">unit&nbsp;class</a> (if
-the <code>:use-global-instance-name-counter</code> class option is <code>nil</code> or was not
-specified for the unit class) or the global instance-name counter value (if
-the <code>:use-global-instance-name-counter</code> class option is true for the unit
-class).
+<nobr><code>:instance-name</code></nobr> initialization argument causes that value to be
+used as the <a href="ref-glossary.html#id93">instance&nbsp;name</a> of the newly created <a href="ref-glossary.html#id221">unit&nbsp;instance</a>
+instead of the instance-name counter value associated with the
+<a href="ref-glossary.html#id219">unit&nbsp;class</a> (if the <nobr><code>:use-global-instance-name-counter</code></nobr>
+class option is <code>nil</code> or was not specified for the unit class) or the global
+instance-name counter value (if the
+<nobr><code>:use-global-instance-name-counter</code></nobr> class option is true for the
+unit class).
 </p>
 <p><span class="fndoclabel">See also</span>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-change-class.html"><b>change-class</b></a>
@@ -109,8 +110,9 @@ class).
   &gt;
 </pre>
 </p>
-<p><span class="fndoclabel">Note</span> <br /><a name="id3">The</a> <a href="ref-glossary.html#gl:function">function</a> <b><a href="ref-make-space-instance.html">make-space-instance</a></b> provides a
-clear and convenient shorthand for creating <a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a>.
+<p><span class="fndoclabel">Note</span> <br /><a name="id3">The</a> <a href="ref-glossary.html#gl:function">function</a> <nobr><b><a href="ref-make-space-instance.html">make-space-instance</a></b></nobr>
+provides a clear and convenient shorthand for creating
+<a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a>.
 </p>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />

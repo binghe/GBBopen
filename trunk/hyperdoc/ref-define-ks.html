@@ -43,7 +43,7 @@ revalidation-predicate trigger-events</var>
 <a href="ref-glossary.html#gl:activations">KSA</a> <a href="ref-glossary.html#id221">unit&nbsp;instance</a>) or <code>nil</code> (default is <code>nil</code>)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>ks-class</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A class or a symbol specifying a class (not evaluated)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>ksa-class</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A class or a symbol specifying a class (not evaluated)
-</td></tr><tr valign="top"><td valign="baseline" nowrap><i>obviation-events</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An <var>event-specification</var> (see below, 
+</td></tr><tr valign="top"><td valign="baseline" nowrap><i>obviation-events</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An <nobr><var>event-specification</var></nobr> (see below, 
 not evaluated)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>obviation-predicate</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline">  A <a href="ref-glossary.html#gl:function">function</a> of two arguments (the
 <a href="ref-glossary.html#gl:activations">KSA</a> <a href="ref-glossary.html#id221">unit&nbsp;instance</a> and the <a href="ref-glossary.html#gl:event">event</a> object) that returns a
@@ -53,7 +53,7 @@ not evaluated)
 <a href="ref-glossary.html#gl:KSs">KS</a> <a href="ref-glossary.html#id221">unit&nbsp;instance</a> and the <a href="ref-glossary.html#gl:event">event</a> object) or <code>nil</code>
 (default is <code>nil</code>) 
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>rating</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#gl:rating">rating</a> (default is <code>1</code>)
-</td></tr><tr valign="top"><td valign="baseline" nowrap><i>retrigger-events</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An <var>event-specification</var> (see below, 
+</td></tr><tr valign="top"><td valign="baseline" nowrap><i>retrigger-events</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An <nobr><var>event-specification</var></nobr> (see below, 
 not evaluated)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>retrigger-function</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#gl:function">function</a> of two arguments (the
 <a href="ref-glossary.html#gl:activations">KSA</a> <a href="ref-glossary.html#id221">unit&nbsp;instance</a> and the <a href="ref-glossary.html#gl:event">event</a> object) or <code>nil</code>
@@ -61,7 +61,8 @@ not evaluated)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>revalidation-predicate</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#gl:function">function</a> of one argument (the
 <a href="ref-glossary.html#gl:activations">KSA</a> <a href="ref-glossary.html#id221">unit&nbsp;instance</a>) that returns a
 <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> or <code>nil</code> (default is <code>nil</code>)
-</td></tr><tr valign="top"><td valign="baseline" nowrap><i>trigger-events</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An <var>event-specification</var> (see below, not evaluated)
+</td></tr><tr valign="top"><td valign="baseline" nowrap><i>trigger-events</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An <nobr><var>event-specification</var></nobr> (see below, not 
+evaluated)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>ks</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#gl:KSs">KS</a>
 </td></tr></table>
 </p>
@@ -69,14 +70,14 @@ not evaluated)
 </p>
 <p><span class="fndoclabel">Detailed syntax</span><table class="tighttop"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
-<var>event-specification</var>&nbsp;::=
+<nobr><var>event-specification</var> ::=</nobr>
 </td><td valign="baseline" colspan="1" align="left"> <code>(</code><var>event-signature</var>*<code>)</code> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
 </p>
 <table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
-<var>event-signature</var>&nbsp;::=
+<nobr><var>event-signature</var> ::=</nobr>
 </td><td valign="baseline" colspan="1" align="left"> <code>(</code><var>event-class-specifier</var> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> &nbsp; &nbsp;  [<var>unit-class-or-instance-specifier</var> </td></tr>
@@ -90,26 +91,26 @@ not evaluated)
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
 <br /><table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
-<var>event-class-specifier</var>&nbsp;::= </td><td valign="baseline" colspan="1" align="left"> <var>atomic-event-class</var> |
+<nobr><var>event-class-specifier</var> ::=</nobr> </td><td valign="baseline" colspan="1" align="left"> <var>atomic-event-class</var> |
 <code>(</code><var>atomic-event-class subeventing-specifier</var><code>)</code>
 | <code>t</code></td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
 <table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
-<var>atomic-event-class</var>&nbsp;::= </td><td valign="baseline" colspan="1" align="left"> <var>event-class</var> | 
+<nobr><var>atomic-event-class</var> ::=</nobr> </td><td valign="baseline" colspan="1" align="left"> <var>event-class</var> | 
 <var>event-class-name</var> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
 <table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
-<var>subeventing-specifier</var>&nbsp;::= 
+<nobr><var>subeventing-specifier</var> ::=</nobr> 
 <a name="id1"></a></td><td valign="baseline" colspan="1" align="left"> <code>:plus-subevents</code> | <code>:no-subevents</code> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
 <br /><table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
-<var>unit-class-or-instance-specifier</var>&nbsp;::= 
+<nobr><var>unit-class-or-instance-specifier</var> ::=</nobr> 
 </td><td valign="baseline" colspan="1" align="left"> <var>unit-instance</var> | 
 <code>(</code><var>unit-instance</var>*<code>)</code> | </td></tr>
 <tr>
@@ -121,61 +122,62 @@ not evaluated)
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
 <table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
-<var>atomic-unit-class</var>&nbsp;::=&nbsp; </td><td valign="baseline" colspan="1" align="left"> <var>unit-class</var> | 
+<nobr><var>atomic-unit-class</var> ::= </nobr> </td><td valign="baseline" colspan="1" align="left"> <var>unit-class</var> | 
 <var>unit-class-name</var> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
 <table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
-<var>subclassing-specifier</var>&nbsp;::= 
+<nobr><var>subclassing-specifier</var> ::=</nobr> 
 <a name="id2"></a></td><td valign="baseline" colspan="1" align="left"> <code>:plus-subclasses</code> | <code>:no-subclasses</code> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
-<p><span class="fndoclabel">Description</span> <br />A <a href="ref-glossary.html#gl:KSs">KS</a> definition creates a <a href="ref-glossary.html#id221">unit&nbsp;instance</a> of class
-<var>ks-class</var> which specifies how <a href="ref-glossary.html#gl:activations">activations</a> of the <a href="ref-glossary.html#gl:KSs">KS</a> are
-created and executed.  The lifetime of each <a href="ref-glossary.html#gl:activations">KS&nbsp;activation</a> involves the
-following sequence:
+<p><span class="fndoclabel">Description</span> <br />A <a href="ref-glossary.html#gl:KSs">KS</a> definition creates a <a href="ref-glossary.html#id221">unit&nbsp;instance</a> of
+class <nobr><var>ks-class</var></nobr> which specifies how <a href="ref-glossary.html#gl:activations">activations</a> of the
+<a href="ref-glossary.html#gl:KSs">KS</a> are created and executed.  The lifetime of each
+<a href="ref-glossary.html#gl:activations">KS&nbsp;activation</a> involves the following sequence:
 </p>
 <p><ul class="tight"><li>When an <a href="ref-glossary.html#gl:event">event</a> matching one of the event specifications in
-<var>trigger-events</var> occurs and the <a href="ref-glossary.html#gl:KSs">KS</a> is enabled:
+<nobr><var>trigger-events</var></nobr> occurs and the <a href="ref-glossary.html#gl:KSs">KS</a> is enabled:
 </p>
-<p><ul class="tight"><li>the <var>activation-predicate</var>, if specified, is called and must
+<p><ul class="tight"><li>the <nobr><var>activation-predicate</var></nobr>, if specified, is called and must
 return true for potential <a href="ref-glossary.html#gl:activations">activation</a> to continue
-<li>the <var>precondition-function</var>, if specified, is called and must
+<li>the <nobr><var>precondition-function</var></nobr>, if specified, is called and must
 return an integer rating for potential <a href="ref-glossary.html#gl:activations">activation</a> to continue
 </ul>
 <li>The <a href="ref-glossary.html#gl:KSs">KS</a> is activated (a <a href="ref-glossary.html#id221">unit&nbsp;instance</a> of class
-<var>ksa-class</var> is created) and given the rating returned by the
-<var>precondition-function</var> or the constant <var>rating</var> value defined for
-the <a href="ref-glossary.html#gl:KSs">KS</a> if no <var>precondition-function</var> was specified.  The
-current control-shell cycle number is stored in the <code>activation-cycle</code>
-slot of the <a href="ref-glossary.html#gl:activations">KSA</a> <a href="ref-glossary.html#id221">unit&nbsp;instance</a>.
+<nobr><var>ksa-class</var></nobr> is created) and given the rating returned by the
+<nobr><var>precondition-function</var></nobr> or the constant <nobr><var>rating</var></nobr>
+value defined for the <a href="ref-glossary.html#gl:KSs">KS</a> if no <nobr><var>precondition-function</var></nobr>
+was specified.  The current control-shell cycle number is stored in the
+<nobr><code>activation-cycle</code></nobr> slot of the <a href="ref-glossary.html#gl:activations">KSA</a>
+<a href="ref-glossary.html#id221">unit&nbsp;instance</a>.
 <li>The <a href="ref-glossary.html#gl:activations">KSA</a> is placed on the queue of
 <a href="ref-glossary.html#id148">pending&nbsp;KSAs</a>.
 <li>If an <a href="ref-glossary.html#gl:event">event</a> matching one of the event specifications in
-<var>obviation-events</var> occurs, the <var>obviation-predicate</var>, if
-specified, is called.  If it returns true, the <a href="ref-glossary.html#id148">pending&nbsp;KSA</a> is
-removed from the <a href="ref-glossary.html#id148">pending&nbsp;KSAs</a> queue, the current
-control-shell cycle number is stored in the <code>obviation-cycle</code> slot of
-the <a href="ref-glossary.html#gl:activations">KSA</a>, and the <a href="ref-glossary.html#gl:activations">KSA</a> is placed on the queue of
-<a href="ref-glossary.html#gl:obviation">obviated&nbsp;KSAs</a>.
+<nobr><var>obviation-events</var></nobr> occurs, the
+<nobr><var>obviation-predicate</var></nobr>, if specified, is called.  If it returns
+true, the <a href="ref-glossary.html#id148">pending&nbsp;KSA</a> is removed from the <a href="ref-glossary.html#id148">pending&nbsp;KSAs</a>
+queue, the current control-shell cycle number is stored in the
+<nobr><code>obviation-cycle</code></nobr> slot of the <a href="ref-glossary.html#gl:activations">KSA</a>, and the <a href="ref-glossary.html#gl:activations">KSA</a>
+is placed on the queue of <a href="ref-glossary.html#gl:obviation">obviated&nbsp;KSAs</a>.
 <li>If an <a href="ref-glossary.html#gl:event">event</a> matching one of the event specifications in
-<var>retrigger-events</var> occurs, the <var>retrigger-function</var>, if
-specified, is called.  A <var>retrigger-function</var> is often used to change
-the triggering context of the <a href="ref-glossary.html#gl:activations">KSA</a> or its rating.
+<nobr><var>retrigger-events</var></nobr> occurs, the <nobr><var>retrigger-function</var></nobr>,
+if specified, is called.  A <nobr><var>retrigger-function</var></nobr> is often used
+to change the triggering context of the <a href="ref-glossary.html#gl:activations">KSA</a> or its rating.
 <a name="id3"></a><li>When the <a href="ref-glossary.html#id148">pending&nbsp;KSA</a> is selected for execution (typically
-because has the highest rating above the <var>minimum-ksa-execution-rating</var>
-currently in effect for the control shell), the
-<var>revalidation-predicate</var>, if specified, is called. If the
-<var>revalidation-predicate</var> returns <code>nil</code>, the <a href="ref-glossary.html#id148">pending&nbsp;KSA</a> is
-removed from the <a href="ref-glossary.html#id148">pending&nbsp;KSAs</a> queue, the current
-control-shell cycle number is stored in the <code>obviation-cycle</code> slot of
-the <a href="ref-glossary.html#gl:activations">KSA</a>, and the <a href="ref-glossary.html#gl:activations">KSA</a>is placed on the queue of
-<a href="ref-glossary.html#gl:obviation">obviated&nbsp;KSAs</a>.
-<li>The <a href="ref-glossary.html#id148">pending&nbsp;KSA</a> is removed from the
-<a href="ref-glossary.html#id148">pending&nbsp;KSAs</a> queue, the current control-shell cycle number
-is stored in the <code>execution-cycle</code> slot of the <a href="ref-glossary.html#gl:activations">KSA</a>
-<a href="ref-glossary.html#id221">unit&nbsp;instance</a>, and the <var>execution-function</var> is called.
+because has the highest rating above the
+<nobr><var>minimum-ksa-execution-rating</var></nobr> currently in effect for the
+control shell), the <nobr><var>revalidation-predicate</var></nobr>, if specified, is
+called. If the <nobr><var>revalidation-predicate</var></nobr> returns <code>nil</code>, the
+<a href="ref-glossary.html#id148">pending&nbsp;KSA</a> is removed from the <a href="ref-glossary.html#id148">pending&nbsp;KSAs</a> queue, the
+current control-shell cycle number is stored in the
+<nobr><code>obviation-cycle</code></nobr> slot of the <a href="ref-glossary.html#gl:activations">KSA</a>, and the <a href="ref-glossary.html#gl:activations">KSA</a>is
+placed on the queue of <a href="ref-glossary.html#gl:obviation">obviated&nbsp;KSAs</a>.
+<li>The <a href="ref-glossary.html#id148">pending&nbsp;KSA</a> is removed from the <a href="ref-glossary.html#id148">pending&nbsp;KSAs</a> queue,
+the current control-shell cycle number is stored in the
+<nobr><code>execution-cycle</code></nobr> slot of the <a href="ref-glossary.html#gl:activations">KSA</a> <a href="ref-glossary.html#id221">unit&nbsp;instance</a>,
+and the <nobr><var>execution-function</var></nobr> is called.
 <li>The executed <a href="ref-glossary.html#gl:activations">KSA</a> is placed on the queue of
 <a href="ref-glossary.html#id58">executed&nbsp;KSAs</a>.
 </ul>
@@ -189,17 +191,19 @@ require a subset of these functions and predicates.
 </p>
 <p>An <var>activation-predicate</var> is a <a href="ref-glossary.html#gl:function">function</a> that is called with two
 arguments, the <a href="ref-glossary.html#id221">unit&nbsp;instance</a> representing the <a href="ref-glossary.html#gl:KSs">KS</a> and the
-object representing the triggering event.  The <var>activation-predicate</var>
-should return a <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> that indicates whether the
-<a href="ref-glossary.html#gl:KSs">KS</a> should continue to be considered for activation in response to the
-event.  Typically, an <var>activation-predicate</var> is specified for a
-<a href="ref-glossary.html#gl:KSs">KS</a> that does not require a <var>precondition-function</var> rating
-computation, but that does require an activate/don't-activate decision.
+object representing the triggering event.  The
+<nobr><var>activation-predicate</var></nobr> should return a
+<a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> that indicates whether the <a href="ref-glossary.html#gl:KSs">KS</a> should
+continue to be considered for activation in response to the event.  Typically,
+an <nobr><var>activation-predicate</var></nobr> is specified for a <a href="ref-glossary.html#gl:KSs">KS</a> that does
+not require a <nobr><var>precondition-function</var></nobr> rating computation, but
+that does require an activate/don't-activate decision.
 </p>
 <p>A <var>precondition-function</var> is a <a href="ref-glossary.html#gl:function">function</a> that is called with two
 arguments, the <a href="ref-glossary.html#id221">unit&nbsp;instance</a> representing the <a href="ref-glossary.html#gl:KSs">KS</a> and the
-object representing the triggering event.  The <var>precondition-function</var>
-should return one of the following sets of values:
+object representing the triggering event.  The
+<nobr><var>precondition-function</var></nobr> should return one of the following sets
+of values:
 </p>
 <p><ul class="tight"><li><code>nil</code> indicating the <a href="ref-glossary.html#gl:KSs">KS</a> is not to be activated in response to
 the event
@@ -219,23 +223,23 @@ control shell), the control shell will exit immediately.
 </p>
 <p>An <var>obviation-predicate</var> is a <a href="ref-glossary.html#gl:function">function</a> that is called with two
 arguments, the <a href="ref-glossary.html#id221">unit&nbsp;instance</a> representing the <a href="ref-glossary.html#gl:activations">KSA</a> and the
-object representing the <a href="ref-glossary.html#gl:obviation">obviation</a> event.  The <var>obviation-predicate</var>
-should return a <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> that indicates whether the
-<a href="ref-glossary.html#gl:activations">KSA</a> should be <a href="ref-glossary.html#gl:obviation">obviated</a>.
+object representing the <a href="ref-glossary.html#gl:obviation">obviation</a> event.  The
+<nobr><var>obviation-predicate</var></nobr> should return a <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a>
+that indicates whether the <a href="ref-glossary.html#gl:activations">KSA</a> should be <a href="ref-glossary.html#gl:obviation">obviated</a>.
 </p>
-<p>A <var>retrigger-function</var> is a <a href="ref-glossary.html#gl:function">function</a> that is called with
-two arguments, the <a href="ref-glossary.html#id221">unit&nbsp;instance</a> representing the <a href="ref-glossary.html#gl:activations">KSA</a>
-and the object representing the retrigger event.  The
-<var>retrigger-function</var> can perform whatever activities are needed
-in response to the event.  Typically this involves augmenting the
-triggering context of the <a href="ref-glossary.html#gl:activations">KSA</a> or changing its execution rating.
+<p>A <var>retrigger-function</var> is a <a href="ref-glossary.html#gl:function">function</a> that is called with two
+arguments, the <a href="ref-glossary.html#id221">unit&nbsp;instance</a> representing the <a href="ref-glossary.html#gl:activations">KSA</a> and the
+object representing the retrigger event.  The
+<nobr><var>retrigger-function</var></nobr> can perform whatever activities are needed
+in response to the event.  Typically this involves augmenting the triggering
+context of the <a href="ref-glossary.html#gl:activations">KSA</a> or changing its execution rating.
 </p>
 <p>A <var>revalidation-predicate</var> is a <a href="ref-glossary.html#gl:function">function</a> that is called with one
 argument, the <a href="ref-glossary.html#id221">unit&nbsp;instance</a> representing the <a href="ref-glossary.html#gl:activations">KSA</a>.  The
-<var>revalidation-predicate</var> is called immediately before a <a href="ref-glossary.html#gl:activations">KSA</a> is
-executed and should return a <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> that indicates
-whether the <a href="ref-glossary.html#gl:activations">KSA</a> should be executed (if true) or <a href="ref-glossary.html#gl:obviation">obviated</a> (if
-false).
+<nobr><var>revalidation-predicate</var></nobr> is called immediately before a
+<a href="ref-glossary.html#gl:activations">KSA</a> is executed and should return a <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> that
+indicates whether the <a href="ref-glossary.html#gl:activations">KSA</a> should be executed (if true) or
+<a href="ref-glossary.html#gl:obviation">obviated</a> (if false).
 </p>
 <p><span class="fndoclabel">See also</span>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-define-ks-class.html"><b>define-ks-class</b></a>
@@ -254,8 +258,8 @@ false).
      :execution-function #'initial-ks-function)
 </pre>
 </p>
-<p>Define a <a href="ref-glossary.html#gl:KSs">KS</a> named <code>aggregate-hyps</code> that is triggered whenever a
-<code>hyp</code> <a href="ref-glossary.html#id221">unit&nbsp;instance</a> is created:
+<p>Define a <a href="ref-glossary.html#gl:KSs">KS</a> named <nobr><code>aggregate-hyps</code></nobr> that is triggered
+whenever a <code>hyp</code> <a href="ref-glossary.html#id221">unit&nbsp;instance</a> is created:
 <pre class="pretop">
   (define-ks aggregate-hyps
      :trigger-events ((create-instance-event hyp))

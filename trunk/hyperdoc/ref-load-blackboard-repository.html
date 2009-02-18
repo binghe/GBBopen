@@ -33,7 +33,7 @@ retain-event-printing</var>
 </td></tr></table></p>
 <p><span class="fndoclabel">Purpose</span> <br />Load the blackboard repository (all <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a> and
 <a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a>) that has been saved to a file previously by
-<b><a href="ref-save-blackboard-repository.html">save-blackboard-repository</a></b>.
+<nobr><b><a href="ref-save-blackboard-repository.html">save-blackboard-repository</a></b></nobr>.
 </p>
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen</code>
 </p>
@@ -46,11 +46,11 @@ retain-event-printing</var>
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>confirm-if-not-empty</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> (default is true)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>disable-events</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> (default is <code>t</code>)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>estimated-peak-forward-references</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An integer (default is
-<code>*default-estimated-peak-forward-references*</code>)
+<nobr><code>*default-estimated-peak-forward-references*</code></nobr>)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>external-format</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An external-file-format designator (default is
-<code>:default</code>)
+<nobr><code>:default</code></nobr>)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>readtable</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A readtable (default is 
-<code>*reading-saved/sent-objects-readtable*</code>)
+<nobr><code>*reading-saved/sent-objects-readtable*</code></nobr>)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>read-eval</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> (default is <code>nil</code>)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>retain-classes</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An <a href="ref-glossary.html#id68">extended&nbsp;unit-classes&nbsp;specification</a>
 (see below)
@@ -72,28 +72,28 @@ to loading:
 </p>
 <p><ul class="tight"><li><code>delete-instance-event</code>
 <li><code>unlink-event</code>
-<li><code>remove-instance-from-space-instance-event</code>
+<li><nobr><code>remove-instance-from-space-instance-event</code></nobr>
 <li><code>instance-deleted-event</code>
 </ul>
 </p>
 <p><span class="fndoclabel">Description</span> <br />If <var>pathname</var> does not specify a file type, the type
-<code>bb</code> is added to it.  Then, <code>(user-homedir-pathname)</code> is used to
-supply any missing components to <var>pathname</var>.
+<code>bb</code> is added to it.  Then, <nobr><code>(user-homedir-pathname)</code></nobr> is used
+to supply any missing components to <nobr><var>pathname</var></nobr>.
 </p>
-<p>The <var>class-name-translations</var> <a href="ref-glossary.html#id3">association&nbsp;list</a>, if specified,
-should contain <a href="ref-glossary.html#gl:conses">conses</a> of the form:<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<tt>(<var>class-name</var> . <var>new-class-name</var>)</tt><br />for any <a href="ref-glossary.html#gl:class">class</a> translations that should occur during repository
+<p>The <nobr><var>class-name-translations</var></nobr> <a href="ref-glossary.html#id3">association&nbsp;list</a>, if
+specified, should contain <a href="ref-glossary.html#gl:conses">conses</a> of the form:<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<nobr><tt>(<var>class-name</var> . <var>new-class-name</var>)</tt></nobr><br />for any <a href="ref-glossary.html#gl:class">class</a> translations that should occur during repository
 loading.
 </p>
-<p>If <var>coalesce-strings</var> is true, loaded strings that are <code>equal</code>
-become shared (<code>eq</code>).  This coalescing is performed using a temporary
-hash table whose initial size can be specified by providing an integer value
-for <var>coalesce-strings</var>.  If <var>confirm-if-not-empty</var> is true, the user
-must confirm loading when the current blackboard repository contains
-<a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a>.
+<p>If <var>coalesce-strings</var> is true, loaded strings that are
+<nobr><code>equal</code></nobr> become shared (<code>eq</code>).  This coalescing is performed
+using a temporary hash table whose initial size can be specified by providing
+an integer value for <nobr><var>coalesce-strings</var></nobr>.  If
+<nobr><var>confirm-if-not-empty</var></nobr> is true, the user must confirm loading
+when the current blackboard repository contains <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a>.
 </p>
 <p><a href="ref-glossary.html#gl:instances">Unit&nbsp;instances</a> that are referenced before they are defined are
 recorded using a temporary hash table whose initial size can be specified by
-providing an integer value for <var>estimated-peak-forward-references</var>.
+providing an integer value for <nobr><var>estimated-peak-forward-references</var></nobr>.
 </p>
 <p><span class="fndoclabel">See also</span>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-confirm-if-blackboard-repository-not-empty-p.html"><b>confirm-if-blackboard-repository-not-empty-p</b></a>
@@ -119,9 +119,9 @@ Try loading the repository again:
   nil
   &gt;
 </pre>
-Define a new <a href="ref-glossary.html#id219">unit&nbsp;class</a>, <code>new-location</code>, and then load the
-repository again, translating all <code>location</code> <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a> to
-<code>new-location</code> <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a>:
+Define a new <a href="ref-glossary.html#id219">unit&nbsp;class</a>, <nobr><code>new-location</code></nobr>, and then load the
+repository again, translating all <nobr><code>location</code></nobr>
+<a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a> to <nobr><code>new-location</code></nobr> <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a>:
 <pre>
   &gt; (define-unit-class new-location (location) ())
   #&lt;standard-unit-class new-location&gt;

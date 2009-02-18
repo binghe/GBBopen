@@ -22,8 +22,9 @@
 <span 
     style="font-family: serif; font-style: normal">=&gt;</span> <var>result</var>*</td><td valign="baseline" align="right">[<i>Macro</i>]
 </td></tr></table></p>
-<p><span class="fndoclabel">Purpose</span> <br />Bound the time allowed to evaluate <var>forms</var> to
-<var>seconds</var>, evaluating <var>timeout-forms</var> if the time limit is reached.
+<p><span class="fndoclabel">Purpose</span> <br />Bound the time allowed to evaluate <nobr><var>forms</var></nobr> to
+<nobr><var>seconds</var></nobr>, evaluating <nobr><var>timeout-forms</var></nobr> if the time
+limit is reached.
 </p>
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:portable-threads</code>
 </p>
@@ -31,27 +32,27 @@
 </p>
 <p><span class="fndoclabel">Arguments and values</span><table class="tighttop">
 <tr valign="top"><td valign="baseline" nowrap><i>seconds</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A number
-</td></tr><tr valign="top"><td valign="baseline" nowrap><i>timeout-forms</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An implicit <b>progn</b> of <a href="ref-glossary.html#gl:forms">forms</a> to be
-evaluated if the timed <var>forms</var> do not completed before <var>seconds</var>
-seconds have elapsed
-</td></tr><tr valign="top"><td valign="baseline" nowrap><i>forms</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An implicit <b>progn</b> of <a href="ref-glossary.html#gl:forms">forms</a> to be evaluated
+</td></tr><tr valign="top"><td valign="baseline" nowrap><i>timeout-forms</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An implicit <nobr><b>progn</b></nobr> of <a href="ref-glossary.html#gl:forms">forms</a> to be
+evaluated if the timed <nobr><var>forms</var></nobr> do not complete before <nobr><var>seconds</var></nobr> seconds have elapsed
+</td></tr><tr valign="top"><td valign="baseline" nowrap><i>forms</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An implicit <nobr><b>progn</b></nobr> of <a href="ref-glossary.html#gl:forms">forms</a> to be evaluated
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>results</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> The values returned by evaluating the last <var>form</var>
 </td></tr></table>
 </p>
 <p><span class="fndoclabel">Returns</span> <br />The values returned by evaluating the last <var>form</var> if
-completed in less than <var>seconds</var> seconds; otherwise the values returned by
-evaluating the last <var>timeout-form</var>
+completed in less than <nobr><var>seconds</var></nobr> seconds; otherwise the values
+returned by evaluating the last <nobr><var>timeout-form</var></nobr>
 </p>
 <p><span class="fndoclabel">Errors</span> <br />Threads (multiprocessing) is not supported on the
-Common Lisp implementation. However, <b>with-timeout</b> is also
+Common Lisp implementation. However, <nobr><b>with-timeout</b></nobr> is also
 supported on non-threaded <a target="_top" href="http://sbcl.sourceforge.net">SBCL</a>.
 </p>
-<p><span class="fndoclabel">Description</span> <br />If the evaluation of <var>forms</var> does not complete within
-<var>seconds</var> seconds, execution of <var>forms</var> is terminated and the
-<var>timeout-forms</var> are evaluated, returning the result of the last
-<var>timeout-form</var>. The <var>timeout-forms</var> are not evaluated if the
-<var>forms</var> complete within <var>seconds</var> seconds, in which case the result of the
-last <var>form</var> is returned.
+<p><span class="fndoclabel">Description</span> <br />If the evaluation of <nobr><var>forms</var></nobr> does not complete
+within <nobr><var>seconds</var></nobr> seconds, execution of <nobr><var>forms</var></nobr> is
+terminated and the <nobr><var>timeout-forms</var></nobr> are evaluated, returning the
+result of the last <nobr><var>timeout-form</var></nobr>. The <nobr><var>timeout-forms</var></nobr>
+are not evaluated if the <nobr><var>forms</var></nobr> complete within
+<nobr><var>seconds</var></nobr> seconds, in which case the result of the last
+<var>form</var> is returned.
 </p>
 <p><span class="fndoclabel">See also</span>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-condition-variable-wait-with-timeout.html"><b>condition-variable-wait-with-timeout</b></a>

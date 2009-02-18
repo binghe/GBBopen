@@ -20,7 +20,7 @@
 <span 
     style="font-family: serif; font-style: normal">=&gt;</span> <var>result</var>*</td><td valign="baseline" align="right">[<i>Function</i>]
 </td></tr></table></p>
-<p><span class="fndoclabel">Purpose</span> <br />Restart the agenda shell named <var>instance-name</var>.
+<p><span class="fndoclabel">Purpose</span> <br />Restart the agenda shell named <nobr><var>instance-name</var></nobr>.
 </p>
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:agenda-shell</code>
 </p>
@@ -40,16 +40,16 @@ in the queue of <a href="ref-glossary.html#id148">pending&nbsp;KSAs</a>)
 <li><code>:stop</code> and (optionally) associated reasons, as multiple
 values&mdash;If one of the following conditions occurs:
 </p>
-<p><ul class="tight"><li>The <b><a href="ref-exit-control-shell.html">exit-control-shell</a></b> <a href="ref-glossary.html#gl:function">function</a> is
+<p><ul class="tight"><li>The <nobr><b><a href="ref-exit-control-shell.html">exit-control-shell</a></b></nobr> <a href="ref-glossary.html#gl:function">function</a> is
 called.
 <li>A precondition <a href="ref-glossary.html#gl:function">function</a> or <a href="ref-glossary.html#gl:KS-execution">KS-execution</a> <a href="ref-glossary.html#gl:function">function</a>
 returns <code>:stop</code> and, optionally, associated reasons.
 </ul>
 <li><var>Result-values</var>&mdash;If the control-shell is terminated by
-calling <b><a href="ref-exit-control-shell.html">exit-control-shell</a></b>.
+calling <nobr><b><a href="ref-exit-control-shell.html">exit-control-shell</a></b></nobr>.
 </ul>
 </p>
-<p><span class="fndoclabel">Events</span> <br /><a name="id2">A</a> <code>restart-control-shell-event</code> is signaled.
+<p><span class="fndoclabel">Events</span> <br /><a name="id2">A</a> <nobr><code>restart-control-shell-event</code></nobr> is signaled.
 </p>
 <p><span class="fndoclabel">Errors</span> <br />The idle-loop process has not been started on
 <a target="_top" href="http://www.cons.org/cmucl/">CMUCL</a>.  Multiprocessing has not been
@@ -75,12 +75,13 @@ started on <a target="_top" href="http://www.lispworks.com">LispWorks</a>.
   &gt;
 </pre>
 </p>
-<a name="id3"></a><p><span class="fndoclabel">Note</span> <br />When a non-<code>nil</code> <code>:run-polling-functions</code>
-value is supplied to <b><a href="ref-start-control-shell.html">start-control-shell</a></b> (the default on
-Common Lisp implementations without threads),
-<b><a href="ref-run-polling-functions.html">run-polling-functions</a></b> is called at the beginning of every
-control-shell-cycle and at one-half-second intervals when the Agenda Shell
-is hibernating due to <a href="ref-glossary.html#gl:quiescence">quiescence</a>.
+<a name="id3"></a><p><span class="fndoclabel">Note</span> <br />When a non-<code>nil</code>
+<nobr><code>:run-polling-functions</code></nobr> value is supplied to
+<nobr><b><a href="ref-start-control-shell.html">start-control-shell</a></b></nobr> (the default on Common Lisp
+implementations without threads),
+<nobr><b><a href="ref-run-polling-functions.html">run-polling-functions</a></b></nobr> is called at the beginning
+of every control-shell-cycle and at one-half-second intervals when the
+Agenda Shell is hibernating due to <a href="ref-glossary.html#gl:quiescence">quiescence</a>.
 </p>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />

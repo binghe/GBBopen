@@ -29,19 +29,20 @@
 <p><span class="fndoclabel">Arguments and values</span><table class="tighttop">
 <tr valign="top"><td valign="baseline" nowrap><i>id</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An object
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>date</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A string representing a date (parsed by 
-<b><a href="ref-parse-date.html">parse-date</a></b>)
-</td></tr><tr valign="top"><td valign="baseline" nowrap><i>author</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A string (default is <code>"Anonymous"</code>)
+<nobr><b><a href="ref-parse-date.html">parse-date</a></b></nobr>)
+</td></tr><tr valign="top"><td valign="baseline" nowrap><i>author</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A string (default is <nobr><code>"Anonymous"</code></nobr>)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>description</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A string or a list of strings (default is <code>nil</code>)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>form</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#gl:form">form</a>
 </td></tr></table>
 </p>
 <p><span class="fndoclabel">Description</span> <br />The source file for a patch should be placed in a subdirectory named
-<code>patches</code> in the module's source-files directory.
+<nobr><code>patches</code></nobr> in the module's source-files directory.
 </p>
-<p>If a patch cannot be defined as a single <b>patch</b> form, the more
-primitive <b><a href="ref-start-patch.html">start-patch</a></b>, <b><a href="ref-continue-patch.html">continue-patch</a></b>,
-and <b><a href="ref-finish-patch.html">finish-patch</a></b> macros can be used to separate the patch
-into multiple top-level forms in the same patch file.
+<p>If a patch cannot be defined as a single <nobr><b>patch</b></nobr> form, the more
+primitive <nobr><b><a href="ref-start-patch.html">start-patch</a></b></nobr>,
+<nobr><b><a href="ref-continue-patch.html">continue-patch</a></b></nobr>, and
+<nobr><b><a href="ref-finish-patch.html">finish-patch</a></b></nobr> macros can be used to separate the
+patch into multiple top-level forms in the same patch file.
 </p>
 <p><span class="fndoclabel">See also</span>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-allow-redefinition.html"><b>allow-redefinition</b></a>
@@ -56,15 +57,15 @@ into multiple top-level forms in the same patch file.
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-start-patch.html"><b>start-patch</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-undefmethod.html"><b>undefmethod</b></a>
 </p>
-<p><span class="fndoclabel">Example</span> <br />Define a simple <a href="ref-glossary.html#gl:patch">patch</a> (in a file named <code>my-app-p001.lisp</code> in the
-<code>patches</code> subdirectory of the module):
+<p><span class="fndoclabel">Example</span> <br />Define a simple <a href="ref-glossary.html#gl:patch">patch</a> (in a file named <nobr><code>my-app-p001.lisp</code></nobr>
+in the <nobr><code>patches</code></nobr> subdirectory of the module):
 <a name="id1"></a><pre class="pretop">
   (patch (1 "06-22-08" 
             :author "Corkill"
             :description "A simple example patch")
       (<a href="ref-printv.html">printv</a> "Simple example patch loaded!"))
 </pre>
-and add the patch file to the <code>:my-app</code> <a href="ref-glossary.html#gl:module">module</a>:
+and add the patch file to the <nobr><code>:my-app</code></nobr> <a href="ref-glossary.html#gl:module">module</a>:
 <pre>
   (<a href="ref-define-module.html">define-module</a> :my-app
     (:requires :gbbopen-user)

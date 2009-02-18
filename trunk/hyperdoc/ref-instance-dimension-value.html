@@ -17,8 +17,9 @@
 <p><table class="tight" width="100%">
 <tr valign="top"><td valign="baseline" align="left"%>
 <nobr><b><font color="#000000">instance-dimension-value</font></b></nobr></td><td valign="baseline"> &nbsp; </td><td valign="baseline" align="left" width="99%"><var>unit-instance dimension-name</var>
-<span 
-    style="font-family: serif; font-style: normal">=&gt;</span>&nbsp;<var>dimension-value,&nbsp;dimension-value-type,&nbsp;comparison-type,&nbsp;composite-type,&nbsp;ordering-dimension-name</var></td><td valign="baseline" align="right">[<i>Function</i>]
+<nobr><span 
+    style="font-family: serif; font-style: normal">=&gt;</span> <var>dimension-value, dimension-value-type,
+comparison-type, composite-type, ordering-dimension-name</var></nobr></td><td valign="baseline" align="right">[<i>Function</i>]
 </td></tr></table></p>
 <p><span class="fndoclabel">Purpose</span> <br />Obtain a <a href="ref-glossary.html#id35">dimension&nbsp;value</a> of a <a href="ref-glossary.html#id221">unit&nbsp;instance</a>.
 </p>
@@ -31,17 +32,19 @@
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>dimension-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A symbol specifying a <a href="ref-glossary.html#gl:dimension">dimension</a> of
 <var>unit-instance</var> 
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>dimension-value</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An object
-</td></tr><tr valign="top"><td valign="baseline" nowrap><i>dimension-value-type</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> One of: <code>:point</code>, <code>:interval</code>, 
-<code>:mixed</code>, <code>:element</code>, or <code>:boolean</code>
-</td></tr><tr valign="top"><td valign="baseline" nowrap><i>comparison-type</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> One of: <code>number</code>, <code>fixnum</code>,
-<code>short-float</code>, <code>single-float</code>, <code>double-float</code>,
-<code>long-float</code>, or <code>pseudo-probability</code>
+</td></tr><tr valign="top"><td valign="baseline" nowrap><i>dimension-value-type</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> One of: <nobr><code>:point</code></nobr>,
+<nobr><code>:interval</code></nobr>, <nobr><code>:mixed</code></nobr>, <nobr><code>:element</code></nobr>, or
+<nobr><code>:boolean</code></nobr>
+</td></tr><tr valign="top"><td valign="baseline" nowrap><i>comparison-type</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> One of: <nobr><code>number</code></nobr>, <nobr><code>fixnum</code></nobr>,
+<nobr><code>short-float</code></nobr>, <nobr><code>single-float</code></nobr>,
+<nobr><code>double-float</code></nobr>, <nobr><code>long-float</code></nobr>, or
+<nobr><code>pseudo-probability</code></nobr>
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>composite-type</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> One of <code>:set</code>,
-<font color="#667f66"><code>:sequence</code></font>,
-<font color="#667f66">(<code>:ascending-series</code> 
-<var>ordering-dimension-name</var>)</font>,
-<font color="#667f66">(<code>:descending-series</code> 
-<var>ordering-dimension-name</var>)</font> or <code>nil</code>
+<font color="#667f66"><nobr><code>:sequence</code></nobr></font>,
+<font color="#667f66"><nobr>(<code>:ascending-series</code>
+<var>ordering-dimension-name</var>)</nobr></font>,
+<font color="#667f66"><nobr>(<code>:descending-series</code>
+<var>ordering-dimension-name</var>)</nobr></font>, or <code>nil</code>
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>ordering-dimension-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id125">non-keyword&nbsp;symbol</a> or <code>nil</code>
 </td></tr></table>
 </p>
@@ -78,7 +81,7 @@
   nil
   &gt;
 </pre>
-and its <code>classification</code> <a href="ref-glossary.html#id35">dimension&nbsp;value</a>:
+and its <nobr><code>classification</code></nobr> <a href="ref-glossary.html#id35">dimension&nbsp;value</a>:
 <pre>
   &gt; (instance-dimension-value hyp 'classification)
   (:car :truck)
@@ -89,7 +92,7 @@ and its <code>classification</code> <a href="ref-glossary.html#id35">dimension&n
   &gt;
 </pre>
 </p>
-<p>Return the <code>character</code> <a href="ref-glossary.html#id35">dimension&nbsp;value</a> of the
+<p>Return the <nobr><code>character</code></nobr> <a href="ref-glossary.html#id35">dimension&nbsp;value</a> of the
 <a href="ref-glossary.html#id221">unit&nbsp;instance</a>, <code>word</code>:
 <pre class="pretop">
   &gt; (instance-dimension-value w 'character)
@@ -100,7 +103,7 @@ and its <code>classification</code> <a href="ref-glossary.html#id35">dimension&n
   nil
   &gt;
 </pre>
-and its <code>char-code</code> <a href="ref-glossary.html#id35">dimension&nbsp;value</a>:
+and its <nobr><code>char-code</code></nobr> <a href="ref-glossary.html#id35">dimension&nbsp;value</a>:
 <pre>
   &gt; (instance-dimension-value word 'char-code)
   (119 104 97 116 39 115)

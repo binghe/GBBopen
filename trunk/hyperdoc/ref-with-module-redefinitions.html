@@ -34,11 +34,12 @@ redefined in <var>forms</var> conflicts with the fully expanded
 <a href="ref-glossary.html#gl:required-module">required-module</a> order of another <a href="ref-glossary.html#gl:module">module</a>.
 </p>
 <p><span class="fndoclabel">Description</span> <br />Normally, the fully expanded <a href="ref-glossary.html#gl:required-module">required-module</a> order
-specified by the <code>:requires</code> option is checked immediately for conflicts
-with previously defined <a href="ref-glossary.html#gl:modules">modules</a> by <b><a href="ref-define-module.html">define-module</a></b>.
-Wrapping several <b><a href="ref-define-module.html">define-module</a></b> forms with
-<b>with-module-redefinitions</b> allows the definitions to be conflicting
-temporarily, until all the <var>forms</var> have been processed.
+specified by the <nobr><code>:requires</code></nobr> option is checked immediately for
+conflicts with previously defined <a href="ref-glossary.html#gl:modules">modules</a> by
+<nobr><b><a href="ref-define-module.html">define-module</a></b></nobr>.  Wrapping several
+<nobr><b><a href="ref-define-module.html">define-module</a></b></nobr> forms with
+<nobr><b>with-module-redefinitions</b></nobr> allows the definitions to be
+conflicting temporarily, until all the <var>forms</var> have been processed.
 </p>
 <p><span class="fndoclabel">See also</span>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-define-module.html"><b>define-module</b></a>

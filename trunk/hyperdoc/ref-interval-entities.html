@@ -14,7 +14,7 @@
 <table width="100%" cellpadding="0" cellspacing="2"><tr>
 <td bgcolor="#99ccff"><a href="ref-event-entities.html"><img border="0" alt="Events" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="ref-GBBopen-core-entities.html"><img border="0" alt="GBBopen Core" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-bb-repository-entities.html"><img border="0" alt="Blackboard Repository" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b>Intervals</b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table>
 <h2>Intervals</h2>
-<p>This section contains <code>:gbbopen-core</code> entities that pertain to
+<p>This section contains <nobr><code>:gbbopen-core</code></nobr> entities that pertain to
 <a href="ref-glossary.html#gl:intervals">intervals</a>. An interval <i>[a,b]</i> is the set of real numbers between the
 start value of the interval, <i>a</i>, and the end value, <i>b</i>, inclusive. The
 interval <i>[x,x]</i> represents the single point <i>x</i>.
@@ -28,17 +28,17 @@ following:
 <li><code>(list 0 100)</code>
 <li><code>(vector 0 100)</code>
 </ul>
-The function <b><a href="ref-make-interval.html">make-interval</a></b> is provided for stylistic
+The function <nobr><b><a href="ref-make-interval.html">make-interval</a></b></nobr> is provided for stylistic
 clarity in creating an interval.
 </p>
 <p><a name="id1">Intervals</a> also include the unbounded intervals:
 </p>
 <p><ul class="tight"><li><i>(-&#8734;,&#8734;)</i> &nbsp; (provided as the constant 
-<b><a href="ref-infinite-interval.html">infinite-interval</a></b>)
+<nobr><b><a href="ref-infinite-interval.html">infinite-interval</a></b></nobr>)
 <li><i>(-&#8734;,x]</i>      &nbsp; (for example, 
-<code>(<a href="ref-make-interval.html">make-interval</a> x infinity)</code>)
+<nobr><b>(<a href="ref-make-interval.html">make-interval</a> x infinity)</b></nobr>)
 <li><i>[x,&#8734;)</i>       &nbsp; (for example, 
-<code>(<a href="ref-make-interval.html">make-interval</a> -infinity x)</code>)
+<nobr><b>(<a href="ref-make-interval.html">make-interval</a> -infinity x)</b></nobr>)
 </ul>
 </p>
 <p>It is an error for the start value of an interval to be greater than the end

@@ -18,7 +18,8 @@
 <tr valign="top"><td valign="baseline" align="left"%>
 <nobr><b><font color="#000000">dosequence</font></b></nobr></td><td valign="baseline"> &nbsp; </td><td valign="baseline" align="left" width="99%">(<var>var sequence-form</var> 
 [<var>result-form</var>]) <var>declaration</var>* 
-&#123;<var>tag</var>&nbsp;|&nbsp;<var>form</var>&#125;*<span 
+<nobr>&#123;<var>tag</var> | <var>form</var>&#125;*</nobr>
+<span 
     style="font-family: serif; font-style: normal">=&gt;</span> <var>result</var>*or <code>nil</code></td><td valign="baseline" align="right">[<i>Macro</i>]
 </td></tr></table></p>
 <p><span class="fndoclabel">Purpose</span> <br />A generalized <code>dolist</code>-style iterator for any sequence.
@@ -37,18 +38,19 @@
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>results</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> The values returned by evaluating the last <var>form</var>
 </td></tr></table>
 </p>
-<p><span class="fndoclabel">Returns</span> <br />If a <code>return</code> or <code>return-from</code> form is executed, then
-the values passed from that form are returned; otherwise, the values
-returned by evaluating the <var>result-form</var> are returned, or <code>nil</code> if
-there is no <var>result-form</var>.
+<p><span class="fndoclabel">Returns</span> <br />If a <code>return</code> or <nobr><code>return-from</code></nobr> form is executed,
+then the values passed from that form are returned; otherwise, the values
+returned by evaluating the <nobr><var>result-form</var></nobr> are returned, or <code>nil</code>
+if there is no <nobr><var>result-form</var></nobr>.
 </p>
-<p><span class="fndoclabel">Description</span> <br />The body of <b>dosequence</b> is like a <code>tagbody</code>.
-<b>Dosequence</b> evaluates <var>sequence-form</var>, which should produce a
-sequence. It then executes the body once for each element in the sequence,
-with <var>var</var> bound to the element.
+<p><span class="fndoclabel">Description</span> <br />The body of <nobr><b>dosequence</b></nobr> is like a
+<nobr><code>tagbody</code></nobr>.  <nobr><b>Dosequence</b></nobr> evaluates
+<nobr><var>sequence-form</var></nobr>, which should produce a sequence. It then executes
+the body once for each element in the sequence, with <var>var</var> bound to the
+element.
 </p>
 <p>The scope of the binding of <var>var</var> does not include the
-<var>sequence-form</var>, but it does include the <var>result-form</var>.
+<nobr><var>sequence-form</var></nobr>, but it does include the <nobr><var>result-form</var></nobr>.
 </p>
 <p><span class="fndoclabel">Examples</span> <br /><pre class="pretop">
   &gt; (dosequence (elt #(1 2 3)) (print elt))

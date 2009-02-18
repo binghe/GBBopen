@@ -20,7 +20,8 @@
 <span 
     style="font-family: serif; font-style: normal">=&gt;</span> <var>version-string-or-nil</var></td><td valign="baseline" align="right">[<i>Function</i>]
 </td></tr></table></p>
-<p><span class="fndoclabel">Purpose</span> <br />Obtain the subversion compact version number of a working copy.
+<p><span class="fndoclabel">Purpose</span> <br />Obtain the <a target="_top" href="http://subversion.tigris.org">Subversion</a>
+compact version number of a working copy.
 </p>
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-tools</code>
 </p>
@@ -35,13 +36,13 @@
 </ul>
 (default is the GBBopen install directory)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>program</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A string specifying the name of the program to be run (default
-is <code>"svnversion"</code>)
+is <nobr><code>"svnversion"</code></nobr>)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>version-string-or-nil</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A string or <code>nil</code>
 </td></tr></table>
 </p>
 <p><span class="fndoclabel">Returns</span> <br />A string containing the compact version number or <code>nil</code> if the
-program <code>svnversion</code> cannot be found or the specified directory is not
-in a subversion working copy.
+program <nobr><code>svnversion</code></nobr> cannot be found or the specified directory is
+not in a Subversion working copy.
 </p>
 <p><span class="fndoclabel">Description</span> <br /><a target="_top" href="http://www.lispworks.com">LispWorks</a> (non-Windows platforms) and
 <a target="_top" href="http://sbcl.sourceforge.net">SBCL</a> do not use a search path for

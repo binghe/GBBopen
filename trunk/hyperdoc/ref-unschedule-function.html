@@ -31,9 +31,9 @@
 <p><span class="fndoclabel">Arguments and values</span><table class="tighttop">
 <tr valign="top"><td valign="baseline" nowrap><i>name-or-scheduled-function</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An object (typically a string or a
 symbol) naming a currently scheduled <a href="ref-glossary.html#id181">scheduled&nbsp;function</a> or a
-<code>scheduled-function</code> object
+<nobr><code>scheduled-function</code></nobr> object
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>verbose</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> 
-(default is <b><a href="ref-schedule-function-verbose.html">*schedule-function-verbose*</a></b>)
+(default is <nobr><b><a href="ref-schedule-function-verbose.html">*schedule-function-verbose*</a></b></nobr>)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>boolean</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a>
 </td></tr></table>
 </p>
@@ -43,8 +43,9 @@ symbol) naming a currently scheduled <a href="ref-glossary.html#id181">scheduled
 <p><span class="fndoclabel">Errors</span> <br />Threads (multiprocessing) is not supported on the
 Common Lisp implementation.
 </p>
-<p><span class="fndoclabel">Description</span> <br />If the <var>scheduled-function</var> object is scheduled, it is
-removed from the list of currently scheduled <a href="ref-glossary.html#gl:scheduled-function">scheduled&nbsp;functions</a>.
+<p><span class="fndoclabel">Description</span> <br />If the <nobr><var>scheduled-function</var></nobr> object is scheduled,
+it is removed from the list of currently scheduled
+<a href="ref-glossary.html#gl:scheduled-function">scheduled&nbsp;functions</a>.
 </p>
 <p><span class="fndoclabel">See also</span>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-schedule-function-verbose.html"><b>*schedule-function-verbose*</b></a>
@@ -53,7 +54,7 @@ removed from the list of currently scheduled <a href="ref-glossary.html#gl:sched
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-schedule-function.html"><b>schedule-function</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-schedule-function-relative.html"><b>schedule-function-relative</b></a>
 </p>
-<p><span class="fndoclabel">Examples</span> <br />Unschedule the <code>quitting-time</code> <a href="ref-glossary.html#id181">scheduled&nbsp;function</a>:
+<p><span class="fndoclabel">Examples</span> <br />Unschedule the <nobr><code>quitting-time</code></nobr> <a href="ref-glossary.html#id181">scheduled&nbsp;function</a>:
 <pre class="pretop">
   &gt; (unschedule-function 'quitting-time)
   #&lt;scheduled-function quitting-time [unscheduled]&gt;

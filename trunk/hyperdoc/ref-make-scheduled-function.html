@@ -29,9 +29,10 @@
 </p>
 <p><span class="fndoclabel">Arguments and values</span><table class="tighttop">
 <tr valign="top"><td valign="baseline" nowrap><i>function</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id75">function&nbsp;designator</a> specifying a
-<a href="ref-glossary.html#id77">function&nbsp;object</a> of one argument
-</td></tr><tr valign="top"><td valign="baseline" nowrap><i>name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An object (typically a string or a symbol; default is
-<var>function</var>, if <var>function</var> is a symbol, otherwise <code>nil</code>)
+<a href="ref-glossary.html#id77">function&nbsp;object</a> of one argument 
+</td></tr><tr valign="top"><td valign="baseline" nowrap><i>name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An object (typically a
+string or a symbol; default is <nobr><var>function</var></nobr>, if
+<nobr><var>function</var></nobr> is a symbol, otherwise <code>nil</code>)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>scheduled-function</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id181">scheduled&nbsp;function</a>
 </td></tr></table>
 </p>
@@ -40,8 +41,8 @@
 <p><span class="fndoclabel">Errors</span> <br />Threads (multiprocessing) is not supported on the
 Common Lisp implementation.
 </p>
-<p><span class="fndoclabel">Description</span> <br />Unless the run time of <var>function</var> is brief, it
-should spawn a new <a href="ref-glossary.html#gl:thread">thread</a> in which to perform its activities
+<p><span class="fndoclabel">Description</span> <br />Unless the run time to perform <nobr><var>function</var></nobr> is
+brief, it should spawn a new <a href="ref-glossary.html#gl:thread">thread</a> in which to perform its activities
 so as to avoid delaying the invocation of a subsequent
 <a href="ref-glossary.html#id181">scheduled&nbsp;function</a>.
 </p>
@@ -55,8 +56,8 @@ so as to avoid delaying the invocation of a subsequent
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-spawn-periodic-function.html"><b>spawn-periodic-function</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-unschedule-function.html"><b>unschedule-function</b></a>
 </p>
-<p><span class="fndoclabel">Examples</span> <br />Create a <a href="ref-glossary.html#id181">scheduled&nbsp;function</a> that simply prints <code>"Hello"</code> when
-invoked:
+<p><span class="fndoclabel">Examples</span> <br />Create a <a href="ref-glossary.html#id181">scheduled&nbsp;function</a> that simply prints <nobr><code>"Hello"</code></nobr>
+when invoked:
 <pre class="pretop">
   &gt; (make-scheduled-function 
       #'(lambda (scheduled-function)

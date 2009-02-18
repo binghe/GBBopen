@@ -23,10 +23,9 @@ increment place</var>
     style="font-family: serif; font-style: normal">=&gt;</span> <var>new-place-value</var></td><td valign="baseline" align="right">[<i>Macro</i>]
 </td></tr></table></p>
 <p><span class="fndoclabel">Purpose</span> <br />Increment by <var>increment</var> the value associated with
-<var>item</var> in an <a href="ref-glossary.html#id3">association&nbsp;list</a> stored in <var>place</var> or
-add a new <var>item increment</var> <a href="ref-glossary.html#gl:cons">cons</a> to the
-<a href="ref-glossary.html#id3">association&nbsp;list</a> if there is no existing association for
-<var>item</var>.
+<var>item</var> in an <a href="ref-glossary.html#id3">association&nbsp;list</a> stored in <var>place</var> or add a
+new <nobr><code>(<var>item</var> . <var>increment</var>)</code></nobr> <a href="ref-glossary.html#gl:cons">cons</a> to the
+<a href="ref-glossary.html#id3">association&nbsp;list</a> if there is no existing association for <var>item</var>.
 </p>
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-tools</code>
 </p>
@@ -39,9 +38,9 @@ add a new <var>item increment</var> <a href="ref-glossary.html#gl:cons">cons</a>
 <a href="ref-glossary.html#id83">generalized&nbsp;reference</a> 
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>key</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#gl:function">function</a> of one argument, or <code>nil</code> (default is <code>nil</code>)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>test</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#gl:function">function</a> of two arguments that returns a
-<a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> (default is <code>&#35;'eql</code>) 
+<a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> (default is <nobr><code>&#35;'eql</code></nobr>) 
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>test-not</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#gl:function">function</a> of two arguments that returns a
-<a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> (use of <code>:test-not</code> is deprecated)
+<a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> (use of <nobr><code>:test-not</code></nobr> is deprecated)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>new-place-value</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An <a href="ref-glossary.html#id3">association&nbsp;list</a>
 </td></tr></table>
 </p>
@@ -69,10 +68,12 @@ add a new <var>item increment</var> <a href="ref-glossary.html#gl:cons">cons</a>
 </pre>
 </p>
 <p><span class="fndoclabel">Note</span> <br /><a name="id1"></a><a href="ref-declared-numerics.html">Declared numeric</a> and <a href="ref-pseudo-probability-entities.html">pseudo
-probability</a> versions of <b>pushnew/incf-acons</b> are also
-provided: <b>pushnew/incf&#38;-acons</b>, <b>pushnew/incf&#36;&#38;-acons</b>,
-<b>pushnew/incf&#36;-acons</b>, <b>pushnew/incf&#36;&#36;-acons</b>,
-<b>pushnew/incf&#36;&#36;&#36;-acons</b>, and <b>pushnew/incf&#37;-acons</b>.
+probability</a> versions of <nobr><b>pushnew/incf-acons</b></nobr> are
+also provided: <nobr><b>pushnew/incf&#38;-acons</b></nobr>,
+<nobr><b>pushnew/incf&#36;&#38;-acons</b></nobr>, <nobr><b>pushnew/incf&#36;-acons</b></nobr>,
+<nobr><b>pushnew/incf&#36;&#36;-acons</b></nobr>,
+<nobr><b>pushnew/incf&#36;&#36;&#36;-acons</b></nobr>, and
+<nobr><b>pushnew/incf&#37;-acons</b></nobr>.
 </p>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />

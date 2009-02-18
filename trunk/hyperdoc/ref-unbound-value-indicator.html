@@ -26,8 +26,9 @@
 <p><span class="fndoclabel">See also</span>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-define-unit-class.html"><b>define-unit-class</b></a>
 </p>
-<p><span class="fndoclabel">Example</span> <br />Define a slot-reader <a href="ref-glossary.html#gl:function">function</a> that returns the value of <code>my-slot</code> or 
-<b>unbound-value-indicator</b> if the slot is unbound: 
+<p><span class="fndoclabel">Example</span> <br />Define a slot-reader <a href="ref-glossary.html#gl:function">function</a> that returns the value of
+<nobr><code>my-slot</code></nobr> or <nobr><b>unbound-value-indicator</b></nobr> if the slot
+is unbound:
 <pre class="pretop">
   (defun safe-my-slot-of (instance)
     (if (slot-bound-p instance 'my-slot)

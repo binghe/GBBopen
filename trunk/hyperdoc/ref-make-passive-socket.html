@@ -38,11 +38,12 @@ interface on the local machine or <code>nil</code></td></tr><tr valign="top"><td
 <p><span class="fndoclabel">Returns</span> <br />The new <a href="ref-glossary.html#id137">passive&nbsp;socket</a>.
 </p>
 <p><span class="fndoclabel">Description</span> <br />An <var>interface</var> string can be either a host name, such as
-<code>"localhost"</code> or a &#8220;dotted&#8221; IP address, such as <code>"127.0.0.1"</code>.
+<nobr><code>"localhost"</code></nobr> or a &#8220;dotted&#8221; IP address, such as
+<nobr><code>"127.0.0.1"</code></nobr>.
 </p>
-<p>The value of <var>backlog</var> tells the operating system
+<p>The value of <nobr><var>backlog</var></nobr> tells the operating system
 how many unprocessed connections can be held pending (connected but
-still awaiting an <b><a href="ref-accept-connection.html">accept-connection</a></b>).
+still awaiting an <nobr><b><a href="ref-accept-connection.html">accept-connection</a></b></nobr>).
 </p>
 <p><span class="fndoclabel">See also</span>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-accept-connection.html"><b>accept-connection</b></a>
@@ -56,7 +57,7 @@ still awaiting an <b><a href="ref-accept-connection.html">accept-connection</a><
 </pre>
 </p>
 <a name="id1"></a><p><span class="fndoclabel">Note</span> <br />The passive socket should be closed using
-<b><a href="ref-close-passive-socket.html">close-passive-socket</a></b> when the service is no longer
+<nobr><b><a href="ref-close-passive-socket.html">close-passive-socket</a></b></nobr> when the service is no longer
 needed in order to free up operating system resources.
 </p>
 <hr /><address><a target="_top" class="address"

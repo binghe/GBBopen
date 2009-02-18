@@ -34,12 +34,12 @@ specified <a href="ref-glossary.html#gl:unit-class">unit&nbsp;classes</a>.
 </td></tr></table>
 </p>
 <p><span class="fndoclabel">Returns</span> <br /><a name="id1">A</a> newly consed list of all <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a> of the
-<a href="ref-glossary.html#gl:unit-class">unit&nbsp;classes</a> specified by <var>unit-class-specifier</var>,
+<a href="ref-glossary.html#gl:unit-class">unit&nbsp;classes</a> specified by <nobr><var>unit-class-specifier</var></nobr>,
 whether or not they reside on any <a href="ref-glossary.html#id197">space&nbsp;instance</a>.
 </p>
 <p><span class="fndoclabel">Detailed syntax</span><table class="tighttop"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
-<var>unit-classes-specifier</var>&nbsp;::= </td><td valign="baseline" colspan="1" align="left"> <code>t</code> | 
+<nobr><var>unit-classes-specifier</var> ::=</nobr> </td><td valign="baseline" colspan="1" align="left"> <code>t</code> | 
 <var>single-unit-class-specifier</var> 
 | <code>(</code><var>single-unit-class-specifier</var><sup>+</sup><code>)</code></td></tr>
 <tr>
@@ -47,20 +47,20 @@ whether or not they reside on any <a href="ref-glossary.html#id197">space&nbsp;i
 </p>
 <table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
-<var>single-unit-class-specifier</var>&nbsp;::= 
+<nobr><var>single-unit-class-specifier</var> ::=</nobr> 
 </td><td valign="baseline" colspan="1" align="left"> <var>atomic-unit-class</var> |
 <code>(</code><var>atomic-unit-class subclassing-specifier</var><code>)</code></td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
 <table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
-<var>atomic-unit-class</var>&nbsp;::= </td><td valign="baseline" colspan="1" align="left"> <var>unit-class</var> | 
+<nobr><var>atomic-unit-class</var> ::=</nobr> </td><td valign="baseline" colspan="1" align="left"> <var>unit-class</var> | 
 <var>unit-class-name</var> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
 <table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
-<var>subclassing-specifier</var>&nbsp;::= 
+<nobr><var>subclassing-specifier</var> ::=</nobr> 
 <a name="id2"></a></td><td valign="baseline" colspan="1" align="left"> <code>:plus-subclasses</code> | <code>:no-subclasses</code> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
@@ -88,9 +88,9 @@ whether or not they reside on any <a href="ref-glossary.html#id197">space&nbsp;i
   &gt;
 </pre> 
 </p>
-<p><span class="fndoclabel">Note</span> <br />In general, <b><a href="ref-do-instances-of-class.html">do-instances-of-class</a></b> or
-<b><a href="ref-map-instances-of-class.html">map-instances-of-class</a></b> is preferred over operating
-on the list created by <b>find-instances-of-class</b>.
+<p><span class="fndoclabel">Note</span> <br />In general, <nobr><b><a href="ref-do-instances-of-class.html">do-instances-of-class</a></b></nobr> or
+<nobr><b><a href="ref-map-instances-of-class.html">map-instances-of-class</a></b></nobr> is preferred over operating
+on the list created by <nobr><b>find-instances-of-class</b></nobr>.
 </p>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />

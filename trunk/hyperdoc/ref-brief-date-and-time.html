@@ -23,14 +23,14 @@ destination</var>
 </td></tr></table></p>
 <p><span class="fndoclabel">Purpose</span> <br />Generate a brief date-and-time description.
 </p>
-<p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-tools</code> (home package is <code>:module-manager</code>)
+<p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-tools</code> (home package is <nobr><code>:module-manager</code></nobr>)
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:module-manager</code>
 </p>
 <p><span class="fndoclabel">Arguments and values</span><table class="tighttop">
 <tr valign="top"><td valign="baseline" nowrap><i>universal-time</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id223">universal&nbsp;time</a> (default is <code>nil</code>,
 which is equivalent to the value returned by
-<code>(get-universal-time)</code>)
+<nobr><code>(get-universal-time)</code></nobr>)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>time-zone</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id215">time&nbsp;zone</a> (default is <code>nil</code>,
 which is equivalent to the current time zone adjusted for daylight
 saving time)
@@ -42,19 +42,20 @@ pointer (default is <code>nil</code>)
 </p>
 <p><span class="fndoclabel">Returns</span> <br />If <var>destination</var> is non-<code>nil</code>, then <code>nil</code>; otherwise, a string.
 </p>
-<p><span class="fndoclabel">Description</span> <br />A 12-character description (15-characters if <var>include-seconds</var> is non-<code>nil</code>) is generated.  If the <var>universal-time</var> value is within 120 days
-of the current time, the result <var>string</var> includes the time of
-day but not the year; otherwise, the year is included but not the time
-of day.
+<p><span class="fndoclabel">Description</span> <br />A 12-character description (15-characters if
+<nobr><var>include-seconds</var></nobr> is non-<code>nil</code>) is generated.  If the
+<nobr><var>universal-time</var></nobr> value is within 120 days of the current time,
+the result <nobr><var>string</var></nobr> includes the time of day but not the year;
+otherwise, the year is included but not the time of day.
 </p>
-<p><p>
-<a name="id1">If</a> <var>universal-time</var> is not supplied or is <code>nil</code>, the current time
-(as returned by <b>get-universal-time</b> is used.  
+<p><p> 
+<a name="id1">If</a> <nobr><var>universal-time</var></nobr> is not supplied or is <code>nil</code>, the current time
+(as returned by <nobr><code>get-universal-time</code></nobr> is used.
 </p>
-<p><p>
+<p><p> 
 If <var>time-zone</var> is not supplied or is <code>nil</code>, it defaults to the
 current time zone adjusted for daylight saving time. If
-<var>time-zone</var> is supplied, it is assumed to include any adjustment
+<nobr><var>time-zone</var></nobr> is supplied, it is assumed to include any adjustment
 for daylight saving time.
 </p>
 <p><span class="fndoclabel">See also</span>
@@ -101,8 +102,8 @@ The date and time 100 days ago (with seconds):
   &gt;
 </pre>
 </p>
-<p><span class="fndoclabel">Note</span> <br /><a name="id2">This</a> function is loaded with the <code>:module-manager</code> <a href="ref-glossary.html#gl:module">module</a> in order
-to to make it available as early as possible.
+<p><span class="fndoclabel">Note</span> <br /><a name="id2">This</a> function is loaded with the <nobr><code>:module-manager</code></nobr> <a href="ref-glossary.html#gl:module">module</a>
+in order to to make it available as early as possible.
 </p>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />

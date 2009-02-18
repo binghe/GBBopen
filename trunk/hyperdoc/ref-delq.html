@@ -20,8 +20,8 @@
 <span 
     style="font-family: serif; font-style: normal">=&gt;</span> <var>list</var></td><td valign="baseline" align="right">[<i>Function</i>]
 </td></tr></table></p>
-<p><span class="fndoclabel">Purpose</span> <br />Destructively delete all <var>item</var>s from <var>list</var> using
-<code>eq</code> as the comparison function.
+<p><span class="fndoclabel">Purpose</span> <br />Destructively delete all <var>item</var> elements from <var>list</var>
+using <code>eq</code> as the comparison function.
 </p>
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-tools</code>
 </p>
@@ -32,14 +32,15 @@
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>list</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id153">proper&nbsp;list</a>
 </td></tr></table>
 </p>
-<p><span class="fndoclabel">Returns</span> <br />A list from which all <var>item</var>s have been deleted.
+<p><span class="fndoclabel">Returns</span> <br />A list from which all <var>item</var> elements have been deleted.
 </p>
 <p><span class="fndoclabel">Description</span> <br /><b>Delq</b> is a convenient shorthand for:
 <pre class="pretop">
   (delete <var>item</var> (the list <var>list</var>) :test #'eq)
 </pre>
-As is the case with <code>delete</code>, <b>delq</b> may modify the top-level
-structure of <var>list</var> in constructing the <var>result-list</var>.
+As is the case with <nobr><code>delete</code></nobr>, <nobr><b>delq</b></nobr> may modify the
+top-level structure of <var>list</var> in constructing the
+<nobr><var>result-list</var></nobr>.
 </p>
 <p><span class="fndoclabel">Examples</span> <br /><pre class="pretop">
   &gt; (delq 'b '(a b c b))

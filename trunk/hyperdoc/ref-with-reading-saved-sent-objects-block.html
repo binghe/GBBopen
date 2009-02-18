@@ -27,7 +27,7 @@ read-eval</var><code>)</code>
 </td></tr></table></p>
 <p><span class="fndoclabel">Purpose</span> <br />Bind reader and GBBopen reading-saved/sent-objects control
 variables) to values that produce standard GBBopen
-reading-saved/sent-objects behavior when evaluating <var>forms</var>.
+reading-saved/sent-objects behavior when evaluating <nobr><var>forms</var></nobr>.
 </p>
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-tools</code>
 </p>
@@ -38,37 +38,37 @@ reading-saved/sent-objects behavior when evaluating <var>forms</var>.
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>class-name-translations</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An <a href="ref-glossary.html#id3">association&nbsp;list</a> (default is <code>nil</code>)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>coalesce-strings</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> (default is <code>nil</code>)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>estimated-peak-forward-references</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An integer (default is
-<code>*default-estimated-peak-forward-references*</code>)
+<nobr><code>*default-estimated-peak-forward-references*</code></nobr>)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>readtable</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A readtable (default is 
-<code>*reading-saved/sent-objects-readtable*</code>)
+<nobr><code>*reading-saved/sent-objects-readtable*</code></nobr>)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>read-eval</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> (default is <code>nil</code>)
-</td></tr><tr valign="top"><td valign="baseline" nowrap><i>forms</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An implicit <b>progn</b> of <a href="ref-glossary.html#gl:forms">forms</a> to be evaluated
+</td></tr><tr valign="top"><td valign="baseline" nowrap><i>forms</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An implicit <nobr><b>progn</b></nobr> of <a href="ref-glossary.html#gl:forms">forms</a> to be evaluated
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>results</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> The values returned by evaluating the last <var>form</var>
 </td></tr></table>
 </p>
 <p><span class="fndoclabel">Returns</span> <br />The values returned by evaluating the last <var>form</var>.
 </p>
-<p><span class="fndoclabel">Description</span> <br />Within the dynamic extent of the body of <var>forms</var>,
-all Common Lisp reader control variables (including any
-implementation-defined ones) and GBBopen reading-saved/sent-objects
-control variables are bound to values that produce standard GBBopen
-reading-saved/sent-objects behavior.  The function
-<b><a href="ref-load-blackboard-repository.html">load-blackboard-repository</a></b> establishes a
-<b>with-reading-saved/sent-objects-block</b> when loading the
-blackboard repository, and this macro can be used in constructing
-specialized reading-saved/sent-objects operations.
+<p><span class="fndoclabel">Description</span> <br />Within the dynamic extent of the body of <nobr><var>forms</var></nobr>,
+all Common Lisp reader control variables (including any implementation-defined
+ones) and GBBopen reading-saved/sent-objects control variables are bound to
+values that produce standard GBBopen reading-saved/sent-objects behavior.  The
+function <nobr><b><a href="ref-load-blackboard-repository.html">load-blackboard-repository</a></b></nobr> establishes a
+<nobr><b>with-reading-saved/sent-objects-block</b></nobr> when loading the
+blackboard repository, and this macro can be used in constructing specialized
+reading-saved/sent-objects operations.
 </p>
-<p>The <var>class-name-translations</var> <a href="ref-glossary.html#id3">association&nbsp;list</a>, if specified,
-should contain <a href="ref-glossary.html#gl:conses">conses</a> of the form:<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<tt>(<var>class-name</var> . <var>new-class-name</var>)</tt><br />for any <a href="ref-glossary.html#gl:class">class</a> translations that should occur during reading.
+<p>The <nobr><var>class-name-translations</var></nobr> <a href="ref-glossary.html#id3">association&nbsp;list</a>, if
+specified, should contain <a href="ref-glossary.html#gl:conses">conses</a> of the form:<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<nobr><tt>(<var>class-name</var> . <var>new-class-name</var>)</tt></nobr><br />for any <a href="ref-glossary.html#gl:class">class</a> translations that should occur during reading.
 </p>
-<p>If <var>coalesce-strings</var> is true, strings read within the dynamic extent of
-the body of <var>forms</var> that are <code>equal</code> become shared (<code>eq</code>).  This
-coalescing is performed using a temporary hash-table whose initial size can be
-specified by providing an integer value for <var>coalesce-strings</var>.
+<p>If <nobr><var>coalesce-strings</var></nobr> is true, strings read within the dynamic
+extent of the body of <nobr><var>forms</var></nobr> that are <nobr><code>equal</code></nobr> become
+shared (<code>eq</code>).  This coalescing is performed using a temporary hash-table
+whose initial size can be specified by providing an integer value for
+<nobr><var>coalesce-strings</var></nobr>.
 </p>
 <p><a href="ref-glossary.html#gl:instances">Unit&nbsp;instances</a> that are referenced before they are defined are
 recorded using a temporary hash table whose initial size can be specified by
-providing an integer value for <var>estimated-peak-forward-references</var>.
+providing an integer value for <nobr><var>estimated-peak-forward-references</var></nobr>.
 </p>
 <p><span class="fndoclabel">See also</span>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-block-saved-sent-time-var.html"><b>*block-saved/sent-time*</b></a>

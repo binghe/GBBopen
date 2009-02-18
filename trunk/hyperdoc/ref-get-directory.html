@@ -56,26 +56,27 @@ The pathname returned for relative directories is based on the source pathname.
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-get-root-directory.html"><b>get-root-directory</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-show-defined-directories.html"><b>show-defined-directories</b></a>
 </p>
-<p><span class="fndoclabel">Examples</span> <br />Return the pathname of the <code>:my-app-root</code> <a href="ref-glossary.html#id179">root&nbsp;directory</a>:
+<p><span class="fndoclabel">Examples</span> <br />Return the pathname of the <nobr><code>:my-app-root</code></nobr> <a href="ref-glossary.html#id179">root&nbsp;directory</a>:
 <pre class="pretop">
   &gt; (get-directory :my-app-root)
   #P"~/my-app/"
   &gt;
 </pre>
-Return the pathname of the <code>:gbbopen-tools</code> <a href="ref-glossary.html#id171">relative&nbsp;directory</a>:
+Return the pathname of the <nobr><code>:gbbopen-tools</code></nobr>
+<a href="ref-glossary.html#id171">relative&nbsp;directory</a>:
 <pre>
   &gt; (get-directory :gbbopen-tools)
   #P"<var>&lt;install-dir&gt;</var>/source/tools/"
   &gt;
 </pre>
-Return this same pathname, this time computed from the <code>:gbbopen-root</code>
-<a href="ref-glossary.html#id179">root&nbsp;directory</a>:
+Return this same pathname, this time computed from the
+<nobr><code>:gbbopen-root</code></nobr> <a href="ref-glossary.html#id179">root&nbsp;directory</a>:
 <pre>
   &gt; (get-directory :gbbopen-root "tools")
   #P"<var>&lt;install-dir&gt;</var>/source/tools/" 
   &gt;
 </pre>
-Return the pathname of the <code>:gbbopen-user</code> <a href="ref-glossary.html#gl:module">module</a>:
+Return the pathname of the <nobr><code>:gbbopen-user</code></nobr> <a href="ref-glossary.html#gl:module">module</a>:
 <pre>
   &gt; (get-directory :gbbopen-user)
   #P"<var>&lt;install-dir&gt;</var>/source/gbbopen/"
