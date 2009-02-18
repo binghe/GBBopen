@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Feb 17 17:23:27 2009 *-*
+;;;; *-* Last-Edit: Wed Feb 18 02:27:31 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -840,8 +840,13 @@
     (dolist (space-instance 
                 (standard-unit-instance.%%space-instances%% instance))
       (remove-instance-from-space-instance instance space-instance)))
-  (change-class instance (deleted-instance-class instance)
-                :original-class (class-of instance))
+  (let ((deleted-instance-class (deleted-instance-class instance)))
+    (change-class instance (deleted-instance-class instance)
+                  :original-class (class-of instance))
+    (when (typep instance 'standard-unit-instance)
+      (error "The deleted-instance-class ~s is a subclass of ~s"
+             deleted-instance-class
+             'standard-unit-instance)))
   instance)
 
 ;;; ---------------------------------------------------------------------------
