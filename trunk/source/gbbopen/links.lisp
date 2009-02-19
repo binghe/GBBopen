@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/links.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Aug 30 09:30:15 2008 *-*
+;;;; *-* Last-Edit: Thu Feb 19 15:41:43 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -174,7 +174,7 @@
 	    .dslotd.
             ,@(when forced '(.forced-removal.)))
        (multiple-value-setq (,(first store-vars) 
-                             .change. 
+                             .change.
                              ,@(when forced '(.forced-removal.)))
          (,fn 
 	  ;; determine the direct-link-definition:
@@ -357,7 +357,14 @@
                   (push new-instance existing))
               (push new-instance change)))
           (%do-ilinks dslotd instance change force)
-          (values existing change forced-removal))))))
+          (values 
+           ;; Use new to as the value for link-setf (unless a sort-function
+           ;; was used); otherwise the updated existing value:
+           (if (and force (not sort-function)) 
+               (delete-duplicates new :test 'eq)
+               existing)
+           change
+           forced-removal))))))
 
 ;;; ---------------------------------------------------------------------------
 

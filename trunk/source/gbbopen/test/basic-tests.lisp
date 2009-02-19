@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/basic-tests.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Jun 26 04:48:33 2008 *-*
+;;;; *-* Last-Edit: Thu Feb 19 15:42:09 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -539,8 +539,8 @@
       ;; multi-link-setf:
       (progn
         (linkf (link-2-of u1) (list u3 u4))
-        (link-setf (link-2-of u1) (list u4 u5))
-        (let ((expected-value (list u5 u4))
+        (link-setf (link-2-of u1) (list u4 u5 u4 u5))
+        (let ((expected-value (list u4 u5))
               (value (link-2-of u1)))
           (unless (equal value expected-value)
             (incorrect-link-slot-value
