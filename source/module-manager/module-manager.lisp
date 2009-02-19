@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/module-manager/module-manager.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Dec  4 13:19:21 2008 *-*
+;;;; *-* Last-Edit: Wed Feb 11 02:23:46 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -15,7 +15,7 @@
 ;;; Written by: Dan Corkill (incorporating some original ideas by 
 ;;;                          Kevin Gallagher and Zachary Rubinstein)
 ;;;
-;;; Copyright (C) 2002-2008, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2009, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; Porting Notice:
@@ -124,12 +124,12 @@
     `(#+allegro excl:without-redefinition-warnings
       #+clisp let
       #+clisp ((custom:*suppress-check-redefinition* 't))
-      #+closure let
-      #+closure ((ccl:*warn-if-redefine*) nil)
+      #+clozure let
+      #+clozure ((ccl:*warn-if-redefine* nil))
       #+digitool-mcl let
-      #+digitool-mcl ((ccl:*warn-if-redefine*) nil)
+      #+digitool-mcl ((ccl:*warn-if-redefine* nil))
       #+lispworks system::without-warning-on-redefinition
-      #-(or allegro clisp closure digitool-mcl lispworks)
+      #-(or allegro clisp clozure digitool-mcl lispworks)
       progn
       (progn ,@body))))
 

@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/module-manager/module-manager-loader.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Nov 26 04:15:59 2008 *-*
+;;;; *-* Last-Edit: Tue Dec  2 13:54:46 2008 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -80,7 +80,7 @@
   (funcall (if error 'error 'warn)
            "~s needs to be defined for ~a~@[ running on ~a~].~
             ~@[~%(Please send this error message and the result of ~
-             ~% evaluating (pprint *features*) to bugs@gbbopen.org.)~]"
+            ~% evaluating (pprint *features*) to bugs@gbbopen.org.)~]"
            entity
            (lisp-implementation-type) 
            (machine-type)
