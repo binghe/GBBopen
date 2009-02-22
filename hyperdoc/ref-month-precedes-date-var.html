@@ -31,16 +31,17 @@ entities.
 <p><span class="fndoclabel">See also</span>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-brief-date.html"><b>brief-date</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-brief-date-and-time.html"><b>brief-date-and-time</b></a>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-full-date-and-time.html"><b>full-date-and-time</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-parse-date.html"><b>parse-date</b></a>
 </p>
 <p><span class="fndoclabel">Examples</span> <br />Toggle between date formatting options:
 <pre class="pretop">
   &gt; (let ((*month-precedes-date* t))
       (brief-date-and-time))
-  "Feb 16 12:11"
+  "Feb 16 13:11"
   &gt; (let ((*month-precedes-date* nil))
       (brief-date-and-time))
-  "16 Feb 12:11"
+  "16 Feb 13:11"
   &gt;
 </pre>
 </p>

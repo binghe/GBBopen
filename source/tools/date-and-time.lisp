@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/date-and-time.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Feb 22 04:12:55 2009 *-*
+;;;; *-* Last-Edit: Sun Feb 22 04:53:36 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -133,12 +133,13 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun full-date-and-time (&optional (time (get-universal-time))
+(defun full-date-and-time (&optional time
                                      time-zone
                                      include-seconds
                                      include-time-zone
                                      (destination nil))
   ;;;  Returns formatted date/time string (always includes date and time-of-day)
+  (unless time (setf time (get-universal-time)))
   (multiple-value-bind (second minute hour date month year
                         day daylight-savings-p zone)      
       (if time-zone 
@@ -173,10 +174,11 @@
 ;;; ---------------------------------------------------------------------------
 ;;;  message-log-date-and-time
 
-(defun message-log-date-and-time (&optional (time (get-universal-time))
+(defun message-log-date-and-time (&optional time
                                             (destination nil))
   ;; Writes or returns a string representing local time in "message log"
   ;; format: MMM DD HH:MM:SS
+  (unless time (setf time (get-universal-time)))
   (multiple-value-bind (second minute hour date month)
       (decode-universal-time time)
     (format destination
@@ -190,10 +192,11 @@
 ;;; ---------------------------------------------------------------------------
 ;;;  ISO8661-date-and-time
 
-(defun iso8661-date-and-time (&optional (time (get-universal-time))
+(defun iso8661-date-and-time (&optional time
                                         (destination nil))
   ;; Writes or returns a string representing time in ISO8661 (XML dateTime) 
   ;; format
+  (unless time (setf time (get-universal-time)))
   (multiple-value-bind (second minute hour date month year)
       (decode-universal-time time 0)
     (format destination
@@ -208,10 +211,11 @@
 ;;; ---------------------------------------------------------------------------
 ;;;  Internet-text-date-and-time
 
-(defun internet-text-date-and-time (&optional (time (get-universal-time))
+(defun internet-text-date-and-time (&optional time
                                               time-zone
                                               (destination nil))
   ;;; Returns a string representing time in Internet Text Message format
+  (unless time (setf time (get-universal-time)))
   (multiple-value-bind (second minute hour date month year 
                         day daylight-savings-p zone)
       (if time-zone
