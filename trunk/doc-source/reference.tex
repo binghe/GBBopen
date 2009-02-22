@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Thu Feb 19 16:20:51 2009; Edited-By: cork *-*
+%% *-* Last-Edit: Sun Feb 22 05:12:25 2009; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2009, Dan Corkill <corkill@GBBopen.org>
@@ -8309,6 +8309,7 @@ entities.
 \begin{alsos}{brief-date-and-time}
 \also[brief-date]
 \also[brief-date-and-time]
+\also[full-date-and-time]
 \also[parse-date]
 \end{alsos}
 
@@ -8319,10 +8320,10 @@ Toggle between date formatting options:
 \begin{example}
   > (let ((*month-precedes-date* t))
       (brief-date-and-time))
-  "Feb 16 12:11"
+  "Feb 16 13:11"
   > (let ((*month-precedes-date* nil))
       (brief-date-and-time))
-  "16 Feb 12:11"
+  "16 Feb 13:11"
   >
 \end{example}
 
@@ -8382,6 +8383,7 @@ for daylight saving time.
 \begin{alsos}{internet-text-date-and-time}
 \also[*month-precedes-date*]
 \also[brief-date-and-time]
+\also[full-date-and-time]
 \also[internet-text-date-and-time]
 \also[iso8661-date-and-time]
 \also[message-log-date-and-time]
@@ -8470,6 +8472,7 @@ for daylight saving time.
 \begin{alsos}{internet-text-date-and-time}
 \also[*month-precedes-date*]
 \also[brief-date]
+\also[full-date-and-time]
 \also[internet-text-date-and-time]
 \also[iso8661-date-and-time]
 \also[message-log-date-and-time]
@@ -8481,7 +8484,7 @@ Display the current date and time:
 \W\supp
 \begin{example}
   > (brief-date-and-time)
-  "Feb 16 12:11"
+  "Feb 16 13:11"
   >
 \end{example}
 %
@@ -8490,7 +8493,7 @@ Display the current date and time (with seconds):
 \W\supp\notpretop
 \begin{example}
   > (brief-date-and-time nil nil 't)
-  "Feb 16 12:11:38"
+  "Feb 16 13:11:38"
   >
 \end{example}
 %
@@ -8499,7 +8502,7 @@ Display the current date and time as GMT:
 \W\supp\notpretop
 \begin{example}
   > (brief-date-and-time nil 0)
-  "Feb 16 17:11"
+  "Feb 16 18:11"
   >
 \end{example}
 %
@@ -8508,25 +8511,26 @@ The date and time 10 days ago:
 \W\supp\notpretop
 \begin{example}
   > (brief-date-and-time (- (get-universal-time) (* 60 60 24 10)))
-  "Feb 6 12:11"
+  "Feb  6 13:11"
   >
 \end{example}
 %
-The date and time 100 days ago:
+The date and time 125 days ago:
 %
 \W\supp\notpretop
 \begin{example}
-  > (brief-date-and-time (- (get-universal-time) (* 60 60 24 100)))
-  "Nov  8, 2004"
+  > (brief-date-and-time (- (get-universal-time) (* 60 60 24 125)))
+  "Oct 12, 2004"
   >
 \end{example}
 %
-The date and time 100 days ago (with seconds):
+The date and time 125 days ago (with seconds, but ignored because no time of
+day is included for dates that are not within 120 days of the given time):
 %
 \W\supp\notpretop
 \begin{example}
-  > (brief-date-and-time (- (get-universal-time) (* 60 60 24 100)))
-  "Nov  8, 2004   "
+  > (brief-date-and-time (- (get-universal-time) (* 60 60 24 125)) nil 't)
+  "Oct 12, 2004   "
   >
 \end{example}
 
@@ -8536,6 +8540,149 @@ The date and time 100 days ago (with seconds):
 %
 This function is loaded with the \nobr{\code{:module-manager}} \glref{module}
 in order to to make it available as early as possible.
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{full-date-and-time}{%
+    \code{\&optional} \var{universal-time time-zone include-seconds
+      include-time-zone destination\/}
+    \returns{} \var{result\/}}
+\index{date!formatted}%
+\index{time, formatted}%
+
+\fnsyntax
+
+\fnpurpose Generate a date-and-time description.
+
+\fnpackage \code{:gbbopen-tools} 
+
+\fnmodule \code{:gbbopen-tools}
+
+\fnargs
+\begin{args}{universal-time}
+\arg[universal-time] A \glref{universal~time} (default is \nil,
+  which is equivalent to the value returned by
+  \nobr{\code{(get-universal-time)}})
+\arg[time-zone] A \glref{time~zone} (default is \nil,
+  which is equivalent to the current time zone adjusted for daylight
+  saving time)
+\arg[include-seconds] A \glref{generalized~boolean} (default is \nil)
+\arg[include-time-zone] A \glref{generalized~boolean} (default is \nil)
+\arg[destination] Either \nil, \code{t}, a stream, or a string with a fill 
+pointer (default is \nil)
+\arg[result] A string or \nil{}
+\end{args}
+
+\fnreturns If \var{destination\/} is non-\nil, then \nil; otherwise, a string.
+
+\fndescription A 17-character description (longer if
+\nobr{\var{include-seconds\/}} or \nobr{\var{include-time-zone\/}} is
+non-\nil{}) is generated.
+
+\W\xml{p} 
+\bfindexit{get-universal-time}%
+%
+If \nobr{\var{universal-time\/}} is not supplied or is \nil, the current time
+(as returned by \nobr{\code{get-universal-time}} is used.
+
+\W\xml{p} 
+%
+If \var{time-zone\/} is not supplied or is \nil, it defaults to the
+current time zone adjusted for daylight saving time. If
+\nobr{\var{time-zone\/}} is supplied, it is assumed to include any adjustment
+for daylight saving time.
+
+\begin{alsos}{internet-text-date-and-time}
+\also[*month-precedes-date*]
+\also[brief-date]
+\also[full-date-and-time]
+\also[internet-text-date-and-time]
+\also[iso8661-date-and-time]
+\also[message-log-date-and-time]
+\end{alsos}
+
+\fnexamples
+Display the current date and time: 
+%
+\W\supp
+\begin{example}
+  > (full-date-and-time)
+  "Feb 16 2009 13:11"
+  >
+\end{example}
+%
+Display the current date and time (with seconds):
+%
+\W\supp\notpretop
+\begin{example}
+  > (full-date-and-time nil nil 't)
+  "Feb 16 2009 13:11:38"
+  >
+\end{example}
+%
+Display the current date and time (with time zone):
+%
+\W\supp\notpretop
+\begin{example}
+  > (full-date-and-time nil nil nil 't)
+  "Feb 16 2009 13:11 EST"
+  >
+\end{example}
+%
+Display the current date and time (with seconds and time zone):
+%
+\W\supp\notpretop
+\begin{example}
+  > (full-date-and-time nil nil 't 't)
+  "Feb 16 2009 13:11:38 EST"
+  >
+\end{example}
+%
+Display the current date and time as GMT: 
+%
+\W\supp\notpretop
+\begin{example}
+  > (full-date-and-time nil 0)
+  "Feb 16 2009 18:11"
+  >
+\end{example}
+Display the current date and time as GMT (with time zone):
+%
+\W\supp\notpretop
+\begin{example}
+  > (full-date-and-time nil 0 nil 't)
+  "Feb 16 2009 18:11 GMT"
+  >
+\end{example}
+%
+The date and time 10 days ago:
+%
+\W\supp\notpretop
+\begin{example}
+  > (full-date-and-time (- (get-universal-time) (* 60 60 24 10)))
+  "Feb  6 2009 13:11"
+  >
+\end{example}
+%
+The date and time 125 days ago:
+%
+\W\supp\notpretop
+\begin{example}
+  > (full-date-and-time (- (get-universal-time) (* 60 60 24 125)))
+  "Oct 12 2008 13:11"
+  >
+\end{example}
+%
+The date and time 125 days ago (with seconds):
+%
+\W\supp\notpretop
+\begin{example}
+  > (full-date-and-time (- (get-universal-time) (* 60 60 24 125)) nil 't)
+  "Oct 12 2008 13:11:38"
+  >
+\end{example}
 
 \end{functiondoc}
 
@@ -8569,9 +8716,16 @@ pointer (default is \nil)
 
 \fnreturns If \var{destination\/} is non-\nil, then \nil; otherwise, a string.
 
+\fndescription
+\bfindexit{get-universal-time}%
+%
+If \nobr{\var{universal-time\/}} is not supplied or is \nil, the current time
+(as returned by \nobr{\code{get-universal-time}} is used.
+
 \begin{alsos}{iso8661-date-and-time}
 \also[brief-date]
 \also[brief-date-and-time]
+\also[full-date-and-time]
 \also[iso8661-date-and-time]
 \also[message-log-date-and-time]
 \end{alsos}
@@ -8616,9 +8770,16 @@ pointer (default is \nil)
 
 \fnreturns If \var{destination\/} is non-\nil, then \nil; otherwise, a string.
 
+\fndescription
+\bfindexit{get-universal-time}%
+%
+If \nobr{\var{universal-time\/}} is not supplied or is \nil, the current time
+(as returned by \nobr{\code{get-universal-time}} is used.
+
 \begin{alsos}{internet-text-date-and-time}
 \also[brief-date]
 \also[brief-date-and-time]
+\also[full-date-and-time]
 \also[internet-text-date-and-time]
 \also[message-log-date-and-time]
 \end{alsos}
@@ -8662,9 +8823,16 @@ pointer (default is \nil)
 
 \fnreturns If \var{destination\/} is non-\nil, then \nil; otherwise, a string.
 
+\fndescription
+\bfindexit{get-universal-time}%
+%
+If \nobr{\var{universal-time\/}} is not supplied or is \nil, the current time
+(as returned by \nobr{\code{get-universal-time}} is used.
+
 \begin{alsos}{internet-text-date-and-time}
 \also[brief-date]
 \also[brief-date-and-time]
+\also[full-date-and-time]
 \also[internet-text-date-and-time]
 \also[iso8661-date-and-time]
 \end{alsos}
@@ -9077,7 +9245,7 @@ value.
 \fnmodule \code{:gbbopen-tools}
 
 \fnargs
-\begin{args}{universal-time}
+\begin{args}{suppress-warning}
 \arg[suppress-warning] A \glref{generalized~boolean} (default is \nil)
 \arg[boolean] A \glref{generalized~boolean}
 \end{args}
