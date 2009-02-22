@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/portable-threads-entities.tex *-*
-%% *-* Last-Edit: Wed Feb 18 01:30:42 2009; Edited-By: cork *-*
+%% *-* Last-Edit: Sun Feb 22 12:53:37 2009; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 \index{module!:portable-threads@\code{:portable-threads}}%
@@ -72,15 +72,9 @@ lock entities.
 
 \ppar{Hibernation}
 
-Sometimes it is desirable to put a thread to sleep (perhaps for a long time)
-until some event has occurred.  The Portable Threads Interface provides two
-entities that make this situation easy to code:
-\nobr{\textbf{\entlink{hibernate-thread}}} and
-\nobr{\textbf{\entlink{awaken-thread}}}.  Note that when a thread is
-hibernating, it remains available to respond to
-\nobr{\textbf{\entlink{run-in-thread}}} and
-\nobr{\textbf{\entlink{symbol-value-in-thread}}} operations as well as to be
-awakened by a dynamically surrounding \nobr{\textbf{\entlink{with-timeout}}}.
+Sometimes it is desirable to put a thread to sleep (perhaps for a long time) until some event has occurred.  The Portable Threads Interface provides two entities that make this situation easy to code: \nobr{\textbf{\entlink{hibernate-thread}}} and \nobr{\textbf{\entlink{awaken-thread}}}.  Thread hibernation can only be performed by the thread on itself, eliminating issues of a thread being hibernated at an undesirable time.  Note that there is the potential for a hibernate/awaken race condition if a thread hibernates itself again soon after being awakened (when a second \nobr{\textbf{\entlink{awaken-thread}}} intended for the original hiberation is applied to the second hibernation rather than being ignored because the target thread is not hibernating).  Using a \nobr{\textbf{\entlink{condition-variable}}} is preferable in this situation.
+
+When a thread is hibernating, it remains available to respond to \nobr{\textbf{\entlink{run-in-thread}}} and \nobr{\textbf{\entlink{symbol-value-in-thread}}} operations as well as to be awakened by a dynamically surrounding \nobr{\textbf{\entlink{with-timeout}}}.
 
 \ppar{What about Process Wait?}
 

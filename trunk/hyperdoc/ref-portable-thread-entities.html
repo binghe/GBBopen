@@ -81,15 +81,9 @@ lock entities.
 </p>
 <p><h4>Hibernation</h4>
 </p>
-<p>Sometimes it is desirable to put a thread to sleep (perhaps for a long time)
-until some event has occurred.  The Portable Threads Interface provides two
-entities that make this situation easy to code:
-<nobr><b><a href="ref-hibernate-thread.html">hibernate-thread</a></b></nobr> and
-<nobr><b><a href="ref-awaken-thread.html">awaken-thread</a></b></nobr>.  Note that when a thread is
-hibernating, it remains available to respond to
-<nobr><b><a href="ref-run-in-thread.html">run-in-thread</a></b></nobr> and
-<nobr><b><a href="ref-symbol-value-in-thread.html">symbol-value-in-thread</a></b></nobr> operations as well as to be
-awakened by a dynamically surrounding <nobr><b><a href="ref-with-timeout.html">with-timeout</a></b></nobr>.
+<p>Sometimes it is desirable to put a thread to sleep (perhaps for a long time) until some event has occurred.  The Portable Threads Interface provides two entities that make this situation easy to code: <nobr><b><a href="ref-hibernate-thread.html">hibernate-thread</a></b></nobr> and <nobr><b><a href="ref-awaken-thread.html">awaken-thread</a></b></nobr>.  Thread hibernation can only be performed by the thread on itself, eliminating issues of a thread being hibernated at an undesirable time.  Note that there is the potential for a hibernate/awaken race condition if a thread hibernates itself again soon after being awakened (when a second <nobr><b><a href="ref-awaken-thread.html">awaken-thread</a></b></nobr> intended for the original hiberation is applied to the second hibernation rather than being ignored because the target thread is not hibernating).  Using a <nobr><b><a href="ref-condition-variable.html">condition-variable</a></b></nobr> is preferable in this situation.
+</p>
+<p>When a thread is hibernating, it remains available to respond to <nobr><b><a href="ref-run-in-thread.html">run-in-thread</a></b></nobr> and <nobr><b><a href="ref-symbol-value-in-thread.html">symbol-value-in-thread</a></b></nobr> operations as well as to be awakened by a dynamically surrounding <nobr><b><a href="ref-with-timeout.html">with-timeout</a></b></nobr>.
 </p>
 <p><h4>What about Process Wait?</h4>
 </p>
