@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/date-and-time.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Feb  9 11:51:48 2009 *-*
+;;;; *-* Last-Edit: Sun Feb 22 04:12:55 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -36,8 +36,9 @@
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(*month-precedes-date*       ; these three entities are defined in 
-            bried-date                  ; ../module-manager/module-manager.lisp, 
+            brief-date                  ; ../module-manager/module-manager.lisp, 
             brief-date-and-time         ; but are part of :gbbopen-tools
+            full-date-and-time
             internet-text-date-and-time
             iso8661-date-and-time
             message-log-date-and-time
@@ -55,6 +56,119 @@
 
 (defparameter *weekday-name-vector*
     #("Mon" "Tue" "Wed" "Thu" "Fri" "Sat" "Sun"))
+
+;;; ---------------------------------------------------------------------------
+
+(defun time-zone-abbreviation (zone daylight-savings-p)
+  ;;; Return a time-zone abbreviation string for `zone;' `zone' is a rational
+  ;;; with decode-universal-time semantics.
+  (or
+   (cdr (assoc zone                      
+               (if daylight-savings-p
+                   '((7/2 . "NDT")      ; Newfoundland Daylight
+                     (4 . "ADT")        ; Atlantic Daylight
+                     (5 . "EDT")        ; Eastern Daylight (US)
+                     (6 . "CDT")        ; Central Daylight (US)
+                     (7 . "MDT")        ; Mountain Daylight (US)
+                     (8 . "PDT")        ; Pacific Daylight (US)
+                     (9 . "AKDT")       ; Alaska
+                     (10 . "HADT")      ; Hawaii-Aleutian Daylight
+                     (0 . "BST")        ; British Summer
+                     (-1 . "CEDT")      ; Central European Daylight
+                     (-2 . "EEDT")      ; Eastern European Daylight
+                     (-3 . "MSD")       ; Moscow Daylight
+                     (-8 . "AWDT")      ; Australian Western Daylight
+                     (-19/2 . "ACSD")   ; Australian Central Daylight
+                     (-10 . "AEDT"))    ; Australian Eastern Daylight
+                   '((1 . "WAT")        ; West Africa (also Cape Verdes
+                                        ;   Islands, Atlantic Ocean)
+                     (2 . "AT")         ; Azores
+                     (7/2 . "NST")      ; Newfoundland
+                     (4 . "AST")        ; Atlantic
+                     (5 . "EST")        ; Eastern (US)
+                     (6 . "CST")        ; Central (US)
+                     (7 . "MST")        ; Mountain (US)
+                     (8 . "PST")        ; Pacific (US)
+                     (9 . "AKST")       ; Alaska
+                     (10 . "HAST")      ; Hawaii-Aleutian
+                     (11 . "NT")        ; Nome
+                     (12 . "IDLW")      ; International Dateline West
+                     (0 . "GMT")        ; Greenwich (also Portugal, Reykjavik
+                                        ;   (Iceland), Western Africa)
+                     (-1 . "CET")       ; Central European (also Algeria,
+                                        ;   Nigeria, Angola)
+                     (-2 . "EET")       ; Eastern European (also Finland,
+                                        ;   Balkans, Libya, Egypt, South
+                                        ;   Africa)
+                     (-3 . "MSK")       ; Moscow (also Baghdad, Eastern
+                                        ;   Africa, Ethiopia, Kenya, Tanzania)
+                     (-4 . "ZP4")       ; Samara (Russia Zone 3)
+                     (-5 . "ZP5")       ; Yekaterinburg (Russia Zone 4)
+                     (-11/2 . "IST")    ; Indian
+                     (-6 . "ZP6")       ; Omsk (Russia Zone 5), Bangladesh)
+                     (-7 . "WAST")      ; West Austrailian Standard (also
+                                        ;   Christmas Island, Krasnoyarsk
+                                        ;   (Russia Zone 6), Western Indonesia)
+                     (-8 . "AWST")      ; Australian Western (also Irkutsk
+                                        ;   (Russia Zone 7), China, Hong Kong,
+                                        ;   Philippines, Central Indonesia)
+                     (-9 . "JST")       ; Japan (also Yakutsk (Russia Zone 8),
+                                        ;   Korea, Eastern Indonesia)
+                     (-19/2 . "ACST")   ; Australian Central
+                     (-10 . "AEST")     ; Australian Eastern (also Vladivostok
+                                        ;   (Russia Zone 9), Papua New Guinea)
+                     (-21/2 . "NFT")    ; Norfolk (Island)
+                     (-12 . "NZST"))))) ; New Zealand (also Kamchatka
+                                        ;   (Russia), Fiji, New Zealand,
+                                        ;   Marshall Islands)
+   ;; No abbreviation from above:
+   (let ((utc-zone (if (integerp zone)
+                       (-& zone)
+                       (-$ (float zone)))))
+     (format nil "UTC~:[~@f~;~@d~]"
+             (integerp utc-zone)
+             (if daylight-savings-p
+                 (1+ utc-zone)
+                 utc-zone)))))
+
+;;; ---------------------------------------------------------------------------
+
+(defun full-date-and-time (&optional (time (get-universal-time))
+                                     time-zone
+                                     include-seconds
+                                     include-time-zone
+                                     (destination nil))
+  ;;;  Returns formatted date/time string (always includes date and time-of-day)
+  (multiple-value-bind (second minute hour date month year
+                        day daylight-savings-p zone)      
+      (if time-zone 
+          (decode-universal-time time time-zone)
+          (decode-universal-time time))
+    (declare (ignore day))
+    (let ((month-name (svref (the (simple-array t (*))
+                               *month-name-vector*)
+                             (& (1- (& month))))))
+      (if *month-precedes-date*
+          (format destination "~a ~2d ~a ~2,'0d:~2,'0d~:[~*~;:~2,'0d~]~@[ ~a~]"
+                  month-name
+                  date
+                  year
+                  hour
+                  minute
+                  include-seconds
+                  second
+                  (and include-time-zone
+                       (time-zone-abbreviation zone daylight-savings-p)))
+          (format destination "~2d ~a ~a ~a ~2,'0d:~2,'0d~:[~*~;:~2,'0d~]~@[ ~a~]"
+                  date
+                  month-name
+                  year
+                  hour
+                  minute
+                  include-seconds
+                  second
+                  (and include-time-zone
+                       (time-zone-abbreviation zone daylight-savings-p)))))))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  message-log-date-and-time
@@ -93,34 +207,6 @@
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Internet-text-date-and-time
-
-(defun time-zone-abbreviation (zone daylight-savings-p)
-  ;;; Return a time-zone abbreviation string for `zone;'
-  ;;; `zone' is an integer with decode-universal-time semantics.
-  (cdr (assoc zone                      
-              (if daylight-savings-p
-                  '((4 . "ADT")
-                    (5 . "EDT")
-                    (6 . "CDT")
-                    (7 . "MDT")
-                    (8 . "PDT")
-                    (9 . "AKDT")        ; Alaska
-                    (-1 . "BST")        ; British Summer (IST is Irish Summer) 
-                    (-2 . "CEST")       ; Central Europe
-                    (-3 . "EEST"))      ; Eastern Europe
-                  '((0 . "GMT")
-                    (4 . "AST")
-                    (5 . "EST")
-                    (6 . "CST")
-                    (7 . "MST")
-                    (8 . "PST")
-                    (9 . "AKST")        ; Alaska
-                    (10 . "HST")        ; Hawaii
-                    (-1 . "CET")        ; Central Europe
-                    (-2 . "EET")        ; Eastern Europe
-                    (-10 . "AEST")))))) ; Australian Eastern
-
-;;; ---------------------------------------------------------------------------
 
 (defun internet-text-date-and-time (&optional (time (get-universal-time))
                                               time-zone
