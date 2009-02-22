@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/test/portable-threads-test.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Dec  4 13:35:56 2008 *-*
+;;;; *-* Last-Edit: Sun Feb 22 15:46:03 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2005-2008, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2005-2009, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -749,6 +749,7 @@
       (log-error "Symbol-value-in-thread failed on hibernating thread"))
     (forced-format "~&;;   Re-awakening thread...~%")
     (awaken-thread thread)
+    (awaken-thread thread)              ; 2nd should be a no-op
     (with-lock-held (cv)
       (unless (eq (state-of cv) ':reawake)
         (condition-variable-wait cv)
