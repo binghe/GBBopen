@@ -6,6 +6,7 @@ Important changes since GBBopen 1.2:
   * Changes to GBBopen Tools
      - Saving/sending support for adjustable, fill-pointer, and 
        element-typed vectors, bit-vectors, and arrays
+     - New FULL-DATE-AND-TIME function 
      - New PARSE-TIME-INTERVAL function 
 
   * Changes to GBBopen Core
