@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/portable-threads.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Feb 10 15:35:05 2009 *-*
+;;;; *-* Last-Edit: Sun Feb 22 16:25:52 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -1509,10 +1509,16 @@
             (values (symbol-value symbol) 't)
             (values nil nil))))
   #+clozure
-  (let ((value (ccl:symbol-value-in-process symbol thread)))
-    (if (eq value (ccl::%unbound-marker))
-        (values nil nil)
-        (values value 't)))
+  (handler-case
+      (let ((value (ccl:symbol-value-in-process symbol thread)))
+        (if (eq value (ccl::%unbound-marker))
+            (values nil nil)
+            (values value 't)))
+    ;; If SYMBOL-VALUE-IN-PROCESS generates an error, assume it is due to an
+    ;; unbound symbol (someday, check the error-message string to be sure):
+    (error (condition)
+      (declare (ignore condition))
+      (values nil nil)))
   #+(and cmu mp)
   (let ((result nil))
     (mp:process-interrupt
@@ -1599,20 +1605,21 @@
 ;;; ---------------------------------------------------------------------------
 
 #-threads-not-available
-(defun throwable-sleep-forever ()
+(defun throwable-sleep-forever (&optional (tag 'throwable-sleep-forever))
   ;; In most CLs, sleep allows run-in-thread, symbol-value-in-thread,
   ;; and throws to be processed while sleeping, and sleep is often
   ;; well optimized.  So, we use it whenever possible.
-  (catch 'throwable-sleep-forever
+  (catch tag
     (sleep *nearly-forever-seconds*)))
 
 ;;; ---------------------------------------------------------------------------
 
 #-threads-not-available
-(defun awaken-throwable-sleeper (thread)
+(defun awaken-throwable-sleeper (thread 
+                                 &optional (tag 'throwable-sleep-forever))
   (flet ((awake-fn ()
            (ignore-errors
-            (throw 'throwable-sleep-forever nil))))
+            (throw tag nil))))
     (run-in-thread thread #'awake-fn)
     (thread-yield)))
 
@@ -1620,7 +1627,7 @@
 
 (defun hibernate-thread ()
   #-threads-not-available
-  (throwable-sleep-forever)
+  (throwable-sleep-forever 'hibernate-thread)
   #+threads-not-available
   (threads-not-available 'hibernate-thread))
 
@@ -1628,7 +1635,7 @@
 
 (defun awaken-thread (thread)
   #-threads-not-available
-  (awaken-throwable-sleeper thread)
+  (awaken-throwable-sleeper thread 'hibernate-thread)
   #+threads-not-available
   (declare (ignore thread))
   #+threads-not-available
@@ -1754,7 +1761,7 @@
       (push system:*current-process* 
             (condition-variable-queue condition-variable))
       (mp::process-unlock lock)
-      (throwable-sleep-forever)
+      (throwable-sleep-forever 'condition-variable)
       (mp::process-lock lock))
     #+clozure
     (let ((ccl-lock (lock-ccl-lock lock)))
@@ -1774,14 +1781,14 @@
       (push mp:*current-process*
             (condition-variable-queue condition-variable))
       (setf (mp::lock-process lock) nil)
-      (throwable-sleep-forever)
+      (throwable-sleep-forever 'condition-variable)
       (mp::lock-wait lock nil))
     #+digitool-mcl
     (let ((ccl-lock (lock-ccl-lock lock)))
       (push ccl:*current-process*
             (condition-variable-queue condition-variable))
       (ccl:process-unlock ccl-lock)
-      (throwable-sleep-forever)
+      (throwable-sleep-forever 'condition-variable)
       (ccl:process-lock ccl-lock ccl:*current-process*))
     #+(and ecl threads)
     (mp:condition-variable-wait (condition-variable-cv condition-variable) lock)
@@ -1790,7 +1797,7 @@
       (push mp:*current-process*
             (condition-variable-queue condition-variable))
       (mp:process-unlock lock)
-      (throwable-sleep-forever)
+      (throwable-sleep-forever 'condition-variable)
       (mp:process-allow-scheduling)
       (mp:process-lock lock))
     #+(and sbcl sb-thread)
@@ -1825,7 +1832,7 @@
                               (condition-variable-queue
                                condition-variable))))
                nil)
-            (throwable-sleep-forever)
+            (throwable-sleep-forever 'condition-variable)
             't)
         (mp::process-lock lock)))
     #+clozure
@@ -1854,7 +1861,7 @@
                       (remove mp:*current-process*
                               (condition-variable-queue condition-variable))))
                nil)
-            (throwable-sleep-forever)
+            (throwable-sleep-forever 'condition-variable)
             't)
         (mp::lock-wait lock nil)))
     #+digitool-mcl
@@ -1870,7 +1877,7 @@
                       (remove ccl:*current-process*
                               (condition-variable-queue condition-variable))))
                nil)
-            (throwable-sleep-forever)
+            (throwable-sleep-forever 'condition-variable)
             't)
         (ccl:process-lock ccl-lock ccl:*current-process*)))
     #+(and ecl threads)
@@ -1889,7 +1896,7 @@
                       (remove mp:*current-process*
                               (condition-variable-queue condition-variable))))
                nil)
-            (throwable-sleep-forever)
+            (throwable-sleep-forever 'condition-variable)
             't)
         (mp:process-lock lock)))
     #+(and sbcl sb-thread)
@@ -1921,7 +1928,7 @@
         lispworks)
   (let ((thread (pop (condition-variable-queue condition-variable))))
     (when (and thread (thread-alive-p thread))
-      (awaken-throwable-sleeper thread)))
+      (awaken-throwable-sleeper thread 'condition-variable)))
   #+clozure
   (when (condition-variable-queue condition-variable)
     (ccl:signal-semaphore (condition-variable-semaphore condition-variable)))
@@ -1947,7 +1954,7 @@
     (setf (condition-variable-queue condition-variable) nil)
     (dolist (thread queue)
       (when (thread-alive-p thread)
-        (awaken-throwable-sleeper thread))))
+        (awaken-throwable-sleeper thread 'condition-variable))))
   #+clozure
   (let ((queue-length (length (condition-variable-queue condition-variable)))
         (semaphore (condition-variable-semaphore condition-variable)))
