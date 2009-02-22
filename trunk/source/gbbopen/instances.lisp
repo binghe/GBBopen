@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Feb 18 02:27:31 2009 *-*
+;;;; *-* Last-Edit: Sun Feb 22 17:37:55 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2002-2008, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2009, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -192,6 +192,20 @@
   (next-class-instance-number 
    (class-prototype (find-unit-class unit-class-name))))
 
+;;; ---------------------------------------------------------------------------
+
+(defun add-instance-to-space-instance-paths (instance space-instance-paths)
+  (flet ((add-it (path)
+           (let ((space-instance (find-space-instance-by-path path)))
+             (if space-instance
+                 (add-instance-to-space-instance instance space-instance)
+                 (error "Space instance ~s does not exist." path)))))
+    (if (and (consp space-instance-paths)
+             (not (consp (car space-instance-paths))))
+        ;; Handle a single (non-listed) space-instance path:
+        (add-it space-instance-paths)
+        (mapc #'add-it space-instance-paths))))
+
 ;;; ===========================================================================
 ;;;  Making Duplicate Unit Instances
 
@@ -221,10 +235,11 @@
           ;; Clear the old %%space-instances%% value:
           (setf (standard-unit-instance.%%space-instances%% new-instance)
                 nil)
-          (dolist (space-instance (if space-instances-p
-                                      space-instances
-                                      original-space-instances))
-            (add-instance-to-space-instance new-instance space-instance))))
+          (add-instance-to-space-instance-paths 
+           new-instance 
+           (if space-instances-p
+               space-instances
+               original-space-instances))))
       (values new-instance slots))))
 
 ;;; ---------------------------------------------------------------------------
@@ -607,15 +622,6 @@
         (declare (special *%%existing-space-instances%%*))
         (with-lock-held (*master-instance-lock*)
           (call-next-method))))))
-
-;;; ---------------------------------------------------------------------------
-
-(defun add-instance-to-space-instance-paths (instance space-instance-paths)
-  (dolist (path space-instance-paths)
-    (let ((space-instance (find-space-instance-by-path path)))
-      (if space-instance
-          (add-instance-to-space-instance instance space-instance)
-          (error "Space instance ~s does not exist." path)))))
 
 ;;; ---------------------------------------------------------------------------
 
