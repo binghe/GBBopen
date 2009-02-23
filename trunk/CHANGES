@@ -8,6 +8,7 @@ Important changes since GBBopen 1.2:
        element-typed vectors, bit-vectors, and arrays
      - New FULL-DATE-AND-TIME function 
      - New PARSE-TIME-INTERVAL function 
+     - New :EXPORT-SLOT-NAMES class option in DEFINE-CLASS
 
   * Changes to GBBopen Core
      - New class, DELETED-UNIT-INSTANCE, now used to represent deleted 
@@ -20,6 +21,8 @@ Important changes since GBBopen 1.2:
      - New :coalesce-strings and :estimated-peak-forward-references
        arguments to LOAD-BLACKBOARD-REPOSITORY (these arguments are also
        new in GBBopen Tool's WITH-READING-SAVED/SENT-OBJECTS-BLOCK)
+     - New :EXPORT-SLOT-NAMES class option in DEFINE-UNIT-CLASS,
+       DEFINE-SPACE-CLASS, DEFINE-KS-CLASS, and DEFINE-KSA-CLASS
 
 
 Important changes in GBBopen 1.2:

@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Sun Feb 22 05:12:25 2009; Edited-By: cork *-*
+%% *-* Last-Edit: Mon Feb 23 04:13:44 2009; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2009, Dan Corkill <corkill@GBBopen.org>
@@ -4713,8 +4713,9 @@ direct superclass of the \glref{class} \nobr{\var{class-name\/}}
 \nobr{\var{class-option\/} ::=}
  & \code{(:default-initargs .} \var{initarg-list\/}\code{)} \vbar \\
  & \code{(:documentation} \var{string\/}\code{)} \vbar \\
- & \code{(:export-class-name} \var{boolean\/}\code{)} \vbar \\
  & \code{(:export-accessors} \var{boolean\/}\code{)} \vbar \\
+ & \code{(:export-class-name} \var{boolean\/}\code{)} \vbar \\
+ & \code{(:export-slot-names} \var{slots-specifier\/}\code{)} \vbar \\
  & \code{(:generate-accessors} \var{slots-specifier\/}\code{)} \vbar \\
  & \code{(:generate-accessors-format} 
      \{\code{:prefix} \vbar{} \code{:suffix}\} \vbar \\
@@ -10859,8 +10860,9 @@ one \glref{unit~class} name.  This error is signaled on class finalization.
    \var{dimensional-value-specifier\/}\superstar\code{)} \vbar \\
  & \code{(:documentation} \var{string\/}\code{)} \vbar \\
  & \code{(:estimated-instances} \var{integer\/}\code{)} \vbar \\
- & \code{(:export-class-name} \var{boolean\/}\code{)} \vbar \\
  & \code{(:export-accessors} \var{boolean\/}\code{)} \vbar \\
+ & \code{(:export-class-name} \var{boolean\/}\code{)} \vbar \\
+ & \code{(:export-slot-names} \var{direct-slots-specifier\/}\code{)} \vbar \\
  & \code{(:generate-accessors} \var{direct-slots-specifier\/}\code{)} \vbar \\
  & \code{(:generate-accessors-format} 
      \{\code{:prefix} \vbar{} \code{:suffix}\} \vbar \\
@@ -13404,8 +13406,9 @@ direct superclass of the \glref{event~class} \var{event-class-name\/}
  & \code{(:documentation} \var{string\/}\code{)} \vbar \\
  & \code{(:event-metaclass} \var{event-metaclass-specifier\/}\code{)} \vbar \\
  & \code{(:event-printing} \var{event-printing-specifier\/}/code{)} \vbar \\
- & \code{(:export-class-name} \var{boolean\/}\code{)} \vbar \\
  & \code{(:export-accessors} \var{boolean\/}\code{)} \vbar \\
+ & \code{(:export-class-name} \var{boolean\/}\code{)} \vbar \\
+ & \code{(:export-slot-names} \var{direct-slots-specifier\/}\code{)} \vbar \\
  & \code{(:generate-accessors} \var{direct-slots-specifier\/}\code{)} \vbar \\
  & \code{(:generate-accessors-format} 
      \{\code{:prefix} \vbar{} \code{:suffix}\} \vbar \\
@@ -15494,8 +15497,9 @@ one \glref{space~class} name.  This error is signaled on class finalization.
    \var{dimensional-value-specifier\/}\superstar\code{)} \vbar \\
  & \code{(:documentation} \var{string\/}\code{)} \vbar \\
  & \code{(:estimated-instances} \var{integer\/}\code{)} \vbar \\
- & \code{(:export-class-name} \var{boolean\/}\code{)} \vbar \\
  & \code{(:export-accessors} \var{boolean\/}\code{)} \vbar \\
+ & \code{(:export-class-name} \var{boolean\/}\code{)} \vbar \\
+ & \code{(:export-slot-names} \var{direct-slots-specifier\/}\code{)} \vbar \\
  & \code{(:generate-accessors} \var{direct-slots-specifier\/}\code{)} \vbar \\
  & \code{(:generate-accessors-format} 
      \{\code{:prefix} \vbar{} \code{:suffix}\} \vbar \\
@@ -20444,8 +20448,9 @@ one \glref{ks~class} name.  This error is signaled on class finalization.
    \var{dimensional-value-specifier\/}\superstar\code{)} \vbar \\
  & \code{(:documentation} \var{string\/}\code{)} \vbar \\
  & \code{(:estimated-instances} \var{integer\/}\code{)} \vbar \\
- & \code{(:export-class-name} \var{boolean\/}\code{)} \vbar \\
  & \code{(:export-accessors} \var{boolean\/}\code{)} \vbar \\
+ & \code{(:export-class-name} \var{boolean\/}\code{)} \vbar \\
+ & \code{(:export-slot-names} \var{direct-slots-specifier\/}\code{)} \vbar \\
  & \code{(:generate-accessors} \var{direct-slots-specifier\/}\code{)} \vbar \\
  & \code{(:generate-accessors-format} 
      \{\code{:prefix} \vbar{} \code{:suffix}\} \vbar \\
@@ -20644,8 +20649,9 @@ finalization.
    \var{dimensional-value-specifier\/}\superstar\code{)} \vbar \\
  & \code{(:documentation} \var{string\/}\code{)} \vbar \\
  & \code{(:estimated-instances} \var{integer\/}\code{)} \vbar \\
- & \code{(:export-class-name} \var{boolean\/}\code{)} \vbar \\
  & \code{(:export-accessors} \var{boolean\/}\code{)} \vbar \\
+ & \code{(:export-class-name} \var{boolean\/}\code{)} \vbar \\
+ & \code{(:export-slot-names} \var{direct-slots-specifier\/}\code{)} \vbar \\
  & \code{(:generate-accessors} \var{direct-slots-specifier\/}\code{)} \vbar \\
  & \code{(:generate-accessors-format} 
      \{\code{:prefix} \vbar{} \code{:suffix}\} \vbar \\

@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/define-class.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon May 19 04:12:29 2008 *-*
+;;;; *-* Last-Edit: Mon Feb 23 04:10:20 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2002-2006, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2009, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; Define-class provides extended class options to defclass:
@@ -23,6 +23,11 @@
 ;;;                          package
 ;;;   :export-accessors   -- exports the generated accessor symbols from the
 ;;;                          current package (does not export other accessors)
+;;;   :export-slot-names  -- exports from the current package the slot-name
+;;;                          symbols for specified direct slots
+;;;                          (t => all direct slots |
+;;;                           <direct-slot-names> |
+;;;                           t :exclude ... => all direct slots except ...)
 ;;;   :generate-accessors -- generates accessors of the form 
 ;;;                          class-name.slot-name for specified direct slots 
 ;;;                          (t => all direct slots |
@@ -60,10 +65,11 @@
 ;;;  05-21-05 Added :generate-accessors-prefix (reluctantly).  (Corkill)
 ;;;  05-27-06 Added "-of" accessor support, via :generate-accessors-format and 
 ;;;           :generate-accessors-suffix. (Corkill)
-;;;  09-23-06 Added with-generate-accessors-format macro in preparation for
+;;;  09-23-06 Added WITH-GENERATE-ACCESSORS-FORMAT macro in preparation for
 ;;;           change from :prefix to :suffix-style accessors. (Corkill)
 ;;;  09-28-05 Added (undocumented) :generate-initargs-symbol-function
-;;;           class option to define-class.  (Corkill)
+;;;           class option to DEFINE-CLASS.  (Corkill)
+;;;  02-23-09 Added :export-slot-names class option to DEFINE-CLASS. (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -92,8 +98,9 @@
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defparameter *standard-define-class-options*
-      '(:export-class-name 
-        :export-accessors 
+      '(:export-accessors 
+        :export-class-name 
+        :export-slot-names
         :generate-accessors
         :generate-accessors-format
         :generate-accessors-prefix
@@ -177,7 +184,7 @@
 
 (defun parse-direct-slots (class-name direct-slots extended-options)
   (let ((clos-direct-slots nil)
-        (exported-accessors nil)
+        (exported-symbols nil)
         (generate-initargs 
          (or (rest (assoc :generate-initargs extended-options :test #'eq))
              ;; Default is t
@@ -201,6 +208,8 @@
                        :test #'eq))))
         (export-accessors 
          (rest (assoc :export-accessors extended-options :test #'eq)))
+        (export-slot-names
+         (rest (assoc :export-slot-names extended-options :test #'eq)))
         ;; Currently undocumented class option (requested by Zack for CMU),
         ;; must be a symbol naming a function of two arguments, class-name
         ;; slot-name, (or an equivalent lambda expression) that returns the
@@ -218,6 +227,8 @@
                         generate-accessors direct-slots)
     (check-option-slots class-name :export-accessors 
                         export-accessors direct-slots)
+    (check-option-slots class-name :export-slot-names
+                        export-slot-names direct-slots)
     ;; Warn about unused prefix/suffix specifications:
     (flet ((do-warn (generate-accessors-xxfix-indicator value)
              (warn "A ~s ~s was specified, but ignored, because ~s ~s ~
@@ -239,6 +250,8 @@
         (setf slot (list slot)))
       ;; Process the slot specification:
       (let ((slot-name (first slot))) 
+        (when (apply-to-slot-p export-slot-names slot-name)
+          (push slot-name exported-symbols))
         (multiple-value-bind (accessor-spec export-p)
             (do-generate-accessors generate-accessors
               export-accessors
@@ -257,9 +270,9 @@
                    ,@(rest slot))))
             (push new-clos-slot clos-direct-slots)
             (when export-p 
-              (push export-p exported-accessors))))))
+              (push export-p exported-symbols))))))
     (values (nreverse clos-direct-slots)
-            exported-accessors)))
+            exported-symbols)))
 
 ;;; ---------------------------------------------------------------------------
 
