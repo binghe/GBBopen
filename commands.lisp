@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/commands.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Sep  1 11:35:33 2008 *-*
+;;;; *-* Last-Edit: Thu Feb 26 19:58:19 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2004-2008, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2004-2009, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; Loaded by initiate.lisp.  After loading, handy top-level-loop keyword
@@ -79,7 +79,7 @@
 
   (define-repl-command :gbbopen-tools (&rest options)
     "Compile and load GBBopen Tools module"
-    (startup-module :gbbopen-tools options))
+    (startup-module :gbbopen-tools options :gbbopen-tools))
 
   (define-repl-command :portable-threads (&rest options)
     "Compile and load Portable Threads module"
@@ -171,6 +171,11 @@
     "Compile and load GBBopen multi-node support (under construction)"
     (startup-module :multinode options nil))
 
+  #+not-yet
+  (define-repl-command :restricted-eval (&rest options)
+    "Compile and load GBBopen restricted-eval support (under construction)"
+    (startup-module :restricted-eval options :gbbopen-tools))
+
   (define-repl-command :web-inspector (&rest options)
     "Compile and load Web inspector (under construction)"
     (startup-module :web-inspector options nil))
@@ -198,6 +203,8 @@
   (define-repl-command (:lm :add-to-native-help)
       (&rest module-name-and-options)
     "Load module"
+    (startup-gbbopen)
+    #+ignore
     (startup-module :module-manager (rest module-name-and-options) nil 't)
     (funcall 
      (fdefinition (intern (symbol-name '#:do-module-manager-repl-command) 
@@ -207,6 +214,8 @@
   (define-repl-command (:cm :add-to-native-help)
       (&rest module-name-and-options)
     "Compile and load module"
+    (startup-gbbopen)
+    #+ignore
     (startup-module :module-manager (rest module-name-and-options) nil 't)
     (funcall
      (fdefinition (intern (symbol-name '#:do-module-manager-repl-command) 

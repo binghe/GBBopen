@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/modules.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Aug 31 14:57:08 2008 *-*
+;;;; *-* Last-Edit: Thu Feb 26 19:58:30 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2002-2008, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2009, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -79,7 +79,7 @@
     (:files ("portable-threads" :forces-recompile)))
   
   (define-module :polling-functions
-    (:requires :portable-threads :gbbopen-tools)
+    (:requires :gbbopen-tools :portable-threads)
     (:directory :gbbopen-tools)
     (:files "polling-functions"))
   
@@ -94,9 +94,15 @@
     (:files ("portable-sockets")))
   
   (define-module :queue
-    (:requires :portable-threads :gbbopen-core :polling-functions)
+    (:requires :polling-functions :gbbopen-core)
     (:directory :gbbopen)
     (:files ("queue" :forces-recompile)))
+  
+  #+not-yet
+  (define-module :restricted-eval
+    (:requires :gbbopen-tools)
+    (:directory :gbbopen-tools)
+    (:files ("restricted-eval")))
   
 ;;; ===========================================================================
 ;;;  GBBopen Core Modules   (Keep gbbopen.asd consistent with these!)
@@ -104,7 +110,7 @@
   (define-relative-directory :gbbopen :gbbopen-root "gbbopen")
   
   (define-module :gbbopen-core
-    (:requires :portable-threads :gbbopen-tools :os-interface)
+    (:requires :gbbopen-tools :portable-threads :os-interface)
     (:directory :gbbopen)
     (:files "preamble"
             ("utilities" :forces-recompile)
@@ -136,7 +142,7 @@
 ;;;  Agenda Shell Modules
 
   (define-module :agenda-shell
-    (:requires :gbbopen-core :queue)
+    (:requires :queue)
     (:directory :gbbopen "control-shells")
     (:files ("agenda-shell-metaclasses" :forces-recompile)
             ("agenda-shell-metering" :forces-recompile)
@@ -173,7 +179,7 @@
 (with-system-name (:gbbopen-tests)
 
   (define-module :test-harness
-    (:requires :portable-threads :gbbopen-tools)
+    (:requires :gbbopen-tools :portable-threads)
     (:directory :gbbopen-tools "test")
     (:files ("test-harness")))
   
@@ -254,7 +260,7 @@
     (:files "multinode"))
   
   (define-module :web-inspector 
-    (:requires :portable-sockets :gbbopen-core)
+    (:requires :gbbopen-core :portable-sockets)
     (:directory :gbbopen "extensions")
     (:files "web-inspector"))
   
