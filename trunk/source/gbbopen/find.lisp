@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/find.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Dec  4 12:51:23 2008 *-*
+;;;; *-* Last-Edit: Sat Feb 28 05:35:33 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2003-2009, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -504,6 +504,8 @@
           (defun ,name (instance-value pattern-value comparison-type)
             ,@(when (eq number-test 'numberp)
                 `((declare (notinline ,point-op ,range-op ,sub-op))))
+            ,@(when (eq number-test 'fixnump)
+                `((declare (notinline ,range-op ,sub-op))))
             ,(cond
               ;; If dispatching, generate the dispatch code:
               (dispatching (generate-numeric-dispatch name))
@@ -532,19 +534,21 @@
                     (,range-op 
                      ;; on CLs without infinity extensions, we must
                      ;; check for overflow/underflow explicitly
-                     #+(or clisp ecl)
+                     #+infinity-not-available
                      (if (or (= iend infinity)
                              (= istart -infinity)
                              (= pstart -infinity))
                          -infinity
                          (,sub-op pstart (,sub-op iend istart))) 
-                     #-(or clisp ecl)
+                     #-infinity-not-available
                      (,sub-op pstart (,sub-op iend istart)) 
                      istart 
                      pend)))))))))
   (generate-match-overlaps match-overlaps numberp = <= - :dispatching)
-  ;; declared fixnums:
-  (generate-match-overlaps match-overlaps& fixnump =& <=& -&)
+  ;; declared fixnums (NOTE: we can't use -& as sub-op and <=& as range-op, 
+  ;; due to potential bignum overflow):
+  ;; (generate-match-overlaps match-overlaps& fixnump =& <=& -&)
+  (generate-match-overlaps match-overlaps& fixnump =& <= -)
   ;; declared short-floats:
   (generate-match-overlaps match-overlaps$& short-float-p =$& <=$& -$&)
   ;; declared single-floats:

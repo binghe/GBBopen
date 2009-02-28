@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/declared-numerics.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Oct 22 17:03:47 2008 *-*
+;;;; *-* Last-Edit: Sat Feb 28 04:35:06 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2002-2008, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2009, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; Porting Notice:
@@ -717,7 +717,6 @@
 ;;;    * CLISP, ECL, and GCL do not support IEEE 754 infinity representations
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  
   #+(or clisp cormanlisp ecl gcl)
   (pushnew ':infinity-not-available *features*))
   
