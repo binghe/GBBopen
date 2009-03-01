@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Mon Feb 23 04:13:44 2009; Edited-By: cork *-*
+%% *-* Last-Edit: Sun Mar  1 12:37:44 2009; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2009, Dan Corkill <corkill@GBBopen.org>
@@ -535,12 +535,16 @@ reload all subsequent files and \glref{modules}\\[2pt]
 \index{within@\code{within} ~(ordered-dimension pattern operator)|itidx}%
 \index{covers@\code{covers} ~(ordered-dimension pattern operator)|itidx}%
 \index{overlaps@\code{overlaps} ~(ordered-dimension pattern operator)|itidx}%
+\index{abuts@\code{abuts} ~(ordered-dimension pattern operator)|itidx}%
 \index{starts@\code{starts} ~(ordered-dimension pattern operator)|itidx}%
 \index{ends@\code{ends} ~(ordered-dimension pattern operator)|itidx}%
-     & \code{$<$} \vbar{} \code{$<$=} \vbar{} \code{$>$=} \vbar{} 
-       \code{$>$} \vbar{} \code{=} \vbar{} \code{/=} \vbar{} \\
-     & \code{within} \vbar{} \code{covers} \vbar{} \code{overlaps} \vbar{}
-       \code{starts} \vbar{} \code{ends} \\
+    & \code{$<$} \vbar{} \code{$<$=} \vbar{} 
+      \code{$>$=} \vbar{} \code{$>$} \vbar{} 
+      \code{=} \vbar{} \code{/=} \vbar{} \\
+    & \code{within} \vbar{} \code{covers} \vbar{} 
+      \code{overlaps} \vbar{} \\
+    & \code{abuts} \vbar{} 
+      \code{starts} \vbar{} \code{ends} \\
 \end{tabular}
 \T\\
 \begin{tabular}{@{~}l@{~}l}
@@ -563,14 +567,19 @@ reload all subsequent files and \glref{modules}\\[2pt]
   pattern operator)|itidx}%
 \index{overlaps\&@\code{overlaps\&} ~(ordered-dimension fixnum
   pattern operator)|itidx}%
+\index{abuts\&@\code{abuts\&} ~(ordered-dimension fixnum
+  pattern operator)|itidx}%
 \index{starts\&@\code{starts\&} ~(ordered-dimension fixnum
   pattern operator)|itidx}%
 \index{ends\&@\code{ends\&} ~(ordered-dimension fixnum
   pattern operator)|itidx}%
-     & \code{$<$\&} \vbar{} \code{$<$=\&} \vbar{} \code{$>$=\&} \vbar{} 
-       \code{$>$\&} \vbar{} \code{=\&} \vbar{} \code{/=\&} \vbar{} \\
-     & \code{within\&} \vbar{} \code{covers\&} \vbar{} \code{overlaps\&} \vbar{}
-       \code{starts\&} \vbar{} \code{ends\&} \\
+    & \code{$<$\&} \vbar{} \code{$<$=\&} \vbar{} 
+      \code{$>$=\&} \vbar{} \code{$>$\&} \vbar{}
+      \code{=\&} \vbar{} \code{/=\&} \vbar{} \\
+    & \code{within\&} \vbar{} \code{covers\&} \vbar{} 
+      \code{overlaps\&} \vbar{} \\
+    & \code{abuts\&} \vbar{} 
+      \code{starts\&} \vbar{} \code{ends\&} \\
 \end{tabular}
 \T\\
 \begin{tabular}{@{~}l@{~}l}
@@ -593,15 +602,19 @@ reload all subsequent files and \glref{modules}\\[2pt]
   pattern operator)|itidx}%
 \index{overlaps\$\&@\code{overlaps\$\&} ~(ordered-dimension short-float
   pattern operator)|itidx}%
+\index{abuts\$\&@\code{abuts\$\&} ~(ordered-dimension short-float
+  pattern operator)|itidx}%
 \index{starts\$\&@\code{starts\$\&} ~(ordered-dimension short-float
   pattern operator)|itidx}%
 \index{ends\$\&@\code{ends\$\&} ~(ordered-dimension short-float 
   pattern operator)|itidx}%
-     & \code{$<$\$\&} \vbar{} \code{$<$=\$\&} \vbar{} \code{$>$=\$\&} \vbar{} 
-       \code{$>$\$\&} \vbar{} \code{=\$\&} \vbar{} \code{/=\$\&} \vbar{} \\
-     & \code{within\$\&} \vbar{} \code{covers\$\&} \vbar{}
-       \code{overlaps\$\&} \vbar{} \\
-     & \code{starts\$\&} \vbar{} \code{ends\$\&} \\
+    & \code{$<$\$\&} \vbar{} \code{$<$=\$\&} \vbar{} 
+      \code{$>$=\$\&} \vbar{} \code{$>$\$\&} \vbar{} 
+      \code{=\$\&} \vbar{} \code{/=\$\&} \vbar{} \\
+    & \code{within\$\&} \vbar{} \code{covers\$\&} \vbar{}
+      \code{overlaps\$\&} \vbar{} \\
+    & \code{abuts\$\&} \vbar{} 
+      \code{starts\$\&} \vbar{} \code{ends\$\&} \\
 \end{tabular}
 \T\\
 \begin{tabular}{@{~}l@{~}l}
@@ -624,15 +637,19 @@ reload all subsequent files and \glref{modules}\\[2pt]
   pattern operator)|itidx}%
 \index{overlaps\$@\code{overlaps\$} ~(ordered-dimension single-float
   pattern operator)|itidx}%
+\index{abuts\$@\code{abuts\$} ~(ordered-dimension single-float
+  pattern operator)|itidx}%
 \index{starts\$@\code{starts\$} ~(ordered-dimension single-float
   pattern operator)|itidx}%
 \index{ends\$@\code{ends\$} ~(ordered-dimension single-float
   pattern operator)|itidx}%
-     & \code{$<$\$} \vbar{} \code{$<$=\$} \vbar{} \code{$>$=\$} \vbar{} 
-       \code{$>$\$} \vbar{} \code{=\$} \vbar{} \code{/=\$} \vbar{} \\
-     & \code{within\$} \vbar{} \code{covers\$} \vbar{} 
-       \code{overlaps\$} \vbar{} \\
-     & \code{starts\$} \vbar{} \code{ends\$} \\
+    & \code{$<$\$} \vbar{} \code{$<$=\$} \vbar{} 
+      \code{$>$=\$} \vbar{} \code{$>$\$} \vbar{} 
+      \code{=\$} \vbar{} \code{/=\$} \vbar{} \\
+    & \code{within\$} \vbar{} \code{covers\$} \vbar{} 
+      \code{overlaps\$} \vbar{} \\
+    & \code{abuts\$} \vbar{} 
+      \code{starts\$} \vbar{} \code{ends\$} \\
 \end{tabular}
 \T\\
 \begin{tabular}{@{~}l@{~}l}
@@ -655,15 +672,19 @@ reload all subsequent files and \glref{modules}\\[2pt]
   pattern operator)|itidx}%
 \index{overlaps\$\$@\code{overlaps\$\$} ~(ordered-dimension double-float
   pattern operator)|itidx}%
+\index{abuts\$\$@\code{abuts\$\$} ~(ordered-dimension double-float
+  pattern operator)|itidx}%
 \index{starts\$\$@\code{starts\$\$} ~(ordered-dimension double-float
   pattern operator)|itidx}%
 \index{ends\$\$@\code{ends\$\$} ~(ordered-dimension double-float
   pattern operator)|itidx}%
-     & \code{$<$\$\$} \vbar{} \code{$<$=\$\$} \vbar{} \code{$>$=\$\$} \vbar{} 
-       \code{$>$\$\$} \vbar{} \code{=\$\$} \vbar{} \code{/=\$\$} \vbar{} \\
-     & \code{within\$\$} \vbar{} \code{covers\$\$} \vbar{} 
-       \code{overlaps\$\$} \vbar{} \\
-     & \code{starts\$\$} \vbar{} \code{ends\$\$} \\
+    & \code{$<$\$\$} \vbar{} \code{$<$=\$\$} \vbar{} 
+      \code{$>$=\$\$} \vbar{} \code{$>$\$\$} 
+      \vbar{} \code{=\$\$} \vbar{} \code{/=\$\$} \vbar{} \\
+    & \code{within\$\$} \vbar{} \code{covers\$\$} \vbar{} 
+      \code{overlaps\$\$} \vbar{} \\
+    & \code{abuts\$\$} \vbar{} 
+      \code{starts\$\$} \vbar{} \code{ends\$\$} \\
 \end{tabular}
 \T\\
 \begin{tabular}{@{~}l@{~}l}
@@ -686,17 +707,19 @@ reload all subsequent files and \glref{modules}\\[2pt]
   pattern operator)|itidx}%
 \index{overlaps\$\$\$@\code{overlaps\$\$\$} ~(ordered-dimension long-float
   pattern operator)|itidx}%
+\index{abuts\$\$\$@\code{abuts\$\$\$} ~(ordered-dimension long-float
+  pattern operator)|itidx}%
 \index{starts\$\$\$@\code{starts\$\$\$} ~(ordered-dimension long-float
   pattern operator)|itidx}%
 \index{ends\$\$\$@\code{ends\$\$\$} ~(ordered-dimension long-float
   pattern operator)|itidx}%
-     & \code{$<$\$\$\$} \vbar{} \code{$<$=\$\$\$} \vbar{}
-       \code{$>$=\$\$\$} \vbar{} 
-       \code{$>$\$\$\$} \vbar{} \code{=\$\$\$} \vbar{}
-       \code{/=\$\$\$} \vbar{} \\
-     & \code{within\$\$\$} \vbar{} \code{covers\$\$\$} \vbar{} 
-       \code{overlaps\$\$\$} \vbar{} \\
-     & \code{starts\$\$\$} \vbar{} \code{ends\$\$\$} \\
+    & \code{$<$\$\$\$} \vbar{} \code{$<$=\$\$\$} \vbar{}
+      \code{$>$=\$\$\$} \vbar{} \code{$>$\$\$\$} \vbar{}
+      \code{=\$\$\$} \vbar{} \code{/=\$\$\$} \vbar{} \\
+    & \code{within\$\$\$} \vbar{} \code{covers\$\$\$} \vbar{} 
+      \code{overlaps\$\$\$} \vbar{} \\
+    & \code{abuts\$\$\$} \vbar{}
+      \code{starts\$\$\$} \vbar{} \code{ends\$\$\$} \\
 \end{tabular}
 \T\\
 \begin{tabular}{@{~}l@{~}l}
@@ -719,17 +742,18 @@ reload all subsequent files and \glref{modules}\\[2pt]
   pattern operator)|itidx}%
 \index{overlaps\%@\code{overlaps\%} ~(ordered-dimension pseudo-probability
   pattern operator)|itidx}%
+\index{abuts\%@\code{abuts\%} ~(ordered-dimension pseudo-probability
+  pattern operator)|itidx}%
 \index{starts\%@\code{starts\%} ~(ordered-dimension pseudo-probability
   pattern operator)|itidx}%
 \index{ends\%@\code{ends\%} ~(ordered-dimension pseudo-probability
   pattern operator)|itidx}%
      & \code{$<$\%} \vbar{} \code{$<$=\%} \vbar{}
-       \code{$>$=\%} \vbar{} 
-       \code{$>$\%} \vbar{} \code{=\%} \vbar{}
-       \code{/=\%} \vbar{} \\
+       \code{$>$=\%} \vbar{} \code{$>$\%} \vbar{} 
+       \code{=\%} \vbar{} \code{/=\%} \vbar{} \\
      & \code{within\%} \vbar{} \code{covers\%} \vbar{} 
        \code{overlaps\%} \vbar{} \\
-     & \code{starts\%} \vbar{} \code{ends\%} \\
+     & \code{abuts\%} \vbar{} \code{starts\%} \vbar{} \code{ends\%} \\
 \end{tabular}
 \T\\
 \begin{tabular}{@{~}l@{~}l}
@@ -810,6 +834,12 @@ reload all subsequent files and \glref{modules}\\[2pt]
 \var{end\/} & & A number or \code{-infinity}\\
 \var{element\/} & ~~ & An object\\
 \end{tabular}
+}
+
+\newcommand{\patternnote}{%
+Fixnum \code{overlaps} comparisons can result in bignum computations if the
+combined intervals of the pattern and a candidate \glref{unit~instance}
+exceeds \code{most-positive-fixnum}.
 }
 
 %% ---------------------------------------------------------------------------
@@ -17002,6 +17032,9 @@ than 0.5:
      (\entlink{delete-instance} instance))
 \end{example}
 
+\fnnote
+\patternnote
+
 \end{functiondoc}
 
 %% ------------------------------------------------------------------------
@@ -17137,6 +17170,9 @@ and \nobr{\code{within\%}}.
    #<hyp 419 (1835 4791) 0.85 [5..35]>)
   >
 \end{example}
+
+\fnnote
+\patternnote
 
 \end{functiondoc}
 
@@ -17438,6 +17474,11 @@ Here are some basic examples of finding \code{hyp} \glref{unit~instances}:
       '(and (= x 1835) (ends velocity-range 30)))
   (#<hyp 331 (1835 8419) 0.88 [15..30]>)
   > (find-instances 'hyp '(bb hyps) 
+      '(and (= x 1835) (abuts velocity-range (5 30))))
+  (#<hyp 233 (1835 4791) 0.89 [5..35]>
+   #<hyp 331 (1835 8419) 0.88 [15..30]>
+   #<hyp 419 (1835 4791) 0.85 [5..35]>)\goodpagebreak
+ > (find-instances 'hyp '(bb hyps) 
       '(is color :silver))
   (#<hyp 183 (1835 4791) 0.82 [0..35]> 
    #<hyp 233 (1835 4791) 0.89 [5..35]>
@@ -17467,6 +17508,9 @@ Find \code{word} \glref{unit~instances} with special characters in them:
   (#<word 1>)
   >
 \end{example}
+
+\fnnote
+\patternnote
 
 \end{functiondoc}
 
@@ -17796,6 +17840,9 @@ than 0.5:
      #'\entlink{delete-instance} 
      'hyp '(bb probable-hyps) :pattern '(< belief .5))
 \end{example}
+
+\fnnote
+\patternnote
 
 \end{functiondoc}
 

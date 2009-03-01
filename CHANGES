@@ -16,6 +16,7 @@ Important changes since GBBopen 1.2:
      - New generic function, DELETED-INSTANCE-CLASS, and default method
        for STANDARD-UNIT-INSTANCE
      - New function, MAKE-INSTANCES-OF-CLASS-VECTOR
+     - New abuts ordered-match operator to FIND-INSTANCES, etc.
      - speed/allocation optimizations to MAP-SORTED-INSTANCES-OF-CLASS
        and DO-SORTED-INSTANCES-OF-CLASS
      - New :coalesce-strings and :estimated-peak-forward-references
