@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/find.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Feb 28 05:35:33 2009 *-*
+;;;; *-* Last-Edit: Sun Mar  1 11:47:52 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -37,6 +37,7 @@
 ;;;  05-26-05 Add :all pattern support for find-instances and
 ;;;           map-instances-on-space-instances.  (Corkill)
 ;;;  08-20-06 Added DO-INSTANCES-ON-SPACE-INSTANCES syntactic sugar.  (Corkill)
+;;;  03-01-08 Added abuts ordered-match operator.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -52,6 +53,14 @@
             *processed-hash-table-size* ; not documented, yet
             *processed-hash-table-rehash-size* ; not documented, yet
             *use-marking*               ; not documented, yet
+            abuts
+            ;; --- declared-type operators:
+            abuts&
+            abuts$
+            abuts$&
+            abuts$$
+            abuts$$$
+            abuts%
             covers
             ;; --- declared-type operators:
             covers&
@@ -561,6 +570,48 @@
   (generate-match-overlaps match-overlaps% pseudo-probability-p =% <=% -%))
 
 ;;; ---------------------------------------------------------------------------
+;;;    THIS ONE IS UNDER CONSTRUCTION!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+(macrolet 
+    ((generate-match-abuts (name number-test op &optional dispatching)
+       `(with-full-optimization ()
+          (defun ,name (instance-value pattern-value comparison-type)
+            ,@(when (eq number-test 'numberp)
+                `((declare (notinline ,op))))
+            ,(cond
+              ;; If dispatching, generate the dispatch code:
+              (dispatching (generate-numeric-dispatch name))
+              ;; Non-dispatching (declared type) operators:
+              (t '(declare (ignore comparison-type))))
+            (cond 
+             ;; point instance-value:
+             ((,number-test instance-value)
+              (cond ((,number-test pattern-value)
+                     (,op instance-value pattern-value))
+                    (t (or (,op instance-value (interval-start pattern-value))
+                           (,op instance-value (interval-end pattern-value))))))
+             ;; interval instance-value and point pattern-value:
+             ((,number-test pattern-value)
+              (or (,op (interval-end instance-value) pattern-value)
+                  (,op (interval-end instance-value) pattern-value)))
+             ;; interval instance-value and pattern-value:
+             (t (or (,op (interval-end instance-value) 
+                         (interval-start pattern-value))
+                    (,op (interval-start instance-value) 
+                         (interval-end pattern-value)))))))))
+  (generate-match-abuts match-abuts numberp = :dispatching)
+  (generate-match-abuts match-abuts& fixnump =&)
+  ;; declared short-floats:
+  (generate-match-abuts match-abuts$& short-float-p =$&)
+  ;; declared single-floats:
+  (generate-match-abuts match-abuts$ single-float-p =$)
+  ;; declared double-floats:
+  (generate-match-abuts match-abuts$$ double-float-p =$$)
+  ;; declared long-floats:
+  (generate-match-abuts match-abuts$$$ long-float-p =$$$)
+  ;; declared pseudo-probabilities:
+  (generate-match-abuts match-abuts% pseudo-probability-p =%))
+
+;;; ---------------------------------------------------------------------------
 
 (with-full-optimization ()
   (defun match-is (instance-value pattern-value comparison-type)
@@ -660,7 +711,7 @@
 
 (defsetf extent-end #.(first (nth-value 3 (get-setf-expansion '(cdr x)))))
 
- ;;; ---------------------------------------------------------------------------
+;;; ---------------------------------------------------------------------------
 
 (with-full-optimization ()
   (defun extent-< (value)
@@ -692,8 +743,9 @@
       (within ,#'match-within)
       (covers ,#'match-covers)
       (overlaps ,#'match-overlaps)
-      (starts ,#'match-starts ,#'extent->)
-      (ends ,#'match-ends ,#'extent-<)
+      (starts ,#'match-starts) ; ,#'extent->)
+      (ends ,#'match-ends) ; ,#'extent-<)
+      (abuts ,#'match-abuts)
       ;; declared fixnums:
       (=& ,#'match-=&)
       (<& ,#'match-<& ,#'extent-<)
@@ -704,8 +756,9 @@
       (within& ,#'match-within&)
       (covers& ,#'match-covers&)
       (overlaps& ,#'match-overlaps&)
-      (starts& ,#'match-starts& ,#'extent->)
-      (ends& ,#'match-ends& ,#'extent-<)
+      (starts& ,#'match-starts&) ; ,#'extent->)
+      (ends& ,#'match-ends&) ; ,#'extent-<)
+      (abuts& ,#'match-abuts&)
       ;; declared single-floats:
       (=$ ,#'match-=$)
       (<$ ,#'match-<$ ,#'extent-<)
@@ -716,8 +769,9 @@
       (within$ ,#'match-within$)
       (covers$ ,#'match-covers$)
       (overlaps$ ,#'match-overlaps$)
-      (starts$ ,#'match-starts$ ,#'extent->)
-      (ends$ ,#'match-ends$ ,#'extent-<)
+      (starts$ ,#'match-starts$) ; ,#'extent->)
+      (ends$ ,#'match-ends$) ; ,#'extent-<)
+      (abuts$ ,#'match-abuts$)
       ;; declared pseudo-probabilities:
       (=% ,#'match-=%)
       (<% ,#'match-<% ,#'extent-<)
@@ -728,8 +782,9 @@
       (within% ,#'match-within%)
       (covers% ,#'match-covers%)
       (overlaps% ,#'match-overlaps%)
-      (starts% ,#'match-starts% ,#'extent->)
-      (ends% ,#'match-ends% ,#'extent-<)
+      (starts% ,#'match-starts%) ; ,#'extent->)
+      (ends% ,#'match-ends%) ; ,#'extent-<)
+      (abuts% ,#'match-abuts%)
       ;; declared short-floats 
       (=$& ,#'match-=$&)
       (<$& ,#'match-<$& ,#'extent-<)
@@ -740,8 +795,9 @@
       (within$& ,#'match-within$&)
       (covers$& ,#'match-covers$&)
       (overlaps$& ,#'match-overlaps$&)
-      (starts$& ,#'match-starts$& ,#'extent->)
-      (ends$& ,#'match-ends$& ,#'extent-<)
+      (starts$& ,#'match-starts$&) ; ,#'extent->)
+      (ends$& ,#'match-ends$&) ; ,#'extent-<)
+      (abuts$& ,#'match-abuts$&)
       ;; declared double-floats:
       (=$$ ,#'match-=$$)
       (<$$ ,#'match-<$$ ,#'extent-<)
@@ -752,8 +808,9 @@
       (within$$ ,#'match-within$$)
       (covers$$ ,#'match-covers$$)
       (overlaps$$ ,#'match-overlaps$$)
-      (starts$$ ,#'match-starts$$ ,#'extent->)
-      (ends$$ ,#'match-ends$$ ,#'extent-<)
+      (starts$$ ,#'match-starts$$) ; ,#'extent->)
+      (ends$$ ,#'match-ends$$) ; ,#'extent-<)
+      (abuts$$ ,#'match-abuts$$)
       ;; declared long-floats:
       (=$$$ ,#'match-=$$$)
       (<$$$ ,#'match-<$$$ ,#'extent-<)
@@ -764,8 +821,9 @@
       (within$$$ ,#'match-within$$$)
       (covers$$$ ,#'match-covers$$$)
       (overlaps$$$ ,#'match-overlaps$$$)
-      (starts$$$ ,#'match-starts$$$ ,#'extent->)
-      (ends$$$ ,#'match-ends$$$ ,#'extent-<)))
+      (starts$$$ ,#'match-starts$$$) ; ,#'extent->)
+      (ends$$$ ,#'match-ends$$$) ; ,#'extent-<)
+      (abuts$$$ ,#'match-abuts$$$)))
 
 ;;; ---------------------------------------------------------------------------
 
