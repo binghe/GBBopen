@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Oct 30 16:09:37 2008 *-*
+;;;; *-* Last-Edit: Mon Mar  2 12:26:23 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2002-2008, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2009, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; Porting Notice:
@@ -62,6 +62,7 @@
 ;;;  06-25-08 Added :conditions option to WITH-ERROR-HANDLING and exclude
 ;;;           handling EXCL::INTERRUPT-SIGNAL on Allegro by default.  (Corkill) 
 ;;;  07-20-08 Added CASE-USING, CCASE-USING, and ECASE-USING macros.  (Corkill)
+;;;  03-02-09 Added LIST-LENGTH>2.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -180,6 +181,7 @@
             list-length-2-p
             list-length>
             list-length>1
+            list-length>2
             macrolet-debug              ; not documented
             make-keyword
             memq
@@ -909,6 +911,21 @@
 (defcm list-length>1 (list)
   (with-once-only-bindings (list)
     `(and (consp ,list) (consp (cdr ,list)))))
+
+;;; ---------------------------------------------------------------------------
+
+(defun list-length>2 (list)
+  (and (consp list)
+       (let ((rest (cdr list)))
+         (and (consp rest)
+              (consp (cdr rest))))))
+
+(defcm list-length>2 (list)
+  (with-once-only-bindings (list)
+    `(and (consp ,list)
+          (let ((rest (cdr, list)))
+            (and (consp rest)
+                 (consp (cdr rest)))))))
 
 ;;; ===========================================================================
 ;;;  Shuffle-list
