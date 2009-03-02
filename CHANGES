@@ -9,6 +9,7 @@ Important changes since GBBopen 1.2:
      - New FULL-DATE-AND-TIME function 
      - New PARSE-TIME-INTERVAL function 
      - New :EXPORT-SLOT-NAMES class option in DEFINE-CLASS
+     - New LIST-LENGTH>2 predicate
 
   * Changes to GBBopen Core
      - New class, DELETED-UNIT-INSTANCE, now used to represent deleted 

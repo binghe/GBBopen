@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Sun Mar  1 12:37:44 2009; Edited-By: cork *-*
+%% *-* Last-Edit: Mon Mar  2 12:30:59 2009; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2009, Dan Corkill <corkill@GBBopen.org>
@@ -5221,6 +5221,7 @@ provided: \nobr{\textbf{incf-after\&}}, \nobr{\textbf{incf-after\$\&}},
 \begin{alsos}{list-length-2-p}
 \also[list-length>]
 \also[list-length>1]
+\also[list-length>2]
 \also[list-length-2-p]
 \end{alsos}
 
@@ -5269,6 +5270,7 @@ provided: \nobr{\textbf{incf-after\&}}, \nobr{\textbf{incf-after\$\&}},
 \also[list-length-1-p]
 \also[list-length>]
 \also[list-length>1]
+\also[list-length>2]
 \end{alsos}
 
 \fnexamples
@@ -5379,6 +5381,54 @@ provided: \nobr{\textbf{incf-after\&}}, \nobr{\textbf{incf-after\$\&}},
   > (list-length>1 '(a . b))
   nil
   > (list-length>1 '(a b . c))
+  t
+  >
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}[list-length-gt-2]{Function}{list-length>2}%
+  {\var{list\/}
+    \returns{} \var{boolean\/}}
+\index{length!testing a list for length > 2}%
+\index{list!testing length > 2}%
+
+\fnsyntax
+
+\fnpurpose Fast length > 2 test of a list.
+
+\fnpackage \code{:gbbopen-tools}
+
+\fnmodule \code{:gbbopen-tools}
+
+\fnargs
+\begin{args}{boolean}
+\arg[list] A \glref{proper~list} or a \glref{dotted~list}
+\arg[boolean] A \glref{generalized~boolean}
+\end{args}
+
+\fnreturns True if \var{list\/} has length > 2; \nil{} otherwise.
+
+\begin{alsos}{list-length-2-p}
+\also[list-length>]
+\also[list-length>1]
+\also[list-length-1-p]
+\also[list-length-2-p]
+\end{alsos}
+
+\fnexamples
+%
+\W\supp
+\begin{example}
+  > (list-length>2 '(a b c))
+  t
+  > (list-length>2 '(a b))
+  nil\goodpagebreak
+  > (list-length>2 '(a b . c))
+  nil
+  > (list-length>2 '(a b c . d))
   t
   >
 \end{example}
