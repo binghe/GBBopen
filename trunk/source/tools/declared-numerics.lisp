@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/declared-numerics.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Feb 28 04:35:06 2009 *-*
+;;;; *-* Last-Edit: Wed Mar  4 16:48:15 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -213,6 +213,23 @@
             infinity$$ -infinity$$ infinity$$$ -infinity$$$
             ;; Infinity reader escape hook (undocumented):
             *inf-reader-escape-hook*)))
+
+;;; ---------------------------------------------------------------------------
+;;; Warn if the CL implementation doesn't have at least 29-bit fixnums:
+
+(defun small-fixnum-warning ()
+  (let ((fixnum-size #.(1+ (integer-length most-positive-fixnum))))
+    (warn "Fixnums on ~a (~a) are only ~s bits long."
+          fixnum-size
+          (lisp-implementation-type) 
+          (machine-type))))
+
+(let ((fixnum-size (1+ (integer-length most-positive-fixnum))))
+  ;; Suppress unreachable code warning in CMUCL and SCL:
+  #+(or cmu scl)
+  (declare (optimize (extensions:inhibit-warnings 3)))
+  (when (< fixnum-size 29)
+    (small-fixnum-warning)))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  The fastest (/ fixnum fixnum)=>fixnum (full-fixnum division) operator for
