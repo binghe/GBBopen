@@ -5,24 +5,24 @@
 <!-- XML file produced from file: reference.tex
      using Hyperlatex v 2.9-in-waiting-rk (c) Otfried Cheong -->
 <head>
-<title>GBBopen 1.2 Reference -- pretty-time-interval</title>
+<title>GBBopen 1.2 Reference -- brief-duration</title>
 </p>
 <link rel="SHORTCUT ICON" href="favicon.ico"><link rel=stylesheet
         href="gbbopen.css" type="text/css" />
 </head>
 <body>
 <table width="100%" cellpadding="0" cellspacing="2"><tr>
-<td bgcolor="#99ccff"><a href="ref-pretty-run-time-interval.html"><img border="0" alt="pretty-run-time-interval" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="ref-date-and-time-entities.html"><img border="0" alt="Date and Time" src="up.png"/></a></td><td bgcolor="#99ccff"><img alt="" src="blank.png"/></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">pretty-time-interval</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table>
+<td bgcolor="#99ccff"><a href="ref-brief-date-and-time.html"><img border="0" alt="brief-date-and-time" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="ref-date-and-time-entities.html"><img border="0" alt="Date and Time" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-brief-run-time-duration.html"><img border="0" alt="brief-run-time-duration" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">brief-duration</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table>
 
 <p><table class="tight" width="100%">
 <tr valign="top"><td valign="baseline" align="left"%>
-<nobr><b><font color="#000000">pretty-time-interval</font></b></nobr></td><td valign="baseline"> &nbsp; </td><td valign="baseline" align="left" width="99%"><var>seconds</var>
+<nobr><b><font color="#000000">brief-duration</font></b></nobr></td><td valign="baseline"> &nbsp; </td><td valign="baseline" align="left" width="99%"><var>seconds</var>
 <code>&#38;optional</code> <var>maximum-fields destination</var> 
 <span 
     style="font-family: serif; font-style: normal">=&gt;</span> <var>result</var></td><td valign="baseline" align="right">[<i>Function</i>]
 </td></tr></table></p>
-<p><span class="fndoclabel">Purpose</span> <br />Format a numeric time interval (in <nobr><var>seconds</var></nobr>) into
-descriptive text.
+<p><span class="fndoclabel">Purpose</span> <br />Format a numeric time duration (in <nobr><var>seconds</var></nobr>) into
+brief descriptive text.
 </p>
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-tools</code>
 </p>
@@ -46,34 +46,36 @@ pointer (default is <code>nil</code>)
 description.
 </p>
 <p><span class="fndoclabel">See also</span>
-<br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-parse-time-interval.html"><b>parse-time-interval</b></a>
-<br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-pretty-run-time-interval.html"><b>pretty-run-time-interval</b></a>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-brief-run-time-duration.html"><b>brief-run-time-duration</b></a>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-parse-duration.html"><b>parse-duration</b></a>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-pretty-duration.html"><b>pretty-duration</b></a>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-pretty-run-time-duration.html"><b>pretty-run-time-duration</b></a>
 </p>
 <p><span class="fndoclabel">Examples</span> <br /><pre class="pretop">
-  &gt; (pretty-time-interval 1000)
-  "16 minutes, 40 seconds"
-  &gt; (pretty-time-interval -1000)
-  "minus 16 minutes, 40 seconds"
-  &gt; (pretty-time-interval -1000.12345)
-  "minus 16 minutes, 40.12 seconds"
-  &gt; (pretty-time-interval -1000.12543)
-  "minus 16 minutes, 40.13 seconds"
-  &gt; (pretty-time-interval 166611.9)
-  "1 day, 22 hours, 16 minutes, 51.91 seconds"
-  &gt; (pretty-time-interval 166611.9 4)
-  "1 day, 22 hours, 16 minutes, 52 seconds"
-  &gt; (pretty-time-interval 166611.9 3)
-  "1 day, 22 hours, 17 minutes"
-  &gt; (pretty-time-interval 166611.9 2)
-  "1 day, 22 hours"
-  &gt; (pretty-time-interval 166611.9 1)
-  "2 days"
-  &gt; (pretty-time-interval 31556952)
-  "365 days, 5 hours, 49 minutes, 12 seconds"
+  &gt; (brief-duration 1000)
+  "16m 40s"
+  &gt; (brief-duration -1000)
+  "-16m 40s"
+  &gt; (brief-duration -1000.12345)
+  "-16m 40.12s"
+  &gt; (brief-duration -1000.12543)
+  "-16m 40.13s"
+  &gt; (brief-duration 166611.9)
+  "1d 22h 16m 51.91s"
+  &gt; (brief-duration 166611.9 4)
+  "1d 22h 16m 52s"
+  &gt; (brief-duration 166611.9 3)
+  "1d 22h 17m"
+  &gt; (brief-duration 166611.9 2)
+  "1d 22h"
+  &gt; (brief-duration 166611.9 1)
+  "2d"
+  &gt; (brief-duration 31556952)
+  "365d 5h 49m 12s"
   &gt;
 </pre>
 </p>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
 <table width="100%" cellpadding="0" cellspacing="2"><tr>
-<td bgcolor="#99ccff"><a href="ref-pretty-run-time-interval.html"><img border="0" alt="pretty-run-time-interval" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="ref-date-and-time-entities.html"><img border="0" alt="Date and Time" src="up.png"/></a></td><td bgcolor="#99ccff"><img alt="" src="blank.png"/></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">pretty-time-interval</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table></body></html>
+<td bgcolor="#99ccff"><a href="ref-brief-date-and-time.html"><img border="0" alt="brief-date-and-time" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="ref-date-and-time-entities.html"><img border="0" alt="Date and Time" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-brief-run-time-duration.html"><img border="0" alt="brief-run-time-duration" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">brief-duration</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table></body></html>

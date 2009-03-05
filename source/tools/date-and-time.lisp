@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/date-and-time.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Feb 22 04:53:36 2009 *-*
+;;;; *-* Last-Edit: Thu Mar  5 11:27:20 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -20,8 +20,10 @@
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
 ;;;  05-16-08 File split from tools.lisp.  (Corkill)
-;;;  03-20-04 Added pretty time-interval functions.  (Corkill)
-;;;  02-08-09 Added PARSE-TIME-INTERVAL.  (Corkill)
+;;;  03-20-04 Added pretty time-duration functions.  (Corkill)
+;;;  02-08-09 Added PARSE-DURATION function.  (Corkill)
+;;;  03-05-09 Added BRIEF-DURATION and BRIEF-RUN-TIME-DURATION functions.
+;;;           (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -38,14 +40,20 @@
   (export '(*month-precedes-date*       ; these three entities are defined in 
             brief-date                  ; ../module-manager/module-manager.lisp, 
             brief-date-and-time         ; but are part of :gbbopen-tools
+            brief-duration
+            brief-run-time-duration
             full-date-and-time
             internet-text-date-and-time
             iso8661-date-and-time
             message-log-date-and-time
             parse-date                  ; also from module-manager.lisp
-            parse-time-interval
-            pretty-time-interval
-            pretty-run-time-interval)))
+            parse-duration
+            pretty-duration
+            parse-time-interval         ; older, deprecated name
+            pretty-time-interval        ; older, deprecated name
+            pretty-run-time-duration
+            pretty-run-time-interval    ; older, deprecated name
+            )))
 
 ;;; ===========================================================================
 ;;;  Time parsing and formatting
@@ -238,21 +246,17 @@
               (abs& zone-value)
               (time-zone-abbreviation zone daylight-savings-p)))))
 
-;;; ---------------------------------------------------------------------------
-;;;   Pretty time-interval conversions
+;;; ===========================================================================
+;;;   Duration entities
 
-(defun pretty-time-interval (interval-in-seconds 
-                             &optional (maximum-fields 5)
-                                       (destination nil))
-  ;;; Converts `seconds' to a time interval string (rounded to the nearest
-  ;;; 100th of a second):
+(defun time-duration-fields (duration-in-seconds maximum-fields)
   (check-type maximum-fields (integer 1 5))
   (let ((negative-p nil))
-    (when (minusp interval-in-seconds)
+    (when (minusp duration-in-seconds)
       (setf negative-p 't)
-      (setf interval-in-seconds (abs interval-in-seconds)))
+      (setf duration-in-seconds (abs duration-in-seconds)))
     (multiple-value-bind (seconds remainder)
-        (truncate interval-in-seconds)
+        (truncate duration-in-seconds)
       (multiple-value-bind (hundreds)
           (round (* remainder 100))
         ;; handle roundup!
@@ -321,50 +325,128 @@
                                  (when (>=& hours 12)
                                    (incf days)))
                                (not (zerop days)))))
-                (flet ((write-it (stream)
-                         (when negative-p (format stream "minus "))
-                         (when days-p
-                           (format stream "~s day~:p~@[~*, ~]"
-                                   days 
-                                   (or hours-p minutes-p seconds-p hundreds-p)))
-                         (when hours-p 
-                           (format stream "~s hour~:p~@[~*, ~]"
-                                   hours 
-                                   (or minutes-p seconds-p hundreds-p)))
-                         (when minutes-p
-                           (format stream "~s minute~:p~@[~*, ~]"
-                                   minutes 
-                                   (or seconds-p hundreds-p)))
-                         (cond
-                          ((or seconds-p hundreds-p)
-                           (format stream "~s~:[~*~;.~2,'0d~] second~p" 
-                                   seconds
-                                   hundreds-p
-                                   hundreds 
-                                   seconds))
-                          ;; Should only occur when interval-in-seconds is zero:
-                          ((not (or days-p hours-p minutes-p))
-                           (format stream "0 seconds")))))
-                  (if destination
-                      (write-it destination)
-                      (with-output-to-string (stream)
-                        (write-it stream))))))))))))
+                (values negative-p days-p days hours-p hours 
+                        minutes-p minutes seconds-p seconds
+                        hundreds-p hundreds)))))))))
 
 ;;; ---------------------------------------------------------------------------
 
-(defun pretty-run-time-interval (internal-run-time 
+(defun brief-duration (duration-in-seconds 
+                            &optional (maximum-fields 5)
+                                      (destination nil))
+  ;;; Converts `seconds' to a brief time-duration string (rounded to the
+  ;;; nearest 100th of a second):
+  (multiple-value-bind (negative-p days-p days hours-p hours 
+                        minutes-p minutes seconds-p seconds
+                        hundreds-p hundreds)
+      (time-duration-fields duration-in-seconds maximum-fields)
+    (flet ((write-it (stream)
+             (when negative-p (format stream "-"))
+             (when days-p
+               (format stream "~sd~@[~* ~]"
+                       days 
+                       (or hours-p minutes-p seconds-p hundreds-p)))
+             (when hours-p 
+               (format stream "~sh~@[~* ~]"
+                       hours 
+                       (or minutes-p seconds-p hundreds-p)))
+             (when minutes-p
+               (format stream "~sm~@[~* ~]"
+                       minutes 
+                       (or seconds-p hundreds-p)))
+             (cond
+              ((or seconds-p hundreds-p)
+               (format stream "~s~:[~*~;.~2,'0d~]s" 
+                       seconds
+                       hundreds-p
+                       hundreds 
+                       seconds))
+              ;; Should only occur when duration-in-seconds is zero:
+              ((not (or days-p hours-p minutes-p))
+               (format stream "0s")))))
+      (if destination
+          (write-it destination)
+          (with-output-to-string (stream)
+            (write-it stream))))))
+  
+;;; ---------------------------------------------------------------------------
+
+(defun pretty-duration (duration-in-seconds 
+                        &optional (maximum-fields 5)
+                                  (destination nil))
+  ;;; Converts `seconds' to a time duration string (rounded to the nearest
+  ;;; 100th of a second):
+  (multiple-value-bind (negative-p days-p days hours-p hours 
+                        minutes-p minutes seconds-p seconds
+                        hundreds-p hundreds)
+      (time-duration-fields duration-in-seconds maximum-fields)
+    (flet ((write-it (stream)
+             (when negative-p (format stream "minus "))
+             (when days-p
+               (format stream "~s day~:p~@[~*, ~]"
+                       days 
+                       (or hours-p minutes-p seconds-p hundreds-p)))
+             (when hours-p 
+               (format stream "~s hour~:p~@[~*, ~]"
+                       hours 
+                       (or minutes-p seconds-p hundreds-p)))
+             (when minutes-p
+               (format stream "~s minute~:p~@[~*, ~]"
+                       minutes 
+                       (or seconds-p hundreds-p)))
+             (cond
+              ((or seconds-p hundreds-p)
+               (format stream "~s~:[~*~;.~2,'0d~] second~p" 
+                       seconds
+                       hundreds-p
+                       hundreds 
+                       seconds))
+              ;; Should only occur when duration-in-seconds is zero:
+              ((not (or days-p hours-p minutes-p))
+               (format stream "0 seconds")))))
+      (if destination
+          (write-it destination)
+          (with-output-to-string (stream)
+            (write-it stream))))))
+  
+
+;; Old, deprecated, function name:
+(defcm pretty-time-interval (duration-in-seconds)
+  `(pretty-duration ,duration-in-seconds))
+
+;;; ---------------------------------------------------------------------------
+
+(defun brief-run-time-duration (internal-run-time 
+                                &optional (maximum-fields 5)
+                                          (destination nil))
+  ;;; Converts `internal-run-time' to a brief time-duration string (rounded to
+  ;;; nearest 100th of a second).
+  (brief-duration (/ internal-run-time 
+                     #.(float internal-time-units-per-second))
+                  maximum-fields
+                  destination))
+
+;;; ---------------------------------------------------------------------------
+
+(defun pretty-run-time-duration (internal-run-time 
                                  &optional (maximum-fields 5)
                                            (destination nil))
   ;;; Converts `internal-run-time' to a time interval string (rounded to
   ;;; nearest 100th of a second).
-  (pretty-time-interval (/ internal-run-time 
-                           #.(float internal-time-units-per-second))
-                        maximum-fields
-                        destination))
+  (pretty-duration (/ internal-run-time 
+                      #.(float internal-time-units-per-second))
+                   maximum-fields
+                   destination))
 
-;;; ===========================================================================
+;; Old, deprecated, function name:
+(defcm pretty-run-time-interval (internal-run-time 
+                                 &optional (maximum-fields 5)
+                                 (destination nil))
+  `(pretty-run-time-duration ,internal-run-time ,maximum-fields, destination))
 
-(defparameter *time-interval-units-alist*
+;;; ---------------------------------------------------------------------------
+
+(defparameter *time-duration-units-alist*
     ;; Plurals are handled automatically:
     `(("second"        . 1)
       ("sec"           . 1)
@@ -386,12 +468,12 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun parse-time-interval (string &key (start 0) 
-                                        (end (length string))
-                                        (separators " ,")
-                                        ;; units keyword is not documented:
-                                        (units *time-interval-units-alist*))
-  ;; Returns the number of seconds representing the time interval specified in
+(defun parse-duration (string &key (start 0) 
+                                   (end (length string))
+                                   (separators " ,")
+                                   ;; units keyword is not documented:
+                                   (units *time-duration-units-alist*))
+  ;; Returns the number of seconds representing the time duration specified in
   ;; string:
   (declare (simple-string string))
   (flet ((skip-separators ()
@@ -413,7 +495,7 @@
                       (char= #\- (schar string start)))
              (incf& start)))
          (no-numeric-value-error (start end)
-           (error "No interval numeric value found prior to ~s"
+           (error "No duration numeric value found prior to ~s"
                   (subseq string start end))))
     (let ((result 0))
       (while (<& start end)
@@ -456,7 +538,7 @@
                   (setf value (/ value denominator)))))))
           (unless value 
             (when (=& start end)
-              (return-from parse-time-interval result))
+              (return-from parse-duration result))
             (no-numeric-value-error start end))
           (skip-separators)
           (let ((token-start start))
@@ -473,12 +555,16 @@
                                                             :end1 token-end))
                                           units)))
                 (unless unit-acons 
-                  (error "Unknown time-interval unit ~s following value ~s"
+                  (error "Unknown time-duration unit ~s following value ~s"
                          (subseq string token-start start)
                          value))
                 (setf value (* value (cdr unit-acons)))
                 (if negative? (decf result value) (incf result value)))))))
       result)))
+
+;; Old, deprecated, function name:
+(defcm parse-time-interval (args)
+  `(parse-duration ,@args))
 
 ;;; ===========================================================================
 ;;;                               End of File
