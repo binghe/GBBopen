@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Mon Mar  2 12:30:59 2009; Edited-By: cork *-*
+%% *-* Last-Edit: Thu Mar  5 11:24:40 2009; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2009, Dan Corkill <corkill@GBBopen.org>
@@ -8626,6 +8626,143 @@ in order to to make it available as early as possible.
 
 %% ------------------------------------------------------------------------
 
+\begin{functiondoc}{Function}{brief-duration}{%
+    \var{seconds\/}
+    \code{\&optional} \var{maximum-fields destination\/} 
+    \returns{} \var{result\/}}
+  \index{time!duration, formatting}% 
+\index{duration!formatting}% 
+
+\fnsyntax
+
+\fnpurpose Format a numeric time duration (in \nobr{\var{seconds\/}}) into
+brief descriptive text.
+
+\fnpackage \code{:gbbopen-tools}
+
+\fnmodule \code{:gbbopen-tools}
+
+\fnargs
+\begin{args}{maximum-fields}
+\arg[seconds] A number
+\arg[maximum-fields] An integer from 1--5 indicating maximum number of fields 
+to include in the descriptive \var{string\/} (default is 5, indicating all 
+fields should be included)
+\arg[destination] Either \nil, \code{t}, a stream, or a string with a fill 
+pointer (default is \nil)
+\arg[result] A string or \nil{}
+\end{args}
+
+\fnreturns If \var{destination\/} is non-\nil, then \nil; otherwise, a string.
+
+\fndescription The value of \var{seconds\/} is rounded to the nearest
+100$^{th}$ of a second before conversion.  Fields omitted by
+\nobr{\var{maximum-fields\/}} cause appropriate rounding of the generated
+description.
+
+\begin{alsos}{pretty-run-time-duration}
+\also[brief-run-time-duration]
+\also[parse-duration]
+\also[pretty-duration]
+\also[pretty-run-time-duration]
+\end{alsos}
+
+\fnexamples
+%
+\W\supp
+\begin{example}
+  > (brief-duration 1000)
+  "16m 40s"
+  > (brief-duration -1000)
+  "-16m 40s"
+  > (brief-duration -1000.12345)
+  "-16m 40.12s"
+  > (brief-duration -1000.12543)
+  "-16m 40.13s"\goodpagebreak
+  > (brief-duration 166611.9)
+  "1d 22h 16m 51.91s"
+  > (brief-duration 166611.9 4)
+  "1d 22h 16m 52s"
+  > (brief-duration 166611.9 3)
+  "1d 22h 17m"
+  > (brief-duration 166611.9 2)
+  "1d 22h"
+  > (brief-duration 166611.9 1)
+  "2d"
+  > (brief-duration 31556952)
+  "365d 5h 49m 12s"
+  >
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{brief-run-time-duration}{%
+    \var{internal-time-units\/}
+    \code{\&optional} \var{maximum-fields destination\/} 
+    \returns{} \var{result\/}}
+  \index{time!duration, formatting}% 
+\index{duration!formatting}% 
+\index{internal time units, formatting}% 
+
+\fnsyntax
+
+\fnpurpose Format a run-time duration (in \nobr{\var{internal-time-units\/}})
+into brief descriptive text.
+
+\fnpackage \code{:gbbopen-tools}
+
+\fnmodule \code{:gbbopen-tools}
+
+\fnargs
+\begin{args}{internal-time-units}
+\arg[internal-time-units] A number
+\arg[maximum-fields] An integer from 1--5 indicating maximum number of fields 
+to include in the descriptive \var{string\/} (default is 5, indicating all 
+fields should be included)
+\arg[destination] Either \nil, \code{t}, a stream, or a string with a fill 
+pointer (default is \nil)
+\arg[result] A string or \nil{}
+\end{args}
+
+\fnreturns If \var{destination\/} is non-\nil, then \nil; otherwise, a string.
+
+\fndescription The \var{internal-time-units\/} run-time duration is rounded to
+the nearest 100$^{th}$ of a second before conversion. Fields omitted by
+\nobr{\var{maximum-fields\/}} cause appropriate rounding of the generated
+description.
+
+\begin{alsos}{brief-run-time-duration}
+\also[brief-duration]
+\also[parse-duration]
+\also[pretty-duration]
+\also[pretty-run-time-duration]
+\end{alsos}
+
+\fnexamples
+%
+\W\supp
+\begin{example}
+  > internal-time-units-per-second
+  1000
+  > (brief-run-time-duration 1000)
+  "1s"
+  > (brief-run-time-duration 5)
+  "0s"
+  > (brief-run-time-duration 6)
+  "0.01s"
+  > most-positive-fixnum
+  536870911
+  > (brief-run-time-duration most-positive-fixnum)
+  "6d 5h 7m 50.94s"
+  >
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
 \begin{functiondoc}{Function}{full-date-and-time}{%
     \code{\&optional} \var{universal-time time-zone include-seconds
       include-time-zone destination\/}
@@ -8983,7 +9120,7 @@ have passed, in which case next year is assumed.
 
 \begin{alsos}{*month-precedes-date*}
 \also[*month-precedes-date*]
-\also[parse-time-interval]
+\also[parse-duration]
 \end{alsos}
 
 \fnexamples
@@ -9027,16 +9164,16 @@ in order to to make it available as early as possible.
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Function}{parse-time-interval}{%
+\begin{functiondoc}{Function}{parse-duration}{%
     \var{string\/}
     %% units keyword is not documented:
     \code{\&key} \var{start end separators\/}
     \nobr{\returns{} \var{seconds\/}}}
-\index{time interval!parsing}% 
+\index{duration!parsing}% 
 
 \fnsyntax
 
-\fnpurpose Parse a time-interval-specification string.
+\fnpurpose Parse a time-duration-specification string.
 
 \fnpackage \code{:gbbopen-tools}
 
@@ -9052,11 +9189,11 @@ end of \var{string\/})
 specification items (default is \nobr{\code{" ,"}})
 \end{args}
 
-\fnreturns The time-interval duration, in seconds
+\fnreturns The duration, in seconds
 
 \fndescription
 %
-The following time-interval unit specifiers are recognized (both singular and
+The following time-duration-unit specifiers are recognized (both singular and
 plural): 
 \W\supp\tabletop
 \begin{tabular}{@{}llll@{}}
@@ -9072,38 +9209,39 @@ plural):
 A \code{"month"} is interpreted as exactly 30 days; a \nobr{\code{"year"}} as
 365 days.
 
-\begin{alsos}{pretty-time-interval}
+\begin{alsos}{pretty-duration}
+\also[brief-duration]
 \also[parse-date]
-\also[pretty-time-interval]
+\also[pretty-duration]
 \end{alsos}
 
 \fnexamples
 %
 \W\supp
 \begin{example}
-  > (parse-time-interval "2 minutes")
+  > (parse-duration "2 minutes")
   60
-  > (parse-time-interval "-2min")
+  > (parse-duration "-2min")
   -60
-  > (parse-time-interval "2m")
+  > (parse-duration "2m")
   60\goodpagebreak
-  > (parse-time-interval "365 days, 5 hours, 49 minutes, 12 seconds"
+  > (parse-duration "365 days, 5 hours, 49 minutes, 12 seconds"
   31556952
-  > (parse-time-interval "365d 5h 49m 12s")
+  > (parse-duration "365d 5h 49m 12s")
   31556952
-  > (parse-time-interval "365d5h49m12s")
+  > (parse-duration "365d5h49m12s")
   31556952\goodpagebreak
-  > (parse-time-interval "1min -2secs")
+  > (parse-duration "1min -2secs")
   58
-  > (parse-time-interval "1m-2s")
+  > (parse-duration "1m-2s")
   58\goodpagebreak
-  > (parse-time-interval "1/2hr")
+  > (parse-duration "1/2hr")
   1800
-  > (parse-time-interval "0.5hr")
+  > (parse-duration "0.5hr")
   1800.0\goodpagebreak
-  > (parse-time-interval "2 months")
+  > (parse-duration "2 months")
   5184000
-  > (parse-time-interval "3 wks")
+  > (parse-duration "3 wks")
   1814400
 \end{example}
 
@@ -9111,76 +9249,16 @@ A \code{"month"} is interpreted as exactly 30 days; a \nobr{\code{"year"}} as
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Function}{pretty-run-time-interval}{%
-    \var{internal-time-units\/}
-    \code{\&optional} \var{maximum-fields destination\/} 
-    \returns{} \var{result\/}}
-  \index{interval!time, formatting}% 
-\index{time interval!formatting}% 
-\index{internal time units, formatting}% 
-
-\fnsyntax
-
-\fnpurpose Format a run-time interval (in \nobr{\var{internal-time-units\/}})
-into descriptive text.
-
-\fnpackage \code{:gbbopen-tools}
-
-\fnmodule \code{:gbbopen-tools}
-
-\fnargs
-\begin{args}{internal-time-units}
-\arg[internal-time-units] A number
-\arg[maximum-fields] An integer from 1--5 indicating maximum number of fields 
-to include in the descriptive \var{string\/} (default is 5, indicating all 
-fields should be included)
-\arg[destination] Either \nil, \code{t}, a stream, or a string with a fill 
-pointer (default is \nil)
-\arg[result] A string or \nil{}
-\end{args}
-
-\fnreturns If \var{destination\/} is non-\nil, then \nil; otherwise, a string.
-
-\fndescription The \var{internal-time-units\/} run-time interval is rounded to
-the nearest 100$^{th}$ of a second before conversion. Fields omitted by
-\nobr{\var{maximum-fields\/}} cause appropriate rounding of the generated
-description.
-
-\begin{alsos}{pretty-time-interval}
-\also[pretty-time-interval]
-\end{alsos}
-
-\fnexamples
-%
-\W\supp
-\begin{example}
-  > internal-time-units-per-second
-  1000
-  > (pretty-run-time-interval 1000)
-  "1 second"
-  > (pretty-run-time-interval 5)
-  "0 seconds"
-  > (pretty-run-time-interval 6)
-  "0.01 seconds"
-  > (pretty-run-time-interval most-positive-fixnum)
-  "6 days, 5 hours, 7 minutes, 50.94 seconds"
-  >
-\end{example}
-
-\end{functiondoc}
-
-%% ------------------------------------------------------------------------
-
-\begin{functiondoc}{Function}{pretty-time-interval}{%
+\begin{functiondoc}{Function}{pretty-duration}{%
     \var{seconds\/}
     \code{\&optional} \var{maximum-fields destination\/} 
     \returns{} \var{result\/}}
-  \index{interval!time, formatting}% 
-\index{time interval!formatting}% 
+  \index{time!duration, formatting}% 
+\index{duration!formatting}% 
 
 \fnsyntax
 
-\fnpurpose Format a numeric time interval (in \nobr{\var{seconds\/}}) into
+\fnpurpose Format a numeric time duration (in \nobr{\var{seconds\/}}) into
 descriptive text.
 
 \fnpackage \code{:gbbopen-tools}
@@ -9205,35 +9283,102 @@ pointer (default is \nil)
 \nobr{\var{maximum-fields\/}} cause appropriate rounding of the generated
 description.
 
-\begin{alsos}{pretty-run-time-interval}
-\also[parse-time-interval]
-\also[pretty-run-time-interval]
+\begin{alsos}{pretty-run-time-duration}
+\also[brief-duration]
+\also[brief-run-time-duration]
+\also[parse-duration]
+\also[pretty-run-time-duration]
 \end{alsos}
 
 \fnexamples
 %
 \W\supp
 \begin{example}
-  > (pretty-time-interval 1000)
+  > (pretty-duration 1000)
   "16 minutes, 40 seconds"
-  > (pretty-time-interval -1000)
+  > (pretty-duration -1000)
   "minus 16 minutes, 40 seconds"
-  > (pretty-time-interval -1000.12345)
+  > (pretty-duration -1000.12345)
   "minus 16 minutes, 40.12 seconds"
-  > (pretty-time-interval -1000.12543)
+  > (pretty-duration -1000.12543)
   "minus 16 minutes, 40.13 seconds"\goodpagebreak
-  > (pretty-time-interval 166611.9)
+  > (pretty-duration 166611.9)
   "1 day, 22 hours, 16 minutes, 51.91 seconds"
-  > (pretty-time-interval 166611.9 4)
+  > (pretty-duration 166611.9 4)
   "1 day, 22 hours, 16 minutes, 52 seconds"
-  > (pretty-time-interval 166611.9 3)
+  > (pretty-duration 166611.9 3)
   "1 day, 22 hours, 17 minutes"
-  > (pretty-time-interval 166611.9 2)
+  > (pretty-duration 166611.9 2)
   "1 day, 22 hours"
-  > (pretty-time-interval 166611.9 1)
+  > (pretty-duration 166611.9 1)
   "2 days"
-  > (pretty-time-interval 31556952)
+  > (pretty-duration 31556952)
   "365 days, 5 hours, 49 minutes, 12 seconds"
+  >
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{pretty-run-time-duration}{%
+    \var{internal-time-units\/}
+    \code{\&optional} \var{maximum-fields destination\/} 
+    \returns{} \var{result\/}}
+  \index{time!duration, formatting}% 
+\index{duration!formatting}% 
+\index{internal time units, formatting}% 
+
+\fnsyntax
+
+\fnpurpose Format a run-time duration (in \nobr{\var{internal-time-units\/}})
+into descriptive text.
+
+\fnpackage \code{:gbbopen-tools}
+
+\fnmodule \code{:gbbopen-tools}
+
+\fnargs
+\begin{args}{internal-time-units}
+\arg[internal-time-units] A number
+\arg[maximum-fields] An integer from 1--5 indicating maximum number of fields 
+to include in the descriptive \var{string\/} (default is 5, indicating all 
+fields should be included)
+\arg[destination] Either \nil, \code{t}, a stream, or a string with a fill 
+pointer (default is \nil)
+\arg[result] A string or \nil{}
+\end{args}
+
+\fnreturns If \var{destination\/} is non-\nil, then \nil; otherwise, a string.
+
+\fndescription The \var{internal-time-units\/} run-time duration is rounded to
+the nearest 100$^{th}$ of a second before conversion. Fields omitted by
+\nobr{\var{maximum-fields\/}} cause appropriate rounding of the generated
+description.
+
+\begin{alsos}{brief-run-time-duration}
+\also[brief-duration]
+\also[brief-run-time-duration]
+\also[parse-duration]
+\also[pretty-duration]
+\end{alsos}
+
+\fnexamples
+%
+\W\supp
+\begin{example}
+  > internal-time-units-per-second
+  1000
+  > (pretty-run-time-duration 1000)
+  "1 second"
+  > (pretty-run-time-duration 5)
+  "0 seconds"
+  > (pretty-run-time-duration 6)
+  "0.01 seconds"
+  > most-positive-fixnum
+  536870911
+  > (pretty-run-time-duration most-positive-fixnum)
+  "6 days, 5 hours, 7 minutes, 50.94 seconds"
   >
 \end{example}
 
@@ -9418,9 +9563,9 @@ value.
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Function}{set-ot-base}{[\var{date month year\/}
-   [\var{time-zone\/}]]
-  \returns{} \var{ot-base\/}}
+\begin{functiondoc}{Function}{set-ot-base}{\var{\code{\&optional} 
+      date month year time-zone\/})
+    \returns{} \var{ot-base\/}}
 \index{universal time!setting the time base value}%
 
 \fnsyntax
@@ -9434,9 +9579,11 @@ value.
 \fnargs
 \begin{args}{universal-time}
   \arg[date] An integer between 1 and up to 31, inclusive, depending
-  on the month and year
-  \arg[month] An integer between 1 and 12, inclusive
-  \arg[year] An integer indicating the year A.D. However, if this
+  on the month and year or \nil, indicating the current date (default is \nil)
+  \arg[month] An integer between 1 and 12, inclusive or \nil, indicating the
+  current month (default is \nil)
+  \arg[year] An integer indicating the year A.D. or \nil, indicating the
+  current year (default is \nil); if the \var{year\/}
   integer is between 0 and 99, the ``obvious'' year is assumed.
   \arg[time-zone] A time zone: a rational multiple of 1/3600 between
   -24 and 24 that represents the number of hours offset from GMT 
@@ -9446,9 +9593,11 @@ value.
 \fnreturns The Offset Universal Time time-base value
 
 \fndescription Without any arguments, \nobr{\textbf{set-ot-base}} sets the
-time-base value to the current date.  This can be useful for initializing
-applications that do not need to represent historical dates or save or
-communicate Offset Universal Time values.
+time-base value to the current date.  Setting the time base to the current
+date can be used in applications that do not need to represent historical
+dates and that do not save or communicate Offset Universal Time values.
+However, setting the time base to a specific date is recommended for most
+applications.
 
 \begin{alsos}{check-ot-base}
 \also[*ot-base*]
@@ -10626,7 +10775,7 @@ remaining \nobr{\code{:gbbopen-core}} entities is arranged into the following
 \item \refsectionlink{link entities}{sec:links}
 \item \refsectionlink{event, event function, event printing, and event
     signaling entities}{sec:events}
-\item \refsectionlink{interval manipluation entities}{sec:interval}
+\item \refsectionlink{interval manipulation entities}{sec:interval}
 \item \refsectionlink{space-instance and blackboard-repository
     entities}{sec:bb-repository}
 \item \refsectionlink{instance retrieval and iteration/mapping

@@ -6,8 +6,11 @@ Important changes since GBBopen 1.2:
   * Changes to GBBopen Tools
      - Saving/sending support for adjustable, fill-pointer, and 
        element-typed vectors, bit-vectors, and arrays
-     - New FULL-DATE-AND-TIME function 
-     - New PARSE-TIME-INTERVAL function 
+     - New FULL-DATE-AND-TIME, BRIEF-DURATION, BRIEF-RUN-TIME-DURATION,
+       and PARSE-DURATION functions 
+     - Renamed: PRETTY-TIME-INTERVAL -> PRETTY-DURATION
+                PRETTY-RUN-TIME-INTERVAL -> PRETTY-RUN-TIME-DURATION
+       the old names are deprecated and will be removed eventually
      - New :EXPORT-SLOT-NAMES class option in DEFINE-CLASS
      - New LIST-LENGTH>2 predicate
 
