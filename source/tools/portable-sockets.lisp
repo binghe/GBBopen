@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-SOCKETS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/portable-sockets.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Jul 13 10:46:05 2008 *-*
+;;;; *-* Last-Edit: Tue Mar 10 02:51:00 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -116,7 +116,7 @@
 
 (defun print-portable-sockets-herald ()
   (format t "~%;;; ~72,,,'-<-~>
-;;;  Portable Sockets Interface ~a~@
+;;;  Portable Sockets Interface ~a
 ;;;
 ;;;    Developed and supported by the GBBopen Project (http:/GBBopen.org/)
 ;;;    (See http://GBBopen.org/downloads/LICENSE for license details.)

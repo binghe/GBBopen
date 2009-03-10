@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/portable-threads.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Feb 22 16:25:52 2009 *-*
+;;;; *-* Last-Edit: Tue Mar 10 02:50:44 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -355,7 +355,7 @@
 
 (defun print-portable-threads-herald ()
   (format t "~%;;; ~72,,,'-<-~>
-;;;  Portable Threads Interface ~a~@
+;;;  Portable Threads Interface ~a
 ;;;
 ;;;    Developed and supported by the GBBopen Project (http:/GBBopen.org/)
 ;;;    (See http://GBBopen.org/downloads/LICENSE for license details.)
