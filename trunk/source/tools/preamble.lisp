@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/preamble.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Aug 31 16:28:47 2008 *-*
+;;;; *-* Last-Edit: Tue Mar 10 02:50:24 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2004-2008, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2004-2009, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -95,7 +95,7 @@
 
 (defun print-gbbopen-tools-herald ()
   (format t "~%;;; ~72,,,'-<-~>
-;;;  GBBopen Tools ~a~@
+;;;  GBBopen Tools ~a
 ;;;
 ;;;    Developed and supported by the GBBopen Project (http:/GBBopen.org/)
 ;;;    (See http://GBBopen.org/downloads/LICENSE for license details.)
