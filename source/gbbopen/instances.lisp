@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Mar 13 05:46:19 2009 *-*
+;;;; *-* Last-Edit: Fri Mar 13 15:04:15 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -834,9 +834,6 @@
 
 ;;; ---------------------------------------------------------------------------
 
-#+cmu
-(defun cmu-bug-fix (x) (typep x 'standard-unit-instance))  ; see NOTE below
-
 (defmethod delete-instance ((instance standard-unit-instance))
   (declare (inline class-of))
   ;; unlink `instance' from other unit instances:
@@ -852,12 +849,12 @@
   (let ((deleted-instance-class (deleted-instance-class instance)))
     (change-class instance (deleted-instance-class instance)
                   :original-class (class-of instance))
-    ;; NOTE: CMUCL (at least up through 19f) gets the following TYPEP check on
-    ;; a changed-class instance wrong; we work around that by using satisfies
-    ;; to fake out CMUCL's compiler:
-    (when (typep instance
-                 #-cmu 'standard-unit-instance
-                 #+cmu '(satisfies cmu-bug-fix))
+    (when 
+        ;; NOTE: CMUCL (at least up through 19f) gets the following TYPEP
+        ;; check on a changed-class instance wrong; we work around that by
+        ;; using a not-inlined TYPEP:
+        (locally #+cmu (declare (notinline typep))
+                 (typep instance 'standard-unit-instance))
       (error "The deleted-instance-class ~s is a subclass of ~s"
              (class-name deleted-instance-class)
              'standard-unit-instance)))
