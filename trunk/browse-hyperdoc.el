@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Emacs-Lisp -*-
-;;;; *-* File: /home/gbbopen/current/browse-hyperdoc.el *-*
+;;;; *-* File: /usr/local/gbbopen/browse-hyperdoc.el *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Sep 29 05:50:31 2005 *-*
-;;;; *-* Machine: ruby.corkills.org *-*
+;;;; *-* Last-Edit: Sun Mar 15 12:38:43 2009 *-*
+;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2005, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2005-2009, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; To enable on-line GBBopen hyperdoc access, the GBBopen hyperdoc
@@ -26,9 +26,10 @@
 ;;;    http://GBBopen.org/downloads/GBBopen-hyperdoc.tar.gz
 ;;; Download and extract the files in this archive into <install-directory>.
 ;;; 
-;;; To maintain the lastest documentation additions and revisions,
-;;; your copy of the hyperdoc files should be refreshed periodically,
-;;; such as when updating your GBBopen sources.
+;;; To maintain the lastest documentation additions and revisions, your copy
+;;; of the hyperdoc files should be refreshed periodically, such as when
+;;; updating your GBBopen sources.  (Using svn update will keep both the
+;;; GBBopen sources and hyperdoc entries up-to-date and consistent.)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
@@ -78,7 +79,7 @@
 		    (t basename))))))
     (cond ((file-exists-p filename)
 	   (let ((browse-url-new-window-flag t))
-	     (browse-url filename)))
+	     (browse-url (concat "file\:" filename))))
 	  ;; Defer to the Common Lisp Hyperspec, if available:
 	  ((fboundp 'common-lisp-hyperspec)
 	   (common-lisp-hyperspec string))
