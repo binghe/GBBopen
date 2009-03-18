@@ -13,6 +13,7 @@ Important changes since GBBopen 1.2:
        the old names are deprecated and will be removed eventually
      - New :EXPORT-SLOT-NAMES class option in DEFINE-CLASS
      - New LIST-LENGTH>2 predicate
+     - New MAKE-DUPLICATE-INSTANCE-CHANGING-CLASS function
 
   * Changes to GBBopen Core
      - New class, DELETED-UNIT-INSTANCE, now used to represent deleted 

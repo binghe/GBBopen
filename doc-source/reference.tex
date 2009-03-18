@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Thu Mar  5 11:24:40 2009; Edited-By: cork *-*
+%% *-* Last-Edit: Sun Mar 15 18:41:16 2009; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2009, Dan Corkill <corkill@GBBopen.org>
@@ -3783,6 +3783,7 @@ These entities are:
   & \code{\entlink{*save/send-references-only*}} \\
   & \code{\entlink{initialize-saved/sent-instance}} \\ 
   & \code{\entlink{make-duplicate-instance}} \\
+  & \code{\entlink{make-duplicate-instance-changing-class}} \\
   & \code{\entlink{omitted-slots-for-saving/sending}} \\
   & \code{\entlink{print-object-for-saving/sending}} \\
   & \code{\entlink{print-slot-for-saving/sending}} \\
@@ -10902,8 +10903,9 @@ also added to all space instances defined as initial-space-instances for
 removed from all space instances and then added to the supplied space
 instances.
 
-\begin{alsos}{next-class-instance-number}
+\begin{alsos}{make-duplicate-instance-changing-class}
 \also[define-unit-class]
+\also[make-duplicate-instance-changing-class]
 \also[next-class-instance-number]
 \end{alsos}
 
@@ -12359,14 +12361,15 @@ of whether the slots are local or shared:
   are initialized according to their \nobr{\code{:initform}} forms. 
 \end{tightitemize}
 
-Specifying a \nobr{\code{:instance-name}} initialization argument causes that
-value to be used as the \glref{instance~name} of the newly created
-\glref{unit~instance} instead of the instance-name counter value associated
-with the \glref{unit~class} (if the
-\nobr{\code{:use-global-instance-name-counter}} class option is \nil{} or was
-not specified for the unit class) or the global instance-name counter value
-(if the \nobr{\code{:use-global-instance-name-counter}} class option is true
-for the unit class).
+When duplicating a \glref{unit~instance}, specifying a
+\nobr{\code{:instance-name}} initialization argument causes that value to be
+used as the \glref{instance~name} of the newly created \glref{unit~instance}
+instead of the instance-name counter value associated with the
+\glref{unit~class} (if the \nobr{\code{:use-global-instance-name-counter}}
+class option is \nil{} or was not specified for the unit class) or the global
+instance-name counter value (if the
+\nobr{\code{:use-global-instance-name-counter}} class option is true for the
+unit class).
 
 A \nobr{\code{:space-instances}} initialization argument must be provided when
 duplicating a \glref{space~instance}.
@@ -12377,6 +12380,7 @@ duplicating a \glref{space~instance}.
 \also[describe-instance]
 \also[initial-class-instance-number]
 \also[instance-name-of]
+\also[make-duplicate-instance-changing-class]
 \also[make-instance]
 \also[make-space-instance]
 \also[next-class-instance-number]
@@ -12424,12 +12428,229 @@ Create some simple duplicate \glref{instances}:
   >
 \end{example}
 
+\bfindexit{find-instance-by-name}% 
 Create a duplicate of the \code{hyp} \code{419} \glref{unit~instance}:
 %
 \W\supp
 \begin{example}
-  > (make-duplicate-instance (find-instance-by-name 19 'hyp) nil)
+  > (make-duplicate-instance (\entlink{find-instance-by-name} 19 'hyp) nil)
   #<hyp 681 (1835 4791) 0.85 [5..35]>
+  >
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Generic~Function}%
+  {make-duplicate-instance-changing-class}{%
+    \var{instance new-class unduplicated-slot-names\/}
+    \code{\&rest} \var{initargs\/}
+    \code{\&key} \code{\&allow-other-keys}
+    \nobr{\returns{} \var{new-instance, slots\/}}}
+\index{duplicating!an instance}%
+\index{unit instance!duplicating}%
+
+\fnsyntax
+
+\fnpurpose Create a duplicate \glref{instance} of \var{instance}, changing its
+\glref{class} to \var{new-class\/} in the process.
+
+\fnmethods
+\fnalternate{make-duplicate-instance-changing-class}{%
+  \code{(}\var{instance\/} \code{deleted-unit-instance)}
+  \var{new-class\/}
+  \var{unduplicated-slot-names\/}
+  \code{\&rest} \var{initargs\/}
+  \nobr{\returns{} \vbar{}}}
+\fnalternate{make-duplicate-instance-changing-class}{%
+  \code{(}\var{instance\/} \code{standard-object)}
+  \code{(}\var{new-class\/} \code{class)}
+\var{unduplicated-slot-names\/}
+  \code{\&rest} \var{initargs\/}
+  \nobr{\returns{} \var{new-instance, slots\/}}}
+\fnalternate{make-duplicate-instance-changing-class}{%
+  \code{(}\var{instance\/} \code{standard-object)}
+  \code{(}\var{new-class\/} \code{standard-space-class)}
+ \var{unduplicated-slot-names\/}
+  \code{\&rest} \var{initargs\/}
+  \nobr{\returns{} \var{new-space-instance, slots\/}}}
+\fnalternate{make-duplicate-instance-changing-class}{%
+  \code{(}\var{instance\/} \code{standard-object)}
+  \code{(}\var{new-class\/} \code{standard-unit-class)}
+  \var{unduplicated-slot-names\/}
+  \code{\&rest} \var{initargs\/}
+  \nobr{\returns{} \var{new-unit-instance, slots\/}}}
+\fnalternate{make-duplicate-instance-changing-class}{%
+  \code{(}\var{instance\/} \code{standard-object)}
+  \code{(}\var{new-class\/} \code{symbol)}
+  \var{unduplicated-slot-names\/}
+  \code{\&rest} \var{initargs\/}
+  \nobr{\returns{} \var{new-instance, slots\/}}}
+\fnalternate{make-duplicate-instance-changing-class}{%
+  \code{:around}
+  \code{(}\var{instance\/} \code{standard-unit-instance)}
+  \code{(}\var{new-class\/} \code{standard-unit-class)}
+  \var{unduplicated-slot-names\/}
+  \code{\&rest} \var{initargs\/}
+  \nobr{\returns{} \var{new-unit-instance, slots\/}}}
+
+\fnpackage \code{:gbbopen-tools} (re-exported by \nobr{\code{:gbbopen}})
+
+\fnmodule \code{:gbbopen-tools} (the \glref{unit-instance} and
+\glref{space-instance} methods are added by \nobr{\code{:gbbopen-core}})
+
+\fnargs
+\begin{args}{new-instance}
+\arg[instance] A \code{standard-object} \glref{instance}
+\arg[new-class] A \glref{class~designator}
+\arg[unduplicated-slot-names] A list of slot names
+\arg[initargs] An \glref{initialization~argument~list}
+\arg[new-instance] A \code{standard-object} \glref{instance}
+\arg[slots] A proper list of slot objects
+\end{args}
+
+\fnreturns Two values: the (newly created) duplicate \glref{instance} and a
+list of the slots that were duplicated or explicitly initialized.
+
+\fnevents
+\index{events!generated by!make-duplicate-instance-given-class@\textbf{make-duplicate-instance-given-class}}%
+%
+\codeindexit{add-instance-to-space-instance-event}%
+\codeindexit{create-instance-event}%
+\codeindexit{link-event}%
+\codeindexit{update-nonlink-slot-event}%
+%
+\index{events!add-instance-to-space-instance-event@\code{add-instance-to-space-instance-event}|itidx}%
+\index{events!create-instance-event@\code{create-instance-event}|itidx}%
+\index{events!link-event@\code{link-event}|itidx}%
+\index{events!update-nonlink-slot-event@\code{update-nonlink-slot-event}|itidx}%
+%
+When a \glref{unit~instance} is duplicated, events are signaled in the
+following sequence: 
+\begin{tightenumerate}
+\item An \nobr{\code{update-nonlink-slot-event}} or \nobr{\code{link-event}} is
+  signaled for each initialized slot in the duplicated
+  \glref{unit~instance}.  A \nobr{\code{link-event}} is also signaled for
+  each inverse pointer from an existing \glref{unit~instance} to the
+  (newly created) duplicate \glref{unit~instance}.
+\item An \nobr{\code{add-instance-to-space-instance-event}} is signaled
+  for each \glref{space~instance} on which the duplicate
+  \glref{unit~instance} is added.
+\item A \code{create-instance-event} is signaled.
+\end{tightenumerate}
+
+\fnerrors Attempting to duplicate a
+\nobr{\textbf{\entlink{deleted-unit-instance}}}.
+
+Use of an initialization argument that has not been declared as valid.
+
+\codeindexit{:space-instances}%
+\codeindexit{:initial-space-instances}%
+\codeindexit{:instance-name}%
+\fndescription 
+%
+Slot initialization during instance duplication behaves as follows, regardless
+of whether the slots are local or shared:
+%
+\begin{tightitemize}
+\item If an initarg in \var{initargs\/} specifies a value for a slot, that
+  value is stored into the slot.
+\item All slots that are still unbound at this point and that are not named in
+  \var{unduplicated-slot-names\/} or in the list of slot-names returned from
+  calling \nobr{\textbf{\entlink{unduplicated-slot-names}}} on
+  \var{instance\/} are set to the value of the slot in \var{instance}.
+\item Any slots indicated by slot-names that are still unbound at this point
+  are initialized according to their \nobr{\code{:initform}} forms. 
+\end{tightitemize}
+
+When creating (duplicating) a new \glref{unit~instance}, specifying a
+\nobr{\code{:instance-name}} initialization argument causes that value to be
+used as the \glref{instance~name} of the newly created \glref{unit~instance}
+instead of the instance-name counter value associated with the
+\glref{unit~class} (if the \nobr{\code{:use-global-instance-name-counter}}
+class option is \nil{} or was not specified for the unit class) or the global
+instance-name counter value (if the
+\nobr{\code{:use-global-instance-name-counter}} class option is true for the
+unit class).
+
+A \nobr{\code{:space-instances}} initialization argument must be provided when
+creating a new a \glref{space~instance}.
+
+\begin{alsos}{initial-class-instance-number}
+\also[change-class]
+\also[delete-instance]
+\also[describe-instance]
+\also[initial-class-instance-number]
+\also[instance-name-of]
+\also[make-duplicate-instance]
+\also[make-instance]
+\also[make-space-instance]
+\also[next-class-instance-number]
+\also[unduplicated-slot-names]
+\end{alsos}
+
+\fnexamples
+Create some simple duplicate \glref{instances}:
+%
+\bfindexit{define-class}%
+\bfindexit{define-unit-class}%
+\bfindexit{make-instance}%
+%
+\W\supp
+\begin{example}
+  > (\entlink{define-class} foo () 
+       ((a :initform 1)
+        (b :initform 2)))
+  #<standard-class foo>
+  > (\entlink{define-unit-class} bar () 
+       ((a :initform 1)
+        (b :initform 2)))
+  #<standard-class bar>
+  > (defparameter *x* (\entlink{make-instance} 'foo :a 11 :b 12))
+  *x*
+  > :ds *x*
+  #<foo #x110fe6ea> is an instance of #<standard-class foo>:
+   The following slots have :instance allocation:
+    a   11
+    b   12
+  > :ds (make-duplicate-instance-changing-class *x* 'foo nil :a -1)
+  #<foo #x110ff93a> is an instance of #<standard-class foo>:
+   The following slots have :instance allocation:
+    a   -1
+    b   12\goodpagebreak
+  > :ds (make-duplicate-instance-changing-class *x* 'bar nil :b 2)
+  #<bar #x11100032> is an instance of #<standard-unit-class bar>:
+   The following slots have :instance allocation:
+    a   11
+    b   2\goodpagebreak
+  > :ds (make-duplicate-instance-changing-class *x* 'bar '(b) :a -1)
+  #<bar #x11104542> is an instance of #<standard-unit-class bar>:
+   The following slots have :instance allocation:
+    a   -1
+    b   2
+  > :ds (make-duplicate-instance-changing-class *x* 'bar '(b))
+  #<bar #x11108c82> is an instance of #<standard-unit-class foo>:
+   The following slots have :instance allocation:
+    a   11
+    b   2
+  > (make-duplicate-instance-changing-class *x* 'bar nil)
+  #<bar @ #x1110a0e2>
+  (#<standard-effective-slot-definition b>
+   #<standard-effective-slot-definition a>)
+  >
+\end{example}
+
+\bfindexit{find-instance-by-name}%
+Create a duplicate of the \code{hyp} \code{419} \glref{unit~instance} as a 
+\nobr{\code{probable-hyp}}:'
+%
+\W\supp
+\begin{example}
+  > (make-duplicate-instance-changing-class 
+      (\entlink{find-instance-by-name} 19 'hyp)
+      'possible-hyp nil)
+  #<possible-hyp 681 (1835 4791) 0.85 [5..35]>
   >
 \end{example}
 
@@ -12524,7 +12745,7 @@ instance-name counter value (if the
 \nobr{\code{:use-global-instance-name-counter}} class option is true for the
 unit class).
 
-\begin{alsos}{initial-class-instance-number}
+\begin{alsos}{make-duplicate-instance-changing-class}
 \also[change-class]
 \also[define-event-class]
 \also[define-unit-class]
@@ -12534,6 +12755,7 @@ unit class).
 \also[initial-class-instance-number]
 \also[instance-name-of]
 \also[make-duplicate-instance]
+\also[make-duplicate-instance-changing-class]
 \also[make-space-instance]
 \also[next-class-instance-number]
 \end{alsos}
@@ -12818,7 +13040,8 @@ A \glref{space~instance} is also a \glref{unit~instance}, so
 \fnsyntax
 
 \fnpurpose Add slot names of a \glref{class} to the list of slots that
-are not duplicated by \nobr{\textbf{\entlink{make-duplicate-instance}}}.
+are not duplicated by \nobr{\textbf{\entlink{make-duplicate-instance}}}
+and \nobr{\textbf{\entlink{make-duplicate-instance-changing-class}}}.
 
 \fnmethods
 \fnalternate{unduplicated-slot-names}%
@@ -12845,15 +13068,17 @@ are not duplicated by \nobr{\textbf{\entlink{make-duplicate-instance}}}.
 \fnreturns A list of unduplicated slot names for the \glref{class} of 
 \var{instance}.
 
-\begin{alsos}{make-duplicate-instance}
+\begin{alsos}{make-duplicate-instance-changing-class}
 \also[make-duplicate-instance]
+\also[make-duplicate-instance-changing-class]
 \end{alsos}
 
 \fnexample
 %
 Specify that slot \nobr{\code{complex-unsaved-slot}} in
 \nobr{\code{my-unit-instance}} should be added to the list of slots that are
-not duplicated by \nobr{\textbf{\entlink{make-duplicate-instance}}}:
+not duplicated by \nobr{\textbf{\entlink{make-duplicate-instance}}} and
+\nobr{\textbf{\entlink{make-duplicate-instance-changing-class}}}:
 %
 \W\supp
 \begin{example}

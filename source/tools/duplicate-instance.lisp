@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/duplicate-instance.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Jul  8 05:53:58 2008 *-*
+;;;; *-* Last-Edit: Mon Mar 16 16:02:34 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -14,27 +14,32 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2008, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2008-2009, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
 ;;;  05-18-08 File created.  (Corkill)
+;;;  03-13-09 Added DUPLICATE-INSTANCE-CHANGING-CLASS.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 (in-package :gbbopen-tools)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (export '(make-duplicate-instance
+  (export '(make-duplicate-instance 
+            make-duplicate-instance-changing-class
             unduplicated-slot-names)))
 
 ;;; ===========================================================================
 
-(defgeneric initialize-duplicated-instance (instance slots slot-values 
-                                            missing-slot-names))
 (defgeneric make-duplicate-instance (instance unduplicated-slot-names
                                      &rest initargs))
+(defgeneric make-duplicate-instance-changing-class (instance new-class
+                                                    unduplicated-slot-names
+                                                    &rest initargs))
+(defgeneric initialize-duplicated-instance (instance slots slot-values 
+                                            missing-slot-names))
 (defgeneric unduplicated-slot-names (instance))
 
 ;;; ---------------------------------------------------------------------------
@@ -77,12 +82,10 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defmethod make-duplicate-instance ((instance standard-object) 
-                                    unduplicated-slot-names
-                                    &rest initargs)
-  (declare (dynamic-extent initargs))
-  (let* ((class (class-of instance))
-         (new-instance (allocate-instance class))
+(defun duplicate-instance (instance new-class unduplicated-slot-names initargs)
+  (let* ((old-class (class-of instance))
+         (old-class-slots (class-slots old-class))
+         (new-instance (allocate-instance new-class))
          (slots nil)
          (slot-values nil)
          (missing-slot-names nil)
@@ -90,29 +93,65 @@
     (setf unduplicated-slot-names 
           (append unduplicated-slot-names
                   (unduplicated-slot-names instance)))
-    (dolist (slot (class-slots class))
-      (let ((slot-name (slot-definition-name slot))
-            ;; See if we are setting via an initarg:
-            (maybe-initarg-value
-             (lookup-initarg-value 
-              (slot-definition-initargs slot) initargs not-found-value)))
+    (dolist (slot (class-slots new-class))
+      (let* ((slot-name (slot-definition-name slot))
+             (old-slot (find slot-name old-class-slots :key #'slot-definition-name))
+             ;; See if we are setting via an initarg:
+             (maybe-initarg-value
+              (lookup-initarg-value 
+               (slot-definition-initargs slot) initargs not-found-value)))
         (cond 
          ;; An initarg was specified for the slot:
          ((not (eq maybe-initarg-value not-found-value))
           (push slot slots)
           (push maybe-initarg-value slot-values))
-         ;; Record as a missing-slot-name, if asked not to duplicate:
-         ((memq slot-name unduplicated-slot-names)
+         ;; Record as a missing-slot-name, if asked not to duplicate or if
+         ;; this slot is only in the new class:
+         ((or (memq slot-name unduplicated-slot-names)
+              (not old-slot))
           (push slot-name missing-slot-names))
-         ;; Not an initarg or an unduplicated-slot-name, use the slot-value:
+         ;; Not an initarg or an unduplicated-slot-name, use the slot-value
+         ;; from the old instance:
          (t (push slot slots)
-            (push (if (slot-boundp-using-class class instance slot)
-                      (slot-value-using-class class instance slot)
+            (push (if (slot-boundp-using-class old-class instance old-slot)
+                      (slot-value-using-class old-class instance old-slot)
                       unbound-value-indicator)
                   slot-values)))))
     (initialize-duplicated-instance 
      new-instance slots slot-values missing-slot-names)
     (values new-instance slots)))
+
+;;; ---------------------------------------------------------------------------
+
+(defmethod make-duplicate-instance ((instance standard-object) 
+                                    unduplicated-slot-names
+                                    &rest initargs)
+  (declare (dynamic-extent initargs))
+  (duplicate-instance instance (class-of instance) 
+                      unduplicated-slot-names initargs))
+
+;;; ---------------------------------------------------------------------------
+
+(defmethod make-duplicate-instance-changing-class ((instance standard-object) 
+                                                   (new-class symbol)
+                                                   unduplicated-slot-names
+                                                   &rest initargs)
+  (declare (dynamic-extent initargs))
+  ;; We must call MAKE-DUPLICATE-INSTANCE-CHANGING-CLASS with the new-class
+  ;; object (rather than calling duplicate-instance directly):
+  (apply 'make-duplicate-instance-changing-class instance
+         (find-class new-class)
+         unduplicated-slot-names
+         initargs))
+
+;;; ---------------------------------------------------------------------------
+
+(defmethod make-duplicate-instance-changing-class ((instance standard-object) 
+                                                   (new-class class)
+                                                   unduplicated-slot-names
+                                                   &rest initargs)
+  (declare (dynamic-extent initargs))
+  (duplicate-instance instance new-class unduplicated-slot-names initargs))
 
 ;;; ===========================================================================
 ;;;                               End of File

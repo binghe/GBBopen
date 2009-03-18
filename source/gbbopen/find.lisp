@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/find.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Mar  1 11:47:52 2009 *-*
+;;;; *-* Last-Edit: Wed Mar 18 12:06:22 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -246,6 +246,8 @@
    ((eq (second unit-classes-spec) ':plus-subclasses)
     (with-full-optimization ()
       #'(lambda (instance) 
+             ;; Compiler can't determine inline typep optimization in CMUCL,
+             ;; SBCL, and SCL:
           #+(or cmu sbcl scl) (declare (notinline typep))
           (typep instance (first unit-classes-spec)))))
    ((eq (second unit-classes-spec) ':no-subclasses)
