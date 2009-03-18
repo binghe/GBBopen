@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Mar 13 15:04:15 2009 *-*
+;;;; *-* Last-Edit: Wed Mar 18 12:12:48 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -71,6 +71,7 @@
             instance-name               ; re-export
 	    instance-name-of
             make-duplicate-instance
+            make-duplicate-instance-changing-class
             make-instances-of-class-vector
             map-instances-of-class
             map-sorted-instances-of-class
@@ -123,6 +124,14 @@
                                     unduplicated-slot-names
                                     &rest initargs)
   (declare (ignore unduplicated-slot-names initargs))
+  (declare (dynamic-extent initargs))
+  (operation-on-deleted-instance 'make-duplicate-instance instance))
+
+(defmethod make-duplicate-instance-changing-class ((instance deleted-unit-instance)
+                                                   new-class
+                                                   unduplicated-slot-names
+                                                   &rest initargs)
+  (declare (ignore new-class unduplicated-slot-names initargs))
   (declare (dynamic-extent initargs))
   (operation-on-deleted-instance 'make-duplicate-instance instance))
 
@@ -207,7 +216,7 @@
         (mapc #'add-it space-instance-paths))))
 
 ;;; ===========================================================================
-;;;  Making Duplicate Unit Instances
+;;;  Duplicating unit instances
 
 (defmethod unduplicated-slot-names ((instance standard-unit-instance))
   (list* '%%marks%%
@@ -216,35 +225,63 @@
 
 ;;; ---------------------------------------------------------------------------
 
+(defun complete-duplicate-unit-instance (new-instance slots 
+                                         space-instances space-instances-p)
+  ;;; Perform the completion work for MAKE-DUPLICATE-INSTANCE and
+  ;;; MAKE-DUPLICATE-INSTANCE-CHANGING-CLASS that create new unit instances:
+  (post-initialize-instance-slots new-instance nil slots)
+  (with-lock-held (*master-instance-lock*)
+    (maybe-initialize-instance-name-slot
+     (class-of new-instance) new-instance)
+    (let ((original-space-instances
+           (standard-unit-instance.%%space-instances%% new-instance)))
+      ;; Clear the old %%space-instances%% value:
+      (setf (standard-unit-instance.%%space-instances%% new-instance)
+            nil)
+      (add-instance-to-space-instance-paths 
+       new-instance 
+       (if space-instances-p
+           space-instances
+           original-space-instances))))
+  (values new-instance slots))
+
+;;; ---------------------------------------------------------------------------
+
 (defmethod make-duplicate-instance ((instance standard-unit-instance)
                                     unduplicated-slot-names
                                     &rest initargs
                                     &key (space-instances 
-                                          nil space-instances-p))
-  (declare (dynamic-extent initargs))
+                                          nil space-instances-p)
+                                    &allow-other-keys)
+(declare (dynamic-extent initargs))
   ;; Allow setf setting of link-slot pointers:
   (let ((*%%allow-setf-on-link%%* 't))
     (multiple-value-bind (new-instance slots)
         (apply #'call-next-method instance unduplicated-slot-names initargs)
-      (post-initialize-instance-slots new-instance nil slots)
-      (with-lock-held (*master-instance-lock*)
-        (maybe-initialize-instance-name-slot
-         (class-of new-instance) new-instance)
-        (let ((original-space-instances
-               (standard-unit-instance.%%space-instances%% new-instance)))
-          ;; Clear the old %%space-instances%% value:
-          (setf (standard-unit-instance.%%space-instances%% new-instance)
-                nil)
-          (add-instance-to-space-instance-paths 
-           new-instance 
-           (if space-instances-p
-               space-instances
-               original-space-instances))))
-      (values new-instance slots))))
+      (complete-duplicate-unit-instance 
+       new-instance slots space-instances space-instances-p))))
 
 ;;; ---------------------------------------------------------------------------
-;;; Create-instance-event signaling is done in this :around method to follow
-;;; activities performed by primary and :before/:after methods.
+
+(defmethod make-duplicate-instance-changing-class ((instance standard-object)
+                                                   (new-class standard-unit-class)
+                                                   unduplicated-slot-names
+                                                   &rest initargs
+                                                   &key (space-instances 
+                                                         nil space-instances-p)
+                                                   &allow-other-keys)
+  (declare (dynamic-extent initargs))
+  ;; Allow setf setting of link-slot pointers:
+  (let ((*%%allow-setf-on-link%%* 't))
+    (multiple-value-bind (new-instance slots)
+        (apply #'call-next-method instance new-class unduplicated-slot-names 
+               initargs)
+      (complete-duplicate-unit-instance 
+       new-instance slots space-instances space-instances-p))))
+
+;;; ---------------------------------------------------------------------------
+;;; Create-instance-event signaling is done in these :around methods to follow
+;;; the activities performed by the primary and :before/:after methods.
 
 (defmethod make-duplicate-instance :around ((instance standard-unit-instance)
                                     unduplicated-slot-names
@@ -258,8 +295,25 @@
      :instance new-instance)
     (values new-instance slots)))
 
+;;; ---------------------------------------------------------------------------
+
+(defmethod make-duplicate-instance-changing-class :around 
+           ((instance standard-unit-instance)
+            (new-class standard-unit-instance)
+            unduplicated-slot-names
+            &rest initargs)
+  (declare (dynamic-extent initargs))
+  (multiple-value-bind (new-instance slots)
+      (apply #'call-next-method instance new-class unduplicated-slot-names
+             initargs)
+    ;; signal the creation event:
+    (signal-event-using-class
+     (load-time-value (find-class 'create-instance-event))
+     :instance new-instance)
+    (values new-instance slots)))
+
 ;;; ===========================================================================
-;;;  Saving/Sending Unit Instances
+;;;  Saving/sending unit instances
 
 (defmethod omitted-slots-for-saving/sending ((instance standard-unit-instance))
   (cons '%%marks%% (call-next-method)))
@@ -526,9 +580,9 @@
 
 (defun post-initialize-instance-slots (instance slot-names slots)
   ;; Performs post-initialization slot processing. At least one of
-  ;; `slot-names' or `slots' must be nil (dealing with the different between
-  ;; having the slot-names in initialize-instance or the actual slots in
-  ;; make-duplicate-instance).
+  ;; `slot-names' or `slots' should be nil (dealing with the difference
+  ;; between having the slot-names in INITIALIZE-INSTANCE or the actual slots
+  ;; in MAKE-DUPLICATE-INSTANCE and MAKE-DUPLICATE-INSTANCE-CHANGING-CLASS).
   (let ((unit-class (class-of instance)))
     ;; Link slot processing: fix atomic, non-singular link-slot values and
     ;; create link inverse pointers:
@@ -541,7 +595,7 @@
         (cond 
          ;; link slot:
          ((typep eslotd 'effective-link-definition)
-          (let ((current-value
+          (let ((current-value 
                  (slot-value-using-class unit-class instance eslotd)))
             (when current-value
               (multiple-value-bind (current-value dslotd)
@@ -851,8 +905,8 @@
                   :original-class (class-of instance))
     (when 
         ;; NOTE: CMUCL (at least up through 19f) gets the following TYPEP
-        ;; check on a changed-class instance wrong; we work around that by
-        ;; using a not-inlined TYPEP:
+        ;; check on a changed-class instance wrong. We work around that by not
+        ;; inlining TYPEP:
         (locally #+cmu (declare (notinline typep))
                  (typep instance 'standard-unit-instance))
       (error "The deleted-instance-class ~s is a subclass of ~s"
@@ -894,6 +948,8 @@
         (ecase subclass-indicator
           (:plus-subclasses
            (locally 
+             ;; Avoid compiler warnings (in CMUCL, SBCL, and SCL) due to
+             ;; inability to generate inlined TYPEP at compile time:
              #+(or cmu sbcl scl) (declare (notinline typep))
              (typep object unit-class-name)))
           (:no-subclasses

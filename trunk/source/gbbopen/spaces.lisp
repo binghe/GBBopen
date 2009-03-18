@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/spaces.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Nov 30 17:57:03 2008 *-*
+;;;; *-* Last-Edit: Wed Mar 18 12:01:27 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2003-2009, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -581,7 +581,7 @@
   (change-space-instance space-instance :storage storage-spec))
 
 ;;; ===========================================================================
-;;;  Making Duplicate Unit Instances
+;;;  Duplicating space instances
 
 (defmethod unduplicated-slot-names ((instance standard-space-instance))
   (list* 'instance-counts
@@ -592,31 +592,65 @@
 
 ;;; ---------------------------------------------------------------------------
 
+(defun complete-duplicate-space-instance (new-space-instance 
+                                          slots
+                                          space-name
+                                          parent-space-instance 
+                                          storage)
+  ;;; Perform the completion work for MAKE-DUPLICATE-INSTANCE and
+  ;;; MAKE-DUPLICATE-INSTANCE-CHANGING-CLASS that create new space instances:
+  (setf (standard-space-instance.space-name new-space-instance) space-name)
+  (if parent-space-instance
+      ;; Link to parent space instance:
+      (linkf (slot-value new-space-instance 'parent) parent-space-instance)
+      ;; Add to the top-level space-instances list:
+      (push new-space-instance *top-level-space-instances*))
+  (setup-instance-storage new-space-instance storage)
+  (values new-space-instance slots))
+
+;;; ---------------------------------------------------------------------------
+
 (defmethod make-duplicate-instance ((instance standard-space-instance)
                                     unduplicated-slot-names
                                     &rest initargs
                                     &key instance-name 
                                          make-parents 
                                          storage
-                                         (allowed-unit-classes 't))
-
+                                         (allowed-unit-classes 't)
+                                    &allow-other-keys)
   (declare (dynamic-extent initargs))
   (multiple-value-bind (space-name parent-space-instance)
       (prepare-space-name-and-parents 
        instance-name make-parents allowed-unit-classes)
     (multiple-value-bind (new-instance slots)
         (apply #'call-next-method instance unduplicated-slot-names initargs)
-      (setf (standard-space-instance.space-name new-instance) space-name)
-      (if parent-space-instance
-          ;; Link to parent space instance:
-          (linkf (slot-value instance 'parent) parent-space-instance)
-          ;; Add to the top-level space-instances list:
-          (push instance *top-level-space-instances*))
-      (setup-instance-storage new-instance storage)
-      (values new-instance slots))))
+      (complete-duplicate-space-instance 
+       new-instance slots space-name parent-space-instance storage))))
+
+;;; ---------------------------------------------------------------------------
+
+(defmethod make-duplicate-instance-changing-class
+    ((instance standard-object)
+     (new-class standard-space-class)
+     unduplicated-slot-names
+     &rest initargs
+     &key instance-name 
+          make-parents 
+          storage
+          (allowed-unit-classes 't)
+     &allow-other-keys)
+  (declare (dynamic-extent initargs))
+  (multiple-value-bind (space-name parent-space-instance)
+      (prepare-space-name-and-parents 
+       instance-name make-parents allowed-unit-classes)
+    (multiple-value-bind (new-instance slots)
+        (apply #'call-next-method instance new-class unduplicated-slot-names
+               initargs)
+      (complete-duplicate-space-instance 
+       new-instance slots space-name parent-space-instance storage))))
 
 ;;; ===========================================================================
-;;;   Saving/Sending Space Instances
+;;;   Saving/sending space instances
 
 (defmethod omitted-slots-for-saving/sending ((instance standard-space-instance))
   (list* 'instance-counts
