@@ -5,19 +5,20 @@
 <!-- XML file produced from file: reference.tex
      using Hyperlatex v 2.9-in-waiting-rk (c) Otfried Cheong -->
 <head>
-<title>GBBopen 1.2 Reference -- full-date-and-time</title>
+<title>GBBopen 1.3 Reference -- full-date-and-time</title>
 </p>
 <link rel="SHORTCUT ICON" href="favicon.ico"><link rel=stylesheet
         href="gbbopen.css" type="text/css" />
 </head>
 <body>
 <table width="100%" cellpadding="0" cellspacing="2"><tr>
-<td bgcolor="#99ccff"><a href="ref-brief-run-time-duration.html"><img border="0" alt="brief-run-time-duration" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="ref-date-and-time-entities.html"><img border="0" alt="Date and Time" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-internet-text-date-and-time.html"><img border="0" alt="internet-text-date-and-time" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">full-date-and-time</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table>
+<td bgcolor="#99ccff"><a href="ref-encode-date-and-time.html"><img border="0" alt="encode-date-and-time" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="ref-date-and-time-entities.html"><img border="0" alt="Date and Time" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-internet-text-date-and-time.html"><img border="0" alt="internet-text-date-and-time" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">full-date-and-time</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table>
 
 <p><table class="tight" width="100%">
 <tr valign="top"><td valign="baseline" align="left"%>
-<nobr><b><font color="#000000">full-date-and-time</font></b></nobr></td><td valign="baseline"> &nbsp; </td><td valign="baseline" align="left" width="99%"><code>&#38;optional</code> <var>universal-time time-zone include-seconds
-include-time-zone destination</var>
+<nobr><b><font color="#000000">full-date-and-time</font></b></nobr></td><td valign="baseline"> &nbsp; </td><td valign="baseline" align="left" width="99%"><code>&#38;optional</code> <var>universal-time</var>
+<code>&#38;key</code> <var>time-zone daylight-savings-p include-seconds
+include-time-zone utc-offset-only 12-hour destination</var>
 <span 
     style="font-family: serif; font-style: normal">=&gt;</span> <var>result</var></td><td valign="baseline" align="right">[<i>Function</i>]
 </td></tr></table></p>
@@ -34,8 +35,10 @@ which is equivalent to the value returned by
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>time-zone</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id215">time&nbsp;zone</a> (default is <code>nil</code>,
 which is equivalent to the current time zone adjusted for daylight
 saving time)
-</td></tr><tr valign="top"><td valign="baseline" nowrap><i>include-seconds</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> (default is <code>nil</code>)
+</td></tr><tr valign="top"><td valign="baseline" nowrap><i>daylight-savings-p</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> (default is <code>nil</code>)        </td></tr><tr valign="top"><td valign="baseline" nowrap><i>include-seconds</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> (default is <code>nil</code>)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>include-time-zone</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> (default is <code>nil</code>)
+</td></tr><tr valign="top"><td valign="baseline" nowrap><i>utc-offset-only</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> (default is <code>nil</code>)
+</td></tr><tr valign="top"><td valign="baseline" nowrap><i>12-hour</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> (default is <code>nil</code>)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>destination</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> Either <code>nil</code>, <code>t</code>, a stream, or a string with a fill 
 pointer (default is <code>nil</code>)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>result</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A string or <code>nil</code>
@@ -44,18 +47,33 @@ pointer (default is <code>nil</code>)
 <p><span class="fndoclabel">Returns</span> <br />If <var>destination</var> is non-<code>nil</code>, then <code>nil</code>; otherwise, a string.
 </p>
 <p><span class="fndoclabel">Description</span> <br />A 17-character description (longer if
-<nobr><var>include-seconds</var></nobr> or <nobr><var>include-time-zone</var></nobr> is
-non-<code>nil</code>) is generated.
+<nobr><var>include-seconds</var></nobr>, <nobr><var>include-time-zone</var></nobr>, or
+<nobr><var>utc-offset-only</var></nobr> are non-<code>nil</code>) is generated.
 </p>
 <p><p> 
 <a name="id1">If</a> <nobr><var>universal-time</var></nobr> is not supplied or is <code>nil</code>, the current time
 (as returned by <nobr><code>get-universal-time</code></nobr> is used.
 </p>
 <p><p> 
-If <var>time-zone</var> is not supplied or is <code>nil</code>, it defaults to the
-current time zone adjusted for daylight saving time. If
-<nobr><var>time-zone</var></nobr> is supplied, it is assumed to include any adjustment
-for daylight saving time.
+If <var>time-zone</var> is not supplied or is <code>nil</code>, it defaults to the current
+time zone adjusted for daylight saving time. If a <nobr><var>time-zone</var></nobr> is
+supplied, it is assumed to include any adjustment for daylight saving time.
+</p>
+<p><p> 
+If either <var>include-time-zone</var> or <var>utc-offset-only</var> is true,
+time-zone specification is appended to the date-and-time representation.  If
+<var>utc-offset-only</var> is true, the time zone is represented as a UTC
+offset&mdash;even if a <a href="ref-date-and-time-entities.html#ref:timezones">time-zone abbreviation</a> supported by
+GBBopen Tools is available for the time zone.  If a <nobr><var>time-zone</var></nobr>
+is supplied, the value of <nobr><var>daylight-savings-p</var></nobr> is used when
+generating a non-UTC time zone abbreviation; otherwise, the local
+daylight-savings setting for the <nobr><var>universal-time</var></nobr> value (as
+determined by <code>decode-universal-time</code>) is used, and the
+<nobr><var>daylight-savings-p</var></nobr> argument is ignored.
+</p>
+<p><p> 
+If <var>12-hour</var> is supplied and is non-<code>nil</code>, the time-of-day is represented
+in AM/PM format.
 </p>
 <p><span class="fndoclabel">See also</span>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-month-precedes-date-var.html"><b>*month-precedes-date*</b></a>
@@ -73,49 +91,66 @@ for daylight saving time.
 </pre>
 Display the current date and time (with seconds):
 <pre>
-  &gt; (full-date-and-time nil nil 't)
+  &gt; (full-date-and-time nil :include-seconds't)
   "Feb 16 2009 13:11:38"
   &gt;
 </pre>
 Display the current date and time (with time zone):
 <pre>
-  &gt; (full-date-and-time nil nil nil 't)
+  &gt; (full-date-and-time nil :include-time-zone 't)
   "Feb 16 2009 13:11 EST"
+  &gt;
+</pre>
+Display the current date and time (in 12-hour format with time zone):
+<pre>
+  &gt; (full-date-and-time nil :12-hour 't :include-time-zone 't)
+  "Feb 16 2009 1:11PM EST"
+  &gt;
+</pre>
+Display the current date and time (with UTC-offset time zone):
+<pre>
+  &gt; (full-date-and-time nil :utc-offset-only 't)
+  "Feb 16 2009 13:11 UTC-5"
   &gt;
 </pre>
 Display the current date and time (with seconds and time zone):
 <pre>
-  &gt; (full-date-and-time nil nil 't 't)
+  &gt; (full-date-and-time nil
+      :include-seconds 't 
+      :include-time-zone 't)
   "Feb 16 2009 13:11:38 EST"
   &gt;
 </pre>
 Display the current date and time as GMT: 
 <pre>
-  &gt; (full-date-and-time nil 0)
+  &gt; (full-date-and-time nil :time-zone 0)
   "Feb 16 2009 18:11"
   &gt;
 </pre>
 Display the current date and time as GMT (with time zone):
 <pre>
-  &gt; (full-date-and-time nil 0 nil 't)
+  &gt; (full-date-and-time nil 
+      :time-zone 0 
+      :include-time-zone 't)
   "Feb 16 2009 18:11 GMT"
   &gt;
 </pre>
 The date and time 10 days ago:
-<pre>
-  &gt; (full-date-and-time (- (get-universal-time) (* 60 60 24 10)))
+<a name="id2"></a><pre>
+  &gt; (full-date-and-time (- (get-universal-time) (<a href="ref-parse-duration.html">parse-duration</a> "10 days")))
   "Feb  6 2009 13:11"
   &gt;
 </pre>
 The date and time 125 days ago:
 <pre>
-  &gt; (full-date-and-time (- (get-universal-time) (* 60 60 24 125)))
+  &gt; (full-date-and-time (- (get-universal-time) (<a href="ref-parse-duration.html">parse-duration</a> "125 days")))
   "Oct 12 2008 13:11"
   &gt;
 </pre>
 The date and time 125 days ago (with seconds):
 <pre>
-  &gt; (full-date-and-time (- (get-universal-time) (* 60 60 24 125)) nil 't)
+  &gt; (full-date-and-time (- (get-universal-time) (<a href="ref-parse-duration.html">parse-duration</a> "125d"))
+      :include-seconds 't)
   "Oct 12 2008 13:11:38"
   &gt;
 </pre>
@@ -123,4 +158,4 @@ The date and time 125 days ago (with seconds):
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
 <table width="100%" cellpadding="0" cellspacing="2"><tr>
-<td bgcolor="#99ccff"><a href="ref-brief-run-time-duration.html"><img border="0" alt="brief-run-time-duration" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="ref-date-and-time-entities.html"><img border="0" alt="Date and Time" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-internet-text-date-and-time.html"><img border="0" alt="internet-text-date-and-time" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">full-date-and-time</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table></body></html>
+<td bgcolor="#99ccff"><a href="ref-encode-date-and-time.html"><img border="0" alt="encode-date-and-time" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="ref-date-and-time-entities.html"><img border="0" alt="Date and Time" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-internet-text-date-and-time.html"><img border="0" alt="internet-text-date-and-time" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">full-date-and-time</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table></body></html>

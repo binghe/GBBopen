@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Mar  2 12:26:23 2009 *-*
+;;;; *-* Last-Edit: Fri Mar 20 02:23:04 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -43,7 +43,6 @@
 ;;;  11-02-05 Added CormanLisp support.  (Corkill)
 ;;;  11-30-05 Rewrote LIST-LENGTH=1 as LIST-LENGTH-1-P.  (Corkill)
 ;;;  02-13-06 Added GCL support.  (Corkill)
-;;;  03-11-06 Depreciated ASSURE-LIST.  (Corkill)
 ;;;  03-12-06 Added LIST-LENGTH-2-P.  (Corkill)
 ;;;  03-18-06 Added DOSEQUENCE.  (Corkill)
 ;;;  04-07-06 Added SHUFFLE-LIST.  (Corkill)

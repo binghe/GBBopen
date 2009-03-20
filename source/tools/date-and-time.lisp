@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/date-and-time.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Mar  5 11:27:20 2009 *-*
+;;;; *-* Last-Edit: Fri Mar 20 12:59:33 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -22,8 +22,8 @@
 ;;;  05-16-08 File split from tools.lisp.  (Corkill)
 ;;;  03-20-04 Added pretty time-duration functions.  (Corkill)
 ;;;  02-08-09 Added PARSE-DURATION function.  (Corkill)
-;;;  03-05-09 Added BRIEF-DURATION and BRIEF-RUN-TIME-DURATION functions.
-;;;           (Corkill)
+;;;  03-05-09 Added BRIEF-DURATION, BRIEF-RUN-TIME-DURATION, and
+;;;           PARSE-TIME functions.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -34,6 +34,7 @@
             module-manager::*month-name-vector*
             module-manager:brief-date
             module-manager:brief-date-and-time
+            module-manager::decode-supplied-universal-time
             module-manager:parse-date)))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
@@ -46,205 +47,453 @@
             internet-text-date-and-time
             iso8661-date-and-time
             message-log-date-and-time
+            encode-date-and-time        ; not documented yet
             parse-date                  ; also from module-manager.lisp
+            parse-date-and-time         ; not documented yet
             parse-duration
-            pretty-duration
+            parse-time                  ; not documented yet
             parse-time-interval         ; older, deprecated name
-            pretty-time-interval        ; older, deprecated name
+            pretty-duration
             pretty-run-time-duration
             pretty-run-time-interval    ; older, deprecated name
+            pretty-time-interval        ; older, deprecated name
+            time-zone-offset            ; not documented yet
             )))
 
 ;;; ===========================================================================
 ;;;  Time parsing and formatting
 
-;;; Defined in ../module-manager/module-manager.lisp:
-;;;  (defvar *month-precedes-date* 't) and 
-;;;   (defparameter *month-name-vector* ...)
+;;; The following globals are defined in ../module-manager/module-manager.lisp:
+;;;    (defvar *month-precedes-date* 't) 
+;;;    (defparameter *month-name-vector* ...)
 
 (defparameter *weekday-name-vector*
     #("Mon" "Tue" "Wed" "Thu" "Fri" "Sat" "Sun"))
 
-;;; ---------------------------------------------------------------------------
+(defparameter *standard-time-zone-abbreviations*
+    ;; Time-zone abbreviations are not unique or universal, and the same hour
+    ;; offset can map onto several different zone abbreviations; the following
+    ;; choices of supported standard-time abbreviations were made arbitrarily:
+    '((1 . "WAT")     ;; West Africa (also Cape Verdes Islands, Atlantic Ocean)
+      (2 . "AT")      ;; Azores
+      (7/2 . "NST")   ;; Newfoundland
+      (4 . "AST")     ;; Atlantic
+      (5 . "EST")     ;; Eastern (US)
+      (6 . "CST")     ;; Central (US)
+      (7 . "MST")     ;; Mountain (US)
+      (8 . "PST")     ;; Pacific (US)
+      (9 . "AKST")    ;; Alaska
+      (10 . "HAST")   ;; Hawaii-Aleutian
+      (11 . "NT")     ;; Nome
+      (12 . "IDLW")   ;; International Dateline West
+      (0 . "GMT")     ;; Greenwich (also Portugal, Reykjavik (Iceland), 
+                      ;; Western Africa)
+      (-1 . "CET")    ;; Central European (also Algeria, Nigeria, Angola)
+      (-2 . "EET")    ;; Eastern European (also Finland, Balkans, Libya, Egypt, 
+                      ;; South Africa)
+      (-3 . "MSK")    ;; Moscow (also Baghdad, Eastern Africa, Ethiopia, Kenya, 
+                      ;; Tanzania)
+      (-4 . "ZP4")    ;; Samara (Russia Zone 3)
+      (-5 . "ZP5")    ;; Yekaterinburg (Russia Zone 4)
+      (-11/2 . "IST") ;; Indian
+      (-6 . "ZP6")    ;; Omsk (Russia Zone 5), Bangladesh)
+      (-7 . "WAST")   ;; West Austrailian Standard (also Christmas Island, 
+                      ;; Krasnoyarsk (Russia Zone 6), Western Indonesia)
+      (-8 . "AWST")   ;; Australian Western (also Irkutsk (Russia Zone 7), 
+                      ;; China, Hong Kong, Philippines, Central Indonesia)
+      (-9 . "JST")    ;; Japan (also Yakutsk (Russia Zone 8), Korea, 
+                      ;; Eastern Indonesia)
+      (-19/2 . "ACST");; Australian Central
+      (-10 . "AEST")  ;; Australian Eastern (also Vladivostok (Russia Zone 9),
+                      ;; Papua New Guinea)
+      (-21/2 . "NFT") ;; Norfolk (Island)
+      (-12 . "NZST")  ;; New Zealand (also Kamchatka (Russia), Fiji, 
+                      ;; Marshall Islands)
+      ;;; --------------------------------------------------------------------
+      ;;;  Additional abbreviations (hourly offset duplicates--used for
+      ;;;  decoding only):
+      ))
 
-(defun time-zone-abbreviation (zone daylight-savings-p)
-  ;;; Return a time-zone abbreviation string for `zone;' `zone' is a rational
-  ;;; with decode-universal-time semantics.
-  (or
-   (cdr (assoc zone                      
-               (if daylight-savings-p
-                   '((7/2 . "NDT")      ; Newfoundland Daylight
-                     (4 . "ADT")        ; Atlantic Daylight
-                     (5 . "EDT")        ; Eastern Daylight (US)
-                     (6 . "CDT")        ; Central Daylight (US)
-                     (7 . "MDT")        ; Mountain Daylight (US)
-                     (8 . "PDT")        ; Pacific Daylight (US)
-                     (9 . "AKDT")       ; Alaska
-                     (10 . "HADT")      ; Hawaii-Aleutian Daylight
-                     (0 . "BST")        ; British Summer
-                     (-1 . "CEDT")      ; Central European Daylight
-                     (-2 . "EEDT")      ; Eastern European Daylight
-                     (-3 . "MSD")       ; Moscow Daylight
-                     (-8 . "AWDT")      ; Australian Western Daylight
-                     (-19/2 . "ACSD")   ; Australian Central Daylight
-                     (-10 . "AEDT"))    ; Australian Eastern Daylight
-                   '((1 . "WAT")        ; West Africa (also Cape Verdes
-                                        ;   Islands, Atlantic Ocean)
-                     (2 . "AT")         ; Azores
-                     (7/2 . "NST")      ; Newfoundland
-                     (4 . "AST")        ; Atlantic
-                     (5 . "EST")        ; Eastern (US)
-                     (6 . "CST")        ; Central (US)
-                     (7 . "MST")        ; Mountain (US)
-                     (8 . "PST")        ; Pacific (US)
-                     (9 . "AKST")       ; Alaska
-                     (10 . "HAST")      ; Hawaii-Aleutian
-                     (11 . "NT")        ; Nome
-                     (12 . "IDLW")      ; International Dateline West
-                     (0 . "GMT")        ; Greenwich (also Portugal, Reykjavik
-                                        ;   (Iceland), Western Africa)
-                     (-1 . "CET")       ; Central European (also Algeria,
-                                        ;   Nigeria, Angola)
-                     (-2 . "EET")       ; Eastern European (also Finland,
-                                        ;   Balkans, Libya, Egypt, South
-                                        ;   Africa)
-                     (-3 . "MSK")       ; Moscow (also Baghdad, Eastern
-                                        ;   Africa, Ethiopia, Kenya, Tanzania)
-                     (-4 . "ZP4")       ; Samara (Russia Zone 3)
-                     (-5 . "ZP5")       ; Yekaterinburg (Russia Zone 4)
-                     (-11/2 . "IST")    ; Indian
-                     (-6 . "ZP6")       ; Omsk (Russia Zone 5), Bangladesh)
-                     (-7 . "WAST")      ; West Austrailian Standard (also
-                                        ;   Christmas Island, Krasnoyarsk
-                                        ;   (Russia Zone 6), Western Indonesia)
-                     (-8 . "AWST")      ; Australian Western (also Irkutsk
-                                        ;   (Russia Zone 7), China, Hong Kong,
-                                        ;   Philippines, Central Indonesia)
-                     (-9 . "JST")       ; Japan (also Yakutsk (Russia Zone 8),
-                                        ;   Korea, Eastern Indonesia)
-                     (-19/2 . "ACST")   ; Australian Central
-                     (-10 . "AEST")     ; Australian Eastern (also Vladivostok
-                                        ;   (Russia Zone 9), Papua New Guinea)
-                     (-21/2 . "NFT")    ; Norfolk (Island)
-                     (-12 . "NZST"))))) ; New Zealand (also Kamchatka
-                                        ;   (Russia), Fiji, New Zealand,
-                                        ;   Marshall Islands)
-   ;; No abbreviation from above:
-   (let ((utc-zone (if (integerp zone)
-                       (-& zone)
-                       (-$ (float zone)))))
-     (format nil "UTC~:[~@f~;~@d~]"
-             (integerp utc-zone)
-             (if daylight-savings-p
-                 (1+ utc-zone)
-                 utc-zone)))))
+(defparameter *daylight-time-zone-abbreviations*
+    ;; Time-zone abbreviations are not unique or universal, and the same hour
+    ;; offset can map onto several different zone abbreviations; the following
+    ;; choices of supported daylight-savings abbreviations were made
+    ;; arbitrarily:
+    '((7/2 . "NDT")   ;; Newfoundland Daylight
+      (4 . "ADT")     ;; Atlantic Daylight
+      (5 . "EDT")     ;; Eastern Daylight (US)
+      (6 . "CDT")     ;; Central Daylight (US)
+      (7 . "MDT")     ;; Mountain Daylight (US)
+      (8 . "PDT")     ;; Pacific Daylight (US)
+      (9 . "AKDT")    ;; Alaska Daylight
+      (10 . "HADT")   ;; Hawaii-Aleutian Daylight
+      (0 . "BST")     ;; British Summer
+      (-1 . "CEDT")   ;; Central European Daylight
+      (-2 . "EEDT")   ;; Eastern European Daylight
+      (-3 . "MSD")    ;; Moscow Daylight
+      (-8 . "AWDT")   ;; Australian Western Daylight
+      (-19/2 . "ACSD");; Australian Central Daylight
+      (-10 . "AEDT") ;; Australian Eastern Daylight
+      ;;; --------------------------------------------------------------------
+      ;;;  Additional abbreviations (hourly offset duplicates--used for
+      ;;;  decoding only):
+      ))
 
 ;;; ---------------------------------------------------------------------------
 
-(defun full-date-and-time (&optional time
-                                     time-zone
-                                     include-seconds
-                                     include-time-zone
-                                     (destination nil))
-  ;;;  Returns formatted date/time string (always includes date and time-of-day)
-  (unless time (setf time (get-universal-time)))
-  (multiple-value-bind (second minute hour date month year
-                        day daylight-savings-p zone)      
-      (if time-zone 
-          (decode-universal-time time time-zone)
-          (decode-universal-time time))
-    (declare (ignore day))
-    (let ((month-name (svref (the (simple-array t (*))
-                               *month-name-vector*)
-                             (& (1- (& month))))))
-      (if *month-precedes-date*
-          (format destination "~a ~2d ~a ~2,'0d:~2,'0d~:[~*~;:~2,'0d~]~@[ ~a~]"
-                  month-name
-                  date
-                  year
-                  hour
-                  minute
-                  include-seconds
-                  second
-                  (and include-time-zone
-                       (time-zone-abbreviation zone daylight-savings-p)))
-          (format destination "~2d ~a ~a ~a ~2,'0d:~2,'0d~:[~*~;:~2,'0d~]~@[ ~a~]"
-                  date
-                  month-name
-                  year
-                  hour
-                  minute
-                  include-seconds
-                  second
-                  (and include-time-zone
-                       (time-zone-abbreviation zone daylight-savings-p)))))))
+(defun junk-in-string-error (string)
+  (error "There's junk in this string: ~s" string))
 
+;;; ---------------------------------------------------------------------------
+
+(defun time-zone-abbreviation (zone daylight-savings-p utc-only-p)
+  ;;; Return a time-zone abbreviation string for `zone'; `zone' is a rational
+  ;;; with DECODE-UNIVERSAL-TIME semantics.
+  (or (unless utc-only-p
+        (cdr (assoc zone                      
+                    (if daylight-savings-p
+                        *daylight-time-zone-abbreviations*
+                        *standard-time-zone-abbreviations*))))
+      ;; No abbreviation from above:
+      (let ((utc-zone (if (integerp zone)
+                          (-& zone)
+                          (-$ (float zone)))))
+        (format nil "UTC~:[~@f~;~@d~]"
+                (integerp utc-zone)
+                (if daylight-savings-p
+                    (1+ utc-zone)
+                    utc-zone)))))
+
+;;; ---------------------------------------------------------------------------
+
+(defun time-zone-offset (string &key (start 0)
+                                     (junk-allowed nil)
+                                     (separators " :"))
+  ;;; Return a time-zone offset given an abbreviation-string in `string'
+  ;;; starting at `start', daylight-savings-p if the abbreviation-string
+  ;;; represents a daylight-savings time, and the ending position of the
+  ;;; time-zone-offset parse.  The returned time-zone offset is a rational
+  ;;; with DECODE-UNIVERSAL-TIME semantics.
+  (let ((string-length (length string))
+        (daylight-savings-p nil)            
+        pos)
+    (labels ((skip-separators ()
+               (loop 
+                   while (and (< (& pos) (& string-length))
+                              (find (schar string pos) separators))
+                   do (incf& pos)))
+             (find-zone (zone-abbr &optional signed-digit-separators)
+               (let* ((zone-abbr-length (length zone-abbr))
+                      (end (+& start zone-abbr-length)))
+                 (when (and (>=& (-& string-length start) zone-abbr-length)
+                            (string-equal zone-abbr string :start2 start :end2 end)
+                            ;; Must be at end of string or have a following
+                            ;; separator (or signed-digit-separator) char:
+                            (or (=& end string-length)
+                                (find (schar string end) separators)
+                                (find (schar string end) 
+                                      signed-digit-separators)))
+                   (setf pos end)
+                   (skip-separators)
+                   ;; success:
+                   't))))
+      (let ((result
+             (or (car (rassoc-if 
+                       #'find-zone 
+                       *standard-time-zone-abbreviations*))
+                 (let ((dst-offset 
+                        (car (rassoc-if 
+                              #'find-zone 
+                              *daylight-time-zone-abbreviations*))))
+                   (when dst-offset 
+                     (setf daylight-savings-p 't)
+                     (1-& dst-offset)))
+                 (and (find-zone "UTC" "+-")
+                      (let (utc-offset
+                            (initial-pos pos))
+                        (multiple-value-setq (utc-offset pos)
+                          (parse-integer string 
+                                         :start pos
+                                         :junk-allowed 't))
+                        (cond 
+                         ;; A lone + or - sign is junk:
+                         ((and (not utc-offset)
+                               (=& (1+& initial-pos) pos))
+                          (if junk-allowed
+                              (setf pos initial-pos)
+                              (junk-in-string-error string)))
+                         (t (skip-separators)))
+                        (or (and utc-offset (-& utc-offset))
+                            0))))))
+        ;; skip separators when no zone abbreviation was found:
+        (unless result
+          (setf pos start)
+          (skip-separators))
+        ;; check for junk:
+        (unless (or junk-allowed 
+                    (=& pos string-length))
+          (junk-in-string-error string))
+        (values result daylight-savings-p pos)))))
+
+;;; ---------------------------------------------------------------------------
+
+(locally
+  ;; SBCL (rightly) complains about combining &optional and &key, but we
+  ;; ignore that here:
+  #+sbcl (declare (sb-ext:muffle-conditions style-warning))
+  (defun full-date-and-time (&optional universal-time
+                             &key time-zone
+                                  daylight-savings-p
+                                  include-seconds
+                                  include-time-zone
+                                  utc-offset-only
+                                  12-hour
+                                  destination)
+    ;;;  Returns formatted date/time string (always includes date and time-of-day)
+    (multiple-value-bind (second minute hour date month year
+                          day local-daylight-savings-p zone)      
+        (decode-supplied-universal-time universal-time time-zone)
+      (declare (ignore day))
+      (let ((month-name (svref (the (simple-array t (*))
+                                 *month-name-vector*)
+                               (& (1- (& month)))))
+            (am/pm (when 12-hour
+                     (cond ((>=& hour 12)
+                            (when (>=& hour 13)
+                              (decf& hour 12))
+                            "PM")
+                           (t (when (zerop& hour) (setf hour 12))
+                              "AM"))))
+            (time-zone-abbreviation
+             (when (or include-time-zone utc-offset-only)
+               (time-zone-abbreviation
+                zone
+                ;; If a `time-zone' was specified, the user must specify
+                ;; whether daylight savings is applicable to the decoded
+                ;; universal-time; otherwise, we use the local
+                ;; daylight-savings-p determined by DECODE-UNIVERSAL-TIME:
+                (if time-zone                   
+                    daylight-savings-p
+                    local-daylight-savings-p)
+                utc-offset-only))))
+        (if *month-precedes-date*
+            (format destination
+                    "~a ~2d ~a ~2,'0d:~2,'0d~:[~*~;:~2,'0d~]~@[~a~]~@[ ~a~]"
+                    month-name
+                    date
+                    year
+                    hour
+                    minute
+                    include-seconds
+                    second
+                    am/pm
+                    time-zone-abbreviation)
+            (format destination 
+                    "~2d ~a ~a ~a ~2,'0d:~2,'0d~:[~*~;:~2,'0d~]~@[~a~]~@[ ~a~]"
+                    date
+                    month-name
+                    year
+                    hour
+                    minute
+                    include-seconds
+                    second
+                    am/pm
+                    time-zone-abbreviation))))))
+  
 ;;; ---------------------------------------------------------------------------
 ;;;  message-log-date-and-time
 
-(defun message-log-date-and-time (&optional time
-                                            (destination nil))
-  ;; Writes or returns a string representing local time in "message log"
-  ;; format: MMM DD HH:MM:SS
-  (unless time (setf time (get-universal-time)))
-  (multiple-value-bind (second minute hour date month)
-      (decode-universal-time time)
-    (format destination
-            "~a ~2,'0d ~2,'0d:~2,'0d:~2,'0d"
-            (svref *month-name-vector* (1-& month))
-            date
-            hour
-            minute
-            second)))
-
+(locally
+  ;; SBCL (rightly) complains about combining &optional and &key, but we
+  ;; ignore that here:
+  #+sbcl (declare (sb-ext:muffle-conditions style-warning))
+  (defun message-log-date-and-time (&optional universal-time
+                                    &key destination)
+    ;; Writes or returns a string representing local time in "message log"
+    ;; format: MMM DD HH:MM:SS
+    (multiple-value-bind (second minute hour date month)
+        (decode-supplied-universal-time universal-time nil)
+      (format destination
+              "~a ~2,'0d ~2,'0d:~2,'0d:~2,'0d"
+              (svref *month-name-vector* (1-& month))
+              date
+              hour
+              minute
+              second))))
+  
 ;;; ---------------------------------------------------------------------------
 ;;;  ISO8661-date-and-time
 
-(defun iso8661-date-and-time (&optional time
-                                        (destination nil))
-  ;; Writes or returns a string representing time in ISO8661 (XML dateTime) 
-  ;; format
-  (unless time (setf time (get-universal-time)))
-  (multiple-value-bind (second minute hour date month year)
-      (decode-universal-time time 0)
-    (format destination
-            "~4,'0d-~2,'0d-~2,'0dT~2,'0d:~2,'0d:~2,'0dZ"
-            year
-            month
-            date
-            hour
-            minute
-            second)))
+(locally
+  ;; SBCL (rightly) complains about combining &optional and &key, but we
+  ;; ignore that here:
+  #+sbcl (declare (sb-ext:muffle-conditions style-warning))
+  (defun iso8661-date-and-time (&optional universal-time
+                                &key destination)
+    ;; Writes or returns a string representing time in ISO8661 (XML dateTime) 
+    ;; format
+    (multiple-value-bind (second minute hour date month year)
+        (decode-supplied-universal-time universal-time 0)
+      (format destination
+              "~4,'0d-~2,'0d-~2,'0dT~2,'0d:~2,'0d:~2,'0dZ"
+              year
+              month
+              date
+              hour
+              minute
+              second))))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Internet-text-date-and-time
 
-(defun internet-text-date-and-time (&optional time
-                                              time-zone
-                                              (destination nil))
-  ;;; Returns a string representing time in Internet Text Message format
-  (unless time (setf time (get-universal-time)))
+(locally
+  ;; SBCL (rightly) complains about combining &optional and &key, but we
+  ;; ignore that here:
+  #+sbcl (declare (sb-ext:muffle-conditions style-warning))
+  (defun internet-text-date-and-time (&optional universal-time
+                                      &key time-zone
+                                           daylight-savings-p
+                                           utc-offset-only
+                                           destination)
+    ;;; Returns a string representing time in Internet Text Message format
+    (multiple-value-bind (second minute hour date month year 
+                          day local-daylight-savings-p zone)
+        (decode-supplied-universal-time universal-time time-zone)
+      (let ((zone-value (*& -100 (if daylight-savings-p
+                                     (1-& zone)
+                                     zone))))
+        (format destination
+                "~a, ~2,'0d ~a ~a ~2,'0d:~2,'0d:~2,'0d ~a~4,'0d~@[ (~a)~]"
+                (svref *weekday-name-vector* day)
+                date
+                (svref *month-name-vector* (1-& month))
+                year
+                hour
+                minute
+                second
+                ;; we do want -0000!
+                (if (plusp& zone-value) "+" "-")
+                (abs& zone-value)
+                (time-zone-abbreviation
+                 zone 
+                 ;; If a `time-zone' was specified, the user must specify
+                 ;; whether daylight savings is applicable to the decoded
+                 ;; universal-time; otherwise, we use the local
+                 ;; daylight-savings-p determined by DECODE-UNIVERSAL-TIME:
+                 (if time-zone                   
+                     daylight-savings-p
+                     local-daylight-savings-p)
+                 utc-offset-only))))))
+  
+;;; ---------------------------------------------------------------------------
+
+(defun parse-time (string &key (start 0) 
+                               (end (length string))
+                               (junk-allowed nil)
+                               (separators " :"))
+  (declare (simple-string string))
+  (flet ((skip-separators ()
+           (loop 
+               while (and (<& start end)
+                          (find (schar string start) separators))
+               do (incf& start))))
+    (let ((hour 0)
+          (minute 0)
+          (second 0)
+          maybe-pos)
+      (skip-separators)
+      (when (<& start end)
+        (multiple-value-setq (hour start)
+          (parse-integer string :start start :end end :junk-allowed 't))
+        (setf maybe-pos start))
+      (when (and hour (<& start end))
+        (skip-separators)
+        (multiple-value-setq (minute start)
+          (parse-integer string :start start :end end :junk-allowed 't))
+        (when minute
+          (setf maybe-pos start)
+          (when (<& start end)
+            (skip-separators)
+            (multiple-value-setq (second start)
+              (parse-integer string :start start :end end :junk-allowed 't))
+            (when second (setf maybe-pos start)))))
+      (skip-separators)
+      ;; Check for am/pm:
+      (when (>=& (-& end start) 2)
+        (let ((end2 (+& start 2))) 
+          (cond 
+           ((and (string-equal "AM" string :start2 start :end2 end2)
+                 (or (=& end2 end)
+                     (find (schar string end2) separators)))
+            (when (=& hour 12) (setf hour 0))
+            (incf& start 2)
+            (setf maybe-pos start)
+            (skip-separators))
+           ((and (string-equal "PM" string :start2 start :end2 (+& start 2))
+                 (or (=& end2 end)
+                     (find (schar string end2) separators)))
+            (when (<& hour 12)
+              (incf& hour 12))
+            (incf& start 2)
+            (setf maybe-pos start)
+            (skip-separators)))))
+      ;; Check for a time-zone offset:
+      (multiple-value-bind (time-zone-offset daylight-savings-p tzo-pos)
+          (time-zone-offset string 
+                            :start start
+                            :junk-allowed junk-allowed
+                            :separators separators)
+        (values (or second 0)
+                (or minute 0)
+                hour 
+                time-zone-offset
+                daylight-savings-p
+                (if time-zone-offset
+                    tzo-pos
+                    (if (=& start end) 
+                        start
+                        (or maybe-pos start))))))))
+
+;;; ---------------------------------------------------------------------------
+
+(defun parse-date-and-time (string
+                            &key (start 0) 
+                                 (end (length string))
+                                 (junk-allowed nil)
+                                 (date-separators "-/ ,")
+                                 (time-separators " :")
+                                 (month-precedes-date *month-precedes-date*))
+  (multiple-value-bind (date month year start)
+      (parse-date string 
+                  :start start :end end 
+                  :junk-allowed 't
+                  :separators date-separators
+                  :month-precedes-date month-precedes-date)
+    (multiple-value-bind (second minute hour 
+                          time-zone daylight-savings-p start)
+        (parse-time string 
+                    :start start :end end 
+                    :junk-allowed junk-allowed
+                    :separators time-separators)
+      (values second minute hour date month year 
+              time-zone daylight-savings-p start))))
+
+;;; ---------------------------------------------------------------------------
+
+(defun encode-date-and-time (string &rest args)
+  (declare (dynamic-extent args))
   (multiple-value-bind (second minute hour date month year 
-                        day daylight-savings-p zone)
-      (if time-zone
-          (decode-universal-time time time-zone)
-          (decode-universal-time time))
-    (let ((zone-value (*& -100 (if daylight-savings-p
-                                   (1-& zone)
-                                   zone))))
-      (format destination
-              "~a, ~2,'0d ~a ~a ~2,'0d:~2,'0d:~2,'0d ~a~4,'0d~@[ (~a)~]"
-              (svref *weekday-name-vector* day)
-              date
-              (svref *month-name-vector* (1-& month))
-              year
-              hour
-              minute
-              second
-              ;; we do want -0000!
-              (if (plusp& zone-value) "+" "-")
-              (abs& zone-value)
-              (time-zone-abbreviation zone daylight-savings-p)))))
+                        time-zone daylight-savings-p start)
+      (apply #'parse-date-and-time string args)
+    (declare (ignore daylight-savings-p))
+    (values
+     (cond 
+      ;; A time zone was specified in the string:
+      (time-zone
+       (encode-universal-time second minute hour date month year time-zone))
+      ;; Use the local time zone:
+      (t (encode-universal-time second minute hour date month year)))
+     start)))
 
 ;;; ===========================================================================
 ;;;   Duration entities
@@ -332,8 +581,8 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun brief-duration (duration-in-seconds 
-                            &optional (maximum-fields 5)
-                                      (destination nil))
+                       &optional (maximum-fields 5)
+                                 (destination nil))
   ;;; Converts `seconds' to a brief time-duration string (rounded to the
   ;;; nearest 100th of a second):
   (multiple-value-bind (negative-p days-p days hours-p hours 
@@ -411,6 +660,9 @@
   
 
 ;; Old, deprecated, function name:
+(defun pretty-time-interval (duration-in-seconds)
+  (pretty-duration duration-in-seconds))
+
 (defcm pretty-time-interval (duration-in-seconds)
   `(pretty-duration ,duration-in-seconds))
 
@@ -439,10 +691,13 @@
                    destination))
 
 ;; Old, deprecated, function name:
-(defcm pretty-run-time-interval (internal-run-time 
+(defun pretty-run-time-interval (internal-run-time 
                                  &optional (maximum-fields 5)
-                                 (destination nil))
-  `(pretty-run-time-duration ,internal-run-time ,maximum-fields, destination))
+                                           (destination nil))
+  (pretty-run-time-duration internal-run-time maximum-fields destination))
+
+(defcm pretty-run-time-interval (&rest args)
+  `(pretty-run-time-duration ,@args))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -538,7 +793,7 @@
                   (setf value (/ value denominator)))))))
           (unless value 
             (when (=& start end)
-              (return-from parse-duration result))
+              (return-from parse-duration (values result start)))
             (no-numeric-value-error start end))
           (skip-separators)
           (let ((token-start start))
@@ -560,10 +815,14 @@
                          value))
                 (setf value (* value (cdr unit-acons)))
                 (if negative? (decf result value) (incf result value)))))))
-      result)))
+      (values result start))))
 
 ;; Old, deprecated, function name:
-(defcm parse-time-interval (args)
+(defun parse-time-interval (&rest args)
+  (declare (dynamic-extent args))
+  (apply 'parse-duration args))
+
+(defcm parse-time-interval (&rest args)
   `(parse-duration ,@args))
 
 ;;; ===========================================================================

@@ -5,21 +5,22 @@
 <!-- XML file produced from file: reference.tex
      using Hyperlatex v 2.9-in-waiting-rk (c) Otfried Cheong -->
 <head>
-<title>GBBopen 1.2 Reference -- parse-date</title>
+<title>GBBopen 1.3 Reference -- parse-date</title>
 </p>
 <link rel="SHORTCUT ICON" href="favicon.ico"><link rel=stylesheet
         href="gbbopen.css" type="text/css" />
 </head>
 <body>
 <table width="100%" cellpadding="0" cellspacing="2"><tr>
-<td bgcolor="#99ccff"><a href="ref-message-log-date-and-time.html"><img border="0" alt="message-log-date-and-time" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="ref-date-and-time-entities.html"><img border="0" alt="Date and Time" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-parse-duration.html"><img border="0" alt="parse-duration" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">parse-date</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table>
+<td bgcolor="#99ccff"><a href="ref-message-log-date-and-time.html"><img border="0" alt="message-log-date-and-time" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="ref-date-and-time-entities.html"><img border="0" alt="Date and Time" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-parse-date-and-time.html"><img border="0" alt="parse-date-and-time" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">parse-date</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table>
 
 <p><table class="tight" width="100%">
 <tr valign="top"><td valign="baseline" align="left"%>
 <nobr><b><font color="#000000">parse-date</font></b></nobr></td><td valign="baseline"> &nbsp; </td><td valign="baseline" align="left" width="99%"><var>string</var>
-<code>&#38;key</code> <var>start end junk-allowed separators month-precedes-date</var>
+<code>&#38;key</code> <var>start end <nobr>junk-allowed</nobr> <nobr>separators</nobr>
+<nobr>month-precedes-date</nobr></var>
 <nobr><span 
-    style="font-family: serif; font-style: normal">=&gt;</span> <var>date, month, year</var></nobr></td><td valign="baseline" align="right">[<i>Function</i>]
+    style="font-family: serif; font-style: normal">=&gt;</span> <var>date, month, year, <nobr>position</nobr></var></nobr></td><td valign="baseline" align="right">[<i>Function</i>]
 </td></tr></table></p>
 <p><span class="fndoclabel">Purpose</span> <br />Parse a date-specification string.
 </p>
@@ -42,9 +43,11 @@ date, month, and year fields in <var>string</var>, if needed (default is
 on the month and year
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>month</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An integer between 1 and 12, inclusive
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>year</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An integer
+</td></tr><tr valign="top"><td valign="baseline" nowrap><i>position</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A index in <var>string</var>
 </td></tr></table>
 </p>
-<p><span class="fndoclabel">Returns</span> <br />Three values: <var>date</var>, <var>month</var>, and <var>year</var>
+<p><span class="fndoclabel">Returns</span> <br />Four values: <var>date</var>, <var>month</var>, <var>year</var>, and
+<nobr><var>position</var></nobr>
 </p>
 <p><span class="fndoclabel">Errors</span> <br />If <var>junk-allowed</var> is false, an error is signaled if a numeric field in
 <var>string</var> does not consist entirely of the representation of a integer,
@@ -58,35 +61,52 @@ determine the month and date ordering. If no year is specified in
 <var>string</var>, the current year is assumed, unless the specified month and date
 have passed, in which case next year is assumed.
 </p>
+<p>The returned <var>position</var> is the index within <var>string</var> where the
+parse ended.
+</p>
 <p><span class="fndoclabel">See also</span>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-month-precedes-date-var.html"><b>*month-precedes-date*</b></a>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-encode-date-and-time.html"><b>encode-date-and-time</b></a>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-parse-date-and-time.html"><b>parse-date-and-time</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-parse-duration.html"><b>parse-duration</b></a>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-parse-time.html"><b>parse-time</b></a>
 </p>
 <p><span class="fndoclabel">Examples</span> <br /><pre class="pretop">
   &gt; (parse-date "1 Apr 2010")
   1
   4
   2010
+  10
   &gt; (parse-date "April 1, 2010")
   1
   4
   2010
+  13
   &gt; (parse-date "1-4-10" :month-precedes-date 't)
   4
   1
   2010
+  6
   &gt; (parse-date "1-4-10" :month-precedes-date nil)
   1
   4
   2010
+  6
   &gt; (parse-date "4 Jul") <font color="#667f66">;; entered before July 4, 2008</font>
   4
   7
   2008
-  &gt; (parse-date "4/7" :month-precedes-date nil)
+  5
+  &gt; (parse-date "4/7  " :month-precedes-date nil)
   4
   7
   2008
+  5
+  &gt; (parse-date "4/7  junk" :junk-allowed 't)
+  7
+  4
+  2008
+  5
   &gt;
 </pre>
 </p>
@@ -96,4 +116,4 @@ in order to to make it available as early as possible.
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
 <table width="100%" cellpadding="0" cellspacing="2"><tr>
-<td bgcolor="#99ccff"><a href="ref-message-log-date-and-time.html"><img border="0" alt="message-log-date-and-time" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="ref-date-and-time-entities.html"><img border="0" alt="Date and Time" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-parse-duration.html"><img border="0" alt="parse-duration" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">parse-date</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table></body></html>
+<td bgcolor="#99ccff"><a href="ref-message-log-date-and-time.html"><img border="0" alt="message-log-date-and-time" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="ref-date-and-time-entities.html"><img border="0" alt="Date and Time" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-parse-date-and-time.html"><img border="0" alt="parse-date-and-time" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">parse-date</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table></body></html>

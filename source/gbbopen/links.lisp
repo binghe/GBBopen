@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/links.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Feb 19 15:41:43 2009 *-*
+;;;; *-* Last-Edit: Wed Mar 18 14:36:26 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2002-2008, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2009, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -43,8 +43,7 @@
 (in-package :gbbopen)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (export '(check-link-consistency      ; deprecated, remove in 1.3
-            check-link-definitions
+  (export '(check-link-definitions
 	    link-setf
 	    linkf
 	    unlinkf
@@ -645,10 +644,6 @@
     (when (and result (not silent))
       (format t "~&;; All link definitions are consistent.~%"))
     result))
-
-;; Deprecated name, remove in 1.3:
-(defun check-link-consistency (&optional silent)
-  (check-link-definitions silent))
 
 ;;; ===========================================================================
 ;;;				  End of File
