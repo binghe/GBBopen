@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/module-manager/module-manager.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Feb 11 02:23:46 2009 *-*
+;;;; *-* Last-Edit: Fri Mar 20 12:45:50 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -93,6 +93,8 @@
 ;;;           DEFINE-ROOT-DIRECTORY and incremented version to 1.3.  (Corkill)
 ;;;  05-15-08 Added PARSE-DATE.  (Corkill)
 ;;;  06-23-08 Added BRIEF-DATE.  (Corkill)
+;;;  03-06-09 Added ending bounding-index second return value to PARSE-DATE.
+;;;           (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -274,7 +276,7 @@
 
 (allow-redefinition
  (defun module-manager-implementation-version ()
-   "1.5"))
+   "1.6"))
 
 ;;; Added to *features* at the end of this file:
 (defparameter *module-manager-version-keyword* 
@@ -287,7 +289,7 @@
 (allow-redefinition
  (defun print-module-manager-herald ()
    (format t "~%;;; ~72,,,'-<-~>
-;;;  Module-Manager System ~a~@
+;;;  Module-Manager System ~a
 ;;;
 ;;;    Developed and supported by the GBBopen Project (http:/GBBopen.org/)
 ;;;    (See http://GBBopen.org/downloads/LICENSE for license details.)
@@ -379,75 +381,96 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun brief-date (&optional time time-zone (destination nil))
-  ;;;  Returns formatted date string
-  (unless time (setf time (get-universal-time)))
-  (multiple-value-bind (second minute hour date month year)
-      (if time-zone 
-          (decode-universal-time time time-zone)
-          (decode-universal-time time))
-    (declare (ignore second minute hour))
-    (let ((month-name (svref (the (simple-array t (*))
-                               *month-name-vector*)
-                             (& (1- (& month))))))
-      (if *month-precedes-date*     
-          (format destination "~a ~2d, ~s"
-                  month-name
-                  date
-                  year)
-          (format destination "~2d ~a, ~s"
-                  date
-                  month-name
-                  year)))))
+(defun decode-supplied-universal-time (universal-time time-zone)
+  (cond 
+   ((not universal-time)
+    (setf universal-time (get-universal-time)))
+   ;; User likely forgot the optional `universal-time' value:
+   ((keywordp universal-time)
+    (error "The optional universal-time value must be supplied when ~
+            specifying keyword options.")))
+  (if time-zone 
+      (decode-universal-time universal-time time-zone)
+      (decode-universal-time universal-time)))
 
 ;;; ---------------------------------------------------------------------------
 
-(defun brief-date-and-time (&optional time time-zone include-seconds
-                                      (destination nil))
-  ;;;  Returns formatted date/time string (brief, Unix ls-like form)
-  (let ((current-time (get-universal-time))
-        time-difference)
-    (if time
-        (setf time-difference (abs (- current-time time)))
-        (setf time current-time 
-              time-difference 0))
+(locally 
+  ;; SBCL (rightly) complains about combining &optional and &key, but we
+  ;; ignore that here:
+  #+sbcl (declare (sb-ext:muffle-conditions style-warning))
+  (defun brief-date (&optional universal-time 
+                     &key time-zone 
+                          destination)
+  ;;;  Returns formatted date string
     (multiple-value-bind (second minute hour date month year)
-        (if time-zone 
-            (decode-universal-time time time-zone)
-            (decode-universal-time time))
+        (decode-supplied-universal-time universal-time time-zone)
+      (declare (ignore second minute hour))
       (let ((month-name (svref (the (simple-array t (*))
                                  *month-name-vector*)
                                (& (1- (& month))))))
-        (if (< (& time-difference)
-               ;; 120 days:
-               #.(* 60 60 24 120))
-            (if *month-precedes-date*
-                (format destination "~a ~2d ~2,'0d:~2,'0d~:[~;:~2,'0d~]"
-                        month-name
-                        date
-                        hour
-                        minute
-                        include-seconds
-                        second)
-                (format destination "~2d ~a ~2,'0d:~2,'0d~:[~;:~2,'0d~]"
-                        date
-                        month-name
-                        hour
-                        minute
-                        include-seconds
-                        second))
-            (if *month-precedes-date*     
-                (format destination "~a ~2d, ~a~@[   ~]"
-                        month-name
-                        date
-                        year
-                        include-seconds)
-                (format destination "~2d ~a, ~a~@[   ~]"
-                        date
-                        month-name
-                        year
-                        include-seconds)))))))
+        (if *month-precedes-date*     
+            (format destination "~a ~2d, ~s"
+                    month-name
+                    date
+                    year)
+            (format destination "~2d ~a, ~s"
+                    date
+                    month-name
+                    year))))))
 
+;;; ---------------------------------------------------------------------------
+
+(locally 
+  ;; SBCL (rightly) complains about combining &optional and &key, but we
+  ;; ignore that here:
+  #+sbcl (declare (sb-ext:muffle-conditions style-warning))
+  (defun brief-date-and-time (&optional universal-time 
+                              &key time-zone
+                                   include-seconds
+                                   destination)
+    ;;;  Returns formatted date/time string (brief, Unix ls-like form)
+    (let ((current-time (get-universal-time))
+          time-difference)
+      (if universal-time
+          (setf time-difference (abs (- current-time universal-time)))
+          (setf universal-time current-time 
+                time-difference 0))
+      (multiple-value-bind (second minute hour date month year)
+          (decode-supplied-universal-time universal-time time-zone)
+        (let ((month-name (svref (the (simple-array t (*))
+                                   *month-name-vector*)
+                                 (& (1- (& month))))))
+          (if (< (& time-difference)
+                 ;; 120 days:
+                 #.(* 60 60 24 120))
+              (if *month-precedes-date*
+                  (format destination "~a ~2d ~2,'0d:~2,'0d~:[~;:~2,'0d~]"
+                          month-name
+                          date
+                          hour
+                          minute
+                          include-seconds
+                          second)
+                  (format destination "~2d ~a ~2,'0d:~2,'0d~:[~;:~2,'0d~]"
+                          date
+                          month-name
+                          hour
+                          minute
+                          include-seconds
+                          second))
+              (if *month-precedes-date*     
+                  (format destination "~a ~2d, ~a~@[   ~]"
+                          month-name
+                          date
+                          year
+                          include-seconds)
+                  (format destination "~2d ~a, ~a~@[   ~]"
+                          date
+                          month-name
+                          year
+                          include-seconds))))))))
+  
 ;;; ---------------------------------------------------------------------------
 
 (defun parse-date (string &key (start 0) 
@@ -488,68 +511,76 @@
                      (error "Unable to determine the month in ~s" string))
                    (incf& month)
                    (incf& start (& (length month-string)))))))
+           (default-year ()
+               ;;; return the default year; used when a year is not specified:
+               (multiple-value-bind (seconds minutes hours 
+                                     current-date current-month current-year)
+                   (get-decoded-time)
+                 (declare (ignore seconds minutes hours))
+                 ;; Assume next year, if the date is past in the current year:
+                 (if (or (< (& month) (& current-month))
+                         (and (= (& month) (& current-month))
+                              (< (& date) (& current-date))))
+                     (+& current-year 1)
+                     current-year)))
            (skip-separators ()
              (loop 
                  while (and (< (& start) (& end))
                             (find (schar string start) separators))
                  do (incf& start))))
       (skip-separators)
-      ;; If we have a month name, then we know the month-date order; otherwise
-      ;; we'll assume month-first for until we process the second field:
-      (when (alpha-char-p (schar string start))
-        (setf month-preceded-date 't))
-      (process-month)
-      (skip-separators)
-      (cond
-       ((and (not month-preceded-date)
-             (or
-              ;; We have a month name in the second field:
-              (alpha-char-p (schar string start))
-              ;; Use the month-precedes-date value to decide the order:
-              (not month-precedes-date)))
-        ;; We actually have the date value from the first field (rather than
-        ;; the month), so set the date from the assumed month value and then
-        ;; proceed with month processing:
-        (setf date month)
-        (process-month))
-       ;; Simply continue, as we have month then date order:
-       (t (process-date)))
-      (skip-separators))
-    (check-type month (integer 1 12))
-    (check-type date (integer 1 31))
-    ;; Process year:
-    (cond 
-     ;; Assumed year, if omitted:
-     ((= (& start) (& end))
-      (multiple-value-bind (seconds minutes hours 
-                            current-date current-month current-year)
-          (get-decoded-time)
-        (declare (ignore seconds minutes hours))
-        (setf year current-year)
-        ;; Assume next year, if the date is past in the current year:
-        (when (or (< (& month) (& current-month))
-                  (and (= (& month) (& current-month))
-                       (< (& date) (& current-date))))
-          (incf& year))))
-     ;; Otherwise, process the specified year:
-     (t (multiple-value-setq (year start)
-          (parse-integer string :start start :end end 
-                         :junk-allowed junk-allowed))))
-    (check-type year (integer 0 #.most-positive-fixnum))
-    ;; Upgrade YY to YYYY -- YY assumed within +/- 50 years from current time
-    ;; (if year < 100):
-    (setf year (cond 
-                ;; No year upgrade needed:
-                ((>= (& year) 100) year)
-                ;; Do the upgrade:
-                (t (let ((current-century
-                          (& (* 100 
-                                (& (truncate (& (nth-value 5 (get-decoded-time)))
-                                             100))))))
-                     (if (>= (& year) 50) 
-                         (& (+ (& year) (& current-century) -100))
-                         (& (+ (& year) (& current-century))))))))
-    (values date month year)))
+      (when (< (the fixnum start) (the fixnum end))
+        ;; If we have a month name, then we know the month-date order; otherwise
+        ;; we'll assume month-first for until we process the second field:
+        (when (alpha-char-p (schar string start))
+          (setf month-preceded-date 't))
+        (process-month)
+        (skip-separators)
+        (cond
+         ((and (not month-preceded-date)
+               (or
+                ;; We have a month name in the second field:
+                (alpha-char-p (schar string start))
+                ;; Use the month-precedes-date value to decide the order:
+                (not month-precedes-date)))
+          ;; We actually have the date value from the first field (rather than
+          ;; the month), so set the date from the assumed month value and then
+          ;; proceed with month processing:
+          (setf date month)
+          (process-month))
+         ;; Simply continue, as we have month then date order:
+         (t (process-date)))
+        (skip-separators))
+      (check-type month (integer 1 12))
+      (check-type date (integer 1 31))
+      ;; Process year:
+      (cond 
+       ;; Assumed year, if omitted:
+       ((= (& start) (& end))
+        (setf year (default-year)))
+       ;; Otherwise, process the specified year:
+       (t (multiple-value-setq (year start)
+            (parse-integer string :start start :end end 
+                           :junk-allowed junk-allowed))
+          (if year
+              ;; a year was specified:
+              (check-type year (integer 0 #.most-positive-fixnum))
+              ;; use assumed year:
+              (setf year (default-year)))))
+      ;; Upgrade YY to YYYY -- YY assumed within +/- 50 years from current time
+      ;; (if year < 100):
+      (setf year (cond 
+                  ;; No year upgrade needed:
+                  ((>= (& year) 100) year)
+                  ;; Do the upgrade:
+                  (t (let ((current-century
+                            (& (* 100 
+                                  (& (truncate (& (nth-value 5 (get-decoded-time)))
+                                               100))))))
+                       (if (>= (& year) 50) 
+                           (& (+ (& year) (& current-century) -100))
+                           (& (+ (& year) (& current-century)))))))))
+    (values date month year start)))
 
 ;;; ===========================================================================
 ;;;  Directories and modules hash tables
@@ -1204,8 +1235,7 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun %make-patch (id date author description &optional reload)
-  (declare (ignore reload))             ; reload is deprecated, remove soon!!!
+(defun %make-patch (id date author description)
   (cond
    (*compiling-file*)
    (t (when (%find-patch-desc id)
@@ -1249,10 +1279,8 @@
 
 (defun %check-patch ()
   ;; Checks that there is an open patch
-  (if (or *compiling-file* *loading-patch*)
-      ;; Return value is deprecated, remove on next release (change to unless)!
-      't
-      (error "No patch has been started.")))
+  (unless (or *compiling-file* *loading-patch*)
+    (error "No patch has been started.")))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -1989,9 +2017,8 @@
 ;;; ===========================================================================
 ;;;  Patch entities
 
-(defmacro start-patch ((id date &key (author "Anonymous") description reload)
+(defmacro start-patch ((id date &key (author "Anonymous") description)
                        &body body)
-  (declare (ignore reload))             ; :reload is deprecated, remove soon!!
   (let ((date (multiple-value-call 
                   #'encode-universal-time 
                 ;; noon on the given date

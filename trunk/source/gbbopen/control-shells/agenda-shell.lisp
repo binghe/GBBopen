@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:AGENDA-SHELL; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/control-shells/agenda-shell.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jul  2 09:44:53 2008 *-*
+;;;; *-* Last-Edit: Thu Mar 19 02:40:41 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2004-2008, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2004-2009, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -842,7 +842,7 @@
          `((let ((.result-list. (multiple-value-list (progn ,@body))))
              (when .do-step-p.
                (control-shell-step-result .cs. .operation. .result-list.))
-             (apply #'values .result-list.))))))
+             (values-list .result-list.))))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -1284,7 +1284,7 @@
 
 (defun exit-control-shell (&rest result-values)
   (declare (dynamic-extent result-values))
-  (throw 'exit-control-shell (apply #'values result-values)))
+  (throw 'exit-control-shell (values-list result-values)))
 
 ;;; ---------------------------------------------------------------------------
 

@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/spaces.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Mar 18 12:01:27 2009 *-*
+;;;; *-* Last-Edit: Wed Mar 18 14:46:42 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -48,7 +48,6 @@
             allowed-unit-classes-of
             clear-space-instances
             change-space-instance
-            change-space-instance-storage ; remove in 1.2
             children                    ; standard-space-instance slot name
             children-of
             define-space-class
@@ -574,12 +573,6 @@
          storage 't nil))))
   space-instance)
   
-;;; ---------------------------------------------------------------------------
-
-;;; Brief (initial) name and signature, remove in 1.1:
-(defun change-space-instance-storage (space-instance storage-spec)
-  (change-space-instance space-instance :storage storage-spec))
-
 ;;; ===========================================================================
 ;;;  Duplicating space instances
 

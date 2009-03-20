@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/portable-threads.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Mar 10 02:50:44 2009 *-*
+;;;; *-* Last-Edit: Thu Mar 19 02:43:26 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -1529,7 +1529,7 @@
                           '(nil nil)))))
     ;; Wait for result:
     (loop until result do (mp:process-yield))
-    (apply #'values result))
+    (values-list result))
   #+digitool-mcl
   (handler-case
       (let ((value (ccl:symbol-value-in-process symbol thread)))
@@ -1548,7 +1548,7 @@
                                    '(nil nil)))))
     ;; Wait for result:
     (loop until result do (sleep 0))
-    (apply #'values result))
+    (values-list result))
   #+lispworks
   (mp:read-special-in-process thread symbol)
   #+(and sbcl sb-thread)
@@ -1563,7 +1563,7 @@
                             '(nil nil)))))
     ;; Wait for result:
     (loop until result do (sleep 0.05))
-    (apply #'values result))
+    (values-list result))
   #+scl
   (multiple-value-bind (value boundp)
       (kernel:thread-symbol-dynamic-value thread symbol)

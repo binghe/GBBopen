@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/module-manager/module-manager-user.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Aug 31 14:55:06 2008 *-*
+;;;; *-* Last-Edit: Wed Mar 18 14:41:17 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2008, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2008-2009, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -26,8 +26,7 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (unless (find-package ':module-manager-user)
     (make-package ':module-manager-user
-                  :use '(:common-lisp :module-manager)
-                  :nicknames '(:mini-module-user))))
+                  :use '(:common-lisp :module-manager))))
 
 (in-package :module-manager-user)
 

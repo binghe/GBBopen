@@ -3,5 +3,5 @@
 ;;;   (and read by gbbopen.asd, source/tools/preamble.lisp, and
 ;;;    source/gbbopen/preamble.lisp)
 ;;; ---------------------------------------------------------------------------
-"1.2"
+"1.3"
 

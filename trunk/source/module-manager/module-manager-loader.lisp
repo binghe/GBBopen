@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/module-manager/module-manager-loader.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Dec  2 13:54:46 2008 *-*
+;;;; *-* Last-Edit: Wed Mar 18 14:30:46 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -15,7 +15,7 @@
 ;;; Written by: Dan Corkill (incorporating some original ideas by 
 ;;;                          Kevin Gallagher and Zack Rubinstein)
 ;;;
-;;; Copyright (C) 2002-2008, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2009, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; Stand-alone Use:
@@ -65,8 +65,7 @@
 
 (unless (find-package ':module-manager)
   (make-package ':module-manager 
-                :use '(:common-lisp)
-                :nicknames '(:mini-module)))
+                :use '(:common-lisp)))
 
 (in-package :module-manager)
 

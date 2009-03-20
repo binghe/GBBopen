@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/offset-universal-time.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Dec  4 12:44:46 2008 *-*
+;;;; *-* Last-Edit: Fri Mar 20 02:25:30 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2007-2008, Dan Corkill <corkill@GBBopen.org> 
+;;; Copyright (C) 2007-2009, Dan Corkill <corkill@GBBopen.org> 
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; This file is self-contained and can be used stand-alone.
@@ -48,9 +48,9 @@
 ;;; integer time-base value so that the most often used OT values in an
 ;;; application are fixnums.
 ;;;
-;;; Nearly all CL implementations provide fixnums of at least 30 bits (34
+;;; Nearly all CL implementations provide fixnums of at least 29 bits (34
 ;;; years of time range) or more, but CLISP on 32-bit machines provides only
-;;; 25 bits (388 days).  The ANSI standard requires an implementation to
+;;; 24 bits (388 days).  The ANSI standard requires an implementation to
 ;;; provide fixnums with at least 16 bits (only 18 hours), but fortunately CL
 ;;; implementations are considerably more generous!
 ;;;
@@ -62,7 +62,7 @@
 (defvar *ot-base* "You must set the offset-universal-time base (set-ot-base).")
 
 ;;; ---------------------------------------------------------------------------
-;;; Warn if the CL implementation doesn't have at least 25-bit fixnums:
+;;; Warn if the CL implementation doesn't have at least 29-bit fixnums:
 
 (defun small-fixnum-ot-warning ()
   (let ((fixnum-size #.(1+ (integer-length most-positive-fixnum))))
@@ -77,7 +77,7 @@
   ;; Suppress unreachable code warning in CMUCL and SCL:
   #+(or cmu scl)
   (declare (optimize (extensions:inhibit-warnings 3)))
-  (when (< fixnum-size 25)
+  (when (< fixnum-size 29)
     (small-fixnum-ot-warning)))
 
 ;;; ---------------------------------------------------------------------------
@@ -108,25 +108,26 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun set-ot-base (&rest args)
+(defun set-ot-base (&optional date month year (time-zone 0))
   ;;; Sets the offset-universal-time base to today's date (no supplied args)
   ;;; or to a specified date:
-  (declare (dynamic-extent args))
-  (setf *ot-base*
-        (+ (if args
-               (destructuring-bind (date month year &optional (time-zone 0))
-                   args
-                 (encode-universal-time 0 0 0 date month year time-zone))
-               ;; Maintain 0 hours, minutes, & seconds GMT:
-               (let ((seconds-in-a-day #.(* 24 60 60)))
-                 (* (floor (get-universal-time) seconds-in-a-day)
-                    seconds-in-a-day)))
-           (expt 2 24)))
-  (when args (check-ot-base))
-  *ot-base*)
+  (let ((base-ut (multiple-value-bind (current-second current-minute current-hour
+                                       current-date current-month current-year)
+                     (decode-universal-time (get-universal-time) time-zone)
+                   (declare (ignore current-second current-minute current-hour))
+                   (encode-universal-time 0 0 0 
+                                          (or date current-date)
+                                          (or month current-month)
+                                          (or year current-year)
+                                          time-zone))))
+    (setf *ot-base*
+          (+ base-ut
+             (expt 2 24)))
+    (check-ot-base)
+    (values *ot-base* base-ut)))
 
 ;;; ===========================================================================
-;;;                               End of File
+;;; End of File
 ;;; ===========================================================================
 
 

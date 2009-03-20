@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Wed Mar 18 12:26:13 2009; Edited-By: cork *-*
+%% *-* Last-Edit: Fri Mar 20 12:59:13 2009; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2009, Dan Corkill <corkill@GBBopen.org>
@@ -8364,8 +8364,91 @@ probability.
 \label{sec:dateandtime}%
 
 \index{date and time entities}%
-The \code{:gbbopen-tools} module includes useful (and specialized) date and
+The \code{:gbbopen-tools} module includes useful date and
 time parsing and formatting entities.
+
+\index{time zone!abbreviations}%
+\index{abbreviations!time zone}%
+\label{ref:timezones}%
+In addition to UTC offsets, time-of-day entities support the following
+time-zone abbreviations for standard-time (non-daylight-savings) offsets:
+%
+\T\\[3pt]
+\W\supp\tabletop
+\small
+\begin{tabular}{c@{}c@{}c@{}c@{}l@{}}
+\textbf{Offset} & ~~~ & \textbf{Zone} & ~~~ & \textbf{Locations} \\
+1 && \code{WAT} && West Africa (also Cape Verdes Islands, 
+                   Atlantic Ocean)\\
+2 && \code{AT} && Azores\\
+7/2 && \code{NST} && Newfoundland\\
+4 && \code{AST} && Atlantic\\
+5 && \code{EST} && Eastern (North America)\\
+6 && \code{CST} && Central (North America)\\
+7 && \code{MST} && Mountain (North America)\\
+8 && \code{PST} && Pacific (North America)\\
+9 && \code{AKST} && Alaska\\
+10 && \code{HAST} && Hawaii-Aleutian\\
+11 && \code{NT} && Nome\\
+12 && \code{IDLW} && International Dateline West\\
+0 && \code{GMT} && Greenwich (also Portugal, Reykjavik (Iceland),
+                   Western Africa)\\
+-1 && \code{CET} && Central European (also Algeria, Nigeria, Angola)\\
+-2 && \code{EET} && Eastern European (also Finland, Balkans, Libya, Egypt,
+                    South Africa)\\
+-3 && \code{MSK} && Moscow (also Baghdad, Eastern Africa, Ethiopia, Kenya,
+                    Tanzania)\\
+-4 && \code{ZP4} && Samara (Russia Zone 3)\\
+-5 && \code{ZP5} && Yekaterinburg (Russia Zone 4)\\
+-11/2 && \code{IST} && Indian\\
+-6 && \code{ZP6}  && Omsk (Russia Zone 5), Bangladesh)\\
+-7 && \code{WAST} && West Austrailian Standard (also Christmas Island,
+                     Krasnoyarsk (Russia Zone 6), Western Indonesia) \\
+-8 && \code{AWST} && Australian Western (also Irkutsk (Russia Zone 7),
+                     China, Hong Kong, Philippines, Central Indonesia)\\
+-9 && \code{JST}  && Japan (also Yakutsk (Russia Zone 8), Korea,
+                     Eastern Indonesia)\\
+-19/2 && \code{ACST} && Australian Central\\
+-10 && \code{AEST} && Australian Eastern (also Vladivostok (Russia Zone 9),
+                      Papua New Guinea)\\
+-21/2 && \code{NFT} && Norfolk (Island)\\
+-12 && \code{NZST} && New Zealand (also Kamchatka (Russia), Fiji,
+                      Marshall Islands) \\
+\end{tabular}
+\normalsize
+\T\\[3pt]
+%
+and for daylight-savings-time offsets:
+%
+\T\\[3pt]
+\W\supp
+\small
+\begin{tabular}{c@{}c@{}c@{}c@{}l@{}}
+\textbf{Offset} & ~~~ & \textbf{Zone} & ~~~ & \textbf{Locations} \\
+5/2 && \code{NDT} && Newfoundland Daylight\\
+3   && \code{ADT} && Atlantic Daylight\\
+4   && \code{EDT} && Eastern Daylight (North America)\\
+5   && \code{CDT} && Central Daylight (North America)\\
+6   && \code{MDT} && Mountain Daylight (North America)\\
+7   && \code{PDT} && Pacific Daylight (North America)\\
+8   && \code{AKDT} && Alaska Daylight\\
+9  && \code{HADT} && Hawaii-Aleutian Daylight\\
+-1   && \code{BST} && British Summer\\
+-2  && \code{CEDT} && Central European Daylight\\
+-3  && \code{EEDT} && Eastern European Daylight\\
+-4  && \code{MSD} && Moscow Daylight\\
+-9  && \code{AWDT} && Australian Western Daylight\\
+-21/2 && \code{ACSD} && Australian Central Daylight\\
+-11 && \code{AEDT} && Australian Eastern Daylight\\
+\end{tabular}
+\normalsize
+
+Time-zone abbreviations used around the world are not unique or universal. The
+same hour offset can map onto multiple different zone abbreviations, and the
+same abbreviations are also used to refer to different zones.  The above
+choices of supported abbreviations were made arbitrarily, and the use of UTC
+offsets is recommended for unambiguous textual representation of the time of
+day.
 
 \W\entities
 \T\clearpage
@@ -8393,6 +8476,8 @@ entities.
 \also[brief-date-and-time]
 \also[full-date-and-time]
 \also[parse-date]
+\also[parse-date-and-time]
+\also[parse-time]
 \end{alsos}
 
 \fnexamples
@@ -8421,7 +8506,8 @@ in order to make it available as early as possible.
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{brief-date}{%
-    \code{\&optional} \var{universal-time time-zone destination\/}
+    \code{\&optional} \var{universal-time\/}
+    \code{\&key} \var{time-zone destination\/}
     \returns{} \var{result\/}}
 \index{date!formatted}% 
 \index{time, formatted}% 
@@ -8502,8 +8588,8 @@ in order to to make it available as early as possible.
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{brief-date-and-time}{%
-    \code{\&optional} \var{universal-time time-zone include-seconds
-      destination\/}
+    \code{\&optional} \var{universal-time\/}
+    \code{\&key} \var{time-zone include-seconds destination\/}
     \returns{} \var{result\/}}
 \index{date!formatted}% 
 \index{time, formatted}% 
@@ -8764,9 +8850,104 @@ description.
 
 %% ------------------------------------------------------------------------
 
+\begin{functiondoc}{Function}{encode-date-and-time}{%
+    \var{string\/}
+    \code{\&key} \var{start end \nobr{junk-allowed} \nobr{date-separators}
+      \nobr{time-separators} \nobr{month-precedes-date}\/}
+    \nobr{\returns{} \nobr{\var{universal-time,} pos\/}}}
+\index{date!parsing}% 
+
+\fnsyntax
+
+\fnpurpose Parse and then encode a date-and-time specification string to a
+\glref{universal~time}
+
+\fnpackage \code{:gbbopen-tools} 
+
+\fnmodule \code{:gbbopen-tools}
+
+\fnargs
+\begin{args}{month-precedes-date}
+\arg[string] A string
+\arg[start] Starting index into \var{string\/} (default is \code{0})
+\arg[end] Ending index into \var{string\/} (default is \nil, meaning
+end of \var{string\/})
+\arg[junk-allowed] A \glref{generalized~boolean} (default is \nil)
+\arg[date-separators] A sequence of characters that are skipped and separate the
+ date, month, and year fields in \var{string}, if needed (default is 
+ \nobr{\code{"-/ ,"}})
+\arg[time-separators] A sequence of characters that are skipped and separate the
+ hour, minute, and second fields in \var{string}, if needed (default is 
+ \nobr{\code{" :"}})
+\arg[month-precedes-date] A \glref{generalized~boolean} (default is 
+\nobr{\textbf{\entlink{*month-precedes-date*}}})
+\arg[universal-time] A \glref{universal~time} 
+\arg[position] A index in \var{string\/}
+\end{args}
+
+\fnreturns Two values: \var{universal-time} and \nobr{\var{position}}
+
+\fnerrors
+%
+If \var{junk-allowed\/} is false, an error is signaled if a numeric field in
+\var{string\/} does not consist entirely of the representation of a integer,
+possibly surrounded on either side by characters in \nobr{\var{separators}}.
+
+\fndescription
+%
+Both the month and date must be specified in \var{string}, optionally followed
+by the year and the time of day. The month can be a numeric value (1--12), a
+three-letter abbreviation, or the full month name.  If the month is specified
+numerically, then the value of \nobr{\var{month-precedes-date\/}} is used to
+determine the month and date ordering. If no year is specified in
+\var{string}, the current year is assumed, unless the specified month and date
+have passed, in which case next year is assumed.  If no hour, minute, or
+second values are specified, they default to zero.  
+
+The returned \var{position\/} is the index within \var{string\/} where the
+parse ended.
+
+\begin{alsos}{*month-precedes-date*}
+\also[*month-precedes-date*]
+\also[parse-date]
+\also[parse-date-and-time]
+\also[parse-duration]
+\also[parse-time]
+\end{alsos}
+
+\fnexamples
+%
+\W\supp
+\begin{example}
+  > (encode-date-and-time "1 Apr 2010")
+  3479083200
+  10\goodpagebreak
+  > (encode-date-and-time "April 1, 2010 10:30")
+  3479121000
+  19\goodpagebreak
+  > (encode-date-and-time "4/1/10 10:30pm")
+  3479164200
+  14\goodpagebreak
+  > (encode-date-and-time "Apr 1 2010 10:30 EDT")
+  3479121000
+  20\goodpagebreak
+  > (encode-date-and-time "1 Apr 2010 10:30 IST")
+  3479086800
+  20\goodpagebreak
+  > (encode-date-and-time "April 1, 2010 10:30 UTC-7")
+  3479131800
+  25
+  >
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
 \begin{functiondoc}{Function}{full-date-and-time}{%
-    \code{\&optional} \var{universal-time time-zone include-seconds
-      include-time-zone destination\/}
+    \code{\&optional} \var{universal-time\/}
+    \code{\&key} \var{time-zone daylight-savings-p include-seconds
+      include-time-zone utc-offset-only 12-hour destination\/}
     \returns{} \var{result\/}}
 \index{date!formatted}%
 \index{time, formatted}%
@@ -8780,15 +8961,17 @@ description.
 \fnmodule \code{:gbbopen-tools}
 
 \fnargs
-\begin{args}{universal-time}
+\begin{args}{daylight-savings-p}
 \arg[universal-time] A \glref{universal~time} (default is \nil,
   which is equivalent to the value returned by
   \nobr{\code{(get-universal-time)}})
 \arg[time-zone] A \glref{time~zone} (default is \nil,
   which is equivalent to the current time zone adjusted for daylight
   saving time)
-\arg[include-seconds] A \glref{generalized~boolean} (default is \nil)
+\arg[daylight-savings-p] A \glref{generalized~boolean} (default is \nil)        \arg[include-seconds] A \glref{generalized~boolean} (default is \nil)
 \arg[include-time-zone] A \glref{generalized~boolean} (default is \nil)
+\arg[utc-offset-only] A \glref{generalized~boolean} (default is \nil)
+\arg[12-hour] A \glref{generalized~boolean} (default is \nil)
 \arg[destination] Either \nil, \code{t}, a stream, or a string with a fill 
 pointer (default is \nil)
 \arg[result] A string or \nil{}
@@ -8797,8 +8980,8 @@ pointer (default is \nil)
 \fnreturns If \var{destination\/} is non-\nil, then \nil; otherwise, a string.
 
 \fndescription A 17-character description (longer if
-\nobr{\var{include-seconds\/}} or \nobr{\var{include-time-zone\/}} is
-non-\nil{}) is generated.
+\nobr{\var{include-seconds\/}}, \nobr{\var{include-time-zone\/}}, or
+\nobr{\var{utc-offset-only\/}} are non-\nil{}) is generated.
 
 \W\xml{p} 
 \bfindexit{get-universal-time}%
@@ -8808,10 +8991,27 @@ If \nobr{\var{universal-time\/}} is not supplied or is \nil, the current time
 
 \W\xml{p} 
 %
-If \var{time-zone\/} is not supplied or is \nil, it defaults to the
-current time zone adjusted for daylight saving time. If
-\nobr{\var{time-zone\/}} is supplied, it is assumed to include any adjustment
-for daylight saving time.
+If \var{time-zone\/} is not supplied or is \nil, it defaults to the current
+time zone adjusted for daylight saving time. If a \nobr{\var{time-zone\/}} is
+supplied, it is assumed to include any adjustment for daylight saving time.
+
+\W\xml{p} 
+%
+If either \var{include-time-zone\/} or \var{utc-offset-only\/} is true,
+time-zone specification is appended to the date-and-time representation.  If
+\var{utc-offset-only\/} is true, the time zone is represented as a UTC
+offset---even if a \link{{time-zone abbreviation}}{ref:timezones} supported by
+GBBopen Tools is available for the time zone.  If a \nobr{\var{time-zone\/}}
+is supplied, the value of \nobr{\var{daylight-savings-p\/}} is used when
+generating a non-UTC time zone abbreviation; otherwise, the local
+daylight-savings setting for the \nobr{\var{universal-time\/}} value (as
+determined by \code{decode-universal-time}) is used, and the
+\nobr{\var{daylight-savings-p\/}} argument is ignored.
+
+\W\xml{p} 
+%
+If \var{12-hour\/} is supplied and is non-\nil, the time-of-day is represented
+in AM/PM format.
 
 \begin{alsos}{internet-text-date-and-time}
 \also[*month-precedes-date*]
@@ -8836,7 +9036,7 @@ Display the current date and time (with seconds):
 %
 \W\supp\notpretop
 \begin{example}
-  > (full-date-and-time nil nil 't)
+  > (full-date-and-time nil :include-seconds't)
   "Feb 16 2009 13:11:38"
   >
 \end{example}
@@ -8845,8 +9045,26 @@ Display the current date and time (with time zone):
 %
 \W\supp\notpretop
 \begin{example}
-  > (full-date-and-time nil nil nil 't)
+  > (full-date-and-time nil :include-time-zone 't)
   "Feb 16 2009 13:11 EST"
+  >
+\end{example}
+%
+Display the current date and time (in 12-hour format with time zone):
+%
+\W\supp\notpretop
+\begin{example}
+  > (full-date-and-time nil :12-hour 't :include-time-zone 't)
+  "Feb 16 2009 1:11PM EST"
+  >
+\end{example}
+%
+Display the current date and time (with UTC-offset time zone):
+%
+\W\supp\notpretop
+\begin{example}
+  > (full-date-and-time nil :utc-offset-only 't)
+  "Feb 16 2009 13:11 UTC-5"
   >
 \end{example}
 %
@@ -8854,7 +9072,9 @@ Display the current date and time (with seconds and time zone):
 %
 \W\supp\notpretop
 \begin{example}
-  > (full-date-and-time nil nil 't 't)
+  > (full-date-and-time nil
+      :include-seconds 't 
+      :include-time-zone 't)
   "Feb 16 2009 13:11:38 EST"
   >
 \end{example}
@@ -8863,7 +9083,7 @@ Display the current date and time as GMT:
 %
 \W\supp\notpretop
 \begin{example}
-  > (full-date-and-time nil 0)
+  > (full-date-and-time nil :time-zone 0)
   "Feb 16 2009 18:11"
   >
 \end{example}
@@ -8871,16 +9091,19 @@ Display the current date and time as GMT (with time zone):
 %
 \W\supp\notpretop
 \begin{example}
-  > (full-date-and-time nil 0 nil 't)
+  > (full-date-and-time nil 
+      :time-zone 0 
+      :include-time-zone 't)
   "Feb 16 2009 18:11 GMT"
   >
 \end{example}
 %
 The date and time 10 days ago:
 %
+\bfindexit{parse-duration}%
 \W\supp\notpretop
 \begin{example}
-  > (full-date-and-time (- (get-universal-time) (* 60 60 24 10)))
+  > (full-date-and-time (- (get-universal-time) (\entlink{parse-duration} "10 days")))
   "Feb  6 2009 13:11"
   >
 \end{example}
@@ -8889,7 +9112,7 @@ The date and time 125 days ago:
 %
 \W\supp\notpretop
 \begin{example}
-  > (full-date-and-time (- (get-universal-time) (* 60 60 24 125)))
+  > (full-date-and-time (- (get-universal-time) (\entlink{parse-duration} "125 days")))
   "Oct 12 2008 13:11"
   >
 \end{example}
@@ -8898,7 +9121,8 @@ The date and time 125 days ago (with seconds):
 %
 \W\supp\notpretop
 \begin{example}
-  > (full-date-and-time (- (get-universal-time) (* 60 60 24 125)) nil 't)
+  > (full-date-and-time (- (get-universal-time) (\entlink{parse-duration} "125d"))
+      :include-seconds 't)
   "Oct 12 2008 13:11:38"
   >
 \end{example}
@@ -8908,8 +9132,10 @@ The date and time 125 days ago (with seconds):
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{internet-text-date-and-time}{%
-    \code{\&optional} \var{universal-time time-zone destination\/} 
-    \returns{} \var{result\/}}
+    \code{\&optional} \var{universal-time\/} 
+    \code{\&key} \var{time-zone daylight-savings-p 
+      utc-offset-only destination\/} 
+   \returns{} \var{result\/}}
 \index{time!formatting}% 
 
 \fnsyntax
@@ -8921,13 +9147,14 @@ The date and time 125 days ago (with seconds):
 \fnmodule \code{:gbbopen-tools}
 
 \fnargs
-\begin{args}{maximum-fields}
+\begin{args}{daylight-savings-p}
 \arg[universal-time] A \glref{universal~time} (default is \nil,
   which is equivalent to the value returned by
   \nobr{\code{(get-universal-time)}})
 \arg[time-zone] A \glref{time~zone} (default is \nil,
   which is equivalent to the current time zone adjusted for daylight
   saving time)
+\arg[daylight-savings-p] A \glref{generalized~boolean} (default is \nil)        \arg[utc-offset-only] A \glref{generalized~boolean} (default is \nil)
 \arg[destination] Either \nil, \code{t}, a stream, or a string with a fill 
 pointer (default is \nil)
 \arg[result] A string or \nil{}
@@ -8940,6 +9167,17 @@ pointer (default is \nil)
 %
 If \nobr{\var{universal-time\/}} is not supplied or is \nil, the current time
 (as returned by \nobr{\code{get-universal-time}} is used.
+
+\W\xml{p} 
+%
+If \var{utc-offset-only\/} is true, the time zone is represented as a UTC
+offset---even if a \link{{time-zone abbreviation}}{ref:timezones} supported by
+GBBopen Tools is available for the time zone. If a \nobr{\var{time-zone\/}} is
+supplied, the value of \nobr{\var{daylight-savings-p\/}} is used when
+generating a non-UTC time zone abbreviation; otherwise, the local
+daylight-savings setting for the \nobr{\var{universal-time\/}} value (as
+determined by \code{decode-universal-time}) is used, and the
+\nobr{\var{daylight-savings-p\/}} argument is ignored.
 
 \begin{alsos}{iso8661-date-and-time}
 \also[brief-date]
@@ -8955,8 +9193,8 @@ If \nobr{\var{universal-time\/}} is not supplied or is \nil, the current time
 \begin{example}
   > (internet-text-date-and-time)
   "Sat, 17 May 2008 04:02:49 -0400 (EDT)"
-  > (internet-text-date-and-time (get-universal-time) 0)
-  "Sat, 17 May 2008 08:02:49 -0000 (GMT)"
+  > (internet-text-date-and-time nil :time-zone 0)
+  "Sat, 17 May 2008 08:02:50 -0000 (GMT)"
   >
 \end{example}
 
@@ -8965,8 +9203,9 @@ If \nobr{\var{universal-time\/}} is not supplied or is \nil, the current time
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{iso8661-date-and-time}{%
-    \code{\&optional} \var{universal-time destination\/} 
-    \returns{} \var{result\/}}
+    \code{\&optional} \var{universal-time\/} 
+    \code{\&key} \var{destination\/} 
+   \returns{} \var{result\/}}
 \index{time!formatting}% 
 
 \fnsyntax
@@ -9017,8 +9256,9 @@ If \nobr{\var{universal-time\/}} is not supplied or is \nil, the current time
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{message-log-date-and-time}{%
-    \code{\&optional} \var{universal-time destination\/} 
-    \returns{} \var{result\/}}
+    \code{\&optional} \var{universal-time\/} 
+    \code{\&key} \var{destination\/} 
+   \returns{} \var{result\/}}
 \index{time!formatting}% 
 
 \fnsyntax
@@ -9071,8 +9311,9 @@ If \nobr{\var{universal-time\/}} is not supplied or is \nil, the current time
 
 \begin{functiondoc}{Function}{parse-date}{%
     \var{string\/}
-    \code{\&key} \var{start end junk-allowed separators month-precedes-date\/}
-    \nobr{\returns{} \var{date, month, year\/}}}
+    \code{\&key} \var{start end \nobr{junk-allowed} \nobr{separators}
+      \nobr{month-precedes-date}\/}
+    \nobr{\returns{} \var{date, month, year, \nobr{position}\/}}}
 \index{date!parsing}% 
 
 \fnsyntax
@@ -9099,9 +9340,11 @@ end of \var{string\/})
   on the month and year
 \arg[month] An integer between 1 and 12, inclusive
 \arg[year] An integer
+\arg[position] A index in \var{string\/}
 \end{args}
 
-\fnreturns Three values: \var{date}, \var{month}, and \var{year}
+\fnreturns Four values: \var{date}, \var{month}, \var{year}, and
+\nobr{\var{position}}
 
 \fnerrors
 %
@@ -9119,9 +9362,15 @@ determine the month and date ordering. If no year is specified in
 \var{string}, the current year is assumed, unless the specified month and date
 have passed, in which case next year is assumed.
 
+The returned \var{position\/} is the index within \var{string\/} where the
+parse ended.
+
 \begin{alsos}{*month-precedes-date*}
 \also[*month-precedes-date*]
+\also[encode-date-and-time]
+\also[parse-date-and-time]
 \also[parse-duration]
+\also[parse-time]
 \end{alsos}
 
 \fnexamples
@@ -9132,26 +9381,37 @@ have passed, in which case next year is assumed.
   1
   4
   2010
+  10
   > (parse-date "April 1, 2010")
   1
   4
-  2010\goodpagebreak
+  2010
+  13\goodpagebreak
   > (parse-date "1-4-10" :month-precedes-date 't)
   4
   1
   2010
+  6
   > (parse-date "1-4-10" :month-precedes-date nil)
   1
   4
-  2010\goodpagebreak
+  2010
+  6\goodpagebreak
   > (parse-date "4 Jul") \textcolor{darkergray}{;; entered before July 4, 2008}
   4
   7
   2008
-  > (parse-date "4/7" :month-precedes-date nil)
+  5
+  > (parse-date "4/7  " :month-precedes-date nil)
   4
   7
   2008
+  5\goodpagebreak
+  > (parse-date "4/7  junk" :junk-allowed 't)
+  7
+  4
+  2008
+  5
   >
 \end{example}
 
@@ -9161,6 +9421,155 @@ have passed, in which case next year is assumed.
 %
 This function is loaded with the \nobr{\code{:module-manager}} \glref{module}
 in order to to make it available as early as possible.
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{parse-date-and-time}{%
+    \var{string\/}
+    \code{\&key} \var{start end \nobr{junk-allowed} \nobr{date-separators}
+      \nobr{time-separators} \nobr{month-precedes-date}\/}
+    \nobr{\returns{} \var{second, minute, hour, date, month, year, 
+        \nobr{time-zone,} \nobr{daylight-savings-p,} pos\/}}}
+\index{date!parsing}% 
+
+\fnsyntax
+
+\fnpurpose Parse a date-and-time specification string.
+
+\fnpackage \code{:gbbopen-tools} 
+
+\fnmodule \code{:gbbopen-tools}
+
+\fnargs
+\begin{args}{month-precedes-date}
+\arg[string] A string
+\arg[start] Starting index into \var{string\/} (default is \code{0})
+\arg[end] Ending index into \var{string\/} (default is \nil, meaning
+end of \var{string\/})
+\arg[junk-allowed] A \glref{generalized~boolean} (default is \nil)
+\arg[date-separators] A sequence of characters that are skipped and separate the
+ date, month, and year fields in \var{string}, if needed (default is 
+ \nobr{\code{"-/ ,"}})
+\arg[time-separators] A sequence of characters that are skipped and separate the
+ hour, minute, and second fields in \var{string}, if needed (default is 
+ \nobr{\code{" :"}})
+\arg[month-precedes-date] A \glref{generalized~boolean} (default is 
+\nobr{\textbf{\entlink{*month-precedes-date*}}})
+\arg[second] An integer between 0 and up to 59, inclusive
+\arg[minute] An integer between 0 and up to 59, inclusive
+\arg[hour] An integer between 0 and up to 23, inclusive
+\arg[date] An integer between 1 and up to 31, inclusive, depending
+  on the month and year
+\arg[month] An integer between 1 and 12, inclusive
+\arg[year] An integer
+\arg[time-zone] A time zone: a rational multiple of 1/3600 between
+ -24 and 24 that represents the number of hours offset from GMT
+\arg[daylight-savings-p] A \glref{generalized~boolean}
+\arg[position] A index in \var{string\/}
+\end{args}
+
+\fnreturns Nine values: \var{second}, \var{minute}, \var{hour}, \var{date},
+\var{month}, \var{year}, \nobr{\var{time-zone}},
+\nobr{\var{daylight-savings-p}}, and \nobr{\var{position}}
+
+\fnerrors
+%
+If \var{junk-allowed\/} is false, an error is signaled if a numeric field in
+\var{string\/} does not consist entirely of the representation of a integer,
+possibly surrounded on either side by characters in \nobr{\var{separators}}.
+
+\fndescription
+%
+Both the month and date must be specified in \var{string}, optionally followed
+by the year and the time of day. The month can be a numeric value (1--12), a
+three-letter abbreviation, or the full month name.  If the month is specified
+numerically, then the value of \nobr{\var{month-precedes-date\/}} is used to
+determine the month and date ordering. If no year is specified in
+\var{string}, the current year is assumed, unless the specified month and date
+have passed, in which case next year is assumed.  If no hour, minute, or
+second values are specified, they default to zero.  The values returned for
+\nobr{\var{time-zone}} and \nobr{\var{daylight-savings-p}} will be \nil{}
+unless a time-zone is specified in \var{string}.
+
+The returned \var{position\/} is the index within \var{string\/} where the
+parse ended.
+
+\begin{alsos}{*month-precedes-date*}
+\also[*month-precedes-date*]
+\also[encode-date-and-time]
+\also[parse-date]
+\also[parse-duration]
+\also[parse-time]
+\end{alsos}
+
+\fnexamples
+%
+\W\supp
+\begin{example}
+  > (parse-date-and-time "1 Apr 2010")
+  0
+  0
+  0
+  1
+  4
+  2010
+  nil
+  nil
+  10\goodpagebreak
+  > (parse-date-and-time "April 1, 2010 10:30")
+  0
+  30
+  10
+  1
+  4
+  2010
+  nil
+  nil
+  19\goodpagebreak
+  > (parse-date-and-time "4/1/10 10:30pm")
+  0
+  30
+  22
+  1
+  4
+  2010
+  nil
+  nil
+  14\goodpagebreak
+  > (parse-date-and-time "Apr 1 2010 10:30 EDT")
+  0
+  30
+  10
+  1
+  4
+  2010
+  4
+  t
+  20\goodpagebreak
+  > (parse-date-and-time "1 Apr 2010 10:30 IST")
+  0
+  30
+  10
+  1
+  4
+  2010
+  -11/2
+  nil
+  20\goodpagebreak
+  > (parse-date-and-time "April 1, 2010 10:30 UTC-7")
+  0
+  30
+  10
+  1
+  4
+  2010
+  7
+  nil
+  25
+  >
+\end{example}
+
 \end{functiondoc}
 
 %% ------------------------------------------------------------------------
@@ -9212,8 +9621,11 @@ A \code{"month"} is interpreted as exactly 30 days; a \nobr{\code{"year"}} as
 
 \begin{alsos}{pretty-duration}
 \also[brief-duration]
+\also[encode-date-and-time]
 \also[parse-date]
+\also[parse-date-and-time]
 \also[pretty-duration]
+\also[parse-time]
 \end{alsos}
 
 \fnexamples
@@ -9244,6 +9656,114 @@ A \code{"month"} is interpreted as exactly 30 days; a \nobr{\code{"year"}} as
   5184000
   > (parse-duration "3 wks")
   1814400
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{parse-time}{%
+    \var{string\/}
+    \code{\&key} \var{start end junk-allowed separators\/}
+    \nobr{\returns{} \var{second, minute, hour, 
+        \nobr{time-zone,} \nobr{daylight-savings-p,} pos\/}}}
+\index{date!parsing}% 
+
+\fnsyntax
+
+\fnpurpose Parse a time-of-day specification string.
+
+\fnpackage \code{:gbbopen-tools} 
+
+\fnmodule \code{:gbbopen-tools}
+
+\fnargs
+\begin{args}{daylight-savings-p}
+\arg[string] A string
+\arg[start] Starting index into \var{string\/} (default is \code{0})
+\arg[end] Ending index into \var{string\/} (default is \nil, meaning
+end of \var{string\/})
+\arg[junk-allowed] A \glref{generalized~boolean} (default is \nil)
+\arg[separators] A sequence of characters that are skipped and separate the
+ hour, minute, and second fields in \var{string}, if needed (default is 
+ \nobr{\code{" :"}})
+\arg[second] An integer between 0 and up to 59, inclusive
+\arg[minute] An integer between 0 and up to 59, inclusive
+\arg[hour] An integer between 0 and up to 23, inclusive
+\arg[time-zone] A time zone: a rational multiple of 1/3600 between
+ -24 and 24 that represents the number of hours offset from GMT
+\arg[daylight-savings-p] A \glref{generalized~boolean}
+\arg[position] A index in \var{string\/}
+\end{args}
+
+\fnreturns Six values: \var{second}, \var{minute}, \var{hour},
+\nobr{\var{time-zone}}, \nobr{\var{daylight-savings-p}}, and
+\nobr{\var{position}}
+
+\fnerrors
+%
+If \var{junk-allowed\/} is false, an error is signaled if a numeric field in
+\var{string\/} does not consist entirely of the representation of a integer,
+possibly surrounded on either side by characters in \nobr{\var{separators}}.
+
+\fndescription
+%
+If no hour, minute, or second values are specified in \var{string}, they
+default to zero.  The values returned for \nobr{\var{time-zone}} and
+\nobr{\var{daylight-savings-p}} will be \nil{} unless a time-zone is specified
+in \var{string}.
+
+The returned \var{position\/} is the index within \var{string\/} where the
+parse ended.
+
+\begin{alsos}{parse-date-and-time}
+\also[encode-date-and-time]
+\also[parse-date]
+\also[parse-date-and-time]
+\also[parse-duration]
+\also[parse-time]
+\end{alsos}
+
+\fnexamples
+%
+\W\supp
+\begin{example}
+  > (parse-time "10:30")
+  0
+  30
+  10
+  nil
+  nil
+  5\goodpagebreak
+  > (parse-time "10:30pm")
+  0
+  30
+  22
+  nil
+  nil
+  7\goodpagebreak
+  > (parse-time "10:30 EDT")
+  0
+  30
+  10
+  4
+  t
+  9\goodpagebreak
+  > (parse-time "10:30 IST")
+  0
+  30
+  10
+ -11/2
+  nil
+  9\goodpagebreak
+  > (parse-time "10:30 UTC-7")
+  0
+  30
+  10
+  7
+  nil
+  11
+  >
 \end{example}
 
 \end{functiondoc}
@@ -9312,7 +9832,7 @@ description.
   > (pretty-duration 166611.9 2)
   "1 day, 22 hours"
   > (pretty-duration 166611.9 1)
-  "2 days"
+  "2 days"\goodpagebreak
   > (pretty-duration 31556952)
   "365 days, 5 hours, 49 minutes, 12 seconds"
   >
@@ -9375,7 +9895,7 @@ description.
   > (pretty-run-time-duration 5)
   "0 seconds"
   > (pretty-run-time-duration 6)
-  "0.01 seconds"
+  "0.01 seconds"\goodpagebreak
   > most-positive-fixnum
   536870911
   > (pretty-run-time-duration most-positive-fixnum)
