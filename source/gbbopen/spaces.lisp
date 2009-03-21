@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/spaces.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Mar 18 14:46:42 2009 *-*
+;;;; *-* Last-Edit: Sat Mar 21 15:42:28 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -321,6 +321,9 @@
                          spec
                        (etypecase unit-class
                          (symbol)
+                         (standard-unit-class (class-name unit-class))
+                         ;; Should we really allow this?
+                         #+dont-allow
                          (standard-unit-instance
                           (setf unit-class (type-of unit-class))))
                        (when subclass-indicator
@@ -357,6 +360,10 @@
                             (when (consp b) (setf b (first b)))
                             (string< a b))))))))
         ;; Return a list of the singleton specifier's class-name:
+        (standard-unit-class (list (class-name unit-classes-specifiers)))
+        ;; Return a list of the singleton specifier's class-name (should we
+        ;; really allow this)?
+        #+dont-allow
         (standard-unit-instance (list (type-of unit-classes-specifiers)))))))
 
 ;;; ---------------------------------------------------------------------------
@@ -372,7 +379,11 @@
   ;; Verify that user-defined space-classes have the correct metaclass:
   (let ((metaclass (class-of instance)))
     (check-type metaclass standard-space-class))
-  (check-type allowed-unit-classes (or symbol list standard-unit-instance))
+  (check-type allowed-unit-classes
+      (or symbol list standard-unit-class 
+          ;; should we really allow this?
+          #+dont-allow
+          standard-unit-instance))
   (multiple-value-bind (space-name parent-space-instance)
       (prepare-space-name-and-parents 
        instance-name make-parents allowed-unit-classes)
@@ -539,7 +550,10 @@
            (instance-name-of space-instance) dimensions)))
   ;; Change the allowed unit classes, if specified:
   (when allowed-unit-classes-p
-    (check-type allowed-unit-classes (or symbol list standard-unit-instance))
+    (check-type allowed-unit-classes (or symbol list standard-unit-class
+                                         ;; should we really allow this?
+                                         #+dont-allow
+                                         standard-unit-instance))
     (let ((new-allowed-unit-class-names 
            (canonicalize-allowed-unit-classes allowed-unit-classes)))
       ;; An actual change in allowed-unit-classes?
