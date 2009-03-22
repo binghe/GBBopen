@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Fri Mar 20 12:59:13 2009; Edited-By: cork *-*
+%% *-* Last-Edit: Sun Mar 22 05:33:32 2009; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2009, Dan Corkill <corkill@GBBopen.org>
@@ -8853,7 +8853,7 @@ description.
 \begin{functiondoc}{Function}{encode-date-and-time}{%
     \var{string\/}
     \code{\&key} \var{start end \nobr{junk-allowed} \nobr{date-separators}
-      \nobr{time-separators} \nobr{month-precedes-date}\/}
+      \nobr{time-separators} \nobr{month-precedes-date} \nobr{time-zone}\/}
     \nobr{\returns{} \nobr{\var{universal-time,} pos\/}}}
 \index{date!parsing}% 
 
@@ -8881,6 +8881,9 @@ end of \var{string\/})
  \nobr{\code{" :"}})
 \arg[month-precedes-date] A \glref{generalized~boolean} (default is 
 \nobr{\textbf{\entlink{*month-precedes-date*}}})
+\arg[time-zone] A \glref{time~zone} (default is \nil,
+  which is equivalent to the current time zone adjusted for daylight
+  saving time)
 \arg[universal-time] A \glref{universal~time} 
 \arg[position] A index in \var{string\/}
 \end{args}
@@ -8903,6 +8906,11 @@ determine the month and date ordering. If no year is specified in
 \var{string}, the current year is assumed, unless the specified month and date
 have passed, in which case next year is assumed.  If no hour, minute, or
 second values are specified, they default to zero.  
+
+If a time-zone is specified in \var{string}, it is used when encoding the
+\nobr{\var{universal-time\/}} value.  Otherwise, if a non-\nil{}
+\nobr{\var{time-zone\/}} argument was supplied, it used for the encoding.
+Otherwise, the current time zone adjusted for daylight saving time is used.
 
 The returned \var{position\/} is the index within \var{string\/} where the
 parse ended.
@@ -8931,11 +8939,20 @@ parse ended.
   > (encode-date-and-time "Apr 1 2010 10:30 EDT")
   3479121000
   20\goodpagebreak
+  > (encode-date-and-time "Apr 1 2010 10:30PM EDT")
+  3479164200
+  22\goodpagebreak
   > (encode-date-and-time "1 Apr 2010 10:30 IST")
   3479086800
   20\goodpagebreak
-  > (encode-date-and-time "April 1, 2010 10:30 UTC-7")
-  3479131800
+  > (encode-date-and-time "1 Apr 2010 10:30" :time-zone -11/2)
+  3479121000
+  20\goodpagebreak
+  > (encode-date-and-time "1 Apr 2010 10:30 EDT" :time-zone -11/2)
+  3479086800
+  16\goodpagebreak
+  > (encode-date-and-time "April 1, 2010 10:30 UTC-4")
+  3479121000
   25
   >
 \end{example}
