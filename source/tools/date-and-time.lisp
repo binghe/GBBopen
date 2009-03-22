@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/date-and-time.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Mar 20 12:59:33 2009 *-*
+;;;; *-* Last-Edit: Sun Mar 22 05:31:01 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -480,15 +480,19 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun encode-date-and-time (string &rest args)
+(defun encode-date-and-time (string &rest args &key time-zone)
   (declare (dynamic-extent args))
   (multiple-value-bind (second minute hour date month year 
-                        time-zone daylight-savings-p start)
-      (apply #'parse-date-and-time string args)
+                        specified-time-zone daylight-savings-p start)
+      (apply #'parse-date-and-time string (remove-property args ':time-zone))
     (declare (ignore daylight-savings-p))
     (values
      (cond 
       ;; A time zone was specified in the string:
+      (specified-time-zone
+       (encode-universal-time second minute hour date month year 
+                              specified-time-zone))
+      ;; A :time-zone argument was specified in the call:
       (time-zone
        (encode-universal-time second minute hour date month year time-zone))
       ;; Use the local time zone:

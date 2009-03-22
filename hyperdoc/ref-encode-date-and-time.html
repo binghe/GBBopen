@@ -18,7 +18,7 @@
 <tr valign="top"><td valign="baseline" align="left"%>
 <nobr><b><font color="#000000">encode-date-and-time</font></b></nobr></td><td valign="baseline"> &nbsp; </td><td valign="baseline" align="left" width="99%"><var>string</var>
 <code>&#38;key</code> <var>start end <nobr>junk-allowed</nobr> <nobr>date-separators</nobr>
-<nobr>time-separators</nobr> <nobr>month-precedes-date</nobr></var>
+<nobr>time-separators</nobr> <nobr>month-precedes-date</nobr> <nobr>time-zone</nobr></var>
 <nobr><span 
     style="font-family: serif; font-style: normal">=&gt;</span> <nobr><var>universal-time,</var> pos</nobr></nobr></td><td valign="baseline" align="right">[<i>Function</i>]
 </td></tr></table></p>
@@ -43,6 +43,9 @@ hour, minute, and second fields in <var>string</var>, if needed (default is
 <nobr><code>" :"</code></nobr>)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>month-precedes-date</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> (default is 
 <nobr><b><a href="ref-month-precedes-date-var.html">*month-precedes-date*</a></b></nobr>)
+</td></tr><tr valign="top"><td valign="baseline" nowrap><i>time-zone</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id215">time&nbsp;zone</a> (default is <code>nil</code>,
+which is equivalent to the current time zone adjusted for daylight
+saving time)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>universal-time</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id223">universal&nbsp;time</a> 
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>position</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A index in <var>string</var>
 </td></tr></table>
@@ -61,6 +64,11 @@ determine the month and date ordering. If no year is specified in
 <var>string</var>, the current year is assumed, unless the specified month and date
 have passed, in which case next year is assumed.  If no hour, minute, or
 second values are specified, they default to zero.  
+</p>
+<p>If a time-zone is specified in <var>string</var>, it is used when encoding the
+<nobr><var>universal-time</var></nobr> value.  Otherwise, if a non-<code>nil</code>
+<nobr><var>time-zone</var></nobr> argument was supplied, it used for the encoding.
+Otherwise, the current time zone adjusted for daylight saving time is used.
 </p>
 <p>The returned <var>position</var> is the index within <var>string</var> where the
 parse ended.
@@ -85,11 +93,20 @@ parse ended.
   &gt; (encode-date-and-time "Apr 1 2010 10:30 EDT")
   3479121000
   20
+  &gt; (encode-date-and-time "Apr 1 2010 10:30PM EDT")
+  3479164200
+  22
   &gt; (encode-date-and-time "1 Apr 2010 10:30 IST")
   3479086800
   20
-  &gt; (encode-date-and-time "April 1, 2010 10:30 UTC-7")
-  3479131800
+  &gt; (encode-date-and-time "1 Apr 2010 10:30" :time-zone -11/2)
+  3479121000
+  20
+  &gt; (encode-date-and-time "1 Apr 2010 10:30 EDT" :time-zone -11/2)
+  3479086800
+  16
+  &gt; (encode-date-and-time "April 1, 2010 10:30 UTC-4")
+  3479121000
   25
   &gt;
 </pre>
