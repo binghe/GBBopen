@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/links.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Mar 18 14:36:26 2009 *-*
+;;;; *-* Last-Edit: Thu Apr  2 18:07:27 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -162,7 +162,7 @@
 (defun build-link-macro-code (fn event-fn place env 
                               &optional 
                               (other-instances nil other-instances-p)
-                              (force nil forced))
+                              (forced-unlink-event-fn nil forced))
   ;;; Generates expansion code for all link macros (linkf & friends)
   (multiple-value-bind (vars vals store-vars writer-form reader-form)
       (get-setf-expansion place env)
@@ -171,10 +171,11 @@
             (.new. ,other-instances) 
             .change.
 	    .dslotd.
-            ,@(when forced '(.forced-removal.)))
+            ,@(when forced '(.forced-removal.
+                             .forced-unlinked.)))
        (multiple-value-setq (,(first store-vars) 
                              .change.
-                             ,@(when forced '(.forced-removal.)))
+                             ,@(when forced '(.forced-removal. .forced-unlinked.)))
          (,fn 
 	  ;; determine the direct-link-definition:
 	  (setf .dslotd.
@@ -188,15 +189,21 @@
 		   ,(first vars))))
 	  ,(first vars) ,reader-form
 	  ,@(when other-instances-p '(.new.))
-	  ,@(when forced `(,force))))
+	  ,@(when forced `(',forced-unlink-event-fn))))
        (when (or .change. ,@(when forced '(.forced-removal.)))
          (let ((*%%allow-setf-on-link%%* t))
            ,writer-form)
+         ,@(when forced
+             `((when .forced-unlinked.
+                 (,forced-unlink-event-fn ,(second reader-form)
+                                          .dslotd.
+                                          ,(first store-vars)
+                                          .forced-unlinked.))))
          (when ,@(if forced '(.change.) '(t))
-           (,event-fn ,(second reader-form)
-                      .dslotd.
-                      ,(first store-vars)
-                      .change.)))
+               (,event-fn ,(second reader-form)
+                          .dslotd.
+                          ,(first store-vars)
+                          .change.)))
        .new.)))
 
 ;;; ---------------------------------------------------------------------------
@@ -301,9 +308,10 @@
   ;;; matter how many times it appears in `new'.  Link-setf behavior is
   ;;; specified via `force'.
   ;;;
-  ;;; Return the new link value, list of added instances, and indicator of
-  ;;; forced removal
+  ;;; Return the new link value, list of added instances, an indicator of
+  ;;; forced removal, and the list of forced unlinked instances.
   (let ((forced-removal nil)
+        (forced-unlinked-instances nil)
         (operation (if force 'link-setf 'linkf)))
     (check-for-deleted-instance instance operation)
     (cond
@@ -327,11 +335,12 @@
             (non-empty-singular-link-cerror dslotd instance existing))
           ;; unlink the existing value
           (%do-iunlink dslotd instance existing)
+          (push existing forced-unlinked-instances)
           (setf forced-removal t))
         (let ((change (ensure-list new)))
           (%do-ilinks dslotd instance change force)
-          ;; return the new link value and changes:
-          (values new change forced-removal)))))
+          ;; return the result values:
+          (values new change forced-removal forced-unlinked-instances)))))
      ;; multi-link:
      (t (let ((change nil)
               (sort-function (direct-link-definition.sort-function dslotd))
@@ -345,6 +354,7 @@
               (unless (memq existing-instance new)
                 (setf existing (delq existing-instance existing))
                 (%do-iunlink dslotd instance existing-instance)
+                (push existing-instance forced-unlinked-instances)
                 (setf forced-removal t))))
           ;; add in new links:
           (dolist (new-instance new)
@@ -363,7 +373,8 @@
                (delete-duplicates new :test 'eq)
                existing)
            change
-           forced-removal))))))
+           forced-removal
+           forced-unlinked-instances))))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -560,7 +571,8 @@
 
 (defmacro link-setf (place other-instances &environment env)
   (build-link-macro-code '%do-linkf '%signal-direct-link-event 
-                         place env other-instances 't))
+                         place env other-instances
+                         '%signal-direct-unlink-event ))
 
 (defmacro unlinkf (place other-instances &environment env)
   (build-link-macro-code '%do-unlinkf '%signal-direct-unlink-event 

@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Mar 18 12:12:48 2009 *-*
+;;;; *-* Last-Edit: Wed Mar 25 17:49:56 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -1213,7 +1213,7 @@
   ;;; This :after method handles link processing and adding the instance to
   ;;; space instances on class changes from a unit class to a unit class.
   ;;;
-  ;; Add inverse pointers from ihstances pointed to by any link slots that
+  ;; Add inverse pointers from instances pointed to by any link slots that
   ;; aren't present already:
   (dolist (slot (class-slots new-class))
     (when (typep slot 'effective-link-definition)
