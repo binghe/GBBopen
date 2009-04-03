@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/startup.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Aug 31 14:43:40 2008 *-*
+;;;; *-* Last-Edit: Fri Apr  3 14:35:49 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -155,11 +155,14 @@
 ;;;  If there is a gbbopen-init.lisp file (or compiled version) in the users
 ;;;  "home" directory, load it now:
 
-(load (namestring (make-pathname :name "gbbopen-init"
-				 :type #-(or clisp ecl) ':unspecific 
-				       #+(or clisp ecl) nil
-				 :version ':newest
-				 :defaults (user-homedir-pathname)))
+(load (namestring 
+       (make-pathname :name "gbbopen-init"
+                      ;; CLISP, Cormanlisp, and ECL don't handle :unspecific
+                      ;; file types:
+                      :type #-(or clisp cormanlisp ecl) ':unspecific 
+                            #+(or clisp cormanlisp ecl) nil
+                      :version ':newest
+                      :defaults (user-homedir-pathname)))
       :if-does-not-exist nil)
 
 ;;; ===========================================================================

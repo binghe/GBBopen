@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/module-manager/module-manager-loader.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Mar 18 14:30:46 2009 *-*
+;;;; *-* Last-Edit: Fri Apr  3 14:36:57 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -393,7 +393,7 @@
            digitool-mcl
            ecl
            lispworks
-	   sbcl
+           sbcl
            scl)
      (need-to-port *compiled-file-type*)))
 
@@ -442,7 +442,7 @@
     (load-source-or-compiled-file "module-manager")))
 
 ;;; ===========================================================================
-;;;				  End of File
+;;;                               End of File
 ;;; ===========================================================================
 
 

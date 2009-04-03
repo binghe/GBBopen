@@ -10,11 +10,10 @@ Requirements:
 
        Allegro CL   Version 8.1
        CLISP        Version 2.47
-       Clozure CL   Version 1.3 (r11840)
+       Clozure CL   Version 1.3 (r11885)
        CMUCL        Version 19f
-       ECL          Version 9.3.0 (configure with --enable-threads if 
-                                   possible; --enable-smallcons & 
-                                   --enable-gengc are also recommended)
+       ECL          Version 9.4.0 (configure with --enable-threads if 
+                                   possible)
        Lispworks    Version 5.1.2
        SBCL         Version 1.0.27 (use sb-threads if possible)
        Scieneer CL  Version 1.3.8
