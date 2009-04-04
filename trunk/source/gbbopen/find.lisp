@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/find.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Mar 18 12:06:22 2009 *-*
+;;;; *-* Last-Edit: Sat Apr  4 17:39:13 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -994,10 +994,24 @@
   ;;; A simple disjunctive-normal-form converter
   (let ((original-pattern pattern))
     (labels
-        ((transform (pattern)
+        ((equivalent-clause-p (clause-1 clause-2)
+           (cond
+            ((or (atom clause-1) (atom clause-2))
+             (equal clause-1 clause-2))
+            ((and (eq (first clause-1) 'not)
+                  (eq (first clause-2) 'not))
+             (equal (second clause-1) (second clause-2)))
+            ((and (eq (first clause-1) 'or)
+                  (eq (first clause-2) 'or))
+             (set-equal (rest clause-1) (rest clause-2)))
+            ((and (eq (first clause-1) 'and)
+                  (eq (first clause-2) 'and))
+             (set-equal (rest clause-1) (rest clause-2)))))
+         (transform (pattern)
            (cond 
             ((consp pattern)
              (case (car pattern)
+               ;; Handle NOT clause:
                (not 
                 (cond 
                  ;; (not) is an error:
@@ -1026,6 +1040,7 @@
                  ;; simple (but not "square"...!) not:
                  (t `(not ,(transform (second pattern))))))
 
+               ;; Handle OR clause:
                (or 
                 (cond 
                  ;; (or) is an error:
@@ -1051,15 +1066,13 @@
                       (transform `(or ,(nth pos p)
                                       ,.(subseq p 0 pos)
                                       ,.(subseq p (1+& pos)))))))
-                 ;; no additional transforms for (or ...), but
-                 ;; delete-duplicates eliminates trivial disjunctive
-                 ;; duplications, such as (or (true b) (true b))
-                 ;; and (or (= x 5) (= x 5)).  Do a smarter analysis
-                 ;; someday...
+                 ;; no additional transforms for (or ...), but delete
+                 ;; duplicate equivalent or clauses:
                  (t `(or ,.(delete-duplicates 
                             (mapcar #'transform (cdr pattern))
-                            :test #'equal)))))
-      
+                            :test #'equivalent-clause-p)))))
+
+               ;; Handle AND clause:
                (and        
                 (cond 
                  ;; (and) is an error:
@@ -1095,14 +1108,16 @@
                       (transform `(and ,(nth pos p)
                                        ,.(subseq p 0 pos)
                                        ,.(subseq p (1+& pos)))))))
+                 ;; no additional transforms for (and ...), but delete
+                 ;; duplicate equivalent and clauses:
+                 (t `(and ,.(delete-duplicates 
+                             (mapcar #'transform (cdr pattern))
+                             :test #'equivalent-clause-p)))))
 
-                 ;; no additional transforms for (and ...)
-                 (t `(and ,.(mapcar #'transform (cdr pattern))))))
-
-               ;; simple cons pattern element:
+               ;; Handle a simple cons pattern element:
                (otherwise pattern)))
-            
-            ;; simple atomic pattern element:
+
+            ;; Handle a simple atomic pattern element:
             (t pattern))))
       ;; Iteratively transform pattern until no further transformations
       ;; apply:
