@@ -1,7 +1,7 @@
 ;;;; -*- Mode:COMMON-LISP; Package:TUTORIAL; Base:10 -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/examples/tutorial.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Aug 31 16:43:23 2008 *-*
+;;;; *-* Last-Edit: Sat Apr  4 12:45:18 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -244,7 +244,7 @@
     (values loaded-pathname saved-time)))
 
 ;;; ===========================================================================
-;;;   Event printing control:
+;;;   Event printing control
 
 (defun show-important-events ()
   (enable-event-printing 'initial-location-event 'location)
@@ -260,7 +260,9 @@
 (show-important-events)
 
 ;;; ===========================================================================
-;;;  Indicate successful loading
+;;;  Check link-definition consistency & indicate successful loading
+
+(check-link-definitions nil ':error)        ; Check link-definition consistency
 
 (pushnew ':tutorial *features*)
 
