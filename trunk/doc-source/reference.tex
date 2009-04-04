@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Wed Mar 25 11:27:01 2009; Edited-By: cork *-*
+%% *-* Last-Edit: Sat Apr  4 12:32:44 2009; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2009, Dan Corkill <corkill@GBBopen.org>
@@ -13712,7 +13712,7 @@ This section contains \nobr{\code{:gbbopen-core}} entities that pertain to
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{check-link-definitions}{\code{\&optional}
-    \var{silent\/}
+    \var{silent errorp\/}
     \returns{} \var{boolean\/}}
 \index{link!definitions, checking consistency of}%
 
@@ -13727,18 +13727,22 @@ This section contains \nobr{\code{:gbbopen-core}} entities that pertain to
 
 \fnargs
 \begin{args}{silent}
-\arg[silent] If true, suppress warning/success printing (default is \nil) 
+\arg[silent] A \glref{generalized~boolean} (default is \nil)
+\arg[errorp] A \glref{generalized~boolean} (default is \nil) 
 \arg[boolean] A \glref{generalized~boolean}
 \end{args}
 
-\fnreturns True if all \glref{link-slot} definitions are consistent; \nil{}
-otherwise. 
+\fnreturns True if all \glref{link-slot} definitions are consistent; \nil{} otherwise. 
 
 \fndescription If a link inconsistency is found, details of the inconsistency
 are printed to \nobr{\code{*standard-output*}}.  For clarity, only the first
 inconsistency is displayed.  After the inconsistency has been repaired,
 \nobr{\textbf{check-link-definitions}} should be used again to check for
 additional inconsistencies.
+
+If \var{silent\/} is true, warning and success printing or error signaling is
+supressed.  If \var{silent\/} is \nil{} and \var{errorp\/} is true, an error
+is signaled if a link inconsistency is found.
 
 \begin{alsos}{define-unit-class}
 \also[define-unit-class]
@@ -13767,9 +13771,28 @@ Create a \glref{link-slot} inconsistency:
   bad
   > (check-link-definitions)
   ;; Warning: The inverse of link MISMATCHED-LINK in unit-class BAD refers
-  ;           to unit-class MISSING, which is not defined.
+  ;;          to unit-class MISSING, which is not defined.
   nil
   >
+\end{example}
+%
+Check again, generating an error on the inconsistency:
+%
+\W\supp\notpretop
+\begin{example}
+  > (check-link-definitions nil 't)
+  Error: The inverse of link MISMATCHED-LINK in unit-class BAD refers
+         to unit-class MISSING, which is not defined.
+  >>\goodpagebreak
+\end{example}
+%
+Check again, silently:
+%
+\W\supp\notpretop
+\begin{example}
+  > (check-link-definitions 't)
+  nil
+  >\goodpagebreak
 \end{example}
 %
 Define the missing \glref{unit~class}, but incorrectly:
@@ -13797,7 +13820,7 @@ Fix the definition and check again:
   >
 \end{example}
 %
-Check again, but silently:
+Check again, silently:
 %
 \W\supp\notpretop
 \begin{example}
