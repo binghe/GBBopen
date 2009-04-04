@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/links.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Apr  2 18:07:27 2009 *-*
+;;;; *-* Last-Edit: Sat Apr  4 10:56:44 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -585,7 +585,7 @@
 ;;; ===========================================================================
 ;;;   Link consistency checking
 
-(defun check-a-link (class linkd &optional silent)
+(defun check-a-link (class linkd silent errorp)
   (let ((inverse-link (direct-link-definition.inverse-link linkd)))
     (cond 
      ;; reflexive links are OK:
@@ -598,11 +598,12 @@
            ;; missing class for inverse link:
            ((not iunit-class)
             (unless silent
-              (warn "The inverse of link slot ~a in unit-class ~s refers to ~
-                     unit class ~s, which is not defined."
-                    (slot-definition-name linkd)
-                    (class-name class)
-                    iunit-class-name)))
+              (funcall (if errorp #'error #'warn)
+                       "The inverse of link slot ~a in unit-class ~s refers ~
+                        to unit class ~s, which is not defined."
+                       (slot-definition-name linkd)
+                       (class-name class)
+                       iunit-class-name)))
            (t (let* ((islot-name (second inverse-link))
                      (ilinkd (find islot-name 
                                    (the list (class-direct-slots iunit-class))
@@ -615,37 +616,39 @@
                  ((or (not ilinkd)
                       (not (typep ilinkd 'direct-link-definition)))
                   (unless silent
-                    (warn "The inverse of link slot ~a in unit-class ~s ~
-                           refers to link slot ~s which is not present in ~
-                           unit class ~s."
-                          (slot-definition-name linkd)
-                          (class-name class)
-                          islot-name
-                          iunit-class-name)))
+                    (funcall (if errorp #'error #'warn)
+                             "The inverse of link slot ~a in unit-class ~s ~
+                              refers to link slot ~s which is not present ~
+                              in unit class ~s."
+                             (slot-definition-name linkd)
+                             (class-name class)
+                             islot-name
+                             iunit-class-name)))
                  ;; mismatched singularity:
                  ((xor singular-inverse
 		       (direct-link-definition.singular ilinkd))
                   (unless silent
-                    (warn "Link slot ~a in unit class ~s incorrectly ~
-                           declares its inverse link slot ~s in unit class ~
-                           ~s as ~:[not ~;~]singular."
-                          (slot-definition-name linkd)
-                          (class-name class)
-                          (slot-definition-name ilinkd)
-                          iunit-class-name
-                          singular-inverse)))
+                    (funcall (if errorp #'error #'warn)
+                             "Link slot ~a in unit class ~s incorrectly ~
+                              declares its inverse link slot ~s in unit ~
+                              class ~s as ~:[not ~;~]singular."
+                             (slot-definition-name linkd)
+                             (class-name class)
+                             (slot-definition-name ilinkd)
+                             iunit-class-name
+                             singular-inverse)))
                  (t t))))))))))
 
 ;;; ---------------------------------------------------------------------------
 
-(defun check-link-definitions (&optional silent)
+(defun check-link-definitions (&optional silent errorp)
   (let ((result 't))
     (map-unit-classes
      #'(lambda (class plus-subclasses)
          (declare (ignore plus-subclasses))
          (map-direct-link-slots 
           #'(lambda (link) 
-              (unless (check-a-link class link silent)
+              (unless (check-a-link class link silent errorp)
                 (if silent 
                     (setf result nil)
                     (return-from check-link-definitions nil))))
