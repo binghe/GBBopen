@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/links.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Apr  5 15:08:42 2009 *-*
+;;;; *-* Last-Edit: Sun Apr  5 15:28:45 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -189,20 +189,24 @@
 	  ,(first vars) ,reader-form
 	  ,@(when other-instances-p '(.new.))
 	  ,@(when forced `(',forced-unlink-event-fn))))
-       (when ,(if forced t '.change.)
+       ;; always set the slot on a LINK-SETF; otherwise only on a change:
+       (when ,(if forced t '.change.)   
          (let ((*%%allow-setf-on-link%%* t))
            ,writer-form)
+         ;; signal any forced direct unlinks by a LINK-SETF:
          ,@(when forced
              `((when .forced-unlinked.
                  (,forced-unlink-event-fn ,(second reader-form)
                                           .dslotd.
                                           ,(first store-vars)
                                           .forced-unlinked.))))
-         (when ,@(if forced '(.change.) '(t))
-               (,event-fn ,(second reader-form)
-                          .dslotd.
-                          ,(first store-vars)
-                          .change.)))
+         ;; always signal the link-event on a LINK-SETF; otherwise only on a
+         ;; change:
+         (when ,(if forced 't '.change.)
+           (,event-fn ,(second reader-form)
+                      .dslotd.
+                      ,(first store-vars)
+                      .change.)))
        .new.)))
 
 ;;; ---------------------------------------------------------------------------
