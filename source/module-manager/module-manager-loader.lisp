@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/module-manager/module-manager-loader.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Apr  3 14:36:57 2009 *-*
+;;;; *-* Last-Edit: Sun Apr  5 17:47:31 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -222,6 +222,7 @@
              #+darwinx8664-target "mac86-64"
              #+linuxppc-target "linuxppc"
              #+linuxx8664-target "linux86-64" ; Thanks to Matthew Danish
+             #+linuxx8632-target "linuxx86"
              #+windows-target "windows"
              #+win64-target "windows-64")
             "clozure"
