@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/links.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Apr  4 10:56:44 2009 *-*
+;;;; *-* Last-Edit: Sun Apr  5 15:08:42 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -171,11 +171,10 @@
             (.new. ,other-instances) 
             .change.
 	    .dslotd.
-            ,@(when forced '(.forced-removal.
-                             .forced-unlinked.)))
+            ,@(when forced '(.forced-unlinked.)))
        (multiple-value-setq (,(first store-vars) 
                              .change.
-                             ,@(when forced '(.forced-removal. .forced-unlinked.)))
+                             ,@(when forced '(.forced-unlinked.)))
          (,fn 
 	  ;; determine the direct-link-definition:
 	  (setf .dslotd.
@@ -190,7 +189,7 @@
 	  ,(first vars) ,reader-form
 	  ,@(when other-instances-p '(.new.))
 	  ,@(when forced `(',forced-unlink-event-fn))))
-       (when (or .change. ,@(when forced '(.forced-removal.)))
+       (when ,(if forced t '.change.)
          (let ((*%%allow-setf-on-link%%* t))
            ,writer-form)
          ,@(when forced
@@ -310,8 +309,7 @@
   ;;;
   ;;; Return the new link value, list of added instances, an indicator of
   ;;; forced removal, and the list of forced unlinked instances.
-  (let ((forced-removal nil)
-        (forced-unlinked-instances nil)
+  (let ((forced-unlinked-instances nil)
         (operation (if force 'link-setf 'linkf)))
     (check-for-deleted-instance instance operation)
     (cond
@@ -335,12 +333,11 @@
             (non-empty-singular-link-cerror dslotd instance existing))
           ;; unlink the existing value
           (%do-iunlink dslotd instance existing)
-          (push existing forced-unlinked-instances)
-          (setf forced-removal t))
+          (push existing forced-unlinked-instances))
         (let ((change (ensure-list new)))
           (%do-ilinks dslotd instance change force)
           ;; return the result values:
-          (values new change forced-removal forced-unlinked-instances)))))
+          (values new change forced-unlinked-instances)))))
      ;; multi-link:
      (t (let ((change nil)
               (sort-function (direct-link-definition.sort-function dslotd))
@@ -354,8 +351,7 @@
               (unless (memq existing-instance new)
                 (setf existing (delq existing-instance existing))
                 (%do-iunlink dslotd instance existing-instance)
-                (push existing-instance forced-unlinked-instances)
-                (setf forced-removal t))))
+                (push existing-instance forced-unlinked-instances))))
           ;; add in new links:
           (dolist (new-instance new)
             (unless (memq new-instance existing)
@@ -373,7 +369,6 @@
                (delete-duplicates new :test 'eq)
                existing)
            change
-           forced-removal
            forced-unlinked-instances))))))
 
 ;;; ---------------------------------------------------------------------------
