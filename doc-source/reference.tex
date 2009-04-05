@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Sat Apr  4 12:32:44 2009; Edited-By: cork *-*
+%% *-* Last-Edit: Sun Apr  5 15:36:29 2009; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2009, Dan Corkill <corkill@GBBopen.org>
@@ -13919,9 +13919,9 @@ list of \glref{unit~instances}
 A \code{link-event} is signaled for:
 \begin{tightitemize}
 \item all pointers that are added to the specified
-  \glref{link-slot-place}
+  \nobr{\glref{link-slot-place}}
 \item  each inverse pointer of the \glref{link} that is added to
-  another \glref{unit~instance}
+  another \nobr{\glref{unit~instance}}
 \end{tightitemize}
 
 \begin{alsos}{unlinkf-all}
@@ -13957,8 +13957,8 @@ A \code{link-event} is signaled for:
 \fnsyntax
 
 \fnpurpose Set \var{\glref{link-slot-place}\/} to be precisely
-\var{unit-instance-or-instances\/} \glref{links} between
-\glref{unit~instance} and \var{unit-instance-or-instances}.
+\nobr{\var{unit-instance-or-instances\/}} \glref{links} between
+\nobr{\glref{unit~instance}} and \nobr{\var{unit-instance-or-instances}}.
 
 \fnpackage \code{:gbbopen}
 
@@ -13986,23 +13986,25 @@ list of \glref{unit~instances}
 An \code{unlink-event} is signaled for:
 \begin{tightitemize}
 \item all pointers that are removed from the specified
-  \glref{link-slot-place}
+  \nobr{\glref{link-slot-place}}
 \item each inverse pointer of the \glref{link} that is removed-from
-  another \glref{unit~instance}
+  another \nobr{\glref{unit~instance}}
 \end{tightitemize}
 A \code{link-event} is signaled for:
 \begin{tightitemize}
 \item all pointers that are added to the specified
-  \glref{link-slot-place}
+  \nobr{\glref{link-slot-place\/}} (unlike \textbf{\entlink{linkf}}, this event
+  is signaled even if no new pointers were added to
+  \nobr{\glref{link-slot-place\/}})
 \item each inverse pointer of the \glref{link} that is added to
-  another \glref{unit~instance}
+  another \nobr{\glref{unit~instance}}
 \end{tightitemize}
 
 \fndescription Any existing \glref{links} in
-\var{\glref{link-slot-place}} that do not involve
-\var{unit-instance-or-instances\/} are unlinked.  Then \glref{links}
-to any additional \glref{unit~instances} in
-\var{unit-instance-or-instances\/} are added.  
+\nobr{\var{\glref{link-slot-place}}} that do not involve
+\nobr{\var{unit-instance-or-instances\/}} are unlinked.  Then \glref{links} to
+any additional \nobr{\glref{unit~instances}} in
+\nobr{\var{unit-instance-or-instances\/}} are added.
 
 The order of the specified \nobr{\var{unit-instance-or-instances\/}} is
 maintained when settting the value of \nobr{\var{\glref{link-slot-place}}}, if
@@ -14122,7 +14124,7 @@ list of \glref{unit~instances}
 An \code{unlink-event} is signaled for:
 \begin{tightitemize}
 \item all pointers that are removed from the specified
-  \glref{link-slot-place}
+  \nobr{\glref{link-slot-place}}
 \item each inverse pointer of the \glref{link} that is removed from
   another \glref{unit~instance}
 \end{tightitemize}
@@ -14177,7 +14179,7 @@ An \code{unlink-event} is signaled for:
 An \code{unlink-event} is signaled for:
 \begin{tightitemize}
 \item all pointers that are removed from the specified
-  \glref{link-slot-place}
+  \nobr{\glref{link-slot-place}}
 \item each inverse pointer of the \glref{link} that is removed from
   another \glref{unit~instance}
 \end{tightitemize}
