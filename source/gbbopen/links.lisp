@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/links.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Apr  5 15:28:45 2009 *-*
+;;;; *-* Last-Edit: Mon Apr  6 10:54:01 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -370,7 +370,7 @@
            ;; Use new to as the value for link-setf (unless a sort-function
            ;; was used); otherwise the updated existing value:
            (if (and force (not sort-function)) 
-               (delete-duplicates new :test 'eq)
+               (delete-duplicates new :test 'eq :from-end t)
                existing)
            change
            forced-unlinked-instances))))))
