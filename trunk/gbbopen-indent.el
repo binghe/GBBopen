@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Emacs-Lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/gbbopen-indent.el *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jun 25 05:01:01 2008 *-*
+;;;; *-* Last-Edit: Tue Apr 14 12:13:01 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2002-2008, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2009, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -35,6 +35,7 @@
   ;; GBBopen entity indentations:
   (set-indent-hook 'define-module 1)
   (set-indent-hook 'destructure-extent 2)
+  (set-indent-hook 'dosublists 1)
   (set-indent-hook 'make-space-instance 2)
   (set-indent-hook 'patch 2)
   (set-indent-hook 'start-patch 2)

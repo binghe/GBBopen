@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Mar 20 02:23:04 2009 *-*
+;;;; *-* Last-Edit: Tue Apr 14 12:22:19 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -62,6 +62,7 @@
 ;;;           handling EXCL::INTERRUPT-SIGNAL on Allegro by default.  (Corkill) 
 ;;;  07-20-08 Added CASE-USING, CCASE-USING, and ECASE-USING macros.  (Corkill)
 ;;;  03-02-09 Added LIST-LENGTH>2.  (Corkill)
+;;;  04-14-09 Added DOSUBLISTS.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -164,6 +165,7 @@
             delq
             do-until
             dosequence
+            dosublists
             dotted-conc-name            ; in module-manager, but part of tools;
                                         ; not documented
             dotted-length
@@ -608,6 +610,15 @@
          (map nil #'(lambda (element) (,fun element nil))
               ,sequence)
          ,@(when result `((,fun nil t))))))) 
+
+;;; ===========================================================================
+;;;   Dosublists (mapl-style dolist variant)
+
+(defmacro dosublists ((var listform &optional result) &body body)
+  `(do ((,var ,listform (cdr ,var)))
+       ((endp ,var) ,result)
+     (declare (list ,var))
+     ,@body))
 
 ;;; ===========================================================================
 ;;;  Nicer y-or-n-p and yes-or-no-p (add initial help to Allegro & CMUCL

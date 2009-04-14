@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Sun Apr  5 15:36:29 2009; Edited-By: cork *-*
+%% *-* Last-Edit: Tue Apr 14 13:50:57 2009; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2009, Dan Corkill <corkill@GBBopen.org>
@@ -3026,7 +3026,7 @@ Return the pathname of the \nobr{\code{:gbbopen-user}} \glref{module}:
 \arg[module-name] A \glref{keyword~symbol} naming a \glref{module}
 \arg[date] A \glref{universal~time}
 \arg[author] A string
-\arg[description] A string or a list of strings or \nil
+\arg[description] A string or a \glref{proper~list} of strings or \nil
 \arg[date-loaded] A \glref{universal~time}
 \arg[file-name] A string
 \end{args}
@@ -3397,7 +3397,7 @@ Check if the Agenda Shell \glref{module} has been loaded:
 \arg[date] A string representing a date (parsed by 
   \nobr{\textbf{\entlink{parse-date}}})
 \arg[author] A string (default is \nobr{\code{"Anonymous"}})
-\arg[description] A string or a list of strings (default is \nil)
+\arg[description] A string or a \glref{proper~list} of strings (default is \nil)
 \arg[form] A \glref{form}
 \end{args}
 
@@ -3601,7 +3601,7 @@ a \glref{module}.
 \arg[date] A string representing a date (parsed by 
   \nobr{\textbf{\entlink{parse-date}}})
 \arg[author] A string (default is \nobr{\code{"Anonymous"}})
-\arg[description] A string or a list of strings (default is \nil)
+\arg[description] A string or a \glref{proper~list} of strings (default is \nil)
 \arg[form] A \glref{form}
 \end{args}
 
@@ -4031,9 +4031,9 @@ the \nobr{\var{otherwise-clause}}, if specified; otherwise \nil.
 \fnterms
 \begin{args}{test-key}
 \arg[test-key] An object produced by evaluating \nobr{\var{keyform}}
-\arg[keys] An object or a list of objects. To refer to the symbols \code{t}
-and \nobr{\code{otherwise}} by themselves as the sole key object for a
-\nobr{\var{normal-clause}}, \code{(t)} and \nobr{\code{(otherwise)}},
+\arg[keys] An object or a \glref{proper~list} of objects. To refer to the symbols
+\code{t} and \nobr{\code{otherwise}} by themselves as the sole key object for
+a \nobr{\var{normal-clause}}, \code{(t)} and \nobr{\code{(otherwise)}},
 respectively, must be specified as the \var{keys\/} for the clause.
 \arg[form] A \glref{form}
 \end{args}
@@ -4157,7 +4157,7 @@ No \var{clause\/} was selected.
 \fnterms
 \begin{args}{test-key}
 \arg[test-key] An object produced by evaluating \nobr{\var{keyplace}}
-\arg[keys] An object or a list of objects. 
+\arg[keys] An object or a \glref{proper~list} of objects. 
 \arg[form] A \glref{form}
 \end{args}
 
@@ -4900,6 +4900,10 @@ element.
 The scope of the binding of \var{var\/} does not include the
 \nobr{\var{sequence-form}}, but it does include the \nobr{\var{result-form}}.
 
+\begin{alsos}{dosublists}
+\also[dosublists]
+\end{alsos}
+
 \fnexamples
 %
 \W\supp
@@ -4914,6 +4918,70 @@ The scope of the binding of \var{var\/} does not include the
   #\(\backslash\)b 
   #\(\backslash\)c
   nil
+  >
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Macro}{dosublists}{(\var{var list-form\/} 
+  [\var{result-form\/}]) \var{declaration\/}\superstar{} 
+  \nobr{\{\var{tag\/} \vbar{} \var{form\/}\}\superstar}
+  \returns{} \var{result\/}\superstar or \nil}
+\index{iteration!dosublists@\textbf{dosublists}}%
+  
+\fnsyntax
+
+\fnpurpose A \code{dolist}-style iterator for successive sublists of a list.
+
+\fnpackage \code{:gbbopen-tools}
+
+\fnmodule \code{:gbbopen-tools}
+
+\fnargs
+\begin{args}{declarations}
+\arg[var] A \glref{variable~symbol}
+\arg[list-form] A \glref{form} that evaluates to a \glref{proper~list}
+\arg[result-form] A \glref{form}
+\arg[declarations] A declare expression (not evaluated)
+\arg[tag] A \code{go} tag (not evaluated)
+\arg[form] A \glref{form}
+\arg[results] The values returned by evaluating the last \var{form}
+\end{args}
+
+\fnreturns If a \code{return} or \nobr{\code{return-from}} form is executed,
+then the values passed from that form are returned; otherwise, the values
+returned by evaluating the \nobr{\var{result-form\/}} are returned, or \nil{}
+if there is no \nobr{\var{result-form}}.
+
+\fndescription The body of \nobr{\textbf{dosublists}} is like a
+\nobr{\code{tagbody}}.  \nobr{\textbf{Dosublists}} evaluates
+\nobr{\var{list-form}}, which should produce a \glref{proper~list}. It then executes
+the body once for each successive sublist in the list, with \var{var\/} bound
+to the sublist.
+
+The scope of the binding of \var{var\/} does not include the
+\nobr{\var{list-form}}, but it does include the \nobr{\var{result-form}}.
+
+\begin{alsos}{dosequence}
+\also[dosequence]
+\end{alsos}
+
+\fnexamples
+%
+\W\supp
+\begin{example}
+  > (dosublists (sublist '(1 2 3)) (print sublist))
+  (1 2 3)
+  (2 3) 
+  (3) 
+  nil\goodpagebreak
+  > (dosublists (sublist '(1 2 3) (print "Done")) (print sublist))
+  (1 2 3)
+  (2 3) 
+  (3) 
+  "Done"
   >
 \end{example}
 
@@ -4998,7 +5066,7 @@ No \var{clause\/} was selected.
 \fnterms
 \begin{args}{test-key}
 \arg[test-key] An object produced by evaluating \nobr{\var{keyform}}
-\arg[keys] An object or a list of objects. 
+\arg[keys] An object or a \glref{proper~list} of objects. 
 \arg[form] A \glref{form}
 \end{args}
 
@@ -6107,8 +6175,8 @@ removed.
 
 \fnargs
 \begin{args}{test-not}
-\arg[list-1] A proper list
-\arg[list-2] A proper list
+\arg[list-1] A \glref{proper~list}
+\arg[list-2] A \glref{proper~list}
 \arg[test] A \glref{function} of two arguments that returns a
 \glref{generalized~boolean} (default is \nobr{\code{\#'eql}}) 
 \arg[test-not] A \glref{function} of two arguments that returns a
@@ -6160,8 +6228,8 @@ true.
 
 \fnargs
 \begin{args}{test-not}
-\arg[list-1] A proper list
-\arg[list-2] A proper list
+\arg[list-1] A \glref{proper~list}
+\arg[list-2] A \glref{proper~list}
 \arg[test] A \glref{function} of two arguments that returns a
 \glref{generalized~boolean} (default is \nobr{\code{\#'eql}}) 
 \arg[test-not] A \glref{function} of two arguments that returns a
@@ -12214,7 +12282,7 @@ The description is printed to the {\bf *standard-output*} stream.
 \arg[space-instance-or-unit-classes-specifier] A \glref{space~instance}, 
   an \glref{extended~unit-classes~specification}
   or a list of \glref{extended~unit-classes~specifications}
-\arg[dimension-specifications-list] A proper list
+\arg[dimension-specifications-list] A \glref{proper~list}
 \end{args}
 
 \fnreturns A list of \nobr{\code{(\glref{dimension-name} (\glref{dimension-type}
@@ -12834,7 +12902,7 @@ Change the \glref{instance~name} of \code{hyp} \code{180} to
 \arg[unduplicated-slot-names] A list of slot names
 \arg[initargs] An \glref{initialization~argument~list}
 \arg[new-instance] A \code{standard-object} \glref{instance}
-\arg[slots] A proper list of slot objects
+\arg[slots] A \glref{proper~list} of slot objects
 \end{args}
 
 \fnreturns Two values: the (newly created) duplicate \glref{instance} and a
@@ -13037,7 +13105,7 @@ Create a duplicate of the \code{hyp} \code{419} \glref{unit~instance}:
 \arg[unduplicated-slot-names] A list of slot names
 \arg[initargs] An \glref{initialization~argument~list}
 \arg[new-instance] A \code{standard-object} \glref{instance}
-\arg[slots] A proper list of slot objects
+\arg[slots] A \glref{proper~list} of slot objects
 \end{args}
 
 \fnreturns Two values: the (newly created) duplicate \glref{instance} and a
@@ -13476,7 +13544,7 @@ instances of that class exist.
 \fnargs
 \begin{args}{unit-instance}
 \arg[unit-instance] A \glref{unit~instance}
-\arg[space-instances] A proper list
+\arg[space-instances] A \glref{proper~list}
 \end{args}
 
 \fnreturns The list of \glref{space~instances} on which
@@ -13592,7 +13660,7 @@ and \nobr{\textbf{\entlink{make-duplicate-instance-changing-class}}}.
 \fnargs
 \begin{args}{unduplicated-slot-names}
 \arg[instance] A \code{standard-object} \glref{instance}
-\arg[unduplicated-slot-names] A proper list
+\arg[unduplicated-slot-names] A \glref{proper~list}
 \end{args}
 
 \fnreturns A list of unduplicated slot names for the \glref{class} of 
@@ -16129,7 +16197,7 @@ or
 \fnargs
 \begin{args}{extended-unit-classes-specification-list}
 \arg[space-instance] A \glref{space~instance}
-\arg[extended-unit-classes-specification-list] A proper list
+\arg[extended-unit-classes-specification-list] A \glref{proper~list}
 \end{args}
 
 \fnreturns A list of \glref{extended~unit-classes~specifications}; \code{t},
@@ -16315,7 +16383,7 @@ allowed unit classes.
 \fnargs
 \begin{args}{space-instances}
 \arg[space-instance] A \glref{space~instance}
-\arg[space-instances] A proper list
+\arg[space-instances] A \glref{proper~list}
 \end{args}
 
 \fnreturns A list of the child space instances.
@@ -17166,7 +17234,7 @@ Find the \glref{space~instance} with path \nobr{\code{(bb hyps)}}:
 \begin{args}{space-instance-regexp}
 \arg[space-instance-regexp] A \glref{space-instance~path} regular expression
 specifying the \glref{space~instances} to be returned 
-\arg[space-instances] A proper list
+\arg[space-instances] A \glref{proper~list}
 \end{args}
 
 \fnreturns The specified \glref{space~instances}.
@@ -17487,7 +17555,7 @@ Remove all \code{hyp} \glref{unit~instances} from
 \fnargs
 \begin{args}{space-instances}
 \arg[space-instance] A \glref{space~instance}
-\arg[space-instances] A proper list
+\arg[space-instances] A \glref{proper~list}
 \end{args}
 
 \fnreturns The parent space instance or \nil, if \var{space-instance} does not
@@ -18101,7 +18169,7 @@ Print a list of all \code{hyp} \glref{instance~names}, in ascending order:
 pattern-matching tests occur
 \arg[filter-after] A single-argument predicate to be
 applied after pattern-matching tests occur
-\arg[matching-unit-instances] A proper list of \glref{unit~instances}
+\arg[matching-unit-instances] A \glref{proper~list} of \glref{unit~instances}
 \end{args}
 
 \index{pattern!specification!filter-instances@\textbf{filter-instances}}%
@@ -18178,7 +18246,7 @@ and \nobr{\code{within\%}}.
 \arg[instance-name] The \glref{instance~name} for the retrieval
 \arg[unit-class-specifier] An \glref{extended~unit-class~specification}
 (see below; default is \code{t})
-\arg[unit-instances] A proper list of \glref{unit~instances}
+\arg[unit-instances] A \glref{proper~list} of \glref{unit~instances}
 \end{args}
 
 \fnreturns A list of the \glref{unit~instances} with the specified
@@ -18336,7 +18404,7 @@ which sets \code{=} to be the found \glref{unit~instance}.
   pattern-matching tests occur
 \arg[filter-after] A single-argument predicate to be applied after
   pattern-matching tests occur
-\arg[unit-instances] A proper list of \glref{unit~instances}
+\arg[unit-instances] A \glref{proper~list} of \glref{unit~instances}
 \end{args}
 
 \fnreturns
@@ -18515,7 +18583,7 @@ specified \glref{unit~classes}.
 \begin{args}{unit-classes-specifier}
 \arg[unit-classes-specifier] An \glref{extended~unit-classes~specification}
 (see below)
-\arg[unit-instances] A proper list of \glref{unit~instances}
+\arg[unit-instances] A \glref{proper~list} of \glref{unit~instances}
 \end{args}
 
 \fnreturns
@@ -19647,7 +19715,7 @@ are not saved or sent.
 \fnargs
 \begin{args}{omitted-slot-names}
 \arg[instance] An \glref{instance}
-\arg[omitted-slot-names] A proper list
+\arg[omitted-slot-names] A \glref{proper~list}
 \end{args}
 
 \fnreturns A list of omitted slot names for the \glref{class} of 
@@ -21043,7 +21111,7 @@ Return the activation cycle of \code{ksa}:
 \begin{args}{trigger-instances}
 \arg[source] A \glref{KSA}, \glref{event},
 or a list of \glref{KSAs} or \glref{events}
-\arg[trigger-instances] A proper list
+\arg[trigger-instances] A \glref{proper~list}
 \end{args}
 
 \fnreturns The list of trigger \glref{unit~instances}
@@ -23113,7 +23181,7 @@ stepping enabled):
 \fnargs
 \begin{args}{events}
 \arg[ksa] A \glref{KSA}
-\arg[events] A proper list
+\arg[events] A \glref{proper~list}
 \end{args}
 
 \fnreturns The list of events that triggered \var{ksa}
