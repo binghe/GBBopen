@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/initiate.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Apr  3 14:36:07 2009 *-*
+;;;; *-* Last-Edit: Tue Apr 14 03:56:41 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -221,8 +221,8 @@
        (make-pathname :name "gbbopen-commands"
                       ;; CLISP, Cormanlisp, and ECL don't handle :unspecific
                       ;; file types:
-                      :type #-(or clisp cormanlisp) ':unspecific 
-                            #+(or clisp cormanlisp) nil
+                      :type #-(or clisp cormanlisp ecl) ':unspecific 
+                            #+(or clisp cormanlisp ecl) nil
                       :version ':newest
                       :defaults (user-homedir-pathname)))
       :if-does-not-exist nil)
