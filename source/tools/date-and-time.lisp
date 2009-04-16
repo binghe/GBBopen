@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/date-and-time.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Mar 22 05:31:01 2009 *-*
+;;;; *-* Last-Edit: Thu Apr 16 16:17:00 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -30,8 +30,11 @@
 (in-package :gbbopen-tools)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (import '(module-manager:*month-precedes-date*
+  (import '(module-manager::*month-full-name-vector*
             module-manager::*month-name-vector*
+            module-manager:*month-precedes-date*
+            module-manager::*weekday-full-name-vector*
+            module-manager::*weekday-name-vector*
             module-manager:brief-date
             module-manager:brief-date-and-time
             module-manager::decode-supplied-universal-time
@@ -66,9 +69,9 @@
 ;;; The following globals are defined in ../module-manager/module-manager.lisp:
 ;;;    (defvar *month-precedes-date* 't) 
 ;;;    (defparameter *month-name-vector* ...)
-
-(defparameter *weekday-name-vector*
-    #("Mon" "Tue" "Wed" "Thu" "Fri" "Sat" "Sun"))
+;;;    (defparameter *month-full-name-vector* ...)
+;;;    (defparameter *weekday-name-vector* ...)
+;;;    (defparameter *weekday-full-name-vector* ...)
 
 (defparameter *standard-time-zone-abbreviations*
     ;; Time-zone abbreviations are not unique or universal, and the same hour
@@ -244,8 +247,12 @@
   (defun full-date-and-time (&optional universal-time
                              &key time-zone
                                   daylight-savings-p
+                                  all-numeric
+                                  full-names
+                                  include-day
                                   include-seconds
                                   include-time-zone
+                                  (month-precedes-date *month-precedes-date*)
                                   utc-offset-only
                                   12-hour
                                   destination)
@@ -253,10 +260,13 @@
     (multiple-value-bind (second minute hour date month year
                           day local-daylight-savings-p zone)      
         (decode-supplied-universal-time universal-time time-zone)
-      (declare (ignore day))
-      (let ((month-name (svref (the (simple-array t (*))
-                                 *month-name-vector*)
-                               (& (1- (& month)))))
+      (let ((month-name (if all-numeric
+                            month
+                            (svref (the (simple-array t (*))
+                                     (if full-names
+                                         *month-full-name-vector*
+                                         *month-name-vector*))
+                                   (& (1- (& month))))))
             (am/pm (when 12-hour
                      (cond ((>=& hour 12)
                             (when (>=& hour 13)
@@ -264,6 +274,16 @@
                             "PM")
                            (t (when (zerop& hour) (setf hour 12))
                               "AM"))))
+            (day-name (when include-day
+                        (if full-names
+                            (concatenate 'string
+                              (svref (the (simple-array t (*))
+                                       *weekday-full-name-vector*)
+                                     day)
+                              ",")
+                            (svref (the (simple-array t (*))
+                                     *weekday-name-vector*)
+                                   day))))
             (time-zone-abbreviation
              (when (or include-time-zone utc-offset-only)
                (time-zone-abbreviation
@@ -276,11 +296,15 @@
                     daylight-savings-p
                     local-daylight-savings-p)
                 utc-offset-only))))
-        (if *month-precedes-date*
+        (if month-precedes-date
             (format destination
-                    "~a ~2d ~a ~2,'0d:~2,'0d~:[~*~;:~2,'0d~]~@[~a~]~@[ ~a~]"
+                    "~@[~a ~]~:[~a ~2d~@[,~*~] ~a~;~2,'0d/~2,'0d~*/~a~] ~
+                     ~2,'0d:~2,'0d~:[~*~;:~2,'0d~]~@[~a~]~@[ ~a~]"
+                    day-name
+                    all-numeric
                     month-name
                     date
+                    full-names
                     year
                     hour
                     minute
@@ -289,9 +313,13 @@
                     am/pm
                     time-zone-abbreviation)
             (format destination 
-                    "~2d ~a ~a ~a ~2,'0d:~2,'0d~:[~*~;:~2,'0d~]~@[~a~]~@[ ~a~]"
+                    "~@[~a ~]~:[~2d ~a~@[,~*~] ~a~;~2,'0d/~2,'0d~*/~a~] ~
+                     ~2,'0d:~2,'0d~:[~*~;:~2,'0d~]~@[~a~]~@[ ~a~]"
+                    day-name
+                    all-numeric
                     date
                     month-name
+                    full-names
                     year
                     hour
                     minute
@@ -315,7 +343,8 @@
         (decode-supplied-universal-time universal-time nil)
       (format destination
               "~a ~2,'0d ~2,'0d:~2,'0d:~2,'0d"
-              (svref *month-name-vector* (1-& month))
+              (svref (the (simple-array t (*)) *month-name-vector*)
+                     (1-& month))
               date
               hour
               minute
@@ -364,9 +393,11 @@
                                      zone))))
         (format destination
                 "~a, ~2,'0d ~a ~a ~2,'0d:~2,'0d:~2,'0d ~a~4,'0d~@[ (~a)~]"
-                (svref *weekday-name-vector* day)
+                (svref (the (simple-array t (*)) *weekday-name-vector*) 
+                       day)
                 date
-                (svref *month-name-vector* (1-& month))
+                (svref (the (simple-array t (*)) *month-name-vector*)
+                       (1-& month))
                 year
                 hour
                 minute
