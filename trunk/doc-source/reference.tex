@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Tue Apr 14 13:50:57 2009; Edited-By: cork *-*
+%% *-* Last-Edit: Thu Apr 16 16:42:20 2009; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2009, Dan Corkill <corkill@GBBopen.org>
@@ -9024,8 +9024,9 @@ parse ended.
 
 \begin{functiondoc}{Function}{full-date-and-time}{%
     \code{\&optional} \var{universal-time\/}
-    \code{\&key} \var{time-zone daylight-savings-p include-seconds
-      include-time-zone utc-offset-only 12-hour destination\/}
+    \code{\&key} \var{time-zone daylight-savings-p all-numeric full-names
+      include-day include-seconds include-time-zone
+      month-precedes-date utc-offset-only 12-hour destination\/}
     \returns{} \var{result\/}}
 \index{date!formatted}%
 \index{time, formatted}%
@@ -9046,8 +9047,13 @@ parse ended.
 \arg[time-zone] A \glref{time~zone} (default is \nil,
   which is equivalent to the current time zone adjusted for daylight
   saving time)
-\arg[daylight-savings-p] A \glref{generalized~boolean} (default is \nil)        \arg[include-seconds] A \glref{generalized~boolean} (default is \nil)
+\arg[daylight-savings-p] A \glref{generalized~boolean} (default is \nil)        
+\arg[all-numeric] A \glref{generalized~boolean} (default is \nil)
+\arg[full-names] A \glref{generalized~boolean} (default is \nil)
+\arg[include-day] A \glref{generalized~boolean} (default is \nil)
 \arg[include-time-zone] A \glref{generalized~boolean} (default is \nil)
+\arg[month-precedes-date] A \glref{generalized~boolean} (default is 
+  \nobr{\textbf{\entlink{*month-precedes-date*}}})
 \arg[utc-offset-only] A \glref{generalized~boolean} (default is \nil)
 \arg[12-hour] A \glref{generalized~boolean} (default is \nil)
 \arg[destination] Either \nil, \code{t}, a stream, or a string with a fill 
@@ -9058,6 +9064,7 @@ pointer (default is \nil)
 \fnreturns If \var{destination\/} is non-\nil, then \nil; otherwise, a string.
 
 \fndescription A 17-character description (longer if
+\nobr{\var{full-names\/}}, \nobr{\var{include-day\/}},
 \nobr{\var{include-seconds\/}}, \nobr{\var{include-time-zone\/}}, or
 \nobr{\var{utc-offset-only\/}} are non-\nil{}) is generated.
 
@@ -9066,6 +9073,12 @@ pointer (default is \nil)
 %
 If \nobr{\var{universal-time\/}} is not supplied or is \nil, the current time
 (as returned by \nobr{\code{get-universal-time}} is used.
+
+\W\xml{p} 
+%
+If \var{full-names\/} is supplied and is non-\nil, the full name is generated
+rather than the abbreviated name for the month (and for the day of the week,
+if \var{include-day\/} is non-\nil).
 
 \W\xml{p} 
 %
@@ -9098,6 +9111,7 @@ in AM/PM format.
 \also[internet-text-date-and-time]
 \also[iso8661-date-and-time]
 \also[message-log-date-and-time]
+\also[parse-date-and-time]
 \end{alsos}
 
 \fnexamples
@@ -9114,8 +9128,59 @@ Display the current date and time (with seconds):
 %
 \W\supp\notpretop
 \begin{example}
-  > (full-date-and-time nil :include-seconds't)
+  > (full-date-and-time nil :include-seconds 't)
   "Feb 16 2009 13:11:38"
+  >
+\end{example}
+%
+Display the current date and time (with the day of the week):
+%
+\W\supp\notpretop
+\begin{example}
+  > (full-date-and-time nil :include-day 't)
+  "Mon Feb 16 2009 13:11"
+  >
+\end{example}
+%
+Display the current date and time (with no abbreviations and with the day of
+the week):
+%
+\W\supp\notpretop
+\begin{example}
+  > (full-date-and-time nil :full-names 't :include-day 't)
+  "Monday, February 16, 2009 13:11"
+  >
+\end{example}
+%
+Display the current date and time (with no abbreviations, with the month
+following the date, and with the day of the week):
+%
+\W\supp\notpretop
+\begin{example}
+  > (full-date-and-time nil :full-names 't :include-day 't
+                            :month-precedes-date nil)
+  "Monday, 16 February, 2009 13:11"
+  >
+\end{example}
+%
+Display the current date and time (all numeric, with the abbreviated day of
+the week):
+%
+\W\supp\notpretop
+\begin{example}
+  > (full-date-and-time nil :all-numeric 't :include-day 't)
+  "Mon 02/16/2009 13:11"
+  >
+\end{example}
+%
+Display the current date and time (all numeric, with the month following the
+date, and with the full day of the week):
+%
+\W\supp\notpretop
+\begin{example}
+  > (full-date-and-time nil :all-numeric 't :include-day 't 
+                        :full-names 't :month-precedes-date nil)
+  "Monday, 16/02/2009 13:11"
   >
 \end{example}
 %
@@ -9576,6 +9641,7 @@ parse ended.
 \begin{alsos}{*month-precedes-date*}
 \also[*month-precedes-date*]
 \also[encode-date-and-time]
+\also[full-date-and-time]
 \also[parse-date]
 \also[parse-duration]
 \also[parse-time]

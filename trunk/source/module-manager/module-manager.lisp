@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/module-manager/module-manager.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Mar 20 12:45:50 2009 *-*
+;;;; *-* Last-Edit: Thu Apr 16 15:05:19 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -379,6 +379,12 @@
     #("January" "February" "March" "April" "May" "June"
       "July" "August" "September" "October" "November" "December"))
 
+(defparameter *weekday-name-vector*
+    #("Mon" "Tue" "Wed" "Thu" "Fri" "Sat" "Sun"))
+
+(defparameter *weekday-full-name-vector*
+    #("Monday" "Tuesday" "Wednesday" "Thursday" "Friday" "Saturday" "Sunday"))
+
 ;;; ---------------------------------------------------------------------------
 
 (defun decode-supplied-universal-time (universal-time time-zone)
@@ -481,57 +487,64 @@
   ;;; Parses many intuitive date formats (sensitive to month-precedes-date,
   ;;; if needed):
   (declare (simple-string string))
-  (let (date month year month-preceded-date)
-    (flet ((process-date ()
-             (multiple-value-setq (date start)
-               (parse-integer string :start start :end end :junk-allowed t)))
-           (process-month ()
-             (cond
-              ;; Numeric month:
-              ((digit-char-p (schar string start))
-               (multiple-value-setq (month start)
+  (let (date month year month-preceded-date name-equal-string)
+    (labels ((name-equal (name)
+               (when (string-equal 
+                      string name
+                      :start1 start
+                      :end1 (& (min (& end)
+                                    (& (+ (& start) (& (length name)))))))
+                 (setf name-equal-string name)))
+             (process-date ()
+               (multiple-value-setq (date start)
                  (parse-integer string :start start :end end :junk-allowed t)))
-              ;; Month name:
-              (t (let* (month-string
-                        (month-equal-fn
-                         #'(lambda (month-name)
-                             (when (string-equal 
-                                    string month-name
-                                    :start1 start
-                                    :end1 (& (min (& end)
-                                                  (& (+ (& start)
-                                                        (& (length
-                                                            month-name)))))))
-                               (setf month-string month-name)))))
-                   (setf month (or (position-if month-equal-fn 
+             (process-possible-day ()
+               (setf name-equal-string nil)
+               (when (or (position-if #'name-equal
+                                      *weekday-full-name-vector*)
+                         (position-if #'name-equal
+                                      *weekday-name-vector*))
+                 (incf& start (& (length name-equal-string)))
+                 (skip-separators)))
+             (process-month ()
+               (cond
+                ;; Numeric month:
+                ((digit-char-p (schar string start))
+                 (multiple-value-setq (month start)
+                   (parse-integer string :start start :end end :junk-allowed t)))
+                ;; Month name:
+                (t (setf name-equal-string nil)
+                   (setf month (or (position-if #'name-equal
                                                 *month-full-name-vector*)
-                                   (position-if month-equal-fn
+                                   (position-if #'name-equal
                                                 *month-name-vector*)))
                    (unless month
                      (error "Unable to determine the month in ~s" string))
                    (incf& month)
-                   (incf& start (& (length month-string)))))))
-           (default-year ()
+                   (incf& start (& (length name-equal-string))))))
+             (default-year ()
                ;;; return the default year; used when a year is not specified:
-               (multiple-value-bind (seconds minutes hours 
-                                     current-date current-month current-year)
-                   (get-decoded-time)
-                 (declare (ignore seconds minutes hours))
-                 ;; Assume next year, if the date is past in the current year:
-                 (if (or (< (& month) (& current-month))
-                         (and (= (& month) (& current-month))
-                              (< (& date) (& current-date))))
-                     (+& current-year 1)
-                     current-year)))
-           (skip-separators ()
-             (loop 
-                 while (and (< (& start) (& end))
-                            (find (schar string start) separators))
-                 do (incf& start))))
+                 (multiple-value-bind (seconds minutes hours 
+                                       current-date current-month current-year)
+                     (get-decoded-time)
+                   (declare (ignore seconds minutes hours))
+                   ;; Assume next year, if the date is past in the current year:
+                   (if (or (< (& month) (& current-month))
+                           (and (= (& month) (& current-month))
+                                (< (& date) (& current-date))))
+                       (+& current-year 1)
+                       current-year)))
+             (skip-separators ()
+               (loop 
+                   while (and (< (& start) (& end))
+                              (find (schar string start) separators))
+                   do (incf& start))))
       (skip-separators)
+      ;; We might-have a day of week, which we skip:
+      (process-possible-day)
       (when (< (the fixnum start) (the fixnum end))
         ;; If we have a month name, then we know the month-date order; otherwise
-        ;; we'll assume month-first for until we process the second field:
+        ;; we'll assume month-first for now, until we process the second field:
         (when (alpha-char-p (schar string start))
           (setf month-preceded-date 't))
         (process-month)
