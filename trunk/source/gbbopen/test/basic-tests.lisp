@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/basic-tests.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Feb 19 15:42:09 2009 *-*
+;;;; *-* Last-Edit: Tue Apr 21 04:03:06 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -976,13 +976,19 @@
 	(delete-instance u1)
 	(check-event 'delete-instance-event
 		     :instance u1)
+        (check-event 'unlink-event 
+                     :instance u1 
+                     :slot-name 'link-2
+                     :current-value nil 
+                     :removed-instances (list u3)
+                     :directp 't)
 	(check-event 'unlink-event 
 		     :instance u3
 		     :slot-name 'backlink-2
 		     :current-value nil
 		     :removed-instances (list u1)
-		     :directp nil))
-      (check-for-unprocessed-events)))
+		     :directp nil)
+        (check-for-unprocessed-events))))
   (remove-all-event-functions 't '(uc-1 :plus-subclasses))
   (values))
 

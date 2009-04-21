@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Mar 25 17:49:56 2009 *-*
+;;;; *-* Last-Edit: Tue Apr 21 03:40:40 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -1153,10 +1153,16 @@
     ;; slots that aren't link slots in the new class:
     (dolist (slot (class-slots unit-class))
       (when (typep slot 'effective-link-definition)
-	(unless (or non-unit-new-class
-                    (let ((new-class-slot (car (memq slot new-class-slots))))
-                      (typep new-class-slot 'effective-link-definition)))
-	  (delete-incoming-link-pointer instance slot))))))
+	(when (or non-unit-new-class
+                  (let ((new-class-slot 
+                         (find (slot-definition-name slot) new-class-slots 
+                               :test #'eq
+                               :key #'slot-definition-name)))
+                    (not (typep new-class-slot 'effective-link-definition))))
+          (delete-incoming-link-pointer instance slot)
+          (%signal-direct-unlink-event 
+           instance slot nil
+           (ensure-list (slot-value-using-class unit-class instance slot))))))))
 
 ;;; ---------------------------------------------------------------------------
 
