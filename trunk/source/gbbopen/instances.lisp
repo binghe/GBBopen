@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Apr 21 03:40:40 2009 *-*
+;;;; *-* Last-Edit: Thu Apr 23 06:36:58 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -1149,8 +1149,8 @@
     (dolist (space-instance
                 (standard-unit-instance.%%space-instances%% instance))
       (remove-instance-from-space-instance instance space-instance))
-    ;; Unlink incoming link pointers from instances pointed to by any link
-    ;; slots that aren't link slots in the new class:
+    ;; Unlink instances in any link slots that aren't link slots in the new
+    ;; class:
     (dolist (slot (class-slots unit-class))
       (when (typep slot 'effective-link-definition)
 	(when (or non-unit-new-class
@@ -1159,10 +1159,13 @@
                                :test #'eq
                                :key #'slot-definition-name)))
                     (not (typep new-class-slot 'effective-link-definition))))
-          (delete-incoming-link-pointer instance slot)
-          (%signal-direct-unlink-event 
-           instance slot nil
-           (ensure-list (slot-value-using-class unit-class instance slot))))))))
+          (let ((current-value
+                 (slot-value-using-class unit-class instance slot)))
+            (when current-value
+              (delete-incoming-link-pointer instance slot)
+              (%signal-direct-unlink-event 
+               instance slot nil
+               (ensure-list current-value)))))))))
 
 ;;; ---------------------------------------------------------------------------
 
