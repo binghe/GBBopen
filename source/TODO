@@ -8,6 +8,8 @@ No priority bugs at this time
                                   Small Tasks
                                   -----------
 
+* Add CHANGE-CLASS event testing to :gbbopen-test
+
 * Improve define-tll-command SLIME support
 
 * Add LispWorks "heavy-allocation" support to with-reading-saved/sent-objects
@@ -28,7 +30,7 @@ No priority bugs at this time
                                  -----------
 
 * Worry about the effect on the storage for existing space instances when
-  a unit-class definition is redefined with a change dimensional-value
+  a unit-class definition is redefined with a changed dimensional-value
   specifications
 
 

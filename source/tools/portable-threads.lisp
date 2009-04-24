@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/portable-threads.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Mar 19 02:43:26 2009 *-*
+;;;; *-* Last-Edit: Fri Apr 24 10:43:23 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -1593,14 +1593,28 @@
 ;;;  Using scheduler mechanisms, such as process-arrest-reasons, often
 ;;;  interferes with these operations.  Instead we use sleeping which
 ;;;  works like a charm in most CLs!
+;;;  
+;;;  Clozure is the exception to this, as occasionally it fails to run
+;;;  thread-interrupt forms.  Instead, a global association list of sleeper
+;;;  tag/thread semaphores are used to implement THROWABLE-SLEEP-FOREVER and
+;;;  AWAKEN-THROWABLE-SLEEPER.
 
 (defparameter *nearly-forever-seconds* 
     #.(min most-positive-fixnum
            ;; Keep well within a 32-bit word on 64-bit CLs:
            (1- (expt 2 29))
-           ;; Clozure CL on Windows needs a smaller value:
+           ;; Clozure CL on Windows needs a smaller value (but not used, at
+           ;; present, due to the different sleeper strategy we use for CLL):
            #+(and clozure windows-target)
            (1- (expt 2 22))))
+
+;;; ---------------------------------------------------------------------------
+;;;  Sleeper semaphores (needed in Clozure)
+
+#+clozure
+(defvar *sleeper-semaphores* nil)
+#+clozure
+(defvar *sleeper-semaphores-lock* (ccl:make-lock "sleeper semaphores"))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -1609,19 +1623,35 @@
   ;; In most CLs, sleep allows run-in-thread, symbol-value-in-thread,
   ;; and throws to be processed while sleeping, and sleep is often
   ;; well optimized.  So, we use it whenever possible.
+  #-clozure
   (catch tag
-    (sleep *nearly-forever-seconds*)))
+    (sleep *nearly-forever-seconds*))
+  #+clozure
+  (let ((semaphore (ccl:make-semaphore)))
+    (ccl:with-lock-grabbed (*sleeper-semaphores-lock* "adding")
+      (push (cons (cons tag ccl:*current-process*) semaphore)
+            *sleeper-semaphores*))
+    (ccl:wait-on-semaphore semaphore)))
 
 ;;; ---------------------------------------------------------------------------
 
 #-threads-not-available
 (defun awaken-throwable-sleeper (thread 
                                  &optional (tag 'throwable-sleep-forever))
+  #-clozure
   (flet ((awake-fn ()
            (ignore-errors
             (throw tag nil))))
-    (run-in-thread thread #'awake-fn)
-    (thread-yield)))
+    (run-in-thread thread #'awake-fn))
+  #+clozure
+  (let ((acons (assoc (cons tag thread) *sleeper-semaphores*
+                      :test #'equal)))
+    (when acons 
+      (ccl:with-lock-grabbed (*sleeper-semaphores-lock* "removing")
+        (setf *sleeper-semaphores*
+              (delete acons *sleeper-semaphores* :test #'eq)))
+      (ccl:signal-semaphore (cdr acons))))
+  (thread-yield))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -1751,7 +1781,7 @@
 (defun condition-variable-wait (condition-variable)
   #-threads-not-available
   (let ((lock (condition-variable-lock condition-variable)))
-    ;; No lock-owner checking under SCL:
+    ;; No lock-owner checking is available under SCL:
     #-scl
     (unless (thread-holds-lock-p lock)
       (condition-variable-lock-needed-error
@@ -1814,6 +1844,7 @@
 (defun condition-variable-wait-with-timeout (condition-variable seconds)
   #-threads-not-available
   (let ((lock (condition-variable-lock condition-variable)))
+    ;; No lock-owner checking is available under SCL:
     #-scl
     (unless (thread-holds-lock-p lock)
       (condition-variable-lock-needed-error
@@ -1918,6 +1949,7 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun condition-variable-signal (condition-variable)
+  ;; No lock-owner checking is available under SCL:
   #-scl
   (unless (thread-holds-lock-p (condition-variable-lock condition-variable))
     (condition-variable-lock-needed-error
@@ -1942,6 +1974,7 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun condition-variable-broadcast (condition-variable)
+  ;; No lock-owner checking is available under SCL:
   #-scl
   (unless (thread-holds-lock-p (condition-variable-lock condition-variable))
     (condition-variable-lock-needed-error
