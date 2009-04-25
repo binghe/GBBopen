@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/common.tex *-*
-%% *-* Last-Edit: Wed Mar 18 13:48:36 2009; Edited-By: cork *-*
+%% *-* Last-Edit: Sat Apr 25 11:38:06 2009; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2009, Dan Corkill <corkill@GBBopen.org>
@@ -19,6 +19,7 @@
 
 %% Html declarations: output directory and filenames, node title
 \newcommand{\gbbopenversion}{1.3}
+\newcommand{\portablethreadsversion}{2.3}
 \newcommand{\runningtitle}{GBBopen \gbbopenversion{} \docname}
 \htmltitle{\runningtitle}
 
@@ -125,6 +126,8 @@
 }
 % Tighten up example environment (uses atbeginend.sty):
 \AfterBegin{example}{\vspace*{-0.8\baselineskip}}
+% Tighten up example environment (uses atbeginend.sty):
+\AfterBegin{smallexample}{\vspace*{-0.8\baselineskip}}
 
 % fndocsec
 \newcommand{\fndocsec}{\@startsection{subparagraph}{5}{\z@}%
@@ -626,6 +629,8 @@
   \fndocsec{Note}~\\[2pt]\nopagebreak}
 \newcommand{\fnnotes}{\ckfnpartctr{16}{Notes}%
   \fndocsec{Notes}~\\[2pt]\nopagebreak}
+\newcommand{\replnote}{\ckfnpartctr{16}{Notes}%
+  \fndocsec{REPL Note}~\\[2pt]\nopagebreak}
 
 \let\syntaxsep=\par
 
@@ -736,6 +741,8 @@
   \xml{span class="fndoclabel"}Note\xml{/span} \\} 
 \newcommand{\fnnotes}{\par
   \xml{span class="fndoclabel"}Notes\xml{/span} \\} 
+\newcommand{\replnote}{\par
+  \xml{span class="fndoclabel"}REPL Note\xml{/span} \\} 
 \newcommand{\argstarted}{}
 \newcommand{\syntaxsep}{\\}
 \newenvironment{args}[1]{%
@@ -788,7 +795,26 @@
 \T\end{ifhtml}
 
 %% ----------------------------------------------------------------------------
-%%  TightItemize
+%%  smallexample environment -- obeys spaces and lines (in \small font)
+
+\W\begin{iftex}
+\makeatletter
+\def\smallexample{\list{}{\small\leftmargin\z@
+    \itemindent\z@ \rightmargin\z@ \parsep \z@ plus\p@}\item[]\tt
+  \turnon@spaces\turnon@lines\let\do\@makeother\Hlx@example}
+\let\endsmallexample=\endlist
+\makeatother
+\W\end{iftex}
+
+\T\begin{ifhtml}
+\HlxEval{
+(put 'smallexample    'hyperlatex 'hyperlatex-format-smallexample)
+(put 'endsmallexample 'hyperlatex 'hyperlatex-end-recursion)
+}
+\T\end{ifhtml}
+
+%% ----------------------------------------------------------------------------
+%%  tightitemize environment
 
 \W\begin{iftex}
 \makeatletter
@@ -816,7 +842,7 @@
 \T\end{ifhtml}
 
 %% ----------------------------------------------------------------------------
-%%  TightEnumerate
+%%  tightenumerate environment
 
 \W\begin{iftex}
 \makeatletter
@@ -1068,7 +1094,7 @@
 	(setq hyperlatex-verbatim-need-pars t))
     (setq hyperlatex-verbatim-need-pars nil))
   (hyperlatex-blk)
-  (hyperlatex-gen (if (not notpretop)
+ (hyperlatex-gen (if (not notpretop)
                       "pre class=\"pretop\""
                       (progn (setq notpretop nil)
                              "pre")))
@@ -1087,7 +1113,39 @@
   (if hyperlatex-verbatim-need-pars
       (hyperlatex-format-resumepars)))
 
-(defun hyperlatex-format-verbatim ()
+(defun hyperlatex-format-smallexample ()
+  (hyperlatex-format-endpar)
+;; RK's
+  (hyperlatex-mode-level-up "smallexample")
+;;
+  (if hyperlatex-in-body 
+      (progn
+	(hyperlatex-format-suspendpars)
+	(setq hyperlatex-verbatim-need-pars t))
+    (setq hyperlatex-verbatim-need-pars nil))
+  (hyperlatex-blk)
+  (hyperlatex-gen "small")
+  (hyperlatex-gen (if (not notpretop)
+                      "pre class=\"pretop\""
+                      (progn (setq notpretop nil)
+                             "pre")))
+  (let ((hyperlatex-special-chars-regexp
+	 (concat "[\\\\{}%" hyperlatex-meta-| "]"))
+	(hyperlatex-example-depth hyperlatex-recursion-depth)
+	(hyperlatex-active-space t))
+    ;; recursive call returns after processing \end{example}
+    (hyperlatex-format-region (point) (point-max) t))
+  (goto-char hyperlatex-command-start)
+;  (hyperlatex-delete-whitespace)
+  (hyperlatex-gen "/pre")
+  (hyperlatex-gen "/small")
+;; RK's
+  (hyperlatex-mode-level-down "smallexample")
+;;
+  (if hyperlatex-verbatim-need-pars
+      (hyperlatex-format-resumepars)))
+
+ (defun hyperlatex-format-verbatim ()
   (hyperlatex-format-endpar)
 ;; RK's
   (hyperlatex-mode-level-up "format-verbatim")
