@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Apr 14 12:22:19 2009 *-*
+;;;; *-* Last-Edit: Mon Apr 27 13:29:09 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -145,7 +145,8 @@
 ;;;  Exported tools entities
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (export '(bounded-value
+  (export '(*disable-with-error-handling* ; need to document!
+            bounded-value
             case-using
             case-using-failure
             ccase-using
@@ -241,6 +242,8 @@
 ;;;
 ;;;  Evaluates body if an error occurs while evaluating form
 
+(defvar *disable-with-error-handling* nil)
+
 (defun error-message-string (condition)                            
   (let ((*print-readably* nil))
     (handler-case (format nil "~a" condition)
@@ -291,6 +294,8 @@
                                                        (function error-condition)))
                                    ,@(if error-body
                                          `(,@handler-body
+                                           (when *disable-with-error-handling*
+                                             (error condition))
                                            ;; Save the condition for use
                                            ;; by (error-message) in error-body:
                                            (setf ,condition/tag condition)
@@ -299,6 +304,8 @@
                                              (progn ,@handler-body))))))
                                `(,@(if error-body
                                        `(,@handler-body
+                                         (when *disable-with-error-handling*
+                                           (error condition))
                                          ;; Save the condition for use by
                                          ;; (error-message) in error-body:
                                          (setf ,condition/tag condition)
