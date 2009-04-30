@@ -97,13 +97,18 @@ provided that the deletion does not trigger the deletion of any other
 <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a>.  For example, the following form intended to delete
 all <a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a> violates this restriction:
 <pre class="pretop">
-   <font color="#ff0000">(do-instances-of-class (space-instance '(<a href="ref-standard-space-instance.html">standard-space-instance</a> :plus-subclasses))
+   <font color="#ff0000">(do-instances-of-class (space-instance 
+                             '(<a href="ref-standard-space-instance.html">standard-space-instance</a> :plus-subclasses))
      (<a href="ref-delete-space-instance.html">delete-space-instance</a> space-instance))</font>
 </pre>
 because deletion of a <a href="ref-glossary.html#id197">space&nbsp;instance</a> with children automatically
 deletes those child <a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a>.  The function
 <nobr><b><a href="ref-delete-all-space-instances.html">delete-all-space-instances</a></b></nobr> provides an efficient
 means of deleting all <a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a> without violating this rule.
+</p>
+<p><span class="fndoclabel">REPL Note</span> <br /><a name="id3">The</a> equivalent of 
+<nobr><code>(do-instances-of-class (instance <var>arg</var>) (print instance))</code></nobr>
+can be invoked using the <a href="ref-glossary.html#id173">REPL&nbsp;command</a> <nobr><code>:pic <var>arg/</var></code></nobr>.
 </p>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
