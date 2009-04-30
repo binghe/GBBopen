@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/epilogue.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Sep 19 14:27:02 2008 *-*
+;;;; *-* Last-Edit: Sat Apr 25 04:41:43 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2004-2008, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2004-2009, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -25,6 +25,7 @@
 ;;;           (Corkill)
 ;;;  05-02-08 Added :di and :dsi REPL commands.  (Corkill)
 ;;;  05-25-08 Added :dsis REPL command.  (Corkill)
+;;;  04-25-09 Added :pic REPL command.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -311,8 +312,8 @@
                 *block-saved/sent-value*)))))
 
 ;;; ---------------------------------------------------------------------------
-;;;  Add :di, :dsbb, :dsi, :dsis, and :fi REPL commands (available if using
-;;;  GBBopen's initiate.lisp)
+;;;  Add :di, :dsbb, :dsi, :dsis, :fi, and :pic REPL commands (available if
+;;;  using GBBopen's initiate.lisp)
 
 (defun do-di/dsi-repl-command (type find-fn describe-fn args)
       (let ((maybe-instance 
@@ -390,8 +391,13 @@
            
            (define-repl-command :fi (&rest args)
              "Find instance by name"
-             (do-fi-repl-command args)))))
-  
+             (do-fi-repl-command args))
+
+           (define-repl-command :pic (&rest args)
+             "Print instances of class"
+             (apply 'map-instances-of-class 'print args)))))
+
+
 ;;; ===========================================================================
 ;;;  GBBopen is fully loaded
 
