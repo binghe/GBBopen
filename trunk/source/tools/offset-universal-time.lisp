@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/offset-universal-time.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Apr 30 04:32:17 2009 *-*
+;;;; *-* Last-Edit: Thu Apr 30 05:20:02 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -145,12 +145,13 @@
     (when maybe-ot
       (funcall 'full-date-and-time (ot2ut maybe-ot) 
                :include-seconds 't
-               :destination *standard-output*))))
+               :destination *standard-output*)
+      maybe-ot)))
 
 ;;; ---------------------------------------------------------------------------
 
 (when (fboundp 'define-repl-command)
-  (eval `(let ((*current-system-name* ':offset-universal-time))
+  (eval `(let ((*current-system-name* ':gbbopen-tools))
            (declare (special *current-system-name*))
            
            (define-repl-command :ot (&rest args)
