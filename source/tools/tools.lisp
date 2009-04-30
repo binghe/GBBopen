@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Apr 27 13:29:09 2009 *-*
+;;;; *-* Last-Edit: Mon Apr 27 16:49:03 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -145,7 +145,7 @@
 ;;;  Exported tools entities
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (export '(*disable-with-error-handling* ; need to document!
+  (export '(*disable-with-error-handling*
             bounded-value
             case-using
             case-using-failure

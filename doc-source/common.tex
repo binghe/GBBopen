@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/common.tex *-*
-%% *-* Last-Edit: Sat Apr 25 11:38:06 2009; Edited-By: cork *-*
+%% *-* Last-Edit: Mon Apr 27 18:04:18 2009; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2009, Dan Corkill <corkill@GBBopen.org>
@@ -121,8 +121,8 @@
 \renewcommand\subitem{\@idxitem \hspace*{10\p@}}
 \renewcommand\subsubitem{\@idxitem \hspace*{20\p@}}
 % ppar
-\newcommand{\ppar}[1]{\paragraph{#1}~\\[0.5\baselineskip]%
-  \T\addcontentsline{toc}{subsubsection}{{#1}}
+\newcommand{\ppar}[1]{\paragraph*{#1}~\\[0.5\baselineskip]%
+  \T\addcontentsline{toc}{subsection}{{#1}}
 }
 % Tighten up example environment (uses atbeginend.sty):
 \AfterBegin{example}{\vspace*{-0.8\baselineskip}}

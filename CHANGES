@@ -1,6 +1,12 @@
 Important changes since GBBopen 1.3:
 
+  * Changes to extended-REPL commands
+     - New :ot (describe offset-univeral-time value) command
+     - New :pic (print-instances-of-class) command
+     - New :ut (describe univeral-time value) command
+
   * Changes to GBBopen Tools
+     - New *DISABLE-WITH-ERROR-HANDLING* global variable
      - New DOSUBLISTS macro
      - New :all-numeric, :include-day, and :full-names arguments to 
        FULL-DATE-AND-TIME
