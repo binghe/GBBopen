@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/offset-universal-time.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Mar 20 02:25:30 2009 *-*
+;;;; *-* Last-Edit: Thu Apr 30 04:32:17 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -22,6 +22,7 @@
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
 ;;;  07-18-07 File created.  (Corkill)
+;;;  04-30-09 Added :ot REPL command.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -31,6 +32,10 @@
                   :use '(:common-lisp))))
 
 (in-package :gbbopen-tools)
+
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (import '(common-lisp-user::*current-system-name*
+            common-lisp-user::define-repl-command)))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(*ot-base*
@@ -125,6 +130,32 @@
              (expt 2 24)))
     (check-ot-base)
     (values *ot-base* base-ut)))
+
+;;; ===========================================================================
+;;;  Add :ot REPL command (available if using GBBopen's initiate.lisp)
+
+(defun do-ot-repl-command (arg)
+  (let ((maybe-ot
+         ;; Handle evaluating REPLs:
+         (if (integerp arg)
+             ;; Already evaluated:
+             arg
+             ;; Try evaluating:
+             (ignore-errors (eval arg)))))
+    (when maybe-ot
+      (funcall 'full-date-and-time (ot2ut maybe-ot) 
+               :include-seconds 't
+               :destination *standard-output*))))
+
+;;; ---------------------------------------------------------------------------
+
+(when (fboundp 'define-repl-command)
+  (eval `(let ((*current-system-name* ':offset-universal-time))
+           (declare (special *current-system-name*))
+           
+           (define-repl-command :ot (&rest args)
+             "Describe offset-universal-time value"
+             (do-ot-repl-command (sole-element args))))))
 
 ;;; ===========================================================================
 ;;; End of File
