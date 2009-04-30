@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/date-and-time.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Apr 16 16:17:00 2009 *-*
+;;;; *-* Last-Edit: Thu Apr 30 05:19:32 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -24,13 +24,16 @@
 ;;;  02-08-09 Added PARSE-DURATION function.  (Corkill)
 ;;;  03-05-09 Added BRIEF-DURATION, BRIEF-RUN-TIME-DURATION, and
 ;;;           PARSE-TIME functions.  (Corkill)
+;;;  04-30-09 Added :ot REPL command.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 (in-package :gbbopen-tools)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (import '(module-manager::*month-full-name-vector*
+  (import '(common-lisp-user::*current-system-name*
+            common-lisp-user::define-repl-command
+            module-manager::*month-full-name-vector*
             module-manager::*month-name-vector*
             module-manager:*month-precedes-date*
             module-manager::*weekday-full-name-vector*
@@ -859,6 +862,33 @@
 
 (defcm parse-time-interval (&rest args)
   `(parse-duration ,@args))
+
+;;; ===========================================================================
+;;;  Add :ut REPL command (available if using GBBopen's initiate.lisp)
+
+(defun do-ut-repl-command (arg)
+  (let ((maybe-ut
+         ;; Handle evaluating REPLs:
+         (if (integerp arg)
+             ;; Already evaluated:
+             arg
+             ;; Try evaluating:
+             (ignore-errors (eval arg)))))
+    (when maybe-ut
+      (funcall 'full-date-and-time maybe-ut
+               :include-seconds 't
+               :destination *standard-output*)
+      maybe-ut)))
+
+;;; ---------------------------------------------------------------------------
+
+(when (fboundp 'define-repl-command)
+  (eval `(let ((*current-system-name* ':gbbopen-tools))
+           (declare (special *current-system-name*))
+           
+           (define-repl-command :ut (&rest args)
+             "Describe universal-time value"
+             (do-ut-repl-command (sole-element args))))))
 
 ;;; ===========================================================================
 ;;;                               End of File
