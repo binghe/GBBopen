@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Apr 27 16:49:03 2009 *-*
+;;;; *-* Last-Edit: Fri May  1 15:03:49 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -423,38 +423,44 @@
                  'eq 
                  test)))
       (with-once-only-bindings (exp)
-        `(declare (ignorable ,exp))
-        `(cond ,@(mapcan 
-                  #'(lambda (clause)
-                      (destructuring-bind (keys . clause-forms) clause
-                        (cond 
-                         ;; no keys
-                         ((not keys) 
-                          `((nil ,@clause-forms)))
-                         ;; otherwise clause:
-                         ((eq keys 'otherwise)
-                          `((t ,@clause-forms)))
-                         ;; normal clause (including t clause):
-                         (t `((,(cond
-                                 ((atom keys)
-                                  (pushnew keys all-keys :test test)
-                                  `(,(maybe-downgrade-test keys) ,exp ',keys))
-                                 (t `(or ,@(mapcar 
-                                            #'(lambda (key)
-                                                (pushnew key all-keys :test test)
-                                                `(,(maybe-downgrade-test key)
-                                                  ,exp ',key))
-                                            keys))))
-                               ,@clause-forms))))))
-                  clauses)
-               ,@(when ccase-tag
-                   `((t (setf ,exp-form 
-                              (ccase-using-failure 
-                               ',exp-form ,exp ',test ',(nreverse all-keys)))
-                        (go ,ccase-tag))))
-               ,@(when ecase?
-                   `((t (case-using-failure 
-                         'ecase-using ,exp ',test ',(nreverse all-keys))))))))))
+        `(progn
+           ;; Reference exp, just in case it is never referenced in a clause:
+           ,exp
+           ;; Generate the clauses:
+           (cond 
+            ,@(mapcan 
+               #'(lambda (clause)
+                   (destructuring-bind (keys . clause-forms) clause
+                     (cond 
+                      ;; no keys
+                      ((not keys) 
+                       `((nil ,@clause-forms)))
+                      ;; otherwise clause:
+                      ((eq keys 'otherwise)
+                       `((t ,@clause-forms)))
+                      ;; normal clause (including t clause):
+                      (t `((,(cond
+                              ((atom keys)
+                               (pushnew keys all-keys :test test)
+                               `(,(maybe-downgrade-test keys) ,exp ',keys))
+                              (t `(or ,@(mapcar 
+                                         #'(lambda (key)
+                                             (pushnew key all-keys :test test)
+                                             `(,(maybe-downgrade-test key)
+                                               ,exp ',key))
+                                         keys))))
+                            ,@clause-forms))))))
+               clauses)
+            ;; ccase error-and-go form:
+            ,@(when ccase-tag
+                `((t (setf ,exp-form 
+                           (ccase-using-failure 
+                            ',exp-form ,exp ',test ',(nreverse all-keys)))
+                     (go ,ccase-tag))))
+            ;; ecase error form:
+            ,@(when ecase?
+                `((t (case-using-failure 
+                      'ecase-using ,exp ',test ',(nreverse all-keys)))))))))))
   
 ;;; ---------------------------------------------------------------------------
 
