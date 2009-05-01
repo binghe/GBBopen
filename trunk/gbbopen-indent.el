@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Emacs-Lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/gbbopen-indent.el *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Apr 14 12:13:01 2009 *-*
+;;;; *-* Last-Edit: Fri May  1 06:08:07 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -32,6 +32,10 @@
   ;; "Improve" some CL indentations:
   (set-indent-hook 'if 3)
   (set-indent-hook 'setf  0)
+  ;; GBBopen-tools entity indentations:
+  (set-indent-hook 'case-using 2)
+  (set-indent-hook 'ccase-using 2)
+  (set-indent-hook 'ecase-using 2)
   ;; GBBopen entity indentations:
   (set-indent-hook 'define-module 1)
   (set-indent-hook 'destructure-extent 2)
