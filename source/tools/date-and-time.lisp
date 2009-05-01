@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/date-and-time.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Apr 30 05:19:32 2009 *-*
+;;;; *-* Last-Edit: Fri May  1 15:50:47 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -514,7 +514,8 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun encode-date-and-time (string &rest args &key time-zone)
+(defun encode-date-and-time (string &rest args &key time-zone
+                             &allow-other-keys)
   (declare (dynamic-extent args))
   (multiple-value-bind (second minute hour date month year 
                         specified-time-zone daylight-savings-p start)
