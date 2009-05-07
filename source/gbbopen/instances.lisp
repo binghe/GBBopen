@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Apr 23 06:36:58 2009 *-*
+;;;; *-* Last-Edit: Thu May  7 13:36:33 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -253,13 +253,11 @@
                                     &key (space-instances 
                                           nil space-instances-p)
                                     &allow-other-keys)
-(declare (dynamic-extent initargs))
-  ;; Allow setf setting of link-slot pointers:
-  (let ((*%%allow-setf-on-link%%* 't))
-    (multiple-value-bind (new-instance slots)
-        (apply #'call-next-method instance unduplicated-slot-names initargs)
-      (complete-duplicate-unit-instance 
-       new-instance slots space-instances space-instances-p))))
+  (declare (dynamic-extent initargs))
+  (multiple-value-bind (new-instance slots)
+      (apply #'call-next-method instance unduplicated-slot-names initargs)
+    (complete-duplicate-unit-instance 
+     new-instance slots space-instances space-instances-p)))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -271,13 +269,11 @@
                                                          nil space-instances-p)
                                                    &allow-other-keys)
   (declare (dynamic-extent initargs))
-  ;; Allow setf setting of link-slot pointers:
-  (let ((*%%allow-setf-on-link%%* 't))
-    (multiple-value-bind (new-instance slots)
-        (apply #'call-next-method instance new-class unduplicated-slot-names 
-               initargs)
-      (complete-duplicate-unit-instance 
-       new-instance slots space-instances space-instances-p))))
+  (multiple-value-bind (new-instance slots)
+      (apply #'call-next-method instance new-class unduplicated-slot-names 
+             initargs)
+    (complete-duplicate-unit-instance 
+     new-instance slots space-instances space-instances-p)))
 
 ;;; ---------------------------------------------------------------------------
 ;;; Create-instance-event signaling is done in these :around methods to follow
@@ -287,8 +283,11 @@
                                     unduplicated-slot-names
                                     &rest initargs)
   (declare (dynamic-extent initargs))
+  ;; Allow setf setting of link-slot pointers:
   (multiple-value-bind (new-instance slots)
-      (apply #'call-next-method instance unduplicated-slot-names initargs)
+      (let ((*%%allow-setf-on-link%%* 't)
+            (*%%doing-initialize-instance%%* 't))
+        (apply #'call-next-method instance unduplicated-slot-names initargs))
     ;; signal the creation event:
     (signal-event-using-class
      (load-time-value (find-class 'create-instance-event))
@@ -298,14 +297,16 @@
 ;;; ---------------------------------------------------------------------------
 
 (defmethod make-duplicate-instance-changing-class :around 
-           ((instance standard-unit-instance)
-            (new-class standard-unit-instance)
+           ((instance standard-object)
+            (new-class standard-unit-class)
             unduplicated-slot-names
             &rest initargs)
   (declare (dynamic-extent initargs))
   (multiple-value-bind (new-instance slots)
-      (apply #'call-next-method instance new-class unduplicated-slot-names
-             initargs)
+      (let ((*%%allow-setf-on-link%%* 't)
+            (*%%doing-initialize-instance%%* 't))
+        (apply #'call-next-method instance new-class unduplicated-slot-names
+               initargs))
     ;; signal the creation event:
     (signal-event-using-class
      (load-time-value (find-class 'create-instance-event))
