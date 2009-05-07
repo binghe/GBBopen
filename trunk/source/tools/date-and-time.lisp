@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/date-and-time.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri May  1 15:50:47 2009 *-*
+;;;; *-* Last-Edit: Thu May  7 15:27:22 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -497,20 +497,33 @@
                                  (date-separators "-/ ,")
                                  (time-separators " :")
                                  (month-precedes-date *month-precedes-date*))
-  (multiple-value-bind (date month year start)
-      (parse-date string 
-                  :start start :end end 
-                  :junk-allowed 't
-                  :separators date-separators
-                  :month-precedes-date month-precedes-date)
-    (multiple-value-bind (second minute hour 
-                          time-zone daylight-savings-p start)
-        (parse-time string 
-                    :start start :end end 
-                    :junk-allowed junk-allowed
-                    :separators time-separators)
-      (values second minute hour date month year 
-              time-zone daylight-savings-p start))))
+  (let ((time-only nil))
+    (multiple-value-bind (date month year start)
+        (with-error-handling
+            (parse-date string 
+                        :start start :end end 
+                        :junk-allowed 't
+                        :separators date-separators
+                        :month-precedes-date month-precedes-date)
+          ;; If date parsing failed, try as just a time:
+          (setf time-only 't)
+          (values nil nil nil start))
+      (multiple-value-bind (second minute hour 
+                            time-zone daylight-savings-p start)
+          (parse-time string 
+                      :start start :end end 
+                      :junk-allowed junk-allowed
+                      :separators time-separators)
+        (if time-only
+            (multiple-value-bind (s m h date month year)
+                (if time-zone
+                    (decode-universal-time (get-universal-time) time-zone)
+                    (get-decoded-time))
+              (declare (ignore s m h))
+              (values second minute hour date month year 
+                      time-zone daylight-savings-p start))
+            (values second minute hour date month year 
+                    time-zone daylight-savings-p start))))))
 
 ;;; ---------------------------------------------------------------------------
 
