@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/declared-numerics.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Mar  4 16:48:15 2009 *-*
+;;;; *-* Last-Edit: Mon May 11 04:22:05 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -405,20 +405,16 @@
 (define-modify-macro incf& (&optional (increment 1)) +&)
 (define-modify-macro decf& (&optional (increment 1)) -&)
 
-(defmacro incf&-after (place &optional (increment 1))
-  ;;; Returns the current value of `place' (before the incf is done)
-  (with-gensyms (old-value)
-    `(let ((,old-value ,place))
-       (setf ,place (+& ,old-value ,increment))
-       ,old-value)))
+(defmacro incf&-after (place &optional (increment 1) &environment env)
+  ;;; Like incf&, but returns the original value of `place' (the value before
+  ;;; the incf was done)
+  (incf/decf-after-builder place increment env '+& 'incf&))
 
-(defmacro decf&-after (place &optional (increment 1))
-  ;;; Returns the current value of `place' (before the decf is done)
-  (with-gensyms (old-value)
-    `(let ((,old-value ,place))
-       (setf ,place (-& ,old-value ,increment))
-       ,old-value)))
-  
+(defmacro decf&-after (place &optional (increment 1) &environment env)
+  ;;; Like decf&, but returns the original value of `place' (the value before
+  ;;; the decf was done)
+  (incf/decf-after-builder place increment env '-& 'decf&))
+
 (defun bounded-value& (min n max)
   (max& min (min& n max)))
 
@@ -480,19 +476,15 @@
 (define-modify-macro incf$& (&optional (increment 1.0s0)) +$&)
 (define-modify-macro decf$& (&optional (increment 1.0s0)) -$&)
 
-(defmacro incf$&-after (place &optional (increment 1.0s0))
-  ;;; Returns the current value of `place' (before the incf is done)
-  (with-gensyms (old-value)
-    `(let ((,old-value ,place))
-       (setf ,place (+$& ,old-value ,increment))
-       ,old-value)))
-  
-(defmacro decf$&-after (place &optional (increment 1.0s0))
-  ;;; Returns the current value of `place' (before the decf is done)
-  (with-gensyms (old-value)
-    `(let ((,old-value ,place))
-       (setf ,place (-$& ,old-value ,increment))
-       ,old-value)))
+(defmacro incf$&-after (place &optional (increment 1.0s0) &environment env)
+  ;;; Like incf$&, but returns the original value of `place' (the value before
+  ;;; the incf was done)
+  (incf/decf-after-builder place increment env '+$& 'incf$&))
+
+(defmacro decf$&-after (place &optional (increment 1.0s0) &environment env)
+  ;;; Like decf$&, but returns the original value of `place' (the value before
+  ;;; the decf was done)
+  (incf/decf-after-builder place increment env '-$& 'decf$&))
   
 (defun bounded-value$& (min n max)
   (max$& min (min$& n max)))
@@ -551,20 +543,16 @@
 (define-modify-macro incf$ (&optional (increment 1.0f0)) +$)
 (define-modify-macro decf$ (&optional (increment 1.0f0)) -$)
 
-(defmacro incf$-after (place &optional (increment 1.0f0))
-  ;;; Returns the current value of `place' (before the incf is done)
-  (with-gensyms (old-value)
-    `(let ((,old-value ,place))
-       (setf ,place (+$ ,old-value ,increment))
-       ,old-value)))
+(defmacro incf$-after (place &optional (increment 1.0f0) &environment env)
+  ;;; Like incf$, but returns the original value of `place' (the value before
+  ;;; the incf was done)
+  (incf/decf-after-builder place increment env '+$ 'incf$))
 
-(defmacro decf$-after (place &optional (increment 1.0f0))
-  ;;; Returns the current value of `place' (before the decf is done)
-  (with-gensyms (old-value)
-    `(let ((,old-value ,place))
-       (setf ,place (-$ ,old-value ,increment))
-       ,old-value)))
-  
+(defmacro decf$-after (place &optional (increment 1.0f0) &environment env)
+  ;;; Like decf$, but returns the original value of `place' (the value before
+  ;;; the decf was done)
+  (incf/decf-after-builder place increment env '-$ 'decf$))
+
 (defun bounded-value$ (min n max)
   (max$ min (min$ n max)))
 
@@ -622,20 +610,16 @@
 (define-modify-macro incf$$ (&optional (increment 1.0d0)) +$$)
 (define-modify-macro decf$$ (&optional (increment 1.0d0)) -$$)
  
-(defmacro incf$$-after (place &optional (increment 1.0d0))
-  ;;; Returns the current value of `place' (before the incf is done)
-  (with-gensyms (old-value)
-    `(let ((,old-value ,place))
-       (setf ,place (+$$ ,old-value ,increment))
-       ,old-value)))
+(defmacro incf$$-after (place &optional (increment 1.0d0) &environment env)
+  ;;; Like incf$$, but returns the original value of `place' (the value before
+  ;;; the incf was done)
+  (incf/decf-after-builder place increment env '+$$ 'incf$$))
 
-(defmacro decf$$-after (place &optional (increment 1.0d0))
-  ;;; Returns the current value of `place' (before the decf is done)
-  (with-gensyms (old-value)
-    `(let ((,old-value ,place))
-       (setf ,place (-$$ ,old-value ,increment))
-       ,old-value)))
-  
+(defmacro decf$$-after (place &optional (increment 1.0d0) &environment env)
+  ;;; Like decf$$, but returns the original value of `place' (the value before
+  ;;; the decf was done)
+  (incf/decf-after-builder place increment env '-$$ 'decf$$))
+
 (defun bounded-value$$ (min n max)
   (max$$ min (min$$ n max)))
 
@@ -693,19 +677,15 @@
 (define-modify-macro incf$$$ (&optional (increment 1.0l0)) +$$$)
 (define-modify-macro decf$$$ (&optional (increment 1.0l0)) -$$$)
 
-(defmacro incf$$$-after (place &optional (increment 1.0l0))
-  ;;; Returns the current value of `place' (before the incf is done)
-  (with-gensyms (old-value)
-    `(let ((,old-value ,place))
-       (setf ,place (+$$$ ,old-value ,increment))
-       ,old-value)))
-  
-(defmacro decf$$$-after (place &optional (increment 1.0l0))
-  ;;; Returns the current value of `place' (before the decf is done)
-  (with-gensyms (old-value)
-    `(let ((,old-value ,place))
-       (setf ,place (-$$$ ,old-value ,increment))
-       ,old-value)))
+(defmacro incf$$$-after (place &optional (increment 1.0l0) &environment env)
+  ;;; Like incf$$$, but returns the original value of `place' (the value before
+  ;;; the incf was done)
+  (incf/decf-after-builder place increment env '+$$$ 'incf$$$))
+
+(defmacro decf$$$-after (place &optional (increment 1.0l0) &environment env)
+  ;;; Like decf$$$, but returns the original value of `place' (the value before
+  ;;; the decf was done)
+  (incf/decf-after-builder place increment env '-$$$ 'decf$$$))
   
 (defun bounded-value$$$ (min n max)
   (max$$$ min (min$$$ n max)))
