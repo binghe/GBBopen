@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri May  1 15:03:49 2009 *-*
+;;;; *-* Last-Edit: Mon May 11 04:15:24 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -1196,19 +1196,31 @@
 ;;;
 ;;;   Like incf & decf, but returns the original value.
 
-(defmacro incf-after (place &optional (increment 1))
-  ;;; Returns the current value of `place' (before the incf is done)
+(defun incf/decf-after-builder (place inc/dec env 
+                                add/sub-function incf/decf-function)
   (with-gensyms (old-value)
-    `(let ((,old-value ,place))
-       (setf ,place (+ ,old-value ,increment))
-       ,old-value)))
+    (if (symbolp place)
+        `(let ((,old-value ,place))
+           (setf ,place (,add/sub-function ,old-value ,inc/dec))
+           ,old-value)     
+        (multiple-value-bind (vars vals store-vars writer-form reader-form)
+            (get-setf-expansion place env)
+          `(let* (,@(mapcar #'list vars vals)
+                  (,(first store-vars) ,reader-form)
+                  (,old-value ,(first store-vars)))
+             (,incf/decf-function ,(first store-vars) ,inc/dec)
+             ,writer-form
+             ,old-value)))))
 
-(defmacro decf-after (place &optional (increment 1))
-  ;;; Returns the current value of `place' (before the decf is done)
-  (with-gensyms (old-value)
-    `(let ((,old-value ,place))
-       (setf ,place (- ,old-value ,increment))
-       ,old-value)))
+(defmacro incf-after (place &optional (increment 1) &environment env)
+  ;;; Like incf, but returns the original value of `place' (the value before
+  ;;; the incf was done)
+  (incf/decf-after-builder place increment env '+ 'incf))
+
+(defmacro decf-after (place &optional (increment 1) &environment env)
+  ;;; Like decf, but returns the original value of `place' (the value before
+  ;;; the decf was done)
+  (incf/decf-after-builder place increment env '- 'decf))
 
 ;;; ===========================================================================
 ;;;   Bounded-value
