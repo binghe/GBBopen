@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/date-and-time.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu May  7 15:27:22 2009 *-*
+;;;; *-* Last-Edit: Wed May 13 10:59:34 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -53,11 +53,11 @@
             internet-text-date-and-time
             iso8661-date-and-time
             message-log-date-and-time
-            encode-date-and-time        ; not documented yet
+            encode-date-and-time
             parse-date                  ; also from module-manager.lisp
-            parse-date-and-time         ; not documented yet
+            parse-date-and-time
             parse-duration
-            parse-time                  ; not documented yet
+            parse-time
             parse-time-interval         ; older, deprecated name
             pretty-duration
             pretty-run-time-duration

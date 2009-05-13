@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/common.tex *-*
-%% *-* Last-Edit: Mon Apr 27 18:04:18 2009; Edited-By: cork *-*
+%% *-* Last-Edit: Wed May 13 13:39:37 2009; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2009, Dan Corkill <corkill@GBBopen.org>
@@ -122,8 +122,9 @@
 \renewcommand\subsubitem{\@idxitem \hspace*{20\p@}}
 % ppar
 \newcommand{\ppar}[1]{\paragraph*{#1}~\\[0.5\baselineskip]%
-  \T\addcontentsline{toc}{subsection}{{#1}}
-}
+  \addcontentsline{toc}{subsection}{{#1}}}
+% psubpar (used in Portable Threads section)
+\newcommand{\psubpar}[1]{\paragraph*{#1}~\\[0.5\baselineskip]}
 % Tighten up example environment (uses atbeginend.sty):
 \AfterBegin{example}{\vspace*{-0.8\baselineskip}}
 % Tighten up example environment (uses atbeginend.sty):
@@ -390,6 +391,8 @@
 %% ----------------------------------------------------------------------------
 %% ppar
 \W\newcommand{\ppar}[1]{\endpar\xml{h4}#1\xml{/h4}}
+%% psubpar
+\W\newcommand{\psubpar}[1]{\endpar\xml{h4}#1\xml{/h4}}
 
 %% ----------------------------------------------------------------------------
 
