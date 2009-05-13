@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Thu Apr 30 05:30:48 2009; Edited-By: cork *-*
+%% *-* Last-Edit: Wed May 13 12:19:54 2009; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2009, Dan Corkill <corkill@GBBopen.org>
@@ -1196,10 +1196,9 @@ exceeds \code{most-positive-fixnum}.
 \T\markright{}%
 \T\pagestyle{plain}
 \T\cleardoublepage
-\W\xname{ref-module-manager-entities}
+\W\xname{ref-starting-up}
 \T\pagestyle{fancy}
 \T\thispagestyle{fancybottom}
-\W\xname{ref-starting-up}
 \T\global\def\fnlastname{ }%
 \section{Starting Up}
 \label{sec:startup}%
@@ -1550,8 +1549,9 @@ example:
 
 Highly recommended!
 
-
 \W\entities
+\T\ppar{Starting-up entities}
+\T Descriptions of entities related to installing and customizing GBBopen follow.
 \T\clearpage
 \T\renewcommand{\headrulewidth}{0.01pt}
 
@@ -2025,11 +2025,13 @@ Project software tree), do the following:
 ~~~\nobr{\code{> (module-manager:\entlink{compile-module} :module-manager-user :create-dirs :propagate)}}
 \end{tightitemize}
 %
-The Module Manager can now be used stand-alone by loading
-\nobr{\code{source/module-manager-loader.lisp}} as part of your Common Lisp
-initialization.
+After performing the above steps, the Module Manager can be used stand-alone
+by loading \nobr{\code{source/module-manager-loader.lisp}} as part of your
+Common Lisp initialization.
 
 \W\entities
+\T\ppar{Module Manager entities}
+\T Descriptions of Module Manager entities follow.
 \T\clearpage
 \T\renewcommand{\headrulewidth}{0.01pt}
 
@@ -3392,7 +3394,7 @@ Check if the Agenda Shell \glref{module} has been loaded:
 \fnargs
 \begin{args}{description}
 \arg[id] An object
-\arg[date] A string representing a date (parsed by 
+\arg[date] A simple string representing a date (parsed by 
   \nobr{\textbf{\entlink{parse-date}}})
 \arg[author] A string (default is \nobr{\code{"Anonymous"}})
 \arg[description] A string or a \glref{proper~list} of strings (default is \nil)
@@ -3596,7 +3598,7 @@ a \glref{module}.
 \fnargs
 \begin{args}{description}
 \arg[id] An object
-\arg[date] A string representing a date (parsed by 
+\arg[date] A simple string representing a date (parsed by 
   \nobr{\textbf{\entlink{parse-date}}})
 \arg[author] A string (default is \nobr{\code{"Anonymous"}})
 \arg[description] A string or a \glref{proper~list} of strings (default is \nil)
@@ -3790,6 +3792,8 @@ These entities are:
 \end{tabular}
 
 \W\entities
+\T\ppar{GBBopen Tools entities}
+\T Descriptions of GBBopen Tools entities follow.
 \T\clearpage
 \T\renewcommand{\headrulewidth}{0.01pt}
 
@@ -9537,7 +9541,7 @@ If \nobr{\var{universal-time\/}} is not supplied or is \nil, the current time
 
 \fnargs
 \begin{args}{month-precedes-date}
-\arg[string] A string
+\arg[string] A simple string
 \arg[start] Starting index into \var{string\/} (default is \code{0})
 \arg[end] Ending index into \var{string\/} (default is \nil, meaning
 end of \var{string\/})
@@ -9654,7 +9658,7 @@ in order to to make it available as early as possible.
 
 \fnargs
 \begin{args}{month-precedes-date}
-\arg[string] A string
+\arg[string] A simple string
 \arg[start] Starting index into \var{string\/} (default is \code{0})
 \arg[end] Ending index into \var{string\/} (default is \nil, meaning
 end of \var{string\/})
@@ -9803,7 +9807,7 @@ parse ended.
 
 \fnargs
 \begin{args}{month-precedes-date}
-\arg[string] A string
+\arg[string] A simple string
 \arg[start] Starting index into \var{string\/} (default is \code{0})
 \arg[end] Ending index into \var{string\/} (default is \nil, meaning
 end of \var{string\/})
@@ -9891,7 +9895,7 @@ A \code{"month"} is interpreted as exactly 30 days; a \nobr{\code{"year"}} as
 
 \fnargs
 \begin{args}{daylight-savings-p}
-\arg[string] A string
+\arg[string] A simple string
 \arg[start] Starting index into \var{string\/} (default is \code{0})
 \arg[end] Ending index into \var{string\/} (default is \nil, meaning
 end of \var{string\/})
@@ -12187,21 +12191,25 @@ subclasses of \code{hyp}) \glref{unit~instances}:
 
 \fnmethods
 \fnalternate{describe-instance}%
-  {\code{(}\var{instance\/} \code{standard-unit-instance)}}
+ {\code{(}\var{instance\/} \code{standard-unit-instance)}
+    \code{\&optional} \var{stream\/}}
+
 \fnpackage \code{:gbbopen}
 
 \fnmodule \code{:gbbopen-core}
 
+\bfindexit{*standard-output*}%
 \fnargs
 \begin{args}{instance}
 \arg[instance] A \glref{unit~instance} (or \glref{space~instance})
+\arg[stream] A stream (default is \nobr{\code{*standard-output*}})
 \end{args}
 
 \fndescription
-\bfindexit{*standard-output*}%
-The description is printed to the {\bf *standard-output*} stream.
+The description is printed to the output \var{stream}.
 
 \begin{alsos}{describe-space-instance-storage}
+\also[describe-instance-slot-value]
 \also[describe-space-instance]
 \also[describe-space-instance-storage]
 \also[make-instance]
@@ -12244,6 +12252,71 @@ Describe the \code{hyp} \glref{unit~instance}:
 %
 \textbf{Describe-instance} can be invoked using the \glref{REPL~command}
 \code{:di}, which also sets \code{=} to the described \glref{unit~instance}.
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Generic~Function}{describe-instance-slot-value}%
+  {\var{instance slot-name value\/}
+    \code{\&optional} \var{stream\/}}
+\index{unit instance!printing information about}%
+\index{printing!information about!unit instance}%
+\index{printing!information about!space instance, as a unit instance}%
+
+\fnsyntax
+
+\fnpurpose Customize slot-value printing by
+\textbf{\entlink{describe-instance}}.
+
+\fnmethods
+\fnalternate{describe-instance-slot-value}%
+  {\code{(}\var{instance\/} \code{standard-unit-instance)}
+    \var{slot-name value\/}
+    \code{\&optional} \var{stream\/}}
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:gbbopen-core}
+
+\bfindexit{*standard-output*}%
+\fnargs
+\begin{args}{instance}
+\arg[instance] A \glref{unit~instance} (or \glref{space~instance})
+\arg[slot-name] A non-\nil, \glref{non-keyword~symbol}
+\arg[value] An object
+\arg[stream] A stream (default is \nobr{\code{*standard-output*}})
+\end{args}
+
+\fndescription 
+\bfindexit{describe-instance}%
+%
+\textbf{Describe-instance-slot-value} is called by
+\nobr{\textbf{\entlink{describe-instance}}} to print each slot value; it
+should not be called directly. The slot-value representation is printed to the
+output \var{stream}.
+
+\begin{alsos}{describe-instance}
+\also[describe-instance]
+\end{alsos}
+
+\fnexample
+%
+\bfindexit{pretty-duration}%  
+%
+Describe the \code{observation-duration} slot of a \code{hyp}
+\glref{unit~instance} as a human-readable duration:
+%
+\W\supp
+\begin{example}
+  (defmethod describe-instance-slot-value
+      ((hyp hyp)
+       (slot-name (eql 'observation-duration)) value
+       \&optional (stream *standard-output*))
+    (if value
+        (\entlink{pretty-duration} duration 5 stream)
+        (prin1 nil stream)))
+\end{example}
 
 \end{functiondoc}
 
