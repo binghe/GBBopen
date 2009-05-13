@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/preamble.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Mar 10 02:49:56 2009 *-*
+;;;; *-* Last-Edit: Tue May 12 15:25:53 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -119,7 +119,9 @@
 (defgeneric delete-instance (instance))
 (defgeneric delete-space-instance (space-instance))
 (defgeneric deleted-instance-class (instance))
-(defgeneric describe-instance (instance))
+(defgeneric describe-instance (instance &optional stream))
+(defgeneric describe-instance-slot-value (instance slot-name value 
+                                          &optional stream))
 (defgeneric describe-space-instance (space-instance))
 (defgeneric describe-space-instance-storage (space-instance))
 (defgeneric describe-unit-class (unit-class-name-or-class))

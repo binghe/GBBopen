@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu May  7 13:36:33 2009 *-*
+;;;; *-* Last-Edit: Tue May 12 15:25:44 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -59,6 +59,7 @@
             delete-instance
             deleted-instance-class
             describe-instance
+            describe-instance-slot-value
             do-instances-of-class
             do-sorted-instances-of-class
             find-instance-by-name
@@ -821,9 +822,18 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defmethod describe-instance ((instance standard-unit-instance))
+(defmethod describe-instance-slot-value ((instance standard-unit-instance)
+                                         slot-name value
+                                         &optional (stream *standard-output*))
+  (declare (ignore slot-name))
+  (prin1 value stream))
+
+;;; ---------------------------------------------------------------------------
+
+(defmethod describe-instance ((instance standard-unit-instance) 
+                               &optional (stream *standard-output*))
   (let ((class (class-of instance)))
-    (format t "~&~@(~s~) ~s~%" (class-name class) instance)
+    (format stream "~&~@(~s~) ~s~%" (class-name class) instance)
     (let ((non-link-slots nil)
           (link-slots nil))
       (dolist (eslotd (class-slots class))
@@ -834,18 +844,23 @@
          ;; non-link slot:
          (t (push eslotd non-link-slots))))
       (flet ((do-slot (eslotd)
-               (let ((boundp (slot-boundp-using-class class instance eslotd)))
-                 (format t "~&~4t~s:  ~:[~*<unbound>~;~s~]~%" 
-                         (slot-definition-name eslotd)
-                         boundp
-                         (when boundp
-                           (slot-value-using-class class instance eslotd))))))
-        (format t "~2tInstance name: ~s~%" (instance-name-of instance))
+               (let ((boundp (slot-boundp-using-class class instance eslotd))
+                     (slot-name (slot-definition-name eslotd)))
+                 (format stream "~&~4t~s:  " slot-name)
+                 (if boundp
+                     (describe-instance-slot-value
+                      instance
+                      slot-name                            
+                      (slot-value-using-class class instance eslotd)
+                      stream)
+                     (princ "<unbound>" stream))
+                 (terpri stream))))
+        (format stream "~2tInstance name: ~s~%" (instance-name-of instance))
         (let ((space-instances
                (mapcar #'instance-name-of (space-instances-of instance))))
-          (format t "~2tSpace instances: ~:[None~;~:*~s~]~%"
+          (format stream "~2tSpace instances: ~:[None~;~:*~s~]~%"
                   space-instances))
-        (format t "~2tDimensional values:")
+        (format stream "~2tDimensional values:")
         (let ((dimension-specs 
                (sort (copy-list (dimensions-of (class-of instance)))
                      #'string< :key #'first)))
@@ -854,12 +869,12 @@
                 (let* ((dimension-name (first dimension-spec))
                        (dimension-value
                         (instance-dimension-value instance dimension-name))) 
-                  (format t "~&~4t~s:  ~:[~s~;<unbound>~]~%"
+                  (format stream "~&~4t~s:  ~:[~s~;<unbound>~]~%"
                           dimension-name
                           (eq dimension-value unbound-value-indicator)
                           dimension-value)))
-              (format t " None~%")))
-        (format t "~2tNon-link slots:")
+              (format stream " None~%")))
+        (format stream "~2tNon-link slots:")
         (let ((slot-printed nil))
           (dolist (eslotd (sort non-link-slots #'string< 
                                 :key #'slot-definition-name))
@@ -872,13 +887,13 @@
                 (setf slot-printed t)
                 (do-slot eslotd))))
           (unless slot-printed 
-            (format t " None~%")))
-        (format t "~2tLink slots:")
+            (format stream " None~%")))
+        (format stream "~2tLink slots:")
         (if link-slots
             (dolist (eslotd (sort link-slots #'string<
                                   :key #'slot-definition-name))
               (do-slot eslotd))
-            (format t " None~%")))))
+            (format stream " None~%")))))
   (values))
 
 ;;; ===========================================================================
