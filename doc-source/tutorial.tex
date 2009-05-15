@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/tutorial.tex *-*
-%% *-* Last-Edit: Sat Apr 25 11:59:01 2009; Edited-By: cork *-*
+%% *-* Last-Edit: Fri May 15 05:31:14 2009; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2005-2009, Dan Corkill <corkill@GBBopen.org>
@@ -3697,7 +3697,7 @@ repository:
 With all but the retained unit instances deleted from the blackboard
 repository, let's rerun the control shell.  However, this time we will ask
 GBBopen to display more of what the control shell is doing. First, enable
-display of all control-shell and instance-creation events:
+display of all control-shell and instance-creation events by evaluating:
 %
 \W\supp
 \begin{example}
@@ -3709,6 +3709,19 @@ display of all control-shell and instance-creation events:
   gbbopen-user>}
 \end{example}
 %
+or the shorthand equivalent:
+%
+\W\supp\notpretop
+\begin{example}
+\textcolor{darkergray}{%
+  gbbopen-user> \textcolor{black}{(enable-event-printing '(control-shell-event +))}
+  nil
+  gbbopen-user> \textcolor{black}{(enable-event-printing 'create-instance-event)}
+  nil
+  gbbopen-user>}
+\end{example}
+
+
 We will cover events, event printing, and event functions in greater
 detail in a later exercise.
 
@@ -3960,6 +3973,16 @@ all control-shell events by evaluating:
 \begin{example}
 \textcolor{darkergray}{%
   gbbopen-user> (enable-event-printing '(control-shell-event :plus-subevents))
+  nil
+  gbbopen-user>}
+\end{example}
+%
+or the shorthand equivalent:
+%
+\W\supp\notpretop
+\begin{example}
+\textcolor{darkergray}{%
+  gbbopen-user> (enable-event-printing '(control-shell-event +))
   nil
   gbbopen-user>}
 \end{example}

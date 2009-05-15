@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/events.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Nov 30 05:26:41 2008 *-*
+;;;; *-* Last-Edit: Fri May 15 05:08:55 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -447,8 +447,8 @@
         (let ((event-class (find-event-class event-class-name)))
           (values event-class 
                   (ecase subclass-indicator
-                    (:plus-subevents 't)
-                    (:no-subevents nil))))))
+                    ((:plus-subevents +) 't)
+                    ((:no-subevents =) nil))))))
      ;; anything else we assume is a event-class-name or event-class:
      (t (values (find-event-class event-class-spec) nil)))))
 

@@ -54,9 +54,13 @@
 <table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <nobr><var>subclassing-specifier</var> ::=</nobr> 
-<a name="id1"></a></td><td valign="baseline" colspan="1" align="left"> <code>:plus-subclasses</code> | <code>:no-subclasses</code> </td></tr>
+<a name="id1"></a></td><td valign="baseline" colspan="1" align="left"> <code>:plus-subclasses</code> | <code>:no-subclasses</code> | 
+<code>+</code> | <code>=</code> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
+<p>The shorthand <code>+</code> subclasses specifier is equivalent to
+<code>:plus-subclasses</code> and <code>=</code> to <code>:no-subclasses</code>.
+</p>
 <p><span class="fndoclabel">Description</span> <br />The <nobr><code>:instance-name-comparison-test</code></nobr> function
 (<code>eq</code>, <code>eql</code>, <nobr><code>equal</code></nobr>, or <nobr><code>equalp</code></nobr>)
 specified in <nobr><b><a href="ref-define-unit-class.html">define-unit-class</a></b></nobr> is used to match
@@ -84,6 +88,12 @@ Find all <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a> (of an
 419:
 <pre>
   &gt; (find-instances-by-name 419 '(hyp :plus-subclasses))
+  (#&lt;hyp 419 (1835 4791) 0.85 [5..35]&gt;)
+  &gt;
+</pre>
+or simply:
+<pre>
+  &gt; (find-instances-by-name 419 '(hyp +))
   (#&lt;hyp 419 (1835 4791) 0.85 [5..35]&gt;)
   &gt;
 </pre>
