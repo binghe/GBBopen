@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Jul 10 11:55:01 2008 *-*
+;;;; *-* Last-Edit: Fri May 15 05:03:12 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -275,7 +275,7 @@
 ;;;  <unit-classes-spec> :== t | <single-class-spec> | (<single-class-spec>+)
 ;;;  <single-class-spec> :== <class-spec> | (<class-spec> <subclass-indicator>)
 ;;;  <class-spec> :==  <class> | <class-name>
-;;;  <subclass-indicator> :==  :plus-subclasses | :no-subclasses
+;;;  <subclass-indicator> :==  :plus-subclasses | :no-subclasses | + | =
 ;;;
 ;;; ---------------------------------------------------------------------------
 

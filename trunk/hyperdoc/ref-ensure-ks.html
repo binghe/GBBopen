@@ -102,10 +102,14 @@ revalidation-predicate trigger-events</var>
 <table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <nobr><var>subeventing-specifier</var> ::=</nobr> 
-<a name="id1"></a></td><td valign="baseline" colspan="1" align="left"> <code>:plus-subevents</code> | <code>:no-subevents</code> </td></tr>
+<a name="id1"></a></td><td valign="baseline" colspan="1" align="left"> <code>:plus-subevents</code> | <code>:no-subevents</code>
+<code>+</code> | <code>=</code> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
-<br /><table class="tight"><tbody><tr>
+<p>The shorthand <code>+</code> subevents specifier is equivalent to
+<code>:plus-subevents</code> and <code>=</code> to <code>:no-subevents</code>.
+<br /></p>
+<table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <nobr><var>unit-class-or-instance-specifier</var> ::=</nobr> 
 </td><td valign="baseline" colspan="1" align="left"> <var>unit-instance</var> | 
@@ -126,9 +130,13 @@ revalidation-predicate trigger-events</var>
 <table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <nobr><var>subclassing-specifier</var> ::=</nobr> 
-<a name="id2"></a></td><td valign="baseline" colspan="1" align="left"> <code>:plus-subclasses</code> | <code>:no-subclasses</code> </td></tr>
+<a name="id2"></a></td><td valign="baseline" colspan="1" align="left"> <code>:plus-subclasses</code> | <code>:no-subclasses</code> | 
+<code>+</code> | <code>=</code> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
+<p>The shorthand <code>+</code> subclasses specifier is equivalent to
+<code>:plus-subclasses</code> and <code>=</code> to <code>:no-subclasses</code>.
+</p>
 <p><span class="fndoclabel">Description</span> <br />This function is called to define or redefine a <a href="ref-glossary.html#gl:KSs">KS</a>. It
 is the functional equivalent of <nobr><b><a href="ref-define-ks.html">define-ks</a></b></nobr> and is
 called by the expansion of the <nobr><b><a href="ref-define-ks.html">define-ks</a></b></nobr> macro.

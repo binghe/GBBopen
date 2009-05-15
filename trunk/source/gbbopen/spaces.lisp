@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/spaces.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Mar 21 15:42:28 2009 *-*
+;;;; *-* Last-Edit: Fri May 15 05:02:41 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -328,8 +328,8 @@
                           (setf unit-class (type-of unit-class))))
                        (when subclass-indicator
                          (ecase subclass-indicator
-                           (:plus-subclasses)
-                           (:no-subclasses
+                           ((:plus-subclasses +))
+                           ((:no-subclasses =)
                             (setf subclass-indicator nil))))
                        (if subclass-indicator
                            (list unit-class subclass-indicator)
@@ -345,8 +345,8 @@
            (if (and (list-length-2-p unit-classes-specifiers)
                     (let ((maybe-subclass-indicator 
                            (second unit-classes-specifiers)))
-                      (or (eq maybe-subclass-indicator ':plus-subclasses)
-                          (eq maybe-subclass-indicator ':no-subclasses))))
+                      (memq maybe-subclass-indicator
+                            '(:plus-subclasses + :no-subclasses =))))
                ;; Make a list of the singleton specifier:
                (check-for-allows-everything
                 (list (do-spec unit-classes-specifiers)))

@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Wed May 13 12:19:54 2009; Edited-By: cork *-*
+%% *-* Last-Edit: Fri May 15 06:11:47 2009; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2009, Dan Corkill <corkill@GBBopen.org>
@@ -918,8 +918,12 @@ exceeds \code{most-positive-fixnum}.
 \nobr{\var{subclassing-specifier\/} ::=} 
 \codeindexit{:plus-subclasses}%
 \codeindexit{:no-subclasses}%
-  & \code{:plus-subclasses} \vbar{} \code{:no-subclasses} \\
+  & \code{:plus-subclasses} \vbar{} \code{:no-subclasses} \vbar{} 
+    \code{+} \vbar{} \code{=} \\
 \end{tabular}
+\T\\[4pt]
+The shorthand \code{+} subclasses specifier is equivalent to
+\code{:plus-subclasses} and \code{=} to \code{:no-subclasses}.
 }
 
 %% ---------------------------------------------------------------------------
@@ -929,8 +933,12 @@ exceeds \code{most-positive-fixnum}.
 \nobr{\var{subeventing-specifier\/} ::=} 
 \codeindexit{:plus-subevents}%
 \codeindexit{:no-subevents}%
-  & \code{:plus-subevents} \vbar{} \code{:no-subevents} \\
+  & \code{:plus-subevents} \vbar{} \code{:no-subevents}
+    \code{+} \vbar{} \code{=} \\
 \end{tabular}
+\T\\[4pt]
+The shorthand \code{+} subevents specifier is equivalent to
+\code{:plus-subevents} and \code{=} to \code{:no-subevents}.
 }
 
 %% ---------------------------------------------------------------------------
@@ -11743,6 +11751,15 @@ Return the count of all \glref{space~instance}:
   14
   >
 \end{example} 
+%
+or simply:
+%
+\W\supp\notpretop
+\begin{example}
+  > (class-instances-count '(standard-space-instance +))
+  14
+  >
+\end{example} 
 
 \end{functiondoc}
 
@@ -14638,6 +14655,13 @@ to be invoked when \nobr{\code{create-instance-event}} is signaled on a
 \begin{example}
   (add-event-function 'evfn-printv 'create-instance-event '(hyp :plus-subclasses))
 \end{example}
+%
+or simply:
+%
+\W\supp\notpretop
+\begin{example}
+  (add-event-function 'evfn-printv 'create-instance-event '(hyp +))
+\end{example}
 
 \fnnote
 \instanceevfnsnyi
@@ -15015,6 +15039,13 @@ Enable event printing on all \glref{space-instance} events of
   (enable-event-printing '(space-instance-event :plus-subevents)
                          '(hyp :plus-subclasses))
 \end{example}
+%
+or simply:
+%
+\W\supp\notpretop
+\begin{example}
+  (enable-event-printing '(space-instance-event +) '(hyp +))
+\end{example}
 
 \fnnote
 \instanceevfnsnyi
@@ -15127,6 +15158,13 @@ its subclasses:
 \begin{example}
   (remove-all-event-functions 'create-instance-event '(hyp :plus-subclasses))
 \end{example}
+%
+or simply:
+%
+\W\supp\notpretop
+\begin{example}
+  (remove-all-event-functions 'create-instance-event '(hyp +))
+\end{example}
 
 \fnnote
 \instanceevfnsnyi
@@ -15200,6 +15238,13 @@ signaled on a \code{hyp} \glref{unit~instance} or its subclasses:
 \W\supp\notpretop
 \begin{example}
   (remove-event-function 'evfn-printv 'create-instance-event '(hyp :plus-subclasses))
+\end{example}
+%
+or simply:
+%
+\W\supp\notpretop
+\begin{example}
+  (remove-event-function 'evfn-printv 'create-instance-event '(hyp +))
 \end{example}
 
 \fnnote
@@ -18155,6 +18200,14 @@ instances of subclasses of \code{hyp}:
   (do-instances-of-class (instance '(hyp :plus-subclasses))
     (\entlink{delete-instance} instance))
 \end{example} 
+%
+or simply:
+%
+\W\supp\notpretop
+\begin{example}
+  (do-instances-of-class (instance '(hyp +))
+    (\entlink{delete-instance} instance))
+\end{example} 
 
 \fnnote \bfindexit{delete-space-instance}%
 \bfindexit{standard-space-instance}%
@@ -18522,6 +18575,15 @@ Find all \glref{unit~instances} (of any \glref{unit~class}) that are named
 \W\supp\notpretop
 \begin{example}
   > (find-instances-by-name 419 '(hyp :plus-subclasses))
+  (#<hyp 419 (1835 4791) 0.85 [5..35]>)
+  >
+\end{example}
+%
+or simply:
+%
+\W\supp\notpretop
+\begin{example}
+  > (find-instances-by-name 419 '(hyp +))
   (#<hyp 419 (1835 4791) 0.85 [5..35]>)
   >
 \end{example}
@@ -18911,6 +18973,13 @@ and subclasses of \code{hyp}:
 \begin{example}
   (make-instances-of-class-vector '(hyp :plus-subclasses))
 \end{example} 
+%
+or simply:
+%
+\W\supp\notpretop
+\begin{example}
+  (make-instances-of-class-vector '(hyp +))
+\end{example} 
 
 \end{functiondoc}
 
@@ -18971,6 +19040,13 @@ instances of subclasses of \code{hyp}:
 \W\supp\notpretop
 \begin{example}
   (map-instances-of-class #'\entlink{delete-instance} '(hyp :plus-subclasses))
+\end{example} 
+%
+or simply:
+%
+\W\supp\notpretop
+\begin{example}
+  (map-instances-of-class #'\entlink{delete-instance} '(hyp +))
 \end{example} 
 
 \fnnote
@@ -23494,12 +23570,18 @@ forms are all equivalent:
        :trigger-events '((start-control-shell-event)) 
        :execution-function #'initial-ks-function)
   #<deleted-unit-instance ks initial>\goodpagebreak
+
   > (undefine-ks initial)
   #<deleted-unit-instance ks initial>\goodpagebreak
+
   > (\entlink{delete-instance} 
        (\entlink{find-instance-by-name} 'initial '(ks :plus-subclasses)))
   #<deleted-unit-instance ks initial>
-  >
+  
+  > (\entlink{delete-instance} 
+       (\entlink{find-instance-by-name} 'initial '(ks +)))
+  #<deleted-unit-instance ks initial>
+
 \end{example}
 
 \end{functiondoc}

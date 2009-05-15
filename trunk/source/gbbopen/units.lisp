@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/units.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Apr  4 10:55:58 2009 *-*
+;;;; *-* Last-Edit: Fri May 15 05:04:37 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -656,8 +656,8 @@
 		   specifier
 		 (setf specifier unit-class-name)
 		 (ecase subclass-indicator
-		   (:plus-subclasses (setf plus-subclasses? 't))
-		   (:no-subclasses))))
+		   ((:plus-subclasses +) (setf plus-subclasses? 't))
+		   ((:no-subclasses =)))))
 	     (if (typep specifier 'standard-unit-class)
 		 ;; we have a unit-class object
 		 (if plus-subclasses?
@@ -675,9 +675,9 @@
      ((consp specifier)
       (if (and (list-length-2-p specifier)
 	       (let ((possible-subclass-indicator (second specifier)))
-		 (or (eq possible-subclass-indicator :plus-subclasses)
-		     (eq possible-subclass-indicator :no-subclasses))))
-	  ;; simply a single, extended unit-class specification:
+		 (memq possible-subclass-indicator
+                       '(:plus-subclasses + :no-subclasses =))))
+          ;; simply a single, extended unit-class specification:
 	  (in-simple-specifier-p specifier)
 	  ;; a list of specifications:
 	  (some #'in-simple-specifier-p specifier)))

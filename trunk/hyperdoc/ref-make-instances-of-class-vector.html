@@ -61,9 +61,13 @@
 <table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <nobr><var>subclassing-specifier</var> ::=</nobr> 
-<a name="id1"></a></td><td valign="baseline" colspan="1" align="left"> <code>:plus-subclasses</code> | <code>:no-subclasses</code> </td></tr>
+<a name="id1"></a></td><td valign="baseline" colspan="1" align="left"> <code>:plus-subclasses</code> | <code>:no-subclasses</code> | 
+<code>+</code> | <code>=</code> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
+<p>The shorthand <code>+</code> subclasses specifier is equivalent to
+<code>:plus-subclasses</code> and <code>=</code> to <code>:no-subclasses</code>.
+</p>
 <p><span class="fndoclabel">See also</span>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-do-instances-of-class.html"><b>do-instances-of-class</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-find-instances-of-class.html"><b>find-instances-of-class</b></a>
@@ -74,6 +78,10 @@
 and subclasses of <code>hyp</code>:
 <pre class="pretop">
   (make-instances-of-class-vector '(hyp :plus-subclasses))
+</pre> 
+or simply:
+<pre>
+  (make-instances-of-class-vector '(hyp +))
 </pre> 
 </p>
 <hr /><address><a target="_top" class="address"

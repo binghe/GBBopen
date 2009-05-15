@@ -13,6 +13,8 @@ Important changes since GBBopen 1.3:
 
   * Changes to GBBopen
      - New DESCRIBE-INSTANCE-SLOT-VALUE generic function
+     - Abbreviated + specifier for :plus-subclasses and :plus-subevents
+     - Abbreviated = specifier for :no-subclasses and :no-subevents
 
 
 Important changes in GBBopen 1.3:

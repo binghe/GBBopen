@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/find.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Apr  4 17:39:13 2009 *-*
+;;;; *-* Last-Edit: Fri May 15 04:58:44 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -226,7 +226,7 @@
 ;;;  <unit-classes-spec> :== t | <single-class-spec> | (<single-class-spec>+)
 ;;;  <single-class-spec> :== <class-spec> | (<class-spec> <subclass-indicator>)
 ;;;  <class-spec> :==  <class> | <class-name>
-;;;  <subclass-indicator> :==  :plus-subclasses | :no-subclasses
+;;;  <subclass-indicator> :==  :plus-subclasses | :no-subclasses | + | =
 ;;;
 ;;; ---------------------------------------------------------------------------
 
@@ -243,14 +243,14 @@
     (with-full-optimization ()
       #'(lambda (instance)
           (eq (type-of instance) unit-classes-spec))))
-   ((eq (second unit-classes-spec) ':plus-subclasses)
+   ((memq (second unit-classes-spec) '(:plus-subclasses +))
     (with-full-optimization ()
       #'(lambda (instance) 
              ;; Compiler can't determine inline typep optimization in CMUCL,
              ;; SBCL, and SCL:
           #+(or cmu sbcl scl) (declare (notinline typep))
           (typep instance (first unit-classes-spec)))))
-   ((eq (second unit-classes-spec) ':no-subclasses)
+   ((memq (second unit-classes-spec) '(:no-subclasses =))
     (with-full-optimization ()
       #'(lambda (instance) 
           (eq (type-of instance) (first unit-classes-spec)))))
@@ -267,11 +267,11 @@
                #'(lambda (spec)
                    (cond ((atom spec)
                           (eq instance-type spec))
-                         ((eq (second spec) ':plus-subclasses)
+                         ((memq (second spec) '(:plus-subclasses +))
                           (locally #+(or cmu sbcl scl)
                                    (declare (notinline typep))
                             (typep instance (first spec))))
-                         ((eq (second spec) ':no-subclasses)
+                         ((memq (second spec) '(:no-subclasses =))
                           (eq instance-type (first spec)))
                          (t (ill-formed-unit-classes-spec unit-classes-spec))))
                (the list unit-classes-spec))))))))

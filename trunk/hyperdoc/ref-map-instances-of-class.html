@@ -56,9 +56,13 @@ specified <a href="ref-glossary.html#gl:unit-class">unit&nbsp;classes</a>.
 <table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <nobr><var>subclassing-specifier</var> ::=</nobr> 
-<a name="id1"></a></td><td valign="baseline" colspan="1" align="left"> <code>:plus-subclasses</code> | <code>:no-subclasses</code> </td></tr>
+<a name="id1"></a></td><td valign="baseline" colspan="1" align="left"> <code>:plus-subclasses</code> | <code>:no-subclasses</code> | 
+<code>+</code> | <code>=</code> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
+<p>The shorthand <code>+</code> subclasses specifier is equivalent to
+<code>:plus-subclasses</code> and <code>=</code> to <code>:no-subclasses</code>.
+</p>
 <p><span class="fndoclabel">Description</span> <br />The specified <a href="ref-glossary.html#gl:function">function</a> is applied once to each
 <a href="ref-glossary.html#id221">unit&nbsp;instance</a> of the specified <a href="ref-glossary.html#gl:unit-class">unit&nbsp;classes</a>, whether
 or not the instances reside on any <a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a>.
@@ -80,6 +84,10 @@ Delete all <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a> of t
 instances of subclasses of <code>hyp</code>:
 <pre>
   (map-instances-of-class #'<a href="ref-delete-instance.html">delete-instance</a> '(hyp :plus-subclasses))
+</pre> 
+or simply:
+<pre>
+  (map-instances-of-class #'<a href="ref-delete-instance.html">delete-instance</a> '(hyp +))
 </pre> 
 </p>
 <p><span class="fndoclabel">Note</span> <br /><a name="id2">The</a> consequences are unspecified if an attempt is made to add or delete a

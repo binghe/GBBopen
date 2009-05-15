@@ -266,7 +266,7 @@ repository:
 With all but the retained unit instances deleted from the blackboard
 repository, let's rerun the control shell.  However, this time we will ask
 GBBopen to display more of what the control shell is doing. First, enable
-display of all control-shell and instance-creation events:
+display of all control-shell and instance-creation events by evaluating:
 <pre class="pretop">
 <font color="#667f66">  gbbopen-user&gt; <font color="#000000">(enable-event-printing '(control-shell-event :plus-subevents))</font>
   nil
@@ -274,7 +274,16 @@ display of all control-shell and instance-creation events:
   nil
   gbbopen-user&gt;</font>
 </pre>
-We will cover events, event printing, and event functions in greater
+or the shorthand equivalent:
+<pre>
+<font color="#667f66">  gbbopen-user&gt; <font color="#000000">(enable-event-printing '(control-shell-event +))</font>
+  nil
+  gbbopen-user&gt; <font color="#000000">(enable-event-printing 'create-instance-event)</font>
+  nil
+  gbbopen-user&gt;</font>
+</pre>
+</p>
+<p>We will cover events, event printing, and event functions in greater
 detail in a later exercise.
 </p>
 <p><a name="id12">Start</a> the Agenda Shell once again:
