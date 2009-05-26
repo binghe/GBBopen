@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Thu May 21 16:07:40 2009; Edited-By: cork *-*
+%% *-* Last-Edit: Mon May 25 21:20:10 2009; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2009, Dan Corkill <corkill@GBBopen.org>
@@ -18238,7 +18238,8 @@ means of deleting all \glref{space~instances} without violating this rule.
 %
 The equivalent of 
 \nobr{\code{(do-instances-of-class (instance \var{arg\/}) (print instance))}}
-can be invoked using the \glref{REPL~command} \nobr{\code{:pic \var{arg/}}}.
+can be invoked using the \glref{REPL~command} \nobr{\code{:pic \var{arg\/}}}.
+If \var{arg\/} is omitted, \code{t} is assumed.
 
 \end{functiondoc}
 
@@ -19081,7 +19082,9 @@ means of deleting all \glref{space~instances} without violating this rule.
 \REPLindex{:pic}%
 %
 The equivalent of \nobr{\code{(map-instances-of-class 'print \var{arg\/})}}
-can be invoked using the \glref{REPL~command} \nobr{\code{:pic}}.
+can be invoked using the \glref{REPL~command} \nobr{\code{:pic \var{arg\/}}}.
+If \var{arg\/} is omitted, \code{t} is assumed.
+
 
 \end{functiondoc}
 
