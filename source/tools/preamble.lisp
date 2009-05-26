@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/preamble.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Mar 10 02:50:24 2009 *-*
+;;;; *-* Last-Edit: Mon May 25 22:50:13 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -58,7 +58,8 @@
   (import '(common-lisp-user::*gbbopen-install-root*
             common-lisp-user::*preferred-browser*
             common-lisp-user::*inf-reader-escape-hook*
-            module-manager:printv)))
+            module-manager:printv
+            module-manager:printv-printer)))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(*gbbopen-install-root*      ; re-export, not documented
@@ -68,6 +69,8 @@
             hyperdoc-url                ; not yet documented
             object-address
             printv                      ; in module-manager, but part of tools
+            printv-printer              ; in module-manager, but part of tools
+                                        ; (not yet documented)
             with-gensyms
             with-once-only-bindings)))  ; not yet documented
 
