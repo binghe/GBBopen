@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/epilogue.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Apr 25 04:41:43 2009 *-*
+;;;; *-* Last-Edit: Mon May 25 21:16:43 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -395,7 +395,7 @@
 
            (define-repl-command :pic (&rest args)
              "Print instances of class"
-             (apply 'map-instances-of-class 'print args)))))
+             (apply 'map-instances-of-class 'print (or args '(t)))))))
 
 
 ;;; ===========================================================================
