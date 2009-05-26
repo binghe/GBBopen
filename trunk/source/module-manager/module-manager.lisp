@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/module-manager/module-manager.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Apr 16 15:05:19 2009 *-*
+;;;; *-* Last-Edit: Mon May 25 22:45:56 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -262,6 +262,8 @@
             patch
             patch-loaded-p
             printv                      ; part of tools, but placed here
+            printv-printer              ; part of tools, but placed here (not
+                                        ; yet documented)
             show-defined-directories
             show-modules                ; not yet documented
             start-patch
@@ -317,23 +319,35 @@
 ;;;
 ;;; Placed here to make this macro available ASAP
 
+(defun printv-printer (forms forms-values-lists
+                       ;; Allow for customized printv-style printv'ers:
+                       &optional values-trans-fn)
+  (let ((*print-readably* nil))
+    (loop
+        for form in forms
+        and form-values-list in forms-values-lists
+        do (typecase form
+             (keyword (format *trace-output* "~&;; ~s~%" form))
+             (string (format *trace-output* "~&;; ~a~%" form))
+             (t (format *trace-output* 
+                        "~&;;  ~w =>~{ ~w~^;~}~%" 
+                        form 
+                        (if values-trans-fn
+                            (funcall values-trans-fn form-values-list)
+                            form-values-list))))))
+  (force-output *trace-output*)
+  (values-list (first (last forms-values-lists))))
+
+;;; ---------------------------------------------------------------------------
+
 (defmacro printv (&rest forms)
-  (let ((values (gensym)))
-    `(let* ((*print-readably* nil)
-            (,values (list ,@(mapcar #'(lambda (form)
-					 `(multiple-value-list ,form))
-				     forms))))
-       (declare (dynamic-extent ,values))
-       (loop
-           for form in ',forms
-	   and value in ,values
-	   do (typecase form
-		(keyword (format *trace-output* "~&;; ~s~%" form))
-		(string (format *trace-output* "~&;; ~a~%" form))
-		(t (format *trace-output* 
-			   "~&;;  ~w =>~{ ~w~^;~}~%" form value))))
-       (force-output *trace-output*)
-       (values-list (first (last ,values))))))
+  (let ((forms-values-lists (gensym)))
+    `(let ((,forms-values-lists
+            (list ,@(mapcar #'(lambda (form)
+                                `(multiple-value-list ,form))
+                            forms))))
+       (declare (dynamic-extent ,forms-values-lists))
+       (printv-printer ',forms ,forms-values-lists))))
 
 ;;; ===========================================================================
 ;;;  Feature-present-p and dotted-conc-name
