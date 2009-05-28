@@ -67,7 +67,7 @@ command processing (see below).
 <nobr><code><var>&lt;install-dir&gt;</var>/initiate.lisp</code></nobr> rather than
 <nobr><code><var>&lt;install-dir&gt;</var>/startup.lisp</code></nobr>.  Let's try it.  Start up a
 fresh Common Lisp session and enter the following form in the REPL:
-<pre>
+<small><pre>
 <font color="#667f66">  cl-user&gt; <font color="#000000">(load "<var>&lt;install-dir&gt;</var>/initiate.lisp")</font>
   ;; Loading <var>&lt;install-dir&gt;</var>/initiate.lisp
   ;; GBBopen is installed in <var>&lt;install-dir&gt;</var>
@@ -79,18 +79,18 @@ fresh Common Lisp session and enter the following form in the REPL:
   ;; No personal module command definitions were found in <var>&lt;homedir&gt;</var>/gbbopen-modules/.
   t
   cl-user&gt;</font>
-</pre>
+</pre></small>
 </p>
 <p><a name="id2">Note</a> that the Module Manager Facility and GBBopen
 module definitions have not been loaded.  Now enter the REPL
 command, <nobr><code>:gbbopen-user</code></nobr>:
-<pre class="pretop">
+<small><pre class="pretop">
 <font color="#667f66">  cl-user&gt; <font color="#000000">:gbbopen-user</font>
   ;; Loading <var>&lt;install-dir&gt;</var>/startup.lisp
      ...
   ;; Loading <var>&lt;install-dir&gt;</var>/<var>&lt;platform-dir&gt;</var>/gbbopen/gbbopen-user.fasl
   gbbopen-user&gt;</font>
-</pre>
+</pre></small>
 The <code>:gbbopen-user</code> module (and supporting modules) are loaded,
 and the current package is set to <nobr><code>:gbbopen-user</code></nobr>:
 <pre>
@@ -111,13 +111,13 @@ REPL commands and the <nobr><code>:gbbopen-user</code></nobr> REPL command didn'
 all is not lost.  Loading <nobr><code><var>&lt;install-dir&gt;</var>/initiate.lisp</code></nobr>
 also defines functions in the <nobr><code>:common-lisp-user</code></nobr> package with the
 same name as the REPL command:
-<pre class="pretop">
+<small><pre class="pretop">
 <font color="#667f66">  cl-user&gt; <font color="#000000">(gbbopen-user)</font>
   ;; Loading <var>&lt;install-dir&gt;</var>/startup.lisp
      ...
   ;; Loading <var>&lt;install-dir&gt;</var>/<var>&lt;platform-dir&gt;</var>/gbbopen/gbbopen-user.fasl
   gbbopen-user&gt;</font>
-</pre>
+</pre></small>
 </p>
 <h3><a name="sec:REPL-command-syntax">REPL command syntax</a></h3>
 <p>GBBopen's REPL commands are defined to mimic the syntax of existing REPL
@@ -126,21 +126,21 @@ implementations, or if you are using the
 <a target="_top" href="http://common-lisp.net/project/slime/">SLIME</a> interface, REPL
 commands with arguments can be specified in either list or &#8220;spread&#8221;
 notation.  For example:
-<pre class="pretop">
+<small><pre class="pretop">
 <font color="#667f66">  cl-user&gt; <font color="#000000">(:gbbopen-user :create-dirs)</font>
   ;; Loading <var>&lt;install-dir&gt;</var>/startup.lisp
      ...
   ;; Loading <var>&lt;install-dir&gt;</var>/<var>&lt;platform-dir&gt;</var>/gbbopen/gbbopen-user.fasl
   gbbopen-user&gt;</font>
-</pre>
+</pre></small>
 or
-<pre>
+<small><pre>
 <font color="#667f66">  cl-user&gt; <font color="#000000">:gbbopen-user :create-dirs</font>
   ;; Loading <var>&lt;install-dir&gt;</var>/startup.lisp
      ...
   ;; Loading <var>&lt;install-dir&gt;</var>/<var>&lt;platform-dir&gt;</var>/gbbopen/gbbopen-user.fasl
   gbbopen-user&gt;</font>
-</pre>
+</pre></small>
 </p>
 <p>However, <a target="_top" href="http://www.franz.com">Allegro CL</a>,
 <a target="_top" href="http://clisp.cons.org/">CLISP</a>, and
@@ -150,13 +150,13 @@ notation.  CLISP versions prior to 2.45 and
 notation&mdash;but without arguments.  So, a user running on these Common Lisp
 implementations must use the <nobr><code>:common-lisp-user</code></nobr> functions rather
 than a REPL command when the command requires arguments:
-<pre class="pretop">
+<small><pre class="pretop">
 <font color="#667f66">  cl-user&gt; <font color="#000000">(cl-user:gbbopen-user :create-dirs)</font>
   ;; Loading <var>&lt;install-dir&gt;</var>/startup.lisp
      ...
   ;; Loading <var>&lt;install-dir&gt;</var>/<var>&lt;platform-dir&gt;</var>/gbbopen/gbbopen-user.fasl
   gbbopen-user&gt;</font>
-</pre>
+</pre></small>
 or use the <a target="_top" href="http://common-lisp.net/project/slime/">SLIME</a> REPL
 interface.
 </p>
@@ -396,7 +396,7 @@ Lisp function, <nobr><b>browse-hyperdoc</b></nobr>, that can be used to access
 GBBopen HyperDoc pages from Common Lisp.  GBBopen's
 <nobr><code>:os-interface</code></nobr> module must be loaded to make
 <nobr><b>browse-hyperdoc</b></nobr> available.  For example:
-<pre class="pretop">
+<small><pre class="pretop">
 <font color="#667f66">  cl-user&gt; <font color="#000000">:os-interface</font>
   ;; Loading <var>&lt;install-dir&gt;</var>/startup.lisp
      ...
@@ -404,7 +404,7 @@ GBBopen HyperDoc pages from Common Lisp.  GBBopen's
   gbbopen-tools&gt; <font color="#000000">(browse-hyperdoc 'define-unit-class)</font>
   t
   gbbopen-tools&gt;</font>
-</pre>
+</pre></small>
 will display the GBBopen HyperDoc page for <b>define-unit-class</b> in your
 browser.  Note that the <nobr><code>:gbbopen-user</code></nobr> module requires (and
 therefore loads) the <nobr><code>:os-interface</code></nobr> module, so if you have loaded

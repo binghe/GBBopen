@@ -42,13 +42,13 @@ that I used to create my directories:
 <h2><a name="id2">Step 2: Create the tutorial-example file</a></h2><p>
 Start up a fresh Common Lisp session and load the <nobr><code>:gbbopen-user</code></nobr>
 module, using the REPL command we set up in the last exercise:
-<pre class="pretop">
+<small><pre class="pretop">
 <font color="#667f66">  cl-user&gt; <font color="#000000">:gbbopen-user</font>
   ;; Loading <var>&lt;install-dir&gt;</var>/startup.lisp
      ...
   ;; Loading <var>&lt;install-dir&gt;</var>/<var>&lt;platform-dir&gt;</var>/gbbopen/gbbopen-user.fasl
   gbbopen-user&gt;</font>
-</pre>
+</pre></small>
 </p>
 <p>Next, begin editing a new file named <nobr><code>tutorial-example.lisp</code></nobr> in
 the <code>source</code> subdirectory that you just created.  Even if you are more
@@ -97,13 +97,13 @@ into Common Lisp:
 </p>
 <p>We could use Common Lisp's <nobr><code>compile-file</code></nobr> to compile the file and
 then <code>load</code> to load the resulting compiled file. For example:
-<pre class="pretop">
+<small><pre class="pretop">
 <font color="#667f66">  gbbopen-user&gt; <font color="#000000">(load (compile-file "~/tutorial/source/tutorial-example.lisp"))</font>
   ;; Compiling file ~/tutorial/source/tutorial-example.lisp
   ;; Loading ~/tutorial/source/tutorial-example.fasl
   t
   gbbopen-user&gt;</font>
-</pre>
+</pre></small>
 but you should be able to compile and load the file directly from the editor
 buffer.  In SLIME, the command <nobr><code>C-c C-k</code></nobr> will compile and load the
 file currently being edited.  Allegro's ELI interface compile-and-load command

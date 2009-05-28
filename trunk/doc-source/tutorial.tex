@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/tutorial.tex *-*
-%% *-* Last-Edit: Thu May 28 16:45:51 2009; Edited-By: cork *-*
+%% *-* Last-Edit: Thu May 28 17:15:54 2009; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2005-2009, Dan Corkill <corkill@GBBopen.org>
@@ -770,7 +770,7 @@ Common Lisp environment.  First, load GBBopen's
 has been installed:
 %
 \W\supp
-\begin{example}
+\begin{smallexample}
 \textcolor{darkergray}{%
   cl-user> \textcolor{black}{(load "\var{<install-dir>\/}/startup.lisp")}
   ;; Loading \var{<install-dir>\/}/startup.lisp
@@ -782,14 +782,14 @@ has been installed:
   ;;  Loading \var{<install-dir>\/}/source/modules.lisp
   t
   cl-user>}
-\end{example}
+\end{smallexample}
 %
 \bfindex{compile-module}%
 Then compile and load the \nobr{\code{:gbbopen-user}} module and all the
 GBBopen modules it requires by evaluating:
 %
 \W\supp\notpretop
-\begin{example}
+\begin{smallexample}
 \textcolor{darkergray}{%
   cl-user> \textcolor{black}{(module-manager:compile-module :gbbopen-user :propagate :create-dirs)}
   ;; Compiling \var{<install-dir>\/}/source/module-manager/module-manager.lisp
@@ -798,7 +798,7 @@ GBBopen modules it requires by evaluating:
   ;; Compiling \var{<install-dir>\/}/source/gbbopen/gbbopen-user.lisp
   ;; Loading \var{<install-dir>\/}/\var{<platform-dir>\/}/gbbopen/gbbopen-user.fasl
   cl-user>}
-\end{example}
+\end{smallexample}
 
 GBBopen should compile (if necessary) and load all the files needed for the
 next exercise without error.  The output on your Common Lisp implementation
@@ -819,7 +819,7 @@ installation, they must start up Common Lisp and then evaluate the following
 two expressions:
 %
 \W\supp
-\begin{example}
+\begin{smallexample}
 \textcolor{darkergray}{%
   cl-user> \textcolor{black}{(load "\var{<install-dir>\/}/initiate.lisp")}
   ;; Loading \var{<install-dir>\/}/initiate.lisp
@@ -836,7 +836,7 @@ two expressions:
      ...
   ;;; GBBopen module compilation completed.
   [~]\$}
-\end{example}
+\end{smallexample}
 %
 every time they update GBBopen to ensure that all GBBopen modules have
 been compiled.
@@ -2226,7 +2226,7 @@ To make these GBBopen keyword commands available, simply load the file
 fresh Common Lisp session and enter the following form in the REPL:
 %
 \W\supp\notpretop
-\begin{example}
+\begin{smallexample}
 \textcolor{darkergray}{%
   cl-user> \textcolor{black}{(load "\var{<install-dir>\/}/initiate.lisp")}
   ;; Loading \var{<install-dir>\/}/initiate.lisp
@@ -2239,7 +2239,7 @@ fresh Common Lisp session and enter the following form in the REPL:
   ;; No personal module command definitions were found in \var{<homedir>\/}/gbbopen-modules/.
   t
   cl-user>}
-\end{example}
+\end{smallexample}
 
 \REPLindex{:gbbopen-user}%
 %
@@ -2248,14 +2248,14 @@ module definitions have not been loaded.  Now enter the REPL
 command, \nobr{\code{:gbbopen-user}}:
 %
 \W\supp
-\begin{example}
+\begin{smallexample}
 \textcolor{darkergray}{%
   cl-user> \textcolor{black}{:gbbopen-user}
   ;; Loading \var{<install-dir>\/}/startup.lisp
      ...
   ;; Loading \var{<install-dir>\/}/\var{<platform-dir>\/}/gbbopen/gbbopen-user.fasl
   gbbopen-user>}
-\end{example}
+\end{smallexample}
 %
 The \code{:gbbopen-user} module (and supporting modules) are loaded,
 and the current package is set to \nobr{\code{:gbbopen-user}}:
@@ -2282,14 +2282,14 @@ also defines functions in the \nobr{\code{:common-lisp-user}} package with the
 same name as the REPL command:
 %
 \W\supp
-\begin{example}
+\begin{smallexample}
 \textcolor{darkergray}{%
   cl-user> \textcolor{black}{(gbbopen-user)}
   ;; Loading \var{<install-dir>\/}/startup.lisp
      ...
   ;; Loading \var{<install-dir>\/}/\var{<platform-dir>\/}/gbbopen/gbbopen-user.fasl
   gbbopen-user>}
-\end{example}
+\end{smallexample}
 
 \subsubsection*{REPL command syntax}
 \label{sec:REPL-command-syntax}
@@ -2302,26 +2302,26 @@ commands with arguments can be specified in either list or ``spread''
 notation.  For example:
 %
 \W\supp
-\begin{example}
+\begin{smallexample}
 \textcolor{darkergray}{%
   cl-user> \textcolor{black}{(:gbbopen-user :create-dirs)}
   ;; Loading \var{<install-dir>\/}/startup.lisp
      ...
   ;; Loading \var{<install-dir>\/}/\var{<platform-dir>\/}/gbbopen/gbbopen-user.fasl
   gbbopen-user>}
-\end{example}
+\end{smallexample}
 %
 or
 %
 \W\supp\notpretop
-\begin{example}
+\begin{smallexample}
 \textcolor{darkergray}{%
   cl-user> \textcolor{black}{:gbbopen-user :create-dirs}
   ;; Loading \var{<install-dir>\/}/startup.lisp
      ...
   ;; Loading \var{<install-dir>\/}/\var{<platform-dir>\/}/gbbopen/gbbopen-user.fasl
   gbbopen-user>}
-\end{example}
+\end{smallexample}
 
 However, \xsitelink{Allegro CL}{http://www.franz.com},
 \xsitelink{CLISP}{http://clisp.cons.org/}, and
@@ -2333,14 +2333,14 @@ implementations must use the \nobr{\code{:common-lisp-user}} functions rather
 than a REPL command when the command requires arguments:
 %
 \W\supp
-\begin{example}
+\begin{smallexample}
 \textcolor{darkergray}{%
   cl-user> \textcolor{black}{(cl-user:gbbopen-user :create-dirs)}
   ;; Loading \var{<install-dir>\/}/startup.lisp
      ...
   ;; Loading \var{<install-dir>\/}/\var{<platform-dir>\/}/gbbopen/gbbopen-user.fasl
   gbbopen-user>}
-\end{example}
+\end{smallexample}
 %
 or use the \xsitelink{SLIME}{http://common-lisp.net/project/slime/} REPL
 interface.
@@ -2606,7 +2606,7 @@ GBBopen HyperDoc pages from Common Lisp.  GBBopen's
 \nobr{\textbf{browse-hyperdoc}} available.  For example:
 %
 \W\supp
-\begin{example}
+\begin{smallexample}
 \textcolor{darkergray}{%
   cl-user> \textcolor{black}{:os-interface}
   ;; Loading \var{<install-dir>\/}/startup.lisp
@@ -2615,7 +2615,7 @@ GBBopen HyperDoc pages from Common Lisp.  GBBopen's
   gbbopen-tools> \textcolor{black}{(browse-hyperdoc 'define-unit-class)}
   t
   gbbopen-tools>}
-\end{example}
+\end{smallexample}
 %
 will display the GBBopen HyperDoc page for \textbf{define-unit-class} in your
 browser.  Note that the \nobr{\code{:gbbopen-user}} module requires (and
@@ -2673,14 +2673,14 @@ Start up a fresh Common Lisp session and load the \nobr{\code{:gbbopen-user}}
 module, using the REPL command we set up in the last exercise:
 %
 \W\supp
-\begin{example}
+\begin{smallexample}
 \textcolor{darkergray}{%
   cl-user> \textcolor{black}{:gbbopen-user}
   ;; Loading \var{<install-dir>\/}/startup.lisp
      ...
   ;; Loading \var{<install-dir>\/}/\var{<platform-dir>\/}/gbbopen/gbbopen-user.fasl
   gbbopen-user>}
-\end{example}
+\end{smallexample}
 
 Next, begin editing a new file named \nobr{\code{tutorial-example.lisp}} in
 the \code{source} subdirectory that you just created.  Even if you are more
@@ -2737,14 +2737,14 @@ We could use Common Lisp's \nobr{\code{compile-file}} to compile the file and
 then \code{load} to load the resulting compiled file. For example:
 %
 \W\supp
-\begin{example}
+\begin{smallexample}
 \textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(load (compile-file "~/tutorial/source/tutorial-example.lisp"))}
   ;; Compiling file ~/tutorial/source/tutorial-example.lisp
   ;; Loading ~/tutorial/source/tutorial-example.fasl
   t
   gbbopen-user>}
-\end{example}
+\end{smallexample}
 %
 but you should be able to compile and load the file directly from the editor
 buffer.  In SLIME, the command \nobr{\code{C-c C-k}} will compile and load the
@@ -3481,7 +3481,7 @@ Start up a fresh Common Lisp session and load the
 \nobr{\code{:agenda-shell-user}} REPL command:
 %
 \W\supp
-\begin{example}
+\begin{smallexample}
 \textcolor{darkergray}{%
   cl-user> \textcolor{black}{:agenda-shell-user}
   ;; Loading \var{<install-dir>\/}/startup.lisp
@@ -3489,7 +3489,7 @@ Start up a fresh Common Lisp session and load the
   ;; Loading \var{<install-dir>\/}/\var{<platform-dir>\/}/gbbopen/
   ;;            control-shells/agenda-shell-user.fasl
   gbbopen-user>}
-\end{example}
+\end{smallexample}
 
 This loads everything that we've been loading with the
 \nobr{\code{:gbbopen-user}} module and, additionally, GBBopen's Agenda Shell
@@ -5641,7 +5641,7 @@ Common Lisp session.  If you have set up your environment according to the
 the following files should be loaded:
 %
 \W\supp
-\begin{example}
+\begin{smallexample}
 \textcolor{darkergray}{%
      ...
   ;; Loading \var{<homedir>\/}/shared-init.lisp
@@ -5654,7 +5654,7 @@ the following files should be loaded:
   ;; No shared module command definitions were found in \var{<install-dir>\/}/gbbopen-modules/.
   ;; No personal module command definitions were found in \var{<homedir>\/}/gbbopen-modules/.
  cl-user>}
-\end{example}
+\end{smallexample}
 
 Note that some basic GBBopen initialization files have been loaded for us as
 well as GBBopen's command definitions and any command definitions for
@@ -5667,7 +5667,7 @@ Now, instead of loading the \nobr{\code{:agenda-shell-user}} module, let's
 load only the \nobr{\code{:module-manager-user}} module:
 %
 \W\supp
-\begin{example}
+\begin{smallexample}
 \textcolor{darkergray}{%
   cl-user> \textcolor{black}{:module-manager-user}
   ;; Loading \var{<install-dir>\/}/startup.lisp
@@ -5677,7 +5677,7 @@ load only the \nobr{\code{:module-manager-user}} module:
   ;; Loading module definitions from \var{<homedir>\/}/gbbopen-modules/...
   ;;     Loading \var{<homedir>\/}/tutorial/modules.lisp
   module-manager-user>}
-\end{example}
+\end{smallexample}
 %
 Note that when the Module Manager was loaded as part of loading the
 \nobr{\code{:module-manager-user}} module, the module definitions for our
@@ -5732,7 +5732,7 @@ subdirectory automatically for us.  Since we did not do this, we can still
 continue from the error:
 %
 \W\supp\notpretop
-\begin{example}
+\begin{smallexample}
 \textcolor{darkergray}{%
   Restart actions (select using :c n):
     0: Create this directory.
@@ -5741,7 +5741,7 @@ continue from the error:
   ;; Compiling file \var{<homedir>\/}/tutorial/source/tutorial-example.lisp
   ;; Loading \var{<homedir>\/}/tutorial/\var{<platform-dir>\/}/tutorial-example.fasl
   module-manager-user>}
-\end{example}
+\end{smallexample}
 
 At this point, we've compiled and loaded our \code{:tutorial} application
 module.
@@ -5792,7 +5792,7 @@ Common Lisp session.  If you have set up your environment according to the
 the following files should be loaded:
 %
 \W\supp
-\begin{example}
+\begin{smallexample}
 \textcolor{darkergray}{%
      ...
   ;; Loading \var{<homedir>\/}/shared-init.lisp
@@ -5806,7 +5806,7 @@ the following files should be loaded:
   ;; Loading personal module command definitions from \var{<homedir>\/}/gbbopen-modules/...
   ;;     Loading \var{<homedir>}/gbbopen-modules/tutorial/commands.lisp
   cl-user>}
-\end{example}
+\end{smallexample}
 %
 Note that the \nobr{\code{commands.lisp}} file from the \code{tutorial}
 directory has been loaded by
@@ -5816,14 +5816,14 @@ Now, we can compile and load the \code{:tutorial} module by simply issuing the
 \code{:tutorial} REPL command:
 %
 \W\supp
-\begin{example}
+\begin{smallexample}
 \textcolor{darkergray}{%
   cl-user> \textcolor{black}{:tutorial}
   ;; Loading \var{<install-dir>\/}/startup.lisp
      ...
   ;; Loading \var{<homedir>\/}/tutorial/\var{<platform-dir>\/}/tutorial-example.fasl
   gbbopen-user>}
-\end{example}
+\end{smallexample}
 %
 With the command definition in place, we are able to compile and load our
 random-walk application by issuing a single command, \code{:tutorial}.
@@ -6052,14 +6052,14 @@ a fresh Common Lisp session.  Next enter the
 \code{:tutorial} REPL command:
 %
 \W\supp
-\begin{example}
+\begin{smallexample}
 \textcolor{darkergray}{%
   cl-user> \textcolor{black}{:tutorial}
   ;; Loading \var{<install-dir>\/}/startup.lisp
      ...
   ;; Loading \var{<homedir>\/}/tutorial/\var{<platform-dir>\/}/tutorial-example.fasl
   tutorial>}
-\end{example}
+\end{smallexample}
 %
 Note that we are now in our newly defined \code{:tutorial} package.  We should
 still be able to run the random-walk application:
@@ -6160,7 +6160,7 @@ Enter the \code{:tutorial} REPL command. The modified
 a random walk:
 %
 \W\supp
-\begin{example}
+\begin{smallexample}
 \textcolor{darkergray}{%
   tutorial> \textcolor{black}{:tutorial}
   ;; Compiling \var{<homedir>\/}/tutorial/source/tutorial-example.lisp
@@ -6186,16 +6186,16 @@ a random walk:
   ;; Elapsed time: 0 seconds
   :stop
   tutorial>}
-\end{example}
+\end{smallexample}
 
 Let's try it again:
 %
 \W\supp
-\begin{example}
+\begin{smallexample}
 \textcolor{darkergray}{%
   tutorial> \textcolor{black}{:tutorial}
   tutorial>}
-\end{example}
+\end{smallexample}
 %
 This time, nothing happened.  Why?
 
@@ -6225,7 +6225,7 @@ Save the modified \nobr{\code{modules.lisp}} file. Now, if you try the
 be loaded and its ``autorun'' form evaluated:
 %
 \W\supp
-\begin{example}
+\begin{smallexample}
 \textcolor{darkergray}{%
   tutorial> \textcolor{black}{:tutorial}
   ;; Loading \var{<homedir>\/}/tutorial/modules.lisp
@@ -6233,7 +6233,7 @@ be loaded and its ``autorun'' form evaluated:
   ;; Control shell 1 started
      ...
   tutorial>}
-\end{example}
+\end{smallexample}
 %
 The Module Manager noticed our updated \nobr{\code{modules.lisp}} file and
 loaded it, redefining the \code{:tutorial} module definition, and then
@@ -6243,14 +6243,14 @@ Let's try the \code{:tutorial} command one more time, just to be certain that
 \code{:reload} is happening when no files have been updated:
 %
 \W\supp
-\begin{example}
+\begin{smallexample}
 \textcolor{darkergray}{%
   tutorial> \textcolor{black}{:tutorial}
   ;; Loading \var{<homedir>\/}/tutorial/\var{<platform-dir>\/}/tutorial-example.fasl
   ;; Control shell 1 started
      ...
   tutorial>}
-\end{example}
+\end{smallexample}
 
 \subsubsection*{Module Manager propagation}
 
@@ -6281,14 +6281,14 @@ We could override (cancel) this propagation behavior by adding the
 command:
 %
 \W\supp\notpretop
-\begin{example}
+\begin{smallexample}
 \textcolor{darkergray}{%
   tutorial> :tutorial :reload :nopropagate
   ;; Loading \var{<homedir>\/}/tutorial/\var{<platform-dir>\/}/tutorial-example.fasl
   ;; Control shell 1 started
      ...
   tutorial>}
-\end{example}
+\end{smallexample}
 %
 which would eliminate reloading of all but the files in the \code{:tutorial}
 module.  Since we only have one file (at the moment) specified in our
@@ -6309,7 +6309,7 @@ so we could have alternatively typed the \code{:cm} REPL command rather than
 \code{:tutorial} once we have issued the first \code{:tutorial} REPL command:
 %
 \W\supp
-\begin{example}
+\begin{smallexample}
 \textcolor{darkergray}{%
   tutorial> \textcolor{black}{:cm}
   ;; :cm :tutorial :propagate
@@ -6317,7 +6317,7 @@ so we could have alternatively typed the \code{:cm} REPL command rather than
   ;; Control shell 1 started
      ...
   tutorial>}
-\end{example}
+\end{smallexample}
 %
 Just the thing for lazy typists like me!  Note that the \code{:cm} command
 echos the full (implicitly completed) command with the remembered module name
@@ -6402,7 +6402,7 @@ and save the file.
 Let's double-check that everything is working:
 %
 \W\supp
-\begin{example}
+\begin{smallexample}
 \textcolor{darkergray}{%
   tutorial> \textcolor{black}{:cm}
   ;; :cm :tutorial :propagate
@@ -6414,7 +6414,7 @@ Let's double-check that everything is working:
   ;; Control shell 1 started
      ...
   tutorial>}
-\end{example}
+\end{smallexample}
 %
 The modified files are compiled and loaded and the Agenda Shell is invoked.
 
@@ -6422,7 +6422,7 @@ Let's try it one last time, just to be sure that the application runs when no
 files have been modified:
 %
 \W\supp
-\begin{example}
+\begin{smallexample}
 \textcolor{darkergray}{%
   tutorial> \textcolor{black}{:cm}
   ;; :cm :tutorial :propagate
@@ -6430,7 +6430,7 @@ files have been modified:
   ;; Control shell 1 started
      ...
   tutorial>}
-\end{example}
+\end{smallexample}
 
 Congratulations!  It's time to move to the next exercise.
 
