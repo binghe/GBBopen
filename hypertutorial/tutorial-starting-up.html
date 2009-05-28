@@ -376,7 +376,7 @@ modules it requires, you need to evaluate the following forms within your
 Common Lisp environment.  First, load GBBopen's
 <nobr><code><var>&lt;install-dir&gt;</var>/startup.lisp</code></nobr> file from wherever GBBopen
 has been installed:
-<pre class="pretop">
+<small><pre class="pretop">
 <font color="#667f66">  cl-user&gt; <font color="#000000">(load "<var>&lt;install-dir&gt;</var>/startup.lisp")</font>
   ;; Loading <var>&lt;install-dir&gt;</var>/startup.lisp
   ;; GBBopen is installed in <var>&lt;install-dir&gt;</var>
@@ -387,10 +387,10 @@ has been installed:
   ;;  Loading <var>&lt;install-dir&gt;</var>/source/modules.lisp
   t
   cl-user&gt;</font>
-</pre>
+</pre></small>
 <a name="id13">Then</a> compile and load the <nobr><code>:gbbopen-user</code></nobr> module and all the
 GBBopen modules it requires by evaluating:
-<pre>
+<small><pre>
 <font color="#667f66">  cl-user&gt; <font color="#000000">(module-manager:compile-module :gbbopen-user :propagate :create-dirs)</font>
   ;; Compiling <var>&lt;install-dir&gt;</var>/source/module-manager/module-manager.lisp
   ;; Loading <var>&lt;install-dir&gt;</var>/<var>&lt;platform-dir&gt;</var>/module-manager/module-manager.fasl
@@ -398,7 +398,7 @@ GBBopen modules it requires by evaluating:
   ;; Compiling <var>&lt;install-dir&gt;</var>/source/gbbopen/gbbopen-user.lisp
   ;; Loading <var>&lt;install-dir&gt;</var>/<var>&lt;platform-dir&gt;</var>/gbbopen/gbbopen-user.fasl
   cl-user&gt;</font>
-</pre>
+</pre></small>
 </p>
 <p>GBBopen should compile (if necessary) and load all the files needed for the
 next exercise without error.  The output on your Common Lisp implementation
@@ -412,7 +412,7 @@ permission for those files and directories on your file system.  If you do not
 have write permission and someone else is maintaining your GBBopen
 installation, they must start up Common Lisp and then evaluate the following
 two expressions:
-<pre class="pretop">
+<small><pre class="pretop">
 <font color="#667f66">  cl-user&gt; <font color="#000000">(load "<var>&lt;install-dir&gt;</var>/initiate.lisp")</font>
   ;; Loading <var>&lt;install-dir&gt;</var>/initiate.lisp
   ;; GBBopen is installed in <var>&lt;install-dir&gt;</var>
@@ -428,7 +428,7 @@ two expressions:
      ...
   ;;; GBBopen module compilation completed.
   [~]&#36;</font>
-</pre>
+</pre></small>
 every time they update GBBopen to ensure that all GBBopen modules have
 been compiled.
 </p>
