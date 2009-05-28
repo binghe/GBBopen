@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/startup.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Apr  3 14:35:49 2009 *-*
+;;;; *-* Last-Edit: Thu May 28 16:17:56 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -64,6 +64,15 @@
         (make-pathname :name nil
                        :type nil
                        :defaults *load-truename*)))
+
+;;; ---------------------------------------------------------------------------
+;;;  Show directory locations (if not done previously by initiate.lisp)
+
+(unless (fboundp 'compile-if-advantageous)
+  (format t "~&;; GBBopen is installed in ~a~%"
+          (namestring *gbbopen-install-root*))
+  (format t "~&;; Your \"home\" directory is ~a~%"
+          (namestring (user-homedir-pathname))))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Control gbbopen-modules directory processing (defvar is in initiate.lisp)

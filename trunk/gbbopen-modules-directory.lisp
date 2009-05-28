@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/gbbopen-modules-directory.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Aug 26 10:08:37 2008 *-*
+;;;; *-* Last-Edit: Thu May 28 16:36:17 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -73,7 +73,7 @@
 
 ;;; ---------------------------------------------------------------------------
                   
-(defun process-the-gbbopen-modules-directory (modules-dir filename)
+(defun process-the-gbbopen-modules-directory (modules-dir filename shared?)
   ;;; Common function to process GBBopen's shared-gbbopen-modules directory
   ;;; and a user's personal gbbopen-modules directory.
   #+(and sbcl (not sb-unicode))
@@ -105,7 +105,12 @@
 	   (mapcan 'read-target-directory-specification
 		   pseudo-sym-link-paths)))
          (now (get-universal-time)))
-    (let ((message-printed? nil))
+    (let ((message-printed? nil)
+          (load-type (cond ((string= filename "modules")
+                            "module definitions")
+                           ((string= filename "commands")
+                            "module command definitions")
+                           (t filename))))
       (dolist (dir module-dirs)
 	(let* ((dir-pathname-name (pathname-name dir))
                (pathname (make-pathname 
@@ -130,12 +135,9 @@
                                 (not (> file-write-date 
                                         previous-load-time))))))
             (unless (or message-printed? (not (probe-file pathname)))
-              (format t "~&;; Loading ~a from ~a...~%" 
-                      (cond ((string= filename "modules")
-                             "module definitions")
-                            ((string= filename "commands")
-                             "module command definitions")
-                            (t filename))
+              (format t "~&;; Loading ~:[personal~;shared~] ~a from ~a...~%" 
+                      shared?
+                      load-type
                       (namestring modules-dir))
               (setf message-printed? 't))
             (when (load (namestring pathname)
@@ -145,8 +147,12 @@
                 (setf (cdr previous-load-time-acons) now))
                (t (setf *loaded-gbbopen-modules-directory-files*
                         (acons pathname now
-                               *loaded-gbbopen-modules-directory-files*)))))))
-        ))))
+                               *loaded-gbbopen-modules-directory-files*))))))))
+      (unless message-printed?
+        (format t "~&;; No ~:[personal~;shared~] ~a were found in ~a.~%"
+                shared?
+                load-type 
+                (namestring modules-dir))))))
 
 (compile-if-advantageous 'process-the-gbbopen-modules-directory)
 
@@ -160,7 +166,7 @@
           :directory (append (pathname-directory *gbbopen-install-root*)
                              '("shared-gbbopen-modules"))
           :defaults *gbbopen-install-root*)))
-      (process-the-gbbopen-modules-directory shared-modules-dir filename)))
+      (process-the-gbbopen-modules-directory shared-modules-dir filename 't)))
 
 (compile-if-advantageous 'process-shared-gbbopen-modules-directory)
 
@@ -176,7 +182,7 @@
 	   :directory (append (pathname-directory user-homedir-pathname)
 			      '("gbbopen-modules"))
 	   :defaults user-homedir-pathname)))
-    (process-the-gbbopen-modules-directory user-modules-dir filename)))
+    (process-the-gbbopen-modules-directory user-modules-dir filename nil)))
 
 (compile-if-advantageous 'process-gbbopen-modules-directory)
 

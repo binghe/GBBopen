@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/initiate.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Apr 14 03:56:41 2009 *-*
+;;;; *-* Last-Edit: Thu May 28 16:15:18 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -93,6 +93,14 @@
       (make-pathname :name nil
                      :type nil
                      :defaults *load-truename*))
+
+;;; ---------------------------------------------------------------------------
+;;;  Show directory locations:
+
+(format t "~&;; GBBopen is installed in ~a~%"
+        (namestring *gbbopen-install-root*))
+(format t "~&;; Your \"home\" directory is ~a~%"
+        (namestring (user-homedir-pathname)))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Compile bootstrap-loaded function or macro on CLs where this is

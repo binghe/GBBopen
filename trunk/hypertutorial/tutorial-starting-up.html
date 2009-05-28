@@ -379,6 +379,8 @@ has been installed:
 <pre class="pretop">
 <font color="#667f66">  cl-user&gt; <font color="#000000">(load "<var>&lt;install-dir&gt;</var>/startup.lisp")</font>
   ;; Loading <var>&lt;install-dir&gt;</var>/startup.lisp
+  ;; GBBopen is installed in <var>&lt;install-dir&gt;</var>
+  ;; Your "home" directory is <var>&lt;homedir&gt;</var>
   ;;  Loading <var>&lt;install-dir&gt;</var>/source/module-manager/module-manager-loader.lisp
   ;;   Loading <var>&lt;install-dir&gt;</var>/source/module-manager/module-manager.lisp
   ;;     Loading <var>&lt;install-dir&gt;</var>/source/module-manager/module-manager-user.lisp
@@ -413,8 +415,13 @@ two expressions:
 <pre class="pretop">
 <font color="#667f66">  cl-user&gt; <font color="#000000">(load "<var>&lt;install-dir&gt;</var>/initiate.lisp")</font>
   ;; Loading <var>&lt;install-dir&gt;</var>/initiate.lisp
-  ;;  Loading <var>&lt;install-dir&gt;</var>/extended-repl.lisp
-  ;;  Loading <var>&lt;install-dir&gt;</var>/commands.lisp
+  ;; GBBopen is installed in <var>&lt;install-dir&gt;</var>
+  ;; Your "home" directory is <var>&lt;homedir&gt;</var>
+  ;;     Loading <var>&lt;install-dir&gt;</var>/extended-repl.lisp
+  ;;     Loading <var>&lt;install-dir&gt;</var>/commands.lisp
+  ;;     Loading <var>&lt;install-dir&gt;</var>/gbbopen-modules-directory.lisp
+  ;; No shared module command definitions were found in <var>&lt;install-dir&gt;</var>/gbbopen-modules/.
+  ;; No personal module command definitions were found in <var>&lt;homedir&gt;</var>/gbbopen-modules/.
   t
   cl-user&gt; <font color="#000000">(compile-gbbopen)</font>
   ;; Loading <var>&lt;install-dir&gt;</var>/startup.lisp

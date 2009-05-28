@@ -269,11 +269,14 @@ the following files should be loaded:
 <font color="#667f66">     ...
   ;; Loading <var>&lt;homedir&gt;</var>/shared-init.lisp
   ;;   Loading <var>&lt;install-dir&gt;</var>/initiate.lisp
+  ;; GBBopen is installed in <var>&lt;install-dir&gt;</var>
+  ;; Your "home" directory is <var>&lt;homedir&gt;</var>
   ;;     Loading <var>&lt;install-dir&gt;</var>/extended-repl.lisp
   ;;     Loading <var>&lt;install-dir&gt;</var>/commands.lisp
   ;;     Loading <var>&lt;install-dir&gt;</var>/gbbopen-modules-directory.lisp
-  ;; Loading module command definitions from <var>&lt;homedir&gt;</var>/gbbopen-modules/...
-  cl-user&gt;</font>
+  ;; No shared module command definitions were found in <var>&lt;install-dir&gt;</var>/gbbopen-modules/.
+  ;; No personal module command definitions were found in <var>&lt;homedir&gt;</var>/gbbopen-modules/.
+ cl-user&gt;</font>
 </pre>
 </p>
 <p>Note that some basic GBBopen initialization files have been loaded for us as
@@ -390,11 +393,14 @@ the following files should be loaded:
 <font color="#667f66">     ...
   ;; Loading <var>&lt;homedir&gt;</var>/shared-init.lisp
   ;;   Loading <var>&lt;install-dir&gt;</var>/initiate.lisp
+  ;; GBBopen is installed in <var>&lt;install-dir&gt;</var>
+  ;; Your "home" directory is <var>&lt;homedir&gt;</var>
   ;;     Loading <var>&lt;install-dir&gt;</var>/extended-repl.lisp
   ;;     Loading <var>&lt;install-dir&gt;</var>/commands.lisp
   ;;     Loading <var>&lt;install-dir&gt;</var>/gbbopen-modules-directory.lisp
-  ;; Loading module command definitions from <var>&lt;homedir&gt;</var>/gbbopen-modules/...
-  ;      Loading <var>&lt;homedir&gt;</var>/gbbopen-modules/tutorial/commands.lisp
+  ;; No shared module command definitions were found in <var>&lt;install-dir&gt;</var>/gbbopen-modules/.
+  ;; Loading personal module command definitions from <var>&lt;homedir&gt;</var>/gbbopen-modules/...
+  ;;     Loading <var>&lt;homedir&gt;</var>/gbbopen-modules/tutorial/commands.lisp
   cl-user&gt;</font>
 </pre>
 Note that the <nobr><code>commands.lisp</code></nobr> file from the <code>tutorial</code>

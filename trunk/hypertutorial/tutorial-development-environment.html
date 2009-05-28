@@ -70,8 +70,13 @@ fresh Common Lisp session and enter the following form in the REPL:
 <pre>
 <font color="#667f66">  cl-user&gt; <font color="#000000">(load "<var>&lt;install-dir&gt;</var>/initiate.lisp")</font>
   ;; Loading <var>&lt;install-dir&gt;</var>/initiate.lisp
-  ;;  Loading <var>&lt;install-dir&gt;</var>/extended-repl.lisp
-  ;;  Loading <var>&lt;install-dir&gt;</var>/commands.lisp
+  ;; GBBopen is installed in <var>&lt;install-dir&gt;</var>
+  ;; Your "home" directory is <var>&lt;homedir&gt;</var>
+  ;;     Loading <var>&lt;install-dir&gt;</var>/extended-repl.lisp
+  ;;     Loading <var>&lt;install-dir&gt;</var>/commands.lisp
+  ;;     Loading <var>&lt;install-dir&gt;</var>/gbbopen-modules-directory.lisp
+  ;; No shared module command definitions were found in <var>&lt;install-dir&gt;</var>/gbbopen-modules/.
+  ;; No personal module command definitions were found in <var>&lt;homedir&gt;</var>/gbbopen-modules/.
   t
   cl-user&gt;</font>
 </pre>
@@ -312,7 +317,12 @@ directory is located:
   nil
   cl-user&gt;</font>
 </pre>
-We will refer to this directory from now on as your &#8220;homedir&#8221; directory.
+Alternatively, loading either GBBopen's
+<nobr><code><var>&lt;install-dir&gt;</var>/startup.lisp</code></nobr> file or
+<nobr><code><var>&lt;install-dir&gt;</var>/initiate.lisp</code></nobr> will display the &#8220;home&#8221;
+directory.
+</p>
+<p>We will refer to this directory from now on as your &#8220;homedir&#8221; directory.
 </p>
 <br />&nbsp;<br /></li><li>With this setup in place, all that is needed to use GBBopen is
 to start up a Common Lisp and type a GBBopen command, such as
