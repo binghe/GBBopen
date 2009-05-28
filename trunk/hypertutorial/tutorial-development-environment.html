@@ -307,8 +307,9 @@ deem as your &#8220;home&#8221; directory.
 <p><a name="ref:your-homedir">Here</a> is a quick way to have Common Lisp tell you where it thinks your &#8220;home&#8221;
 directory is located:
 <pre class="pretop">
-<font color="#667f66">  cl-user&gt; <font color="#000000">(truename (user-homedir-pathname))</font>
-  "C:\\Documents and Settings\\corkill\\"
+<font color="#667f66">  cl-user&gt; <font color="#000000">(not (princ (truename (user-homedir-pathname))))</font>
+  C:\Documents and Settings\corkill\
+  nil
   cl-user&gt;</font>
 </pre>
 We will refer to this directory from now on as your &#8220;homedir&#8221; directory.
