@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/tutorial.tex *-*
-%% *-* Last-Edit: Fri May 15 05:31:14 2009; Edited-By: cork *-*
+%% *-* Last-Edit: Thu May 28 10:41:17 2009; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2005-2009, Dan Corkill <corkill@GBBopen.org>
@@ -2492,8 +2492,9 @@ directory is located:
 \W\supp
 \begin{example}
 \textcolor{darkergray}{%
-  cl-user> \textcolor{black}{(truename (user-homedir-pathname))}
-  "C:\bkslash\bkslash{}Documents and Settings\bkslash\bkslash{}corkill\bkslash\bkslash"
+  cl-user> \textcolor{black}{(not (princ (truename (user-homedir-pathname))))}
+  C:\bkslash{}Documents and Settings\bkslash{}corkill\bkslash
+  nil
   cl-user>}
 \end{example}
 We will refer to this directory from now on as your ``homedir'' directory.
