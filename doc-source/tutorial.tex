@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/tutorial.tex *-*
-%% *-* Last-Edit: Thu May 28 10:41:17 2009; Edited-By: cork *-*
+%% *-* Last-Edit: Thu May 28 16:45:51 2009; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2005-2009, Dan Corkill <corkill@GBBopen.org>
@@ -774,6 +774,8 @@ has been installed:
 \textcolor{darkergray}{%
   cl-user> \textcolor{black}{(load "\var{<install-dir>\/}/startup.lisp")}
   ;; Loading \var{<install-dir>\/}/startup.lisp
+  ;; GBBopen is installed in \var{<install-dir>\/}
+  ;; Your "home" directory is \var{<homedir>\/}
   ;;  Loading \var{<install-dir>\/}/source/module-manager/module-manager-loader.lisp
   ;;   Loading \var{<install-dir>\/}/source/module-manager/module-manager.lisp
   ;;     Loading \var{<install-dir>\/}/source/module-manager/module-manager-user.lisp
@@ -821,8 +823,13 @@ two expressions:
 \textcolor{darkergray}{%
   cl-user> \textcolor{black}{(load "\var{<install-dir>\/}/initiate.lisp")}
   ;; Loading \var{<install-dir>\/}/initiate.lisp
-  ;;  Loading \var{<install-dir>\/}/extended-repl.lisp
-  ;;  Loading \var{<install-dir>\/}/commands.lisp
+  ;; GBBopen is installed in \var{<install-dir>\/}
+  ;; Your "home" directory is \var{<homedir>\/}
+  ;;     Loading \var{<install-dir>\/}/extended-repl.lisp
+  ;;     Loading \var{<install-dir>\/}/commands.lisp
+  ;;     Loading \var{<install-dir>\/}/gbbopen-modules-directory.lisp
+  ;; No shared module command definitions were found in \var{<install-dir>\/}/gbbopen-modules/.
+  ;; No personal module command definitions were found in \var{<homedir>\/}/gbbopen-modules/.
   t
   cl-user> \textcolor{black}{(compile-gbbopen)}
   ;; Loading \var{<install-dir>\/}/startup.lisp
@@ -2223,8 +2230,13 @@ fresh Common Lisp session and enter the following form in the REPL:
 \textcolor{darkergray}{%
   cl-user> \textcolor{black}{(load "\var{<install-dir>\/}/initiate.lisp")}
   ;; Loading \var{<install-dir>\/}/initiate.lisp
-  ;;  Loading \var{<install-dir>\/}/extended-repl.lisp
-  ;;  Loading \var{<install-dir>\/}/commands.lisp
+  ;; GBBopen is installed in \var{<install-dir>\/}
+  ;; Your "home" directory is \var{<homedir>\/}
+  ;;     Loading \var{<install-dir>\/}/extended-repl.lisp
+  ;;     Loading \var{<install-dir>\/}/commands.lisp
+  ;;     Loading \var{<install-dir>\/}/gbbopen-modules-directory.lisp
+  ;; No shared module command definitions were found in \var{<install-dir>\/}/gbbopen-modules/.
+  ;; No personal module command definitions were found in \var{<homedir>\/}/gbbopen-modules/.
   t
   cl-user>}
 \end{example}
@@ -2497,6 +2509,12 @@ directory is located:
   nil
   cl-user>}
 \end{example}
+%
+Alternatively, loading either GBBopen's
+\nobr{\code{\var{<install-dir>\/}/startup.lisp}} file or
+\nobr{\code{\var{<install-dir>\/}/initiate.lisp}} will display the ``home''
+directory.
+
 We will refer to this directory from now on as your ``homedir'' directory.
 
 \W\\~\\
@@ -5628,11 +5646,14 @@ the following files should be loaded:
      ...
   ;; Loading \var{<homedir>\/}/shared-init.lisp
   ;;   Loading \var{<install-dir>\/}/initiate.lisp
+  ;; GBBopen is installed in \var{<install-dir>\/}
+  ;; Your "home" directory is \var{<homedir>\/}
   ;;     Loading \var{<install-dir>\/}/extended-repl.lisp
   ;;     Loading \var{<install-dir>\/}/commands.lisp
   ;;     Loading \var{<install-dir>\/}/gbbopen-modules-directory.lisp
-  ;; Loading module command definitions from \var{<homedir>\/}/gbbopen-modules/...
-  cl-user>}
+  ;; No shared module command definitions were found in \var{<install-dir>\/}/gbbopen-modules/.
+  ;; No personal module command definitions were found in \var{<homedir>\/}/gbbopen-modules/.
+ cl-user>}
 \end{example}
 
 Note that some basic GBBopen initialization files have been loaded for us as
@@ -5776,11 +5797,14 @@ the following files should be loaded:
      ...
   ;; Loading \var{<homedir>\/}/shared-init.lisp
   ;;   Loading \var{<install-dir>\/}/initiate.lisp
+  ;; GBBopen is installed in \var{<install-dir>\/}
+  ;; Your "home" directory is \var{<homedir>\/}
   ;;     Loading \var{<install-dir>\/}/extended-repl.lisp
   ;;     Loading \var{<install-dir>\/}/commands.lisp
   ;;     Loading \var{<install-dir>\/}/gbbopen-modules-directory.lisp
-  ;; Loading module command definitions from \var{<homedir>\/}/gbbopen-modules/...
-  ;      Loading \var{<homedir>}/gbbopen-modules/tutorial/commands.lisp
+  ;; No shared module command definitions were found in \var{<install-dir>\/}/gbbopen-modules/.
+  ;; Loading personal module command definitions from \var{<homedir>\/}/gbbopen-modules/...
+  ;;     Loading \var{<homedir>}/gbbopen-modules/tutorial/commands.lisp
   cl-user>}
 \end{example}
 %

@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon May 11 04:15:24 2009 *-*
+;;;; *-* Last-Edit: Thu May 28 16:53:42 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -290,8 +290,8 @@
                                           condition))
                                    (declare (dynamic-extent (function error-message)
                                                             (function error-condition)))
-                                   (declare (ignorable (function error-message)
-                                                       (function error-condition)))
+                                   (declare #-clisp (ignorable (function error-message)
+                                                               (function error-condition)))
                                    ,@(if error-body
                                          `(,@handler-body
                                            (when *disable-with-error-handling*
@@ -321,8 +321,8 @@
                               ,condition/tag))
                        (declare (dynamic-extent (function error-message)
                                                 (function error-condition)))
-                       (declare (ignorable (function error-message)
-                                           (function error-condition)))
+                       (declare #-clisp (ignorable (function error-message)
+                                                   (function error-condition)))
                        (return-from ,block (progn ,@error-body))))))))))))
   
 ;;; ===========================================================================
