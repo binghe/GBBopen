@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/gbbopen-modules-directory.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu May 28 16:36:17 2009 *-*
+;;;; *-* Last-Edit: Fri May 29 10:50:25 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2006-2008, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2006-2009, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;;   This file is loaded by initiate.lisp (and optionally by startup.lisp)
@@ -45,6 +45,8 @@
       (loop
 	(setf line (ignore-errors (read-line file nil nil)))
 	(unless line
+          (warn "Unable to read the target-directory file ~s" 
+                (namestring filename))
 	  (return-from read-target-directory-specification nil))
 	(locally (declare (simple-string line))
 	  (when (plusp (length line))
@@ -112,42 +114,49 @@
                             "module command definitions")
                            (t filename))))
       (dolist (dir module-dirs)
-	(let* ((dir-pathname-name (pathname-name dir))
-               (pathname (make-pathname 
-                          :name filename
-                          :type "lisp"
-                          :directory (if (and dir-pathname-name
-                                              (not (eq dir-pathname-name 
-                                                       ':unspecific)))
-                                         `(,@(pathname-directory dir)
-                                             ,(pathname-name dir))
-                                         (pathname-directory dir))
-                          :defaults dir))
-               (previous-load-time-acons 
-                (assoc pathname *loaded-gbbopen-modules-directory-files*
-                       :test #'equal))
-               (previous-load-time (cdr previous-load-time-acons)))
-          (unless (and previous-load-time
-                       (let ((file-write-date (file-write-date pathname)))
-                         (and file-write-date
-                              (locally  ; avoid SBCL optimization warning: 
-                                  (declare (optimize (speed 1)))
-                                (not (> file-write-date 
-                                        previous-load-time))))))
-            (unless (or message-printed? (not (probe-file pathname)))
-              (format t "~&;; Loading ~:[personal~;shared~] ~a from ~a...~%" 
-                      shared?
-                      load-type
-                      (namestring modules-dir))
-              (setf message-printed? 't))
-            (when (load (namestring pathname)
+        (let ((dir-pathname-name (pathname-name dir)))
+          (unless (string-equal dir-pathname-name ".svn")
+            (let* ((pathname (make-pathname 
+                              :name filename
+                              :type "lisp"
+                              :directory (if (and dir-pathname-name
+                                                  (not (eq dir-pathname-name 
+                                                           ':unspecific)))
+                                             `(,@(pathname-directory dir)
+                                                 ,(pathname-name dir))
+                                             (pathname-directory dir))
+                              :defaults dir))
+                   (previous-load-time-acons 
+                    (assoc pathname *loaded-gbbopen-modules-directory-files*
+                           :test #'equal))
+                   (previous-load-time (cdr previous-load-time-acons)))
+              (unless (and previous-load-time
+                           (let ((file-write-date (file-write-date pathname)))
+                             (and file-write-date
+                                  (locally ; avoid SBCL optimization warning: 
+                                      (declare (optimize (speed 1)))
+                                    (not (> file-write-date 
+                                            previous-load-time))))))
+                (unless (or message-printed? (not (probe-file pathname)))
+                  (format t "~&;; Loading ~:[personal~;shared~] ~a from ~a...~%" 
+                          shared?
+                          load-type
+                          (namestring modules-dir))
+                  (setf message-printed? 't))
+                (cond
+                 ((load (namestring pathname)
                         :if-does-not-exist nil)
-              (cond 
-               (previous-load-time-acons
-                (setf (cdr previous-load-time-acons) now))
-               (t (setf *loaded-gbbopen-modules-directory-files*
-                        (acons pathname now
-                               *loaded-gbbopen-modules-directory-files*))))))))
+                  (cond 
+                   (previous-load-time-acons
+                    (setf (cdr previous-load-time-acons) now))
+                   (t (setf *loaded-gbbopen-modules-directory-files*
+                            (acons pathname now
+                                   *loaded-gbbopen-modules-directory-files*)))))
+                 ;; Unable to load the command/module file:
+                 (t (warn "Unable to load ~:[personal~;shared~] ~a from ~a."
+                          shared?
+                          load-type
+                          (namestring pathname)))))))))
       (unless message-printed?
         (format t "~&;; No ~:[personal~;shared~] ~a were found in ~a.~%"
                 shared?
