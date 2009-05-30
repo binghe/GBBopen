@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/gbbopen-modules-directory.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri May 29 10:50:25 2009 *-*
+;;;; *-* Last-Edit: Sat May 30 01:20:38 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -45,7 +45,7 @@
       (loop
 	(setf line (ignore-errors (read-line file nil nil)))
 	(unless line
-          (warn "Unable to read the target-directory file ~s" 
+          (format t "~&;; WARNING: Unable to read the target-directory file ~s~%" 
                 (namestring filename))
 	  (return-from read-target-directory-specification nil))
 	(locally (declare (simple-string line))
@@ -61,8 +61,8 @@
 			 ;; We got the expected string:
 			 (string (list string))
 			 (otherwise 
-			  (warn "While reading from ~s: Unable to read ~
-                                 target-directory, ~a, " 
+			  (format t "~&;; WARNING: While reading from ~s: ~
+                                 Unable to read target-directory \"~a\"~%" 
 				(namestring file)
 				line)
 			  ;; return nil
@@ -153,7 +153,8 @@
                             (acons pathname now
                                    *loaded-gbbopen-modules-directory-files*)))))
                  ;; Unable to load the command/module file:
-                 (t (warn "Unable to load ~:[personal~;shared~] ~a from ~a."
+                 (t (format t "~&;; WARNING: Unable to load ~
+                                    ~:[personal~;shared~] ~a from ~a.~%"
                           shared?
                           load-type
                           (namestring pathname)))))))))
