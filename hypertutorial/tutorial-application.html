@@ -206,7 +206,7 @@ directory that contains the <code>source</code> subdirectory.
 <p>Type the following two forms into the new <nobr><code>modules.lisp</code></nobr>
 file:
 <pre class="pretop">
-  (in-package :common-lisp-user)
+  (in-package :module-manager-user)
 
   (define-module :tutorial
     (:requires :agenda-shell-user)
@@ -565,7 +565,7 @@ the loading of the <nobr><code>:gbbopen-user</code></nobr> module by editing our
 <nobr><code>modules.lisp</code></nobr> file and delete <nobr><code>:agenda-shell-user</code></nobr> in
 the <code>:requires</code> option in our <code>:tutorial</code> module definition:
 <pre>
-<font color="#667f66">  (in-package :common-lisp-user)
+<font color="#667f66">  (in-package :module-manager-user)
 
   (define-module :tutorial
     (:requires <font color="#ff0000">:agenda-shell-user</font>)
@@ -573,7 +573,7 @@ the <code>:requires</code> option in our <code>:tutorial</code> module definitio
 </pre>
 and replace it with <nobr><code>:agenda-shell</code></nobr>:
 <pre>
-<font color="#667f66">  (in-package :common-lisp-user)
+<font color="#667f66">  (in-package :module-manager-user)
 
   (define-module :tutorial
     (:requires <font color="#000000">:agenda-shell</font>)
