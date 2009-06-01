@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/startup.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Jun  1 05:30:26 2009 *-*
+;;;; *-* Last-Edit: Mon Jun  1 14:07:37 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2002-2008, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2009, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;;  For GBBopen porting information, refer to the file PORTING.
@@ -68,7 +68,9 @@
 ;;; ---------------------------------------------------------------------------
 ;;;  Show directory locations (if not done previously by initiate.lisp)
 
-(defvar *gbbopen-startup-loaded* nil)
+(declaim (special *gbbopen-startup-loaded*)) ; a redefinition-quiet DEFVAR
+(unless (boundp '*gbbopen-startup-loaded*)
+  (setf *gbbopen-startup-loaded* nil))
 
 (unless *gbbopen-startup-loaded*
   (format t "~&;; GBBopen is installed in ~a~%"
