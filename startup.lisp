@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/startup.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu May 28 16:17:56 2009 *-*
+;;;; *-* Last-Edit: Mon Jun  1 05:30:26 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -68,7 +68,9 @@
 ;;; ---------------------------------------------------------------------------
 ;;;  Show directory locations (if not done previously by initiate.lisp)
 
-(unless (fboundp 'compile-if-advantageous)
+(defvar *gbbopen-startup-loaded* nil)
+
+(unless *gbbopen-startup-loaded*
   (format t "~&;; GBBopen is installed in ~a~%"
           (namestring *gbbopen-install-root*))
   (format t "~&;; Your \"home\" directory is ~a~%"
@@ -201,7 +203,6 @@
 ;;; ---------------------------------------------------------------------------
 ;;;  Record that GBBopen's startup file has been loaded:
 
-(declaim (special *gbbopen-startup-loaded*))
 (setf *gbbopen-startup-loaded* 't)
 
 ;;; ===========================================================================
