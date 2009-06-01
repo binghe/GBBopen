@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/gbbopen-modules-directory.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Jun  1 05:36:55 2009 *-*
+;;;; *-* Last-Edit: Mon Jun  1 14:23:56 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -32,6 +32,9 @@
 (in-package :common-lisp-user)
 
 ;;; ---------------------------------------------------------------------------
+
+(defparameter *ignored-gbbopen-modules-directory-subdirectories*
+    '(".svn"))
 
 (defvar *loaded-gbbopen-modules-directory-files* nil)
 
@@ -111,11 +114,13 @@
           (load-type (cond ((string= filename "modules")
                             "module definitions")
                            ((string= filename "commands")
-                            "module command definitions")
+                            "command definitions")
                            (t filename))))
       (dolist (dir module-dirs)
         (let ((dir-pathname-name (pathname-name dir)))
-          (unless (string-equal dir-pathname-name ".svn")
+          (unless (member dir-pathname-name 
+                          *ignored-gbbopen-modules-directory-subdirectories*
+                          :test #'string-equal)
             (let* ((pathname (make-pathname 
                               :name filename
                               :type "lisp"
@@ -137,27 +142,30 @@
                                       (declare (optimize (speed 1)))
                                     (not (> file-write-date 
                                             previous-load-time))))))
-                (unless (or message-printed? (not (probe-file pathname)))
-                  (format t "~&;; Loading ~:[personal~;shared~] ~a from ~a...~%" 
+                (cond
+                 ;; No load-type file in this directory:
+                 ((not (probe-file pathname))
+                  (format t "~&;; WARNING: Unable to find ~
+                                      ~:[personal~;shared~] ~a file ~a~%" 
+                          shared?
+                          load-type
+                          (namestring pathname)))
+                 ((not message-printed?)
+                  (format t "~&;; Loading ~:[personal~;shared~] ~a from ~
+                                      ~a...~%" 
                           shared?
                           load-type
                           (namestring modules-dir))
-                  (setf message-printed? 't))
-                (cond
-                 ((load (namestring pathname)
-                        :if-does-not-exist nil)
+                  (setf message-printed? 't)))
+                (when (load (namestring pathname)
+                            :if-does-not-exist nil)
                   (cond 
                    (previous-load-time-acons
                     (setf (cdr previous-load-time-acons) now))
                    (t (setf *loaded-gbbopen-modules-directory-files*
-                            (acons pathname now
-                                   *loaded-gbbopen-modules-directory-files*)))))
-                 ;; Unable to load the command/module file:
-                 (t (format t "~&;; WARNING: Unable to load ~
-                                    ~:[personal~;shared~] ~a from ~a.~%"
-                          shared?
-                          load-type
-                          (namestring pathname)))))))))
+                            (acons 
+                             pathname now
+                             *loaded-gbbopen-modules-directory-files*))))))))))
       (unless (or message-printed? *gbbopen-startup-loaded*)
         (format t "~&;; No ~:[personal~;shared~] ~a were found in ~a.~%"
                 shared?
