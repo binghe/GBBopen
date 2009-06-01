@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/gbbopen-modules-directory.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat May 30 01:20:38 2009 *-*
+;;;; *-* Last-Edit: Mon Jun  1 05:36:55 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -158,7 +158,7 @@
                           shared?
                           load-type
                           (namestring pathname)))))))))
-      (unless message-printed?
+      (unless (or message-printed? *gbbopen-startup-loaded*)
         (format t "~&;; No ~:[personal~;shared~] ~a were found in ~a.~%"
                 shared?
                 load-type 
