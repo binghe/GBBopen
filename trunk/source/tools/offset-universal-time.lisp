@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/offset-universal-time.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon May 25 22:58:33 2009 *-*
+;;;; *-* Last-Edit: Mon Jun  1 22:15:15 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -23,7 +23,7 @@
 ;;;
 ;;;  07-18-07 File created.  (Corkill)
 ;;;  04-30-09 Added :ot REPL command.  (Corkill)
-;;;  05-25-09 Added PRINTOTV macro.  (Corkill)
+;;;  05-25-09 Added PRINTVOT macro.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -42,7 +42,7 @@
   (export '(*ot-base*
             check-ot-base
             ot2ut
-            printotv                    ; not yet documented
+            printvot                    ; not yet documented
             set-ot-base
             ut2ot)))
 
@@ -105,7 +105,7 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun printotv-trans-fn (values)
+(defun printvot-trans-fn (values)
   (when (and (list-length-1-p values)
              (integerp (first values)))
     (setf (first values)
@@ -113,7 +113,7 @@
                               :include-seconds 't)))
   values)
 
-(defmacro printotv (&rest forms)
+(defmacro printvot (&rest forms)
   ;;; Like printv, except that any form producing a single-valued integer
   ;;; result is assumed to be an offset-time value and is printed in
   ;;; FULL-DATE-AND-TIME format (including seconds).
@@ -123,7 +123,7 @@
                                 `(multiple-value-list ,form))
                             forms))))
        (declare (dynamic-extent ,forms-values-lists))
-       (printv-printer ',forms ,forms-values-lists #'printotv-trans-fn))))
+       (printv-printer ',forms ,forms-values-lists #'printvot-trans-fn))))
 
 ;;; ---------------------------------------------------------------------------
 
