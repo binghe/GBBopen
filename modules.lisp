@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/modules.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Feb 26 19:58:30 2009 *-*
+;;;; *-* Last-Edit: Mon Jun  1 22:13:27 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -64,7 +64,7 @@
             ("define-class" :forces-recompile)
             "gbbopen-instance"
             "date-and-time"
-            "offset-universal-time"
+            ("offset-universal-time" :forces-recompile)
             ("print-object-for" :forces-recompile)
             ("read-object" :forces-recompile)
             "duplicate-instance"
