@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/gbbopen-modules-directory.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Jun  1 14:23:56 2009 *-*
+;;;; *-* Last-Edit: Tue Jun  2 11:10:23 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -51,31 +51,35 @@
           (format t "~&;; WARNING: Unable to read the target-directory file ~s~%" 
                 (namestring filename))
 	  (return-from read-target-directory-specification nil))
-	(locally (declare (simple-string line))
-	  (when (plusp (length line))
-	    (case (aref line 0)
-	      ;; Skip comment lines:
-	      ((#\; #\#))
-	      ;;
-	      (#\" (let ((string
-			  (ignore-errors (read-from-string line nil nil))))
-		     (return-from read-target-directory-specification 
-		       (typecase string
-			 ;; We got the expected string:
-			 (string (list string))
-			 (otherwise 
-			  (format t "~&;; WARNING: While reading from ~s: ~
-                                 Unable to read target-directory \"~a\"~%" 
-				(namestring file)
-				line)
-			  ;; return nil
-			  nil)))))
-	      (otherwise 
-	       (return-from read-target-directory-specification 
-		 (list line))))))))))
-
+        (when (plusp (length line))
+          (flet ((trim-spec (string)
+                   (string-right-trim 
+                    '(#\Space #\Tab #\Return #\Linefeed #\Newline #\Backspace #\Rubout)
+                    string)))
+            (case (aref line 0)
+              ;; Skip comment lines:
+              ((#\; #\#))
+              ;; The target was specified as a string:
+              (#\" (let ((string
+                          (ignore-errors (read-from-string line nil nil))))
+                     (return-from read-target-directory-specification 
+                       (typecase string
+                         ;; We got the expected string:
+                         (string (list (trim-spec string)))
+                         (otherwise 
+                          (format t "~&;; WARNING: While reading from ~s: ~
+                                          Unable to read target-directory ~
+                                          specification \"~a\"~%" 
+                                  (namestring file)
+                                  line)
+                          ;; return nil
+                          nil)))))
+              (otherwise 
+               (return-from read-target-directory-specification 
+                 (list (trim-spec line)))))))))))
+  
 (compile-if-advantageous 'read-target-directory-specification)
-
+  
 ;;; ---------------------------------------------------------------------------
                   
 (defun process-the-gbbopen-modules-directory (modules-dir filename shared?)
