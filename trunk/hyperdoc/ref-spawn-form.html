@@ -5,32 +5,28 @@
 <!-- XML file produced from file: reference.tex
      using Hyperlatex v 2.9-in-waiting-rk (c) Otfried Cheong -->
 <head>
-<title>GBBopen 1.3 Reference -- spawn-thread</title>
+<title>GBBopen 1.3 Reference -- spawn-form</title>
 </p>
 <link rel="SHORTCUT ICON" href="favicon.ico"><link rel=stylesheet
         href="gbbopen.css" type="text/css" />
 </head>
 <body>
 <table width="100%" cellpadding="0" cellspacing="2"><tr>
-<td bgcolor="#99ccff"><a href="ref-spawn-periodic-function.html"><img border="0" alt="spawn-periodic-function" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="ref-portable-thread-entities.html"><img border="0" alt="Portable Threads" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-symbol-value-in-thread.html"><img border="0" alt="symbol-value-in-thread" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">spawn-thread</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table>
+<td bgcolor="#99ccff"><a href="ref-scheduled-function-repeat-interval.html"><img border="0" alt="scheduled-function-repeat-interval" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="ref-portable-thread-entities.html"><img border="0" alt="Portable Threads" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-spawn-periodic-function.html"><img border="0" alt="spawn-periodic-function" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">spawn-form</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table>
 
 <p><table class="tight" width="100%">
 <tr valign="top"><td valign="baseline" align="left"%>
-<nobr><b><font color="#000000">spawn-thread</font></b></nobr></td><td valign="baseline"> &nbsp; </td><td valign="baseline" align="left" width="99%"><var>name function</var>
-<code>&#38;rest</code>
-<var>args</var> <span 
-    style="font-family: serif; font-style: normal">=&gt;</span> <var>thread</var></td><td valign="baseline" align="right">[<i>Function</i>]
+<nobr><b><font color="#000000">spawn-form</font></b></nobr></td><td valign="baseline"> &nbsp; </td><td valign="baseline" align="left" width="99%"><var>form</var>*<span 
+    style="font-family: serif; font-style: normal">=&gt;</span> <var>thread</var></td><td valign="baseline" align="right">[<i>Macro</i>]
 </td></tr></table></p>
-<p><span class="fndoclabel">Purpose</span> <br />Spawn a new <a href="ref-glossary.html#gl:thread">thread</a>.
+<p><span class="fndoclabel">Purpose</span> <br />Evaluate <var>forms</var> in a new <a href="ref-glossary.html#gl:thread">thread</a>.
 </p>
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:portable-threads</code>
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:portable-threads</code>
 </p>
 <p><span class="fndoclabel">Arguments and values</span><table class="tighttop">
-<tr valign="top"><td valign="baseline" nowrap><i>name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A string
-</td></tr><tr valign="top"><td valign="baseline" nowrap><i>function</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id75">function&nbsp;designator</a>
-</td></tr><tr valign="top"><td valign="baseline" nowrap><i>args</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> Arguments to the function
+<tr valign="top"><td valign="baseline" nowrap><i>form</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#gl:form">form</a>
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>thread</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#gl:thread">thread</a>
 </td></tr></table>
 </p>
@@ -45,7 +41,7 @@ Common Lisp implementation.
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-current-thread.html"><b>current-thread</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-hibernate-thread.html"><b>hibernate-thread</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-kill-thread.html"><b>kill-thread</b></a>
-<br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-spawn-form.html"><b>spawn-form</b></a>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-spawn-thread.html"><b>spawn-thread</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-thread-alive-p.html"><b>thread-alive-p</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-thread-name.html"><b>thread-name</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-thread-whostate.html"><b>thread-whostate</b></a>
@@ -54,12 +50,12 @@ Common Lisp implementation.
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-symbol-value-in-thread.html"><b>symbol-value-in-thread</b></a>
 </p>
 <p><span class="fndoclabel">Example</span> <br /><pre class="pretop">
-  &gt; (spawn-thread "Sleepy" #'sleep 60)
-  #&lt;thread Sleepy&gt;
+  &gt; (spawn-form (sleep 60))
+  #&lt;thread Form (sleep 60)&gt;
   &gt;
 </pre>
 </p>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
 <table width="100%" cellpadding="0" cellspacing="2"><tr>
-<td bgcolor="#99ccff"><a href="ref-spawn-periodic-function.html"><img border="0" alt="spawn-periodic-function" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="ref-portable-thread-entities.html"><img border="0" alt="Portable Threads" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-symbol-value-in-thread.html"><img border="0" alt="symbol-value-in-thread" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">spawn-thread</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table></body></html>
+<td bgcolor="#99ccff"><a href="ref-scheduled-function-repeat-interval.html"><img border="0" alt="scheduled-function-repeat-interval" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="ref-portable-thread-entities.html"><img border="0" alt="Portable Threads" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-spawn-periodic-function.html"><img border="0" alt="spawn-periodic-function" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">spawn-form</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table></body></html>

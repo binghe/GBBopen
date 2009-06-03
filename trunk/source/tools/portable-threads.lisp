@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/portable-threads.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Apr 24 10:43:23 2009 *-*
+;;;; *-* Last-Edit: Wed Jun  3 05:12:30 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -231,6 +231,7 @@
             scheduled-function          ; structure (not documented)
             scheduled-function-name
             scheduled-function-repeat-interval
+            spawn-form
             spawn-periodic-function
             spawn-thread
             #+(and cmu mp)
@@ -1411,6 +1412,15 @@
   (declare (ignore name function args))
   #+threads-not-available
   (threads-not-available 'spawn-thread))
+
+;;; ---------------------------------------------------------------------------
+;;;   Spawn-Form
+
+(defmacro spawn-form (&body body)
+  (let* ((*print-length* 2)
+         (*print-level* 2)
+         (name (format nil "Form ~s" (first body))))
+    `(spawn-thread ,name (lambda () ,@body))))
 
 ;;; ---------------------------------------------------------------------------
 ;;;   Kill-Thread

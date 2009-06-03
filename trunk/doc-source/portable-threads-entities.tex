@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/portable-threads-entities.tex *-*
-%% *-* Last-Edit: Wed May 13 13:45:35 2009; Edited-By: cork *-*
+%% *-* Last-Edit: Wed Jun  3 05:29:08 2009; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 \index{module!:portable-threads@\code{:portable-threads}}%
@@ -305,6 +305,7 @@ list is always potentially outdated.
 \also[current-thread]
 \also[thread-alive-p]
 \also[threadp]
+\also[spawn-form]
 \also[spawn-thread]
 \end{alsos}
 
@@ -397,9 +398,9 @@ Define an atomic \nobr{\textbf{\entlink{nsorted-insert}}}:
 
 \fnargs
 \begin{args}{place}
-\arg[place] A form which is suitable for use as a
+\arg[place] A \glref{form} which is suitable for use as a
 \glref{generalized~reference} 
-\arg[delta-form] A form that is evaluated to produce a delta value (default is 1).
+\arg[delta-form] A \glref{form} that is evaluated to produce a delta value (default is 1).
 \arg[new-place-value] A number
 \end{args}
 
@@ -449,7 +450,7 @@ sequence in \nobr{\var{place\/}} from which the elements that satisfy the
 \fnargs
 \begin{args}{from-end}
 \arg[item] An object
-\arg[place] A form which is suitable for use as a
+\arg[place] A \glref{form} which is suitable for use as a
 \glref{generalized~reference} that contains a proper sequence
 \arg[from-end] A \glref{generalized~boolean} (default is \nil)
 \arg[test] A \glref{function} of two arguments that returns a
@@ -519,7 +520,7 @@ prior to being set.
 
 \fnargs
 \begin{args}{old-place-value}
-\arg[place] A form which is suitable for use as a
+\arg[place] A \glref{form} which is suitable for use as a
 \glref{generalized~reference} 
 \arg[old-place-value] An object
 \end{args}
@@ -564,9 +565,9 @@ prior to being set.
 
 \fnargs
 \begin{args}{new-place-value}
-\arg[place] A form which is suitable for use as a
+\arg[place] A \glref{form} which is suitable for use as a
 \glref{generalized~reference} 
-\arg[delta-form] A form that is evaluated to produce a delta value (default is 1).
+\arg[delta-form] A \glref{form} that is evaluated to produce a delta value (default is 1).
 \arg[new-place-value] An object
 \end{args}
 
@@ -610,7 +611,7 @@ from the list stored in \nobr{\var{place}}, store the updated list in
 
 \fnargs
 \begin{args}{element}
-\arg[place] A form which is suitable for use as a
+\arg[place] A \glref{form} which is suitable for use as a
   \glref{generalized~reference} that contains a \glref{proper~list} or
    a \glref{dotted~list}
 \arg[element] An object
@@ -661,7 +662,7 @@ list stored in \nobr{\var{place\/}} and store the updated list in
 \fnargs
 \begin{args}{new-place-value}
 \arg[item] An object
-\arg[place] A form which is suitable for use as a
+\arg[place] A \glref{form} which is suitable for use as a
 \glref{generalized~reference} 
 \arg[new-place-value] A proper list
 \end{args}
@@ -709,7 +710,7 @@ the same as any element in the list stored in \nobr{\var{place}}, prepend
 \fnargs
 \begin{args}{new-place-value}
 \arg[item] An object
-\arg[place] A form which is suitable for use as a
+\arg[place] A \glref{form} which is suitable for use as a
 \glref{generalized~reference} that contains a \glref{proper~list} 
 \arg[key] A \glref{function} of one argument, or \nil{} (default is \nil)
 \arg[test] A \glref{function} of two arguments that returns a
@@ -1026,6 +1027,7 @@ signaled by another \glref{thread} or until 5 seconds have elapsed:
 
 \begin{alsos}{spawn-thread}
 \also[all-threads]
+\also[spawn-form]
 \also[spawn-thread]
 \end{alsos}
 
@@ -1216,6 +1218,7 @@ as long as the control shell is running:
 \nothreads{}
 
 \begin{alsos}{thread-alive-p}
+\also[spawn-form]
 \also[spawn-thread]
 \also[thread-alive-p]
 \end{alsos}
@@ -1586,6 +1589,7 @@ no effect:
 \nothreads{}
 
 \begin{alsos}{spawn-thread}
+\also[spawn-form]
 \also[spawn-thread]
 \end{alsos}
 
@@ -1919,6 +1923,59 @@ randomly sets whether to reschedule itself (and at what interval):
 
 %% ------------------------------------------------------------------------
 
+\begin{functiondoc}{Macro}{spawn-form}{\var{form\/}\superstar
+  \returns{} \var{thread\/}}
+\index{thread!spawning}%
+\index{creating!a thread}%
+\index{making!a thread}%
+
+\fnsyntax
+
+\fnpurpose Evaluate \var{forms\/} in a new \glref{thread}.
+
+\fnpackage \code{:portable-threads}
+
+\fnmodule \code{:portable-threads}
+
+\fnargs
+\begin{args}{function}
+\arg[form] A \glref{form}
+\arg[thread] A \glref{thread}
+\end{args}
+
+\fnreturns The object representing the new \glref{thread}.
+  
+\fnerrors
+\nothreads{}
+
+\begin{alsos}{symbol-value-in-thread}
+\also[all-threads]
+\also[awaken-thread]
+\also[current-thread]
+\also[hibernate-thread]
+\also[kill-thread]
+\also[spawn-thread]
+\also[thread-alive-p]
+\also[thread-name]
+\also[thread-whostate]
+\also[threadp]
+\also[run-in-thread]
+\also[symbol-value-in-thread]
+\end{alsos}
+
+\fnexample
+%
+\W\supp
+\begin{example}
+  > (spawn-form (sleep 60))
+  #<thread Form (sleep 60)>
+  >
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
 \begin{functiondoc}{Function}{spawn-periodic-function}%
   {\var{function repeat-interval\/} 
     \code{\&key} \var{count name verbose\/}
@@ -2077,6 +2134,7 @@ the control shell is running:
 \also[current-thread]
 \also[hibernate-thread]
 \also[kill-thread]
+\also[spawn-form]
 \also[thread-alive-p]
 \also[thread-name]
 \also[thread-whostate]
@@ -2132,6 +2190,7 @@ the control shell is running:
 thread-local value is bound.
 
 \begin{alsos}{spawn-thread}
+\also[spawn-form]
 \also[spawn-thread]
 \end{alsos}
 
@@ -2183,6 +2242,7 @@ the global symbol value.
 \begin{alsos}{spawn-thread}
 \also[all-threads]
 \also[kill-thread]
+\also[spawn-form]
 \also[spawn-thread]
 \end{alsos}
 
@@ -2233,6 +2293,7 @@ the global symbol value.
 \nothreads{}
 
 \begin{alsos}{spawn-thread}
+\also[spawn-form]
 \also[spawn-thread]
 \end{alsos}
 
@@ -2284,6 +2345,7 @@ does not support changing the thread name via \nobr{\textbf{setf}}.
 \nothreads{}
 
 \begin{alsos}{spawn-thread}
+\also[spawn-form]
 \also[spawn-thread]
 \end{alsos}
 
@@ -2363,6 +2425,7 @@ no-op on non-threaded implementations.
 
 \begin{alsos}{thread-alive-p}
 \also[all-threads]
+\also[spawn-form]
 \also[spawn-thread]
 \also[thread-alive-p]
 \end{alsos}
