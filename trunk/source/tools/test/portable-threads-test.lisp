@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/test/portable-threads-test.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Feb 22 15:46:03 2009 *-*
+;;;; *-* Last-Edit: Wed Jun  3 14:35:23 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -197,7 +197,7 @@
     (check-error-checking
      (with-lock-held (not-a-lock) nil)
      error
-     "With-lock-held did not fail when given a non lock")
+     "WITH-LOCK-HELD did not fail when given a non lock")
     ;; Check recursive locking:
     (forced-format 
      "~&;;   Testing recursive locking with a recursive lock...~%")
@@ -219,8 +219,8 @@
          (with-lock-held (nonrecursive-lock :whostate "Level 3")
            nil)))
      error
-     "With-lock-held did not fail when used recursively")
-    (forced-format "~&;;   Testing with-lock-held returned values...~%")
+     "WITH-LOCK-HELD did not fail when used recursively")
+    (forced-format "~&;;   Testing WITH-LOCK-HELD returned values...~%")
     (let ((returned-values
            (multiple-value-list (with-lock-held (nonrecursive-lock) 
                                   (values 1 2)))))
@@ -230,7 +230,7 @@
                returned-values)))
     ;; Check recursive locking:
     (forced-format 
-     "~&;;   Testing with/without-lock-held forms and throws...~%")
+     "~&;;   Testing WITH/WITHOUT-LOCK-HELD forms and throws...~%")
     (catch :not-held
       (with-lock-held (nonrecursive-lock :whostate "Locked")
         (catch :held
@@ -238,13 +238,13 @@
               (throw :held nil)))
         #-scl
         (unless (thread-holds-lock-p nonrecursive-lock)
-          (log-error "Incorrect thread-holds-lock-p value on throw from ~
-                      within without-lock-held"))
+          (log-error "Incorrect THREAD-HOLDS-LOCK-P value on throw from ~
+                      within WITHOUT-LOCK-HELD"))
         (throw :not-held nil)))
     #-scl
     (when (thread-holds-lock-p nonrecursive-lock)
-      (log-error "Incorrect thread-holds-lock-p value on throw from ~
-                      within with-lock-held"))
+      (log-error "Incorrect THREAD-HOLDS-LOCK-p value on throw from ~
+                      within WITH-LOCK-HELD"))
     (forced-format
      "~&;; Completed basic lock tests (~,2f seconds real time).~%"
      (/ (float (- (get-internal-real-time) start-real-time))
@@ -386,12 +386,12 @@
 
 #-threads-not-available
 (defun with-timeout-tests ()  
-  (forced-format "~&;; Performing with-timeout tests...")
+  (forced-format "~&;; Performing WITH-TIMEOUT tests...")
   (let ((values (multiple-value-list 
                  (with-timeout (1 (values 3 4))
                    (values 1 2)))))
     (unless (equal '(1 2) values)
-      (log-error "With-timeout did not return the correct timed-body values ~
+      (log-error "WITH-TIMEOUT did not return the correct timed-body values ~
                   (1 2): ~s"
                  values)))
   (let ((values (multiple-value-list 
@@ -399,10 +399,28 @@
                    (sleep 1)
                    (values 1 2)))))
     (unless (equal '(3 4) values)
-      (log-error "With-timeout did not return the correct timeout-body values ~
+      (log-error "WITH-TIMEOUT did not return the correct timeout-body values ~
                   (3 4): ~s"
                  values)))
-  (forced-format "~&;; Completed with-timeout tests~%"))
+  (let ((values (multiple-value-list 
+                 (with-timeout (0.1 (values 3 4))
+                   (with-timeout (2 (values 5 6))
+                     (sleep 1)
+                     (values 1 2))))))
+    (unless (equal '(3 4) values)
+      (log-error "Nested WITH-TIMEOUTs did not return the correct timeout-body ~
+                  values (3 4): ~s"
+                 values)))
+  (let ((values (multiple-value-list 
+                 (with-timeout (2 (values 3 4))
+                   (with-timeout (0.1 (values 5 6))
+                     (sleep 1)
+                     (values 1 2))))))
+    (unless (equal '(5 6) values)
+      (log-error "Nested WITH-TIMEOUTs did not return the correct timeout-body ~
+                  values (5 6): ~s"
+                 values)))
+  (forced-format "~&;; Completed WITH-TIMEOUT tests~%"))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -461,7 +479,7 @@
 
 #-threads-not-available
 (defun without-lock-held-contention-tests (lock lock-type-string)
-  (forced-format "~&;; Performing ~a without-lock-held contention tests..."
+  (forced-format "~&;; Performing ~a WITHOUT-LOCK-HELD contention tests..."
                  lock-type-string)
   (let ((counter 0))
     (with-lock-held (lock :whostate "Held by main thread")
@@ -482,7 +500,7 @@
       (without-lock-held (lock :whostate "Released by main thread")
           (sleepy-time))
       (check-counter-value (incf counter) 3)))
-  (forced-format "~&;; Completed ~a without-lock-held contention tests~%"
+  (forced-format "~&;; Completed ~a WITHOUT-LOCK-HELD contention tests~%"
                  lock-type-string))
 
 ;;; ---------------------------------------------------------------------------
@@ -754,11 +772,11 @@
       (unless (eq (state-of cv) ':reawake)
         (condition-variable-wait cv)
         (check-cv-state cv ':reawake))))
-  (forced-format "~&;;   Trying with-timeout on a hibernating thread...~%")
+  (forced-format "~&;;   Trying WITH-TIMEOUT on a hibernating thread...~%")
   (let ((result (with-timeout (0.1 ':timed-out)
                   (hibernate-thread))))
     (unless (eq result ':timed-out)
-      (log-error "Unexpected with-timeout value from a hibernating thread.")))
+      (log-error "Unexpected WITH-TIMEOUT value from a hibernating thread.")))
   (forced-format "~&;; Completed hibernate/awaken thread tests~%"))
 
 ;;; ---------------------------------------------------------------------------

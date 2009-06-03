@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/portable-threads.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jun  3 05:12:30 2009 *-*
+;;;; *-* Last-Edit: Wed Jun  3 14:41:35 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -695,13 +695,18 @@
 
 ;;; ===========================================================================
 ;;;  With-timeout
+;;;
+;;;  Note: CMUCL's native WITH-TIMEOUT doesn't nest correctly; however we
+;;;        still expose the native version (in the hope that it will be fixed
+;;;        someday) rather than rolling our own.  Nested users beware!!!!
 
 #-(or allegro (and cmu mp))
 (defmacro with-timeout ((seconds &body timeout-body) &body timed-body)
   #+(and ecl threads)
-  (let ((timer-process-sym (gensym)))
+  (let ((tag (gensym))
+        (timer-process-sym (gensym)))
     ;; No timers in ECL, so we use sleep in a separate "timer" process:
-    `(catch 'with-timeout
+    `(catch ',tag
        (let ((,timer-process-sym
               (mp:process-run-function 
                   "with-timeout timer"
@@ -711,7 +716,7 @@
                      process
                      #'(lambda ()
                          (ignore-errors
-                          (throw 'with-timeout
+                          (throw ',tag
                             (progn ,@timeout-body))))))
                 mp:*current-process*
                 ,seconds)))
@@ -721,17 +726,18 @@
              (mp:process-kill ,timer-process-sym)
              (sleep 0))))))
   #+lispworks
-  (let ((timer-sym (gensym)))
+  (let ((tag (gensym))
+        (timer-sym (gensym)))
     ;; Note that Lispworks runs the timer function in the process that is
     ;; running when the timeout occurs, so we have to use some cruft to get
     ;; back to the with-timeout process:
-    `(catch 'with-timeout
+    `(catch ',tag
        (let ((,timer-sym (mp:make-timer
                           #'(lambda (process)
                               (mp:process-interrupt 
                                process
                                #'(lambda ()
-                                   (throw 'with-timeout
+                                   (throw ',tag
                                      (progn ,@timeout-body)))))
                           mp:*current-process*)))
          (mp:schedule-timer-relative ,timer-sym ,seconds)
@@ -739,10 +745,11 @@
            (mp:unschedule-timer ,timer-sym)))))
   #+(or clozure
         digitool-mcl)
-  (let ((timer-process-sym (gensym)))
+  (let ((tag (gensym))
+        (timer-process-sym (gensym)))
     ;; No timers in Clozure or Digitool MCL, so we use sleep in a separate
     ;; "timer" process:
-    `(catch 'with-timeout
+    `(catch ',tag
        (let ((,timer-process-sym
               (ccl:process-run-function 
                   "with-timeout timer"
@@ -752,7 +759,7 @@
                      process
                      #'(lambda ()
                          (ignore-errors
-                          (throw 'with-timeout
+                          (throw ',tag
                             (progn ,@timeout-body))))))
                 ccl:*current-process*
                 ,seconds)))
@@ -761,18 +768,20 @@
            (ccl:process-kill ,timer-process-sym)
            (ccl:process-allow-schedule)))))
   #+sbcl
-  (let ((timer-sym (gensym)))
-    `(block with-timeout
+  (let ((tag (gensym))
+        (timer-sym (gensym)))
+    `(block ,tag
        (let ((,timer-sym (sb-ext:make-timer
-                          #'(lambda () (return-from with-timeout
+                          #'(lambda () (return-from ,tag
                                          (progn ,@timeout-body))))))
          (sb-ext:schedule-timer ,timer-sym ,seconds)
          (unwind-protect (progn ,@timed-body)
            (sb-ext:unschedule-timer ,timer-sym)))))
   #+scl
-  (let ((timer-process-sym (gensym)))
+  (let ((tag (gensym))
+        (timer-process-sym (gensym)))
     ;; Simple version for SCL, we sleep in a separate "timer" process:
-    `(catch 'with-timeout
+    `(catch ',tag
        (let ((,timer-process-sym
               (mp:make-process 
                #'(lambda ()
@@ -783,7 +792,7 @@
                          process
                          #'(lambda ()
                              (ignore-errors
-                              (throw 'with-timeout
+                              (throw ',tag
                                 (progn ,@timeout-body))))))
                     (mp:current-process)
                     ,seconds))
