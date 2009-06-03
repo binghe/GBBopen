@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/gbbopen-modules-directory.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Jun  2 11:10:23 2009 *-*
+;;;; *-* Last-Edit: Tue Jun  2 13:38:12 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -26,6 +26,8 @@
 ;;;  06-20-06 Add "pseudo symbolic-link" support (for operating systems that
 ;;;           do not provide symbolic links).  (Corkill)
 ;;;  03-29-08 Add PROCESS-GBBOPEN-MODULES-DIRECTORY rescanning.  (Corkill)
+;;;  06-01-09 Add *IGNORED-GBBOPEN-MODULES-DIRECTORY-SUBDIRECTORIES* parameter. 
+;;;           (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 

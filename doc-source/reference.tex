@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Thu May 28 17:17:28 2009; Edited-By: cork *-*
+%% *-* Last-Edit: Wed Jun  3 06:12:08 2009; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2009, Dan Corkill <corkill@GBBopen.org>
@@ -1564,6 +1564,42 @@ Highly recommended!
 \T Descriptions of entities related to installing and customizing GBBopen follow.
 \T\clearpage
 \T\renewcommand{\headrulewidth}{0.01pt}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}[ignored-gbbopen-modules-directory-subdirectories-var]%
+  {Variable}{*ignored-gbbopen-modules-directory-subdirectories*}{}%
+
+\fnsyntax
+
+\fnpurpose Specify subdirectory names to be ignored by GBBopen's
+\code{gbbopen-modules} directory processing.
+
+\fnpackage \code{:common-lisp-user}
+
+\fnmodule Defined in \code{gbbopen-modules-directory.lisp}
+
+\fnvaluetype A list
+
+\fninitialvalue \code{(".svn")}
+
+\fndescription Subdirectories named in 
+\nobr{\code{*ignored-gbbopen-modules-directory-subdirectories*}} are
+ignored when processing shared and personal \code{gbbopen-modules} directories
+for command and module definitions.
+
+\fnexample
+Add \code{"CVS"} to the list of subdirectories that are ignored by GBBopen's
+\code{gbbopen-modules} directory processing:
+%
+\W\supp
+\begin{example}
+  > (push "CVS" *ignored-gbbopen-modules-directory-subdirectories*)
+  ("CVS" ".svn")
+  >
+\end{example}
+
+\end{functiondoc}
 
 %% ------------------------------------------------------------------------
 
@@ -4501,7 +4537,7 @@ Lisp Machines).
 
 \fnargs
 \begin{args}{original-value}
-\arg[place] A form which is suitable for use as a \glref{generalized~reference}
+\arg[place] A \glref{form} which is suitable for use as a \glref{generalized~reference}
 \arg[decrement] A number (default is \code{1})
 \arg[original-value] A number
 \end{args}
@@ -4570,7 +4606,7 @@ the \glref{cons} associated with \var{item\/} if the value becomes zero.
 \begin{args}{new-place-value}
 \arg[item] An object
 \arg[decrement] A number
-\arg[place] A form which is suitable for use as a
+\arg[place] A \glref{form} which is suitable for use as a
 \glref{generalized~reference} 
 \arg[key] A \glref{function} of one argument, or \nil{} (default is \nil)
 \arg[test] A \glref{function} of two arguments that returns a
@@ -5282,8 +5318,8 @@ an atom, a newly consed list containing \var{object\/} as its sole element.
 
 \fnargs
 \begin{args}{original-value}
-\arg[place] A form which is suitable for use as a \glref{generalized~reference}
-\arg[increment] A number  (default is \code{1})
+\arg[place] A \glref{form} which is suitable for use as a \glref{generalized~reference}
+\arg[increment] A number (default is \code{1})
 \arg[original-value] A number
 \end{args}
 
@@ -5672,7 +5708,7 @@ comparison function.
 
 \fnargs
 \begin{args}{test-form}
-\arg[place] A form which is suitable for use as a
+\arg[place] A \glref{form} which is suitable for use as a
   \glref{generalized~reference} or \nil 
 \arg[form] A \glref{form}
 \arg[primary-value] The first value returned by evaluating \var{form}
@@ -5952,7 +5988,7 @@ in order to make it available as early as possible.
 \begin{args}{new-place-value}
 \arg[item] An object
 \arg[value] An object
-\arg[place] A form which is suitable for use as a
+\arg[place] A \glref{form} which is suitable for use as a
 \glref{generalized~reference} 
 \arg[new-place-value] An \glref{association~list}
 \end{args}
@@ -6007,7 +6043,7 @@ in order to make it available as early as possible.
 \begin{args}{new-place-value}
 \arg[item] An object
 \arg[value] An object
-\arg[place] A form which is suitable for use as a
+\arg[place] A \glref{form} which is suitable for use as a
 \glref{generalized~reference} 
 \arg[key] A \glref{function} of one argument, or \nil{} (default is \nil)
 \arg[test] A \glref{function} of two arguments that returns a
@@ -6064,7 +6100,7 @@ in order to make it available as early as possible.
 \fnargs
 \begin{args}{new-place-value}
 \arg[list] A \glref{proper~list}
-\arg[place] A form which is suitable for use as a
+\arg[place] A \glref{form} which is suitable for use as a
 \glref{generalized~reference} 
 \arg[key] A \glref{function} of one argument, or \nil{} (default is \nil)
 \arg[test] A \glref{function} of two arguments that returns a
@@ -6122,7 +6158,7 @@ new \nobr{\code{(\var{item\/} . \var{increment\/})}} \glref{cons} to the
 \begin{args}{new-place-value}
 \arg[item] An object
 \arg[increment] A number
-\arg[place] A form which is suitable for use as a
+\arg[place] A \glref{form} which is suitable for use as a
 \glref{generalized~reference} 
 \arg[key] A \glref{function} of one argument, or \nil{} (default is \nil)
 \arg[test] A \glref{function} of two arguments that returns a
@@ -14210,7 +14246,7 @@ or more \glref{unit~instances}.
 
 \fnargs
 \begin{args}{unit-instance-or-instances}
-\arg[\glref{link-slot-place}] A form which is suitable for use as a
+\arg[\glref{link-slot-place}] A \glref{form} which is suitable for use as a
 \glref{generalized~reference} to a \glref{link~slot}
 \arg[unit-instance-or-instances] A \glref{unit~instance} or a
 list of \glref{unit~instances}
@@ -14275,7 +14311,7 @@ A \code{link-event} is signaled for:
 
 \fnargs
 \begin{args}{unit-instance-or-instances}
-\arg[\glref{link-slot-place}] A form which is suitable for use as a
+\arg[\glref{link-slot-place}] A \glref{form} which is suitable for use as a
 \glref{generalized~reference} to a \glref{link~slot}
 \arg[unit-instance-or-instances] A \glref{unit~instance} or a
 list of \glref{unit~instances}
@@ -14415,7 +14451,7 @@ or more \glref{unit~instances}.
 
 \fnargs
 \begin{args}{unit-instance-or-instances}
-\arg[\glref{link-slot-place}] A form which is suitable for use as a
+\arg[\glref{link-slot-place}] A \glref{form} which is suitable for use as a
 \glref{generalized~reference} to a \glref{link~slot}
 \arg[unit-instance-or-instances] A \glref{unit~instance} or a
 list of \glref{unit~instances}
@@ -14474,7 +14510,7 @@ An \code{unlink-event} is signaled for:
 
 \fnargs
 \begin{args}{link-slot-place}
-\arg[\glref{link-slot-place}] A form which is suitable for use as a
+\arg[\glref{link-slot-place}] A \glref{form} which is suitable for use as a
 \glref{generalized~reference} to a \glref{link~slot}
 \end{args}
 

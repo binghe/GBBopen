@@ -1,5 +1,9 @@
 Important changes since GBBopen 1.3:
 
+  * Changes to gbbopen-modules directory processing
+     - New *IGNORED-GBBOPEN-MODULES-DIRECTORY-SUBDIRECTORIES* global 
+       variable
+
   * Changes to extended-REPL commands
      - New :ot (describe offset-univeral-time value) command
      - New :pic (print-instances-of-class) command
@@ -10,6 +14,9 @@ Important changes since GBBopen 1.3:
      - New DOSUBLISTS macro
      - New :all-numeric, :include-day, and :full-names arguments to 
        FULL-DATE-AND-TIME
+
+  * Changes to Portable Threads
+     - New SPAWN-FORM macro
 
   * Changes to GBBopen
      - New DESCRIBE-INSTANCE-SLOT-VALUE generic function
