@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/declared-numerics.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon May 11 04:22:05 2009 *-*
+;;;; *-* Last-Edit: Thu Jun  4 12:55:32 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -43,15 +43,15 @@
 ;;;  Common Lisp implementations and provided patches for Clozure CL, CMUCL,
 ;;;  and SBCL to use the Lispworks representation.  Our proposal met with
 ;;;  mixed opinions, and Nikodemus Siivola suggested an alternative approach
-;;;  using a #@ dispatch macro.  This is the approach that is currently being
-;;;  used in GBBopen, but it has three issues:
+;;;  using PRINT-OBJECT and a #@ dispatch macro.  This is the approach that is
+;;;  currently being used in GBBopen, but it has three issues:
 ;;;    1. Printing infinite values using #@ does not work in Lispworks, as we
-;;;       are unable to use print-object (other CLs could eventually share this
-;;;       issue)
+;;;       are unable to use PRINT-OBJECT.  ECL's printer hardwires
+;;;       infinite-value printing (no hook into PRINT-OBJECT). 
 ;;;    2. Digitool MCL has an existing #@ dispatch that we have to work around
 ;;;    3. Other packages might also want to use the #@ dispatch for other
 ;;;    purposes
-;;;  Until CL implementations "standardize" on a portable, non-read-eval, 
+;;;  Until CL implementations "standardize" on a portable, non-read-eval-based, 
 ;;;  mechanism for infinite values, this is our best attempt.
 ;;;
 ;;;  Most Common Lisp implementations map double-float numbers to the the
@@ -699,7 +699,7 @@
 ;;;  Infinity values are not required by the CL standard, but most they are
 ;;;  provided in most CL implementations.  We also want to be able to save and
 ;;;  communicate infinity values, and using implementation-specific #.
-;;;  representations won't work between implementations or if *read-eval*
+;;;  representations won't work between implementations or if *READ-EVAL*
 ;;;  is turned off.  We like the text-representation approach used by 
 ;;;  Lispworks:
 ;;;     1e++0 => positive infinity
@@ -711,10 +711,14 @@
 ;;;  where some defacto standardization is sorely needed.
 ;;;
 ;;;  Note: 
-;;;    * CLISP, ECL, and GCL do not support IEEE 754 infinity representations
+;;;    * CLISP, ECL (if configured without ieee-fp), and GCL do not support 
+;;;      IEEE 754 infinity representations
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  #+(or clisp cormanlisp ecl gcl)
+  #+(or clisp 
+        cormanlisp
+        (and ecl (not ieee-floating-point))
+        gcl)
   (pushnew ':infinity-not-available *features*))
   
 (eval-when (:compile-toplevel :load-toplevel :execute)
@@ -742,13 +746,15 @@
                              (ccl:set-fpu-mode :division-by-zero nil)
                              (/ 0d0))
                          (ccl:set-fpu-mode :division-by-zero t))
+      #+(and ecl (not infinity-not-available)) ext:double-float-positive-infinity
       #+lispworks #.(read-from-string "10E999")
       #+sbcl sb-ext:double-float-positive-infinity
       #+scl ext:double-float-positive-infinity
       ;; We have to fake infinity
       #+infinity-not-available most-positive-double-float
-      #-(or allegro clozure cmu digitool-mcl lispworks
-            sbcl scl infinity-not-available)
+      #-(or allegro clozure cmu digitool-mcl 
+            (and ecl (not infinity-not-available)) 
+            lispworks sbcl scl infinity-not-available)
       (need-to-port infinity$$))
 
   (defconstant -infinity$$
@@ -764,13 +770,15 @@
                              (ccl:set-fpu-mode :division-by-zero nil)
                              (/ -0d0))
                          (ccl:set-fpu-mode :division-by-zero t))
+      #+(and ecl (not infinity-not-available)) ext:double-float-negative-infinity
       #+lispworks #.(read-from-string "-10E999")
       #+sbcl sb-ext:double-float-negative-infinity
       #+scl ext:double-float-negative-infinity
       ;; We have to fake negative infinity
       #+infinity-not-available most-negative-double-float
-      #-(or allegro clozure cmu digitool-mcl lispworks 
-            sbcl scl infinity-not-available)
+      #-(or allegro clozure cmu digitool-mcl 
+            (and ecl (not infinity-not-available)) 
+            lispworks sbcl scl infinity-not-available)
       (need-to-port -infinity$$))
 
   ;; --------------------------------------------------------------------------
@@ -781,13 +789,15 @@
       #+clozure (coerce infinity$$ 'single-float)
       #+cmu ext:single-float-positive-infinity
       #+digitool-mcl (coerce infinity$$ 'single-float)
+      #+(and ecl (not infinity-not-available)) ext:single-float-positive-infinity
       #+lispworks (coerce infinity$$ 'single-float)
       #+sbcl sb-ext:single-float-positive-infinity
       #+scl ext:single-float-positive-infinity
       ;; We have to fake infinity
       #+infinity-not-available most-positive-single-float
-      #-(or allegro clozure cmu digitool-mcl lispworks
-            sbcl scl infinity-not-available)
+      #-(or allegro clozure cmu digitool-mcl 
+            (and ecl (not infinity-not-available)) 
+            lispworks sbcl scl infinity-not-available)
       (need-to-port infinity$))
   
   (defconstant -infinity$
@@ -795,13 +805,15 @@
       #+clozure (coerce -infinity$$ 'single-float)
       #+cmu ext:single-float-negative-infinity
       #+digitool-mcl (coerce -infinity$$ 'single-float)
+      #+(and ecl (not infinity-not-available)) ext:single-float-negative-infinity
       #+lispworks (coerce -infinity$$ 'single-float)
       #+sbcl sb-ext:single-float-negative-infinity
       #+scl ext:single-float-negative-infinity
       ;; We have to fake negative infinity
       #+infinity-not-available most-negative-single-float
-      #-(or allegro clozure cmu digitool-mcl lispworks
-            sbcl scl infinity-not-available)
+      #-(or allegro clozure cmu digitool-mcl 
+            (and ecl (not infinity-not-available)) 
+            lispworks sbcl scl infinity-not-available)
       (need-to-port -infinity$))
   
   ;; --------------------------------------------------------------------------
@@ -812,13 +824,15 @@
       #+clozure (coerce infinity$$ 'short-float)
       #+cmu ext:short-float-positive-infinity
       #+digitool-mcl (coerce infinity$$ 'short-float)
+      #+(and ecl (not infinity-not-available)) ext:short-float-positive-infinity
       #+lispworks (coerce infinity$$ 'short-float)
       #+sbcl sb-ext:short-float-positive-infinity
       #+scl ext:short-float-positive-infinity
       ;; We have to fake infinity
       #+infinity-not-available most-positive-short-float
-      #-(or allegro clozure cmu digitool-mcl lispworks
-            sbcl scl infinity-not-available)
+      #-(or allegro clozure cmu digitool-mcl 
+            (and ecl (not infinity-not-available)) 
+            lispworks sbcl scl infinity-not-available)
       (need-to-port infinity$&))
   
   (defconstant -infinity$&
@@ -826,13 +840,15 @@
       #+clozure (coerce -infinity$$ 'short-float)
       #+cmu ext:short-float-negative-infinity
       #+digitool-mcl (coerce -infinity$$ 'short-float)
+      #+(and ecl (not infinity-not-available)) ext:short-float-negative-infinity
       #+lispworks (coerce -infinity$$ 'short-float)
       #+sbcl sb-ext:short-float-negative-infinity
       #+scl ext:short-float-negative-infinity
       ;; We have to fake negative infinity
       #+infinity-not-available most-negative-short-float
-      #-(or allegro clozure cmu digitool-mcl lispworks
-            sbcl scl infinity-not-available)
+      #-(or allegro clozure cmu digitool-mcl 
+            (and ecl (not infinity-not-available)) 
+            lispworks sbcl scl infinity-not-available)
       (need-to-port -infinity$&))
 
   ;; --------------------------------------------------------------------------
@@ -843,13 +859,15 @@
       #+clozure (coerce infinity$$ 'long-float)
       #+cmu ext:long-float-positive-infinity
       #+digitool-mcl (coerce infinity$$ 'long-float)
+      #+(and ecl (not infinity-not-available)) ext:long-float-positive-infinity
       #+lispworks (coerce infinity$$ 'long-float)
       #+sbcl sb-ext:long-float-positive-infinity
       #+scl ext:long-float-positive-infinity
       ;; We have to fake infinity
       #+infinity-not-available most-positive-long-float
-      #-(or allegro clozure cmu digitool-mcl lispworks
-            sbcl scl infinity-not-available)
+      #-(or allegro clozure cmu digitool-mcl 
+            (and ecl (not infinity-not-available)) 
+            lispworks sbcl scl infinity-not-available)
       (need-to-port infinity$$$))
   
   (defconstant -infinity$$$
@@ -857,13 +875,15 @@
       #+clozure (coerce -infinity$$ 'long-float)
       #+cmu ext:long-float-negative-infinity
       #+digitool-mcl (coerce -infinity$$ 'long-float)
+      #+(and ecl (not infinity-not-available)) ext:long-float-negative-infinity
       #+lispworks (coerce -infinity$$ 'long-float)
       #+sbcl sb-ext:long-float-negative-infinity
       #+scl ext:long-float-negative-infinity
       ;; We have to fake negative infinity
       #+infinity-not-available most-positive-long-float
-      #-(or allegro clozure cmu digitool-mcl lispworks
-            sbcl scl infinity-not-available)
+      #-(or allegro clozure cmu digitool-mcl 
+            (and ecl (not infinity-not-available)) 
+            lispworks sbcl scl infinity-not-available)
       (need-to-port -infinity$$$))
   
   ;; --------------------------------------------------------------------------
@@ -875,16 +895,20 @@
 ;;; ---------------------------------------------------------------------------
 ;;;   INF input & output 
 ;;;
-;;;   Until CL implementations "standardize" on a portable, non-read-eval, 
-;;;   mechanism for infinite values, we roll our own using a #@ dispatch macro.
-;;;   (Thanks to Nikodemus Siivola for suggesting this approach.)
+;;;   Until CL implementations "standardize" on a portable,
+;;;   non-read-eval-based, mechanism for infinite values, we roll our own
+;;;   using PRINT-OBJECT and a #@ dispatch macro.  (Thanks to Nikodemus
+;;;   Siivola for suggesting this approach.)
 ;;;
-;;;   The Lispworks printer does not call the print-object methods, because
+;;;   The Lispworks printer does not call our PRINT-OBJECT methods, because
 ;;;   the methods violate the conforming program rules that state that the
 ;;;   consequences are undefined for a method on a standardized generic
 ;;;   function which is applicable when all of the arguments are direct
 ;;;   instances of standardized classes.  We've yet to figure out a work
 ;;;   around.
+;;;
+;;;   Simiarly, ECL's printer hardwires infinite-value printing.  Again, we've 
+;;;   yet to devise a work-around.
 
 (defun inf-reader (stream sub-char infix-parameter)
   (declare (ignore sub-char infix-parameter))
