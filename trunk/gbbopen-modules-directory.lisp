@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/gbbopen-modules-directory.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Jun  2 13:38:12 2009 *-*
+;;;; *-* Last-Edit: Fri Jun  5 13:56:28 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -32,6 +32,9 @@
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 (in-package :common-lisp-user)
+
+#+debugging
+(load (make-pathname :name "printv" :defaults *load-truename*))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -90,15 +93,15 @@
   #+(and sbcl (not sb-unicode))
   (declare (type simple-base-string filename))
   (let* ((subdirs-pathname
-	  #-clozure
-	  (make-pathname
+	  #-(or clozure lispworks)
+          (make-pathname
 	   :directory (append (pathname-directory modules-dir)
 			      #-(or allegro cmu scl)
 			      '(:wild))
 	   :defaults modules-dir)
-	  #+clozure
-	  (make-pathname
-	   :name ':wild
+          #+(or clozure lispworks)
+          (make-pathname
+           :name ':wild
 	   :defaults modules-dir))
 	 (pseudo-sym-link-paths
 	  (directory 
@@ -108,10 +111,12 @@
 	    :defaults modules-dir)))
 	 (module-dirs
 	  (append
-	   #-clozure
-           (directory subdirs-pathname)
+           #+allegro
+           (directory subdirs-pathname :directories-are-files nil)
 	   #+clozure
            (directory subdirs-pathname :directories 't)
+	   #-(or allegro clozure)
+           (directory subdirs-pathname)
            ;; Add in any *.sym file "pseudo" symbolic links:
 	   (mapcan 'read-target-directory-specification
 		   pseudo-sym-link-paths)))
@@ -123,19 +128,15 @@
                             "command definitions")
                            (t filename))))
       (dolist (dir module-dirs)
-        (let ((dir-pathname-name (pathname-name dir)))
-          (unless (member dir-pathname-name 
+        (let* ((pathname-directory (pathname-directory dir))
+               (dir-name (first (last pathname-directory))))
+          (unless (member dir-name 
                           *ignored-gbbopen-modules-directory-subdirectories*
                           :test #'string-equal)
             (let* ((pathname (make-pathname 
                               :name filename
                               :type "lisp"
-                              :directory (if (and dir-pathname-name
-                                                  (not (eq dir-pathname-name 
-                                                           ':unspecific)))
-                                             `(,@(pathname-directory dir)
-                                                 ,(pathname-name dir))
-                                             (pathname-directory dir))
+                              :directory pathname-directory
                               :defaults dir))
                    (previous-load-time-acons 
                     (assoc pathname *loaded-gbbopen-modules-directory-files*
