@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/declared-numerics.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Jun  4 12:55:32 2009 *-*
+;;;; *-* Last-Edit: Thu Jun  4 13:28:05 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -24,7 +24,7 @@
 ;;;
 ;;;  Infinity and -infinity values are implementation dependent and must be
 ;;;  defined for each new port.  These are generally IEEE 754 number-format
-;;;  value for infinity (INF) and negative infinity (-INF).  Many
+;;;  values for infinity (INF) and negative infinity (-INF).  Many
 ;;;  implementations use read-time evaluation (#.) notation to represent these
 ;;;  (a non-evaluating, standard reader syntax is sorely needed!).  Lispworks
 ;;;  uses an extended number syntax with a doubled exponent sign (with the
