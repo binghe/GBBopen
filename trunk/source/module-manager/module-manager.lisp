@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/module-manager/module-manager.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon May 25 22:45:56 2009 *-*
+;;;; *-* Last-Edit: Fri Jun  5 14:55:05 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -682,8 +682,11 @@
   (system::file-directory-p path)
   #+(and sbcl unix)
   (let ((dir (namestring 
-              (make-pathname :name nil :type nil :defaults path))))
-    (eq (sb-unix::unix-file-kind dir) :directory))
+              (make-pathname :name nil :type nil :defaults path)))
+        (fn (or (find-symbol "NATIVE-FILE-KIND" :sb-impl)               
+                ;; Pre-1.0.29 name for the above -- remove eventually:
+                (find-symbol "UNIX-FILE-KIND" :sb-unix))))
+    (eq (funcall fn dir) :directory))
   #+(and scl unix)
   (ext:unix-namestring (make-pathname :name nil :type nil :version nil
                                       :defaults path))
@@ -1809,63 +1812,6 @@
                   (> source-file-date compiled-file-date))
               (load-it source-path source-file-date)
               (load-it compiled-path compiled-file-date)))))))
-
-;;; ---------------------------------------------------------------------------
-;;;
-;;; SBCL's namestring functions (filesys.lisp) fail on pathnames containing
-;;; :UNSPECIFIC names/types -- we "fix" it here.  (Note that CMUCL now has
-;;; been "fixed" officially.)
-
-#+sbcl
-(sb-ext::without-package-locks
- (allow-redefinition
-  (defun sb-impl::unparse-unix-piece (thing)
-    (etypecase thing
-      ((member :wild) "*")
-      ((member :unspecific)             ; Added by DDC
-       ;; CLHS 19.2.2.2.3.1 says "That is, both nil and :unspecific
-       ;; cause the component not to appear in the namestring."
-       "")
-      (simple-string
-       (let* ((srclen (length thing))
-              (dstlen srclen))
-         (dotimes (i srclen)
-           (case (schar thing i)
-             ((#\* #\? #\[)
-              (incf dstlen))))
-         (let ((result (make-string dstlen))
-               (dst 0))
-           (dotimes (src srclen)
-             (let ((char (schar thing src)))
-               (case char
-                 ((#\* #\? #\[)
-                  (setf (schar result dst) #\\)
-                  (incf dst)))
-               (setf (schar result dst) char)
-               (incf dst)))
-           result)))
-      (sb-impl::pattern
-       (sb-impl::collect ((strings))
-         (dolist (piece (sb-impl::pattern-pieces thing))
-           (etypecase piece
-             (simple-string
-              (strings piece))
-             (symbol
-              (ecase piece
-                (:multi-char-wild
-                 (strings "*"))
-                (:single-char-wild
-                 (strings "?"))))
-             (cons
-              (case (car piece)
-                (:character-set
-                 (strings "[")
-                 (strings (cdr piece))
-                 (strings "]"))
-                (t (error "invalid pattern piece: ~S" piece))))))
-         (apply #'concatenate
-                'simple-base-string
-                (strings))))))))
 
 ;;; ---------------------------------------------------------------------------
 

@@ -16,7 +16,7 @@ Requirements:
                                    possible; --enable-smallcons & 
                                      --enable-gengc are also recommended)
        Lispworks    Version 5.1.2
-       SBCL         Version 1.0.28 (use sb-threads if possible)
+       SBCL         Version 1.0.29 (use sb-threads if possible)
        Scieneer CL  Version 1.3.8
 
    Support for Digitool MCL (Version 5.1) has been discontinued. However,
@@ -32,7 +32,7 @@ Requirements:
    See PORTING for information on porting GBBopen to other Common Lisp
    implementations.
 
-Current Status Notes (June 3, 2009):
+Current Status Notes (June 4, 2009):
 
  - Implementation work is progressing on a regular basis.  See the list of
    pending development activities maintained on the "Development Activities"
