@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/portable-threads.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Jun  7 11:46:22 2009 *-*
+;;;; *-* Last-Edit: Sun Jun  7 12:43:11 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -192,8 +192,7 @@
      thread:cond-var-broadcast)))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (export '(*nearly-forever-seconds*             ; not documented
-            *non-threaded-polling-function-hook* ; not documented
+  (export '(*non-threaded-polling-function-hook* ; not documented
             *periodic-function-verbose*
             *schedule-function-verbose*
             all-scheduled-functions
@@ -223,6 +222,7 @@
             make-lock
             make-recursive-lock
             make-scheduled-function
+            nearly-forever-seconds
             portable-threads-implementation-version ; not documented
             restart-scheduled-function-scheduler
             run-in-thread
@@ -231,6 +231,7 @@
             scheduled-function          ; structure (not documented)
             scheduled-function-name
             scheduled-function-repeat-interval
+            sleep-nearly-forever
             spawn-form
             spawn-periodic-function
             spawn-thread
@@ -1639,15 +1640,21 @@
 ;;;  tag/thread semaphores are used to implement THROWABLE-SLEEP-FOREVER and
 ;;;  AWAKEN-THROWABLE-SLEEPER.
 
-(defparameter *nearly-forever-seconds* 
+(defconstant nearly-forever-seconds
     #.(min most-positive-fixnum
            ;; Keep well within a 32-bit word on 64-bit CLs:
            (1- (expt 2 29))
-           ;; Clozure CL on Windows needs a smaller value (but not used, at
-           ;; present, due to the different sleeper strategy we use for CLL):
+           ;; Clozure CL on Windows needs a smaller value:
            #+(and clozure windows-target)
            (1- (expt 2 22))))
 
+;;; ---------------------------------------------------------------------------
+
+(defun sleep-nearly-forever (&optional seconds)
+  (sleep (if seconds
+             (min seconds nearly-forever-seconds)
+             nearly-forever-seconds)))
+             
 ;;; ---------------------------------------------------------------------------
 ;;;  Sleeper semaphores (needed in Clozure)
 
@@ -1664,8 +1671,7 @@
   ;; and throws to be processed while sleeping, and sleep is often
   ;; well optimized.  So, we use it whenever possible.
   #-clozure
-  (catch tag
-    (sleep *nearly-forever-seconds*))
+  (catch tag (sleep-nearly-forever))
   #+clozure
   (let ((semaphore (ccl:make-semaphore)))
     (ccl:with-lock-grabbed (*sleeper-semaphores-lock* "adding")

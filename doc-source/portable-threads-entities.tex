@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/portable-threads-entities.tex *-*
-%% *-* Last-Edit: Wed Jun  3 05:29:08 2009; Edited-By: cork *-*
+%% *-* Last-Edit: Sun Jun  7 13:01:13 2009; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 \index{module!:portable-threads@\code{:portable-threads}}%
@@ -120,6 +120,8 @@ delaying the invocation of a subsequent \glref{scheduled~function}.
 
 \psubpar{Periodic Functions} 
 
+\codeindexit{sleep}%
+%
 A \glref{periodic~function} is a \glref{function} to be run repeatedly at a
 specified interval.  Unlike \glref{scheduled~functions}, which can be
 scheduled only to a resolution of one second, a \glref{periodic~function} can
@@ -137,53 +139,7 @@ brief.
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}[schedule-function-verbose]{Variable}%
-  {*schedule-function-verbose*}{}%
-
-\fnsyntax
-
-\fnpurpose Controls whether scheduling changes made to
-\glref{scheduled~functions} are printed as comments. 
-
-\fnpackage \code{:portable-threads}
-
-\fnmodule \code{:portable-threads}
-
-\fnvaluetype A \glref{generalized~boolean}
-
-\fninitialvalue \nil
-
-\fndescription The value of \nobr{\textbf{*schedule-function-verbose*}} can be
-changed globally to display the activities of the \glref{scheduled~function}
-scheduler.
-
-\begin{alsos}{schedule-function-relative}
-\also[schedule-function]
-\also[schedule-function-relative]
-\also[unschedule-function]
-\end{alsos}
-
-\bfindexit{encode-time-of-day}%
-\fnexample Change the invocation time of \glref{scheduled~function}
-\nobr{\code{quitting-time}} from 5pm to 5:30pm with verbose printing enabled:
-%
-\W\supp
-\begin{example}
-  > (setf *schedule-function-verbose* 't)
-  t
-  > (schedule-function 'quitting-time (\entlink{encode-time-of-day} 17 30 0)
-      :repeat-interval #.(* 24 60 60))
-  ;; Unscheduling #<scheduled-function quitting-time [17:00:00]>...
-  ;; Scheduling #<scheduled-function quitting-time [17:30:00]> 
-  ;; as the next scheduled-function...
-  >
-\end{example}
-
-\end{functiondoc}
-
-%% ------------------------------------------------------------------------
-
-\begin{functiondoc}[periodic-function-verbose]{Variable}%
+\begin{functiondoc}[periodic-function-verbose-var]{Variable}%
   {*periodic-function-verbose*}{}%
 
 \fnsyntax
@@ -224,6 +180,52 @@ Schedule a simple \glref{periodic~function} with verbose printing enabled:
   "Hello!" 
   "Hello!" 
   ;; Exiting periodic-function thread hello
+  >
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}[schedule-function-verbose-var]{Variable}%
+  {*schedule-function-verbose*}{}%
+
+\fnsyntax
+
+\fnpurpose Controls whether scheduling changes made to
+\glref{scheduled~functions} are printed as comments. 
+
+\fnpackage \code{:portable-threads}
+
+\fnmodule \code{:portable-threads}
+
+\fnvaluetype A \glref{generalized~boolean}
+
+\fninitialvalue \nil
+
+\fndescription The value of \nobr{\textbf{*schedule-function-verbose*}} can be
+changed globally to display the activities of the \glref{scheduled~function}
+scheduler.
+
+\begin{alsos}{schedule-function-relative}
+\also[schedule-function]
+\also[schedule-function-relative]
+\also[unschedule-function]
+\end{alsos}
+
+\bfindexit{encode-time-of-day}%
+\fnexample Change the invocation time of \glref{scheduled~function}
+\nobr{\code{quitting-time}} from 5pm to 5:30pm with verbose printing enabled:
+%
+\W\supp
+\begin{example}
+  > (setf *schedule-function-verbose* 't)
+  t
+  > (schedule-function 'quitting-time (\entlink{encode-time-of-day} 17 30 0)
+      :repeat-interval #.(* 24 60 60))
+  ;; Unscheduling #<scheduled-function quitting-time [17:00:00]>...
+  ;; Scheduling #<scheduled-function quitting-time [17:30:00]> 
+  ;; as the next scheduled-function...
   >
 \end{example}
 
@@ -1507,6 +1509,33 @@ interval):
 
 %% ------------------------------------------------------------------------
 
+\begin{functiondoc}[nearly-forever-seconds]{Constant}%
+  {nearly-forever-seconds}{}%
+
+\codeindexit{sleep}%
+
+\bfindexit{nearly-forever-seconds}%
+
+\fnsyntax
+
+\fnpurpose The maximum number of seconds supported by \code{sleep}.
+
+\fnpackage \code{:portable-threads}
+
+\fnmodule \code{:portable-threads}
+
+\fnvaluetype A \glref{fixnum}
+
+\fnvalue Implementation dependent
+
+\begin{alsos}{sleep-nearly-forever}
+\also[sleep-nearly-forever]
+\end{alsos}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
 \begin{functiondoc}{Function}{restart-scheduled-function-scheduler}%
   {\noargs{} \returns{} \var{thread\/}}
 \index{scheduled function!scheduler, restarting}%
@@ -1917,6 +1946,51 @@ randomly sets whether to reschedule itself (and at what interval):
                 ;; don't repeat 1\% of the time:
                 nil)))
     (do-some-stuff))
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{sleep-nearly-forever}{\code{\&optional}
+    \var{seconds\/}}
+
+\fnsyntax
+
+\fnpurpose A maximum-time-bounded \code{sleep}.
+
+\fnpackage \code{:portable-threads}
+
+\fnmodule \code{:portable-threads}
+
+\fnargs
+\begin{args}{function}
+\arg[seconds] An integer (default is 
+  \nobr{\textbf{\entlink{nearly-forever-seconds}}})
+\end{args}
+
+\fndescription 
+%
+\codeindexit{sleep}%
+\bfindexit{nearly-forever-seconds}%
+%
+Calls \code{sleep} with \var{seconds\/} or \nobr{\textbf{\entlink{nearly-forever-seconds}}}, whichever is less.  Using \nobr{\textbf{nearly-forever-seconds}} protects against exceeding the duration limit of the Common Lisp implementation's \code{sleep} function for very long duration sleeping, by truncating the duration to \nobr{\textbf{\entlink{nearly-forever-seconds}}}.
+
+
+\begin{alsos}{nearly-forever-seconds}
+\also[nearly-forever-seconds]
+\end{alsos}
+
+\fnexamples
+%
+\W\supp
+\begin{example}
+  > (sleep-nearly-forever)    ; sleep for a very long time
+        ...
+  > (sleep-nearly-forever     ; sleep as long as the above
+       (* 2 most-positive-fixnum))
+        ...
+  >
 \end{example}
 
 \end{functiondoc}

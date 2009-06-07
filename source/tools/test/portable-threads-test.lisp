@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/test/portable-threads-test.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jun  3 14:35:23 2009 *-*
+;;;; *-* Last-Edit: Sun Jun  7 12:08:11 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -107,9 +107,6 @@
        (when form-completed (log-error ,message)))))
 
 ;;; ---------------------------------------------------------------------------
-
-(defun sleep-nearly-forever ()
-  (sleep *nearly-forever-seconds*))
 
 (defun sleepy-time ()
   ;; We sleep long enough for thread startup/cleanup/scheduling to occur:
@@ -583,7 +580,7 @@
          (forced-format "~&;;    Also waiting-with-timeout on CV...~%")
          (with-lock-held (cv)
            (unless (condition-variable-wait-with-timeout
-                    cv *nearly-forever-seconds*)
+                    cv nearly-forever-seconds)
              (log-error "~s returned nil on non-timeout"
                         'condition-variable-wait-with-timeout)))
          (forced-format
@@ -603,7 +600,7 @@
      cv)
     (forced-format "~&;;    Waiting-with-timeout on CV...~%")
     (with-lock-held (cv)
-      (condition-variable-wait-with-timeout cv *nearly-forever-seconds*))
+      (condition-variable-wait-with-timeout cv nearly-forever-seconds))
     (forced-format "~&;;    Continuing on waiting-with-timout CV...~%"))
   (forced-format 
    "~&;; Completed condition-variable wait-with-timeout (non-timeout) tests~%")
