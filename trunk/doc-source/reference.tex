@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Sun Jun  7 12:38:38 2009; Edited-By: cork *-*
+%% *-* Last-Edit: Mon Jun 15 10:43:35 2009; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2009, Dan Corkill <corkill@GBBopen.org>
@@ -52,7 +52,13 @@
 
 \input{common.tex}
 
-\htmldirectory{../hyperdoc}
+
+%% This should work, but the current-working-directory gets confused when
+%% running from the same AucTeX session:
+%%
+%%\htmldirectory{../hyperdoc}
+\htmldirectory{/usr/local/gbbopen/hyperdoc}
+
 \htmladdress{\xml{a target="_top" class="address"
     href="http://GBBopen.org/"}The GBBopen Project\xml{/a}}
 \htmlcss{gbbopen.css}
@@ -6705,7 +6711,7 @@ environment-specific eql specializers.
 
 \fnvaluetype A \glref{keyword~symbol}
 
-\fnvalue \code{:---unbound---}
+\fnvalue \code{:-{}-{}-unbound-{}-{}-}
 
 \begin{alsos}{define-unit-class}
 \also[define-unit-class]

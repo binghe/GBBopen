@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/tutorial.tex *-*
-%% *-* Last-Edit: Sat May 30 01:08:53 2009; Edited-By: cork *-*
+%% *-* Last-Edit: Sat Jun 13 11:26:07 2009; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2005-2009, Dan Corkill <corkill@GBBopen.org>
@@ -51,7 +51,12 @@
 
 \input{common.tex}
 
-\htmldirectory{../hypertutorial}
+%% This should work, but the current-working-directory gets confused when
+%% running from the same AucTeX session:
+%%
+%%\htmldirectory{../hypertutorial}
+\htmldirectory{/usr/local/gbbopen/hypertutorial}
+
 \htmladdress{\xml{a target="_top" class="address"
     href="http://GBBopen.org/"}The GBBopen Project\xml{/a}}
 \htmlcss{gbbopen.css}
