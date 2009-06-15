@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/common.tex *-*
-%% *-* Last-Edit: Sun Jun  7 12:14:27 2009; Edited-By: cork *-*
+%% *-* Last-Edit: Sat Jun 13 11:42:33 2009; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2009, Dan Corkill <corkill@GBBopen.org>
@@ -22,6 +22,7 @@
 \newcommand{\portablethreadsversion}{2.3}
 \newcommand{\runningtitle}{GBBopen \gbbopenversion{} \docname}
 \htmltitle{\runningtitle}
+\W\newcommand{\HlxFramesNavigationLogo}{\xml{img align="left" src="GBBopen-logo-sm.png"}}
 
 \newcommand{\noargs}{$<$no arguments$>$}
 \T\newcommand{\bkslash}{$\backslash$}
@@ -280,14 +281,15 @@
   \renewcommand{\HlxFramesNavigation}{%
     \HlxTocName
     \htmlpanel{0}%
-    \HlxSection{-5}{}*{\xml{img align="left" src="GBBopen-logo-sm.png"}%
-      \xml{br clear="both"}%
-      {\large \navigationname}}%
-    % \xml{base target="right"}% IE requires base to be in <HEAD>
-    \htmlmenu[0]{1}
-    \renewcommand{\HlxAddressDatetime}{,\xml{nobr}~\today{}\xml{/nobr}
-      \xml{nobr}\hhmm~\timezone\xml{/nobr}}
-    \renewcommand{\bottommatter}{}}
+    \HlxSection{-5}{}*{%
+    \HlxFramesNavigationLogo%
+    \xml{br}%
+    {\large \navigationname}}%
+  % \xml{base target="right"}% IE requires base to be in <HEAD>
+  \htmlmenu[0]{1}
+  \renewcommand{\HlxAddressDatetime}{,\xml{nobr}~\today{}\xml{/nobr}
+    \xml{nobr}\hhmm~\timezone\xml{/nobr}}
+  \renewcommand{\bottommatter}{}}
 
 \renewcommand{\HlxBottomMatter}{%
   \HlxBlk\htmlrule\EmptyP{\HlxAddress}%
