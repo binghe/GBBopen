@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/portable-threads.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Jun  7 12:43:11 2009 *-*
+;;;; *-* Last-Edit: Fri Jun 19 06:13:49 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -57,6 +57,8 @@
 ;;;  10-23-07 Fixed 64-bit CL sleep issues (thanks Antony!).  (Corkill)
 ;;;  11-20-07 V2.3: Remove V1.0 compatabilty; resupport Digitool MCL.
 ;;;           (Corkill)
+;;;  06-18-09 Added CLISP multi-thread support (provided by Vladimir Tzankov; 
+;;;           thanks!).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -295,7 +297,7 @@
 ;;; ===========================================================================
 ;;;  Features & warnings
 
-#+(or clisp
+#+(or (and clisp (not mt))
       cormanlisp
       (and cmu (not mp)) 
       (and ecl (not threads))
@@ -382,6 +384,8 @@
   mp:*current-process*
   #+clozure
   ccl:*current-process*
+  #+(and clisp mt)
+  (mt:current-thread)
   #+(and cmu mp)
   mp:*current-process*
   #+(and ecl threads)
@@ -400,6 +404,8 @@
 (defcm current-thread ()
   #+allegro
   'mp:*current-process*
+  #+(and clisp mt)
+  '(mt:current-thread)
   #+clozure
   'ccl:*current-process*
   #+(and cmu mp)
@@ -423,6 +429,8 @@
 (defun all-threads ()
   #+allegro
   mp:*all-processes*
+  #+(and clisp (not mt))
+  (delete nil (mt:list-threads) :key #'mt:thread-active-p) ; Delete is OK?
   #+clozure
   (ccl:all-processes)
   #+(and cmu mp)
@@ -443,6 +451,8 @@
 (defcm all-threads ()
   #+allegro
   'mp:*all-processes*
+  #+(and clisp (not mt))
+  '(delete nil (mt:list-threads) :key #'mt:thread-active-p) ; Delete is OK?
   #+clozure
   '(ccl:all-processes)
   #+(and cmu mp)
@@ -466,6 +476,8 @@
 (defun threadp (obj)
   #+allegro
   (mp:process-p obj)
+  #+(and clisp mt)
+  (mt:threadp obj)
   #+clozure
   (ccl::processp obj)
   #+(and cmu mp)
@@ -488,6 +500,8 @@
 (defcm threadp (obj)
   #+allegro
   `(mp:process-p ,obj)
+  #+(and clisp mt)
+  `(mt:threadp ,obj)
   #+clozure
   `(ccl::processp ,obj)
   #+(and cmu mp)
@@ -514,6 +528,8 @@
 (defun thread-alive-p (obj)
   #+allegro
   (mp:process-alive-p obj)
+  #+(and clisp mt)
+  (mt:thread-active-p obj)
   #+clozure
   (ccl::process-active-p obj)
   #+(and cmu mp)
@@ -536,6 +552,8 @@
 (defcm thread-alive-p (obj)
   #+allegro
   `(mp:process-alive-p ,obj)
+  #+(and clisp mt)
+  `(mt:thread-active-p ,obj)
   #+clozure
   `(ccl::process-active-p ,obj)
   #+(and cmu mp)
@@ -560,6 +578,8 @@
 (defun thread-name (thread)
   #+allegro
   (mp:process-name thread)
+  #+(and clisp mt)
+  (mt:thread-name thread)
   #+clozure
   (ccl:process-name thread)
   #+(and cmu mp)
@@ -580,6 +600,8 @@
 (defcm thread-name (thread)
   #+allegro
   `(mp:process-name ,thread)
+  #+(and clisp mt)
+  `(mt:thread-name ,thread)
   #+clozure
   `(ccl:process-name ,thread)
   #+(and cmu mp)
@@ -595,7 +617,8 @@
 
 ;;; ---------------------------------------------------------------------------
 
-#-(and sbcl sb-thread)
+#-(or (and sbcl sb-thread)
+      (and clisp mt))
 (defun (setf thread-name) (name thread)
   #+allegro
   (setf (mp:process-name thread) name)
@@ -622,6 +645,9 @@
 (defun thread-whostate (thread)
   #+allegro
   (mp:process-whostate thread)
+  ;; We fake a basic whostate for CLISP/threads:
+  #+(and clisp mt)
+  (if (mt:thread-active-p thread) "Alive" "Dead")
   #+clozure
   (ccl:process-whostate thread)     
   #+(and cmu mp)
@@ -630,7 +656,7 @@
   (ccl:process-whostate thread)
   ;; We fake a basic whostate for ECL/threads:
   #+(and ecl threads)
-  (if (mp:process-active-p thread) "Active" "Inactive")
+  (if (mp:process-active-p thread) "Alive" "Dead")
   #+lispworks
   (mp:process-whostate thread)  
   ;; We fake a basic whostate for SBCL/sb-threads:
@@ -642,6 +668,7 @@
   (not-a-thread thread))
 
 #-(or threads-not-available
+      (and clisp mt)
       (and ecl threads)
       (and sbcl sb-thread))
 (defcm thread-whostate (thread)
@@ -663,6 +690,10 @@
   ;;; whostates; this function is a NOOP on other CLs.
   #+allegro
   (setf (mp:process-whostate thread) whostate)
+  #+(and clisp mt)
+  (declare (ignore thread))
+  #+(and clisp mt)
+  whostate                              ; no-op
   #+clozure
   (setf (ccl:process-whostate thread) whostate)
   #+(and cmu mp)
@@ -703,29 +734,8 @@
 
 #-(or allegro (and cmu mp))
 (defmacro with-timeout ((seconds &body timeout-body) &body timed-body)
-  #+(and ecl threads)
-  (let ((tag-sym (gensym))
-        (timer-process-sym (gensym)))
-    ;; No timers in ECL, so we use SLEEP in a separate "timer" process:
-    `(catch ',tag-sym
-       (let ((,timer-process-sym
-              (mp:process-run-function 
-                  "WITH-TIMEOUT timer"
-                #'(lambda (process seconds)
-                    (sleep seconds)
-                    (mp:interrupt-process
-                     process
-                     #'(lambda ()
-                         (ignore-errors
-                          (throw ',tag-sym
-                            (progn ,@timeout-body))))))
-                mp:*current-process*
-                ,seconds)))
-         (sleep 0)
-         (unwind-protect (progn ,@timed-body)
-           (when (mp:process-active-p ,timer-process-sym)
-             (mp:process-kill ,timer-process-sym)
-             (sleep 0))))))
+  #+(and clisp mt)
+  `(mt:with-timeout (,seconds ,@timeout-body) ,@timed-body)
   #+clozure
   (let ((tag-sym (gensym))
         (semaphore-sym (gensym)))
@@ -771,6 +781,29 @@
          (unwind-protect (progn ,@timed-body)
            (ccl:process-kill ,timer-process-sym)
            (ccl:process-allow-schedule)))))
+  #+(and ecl threads)
+  (let ((tag-sym (gensym))
+        (timer-process-sym (gensym)))
+    ;; No timers in ECL, so we use SLEEP in a separate "timer" process:
+    `(catch ',tag-sym
+       (let ((,timer-process-sym
+              (mp:process-run-function 
+                  "WITH-TIMEOUT timer"
+                #'(lambda (process seconds)
+                    (sleep seconds)
+                    (mp:interrupt-process
+                     process
+                     #'(lambda ()
+                         (ignore-errors
+                          (throw ',tag-sym
+                            (progn ,@timeout-body))))))
+                mp:*current-process*
+                ,seconds)))
+         (sleep 0)
+         (unwind-protect (progn ,@timed-body)
+           (when (mp:process-active-p ,timer-process-sym)
+             (mp:process-kill ,timer-process-sym)
+             (sleep 0))))))
   #+lispworks
   (let ((tag-sym (gensym))
         (timer-sym (gensym)))
@@ -838,6 +871,8 @@
 (defun thread-yield ()
   #+allegro
   (mp:process-allow-schedule)
+  #+(and clisp mt)
+  (mt:thread-yield)
   #+clozure
   (ccl:process-allow-schedule)
   #+(and cmu mp)
@@ -857,6 +892,8 @@
 (defcm thread-yield ()
   #+allegro  
   '(mp:process-allow-schedule)
+  #+(and clisp mt)
+  '(mt:thread-yield)
   #+clozure
   '(ccl:process-allow-schedule)
   #+(and cmu mp)
@@ -1008,9 +1045,12 @@
 #-(or lispworks                         ; simply imported
       threads-not-available
       cormanlisp)                       ; CLL 3.0 can't handle this one
-(defun make-lock (&key name)
+(defun make-lock (&key (name
+                        #+(and clisp mt) "Anonymous mutex"))
   #+allegro
   (mp:make-process-lock :name name)
+  #+(and clisp mt)
+  (mt:make-mutex :name name)
   #+(and cmu mp)
   (mp:make-lock name :kind ':error-check)
   #+(and ecl threads)
@@ -1030,14 +1070,17 @@
       (and lispworks (not new-locks))
       (and sbcl sb-thread)
       threads-not-available)
-(defun make-recursive-lock (&key name)
+(defun make-recursive-lock (&key (name
+                                  #+(and clisp mt) "Anonymous mutex"))
+  #+(and clisp mt)
+  (mt:make-mutex :name name :recursive-p t)
+  #+(or clozure
+        digitool-mcl)
+  (%make-recursive-lock :ccl-lock (ccl:make-lock name))
   #+(and cmu mp)
   (mp:make-lock name)
   #+(and ecl threads)
   (mp:make-lock :name name :recursive t)
-  #+(or clozure
-        digitool-mcl)
-  (%make-recursive-lock :ccl-lock (ccl:make-lock name))
   #+(and lispworks new-locks)
   (%make-recursive-lock :i-name name)
   #+scl
@@ -1049,7 +1092,8 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defmacro with-lock-held ((lock &key (whostate "With Lock Held"))
                             &body body)
-    #+(or (and ecl threads)
+    #+(or (and clisp mt)
+          (and ecl threads)
           (and sbcl sb-thread)
           threads-not-available)
     (declare (ignore whostate))
@@ -1069,6 +1113,8 @@
                (,lock-sym :norecursive nil
                           :whostate ,whostate)
              ,@body))
+         #+(and clisp mt)
+         (mt::with-lock (,lock-sym) ,@body)
          #+clozure
          (let ((.ccl-lock. (and (lock-p ,lock-sym)
                                 (lock-ccl-lock (the lock ,lock-sym)))))
@@ -1139,6 +1185,8 @@
   (let ((lock (%%get-lock%% lock)))
     #+allegro
     (eq (mp:process-lock-locker lock) system:*current-process*)
+    #+(and clisp mt)
+    (eq (mt:mutex-owner lock) (mt:current-thread))
     #+clozure
     (eq (ccl::%%lock-owner (lock-ccl-lock lock)) ccl:*current-process*)
     #+(and cmu mp)
@@ -1165,6 +1213,8 @@
       `(let ((,lock-sym (%%get-lock%% ,lock)))
          #+allegro
          (eq (mp:process-lock-locker ,lock-sym) system:*current-process*)
+         #+(and clisp mt)
+         (eq (mt:mutex-owner lock) (mt:current-thread))
          #+clozure
          (eq (ccl::%%lock-owner (lock-ccl-lock ,lock-sym))
              ccl:*current-process*)
@@ -1290,6 +1340,18 @@
 ;;; ---------------------------------------------------------------------------
 ;;;   Without-Lock-held
 
+#+(and cmu mp)
+(defun %%lock-release (lock)
+  ;;; Internal release-lock function for CMUCL
+  (declare (type mp:lock lock))
+  #-i486
+  (setf (mp:lock-process lock) nil)
+  #+i486
+  (null (kernel:%instance-set-conditional
+         lock 2 mp:*current-process* nil)))
+
+;;; ---------------------------------------------------------------------------
+
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defmacro without-lock-held ((lock &key (whostate "Without Lock Held"))
                                &body body)
@@ -1318,6 +1380,12 @@
            (unwind-protect
                (progn ,@body)
              (mp:process-lock ,lock-sym .current-thread. ,saved-whostate)))
+         #+(and clisp mt)
+         (progn
+           (mt:mutex-unlock ,lock-sym)  ; MUTEX-UNLOCK checks the mutex owner
+           (unwind-protect
+               (progn ,@body)
+             (mt:mutex-lock ,lock-sym)))
          #+clozure
          (let ((.ccl-lock. (and (lock-p ,lock-sym)
                                 (lock-ccl-lock (the lock ,lock-sym))))
@@ -1368,7 +1436,7 @@
                (setf (thread-whostate .current-thread.) ,saved-whostate))))
          #+(and ecl threads)
          (progn
-           (mp:giveup-lock ,lock-sym)   ; performs valid holder check
+           (mp:giveup-lock ,lock-sym)   ; performs valid-holder check
            (unwind-protect
                (progn ,@body)
              (mp:get-lock ,lock-sym)))
@@ -1406,16 +1474,6 @@
          #+threads-not-available
          (progn ,@body)))))
 
-;;; Internal release-lock function for CMUCL:
-#+(and cmu mp)
-(defun %%lock-release (lock)
-  (declare (type mp:lock lock))
-  #-i486
-  (setf (mp:lock-process lock) nil)
-  #+i486
-  (null (kernel:%instance-set-conditional
-         lock 2 mp:*current-process* nil)))
-
 ;;; ===========================================================================
 ;;;   Spawn-Thread
 
@@ -1424,6 +1482,8 @@
   (declare (dynamic-extent args))
   #+allegro
   (apply #'mp:process-run-function name function args)
+  #+(and clisp mt)
+  (mt:make-thread #'(lambda () (apply function args)) :name name)
   #+clozure
   (apply #'ccl:process-run-function name function args)
   #+(and cmu mp)
@@ -1459,6 +1519,8 @@
 (defun kill-thread (thread)
   #+allegro
   (mp:process-kill thread)
+  #+(and clisp mt)
+  (mt:thread-kill thread)
   #+clozure
   (ccl:process-kill thread)
   #+(and cmu mp)
@@ -1481,6 +1543,8 @@
 (defcm kill-thread (thread)
   #+allegro
   `(mp:process-kill ,thread)
+  #+(and clisp mt)
+  `(mt:thread-kill ,thread)
   #+clozure
   `(ccl:process-kill ,thread)
   #+(and cmu mp)
@@ -1508,6 +1572,8 @@
   (declare (dynamic-extent args))
   #+allegro
   (apply #'multiprocessing:process-interrupt thread function args)
+  #+(and clisp mt)
+  (apply #'mt:thread-interrupt thread function args)
   #+clozure
   (apply #'ccl:process-interrupt thread function args)
   #+(and cmu mp)
@@ -1544,6 +1610,14 @@
   #+allegro
   (multiple-value-bind (value boundp)
       (mp:symeval-in-process symbol thread)
+    (if boundp
+        (values value (eq boundp 't))
+        (if (boundp symbol)
+            (values (symbol-value symbol) 't)
+            (values nil nil))))
+  #+(and clisp mt)
+  (multiple-value-bind (value boundp)
+      (mt:symbol-value-thread symbol thread)
     (if boundp
         (values value (eq boundp 't))
         (if (boundp symbol)
@@ -1728,6 +1802,14 @@
    (queue :initform nil
           :accessor condition-variable-queue)))
 
+#+(and clisp mt)
+(defclass condition-variable ()
+  ((lock :initarg :lock
+         :initform (mt:make-mutex :name "Exemption Lock")
+         :reader condition-variable-lock)
+   (cv :initform (mt:make-exemption :name "Anonymous Exemption")
+       :reader condition-variable-cv)))
+
 #+clozure
 (defclass condition-variable ()
   ((lock :initarg :lock
@@ -1827,8 +1909,11 @@
 (defun condition-variable-wait (condition-variable)
   #-threads-not-available
   (let ((lock (condition-variable-lock condition-variable)))
-    ;; No lock-owner checking is available under SCL:
-    #-scl
+    ;; Lock-owner checking is done by CLISP, ECL, SBCL, and SCL:
+    #-(or (and clisp mt)
+          (and ecl threads)
+          (and sbcl sb-thread)
+          scl)
     (unless (thread-holds-lock-p lock)
       (condition-variable-lock-needed-error
        condition-variable 'condition-variable-wait))
@@ -1839,6 +1924,8 @@
       (mp::process-unlock lock)
       (throwable-sleep-forever 'condition-variable)
       (mp::process-lock lock))
+    #+(and clisp mt)
+    (mt:exemption-wait (condition-variable-cv condition-variable) lock)
     #+clozure
     (let ((ccl-lock (lock-ccl-lock lock)))
       (unwind-protect
@@ -1890,8 +1977,11 @@
 (defun condition-variable-wait-with-timeout (condition-variable seconds)
   #-threads-not-available
   (let ((lock (condition-variable-lock condition-variable)))
-    ;; No lock-owner checking is available under SCL:
-    #-scl
+    ;; Lock-owner checking is done by CLISP, ECL, SBCL, and SCL:
+    #-(or (and clisp mt)
+          (and ecl threads)
+          (and sbcl sb-thread)
+          scl)
     (unless (thread-holds-lock-p lock)
       (condition-variable-lock-needed-error
        condition-variable 'condition-variable-wait-with-timeout))
@@ -1912,6 +2002,9 @@
             (throwable-sleep-forever 'condition-variable)
             't)
         (mp::process-lock lock)))
+    #+(and clisp mt)
+    (mt:exemption-wait (condition-variable-cv condition-variable) lock
+                       :timeout seconds)
     #+clozure
     (let ((ccl-lock (lock-ccl-lock lock)))
       (unwind-protect
@@ -1979,8 +2072,9 @@
     #+(and sbcl sb-thread)
     (sb-ext:with-timeout seconds
       (handler-case (progn
-                      (sb-thread:condition-wait 
-                       (condition-variable-cv condition-variable) lock)
+                      (sb-thread:condition-wait
+                       (condition-variable-cv condition-variable) 
+                       lock)
                       't)
         (sb-ext:timeout () nil)))
     #+scl
@@ -2007,6 +2101,8 @@
   (let ((thread (pop (condition-variable-queue condition-variable))))
     (when (and thread (thread-alive-p thread))
       (awaken-throwable-sleeper thread 'condition-variable)))
+  #+(and clisp mt)
+  (mt:exemption-signal (condition-variable-cv condition-variable))
   #+clozure
   (when (condition-variable-queue condition-variable)
     (ccl:signal-semaphore (condition-variable-semaphore condition-variable)))
@@ -2034,6 +2130,8 @@
     (dolist (thread queue)
       (when (thread-alive-p thread)
         (awaken-throwable-sleeper thread 'condition-variable))))
+  #+(and clisp mt)
+  (mt:exemption-broadcast (condition-variable-cv condition-variable))
   #+clozure
   (let ((queue-length (length (condition-variable-queue condition-variable)))
         (semaphore (condition-variable-semaphore condition-variable)))

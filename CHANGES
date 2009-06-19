@@ -19,6 +19,7 @@ Important changes since GBBopen 1.3:
      - New SPAWN-FORM macro
      - New constant NEARLY-FOREVER-SECONDS
      - New function SLEEP-NEARLY-FOREVER
+     - CLISP MT support (thanks to Vladimir Tzankov)
 
   * Changes to GBBopen
      - New DESCRIBE-INSTANCE-SLOT-VALUE generic function
