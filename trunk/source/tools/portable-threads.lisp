@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/portable-threads.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Jun 19 06:13:49 2009 *-*
+;;;; *-* Last-Edit: Fri Jun 19 15:26:06 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -429,7 +429,7 @@
 (defun all-threads ()
   #+allegro
   mp:*all-processes*
-  #+(and clisp (not mt))
+  #+(and clisp mt)
   (delete nil (mt:list-threads) :key #'mt:thread-active-p) ; Delete is OK?
   #+clozure
   (ccl:all-processes)
@@ -451,7 +451,7 @@
 (defcm all-threads ()
   #+allegro
   'mp:*all-processes*
-  #+(and clisp (not mt))
+  #+(and clisp mt)
   '(delete nil (mt:list-threads) :key #'mt:thread-active-p) ; Delete is OK?
   #+clozure
   '(ccl:all-processes)
@@ -1630,7 +1630,8 @@
             (values nil nil)
             (values value 't)))
     ;; If SYMBOL-VALUE-IN-PROCESS generates an error, assume it is due to an
-    ;; unbound symbol (someday, check the error-message string to be sure):
+    ;; unbound symbol (someday, check the condition class or error-message
+    ;; string to be sure):
     (error (condition)
       (declare (ignore condition))
       (values nil nil)))
