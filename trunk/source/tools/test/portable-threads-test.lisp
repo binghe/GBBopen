@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/test/portable-threads-test.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Jun  7 12:08:11 2009 *-*
+;;;; *-* Last-Edit: Fri Jun 19 06:17:33 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -329,6 +329,12 @@
     (forced-format "~&;;   Timing ~s spawn-threads..." iterations)
     (time-it (dotimes (i iterations)
                (declare (fixnum i))
+               ;; CLISP is limited to 128 simultaneous threads; should thread
+               ;; creation fail, yield and try again:
+               #+clisp
+               (loop until (spawn-thread "Do nothing" #'(lambda ())) do
+                    (thread-yield))
+               #-clisp
                (spawn-thread "Do nothing" #'(lambda ()))))
     (sleepy-time)
     (unless (= thread-count (length (all-threads)))
@@ -362,9 +368,18 @@
                       #+lispworks
                         (when (zerop (mod count 200))
                           (sleep 0.005))
+                        (decf count)
+                        #+clisp
+                        ;; CLISP is limited to 128 simultaneous threads.
+                        ;; Should thread creation fail, yield and try again:
+                        (loop until (spawn-thread "Spawn and die"
+                                                  #'spawn-and-die-fn 
+                                                  count) 
+                            do (thread-yield))
+                        #-clisp
                         (spawn-thread "Spawn and die"
                                       #'spawn-and-die-fn
-                                      (decf count))))))
+                                      count)))))
       (time-it (progn
                  (spawn-thread "Spawn and die"
                                #'spawn-and-die-fn
@@ -508,6 +523,22 @@
   ;;; Condition-variable wait test with signal:
   (forced-format "~&;; Performing condition-variable wait & signal tests...")
   (let ((cv (make-condition-variable :class 'state-cv)))
+    (check-error-checking
+     (condition-variable-wait cv)
+     error
+     "CONDITION-VARIABLE-WAIT did not fail when issued without holding the lock")
+    (check-error-checking
+     (condition-variable-wait-with-timeout cv 1)
+     error
+     "CONDITION-VARIABLE-WAIT-WITH-TIMEOUT did not fail when issued without holding the lock")
+    (check-error-checking
+     (condition-variable-signal cv)
+     error
+     "CONDITION-VARIABLE-SIGNAL did not fail when issued without holding the lock")
+    (check-error-checking
+     (condition-variable-broadcast cv)
+     error
+     "CONDITION-VARIABLE-BROADCAST did not fail when issued without holding the lock")
     (spawn-thread
      "Condition Variable Waiter"
      #'(lambda (cv)
