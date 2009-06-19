@@ -18,6 +18,7 @@ Individual Contributors
   * Gary King (initial Digitool MCL and OpenMCL porting)
   * Christian Lynbech (initial CMUCL porting)
   * Sam Steingold (initiated CLISP porting)
+  * Vladimir Tzankov (Portable Threads support for CLISP/MT)
   * <Your name could be here!>
 
 Questioners, bug reporters, capability demanders, and great idea suggesters
