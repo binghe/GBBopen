@@ -1,4 +1,8 @@
-Important changes since GBBopen 1.3:
+Important changes since GBBopen 1.4:
+  None.
+
+
+Important changes in GBBopen 1.4:
 
   * Changes to gbbopen-modules directory processing
      - New *IGNORED-GBBOPEN-MODULES-DIRECTORY-SUBDIRECTORIES* global 
@@ -22,6 +26,8 @@ Important changes since GBBopen 1.3:
      - CLISP MT support (thanks to Vladimir Tzankov)
 
   * Changes to GBBopen
+     - Support for link-pointer objects and new LINK-INSTANCE-OF 
+       generic function
      - New DESCRIBE-INSTANCE-SLOT-VALUE generic function
      - Abbreviated + specifier for :plus-subclasses and :plus-subevents
      - Abbreviated = specifier for :no-subclasses and :no-subevents
@@ -76,7 +82,6 @@ Important changes in GBBopen 1.2:
      - Module and package names have been renamed, as appropriate
          :mini-module -> :module-manager
          :mini-module-user -> :module-manager-user
-         (the old names are defined as package nicknames)
      - Support for patches added
          *PATCHES-ONLY*
          DESCRIBE-PATCHES

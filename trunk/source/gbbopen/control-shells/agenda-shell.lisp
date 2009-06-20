@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:AGENDA-SHELL; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/control-shells/agenda-shell.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Mar 19 02:40:41 2009 *-*
+;;;; *-* Last-Edit: Sat Jun 20 11:03:08 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -1429,9 +1429,9 @@
                      ~%;; Elapsed time: ~a~%"
                     (instance-name-of cs)
 		    (cs.cycle cs)
-		    (pretty-run-time-interval
+		    (pretty-run-time-duration
 		     (- (get-internal-run-time) start-runtime))
-		    (pretty-time-interval
+		    (pretty-duration
 		     (- (get-universal-time) start-time))))
 	  (let ((pending-ksa-count (queue-length (pending-ksas-of cs))))
 	    (when (and (cs.print cs) (plusp pending-ksa-count))

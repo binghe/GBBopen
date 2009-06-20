@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri May 15 05:03:12 2009 *-*
+;;;; *-* Last-Edit: Sat Jun 20 11:12:18 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2003-2009, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -386,7 +386,6 @@
   (destructuring-bind (unit-classes-spec dimension-names storage-class
 		       &rest args)
       storage-spec
-    (declare (dynamic-extent args))
     (unless (eq dimension-names 't)
       (setf dimension-names (ensure-list dimension-names)))
     (let ((stores-classes (parse-unit-classes-specifier unit-classes-spec)))

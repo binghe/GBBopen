@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/links.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Apr  6 10:54:01 2009 *-*
+;;;; *-* Last-Edit: Sat Jun 20 11:25:58 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -37,6 +37,7 @@
 ;;;  03-11-06 Add ECL support.  (Corkill)
 ;;;  06-24-06 Finally rewrote get-dlslotd-from-reader to handle object-specific
 ;;;           lookups.  (Corkill)
+;;;  06-19-09 Add link-pointer-object support.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -221,21 +222,36 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun %do-ilinks (dslotd instance other-instances force)
-  ;;; Set the inverse pointers to `instance' in each other-instance, if it is
+(defun link-instance-of-or-nil (x)
+  ;; Only calls LINK-INSTANCE-OF if `x' is non-nil:
+  (when x
+    (link-instance-of x)))
+
+(defcm link-instance-of-or-nil (x)
+  (with-once-only-bindings (x)
+    `(when ,x
+       (link-instance-of ,x))))
+
+;;; ---------------------------------------------------------------------------
+
+(defun %do-ilinks (dslotd instance-ptr-obj other-instance-ptr-objs force)
+  ;;; Set the inverse pointers to instance in each other-instance, if it is
   ;;; not present already
-  (let* ((idslotd (direct-link-definition.inverse-link-definition dslotd))
+  (let* ((instance (link-instance-of instance-ptr-obj))
+         (idslotd (direct-link-definition.inverse-link-definition dslotd))
          (singular (direct-link-definition.singular idslotd))
          (slot-name (slot-definition-name idslotd))
          (*%%allow-setf-on-link%%* t)
 	 (added-instances (list instance)))
-    (dolist (other-instance other-instances)
-      (let ((pointer-added? nil)
+    (dolist (other-instance-ptr-obj other-instance-ptr-objs)
+      (let ((other-instance (link-instance-of other-instance-ptr-obj))
+            (pointer-added? nil)
             new-value)
         (cond
          ;; ilink is singular:
          (singular 
-          (let ((existing (slot-value other-instance slot-name)))
+          (let* ((existing-ptr-obj (slot-value other-instance slot-name))
+                 (existing (link-instance-of-or-nil existing-ptr-obj)))
             ;; Do nothing, if the inverse pointer is present already:
             (unless (eq instance existing)
               ;; Handle another inverse pointer present:
@@ -246,37 +262,52 @@
                 (%do-iunlink idslotd other-instance existing))
               ;; Note the addition and set the value:
               (setf pointer-added? 't)
-              (setf new-value instance) 
-              (setf (slot-value other-instance slot-name) instance))))
+              (setf new-value instance)
+              (setf (slot-value other-instance slot-name) instance-ptr-obj))))
          ;; multi-link ilink:
-         (t (let* ((sort-function (direct-link-definition.sort-function idslotd))
-                   (sort-key (direct-link-definition.sort-key idslotd))
-                   (slot-value (slot-value other-instance slot-name)))
-              ;; Do nothing, if the inverse pointer is present already:
-              (unless (memq instance slot-value)
-                ;; Note the addition and set the value:
-                (setf pointer-added? 't)
+         (t 
+          (let* ((sort-function (direct-link-definition.sort-function idslotd))
+                 (sort-key (or (direct-link-definition.sort-key idslotd)
+                               #'identity))
+                 (slot-value (slot-value other-instance slot-name)))
+            ;; Do nothing, if the inverse pointer is present already:
+            (unless (member instance slot-value
+                            :key #'link-instance-of
+                            :test #'eq)
+              ;; Note the addition and set the value:
+              (setf pointer-added? 't)
+              (cond
+               (sort-function
                 (setf new-value
-                      (if sort-function
-                          (nsorted-insert instance slot-value
-                                          sort-function sort-key)
-                          (cons instance slot-value)))
-                (setf (slot-value other-instance slot-name) new-value)))))
+                      (nsorted-insert 
+                       instance-ptr-obj slot-value
+                       sort-function 
+                       (when sort-key
+                         #'(lambda (x)
+                             (funcall sort-key (link-instance-of x))))))
+                (setf (slot-value other-instance slot-name) new-value))
+               (t 
+                (setf new-value (cons instance-ptr-obj slot-value))
+                (setf (slot-value other-instance slot-name) new-value)))
+              (setf new-value (mapcar #'link-instance-of new-value))))))
         ;; signal the indirect link event, if the inverse pointer was added:
         (when pointer-added?
           (%signal-indirect-link-event 
-           other-instance idslotd new-value added-instances))))))
+           other-instance idslotd 
+           new-value
+           added-instances))))))
 
 ;;; ---------------------------------------------------------------------------
 
-(defun %do-iunlinks (dslotd instance other-instances)
-  ;;; Remove the inverse pointers to `instance' in each other-instance
+(defun %do-iunlinks (dslotd instance other-instance-ptr-objs)
+  ;;; Remove the inverse pointers to instance in each other-instance
   (let* ((idslotd (direct-link-definition.inverse-link-definition dslotd))
          (slot-name (slot-definition-name idslotd))
          (*%%allow-setf-on-link%%* t)
          (removed-instances (list instance)))
-    (dolist (other-instance other-instances)
-      (let* ((previous-value (slot-value other-instance slot-name))
+    (dolist (other-instance-ptr-obj other-instance-ptr-objs)
+      (let* ((other-instance (link-instance-of other-instance-ptr-obj))
+              (previous-value (slot-value other-instance slot-name))
 	     (current-value
 	      (if (consp previous-value)
 		  (setf (slot-value other-instance slot-name) 
@@ -287,14 +318,15 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun %do-iunlink (dslotd instance other-instance)
+(defun %do-iunlink (dslotd instance other-instance-ptr-objs)
   ;;; Single value version of %do-iunlinks (above) --
-  ;;; removes the inverse pointer to `instance' in `other-instance'
+  ;;; removes the inverse pointer to instance in other-instance
   (let* ((idslotd (direct-link-definition.inverse-link-definition dslotd))
          (slot-name (slot-definition-name idslotd))
          (*%%allow-setf-on-link%%* t)
          (removed-instances (list instance)))
-    (let* ((previous-value (slot-value other-instance slot-name))
+    (let* ((other-instance (link-instance-of other-instance-ptr-objs))
+           (previous-value (slot-value other-instance slot-name))
            (current-value
             (if (consp previous-value)
                 (setf (slot-value other-instance slot-name) 
@@ -305,11 +337,11 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun %do-linkf (dslotd instance existing new &optional force)
+(defun %do-linkf (dslotd instance existing-ptr-objs new-ptr-objs &optional force)
   ;;; Determine the new links to add to `instance' and perform setting of
   ;;; inverse pointers.  Ensure that a link is never added more than once, no
-  ;;; matter how many times it appears in `new'.  Link-setf behavior is
-  ;;; specified via `force'.
+  ;;; matter how many times it appears in `new-ptr-objs'.  Link-setf behavior
+  ;;; is specified via `force'.
   ;;;
   ;;; Return the new link value, list of added instances, an indicator of
   ;;; forced removal, and the list of forced unlinked instances.
@@ -318,66 +350,87 @@
     (check-for-deleted-instance instance operation)
     (cond
      ;; nothing new to add:
-     ((and (null new) (not force))
-      (values existing nil nil))
+     ((and (null new-ptr-objs) (not force))
+      (values existing-ptr-objs nil nil))
      ;; singular link
      ((direct-link-definition.singular dslotd)
-      ;; ensure atomic new value:
-      (when (consp new)
-        (setf new (sole-element new)))
-      (when new 
-        (check-for-deleted-instance new operation))
-      (cond
-       ;; no-op if already present:
-       ((eq existing new) (values existing nil nil))
-       (t 
-        ;; non-empty existing value:
-        (when existing 
-          (unless force
-            (non-empty-singular-link-cerror dslotd instance existing))
-          ;; unlink the existing value
-          (%do-iunlink dslotd instance existing)
-          (push existing forced-unlinked-instances))
-        (let ((change (ensure-list new)))
-          (%do-ilinks dslotd instance change force)
-          ;; return the result values:
-          (values new change forced-unlinked-instances)))))
+      ;; ensure atomic new-ptr-ojbs value:
+      (when (consp new-ptr-objs)
+        (setf new-ptr-objs (sole-element new-ptr-objs)))
+      (let ((new (link-instance-of-or-nil new-ptr-objs)))
+        (when new 
+          (check-for-deleted-instance new operation))
+        (cond
+         ;; no-op if already present:
+         ((eq (link-instance-of-or-nil existing-ptr-objs) new) 
+          (values existing-ptr-objs nil nil))
+         (t 
+          (let ((existing (link-instance-of-or-nil existing-ptr-objs)))
+            ;; non-empty existing value:
+            (when existing
+              (unless force
+                (non-empty-singular-link-cerror dslotd instance existing-ptr-objs))
+              ;; unlink the existing value
+              (%do-iunlink dslotd instance existing)
+              (push existing forced-unlinked-instances)))
+          (let ((change (ensure-list new)))
+            (%do-ilinks dslotd instance change force)
+            ;; return the result values:
+            (values new-ptr-objs change forced-unlinked-instances))))))
      ;; multi-link:
      (t (let ((change nil)
               (sort-function (direct-link-definition.sort-function dslotd))
               (sort-key (or (direct-link-definition.sort-key dslotd)
                             #'identity)))
-          ;; ensure new is a list:
-          (unless (listp new) (setf new (list new)))
+          ;; ensure new-ptr-objs is a list:
+          (unless (listp new-ptr-objs) 
+            (setf new-ptr-objs (list new-ptr-objs)))
           ;; unlink any extra links:
           (when force
-            (dolist (existing-instance existing)
-              (unless (memq existing-instance new)
-                (setf existing (delq existing-instance existing))
-                (%do-iunlink dslotd instance existing-instance)
-                (push existing-instance forced-unlinked-instances))))
+            (dolist (existing-ptr-obj existing-ptr-objs)
+              (let ((existing (link-instance-of existing-ptr-obj)))
+                (unless (member existing new-ptr-objs
+                                :key #'link-instance-of
+                                :test #'eq)
+                  (setf existing-ptr-objs
+                      (delete existing existing-ptr-objs
+                              :key #'link-instance-of
+                              :test #'eq))
+                  (%do-iunlink dslotd instance existing)
+                  (push existing forced-unlinked-instances)))))
           ;; add in new links:
-          (dolist (new-instance new)
-            (unless (memq new-instance existing)
-              (check-for-deleted-instance new-instance operation)
-              (if sort-function
-                  (setf existing
-                    (nsorted-insert new-instance existing sort-function sort-key))
-                  (push new-instance existing))
-              (push new-instance change)))
+          (dolist (new-ptr-obj new-ptr-objs)
+            (let ((new (link-instance-of new-ptr-obj)))
+              (unless (member new existing-ptr-objs
+                              :key #'link-instance-of
+                              :test #'eq)
+                (check-for-deleted-instance new operation)
+                (if sort-function
+                    (setf existing-ptr-objs
+                          (nsorted-insert 
+                           new-ptr-obj existing-ptr-objs
+                           sort-function
+                           (when sort-key
+                             #'(lambda (x)
+                                 (funcall sort-key (link-instance-of x))))))
+                    (push new-ptr-obj existing-ptr-objs))
+                (push new change))))
           (%do-ilinks dslotd instance change force)
           (values 
-           ;; Use new to as the value for link-setf (unless a sort-function
-           ;; was used); otherwise the updated existing value:
+           ;; Use new-ptr-objs as the value for link-setf (unless a
+           ;; sort-function was used); otherwise the updated existing value:
            (if (and force (not sort-function)) 
-               (delete-duplicates new :test 'eq :from-end t)
-               existing)
+               (delete-duplicates new-ptr-objs
+                                  :key #'link-instance-of
+                                  :test #'eq 
+                                  :from-end t)
+               existing-ptr-objs)
            change
            forced-unlinked-instances))))))
 
 ;;; ---------------------------------------------------------------------------
 
-(defun %do-unlinkf (dslotd instance existing remove)
+(defun %do-unlinkf (dslotd instance existing-ptr-objs remove-ptr-objs)
   ;;; Unlink the specified instances from `dslotd' in `instance' and
   ;;; unlink the inverse pointers.
   ;;;
@@ -385,34 +438,40 @@
   (check-for-deleted-instance instance 'unlinkf)
   (cond
    ;; nothing to remove
-   ((null remove) (values existing nil))
+   ((null remove-ptr-objs) (values existing-ptr-objs nil))
    ;; singular link
    ((direct-link-definition.singular dslotd)
-    (cond ((or (eq existing remove)
-               (and (consp remove)
-                    (memq existing remove)))
-           (check-for-deleted-instance existing 'unlinkf)
-           ;; unlink the inverse pointer
-           (%do-iunlink dslotd instance existing)
-           ;; return the new link value and changes
-           (values nil (list existing)))
-          (t (values existing nil))))
+    (let ((existing (link-instance-of-or-nil existing-ptr-objs))
+          (remove (link-instance-of remove-ptr-objs)))
+      (cond ((or (eq existing remove)
+                 (and (consp remove)
+                      (memq existing remove)))
+             (check-for-deleted-instance existing 'unlinkf)
+             ;; unlink the inverse pointer
+             (%do-iunlink dslotd instance existing)
+             ;; return the new link value and changes
+             (values nil (list existing)))
+            (t (values existing-ptr-objs nil)))))
    ;; multi-link
    (t (let ((change nil))
-        ;; ensure remove is a list
-        (unless (listp remove) (setf remove (list remove)))
+        ;; ensure remove-ptr-objs is a list
+        (unless (listp remove-ptr-objs) 
+          (setf remove-ptr-objs (list remove-ptr-objs)))
         (flet ((when-eq-push (a b)
                  (when (eq a b)
                    (push a change))))
           (declare (dynamic-extent #'when-eq-push))
-          (dolist (rinstance remove)
-            (check-for-deleted-instance rinstance 'unlinkf)
-            (setf existing (delete rinstance existing :test #'when-eq-push))))
-        (when change
-          ;; unlink the inverses
-          (%do-iunlinks dslotd instance change))
-        ;; return the new link value and changes
-        (values existing change)))))
+          (dolist (remove-ptr-obj remove-ptr-objs)
+            (let ((remove (link-instance-of remove-ptr-obj)))
+              (check-for-deleted-instance remove 'unlinkf)
+              (setf existing-ptr-objs (delete remove existing-ptr-objs 
+                                              :key #'link-instance-of
+                                              :test #'when-eq-push))))
+          (when change
+            ;; unlink the inverses
+            (%do-iunlinks dslotd instance change))
+          ;; return the new link value and changes
+          (values existing-ptr-objs change))))))
   
 ;;; ---------------------------------------------------------------------------
 

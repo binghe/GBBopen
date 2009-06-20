@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Mon Jun 15 10:43:35 2009; Edited-By: cork *-*
+%% *-* Last-Edit: Sat Jun 20 11:48:36 2009; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2009, Dan Corkill <corkill@GBBopen.org>
@@ -14062,7 +14062,24 @@ changed:
 \label{sec:links}%
 
 This section contains \nobr{\code{:gbbopen-core}} entities that pertain to
-\glref{links}.
+\glref{links}.  A link represents a bi-directional relationship between two
+\glref{unit~instances} using an outgoing pointer at each unit instance
+pointing to the other.  GBBopen's link operators maintain the bi-directional
+consistency of link pointers.
+
+GBBopen also allows a \glref{link-pointer~object} to be used as an outgoing
+link pointer. An application developer can define a link-pointer object to
+hold attributes (such as ``confidence'' or ``applicability conditions'') that
+are associated with the outgoing pointer.
+
+Attributes of a link relationship that are not directional (attributes that
+are to be the same when obtained from either side of the link), are best
+represented by representing the ``link'' as a first-class
+\glref{unit~instance} rather than by maintaining a link-pointer object on each
+end of the link that have consistent values.
+
+\W\entities
+\T\clearpage
 
 %% ------------------------------------------------------------------------
 
@@ -14239,6 +14256,77 @@ default effective link-definition \glref{metaobject~class} of
 
 %% ------------------------------------------------------------------------
 
+\begin{functiondoc}{Generic~Function}{link-instance-of}{\var{object\/}
+    \returns{} \var{instance\/}}
+
+\fnsyntax
+
+\fnpurpose Return the \glref{unit~instance} in an object that can be used 
+as a \glref{link} pointer.
+
+\fnsetf
+\fnsetfsyntax{link-instance-of}{\var{object\/}}{\var{unit-instance\/}}
+
+\fnmethods
+\fnalternate{link-instance-of}%
+ {\code{(}\var{object\/} \code{standard-unit-instance)}
+  \returns{} \var{object}}
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:gbbopen-core}
+
+\fnargs
+\begin{args}{unit-instance}
+\arg[object] An object
+\arg[unit-instance] A \glref{unit~instance}
+\end{args}
+
+\fnreturns The \glref{link} pointer \glref{unit-instance}.
+
+\fndescription
+%
+The default \textbf{link-instance-of} method on a \glref{unit~instance} 
+returns its argument unit-instance object (an \code{identity} function).
+
+\begin{alsos}{link-setf}
+\also[linkf]
+\also[link-setf]
+\also[unlinkf]
+\end{alsos}
+
+\fnexample
+%
+\bfindexit{define-class}%
+\index{link-ptr-with-value!\code{link-ptr-with-value} class example}%
+\index{link-pointer object example, link-ptr-with-value!\code{link-ptr-with-value}}%
+\label{link-ptr-class}%
+Define a \glref{link-pointer~object} class that can be used to associate a value
+with a link pointer:
+%
+\W\supp
+\begin{example}
+  (\entlink{define-class} link-ptr-with-value ()
+    (link-instance
+     (value :initform nil)))
+\end{example}
+%
+and a helpful \code{print-object} method:
+%
+\W\supp\notpretop
+\begin{example}
+  (defmethod print-object ((obj link-ptr-with-value) stream)
+    (cond (*print-readably* (call-next-method))
+          (t (print-unreadable-object (obj stream :type t)
+               (format stream "~s" (link-instance-of obj)))
+             ;; Print-object must return object:
+             obj)))
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
 \begin{functiondoc}{Macro}{linkf}%
  {\var{\glref{link-slot-place} unit-instance-or-instances\/}
    \returns{} \var{unit-instance-or-instances\/}} 
@@ -14258,8 +14346,9 @@ or more \glref{unit~instances}.
 \begin{args}{unit-instance-or-instances}
 \arg[\glref{link-slot-place}] A \glref{form} which is suitable for use as a
 \glref{generalized~reference} to a \glref{link~slot}
-\arg[unit-instance-or-instances] A \glref{unit~instance} or a
-list of \glref{unit~instances}
+\arg[unit-instance-or-instances] A \glref{unit~instance}, a 
+\glref{link-pointer~object}, or a list of \glref{unit~instances} and 
+\glref{link-pointer~objects}
 \end{args}
 
 \fnreturns The supplied \var{unit-instance-or-instances}.
@@ -14279,20 +14368,62 @@ A \code{link-event} is signaled for:
   another \nobr{\glref{unit~instance}}
 \end{tightitemize}
 
-\begin{alsos}{unlinkf-all}
+\fndescription
+%
+Adding a \glref{link} from a \glref{unit~instance} to another unit 
+instance that is already linked to that same unit instance is ignored.
+
+\begin{alsos}{link-instance-of}
+\also[link-instance-of]
 \also[link-setf]
 \also[unlinkf]
 \also[unlinkf-all]
 \end{alsos}
 
-\fnexample Add \code{support-hyp} to the \nobr{\code{supporting-hyps}}
-\glref{link~slot} of the \code{hyp} \glref{unit~instance}
-\nobr{\code{unit-instance}}:
+\fnexamples
+%
+Add \code{support-hyp} to the 
+\nobr{\code{supporting-hyps}} \glref{link~slot}
+of the \code{hyp} \glref{unit~instance} \nobr{\code{unit-instance}}:
 %
 \W\supp
 \begin{example}
   > (linkf (supporting-hyps-of unit-instance) support-hyp)
   #<hyp 231 (1488 7405) 0.63 [0..8]>
+  >
+\end{example}
+%
+Note that, when a link pointer to \code{hyp} 231 is already present in
+a link slot, adding a link to that same \code{hyp} unit instance---even
+as a \glref{link-pointer~object}---has no effect on the existing link pointer:
+%
+\W\supp\notpretop
+\begin{example}
+  > (supporting-hyps-of unit-instance)
+  (#<hyp 231 (1488 7405) 0.63 [0..8]>)
+  > (linkf (supporting-hyps-of unit-instance) 
+           (\entlink{make-instance} '\link{link-ptr-with-value}{link-ptr-class}
+               :link-instance support-hyp
+               :value 0.9))
+  #<link-ptr-with-value #<hyp 231 (1488 7405) 0.63 [0..8]>>
+  > (supporting-hyps-of unit-instance)
+  (#<hyp 231 (1488 7405) 0.63 [0..8]>)
+  >
+\end{example}
+%
+This time, add a \glref{link-pointer~object} as a new pointer:
+%
+\W\supp\notpretop
+\begin{example}
+  > (\entlink{unlinkf-all} (supporting-hyps-of unit-instance))
+  nil
+  > (linkf (supporting-hyps-of unit-instance) 
+           (\entlink{make-instance} '\link{link-ptr-with-value}{link-ptr-class}
+               :link-instance support-hyp
+               :value 0.9))
+  #<link-ptr-with-value #<hyp 231 (1488 7405) 0.63 [0..8]>>
+  > (supporting-hyps-of unit-instance)
+  (#<link-ptr-with-value #<hyp 231 (1488 7405) 0.63 [0..8]>>)
   >
 \end{example}
 
@@ -14323,8 +14454,9 @@ A \code{link-event} is signaled for:
 \begin{args}{unit-instance-or-instances}
 \arg[\glref{link-slot-place}] A \glref{form} which is suitable for use as a
 \glref{generalized~reference} to a \glref{link~slot}
-\arg[unit-instance-or-instances] A \glref{unit~instance} or a
-list of \glref{unit~instances}
+\arg[unit-instance-or-instances] A \glref{unit~instance}, a 
+\glref{link-pointer~object}, or a list of \glref{unit~instances} and 
+\glref{link-pointer~objects}
 \end{args}
 
 \fnreturns The supplied \var{unit-instance-or-instances}.
@@ -14355,11 +14487,15 @@ A \code{link-event} is signaled for:
   another \nobr{\glref{unit~instance}}
 \end{tightitemize}
 
-\fndescription Any existing \glref{links} in
-\nobr{\var{\glref{link-slot-place}}} that do not involve
-\nobr{\var{unit-instance-or-instances\/}} are unlinked.  Then \glref{links} to
-any additional \nobr{\glref{unit~instances}} in
-\nobr{\var{unit-instance-or-instances\/}} are added.
+\fndescription 
+%
+Any existing \glref{links} in \nobr{\var{\glref{link-slot-place}}} that 
+do not involve \nobr{\var{unit-instance-or-instances\/}} are unlinked.  
+Existing \glref{links} that are also specified as \glref{link-pointer~objects} in
+\nobr{\var{unit-instance-or-instances\/}} are replaced with the new
+link-pointer objects. Then \glref{links} to any additional
+\nobr{\glref{unit~instances}} in \nobr{\var{unit-instance-or-instances\/}}
+are added.
 
 The order of the specified \nobr{\var{unit-instance-or-instances\/}} is
 maintained when settting the value of \nobr{\var{\glref{link-slot-place}}}, if
@@ -14370,13 +14506,16 @@ no \nobr{\code{:sort-function}} was specified as a
 remaining elements will be the same as the order in which they appeared in
 \nobr{\var{unit-instance-or-instances.}}
 
-\begin{alsos}{unlinkf-all}
+\begin{alsos}{link-instance-of}
+\also[link-instance-of]
 \also[linkf]
 \also[unlinkf]
 \also[unlinkf-all]
 \end{alsos}
 
-\fnexample Set the \nobr{\code{supporting-hyps}} \glref{link~slot} of the
+\fnexamples
+%
+Set the \nobr{\code{supporting-hyps}} \glref{link~slot} of the
 \code{hyp} \glref{unit~instance} to the \glref{unit~instances} in
 \nobr{\code{supporting-hyps}}:
 %
@@ -14384,6 +14523,59 @@ remaining elements will be the same as the order in which they appeared in
 \begin{example}
   > (link-setf (supporting-hyps-of unit-instance) supporting-hyps)
   #<hyp 231 (1488 7405) 0.63 [0..8]>
+  >
+\end{example}
+%
+Note that, when a link pointer to \code{hyp} 231 is already present in
+a link slot, adding a \glref{link-pointer-object} link to that same \code{hyp} unit instance replaces the existing link pointer:
+%
+\W\supp\notpretop
+\begin{example}
+  > (supporting-hyps-of unit-instance)
+  (#<hyp 231 (1488 7405) 0.63 [0..8]>)
+  > (link-setf (supporting-hyps-of unit-instance) 
+           (\entlink{make-instance} '\link{link-ptr-with-value}{link-ptr-class}
+               :link-instance support-hyp
+               :value 0.9))
+  #<link-ptr-with-value #<hyp 231 (1488 7405) 0.63 [0..8]>>
+  > (supporting-hyps-of unit-instance)
+  (#<link-ptr-with-value #<hyp 231 (1488 7405) 0.63 [0..8]>>)
+  > (value-of *)
+  0.9
+  >
+\end{example}
+%
+Replace the existing \glref{link-pointer-object} pointer with one that has a different \code{value}:
+%
+\W\supp\notpretop
+\begin{example}
+  > (supporting-hyps-of unit-instance)
+  (#<link-ptr-with-value #<hyp 231 (1488 7405) 0.63 [0..8]>>)
+  > (link-setf (supporting-hyps-of unit-instance) 
+           (\entlink{make-instance} '\link{link-ptr-with-value}{link-ptr-class}
+               :link-instance support-hyp
+               :value 0.94))
+  #<link-ptr-with-value #<hyp 231 (1488 7405) 0.63 [0..8]>>
+  > (supporting-hyps-of unit-instance)
+  (#<link-ptr-with-value #<hyp 231 (1488 7405) 0.63 [0..8]>>)
+  > (value-of *)
+  0.94
+  >
+\end{example}
+%
+Of course, a \code{value} change can also be done directly in 
+an existing \glref{link-pointer~object}:
+%
+\W\supp\notpretop
+\begin{example}
+  > (supporting-hyps-of unit-instance)
+  (#<link-ptr-with-value #<hyp 231 (1488 7405) 0.63 [0..8]>>)
+  > (setf (value-of *) 0.96)
+  0.96
+  > (supporting-hyps-of unit-instance)
+  (#<link-ptr-with-value #<hyp 231 (1488 7405) 0.63 [0..8]>>)
+  > (value-of *)
+  0.96
   >
 \end{example}
 
@@ -14463,8 +14655,9 @@ or more \glref{unit~instances}.
 \begin{args}{unit-instance-or-instances}
 \arg[\glref{link-slot-place}] A \glref{form} which is suitable for use as a
 \glref{generalized~reference} to a \glref{link~slot}
-\arg[unit-instance-or-instances] A \glref{unit~instance} or a
-list of \glref{unit~instances}
+\arg[unit-instance-or-instances] A \glref{unit~instance}, a 
+\glref{link-pointer~object}, or a list of \glref{unit~instances} and 
+\glref{link-pointer~objects}
 \end{args}
 
 \fnreturns The supplied \var{unit-instance-or-instances}.
@@ -14484,13 +14677,16 @@ An \code{unlink-event} is signaled for:
   another \glref{unit~instance}
 \end{tightitemize}
 
-\begin{alsos}{unlinkf-all}
+\begin{alsos}{link-instance-of}
+\also[link-instance-of]
 \also[linkf]
 \also[link-setf]
 \also[unlinkf-all]
 \end{alsos}
 
-\fnexample Remove \code{support-hyp} from the \nobr{\code{supporting-hyps}}
+\fnexamples
+%
+Remove \code{support-hyp} from the \nobr{\code{supporting-hyps}}
 \glref{link~slot} of the \code{hyp} \glref{unit~instance}
 \nobr{\code{unit-instance}}:
 %
@@ -14498,6 +14694,21 @@ An \code{unlink-event} is signaled for:
 \begin{example}
   > (unlinkf (supporting-hyps-of unit-instance) support-hyp)
   #<hyp 231 (1488 7405) 0.63 [0..8]>
+  >
+\end{example}
+%
+The above, but this time showing that the \code{support-hyp} can be a \glref{link-pointer~object}:
+%
+\W\supp\notpretop
+\begin{example}
+  > (\entlink{linkf} (supporting-hyps-of unit-instance) support-hyp)
+  #<hyp 231 (1488 7405) 0.63 [0..8]>
+  > (unlinkf (supporting-hyps-of unit-instance) 
+             (\entlink{make-instance} '\link{link-ptr-with-value}{link-ptr-class}
+                 :link-instance support-hyp))
+  #<link-ptr-with-value #<hyp 231 (1488 7405) 0.63 [0..8]>>
+  > (supporting-hyps-of unit-instance)
+  nil
   >
 \end{example}
 
@@ -14604,8 +14815,10 @@ have been loaded:
 %
 \T\begin{ifhtml}
 \xml{br}
+\xml{br}
 \xml{img align="center" src="agenda-shell-events.png"}
 \xml{br clear="both"}
+\xml{br}
 \T\end{ifhtml}
 \W\begin{iftex} 
 \begin{center}
@@ -14821,7 +15034,7 @@ the single class \nobr{\textbf{\entlink{standard-event-instance}}}.
 The \code{:metaclass} \var{class-name\/} class option, if specified, must be a
 subclass of \nobr{\textbf{\entlinknoex{standard-event-class}}}.  The default
 metaclass value is the metaclass of the event superclasses of
-\var{event-class-name} if they all have the same metaclass.  If the event
+\var{event-class-name} if they all have the smae metaclass.  If the event
 superclasses have multiple metaclasses, the metaclass of
 \var{event-class-name} must be provided. The following table lists the
 compatible event-superclass metaclasses for each \glref{event~metaclass}:

@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/basic-tests.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Apr 21 04:03:06 2009 *-*
+;;;; *-* Last-Edit: Fri Jun 19 14:55:58 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2002-2008, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2009, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -129,6 +129,19 @@
 (define-event-class my-event (non-instance-event)
   ((my-event-arg1 :initform nil)
    (my-event-arg2 :initform nil)))
+
+;;; ---------------------------------------------------------------------------
+
+(define-class link-ptr-with-value ()
+  (link-instance
+   (value :initform nil)))
+
+(defmethod print-object ((obj link-ptr-with-value) stream)
+  (cond (*print-readably* (call-next-method))
+        (t (print-unreadable-object (obj stream :type t)
+             (format stream "~s" (link-instance-of obj)))
+           ;; Print-object must return object:
+           obj)))
 
 ;;; ===========================================================================
 ;;;  Basic timing functions
@@ -279,6 +292,234 @@
 
 ;;; ---------------------------------------------------------------------------
 
+(defvar *test-link-ptrs* nil)
+    
+(defun make-ptr-obj (instance value)
+  (if *test-link-ptrs*
+      (make-instance 'link-ptr-with-value 
+        :link-instance instance
+        :value value)
+      instance))
+
+;;; ---------------------------------------------------------------------------
+
+(defun link-tests ()
+  (format t "~&;; Link/unlink tests (using ~
+                  ~:[direct pointers~;link-ptr objects~])...~%"
+          *test-link-ptrs*)
+  (map-instances-of-class #'delete-instance '(abstract :plus-subclasses))
+  (reset-unit-class 't)
+  (flet ((incorrect-link-slot-value (op slot unit value expected-value)
+           (error "Error in ~a: Incorrect ~s link-slot value ~s ~
+                 (~s expected) in ~s" 
+                  op slot value expected-value unit)))
+    (let* ((u2 (make-instance 'uc-1 :x 1 :y 2))
+           (u2-ptr-obj (make-ptr-obj u2 2))
+	   (u3 (make-instance 'uc-2 :x 2 :y 1))
+           (u3-ptr-obj (make-ptr-obj u3 3))
+	   (u4 (make-instance 'uc-2 :x 2 :y 2))
+           (u4-ptr-obj (make-ptr-obj u4 4))
+	   (u5 (make-instance 'uc-2 :x 2 :y 3))
+           (u5-ptr-obj (make-ptr-obj u5 5))
+	   (u1 (make-instance 'uc-1 :x 1 :y 1 
+                              :link-1 u2-ptr-obj :link-2 u3-ptr-obj)))
+      ;; check initial link values:
+      (let ((expected-value u2-ptr-obj)
+	    (value (link-1-of u1)))
+	(unless (eq value expected-value)
+	  (incorrect-link-slot-value 
+	   "singular link initarg" 'link-1 u1 value expected-value)))
+      (let ((expected-value (list u3-ptr-obj))
+	    (value (link-2-of u1)))
+	(unless (equal value expected-value)
+	  (incorrect-link-slot-value 
+	   "non-singular link initarg" 'link-2 u1 value expected-value)))
+      ;; unlink-all values:
+      (unlinkf-all (link-1-of u1))
+      (let ((expected-value nil)
+	    (value (link-1-of u1)))
+	(unless (eq value expected-value)
+	  (incorrect-link-slot-value 
+	   "signular unlinkf-all" 'link-1 u1 value expected-value)))
+      (unlinkf-all (link-2-of u1))
+      (let ((expected-value nil)
+	    (value (link-2-of u1))) 
+	(unless (eq value expected-value)
+	  (incorrect-link-slot-value 
+	   "non-singular unlinkf-all" 'link-2 u1 value expected-value)))      
+      ;; empty singular linkf:
+      (progn
+        (linkf (link-1-of u1) u2-ptr-obj)
+        (let ((expected-value u2-ptr-obj)
+              (value (link-1-of u1)))
+          (unless (eq value expected-value)
+            (incorrect-link-slot-value 
+             "singular linkf" 'link-1 u1 value expected-value)))
+        (let ((expected-value u1)
+              (value (link-1-of u2)))
+          (unless (eq value expected-value)
+            (incorrect-link-slot-value 
+             "singular linkf (i-value)" 'link-1 u2 value expected-value))))
+      ;; singular unlinkf:
+      (progn
+        (unlinkf (link-1-of u1) u2-ptr-obj)
+        (let ((expected-value nil)
+              (value (link-1-of u1)))
+          (unless (eq value expected-value)
+            (incorrect-link-slot-value 
+             "singular unlinkf" 'link-1 u1 value expected-value)))
+        (let ((expected-value nil)
+              (value (link-1-of u2)))
+          (unless (eq value expected-value)
+            (incorrect-link-slot-value 
+             "singular unlinkf (i-value)" 'link-1 u2 value expected-value))))
+      ;; singular unlinkf-all:
+      (progn
+        (linkf (link-1-of u1) u2-ptr-obj)
+        (unlinkf-all (link-1-of u1))
+        (let ((expected-value nil)
+              (value (link-1-of u1)))
+          (unless (eq value expected-value)
+            (incorrect-link-slot-value 
+             "singular unlinkf-all" 'link-1 u1 value expected-value)))
+        (let ((expected-value nil)
+              (value (link-1-of u2)))
+          (unless (eq value expected-value)
+            (incorrect-link-slot-value 
+             "singular unlinkf-all (i-value)" 
+	     'link-1 u2 value expected-value))))
+      ;; non-empty singular linkf:
+      (progn
+        (linkf (link-1-of u1) u2-ptr-obj)
+        (with-error-handling 
+            (progn (linkf (link-1-of u1) u1)
+                   (error "Uncaught linkf of non-empty singular link slot ~
+                           ~s in ~s"
+                          'link-1 u1))))
+      ;; non-empty singular link-setf:
+      (progn
+        (unlinkf-all (link-1-of u1))
+        (linkf (link-1-of u1) u2-ptr-obj)
+        (link-setf (link-1-of u1) u3-ptr-obj)
+        (let ((expected-value u3-ptr-obj)
+              (value (link-1-of u1)))
+          (unless (eq value expected-value)
+            (incorrect-link-slot-value 
+             "singular link-setf" 'link-1 u1 value expected-value)))
+        (let ((expected-value u1)
+              (value (link-1-of u3)))
+          (unless (eq value expected-value)
+            (incorrect-link-slot-value 
+             "singular link-setf (i-value)" 'link-1 u3 value expected-value)))
+        (let ((expected-value nil)
+              (value (link-1-of u2)))
+          (unless (eq value expected-value)
+            (incorrect-link-slot-value 
+             "singular link-setf (old i-value)" 'link-1 u2 value expected-value)))
+        (unlinkf-all (link-1-of u1)))
+      ;; atomic multi-linkf:
+      (progn
+        (linkf (link-2-of u1) u3-ptr-obj)
+        (let ((expected-value (list u3-ptr-obj))
+              (value (link-2-of u1)))
+          (unless (equal value expected-value)
+            (incorrect-link-slot-value
+             "atomic multi-linkf" 'link-2 u1 value expected-value)))
+	;; atomic multi-unlinkf:
+        (unlinkf (link-2-of u1) u3-ptr-obj)
+        (let ((expected-value nil)
+              (value (link-2-of u1)))
+          (unless (eq value expected-value)
+            (incorrect-link-slot-value
+             "atomic multi-unlinkf" 'link-2 u1 value expected-value))))
+      ;; atomic multi-unlinkf-all:
+      (progn
+        (linkf (link-2-of u1) u3-ptr-obj)
+        (unlinkf-all (link-2-of u1))
+        (let ((expected-value nil)
+              (value (link-2-of u1)))
+          (unless (eq value expected-value)
+            (incorrect-link-slot-value
+             "atomic multi-unlinkf-all" 'link-2 u1 value expected-value))))
+      ;; multi-linkf:
+      (progn
+        (linkf (link-2-of u1) (list u3-ptr-obj u4-ptr-obj u5-ptr-obj u3 u4))
+        (let ((expected-value (list u5-ptr-obj u4-ptr-obj u3-ptr-obj))
+              (value (link-2-of u1)))
+          (unless (equal value expected-value)
+            (incorrect-link-slot-value 
+             "multi-linkf" 'link-2 u1 value expected-value)))
+        ;; multi-unlinkf:
+        (unlinkf (link-2-of u1) (list u3-ptr-obj u5-ptr-obj u3-ptr-obj))
+        (let ((expected-value (list u4-ptr-obj))
+              (value (link-2-of u1)))
+          (unless (equal value expected-value)
+            (incorrect-link-slot-value
+             "multi-unlinkf" 'link-2 u1 value expected-value)))
+        ;; check again, but this time with bare instance pointers first:
+        (unlinkf-all (link-2-of u1))
+        (linkf (link-2-of u1) (list u3 u4 u5-ptr-obj u4-ptr-obj u3-ptr-obj))
+        (let ((expected-value (list u5-ptr-obj u4 u3))
+              (value (link-2-of u1)))
+          (unless (equal value expected-value)
+            (incorrect-link-slot-value
+             "multi-linkf (#2)" 'link-2 u1 value expected-value))))
+      ;; multi-unlinkf-all:
+      (progn
+        (linkf (link-2-of u1) (list u3-ptr-obj u4-ptr-obj u5-ptr-obj u3-ptr-obj u4-ptr-obj))
+        (unlinkf-all (link-2-of u1))
+        (let ((expected-value nil)
+              (value (link-2-of u1)))
+          (unless (equal value expected-value)
+            (incorrect-link-slot-value
+             "multi-unlinkf-all" 'link-2 u1 value expected-value))))
+      ;; multi-link-setf:
+      (progn
+        (linkf (link-2-of u1) (list u3-ptr-obj u4-ptr-obj))
+        (link-setf (link-2-of u1) (list u4-ptr-obj u5-ptr-obj u4-ptr-obj u5-ptr-obj))
+        (let ((expected-value (list u4-ptr-obj u5-ptr-obj))
+              (value (link-2-of u1)))
+          (unless (equal value expected-value)
+            (incorrect-link-slot-value
+             "multi-link-setf" 'link-2 u1 value expected-value)))
+        ;; check unlinkf-ish behavior:
+        (link-setf (link-2-of u1) nil)
+        (let ((expected-value nil)
+              (value (link-2-of u1)))
+          (unless (equal value expected-value)
+            (incorrect-link-slot-value
+             "multi-link-setf" 'link-2 u1 value expected-value))))
+      ;; multi-linkf (sorted):
+      (progn
+        (linkf (link-3-of u1) (list u3-ptr-obj u4-ptr-obj u5-ptr-obj u3 u4-ptr-obj))
+        (let ((expected-value (list u3-ptr-obj u4-ptr-obj u5-ptr-obj))
+              (value (link-3-of u1)))
+          (unless (equal value expected-value)
+            (incorrect-link-slot-value
+             "multi-linkf (sorted)" 'link-3 u1 value expected-value))))
+      ;; empty singular linkf:
+      (let ((x (make-instance 'uc-1 :link-1 u1)))
+        (let ((expected-value u1)
+              (value (link-1-of x)))
+          (unless (eq value expected-value)
+            (incorrect-link-slot-value 
+             "singular linkf (initarg)" 'link-1 x value expected-value)))
+        (let ((expected-value x)
+              (value (link-1-of u1)))
+          (unless (eq value expected-value)
+            (incorrect-link-slot-value 
+             "singular link-setf (initarg i-value)" 
+             'link-1 u1 value expected-value)))
+        (delete-instance x))
+      ;; cleanup
+      (mapc #'delete-instance (list u1 u2 u3 u4 u5))
+      ;; double-check
+      (let ((instances (find-instances 't 't 't)))
+        (when instances
+          (error "Cleanup of initial instances failed: ~s." instances))))))
+
+;;; ---------------------------------------------------------------------------
+
 (defun basic-tests ()
   (format t "~&;; Running basic GBBopen tests...~%")
   ;; Cleanup:
@@ -381,205 +622,13 @@
                (delete-instance x)))))
     (check-values 'uc-1)
     (check-values 'uc-2))
-  
-  ;;; Linkf checks:
-  (map-instances-of-class #'delete-instance '(abstract :plus-subclasses))
-  (reset-unit-class 't)
-  (flet ((incorrect-link-slot-value (op slot unit value expected-value)
-           (error "Error in ~a: Incorrect ~s link-slot value ~s ~
-                 (~s expected) in ~s" 
-                  op slot value expected-value unit)))
-    (let* ((u2 (make-instance 'uc-1 :x 1 :y 2))
-	   (u3 (make-instance 'uc-2 :x 2 :y 1))
-	   (u4 (make-instance 'uc-2 :x 2 :y 2))
-	   (u5 (make-instance 'uc-2 :x 2 :y 3))
-	   (u1 (make-instance 'uc-1 :x 1 :y 1 :link-1 u2 :link-2 u3)))
-      ;; check initial link values:
-      (let ((expected-value u2)
-	    (value (link-1-of u1)))
-	(unless (eq value expected-value)
-	  (incorrect-link-slot-value 
-	   "singular link initarg" 'link-1 u1 value expected-value)))
-      (let ((expected-value (list u3))
-	    (value (link-2-of u1)))
-	(unless (equal value expected-value)
-	  (incorrect-link-slot-value 
-	   "non-singular link initarg" 'link-2 u1 value expected-value)))
-      ;; unlink-all values:
-      (unlinkf-all (link-1-of u1))
-      (let ((expected-value nil)
-	    (value (link-1-of u1)))
-	(unless (eq value expected-value)
-	  (incorrect-link-slot-value 
-	   "signular unlinkf-all" 'link-1 u1 value expected-value)))
-      (unlinkf-all (link-2-of u1))
-      (let ((expected-value nil)
-	    (value (link-2-of u1))) 
-	(unless (eq value expected-value)
-	  (incorrect-link-slot-value 
-	   "non-singular unlinkf-all" 'link-2 u1 value expected-value)))      
-      ;; empty singular linkf:
-      (progn
-        (linkf (link-1-of u1) u2)
-        (let ((expected-value u2)
-              (value (link-1-of u1)))
-          (unless (eq value expected-value)
-            (incorrect-link-slot-value 
-             "singular linkf" 'link-1 u1 value expected-value)))
-        (let ((expected-value u1)
-              (value (link-1-of u2)))
-          (unless (eq value expected-value)
-            (incorrect-link-slot-value 
-             "singular linkf (i-value)" 'link-1 u2 value expected-value))))
-      ;; singular unlinkf:
-      (progn
-        (unlinkf (link-1-of u1) u2)
-        (let ((expected-value nil)
-              (value (link-1-of u1)))
-          (unless (eq value expected-value)
-            (incorrect-link-slot-value 
-             "singular unlinkf" 'link-1 u1 value expected-value)))
-        (let ((expected-value nil)
-              (value (link-1-of u2)))
-          (unless (eq value expected-value)
-            (incorrect-link-slot-value 
-             "singular unlinkf (i-value)" 'link-1 u2 value expected-value))))
-      ;; singular unlinkf-all:
-      (progn
-        (linkf (link-1-of u1) u2)
-        (unlinkf-all (link-1-of u1))
-        (let ((expected-value nil)
-              (value (link-1-of u1)))
-          (unless (eq value expected-value)
-            (incorrect-link-slot-value 
-             "singular unlinkf-all" 'link-1 u1 value expected-value)))
-        (let ((expected-value nil)
-              (value (link-1-of u2)))
-          (unless (eq value expected-value)
-            (incorrect-link-slot-value 
-             "singular unlinkf-all (i-value)" 
-	     'link-1 u2 value expected-value))))
-      ;; non-empty singular linkf:
-      (progn
-        (linkf (link-1-of u1) u2)
-        (with-error-handling 
-            (progn (linkf (link-1-of u1) u1)
-                   (error "Uncaught linkf of non-empty singular link slot ~
-                           ~s in ~s"
-                          'link-1 u1))))
-      ;; non-empty singular link-setf:
-      (progn
-        (unlinkf-all (link-1-of u1))
-        (linkf (link-1-of u1) u2)
-        (link-setf (link-1-of u1) u3)
-        (let ((expected-value u3)
-              (value (link-1-of u1)))
-          (unless (eq value expected-value)
-            (incorrect-link-slot-value 
-             "singular link-setf" 'link-1 u1 value expected-value)))
-        (let ((expected-value u1)
-              (value (link-1-of u3)))
-          (unless (eq value expected-value)
-            (incorrect-link-slot-value 
-             "singular link-setf (i-value)" 'link-1 u3 value expected-value)))
-        (let ((expected-value nil)
-              (value (link-1-of u2)))
-          (unless (eq value expected-value)
-            (incorrect-link-slot-value 
-             "singular link-setf (old i-value)" 'link-1 u2 value expected-value)))
-        (unlinkf-all (link-1-of u1)))
-      ;; atomic multi-linkf:
-      (progn
-        (linkf (link-2-of u1) u3)
-        (let ((expected-value (list u3))
-              (value (link-2-of u1)))
-          (unless (equal value expected-value)
-            (incorrect-link-slot-value
-             "atomic multi-linkf" 'link-2 u1 value expected-value)))
-	;; atomic multi-unlinkf:
-        (unlinkf (link-2-of u1) u3)
-        (let ((expected-value nil)
-              (value (link-2-of u1)))
-          (unless (eq value expected-value)
-            (incorrect-link-slot-value
-             "atomic multi-unlinkf" 'link-2 u1 value expected-value))))
-      ;; atomic multi-unlinkf-all:
-      (progn
-        (linkf (link-2-of u1) u3)
-        (unlinkf-all (link-2-of u1))
-        (let ((expected-value nil)
-              (value (link-2-of u1)))
-          (unless (eq value expected-value)
-            (incorrect-link-slot-value
-             "atomic multi-unlinkf-all" 'link-2 u1 value expected-value))))
-      ;; multi-linkf:
-      (progn
-        (linkf (link-2-of u1) (list u3 u4 u5 u3 u4))
-        (let ((expected-value (list u5 u4 u3))
-              (value (link-2-of u1)))
-          (unless (equal value expected-value)
-            (incorrect-link-slot-value
-             "multi-linkf" 'link-2 u1 value expected-value)))
-        ;; multi-unlinkf:
-        (unlinkf (link-2-of u1) (list u3 u5 u3))
-        (let ((expected-value (list u4))
-              (value (link-2-of u1)))
-          (unless (equal value expected-value)
-            (incorrect-link-slot-value
-             "multi-unlinkf" 'link-2 u1 value expected-value))))
-      ;; multi-unlinkf-all:
-      (progn
-        (linkf (link-2-of u1) (list u3 u4 u5 u3 u4))
-        (unlinkf-all (link-2-of u1))
-        (let ((expected-value nil)
-              (value (link-2-of u1)))
-          (unless (equal value expected-value)
-            (incorrect-link-slot-value
-             "multi-unlinkf-all" 'link-2 u1 value expected-value))))
-      ;; multi-link-setf:
-      (progn
-        (linkf (link-2-of u1) (list u3 u4))
-        (link-setf (link-2-of u1) (list u4 u5 u4 u5))
-        (let ((expected-value (list u4 u5))
-              (value (link-2-of u1)))
-          (unless (equal value expected-value)
-            (incorrect-link-slot-value
-             "multi-link-setf" 'link-2 u1 value expected-value)))
-        ;; check unlinkf-ish behavior:
-        (link-setf (link-2-of u1) nil)
-        (let ((expected-value nil)
-              (value (link-2-of u1)))
-          (unless (equal value expected-value)
-            (incorrect-link-slot-value
-             "multi-link-setf" 'link-2 u1 value expected-value))))
-      ;; multi-linkf (sorted):
-      (progn
-        (linkf (link-3-of u1) (list u3 u4 u5 u3 u4))
-        (let ((expected-value (list u3 u4 u5))
-              (value (link-3-of u1)))
-          (unless (equal value expected-value)
-            (incorrect-link-slot-value
-             "multi-linkf (sorted)" 'link-3 u1 value expected-value))))
-      ;; empty singular linkf:
-      (let ((x (make-instance 'uc-1 :link-1 u1)))
-        (let ((expected-value u1)
-              (value (link-1-of x)))
-          (unless (eq value expected-value)
-            (incorrect-link-slot-value 
-             "singular linkf (initarg)" 'link-1 x value expected-value)))
-        (let ((expected-value x)
-              (value (link-1-of u1)))
-          (unless (eq value expected-value)
-            (incorrect-link-slot-value 
-             "singular link-setf (initarg i-value)" 
-             'link-1 u1 value expected-value)))
-        (delete-instance x))
-      ;; cleanup
-      (mapc #'delete-instance (list u1 u2 u3 u4 u5))
-      ;; double-check
-      (let ((instances (find-instances 't 't 't)))
-        (when instances
-          (error "Cleanup of initial instances failed: ~s." instances)))))
+
+  ;;; Link checks (using direct pointers):
+  (let ((*test-link-ptrs* nil))
+    (link-tests))
+  ;;; Link checks (using link-ptr objects):
+  (let ((*test-link-ptrs* 't))
+    (link-tests))
 
   ;;; My-space-instance check:
   (unless (= infinity (my-space-slot-of

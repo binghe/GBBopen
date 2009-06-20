@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/spaces.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri May 15 05:02:41 2009 *-*
+;;;; *-* Last-Edit: Sat Jun 20 11:21:54 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -999,7 +999,6 @@
                (destructuring-bind (path-pattern add/remove-fn-name event-class 
                                     &rest args)
                    entry
-                 (declare (dynamic-extent args))
                  (when (path-match path-pattern (instance-name-of instance))
                    (apply (the function (symbol-function add/remove-fn-name))
                           event-class

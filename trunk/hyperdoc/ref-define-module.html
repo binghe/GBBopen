@@ -5,7 +5,7 @@
 <!-- XML file produced from file: reference.tex
      using Hyperlatex v 2.9-in-waiting-rk (c) Otfried Cheong -->
 <head>
-<title>GBBopen 1.3 Reference -- define-module</title>
+<title>GBBopen 1.4 Reference -- define-module</title>
 </p>
 <link rel="SHORTCUT ICON" href="favicon.ico"><link rel=stylesheet
         href="gbbopen.css" type="text/css" />
@@ -71,7 +71,7 @@ module-option</var>*</td><td valign="baseline" align="right">[<i>Macro</i>]
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
 <p><span class="fndoclabel">Terms</span><table class="tighttop">
 <tr valign="top"><td valign="baseline" nowrap><i>root-or-relative-directory</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#gl:keywords">keyword</a> naming a <a href="ref-glossary.html#gl:Root">root</a> or
-<a href="ref-glossary.html#id171">relative&nbsp;directory</a>, a <a href="ref-glossary.html#gl:keywords">keyword</a> naming another <a href="ref-glossary.html#gl:module">module</a>,
+<a href="ref-glossary.html#id173">relative&nbsp;directory</a>, a <a href="ref-glossary.html#gl:keywords">keyword</a> naming another <a href="ref-glossary.html#gl:module">module</a>,
 or <code>nil</code>, indicating that the module is rooted at the
 <nobr><code>*load-truename*</code></nobr> value in effect when the module definition is
 loaded
@@ -91,7 +91,7 @@ file containing the <nobr><b>define-module</b></nobr> form) is used.  If the
 another <a href="ref-glossary.html#gl:module">module</a>, the directory specification of the named module is
 used as the base (root or relative) directory for the module that is being
 defined.  If both a <a href="ref-glossary.html#gl:module">module</a> and a <a href="ref-glossary.html#gl:Root">root</a> or
-<a href="ref-glossary.html#id171">relative&nbsp;directory</a> definition have the same name, the directory
+<a href="ref-glossary.html#id173">relative&nbsp;directory</a> definition have the same name, the directory
 definition takes precedence over the module directory specification.
 </p>
 <p>The <code>:requires</code> module option specifies, in order, the <a href="ref-glossary.html#gl:modules">modules</a>
@@ -158,7 +158,7 @@ reload all subsequent files and <a href="ref-glossary.html#gl:modules">modules</
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-with-system-name.html"><b>with-system-name</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-with-module-redefinitions.html"><b>with-module-redefinitions</b></a>
 </p>
-<p><span class="fndoclabel">Examples</span> <br /><a name="id2">Define</a> a <a href="ref-glossary.html#id179">root&nbsp;directory</a> and <a href="ref-glossary.html#gl:module">module</a> for <nobr><code>:my-app</code></nobr>:
+<p><span class="fndoclabel">Examples</span> <br /><a name="id2">Define</a> a <a href="ref-glossary.html#id181">root&nbsp;directory</a> and <a href="ref-glossary.html#gl:module">module</a> for <nobr><code>:my-app</code></nobr>:
 <pre class="pretop">
   (<a href="ref-define-root-directory.html">define-root-directory</a> :my-app-root 
     (make-pathname :directory "~/my-app"))

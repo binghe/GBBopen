@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/preamble.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue May 12 15:25:53 2009 *-*
+;;;; *-* Last-Edit: Sat Jun 20 11:26:53 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -135,6 +135,8 @@
 (defgeneric initial-class-instance-number (unit-class-name-or-class))
 (defgeneric instance-name-comparison-test (unit-class))
 (defgeneric link-slot-p (slot))
+(defgeneric link-instance-of (instance-or-link-object))
+(defgeneric (setf link-instance-of) (nv instance-or-link-object))
 (defgeneric map-all-instances-on-storage (fn storage 
 					  disjunctive-dimensional-extents  
 					  verbose))
