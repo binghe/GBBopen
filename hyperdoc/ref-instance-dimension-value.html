@@ -5,7 +5,7 @@
 <!-- XML file produced from file: reference.tex
      using Hyperlatex v 2.9-in-waiting-rk (c) Otfried Cheong -->
 <head>
-<title>GBBopen 1.3 Reference -- instance-dimension-value</title>
+<title>GBBopen 1.4 Reference -- instance-dimension-value</title>
 </p>
 <link rel="SHORTCUT ICON" href="favicon.ico"><link rel=stylesheet
         href="gbbopen.css" type="text/css" />
@@ -21,14 +21,14 @@
     style="font-family: serif; font-style: normal">=&gt;</span> <var>dimension-value, dimension-value-type,
 comparison-type, composite-type, ordering-dimension-name</var></nobr></td><td valign="baseline" align="right">[<i>Function</i>]
 </td></tr></table></p>
-<p><span class="fndoclabel">Purpose</span> <br />Obtain a <a href="ref-glossary.html#id35">dimension&nbsp;value</a> of a <a href="ref-glossary.html#id221">unit&nbsp;instance</a>.
+<p><span class="fndoclabel">Purpose</span> <br />Obtain a <a href="ref-glossary.html#id35">dimension&nbsp;value</a> of a <a href="ref-glossary.html#id223">unit&nbsp;instance</a>.
 </p>
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen</code>
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-core</code>
 </p>
 <p><span class="fndoclabel">Arguments and values</span><table class="tighttop">
-<tr valign="top"><td valign="baseline" nowrap><i>unit-instance</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id221">unit&nbsp;instance</a>
+<tr valign="top"><td valign="baseline" nowrap><i>unit-instance</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id223">unit&nbsp;instance</a>
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>dimension-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A symbol specifying a <a href="ref-glossary.html#gl:dimension">dimension</a> of
 <var>unit-instance</var> 
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>dimension-value</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An object
@@ -45,7 +45,7 @@ comparison-type, composite-type, ordering-dimension-name</var></nobr></td><td va
 <var>ordering-dimension-name</var>)</nobr></font>,
 <font color="#667f66"><nobr>(<code>:descending-series</code>
 <var>ordering-dimension-name</var>)</nobr></font>, or <code>nil</code>
-</td></tr><tr valign="top"><td valign="baseline" nowrap><i>ordering-dimension-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id125">non-keyword&nbsp;symbol</a> or <code>nil</code>
+</td></tr><tr valign="top"><td valign="baseline" nowrap><i>ordering-dimension-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id127">non-keyword&nbsp;symbol</a> or <code>nil</code>
 </td></tr></table>
 </p>
 <p><span class="fndoclabel">Returns</span> <br />Five values: 
@@ -57,8 +57,8 @@ comparison-type, composite-type, ordering-dimension-name</var></nobr></td><td va
 <li>the composite type of the <a href="ref-glossary.html#id35">dimension&nbsp;value</a> if it is a
 <a href="ref-glossary.html#id23">composite&nbsp;dimension&nbsp;value</a>; <code>nil</code> if it is an
 <a href="ref-glossary.html#id87">incomposite&nbsp;dimension&nbsp;value</a>
-<li>the name of the <a href="ref-glossary.html#id131">ordering&nbsp;dimension</a>, if the 
-<a href="ref-glossary.html#id35">dimension&nbsp;value</a> is a <a href="ref-glossary.html#id183">series-composite&nbsp;dimension&nbsp;value</a>;
+<li>the name of the <a href="ref-glossary.html#id133">ordering&nbsp;dimension</a>, if the 
+<a href="ref-glossary.html#id35">dimension&nbsp;value</a> is a <a href="ref-glossary.html#id185">series-composite&nbsp;dimension&nbsp;value</a>;
 <code>nil</code> otherwise
 </ul>
 </p>
@@ -70,7 +70,7 @@ comparison-type, composite-type, ordering-dimension-name</var></nobr></td><td va
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-instance-dimension-values.html"><b>instance-dimension-values</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-make-instance.html"><b>make-instance</b></a>
 </p>
-<p><span class="fndoclabel">Examples</span> <br />Return the <code>x</code> <a href="ref-glossary.html#id35">dimension&nbsp;value</a> of the <a href="ref-glossary.html#id221">unit&nbsp;instance</a>,
+<p><span class="fndoclabel">Examples</span> <br />Return the <code>x</code> <a href="ref-glossary.html#id35">dimension&nbsp;value</a> of the <a href="ref-glossary.html#id223">unit&nbsp;instance</a>,
 <code>hyp</code>:
 <pre class="pretop">
   &gt; (instance-dimension-value hyp 'x)
@@ -93,7 +93,7 @@ and its <nobr><code>classification</code></nobr> <a href="ref-glossary.html#id35
 </pre>
 </p>
 <p>Return the <nobr><code>character</code></nobr> <a href="ref-glossary.html#id35">dimension&nbsp;value</a> of the
-<a href="ref-glossary.html#id221">unit&nbsp;instance</a>, <code>word</code>:
+<a href="ref-glossary.html#id223">unit&nbsp;instance</a>, <code>word</code>:
 <pre class="pretop">
   &gt; (instance-dimension-value w 'character)
   "what's"

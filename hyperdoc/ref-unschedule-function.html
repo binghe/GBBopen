@@ -5,7 +5,7 @@
 <!-- XML file produced from file: reference.tex
      using Hyperlatex v 2.9-in-waiting-rk (c) Otfried Cheong -->
 <head>
-<title>GBBopen 1.3 Reference -- unschedule-function</title>
+<title>GBBopen 1.4 Reference -- unschedule-function</title>
 </p>
 <link rel="SHORTCUT ICON" href="favicon.ico"><link rel=stylesheet
         href="gbbopen.css" type="text/css" />
@@ -22,7 +22,7 @@
     style="font-family: serif; font-style: normal">=&gt;</span> <var>boolean</var></td><td valign="baseline" align="right">[<i>Function</i>]
 </td></tr></table></p>
 <p><span class="fndoclabel">Purpose</span> <br />Cancel the upcoming invocation of a currently scheduled
-<a href="ref-glossary.html#id181">scheduled&nbsp;function</a>.
+<a href="ref-glossary.html#id183">scheduled&nbsp;function</a>.
 </p>
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:portable-threads</code>
 </p>
@@ -30,15 +30,15 @@
 </p>
 <p><span class="fndoclabel">Arguments and values</span><table class="tighttop">
 <tr valign="top"><td valign="baseline" nowrap><i>name-or-scheduled-function</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An object (typically a string or a
-symbol) naming a currently scheduled <a href="ref-glossary.html#id181">scheduled&nbsp;function</a> or a
+symbol) naming a currently scheduled <a href="ref-glossary.html#id183">scheduled&nbsp;function</a> or a
 <nobr><code>scheduled-function</code></nobr> object
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>verbose</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> 
 (default is <nobr><b><a href="ref-schedule-function-verbose-var.html">*schedule-function-verbose*</a></b></nobr>)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>boolean</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a>
 </td></tr></table>
 </p>
-<p><span class="fndoclabel">Returns</span> <br />The <a href="ref-glossary.html#id181">scheduled&nbsp;function</a> if it was unscheduled; <code>nil</code> if the 
-<a href="ref-glossary.html#id181">scheduled&nbsp;function</a> was not currently scheduled or was not found.
+<p><span class="fndoclabel">Returns</span> <br />The <a href="ref-glossary.html#id183">scheduled&nbsp;function</a> if it was unscheduled; <code>nil</code> if the 
+<a href="ref-glossary.html#id183">scheduled&nbsp;function</a> was not currently scheduled or was not found.
 </p>
 <p><span class="fndoclabel">Errors</span> <br />Threads (multiprocessing) is not supported on the
 Common Lisp implementation.
@@ -54,7 +54,7 @@ it is removed from the list of currently scheduled
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-schedule-function.html"><b>schedule-function</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-schedule-function-relative.html"><b>schedule-function-relative</b></a>
 </p>
-<p><span class="fndoclabel">Examples</span> <br />Unschedule the <nobr><code>quitting-time</code></nobr> <a href="ref-glossary.html#id181">scheduled&nbsp;function</a>:
+<p><span class="fndoclabel">Examples</span> <br />Unschedule the <nobr><code>quitting-time</code></nobr> <a href="ref-glossary.html#id183">scheduled&nbsp;function</a>:
 <pre class="pretop">
   &gt; (unschedule-function 'quitting-time)
   #&lt;scheduled-function quitting-time [unscheduled]&gt;
@@ -70,7 +70,7 @@ it is removed from the list of currently scheduled
   nil
   &gt;
 </pre>
-Unschedule a non-existent <a href="ref-glossary.html#id181">scheduled&nbsp;function</a>:
+Unschedule a non-existent <a href="ref-glossary.html#id183">scheduled&nbsp;function</a>:
 <pre>
   &gt; (unschedule-function 'non-existent)
   ;; Warning: Scheduled-function non-existent was not scheduled; no action taken.

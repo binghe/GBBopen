@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/declared-numerics.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Jun  4 13:28:05 2009 *-*
+;;;; *-* Last-Edit: Mon Jun 15 15:25:55 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -46,8 +46,7 @@
 ;;;  using PRINT-OBJECT and a #@ dispatch macro.  This is the approach that is
 ;;;  currently being used in GBBopen, but it has three issues:
 ;;;    1. Printing infinite values using #@ does not work in Lispworks, as we
-;;;       are unable to use PRINT-OBJECT.  ECL's printer hardwires
-;;;       infinite-value printing (no hook into PRINT-OBJECT). 
+;;;       are unable to use PRINT-OBJECT.
 ;;;    2. Digitool MCL has an existing #@ dispatch that we have to work around
 ;;;    3. Other packages might also want to use the #@ dispatch for other
 ;;;    purposes
@@ -746,7 +745,7 @@
                              (ccl:set-fpu-mode :division-by-zero nil)
                              (/ 0d0))
                          (ccl:set-fpu-mode :division-by-zero t))
-      #+(and ecl (not infinity-not-available)) ext:double-float-positive-infinity
+      #+(and ecl (not infinity-not-available)) si:double-float-positive-infinity
       #+lispworks #.(read-from-string "10E999")
       #+sbcl sb-ext:double-float-positive-infinity
       #+scl ext:double-float-positive-infinity
@@ -770,7 +769,7 @@
                              (ccl:set-fpu-mode :division-by-zero nil)
                              (/ -0d0))
                          (ccl:set-fpu-mode :division-by-zero t))
-      #+(and ecl (not infinity-not-available)) ext:double-float-negative-infinity
+      #+(and ecl (not infinity-not-available)) si:double-float-negative-infinity
       #+lispworks #.(read-from-string "-10E999")
       #+sbcl sb-ext:double-float-negative-infinity
       #+scl ext:double-float-negative-infinity
@@ -789,7 +788,7 @@
       #+clozure (coerce infinity$$ 'single-float)
       #+cmu ext:single-float-positive-infinity
       #+digitool-mcl (coerce infinity$$ 'single-float)
-      #+(and ecl (not infinity-not-available)) ext:single-float-positive-infinity
+      #+(and ecl (not infinity-not-available)) si:single-float-positive-infinity
       #+lispworks (coerce infinity$$ 'single-float)
       #+sbcl sb-ext:single-float-positive-infinity
       #+scl ext:single-float-positive-infinity
@@ -805,7 +804,7 @@
       #+clozure (coerce -infinity$$ 'single-float)
       #+cmu ext:single-float-negative-infinity
       #+digitool-mcl (coerce -infinity$$ 'single-float)
-      #+(and ecl (not infinity-not-available)) ext:single-float-negative-infinity
+      #+(and ecl (not infinity-not-available)) si:single-float-negative-infinity
       #+lispworks (coerce -infinity$$ 'single-float)
       #+sbcl sb-ext:single-float-negative-infinity
       #+scl ext:single-float-negative-infinity
@@ -824,7 +823,7 @@
       #+clozure (coerce infinity$$ 'short-float)
       #+cmu ext:short-float-positive-infinity
       #+digitool-mcl (coerce infinity$$ 'short-float)
-      #+(and ecl (not infinity-not-available)) ext:short-float-positive-infinity
+      #+(and ecl (not infinity-not-available)) si:short-float-positive-infinity
       #+lispworks (coerce infinity$$ 'short-float)
       #+sbcl sb-ext:short-float-positive-infinity
       #+scl ext:short-float-positive-infinity
@@ -840,7 +839,7 @@
       #+clozure (coerce -infinity$$ 'short-float)
       #+cmu ext:short-float-negative-infinity
       #+digitool-mcl (coerce -infinity$$ 'short-float)
-      #+(and ecl (not infinity-not-available)) ext:short-float-negative-infinity
+      #+(and ecl (not infinity-not-available)) si:short-float-negative-infinity
       #+lispworks (coerce -infinity$$ 'short-float)
       #+sbcl sb-ext:short-float-negative-infinity
       #+scl ext:short-float-negative-infinity
@@ -859,7 +858,7 @@
       #+clozure (coerce infinity$$ 'long-float)
       #+cmu ext:long-float-positive-infinity
       #+digitool-mcl (coerce infinity$$ 'long-float)
-      #+(and ecl (not infinity-not-available)) ext:long-float-positive-infinity
+      #+(and ecl (not infinity-not-available)) si:long-float-positive-infinity
       #+lispworks (coerce infinity$$ 'long-float)
       #+sbcl sb-ext:long-float-positive-infinity
       #+scl ext:long-float-positive-infinity
@@ -875,7 +874,7 @@
       #+clozure (coerce -infinity$$ 'long-float)
       #+cmu ext:long-float-negative-infinity
       #+digitool-mcl (coerce -infinity$$ 'long-float)
-      #+(and ecl (not infinity-not-available)) ext:long-float-negative-infinity
+      #+(and ecl (not infinity-not-available)) si:long-float-negative-infinity
       #+lispworks (coerce -infinity$$ 'long-float)
       #+sbcl sb-ext:long-float-negative-infinity
       #+scl ext:long-float-negative-infinity
@@ -906,9 +905,6 @@
 ;;;   function which is applicable when all of the arguments are direct
 ;;;   instances of standardized classes.  We've yet to figure out a work
 ;;;   around.
-;;;
-;;;   Simiarly, ECL's printer hardwires infinite-value printing.  Again, we've 
-;;;   yet to devise a work-around.
 
 (defun inf-reader (stream sub-char infix-parameter)
   (declare (ignore sub-char infix-parameter))
@@ -994,8 +990,8 @@
  (defun lisp::output-float-infinity (x stream)
    (print-object x stream)))
 
-#+scl
-(defun lisp::output-float-infinity (x stream)
+#+ecl
+(defun ext:output-float-infinity (x stream)
   (print-object x stream))
 
 ;; From SBCL's print.lisp:
@@ -1003,6 +999,10 @@
 (sb-ext::without-package-locks
  (defun sb-impl::output-float-infinity (x stream)
    (print-object x stream)))
+
+#+scl
+(defun lisp::output-float-infinity (x stream)
+  (print-object x stream))
 
 ;;; ===========================================================================
 ;;;                               End of File

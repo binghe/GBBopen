@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/read-object.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Sep 19 14:34:20 2008 *-*
+;;;; *-* Last-Edit: Sat Jun 20 11:19:43 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2008, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2008-2009, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -342,7 +342,6 @@
 (defmethod saved/sent-object-reader ((char (eql #\H)) stream)
   (destructuring-bind (ht-test ht-count ht-values &rest keys-and-values)
       (read stream 't nil 't)
-    (declare (dynamic-extent keys-and-values))
     (let ((ht (make-keys-only-hash-table-if-supported
                :test ht-test :size ht-count)))
       (if ht-values 
@@ -392,7 +391,6 @@
     (outside-reading-saved/sent-objects-block-error 'saved/sent-object-reader))
   (destructuring-bind (class-name &rest slot-values)
       (read stream 't nil 't)
-    (declare (dynamic-extent slot-values))    
     (setf class-name (possibly-translate-class-name class-name))
     (destructuring-bind (unit-class incoming-slots . missing-slot-names)
         (or (gethash class-name *read-class-descriptions-ht*)

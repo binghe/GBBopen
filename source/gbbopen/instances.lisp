@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri May 15 05:01:26 2009 *-*
+;;;; *-* Last-Edit: Sat Jun 20 11:32:24 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -71,6 +71,7 @@
             instance-deleted-p
             instance-name               ; re-export
 	    instance-name-of
+            link-instance-of
             make-duplicate-instance
             make-duplicate-instance-changing-class
             make-instances-of-class-vector
@@ -215,6 +216,18 @@
         ;; Handle a single (non-listed) space-instance path:
         (add-it space-instance-paths)
         (mapc #'add-it space-instance-paths))))
+
+;;; ===========================================================================
+;;;   Default LINK-INSTANCE-OF reader/writer
+
+(defmethod link-instance-of ((link standard-unit-instance))
+  ;; The default value for a basic link to a unit instance is just the unit
+  ;; instance:
+  link)
+
+(defmethod (setf link-instance-of) (nv (link standard-unit-instance))
+  ;; The default writer for a basic link to a unit instance is a noop:
+  nv)
 
 ;;; ===========================================================================
 ;;;  Duplicating unit instances

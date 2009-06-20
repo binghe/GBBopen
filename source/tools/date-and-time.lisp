@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/date-and-time.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed May 13 10:59:34 2009 *-*
+;;;; *-* Last-Edit: Sat Jun 20 04:04:27 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -58,11 +58,8 @@
             parse-date-and-time
             parse-duration
             parse-time
-            parse-time-interval         ; older, deprecated name
             pretty-duration
             pretty-run-time-duration
-            pretty-run-time-interval    ; older, deprecated name
-            pretty-time-interval        ; older, deprecated name
             time-zone-offset            ; not documented yet
             )))
 
@@ -710,14 +707,6 @@
           (with-output-to-string (stream)
             (write-it stream))))))
   
-
-;; Old, deprecated, function name:
-(defun pretty-time-interval (duration-in-seconds)
-  (pretty-duration duration-in-seconds))
-
-(defcm pretty-time-interval (duration-in-seconds)
-  `(pretty-duration ,duration-in-seconds))
-
 ;;; ---------------------------------------------------------------------------
 
 (defun brief-run-time-duration (internal-run-time 
@@ -741,15 +730,6 @@
                       #.(float internal-time-units-per-second))
                    maximum-fields
                    destination))
-
-;; Old, deprecated, function name:
-(defun pretty-run-time-interval (internal-run-time 
-                                 &optional (maximum-fields 5)
-                                           (destination nil))
-  (pretty-run-time-duration internal-run-time maximum-fields destination))
-
-(defcm pretty-run-time-interval (&rest args)
-  `(pretty-run-time-duration ,@args))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -868,14 +848,6 @@
                 (setf value (* value (cdr unit-acons)))
                 (if negative? (decf result value) (incf result value)))))))
       (values result start))))
-
-;; Old, deprecated, function name:
-(defun parse-time-interval (&rest args)
-  (declare (dynamic-extent args))
-  (apply 'parse-duration args))
-
-(defcm parse-time-interval (&rest args)
-  `(parse-duration ,@args))
 
 ;;; ===========================================================================
 ;;;  Add :ut REPL command (available if using GBBopen's initiate.lisp)

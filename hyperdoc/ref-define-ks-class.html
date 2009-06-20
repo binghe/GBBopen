@@ -5,7 +5,7 @@
 <!-- XML file produced from file: reference.tex
      using Hyperlatex v 2.9-in-waiting-rk (c) Otfried Cheong -->
 <head>
-<title>GBBopen 1.3 Reference -- define-ks-class</title>
+<title>GBBopen 1.4 Reference -- define-ks-class</title>
 </p>
 <link rel="SHORTCUT ICON" href="favicon.ico"><link rel=stylesheet
         href="gbbopen.css" type="text/css" />
@@ -30,9 +30,9 @@
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:agenda-shell</code>
 </p>
 <p><span class="fndoclabel">Arguments and values</span><table class="tighttop">
-<tr valign="top"><td valign="baseline" nowrap><i>ks-class-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A non-<code>nil</code>, <a href="ref-glossary.html#id125">non-keyword&nbsp;symbol</a> that names the
+<tr valign="top"><td valign="baseline" nowrap><i>ks-class-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A non-<code>nil</code>, <a href="ref-glossary.html#id127">non-keyword&nbsp;symbol</a> that names the
 <a href="ref-glossary.html#id105">ks&nbsp;class</a> 
-</td></tr><tr valign="top"><td valign="baseline" nowrap><i>superclass-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A non-<code>nil</code>, <a href="ref-glossary.html#id125">non-keyword&nbsp;symbol</a> that specifies a
+</td></tr><tr valign="top"><td valign="baseline" nowrap><i>superclass-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A non-<code>nil</code>, <a href="ref-glossary.html#id127">non-keyword&nbsp;symbol</a> that specifies a
 direct superclass of the <a href="ref-glossary.html#id105">ks&nbsp;class</a> <nobr><var>ks-class-name</var></nobr>
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>documentation</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A documentation string (not evaluated)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>slot-specifiers</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> See below
@@ -48,7 +48,7 @@ one <a href="ref-glossary.html#id105">ks&nbsp;class</a> name.  This error is sig
 <p><span class="fndoclabel">Detailed syntax</span><br /><img height=14 width=0 src="shim.gif">
 <span 
     style="font-family: sans-serif; font-style: normal"><font size="-1"><font color="#667f66">[Syntax shown in gray is
-not supported in GBBopen Version&nbsp;1.3, but will become
+not supported in GBBopen Version&nbsp;1.4, but will become
 available in a future release.]</font></font></span><table class="tighttop"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 <nobr><var>slot-specifier</var> ::=</nobr>
@@ -295,10 +295,10 @@ if unspecified, is <code>eql</code>.  The default
 allowed only for an <nobr><code>:interval</code></nobr> dimension-value specification.
 </p>
 <p><span class="fndoclabel">Terms</span><table class="tighttop">
-<tr valign="top"><td valign="baseline" nowrap><i>class-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A non-<code>nil</code>, <a href="ref-glossary.html#id125">non-keyword&nbsp;symbol</a> that names a
+<tr valign="top"><td valign="baseline" nowrap><i>class-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A non-<code>nil</code>, <a href="ref-glossary.html#id127">non-keyword&nbsp;symbol</a> that names a
 <a href="ref-glossary.html#gl:class">class</a> 
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>initarg-list</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An <a href="ref-glossary.html#id89">initialization&nbsp;argument&nbsp;list</a>
-</td></tr><tr valign="top"><td valign="baseline" nowrap><i>slot-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A non-<code>nil</code>, <a href="ref-glossary.html#id125">non-keyword&nbsp;symbol</a>
+</td></tr><tr valign="top"><td valign="baseline" nowrap><i>slot-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A non-<code>nil</code>, <a href="ref-glossary.html#id127">non-keyword&nbsp;symbol</a>
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>instance-name-comparison-test</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> One of the four standardized hash table
 test function names: <code>eq</code>, <code>eql</code>, <nobr><code>equal</code></nobr>, or
 <nobr><code>equalp</code></nobr> (default for classes of metaclass
@@ -319,15 +319,15 @@ default metaclass value is also
 <nobr><b><a href="ref-standard-unit-class.html">standard-unit-class</a></b></nobr>.
 </p>
 <p><p><b>Inheritance of class options</b></p>
-<a name="id8">The</a> set of <nobr><var>dimensional-values</var></nobr> for a <a href="ref-glossary.html#id219">unit&nbsp;class</a> is the
+<a name="id8">The</a> set of <nobr><var>dimensional-values</var></nobr> for a <a href="ref-glossary.html#id221">unit&nbsp;class</a> is the
 union of the sets specified in the <nobr><var>dimensional-values</var></nobr> options
 of the class and its superclasses.  When more than one dimensional index is
 supplied for a given dimension, the one supplied by the most specific class
 is used.
 </p>
 <p>The effective <nobr><var>initial-space-instances</var></nobr> value for a
-<a href="ref-glossary.html#id219">unit&nbsp;class</a> is the value specified in the definition of the most
-specific <a href="ref-glossary.html#id219">unit&nbsp;class</a>. (No additive inheritance of
+<a href="ref-glossary.html#id221">unit&nbsp;class</a> is the value specified in the definition of the most
+specific <a href="ref-glossary.html#id221">unit&nbsp;class</a>. (No additive inheritance of
 <nobr><var>initial-space-instances</var></nobr> is performed.) If no definitions
 specify an <nobr><var>initial-space-instances</var></nobr> value, <code>nil</code> is used.
 </p>

@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/glossary.tex *-*
-%% *-* Last-Edit: Fri Sep 19 14:50:29 2008; Edited-By: cork *-*
+%% *-* Last-Edit: Sat Jun 20 10:29:46 2009; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 \begin{glossary-list}
@@ -35,7 +35,7 @@ another \glref{thread}.
 \index{autorun form, module}%
 %
 Forms in a \glref{module} file that are to be evaluated conditionally when the
-file is loaded based on the value of \textbf{\entlink{*autorun-modules*}}.
+file is loaded based on the value of \nobr{\textbf{\entlink{*autorun-modules*}}}.
 Part of the \reflink{Module Manager Facility}{sec:module-manager}.
 
 %% ------------------------------------------------------------------------
@@ -269,7 +269,7 @@ An activity that is noticed, and signaled, by GBBopen.
 \index{class!event}%
 \bfindexit{standard-event-class}%
 %
-An object that is a subclass of \textbf{\entlinknoex{standard-event-class}}.
+An object that is a subclass of \nobr{\textbf{\entlinknoex{standard-event-class}}}.
 
 %% ------------------------------------------------------------------------
 
@@ -281,7 +281,7 @@ An object that is a subclass of \textbf{\entlinknoex{standard-event-class}}.
 %
 A \glref{function} that is associated with one or more event specifications
 and is called whenever such an event occurs.  (See
-\textbf{\entlink{signal-event}} for the required event-function arguments for
+\nobr{\textbf{\entlink{signal-event}}} for the required event-function arguments for
 each event metaclass.
 
 %% ------------------------------------------------------------------------
@@ -294,7 +294,7 @@ each event metaclass.
 \bfindexit{standard-event-instance}%
 %
 An object whose class is a subclass of
-\textbf{\entlinknoex{standard-event-instance}}.
+\nobr{\textbf{\entlinknoex{standard-event-instance}}}.
 
 %% ------------------------------------------------------------------------
 
@@ -609,7 +609,7 @@ The execution of a \glref{KS~activation}.
 \index{class!ks}%
 %
 An object that is a subclass of
-\textbf{\entlinknoex{standard-unit-class}} that is used to represent a
+\nobr{\textbf{\entlinknoex{standard-unit-class}}} that is used to represent a
 \glref{KS}.
 
 %% ------------------------------------------------------------------------
@@ -620,8 +620,9 @@ An object that is a subclass of
 \index{ksa class}%
 \index{class!ksa}%
 %
-An object that is a subclass of \textbf{\entlinknoex{standard-ksa-class}}
-that is used to represent a \glref{KSA}.
+An object that is a subclass of
+\nobr{\textbf{\entlinknoex{standard-ksa-class}}} that is used to represent a
+\glref{KSA}.
 
 %% ------------------------------------------------------------------------
 
@@ -629,8 +630,10 @@ that is used to represent a \glref{KSA}.
 \gllabel{links}%
 \index{link}%
 %
-A bi-directional pair of pointers between two \glref{unit~instances}.
-Link operators maintain bi-directional consistency of link pointers.
+A bi-directional relationship between two \glref{unit~instances} represented
+by a pair of pointers, one at each unit instance pointing to the other unit
+instance.  GBBopen's link operators maintain the bi-directional consistency of
+link pointers.
 
 %% ------------------------------------------------------------------------
 
@@ -643,14 +646,30 @@ associated with that \glref{slot}.
 
 %% ------------------------------------------------------------------------
 
+\glent[link-pointer~object] 
+\gllabel{link-pointer-object}%
+\gllabel{link-pointer~objects}%
+\index{link-pointer object}%
+\index{object!link-pointer}%
+\indexit{link slot}%
+\indexit{unit instance}%
+\bfindexit{link-instance-of}%
+%
+An object that can be used as a pointer in a \nobr{\glref{link~slot}}.  A
+link-pointer object must have a \nobr{\textbf{\entlink{link-instance-of}}}
+method defined for it whose result returns the \glref{unit~instance} to be
+used as the link pointer.
+
+%% ------------------------------------------------------------------------
+
 \glent[link-slot~place]
 \gllabel{link-slot-place}%
 \index{link slot!place}%
 \index{place!link slot}%
 %
-A form which is suitable for use as a \glref{generalized~reference} to
-a \glref{link~slot}.  Typical examples of link-slot-place forms
-include:
+A form which is suitable for use as a \glref{generalized~reference} to a
+\glref{link~slot}.  Typical examples of link-slot-place forms include:
+%
 \W\supp\notpretop
 \T\vspace{4pt}
 \begin{example}
@@ -660,8 +679,8 @@ include:
 where:
 \W\\~\\
 \begin{args}{unit-instance}
-\arg[slot-accessor] is a symbol specifying an accessor \glref{function} for a
-link slot 
+\arg[slot-accessor] is a symbol specifying an accessor \glref{function} for
+  a link slot
 \arg[unit-instance] is a \glref{unit~instance}
 \arg[slot-name] is a symbol naming a \glref{link~slot} in
 \var{unit-instance\/} 
@@ -768,7 +787,7 @@ The \glref{dimension} whose \glref{dimension~values} are used to order a
 \bfindexit{ordered-queue}%
 %
 A doubly linked, ordered queue.  A GBBopen queue is headed by an object that
-is a subclass of \textbf{\entlinknoex{ordered-queue}}.
+is a subclass of \nobr{\textbf{\entlinknoex{ordered-queue}}}.
 
 %% ------------------------------------------------------------------------
 
@@ -909,7 +928,7 @@ sorted ordering of \glref{queue~elements} are provided by
 \gllabel{queue-element}%
 \gllabel{queue~elements}%
 \index{queue element}%
-An object that is a subclass of \textbf{\entlinknoex{queue-element}}.
+An object that is a subclass of \nobr{\textbf{\entlinknoex{queue-element}}}.
 
 %% ------------------------------------------------------------------------
 
@@ -981,9 +1000,9 @@ arguments) provide convenient shortcuts for often-used operations.
 \bfindexit{find-instances}%
 \bfindexit{map-instances-on-space-instances}%
 %
-A list argument to \textbf{\entlinknoex{filter-instances}},
-\textbf{\entlinknoex{find-instances}}, and
-\textbf{\entlinknoex{map-instances-on-space-instances}} specifying the
+A list argument to \nobr{\textbf{\entlinknoex{filter-instances}}},
+\nobr{\textbf{\entlinknoex{find-instances}}}, and
+\nobr{\textbf{\entlinknoex{map-instances-on-space-instances}}} specifying the
 \glref{dimension~value} requirements for selecting \glref{unit~instances} to
 be returned.
 
@@ -1094,7 +1113,7 @@ Pertaining to a \glref{space~class} or \glref{space~instance}.
 \index{space!class}%
 \bfindexit{standard-space-class}%
 %
-An object that is a subclass of \textbf{\entlinknoex{standard-space-class}}.
+An object that is a subclass of \nobr{\textbf{\entlinknoex{standard-space-class}}}.
 
 %% ------------------------------------------------------------------------
 
@@ -1106,7 +1125,7 @@ An object that is a subclass of \textbf{\entlinknoex{standard-space-class}}.
 \bfindexit{standard-space-instance}%
 %
 An object whose class is a subclass of
-\textbf{\entlinknoex{standard-space-instance}}.  A space instance is also a
+\nobr{\textbf{\entlinknoex{standard-space-instance}}}.  A space instance is also a
 \glref{unit~instance}, but space instances are normally described by their
 more specific categorization.
 
@@ -1127,9 +1146,9 @@ indirect parent space-instance name, that uniquely identifies a
 \bfindexit{standard-gbbopen-instance}%
 %
 An object whose class is a subclass of 
-\textbf{\entlinknoex{standard-gbbopen-instance}}. It is a superclass of
-\textbf{\entlink{standard-event-instance}} and
-\textbf{\entlink{standard-unit-instance}}.
+\nobr{\textbf{\entlinknoex{standard-gbbopen-instance}}}. It is a superclass of
+\nobr{\textbf{\entlink{standard-event-instance}}} and
+\nobr{\textbf{\entlink{standard-unit-instance}}}.
 
 %% ------------------------------------------------------------------------
 
@@ -1213,7 +1232,7 @@ Pertaining to a \glref{unit~class} or \glref{unit~instance}.
 \index{class!unit}%
 \bfindexit{standard-unit-class}%
 %
-An object that is a subclass of \textbf{\entlinknoex{standard-unit-class}}.
+An object that is a subclass of \nobr{\textbf{\entlinknoex{standard-unit-class}}}.
 
 %% ------------------------------------------------------------------------
 
@@ -1228,7 +1247,7 @@ An object that is a subclass of \textbf{\entlinknoex{standard-unit-class}}.
 \bfindexit{standard-unit-instance}%
 %
 An object whose class is a subclass of
-\textbf{\entlinknoex{standard-unit-instance}}. A \glref{space~instance} is
+\nobr{\textbf{\entlinknoex{standard-unit-instance}}}. A \glref{space~instance} is
 also a unit instance, but \glref{space~instances} are normally described by
 their more specific categorization.
 

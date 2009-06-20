@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/pseudo-probabilities.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Jan 31 06:35:18 2009 *-*
+;;;; *-* Last-Edit: Sat Jun 20 11:29:30 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -175,7 +175,6 @@
   `(truncate& (*& ,pprob1 ,pprob2) ,max-pprob))
 
 (defun *% (&rest args)
-  (declare (dynamic-extent args))
   (let ((result max-pprob))
     (while args
       (setf result (*%-2op result (pop args))))
@@ -189,7 +188,6 @@
             `(*%-2op ,first-arg 
                      ,(labels 
                           ((another (args)
-                             (declare (dynamic-extent args))
                              (if (rest args)
                                  `(*%-2op ,(first args)
                                           ,(another (rest args)))
@@ -209,7 +207,6 @@
   `(truncate& (*& ,pprob1 ,max-pprob) ,pprob2))
 
 (defun /% (pprob1 &rest args)
-  (declare (dynamic-extent args))
   (if args
       ;; not unary:
       (let ((result pprob1))
@@ -227,7 +224,6 @@
       `(/%-2op ,first-arg 
                ,(labels 
                     ((another (args)
-                       (declare (dynamic-extent args))
                        (if (rest args)
                            `(/%-2op ,(first args)
                                     ,(another (rest args)))

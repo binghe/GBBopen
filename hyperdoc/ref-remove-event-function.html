@@ -5,7 +5,7 @@
 <!-- XML file produced from file: reference.tex
      using Hyperlatex v 2.9-in-waiting-rk (c) Otfried Cheong -->
 <head>
-<title>GBBopen 1.3 Reference -- remove-event-function</title>
+<title>GBBopen 1.4 Reference -- remove-event-function</title>
 </p>
 <link rel="SHORTCUT ICON" href="favicon.ico"><link rel=stylesheet
         href="gbbopen.css" type="text/css" />
@@ -36,7 +36,7 @@
     style="font-family: serif; font-style: normal">or</span> slot-name <td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A slot-name or list of slot-names
 (default is <code>t</code>)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>paths <span 
-    style="font-family: serif; font-style: normal">or</span> path <td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id199">space-instance&nbsp;path</a> regular expression
+    style="font-family: serif; font-style: normal">or</span> path <td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id201">space-instance&nbsp;path</a> regular expression
 (default is <code>(*)</code>)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>permanent</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> (default is <code>nil</code>)
 </td></tr></table>
@@ -99,13 +99,13 @@
 </p>
 <p><span class="fndoclabel">Examples</span> <br /><a name="id3">Remove</a> the event <a href="ref-glossary.html#gl:function">function</a> <nobr><b><a href="ref-evfn-printv.html">evfn-printv</a></b></nobr> from
 the set of functions to be invoked when <nobr><code>create-instance-event</code></nobr> is
-signaled on a <code>hyp</code> <a href="ref-glossary.html#id221">unit&nbsp;instance</a>:
+signaled on a <code>hyp</code> <a href="ref-glossary.html#id223">unit&nbsp;instance</a>:
 <pre class="pretop">
   (remove-event-function 'evfn-printv 'create-instance-event 'hyp)
 </pre>
 Remove the event <a href="ref-glossary.html#gl:function">function</a> <nobr><b><a href="ref-evfn-printv.html">evfn-printv</a></b></nobr> from
 the set of functions to be invoked when <nobr><code>create-instance-event</code></nobr> is
-signaled on a <code>hyp</code> <a href="ref-glossary.html#id221">unit&nbsp;instance</a> or its subclasses:
+signaled on a <code>hyp</code> <a href="ref-glossary.html#id223">unit&nbsp;instance</a> or its subclasses:
 <pre>
   (remove-event-function 'evfn-printv 'create-instance-event '(hyp :plus-subclasses))
 </pre>
