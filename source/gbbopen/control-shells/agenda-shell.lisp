@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:AGENDA-SHELL; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/control-shells/agenda-shell.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Jun 20 11:03:08 2009 *-*
+;;;; *-* Last-Edit: Sun Jun 21 05:04:54 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -420,14 +420,8 @@
 
 (defmethod print-instance-slots ((instance ksa) stream)
   (call-next-method)
-  (format stream " ~s ~a"
-          (if (slot-boundp instance 'ks)
-              (let ((ks (ks-of instance)))
-                (when ks (instance-name-of ks)))
-              "##")
-          (if (slot-boundp instance 'rating)
-              (rating-of instance)
-              "##")))
+  (print-instance-slot-value instance 'ks stream)
+  (print-instance-slot-value instance 'rating stream))
 
 ;;; ---------------------------------------------------------------------------
 

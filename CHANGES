@@ -18,6 +18,7 @@ Important changes in GBBopen 1.4:
      - New DOSUBLISTS macro
      - New :all-numeric, :include-day, and :full-names arguments to 
        FULL-DATE-AND-TIME
+     - New PRINT-INSTANCE-SLOT-VALUE generic function
 
   * Changes to Portable Threads
      - New SPAWN-FORM macro
@@ -26,8 +27,8 @@ Important changes in GBBopen 1.4:
      - CLISP MT support (thanks to Vladimir Tzankov)
 
   * Changes to GBBopen
-     - Support for link-pointer objects and new LINK-INSTANCE-OF 
-       generic function
+     - Support for link-pointer objects, new LINK-INSTANCE-OF 
+       generic function, and new STANDARD-LINK-POINTER class
      - New DESCRIBE-INSTANCE-SLOT-VALUE generic function
      - Abbreviated + specifier for :plus-subclasses and :plus-subevents
      - Abbreviated = specifier for :no-subclasses and :no-subevents

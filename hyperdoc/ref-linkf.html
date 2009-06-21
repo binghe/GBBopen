@@ -51,6 +51,7 @@ instance that is already linked to that same unit instance is ignored.
 <p><span class="fndoclabel">See also</span>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-link-instance-of.html"><b>link-instance-of</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-link-setf.html"><b>link-setf</b></a>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-standard-link-pointer.html"><b>standard-link-pointer</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-unlinkf.html"><b>unlinkf</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-unlinkf-all.html"><b>unlinkf-all</b></a>
 </p>
@@ -69,7 +70,7 @@ as a <a href="ref-glossary.html#id113">link-pointer&nbsp;object</a>&mdash;has no
   &gt; (supporting-hyps-of unit-instance)
   (#&lt;hyp 231 (1488 7405) 0.63 [0..8]&gt;)
   &gt; (linkf (supporting-hyps-of unit-instance) 
-           (<a href="ref-make-instance.html">make-instance</a> '<a href="ref-link-instance-of.html#link-ptr-class">link-ptr-with-value</a>
+           (<a href="ref-make-instance.html">make-instance</a> '<a href="ref-standard-link-pointer.html#link-ptr-class">link-ptr-with-value</a>
                :link-instance support-hyp
                :value 0.9))
   #&lt;link-ptr-with-value #&lt;hyp 231 (1488 7405) 0.63 [0..8]&gt;&gt;
@@ -82,7 +83,7 @@ This time, add a <a href="ref-glossary.html#id113">link-pointer&nbsp;object</a> 
   &gt; (<a href="ref-unlinkf-all.html">unlinkf-all</a> (supporting-hyps-of unit-instance))
   nil
   &gt; (linkf (supporting-hyps-of unit-instance) 
-           (<a href="ref-make-instance.html">make-instance</a> '<a href="ref-link-instance-of.html#link-ptr-class">link-ptr-with-value</a>
+           (<a href="ref-make-instance.html">make-instance</a> '<a href="ref-standard-link-pointer.html#link-ptr-class">link-ptr-with-value</a>
                :link-instance support-hyp
                :value 0.9))
   #&lt;link-ptr-with-value #&lt;hyp 231 (1488 7405) 0.63 [0..8]&gt;&gt;

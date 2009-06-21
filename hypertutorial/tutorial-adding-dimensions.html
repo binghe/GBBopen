@@ -368,16 +368,21 @@ unit instances.
               (x-of location)
               (y-of location))))</font></font>
 </pre>
-The method first performs a <nobr><code>(call-next-method)</code></nobr> to produce the
+<a name="id21">The</a> method first performs a <nobr><code>(call-next-method)</code></nobr> to produce the
 initial printed representation of the <nobr><code>location</code></nobr> unit instance.
 It then checks that both <code>x</code> and <code>y</code> slots are bound and, if so,
 writes the <nobr><code>location</code></nobr>'s coordinates to the output stream.
 Checking that the slots are bound is necessary to avoid generating an error in
 the <nobr><b>print-instance-slots</b></nobr> if the slots have not been given a
 value.  You should always perform this safety check in any
-<nobr><b>print-instance-slots</b></nobr> methods.
+<nobr><b>print-instance-slots</b></nobr> methods.  (GBBopen provides the generic
+function <nobr><b>print-instance-slot-value</b></nobr> for use in safely
+displaying a slot value in <nobr><b>print-instance-slots</b></nobr> methods.  We
+did not use <nobr><b>print-instance-slot-value</b></nobr> here, as our
+<nobr><b>print-instance-slots</b></nobr> method presents two slots, <code>x</code> and
+<code>y</code>, formatted together.)
 </p>
-<p><a name="id21">Now,</a> compile and load the <nobr><b>print-instance-slots</b></nobr> method and try
+<p><a name="id22">Now,</a> compile and load the <nobr><b>print-instance-slots</b></nobr> method and try
 it out:
 <pre class="pretop">
 <font color="#667f66">  gbbopen-user&gt; <font color="#000000">(find-instances 'location '(known-world)
@@ -393,7 +398,7 @@ higher-dimensional pattern may be more convenient than a conjunction.  Also
 note that we can see immediately that we retrieved the desired
 <nobr><code>location</code></nobr>.
 </p>
-<h2><a name="id22">Step 12: More dimensional retrievals</a></h2><p>
+<h2><a name="id23">Step 12: More dimensional retrievals</a></h2><p>
 Let's try some additional dimensional retrievals.  First, find all
 <nobr><code>location</code></nobr> unit instances with an <code>x</code> position of 20:
 <pre class="pretop">
@@ -429,7 +434,7 @@ within the above region:
   gbbopen-user&gt;</font>
 </pre>
 </p>
-<h2><a name="id23">Step 13: Change a dimensional value</a></h2><p>
+<h2><a name="id24">Step 13: Change a dimensional value</a></h2><p>
 Recall that we assigned <nobr><code>location</code></nobr> <code>1</code> to the global variable
 <code>ui</code>:
 <pre class="pretop">
@@ -445,7 +450,7 @@ and we can retrieve it by its <code>x</code> and <code>y</code> coordinates:
   gbbopen-user&gt;</font>
 </pre>
 </p>
-<p><a name="id24">Let's</a> change its <code>x</code> position to <code>80</code> and try retrieving it again:
+<p><a name="id25">Let's</a> change its <code>x</code> position to <code>80</code> and try retrieving it again:
 <pre class="pretop">
 <font color="#667f66">  gbbopen-user&gt; <font color="#000000">(setf (x-of ui) 80)</font>
   80

@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/basic-tests.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Jun 19 14:55:58 2009 *-*
+;;;; *-* Last-Edit: Sun Jun 21 04:02:23 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -132,16 +132,12 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(define-class link-ptr-with-value ()
-  (link-instance
-   (value :initform nil)))
+(define-class link-ptr-with-value (standard-link-pointer)
+  ((value :initform nil)))
 
-(defmethod print-object ((obj link-ptr-with-value) stream)
-  (cond (*print-readably* (call-next-method))
-        (t (print-unreadable-object (obj stream :type t)
-             (format stream "~s" (link-instance-of obj)))
-           ;; Print-object must return object:
-           obj)))
+(defmethod print-instance-slots ((obj link-ptr-with-value) stream)
+  (call-next-method)
+  (print-instance-slot-value obj 'value stream))
 
 ;;; ===========================================================================
 ;;;  Basic timing functions

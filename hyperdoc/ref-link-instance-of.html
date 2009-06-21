@@ -59,23 +59,20 @@ returns its argument unit-instance object (an <code>identity</code> function).
 <p><span class="fndoclabel">See also</span>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-linkf.html"><b>linkf</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-link-setf.html"><b>link-setf</b></a>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-standard-link-pointer.html"><b>standard-link-pointer</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-unlinkf.html"><b>unlinkf</b></a>
 </p>
 <p><span class="fndoclabel">Example</span> <br /><a name="link-ptr-class">Define</a> a <a href="ref-glossary.html#id113">link-pointer&nbsp;object</a> class that can be used to associate a value
 with a link pointer:
 <pre class="pretop">
-  (<a href="ref-define-class.html">define-class</a> link-ptr-with-value ()
-    (link-instance
-     (value :initform nil)))
+  (<a href="ref-define-class.html">define-class</a> link-ptr-with-value (<a href="ref-standard-link-pointer.html">standard-link-pointer</a>)
+     ((value :initform nil)))
 </pre>
-and a helpful <code>print-object</code> method:
+<a name="id2">and</a> an informative <nobr><b><a href="ref-print-instance-slots.html">print-instance-slots</a></b></nobr> method:
 <pre>
-  (defmethod print-object ((obj link-ptr-with-value) stream)
-    (cond (*print-readably* (call-next-method))
-          (t (print-unreadable-object (obj stream :type t)
-               (format stream "~s" (link-instance-of obj)))
-             ;; Print-object must return object:
-             obj)))
+  (defmethod <a href="ref-print-instance-slots.html">print-instance-slots</a> ((obj link-ptr-with-value) stream)
+    (call-next-method)
+    (<a href="ref-print-instance-slot-value.html">print-instance-slot-value</a> obj 'value stream))
 </pre>
 </p>
 <hr /><address><a target="_top" class="address"
