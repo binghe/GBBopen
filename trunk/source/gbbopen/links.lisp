@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/links.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Jun 20 11:25:58 2009 *-*
+;;;; *-* Last-Edit: Sun Jun 21 04:13:40 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -47,17 +47,28 @@
   (export '(check-link-definitions
 	    link-setf
 	    linkf
+            standard-link-pointer
 	    unlinkf
 	    unlinkf-all)))
 
 ;;; ===========================================================================
-;;;
 ;;;  Important Note:
 ;;;
 ;;;  In GBBopen, link-slot pointer lists are destructively modified by
 ;;;  linkf/unlinkf operations for top performance.
-;;;
-;;; ---------------------------------------------------------------------------
+;;; ===========================================================================
+
+;;; ===========================================================================
+;;;  Standard-link-pointer (base class for link-pointer object customization)
+
+(define-class standard-link-pointer (standard-gbbopen-instance)
+  (link-instance))
+
+(defmethod print-instance-slots ((obj standard-link-pointer) stream)
+  (call-next-method)
+  (print-instance-slot-value obj 'link-instance stream))
+
+;;; ===========================================================================
 
 (defun map-direct-link-slots (fn class)
   (declare (type function fn))

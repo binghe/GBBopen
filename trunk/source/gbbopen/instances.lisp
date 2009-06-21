@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Jun 20 11:32:24 2009 *-*
+;;;; *-* Last-Edit: Sun Jun 21 05:06:46 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -116,11 +116,8 @@
 
 (defmethod print-instance-slots ((instance deleted-unit-instance) stream)
   (call-next-method)
-  (format stream " ~s ~s" 
-          (class-name (original-class-of instance))
-          (if (slot-boundp instance 'instance-name)
-              (instance-name-of instance)
-              "Uninitialized")))
+  (format stream " ~s" (class-name (original-class-of instance)))
+  (print-instance-slot-value instance 'instance-name stream))
 
 (defmethod make-duplicate-instance ((instance deleted-unit-instance)
                                     unduplicated-slot-names
@@ -508,10 +505,7 @@
 
 (defmethod print-instance-slots ((instance standard-unit-instance) stream)
   (call-next-method)
-  (format stream " ~s"
-          (if (slot-boundp instance 'instance-name)
-              (instance-name-of instance)
-              "Uninitialized")))
+  (print-instance-slot-value instance 'instance-name stream))
 
 ;;; ---------------------------------------------------------------------------
 

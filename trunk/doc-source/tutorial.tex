@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/tutorial.tex *-*
-%% *-* Last-Edit: Sat Jun 13 11:26:07 2009; Edited-By: cork *-*
+%% *-* Last-Edit: Sun Jun 21 05:16:12 2009; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2005-2009, Dan Corkill <corkill@GBBopen.org>
@@ -3264,6 +3264,7 @@ Add the following \nobr{\textbf{print-instance-slots}} method
               (y-of location))))}}
 \end{example}
 %
+\bfindexit{print-instance-slot-value}%
 The method first performs a \nobr{\code{(call-next-method)}} to produce the
 initial printed representation of the \nobr{\code{location}} unit instance.
 It then checks that both \code{x} and \code{y} slots are bound and, if so,
@@ -3271,7 +3272,12 @@ writes the \nobr{\code{location}}'s coordinates to the output stream.
 Checking that the slots are bound is necessary to avoid generating an error in
 the \nobr{\textbf{print-instance-slots}} if the slots have not been given a
 value.  You should always perform this safety check in any
-\nobr{\textbf{print-instance-slots}} methods.
+\nobr{\textbf{print-instance-slots}} methods.  (GBBopen provides the generic
+function \nobr{\textbf{print-instance-slot-value}} for use in safely
+displaying a slot value in \nobr{\textbf{print-instance-slots}} methods.  We
+did not use \nobr{\textbf{print-instance-slot-value}} here, as our
+\nobr{\textbf{print-instance-slots}} method presents two slots, \code{x} and
+\code{y}, formatted together.)
 
 \bfindexit{find-instances}%
 %

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<!-- XML file produced from file: reference.tex
+     using Hyperlatex v 2.9-in-waiting-rk (c) Otfried Cheong -->
+<head>
+<title>GBBopen 1.4 Reference -- print-instance-slot-value</title>
+</p>
+<link rel="SHORTCUT ICON" href="favicon.ico"><link rel=stylesheet
+        href="gbbopen.css" type="text/css" />
+</head>
+<body>
+<table width="100%" cellpadding="0" cellspacing="2"><tr>
+<td bgcolor="#99ccff"><a href="ref-print-instance-slots.html"><img border="0" alt="print-instance-slots" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="ref-tools-entities.html"><img border="0" alt="GBBopen Tools" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-printv.html"><img border="0" alt="printv" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">print-instance-slot-value</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table>
+
+<p><table class="tight" width="100%">
+<tr valign="top"><td valign="baseline" align="left"%>
+<nobr><b><font color="#000000">print-instance-slot-value</font></b></nobr></td><td valign="baseline"> &nbsp; </td><td valign="baseline" align="left" width="99%"><var>instance slot-name stream</var></td><td valign="baseline" align="right">[<i>Generic&nbsp;Function</i>]
+</td></tr></table></p>
+<p><span class="fndoclabel">Purpose</span> <br />Print the value of the <var>slot-name</var> slot in <var>instance</var>
+or <code>&lt;unbound&gt;</code>, if the slot is unbound.
+</p>
+<p><span class="fndoclabel">Method signatures</span><table class="tighttop" width="100%">
+<tr valign="top"><td valign="baseline" align="left"><nobr>print-instance-slot-value</nobr></td><td valign="baseline">&nbsp; </td><td valign="baseline" align="left" width="99%">
+<code>(</code><var>instance</var>
+<code>standard-gbbopen-instance)</code> slot-name stream
+</td></tr></table>
+</p>
+<p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-tools</code>
+</p>
+<p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-tools</code>
+</p>
+<p><span class="fndoclabel">Arguments and values</span><table class="tighttop">
+<tr valign="top"><td valign="baseline" nowrap><i>instance</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#gl:standard-gbbopen-instance">standard-gbbopen-instance</a> object
+</td></tr><tr valign="top"><td valign="baseline" nowrap><i>slot-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A non-<code>nil</code>, <a href="ref-glossary.html#id127">non-keyword&nbsp;symbol</a>
+</td></tr><tr valign="top"><td valign="baseline" nowrap><i>stream</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A stream
+</td></tr></table>
+</p>
+<p><span class="fndoclabel">Description</span> <br />After printing a space character, print the slot value in <var>instance</var>
+specified by <var>slot-name</var> or print <code>&lt;unbound&gt;</code>, if the slot is
+unbound. All output is written to <var>stream</var>.
+</p>
+<p><span class="fndoclabel">See also</span>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-print-instance-slots.html"><b>print-instance-slots</b></a>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-standard-gbbopen-instance.html"><b>standard-gbbopen-instance</b></a>
+</p>
+<p><span class="fndoclabel">Example</span> <br /><a name="id1">Extend</a> the <nobr><code>print-object</code></nobr> printing for <code>hyp</code>
+<a href="ref-glossary.html#gl:instances">instances</a> to include <code>location</code> and <code>belief</code> slot values:
+<pre class="pretop">
+  (defmethod <a href="ref-print-instance-slots.html">print-instance-slots</a> ((obj hyp) stream)
+    (call-next-method)
+    (print-instance-slot-value obj 'location stream)
+    (print-instance-slot-value obj 'belief stream))
+</pre>
+</p>
+<hr /><address><a target="_top" class="address"
+    href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
+<table width="100%" cellpadding="0" cellspacing="2"><tr>
+<td bgcolor="#99ccff"><a href="ref-print-instance-slots.html"><img border="0" alt="print-instance-slots" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="ref-tools-entities.html"><img border="0" alt="GBBopen Tools" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-printv.html"><img border="0" alt="printv" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">print-instance-slot-value</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table></body></html>
