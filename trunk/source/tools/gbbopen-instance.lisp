@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/gbbopen-instance.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Jun 21 04:12:59 2009 *-*
+;;;; *-* Last-Edit: Mon Jun 22 07:33:20 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -31,14 +31,23 @@
             print-instance-slot-value
             standard-gbbopen-instance)))
 
-(defgeneric print-instance-slots (instance stream))
-(defgeneric print-instance-slot-value (instance slot-name stream))
+(defgeneric print-instance-slots (instance stream)
+  (:documentation 
+   "Extend PRINT-OBJECT printing of STANDARD-GBBOPEN-INSTANCE objects to include
+    additional slot values"))
+
+(defgeneric print-instance-slot-value (instance slot-name stream &key)
+  (:documentation
+   "Print the value of the specified slot or <unbound>, if it is unbound."))
 
 ;;; ---------------------------------------------------------------------------
 
 (define-class standard-gbbopen-instance ()
   ()
-  (:export-class-name t))
+  (:export-class-name t)
+  (:documentation
+   "The base class for GBBopen extensions; superclass of DELETED-UNIT-INSTANCE, 
+    STANDARD-EVENT-INSTANCE, STANDARD-LINK-POINTER, and STANDARD-UNIT-INSTANCE."))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -50,10 +59,10 @@
            instance)))
 
 ;;; ---------------------------------------------------------------------------
-;;;  Print instance slots (extension of print-object method for
-;;;  standard-gbbopen-instance objects)
+;;;  Print instance slots (extension of PRINT-OBJECT for
+;;;  STANDARD-GBBOPEN-INSTANCE objects)
 
-(defmethod print-instance-slots ((instance standard-gbbopen-instance) stream)
+(defmethod print-instance-slots ((instance standard-gbbopen-instance) stream)  
   (format stream "~s" (type-of instance))
   nil)
 
@@ -62,10 +71,16 @@
 
 (defmethod print-instance-slot-value ((instance standard-gbbopen-instance) 
                                       slot-name
-                                      stream)
+                                      stream
+                                      &key function no-space)
+  (unless no-space (write-char #\Space stream))
   (if (slot-boundp instance slot-name)
-      (format stream " ~s" (slot-value instance slot-name))
-      (princ " <unbound>" stream)))
+      (let ((slot-value (slot-value instance slot-name)))
+        (prin1 (if function 
+                   (funcall function slot-value)
+                   slot-value)
+               stream))
+      (princ "<unbound>" stream)))
 
 ;;; ===========================================================================
 ;;; End of File
