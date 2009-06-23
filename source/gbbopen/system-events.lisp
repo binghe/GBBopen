@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/system-events.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Aug 31 16:37:23 2008 *-*
+;;;; *-* Last-Edit: Mon Jun 22 13:12:46 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2004-2007, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2004-2009, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -65,10 +65,7 @@
 
 (defmethod print-instance-slots ((instance single-instance-event) stream)
   (call-next-method)
-  (format stream " ~s"
-          (if (slot-boundp instance 'instance)
-              (type-of (instance-of instance))
-              :unknown)))
+  (print-instance-slot-value instance 'instance stream :function 'type-of))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -82,10 +79,9 @@
 
 (defmethod print-instance-slots ((instance multiple-instance-event) stream)
   (call-next-method)
-  (format stream " ~s"
-          (if (slot-boundp instance 'instances)
-              (mapcar #'type-of (instances-of instance))
-              :unknown)))
+  (print-instance-slot-value 
+   instance 'instances stream :function #'(lambda (instances)
+                                            (mapcar #'type-of instances))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -150,10 +146,8 @@
 
 (defmethod print-instance-slots ((instance space-instance-event) stream)
   (call-next-method)
-  (format stream " ~s"
-          (if (slot-boundp instance 'space-instance)
-              (instance-name-of (space-instance-of instance))
-              :unknown)))
+  (print-instance-slot-value 
+   instance 'space-instance stream :function 'instance-name-of))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -193,10 +187,8 @@
 
 (defmethod print-instance-slots ((instance link/nonlink-slot-event) stream)
   (call-next-method)
-  (format stream " :slot-name ~s"
-          (if (slot-boundp instance 'slot)
-              (slot-definition-name (slot-of instance))
-              :unknown)))
+  (print-instance-slot-value 
+   instance 'slot stream :function 'slot-definition-name))
 
 ;;; ---------------------------------------------------------------------------
 

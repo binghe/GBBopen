@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/unit-metaclasses.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Aug 22 13:05:36 2008 *-*
+;;;; *-* Last-Edit: Sun Jun 21 17:16:38 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2002-2008, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2009, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; Porting Notice:
@@ -308,10 +308,7 @@
 
 (defmethod print-instance-slots ((node-state gbbopen-node-state) stream)
   (call-next-method)
-  (format stream " ~s"
-          (if (slot-boundp node-state 'node-name)
-              (node-name-of node-state)
-              "Uninitialized")))
+  (print-instance-slot-value node-state 'node-name stream))
 
 ;;; ---------------------------------------------------------------------------
   
