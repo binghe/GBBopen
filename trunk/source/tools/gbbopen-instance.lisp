@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/gbbopen-instance.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Jun 22 07:33:20 2009 *-*
+;;;; *-* Last-Edit: Wed Jun 24 16:31:48 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -80,7 +80,7 @@
                    (funcall function slot-value)
                    slot-value)
                stream))
-      (princ "<unbound>" stream)))
+      (princ "[Unbound]" stream)))
 
 ;;; ===========================================================================
 ;;; End of File

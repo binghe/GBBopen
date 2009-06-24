@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Mon Jun 22 07:38:07 2009; Edited-By: cork *-*
+%% *-* Last-Edit: Wed Jun 24 16:32:34 2009; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2009, Dan Corkill <corkill@GBBopen.org>
@@ -5858,7 +5858,7 @@ containing the hexadecimal representation of the address if
 \fnsyntax
 
 \fnpurpose Print the value of the \var{slot-name\/} slot in \var{instance\/}
-or \code{<unbound>}, if the slot is unbound.
+or \code{[Unbound]}, if the slot is unbound.
 
 \fnmethods
 \fnalternate{print-instance-slot-value}{\code{(}\var{instance\/}
@@ -5883,7 +5883,7 @@ or \code{<unbound>}, if the slot is unbound.
 Unless \var{no-space} is true, a space character is printed to \var{stream}.
 Then the slot value in \var{instance\/} specified by \var{slot-name} is
 printed to \var{stream\/}, unless the slot is unbound, in which case
-\code{<unbound>} is printed to \var{stream}.
+\code{[Unbound]} is printed to \var{stream}.
 
 If the slot is bound and \var{function\/} is specifed, \var{function\/} is
 called with the slot value and the result is printed to \var{stream} rather
@@ -5974,7 +5974,7 @@ Extend the \nobr{\code{print-object}} printing for \code{hyp}
 \end{example}
 %
 \bfindexit{print-instance-slot-value}%
-or if displaying \code{<unbound>} for unbound slots is desired:
+or if displaying \code{[Unbound]} for unbound slots is desired:
 %
 \W\supp\notpretop
 \begin{example}
