@@ -97,7 +97,7 @@ information.
               (slot-value obj 'location)
               (slot-value obj 'belief))))
 </pre>
-<a name="id1">or</a> if displaying <code>&lt;unbound&gt;</code> for unbound slots is desired:
+<a name="id1">or</a> if displaying <code>[Unbound]</code> for unbound slots is desired:
 <pre>
   (defmethod print-instance-slots ((obj hyp) stream)
     (call-next-method)

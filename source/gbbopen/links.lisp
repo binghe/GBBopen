@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/links.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Jun 21 04:13:40 2009 *-*
+;;;; *-* Last-Edit: Wed Jun 24 16:30:21 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -45,6 +45,7 @@
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(check-link-definitions
+            link-instance               ; STANDARD-LINK-POINTER slot
 	    link-setf
 	    linkf
             standard-link-pointer
