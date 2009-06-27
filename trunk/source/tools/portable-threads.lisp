@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/portable-threads.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Jun 22 11:32:11 2009 *-*
+;;;; *-* Last-Edit: Sat Jun 27 11:18:01 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -1214,7 +1214,7 @@
          #+allegro
          (eq (mp:process-lock-locker ,lock-sym) system:*current-process*)
          #+(and clisp mt)
-         (eq (mt:mutex-owner lock) (mt:current-thread))
+         (eq (mt:mutex-owner ,lock-sym) (mt:current-thread))
          #+clozure
          (eq (ccl::%%lock-owner (lock-ccl-lock ,lock-sym))
              ccl:*current-process*)
@@ -1520,7 +1520,7 @@
   #+allegro
   (mp:process-kill thread)
   #+(and clisp mt)
-  (mt:thread-kill thread)
+  (mt:thread-interrupt thread :function t)
   #+clozure
   (ccl:process-kill thread)
   #+(and cmu mp)
@@ -1544,7 +1544,7 @@
   #+allegro
   `(mp:process-kill ,thread)
   #+(and clisp mt)
-  `(mt:thread-kill ,thread)
+  `(mt:thread-interrupt ,thread :function t)
   #+clozure
   `(ccl:process-kill ,thread)
   #+(and cmu mp)
@@ -1573,7 +1573,7 @@
   #+allegro
   (apply #'multiprocessing:process-interrupt thread function args)
   #+(and clisp mt)
-  (apply #'mt:thread-interrupt thread function args)
+  (mt:thread-interrupt thread :function function :arguments args)
   #+clozure
   (apply #'ccl:process-interrupt thread function args)
   #+(and cmu mp)
