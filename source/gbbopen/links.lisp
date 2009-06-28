@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/links.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jun 24 16:30:21 2009 *-*
+;;;; *-* Last-Edit: Sun Jun 28 11:30:06 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -323,7 +323,9 @@
 	     (current-value
 	      (if (consp previous-value)
 		  (setf (slot-value other-instance slot-name) 
-			(delq instance previous-value))
+			(delete instance previous-value
+                                :key #'link-instance-of
+                                :test #'eq))
 		  (setf (slot-value other-instance slot-name) nil))))
         (%signal-indirect-unlink-event 
          other-instance idslotd current-value removed-instances)))))
@@ -342,7 +344,9 @@
            (current-value
             (if (consp previous-value)
                 (setf (slot-value other-instance slot-name) 
-                      (delq instance previous-value))
+                      (delete instance previous-value
+                              :key #'link-instance-of
+                              :test #'eq))
                 (setf (slot-value other-instance slot-name) nil))))
       (%signal-indirect-unlink-event
        other-instance idslotd current-value removed-instances))))
