@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/declared-numerics.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Jun 15 15:25:55 2009 *-*
+;;;; *-* Last-Edit: Mon Jun 29 04:23:01 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -210,8 +210,12 @@
             infinity -infinity infinity& -infinity&
             infinity$ -infinity$ infinity$& -infinity$&
             infinity$$ -infinity$$ infinity$$$ -infinity$$$
-            ;; Infinity reader escape hook (undocumented):
-            *inf-reader-escape-hook*)))
+            ;; Infinity reader escape hook (undocumented):            
+            *inf-reader-escape-hook*
+            ;; Infinity reader macro-character checker (undocumented):
+            check-for-inf-reader
+            ;; Infinity reader macro-character setting (undocumented):
+            set-inf-reader-dispatch-macro-character)))
 
 ;;; ---------------------------------------------------------------------------
 ;;; Warn if the CL implementation doesn't have at least 29-bit fixnums:
@@ -938,9 +942,21 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(safely-set-dispatch-macro-character #\# #\@ 
-                                     #-cormanlisp 'inf-reader
-                                     #+cormanlisp #'inf-reader)
+(defun set-inf-reader-dispatch-macro-character (&optional 
+                                                (readtable *readtable*))
+  "Set #@ dispatch macro-character to GBBopen Tools INF-READER function"
+  (safely-set-dispatch-macro-character #\# #\@ 
+                                       #-cormanlisp 'inf-reader
+                                       #+cormanlisp #'inf-reader
+                                       readtable))
+
+(set-inf-reader-dispatch-macro-character)
+
+;;; ---------------------------------------------------------------------------
+
+(defun check-for-inf-reader ()
+  (unless (eq 'inf-reader (get-dispatch-macro-character #\# #\@))
+    (warn "No inf-reader dispatch set in ~s" *readtable*)))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -990,9 +1006,19 @@
  (defun lisp::output-float-infinity (x stream)
    (print-object x stream)))
 
+;; ECL allows redefinition of its EXT:OUTPUT-FLOAT-INFINITY function, but its
+;; compiler/loader uses different readtables so we can't use #@ format unless
+;; the INF-READER dispatch is in place:
 #+ecl
-(defun ext:output-float-infinity (x stream)
-  (print-object x stream))
+(progn
+  (defvar *%saved-ecl-output-float-infinity-function%*
+      (symbol-function 'ext:output-float-infinity))
+  (defun ext:output-float-infinity (x stream)
+    ;; Redefine ECL's EXT:OUTPUT-FLOAT-INFINITY to call PRINT-OBJECT unless 
+    ;; INF-READER isn't established:
+    (if (eq 'inf-reader (get-dispatch-macro-character #\# #\@))
+        (print-object x stream)
+        (funcall *%saved-ecl-output-float-infinity-function%* x stream))))
 
 ;; From SBCL's print.lisp:
 #+sbcl

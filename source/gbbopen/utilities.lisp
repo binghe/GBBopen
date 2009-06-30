@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/utilities.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Dec  4 12:51:05 2008 *-*
+;;;; *-* Last-Edit: Mon Jun 29 04:16:58 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -359,7 +359,7 @@
 
 (defun uniform-bucket-index (value start size)
   ;;; Compute the bucket index for `value' for uniform buckets of `size':
-  ;;;  - a negative index preceed the buckets
+  ;;;  - a negative index preceeds the buckets
   ;;;
   ;;;  Although the result is a fixnum, the internal calculations are general
   ;;;  numeric with infinity values.

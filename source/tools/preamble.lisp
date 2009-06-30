@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/preamble.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon May 25 22:50:13 2009 *-*
+;;;; *-* Last-Edit: Mon Jun 29 02:43:51 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -204,10 +204,12 @@
 ;;; ===========================================================================
 ;;;   Dispatch-macro-character conflict checker
 
-(defun safely-set-dispatch-macro-character (disp-char sub-char function)
+(defun safely-set-dispatch-macro-character (disp-char sub-char function
+                                            &optional
+                                            (readtable *readtable*))
   (declare (special *inf-reader-escape-hook*))
   (let ((existing-dispatch 
-         (get-dispatch-macro-character disp-char sub-char)))
+         (get-dispatch-macro-character disp-char sub-char readtable)))
     (unless (or (null existing-dispatch)
                 (eq existing-dispatch function)
                 (and (functionp existing-dispatch)
@@ -219,7 +221,7 @@
                 ;; character):
                 #+cormanlisp
                 (eq existing-dispatch
-                    (get-dispatch-macro-character #\# #\&))
+                    (get-dispatch-macro-character #\# #\& readtable))
                 #+cmu
                 (eq existing-dispatch
                     (symbol-function 'lisp::dispatch-char-error))
@@ -236,13 +238,13 @@
                 ;; character):
                 #+ecl
                 (eq existing-dispatch
-                    (get-dispatch-macro-character #\# #\&))
+                    (get-dispatch-macro-character #\# #\& readtable))
                 ;; On GCL, look if the dispatch function is the same as the
                 ;; default (by checking against another unlikely macro
                 ;; character):
                 #+gcl
                 (eq existing-dispatch
-                    (get-dispatch-macro-character #\# #\&)))
+                    (get-dispatch-macro-character #\# #\& readtable)))
       (cond 
        ;; Allow an override (and warn), if the user has set up an
        ;; *inf-reader-escape-hook* and we are setting the inf-reader dispatch
@@ -263,7 +265,7 @@
                   sub-char
                   (lisp-implementation-type)
                   existing-dispatch))))
-    (set-dispatch-macro-character disp-char sub-char function)))
+    (set-dispatch-macro-character disp-char sub-char function readtable)))
 
 ;;; ===========================================================================
 ;;;   Hyperdoc lookup helper
