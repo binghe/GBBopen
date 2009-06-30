@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu May 28 16:53:42 2009 *-*
+;;;; *-* Last-Edit: Tue Jun 30 02:47:45 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -165,6 +165,7 @@
             define-directory            ; in module-manager, but part of tools
             delq
             do-until
+            do-while
             dosequence
             dosublists
             dotted-conc-name            ; in module-manager, but part of tools;
@@ -236,6 +237,9 @@
 
 (defmacro do-until (form test)
   `(loop ,form (when ,test (return))))
+
+(defmacro do-while (form test)
+  `(loop ,form (unless ,test (return))))
 
 ;;; ===========================================================================
 ;;;  With-error-handling

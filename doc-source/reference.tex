@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Wed Jun 24 16:32:34 2009; Edited-By: cork *-*
+%% *-* Last-Edit: Tue Jun 30 02:52:48 2009; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2009, Dan Corkill <corkill@GBBopen.org>
@@ -4938,7 +4938,8 @@ repeatedly, as long as \nobr{\var{test-form\/}} evaluates to \nil.
 \arg[test-form] A \glref{form}
 \end{args}
 
-\begin{alsos}{while}
+\begin{alsos}{do-while}
+\also[do-while]
 \also[until]
 \also[while]
 \end{alsos}
@@ -4957,6 +4958,53 @@ repeatedly, as long as \nobr{\var{test-form\/}} evaluates to \nil.
   > (let ((i 10)) 
       (do-until (print i)
           (> (incf i) 3)))
+  10
+  nil
+  >
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Macro}{do-while}{\var{form test-form\/}} 
+\index{iteration!do-while@\textbf{do-while}}%
+  
+\fnsyntax
+
+\fnpurpose Evaluates \var{form\/} and then \nobr{\var{test-form\/}}
+repeatedly, until \nobr{\var{test-form\/}} evaluates to \nil.
+
+\fnpackage \code{:gbbopen-tools}
+
+\fnmodule \code{:gbbopen-tools}
+
+\fnargs
+\begin{args}{test-form}
+\arg[form] A \glref{form}
+\arg[test-form] A \glref{form}
+\end{args}
+
+\begin{alsos}{do-until}
+\also[do-until]
+\also[until]
+\also[while]
+\end{alsos}
+
+\fnexamples
+%
+\W\supp
+\begin{example}
+  > (let ((i 0)) 
+      (do-while (print i)
+          (<= (incf i) 3)))
+  1 
+  2 
+  3 
+  nil\goodpagebreak
+  > (let ((i 10)) 
+      (do-while (print i)
+          (<= (incf i) 3)))
   10
   nil
   >
@@ -6832,8 +6880,9 @@ as long as \nobr{\var{test-form\/}} evaluates to \nil.
 \arg[forms] An implicit \textbf{progn} of \glref{forms} to be evaluated
 \end{args}
 
-\begin{alsos}{do-until}
+\begin{alsos}{do-while}
 \also[do-until]
+\also[do-while]
 \also[while]
 \end{alsos}
 
@@ -6878,8 +6927,9 @@ repeatedly, until \nobr{\var{test-form\/}} evaluates to \nil.
 \arg[forms] An implicit \textbf{progn} of \glref{forms} to be evaluated
 \end{args}
 
-\begin{alsos}{do-until}
+\begin{alsos}{do-while}
 \also[do-until]
+\also[do-while]
 \also[until]
 \end{alsos}
 
