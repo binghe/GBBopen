@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/test/portable-threads-test.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Jun 19 06:17:33 2009 *-*
+;;;; *-* Last-Edit: Sat Jun 27 12:08:27 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -658,6 +658,7 @@
            (let ((cv (make-condition-variable
                       :class 'state-cv
                       :state 0))
+                 (wait-timeout 5)
                  (iterations 5000)
                  (start-real-time (get-internal-real-time)))
              (forced-format
@@ -666,24 +667,26 @@
               signal-fn-label)
              (spawn-thread 
               "Condition Variable Incrementer"
-              #'(lambda (cv iterations signal-fn)
+              #'(lambda (cv iterations wait-timeout signal-fn)
                   (dotimes (i iterations)
                     (with-lock-held (cv)
                       (loop while (plusp (state-of cv)) 
                           do (unless
-                                 (condition-variable-wait-with-timeout cv 2)
+                                 (condition-variable-wait-with-timeout
+                                  cv wait-timeout)
                                (warn "Incrementer wait timeout (iteration ~s)"
                                      i)))
                       (incf (state-of cv))
                       (funcall signal-fn cv))))
               cv 
               iterations
+              wait-timeout
               signal-fn)
              (time-it
               (dotimes (i iterations)
                 (with-lock-held (cv)
                   (loop until (plusp (state-of cv)) 
-                      do (unless (condition-variable-wait-with-timeout cv 2)
+                      do (unless (condition-variable-wait-with-timeout cv wait-timeout)
                            (warn "Decrementer wait timeout (iteration ~s)"
                                  i)))
                   (decf (state-of cv))
