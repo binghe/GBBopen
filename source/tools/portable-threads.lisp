@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/portable-threads.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Jun 27 11:18:01 2009 *-*
+;;;; *-* Last-Edit: Sun Jul 12 06:51:27 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -1114,7 +1114,7 @@
                           :whostate ,whostate)
              ,@body))
          #+(and clisp mt)
-         (mt::with-lock (,lock-sym) ,@body)
+         (mt:with-mutex-lock (,lock-sym) ,@body)
          #+clozure
          (let ((.ccl-lock. (and (lock-p ,lock-sym)
                                 (lock-ccl-lock (the lock ,lock-sym)))))
