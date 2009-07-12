@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/duplicate-instance.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Mar 16 16:02:34 2009 *-*
+;;;; *-* Last-Edit: Sun Jul 12 11:43:05 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -83,16 +83,17 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun duplicate-instance (instance new-class unduplicated-slot-names initargs)
+  ;;; Common internal function for MAKE-DUPLICATE-INSTANCE and
+  ;;; MAKE-DUPLICATE-INSTANCE-CHANGING-CLASS
   (let* ((old-class (class-of instance))
          (old-class-slots (class-slots old-class))
          (new-instance (allocate-instance new-class))
          (slots nil)
          (slot-values nil)
          (missing-slot-names nil)
+         (computed-unduplicated-slot-names (unduplicated-slot-names instance))
          (not-found-value ""))
-    (setf unduplicated-slot-names 
-          (append unduplicated-slot-names
-                  (unduplicated-slot-names instance)))
+    (declare (dynamic-extent slots slot-values missing-slot-names))
     (dolist (slot (class-slots new-class))
       (let* ((slot-name (slot-definition-name slot))
              (old-slot (find slot-name old-class-slots :key #'slot-definition-name))
@@ -105,10 +106,13 @@
          ((not (eq maybe-initarg-value not-found-value))
           (push slot slots)
           (push maybe-initarg-value slot-values))
-         ;; Record as a missing-slot-name, if asked not to duplicate or if
-         ;; this slot is only in the new class:
-         ((or (memq slot-name unduplicated-slot-names)
-              (not old-slot))
+         ;; Record as a missing-slot-name, if asked not to duplicate it
+         ;; (either specified in `unduplicated-slot-names' or computed by
+         ;; UNDUPLICATED-SLOT-NAMES method) or if this slot is defined only in
+         ;; the new class:
+         ((or (not old-slot)
+              (memq slot-name unduplicated-slot-names)
+              (memq slot-name computed-unduplicated-slot-names))
           (push slot-name missing-slot-names))
          ;; Not an initarg or an unduplicated-slot-name, use the slot-value
          ;; from the old instance:
