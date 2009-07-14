@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Jun 21 05:06:46 2009 *-*
+;;;; *-* Last-Edit: Tue Jul 14 12:46:23 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -1214,6 +1214,7 @@
                                                  ;; space instance
       (add-instance-to-initial-space-instances instance new-class)))))
 
+
 ;;; ---------------------------------------------------------------------------
 
 (defmethod change-class :after ((instance standard-object)
@@ -1221,44 +1222,41 @@
                                 &key (space-instances 
 				      nil space-instances-p)
                                 &allow-other-keys)
-  ;;; This :after method handles class changes from a non-unit class to a unit
-  ;;; class (so we must grab the master-instance lock here):
-  (with-lock-held (*master-instance-lock*)
-    (let ((instance-name 
-           (if (slot-boundp instance 'instance-name)
-               (instance-name-of instance)
-               (setf (instance-name-of instance)
-                     (next-class-instance-number instance)))))
-      (add-instance-to-instance-hash-table 
-       new-class instance instance-name))
-    ;; Add instance to appropriate space instances:
-    (add-changed-class-instance-to-space-instances 
-     instance new-class space-instances space-instances-p)))
-
-;;; ---------------------------------------------------------------------------
-
-(defmethod change-class :after ((instance standard-unit-instance)
-				(new-class standard-unit-class) 
-				&key (space-instances 
-				      nil space-instances-p)
-                                &allow-other-keys)
-  ;;; This :after method handles link processing and adding the instance to
-  ;;; space instances on class changes from a unit class to a unit class.
-  ;;;
-  ;; Add inverse pointers from instances pointed to by any link slots that
-  ;; aren't present already:
-  (dolist (slot (class-slots new-class))
-    (when (typep slot 'effective-link-definition)
-      (%do-ilinks (effective-link-definition.direct-slot-definition slot)
-                  instance 
-                  (ensure-list (slot-value-using-class new-class instance slot))
-                  nil)))
-  ;; Add the changed-class instance to its space instances:
-  (add-changed-class-instance-to-space-instances 
-   instance new-class 
-   ;; Use space-instances, if specified, or the remembered ones:
-   (or space-instances *%changing-class-space-instances%*)
-   (or space-instances-p *%changing-class-space-instances%*)))
+  (typecase instance 
+    ;; ------------------------------------------------------------------------
+    ;; This portion of the :after method handles link processing and adding the
+    ;; instance to space instances on class changes from a unit class to a unit
+    ;; class
+    (standard-unit-instance
+     ;; Add inverse pointers from instances pointed to by any link slots that
+     ;; aren't present already:
+     (dolist (slot (class-slots new-class))
+       (when (typep slot 'effective-link-definition)
+         (%do-ilinks (effective-link-definition.direct-slot-definition slot)
+                     instance 
+                     (ensure-list (slot-value-using-class new-class instance slot))
+                     nil)))
+     ;; Add the changed-class instance to its space instances:
+     (add-changed-class-instance-to-space-instances 
+      instance new-class 
+      ;; Use space-instances, if specified, or the remembered ones:
+      (or space-instances *%changing-class-space-instances%*)
+      (or space-instances-p *%changing-class-space-instances%*)))
+    ;; ------------------------------------------------------------------------
+    ;; This portion of the :after method handles class changes from a non-unit
+    ;; class to a unit class (so we must grab the master-instance lock here)
+    (otherwise 
+     (with-lock-held (*master-instance-lock*)
+       (let ((instance-name 
+              (if (slot-boundp instance 'instance-name)
+                  (instance-name-of instance)
+                  (setf (instance-name-of instance)
+                        (next-class-instance-number instance)))))
+         (add-instance-to-instance-hash-table 
+          new-class instance instance-name))
+       ;; Add instance to appropriate space instances:
+       (add-changed-class-instance-to-space-instances 
+        instance new-class space-instances space-instances-p)))))
 
 ;;; ---------------------------------------------------------------------------
 ;;; Event signaling is done in this :around method to surround activities
