@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/duplicate-instance.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Jul 12 11:43:05 2009 *-*
+;;;; *-* Last-Edit: Sun Jul 12 12:11:31 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -111,8 +111,8 @@
          ;; UNDUPLICATED-SLOT-NAMES method) or if this slot is defined only in
          ;; the new class:
          ((or (not old-slot)
-              (memq slot-name unduplicated-slot-names)
-              (memq slot-name computed-unduplicated-slot-names))
+              (memq slot-name computed-unduplicated-slot-names)
+              (memq slot-name unduplicated-slot-names))
           (push slot-name missing-slot-names))
          ;; Not an initarg or an unduplicated-slot-name, use the slot-value
          ;; from the old instance:
