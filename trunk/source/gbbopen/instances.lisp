@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Jul 14 12:46:23 2009 *-*
+;;;; *-* Last-Edit: Wed Jul 15 08:11:56 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -1228,6 +1228,13 @@
     ;; instance to space instances on class changes from a unit class to a unit
     ;; class
     (standard-unit-instance
+     (let ((instance-name 
+            (if (slot-boundp instance 'instance-name)
+                (instance-name-of instance)
+                (setf (instance-name-of instance)
+                      (next-class-instance-number instance)))))
+       (add-instance-to-instance-hash-table 
+        new-class instance instance-name))
      ;; Add inverse pointers from instances pointed to by any link slots that
      ;; aren't present already:
      (dolist (slot (class-slots new-class))
