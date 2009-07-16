@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/modules.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Jun  1 22:13:27 2009 *-*
+;;;; *-* Last-Edit: Thu Jul 16 16:25:51 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -68,6 +68,7 @@
             ("print-object-for" :forces-recompile)
             ("read-object" :forces-recompile)
             "duplicate-instance"
+            ("llrb-trees" :forces-recompile)
             "epilogue"))
   
   (define-module :portable-threads
@@ -227,6 +228,13 @@
     (:requires :portable-threads)
     (:directory :gbbopen-tools "test")
     (:files ("portable-threads-test" :reload)))
+  
+;;; ---------------------------------------------------------------------------
+
+  (define-module :llrb-trees-test
+    (:requires :gbbopen-tools)
+    (:directory :gbbopen-tools "test")
+    (:files ("llrb-trees-test" :reload)))
   
   ;; end of with-system-name
   )
