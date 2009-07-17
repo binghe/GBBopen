@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/llrb-tree.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Jul 17 11:53:24 2009 *-*
+;;;; *-* Last-Edit: Fri Jul 17 13:30:33 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -295,6 +295,7 @@
          ;; If Equal and at bottom, delete node (by returning nil):
 	 (when (and (zerop& result) 
 		    (not (rbt-node-right node)))
+           (printv "Leaf delete" key)
            (setf *%llrb-delete-succeeded%* 't)
 	   (return-from llrb-delete nil))
          ;; Push red right, if necessary:
@@ -308,6 +309,7 @@
 	   ((zerop& result)
 	    (let* ((right (rbt-node-right node))
 		   (successor (llrb-min-node right)))
+              (printv "Internal delete" key)
               (setf *%llrb-delete-succeeded%* 't)
 	      (setf (rbt-node-key node) (rbt-node-key successor))
 	      (setf (rbt-node-value node) (rbt-node-value successor))
