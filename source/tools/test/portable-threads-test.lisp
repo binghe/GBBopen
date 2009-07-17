@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/test/portable-threads-test.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Jun 27 12:08:27 2009 *-*
+;;;; *-* Last-Edit: Fri Jul 17 04:17:06 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -58,6 +58,13 @@
 
 ;;; ---------------------------------------------------------------------------
 
+(defun forced-format (&rest args)
+  (declare (dynamic-extent args))
+  (apply #'format t args)
+  (force-output))
+
+;;; ---------------------------------------------------------------------------
+
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defmacro time-it (&body body)
     (let ((start-time-sym (gensym)))
@@ -111,13 +118,6 @@
 (defun sleepy-time ()
   ;; We sleep long enough for thread startup/cleanup/scheduling to occur:
   (sleep 0.5))
-
-;;; ---------------------------------------------------------------------------
-
-(defun forced-format (&rest args)
-  (declare (dynamic-extent args))
-  (apply #'format t args)
-  (force-output))
 
 ;;; ---------------------------------------------------------------------------
 
