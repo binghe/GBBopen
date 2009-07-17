@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/llrb-tree.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Jul 17 10:27:36 2009 *-*
+;;;; *-* Last-Edit: Fri Jul 17 11:53:24 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -303,7 +303,7 @@
 	   (setf node (llrb-move-red-right node)))
 	 (setf result (funcall test key (rbt-node-key node)))
 	 (cond 
-	   ;; If Equal and not at bottom, replace current node's values with
+	   ;; If equal and not at bottom, replace current node's values with
 	   ;; successor's values and delete successor:
 	   ((zerop& result)
 	    (let* ((right (rbt-node-right node))
