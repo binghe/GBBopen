@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/module-manager/module-manager.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Jun  5 14:55:05 2009 *-*
+;;;; *-* Last-Edit: Fri Jul 17 12:05:39 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -1383,7 +1383,7 @@
 (defparameter *compile/load-file-options*
     ;; A patch files can also have the option :developing, which is added
     ;; contextually in COMPILE/LOAD-MODULE-FILES-HELPER:
-    '(:recompile :reload :source :forces-recompile :noload))
+    '(:recompile :reload :source :forces-recompile :noload :noautorun))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -1460,7 +1460,11 @@
                 -1))
            (files-loaded (mm-module.files-loaded module))
            (file-loaded-acons (assoc file-name files-loaded
-                                     :test #'string=)))
+                                     :test #'string=))
+           (*autorun-modules*
+            (if (member ':noautorun file-options :test #'eq)
+                nil 
+                *autorun-modules*)))
       (when bad-options
         (warn "Invalid file option~p for ~s in module ~s: ~s"
               bad-options
