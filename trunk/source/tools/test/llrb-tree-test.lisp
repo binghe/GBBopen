@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/test/llrb-tree-test.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Jul 17 10:31:29 2009 *-*
+;;;; *-* Last-Edit: Fri Jul 17 12:44:57 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -14,11 +14,9 @@
 
 (in-package :gbbopen-tools)
 
-(defvar *x* nil)
-
 ;;; ---------------------------------------------------------------------------
 
-(defun check-traversal (llrb-tree)
+(defun llrb-check-traversal (llrb-tree)
   (let ((last-key -infinity&))
     (map-llrb-tree
      #'(lambda (key value)
@@ -30,34 +28,30 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun print-tree (node &optional (indent 0))
+(defun llrb-print-tree (node &optional (indent 0))
   (when node
     (let ((left (rbt-node-right node))
 	  (right (rbt-node-left node)))
       (when left
-	(print-tree left (1+& indent)))
+	(llrb-print-tree left (1+& indent)))
       (loop for i from 1 to indent
           do (format t "  "))
       (format t "~a ~:[B~;R~]~%" (rbt-node-key node) (rbt-node-is-red? node))
       (when right
-	(print-tree right (1+& indent))))))
+	(llrb-print-tree right (1+& indent))))))
 
 ;;; ---------------------------------------------------------------------------
 
-(defun llrb-print (node)
-  (llrb-prefix-map #'(lambda (node) (format t "~&~s~%" node))
-                   node)
+(defun llrb-print (llrb-tree)
+  (let ((root (llrb-tree-root llrb-tree)))
+    (if root
+        (llrb-prefix-map #'(lambda (node) (format t "~&~s~%" node)) root)
+        (format t "#<empty>~%")))
   (values))
 
 ;;; ---------------------------------------------------------------------------
 
-(defun new (n) 
-  (setf *x* (llrb-insert n *x* n))
-  (llrb-print *x*))       
-
-;;; ---------------------------------------------------------------------------
-
-(defun count-nodes (llrb-tree)
+(defun llrb-tree-count-nodes (llrb-tree)
   (let ((count 0))
     (flet ((count-it (key value)
              (declare (ignore key value))
@@ -68,7 +62,7 @@
 ;;; ===========================================================================
 ;;;   Timing
 
-(defun big-test (n)
+(defun random-size-llrb-tree-test (n)
   ;; Build the test-data hash table:
   (let ((numbers (make-hash-table :size n))
         tree
@@ -87,9 +81,10 @@
        (setf tree (make-llrb-tree #'compare&))
        (while (multiple-value-setq (continuep key) (next))
          (llrb-tree-insert key tree key))))
-    (unless (= (hash-table-count numbers) (count-nodes tree))
-      (error "Wrong count"))
-    (check-traversal tree)
+    (unless (= (hash-table-count numbers)
+               (llrb-tree-count-nodes tree))
+      (error "Wrong node count"))
+    (llrb-check-traversal tree)
     ;; Now build the hash table:
     (printv "Building hash table:")
     (time
@@ -129,69 +124,84 @@
        (with-hash-table-iterator (next numbers)
          (while (multiple-value-setq (continuep key) (next))
            (remhash key ht))))
-      (let ((count (count-nodes tree)))
+      (let ((count (llrb-tree-count-nodes tree)))
         (unless (= (hash-table-count ht) count)
           (error "Wrong count after deletes: ~s" count))))))
 
 ;;; ===========================================================================
-;;;  Trip test
+;;;  Basic LLRB-tree trip test
 
-(eval-when (:compile-toplevel :load-toplevel :execute)
-
-  (defmacro logger ((s &body setup) &body body) 
-    `(progn (format t "~&;; ~40,,,'-<-~>~%;; ~a~%" ,s)
-            ,@setup
-            (llrb-print *x*)
-            ,@body
-            (if *x* 
-                (llrb-print *x*) 
-                (format t "#<empty>~%")))))
-
-(defun test (&optional print-trees?)
-  (format t "~&;; Starting LLRB trees tests...~%")
-  (logger ("Delete missing from empty tree:"
-           (setf *x* nil))
-          (setf *x* (llrb-delete 5 *x*)))
-  (when print-trees? (print-tree *x*))
-  (logger ("Delete root:"
-           (setf *x* (make-llrb-root 5 5)))
-          (setf *x* (llrb-delete 5 *x*)))
-  (when print-trees? (print-tree *x*))
-  (logger ("Delete missing (left) from singleton tree:"
-           (setf *x* (make-llrb-root 5 5)))
-          (setf *x* (llrb-delete 1 *x*)))
-  (when print-trees? (print-tree *x*))
-  (logger ("Delete missing (right) from singleton tree:"
-           (setf *x* (make-llrb-root 5 5)))
-          (setf *x* (llrb-delete 9 *x*)))
-  (when print-trees? (print-tree *x*))
-  (logger ("Delete 1 from 5-1 tree:"
-           (setf *x* (make-llrb-root 5 5))
-           (setf *x* (llrb-insert 1 *x* 1)))
-          (setf *x* (llrb-delete 1 *x*)))
-  (when print-trees? (print-tree *x*))
-  (logger ("Delete 9 from 1-5-9 tree:"
-           (setf *x* (make-llrb-root 5 5))
-           (setf *x* (llrb-insert 1 *x* 1))
-           (setf *x* (llrb-insert 9 *x* 1)))
-          (setf *x* (llrb-delete 9 *x*)))
-  (when print-trees? (print-tree *x*))
-  (logger ("Make 1:8 tree:"
-           (setf *x* (make-llrb-root 1 1))
-           (loop for i from 2 to 8 do
-		(setf *x* (llrb-insert i *x* i)))))  
-  (when print-trees? (print-tree *x*))
-  (logger ("Delete 5 from 5-1 tree:"
-           (setf *x* (make-llrb-root 5 5))
-           (setf *x* (llrb-insert 1 *x* nil))
-	   (setf *x* (llrb-delete 5 *x*))))
-  (when print-trees? (print-tree *x*))
-  (format t "~&;; Completed LLRB trees tests.~%"))
-
+(defun basic-llrb-tree-test (&optional verbose)
+  (format t "~&;; Starting basic LLRB-tree tests...~%")
+  (let (llrb-tree)
+    (macrolet
+        ((logger ((s &body setup) &body body)
+           `(progn (format t "~&;; ~40,,,'-<-~>~%;; ~a~%" ,s)
+                   ,@setup
+                   (when verbose (llrb-print llrb-tree))
+                   ,@body
+                   (when verbose (llrb-print llrb-tree)))))
+      (flet
+          ((nil-result-error ()
+             (error "Result was nil"))
+           (non-nil-result-error ()
+             (error "Result was not nil")))
+        (logger ("Delete missing from empty tree:"
+                 (setf llrb-tree (make-llrb-tree #'compare&)))
+                (when (llrb-tree-delete 5 llrb-tree)
+                  (non-nil-result-error)))
+        (when verbose (llrb-print-tree llrb-tree))
+        (logger ("Delete root:"
+                 (setf llrb-tree (make-llrb-tree #'compare&))
+                 (llrb-tree-insert 5 llrb-tree 5))
+                (unless (llrb-tree-delete 5 llrb-tree)
+                  (nil-result-error)))
+        (when verbose (llrb-print-tree llrb-tree))
+        (logger ("Delete missing (left) from singleton tree:"
+                 (setf llrb-tree (make-llrb-tree #'compare&))
+                 (llrb-tree-insert 5 llrb-tree 5))
+                (when (llrb-tree-delete 1 llrb-tree)
+                  (non-nil-result-error)))
+        (when verbose (llrb-print-tree llrb-tree))
+        (logger ("Delete missing (right) from singleton tree:"
+                 (setf llrb-tree (make-llrb-tree #'compare&))
+                 (llrb-tree-insert 5 llrb-tree 5))
+                (when (llrb-tree-delete 9 llrb-tree)
+                  (non-nil-result-error)))
+        (when verbose (llrb-print-tree llrb-tree))
+        (logger ("Delete 1 from 5-1 tree:"
+                 (setf llrb-tree (make-llrb-tree #'compare&))
+                 (llrb-tree-insert 5 llrb-tree 5)
+                 (llrb-tree-insert 1 llrb-tree 1))
+                (unless (llrb-tree-delete 1 llrb-tree)
+                  (nil-result-error)))
+        (when verbose (llrb-print-tree llrb-tree))
+        (logger ("Delete 9 from 1-5-9 tree:"
+                 (setf llrb-tree (make-llrb-tree #'compare&))
+                 (llrb-tree-insert 5 llrb-tree 5)
+                 (llrb-tree-insert 1 llrb-tree 1)
+                 (llrb-tree-insert 9 llrb-tree 1))
+                (unless (llrb-tree-delete 9 llrb-tree)
+                  (nil-result-error)))
+        (when verbose (llrb-print-tree llrb-tree))
+        (logger ("Make 1:8 tree:"
+                 (setf llrb-tree (make-llrb-tree #'compare&))
+                 (loop for i from 1 to 8 do
+                       (llrb-tree-insert i llrb-tree i))))
+        (when verbose (llrb-print-tree llrb-tree))
+        (logger ("Delete 5 from 5-1 tree:"
+                 (setf llrb-tree (make-llrb-tree #'compare&))
+                 (llrb-tree-insert 5 llrb-tree 5)
+                 (llrb-tree-insert 1 llrb-tree nil))
+                (unless (llrb-tree-delete 5 llrb-tree)
+                  (nil-result-error)))
+        (when verbose (llrb-print-tree llrb-tree)))))
+    (format t "~&;; Completed basic LLRB-tree tests.~%"))
+  
 ;;; ---------------------------------------------------------------------------
 
 (when *autorun-modules*
-  (test))
+  (basic-llrb-tree-test))
   
 ;;; ===========================================================================
 ;;;				  End of File

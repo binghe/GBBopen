@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/commands.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Jul 17 10:17:13 2009 *-*
+;;;; *-* Last-Edit: Fri Jul 17 11:58:15 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -155,9 +155,9 @@
     "Compile and load OS-Interface-Test module"
     (startup-module :os-interface-test options :os-interface-user))
 
-  (define-repl-command :llrb-tree-test (&rest options)
-    "Compile and load LLRB Tree Test module"
-    (startup-module :llrb-tree-test options :gbbopen-tools))
+  (define-repl-command :gbbopen-tools-test (&rest options)
+    "Compile and load GBBopen-Tools Test module"
+    (startup-module :gbbopen-tools-test options :gbbopen-tools))
   
   (define-repl-command :agenda-shell-test (&rest options)
     "Compile and load Agenda-Shell-Test module"
