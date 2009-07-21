@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/llrb-tree.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Jul 21 14:07:42 2009 *-*
+;;;; *-* Last-Edit: Tue Jul 21 14:22:00 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -263,45 +263,43 @@
 (defun llrb-delete (key node &optional (test #'compare))
   (declare (type (or rbt-node null) node))
   (when node
-    (let ((result (funcall test key (rbt-node-key node))))
+    (cond 
+     ;; Left: 
+     ((minusp& (funcall test key (rbt-node-key node)))
+      ;; push red right, if necessary:
+      (when (and (not (rbt-node-is-red? (rbt-node-left node)))
+                 (not (rbt-node-is-red? (rbt-node-left-left node))))
+        (setf node (llrb-move-red-left node)))
+      ;; move down (left):
+      (setf (rbt-node-left node) 
+            (llrb-delete key (rbt-node-left node) test)))
+     ;; Equal or Right:
+     (t 
+      ;; Rotate to push red right:
+      (when (rbt-node-is-red? (rbt-node-left node))
+        (setf node (llrb-rotate-right node)))
+      ;; If Equal and at bottom, delete node (by returning nil):
+      (when (and (zerop& (funcall test key (rbt-node-key node)))
+                 (not (rbt-node-right node)))
+        (setf *%llrb-delete-succeeded%* 't)
+        (return-from llrb-delete nil))
+      ;; Push red right, if necessary:
+      (when (and (not (rbt-node-is-red? (rbt-node-right node)))
+                 (not (rbt-node-is-red? (rbt-node-right-left node))))
+        (setf node (llrb-move-red-right node)))
       (cond 
-	;; Left: 
-	((minusp& result)
-	 ;; push red right, if necessary:
-	 (when (and (not (rbt-node-is-red? (rbt-node-left node)))
-		    (not (rbt-node-is-red? (rbt-node-left-left node))))
-	   (setf node (llrb-move-red-left node)))
-	 ;; move down (left):
-	 (setf (rbt-node-left node) 
-	       (llrb-delete key (rbt-node-left node) test)))
-	;; Equal or Right:
-	(t 
-         ;; Rotate to push red right:
-	 (when (rbt-node-is-red? (rbt-node-left node))
-	   (setf node (llrb-rotate-right node)))
-         ;; If Equal and at bottom, delete node (by returning nil):
-	 (when (and (zerop& result) 
-		    (not (rbt-node-right node)))
-           (setf *%llrb-delete-succeeded%* 't)
-	   (return-from llrb-delete nil))
-         ;; Push red right, if necessary:
-	 (when (and (not (rbt-node-is-red? (rbt-node-right node)))
-		    (not (rbt-node-is-red? (rbt-node-right-left node))))
-	   (setf node (llrb-move-red-right node)))
-	 (setf result (funcall test key (rbt-node-key node)))
-	 (cond 
-	   ;; If equal and not at bottom, replace current node's values with
-	   ;; successor's values and delete successor:
-	   ((zerop& result)
-	    (let* ((right (rbt-node-right node))
-		   (successor (llrb-min-node right)))
-              (setf *%llrb-delete-succeeded%* 't)
-	      (setf (rbt-node-key node) (rbt-node-key successor))
-	      (setf (rbt-node-value node) (rbt-node-value successor))
-              (setf (rbt-node-right node) (llrb-delete-min right))))
-	   ;; Otherwise, move down (right):
-	   (t (setf (rbt-node-right node) 
-		    (llrb-delete key (rbt-node-right node) test)))))))
+       ;; If equal and not at bottom, replace current node's values with
+       ;; successor's values and delete successor:
+       ((zerop& (funcall test key (rbt-node-key node)))
+        (let* ((right (rbt-node-right node))
+               (successor (llrb-min-node right)))
+          (setf *%llrb-delete-succeeded%* 't)
+          (setf (rbt-node-key node) (rbt-node-key successor))
+          (setf (rbt-node-value node) (rbt-node-value successor))
+          (setf (rbt-node-right node) (llrb-delete-min right))))
+       ;; Otherwise, move down (right):
+       (t (setf (rbt-node-right node) 
+		    (llrb-delete key (rbt-node-right node) test))))))
     ;; Fix right-leaning red links and eliminate 4-nodes on the way up:
     (llrb-fixup node)))
 
