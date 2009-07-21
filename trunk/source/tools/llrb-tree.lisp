@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/llrb-tree.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Jul 21 14:22:00 2009 *-*
+;;;; *-* Last-Edit: Tue Jul 21 14:27:56 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -75,7 +75,7 @@
             (:copier))
   (count 0 :type integer)
   test
-  (root nil :type '(or rbt-node nil)))
+  (root nil :type (or rbt-node null)))
             
 (defmethod print-object ((object llrb-tree) stream)
   (cond
