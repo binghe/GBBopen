@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/llrb-tree.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Jul 17 13:30:33 2009 *-*
+;;;; *-* Last-Edit: Tue Jul 21 14:07:42 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -75,7 +75,7 @@
             (:copier))
   (count 0 :type integer)
   test
-  (root nil :type (or rbt-node nil)))
+  (root nil :type '(or rbt-node nil)))
             
 (defmethod print-object ((object llrb-tree) stream)
   (cond
@@ -218,23 +218,10 @@
 ;;;  Deletion
 
 (with-full-optimization ()
-  (defun llrb-lean-right (node)
-    (declare (type rbt-node node))
-    ;; Make a left-leaning 3-node lean to the right:
-    (setf node (llrb-rotate-right node))
-    (let ((right (rbt-node-right node)))
-      (setf (rbt-node-red-p node) (rbt-node-red-p right))
-      (setf (rbt-node-red-p right) 't))
-    ;; Return node:
-    node))
-
-;;; ---------------------------------------------------------------------------
-
-(with-full-optimization ()
   (defun llrb-move-red-left (node)
     (declare (type rbt-node node))
     (llrb-color-flip node)
-    (when (rbt-node-is-red? (rbt-node-left-right node))
+    (when (rbt-node-is-red? (rbt-node-right-left node))
       (setf (rbt-node-right node) (llrb-rotate-right (rbt-node-right node)))
       (setf node (llrb-rotate-left node))
       (llrb-color-flip node))
@@ -291,16 +278,15 @@
 	(t 
          ;; Rotate to push red right:
 	 (when (rbt-node-is-red? (rbt-node-left node))
-	   (setf node (llrb-lean-right node)))
+	   (setf node (llrb-rotate-right node)))
          ;; If Equal and at bottom, delete node (by returning nil):
 	 (when (and (zerop& result) 
 		    (not (rbt-node-right node)))
-           (printv "Leaf delete" key)
            (setf *%llrb-delete-succeeded%* 't)
 	   (return-from llrb-delete nil))
          ;; Push red right, if necessary:
 	 (when (and (not (rbt-node-is-red? (rbt-node-right node)))
-		    (not (rbt-node-is-red? (rbt-node-left-right node))))
+		    (not (rbt-node-is-red? (rbt-node-right-left node))))
 	   (setf node (llrb-move-red-right node)))
 	 (setf result (funcall test key (rbt-node-key node)))
 	 (cond 
@@ -309,7 +295,6 @@
 	   ((zerop& result)
 	    (let* ((right (rbt-node-right node))
 		   (successor (llrb-min-node right)))
-              (printv "Internal delete" key)
               (setf *%llrb-delete-succeeded%* 't)
 	      (setf (rbt-node-key node) (rbt-node-key successor))
 	      (setf (rbt-node-value node) (rbt-node-value successor))

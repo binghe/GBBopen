@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/test/llrb-tree-test.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Jul 17 13:34:35 2009 *-*
+;;;; *-* Last-Edit: Tue Jul 21 14:09:18 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -118,13 +118,11 @@
        (let ((delete-counter (hash-table-count ht)))
          (with-hash-table-iterator (next numbers)
            (while (multiple-value-setq (continuep key) (next))
-             (printv "===>" key)
              (llrb-tree-delete key tree)
-             #-debugging
+             #+debugging
              (let ((count (llrb-tree-count tree))
                    (node-count (llrb-tree-count-nodes tree)))
                (decf& delete-counter)
-               (printv delete-counter)
                (unless (=& count node-count)
                  (llrb-print tree)
                  (error "Count mismatch during deletes: ~s ~s ~s"
