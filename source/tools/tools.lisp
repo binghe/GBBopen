@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jul 22 05:51:21 2009 *-*
+;;;; *-* Last-Edit: Wed Jul 22 10:13:56 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -666,14 +666,14 @@
          args))
 
 ;;; ===========================================================================
-;;;  Nicer time macro (limit `form' display under Clozure CL):
+;;;  Nicer time macro (limit `form' display under Clozure CL & Lispworks):
 
 (defmacro nicer-time (form)
-  #+clozure
+  #+(or clozure lispworks)
   `(let ((*print-length* 1)
          (*print-level* 1))
      (time ,form))
-  #-clozure
+  #-(or clozure lispworks)
   `(time ,form))
 
 ;;; ===========================================================================

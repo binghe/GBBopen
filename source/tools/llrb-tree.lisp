@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/llrb-tree.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jul 22 06:30:56 2009 *-*
+;;;; *-* Last-Edit: Wed Jul 22 10:12:07 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -33,6 +33,7 @@
             llrb-tree
             llrb-tree-count
             llrb-tree-delete
+            llrb-tree-p
             llrb-tree-test
             llrb-tree-value
             make-llrb-tree
@@ -73,8 +74,8 @@
 ;;;         positive => a > b
 
 (defstruct (llrb-tree
-            (:constructor make-llrb-tree (&optional (test 'compare)))
-            (:copier))
+            (:constructor %make-llrb-tree (test))
+            (:copier nil))
   (count 0 :type integer)
   test
   (root nil :type (or llrb-node null)))
@@ -196,25 +197,27 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun llrb-insert (key node value &optional (test 'compare))
-  (declare (type (or llrb-node null) node))
-  (cond
-   ;; Empty LLRB tree (insert at the bottom):
-   ((not node) (make-llrb-node key value 't))
-   ;; Do an interior insert:
-   (t (let ((result (funcall test key (llrb-node-key node))))
-        ;; Standard BST insert:
-        (cond 
-         ((zerop& result) 
-          (setf (llrb-node-value node) value))
-         ((minusp& result)
-          (setf (llrb-node-left node)
-                (llrb-insert key (llrb-node-left node) value test)))
-         (t (setf (llrb-node-right node)
-                  (llrb-insert key (llrb-node-right node) value test))))
-	(setf node (llrb-fixup node)))
-      ;; Return node
-      node)))
+(with-full-optimization ()
+  (defun llrb-insert (key node value test)
+    (declare (type (or llrb-node null) node)
+             (type function test))
+    (cond
+     ;; Empty LLRB tree (insert at the bottom):
+     ((not node) (make-llrb-node key value 't))
+     ;; Do an interior insert:
+     (t (let ((result (funcall test key (llrb-node-key node))))
+          ;; Standard BST insert:
+          (cond 
+           ((zerop& result) 
+            (setf (llrb-node-value node) value))
+           ((minusp& result)
+            (setf (llrb-node-left node)
+                  (llrb-insert key (llrb-node-left node) value test)))
+           (t (setf (llrb-node-right node)
+                    (llrb-insert key (llrb-node-right node) value test))))
+          (setf node (llrb-fixup node)))
+        ;; Return node
+        node))))
 
 ;;; ===========================================================================
 ;;;  Deletion
@@ -262,90 +265,104 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun llrb-delete (key node &optional (test #'compare))
-  (declare (type (or llrb-node null) node))
-  (when node
-    (cond 
-     ;; Left: 
-     ((minusp& (funcall test key (llrb-node-key node)))
-      ;; push red right, if necessary:
-      (when (and (not (llrb-node-is-red? (llrb-node-left node)))
-                 (not (llrb-node-is-red? (llrb-node-left-left node))))
-        (setf node (llrb-move-red-left node)))
-      ;; move down (left):
-      (setf (llrb-node-left node) 
-            (llrb-delete key (llrb-node-left node) test)))
-     ;; Equal or Right:
-     (t 
-      ;; Rotate to push red right:
-      (when (llrb-node-is-red? (llrb-node-left node))
-        (setf node (llrb-rotate-right node)))
-      ;; If Equal and at bottom, delete node (by returning nil):
-      (when (and (zerop& (funcall test key (llrb-node-key node)))
-                 (not (llrb-node-right node)))
-        (setf *%llrb-delete-succeeded%* 't)
-        (return-from llrb-delete nil))
-      ;; Push red right, if necessary:
-      (when (and (not (llrb-node-is-red? (llrb-node-right node)))
-                 (not (llrb-node-is-red? (llrb-node-right-left node))))
-        (setf node (llrb-move-red-right node)))
+(with-full-optimization ()
+  (defun llrb-delete (key node test)
+    (declare (type (or llrb-node null) node)
+             (type function test))
+    (when node
       (cond 
-       ;; If equal and not at bottom, replace current node's values with
-       ;; successor's values and delete successor:
-       ((zerop& (funcall test key (llrb-node-key node)))
-        (let* ((right (llrb-node-right node))
-               (successor (llrb-min-node right)))
+       ;; Left: 
+       ((minusp& (funcall test key (llrb-node-key node)))
+        ;; push red right, if necessary:
+        (when (and (not (llrb-node-is-red? (llrb-node-left node)))
+                   (not (llrb-node-is-red? (llrb-node-left-left node))))
+          (setf node (llrb-move-red-left node)))
+        ;; move down (left):
+        (setf (llrb-node-left node) 
+              (llrb-delete key (llrb-node-left node) test)))
+       ;; Equal or Right:
+       (t 
+        ;; Rotate to push red right:
+        (when (llrb-node-is-red? (llrb-node-left node))
+          (setf node (llrb-rotate-right node)))
+        ;; If Equal and at bottom, delete node (by returning nil):
+        (when (and (zerop& (funcall test key (llrb-node-key node)))
+                   (not (llrb-node-right node)))
           (setf *%llrb-delete-succeeded%* 't)
-          (setf (llrb-node-key node) (llrb-node-key successor))
-          (setf (llrb-node-value node) (llrb-node-value successor))
-          (setf (llrb-node-right node) (llrb-delete-min right))))
-       ;; Otherwise, move down (right):
-       (t (setf (llrb-node-right node) 
-		    (llrb-delete key (llrb-node-right node) test))))))
-    ;; Fix right-leaning red links and eliminate 4-nodes on the way up:
-    (llrb-fixup node)))
+          (return-from llrb-delete nil))
+        ;; Push red right, if necessary:
+        (when (and (not (llrb-node-is-red? (llrb-node-right node)))
+                   (not (llrb-node-is-red? (llrb-node-right-left node))))
+          (setf node (llrb-move-red-right node)))
+        (cond 
+         ;; If equal and not at bottom, replace current node's values with
+         ;; successor's values and delete successor:
+         ((zerop& (funcall test key (llrb-node-key node)))
+          (let* ((right (llrb-node-right node))
+                 (successor (llrb-min-node right)))
+            (setf *%llrb-delete-succeeded%* 't)
+            (setf (llrb-node-key node) (llrb-node-key successor))
+            (setf (llrb-node-value node) (llrb-node-value successor))
+            (setf (llrb-node-right node) (llrb-delete-min right))))
+         ;; Otherwise, move down (right):
+         (t (setf (llrb-node-right node) 
+                  (llrb-delete key (llrb-node-right node) test))))))
+      ;; Fix right-leaning red links and eliminate 4-nodes on the way up:
+      (llrb-fixup node))))
 
 ;;; ===========================================================================
 ;;;  Traversal & retrieval
 
-(defun llrb-get-node (key node test)
-  (declare (type (or llrb-node null) node))
-  (while node
-    (let ((result (funcall test key (llrb-node-key node))))
-      (cond
-       ((zerop& result) (return node))
-       ((minusp& result) (setf node (llrb-node-left node)))
-       (t (setf node (llrb-node-right node)))))))
+(with-full-optimization ()
+  (defun llrb-get-node (key node test)
+    (declare (type (or llrb-node null) node)
+             (type function test))
+    (while node
+      (let ((result (funcall test key (llrb-node-key node))))
+        (cond
+         ((zerop& result) (return node))
+         ((minusp& result) (setf node (llrb-node-left node)))
+         (t (setf node (llrb-node-right node))))))))
 
 ;;; ---------------------------------------------------------------------------
 
-(defun llrb-min-node (node)
-  (declare (type (or llrb-node null) node))
-  (let ((result node))
-    (while (setf node (llrb-node-left node))
-      (setf result node))
-    result))
+(with-full-optimization ()
+  (defun llrb-min-node (node)
+    (declare (type (or llrb-node null) node))
+    (let ((result node))
+      (while (setf node (llrb-node-left node))
+        (setf result node))
+      result)))
 
 ;;; ---------------------------------------------------------------------------
 
-(defun llrb-map (fn node)
-  (declare (type (or llrb-node null) node))
-  (when node
-    (llrb-map fn (llrb-node-left node))
-    (funcall fn node)
-    (llrb-map fn (llrb-node-right node))))
+(with-full-optimization ()
+  (defun llrb-map (fn node)
+    (declare (type (or llrb-node null) node)
+             (type function fn))
+    (when node
+      (llrb-map fn (llrb-node-left node))
+      (funcall fn node)
+      (llrb-map fn (llrb-node-right node)))))
 
 ;;; ---------------------------------------------------------------------------
 
-(defun llrb-prefix-map (fn node)
-  (declare (type (or llrb-node null) node))
-  (when node
-    (funcall fn node)
-    (llrb-prefix-map fn (llrb-node-left node))
-    (llrb-prefix-map fn (llrb-node-right node))))
+(with-full-optimization ()
+  (defun llrb-prefix-map (fn node)
+    (declare (type (or llrb-node null) node)
+             (type function fn))
+    (when node
+      (funcall fn node)
+      (llrb-prefix-map fn (llrb-node-left node))
+      (llrb-prefix-map fn (llrb-node-right node)))))
 
 ;;; ===========================================================================
-;;;  Public interface (MAKE-LLRB-NODE is defined above)
+;;;  Public interface
+
+(defun make-llrb-tree (&optional (comparision-test #'compare))
+  (%make-llrb-tree (coerce comparision-test 'function)))
+
+;;; ---------------------------------------------------------------------------
 
 (defun llrb-tree-node (key llrb-tree)
   (let ((root-node (llrb-tree-root llrb-tree)))
