@@ -1,5 +1,7 @@
 Important changes since GBBopen 1.4:
-  None.
+
+  * Changes to GBBopen Tools
+     - New left-leaning red-black (LLRB) tree entities
 
 
 Important changes in GBBopen 1.4:
