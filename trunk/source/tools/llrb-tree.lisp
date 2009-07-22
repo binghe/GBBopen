@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/llrb-tree.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jul 22 06:11:51 2009 *-*
+;;;; *-* Last-Edit: Wed Jul 22 06:30:56 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -29,7 +29,6 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(compare
             compare&
-            get-llrb-tree-node          ; not documented
             llrb-node
             llrb-tree
             llrb-tree-count
@@ -348,14 +347,14 @@
 ;;; ===========================================================================
 ;;;  Public interface (MAKE-LLRB-NODE is defined above)
 
-(defun get-llrb-tree-node (key llrb-tree)
+(defun llrb-tree-node (key llrb-tree)
   (let ((root-node (llrb-tree-root llrb-tree)))
     (llrb-get-node key root-node (llrb-tree-test llrb-tree))))
 
 ;;; ---------------------------------------------------------------------------
 
 (defun llrb-tree-value (key llrb-tree)
-  (let ((tree-node (get-llrb-tree-node key llrb-tree)))
+  (let ((tree-node (llrb-tree-node key llrb-tree)))
     (when tree-node
       (values (llrb-node-value tree-node) 't))))
 
