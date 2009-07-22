@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Wed Jul 22 12:15:05 2009; Edited-By: cork *-*
+%% *-* Last-Edit: Wed Jul 22 17:39:25 2009; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2009, Dan Corkill <corkill@GBBopen.org>
@@ -10645,6 +10645,12 @@ codeindexit{encode-universal-time}%
 \index{search trees}%
 \index{left-leaning red-black trees}%
 %
+A \glref{LLRB~tree} is binary search tree that is roughly balanced, keeping
+the worst-case time values for operations such as inserting, deleting, and
+searching proportional to the height of the tree. A left-leaning, red-black
+(LLRB) tree is a simpler version of red-black trees where all red links must
+``lean'' left except during inserts and deletes.  LLRB trees have good
+worst-case running time for their operations and are efficient in general use.
 
 \W\entities
 \T\clearpage
@@ -10665,7 +10671,7 @@ codeindexit{encode-universal-time}%
 
 \fnargs
 \begin{args}{llrb-tree}
-\arg[llrb-tree] An LLRB tree
+\arg[llrb-tree] An \glref{LLRB~tree}
 \arg[count] A non-negative integer
 \end{args}
 
@@ -10673,6 +10679,7 @@ codeindexit{encode-universal-time}%
 
 \begin{alsos}{llrb-tree-delete}
 \also[llrb-tree-delete]
+\also[llrb-tree-p]
 \also[llrb-tree-test]
 \also[llrb-tree-value]
 \also[make-llrb-tree]
@@ -10684,7 +10691,8 @@ codeindexit{encode-universal-time}%
 \W\supp
 \begin{example}
   > (llrb-tree-count *tree*)
-  1
+  3
+  >
 \end{example}
 
 \end{functiondoc}
@@ -10706,7 +10714,7 @@ codeindexit{encode-universal-time}%
 \fnargs
 \begin{args}{llrb-tree}
 \arg[key] An object
-\arg[llrb-tree] An LLRB-tree
+\arg[llrb-tree] An \glref{LLRB~tree}
 \arg[deleted-p] A \glref{generalized~boolean}
 \end{args}
 
@@ -10714,6 +10722,7 @@ codeindexit{encode-universal-time}%
 
 \begin{alsos}{llrb-tree-count}
 \also[llrb-tree-count]
+\also[llrb-tree-p]
 \also[llrb-tree-test]
 \also[llrb-tree-value]
 \also[make-llrb-tree]
@@ -10736,6 +10745,48 @@ try deleting it a second time:
 
 %% ------------------------------------------------------------------------
 
+\begin{functiondoc}{Function}{llrb-tree-p}{\var{object\/}
+    \returns{} \var{boolean\/}}
+\index{LLRB tree!predicate}%
+
+\fnsyntax
+
+\fnpurpose Determine if an object is an LLRB tree
+
+\fnpackage \code{:gbbopen-tools}
+
+\fnmodule \code{:gbbopen-tools}
+
+\fnargs
+\begin{args}{boolean}
+\arg[object] An object
+\arg[boolean] A \glref{generalized~boolean}
+\end{args}
+
+\fnreturns True if \var{object\/} is an LLRB tree; \nil{} otherwise.
+
+\begin{alsos}{llrb-tree-delete}
+\also[llrb-tree-count]
+\also[llrb-tree-delete]
+\also[llrb-tree-test]
+\also[llrb-tree-value]
+\also[make-llrb-tree]
+\also[map-llrb-tree]
+\end{alsos}
+
+\fnexample
+%
+\W\supp
+\begin{example}
+  > (llrb-tree-p *tree*)
+  t
+  >
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
 \begin{functiondoc}{Function}{llrb-tree-test}{\var{llrb-tree\/}
   \returns{} \var{comparison-test\/}}
 \index{LLRB tree!entities count}%
@@ -10750,7 +10801,7 @@ try deleting it a second time:
 
 \fnargs
 \begin{args}{llrb-tree}
-\arg[llrb-tree] An LLRB tree
+\arg[llrb-tree] An \glref{LLRB~tree}
 \arg[test] A \glref{function~designator} specifying a the three-way
 comparison test used in \var{llrb-tree}
 \end{args}
@@ -10760,6 +10811,7 @@ comparison test used in \var{llrb-tree}
 \begin{alsos}{llrb-tree-delete}
 \also[llrb-tree-count]
 \also[llrb-tree-delete]
+\also[llrb-tree-p]
 \also[llrb-tree-value]
 \also[make-llrb-tree]
 \also[map-llrb-tree]
@@ -10800,7 +10852,7 @@ comparison test used in \var{llrb-tree}
 \fnargs
 \begin{args}{present-p}
 \arg[key] An object
-\arg[llrb-tree] An LLRB tree
+\arg[llrb-tree] An \glref{LLRB~tree}
 \arg[default] An object (default is \nil)
 \arg[value] An object 
 \arg[present-p] A \glref{generalized~boolean}
@@ -10823,6 +10875,7 @@ value associated with the given \var{key}, or to add a new entry. When a
 \begin{alsos}{llrb-tree-delete}
 \also[llrb-tree-count]
 \also[llrb-tree-delete]
+\also[llrb-tree-p]
 \also[llrb-tree-test]
 \also[make-llrb-tree]
 \also[map-llrb-tree]
@@ -10834,8 +10887,13 @@ value associated with the given \var{key}, or to add a new entry. When a
 \begin{example}
   > (defparameter *tree* (\entlink{make-llrb-tree} #'compare\&))
   *tree*
+  > (llrb-tree-value 1 *tree*)
+  nil
   > (setf (llrb-tree-value 1 *tree*) 'a)
   a
+  > (llrb-tree-value 1 *tree*)
+  a
+  t
   >
 \end{example}
 
@@ -10858,7 +10916,7 @@ value associated with the given \var{key}, or to add a new entry. When a
 \fnargs
 \begin{args}{comparison-test}
 \arg[comparison-test] A three-way comparison test
-\arg[llrb-tree] An LLRB tree
+\arg[llrb-tree] An \glref{LLRB~tree}
 \end{args}
 
 \fnreturns An empty left-leaning red-black tree
@@ -10866,6 +10924,7 @@ value associated with the given \var{key}, or to add a new entry. When a
 \begin{alsos}{llrb-tree-delete}
 \also[llrb-tree-count]
 \also[llrb-tree-delete]
+\also[llrb-tree-p]
 \also[llrb-tree-test]
 \also[llrb-tree-value]
 \also[map-llrb-tree]
@@ -10900,12 +10959,13 @@ an LLRB tree.
 \begin{args}{comparison-test}
 \arg[function] A \glref{function~designator} specifying a
  \glref{function~object} of two arguments
-\arg[llrb-tree] An LLRB tree
+\arg[llrb-tree] An \glref{LLRB~tree}
 \end{args}
 
 \begin{alsos}{llrb-tree-delete}
 \also[llrb-tree-count]
 \also[llrb-tree-delete]
+\also[llrb-tree-p]
 \also[llrb-tree-test]
 \also[llrb-tree-value]
 \also[make-llrb-tree]
