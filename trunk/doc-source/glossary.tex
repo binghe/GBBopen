@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/glossary.tex *-*
-%% *-* Last-Edit: Sat Jun 20 10:29:46 2009; Edited-By: cork *-*
+%% *-* Last-Edit: Wed Jul 22 17:27:41 2009; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 \begin{glossary-list}
@@ -623,6 +623,24 @@ An object that is a subclass of
 An object that is a subclass of
 \nobr{\textbf{\entlinknoex{standard-ksa-class}}} that is used to represent a
 \glref{KSA}.
+
+%% ------------------------------------------------------------------------
+
+\glent[left-leaning~red-black~tree]
+\index{left-leaning red-black tree|see{LLRB tree}}%
+%
+An \glref{LLRB~tree}.
+
+%% ------------------------------------------------------------------------
+
+\glent[LLRB~tree]
+\index{LLRB tree}%
+%
+A binary search tree that is roughly balanced, keeping the worst-case time for
+operations such as inserting, deleting, and finding values proportional to the
+height of the tree. A left-leaning, red-black (LLRB) tree is a simpler version
+of red-black trees introduced by Sedgewick in 2008 where all red links must
+lean left except during inserts and deletes.
 
 %% ------------------------------------------------------------------------
 
