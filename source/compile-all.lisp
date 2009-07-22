@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/compile-all.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Jul 13 10:40:25 2008 *-*
+;;;; *-* Last-Edit: Wed Jul 22 04:49:21 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2006-2008, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2006-2009, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -40,6 +40,7 @@
 ;; modules at once (and reduce :forces-recompile recompilations):
 (compile-it :agenda-shell-test)
 ;; Now do the rest:
+(compile-it :gbbopen-tools-test)
 (compile-it :gbbopen-test)
 (compile-it :tutorial-example)
 (compile-it :os-interface-test :dont-reset 't)
