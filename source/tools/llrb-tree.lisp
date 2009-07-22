@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/llrb-tree.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jul 22 11:58:38 2009 *-*
+;;;; *-* Last-Edit: Wed Jul 22 14:27:29 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -29,10 +29,11 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(compare
             compare&
-            llrb-node
-            llrb-tree
+            llrb-node                   ; structure type
+            llrb-tree                   ; structure type
             llrb-tree-count
             llrb-tree-delete
+            llrb-tree-node              ; not yet documented
             llrb-tree-p
             llrb-tree-test
             llrb-tree-value
