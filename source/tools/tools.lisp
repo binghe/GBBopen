@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Jun 30 02:47:45 2009 *-*
+;;;; *-* Last-Edit: Wed Jul 22 05:51:21 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -63,6 +63,7 @@
 ;;;  07-20-08 Added CASE-USING, CCASE-USING, and ECASE-USING macros.  (Corkill)
 ;;;  03-02-09 Added LIST-LENGTH>2.  (Corkill)
 ;;;  04-14-09 Added DOSUBLISTS.  (Corkill)
+;;;  07-22-08 Added NICER-TIME.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -189,6 +190,7 @@
             make-keyword
             memq
             multiple-value-setf
+            nicer-time                  ; not yet documented
             nicer-y-or-n-p              ; not yet documented
             nicer-yes-or-no-p           ; not yet documented
             nsorted-insert
@@ -662,6 +664,17 @@
          #-(or allegro cmu)
          control-string
          args))
+
+;;; ===========================================================================
+;;;  Nicer time macro (limit `form' display under Clozure CL):
+
+(defmacro nicer-time (form)
+  #+clozure
+  `(let ((*print-length* 1)
+         (*print-level* 1))
+     (time ,form))
+  #-clozure
+  `(time ,form))
 
 ;;; ===========================================================================
 ;;;  Ensure-finalized-class
