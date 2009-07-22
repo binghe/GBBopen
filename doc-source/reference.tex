@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Tue Jun 30 02:52:48 2009; Edited-By: cork *-*
+%% *-* Last-Edit: Wed Jul 22 12:15:05 2009; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2009, Dan Corkill <corkill@GBBopen.org>
@@ -1767,7 +1767,8 @@ the \nobr{\code{:gbbopen-user}} package:
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{startup-module}%
-  {\var{module-name options \code{\&optional} package-name\/}}
+  {\var{module-name options\/} 
+    \nobr{\code{\&optional} \var{package-name\/}}}
 \index{compiling, a module, and also loading module}%
 \index{loading!a module}% 
 \index{module!compiling, recompiling, and loading}%
@@ -4337,8 +4338,8 @@ macro.
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Function}{compiler-macroexpand}{%
-    \var{form\/} \code{\&optional} \var{env\/} 
+\begin{functiondoc}{Function}{compiler-macroexpand}{\var{form\/} 
+    \nobr{\code{\&optional} \var{env\/}}
     \nobr{\returns{} \var{expansion, expanded-p\/}}}
 \index{compiler macro!expanding}%
 \index{macroexpand!compiler macro}%
@@ -4394,8 +4395,8 @@ compiler-macro form.
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Function}{compiler-macroexpand-1}{%
-    \var{form\/} \code{\&optional} \var{env\/} 
+\begin{functiondoc}{Function}{compiler-macroexpand-1}{\var{form\/} 
+    \nobr{\code{\&optional} \var{env\/}}
     \nobr{\returns{} \var{expansion, expanded-p\/}}}
 \index{compiler macro!expanding}%
 \index{macroexpand!compiler macro}%
@@ -4528,7 +4529,7 @@ Lisp Machines).
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Macro}{decf-after}{\var{place\/}
-    \code{\&optional} \var{decrement\/}
+    \nobr{\code{\&optional} \var{decrement\/}}
     \returns{} \var{original-value\/}}
 \index{place!decrementing numeric value of}%
 
@@ -5357,7 +5358,7 @@ an atom, a newly consed list containing \var{object\/} as its sole element.
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Macro}{incf-after}{\var{place\/}
-    \code{\&optional} \var{increment\/}
+    \nobr{\code{\&optional} \var{increment\/}}
     \returns{} \var{original-value\/}}
 \index{place!incrementing numeric value of}%
 
@@ -5809,7 +5810,7 @@ are more values than \var{places}, the extra values are discarded.
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{nsorted-insert}{\var{item list\/}
-    \code{\&optional} \var{predicate key\/} 
+    \nobr{\code{\&optional} \var{predicate key\/}}
     \returns{} \var{result-list\/}} 
 \index{inserting an item!into a sorted list}%
 \index{sorted list!inserting an item into}%
@@ -5853,7 +5854,7 @@ constructing the result; however, modification of the supplied
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{object-address}{\var{object\/}
-    \code{\&optional} \var{hex-string-p\/}
+    \nobr{\code{\&optional} \var{hex-string-p\/}}
     \returns{} \var{address\/}} 
 \index{searching!for an item in a list}%
   
@@ -6625,7 +6626,7 @@ often used on the results of calling
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{splitting-butlast}{\var{list\/}
-    \code{\&optional} \var{n\/} 
+    \nobr{\code{\&optional} \var{n\/}}
     \nobr{\returns{} \var{result-list, tail\/}}}
 \index{list!splitting into two sublists}%
 \index{splitting a list}%
@@ -6706,7 +6707,7 @@ subclass of \nobr{\code{standard-object}}.  It is a superclass of
 
 \begin{functiondoc}{Function}{trimmed-substring}%
   {\var{character-bag string\/} 
-    \code{\&optional} \var{start end\/}
+    \nobr{\code{\&optional} \var{start end\/}}
     \returns{} \var{trimmed-substring\/}}
 \index{date!formatted}% 
 
@@ -8808,8 +8809,8 @@ in order to make it available as early as possible.
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{brief-date}{%
-    \code{\&optional} \var{universal-time\/}
-    \code{\&key} \var{time-zone destination\/}
+    \nobr{\code{\&optional} \var{universal-time\/}}
+    \nobr{\code{\&key} \var{time-zone destination\/}}
     \returns{} \var{result\/}}
 \index{date!formatted}% 
 \index{time, formatted}% 
@@ -8890,7 +8891,7 @@ in order to to make it available as early as possible.
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{brief-date-and-time}{%
-    \code{\&optional} \var{universal-time\/}
+    \nobr{\code{\&optional} \var{universal-time\/}}
     \code{\&key} \var{time-zone include-seconds destination\/}
     \returns{} \var{result\/}}
 \index{date!formatted}% 
@@ -9017,7 +9018,7 @@ in order to to make it available as early as possible.
 
 \begin{functiondoc}{Function}{brief-duration}{%
     \var{seconds\/}
-    \code{\&optional} \var{maximum-fields destination\/} 
+    \nobr{\code{\&optional} \var{maximum-fields destination\/}}
     \returns{} \var{result\/}}
   \index{time!duration, formatting}% 
 \index{duration!formatting}% 
@@ -9089,7 +9090,7 @@ description.
 
 \begin{functiondoc}{Function}{brief-run-time-duration}{%
     \var{internal-time-units\/}
-    \code{\&optional} \var{maximum-fields destination\/} 
+    \nobr{\code{\&optional} \var{maximum-fields destination\/}}
     \returns{} \var{result\/}}
   \index{time!duration, formatting}% 
 \index{duration!formatting}% 
@@ -9531,7 +9532,7 @@ can be invoked using the \glref{REPL~command} \nobr{\code{:ut} \var{arg\/}}.
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{internet-text-date-and-time}{%
-    \code{\&optional} \var{universal-time\/} 
+    \nobr{\code{\&optional} \var{universal-time\/}}
     \code{\&key} \var{time-zone daylight-savings-p 
       utc-offset-only destination\/} 
    \returns{} \var{result\/}}
@@ -9602,8 +9603,8 @@ determined by \code{decode-universal-time}) is used, and the
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{iso8661-date-and-time}{%
-    \code{\&optional} \var{universal-time\/} 
-    \code{\&key} \var{destination\/} 
+    \nobr{\code{\&optional} \var{universal-time\/}}
+    \nobr{\code{\&key} \var{destination\/}}
    \returns{} \var{result\/}}
 \index{time!formatting}% 
 
@@ -9655,8 +9656,8 @@ If \nobr{\var{universal-time\/}} is not supplied or is \nil, the current time
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{message-log-date-and-time}{%
-    \code{\&optional} \var{universal-time\/} 
-    \code{\&key} \var{destination\/} 
+    \nobr{\code{\&optional} \var{universal-time\/}}
+    \nobr{\code{\&key} \var{destination\/}}
    \returns{} \var{result\/}}
 \index{time!formatting}% 
 
@@ -10172,7 +10173,7 @@ parse ended.
 
 \begin{functiondoc}{Function}{pretty-duration}{%
     \var{seconds\/}
-    \code{\&optional} \var{maximum-fields destination\/} 
+    \nobr{\code{\&optional} \var{maximum-fields destination\/}}
     \returns{} \var{result\/}}
   \index{time!duration, formatting}% 
 \index{duration!formatting}% 
@@ -10244,7 +10245,7 @@ description.
 
 \begin{functiondoc}{Function}{pretty-run-time-duration}{%
     \var{internal-time-units\/}
-    \code{\&optional} \var{maximum-fields destination\/} 
+    \nobr{\code{\&optional} \var{maximum-fields destination\/}}
     \returns{} \var{result\/}}
   \index{time!duration, formatting}% 
 \index{duration!formatting}% 
@@ -10375,8 +10376,8 @@ value is changed.
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Function}{check-ot-base}{\code{\&optional}
-    \var{suppress-warning\/}
+\begin{functiondoc}{Function}{check-ot-base}{%
+    \nobr{\code{\&optional} \var{suppress-warning\/}}
     \returns{} \var{boolean\/}}
 
 \index{universal time!setting the time base value}%
@@ -10499,8 +10500,8 @@ can be invoked using the \glref{REPL~command} \nobr{\code{:ot} \var{arg\/}}.
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Function}{set-ot-base}{\var{\code{\&optional} 
-      date month year time-zone\/})
+\begin{functiondoc}{Function}{set-ot-base}{\code{\&optional} 
+    \var{date month year time-zone\/}
     \returns{} \var{ot-base\/}}
 \index{universal time!setting the time base value}%
 
@@ -10574,8 +10575,8 @@ Set the time base for Offset Universal Time to July 1, 2007:
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Function}{ut2ot}{\code{\&optional} 
-    \var{universal-time\/}
+\begin{functiondoc}{Function}{ut2ot}{%
+    \nobr{\code{\&optional} \var{universal-time\/}}
   \returns{} \var{offset-universal-time\/}}
 \index{universal time!converting to offset universal time}%
 
@@ -10623,6 +10624,308 @@ codeindexit{encode-universal-time}%
              ;; noon on the Fourth of July, 2008:
              0 0 12 (parse-date "July 4, 2008")))
   15161984
+  >
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\T\markright{}%
+\T\pagestyle{plain}
+\T\clearpage
+\W\xname{ref-search-tree-entities}
+\T\pagestyle{fancy}
+\T\thispagestyle{fancybottom}
+\T\global\def\fnlastname{ }%
+
+\subsection{Search Trees}
+\label{sec:trees}%
+
+\index{search trees}%
+\index{left-leaning red-black trees}%
+%
+
+\W\entities
+\T\clearpage
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{llrb-tree-count}{\var{llrb-tree\/}
+  \returns{} \var{count\/}}
+\index{LLRB tree!entities count}%
+
+\fnsyntax
+
+\fnpurpose Return number of entries stored in \var{llrb-tree} 
+
+\fnpackage \code{:gbbopen-tools}
+
+\fnmodule \code{:gbbopen-tools}
+
+\fnargs
+\begin{args}{llrb-tree}
+\arg[llrb-tree] An LLRB tree
+\arg[count] A non-negative integer
+\end{args}
+
+\fnreturns The number of entries stored in \var{llrb-tree}
+
+\begin{alsos}{llrb-tree-delete}
+\also[llrb-tree-delete]
+\also[llrb-tree-test]
+\also[llrb-tree-value]
+\also[make-llrb-tree]
+\also[map-llrb-tree]
+\end{alsos}
+
+\fnexample
+%
+\W\supp
+\begin{example}
+  > (llrb-tree-count *tree*)
+  1
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{llrb-tree-delete}{\var{key llrb-tree\/}
+  \returns{} \var{deleted-p\/}}
+\index{LLRB tree!deleting}%
+
+\fnsyntax
+
+\fnpurpose Delete the entry associated with a given key
+
+\fnpackage \code{:gbbopen-tools}
+
+\fnmodule \code{:gbbopen-tools}
+
+\fnargs
+\begin{args}{llrb-tree}
+\arg[key] An object
+\arg[llrb-tree] An LLRB-tree
+\arg[deleted-p] A \glref{generalized~boolean}
+\end{args}
+
+\fnreturns True if the entry was deleted; \nil{} if it was not found
+
+\begin{alsos}{llrb-tree-count}
+\also[llrb-tree-count]
+\also[llrb-tree-test]
+\also[llrb-tree-value]
+\also[make-llrb-tree]
+\also[map-llrb-tree]
+\end{alsos}
+
+\fnexample
+%
+Delete the entry stored under \code{1} in the LLRB-tree \code{*tree*}, then
+try deleting it a second time:
+\W\supp
+\begin{example}
+  > (llrb-tree-delete 1 *tree*)
+  t
+  > (llrb-tree-delete 1 *tree*)
+  nil
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{llrb-tree-test}{\var{llrb-tree\/}
+  \returns{} \var{comparison-test\/}}
+\index{LLRB tree!entities count}%
+
+\fnsyntax
+
+\fnpurpose Return the comparison test used in \var{llrb-tree} 
+
+\fnpackage \code{:gbbopen-tools}
+
+\fnmodule \code{:gbbopen-tools}
+
+\fnargs
+\begin{args}{llrb-tree}
+\arg[llrb-tree] An LLRB tree
+\arg[test] A \glref{function~designator} specifying a the three-way
+comparison test used in \var{llrb-tree}
+\end{args}
+
+\fnreturns The comparison test used in \var{llrb-tree}
+
+\begin{alsos}{llrb-tree-delete}
+\also[llrb-tree-count]
+\also[llrb-tree-delete]
+\also[llrb-tree-value]
+\also[make-llrb-tree]
+\also[map-llrb-tree]
+\end{alsos}
+
+\fnexample
+%
+\W\supp
+\begin{example}
+  > (llrb-tree-test *tree*)
+  compare\&
+  >
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{llrb-tree-value}{\var{key llrb-tree\/}
+      \nobr{\code{\&optional} \var{default\/}}
+    \nobr{\returns{} \var{value, present-p\/}}}
+\index{LLRB tree!retrieval}%
+\index{LLRB tree!inserting}%
+
+\fnsyntax
+
+\fnpurpose Return the value associated with a given key
+
+\fnsetf
+\fnsetfsyntax{llrb-tree-value}{\var{key llrb-tree\/}
+      \nobr{\code{\&optional} \var{default\/}}}{\var{value\/}}%
+    {\returns{} \var{value\/}}
+
+\fnpackage \code{:gbbopen-tools}
+
+\fnmodule \code{:gbbopen-tools}
+
+\fnargs
+\begin{args}{present-p}
+\arg[key] An object
+\arg[llrb-tree] An LLRB tree
+\arg[default] An object (default is \nil)
+\arg[value] An object 
+\arg[present-p] A \glref{generalized~boolean}
+\end{args}
+
+\fnreturns Two values:
+\begin{tightitemize}
+\item The value associated with the given \var{key\/} or \var{default\/} if no
+  entry is associated with \var{key}
+\item True, if an entry was found; \nil{} if there is no such entry
+\end{tightitemize}
+
+\fndescription
+%
+\code{Setf} may be used with \nobr{\textbf{llrb-tree-value}} to replace the
+value associated with the given \var{key}, or to add a new entry. When a
+\nobr{\textbf{llrb-tree-value}} form is used as a setf place, any
+\var{default\/} which is supplied is evaluated, but its value is ignored.
+
+\begin{alsos}{llrb-tree-delete}
+\also[llrb-tree-count]
+\also[llrb-tree-delete]
+\also[llrb-tree-test]
+\also[make-llrb-tree]
+\also[map-llrb-tree]
+\end{alsos}
+
+\fnexample
+%
+\W\supp
+\begin{example}
+  > (defparameter *tree* (\entlink{make-llrb-tree} #'compare\&))
+  *tree*
+  > (setf (llrb-tree-value 1 *tree*) 'a)
+  a
+  >
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{make-llrb-tree}{\var{comparison-test\/}
+  \returns{} \var{llrb-tree\/}}
+\index{LLRB tree!creating}%
+
+\fnsyntax
+
+\fnpurpose Create an empty left-leaning red-black tree.
+
+\fnpackage \code{:gbbopen-tools}
+
+\fnmodule \code{:gbbopen-tools}
+
+\fnargs
+\begin{args}{comparison-test}
+\arg[comparison-test] A three-way comparison test
+\arg[llrb-tree] An LLRB tree
+\end{args}
+
+\fnreturns An empty left-leaning red-black tree
+
+\begin{alsos}{llrb-tree-delete}
+\also[llrb-tree-count]
+\also[llrb-tree-delete]
+\also[llrb-tree-test]
+\also[llrb-tree-value]
+\also[map-llrb-tree]
+\end{alsos}
+
+\fnexample
+%
+\W\supp
+\begin{example}
+  > (make-llrb-tree #'compare\&)
+  #<compare\& llrb-tree with 0 entries>
+  >
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{map-llrb-tree}{\var{function llrb-tree\/}}
+\index{LLRB tree!applying a function to entries of}%
+
+\fnsyntax
+
+\fnpurpose Apply a \glref{function} once to the key and value of each entry in
+an LLRB tree.
+
+\fnpackage \code{:gbbopen-tools}
+
+\fnmodule \code{:gbbopen-tools}
+
+\fnargs
+\begin{args}{comparison-test}
+\arg[function] A \glref{function~designator} specifying a
+ \glref{function~object} of two arguments
+\arg[llrb-tree] An LLRB tree
+\end{args}
+
+\begin{alsos}{llrb-tree-delete}
+\also[llrb-tree-count]
+\also[llrb-tree-delete]
+\also[llrb-tree-test]
+\also[llrb-tree-value]
+\also[make-llrb-tree]
+\end{alsos}
+
+\fnexample
+%
+\W\supp
+\begin{example}
+  > (map-llrb-tree 
+      #'(lambda (key value)
+          (\entlink{printv} key value))
+    *tree*)
+  ;;  key => 1
+  ;;  value => a
+  ;;  key => 2
+  ;;  value => b
+  ;;  key => 3
+  ;;  value => c
+  nil
   >
 \end{example}
 
@@ -10961,7 +11264,7 @@ Close a passive socket:
 
 \begin{functiondoc}{Function}{local-hostname-and-port}%
   {\var{socket-stream\/}
-    \code{\&optional} \var{do-not-resolve\/} 
+    \nobr{\code{\&optional} \var{do-not-resolve\/}}
     \nobr{\returns{} \var{hostname, port}}}
 \index{socket stream!local hostname}%
 \index{socket stream!local port}%
@@ -11146,7 +11449,7 @@ resources.
 
 \begin{functiondoc}{Function}{remote-hostname-and-port}%
   {\var{socket-stream\/} 
-    \code{\&optional} \var{do-not-resolve\/} 
+    \nobr{\code{\&optional} \var{do-not-resolve\/}}
     \nobr{\returns{} \var{hostname, port}}}
 \index{socket stream!remote hostname}%
 \index{socket stream!remote port}%
@@ -11506,7 +11809,7 @@ available and has been passed to the preferred browser; no value otherwise.
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{kill-external-program}{\var{os-process\/}
-  \&optional \var{signal-number\/}}
+  \nobr{\code{\&optional} \var{signal-number\/}}}
 \index{external-program!terminating}%
 \index{external-program!signaling}%
 \index{signaling an external program}%
@@ -12385,7 +12688,7 @@ subclasses of \code{hyp}) \glref{unit~instances}:
 \fnmethods
 \fnalternate{describe-instance}%
  {\code{(}\var{instance\/} \code{standard-unit-instance)}
-    \code{\&optional} \var{stream\/}}
+    \nobr{\code{\&optional} \var{stream\/}}}
 
 \fnpackage \code{:gbbopen}
 
@@ -12452,7 +12755,7 @@ Describe the \code{hyp} \glref{unit~instance}:
 
 \begin{functiondoc}{Generic~Function}{describe-instance-slot-value}%
   {\var{instance slot-name value\/}
-    \code{\&optional} \var{stream\/}}
+    \nobr{\code{\&optional} \var{stream\/}}}
 \index{unit instance!printing information about}%
 \index{printing!information about!unit instance}%
 \index{printing!information about!space instance, as a unit instance}%
@@ -12466,7 +12769,7 @@ Describe the \code{hyp} \glref{unit~instance}:
 \fnalternate{describe-instance-slot-value}%
   {\code{(}\var{instance\/} \code{standard-unit-instance)}
     \var{slot-name value\/}
-    \code{\&optional} \var{stream\/}}
+    \nobr{\code{\&optional} \var{stream\/}}}
 
 \fnpackage \code{:gbbopen}
 
@@ -13123,7 +13426,7 @@ and its \nobr{\code{char-code}} \glref{dimension~value}:
 
 \begin{functiondoc}{Function}{instance-dimension-values}%
   {\var{unit-instance\/}
-    \code{\&optional} \var{dimension-names\/}
+    \nobr{\code{\&optional} \var{dimension-names\/}}
     \returns{} \var{dimension-values-alist\/}}
 \index{unit instance!obtaining a dimension values of}%
 \index{dimension value!of a unit instance}%
@@ -14211,8 +14514,8 @@ end of the link that have consistent values.
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Function}{check-link-definitions}{\code{\&optional}
-    \var{silent errorp\/}
+\begin{functiondoc}{Function}{check-link-definitions}{%
+    \nobr{\code{\&optional} \var{silent errorp\/}}
     \returns{} \var{boolean\/}}
 \index{link!definitions, checking consistency of}%
 
@@ -16277,7 +16580,7 @@ center point of the original \var{interval}.
 
 \begin{functiondoc}{Function}{expand-point}%
   {\var{point amount\/}
-    \code{\&optional} \var{type-specifier\/} 
+    \nobr{\code{\&optional} \var{type-specifier\/}}
     \returns{} \var{new-interval\/}}
 \index{expand, a point into an interval}%
 \index{point!expanding into an interval}%
@@ -16576,7 +16879,7 @@ declaration:
 
 \begin{functiondoc}{Function}{make-interval}%
   {\var{start end\/} 
-    \code{\&optional} \var{type-specifier\/} 
+    \nobr{\code{\&optional} \var{type-specifier\/}}
     \returns{} \var{new-interval\/}}
 \index{make, an interval}%
 \index{interval!making}%
@@ -18967,7 +19270,7 @@ and \nobr{\code{within\%}}.
 
 \begin{functiondoc}{Function}{find-all-instances-by-name}%
   {\var{instance-name\/}
-    \code{\&optional} \var{unit-class-specifier\/} 
+    \nobr{\code{\&optional} \var{unit-class-specifier\/}}
     \returns{} \var{unit-instances\/}} 
 \index{unit instance!retrieving by instance name}%
 \index{name-based retrieval}%
@@ -19049,7 +19352,7 @@ or simply:
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{find-instance-by-name}{\var{instance-name\/}
-    \code{\&optional} \var{unit-class-specifier\/} 
+    \nobr{\code{\&optional} \var{unit-class-specifier\/}}
     \returns{} \var{unit-instance\/}} 
 \index{unit instance!retrieving by instance name}%
 \index{name-based retrieval}%
@@ -21576,7 +21879,7 @@ queue of \glref{pending~KSAs}:
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Generic~Function}{queue-length}{\var{queue\/}
-    \code{\&optional} \var{recount-p\/} 
+    \nobr{\code{\&optional} \var{recount-p\/}}
     \returns{} \var{integer\/}}
 \index{length!of a queue}%
 \index{queue!obtaining the length of}%
