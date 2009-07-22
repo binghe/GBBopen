@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/llrb-tree.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jul 22 10:26:37 2009 *-*
+;;;; *-* Last-Edit: Wed Jul 22 11:58:38 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -97,6 +97,7 @@
 ;;; ---------------------------------------------------------------------------
 
 (defvar *%llrb-delete-succeeded%* nil)  ; used to signal successful llrb-delete
+(defvar *%llrb-insert-succeeded%* nil)  ; used to signal added llrb-node
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Move these to declared-numerics and complete them with all declared types
@@ -175,6 +176,7 @@
 ;;;  Insertion
 
 (defun make-llrb-root (key value)
+  (setf *%llrb-insert-succeeded%* 't)
   (make-llrb-node key value nil))
 
 ;;; ---------------------------------------------------------------------------
@@ -203,7 +205,9 @@
              (type function test))
     (cond
      ;; Empty LLRB tree (insert at the bottom):
-     ((not node) (make-llrb-node key value 't))
+     ((not node) 
+      (setf *%llrb-insert-succeeded%* 't)
+      (make-llrb-node key value 't))
      ;; Do an interior insert:
      (t (let ((result (funcall test key (llrb-node-key node))))
           ;; Standard BST insert:
@@ -380,12 +384,13 @@
 
 (defun (setf llrb-tree-value) (value key llrb-tree &optional default)
   (declare (ignore default))
-  (let ((root-node (llrb-tree-root llrb-tree)))
+  (let ((root-node (llrb-tree-root llrb-tree))
+        (*%llrb-insert-succeeded%* nil))
     (setf (llrb-tree-root llrb-tree)
           (if root-node
               (llrb-insert key root-node value (llrb-tree-test llrb-tree))
-              (make-llrb-root key value))))
-  (incf (llrb-tree-count llrb-tree))
+              (make-llrb-root key value)))
+    (when *%llrb-insert-succeeded%* (incf (llrb-tree-count llrb-tree))))
   value)
 
 ;;; ---------------------------------------------------------------------------
