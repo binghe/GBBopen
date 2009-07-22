@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/llrb-tree.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jul 22 10:12:07 2009 *-*
+;;;; *-* Last-Edit: Wed Jul 22 10:26:37 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -370,14 +370,16 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun llrb-tree-value (key llrb-tree)
+(defun llrb-tree-value (key llrb-tree &optional default)
   (let ((tree-node (llrb-tree-node key llrb-tree)))
-    (when tree-node
-      (values (llrb-node-value tree-node) 't))))
+    (if tree-node
+        (values (llrb-node-value tree-node) 't)
+        default)))
 
 ;;; ---------------------------------------------------------------------------
 
-(defun (setf llrb-tree-value) (value key llrb-tree)
+(defun (setf llrb-tree-value) (value key llrb-tree &optional default)
+  (declare (ignore default))
   (let ((root-node (llrb-tree-root llrb-tree)))
     (setf (llrb-tree-root llrb-tree)
           (if root-node
