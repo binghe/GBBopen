@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/llrb-tree.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jul 22 14:27:29 2009 *-*
+;;;; *-* Last-Edit: Thu Jul 23 15:38:24 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -29,6 +29,8 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(compare
             compare&
+	    llrb-current-node-value
+	    llrb-current-node-key
             llrb-node                   ; structure type
             llrb-tree                   ; structure type
             llrb-tree-count
@@ -38,7 +40,8 @@
             llrb-tree-test
             llrb-tree-value
             make-llrb-tree
-            map-llrb-tree)))
+            map-llrb-tree
+	    map-llrb-tree-with-conditional-descent)))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -99,6 +102,8 @@
 
 (defvar *%llrb-delete-succeeded%* nil)  ; used to signal successful llrb-delete
 (defvar *%llrb-insert-succeeded%* nil)  ; used to signal added llrb-node
+(defvar *%llrb-current-node%* nil)      ; used to access the current llrb-node
+                                        ; during traversals
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Move these to declared-numerics and complete them with all declared types
@@ -346,9 +351,27 @@
     (declare (type (or llrb-node null) node)
              (type function fn))
     (when node
-      (llrb-map fn (llrb-node-left node))
-      (funcall fn node)
-      (llrb-map fn (llrb-node-right node)))))
+      (let ((*%llrb-current-node%* node))
+        (llrb-map fn (llrb-node-left node))
+        (funcall fn node)
+        (llrb-map fn (llrb-node-right node))))))
+
+;;; ---------------------------------------------------------------------------
+
+(with-full-optimization ()
+  (defun llrb-map-with-conditional-descent (left right node)
+    (declare (type (or llrb-node null) node)
+	     (type function left right))
+      (when node
+        (let ((*%llrb-current-node%* node))
+          (when (funcall left (llrb-node-left node))
+            (llrb-map-with-conditional-descent left 
+                                               right 
+                                               (llrb-node-left node)))
+          (when (funcall right (llrb-node-right node))
+            (llrb-map-with-conditional-descent left 
+                                               right 
+                                               (llrb-node-right node)))))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -361,6 +384,11 @@
       (llrb-prefix-map fn (llrb-node-left node))
       (llrb-prefix-map fn (llrb-node-right node)))))
 
+;;; ---------------------------------------------------------------------------
+
+(defun no-current-llrb-node-error ()
+  (error "No current llrb-node is active."))
+
 ;;; ===========================================================================
 ;;;  Public interface
 
@@ -369,9 +397,25 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun llrb-tree-node (key llrb-tree)
-  (let ((root-node (llrb-tree-root llrb-tree)))
-    (llrb-get-node key root-node (llrb-tree-test llrb-tree))))
+(defun llrb-current-node-key ()
+  (if *%llrb-current-node%*
+      (llrb-node-key *%llrb-current-node%*)
+      (no-current-llrb-node-error)))
+
+;;; ---------------------------------------------------------------------------
+
+(defun llrb-current-node-value ()
+  (if *%llrb-current-node%*
+      (llrb-node-value *%llrb-current-node%*)
+      (no-current-llrb-node-error)))
+
+;;; ---------------------------------------------------------------------------
+
+(defun (setf llrb-current-node-value) (value)
+  (if *%llrb-current-node%*
+      (setf (llrb-node-value *%llrb-current-node%*)
+	    value)
+      (no-current-llrb-node-error)))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -396,6 +440,13 @@
 
 ;;; ---------------------------------------------------------------------------
 
+(defun llrb-tree-node (key llrb-tree)
+  ;;; Not public yet, but exported (undocumented) should it be useful
+  (let ((root-node (llrb-tree-root llrb-tree)))
+    (llrb-get-node key root-node (llrb-tree-test llrb-tree))))
+
+;;; ---------------------------------------------------------------------------
+
 (defun llrb-tree-delete (key llrb-tree)
   (let ((root-node (llrb-tree-root llrb-tree))
         (*%llrb-delete-succeeded%* nil))
@@ -413,6 +464,24 @@
    #'(lambda (node) 
        (funcall fn (llrb-node-key node) (llrb-node-value node)))
    (llrb-tree-root llrb-tree)))
+
+;;; ---------------------------------------------------------------------------
+
+(defun map-llrb-tree-with-conditional-descent (left-fn right-fn llrb-tree)
+  (llrb-map-with-conditional-descent
+   #'(lambda (left-node)
+       (funcall left-fn 
+		(and left-node
+		     (llrb-node-key left-node))
+		(and left-node
+		     (llrb-node-value left-node))))
+   #'(lambda (right-node)
+       (funcall right-fn 
+		(and right-node
+		     (llrb-node-key right-node))
+		(and right-node
+		     (llrb-node-value right-node))))
+   (llrb-tree-root llrb-tree)))		
 
 ;;; ===========================================================================
 ;;;				  End of File
