@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/declared-numerics.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Jun 29 04:23:01 2009 *-*
+;;;; *-* Last-Edit: Mon Aug  3 15:21:04 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -71,23 +71,23 @@
 ;;;  02-20-04 Added full-safety escape feature.  (Corkill)
 ;;;  03-13-04 Added infinity values.  (Corkill)
 ;;;  04-13-04 Added SBCL & CMUCL infinity values.  (Corkill)
-;;;  05-21-04 Export fixnump, single-float-p, and double-float-p.  (Corkill)
-;;;  06-14-04 Changed single-float operation indicator from && to $.  (Corkill)
+;;;  05-21-04 Export FIXNUMP, SINGLE-FLOAT-P, and DOUBLE-FLOAT-P.  (Corkill)
 ;;;  01-11-05 Added fixnum infinity values.  (Corkill)
 ;;;  06-08-05 Added CLISP support.  (sds)
-;;;  08-23-05 Added coerce&, coerce$, and coerce$$.  (Corkill)
+;;;  08-23-05 Added COERCE&, COERCE$, and COERCE$$.  (Corkill)
 ;;;  10-31-05 Add non-*read-eval*, *print-readably* printing for infinity and 
 ;;;           NaN values for SBCL, Clozure CL, & CMUCL.  (Corkill)
 ;;;  11-02-05 Added CormanLisp support (faking infinity for now).  (Corkill)
 ;;;  11-27-05 Changed infinity reading/printing to #@ dispatching macro (as
 ;;;           suggested by Nikodemus Siivola); no special NaN I/O.  (Corkill)
-;;;  01-18-06 Added abs&, abs$, and abs$$.  (Corkill)
+;;;  01-18-06 Added declared-numeric ABS functions.  (Corkill)
 ;;;  02-13-06 Added GCL support.  (Corkill)
 ;;;  03-24-06 Added infinity-not-available feature.  (Corkill)
 ;;;  05-08-06 Added support for the Scieneer CL. (dtc)
 ;;;  11-15-06 Added short-float support.  (Corkill)
 ;;;  06-29-08 Changed most operators from macros to functions with 
 ;;;           compiler-macros.  (Corkill)
+;;;  08-03-09 Added declared-numeric COMPARE functions.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -174,35 +174,35 @@
             ;; Declared fixnum ops:
             & /& *& +& -& 1+& 1-& 
             /=& <& <=& =& >& >=& 
-            bounded-value& ceiling& decf& decf&-after evenp& 
+            bounded-value& ceiling& compare& decf& decf&-after evenp& 
             floor& fceiling& ffloor& fround& ftruncate& 
             incf& incf&-after max& min& minusp& 
             abs& mod& oddp& plusp& round& truncate& zerop&
             ;; Declared short-float ops:
             $& /$& *$& +$& -$& 1+$& 1-$&
             /=$& <$& <=$& =$& >$& >=$& 
-            bounded-value$& ceiling$& decf$& decf$&-after evenp$& 
+            bounded-value$& ceiling$& compare$& decf$& decf$&-after evenp$& 
             floor$& fceiling$& ffloor$& fround$& ftruncate$& 
             incf$& incf$&-after max$& min$& minusp$& 
             abs$& mod$& oddp$& plusp$& round$& truncate$& zerop$&
             ;; Declared single-float ops:
             $ /$ *$ +$ -$ 1+$ 1-$
             /=$ <$ <=$ =$ >$ >=$ 
-            bounded-value$ ceiling$ decf$ decf$-after evenp$ 
+            bounded-value$ ceiling$ compare$ decf$ decf$-after evenp$ 
             floor$ fceiling$ ffloor$ fround$ ftruncate$
             incf$ incf$-after max$ min$ minusp$ 
             abs$ mod$ oddp$ plusp$ round$ truncate$ zerop$
             ;; Declared double-float ops:
             $$ /$$ *$$ +$$ -$$ 1+$$ 1-$$ 
             /=$$ <$$ <=$$ =$$ >$$ >=$$ 
-            bounded-value$$ ceiling$$ decf$$ decf$$-after evenp$$ 
+            bounded-value$$ ceiling$$ compare$$ decf$$ decf$$-after evenp$$ 
             floor$$ fceiling$$ ffloor$$ fround$$ ftruncate$$
             incf$$ incf$$-after max$$ min$$ minusp$$ 
             abs$$ mod$$ oddp$$ plusp$$ round$$ truncate$$ zerop$$
             ;; Declared long-float ops:
             $$$ /$$$ *$$$ +$$$ -$$$ 1+$$$ 1-$$$ 
             /=$$$ <$$$ <=$$$ =$$$ >$$$ >=$$$ 
-            bounded-value$$$ ceiling$$$ decf$$$ decf$$$-after evenp$$$ 
+            bounded-value$$$ ceiling$$$ compare$$$ decf$$$ decf$$$-after evenp$$$ 
             floor$$$ fceiling$$$ ffloor$$$ fround$$$ ftruncate$$$
             incf$$$ incf$$$-after max$$$ min$$$ minusp$$$ 
             abs$$$ mod$$$ oddp$$$ plusp$$$ round$$$ truncate$$$ zerop$$$
@@ -424,6 +424,9 @@
 (defcm bounded-value& (min n max)
   `(max& ,min (min& ,n ,max)))
 
+(defun compare& (a b)
+  (-& a b))
+
 ;;; ===========================================================================
 ;;;   Short-Float Operations
 
@@ -495,6 +498,9 @@
 (defcm bounded-value$& (min n max)
   `(max$& ,min (min$& ,n ,max)))
 
+(defun compare$& (a b)
+  (-$& a b))
+
 ;;; ===========================================================================
 ;;;   Single-Float Operations
 
@@ -561,6 +567,9 @@
 
 (defcm bounded-value$ (min n max)
   `(max$ ,min (min$ ,n ,max)))
+
+(defun compare$ (a b)
+  (-$ a b))
 
 ;;; ===========================================================================
 ;;;   Double-Float Operations
@@ -629,6 +638,9 @@
 (defcm bounded-value$$ (min n max)
   `(max$$ ,min (min$$ ,n ,max)))
 
+(defun compare$$ (a b)
+  (-$$ a b))
+
 ;;; ===========================================================================
 ;;;   Long-Float Operations
 
@@ -696,6 +708,9 @@
 (defcm bounded-value$$$ (min n max)
   `(max$$$ ,min (min$$$ ,n ,max)))
  
+(defun compare$$$ (a b)
+  (-$$$ a b))
+
 ;;; ===========================================================================
 ;;;   Infinity Values
 ;;;
