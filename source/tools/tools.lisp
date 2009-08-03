@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jul 22 10:13:56 2009 *-*
+;;;; *-* Last-Edit: Mon Aug  3 15:13:01 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -64,6 +64,7 @@
 ;;;  03-02-09 Added LIST-LENGTH>2.  (Corkill)
 ;;;  04-14-09 Added DOSUBLISTS.  (Corkill)
 ;;;  07-22-08 Added NICER-TIME.  (Corkill)
+;;;  08-03-09 Added COMPARE and COMPARE-STRINGS.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -151,6 +152,8 @@
             case-using
             case-using-failure
             ccase-using
+            compare                     ; not yet documented
+            compare-strings             ; not yet documented
             copy-file                   ; not yet documented
             compiler-macroexpand
             compiler-macroexpand-1
@@ -1257,9 +1260,28 @@
            (t ,n))))
 
 ;;; ===========================================================================
-;;;   Counted-delete
+;;;   Compare and compare-strings
 ;;;
-;;;   This is what delete should have been (and was on the LispMs).  Returns
+;;;   Three-way numeric comparison.  Returns negative fixnum (-1) if a<b;
+;;;   zero if a=b; positive fixnum (1) if a>b.
+
+(defun compare (a b)
+  (let ((result (- a b)))
+    (cond ((minusp result) -1)
+          ((plusp result) 1)
+          (t 0))))
+
+(defun compare-strings (a b)
+  ;; We assume that the system string comparison functions are optimized
+  ;; sufficiently that comparing a with b character by character is a win.
+  (cond ((string< a b) -1)
+        ((string> a b) 1)
+        (t 0)))
+
+;;; ===========================================================================
+;;; Counted-delete
+;;;
+;;;   This is what DELETE should have been (and was on the LispMs).  Returns
 ;;;   the number of items that were deleted as a second value.
 
 (defun counted-delete (item seq &rest args 
