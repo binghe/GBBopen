@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/llrb-tree.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Jul 23 15:38:24 2009 *-*
+;;;; *-* Last-Edit: Mon Aug  3 16:14:49 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -27,21 +27,31 @@
 (in-package :gbbopen-tools)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (export '(compare
-            compare&
-	    llrb-current-node-value
-	    llrb-current-node-key
-            llrb-node                   ; structure type
+  (export '(llrb-node                   ; structure type
             llrb-tree                   ; structure type
+	    llrb-compare
+	    llrb-current-left-child     ; not yet documented
+	    llrb-current-right-child    ; not yet documented
+	    llrb-iterator
+	    llrb-iterator-get
+	    llrb-iterator-decrement
+	    llrb-iterator-increment
+	    llrb-iterator-p
+	    llrb-iterator-value
             llrb-tree-count
             llrb-tree-delete
+	    llrb-tree-find
             llrb-tree-node              ; not yet documented
             llrb-tree-p
             llrb-tree-test
             llrb-tree-value
+	    make-llrb-iterator          ; export needed?
             make-llrb-tree
             map-llrb-tree
-	    map-llrb-tree-with-conditional-descent)))
+	    map-llrb-tree-with-conditional-descent
+	    override-setf-value
+	    set-current-node-value
+	    with-llrb-iterator)))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -102,17 +112,11 @@
 
 (defvar *%llrb-delete-succeeded%* nil)  ; used to signal successful llrb-delete
 (defvar *%llrb-insert-succeeded%* nil)  ; used to signal added llrb-node
-(defvar *%llrb-current-node%* nil)      ; used to access the current llrb-node
-                                        ; during traversals
-
-;;; ---------------------------------------------------------------------------
-;;;  Move these to declared-numerics and complete them with all declared types
-
-(defun compare (a b)
-  (- a b))
-
-(defun compare& (a b)
-  (-& a b))
+(defvar *%llrb-current-node%* nil)      ; used to set the current llrb-node
+                                        ; value during traversals
+(defvar *%llrb-current-test%* nil)
+(defvar *%llrb-set-override%* nil)
+(defvar *%llrb-in-setf%* nil)
 
 ;;; ---------------------------------------------------------------------------
 
@@ -337,12 +341,37 @@
 ;;; ---------------------------------------------------------------------------
 
 (with-full-optimization ()
-  (defun llrb-min-node (node)
+  (defun llrb-min-node (node &optional and-stack)
     (declare (type (or llrb-node null) node))
     (let ((result node))
-      (while (setf node (llrb-node-left node))
-        (setf result node))
-      result)))
+      (if and-stack
+	  (let (stack)
+	    (while (setf node (llrb-node-left node))
+	      (when result
+		(push result stack))
+	      (setf result node))
+	    (values result stack))
+	  (progn
+	    (while (setf node (llrb-node-left node))
+	      (setf result node))
+	    result)))))
+
+(with-full-optimization ()
+  (defun llrb-max-node (node &optional and-stack)
+    (declare (type (or llrb-node null) node))
+    (let ((result node))
+      (if and-stack
+	  (let (stack)
+	    (while (setf node (llrb-node-right node))
+	      (when result
+		(push result stack))
+	      (setf result node))
+	    (values result stack))
+	  (progn
+	    (while (setf node (llrb-node-right node))
+	      (setf result node))
+	    result)))))
+
 
 ;;; ---------------------------------------------------------------------------
 
@@ -362,16 +391,45 @@
   (defun llrb-map-with-conditional-descent (left right node)
     (declare (type (or llrb-node null) node)
 	     (type function left right))
+    (let ((*%llrb-current-node%* node))
       (when node
-        (let ((*%llrb-current-node%* node))
-          (when (funcall left (llrb-node-left node))
-            (llrb-map-with-conditional-descent left 
-                                               right 
-                                               (llrb-node-left node)))
-          (when (funcall right (llrb-node-right node))
-            (llrb-map-with-conditional-descent left 
-                                               right 
-                                               (llrb-node-right node)))))))
+	(when (funcall left node)
+	  (llrb-map-with-conditional-descent left 
+					     right 
+					     (llrb-node-left node)))
+	(when (funcall right node)
+	  (llrb-map-with-conditional-descent left 
+					     right 
+					     (llrb-node-right node)))))))
+
+;;; ---------------------------------------------------------------------------
+
+(defun llrb-current-left-child ()
+  (if *%llrb-current-node%*
+      (let ((left (llrb-node-left *%llrb-current-node%*)))
+	(when left
+	  (values (llrb-node-key left)
+		  (llrb-node-value left))))
+      (error "No current node is active.")))
+
+(defun llrb-current-right-child ()
+  (if *%llrb-current-node%*
+      (let ((right (llrb-node-right *%llrb-current-node%*)))
+	(when right
+	  (values (llrb-node-key right)
+		  (llrb-node-value right))))
+      (error "No current node is active.")))
+
+(defun set-current-node-value (value)
+  (if *%llrb-current-node%*
+      (setf (llrb-node-value *%llrb-current-node%*)
+	    value)
+      (error "No current node is active.")))
+
+(defun override-setf-value ()
+  (if *%llrb-in-setf%*
+      (setf *%llrb-set-override%* t)
+      (error "No setf to override.")))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -384,38 +442,26 @@
       (llrb-prefix-map fn (llrb-node-left node))
       (llrb-prefix-map fn (llrb-node-right node)))))
 
-;;; ---------------------------------------------------------------------------
-
-(defun no-current-llrb-node-error ()
-  (error "No current llrb-node is active."))
-
 ;;; ===========================================================================
 ;;;  Public interface
 
-(defun make-llrb-tree (&optional (comparision-test #'compare))
-  (%make-llrb-tree (coerce comparision-test 'function)))
+(defun make-llrb-tree (&optional (comparison-test #'compare))
+  (%make-llrb-tree (coerce comparison-test 'function)))
 
 ;;; ---------------------------------------------------------------------------
 
-(defun llrb-current-node-key ()
-  (if *%llrb-current-node%*
-      (llrb-node-key *%llrb-current-node%*)
-      (no-current-llrb-node-error)))
+(defun llrb-compare (key1 key2)
+  (if *%llrb-current-test%*
+      (funcall *%llrb-current-test%*
+	       key1
+	       key2)
+      (error "llrb-compare must be called in the context of an llrb-map function.")))
 
 ;;; ---------------------------------------------------------------------------
 
-(defun llrb-current-node-value ()
-  (if *%llrb-current-node%*
-      (llrb-node-value *%llrb-current-node%*)
-      (no-current-llrb-node-error)))
-
-;;; ---------------------------------------------------------------------------
-
-(defun (setf llrb-current-node-value) (value)
-  (if *%llrb-current-node%*
-      (setf (llrb-node-value *%llrb-current-node%*)
-	    value)
-      (no-current-llrb-node-error)))
+(defun llrb-tree-node (key llrb-tree)
+  (let ((root-node (llrb-tree-root llrb-tree)))
+    (llrb-get-node key root-node (llrb-tree-test llrb-tree))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -440,13 +486,6 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun llrb-tree-node (key llrb-tree)
-  ;;; Not public yet, but exported (undocumented) should it be useful
-  (let ((root-node (llrb-tree-root llrb-tree)))
-    (llrb-get-node key root-node (llrb-tree-test llrb-tree))))
-
-;;; ---------------------------------------------------------------------------
-
 (defun llrb-tree-delete (key llrb-tree)
   (let ((root-node (llrb-tree-root llrb-tree))
         (*%llrb-delete-succeeded%* nil))
@@ -460,28 +499,269 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun map-llrb-tree (fn llrb-tree)
-  (llrb-map 
-   #'(lambda (node) 
-       (funcall fn (llrb-node-key node) (llrb-node-value node)))
-   (llrb-tree-root llrb-tree)))
+  (let ((*%llrb-current-test%* (llrb-tree-test llrb-tree)))
+    (llrb-map
+     #'(lambda (node) 
+	 (funcall fn (llrb-node-key node) (llrb-node-value node)))
+     (llrb-tree-root llrb-tree))))
 
 ;;; ---------------------------------------------------------------------------
 
-(defun map-llrb-tree-with-conditional-descent (left-fn right-fn llrb-tree)
-  (llrb-map-with-conditional-descent
-   #'(lambda (left-node)
-       (funcall left-fn 
-		(and left-node
-		     (llrb-node-key left-node))
-		(and left-node
-		     (llrb-node-value left-node))))
-   #'(lambda (right-node)
-       (funcall right-fn 
-		(and right-node
-		     (llrb-node-key right-node))
-		(and right-node
-		     (llrb-node-value right-node))))
-   (llrb-tree-root llrb-tree)))		
+(defun map-llrb-tree-with-conditional-descent (left right llrb-tree)
+  (let ((*%llrb-current-test%* (llrb-tree-test llrb-tree)))
+    (llrb-map-with-conditional-descent
+     #'(lambda (node)
+	 (funcall left 
+		  (and node
+		     (llrb-node-key node))
+		  (and node
+		       (llrb-node-value node))))
+     #'(lambda (node)
+	 (funcall right 
+		  (and node
+		       (llrb-node-key node))
+		  (and node
+		       (llrb-node-value node))))
+     (llrb-tree-root llrb-tree))))
+
+;;; ---------------------------------------------------------------------------
+
+(defun llrb-tree-find (search-key llrb-tree &optional (qualifier '=) fn)
+  ;;; Qualifiers: '= '< '> '<= '>= '\= or '<>
+  (let (best best-key best-value)
+    (map-llrb-tree-with-conditional-descent
+     #'(lambda (key value)
+	 (declare (ignore value))
+	 (let ((compare (llrb-compare key search-key)))
+	   (ecase qualifier
+               ((<= = >) (plusp& compare))
+               ((>= < \= <>) (not (minusp& compare))))))
+     #'(lambda (key value)
+	 (let ((compare (llrb-compare key search-key)))
+	   (flet ((minimize-difference (predicate)
+		    (when (and (funcall predicate compare)
+			       (or (not best-key)
+				   (<& (abs& (llrb-compare key search-key))
+                                       (abs& (llrb-compare best-key search-key)))))
+		      (setf best *%llrb-current-node%*)
+		      (setf best-key key)
+		      (setf best-value value))))
+	     (ecase qualifier 
+               (= (minimize-difference #'zerop)
+                  (minusp& compare))
+               (<
+                (minimize-difference #'minusp)
+                (minusp& compare))
+               (<=
+                (minimize-difference #'(lambda (x) (not (plusp& x))))
+                (not (plusp& compare)))
+               (>=
+                (minimize-difference #'(lambda (x) (not (minusp& x))))
+                (minusp& compare))
+               (>
+                (minimize-difference #'plusp)
+                (not (plusp& compare)))
+               ((\= <>)
+                (minimize-difference #'(lambda (x) (not (zerop& x))))
+                (not (plusp& compare)))))))
+	 llrb-tree)
+    (when best-key
+      (if (functionp fn)
+	  (let ((*%llrb-current-node%* best))
+	    (funcall fn best-key best-value))
+	  (values best-key best-value)))))
+
+;;; ---------------------------------------------------------------------------
+
+(defun (setf llrb-tree-find) (set-value search-key llrb-tree &optional qualifier fn)
+  (let ((*%llrb-in-setf%* t)
+	(*%llrb-set-override%* nil))
+    (multiple-value-bind (returned-value set?)
+	(llrb-tree-find search-key llrb-tree qualifier 
+			#'(lambda (key value)
+			    (when key
+			      (when fn
+				(funcall fn key value))
+			      (values (if (not *%llrb-set-override%*)
+					  (set-current-node-value set-value)
+					  value)
+				      t))))
+      (if (not set?)
+	  (if (memq qualifier '(= <= >=))
+	      (setf (llrb-tree-value search-key llrb-tree) set-value)
+	      (error (with-output-to-string (string) 
+		       (format string "No node to set ~a ~a" qualifier search-key))))
+	  returned-value))))
+
+;;; ===========================================================================
+;;;  Iterator interface
+
+(defstruct (llrb-iterator
+	     (:constructor %make-llrb-iterator (node parent-stack tree))
+	     (:copier))
+  tree
+  node
+  parent-stack)
+
+(defmethod print-object ((object llrb-iterator) stream)
+  (cond
+   (*print-readably* (call-next-method))
+   (t 
+    (let ((node (llrb-iterator-node object)))
+      (print-unreadable-object (object stream)
+        (format stream "iterator @~a on level ~a"
+		node
+		(length (llrb-iterator-parent-stack object))))
+      object))))
+
+;;; ---------------------------------------------------------------------------
+
+(defun make-llrb-iterator (llrb-tree)
+  (%make-llrb-iterator (llrb-tree-root llrb-tree)
+		       nil
+		       llrb-tree))
+
+;;; ---------------------------------------------------------------------------
+
+(defun llrb-iterator-helper (iterator parent parent-stack child child-stack increment)
+  (let ((node (llrb-iterator-node iterator)))
+    (setf (llrb-iterator-node iterator)
+	  (cond
+           ((and parent (not child))
+            (setf (llrb-iterator-parent-stack iterator) parent-stack)
+            parent)
+           ((not parent)
+            (when node
+              (setf (llrb-iterator-parent-stack iterator)
+                    (nconc child-stack 
+                           (llrb-iterator-parent-stack iterator))))
+            child)
+           (t
+            (cond
+             ((and (and parent child)
+                   (funcall (if increment
+                                #'minusp&
+                                #'plusp&)
+                            (funcall (llrb-tree-test
+                                      (llrb-iterator-tree iterator))
+                                     (llrb-node-key parent) 
+                                     (llrb-node-key child))))
+              (setf (llrb-iterator-parent-stack iterator) parent-stack)
+              parent)
+             (t
+              (setf (llrb-iterator-parent-stack iterator)
+                    (nconc child-stack
+                           (llrb-iterator-parent-stack iterator)))
+              child)))))
+    iterator))
+
+;;; ---------------------------------------------------------------------------
+
+(defun llrb-iterator-increment (iterator)
+  (let ((node (llrb-iterator-node iterator)))
+    (case node 
+      (max (return-from llrb-iterator-increment iterator))
+      (min
+       (setf (llrb-iterator-node iterator) (pop (llrb-iterator-parent-stack iterator)))
+       iterator)
+      (otherwise
+       (let* ((parent-stack (llrb-iterator-parent-stack iterator))
+              (child-stack (list node))
+              (parent (loop with i = nil
+                          do (setf i (car parent-stack))
+                             (setf parent-stack (cdr parent-stack))
+                          when (or (not i)
+                                   (minusp 
+                                    (funcall (llrb-tree-test
+                                              (llrb-iterator-tree iterator))
+                                             (llrb-node-key node)
+                                             (llrb-node-key i))))
+                          do (return i)))
+              (child (and node
+                          (llrb-node-right node)
+                          (multiple-value-bind (child-node new-stack)
+                              (llrb-min-node (llrb-node-right node) t)
+                            (setf child-stack (nconc new-stack child-stack))
+                            child-node))))
+         (if (or child parent)
+             (llrb-iterator-helper iterator parent parent-stack child child-stack t)
+             (progn
+               (setf (llrb-iterator-node iterator) 'max)
+               (push node (llrb-iterator-parent-stack iterator))
+               iterator)))))))
+
+;;; ---------------------------------------------------------------------------
+
+(defun llrb-iterator-decrement (iterator)
+  (let ((node (llrb-iterator-node iterator)))
+    (case node 
+      (min (return-from llrb-iterator-decrement iterator))
+      (max
+       (setf (llrb-iterator-node iterator) (pop (llrb-iterator-parent-stack iterator)))
+       iterator)
+      (otherwise
+       (let* ((parent-stack (llrb-iterator-parent-stack iterator))
+              (child-stack (list node))
+              (parent (loop with i = nil
+                          do (setf i (car parent-stack))
+                             (setf parent-stack (cdr parent-stack))
+                          when (or (not i)
+                                   (plusp& 
+                                    (funcall (llrb-tree-test
+                                              (llrb-iterator-tree iterator))
+                                             (llrb-node-key node)
+                                             (llrb-node-key i))))
+                          do (return i)))
+              (child (and node
+                          (llrb-node-left node)
+                          (multiple-value-bind (child-node new-stack)
+                              (llrb-max-node (llrb-node-left node) t)
+                            (setf child-stack (nconc new-stack child-stack))
+                            child-node))))
+         (if (or child parent)
+             (llrb-iterator-helper iterator parent parent-stack child child-stack nil)
+             (progn
+               (setf (llrb-iterator-node iterator) 'min)
+               (push node (llrb-iterator-parent-stack iterator))
+               iterator)))))))
+
+;;; ---------------------------------------------------------------------------
+
+(defun llrb-iterator-value (iterator)
+  (let ((node (llrb-iterator-node iterator)))
+    (when (llrb-node-p node)
+      (values (llrb-node-value node)
+	      (and node t)))))
+
+;;; ---------------------------------------------------------------------------
+
+(defun llrb-iterator-get (iterator)
+  (let ((node (llrb-iterator-node iterator)))
+    (when (llrb-node-p node)
+      (values (llrb-node-key node)
+	      (llrb-node-value node)))))
+
+;;; ---------------------------------------------------------------------------
+
+(defmacro with-llrb-iterator ((llrb-tree &optional 
+					 (decrement 'decrement)
+					 (increment 'increment)
+					 (value 'value))
+					 &body body)
+  (with-gensyms (iterator)
+    `(let* ((,iterator (make-llrb-iterator ,llrb-tree))
+	    (*%llrb-current-node%* (llrb-iterator-node ,iterator)))
+       (flet ((,decrement ()
+		(llrb-iterator-decrement ,iterator)
+		(setf *%llrb-current-node%* (llrb-iterator-node ,iterator))
+		(llrb-iterator-get ,iterator))
+	      (,increment ()
+		(llrb-iterator-increment ,iterator)
+		(setf *%llrb-current-node%* (llrb-iterator-node ,iterator))
+		(llrb-iterator-get ,iterator))
+	      (,value ()
+		(llrb-iterator-value ,iterator)))
+	 ,@body))))
 
 ;;; ===========================================================================
 ;;;				  End of File
