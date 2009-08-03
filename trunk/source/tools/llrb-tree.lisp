@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/llrb-tree.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Aug  3 16:14:49 2009 *-*
+;;;; *-* Last-Edit: Mon Aug  3 16:37:13 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -356,6 +356,8 @@
 	      (setf result node))
 	    result)))))
 
+;;; ---------------------------------------------------------------------------
+
 (with-full-optimization ()
   (defun llrb-max-node (node &optional and-stack)
     (declare (type (or llrb-node null) node))
@@ -371,7 +373,6 @@
 	    (while (setf node (llrb-node-right node))
 	      (setf result node))
 	    result)))))
-
 
 ;;; ---------------------------------------------------------------------------
 
@@ -527,7 +528,7 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun llrb-tree-find (search-key llrb-tree &optional (qualifier '=) fn)
-  ;;; Qualifiers: '= '< '> '<= '>= '\= or '<>
+  ;;; Qualifiers: '= '< '> '<= '>= or '<>
   (let (best best-key best-value)
     (map-llrb-tree-with-conditional-descent
      #'(lambda (key value)
@@ -535,7 +536,7 @@
 	 (let ((compare (llrb-compare key search-key)))
 	   (ecase qualifier
                ((<= = >) (plusp& compare))
-               ((>= < \= <>) (not (minusp& compare))))))
+               ((>= < <>) (not (minusp& compare))))))
      #'(lambda (key value)
 	 (let ((compare (llrb-compare key search-key)))
 	   (flet ((minimize-difference (predicate)
@@ -561,7 +562,7 @@
                (>
                 (minimize-difference #'plusp)
                 (not (plusp& compare)))
-               ((\= <>)
+               (<>
                 (minimize-difference #'(lambda (x) (not (zerop& x))))
                 (not (plusp& compare)))))))
 	 llrb-tree)
