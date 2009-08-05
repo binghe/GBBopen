@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/commands.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Jul 17 11:58:15 2009 *-*
+;;;; *-* Last-Edit: Wed Aug  5 07:13:48 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -144,12 +144,12 @@
     (startup-module :timing-tests options  :gbbopen-user))
 
   (define-repl-command :portable-threads-test (&rest options)
-    "Compile and load Portable-Threads-Test module"
+    "Compile and load Portable-Threads Test module"
     (startup-module :portable-threads-test options :portable-threads-user))
 
-  (define-repl-command :http-test (&rest options)
-    "Compile and load Socket/HTTP-Test module"
-    (startup-module :http-test options :portable-sockets-user))
+  (define-repl-command :portable-sockets-test (&rest options)
+    "Compile and load Portable-Sockets Test module"
+    (startup-module :portable-sockets-test options :portable-sockets-user))
 
   (define-repl-command :os-interface-test (&rest options)
     "Compile and load OS-Interface-Test module"
