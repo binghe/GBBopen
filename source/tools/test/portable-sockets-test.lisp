@@ -1,20 +1,20 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-SOCKETS-USER; Syntax:common-lisp -*-
-;;;; *-* File: /usr/local/gbbopen/source/tools/test/http-test.lisp *-*
+;;;; *-* File: /usr/local/gbbopen/source/tools/test/portable-sockets-test.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Apr 27 14:02:47 2008 *-*
+;;;; *-* Last-Edit: Wed Aug  5 07:12:05 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
 ;;;; *
-;;;; *                        Basic Socket/HTTP Tests
+;;;; *                            Basic Socket Tests
 ;;;; *
 ;;;; **************************************************************************
 ;;;; **************************************************************************
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2005-2007, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2005-2009, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -56,9 +56,9 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun http-test (host port)
+(defun http-connect-test (host port filepathname)
   (with-open-connection (connection host port)
-    (format connection "GET /robots.txt HTTP/1.1")
+    (format connection "GET ~a HTTP/1.1" filepathname)
     (write-crlf connection)
     (format connection "Host: ~a:~a" host port)
     (write-crlf connection)
@@ -126,7 +126,7 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun portable-sockets-test ()
-  (http-test "GBBopen.org" 80)
+  (http-connect-test "GBBopen.org" 80 "/robots.txt")
   (passive-socket-tests))
 
 ;;; ---------------------------------------------------------------------------

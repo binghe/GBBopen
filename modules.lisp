@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/modules.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Jul 17 11:57:32 2009 *-*
+;;;; *-* Last-Edit: Wed Aug  5 07:14:16 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -210,10 +210,10 @@
   
 ;;; ---------------------------------------------------------------------------
 
-  (define-module :http-test
+  (define-module :portable-sockets-test
     (:requires :portable-sockets)
     (:directory :gbbopen-tools "test")
-    (:files ("http-test" :reload)))
+    (:files ("portable-sockets-test" :reload)))
   
 ;;; ---------------------------------------------------------------------------
 
