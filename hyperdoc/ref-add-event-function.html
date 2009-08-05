@@ -130,13 +130,13 @@ follows:
 </p>
 <p><span class="fndoclabel">Examples</span> <br /><a name="id4">Add</a> the event <a href="ref-glossary.html#gl:function">function</a> <a href="ref-evfn-printv.html">evfn-printv</a> to the set of functions
 to be invoked when <nobr><code>create-instance-event</code></nobr> is signaled on a
-<code>hyp</code> <a href="ref-glossary.html#id227">unit&nbsp;instance</a>:
+<code>hyp</code> <a href="ref-glossary.html#id229">unit&nbsp;instance</a>:
 <pre class="pretop">
   (add-event-function 'evfn-printv 'create-instance-event 'hyp)
 </pre>
 Add the event <a href="ref-glossary.html#gl:function">function</a> <a href="ref-evfn-printv.html">evfn-printv</a> to the set of functions
 to be invoked when <nobr><code>create-instance-event</code></nobr> is signaled on a
-<code>hyp</code> <a href="ref-glossary.html#id227">unit&nbsp;instance</a> or its subclasses:
+<code>hyp</code> <a href="ref-glossary.html#id229">unit&nbsp;instance</a> or its subclasses:
 <pre>
   (add-event-function 'evfn-printv 'create-instance-event '(hyp :plus-subclasses))
 </pre>

@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/compile-all.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jul 22 04:49:21 2009 *-*
+;;;; *-* Last-Edit: Wed Aug  5 07:12:44 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -44,7 +44,7 @@
 (compile-it :gbbopen-test)
 (compile-it :tutorial-example)
 (compile-it :os-interface-test :dont-reset 't)
-(compile-it :http-test :dont-reset 't)
+(compile-it :portable-sockets-test :dont-reset 't)
 (compile-it :multinode :dont-reset 't)
 (compile-it :portable-threads-test :dont-reset 't)
 (compile-it :cl-timing :dont-reset 't)

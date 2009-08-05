@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Wed Jul 22 17:39:25 2009; Edited-By: cork *-*
+%% *-* Last-Edit: Wed Aug  5 13:46:24 2009; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2009, Dan Corkill <corkill@GBBopen.org>
@@ -8855,6 +8855,7 @@ for daylight saving time.
 \also[*month-precedes-date*]
 \also[brief-date-and-time]
 \also[full-date-and-time]
+\also[http-date-and-time]
 \also[internet-text-date-and-time]
 \also[iso8661-date-and-time]
 \also[message-log-date-and-time]
@@ -8944,6 +8945,7 @@ for daylight saving time.
 \also[*month-precedes-date*]
 \also[brief-date]
 \also[full-date-and-time]
+\also[http-date-and-time]
 \also[internet-text-date-and-time]
 \also[iso8661-date-and-time]
 \also[message-log-date-and-time]
@@ -9349,7 +9351,8 @@ in AM/PM format.
 \begin{alsos}{internet-text-date-and-time}
 \also[*month-precedes-date*]
 \also[brief-date]
-\also[full-date-and-time]
+\also[brief-date-and-time]
+\also[http-date-and-time]
 \also[internet-text-date-and-time]
 \also[iso8661-date-and-time]
 \also[message-log-date-and-time]
@@ -9531,6 +9534,61 @@ can be invoked using the \glref{REPL~command} \nobr{\code{:ut} \var{arg\/}}.
 
 %% ------------------------------------------------------------------------
 
+\begin{functiondoc}{Function}{http-date-and-time}{%
+    \nobr{\code{\&optional} \var{universal-time\/}}
+    \nobr{\code{\&key} \var{destination\/}}
+   \returns{} \var{result\/}}
+\index{time!formatting}% 
+
+\fnsyntax
+
+\fnpurpose Convert a universal time into HTTP/1.1 time-stamp format.
+
+\fnpackage \code{:gbbopen-tools}
+
+\fnmodule \code{:gbbopen-tools}
+
+\fnargs
+\begin{args}{universal-time}
+\arg[universal-time] A \glref{universal~time} (default is \nil,
+  which is equivalent to the value returned by
+  \nobr{\code{(get-universal-time)}})
+\arg[destination] Either \nil, \code{t}, a stream, or a string with a fill 
+pointer (default is \nil)
+\arg[result] A string or \nil{}
+\end{args}
+
+\fnreturns If \var{destination\/} is non-\nil, then \nil; otherwise, a string.
+
+\fndescription
+\bfindexit{get-universal-time}%
+%
+If \nobr{\var{universal-time\/}} is not supplied or is \nil, the current time
+(as returned by \nobr{\code{get-universal-time}} is used.
+
+\begin{alsos}{internet-text-date-and-time}
+\also[brief-date]
+\also[brief-date-and-time]
+\also[full-date-and-time]
+\also[http-date-and-time]
+\also[internet-text-date-and-time]
+\also[iso8661-date-and-time]
+\also[message-log-date-and-time]
+\end{alsos}
+
+\fnexample
+%
+\W\supp
+\begin{example}
+  > (http-date-and-time)
+  "Wed, 05 Aug 2009 17:29:26 GMT"
+  >
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
 \begin{functiondoc}{Function}{internet-text-date-and-time}{%
     \nobr{\code{\&optional} \var{universal-time\/}}
     \code{\&key} \var{time-zone daylight-savings-p 
@@ -9583,6 +9641,7 @@ determined by \code{decode-universal-time}) is used, and the
 \also[brief-date]
 \also[brief-date-and-time]
 \also[full-date-and-time]
+\also[http-date-and-time]
 \also[iso8661-date-and-time]
 \also[message-log-date-and-time]
 \end{alsos}
@@ -9617,7 +9676,7 @@ determined by \code{decode-universal-time}) is used, and the
 \fnmodule \code{:gbbopen-tools}
 
 \fnargs
-\begin{args}{maximum-fields}
+\begin{args}{universal-time}
 \arg[universal-time] A \glref{universal~time} (default is \nil,
   which is equivalent to the value returned by
   \nobr{\code{(get-universal-time)}})
@@ -9638,6 +9697,7 @@ If \nobr{\var{universal-time\/}} is not supplied or is \nil, the current time
 \also[brief-date]
 \also[brief-date-and-time]
 \also[full-date-and-time]
+\also[http-date-and-time]
 \also[internet-text-date-and-time]
 \also[message-log-date-and-time]
 \end{alsos}
@@ -9671,7 +9731,7 @@ If \nobr{\var{universal-time\/}} is not supplied or is \nil, the current time
 \fnmodule \code{:gbbopen-tools}
 
 \fnargs
-\begin{args}{maximum-fields}
+\begin{args}{universal-time}
 \arg[universal-time] A \glref{universal~time} (default is \nil,
   which is equivalent to the value returned by
   \nobr{\code{(get-universal-time)}}
@@ -9692,6 +9752,7 @@ If \nobr{\var{universal-time\/}} is not supplied or is \nil, the current time
 \also[brief-date]
 \also[brief-date-and-time]
 \also[full-date-and-time]
+\also[http-date-and-time]
 \also[internet-text-date-and-time]
 \also[iso8661-date-and-time]
 \end{alsos}
@@ -10645,12 +10706,13 @@ codeindexit{encode-universal-time}%
 \index{search trees}%
 \index{left-leaning red-black trees}%
 %
-A \glref{LLRB~tree} is binary search tree that is roughly balanced, keeping
-the worst-case time values for operations such as inserting, deleting, and
-searching proportional to the height of the tree. A left-leaning, red-black
-(LLRB) tree is a simpler version of red-black trees where all red links must
-``lean'' left except during inserts and deletes.  LLRB trees have good
-worst-case running time for their operations and are efficient in general use.
+A red-black tree is binary search tree that is roughly balanced, keeping the
+worst-case time values for operations such as inserting, deleting, and
+searching proportional to the height of the tree.  Left-leaning red-black
+(\glref{LLRB}) trees are a simpler version of red-black trees in which all red
+links must ``lean'' left except during inserts and deletes.  LLRB trees have
+good worst-case running time for their operations and are efficient in general
+use.
 
 \W\entities
 \T\clearpage
@@ -10793,17 +10855,18 @@ try deleting it a second time:
 
 \fnsyntax
 
-\fnpurpose Return the comparison test used in \var{llrb-tree} 
+\fnpurpose Return the \glref{three-way~comparison~test} function used in
+\var{llrb-tree}
 
 \fnpackage \code{:gbbopen-tools}
 
 \fnmodule \code{:gbbopen-tools}
 
 \fnargs
-\begin{args}{llrb-tree}
+\begin{args}{comparison-test}
 \arg[llrb-tree] An \glref{LLRB~tree}
-\arg[test] A \glref{function~designator} specifying a the three-way
-comparison test used in \var{llrb-tree}
+\arg[comparison-test] A \glref{function~designator} specifying the
+\glref{three-way~comparison~test} used in \var{llrb-tree}
 \end{args}
 
 \fnreturns The comparison test used in \var{llrb-tree}
@@ -10915,7 +10978,7 @@ value associated with the given \var{key}, or to add a new entry. When a
 
 \fnargs
 \begin{args}{comparison-test}
-\arg[comparison-test] A three-way comparison test
+\arg[comparison-test] A \glref{three-way~comparison~test}
 \arg[llrb-tree] An \glref{LLRB~tree}
 \end{args}
 
