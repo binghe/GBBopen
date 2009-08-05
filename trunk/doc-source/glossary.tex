@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/glossary.tex *-*
-%% *-* Last-Edit: Wed Jul 22 17:27:41 2009; Edited-By: cork *-*
+%% *-* Last-Edit: Mon Aug  3 14:19:48 2009; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 \begin{glossary-list}
@@ -634,11 +634,12 @@ An \glref{LLRB~tree}.
 %% ------------------------------------------------------------------------
 
 \glent[LLRB~tree]
+\gllabel{LLRB}%
 \index{LLRB tree}%
 %
 A binary search tree that is roughly balanced, keeping the worst-case time for
 operations such as inserting, deleting, and finding values proportional to the
-height of the tree. A left-leaning, red-black (LLRB) tree is a simpler version
+height of the tree. Left-leaning red-black (LLRB) trees are a simpler version
 of red-black trees introduced by Sedgewick in 2008 where all red links must
 lean left except during inserts and deletes.
 
@@ -1217,6 +1218,16 @@ definitions, and module definitions with a specific library or application.
 %
 A thread in a multi-threaded Common Lisp implementation or a Lisp process in a
 Common Lisp that provides multiprocessing.
+
+%% ------------------------------------------------------------------------
+
+\glent[three-way~comparison~test] 
+\index{thread}%
+%
+A function of two arguments that returns: a negative \glref{fixnum} if the
+first argument is less than the second argument, zero if the two arguments are
+equal, and a positive \glref{fixnum} if the first argument is greater than the
+second argument.
 
 %% ------------------------------------------------------------------------
 

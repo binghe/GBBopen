@@ -2,6 +2,7 @@ Important changes since GBBopen 1.4:
 
   * Changes to GBBopen Tools
      - New left-leaning red-black (LLRB) tree entities
+     - New HTTP-DATE-AND-TIME function
 
 
 Important changes in GBBopen 1.4:

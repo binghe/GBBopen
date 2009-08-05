@@ -308,7 +308,7 @@ and any predicate filters.
 <p><span class="fndoclabel">Description</span> <br />The <var>pattern</var> <code>t</code> matches all <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a>
 whose <a href="ref-glossary.html#id36">dimension&nbsp;values</a> overlap the <a href="ref-glossary.html#id39">dimensional&nbsp;extent</a> of at
 least one <a href="ref-glossary.html#id203">space&nbsp;instance</a> in <nobr><var>space-instances</var></nobr>. The
-<nobr><var>pattern</var></nobr> <code>:all</code> matches every <a href="ref-glossary.html#id227">unit&nbsp;instance</a> on a
+<nobr><var>pattern</var></nobr> <code>:all</code> matches every <a href="ref-glossary.html#id229">unit&nbsp;instance</a> on a
 <a href="ref-glossary.html#id203">space&nbsp;instance</a> in <nobr><var>space-instances</var></nobr>, regardless of
 dimensional overlap.
 </p>
@@ -408,7 +408,7 @@ and <nobr><code>within&#37;</code></nobr>.
   &gt;
 </pre>
 </p>
-<p>Some examples finding a <code>word</code> <a href="ref-glossary.html#id227">unit&nbsp;instance</a>:
+<p>Some examples finding a <code>word</code> <a href="ref-glossary.html#id229">unit&nbsp;instance</a>:
 <pre class="pretop">
 &gt; (find-instances 'word '(words) '(is character #\s))
 (#&lt;word 1&gt;)
@@ -423,7 +423,7 @@ Find <code>word</code> <a href="ref-glossary.html#gl:instances">unit&nbsp;instan
 </pre>
 </p>
 <p><span class="fndoclabel">Note</span> <br />Fixnum <code>overlaps</code> comparisons can result in bignum computations if the
-combined intervals of the pattern and a candidate <a href="ref-glossary.html#id227">unit&nbsp;instance</a>
+combined intervals of the pattern and a candidate <a href="ref-glossary.html#id229">unit&nbsp;instance</a>
 exceeds <code>most-positive-fixnum</code>.
 </p>
 <hr /><address><a target="_top" class="address"

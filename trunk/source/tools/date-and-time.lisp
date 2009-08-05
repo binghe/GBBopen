@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/date-and-time.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Jun 20 04:04:27 2009 *-*
+;;;; *-* Last-Edit: Wed Aug  5 13:44:48 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -50,6 +50,7 @@
             brief-duration
             brief-run-time-duration
             full-date-and-time
+            http-date-and-time
             internet-text-date-and-time
             iso8661-date-and-time
             message-log-date-and-time
@@ -182,7 +183,7 @@
         pos)
     (labels ((skip-separators ()
                (loop 
-                   while (and (< (& pos) (& string-length))
+                   while (and (<& pos string-length)
                               (find (schar string pos) separators))
                    do (incf& pos)))
              (find-zone (zone-abbr &optional signed-digit-separators)
@@ -266,7 +267,7 @@
                                      (if full-names
                                          *month-full-name-vector*
                                          *month-name-vector*))
-                                   (& (1- (& month))))))
+                                   (1-& month))))
             (am/pm (when 12-hour
                      (cond ((>=& hour 12)
                             (when (>=& hour 13)
@@ -371,6 +372,30 @@
               hour
               minute
               second))))
+
+;;; ---------------------------------------------------------------------------
+;;;  http-date-and-time
+
+(locally
+  ;; SBCL (rightly) complains about combining &optional and &key, but we
+  ;; ignore that here:
+  #+sbcl (declare (sb-ext:muffle-conditions style-warning))
+  (defun http-date-and-time (&optional universal-time
+                             &key destination)
+    ;; Writes or returns a string representing time in HTTP/1.1 GMT timestamp
+    ;; format
+    (multiple-value-bind (second minute hour date month year day)
+        (decode-supplied-universal-time universal-time 0)
+      (format destination
+              "~a, ~2,'0d ~a ~4d ~2,'0d:~2,'0d:~2,'0d GMT"
+              (svref (the (simple-array t (*))
+                       *weekday-name-vector*)
+                     day)
+              date
+              (svref (the (simple-array t (*)) *month-name-vector*)
+                     (1-& month))
+              year
+              hour minute second))))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Internet-text-date-and-time
@@ -765,12 +790,12 @@
   (declare (simple-string string))
   (flet ((skip-separators ()
            (loop 
-               while (and (< (& start) (& end))
+               while (and (<& start end)
                           (find (schar string start) separators))
                do (incf& start)))
          (skip-to-a-separator-minus-or-digit ()
            (loop 
-               while (and (< (& start) (& end))
+               while (and (<& start end)
                           (let ((char (schar string start)))
                             (not (or (digit-char-p char)
                                      (char= char #\-)
