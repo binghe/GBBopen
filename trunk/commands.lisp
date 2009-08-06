@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/commands.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Aug  5 07:13:48 2009 *-*
+;;;; *-* Last-Edit: Wed Aug  5 14:25:44 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -88,6 +88,10 @@
   (define-repl-command :portable-sockets (&rest options)
     "Compile and load Portable Sockets module"
     (startup-module :portable-sockets options))
+
+  (define-repl-command :http-services (&rest options)
+    "Compile and load HTTP and HTML Services module"
+    (startup-module :http-services options))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  GBBopen Core

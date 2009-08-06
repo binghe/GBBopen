@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/modules.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Aug  5 07:14:16 2009 *-*
+;;;; *-* Last-Edit: Wed Aug  5 14:28:43 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -93,6 +93,11 @@
     (:requires :portable-threads)
     (:directory :gbbopen-tools)
     (:files ("portable-sockets")))
+  
+  (define-module :http-services
+    (:requires  :gbbopen-tools :portable-threads :portable-sockets)
+    (:directory :gbbopen-tools)
+    (:files ("http-services")))
   
   (define-module :queue
     (:requires :polling-functions :gbbopen-core)
@@ -269,7 +274,7 @@
     (:files "multinode"))
   
   (define-module :web-inspector 
-    (:requires :gbbopen-core :portable-sockets)
+    (:requires :http-services)
     (:directory :gbbopen "extensions")
     (:files "web-inspector"))
   
