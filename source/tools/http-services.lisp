@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:HTTP-SERVICES; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/http-services.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Aug  6 14:38:42 2009 *-*
+;;;; *-* Last-Edit: Fri Aug  7 16:11:58 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -40,7 +40,7 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(handle-http-get             ; not yet documented
             kill-http-server            ; not yet documented
-            send-http-response-header   ; not yet documented
+            send-http-response-headers  ; not yet documented
             start-http-server           ; not yet documented
             write-crlf)))               ; not yet documented
 
@@ -52,10 +52,11 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun send-http-response-header (connection status string 
-                                  &key (content-type "text/html")
-                                       (charset "iso-8859-1"))
-  (format connection "HTTP/1.1 ~d ~a" status string)
+(defun send-http-response-headers (connection status status-message
+                                   &key (content-type "text/html")
+                                        content-length
+                                        (charset "iso-8859-1"))
+  (format connection "HTTP/1.1 ~d ~a" status status-message)
   (write-crlf connection)
   (format connection "Server: GBBopen/~a" 
           (gbbopen-tools-implementation-version))
@@ -66,6 +67,10 @@
   (format connection "Content-Type: ~a; charset=~a"
           content-type charset)
   (write-crlf connection)
+  (when content-length
+    (format connection "Content-Length: ~s"
+            content-length)
+    (write-crlf connection))
   (write-crlf connection)
   (values))
 
@@ -74,9 +79,17 @@
 (defun http-connection-thread (connection)
   (loop for line = (string-trim '(#\Return) (read-line connection nil nil))
       until (zerop (length line))
-      when (and (>& (length line) 3)
-                (string= "GET" line :end2 3)) do 
-        (funcall 'handle-http-get connection (subseq line 4))))
+      do #+debugging
+         (printv line)
+         (cond
+          ;; GET request:
+          ((and (>& (length line) 3) (string= "GET" line :end2 3)) 
+           (funcall 'handle-http-get connection
+                    (subseq line 4
+                            (position #\Space line :start 5 :test #'eq))))))
+  #+debugging
+  (printv "Closing connection...")
+  (close connection))
 
 ;;; ---------------------------------------------------------------------------
 
