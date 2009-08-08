@@ -10,9 +10,9 @@ Requirements:
 
        Allegro CL   Version 8.1
        CLISP        Version 2.48 (configure --with-threads if possible)
-       Clozure CL   Version 1.3 (r12471)
+       Clozure CL   Version 1.3 (r12558)
        CMUCL        Version 19f
-       ECL          Version 9.7.2 (configure with --enable-threads if 
+       ECL          Version 9.8.1 (configure with --enable-threads if 
                                    possible; --enable-smallcons & 
                                      --enable-gengc are also recommended)
        Lispworks    Version 5.1.2
@@ -32,7 +32,7 @@ Requirements:
    See PORTING for information on porting GBBopen to other Common Lisp
    implementations.
 
-Current Status Notes (July 28, 2009)
+Current Status Notes (August 8, 2009)
 --------------------
 
 Implementation work is progressing on a regular basis.  See the list of
