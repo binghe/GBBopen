@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:HTTP-SERVICES; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/http-services.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Aug 10 10:06:03 2009 *-*
+;;;; *-* Last-Edit: Mon Aug 10 16:36:35 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -49,6 +49,8 @@
 (defvar *http-server-port* 8052)
 (defvar *http-server-thread* nil)
 (defvar *http-clients* nil)
+(defvar *http-log-stream* *standard-output*)
+(defvar *http-log-stream-lock* (make-lock :name "HTTP log stream"))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -94,16 +96,30 @@
           (funcall 'handle-http-get connection
                    (subseq line 4
                            (position #\Space line :start 5 :test #'eq))))))
-  #-debugging
-  (printv "Closing connection...")
+  (multiple-value-call 'write-to-http-log 
+    "Closing connection from ~a/~s"
+    (remote-hostname-and-port connection))
   (close connection))
+
+;;; ---------------------------------------------------------------------------
+
+(defun write-to-http-log (control-string &rest args)
+  (when *http-log-stream*
+    (with-lock-held (*http-log-stream-lock*)
+      (format *http-log-stream* "~&;; ~a ~?~%"
+              (message-log-date-and-time)
+              control-string
+              args))))
 
 ;;; ---------------------------------------------------------------------------
 
 (defun http-connection-server (connection) 
   (let ((client-thread
          (spawn-thread "HTTP Connection" 'http-connection-thread connection)))
-    (atomic-push client-thread *http-clients*)))
+    (atomic-push client-thread *http-clients*)
+    (multiple-value-call 'write-to-http-log 
+      "Connection from ~a/~s"
+      (remote-hostname-and-port connection))))
 
 ;;; ---------------------------------------------------------------------------
 
