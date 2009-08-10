@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:HTTP-SERVICES; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/http-services.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Aug  7 16:11:58 2009 *-*
+;;;; *-* Last-Edit: Mon Aug 10 10:06:03 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -55,11 +55,14 @@
 (defun send-http-response-headers (connection status status-message
                                    &key (content-type "text/html")
                                         content-length
+                                        last-modified
+                                        (server
+                                         (format nil "GBBopen/~a" 
+                                                 (gbbopen-tools-implementation-version)))
                                         (charset "iso-8859-1"))
   (format connection "HTTP/1.1 ~d ~a" status status-message)
   (write-crlf connection)
-  (format connection "Server: GBBopen/~a" 
-          (gbbopen-tools-implementation-version))
+  (format connection "Server: ~a" server)
   (write-crlf connection)
   (format connection "Date: ")
   (http-date-and-time nil :destination connection)
@@ -71,6 +74,10 @@
     (format connection "Content-Length: ~s"
             content-length)
     (write-crlf connection))
+  (when last-modified
+    (format connection "Last-Modified: ")
+    (http-date-and-time last-modified :destination connection)
+    (write-crlf connection))
   (write-crlf connection)
   (values))
 
@@ -78,16 +85,16 @@
 
 (defun http-connection-thread (connection)
   (loop for line = (string-trim '(#\Return) (read-line connection nil nil))
-      until (zerop (length line))
-      do #+debugging
-         (printv line)
-         (cond
-          ;; GET request:
-          ((and (>& (length line) 3) (string= "GET" line :end2 3)) 
-           (funcall 'handle-http-get connection
-                    (subseq line 4
-                            (position #\Space line :start 5 :test #'eq))))))
-  #+debugging
+      until (zerop (length line)) do
+        #+debugging
+        (printv line)
+        (cond
+         ;; GET request:
+         ((and (>& (length line) 3) (string= "GET" line :end2 3)) 
+          (funcall 'handle-http-get connection
+                   (subseq line 4
+                           (position #\Space line :start 5 :test #'eq))))))
+  #-debugging
   (printv "Closing connection...")
   (close connection))
 
