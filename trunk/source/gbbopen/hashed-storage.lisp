@@ -1,27 +1,25 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/hashed-storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Jun 14 16:38:08 2008 *-*
+;;;; *-* Last-Edit: Wed Aug 12 10:29:28 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
 ;;;; *
-;;;; *                    Hashed Space-Instance Storage
+;;;; *                       Hashed Space-Instance Storage
 ;;;; *
 ;;;; **************************************************************************
 ;;;; **************************************************************************
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2003-2009, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
 ;;;  04-23-06 Split out from storage.lisp.  (Corkill)
-;;;  06-11-07 Converted hashed-storage accessors from :prefix to modern
-;;;           "-of" format.  (Corkill)
 ;;;  06-12-08 Add :size option.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -132,9 +130,10 @@
   (print-storage-usage-message storage)
   (let ((hash-table (bound-instances-of storage)))
     (format *trace-output* 
-	    "~&;; - ~s: Using ~s hashed storage (~s instance~:p)~&"
+	    "~&;; - ~s: Using ~s ~s hashed storage (~s instance~:p)~&"
 	    't 
-	    (hash-table-test hash-table)
+            (hash-table-test hash-table)
+	    (dimension-names-of storage)
 	    (hash-table-count hash-table))))
 
 ;;; ---------------------------------------------------------------------------
@@ -232,8 +231,8 @@
 
 (defun do-hashed-map-actions (action storage disjunctive-dimensional-extents
 			      verbose)
-  ;; disjunctive-dimensional-extents for a hashed can contain unbound-value
-  ;; or one or more bound values:
+  ;; disjunctive-dimensional-extents for a hashed storage can contain
+  ;; unbound-value or one or more bound values:
   (declare (type function action))
   (when verbose (print-hashed-storage-usage-message storage))
   (let ((bucket-count 0)

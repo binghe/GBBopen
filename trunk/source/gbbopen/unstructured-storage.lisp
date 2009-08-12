@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/source/gbbopen/unstructured-storage.lisp *-*
+;;;; *-* File: /usr/local/gbbopen/source/gbbopen/unstructured-storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Jan 26 06:12:23 2008 *-*
-;;;; *-* Machine: whirlwind.corkills.org *-*
+;;;; *-* Last-Edit: Wed Aug 12 10:24:50 2009 *-*
+;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -14,14 +14,12 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2003-2009, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
 ;;;  04-23-06 Split out from storage.lisp.  (Corkill)
-;;;  06-11-07 Converted unstructured-storage accessors from :prefix to modern
-;;;           "-of" format.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -43,8 +41,10 @@
 (defun print-unstructured-storage-usage-message (storage)
   (print-storage-usage-message storage)
   (format *trace-output* 
-          "~&;; - ~s: Using unstructured storage (~s instance~:p)~&"
-          't (hash-table-count (instances-of storage))))
+          "~&;; - ~s: Using ~s unstructured storage (~s instance~:p)~&"
+          't 
+          (dimension-names-of storage)
+          (hash-table-count (instances-of storage))))
 
 ;;; ---------------------------------------------------------------------------
 

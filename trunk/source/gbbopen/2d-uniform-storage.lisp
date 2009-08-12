@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/2d-uniform-storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue May 27 05:29:13 2008 *-*
+;;;; *-* Last-Edit: Wed Aug 12 10:18:49 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2003-2009, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -22,8 +22,6 @@
 ;;;  04-23-06 Split out from storage.lisp.  (Corkill)
 ;;;  06-11-07 Change "x" and "y" names to "1st-d" and "2nd-d" to avoid 
 ;;;           confusion with application dimension names.  (Corkill)
-;;;  06-11-07 Converted 2d-uniform-buckets accessors from :prefix to modern
-;;;           "-of" format.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -82,9 +80,9 @@
 
 (defun print-2d-uniform-buckets-usage-message (buckets storage)
   (format *trace-output* 
-	  "~&;; - ~s: Using 2D-uniform buckets "
-	  (dimension-names-of storage))
-  (format *trace-output* "(~s bucket~:p)~&" buckets))
+	  "~&;; - ~s: Using 2D-uniform buckets (~s bucket~:p)~%"
+	  (dimension-names-of storage)
+          buckets))
 
 ;;; ---------------------------------------------------------------------------
 
