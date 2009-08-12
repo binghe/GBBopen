@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/boolean-storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Apr 14 10:40:51 2008 *-*
+;;;; *-* Last-Edit: Wed Aug 12 10:25:12 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -14,14 +14,12 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2003-2009, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
 ;;;  04-23-06 Split out from storage.lisp.  (Corkill)
-;;;  06-11-07 Converted boolean-storage accessors from :prefix to modern
-;;;           "-of" format.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -52,9 +50,10 @@
 (defun print-boolean-storage-usage-message (storage)
   (print-storage-usage-message storage)
   (format *trace-output* 
-          "~&;; - ~s: Using boolean storage (~s true instance~:p, ~
+          "~&;; - ~s: Using ~s boolean storage (~s true instance~:p, ~
            ~s false instance~:p)~&"
           't 
+          (dimension-names-of storage)
 	  (hash-table-count (true-instances-of storage))
 	  (hash-table-count (false-instances-of storage))))
 

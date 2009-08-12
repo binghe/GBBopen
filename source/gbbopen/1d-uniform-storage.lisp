@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/1d-uniform-storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue May 27 05:28:33 2008 *-*
+;;;; *-* Last-Edit: Wed Aug 12 10:16:07 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -14,14 +14,12 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2003-2009, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
 ;;;  04-23-06 Split out from storage.lisp.  (Corkill)
-;;;  06-11-07 Converted 1d-uniform-buckets accessors from :prefix to modern
-;;;           "-of" format.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -71,9 +69,8 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun print-1d-uniform-buckets-usage-message (buckets dimension-name)
-  (format *trace-output* "~&;; - ~s: Using 1D-uniform buckets "
-          dimension-name)
-  (format *trace-output* "(~s bucket~:p)~&"
+  (format *trace-output* "~&;; - ~s: Using 1D-uniform buckets (~s bucket~:p)~&"
+          dimension-name
           buckets))
 
 ;;; ---------------------------------------------------------------------------
