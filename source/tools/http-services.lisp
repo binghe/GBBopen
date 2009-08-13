@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:HTTP-SERVICES; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/http-services.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Aug 10 16:36:35 2009 *-*
+;;;; *-* Last-Edit: Wed Aug 12 13:28:55 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -38,7 +38,8 @@
 (in-package :http-services)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (export '(handle-http-get             ; not yet documented
+  (export '(decode-uri-string           ; not yet documented
+            handle-http-get             ; not yet documented
             kill-http-server            ; not yet documented
             send-http-response-headers  ; not yet documented
             start-http-server           ; not yet documented
@@ -51,6 +52,38 @@
 (defvar *http-clients* nil)
 (defvar *http-log-stream* *standard-output*)
 (defvar *http-log-stream-lock* (make-lock :name "HTTP log stream"))
+
+;;; ---------------------------------------------------------------------------
+
+(defun decode-uri-string (encoded-uri)
+  (cond
+   ;; Need to decode?
+   ((position #\% encoded-uri)
+    (macrolet ((char-hex-code (char)
+                 ;; convert hex character to numeric equiv
+		 `(let ((.char-code. (char-code ,char)))
+		    (if (<=& .char-code. #.(char-code #\9))
+                        (-& .char-code. #.(char-code #\0))
+                        (+& 9 (logand .char-code. 7))))))
+      (let* ((length (length encoded-uri))
+             (uri (make-array `(,length)
+                              :element-type 'character
+                              :adjustable t
+                              :fill-pointer 0))
+             (pos 0))
+        (while (<& pos length)
+          (let ((char (schar encoded-uri pos)))
+            (when (char= char #\%)
+              (setf char
+                    (code-char
+                     (+& (ash (char-hex-code (schar encoded-uri (1+& pos))) 4)
+                         (char-hex-code (schar encoded-uri (+& pos 2))))))
+              (incf& pos 2))
+            (vector-push char uri))
+          (incf& pos)) 
+        (coerce uri 'simple-string))))
+   ;; Nothing to decode:
+   (t encoded-uri)))
 
 ;;; ---------------------------------------------------------------------------
 
