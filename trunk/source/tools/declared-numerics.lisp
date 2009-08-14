@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/declared-numerics.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Aug  3 15:21:04 2009 *-*
+;;;; *-* Last-Edit: Fri Aug 14 07:05:36 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -425,6 +425,7 @@
   `(max& ,min (min& ,n ,max)))
 
 (defun compare& (a b)
+  ;; Users must be careful that the result is a fixnum!
   (-& a b))
 
 ;;; ===========================================================================
@@ -499,7 +500,9 @@
   `(max$& ,min (min$& ,n ,max)))
 
 (defun compare$& (a b)
-  (-$& a b))
+  (cond ((<$& a b) -1)
+        ((>$& a b) 1)
+        (t 0)))
 
 ;;; ===========================================================================
 ;;;   Single-Float Operations
@@ -569,7 +572,9 @@
   `(max$ ,min (min$ ,n ,max)))
 
 (defun compare$ (a b)
-  (-$ a b))
+  (cond ((<$ a b) -1)
+        ((>$ a b) 1)
+        (t 0)))
 
 ;;; ===========================================================================
 ;;;   Double-Float Operations
@@ -639,7 +644,9 @@
   `(max$$ ,min (min$$ ,n ,max)))
 
 (defun compare$$ (a b)
-  (-$$ a b))
+  (cond ((<$$ a b) -1)
+        ((>$$ a b) 1)
+        (t 0)))
 
 ;;; ===========================================================================
 ;;;   Long-Float Operations
@@ -709,7 +716,9 @@
   `(max$$$ ,min (min$$$ ,n ,max)))
  
 (defun compare$$$ (a b)
-  (-$$$ a b))
+  (cond ((<$$$ a b) -1)
+        ((>$$$ a b) 1)
+        (t 0)))
 
 ;;; ===========================================================================
 ;;;   Infinity Values

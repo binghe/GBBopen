@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Aug  3 15:13:01 2009 *-*
+;;;; *-* Last-Edit: Fri Aug 14 06:15:46 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -1266,10 +1266,9 @@
 ;;;   zero if a=b; positive fixnum (1) if a>b.
 
 (defun compare (a b)
-  (let ((result (- a b)))
-    (cond ((minusp result) -1)
-          ((plusp result) 1)
-          (t 0))))
+  (cond ((< a b) -1)
+        ((> a b) 1)
+        (t 0)))
 
 (defun compare-strings (a b)
   ;; We assume that the system string comparison functions are optimized
