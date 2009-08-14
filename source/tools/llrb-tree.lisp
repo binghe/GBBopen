@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/llrb-tree.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Aug  3 16:37:13 2009 *-*
+;;;; *-* Last-Edit: Fri Aug 14 09:33:52 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -527,44 +527,46 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun llrb-tree-find (search-key llrb-tree &optional (qualifier '=) fn)
-  ;;; Qualifiers: '= '< '> '<= '>= or '<>
+(defun llrb-tree-find (search-key llrb-tree &optional (criterion '=) fn)
+  ;;; Criterion options: '= '< '> '<= or '>=
   (let (best best-key best-value)
     (map-llrb-tree-with-conditional-descent
      #'(lambda (key value)
 	 (declare (ignore value))
 	 (let ((compare (llrb-compare key search-key)))
-	   (ecase qualifier
+	   (ecase criterion
                ((<= = >) (plusp& compare))
-               ((>= < <>) (not (minusp& compare))))))
+               ((>= <) (not (minusp& compare))))))
      #'(lambda (key value)
 	 (let ((compare (llrb-compare key search-key)))
-	   (flet ((minimize-difference (predicate)
-		    (when (and (funcall predicate compare)
-			       (or (not best-key)
-				   (<& (abs& (llrb-compare key search-key))
-                                       (abs& (llrb-compare best-key search-key)))))
-		      (setf best *%llrb-current-node%*)
-		      (setf best-key key)
-		      (setf best-value value))))
-	     (ecase qualifier 
-               (= (minimize-difference #'zerop)
+	   (flet ((set-best ()
+		    (setf best *%llrb-current-node%*)
+		    (setf best-key key)
+		    (setf best-value value)))
+	     (ecase criterion 
+               (= (when (zerop& compare)
+		    (set-best))
                   (minusp& compare))
-               (<
-                (minimize-difference #'minusp)
-                (minusp& compare))
-               (<=
-                (minimize-difference #'(lambda (x) (not (plusp& x))))
-                (not (plusp& compare)))
-               (>=
-                (minimize-difference #'(lambda (x) (not (minusp& x))))
-                (minusp& compare))
-               (>
-                (minimize-difference #'plusp)
-                (not (plusp& compare)))
-               (<>
-                (minimize-difference #'(lambda (x) (not (zerop& x))))
-                (not (plusp& compare)))))))
+               (< (when (and (minusp& compare)
+			     (or (not best-key)
+				 (plusp& (llrb-compare key best-key))))
+		    (set-best))
+		  (minusp& compare))
+               (<= (when (and (not (plusp& compare))
+			      (or (not best-key)
+				  (plusp& (llrb-compare key best-key))))
+		     (set-best))
+		   (not (plusp& compare)))
+               (>= (when (and (not (minusp& compare))
+			      (or (not best-key)
+				  (minusp& (llrb-compare key best-key))))
+		     (set-best))
+		   (minusp& compare))
+               (> (when (and (plusp& compare)
+			     (or (not best-key)
+				 (minusp& (llrb-compare key best-key))))
+		    (set-best))
+		  (not (plusp& compare)))))))
 	 llrb-tree)
     (when best-key
       (if (functionp fn)
@@ -574,11 +576,11 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun (setf llrb-tree-find) (set-value search-key llrb-tree &optional qualifier fn)
+(defun (setf llrb-tree-find) (set-value search-key llrb-tree &optional criterion fn)
   (let ((*%llrb-in-setf%* t)
 	(*%llrb-set-override%* nil))
     (multiple-value-bind (returned-value set?)
-	(llrb-tree-find search-key llrb-tree qualifier 
+	(llrb-tree-find search-key llrb-tree criterion 
 			#'(lambda (key value)
 			    (when key
 			      (when fn
@@ -588,10 +590,10 @@
 					  value)
 				      t))))
       (if (not set?)
-	  (if (memq qualifier '(= <= >=))
+	  (if (memq criterion '(= <= >=))
 	      (setf (llrb-tree-value search-key llrb-tree) set-value)
 	      (error (with-output-to-string (string) 
-		       (format string "No node to set ~a ~a" qualifier search-key))))
+		       (format string "No node to set ~a ~a" criterion search-key))))
 	  returned-value))))
 
 ;;; ===========================================================================
