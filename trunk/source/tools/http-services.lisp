@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:HTTP-SERVICES; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/http-services.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Aug 12 13:28:55 2009 *-*
+;;;; *-* Last-Edit: Fri Aug 14 10:01:49 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -91,6 +91,7 @@
                                    &key (content-type "text/html")
                                         content-length
                                         last-modified
+                                        location
                                         (server
                                          (format nil "GBBopen/~a" 
                                                  (gbbopen-tools-implementation-version)))
@@ -105,6 +106,10 @@
   (format connection "Content-Type: ~a; charset=~a"
           content-type charset)
   (write-crlf connection)
+  (when location
+    (format connection "Location: ~a"
+            location)
+    (write-crlf connection))
   (when content-length
     (format connection "Content-Length: ~s"
             content-length)
