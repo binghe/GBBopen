@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:HTTP-SERVICES; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/http-services.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Aug 16 11:48:10 2009 *-*
+;;;; *-* Last-Edit: Sun Aug 16 12:03:38 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -146,8 +146,10 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun read-http-line (connection)
-  (let ((line (with-timeout (20)
-                (read-line connection nil nil))))
+  (let ((line (with-error-handling      ; in case the client closes down at
+                                        ; the wrong time...
+                  (with-timeout (20)
+                    (read-line connection nil nil)))))
     (when line (string-right-trim '(#\Return) line))))
 
 ;;; ---------------------------------------------------------------------------
