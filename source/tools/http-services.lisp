@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:HTTP-SERVICES; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/http-services.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Aug 14 10:01:49 2009 *-*
+;;;; *-* Last-Edit: Sun Aug 16 11:48:10 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -38,7 +38,9 @@
 (in-package :http-services)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (export '(decode-uri-string           ; not yet documented
+  (export '(*log-http-headers*          ; not yet documented
+            close-http-connection       ; not yet documented
+            decode-uri-string           ; not yet documented
             handle-http-get             ; not yet documented
             kill-http-server            ; not yet documented
             send-http-response-headers  ; not yet documented
@@ -48,8 +50,9 @@
  ;;; ---------------------------------------------------------------------------
 
 (defvar *http-server-port* 8052)
+(defvar *log-http-headers* nil)
 (defvar *http-server-thread* nil)
-(defvar *http-clients* nil)
+(defvar *http-clients* nil)             ; none yet...
 (defvar *http-log-stream* *standard-output*)
 (defvar *http-log-stream-lock* (make-lock :name "HTTP log stream"))
 
@@ -84,6 +87,25 @@
         (coerce uri 'simple-string))))
    ;; Nothing to decode:
    (t encoded-uri)))
+
+;;; ---------------------------------------------------------------------------
+
+(defun write-to-http-log (control-string &rest args)
+  (when *http-log-stream*
+    (with-lock-held (*http-log-stream-lock*)
+      (format *http-log-stream* "~&;; ~a ~?~%"
+              (message-log-date-and-time)
+              control-string
+              args))))
+
+;;; ---------------------------------------------------------------------------
+
+(defun add-to-http-log (control-string &rest args)
+  (when *http-log-stream*
+    (with-lock-held (*http-log-stream-lock*)
+      (format *http-log-stream* "~&;;~19t~?~%"
+              control-string
+              args))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -123,41 +145,73 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun http-connection-thread (connection)
-  (loop for line = (string-trim '(#\Return) (read-line connection nil nil))
-      until (zerop (length line)) do
-        #+debugging
-        (printv line)
-        (cond
-         ;; GET request:
-         ((and (>& (length line) 3) (string= "GET" line :end2 3)) 
-          (funcall 'handle-http-get connection
-                   (subseq line 4
-                           (position #\Space line :start 5 :test #'eq))))))
-  (multiple-value-call 'write-to-http-log 
-    "Closing connection from ~a/~s"
-    (remote-hostname-and-port connection))
-  (close connection))
+(defun read-http-line (connection)
+  (let ((line (with-timeout (20)
+                (read-line connection nil nil))))
+    (when line (string-right-trim '(#\Return) line))))
 
 ;;; ---------------------------------------------------------------------------
 
-(defun write-to-http-log (control-string &rest args)
-  (when *http-log-stream*
-    (with-lock-held (*http-log-stream-lock*)
-      (format *http-log-stream* "~&;; ~a ~?~%"
-              (message-log-date-and-time)
-              control-string
-              args))))
+(defun read-remaining-http-request-headers (connection)
+  ;; Reads the HTTP request headers (after the inital request header),
+  ;; returning user-agent and connection-type values, if found:
+  (let ((user-agent nil)
+        (connection-type nil))
+  (loop
+      for line = (read-http-line connection)
+      until (zerop (length line)) do
+        (when *log-http-headers* (add-to-http-log "~s" line))
+        (cond
+         ;; User-Agent:
+         ((and (>& (length line) 12) (string= "User-Agent: " line :end2 12))
+          (setf user-agent (subseq line 12)))
+         ;; Connection-Type:
+         ((and (>& (length line) 12) (string= "Connection: " line :end2 12))
+          (setf connection-type (subseq line 12)))))
+  (values user-agent connection-type)))
 
+;;; ---------------------------------------------------------------------------
+
+(defun close-http-connection (connection) 
+  (when (open-stream-p connection)
+    (multiple-value-call 'write-to-http-log 
+      "Closing connection from ~a/~s"
+      (remote-hostname-and-port connection))
+    (close connection)))
+
+;;; ---------------------------------------------------------------------------
+
+(defun http-connection-thread (connection)
+  (multiple-value-call 'write-to-http-log 
+    "Connection from ~a/~s"
+    (remote-hostname-and-port connection))
+  (loop
+    (let ((line (read-http-line connection)))
+      (cond
+       ;; The line is dead:
+       ((not line) (return))
+       ;; GET request:
+       ((and (>& (length line) 3) (string= "GET" line :end2 3))
+        (let ((path (subseq line 4 (position #\Space line :start 5 :test #'eq))))
+          (multiple-value-bind (user-agent connection-type)
+              (read-remaining-http-request-headers connection)
+            (funcall 'handle-http-get connection path user-agent)
+            (unless (string= connection-type "keep-alive")
+              (return)))))
+       ;; Unhandled requests:
+       (t (printv "Unhandled HTTP request:" line)
+          (multiple-value-bind (user-agent connection-type)
+              (read-remaining-http-request-headers connection)
+            (declare (ignore user-agent))
+            (unless (string= connection-type "keep-alive")
+              (return))))))
+    (force-output connection))
+  (close-http-connection connection))
+  
 ;;; ---------------------------------------------------------------------------
 
 (defun http-connection-server (connection) 
-  (let ((client-thread
-         (spawn-thread "HTTP Connection" 'http-connection-thread connection)))
-    (atomic-push client-thread *http-clients*)
-    (multiple-value-call 'write-to-http-log 
-      "Connection from ~a/~s"
-      (remote-hostname-and-port connection))))
+  (spawn-thread "HTTP Connection" 'http-connection-thread connection))
 
 ;;; ---------------------------------------------------------------------------
 
