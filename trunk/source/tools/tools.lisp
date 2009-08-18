@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Aug 14 06:15:46 2009 *-*
+;;;; *-* Last-Edit: Tue Aug 18 05:50:30 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -224,6 +224,7 @@
             until
             while
             with-error-handling
+            with-opened-file            ; not yet documented
             xor)))
 
 ;;; ===========================================================================
@@ -334,6 +335,23 @@
                                                    (function error-condition)))
                        (return-from ,block (progn ,@error-body))))))))))))
   
+;;; ===========================================================================
+;;;  With-opened-file 
+;;;
+;;;   Like WITH-OPEN-FILE, but sets stream to nil if a file-error occurs when
+;;;   opening the file.
+
+(defmacro with-opened-file ((stream filespec &rest options) &body body)
+  (with-gensyms (abort-on-close?)
+    `(let ((,stream (with-error-handling ((open ,filespec ,@options)
+                                          (:conditions file-error))))
+           (,abort-on-close? 't))
+       (unwind-protect
+           (multiple-value-prog1 
+               (progn ,@body)
+             (setq ,abort-on-close? nil))
+         (when (streamp ,stream) (close ,stream :abort ,abort-on-close?))))))
+
 ;;; ===========================================================================
 ;;;  Case-using
 
