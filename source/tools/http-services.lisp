@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:HTTP-SERVICES; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/http-services.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Aug 19 05:02:12 2009 *-*
+;;;; *-* Last-Edit: Wed Aug 19 05:11:53 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -42,6 +42,7 @@
             close-http-connection       ; not yet documented
             decode-uri-string           ; not yet documented
             encode-xml-string           ; not yet documented
+            encode-xml-value            ; not yet documented
             handle-http-get             ; not yet documented
             kill-http-server            ; not yet documented
             send-http-response-headers  ; not yet documented
@@ -98,6 +99,8 @@
       (#\' . "apos;")
       (#\" . "quot;")))
 
+;;; ---------------------------------------------------------------------------
+
 (defun encode-xml-string (string)
   (flet ((special-char-p (char)
            (assoc char *xml-special-characters*)))
@@ -122,6 +125,11 @@
             (coerce encoded-string 'simple-string))
           ;; Nothing to decode:
           string))))
+
+;;; ---------------------------------------------------------------------------
+
+(defun encode-xml-value (value)
+  (encode-xml-string (format nil "~s" value)))
 
 ;;; ---------------------------------------------------------------------------
 
