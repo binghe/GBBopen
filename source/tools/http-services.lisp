@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:HTTP-SERVICES; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/http-services.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Aug 16 12:03:38 2009 *-*
+;;;; *-* Last-Edit: Wed Aug 19 05:02:12 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -41,6 +41,7 @@
   (export '(*log-http-headers*          ; not yet documented
             close-http-connection       ; not yet documented
             decode-uri-string           ; not yet documented
+            encode-xml-string           ; not yet documented
             handle-http-get             ; not yet documented
             kill-http-server            ; not yet documented
             send-http-response-headers  ; not yet documented
@@ -87,6 +88,40 @@
         (coerce uri 'simple-string))))
    ;; Nothing to decode:
    (t encoded-uri)))
+
+;;; ---------------------------------------------------------------------------
+
+(defvar *xml-special-characters*
+    `((#\< . "lt;")
+      (#\> . "gt;")
+      (#\& . "amp;")
+      (#\' . "apos;")
+      (#\" . "quot;")))
+
+(defun encode-xml-string (string)
+  (flet ((special-char-p (char)
+           (assoc char *xml-special-characters*)))
+    (let ((pos (position-if #'special-char-p string)))
+      (if pos
+          (let* ((length (length string))
+                 (encoded-string (make-array `(,length)
+                                             :element-type 'character
+                                             :adjustable t
+                                             :fill-pointer 0))
+                 (pos 0))
+            (while (<& pos length)
+              (let* ((char (schar string pos))
+                     (acons (special-char-p char)))
+                (cond
+                 (acons
+                  (vector-push-extend #\& encoded-string)
+                  (dosequence (char (cdr acons))
+                     (vector-push-extend char encoded-string)))
+                 (t (vector-push-extend char encoded-string))))
+              (incf& pos))
+            (coerce encoded-string 'simple-string))
+          ;; Nothing to decode:
+          string))))
 
 ;;; ---------------------------------------------------------------------------
 
