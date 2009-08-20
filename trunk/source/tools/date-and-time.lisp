@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/date-and-time.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Aug  5 13:44:48 2009 *-*
+;;;; *-* Last-Edit: Thu Aug 20 05:04:26 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -413,9 +413,17 @@
     (multiple-value-bind (second minute hour date month year 
                           day local-daylight-savings-p zone)
         (decode-supplied-universal-time universal-time time-zone)
-      (let ((zone-value (*& -100 (if daylight-savings-p
-                                     (1-& zone)
-                                     zone))))
+      (let ((zone-value
+             (if (integerp zone)
+                 ;; HH00 is easy!
+                 (*& -100 (if daylight-savings-p (1-& zone) zone))
+                 ;; zone is a non-integer rational (multiple of 1/3600), HHMM
+                 ;; is needed:
+                 (multiple-value-bind (zone-hours zone-minutes)
+                     (truncate& (round$ (*$ -60f0 (float zone))) 60)
+                   (+& (*& (if daylight-savings-p (1-& zone-hours) zone-hours)
+                           100) 
+                       zone-minutes)))))
         (format destination
                 "~a, ~2,'0d ~a ~a ~2,'0d:~2,'0d:~2,'0d ~a~4,'0d~@[ (~a)~]"
                 (svref (the (simple-array t (*)) *weekday-name-vector*) 
