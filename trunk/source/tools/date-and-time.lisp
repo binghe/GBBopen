@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/date-and-time.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Aug 20 05:04:26 2009 *-*
+;;;; *-* Last-Edit: Thu Aug 20 05:14:31 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -421,7 +421,7 @@
                  ;; is needed:
                  (multiple-value-bind (zone-hours zone-minutes)
                      (truncate& (round$ (*$ -60f0 (float zone))) 60)
-                   (+& (*& (if daylight-savings-p (1-& zone-hours) zone-hours)
+                   (+& (*& (if daylight-savings-p (1+& zone-hours) zone-hours)
                            100) 
                        zone-minutes)))))
         (format destination
