@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:HTTP-SERVICES; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/http-services.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Aug 19 05:11:53 2009 *-*
+;;;; *-* Last-Edit: Thu Aug 20 17:32:27 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -39,6 +39,7 @@
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(*log-http-headers*          ; not yet documented
+            *log-http-requests*         ; not yet documented
             close-http-connection       ; not yet documented
             decode-uri-string           ; not yet documented
             encode-xml-string           ; not yet documented
@@ -53,6 +54,7 @@
 
 (defvar *http-server-port* 8052)
 (defvar *log-http-headers* nil)
+(defvar *log-http-requests* nil)
 (defvar *http-server-thread* nil)
 (defvar *http-clients* nil)             ; none yet...
 (defvar *http-log-stream* *standard-output*)
@@ -232,6 +234,8 @@
     (remote-hostname-and-port connection))
   (loop
     (let ((line (read-http-line connection)))
+      (when (and line (or *log-http-requests* *log-http-headers*))
+        (add-to-http-log "~s" line))
       (cond
        ;; The line is dead:
        ((not line) (return))
