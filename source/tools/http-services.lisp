@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:HTTP-SERVICES; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/http-services.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Aug 20 17:32:27 2009 *-*
+;;;; *-* Last-Edit: Fri Aug 21 05:22:56 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -38,7 +38,8 @@
 (in-package :http-services)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (export '(*log-http-headers*          ; not yet documented
+  (export '(*log-http-connections*      ; not yet documented
+            *log-http-headers*          ; not yet documented
             *log-http-requests*         ; not yet documented
             close-http-connection       ; not yet documented
             decode-uri-string           ; not yet documented
@@ -53,8 +54,9 @@
  ;;; ---------------------------------------------------------------------------
 
 (defvar *http-server-port* 8052)
+(defvar *log-http-connections* 't)
 (defvar *log-http-headers* nil)
-(defvar *log-http-requests* nil)
+(defvar *log-http-requests* 't)
 (defvar *http-server-thread* nil)
 (defvar *http-clients* nil)             ; none yet...
 (defvar *http-log-stream* *standard-output*)
@@ -221,17 +223,19 @@
 
 (defun close-http-connection (connection) 
   (when (open-stream-p connection)
-    (multiple-value-call 'write-to-http-log 
-      "Closing connection from ~a/~s"
-      (remote-hostname-and-port connection))
+    (when *log-http-connections*
+      (multiple-value-call 'write-to-http-log 
+        "Closing connection from ~a/~s"
+        (remote-hostname-and-port connection)))
     (close connection)))
 
 ;;; ---------------------------------------------------------------------------
 
 (defun http-connection-thread (connection)
-  (multiple-value-call 'write-to-http-log 
-    "Connection from ~a/~s"
-    (remote-hostname-and-port connection))
+    (when *log-http-connections*
+      (multiple-value-call 'write-to-http-log 
+        "Connection from ~a/~s"
+        (remote-hostname-and-port connection)))
   (loop
     (let ((line (read-http-line connection)))
       (when (and line (or *log-http-requests* *log-http-headers*))
