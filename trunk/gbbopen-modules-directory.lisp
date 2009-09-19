@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/gbbopen-modules-directory.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Jun  5 13:56:28 2009 *-*
+;;;; *-* Last-Edit: Sat Sep 19 14:55:12 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -93,13 +93,13 @@
   #+(and sbcl (not sb-unicode))
   (declare (type simple-base-string filename))
   (let* ((subdirs-pathname
-	  #-(or clozure lispworks)
+	  #-(or clozure lispworks xcl)
           (make-pathname
 	   :directory (append (pathname-directory modules-dir)
 			      #-(or allegro cmu scl)
 			      '(:wild))
 	   :defaults modules-dir)
-          #+(or clozure lispworks)
+          #+(or clozure lispworks xcl)
           (make-pathname
            :name ':wild
 	   :defaults modules-dir))
