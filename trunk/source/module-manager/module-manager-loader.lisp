@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/module-manager/module-manager-loader.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat May  2 12:28:19 2009 *-*
+;;;; *-* Last-Edit: Sat Sep 19 11:36:33 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -322,6 +322,14 @@
              #+(and hpux 64-bit) "hpux-64")
             "scl"
             (not (eq ext::*case-mode* ':upper))
+            (lisp-implementation-version))
+    ;; XCL:
+    #+xcl
+    (values (check                      ; ensure one feature match   
+             #+(and x86 linux) "linux86"
+             #+(and x86 (not linux)) "windows")
+            "xcl"
+            nil
             (lisp-implementation-version))))
   
 ;;; ---------------------------------------------------------------------------
@@ -385,6 +393,9 @@
      ;; The Scieneer CL:
      #+scl
      (c:backend-fasl-file-type c:*backend*)
+     ;; XCL:
+     #+xcl
+     "xcl"
      ;; Unknown CL:
      #-(or allegro 
            clisp
@@ -395,7 +406,8 @@
            ecl
            lispworks
            sbcl
-           scl)
+           scl
+           xcl)
      (need-to-port *compiled-file-type*)))
 
 ;;; ===========================================================================
