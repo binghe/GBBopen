@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/module-manager/module-manager.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Jul 17 12:05:39 2009 *-*
+;;;; *-* Last-Edit: Sat Sep 19 13:09:52 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -104,6 +104,10 @@
             module-manager-loader.lisp")))
          
 (in-package :module-manager)
+
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (import '(#+xcl
+            extensions:probe-directory)))
 
 ;;; ---------------------------------------------------------------------------
 ;;;   Check if we are good to go:
@@ -700,7 +704,8 @@
         gcl
         lispworks 
         (and sbcl unix)
-        (and scl unix))
+        (and scl unix)
+        xcl)
   (need-to-port probe-directory))
 
 ;;; ---------------------------------------------------------------------------
