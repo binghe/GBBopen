@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/duplicate-instance.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Sep 27 06:17:20 2009 *-*
+;;;; *-* Last-Edit: Sun Sep 27 06:26:37 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -59,7 +59,7 @@
              ;; Set the slot value, unless it is to remain unbound:
              (unless (eq value unbound-value-indicator)
                ;; Handle the UNBOUND-VALUE-INDICATOR escape:
-               (when (eq value unbound-value-indicator-indicator)
+               (when (eq value the-unbound-value-indicator)
                  (setf value unbound-value-indicator))
                ;; Lispworks can't use slot-value-using-class here
                ;; (prior to shared-initialize?):
@@ -121,7 +121,11 @@
          ;; from the old instance:
          (t (push slot slots)
             (push (if (slot-boundp-using-class old-class instance old-slot)
-                      (slot-value-using-class old-class instance old-slot)
+                      (let ((value (slot-value-using-class 
+                                    old-class instance old-slot)))
+                        (if (eq value unbound-value-indicator)
+                            the-unbound-value-indicator
+                            value))
                       unbound-value-indicator)
                   slot-values)))))
     (initialize-duplicated-instance 
