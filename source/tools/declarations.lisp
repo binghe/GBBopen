@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/declarations.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Sep 27 06:14:51 2009 *-*
+;;;; *-* Last-Edit: Sun Sep 27 06:28:00 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -38,8 +38,8 @@
             make-keys-only-hash-table-if-supported ; not documented
             need-to-port                ; in module-manager-loader, not documented
             nyi                         ; not documented
+            the-unbound-value-indicator ; not documented yet
             unbound-value-indicator
-            unbound-value-indicator-indicator            ; not documented yet
             without-cmucl/sbcl/scl-optimization-warnings ; not documented
             with-full-optimization)))
 
@@ -92,7 +92,7 @@
 
 ;;; Used to specify the unbound-value-indicator value in initargs to
 ;;; MAKE-DUPLICATE-INSTANCE and MAKE-DUPLICATE-INSTANCE-CHANGING-CLASS:
-(defconstant unbound-value-indicator-indicator
+(defconstant the-unbound-value-indicator
     ':---unbound-value-indicator---)
 
 ;;; ---------------------------------------------------------------------------
