@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/declarations.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Dec  4 12:50:22 2008 *-*
+;;;; *-* Last-Edit: Sun Sep 27 06:14:51 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2002-2008, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2009, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -39,6 +39,7 @@
             need-to-port                ; in module-manager-loader, not documented
             nyi                         ; not documented
             unbound-value-indicator
+            unbound-value-indicator-indicator            ; not documented yet
             without-cmucl/sbcl/scl-optimization-warnings ; not documented
             with-full-optimization)))
 
@@ -88,6 +89,11 @@
 (defconstant unbound-value-indicator
     ;; We use Allegro's keyword symbol (as good as any choice...)
     ':---unbound---)
+
+;;; Used to specify the unbound-value-indicator value in initargs to
+;;; MAKE-DUPLICATE-INSTANCE and MAKE-DUPLICATE-INSTANCE-CHANGING-CLASS:
+(defconstant unbound-value-indicator-indicator
+    ':---unbound-value-indicator---)
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Keys-only hash tables
