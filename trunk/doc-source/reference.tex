@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Wed Aug  5 13:46:24 2009; Edited-By: cork *-*
+%% *-* Last-Edit: Mon Sep 28 05:25:11 2009; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2009, Dan Corkill <corkill@GBBopen.org>
@@ -13765,14 +13765,14 @@ list of the slots that were duplicated or explicitly initialized.
 When a \glref{unit~instance} is duplicated, events are signaled in the
 following sequence: 
 \begin{tightenumerate}
-\item An \nobr{\code{update-nonlink-slot-event}} or \nobr{\code{link-event}} is
-  signaled for each initialized slot in the duplicated
-  \glref{unit~instance}.  A \nobr{\code{link-event}} is also signaled for
-  each inverse pointer from an existing \glref{unit~instance} to the
-  (newly created) duplicate \glref{unit~instance}.
-\item An \nobr{\code{add-instance-to-space-instance-event}} is signaled
-  for each \glref{space~instance} on which the duplicate
-  \glref{unit~instance} is added.
+\item An \nobr{\code{update-nonlink-slot-event}} or \nobr{\code{link-event}}
+  is signaled for each initialized slot in the duplicated
+  \glref{unit~instance}.  A \nobr{\code{link-event}} is also signaled for each
+  inverse pointer from an existing \glref{unit~instance} to the (newly
+  created) duplicate \glref{unit~instance}.
+\item An \nobr{\code{add-instance-to-space-instance-event}} is signaled for
+  each \glref{space~instance} on which the duplicate \glref{unit~instance} is
+  added.
 \item A \code{create-instance-event} is signaled.
 \end{tightenumerate}
 
@@ -13791,13 +13791,17 @@ of whether the slots are local or shared:
 %
 \begin{tightitemize}
 \item If an initarg in \var{initargs\/} specifies a value for a slot, that
-  value is stored into the slot.
-\item All slots that are still unbound at this point and that are not named in
+  value is stored into the slot in the duplicated instance.
+\item All slots in the duplicated instance that are unbound at this point and
+  that are not named in \var{unduplicated-slot-names\/} or in the list of
+  slot-names returned from calling
+  \nobr{\textbf{\entlink{unduplicated-slot-names}}} on \var{instance\/} are
+  set to the value of the slot in \var{instance}.
+\item Any slots that remain unbound and are named in
   \var{unduplicated-slot-names\/} or in the list of slot-names returned from
   calling \nobr{\textbf{\entlink{unduplicated-slot-names}}} on
-  \var{instance\/} are set to the value of the slot in \var{instance}.
-\item Any slots indicated by slot-names that are still unbound at this point
-  are initialized according to their \nobr{\code{:initform}} forms. 
+  \var{instance\/} are initialized according to their \nobr{\code{:initform}}
+  forms.
 \end{tightitemize}
 
 When duplicating a \glref{unit~instance}, specifying a
@@ -13994,13 +13998,18 @@ of whether the slots are local or shared:
 %
 \begin{tightitemize}
 \item If an initarg in \var{initargs\/} specifies a value for a slot, that
-  value is stored into the slot.
-\item All slots that are still unbound at this point and that are not named in
+  value is stored into the slot in the duplicated instance.
+\item All slots in the duplicated instance that are unbound at this point and
+  that are not named in \var{unduplicated-slot-names\/} or in the list of
+  slot-names returned from calling
+  \nobr{\textbf{\entlink{unduplicated-slot-names}}} on \var{instance\/} are
+  set to the value of the slot in \var{instance}.
+\item Any slots that remain unbound at this point and that are defined for
+  \var{new-class\/} instances but not for \var{instance\/} or are named in
   \var{unduplicated-slot-names\/} or in the list of slot-names returned from
   calling \nobr{\textbf{\entlink{unduplicated-slot-names}}} on
-  \var{instance\/} are set to the value of the slot in \var{instance}.
-\item Any slots indicated by slot-names that are still unbound at this point
-  are initialized according to their \nobr{\code{:initform}} forms. 
+  \var{instance\/} are initialized according to their \nobr{\code{:initform}}
+  forms.
 \end{tightitemize}
 
 When creating (duplicating) a new \glref{unit~instance}, specifying a
