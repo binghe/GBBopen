@@ -85,14 +85,14 @@ list of the slots that were duplicated or explicitly initialized.
 <p><span class="fndoclabel">Events</span> <br /><a name="id1">When</a> a <a href="ref-glossary.html#id229">unit&nbsp;instance</a> is duplicated, events are signaled in the
 following sequence: 
 </p>
-<p><ol class="tight"><li>An <nobr><code>update-nonlink-slot-event</code></nobr> or <nobr><code>link-event</code></nobr> is
-signaled for each initialized slot in the duplicated
-<a href="ref-glossary.html#id229">unit&nbsp;instance</a>.  A <nobr><code>link-event</code></nobr> is also signaled for
-each inverse pointer from an existing <a href="ref-glossary.html#id229">unit&nbsp;instance</a> to the
-(newly created) duplicate <a href="ref-glossary.html#id229">unit&nbsp;instance</a>.
-<li>An <nobr><code>add-instance-to-space-instance-event</code></nobr> is signaled
-for each <a href="ref-glossary.html#id203">space&nbsp;instance</a> on which the duplicate
-<a href="ref-glossary.html#id229">unit&nbsp;instance</a> is added.
+<p><ol class="tight"><li>An <nobr><code>update-nonlink-slot-event</code></nobr> or <nobr><code>link-event</code></nobr>
+is signaled for each initialized slot in the duplicated
+<a href="ref-glossary.html#id229">unit&nbsp;instance</a>.  A <nobr><code>link-event</code></nobr> is also signaled for each
+inverse pointer from an existing <a href="ref-glossary.html#id229">unit&nbsp;instance</a> to the (newly
+created) duplicate <a href="ref-glossary.html#id229">unit&nbsp;instance</a>.
+<li>An <nobr><code>add-instance-to-space-instance-event</code></nobr> is signaled for
+each <a href="ref-glossary.html#id203">space&nbsp;instance</a> on which the duplicate <a href="ref-glossary.html#id229">unit&nbsp;instance</a> is
+added.
 <li>A <code>create-instance-event</code> is signaled.
 </ol>
 </p>
@@ -105,13 +105,17 @@ for each <a href="ref-glossary.html#id203">space&nbsp;instance</a> on which the 
 of whether the slots are local or shared:
 </p>
 <p><ul class="tight"><li>If an initarg in <var>initargs</var> specifies a value for a slot, that
-value is stored into the slot.
-<li>All slots that are still unbound at this point and that are not named in
+value is stored into the slot in the duplicated instance.
+<li>All slots in the duplicated instance that are unbound at this point and
+that are not named in <var>unduplicated-slot-names</var> or in the list of
+slot-names returned from calling
+<nobr><b><a href="ref-unduplicated-slot-names.html">unduplicated-slot-names</a></b></nobr> on <var>instance</var> are
+set to the value of the slot in <var>instance</var>.
+<li>Any slots that remain unbound and are named in
 <var>unduplicated-slot-names</var> or in the list of slot-names returned from
 calling <nobr><b><a href="ref-unduplicated-slot-names.html">unduplicated-slot-names</a></b></nobr> on
-<var>instance</var> are set to the value of the slot in <var>instance</var>.
-<li>Any slots indicated by slot-names that are still unbound at this point
-are initialized according to their <nobr><code>:initform</code></nobr> forms. 
+<var>instance</var> are initialized according to their <nobr><code>:initform</code></nobr>
+forms.
 </ul>
 </p>
 <p>When duplicating a <a href="ref-glossary.html#id229">unit&nbsp;instance</a>, specifying a
