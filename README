@@ -22,7 +22,7 @@ Requirements:
    GBBopen may still function under MCL.
 
    Ports of GBBopen to Corman Common Lisp (Version 3.0), and GCL
-   (Version 2.7.0 with --enable-ansi) are incomplete (due to limitations 
+   (Version 2.7.0 with --enable-ansi) are incomplete (due to limitations
    in the MOP support in these implementations).  The latest GCL tested was
    obtained using:
       # export CVSROOT=:pserver:anonymous@cvs.sv.gnu.org:/sources/gcl
