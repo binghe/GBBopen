@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/extended-repl.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Oct 16 06:32:56 2009 *-*
+;;;; *-* Last-Edit: Fri Oct 16 14:46:38 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -52,8 +52,8 @@
 
 ;;; ---------------------------------------------------------------------------
 ;;;  In Allegro, we hide non-native help commands by saving the command-name
-;;;  strings in *non-native-help-commandss* and fwrapping
-;;;  tpl::get-commands-list to remove the commands from its returned value.
+;;;  strings in *non-native-help-commands* and fwrapping
+;;;  TPL::GET-COMMANDS-LIST to remove the commands from its returned value.
 
 #+allegro
 (defvar *non-native-help-commands* nil)
@@ -113,6 +113,14 @@
                                    :key #'car))))
 
 (compile-if-advantageous 'add-repl-command-spec)
+
+;;; ---------------------------------------------------------------------------
+
+#+xcl
+(defun read-args-from-string (string)
+  (ignore-errors
+   (read-from-string 
+    (concatenate 'string "(" string ")"))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -205,11 +213,12 @@
          #+xcl
          (progn
            (pushnew
-            `(,(string-downcase (symbol-name command-name))
+            '(,(string-downcase (symbol-name command-name))
               nil
-              ,tlc-sym 
+              (lambda (line) (apply ',tlc-sym (read-from-string line)))
               ,(when (stringp maybe-doc) maybe-doc))
-            top-level::*command-table*)
+            top-level::*command-table*
+            :test #'string=)
            (sort top-level::*command-table* #'string< :key #'first))
          ',command-name))))
 
@@ -319,7 +328,7 @@
                                   ;; release:
                                   &optional cl-user-fn-name this-system-name)
                  command-spec
-               (declare (ignore #-(or allegro clozure lispworks)
+               (declare (ignore #-(or allegro clozure lispworks xcl)
                                 command-name
                                 function doc help-control))
                ;; Deleting?
