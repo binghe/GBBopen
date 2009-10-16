@@ -1,21 +1,23 @@
 ;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/extended-repl.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Sep 19 09:44:24 2008 *-*
+;;;; *-* Last-Edit: Fri Oct 16 05:19:45 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
 ;;;; *
 ;;;; *                    Extended REPL Command Processing
-;;;; * for CLISP, CMUCL, SCL, ECL, and SBCL REPL and for SLIME (Emacs->Swank)
+;;;; * 
+;;;; *  for CLISP, CLOSURE CL, CMUCL, ECL, and SBCL, and SCL REPL and for 
+;;;; *  SLIME (Emacs->Swank)
 ;;;; *
 ;;;; **************************************************************************
 ;;;; **************************************************************************
 ;;;
 ;;; Written by: Dan Corkill 
 ;;;
-;;; Copyright (C) 2005-2008, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2005-2009, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; Porting Notice:
