@@ -1,16 +1,16 @@
 ;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/extended-repl.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Oct 16 05:19:45 2009 *-*
+;;;; *-* Last-Edit: Fri Oct 16 06:32:56 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
 ;;;; *
-;;;; *                    Extended REPL Command Processing
+;;;; *                      Extended REPL Command Processing
 ;;;; * 
-;;;; *  for CLISP, CLOSURE CL, CMUCL, ECL, and SBCL, and SCL REPL and for 
-;;;; *  SLIME (Emacs->Swank)
+;;;; *  for CLISP, Closure CL, CMUCL, ECL, Lispworks, SBCL, SCL, and XCL REPL 
+;;;; *  and for SLIME (Emacs->Swank)
 ;;;; *
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -23,8 +23,8 @@
 ;;; Porting Notice:
 ;;;
 ;;;   These extensions add:
-;;;    - keyword-command capabilities to the REPL in CLISP, CMUCL, SCL,
-;;;      and SBCL
+;;;    - keyword-command capabilities to the REPL in CLISP, CMUCL, SBCL, 
+;;;      and SCL
 ;;;    - interface into CLISP's *user-commands* facility
 ;;;    - extend ECL's command repertoire
 ;;;    - add keyword-command support to SLIME's Emacs->Swank interface  
@@ -35,6 +35,7 @@
 ;;;  02-02-06 Added ECL support.  (Corkill)
 ;;;  02-04-06 Added SLIME (Emacs->Swank) support.  (Corkill)
 ;;;  04-17-08 Reworked SLIME mechanism.  (Corkill)
+;;;  10-15-09 Added XCL support.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 	 
@@ -201,6 +202,15 @@
          #+lispworks
          (system:define-top-loop-command ,command-name ,lambda-list
            (progn ,@body))
+         #+xcl
+         (progn
+           (pushnew
+            `(,(string-downcase (symbol-name command-name))
+              nil
+              ,tlc-sym 
+              ,(when (stringp maybe-doc) maybe-doc))
+            top-level::*command-table*)
+           (sort top-level::*command-table* #'string< :key #'first))
          ',command-name))))
 
 (compile-if-advantageous 'define-repl-command)
@@ -335,6 +345,12 @@
                                  :key #'caar)))                 
                  #+lispworks
                  (system::%put command-name 'system::top-loop-handler nil)
+                 #+xcl
+                 (setf top-level::*command-table*
+                       (delete (string-downcase (symbol-name command-name))
+                               top-level::*command-table*
+                               :test #'string=
+                               :key #'first))
                  ;; Also delete the :cl-user function?
                  (when cl-user-fn-name
                    (fmakunbound cl-user-fn-name))
