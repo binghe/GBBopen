@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/gbbopen-modules-directory.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Oct 16 05:56:15 2009 *-*
+;;;; *-* Last-Edit: Fri Oct 16 06:05:38 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -119,7 +119,10 @@
 	   #+clozure
            (directory subdirs-pathname :directories 't)
 	   #-(or allegro clozure)
-           (directory subdirs-pathname)
+           (and
+             ;; XCL requires the directory to be present:
+             #+xcl (probe-directory modules-dir)
+             (directory subdirs-pathname))
            ;; Add in any *.sym file "pseudo" symbolic links:
 	   (mapcan 'read-target-directory-specification
 		   pseudo-sym-link-paths)))
