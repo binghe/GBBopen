@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/gbbopen-modules-directory.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Sep 19 14:55:12 2009 *-*
+;;;; *-* Last-Edit: Fri Oct 16 05:56:15 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -104,11 +104,14 @@
            :name ':wild
 	   :defaults modules-dir))
 	 (pseudo-sym-link-paths
-	  (directory 
-	   (make-pathname
-	    :name ':wild
-	    :type "sym"
-	    :defaults modules-dir)))
+          (and
+            ;; XCL requires the directory to be present:
+            #+xcl (probe-directory modules-dir)
+            (directory 
+             (make-pathname
+              :name ':wild
+              :type "sym"
+              :defaults modules-dir))))
 	 (module-dirs
 	  (append
            #+allegro
