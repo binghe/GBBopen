@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/initiate.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Jun  1 14:07:29 2009 *-*
+;;;; *-* Last-Edit: Fri Oct 16 05:24:32 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -21,7 +21,7 @@
 ;;; your personal CL initialization file (in place of startup.lisp).  After
 ;;; loading, handy top-level-loop keyword commands, such as :gbbopen-tools,
 ;;; :gbbopen, :gbbopen-user, and :gbbopen-test, are available on Allegro CL,
-;;; CLISP, Clozure CL, CMUCL, SCL, ECL, Lispworks, and SBCL.  GBBopen keyword
+;;; CLISP, Clozure CL, CMUCL, ECL, Lispworks, SBCL, and SCL.  GBBopen keyword
 ;;; commands are also supported in the SLIME REPL.
 ;;;
 ;;; For example:
@@ -114,12 +114,12 @@
   ;;;  compile interpreted closures (so we avoid having `fn-name' any
   ;;;  definitions that are closures)
   ;;;
-  ;;;  CMUCL and SCL can't compile macro definitions (so we skip compiling
-  ;;;  them)
+  ;;;  CMUCL, SCL, and XCL can't compile macro definitions (so we skip
+  ;;;  compiling them)
   ;;; 
   ;;;  ECL's compiler is slow and creates temporary files, so we don't bother
   #+ecl (declare (ignore fn-name))
-  #-ecl (unless (or #+(or cmu scl) (macro-function fn-name))
+  #-ecl (unless (or #+(or cmu scl xcl) (macro-function fn-name))
           (compile fn-name)))
 
 ;;; ---------------------------------------------------------------------------

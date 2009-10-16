@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/startup.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Jun  1 14:07:37 2009 *-*
+;;;; *-* Last-Edit: Fri Oct 16 05:23:25 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -36,6 +36,7 @@
 ;;;           *module-manager-load-verbose*.  (Corkill)
 ;;;  04-07-06 Added gbbopen-modules directory support.  (Corkill)
 ;;;  04-27-08 Added shared-gbbopen-modules directory support.  (Corkill)
+;;;  10-15-09 Added XCL support.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -96,6 +97,8 @@
 ;;; ---------------------------------------------------------------------------
 ;;;  Define COMPILE-IF-ADVANTAGEOUS if it is not already present (from loading
 ;;;  initiate.lisp)
+;;;
+;;;  NOTE: Copy all changes to COMPILE-IF-ADVANTAGEOUS to initiate.lisp:
 
 (unless (fboundp 'compile-if-advantageous)
   (defun compile-if-advantageous (fn-name)
@@ -103,11 +106,12 @@
     ;;;  compile interpreted closures (so we avoid having `fn-name' any
     ;;;  definitions that are closures)
     ;;;
-    ;;;  CMUCL can't compile macro definitions (so we skip compiling them)
+    ;;;  CMUCL, SCL, and XCL can't compile macro definitions (so we skip
+    ;;;  compiling them)
     ;;; 
     ;;;  ECL's compiler is slow and creates temporary files, so we don't bother
     #+ecl (declare (ignore fn-name))
-    #-ecl (unless (or #+cmu (macro-function fn-name))
+    #-ecl (unless (or #+(or cmu scl xcl) (macro-function fn-name))
             (compile fn-name))))
 
 ;;; ---------------------------------------------------------------------------
