@@ -118,9 +118,10 @@
 
 #+xcl
 (defun read-args-from-string (string)
-  (ignore-errors
-   (read-from-string 
-    (concatenate 'string "(" string ")"))))
+  (when string
+    (ignore-errors
+     (read-from-string 
+      (concatenate 'string "(" string ")")))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -141,15 +142,27 @@
            (unless (member ':no-cl-user-function .options.)
              (intern (symbol-name command-name) ':common-lisp-user)))
           (tlc-sym (gensym))
+	  #+xcl
+	  (command-fn-sym
+	   (intern (concatenate 'string
+				"%"
+				(symbol-name command-name)
+				"-CMD%")
+		   ':common-lisp-user))
           (maybe-doc (first body)))
       `(progn 
-         ;; Define the :cl-user function:
+         ;; Define the :cl-user function, if desired:
          ,@(when cl-user-fn-name
              `((when (fboundp ',cl-user-fn-name)
                  (redefining-cl-user-repl-command-warning 
                   ',command-name ',cl-user-fn-name))
                (defun ,cl-user-fn-name ,lambda-list 
                  ,@body)))
+	 ;; Define the command (with line parsing) for XCL:
+	 #+xcl
+	 (defun ,command-fn-sym (line)
+	   (flet ((command ,lambda-list ,@body))
+	      (apply #'command (read-args-from-string line))))
          ;; Now do the REPL-command definition:
          #+allegro
          ,@(unless (member ':add-to-native-help .options.)
@@ -215,10 +228,11 @@
            (pushnew
             '(,(string-downcase (symbol-name command-name))
               nil
-              (lambda (line) (apply ',tlc-sym (read-from-string line)))
+	      ,command-fn-sym
               ,(when (stringp maybe-doc) maybe-doc))
             top-level::*command-table*
-            :test #'string=)
+            :test #'string=
+	    :key #'first)
            (sort top-level::*command-table* #'string< :key #'first))
          ',command-name))))
 
