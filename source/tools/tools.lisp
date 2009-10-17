@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Aug 18 05:50:30 2009 *-*
+;;;; *-* Last-Edit: Mon Oct  5 13:27:00 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -795,10 +795,14 @@
           (ccl::unlock-hash-table hash-table nil)
           't)))
   #+lispworks
-  (system:with-hash-table-locked hash-table
-    (when (> new-size (hash-table-size hash-table))
-      (system::rehash hash-table (system::almost-primify new-size))
-      't))
+  (#-lispworks6
+   system:with-hash-table-locked
+   #+lispworks6
+   hcl:with-hash-table-locked 
+   hash-table
+   (when (> new-size (hash-table-size hash-table))
+     (system::rehash hash-table (system::almost-primify new-size))
+     't))
   ;; CMUCL doesn't provide a direct interface for resizing a hash table, so we
   ;; fake such an interface by temporarily setting the REHASH-SIZE of the hash
   ;; table to (- `new-size' old-size). 
