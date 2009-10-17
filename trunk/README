@@ -21,6 +21,8 @@ Requirements:
    Support for Digitool MCL (Version 5.1) has been discontinued. However,
    GBBopen may still function under MCL.
 
+   Initial investigation/porting for XCL is underway.
+
    Ports of GBBopen to Corman Common Lisp (Version 3.0), and GCL
    (Version 2.7.0 with --enable-ansi) are incomplete (due to limitations
    in the MOP support in these implementations).  The latest GCL tested was
@@ -31,7 +33,7 @@ Requirements:
    See PORTING for information on porting GBBopen to other Common Lisp
    implementations.
 
-Current Status Notes (October 8, 2009)
+Current Status Notes (October 16, 2009)
 --------------------
 
 Implementation work is progressing on a regular basis.  See the list of
