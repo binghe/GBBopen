@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/extended-repl.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Oct 16 14:46:38 2009 *-*
+;;;; *-* Last-Edit: Sat Oct 17 12:29:22 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -229,7 +229,9 @@
             '(,(string-downcase (symbol-name command-name))
               nil
 	      ,command-fn-sym
-              ,(when (stringp maybe-doc) maybe-doc))
+              ,(when (stringp maybe-doc) 
+                 ;; Match XCL's non-captialization:
+                 (string-downcase maybe-doc :end 1)))
             top-level::*command-table*
             :test #'string=
 	    :key #'first)
