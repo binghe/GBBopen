@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/module-manager/module-manager-loader.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Sep 19 11:36:33 2009 *-*
+;;;; *-* Last-Edit: Sun Oct 18 05:25:34 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -246,10 +246,11 @@
     ;; ECL (Embedable Common Lisp):
     #+ecl
     (values (check                      ; ensure one feature match
-             #+(and (or pentium3 pentium4) linux) "linux86" 
-             #+(and (or pentium3 pentium4) darwin) "mac86" 
-             #+(and (or pentium3 pentium4) (not (or linux darwin))) "windows"
-             #+(and (not (or pentium3 pentium4)) darwin) "macppc")
+             #+(and (or i686 i586 pentium4 pentium3) linux) "linux86" 
+             #+(and (or i686 i586 pentium4 pentium3) darwin) "mac86" 
+             #+(and (or i686 i586 pentium4 pentium3) 
+                    (not (or linux darwin))) "windows"
+             #+(and (not (or i686 i586 pentium4 pentium3)) darwin) "macppc")
             "ecl"
             nil
             ;; Strip away any CVS info:
