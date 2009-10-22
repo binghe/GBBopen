@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/portable-threads.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Jul 12 06:51:27 2009 *-*
+;;;; *-* Last-Edit: Wed Oct  7 12:03:54 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -92,9 +92,9 @@
   (pushnew ':clozure *features*))
 
 ;;; ---------------------------------------------------------------------------
-;;; Add a feature to identify new lock structure for Lispworks:
+;;; Add a feature to identify new lock structure for Lispworks 5.1:
 
-#+lispworks
+#+(and lispworks (not lispworks6))
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (when (fboundp 'mp::lock-i-name)
     (pushnew ':new-locks *features*)))
@@ -173,7 +173,13 @@
    '()
    #+gcl
    '()
-   #+lispworks
+   #+(and lispworks lispworks6)
+   '(system:atomic-decf
+     system:atomic-incf 
+     system:atomic-pop
+     system:atomic-push
+     mp::initialize-multiprocessing)
+   #+(and lispworks (not lispworks6))
    '(mp:make-lock
      mp::initialize-multiprocessing)
    #+(and sbcl sb-thread)
@@ -201,9 +207,11 @@
             all-threads
             as-atomic-operation
             atomic-decf
+            atomic-decf&
             atomic-delete
             atomic-flush
             atomic-incf
+            atomic-incf&
             atomic-pop
             atomic-push
             atomic-pushnew
@@ -822,9 +830,13 @@
          (mp:schedule-timer-relative ,timer-sym ,seconds)
          (unwind-protect (progn ,@timed-body)
            (mp:unschedule-timer ,timer-sym)))))
+  #+sbcl-does-not-nest
+  `(handler-case (sb-ext:with-timeout ,seconds ,@timed-body)
+     (sb-ext:timeout ()
+       ,@timeout-body))
   #+sbcl
-  (let ((tag-sym (gensym))
-        (timer-sym (gensym)))
+    (let ((tag-sym (gensym))
+          (timer-sym (gensym)))
     `(block ,tag-sym
        (let ((,timer-sym (sb-ext:make-timer
                           #'(lambda () (return-from ,tag-sym
@@ -964,13 +976,13 @@
                         (ccl:lock-name ccl-lock)
                         "[No ccl-lock]")))))))
 
-#+(and lispworks new-locks)
+#+(and lispworks new-locks (not lispworks6))
 (defstruct (nonrecursive-lock
             (:include mp:lock)
             (:copier nil)
             (:constructor %make-nonrecursive-lock)))
 
-#+lispworks
+#+(and lispworks (not lispworks6))
 (defstruct (recursive-lock
             (:include mp:lock)
             (:copier nil)
@@ -1042,7 +1054,7 @@
 ;;; ---------------------------------------------------------------------------
 ;;;   Make-lock
 
-#-(or lispworks                         ; simply imported
+#-(or (and lispworks (not lispworks6))  ; simply imported
       threads-not-available
       cormanlisp)                       ; CLL 3.0 can't handle this one
 (defun make-lock (&key (name
@@ -1058,6 +1070,8 @@
   #+(or clozure
         digitool-mcl)
   (%make-lock :ccl-lock (ccl:make-lock name))
+  #+(and lispworks lispworks6)
+  (mp:make-lock :name name :recursivep nil)
   #+(and sbcl sb-thread)
   (sb-thread:make-mutex :name name)
   #+scl
@@ -1067,7 +1081,7 @@
 ;;;   Make-recursive-lock
 
 #-(or allegro 
-      (and lispworks (not new-locks))
+      (and lispworks (not new-locks) (not lispworks6))
       (and sbcl sb-thread)
       threads-not-available)
 (defun make-recursive-lock (&key (name
@@ -1081,7 +1095,9 @@
   (mp:make-lock name)
   #+(and ecl threads)
   (mp:make-lock :name name :recursive t)
-  #+(and lispworks new-locks)
+  #+(and lispworks lispworks6)
+  (mp:make-lock :name name :recursivep t)
+  #+(and lispworks new-locks (not lispworks6))
   (%make-recursive-lock :i-name name)
   #+scl
   (mp:make-lock name :type ':recursive))
@@ -1143,7 +1159,10 @@
          #+(and ecl threads)
          (mp:with-lock (,lock-sym)
            ,@body)
-         #+lispworks
+         #+(and lispworks lispworks6)
+           (mp:with-lock (,lock-sym ,whostate) 
+             ,@body)
+         #+(and lispworks (not lispworks6))
          (progn
            (unless (recursive-lock-p ,lock-sym)
              (let ((.current-thread. mp:*current-process*)
@@ -1195,7 +1214,9 @@
     (eq (ccl::lock.value (lock-ccl-lock lock)) ccl:*current-process*)
     #+(and ecl threads)
     (eq (mp:lock-holder lock) mp:*current-process*)
-    #+lispworks
+    #+(and lispworks lispworks6)
+    (mp:lock-owned-by-current-process-p lock)
+    #+(and lispworks (not lispworks6))
     (eq (mp:lock-owner lock) mp:*current-process*)
     #+(and sbcl sb-thread)
     (eq (sb-thread:mutex-value lock) sb-thread:*current-thread*)
@@ -1225,7 +1246,9 @@
              ccl:*current-process*)
          #+(and ecl threads)
          (eq (mp:lock-holder ,lock-sym) mp:*current-process*)
-         #+lispworks
+         #+(and lispworks lispworks6)
+         (mp:lock-owned-by-current-process-p ,lock-sym)
+         #+(and lispworks (not lispworks6))
          (eq (mp:lock-owner ,lock-sym) mp:*current-process*)
          #+(and sbcl sb-thread)
          (eq (sb-thread:mutex-value ,lock-sym) sb-thread:*current-thread*)
@@ -1240,13 +1263,13 @@
 ;;;
 ;;;  (used to implement atomic operations; for very brief operations only)
 ;;;
-;;; We use native without-scheduling on Allegro, CMUCL/mp, and SCL, and we use
+;;; We use native without-scheduling on pre-SMP Allegro, CMUCL/mp, and SCL, and we use
 ;;; native without-interrupts on Digitool MCL, ECL/threads, and Lispworks.  
 ;;;
 ;;; Clozure's without-interrupts doesn't control thread scheduling, so we have
 ;;; to use a lock.
 
-#-(or allegro
+#-(or (and allegro (not smp-macros))
       (and cmu mp)
       digitool-mcl
       (and ecl threads) 
@@ -1254,21 +1277,21 @@
       scl)
 (defvar *atomic-operation-lock* (make-lock :name "Atomic operation"))
 
-#-(or allegro
+#-(or (and allegro (not smp-macros))
       (and cmu mp)
       digitool-mcl
-      lispworks
+      (and lispworks (not lispworks6))
       scl)
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defmacro as-atomic-operation (&body body)
     `(with-lock-held (*atomic-operation-lock*)
        ,@body)))
 
-#+(or allegro
+#+(or (and allegro (not smp-macros))
       (and cmu mp)
       digitool-mcl 
       (and ecl threads) 
-      lispworks
+      (and lispworks (not lispworks6))
       scl)
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defmacro as-atomic-operation (&body body)
@@ -1276,7 +1299,7 @@
       #+(and cmu mp) mp:without-scheduling
       #+digitool-mcl ccl:without-interrupts
       #+(and ecl threads) mp:without-interrupts
-      #+lispworks mp:without-preemption
+      #+(and lispworks (not lispworks6)) mp:without-preemption
       #+scl mp:without-scheduling
       ,@body)))
 
@@ -1284,7 +1307,9 @@
 ;;;   Atomic Operations (defined here unless imported from the CL
 ;;;   implementation)
 
-#-(or (and cmu mp) scl)
+#-(or (and cmu mp) 
+      (and lispworks lispworks6)
+      scl)
 (defmacro atomic-push (value place)
   `(as-atomic-operation (push ,value ,place)))
 
@@ -1301,17 +1326,41 @@
              ,list
              (cons ,value ,list))))))
 
-#-(or (and cmu mp) scl)
+#-(or (and cmu mp)
+      (and lispworks lispworks6)
+      scl)
 (defmacro atomic-pop (place)
   `(as-atomic-operation (pop ,place)))
 
-#-(or (and cmu mp) scl)
+#-(or (and cmu mp) 
+      (and lispworks lispworks6)
+      scl)
 (defmacro atomic-incf (place &optional (delta 1))
   `(as-atomic-operation (incf ,place ,delta)))
 
-#-(or (and cmu mp) scl)
+#+(and lispworks lispworks6)
+(defmacro atomic-incf& (place &optional (delta 1))
+  `(system:atomic-fixnum-incf ,place ,delta))
+
+#-lispworks6
+(defmacro atomic-incf& (place &optional (delta 1))
+  `(as-atomic-operation (the fixnum (incf (the fixnum ,place)
+                                          (the fixnum ,delta)))))
+
+#-(or (and cmu mp) 
+      (and lispworks lispworks6)
+      scl)
 (defmacro atomic-decf (place &optional (delta 1))
   `(as-atomic-operation (decf ,place ,delta)))
+
+#+(and lispworks lispworks6)
+(defmacro atomic-decf& (place &optional (delta 1))
+  `(system:atomic-fixnum-decf ,place ,delta))
+
+#-lispworks6
+(defmacro atomic-decf& (place &optional (delta 1))
+  `(as-atomic-operation (the fixnum (decf (the fixnum ,place)
+                                          (the fixnum ,delta)))))
 
 (defmacro atomic-delete (item place &rest args &environment env)
   (if (symbolp place)
@@ -1369,7 +1418,8 @@
          #+allegro
          (let ((.current-thread. system:*current-process*)
                ,saved-whostate)
-           (excl:without-interrupts
+           (#+smp-macros excl:with-delayed-interrupts
+            #-smp-macros excl:without-interrupts
              (let ((.holding-thread. (mp:process-lock-locker ,lock-sym)))
                (unless (eq .current-thread. .holding-thread.)
                  (non-holder-lock-release-error
@@ -1440,7 +1490,13 @@
            (unwind-protect
                (progn ,@body)
              (mp:get-lock ,lock-sym)))
-         #+lispworks
+         #+(and lispworks lispworks6)
+         (progn
+           (mp:process-unlock ,lock-sym 't) ; performs valid-holder check
+           (unwind-protect
+               (progn ,@body)
+             (mp:process-lock ,lock-sym)))
+         #+(and lispworks (not lispworks6))
          (progn
            (mp:without-preemption
              (let ((.current-thread. mp:*current-process*)
@@ -1668,8 +1724,10 @@
   #+lispworks
   (mp:read-special-in-process thread symbol)
   #+(and sbcl sb-thread)
-  ;; We can't figure out how to use (sb-thread::symbol-value-in-thread
+  (sb-thread:symbol-value-in-thread symbol thread)
+  ;; We can't figure out how to use (sb-thread:symbol-value-in-thread
   ;; symbol thread-sap), so:
+  #+ignore
   (let ((result nil))
     (sb-thread:interrupt-thread 
      thread
@@ -1745,21 +1803,25 @@
   ;; In most CLs, sleep allows run-in-thread, symbol-value-in-thread,
   ;; and throws to be processed while sleeping, and sleep is often
   ;; well optimized.  So, we use it whenever possible.
-  #-clozure
+  #-(or clozure
+        (and lispworks lispworks6))
   (catch tag (sleep-nearly-forever))
   #+clozure
   (let ((semaphore (ccl:make-semaphore)))
     (ccl:with-lock-grabbed (*sleeper-semaphores-lock* "adding")
       (push (cons (cons tag ccl:*current-process*) semaphore)
             *sleeper-semaphores*))
-    (ccl:wait-on-semaphore semaphore)))
+    (ccl:wait-on-semaphore semaphore))
+  #+(and lispworks6 lispworks6)
+  (mp:current-process-pause nearly-forever-seconds))
 
 ;;; ---------------------------------------------------------------------------
 
 #-threads-not-available
 (defun awaken-throwable-sleeper (thread 
                                  &optional (tag 'throwable-sleep-forever))
-  #-clozure
+  #-(or clozure
+        (and lispworks lispworks6))
   (flet ((awake-fn ()
            (ignore-errors
             (throw tag nil))))
@@ -1772,7 +1834,9 @@
       (ccl:with-lock-grabbed (*sleeper-semaphores-lock* "removing")
         (setf *sleeper-semaphores*
               (delete acons *sleeper-semaphores* :test #'eq)))
-      (ccl:signal-semaphore (cdr acons)))))
+      (ccl:signal-semaphore (cdr acons))))
+  #+(and lispworks lispworks6)
+  (mp:process-poke thread))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -1850,6 +1914,10 @@
   ((lock :initarg :lock
          :initform (mp:make-lock :name "CV Lock")
          :reader condition-variable-lock)
+   #+lispworks6
+   (cv :initform (mp:make-condition-variable)
+       :reader condition-variable-cv)
+   #-lispworks6
    (queue :initform nil
           :accessor condition-variable-queue)))
 
@@ -1956,7 +2024,9 @@
       (ccl:process-lock ccl-lock ccl:*current-process*))
     #+(and ecl threads)
     (mp:condition-variable-wait (condition-variable-cv condition-variable) lock)
-    #+lispworks
+    #+(and lispworks lispworks6)
+    (mp:condition-variable-wait (condition-variable-cv condition-variable) lock)
+    #+(and lispworks (not lispworks6))
     (progn
       (push mp:*current-process*
             (condition-variable-queue condition-variable))
@@ -2054,7 +2124,10 @@
     #+(and ecl threads)
     (mp:condition-variable-timedwait
      (condition-variable-cv condition-variable) lock seconds)
-    #+lispworks
+    #+(and lispworks lispworks6)
+    (mp:condition-variable-wait (condition-variable-cv condition-variable) lock 
+                                :timeout seconds)
+    #+(and lispworks (not lispworks6))
     (progn
       (push mp:*current-process* 
             (condition-variable-queue condition-variable))
@@ -2071,6 +2144,12 @@
             't)
         (mp:process-lock lock)))
     #+(and sbcl sb-thread)
+    (with-timeout (seconds)
+      (sb-thread:condition-wait
+       (condition-variable-cv condition-variable) 
+       lock)
+      't)
+    #+sbcl-ignore
     (sb-ext:with-timeout seconds
       (handler-case (progn
                       (sb-thread:condition-wait
@@ -2098,7 +2177,7 @@
   #+(or allegro
         (and cmu mp)
         digitool-mcl
-        lispworks)
+        (and lispworks (not lispworks6)))
   (let ((thread (pop (condition-variable-queue condition-variable))))
     (when (and thread (thread-alive-p thread))
       (awaken-throwable-sleeper thread 'condition-variable)))
@@ -2108,6 +2187,8 @@
   (when (condition-variable-queue condition-variable)
     (ccl:signal-semaphore (condition-variable-semaphore condition-variable)))
   #+(and ecl threads)
+  (mp:condition-variable-signal (condition-variable-cv condition-variable))
+  #+(and lispworks lispworks6)
   (mp:condition-variable-signal (condition-variable-cv condition-variable))
   #+(and sbcl sb-thread)
   (sb-thread:condition-notify (condition-variable-cv condition-variable))
@@ -2125,7 +2206,7 @@
   #+(or allegro
         (and cmu mp)
         digitool-mcl
-        lispworks)
+        (and lispworks (not lispworks6)))
   (let ((queue (condition-variable-queue condition-variable)))
     (setf (condition-variable-queue condition-variable) nil)
     (dolist (thread queue)
@@ -2141,10 +2222,19 @@
       (ccl:signal-semaphore semaphore)))
   #+(and ecl threads)
   (mp:condition-variable-broadcast (condition-variable-cv condition-variable))
+  #+(and lispworks lispworks6)
+  (mp:condition-variable-broadcast (condition-variable-cv condition-variable))
   #+(and sbcl sb-thread)
   (sb-thread:condition-broadcast (condition-variable-cv condition-variable))
   #+scl
   (thread:cond-var-broadcast (condition-variable-cv condition-variable)))
+
+;;;; ==========================================================================
+;;;; ==========================================================================
+;;;;  End of port-specific code -- everything below is written in Common Lisp
+;;;;  and portable-threads
+;;;; ==========================================================================
+;;;; ==========================================================================
 
 ;;; ===========================================================================
 ;;;  Scheduled Functions (built entirely on top of Portable Threads substrate)

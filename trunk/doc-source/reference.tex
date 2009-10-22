@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Mon Sep 28 05:25:11 2009; Edited-By: cork *-*
+%% *-* Last-Edit: Thu Oct 22 05:08:36 2009; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2009, Dan Corkill <corkill@GBBopen.org>
@@ -358,14 +358,14 @@ and \xsitelink{Hyperlatex}{http://hyperlatex.sourceforge.net/} 2.9a.
 %%  Global syntax specifications
 
 \newcommand{\compilemoduleoptions}{\T\\[4pt]
-\begin{tabular}{@{~~~}l@{}l@{}}
+\begin{tabular}{@{~~~}l@{}p{4.2in}@{}}
 \code{:create-dirs} & Creates any needed directories that are missing in the
   compiled-file tree\\[2pt]
 \code{:noautorun} & Binds \nobr{\textbf{\entlink{*autorun-modules*}}} to \nil{}
   during compilation and loading\\[2pt]
 \code{:nopatches} & Do not compile or load any \glref{patches}\\[2pt]
 \code{:nopropagate} & Cancels (overrides) a specified :propagate option\\[2pt]
-\code{:patches-only}~~~ & Do not compile or load/reload any non-\glref{patch} 
+\nobr{\code{:patches-only}}~~~ & Do not compile or load/reload any non-\glref{patch} 
   files (binds \nobr{\textbf{\entlink{*patches-only*}}} to \code{t} during 
   compilation and loading)\\[2pt]
 \code{:print} & Incrementally prints information during compilation and
@@ -391,15 +391,14 @@ and \xsitelink{Hyperlatex}{http://hyperlatex.sourceforge.net/} 2.9a.
 }
 
 \newcommand{\loadmoduleoptions}{\T\\[4pt]
-\begin{tabular}{@{~~~}l@{}l@{}}
+\begin{tabular}{@{~~~}l@{}p{4.2in}@{}}
 \code{:noautorun} & Binds \nobr{\textbf{\entlink{*autorun-modules*}}} to \nil{}
-  during compilation and loading\\[2pt]
+  during loading\\[2pt]
 \code{:nopatches} & Do not load any \glref{patches}\\[2pt]
 \code{:nopropagate}~~~ & Cancels (overrides) a specified :propagate option\\[2pt]
-\code{:patches-only}~~~ & Do not load/reload any non-\glref{patch} files (binds 
+\nobr{\code{:patches-only}}~~~ & Do not load/reload any non-\glref{patch} files (binds 
   \nobr{\textbf{\entlink{*patches-only*}}} to \code{t} during loading)\\[2pt]
-\code{:print} & Incrementally prints information during compilation and
-  loading\\[2pt]
+\code{:print} & Incrementally prints information during loading\\[2pt]
 \code{:propagate} & Applies the specified options to all 
   \glref{required~modules}\\[2pt]
 \code{:reload} & Loads files even if they are already loaded\\[2pt]
@@ -417,11 +416,10 @@ and \xsitelink{Hyperlatex}{http://hyperlatex.sourceforge.net/} 2.9a.
 }
 
 \newcommand{\loadonefilemoduleoptions}{\T\\[4pt]
-\begin{tabular}{@{~~~}l@{}l@{}}
+\begin{tabular}{@{~~~}l@{}p{4.2in}@{}}
 \code{:noautorun}~~~ & Binds \nobr{\textbf{\entlink{*autorun-modules*}}} to \nil{}
-  during compilation and loading\\[2pt]
-\code{:print} & Incrementally prints information during compilation and
-  loading\\[2pt]
+  during loading\\[2pt]
+\code{:print} & Incrementally prints information during loading\\[2pt]
 \code{:source} & Loads from the source file even if the existing compiled file
   is newer than the source file\\[2pt]
 \end{tabular}
@@ -3273,7 +3271,7 @@ Load the GBBopen User \glref{module} and all its \glref{required~modules}:
 \end{example}
 %
 which remembers the last specified \nobr{\var{module-name\/}} and
-nobr{\var{options}} as default values for the command.
+\nobr{\var{options}} as default values for the command.
 
 \end{functiondoc}
 
@@ -3332,6 +3330,20 @@ Tools \glref{module}:
   #P"\var{<install-dir>\/}/source/tools/tools.lisp"
   >
 \end{example}
+
+\replnote \textbf{Load-module-file} can be invoked using the
+\glref{REPL~command}:
+%
+\REPLindex{:lmf}%
+%
+\W\supp
+\begin{example}
+  :lmf \textrm{[}\var{module-name\/} \var{file-name\/} \textrm{[}\var{option\/}\superstar\textrm{]]}
+\end{example}
+%
+which remembers the last specified \nobr{\var{module-name\/}},
+\nobr{\var{file-name\/}}, and \nobr{\var{options}} as default values for the
+command.
 
 \end{functiondoc}
 
