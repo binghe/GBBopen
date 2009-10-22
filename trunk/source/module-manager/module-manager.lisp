@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/module-manager/module-manager.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Oct 22 04:10:57 2009 *-*
+;;;; *-* Last-Edit: Thu Oct 22 05:25:15 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -322,6 +322,11 @@
 ;;;  A handy debugging macro
 ;;;
 ;;; Placed here to make this macro available ASAP
+;;;
+;;; ---------------------------------------------------------------------------
+;;;  NOTE: Copy any changes to PRINTV & PRINTV-PRINTER definitions to the
+;;;  stand-alone ../../printv.lisp file
+;;;  ---------------------------------------------------------------------------
 
 (defun printv-printer (forms forms-values-lists
                        ;; Allow for customized printv-style printv'ers:
