@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/printv.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Jun  5 10:13:52 2009 *-*
+;;;; *-* Last-Edit: Thu Oct 22 05:24:07 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -25,6 +25,9 @@
 
 (in-package :common-lisp-user)
 
+;;; ---------------------------------------------------------------------------
+;;;  NOTE: Keep synchronized with the original PRINTV & PRINTV-PRINTER
+;;;  definitions in module-manager.lisp
 ;;; ---------------------------------------------------------------------------
 
 (defun printv-printer (forms forms-values-lists
