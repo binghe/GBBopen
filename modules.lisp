@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/modules.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Aug  5 14:28:43 2009 *-*
+;;;; *-* Last-Edit: Thu Oct 22 11:00:51 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -120,7 +120,10 @@
     (:directory :gbbopen)
     (:files "preamble"
             ("utilities" :forces-recompile)
-            ("unit-metaclasses" :forces-recompile)
+            ("unit-metaclasses" :forces-recompile 
+                                ;; Clozure CL can't recompile these
+                                ;; metaclasses in the same image:
+                                #+clozure :skip-recompile)
             ("units" :forces-recompile)
             ("event-metaclasses" :forces-recompile)
             ("events" :forces-recompile)

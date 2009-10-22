@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Thu Oct 22 05:08:36 2009; Edited-By: cork *-*
+%% *-* Last-Edit: Thu Oct 22 11:23:02 2009; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2009, Dan Corkill <corkill@GBBopen.org>
@@ -438,6 +438,9 @@ reload all subsequent files and \glref{modules}\\[2pt]
 \code{:noload} & Compile, but do not load the file \\[2pt]
 \code{:recompile} & Always recompile the file \\[2pt]
 \code{:reload} & Always reload the file \\[2pt]
+\code{:skip-recompile}~~~ & Skip recompiling the file if it has been 
+loaded already\\ 
+ & (takes precedence over other recompilation decisions)\\[2pt]
 \code{:source} & Do not compile the file (load the source instead) \\
 \end{tabular}
 %
@@ -446,6 +449,7 @@ reload all subsequent files and \glref{modules}\\[2pt]
 \codeindexqual{:noload}{define-module file option}%
 \codeindexsub{:recompile}{define-module file option}%
 \codeindexsub{:reload}{define-module file option}%
+\codeindexqual{:skip-recompile}{define-module file option}%
 \codeindexsub{:source}{define-module file option}%
 }
 
