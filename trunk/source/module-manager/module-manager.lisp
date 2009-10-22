@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/module-manager/module-manager.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Oct 22 05:25:15 2009 *-*
+;;;; *-* Last-Edit: Thu Oct 22 11:07:20 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -1373,7 +1373,7 @@
       :print
       :propagate
       :recompile
-      :reload 
+      :reload
       :source))
 
 ;;; ---------------------------------------------------------------------------
@@ -1393,7 +1393,13 @@
 (defparameter *compile/load-file-options*
     ;; A patch files can also have the option :developing, which is added
     ;; contextually in COMPILE/LOAD-MODULE-FILES-HELPER:
-    '(:recompile :reload :source :forces-recompile :noload :noautorun))
+    '(:forces-recompile 
+      :noautorun
+      :noload
+      :recompile 
+      :reload
+      :skip-recompile
+      :source))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -1539,7 +1545,13 @@
                      (not (member ':source file-options :test #'eq))
                      (or recompile? 
                          (member ':recompile file-options :test #'eq)
-                         recompile-needed))
+                         recompile-needed)
+                     (not 
+                      (when (and (member ':skip-recompile file-options :test #'eq)
+                                 file-loaded-acons)
+                        (format t "~&; Recompilation of file ~a in ~s skipped.~%"
+                                file-name (mm-module.name module))
+                        't)))
             ;; Delete the old compiled file, if it exists:
             (when (plusp compiled-file-date)
               (delete-file compiled-path))

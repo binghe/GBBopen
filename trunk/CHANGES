@@ -3,6 +3,9 @@ Important changes since GBBopen 1.4:
   * Changes to extended-REPL commands
      - New :lmf (LOAD-MODULE-FILE) command
 
+  * Changes to Module Manager
+     - Add :skip-recompile module file option
+
   * Changes to GBBopen Tools
      - New left-leaning red-black (LLRB) tree entities
      - New HTTP-DATE-AND-TIME function
