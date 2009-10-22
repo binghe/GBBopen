@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/test/portable-threads-test.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Jul 17 04:17:06 2009 *-*
+;;;; *-* Last-Edit: Wed Oct  7 12:05:58 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -270,14 +270,14 @@
     ;; Check that sleep is not "busy waiting...":  
     (sleep 0)                           ; one untimed call to set things up...
     (forced-format 
-     "~&;;   Timing (sleep 0), run time should be zero seconds...")
+     "~&;;   Timing (sleep 0), run time should be close to zero seconds...")
     (let ((run-time (time-it (sleep 0))))
-      (when (plusp run-time)
+      (when (> run-time 0.01)
         (warn "(sleep 0) consumed ~s seconds of processing time." run-time)))
     (forced-format
-     "~&;;   Timing (sleep 10), run time should also be zero seconds...")
+     "~&;;   Timing (sleep 10), run time should also be close to zero seconds...")
     (let ((run-time (time-it (sleep 10))))
-      (when (plusp run-time)
+      (when (> run-time 0.1)
         (warn "(sleep 10) consumed ~s seconds of processing time." run-time)))
     ;; Check to be sure that (sleep 0) is not optimized away by this CL:
     (let ((iterations 
@@ -317,12 +317,13 @@
          ;; Spawning in MCL is slow (10K works, but we don't want to wait)
          #+digitool-mcl 500
          #+ecl 3000                     ; ECL is limited to < 3K or so
-         #+lispworks 250                ; Lispworks is limited to < 300 or so
+         #+(and lispworks (not lispworks6))
+         250                            ; Lispworks 5.1 is limited to < 300 or so
          #-(or allegro 
                clozure
                digitool-mcl
                ecl
-               lispworks)
+               (and lispworks (not lispworks6)))
          10000)
         (thread-count (length (all-threads))))
     (declare (fixnum iterations))
@@ -606,7 +607,7 @@
    "~&;; Performing condition-variable-wait-with-timeout (non-timeout) tests...")
   (let ((cv (make-condition-variable)))
     (spawn-thread
-     "Timeout-Waiting Condition Variable Waiter"
+     "Waiting-With-Timeout Condition Variable Waiter"
      #'(lambda (cv)
          (forced-format "~&;;    Also waiting-with-timeout on CV...~%")
          (with-lock-held (cv)
@@ -618,7 +619,7 @@
           "~&;;    Also continuing on waiting-with-timeout CV...~%"))
      cv)
     (spawn-thread 
-     "Timeout-Waiting condition Variable Signaler"
+     "Waiting-With-Timeout Condition Variable Signaler"
      #'(lambda (cv)
          (sleepy-time)
          (forced-format "~&;;    Signaling waiting-with-timeout CV...~%")
@@ -654,12 +655,13 @@
 #-threads-not-available
 (defun condition-variable-timing-tests ()
   (forced-format "~&;; Performing condition-variable timing tests...")
-  (flet ((test (signal-fn signal-fn-label)
+  (flet ((test (signal-fn signal-fn-label &aux (warnings 0) state)
            (let ((cv (make-condition-variable
                       :class 'state-cv
                       :state 0))
-                 (wait-timeout 5)
+                 (wait-timeout 2)
                  (iterations 5000)
+                 (allowed-warnings 3)
                  (start-real-time (get-internal-real-time)))
              (forced-format
               "~&;;   Timing ~s condition-variable wait & ~as..."
@@ -667,33 +669,56 @@
               signal-fn-label)
              (spawn-thread 
               "Condition Variable Incrementer"
-              #'(lambda (cv iterations wait-timeout signal-fn)
-                  (dotimes (i iterations)
+              #'(lambda (cv iterations wait-timeout signal-fn allowed-warnings
+                         &aux (warnings 0) state)
+                  (block :exit
                     (with-lock-held (cv)
-                      (loop while (plusp (state-of cv)) 
-                          do (unless
-                                 (condition-variable-wait-with-timeout
-                                  cv wait-timeout)
-                               (warn "Incrementer wait timeout (iteration ~s)"
-                                     i)))
-                      (incf (state-of cv))
-                      (funcall signal-fn cv))))
+                      (dotimes (i iterations)
+                        (loop while (plusp (setf state (state-of cv)))
+                            do (unless
+                                   (condition-variable-wait-with-timeout
+                                    cv wait-timeout)
+                                 (warn "Incrementer wait timeout ~
+                                        (iteration ~s; state ~s)"
+                                       i state)
+                                 (when (> (incf warnings) allowed-warnings)
+                                   (return-from :exit))))
+                        (cond 
+                         ((> state 1)
+                          (error "Incrementer double signal ~
+                                  (iteration ~s; state ~s)"
+                                 i state))
+                         (t (incf (state-of cv))
+                            (funcall signal-fn cv)))))))
               cv 
               iterations
               wait-timeout
-              signal-fn)
+              signal-fn
+              allowed-warnings)
              (time-it
-              (dotimes (i iterations)
+              (block :exit
                 (with-lock-held (cv)
-                  (loop until (plusp (state-of cv)) 
-                      do (unless (condition-variable-wait-with-timeout cv wait-timeout)
-                           (warn "Decrementer wait timeout (iteration ~s)"
-                                 i)))
-                  (decf (state-of cv))
-                  (funcall signal-fn cv))))
+                  (dotimes (i iterations)
+                    (loop until (plusp (setf state (state-of cv)) )
+                        do (unless (condition-variable-wait-with-timeout
+                                    cv wait-timeout)
+                             (warn "Decrementer wait timeout ~
+                                    (iteration ~s; state ~s)"
+                                   i state)
+                             (when (>= (incf warnings) allowed-warnings)
+                               (return-from :exit))))
+                    (cond
+                     ((< state 1)
+                      (error "Decrementer double signal ~
+                              (iteration ~s; state ~s)"
+                             i state))
+                     (t (decf (state-of cv))
+                        (funcall signal-fn cv)))))))
              (forced-format
-              "~&;;   Completed condition-variable wait & ~a timing test~
+              "~&;;   ~:[Aborted~;Completed~] condition-variable wait & ~
+                      ~a timing test~
                ~%;;      (~,2f seconds real time).~%"
+              (zerop warnings)
               signal-fn-label
               (/ (float (- (get-internal-real-time) start-real-time))
                  (float internal-time-units-per-second))))))
@@ -866,15 +891,27 @@
 (defun atomic-incf/decf-tests ()
   ;; Test atomic-incf/decf basic operation (atomic-operation exclusion not
   ;; tested):
-  (forced-format "~&;; Testing atomic-incf/decf...~%")
-  (let* ((x 0))
-    (atomic-incf x 2)
-    (atomic-decf x)
-    (unless (= x 1)
-      (log-error "Incorrect atomic-incf/decf result: ~s"
-                 x)))
-  (forced-format "~&;; Completed atomic-incf/decf test~%"))
-
+  (progn
+    (forced-format "~&;; Testing atomic-incf/decf...~%")
+    (let* ((*x* 0))
+      (atomic-incf *x* 2)
+      (atomic-decf *x*)
+      (unless (= *x* 1)
+        (log-error "Incorrect atomic-incf/decf result: ~s"
+                   *x*)))
+    (forced-format "~&;; Completed atomic-incf/decf test~%"))
+  ;; Test atomic-incf&/decf& basic operation (atomic-operation exclusion not
+  ;; tested):
+  (progn
+    (forced-format "~&;; Testing atomic-incf&/decf&...~%")
+    (let* ((*x* 0))
+      (atomic-incf& *x* 2)
+      (atomic-decf& *x*)
+      (unless (= *x* 1)
+        (log-error "Incorrect atomic-incf&/decf& result: ~s"
+                   *x*)))
+    (forced-format "~&;; Completed atomic-incf&/decf& test~%")))
+  
 ;;; ---------------------------------------------------------------------------
 
 (defun portable-threads-tests ()

@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:HTTP-SERVICES; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/http-services.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Aug 21 05:22:56 2009 *-*
+;;;; *-* Last-Edit: Mon Sep  7 09:52:23 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -96,7 +96,7 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defvar *xml-special-characters*
+(defparameter *xml-special-characters*
     `((#\< . "lt;")
       (#\> . "gt;")
       (#\& . "amp;")

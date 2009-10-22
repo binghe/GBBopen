@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/portable-threads-entities.tex *-*
-%% *-* Last-Edit: Sun Jun  7 13:01:13 2009; Edited-By: cork *-*
+%% *-* Last-Edit: Tue Oct  6 04:49:09 2009; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 \index{module!:portable-threads@\code{:portable-threads}}%
@@ -350,24 +350,32 @@ altered.
 \fnreturns The primary value returned by evaluating the last
 \nobr{\var{form}}.
 
-\fndescription This macro provides atomicity in the following entities:
+\fndescription This macro provides atomicity in the following entities (when
+the Common Lisp implementation does not support them directly):
+%
 \nobr{\textbf{\entlink{atomic-decf}}},
+\nobr{\textbf{\entlink{atomic-decf\&}}},
 \nobr{\textbf{\entlink{atomic-delete}}},
-\nobr{\textbf{\entlink{atomic-flush}}}, \nobr{\textbf{\entlink{atomic-incf}}},
+\nobr{\textbf{\entlink{atomic-flush}}}, 
+\nobr{\textbf{\entlink{atomic-incf}}},
+\nobr{\textbf{\entlink{atomic-incf\&}}},
 \nobr{\textbf{\entlink{atomic-push}}},
 \nobr{\textbf{\entlink{atomic-pushnew}}}, and
-\nobr{\textbf{\entlink{atomic-pop}}}.  It is intended only for implementing
-very brief atomic operations and should not be used for long computations or
-computations that wait or block.
+\nobr{\textbf{\entlink{atomic-pop}}}.  
+%
+It is intended only for implementing very brief atomic operations and should
+not be used for long computations or computations that wait or block.
 
 Note that \nobr{\textbf{as-atomic-operation}} is only guaranteed to return a
 single value, not multiple values.
 
 \begin{alsos}{browse-hyperdoc}
 \also[atomic-decf]
+\also[atomic-decf\&]
 \also[atomic-delete]
 \also[atomic-flush]
 \also[atomic-incf]
+\also[atomic-incf\&]
 \also[atomic-push]
 \also[atomic-pushnew]
 \also[atomic-pop]
@@ -402,7 +410,8 @@ Define an atomic \nobr{\textbf{\entlink{nsorted-insert}}}:
 \begin{args}{place}
 \arg[place] A \glref{form} which is suitable for use as a
 \glref{generalized~reference} 
-\arg[delta-form] A \glref{form} that is evaluated to produce a delta value (default is 1).
+\arg[delta-form] A \glref{form} that is evaluated to produce a delta value
+(default is 1)
 \arg[new-place-value] A number
 \end{args}
 
@@ -410,9 +419,11 @@ Define an atomic \nobr{\textbf{\entlink{nsorted-insert}}}:
 
 \begin{alsos}{as-atomic-operation}
 \also[as-atomic-operation]
+\also[atomic-decf\&]
 \also[atomic-delete]
 \also[atomic-flush]
 \also[atomic-incf]
+\also[atomic-incf\&]
 \also[atomic-pop]
 \also[atomic-pushnew]
 \end{alsos}
@@ -427,6 +438,57 @@ Define an atomic \nobr{\textbf{\entlink{nsorted-insert}}}:
   4
   > (atomic-decf x 1.5)
   2.5
+  >
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}[atomic-decf-amp]{Macro}{atomic-decf\&}{\var{place\/}
+    [\var{delta-form\/}]
+    \returns{} \var{new-place-value\/}}
+\index{atomic operations!decf\&@\textbf{decf\&}}%
+
+\fnsyntax \fnpurpose Decrement the \glref{fixnum} value stored in
+\nobr{\var{place\/}} as an \glref{atomic~operation}.
+
+\fnpackage \code{:portable-threads}
+
+\fnmodule \code{:portable-threads}
+
+\fnargs
+\begin{args}{place}
+\arg[place] A \glref{form} which is suitable for use as a
+\glref{generalized~reference} containing a fixnum value
+\arg[delta-form] A \glref{form} that is evaluated to produce a fixnum delta
+value (default is 1)
+\arg[new-place-value] A fixnum
+\end{args}
+
+\fnreturns The new fixnum value of \var{place}. 
+
+\begin{alsos}{as-atomic-operation}
+\also[as-atomic-operation]
+\also[atomic-decf]
+\also[atomic-delete]
+\also[atomic-flush]
+\also[atomic-incf]
+\also[atomic-incf\&]
+\also[atomic-pop]
+\also[atomic-pushnew]
+\end{alsos}
+
+\fnexamples
+%
+\W\supp
+\begin{example}
+  > x
+  5
+  > (atomic-decf\& x)
+  4
+  > (atomic-decf\& x 2)
+  2
   >
 \end{example}
 
@@ -569,8 +631,9 @@ prior to being set.
 \begin{args}{new-place-value}
 \arg[place] A \glref{form} which is suitable for use as a
 \glref{generalized~reference} 
-\arg[delta-form] A \glref{form} that is evaluated to produce a delta value (default is 1).
-\arg[new-place-value] An object
+\arg[delta-form] A \glref{form} that is evaluated to produce a delta value
+(default is 1)
+\arg[new-place-value] A number
 \end{args}
 
 \fnreturns The new value of \var{place}. 
@@ -578,6 +641,12 @@ prior to being set.
 \begin{alsos}{as-atomic-operation}
 \also[as-atomic-operation]
 \also[atomic-decf]
+\also[atomic-decf\&]
+\also[atomic-delete]
+\also[atomic-flush]
+\also[atomic-incf\&]
+\also[atomic-pop]
+\also[atomic-pushnew]
 \end{alsos}
 
 \fnexamples
@@ -590,6 +659,57 @@ prior to being set.
   3
   > (atomic-incf x 1.5)
   4.5
+  >
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}[atomic-incf-amp]{Macro}{atomic-incf\&}{\var{place\/} 
+    [\var{delta-form\/}]
+    \returns{} \var{new-place-value\/}}
+\index{atomic operations!incf\&@\textbf{incf\&}}%
+
+\fnsyntax \fnpurpose Increment the \glref{fixnum} value stored in
+\nobr{\var{place\/}} as an \glref{atomic~operation}.
+
+\fnpackage \code{:portable-threads}
+
+\fnmodule \code{:portable-threads}
+
+\fnargs
+\begin{args}{new-place-value}
+\arg[place] A \glref{form} which is suitable for use as a
+\glref{generalized~reference} containing a fixnum value
+\arg[delta-form] A \glref{form} that is evaluated to produce a fixnum delta
+value (default is 1)
+\arg[new-place-value] A fixnum
+\end{args}
+
+\fnreturns The new fixnum value of \var{place}. 
+
+\begin{alsos}{as-atomic-operation}
+\also[as-atomic-operation]
+\also[atomic-decf]
+\also[atomic-decf\&]
+\also[atomic-delete]
+\also[atomic-flush]
+\also[atomic-incf]
+\also[atomic-pop]
+\also[atomic-pushnew]
+\end{alsos}
+
+\fnexamples
+%
+\W\supp
+\begin{example}
+  > x
+  2
+  > (atomic-incf\& x)
+  3
+  > (atomic-incf\& x 2)
+  5
   >
 \end{example}
 

@@ -34,24 +34,30 @@
 <p><span class="fndoclabel">Returns</span> <br />The primary value returned by evaluating the last
 <nobr><var>form</var></nobr>.
 </p>
-<p><span class="fndoclabel">Description</span> <br />This macro provides atomicity in the following entities:
+<p><span class="fndoclabel">Description</span> <br />This macro provides atomicity in the following entities (when
+the Common Lisp implementation does not support them directly):
 <nobr><b><a href="ref-atomic-decf.html">atomic-decf</a></b></nobr>,
+<nobr><b><a href="ref-atomic-decf-amp.html">atomic-decf&#38;</a></b></nobr>,
 <nobr><b><a href="ref-atomic-delete.html">atomic-delete</a></b></nobr>,
-<nobr><b><a href="ref-atomic-flush.html">atomic-flush</a></b></nobr>, <nobr><b><a href="ref-atomic-incf.html">atomic-incf</a></b></nobr>,
+<nobr><b><a href="ref-atomic-flush.html">atomic-flush</a></b></nobr>, 
+<nobr><b><a href="ref-atomic-incf.html">atomic-incf</a></b></nobr>,
+<nobr><b><a href="ref-atomic-incf-amp.html">atomic-incf&#38;</a></b></nobr>,
 <nobr><b><a href="ref-atomic-push.html">atomic-push</a></b></nobr>,
 <nobr><b><a href="ref-atomic-pushnew.html">atomic-pushnew</a></b></nobr>, and
-<nobr><b><a href="ref-atomic-pop.html">atomic-pop</a></b></nobr>.  It is intended only for implementing
-very brief atomic operations and should not be used for long computations or
-computations that wait or block.
+<nobr><b><a href="ref-atomic-pop.html">atomic-pop</a></b></nobr>.  
+It is intended only for implementing very brief atomic operations and should
+not be used for long computations or computations that wait or block.
 </p>
 <p>Note that <nobr><b>as-atomic-operation</b></nobr> is only guaranteed to return a
 single value, not multiple values.
 </p>
 <p><span class="fndoclabel">See also</span>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-atomic-decf.html"><b>atomic-decf</b></a>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-atomic-decf-amp.html"><b>atomic-decf&#38;</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-atomic-delete.html"><b>atomic-delete</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-atomic-flush.html"><b>atomic-flush</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-atomic-incf.html"><b>atomic-incf</b></a>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-atomic-incf-amp.html"><b>atomic-incf&#38;</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-atomic-push.html"><b>atomic-push</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-atomic-pushnew.html"><b>atomic-pushnew</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-atomic-pop.html"><b>atomic-pop</b></a>
