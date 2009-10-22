@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/module-manager/module-manager.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Sep 19 13:09:52 2009 *-*
+;;;; *-* Last-Edit: Thu Oct 22 04:10:57 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -2119,6 +2119,8 @@
 (defvar *last-lm/cm-module* nil)
 (defvar *last-lm-options* nil)
 (defvar *last-cm-options* nil)
+(defvar *last-lmf-module* nil)
+(defvar *last-lmf-options* nil)
 
 (defun do-module-manager-repl-command (cmd module-and-options 
                                     &optional dont-remember)
@@ -2129,26 +2131,33 @@
       (when (and (not module-name) 
                  *last-lm/cm-module*)
         (setf recalled-options 't)
-        (setf module-name *last-lm/cm-module*)
-        (setf options (if (eq cmd ':cm)
-                          *last-cm-options*
-                          *last-lm-options*)))
+        (setf module-name (if (eq cmd ':lmf)
+                              *last-lmf-module*
+                              *last-lm/cm-module*))
+        (setf options (ecase cmd 
+                        (:cm *last-cm-options*)
+                        (:lm *last-lm-options*)
+                        (:lmf *last-lmf-options*))))
       (cond 
        ;; New module-name or options were specified:
        (module-name
-        (let ((fn (ecase cmd
+        (let ((fn (case cmd
                     (:cm 'compile-module)
-                    (:lm 'load-module))))
+                    (:lm 'load-module)
+                    (:lmf 'load-module-file))))
           (unless dont-remember
-            (setf *last-lm/cm-module* module-name)
-            (cond 
-             ;; :cm command:
-             ((eq cmd ':cm)
-              (setf *last-cm-options* options)
-              (setf *last-lm-options* 
-                    (intersection options *load-module-options* :test #'eq)))
-             ;; :lm command:
-             (t (setf *last-lm-options* options))))
+            (case cmd
+              (:cm
+               (setf *last-lm/cm-module* module-name)
+               (setf *last-cm-options* options)
+               (setf *last-lm-options* 
+                     (intersection options *load-module-options* :test #'eq)))
+              (:lm 
+               (setf *last-lm/cm-module* module-name)
+               (setf *last-lm-options* options))
+              (:lmf
+               (setf *last-lmf-module* module-name)
+               (setf *last-lmf-options* options))))
           (when recalled-options
             (format *trace-output* "~&;; ~(~s ~s~)~{ ~(~s~)~}~%"
                     cmd module-name options))

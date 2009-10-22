@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/commands.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Aug  5 14:25:44 2009 *-*
+;;;; *-* Last-Edit: Thu Oct 22 03:58:59 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -20,26 +20,26 @@
 ;;; Loaded by initiate.lisp.  After loading, handy top-level-loop keyword
 ;;; commands, such as :gbbopen-tools, :gbbopen-core, :gbbopen-user,
 ;;; :gbbopen-test, :agenda-shell-user, and :agenda-shell-test are available on
-;;; Allegro CL, CLISP, Clozure CL, CMUCL, SCL, ECL, Lispworks, and SBCL.
+;;; Allegro CL, CLISP, Clozure CL, CMUCL, ECL, Lispworks, SBCL, SCL, and XCL.
 ;;; GBBopen keyword commands are also supported in the SLIME REPL.
 ;;;
 ;;; In many CL implementations, commands with arguments can be specified in
-;;; either list or spread notation.  However, Allegro CL, CLISP, and Lispworks
-;;; do not support list notation. CLISP versions prior to 2.45 only support
-;;; the spread notation---but without arguments. For example:
+;;; either list or spread notation.  However, Allegro CL, CLISP, Lispworks,
+;;; and XCL do not support the list notation for commands.  For example:
 ;;;
 ;;;    > :gbbopen-test :create-dirs
-;;; or
-;;;    > (:gbbopen-test :create-dirs)    [not Allegro CL, CLISP, or Lispworks]
-;;; or
-;;;    > :gbbopen-test             [CLISP pre-2.45 (cannot provide arguments)]
+;;;
+;;; or (if not Allegro CL, CLISP, Lispworks, or XCL)
+;;;
+;;;    > (:gbbopen-test :create-dirs) 
 ;;;
 ;;; will compile and load GBBopen and perform a basic trip test.
 ;;;
 ;;; On all CL implementations, functions invoking each top-level command, such
-;;; as gbbopen-tools, gbbopen-core, gbbopen-user, gbbopen-test,
-;;; agenda-shell-user and agenda-shell-test, are defined in the
-;;; common-lisp-user package.  For example:
+;;; as GBBOPEN-TOOLS, GBBOPEN-CORE, GBBOPEN-USER, GBBOPEN-TEST,
+;;; AGENDA-SHELL-USER and AGENDA-SHELL-TEST, are defined in the
+;;; COMMON-LISP-USER package (using the same symbol-name as the keyword
+;;; command).  For example:
 ;;;
 ;;;    > (gbbopen-test :create-dirs)
 ;;;
@@ -230,6 +230,17 @@
                           ':module-manager))
      ':cm module-name-and-options))
   
+  (define-repl-command (:lmf :add-to-native-help)
+      (&rest module-name-and-options)
+    "Load module file"
+    (startup-gbbopen)
+    #+ignore
+    (startup-module :module-manager (rest module-name-and-options) nil 't)
+    (funcall 
+     (fdefinition (intern (symbol-name '#:do-module-manager-repl-command) 
+                          ':module-manager))
+     ':lmf module-name-and-options))
+  
   ;; end with-system-name
   )
 
@@ -258,8 +269,8 @@
     "Exit Lisp" 
     (apply #'extended-repl-quit-lisp args))
   
-  ;; Allegro CL and ECL provide :exit commands already, but we still define
-  ;; them here on all platforms for SLIME interface:
+  ;; Allegro CL, ECL, and XCL provide :exit commands already, but we still
+  ;; define them here on all platforms for SLIME interface:
   (define-repl-command (:exit :add-to-native-help
                              #+(or allegro
                                    clisp)
@@ -279,6 +290,14 @@
    ;; Package show:
    (t (format t "~&;; The ~s package is current.~%" 
               (package-name *package*)))))
+  
+;;; ---------------------------------------------------------------------------
+  
+  ;;  Add :a (:abort) as :reset alias in XCL:
+  #+xcl
+  (define-repl-command (:a :add-to-native-help) ()
+    "Alias to :reset"
+    (extensions:reset))
   
 ;;; ===========================================================================
 ;;;   Undefine system-name (commands, directories, & modules)

@@ -1,8 +1,14 @@
 Important changes since GBBopen 1.4:
 
+  * Changes to extended-REPL commands
+     - New :lmf (LOAD-MODULE-FILE) command
+
   * Changes to GBBopen Tools
      - New left-leaning red-black (LLRB) tree entities
      - New HTTP-DATE-AND-TIME function
+
+  * Changes to Portable Threads
+     - New ATOMIC-INCF& and ATOMIC-DECF& macros
 
 
 Important changes in GBBopen 1.4:
