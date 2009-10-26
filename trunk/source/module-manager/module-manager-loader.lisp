@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/module-manager/module-manager-loader.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Oct 18 05:25:34 2009 *-*
+;;;; *-* Last-Edit: Mon Oct 26 04:55:21 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -301,11 +301,12 @@
     ;; SBCL:
     #+sbcl
     (values (check                      ; ensure one feature match   
-             #+(and (not x86) darwin) "macppc"
+             #+(and x86-64 darwin) "mac86-64"
              #+(and x86 darwin) "mac86"
-             #+sparc "sparc"
+             #+(and ppc darwin) "macppc"
              #+(and x86 linux) "linux86"
              #+(and x86-64 linux) "linux86-64" ; Thanks to Eric Menard
+             #+sparc "sparc"
              #+(and x86 (not linux) (not darwin)) "windows")
             "sbcl"
             nil
