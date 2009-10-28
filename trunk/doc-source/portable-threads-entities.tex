@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/portable-threads-entities.tex *-*
-%% *-* Last-Edit: Tue Oct 27 22:06:20 2009; Edited-By: cork *-*
+%% *-* Last-Edit: Wed Oct 28 12:39:12 2009; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 \index{module!:portable-threads@\code{:portable-threads}}%
@@ -2793,7 +2793,7 @@ Two more simple examples using a \glref{condition~variable}:
 
 \begin{functiondoc}{Function}{unschedule-function}%
   {\var{name-or-scheduled-function\/}
-    \code{\&key} \var{key verbose\/}
+    \code{\&key} \var{key warnp verbose\/}
   \returns{} \var{boolean\/}} 
 \index{scheduled function!canceling scheduling}%
 \index{function!scheduled, canceling scheduling}%
@@ -2815,6 +2815,7 @@ Two more simple examples using a \glref{condition~variable}:
   symbol) naming a currently scheduled \glref{scheduled~function} or a
   \nobr{\code{scheduled-function}} object
 \arg[key] An object (default is \nil)
+\arg[warnp] A \glref{generalized~boolean} (default is \code{t}) 
 \arg[verbose] A \glref{generalized~boolean} 
   (default is \nobr{\textbf{\entlink{*schedule-function-verbose*}}})
 \arg[boolean] A \glref{generalized~boolean}
@@ -2829,6 +2830,9 @@ Two more simple examples using a \glref{condition~variable}:
 \fndescription If the \nobr{\var{scheduled-function\/}} object is scheduled,
 it is removed from the list of currently scheduled
 \glref{scheduled~functions}.
+
+If \var{warnp} is true, a warning is issued if the \glref{scheduled~function}
+was not currently scheduled or was not found.
 
 \begin{alsos}{restart-scheduled-function-scheduler}
 \also[*schedule-function-verbose*]

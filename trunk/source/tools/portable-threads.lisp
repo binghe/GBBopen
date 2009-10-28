@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/portable-threads.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Oct 28 11:36:04 2009 *-*
+;;;; *-* Last-Edit: Wed Oct 28 12:41:12 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -2260,7 +2260,7 @@
   (if *print-readably*
       (call-next-method)
       (print-unreadable-object (obj stream :type t)
-        (format stream "~s~@[ ~s~] ["
+        (format stream "~s~@[ (key ~s)~] ["
                 (scheduled-function-name obj)
                 (scheduled-function-key obj))
         (pretty-invocation-time (scheduled-function-invocation-time obj)
@@ -2411,8 +2411,10 @@
                 (when (or *schedule-function-verbose*
                           (scheduled-function-verbose scheduled-function-to-run))
                   (format *trace-output* 
-                          "~&;; Scheduling ~s at repeat-interval ~s...~%"
+                          "~&;; Scheduling ~s~@[ (key ~s)~] at ~
+                                repeat-interval ~s...~%"
                           scheduled-function-to-run
+                          (scheduled-function-key scheduled-function-to-run)
                           repeat-interval)
                   (force-output *trace-output*))
                 (insert-scheduled-function scheduled-function-to-run nil))
@@ -2447,8 +2449,10 @@
    ((null *scheduled-functions*)
     (when verbose
       (format *trace-output* 
-              "~&;; Scheduling ~s as the next scheduled-function...~%"
-              scheduled-function)
+              "~&;; Scheduling ~s~@[ (key ~s)~] as the next ~
+                    scheduled-function...~%"
+              scheduled-function
+              (scheduled-function-key scheduled-function))
       (force-output *trace-output*))
     (setf *scheduled-functions* (list scheduled-function))
     ;; schedule it:
@@ -2472,8 +2476,10 @@
          ;; splice into the list:
          (t (when verbose
               (format *trace-output* 
-                      "~&;; Adding ~s as a scheduled-function...~%"
-                      scheduled-function)
+                      "~&;; Adding ~s~@[ (key ~s)~] as a ~
+                            scheduled-function...~%"
+                      scheduled-function
+                      (scheduled-function-key scheduled-function))
               (force-output *trace-output*))
             (do ((sublist *scheduled-functions* (cdr sublist)))
                 ((null (cdr sublist))
@@ -2493,8 +2499,10 @@
   (let ((the-deleted-scheduled-function nil))
     (flet ((on-deletion (scheduled-function)
              (when verbose
-               (format *trace-output* "~&;; Unscheduling ~s...~%"
-                       scheduled-function)
+               (format *trace-output* 
+                       "~&;; Unscheduling ~s~@[ (key ~s)~]...~%"
+                       scheduled-function
+                       key)
                (force-output *trace-output*))
              ;; Clear the invocation and repeat-interval values:
              (setf (scheduled-function-invocation-time scheduled-function)
@@ -2510,7 +2518,7 @@
                      (when (eq scheduled-function name-or-scheduled-function)
                        (on-deletion scheduled-function)))
                #'(lambda (scheduled-function)
-                   (when (and (apply 
+                   (when (and (funcall
                                (scheduled-function-test scheduled-function)
                                key 
                                (scheduled-function-key scheduled-function))
@@ -2550,8 +2558,9 @@
             ;; return success (outside of the lock):
             't)))
       ;; warn if unable to find the scheduled function (outside of the lock):
-      (warn "Unable to find scheduled-function: ~s."
-            name-or-scheduled-function)))
+      (warn "Unable to find scheduled-function: ~s~@[ (key ~s)~]."
+            name-or-scheduled-function
+            key)))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -2603,6 +2612,7 @@
 
 (defun unschedule-function (name-or-scheduled-function 
                             &key key
+                                 (warnp 't)
                                  (verbose *schedule-function-verbose*))
   #-threads-not-available
   (or (with-lock-held (*scheduled-functions-cv*)
@@ -2619,8 +2629,12 @@
             ;; return the unscheduled function if we unscheduled:
             unscheduled-function)))
       ;; warn if unable to find the scheduled function (outside of the lock):
-      (warn "Scheduled-function ~s was not scheduled; no action taken."
-            name-or-scheduled-function))
+      (when warnp
+        (warn "Scheduled-function ~s~@[ (key ~s)~] was not scheduled; ~
+               no action taken."
+              name-or-scheduled-function key)
+        ;; ensure nil is returned:
+        nil))
   #+threads-not-available
   (declare (ignore name-or-scheduled-function verbose))
   #+threads-not-available

@@ -14,6 +14,7 @@ Important changes since GBBopen 1.4:
   * Changes to Portable Threads
      - New ATOMIC-INCF& and ATOMIC-DECF& macros
      - New :key argument to MAKE-SCHEDULED-FUNCTION
+     - New :warnp argument to UNSCHEDULE-FUNCTION
 
 
 Important changes in GBBopen 1.4:
