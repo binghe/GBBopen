@@ -9,9 +9,11 @@ Important changes since GBBopen 1.4:
   * Changes to GBBopen Tools
      - New left-leaning red-black (LLRB) tree entities
      - New HTTP-DATE-AND-TIME function
+     - Change argument order of ENCODE-TIME-OF-DAY
 
   * Changes to Portable Threads
      - New ATOMIC-INCF& and ATOMIC-DECF& macros
+     - New :key argument to MAKE-SCHEDULED-FUNCTION
 
 
 Important changes in GBBopen 1.4:

@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/portable-threads-entities.tex *-*
-%% *-* Last-Edit: Tue Oct  6 04:49:09 2009; Edited-By: cork *-*
+%% *-* Last-Edit: Tue Oct 27 22:06:20 2009; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 \index{module!:portable-threads@\code{:portable-threads}}%
@@ -1169,73 +1169,6 @@ the keyword symbol \nobr{\code{:threads-not-available}} is returned.
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Function}{encode-time-of-day}%
-  {\var{hour minute second\/} 
-    \code{\&optional} \var{universal-time\/}
-    \returns{} \var{universal-time\/}}
-
-\fnsyntax
-
-\fnpurpose Return a \glref{universal~time} representing a specified
-time-of-day.
-
-\fnpackage \code{:portable-threads}
-
-\fnmodule \code{:portable-threads}
-
-\fnargs
-\begin{args}{universal-time}
-\arg[hour] An integer between 0 and 23, inclusive
-\arg[minute] An integer between 0 and 59, inclusive
-\arg[second] An integer between 0 and 59, inclusive
-\arg[universal-time] A \glref{universal~time} (default is \nil,
-  which is equivalent to the value returned by
-  \nobr{\code{(get-universal-time)}})
-\end{args}
-
-\fndescription If the specified time-of-date has already passed (relative to
-the \nobr{\var{universal-time\/}} value), the next day is assumed.
-
-\begin{alsos}{schedule-function}
-\also[schedule-function]
-\end{alsos}
-
-\bfindexit{make-scheduled-function}%
-\bfindexit{schedule-function}%
-\fnexamples
-Schedule a \glref{scheduled~function} that prints \nobr{\code{"It's quitting time!"}} 
-every day at 5pm:
-%
-\W\supp
-\begin{example}
-  > (\entlink{schedule-function}
-      (\entlink{make-scheduled-function}
-        #'(lambda (scheduled-function)
-            (declare (ignore scheduled-function))
-            (print "It's quitting time!"))
-        :name 'quitting-time)
-       (encode-time-of-day 17 0 0) :repeat-interval #.(* 24 60 60))
-  >
-\end{example}
-
-\bfindexit{encode-time-of-day}%
-Verbosely change \nobr{\code{quitting-time}} to 5:30pm every day:
-%
-\W\supp
-\begin{example}
-  > (\entlink{schedule-function} 'quitting-time (encode-time-of-day 17 30 0)
-      :repeat-interval #.(* 24 60 60)
-      :verbose 't)
-  ;; Unscheduling #<scheduled-function quitting-time [17:00:00]>...
-  ;; Scheduling #<scheduled-function quitting-time [17:30:00]> 
-  ;; as the next scheduled-function...
-  >
-\end{example}
-
-\end{functiondoc}
-
-%% ------------------------------------------------------------------------
-
 \begin{functiondoc}{Function}{hibernate-thread}{\noargs{}}
 \index{thread!hibernating}%
 
@@ -1539,7 +1472,7 @@ the created \glref{condition-variable} instance.  However, using
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{make-scheduled-function}{\var{function\/} 
-    \code{\&key} \var{name\/}
+    \code{\&key} \var{name key test\/}
     \returns{} \var{scheduled-function\/}} 
 \index{scheduled function!creating}%
 \index{function!scheduled, creating}%
@@ -1561,6 +1494,9 @@ the created \glref{condition-variable} instance.  However, using
 \arg[name] An object (typically a
   string or a symbol; default is \nobr{\var{function}}, if
   \nobr{\var{function\/}} is a symbol, otherwise \nil)
+\arg[key] An object (default is \nil)
+\arg[test] A \glref{function} of two arguments that returns a
+\glref{generalized~boolean} (default is \nobr{\code{\#'eql}})
 \arg[scheduled-function] A \glref{scheduled~function}
 \end{args}
 
@@ -1574,13 +1510,19 @@ brief, it should spawn a new \glref{thread} in which to perform its activities
 so as to avoid delaying the invocation of a subsequent
 \glref{scheduled~function}.
 
+The optional \var{key\/} and associated key-comparison \var{test\/} can be
+specified to distinguish \glref{scheduled~functions} with the same \var{name}
+or \var{function}.
+
 \begin{alsos}{*schedule-function-verbose*}
 \also[*schedule-function-verbose*]
 \also[all-scheduled-functions]
 \also[schedule-function]
 \also[schedule-function-relative]
+\also[scheduled-function-key]
 \also[scheduled-function-name]
 \also[scheduled-function-repeat-interval]
+\also[scheduled-function-test]
 \also[spawn-periodic-function]
 \also[unschedule-function]
 \end{alsos}
@@ -1757,7 +1699,7 @@ no effect:
 
 \begin{functiondoc}{Function}{schedule-function}%
   {\var{name-or-scheduled-function invocation-time\/} 
-    \code{\&key} \var{repeat-interval verbose\/}}
+    \code{\&key} \var{key repeat-interval verbose\/}}
 \index{scheduled function!scheduling}%
 \index{function!scheduled, scheduling}%
 \index{scheduling!a scheduled function}%
@@ -1776,6 +1718,7 @@ no effect:
   symbol) naming a currently scheduled \glref{scheduled~function} or a
   \nobr{\code{scheduled-function}} object
 \arg[invocation-time] A \glref{universal~time}
+\arg[key] An object (default is \nil)
 \arg[repeat-interval] A positive integer (representing seconds) or
   \nil{} (default is \nil)
 \arg[verbose] A \glref{generalized~boolean} 
@@ -1860,7 +1803,7 @@ Verbosely change \nobr{\code{quitting-time}} to 5:30pm every day:
 
 \begin{functiondoc}{Function}{schedule-function-relative}%
   {\var{name-or-scheduled-function seconds\/} 
-    \code{\&key} \var{repeat-interval verbose\/}}
+    \code{\&key} \var{key repeat-interval verbose\/}}
 \index{scheduled function!scheduling}%
 \index{function!scheduled, scheduling}%
 \index{scheduling!a scheduled function}%
@@ -1880,6 +1823,7 @@ seconds from now.
   symbol) naming a currently scheduled \glref{scheduled~function} or a
   \nobr{\code{scheduled-function}} object
 \arg[seconds] A positive integer
+\arg[key] An object (default is \nil)
 \arg[repeat-interval] A positive integer (representing seconds) or
   \nil{} (default is \nil)
 \arg[verbose] A \glref{generalized~boolean}
@@ -1904,7 +1848,11 @@ unscheduled and then rescheduled with an invocation time of
 \also[make-scheduled-function]
 \also[restart-scheduled-function-scheduler]
 \also[schedule-function]
+\also[scheduled-function-invocation-time]
+\also[scheduled-function-key]
+\also[scheduled-function-name]
 \also[scheduled-function-repeat-interval]
+\also[scheduled-function-test]
 \also[spawn-periodic-function]
 \also[unschedule-function]
 \end{alsos}
@@ -1953,18 +1901,110 @@ Schedule a \glref{scheduled~function} that signals a GBBopen
 
 %% ------------------------------------------------------------------------
 
+\begin{functiondoc}{Function}{scheduled-function-invocation-time}%
+  {\var{scheduled-function\/}
+    \returns{} \var{invocation-time\/}}
+
+\index{function!scheduled, invocation time}%
+
+\fnsyntax
+
+\fnpurpose Return the invocation time of a \glref{scheduled~function}.
+
+\fnpackage \code{:portable-threads}
+
+\fnmodule \code{:portable-threads}
+
+\fnargs
+\begin{args}{scheduled-function}
+\arg[scheduled-function] A \glref{scheduled~function}
+\arg[invocation-time] A \glref{universal~time}
+\end{args}
+
+\fnreturns The invocation time of \var{scheduled-function}. 
+
+\begin{alsos}{schedule-function-relative}
+\also[all-scheduled-functions]
+\also[make-scheduled-function]
+\also[schedule-function]
+\also[schedule-function-relative]
+\also[scheduled-function-key]
+\also[scheduled-function-name]
+\also[scheduled-function-repeat-interval]
+\also[scheduled-function-test]
+\end{alsos}
+
+\fnexample
+%
+Return the invocation-time of \glref{scheduled~function}
+\nobr{\code{scheduled-function}}:
+%
+\W\supp
+\begin{example}
+  > (scheduled-function-invocation-time scheduled-function)
+  3465679813
+  >
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{scheduled-function-key}%
+  {\var{scheduled-function\/}
+    \returns{} \var{key\/}}
+\index{function!scheduled, key}%
+
+\fnsyntax
+
+\fnpurpose Return the key of a \glref{scheduled~function}.
+
+\fnpackage \code{:portable-threads}
+
+\fnmodule \code{:portable-threads}
+
+\fnargs
+\begin{args}{scheduled-function}
+\arg[scheduled-function] A \glref{scheduled~function}
+\arg[key] An object
+\end{args}
+
+\fnreturns The key of \var{scheduled-function}. 
+
+\begin{alsos}{schedule-function-relative}
+\also[all-scheduled-functions]
+\also[make-scheduled-function]
+\also[schedule-function]
+\also[schedule-function-relative]
+\also[scheduled-function-name]
+\also[scheduled-function-repeat-interval]
+\also[scheduled-function-test]
+\end{alsos}
+
+\bfindexit{all-scheduled-functions}%
+\fnexample
+%
+Return the key of all currently scheduled \glref{scheduled~functions}:
+%
+\W\supp
+\begin{example}
+  > (mapcar #'scheduled-function-key (\entlink{all-scheduled-functions}))
+  (nil)
+  >
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
 \begin{functiondoc}{Function}{scheduled-function-name}%
-  {\var{scheduled-function\/}}
+  {\var{scheduled-function\/}
+    \returns{} \var{name\/}}
 \index{function!scheduled, name}%
-\index{changing!name of a scheduled function}%
 
 \fnsyntax
 
 \fnpurpose Return the name of a \glref{scheduled~function}.
-
-\fnsetf
-\fnsetfsyntax{scheduled-function-repeat-interval}%
-  {\var{scheduled-function\/}}{\var{name\/}}
 
 \fnpackage \code{:portable-threads}
 
@@ -1983,7 +2023,9 @@ Schedule a \glref{scheduled~function} that signals a GBBopen
 \also[make-scheduled-function]
 \also[schedule-function]
 \also[schedule-function-relative]
-\also[scheduled-function-name]
+\also[scheduled-function-key]
+\also[scheduled-function-repeat-interval]
+\also[scheduled-function-test]
 \end{alsos}
 
 \bfindexit{all-scheduled-functions}%
@@ -2003,7 +2045,8 @@ Return the names of all currently scheduled \glref{scheduled~functions}:
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{scheduled-function-repeat-interval}%
-  {\var{scheduled-function\/}}
+  {\var{scheduled-function\/}
+    \returns{} \var{repeat-interval\/}}
 \index{function!scheduled, repeat-interval value}%
 \index{changing!repeat-interval, of a scheduled function}%
 
@@ -2032,7 +2075,9 @@ Return the names of all currently scheduled \glref{scheduled~functions}:
 \also[make-scheduled-function]
 \also[schedule-function]
 \also[schedule-function-relative]
+\also[scheduled-function-key]
 \also[scheduled-function-name]
+\also[scheduled-function-test]
 \end{alsos}
 
 \bfindexit{all-scheduled-functions}%
@@ -2066,6 +2111,55 @@ randomly sets whether to reschedule itself (and at what interval):
                 ;; don't repeat 1\% of the time:
                 nil)))
     (do-some-stuff))
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{scheduled-function-test}%
+  {\var{scheduled-function\/}
+    \returns{} \var{key\/}}
+\index{function!scheduled, test}%
+
+\fnsyntax
+
+\fnpurpose Return the key-comparison test of a \glref{scheduled~function}.
+
+\fnpackage \code{:portable-threads}
+
+\fnmodule \code{:portable-threads}
+
+\fnargs
+\begin{args}{scheduled-function}
+\arg[scheduled-function] A \glref{scheduled~function}
+\arg[test] A \glref{function} of two arguments that returns a
+\glref{generalized~boolean}
+\end{args}
+
+\fnreturns The key-comparison test of \var{scheduled-function}. 
+
+\begin{alsos}{schedule-function-relative}
+\also[all-scheduled-functions]
+\also[make-scheduled-function]
+\also[schedule-function]
+\also[schedule-function-relative]
+\also[scheduled-function-key]
+\also[scheduled-function-invocation-time]
+\also[scheduled-function-name]
+\end{alsos}
+
+\bfindexit{all-scheduled-functions}%
+\fnexample
+%
+Return the key-comparison tests of all currently scheduled
+\glref{scheduled~functions}:
+%
+\W\supp
+\begin{example}
+  > (mapcar #'scheduled-function-key (\entlink{all-scheduled-functions}))
+  (#'eql)
+  >
 \end{example}
 
 \end{functiondoc}
@@ -2295,8 +2389,8 @@ the control shell is running:
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{spawn-thread}{\var{name function\/}
-    \code{\&rest}
-    \var{args\/} \returns{} \var{thread\/}}
+    \code{\&rest} \var{args\/} 
+    \returns{} \var{thread\/}}
 \index{thread!spawning}%
 \index{creating!a thread}%
 \index{making!a thread}%
@@ -2595,8 +2689,8 @@ no-op on non-threaded implementations.
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Function}{threadp}{\var{object\/} \returns{}
-    \var{boolean\/}}
+\begin{functiondoc}{Function}{threadp}{\var{object\/} 
+    \returns{} \var{boolean\/}}
 \index{thread!checking state}%
 
 \fnsyntax
@@ -2699,7 +2793,7 @@ Two more simple examples using a \glref{condition~variable}:
 
 \begin{functiondoc}{Function}{unschedule-function}%
   {\var{name-or-scheduled-function\/}
-    \code{\&key} \var{verbose\/}
+    \code{\&key} \var{key verbose\/}
   \returns{} \var{boolean\/}} 
 \index{scheduled function!canceling scheduling}%
 \index{function!scheduled, canceling scheduling}%
@@ -2720,6 +2814,7 @@ Two more simple examples using a \glref{condition~variable}:
 \arg[name-or-scheduled-function] An object (typically a string or a
   symbol) naming a currently scheduled \glref{scheduled~function} or a
   \nobr{\code{scheduled-function}} object
+\arg[key] An object (default is \nil)
 \arg[verbose] A \glref{generalized~boolean} 
   (default is \nobr{\textbf{\entlink{*schedule-function-verbose*}}})
 \arg[boolean] A \glref{generalized~boolean}

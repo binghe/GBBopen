@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/date-and-time.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Aug 20 05:14:31 2009 *-*
+;;;; *-* Last-Edit: Tue Oct 27 12:18:57 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -55,6 +55,7 @@
             iso8661-date-and-time
             message-log-date-and-time
             encode-date-and-time
+            encode-time-of-day          ; duplicated in portable-threads.lisp
             parse-date                  ; also from module-manager.lisp
             parse-date-and-time
             parse-duration
@@ -449,7 +450,8 @@
                      local-daylight-savings-p)
                  utc-offset-only))))))
   
-;;; ---------------------------------------------------------------------------
+;;; ===========================================================================
+;;;  Time and date parsing and encoding
 
 (defun parse-time (string &key (start 0) 
                                (end (length string))
@@ -576,6 +578,30 @@
       ;; Use the local time zone:
       (t (encode-universal-time second minute hour date month year)))
      start)))
+
+;;; ---------------------------------------------------------------------------
+;;;  Handy utility to encode (second minute hour) time of day into a universal
+;;;  time.  If that time has already passed, the next day is assumed.
+
+(defun encode-time-of-day (second minute hour
+                           &optional (universal-time (get-universal-time)))
+  ;; get the decoded current time of day:
+  (multiple-value-bind (current-second current-minute current-hour
+                        date month year)
+      (decode-universal-time universal-time)
+    ;; substitute the supplied hour, minute, and second values:
+    (let ((tentative-result
+           (encode-universal-time second minute hour date month year)))
+      (flet ((seconds-into-day (hour minute second)
+               (the fixnum (+ (the fixnum (* (the fixnum hour) 3600))
+                              (the fixnum (* (the fixnum minute) 60))
+                              (the fixnum second)))))
+        ;; if the time of day has already passed for today, assume
+        ;; tomorrow is intended:
+        (if (> (seconds-into-day current-hour current-minute current-second)
+               (seconds-into-day hour minute second))
+            (+ tentative-result #.(* 60 60 24))
+            tentative-result)))))
 
 ;;; ===========================================================================
 ;;;   Duration entities
