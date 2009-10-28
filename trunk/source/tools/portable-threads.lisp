@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/portable-threads.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Oct 27 19:22:02 2009 *-*
+;;;; *-* Last-Edit: Wed Oct 28 05:37:08 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -1377,7 +1377,7 @@
         (let ((item-var (gensym)))
           `(as-atomic-operation
              (let* ((,item-var ,item)
-                    ,@(mapcar #'list vars vals)
+                    ,.(mapcar #'list vars vals)
                     (,(first store-vars)
                      (delete ,item-var ,reader-form ,@args)))
                ,writer-form))))))

@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Oct  5 13:27:00 2009 *-*
+;;;; *-* Last-Edit: Wed Oct 28 05:33:29 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -288,7 +288,7 @@
       (let ((block (gensym))
             (condition/tag (when error-body (gensym))))
         `(block ,block
-           (let (,@(when error-body (list condition/tag)))
+           (let (,.(when error-body (list condition/tag)))
              (tagbody
                (handler-bind
                    ((,conditions
@@ -323,7 +323,7 @@
                                        `((declare (ignore condition))
                                          (return-from ,block (values)))))))))
                  (return-from ,block ,form))
-               ,@(when error-body (list condition/tag))
+               ,.(when error-body (list condition/tag))
                ,@(when error-body
                    `((flet ((error-message ()
                               (error-message-string ,condition/tag))
@@ -470,7 +470,7 @@
                               ((atom keys)
                                (pushnew keys all-keys :test test)
                                `(,(maybe-downgrade-test keys) ,exp ',keys))
-                              (t `(or ,@(mapcar 
+                              (t `(or ,.(mapcar 
                                          #'(lambda (key)
                                              (pushnew key all-keys :test test)
                                              `(,(maybe-downgrade-test key)
@@ -1078,7 +1078,7 @@
       (with-once-only-bindings (key datum)
         (multiple-value-bind (vars vals store-vars writer-form reader-form)
             (get-setf-expansion place env)
-          `(let* (,@(mapcar #'list vars vals)
+          `(let* (,.(mapcar #'list vars vals)
                   (,(first store-vars)
                    (acons ,key ,datum ,reader-form)))
              ,writer-form)))))
@@ -1093,7 +1093,7 @@
     (multiple-value-bind (vars vals store-vars writer-form reader-form)
         (get-setf-expansion place env)
       (with-gensyms (assoc-result)
-        `(let* (,@(mapcar #'list vars vals)
+        `(let* (,.(mapcar #'list vars vals)
                 (,(first store-vars) ,reader-form)
                 (,assoc-result (assoc ,key ,(first store-vars) ,@keys)))
            (cond (,assoc-result
@@ -1110,7 +1110,7 @@
     (multiple-value-bind (vars vals store-vars writer-form reader-form)
         (get-setf-expansion place env)
       (with-gensyms (assoc-result)
-        `(let* (,@(mapcar #'list vars vals)
+        `(let* (,.(mapcar #'list vars vals)
                 (,(first store-vars) ,reader-form)
                 (,assoc-result (assoc ,key ,(first store-vars) ,@keys)))
            (cond (,assoc-result
@@ -1163,7 +1163,7 @@
       (multiple-value-bind (vars vals store-vars writer-form reader-form)
           (get-setf-expansion place env)
         (with-gensyms (assoc-result new-value)
-          `(let* (,@(mapcar #'list vars vals)
+          `(let* (,.(mapcar #'list vars vals)
                   (,(first store-vars) ,reader-form)
                   (,assoc-result (assoc ,key ,(first store-vars) ,@keys)))
              (cond (,assoc-result
@@ -1247,7 +1247,7 @@
            ,old-value)     
         (multiple-value-bind (vars vals store-vars writer-form reader-form)
             (get-setf-expansion place env)
-          `(let* (,@(mapcar #'list vars vals)
+          `(let* (,.(mapcar #'list vars vals)
                   (,(first store-vars) ,reader-form)
                   (,old-value ,(first store-vars)))
              (,incf/decf-function ,(first store-vars) ,inc/dec)
@@ -1553,7 +1553,7 @@
   ;;; macro definitions as global macros (allowing quick macroexpansion of
   ;;; the `body' forms)
   `(progn
-     ,@(mapcar
+     ,.(mapcar
         #'(lambda (macro)
             `(defmacro ,@macro))
         macrobindings)
