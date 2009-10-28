@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/defflags.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Aug 31 16:30:36 2008 *-*
+;;;; *-* Last-Edit: Wed Oct 28 05:36:03 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -132,7 +132,7 @@
            (let ((index (1-& start)))
              `((defun ,constructor (&key ,@flags)
                  (let ((value 0))
-                   ,@(mapcar 
+                   ,.(mapcar 
                       #'(lambda (flag)
                           `(when ,flag
                              (setq value (set-flag value ,(incf& index)))))

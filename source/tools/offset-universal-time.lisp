@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/offset-universal-time.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Jun  1 22:15:15 2009 *-*
+;;;; *-* Last-Edit: Wed Oct 28 05:36:26 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -119,7 +119,7 @@
   ;;; FULL-DATE-AND-TIME format (including seconds).
   (let ((forms-values-lists (gensym)))
     `(let ((,forms-values-lists
-            (list ,@(mapcar #'(lambda (form)
+            (list ,.(mapcar #'(lambda (form)
                                 `(multiple-value-list ,form))
                             forms))))
        (declare (dynamic-extent ,forms-values-lists))

@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/current/corman-patches.lisp *-*
+;;;; *-* File: /usr/local/gbbopen/corman-patches.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Sep 21 15:15:37 2006 *-*
-;;;; *-* Machine: ruby.corkills.org *-*
+;;;; *-* Last-Edit: Wed Oct 28 05:34:22 2009 *-*
+;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -303,13 +303,13 @@
        (let* ((,struct-template-sym
 	       (apply 'define-struct-template ',name 
 		      (create-named-class ',name 
-					  (list ,@(mapcar 
+					  (list ,.(mapcar 
 						   #'(lambda (class-name) 
 						       `(find-class ',class-name))
 						   base-list))) 
 		      ',struct-type 
 		      ',base-list ,initial-offset ,slot-count ',(reverse struct-template-info)))) 
-	 ,@(reverse struct-template-expressions))
+	 ,.(reverse struct-template-expressions))
        ,@(nreverse expressions))))
 
 ;;; ===========================================================================

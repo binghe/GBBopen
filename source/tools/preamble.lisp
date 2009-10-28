@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/preamble.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Jun 29 02:43:51 2009 *-*
+;;;; *-* Last-Edit: Wed Oct 28 05:37:43 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -155,12 +155,12 @@
                              (declare (ignore symbol))
                              (gensym))
                          symbols)))
-    `(let (,@(mapcar #'(lambda (gensym) `(,gensym (gensym)))
+    `(let (,.(mapcar #'(lambda (gensym) `(,gensym (gensym)))
                      gensyms))
-       `(let (,,@(mapcar #'(lambda (symbol gensym) ``(,,gensym ,,symbol))
+       `(let (,,.(mapcar #'(lambda (symbol gensym) ``(,,gensym ,,symbol))
                          symbols
                          gensyms))
-          ,(let (,@(mapcar #'(lambda (symbol gensym) `(,symbol ,gensym))
+          ,(let (,.(mapcar #'(lambda (symbol gensym) `(,symbol ,gensym))
                            symbols
                            gensyms))
              ,@body)))))

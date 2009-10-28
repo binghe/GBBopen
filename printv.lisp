@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/printv.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Oct 22 05:24:07 2009 *-*
+;;;; *-* Last-Edit: Wed Oct 28 05:34:46 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -54,7 +54,7 @@
 (defmacro printv (&rest forms)
   (let ((forms-values-lists (gensym)))
     `(let ((,forms-values-lists
-            (list ,@(mapcar #'(lambda (form)
+            (list ,.(mapcar #'(lambda (form)
                                 `(multiple-value-list ,form))
                             forms))))
        (declare (dynamic-extent ,forms-values-lists))
