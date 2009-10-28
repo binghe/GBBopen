@@ -12,12 +12,12 @@
 </head>
 <body>
 <table width="100%" cellpadding="0" cellspacing="2"><tr>
-<td bgcolor="#99ccff"><a href="ref-schedule-function.html"><img border="0" alt="schedule-function" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="ref-portable-thread-entities.html"><img border="0" alt="Portable Threads" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-scheduled-function-name.html"><img border="0" alt="scheduled-function-name" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">schedule-function-relative</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table>
+<td bgcolor="#99ccff"><a href="ref-schedule-function.html"><img border="0" alt="schedule-function" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="ref-portable-thread-entities.html"><img border="0" alt="Portable Threads" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-scheduled-function-invocation-time.html"><img border="0" alt="scheduled-function-invocation-time" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">schedule-function-relative</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table>
 
 <p><table class="tight" width="100%">
 <tr valign="top"><td valign="baseline" align="left"%>
 <nobr><b><font color="#000000">schedule-function-relative</font></b></nobr></td><td valign="baseline"> &nbsp; </td><td valign="baseline" align="left" width="99%"><var>name-or-scheduled-function seconds</var> 
-<code>&#38;key</code> <var>repeat-interval verbose</var></td><td valign="baseline" align="right">[<i>Function</i>]
+<code>&#38;key</code> <var>key repeat-interval verbose</var></td><td valign="baseline" align="right">[<i>Function</i>]
 </td></tr></table></p>
 <p><span class="fndoclabel">Purpose</span> <br />Schedule a <a href="ref-glossary.html#id187">scheduled&nbsp;function</a> a specified number of
 seconds from now.
@@ -31,6 +31,7 @@ seconds from now.
 symbol) naming a currently scheduled <a href="ref-glossary.html#id187">scheduled&nbsp;function</a> or a
 <nobr><code>scheduled-function</code></nobr> object
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>seconds</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A positive integer
+</td></tr><tr valign="top"><td valign="baseline" nowrap><i>key</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An object (default is <code>nil</code>)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>repeat-interval</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A positive integer (representing seconds) or
 <code>nil</code> (default is <code>nil</code>)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>verbose</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a>
@@ -55,7 +56,11 @@ unscheduled and then rescheduled with an invocation time of
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-make-scheduled-function.html"><b>make-scheduled-function</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-restart-scheduled-function-scheduler.html"><b>restart-scheduled-function-scheduler</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-schedule-function.html"><b>schedule-function</b></a>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-scheduled-function-invocation-time.html"><b>scheduled-function-invocation-time</b></a>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-scheduled-function-key.html"><b>scheduled-function-key</b></a>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-scheduled-function-name.html"><b>scheduled-function-name</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-scheduled-function-repeat-interval.html"><b>scheduled-function-repeat-interval</b></a>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-scheduled-function-test.html"><b>scheduled-function-test</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-spawn-periodic-function.html"><b>spawn-periodic-function</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-unschedule-function.html"><b>unschedule-function</b></a>
 </p>
@@ -91,4 +96,4 @@ unscheduled and then rescheduled with an invocation time of
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
 <table width="100%" cellpadding="0" cellspacing="2"><tr>
-<td bgcolor="#99ccff"><a href="ref-schedule-function.html"><img border="0" alt="schedule-function" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="ref-portable-thread-entities.html"><img border="0" alt="Portable Threads" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-scheduled-function-name.html"><img border="0" alt="scheduled-function-name" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">schedule-function-relative</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table></body></html>
+<td bgcolor="#99ccff"><a href="ref-schedule-function.html"><img border="0" alt="schedule-function" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="ref-portable-thread-entities.html"><img border="0" alt="Portable Threads" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-scheduled-function-invocation-time.html"><img border="0" alt="scheduled-function-invocation-time" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">schedule-function-relative</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table></body></html>

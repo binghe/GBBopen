@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/portable-threads.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Oct  7 12:03:54 2009 *-*
+;;;; *-* Last-Edit: Tue Oct 27 19:22:02 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -42,17 +42,17 @@
 ;;;  03-21-04 Added atomic operations.  (Corkill)
 ;;;  06-11-05 Clean up best attempts for non-threaded CLs.  (Corkill)
 ;;;  10-21-05 Added polling functions for non-threaded CLs.  (Corkill)
-;;;  12-22-05 Removed without-interrupts support (incompatible with
+;;;  12-22-05 Removed WITHOUT-INTERRUPTS support (incompatible with
 ;;;           preemptive scheduling models).  (Corkill)
-;;;  12-27-05 Added process-name.  (Corkill)
+;;;  12-27-05 Added PROCESS-NAME.  (Corkill)
 ;;;  01-02-06 Separated from GBBopen, moved polling-functions into separate
 ;;;           polling-functions.lisp file and module.  (Corkill)
-;;;  01-12-06 Added as-atomic-operation support, but only as a mechanism
+;;;  01-12-06 Added AS-ATOMIC-OPERATION support, but only as a mechanism
 ;;;           for implementing very brief atomic operations.  (Corkill)
 ;;;  05-08-06 Added support for the Scieneer CL. (dtc)
 ;;;  07-28-07 V2.0 naming changes, full condition variable support.  (Corkill)
-;;;  08-20-07 V2.1: Added scheduled functions, thread-alive-p, 
-;;;           encode-time-of-day. (Corkill)
+;;;  08-20-07 V2.1: Added scheduled functions, THREAD-ALIVE-P, 
+;;;           ENCODE-TIME-OF-DAY. (Corkill)
 ;;;  08-27-07 V2.2: Added periodic functions.  (Corkill)
 ;;;  10-23-07 Fixed 64-bit CL sleep issues (thanks Antony!).  (Corkill)
 ;;;  11-20-07 V2.3: Remove V1.0 compatabilty; resupport Digitool MCL.
@@ -199,6 +199,8 @@
      thread:cond-var-signal
      thread:cond-var-broadcast)))
 
+;;; ---------------------------------------------------------------------------
+
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(*non-threaded-polling-function-hook* ; not documented
             *periodic-function-verbose*
@@ -222,7 +224,8 @@
             condition-variable-wait
             condition-variable-wait-with-timeout
             current-thread
-            encode-time-of-day
+            #+exported-below
+            encode-time-of-day          ; exported near the end of this file
             hibernate-thread
             #+lispworks
             initialize-multiprocessing
@@ -239,8 +242,11 @@
             schedule-function
             schedule-function-relative
             scheduled-function          ; structure (not documented)
+            scheduled-function-invocation-time
+            scheduled-function-key
             scheduled-function-name
             scheduled-function-repeat-interval
+            scheduled-function-test
             sleep-nearly-forever
             spawn-form
             spawn-periodic-function
@@ -2240,9 +2246,11 @@
 ;;;  Scheduled Functions (built entirely on top of Portable Threads substrate)
 
 (defstruct (scheduled-function
-            (:constructor %make-scheduled-function (function name))
+            (:constructor %make-scheduled-function (function name key))
             (:copier nil))
   name
+  key
+  test
   function
   invocation-time
   repeat-interval
@@ -2252,14 +2260,16 @@
   (if *print-readably*
       (call-next-method)
       (print-unreadable-object (obj stream :type t)
-        (format stream "~s [" (scheduled-function-name obj))
+        (format stream "~s~@[ ~s~] ["
+                (scheduled-function-name obj)
+                (scheduled-function-key obj))
         (pretty-invocation-time (scheduled-function-invocation-time obj)
                                 stream)
         (format stream "]"))))
 
 ;;; ---------------------------------------------------------------------------
 
-(defvar *month-name-vector* 
+(defparameter *month-name-vector* 
     (vector "Jan" "Feb" "Mar" "Apr" "May" "Jun"
             "Jul" "Aug" "Sep" "Oct" "Nov" "Dec"))
 
@@ -2314,9 +2324,11 @@
 
 (defun make-scheduled-function (function &key                                      
                                          (name (and (symbolp function)
-                                                    function)))
+                                                    function))
+                                         key
+                                         test #'eql)
   #-threads-not-available
-  (%make-scheduled-function function name)
+  (%make-scheduled-function function name key)
   #+threads-not-available
   (declare (ignore name))
   #+threads-not-available
@@ -2474,7 +2486,7 @@
 ;;; ---------------------------------------------------------------------------
 
 #-threads-not-available
-(defun delete-scheduled-function (name-or-scheduled-function verbose)
+(defun delete-scheduled-function (name-or-scheduled-function key verbose)
   ;;; Do the work of deleting a scheduled function from the list of
   ;;; *scheduled-functions*.  The *scheduled-function-cv* lock must be held
   ;;; when calling this function.
@@ -2498,9 +2510,13 @@
                      (when (eq scheduled-function name-or-scheduled-function)
                        (on-deletion scheduled-function)))
                #'(lambda (scheduled-function)
-                   (when (equal (scheduled-function-name scheduled-function)
-                                name-or-scheduled-function)
-                       (on-deletion scheduled-function))))
+                   (when (and (apply 
+                               (scheduled-function-test scheduled-function)
+                               key 
+                               (scheduled-function-key scheduled-function))
+                              (equal (scheduled-function-name scheduled-function)
+                                     name-or-scheduled-function))
+                     (on-deletion scheduled-function))))
              *scheduled-functions*)))
     ;; return the deleted scheduled-function (or nil, if unsuccessful):
     the-deleted-scheduled-function))
@@ -2508,12 +2524,13 @@
 ;;; ---------------------------------------------------------------------------
 
 #-threads-not-available
-(defun schedule-function-internal (name-or-scheduled-function invocation-time
-                                   repeat-interval verbose)
+(defun schedule-function-internal (name-or-scheduled-function key
+                                   invocation-time repeat-interval verbose)
   (or (with-lock-held (*scheduled-functions-cv*)
         (let* ((next-scheduled-function (first *scheduled-functions*))
                (unscheduled-scheduled-function 
-                (delete-scheduled-function name-or-scheduled-function verbose))
+                (delete-scheduled-function name-or-scheduled-function key
+                                           verbose))
                (scheduled-function (or unscheduled-scheduled-function 
                                        name-or-scheduled-function)))
           ;; Was the specified function scheduled?
@@ -2539,25 +2556,30 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun schedule-function (name-or-scheduled-function invocation-time
-                          &key repeat-interval
+                          &key key
+                               repeat-interval
                                (verbose *schedule-function-verbose*))
   #-threads-not-available
   (progn
     (check-type invocation-time integer)
     (check-type repeat-interval (or null integer))
-    (schedule-function-internal name-or-scheduled-function invocation-time
-                                repeat-interval verbose)
+    (schedule-function-internal name-or-scheduled-function
+                                key 
+                                invocation-time 
+                                repeat-interval
+                                verbose)
     (values))
   #+threads-not-available
-  (declare (ignore name-or-scheduled-function invocation-time repeat-interval
-                   verbose))
+  (declare (ignore name-or-scheduled-function invocation-time key 
+                   repeat-interval verbose))
   #+threads-not-available
   (threads-not-available 'schedule-function))
 
 ;;; ---------------------------------------------------------------------------
 
 (defun schedule-function-relative (name-or-scheduled-function interval
-                                   &key repeat-interval 
+                                   &key key
+                                        repeat-interval 
                                         (verbose *schedule-function-verbose*))
   ;;; Syntactic sugar that simply adds `interval' to the current time before
   ;;; scheduling the scheduled-function.
@@ -2566,24 +2588,28 @@
     (check-type interval integer)
     (check-type repeat-interval (or null integer))
     (schedule-function-internal name-or-scheduled-function 
+                                key
                                 (+ (get-universal-time) interval)
-                                repeat-interval verbose)
+                                repeat-interval
+                                verbose)
     (values))
   #+threads-not-available
-  (declare (ignore name-or-scheduled-function interval repeat-interval
-                   verbose))
+  (declare (ignore name-or-scheduled-function interval key
+                   repeat-interval verbose))
   #+threads-not-available
   (threads-not-available 'schedule-function-relative))
 
 ;;; ---------------------------------------------------------------------------
 
 (defun unschedule-function (name-or-scheduled-function 
-                            &key (verbose *schedule-function-verbose*))
+                            &key key
+                                 (verbose *schedule-function-verbose*))
   #-threads-not-available
   (or (with-lock-held (*scheduled-functions-cv*)
         (let* ((next-scheduled-function (first *scheduled-functions*))
                (unscheduled-function
-                (delete-scheduled-function name-or-scheduled-function verbose)))
+                (delete-scheduled-function name-or-scheduled-function key 
+                                           verbose)))
           ;; when unscheduled successfully: 
           (when unscheduled-function
             ;; awaken the scheduler if the next-scheduled-function became the
@@ -2611,30 +2637,6 @@
         (awaken-scheduled-function-scheduler)))
   #+threads-not-available
   (threads-not-available 'restart-scheduled-function-scheduler))
-
-;;; ---------------------------------------------------------------------------
-;;;  Handy utility to encode (hour minute second) time of day into a universal
-;;;  time.  If that time has already passed, the next day is assumed.
-
-(defun encode-time-of-day (hour minute second
-                           &optional (universal-time (get-universal-time)))
-  ;; get the decoded current time of day:
-  (multiple-value-bind (current-second current-minute current-hour
-                        date month year)
-      (decode-universal-time universal-time)
-    ;; substitute the supplied hour, minute, and second values:
-    (let ((tentative-result
-           (encode-universal-time second minute hour date month year)))
-      (flet ((seconds-into-day (hour minute second)
-               (the fixnum (+ (the fixnum (* (the fixnum hour) 3600))
-                              (the fixnum (* (the fixnum minute) 60))
-                              (the fixnum second)))))
-        ;; if the time of day has already passed for today, assume
-        ;; tomorrow is intended:
-        (if (> (seconds-into-day current-hour current-minute current-second)
-               (seconds-into-day hour minute second))
-            (+ tentative-result #.(* 60 60 24))
-            tentative-result)))))
 
 ;;; ===========================================================================
 ;;;  Periodic Functions (also built entirely on top of Portable Threads)
@@ -2697,6 +2699,51 @@
   #+threads-not-available
   (threads-not-available 'kill-periodic-function))
 
+;;; ===========================================================================
+;;;  Handy function to encode (second minute hour) time of day into a
+;;;  universal time.  If that time has already passed, the next day is
+;;;  assumed.
+;;;
+;;;  (ENCODE-TIME-OF-DAY is duplicated here (as %ENCODE-TIME-OF-DAY) from
+;;;  GBBopen Tools, for stand-alone use.)
+
+(defun %encode-time-of-day (second minute hour
+                           &optional (universal-time (get-universal-time)))
+  ;; get the decoded current time of day:
+  (multiple-value-bind (current-second current-minute current-hour
+                        date month year)
+      (decode-universal-time universal-time)
+    ;; substitute the supplied hour, minute, and second values:
+    (let ((tentative-result
+           (encode-universal-time second minute hour date month year)))
+      (flet ((seconds-into-day (hour minute second)
+               (the fixnum (+ (the fixnum (* (the fixnum hour) 3600))
+                              (the fixnum (* (the fixnum minute) 60))
+                              (the fixnum second)))))
+        ;; if the time of day has already passed for today, assume
+        ;; tomorrow is intended:
+        (if (> (seconds-into-day current-hour current-minute current-second)
+               (seconds-into-day hour minute second))
+            (+ tentative-result #.(* 60 60 24))
+            tentative-result)))))
+
+;;; ---------------------------------------------------------------------------
+;;;  Cruft to use GBBopen Tool's ENCODE-TIME-OF-DAY, if present; otherwise,
+;;;  the above %ENCODE-TIME-OF-DAY definition is used:
+
+(let* ((gbbopen-tools-package (find-package ':gbbopen-tools))
+       (symbol (when gbbopen-tools-package
+                 (find-symbol (symbol-name '#:encode-time-of-day) 
+                              gbbopen-tools-package))))
+  (cond
+   ((and symbol (fboundp symbol))
+    (import `(,symbol) gbbopen-tools-package)
+    (export `(,symbol) gbbopen-tools-package))
+   (t (setf (symbol-function (intern (symbol-name '#:encode-time-of-day)))
+            (symbol-function '%encode-time-of-day))
+      (export (list (intern (symbol-name '#:encode-time-of-day))))))
+  (unintern '%encode-time-of-day))
+  
 ;;; ===========================================================================
 ;;;  Portable threads interface is fully loaded:
 

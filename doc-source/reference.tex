@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Thu Oct 22 11:23:02 2009; Edited-By: cork *-*
+%% *-* Last-Edit: Tue Oct 27 22:12:09 2009; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2009, Dan Corkill <corkill@GBBopen.org>
@@ -9238,6 +9238,7 @@ parse ended.
 
 \begin{alsos}{*month-precedes-date*}
 \also[*month-precedes-date*]
+\also[encode-time-of-day]
 \also[parse-date]
 \also[parse-date-and-time]
 \also[parse-duration]
@@ -9275,6 +9276,75 @@ parse ended.
   > (encode-date-and-time "April 1, 2010 10:30 UTC-4")
   3479121000
   25
+  >
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{encode-time-of-day}%
+  {\var{second minute hour\/} 
+    \code{\&optional} \var{universal-time\/}
+    \returns{} \var{universal-time\/}}
+
+\fnsyntax
+
+\fnpurpose Return a \glref{universal~time} representing a specified
+time-of-day.
+
+\fnpackage \code{:gbbopen-tools} (or \code{:portable-threads} if Portable
+Threads is used without GBBopen Tools)
+
+\fnmodule \code{:gbbopen-tools} (or \code{:portable-threads} if Portable
+Threads is used without GBBopen Tools)
+
+\fnargs
+\begin{args}{universal-time}
+\arg[second] An integer between 0 and 59, inclusive
+\arg[minute] An integer between 0 and 59, inclusive
+\arg[hour] An integer between 0 and 23, inclusive
+\arg[universal-time] A \glref{universal~time} (default is \nil,
+  which is equivalent to the value returned by
+  \nobr{\code{(get-universal-time)}})
+\end{args}
+
+\fndescription If the specified time-of-date has already passed (relative to
+the \nobr{\var{universal-time\/}} value), the next day is assumed.
+
+\begin{alsos}{encode-date-and-time}
+\also[encode-date-and-time]
+\end{alsos}
+
+\bfindexit{make-scheduled-function}%
+\bfindexit{schedule-function}%
+\fnexamples
+Schedule a \glref{scheduled~function} that prints \nobr{\code{"It's quitting time!"}} 
+every day at 5pm:
+%
+\W\supp
+\begin{example}
+  > (\entlink{schedule-function}
+      (\entlink{make-scheduled-function}
+        #'(lambda (scheduled-function)
+            (declare (ignore scheduled-function))
+            (print "It's quitting time!"))
+        :name 'quitting-time)
+       (encode-time-of-day 0 0 17) :repeat-interval #.(* 24 60 60))
+  >
+\end{example}
+
+\bfindexit{schedule-function}%
+Verbosely change \nobr{\code{quitting-time}} to 5:30pm every day:
+%
+\W\supp
+\begin{example}
+  > (\entlink{schedule-function} 'quitting-time (encode-time-of-day 0 30 17)
+      :repeat-interval #.(* 24 60 60)
+      :verbose 't)
+  ;; Unscheduling #<scheduled-function quitting-time [17:00:00]>...
+  ;; Scheduling #<scheduled-function quitting-time [17:30:00]> 
+  ;; as the next scheduled-function...
   >
 \end{example}
 
@@ -9845,6 +9915,7 @@ parse ended.
 \begin{alsos}{*month-precedes-date*}
 \also[*month-precedes-date*]
 \also[encode-date-and-time]
+\also[encode-time-of-day]
 \also[parse-date-and-time]
 \also[parse-duration]
 \also[parse-time]
@@ -9975,6 +10046,7 @@ parse ended.
 \begin{alsos}{*month-precedes-date*}
 \also[*month-precedes-date*]
 \also[encode-date-and-time]
+\also[encode-time-of-day]
 \also[full-date-and-time]
 \also[parse-date]
 \also[parse-duration]
@@ -10100,6 +10172,7 @@ A \code{"month"} is interpreted as exactly 30 days; a \nobr{\code{"year"}} as
 \begin{alsos}{pretty-duration}
 \also[brief-duration]
 \also[encode-date-and-time]
+\also[encode-time-of-day]
 \also[parse-date]
 \also[parse-date-and-time]
 \also[pretty-duration]
@@ -10196,6 +10269,7 @@ parse ended.
 
 \begin{alsos}{parse-date-and-time}
 \also[encode-date-and-time]
+\also[encode-time-of-day]
 \also[parse-date]
 \also[parse-date-and-time]
 \also[parse-duration]
@@ -14882,7 +14956,7 @@ returns its argument unit-instance object (an \code{identity} function).
 \bfindexit{standard-link-instance}%
 \index{link-ptr-with-value@\code{link-ptr-with-value} class example}%
 \index{link-pointer object example, link-ptr-with-value@\code{link-ptr-with-value}}%
-\label{link-ptr-class}%
+\index{link-ptr-class}%
 Define a \glref{link-pointer~object} class that can be used to associate a value
 with a link pointer:
 %
