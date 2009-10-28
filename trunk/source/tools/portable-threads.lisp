@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/portable-threads.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Oct 28 05:37:08 2009 *-*
+;;;; *-* Last-Edit: Wed Oct 28 11:36:04 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -2246,7 +2246,7 @@
 ;;;  Scheduled Functions (built entirely on top of Portable Threads substrate)
 
 (defstruct (scheduled-function
-            (:constructor %make-scheduled-function (function name key))
+            (:constructor %make-scheduled-function (function name key test))
             (:copier nil))
   name
   key
@@ -2326,9 +2326,9 @@
                                          (name (and (symbolp function)
                                                     function))
                                          key
-                                         test #'eql)
+                                         (test #'eql))
   #-threads-not-available
-  (%make-scheduled-function function name key)
+  (%make-scheduled-function function name key test)
   #+threads-not-available
   (declare (ignore name))
   #+threads-not-available
