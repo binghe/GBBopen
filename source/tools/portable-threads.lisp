@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/portable-threads.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Oct 28 12:41:12 2009 *-*
+;;;; *-* Last-Edit: Thu Oct 29 10:17:14 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -1573,7 +1573,9 @@
   (let* ((*print-length* 2)
          (*print-level* 2)
          (name (format nil "Form ~s" (first body))))
-    `(spawn-thread ,name (lambda () ,@body))))
+    `(spawn-thread ,name (lambda (*package*) ,@body) 
+                   ;; Run in caller's package:
+                   *package*)))
 
 ;;; ---------------------------------------------------------------------------
 ;;;   Kill-Thread
