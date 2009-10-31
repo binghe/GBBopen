@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/2d-uniform-storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Oct 30 13:38:43 2009 *-*
+;;;; *-* Last-Edit: Sat Oct 31 06:26:53 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -279,9 +279,6 @@
 	   (2nd-d-start (2nd-d-start-of storage))
 	   (2nd-d-size (2nd-d-size-of storage))
 	   (bucket-count 0))
-      ;; CCL-1.4 (through r13131) can't handle this declaration on Mac (x86
-      ;; and PPC):
-      #-(and ccl-1.4 darwin-target (or :x86-target :ppc-target))
       (declare (type (simple-array t (* *)) buckets))
       ;; unbound instances req'd:
       (when full-map-p
