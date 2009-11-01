@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jul 15 08:11:56 2009 *-*
+;;;; *-* Last-Edit: Sun Nov  1 06:34:07 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -111,6 +111,7 @@
     (:export-accessors t)))
 
 (defmethod delete-instance ((instance deleted-unit-instance))
+  #+ecl (declare (ignore instance))
   ;; Deleting a deleted-unit-instance is a no-op:
   instance)
 
@@ -1002,7 +1003,6 @@
                   (eql 'instance-name)
                   #-lispworks
                   effective-nonlink-slot-definition))
-  #+ecl (declare (ignore slot))
   (when #+lispworks 't
         #-lispworks (eq (slot-definition-name slot) 'instance-name)        
      (when (slot-boundp-using-class 
