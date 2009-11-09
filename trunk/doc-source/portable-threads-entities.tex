@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/portable-threads-entities.tex *-*
-%% *-* Last-Edit: Wed Oct 28 12:39:12 2009; Edited-By: cork *-*
+%% *-* Last-Edit: Mon Nov  9 07:37:33 2009; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 \index{module!:portable-threads@\code{:portable-threads}}%
@@ -26,8 +26,9 @@ file.
 Common Lisp implementations that provide multiprocessing capabilities use one
 of two approaches:
 \begin{tightitemize}
-\item \textit{Application-level threads\/} (also called ``Lisp processes'') which are
-  created, deleted, and scheduled internally by the Common Lisp implementation
+\item \textit{Application-level threads\/} (also called ``Lisp processes'')
+  which are created, deleted, and scheduled internally by the Common Lisp
+  implementation
 \item \textit{Operating-system threads\/} (or ``native threads'') which are
   lightweight, operating-system threads that are created, deleted, and
   scheduled by the operating system
@@ -1472,7 +1473,7 @@ the created \glref{condition-variable} instance.  However, using
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{make-scheduled-function}{\var{function\/} 
-    \code{\&key} \var{name key test\/}
+    \code{\&key} \var{name name-test marker marker-test\/}
     \returns{} \var{scheduled-function\/}} 
 \index{scheduled function!creating}%
 \index{function!scheduled, creating}%
@@ -1494,8 +1495,10 @@ the created \glref{condition-variable} instance.  However, using
 \arg[name] An object (typically a
   string or a symbol; default is \nobr{\var{function}}, if
   \nobr{\var{function\/}} is a symbol, otherwise \nil)
-\arg[key] An object (default is \nil)
-\arg[test] A \glref{function} of two arguments that returns a
+\arg[name-test] A \glref{function} of two arguments that returns a
+\glref{generalized~boolean} (default is \nobr{\code{\#'eql}})
+\arg[marker] An object (default is \nil)
+\arg[marker-test] A \glref{function} of two arguments that returns a
 \glref{generalized~boolean} (default is \nobr{\code{\#'eql}})
 \arg[scheduled-function] A \glref{scheduled~function}
 \end{args}
@@ -1510,19 +1513,22 @@ brief, it should spawn a new \glref{thread} in which to perform its activities
 so as to avoid delaying the invocation of a subsequent
 \glref{scheduled~function}.
 
-The optional \var{key\/} and associated key-comparison \var{test\/} can be
-specified to distinguish \glref{scheduled~functions} with the same \var{name}
-or \var{function}.
+The optional \var{marker\/} and associated comparison \var{marker-test\/} can
+be specified to distinguish \glref{scheduled~functions} with the same
+\var{name} in calls to \nobr{\textbf{\entlink{schedule-function}}},
+\nobr{\textbf{\entlink{schedule-function-relative}}}, and
+\nobr{\textbf{\entlink{unschedule-function}}}.
 
 \begin{alsos}{*schedule-function-verbose*}
 \also[*schedule-function-verbose*]
 \also[all-scheduled-functions]
 \also[schedule-function]
 \also[schedule-function-relative]
-\also[scheduled-function-key]
+\also[scheduled-function-marker]
+\also[scheduled-function-marker-test]
 \also[scheduled-function-name]
+\also[scheduled-function-name-test]
 \also[scheduled-function-repeat-interval]
-\also[scheduled-function-test]
 \also[spawn-periodic-function]
 \also[unschedule-function]
 \end{alsos}
@@ -1699,7 +1705,7 @@ no effect:
 
 \begin{functiondoc}{Function}{schedule-function}%
   {\var{name-or-scheduled-function invocation-time\/} 
-    \code{\&key} \var{key repeat-interval verbose\/}}
+    \code{\&key} \var{marker repeat-interval verbose\/}}
 \index{scheduled function!scheduling}%
 \index{function!scheduled, scheduling}%
 \index{scheduling!a scheduled function}%
@@ -1718,7 +1724,7 @@ no effect:
   symbol) naming a currently scheduled \glref{scheduled~function} or a
   \nobr{\code{scheduled-function}} object
 \arg[invocation-time] A \glref{universal~time}
-\arg[key] An object (default is \nil)
+\arg[marker] An object (default is \nil)
 \arg[repeat-interval] A positive integer (representing seconds) or
   \nil{} (default is \nil)
 \arg[verbose] A \glref{generalized~boolean} 
@@ -1728,12 +1734,32 @@ no effect:
 \fnerrors
 \nothreads{}
 
-\fndescription If the \nobr{\var{scheduled-function\/}} object is unscheduled,
-it is added to the list of currently scheduled \glref{scheduled~functions}
-with the specified \nobr{\var{invocation-time\/}} and
-\nobr{\var{repeat-interval}}.  If the \nobr{\var{scheduled-function\/}} object
-is currently scheduled, it is first unscheduled and then rescheduled with the
-specified \nobr{\var{invocation-time\/}} and \nobr{\var{repeat-interval}}.
+\fndescription If the \nobr{\glref{scheduled~function}} is unscheduled, the
+\nobr{\code{scheduled-function}} object must be specified as the
+\nobr{\var{name-or-scheduled-function\/}} value.  In this case, the
+\nobr{\glref{scheduled~function}} it is added to the list of currently
+scheduled \nobr{\glref{scheduled~functions}} with the specified
+\nobr{\var{invocation-time\/}} and optional \nobr{\var{repeat-interval}}, if
+specified.
+
+If the \nobr{\var{scheduled-function\/}} object is currently scheduled, either
+the \nobr{\code{scheduled-function}} object or the optional \var{name\/} value
+that was specified when the \nobr{\code{scheduled-function}} object was
+created with \nobr{\textbf{\entlink{make-scheduled-function}}} can be
+specified as the \nobr{\var{name-or-scheduled-function\/}} value.  If a name
+is specified as the \nobr{\var{name-or-scheduled-function\/}} value and more
+than one \nobr{\glref{scheduled~function}} with the specified \var{name\/} is
+currently scheduled, the \nobr{\glref{scheduled~function}} with the earliest
+invocation time is selected.  If an optional \var{marker\/} value was
+specified along with \var{name\/} when the \nobr{\code{scheduled-function}}
+object was created with \nobr{\textbf{\entlink{make-scheduled-function}}}, the
+\var{marker\/} value can also be specified to restrict the selected
+\nobr{\glref{scheduled~function}} to the one with the earliest invocation time
+that matches both the \var{name\/} and \var{marker} values.  The selected
+\nobr{\glref{scheduled~function}} is first unscheduled and then rescheduled
+with the specified \nobr{\var{invocation-time\/}} and optional
+\nobr{\var{repeat-interval}}, if specified.
+
 
 \begin{alsos}{restart-scheduled-function-scheduler}
 \also[*schedule-function-verbose*]
@@ -1803,7 +1829,7 @@ Verbosely change \nobr{\code{quitting-time}} to 5:30pm every day:
 
 \begin{functiondoc}{Function}{schedule-function-relative}%
   {\var{name-or-scheduled-function seconds\/} 
-    \code{\&key} \var{key repeat-interval verbose\/}}
+    \code{\&key} \var{marker repeat-interval verbose\/}}
 \index{scheduled function!scheduling}%
 \index{function!scheduled, scheduling}%
 \index{scheduling!a scheduled function}%
@@ -1823,7 +1849,7 @@ seconds from now.
   symbol) naming a currently scheduled \glref{scheduled~function} or a
   \nobr{\code{scheduled-function}} object
 \arg[seconds] A positive integer
-\arg[key] An object (default is \nil)
+\arg[marker] An object (default is \nil)
 \arg[repeat-interval] A positive integer (representing seconds) or
   \nil{} (default is \nil)
 \arg[verbose] A \glref{generalized~boolean}
@@ -1833,14 +1859,31 @@ seconds from now.
 \fnerrors
 \nothreads{}
 
-\fndescription If the \nobr{\var{scheduled-function\/}} object is unscheduled,
-it is added to the list of currently scheduled \glref{scheduled~functions}
+\fndescription If the \nobr{\glref{scheduled~function}} is unscheduled, the
+\nobr{\code{scheduled-function}} object must be specified as the
+\nobr{\var{name-or-scheduled-function\/}} value.  In this case, the
+\nobr{\glref{scheduled~function}} it is added to the list of currently
+scheduled \nobr{\glref{scheduled~functions}} with an invocation time of
+\nobr{\var{interval\/}} seconds from the current time and optional
+\nobr{\var{repeat-interval}}, if specified.
+
+If the \nobr{\var{scheduled-function\/}} object is currently scheduled, either
+the \nobr{\code{scheduled-function}} object or the optional \var{name\/} value
+that was specified when the \nobr{\code{scheduled-function}} object was
+created with \nobr{\textbf{\entlink{make-scheduled-function}}} can be
+specified as the \nobr{\var{name-or-scheduled-function\/}} value.  If a name
+is specified as the \nobr{\var{name-or-scheduled-function\/}} value and more
+than one \nobr{\glref{scheduled~function}} with the specified \var{name\/} is
+currently scheduled, the \nobr{\glref{scheduled~function}} with the earliest
+invocation time is selected.  If an optional \var{marker\/} value was
+specified along with \var{name\/} when the \nobr{\code{scheduled-function}}
+object was created with \nobr{\textbf{\entlink{make-scheduled-function}}}, the
+\var{marker\/} value can also be specified to restrict the selected
+\nobr{\glref{scheduled~function}} to the one with the earliest invocation time
+that matches both the \var{name\/} and \var{marker} values.  The selected
+\nobr{\glref{scheduled~function}} is first unscheduled and then rescheduled
 with an invocation time of \nobr{\var{interval\/}} seconds from the current
-time and the specified \nobr{\var{repeat-interval}}.  If the
-\nobr{\var{scheduled-function\/}} object is currently scheduled, it is first
-unscheduled and then rescheduled with an invocation time of
-\nobr{\var{interval\/}} seconds from the current time and the specified
-\nobr{\var{repeat-interval}}.
+time and optional \nobr{\var{repeat-interval}}, if specified.
 
 \begin{alsos}{restart-scheduled-function-scheduler}
 \also[*schedule-function-verbose*]
@@ -1849,10 +1892,11 @@ unscheduled and then rescheduled with an invocation time of
 \also[restart-scheduled-function-scheduler]
 \also[schedule-function]
 \also[scheduled-function-invocation-time]
-\also[scheduled-function-key]
+\also[scheduled-function-marker]
+\also[scheduled-function-marker-test]
 \also[scheduled-function-name]
+\also[scheduled-function-name-test]
 \also[scheduled-function-repeat-interval]
-\also[scheduled-function-test]
 \also[spawn-periodic-function]
 \also[unschedule-function]
 \end{alsos}
@@ -1928,10 +1972,11 @@ Schedule a \glref{scheduled~function} that signals a GBBopen
 \also[make-scheduled-function]
 \also[schedule-function]
 \also[schedule-function-relative]
-\also[scheduled-function-key]
+\also[scheduled-function-marker]
+\also[scheduled-function-marker-test]
 \also[scheduled-function-name]
+\also[scheduled-function-name-test]
 \also[scheduled-function-repeat-interval]
-\also[scheduled-function-test]
 \end{alsos}
 
 \fnexample
@@ -1950,14 +1995,14 @@ Return the invocation-time of \glref{scheduled~function}
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Function}{scheduled-function-key}%
+\begin{functiondoc}{Function}{scheduled-function-marker}%
   {\var{scheduled-function\/}
-    \returns{} \var{key\/}}
-\index{function!scheduled, key}%
+    \returns{} \var{marker\/}}
+\index{function!scheduled, marker}%
 
 \fnsyntax
 
-\fnpurpose Return the key of a \glref{scheduled~function}.
+\fnpurpose Return the marker of a \glref{scheduled~function}.
 
 \fnpackage \code{:portable-threads}
 
@@ -1966,30 +2011,83 @@ Return the invocation-time of \glref{scheduled~function}
 \fnargs
 \begin{args}{scheduled-function}
 \arg[scheduled-function] A \glref{scheduled~function}
-\arg[key] An object
+\arg[marker] An object
 \end{args}
 
-\fnreturns The key of \var{scheduled-function}. 
+\fnreturns The marker of \var{scheduled-function}. 
 
 \begin{alsos}{schedule-function-relative}
 \also[all-scheduled-functions]
 \also[make-scheduled-function]
 \also[schedule-function]
 \also[schedule-function-relative]
+\also[scheduled-function-marker-test]
 \also[scheduled-function-name]
+\also[scheduled-function-name-test]
 \also[scheduled-function-repeat-interval]
-\also[scheduled-function-test]
 \end{alsos}
 
 \bfindexit{all-scheduled-functions}%
 \fnexample
 %
-Return the key of all currently scheduled \glref{scheduled~functions}:
+Return a list of the markers of all currently scheduled
+\glref{scheduled~functions}:
 %
 \W\supp
 \begin{example}
-  > (mapcar #'scheduled-function-key (\entlink{all-scheduled-functions}))
+  > (mapcar #'scheduled-function-marker (\entlink{all-scheduled-functions}))
   (nil)
+  >
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{scheduled-function-marker-test}%
+  {\var{scheduled-function\/}
+    \returns{} \var{marker-predicate\/}}
+\index{function!scheduled, test}%
+
+\fnsyntax
+
+\fnpurpose Return the marker-comparison predicate of a
+\glref{scheduled~function}.
+
+\fnpackage \code{:portable-threads}
+
+\fnmodule \code{:portable-threads}
+
+\fnargs
+\begin{args}{scheduled-function}
+\arg[scheduled-function] A \glref{scheduled~function}
+\arg[marker-predicate] A \glref{function} of two arguments that returns a
+\glref{generalized~boolean}
+\end{args}
+
+\fnreturns The marker-comparison predicate of \var{scheduled-function}. 
+
+\begin{alsos}{schedule-function-relative}
+\also[all-scheduled-functions]
+\also[make-scheduled-function]
+\also[schedule-function]
+\also[schedule-function-relative]
+\also[scheduled-function-invocation-time]
+\also[scheduled-function-marker]
+\also[scheduled-function-name]
+\also[scheduled-function-name-test]
+\end{alsos}
+
+\bfindexit{all-scheduled-functions}%
+\fnexample
+%
+Return a list of the marker-comparison predicates of all currently scheduled
+\glref{scheduled~functions}:
+%
+\W\supp
+\begin{example}
+  > (mapcar #'scheduled-function-marker-test (\entlink{all-scheduled-functions}))
+  (#'eql)
   >
 \end{example}
 
@@ -2023,9 +2121,10 @@ Return the key of all currently scheduled \glref{scheduled~functions}:
 \also[make-scheduled-function]
 \also[schedule-function]
 \also[schedule-function-relative]
-\also[scheduled-function-key]
+\also[scheduled-function-marker]
+\also[scheduled-function-marker-test]
+\also[scheduled-function-name-test]
 \also[scheduled-function-repeat-interval]
-\also[scheduled-function-test]
 \end{alsos}
 
 \bfindexit{all-scheduled-functions}%
@@ -2037,6 +2136,57 @@ Return the names of all currently scheduled \glref{scheduled~functions}:
 \begin{example}
   > (mapcar #'scheduled-function-name (\entlink{all-scheduled-functions}))
   (quitting-time)
+  >
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{scheduled-function-name-test}%
+  {\var{scheduled-function\/}
+    \returns{} \var{name-predicate\/}}
+\index{function!scheduled, test}%
+
+\fnsyntax
+
+\fnpurpose Return the name-comparison predicate of a
+\glref{scheduled~function}.
+
+\fnpackage \code{:portable-threads}
+
+\fnmodule \code{:portable-threads}
+
+\fnargs
+\begin{args}{scheduled-function}
+\arg[scheduled-function] A \glref{scheduled~function}
+\arg[name-predicate] A \glref{function} of two arguments that returns a
+\glref{generalized~boolean}
+\end{args}
+
+\fnreturns The name-comparison predicate of \var{scheduled-function}. 
+
+\begin{alsos}{schedule-function-relative}
+\also[all-scheduled-functions]
+\also[make-scheduled-function]
+\also[schedule-function]
+\also[schedule-function-relative]
+\also[scheduled-function-invocation-time]
+\also[scheduled-function-marker]
+\also[scheduled-function-name]
+\also[scheduled-function-name-test]
+\end{alsos}
+
+\bfindexit{all-scheduled-functions}%
+\fnexample
+%
+Return a list of the name-comparison predicates of all currently scheduled
+\glref{scheduled~functions}:
+%
+\W\supp
+\begin{example}
+  > (mapcar #'scheduled-function-name-test (\entlink{all-scheduled-functions}))
+  (#'eql)
   >
 \end{example}
 
@@ -2075,9 +2225,10 @@ Return the names of all currently scheduled \glref{scheduled~functions}:
 \also[make-scheduled-function]
 \also[schedule-function]
 \also[schedule-function-relative]
-\also[scheduled-function-key]
+\also[scheduled-function-marker]
+\also[scheduled-function-marker-test]
 \also[scheduled-function-name]
-\also[scheduled-function-test]
+\also[scheduled-function-name-test]
 \end{alsos}
 
 \bfindexit{all-scheduled-functions}%
@@ -2111,55 +2262,6 @@ randomly sets whether to reschedule itself (and at what interval):
                 ;; don't repeat 1\% of the time:
                 nil)))
     (do-some-stuff))
-\end{example}
-
-\end{functiondoc}
-
-%% ------------------------------------------------------------------------
-
-\begin{functiondoc}{Function}{scheduled-function-test}%
-  {\var{scheduled-function\/}
-    \returns{} \var{key\/}}
-\index{function!scheduled, test}%
-
-\fnsyntax
-
-\fnpurpose Return the key-comparison test of a \glref{scheduled~function}.
-
-\fnpackage \code{:portable-threads}
-
-\fnmodule \code{:portable-threads}
-
-\fnargs
-\begin{args}{scheduled-function}
-\arg[scheduled-function] A \glref{scheduled~function}
-\arg[test] A \glref{function} of two arguments that returns a
-\glref{generalized~boolean}
-\end{args}
-
-\fnreturns The key-comparison test of \var{scheduled-function}. 
-
-\begin{alsos}{schedule-function-relative}
-\also[all-scheduled-functions]
-\also[make-scheduled-function]
-\also[schedule-function]
-\also[schedule-function-relative]
-\also[scheduled-function-key]
-\also[scheduled-function-invocation-time]
-\also[scheduled-function-name]
-\end{alsos}
-
-\bfindexit{all-scheduled-functions}%
-\fnexample
-%
-Return the key-comparison tests of all currently scheduled
-\glref{scheduled~functions}:
-%
-\W\supp
-\begin{example}
-  > (mapcar #'scheduled-function-key (\entlink{all-scheduled-functions}))
-  (#'eql)
-  >
 \end{example}
 
 \end{functiondoc}
@@ -2793,7 +2895,7 @@ Two more simple examples using a \glref{condition~variable}:
 
 \begin{functiondoc}{Function}{unschedule-function}%
   {\var{name-or-scheduled-function\/}
-    \code{\&key} \var{key warnp verbose\/}
+    \code{\&key} \var{marker warnp verbose\/}
   \returns{} \var{boolean\/}} 
 \index{scheduled function!canceling scheduling}%
 \index{function!scheduled, canceling scheduling}%
@@ -2814,10 +2916,10 @@ Two more simple examples using a \glref{condition~variable}:
 \arg[name-or-scheduled-function] An object (typically a string or a
   symbol) naming a currently scheduled \glref{scheduled~function} or a
   \nobr{\code{scheduled-function}} object
-\arg[key] An object (default is \nil)
-\arg[warnp] A \glref{generalized~boolean} (default is \code{t}) 
+\arg[marker] An object (default is \nil)
 \arg[verbose] A \glref{generalized~boolean} 
   (default is \nobr{\textbf{\entlink{*schedule-function-verbose*}}})
+\arg[warnp] A \glref{generalized~boolean} (default is \code{t}) 
 \arg[boolean] A \glref{generalized~boolean}
 \end{args}
 
@@ -2827,9 +2929,23 @@ Two more simple examples using a \glref{condition~variable}:
 \fnerrors
 \nothreads{}
 
-\fndescription If the \nobr{\var{scheduled-function\/}} object is scheduled,
-it is removed from the list of currently scheduled
-\glref{scheduled~functions}.
+\fndescription If the \nobr{\var{scheduled-function\/}} object is currently
+scheduled, either the \nobr{\code{scheduled-function}} object or the optional
+\var{name\/} value that was specified when the
+\nobr{\code{scheduled-function}} object was created with
+\nobr{\textbf{\entlink{make-scheduled-function}}} can be specified as the
+\nobr{\var{name-or-scheduled-function\/}} value.  If a name is specified as
+the \nobr{\var{name-or-scheduled-function\/}} value and more than one
+\nobr{\glref{scheduled~function}} with the specified \var{name\/} is currently
+scheduled, the \nobr{\glref{scheduled~function}} with the earliest invocation
+time is selected.  If an optional \var{marker\/} value was specified along
+with \var{name\/} when the \nobr{\code{scheduled-function}} object was created
+with \nobr{\textbf{\entlink{make-scheduled-function}}}, the \var{marker\/}
+value can also be specified to restrict the selected
+\nobr{\glref{scheduled~function}} to the one with the earliest invocation time
+that matches both the \var{name\/} and \var{marker} values.  The selected
+\nobr{\glref{scheduled~function}} is removed from the list of currently
+scheduled \glref{scheduled~functions}.
 
 If \var{warnp} is true, a warning is issued if the \glref{scheduled~function}
 was not currently scheduled or was not found.
