@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/portable-threads.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Oct 29 10:17:14 2009 *-*
+;;;; *-* Last-Edit: Mon Nov  9 06:53:14 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -59,6 +59,9 @@
 ;;;           (Corkill)
 ;;;  06-18-09 Added CLISP multi-thread support (provided by Vladimir Tzankov; 
 ;;;           thanks!).
+;;;  11-08-09 Renamed keyword arguments (:key -> :marker, etc.) in
+;;;           MAKE-SCHEDULED-FUNCTION, SCHEDULE-FUNCTION,
+;;;           SCHEDULE-FUNCTION-RELATIVE, and UNSCHEDULE-FUNCTION.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -243,10 +246,11 @@
             schedule-function-relative
             scheduled-function          ; structure (not documented)
             scheduled-function-invocation-time
-            scheduled-function-key
+            scheduled-function-marker
+            scheduled-function-marker-test
             scheduled-function-name
+            scheduled-function-name-test
             scheduled-function-repeat-interval
-            scheduled-function-test
             sleep-nearly-forever
             spawn-form
             spawn-periodic-function
@@ -2248,11 +2252,13 @@
 ;;;  Scheduled Functions (built entirely on top of Portable Threads substrate)
 
 (defstruct (scheduled-function
-            (:constructor %make-scheduled-function (function name key test))
+            (:constructor %make-scheduled-function
+                          (function name name-test marker marker-test))
             (:copier nil))
   name
-  key
-  test
+  name-test
+  marker
+  marker-test
   function
   invocation-time
   repeat-interval
@@ -2262,9 +2268,9 @@
   (if *print-readably*
       (call-next-method)
       (print-unreadable-object (obj stream :type t)
-        (format stream "~s~@[ (key ~s)~] ["
+        (format stream "~:[<unnamed>~;~:*~s~]~@[ (marker: ~s)~] ["
                 (scheduled-function-name obj)
-                (scheduled-function-key obj))
+                (scheduled-function-marker obj))
         (pretty-invocation-time (scheduled-function-invocation-time obj)
                                 stream)
         (format stream "]"))))
@@ -2327,10 +2333,11 @@
 (defun make-scheduled-function (function &key                                      
                                          (name (and (symbolp function)
                                                     function))
-                                         key
-                                         (test #'eql))
+                                         (name-test #'eql)
+                                         marker
+                                         (marker-test #'eql))
   #-threads-not-available
-  (%make-scheduled-function function name key test)
+  (%make-scheduled-function function name name-test marker marker-test)
   #+threads-not-available
   (declare (ignore name))
   #+threads-not-available
@@ -2413,10 +2420,10 @@
                 (when (or *schedule-function-verbose*
                           (scheduled-function-verbose scheduled-function-to-run))
                   (format *trace-output* 
-                          "~&;; Scheduling ~s~@[ (key ~s)~] at ~
+                          "~&;; Scheduling ~s~@[ (marker: ~s)~] at ~
                                 repeat-interval ~s...~%"
                           scheduled-function-to-run
-                          (scheduled-function-key scheduled-function-to-run)
+                          (scheduled-function-marker scheduled-function-to-run)
                           repeat-interval)
                   (force-output *trace-output*))
                 (insert-scheduled-function scheduled-function-to-run nil))
@@ -2451,10 +2458,10 @@
    ((null *scheduled-functions*)
     (when verbose
       (format *trace-output* 
-              "~&;; Scheduling ~s~@[ (key ~s)~] as the next ~
+              "~&;; Scheduling ~s~@[ (marker: ~s)~] as the next ~
                     scheduled-function...~%"
               scheduled-function
-              (scheduled-function-key scheduled-function))
+              (scheduled-function-marker scheduled-function))
       (force-output *trace-output*))
     (setf *scheduled-functions* (list scheduled-function))
     ;; schedule it:
@@ -2478,10 +2485,10 @@
          ;; splice into the list:
          (t (when verbose
               (format *trace-output* 
-                      "~&;; Adding ~s~@[ (key ~s)~] as a ~
+                      "~&;; Adding ~s~@[ (marker: ~s)~] as a ~
                             scheduled-function...~%"
                       scheduled-function
-                      (scheduled-function-key scheduled-function))
+                      (scheduled-function-marker scheduled-function))
               (force-output *trace-output*))
             (do ((sublist *scheduled-functions* (cdr sublist)))
                 ((null (cdr sublist))
@@ -2494,7 +2501,7 @@
 ;;; ---------------------------------------------------------------------------
 
 #-threads-not-available
-(defun delete-scheduled-function (name-or-scheduled-function key verbose)
+(defun delete-scheduled-function (name-or-scheduled-function marker verbose)
   ;;; Do the work of deleting a scheduled function from the list of
   ;;; *scheduled-functions*.  The *scheduled-function-cv* lock must be held
   ;;; when calling this function.
@@ -2502,9 +2509,9 @@
     (flet ((on-deletion (scheduled-function)
              (when verbose
                (format *trace-output* 
-                       "~&;; Unscheduling ~s~@[ (key ~s)~]...~%"
+                       "~&;; Unscheduling ~s~@[ (marker: ~s)~]...~%"
                        scheduled-function
-                       key)
+                       marker)
                (force-output *trace-output*))
              ;; Clear the invocation and repeat-interval values:
              (setf (scheduled-function-invocation-time scheduled-function)
@@ -2520,26 +2527,30 @@
                      (when (eq scheduled-function name-or-scheduled-function)
                        (on-deletion scheduled-function)))
                #'(lambda (scheduled-function)
-                   (when (and (funcall
-                               (scheduled-function-test scheduled-function)
-                               key 
-                               (scheduled-function-key scheduled-function))
-                              (equal (scheduled-function-name scheduled-function)
-                                     name-or-scheduled-function))
+                   (when (and 
+                           (funcall
+                            (scheduled-function-name-test scheduled-function)
+                            (scheduled-function-name scheduled-function)
+                            name-or-scheduled-function)
+                           (funcall
+                            (scheduled-function-marker-test scheduled-function)
+                            marker 
+                            (scheduled-function-marker scheduled-function)))
                      (on-deletion scheduled-function))))
-             *scheduled-functions*)))
+             *scheduled-functions*
+             :count 1)))
     ;; return the deleted scheduled-function (or nil, if unsuccessful):
     the-deleted-scheduled-function))
 
 ;;; ---------------------------------------------------------------------------
 
 #-threads-not-available
-(defun schedule-function-internal (name-or-scheduled-function key
+(defun schedule-function-internal (name-or-scheduled-function marker
                                    invocation-time repeat-interval verbose)
   (or (with-lock-held (*scheduled-functions-cv*)
         (let* ((next-scheduled-function (first *scheduled-functions*))
                (unscheduled-scheduled-function 
-                (delete-scheduled-function name-or-scheduled-function key
+                (delete-scheduled-function name-or-scheduled-function marker
                                            verbose))
                (scheduled-function (or unscheduled-scheduled-function 
                                        name-or-scheduled-function)))
@@ -2560,14 +2571,14 @@
             ;; return success (outside of the lock):
             't)))
       ;; warn if unable to find the scheduled function (outside of the lock):
-      (warn "Unable to find scheduled-function: ~s~@[ (key ~s)~]."
+      (warn "Unable to find scheduled-function: ~s~@[ (marker: ~s)~]."
             name-or-scheduled-function
-            key)))
+            marker)))
 
 ;;; ---------------------------------------------------------------------------
 
 (defun schedule-function (name-or-scheduled-function invocation-time
-                          &key key
+                          &key marker
                                repeat-interval
                                (verbose *schedule-function-verbose*))
   #-threads-not-available
@@ -2575,13 +2586,13 @@
     (check-type invocation-time integer)
     (check-type repeat-interval (or null integer))
     (schedule-function-internal name-or-scheduled-function
-                                key 
+                                marker 
                                 invocation-time 
                                 repeat-interval
                                 verbose)
     (values))
   #+threads-not-available
-  (declare (ignore name-or-scheduled-function invocation-time key 
+  (declare (ignore name-or-scheduled-function invocation-time marker 
                    repeat-interval verbose))
   #+threads-not-available
   (threads-not-available 'schedule-function))
@@ -2589,7 +2600,7 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun schedule-function-relative (name-or-scheduled-function interval
-                                   &key key
+                                   &key marker
                                         repeat-interval 
                                         (verbose *schedule-function-verbose*))
   ;;; Syntactic sugar that simply adds `interval' to the current time before
@@ -2599,13 +2610,13 @@
     (check-type interval integer)
     (check-type repeat-interval (or null integer))
     (schedule-function-internal name-or-scheduled-function 
-                                key
+                                marker
                                 (+ (get-universal-time) interval)
                                 repeat-interval
                                 verbose)
     (values))
   #+threads-not-available
-  (declare (ignore name-or-scheduled-function interval key
+  (declare (ignore name-or-scheduled-function interval marker
                    repeat-interval verbose))
   #+threads-not-available
   (threads-not-available 'schedule-function-relative))
@@ -2613,14 +2624,14 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun unschedule-function (name-or-scheduled-function 
-                            &key key
+                            &key marker
                                  (warnp 't)
                                  (verbose *schedule-function-verbose*))
   #-threads-not-available
   (or (with-lock-held (*scheduled-functions-cv*)
         (let* ((next-scheduled-function (first *scheduled-functions*))
                (unscheduled-function
-                (delete-scheduled-function name-or-scheduled-function key 
+                (delete-scheduled-function name-or-scheduled-function marker
                                            verbose)))
           ;; when unscheduled successfully: 
           (when unscheduled-function
@@ -2632,9 +2643,10 @@
             unscheduled-function)))
       ;; warn if unable to find the scheduled function (outside of the lock):
       (when warnp
-        (warn "Scheduled-function ~s~@[ (key ~s)~] was not scheduled; ~
+        (warn "Scheduled-function ~s~@[ (marker: ~s)~] was not scheduled; ~
                no action taken."
-              name-or-scheduled-function key)
+              name-or-scheduled-function 
+              marker)
         ;; ensure nil is returned:
         nil))
   #+threads-not-available
