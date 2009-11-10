@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/portable-threads.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Nov  9 06:53:14 2009 *-*
+;;;; *-* Last-Edit: Tue Nov 10 17:08:05 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -62,6 +62,9 @@
 ;;;  11-08-09 Renamed keyword arguments (:key -> :marker, etc.) in
 ;;;           MAKE-SCHEDULED-FUNCTION, SCHEDULE-FUNCTION,
 ;;;           SCHEDULE-FUNCTION-RELATIVE, and UNSCHEDULE-FUNCTION.  (Corkill)
+;;;  11-10-09 Add PAUSE-SCHEDULED-FUNCTION-SCHEDULER, 
+;;;           RESUME-SCHEDULED-FUNCTION-SCHEDULER, and 
+;;;           SCHEDULED-FUNCTION-SCHEDULER-PAUSED-P.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -240,7 +243,9 @@
             make-scheduled-function
             nearly-forever-seconds
             portable-threads-implementation-version ; not documented
+            pause-scheduled-function-scheduler
             restart-scheduled-function-scheduler
+            resume-scheduled-function-scheduler
             run-in-thread
             schedule-function
             schedule-function-relative
@@ -251,6 +256,7 @@
             scheduled-function-name
             scheduled-function-name-test
             scheduled-function-repeat-interval
+            scheduled-function-scheduler-paused-p
             sleep-nearly-forever
             spawn-form
             spawn-periodic-function
@@ -2318,6 +2324,7 @@
 
 (defvar *scheduled-functions* nil)
 (defvar *schedule-function-verbose* nil)
+(defvar *scheduled-functions-paused?* nil)
 #-threads-not-available
 (defvar *scheduled-functions-cv* (make-condition-variable))
 (defvar *scheduled-function-scheduler-thread* nil)
@@ -2361,8 +2368,9 @@
     (loop
       (with-lock-held (*scheduled-functions-cv*)
         (cond 
-         ;; nothing to schedule, wait until signaled:
-         ((null *scheduled-functions*)
+         ;; nothing to schedule or paused, wait until signaled:
+         ((or *scheduled-functions-paused?*
+              (null *scheduled-functions*))
           (condition-variable-wait *scheduled-functions-cv*))
          ;; something to schedule:
          (t (let ((invocation-time (scheduled-function-invocation-time
@@ -2653,6 +2661,24 @@
   (declare (ignore name-or-scheduled-function verbose))
   #+threads-not-available
   (threads-not-available 'unschedule-function))
+
+;;; ---------------------------------------------------------------------------
+
+(defun pause-scheduled-function-scheduler ()
+  (with-lock-held (*scheduled-functions-cv*)
+    (setf *scheduled-functions-paused?* 't)))
+
+;;; ---------------------------------------------------------------------------
+
+(defun resume-scheduled-function-scheduler ()
+  (with-lock-held (*scheduled-functions-cv*)
+    (setf *scheduled-functions-paused?* nil)
+    (condition-variable-signal *scheduled-functions-cv*)))
+
+;;; ---------------------------------------------------------------------------
+
+(defun scheduled-function-scheduler-paused-p ()
+  *scheduled-functions-paused?*)
 
 ;;; ---------------------------------------------------------------------------
 

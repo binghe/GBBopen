@@ -18,6 +18,9 @@ Important changes since GBBopen 1.4:
      - New :marker keyword argument to SCHEDULE-FUNCTION,
        SCHEDULE-FUNCTION-RELATIVE, and UNSCHEDULE-FUNCTION
      - New :warnp keyword argument to UNSCHEDULE-FUNCTION
+     - New PAUSE-SCHEDULED-FUNCTION-SCHEDULER, 
+       RESUME-SCHEDULED-FUNCTION-SCHEDULER, and 
+       SCHEDULED-FUNCTION-SCHEDULER-PAUSED-P functions
 
 
 Important changes in GBBopen 1.4:
