@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/portable-threads.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Nov 10 17:08:05 2009 *-*
+;;;; *-* Last-Edit: Wed Nov 11 04:02:47 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -63,8 +63,9 @@
 ;;;           MAKE-SCHEDULED-FUNCTION, SCHEDULE-FUNCTION,
 ;;;           SCHEDULE-FUNCTION-RELATIVE, and UNSCHEDULE-FUNCTION.  (Corkill)
 ;;;  11-10-09 Add PAUSE-SCHEDULED-FUNCTION-SCHEDULER, 
-;;;           RESUME-SCHEDULED-FUNCTION-SCHEDULER, and 
-;;;           SCHEDULED-FUNCTION-SCHEDULER-PAUSED-P.  (Corkill)
+;;;           RESUME-SCHEDULED-FUNCTION-SCHEDULER,  
+;;;           SCHEDULED-FUNCTION-SCHEDULER-PAUSED-P, and
+;;;           SCHEDULED-FUNCTION-SCHEDULER-RUNNING-P.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -257,6 +258,7 @@
             scheduled-function-name-test
             scheduled-function-repeat-interval
             scheduled-function-scheduler-paused-p
+            scheduled-function-scheduler-running-p
             sleep-nearly-forever
             spawn-form
             spawn-periodic-function
@@ -2365,6 +2367,9 @@
   ;;; The scheduled-function scheduler (run by the scheduled-function-scheduler
   ;;; thread)
   (let ((scheduled-function-to-run nil))
+    (when *schedule-function-verbose*
+      (format *trace-output* 
+              "~&;; Starting the scheduled-function scheduler...~%"))
     (loop
       (with-lock-held (*scheduled-functions-cv*)
         (cond 
@@ -2665,29 +2670,57 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun pause-scheduled-function-scheduler ()
+  #-threads-not-available
   (with-lock-held (*scheduled-functions-cv*)
-    (setf *scheduled-functions-paused?* 't)))
+    (when *schedule-function-verbose*
+      (format *trace-output* 
+              "~&;; Pausing the scheduled-function scheduler...~%"))
+    (setf *scheduled-functions-paused?* 't)
+    (values))
+  #+threads-not-available
+  (threads-not-available 'pause-scheduled-function-scheduler))
 
 ;;; ---------------------------------------------------------------------------
 
 (defun resume-scheduled-function-scheduler ()
+  #-threads-not-available
   (with-lock-held (*scheduled-functions-cv*)
+    (when *schedule-function-verbose*
+      (format *trace-output* 
+              "~&;; Resuming the scheduled-function scheduler...~%"))
     (setf *scheduled-functions-paused?* nil)
-    (condition-variable-signal *scheduled-functions-cv*)))
+    (condition-variable-signal *scheduled-functions-cv*)
+    (values))
+  #+threads-not-available
+  (threads-not-available 'resume-scheduled-function-scheduler))
 
 ;;; ---------------------------------------------------------------------------
 
 (defun scheduled-function-scheduler-paused-p ()
-  *scheduled-functions-paused?*)
+  #-threads-not-available
+  *scheduled-functions-paused?*
+  #+threads-not-available
+  (threads-not-available 'scheduled-function-scheduler-paused-p))
+
+;;; ---------------------------------------------------------------------------
+
+(defun scheduled-function-scheduler-running-p ()
+  #-threads-not-available
+  (and (threadp *scheduled-function-scheduler-thread*)
+       (thread-alive-p *scheduled-function-scheduler-thread*))
+  #+threads-not-available
+  (threads-not-available 'scheduled-function-scheduler-running-p))
 
 ;;; ---------------------------------------------------------------------------
 
 (defun restart-scheduled-function-scheduler ()
   #-threads-not-available
-  (if (and (threadp *scheduled-function-scheduler-thread*)
-           (thread-alive-p *scheduled-function-scheduler-thread*))
+  (if (scheduled-function-scheduler-running-p)
       (format t "~%;; The scheduled-function scheduler is already running.~%")
       (with-lock-held (*scheduled-functions-cv*)
+        (when *schedule-function-verbose*
+          (format *trace-output* 
+                  "~&;; Restarting the scheduled-function scheduler...~%"))
         (awaken-scheduled-function-scheduler)))
   #+threads-not-available
   (threads-not-available 'restart-scheduled-function-scheduler))
