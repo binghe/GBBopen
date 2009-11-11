@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/portable-threads-entities.tex *-*
-%% *-* Last-Edit: Mon Nov  9 07:37:33 2009; Edited-By: cork *-*
+%% *-* Last-Edit: Wed Nov 11 03:57:34 2009; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 \index{module!:portable-threads@\code{:portable-threads}}%
@@ -1519,9 +1519,12 @@ be specified to distinguish \glref{scheduled~functions} with the same
 \nobr{\textbf{\entlink{schedule-function-relative}}}, and
 \nobr{\textbf{\entlink{unschedule-function}}}.
 
-\begin{alsos}{*schedule-function-verbose*}
+\begin{alsos}{scheduled-function-scheduler-running-p}
 \also[*schedule-function-verbose*]
 \also[all-scheduled-functions]
+\also[pause-scheduled-function-scheduler]
+\also[restart-scheduled-function-scheduler]
+\also[resume-scheduled-function-scheduler]
 \also[schedule-function]
 \also[schedule-function-relative]
 \also[scheduled-function-marker]
@@ -1529,6 +1532,8 @@ be specified to distinguish \glref{scheduled~functions} with the same
 \also[scheduled-function-name]
 \also[scheduled-function-name-test]
 \also[scheduled-function-repeat-interval]
+\also[scheduled-function-scheduler-paused-p]
+\also[scheduled-function-scheduler-running-p]
 \also[spawn-periodic-function]
 \also[unschedule-function]
 \end{alsos}
@@ -1604,6 +1609,49 @@ interval):
 
 %% ------------------------------------------------------------------------
 
+\begin{functiondoc}{Function}{pause-scheduled-function-scheduler}%
+  {\noargs{}}
+\index{scheduled function!scheduler, pausing}%
+
+\fnsyntax
+
+\fnpurpose Pause \glref{scheduled-function} scheduling.
+
+\fnpackage \code{:portable-threads}
+
+\fnmodule \code{:portable-threads}
+
+\fnerrors
+\nothreads{}
+
+\fndescription Pausing the \glref{scheduled-function} scheduler causes all
+scheduled functions whose invocation time arrives to be held pending until the
+scheduled-function scheduler is resumed.
+
+\begin{alsos}{scheduled-function-scheduler-running-p}
+\also[resume-scheduled-function-scheduler]
+\also[scheduled-function-scheduler-paused-p]
+\also[scheduled-function-scheduler-running-p]
+\end{alsos}
+
+\bfindexit{scheduled-function-scheduler-paused-p}%
+\fnexample
+Pause the \glref{scheduled-function} scheduler:
+%
+\W\supp
+\begin{example}
+  > (\entlink{scheduled-function-scheduler-paused-p})
+  nil
+  > (pause-scheduled-function-scheduler)
+  > (\entlink{scheduled-function-scheduler-paused-p})
+  t
+  >
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
 \begin{functiondoc}{Function}{restart-scheduled-function-scheduler}%
   {\noargs{} \returns{} \var{thread\/}}
 \index{scheduled function!scheduler, restarting}%
@@ -1632,9 +1680,12 @@ interval):
 been killed accidentally, this function can be used to start a new scheduler
 \glref{thread}.
 
-\begin{alsos}{scheduled-function-repeat-interval}
+\begin{alsos}{scheduled-function-scheduler-running-p}
+\also[resume-scheduled-function-scheduler]
 \also[schedule-function]
 \also[scheduled-function-repeat-interval]
+\also[scheduled-function-scheduler-paused-p]
+\also[scheduled-function-scheduler-running-p]
 \also[unschedule-function]
 \end{alsos}
 
@@ -1655,6 +1706,50 @@ no effect:
 \begin{example}
   > (restart-scheduled-function-scheduler)
   ;; The scheduled-function scheduler is already running.
+  nil
+  >
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{resume-scheduled-function-scheduler}%
+  {\noargs{}}
+\index{scheduled function!scheduler, resuming}%
+
+\fnsyntax
+
+\fnpurpose Resume \glref{scheduled-function} scheduling.
+
+\fnpackage \code{:portable-threads}
+
+\fnmodule \code{:portable-threads}
+
+\fnerrors
+\nothreads{}
+
+\fndescription Resuming the \glref{scheduled-function} scheduler causes all
+scheduled functions that have been held pending while the scheduled-function
+scheduler was paused to be invoked as if their invocation time had just
+occurred.
+
+\begin{alsos}{scheduled-function-scheduler-running-p}
+\also[pause-scheduled-function-scheduler]
+\also[scheduled-function-scheduler-paused-p]
+\also[scheduled-function-scheduler-running-p]
+\end{alsos}
+
+\bfindexit{scheduled-function-scheduler-paused-p}%
+\fnexample
+Resume the \glref{scheduled-function} scheduler:
+%
+\W\supp
+\begin{example}
+  > (\entlink{scheduled-function-scheduler-paused-p})
+  t
+  > (resume-scheduled-function-scheduler)
+  > (\entlink{scheduled-function-scheduler-paused-p})
   nil
   >
 \end{example}
@@ -1760,8 +1855,7 @@ that matches both the \var{name\/} and \var{marker} values.  The selected
 with the specified \nobr{\var{invocation-time\/}} and optional
 \nobr{\var{repeat-interval}}, if specified.
 
-
-\begin{alsos}{restart-scheduled-function-scheduler}
+\begin{alsos}{scheduled-function-scheduler-running-p}
 \also[*schedule-function-verbose*]
 \also[all-scheduled-functions]
 \also[encode-time-of-day]
@@ -1769,6 +1863,8 @@ with the specified \nobr{\var{invocation-time\/}} and optional
 \also[restart-scheduled-function-scheduler]
 \also[schedule-function-relative]
 \also[scheduled-function-repeat-interval]
+\also[scheduled-function-scheduler-paused-p]
+\also[scheduled-function-scheduler-running-p]
 \also[spawn-periodic-function]
 \also[unschedule-function]
 \end{alsos}
@@ -1885,7 +1981,7 @@ that matches both the \var{name\/} and \var{marker} values.  The selected
 with an invocation time of \nobr{\var{interval\/}} seconds from the current
 time and optional \nobr{\var{repeat-interval}}, if specified.
 
-\begin{alsos}{restart-scheduled-function-scheduler}
+\begin{alsos}{scheduled-function-scheduler-running-p}
 \also[*schedule-function-verbose*]
 \also[all-scheduled-functions]
 \also[make-scheduled-function]
@@ -1897,6 +1993,8 @@ time and optional \nobr{\var{repeat-interval}}, if specified.
 \also[scheduled-function-name]
 \also[scheduled-function-name-test]
 \also[scheduled-function-repeat-interval]
+\also[scheduled-function-scheduler-paused-p]
+\also[scheduled-function-scheduler-running-p]
 \also[spawn-periodic-function]
 \also[unschedule-function]
 \end{alsos}
@@ -2262,6 +2360,99 @@ randomly sets whether to reschedule itself (and at what interval):
                 ;; don't repeat 1\% of the time:
                 nil)))
     (do-some-stuff))
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{scheduled-function-scheduler-paused-p}%
+  {\noargs{} \returns{} \var{boolean\/}}
+\index{scheduled function!scheduler, checking paused status}%
+
+\fnsyntax
+
+\fnpurpose Return a value indicating whether \glref{scheduled-function}
+scheduling is paused.
+
+\fnpackage \code{:portable-threads}
+
+\fnmodule \code{:portable-threads}
+
+\fnargs
+\begin{args}{boolean}
+\arg[boolean] A \glref{generalized~boolean}
+\end{args}
+
+\fnreturns True if the \glref{scheduled-function} scheduler is paused; \nil{}
+otherwise.
+
+\fnerrors
+\nothreads{}
+
+\begin{alsos}{scheduled-function-scheduler-running-p}
+\also[pause-scheduled-function-scheduler]
+\also[resume-scheduled-function-scheduler]
+\also[scheduled-function-scheduler-running-p]
+\end{alsos}
+
+\bfindexit{pause-scheduled-function-scheduler}%
+\fnexample
+Pause the \glref{scheduled-function} scheduler:
+%
+\W\supp
+\begin{example}
+  > (scheduled-function-scheduler-paused-p)
+  nil
+  > (\entlink{pause-scheduled-function-scheduler})
+  > (scheduled-function-scheduler-paused-p)
+  t
+  >
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{scheduled-function-scheduler-running-p}%
+  {\noargs{} \returns{} \var{boolean\/}}
+\index{scheduled function!scheduler, checking running status}%
+
+\fnsyntax
+
+\fnpurpose Return a value indicating whether the \glref{scheduled-function}
+scheduler is running.
+
+\fnpackage \code{:portable-threads}
+
+\fnmodule \code{:portable-threads}
+
+\fnargs
+\begin{args}{boolean}
+\arg[boolean] A \glref{generalized~boolean}
+\end{args}
+
+\fnreturns True if the \glref{scheduled-function} scheduler is running; \nil{}
+otherwise.
+
+\fnerrors
+\nothreads{}
+
+\begin{alsos}{scheduled-function-scheduler-paused-p}
+\also[pause-scheduled-function-scheduler]
+\also[restart-scheduled-function-scheduler]
+\also[resume-scheduled-function-scheduler]
+\also[scheduled-function-scheduler-paused-p]
+\end{alsos}
+
+\fnexample
+Check that the \glref{scheduled-function} scheduler is running:
+%
+\W\supp
+\begin{example}
+  > (scheduled-function-scheduler-running-p)
+  t
+  >
 \end{example}
 
 \end{functiondoc}
