@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/portable-threads-entities.tex *-*
-%% *-* Last-Edit: Wed Nov 11 03:57:34 2009; Edited-By: cork *-*
+%% *-* Last-Edit: Mon Nov 23 05:48:29 2009; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 \index{module!:portable-threads@\code{:portable-threads}}%
@@ -241,7 +241,7 @@ scheduler.
 
 \fnsyntax
 
-\fnpurpose Return a list of all \glref{scheduled~functions} that are
+\fnpurpose Return the list of all \glref{scheduled~functions} that are
 currently scheduled.
 
 \fnpackage \code{:portable-threads}
@@ -273,8 +273,16 @@ currently scheduled.
 
 \fnnotes On Common Lisp implementations without threads, \nil{} is returned.
 
-The returned list of \glref{scheduled~functions} should not be
-destructively altered.
+\bfindexit{schedule-function}%
+\bfindexit{unschedule-function}%
+%
+The returned list of \glref{scheduled~functions} should not be destructively
+altered.  In particular, unscheduling a scheduled function (using
+\nobr{\textbf{\entlink{unschedule-function}}}) or changing a scheduled
+function's invocation time (using \nobr{\textbf{\entlink{schedule-function}}})
+may modify the list of scheduled functions, so a copy of the returned list of
+scheduled functions should be used for any iteration that involves these
+operations.
 
 \end{functiondoc}
 
@@ -3095,8 +3103,8 @@ Two more simple examples using a \glref{condition~variable}:
 
 \fnsyntax
 
-\fnpurpose Cancel the upcoming invocation of a currently scheduled
-\glref{scheduled~function}.
+\fnpurpose Cancel the upcoming invocation (and subsequent repeat-interval
+scheduling) of a currently scheduled \glref{scheduled~function}.
 
 \fnpackage \code{:portable-threads}
 
