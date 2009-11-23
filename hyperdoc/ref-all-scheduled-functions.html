@@ -20,7 +20,7 @@
 <span 
     style="font-family: serif; font-style: normal">=&gt;</span> <var>list-of-scheduled-functions</var></td><td valign="baseline" align="right">[<i>Function</i>]
 </td></tr></table></p>
-<p><span class="fndoclabel">Purpose</span> <br />Return a list of all <a href="ref-glossary.html#gl:scheduled-function">scheduled&nbsp;functions</a> that are
+<p><span class="fndoclabel">Purpose</span> <br />Return the list of all <a href="ref-glossary.html#gl:scheduled-function">scheduled&nbsp;functions</a> that are
 currently scheduled.
 </p>
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:portable-threads</code>
@@ -47,8 +47,13 @@ currently scheduled.
 </p>
 <p><span class="fndoclabel">Notes</span> <br />On Common Lisp implementations without threads, <code>nil</code> is returned.
 </p>
-<p>The returned list of <a href="ref-glossary.html#gl:scheduled-function">scheduled&nbsp;functions</a> should not be
-destructively altered.
+<p><a name="id1">The</a> returned list of <a href="ref-glossary.html#gl:scheduled-function">scheduled&nbsp;functions</a> should not be destructively
+altered.  In particular, unscheduling a scheduled function (using
+<nobr><b><a href="ref-unschedule-function.html">unschedule-function</a></b></nobr>) or changing a scheduled
+function's invocation time (using <nobr><b><a href="ref-schedule-function.html">schedule-function</a></b></nobr>)
+may modify the list of scheduled functions, so a copy of the returned list of
+scheduled functions should be used for any iteration that involves these
+operations.
 </p>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
