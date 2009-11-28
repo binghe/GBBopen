@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/portable-threads.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Nov 11 04:02:47 2009 *-*
+;;;; *-* Last-Edit: Sat Nov 28 06:55:27 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -190,7 +190,8 @@
    '(mp:make-lock
      mp::initialize-multiprocessing)
    #+(and sbcl sb-thread)
-   '(sb-thread:thread-alive-p
+   '(sb-thread:symbol-value-in-thread
+     sb-thread:thread-alive-p
      sb-thread:thread-name
      sb-thread:thread-yield)
    #+(and sbcl (not sb-thread))
@@ -1677,6 +1678,7 @@
 ;;; ---------------------------------------------------------------------------
 ;;;   Symbol-value-in-thread
 
+#-(and sbcl sb-thread)
 (defun symbol-value-in-thread (symbol thread)
   ;; Returns two values:
   ;;  1. the symbol value (or nil if it is unbound)
@@ -1743,21 +1745,7 @@
     (values-list result))
   #+lispworks
   (mp:read-special-in-process thread symbol)
-  #+(and sbcl sb-thread)
-  (sb-thread:symbol-value-in-thread symbol thread)
-  ;; We can't figure out how to use (sb-thread:symbol-value-in-thread
-  ;; symbol thread-sap), so:
-  #+ignore
-  (let ((result nil))
-    (sb-thread:interrupt-thread 
-     thread
-     #'(lambda () (setf result
-                        (if (boundp symbol)
-                            `(,(symbol-value symbol) t)
-                            '(nil nil)))))
-    ;; Wait for result:
-    (loop until result do (sleep 0.05))
-    (values-list result))
+  ;;; (and sbcl sb-thread) uses imported SBCL function
   #+scl
   (multiple-value-bind (value boundp)
       (kernel:thread-symbol-dynamic-value thread symbol)
