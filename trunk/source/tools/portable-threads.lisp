@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/portable-threads.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Nov 28 06:55:27 2009 *-*
+;;;; *-* Last-Edit: Sun Nov 29 04:12:46 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -190,8 +190,7 @@
    '(mp:make-lock
      mp::initialize-multiprocessing)
    #+(and sbcl sb-thread)
-   '(sb-thread:symbol-value-in-thread
-     sb-thread:thread-alive-p
+   '(sb-thread:thread-alive-p
      sb-thread:thread-name
      sb-thread:thread-yield)
    #+(and sbcl (not sb-thread))
@@ -849,6 +848,7 @@
          (mp:schedule-timer-relative ,timer-sym ,seconds)
          (unwind-protect (progn ,@timed-body)
            (mp:unschedule-timer ,timer-sym)))))
+  ;; SBCL's native WITH-TIMEOUT doesn't nest, so we have to roll our own:
   #+sbcl-does-not-nest
   `(handler-case (sb-ext:with-timeout ,seconds ,@timed-body)
      (sb-ext:timeout ()
@@ -1678,7 +1678,6 @@
 ;;; ---------------------------------------------------------------------------
 ;;;   Symbol-value-in-thread
 
-#-(and sbcl sb-thread)
 (defun symbol-value-in-thread (symbol thread)
   ;; Returns two values:
   ;;  1. the symbol value (or nil if it is unbound)
@@ -1745,7 +1744,18 @@
     (values-list result))
   #+lispworks
   (mp:read-special-in-process thread symbol)
-  ;;; (and sbcl sb-thread) uses imported SBCL function
+  ;; Can't get SB-THREAD:SYMBOL-VALUE-IN-THREAD to work correctly, so:
+  #+(and sbcl sb-thread)  
+  (let ((result nil))
+    (sb-thread:interrupt-thread 
+     thread
+     #'(lambda () (setf result
+                        (if (boundp symbol)
+                            `(,(symbol-value symbol) t)
+                            '(nil nil)))))
+    ;; Wait for result:
+    (loop until result do (sleep 0.05))
+    (values-list result))
   #+scl
   (multiple-value-bind (value boundp)
       (kernel:thread-symbol-dynamic-value thread symbol)

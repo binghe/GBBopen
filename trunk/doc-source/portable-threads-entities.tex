@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/portable-threads-entities.tex *-*
-%% *-* Last-Edit: Mon Nov 23 05:48:29 2009; Edited-By: cork *-*
+%% *-* Last-Edit: Sun Nov 29 05:48:42 2009; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 \index{module!:portable-threads@\code{:portable-threads}}%
@@ -3300,7 +3300,8 @@ limit is reached.
 \arg[timeout-forms] An implicit \nobr{\textbf{progn}} of \glref{forms} to be
 evaluated if the timed \nobr{\var{forms\/}} do not complete before \nobr{\var{seconds\/}} seconds have elapsed
 \arg[forms] An implicit \nobr{\textbf{progn}} of \glref{forms} to be evaluated
-\arg[results] The values returned by evaluating the last \var{form}
+\arg[results] The values returned by evaluating the last \var{form\/} or the
+last \nobr{\var{timeout-form\/}}
 \end{args}
 
 \fnreturns The values returned by evaluating the last \var{form\/} if
@@ -3340,7 +3341,24 @@ Again, but this time sleep for two seconds to cause a time out:
   > (with-timeout (1 ':timed-out)
        (sleep 2) 
        ':did-not-time-out)
-  :timed-out              \textrm{\textcolor{green}{; (after 2 seconds)}}
+  :timed-out              \textrm{\textcolor{green}{; (after 1 second)}}
+  >
+\end{example}
+%
+Uses of \nobr{\textbf{with-timeout}} can be nested:
+%
+\W\supp\notpretop
+\begin{example}
+  > (with-timeout (1 ':timed-out-outer)
+       (with-timeout (2 ':timed-out-inner)
+          (sleep 3)
+          ':did-not-time-out))
+  :timed-out-outer        \textrm{\textcolor{green}{; (after 1 second)}}
+  > (with-timeout (2 ':timed-out-outer)
+       (with-timeout (1 ':timed-out-inner)
+          (sleep 3)
+          ':did-not-time-out))
+  :timed-out-inner        \textrm{\textcolor{green}{; (after 1 second)}}
   >
 \end{example}
 
