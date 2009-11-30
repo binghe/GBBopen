@@ -35,7 +35,8 @@ limit is reached.
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>timeout-forms</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An implicit <nobr><b>progn</b></nobr> of <a href="ref-glossary.html#gl:forms">forms</a> to be
 evaluated if the timed <nobr><var>forms</var></nobr> do not complete before <nobr><var>seconds</var></nobr> seconds have elapsed
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>forms</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An implicit <nobr><b>progn</b></nobr> of <a href="ref-glossary.html#gl:forms">forms</a> to be evaluated
-</td></tr><tr valign="top"><td valign="baseline" nowrap><i>results</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> The values returned by evaluating the last <var>form</var>
+</td></tr><tr valign="top"><td valign="baseline" nowrap><i>results</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> The values returned by evaluating the last <var>form</var> or the
+last <nobr><var>timeout-form</var></nobr>
 </td></tr></table>
 </p>
 <p><span class="fndoclabel">Returns</span> <br />The values returned by evaluating the last <var>form</var> if
@@ -70,7 +71,23 @@ Again, but this time sleep for two seconds to cause a time out:
        (sleep 2) 
        ':did-not-time-out)
   :timed-out              <span 
-    style="font-family: serif; font-style: normal"><font color="#00ff00">; (after 2 seconds)</font></span>
+    style="font-family: serif; font-style: normal"><font color="#00ff00">; (after 1 second)</font></span>
+  &gt;
+</pre>
+Uses of <nobr><b>with-timeout</b></nobr> can be nested:
+<pre>
+  &gt; (with-timeout (1 ':timed-out-outer)
+       (with-timeout (2 ':timed-out-inner)
+          (sleep 3)
+          ':did-not-time-out))
+  :timed-out-outer        <span 
+    style="font-family: serif; font-style: normal"><font color="#00ff00">; (after 1 second)</font></span>
+  &gt; (with-timeout (2 ':timed-out-outer)
+       (with-timeout (1 ':timed-out-inner)
+          (sleep 3)
+          ':did-not-time-out))
+  :timed-out-inner        <span 
+    style="font-family: serif; font-style: normal"><font color="#00ff00">; (after 1 second)</font></span>
   &gt;
 </pre>
 </p>

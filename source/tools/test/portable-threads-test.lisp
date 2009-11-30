@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/test/portable-threads-test.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Oct  7 12:05:58 2009 *-*
+;;;; *-* Last-Edit: Sat Nov 28 16:00:13 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -848,7 +848,7 @@
                (let ((*v* 4)
                      (*x* 5)
                      (*y* 6))
-                 (declare (special *v* *x* *y))
+                 (declare (special *v* *x* *y*))
                  (makunbound '*y*)
                  (with-lock-held (cv)
                    (setf (state-of cv) ':hibernating)
