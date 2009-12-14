@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/portable-threads.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Nov 29 04:12:46 2009 *-*
+;;;; *-* Last-Edit: Mon Nov 30 15:54:01 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -1830,7 +1830,7 @@
       (push (cons (cons tag ccl:*current-process*) semaphore)
             *sleeper-semaphores*))
     (ccl:wait-on-semaphore semaphore))
-  #+(and lispworks6 lispworks6)
+  #+(and lispworks lispworks6)
   (mp:current-process-pause nearly-forever-seconds))
 
 ;;; ---------------------------------------------------------------------------
