@@ -13,6 +13,10 @@ Important changes since GBBopen 1.4:
 
   * Changes to Portable Threads
      - New ATOMIC-INCF& and ATOMIC-DECF& macros
+     - Scheduled and periodic function entities moved into a 
+       separate file (scheduled-periodic-functions.lisp)
+
+  * Changes to Scheduled and Periodic Functions
      - New :name-test, :marker, :marker-test keyword arguments to 
        MAKE-SCHEDULED-FUNCTION
      - New :marker keyword argument to SCHEDULE-FUNCTION,

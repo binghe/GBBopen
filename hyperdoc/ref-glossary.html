@@ -348,7 +348,7 @@ or a <a href="#gl:pathname">pathname</a> (denoting itself).
 <p></dd><dt><a name="id153"></a><b>pending&nbsp;KS&nbsp;activation</b></dt><dd>
 <a name="id154">A</a> <a href="#gl:activations">KS&nbsp;activation</a> that has not been executed or <a href="#gl:obviation">obviated</a>.
 <p></dd><dt><a name="id155"></a><b>periodic&nbsp;function</b></dt><dd>
-<a name="gl:periodic-function">A</a> <a href="#gl:function">function</a> of no arguments that is run repeatedly at a specified
+<a name="gl:periodic">A</a> <a href="#gl:function">function</a> of no arguments that is run repeatedly at a specified
 interval, at a resolution as brief as supported by <code>sleep</code>. A separate
 <a href="#gl:thread">thread</a> is spawned to manage the periodic invocations of the specified
 function.
@@ -421,7 +421,7 @@ Part of the <a href="ref-module-manager-entities.html">Module Manager Facility</
 <a name="gl:Root">A</a> fixed anchor directory for a tree of relative directory definitions.
 Part of the <a href="ref-module-manager-entities.html">Module Manager Facility</a>.
 <p></dd><dt><a name="id187"></a><b>scheduled&nbsp;function</b></dt><dd>
-<a name="gl:scheduled-function">An</a> object that contains a <a href="#gl:function">function</a> that may be scheduled to run at an
+<a name="gl:scheduled">An</a> object that contains a <a href="#gl:function">function</a> that may be scheduled to run at an
 absolute or relative time. When that specified time arrives, the function
 is invoked with a single argument: the scheduled-function object.
 <p>A repeat interval can also be specified for the scheduled
@@ -431,7 +431,7 @@ current invocation.
 </p>
 <p>Scheduled functions can be scheduled to a resolution of one second.  Periodic
 function invocations at brief time intervals are provided by
-<a href="#gl:periodic-function">periodic&nbsp;functions</a>.
+<a href="#gl:periodic">periodic&nbsp;functions</a>.
 </p>
 <p></dd><dt><a name="id189"></a><b>series-composite&nbsp;dimension&nbsp;value</b></dt><dd>
 <a name="id190">A</a> <a href="#id35">dimension&nbsp;value</a> that is a series of <a href="#id36">dimension&nbsp;values</a> that
