@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/modules.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Oct 22 13:00:07 2009 *-*
+;;;; *-* Last-Edit: Sat Dec 19 07:53:57 2009 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -77,7 +77,8 @@
                                            ; compiled/loaded if we are using
                                            ; the Module Manager Facility
     (:directory :gbbopen-tools)
-    (:files ("portable-threads" :forces-recompile)))
+    (:files ("portable-threads" :forces-recompile)
+            "scheduled-periodic-functions"))
   
   (define-module :polling-functions
     (:requires :gbbopen-tools :portable-threads)
