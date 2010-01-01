@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/module-manager/module-manager.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Oct 28 05:35:17 2009 *-*
+;;;; *-* Last-Edit: Fri Jan  1 10:42:59 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -15,7 +15,7 @@
 ;;; Written by: Dan Corkill (incorporating some original ideas by 
 ;;;                          Kevin Gallagher and Zachary Rubinstein)
 ;;;
-;;; Copyright (C) 2002-2009, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2010, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; Porting Notice:
@@ -217,8 +217,13 @@
 ;; Allow use of CMUCL package nicknames with SBCL:
 #+sbcl
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (sb-impl::enter-new-nicknames (find-package "SB-PCL") '("PCL"))
-  (sb-impl::enter-new-nicknames (find-package "SB-UNIX") '("UNIX")))
+  (let ((fn (or
+              ;; Pre SBCL-1.0.34:
+              (find-symbol "ENTER-NEW-NICKNAMES" :sb-impl)
+              ;; Post SBCL-1.0.34:
+              (find-symbol "%ENTER-NEW-NICKNAMES" :sb-impl))))
+    (funcall fn (find-package "SB-PCL") '("PCL"))
+    (funcall fn (find-package "SB-UNIX") '("UNIX"))))
 
 ;;; ===========================================================================
 ;;;  Export user-level Module Manager names.  (Some of these names could
