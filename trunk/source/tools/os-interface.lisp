@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/os-interface.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Sep  1 06:18:36 2008 *-*
+;;;; *-* Last-Edit: Wed Jan 20 11:35:21 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -237,7 +237,7 @@
         (external-process-output-stream process)              
         (external-process-input-stream process)))
      process))
-  #-(or allegro clisp cmu digitool-mcl ecl lispworks sbcl scl)
+  #-(or allegro clisp closure cmu digitool-mcl ecl lispworks sbcl scl)
   (need-to-port run-external-program))
 
 ;;; ---------------------------------------------------------------------------
