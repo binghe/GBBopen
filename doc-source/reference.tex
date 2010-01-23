@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Thu Dec 31 14:22:25 2009; Edited-By: cork *-*
+%% *-* Last-Edit: Sat Jan 23 10:24:28 2010; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2010, Dan Corkill <corkill@GBBopen.org>
@@ -12506,6 +12506,7 @@ Calls \code{sleep} with \var{seconds\/} or \nobr{\textbf{\entlink{nearly-forever
 \also[nearly-forever-seconds]
 \end{alsos}
 
+\bfindexit{nearly-forever-seconds}%
 \fnexamples
 %
 \W\supp
@@ -12513,7 +12514,7 @@ Calls \code{sleep} with \var{seconds\/} or \nobr{\textbf{\entlink{nearly-forever
   > (sleep-nearly-forever)    ; sleep for a very long time
         ...
   > (sleep-nearly-forever     ; sleep as long as the above
-       (* 2 most-positive-fixnum))
+       (* 2 \entlink{nearly-forever-seconds}))
         ...
   >
 \end{example}
