@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/module-manager/module-manager-loader.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Nov  5 13:11:11 2009 *-*
+;;;; *-* Last-Edit: Sun Jan 24 06:42:57 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -189,6 +189,7 @@
              #+(and x86 macosx) "mac86"
              #+(and x86-64 macosx) "mac86-64" ; just a guess
              #+(and x86 (not macosx) (not linux86) (not freebsd)) "windows"
+             #+(and x86-64 (not macosx) (not linux86) (not freebsd)) "windows-64"
              #+powerpc "macppc"
              #+powerpc-64 "macppc-64")  ; just a guess
             "allegro"
@@ -308,7 +309,8 @@
              #+(and x86 linux) "linux86"
              #+(and x86-64 linux) "linux86-64" ; Thanks to Eric Menard
              #+sparc "sparc"
-             #+(and x86 (not linux) (not darwin)) "windows")
+             #+(and x86 (not linux) (not darwin)) "windows"
+             #+(and x86-64 (not linux) (not darwin)) "windows-64")
             "sbcl"
             nil
             (lisp-implementation-version))
