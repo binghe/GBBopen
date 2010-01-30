@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/tutorial.tex *-*
-%% *-* Last-Edit: Fri Jan  1 08:04:48 2010; Edited-By: cork *-*
+%% *-* Last-Edit: Sat Jan 30 06:52:03 2010; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2005-2010, Dan Corkill <corkill@GBBopen.org>
@@ -2215,8 +2215,8 @@ application) by issuing only a single command.
 The file \nobr{\code{\var{<install-dir>\/}/initiate.lisp}} is an alternative
 for \nobr{\code{\var{<install-dir>\/}/startup.lisp}} that adds handy GBBopen
 keyword commands to the top-level REPL listener for \xsitelink{Allegro
-  CL}{http://www.franz.com}, \xsitelink{CLISP}{http://clisp.cons.org/},
-\xsitelink{Clozure CL}{http://clozure.com/clozurecl.html},
+  CL}{http://franz.com/products/allegrocl/}, \xsitelink{CLISP}{http://clisp.cons.org/},
+\xsitelink{Clozure CL}{http://trac.clozure.com/ccl},
 \xsitelink{CMUCL}{http://www.cons.org/cmucl/},
 \xsitelink{ECL}{http://common-lisp.net/project/ecl/},
 \xsitelink{LispWorks}{http://www.lispworks.com},
@@ -2330,7 +2330,7 @@ or
   gbbopen-user>}
 \end{smallexample}
 
-However, \xsitelink{Allegro CL}{http://www.franz.com},
+However, \xsitelink{Allegro CL}{http://franz.com/products/allegrocl/},
 \xsitelink{CLISP}{http://clisp.cons.org/}, and
 \xsitelink{LispWorks}{http://www.lispworks.com} do not support the list
 notation.  CLISP versions prior to 2.45 and
@@ -2439,7 +2439,7 @@ initialization file is:
 \end{example}
 
 Here is my \nobr{\code{.clinit.cl}} initialization file for
-\xsitelink{Allegro CL}{http://www.franz.com}:
+\xsitelink{Allegro CL}{http://franz.com/products/allegrocl/}:
 %
 \W\supp
 \begin{example}
@@ -2461,11 +2461,11 @@ Here is my \nobr{\code{.clinit.cl}} initialization file for
 The initialization file names for supported GBBopen ports are:
 %
 \begin{tabular}{llll}
-~~~~~~ & \xsitelink{Allegro CL}{http://www.franz.com} &
+~~~~~~ & \xsitelink{Allegro CL}{http://franz.com/products/allegrocl/} &
 ~~~~~~ & \code{.clinit.cl} \\
        & \xsitelink{CLISP}{http://clisp.cons.org/} &
        & \code{.clisprc} \\
-       & \xsitelink{Clozure CL}{http://clozure.com/clozurecl.html} &
+       & \xsitelink{Clozure CL}{http://trac.clozure.com/ccl} &
        & \code{ccl-init.lisp} \\
        & \xsitelink{CMUCL}{http://www.cons.org/cmucl/} &
        & \code{init.lisp} \\
@@ -2698,7 +2698,7 @@ by your Common Lisp environment.  The development features of a quality Common
 Lisp environment are well worth the price of learning a new editor.  In an
 Emacs-based environment, such as
 \xsitelink{SLIME}{http://common-lisp.net/project/slime/} or \xsitelink{Allegro
-  CL}{http://www.franz.com}'s ELI, typing \nobr{\code{C-x C-f}} will prompt
+  CL}{http://franz.com/products/allegrocl/}'s ELI, typing \nobr{\code{C-x C-f}} will prompt
 you for the name of a file to editor or create.  (We will use Emacs
 key-binding notation, where \nobr{\code{C-x C-f}} means typing \code{\ctrl{c}}
 followed by {\ctrl{f}}.)
