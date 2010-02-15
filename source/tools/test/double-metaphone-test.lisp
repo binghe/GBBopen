@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/test/double-metaphone-test.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Feb 15 14:40:52 2010 *-*
+;;;; *-* Last-Edit: Mon Feb 15 16:05:50 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -17,32 +17,23 @@
 ;;; ---------------------------------------------------------------------------
 
 (defparameter *encodings*
-    '(("TSTN" "testing")
-      ("0" "the")
-      ("KK" "quick")
-      ("BRN" "brown")
-      ("FKS" "fox")
-      ("JMPT" "jumped")
-      ("AFR" "over")
-      ("LS" "lazy")
-      ("TKS" "dogs")
-      ("MKFR" "MacCafferey")
-      ("STFN" "Stephan")
-      ("KSSK" "Kuczewski")
-      ("TSTN" "testing")
-      ;; secondary keys
-      (nil "testing" :secondary)
-      ("T" "the" :secondary)
-      (nil "quick" :secondary)
-      (nil "brown" :secondary)
-      (nil "fox" :secondary)
-      ("AMPT" "jumped" :secondary)
-      (nil "over" :secondary)
-      (nil "lazy" :secondary)
-      (nil "dogs" :secondary)
-      (nil "MacCafferey" :secondary)
-      (nil "Stephan" :secondary)
-      (nil "Kutchefski" :secondary)))
+    '(("testing" "TSTN" nil)
+      ("" "" nil)
+      ("the" "0" "T")
+      ("quick" "KK" nil)
+      ("brown" "BRN" nil)
+      ("fox" "FKS" nil)
+      ("jumped" "JMPT" "AMPT")
+      ("over" "AFR" nil)
+      ("lazy" "LS" nil)
+      ("dogs" "TKS" nil)
+      ("MacCafferey" "MKFR" nil)
+      ("Stephan" "STFN" nil)
+      ("Kuczewski" "KSSK" "KXFS")
+      ("Kutchefski" "KXFS" nil)
+      ("San Jose" "SNHS" nil)
+      ;; some have this as "SNFP":
+      ("xenophobia" "SNFB" nil)))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -56,6 +47,12 @@
       ("Xavier" "savior")))
 
 ;;; ---------------------------------------------------------------------------
+;;;  The following test pairs are translated from
+;;;  http://aspell.sourceforge.net/test/batch0.tab
+;;;
+;;;  Copyright (C) 2002 Kevin Atkinson (kevina@gnu.org).
+;;;  Verbatim copying and distribution is permitted in any medium, provided
+;;;  this notice is preserved.
 
 (defparameter *more-matches*
     '(("Accosinly" "Occasionally")
@@ -616,17 +613,18 @@
 
 (defun check-encodings ()
   (format t "~&;;   Starting encodings test...~%")
-  (loop for (expected string secondary-p) in *encodings* do
-        (multiple-value-bind (primary secondary)
-            (double-metaphone string)
-	  (cond 
-	   (secondary-p
-	    (unless (string= secondary expected)
-	      (report-problem "Secondary of ~s should be ~s, got ~s"
-			      string expected secondary)))
-	   (t (unless (string= primary expected)
-		(report-problem "Primary of ~s should be ~s, got ~s"
-				string expected primary))))))
+  (loop for test in *encodings* do
+        (destructuring-bind (string expected-primary expected-secondary)
+            test
+          (multiple-value-bind (primary secondary)
+              (double-metaphone string)
+            (unless (string= primary expected-primary)
+              (report-problem "Primary of ~s should be ~s, got ~s"
+                              string expected-primary primary))
+            (unless (or (and (not expected-secondary) (not secondary))
+                        (string= secondary expected-secondary)
+                        (report-problem "Secondary of ~s should be ~s, got ~s"
+                                        string expected-secondary secondary))))))
   (format t "~&;;   Encodings test completed.~%"))
 
 ;;; ---------------------------------------------------------------------------
