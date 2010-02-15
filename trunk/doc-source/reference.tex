@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Sat Jan 30 06:51:41 2010; Edited-By: cork *-*
+%% *-* Last-Edit: Mon Feb 15 14:59:56 2010; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2010, Dan Corkill <corkill@GBBopen.org>
@@ -3828,9 +3828,10 @@ useful Common Lisp additions and utilities.  Convenient (\reflink{shorthand
 \nobr{\code{double-float}}, and \nobr{\code{long-float}} numeric operators are
 provided by the \nobr{\code{:gbbopen-tools}} module, as are efficient
 \reflink{pseudo probability}{sec:pprob} operators.  Date and time
-\reflink{parsing and formatting entities}{sec:dateandtime} and
+\reflink{parsing and formatting entities}{sec:dateandtime},
 \nobr{\code{\glref{fixnum}}}-based \reflink{offset-universal-time
-  functions}{sec:offsettime} are also included in GBBopen Tools.
+  functions}{sec:offsettime}, and \reflink{left-leaning red-black
+(\glref{LLRB}) trees}{sec:trees} are also included in GBBopen Tools.
 
 Uniform access to \reflink{commonly used CLOS and MOP symbols}{sec:CLOS} is
 provided by the \nobr{\code{:gbbopen-tools}} package.  Uniform interfaces to
@@ -3838,10 +3839,7 @@ implementation-specific thread (multiprocessing) capabilities are provided by
 the \reflink{\nobr{\code{:portable-threads}} module}{sec:portablethreads},
 polling functions for Common Lisp implementations that do not provide thread
 capabilities are provided by the \reflink{\nobr{\code{:polling-functions}}
-  module}{sec:pollingfunctions}, uniform socket interfaces are provided by the
-\reflink{\nobr{\code{:portable-sockets}} module}{sec:portablesockets}, and
-uniform interfaces to the operating system are provided by the
-\reflink{\nobr{\code{:os-interface}} module}{sec:os-interface}.
+  module}{sec:pollingfunctions}, uniform socket interfaces are provided by the \reflink{\nobr{\code{:portable-sockets}} module}{sec:portablesockets}, uniform interfaces to the operating system are provided by the \reflink{\nobr{\code{:os-interface}} module}{sec:os-interface}, and Double Metaphone phonetic-code computation is provided by the \reflink{\nobr{\code{:double-metaphone}} module}{sec:double-metaphone} module.
 
 Several entities in the \nobr{\code{:gbbopen-tools}} module that are extended
 by additional methods in the \nobr{\code{:gbbopen-core}} module are documented
@@ -10808,6 +10806,9 @@ links must ``lean'' left except during inserts and deletes.  LLRB trees have
 good worst-case running time for their operations and are efficient in general
 use.
 
+\indexit{module!:gbbopen-tools@\code{:gbbopen-tools}}%
+\indexit{:gbbopen-tools@\code{:gbbopen-tools} module}%
+
 \W\entities
 \T\clearpage
 
@@ -13224,9 +13225,13 @@ critical sections of code:
 \subsection{Scheduled and Periodic Functions}
 \label{sec:scheduledfunctions}%
 
+\indexit{module!:portable-threads@\code{:portable-threads}}%
+\indexit{:portable-threads@\code{:portable-threads} module}%
 GBBopen provides two forms of time-scheduled functions:
 \glref{scheduled~functions} and \glref{periodic~functions}, both built using
-\reflink{Portable Threads}{sec:portablethreads}.
+\reflink{Portable Threads}{sec:portablethreads}.  These
+time-scheduled-function entities are provided by the
+\nobr{\code{:portable-threads}} module.
 
 \psubpar{Scheduled Functions} 
 
@@ -15363,6 +15368,67 @@ Open a socket connection to the GBBopen Project web server:
           (format t "~&;; Received: ~a~%" line))))
 ;; Received: HTTP/1.1 200 OK
 \end{verbatim}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\T\markright{}%
+\T\pagestyle{plain}
+\T\clearpage
+\W\xname{ref-double-metaphone-entities}
+\T\pagestyle{fancy}
+\T\thispagestyle{fancybottom}
+\T\global\def\fnlastname{ }%
+\subsection{Double Metaphone}
+\label{sec:double-metaphone}%
+
+\index{module!:double-metaphone@\code{:double-metaphone}}%
+\index{:double-metaphone@\code{:double-metaphone} module}%
+%
+The \nobr{\code{:double-metaphone}} \glref{module} provides Double Metaphone phonetic-code generation.
+
+\W\entities
+\T\clearpage
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{double-metaphone}{\var{string\/}
+  \returns{} \var{primary-index, secondary-index\/}} 
+\index{string!double-metaphone indexes}%
+
+\fnsyntax
+
+\fnpurpose Compute the primary and secondary Double Metaphone phonetic-code strings of \var{string}.
+
+\fnpackage \code{:gbbopen-tools}
+
+\fnmodule \code{:double-metaphone}
+
+\fnargs
+\begin{args}{boolean}
+\arg[string] A string
+\arg[primary-index] A string
+\arg[secondary-index] A string or \nil{}
+\end{args}
+
+\fnreturns Two values: the primary and secondary phonetic-code strings.  The second value is \nil, if there is no secondary code for \var{string}.
+
+\fnexample
+%
+\W\supp
+\begin{example}
+  > (double-metaphone "testing")
+  "TSTN"
+  nil
+  > (double-metaphone "Smith")
+  "SM0"
+  "XMT"
+  > (double-metaphone "Schmidt")
+  "XMT"
+  "SMT"
+  >
+\end{example}
 
 \end{functiondoc}
 

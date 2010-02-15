@@ -7,9 +7,11 @@ Important changes since GBBopen 1.4:
      - Add :skip-recompile module file option
 
   * Changes to GBBopen Tools
-     - New left-leaning red-black (LLRB) tree entities
      - New HTTP-DATE-AND-TIME function
      - Change argument order of ENCODE-TIME-OF-DAY
+     - New left-leaning red-black (LLRB) tree entities
+
+  * New :double-metaphone module
 
   * Changes to Portable Threads
      - New ATOMIC-INCF& and ATOMIC-DECF& macros

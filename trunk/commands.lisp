@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/commands.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Oct 22 03:58:59 2009 *-*
+;;;; *-* Last-Edit: Mon Feb 15 04:29:18 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2004-2009, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2004-2010, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; Loaded by initiate.lisp.  After loading, handy top-level-loop keyword
@@ -52,6 +52,7 @@
 ;;;  01-02-05 Changed :multiprocessing to :portable-threads.  (Corkill)
 ;;;  01-05-06 Added :portable-sockets command.  (Corkill)
 ;;;  11-13-06 Added :abort-ks-execution-example command.  (Corkill)
+;;;  02-15-10 Added :double-metaphone command.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -92,6 +93,10 @@
   (define-repl-command :http-services (&rest options)
     "Compile and load HTTP and HTML Services module"
     (startup-module :http-services options))
+
+  (define-repl-command :double-metaphone (&rest options)
+    "Compile and load Double-MetaPhone module"
+    (startup-module :double-metaphone options))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  GBBopen Core
@@ -162,6 +167,10 @@
   (define-repl-command :gbbopen-tools-test (&rest options)
     "Compile and load GBBopen-Tools Test module"
     (startup-module :gbbopen-tools-test options :gbbopen-tools))
+  
+  (define-repl-command :double-metaphone-test (&rest options)
+    "Compile and load Double-MetaPhone-Test module"
+    (startup-module :double-metaphone-test options :gbbopen-tools))
   
   (define-repl-command :agenda-shell-test (&rest options)
     "Compile and load Agenda-Shell-Test module"
