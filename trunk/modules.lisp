@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/modules.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Feb 15 04:48:24 2010 *-*
+;;;; *-* Last-Edit: Mon Feb 15 15:18:05 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -252,7 +252,7 @@
     (:requires :gbbopen-tools)
     (:directory :gbbopen-tools "test")
     (:files ("llrb-tree-test" :reload :noautorun)
-            "gbbopen-tools-test" :reload))
+            ("gbbopen-tools-test" :reload)))
   
 ;;; ---------------------------------------------------------------------------
 
