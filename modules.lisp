@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/modules.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Dec 19 07:53:57 2009 *-*
+;;;; *-* Last-Edit: Mon Feb 15 04:48:24 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2002-2009, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2010, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -33,6 +33,7 @@
 ;;;  04-06-06 Added gbbopen-instance class. (Corkill)
 ;;;  11-13-06 Added :abort-ks-execution-example module. (Corkill)
 ;;;  06-28-07 Renamed :gbbopen module to more accurate :gbbopen-core. (Corkill)
+;;;  02-15-10 Added :double-metaphone module. (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -104,6 +105,11 @@
     (:requires :polling-functions :gbbopen-core)
     (:directory :gbbopen)
     (:files ("queue" :forces-recompile)))
+  
+  (define-module :double-metaphone
+    (:requires :gbbopen-tools)
+    (:directory :gbbopen-tools)
+    (:files ("double-metaphone")))
   
   #+not-yet
   (define-module :restricted-eval
@@ -246,7 +252,14 @@
     (:requires :gbbopen-tools)
     (:directory :gbbopen-tools "test")
     (:files ("llrb-tree-test" :reload :noautorun)
-            "gbbopen-tools-test"))
+            "gbbopen-tools-test" :reload))
+  
+;;; ---------------------------------------------------------------------------
+
+  (define-module :double-metaphone-test
+    (:requires :double-metaphone)
+    (:directory :gbbopen-tools "test")
+    (:files ("double-metaphone-test" :reload)))
   
   ;; end of with-system-name
   )
