@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Mon Feb 15 14:59:56 2010; Edited-By: cork *-*
+%% *-* Last-Edit: Thu Feb 18 11:57:27 2010; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2010, Dan Corkill <corkill@GBBopen.org>
@@ -15386,20 +15386,65 @@ Open a socket connection to the GBBopen Project web server:
 \index{module!:double-metaphone@\code{:double-metaphone}}%
 \index{:double-metaphone@\code{:double-metaphone} module}%
 %
-The \nobr{\code{:double-metaphone}} \glref{module} provides Double Metaphone phonetic-code generation.
+The \nobr{\code{:double-metaphone}} \glref{module} provides Double Metaphone
+phonetic-code generation.
+
+The Metaphone algorithm, published by Lawrence Philips in 1990, improved early
+phonetic approaches, such as Soundex, by attempting to correctly code cases
+where ``gh'' is pronounced as ``f'' as in ``laugh'' and when it is silent, as
+in ``dough,'' or where ``t,'' ``c,'' and ``s'' are pronounced as ``sh'' (or
+``ch,'' which is treated as a sound that is similar enough to ``sh'' to be
+mapped to the same encoding value) as in ``ratio,'' ``ciao,'' and ``erosion.''
+Although Metaphone was an improvement, it failed to encode many common words
+accurately, including the silent ``l'' in ``lincoln,'' and the case of
+``school'' where ``ch'' is pronounced as ``k.'' Also, by using the Soundex
+style of encoding an initial vowel as it appears, Metaphone results in
+different encodings for ``Otto'' and ``auto,'' which sound similar enough to
+match.
+
+Double Metaphone was published by Lawrence Philips in 2000 to improve accuracy
+further than was achieved by Metaphone. It maps all initial vowels to ``A,''
+matching ``Otto'' to ``auto.'' It attempts to correctly encode a number of
+common words and names commonly found in the United States that are of
+non-english origin and are usually pronounced correctly according to their
+non-english spellings, by Americans, such as ``Jose'' or ``pizza.''  It also
+attempts to account for cases where more than one pronunciation may be common
+in the United States, such as the Spanish name ``Cabrillo'' which might be
+plausibly pronounced as ``cabreeyo'' or ``cabrillo.'' Double Metaphone
+addresses exceptions in regular English pronunciation, such as the many cases
+of silent consonants, such as the silent ``l'' in ``lincoln'' or the silent
+``s'' in ``island,'' as well as the pronunciation of ``s'' as ``sh'' in
+``sugar,'' or an anomaly like ``caesar,'' an unusual case of a ``c'' followed
+by an ``a'' where the ``c'' is pronounced as ``s.''
+
+Even with this more detailed treatment, Double Metaphone still misses a number
+of common exceptions, such as the silent ``p'' in ``receipt,'' many cases
+where ``ch'' is pronounced as ``k'' instead of ``ch'' as in ``monarch,'' many
+cases where Americans pronounce words of non-English origin according to their
+non-English pronunciations, such as ``chutzpah,'' and exceptions such as
+``colonel,'' pronounced ``kernal,'' and ``tucson,'' pronounced ``tooson.''
+
+In addition to providing strict adherence to the Double Metaphone algorithm,
+this Common Lisp implementation also supports an extended-encoding option that
+activates additional encoding rules that separate the sounds used for ``B''
+and ``P,'' for ``D'' and ``T,'' for ``F'' and ``V,'' and for ``S'' and ``Z.''
+The extended-encoding option often produces phonetic-code results that are
+more natural and intuitive.
 
 \W\entities
 \T\clearpage
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Function}{double-metaphone}{\var{string\/}
-  \returns{} \var{primary-index, secondary-index\/}} 
+\begin{functiondoc}{Function}{double-metaphone}{\var{string\/
+      \nobr{\code{\&optional} \var{extended-p\/}}}
+      \returns{} \var{primary-index [, secondary-index]\/}} 
 \index{string!double-metaphone indexes}%
 
 \fnsyntax
 
-\fnpurpose Compute the primary and secondary Double Metaphone phonetic-code strings of \var{string}.
+\fnpurpose Compute the primary and secondary Double Metaphone phonetic-code
+strings of \var{string}.
 
 \fnpackage \code{:gbbopen-tools}
 
@@ -15408,25 +15453,48 @@ The \nobr{\code{:double-metaphone}} \glref{module} provides Double Metaphone pho
 \fnargs
 \begin{args}{boolean}
 \arg[string] A string
+\arg[extended-p] A \glref{generalized~boolean} (default is \nil)
 \arg[primary-index] A string
-\arg[secondary-index] A string or \nil{}
+\arg[secondary-index] A string
 \end{args}
 
-\fnreturns Two values: the primary and secondary phonetic-code strings.  The second value is \nil, if there is no secondary code for \var{string}.
+\fnreturns One or two values: the primary and secondary phonetic-code strings.
+If there is no secondary code for \var{string}, only the primary string is
+returned.
 
-\fnexample
+\fndescription
+%
+If \var{extended-p} is \nil{}, strict Double Metaphone encoding is used.  If
+\var{extended-p} is true, additional encoding rules that separate sounds are
+used for ``B'' and ``P,'' for ``D'' and ``T,'' for ``F'' and ``V,'' and for
+``S'' and ``Z.''
+
+\fnexamples
 %
 \W\supp
 \begin{example}
   > (double-metaphone "testing")
   "TSTN"
-  nil
   > (double-metaphone "Smith")
   "SM0"
   "XMT"
   > (double-metaphone "Schmidt")
   "XMT"
-  "SMT"
+  "SMT"\goodpagebreak
+  > (double-metaphone "batboy")
+  "PTP"
+  > (double-metaphone "batboy" 't)
+  "BTB"\goodpagebreak
+  > (double-metaphone "Barlow")
+  "PRL"
+  "PRLF"
+  > (double-metaphone "Barlow" 't)
+  "BRL" 
+  "BRLF"\goodpagebreak
+  > (double-metaphone "buzz")
+  "PS"
+  > (double-metaphone "buzz" 't)
+  "BZ"
   >
 \end{example}
 

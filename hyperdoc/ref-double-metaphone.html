@@ -16,11 +16,13 @@
  
 <p><table class="tight" width="100%">
 <tr valign="top"><td valign="baseline" align="left"%>
-<nobr><b><font color="#000000">double-metaphone</font></b></nobr></td><td valign="baseline"> &nbsp; </td><td valign="baseline" align="left" width="99%"><var>string</var>
+<nobr><b><font color="#000000">double-metaphone</font></b></nobr></td><td valign="baseline"> &nbsp; </td><td valign="baseline" align="left" width="99%"><var>string
+<nobr><code>&#38;optional</code> <var>extended-p</var></nobr></var>
 <span 
-    style="font-family: serif; font-style: normal">=&gt;</span> <var>primary-index, secondary-index</var></td><td valign="baseline" align="right">[<i>Function</i>]
+    style="font-family: serif; font-style: normal">=&gt;</span> <var>primary-index [, secondary-index]</var></td><td valign="baseline" align="right">[<i>Function</i>]
 </td></tr></table></p>
-<p><span class="fndoclabel">Purpose</span> <br />Compute the primary and secondary Double Metaphone phonetic-code strings of <var>string</var>.
+<p><span class="fndoclabel">Purpose</span> <br />Compute the primary and secondary Double Metaphone phonetic-code
+strings of <var>string</var>.
 </p>
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-tools</code>
 </p>
@@ -28,22 +30,43 @@
 </p>
 <p><span class="fndoclabel">Arguments and values</span><table class="tighttop">
 <tr valign="top"><td valign="baseline" nowrap><i>string</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A string
+</td></tr><tr valign="top"><td valign="baseline" nowrap><i>extended-p</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> (default is <code>nil</code>)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>primary-index</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A string
-</td></tr><tr valign="top"><td valign="baseline" nowrap><i>secondary-index</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A string or <code>nil</code>
+</td></tr><tr valign="top"><td valign="baseline" nowrap><i>secondary-index</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A string
 </td></tr></table>
 </p>
-<p><span class="fndoclabel">Returns</span> <br />Two values: the primary and secondary phonetic-code strings.  The second value is <code>nil</code>, if there is no secondary code for <var>string</var>.
+<p><span class="fndoclabel">Returns</span> <br />One or two values: the primary and secondary phonetic-code strings.
+If there is no secondary code for <var>string</var>, only the primary string is
+returned.
 </p>
-<p><span class="fndoclabel">Example</span> <br /><pre class="pretop">
+<p><span class="fndoclabel">Description</span> <br />If <var>extended-p</var> is <code>nil</code>, strict Double Metaphone encoding is used.  If
+<var>extended-p</var> is true, additional encoding rules that separate sounds are
+used for &#8220;B&#8221; and &#8220;P,&#8221; for &#8220;D&#8221; and &#8220;T,&#8221; for &#8220;F&#8221; and &#8220;V,&#8221; and for
+&#8220;S&#8221; and &#8220;Z.&#8221;
+</p>
+<p><span class="fndoclabel">Examples</span> <br /><pre class="pretop">
   &gt; (double-metaphone "testing")
   "TSTN"
-  nil
   &gt; (double-metaphone "Smith")
   "SM0"
   "XMT"
   &gt; (double-metaphone "Schmidt")
   "XMT"
   "SMT"
+  &gt; (double-metaphone "batboy")
+  "PTP"
+  &gt; (double-metaphone "batboy" 't)
+  "BTB"
+  &gt; (double-metaphone "Barlow")
+  "PRL"
+  "PRLF"
+  &gt; (double-metaphone "Barlow" 't)
+  "BRL" 
+  "BRLF"
+  &gt; (double-metaphone "buzz")
+  "PS"
+  &gt; (double-metaphone "buzz" 't)
+  "BZ"
   &gt;
 </pre>
 </p>
