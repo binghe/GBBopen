@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/double-metaphone.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Feb 21 17:41:23 2010 *-*
+;;;; *-* Last-Edit: Mon Feb 22 15:04:38 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -42,14 +42,22 @@
 
 (with-full-optimization ()
   (defun vowelp (string pos)
-    (declare (simple-string string)
+    (declare (simple-base-string string)
              (fixnum pos))
-    (when (<= 0 pos (length string))
-      (member (char string pos) '(#\A #\E #\I #\O #\U #\Y)))))
+    (when (<=& 0 pos (length string))
+      ;; optimized (member (char string pos) '(#\A #\E #\I #\O #\U #\Y)):
+      (let ((char (char string pos)))
+        (or (eql char #\A)
+            (eql char #\E)
+            (eql char #\I)
+            (eql char #\O)
+            (eql char #\U)
+            (eql char #\Y))))))
 
 ;;; ---------------------------------------------------------------------------
 
 (defun char-at (string index candidate-char)
+  (declare (simple-base-string string))
   (eql (char string index) candidate-char))
 
 (defcm char-at (string index candidate-char)
@@ -57,16 +65,31 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun string-at (string start &rest candidate-strings)
-  (declare (dynamic-extent candidate-strings))
-  (let ((string-length (length string)))
-    (dolist (candidate candidate-strings)
-      (when (and (>=& start 0)
-		 (string= string candidate 
-			  :start1 start
-			  :end1 (min& string-length 
-				      (+& start (length candidate)))))
-	(return-from string-at candidate)))))
+(defun char-member-at (string index &rest candidate-chars)
+  (declare (simple-base-string string)
+           (dynamic-extent candidate-chars))
+  (member (char string index) candidate-chars))
+
+(defcm char-member-at (string index &rest candidate-chars)
+  `(let ((.char. (char ,string ,index)))
+     (or ,@(loop for candidate-char in candidate-chars 
+               collect `(eql .char. ,candidate-char)))))
+
+;;; ---------------------------------------------------------------------------
+
+(with-full-optimization ()
+  (defun string-at (string start &rest candidate-strings)
+    (declare (simple-base-string string)
+             (fixnum start)
+             (dynamic-extent candidate-strings))
+    (when (>=& start 0)
+      (dolist (candidate candidate-strings)
+        (declare (simple-base-string candidate))
+        (when (string= string candidate 
+                       :start1 start
+                       :end1 (min& (length string)
+                                   (+& start (length candidate))))
+          (return-from string-at candidate))))))
 
 ;;; ===========================================================================
 ;;;  Double-metaphone (string [extended-p]) => primary-key; [secondary-key]
@@ -84,7 +107,7 @@
   (let* ((current 0)
          (length (length string))
          (last (1-& length))
-         (ustring (concatenate 'simple-string (string-upcase string) "  "))
+         (ustring (concatenate 'simple-base-string (string-upcase string) "  "))
          (primary (make-array '(4) 
                               :fill-pointer 0 
                               :element-type 'character))
@@ -93,7 +116,6 @@
                                 :element-type 'character))
 	 (slavo-germanic-value ':needed))
     (declare (dynamic-extent ustring))    
-    
     (labels ((add-to (array add)
                (etypecase add
                  (null)
@@ -223,12 +245,12 @@
                    ;; "ARCHITECT" but not "ARCH", "ORCHESTRA", "ORCHID":
                    (string-at ustring (-& current 2)
                               "ORCHES" "ARCHIT" "ORCHID")
-                   (string-at ustring (+& current 2) "T" "S")
+                   (char-member-at ustring (+& current 2) #\T #\S)
                    ;; "WACHTLER", "WECHSLER", but not "TICHNER":
                    (and (or (zerop& current) 
-			    (string-at ustring (-& current 1)  "A" "O" "U" "E"))
-                        (string-at ustring (+& current 2)
-                                   "L" "R" "N" "M" "B" "H" "F" "V" "W" " ")))
+			    (char-member-at ustring (-& current 1)  #\A #\O #\U #\E))
+                        (char-member-at ustring (+& current 2)
+                                        #\L #\R #\N #\M #\B #\H #\F #\V #\W #\Space)))
                (metaph-add #\K)
                (incf& current 2))
               
@@ -263,7 +285,7 @@
                             (char-at ustring 0 #\M))))
              (cond
               ;; "BELLOCCHIO" but not "BACCHUS":
-              ((and (string-at ustring (+& current 2) "I" "E" "H")
+              ((and (char-member-at ustring (+& current 2) #\I #\E #\H)
                     (not (string-at ustring (+& current 2) "HU")))
                (cond 
                 ;; "ACCIDENT", "ACCEDE", "SUCCEED":
@@ -301,7 +323,7 @@
                        ;; Name such as "MAC CAFFREY", "MAC GREGOR":
                        ((string-at ustring (+& current 1) " C" " Q" " G")
                         3)
-                       ((and (string-at ustring (+& current 1) "C" "K" "Q")
+                       ((and (char-member-at ustring (+& current 1) #\C #\K #\Q)
                              (not (string-at ustring (+& current 1)
                                              "CE" "CI")))
                         2)
@@ -314,7 +336,7 @@
             ((string-at ustring current "DG")
              (cond
               ;; E.g., "EDGE":
-              ((string-at ustring (+& current 2) "I" "E" "Y")
+              ((char-member-at ustring (+& current 2) #\I #\E #\Y)
                (metaph-add #\J)
                (incf& current 3))
               ;; E.g., "EDGAR":
@@ -358,21 +380,21 @@
 
 	      ;; Parker's rule (with some further refinements); e.g., "HUGH":
               ((or (and (>& current 1)
-                        (string-at ustring (-& current 2) "B" "H" "D"))
+                        (char-member-at ustring (-& current 2) #\B #\H #\D))
                    ;; E.g., "BOUGH":
                    (and (>& current 2)
-                        (string-at ustring (-& current 3) "B" "H" "D"))
+                        (char-member-at ustring (-& current 3) #\B #\H #\D))
                    ;; E.g., "BROUGHTON":
                    (and (>& current 3)
-                        (string-at ustring (-& current 4) "B" "H")))
+                        (char-member-at ustring (-& current 4) #\B #\H)))
                (incf& current 2))
 
               ;; E.g., "LAUGH", "MCLAUGHLIN", "COUGH", "GOUGH", "ROUGH",
               ;; "TOUGH":
               ((and (>& current 2)
                     (char-at ustring (-& current 1) #\U)
-                    (string-at ustring (-& current 3)
-                               "C" "G" "L" "R" "T"))
+                    (char-member-at ustring (-& current 3)
+                                    #\C #\G #\L #\R #\T))
                (metaph-add #\F)
                (incf& current 2))
             
@@ -424,7 +446,7 @@
 	     (incf& current 2))
 
 	    ;; Italian; e.g, "BIAGGI":
-	    ((or (string-at ustring (+& current 1) "E" "I" "Y")
+	    ((or (char-member-at ustring (+& current 1) #\E #\I #\Y)
 		 (string-at ustring (-& current 1) "AGGI" "OGGI"))
 	     (cond
 	      ;;obvious Germanic:
@@ -481,7 +503,7 @@
             ;; Spanish pronounciation of e.g., "BAJADOR":
             ((and (vowelp ustring (-& current 1))
                   (not (slavo-germanic-p))
-                  (string-at ustring (+& current 1) "A" "O"))
+                  (char-member-at ustring (+& current 1) #\A #\O))
              (metaph-add #\J #\H)
              (incf& current (if (char-at ustring (+& current 1) #\J) 2 1)))
 
@@ -489,9 +511,9 @@
              (metaph-add #\J nil)
              (incf& current (if (char-at ustring (+& current 1) #\J) 2 1)))
 
-            ((and (not (string-at ustring (+& current 1)
-                                  "L" "T" "K" "S" "N" "M" "B" "Z"))
-                  (not (string-at ustring (-& current 1) "S" "K" "L")))
+            ((and (not (char-member-at ustring (+& current 1)
+                                       #\L #\T #\K #\S #\N #\M #\B #\Z))
+                  (not (char-member-at ustring (-& current 1) #\S #\K #\L)))
              (metaph-add #\J)
              (incf& current (if (char-at ustring (+& current 1) #\J) 2 1)))
           
@@ -516,7 +538,7 @@
                         (string-at ustring (-& current 1)
                                    "ILLO" "ILLA" "ALLE"))
                    (and (or (string-at ustring (-& last 1) "AS" "OS")
-                            (string-at ustring last "A" "O"))
+                            (char-member-at ustring last #\A #\O))
                         (string-at ustring (-& current 1) "ALLE")))
                (metaph-add #\L nil)
                (incf& current 2))
@@ -561,7 +583,7 @@
              (incf& current 2))
           
             ;; Also account for "CAMPBELL", "RASPBERRY":
-            ((string-at ustring (+& current 1) "P" "B")
+            ((char-member-at ustring (+& current 1) #\P #\B)
              (metaph-add #\P)
              (incf& current 2))
           
@@ -622,8 +644,8 @@
             ;; "SNIDER" match "schneider"; also, "-SZ-" in Slavic language
             ;; although in Hungarian it is pronounced "S":
             ((or (and (zerop& current)
-                      (string-at ustring (+& current 1) "M" "N" "L" "W"))
-                 (string-at ustring (+& current 1) "Z"))
+                      (char-member-at ustring (+& current 1) #\M #\N #\L #\W))
+                 (char-at ustring (+& current 1) #\Z))
              (metaph-add #\S #\X)
              (incf& current (if (char-at ustring (+& current 1) #\Z) 2 1)))
           
@@ -651,7 +673,7 @@
                 (t (metaph-add #\X)
                    (incf& current 3))))
             
-              ((string-at ustring (+& current 2) "I" "E" "Y")
+              ((char-member-at ustring (+& current 2) #\I #\E #\Y)
                (metaph-add #\S)
                (incf& current 3))
             
@@ -663,11 +685,13 @@
                   (string-at ustring (-& current 2) "AI" "OI"))
              (metaph-add nil #\S)
              (incf& current 
-                    (if (string-at ustring (+& current 1) "S" "Z") 2 1)))
+                    (if (char-member-at ustring (+& current 1) #\S #\Z) 2 1)))
           
             (t (metaph-add #\S)
                (incf& current 
-                      (if (string-at ustring (+& current 1) "S" "Z") 2 1)))))
+                      (if (char-member-at ustring (+& current 1) #\S #\Z)
+                          2 
+                          1)))))
 
           ;; ------------------------------------------------------------------
 
@@ -690,7 +714,9 @@
 
             (t (metaph-add #\T)
                (incf& current
-                      (if (string-at ustring (+& current 1) "T" "D") 2 1)))))
+                      (if (char-member-at ustring (+& current 1) #\T #\D) 
+                          2 
+                          1)))))
          
           ;; ------------------------------------------------------------------
 
@@ -747,7 +773,7 @@
                           (string-at ustring (-& current 2) "AU" "OU")))
              (metaph-add "KS"))
            (incf& current
-                  (if (string-at ustring (+& current 1) "C" "X") 2 1)))
+                  (if (char-member-at ustring (+& current 1) #\C #\X) 2 1)))
 
           ;; ------------------------------------------------------------------
 
