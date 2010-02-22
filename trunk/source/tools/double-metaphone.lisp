@@ -1,13 +1,13 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/double-metaphone.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Feb 15 14:31:52 2010 *-*
+;;;; *-* Last-Edit: Sun Feb 21 17:41:23 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
 ;;;; *
-;;;; *                           Double Metaphone
+;;;; *                    Double Metaphone (with extensions)
 ;;;; *
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -15,16 +15,21 @@
 ;;; Written by: Dan Corkill
 ;;;
 ;;; Original algorithm Copyright (C) 1998, 1999 by Lawrence Philips
-;;; Common Lisp version Copyright (C) 2007-2008 by Dan Corkill
+;;; Common Lisp version Copyright (C) 2007-2010 by Dan Corkill
 ;;;     <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; Based on CPANs Text-DoubleMetaphone-0.07 implementation by Maurice Aubrey
-;;; and a C++ version with modifications/bug fixes by Kevin Atkinson
+;;; and a C++ version with modifications/bug fixes by Kevin Atkinson.  
+;;;
+;;; Dan Corkill augmented this Common Lisp version with the `extended-p'
+;;; extensions.
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
 ;;;  12-04-07 File Created.  (Corkill)
+;;;  04-02-08 Added non-strict B/T separation extention.  (Corkill)
+;;;  02-16-10 Added more extended-p extensions.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -64,7 +69,7 @@
 	(return-from string-at candidate)))))
 
 ;;; ===========================================================================
-;;;  Double-metaphone (string) => primary-key; [secondary-key]
+;;;  Double-metaphone (string [extended-p]) => primary-key; [secondary-key]
 ;;;
 ;;; When matching string1 & string2:
 ;;;   Strong:
@@ -75,7 +80,7 @@
 ;;;   Weak:
 ;;;     secondary-key1 = secondary-key2
 
-(defun double-metaphone (string)
+(defun double-metaphone (string &optional extended-p)
   (let* ((current 0)
          (length (length string))
          (last (1-& length))
@@ -95,23 +100,30 @@
                  (character (vector-push add array))
                  (string (loop for char across add
                              do (vector-push char array)))))
-             (metaph-add (primary-add &optional secondary-add)
-               (cond 
-		;; Adding both a primary and secondary:
-		(secondary-add
-		 ;; Copy primary, if this is the first secondary add:
-		 (when (and (plusp& (fill-pointer primary))
-			    (zerop& (fill-pointer secondary)))
-		   (loop for char across primary do
-			 (vector-push char secondary)))
-		 ;; Add to each:
-		 (add-to primary primary-add)
-		 (add-to secondary secondary-add))
-		;; Only a primary:
-		(t (add-to primary primary-add)
-		   ;; Also add to secondary, if we have one:
-		   (when (plusp& (fill-pointer secondary))
-		     (add-to secondary primary-add)))))
+             (metaph-add (primary-add 
+                          &optional (secondary-add 
+                                     primary-add
+                                     secondary-supplied-p))
+               (cond
+                ;; Adding both a primary and secondary:
+                (secondary-supplied-p
+                 ;; Copy primary, if this is the first secondary being added
+                 ;; and we've not exceeded the encoded-string length:
+                 (unless (=& (fill-pointer primary) 
+                             (array-total-size primary))
+                   (when (and (zerop& (fill-pointer secondary))
+                              (plusp& (fill-pointer primary)))
+                     (loop for char across primary do
+                           (vector-push char secondary)))
+                   ;; Add to each (unless primary is nil):
+                   (when primary 
+                     (add-to primary primary-add))
+                   (add-to secondary secondary-add)))
+                ;; Only a primary was supplied:
+                (t (add-to primary primary-add)
+                   ;; also add primary to secondary, if we have one:
+                   (when (plusp& (fill-pointer secondary))
+                     (add-to secondary primary-add)))))
 	     (slavo-germanic-p ()
 	       (if (eq slavo-germanic-value ':needed)
   		   ;; determine and save the value:
@@ -151,12 +163,16 @@
           
           (#\B
            ;; "-mb", e.g., "dumb", already skipped over...
-           (metaph-add #\B)
+           (if extended-p
+               (metaph-add #\B)
+               (metaph-add #\P))
            (incf& current (if (char-at ustring (+& current 1) #\B) 2 1)))
           
           ;; ------------------------------------------------------------------
+          ;; #\Ç is "converted" by Tortoise SVN on Windows, so we avoid that
+          ;; by specifying it via CODE-CHAR
           
-          (#.(code-char 199) ;; #\Ç is "converted" by Tortoise SVN on Windows
+          (#.(code-char 199) 
            (metaph-add #\S)
            (incf& current))
           
@@ -243,8 +259,8 @@
             
             ;; Double "C", but not if e.g., "MCCLELLAN":
             ((and (string-at ustring current "CC")
-                  (/=& current 1)
-                  (char-at ustring 0 #\M))
+                  (not (and (/=& current 1)
+                            (char-at ustring 0 #\M))))
              (cond
               ;; "BELLOCCHIO" but not "BACCHUS":
               ((and (string-at ustring (+& current 2) "I" "E" "H")
@@ -305,10 +321,13 @@
               (t (metaph-add "TK")
                  (incf& current 2))))
             ((string-at ustring current "DT" "DD")
-             (metaph-add #\T)
-             (incf& current 2))
-          
-            (t (metaph-add #\T)
+             (if extended-p 
+                 (metaph-add #\D)
+                 (metaph-add #\T))
+             (incf& current 2))          
+            (t (if extended-p 
+                   (metaph-add #\D)
+                   (metaph-add #\T))
                (incf& current 1))))
         
           ;; ------------------------------------------------------------------
@@ -362,11 +381,9 @@
                (metaph-add #\K)
                (incf& current 2))
 	      
-	      (t (metaph-add #\K)
-               (incf& current
-                      (if (char-at ustring (+& current 1) #\G) 2 1)))))
+	      (t (incf& current 2))))
 
-	    ;; "-GN-"
+            ;; "-GN-"
 	    ((char-at ustring (+& current 1) #\N)
 	     (cond
 	      ((and (=& current 1)
@@ -469,7 +486,7 @@
              (incf& current (if (char-at ustring (+& current 1) #\J) 2 1)))
 
             ((=& current last)
-             (metaph-add #\J #\Space)
+             (metaph-add #\J nil)
              (incf& current (if (char-at ustring (+& current 1) #\J) 2 1)))
 
             ((and (not (string-at ustring (+& current 1)
@@ -495,16 +512,16 @@
             ;; Spanish: e.g., "CABRILLO", "GALLEGOS":
             ((char-at ustring (+& current 1) #\L)
              (cond
-              ((or (and (=& current (-& length  3))
+              ((or (and (=& current (-& length 3))
                         (string-at ustring (-& current 1)
                                    "ILLO" "ILLA" "ALLE"))
-                   (string-at ustring (-& last 1) "AS" "OS")
-                   (and (string-at ustring last "A" "O")
+                   (and (or (string-at ustring (-& last 1) "AS" "OS")
+                            (string-at ustring last "A" "O"))
                         (string-at ustring (-& current 1) "ALLE")))
-               (metaph-add #\L #\Space)
+               (metaph-add #\L nil)
                (incf& current 2))
-              (t (incf& current 2))))
-          
+              (t (metaph-add #\L)
+                 (incf& current 2))))
             (t (metaph-add #\L)
                (incf& current 1))))
 
@@ -516,8 +533,8 @@
                   (cond
                    ;; "DUMB", "THUMB":
                    ((or (and (string-at ustring (-& current 1) "UMB")
-                             (=& (+& current 1) last))
-                        (string-at ustring (+& current 2) "ER")
+                             (or (=& (+& current 1) last)
+                                 (string-at ustring (+& current 2) "ER")))
                         (char-at ustring (+& current 1) #\M))
                     2)
                    (t 1))))
@@ -545,6 +562,7 @@
           
             ;; Also account for "CAMPBELL", "RASPBERRY":
             ((string-at ustring (+& current 1) "P" "B")
+             (metaph-add #\P)
              (incf& current 2))
           
             (t (metaph-add #\P)
@@ -593,7 +611,7 @@
                  (incf& current 2))))
           
             ;; Italian & Armenian:
-            ((string-at ustring current "SIO" "SIA" #+redundant "SIAN")
+            ((string-at ustring current "SIO" "SIA") ; also covers "SIAN"
              (cond
               ((not (slavo-germanic-p))
                (metaph-add #\S #\X))
@@ -677,7 +695,9 @@
           ;; ------------------------------------------------------------------
 
           (#\V
-           (metaph-add #\F)
+           (if extended-p
+               (metaph-add #\V)
+               (metaph-add #\F))
            (incf& current (if (char-at ustring (+& current 1) #\V) 2 1)))
         
           ;; ------------------------------------------------------------------
@@ -721,10 +741,10 @@
         
           (#\X
            ;; French: e.g., "BREAUX":
-           (unless
-               (or (and (=& current last)
-                        (string-at ustring (-& current 3) "IAU" "EAU"))
-                   (string-at ustring (-& current 2) "AU" "OU"))
+           (unless (and (=& current last)
+                        (or
+                          (string-at ustring (-& current 3) "IAU" "EAU")
+                          (string-at ustring (-& current 2) "AU" "OU")))
              (metaph-add "KS"))
            (incf& current
                   (if (string-at ustring (+& current 1) "C" "X") 2 1)))
@@ -746,7 +766,9 @@
              (metaph-add #\S "TS")
              (incf& current (if (char-at ustring (+& current 1) #\Z) 2 1)))
           
-            (t (metaph-add #\S)
+            (t (if extended-p
+                   (metaph-add #\Z)
+                   (metaph-add #\S))
                (incf& current 
                       (if (char-at ustring (+& current 1) #\Z) 2 1)))))
         
@@ -755,7 +777,9 @@
           (otherwise
            (incf& current 1))))
 
-      (values primary (when (plusp& (fill-pointer secondary)) secondary)))))
+      (if (plusp& (fill-pointer secondary))
+          (values primary secondary)
+          primary))))
 
 ;;; ===========================================================================
 ;;;                               End of File
