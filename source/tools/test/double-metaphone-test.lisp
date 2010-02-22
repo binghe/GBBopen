@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/test/double-metaphone-test.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Feb 22 04:55:21 2010 *-*
+;;;; *-* Last-Edit: Mon Feb 22 14:57:11 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -35,7 +35,6 @@
       ("" "" nil)
       ("the" "0" "T")
       ("quick" "KK" nil)
-      ("brown" "PRN" nil "BRN")
       ("fox" "FKS" nil)
       ("jumped" "JMPT" "AMPT" "JMPD" "AMPD")
       ("over" "AFR" nil "AVR")
@@ -1847,9 +1846,10 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun check-encodings (&optional check-extended-p)
-  (format t "~&;;   Starting encodings test~@[ (with extended-p)~]...~%" 
-          check-extended-p)
+(defun check-encodings (&optional extended-p)
+  (format t "~&;;   Starting encodings test~@[ (testing both strict & ~
+                    extended-p)~]...~%" 
+          extended-p)
   (loop for test in *encodings* do
         (destructuring-bind (string expected-primary expected-secondary
                              &optional expected-extended-primary
@@ -1866,7 +1866,7 @@
                         (report-problem 
                          "Secondary of ~s should be ~s, got ~s"
                          string expected-secondary secondary)))
-            (when check-extended-p
+            (when extended-p
               (multiple-value-bind (extended-primary extended-secondary)
                   (double-metaphone string 't)
                 (unless (if expected-extended-primary
@@ -1887,7 +1887,7 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun check-the-matches (matches label summarize-p)
+(defun check-the-matches (matches label summarize-p &optional extended-p)
   (format t "~&;;   Starting ~a matches test~@[ (summarizing)~]...~%" 
 	  label
 	  summarize-p)
@@ -1899,9 +1899,9 @@
     (loop for (string1 string2) in matches do
 	  (incf& total-count)
 	  (multiple-value-bind (primary1 secondary1)
-	      (double-metaphone string1)
+	      (double-metaphone string1 extended-p)
 	    (multiple-value-bind (primary2 secondary2)
-		(double-metaphone string2)
+		(double-metaphone string2 extended-p)
 	      (unless (or
 		       ;; Strong match:
 		       (when (string= primary1 primary2)
@@ -1922,8 +1922,10 @@
 		   string1 string2 
 		   primary1 secondary1
 		   primary2 secondary2))))))
-    (format t "~&;;   ~@(~a matches~) test completed (~s/~s S:~s N:~s W:~s).~%"
+    (format t "~&;;   ~@(~a matches~) test completed~@[ using extended-p~*~] ~
+                      (~s/~s S:~s N:~s W:~s).~%"
 	    label
+            extended-p
 	    (-& total-count failure-count)
 	    total-count
 	    strong-match-count
@@ -1932,11 +1934,11 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun check-basic-matches (&optional summarize-p)
-  (check-the-matches *basic-matches* "basic" summarize-p))
+(defun check-basic-matches (&optional summarize-p extended-p)
+  (check-the-matches *basic-matches* "basic" summarize-p extended-p))
 
-(defun check-more-matches (&optional summarize-p)
-  (check-the-matches *more-matches* "more" summarize-p))
+(defun check-more-matches (&optional summarize-p extended-p)
+  (check-the-matches *more-matches* "more" summarize-p extended-p))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -1944,13 +1946,15 @@
   (format t "~&;; Starting double-metaphone tests...~%")
   (check-encodings 't)
   (check-basic-matches 't)
+  (check-basic-matches 't 't)
   (check-more-matches 't)
+  (check-more-matches 't 't)
   (format t "~&;; Double-metaphone tests completed.~%"))
 
 ;;; ---------------------------------------------------------------------------
 
 (when *autorun-modules* 
-  (double-metaphone-tests))
+  (time (double-metaphone-tests)))
 
 ;;; ===========================================================================
 ;;;                               End of File
