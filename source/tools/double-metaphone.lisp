@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/double-metaphone.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Feb 22 15:04:38 2010 *-*
+;;;; *-* Last-Edit: Tue Feb 23 05:40:05 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -131,16 +131,17 @@
                 (secondary-supplied-p
                  ;; Copy primary, if this is the first secondary being added
                  ;; and we've not exceeded the encoded-string length:
-                 (unless (=& (fill-pointer primary) 
-                             (array-total-size primary))
-                   (when (and (zerop& (fill-pointer secondary))
-                              (plusp& (fill-pointer primary)))
-                     (loop for char across primary do
-                           (vector-push char secondary)))
-                   ;; Add to each (unless primary is nil):
-                   (when primary 
-                     (add-to primary primary-add))
-                   (add-to secondary secondary-add)))
+                 (let ((fill-pointer-primary (fill-pointer primary)))
+                   (unless (=& fill-pointer-primary
+                               (array-total-size primary))
+                     (when (and (zerop& (fill-pointer secondary))
+                                (plusp& fill-pointer-primary))
+                       (loop for char across primary do
+                             (vector-push char secondary)))
+                     ;; Add to each (unless primary is nil):
+                     (when primary 
+                       (add-to primary primary-add))
+                     (add-to secondary secondary-add))))
                 ;; Only a primary was supplied:
                 (t (add-to primary primary-add)
                    ;; also add primary to secondary, if we have one:
@@ -584,7 +585,10 @@
           
             ;; Also account for "CAMPBELL", "RASPBERRY":
             ((char-member-at ustring (+& current 1) #\P #\B)
-             (metaph-add #\P)
+             (metaph-add (if (and extended-p
+                                  (char-at ustring (+& current 1) #\B))
+                             #\B 
+                             #\P))
              (incf& current 2))
           
             (t (metaph-add #\P)

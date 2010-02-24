@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/test/double-metaphone-test.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Feb 22 14:57:11 2010 *-*
+;;;; *-* Last-Edit: Tue Feb 23 05:41:09 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -1199,7 +1199,7 @@
       ("cabrillo" "KPRL" "KPR" "KBRL" "KBR")
       ("caesar" "SSR" nil)
       ("cagney" "KKN" nil)
-      ("campbell" "KMPL" nil)
+      ("campbell" "KMPL" nil "KMBL")
       ("carlisle" "KRLL" nil)
       ("carlysle" "KRLL" nil)
       ("chemistry" "KMST" nil)
@@ -1234,7 +1234,7 @@
       ("pegnitz" "PNTS" "PKNT" "PNTZ")
       ("piskowitz" "PSKT" "PSKF")
       ("queen" "KN" nil)
-      ("raspberry" "RSPR" nil)
+      ("raspberry" "RSPR" nil "RSBR")
       ("resnais" "RSN" "RSNS")
       ("rogier" "RJ" "RJR")
       ("rough" "RF" nil)
@@ -1267,8 +1267,7 @@
       ("wachtler" "AKTL" "FKTL")
       ("wechsler" "AKSL" "FKSL")
       ("weikersheim" "AKRS" "FKRS")
-      ("zhao" "J" nil)
-      ))
+      ("zhao" "J" nil)))
 
 ;;; ---------------------------------------------------------------------------
 
