@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/date-and-time.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Oct 27 12:18:57 2009 *-*
+;;;; *-* Last-Edit: Mon Mar  1 17:13:40 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2002-2009, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2010, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -895,11 +895,13 @@
                 (when (and (char= (schar string 1-token-end) #\s)
                            (/=& token-start 1-token-end))
                   (setf token-end 1-token-end)))
-              (let ((unit-acons (assoc-if #'(lambda (key) 
-                                              (string-equal string key
-                                                            :start1 token-start
-                                                            :end1 token-end))
-                                          units)))
+              (let ((unit-acons
+                     (flet ((fn (key) 
+                              (string-equal string key
+                                            :start1 token-start
+                                            :end1 token-end)))
+                       (declare (dynamic-extent #'fn))
+                       (assoc-if #'fn units))))
                 (unless unit-acons 
                   (error "Unknown time-duration unit ~s following value ~s"
                          (subseq string token-start start)

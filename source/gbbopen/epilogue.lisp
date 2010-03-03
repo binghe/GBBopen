@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/epilogue.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon May 25 21:16:43 2009 *-*
+;;;; *-* Last-Edit: Tue Mar  2 18:07:19 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2004-2009, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2004-2010, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -74,12 +74,13 @@
 
 (defun empty-blackboard-repository-p ()
   ;; Returns t if there are no unit instances in the blackboard repository
-  (map-unit-classes
-   #'(lambda (class plus-subclasses-p)
-       (declare (ignore plus-subclasses-p))
-       (when (plusp& (class-instances-count class))
-         (return-from empty-blackboard-repository-p nil)))
-   (load-time-value (find-class 'standard-unit-instance)))
+  (flet ((fn (class plus-subclasses-p)
+           (declare (ignore plus-subclasses-p))
+           (when (plusp& (class-instances-count class))
+             (return-from empty-blackboard-repository-p nil))))
+    (declare (dynamic-extent #'fn))
+    (map-unit-classes 
+     #'fn (load-time-value (find-class 'standard-unit-instance))))
   ;; The repository is empty:
   't)
 

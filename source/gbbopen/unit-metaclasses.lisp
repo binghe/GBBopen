@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/unit-metaclasses.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Jun 21 17:16:38 2009 *-*
+;;;; *-* Last-Edit: Wed Mar  3 04:35:08 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2002-2009, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2010, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; Porting Notice:
@@ -120,12 +120,11 @@
 (defmethod dimensions-of ((unit-classes-specifier cons))
   ;;; Support unit-classes-specifiers:
   (let ((result nil))
-    (map-unit-classes-specifier
-     #'(lambda (unit-class) 
-         (dolist (dimension (dimensions-of unit-class))
-           (pushnew dimension result :test #'equal)))
-     unit-classes-specifier)
-    result))
+    (flet ((fn (unit-class) 
+             (dolist (dimension (dimensions-of unit-class))
+               (pushnew dimension result :test #'equal))))
+      (declare (dynamic-extent #'fn))
+      (map-unit-classes-specifier #'fn unit-classes-specifier) result)))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -245,11 +244,11 @@
                   :test (standard-unit-class.instance-name-comparison-test
                          class))))
             (setf (standard-unit-class.instance-hash-table class) new-ht)
-            (maphash 
-             #'(lambda (instance-name instance)
-                 (reinsert-instance-into-hash-table
-                  instance-name instance new-ht))
-             old-ht))
+            (flet ((fn (instance-name instance)
+                     (reinsert-instance-into-hash-table
+                      instance-name instance new-ht)))
+              (declare (dynamic-extent #'fn))
+              (maphash #'fn old-ht)))
           (unless (zerop hash-table-count)
             (format t "~&;; Conversion of instance-name comparison test ~
                             completed.~%"))))))
@@ -321,16 +320,16 @@
   
 (defmethod save-gbbopen-node-state ((node-state gbbopen-node-state))
   (let ((unit-class-states nil))
-    (map-extended-unit-classes
-     #'(lambda (unit-class)
-         (push (make-instance 'unit-class-state
-                 :unit-class unit-class
-                 :instance-name-counter 
-                 (standard-unit-class.instance-name-counter unit-class)
-                 :instance-hash-table
-                 (standard-unit-class.instance-hash-table unit-class))
-               unit-class-states))
-     't)
+    (flet ((fn (unit-class)
+             (push (make-instance 'unit-class-state
+                     :unit-class unit-class
+                     :instance-name-counter 
+                     (standard-unit-class.instance-name-counter unit-class)
+                     :instance-hash-table
+                     (standard-unit-class.instance-hash-table unit-class))
+                   unit-class-states)))
+      (declare (dynamic-extent #'fn))
+      (map-extended-unit-classes #'fn 't))
     (setf (unit-classes-of node-state) unit-class-states)))
 
 ;;; ---------------------------------------------------------------------------

@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Oct 28 05:33:29 2009 *-*
+;;;; *-* Last-Edit: Mon Mar  1 17:10:57 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2002-2009, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2010, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; Porting Notice:
@@ -455,29 +455,29 @@
            ,exp
            ;; Generate the clauses:
            (cond 
-            ,@(mapcan 
-               #'(lambda (clause)
-                   (destructuring-bind (keys . clause-forms) clause
-                     (cond 
-                      ;; no keys
-                      ((not keys) 
-                       `((nil ,@clause-forms)))
-                      ;; otherwise clause:
-                      ((eq keys 'otherwise)
-                       `((t ,@clause-forms)))
-                      ;; normal clause (including t clause):
-                      (t `((,(cond
-                              ((atom keys)
-                               (pushnew keys all-keys :test test)
-                               `(,(maybe-downgrade-test keys) ,exp ',keys))
-                              (t `(or ,.(mapcar 
-                                         #'(lambda (key)
-                                             (pushnew key all-keys :test test)
-                                             `(,(maybe-downgrade-test key)
-                                               ,exp ',key))
-                                         keys))))
-                            ,@clause-forms))))))
-               clauses)
+            ,@(flet ((do-clause (clause)
+                       (destructuring-bind (keys . clause-forms) clause
+                         (cond 
+                          ;; no keys
+                          ((not keys) 
+                           `((nil ,@clause-forms)))
+                          ;; otherwise clause:
+                          ((eq keys 'otherwise)
+                           `((t ,@clause-forms)))
+                          ;; normal clause (including t clause):
+                          (t `((,(cond
+                                  ((atom keys)
+                                   (pushnew keys all-keys :test test)
+                                   `(,(maybe-downgrade-test keys) ,exp ',keys))
+                                  (t `(or ,.(mapcar 
+                                             #'(lambda (key)
+                                                 (pushnew key all-keys :test test)
+                                                 `(,(maybe-downgrade-test key)
+                                                   ,exp ',key))
+                                             keys))))
+                                ,@clause-forms)))))))
+                (declare (dynamic-extent #'do-clause))
+                (mapcan #'do-clause clauses))
             ;; ccase error-and-go form:
             ,@(when ccase-tag
                 `((t (setf ,exp-form 
@@ -647,8 +647,9 @@
                   (return-from ,fun nil)
                   ,end-p
                   (return-from ,fun ,result))))
-         (map nil #'(lambda (element) (,fun element nil))
-              ,sequence)
+         (flet ((fn (element) (,fun element nil)))
+           (declare (dynamic-extent #'fn))
+           (map nil #'fn ,sequence))
          ,@(when result `((,fun nil t))))))) 
 
 ;;; ===========================================================================

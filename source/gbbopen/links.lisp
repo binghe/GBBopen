@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/links.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Jun 28 11:30:06 2009 *-*
+;;;; *-* Last-Edit: Wed Mar  3 04:10:08 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2002-2009, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2010, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -291,12 +291,13 @@
               (cond
                (sort-function
                 (setf new-value
-                      (nsorted-insert 
-                       instance-ptr-obj slot-value
-                       sort-function 
-                       (when sort-key
-                         #'(lambda (x)
-                             (funcall sort-key (link-instance-of x))))))
+                      (flet ((fn (x)
+                               (funcall sort-key (link-instance-of x))))
+                        (declare (dynamic-extent #'fn))
+                        (nsorted-insert 
+                         instance-ptr-obj slot-value
+                         sort-function 
+                         (when sort-key #'fn))))
                 (setf (slot-value other-instance slot-name) new-value))
                (t 
                 (setf new-value (cons instance-ptr-obj slot-value))
@@ -423,12 +424,13 @@
                 (check-for-deleted-instance new operation)
                 (if sort-function
                     (setf existing-ptr-objs
-                          (nsorted-insert 
-                           new-ptr-obj existing-ptr-objs
-                           sort-function
-                           (when sort-key
-                             #'(lambda (x)
-                                 (funcall sort-key (link-instance-of x))))))
+                          (flet ((fn (x)
+                                   (funcall sort-key (link-instance-of x))))
+                            (declare (dynamic-extent #'fn))
+                            (nsorted-insert 
+                             new-ptr-obj existing-ptr-objs
+                             sort-function
+                             (when sort-key #'fn))))
                     (push new-ptr-obj existing-ptr-objs))
                 (push new change))))
           (%do-ilinks dslotd instance change force)
@@ -606,14 +608,16 @@
   ;;; Return the direct-link definition for `slot-name' in `object' by looking
   ;;; for the closest (CPL) definition
   (declare (inline class-of))
-  (some #'(lambda (class)
-            (find-if #'(lambda (dslotd)
-			 (when (and (eq slot-name 
-					(slot-definition-name dslotd))
-				    (typep dslotd 'direct-link-definition)) 
-			   dslotd))
-		     (the list (class-direct-slots class))))
-        (class-precedence-list (class-of object))))
+  (flet ((fn (class)
+           (flet ((slot-fn (dslotd)
+                    (when (and (eq slot-name 
+                                   (slot-definition-name dslotd))
+                               (typep dslotd 'direct-link-definition)) 
+                      dslotd)))
+             (declare (dynamic-extent #'slot-fn))
+             (find-if #'slot-fn (the list (class-direct-slots class))))))
+    (declare (dynamic-extent #'fn))
+    (some #'fn (class-precedence-list (class-of object)))))
     
 ;;; ---------------------------------------------------------------------------
 
@@ -717,19 +721,22 @@
 
 (defun check-link-definitions (&optional silent errorp)
   (let ((result 't))
-    (map-unit-classes
-     #'(lambda (class plus-subclasses)
-         (declare (ignore plus-subclasses))
-         (map-direct-link-slots 
-          #'(lambda (link) 
-              (unless (check-a-link class link silent errorp)
-                (if silent 
-                    (setf result nil)
-                    (return-from check-link-definitions nil))))
-	  (ensure-finalized-class class)))
-     ;; Note: standard-unit-instance isn't defined until after this file is
-     ;;       loaded, so we can't use load-time-value on this class "constant"
-     (find-class 'standard-unit-instance))
+    (flet ((fn (class plus-subclasses)
+             (declare (ignore plus-subclasses))
+             (map-direct-link-slots 
+              #'(lambda (link) 
+                  (unless (check-a-link class link silent errorp)
+                    (if silent 
+                        (setf result nil)
+                        (return-from check-link-definitions nil))))
+              (ensure-finalized-class class))))
+      (declare (dynamic-extent #'fn))
+      (map-unit-classes
+       #'fn
+       ;; Note: standard-unit-instance isn't defined until after this file is
+       ;;       loaded, so we can't use load-time-value on this class
+       ;;       "constant"
+       (find-class 'standard-unit-instance)))
     (when (and result (not silent))
       (format t "~&;; All link definitions are consistent.~%"))
     result))

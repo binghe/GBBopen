@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/print-object-for.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Sep 19 15:07:49 2008 *-*
+;;;; *-* Last-Edit: Mon Mar  1 17:27:51 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -150,11 +150,11 @@
         (let ((omitted-slot-names (omitted-slots-for-saving/sending instance)))
           (setf slots-for-saving/sending
                 (setf (gethash class-name *recorded-class-descriptions-ht*)
-                      (remove-if 
-                       #'(lambda (slot)
-                           (memq (slot-definition-name slot)
-                                 omitted-slot-names))
-                       (class-slots class)))))
+                      (flet ((fn (slot)
+                               (memq (slot-definition-name slot)
+                                     omitted-slot-names)))
+                        (declare (dynamic-extent #'fn))
+                        (remove-if #'fn (class-slots class))))))
         (print-class-description-for-saving/sending class stream))
       slots-for-saving/sending)))
 
@@ -374,19 +374,25 @@
             hash-table-test
             (hash-table-count hash-table)
             keys-and-values-hash-table?)
-    (maphash 
-     (if keys-and-values-hash-table? 
-         #'(lambda (key value)
+    (flet ((write-key-value (key value)
              (write-char #\space stream)
              (print-object-for-saving/sending key stream)
              (write-char #\space stream)
              (print-object-for-saving/sending value stream))
-         #+has-keys-only-hash-tables
-         #'(lambda (key value)
+           #+has-keys-only-hash-tables
+           (write-key-only (key value)
              (declare (ignore value))
              (write-char #\space stream)
              (print-object-for-saving/sending key stream)))
-     hash-table)
+      (declare (dynamic-extent #'write-key-value
+                               #+has-keys-only-hash-tables
+                               #'write-key-only))
+      (maphash 
+       (if keys-and-values-hash-table? 
+           #'write-key-value
+           #+has-keys-only-hash-tables
+           #'write-key-only)
+       hash-table))
     (write-char #\) stream)
     hash-table))
 

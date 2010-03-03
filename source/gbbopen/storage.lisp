@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Jun 20 11:12:18 2009 *-*
+;;;; *-* Last-Edit: Mon Mar  1 16:05:48 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -63,16 +63,16 @@
   ;;; Return a pretty (legal) list representation for `unit-classes-spec' with 
   ;;; class-names rather than class objects and :plus-subclasses only when 
   ;;; needed.  Often used with the format-control-string "~{~{~s~^~@[+~*~]~}~}".
-  (mapcar 
-   #'(lambda (class-spec)
-       (destructuring-bind (unit-class . plus-subclasses)
-           class-spec
-         (let ((class-name (class-name unit-class)))
-           (if (and (eq class-name 'standard-unit-instance)
-                    plus-subclasses)
-               '(t)
-               `(,class-name ,@(when plus-subclasses '(:plus-subclasses)))))))
-   unit-classes-spec))
+  (flet ((fn (class-spec)
+           (destructuring-bind (unit-class . plus-subclasses)
+               class-spec
+             (let ((class-name (class-name unit-class)))
+               (if (and (eq class-name 'standard-unit-instance)
+                        plus-subclasses)
+                   '(t)
+                   `(,class-name ,@(when plus-subclasses '(:plus-subclasses))))))))
+    (declare (dynamic-extent #'fn))
+    (mapcar #'fn unit-classes-spec)))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -94,9 +94,9 @@
                   (if (slot-boundp storage 'instance-counts)
                       (let ((instance-counts (instance-counts-of storage)))
                         (if instance-counts
-                            (reduce #'(lambda (a b) (+& a b))
-                                    instance-counts
-                                    :key #'cdr)
+                            (flet ((fn (a b) (+& a b)))
+                              (declare (dynamic-extent #'fn))
+                              (reduce #'fn instance-counts :key #'cdr))
                             0))
                       0))))
       ;; Print-object must return object:
@@ -177,23 +177,23 @@
   (let* ((unit-class-name (class-name unit-class))
          (stores-classes (stores-classes-of storage)))
     ;; `storage' is a candidate if it:
-    (member-if 
-     #'(lambda (class-spec)
-         (declare (inline class-name))
-         (destructuring-bind (stores-class . stores-subclasses-p)
-             class-spec
-           (or
-            ;; * stores the unit class:
-            (eq unit-class stores-class)
-            ;; * stores a parent class plus subclasses:
-            (and stores-subclasses-p
-                 (subtypep unit-class-name (class-name stores-class)))
-            ;; * subclasses are desired (:plus-subclasses was specified for
-            ;;   retrieval) and `storage' stores a subclasses of
-            ;;   `unit-class':
-            (and plus-subclasses 
-                 (subtypep (class-name stores-class) unit-class-name)))))
-     stores-classes)))
+    (flet ((fn (class-spec)
+             (declare (inline class-name))
+             (destructuring-bind (stores-class . stores-subclasses-p)
+                 class-spec
+               (or
+                 ;; * stores the unit class:
+                 (eq unit-class stores-class)
+                 ;; * stores a parent class plus subclasses:
+                 (and stores-subclasses-p
+                      (subtypep unit-class-name (class-name stores-class)))
+                 ;; * subclasses are desired (:plus-subclasses was specified for
+                 ;;   retrieval) and `storage' stores a subclasses of
+                 ;;   `unit-class':
+                 (and plus-subclasses 
+                      (subtypep (class-name stores-class) unit-class-name))))))
+      (declare (dynamic-extent #'fn))
+      (member-if #'fn stores-classes))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -363,17 +363,17 @@
     ;; we could be a bit smarter about determining if we have full coverage
     ;; (checking against allowed-unit-classes/dimensions), but we simply
     ;; play it very safe for now:
-    (unless (member-if
-	     #'(lambda (storage)
-		 (and (member
-		       (load-time-value 
-			`(,(find-class 'standard-unit-instance) . t))
-		       (the list (stores-classes-of storage))
-		       :test #'equal)
-		      (eq (dimension-names-of storage) 't)))
-	     result)
-      (push (do-storage space-instance '(t t unstructured))
-	    result))
+    (flet ((fn (storage)
+             (and (member
+                   (load-time-value 
+                    `(,(find-class 'standard-unit-instance) . t))
+                   (the list (stores-classes-of storage))
+                   :test #'equal)
+                  (eq (dimension-names-of storage) 't))))
+      (declare (dynamic-extent #'fn))
+      (unless (member-if #'fn result)
+        (push (do-storage space-instance '(t t unstructured))
+              result)))
     (setf (standard-space-instance.%%storage%% space-instance)
           ;; Maintain in original specification order:
 	  (nreverse result))))
@@ -418,9 +418,9 @@
           (and instance-counts
                (sort (copy-list instance-counts) #'string< :key #'car)))
          (total-instances (if instance-counts
-                              (reduce #'(lambda (a b) (+& a b))
-                                      instance-counts
-                                      :key #'cdr)
+                              (flet ((fn (a b) (+& a b)))
+                                (declare (dynamic-extent #'fn))
+                                (reduce #'fn instance-counts :key #'cdr))
                               0))
          (total-locators (+ total-instances (excess-locators-of storage))))
     (format t "~&~:(~s~) ~{~{~s~^~@[+~*~]~}~} ~s ~:[N/A~;~:*~,1f (~s/~s)~]~%"

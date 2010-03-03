@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-SOCKETS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/portable-sockets.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Mar 10 02:51:00 2009 *-*
+;;;; *-* Last-Edit: Mon Mar  1 17:20:47 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2005-2008, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2005-2010, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; Developed and supported by the GBBopen Project (http://GBBopen.org) and
@@ -647,20 +647,19 @@
   #+threads-not-available
   (declare (ignore function port name backlog interface reuse-address))
   #-threads-not-available
-  (spawn-thread 
-   name 
-   #'(lambda (function port interface backlog reuse-address)
-       (let ((passive-socket 
-              (make-passive-socket port 
-                                   :backlog backlog
-                                   :interface interface
-                                   :reuse-address reuse-address)))
-         (unwind-protect
-             (loop
-               (let ((connection (accept-connection passive-socket)))
-                 (funcall function connection)))
-           (close-passive-socket passive-socket))))
-   function port interface backlog reuse-address)
+  (flet ((fn (function port interface backlog reuse-address)
+           (let ((passive-socket 
+                  (make-passive-socket port 
+                                       :backlog backlog
+                                       :interface interface
+                                       :reuse-address reuse-address)))
+             (unwind-protect
+                 (loop
+                   (let ((connection (accept-connection passive-socket)))
+                     (funcall function connection)))
+               (close-passive-socket passive-socket)))))
+    (declare (dynamic-extent #'fn))
+    (spawn-thread name #'fn function port interface backlog reuse-address))
   #+threads-not-available
   (threads-not-available 'start-connection-server))
 

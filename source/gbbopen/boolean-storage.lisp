@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/boolean-storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Aug 12 10:25:12 2009 *-*
+;;;; *-* Last-Edit: Mon Mar  1 15:53:31 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2003-2009, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2003-2010, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -100,17 +100,17 @@
 (defmethod add-instance-to-storage ((instance standard-unit-instance)
                                     (storage boolean-storage)
                                     verbose)
-  (do-boolean-add/remove-action 
-      instance storage verbose
-      ;; unbound-value action:
-      #'(lambda (instance storage)
-	  (setf (gethash instance (unbound-value-instances-of storage)) 't))
-      ;; true-value action:
-      #'(lambda (instance storage)
-	  (setf (gethash instance (true-instances-of storage)) 't))
-       ;; false-value action:
-      #'(lambda (instance storage)
-	  (setf (gethash instance (false-instances-of storage)) 't))))
+  (flet ((unbound-value-action (instance storage)
+           (setf (gethash instance (unbound-value-instances-of storage)) 't))
+         (true-value-action (instance storage)
+           (setf (gethash instance (true-instances-of storage)) 't))
+         (false-value-action (instance storage)
+           (setf (gethash instance (false-instances-of storage)) 't)))
+    (do-boolean-add/remove-action 
+        instance storage verbose
+        #'unbound-value-action
+        #'true-value-action
+        #'false-value-action)))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -120,17 +120,17 @@
                                          dimensions-being-changed 
                                          verbose)
   (declare (ignore old-dimension-values dimensions-being-changed))
-  (do-boolean-add/remove-action 
-      instance storage verbose
-      ;; unbound-value action:
-      #'(lambda (instance storage)
-	  (remhash instance (unbound-value-instances-of storage)))
-      ;; true-value action:
-      #'(lambda (instance storage)
-	  (remhash instance (true-instances-of storage)))
-      ;; false-value action:
-      #'(lambda (instance storage)
-	  (remhash instance (false-instances-of storage)))))
+  (flet ((unbound-value-action (instance storage)
+           (remhash instance (unbound-value-instances-of storage)))
+         (true-value-action  (instance storage)
+           (remhash instance (true-instances-of storage)))
+         (false-value-action (instance storage)
+           (remhash instance (false-instances-of storage))))
+    (do-boolean-add/remove-action 
+        instance storage verbose
+        #'unbound-value-action
+        #'true-value-action
+        #'false-value-action)))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -190,23 +190,25 @@
 (defmethod map-marked-instances-on-storage (fn (storage boolean-storage)
                                             disjunctive-dimensional-extents
                                             verbose)
-  (do-boolean-map-actions
-      #'(lambda (instance value)
-	  (declare (ignore value))
-          (when (mbr-instance-mark-set-p instance)
-            (funcall (the function fn) instance)))
-    storage disjunctive-dimensional-extents verbose))
+  (flet ((do-fn (instance value)
+           (declare (ignore value))
+           (when (mbr-instance-mark-set-p instance)
+             (funcall (the function fn) instance))))
+    (declare (dynamic-extent #'do-fn))
+    (do-boolean-map-actions
+        #'do-fn storage disjunctive-dimensional-extents verbose)))
 
 ;;; ---------------------------------------------------------------------------
 
 (defmethod map-all-instances-on-storage (fn (storage boolean-storage)
                                          disjunctive-dimensional-extents
 					 verbose)
-  (do-boolean-map-actions 
-      #'(lambda (instance value)
-	  (declare (ignore value))
-	  (funcall (the function fn) instance))
-    storage disjunctive-dimensional-extents verbose))
+  (flet ((do-fn (instance value)
+           (declare (ignore value))
+           (funcall (the function fn) instance)))
+    (declare (dynamic-extent #'do-fn))
+    (do-boolean-map-actions 
+        #'do-fn storage disjunctive-dimensional-extents verbose)))
 
 ;;; ===========================================================================
 ;;;				  End of File

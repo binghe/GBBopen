@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/find.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri May 15 04:58:44 2009 *-*
+;;;; *-* Last-Edit: Mon Mar  1 16:18:57 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -263,18 +263,18 @@
    (t (with-full-optimization ()
         #'(lambda (instance)
             (let ((instance-type (type-of instance)))
-              (some 
-               #'(lambda (spec)
-                   (cond ((atom spec)
-                          (eq instance-type spec))
-                         ((memq (second spec) '(:plus-subclasses +))
-                          (locally #+(or cmu sbcl scl)
-                                   (declare (notinline typep))
-                            (typep instance (first spec))))
-                         ((memq (second spec) '(:no-subclasses =))
-                          (eq instance-type (first spec)))
-                         (t (ill-formed-unit-classes-spec unit-classes-spec))))
-               (the list unit-classes-spec))))))))
+              (flet ((fn (spec)
+                       (cond ((atom spec)
+                              (eq instance-type spec))
+                             ((memq (second spec) '(:plus-subclasses +))
+                              (locally #+(or cmu sbcl scl)
+                                       (declare (notinline typep))
+                                       (typep instance (first spec))))
+                             ((memq (second spec) '(:no-subclasses =))
+                              (eq instance-type (first spec)))
+                             (t (ill-formed-unit-classes-spec unit-classes-spec)))))
+                (declare (dynamic-extent #'fn))
+                (some #'fn (the list unit-classes-spec)))))))))
                                     
 ;;; ===========================================================================
 ;;;  Pattern Operators
@@ -893,12 +893,13 @@
                         nil)
                        ;; set-composite dimension value:
                        ((eq composite-type ':set)
-                        (some #'(lambda (component-dimension-value)
-                                  (funcall op-fn 
-                                           component-dimension-value
-                                           pattern-value
-                                           comparison-type))
-                              dimension-value))                      
+                        (flet ((fn (component-dimension-value)
+                                 (funcall op-fn 
+                                          component-dimension-value
+                                          pattern-value
+                                          comparison-type)))
+                          (declare (dynamic-extent #'fn))
+                          (some #'fn dimension-value)))
                        ;; sequence-composite dimension value:
                        ((eq composite-type ':sequence)
                         (nyi))
@@ -1098,12 +1099,12 @@
                  ;; (and .. (and ..) ..) => (and (and ..) ..)
                  ;; (and .. (or ..) ..) => (and (or ..) ..):
                  ((let* ((p (cdr pattern))
-                         (pos (position-if 
-                               #'(lambda (element)
-                                   (and (consp element)
-                                        (or (eq (car element) 'and)
-                                            (eq (car element) 'or))))
-                               (the list p))))
+                         (pos (flet ((fn (element)
+                                       (and (consp element)
+                                            (or (eq (car element) 'and)
+                                                (eq (car element) 'or)))))
+                                (declare (dynamic-extent #'fn))
+                                (position-if #'fn (the list p)))))
                     (when pos
                       (transform `(and ,(nth pos p)
                                        ,.(subseq p 0 pos)
@@ -1577,45 +1578,43 @@
     (when find-stats
       (incf (find-stats.number-of-finds find-stats))
       (incf (find-stats.number-using-marking find-stats)))
-    (map-space-instances
-     #'(lambda (space-instance)
-         (check-pattern/space-dimension-compatibility 
-          disjunctive-dimensional-extents space-instance))
-     space-instances
-     invoking-fn-name)
+    (flet ((fn (space-instance)
+             (check-pattern/space-dimension-compatibility 
+              disjunctive-dimensional-extents space-instance)))
+      (declare (dynamic-extent #'fn))
+      (map-space-instances #'fn space-instances invoking-fn-name))
     (with-lock-held (*master-instance-lock*)
       ;; set all flags:
       (dolist (storage storage-objects)
         (set-all-mbr-instance-marks storage disjunctive-dimensional-extents))
       ;; filter-before & pattern & filter-after & funcall `fn':
       (dolist (storage storage-objects)
-        (map-marked-instances-on-storage 
-         #'(lambda (instance)
-             (when find-stats 
-               (incf (find-stats.instances-touched find-stats)))
-             (when (and (funcall (the function unit-class-check-fn) instance)
-                        (progn
-                          (when find-stats 
-                            (incf (find-stats.instances-considered find-stats)))
-                          't)
-                        (or (null filter-before)
-                            (funcall (the function filter-before) instance))
-                        (match-instance-to-pattern 
-                         instance
-                         (optimized-pattern.pattern optimized-pattern)
-                         into-cons
-                         verbose)
-                        (or (null filter-after)
-                            (funcall (the function filter-after) instance)))
-               ;; the instance is accepted:
-               (when find-stats 
-                 (incf (find-stats.instances-accepted find-stats)))
-               (funcall (the function fn) instance))
-             ;; we have accepted or rejected this instance:
-             (clear-mbr-instance-mark instance))
-         storage
-         disjunctive-dimensional-extents
-         verbose)))
+        (flet ((do-fn (instance)
+                 (when find-stats 
+                   (incf (find-stats.instances-touched find-stats)))
+                 (when (and (funcall (the function unit-class-check-fn) instance)
+                            (progn
+                              (when find-stats 
+                                (incf (find-stats.instances-considered find-stats)))
+                              't)
+                            (or (null filter-before)
+                                (funcall (the function filter-before) instance))
+                            (match-instance-to-pattern 
+                             instance
+                             (optimized-pattern.pattern optimized-pattern)
+                             into-cons
+                             verbose)
+                            (or (null filter-after)
+                                (funcall (the function filter-after) instance)))
+                   ;; the instance is accepted:
+                   (when find-stats 
+                     (incf (find-stats.instances-accepted find-stats)))
+                   (funcall (the function fn) instance))
+                 ;; we have accepted or rejected this instance:
+                 (clear-mbr-instance-mark instance)))
+          (declare (dynamic-extent #'do-fn))
+          (map-marked-instances-on-storage
+           #'do-fn storage disjunctive-dimensional-extents verbose))))
     (when find-stats
       (incf (find-stats.run-time find-stats) 
             (- (get-internal-run-time) run-time)))))
@@ -1660,44 +1659,42 @@
                              storage-objects space-instances))
     (when find-stats
       (incf (find-stats.number-of-finds find-stats)))
-    (map-space-instances
-     #'(lambda (space-instance)
-         (check-pattern/space-dimension-compatibility 
-          disjunctive-dimensional-extents space-instance))
-     space-instances
-     invoking-fn-name)
+    (flet ((fn (space-instance)
+             (check-pattern/space-dimension-compatibility 
+              disjunctive-dimensional-extents space-instance)))
+      (declare (dynamic-extent #'fn))
+      (map-space-instances #'fn space-instances invoking-fn-name))
     ;; filter-before & pattern & filter-after & funcall `fn':
     (with-lock-held (*master-instance-lock*)
       (dolist (storage storage-objects)
-        (map-all-instances-on-storage 
-         #'(lambda (instance)
-             (unless (gethash instance processed-ht)
-               (when find-stats 
-                 (incf (find-stats.instances-touched find-stats)))
-               (when (and (funcall (the function unit-class-check-fn) instance)
-                          (progn 
-                            (when find-stats 
-                              (incf (find-stats.instances-considered 
-                                     find-stats)))
-                            't)
-                          (or (null filter-before)
-                              (funcall (the function filter-before) instance))
-                          (match-instance-to-pattern 
-                           instance
-                           (optimized-pattern.pattern optimized-pattern)
-                           into-cons
-                           verbose)
-                          (or (null filter-after)
-                              (funcall (the function filter-after) instance)))
-                 ;; the instance is accepted:
-                 (when find-stats 
-                   (incf (find-stats.instances-accepted find-stats)))
-                 (funcall (the function fn) instance))
-               ;; we have accepted or rejected this instance:
-               (setf (gethash instance processed-ht) 't)))
-         storage
-         disjunctive-dimensional-extents
-         verbose)))
+        (flet ((fn (instance)
+                 (unless (gethash instance processed-ht)
+                   (when find-stats 
+                     (incf (find-stats.instances-touched find-stats)))
+                   (when (and (funcall (the function unit-class-check-fn) instance)
+                              (progn 
+                                (when find-stats 
+                                  (incf (find-stats.instances-considered 
+                                         find-stats)))
+                                't)
+                              (or (null filter-before)
+                                  (funcall (the function filter-before) instance))
+                              (match-instance-to-pattern 
+                               instance
+                               (optimized-pattern.pattern optimized-pattern)
+                               into-cons
+                               verbose)
+                              (or (null filter-after)
+                                  (funcall (the function filter-after) instance)))
+                     ;; the instance is accepted:
+                     (when find-stats 
+                       (incf (find-stats.instances-accepted find-stats)))
+                     (funcall (the function fn) instance))
+                   ;; we have accepted or rejected this instance:
+                   (setf (gethash instance processed-ht) 't))))
+          (declare (dynamic-extent #'fn))
+          (map-all-instances-on-storage 
+           #'fn storage disjunctive-dimensional-extents verbose))))
     (when find-stats
       (incf (find-stats.run-time find-stats) 
             (- (get-internal-run-time) run-time)))))
@@ -1728,17 +1725,17 @@
         (set-all-mbr-instance-marks storage 't))
       ;; sweep:
       (dolist (storage storage-objects)
-        (map-marked-instances-on-storage
-         #'(lambda (instance)
-             (clear-mbr-instance-mark instance)
-             (when (and (funcall (the function unit-class-check-fn) instance)
-                        (or (null filter-before)
-                            (funcall (the function filter-before) instance))
-                        ;; there is no pattern here...
-                        (or (null filter-after)
-                            (funcall (the function filter-after) instance)))
-               (funcall (the function fn) instance)))
-         storage 't verbose)))))
+        (flet ((fn (instance)
+                 (clear-mbr-instance-mark instance)
+                 (when (and (funcall (the function unit-class-check-fn) instance)
+                            (or (null filter-before)
+                                (funcall (the function filter-before) instance))
+                            ;; there is no pattern here...
+                            (or (null filter-after)
+                                (funcall (the function filter-after) instance)))
+                   (funcall (the function fn) instance))))
+          (declare (dynamic-extent #'fn))
+          (map-marked-instances-on-storage #'fn storage 't verbose))))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -1760,19 +1757,19 @@
                        :rehash-size *processed-hash-table-rehash-size*)))
     (with-lock-held (*master-instance-lock*)
       (dolist (storage storage-objects)
-        (map-all-instances-on-storage
-         #'(lambda (instance)
-             (unless (gethash instance processed-ht)
-               (when (and (funcall (the function unit-class-check-fn) instance)
-                          (or (null filter-before)
-                              (funcall (the function filter-before) instance))
-                          ;; there is no pattern here...
-                          (or (null filter-after)
-                              (funcall (the function filter-after) instance)))
-                 (funcall (the function fn) instance))
-               ;; we have accepted or rejected this instance:
-               (setf (gethash instance processed-ht) 't)))
-         storage 't verbose)))))
+        (flet ((fn (instance)
+                 (unless (gethash instance processed-ht)
+                   (when (and (funcall (the function unit-class-check-fn) instance)
+                              (or (null filter-before)
+                                  (funcall (the function filter-before) instance))
+                              ;; there is no pattern here...
+                              (or (null filter-after)
+                                  (funcall (the function filter-after) instance)))
+                     (funcall (the function fn) instance))
+                   ;; we have accepted or rejected this instance:
+                   (setf (gethash instance processed-ht) 't))))
+          (declare (dynamic-extent #'fn))
+          (map-all-instances-on-storage #'fn storage 't verbose))))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -1833,15 +1830,17 @@
                                            &body body)
    ;;; Do-xxx variant of map-instances-on-space-instances.
   `(block nil
-     (map-instances-on-space-instances 
-      #'(lambda (,var) ,@body)
-      ,unit-classes-spec
-      ,space-instances
-      ,@(when pattern `(:pattern ,pattern))
-      ,@(when filter-before `(:filter-before ,filter-before))
-      ,@(when filter-after `(:filter-after ,filter-after))
-      ,@(when use-marking `(:use-marking ,use-marking))
-      ,@(when verbose `(:verbose ,verbose)))))
+     (flet ((fn (,var) ,@body))
+       (declare (dynamic-extent #'fn))
+       (map-instances-on-space-instances 
+        #'fn
+        ,unit-classes-spec
+        ,space-instances
+        ,@(when pattern `(:pattern ,pattern))
+        ,@(when filter-before `(:filter-before ,filter-before))
+        ,@(when filter-after `(:filter-after ,filter-after))
+        ,@(when use-marking `(:use-marking ,use-marking))
+        ,@(when verbose `(:verbose ,verbose))))))
 
 ;;; ===========================================================================
 ;;;   Find Instances
@@ -1861,31 +1860,32 @@
   (when verbose (find-verbose-operation 'find-instances))
   (let* ((result nil)
          (filter-before (when filter-before (coerce filter-before 'function)))
-         (filter-after (when filter-after (coerce filter-after 'function)))
-         (fn #'(lambda (instance) 
-                 (check-for-deleted-instance instance 'find-instances)
-                 (push instance result))))
-    (cond 
-     ;; full space-instance sweep:
-     ((eq pattern ':all)
-      (funcall (if use-marking 
-                   #'mark-based-sweep
-                   #'hash-based-sweep)
-               fn unit-classes-spec space-instances 
-               filter-before filter-after verbose
-               'find-instances))
-     ;; pattern-based retrieval:
-     (t (funcall (if use-marking 
-                     #'mark-based-retrieval
-                     #'hash-based-retrieval)
-                 fn
-                 unit-classes-spec 
-                 (if (eq space-instances 't)
-                     (find-space-instances '(*))
-                     (ensure-list space-instances))
-                 pattern
+         (filter-after (when filter-after (coerce filter-after 'function))))
+    (flet ((fn (instance) 
+             (check-for-deleted-instance instance 'find-instances)
+             (push instance result)))
+      (declare (dynamic-extent #'fn))
+      (cond 
+       ;; full space-instance sweep:
+       ((eq pattern ':all)
+        (funcall (if use-marking 
+                     #'mark-based-sweep
+                     #'hash-based-sweep)
+                 #'fn unit-classes-spec space-instances 
                  filter-before filter-after verbose
-                 'find-instances)))
+                 'find-instances))
+       ;; pattern-based retrieval:
+       (t (funcall (if use-marking 
+                       #'mark-based-retrieval
+                       #'hash-based-retrieval)
+                   #'fn
+                   unit-classes-spec 
+                   (if (eq space-instances 't)
+                       (find-space-instances '(*))
+                       (ensure-list space-instances))
+                   pattern
+                   filter-before filter-after verbose
+                   'find-instances))))
     result))
 
 ;;; ===========================================================================
@@ -1909,22 +1909,22 @@
         (filter-before (when filter-before (coerce filter-before 'function)))
         (filter-after (when filter-after (coerce filter-after 'function)))
         (into-cons (cons nil nil)))
-    (mapcan
-     #'(lambda (instance)
-         ;; filter-before & pattern & filter-after
-         (when (and (or (null filter-before)
-                        (funcall (the function filter-before) instance))
-                    (match-instance-to-pattern 
-                     instance
-                     (optimized-pattern.pattern optimized-pattern)
-                     into-cons
-                     verbose)
-                    (or (null filter-after)
-                        (funcall (the function filter-after) instance)))
-           ;; instance is accepted:
-           (check-for-deleted-instance instance 'filter-instances)
-           (list instance)))
-     instances)))
+    (flet ((fn (instance)
+             ;; filter-before & pattern & filter-after
+             (when (and (or (null filter-before)
+                            (funcall (the function filter-before) instance))
+                        (match-instance-to-pattern 
+                         instance
+                         (optimized-pattern.pattern optimized-pattern)
+                         into-cons
+                         verbose)
+                        (or (null filter-after)
+                            (funcall (the function filter-after) instance)))
+               ;; instance is accepted:
+               (check-for-deleted-instance instance 'filter-instances)
+               (list instance))))
+      (declare (dynamic-extent #'fn))
+      (mapcan #'fn instances))))
 
 ;;; ===========================================================================
 ;;;   With-Find-Stats

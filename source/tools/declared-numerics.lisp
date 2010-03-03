@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/declared-numerics.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Oct 28 05:35:37 2009 *-*
+;;;; *-* Last-Edit: Sun Feb 28 18:56:09 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2002-2009, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2010, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; Porting Notice:
@@ -49,7 +49,7 @@
 ;;;       are unable to use PRINT-OBJECT.
 ;;;    2. Digitool MCL has an existing #@ dispatch that we have to work around
 ;;;    3. Other packages might also want to use the #@ dispatch for other
-;;;    purposes
+;;;       purposes
 ;;;  Until CL implementations "standardize" on a portable, non-read-eval-based, 
 ;;;  mechanism for infinite values, this is our best attempt.
 ;;;
@@ -245,13 +245,13 @@
     (or #+(and :allegro (not :64-bit)) '/&
         #+(and :allegro :64-bit) 'truncate&
         #+clisp 'truncate&
-        #+clozure '/&
-        #+cmu '/&
-        #+digitool-mcl '/&
-        #+ecl '/&
+        #+clozure 'truncate&
+        #+cmu 'truncate&
+        #+digitool-mcl 'truncate&
+        #+ecl '/&                       ; last checked with 10.2.1 (Feb 2010)
         #+lispworks 'truncate&
         #+sbcl 'truncate&
-        #+scl '/&
+        #+scl 'truncate&
         #-(or :allegro
               :clisp 
               :clozure
@@ -265,7 +265,7 @@
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Check if various floats are not implemented distinctly (also run at
-;;;  compile time in order to push features)
+;;;  compile time in order to push features during compilation)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defun check-for-numeric-type (declared-type feature)

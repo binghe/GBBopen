@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/units.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri May 15 05:04:37 2009 *-*
+;;;; *-* Last-Edit: Wed Mar  3 04:43:48 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2002-2008, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2010, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; Porting Notice:
@@ -125,17 +125,18 @@
           dimensional-values)
     ;; Cache unit-class-dimensions:
     (setf (standard-unit-class.unit-class-dimensions unit-class)
-          (mapcar #'(lambda (dimensional-value)
-                      `(;; dimension name:
-                        ,(first dimensional-value)
-                        (;; dimension type:
-                         ,(case (second dimensional-value)
-                            (:boolean ':boolean)
-                            (:element ':enumerated)
-                            ((:point :interval :mixed) ':ordered))
-                         ;; comparison type:
-                         ,(third dimensional-value))))
-                  dimensional-values))
+          (flet ((fn (dimensional-value)
+                   `(;; dimension name:
+                     ,(first dimensional-value)
+                     (;; dimension type:
+                      ,(case (second dimensional-value)
+                         (:boolean ':boolean)
+                         (:element ':enumerated)
+                         ((:point :interval :mixed) ':ordered))
+                      ;; comparison type:
+                      ,(third dimensional-value)))))
+            (declare (dynamic-extent #'fn))
+            (mapcar #'fn dimensional-values)))
     ;; Propogate retain attribute from supers:
     (unless retain
       (dolist (super (class-direct-superclasses unit-class))
@@ -419,19 +420,19 @@
   ;;; :sort-function and :sort-key from *%%fixup-function-objects%%* based on
   ;;; the gensym'ed fixup-symbols
   (declare (type list fixup-symbols))
-  (map-direct-link-slots 
-   #'(lambda (dslotd)
-       ;; fixup sort-function slot
-       (let ((fn (direct-link-definition.sort-function dslotd)))
-         (when (and fn (memq fn fixup-symbols))
-           (setf (direct-link-definition.sort-function dslotd)
-                 (symbol-value fn))))
-       ;; fixup sort-key slot
-       (let ((fn (direct-link-definition.sort-key dslotd)))
-         (when (and fn (memq fn fixup-symbols))
-           (setf (direct-link-definition.sort-key dslotd)
-                 (symbol-value fn)))))
-   unit-class)
+  (flet ((do-fn (dslotd)
+           ;; fixup sort-function slot
+           (let ((fn (direct-link-definition.sort-function dslotd)))
+             (when (and fn (memq fn fixup-symbols))
+               (setf (direct-link-definition.sort-function dslotd)
+                     (symbol-value fn))))
+           ;; fixup sort-key slot
+           (let ((fn (direct-link-definition.sort-key dslotd)))
+             (when (and fn (memq fn fixup-symbols))
+               (setf (direct-link-definition.sort-key dslotd)
+                     (symbol-value fn))))))
+    (declare (dynamic-extent #'do-fn))
+    (map-direct-link-slots #'do-fn unit-class))
   ;; fixup canonicalized :dimensional-values option:  
   (dolist (cdv-spec (standard-unit-class.dimensional-values unit-class))
     (let ((maybe-fn (fourth cdv-spec)))
@@ -502,19 +503,21 @@
                ;; allow (:dimensional-values nil) to mean none:
 	       (if (equal (cdr option) '(nil))
 		   nil
-		   (mapcar #'(lambda (dv-spec)
-			       (build-cannonical-dimensional-value-spec
-				unit-class-name dv-spec))
-			   (cdr option)))))
+                   (flet ((fn (dv-spec)
+                            (build-cannonical-dimensional-value-spec
+                             unit-class-name dv-spec)))
+                     (declare (dynamic-extent #'fn))
+                     (mapcar #'fn (cdr option))))))
 	(:initial-space-instances
 	 (setf initial-space-instances-seen 't)
          (let ((initial-space-instances-option-values (cdr option)))
            ;; check that the initial-space-instances specification contains
            ;; only a single function object!
            (when (and (list-length>1 initial-space-instances-option-values)
-                    (some #'(lambda (elt)
-                              (eq (car elt) 'function))
-                          initial-space-instances-option-values))
+                      (flet ((fn (elt)
+                               (eq (car elt) 'function)))
+                        (declare (dynamic-extent #'fn))
+                        (some #'fn initial-space-instances-option-values)))
              (error "The option: ~s in the definition of unit-class ~s ~
                      contains more than a single function object."
                     option
@@ -546,10 +549,11 @@
   (fixup-function-objects-part2 unit-class fixup-symbols)
   ;; Clear space-instance storage caches (can't use do-space-instances yet):
   (when (fboundp 'map-space-instances) ;; don't run when loading GBBopen!
-    (map-space-instances 
-     #'(lambda (space-instance)
-         (delete-space-instance-caches space-instance (class-name unit-class)))
-     '(*)))
+    (flet ((fn (space-instance)
+             (delete-space-instance-caches 
+              space-instance (class-name unit-class))))
+      (declare (dynamic-extent #'fn))
+      (map-space-instances #'fn '(*))))
   (compute-inherited-unit-class-values unit-class))
 
 ;;; ---------------------------------------------------------------------------
@@ -569,9 +573,10 @@
   (when (and (null direct-superclass-names)
              (not (eq unit-class-name 'standard-unit-instance)))
     (setf direct-superclass-names '(standard-unit-instance)))
-  (unless (every #'(lambda (element)
-		     (and (symbolp element) (not (keywordp element))))
-		 direct-superclass-names)
+  (unless (flet ((fn (element)
+                   (and (symbolp element) (not (keywordp element)))))
+            (declare (dynamic-extent #'fn))
+            (every #'fn direct-superclass-names))
     (error "Illegal direct-superclasses syntax in define-unit-class: ~s."
 	   direct-superclass-names))
   ;; To support function objects and closures in :initial-space-instances and
@@ -726,14 +731,17 @@
            (fn (if (functionp fn) fn (fdefinition fn)))
            (accumulation-fn #'(lambda (&rest class-spec)
                                 (push class-spec classes))))
+      (declare (dynamic-extent #'accumulation-fn))
       (multiple-value-bind (unit-class plus-subclasses)
           (parse-unit-class-specifier unit-class-name)
         (if plus-subclasses
             (map-unit-classes accumulation-fn unit-class)
             (funcall accumulation-fn unit-class nil)))
-      (setf classes (sort classes #'string< 
-                          :key #'(lambda (class-spec)
-                                   (class-name (first class-spec)))))
+      (setf classes
+            (flet ((fn (class-spec)
+                     (class-name (first class-spec))))
+              (declare (dynamic-extent #'fn))
+              (sort classes #'string< :key #'fn))) 
       (dolist (class-spec classes)
         (apply fn class-spec)))))
 
@@ -802,11 +810,11 @@
 
 (defmethod class-instances-count ((unit-class-spec cons))
   (let ((total 0))
-    (map-extended-unit-classes
-     #'(lambda (unit-class plus-subclasses)
-         (declare (ignore plus-subclasses))
-         (incf total (class-instances-count unit-class)))
-     unit-class-spec)
+    (flet ((fn (unit-class plus-subclasses)
+             (declare (ignore plus-subclasses))
+             (incf total (class-instances-count unit-class))))
+      (declare (dynamic-extent #'fn))
+      (map-extended-unit-classes #'fn unit-class-spec))
     ;; return the computed total:
     total))
     
@@ -823,11 +831,11 @@
       (class-instances-summary (find-unit-class unit-class-name))))
 
 (defmethod class-instances-summary ((unit-class-spec cons))
-  (map-extended-unit-classes-sorted
-   #'(lambda (unit-class plus-subclasses)
-       (declare (ignore plus-subclasses))
-       (class-instances-summary unit-class))
-   unit-class-spec))
+  (flet ((fn (unit-class plus-subclasses)
+           (declare (ignore plus-subclasses))
+           (class-instances-summary unit-class)))
+    (declare (dynamic-extent #'fn))
+    (map-extended-unit-classes-sorted #'fn unit-class-spec)))
     
 (defmethod class-instances-summary ((unit-class standard-unit-class))
   ;;; Prints a descriptive summary of `unit-class-name-or-class'
@@ -847,11 +855,11 @@
       (reset-unit-class (find-unit-class unit-class-name))))
     
 (defmethod reset-unit-class ((unit-class-spec cons))
-  (map-extended-unit-classes
-   #'(lambda (unit-class plus-subclasses)
-       (declare (ignore plus-subclasses))
-       (reset-unit-class unit-class))
-   unit-class-spec))
+  (flet ((fn (unit-class plus-subclasses)
+           (declare (ignore plus-subclasses))
+           (reset-unit-class unit-class)))
+    (declare (dynamic-extent #'fn))
+    (map-extended-unit-classes #'fn unit-class-spec)))
     
 (defmethod reset-unit-class ((unit-class standard-unit-class))
   ;;; Resets the instance count of a unit-class-name-or-class and creates a new
@@ -890,11 +898,11 @@
       (describe-unit-class (find-unit-class unit-class-name))))
 
 (defmethod describe-unit-class ((unit-class-spec cons))
-  (map-extended-unit-classes
-   #'(lambda (unit-class plus-subclasses)
-       (declare (ignore plus-subclasses))
-       (describe-unit-class unit-class))
-   unit-class-spec))
+  (flet ((fn (unit-class plus-subclasses)
+           (declare (ignore plus-subclasses))
+           (describe-unit-class unit-class)))
+    (declare (dynamic-extent #'fn))
+    (map-extended-unit-classes #'fn unit-class-spec)))
     
 (defmethod describe-unit-class ((unit-class standard-unit-class))
   (ensure-finalized-class unit-class)
@@ -908,18 +916,20 @@
           (hidden-nonlink-slot-names (class-prototype unit-class)))
          (direct-slots
           (sort 
-           (delete-if #'(lambda (slot)
-                          (memq (slot-definition-name slot)
-                                hidden-slot-names))
-                      (copy-list (class-direct-slots unit-class)))
+           (flet ((fn (slot)
+                    (memq (slot-definition-name slot)
+                          hidden-slot-names)))
+             (declare (dynamic-extent #'fn))
+             (delete-if #'fn (copy-list (class-direct-slots unit-class))))
            #'string<
            :key #'slot-definition-name))
          (effective-slots
           (sort
-           (delete-if #'(lambda (slot)
-                          (memq (slot-definition-name slot)
-                                hidden-slot-names))
-                      (copy-list (class-slots unit-class)))
+           (flet ((fn (slot)
+                    (memq (slot-definition-name slot)
+                          hidden-slot-names)))
+             (declare (dynamic-extent #'fn))
+             (delete-if #'fn (copy-list (class-slots unit-class))))
            #'string<
            :key #'slot-definition-name)))
     (flet ((name&abstract (class)
@@ -932,16 +942,19 @@
       (format-column 4 subs "~s~:[~; (abstract)~]" #'name&abstract))
     ;; Direct nonlink slots:
     (format t "~&~2tDirect nonlink slots:~@[ None~%~]"
-            (notany #'(lambda (slot) 
-                        (not (typep slot 'direct-link-definition)))
-                    direct-slots))
+            (flet ((fn (slot) 
+                     (not (typep slot 'direct-link-definition))))
+              (declare (dynamic-extent #'fn))
+              (notany #'fn direct-slots)))
     (dolist (slot direct-slots)
       (unless (typep slot 'direct-link-definition)
         (describe-unit-slot unit-class slot)))
     ;; Direct link slots:
     (format t "~&~2tDirect link slots:~@[ None~%~]"
-            (notany #'(lambda (slot) (typep slot 'direct-link-definition))
-                    direct-slots))
+            (flet ((fn (slot) 
+                     (typep slot 'direct-link-definition)))
+              (declare (dynamic-extent #'fn))
+              (notany #'fn direct-slots)))
     (dolist (slot direct-slots)
       (when (typep slot 'direct-link-definition)
         (describe-unit-slot unit-class slot)))
@@ -952,8 +965,10 @@
         (describe-unit-slot unit-class slot)))
     ;; Effective link slots:
     (format t "~&~2tEffective link slots:~@[ None~%~]"
-            (notany #'(lambda (slot) (typep slot 'effective-link-definition))
-                    effective-slots))
+            (flet ((fn (slot) 
+                     (typep slot 'effective-link-definition)))
+              (declare (dynamic-extent #'fn))
+            (notany #'fn effective-slots)))
     (dolist (slot effective-slots)
       (when (typep slot 'effective-link-definition)
         (describe-unit-slot unit-class slot)))
