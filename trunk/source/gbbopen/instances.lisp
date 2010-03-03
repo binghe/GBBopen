@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Nov  1 06:34:07 2009 *-*
+;;;; *-* Last-Edit: Tue Mar  2 18:01:26 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2002-2009, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2010, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -411,10 +411,11 @@
     (outside-reading-saved/sent-objects-block-error 
      'allocate-saved/sent-instance))
   (with-lock-held (*master-instance-lock*)
-    (let* ((position (position-if
-                      #'(lambda (slot)
-                          (eq 'instance-name (slot-definition-name slot)))
-                      slots))
+    (let* ((position 
+            (flet ((fn (slot)
+                     (eq 'instance-name (slot-definition-name slot))))
+              (declare (dynamic-extent #'fn))
+              (position-if #'fn slots)))
            (instance-name (nth position slot-values))
            (instance (find-instance-by-name 
                       instance-name (type-of class-prototype))))
@@ -1085,12 +1086,12 @@
            (let ((instance-hash-table
                   (standard-unit-class.instance-hash-table unit-class)))
              (gethash instance-name instance-hash-table))))
-    (map-extended-unit-classes
-     #'(lambda (unit-class plus-subclasses)
-         (declare (ignore plus-subclasses))
-         (let ((result (find-it unit-class)))
-           (when result (return-from find-instance-by-name result))))
-     unit-class-name)))
+    (flet ((fn (unit-class plus-subclasses)
+             (declare (ignore plus-subclasses))
+             (let ((result (find-it unit-class)))
+               (when result (return-from find-instance-by-name result)))))
+      (declare (dynamic-extent #'fn))
+      (map-extended-unit-classes #'fn unit-class-name))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -1101,12 +1102,12 @@
              (let ((instance-hash-table
                     (standard-unit-class.instance-hash-table unit-class)))
                (gethash instance-name instance-hash-table))))
-      (map-extended-unit-classes
-       #'(lambda (unit-class plus-subclasses)
-           (declare (ignore plus-subclasses))
-           (let ((result (find-it unit-class)))
-             (when result (push result instances))))
-       unit-class-name))
+      (flet ((fn (unit-class plus-subclasses)
+               (declare (ignore plus-subclasses))
+               (let ((result (find-it unit-class)))
+                 (when result (push result instances)))))
+        (declare (dynamic-extent #'fn))
+        (map-extended-unit-classes #'fn unit-class-name)))
     instances))
 
 ;;; ===========================================================================
@@ -1322,38 +1323,39 @@
   (defun map-instances-given-class (fn unit-class)
     ;;; Internal instance mapping for a specific `unit-class' object.
     (declare (type function fn))
-    (maphash #'(lambda (key value)
-                 (declare (ignore key))
-                 (funcall fn value))
-             (standard-unit-class.instance-hash-table unit-class))))
+    (flet ((fn (key value)
+             (declare (ignore key))
+             (funcall fn value)))
+      (declare (dynamic-extent #'fn))
+      (maphash #'fn (standard-unit-class.instance-hash-table unit-class)))))
 
 ;;; ---------------------------------------------------------------------------
 
 (defun map-instances-of-class (fn unit-class-name)
   ;;; This is the public interface to class-instance mapping.
   (let ((fn (coerce fn 'function)))
-    (map-extended-unit-classes 
-     #'(lambda (unit-class plus-subclasses)
-         (declare (ignore plus-subclasses))
-         (map-instances-given-class (the function fn) unit-class))
-     unit-class-name)))
+    (flet ((do-fn (unit-class plus-subclasses)
+             (declare (ignore plus-subclasses))
+             (map-instances-given-class (the function fn) unit-class)))
+      (declare (dynamic-extent #'do-fn))
+      (map-extended-unit-classes #'do-fn unit-class-name))))
 
 ;;; ---------------------------------------------------------------------------
 
 (defmacro do-instances-of-class ((var unit-class-name) &body body)
   ;;; Do-xxx variant of map-instances-of-class.
   `(block nil
-     (map-instances-of-class
-      #'(lambda (,var) ,@body)
-      ,unit-class-name)))
+     (flet ((.fn. (,var) ,@body))
+       (declare (dynamic-extent #'.fn.))
+       (map-instances-of-class #'.fn. ,unit-class-name))))
 
 ;;; ---------------------------------------------------------------------------
 
 (defun find-instances-of-class (unit-class-name)
   (let ((instances nil))
-    (map-instances-of-class
-     #'(lambda (instance) (push instance instances))
-     unit-class-name)
+    (flet ((fn (instance) (push instance instances)))
+      (declare (dynamic-extent #'fn))
+      (map-instances-of-class #'fn unit-class-name))
     instances))
 
 ;;; ---------------------------------------------------------------------------
@@ -1389,11 +1391,13 @@
                                          predicate &key key) &body body)
   ;;; Do-xxx variant of map-sorted-instances-of-class.
   `(block nil
-     (map-sorted-instances-of-class
-      #'(lambda (,var) ,@body)
-      ,unit-class-name 
-      ,predicate 
-      ,@(when key `(:key ,key)))))
+     (flet ((.fn. (,var) ,@body))
+       (declare (dynamic-extent #'.fn.))
+       (map-sorted-instances-of-class
+        #'.fn.
+        ,unit-class-name 
+        ,predicate 
+        ,@(when key `(:key ,key))))))
 
 ;;; ===========================================================================
 ;;;  Dimension-value access
@@ -1409,12 +1413,14 @@
     (declare (inline class-of))
     (let* ((unit-class (class-of instance))
            (dimension-spec 
-            (find-if 
-             #'(lambda (dimensional-value)
-                 (eq dimension-name (car (the cons dimensional-value))))
-             (the list 
-               (standard-unit-class.effective-dimensional-values 
-                unit-class)))))
+            (flet ((fn (dimensional-value)
+                     (eq dimension-name (car (the cons dimensional-value)))))
+              (declare (dynamic-extent #'fn))
+              (find-if 
+               #'fn
+               (the list 
+                 (standard-unit-class.effective-dimensional-values 
+                  unit-class))))))
       (unless dimension-spec
         (error "~s is not a dimension of ~s."
                dimension-name
@@ -1456,10 +1462,12 @@
                    (instance-dimension-value instance dimension-name))))
       (if (symbolp dimension-names)
           (if (eq dimension-names 't)
-              (mapcar #'(lambda (dimensional-value)
-                          (make-dimension-value-acons (car dimensional-value)))
-                      (standard-unit-class.effective-dimensional-values 
-                       unit-class))
+              (flet ((fn (dimensional-value)
+                       (make-dimension-value-acons (car dimensional-value))))
+                (declare (dynamic-extent #'fn))
+                (mapcar #'fn
+                        (standard-unit-class.effective-dimensional-values 
+                         unit-class)))
               (make-dimension-value-acons dimension-names))
           (mapcar #'make-dimension-value-acons dimension-names)))))
 
@@ -1475,17 +1483,19 @@
     ;; Did the instance actually move?
     (unless 
         (if (eq 't dimensions-being-changed)
-            (every #'(lambda (old-dimension-value)
-                       (equal (cdr old-dimension-value)
-                              (instance-dimension-value 
-                               instance (car old-dimension-value))))
-                   old-dimension-values)
-            (every #'(lambda (dimension-name)
-                       (equal (cdr (assoc dimension-name old-dimension-values
-                                          :test #'eq))
-                              (instance-dimension-value
-                               instance dimension-name)))
-                   dimensions-being-changed))
+            (flet ((fn (old-dimension-value)
+                     (equal (cdr old-dimension-value)
+                            (instance-dimension-value 
+                             instance (car old-dimension-value)))))
+              (declare (dynamic-extent #'fn))
+              (every #'fn old-dimension-values))
+            (flet ((fn (dimension-name)
+                     (equal (cdr (assoc dimension-name old-dimension-values
+                                        :test #'eq))
+                            (instance-dimension-value
+                             instance dimension-name))))
+              (declare (dynamic-extent #'fn))
+              (every #'fn dimensions-being-changed)))
       (dolist (space-instance 
                   (standard-unit-instance.%%space-instances%% instance))
         (dolist (storage (storage-objects-for-add/move/remove
@@ -1538,8 +1548,9 @@
       (values unit-class/instance-spec nil))
      ;; extended unit-class specification:
      ((consp unit-class/instance-spec)
-      (if (every #'(lambda (x) (typep x 'standard-unit-instance))
-                 unit-class/instance-spec)
+      (if (flet ((fn (x) (typep x 'standard-unit-instance)))
+            (declare (dynamic-extent #'fn))
+            (every #'fn unit-class/instance-spec))
           (values unit-class/instance-spec nil)
           (destructuring-bind (unit-class-name subclass-indicator)
               unit-class/instance-spec

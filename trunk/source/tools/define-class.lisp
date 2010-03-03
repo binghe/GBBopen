@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/define-class.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Feb 23 04:10:20 2009 *-*
+;;;; *-* Last-Edit: Mon Mar  1 17:15:22 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2002-2009, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2010, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; Define-class provides extended class options to defclass:
@@ -285,11 +285,12 @@
                 nil)
                (t option))))
     (dolist (option-slot option-slots)
-      (unless (member-if #'(lambda (slot)
-                             (if (consp slot)
-                                 (eq option-slot (car slot))
-                                 (eq option-slot slot)))
-                         direct-slots)
+      (unless (flet ((fn (slot)
+                       (if (consp slot)
+                           (eq option-slot (car slot))
+                           (eq option-slot slot))))
+                (declare (dynamic-extent #'fn))
+                (member-if #'fn direct-slots))
         (warn "The slot name ~s specified in ~s is not a direct slot in 
                class ~s.~@
                It will be ignored."

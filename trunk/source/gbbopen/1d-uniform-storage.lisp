@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/1d-uniform-storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Aug 12 10:16:07 2009 *-*
+;;;; *-* Last-Edit: Mon Mar  1 15:53:57 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2003-2009, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2003-2010, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -252,23 +252,25 @@
 (defmethod map-marked-instances-on-storage (fn (storage 1d-uniform-buckets)
 					    disjunctive-dimensional-extents 
 					    verbose)
-  (do-1d-uniform-map-actions 
-      #'(lambda (key instance)
+  (flet ((do-fn (key instance)
 	  (declare (ignore key))
           (when (mbr-instance-mark-set-p instance)
-            (funcall (the function fn) instance)))
-    storage disjunctive-dimensional-extents verbose))
+            (funcall (the function fn) instance))))
+    (declare (dynamic-extent #'do-fn))
+    (do-1d-uniform-map-actions 
+        #'do-fn storage disjunctive-dimensional-extents verbose)))
 
 ;;; ---------------------------------------------------------------------------
 
 (defmethod map-all-instances-on-storage (fn (storage 1d-uniform-buckets)
 					 disjunctive-dimensional-extents 
 					 verbose)
-  (do-1d-uniform-map-actions 
-      #'(lambda (key instance)
-	  (declare (ignore key))
-	  (funcall (the function fn) instance))
-    storage disjunctive-dimensional-extents verbose))
+  (flet ((do-fn (key instance)
+           (declare (ignore key))
+           (funcall (the function fn) instance)))
+    (declare (dynamic-extent #'do-fn))
+    (do-1d-uniform-map-actions 
+        #'do-fn storage disjunctive-dimensional-extents verbose)))
 
 ;;; ===========================================================================
 ;;;				  End of File

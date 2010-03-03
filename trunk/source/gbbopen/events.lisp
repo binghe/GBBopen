@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/events.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri May 15 05:08:55 2009 *-*
+;;;; *-* Last-Edit: Wed Mar  3 04:02:17 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2003-2010, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -173,9 +173,10 @@
                                       (eql 'non-instance-event-class))
                                      super-event-metaclasses)
   #+ecl (declare (ignore event-metaclass-name))
-  (every #'(lambda (super-metaclass)
-             (subtypep super-metaclass 'non-instance-event-class))
-         super-event-metaclasses))
+  (flet ((fn (super-metaclass)
+           (subtypep super-metaclass 'non-instance-event-class)))
+    (declare (dynamic-extent #'fn))
+    (every #'fn super-event-metaclasses)))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -183,10 +184,11 @@
                                       (eql 'instance-event-class))
                                      super-event-metaclasses)
   #+ecl (declare (ignore event-metaclass-name))
-  (every #'(lambda (super-metaclass)
-             (or (subtypep super-metaclass 'non-instance-event-class)
-                 (subtypep super-metaclass 'instance-event-class)))
-         super-event-metaclasses))
+  (flet ((fn (super-metaclass)
+           (or (subtypep super-metaclass 'non-instance-event-class)
+               (subtypep super-metaclass 'instance-event-class))))
+    (declare (dynamic-extent #'fn))
+    (every #'fn super-event-metaclasses)))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -194,11 +196,12 @@
                                       (eql 'space-instance-event-class))
                                      super-event-metaclasses)
   #+ecl (declare (ignore event-metaclass-name))
-  (every #'(lambda (super-metaclass)
-             (or (subtypep super-metaclass 'non-instance-event-class)
-                 (subtypep super-metaclass 'instance-event-class)
-                 (subtypep super-metaclass 'space-instance-event-class)))
-         super-event-metaclasses))
+  (flet ((fn (super-metaclass)
+           (or (subtypep super-metaclass 'non-instance-event-class)
+               (subtypep super-metaclass 'instance-event-class)
+               (subtypep super-metaclass 'space-instance-event-class))))
+    (declare (dynamic-extent #'fn))
+    (every #'fn super-event-metaclasses)))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -206,11 +209,12 @@
                                       (eql 'nonlink-slot-event-class))
                                      super-event-metaclasses)
   #+ecl (declare (ignore event-metaclass-name))
-  (every #'(lambda (super-metaclass)
-             (or (subtypep super-metaclass 'non-instance-event-class)
-                 (subtypep super-metaclass 'instance-event-class)
-                 (subtypep super-metaclass 'nonlink-slot-event-class)))
-         super-event-metaclasses))
+  (flet ((fn (super-metaclass)
+           (or (subtypep super-metaclass 'non-instance-event-class)
+               (subtypep super-metaclass 'instance-event-class)
+               (subtypep super-metaclass 'nonlink-slot-event-class))))
+    (declare (dynamic-extent #'fn))
+    (every #'fn super-event-metaclasses)))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -218,11 +222,12 @@
                                       (eql 'link-slot-event-class))
                                      super-event-metaclasses)
   #+ecl (declare (ignore event-metaclass-name))
-  (every #'(lambda (super-metaclass)
-             (or (subtypep super-metaclass 'non-instance-event-class)
-                 (subtypep super-metaclass 'instance-event-class)
-                 (subtypep super-metaclass 'link-slot-event-class)))
-         super-event-metaclasses))
+  (flet ((fn (super-metaclass)
+           (or (subtypep super-metaclass 'non-instance-event-class)
+               (subtypep super-metaclass 'instance-event-class)
+               (subtypep super-metaclass 'link-slot-event-class))))
+    (declare (dynamic-extent #'fn))
+    (every #'fn super-event-metaclasses)))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -318,12 +323,13 @@
 		     ,(or event-metaclass
 			  ;; use a super-event-class's metaclass, if any
 			  ;; can be determined:
-			  (some #'(lambda (class-name)
-				    (let ((class (find-class class-name nil)))
-				      (when (typep class 'standard-event-class)
-					(standard-event-class.event-metaclass 
-					 class))))
-				direct-superclass-names)
+                          (flet ((fn (class-name)
+                                   (let ((class (find-class class-name nil)))
+                                     (when (typep class 'standard-event-class)
+                                       (standard-event-class.event-metaclass 
+                                        class)))))
+                            (declare (dynamic-extent #'fn))
+                            (some #'fn direct-superclass-names))
 			  'non-instance-event-class))
 		   options))))
        *standard-define-class-options*
@@ -537,14 +543,15 @@
           (setf paths key-paths)))
       (setf supplied-additional-args (nreverse supplied-additional-args)))
     (setf additional-arg-values 
-      (mapcar #'(lambda (arg-spec)
-                  (let ((supplied-value-pair
-                         (find (first arg-spec) supplied-additional-args
-                               :test #'eq :key #'car)))
-                    (if (null supplied-value-pair) 
-                        (second arg-spec)
-                        (second supplied-value-pair))))
-              additional-arg-specs))
+          (flet ((fn (arg-spec)
+                   (let ((supplied-value-pair
+                          (find (first arg-spec) supplied-additional-args
+                                :test #'eq :key #'car)))
+                     (if (null supplied-value-pair) 
+                         (second arg-spec)
+                         (second supplied-value-pair)))))
+            (declare (dynamic-extent #'fn))
+            (mapcar #'fn additional-arg-specs)))
     (apply #'values unit-classes-spec slot-names paths additional-arg-values)))
 
 ;;; ---------------------------------------------------------------------------
@@ -566,16 +573,16 @@
 		   plus-subclasses all-slots-p permanent priority)
   (when fn
     (let ((evfns 
-	   (delete-if 
-	    #'(lambda (evfn)
-		(and (eq fn (evfn.function evfn))
-		     (or permanent
-			 (not (evfn.permanent evfn))
-			 (error "Permanent event-function ~s cannot be ~
-                               redefined for event-class ~s."
-				fn
-				(class-name event-class)))))
-	    (evfn-blk.evfns evfn-blk))))
+           (flet ((do-fn (evfn)
+                    (and (eq fn (evfn.function evfn))
+                         (or permanent
+                             (not (evfn.permanent evfn))
+                             (error "Permanent event-function ~s cannot be ~
+                                    redefined for event-class ~s."
+                                    fn
+                                    (class-name event-class))))))
+             (declare (dynamic-extent #'do-fn))
+             (delete-if #'do-fn (evfn-blk.evfns evfn-blk)))))
       (setf (evfn-blk.evfns evfn-blk)
 	    (nsorted-insert
 	     (make-evfn fn plus-subevents plus-subclasses all-slots-p
@@ -641,11 +648,11 @@
                       evfn-blk plus-subevents plus-subclasses 
                       evfn-blk-fn-args))))))
     (if plus-subclasses
-        (map-unit-classes 
-         #'(lambda (unit-class plus-subclasses)
-             (declare (ignore plus-subclasses))
-             (add-it unit-class))
-         unit-class/instance)
+        (flet ((fn (unit-class plus-subclasses)
+                 (declare (ignore plus-subclasses))
+                 (add-it unit-class)))
+          (declare (dynamic-extent #'fn))
+          (map-unit-classes #'fn unit-class/instance))
         (if (typep unit-class/instance '(or standard-unit-instance cons))
             (instance-event-functions-nyi)
             (add-it unit-class/instance)))))
@@ -693,11 +700,11 @@
                              evfn-blk plus-subevents plus-subclasses
                              evfn-blk-fn-args))))))
              (if plus-subclasses
-                 (map-unit-classes 
-                  #'(lambda (unit-class plus-subclasses)
-                      (declare (ignore plus-subclasses))
-                      (add-it unit-class))
-                  unit-class/instance)
+                 (flet ((fn (unit-class plus-subclasses)
+                          (declare (ignore plus-subclasses))
+                          (add-it unit-class)))
+                   (declare (dynamic-extent #'fn))
+                   (map-unit-classes #'fn unit-class/instance))
                  (add-it unit-class/instance)))))
     ;; save information for newly created space instances:
     (cond ((typep paths 'standard-space-instance)
@@ -732,45 +739,45 @@
   (flet
       ((add-it (unit-class)
          (ensure-finalized-class unit-class)
-         (map-unit-class-slots 
-          #'(lambda (slot)
-              (when (typep slot 'gbbopen-effective-slot-definition)
-                (let* ((evfn-blks
-                        (gbbopen-effective-slot-definition.evfn-blks slot))
-                       (evfn-blk 
-                        (or (cdr (assoc event-class evfn-blks :test #'eq))
-                            (let ((new-evfn-blk
-                                   (make-evfn-blk :event-class event-class
-                                                  :unit-class unit-class
-                                                  :slot-or-space-qualifier
-                                                  slot)))
-                              (push-acons 
-                               event-class new-evfn-blk
-                               (gbbopen-effective-slot-definition.evfn-blks
-                                slot))
-                              new-evfn-blk))))
-                  (cond
-                   ;; non-nil `fn':
-                   (fn (evfn-adder evfn-blk fn event-class 
-                                   plus-subevents plus-subclasses 
-                                   (eq slot-names 't) permanent priority))
-                   ;; nil `fn' with `printing':
-                   (printing
-                    (set-evfn-printing-flags 
-                     evfn-blk printing
-                     plus-subevents plus-subclasses))
-                   ;; nil `fn' with `evfn-blk-fn':
-                   (evfn-blk-fn
-                    (apply (the function (symbol-function evfn-blk-fn))
-                           evfn-blk plus-subevents plus-subclasses
-                           evfn-blk-fn-args))))))
-          unit-class slot-names)))
+         (flet ((do-fn (slot)
+                  (when (typep slot 'gbbopen-effective-slot-definition)
+                    (let* ((evfn-blks
+                            (gbbopen-effective-slot-definition.evfn-blks slot))
+                           (evfn-blk 
+                            (or (cdr (assoc event-class evfn-blks :test #'eq))
+                                (let ((new-evfn-blk
+                                       (make-evfn-blk :event-class event-class
+                                                      :unit-class unit-class
+                                                      :slot-or-space-qualifier
+                                                      slot)))
+                                  (push-acons 
+                                   event-class new-evfn-blk
+                                   (gbbopen-effective-slot-definition.evfn-blks
+                                    slot))
+                                  new-evfn-blk))))
+                      (cond
+                       ;; non-nil `fn':
+                       (fn (evfn-adder evfn-blk fn event-class 
+                                       plus-subevents plus-subclasses 
+                                       (eq slot-names 't) permanent priority))
+                       ;; nil `fn' with `printing':
+                       (printing
+                        (set-evfn-printing-flags 
+                         evfn-blk printing
+                         plus-subevents plus-subclasses))
+                       ;; nil `fn' with `evfn-blk-fn':
+                       (evfn-blk-fn
+                        (apply (the function (symbol-function evfn-blk-fn))
+                               evfn-blk plus-subevents plus-subclasses
+                               evfn-blk-fn-args)))))))
+           (declare (dynamic-extent #'do-fn))
+         (map-unit-class-slots #'do-fn unit-class slot-names))))
     (if plus-subclasses
-        (map-unit-classes 
-         #'(lambda (unit-class plus-subclasses)
-             (declare (ignore plus-subclasses))
-             (add-it unit-class))
-         unit-class/instance)
+        (flet ((fn (unit-class plus-subclasses)
+                 (declare (ignore plus-subclasses))
+                 (add-it unit-class)))
+          (declare (dynamic-extent #'fn))
+          (map-unit-classes #'fn unit-class/instance))
         (add-it unit-class/instance))))
   
 ;;; ---------------------------------------------------------------------------
@@ -819,13 +826,13 @@
 				 '(:evfn-blk-fn nil) '(:evfn-blk-fn-args nil))
     (multiple-value-bind (unit-class/instance plus-subclasses)
         (parse-unit-class/instance-specifier unit-class-spec)
-      (map-extended-event-classes
-       #'(lambda (event-class plus-subevents) 
-           (addto-evfn-using-class 
-            fn event-class plus-subevents unit-class/instance plus-subclasses
-            slot-names paths permanent priority printing 
-            evfn-blk-fn evfn-blk-fn-args))
-       event-classes-spec)))
+      (flet ((do-fn (event-class plus-subevents) 
+               (addto-evfn-using-class 
+                fn event-class plus-subevents unit-class/instance plus-subclasses
+                slot-names paths permanent priority printing 
+                evfn-blk-fn evfn-blk-fn-args)))
+        (declare (dynamic-extent #'do-fn))
+        (map-extended-event-classes #'do-fn event-classes-spec))))
   fn)
 
 ;;; ---------------------------------------------------------------------------
@@ -838,19 +845,19 @@
 (defun evfn-remover (evfn-blk fn event-class permanent)
   (when evfn-blk
     (let ((evfns 
-	   (delete-if 
-	    #'(lambda (evfn)
-		(and (or (eq fn (evfn.function evfn))
-			 ;; remove-all:
-			 (eq fn 't))
-		     (or permanent
-			 (not (evfn.permanent evfn))
-			 (unless (eq fn 't)
-			   (error "Permanent event-function ~s cannot be ~
-                                   removed for event-class ~s."
-				  fn
-				  (class-name event-class))))))
-	    (evfn-blk.evfns evfn-blk))))
+           (flet ((do-fn (evfn)
+                    (and (or (eq fn (evfn.function evfn))
+                             ;; remove-all:
+                             (eq fn 't))
+                         (or permanent
+                             (not (evfn.permanent evfn))
+                             (unless (eq fn 't)
+                               (error "Permanent event-function ~s cannot be ~
+                                       removed for event-class ~s."
+                                      fn
+                                      (class-name event-class)))))))
+             (declare (dynamic-extent #'do-fn))
+             (delete-if #'do-fn (evfn-blk.evfns evfn-blk)))))
       (setf (evfn-blk.evfns evfn-blk) evfns))))
 
 ;;; ---------------------------------------------------------------------------
@@ -898,11 +905,11 @@
                  (apply (the function (symbol-function evfn-blk-fn))
                         evfn-blk evfn-blk-fn-args)))))))
     (if plus-subclasses
-        (map-unit-classes 
-         #'(lambda (unit-class plus-subclasses)
-             (declare (ignore plus-subclasses))
-             (remove-it unit-class))
-         unit-class)
+        (flet ((fn (unit-class plus-subclasses)
+                 (declare (ignore plus-subclasses))
+                 (remove-it unit-class)))
+          (declare (dynamic-extent #'fn))
+          (map-unit-classes #'fn unit-class))
         (remove-it unit-class))))
 
 ;;; ---------------------------------------------------------------------------
@@ -935,11 +942,11 @@
                           (apply (the function (symbol-function evfn-blk-fn))
                                  evfn-blk evfn-blk-fn-args)))))))
              (if plus-subclasses
-                 (map-unit-classes 
-                  #'(lambda (unit-class plus-subclasses)
-                      (declare (ignore plus-subclasses))
-                      (remove-it unit-class))
-                  unit-class)
+                 (flet ((fn (unit-class plus-subclasses)
+                          (declare (ignore plus-subclasses))
+                          (remove-it unit-class)))
+                   (declare (dynamic-extent #'fn))
+                   (map-unit-classes #'fn unit-class))
                  (remove-it unit-class)))))
     (cond ((typep paths 'standard-space-instance)
            (do-space-instance paths))
@@ -948,23 +955,24 @@
              ;; superflous:
              (setf (space-instance-event-class.path-event-functions 
                     event-class)
-                   (delete-if 
-                    #'(lambda (entry)
-                        (destructuring-bind (path-pattern add/remove-fn 
-                                             entry-fn entry-event-class 
-                                             &rest entry-args)
-                            entry
-                          (declare (ignore add/remove-fn entry-event-class))
-                          (and (or (and (eq fn 't) entry-fn)
-                                   (and fn (eq fn entry-fn))
-                                   ;; for ks-trigger processing:
-                                   (and (not fn)
-                                        ;; see if the evfn-blk-fn-args match:
-                                        (equal (tenth entry-args) evfn-blk-fn-args)))
-                               (subsumed-path-pattern-p 
-                                path-pattern paths))))
-                    (space-instance-event-class.path-event-functions 
-                     event-class)))
+                   (flet ((do-fn (entry)
+                            (destructuring-bind (path-pattern add/remove-fn 
+                                                 entry-fn entry-event-class 
+                                                 &rest entry-args)
+                                entry
+                              (declare (ignore add/remove-fn entry-event-class))
+                              (and (or (and (eq fn 't) entry-fn)
+                                       (and fn (eq fn entry-fn))
+                                       ;; for ks-trigger processing:
+                                       (and (not fn)
+                                            ;; see if the evfn-blk-fn-args match:
+                                            (equal (tenth entry-args) evfn-blk-fn-args)))
+                                   (subsumed-path-pattern-p 
+                                    path-pattern paths)))))
+                     (declare (dynamic-extent #'do-fn))
+                     (delete-if 
+                      #'do-fn 
+                      (space-instance-event-class.path-event-functions event-class))))
              ;; Include this operation, just to be safe:
              #+should-never-be-needed
              (when (and (not *%%doing-path-event-functions%%*)
@@ -989,31 +997,31 @@
       ((remove-it (unit-class)
          ;; nothing to remove on non-finalized classes:
          (when (class-finalized-p unit-class)
-           (map-unit-class-slots 
-            #'(lambda (slot)
-                (when (typep slot 'gbbopen-effective-slot-definition)
-                  (let* ((evfn-blks
-                          (gbbopen-effective-slot-definition.evfn-blks slot))
-                         (evfn-blk 
-                          (cdr (assoc event-class evfn-blks :test #'eq))))
-                    (when evfn-blk
-                      (cond
-                       ;; non-nil `fn':
-                       (fn (evfn-remover evfn-blk fn event-class permanent))
-                       ;; nil `fn' with `printing':
-                       (printing
-                        (clear-evfn-printing-flags evfn-blk printing))
-                       ;; nil `fn' with `evfn-blk-fn':
-                       (evfn-blk-fn
-                        (apply (the function (symbol-function evfn-blk-fn))
-                               evfn-blk evfn-blk-fn-args)))))))
-            unit-class slot-names))))
+           (flet ((do-fn (slot)
+                    (when (typep slot 'gbbopen-effective-slot-definition)
+                      (let* ((evfn-blks
+                              (gbbopen-effective-slot-definition.evfn-blks slot))
+                             (evfn-blk 
+                              (cdr (assoc event-class evfn-blks :test #'eq))))
+                        (when evfn-blk
+                          (cond
+                           ;; non-nil `fn':
+                           (fn (evfn-remover evfn-blk fn event-class permanent))
+                           ;; nil `fn' with `printing':
+                           (printing
+                            (clear-evfn-printing-flags evfn-blk printing))
+                           ;; nil `fn' with `evfn-blk-fn':
+                           (evfn-blk-fn
+                            (apply (the function (symbol-function evfn-blk-fn))
+                                   evfn-blk evfn-blk-fn-args))))))))
+             (declare (dynamic-extent #'do-fn))
+             (map-unit-class-slots #'do-fn unit-class slot-names)))))
     (if plus-subclasses
-        (map-unit-classes 
-         #'(lambda (unit-class plus-subclasses)
-             (declare (ignore plus-subclasses))
-             (remove-it unit-class))
-         unit-class)
+        (flet ((fn (unit-class plus-subclasses)
+                 (declare (ignore plus-subclasses))
+                 (remove-it unit-class)))
+          (declare (dynamic-extent #'fn))
+          (map-unit-classes #'fn unit-class))
         (remove-it unit-class))))
   
 ;;; ---------------------------------------------------------------------------
@@ -1060,13 +1068,13 @@
 				 '(:evfn-blk-fn nil) '(:evfn-blk-fn-args nil))
     (multiple-value-bind (unit-class/instance plus-subclasses)
         (parse-unit-class/instance-specifier unit-class-spec)
-      (map-extended-event-classes
-       #'(lambda (event-class plus-subevents) 
-           (rmfrom-evfn-using-class 
-            fn event-class plus-subevents unit-class/instance plus-subclasses
-            slot-names paths permanent printing 
-            evfn-blk-fn evfn-blk-fn-args))
-       event-classes-spec)))
+      (flet ((do-fn (event-class plus-subevents) 
+               (rmfrom-evfn-using-class 
+                fn event-class plus-subevents unit-class/instance plus-subclasses
+                slot-names paths permanent printing 
+                evfn-blk-fn evfn-blk-fn-args)))
+        (declare (dynamic-extent #'do-fn))
+        (map-extended-event-classes #'do-fn event-classes-spec))))
   fn)
 
 ;;; ---------------------------------------------------------------------------
@@ -1188,12 +1196,12 @@
       (let ((*%%event-class-name%%* (class-name event-class))
 	    (*%%slot-or-space-instance-name%%* nil))
 	(if plus-subclasses
-	    (map-unit-classes 
-	     #'(lambda (unit-class plus-subclasses)
-		 (declare (ignore plus-subclasses))
-		 (describe-it unit-class))
-	     unit-class)
-	  (describe-it unit-class))))))
+            (flet ((fn (unit-class plus-subclasses)
+                     (declare (ignore plus-subclasses))
+                     (describe-it unit-class)))
+              (declare (dynamic-extent #'fn))
+              (map-unit-classes #'fn unit-class))
+            (describe-it unit-class))))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -1220,11 +1228,11 @@
 	     (let ((*%%slot-or-space-instance-name%%* 
 		    (instance-name-of space-instance)))
 	       (if plus-subclasses
-		   (map-unit-classes 
-		    #'(lambda (unit-class plus-subclasses)
-			(declare (ignore plus-subclasses))
-			(describe-it unit-class))
-		    unit-class)
+                   (flet ((fn (unit-class plus-subclasses)
+                            (declare (ignore plus-subclasses))
+                            (describe-it unit-class)))
+                     (declare (dynamic-extent #'fn))
+                     (map-unit-classes #'fn unit-class))
 		   (describe-it unit-class))))))
       (let ((*%%event-class-name%%* (class-name event-class)))
 	(cond ((typep paths 'standard-space-instance)
@@ -1243,26 +1251,27 @@
 	   ;; nothing to describe on non-finalized classes:
 	   (when (class-finalized-p unit-class)
 	     (let ((*%%unit-class-name%%* (class-name unit-class)))
-	       (map-unit-class-slots 
-		#'(lambda (slot)
-		    (when (typep slot 'gbbopen-effective-slot-definition)
-		      (let* ((evfn-blks
-			      (gbbopen-effective-slot-definition.evfn-blks 
-			       slot))
-			     (evfn-blk 
-			      (cdr (assoc event-class evfn-blks :test #'eq))))
-			(when evfn-blk
-			  (let ((*%%slot-or-space-instance-name%%*
-				 (slot-definition-name slot)))
-			    (evfn-describer evfn-blk fn))))))
-		unit-class slot-names)))))
+               (flet ((do-fn (slot)
+                        (when (typep slot 'gbbopen-effective-slot-definition)
+                          (let* ((evfn-blks
+                                  (gbbopen-effective-slot-definition.evfn-blks 
+                                   slot))
+                                 (evfn-blk 
+                                  (cdr (assoc event-class evfn-blks :test #'eq))))
+                            (when evfn-blk
+                              (let ((*%%slot-or-space-instance-name%%*
+                                     (slot-definition-name slot)))
+                                (evfn-describer evfn-blk fn)))))))
+                 (declare (dynamic-extent #'do-fn))
+                 (map-unit-class-slots 
+                  #'do-fn unit-class slot-names))))))
       (let ((*%%event-class-name%%* (class-name event-class)))
 	(if plus-subclasses
-	    (map-unit-classes 
-	     #'(lambda (unit-class plus-subclasses)
-		 (declare (ignore plus-subclasses))
-		 (describe-it unit-class))
-	     unit-class)
+            (flet ((fn (unit-class plus-subclasses)
+                     (declare (ignore plus-subclasses))
+                     (describe-it unit-class)))
+              (declare (dynamic-extent #'fn))
+              (map-unit-classes #'fn unit-class))
 	    (describe-it unit-class))))))
   
 ;;; ---------------------------------------------------------------------------
@@ -1291,12 +1300,12 @@
       (parse-event-function-args args)
     (multiple-value-bind (unit-class/instance plus-subclasses)
         (parse-unit-class/instance-specifier unit-class-spec)
-      (map-extended-event-classes
-       #'(lambda (event-class plus-subevents) 
-           (ds-evfn-using-class fn event-class plus-subevents 
-				unit-class/instance plus-subclasses
-				slot-names paths))
-       event-classes-spec)))
+      (flet ((do-fn (event-class plus-subevents) 
+               (ds-evfn-using-class fn event-class plus-subevents 
+                                    unit-class/instance plus-subclasses
+                                    slot-names paths)))
+        (declare (dynamic-extent #'do-fn))
+        (map-extended-event-classes #'do-fn event-classes-spec))))
   (values))
 
 ;;; ---------------------------------------------------------------------------
@@ -1316,13 +1325,13 @@
       (parse-event-function-args args)
     (multiple-value-bind (unit-class/instance plus-subclasses)
         (parse-unit-class/instance-specifier unit-class-spec)
-      (map-extended-event-classes
-       #'(lambda (event-class plus-subevents) 
-           (ds-evfn-using-class 'describe-event-printing
-				event-class plus-subevents 
-				unit-class/instance plus-subclasses
-				slot-names paths))
-       event-classes-spec)))
+      (flet ((fn (event-class plus-subevents) 
+               (ds-evfn-using-class 'describe-event-printing
+                                    event-class plus-subevents 
+                                    unit-class/instance plus-subclasses
+                                    slot-names paths)))
+        (declare (dynamic-extent #'fn))
+        (map-extended-event-classes #'fn event-classes-spec))))
   (values))
 
 ;;; ===========================================================================

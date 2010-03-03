@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/system-events.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Jun 22 13:12:46 2009 *-*
+;;;; *-* Last-Edit: Wed Mar  3 04:33:16 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2004-2009, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2004-2010, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -79,9 +79,10 @@
 
 (defmethod print-instance-slots ((instance multiple-instance-event) stream)
   (call-next-method)
-  (print-instance-slot-value 
-   instance 'instances stream :function #'(lambda (instances)
-                                            (mapcar #'type-of instances))))
+  (flet ((fn (instances)
+           (mapcar #'type-of instances)))
+    (declare (dynamic-extent #'fn))
+    (print-instance-slot-value instance 'instances stream :function #'fn)))
 
 ;;; ---------------------------------------------------------------------------
 

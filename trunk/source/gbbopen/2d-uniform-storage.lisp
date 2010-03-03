@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/2d-uniform-storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Oct 31 06:26:53 2009 *-*
+;;;; *-* Last-Edit: Mon Mar  1 15:54:22 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2003-2009, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2003-2010, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -331,23 +331,25 @@
 (defmethod map-marked-instances-on-storage (fn (storage 2d-uniform-buckets)
 					    disjunctive-dimensional-extents 
                                             verbose)
-  (do-2d-uniform-map-actions 
-      #'(lambda (key instance)
-	  (declare (ignore key))
-          (when (mbr-instance-mark-set-p instance)
-            (funcall (the function fn) instance)))
-    storage disjunctive-dimensional-extents verbose))
+  (flet ((do-fn (key instance)
+           (declare (ignore key))
+           (when (mbr-instance-mark-set-p instance)
+             (funcall (the function fn) instance))))
+    (declare (dynamic-extent #'do-fn))
+    (do-2d-uniform-map-actions 
+        #'do-fn storage disjunctive-dimensional-extents verbose)))
 
 ;;; ---------------------------------------------------------------------------
 
 (defmethod map-all-instances-on-storage (fn (storage 2d-uniform-buckets)
 					 disjunctive-dimensional-extents 
 					 verbose)
-  (do-2d-uniform-map-actions 
-      #'(lambda (key instance)
-	  (declare (ignore key))
-	  (funcall (the function fn) instance))
-    storage disjunctive-dimensional-extents verbose))
+  (flet ((do-fn (key instance)
+           (declare (ignore key))
+           (funcall (the function fn) instance)))
+    (declare (dynamic-extent #'do-fn))
+    (do-2d-uniform-map-actions 
+        #'do-fn storage disjunctive-dimensional-extents verbose)))
 
 ;;; ===========================================================================
 ;;;				  End of File

@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/spaces.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Jun 20 11:21:54 2009 *-*
+;;;; *-* Last-Edit: Wed Mar  3 04:30:36 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2003-2009, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2003-2010, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -186,11 +186,12 @@
                              (sole-element unit-class-spec)))))
         (setf (standard-space-instance.%%by-unit-class-storage%% 
                space-instance)
-              (delete-if
-               #'(lambda (acons)
-                   (eq (car acons) unit-class))
-               (standard-space-instance.%%by-unit-class-storage%% 
-                space-instance))))
+              (flet ((fn (acons)
+                       (eq (car acons) unit-class)))
+                (declare (dynamic-extent #'fn))
+                (delete-if #'fn
+                           (standard-space-instance.%%by-unit-class-storage%% 
+                            space-instance)))))
       (flet ((unit-class-match-p (acons)
                (equal (car acons) unit-class-spec)))
         (setf (standard-space-instance.%%mapping-storage%% space-instance)
@@ -257,19 +258,20 @@
 
 (defun canonicalize-space-dimensions (path dimensions-spec)
   (check-type dimensions-spec list)
-  (mapcar #'(lambda (dimension-spec)
-              (unless (typep dimension-spec 'cons)
-                (error "The dimension-specification ~s for a dimension of ~
-                        space-instance ~s is not a ~
-                        (<dimension-name> <dimension-type>) list."
-                       dimension-spec 
-                       path))
-              (destructuring-bind (dimension-name dimension-type-spec)
-                  dimension-spec
-                (list dimension-name
-                      (determine-dimension-comparison-type
-                       path dimension-name dimension-type-spec))))
-          dimensions-spec))
+  (flet ((fn (dimension-spec)
+           (unless (typep dimension-spec 'cons)
+             (error "The dimension-specification ~s for a dimension of ~
+                     space-instance ~s is not a ~
+                     (<dimension-name> <dimension-type>) list."
+                    dimension-spec 
+                    path))
+           (destructuring-bind (dimension-name dimension-type-spec)
+               dimension-spec
+             (list dimension-name
+                   (determine-dimension-comparison-type
+                    path dimension-name dimension-type-spec)))))
+    (declare (dynamic-extent #'fn))
+    (mapcar #'fn dimensions-spec)))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -354,11 +356,12 @@
                (let ((result (loop for spec in unit-classes-specifiers
                                  collect (do-spec spec))))
                  (check-for-allows-everything
-                  (sort result 
-                        #'(lambda (a b)
-                            (when (consp a) (setf a (first a)))
-                            (when (consp b) (setf b (first b)))
-                            (string< a b))))))))
+                  (flet ((fn (a b)
+                           (when (consp a) (setf a (first a)))
+                           (when (consp b) (setf b (first b)))
+                           (string< a b)))
+                    (declare (dynamic-extent #'fn))
+                    (sort result #'fn)))))))
         ;; Return a list of the singleton specifier's class-name:
         (standard-unit-class (list (class-name unit-classes-specifiers)))
         ;; Return a list of the singleton specifier's class-name (should we
@@ -414,15 +417,14 @@
 ;;; ---------------------------------------------------------------------------
 
 (defmethod delete-instance ((space-instance standard-space-instance))
-  (map-instances-on-space-instances
-   #'(lambda (instance)
-       ;; Inconsistent locators can result in storage pointers to deleted unit
-       ;; instances, so we check the instance's deletion status before
-       ;; attempting removal:
-       (unless (instance-deleted-p instance)
-         (remove-instance-from-space-instance instance space-instance)))
-   't
-   space-instance)
+  (flet ((fn (instance)
+           ;; Inconsistent locators can result in storage pointers to deleted
+           ;; unit instances, so we check the instance's deletion status
+           ;; before attempting removal:
+           (unless (instance-deleted-p instance)
+             (remove-instance-from-space-instance instance space-instance))))
+    (declare (dynamic-extent #'fn))
+    (map-instances-on-space-instances #'fn 't space-instance))
   ;; Delete all child space instances:
   (mapc #'delete-space-instance (children-of space-instance))
   ;; Remove from top level space-instances list, if top-level:
@@ -525,11 +527,11 @@
 
 (defun clear-space-instances (space-instances)
   ;;; Removes (but does not delete) all unit instances from `space-instances'
-  (map-instances-on-space-instances
-   #'(lambda (instance)
-       (dolist (space-instance (space-instances-of instance))
-         (remove-instance-from-space-instance instance space-instance)))
-   't space-instances))
+  (flet ((fn (instance)
+           (dolist (space-instance (space-instances-of instance))
+             (remove-instance-from-space-instance instance space-instance))))
+    (declare (dynamic-extent #'fn))
+    (map-instances-on-space-instances #'fn 't space-instances)))
 
 ;;; ---------------------------------------------------------------------------
 ;;;   Change-space-instance
@@ -562,16 +564,17 @@
         (setf allowed-unit-classes-changed-p 't)
         (unless (eq new-allowed-unit-class-names 't)
           ;; Remove any existing unit instances that are no longer allowed:
-          (map-instances-on-space-instances ; do-instances macro is not
-                                            ; defined yet
-           #'(lambda (instance)
-               (unless (some 
-                        #'(lambda (unit-class-name)
-                            (extended-unit-type-p instance unit-class-name))
-                        new-allowed-unit-class-names)
-                 (remove-instance-from-space-instance-internal 
-                  instance space-instance)))
-           't space-instance))
+          (flet ((fn (instance)
+                   (unless (flet ((class-fn (unit-class-name)
+                                    (extended-unit-type-p
+                                     instance unit-class-name)))
+                             (declare (dynamic-extent #'class-fn))
+                             (some #'class-fn new-allowed-unit-class-names))
+                     (remove-instance-from-space-instance-internal 
+                      instance space-instance))))
+            (declare (dynamic-extent #'fn))
+            ;; do-instances macro is not defined yet
+            (map-instances-on-space-instances #'fn 't space-instance)))
         (setf (standard-space-instance.%%allowed-unit-classes%% space-instance)
               new-allowed-unit-class-names))))
   ;; Change the storage, if specified or if allowed-unit-classes have changed:
@@ -579,12 +582,12 @@
     (let ((old-storage (standard-space-instance.%%storage%% space-instance)))
       (setup-instance-storage space-instance storage)
       (dolist (storage old-storage)
-        (map-all-instances-on-storage
-         #'(lambda (instance)
-             (dolist (storage (storage-objects-for-add/move/remove
-                               (class-of instance) space-instance))
-               (add-instance-to-storage instance storage nil)))      
-         storage 't nil))))
+        (flet ((fn (instance)
+                 (dolist (storage (storage-objects-for-add/move/remove
+                                   (class-of instance) space-instance))
+                   (add-instance-to-storage instance storage nil))))
+          (declare (dynamic-extent #'fn))
+          (map-all-instances-on-storage #'fn storage 't nil)))))
   space-instance)
   
 ;;; ===========================================================================
@@ -678,13 +681,14 @@
   (let ((allowed-unit-classes (allowed-unit-classes-of instance)))
     (when (consp allowed-unit-classes)
       (setf (standard-space-instance.%%allowed-unit-classes%% instance)
-            (mapcar #'(lambda (unit-class-spec)
-                        (if (consp unit-class-spec)
-                            (cons (possibly-translate-class-name
-                                   (first unit-class-spec))
-                                  (rest unit-class-spec))
-                            (possibly-translate-class-name unit-class-spec)))
-                    allowed-unit-classes))))
+            (flet ((fn (unit-class-spec)
+                     (if (consp unit-class-spec)
+                         (cons (possibly-translate-class-name
+                                (first unit-class-spec))
+                               (rest unit-class-spec))
+                         (possibly-translate-class-name unit-class-spec))))
+              (declare (dynamic-extent #'fn))
+              (mapcar #'fn allowed-unit-classes)))))
   (setup-instance-storage
    instance (standard-space-instance.%%storage-spec%% instance)))
 
@@ -790,38 +794,46 @@
            (typep (car pattern) 'standard-space-instance))
       (cond 
        ;; pattern is entirely a list of space-instances:
-       ((every #'(lambda (element)
-                   (typep element 'standard-space-instance))
-               (cdr pattern))
+       ((flet ((do-fn (element)
+                 (typep element 'standard-space-instance)))
+          (declare (dynamic-extent #'do-fn))
+          (every #'do-fn (cdr pattern)))
         (mapc fn pattern))
        ;; relative-path pattern:
        (t (map-space-instances fn (path-relative-match pattern)
                                invoking-fn-name))))
      ;; absolute-path pattern:
      (t (let ((found-a-space nil))
-          (map-unit-classes
-           #'(lambda (space-class plus-subclasses)
-               (declare (ignore plus-subclasses))
-               (maphash #'(lambda (key value)             
+          (flet ((do-fn (space-class plus-subclasses)
+                   (declare (ignore plus-subclasses))
+                   (flet ((entry-fn (key value)             
                             (when (path-match pattern key)
                               (setf found-a-space 't)
-                              (funcall fn value)))
-                        (standard-unit-class.instance-hash-table space-class)))
-           (load-time-value (find-class 'standard-space-instance)))
+                              (funcall fn value))))
+                     (declare (dynamic-extent #'entry-fn))
+                     (maphash 
+                      #'entry-fn
+                      (standard-unit-class.instance-hash-table space-class)))))
+            (declare (dynamic-extent #'do-fn))
+            (map-unit-classes
+             #'do-fn (load-time-value (find-class 'standard-space-instance))))
           (unless found-a-space (no-space-instances-mapped)))))))
 
 ;;; ---------------------------------------------------------------------------
 
 (defmacro do-space-instances ((var pattern) &body body)
    ;;; Do-xxx variant of map-instances-of-class.
-  `(map-space-instances #'(lambda (,var) ,@body) ,pattern))
+  `(flet ((.fn. (,var) ,@body) ,pattern)
+     (declare (dynamic-extent #'.fn.))
+     (map-space-instances #'.fn.))) 
 
 ;;; ---------------------------------------------------------------------------
 
 (defun find-space-instances (pattern)
   (let ((result nil))
-    (map-space-instances #'(lambda (value) (push value result)) 
-                         pattern)
+    (flet ((fn (value) (push value result)))
+      (declare (dynamic-extent #'fn))
+      (map-space-instances #'fn pattern))
     result))
 
 ;;; ---------------------------------------------------------------------------
@@ -875,9 +887,10 @@
       ;; Is `instance' allowed on `space-instance'?
       (let ((allowed-unit-class-names (allowed-unit-classes-of space-instance)))
         (unless (or (eq allowed-unit-class-names 't)
-                    (some #'(lambda (unit-class-name)
-                              (extended-unit-type-p instance unit-class-name))
-                          allowed-unit-class-names))        
+                    (flet ((fn (unit-class-name)
+                             (extended-unit-type-p instance unit-class-name)))
+                      (declare (dynamic-extent #'fn))
+                      (some #'fn allowed-unit-class-names)))
           (error "Attempt to store instance ~s~_on the space instance ~s.~
                  ~_This space instance ~:[does not allow instance storage.~;~
                  can only hold instances of classes: ~:*~s~]"
@@ -959,10 +972,12 @@
   (with-lock-held (*master-instance-lock*)
     (let ((instance-found nil))
       (setf (standard-unit-instance.%%space-instances%% instance)
-            (delete space-instance 
-                    (standard-unit-instance.%%space-instances%% instance)
-                    :test #'(lambda (a b) 
-                              (when (eq a b) (setf instance-found 't)))))
+            (flet ((fn (a b) 
+                     (when (eq a b) (setf instance-found 't))))
+              (declare (dynamic-extent #'fn))
+              (delete space-instance 
+                      (standard-unit-instance.%%space-instances%% instance)
+                      :test #'fn)))
       (cond
        ;; no-op if instance is not present on the space-instance:
        ((not instance-found)
@@ -1038,9 +1053,10 @@
           (instance-counts (standard-space-instance.instance-counts
                          space-instance)))
       (when instance-counts
-        (setf total (reduce #'(lambda (a b) (+& a b))
-                            instance-counts 
-                            :key #'cdr)))
+        (setf total 
+              (flet ((fn (a b) (+& a b)))
+                (declare (dynamic-extent #'fn))
+                (reduce #'fn instance-counts :key #'cdr))))
       (cond 
        ;; Empty space:
        ((zerop total) (format t "Empty"))
@@ -1078,29 +1094,29 @@
     ;; Now summarize the unit instances:
     (let ((header-displayed? nil)
           (total-instances 0))
-      (map-extended-unit-classes-sorted
-       #'(lambda (unit-class plus-subclasses)
-           (declare (ignore plus-subclasses))
-           (let ((count (class-instances-count unit-class)))
-             (when (plusp& count)
-               (incf total-instances count)
-               (unless header-displayed?
-                 (setf header-displayed? 't)
-                 (unless top-level-space-instances
-                   (format t "~&There are no space instances in the ~
-                                  blackboard repository.~%"))
-                 (format t "~2&Unit Class~vtInstances~
+      (flet ((fn (unit-class plus-subclasses)
+               (declare (ignore plus-subclasses))
+               (let ((count (class-instances-count unit-class)))
+                 (when (plusp& count)
+                   (incf total-instances count)
+                   (unless header-displayed?
+                     (setf header-displayed? 't)
+                     (unless top-level-space-instances
+                       (format t "~&There are no space instances in the ~
+                                    blackboard repository.~%"))
+                     (format t "~2&Unit Class~vtInstances~
                                ~%----------~:*~vt---------~%"
-                         2nd-column-indent))
-               (format t "~s~vt~9d ~c~%" 
-                       (class-name unit-class)
-                       2nd-column-indent
-                       count
-                       (case (standard-unit-class.retain unit-class)
-                         ((nil) #\space)
-                         (:propagate #\+)
-                         (otherwise #\*))))))
-       't)
+                             2nd-column-indent))
+                   (format t "~s~vt~9d ~c~%" 
+                           (class-name unit-class)
+                           2nd-column-indent
+                           count
+                           (case (standard-unit-class.retain unit-class)
+                             ((nil) #\space)
+                             (:propagate #\+)
+                             (otherwise #\*)))))))
+        (declare (dynamic-extent #'fn))
+        (map-extended-unit-classes-sorted #'fn 't))
     (if header-displayed?
           (format t "~&~vt---------~%~:*~vt~9d instance~:p"
                   2nd-column-indent

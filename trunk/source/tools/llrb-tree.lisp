@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/llrb-tree.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Aug 14 09:33:52 2009 *-*
+;;;; *-* Last-Edit: Mon Mar  1 17:18:26 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill & Eric O'Connor
 ;;;
-;;; Copyright (C) 2008-2009, Dan Corkill <corkill@GBBopen.org> 
+;;; Copyright (C) 2008-2010, Dan Corkill <corkill@GBBopen.org> 
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -501,29 +501,30 @@
 
 (defun map-llrb-tree (fn llrb-tree)
   (let ((*%llrb-current-test%* (llrb-tree-test llrb-tree)))
-    (llrb-map
-     #'(lambda (node) 
-	 (funcall fn (llrb-node-key node) (llrb-node-value node)))
-     (llrb-tree-root llrb-tree))))
+    (flet ((do-fn (node) 
+             (funcall fn (llrb-node-key node) (llrb-node-value node))))
+      (declare (dynamic-extent fn))
+      (llrb-map #'do-fn (llrb-tree-root llrb-tree)))))
 
 ;;; ---------------------------------------------------------------------------
 
 (defun map-llrb-tree-with-conditional-descent (left right llrb-tree)
   (let ((*%llrb-current-test%* (llrb-tree-test llrb-tree)))
-    (llrb-map-with-conditional-descent
-     #'(lambda (node)
-	 (funcall left 
-		  (and node
-		     (llrb-node-key node))
-		  (and node
-		       (llrb-node-value node))))
-     #'(lambda (node)
-	 (funcall right 
-		  (and node
-		       (llrb-node-key node))
-		  (and node
-		       (llrb-node-value node))))
-     (llrb-tree-root llrb-tree))))
+    (flet ((left-fn (node)
+             (funcall left 
+                      (and node
+                           (llrb-node-key node))
+                      (and node
+                           (llrb-node-value node))))
+           (right-fn (node)
+             (funcall right 
+                      (and node
+                           (llrb-node-key node))
+                      (and node
+                           (llrb-node-value node)))))
+      (declare (dynamic-extent #'left-fn #'right-fn))
+      (llrb-map-with-conditional-descent
+       #'left-fn #'right-fn (llrb-tree-root llrb-tree)))))
 
 ;;; ---------------------------------------------------------------------------
 
