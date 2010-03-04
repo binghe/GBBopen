@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/units.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Mar  3 04:43:48 2010 *-*
+;;;; *-* Last-Edit: Wed Mar  3 18:14:39 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -728,22 +728,22 @@
   ;;; The `fn' will applied once to each class in lexical order.
   (with-full-optimization ()
     (let* ((classes nil)
-           (fn (if (functionp fn) fn (fdefinition fn)))
-           (accumulation-fn #'(lambda (&rest class-spec)
-                                (push class-spec classes))))
-      (declare (dynamic-extent #'accumulation-fn))
-      (multiple-value-bind (unit-class plus-subclasses)
-          (parse-unit-class-specifier unit-class-name)
-        (if plus-subclasses
-            (map-unit-classes accumulation-fn unit-class)
-            (funcall accumulation-fn unit-class nil)))
-      (setf classes
-            (flet ((fn (class-spec)
-                     (class-name (first class-spec))))
-              (declare (dynamic-extent #'fn))
-              (sort classes #'string< :key #'fn))) 
-      (dolist (class-spec classes)
-        (apply fn class-spec)))))
+           (fn (if (functionp fn) fn (fdefinition fn))))
+      (flet ((accumulation-fn (&rest class-spec)
+               (push class-spec classes)))
+        (declare (dynamic-extent #'accumulation-fn))
+        (multiple-value-bind (unit-class plus-subclasses)
+            (parse-unit-class-specifier unit-class-name)
+          (if plus-subclasses
+              (map-unit-classes #'accumulation-fn unit-class)
+              (funcall #'accumulation-fn unit-class nil)))
+        (setf classes
+              (flet ((fn (class-spec)
+                       (class-name (first class-spec))))
+                (declare (dynamic-extent #'fn))
+                (sort classes #'string< :key #'fn))) 
+        (dolist (class-spec classes)
+          (apply fn class-spec))))))
 
 ;;; ---------------------------------------------------------------------------
 

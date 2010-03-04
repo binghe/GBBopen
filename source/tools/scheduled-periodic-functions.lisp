@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/scheduled-periodic-functions.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Dec 22 06:53:02 2009 *-*
+;;;; *-* Last-Edit: Wed Mar  3 18:05:42 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -548,29 +548,29 @@
                                                 function))
                                      (verbose *periodic-function-verbose*))
   #-threads-not-available
-  (flet ((fn ()
-           (let ((*periodic-function-verbose* verbose)
-                 (*periodic-function-name* name))
-             (declare (special *periodic-function-name*))
-             (catch 'kill-periodic-function
-               (loop
-                 (when (and count (minusp (decf count)))
-                   (return))
-                 (sleep interval)
-                 (with-simple-restart (continue "Resume periodic-function")
-                   (funcall function))))
-             (when *periodic-function-verbose*
-               (format *trace-output* 
-                       "~&;; Exiting periodic-function thread~@[ ~s~]~%"
-                       name)
-               (force-output *trace-output*)))))
-    (when verbose
-      (format *trace-output* 
-              "~&;; Spawning periodic-function thread for~@[ ~s~]...~%"
-              name)
-      (force-output *trace-output*))
-    (spawn-thread (format nil "Periodic Function~@[ ~a~]" name)
-                  #'fn))
+  (when verbose
+    (format *trace-output* 
+            "~&;; Spawning periodic-function thread for~@[ ~s~]...~%"
+            name)
+    (force-output *trace-output*))
+  (spawn-thread 
+   (format nil "Periodic Function~@[ ~a~]" name)
+   #'(lambda ()
+       (let ((*periodic-function-verbose* verbose)
+             (*periodic-function-name* name))
+         (declare (special *periodic-function-name*))
+         (catch 'kill-periodic-function
+           (loop
+             (when (and count (minusp (decf count)))
+               (return))
+             (sleep interval)
+             (with-simple-restart (continue "Resume periodic-function")
+               (funcall function))))
+         (when *periodic-function-verbose*
+           (format *trace-output* 
+                   "~&;; Exiting periodic-function thread~@[ ~s~]~%"
+                   name)
+           (force-output *trace-output*)))))
   #+threads-not-available
   (declare (ignore interval count name verbose))
   #+threads-not-available

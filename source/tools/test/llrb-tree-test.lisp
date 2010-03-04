@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/test/llrb-tree-test.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jul 22 06:15:09 2009 *-*
+;;;; *-* Last-Edit: Wed Mar  3 17:29:26 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -18,13 +18,13 @@
 
 (defun llrb-check-traversal (llrb-tree)
   (let ((last-key -infinity&))
-    (map-llrb-tree
-     #'(lambda (key value)
-         (declare (ignore value))
-         (unless (>& key last-key)
-           (error "Wrong key ordering"))
-         (setf last-key key))
-     llrb-tree)))
+    (flet ((fn (key value)
+             (declare (ignore value))
+             (unless (>& key last-key)
+               (error "Wrong key ordering"))
+             (setf last-key key)))
+      (declare (dynamic-extent #'fn))
+      (map-llrb-tree #'fn llrb-tree))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -47,7 +47,10 @@
 (defun llrb-print (llrb-tree)
   (let ((root (llrb-tree-root llrb-tree)))
     (if root
-        (llrb-prefix-map #'(lambda (node) (format t "~&~s~%" node)) root)
+        (flet ((fn (node)
+                 (format t "~&~s~%" node)))
+          (declare (dynamic-extent #'fn))
+          (llrb-prefix-map #'fn root))
         (format t "#<empty>~%")))
   (values))
 
@@ -58,6 +61,7 @@
     (flet ((count-it (key value)
              (declare (ignore key value))
              (incf& count)))
+      (declare (dynamic-extent #'count-it))
       (map-llrb-tree #'count-it llrb-tree))
     count))
 
@@ -155,11 +159,10 @@
                    (when verbose (llrb-print llrb-tree))
                    ,@body
                    (when verbose (llrb-print llrb-tree)))))
-      (flet
-          ((nil-result-error ()
-             (error "Result was nil"))
-           (non-nil-result-error ()
-             (error "Result was not nil")))
+      (flet ((nil-result-error ()
+               (error "Result was nil"))
+             (non-nil-result-error ()
+               (error "Result was not nil")))
         (logger ("Delete missing from empty tree:"
                  (setf llrb-tree (make-llrb-tree #'compare&)))
                 (when (llrb-tree-delete 5 llrb-tree)

@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-SOCKETS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/portable-sockets.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Mar  1 17:20:47 2010 *-*
+;;;; *-* Last-Edit: Wed Mar  3 18:08:44 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -647,19 +647,20 @@
   #+threads-not-available
   (declare (ignore function port name backlog interface reuse-address))
   #-threads-not-available
-  (flet ((fn (function port interface backlog reuse-address)
-           (let ((passive-socket 
-                  (make-passive-socket port 
-                                       :backlog backlog
-                                       :interface interface
-                                       :reuse-address reuse-address)))
-             (unwind-protect
-                 (loop
-                   (let ((connection (accept-connection passive-socket)))
-                     (funcall function connection)))
-               (close-passive-socket passive-socket)))))
-    (declare (dynamic-extent #'fn))
-    (spawn-thread name #'fn function port interface backlog reuse-address))
+  (spawn-thread
+   name
+   #'(lambda (function port interface backlog reuse-address)
+       (let ((passive-socket 
+              (make-passive-socket port 
+                                   :backlog backlog
+                                   :interface interface
+                                   :reuse-address reuse-address)))
+         (unwind-protect
+             (loop
+               (let ((connection (accept-connection passive-socket)))
+                 (funcall function connection)))
+           (close-passive-socket passive-socket))))
+   function port interface backlog reuse-address)
   #+threads-not-available
   (threads-not-available 'start-connection-server))
 
