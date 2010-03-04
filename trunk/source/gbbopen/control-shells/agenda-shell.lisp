@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:AGENDA-SHELL; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/control-shells/agenda-shell.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Jun 21 05:04:54 2009 *-*
+;;;; *-* Last-Edit: Wed Mar  3 18:02:54 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2004-2009, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2004-2010, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -528,9 +528,10 @@
             (cs (or (current-control-shell)
 		    ;; Look for a control-shell thread:
 		    #-threads-not-available
-		    (some #'(lambda (thread)
-			      (symbol-value-in-thread '*cs* thread))
-			  *control-shell-threads*))))
+                    (flet ((fn (thread)
+                             (symbol-value-in-thread '*cs* thread)))
+                      (declare (dynamic-extent #'fn))
+                      (some #'fn *control-shell-threads*)))))
         (cond (cs (with-lock-held ((cs.event-buffer-lock cs))
                     (push event (cs.event-buffer cs))
                     #+threads-not-available
@@ -559,9 +560,10 @@
                      (when ksts
                        (format t "~&~6t~a: ~@<~{~s~^, ~_~}~@:>~%" 
 			       label
-			       (mapcar #'(lambda (kst)
-					   (instance-name-of (kst.ks kst)))
-				       ksts)))))
+                               (flet ((fn (kst)
+                                        (instance-name-of (kst.ks kst))))
+                                 (declare (dynamic-extent #'fn))
+                                 (mapcar #'fn ksts))))))
             (when (or triggers obviates retriggers)
               (show-evfn-describer-headers)
               (describe-it "Triggers" triggers)
@@ -677,19 +679,21 @@
      #-threads-not-available
      (cs (or (current-control-shell)
              ;; Look for a control-shell thread:
-             (some #'(lambda (thread)
-                       (symbol-value-in-thread '*cs* thread))
-                   *control-shell-threads*)
+             (flet ((fn (thread)
+                      (symbol-value-in-thread '*cs* thread)))
+               (declare (dynamic-extent #'fn))
+               (some #'fn *control-shell-threads*))
              (error "No control-shell thread was found"))))
   (cond 
    ((eq (current-thread) *within-abort-ks-execution-catcher*)
     (throw 'abort-ks-execution-catcher *within-abort-ks-execution-catcher*))
    (t #-threads-not-available
-      (run-in-thread (cs.thread cs)
-                      #'(lambda ()
-                          (when *within-abort-ks-execution-catcher*
-                            (throw 'abort-ks-execution-catcher
-                              *within-abort-ks-execution-catcher*)))))))
+      (flet ((fn ()
+               (when *within-abort-ks-execution-catcher*
+                 (throw 'abort-ks-execution-catcher
+                   *within-abort-ks-execution-catcher*))))
+        (declare (dynamic-extent #'fn))
+        (run-in-thread (cs.thread cs) #'fn)))))
 
 ;;; ===========================================================================
 ;;;   Agenda-Shell Event Definitions
@@ -1613,13 +1617,13 @@
   (threads-not-available 'spawn-control-shell-thread)
   #-threads-not-available
   (let ((control-shell-thread
-	 (spawn-thread 
-	  "Agenda Shell" 
-	  #'(lambda (initargs)
-	      (with-control-shell-instance ()
-		(apply #'start-control-shell
-		       (append initargs '(:hibernate-on-quiescence t)))))
-	  initargs)))
+         (spawn-thread 
+          "Agenda Shell"
+          #'(lambda (initargs)
+              (with-control-shell-instance ()
+                (apply #'start-control-shell
+                       (append initargs '(:hibernate-on-quiescence t)))))
+          initargs)))
     (atomic-push control-shell-thread *control-shell-threads*)
     control-shell-thread))
 

@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-USER; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/source/gbbopen/control-shells/test/agenda-shell-test.lisp *-*
+;;;; *-* File: /usr/local/gbbopen/source/gbbopen/control-shells/test/agenda-shell-test.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Feb 11 10:00:17 2008 *-*
-;;;; *-* Machine: whirlwind.corkills.org *-*
+;;;; *-* Last-Edit: Wed Mar  3 17:25:27 2010 *-*
+;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2004-2008, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2004-2010, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -227,7 +227,9 @@
   ;; Clean up any previous run:
   (delete-blackboard-repository)
   ;; Enable all KSs:
-  (map-instances-of-class #'(lambda (ks) (setf (ks-enabled-p ks) 't)) 'ks)
+  (flet ((fn (ks) (setf (ks-enabled-p ks) 't)))
+    (declare (dynamic-extent #'fn))
+    (map-instances-of-class #'fn 'ks))
   ;; Make new space instances:
   (make-space-instance '(space-1)
 		       :dimensions '((value :ordered)))
