@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-SOCKETS-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/test/portable-sockets-test.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Aug  5 07:12:05 2009 *-*
+;;;; *-* Last-Edit: Sat Mar  6 13:36:35 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -57,6 +57,7 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun http-connect-test (host port filepathname)
+  (forced-format "~&;; Performing HTTP connection test...")
   (with-open-connection (connection host port)
     (format connection "GET ~a HTTP/1.1" filepathname)
     (write-crlf connection)
@@ -64,9 +65,12 @@
     (write-crlf connection)
     (write-crlf connection)
     (force-output connection)
+   (forced-format "~&;;   Reading until HTTP server closes connection...")
     (let (line)
       (loop :while (setq line (read-line connection nil)) :do
-	(format t "~&;; ~a~%" line)))))
+	(format t "~&;; ~a~%" line))))
+  (forced-format "~&;;   HTTP connection closed.")
+  (forced-format "~&;; HTTP connection test completed."))
 
 ;;; ---------------------------------------------------------------------------
 
