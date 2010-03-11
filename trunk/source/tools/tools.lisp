@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Mar  7 04:37:17 2010 *-*
+;;;; *-* Last-Edit: Thu Mar 11 13:20:24 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -298,10 +298,12 @@
                                           (error-message-string condition))
                                         (error-condition ()
                                           condition))
-                                   (declare (dynamic-extent #'error-message
+                                   (declare #-clisp 
+                                            (dynamic-extent #'error-message
                                                             #'error-condition))
-                                   (declare #-clisp (ignorable #'error-message
-                                                               #'error-condition))
+                                   (declare #-clisp 
+                                            (ignorable #'error-message
+                                                       #'error-condition))
                                    ,@(if error-body
                                          `(,@handler-body
                                            (when *disable-with-error-handling*
@@ -329,10 +331,12 @@
                               (error-message-string ,condition/tag))
                             (error-condition ()
                               ,condition/tag))
-                       (declare (dynamic-extent #'error-message 
+                       (declare #-clisp
+                                (dynamic-extent #'error-message 
                                                 #'error-condition))
-                       (declare #-clisp (ignorable #'error-message 
-                                                   #'error-condition))
+                       (declare #-clisp
+                                (ignorable #'error-message 
+                                           #'error-condition))
                        (return-from ,block (progn ,@error-body))))))))))))
   
 ;;; ===========================================================================

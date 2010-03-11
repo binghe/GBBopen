@@ -1,3 +1,5 @@
+GBBopen version 1.5 coming soon!
+
 Important changes since GBBopen 1.4:
 
   * Changes to extended-REPL commands
@@ -7,11 +9,16 @@ Important changes since GBBopen 1.4:
      - Add :skip-recompile module file option
 
   * Changes to GBBopen Tools
+     - New DEFCONSTRUCT cons-based 2-field "structure"
      - New HTTP-DATE-AND-TIME function
      - Change argument order of ENCODE-TIME-OF-DAY
      - New left-leaning red-black (LLRB) tree entities
 
   * New :double-metaphone module
+
+  * New :atable (auto-transitioning "fast hash-table") module
+
+  * New :gbbopen-tools-user module
 
   * Changes to Portable Threads
      - New ATOMIC-INCF& and ATOMIC-DECF& macros

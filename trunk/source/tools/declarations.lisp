@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/declarations.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Sep 28 04:47:29 2009 *-*
+;;;; *-* Last-Edit: Tue Mar  9 05:16:20 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2002-2009, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2010, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -47,8 +47,14 @@
 (defmacro with-full-optimization ((&key) &body body)
   ;;  The feature :full-safety disables with-full-optimization optimizations:
   `(locally #+full-safety ()
-            #-full-safety (declare (optimize (speed 3) (safety 0) (debug 0)
-                                             (compilation-speed 0)))
+            #-full-safety 
+            (declare (optimize (speed 3) 
+                               (safety 0)
+                               (space 0)
+                               (debug 0)
+                               (compilation-speed 0)
+                               #+lispworks
+                               (harlequin-common-lisp::fixnum-safety 0)))
             ,@body))
 
 ;;; ---------------------------------------------------------------------------

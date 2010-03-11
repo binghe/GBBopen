@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/commands.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Feb 15 04:29:18 2010 *-*
+;;;; *-* Last-Edit: Tue Mar  9 03:34:48 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -53,6 +53,7 @@
 ;;;  01-05-06 Added :portable-sockets command.  (Corkill)
 ;;;  11-13-06 Added :abort-ks-execution-example command.  (Corkill)
 ;;;  02-15-10 Added :double-metaphone command.  (Corkill)
+;;;  03-09-10 Added :gbbopen-tools-user command.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -81,6 +82,10 @@
   (define-repl-command :gbbopen-tools (&rest options)
     "Compile and load GBBopen Tools module"
     (startup-module :gbbopen-tools options :gbbopen-tools))
+
+  (define-repl-command :gbbopen-tools-user (&rest options)
+    "Compile and load GBBopen-Tools-User module"
+    (startup-module :gbbopen-tools-user options :gbbopen-tools-user))
 
   (define-repl-command :portable-threads (&rest options)
     "Compile and load Portable Threads module"
@@ -166,11 +171,11 @@
 
   (define-repl-command :gbbopen-tools-test (&rest options)
     "Compile and load GBBopen-Tools Test module"
-    (startup-module :gbbopen-tools-test options :gbbopen-tools))
+    (startup-module :gbbopen-tools-test options :gbbopen-tools-user))
   
   (define-repl-command :double-metaphone-test (&rest options)
     "Compile and load Double-MetaPhone-Test module"
-    (startup-module :double-metaphone-test options :gbbopen-tools))
+    (startup-module :double-metaphone-test options :gbbopen-tools-user))
   
   (define-repl-command :agenda-shell-test (&rest options)
     "Compile and load Agenda-Shell-Test module"
@@ -201,13 +206,13 @@
   )
 
 ;;; ---------------------------------------------------------------------------
-;;;  Timing (not yet completed or documented)
+;;;  Timing
 
 (with-system-name (:timing)
 
   (define-repl-command :cl-timing (&rest options)
     "Compile and load CL timing tests (under construction)"
-    (startup-module :cl-timing options :gbbopen-user))
+    (startup-module :cl-timing options :gbbopen-tools-user))
 
   ;; end with-system-name
   )

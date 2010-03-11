@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/modules.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Feb 15 15:18:05 2010 *-*
+;;;; *-* Last-Edit: Thu Mar 11 13:14:25 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -34,6 +34,7 @@
 ;;;  11-13-06 Added :abort-ks-execution-example module. (Corkill)
 ;;;  06-28-07 Renamed :gbbopen module to more accurate :gbbopen-core. (Corkill)
 ;;;  02-15-10 Added :double-metaphone module. (Corkill)
+;;;  03-07-10 Added auto-transitioning tables (:atables) module. (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -62,6 +63,7 @@
             "clos-interface" 
             ("tools" :forces-recompile)
             ("pseudo-probabilities" :forces-recompile)
+            ("defconstruct" :forces-recompile)
             ("define-class" :forces-recompile)
             "gbbopen-instance"
             "date-and-time"
@@ -72,6 +74,11 @@
             ("llrb-tree" :forces-recompile)
             "epilogue"))
   
+  (define-module :gbbopen-tools-user
+    (:requires :gbbopen-tools)
+    (:directory :gbbopen-tools)
+    (:files "gbbopen-tools-user"))
+
   (define-module :portable-threads
     (:requires :module-manager-user)       ; not really required, but we want
                                            ; :module-manager-user
@@ -85,6 +92,11 @@
     (:requires :gbbopen-tools :portable-threads)
     (:directory :gbbopen-tools)
     (:files "polling-functions"))
+  
+  (define-module :atable
+    (:requires :gbbopen-tools)
+    (:directory :gbbopen-tools)
+    (:files ("atable")))
   
   (define-module :os-interface
     (:requires :gbbopen-tools)
@@ -249,7 +261,7 @@
 ;;; ---------------------------------------------------------------------------
 
   (define-module :gbbopen-tools-test
-    (:requires :gbbopen-tools)
+    (:requires :gbbopen-tools-user)
     (:directory :gbbopen-tools "test")
     (:files ("llrb-tree-test" :reload :noautorun)
             ("gbbopen-tools-test" :reload)))
@@ -306,7 +318,7 @@
 (with-system-name (:timing)
 
   (define-module :cl-timing
-    (:requires :gbbopen-user)
+    (:requires :atable :gbbopen-tools-user)
     (:directory :gbbopen-tools "timing")
     (:files "cl-timing"))
   
