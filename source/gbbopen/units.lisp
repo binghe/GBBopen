@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/units.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Mar  3 18:14:39 2010 *-*
+;;;; *-* Last-Edit: Thu Mar 11 13:32:52 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -729,6 +729,7 @@
   (with-full-optimization ()
     (let* ((classes nil)
            (fn (if (functionp fn) fn (fdefinition fn))))
+      (declare (function fn))
       (flet ((accumulation-fn (&rest class-spec)
                (push class-spec classes)))
         (declare (dynamic-extent #'accumulation-fn))
@@ -738,10 +739,14 @@
               (map-unit-classes #'accumulation-fn unit-class)
               (funcall #'accumulation-fn unit-class nil)))
         (setf classes
-              (flet ((fn (class-spec)
-                       (class-name (first class-spec))))
+              (flet ((fn (class-spec1 class-spec2)
+                       (string<
+                        (the simple-base-string
+                          (symbol-name (class-name (first class-spec1))))
+                        (the simple-base-string
+                          (symbol-name (class-name (first class-spec2)))))))
                 (declare (dynamic-extent #'fn))
-                (sort classes #'string< :key #'fn))) 
+                (sort classes #'fn)))
         (dolist (class-spec classes)
           (apply fn class-spec))))))
 

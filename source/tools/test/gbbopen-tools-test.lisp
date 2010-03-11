@@ -1,7 +1,7 @@
-;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
+;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/test/gbbopen-tools-test.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jul 22 05:54:23 2009 *-*
+;;;; *-* Last-Edit: Tue Mar  9 03:39:58 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -11,8 +11,19 @@
 ;;;; *
 ;;;; **************************************************************************
 ;;;; **************************************************************************
+;;;
+;;; Written by: Dan Corkill
+;;;
+;;; Copyright (C) 2008-2010, Dan Corkill <corkill@GBBopen.org> 
+;;; Part of the GBBopen Project (see LICENSE for license information).
+;;;
+;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+;;;
+;;;  06-15-08 File created.  (Corkill)
+;;;
+;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-(in-package :gbbopen-tools)
+(in-package :gbbopen-tools-user)
 
 ;;; ---------------------------------------------------------------------------
 
