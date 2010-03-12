@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/llrb-tree.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Mar  9 03:43:50 2010 *-*
+;;;; *-* Last-Edit: Fri Mar 12 05:33:24 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -531,44 +531,44 @@
 (defun llrb-tree-find (search-key llrb-tree &optional (criterion '=) fn)
   ;;; Criterion options: '= '< '> '<= or '>=
   (let (best best-key best-value)
-    (map-llrb-tree-with-conditional-descent
-     #'(lambda (key value)
-	 (declare (ignore value))
-	 (let ((compare (llrb-compare key search-key)))
-	   (ecase criterion
-               ((<= = >) (plusp& compare))
-               ((>= <) (not (minusp& compare))))))
-     #'(lambda (key value)
-	 (let ((compare (llrb-compare key search-key)))
-	   (flet ((set-best ()
-		    (setf best *%llrb-current-node%*)
-		    (setf best-key key)
-		    (setf best-value value)))
-	     (ecase criterion 
-               (= (when (zerop& compare)
-		    (set-best))
-                  (minusp& compare))
-               (< (when (and (minusp& compare)
-			     (or (not best-key)
-				 (plusp& (llrb-compare key best-key))))
-		    (set-best))
-		  (minusp& compare))
-               (<= (when (and (not (plusp& compare))
-			      (or (not best-key)
-				  (plusp& (llrb-compare key best-key))))
-		     (set-best))
-		   (not (plusp& compare)))
-               (>= (when (and (not (minusp& compare))
-			      (or (not best-key)
-				  (minusp& (llrb-compare key best-key))))
-		     (set-best))
-		   (minusp& compare))
-               (> (when (and (plusp& compare)
-			     (or (not best-key)
-				 (minusp& (llrb-compare key best-key))))
-		    (set-best))
-		  (not (plusp& compare)))))))
-	 llrb-tree)
+    (flet ((left-fn (key value)
+             (declare (ignore value))
+             (let ((compare (llrb-compare key search-key)))
+               (ecase criterion
+                 ((<= = >) (plusp& compare))
+                 ((>= <) (not (minusp& compare))))))
+           (right-fn (key value)
+             (let ((compare (llrb-compare key search-key)))
+               (flet ((set-best ()
+                        (setf best *%llrb-current-node%*)
+                        (setf best-key key)
+                        (setf best-value value)))
+                 (ecase criterion 
+                   (= (when (zerop& compare)
+                        (set-best))
+                      (minusp& compare))
+                   (< (when (and (minusp& compare)
+                                 (or (not best-key)
+                                     (plusp& (llrb-compare key best-key))))
+                        (set-best))
+                      (minusp& compare))
+                   (<= (when (and (not (plusp& compare))
+                                  (or (not best-key)
+                                      (plusp& (llrb-compare key best-key))))
+                         (set-best))
+                       (not (plusp& compare)))
+                   (>= (when (and (not (minusp& compare))
+                                  (or (not best-key)
+                                      (minusp& (llrb-compare key best-key))))
+                         (set-best))
+                       (minusp& compare))
+                   (> (when (and (plusp& compare)
+                                 (or (not best-key)
+                                     (minusp& (llrb-compare key best-key))))
+                        (set-best))
+                      (not (plusp& compare))))))))
+      (declare (dynamic-extent #'left-fn #'right-fn))
+      (map-llrb-tree-with-conditional-descent #'left-fn #'right-fn llrb-tree))
     (when best-key
       (if (functionp fn)
 	  (let ((*%llrb-current-node%* best))
@@ -581,15 +581,16 @@
   (let ((*%llrb-in-setf%* t)
 	(*%llrb-set-override%* nil))
     (multiple-value-bind (returned-value set?)
-	(llrb-tree-find search-key llrb-tree criterion 
-			#'(lambda (key value)
-			    (when key
-			      (when fn
-				(funcall fn key value))
-			      (values (if (not *%llrb-set-override%*)
-					  (set-current-node-value set-value)
-					  value)
-				      t))))
+        (flet ((fn (key value)
+                 (when key
+                   (when fn
+                     (funcall fn key value))
+                   (values (if (not *%llrb-set-override%*)
+                               (set-current-node-value set-value)
+                               value)
+                           t))))
+          (declare (dynamic-extent #'fn))
+          (llrb-tree-find search-key llrb-tree criterion #'fn))
       (if (not set?)
 	  (if (memq criterion '(= <= >=))
 	      (setf (llrb-tree-value search-key llrb-tree) set-value)

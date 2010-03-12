@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:AGENDA-SHELL; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/control-shells/agenda-shell-metering.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Mar  3 17:17:48 2010 *-*
+;;;; *-* Last-Edit: Fri Mar 12 05:12:19 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -142,13 +142,12 @@
 	(*control-shell-stats*
 	 (let ((,stat (funcall 
 		       #',accessor 
-                       (flet ((fn (stat)
-                                (eq ,ks (agenda-shell-ks-stats.ks stat))))
-                         (declare (dynamic-extent #'fn))
-                         (find-if 
-                          #'fn
-                          ;; Skip over the cycle count and start-runtime:
-                          (cddr *control-shell-stats*))))))
+                       (find
+                        ,ks
+                        ;; Skip over the cycle count and start-runtime:
+                        (cddr *control-shell-stats*)
+                        :test #'eq
+                        :key #'agenda-shell-ks-stats.ks))))
 	   (incf (stat-count ,stat))
 	   ,@(when body
 	       `((let ((,start (get-internal-run-time)))

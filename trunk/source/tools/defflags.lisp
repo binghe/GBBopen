@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/defflags.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Oct 28 05:36:03 2009 *-*
+;;;; *-* Last-Edit: Fri Mar 12 05:26:43 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -123,8 +123,8 @@
           ;; The inline declaration must come before the function definition,
           ;; so we push it after in the forms:
           (push `(declaim (inline ,reader)) forms)
-          (incf index)))
-      (when (> index max-index)
+          (incf& index)))
+      (when (>& index max-index)
         (error "Flag index exceeded.")))
     `(progn
        ,@forms
@@ -132,11 +132,11 @@
            (let ((index (1-& start)))
              `((defun ,constructor (&key ,@flags)
                  (let ((value 0))
-                   ,.(mapcar 
-                      #'(lambda (flag)
-                          `(when ,flag
-                             (setq value (set-flag value ,(incf& index)))))
-                      flags)
+                   ,.(flet ((fn (flag)
+                              `(when ,flag
+                                 (setq value (set-flag value ,(incf& index))))))
+                       (declare (dynamic-extent #'fn))
+                       (mapcar #'fn flags))
                    value))))))))
 
 ;;; ===========================================================================

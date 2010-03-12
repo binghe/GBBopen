@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Mar 11 13:20:24 2010 *-*
+;;;; *-* Last-Edit: Fri Mar 12 06:14:29 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -473,12 +473,12 @@
                                   ((atom keys)
                                    (pushnew keys all-keys :test test)
                                    `(,(maybe-downgrade-test keys) ,exp ',keys))
-                                  (t `(or ,.(mapcar 
-                                             #'(lambda (key)
-                                                 (pushnew key all-keys :test test)
-                                                 `(,(maybe-downgrade-test key)
-                                                   ,exp ',key))
-                                             keys))))
+                                  (t `(or ,.(flet ((fn (key)
+                                                     (pushnew key all-keys :test test)
+                                                     `(,(maybe-downgrade-test key)
+                                                       ,exp ',key)))
+                                              (declare (dynamic-extent #'fn))
+                                              (mapcar #'fn keys)))))
                                 ,@clause-forms)))))))
                 (declare (dynamic-extent #'do-clause))
                 (mapcan #'do-clause clauses))
@@ -1177,14 +1177,16 @@
                       (if (zerop ,new-value)
                           ;; Remove the acons:
                           (setf ,(first store-vars)
-                                (delete ,key ,(first store-vars)
-                                        :key ,(if keyword-key-value
-                                                  `#'(lambda (,new-value)
-                                                       (funcall
-                                                        ,keyword-key-value
-                                                        (car ,new-value)))
-                                                  '#'car)
-                                        ,@(remove-property keys ':key)))
+                                (flet ((fn (,new-value)
+                                         (funcall
+                                          ,keyword-key-value
+                                          (car ,new-value))))
+                                  (declare (dynamic-extent #'fn))
+                                  (delete ,key ,(first store-vars)
+                                          :key ,(if keyword-key-value
+                                                    `#'fn
+                                                    '#'car)
+                                          ,@(remove-property keys ':key))))
                           ;; Update the value:
                           (rplacd ,assoc-result ,new-value))))
                    (t (acons-not-found-error ,key ',place)))
@@ -1558,10 +1560,10 @@
   ;;; macro definitions as global macros (allowing quick macroexpansion of
   ;;; the `body' forms)
   `(progn
-     ,.(mapcar
-        #'(lambda (macro)
-            `(defmacro ,@macro))
-        macrobindings)
+     ,.(flet ((fn (macro)
+                `(defmacro ,@macro)))
+         (declare (dynamic-extent #'fn))
+         (mapcar #'fn macrobindings))
      ,@body))
 
 ;;; ===========================================================================

@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/declared-numerics.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Feb 28 18:56:09 2010 *-*
+;;;; *-* Last-Edit: Fri Mar 12 05:22:37 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -309,7 +309,9 @@
     ;;; Builds a form declaring all the arguments to `op' to be `type.'  If
     ;;; `result' is true then the type of the result of the operation is also
     ;;; declared.
-    (let ((form `(,op ,.(mapcar #'(lambda (x) `(the ,type ,x)) args))))
+    (let ((form `(,op ,.(flet ((fn (x) `(the ,type ,x)))
+                          (declare (dynamic-extent #'fn))
+                          (mapcar #'fn args)))))
       (if (and result
                (not (member ':full-safety *features* :test #'eq)))
           `(the ,(if values-types

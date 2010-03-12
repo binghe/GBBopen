@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/portable-threads.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Mar  2 14:02:31 2010 *-*
+;;;; *-* Last-Edit: Fri Mar 12 05:50:51 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -749,21 +749,19 @@
     ;; "timer" process (a technique suggested by Jon S. Anthony):
     `(let ((,semaphore-sym (ccl:make-semaphore)))
        (catch ',tag-sym
-         (flet ((fn (process semaphore seconds)
-                  (unless (ccl:timed-wait-on-semaphore semaphore seconds)
-                    (ccl:process-interrupt
-                     process
-                     #'(lambda ()
-                         (ignore-errors
-                          (throw ',tag-sym
-                            (progn ,@timeout-body))))))))
-           (declare (dynamic-extent #'fn))
-           (ccl:process-run-function 
-               "WITH-TIMEOUT timer"
-             #'fn
-             ccl:*current-process*
-             ,semaphore-sym
-             ,seconds))
+         (ccl:process-run-function 
+             "WITH-TIMEOUT timer"
+           #'(lambda (process semaphore seconds)
+               (unless (ccl:timed-wait-on-semaphore semaphore seconds)
+                 (ccl:process-interrupt
+                  process
+                  #'(lambda ()
+                      (ignore-errors
+                       (throw ',tag-sym
+                         (progn ,@timeout-body)))))))
+           ccl:*current-process*
+           ,semaphore-sym
+           ,seconds)
          (unwind-protect (progn ,@timed-body)
            (ccl:signal-semaphore ,semaphore-sym)))))
   #+digitool-mcl
@@ -773,18 +771,18 @@
     ;; process:
     `(catch ',tag-sym
        (let ((,timer-process-sym
-              (flet ((fn (process seconds)
-                       (sleep seconds)
-                       (ccl:process-interrupt
-                        process
-                        #'(lambda ()
-                            (ignore-errors
-                             (throw ',tag-sym
-                               (progn ,@timeout-body)))))))
-                (declare (dynamic-extent #'fn))
-                (ccl:process-run-function 
-                    "WITH-TIMEOUT timer"
-                  #'fn ccl:*current-process* ,seconds))))
+              (ccl:process-run-function 
+                  "WITH-TIMEOUT timer"
+                #'(lambda (process seconds)
+                    (sleep seconds)
+                    (ccl:process-interrupt
+                     process
+                     #'(lambda ()
+                         (ignore-errors
+                          (throw ',tag-sym
+                            (progn ,@timeout-body))))))
+                ccl:*current-process* 
+                ,seconds)))
          (ccl:process-allow-schedule)
          (unwind-protect (progn ,@timed-body)
            (ccl:process-kill ,timer-process-sym)
@@ -795,18 +793,18 @@
     ;; No timers in ECL, so we use SLEEP in a separate "timer" process:
     `(catch ',tag-sym
        (let ((,timer-process-sym
-              (flet ((fn (process seconds)
-                       (sleep seconds)
-                       (mp:interrupt-process
-                        process
-                        #'(lambda ()
-                            (ignore-errors
-                             (throw ',tag-sym
-                               (progn ,@timeout-body)))))))
-                (declare (dynamic-extent #'fn))
-                (mp:process-run-function 
-                    "WITH-TIMEOUT timer"
-                  #'fn mp:*current-process* ,seconds))))
+              (mp:process-run-function 
+                  "WITH-TIMEOUT timer"
+                #'(lambda (process seconds)
+                    (sleep seconds)
+                    (mp:interrupt-process
+                     process
+                     #'(lambda ()
+                         (ignore-errors
+                          (throw ',tag-sym
+                            (progn ,@timeout-body))))))
+                mp:*current-process* 
+                ,seconds)))
          (sleep 0)
          (unwind-protect (progn ,@timed-body)
            (when (mp:process-active-p ,timer-process-sym)
@@ -820,14 +818,14 @@
     ;; back to the WITH-TIMEOUT process:
     `(catch ',tag-sym
        (let ((,timer-sym 
-              (flet ((fn (process)
-                       (mp:process-interrupt 
-                        process
-                        #'(lambda ()
-                            (throw ',tag-sym
-                              (progn ,@timeout-body))))))
-                (declare (dynamic-extent #'fn))
-                (mp:make-timer #'fn mp:*current-process*))))
+              (mp:make-timer 
+               #'(lambda (process)
+                   (mp:process-interrupt 
+                    process
+                    #'(lambda ()
+                        (throw ',tag-sym
+                          (progn ,@timeout-body)))))
+               mp:*current-process*)))
          (mp:schedule-timer-relative ,timer-sym ,seconds)
          (unwind-protect (progn ,@timed-body)
            (mp:unschedule-timer ,timer-sym)))))
@@ -840,9 +838,10 @@
     (let ((tag-sym (gensym))
           (timer-sym (gensym)))
     `(block ,tag-sym
-       (let ((,timer-sym (sb-ext:make-timer
-                          #'(lambda () (return-from ,tag-sym
-                                         (progn ,@timeout-body))))))
+       (let ((,timer-sym 
+              (sb-ext:make-timer
+               #'(lambda () 
+                   (return-from ,tag-sym (progn ,@timeout-body))))))
          (sb-ext:schedule-timer ,timer-sym ,seconds)
          (unwind-protect (progn ,@timed-body)
            (sb-ext:unschedule-timer ,timer-sym)))))
@@ -1541,17 +1540,13 @@
   #+allegro
   (apply #'mp:process-run-function name function args)
   #+(and clisp mt)
-  (flet ((fn ()
-           (apply function args)))
-    (declare (dynamic-extent #'fn))
-    (mt:make-thread #'fn :name name))
+  (mt:make-thread #'(lambda () (apply function args)) 
+                  :name name)
   #+clozure
   (apply #'ccl:process-run-function name function args)
   #+(and cmu mp)
-  (flet ((fn ()
-           (apply function args)))
-    (declare (dynamic-extent #'fn))
-    (mp:make-process #'fn :name name))
+  (mp:make-process #'(lambda () (apply function args)) 
+                   :name name)
   #+digitool-mcl
   (apply #'ccl:process-run-function name function args)
   #+(and ecl threads)
@@ -1559,15 +1554,11 @@
   #+lispworks
   (apply #'mp:process-run-function name nil function args)
   #+(and sbcl sb-thread)
-  (flet ((fn ()
-           (apply function args)))
-    (declare (dynamic-extent #'fn))
-    (sb-thread:make-thread #'fn :name name))
+  (sb-thread:make-thread #'(lambda () (apply function args))
+                         :name name)
   #+scl
-  (flet ((fn ()
-           (apply function args)))
-    (declare (dynamic-extent #'fn))
-    (mp:make-process #'fn :name name))
+  (mp:make-process #'(lambda () (apply function args))
+                   :name name)
   #+threads-not-available
   (declare (ignore name function args))
   #+threads-not-available
@@ -1648,15 +1639,9 @@
   #+clozure
   (apply #'ccl:process-interrupt thread function args)
   #+(and cmu mp)
-  (flet ((fn () 
-           (apply function args)))
-    (declare (dynamic-extent #'fn))
-    (multiprocessing:process-interrupt thread #'fn))
+  (mp:process-interrupt thread #'(lambda () (apply function args)))
   #+(and ecl threads)
-  (flet ((fn () 
-           (apply function args)))
-    (declare (dynamic-extent #'fn))
-    (mp:interrupt-process thread #'fn))
+  (mp:interrupt-process thread #'(lambda () (apply function args)))
   #+digitool-mcl
   (apply #'ccl:process-interrupt thread function args)
   #+lispworks
@@ -1665,15 +1650,9 @@
     ;; Help Lispworks be more aggressive in running function promptly:
     (mp:process-allow-scheduling))
   #+(and sbcl sb-thread)
-  (flet ((fn () 
-           (apply function args)))
-    (declare (dynamic-extent #'fn))
-    (sb-thread:interrupt-thread thread #'fn))
+  (sb-thread:interrupt-thread thread #'(lambda () (apply function args)))
   #+scl
-  (flet ((fn () 
-           (apply function args)))
-    (declare (dynamic-extent #'fn))
-    (multiprocessing:process-interrupt thread #'fn))
+  (mp:process-interrupt thread #'(lambda () (apply function args)))
   #+threads-not-available
   (declare (ignore thread function args))
   #+threads-not-available
@@ -1718,14 +1697,12 @@
       (values nil nil)))
   #+(and cmu mp)
   (let ((result nil))
-    (flet ((fn ()
-             (setf result (if (boundp symbol)
-                              `(,(symbol-value symbol) t)
-                              '(nil nil)))))
-      (declare (dynamic-extent #'fn))
-      (mp:process-interrupt
-       thread
-       #'fn))
+    (mp:process-interrupt
+     thread
+     #'(lambda ()
+         (setf result (if (boundp symbol)
+                          `(,(symbol-value symbol) t)
+                          '(nil nil)))))
     ;; Wait for result:
     (loop until result do (mp:process-yield))
     (values-list result))
@@ -1740,14 +1717,12 @@
       (values nil nil)))
   #+(and ecl threads)
   (let ((result nil))
-    (flet ((fn () 
-             (setf result (if (boundp symbol)
-                              `(,(symbol-value symbol) t)
-                              '(nil nil)))))
-      (declare (dynamic-extent #'fn))
-      (mp:interrupt-process
-       thread
-       #'fn))
+    (mp:interrupt-process
+     thread
+     #'(lambda () 
+         (setf result (if (boundp symbol)
+                          `(,(symbol-value symbol) t)
+                          '(nil nil)))))
     ;; Wait for result:
     (loop until result do (sleep 0))
     (values-list result))
@@ -1756,15 +1731,13 @@
   ;; Can't get SB-THREAD:SYMBOL-VALUE-IN-THREAD to work correctly, so:
   #+(and sbcl sb-thread)  
   (let ((result nil))
-    (flet ((fn () 
-             (setf result
-                   (if (boundp symbol)
-                       `(,(symbol-value symbol) t)
-                       '(nil nil)))))
-      (declare (dynamic-extent #'fn))
-      (sb-thread:interrupt-thread 
-       thread
-       #'fn))
+    (sb-thread:interrupt-thread 
+     thread
+     #'(lambda () 
+         (setf result
+               (if (boundp symbol)
+                   `(,(symbol-value symbol) t)
+                   '(nil nil)))))
     ;; Wait for result:
     (loop until result do (sleep 0.05))
     (values-list result))
@@ -1852,11 +1825,10 @@
                                  &optional (tag 'throwable-sleep-forever))
   #-(or clozure
         (and lispworks lispworks6))
-  (flet ((awake-fn ()
-           (ignore-errors
-            (throw tag nil))))
-    (run-in-thread thread #'awake-fn)
-    (thread-yield))
+  (progn (run-in-thread 
+          thread 
+          #'(lambda () (ignore-errors (throw tag nil))))
+         (thread-yield))
   #+clozure
   (let ((acons (assoc (cons tag thread) *sleeper-semaphores*
                       :test #'equal)))

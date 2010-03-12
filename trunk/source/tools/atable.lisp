@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/atable.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Mar 11 12:59:11 2010 *-*
+;;;; *-* Last-Edit: Fri Mar 12 05:09:22 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -50,8 +50,12 @@
 ;;;    - keys-only tables are even indicies, key/value tables are odd indicies
 ;;;    - hash-tables are 0 & 1, lists are 2-9
 
-(defparameter *atable-test-vector*
-    (vector nil nil 'eq 'eq 'eql 'eql 'equal 'equal 'equalp 'equalp))
+(eval-when (#+cmu :compile-toplevel     ; CMUCL requires compile-time
+                                        ; definition to support
+                                        ; LOAD-TIME-VALUE usage (below)
+            :load-toplevel :execute) 
+  (defparameter *atable-test-vector*
+      (vector nil nil 'eq 'eq 'eql 'eql 'equal 'equal 'equalp 'equalp)))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (with-full-optimization ()
@@ -362,7 +366,9 @@
 ;;;  Atable mapper
 
 (defun map-atable (function atable)
+  #+cmu (declare (notinline coerce))
   (let ((fn (coerce function 'function)))
+    (declare (function fn))
     (with-full-optimization ()
       (let ((index (atable-type-index atable))
             (data (atable-data atable)))

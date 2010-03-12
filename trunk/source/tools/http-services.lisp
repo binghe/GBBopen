@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:HTTP-SERVICES; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/http-services.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Sep  7 09:52:23 2009 *-*
+;;;; *-* Last-Edit: Fri Mar 12 05:30:16 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2009, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2009-2010, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; --------------------------------------------------------------------------
@@ -108,6 +108,7 @@
 (defun encode-xml-string (string)
   (flet ((special-char-p (char)
            (assoc char *xml-special-characters*)))
+    (declare (dynamic-extent #'special-char-p))
     (let ((pos (position-if #'special-char-p string)))
       (if pos
           (let* ((length (length string))
