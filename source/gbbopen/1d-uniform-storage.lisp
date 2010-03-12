@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/1d-uniform-storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Mar  1 15:53:57 2010 *-*
+;;;; *-* Last-Edit: Thu Mar 11 19:21:41 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -121,6 +121,7 @@
                            from start-index to end-index do
                              (funcall bucket-action instance 
                                       buckets bucket-index)))))))
+          (declare (dynamic-extent #'do-a-value))
           (cond 
            ;; set composite dimension value:
            ((eq composite-type ':set)
@@ -140,14 +141,15 @@
 				    (storage 1d-uniform-buckets) 
 				    verbose)
   (let ((excess-count 0))
-    (do-1d-uniform-buckets-add/remove-action 
-	instance storage verbose nil
-	;; bucket-action:
-	#'(lambda (instance buckets bucket-index)
-	    (declare (type (simple-array t (*)) buckets))
-	    (declare (type fixnum bucket-index))
-	    (push instance (svref buckets bucket-index))
-	    (incf& excess-count)))
+    (flet ((bucket-action (instance buckets bucket-index)
+             (declare (type (simple-array t (*)) buckets))
+             (declare (type fixnum bucket-index))
+             (push instance (svref buckets bucket-index))
+             (incf& excess-count)))
+      (declare (dynamic-extent #'bucket-action))
+      (do-1d-uniform-buckets-add/remove-action 
+          instance storage verbose nil
+          #'bucket-action))
     ;; save the excess count:
     (incf& (excess-locators-of storage) 
            ;; remove the non-excess count for this instance:
@@ -162,15 +164,16 @@
 					 verbose)
   (declare (ignore dimensions-being-changed))
   (let ((excess-count 0))
-    (do-1d-uniform-buckets-add/remove-action 
-	instance storage verbose old-dimension-values
-	;; bucket-action:
-	#'(lambda (instance buckets bucket-index)
-	    (declare (type (simple-array t (*)) buckets))
-	    (declare (type fixnum bucket-index))
-	    (setf (svref buckets bucket-index)
-		  (delq instance (svref buckets bucket-index)))
-	    (decf& excess-count)))
+    (flet ((bucket-action (instance buckets bucket-index)
+             (declare (type (simple-array t (*)) buckets))
+             (declare (type fixnum bucket-index))
+             (setf (svref buckets bucket-index)
+                   (delq instance (svref buckets bucket-index)))
+             (decf& excess-count)))
+      (declare (dynamic-extent #'bucket-action))
+      (do-1d-uniform-buckets-add/remove-action 
+          instance storage verbose old-dimension-values
+          #'bucket-action))
     ;; save the excess count:
     (decf& (excess-locators-of storage) 
 	   ;; add back in the non-excess count for this instance:

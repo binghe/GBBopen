@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/epilogue.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Mar  2 18:07:19 2010 *-*
+;;;; *-* Last-Edit: Thu Mar 11 19:43:02 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -95,24 +95,25 @@
   ;;; Deletes all unit and space instances; resets instance counters to 1.
   (with-lock-held (*master-instance-lock*)
     (let ((*%%events-enabled%%* (not disable-events)))
-      (map-extended-unit-classes 
-       #'(lambda (unit-class plus-subclasses)
-           (declare (ignore plus-subclasses))
-           (unless (or 
-                    ;; Explicitly retained:
-                    (and retain-classes
-                         (unit-class-in-specifier-p
-                          unit-class retain-classes))
-                    ;; :all-classes specified or a retained unit class:
-                    (not (or all-classes
-                             (not (or (standard-unit-class.retain unit-class))))))
-             ;; We must practice safe delete-instance:
-             (let ((instances nil))
-               (map-instances-given-class 
-                #'(lambda (instance) (push instance instances)) unit-class)
-               (mapc #'delete-instance instances)
-               (reset-unit-class unit-class))))
-       't))
+      (flet ((fn (unit-class plus-subclasses)
+               (declare (ignore plus-subclasses))
+               (unless (or 
+                         ;; Explicitly retained:
+                         (and retain-classes
+                              (unit-class-in-specifier-p
+                               unit-class retain-classes))
+                         ;; :all-classes specified or a retained unit class:
+                         (not (or all-classes
+                                  (not (or (standard-unit-class.retain unit-class))))))
+                 ;; We must practice safe delete-instance:
+                 (let ((instances nil))
+                   (flet ((do-instance (instance) (push instance instances)))
+                     (declare (dynamic-extent #'do-instance))
+                     (map-instances-given-class #'do-instance unit-class))
+                   (mapc #'delete-instance instances)
+                   (reset-unit-class unit-class)))))
+        (declare (dynamic-extent #'fn))
+        (map-extended-unit-classes #'fn 't)))
     ;; Reset the global instance-name counter, if possible:
     (when (empty-blackboard-repository-p)
       (setf *global-instance-name-counter* 0)))
@@ -146,13 +147,13 @@
 
 (defun make-unit-instance-count-alist ()
   (let ((result nil))
-    (map-extended-unit-classes
-     #'(lambda (unit-class plus-subclasses)
-         (declare (ignore plus-subclasses))
-         (let ((count (class-instances-count unit-class)))
-           (when (plusp& count)
-             (push `(,(class-name unit-class) . ,count) result))))
-     't)
+    (flet ((fn (unit-class plus-subclasses)
+             (declare (ignore plus-subclasses))
+             (let ((count (class-instances-count unit-class)))
+               (when (plusp& count)
+                 (push `(,(class-name unit-class) . ,count) result)))))
+      (declare (dynamic-extent #'fn))
+      (map-extended-unit-classes #'fn 't))
     result))
 
 ;;; ---------------------------------------------------------------------------
@@ -189,10 +190,10 @@
           ;; Now save the space-instances in the repository forest:
           (let ((*save/send-references-only* nil))
             (dolist (child top-level-space-instances)
-              (traverse-space-instance-tree 
-               #'(lambda (space-instance)
-                   (print-object-for-saving/sending space-instance file))
-               child))
+              (flet ((do-si (space-instance)
+                       (print-object-for-saving/sending space-instance file)))
+                (declare (dynamic-extent #'do-si))
+                (traverse-space-instance-tree #'do-si child)))
             ;; Save non-space unit instances:
             (format file "~&;;; Other unit instances:~%")
             (do-instances-of-class (instance t)

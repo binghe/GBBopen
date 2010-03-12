@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/find.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Mar  1 16:18:57 2010 *-*
+;;;; *-* Last-Edit: Thu Mar 11 17:03:56 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -51,7 +51,6 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(*find-verbose*              ; not documented, yet
             *processed-hash-table-size* ; not documented, yet
-            *processed-hash-table-rehash-size* ; not documented, yet
             *use-marking*               ; not documented, yet
             abuts
             ;; --- declared-type operators:
@@ -139,7 +138,6 @@
 ;;; Hash-based retrieval processed-hash-table parameters
 
 (defvar *processed-hash-table-size* 1000)
-(defvar *processed-hash-table-rehash-size* 1.6)
 
 ;;; ---------------------------------------------------------------------------
 
@@ -230,6 +228,9 @@
 ;;;
 ;;; ---------------------------------------------------------------------------
 
+(defvar *memoized-atomic-unit-classes-check-functions*
+    (make-atable :test 'eq))
+
 (defun determine-unit-class-check (unit-classes-spec)
   ;;; Return a function that returns true if an instance satisfies
   ;;; `unit-classes-spec'.
@@ -241,8 +242,12 @@
           't)))
    ((atom unit-classes-spec)
     (with-full-optimization ()
-      #'(lambda (instance)
-          (eq (type-of instance) unit-classes-spec))))
+      (or (get-entry unit-classes-spec
+                     *memoized-atomic-unit-classes-check-functions*)
+          (setf (get-entry unit-classes-spec
+                           *memoized-atomic-unit-classes-check-functions*)
+                #'(lambda (instance)
+                    (eq (type-of instance) unit-classes-spec))))))
    ((memq (second unit-classes-spec) '(:plus-subclasses +))
     (with-full-optimization ()
       #'(lambda (instance) 
@@ -1647,12 +1652,13 @@
                pattern
                invoking-fn-name)))
          (unit-class-check-fn (determine-unit-class-check unit-classes-spec))
-         (processed-ht (make-keys-only-hash-table-if-supported
+         (processed-ht #-OLD
+                       (make-atable :test 'eq :keys-only 't)
+                       #+OLD 
+                       (make-keys-only-hash-table-if-supported
                         :test 'eq
                         ;; we'll be a bit aggressive here:
-                        :size *processed-hash-table-size*
-                        ;; and here:
-                        :rehash-size *processed-hash-table-rehash-size*))
+                        :size *processed-hash-table-size*))
          (into-cons (cons nil nil)))
     (when verbose 
       (find-verbose-preamble pattern optimized-pattern 
@@ -1668,7 +1674,8 @@
     (with-lock-held (*master-instance-lock*)
       (dolist (storage storage-objects)
         (flet ((fn (instance)
-                 (unless (gethash instance processed-ht)
+                 (unless #-OLD (get-entry instance processed-ht)
+                         #+OLD (gethash instance processed-ht)
                    (when find-stats 
                      (incf (find-stats.instances-touched find-stats)))
                    (when (and (funcall (the function unit-class-check-fn) instance)
@@ -1691,6 +1698,9 @@
                        (incf (find-stats.instances-accepted find-stats)))
                      (funcall (the function fn) instance))
                    ;; we have accepted or rejected this instance:
+                   #-OLD
+                   (setf (get-entry instance processed-ht) 't)
+                   #+OLD
                    (setf (gethash instance processed-ht) 't))))
           (declare (dynamic-extent #'fn))
           (map-all-instances-on-storage 
@@ -1749,16 +1759,18 @@
          (storage-objects-for-mapping unit-classes-spec space-instances
                                       invoking-fn-name))
         (unit-class-check-fn (determine-unit-class-check unit-classes-spec))
-        (processed-ht (make-keys-only-hash-table-if-supported
+        (processed-ht #-OLD
+                      (make-atable :test 'eq :keys-only 't)
+                      #+OLD
+                      (make-keys-only-hash-table-if-supported
                        :test 'eq
                        ;; we'll be a bit aggressive here:
-                       :size *processed-hash-table-size*
-                       ;; and here:
-                       :rehash-size *processed-hash-table-rehash-size*)))
+                       :size *processed-hash-table-size*)))
     (with-lock-held (*master-instance-lock*)
       (dolist (storage storage-objects)
         (flet ((fn (instance)
-                 (unless (gethash instance processed-ht)
+                 (unless #-OLD (get-entry instance processed-ht)
+                         #+OLD (gethash instance processed-ht)
                    (when (and (funcall (the function unit-class-check-fn) instance)
                               (or (null filter-before)
                                   (funcall (the function filter-before) instance))
@@ -1767,7 +1779,8 @@
                                   (funcall (the function filter-after) instance)))
                      (funcall (the function fn) instance))
                    ;; we have accepted or rejected this instance:
-                   (setf (gethash instance processed-ht) 't))))
+                   #-OLD (setf (get-entry instance processed-ht) 't)
+                   #+OLD (setf (gethash instance processed-ht) 't))))
           (declare (dynamic-extent #'fn))
           (map-all-instances-on-storage #'fn storage 't verbose))))))
 

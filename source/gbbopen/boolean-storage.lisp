@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/boolean-storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Mar  1 15:53:31 2010 *-*
+;;;; *-* Last-Edit: Thu Mar 11 19:29:01 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -79,6 +79,7 @@
                  (funcall true-value-action instance storage))
                 ;; false value:
                 (t (funcall false-value-action instance storage)))))
+        (declare (dynamic-extent #'do-a-value))
         (cond 
          ;; unbound value:
          ((eq dimension-value unbound-value-indicator)
@@ -106,6 +107,8 @@
            (setf (gethash instance (true-instances-of storage)) 't))
          (false-value-action (instance storage)
            (setf (gethash instance (false-instances-of storage)) 't)))
+    (declare (dynamic-extent 
+              #'unbound-value-action #'true-value-action #'false-value-action))
     (do-boolean-add/remove-action 
         instance storage verbose
         #'unbound-value-action
@@ -126,6 +129,8 @@
            (remhash instance (true-instances-of storage)))
          (false-value-action (instance storage)
            (remhash instance (false-instances-of storage))))
+    (declare (dynamic-extent 
+              #'unbound-value-action #'true-value-action #'false-value-action))
     (do-boolean-add/remove-action 
         instance storage verbose
         #'unbound-value-action

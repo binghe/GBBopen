@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/declarations.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Mar  9 05:16:20 2010 *-*
+;;;; *-* Last-Edit: Thu Mar 11 22:51:01 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -52,9 +52,7 @@
                                (safety 0)
                                (space 0)
                                (debug 0)
-                               (compilation-speed 0)
-                               #+lispworks
-                               (harlequin-common-lisp::fixnum-safety 0)))
+                               (compilation-speed 0)))
             ,@body))
 
 ;;; ---------------------------------------------------------------------------
