@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Mar 12 06:14:29 2010 *-*
+;;;; *-* Last-Edit: Fri Mar 12 06:24:37 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -1181,7 +1181,8 @@
                                          (funcall
                                           ,keyword-key-value
                                           (car ,new-value))))
-                                  (declare (dynamic-extent #'fn))
+                                  (declare (dynamic-extent #'fn)
+                                           (ignorable #'fn))
                                   (delete ,key ,(first store-vars)
                                           :key ,(if keyword-key-value
                                                     `#'fn
