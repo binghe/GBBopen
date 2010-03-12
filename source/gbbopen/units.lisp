@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/units.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Mar 11 13:32:52 2010 *-*
+;;;; *-* Last-Edit: Thu Mar 11 23:29:33 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -511,6 +511,7 @@
 	(:initial-space-instances
 	 (setf initial-space-instances-seen 't)
          (let ((initial-space-instances-option-values (cdr option)))
+           (declare (type list initial-space-instances-option-values))
            ;; check that the initial-space-instances specification contains
            ;; only a single function object!
            (when (and (list-length>1 initial-space-instances-option-values)
@@ -672,6 +673,7 @@
 		 (if plus-subclasses?
 		     (subtypep (class-name unit-class) specifier)
 		     (eq (class-name unit-class) specifier))))))
+    (declare (dynamic-extent #'in-simple-specifier-p))
     (cond
      ;; 't is shorthand for '(standard-unit-instance :plus-subclasses):
      ((eq specifier 't) (typep unit-class 'standard-unit-class))
@@ -941,6 +943,7 @@
              (values (class-name class)
                      (and (typep class 'standard-unit-class)
                           (standard-unit-class.abstract class)))))
+      (declare (dynamic-extent #'name&abstract))
       (format t "~&~2tDirect superclasses:")
       (format-column 4 supers "~s~:[~; (abstract)~]" #'name&abstract)
       (format t "~&~2tDirect subclasses:")

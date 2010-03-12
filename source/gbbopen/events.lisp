@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/events.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Mar  3 04:02:17 2010 *-*
+;;;; *-* Last-Edit: Thu Mar 11 23:32:20 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -706,6 +706,7 @@
                    (declare (dynamic-extent #'fn))
                    (map-unit-classes #'fn unit-class/instance))
                  (add-it unit-class/instance)))))
+    (declare (dynamic-extent #'do-space-instance))
     ;; save information for newly created space instances:
     (cond ((typep paths 'standard-space-instance)
            (do-space-instance paths))
