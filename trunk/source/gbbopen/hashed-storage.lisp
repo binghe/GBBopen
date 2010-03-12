@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/hashed-storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Mar  1 15:53:47 2010 *-*
+;;;; *-* Last-Edit: Thu Mar 11 19:36:56 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -77,10 +77,10 @@
                         (standard-unit-class.effective-dimensional-values 
                          stores-class)))
                    (dolist (dimension-name (dimension-names-of storage))
-                     (let ((dv-spec (find-if
-                                     #'(lambda (dv-spec)
-                                         (eq dimension-name (first dv-spec)))
-                                     effective-dimensional-values)))
+                     (let ((dv-spec (find dimension-name 
+                                          effective-dimensional-values
+                                          :test #'eq
+                                          :key #'first)))
                        (when dv-spec
                          (destructuring-bind (dimension-name 
                                               dimension-value-type 
@@ -103,6 +103,7 @@
                                          test comparison-type)))
                             ;; Set the test:
                             (t (setf test comparison-type))))))))))
+          (declare (dynamic-extent #'do-class))
           (if plus-subclasses
               (map-unit-classes #'do-class stores-class)
               (do-class stores-class nil)))))
@@ -152,6 +153,7 @@
                        composite-dimension-name))
       (flet ((do-a-value (dimension-value)
                (funcall bound-value-action instance storage dimension-value)))
+        (declare (dynamic-extent #'do-a-value))
         (cond 
          ;; unbound value:
          ((eq dimension-value unbound-value-indicator)
@@ -173,16 +175,17 @@
 (defmethod add-instance-to-storage ((instance standard-unit-instance)
                                     (storage hashed-storage)
                                     verbose)
-  (do-hashed-add/remove-action 
-      instance storage verbose
-      ;; unbound-value action:
-      #'(lambda (instance storage)
-	  (setf (gethash instance (unbound-value-instances-of storage)) 't))
-       ;; bound-value action:
-      #'(lambda (instance storage dimension-value)
-	  (pushnew instance
-		   (gethash dimension-value (bound-instances-of storage))
-		   :test #'eq))))
+  (flet ((unbound-value-action (instance storage)
+           (setf (gethash instance (unbound-value-instances-of storage)) 't))
+         (bound-value-action (instance storage dimension-value)
+           (pushnew instance
+                    (gethash dimension-value (bound-instances-of storage))
+                    :test #'eq)))
+    (declare (dynamic-extent #'unbound-value-action #'bound-value-action))
+    (do-hashed-add/remove-action 
+        instance storage verbose
+        #'unbound-value-action
+        #'bound-value-action)))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -192,17 +195,17 @@
                                          dimensions-being-changed
                                          verbose)
   (declare (ignore old-dimension-values dimensions-being-changed))
-  (do-hashed-add/remove-action 
-      instance storage verbose
-      ;; unbound-value action:
-      #'(lambda (instance storage)
-	  (remhash instance (unbound-value-instances-of storage)))
-      ;; bound-value action:
-      #'(lambda (instance storage dimension-value)
-	  (setf (gethash dimension-value (bound-instances-of storage))
-		(delq instance
-		      (gethash dimension-value
-                               (bound-instances-of storage)))))))
+  (flet ((unbound-value-action (instance storage)
+           (remhash instance (unbound-value-instances-of storage)))
+         (bound-value-action (instance storage dimension-value)
+           (setf (gethash dimension-value (bound-instances-of storage))
+                 (delq instance
+                       (gethash dimension-value
+                                (bound-instances-of storage))))))
+    (declare (dynamic-extent #'unbound-value-action #'bound-value-action))    
+    (do-hashed-add/remove-action 
+        instance storage verbose
+        #'unbound-value-action #'bound-value-action)))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -246,6 +249,7 @@
 	       (incf& bucket-count)
 	       (dolist (instance bucket)
 		 (funcall action instance 't))))
+        (declare (dynamic-extent #'map-bucket))
 	(cond (full-map-p
 	       (maphash #'map-bucket bound-instances-hash-table))		
 	      (t (dolist (storage-extent storage-extents)

@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/modules.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Mar 11 13:14:25 2010 *-*
+;;;; *-* Last-Edit: Thu Mar 11 16:48:29 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -135,7 +135,7 @@
   (define-relative-directory :gbbopen :gbbopen-root "gbbopen")
   
   (define-module :gbbopen-core
-    (:requires :gbbopen-tools :portable-threads :os-interface)
+    (:requires :gbbopen-tools :portable-threads :atable :os-interface)
     (:directory :gbbopen)
     (:files "preamble"
             ("utilities" :forces-recompile)

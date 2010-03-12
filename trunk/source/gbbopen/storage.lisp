@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Mar  1 16:05:48 2010 *-*
+;;;; *-* Last-Edit: Thu Mar 11 19:31:12 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2003-2009, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2003-2010, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -223,6 +223,7 @@
                  (setf result (best-retrieval-storage
                                space-instance unit-class-specs
                                nil result)))))
+        (declare (dynamic-extent #'do-si))
         (cond ((eq space-instances 't)
                (map-space-instances #'do-si '(*) invoking-fn-name))
               (t (map-space-instances
@@ -253,6 +254,7 @@
                            (best-retrieval-storage
                             space-instance unit-class-specs
                             retrieval-dimensions result)))))))
+        (declare (dynamic-extent #'do-si))
         (cond ((eq space-instances 't)
                (map-space-instances #'do-si '(*) invoking-fn-name))
               (t (map-space-instances
