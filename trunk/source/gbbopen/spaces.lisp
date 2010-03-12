@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/spaces.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Mar  3 04:30:36 2010 *-*
+;;;; *-* Last-Edit: Thu Mar 11 23:22:27 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -186,23 +186,24 @@
                              (sole-element unit-class-spec)))))
         (setf (standard-space-instance.%%by-unit-class-storage%% 
                space-instance)
-              (flet ((fn (acons)
-                       (eq (car acons) unit-class)))
-                (declare (dynamic-extent #'fn))
-                (delete-if #'fn
-                           (standard-space-instance.%%by-unit-class-storage%% 
-                            space-instance)))))
-      (flet ((unit-class-match-p (acons)
-               (equal (car acons) unit-class-spec)))
-        (setf (standard-space-instance.%%mapping-storage%% space-instance)
-              (delete-if
-               #'unit-class-match-p
-               (standard-space-instance.%%mapping-storage%% space-instance)))
-        (setf (standard-space-instance.%%retrieval-storage%% space-instance)
-              (delete-if
-               #'unit-class-match-p
-               (standard-space-instance.%%retrieval-storage%% 
-                space-instance)))))))
+              (delete unit-class
+                       (standard-space-instance.%%by-unit-class-storage%% 
+                        space-instance)
+                       :test #'eq
+                       :key #'car)))      
+      (setf (standard-space-instance.%%mapping-storage%% space-instance)
+            (delete
+             unit-class-spec
+             (standard-space-instance.%%mapping-storage%% space-instance)
+             :test #'equal
+             :key #'car))
+      (setf (standard-space-instance.%%retrieval-storage%% space-instance)
+            (delete
+             unit-class-spec
+             (standard-space-instance.%%retrieval-storage%% 
+              space-instance)
+             :test #'equal
+             :key #'car)))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -1018,6 +1019,7 @@
                    (apply (the function (symbol-function add/remove-fn-name))
                           event-class
                           args))))))
+      (declare (dynamic-extent #'do-event-class))
       (map-event-classes 
        #'do-event-class 
        (load-time-value (find-class 'space-instance-event))))))

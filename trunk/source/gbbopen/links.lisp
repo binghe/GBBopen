@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/links.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Mar  3 04:10:08 2010 *-*
+;;;; *-* Last-Edit: Thu Mar 11 23:15:53 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -723,13 +723,14 @@
   (let ((result 't))
     (flet ((fn (class plus-subclasses)
              (declare (ignore plus-subclasses))
-             (map-direct-link-slots 
-              #'(lambda (link) 
-                  (unless (check-a-link class link silent errorp)
-                    (if silent 
-                        (setf result nil)
-                        (return-from check-link-definitions nil))))
-              (ensure-finalized-class class))))
+             (flet ((do-link (link) 
+                      (unless (check-a-link class link silent errorp)
+                        (if silent 
+                            (setf result nil)
+                            (return-from check-link-definitions nil)))))
+               (declare (dynamic-extent #'do-link))
+               (map-direct-link-slots 
+                #'do-link (ensure-finalized-class class)))))
       (declare (dynamic-extent #'fn))
       (map-unit-classes
        #'fn
