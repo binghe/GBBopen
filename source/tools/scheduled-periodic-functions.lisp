@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/scheduled-periodic-functions.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Mar  3 18:05:42 2010 *-*
+;;;; *-* Last-Edit: Fri Mar 12 06:06:43 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2003-2009, Dan Corkill <corkill@GBBopen.org> 
+;;; Copyright (C) 2003-2010, Dan Corkill <corkill@GBBopen.org> 
 ;;;
 ;;; Developed and supported by the GBBopen Project (http://GBBopen.org) and
 ;;; donated to the CL Gardeners portable threads initiative
@@ -344,24 +344,28 @@
              ;; Record the deleted function (which also returns true):
              (setf the-deleted-scheduled-function scheduled-function)))
       (setf *scheduled-functions* 
-            (delete-if
-             (if (scheduled-function-p name-or-scheduled-function)
-                 #'(lambda (scheduled-function)
+            (flet ((scheduled-function-fn (scheduled-function)
                      (when (eq scheduled-function name-or-scheduled-function)
                        (on-deletion scheduled-function)))
-               #'(lambda (scheduled-function)
-                   (when (and 
-                           (funcall
-                            (scheduled-function-name-test scheduled-function)
-                            (scheduled-function-name scheduled-function)
-                            name-or-scheduled-function)
-                           (funcall
-                            (scheduled-function-marker-test scheduled-function)
-                            marker 
-                            (scheduled-function-marker scheduled-function)))
-                     (on-deletion scheduled-function))))
-             *scheduled-functions*
-             :count 1)))
+                   (scheduled-function-structure-fn (scheduled-function)
+                     (when (and 
+                             (funcall
+                              (scheduled-function-name-test scheduled-function)
+                              (scheduled-function-name scheduled-function)
+                              name-or-scheduled-function)
+                             (funcall
+                              (scheduled-function-marker-test scheduled-function)
+                              marker 
+                              (scheduled-function-marker scheduled-function)))
+                       (on-deletion scheduled-function))))
+              (declare (dynamic-extent #'scheduled-function-fn
+                                       #'scheduled-function-structure-fn))
+              (delete-if
+               (if (scheduled-function-p name-or-scheduled-function)
+                 #'scheduled-function-fn
+                 #'scheduled-function-structure-fn)
+               *scheduled-functions*
+               :count 1))))
     ;; return the deleted scheduled-function (or nil, if unsuccessful):
     the-deleted-scheduled-function))
 

@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/basic-tests.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Jun 21 04:02:23 2009 *-*
+;;;; *-* Last-Edit: Fri Mar 12 04:33:55 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2002-2009, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2010, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -223,18 +223,18 @@
 	(composite-elements
 	 '((cu1 uc-set ((10 15 20) 5 5) (:bus :car) nil))))
     (flet ((make-instances (elements)
-	     (mapcar 
-	      #'(lambda (element)
-		  (destructuring-bind (symbol unit-class-name (x y z) 
-				       classification amphibious?)
-		      element
-		    (setf (symbol-value symbol)
-			  (make-instance unit-class-name
-				  :instance-name symbol
-				  :x x :y y :z z
-				  :classification classification
-				  :amphibious amphibious?))))
-	      elements)))
+             (flet ((fn (element)
+                      (destructuring-bind (symbol unit-class-name (x y z) 
+                                           classification amphibious?)
+                          element
+                        (setf (symbol-value symbol)
+                              (make-instance unit-class-name
+                                :instance-name symbol
+                                :x x :y y :z z
+                                :classification classification
+                                :amphibious amphibious?)))))
+               (declare (dynamic-extent #'fn))
+               (mapcar #'fn elements))))
       (setq incomposite-set (make-instances incomposite-elements))
       (setq composite-set (make-instances composite-elements)))
     (values incomposite-set composite-set)))
@@ -679,10 +679,10 @@
                 (t (format t "~&;; ** ~s is not supported.~%" 
                            'specializer-direct-methods)
                    nil))))
-    (unless (member-if 
-	     #'(lambda (method)
-		 (typep method 'gbbopen::nonlink-writer-method))
-	     direct-methods)
+    (unless (flet ((fn (method)
+                     (typep method 'gbbopen::nonlink-writer-method)))
+              (declare (dynamic-extent #'fn))
+              (member-if #'fn direct-methods))
       (format t "~&;; ** ~s is not supported.~%" 
 	      'writer-method-class))))
 
@@ -706,10 +706,11 @@
 	   (do-find-tests (use-marking?)
 	     (flet ((do-map-test (unit-classes space-instances expected-result)
 		      (let ((result nil))
-			(map-instances-on-space-instances
-			 #'(lambda (instance) (push instance result))
-			 unit-classes space-instances 
-			 :use-marking use-marking?)
+                        (flet ((fn (instance) (push instance result)))
+                          (declare (dynamic-extent #'fn))
+                          (map-instances-on-space-instances
+                           #'fn unit-classes space-instances 
+                           :use-marking use-marking?))
 			(unless (set-equal result expected-result)
 			  (error "Wrong results from ~
                                   map-instances-on-space-instances ~
@@ -866,11 +867,12 @@
 	     ;; check one pattern-based mapper, just in case:
 	     (let ((result nil)
 		   (p '(not (within (x y) ((1 . 3) #(2 5))))))
-	       (map-instances-on-space-instances
-		#'(lambda (instance) (push instance result))
-		't all-space-instances 
-		:pattern p 
-		:use-marking use-marking?)
+               (flet ((fn (instance) (push instance result)))
+                 (declare (dynamic-extent #'fn))
+                 (map-instances-on-space-instances
+                  #'fn 't all-space-instances 
+                  :pattern p 
+                  :use-marking use-marking?))
 	       (unless (set-equal result (list u1 u2 u5 u10 u11 u12 cu1))
 		 (error 
 		  "Wrong results from map-instances-on-space-instances ~s"
@@ -929,13 +931,13 @@
 		 (signaled-event-args nil))
 	     ;; look for the expected event:
 	     (setq signaled-events
-	       (delete-if
-		#'(lambda (candidate-event-args)
-		    (when (and (eq event (first candidate-event-args))
-			       (args-match? expected-args 
-					    (rest candidate-event-args)))
-		      (setq signaled-event-args candidate-event-args)))
-		signaled-events))
+               (flet ((fn (candidate-event-args)
+                        (when (and (eq event (first candidate-event-args))
+                                   (args-match? expected-args 
+                                                (rest candidate-event-args)))
+                          (setq signaled-event-args candidate-event-args))))
+                 (declare (dynamic-extent #'fn))
+                 (delete-if #'fn signaled-events)))
 	     (unless signaled-event-args
 	       (error "Event ~s~{ ~s~} was not signaled.
                       ~_Signaled events: ~s" 

@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/date-and-time.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Mar  1 17:13:40 2010 *-*
+;;;; *-* Last-Edit: Fri Mar 12 05:18:07 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -202,6 +202,7 @@
                    (skip-separators)
                    ;; success:
                    't))))
+      (declare (dynamic-extent #'find-zone))
       (let ((result
              (or (car (rassoc-if 
                        #'find-zone 

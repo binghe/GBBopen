@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/preamble.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Oct 28 05:37:43 2009 *-*
+;;;; *-* Last-Edit: Fri Mar 12 05:56:23 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -137,8 +137,9 @@
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defmacro with-gensyms ((&rest symbols) &body body)
-    `(let ,(mapcar #'(lambda (symbol) `(,symbol (gensym)))
-                   symbols)
+    `(let ,(flet ((fn (symbol) `(,symbol (gensym))))
+             (declare (dynamic-extent #'fn))
+             (mapcar #'fn symbols))
        ,@body)))
 
 ;;; ===========================================================================
@@ -151,18 +152,20 @@
 ;;; Placed here to make this macro available ASAP
 
 (defmacro with-once-only-bindings ((&rest symbols) &body body)
-  (let ((gensyms (mapcar #'(lambda (symbol)
+  (let ((gensyms (flet ((fn (symbol)
                              (declare (ignore symbol))
-                             (gensym))
-                         symbols)))
-    `(let (,.(mapcar #'(lambda (gensym) `(,gensym (gensym)))
-                     gensyms))
-       `(let (,,.(mapcar #'(lambda (symbol gensym) ``(,,gensym ,,symbol))
-                         symbols
-                         gensyms))
-          ,(let (,.(mapcar #'(lambda (symbol gensym) `(,symbol ,gensym))
-                           symbols
-                           gensyms))
+                             (gensym)))
+                   (declare (dynamic-extent #'fn))
+                   (mapcar #'fn symbols))))
+    `(let (,.(flet ((fn (gensym) `(,gensym (gensym))))
+               (declare (dynamic-extent #'fn))
+               (mapcar #'fn gensyms)))
+       `(let (,,.(flet ((fn (symbol gensym) ``(,,gensym ,,symbol)))
+                   (declare (dynamic-extent #'fn))
+                   (mapcar #'fn symbols gensyms)))
+          ,(let (,.(flet ((fn (symbol gensym) `(,symbol ,gensym)))
+                     (declare (dynamic-extent #'fn))
+                     (mapcar #'fn symbols gensyms)))
              ,@body)))))
 
 ;;; ===========================================================================
