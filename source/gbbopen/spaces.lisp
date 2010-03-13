@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/spaces.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Mar 11 23:22:27 2010 *-*
+;;;; *-* Last-Edit: Sat Mar 13 15:31:26 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -431,7 +431,7 @@
   ;; Remove from top level space-instances list, if top-level:
   (unless (parent-of space-instance)
     (setf *top-level-space-instances* 
-          (delq space-instance *top-level-space-instances*)))
+          (delq-one space-instance *top-level-space-instances*)))
   (call-next-method))
   
 ;;; ===========================================================================

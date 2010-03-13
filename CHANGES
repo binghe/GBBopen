@@ -10,6 +10,7 @@ Important changes since GBBopen 1.4:
 
   * Changes to GBBopen Tools
      - New DEFCONSTRUCT cons-based 2-field "structure"
+     - New DELQ-ONE function
      - New HTTP-DATE-AND-TIME function
      - Change argument order of ENCODE-TIME-OF-DAY
      - New left-leaning red-black (LLRB) tree entities

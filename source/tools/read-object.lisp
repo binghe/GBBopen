@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/read-object.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Jun 20 11:19:43 2009 *-*
+;;;; *-* Last-Edit: Sat Mar 13 15:50:38 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2008-2009, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2008-2010, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -316,7 +316,7 @@
                    for this slot will be discarded."
                   slot-name class-name))
           (push slot supplied-slots)
-          (setf class-slots (delq slot class-slots))))
+          (setf class-slots (delq-one slot class-slots))))
       ;; Save the incoming class, class-slots, and the missing slot-names for this
       ;; class:
       (setf (gethash class-name *read-class-descriptions-ht*)

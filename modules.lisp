@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/modules.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Mar 11 16:48:29 2010 *-*
+;;;; *-* Last-Edit: Sat Mar 13 11:30:53 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -96,7 +96,7 @@
   (define-module :atable
     (:requires :gbbopen-tools)
     (:directory :gbbopen-tools)
-    (:files ("atable")))
+    (:files ("atable" :forces-recompile)))
   
   (define-module :os-interface
     (:requires :gbbopen-tools)

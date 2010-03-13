@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:AGENDA-SHELL; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/control-shells/agenda-shell.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Mar  3 18:02:54 2010 *-*
+;;;; *-* Last-Edit: Sat Mar 13 15:52:14 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -1637,7 +1637,7 @@
   #-threads-not-available
   (progn
     (setf *control-shell-threads* 
-      (delq control-shell-thread *control-shell-threads*))
+      (delq-one control-shell-thread *control-shell-threads*))
     (run-in-thread control-shell-thread #'exit-control-shell)))
   
 ;;; ---------------------------------------------------------------------------
