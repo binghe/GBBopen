@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Mar 12 06:24:37 2010 *-*
+;;;; *-* Last-Edit: Sat Mar 13 15:24:08 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -89,11 +89,12 @@
    '(posix::copy-file
      system::memq
      system::simple-array-p)
+   ;; Note: Clozure's ccl:while doesn't include a NIL block, so we can't use it
    #+clozure
    '(ccl:compiler-macroexpand
      ccl:compiler-macroexpand-1
      ccl:copy-file
-     ccl:delq
+     ccl:delq     
      ccl:memq
      ccl::simple-array-p)
    #+cmu
@@ -112,7 +113,7 @@
      ccl:delq
      ccl:memq
      ccl::simple-array-p)
-   ;; Note: ECL's while doesn't include a NIL block, so we can't use it
+   ;; Note: ECL's si:while doesn't include a NIL block, so we can't use it
    #+ecl
    '(si::case-failure
      si:memq
@@ -168,6 +169,7 @@
             decf$$$/delete-acons
             define-directory            ; in module-manager, but part of tools
             delq
+            delq-one                    ; not yet documented
             do-until
             do-while
             dosequence
@@ -357,6 +359,139 @@
          (when (streamp ,stream) (close ,stream :abort ,abort-on-close?))))))
 
 ;;; ===========================================================================
+;;;  Compiler-macroexpand (for those CL's that don't provide it)
+
+#-(or clozure cmu digitool-mcl lispworks scl)
+(defun compiler-macroexpand-1 (form &optional env)
+  (let ((compiler-macro-function 
+         (and (consp form)
+              (symbolp (car form))
+              (compiler-macro-function (car form)))))
+    (if compiler-macro-function
+        (let ((expansion (funcall compiler-macro-function form env)))
+          (values expansion (not (eq form expansion))))
+        (values form nil))))
+
+;;; ---------------------------------------------------------------------------
+
+#-(or clozure cmu digitool-mcl lispworks scl)
+(defun compiler-macroexpand (form &optional env)
+  (multiple-value-bind (expansion expanded-p)
+      (compiler-macroexpand-1 form env)
+    (let ((expanded-at-least-once expanded-p))
+      (while expanded-p
+        (multiple-value-setq (expansion expanded-p)
+          (compiler-macroexpand-1 expansion env)))
+      (values expansion expanded-at-least-once))))
+
+;;; ===========================================================================
+;;;  Multiple-value-setf
+
+(defmacro multiple-value-setf (places form)
+  ;;; Like multiple-value-setq, but works with places.  A "place" of nil means
+  ;;; to ignore the corresponding value from `form'.  Returns the primarly
+  ;;; value of evaluating `form'.
+  (loop 
+      for place in places
+      for name = (gensym)
+      collect name into bindings
+      if (eql 'nil place)
+        unless (eq place (first places))
+          collect `(declare (ignore ,name)) into ignores
+        end                                         
+      else
+        collect `(setf ,place ,name) into body
+      finally (return `(multiple-value-bind ,bindings ,form
+                         ,@ignores
+                         ,@body
+                         ;; Return the primary value (like multiple-value-setq)
+                         ,(first bindings)))))
+
+;;; ===========================================================================
+;;;  Memq (lists only)
+
+#-(or allegro
+      clisp
+      clozure
+      cmu
+      digitool-mcl
+      ecl
+      lispworks
+      sbcl 
+      scl)
+(progn
+  (defun memq (item list)
+    (declare (list list))
+    (member item list :test #'eq))
+  
+  (defcm memq (item list)
+    `(member ,item (the list ,list) :test #'eq)))
+
+;;; ===========================================================================
+;;;  Delq and delq-one (lists only)
+
+#+allegro
+(progn
+  (defun delq (item list)
+    (excl::list-delete-eq item list))
+  
+  (defcm delq (item list)
+    `(excl::list-delete-eq ,item ,list)))
+
+#-(or allegro
+      clozure
+      cmu 
+      digitool-mcl
+      lispworks
+      sbcl
+      scl)
+(progn
+  (defun delq (item list)
+    (declare (list list))
+    (delete item list :test #'eq))
+  
+  (defcm delq (item list)
+    `(delete ,item (the list ,list) :test #'eq)))
+
+;;; ---------------------------------------------------------------------------
+
+(defun delq-one (item list)
+  (declare (list list))
+  (with-full-optimization ()
+    (cond
+     ;; Deleting the first element:
+     ((eq item (first list))
+      (rest list))
+     (t (let ((ptr list)
+              next-ptr)
+          (declare (list ptr next-ptr))
+          (loop
+            (unless (consp (setf next-ptr (cdr ptr)))
+              (return list))
+            (when (eq item (car next-ptr))
+              (setf (cdr ptr) (cdr next-ptr))
+              (return-from delq-one list))
+            (setf ptr next-ptr)))))))
+
+;;; ===========================================================================
+;;;  Copy-file (for CLs that don't provide their own version)
+
+#-(or allegro clisp clozure digitool-mcl lispworks)
+(defun copy-file (from to)
+  (with-open-file (output to
+                   :element-type 'unsigned-byte
+                   :direction ':output
+                   :if-exists ':supersede)
+    (with-open-file (input from
+                     :element-type 'unsigned-byte
+                     :direction ':input)
+      (with-full-optimization ()
+        (let (byte)
+          (loop (setf byte (read-byte input nil nil))
+            (unless byte (return))
+            (write-byte byte output)))))))
+
+;;; ===========================================================================
 ;;;  Case-using
 
 ;;; We define our own CASE-USING-FAILURE condition as a subclass of the CL's
@@ -507,113 +642,6 @@
 
 (defmacro ecase-using (test keyform &body clauses)
   (case-using-expander test keyform clauses 't nil nil))
-
-;;; ===========================================================================
-;;;  Compiler-macroexpand (for those CL's that don't provide it)
-
-#-(or clozure cmu digitool-mcl lispworks scl)
-(defun compiler-macroexpand-1 (form &optional env)
-  (let ((compiler-macro-function 
-         (and (consp form)
-              (symbolp (car form))
-              (compiler-macro-function (car form)))))
-    (if compiler-macro-function
-        (let ((expansion (funcall compiler-macro-function form env)))
-          (values expansion (not (eq form expansion))))
-        (values form nil))))
-
-;;; ---------------------------------------------------------------------------
-
-#-(or clozure cmu digitool-mcl lispworks scl)
-(defun compiler-macroexpand (form &optional env)
-  (multiple-value-bind (expansion expanded-p)
-      (compiler-macroexpand-1 form env)
-    (let ((expanded-at-least-once expanded-p))
-      (while expanded-p
-        (multiple-value-setq (expansion expanded-p)
-          (compiler-macroexpand-1 expansion env)))
-      (values expansion expanded-at-least-once))))
-
-;;; ===========================================================================
-;;;  Multiple-value-setf
-
-(defmacro multiple-value-setf (places form)
-  ;;; Like multiple-value-setq, but works with places.  A "place" of nil means
-  ;;; to ignore the corresponding value from `form'.  Returns the primarly
-  ;;; value of evaluating `form'.
-  (loop 
-      for place in places
-      for name = (gensym)
-      collect name into bindings
-      if (eql 'nil place)
-        unless (eq place (first places))
-          collect `(declare (ignore ,name)) into ignores
-        end                                         
-      else
-        collect `(setf ,place ,name) into body
-      finally (return `(multiple-value-bind ,bindings ,form
-                         ,@ignores
-                         ,@body
-                         ;; Return the primary value (like multiple-value-setq)
-                         ,(first bindings)))))
-
-;;; ===========================================================================
-;;;  Memq (lists only)
-
-#-(or allegro
-      clisp
-      clozure
-      cmu
-      digitool-mcl
-      ecl
-      lispworks
-      sbcl 
-      scl)
-(progn
-  (defun memq (item list)
-    (declare (list list))
-    (member item list :test #'eq))
-  
-  (defcm memq (item list)
-    `(member ,item (the ,list ,list) :test #'eq)))
-
-;;; ===========================================================================
-;;;  Delq (lists only)
-
-#+allegro
-(progn
-  (defun delq (item list)
-    (excl::list-delete-eq item list))
-  
-  (defcm delq (item list)
-    `(excl::list-delete-eq ,item ,list)))
-
-#-(or allegro clozure cmu digitool-mcl lispworks sbcl scl)
-(progn
-  (defun delq (item list)
-    (declare (list list))
-    (delete item list :test #'eq))
-  
-  (defcm delq (item list)
-    `(delete ,item (the list ,list) :test #'eq)))
-
-;;; ===========================================================================
-;;;  Copy-file (for CLs that don't provide their own version)
-
-#-(or allegro clisp clozure digitool-mcl lispworks)
-(defun copy-file (from to)
-  (with-open-file (output to
-                   :element-type 'unsigned-byte
-                   :direction ':output
-                   :if-exists ':supersede)
-    (with-open-file (input from
-                     :element-type 'unsigned-byte
-                     :direction ':input)
-      (with-full-optimization ()
-        (let (byte)
-          (loop (setf byte (read-byte input nil nil))
-            (unless byte (return))
-            (write-byte byte output)))))))
 
 ;;; ===========================================================================
 ;;;  Extract-declarations (for CLs that don't provide their own version)
@@ -1177,16 +1205,17 @@
                       (if (zerop ,new-value)
                           ;; Remove the acons:
                           (setf ,(first store-vars)
-                                (flet ((fn (,new-value)
-                                         (funcall
-                                          ,keyword-key-value
-                                          (car ,new-value))))
-                                  (declare (dynamic-extent #'fn)
-                                           (ignorable #'fn))
-                                  (delete ,key ,(first store-vars)
-                                          :key ,(if keyword-key-value
-                                                    `#'fn
-                                                    '#'car)
+                                ,(if keyword-key-value
+                                     `(flet ((fn (,new-value)
+                                               (funcall
+                                                ,keyword-key-value
+                                                (car ,new-value))))
+                                        (declare (dynamic-extent #'fn))
+                                        (delete ,key ,(first store-vars)
+                                                :key #'fn
+                                                ,@(remove-property keys ':key)))
+                                     `(delete ,key ,(first store-vars)
+                                          :key #'car
                                           ,@(remove-property keys ':key))))
                           ;; Update the value:
                           (rplacd ,assoc-result ,new-value))))

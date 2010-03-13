@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/atable.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Mar 12 05:09:22 2010 *-*
+;;;; *-* Last-Edit: Sat Mar 13 16:27:42 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -50,12 +50,8 @@
 ;;;    - keys-only tables are even indicies, key/value tables are odd indicies
 ;;;    - hash-tables are 0 & 1, lists are 2-9
 
-(eval-when (#+cmu :compile-toplevel     ; CMUCL requires compile-time
-                                        ; definition to support
-                                        ; LOAD-TIME-VALUE usage (below)
-            :load-toplevel :execute) 
-  (defparameter *atable-test-vector*
-      (vector nil nil 'eq 'eq 'eql 'eql 'equal 'equal 'equalp 'equalp)))
+(defparameter *atable-test-vector*
+    (vector nil nil 'eq 'eq 'eql 'eql 'equal 'equal 'equalp 'equalp))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (with-full-optimization ()
@@ -74,9 +70,12 @@
 
 (defun determine-atable-test (index)
   (declare (fixnum index))
-  (svref (load-time-value *atable-test-vector*) index))
+  ;; CMUCL (20a) can't handle the load-time-value:
+  (svref #+cmu *atable-test-vector*
+         #-cmu (load-time-value *atable-test-vector*) index))
 (defcm determine-atable-test (index)
-  `(svref (load-time-value *atable-test-vector*) (the fixnum ,index)))
+  `(svref #+cmu *atable-test-vector*
+          #-cmu (load-time-value *atable-test-vector*) (the fixnum ,index)))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Transition values
@@ -389,19 +388,24 @@
 ;;;  Transition-value determination/setting
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  ;; used to avoid iteration over-optimization by CMUCL & SBCL:
-  (defvar *timer-result*)
+  ;; used to avoid iteration timing over-optimization:
+  (defvar *brief-timer-result*)
   
-  (defmacro timer (n &body body)
-    `(let ((%start-time% (get-internal-run-time)))
-       (dotimes (i (the fixnum ,n))
-         (declare (fixnum i)) 
-         (setf *timer-result* 
-               (with-full-optimization ()
-                 ,@body)))
-       (/ (- (get-internal-run-time) %start-time%)
-          (load-time-value (float internal-time-units-per-second))))))
-
+  (defmacro brief-timer (n &body body)
+    (let ((folding-factor 100))
+      (flet ((dupe-it ()
+               `(setf *brief-timer-result* ,@body)))
+        `(with-full-optimization ()
+           (let ((%start-time% (get-internal-run-time)))
+             (dotimes (i (truncate& ,n ,folding-factor))
+               (declare (fixnum i)) 
+               ,@(loop for i fixnum from 0 upto folding-factor 
+                     collect (dupe-it)))
+             (locally (declare (notinline / -))
+               (/ (- (get-internal-run-time) %start-time%)
+                  (load-time-value 
+                   (float internal-time-units-per-second))))))))))
+  
 ;;; ---------------------------------------------------------------------------
 
 (defun bsearch-for-transition (max-value timer-iterations
@@ -416,9 +420,9 @@
         (return-from bsearch-for-transition test-value))
       (let* ((key (funcall keygen-fn test-value))
              (sprint-time 
-              (timer timer-iterations (funcall sprint-fn key)))
+              (brief-timer timer-iterations (funcall sprint-fn key)))
              (marathon-time
-              (timer timer-iterations (funcall marathon-fn key))))
+              (brief-timer timer-iterations (funcall marathon-fn key))))
         (if (<$ sprint-time marathon-time)
             (setf min-value test-value)
             (setf max-value test-value))

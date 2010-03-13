@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/1d-uniform-storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Mar 11 19:21:41 2010 *-*
+;;;; *-* Last-Edit: Sat Mar 13 15:32:14 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -168,7 +168,7 @@
              (declare (type (simple-array t (*)) buckets))
              (declare (type fixnum bucket-index))
              (setf (svref buckets bucket-index)
-                   (delq instance (svref buckets bucket-index)))
+                   (delq-one instance (svref buckets bucket-index)))
              (decf& excess-count)))
       (declare (dynamic-extent #'bucket-action))
       (do-1d-uniform-buckets-add/remove-action 

@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/hashed-storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Mar 11 19:36:56 2010 *-*
+;;;; *-* Last-Edit: Sat Mar 13 15:32:53 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -199,9 +199,9 @@
            (remhash instance (unbound-value-instances-of storage)))
          (bound-value-action (instance storage dimension-value)
            (setf (gethash dimension-value (bound-instances-of storage))
-                 (delq instance
-                       (gethash dimension-value
-                                (bound-instances-of storage))))))
+                 (delq-one instance
+                           (gethash dimension-value
+                                    (bound-instances-of storage))))))
     (declare (dynamic-extent #'unbound-value-action #'bound-value-action))    
     (do-hashed-add/remove-action 
         instance storage verbose
