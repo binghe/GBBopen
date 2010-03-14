@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Mar 13 15:24:08 2010 *-*
+;;;; *-* Last-Edit: Sun Mar 14 04:35:34 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -169,7 +169,7 @@
             decf$$$/delete-acons
             define-directory            ; in module-manager, but part of tools
             delq
-            delq-one                    ; not yet documented
+            delq-one
             do-until
             do-while
             dosequence

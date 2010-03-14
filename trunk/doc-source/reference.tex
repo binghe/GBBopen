@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Thu Feb 18 11:57:27 2010; Edited-By: cork *-*
+%% *-* Last-Edit: Sun Mar 14 04:39:54 2010; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2010, Dan Corkill <corkill@GBBopen.org>
@@ -4518,6 +4518,8 @@ the \var{count\/} is provided, and in that case only the rightmost
 
 \begin{alsos}{atomic-delete}
 \also[atomic-delete]
+\also[delq]
+\also[delq-one]
 \end{alsos}
 
 \fnexamples
@@ -4721,12 +4723,70 @@ As is the case with \nobr{\code{delete}}, \nobr{\textbf{delq}} may modify the
 top-level structure of \var{list\/} in constructing the
 \nobr{\var{result-list}}.
 
+\begin{alsos}{counted-delete}
+\also[atomic-delete]
+\also[counted-delete]
+\also[delq-one]
+\end{alsos}
+
 \fnexamples
 \W\supp
 \begin{example}
   > (delq 'b '(a b c b))
   (a c)
   > (delq 'x '(a b c b))
+  (a b c b)
+  >
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{delq-one}{\var{item list\/}
+    \returns{} \var{list\/}} 
+\index{deleting!an item from a list}%
+  
+\fnsyntax
+
+\fnpurpose Destructively delete the first occurrence of \var{item\/}
+from \var{list\/} using \code{eq} as the comparison function.
+
+\fnpackage \code{:gbbopen-tools}
+
+\fnmodule \code{:gbbopen-tools}
+
+\fnargs
+\begin{args}{symbol}
+\arg[item] An object
+\arg[list] A \glref{proper~list}
+\end{args}
+
+\fnreturns A list from which the first \var{item\/} element has been deleted.
+
+\fndescription \textbf{Delq-one} is a convenient and efficient shorthand for:
+%
+\W\supp
+\begin{example}
+  (delete \var{item\/} (the list \var{list\/}) :test #'eq :count 1)
+\end{example}
+%
+As is the case with \nobr{\code{delete}}, \nobr{\textbf{delq-one}} may modify
+the top-level structure of \var{list\/} in constructing the
+\nobr{\var{result-list}}.
+
+\begin{alsos}{counted-delete}
+\also[atomic-delete]
+\also[counted-delete]
+\also[delq]
+\end{alsos}
+
+\fnexamples
+\W\supp
+\begin{example}
+  > (delq-one 'b '(a b c b))
+  (a c b)
+  > (delq-one 'x '(a b c b))
   (a b c b)
   >
 \end{example}
@@ -5748,8 +5808,10 @@ comparison function.
   (member \var{item\/} (the list \var{list\/}) :test #'eq)
 \end{example}
 
-\begin{alsos}{delq}
+\begin{alsos}{counted-delete}
+\also[counted-delete]
 \also[delq]
+\also[delq-one]
 \end{alsos}
 
 \fnexamples
@@ -11541,6 +11603,8 @@ the \nobr{\var{count\/}} is provided, and in that case only the rightmost
 \also[atomic-push]
 \also[atomic-pushnew]
 \also[counted-delete]
+\also[delq]
+\also[delq-one]
 \end{alsos}
 
 \fnexample
