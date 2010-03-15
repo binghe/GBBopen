@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/test/portable-threads-test.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Nov 28 16:00:13 2009 *-*
+;;;; *-* Last-Edit: Mon Mar 15 10:50:04 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2005-2009, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2005-2010, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -72,7 +72,7 @@
          ,@body
          (let ((run-time (/ (float (- (get-internal-run-time) ,start-time-sym))
                             (float internal-time-units-per-second))))
-           (forced-format " ~s seconds" run-time)
+           (forced-format " ~,2f seconds" run-time)
            ;; return the run-time
            run-time)))))
 
@@ -166,7 +166,7 @@
         (log-error 
          "Incorrect thread-holds-lock-p value on condition-variable lock")))
     ;; Lock timing tests:
-    (forced-format "~&;;   Timing ~s nonrecursive-lock acquisitions..."
+    (forced-format "~&;;   Timing ~:d nonrecursive-lock acquisitions..."
                    iterations)
     (time-it 
      (dotimes (i iterations)
@@ -174,7 +174,7 @@
        (with-lock-held (nonrecursive-lock
                         :whostate "Waiting on nonrecursive lock")
          nil)))
-    (forced-format "~&;;   Timing ~s recursive-lock acquisitions..." 
+    (forced-format "~&;;   Timing ~:d recursive-lock acquisitions..." 
                    iterations)
     (time-it 
      (dotimes (i iterations)
@@ -182,7 +182,7 @@
        (with-lock-held (recursive-lock
                         :whostate "Waiting on recursive lock")
          nil)))
-    (forced-format "~&;;   Timing ~s condition-variable lock acquisitions..."
+    (forced-format "~&;;   Timing ~:d condition-variable lock acquisitions..."
                    iterations)
     (time-it 
      (dotimes (i iterations)
@@ -241,7 +241,7 @@
     #-scl
     (when (thread-holds-lock-p nonrecursive-lock)
       (log-error "Incorrect THREAD-HOLDS-LOCK-p value on throw from ~
-                      within WITH-LOCK-HELD"))
+                  within WITH-LOCK-HELD"))
     (forced-format
      "~&;; Completed basic lock tests (~,2f seconds real time).~%"
      (/ (float (- (get-internal-real-time) start-real-time))
@@ -273,31 +273,31 @@
      "~&;;   Timing (sleep 0), run time should be close to zero seconds...")
     (let ((run-time (time-it (sleep 0))))
       (when (> run-time 0.01)
-        (warn "(sleep 0) consumed ~s seconds of processing time." run-time)))
+        (warn "(sleep 0) consumed ~,2f seconds of processing time." run-time)))
     (forced-format
      "~&;;   Timing (sleep 10), run time should also be close to zero seconds...")
     (let ((run-time (time-it (sleep 10))))
       (when (> run-time 0.1)
-        (warn "(sleep 10) consumed ~s seconds of processing time." run-time)))
+        (warn "(sleep 10) consumed ~,2f seconds of processing time." run-time)))
     ;; Check to be sure that (sleep 0) is not optimized away by this CL:
     (let ((iterations 
            #+digitool-mcl
            100                          ; MCL has a VERY high overhead
            #-digitool-mcl
            (min 100000 most-positive-fixnum)))
-      (forced-format "~&;;   Timing ~s (sleep 0)s..." iterations)
+      (forced-format "~&;;   Timing ~:d (sleep 0)s..." iterations)
       (let ((run-time (time-it (dotimes (i iterations)
                                  (declare (fixnum i))
                                  (sleep 0)))))
         (when (zerop run-time)
-          (warn "~s (sleep 0)s took ~s seconds" iterations run-time)))
-      (forced-format "~&;;   Timing ~s throwable (sleep 0)s..." iterations)
+          (warn "~:d (sleep 0)s took ~,2f seconds" iterations run-time)))
+      (forced-format "~&;;   Timing ~:d throwable (sleep 0)s..." iterations)
       (let ((run-time (time-it (dotimes (i iterations)
                                  (declare (fixnum i))
                                  (catch 'throwable-sleep-nearly-forever
                                    (sleep 0))))))
         (when (zerop run-time)
-          (warn "~s throwable (sleep 0)s took ~s seconds" 
+          (warn "~:d throwable (sleep 0)s took ~,2f seconds" 
                 iterations run-time))))
     (forced-format 
      "~&;; Completed basic thread tests (~,2f seconds real time).~%"
@@ -327,7 +327,7 @@
          10000)
         (thread-count (length (all-threads))))
     (declare (fixnum iterations))
-    (forced-format "~&;;   Timing ~s spawn-threads..." iterations)
+    (forced-format "~&;;   Timing ~:d spawn-threads..." iterations)
     (time-it (dotimes (i iterations)
                (declare (fixnum i))
                ;; CLISP is limited to 128 simultaneous threads; should thread
@@ -355,7 +355,7 @@
         (cv (make-condition-variable))
         (start-real-time (get-internal-real-time)))
     (declare (fixnum iterations))
-    (forced-format "~&;;   Timing ~s spawn and die threads..." iterations)
+    (forced-format "~&;;   Timing ~:d spawn and die threads..." iterations)
     (labels ((spawn-and-die-fn (count)
                (thread-yield)
                (cond ((zerop count)
@@ -664,7 +664,7 @@
                  (allowed-warnings 3)
                  (start-real-time (get-internal-real-time)))
              (forced-format
-              "~&;;   Timing ~s condition-variable wait & ~as..."
+              "~&;;   Timing ~:d condition-variable wait & ~as..."
               (* 2 iterations)
               signal-fn-label)
              (spawn-thread 
@@ -679,14 +679,14 @@
                                    (condition-variable-wait-with-timeout
                                     cv wait-timeout)
                                  (warn "Incrementer wait timeout ~
-                                        (iteration ~s; state ~s)"
+                                        (iteration ~:d; state ~s)"
                                        i state)
                                  (when (> (incf warnings) allowed-warnings)
                                    (return-from :exit))))
                         (cond 
                          ((> state 1)
                           (error "Incrementer double signal ~
-                                  (iteration ~s; state ~s)"
+                                  (iteration ~:d; state ~s)"
                                  i state))
                          (t (incf (state-of cv))
                             (funcall signal-fn cv)))))))
@@ -703,14 +703,14 @@
                         do (unless (condition-variable-wait-with-timeout
                                     cv wait-timeout)
                              (warn "Decrementer wait timeout ~
-                                    (iteration ~s; state ~s)"
+                                    (iteration ~:d; state ~s)"
                                    i state)
                              (when (>= (incf warnings) allowed-warnings)
                                (return-from :exit))))
                     (cond
                      ((< state 1)
                       (error "Decrementer double signal ~
-                              (iteration ~s; state ~s)"
+                              (iteration ~:d; state ~s)"
                              i state))
                      (t (decf (state-of cv))
                         (funcall signal-fn cv)))))))
