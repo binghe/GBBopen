@@ -9,6 +9,7 @@ Important changes since GBBopen 1.4:
      - Add :skip-recompile module file option
 
   * Changes to GBBopen Tools
+     - New ASSQ function
      - New DEFCONSTRUCT cons-based 2-field "structure"
      - New DELQ-ONE function
      - New HTTP-DATE-AND-TIME function

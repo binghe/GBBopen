@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Mar  2 18:01:26 2010 *-*
+;;;; *-* Last-Edit: Tue Mar 16 16:37:10 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -1490,8 +1490,7 @@
               (declare (dynamic-extent #'fn))
               (every #'fn old-dimension-values))
             (flet ((fn (dimension-name)
-                     (equal (cdr (assoc dimension-name old-dimension-values
-                                        :test #'eq))
+                     (equal (cdr (assq dimension-name old-dimension-values))
                             (instance-dimension-value
                              instance dimension-name))))
               (declare (dynamic-extent #'fn))

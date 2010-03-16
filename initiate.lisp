@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/initiate.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Mar 16 05:33:13 2010 *-*
+;;;; *-* Last-Edit: Tue Mar 16 16:45:16 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -143,7 +143,7 @@
                           *skip-gbbopen-modules-directory-processing*)
                          *skip-gbbopen-modules-directory-processing*))
   ;; Avoid forward-referenced "undefined function" warnings:
-  #+lispworks
+  #+(and clozure lispworks)
   (declare (ftype (function (t) t) process-shared-gbbopen-modules-directory)
            (ftype (function (t) t) process-gbbopen-modules-directory))
   (cond 

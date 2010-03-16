@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Sun Mar 14 04:39:54 2010; Edited-By: cork *-*
+%% *-* Last-Edit: Tue Mar 16 16:31:39 2010; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2010, Dan Corkill <corkill@GBBopen.org>
@@ -4054,6 +4054,56 @@ At present, redefinition warnings are not suppressed on
 
 %% ------------------------------------------------------------------------
 
+\begin{functiondoc}{Function}{assq}{\var{item alist\/}
+    \returns{} \var{entry\/}}
+\index{searching!for an entry in an association list}%
+\index{association list, searching for an entry in}%
+  
+\fnsyntax
+
+\fnpurpose Search for \var{entry\/} in \var{alist\/} using \code{eq} as the
+comparison function.
+
+\fnpackage \code{:gbbopen-tools}
+
+\fnmodule \code{:gbbopen-tools}
+
+\fnargs
+\begin{args}{symbol}
+\arg[item] An object
+\arg[alist] An \glref{association~list}
+\arg[entry] A \glref{cons} that is an element of \var{alist} or \nil
+\end{args}
+
+\fnreturns The first \glref{cons} in \var{alist\/} whose car is \code{eq} to
+\var{item}, or nil if no such cons is found.
+
+\fndescription \textbf{Assq} is a convenient shorthand for:
+%
+\W\supp
+\begin{example}
+  (assoc \var{item\/} (the list \var{alist\/}) :test #'eq)
+\end{example}
+
+\begin{alsos}{memq}
+\also[memq]
+\end{alsos}
+
+\fnexamples
+%
+\W\supp
+\begin{example}
+  > (assq 'b '((a . 1) (b . 2) (c . 3) (b . 4)))
+  (b . 2)
+  > (assq 'x '((a . 1) (b . 2) (c . 3) (b . 4)))
+  nil
+  >
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
 \begin{functiondoc}{Function}{bounded-value}{\var{min number max\/}
   \returns{} \var{bounded-number\/}}
 \index{numeric value!bounding within a range}%
@@ -5810,6 +5860,7 @@ comparison function.
 
 \begin{alsos}{counted-delete}
 \also[counted-delete]
+\also[assq]
 \also[delq]
 \also[delq-one]
 \end{alsos}

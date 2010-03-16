@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/hashed-storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Mar 13 15:32:53 2010 *-*
+;;;; *-* Last-Edit: Tue Mar 16 16:36:47 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -77,10 +77,8 @@
                         (standard-unit-class.effective-dimensional-values 
                          stores-class)))
                    (dolist (dimension-name (dimension-names-of storage))
-                     (let ((dv-spec (find dimension-name 
-                                          effective-dimensional-values
-                                          :test #'eq
-                                          :key #'first)))
+                     (let ((dv-spec 
+                            (assq dimension-name effective-dimensional-values)))
                        (when dv-spec
                          (destructuring-bind (dimension-name 
                                               dimension-value-type 
@@ -219,7 +217,7 @@
           (dolist (dimensional-extents disjunctive-dimensional-extents)
             (dolist (dimension-name dimension-names)
               (let ((dimensional-extent
-                     (assoc dimension-name dimensional-extents :test #'eq)))
+                     (assq dimension-name dimensional-extents)))
                 (when dimensional-extent
                   (destructuring-bind (extent-dimension-name
                                        dimension-type . new-extents)

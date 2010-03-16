@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/2d-uniform-storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Mar 13 15:32:30 2010 *-*
+;;;; *-* Last-Edit: Tue Mar 16 16:19:43 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -105,13 +105,11 @@
 	 (2nd-d-dimension-name (second dimension-names))
 	 (1st-d-dimension-value
 	  (if old-dimension-values
-              (cdr (assoc 1st-d-dimension-name old-dimension-values
-                          :test #'eq))
+              (cdr (assq 1st-d-dimension-name old-dimension-values))
               (instance-dimension-value instance 1st-d-dimension-name)))
 	 (2nd-d-dimension-value
 	  (if old-dimension-values
-	      (cdr (assoc 2nd-d-dimension-name old-dimension-values
-                          :test #'eq))
+	      (cdr (assq 2nd-d-dimension-name old-dimension-values))
               (instance-dimension-value instance 2nd-d-dimension-name))))
     (cond 
      ;; both are scalar values (special optimization for 2D points):
@@ -227,11 +225,9 @@
 	  (dimension-names-of storage)
 	(dolist (dimensional-extents disjunctive-dimensional-extents)
 	  (let* ((1st-d-dimensional-extent 
-		  (assoc 1st-d-dimension-name dimensional-extents
-			 :test #'eq))
+		  (assq 1st-d-dimension-name dimensional-extents))
 		 (2nd-d-dimensional-extent 
-		  (assoc 2nd-d-dimension-name dimensional-extents
-			 :test #'eq))
+		  (assq 2nd-d-dimension-name dimensional-extents))
 		 (1st-d-new-extents
 		  (when 1st-d-dimensional-extent 
 		    (destructuring-bind (extent-dimension-name

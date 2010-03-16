@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Mar 14 04:35:34 2010 *-*
+;;;; *-* Last-Edit: Tue Mar 16 16:51:41 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -65,6 +65,7 @@
 ;;;  04-14-09 Added DOSUBLISTS.  (Corkill)
 ;;;  07-22-08 Added NICER-TIME.  (Corkill)
 ;;;  08-03-09 Added COMPARE and COMPARE-STRINGS.  (Corkill)
+;;;  03-16-10 Added ASSQ.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -76,7 +77,8 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (import 
    #+allegro 
-   '(excl:case-failure
+   '(excl::assq 
+     excl:case-failure
      excl::extract-declarations
      excl:interrupt-signal
      excl::memq
@@ -101,6 +103,7 @@
    '(conditions::case-failure
      ext:compiler-macroexpand
      ext:compiler-macroexpand-1
+     ext:assq
      ext:delq
      ext:memq
      kernel:simple-array-p)
@@ -126,10 +129,12 @@
      harlequin-common-lisp:compiler-macroexpand-1
      harlequin-common-lisp:simple-array-p
      system::copy-file
+     system:assq
      system:memq
      system:delq)
    #+sbcl
-   '(sb-int:memq
+   '(sb-int:assq
+     sb-int:memq
      sb-int:delq
      sb-kernel:case-failure
      sb-kernel:simple-array-p)
@@ -137,6 +142,7 @@
    '(conditions::case-failure
      ext:compiler-macroexpand
      ext:compiler-macroexpand-1
+     ext:assq
      ext:memq
      ext:delq
      kernel:simple-array-p)
@@ -149,6 +155,7 @@
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(*disable-with-error-handling*
+            assq
             bounded-value
             case-using
             case-using-failure
@@ -408,7 +415,7 @@
                          ,(first bindings)))))
 
 ;;; ===========================================================================
-;;;  Memq (lists only)
+;;;  Memq and assq (lists only)
 
 #-(or allegro
       clisp
@@ -426,6 +433,19 @@
   
   (defcm memq (item list)
     `(member ,item (the list ,list) :test #'eq)))
+
+#-(or allegro
+      cmu
+      lispworks
+      sbcl
+      scl)
+(progn
+  (defun assq (item list)
+    (declare (list list))
+    (assoc item list :test #'eq))
+  
+  (defcm assq (item list)
+    `(assoc ,item (the list ,list) :test #'eq)))
 
 ;;; ===========================================================================
 ;;;  Delq and delq-one (lists only)

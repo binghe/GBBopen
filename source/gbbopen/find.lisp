@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/find.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Mar 11 17:03:56 2010 *-*
+;;;; *-* Last-Edit: Tue Mar 16 16:36:13 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -231,56 +231,92 @@
 (defvar *memoized-atomic-unit-classes-check-functions*
     (make-atable :test 'eq))
 
+(defvar *memoized-atomic-unit-classes-lock*
+    (make-lock :name "Memoized atomic unit classes"))
+
+(defvar *memoized-plus-subclasses-check-functions*
+    (make-atable :test 'equal))
+
+(defvar *memoized-plus-subclasses-lock*
+    (make-lock :name "Memoized plus subclasses"))
+
 (defun determine-unit-class-check (unit-classes-spec)
   ;;; Return a function that returns true if an instance satisfies
   ;;; `unit-classes-spec'.
-  (cond 
-   ((eq unit-classes-spec 't)
-    (with-full-optimization ()
-      #'(lambda (instance) 
-          (declare (ignore instance)) 
-          't)))
-   ((atom unit-classes-spec)
-    (with-full-optimization ()
-      (or (get-entry unit-classes-spec
-                     *memoized-atomic-unit-classes-check-functions*)
-          (setf (get-entry unit-classes-spec
-                           *memoized-atomic-unit-classes-check-functions*)
-                #'(lambda (instance)
-                    (eq (type-of instance) unit-classes-spec))))))
-   ((memq (second unit-classes-spec) '(:plus-subclasses +))
-    (with-full-optimization ()
-      #'(lambda (instance) 
-             ;; Compiler can't determine inline typep optimization in CMUCL,
-             ;; SBCL, and SCL:
-          #+(or cmu sbcl scl) (declare (notinline typep))
-          (typep instance (first unit-classes-spec)))))
-   ((memq (second unit-classes-spec) '(:no-subclasses =))
-    (with-full-optimization ()
-      #'(lambda (instance) 
-          (eq (type-of instance) (first unit-classes-spec)))))
-   ;; must be (<single-class-spec>+) -- unroll the easy case:
-   ((every #'atom unit-classes-spec)
-    (with-full-optimization ()
-      #'(lambda (instance) 
-          (memq (type-of instance) unit-classes-spec))))
-   ;; (<single-class-spec>+) -- the general case:
-   (t (with-full-optimization ()
-        #'(lambda (instance)
-            (let ((instance-type (type-of instance)))
-              (flet ((fn (spec)
-                       (cond ((atom spec)
-                              (eq instance-type spec))
-                             ((memq (second spec) '(:plus-subclasses +))
-                              (locally #+(or cmu sbcl scl)
-                                       (declare (notinline typep))
-                                       (typep instance (first spec))))
-                             ((memq (second spec) '(:no-subclasses =))
-                              (eq instance-type (first spec)))
-                             (t (ill-formed-unit-classes-spec unit-classes-spec)))))
-                (declare (dynamic-extent #'fn))
-                (some #'fn (the list unit-classes-spec)))))))))
-                                    
+  (macrolet
+      ((memoized-atomic-check-fn (unit-class closure)
+         ;; `unit-class' is a simple form (not once-only'ed)
+         `(with-full-optimization ()
+            (or (get-entry 
+                 ,unit-class
+                 *memoized-atomic-unit-classes-check-functions*)
+                ;; We lock only writes (at the slight risk of tossing an
+                ;; extra closure):
+                (with-lock-held (*memoized-atomic-unit-classes-lock*)
+                  (setf (get-entry 
+                         ,unit-class
+                         *memoized-atomic-unit-classes-check-functions*)
+                        ,closure)))))
+       (memoized-plus-subclasses-check-fn (unit-classes closure)
+         ;; `unit-classes' is a simple form (not once-only'ed)
+         `(with-full-optimization ()
+            (or (get-entry 
+                 ,unit-classes
+                 *memoized-plus-subclasses-check-functions*)
+                ;; We lock only writes (at the slight risk of tossing an
+                ;; extra closure):
+                (with-lock-held (*memoized-plus-subclasses-lock*)
+                  (setf (get-entry 
+                         ,unit-classes
+                         *memoized-plus-subclasses-check-functions*)
+                        ,closure))))))
+    (cond 
+     ((eq unit-classes-spec 't)
+      (memoized-atomic-check-fn 
+       't
+       #'(lambda (instance) 
+           (declare (ignore instance)) 
+           't)))
+     ((atom unit-classes-spec)
+      (memoized-atomic-check-fn 
+       unit-classes-spec
+       #'(lambda (instance)
+           (eq (type-of instance) unit-classes-spec))))
+     ((memq (second unit-classes-spec) '(:plus-subclasses +))
+      (let ((unit-class (first unit-classes-spec)))
+        (memoized-plus-subclasses-check-fn 
+         unit-class
+         `#'(lambda (instance) 
+              (typep instance ',unit-class)))))
+     ((memq (second unit-classes-spec) '(:no-subclasses =))
+      (let ((unit-class (first unit-classes-spec)))
+        (memoized-atomic-check-fn 
+         unit-class
+         #'(lambda (instance) 
+             (eq (type-of instance) unit-class)))))
+     ;; must be (<single-class-spec>+) -- unroll the easy case:
+     ((every #'atom unit-classes-spec)
+      (memoized-plus-subclasses-check-fn 
+       unit-classes-spec
+       #'(lambda (instance) 
+           (memq (type-of instance) unit-classes-spec))))
+     ;; (<single-class-spec>+) -- the general case:
+     (t (with-full-optimization ()
+          #'(lambda (instance)
+              (let ((instance-type (type-of instance)))
+                (flet ((fn (spec)
+                         (cond ((atom spec)
+                                (eq instance-type spec))
+                               ((memq (second spec) '(:plus-subclasses +))
+                                (locally #+(or cmu sbcl scl)
+                                         (declare (notinline typep))
+                                         (typep instance (first spec))))
+                               ((memq (second spec) '(:no-subclasses =))
+                                (eq instance-type (first spec)))
+                               (t (ill-formed-unit-classes-spec unit-classes-spec)))))
+                  (declare (dynamic-extent #'fn))
+                  (some #'fn (the list unit-classes-spec))))))))))
+  
 ;;; ===========================================================================
 ;;;  Pattern Operators
 
@@ -1246,7 +1282,7 @@
   ;;; extents.  They are here for symmetry and possible use in the future.
   (case dimension-type
     (:ordered
-     (let ((extent-acons (assoc dimension *%%pattern-extents%%* :test #'eq))
+     (let ((extent-acons (assq dimension *%%pattern-extents%%*))
            (new-extents (if (numberp value)
                             (if negated 
                                 ;; (not <point>) requires looking everywhere!
@@ -1293,7 +1329,7 @@
      (pushnew-acons dimension (cons dimension-type value) 
                     *%%pattern-extents%%*))
     (:boolean
-     (let ((extent-acons (assoc dimension *%%pattern-extents%%* :test #'eq))
+     (let ((extent-acons (assq dimension *%%pattern-extents%%*))
            (new-extent (if negated 
                            (if value 'false 'true)
                            (if value 'true 'false))))
@@ -1320,18 +1356,18 @@
   ;;;  2. the dimension-value type of `operator'
   ;;;  3. an extent-generator function for an :ordered pattern operator
   (let ((ordered-op-spec
-         (cdr (assoc operator *ordered-match-op-fns* :test #'eq))))
+         (cdr (assq operator *ordered-match-op-fns*))))
     (if ordered-op-spec
         (destructuring-bind (ordered-op-fn 
                              &optional extent-generator-fn)
             ordered-op-spec
           (values ordered-op-fn ':ordered extent-generator-fn))
         (let ((enumerated-op-fn 
-               (second (assoc operator *enumerated-match-op-fns* :test #'eq))))
+               (second (assq operator *enumerated-match-op-fns*))))
           (if enumerated-op-fn
               (values enumerated-op-fn ':enumerated)
               (let ((boolean-op-fn 
-                     (second (assoc operator *boolean-match-op-fns* :test #'eq))))
+                     (second (assq operator *boolean-match-op-fns*))))
                 (if boolean-op-fn
                     (values boolean-op-fn ':boolean)
                     (error "Illegal pattern operator ~s in pattern element ~s."
@@ -1483,8 +1519,7 @@
                       (destructuring-bind (dimension &rest new-extents)
                           new-extent-acons
                         (let ((extent-acons 
-                               (assoc dimension dimensional-extents 
-                                      :test #'eq)))
+                               (assq dimension dimensional-extents)))
                           (cond
                            (extent-acons
                             (dolist (new-extent new-extents)
@@ -1531,8 +1566,7 @@
             dimensional-extent
           (declare (ignore new-extents))
           (let ((space-dimension
-                 (assoc extent-dimension-name (dimensions-of space-instance)
-                        :test #'eq)))
+                 (assq extent-dimension-name (dimensions-of space-instance))))
             (when space-dimension
               (destructuring-bind (space-dimension-name 
                                    (space-dimension-type
