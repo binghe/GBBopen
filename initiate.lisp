@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/initiate.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Oct 16 05:24:32 2009 *-*
+;;;; *-* Last-Edit: Tue Mar 16 05:33:13 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2002-2009, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2010, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; Useful generic GBBopen initialization definitions.  Load this file from
@@ -142,6 +142,10 @@
                         ((:skip-gbbopen-modules-directory-processing
                           *skip-gbbopen-modules-directory-processing*)
                          *skip-gbbopen-modules-directory-processing*))
+  ;; Avoid forward-referenced "undefined function" warnings:
+  #+lispworks
+  (declare (ftype (function (t) t) process-shared-gbbopen-modules-directory)
+           (ftype (function (t) t) process-gbbopen-modules-directory))
   (cond 
    ;; Scan for changes if startup.lisp has been loaded:
    ((and (not force) *gbbopen-startup-loaded*)
