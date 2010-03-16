@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/gbbopen-modules-directory.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Mar 16 05:39:25 2010 *-*
+;;;; *-* Last-Edit: Tue Mar 16 10:52:02 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -156,8 +156,7 @@
                 #+allegro 
                 (setf pathname (pathname-resolve-symbolic-links pathname))                
                 #+lispworks
-                (setf pathname (or (car (directory pathname)) ; can we do better?
-                                   pathname))
+                (setf pathname (or (probe-file pathname) pathname))
                 ;; Process the resolved directory:
                 (let* ((previous-load-time-acons 
                         (assoc pathname *loaded-gbbopen-modules-directory-files*
@@ -167,7 +166,7 @@
                                (let ((file-write-date (file-write-date pathname)))
                                  (and file-write-date
                                       (locally ; avoid SBCL optimization warning: 
-                                          (declare (optimize (speed 1)))
+                                          (declare (notinline >))
                                         (not (> file-write-date 
                                                 previous-load-time))))))
                     (when sym-filename
