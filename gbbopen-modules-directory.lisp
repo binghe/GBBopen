@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/gbbopen-modules-directory.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Oct 16 06:05:38 2009 *-*
+;;;; *-* Last-Edit: Tue Mar 16 05:39:25 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2006-2009, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2006-2010, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;;   This file is loaded by initiate.lisp (and optionally by startup.lisp)
@@ -54,7 +54,7 @@
 	(setf line (ignore-errors (read-line file nil nil)))
 	(unless line
           (format t "~&;; WARNING: Unable to read the target-directory file ~s~%" 
-                (namestring filename))
+                  (namestring filename))
 	  (return-from read-target-directory-specification nil))
         (when (plusp (length line))
           (flet ((trim-spec (string)
@@ -80,8 +80,9 @@
                           ;; return nil
                           nil)))))
               (otherwise 
-               (return-from read-target-directory-specification 
-                 (list (trim-spec line)))))))))))
+               (let ((target-directory (trim-spec line)))
+                 (return-from read-target-directory-specification 
+                   (list (cons filename target-directory))))))))))))
   
 (compile-if-advantageous 'read-target-directory-specification)
   
@@ -134,57 +135,75 @@
                             "command definitions")
                            (t filename))))
       (dolist (dir module-dirs)
-        (let* ((pathname-directory (pathname-directory dir))
-               (dir-name (first (last pathname-directory))))
-          (unless (member dir-name 
-                          *ignored-gbbopen-modules-directory-subdirectories*
-                          :test #'string-equal)
-            (let* ((pathname (make-pathname 
-                              :name filename
-                              :type "lisp"
-                              :directory pathname-directory
-                              :defaults dir))
-                   (previous-load-time-acons 
-                    (assoc pathname *loaded-gbbopen-modules-directory-files*
-                           :test #'equal))
-                   (previous-load-time (cdr previous-load-time-acons)))
-              (unless (and previous-load-time
-                           (let ((file-write-date (file-write-date pathname)))
-                             (and file-write-date
-                                  (locally ; avoid SBCL optimization warning: 
-                                      (declare (optimize (speed 1)))
-                                    (not (> file-write-date 
-                                            previous-load-time))))))
-                (cond
-                 ;; No load-type file in this directory:
-                 ((not (probe-file pathname))
-                  (format t "~&;; WARNING: Unable to find ~
+        (let ((sym-filename nil))
+          (when (consp dir)
+            (destructuring-bind (the-sym-filename . target-directory)
+                dir
+              (setf sym-filename the-sym-filename
+                    dir target-directory)))
+          (let* ((pathname-directory (pathname-directory dir))
+                 (dir-name (first (last pathname-directory))))
+            (unless (member dir-name 
+                            *ignored-gbbopen-modules-directory-subdirectories*
+                            :test #'string-equal)
+              (let ((pathname (make-pathname 
+                               :name filename
+                               :type "lisp"
+                               :directory pathname-directory
+                               :defaults dir)))
+                ;; Resolve symbolic links on CLs that keep directory pathnames
+                ;; unresolved:
+                #+allegro 
+                (setf pathname (pathname-resolve-symbolic-links pathname))                
+                #+lispworks
+                (setf pathname (or (car (directory pathname)) ; can we do better?
+                                   pathname))
+                ;; Process the resolved directory:
+                (let* ((previous-load-time-acons 
+                        (assoc pathname *loaded-gbbopen-modules-directory-files*
+                               :test #'equal))
+                       (previous-load-time (cdr previous-load-time-acons)))
+                  (unless (and previous-load-time
+                               (let ((file-write-date (file-write-date pathname)))
+                                 (and file-write-date
+                                      (locally ; avoid SBCL optimization warning: 
+                                          (declare (optimize (speed 1)))
+                                        (not (> file-write-date 
+                                                previous-load-time))))))
+                    (when sym-filename
+                      (format t "~&;; Pseudo (*.sym) link ~a --> ~a~%"
+                              sym-filename
+                              dir))
+                    (cond
+                     ;; No load-type file in this directory:
+                     ((not (probe-file pathname))
+                      (format t "~&;; WARNING: Unable to find ~
                                       ~:[personal~;shared~] ~a file ~a~%" 
-                          shared?
-                          load-type
-                          (namestring pathname)))
-                 ((not message-printed?)
-                  (format t "~&;; Loading ~:[personal~;shared~] ~a from ~
+                              shared?
+                              load-type
+                              (namestring pathname)))
+                     ((not message-printed?)
+                      (format t "~&;; Loading ~:[personal~;shared~] ~a from ~
                                       ~a...~%" 
-                          shared?
-                          load-type
-                          (namestring modules-dir))
-                  (setf message-printed? 't)))
-                (when (load (namestring pathname)
-                            :if-does-not-exist nil)
-                  (cond 
-                   (previous-load-time-acons
-                    (setf (cdr previous-load-time-acons) now))
-                   (t (setf *loaded-gbbopen-modules-directory-files*
-                            (acons 
-                             pathname now
-                             *loaded-gbbopen-modules-directory-files*))))))))))
-      (unless (or message-printed? *gbbopen-startup-loaded*)
-        (format t "~&;; No ~:[personal~;shared~] ~a were found in ~a.~%"
-                shared?
-                load-type 
-                (namestring modules-dir))))))
-
+                              shared?
+                              load-type
+                              (namestring modules-dir))
+                      (setf message-printed? 't)))
+                    (when (load (namestring pathname)
+                                :if-does-not-exist nil)
+                      (cond 
+                       (previous-load-time-acons
+                        (setf (cdr previous-load-time-acons) now))
+                       (t (setf *loaded-gbbopen-modules-directory-files*
+                                (acons 
+                                 pathname now
+                                 *loaded-gbbopen-modules-directory-files*))))))))))
+          (unless (or message-printed? *gbbopen-startup-loaded*)
+            (format t "~&;; No ~:[personal~;shared~] ~a were found in ~a.~%"
+                    shared?
+                    load-type 
+                    (namestring modules-dir))))))))
+  
 (compile-if-advantageous 'process-the-gbbopen-modules-directory)
 
 ;;; ---------------------------------------------------------------------------
