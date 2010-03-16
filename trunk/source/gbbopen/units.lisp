@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/units.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Mar 11 23:29:33 2010 *-*
+;;;; *-* Last-Edit: Tue Mar 16 16:37:30 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -621,8 +621,7 @@
 	     unit-class-name
 	     (class-prototype
 	      (ensure-finalized-class
-	       (find-class 
-		(second (assoc :metaclass clos-class-options :test #'eq)))))
+	       (find-class (second (assq :metaclass clos-class-options)))))
 	     clos-class-options))
 	;; Some CLs have problems using the class object returned by
 	;; defclass (e.g., CMUCL and SBCL).  So, we'll always use

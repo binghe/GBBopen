@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/1d-uniform-storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Mar 13 15:32:14 2010 *-*
+;;;; *-* Last-Edit: Tue Mar 16 16:19:08 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -90,7 +90,7 @@
                             composite-type composite-dimension-name)
           (if old-dimension-values
               ;; This isn't ready yet for composites!
-              (cdr (assoc dimension-name old-dimension-values :test #'eq))
+              (cdr (assq dimension-name old-dimension-values))
               (instance-dimension-value instance dimension-name))
         (declare (ignore dimension-type comparison-type 
                          composite-dimension-name))
@@ -192,7 +192,7 @@
         (dolist (dimensional-extents disjunctive-dimensional-extents)
           (dolist (dimension-name dimension-names)
             (let ((dimensional-extent 
-                   (assoc dimension-name dimensional-extents :test #'eq)))
+                   (assq dimension-name dimensional-extents)))
               (when dimensional-extent
                 (destructuring-bind (extent-dimension-name
                                      dimension-type . new-extents)

@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/boolean-storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Mar 11 19:29:01 2010 *-*
+;;;; *-* Last-Edit: Tue Mar 16 16:20:08 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -147,7 +147,7 @@
         (dolist (dimensional-extents disjunctive-dimensional-extents)
           (dolist (dimension-name dimension-names)
             (let ((dimensional-extent 
-                   (assoc dimension-name dimensional-extents :test #'eq)))
+                   (assq dimension-name dimensional-extents)))
               (when dimensional-extent
                 (destructuring-bind (extent-dimension-name
                                      dimension-type . new-extents)

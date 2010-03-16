@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/read-object.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Mar 13 15:50:38 2010 *-*
+;;;; *-* Last-Edit: Tue Mar 16 16:41:33 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -113,7 +113,7 @@
   ;; Performs any class-name translation for reading-saved/sent-objects-block:
   (let ((translations *reading-saved/sent-class-name-translations*))
     (if translations
-        (let ((new-class-name (cdr (assoc class-name translations :test #'eq))))
+        (let ((new-class-name (cdr (assq class-name translations))))
           (or new-class-name class-name))
         class-name)))
 

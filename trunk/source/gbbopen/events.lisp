@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/events.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Mar 11 23:32:20 2010 *-*
+;;;; *-* Last-Edit: Tue Mar 16 16:24:49 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -304,10 +304,8 @@
   (multiple-value-bind (clos-direct-slots clos-class-options exports)
       (parse-define-class 
        event-class-name direct-slots 
-       (let ((metaclass 
-	      (second (assoc :metaclass options :test #'eq)))
-	     (event-metaclass 
-	      (second (assoc :event-metaclass options :test #'eq))))
+       (let ((metaclass (second (assq :metaclass options)))
+	     (event-metaclass (second (assq :event-metaclass options))))
 	 (cond 
 	  ;; both metaclass forms were specified, they must be eq:
 	  ((and metaclass event-metaclass)
@@ -545,8 +543,9 @@
     (setf additional-arg-values 
           (flet ((fn (arg-spec)
                    (let ((supplied-value-pair
-                          (find (first arg-spec) supplied-additional-args
-                                :test #'eq :key #'car)))
+                          (car (member (first arg-spec)
+                                       supplied-additional-args
+                                       :test #'eq :key #'car))))
                      (if (null supplied-value-pair) 
                          (second arg-spec)
                          (second supplied-value-pair)))))
@@ -625,7 +624,7 @@
   (flet ((add-it (unit-class)
            (let* ((evfn-blks (standard-unit-class.evfn-blks unit-class))
                   (evfn-blk 
-                   (or (cdr (assoc event-class evfn-blks :test #'eq))
+                   (or (cdr (assq event-class evfn-blks))
                        (let ((new-evfn-blk
                               (make-evfn-blk :event-class event-class
                                              :unit-class unit-class)))
@@ -673,7 +672,7 @@
                            (standard-space-instance.%%evfn-unit-ht%%
                             space-instance)))
                          (evfn-blk 
-                          (or (cdr (assoc event-class evfn-blks :test #'eq))
+                          (or (cdr (assq event-class evfn-blks))
                               (let ((new-evfn-blk
                                      (make-evfn-blk :event-class event-class
                                                     :unit-class unit-class)))
@@ -745,7 +744,7 @@
                     (let* ((evfn-blks
                             (gbbopen-effective-slot-definition.evfn-blks slot))
                            (evfn-blk 
-                            (or (cdr (assoc event-class evfn-blks :test #'eq))
+                            (or (cdr (assq event-class evfn-blks))
                                 (let ((new-evfn-blk
                                        (make-evfn-blk :event-class event-class
                                                       :unit-class unit-class
@@ -893,7 +892,7 @@
   (declare (ignore plus-subevents slot-names paths))
   (flet ((remove-it (unit-class)
            (let* ((evfn-blks (standard-unit-class.evfn-blks unit-class))
-                  (evfn-blk (cdr (assoc event-class evfn-blks :test #'eq))))
+                  (evfn-blk (cdr (assq event-class evfn-blks))))
              (when evfn-blk
                (cond
                 ;; non-nil `fn':
@@ -928,8 +927,7 @@
                              unit-class
                              (standard-space-instance.%%evfn-unit-ht%%
                               space-instance)))
-                           (evfn-blk (cdr (assoc event-class evfn-blks 
-                                                 :test #'eq))))
+                           (evfn-blk (cdr (assq event-class evfn-blks))))
                       (when evfn-blk
                         (cond
                          ;; non-nil `fn':
@@ -1003,7 +1001,7 @@
                       (let* ((evfn-blks
                               (gbbopen-effective-slot-definition.evfn-blks slot))
                              (evfn-blk 
-                              (cdr (assoc event-class evfn-blks :test #'eq))))
+                              (cdr (assq event-class evfn-blks))))
                         (when evfn-blk
                           (cond
                            ;; non-nil `fn':
@@ -1190,7 +1188,7 @@
     (declare (ignore plus-subevents slot-names paths))
     (flet ((describe-it (unit-class)
 	     (let* ((evfn-blks (standard-unit-class.evfn-blks unit-class))
-		    (evfn-blk (cdr (assoc event-class evfn-blks :test #'eq)))
+		    (evfn-blk (cdr (assq event-class evfn-blks)))
 		    (*%%unit-class-name%%* (class-name unit-class)))
 	       (when evfn-blk
 		 (evfn-describer evfn-blk fn)))))
@@ -1221,8 +1219,7 @@
 			   unit-class
 			   (standard-space-instance.%%evfn-unit-ht%%
 			    space-instance)))
-			 (evfn-blk (cdr (assoc event-class evfn-blks 
-					       :test #'eq)))
+			 (evfn-blk (cdr (assq event-class evfn-blks)))
 			 (*%%unit-class-name%%* (class-name unit-class)))
 		    (when evfn-blk
 		      (evfn-describer evfn-blk fn)))))
@@ -1258,7 +1255,7 @@
                                   (gbbopen-effective-slot-definition.evfn-blks 
                                    slot))
                                  (evfn-blk 
-                                  (cdr (assoc event-class evfn-blks :test #'eq))))
+                                  (cdr (assq event-class evfn-blks))))
                             (when evfn-blk
                               (let ((*%%slot-or-space-instance-name%%*
                                      (slot-definition-name slot)))
@@ -1392,7 +1389,7 @@
                 (original-class-of instance)
                 (class-of instance)))
 	   (evfn-blks (standard-unit-class.evfn-blks unit-class))
-	   (evfn-blk (cdr (assoc event-class evfn-blks :test #'eq))))
+	   (evfn-blk (cdr (assq event-class evfn-blks))))
       (when evfn-blk
 	(do-event-printing-and-evfns evfn-blk event-class args)))))
 
@@ -1408,7 +1405,7 @@
 	   (evfn-unit-ht 
 	    (standard-space-instance.%%evfn-unit-ht%% space-instance))
 	   (evfn-blks (gethash unit-class evfn-unit-ht))
-	   (evfn-blk (cdr (assoc event-class evfn-blks :test #'eq))))
+	   (evfn-blk (cdr (assq event-class evfn-blks))))
       (when evfn-blk	
 	(do-event-printing-and-evfns evfn-blk event-class args)))))
 
@@ -1421,7 +1418,7 @@
   (declare (dynamic-extent args))
   (when *%%events-enabled%%*
     (let* ((evfn-blks (gbbopen-effective-slot-definition.evfn-blks slot))
-	   (evfn-blk (cdr (assoc event-class evfn-blks :test #'eq))))
+	   (evfn-blk (cdr (assq event-class evfn-blks))))
       (when evfn-blk
 	(do-event-printing-and-evfns evfn-blk event-class args)))))
 
@@ -1434,7 +1431,7 @@
   (declare (dynamic-extent args))
   (when *%%events-enabled%%*
     (let* ((evfn-blks (gbbopen-effective-slot-definition.evfn-blks slot))
-	   (evfn-blk (cdr (assoc event-class evfn-blks :test #'eq))))
+	   (evfn-blk (cdr (assq event-class evfn-blks))))
       (when evfn-blk
 	(do-event-printing-and-evfns evfn-blk event-class args)))))
 

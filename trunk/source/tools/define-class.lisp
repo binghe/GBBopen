@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/define-class.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Mar  1 17:15:22 2010 *-*
+;;;; *-* Last-Edit: Tue Mar 16 16:39:37 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -176,7 +176,7 @@
         (parse-alist-options options extended-class-options)
       (multiple-value-bind (clos-direct-slots exports)
         (parse-direct-slots class-name direct-slots extended-options)
-        (when (cdr (assoc :export-class-name extended-options :test #'eq))
+        (when (cdr (assq :export-class-name extended-options))
           (push class-name exports))
         (values clos-direct-slots clos-options exports)))))
 
@@ -186,30 +186,27 @@
   (let ((clos-direct-slots nil)
         (exported-symbols nil)
         (generate-initargs 
-         (or (rest (assoc :generate-initargs extended-options :test #'eq))
+         (or (rest (assq :generate-initargs extended-options))
              ;; Default is t
              '(t)))
         (generate-accessors 
-         (or (rest (assoc :generate-accessors extended-options :test #'eq))
+         (or (rest (assq :generate-accessors extended-options))
              ;; Default is t
              '(t)))
         (generate-accessors-format
          (or (sole-element
-              (rest (assoc :generate-accessors-format extended-options
-                           :test #'eq)))
+              (rest (assq :generate-accessors-format extended-options)))
              *default-generate-accessors-format*))
         (generate-accessors-prefix 
          (sole-element
-          (rest (assoc :generate-accessors-prefix extended-options
-                       :test #'eq))))
+          (rest (assq :generate-accessors-prefix extended-options))))
         (generate-accessors-suffix
          (sole-element
-          (rest (assoc :generate-accessors-suffix extended-options
-                       :test #'eq))))
+          (rest (assq :generate-accessors-suffix extended-options))))
         (export-accessors 
-         (rest (assoc :export-accessors extended-options :test #'eq)))
+         (rest (assq :export-accessors extended-options)))
         (export-slot-names
-         (rest (assoc :export-slot-names extended-options :test #'eq)))
+         (rest (assq :export-slot-names extended-options)))
         ;; Currently undocumented class option (requested by Zack for CMU),
         ;; must be a symbol naming a function of two arguments, class-name
         ;; slot-name, (or an equivalent lambda expression) that returns the
@@ -218,8 +215,7 @@
         ;; complexity to support them wasn't justified.
         (generate-initargs-symbol-function
          (sole-element
-          (rest (assoc :generate-initargs-symbol-function extended-options 
-                       :test #'eq)))))
+          (rest (assq :generate-initargs-symbol-function extended-options)))))
     ;; Check that slot options refer to direct slots only:
     (check-option-slots class-name :generate-initargs 
                         generate-initargs direct-slots)

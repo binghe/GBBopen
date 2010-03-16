@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:AGENDA-SHELL; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/control-shells/agenda-shell.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Mar 13 15:52:14 2010 *-*
+;;;; *-* Last-Edit: Sun Mar 14 14:25:37 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -946,8 +946,7 @@
 			(cond ((and (integerp result)
 				    (<= 1 result max-index))
 			       (nth (1-& result) disabled-stepping-options))
-			      ((find result disabled-stepping-options 
-				     :test #'eq))))))
+			      ((car (memq result disabled-stepping-options)))))))
 		 (cond 
 		  (option-to-enable
 		   (push option-to-enable (cs.stepping cs))
