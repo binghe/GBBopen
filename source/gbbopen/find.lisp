@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/find.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Mar 16 16:36:13 2010 *-*
+;;;; *-* Last-Edit: Fri Mar 19 23:19:01 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -286,8 +286,8 @@
       (let ((unit-class (first unit-classes-spec)))
         (memoized-plus-subclasses-check-fn 
          unit-class
-         `#'(lambda (instance) 
-              (typep instance ',unit-class)))))
+         #'(lambda (instance) 
+             (typep instance unit-class)))))
      ((memq (second unit-classes-spec) '(:no-subclasses =))
       (let ((unit-class (first unit-classes-spec)))
         (memoized-atomic-check-fn 
