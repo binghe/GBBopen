@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/gbbopen-modules-directory.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Mar 16 10:52:02 2010 *-*
+;;;; *-* Last-Edit: Tue Mar 23 07:01:38 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -26,8 +26,10 @@
 ;;;  06-20-06 Add "pseudo symbolic-link" support (for operating systems that
 ;;;           do not provide symbolic links).  (Corkill)
 ;;;  03-29-08 Add PROCESS-GBBOPEN-MODULES-DIRECTORY rescanning.  (Corkill)
-;;;  06-01-09 Add *IGNORED-GBBOPEN-MODULES-DIRECTORY-SUBDIRECTORIES* parameter. 
+;;;  06-01-09 Add *IGNORED-GBBOPEN-MODULES-DIRECTORY-SUBDIRECTORIES* variable. 
 ;;;           (Corkill)
+;;;  03-21-10 Add *GBBOPEN-MODULES-DIRECTORY-VERBOSE* and *SYM-FILE-VERBOSE*
+;;;           variables.  (Corkill) 
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -38,7 +40,12 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defparameter *ignored-gbbopen-modules-directory-subdirectories*
+(defvar *gbbopen-modules-directory-verbose* t)
+(defvar *sym-file-verbose* nil)
+
+;;; ---------------------------------------------------------------------------
+
+(defvar *ignored-gbbopen-modules-directory-subdirectories*
     '(".svn"))
 
 (defvar *loaded-gbbopen-modules-directory-files* nil)
@@ -53,7 +60,7 @@
       (loop
 	(setf line (ignore-errors (read-line file nil nil)))
 	(unless line
-          (format t "~&;; WARNING: Unable to read the target-directory file ~s~%" 
+          (format t "~&;; WARNING: Unable to read the target-directory in file ~a~%" 
                   (namestring filename))
 	  (return-from read-target-directory-specification nil))
         (when (plusp (length line))
@@ -72,9 +79,8 @@
                          ;; We got the expected string:
                          (string (list (trim-spec string)))
                          (otherwise 
-                          (format t "~&;; WARNING: While reading from ~s: ~
-                                          Unable to read target-directory ~
-                                          specification \"~a\"~%" 
+                          (format t "~&;; WARNING: Unable to read target-directory ~
+                                          specification in file ~a: ~a~%" 
                                   (namestring file)
                                   line)
                           ;; return nil
@@ -115,20 +121,33 @@
               :defaults modules-dir))))
 	 (module-dirs
 	  (append
+           ;; Allegro CL includes regular files in directory-pathname listing,
+           ;; so we remove them:
            #+allegro
-           (directory subdirs-pathname :directories-are-files nil)
-	   #+clozure
+           (delete-if #'pathname-type
+                      (directory subdirs-pathname :directories-are-files nil))
+           #+clozure
            (directory subdirs-pathname :directories 't)
-	   #-(or allegro clozure)
+           ;; CMUCL and SCL include regular files in directory-pathname
+           ;; listing, so we remove them:
+           #+(or cmu scl)
+           (delete-if #'pathname-type (directory subdirs-pathname))
+           ;; Lispworks includes regular files in directory-pathname
+           ;; listing, so we remove them:
+           #+lispworks
+           (flet ((fn (pathname)
+                    (not (eq (pathname-type pathname) ':unspecific))))
+             (delete-if #'fn (directory subdirs-pathname)))
+	   #-(or allegro clozure cmu lispworks scl)
            (and
              ;; XCL requires the directory to be present:
              #+xcl (probe-directory modules-dir)
              (directory subdirs-pathname))
            ;; Add in any *.sym file "pseudo" symbolic links:
 	   (mapcan 'read-target-directory-specification
-		   pseudo-sym-link-paths)))
+                   pseudo-sym-link-paths)))
          (now (get-universal-time)))
-    (let ((message-printed? nil)
+    (let ((any-found? nil)
           (load-type (cond ((string= filename "modules")
                             "module definitions")
                            ((string= filename "commands")
@@ -151,13 +170,6 @@
                                :type "lisp"
                                :directory pathname-directory
                                :defaults dir)))
-                ;; Resolve symbolic links on CLs that keep directory pathnames
-                ;; unresolved:
-                #+allegro 
-                (setf pathname (pathname-resolve-symbolic-links pathname))                
-                #+lispworks
-                (setf pathname (or (probe-file pathname) pathname))
-                ;; Process the resolved directory:
                 (let* ((previous-load-time-acons 
                         (assoc pathname *loaded-gbbopen-modules-directory-files*
                                :test #'equal))
@@ -169,25 +181,30 @@
                                           (declare (notinline >))
                                         (not (> file-write-date 
                                                 previous-load-time))))))
-                    (when sym-filename
+                    (when (and sym-filename
+                               *sym-file-verbose*
+                               *gbbopen-modules-directory-verbose*)
                       (format t "~&;; Pseudo (*.sym) link ~a --> ~a~%"
                               sym-filename
                               dir))
                     (cond
                      ;; No load-type file in this directory:
                      ((not (probe-file pathname))
-                      (format t "~&;; WARNING: Unable to find ~
-                                      ~:[personal~;shared~] ~a file ~a~%" 
-                              shared?
-                              load-type
-                              (namestring pathname)))
-                     ((not message-printed?)
-                      (format t "~&;; Loading ~:[personal~;shared~] ~a from ~
-                                      ~a...~%" 
-                              shared?
-                              load-type
-                              (namestring modules-dir))
-                      (setf message-printed? 't)))
+                      (when *gbbopen-modules-directory-verbose*
+                        (format t "~&;; No ~:[personal~;shared~] ~a file ~
+                                        (~a.lisp) found in ~a~%" 
+                                shared?
+                                load-type
+                                filename
+                                (namestring dir))))
+                     ((not any-found?)
+                      (when *gbbopen-modules-directory-verbose*
+                        (format t "~&;; Loading ~:[personal~;shared~] ~a from ~
+                                        ~a...~%" 
+                                shared?
+                                load-type
+                                (namestring modules-dir)))
+                      (setf any-found? 't)))
                     (when (load (namestring pathname)
                                 :if-does-not-exist nil)
                       (cond 
@@ -197,11 +214,12 @@
                                 (acons 
                                  pathname now
                                  *loaded-gbbopen-modules-directory-files*))))))))))
-          (unless (or message-printed? *gbbopen-startup-loaded*)
-            (format t "~&;; No ~:[personal~;shared~] ~a were found in ~a.~%"
-                    shared?
-                    load-type 
-                    (namestring modules-dir))))))))
+          (unless (or any-found? *gbbopen-startup-loaded*)
+            (when *gbbopen-modules-directory-verbose*
+              (format t "~&;; No ~:[personal~;shared~] ~a were found in ~a.~%"
+                      shared?
+                      load-type 
+                      (namestring modules-dir)))))))))
   
 (compile-if-advantageous 'process-the-gbbopen-modules-directory)
 

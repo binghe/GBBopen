@@ -2,6 +2,10 @@ GBBopen version 1.5 coming soon!
 
 Important changes since GBBopen 1.4:
 
+  * Changes to gbbopen-modules directory processing
+     - New *GBBOPEN-MODULES-DIRECTORY-VERBOSE* and *SYM-FILE-VERBOSE* 
+       global variables
+
   * Changes to extended-REPL commands
      - New :lmf (LOAD-MODULE-FILE) REPL command
 

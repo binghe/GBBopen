@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Tue Mar 16 16:31:39 2010; Edited-By: cork *-*
+%% *-* Last-Edit: Mon Mar 22 06:18:45 2010; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2010, Dan Corkill <corkill@GBBopen.org>
@@ -1241,6 +1241,8 @@ within your Common Lisp environment:
   ;;   Loading \var{<install-dir>\/}/source/module-manager/module-manager.lisp
   ;;     Loading \var{<install-dir>\/}/source/module-manager/module-manager-user.lisp
   ;;  Loading \var{<install-dir>\/}/source/modules.lisp
+  ;; No shared module definitions were found in \var{<install-dir>\/}/shared-gbbopen-modules/.
+  ;; No personal module definitions were found in \var{<homedir>\/}/gbbopen-modules/.
   T
   > (module-manager:\entlink{compile-module} :gbbopen-test :propagate :create-dirs)
   ;; Compiling \var{<install-dir>\/}/source/module-manager/module-manager.lisp
@@ -1615,6 +1617,26 @@ Add \code{"CVS"} to the list of subdirectories that are ignored by GBBopen's
 
 %% ------------------------------------------------------------------------
 
+\begin{functiondoc}[gbbopen-modules-directory-verbose-var]%
+  {Variable}{*gbbopen-modules-directory-verbose*}{}%
+
+\fnsyntax
+
+\fnpurpose Controls whether the processing of individual modules is shown
+during \nobr{\code{gbbopen-modules}} directory processing.
+
+\fnpackage \code{:common-lisp-user}
+
+\fnmodule Defined in \code{gbbopen-modules-directory.lisp}
+
+\fnvaluetype A \glref{generalized~boolean}
+
+\fninitialvalue \code{t}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
 \begin{functiondoc}[preferred-browser-var]{Variable}{*preferred-browser*}{}%
 
 \fnsyntax
@@ -1674,6 +1696,54 @@ file) on Linux machines:
 platforms) and \xsitelink{SBCL}{http://sbcl.sourceforge.net} do not perform a
 \code{PATH} search for programs, so the browser-program path must be explicitly
 included in the preferred browser setting.
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}[sym-file-verbose-var]%
+  {Variable}{*sym-file-verbose*}{}%
+
+\fnsyntax
+
+\fnpurpose Controls whether the mapping from \code{*.sym} pseudo-symbolic-link
+files to target module directories is shown during
+\nobr{\code{gbbopen-modules}} directory processing.
+
+\fnpackage \code{:common-lisp-user}
+
+\fnmodule Defined in \code{gbbopen-modules-directory.lisp}
+
+\fnvaluetype A \glref{generalized~boolean}
+
+\fninitialvalue \nil
+
+\fnexample 
+%
+Show \code{*.sym} pseudo-symbolic-link file to target module-directory mapping
+\code{gbbopen-modules} directory processing on startup module loading (after
+\nobr{\code{\var{<install-directory>\/}/initiate.lisp}} has been loaded):
+%
+\W\supp
+\begin{example}
+  > (setf *sym-file-verbose* 't)
+  t
+  > :startup
+  ;; Loading \var{<install-dir>\/}/startup.lisp
+  ;; GBBopen is installed in \var{<install-dir>\/}
+  ;; Your "home" directory is \var{<homedir>\/}
+  ;;  Loading \var{<install-dir>\/}/source/module-manager/module-manager-loader.lisp
+  ;;   Loading \var{<install-dir>\/}/source/module-manager/module-manager.lisp
+  ;;     Loading \var{<install-dir>\/}/source/module-manager/module-manager-user.lisp
+  ;;  Loading \var{<install-dir>\/}/source/modules.lisp
+  ;; No shared module definitions were found in \var{<install-dir>\/}/shared-gbbopen-modules/.
+  ;; Loading personal module definitions from \var{<homedir>\/}/gbbopen-modules/...
+  ;; Pseudo (*.sym) link \var{<homedir>\/}/gbbopen-modules/an-app.sym --> /usr/local/an-app/
+  ;;  Loading /usr/local/an-app/modules.lisp
+  T
+  > 
+  >
+\end{example}
 
 \end{functiondoc}
 
