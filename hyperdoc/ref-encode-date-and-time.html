@@ -17,8 +17,14 @@
 <p><table class="tight" width="100%">
 <tr valign="top"><td valign="baseline" align="left"%>
 <nobr><b><font color="#000000">encode-date-and-time</font></b></nobr></td><td valign="baseline"> &nbsp; </td><td valign="baseline" align="left" width="99%"><var>string</var>
-<code>&#38;key</code> <var>start end <nobr>junk-allowed</nobr> <nobr>date-separators</nobr>
-<nobr>time-separators</nobr> <nobr>month-precedes-date</nobr> <nobr>time-zone</nobr></var>
+<code>&#38;key</code> <var>start 
+end 
+<nobr>junk-allowed</nobr>
+<nobr>date-separators</nobr>
+<nobr>time-separators</nobr> 
+<nobr>month-precedes-date</nobr>
+<nobr>year-first</nobr>
+<nobr>time-zone</nobr></var>
 <nobr><span 
     style="font-family: serif; font-style: normal">=&gt;</span> <nobr><var>universal-time,</var> pos</nobr></nobr></td><td valign="baseline" align="right">[<i>Function</i>]
 </td></tr></table></p>
@@ -43,6 +49,7 @@ hour, minute, and second fields in <var>string</var>, if needed (default is
 <nobr><code>" :"</code></nobr>)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>month-precedes-date</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> (default is 
 <nobr><b><a href="ref-month-precedes-date-var.html">*month-precedes-date*</a></b></nobr>)
+</td></tr><tr valign="top"><td valign="baseline" nowrap><i>year-first</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> (default is <code>nil</code>)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>time-zone</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id223">time&nbsp;zone</a> (default is <code>nil</code>,
 which is equivalent to the current time zone adjusted for daylight
 saving time)
@@ -60,12 +67,22 @@ possibly surrounded on either side by characters in <nobr><var>separators</var><
 by the year and the time of day. The month can be a numeric value (1&ndash;12), a
 three-letter abbreviation, or the full month name.  If the month is specified
 numerically, then the value of <nobr><var>month-precedes-date</var></nobr> is used to
-determine the month and date ordering. If no year is specified in
-<var>string</var>, the current year is assumed, unless the specified month and date
-have passed, in which case next year is assumed.  If no hour, minute, or
-second values are specified, they default to zero.  
+determine the month and date ordering. If no year is specified in <var>string</var>
+(and <var>year-first</var> is <code>nil</code>), the current year is assumed, unless the
+specified month and date have passed, in which case next year is assumed.  If
+no hour, minute, or second values are specified, they default to zero.
 </p>
-<p>If a time-zone is specified in <var>string</var>, it is used when encoding the
+<p><p> 
+If <var>month-precedes-date</var> is true, the month is expected before the date;
+otherwise the date is expected to follow the month.
+</p>
+<p><p> 
+If <var>year-first</var> is supplied and is non-<code>nil</code>, the year must be provided
+and it is expected before the month and date; otherwise the year (if provided)
+is expected to follow the month and date.
+</p>
+<p><p> 
+If a time-zone is specified in <var>string</var>, it is used when encoding the
 <nobr><var>universal-time</var></nobr> value.  Otherwise, if a non-<code>nil</code>
 <nobr><var>time-zone</var></nobr> argument was supplied, it used for the encoding.
 Otherwise, the current time zone adjusted for daylight saving time is used.
@@ -88,6 +105,12 @@ parse ended.
   &gt; (encode-date-and-time "April 1, 2010 10:30")
   3479121000
   19
+  &gt; (encode-date-and-time "Thu 1 Apr 2010")
+  3479083200
+  14
+  &gt; (encode-date-and-time "Thursday, April 1, 2010 10:30")
+  3479121000
+  29
   &gt; (encode-date-and-time "4/1/10 10:30pm")
   3479164200
   14

@@ -17,7 +17,11 @@
 <p><table class="tight" width="100%">
 <tr valign="top"><td valign="baseline" align="left"%>
 <nobr><b><font color="#000000">brief-date-and-time</font></b></nobr></td><td valign="baseline"> &nbsp; </td><td valign="baseline" align="left" width="99%"><nobr><code>&#38;optional</code> <var>universal-time</var></nobr>
-<code>&#38;key</code> <var>time-zone include-seconds destination</var>
+<code>&#38;key</code> <var><nobr>time-zone</nobr> 
+<nobr>month-precedes-date</nobr>
+<nobr>year-first</nobr>
+<nobr>include-seconds</nobr>
+destination</var>
 <span 
     style="font-family: serif; font-style: normal">=&gt;</span> <var>result</var></td><td valign="baseline" align="right">[<i>Function</i>]
 </td></tr></table></p>
@@ -34,6 +38,9 @@ which is equivalent to the value returned by
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>time-zone</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id223">time&nbsp;zone</a> (default is <code>nil</code>,
 which is equivalent to the current time zone adjusted for daylight
 saving time)
+</td></tr><tr valign="top"><td valign="baseline" nowrap><i>month-precedes-date</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> (default is 
+<nobr><b><a href="ref-month-precedes-date-var.html">*month-precedes-date*</a></b></nobr>)
+</td></tr><tr valign="top"><td valign="baseline" nowrap><i>year-first</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> (default is <code>nil</code>)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>include-seconds</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> (default is <code>nil</code>)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>destination</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> Either <code>nil</code>, <code>t</code>, a stream, or a string with a fill 
 pointer (default is <code>nil</code>)
@@ -58,6 +65,18 @@ current time zone adjusted for daylight saving time. If
 <nobr><var>time-zone</var></nobr> is supplied, it is assumed to include any adjustment
 for daylight saving time.
 </p>
+<p><p> 
+If <var>month-precedes-date</var> is true, the month is presented in front of the
+date; otherwise the date precedes the month.
+</p>
+<p><p> 
+If <var>year-first</var> is supplied and is non-<code>nil</code>, the year is presented in
+front of the month and date; otherwise the year follows the month and date.
+</p>
+<p><p> 
+If <var>include-seconds</var> is supplied and is non-<code>nil</code>, seconds are included
+in the presented time.
+</p>
 <p><span class="fndoclabel">See also</span>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-month-precedes-date-var.html"><b>*month-precedes-date*</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-brief-date.html"><b>brief-date</b></a>
@@ -75,13 +94,13 @@ for daylight saving time.
 </pre>
 Display the current date and time (with seconds):
 <pre>
-  &gt; (brief-date-and-time nil nil 't)
+  &gt; (brief-date-and-time nil :include-seconds 't)
   "Feb 16 13:11:38"
   &gt;
 </pre>
 Display the current date and time as GMT: 
 <pre>
-  &gt; (brief-date-and-time nil 0)
+  &gt; (brief-date-and-time nil :time-zone 0)
   "Feb 16 18:11"
   &gt;
 </pre>
@@ -100,7 +119,7 @@ The date and time 125 days ago:
 The date and time 125 days ago (with seconds, but ignored because no time of
 day is included for dates that are not within 120 days of the given time):
 <pre>
-  &gt; (brief-date-and-time (- (get-universal-time) (* 60 60 24 125)) nil 't)
+  &gt; (brief-date-and-time (- (get-universal-time) (* 60 60 24 125)) :include-seconds 't)
   "Oct 12, 2004   "
   &gt;
 </pre>
