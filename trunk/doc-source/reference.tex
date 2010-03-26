@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Mon Mar 22 06:18:45 2010; Edited-By: cork *-*
+%% *-* Last-Edit: Fri Mar 26 06:55:34 2010; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2010, Dan Corkill <corkill@GBBopen.org>
@@ -9011,7 +9011,10 @@ in order to make it available as early as possible.
 
 \begin{functiondoc}{Function}{brief-date}{%
     \nobr{\code{\&optional} \var{universal-time\/}}
-    \nobr{\code{\&key} \var{time-zone destination\/}}
+    \code{\&key} \var{\nobr{time-zone} 
+      \nobr{month-precedes-date} 
+      \nobr{year-first} 
+      destination\/}
     \returns{} \var{result\/}}
 \index{date!formatted}% 
 \index{time, formatted}% 
@@ -9032,6 +9035,9 @@ in order to make it available as early as possible.
 \arg[time-zone] A \glref{time~zone} (default is \nil,
   which is equivalent to the current time zone adjusted for daylight
   saving time)
+\arg[month-precedes-date] A \glref{generalized~boolean} (default is 
+\nobr{\textbf{\entlink{*month-precedes-date*}}})
+\arg[year-first] A \glref{generalized~boolean} (default is \nil)
 \arg[destination] Either \nil, \code{t}, a stream, or a string with a fill 
 pointer (default is \nil)
 \arg[result] A string or \nil{}
@@ -9047,10 +9053,21 @@ A 12-character description is generated.
 If \var{universal-time\/} is not supplied or is \nil, the current time
 (as returned by \nobr{\code{get-universal-time}} is used.  
 
-\W\xml{p} If \var{time-zone\/} is not supplied or is \nil, it defaults to the
-current time zone adjusted for daylight saving time. If
-\nobr{\var{time-zone\/}} is supplied, it is assumed to include any adjustment
-for daylight saving time.
+\W\xml{p} 
+%
+If \var{time-zone\/} is not supplied or is \nil, it defaults to the current
+time zone adjusted for daylight saving time. If \nobr{\var{time-zone\/}} is
+supplied, it is assumed to include any adjustment for daylight saving time.
+
+\W\xml{p} 
+%
+If \var{month-precedes-date\/} is true, the month is presented in front of the
+date; otherwise the date precedes the month.
+
+\W\xml{p} 
+%
+If \var{year-first\/} is supplied and is non-\nil, the year is presented in
+front of the month and date; otherwise the year follows the month and date.
 
 \begin{alsos}{internet-text-date-and-time}
 \also[*month-precedes-date*]
@@ -9094,7 +9111,11 @@ in order to to make it available as early as possible.
 
 \begin{functiondoc}{Function}{brief-date-and-time}{%
     \nobr{\code{\&optional} \var{universal-time\/}}
-    \code{\&key} \var{time-zone include-seconds destination\/}
+    \code{\&key} \var{\nobr{time-zone} 
+      \nobr{month-precedes-date}
+      \nobr{year-first}
+      \nobr{include-seconds}
+      destination\/}
     \returns{} \var{result\/}}
 \index{date!formatted}% 
 \index{time, formatted}% 
@@ -9115,6 +9136,9 @@ in order to to make it available as early as possible.
 \arg[time-zone] A \glref{time~zone} (default is \nil,
   which is equivalent to the current time zone adjusted for daylight
   saving time)
+\arg[month-precedes-date] A \glref{generalized~boolean} (default is 
+  \nobr{\textbf{\entlink{*month-precedes-date*}}})
+\arg[year-first] A \glref{generalized~boolean} (default is \nil)
 \arg[include-seconds] A \glref{generalized~boolean} (default is \nil)
 \arg[destination] Either \nil, \code{t}, a stream, or a string with a fill 
 pointer (default is \nil)
@@ -9142,6 +9166,21 @@ current time zone adjusted for daylight saving time. If
 \nobr{\var{time-zone\/}} is supplied, it is assumed to include any adjustment
 for daylight saving time.
 
+\W\xml{p} 
+%
+If \var{month-precedes-date\/} is true, the month is presented in front of the
+date; otherwise the date precedes the month.
+
+\W\xml{p} 
+%
+If \var{year-first\/} is supplied and is non-\nil, the year is presented in
+front of the month and date; otherwise the year follows the month and date.
+
+\W\xml{p} 
+%
+If \var{include-seconds\/} is supplied and is non-\nil, seconds are included
+in the presented time.
+
 \begin{alsos}{internet-text-date-and-time}
 \also[*month-precedes-date*]
 \also[brief-date]
@@ -9166,7 +9205,7 @@ Display the current date and time (with seconds):
 %
 \W\supp\notpretop
 \begin{example}
-  > (brief-date-and-time nil nil 't)
+  > (brief-date-and-time nil :include-seconds 't)
   "Feb 16 13:11:38"
   >
 \end{example}
@@ -9175,7 +9214,7 @@ Display the current date and time as GMT:
 %
 \W\supp\notpretop
 \begin{example}
-  > (brief-date-and-time nil 0)
+  > (brief-date-and-time nil :time-zone 0)
   "Feb 16 18:11"
   >
 \end{example}
@@ -9203,7 +9242,7 @@ day is included for dates that are not within 120 days of the given time):
 %
 \W\supp\notpretop
 \begin{example}
-  > (brief-date-and-time (- (get-universal-time) (* 60 60 24 125)) nil 't)
+  > (brief-date-and-time (- (get-universal-time) (* 60 60 24 125)) :include-seconds 't)
   "Oct 12, 2004   "
   >
 \end{example}
@@ -9358,8 +9397,14 @@ description.
 
 \begin{functiondoc}{Function}{encode-date-and-time}{%
     \var{string\/}
-    \code{\&key} \var{start end \nobr{junk-allowed} \nobr{date-separators}
-      \nobr{time-separators} \nobr{month-precedes-date} \nobr{time-zone}\/}
+    \code{\&key} \var{start 
+      end 
+      \nobr{junk-allowed}
+      \nobr{date-separators}
+      \nobr{time-separators} 
+      \nobr{month-precedes-date}
+      \nobr{year-first}
+      \nobr{time-zone}\/}
     \nobr{\returns{} \nobr{\var{universal-time,} pos\/}}}
 \index{date!parsing}% 
 
@@ -9387,6 +9432,7 @@ end of \var{string\/})
  \nobr{\code{" :"}})
 \arg[month-precedes-date] A \glref{generalized~boolean} (default is 
 \nobr{\textbf{\entlink{*month-precedes-date*}}})
+\arg[year-first] A \glref{generalized~boolean} (default is \nil)
 \arg[time-zone] A \glref{time~zone} (default is \nil,
   which is equivalent to the current time zone adjusted for daylight
   saving time)
@@ -9408,11 +9454,24 @@ Both the month and date must be specified in \var{string}, optionally followed
 by the year and the time of day. The month can be a numeric value (1--12), a
 three-letter abbreviation, or the full month name.  If the month is specified
 numerically, then the value of \nobr{\var{month-precedes-date\/}} is used to
-determine the month and date ordering. If no year is specified in
-\var{string}, the current year is assumed, unless the specified month and date
-have passed, in which case next year is assumed.  If no hour, minute, or
-second values are specified, they default to zero.  
+determine the month and date ordering. If no year is specified in \var{string}
+(and \var{year-first\/} is \nil), the current year is assumed, unless the
+specified month and date have passed, in which case next year is assumed.  If
+no hour, minute, or second values are specified, they default to zero.
 
+\W\xml{p} 
+%
+If \var{month-precedes-date\/} is true, the month is expected before the date;
+otherwise the date is expected to follow the month.
+
+\W\xml{p} 
+%
+If \var{year-first\/} is supplied and is non-\nil, the year must be provided
+and it is expected before the month and date; otherwise the year (if provided)
+is expected to follow the month and date.
+
+\W\xml{p} 
+%
 If a time-zone is specified in \var{string}, it is used when encoding the
 \nobr{\var{universal-time\/}} value.  Otherwise, if a non-\nil{}
 \nobr{\var{time-zone\/}} argument was supplied, it used for the encoding.
@@ -9436,10 +9495,16 @@ parse ended.
 \begin{example}
   > (encode-date-and-time "1 Apr 2010")
   3479083200
-  10\goodpagebreak
+  10
   > (encode-date-and-time "April 1, 2010 10:30")
   3479121000
   19\goodpagebreak
+  > (encode-date-and-time "Thu 1 Apr 2010")
+  3479083200
+  14
+  > (encode-date-and-time "Thursday, April 1, 2010 10:30")
+  3479121000
+  29\goodpagebreak
   > (encode-date-and-time "4/1/10 10:30pm")
   3479164200
   14\goodpagebreak
@@ -9470,8 +9535,8 @@ parse ended.
 
 \begin{functiondoc}{Function}{encode-time-of-day}%
   {\var{second minute hour\/} 
-    \code{\&optional} \var{universal-time\/}
-    \returns{} \var{universal-time\/}}
+    \code{\&optional} \var{\nobr{universal-time}\/}
+    \returns{} \var{\nobr{universal-time}\/}}
 
 \fnsyntax
 
@@ -9539,9 +9604,18 @@ Verbosely change \nobr{\code{quitting-time}} to 5:30pm every day:
 
 \begin{functiondoc}{Function}{full-date-and-time}{%
     \code{\&optional} \var{universal-time\/}
-    \code{\&key} \var{time-zone daylight-savings-p all-numeric full-names
-      include-day include-seconds include-time-zone
-      month-precedes-date utc-offset-only 12-hour destination\/}
+    \code{\&key} \var{\nobr{time-zone}
+      \nobr{daylight-savings-p}
+      \nobr{all-numeric}
+      \nobr{full-names}
+      \nobr{month-precedes-date}
+      \nobr{year-first}
+      \nobr{include-day}
+      \nobr{include-seconds}
+      \nobr{include-time-zone}
+      \nobr{utc-offset-only}
+      \nobr{12-hour}
+      destination\/}
     \returns{} \var{result\/}}
 \index{date!formatted}%
 \index{time, formatted}%
@@ -9565,10 +9639,11 @@ Verbosely change \nobr{\code{quitting-time}} to 5:30pm every day:
 \arg[daylight-savings-p] A \glref{generalized~boolean} (default is \nil)        
 \arg[all-numeric] A \glref{generalized~boolean} (default is \nil)
 \arg[full-names] A \glref{generalized~boolean} (default is \nil)
-\arg[include-day] A \glref{generalized~boolean} (default is \nil)
-\arg[include-time-zone] A \glref{generalized~boolean} (default is \nil)
 \arg[month-precedes-date] A \glref{generalized~boolean} (default is 
   \nobr{\textbf{\entlink{*month-precedes-date*}}})
+\arg[year-first] A \glref{generalized~boolean} (default is \nil)
+\arg[include-day] A \glref{generalized~boolean} (default is \nil)
+\arg[include-time-zone] A \glref{generalized~boolean} (default is \nil)
 \arg[utc-offset-only] A \glref{generalized~boolean} (default is \nil)
 \arg[12-hour] A \glref{generalized~boolean} (default is \nil)
 \arg[destination] Either \nil, \code{t}, a stream, or a string with a fill 
@@ -9591,21 +9666,47 @@ If \nobr{\var{universal-time\/}} is not supplied or is \nil, the current time
 
 \W\xml{p} 
 %
-If \var{full-names\/} is supplied and is non-\nil, the full name is generated
-rather than the abbreviated name for the month (and for the day of the week,
-if \var{include-day\/} is non-\nil).
+If \var{time-zone\/} is not supplied or is \nil, it defaults to the current
+time zone adjusted for daylight saving time. If a \nobr{\var{time-zone\/}} is
+supplied, it is assumed to include any adjustment for daylight saving time
+unless \nobr{\var{daylight-savings-p\/} is specified and is non-\nil}.
 
 \W\xml{p} 
 %
-If \var{time-zone\/} is not supplied or is \nil, it defaults to the current
-time zone adjusted for daylight saving time. If a \nobr{\var{time-zone\/}} is
-supplied, it is assumed to include any adjustment for daylight saving time.
+If \var{all-numeric\/} is supplied and is non-\nil, the month is indicated by
+its numeric value.
+
+\W\xml{p} 
+%
+If \var{full-names\/} is supplied and is non-\nil, the full name is generated
+rather than the abbreviated name for the month (if \var{include-day\/} is
+\nil) and for the day of the week, (if \var{include-day\/} is non-\nil).
+
+\W\xml{p} 
+%
+If \var{month-precedes-date\/} is true, the month is presented in front of the
+date; otherwise the date precedes the month.
+
+\W\xml{p} 
+%
+If \var{year-first\/} is supplied and is non-\nil, the year is presented in
+front of the month and date; otherwise the year follows the month and date.
+
+\W\xml{p} 
+%
+If \var{include-day\/} is supplied and is non-\nil, the day of the week is
+included in front of the date and time.
+
+\W\xml{p} 
+%
+If \var{include-seconds\/} is supplied and is non-\nil, seconds are included
+in the presented time.
 
 \W\xml{p} 
 %
 If either \var{include-time-zone\/} or \var{utc-offset-only\/} is true,
-time-zone specification is appended to the date-and-time representation.  If
-\var{utc-offset-only\/} is true, the time zone is represented as a UTC
+a time-zone specification is appended to the date-and-time presentation.  If
+\var{utc-offset-only\/} is true, the time zone is presented as a UTC
 offset---even if a \link{{time-zone abbreviation}}{ref:timezones} supported by
 GBBopen Tools is available for the time zone.  If a \nobr{\var{time-zone\/}}
 is supplied, the value of \nobr{\var{daylight-savings-p\/}} is used when
@@ -9616,7 +9717,7 @@ determined by \code{decode-universal-time}) is used, and the
 
 \W\xml{p} 
 %
-If \var{12-hour\/} is supplied and is non-\nil, the time-of-day is represented
+If \var{12-hour\/} is supplied and is non-\nil, the time-of-day is presented
 in AM/PM format.
 
 \begin{alsos}{internet-text-date-and-time}
@@ -10119,7 +10220,17 @@ parse ended.
   1
   4
   2010
-  13\goodpagebreak
+  13
+  > (parse-date "Thu 1 Apr 2010")
+  1
+  4
+  2010
+  14
+  > (parse-date "Thursday, April 1, 2010")
+  1
+  4
+  2010
+  23\goodpagebreak
   > (parse-date "1-4-10" :month-precedes-date 't)
   4
   1
@@ -10161,7 +10272,7 @@ in order to to make it available as early as possible.
 \begin{functiondoc}{Function}{parse-date-and-time}{%
     \var{string\/}
     \code{\&key} \var{start end \nobr{junk-allowed} \nobr{date-separators}
-      \nobr{time-separators} \nobr{month-precedes-date}\/}
+      \nobr{time-separators} \nobr{month-precedes-date} \nobr{year-first}\/}
     \nobr{\returns{} \var{second, minute, hour, date, month, year, 
         \nobr{time-zone,} \nobr{daylight-savings-p,} pos\/}}}
 \index{date!parsing}% 
@@ -10189,6 +10300,7 @@ end of \var{string\/})
  \nobr{\code{" :"}})
 \arg[month-precedes-date] A \glref{generalized~boolean} (default is 
 \nobr{\textbf{\entlink{*month-precedes-date*}}})
+\arg[year-first] A \glref{generalized~boolean} (default is \nil)
 \arg[second] An integer between 0 and up to 59, inclusive
 \arg[minute] An integer between 0 and up to 59, inclusive
 \arg[hour] An integer between 0 and up to 23, inclusive
@@ -10218,12 +10330,30 @@ Both the month and date must be specified in \var{string}, optionally followed
 by the year and the time of day. The month can be a numeric value (1--12), a
 three-letter abbreviation, or the full month name.  If the month is specified
 numerically, then the value of \nobr{\var{month-precedes-date\/}} is used to
-determine the month and date ordering. If no year is specified in
-\var{string}, the current year is assumed, unless the specified month and date
-have passed, in which case next year is assumed.  If no hour, minute, or
-second values are specified, they default to zero.  The values returned for
-\nobr{\var{time-zone}} and \nobr{\var{daylight-savings-p}} will be \nil{}
-unless a time-zone is specified in \var{string}.
+determine the month and date ordering. If no year is specified in \var{string}
+(and \var{year-first\/} is \nil), the current year is assumed, unless the
+specified month and date have passed, in which case next year is assumed.  If
+no hour, minute, or second values are specified, they default to zero.  The
+values returned for \nobr{\var{time-zone}} and \nobr{\var{daylight-savings-p}}
+will be \nil{} unless a time-zone is specified in \var{string}.
+
+\W\xml{p} 
+%
+If \var{month-precedes-date\/} is true, the month is expected before the date;
+otherwise the date is expected to follow the month.
+
+\W\xml{p} 
+%
+If \var{year-first\/} is supplied and is non-\nil, the year must be provided
+and it is expected before the month and date; otherwise the year (if provided)
+is expected to follow the month and date.
+
+\W\xml{p} 
+%
+If a time-zone is specified in \var{string}, it is used when encoding the
+\nobr{\var{universal-time\/}} value.  Otherwise, if a non-\nil{}
+\nobr{\var{time-zone\/}} argument was supplied, it used for the encoding.
+Otherwise, the current time zone adjusted for daylight saving time is used.
 
 The returned \var{position\/} is the index within \var{string\/} where the
 parse ended.

@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/date-and-time.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Mar 12 05:18:07 2010 *-*
+;;;; *-* Last-Edit: Fri Mar 26 05:50:06 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -255,9 +255,10 @@
                                   include-day
                                   include-seconds
                                   include-time-zone
-                                  (month-precedes-date *month-precedes-date*)
                                   utc-offset-only
                                   12-hour
+                                  (month-precedes-date *month-precedes-date*)
+                                  year-first
                                   destination)
     ;;;  Returns formatted date/time string (always includes date and time-of-day)
     (multiple-value-bind (second minute hour date month year
@@ -275,7 +276,8 @@
                             (when (>=& hour 13)
                               (decf& hour 12))
                             "PM")
-                           (t (when (zerop& hour) (setf hour 12))
+                           (t (when (zerop& hour) 
+                                (setf hour 12))
                               "AM"))))
             (day-name (when include-day
                         (if full-names
@@ -301,14 +303,17 @@
                 utc-offset-only))))
         (if month-precedes-date
             (format destination
-                    "~@[~a ~]~:[~a ~2d~@[,~*~] ~a~;~2,'0d/~2,'0d~*/~a~] ~
+                    "~@[~a ~]~:[~@[~s, ~]~a ~2d~@[,~*~]~@[ ~s~]~;~
+                                ~@[~s/~]~2,'0d/~2,'0d~*~@[/~s~]~]~@[, ~a~] ~
                      ~2,'0d:~2,'0d~:[~*~;:~2,'0d~]~@[~a~]~@[ ~a~]"
-                    day-name
+                    (unless year-first day-name)
                     all-numeric
+                    (when year-first year)
                     month-name
                     date
-                    full-names
-                    year
+                    (and full-names (not year-first))
+                    (unless year-first year)
+                    (when year-first day-name)
                     hour
                     minute
                     include-seconds
@@ -316,14 +321,17 @@
                     am/pm
                     time-zone-abbreviation)
             (format destination 
-                    "~@[~a ~]~:[~2d ~a~@[,~*~] ~a~;~2,'0d/~2,'0d~*/~a~] ~
+                    "~@[~a ~]~:[~@[~s, ~]~2d ~a~@[,~*~]~@[ ~s~]~;~
+                                ~@[~s/~]~2,'0d/~2,'0d~*~@[/~s~]~]~@[, ~a~] ~
                      ~2,'0d:~2,'0d~:[~*~;:~2,'0d~]~@[~a~]~@[ ~a~]"
-                    day-name
+                    (unless year-first day-name)
                     all-numeric
+                    (when year-first year)
                     date
                     month-name
-                    full-names
-                    year
+                    (and full-names (not year-first))
+                    (unless year-first year)
+                    (when year-first day-name)
                     hour
                     minute
                     include-seconds
@@ -529,7 +537,8 @@
                                  (junk-allowed nil)
                                  (date-separators "-/ ,")
                                  (time-separators " :")
-                                 (month-precedes-date *month-precedes-date*))
+                                 (month-precedes-date *month-precedes-date*)
+                                 year-first)
   (let ((time-only nil))
     (multiple-value-bind (date month year start)
         (with-error-handling
@@ -537,7 +546,8 @@
                         :start start :end end 
                         :junk-allowed 't
                         :separators date-separators
-                        :month-precedes-date month-precedes-date)
+                        :month-precedes-date month-precedes-date
+                        :year-first year-first)
           ;; If date parsing failed, try as just a time:
           (setf time-only 't)
           (values nil nil nil start))

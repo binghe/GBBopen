@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/module-manager/module-manager.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Jan  1 10:42:59 2010 *-*
+;;;; *-* Last-Edit: Fri Mar 26 06:30:57 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -407,6 +407,9 @@
     #("January" "February" "March" "April" "May" "June"
       "July" "August" "September" "October" "November" "December"))
 
+(defparameter *weekday-abbreviation-vector*
+    #("Mo" "Tu" "We" "Th" "Fr" "Sa" "Su"))
+
 (defparameter *weekday-name-vector*
     #("Mon" "Tue" "Wed" "Thu" "Fri" "Sat" "Sun"))
 
@@ -433,8 +436,10 @@
   ;; SBCL (rightly) complains about combining &optional and &key, but we
   ;; ignore that here:
   #+sbcl (declare (sb-ext:muffle-conditions style-warning))
-  (defun brief-date (&optional universal-time 
-                     &key time-zone 
+  (defun brief-date (&optional universal-time
+                     &key (month-precedes-date *month-precedes-date*)
+                          year-first
+                          time-zone 
                           destination)
   ;;;  Returns formatted date string
     (multiple-value-bind (second minute hour date month year)
@@ -443,15 +448,25 @@
       (let ((month-name (svref (the (simple-array t (*))
                                  *month-name-vector*)
                                (& (1- (& month))))))
-        (if *month-precedes-date*     
-            (format destination "~a ~2d, ~s"
-                    month-name
-                    date
-                    year)
-            (format destination "~2d ~a, ~s"
-                    date
-                    month-name
-                    year))))))
+        (if year-first
+            (if month-precedes-date
+                (format destination "~s, ~a ~2d"
+                        year
+                        month-name
+                        date)
+                (format destination "~s, ~2d ~a"
+                        year
+                        date
+                        month-name))
+            (if month-precedes-date
+                (format destination "~a ~2d, ~s"
+                        month-name
+                        date
+                        year)
+                (format destination "~2d ~a, ~s"
+                        date
+                        month-name
+                        year)))))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -460,7 +475,9 @@
   ;; ignore that here:
   #+sbcl (declare (sb-ext:muffle-conditions style-warning))
   (defun brief-date-and-time (&optional universal-time 
-                              &key time-zone
+                              &key (month-precedes-date *month-precedes-date*)
+                                   year-first
+                                   time-zone
                                    include-seconds
                                    destination)
     ;;;  Returns formatted date/time string (brief, Unix ls-like form)
@@ -478,7 +495,7 @@
           (if (< (& time-difference)
                  ;; 120 days:
                  #.(* 60 60 24 120))
-              (if *month-precedes-date*
+              (if month-precedes-date
                   (format destination "~a ~2d ~2,'0d:~2,'0d~:[~;:~2,'0d~]"
                           month-name
                           date
@@ -493,17 +510,29 @@
                           minute
                           include-seconds
                           second))
-              (if *month-precedes-date*     
-                  (format destination "~a ~2d, ~a~@[   ~]"
-                          month-name
-                          date
-                          year
-                          include-seconds)
-                  (format destination "~2d ~a, ~a~@[   ~]"
-                          date
-                          month-name
-                          year
-                          include-seconds))))))))
+              (if year-first
+                  (if month-precedes-date
+                      (format destination "~s, ~a ~2d~@[   ~]"
+                              year
+                              month-name
+                              date
+                              include-seconds)
+                      (format destination "~s, ~2d ~a~@[   ~]"
+                              year
+                              date
+                              month-name
+                              include-seconds))
+                  (if month-precedes-date
+                      (format destination "~a ~2d, ~s~@[   ~]"
+                              month-name
+                              date
+                              year
+                              include-seconds)
+                      (format destination "~2d ~a, ~s~@[   ~]"
+                              date
+                              month-name
+                              year
+                              include-seconds)))))))))
   
 ;;; ---------------------------------------------------------------------------
 
@@ -511,35 +540,39 @@
                                (end (length string))
                                (junk-allowed nil)
                                (separators "-/ ,")
-                               (month-precedes-date *month-precedes-date*))
+                               (month-precedes-date *month-precedes-date*)
+                               year-first)
   ;;; Parses many intuitive date formats (sensitive to month-precedes-date,
   ;;; if needed):
   (declare (simple-string string))
-  (let (date month year month-preceded-date name-equal-string)
+  (let ((ptr start)
+        date month year month-preceded-date name-equal-string)
     (labels ((name-equal (name)
                (when (string-equal 
                       string name
-                      :start1 start
+                      :start1 ptr
                       :end1 (& (min (& end)
-                                    (& (+ (& start) (& (length name)))))))
+                                    (& (+ (& ptr) (& (length name)))))))
                  (setf name-equal-string name)))
              (process-date ()
-               (multiple-value-setq (date start)
-                 (parse-integer string :start start :end end :junk-allowed t)))
+               (multiple-value-setq (date ptr)
+                 (parse-integer string :start ptr :end end :junk-allowed t)))
              (process-possible-day ()
                (setf name-equal-string nil)
                (when (or (position-if #'name-equal
                                       *weekday-full-name-vector*)
                          (position-if #'name-equal
-                                      *weekday-name-vector*))
-                 (incf& start (& (length name-equal-string)))
+                                      *weekday-name-vector*)
+                         (position-if #'name-equal
+                                      *weekday-abbreviation-vector*))
+                 (incf& ptr (& (length name-equal-string)))
                  (skip-separators)))
              (process-month ()
                (cond
                 ;; Numeric month:
-                ((digit-char-p (schar string start))
-                 (multiple-value-setq (month start)
-                   (parse-integer string :start start :end end :junk-allowed t)))
+                ((digit-char-p (schar string ptr))
+                 (multiple-value-setq (month ptr)
+                   (parse-integer string :start ptr :end end :junk-allowed t)))
                 ;; Month name:
                 (t (setf name-equal-string nil)
                    (setf month (or (position-if #'name-equal
@@ -549,7 +582,36 @@
                    (unless month
                      (error "Unable to determine the month in ~s" string))
                    (incf& month)
-                   (incf& start (& (length name-equal-string))))))
+                   (incf& ptr (& (length name-equal-string))))))
+             (process-year ()
+               (cond 
+                ;; Assumed year, if omitted:
+                ((= (& ptr) (& end))
+                 (setf year (default-year)))
+                ;; Otherwise, process the specified year:
+                (t (multiple-value-setq (year ptr)
+                     (parse-integer string :start ptr :end end 
+                                    :junk-allowed (if year-first 
+                                                      't
+                                                      junk-allowed)))
+                   (if year
+                       ;; a year was specified:
+                       (check-type year (integer 0 #.most-positive-fixnum))
+                       ;; use assumed year:
+                       (setf year (default-year)))))
+               ;; Upgrade YY to YYYY -- YY assumed within +/- 50 years from
+               ;; current time (if year < 100):
+               (setf year (cond 
+                           ;; No year upgrade needed:
+                           ((>= (& year) 100) year)
+                           ;; Do the upgrade:
+                           (t (let ((current-century
+                                     (& (* 100 
+                                           (& (truncate (& (nth-value 5 (get-decoded-time)))
+                                                        100))))))
+                                (if (>= (& year) 50) 
+                                    (& (+ (& year) (& current-century) -100))
+                                    (& (+ (& year) (& current-century)))))))))
              (default-year ()
                ;;; return the default year; used when a year is not specified:
                  (multiple-value-bind (seconds minutes hours 
@@ -560,20 +622,24 @@
                    (if (or (< (& month) (& current-month))
                            (and (= (& month) (& current-month))
                                 (< (& date) (& current-date))))
-                       (+& current-year 1)
+                       (+ (& current-year) 1)
                        current-year)))
              (skip-separators ()
                (loop 
-                   while (and (< (& start) (& end))
-                              (find (schar string start) separators))
-                   do (incf& start))))
+                   while (and (< (& ptr) (& end))
+                              (find (schar string ptr) separators))
+                   do (incf& ptr))))
       (skip-separators)
       ;; We might-have a day of week, which we skip:
-      (process-possible-day)
-      (when (< (the fixnum start) (the fixnum end))
+      (unless year-first (process-possible-day))
+      ;; Process the required year, if year-first:
+      (when year-first
+        (process-year)
+        (skip-separators))
+      (when (< (the fixnum ptr) (the fixnum end))
         ;; If we have a month name, then we know the month-date order; otherwise
         ;; we'll assume month-first for now, until we process the second field:
-        (when (alpha-char-p (schar string start))
+        (when (alpha-char-p (schar string ptr))
           (setf month-preceded-date 't))
         (process-month)
         (skip-separators)
@@ -581,7 +647,7 @@
          ((and (not month-preceded-date)
                (or
                 ;; We have a month name in the second field:
-                (alpha-char-p (schar string start))
+                (alpha-char-p (schar string ptr))
                 ;; Use the month-precedes-date value to decide the order:
                 (not month-precedes-date)))
           ;; We actually have the date value from the first field (rather than
@@ -594,34 +660,14 @@
         (skip-separators))
       (check-type month (integer 1 12))
       (check-type date (integer 1 31))
-      ;; Process year:
-      (cond 
-       ;; Assumed year, if omitted:
-       ((= (& start) (& end))
-        (setf year (default-year)))
-       ;; Otherwise, process the specified year:
-       (t (multiple-value-setq (year start)
-            (parse-integer string :start start :end end 
-                           :junk-allowed junk-allowed))
-          (if year
-              ;; a year was specified:
-              (check-type year (integer 0 #.most-positive-fixnum))
-              ;; use assumed year:
-              (setf year (default-year)))))
-      ;; Upgrade YY to YYYY -- YY assumed within +/- 50 years from current time
-      ;; (if year < 100):
-      (setf year (cond 
-                  ;; No year upgrade needed:
-                  ((>= (& year) 100) year)
-                  ;; Do the upgrade:
-                  (t (let ((current-century
-                            (& (* 100 
-                                  (& (truncate (& (nth-value 5 (get-decoded-time)))
-                                               100))))))
-                       (if (>= (& year) 50) 
-                           (& (+ (& year) (& current-century) -100))
-                           (& (+ (& year) (& current-century)))))))))
-    (values date month year start)))
+      (unless year-first (process-year))
+      ;; We might-have a day of week, which we skip:
+      (when year-first (process-possible-day)
+            (unless (or junk-allowed
+                        (= (& ptr) (& end)))
+              (error "There is junk in this string: ~s" 
+                     (subseq string start end)))))
+    (values date month year ptr)))
 
 ;;; ===========================================================================
 ;;;  Directories and modules hash tables
