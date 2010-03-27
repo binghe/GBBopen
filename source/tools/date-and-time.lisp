@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/date-and-time.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Mar 26 05:50:06 2010 *-*
+;;;; *-* Last-Edit: Sat Mar 27 06:04:42 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -41,7 +41,8 @@
             module-manager:brief-date
             module-manager:brief-date-and-time
             module-manager::decode-supplied-universal-time
-            module-manager:parse-date)))
+            module-manager:parse-date
+            module-manager::junk-in-string-error)))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(*month-precedes-date*       ; these three entities are defined in 
@@ -143,11 +144,6 @@
       ;;;  Additional abbreviations (hourly offset duplicates--used for
       ;;;  decoding only):
       ))
-
-;;; ---------------------------------------------------------------------------
-
-(defun junk-in-string-error (string)
-  (error "There's junk in this string: ~s" string))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -259,6 +255,7 @@
                                   12-hour
                                   (month-precedes-date *month-precedes-date*)
                                   year-first
+                                  (separator #\/)
                                   destination)
     ;;;  Returns formatted date/time string (always includes date and time-of-day)
     (multiple-value-bind (second minute hour date month year
@@ -281,38 +278,51 @@
                               "AM"))))
             (day-name (when include-day
                         (if full-names
-                            (concatenate 'string
-                              (svref (the (simple-array t (*))
-                                       *weekday-full-name-vector*)
-                                     day)
-                              ",")
+                            (svref (the (simple-array t (*))
+                                     *weekday-full-name-vector*)
+                                   day)
                             (svref (the (simple-array t (*))
                                      *weekday-name-vector*)
                                    day))))
+            (long-day-name? (and include-day full-names))
             (time-zone-abbreviation
              (when (or include-time-zone utc-offset-only)
                (time-zone-abbreviation
                 zone
                 ;; If a `time-zone' was specified, the user must specify
                 ;; whether daylight savings is applicable to the decoded
-                ;; universal-time; otherwise, we use the local
-                ;; daylight-savings-p determined by DECODE-UNIVERSAL-TIME:
+                ;; universal-time; otherwise, we use CL's local
+                ;; daylight-savings-p value as determined by
+                ;; DECODE-UNIVERSAL-TIME:
                 (if time-zone                   
                     daylight-savings-p
                     local-daylight-savings-p)
                 utc-offset-only))))
+        ;; The following complex format-control-strings keep everything in a
+        ;; single format operation, supporting all destination types:
         (if month-precedes-date
             (format destination
-                    "~@[~a ~]~:[~@[~s, ~]~a ~2d~@[,~*~]~@[ ~s~]~;~
-                                ~@[~s/~]~2,'0d/~2,'0d~*~@[/~s~]~]~@[, ~a~] ~
+                    "~@[~a~]~:[~;,~]~:[~; ~]~
+                     ~:[~@[~s~]~*~:[~;,~]~:[~; ~]~a ~*~2d~*~@[,~*~]~@[ ~s~]~;~
+                        ~@[~s~]~@[~c~]~2*~2,'0d~c~2,'0d~@[~c~]~*~@[~s~]~]~
+                     ~:[~;,~]~:[~; ~]~@[~a~] ~
                      ~2,'0d:~2,'0d~:[~*~;:~2,'0d~]~@[~a~]~@[ ~a~]"
                     (unless year-first day-name)
+                    (and (not year-first) long-day-name?) ; comma after long day name
+                    (and (not year-first) day-name) ; space after day name
                     all-numeric
                     (when year-first year)
+                    (when year-first separator)
+                    (and year-first full-names) ; comma after year
+                    year-first          ; space after year or comma
                     month-name
+                    separator
                     date
-                    (and full-names (not year-first))
+                    (unless year-first separator)
+                    (and full-names (not year-first)) ; comma before year
                     (unless year-first year)
+                    (and year-first long-day-name?) ; comma after long day name
+                    (and year-first day-name) ; space after day name's comma
                     (when year-first day-name)
                     hour
                     minute
@@ -321,16 +331,27 @@
                     am/pm
                     time-zone-abbreviation)
             (format destination 
-                    "~@[~a ~]~:[~@[~s, ~]~2d ~a~@[,~*~]~@[ ~s~]~;~
-                                ~@[~s/~]~2,'0d/~2,'0d~*~@[/~s~]~]~@[, ~a~] ~
+                    "~@[~a~]~:[~;,~]~:[~; ~]~
+                     ~:[~@[~s~]~*~:[~;,~]~:[~; ~]~2d ~*~a~*~@[,~*~]~@[ ~s~]~;~
+                        ~@[~s~]~@[~c~]~2*~2,'0d~c~2,'0d~@[~c~]~*~@[~s~]~]~
+                     ~:[~;,~]~:[~; ~]~@[~a~] ~
                      ~2,'0d:~2,'0d~:[~*~;:~2,'0d~]~@[~a~]~@[ ~a~]"
                     (unless year-first day-name)
+                    (and (not year-first) long-day-name?) ; comma after long day name
+                    (and (not year-first) day-name) ; space after day name
                     all-numeric
                     (when year-first year)
+                    (when year-first separator)
+                    (and year-first full-names) ;comma after year
+                    year-first          ; space after year or comma
                     date
+                    separator
                     month-name
-                    (and full-names (not year-first))
+                    (unless year-first separator)
+                    (and full-names (not year-first)) ; comma before year
                     (unless year-first year)
+                    (and year-first long-day-name?) ; comma after long day name
+                    (and year-first day-name) ; space after day name's comma
                     (when year-first day-name)
                     hour
                     minute

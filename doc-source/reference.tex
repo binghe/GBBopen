@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Fri Mar 26 06:55:34 2010; Edited-By: cork *-*
+%% *-* Last-Edit: Sat Mar 27 06:37:59 2010; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2010, Dan Corkill <corkill@GBBopen.org>
@@ -9607,6 +9607,7 @@ Verbosely change \nobr{\code{quitting-time}} to 5:30pm every day:
     \code{\&key} \var{\nobr{time-zone}
       \nobr{daylight-savings-p}
       \nobr{all-numeric}
+      \nobr{separator}
       \nobr{full-names}
       \nobr{month-precedes-date}
       \nobr{year-first}
@@ -9638,6 +9639,7 @@ Verbosely change \nobr{\code{quitting-time}} to 5:30pm every day:
   saving time)
 \arg[daylight-savings-p] A \glref{generalized~boolean} (default is \nil)        
 \arg[all-numeric] A \glref{generalized~boolean} (default is \nil)
+\arg[separator] A character (default is \code{\#\bkslash/})
 \arg[full-names] A \glref{generalized~boolean} (default is \nil)
 \arg[month-precedes-date] A \glref{generalized~boolean} (default is 
   \nobr{\textbf{\entlink{*month-precedes-date*}}})
@@ -9674,7 +9676,8 @@ unless \nobr{\var{daylight-savings-p\/} is specified and is non-\nil}.
 \W\xml{p} 
 %
 If \var{all-numeric\/} is supplied and is non-\nil, the month is indicated by
-its numeric value.
+its numeric value, and the date, month, and year are separated by the
+\var{separator\/} character.
 
 \W\xml{p} 
 %
@@ -9780,6 +9783,17 @@ following the date, and with the day of the week):
   >
 \end{example}
 %
+Display the current date and time (with no abbreviations, with the year first
+and the month following the date, and with the day of the week):
+%
+\W\supp\notpretop
+\begin{example}
+  > (full-date-and-time nil :full-names 't :include-day 't
+                            :year-first 't :month-precedes-date nil)
+  "2009, 16 February, Monday 13:11"
+  >
+\end{example}
+%
 Display the current date and time (all numeric, with the abbreviated day of
 the week):
 %
@@ -9790,13 +9804,33 @@ the week):
   >
 \end{example}
 %
+Display the current date and time (all numeric, with hyphen (minus-sign)
+separators):
+%
+\W\supp\notpretop
+\begin{example}
+  > (full-date-and-time nil :all-numeric 't :separator #\-)
+  "02-16-2009 13:11"
+  >
+\end{example}
+%
+Display the current date and time (all numeric, with the year first and the
+abbreviated day of the week):
+%
+\W\supp\notpretop
+\begin{example}
+  > (full-date-and-time nil :all-numeric 't :year-first 't :include-day 't)
+  "2009/02/16 Mon 13:11"
+  >
+\end{example}
+%
 Display the current date and time (all numeric, with the month following the
 date, and with the full day of the week):
 %
 \W\supp\notpretop
 \begin{example}
   > (full-date-and-time nil :all-numeric 't :include-day 't 
-                        :full-names 't :month-precedes-date nil)
+                            :full-names 't :month-precedes-date nil)
   "Monday, 16/02/2009 13:11"
   >
 \end{example}
