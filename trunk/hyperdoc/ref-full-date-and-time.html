@@ -20,6 +20,7 @@
 <code>&#38;key</code> <var><nobr>time-zone</nobr>
 <nobr>daylight-savings-p</nobr>
 <nobr>all-numeric</nobr>
+<nobr>separator</nobr>
 <nobr>full-names</nobr>
 <nobr>month-precedes-date</nobr>
 <nobr>year-first</nobr>
@@ -47,6 +48,7 @@ which is equivalent to the current time zone adjusted for daylight
 saving time)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>daylight-savings-p</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> (default is <code>nil</code>)        
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>all-numeric</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> (default is <code>nil</code>)
+</td></tr><tr valign="top"><td valign="baseline" nowrap><i>separator</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A character (default is <code>&#35;\/</code>)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>full-names</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> (default is <code>nil</code>)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>month-precedes-date</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> (default is 
 <nobr><b><a href="ref-month-precedes-date-var.html">*month-precedes-date*</a></b></nobr>)
@@ -79,7 +81,8 @@ unless <nobr><var>daylight-savings-p</var> is specified and is non-<code>nil</co
 </p>
 <p><p> 
 If <var>all-numeric</var> is supplied and is non-<code>nil</code>, the month is indicated by
-its numeric value.
+its numeric value, and the date, month, and year are separated by the
+<var>separator</var> character.
 </p>
 <p><p> 
 If <var>full-names</var> is supplied and is non-<code>nil</code>, the full name is generated
@@ -161,6 +164,14 @@ following the date, and with the day of the week):
   "Monday, 16 February, 2009 13:11"
   &gt;
 </pre>
+Display the current date and time (with no abbreviations, with the year first
+and the month following the date, and with the day of the week):
+<pre>
+  &gt; (full-date-and-time nil :full-names 't :include-day 't
+                            :year-first 't :month-precedes-date nil)
+  "2009, 16 February, Monday 13:11"
+  &gt;
+</pre>
 Display the current date and time (all numeric, with the abbreviated day of
 the week):
 <pre>
@@ -168,11 +179,25 @@ the week):
   "Mon 02/16/2009 13:11"
   &gt;
 </pre>
+Display the current date and time (all numeric, with hyphen (minus-sign)
+separators):
+<pre>
+  &gt; (full-date-and-time nil :all-numeric 't :separator #)
+  "02-16-2009 13:11"
+  &gt;
+</pre>
+Display the current date and time (all numeric, with the year first and the
+abbreviated day of the week):
+<pre>
+  &gt; (full-date-and-time nil :all-numeric 't :year-first 't :include-day 't)
+  "2009/02/16 Mon 13:11"
+  &gt;
+</pre>
 Display the current date and time (all numeric, with the month following the
 date, and with the full day of the week):
 <pre>
   &gt; (full-date-and-time nil :all-numeric 't :include-day 't 
-                        :full-names 't :month-precedes-date nil)
+                            :full-names 't :month-precedes-date nil)
   "Monday, 16/02/2009 13:11"
   &gt;
 </pre>

@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/module-manager/module-manager.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Mar 26 06:30:57 2010 *-*
+;;;; *-* Last-Edit: Sat Mar 27 06:05:45 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -418,6 +418,11 @@
 
 ;;; ---------------------------------------------------------------------------
 
+(defun junk-in-string-error (string)
+  (error "There's junk in this string: ~s" string))
+
+;;; ---------------------------------------------------------------------------
+
 (defun decode-supplied-universal-time (universal-time time-zone)
   (cond 
    ((not universal-time)
@@ -665,8 +670,7 @@
       (when year-first (process-possible-day)
             (unless (or junk-allowed
                         (= (& ptr) (& end)))
-              (error "There is junk in this string: ~s" 
-                     (subseq string start end)))))
+              (junk-in-string-error (subseq string start end)))))
     (values date month year ptr)))
 
 ;;; ===========================================================================
