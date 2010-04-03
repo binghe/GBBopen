@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/timing/cl-timing.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Apr  3 12:12:41 2010 *-*
+;;;; *-* Last-Edit: Sat Apr  3 19:32:45 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -50,7 +50,7 @@
     #-(or clisp ecl) 
            10000000)
 
-(defparameter *max-list-test-size* 20)
+(defparameter *max-list-test-size* 50)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defvar *%timing-result%*))
@@ -361,6 +361,7 @@
          10000000)
         (max-size *max-list-test-size*)
         (transition 0)
+        (contiguous-misses 0)
         (eset)
         (ht (make-keys-only-hash-table-if-supported :test #'eq)))
     (with-full-optimization ()
@@ -397,11 +398,14 @@
               (let ((time-eset (time-eset i))
                     (time-ht (time-ht i)))
                 (declare (fixnum time-eset time-ht))
-                (when (<=& time-eset time-ht)
-                  (setf transition i))
                 (when verbose?
                   (format t "~&;; i: ~d, eset: ~d, ht: ~d~%"
-                          i time-eset time-ht))))
+                          i time-eset time-ht))
+                (cond ((<=& time-eset time-ht)
+                       (setf contiguous-misses 0)
+                       (setf transition i))
+                      ((>=& (incf& contiguous-misses) 5)
+                       (return)))))
         (when verbose?
           (format t "~&;; ESET transition: ~d~%" transition))
         transition))))
@@ -420,6 +424,7 @@
          10000000)
         (max-size *max-list-test-size*)
         (transition 0)
+        (contiguous-misses 0)
         (et)
         (ht (make-hash-table :test #'eq)))
     (with-full-optimization ()
@@ -456,11 +461,14 @@
               (let ((time-ht (time-ht i))
                     (time-et (time-et i)))
                 (declare (fixnum time-et time-ht))
-                (when (<=& time-et time-ht)
-                  (setf transition i))
                 (when verbose?
                   (format t "~&;; i: ~d, et: ~d, ht: ~d~%"
-                          i time-et time-ht))))
+                          i time-et time-ht))
+                (cond ((<=& time-et time-ht)
+                       (setf contiguous-misses 0)
+                       (setf transition i))
+                      ((>=& (incf& contiguous-misses) 5)
+                       (return)))))
         (when verbose?
           (format t "~&;; ET transition: ~d~%" transition))
         transition))))
@@ -479,6 +487,7 @@
         (max-size *max-list-test-size*)
         (computed-sizes-vector
          (make-array '(10) :initial-element 0))
+        (contiguous-misses 0)
         (very-verbose? (eq verbose? ':very)))
     (flet ((string-it (i)
              (make-string 2 :initial-element (code-char (+& i 32)))))
@@ -490,11 +499,11 @@
                         (determine-key/value-atable-index test))))
                (flet ((build-at/ht-timer (name reader)
                         `(,name (cnt at/ht)
-                                (let ((start-time (get-internal-run-time))
-                                      (test-index 1))
-                                  ;; Do one untimed trial to prepare everything:
-                                  (setf *%timing-result%* 
-                                        (,reader (svref keys test-index) at/ht))
+                                ;; Do one untimed trial to prepare everything:
+                                (setf *%timing-result%* 
+                                      (,reader (svref keys 1) at/ht))
+                                (let ((test-index 1)
+                                      (start-time (get-internal-run-time)))
                                   (setf test-index 1)
                                   (dotimes (i iterations)
                                     (declare (fixnum i))
@@ -527,6 +536,7 @@
                       ;; Time to time:
                       (flet (,(build-at/ht-timer 'time-at 'get-entry)
                              ,(build-at/ht-timer 'time-ht 'gethash))
+                        (setf contiguous-misses 0)
                         (loop for i fixnum from 1 to max-size do
                               (let ((time-atl (time-at i atl))
                                     (time-ath (when very-verbose?
@@ -539,14 +549,16 @@
                                 (when very-verbose?
                                   (format t "~&;; i: ~d, atl: ~d, ath: ~d, ht: ~d~%"
                                           i time-atl time-ath time-ht))
-                                (when (and (<=& time-atl time-ht))
+                                (cond 
+                                 ((<=& time-atl time-ht)
+                                  (setf contiguous-misses 0)
                                   (setf (svref computed-sizes-vector ,atable-index)
                                         i))
-                                (when (>& i 10)
+                                 ((>=& (incf& contiguous-misses) 5)
                                   (when verbose?
                                     (format t " transition: ~d~%"
                                             (svref computed-sizes-vector ,atable-index)))
-                                  (return)))))))))))
+                                  (return))))))))))))
         (do-it eq t #'identity)
         (do-it eq nil #'identity)
         (do-it eql t #'identity)
