@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/atable.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Apr  3 12:42:56 2010 *-*
+;;;; *-* Last-Edit: Sat Apr  3 19:34:05 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -511,8 +511,8 @@
 
 ;;; ===========================================================================
 ;;;  General ATABLEs (not a speed win on any CL these days, due to table-type
-;;;  dispatch cost; consider reimplementing with declared-type operators
-;;;  someday)
+;;;  dispatch cost. Consider reimplementing with declared-type operators
+;;;  someday...)
 
 #+(or allegro clisp clozure cmu digitool-mcl ecl lispworks sbcl)
 (eval-when (:compile-toplevel :load-toplevel :execute)
