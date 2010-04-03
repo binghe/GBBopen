@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/timing/cl-timing.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Mar 13 16:25:12 2010 *-*
+;;;; *-* Last-Edit: Sat Apr  3 12:12:41 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -29,9 +29,14 @@
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   ;; Import symbols (defined in tools/atable.lisp):
-  (import '(gbbopen-tools::*brief-timer-result*
-            gbbopen-tools::bsearch-for-transition
-            gbbopen-tools::brief-timer)))
+  (import '(gbbopen-tools::*atable-transition-sizes*
+            gbbopen-tools::%atable-data-list
+            gbbopen-tools::atable-data
+            gbbopen-tools::auto-transition-margin
+            gbbopen-tools::determine-key/value-atable-index
+            gbbopen-tools::determine-keys-only-atable-index
+            gbbopen-tools::eset-transition-size
+            gbbopen-tools::et-transition-size)))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(cl-timing)))
@@ -40,14 +45,45 @@
 ;;;   Timing parameters
 
 (defparameter *timing-iterations*
-    ;; Timing interation must be a fixnum divisible by 100 -- use fewer
-    ;; iterations on slower CLs:
-    #+clisp 4000000                     ; CLISP is slow
-    #+ecl 50000000                      ; ECL is a bit faster
-    #-(or clisp ecl) 50000000)
+    #+clisp 2000000                     ; CLISP is slow
+    #+ecl   6000000                     ; ECL is a bit faster
+    #-(or clisp ecl) 
+           10000000)
 
-(defparameter *max-list-test-size* 30)
+(defparameter *max-list-test-size* 20)
 
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defvar *%timing-result%*))
+
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defmacro brief-timer (n &body body)
+    `(with-full-optimization ()
+       ;; Do one untimed trial to prepare everything:
+       (setf *%timing-result%* ,@body)
+       (let ((%start-time% (get-internal-run-time)))
+         (dotimes (i (& ,n))
+           (declare (fixnum i))
+           (setf *%timing-result%* ,@body))
+         (locally (declare (notinline -))
+           (- (get-internal-run-time) %start-time%))))))
+
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defmacro table-timer (n cnt &body body)
+    `(with-full-optimization ()
+       (let ((test-index 1))
+         ;; Do one untimed trial to prepare everything:
+         (setf *%timing-result%* ,@body)
+         (setf test-index 1)
+         (let ((start-time (get-internal-run-time)))
+           (dotimes (i (& ,n))
+             (declare (fixnum i))
+             (setf *%timing-result%* ,@body)
+             (incf& test-index)
+             (when (>& test-index ,cnt)
+               (setf test-index 1)))
+           (locally (declare (notinline -))
+             (- (get-internal-run-time) start-time)))))))
+             
 ;;; ---------------------------------------------------------------------------
 
 (defun fformat (stream &rest args)
@@ -63,272 +99,512 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun do-list-timing ()
-  (let* ((max-size *max-list-test-size*)
-         (iterations *timing-iterations*)
-         (list (loop for i fixnum from 1 to max-size collect i))
-         (alist (loop for i fixnum from 1 to max-size collect (cons i i))))
-    (declare (type list list alist))
-    (fformat t "~&;;   Do nothing timing (~:d iterations)..."
-             iterations)
-    (format t "~6,2f seconds~%"
-            (brief-timer iterations nil))
-    (fformat t "~&;;   Fastest memq timing (~:d iterations)..."
-             iterations)
-    (format t "~6,2f seconds~%"
-            (brief-timer iterations (car (memq 1 (the list list)))))
-    (fformat t "~&;;   Fastest member eq timing (~:d iterations)..."
-             iterations)
-    (format t "~6,2f seconds~%"
-            (brief-timer iterations 
-                         (car (member 1 (the list list) :test #'eq))))
-    #+(or clisp ecl lispworks)
-    (format t  "~&;;     *** ~a does not optimize ~
-                             (find key list :test #'eq) ***~%"
-            (lisp-implementation-type))
-    (fformat t "~&;;   Fastest find eq timing (~:d iterations)..."
-             iterations)
-    (format t "~6,2f seconds~%"
-            (brief-timer iterations 
-                         (find 1 (the list list) :test #'eq)))
-    (fformat t "~&;;   Fastest member-if eq timing ~
-                                         (~:d iterations)..."
-                       iterations)
-    (format t "~6,2f seconds~%"
-            (flet ((fn (item) (eq 1 item)))
-              (declare (dynamic-extent #'fn))
-              (brief-timer iterations 
-                           (car (member-if #'fn (the list list))))))
-    ;; Assoc
-    (fformat t "~&;;   Fastest assoc eq timing (~:d iterations)..."
-             iterations)
-    (format t "~6,2f seconds~%"
-            (brief-timer iterations 
-                         (cdr (assoc 1 (the list alist) :test #'eq))))
-    ;; Deletes
-    (fformat t "~&;;   Fastest delq-one timing (~:d iterations)..."
-             iterations)
-    (format t "~6,2f seconds~%"
-            (let ((cons (list 1)))
-              (declare (dynamic-extent cons)
-                       (type cons cons))
-              (setf (cdr cons) (rest list))
-              (brief-timer iterations 
-                           (setf (cdr cons) (delq-one 1 (the cons cons))))))
-    #+(or clisp clozure cmu ecl lispworks sbcl scl)
-    (format t  "~&;;     *** ~a does not optimize ~
-                             (delete key list :test #'eq :count 1) ***~%"
-            (lisp-implementation-type))
-    (fformat t "~&;;   Fastest delete eq :count 1 timing (~:d iterations)..."
-             iterations)
-    (format t "~6,2f seconds~%"
-            (let ((cons (list 1)))
-              (declare (dynamic-extent cons)
-                       (type cons cons))
-              (setf (cdr cons) (rest list))
-              (brief-timer iterations 
-                           (setf (cdr cons) (delete 1 (the list list)
-                                                    :test #'eq
-                                                    :count 1)))))))
+(with-full-optimization ()
+  (defun %hidden-identity 
+      ;; Identity function for testing (one that compilers don't know about to
+      ;; optimize):
+      (x) x))
 
 ;;; ---------------------------------------------------------------------------
 
-(macrolet
-    ((build-atable-transition-fn (keys-only?)
-       (let ((ht-maker (if keys-only?
-                           'make-keys-only-hash-table-if-supported
-                           'make-hash-table))
-             (memq/assoc (if keys-only? "memq" "assoc")))
-         `(defun ,(if keys-only? 
-                      'determine-memq-transition 
-                      'determine-assoc-transition) 
-              ()
-            (format t "~&;; ~a/hash-table/atable transitions...~%"
-                    ,(string-capitalize memq/assoc))
-            (let* ((max-size *max-list-test-size*)
-                   (list (loop for i fixnum from 1 to max-size collect 
-                               ,(if keys-only? 'i '(cons i i))))
-                   (ht (,ht-maker :test 'eq :size max-size))
-                   (equalp-ht (,ht-maker :test 'equalp :size max-size))
-                   (atable (make-atable :test 'eq :keys-only ,keys-only?))
-                   (equalp-atable
-                    (make-atable :test 'equalp :keys-only ,keys-only?))
-                   (full-atable
-                    (make-atable :test 'eq :keys-only ,keys-only?
-                                 :size max-size))
-                   (full-equalp-atable
-                    (make-atable :test 'equalp :keys-only ,keys-only?
-                                 :size max-size)))
-              (declare (list list))
-              (dotimes (i max-size)
-                (declare (fixnum i))
-                (let ((key-string (%make-key-string i)))
-                  (setf (gethash i ht) i)
-                  (setf (gethash key-string equalp-ht) i)
-                  (setf (get-entry i full-atable) i)
-                  (setf (get-entry key-string full-equalp-atable) i)))
-              (setf (get-entry 1 atable) 1)
-              (setf (get-entry (%make-key-string 1) equalp-atable) 1)
-              (let ((iterations *timing-iterations*)
-                    memq/assoc-time 
-                    ht-time
-                    at-time
-                    full-at-time)
-                (fformat t "~&;;   Repeat fastest ~a timing (~:d iterations)..."
-                         ,memq/assoc
-                         iterations)
-                (format t "~6,2f seconds~%"
-                        (setf memq/assoc-time 
-                              (brief-timer
-                               iterations 
-                               ,(if keys-only?
-                                    '(car (memq 1 list))
-                                    '(cdr (assoc 1 list :test #'eq))))))
-                (fformat t "~&;;   Slowest tested ~a timing ~
-                                   (item ~s -- ~:d iterations)..."
-                         ,memq/assoc
-                         max-size
-                         iterations)
-                (format t "~6,2f seconds~%"
-                        (brief-timer
-                         iterations
-                         ,(if keys-only?
-                              '(car (memq 1 list))
-                              '(cdr (assoc 1 list :test #'eq)))))
-                (fformat t "~&;;   Eq hash-table~@[ (keys only)~*~] timing ~
-                                   (~:d iterations)..."
-                         ,keys-only?
-                         iterations)
-                (format t "~6,2f seconds~%"
-                        (setf ht-time (brief-timer iterations (gethash 1 ht))))
-                (fformat t "~&;;   Fastest eq atable~@[ (keys only)~*~] timing ~
-                                   (~:d iterations)..."
-                         ,keys-only?
-                         iterations)
-                (format t "~6,2f seconds~%"
-                        (setf at-time 
-                              (brief-timer iterations (get-entry 1 atable))))
-                (format t "~&;;   Atable overhead (~:d iterations)...~
-                                  ~6,2f seconds~%"
-                        iterations
-                        (- at-time memq/assoc-time))
-                (fformat t "~&;;   Transitioned eq atable~@[ (keys only)~*~] ~
-                                   timing (~:d iterations)..."
-                         ,keys-only?
-                         iterations)
-                (format t "~6,2f seconds~%"
-                        (setf full-at-time
-                              (brief-timer iterations (get-entry 1 full-atable))))
-                (format t "~&;;   Rechecking atable overhead (~:d iterations)...~
-                                  ~6,2f seconds~%"
-                        iterations (- full-at-time ht-time))
-                ;; Equalp times:
-                (let ((key-string (%make-key-string 1)))
-                  (fformat t "~&;;   Equalp hash-table~@[ (keys only)~*~] ~
-                                     timing (~:d iterations)..."
-                           ,keys-only?
-                           iterations)
-                  (format t "~6,2f seconds~%"
-                          (setf ht-time 
-                                (brief-timer iterations 
-                                             (gethash key-string equalp-ht))))
-                  (fformat t "~&;;   Fastest equalp atable~@[ (keys only)~*~] ~
-                                     timing (~:d iterations)..."
-                           ,keys-only?
-                           iterations)
-                  (format t "~6,2f seconds~%"
-                          (setf at-time 
-                                (brief-timer 
-                                 iterations 
-                                 (get-entry key-string equalp-atable))))
-                  (format t "~&;;   Atable overhead (~:d iterations)...~
-                                    ~6,2f seconds~%"
-                          iterations
-                          (- at-time memq/assoc-time))
-                  (fformat t "~&;;   Transitioned equalp atable~
-                                     ~@[ (keys only)~*~] timing ~
-                                     (~:d iterations)..."
-                           ,keys-only?
-                           iterations)
-                  (format t "~6,2f seconds~%"
-                          (setf full-at-time
-                                (brief-timer 
-                                 iterations
-                                 (get-entry key-string full-atable))))
-                  (format t "~&;;   Rechecking atable overhead ~
-                                    (~:d iterations)...~6,2f seconds~%"
-                          iterations 
-                          (- full-at-time ht-time))))
-              ;; Transitions:
-              (flet ((list-lookup (key)
-                       (declare (fixnum key))
-                       ,(if keys-only? 
-                            '(car (memq key list))
-                            '(cdr (assoc key list :test #'eq))))
-                     (ht-lookup (key)
-                       (declare (fixnum key))
-                       (gethash key ht))
-                     (at-lookup (key)
-                       (declare (fixnum key))
-                       (get-entry key atable))
-                     (full-at-lookup (key)
-                       (declare (fixnum key))
-                       (get-entry key full-atable)))
-                (declare (dynamic-extent #'list-lookup #'ht-lookup 
-                                         #'at-lookup #'full-at-lookup))
-                (format t "~&;;   ~a transition: ~4d~%"
-                        ,(string-capitalize memq/assoc)
-                        (bsearch-for-transition
-                         max-size 1000000 #'list-lookup #'ht-lookup 
-                         #'identity))
-                (format t "~&;;   Eq atable~@[ (keys only)~*~] ~
-                                  transition: ~4d~%"
-                        ,keys-only?
-                        (bsearch-for-transition
-                         max-size 1000000 #'at-lookup #'ht-lookup 
-                         #'identity))
-                (format t "~&;;   Full eq atable~@[ (keys only)~*~] ~
-                                  transition: ~4d~%"
-                        ,keys-only?
-                        (bsearch-for-transition
-                         max-size 1000000 #'at-lookup #'full-at-lookup 
-                         #'identity))))))))
-  ;; Build keys-only transition function:
-  (build-atable-transition-fn 't)
-  ;; Build keys/value transition function:
-  (build-atable-transition-fn nil))
+(defun format-ticks (ticks)
+  (format t "~6,2f seconds"
+          (locally (declare (optimize (speed 0) (safety 3)))
+            (/ ticks
+               #.(float internal-time-units-per-second)))))
+  
+;;; ---------------------------------------------------------------------------
+
+(defun do-list-timing (&optional (iterations *timing-iterations*))
+  (let* ((max-size *max-list-test-size*)
+         (list (loop for i fixnum from 1 to max-size collect i))
+         (alist (loop for i fixnum from 1 to max-size collect (cons i i)))
+         (warning-time 0)
+         (time 0))
+    (declare (type list list alist))
+    (macrolet
+        ((time-it (form)
+           `(progn
+              (setf time (brief-timer iterations ,form))
+              (format-ticks time)
+              (when (and (not (zerop& warning-time))
+                         (>& time warning-time))
+                (format t " *****"))
+              (terpri))))
+      (fformat t "~&;;   Do nothing timing (~:d iterations)..."
+               iterations)
+      (time-it nil)
+      (fformat t "~&;;   Fastest memq timing (~:d iterations)..."
+               iterations)
+      (time-it (car (memq 1 (the list list))))
+      (setf warning-time (*& 2 time))
+      (fformat t "~&;;   Fastest member eq timing (~:d iterations)..."
+               iterations)
+      (time-it (car (member 1 (the list list) :test #'eq)))
+      (fformat t "~&;;   Fastest member eq key timing (~:d iterations)..."
+               iterations)
+      (time-it (car (member 1 (the list list)
+                            :test #'eq :key #'%hidden-identity)))
+      (fformat t "~&;;   Fastest member-if eq timing (~:d iterations)..."
+               iterations)
+      (flet ((fn (item) (eq 1 item)))
+        (declare (dynamic-extent #'fn))
+        (time-it (car (member-if #'fn (the list list)))))
+      (fformat t "~&;;   Fastest member-if eq key timing (~:d iterations)..."
+               iterations)
+      (flet ((fn (item) (eq 1 (%hidden-identity item))))
+        (declare (dynamic-extent #'fn))
+        (time-it (car (member-if #'fn (the list list)))))
+      (fformat t "~&;;   Fastest find eq timing (~:d iterations)..."
+               iterations)
+      (time-it (find 1 (the list list) :test #'eq))
+      (fformat t "~&;;   Fastest find eq key timing (~:d iterations)..."
+               iterations)
+      (time-it (find 1 (the list list) 
+                     :test #'eq :key #'%hidden-identity))
+      (fformat t "~&;;   Fastest find-if eq timing (~:d iterations)..."
+               iterations)
+      (flet ((fn (item) (eq 1 item)))
+        (declare (dynamic-extent #'fn))
+        (time-it (find-if #'fn (the list list))))
+      (fformat t "~&;;   Fastest find-if eq key timing (~:d iterations)..."
+               iterations)
+      (flet ((fn (item) (eq 1 (%hidden-identity item))))
+        (declare (dynamic-extent #'fn))
+        (time-it (find-if #'fn (the list list))))
+      ;; Assoc
+      (fformat t "~&;;   Fastest assq timing (~:d iterations)..."
+               iterations)
+      (time-it (cdr (assq 1 (the list alist))))
+      (fformat t "~&;;   Fastest assoc eq timing (~:d iterations)..."
+               iterations)
+      (time-it (cdr (assoc 1 (the list alist) :test #'eq)))
+      (fformat t "~&;;   Fastest assoc eq key timing (~:d iterations)..."
+               iterations)
+      (time-it (cdr (assoc 1 (the list alist) 
+                           :test #'eq
+                           :key #'%hidden-identity)))
+      (fformat t "~&;;   Fastest assoc-if eq timing (~:d iterations)..."
+               iterations)
+      (flet ((fn (key) (eq 1 key)))
+        (declare (dynamic-extent #'fn))
+        (time-it (cdr (assoc-if #'fn (the list alist)))))
+      (fformat t "~&;;   Fastest assoc-if eq key timing (~:d iterations)..."
+               iterations)
+      (flet ((fn (key) (eq 1 (%hidden-identity key))))
+        (declare (dynamic-extent #'fn))
+        (time-it (cdr (assoc-if #'fn (the list alist)))))
+      ;; Deletes
+      (setf warning-time 0)
+      (fformat t "~&;;   Fastest delq-one timing (~:d iterations)..."
+               iterations)
+      (let ((cons (list 1)))
+        (declare (dynamic-extent cons)
+                 (type cons cons))
+        (setf (cdr cons) (rest list))
+        (time-it (setf (cdr cons) (delq-one 1 (the cons cons)))))
+      (fformat t "~&;;   Fastest delete eq :count 1 timing (~:d iterations)..."
+               iterations)
+      (let ((cons (list 1)))
+        (declare (dynamic-extent cons)
+                 (type cons cons))
+        (setf (cdr cons) (rest list))
+        (time-it (setf (cdr cons) (delete 1 (the list list)
+                                          :test #'eq
+                                          :count 1)))))))
+
+;;; ---------------------------------------------------------------------------
+
+(defun do-ht-timing (&optional (iterations *timing-iterations*))
+  (let ((keys-only-ht (make-keys-only-hash-table-if-supported :test #'eq))
+        (ht (make-hash-table :test #'eq))
+        (max-size *max-list-test-size*)
+        time)
+    (dotimes (i max-size)
+      (setf (gethash i keys-only-ht) 't)
+      (setf (gethash i ht) 'i))
+    (macrolet
+        ((time-it (cnt form)
+           `(progn
+              (setf time (table-timer iterations ,cnt ,form))
+              (format-ticks time)
+              (terpri))))
+      ;; HT timings:
+      #-has-keys-only-hash-tables
+      (format t "~&;; * Keys-only hash tables are plain hash tables:")
+      (fformat t "~&;;   Keys-only eq hash table timing (~:d iterations)..."
+               iterations)
+      (time-it max-size (gethash 1 ht))
+      (fformat t "~&;;   Normal eq hash table timing (~:d iterations)..."
+               iterations)
+      (time-it max-size (gethash 1 ht)))))
+
+;;; ---------------------------------------------------------------------------
+
+(defun do-eset-timing (&optional (iterations *timing-iterations*))
+  (let ((transition #.(max 1 (+ eset-transition-size auto-transition-margin)))
+        time)
+    (macrolet
+        ((time-it (cnt form)
+           `(progn
+              (setf time (table-timer iterations ,cnt ,form))
+              (format-ticks time)
+              (terpri))))
+      ;; ESET timings:
+      #+slower-eset
+      (format t "~&;; * ESETs are plain hash tables:")
+      (let ((eset-list (make-eset))
+            (eset-ht (make-eset))
+            (ht (make-keys-only-hash-table-if-supported :test #'eq)))
+        ;; Fill them:
+        (loop for i fixnum from transition downto 1 do
+              (add-to-eset i eset-list))
+        (dotimes (i eset-transition-size)
+          (add-to-eset i eset-ht)
+          (setf (gethash i ht) 't))
+        ;; Time them:
+        (fformat t "~&;;   Do nothing timing (~:d iterations)..."
+                 iterations)
+        (time-it i nil)
+        (fformat t "~&;;   Fastest ESET (list) timing (~:d iterations)..."
+                 iterations)
+        (time-it i (in-eset 1 eset-list))
+        (fformat t "~&;;   Slowest ESET (list @~d) timing (~:d iterations)..."
+                 transition
+                 iterations)
+        (time-it i (in-eset eset-transition-size eset-list))
+        (fformat t "~&;;   Average ESET (list @~d) timing (~:d iterations)..."
+                 transition
+                 iterations)
+        (time-it i (in-eset test-index eset-list))
+        (fformat t "~&;;   ESET (transitioned) timing (~:d iterations)..."
+                 iterations)
+        (time-it i (in-eset test-index eset-ht))
+        (fformat t "~&;;   EQ ~:[[key/value~;keys-only]~] HT timing ~
+                           (~:d iterations)..."
+                 (memq ':has-keys-only-hash-tables *features*)
+                 iterations)
+        (time-it i (gethash test-index ht))))))
+  
+;;; ---------------------------------------------------------------------------
+
+(defun do-et-timing (&optional (iterations *timing-iterations*))
+  (let ((transition #.(max 1 (+ et-transition-size auto-transition-margin)))
+        time)
+    (macrolet
+        ((time-it (cnt form)
+           `(progn
+              (setf time (table-timer iterations ,cnt ,form))
+              (format-ticks time)
+              (terpri))))
+      ;; ET timings:
+      #+slower-et
+      (format t "~&;; * ETs are plain hash tables:")
+      (let ((et-list (make-et))
+            (et-ht (make-et))
+            (ht (make-hash-table :test #'eq)))
+        ;; Fill them:
+        (loop for i fixnum from transition downto 1 do
+              (setf (get-et i et-list) i))
+        (dotimes (i et-transition-size)
+          (setf (get-et i et-ht) i)
+          (setf (gethash i ht) 't))
+        ;; Time them:
+        (fformat t "~&;;   Do nothing timing (~:d iterations)..."
+                 iterations)
+        (time-it i nil)
+        (fformat t "~&;;   Fastest ET (list) timing (~:d iterations)..."
+                 iterations)
+        (time-it i (get-et 1 et-list))
+        (fformat t "~&;;   Slowest ET (list @~d) timing (~:d iterations)..."
+                 transition
+                 iterations)
+        (time-it i (get-et et-transition-size et-list))
+        (fformat t "~&;;   Average ET (list @~d) timing (~:d iterations)..."
+                 transition
+                 iterations)
+        (time-it i (get-et test-index et-list))
+        (fformat t "~&;;   ET (transitioned) timing (~:d iterations)..."
+                 iterations)
+        (time-it i (get-et test-index et-ht))
+        (fformat t "~&;;   EQ HT timing (~:d iterations)..."
+                 iterations)
+        (time-it i (gethash test-index ht))))))
 
 ;;; ---------------------------------------------------------------------------
 
 (defun do-division-timing (&optional
                            (numerator 6)
                            (denominator 3))
-  (let ((iterations (truncate *timing-iterations* 4)))
+  (declare (fixnum numerator denominator))
+  (let ((iterations (truncate& *timing-iterations* 2)))
     (fformat t "~&;;   Division timing (~:d iterations)..."
              iterations)
-    (let ((times
-           `(,(brief-timer iterations (/& numerator denominator))
-             ,(brief-timer iterations (floor& numerator denominator))
-             ,(brief-timer iterations (truncate& numerator denominator)))))
-      (format t 
-              "~{~&;;     /&:       ~6,2f seconds~
-               ~%;;     floor&:   ~6,2f seconds~
-               ~%;;     truncate&:~6,2f seconds~%~}"
-              times))))
+    (fformat t "~&;;     /&:       ")
+    (format-ticks (brief-timer iterations (/& numerator denominator)))
+    (fformat t "~%;;     floor&:   ")
+    (format-ticks (brief-timer iterations (floor& numerator denominator)))
+    (fformat t "~%;;     truncate&:")
+    (format-ticks (brief-timer iterations (truncate& numerator denominator)))))
+
+;;; ---------------------------------------------------------------------------
+;;;  Compute the size transition value for ESETs
+
+#-slower-eset
+(defun compute-eset-transition (&optional (verbose? 't))
+  (let ((iterations 
+         #+clisp
+         100000
+         #+ecl
+         1000000
+         #-(or clisp ecl)
+         10000000)
+        (max-size *max-list-test-size*)
+        (transition 0)
+        (eset)
+        (ht (make-keys-only-hash-table-if-supported :test #'eq)))
+    (with-full-optimization ()
+      ;; Initialize values
+      (setf eset (cons max-size
+                     (loop for i fixnum from 1 to max-size
+                         collect i
+                         do (setf (gethash i ht) 't))))
+      ;; Time to time:
+      (flet 
+          ((time-eset (cnt)
+             (let ((start-time (get-internal-run-time))
+                   (test-index 1))
+               (dotimes (i iterations)
+                 (declare (fixnum i))
+                 (setf *%timing-result%* (in-eset test-index eset))
+                 (incf& test-index)
+                 (when (>& test-index cnt)
+                   (setf test-index 1)))
+               (locally (declare (notinline -))
+                 (- (get-internal-run-time) start-time))))
+           (time-ht (cnt)
+             (let ((start-time (get-internal-run-time))
+                   (test-index 1))
+               (dotimes (i iterations)
+                 (declare (fixnum i))
+                 (setf *%timing-result%* (gethash test-index ht))
+                 (incf& test-index)
+                 (when (>& test-index cnt)
+                   (setf test-index 1)))
+               (locally (declare (notinline -))
+                 (- (get-internal-run-time) start-time)))))
+        (loop for i fixnum from 1 to max-size do
+              (let ((time-eset (time-eset i))
+                    (time-ht (time-ht i)))
+                (declare (fixnum time-eset time-ht))
+                (when (<=& time-eset time-ht)
+                  (setf transition i))
+                (when verbose?
+                  (format t "~&;; i: ~d, eset: ~d, ht: ~d~%"
+                          i time-eset time-ht))))
+        (when verbose?
+          (format t "~&;; ESET transition: ~d~%" transition))
+        transition))))
+        
+;;; ---------------------------------------------------------------------------
+;;;  Compute the size transition value for ETs
+
+#-slower-et
+(defun compute-et-transition (&optional (verbose? 't))
+  (let ((iterations 
+         #+clisp
+         100000
+         #+ecl
+         1000000
+         #-(or clisp ecl)
+         10000000)
+        (max-size *max-list-test-size*)
+        (transition 0)
+        (et)
+        (ht (make-hash-table :test #'eq)))
+    (with-full-optimization ()
+      ;; Initialize values
+      (setf et (cons max-size
+                     (loop for i fixnum from 1 to max-size
+                         collect (cons i i)
+                         do (setf (gethash i ht) i))))
+      ;; Time to time:
+      (flet 
+          ((time-et (cnt)
+             (let ((start-time (get-internal-run-time))
+                   (test-index 1))
+               (dotimes (i iterations)
+                 (declare (fixnum i))
+                 (setf *%timing-result%* (get-et test-index et))
+                 (incf& test-index)
+                 (when (>& test-index cnt)
+                   (setf test-index 1)))
+               (locally (declare (notinline -))
+                 (- (get-internal-run-time) start-time))))
+           (time-ht (cnt)
+             (let ((start-time (get-internal-run-time))
+                   (test-index 1))
+               (dotimes (i iterations)
+                 (declare (fixnum i))
+                 (setf *%timing-result%* (gethash test-index ht))
+                 (incf& test-index)
+                 (when (>& test-index cnt)
+                   (setf test-index 1)))
+               (locally (declare (notinline -))
+                 (- (get-internal-run-time) start-time)))))
+        (loop for i fixnum from 1 to max-size do
+              (let ((time-ht (time-ht i))
+                    (time-et (time-et i)))
+                (declare (fixnum time-et time-ht))
+                (when (<=& time-et time-ht)
+                  (setf transition i))
+                (when verbose?
+                  (format t "~&;; i: ~d, et: ~d, ht: ~d~%"
+                          i time-et time-ht))))
+        (when verbose?
+          (format t "~&;; ET transition: ~d~%" transition))
+        transition))))
+        
+;;; ---------------------------------------------------------------------------
+;;;  Compute the size transition values where hash-tables outperform lists
+
+#-slow-atable
+(defun compute-atable-transitions (&optional (verbose? 't))
+  ;; Optional `verbose?' value can be :very for detailed output...
+  (let ((iterations 
+         #+clisp
+         100000
+         #-clisp
+         1000000)
+        (max-size *max-list-test-size*)
+        (computed-sizes-vector
+         (make-array '(10) :initial-element 0))
+        (very-verbose? (eq verbose? ':very)))
+    (flet ((string-it (i)
+             (make-string 2 :initial-element (code-char (+& i 32)))))
+      (macrolet
+          ((do-it (test keys-only keygen-fn)
+             (let ((atable-index 
+                    (if keys-only
+                        (determine-keys-only-atable-index test)
+                        (determine-key/value-atable-index test))))
+               (flet ((build-at/ht-timer (name reader)
+                        `(,name (cnt at/ht)
+                                (let ((start-time (get-internal-run-time))
+                                      (test-index 1))
+                                  ;; Do one untimed trial to prepare everything:
+                                  (setf *%timing-result%* 
+                                        (,reader (svref keys test-index) at/ht))
+                                  (setf test-index 1)
+                                  (dotimes (i iterations)
+                                    (declare (fixnum i))
+                                    (setf *%timing-result%*
+                                          (,reader (svref keys test-index) at/ht))
+                                    (incf& test-index)
+                                    (when (>& test-index cnt)
+                                      (setf test-index 1)))
+                                  (locally (declare (notinline -))
+                                    (- (get-internal-run-time) start-time))))))
+                 `(let ((atl (make-atable :test ',test
+                                          :keys-only ,keys-only))
+                        (ath (make-atable :test ',test
+                                          :keys-only ,keys-only
+                                          :size (1+& max-size)))
+                        (ht (make-hash-table :test ',test))
+                        (keys (make-array (list (1+& max-size)))))
+                    (with-full-optimization ()
+                      (setf (%atable-data-list (atable-data atl))
+                            ;; Fill tables (list in increasing key order):
+                            (loop for i fixnum from 1 to max-size 
+                                for key = (funcall ,keygen-fn i)
+                                collect ,(if keys-only 'key '(cons key i))
+                                do (setf (get-entry key ath) i)
+                                   (setf (gethash key ht) i)))
+                      (when verbose?
+                        (format t "~&;; Timing ~s~@[ (keys only)~*~] "
+                                ',test 
+                                ,keys-only))
+                      ;; Time to time:
+                      (flet (,(build-at/ht-timer 'time-at 'get-entry)
+                             ,(build-at/ht-timer 'time-ht 'gethash))
+                        (loop for i fixnum from 1 to max-size do
+                              (let ((time-atl (time-at i atl))
+                                    (time-ath (when very-verbose?
+                                                (time-at i ath)))
+                                    (time-ht (time-ht i ht)))
+                                (declare (fixnum time-atl time-ht))
+                                (when (and verbose? (not very-verbose?))
+                                  (write-char #\.)
+                                  (force-output))
+                                (when very-verbose?
+                                  (format t "~&;; i: ~d, atl: ~d, ath: ~d, ht: ~d~%"
+                                          i time-atl time-ath time-ht))
+                                (when (and (<=& time-atl time-ht))
+                                  (setf (svref computed-sizes-vector ,atable-index)
+                                        i))
+                                (when (>& i 10)
+                                  (when verbose?
+                                    (format t " transition: ~d~%"
+                                            (svref computed-sizes-vector ,atable-index)))
+                                  (return)))))))))))
+        (do-it eq t #'identity)
+        (do-it eq nil #'identity)
+        (do-it eql t #'identity)
+        (do-it eql nil #'identity)
+        (do-it equal t #'string-it)
+        (do-it equal nil #'string-it)
+        (do-it equalp t #'string-it)
+        (do-it equalp nil #'string-it)
+        computed-sizes-vector))))
+  
+;;; ---------------------------------------------------------------------------
+;;;  Check Clozure CL's combined-method-hash-table threshold value
+
+#+clozure
+(defun check-combined-method-hash-table-threshold ()
+  (format t "~&;; Computing Clozure CL's combined-method-hash-threshold...~%")
+  (let ((threshold
+         (truncate$
+          (*$ 0.75 
+              (float 
+               (let ((*standard-output* 
+                      ;; Run silently (to the null stream):
+                      (make-broadcast-stream)))
+                 (ccl::compute-eql-combined-method-hash-table-threshold)))))))
+    (format t "~&;; Computed ~s value: ~d (current value is ~d)~%"
+            'ccl::*eql-combined-method-hash-table-threshold*
+            threshold
+            ccl::*eql-combined-method-hash-table-threshold*)
+    (unless (<& (abs& (-& ccl::*eql-combined-method-hash-table-threshold*
+                          threshold))
+                2)
+      (format t "~&;; ***** For top performance, set ~s to ~s"
+              'ccl::*eql-combined-method-hash-table-threshold*
+              threshold))))
 
 ;;; ---------------------------------------------------------------------------
 
 (defun cl-timing ()
+  (format t "~&;; ~50,,,'-<-~>~%")
   (format t "~&;; Characters are~@[ not~] eq.~%"
           (not (eval '(eq (code-char 70) (code-char 70)))))
   (format t "~&;; Fixnums are~@[ not~] eq.~%"
           (not (eval '(eq most-positive-fixnum most-positive-fixnum))))
+  ;;; Check the threshold on Clozure CL:
+  #+(and clozure ignore)
+  (check-combined-method-hash-table-threshold)
+  ;; Do the timing:
   (format t "~&;; ~50,,,'-<-~>~%")
   (format t "~&;; Starting timings...~%")
   (do-list-timing)
-  (determine-memq-transition)
-  (determine-assoc-transition)
+  (format t "~&;;~%")
+  (do-ht-timing)
+  (format t "~&;;~%")
   (do-division-timing)
+  (format t "~&;;~%")
+  (do-eset-timing)
+  (format t "~&;;~%")
+  (do-et-timing)
   (format t "~&;; Timings completed.~%"))
 
 ;;; ---------------------------------------------------------------------------

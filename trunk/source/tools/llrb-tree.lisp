@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/llrb-tree.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Mar 12 05:33:24 2010 *-*
+;;;; *-* Last-Edit: Fri Apr  2 12:00:29 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -503,7 +503,7 @@
   (let ((*%llrb-current-test%* (llrb-tree-test llrb-tree)))
     (flet ((do-fn (node) 
              (funcall fn (llrb-node-key node) (llrb-node-value node))))
-      (declare (dynamic-extent fn))
+      (declare (dynamic-extent #'do-fn))
       (llrb-map #'do-fn (llrb-tree-root llrb-tree)))))
 
 ;;; ---------------------------------------------------------------------------

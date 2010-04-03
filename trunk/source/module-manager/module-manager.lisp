@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/module-manager/module-manager.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Mar 27 06:05:45 2010 *-*
+;;;; *-* Last-Edit: Fri Apr  2 11:49:02 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -1324,9 +1324,11 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun %find-patch-desc (id &optional (module *current-module*))
-  (find id (mm-module.patch-descriptions module) 
-        :test #'equal
-        :key #'patch-description.id))
+  ;; (car (member ...)) with :test & :key often optimizes better than (find
+  ;; ...):
+  (car (member id (mm-module.patch-descriptions module) 
+               :test #'equal
+               :key #'patch-description.id)))
 
 ;;; ---------------------------------------------------------------------------
 

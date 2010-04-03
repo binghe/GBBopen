@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/links.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Mar 11 23:15:53 2010 *-*
+;;;; *-* Last-Edit: Fri Apr  2 10:04:52 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -122,9 +122,12 @@
   (unless (or *%%allow-setf-on-link%%*
               ;; determine if the slot is a link slot (Lispworks):
               #+lispworks
-              (let ((link-slot (find link-slot (class-slots class)
-                                     :test #'eq
-                                     :key 'slot-definition-name)))
+              (let ((link-slot 
+                     ;; (car (member ...)) with :test & :key often optimizes
+                     ;; better than (find ...):
+                     (car (member link-slot (class-slots class)
+                                  :test #'eq
+                                  :key 'slot-definition-name))))
                 (not (typep link-slot 'effective-link-definition))))
     (error "~s attempted on a link slot ~s of unit class ~s"
            'setf 
@@ -150,10 +153,10 @@
 			  class
 			  (find-class other-unit-class-name nil))))
 		(when other-unit-class
-		  (find (second inverse-link)
-			(the list (class-direct-slots other-unit-class))
-			:test #'eq
-			:key #'slot-definition-name))))))
+		  (car (member (second inverse-link)
+                               (class-direct-slots other-unit-class)
+                               :test #'eq
+                               :key #'slot-definition-name)))))))
     (when ilinkd
       ;; when possible, set the inverse-link's inverse-link-definition:
       (unless (eq inverse-link ':reflexive)
@@ -521,10 +524,12 @@
 ;;; code...
 
 (defun find-eslotd-given-dslotd (instance dslotd)
-  (find (slot-definition-name dslotd) 
-	(the list (class-slots (class-of instance)))
-	:key #'slot-definition-name
-	:test #'eq))
+  ;; (car (member ...)) with :test & :key often optimizes better than (find
+  ;; ...):
+  (car (member (slot-definition-name dslotd) 
+               (class-slots (class-of instance))
+               :key #'slot-definition-name
+               :test #'eq)))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -615,7 +620,9 @@
                                (typep dslotd 'direct-link-definition)) 
                       dslotd)))
              (declare (dynamic-extent #'slot-fn))
-             (find-if #'slot-fn (the list (class-direct-slots class))))))
+             ;; (car (member-if ...)) often optimizes better than 
+             ;; (find-if ...):
+             (car (member-if #'slot-fn (class-direct-slots class))))))
     (declare (dynamic-extent #'fn))
     (some #'fn (class-precedence-list (class-of object)))))
     
@@ -683,10 +690,13 @@
                        (class-name class)
                        iunit-class-name)))
            (t (let* ((islot-name (second inverse-link))
-                     (ilinkd (find islot-name 
-                                   (the list (class-direct-slots iunit-class))
+                     (ilinkd 
+                      ;; (car (member ...)) with :test & :key often optimizes
+                      ;; better than (find ...):
+                      (car (member islot-name 
+                                   (class-direct-slots iunit-class)
                                    :test #'eq
-                                   :key #'slot-definition-name))
+                                   :key #'slot-definition-name)))
                      (singular-inverse
                       (getf inverse-link :singular nil)))
                 (cond

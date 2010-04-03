@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/spaces.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Mar 13 15:31:26 2010 *-*
+;;;; *-* Last-Edit: Fri Apr  2 10:09:23 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -629,7 +629,6 @@
                                          storage
                                          (allowed-unit-classes 't)
                                     &allow-other-keys)
-  (declare (dynamic-extent initargs))
   (multiple-value-bind (space-name parent-space-instance)
       (prepare-space-name-and-parents 
        instance-name make-parents allowed-unit-classes)
@@ -650,7 +649,6 @@
           storage
           (allowed-unit-classes 't)
      &allow-other-keys)
-  (declare (dynamic-extent initargs))
   (multiple-value-bind (space-name parent-space-instance)
       (prepare-space-name-and-parents 
        instance-name make-parents allowed-unit-classes)
@@ -907,9 +905,11 @@
             (declare (type list space-instance-dimensions))
             (dolist (unit-class-dimension unit-class-dimensions) 
               (let ((matching-space-instance-dimension
-                     (find (car unit-class-dimension) 
-                           space-instance-dimensions
-                           :key #'car :test #'eq)))
+                     ;; (car (member ...)) with :test & :key often optimizes
+                     ;; better than (find ...):
+                     (car (member (car unit-class-dimension) 
+                                  space-instance-dimensions
+                                  :key #'car :test #'eq))))
                 (when matching-space-instance-dimension
                   ;; sdd comparison-test compatibility checks soon!!!
                   (unless (eq (first (second unit-class-dimension))

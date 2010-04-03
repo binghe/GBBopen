@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/declared-numerics.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Mar 12 05:22:37 2010 *-*
+;;;; *-* Last-Edit: Sat Apr  3 11:46:41 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -239,9 +239,9 @@
 ;;;  each CL (determined by :cl-timing tests).
 
 (defconstant fastest-fixnum-div-operator
-    ;; Care must be taken to use /& only where non-rational results will be
-    ;; created.  When timings are very close, truncate& is preferred.  Tested
-    ;; on x86 and PPC architectures (could vary on others--reports welcomed!).
+    ;; Care must be taken to use /& only where fixnum results will be created.
+    ;; When timings are very close, truncate& is preferred.  Tested on x86 and
+    ;; PPC architectures (could vary on others--reports welcomed!).
     (or #+(and :allegro (not :64-bit)) '/&
         #+(and :allegro :64-bit) 'truncate&
         #+clisp 'truncate&
@@ -382,7 +382,7 @@
 (defdn & - t)
 (defdn & 1- t)
 (defdn & * t)
-(defdn & / t)
+(defdn & / t) ;; avoid using this one!!!
 (defdn & =)
 (defdn & /=)
 (defdn & <)

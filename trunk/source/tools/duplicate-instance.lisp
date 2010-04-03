@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/duplicate-instance.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Sep 28 04:39:30 2009 *-*
+;;;; *-* Last-Edit: Fri Apr  2 11:51:01 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2008-2009, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2008-2010, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -94,7 +94,11 @@
     (declare (dynamic-extent slots slot-values slot-names-to-initialize))
     (dolist (slot (class-slots new-class))
       (let* ((slot-name (slot-definition-name slot))
-             (old-slot (find slot-name old-class-slots :key #'slot-definition-name))
+             (old-slot 
+              ;; (car (member ...)) with :key often optimizes better than
+              ;; (find ...):
+              (car (member slot-name old-class-slots 
+                           :key #'slot-definition-name)))
              ;; See if we are setting via an initarg:
              (maybe-initarg-value
               (lookup-initarg-value 

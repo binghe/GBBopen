@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/defconstruct.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Mar 11 13:02:55 2010 *-*
+;;;; *-* Last-Edit: Thu Apr  1 04:54:56 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -56,21 +56,29 @@
            (defcm ,constructor-sym (,field1 ,field2)
              `(cons ,,field1 ,,field2))
            ;; Field1 accessor:
+           #-(or cmu scl)
+           (declaim (inline ,field1-sym (setf ,field1-sym)))
            (defun ,field1-sym (,name)
              (car ,name))
+           #-(or cmu scl)
            (defcm ,field1-sym (,name)
              `(car (the cons ,,name)))
            (defun (setf ,field1-sym) (nv ,name)
              (setf (car ,name) nv))
+           #-(or cmu scl)
            (defcm (setf ,field1-sym) (nv ,name)
              `(setf (car (the cons ,,name)) ,nv))
            ;; Field2 accessor:
+           #-(or cmu scl)
+           (declaim (inline ,field2-sym (setf ,field2-sym)))
            (defun ,field2-sym (,name)
              (cdr ,name))
+           #-(or cmu scl)
            (defcm ,field2-sym (,name)
              `(cdr (the cons ,,name)))
            (defun (setf ,field2-sym) (nv ,name)
              (setf (cdr ,name) nv))
+           #-(or cmu scl)
            (defcm (setf ,field2-sym) (nv ,name)
              `(setf (cdr (the cons ,,name)) ,nv)))))))
 
