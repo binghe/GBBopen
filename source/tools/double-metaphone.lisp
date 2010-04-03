@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/double-metaphone.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Feb 23 05:40:05 2010 *-*
+;;;; *-* Last-Edit: Fri Apr  2 11:59:32 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -115,7 +115,10 @@
                                 :fill-pointer 0 
                                 :element-type 'character))
 	 (slavo-germanic-value ':needed))
-    (declare (dynamic-extent ustring))    
+    (declare 
+     ;; Avoid SBCL's warning about not being able to stack allocate ustring:
+     #-sbcl
+     (dynamic-extent ustring))
     (labels ((add-to (array add)
                (etypecase add
                  (null)

@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Mar 16 16:37:10 2010 *-*
+;;;; *-* Last-Edit: Fri Apr  2 10:01:50 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -124,7 +124,6 @@
                                     unduplicated-slot-names
                                     &rest initargs)
   (declare (ignore unduplicated-slot-names initargs))
-  (declare (dynamic-extent initargs))
   (operation-on-deleted-instance 'make-duplicate-instance instance))
 
 (defmethod make-duplicate-instance-changing-class ((instance deleted-unit-instance)
@@ -132,7 +131,6 @@
                                                    unduplicated-slot-names
                                                    &rest initargs)
   (declare (ignore new-class unduplicated-slot-names initargs))
-  (declare (dynamic-extent initargs))
   (operation-on-deleted-instance 'make-duplicate-instance instance))
 
 (defmethod print-object-for-saving/sending ((instance deleted-unit-instance)
@@ -265,7 +263,6 @@
                                     &key (space-instances 
                                           nil space-instances-p)
                                     &allow-other-keys)
-  (declare (dynamic-extent initargs))
   (multiple-value-bind (new-instance slots)
       (apply #'call-next-method instance unduplicated-slot-names initargs)
     (complete-duplicate-unit-instance 
@@ -280,7 +277,6 @@
                                                    &key (space-instances 
                                                          nil space-instances-p)
                                                    &allow-other-keys)
-  (declare (dynamic-extent initargs))
   (multiple-value-bind (new-instance slots)
       (apply #'call-next-method instance new-class unduplicated-slot-names 
              initargs)
@@ -294,7 +290,6 @@
 (defmethod make-duplicate-instance :around ((instance standard-unit-instance)
                                     unduplicated-slot-names
                                     &rest initargs)
-  (declare (dynamic-extent initargs))
   ;; Allow setf setting of link-slot pointers:
   (multiple-value-bind (new-instance slots)
       (let ((*%%allow-setf-on-link%%* 't)
@@ -313,7 +308,6 @@
             (new-class standard-unit-class)
             unduplicated-slot-names
             &rest initargs)
-  (declare (dynamic-extent initargs))
   (multiple-value-bind (new-instance slots)
       (let ((*%%allow-setf-on-link%%* 't)
             (*%%doing-initialize-instance%%* 't))
@@ -1038,9 +1032,9 @@
                   #-lispworks effective-nonlink-slot-definition))
   ;; must look up the slot object in Lispworks:
   #+lispworks
-  (setf slot (find slot (class-slots class)
-                   :test #'eq
-                   :key 'slot-definition-name))
+  (setf slot (car (member slot (class-slots class)
+                          :test #'eq
+                          :key 'slot-definition-name)))
   (when #-lispworks 't
         ;; only non-link slots!
         #+lispworks (typep slot 'effective-nonlink-slot-definition)    
@@ -1179,9 +1173,12 @@
       (when (typep slot 'effective-link-definition)
 	(when (or non-unit-new-class
                   (let ((new-class-slot 
-                         (find (slot-definition-name slot) new-class-slots 
-                               :test #'eq
-                               :key #'slot-definition-name)))
+                         ;; (car (member ...)) with :test & :key often
+                         ;; optimizes better than (find ...):
+                         (car (member (slot-definition-name slot) 
+                                      new-class-slots 
+                                      :test #'eq
+                                      :key #'slot-definition-name))))
                     (not (typep new-class-slot 'effective-link-definition))))
           (let ((current-value
                  (slot-value-using-class unit-class instance slot)))
@@ -1413,14 +1410,14 @@
     (declare (inline class-of))
     (let* ((unit-class (class-of instance))
            (dimension-spec 
-            (flet ((fn (dimensional-value)
-                     (eq dimension-name (car (the cons dimensional-value)))))
-              (declare (dynamic-extent #'fn))
-              (find-if 
-               #'fn
-               (the list 
-                 (standard-unit-class.effective-dimensional-values 
-                  unit-class))))))
+            ;; (car (member ...)) with :test & :key often optimizes better
+            ;; than (find ...):
+            (car (member
+                  dimension-name
+                  (standard-unit-class.effective-dimensional-values 
+                   unit-class)
+                  :test #'eq
+                  :key #'car))))
       (unless dimension-spec
         (error "~s is not a dimension of ~s."
                dimension-name

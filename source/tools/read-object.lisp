@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/read-object.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Mar 16 16:41:33 2010 *-*
+;;;; *-* Last-Edit: Fri Apr  2 11:51:56 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -308,9 +308,12 @@
       (dolist (slot-name slot-names)
         ;; Check that incoming slot-name is present in the current class
         ;; definition:
-        (let ((slot (find slot-name class-slots
-                          :key #'slot-definition-name
-                          :test #'eq)))
+        (let ((slot
+               ;; (car (member ...)) with :test & :key often optimizes better
+               ;; than (find ...):
+               (car (member slot-name class-slots
+                            :key #'slot-definition-name
+                            :test #'eq))))
           (unless slot
             (warn "Slot ~s is no longer defined for class ~s; saved values ~
                    for this slot will be discarded."

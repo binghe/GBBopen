@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/find.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Mar 19 23:19:01 2010 *-*
+;;;; *-* Last-Edit: Sat Apr  3 12:54:06 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -50,7 +50,6 @@
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(*find-verbose*              ; not documented, yet
-            *processed-hash-table-size* ; not documented, yet
             *use-marking*               ; not documented, yet
             abuts
             ;; --- declared-type operators:
@@ -134,10 +133,6 @@
 (defvar *%%pattern%%*)
 (defvar *%%pattern-clause%%*)
 (defvar *%%pattern-extents%%*)
-
-;;; Hash-based retrieval processed-hash-table parameters
-
-(defvar *processed-hash-table-size* 1000)
 
 ;;; ---------------------------------------------------------------------------
 
@@ -229,13 +224,13 @@
 ;;; ---------------------------------------------------------------------------
 
 (defvar *memoized-atomic-unit-classes-check-functions*
-    (make-atable :test 'eq))
+  (make-et))
 
 (defvar *memoized-atomic-unit-classes-lock*
     (make-lock :name "Memoized atomic unit classes"))
 
 (defvar *memoized-plus-subclasses-check-functions*
-    (make-atable :test 'equal))
+  (make-atable :test 'equal))
 
 (defvar *memoized-plus-subclasses-lock*
     (make-lock :name "Memoized plus subclasses"))
@@ -247,26 +242,26 @@
       ((memoized-atomic-check-fn (unit-class closure)
          ;; `unit-class' is a simple form (not once-only'ed)
          `(with-full-optimization ()
-            (or (get-entry 
+            (or (get-et
                  ,unit-class
                  *memoized-atomic-unit-classes-check-functions*)
                 ;; We lock only writes (at the slight risk of tossing an
                 ;; extra closure):
                 (with-lock-held (*memoized-atomic-unit-classes-lock*)
-                  (setf (get-entry 
+                  (setf (get-et
                          ,unit-class
                          *memoized-atomic-unit-classes-check-functions*)
                         ,closure)))))
        (memoized-plus-subclasses-check-fn (unit-classes closure)
          ;; `unit-classes' is a simple form (not once-only'ed)
          `(with-full-optimization ()
-            (or (get-entry 
+            (or (get-entry
                  ,unit-classes
                  *memoized-plus-subclasses-check-functions*)
                 ;; We lock only writes (at the slight risk of tossing an
                 ;; extra closure):
                 (with-lock-held (*memoized-plus-subclasses-lock*)
-                  (setf (get-entry 
+                  (setf (get-entry
                          ,unit-classes
                          *memoized-plus-subclasses-check-functions*)
                         ,closure))))))
@@ -287,7 +282,9 @@
         (memoized-plus-subclasses-check-fn 
          unit-class
          #'(lambda (instance) 
-             (typep instance unit-class)))))
+             (locally #+(or cmu sbcl scl)
+                      (declare (notinline typep))
+                      (typep instance unit-class))))))
      ((memq (second unit-classes-spec) '(:no-subclasses =))
       (let ((unit-class (first unit-classes-spec)))
         (memoized-atomic-check-fn 
@@ -1686,13 +1683,7 @@
                pattern
                invoking-fn-name)))
          (unit-class-check-fn (determine-unit-class-check unit-classes-spec))
-         (processed-ht #-OLD
-                       (make-atable :test 'eq :keys-only 't)
-                       #+OLD 
-                       (make-keys-only-hash-table-if-supported
-                        :test 'eq
-                        ;; we'll be a bit aggressive here:
-                        :size *processed-hash-table-size*))
+         (processed-ht (make-eset))
          (into-cons (cons nil nil)))
     (when verbose 
       (find-verbose-preamble pattern optimized-pattern 
@@ -1708,8 +1699,7 @@
     (with-lock-held (*master-instance-lock*)
       (dolist (storage storage-objects)
         (flet ((fn (instance)
-                 (unless #-OLD (get-entry instance processed-ht)
-                         #+OLD (gethash instance processed-ht)
+                 (unless (in-eset instance processed-ht)
                    (when find-stats 
                      (incf (find-stats.instances-touched find-stats)))
                    (when (and (funcall (the function unit-class-check-fn) instance)
@@ -1732,10 +1722,7 @@
                        (incf (find-stats.instances-accepted find-stats)))
                      (funcall (the function fn) instance))
                    ;; we have accepted or rejected this instance:
-                   #-OLD
-                   (setf (get-entry instance processed-ht) 't)
-                   #+OLD
-                   (setf (gethash instance processed-ht) 't))))
+                   (add-to-eset instance processed-ht))))
           (declare (dynamic-extent #'fn))
           (map-all-instances-on-storage 
            #'fn storage disjunctive-dimensional-extents verbose))))
@@ -1793,18 +1780,11 @@
          (storage-objects-for-mapping unit-classes-spec space-instances
                                       invoking-fn-name))
         (unit-class-check-fn (determine-unit-class-check unit-classes-spec))
-        (processed-ht #-OLD
-                      (make-atable :test 'eq :keys-only 't)
-                      #+OLD
-                      (make-keys-only-hash-table-if-supported
-                       :test 'eq
-                       ;; we'll be a bit aggressive here:
-                       :size *processed-hash-table-size*)))
+        (processed-ht (make-eset)))
     (with-lock-held (*master-instance-lock*)
       (dolist (storage storage-objects)
         (flet ((fn (instance)
-                 (unless #-OLD (get-entry instance processed-ht)
-                         #+OLD (gethash instance processed-ht)
+                 (unless (in-eset instance processed-ht)
                    (when (and (funcall (the function unit-class-check-fn) instance)
                               (or (null filter-before)
                                   (funcall (the function filter-before) instance))
@@ -1813,8 +1793,7 @@
                                   (funcall (the function filter-after) instance)))
                      (funcall (the function fn) instance))
                    ;; we have accepted or rejected this instance:
-                   #-OLD (setf (get-entry instance processed-ht) 't)
-                   #+OLD (setf (gethash instance processed-ht) 't))))
+                   (add-to-eset instance processed-ht))))
           (declare (dynamic-extent #'fn))
           (map-all-instances-on-storage #'fn storage 't verbose))))))
 

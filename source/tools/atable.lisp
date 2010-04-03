@@ -1,13 +1,14 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/atable.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Mar 13 16:27:42 2010 *-*
+;;;; *-* Last-Edit: Sat Apr  3 12:42:56 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
 ;;;; *
-;;;; *                 Autotransitioning "Fast Hash" Tables
+;;;; *    Autotransitioning "Fast Hash" Tables (ATABLEs),  EQ Sets (ESETS), 
+;;;; *                             and EQ Tables (ETs)
 ;;;; *
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -16,6 +17,15 @@
 ;;;
 ;;; Copyright (C) 2008-2010, Dan Corkill <corkill@GBBopen.org> 
 ;;; Part of the GBBopen Project (see LICENSE for license information).
+;;;
+;;; Ideally, native CL hash tables should always be fast.  On some CLs,
+;;; however, we can save a small amount of time (and some space) by using
+;;; list-based representations for tables with small counts that
+;;; autotransition to regular hash tables as the count grows (and back to the
+;;; list representation if it shrinks).  Of course these autotransitioning
+;;; representations also add some overhead to normal hash table operations, so
+;;; their use should be considered very carefully (and restricted to where the
+;;; counts are likely to be low in most situations)....  You have been warned!
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
@@ -26,77 +36,558 @@
 (in-package :gbbopen-tools)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (export '(atable                      ; data type
+  (export '(add-to-eset
+            atable                      ; data type
             atable-count
             atable-test
-            assoc-eq-list
-            assoc-eql-list
-            assoc-equal-list
-            assoc-equalp-list
             clear-atable
-            compute-atable-size-transitions
+            clear-eset
+            clear-et
+            delete-et
+            delete-from-eset
             delete-entry
+            eset                        ; data type
+            et                          ; data type
             get-entry
-            keys-only-atable            ; data type
-            keys-only-eq-list
-            keys-only-eql-list
-            keys-only-equal-list
-            keys-only-equalp-list
+            get-et
+            in-eset
             make-atable
-            map-atable)))
+            make-et
+            make-eset
+            map-atable
+            map-eset
+            map-et)))
+
+;;; ---------------------------------------------------------------------------
+
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defconstant auto-transition-margin 2))
+
+;;; ===========================================================================
+;;;  EQ Sets (ESETs)
+;;;
+
+;; ESETs are slower in CLISP and ECL:
+#+(or clisp ecl)
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (pushnew :slower-eset *features*))
+
+(defconstant eset-transition-size 
+    #+allegro 12
+    #+clisp 0
+    #+clozure 7
+    #+cmu 12
+    #+digitool-mcl 7
+    #+ecl 0
+    #+lispworks 8
+    #+sbcl 18
+    #+scl 12
+    #-(or allegro 
+          clisp
+          clozure
+          cmu
+          digitool-mcl
+          ecl
+          lispworks
+          sbcl
+          scl)
+    ;; Something reasonable, but need to determine for the port:
+    (progn
+      (warn "Need to compute ~s"
+            'eset-transition-size)
+      10))
+
+;;; ---------------------------------------------------------------------------
+;;;  ESET "structure"
+
+#-slower-eset
+(defconstruct %eset (count data))
+
+;;; ---------------------------------------------------------------------------
+
+#-slower-eset
+(defun make-eset (&key size)
+  ;; Use the specified size if it is larger than the transition size:
+  (if (and (fixnump size) (>& size eset-transition-size))
+      (cons nil (make-keys-only-hash-table-if-supported :test #'eq :size size))
+      (list 0)))
+#-slower-eset
+(defcm make-eset (&whole whole &key size)
+  (if size
+      ;; if size is specified, compile the normal make-eset call:
+      whole
+      ;; otherwise, just make an empty eset:
+      `(list 0)))
+
+#+slower-eset
+(defun make-eset (&key size)
+  (if size
+      (make-keys-only-hash-table-if-supported :test #'eq :size size)
+      (make-keys-only-hash-table-if-supported :test #'eq)))
+#+slower-eset
+(defcm make-eset (&key size)
+  (if size
+      `(make-keys-only-hash-table-if-supported :test #'eq :size ,size)
+      '(make-keys-only-hash-table-if-supported :test #'eq)))
+
+;;; ---------------------------------------------------------------------------
+;;;  ESET membership
+
+#-slower-eset
+(defun in-eset (item et)
+  (with-full-optimization ()
+    (let ((count (%eset-count et))
+          (data (%eset-data et)))
+      (if count
+          (if (memq item data)
+              (values item 't)
+              (values nil nil))
+          (gethash item data)))))
+#+slower-eset
+(defun in-eset (item et)
+  (gethash item et))
+#+slower-eset
+(defcm in-eset (item et)
+  `(gethash ,item ,et))
+
+;;; ---------------------------------------------------------------------------
+;;;  ESET insertion
+
+#-slower-eset
+(defun add-to-eset (item et)
+  (with-full-optimization ()
+    (let ((count (%eset-count et))
+          (data (%eset-data et)))
+      (if count
+          (let ((sublist (memq item data)))
+            (unless sublist
+              (cond 
+               ((<=& (incf& (%eset-count et)) 
+                     (+& eset-transition-size auto-transition-margin))
+                (push item (%eset-data et)))
+               ;; Transition to hash-table:
+               (t (let ((ht (make-keys-only-hash-table-if-supported
+                             :test 'eq
+                             :size eset-transition-size)))
+                    ;; Copy existing items:
+                    (dolist (item data)
+                      (setf (gethash item ht) 't))
+                    ;; Add new entry
+                    (setf (%eset-count et) nil) ; mark as ht
+                    (setf (%eset-data et) ht)
+                    (setf (gethash item ht) 't)))))
+            ;; Return item
+            item)
+          ;; Already a hash-table:
+          (setf (gethash item data) 't)))))
+  
+#+slower-eset
+(defun add-to-eset (item et)
+  (setf (gethash item et) 't))
+#+slower-eset
+(defcm add-to-eset (item et)
+  `(setf (gethash ,item ,et) t))
+
+;;; ---------------------------------------------------------------------------
+;;;  ESET removal
+
+#-slower-eset
+(defun delete-from-eset (item et)
+  (with-full-optimization ()
+    (let ((count (%eset-count et))
+          (data (%eset-data et)))
+      (if count
+          ;; List deletion (inlined DELQ-ONE with add'l ET actions for top
+          ;; performance):
+          (cond
+           ;; Deleting the first element:
+           ((eq item (first data))
+            (setf (%eset-data et) (rest data))
+            (decf& (%eset-count et))
+            ;; Return success:
+            't)
+           ;; Search for it:
+           (t (let ((ptr data)
+                    next-ptr)
+                (declare (list ptr next-ptr))
+                (loop
+                  (unless (consp (setf next-ptr (cdr ptr)))
+                    (return-from delete-from-eset nil))
+                  (when (eq item (car (the cons next-ptr)))
+                    (setf (cdr (the cons ptr)) (cdr next-ptr))
+                    (decf& (%eset-count et))                    
+                    (return-from delete-from-eset 't))
+                  (setf ptr next-ptr)))))
+          ;; Hash-table deletion:
+          (let ((result (remhash item data)))
+            (when result
+              (let ((count (hash-table-count data)))
+                (when (<& count eset-transition-size)
+                  (setf (%eset-data et)
+                        (loop for item being each hash-key in data
+                            collect item))
+                  ;; Mark as list representation:
+                  (setf (%eset-count et) count)))
+              ;; Return success:
+              't))))))
+
+#+slower-eset
+(defun delete-from-eset (item et)
+  (remhash item et))
+#+slower-eset
+(defcm delete-from-eset (item et)
+  `(remhash ,item ,et))
+
+;;; ---------------------------------------------------------------------------
+;;;  ESET clear
+
+#-slower-eset
+(defun clear-eset (et &key retain-as-hash-table)
+  (with-full-optimization ()
+    (let ((count (%eset-count et)))
+      (cond
+       ((or count (not retain-as-hash-table))
+        (setf (%eset-count et) 0)
+        (setf (%eset-data et) nil))
+       (t (clrhash (%eset-data et)))))))
+
+#+slower-eset
+(defun clear-eset (et &key retain-as-hash-table)
+  (declare (ignore retain-as-hash-table))
+  (clrhash et))
+#+slower-eset
+(defcm clear-eset (et &key retain-as-hash-table)
+  (declare (ignore retain-as-hash-table))
+  `(clrhash ,et))
+
+;;; ---------------------------------------------------------------------------
+;;;  ESET mapper
+
+#-slower-eset
+(defun map-eset (function et)
+  #+cmu (declare (notinline coerce))
+  (let ((fn (coerce function 'function)))
+    (declare (function fn))
+    (with-full-optimization ()
+      (let ((count (%eset-count et))
+            (data (%eset-data et)))
+        (if count
+            (mapc fn data)
+            (maphash fn data))))))
+
+#+slower-eset
+(defun map-eset (function et)
+  (maphash function et))
+#+slower-eset
+(defcm map-eset (function et)
+  `(maphash ,function ,et))
+
+;;; ===========================================================================
+;;;  EQ Tables (ETs)
+;;;
+
+;; ETs are slower in CLISP and ECL (and barely win with Lispworks):
+#+(or clisp ecl)
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (pushnew :slower-et *features*))
+
+(defconstant et-transition-size 
+    #+allegro 6
+    #+clisp 0
+    #+clozure 6
+    #+cmu 8
+    #+digitool-mcl 7
+    #+ecl 0
+    #+lispworks 2
+    #+sbcl 12
+    #+scl 8
+    #-(or allegro 
+          clisp
+          clozure
+          cmu
+          digitool-mcl
+          ecl
+          lispworks
+          sbcl
+          scl)
+    ;; Something reasonable, but need to determine for the port:
+    (progn
+      (warn "Need to compute ~s"
+            'et-transition-size)
+      10))
+
+;;; ---------------------------------------------------------------------------
+;;;  ET "structure"
+
+#-slower-et
+(defconstruct %et (count data))
+
+;;; ---------------------------------------------------------------------------
+
+#-slower-et
+(defun make-et (&key size)
+  ;; Use the specified size if it is larger than the transition size:
+  (if (and (fixnump size) (>& size et-transition-size))
+      (cons nil (make-hash-table :test #'eq :size size))
+      (list 0)))
+#-slower-et
+(defcm make-et (&whole whole &key size)
+    (if size
+      ;; if size is specified, compile the normal make-et call:
+      whole
+      ;; otherwise, just make an empty et:
+      `(list 0)))
+
+#+slower-et
+(defun make-et (&key size)
+  (if size
+      (make-hash-table :test #'eq :size size)
+      (make-hash-table :test #'eq)))
+#+slower-et
+(defcm make-et (&key size)
+  (if size
+      `(make-hash-table :test #'eq :size ,size)
+      '(make-hash-table :test #'eq)))
+
+;;; ---------------------------------------------------------------------------
+;;;  ET searcher
+
+#-slower-et
+(defun get-et (key et &optional default)
+  (with-full-optimization ()
+    (let ((count (%et-count et))
+          (data (%et-data et)))
+      (if count
+          (let ((acons (assq key data)))
+            (if acons 
+                (values (cdr (the cons acons)) 't)
+                (values default nil)))
+          (gethash key data default)))))
+
+#+slower-et
+(defun get-et (key et &optional default)
+  (gethash key et default))
+#+slower-et
+(defcm get-et (key et &optional default)
+  `(gethash ,key ,et ,default))
+
+;;; ---------------------------------------------------------------------------
+;;;  ET adder
+
+#-slower-et
+(defun (setf get-et) (nv key et)
+  (with-full-optimization ()
+    (let ((count (%et-count et))
+          (data (%et-data et)))
+      (if count
+          (let ((acons (assoc key data :test #'eq)))
+            (cond
+             ;; Just update the value:
+             (acons (setf (cdr acons) nv))
+             ;; Push new pair onto the alist:
+             ((<=& (incf& (%et-count et)) 
+                   (+& et-transition-size auto-transition-margin))
+              (push (cons key nv) (%et-data et))
+              ;; Return nv:
+              nv)
+             ;; Transition to hash-table:
+             (t (let ((ht (make-hash-table
+                           :test 'eq
+                           :size et-transition-size)))
+                  ;; Copy existing pairs:
+                  (dolist (acons data)
+                    (setf (gethash (car acons) ht) (cdr acons)))
+                  ;; Add new entry
+                  (setf (%et-count et) nil) ; mark as ht
+                  (setf (%et-data et) ht)
+                  (setf (gethash key ht) nv)))))
+          ;; Already a hash-table:
+          (setf (gethash key data) nv)))))
+  
+#+slower-et
+(defun (setf get-et) (nv key et)
+  (setf (gethash key et) nv))
+#+slower-et
+(defcm (setf get-et) (nv key et)
+  (let ((nv-var '#:nv))
+    `(let ((,nv-var ,nv))
+       (setf (gethash ,key ,et) ,nv))))
+
+;;; ---------------------------------------------------------------------------
+;;;  ET remover
+
+#-slower-et
+(defun delete-et (key et)
+  (with-full-optimization ()
+    (let ((count (%et-count et))
+          (data (%et-data et)))
+      (if count
+          ;; List deletion (inlined DELQ-ONE with add'l ET actions for top
+          ;; performance):
+          (cond
+           ;; Deleting the first element:
+           ((eq key (caar data))
+            (setf (%et-data et) (rest data))
+            (decf& (%et-count et))
+            ;; Return success:
+            't)
+           ;; Search for it:
+           (t (let ((ptr data)
+                    next-ptr)
+                (declare (list ptr next-ptr))
+                (loop
+                  (unless (consp (setf next-ptr (cdr ptr)))
+                    (return-from delete-et nil))
+                  (when (eq key (caar next-ptr))
+                    (setf (cdr ptr) (cdr next-ptr))
+                    (decf& (%et-count et))                    
+                    (return-from delete-et 't))
+                  (setf ptr next-ptr)))))
+          ;; Hash-table deletion:
+          (let ((result (remhash key data)))
+            (when result
+              (let ((count (hash-table-count data)))
+                (when (<& count et-transition-size)
+                  (setf (%et-data et)
+                        (loop for key being each hash-key in data
+                            using (hash-value value) 
+                            collect (cons key value)))
+                  ;; Mark as list representation:
+                  (setf (%et-count et) count)))
+              ;; Return success:
+              't))))))
+
+#+slower-et
+(defun delete-et (key et)
+  (remhash key et))
+#+slower-et
+(defcm delete-et (key et)
+  `(remhash ,key ,et))
+
+;;; ---------------------------------------------------------------------------
+;;;  ET clear
+
+#-slower-et
+(defun clear-et (et &key retain-as-hash-table)
+  (with-full-optimization ()
+    (let ((count (%et-count et)))
+      (cond
+       ((or count (not retain-as-hash-table))
+        (setf (%et-count et) 0)
+        (setf (%et-data et) nil))
+       (t (clrhash (%et-data et)))))))
+
+#+slower-et
+(defun clear-et (et &key retain-as-hash-table)
+  (declare (ignore retain-as-hash-table))
+  (clrhash et))
+#+slower-et
+(defcm clear-et (et &key retain-as-hash-table)
+  (declare (ignore retain-as-hash-table))
+  `(clrhash ,et))
+
+;;; ---------------------------------------------------------------------------
+;;;  ET mapper
+
+#-slower-et
+(defun map-et (function et)
+  #+cmu (declare (notinline coerce))
+  (let ((fn (coerce function 'function)))
+    (declare (function fn))
+    (with-full-optimization ()
+      (let ((count (%et-count et))
+            (data (%et-data et)))
+        (if count
+            (dolist (acons data)
+              (funcall fn (car (the cons acons)) (cdr (the cons acons))))
+            (maphash fn data))))))
+
+#+slower-et
+(defun map-et (function et)
+  (maphash function et))
+#+slower-et
+(defcm map-et (function et)
+  `(maphash ,function ,et))
+
+;;; ===========================================================================
+;;;  General ATABLEs (not a speed win on any CL these days, due to table-type
+;;;  dispatch cost; consider reimplementing with declared-type operators
+;;;  someday)
+
+#+(or allegro clisp clozure cmu digitool-mcl ecl lispworks sbcl)
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (pushnew :slow-atable *features*))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Test <--> index lookups
 ;;;    - keys-only tables are even indicies, key/value tables are odd indicies
 ;;;    - hash-tables are 0 & 1, lists are 2-9
 
-(defparameter *atable-test-vector*
-    (vector nil nil 'eq 'eq 'eql 'eql 'equal 'equal 'equalp 'equalp))
+#-slow-atable
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defparameter *atable-test-vector*
+      (vector nil nil 'eq 'eq 'eql 'eql 'equal 'equal 'equalp 'equalp)))
 
+#-slow-atable
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (with-full-optimization ()
-    (defun determine-atable-index (test keys-only)
-      (if keys-only
-          (ecase test
-            (eq 2)
-            (eql 4)
-            (equal 6)
-            (equalp 8))
-          (ecase test
-            (eq 3)
-            (eql 5)
-            (equal 7)
-            (equalp 9))))))
+    (defun determine-keys-only-atable-index (test)
+      (case test
+        (eq 2)
+        (eql 4)
+        (equal 6)
+        (equalp 8)))))
 
-(defun determine-atable-test (index)
-  (declare (fixnum index))
-  ;; CMUCL (20a) can't handle the load-time-value:
-  (svref #+cmu *atable-test-vector*
-         #-cmu (load-time-value *atable-test-vector*) index))
+#-slow-atable
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (with-full-optimization ()
+    (defun determine-key/value-atable-index (test)
+      (case test
+        (eq 3)
+        (eql 5)
+        (equal 7)
+        (equalp 9)))))
+
+#-slow-atable
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defun determine-atable-test (index)
+    (declare (fixnum index))
+    ;; CMUCL (20a) can't handle the load-time-value:
+    (svref #+cmu #.*atable-test-vector*
+           #-cmu (load-time-value *atable-test-vector*) index)))
 (defcm determine-atable-test (index)
-  `(svref #+cmu *atable-test-vector*
+  `(svref #+cmu #.*atable-test-vector*
           #-cmu (load-time-value *atable-test-vector*) (the fixnum ,index)))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Transition values
 
-(defvar *atable-transition-sizes*
-    (make-array '(10) :initial-element 10))
+#-slow-atable
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defvar *atable-transition-sizes* 
+      #+slow-atables #(nil nil 0 0 0 0 0 0 0 0)
+      #-(or slow-atables clozure)
+      #(nil nil 10 10 4 4 4 4 4 4)))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Atable-data "structure"
 
+#-slow-atable
 (defconstruct %atable-data (list count))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Atable "structure"
 
+#-slow-atable
 (defconstruct (atable :constructor %make-atable)
     (type-index data))
 
 ;;; ---------------------------------------------------------------------------
 
 (defun atable-count (atable)
+  #+slow-atable
+  (hash-table-count atable)
+  #-slow-atable
   (let* ((index (atable-type-index atable))
          (data (atable-data atable))
          (list? (>& index 1)))
@@ -107,6 +598,9 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun atable-test (atable)
+  #+slow-atable
+  (hash-table-test atable)
+  #-slow-atable
   (let* ((index (atable-type-index atable))
          (data (atable-data atable))
          (list? (>& index 1)))
@@ -117,6 +611,7 @@
 ;;; ---------------------------------------------------------------------------
 ;;;  Atable constructor
 
+#-slow-atable
 (defun make-atable (&key (test 'eql) (size 0)
                          keys-only
                          rehash-size rehash-threshold)
@@ -125,8 +620,16 @@
       (let ((test-name (nth-value 2 (function-lambda-expression test))))
         (when (symbolp test-name)
           (setf test test-name))))
-    (let* ((index (determine-atable-index test keys-only))
-           (transition-size (svref *atable-transition-sizes* index))
+    (let* ((index 
+            (if keys-only
+                (determine-keys-only-atable-index test)
+                (determine-key/value-atable-index test)))
+           (transition-size
+            (svref  
+             ;; CMUCL (20a) can't handle the load-time-value:
+             #+cmu #.*atable-transition-sizes*
+             #-cmu (load-time-value *atable-transition-sizes*)
+             index))
            (table-data
             (cond ((>& size transition-size)
                    (setf index (if keys-only 0 1))
@@ -142,29 +645,58 @@
                   (t (make-%atable-data nil 0)))))
       (%make-atable index table-data))))
 
+#+slow-atable
+(defun make-atable (&rest args &key keys-only &allow-other-keys)
+  (apply (if keys-only
+             #'make-keys-only-hash-table-if-supported 
+             #'make-hash-table)
+         (remove-property args ':keys-only)))
+
 ;;; ---------------------------------------------------------------------------
 ;;;  Atable reader
 
-(macrolet ((make-reader ()
-             (flet ((make-list-fn (test)
-                      `(let* ((list (%atable-data-list data))
-                              (sublist (member key list :test ',test)))
-                         (if sublist
-                             (values (car (the cons sublist)) 't)
-                             (values nil nil))))
-                    (make-assoc-fn (test)
-                      `(let* ((alist (%atable-data-list data))
-                              (acons (assoc key alist :test ',test)))
-                         (if acons
-                             (values (cdr (the cons acons)) 't)
-                             (values nil nil)))))
-               `(defun get-entry (key atable)
-                  (with-full-optimization ()
-                    (let ((index (atable-type-index atable))
-                          (data (atable-data atable)))
+#-slow-atable
+(macrolet 
+    ((make-reader ()
+       (flet ((make-list-fn (test)
+                `(let* ((list (%atable-data-list data))
+                        (sublist
+                         ,(ecase test
+                            (eq '(memq key list))
+                            (eql #-(or cmu sbcl)
+                                 '(member key list)
+                                 ;; Tell CMUCL & SBCL we can't use float-eql
+                                 #+(or cmu sbcl)
+                                 '(locally (declare (notinline member))
+                                   (member key list)))
+                            ((equal equalp) 
+                             `(member key list :test #',test)))))
+                   (if sublist
+                       (values (car (the cons sublist)) 't)
+                       (values nil nil))))
+              (make-assoc-fn (test)
+                `(let* ((alist (%atable-data-list data))
+                        (acons 
+                         ,(ecase test
+                            (eq '(assq key alist))
+                            (eql #-(or cmu sbcl)
+                                 '(assoc key alist)
+                                 ;; Tell CMUCL & SBCL we can't use float-eql
+                                 #+(or cmu sbcl)
+                                 '(locally (declare (notinline assoc))
+                                   (assoc key alist)))
+                            ((equal equalp)
+                             `(assoc key alist :test #',test)))))
+                   (if acons
+                       (values (cdr (the cons acons)) 't)
+                       (values default nil)))))
+         `(defun get-entry (key atable &optional default)
+            (with-full-optimization ()
+              (let ((index (atable-type-index atable))
+                    (data (atable-data atable)))
                       (declare (fixnum index))
                       (case index
-                       ((0 1) (gethash key data))
+                       ((0 1) (gethash key data default))
                        (2 ,(make-list-fn 'eq))
                        (3 ,(make-assoc-fn 'eq))
                        (4 ,(make-list-fn 'eql))
@@ -175,172 +707,224 @@
                        (9 ,(make-assoc-fn 'equalp)))))))))
   (make-reader))
 
+#+slow-atable
+(defun get-entry (key atable)
+  (gethash key atable))
+#+slow-atable
+(defcm get-entry (key atable)
+  `(gethash ,key ,atable))
+
 ;;; ---------------------------------------------------------------------------
 ;;;  Atable writer
 
-(macrolet ((make-writer ()
-             (flet ((make-list-fn (test)
-                      `(let* ((list (%atable-data-list data))
-                              (sublist (member key list :test ',test)))
-                         (unless sublist
-                           (let ((threshold 
-                                  (1+& (svref 
-                                        (load-time-value *atable-transition-sizes*)
-                                        index))))
-                             (cond 
-                              ((<& (incf& (%atable-data-count data))
-                                   threshold)
-                               (push key (%atable-data-list data)))
-                              ;; Transition to hash-table:
-                              (t (let ((ht (make-keys-only-hash-table-if-supported
-                                            :test (determine-atable-test index)
-                                            :size threshold)))
-                                   (dolist (key (%atable-data-list data))
-                                     (setf (gethash key ht) key))
-                                   ;; Add new entry
-                                   (setf (gethash key ht) key)
-                                   (setf (atable-type-index atable) 0)
-                                   (setf (atable-data atable) ht))))))
-                         key))
-                    (make-assoc-fn (test)
-                      `(let* ((alist (%atable-data-list data))
-                              (acons (assoc key alist :test ',test)))
-                         (cond
-                          ;; Replace value:
-                          (acons (setf (cdr acons) nv))
-                          (t (let ((threshold 
-                                    (1+& (svref 
-                                          (load-time-value *atable-transition-sizes*)
-                                          index))))
-                               (cond
-                                ;; Add assoc-based entry:
-                                ((<& (incf& (%atable-data-count data))
-                                     threshold)
-                                 (setf (%atable-data-list data)
-                                       (acons key nv alist)))
-                                ;; Transition to hash-table:
-                                (t (let ((ht (make-hash-table
-                                              :test (determine-atable-test index))))
-                                     (dolist (acons (%atable-data-list data))
-                                       (setf (gethash (car acons) ht) (cdr acons)))
-                                     ;; Add new entry
-                                     (setf (gethash key ht) nv)
-                                     (setf (atable-type-index atable) 1)
-                                     (setf (atable-data atable) ht)))))))
-                         nv)))
-               `(defun (setf get-entry) (nv key atable)
-                  (with-full-optimization ()
-                    (let ((index (atable-type-index atable))
-                          (data (atable-data atable)))
-                      (declare (fixnum index))
-                      (case index
-                        ((0 1) (setf (gethash key data) nv))
-                        (2 ,(make-list-fn 'eq))
-                        (3 ,(make-assoc-fn 'eq))
-                        (4 ,(make-list-fn 'eql))
-                        (5 ,(make-assoc-fn 'eql))
-                        (6 ,(make-list-fn 'equal))
-                        (7 ,(make-assoc-fn 'equal))
-                        (8 ,(make-list-fn 'equalp))
-                        (9 ,(make-assoc-fn 'equalp)))))))))
+#-slow-atable
+(macrolet-debug
+    ((make-writer ()
+       (flet ((make-list-fn (index)
+                (let ((test (determine-atable-test index))
+                      (threshold
+                       (+& (svref *atable-transition-sizes* index)
+                           auto-transition-margin)))
+                  `(let* ((list (%atable-data-list data))
+                          (sublist 
+                           ,(case test
+                              (eq '(memq key list))
+                              (eql #-(or cmu sbcl)
+                                   '(member key list)
+                                   ;; Tell CMUCL & SBCL we can't use float-eql
+                                   #+(or cmu sbcl)
+                                   '(locally (declare (notinline member))
+                                     (member key list)))
+                              ((equal equalp) 
+                               `(member key list :test #',test)))))
+                     (unless sublist
+                       (cond 
+                        ((<& (incf& (%atable-data-count data))
+                             ,threshold)
+                         (push key (%atable-data-list data)))
+                        ;; Transition to hash-table:
+                        (t (let ((ht (make-keys-only-hash-table-if-supported
+                                      :test ',test
+                                      :size ,threshold)))
+                             (dolist (key (%atable-data-list data))
+                               (setf (gethash key ht) key))
+                             ;; Add new entry
+                             (setf (gethash key ht) key)
+                             (setf (atable-type-index atable) 0)
+                             (setf (atable-data atable) ht)))))
+                     key)))
+              (make-assoc-fn (index)
+                (let ((test (determine-atable-test index))
+                      (threshold
+                       (+& (svref *atable-transition-sizes* index)
+                           auto-transition-margin)))
+                  `(let* ((alist (%atable-data-list data))
+                          (acons
+                           ,(ecase test
+                              (eq '(assq key alist))
+                              (eql #-(or cmu sbcl)
+                                   '(assoc key alist)
+                                   ;; Tell CMUCL & SBCL we can't use float-eql
+                                   #+(or cmu sbcl)
+                                   '(locally (declare (notinline assoc))
+                                     (assoc key alist)))
+                              ((equal equalp)
+                               `(assoc key alist :test #',test)))))
+                     (cond
+                      ;; Replace value:
+                      (acons (setf (cdr acons) nv))
+                      ;; Add assoc-based entry:
+                      ((<& (incf& (%atable-data-count data))
+                           ,threshold)
+                       (setf (%atable-data-list data)
+                             (acons key nv alist)))
+                      ;; Transition to hash-table:
+                      (t (let ((ht (make-hash-table :test ',test)))
+                           (dolist (acons (%atable-data-list data))
+                             (setf (gethash (car acons) ht) (cdr acons)))
+                           ;; Add new entry
+                           (setf (gethash key ht) nv)
+                           (setf (atable-type-index atable) 1)
+                           (setf (atable-data atable) ht))))
+                     nv))))
+         `(defun (setf get-entry) (nv key atable)
+            (with-full-optimization ()
+              (let ((index (atable-type-index atable))
+                    (data (atable-data atable)))
+                (declare (fixnum index))
+                (case index
+                  ((0 1) (setf (gethash key data) nv))
+                  (2 ,(make-list-fn 2))
+                  (3 ,(make-assoc-fn 3))
+                  (4 ,(make-list-fn 4))
+                  (5 ,(make-assoc-fn 5))
+                  (6 ,(make-list-fn 6))
+                  (7 ,(make-assoc-fn 7))
+                  (8 ,(make-list-fn 8))
+                  (9 ,(make-assoc-fn 9)))))))))
   (make-writer))
+
+#+slow-atable
+(defun (setf get-entry) (nv key atable)
+  (setf (gethash key atable) nv))
+#+slow-atable
+(defcm (setf get-entry) (nv key atable)
+  `(setf (gethash ,key ,atable) ,nv))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Atable delete-entry
 
-(macrolet ((make-deleter ()
-             (flet ((make-list-fn (test)
-                      `(let* ((list (%atable-data-list data))
-                              (delete-performed? nil))
-                         (declare (type list list))
-                         (flet ((test-fn (item)
-                                  ;; Tell CMUCL & SBCL we can't use float-eql
-                                  #+(or cmu sbcl)
-                                  ,@(when (eq test 'eql)
-                                      `((declare (notinline ,test))))
-                                  (when (,test key item)
-                                    (setf delete-performed? 't))))
-                           (declare (dynamic-extent #'test-fn))
-                           (setf (%atable-data-list data)
-                                 (delete-if #'test-fn list)))
-                         (when delete-performed?
-                           (decf& (%atable-data-count data))
-                           't)))
-                    (make-assoc-fn (test)
-                      `(let* ((alist (%atable-data-list data))
-                              (delete-performed? nil))
-                         (declare (type list alist))
-                         (flet ((test-fn (item)
-                                  ;; Tell CMUCL & SBCL we can't use float-eql
-                                  #+(or cmu sbcl)
-                                  ,@(when (eq test 'eql)
-                                      `((declare (notinline ,test))))
-                                  (when (,test key (car (the cons item)))
-                                    (setf delete-performed? 't))))
-                           (declare (dynamic-extent #'test-fn))
-                           (setf (%atable-data-list data)
-                                 (delete-if #'test-fn alist)))
-                         (when delete-performed?
-                           (decf& (%atable-data-count data))
-                           't))))
-               `(defun delete-entry (key atable)
-                  (with-full-optimization ()
-                    (let ((index (atable-type-index atable))
-                          (data (atable-data atable)))
-                      (declare (fixnum index))
-                      (case index
-                        (0              ; keys-only hash table
-                         (let ((result (remhash key data)))
-                           (when result 
-                             (let ((threshold 
-                                    (-& (svref
-                                         (load-time-value *atable-transition-sizes*)
-                                         index)
-                                        2))
-                                   (count (hash-table-count data)))
-                               (when (<& count threshold)
-                                 (let ((test (hash-table-test data)))
-                                   (setf (atable-type-index atable)
-                                         (determine-atable-index test 't))
-                                   (setf (atable-data atable)
-                                         (make-%atable-data
-                                          (loop for key being each hash-key in data
-                                              collect key)
-                                          count)))))
-                             result)))
-                        (1              ; key/value hash-table
-                         (let ((result (remhash key data)))
-                           (when result 
-                             (let ((threshold 
-                                    (-& (svref
-                                         (load-time-value *atable-transition-sizes*)
-                                         index)
-                                        2))
-                                   (count (hash-table-count data)))
-                               (when (<& count threshold)
-                                 (let ((test (hash-table-test data)))
-                                   (setf (atable-type-index atable)
-                                         (determine-atable-index test nil))
-                                   (setf (atable-data atable)
-                                         (make-%atable-data 
-                                          (loop for key being each hash-key in data 
-                                              using (hash-value value) 
-                                              collect (cons key value))
-                                          count)))))
-                             result)))
-                        (2 ,(make-list-fn 'eq))
-                        (3 ,(make-assoc-fn 'eq))
-                        (4 ,(make-list-fn 'eql))
-                        (5 ,(make-assoc-fn 'eql))
-                        (6 ,(make-list-fn 'equal))
-                        (7 ,(make-assoc-fn 'equal))
-                        (8 ,(make-list-fn 'equalp))
-                        (9 ,(make-assoc-fn 'equalp)))))))))
+#-slow-atable
+(macrolet
+    ((make-deleter ()
+       (flet ((make-list-fn (test)
+                `(let* ((list (%atable-data-list data))
+                        (delete-performed? nil))
+                   (declare (type list list))
+                   (flet ((test-fn (item)
+                            ;; Tell CMUCL & SBCL we can't use float-eql
+                            #+(or cmu sbcl)
+                            ,@(when (eq test 'eql)
+                                `((declare (notinline ,test))))
+                            (when (,test key item)
+                              (setf delete-performed? 't))))
+                     (declare (dynamic-extent #'test-fn))
+                     (setf (%atable-data-list data)
+                           (delete-if #'test-fn list)))
+                   (when delete-performed?
+                     (decf& (%atable-data-count data))
+                     't)))
+              (make-assoc-fn (test)
+                `(let* ((alist (%atable-data-list data))
+                        (delete-performed? nil))
+                   (declare (type list alist))
+                   (flet ((test-fn (item)
+                            ;; Tell CMUCL & SBCL we can't use float-eql
+                            #+(or cmu sbcl)
+                            ,@(when (eq test 'eql)
+                                `((declare (notinline ,test))))
+                            (when (,test key (car (the cons item)))
+                              (setf delete-performed? 't))))
+                     (declare (dynamic-extent #'test-fn))
+                     (setf (%atable-data-list data)
+                           (delete-if #'test-fn alist)))
+                   (when delete-performed?
+                     (decf& (%atable-data-count data))
+                     't))))
+         `(defun delete-entry (key atable)
+            (with-full-optimization ()
+              (let ((index (atable-type-index atable))
+                    (data (atable-data atable)))
+                (declare (fixnum index))
+                (case index
+                  ;; keys-only hash table:
+                  (0                    
+                   (let ((result (remhash key data)))
+                     (when result 
+                       (let* ((test (hash-table-test data))
+                              (new-index (determine-keys-only-atable-index test))
+                              (threshold 
+                               (svref 
+                                ;; CMUCL (20a) can't handle the load-time-value:
+                                #+cmu #.*atable-transition-sizes*
+                                #-cmu 
+                                (load-time-value *atable-transition-sizes*) 
+                                new-index))
+                              (count (hash-table-count data)))
+                         (when (<& count threshold)
+                           (setf (atable-type-index atable)
+                                 new-index)
+                           (setf (atable-data atable)
+                                 (make-%atable-data
+                                  (loop for key being each hash-key in data
+                                      collect key)
+                                  count))))
+                       result)))
+                  ;; key/value hash-table
+                  (1                    
+                   (let ((result (remhash key data)))
+                     (when result 
+                       (let* ((test (hash-table-test data))
+                              (new-index (determine-key/value-atable-index test))
+                              (threshold 
+                               (svref
+                                ;; CMUCL (20a) can't handle the load-time-value:
+                                #+cmu 
+                                #.*atable-transition-sizes*
+                                #-cmu
+                                (load-time-value *atable-transition-sizes*)
+                                new-index))
+                              (count (hash-table-count data)))
+                         (when (<& count threshold)
+                           (setf (atable-type-index atable) new-index)
+                           (setf (atable-data atable)
+                                 (make-%atable-data 
+                                  (loop for key being each hash-key in data 
+                                      using (hash-value value) 
+                                      collect (cons key value))
+                                  count))))
+                       result)))
+                  (2 ,(make-list-fn 'eq))
+                  (3 ,(make-assoc-fn 'eq))
+                  (4 ,(make-list-fn 'eql))
+                  (5 ,(make-assoc-fn 'eql))
+                  (6 ,(make-list-fn 'equal))
+                  (7 ,(make-assoc-fn 'equal))
+                  (8 ,(make-list-fn 'equalp))
+                  (9 ,(make-assoc-fn 'equalp)))))))))
   (make-deleter))
+
+#+slow-atable
+(defun delete-entry (key atable)
+  (remhash key atable))
+#+slow-atable
+(defcm delete-entry (key atable)
+  `(remhash ,key ,atable))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Atable clear
 
+#-slow-atable
 (defun clear-atable (atable &key retain-as-hash-table)
   (with-full-optimization ()
     (let ((index (atable-type-index atable))
@@ -352,7 +936,9 @@
             (clrhash data)
             (let ((test (hash-table-test data)))
               (setf (atable-type-index atable)
-                    (determine-atable-index test (zerop& index)))
+                    (if (zerop& index)
+                        (determine-keys-only-atable-index test)
+                        (determine-key/value-atable-index test)))
               (setf (atable-data atable)
                     (make-%atable-data nil 0))
               ;; return nil:
@@ -361,9 +947,17 @@
        (t (setf (%atable-data-count data) 0)
           (setf (%atable-data-list data) nil))))))
   
+#+slow-atable
+(defun clear-atable (atable)
+  (clrhash atable))
+#+slow-atable
+(defcm clear-atable (atable)
+  `(clrhash ,atable))
+
 ;;; ---------------------------------------------------------------------------
 ;;;  Atable mapper
 
+#-slow-atable
 (defun map-atable (function atable)
   #+cmu (declare (notinline coerce))
   (let ((fn (coerce function 'function)))
@@ -384,98 +978,12 @@
               (declare (type cons acons))
               (funcall fn (car acons) (cdr acons)))))))))
   
-;;; ---------------------------------------------------------------------------
-;;;  Transition-value determination/setting
-
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  ;; used to avoid iteration timing over-optimization:
-  (defvar *brief-timer-result*)
-  
-  (defmacro brief-timer (n &body body)
-    (let ((folding-factor 100))
-      (flet ((dupe-it ()
-               `(setf *brief-timer-result* ,@body)))
-        `(with-full-optimization ()
-           (let ((%start-time% (get-internal-run-time)))
-             (dotimes (i (truncate& ,n ,folding-factor))
-               (declare (fixnum i)) 
-               ,@(loop for i fixnum from 0 upto folding-factor 
-                     collect (dupe-it)))
-             (locally (declare (notinline / -))
-               (/ (- (get-internal-run-time) %start-time%)
-                  (load-time-value 
-                   (float internal-time-units-per-second))))))))))
-  
-;;; ---------------------------------------------------------------------------
-
-(defun bsearch-for-transition (max-value timer-iterations
-                               sprint-fn marathon-fn keygen-fn)
-  (declare (function sprint-fn marathon-fn keygen-fn))
-  (let ((maximum-test-iterations 100)
-        (min-value 1)
-        (test-value (floor& max-value 2)))
-    (dotimes (i maximum-test-iterations)
-      (declare (fixnum i))
-      (when (=& min-value test-value)
-        (return-from bsearch-for-transition test-value))
-      (let* ((key (funcall keygen-fn test-value))
-             (sprint-time 
-              (brief-timer timer-iterations (funcall sprint-fn key)))
-             (marathon-time
-              (brief-timer timer-iterations (funcall marathon-fn key))))
-        (if (<$ sprint-time marathon-time)
-            (setf min-value test-value)
-            (setf max-value test-value))
-        (setf test-value (+& min-value (floor& (-& max-value min-value) 2)))))))
-
-;;; ---------------------------------------------------------------------------
-;;; Compute the size transition values where hash-tables outperform lists
-
-(defun compute-atable-size-transitions ()
-  (flet ((string-it (i)
-           (make-string 5 :initial-element (code-char (+& i 32)))))
-    (macrolet ((compute-it (test keys-only keygen-fn)
-                 (let ((max-size 60)
-                       (index (determine-atable-index test keys-only))                       )
-                   `(let ((at (make-atable :test ',test
-                                           :keys-only ,keys-only))
-                          (ht (make-atable :test ',test
-                                           :keys-only ,keys-only
-                                           :size ,(* 2 max-size))))
-                      (loop for i fixnum from ,max-size downto 1 do
-                            (let ((key (funcall ,keygen-fn i)))
-                              (setf (get-entry key at) i)
-                              (setf (get-entry key ht) i)))
-                      (with-full-optimization ()
-                        (flet ((at-lookup (key)
-                                 (get-entry key at))
-                               (ht-lookup (key)
-                                 (get-entry key ht)))
-                          (declare (dynamic-extent #'at-lookup #'ht-lookup))
-                          (let ((result
-                                 (bsearch-for-transition
-                                  ,max-size 250000
-                                  #'at-lookup #'ht-lookup ,keygen-fn)))
-                            (format t "~&;; ~s~@[ (keys only)~*~] transition: ~s~%"
-                                    ',test
-                                    ',keys-only
-                                    (setf (svref *atable-transition-sizes* ,index)
-                                          result)))))))))
-      (compute-it eq t #'identity)
-      (compute-it eq nil #'identity)
-      (compute-it eql t #'identity)
-      (compute-it eql nil #'identity)
-      (compute-it equal t #'string-it)
-      (compute-it equal nil #'string-it)
-      (compute-it equalp t #'string-it)
-      (compute-it equalp nil #'string-it)
-      *atable-transition-sizes*)))
-
-;;; ---------------------------------------------------------------------------
-
-#+not-yet
-(eval-when (:load-toplevel)
-  (compute-atable-size-transitions))
+#+slow-atable
+(defun map-atable (function atable)
+  (maphash function atable))
+#+slow-atable
+(defcm map-atable (function atable)
+  `(maphash ,function ,atable))
 
 ;;; ===========================================================================
 ;;;				  End of File

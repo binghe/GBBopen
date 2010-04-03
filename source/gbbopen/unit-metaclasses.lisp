@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/unit-metaclasses.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Mar  3 04:35:08 2010 *-*
+;;;; *-* Last-Edit: Thu Apr  1 12:16:03 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -414,7 +414,6 @@
 
 (defmethod direct-slot-definition-class ((class standard-unit-class)
                                          &rest initargs)
-  (declare (dynamic-extent initargs))
   (cond
    ;; Direct link slot:
    ((getf initargs ':link)
@@ -497,7 +496,6 @@
 
 (defmethod effective-slot-definition-class ((class standard-unit-class)
                                             &rest initargs)
-  (declare (dynamic-extent #+ecl class initargs))
   (if *%%inherited-link-slot%%*
       ;; We can't use load-time-value here, as links are not defined yet:
       (find-class 'effective-link-definition)

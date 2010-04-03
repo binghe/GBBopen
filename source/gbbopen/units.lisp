@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/units.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Mar 16 16:37:30 2010 *-*
+;;;; *-* Last-Edit: Fri Apr  2 11:45:41 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -444,8 +444,8 @@
                 ;; fixup-symbols by comparing the symbol-name (if the eq check
                 ;; fails) and then using the symbol from fixup-symbols:
                 #+clisp
-                (setf maybe-fn 
-                      (find maybe-fn fixup-symbols :test #'string=)))
+                (setf maybe-fn (find maybe-fn fixup-symbols 
+                                     :test #'string=)))
         (setf (fourth cdv-spec)
               (symbol-value maybe-fn)))))
   ;; fixup :initial-space-instances option
@@ -462,8 +462,8 @@
                    ;; the eq check fails) and then using the symbol from
                    ;; fixup-symbols:
                    #+clisp
-                   (setf maybe-fn 
-                         (find maybe-fn fixup-symbols :test #'string=))))
+                   (setf maybe-fn (find maybe-fn fixup-symbols 
+                                        :test #'string=))))
       (setf (standard-unit-class.initial-space-instances unit-class)
             (symbol-value maybe-fn)))))
   
@@ -767,14 +767,20 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun find-effective-slot-definition-by-name (class slot-name)
-  (find slot-name (the list (class-slots class))
-        :key #'slot-definition-name
-        :test #'eq))
+  ;; (car (member ...)) with :test & :key often optimizes better than (find
+  ;; ...):
+  (car (member slot-name (class-slots class)
+               :key #'slot-definition-name
+               :test #'eq)))
 
 (defcm find-effective-slot-definition-by-name (class slot-name)
   (let ((class-var '#:class))
-    `(let ((,class-var (the list (class-slots ,class))))
-       (find ,slot-name ,class-var :key #'slot-definition-name :test #'eq))))
+    `(let ((,class-var (class-slots ,class)))
+       ;; (car (member ...)) with :test & :key often optimizes
+       ;; better than (find ...):
+       (car (member ,slot-name ,class-var
+                    :key #'slot-definition-name 
+                    :test #'eq)))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -790,9 +796,12 @@
         ;; one or more specific slot names:
         (let ((slot-names (ensure-list slot-names)))
           (dolist (slot-name slot-names)
-            (let ((slot (find slot-name class-slots 
-                              :key #'slot-definition-name 
-                              :test #'eq)))
+            (let ((slot 
+                   ;; (car (member ...)) with :test & :key often optimizes
+                   ;; better than (find ...):
+                   (car (member slot-name class-slots 
+                                :key #'slot-definition-name 
+                                :test #'eq))))
               (if slot 
                   (funcall (the function fn) slot)
                   (error "Slot ~s does not exist in ~s."
