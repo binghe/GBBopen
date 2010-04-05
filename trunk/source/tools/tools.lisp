@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Mar 16 16:51:41 2010 *-*
+;;;; *-* Last-Edit: Sun Apr  4 11:29:49 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -1606,9 +1606,9 @@
 ;;;   Macrolet-debug
 
 (defmacro macrolet-debug ((&rest macrobindings) &body body)
-  ;;; This handy macro can help with macrolet debugging.  It defines the local
-  ;;; macro definitions as global macros (allowing quick macroexpansion of
-  ;;; the `body' forms)
+  ;;; This handy macro can help with top-level macrolet debugging.  It defines
+  ;;; the local macro definitions as global macros instead (allowing quick
+  ;;; macroexpansion of uses the `body' forms)
   `(progn
      ,.(flet ((fn (macro)
                 `(defmacro ,@macro)))

@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/find.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Apr  4 06:53:32 2010 *-*
+;;;; *-* Last-Edit: Mon Apr  5 06:10:59 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -339,7 +339,7 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(macrolet 
+(macrolet
     ((generate-match-< (name number-test op &optional dispatching)
        `(with-full-optimization ()
           (defun ,name (instance-value pattern-value comparison-type)
@@ -1624,97 +1624,50 @@
       (dolist (storage storage-objects)
         (set-all-mbr-instance-marks storage disjunctive-dimensional-extents))
       ;; filter-before & pattern & filter-after & funcall `fn':
-      (dolist (storage storage-objects)
-        (flet ((fn-bare (instance)
-                 (when find-stats 
-                   (incf (find-stats.instances-touched find-stats)))
-                 (when (and (funcall (the function unit-class-check-fn) instance)
-                            (progn
-                              (when find-stats 
-                                (incf (find-stats.instances-considered find-stats)))
-                              't)
-                            (match-instance-to-pattern 
-                             instance
-                             (optimized-pattern.pattern optimized-pattern)
-                             into-cons
-                             verbose))
-                   ;; the instance is accepted:
-                   (when find-stats 
-                     (incf (find-stats.instances-accepted find-stats)))
-                   (funcall (the function fn) instance))
-                 ;; we have either accepted or rejected this instance:
-                 (clear-mbr-instance-mark instance))
-               (fn-before-only (instance)
-                 (when find-stats 
-                   (incf (find-stats.instances-touched find-stats)))
-                 (when (and (funcall (the function unit-class-check-fn) instance)
-                            (progn
-                              (when find-stats 
-                                (incf (find-stats.instances-considered find-stats)))
-                              't)
-                            (funcall (the function filter-before) instance)
-                            (match-instance-to-pattern 
-                             instance
-                             (optimized-pattern.pattern optimized-pattern)
-                             into-cons
-                             verbose))
-                   ;; the instance is accepted:
-                   (when find-stats 
-                     (incf (find-stats.instances-accepted find-stats)))
-                   (funcall (the function fn) instance))
-                 ;; we have either accepted or rejected this instance:
-                 (clear-mbr-instance-mark instance))
-               (fn-after-only (instance)
-                 (when find-stats 
-                   (incf (find-stats.instances-touched find-stats)))
-                 (when (and (funcall (the function unit-class-check-fn) instance)
-                            (progn
-                              (when find-stats 
-                                (incf (find-stats.instances-considered find-stats)))
-                              't)
-                            (match-instance-to-pattern 
-                             instance
-                             (optimized-pattern.pattern optimized-pattern)
-                             into-cons
-                             verbose)
-                            (funcall (the function filter-after) instance))
-                   ;; the instance is accepted:
-                   (when find-stats 
-                     (incf (find-stats.instances-accepted find-stats)))
-                   (funcall (the function fn) instance))
-                 ;; we have either accepted or rejected this instance:
-                 (clear-mbr-instance-mark instance))
-               (fn-both (instance)
-                 (when find-stats 
-                   (incf (find-stats.instances-touched find-stats)))
-                 (when (and (funcall (the function unit-class-check-fn) instance)
-                            (progn
-                              (when find-stats 
-                                (incf (find-stats.instances-considered find-stats)))
-                              't)
-                            (funcall (the function filter-before) instance)
-                            (match-instance-to-pattern 
-                             instance
-                             (optimized-pattern.pattern optimized-pattern)
-                             into-cons
-                             verbose)
-                            (funcall (the function filter-after) instance))
-                   ;; the instance is accepted:
-                   (when find-stats 
-                     (incf (find-stats.instances-accepted find-stats)))
-                   (funcall (the function fn) instance))
-                 ;; we have either accepted or rejected this instance:
-                 (clear-mbr-instance-mark instance)))
-          (declare (dynamic-extent #'fn-bare #'fn-before-only
-                                   #'fn-after-only #'fn-both))
-          (let ((fn (if filter-before
-                        (if filter-after #'fn-both #'fn-before-only)
-                        (if filter-after #'fn-after-only #'fn-bare))))
-            (map-marked-instances-on-storage
-             fn storage disjunctive-dimensional-extents verbose)))))
-    (when find-stats
-      (incf (find-stats.run-time find-stats) 
-            (- (get-internal-run-time) run-time)))))
+      (macrolet
+          ((built-check-fn (filter-before? filter-after?)
+             `(flet 
+                  ((fn (instance)
+                     (when find-stats 
+                       (incf (find-stats.instances-touched find-stats)))
+                     (when (and (funcall (the function unit-class-check-fn)
+                                         instance)
+                                (progn
+                                  (when find-stats 
+                                    (incf (find-stats.instances-considered 
+                                           find-stats)))
+                                  't)
+                                ,@(when filter-before?
+                                    '((funcall (the function filter-before)
+                                               instance)))
+                                (match-instance-to-pattern 
+                                 instance
+                                 (optimized-pattern.pattern optimized-pattern)
+                                 into-cons
+                                 verbose)
+                                ,@(when filter-after?
+                                    '((funcall (the function filter-after)
+                                               instance))))
+                       ;; the instance is accepted:
+                       (when find-stats 
+                         (incf (find-stats.instances-accepted find-stats)))
+                       (funcall (the function fn) instance))
+                     ;; we have either accepted or rejected this instance:
+                     (clear-mbr-instance-mark instance)))
+                (declare (dynamic-extent #'fn))
+                (dolist (storage storage-objects)
+                  (map-marked-instances-on-storage
+                   #'fn storage disjunctive-dimensional-extents verbose)))))
+        (if filter-before
+            (if filter-after
+                (built-check-fn t t)
+                (built-check-fn t nil))
+            (if filter-after 
+                (built-check-fn nil t)
+                (built-check-fn nil nil))))
+      (when find-stats
+        (incf (find-stats.run-time find-stats) 
+              (- (get-internal-run-time) run-time))))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -1757,103 +1710,49 @@
       (declare (dynamic-extent #'fn))
       (map-space-instances #'fn space-instances invoking-fn-name))
     ;; filter-before & pattern & filter-after & funcall `fn':
-    (with-lock-held (*master-instance-lock*)
-      (dolist (storage storage-objects)
-        (flet ((fn-bare (instance)
-                 (unless (in-eset instance processed-instance-set)
-                   (when find-stats 
-                     (incf (find-stats.instances-touched find-stats)))
-                   (when (and (funcall (the function unit-class-check-fn) instance)
-                              (progn 
-                                (when find-stats 
-                                  (incf (find-stats.instances-considered 
-                                         find-stats)))
-                                't)
-                              (match-instance-to-pattern 
-                               instance
-                               (optimized-pattern.pattern optimized-pattern)
-                               into-cons
-                               verbose))
-                     ;; the instance is accepted:
+    (macrolet
+        ((built-check-fn (filter-before? filter-after?)
+           `(flet 
+                ((fn (instance)
+                   (unless (in-eset instance processed-instance-set)
                      (when find-stats 
-                       (incf (find-stats.instances-accepted find-stats)))
-                     (funcall (the function fn) instance))
-                   ;; we have either accepted or rejected this instance:
-                   (add-to-eset instance processed-instance-set)))
-               (fn-before-only (instance)
-                 (unless (in-eset instance processed-instance-set)
-                   (when find-stats 
-                     (incf (find-stats.instances-touched find-stats)))
-                   (when (and (funcall (the function unit-class-check-fn) instance)
-                              (progn 
-                                (when find-stats 
-                                  (incf (find-stats.instances-considered 
-                                         find-stats)))
-                                't)
-                              (funcall (the function filter-before) instance)
-                              (match-instance-to-pattern 
-                               instance
-                               (optimized-pattern.pattern optimized-pattern)
-                               into-cons
-                               verbose))
-                     ;; the instance is accepted:
-                     (when find-stats 
-                       (incf (find-stats.instances-accepted find-stats)))
-                     (funcall (the function fn) instance))
-                   ;; we have either accepted or rejected this instance:
-                   (add-to-eset instance processed-instance-set)))
-               (fn-after-only (instance)
-                 (unless (in-eset instance processed-instance-set)
-                   (when find-stats 
-                     (incf (find-stats.instances-touched find-stats)))
-                   (when (and (funcall (the function unit-class-check-fn) instance)
-                              (progn 
-                                (when find-stats 
-                                  (incf (find-stats.instances-considered 
-                                         find-stats)))
-                                't)
-                              (match-instance-to-pattern 
-                               instance
-                               (optimized-pattern.pattern optimized-pattern)
-                               into-cons
-                               verbose)
-                              (funcall (the function filter-after) instance))
-                     ;; the instance is accepted:
-                     (when find-stats 
-                       (incf (find-stats.instances-accepted find-stats)))
-                     (funcall (the function fn) instance))
-                   ;; we have either accepted or rejected this instance:
-                   (add-to-eset instance processed-instance-set)))
-               (fn-both (instance)
-                 (unless (in-eset instance processed-instance-set)
-                   (when find-stats 
-                     (incf (find-stats.instances-touched find-stats)))
-                   (when (and (funcall (the function unit-class-check-fn) instance)
-                              (progn 
-                                (when find-stats 
-                                  (incf (find-stats.instances-considered 
-                                         find-stats)))
-                                't)
-                              (funcall (the function filter-before) instance)
-                              (match-instance-to-pattern 
-                               instance
-                               (optimized-pattern.pattern optimized-pattern)
-                               into-cons
-                               verbose)
-                              (funcall (the function filter-after) instance))
-                     ;; the instance is accepted:
-                     (when find-stats 
-                       (incf (find-stats.instances-accepted find-stats)))
-                     (funcall (the function fn) instance))
-                   ;; we have either accepted or rejected this instance:
-                   (add-to-eset instance processed-instance-set))))
-          (declare (dynamic-extent #'fn-bare #'fn-before-only
-                                   #'fn-after-only #'fn-both))
-          (let ((fn (if filter-before
-                        (if filter-after #'fn-both #'fn-before-only)
-                        (if filter-after #'fn-after-only #'fn-bare))))
-            (map-all-instances-on-storage 
-             fn storage disjunctive-dimensional-extents verbose)))))
+                       (incf (find-stats.instances-touched find-stats)))
+                     (when (and (funcall (the function unit-class-check-fn) 
+                                         instance)
+                                (progn 
+                                  (when find-stats 
+                                    (incf (find-stats.instances-considered 
+                                           find-stats)))
+                                  't)
+                                ,@(when filter-before?
+                                    '((funcall (the function filter-before) 
+                                               instance)))
+                                (match-instance-to-pattern 
+                                 instance
+                                 (optimized-pattern.pattern optimized-pattern)
+                                 into-cons
+                                 verbose)
+                                ,@(when filter-after?
+                                    '((funcall (the function filter-after) 
+                                               instance))))
+                       ;; the instance is accepted:
+                       (when find-stats 
+                         (incf (find-stats.instances-accepted find-stats)))
+                       (funcall (the function fn) instance))
+                     ;; we have either accepted or rejected this instance:
+                     (add-to-eset instance processed-instance-set))))
+              (declare (dynamic-extent #'fn))
+              (with-lock-held (*master-instance-lock*)
+                (dolist (storage storage-objects)
+                  (map-all-instances-on-storage 
+                   #'fn storage disjunctive-dimensional-extents verbose))))))
+      (if filter-before
+          (if filter-after
+              (built-check-fn t t)
+              (built-check-fn t nil))
+          (if filter-after 
+              (built-check-fn nil t)
+              (built-check-fn nil nil))))
     (when find-stats
       (incf (find-stats.run-time find-stats) 
             (- (get-internal-run-time) run-time)))))
@@ -1883,35 +1782,31 @@
       (dolist (storage storage-objects)
         (set-all-mbr-instance-marks storage 't))
       ;; sweep:
-      (dolist (storage storage-objects)
-        (flet ((fn-bare (instance)
-                 (clear-mbr-instance-mark instance)
-                 (when (funcall (the function unit-class-check-fn) instance)
-                   (funcall (the function fn) instance)))
-               (fn-before-only (instance)
-                 (clear-mbr-instance-mark instance)
-                 (when (and (funcall (the function unit-class-check-fn) instance)
-                            (funcall (the function filter-before) instance))
-                   (funcall (the function fn) instance)))
-               (fn-after-only (instance)
-                 (clear-mbr-instance-mark instance)
-                 (when (and (funcall (the function unit-class-check-fn) instance)
-                            ;; there is no pattern here...
-                            (funcall (the function filter-after) instance))
-                   (funcall (the function fn) instance)))
-               (fn-both (instance)
-                 (clear-mbr-instance-mark instance)
-                 (when (and (funcall (the function unit-class-check-fn) instance)
-                            (funcall (the function filter-before) instance)
-                            ;; there is no pattern here...
-                            (funcall (the function filter-after) instance))
-                   (funcall (the function fn) instance))))
-          (declare (dynamic-extent #'fn-bare #'fn-before-only
-                                   #'fn-after-only #'fn-both))
-          (let ((fn (if filter-before
-                        (if filter-after #'fn-both #'fn-before-only)
-                        (if filter-after #'fn-after-only #'fn-bare))))
-            (map-marked-instances-on-storage fn storage 't verbose)))))))
+      (macrolet
+          ((built-check-fn (filter-before? filter-after?)
+             `(flet 
+                  ((fn (instance)
+                     (clear-mbr-instance-mark instance)
+                     (when (and (funcall (the function unit-class-check-fn)
+                                         instance)
+                                ,@(when filter-before?
+                                    '((funcall (the function filter-before) 
+                                               instance)))
+                                ;; there is no pattern here...
+                                ,@(when filter-after?
+                                    '((funcall (the function filter-after) 
+                                               instance))))
+                       (funcall (the function fn) instance))))
+                (declare (dynamic-extent #'fn))
+                (dolist (storage storage-objects)
+                  (map-marked-instances-on-storage #'fn storage 't verbose)))))
+        (if filter-before
+            (if filter-after
+                (built-check-fn t t)
+                (built-check-fn t nil))
+            (if filter-after 
+                (built-check-fn nil t)
+                (built-check-fn nil nil)))))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -1928,43 +1823,33 @@
         (processed-instance-set 
          (make-keys-only-hash-table-if-supported :test #'eq)))
     (with-lock-held (*master-instance-lock*)
-      (dolist (storage storage-objects)
-        (flet ((fn-bare (instance)
-                 (unless (gethash instance processed-instance-set)
-                   (when (funcall (the function unit-class-check-fn) instance)
-                     (funcall (the function fn) instance))
-                   ;; we have either accepted or rejected this instance:
-                   (setf (gethash instance processed-instance-set) 't)))
-               (fn-before-only (instance)
-                 (unless (gethash instance processed-instance-set)
-                   (when (and (funcall (the function unit-class-check-fn) instance)
-                              (funcall (the function filter-before) instance))
-                     (funcall (the function fn) instance))
-                   ;; we have either accepted or rejected this instance:
-                   (setf (gethash instance processed-instance-set) 't)))
-               (fn-after-only (instance)
-                 (unless (gethash instance processed-instance-set)
-                   (when (and (funcall (the function unit-class-check-fn) instance)
-                              ;; there is no pattern here...
-                              (funcall (the function filter-after) instance))
-                     (funcall (the function fn) instance))
-                   ;; we have either accepted or rejected this instance:
-                   (setf (gethash instance processed-instance-set) 't)))
-               (fn-both (instance)
-                 (unless (gethash instance processed-instance-set)
-                   (when (and (funcall (the function unit-class-check-fn) instance)
-                              (funcall (the function filter-before) instance)
-                              ;; there is no pattern here...
-                              (funcall (the function filter-after) instance))
-                     (funcall (the function fn) instance))
-                   ;; we have either accepted or rejected this instance:
-                   (setf (gethash instance processed-instance-set) 't))))
-          (declare (dynamic-extent #'fn-bare #'fn-before-only
-                                   #'fn-after-only #'fn-both))
-          (let ((fn (if filter-before
-                        (if filter-after #'fn-both #'fn-before-only)
-                        (if filter-after #'fn-after-only #'fn-bare))))
-            (map-all-instances-on-storage fn storage 't verbose)))))))
+      (macrolet
+          ((built-check-fn (filter-before? filter-after?)
+             `(flet
+                  ((fn (instance)
+                     (unless (gethash instance processed-instance-set)
+                       (when (and (funcall (the function unit-class-check-fn) 
+                                           instance)
+                                  ,@(when filter-before?
+                                      '((funcall (the function filter-before)
+                                                 instance)))
+                                  ;; there is no pattern here...
+                                  ,@(when filter-after?
+                                      '((funcall (the function filter-after)
+                                                 instance))))
+                         (funcall (the function fn) instance))
+                       ;; we have either accepted or rejected this instance:
+                       (setf (gethash instance processed-instance-set) 't))))
+                (declare (dynamic-extent #'fn))
+                (dolist (storage storage-objects)
+                  (map-all-instances-on-storage #'fn storage 't verbose)))))
+        (if filter-before
+            (if filter-after
+                (built-check-fn t t)
+                (built-check-fn t nil))
+            (if filter-after 
+                (built-check-fn nil t)
+                (built-check-fn nil nil)))))))
 
 ;;; ---------------------------------------------------------------------------
 

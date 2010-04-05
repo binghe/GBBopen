@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/modules.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Mar 13 11:30:53 2010 *-*
+;;;; *-* Last-Edit: Sun Apr  4 05:48:02 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -34,7 +34,7 @@
 ;;;  11-13-06 Added :abort-ks-execution-example module. (Corkill)
 ;;;  06-28-07 Renamed :gbbopen module to more accurate :gbbopen-core. (Corkill)
 ;;;  02-15-10 Added :double-metaphone module. (Corkill)
-;;;  03-07-10 Added auto-transitioning tables (:atables) module. (Corkill)
+;;;  03-07-10 Added auto-transitioning sets, tables. (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -68,6 +68,7 @@
             "gbbopen-instance"
             "date-and-time"
             ("offset-universal-time" :forces-recompile)
+            ("atable" :forces-recompile)
             ("print-object-for" :forces-recompile)
             ("read-object" :forces-recompile)
             "duplicate-instance"
@@ -92,11 +93,6 @@
     (:requires :gbbopen-tools :portable-threads)
     (:directory :gbbopen-tools)
     (:files "polling-functions"))
-  
-  (define-module :atable
-    (:requires :gbbopen-tools)
-    (:directory :gbbopen-tools)
-    (:files ("atable" :forces-recompile)))
   
   (define-module :os-interface
     (:requires :gbbopen-tools)
@@ -135,7 +131,7 @@
   (define-relative-directory :gbbopen :gbbopen-root "gbbopen")
   
   (define-module :gbbopen-core
-    (:requires :gbbopen-tools :portable-threads :atable :os-interface)
+    (:requires :gbbopen-tools :portable-threads :os-interface)
     (:directory :gbbopen)
     (:files "preamble"
             ("utilities" :forces-recompile)
@@ -318,7 +314,7 @@
 (with-system-name (:timing)
 
   (define-module :cl-timing
-    (:requires :atable :gbbopen-tools-user)
+    (:requires :gbbopen-tools-user)
     (:directory :gbbopen-tools "timing")
     (:files "cl-timing"))
   
