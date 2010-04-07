@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/atable.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Apr  3 19:34:05 2010 *-*
+;;;; *-* Last-Edit: Wed Apr  7 09:54:35 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -16,7 +16,8 @@
 ;;; Written by: Dan Corkill
 ;;;
 ;;; Copyright (C) 2008-2010, Dan Corkill <corkill@GBBopen.org> 
-;;; Part of the GBBopen Project (see LICENSE for license information).
+;;; Part of the GBBopen Project.
+;;; Licensed under Apache License 2.0 (see LICENSE for license information).
 ;;;
 ;;; Ideally, native CL hash tables should always be fast.  On some CLs,
 ;;; however, we can save a small amount of time (and some space) by using
@@ -75,7 +76,8 @@
 (defconstant eset-transition-size 
     #+allegro 12
     #+clisp 0
-    #+clozure 7
+    #+(and clozure (not linuxx86-target)) 7
+    #+(and clozure linuxx86-target) 46
     #+cmu 12
     #+digitool-mcl 7
     #+ecl 0
@@ -294,7 +296,8 @@
 (defconstant et-transition-size 
     #+allegro 6
     #+clisp 0
-    #+clozure 6
+    #+(and clozure (not linuxx86-target)) 6
+    #+(and clozure linuxx86-target) 34
     #+cmu 8
     #+digitool-mcl 7
     #+ecl 0

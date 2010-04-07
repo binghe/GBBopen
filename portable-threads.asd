@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Portable-Threads-System; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/portable-threads.asd *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue May 27 23:18:00 2008 *-*
+;;;; *-* Last-Edit: Wed Apr  7 10:24:26 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,8 @@
 ;;;
 ;;; Written by: Attila Lendvai
 ;;;
-;;; Part of the GBBopen Project (see LICENSE for license information).
+;;; Part of the GBBopen Project.
+;;; Licensed under Apache License 2.0 (see LICENSE for license information).
 ;;;
 ;;;  Note: This ASDF system definition is for stand-alone Portable Threads
 ;;;        use.  The current gbbopen.asd interface does not play nice with
@@ -42,7 +43,7 @@
     :author "The GBBopen Project <gbbopen@GBBopen.org>"
     :maintainer "Dan Corkill <corkill@GBBopen.org>"
     :licence 
-      "Part of the GBBopen Project (see LICENSE for license information)."
+      "Part of the GBBopen Project. Licensed under Apache License 2.0 (see LICENSE for license information)."
     :description "Portable Threads"
     :components ((:static-file "COPYING")
                  (:static-file "LICENSE")

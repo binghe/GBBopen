@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/basic-tests.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Mar 14 12:02:48 2010 *-*
+;;;; *-* Last-Edit: Wed Apr  7 10:29:53 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -15,7 +15,8 @@
 ;;; Written by: Dan Corkill
 ;;;
 ;;; Copyright (C) 2002-2010, Dan Corkill <corkill@GBBopen.org>
-;;; Part of the GBBopen Project (see LICENSE for license information).
+;;; Part of the GBBopen Project.
+;;; Licensed under Apache License 2.0 (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
@@ -142,10 +143,15 @@
 ;;; ===========================================================================
 ;;;  Basic timing functions
 
-(defun time-test-1 (n)
-  (let ((x (make-instance 'uc-1 :x 0 :y 0)))
-    (dotimes (i n)
-      (linkf (link-2-of x) (make-instance 'uc-2 :x i :y i))))
+(defun make-and-link-time-test (n)
+  (format t "~&;; Running make-instance & link timing test (~:d instance~:p)...~%" 
+          n)
+  (time 
+   (let ((x (make-instance 'uc-1 :x 0 :y 0)))
+     (dotimes (i n)
+       (linkf (link-2-of x) (make-instance 'uc-2 :x i :y i))))))
+
+(defun retrieval-time-test (n *use-marking*)
   (map-instances-on-space-instances 
    #'delete-instance 
    't
@@ -155,7 +161,7 @@
                     `(=& y ,(expand-point& n 3)))))
 
 #+not-timed
-(defun time-test-1-sorted (n)
+(defun sorted-retrieval-time-test (n *use-marking*)
   (let* ((x (make-instance 'uc-1))
          (dslotd (gbbopen::get-dlslotd-from-reader 'link-2-of x))
          (save-value (direct-link-definition.sort-function dslotd)))
@@ -163,6 +169,14 @@
     (dotimes (i n)
       (linkf (link-2-of x) (make-instance 'uc-2)))
     (setf (direct-link-definition.sort-function dslotd) save-value)))
+
+(defun marking-find-time-test (n)
+  (format t "~&;; Running marking timing test (~:d instance~:p)...~%" n)
+  (time (retrieval-time-test n 't)))
+
+(defun hashing-find-time-test (n)
+  (format t "~&;; Running hashing timing test (~:d instance~:p)...~%" n)
+  (time (retrieval-time-test n nil)))
 
 (defun do-time-tests (n)
   (make-space-instance 
@@ -172,15 +186,13 @@
    :make-parents t)
   (map-instances-of-class #'delete-instance '(abstract :plus-subclasses))
   (reset-unit-class 't)
-  (progn
-    (format t "~&;; Running marking timing test (~s instances)...~%" n)
-    (let ((*use-marking* t))
-      (time (time-test-1 n))))
-  (progn
-    (format t "~&;; Running hashing timing test (~s instances)...~%" n)
-    (let ((*use-marking* nil))
-      (time (time-test-1 n))))
-  (reset-gbbopen))
+  ;; Measure instance creation & linking:
+  (make-and-link-time-test n)
+  ;; Run one retrieval to measure set-up costs:
+  (marking-find-time-test 1)
+  ;; Measure  hashing & marking:
+  (hashing-find-time-test n)
+  (marking-find-time-test n))
   
 ;;; ===========================================================================
 ;;;  Basic tests
@@ -1046,7 +1058,7 @@
   (clos/mop-tests)
   (basic-tests)
   (event-function-tests)
-  
+  ;; Finds:
   (find-tests '((uc-1 x unstructured)))
   (find-tests '((uc-1 amphibious boolean)))
   (find-tests '((uc-1 classification hashed :size 20)))
@@ -1066,13 +1078,11 @@
 			       (1 10 1)))))
   (find-tests '((uc-1 (x y) uniform-buckets 
 		      :layout ((0 10 .2)
-			       (.5 10 .3)))))
-  
-  ;; Simple time test:
-  (progn
-    (reset-gbbopen)
-    (do-time-tests 10000))
-  
+			       (.5 10 .3))))) 
+  ;; Time test:
+  (reset-gbbopen)
+  (do-time-tests 10000)
+  (reset-gbbopen)
   ;; Common Lisp capability tests:
   (lisp-capability-tests))
 

@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:SWANK; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/slime-extended-repl.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri May  9 11:29:38 2008 *-*
+;;;; *-* Last-Edit: Wed Apr  7 09:53:27 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -15,7 +15,8 @@
 ;;; Written by: Dan Corkill 
 ;;;
 ;;; Copyright (C) 2005-2008, Dan Corkill <corkill@GBBopen.org>
-;;; Part of the GBBopen Project (see LICENSE for license information).
+;;; Part of the GBBopen Project.
+;;; Licensed under Apache License 2.0 (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
