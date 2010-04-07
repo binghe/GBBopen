@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
-;;;; *-* File: /home/gbbopen/current/source/gbbopen/extensions/multinode.lisp *-*
+;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/multinode.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Sep 23 23:16:39 2006 *-*
-;;;; *-* Machine: ruby.corkills.org *-*
+;;;; *-* Last-Edit: Wed Apr  7 10:10:05 2010 *-*
+;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -15,7 +15,8 @@
 ;;; Written by: Dan Corkill
 ;;;
 ;;; Copyright (C) 2006, Dan Corkill <corkill@GBBopen.org>
-;;; Part of the GBBopen Project (see LICENSE for license information).
+;;; Part of the GBBopen Project.
+;;; Licensed under Apache License 2.0 (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;

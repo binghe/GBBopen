@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:HTTP-SERVICES; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/http-services.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Mar 12 05:30:16 2010 *-*
+;;;; *-* Last-Edit: Wed Apr  7 09:57:08 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -15,7 +15,8 @@
 ;;; Written by: Dan Corkill
 ;;;
 ;;; Copyright (C) 2009-2010, Dan Corkill <corkill@GBBopen.org>
-;;; Part of the GBBopen Project (see LICENSE for license information).
+;;; Part of the GBBopen Project.
+;;; Licensed under Apache License 2.0 (see LICENSE for license information).
 ;;;
 ;;; --------------------------------------------------------------------------
 ;;;

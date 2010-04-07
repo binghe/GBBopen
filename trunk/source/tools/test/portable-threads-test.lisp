@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/test/portable-threads-test.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Mar 15 10:50:04 2010 *-*
+;;;; *-* Last-Edit: Wed Apr  7 10:02:56 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -15,7 +15,8 @@
 ;;; Written by: Dan Corkill
 ;;;
 ;;; Copyright (C) 2005-2010, Dan Corkill <corkill@GBBopen.org>
-;;; Part of the GBBopen Project (see LICENSE for license information).
+;;; Part of the GBBopen Project.
+;;; Licensed under Apache License 2.0 (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;

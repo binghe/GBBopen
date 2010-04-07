@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/utilities.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Jun 29 04:16:58 2009 *-*
+;;;; *-* Last-Edit: Wed Apr  7 10:08:55 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -15,7 +15,8 @@
 ;;; Written by: Dan Corkill
 ;;;
 ;;; Copyright (C) 2003-2008, Dan Corkill <corkill@GBBopen.org>
-;;; Part of the GBBopen Project (see LICENSE for license information).
+;;; Part of the GBBopen Project.
+;;; Licensed under Apache License 2.0 (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;

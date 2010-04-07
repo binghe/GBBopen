@@ -1,23 +1,24 @@
 ;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/gbbopen.asd *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Jul  1 09:22:24 2008 *-*
+;;;; *-* Last-Edit: Wed Apr  7 10:19:43 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
 ;;;; *
-;;;; *                         GBBopen ASDF Interface
+;;;; *                           GBBopen ASDF Interface
 ;;;; *
 ;;;; **************************************************************************
 ;;;; **************************************************************************
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2005-2008, Dan Corkill <corkill@GBBopen.org>
-;;; Part of the GBBopen Project (see LICENSE for license information).
+;;; Copyright (C) 2005-2010, Dan Corkill <corkill@GBBopen.org>
+;;; Part of the GBBopen Project.
+;;; Licensed under Apache License 2.0 (see LICENSE for license information).
 ;;;
-;;;  Interfaces GBBopen's mini-module facility, a lightweight and easy to use
+;;;  Interfaces GBBopen's Module Manager facility, a lightweight and easy to use
 ;;;  mechanism for maintaining (compiling and loading) modules, with ASDF.
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -45,11 +46,11 @@
         (read version-file))))
 
 ;;; ===========================================================================
-;;;  Compile/load GBBopen's Mini Module system
+;;;  Compile/load GBBopen's Module Manager
 
-(mini-module-user :propagate)
+(module-manager-user :propagate)
 
-(in-package :mini-module)
+(in-package :module-manager)
 
 ;;; ===========================================================================
 ;;;  Utilities
@@ -85,7 +86,7 @@
   (remhash module-name asdf::*defined-systems*))
 
 ;;; ===========================================================================
-;;;  Mini-Module ASDF component
+;;;  Module-Manager ASDF component
 
 (defclass mm-component (asdf:component)
   ())

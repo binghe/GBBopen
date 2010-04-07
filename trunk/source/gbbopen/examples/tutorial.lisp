@@ -1,7 +1,7 @@
 ;;;; -*- Mode:COMMON-LISP; Package:TUTORIAL; Base:10 -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/examples/tutorial.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Apr  4 12:45:18 2009 *-*
+;;;; *-* Last-Edit: Wed Apr  7 10:10:32 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -12,7 +12,8 @@
 ;;;; **************************************************************************
 ;;;; **************************************************************************
 ;;;
-;;; Part of the GBBopen Project (see LICENSE for license information).
+;;; Part of the GBBopen Project.
+;;; Licensed under Apache License 2.0 (see LICENSE for license information).
 ;;;
 ;;; Runs once (automatically) when loaded using the module-manager system.
 ;;;

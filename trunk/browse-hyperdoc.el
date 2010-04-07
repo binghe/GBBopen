@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Emacs-Lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/browse-hyperdoc.el *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Mar 15 12:38:43 2009 *-*
+;;;; *-* Last-Edit: Wed Apr  7 10:16:04 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -15,7 +15,8 @@
 ;;; Written by: Dan Corkill
 ;;;
 ;;; Copyright (C) 2005-2009, Dan Corkill <corkill@GBBopen.org>
-;;; Part of the GBBopen Project (see LICENSE for license information).
+;;; Part of the GBBopen Project.
+;;; Licensed under Apache License 2.0 (see LICENSE for license information).
 ;;;
 ;;; To enable on-line GBBopen hyperdoc access, the GBBopen hyperdoc
 ;;; files must be installed in <install-directory>/hyperdoc.  Note

@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/test/double-metaphone-test.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Feb 23 05:41:09 2010 *-*
+;;;; *-* Last-Edit: Wed Apr  7 10:02:01 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,8 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Part of the GBBopen Project (see LICENSE for license information).
+;;; Part of the GBBopen Project.
+;;; Licensed under Apache License 2.0 (see LICENSE for license information).
 ;;;
 ;;; Incorporates data from various Double Metaphone test sets.  Dan Corkill
 ;;; added the `extended-p' extension tests.

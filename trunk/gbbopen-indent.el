@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Emacs-Lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/gbbopen-indent.el *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Jul 23 06:27:32 2009 *-*
+;;;; *-* Last-Edit: Wed Apr  7 10:18:28 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -15,7 +15,8 @@
 ;;; Written by: Dan Corkill
 ;;;
 ;;; Copyright (C) 2002-2009, Dan Corkill <corkill@GBBopen.org>
-;;; Part of the GBBopen Project (see LICENSE for license information).
+;;; Part of the GBBopen Project.
+;;; Licensed under Apache License 2.0 (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
