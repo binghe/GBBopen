@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/defconstruct.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Apr  7 09:55:27 2010 *-*
+;;;; *-* Last-Edit: Thu Apr  8 05:43:47 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -57,7 +57,7 @@
            (defcm ,constructor-sym (,field1 ,field2)
              `(cons ,,field1 ,,field2))
            ;; Field1 accessor:
-           #-(or cmu scl)
+           #+(or cmu scl)
            (declaim (inline ,field1-sym (setf ,field1-sym)))
            (defun ,field1-sym (,name)
              (car ,name))
@@ -70,7 +70,7 @@
            (defcm (setf ,field1-sym) (nv ,name)
              `(setf (car (the cons ,,name)) ,nv))
            ;; Field2 accessor:
-           #-(or cmu scl)
+           #+(or cmu scl)
            (declaim (inline ,field2-sym (setf ,field2-sym)))
            (defun ,field2-sym (,name)
              (cdr ,name))
