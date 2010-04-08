@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/atable.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Apr  7 09:54:35 2010 *-*
+;;;; *-* Last-Edit: Thu Apr  8 05:48:57 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -76,14 +76,18 @@
 (defconstant eset-transition-size 
     #+allegro 12
     #+clisp 0
-    #+(and clozure (not linuxx86-target)) 7
-    #+(and clozure linuxx86-target) 46
-    #+cmu 12
+    ;; Clozure
+    #+(and clozure darwinx86-target) 7
+    #+(and clozure (not darwinx86-target)) 46
+    #+cmu 22
     #+digitool-mcl 7
     #+ecl 0
     #+lispworks 8
-    #+sbcl 18
-    #+scl 12
+    ;; SBCL
+    #+(and sbcl darwin x86) 18
+    #+(and sbcl darwin ppc) 80
+    #+(and sbcl (not darwin)) 32
+    #+scl 22
     #-(or allegro 
           clisp
           clozure
@@ -296,14 +300,18 @@
 (defconstant et-transition-size 
     #+allegro 6
     #+clisp 0
-    #+(and clozure (not linuxx86-target)) 6
-    #+(and clozure linuxx86-target) 34
-    #+cmu 8
+    ;; Clozure
+    #+(and clozure darwinx86-target) 6
+    #+(and clozure (not darwinx86-target)) 34
+    #+cmu 16
     #+digitool-mcl 7
     #+ecl 0
     #+lispworks 2
-    #+sbcl 12
-    #+scl 8
+    ;; SBCL
+    #+(and sbcl darwin x86) 12
+    #+(and sbcl darwin ppc) 80
+    #+(and sbcl (not darwin)) 20
+    #+scl 16
     #-(or allegro 
           clisp
           clozure
@@ -407,10 +415,12 @@
           ;; Already a hash-table:
           (setf (gethash key data) nv)))))
   
+#+(and slower-et (or cmu scl))
+  (declaim (inline (setf get-et)))
 #+slower-et
 (defun (setf get-et) (nv key et)
   (setf (gethash key et) nv))
-#+slower-et
+#+(and slower-et (not (or cmu scl)))
 (defcm (setf get-et) (nv key et)
   (let ((nv-var '#:nv))
     `(let ((,nv-var ,nv))
@@ -558,6 +568,7 @@
     ;; CMUCL (20a) can't handle the load-time-value:
     (svref #+cmu #.*atable-test-vector*
            #-cmu (load-time-value *atable-test-vector*) index)))
+#-slow-atable
 (defcm determine-atable-test (index)
   `(svref #+cmu #.*atable-test-vector*
           #-cmu (load-time-value *atable-test-vector*) (the fixnum ,index)))
@@ -807,10 +818,12 @@
                   (9 ,(make-assoc-fn 9)))))))))
   (make-writer))
 
+#+(and slow-atable (or cmu scl))
+  (declaim (inline (setf get-entry)))
 #+slow-atable
 (defun (setf get-entry) (nv key atable)
   (setf (gethash key atable) nv))
-#+slow-atable
+#+(and slow-atable (not (or cmu scl)))
 (defcm (setf get-entry) (nv key atable)
   `(setf (gethash ,key ,atable) ,nv))
 
