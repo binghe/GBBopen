@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/atable.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Apr  8 05:48:57 2010 *-*
+;;;; *-* Last-Edit: Thu Apr  8 06:05:03 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -79,7 +79,9 @@
     ;; Clozure
     #+(and clozure darwinx86-target) 7
     #+(and clozure (not darwinx86-target)) 46
-    #+cmu 22
+    ;; CMUCL
+    #+(and cmu darwin x86) 32
+    #+(and cmu (not (and darwin x86))) 46
     #+digitool-mcl 7
     #+ecl 0
     #+lispworks 8
@@ -87,7 +89,9 @@
     #+(and sbcl darwin x86) 18
     #+(and sbcl darwin ppc) 80
     #+(and sbcl (not darwin)) 32
-    #+scl 22
+    ;; SCL
+    #+(and scl darwin x86) 32
+    #+(and scl (not (and darwin x86))) 46
     #-(or allegro 
           clisp
           clozure
@@ -293,7 +297,7 @@
 ;;;
 
 ;; ETs are slower in CLISP and ECL (and barely win with Lispworks):
-#+(or clisp ecl)
+#+(or clisp ecl lispworks)
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (pushnew :slower-et *features*))
 
@@ -303,7 +307,9 @@
     ;; Clozure
     #+(and clozure darwinx86-target) 6
     #+(and clozure (not darwinx86-target)) 34
-    #+cmu 16
+    ;; CMUCL
+    #+(and cmu darwin x86) 16
+    #+(and cmu (not (and darwin x86))) 78
     #+digitool-mcl 7
     #+ecl 0
     #+lispworks 2
@@ -311,7 +317,9 @@
     #+(and sbcl darwin x86) 12
     #+(and sbcl darwin ppc) 80
     #+(and sbcl (not darwin)) 20
-    #+scl 16
+    ;; SCL
+    #+(and scl darwin x86) 16
+    #+(and scl (not (and darwin x86))) 78
     #-(or allegro 
           clisp
           clozure
