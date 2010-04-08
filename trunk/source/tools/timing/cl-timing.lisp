@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/timing/cl-timing.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Apr  7 10:03:31 2010 *-*
+;;;; *-* Last-Edit: Thu Apr  8 05:58:37 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -51,7 +51,7 @@
     #-(or clisp ecl) 
            10000000)
 
-(defparameter *max-list-test-size* 80)
+(defparameter *max-list-test-size* 100)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defvar *%timing-result%*))
