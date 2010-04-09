@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/unit-metaclasses.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Apr  9 05:50:54 2010 *-*
+;;;; *-* Last-Edit: Fri Apr  9 15:13:17 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -226,14 +226,13 @@
                           :use-global-instance-name-counter)
                          (list indicator (sole-element value)))
                         (otherwise (list indicator value)))))))
-    ;; create/copy appropriate type of instance-hash-table:
     (cond 
-     ;; must create a new instance-hash-table:
+     ;; Create a new (empty) instance-hash-table:
      ((or (eq slot-names 't)
           (memq 'instance-name-comparison-test slot-names))
       (make-instance-name-hash-table class))
-     ;; must copy instances into a new instance-hash-table (due to a change in
-     ;; instance-name-comparison-test):
+     ;; Copy existing instances into a new instance-hash-table (due to a
+     ;; change in instance-name-comparison-test):
      ((not (eq (standard-unit-class.instance-name-comparison-test class)
                (cannonical-hash-table-test
                 (standard-unit-class.instance-hash-table class))))
