@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/units.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Apr  9 05:39:04 2010 *-*
+;;;; *-* Last-Edit: Fri Apr  9 10:26:25 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -699,7 +699,7 @@
   (with-full-optimization ()
     (let ((classes-seen nil)
           (fn (if (functionp fn) fn (fdefinition fn))))
-      (declare (type list classes-seen))
+      (declare (function fn) (type list classes-seen))
       (labels ((doit (class)
                  (when (and (typep class 'standard-unit-class)
                             (not (memq class classes-seen)))
@@ -757,13 +757,14 @@
 (defun map-unit-classes-specifier (fn unit-classes-specifier)
   ;;; Handles mapping for functions that accept a unit-classes-specifier
   (with-full-optimization ()
-    (dolist (specifier (parse-unit-classes-specifier unit-classes-specifier))
-      (destructuring-bind (unit-class . plus-subclasses)
-          specifier
-        (if plus-subclasses
-            (map-unit-classes fn unit-class)
-            (funcall (if (functionp fn) fn (fdefinition fn))
-                     unit-class nil))))))
+    (let ((fn (if (functionp fn) fn (fdefinition fn))))
+      (declare (function fn))
+      (dolist (specifier (parse-unit-classes-specifier unit-classes-specifier))
+        (destructuring-bind (unit-class . plus-subclasses)
+            specifier
+          (if plus-subclasses
+              (map-unit-classes fn unit-class)
+              (funcall fn unit-class nil)))))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -789,11 +790,12 @@
   ;;; Applies `fn' to the slots of `unit-class' specified by `slot-names'.
   ;;; `Slot-names' can be t (all slots), a single slot-name, or a list of
   ;;; slot-names. 
+  (declare (function fn))
   (let ((class-slots (class-slots unit-class))) 
     (declare (type list class-slots))
     (if (eq slot-names 't)
         ;; all slots:
-        (mapc (the function fn) class-slots)
+        (mapc fn class-slots)
         ;; one or more specific slot names:
         (let ((slot-names (ensure-list slot-names)))
           (dolist (slot-name slot-names)
@@ -804,7 +806,7 @@
                                 :key #'slot-definition-name 
                                 :test #'eq))))
               (if slot 
-                  (funcall (the function fn) slot)
+                  (funcall fn slot)
                   (error "Slot ~s does not exist in ~s."
                          slot-name 
                          unit-class))))))))

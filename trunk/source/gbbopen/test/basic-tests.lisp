@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/basic-tests.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Apr  7 10:29:53 2010 *-*
+;;;; *-* Last-Edit: Fri Apr  9 15:56:30 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -35,6 +35,15 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (import '(gbbopen::direct-link-definition.sort-function
             gbbopen::standard-unit-class.abstract)))
+
+;;; ---------------------------------------------------------------------------
+
+(declaim (special u1 u2 u3 u4 u5 u6 u7 u8 u9 u10 u11 u12 cu1))
+
+;; CLISP unfortunately initializes CLOS classes at compile time, so we need the
+;; test-size value in the compilation environment:
+(eval-when (#+clisp :compile-toplevel :load-toplevel :execute)
+  (defparameter *timing-tests-size* 10000))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -72,7 +81,8 @@
                      unbound-value-indicator)))
    (classification (:element eq) classification)
    (amphibious :boolean amphibious))
-  (:initial-space-instances (bb sub-bb space-1)))
+  (:initial-space-instances (bb sub-bb space-1))
+  (:estimated-instances 10))
   
 (defmethod print-instance-slots ((obj uc-1) stream)
   (call-next-method)
@@ -90,7 +100,7 @@
   ((backlink-2 :link (uc-1 link-2 :singular nil)
 	       :singular nil)
    (backlink-3 :link (uc-1 link-3)))
-  (:estimated-instances 10)
+  (:estimated-instances *timing-tests-size*)
   (:use-global-instance-name-counter t))
 
 (define-unit-class uc-3 (uc-1) 
@@ -143,40 +153,86 @@
 ;;; ===========================================================================
 ;;;  Basic timing functions
 
+(defun make-time-test (n)
+  (declare (fixnum n))
+  (format t "~&;; Running make-instance timing test (~:d instance~:p)...~%" 
+          n)
+  (time 
+   (with-full-optimization ()
+     (make-instance 'uc-1 :x 0 :y 0)
+     (dotimes (i n)
+       (declare (fixnum i))
+       (make-instance 'uc-2 :x i :y i)))))
+
+;;; ---------------------------------------------------------------------------
+
 (defun make-and-link-time-test (n)
+  (declare (fixnum n))
   (format t "~&;; Running make-instance & link timing test (~:d instance~:p)...~%" 
           n)
   (time 
-   (let ((x (make-instance 'uc-1 :x 0 :y 0)))
-     (dotimes (i n)
-       (linkf (link-2-of x) (make-instance 'uc-2 :x i :y i))))))
+   (with-full-optimization ()
+     (let ((x (make-instance 'uc-1 :x 0 :y 0)))
+       (dotimes (i n)
+         (declare (fixnum i))
+         (setf x (make-instance 'uc-2 :x i :y i :backlink-2 x)))))))
+
+;;; ---------------------------------------------------------------------------
 
 (defun retrieval-time-test (n *use-marking*)
-  (map-instances-on-space-instances 
-   #'delete-instance 
-   't
-   '(bb sub-bb space-1))
+  (declare (fixnum n))
   (dotimes (i n)
+    (declare (fixnum i))
     (find-instances 'uc-1 '(bb sub-bb space-1) 
                     `(=& y ,(expand-point& n 3)))))
 
+;;; ---------------------------------------------------------------------------
+
 #+not-timed
 (defun sorted-retrieval-time-test (n *use-marking*)
+  (declare (fixnum n))
   (let* ((x (make-instance 'uc-1))
          (dslotd (gbbopen::get-dlslotd-from-reader 'link-2-of x))
          (save-value (direct-link-definition.sort-function dslotd)))
     (setf (direct-link-definition.sort-function dslotd) '<)
     (dotimes (i n)
+      (declare (fixnum i))
       (linkf (link-2-of x) (make-instance 'uc-2)))
     (setf (direct-link-definition.sort-function dslotd) save-value)))
+
+;;; ---------------------------------------------------------------------------
 
 (defun marking-find-time-test (n)
   (format t "~&;; Running marking timing test (~:d instance~:p)...~%" n)
   (time (retrieval-time-test n 't)))
 
+;;; ---------------------------------------------------------------------------
+
 (defun hashing-find-time-test (n)
   (format t "~&;; Running hashing timing test (~:d instance~:p)...~%" n)
   (time (retrieval-time-test n nil)))
+
+;;; ---------------------------------------------------------------------------
+
+(defun class-based-delete-time-test (n)
+  (format t "~&;; Running class-based deletion timing test ~
+                  (~:d instance~:p)...~%"
+          n)
+  (time (map-instances-of-class
+         #'delete-instance 
+         '(abstract :plus-subclasses))))
+
+;;; ---------------------------------------------------------------------------
+
+(defun space-instance-based-delete-time-test (n)
+  (format t "~&;; Running space-instance-based deletion timing test ~
+                  (~:d instance~:p)...~%"
+          n)
+  (time (map-instances-on-space-instances 
+         #'delete-instance 
+         't '(bb sub-bb space-1))))
+
+;;; ---------------------------------------------------------------------------
 
 (defun do-time-tests (n)
   (make-space-instance 
@@ -186,13 +242,17 @@
    :make-parents t)
   (map-instances-of-class #'delete-instance '(abstract :plus-subclasses))
   (reset-unit-class 't)
+  ;; Measure instance creation:
+  (make-time-test n)
+  ;; Measure class-based deletion:
+  (class-based-delete-time-test n)
   ;; Measure instance creation & linking:
   (make-and-link-time-test n)
-  ;; Run one retrieval to measure set-up costs:
-  (marking-find-time-test 1)
   ;; Measure  hashing & marking:
+  (marking-find-time-test n)
   (hashing-find-time-test n)
-  (marking-find-time-test n))
+  ;; Measure space-instance-based deletion:
+  (space-instance-based-delete-time-test n))
   
 ;;; ===========================================================================
 ;;;  Basic tests
@@ -210,7 +270,7 @@
 		       :dimensions (dimensions-of 'uc-1)
 		       :allowed-unit-classes '(uc-1)))
 
-(declaim (special u1 u2 u3 u4 u5 u6 u7 u8 u9 u10 u11 u12 cu1))
+;;; ---------------------------------------------------------------------------
 
 (defun make-test-sets (space-1-storage)
   (delete-all-space-instances)
@@ -1081,7 +1141,7 @@
 			       (.5 10 .3))))) 
   ;; Time test:
   (reset-gbbopen)
-  (do-time-tests 10000)
+  (do-time-tests *timing-tests-size*)
   (reset-gbbopen)
   ;; Common Lisp capability tests:
   (lisp-capability-tests))
