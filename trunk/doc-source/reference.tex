@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Wed Apr  7 10:12:35 2010; Edited-By: cork *-*
+%% *-* Last-Edit: Fri Apr  9 06:06:07 2010; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2010, Dan Corkill <corkill@GBBopen.org>
@@ -16487,7 +16487,7 @@ one \glref{unit~class} name.  This error is signaled on class finalization.
  & \code{(:dimensional-values} 
    \var{dimensional-value-specifier\/}\superstar\code{)} \vbar \\
  & \code{(:documentation} \var{string\/}\code{)} \vbar \\
- & \code{(:estimated-instances} \var{integer\/}\code{)} \vbar \\
+ & \code{(:estimated-instances} \var{size-form\/}\code{)} \vbar \\
  & \code{(:export-accessors} \var{boolean\/}\code{)} \vbar \\
  & \code{(:export-class-name} \var{boolean\/}\code{)} \vbar \\
  & \code{(:export-slot-names} \var{direct-slots-specifier\/}\code{)} \vbar \\
@@ -16540,6 +16540,8 @@ metaclass \nobr{\textbf{\entlinknoex{standard-unit-class}}} is \code{eql})
 \arg[\textcolor{darkergray}{ordering-dimension-name}] \textcolor{darkergray}{A 
   symbol specifying the \glref{ordering~dimension} used to order 
   \glref{series-composite~dimension~values}}
+\arg[size-form] An integer or an expression that evaluates to an integer
+(evaluation occurs whenever the unit class is initialized, reinitialized, or reset)
 \arg[slot-name] A non-\nil, \glref{non-keyword~symbol}
 \end{args}
 

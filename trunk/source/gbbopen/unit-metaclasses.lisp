@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/unit-metaclasses.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Apr  7 10:08:28 2010 *-*
+;;;; *-* Last-Edit: Fri Apr  9 05:50:54 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -188,6 +188,26 @@
 
 ;;; ---------------------------------------------------------------------------
 
+(defun make-instance-name-hash-table (class &optional current-count)
+  ;; Make and return the instance-name hash table for a unit-class.  Use the
+  ;; class-option :estimated-size value if provided, otherwise
+  ;; `current-count' or CL default size:
+  (let ((test (standard-unit-class.instance-name-comparison-test class)))
+    (setf (standard-unit-class.instance-hash-table class)
+          (let ((estimated-instances
+                 (standard-unit-class.estimated-instances class)))
+            ;; Evaluate a supplied :estimated-instances specification, if it
+            ;; is not a constant:
+            (unless (constantp estimated-instances)
+              (setf estimated-instances (eval estimated-instances)))
+            (if estimated-instances
+                (make-hash-table :test test :size estimated-instances)
+                (if current-count
+                    (make-hash-table :test test :size current-count)
+                    (make-hash-table :test test)))))))
+
+;;; ---------------------------------------------------------------------------
+
 (defmethod shared-initialize :around ((class standard-unit-class) slot-names
                                       &rest initargs &key)
   ;; Note: instance-name counter initialization is done in
@@ -211,17 +231,7 @@
      ;; must create a new instance-hash-table:
      ((or (eq slot-names 't)
           (memq 'instance-name-comparison-test slot-names))
-      (let ((estimated-instances
-             (standard-unit-class.estimated-instances class)))
-        (setf (standard-unit-class.instance-hash-table class)
-              (if estimated-instances
-                  (make-hash-table 
-                   :size estimated-instances
-                   :test (standard-unit-class.instance-name-comparison-test
-                          class))
-                  (make-hash-table 
-                   :test (standard-unit-class.instance-name-comparison-test
-                          class))))))
+      (make-instance-name-hash-table class))
      ;; must copy instances into a new instance-hash-table (due to a change in
      ;; instance-name-comparison-test):
      ((not (eq (standard-unit-class.instance-name-comparison-test class)
@@ -237,14 +247,7 @@
                     (class-name class)
                     (standard-unit-class.instance-name-comparison-test class)))
           (let ((old-ht (standard-unit-class.instance-hash-table class))
-                (new-ht 
-                 (make-hash-table 
-                  :size (or
-                         (standard-unit-class.estimated-instances class)
-                         hash-table-count)
-                  :test (standard-unit-class.instance-name-comparison-test
-                         class))))
-            (setf (standard-unit-class.instance-hash-table class) new-ht)
+                (new-ht (make-instance-name-hash-table class hash-table-count)))
             (flet ((fn (instance-name instance)
                      (reinsert-instance-into-hash-table
                       instance-name instance new-ht)))
