@@ -42,6 +42,10 @@ Important changes since GBBopen 1.4:
        SCHEDULED-FUNCTION-SCHEDULER-PAUSED-P,
        SCHEDULED-FUNCTION-SCHEDULER-RUNNING-P functions
 
+  * Changes to GBBopen
+     - Support for evaluated :estimated-instances unit-class option 
+       forms
+
 
 Important changes in GBBopen 1.4:
 

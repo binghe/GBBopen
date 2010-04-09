@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/units.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Apr  7 10:08:37 2010 *-*
+;;;; *-* Last-Edit: Fri Apr  9 05:39:04 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -890,17 +890,7 @@
        ((zerop count)
         (setf (standard-unit-class.instance-name-counter unit-class)
               (initial-class-instance-number (class-prototype unit-class)))
-        (let ((estimated-instances
-               (standard-unit-class.estimated-instances unit-class)))
-          (setf (standard-unit-class.instance-hash-table unit-class)
-                (if estimated-instances
-                    (make-hash-table
-                     :size estimated-instances
-                     :test (standard-unit-class.instance-name-comparison-test 
-                            unit-class))
-                    (make-hash-table
-                     :test (standard-unit-class.instance-name-comparison-test 
-                            unit-class))))))
+        (make-instance-name-hash-table unit-class))
        (t (warn "Unit class ~s has ~s instance~:p; not reset"
                 (class-name unit-class)
                 count))))))

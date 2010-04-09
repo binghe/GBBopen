@@ -132,7 +132,7 @@ available in a future release.]</font></font></span><table class="tighttop"><tbo
 <tr>
 <td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code>(:documentation</code> <var>string</var><code>)</code> |</td></tr>
 <tr>
-<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code>(:estimated-instances</code> <var>integer</var><code>)</code> |</td></tr>
+<td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code>(:estimated-instances</code> <var>size-form</var><code>)</code> |</td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code>(:export-accessors</code> <var>boolean</var><code>)</code> |</td></tr>
 <tr>
@@ -306,6 +306,8 @@ metaclass <nobr><b><a href="ref-standard-unit-class.html">standard-unit-class</a
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i><font color="#667f66">ordering-dimension-name</font></i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> <font color="#667f66">A 
 symbol specifying the <a href="ref-glossary.html#id137">ordering&nbsp;dimension</a> used to order 
 <a href="ref-glossary.html#id190">series-composite&nbsp;dimension&nbsp;values</a></font>
+</td></tr><tr valign="top"><td valign="baseline" nowrap><i>size-form</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An integer or an expression that evaluates to an integer
+(evaluation occurs whenever the unit class is initialized, reinitialized, or reset)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>slot-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A non-<code>nil</code>, <a href="ref-glossary.html#id131">non-keyword&nbsp;symbol</a>
 </td></tr></table>
 </p>
