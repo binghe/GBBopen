@@ -1,6 +1,8 @@
-GBBopen version 1.5 coming soon!
+Important changes since GBBopen 1.5:
+  None yet
 
-Important changes since GBBopen 1.4:
+
+Important changes in GBBopen 1.5:
 
   * Changes to gbbopen-modules directory processing
      - New *GBBOPEN-MODULES-DIRECTORY-VERBOSE* and *SYM-FILE-VERBOSE* 
@@ -19,10 +21,10 @@ Important changes since GBBopen 1.4:
      - New HTTP-DATE-AND-TIME function
      - Change argument order of ENCODE-TIME-OF-DAY
      - New left-leaning red-black (LLRB) tree entities
+     - New auto-transitioning EQ set (EQSET), EQ table (ET), and
+       auto-transitioning ("fast hash-table") ATABLE entities
 
   * New :double-metaphone module
-
-  * New :atable (auto-transitioning "fast hash-table") module
 
   * New :gbbopen-tools-user module
 
