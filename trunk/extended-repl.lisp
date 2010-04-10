@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/extended-repl.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Apr  7 09:52:32 2010 *-*
+;;;; *-* Last-Edit: Sat Apr 10 10:21:04 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -17,7 +17,7 @@
 ;;;
 ;;; Written by: Dan Corkill 
 ;;;
-;;; Copyright (C) 2005-2009, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2005-2010, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project.
 ;;; Licensed under Apache License 2.0 (see LICENSE for license information).
 ;;;
@@ -249,8 +249,7 @@
   (let ((result nil))
     (dolist (command-spec *extended-repl-commands*)
       (destructuring-bind (command function doc help-control 
-                           ;; Make these two required in the next release:
-                           &optional cl-user-fn-name command-system-name)
+                           cl-user-fn-name command-system-name)
           command-spec
         (declare (ignore command function doc help-control cl-user-fn-name))
         (declare (symbol command-system-name))
@@ -272,9 +271,7 @@
   (sort (remove-if
          #'(lambda (command-spec)
              (destructuring-bind (command function doc help-control
-                                  ;; Make these two required in the next
-                                  ;; release:
-                                  &optional cl-user-fn-name system-name)
+                                  cl-user-fn-name system-name)
                  command-spec
                (declare (ignore command function doc 
                                 cl-user-fn-name system-name))
@@ -307,8 +304,7 @@
                 2nd-column)
         (dolist (command-spec (sorted/filtered-extended-repl-commands))
           (destructuring-bind (command function doc help-control 
-                               ;; Make these two required in the next release:
-                               &optional cl-user-fn-name command-system-name)
+                               cl-user-fn-name command-system-name)
               command-spec
             (declare (ignore function help-control cl-user-fn-name))
             (when (or (not system-name)
@@ -341,9 +337,7 @@
         (delete-if 
          #'(lambda (command-spec)
              (destructuring-bind (command-name function doc help-control
-                                  ;; Make these two required in the next
-                                  ;; release:
-                                  &optional cl-user-fn-name this-system-name)
+                                  cl-user-fn-name this-system-name)
                  command-spec
                (declare (ignore #-(or allegro clozure lispworks xcl)
                                 command-name
@@ -426,8 +420,7 @@
   (mapcan 
    #'(lambda (command-spec)
        (destructuring-bind (command function doc help-control 
-                            ;; Make these two required in the next release
-                            &optional cl-user-fn-name system-name)
+                            cl-user-fn-name system-name)
 	   command-spec
          (declare (ignore cl-user-fn-name system-name))
 	 (let* ((command-name (concatenate 'simple-string 
