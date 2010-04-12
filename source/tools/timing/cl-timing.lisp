@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/timing/cl-timing.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Apr  8 05:58:37 2010 *-*
+;;;; *-* Last-Edit: Mon Apr 12 11:40:18 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -50,6 +50,8 @@
     #+ecl   6000000                     ; ECL is a bit faster
     #-(or clisp ecl) 
            10000000)
+
+(defparameter *timing-instances* 500000)
 
 (defparameter *max-list-test-size* 100)
 
@@ -204,6 +206,7 @@
                  (type cons cons))
         (setf (cdr cons) (rest list))
         (time-it (setf (cdr cons) (delq-one 1 (the cons cons)))))
+      (setf warning-time (*& 2 time))
       (fformat t "~&;;   Fastest delete eq :count 1 timing (~:d iterations)..."
                iterations)
       (let ((cons (list 1)))
@@ -281,7 +284,7 @@
         (fformat t "~&;;   ESET (transitioned) timing (~:d iterations)..."
                  iterations)
         (time-it i (in-eset test-index eset-ht))
-        (fformat t "~&;;   EQ ~:[[key/value~;keys-only]~] HT timing ~
+        (fformat t "~&;;   EQ ~:[key/value~;keys-only~] HT timing ~
                            (~:d iterations)..."
                  (memq ':has-keys-only-hash-tables *features*)
                  iterations)
@@ -349,6 +352,45 @@
     (format-ticks (brief-timer iterations (truncate& numerator denominator)))))
 
 ;;; ---------------------------------------------------------------------------
+
+;;  CMUCL & SCL require these definitions at compile time:
+(eval-when (#+(or cmu scl) :compile-toplevel :load-toplevel :execute)
+
+  (define-class test-instance ()
+    (slot
+     (non-cloned-slot :initform 1)))
+  
+  (define-class test-instance-clone (test-instance)
+    (slot 
+     (new-slot :initform -1))))
+
+;;; ---------------------------------------------------------------------------
+
+(defun do-instance-timing (&optional (size *timing-instances*))
+  (declare (fixnum size))
+  (let ((list nil)
+        (warning-time 0))
+    (fformat t "~&;;   Make-instance timing (~:d instances)..." size)
+    (let ((start-time (get-internal-run-time)))
+      (with-full-optimization ()
+        (dotimes (i size)
+          (declare (fixnum i))
+          (push (make-instance 'test-instance :slot i) list)))
+      (let ((time (- (get-internal-run-time) start-time)))
+        (setf warning-time (*& time 2))
+        (format-ticks time)))
+    (fformat t "~&;;   Change-class timing (~:d instances)..." size)
+    (let ((start-time (get-internal-run-time)))
+      (with-full-optimization ()
+        (dolist (instance list)
+          (change-class instance
+                        (load-time-value (find-class 'test-instance-clone)))))
+      (let ((time (- (get-internal-run-time) start-time)))
+        (format-ticks time)
+        (when (>& time warning-time)
+          (format t " *****"))))))
+    
+;;; ===========================================================================
 ;;;  Compute the size transition value for ESETs
 
 #-slower-eset
@@ -618,6 +660,8 @@
   (do-eset-timing)
   (format t "~&;;~%")
   (do-et-timing)
+  (format t "~&;;~%")
+  (do-instance-timing)
   (format t "~&;; Timings completed.~%"))
 
 ;;; ---------------------------------------------------------------------------
