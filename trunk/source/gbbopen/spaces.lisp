@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/spaces.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Apr  7 10:08:01 2010 *-*
+;;;; *-* Last-Edit: Mon Apr 12 10:25:56 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -138,7 +138,7 @@
    ;; cached retrieval storage objects (best for each (unit-class dimensions)
    ;; pair:
    (%%retrieval-storage%% :initform nil)
-   (%%evfn-unit-ht%% :initform (make-hash-table :size 0 :test 'eq))
+   (%%evfn-unit-ht%% :initform (make-et))
    (%%bb-widgets%% :initform nil)
    (children 
     :link (standard-space-instance parent :singular t)

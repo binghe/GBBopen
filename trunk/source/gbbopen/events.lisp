@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/events.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Apr  7 10:05:59 2010 *-*
+;;;; *-* Last-Edit: Mon Apr 12 10:27:00 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -668,7 +668,7 @@
            (flet
                ((add-it (unit-class)
                   (let* ((evfn-blks 
-                          (gethash 
+                          (get-et
                            unit-class
                            (standard-space-instance.%%evfn-unit-ht%%
                             space-instance)))
@@ -679,7 +679,7 @@
                                                     :unit-class unit-class)))
                                 (push-acons 
                                  event-class new-evfn-blk
-                                 (gethash 
+                                 (get-et
                                   unit-class
                                   (standard-space-instance.%%evfn-unit-ht%%
                                    space-instance)))
@@ -924,7 +924,7 @@
   (flet ((do-space-instance (space-instance)
            (flet ((remove-it (unit-class)
                     (let* ((evfn-blks 
-                            (gethash 
+                            (get-et
                              unit-class
                              (standard-space-instance.%%evfn-unit-ht%%
                               space-instance)))
@@ -1216,7 +1216,7 @@
 	   (flet
 	       ((describe-it (unit-class)
 		  (let* ((evfn-blks 
-			  (gethash 
+			  (get-et
 			   unit-class
 			   (standard-space-instance.%%evfn-unit-ht%%
 			    space-instance)))
@@ -1405,7 +1405,7 @@
     (let* ((unit-class (class-of instance))
 	   (evfn-unit-ht 
 	    (standard-space-instance.%%evfn-unit-ht%% space-instance))
-	   (evfn-blks (gethash unit-class evfn-unit-ht))
+	   (evfn-blks (get-et unit-class evfn-unit-ht))
 	   (evfn-blk (cdr (assq event-class evfn-blks))))
       (when evfn-blk	
 	(do-event-printing-and-evfns evfn-blk event-class args)))))
