@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/basic-tests.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Apr  9 15:56:30 2010 *-*
+;;;; *-* Last-Edit: Mon Apr 12 04:08:37 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -35,6 +35,10 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (import '(gbbopen::direct-link-definition.sort-function
             gbbopen::standard-unit-class.abstract)))
+
+;;; ---------------------------------------------------------------------------
+
+(defvar *skip-redefinition-testing* nil)
 
 ;;; ---------------------------------------------------------------------------
 
@@ -157,12 +161,13 @@
   (declare (fixnum n))
   (format t "~&;; Running make-instance timing test (~:d instance~:p)...~%" 
           n)
-  (time 
-   (with-full-optimization ()
-     (make-instance 'uc-1 :x 0 :y 0)
-     (dotimes (i n)
-       (declare (fixnum i))
-       (make-instance 'uc-2 :x i :y i)))))
+  (flet ((make-instances ()
+           (with-full-optimization ()
+             (make-instance 'uc-1 :x 0 :y 0)
+             (dotimes (i n)
+               (declare (fixnum i))
+               (make-instance 'uc-2 :x i :y i)))))
+    (time (make-instances))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -170,12 +175,13 @@
   (declare (fixnum n))
   (format t "~&;; Running make-instance & link timing test (~:d instance~:p)...~%" 
           n)
-  (time 
-   (with-full-optimization ()
-     (let ((x (make-instance 'uc-1 :x 0 :y 0)))
-       (dotimes (i n)
-         (declare (fixnum i))
-         (setf x (make-instance 'uc-2 :x i :y i :backlink-2 x)))))))
+  (flet ((make-instances-with-links ()
+           (with-full-optimization ()
+             (let ((x (make-instance 'uc-1 :x 0 :y 0)))
+               (dotimes (i n)
+                 (declare (fixnum i))
+                 (setf x (make-instance 'uc-2 :x i :y i :backlink-2 x)))))))
+    (time (make-instances-with-links))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -214,13 +220,39 @@
 
 ;;; ---------------------------------------------------------------------------
 
+(defun class-mapping-time-test (n)
+  (format t "~&;; Running class-based mapping timing test ~
+                  (~:d instance~:p)...~%"
+          n)
+  (flet ((class-mapping ()
+           (map-instances-of-class
+            #'identity 
+            '(abstract :plus-subclasses))))
+    (time (class-mapping))))
+
+;;; ---------------------------------------------------------------------------
+
+(defun space-instance-mapping-time-test (n)
+  (format t "~&;; Running space-instance-based mapping timing test ~
+                  (~:d instance~:p)...~%"
+          n)
+  (flet ((space-instance-mapping ()
+           (map-instances-on-space-instances 
+            #'identity
+            't '(bb sub-bb space-1))))
+    (time (space-instance-mapping))))
+
+;;; ---------------------------------------------------------------------------
+
 (defun class-based-delete-time-test (n)
   (format t "~&;; Running class-based deletion timing test ~
                   (~:d instance~:p)...~%"
           n)
-  (time (map-instances-of-class
-         #'delete-instance 
-         '(abstract :plus-subclasses))))
+  (flet ((class-based-delete ()
+           (map-instances-of-class
+            #'delete-instance 
+            '(abstract :plus-subclasses))))
+    (time (class-based-delete))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -228,9 +260,11 @@
   (format t "~&;; Running space-instance-based deletion timing test ~
                   (~:d instance~:p)...~%"
           n)
-  (time (map-instances-on-space-instances 
-         #'delete-instance 
-         't '(bb sub-bb space-1))))
+  (flet ((space-instance-based-delete ()
+           (map-instances-on-space-instances 
+            #'delete-instance 
+            't '(bb sub-bb space-1))))
+    (time (space-instance-based-delete))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -244,6 +278,8 @@
   (reset-unit-class 't)
   ;; Measure instance creation:
   (make-time-test n)
+  ;; Measure class-based mapping:
+  (class-mapping-time-test n)
   ;; Measure class-based deletion:
   (class-based-delete-time-test n)
   ;; Measure instance creation & linking:
@@ -251,6 +287,8 @@
   ;; Measure  hashing & marking:
   (marking-find-time-test n)
   (hashing-find-time-test n)
+  ;; Measure space-instance-based mapping:
+  (space-instance-mapping-time-test n)
   ;; Measure space-instance-based deletion:
   (space-instance-based-delete-time-test n))
   
@@ -730,19 +768,21 @@
 		(string-equal infinity-string "#@double-float-infinity"))
       (format t "~&;; ** Infinity is printed as: ~a~%"
 	      infinity-string)))
-  ;; Check if a redefined unit-class remains eq:
-  (let ((old-u1-class (find-unit-class 'uc-1))
-        (old-u2-class (find-unit-class 'uc-2)))
-    (allow-redefinition
-     (eval '(define-unit-class uc-1 (abstract) 
-             ;; Need to explore why the following breaks ECL:
-             (#-ecl redefined)))
-     (eval '(define-unit-class uc-2 (uc-1 not-a-unit) 
-             (also-redefined))))
-    (unless (and (eq old-u1-class (find-unit-class 'uc-1))
-                 (eq old-u2-class (find-unit-class 'uc-2)))
-      (format t "~&;; ** Redefined unit-classes are not eq.~%")))
-  ;; Check if writer-method-class is actually called to determine the
+  ;; Check that a redefined unit-class remains eq:
+  (if *skip-redefinition-testing*
+      (format t "~&;; ** Skipping class-redefinition tests.~%")
+      (let ((old-u1-class (find-unit-class 'uc-1))
+            (old-u2-class (find-unit-class 'uc-2)))
+        (allow-redefinition
+         (eval '(define-unit-class uc-1 (abstract) 
+                 ;; Need to explore why the following breaks ECL:
+                 (#-ecl redefined)))
+         (eval '(define-unit-class uc-2 (uc-1 not-a-unit) 
+                 (also-redefined))))
+        (unless (and (eq old-u1-class (find-unit-class 'uc-1))
+                     (eq old-u2-class (find-unit-class 'uc-2)))
+          (format t "~&;; ** Redefined unit-classes are not eq.~%"))))
+  ;; Check that writer-method-class is actually called to determine the
   ;; class of writer methods:
   (let* ((unit-class (find-unit-class 'standard-unit-instance))
 	 (direct-methods 
@@ -1143,7 +1183,8 @@
   (reset-gbbopen)
   (do-time-tests *timing-tests-size*)
   (reset-gbbopen)
-  ;; Common Lisp capability tests:
+  ;; Common Lisp capability tests (performed last, as uc-1 and uc-2 unit-class
+  ;; definitions are changed during testing):
   (lisp-capability-tests))
 
 ;;; ---------------------------------------------------------------------------
