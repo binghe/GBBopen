@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/basic-tests.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Apr 12 04:08:37 2010 *-*
+;;;; *-* Last-Edit: Wed Apr 14 09:12:24 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -107,6 +107,9 @@
   (:estimated-instances *timing-tests-size*)
   (:use-global-instance-name-counter t))
 
+(define-unit-class uc-2-clone (uc-2)
+  ())
+
 (define-unit-class uc-3 (uc-1) 
   ((link-1 :documentation "Added doc for link-1.")))
 
@@ -189,7 +192,7 @@
   (declare (fixnum n))
   (dotimes (i n)
     (declare (fixnum i))
-    (find-instances 'uc-1 '(bb sub-bb space-1) 
+    (find-instances 'uc-2 '(bb sub-bb space-1) 
                     `(=& y ,(expand-point& n 3)))))
 
 ;;; ---------------------------------------------------------------------------
@@ -209,13 +212,15 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun marking-find-time-test (n)
-  (format t "~&;; Running marking timing test (~:d instance~:p)...~%" n)
+  (format t "~&;; Running mark-based retrieval timing test ~
+                  (~:d instance~:p)...~%" n)
   (time (retrieval-time-test n 't)))
 
 ;;; ---------------------------------------------------------------------------
 
 (defun hashing-find-time-test (n)
-  (format t "~&;; Running hashing timing test (~:d instance~:p)...~%" n)
+  (format t "~&;; Running hash-based retrieval timing test ~
+                  (~:d instance~:p)...~%" n)
   (time (retrieval-time-test n nil)))
 
 ;;; ---------------------------------------------------------------------------
@@ -229,6 +234,20 @@
             #'identity 
             '(abstract :plus-subclasses))))
     (time (class-mapping))))
+
+;;; ---------------------------------------------------------------------------
+
+(defun change-class-time-test (n)
+  (format t "~&;; Running change-class timing test ~
+                  (~:d instance~:p)...~%"
+          n)
+  (let ((uc-2-clone-class (find-class 'uc-2-clone)))
+    (flet ((change-classes ()
+             (flet ((change-it (instance)
+                      (change-class instance uc-2-clone-class)))
+               (declare (dynamic-extent #'change-it))
+               (map-instances-of-class #'change-it 'uc-2))))
+      (time (change-classes)))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -280,6 +299,8 @@
   (make-time-test n)
   ;; Measure class-based mapping:
   (class-mapping-time-test n)
+  ;; Measure change-class:
+  (change-class-time-test n)
   ;; Measure class-based deletion:
   (class-based-delete-time-test n)
   ;; Measure instance creation & linking:
