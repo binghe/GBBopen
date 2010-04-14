@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Apr  7 10:06:37 2010 *-*
+;;;; *-* Last-Edit: Wed Apr 14 09:51:28 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -1304,10 +1304,16 @@
   (cond 
    ;; Previous class was a unit class:
    ((typep instance 'standard-unit-instance)
-    (call-next-method))
+    (let (;; CLISP's internal CHANGE-CLASS implementation uses SETF to set
+          ;; slots, so we must allow link-slot setting here:
+          #+clisp (*%%allow-setf-on-link%%* 't))
+      (call-next-method)))
    ;; Changing from a non-unit class to a unit class:
    (t (let ((previous-class (class-of instance)))
-        (call-next-method)
+        (let (;; CLISP's internal CHANGE-CLASS implementation uses SETF to set
+              ;; slots, so we must allow link-slot setting here:
+              #+clisp (*%%allow-setf-on-link%%* 't))
+          (call-next-method))
         (signal-event-using-class
          (load-time-value (find-class 'instance-changed-class-event))
          :instance instance
