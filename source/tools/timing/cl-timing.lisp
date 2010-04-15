@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/timing/cl-timing.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Apr 12 11:40:18 2010 *-*
+;;;; *-* Last-Edit: Thu Apr 15 10:28:51 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -71,7 +71,7 @@
            (- (get-internal-run-time) %start-time%))))))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (defmacro table-timer (n cnt &body body)
+  (defmacro table-timer (n max-index &body body)
     `(with-full-optimization ()
        (let ((test-index 1))
          ;; Do one untimed trial to prepare everything:
@@ -82,7 +82,7 @@
              (declare (fixnum i))
              (setf *%timing-result%* ,@body)
              (incf& test-index)
-             (when (>& test-index ,cnt)
+             (when (>& test-index ,max-index)
                (setf test-index 1)))
            (locally (declare (notinline -))
              (- (get-internal-run-time) start-time)))))))
@@ -228,20 +228,20 @@
       (setf (gethash i keys-only-ht) 't)
       (setf (gethash i ht) 'i))
     (macrolet
-        ((time-it (cnt form)
+        ((time-it (form)
            `(progn
-              (setf time (table-timer iterations ,cnt ,form))
+              (setf time (table-timer iterations max-size ,form))
               (format-ticks time)
               (terpri))))
-      ;; HT timings:
+      ;; Hash table timings:
       #-has-keys-only-hash-tables
       (format t "~&;; * Keys-only hash tables are plain hash tables:")
       (fformat t "~&;;   Keys-only eq hash table timing (~:d iterations)..."
                iterations)
-      (time-it max-size (gethash 1 ht))
+      (time-it (gethash 1 ht))
       (fformat t "~&;;   Normal eq hash table timing (~:d iterations)..."
                iterations)
-      (time-it max-size (gethash 1 ht)))))
+      (time-it (gethash 1 ht)))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -249,9 +249,9 @@
   (let ((transition #.(max 1 (+ eset-transition-size auto-transition-margin)))
         time)
     (macrolet
-        ((time-it (cnt form)
+        ((time-it (form)
            `(progn
-              (setf time (table-timer iterations ,cnt ,form))
+              (setf time (table-timer iterations transition ,form))
               (format-ticks time)
               (terpri))))
       ;; ESET timings:
@@ -263,32 +263,32 @@
         ;; Fill them:
         (loop for i fixnum from transition downto 1 do
               (add-to-eset i eset-list))
-        (dotimes (i eset-transition-size)
+        (dotimes (i transition)
           (add-to-eset i eset-ht)
           (setf (gethash i ht) 't))
         ;; Time them:
         (fformat t "~&;;   Do nothing timing (~:d iterations)..."
                  iterations)
-        (time-it i nil)
+        (time-it nil)
         (fformat t "~&;;   Fastest ESET (list) timing (~:d iterations)..."
                  iterations)
-        (time-it i (in-eset 1 eset-list))
+        (time-it (in-eset 1 eset-list))
         (fformat t "~&;;   Slowest ESET (list @~d) timing (~:d iterations)..."
                  transition
                  iterations)
-        (time-it i (in-eset eset-transition-size eset-list))
+        (time-it (in-eset transition eset-list))
         (fformat t "~&;;   Average ESET (list @~d) timing (~:d iterations)..."
                  transition
                  iterations)
-        (time-it i (in-eset test-index eset-list))
+        (time-it (in-eset test-index eset-list))
         (fformat t "~&;;   ESET (transitioned) timing (~:d iterations)..."
                  iterations)
-        (time-it i (in-eset test-index eset-ht))
-        (fformat t "~&;;   EQ ~:[key/value~;keys-only~] HT timing ~
+        (time-it (in-eset test-index eset-ht))
+        (fformat t "~&;;   eq ~:[key/value~;keys-only~] hash table timing ~
                            (~:d iterations)..."
                  (memq ':has-keys-only-hash-tables *features*)
                  iterations)
-        (time-it i (gethash test-index ht))))))
+        (time-it (gethash test-index ht))))))
   
 ;;; ---------------------------------------------------------------------------
 
@@ -296,9 +296,9 @@
   (let ((transition #.(max 1 (+ et-transition-size auto-transition-margin)))
         time)
     (macrolet
-        ((time-it (cnt form)
+        ((time-it (form)
            `(progn
-              (setf time (table-timer iterations ,cnt ,form))
+              (setf time (table-timer iterations transition ,form))
               (format-ticks time)
               (terpri))))
       ;; ET timings:
@@ -310,30 +310,30 @@
         ;; Fill them:
         (loop for i fixnum from transition downto 1 do
               (setf (get-et i et-list) i))
-        (dotimes (i et-transition-size)
+        (dotimes (i transition)
           (setf (get-et i et-ht) i)
           (setf (gethash i ht) 't))
         ;; Time them:
         (fformat t "~&;;   Do nothing timing (~:d iterations)..."
                  iterations)
-        (time-it i nil)
+        (time-it nil)
         (fformat t "~&;;   Fastest ET (list) timing (~:d iterations)..."
                  iterations)
-        (time-it i (get-et 1 et-list))
+        (time-it (get-et 1 et-list))
         (fformat t "~&;;   Slowest ET (list @~d) timing (~:d iterations)..."
                  transition
                  iterations)
-        (time-it i (get-et et-transition-size et-list))
+        (time-it (get-et transition et-list))
         (fformat t "~&;;   Average ET (list @~d) timing (~:d iterations)..."
                  transition
                  iterations)
-        (time-it i (get-et test-index et-list))
+        (time-it (get-et test-index et-list))
         (fformat t "~&;;   ET (transitioned) timing (~:d iterations)..."
                  iterations)
-        (time-it i (get-et test-index et-ht))
-        (fformat t "~&;;   EQ HT timing (~:d iterations)..."
+        (time-it (get-et test-index et-ht))
+        (fformat t "~&;;   eq key/value hash table timing (~:d iterations)..."
                  iterations)
-        (time-it i (gethash test-index ht))))))
+        (time-it (gethash test-index ht))))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -342,14 +342,18 @@
                            (denominator 3))
   (declare (fixnum numerator denominator))
   (let ((iterations (truncate& *timing-iterations* 2)))
-    (fformat t "~&;;   Division timing (~:d iterations)..."
-             iterations)
-    (fformat t "~&;;     /&:       ")
-    (format-ticks (brief-timer iterations (/& numerator denominator)))
-    (fformat t "~%;;     floor&:   ")
-    (format-ticks (brief-timer iterations (floor& numerator denominator)))
-    (fformat t "~%;;     truncate&:")
-    (format-ticks (brief-timer iterations (truncate& numerator denominator)))))
+    (with-full-optimization ()
+      (fformat t "~&;;   Division timing (~:d iterations)..."
+               iterations)
+      (fformat t "~&;;     /&:       ")
+      (format-ticks (brief-timer iterations
+                                 (/& numerator denominator)))
+      (fformat t "~%;;     floor&:   ")
+      (format-ticks (brief-timer iterations
+                                 (floor& numerator denominator)))
+      (fformat t "~%;;     truncate&:")
+      (format-ticks (brief-timer iterations
+                                 (truncate& numerator denominator))))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -415,25 +419,25 @@
                          do (setf (gethash i ht) 't))))
       ;; Time to time:
       (flet 
-          ((time-eset (cnt)
+          ((time-eset (max-index)
              (let ((start-time (get-internal-run-time))
                    (test-index 1))
                (dotimes (i iterations)
                  (declare (fixnum i))
                  (setf *%timing-result%* (in-eset test-index eset))
                  (incf& test-index)
-                 (when (>& test-index cnt)
+                 (when (>& test-index max-index)
                    (setf test-index 1)))
                (locally (declare (notinline -))
                  (- (get-internal-run-time) start-time))))
-           (time-ht (cnt)
+           (time-ht (max-index)
              (let ((start-time (get-internal-run-time))
                    (test-index 1))
                (dotimes (i iterations)
                  (declare (fixnum i))
                  (setf *%timing-result%* (gethash test-index ht))
                  (incf& test-index)
-                 (when (>& test-index cnt)
+                 (when (>& test-index max-index)
                    (setf test-index 1)))
                (locally (declare (notinline -))
                  (- (get-internal-run-time) start-time)))))
@@ -478,25 +482,25 @@
                          do (setf (gethash i ht) i))))
       ;; Time to time:
       (flet 
-          ((time-et (cnt)
+          ((time-et (max-index)
              (let ((start-time (get-internal-run-time))
                    (test-index 1))
                (dotimes (i iterations)
                  (declare (fixnum i))
                  (setf *%timing-result%* (get-et test-index et))
                  (incf& test-index)
-                 (when (>& test-index cnt)
+                 (when (>& test-index max-index)
                    (setf test-index 1)))
                (locally (declare (notinline -))
                  (- (get-internal-run-time) start-time))))
-           (time-ht (cnt)
+           (time-ht (max-index)
              (let ((start-time (get-internal-run-time))
                    (test-index 1))
                (dotimes (i iterations)
                  (declare (fixnum i))
                  (setf *%timing-result%* (gethash test-index ht))
                  (incf& test-index)
-                 (when (>& test-index cnt)
+                 (when (>& test-index max-index)
                    (setf test-index 1)))
                (locally (declare (notinline -))
                  (- (get-internal-run-time) start-time)))))
@@ -541,7 +545,7 @@
                         (determine-keys-only-atable-index test)
                         (determine-key/value-atable-index test))))
                (flet ((build-at/ht-timer (name reader)
-                        `(,name (cnt at/ht)
+                        `(,name (max-index at/ht)
                                 ;; Do one untimed trial to prepare everything:
                                 (setf *%timing-result%* 
                                       (,reader (svref keys 1) at/ht))
@@ -553,7 +557,7 @@
                                     (setf *%timing-result%*
                                           (,reader (svref keys test-index) at/ht))
                                     (incf& test-index)
-                                    (when (>& test-index cnt)
+                                    (when (>& test-index max-index)
                                       (setf test-index 1)))
                                   (locally (declare (notinline -))
                                     (- (get-internal-run-time) start-time))))))
