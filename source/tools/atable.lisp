@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/atable.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Apr 19 14:03:35 2010 *-*
+;;;; *-* Last-Edit: Mon Apr 19 18:02:52 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -114,7 +114,7 @@
      #+(and clozure (not (or darwinx86-target
                              darwinppc-target))) 48
      ;; CMUCL
-     #+(and cmu darwin x86) 18
+     #+(and cmu darwin x86) 26
      #+(and cmu (not (and darwin x86))) 46
      ;; Digitool MCL
      #+digitool-mcl 7
@@ -127,7 +127,7 @@
      #+(and sbcl darwin ppc) 80
      #+(and sbcl (not darwin)) 32
      ;; SCL
-     #+(and scl darwin x86) 18
+     #+(and scl darwin x86) 26
      #+(and scl (not (and darwin x86))) 46
      ;; New port (values needed)
      #-(or allegro 
@@ -183,8 +183,8 @@
 
 (defun #-slower-eset in-eset #+slower-eset in-eset%timing  (item et)
   (with-full-optimization ()
-    (let ((count (%eset-count et))
-          (data (%eset-data et)))
+    (let* ((count (%eset-count et))
+           (data (%eset-data (the cons et))))
       (if count
           (if (memq item data)
               (values item 't)
@@ -204,8 +204,8 @@
 #-slower-eset
 (defun add-to-eset (item et)
   (with-full-optimization ()
-    (let ((count (%eset-count et))
-          (data (%eset-data et)))
+    (let* ((count (%eset-count et))
+           (data (%eset-data (the cons et))))
       (if count
           (let ((sublist (memq item data)))
             (unless sublist
@@ -243,8 +243,8 @@
 #-slower-eset
 (defun delete-from-eset (item et)
   (with-full-optimization ()
-    (let ((count (%eset-count et))
-          (data (%eset-data et)))
+    (let* ((count (%eset-count et))
+           (data (%eset-data (the cons et))))
       (if count
           ;; List deletion (inlined DELQ-ONE with add'l ET actions for top
           ;; performance):
@@ -319,8 +319,8 @@
   (let ((fn (coerce function 'function)))
     (declare (function fn))
     (with-full-optimization ()
-      (let ((count (%eset-count et))
-            (data (%eset-data et)))
+      (let* ((count (%eset-count et))
+             (data (%eset-data (the cons et))))
         (if count
             (mapc fn data)
             (maphash fn data))))))
@@ -425,8 +425,8 @@
 
 (defun #-slower-et get-et #+slower-et get-et%timing (key et &optional default)       
   (with-full-optimization ()
-    (let ((count (%et-count et))
-          (data (%et-data et)))
+    (let* ((count (%et-count et))
+           (data (%et-data (the cons et))))
       (if count
           (let ((acons (assq key data)))
             (if acons 
@@ -447,8 +447,8 @@
 #-slower-et
 (defun (setf get-et) (nv key et)
   (with-full-optimization ()
-    (let ((count (%et-count et))
-          (data (%et-data et)))
+    (let* ((count (%et-count et))
+           (data (%et-data (the cons et))))
       (if count
           ;; Currently an alist:
           (let ((acons (assoc key data :test #'eq)))
@@ -494,8 +494,8 @@
 #-slower-et
 (defun delete-et (key et)
   (with-full-optimization ()
-    (let ((count (%et-count et))
-          (data (%et-data et)))
+    (let* ((count (%et-count et))
+           (data (%et-data (the cons et))))
       (if count
           ;; List deletion (inlined DELQ-ONE with add'l ET actions for top
           ;; performance):
@@ -571,8 +571,8 @@
   (let ((fn (coerce function 'function)))
     (declare (function fn))
     (with-full-optimization ()
-      (let ((count (%et-count et))
-            (data (%et-data et)))
+      (let* ((count (%et-count et))
+             (data (%et-data (the cons et))))
         (if count
             (dolist (acons data)
               (funcall fn (car (the cons acons)) (cdr (the cons acons))))
@@ -586,13 +586,35 @@
   `(maphash ,function ,et))
 
 ;;; ===========================================================================
-;;;  General ATABLEs (not a speed win on any CL these days, due to table-type
-;;;  dispatch cost. Consider reimplementing with declared-type operators
-;;;  someday...)
+;;;  General ATABLEs (not a huge speed win on many CLs these days)
 
-#+(or allegro clisp clozure cmu digitool-mcl ecl lispworks sbcl)
+#+(or clisp ecl lispworks)
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (pushnew :slow-atable *features*))
+
+;;; ---------------------------------------------------------------------------
+;;;  Transition values
+
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defparameter *atable-transition-sizes* 
+      (check-featured-value
+       '*atable-transition-sizes*
+       #+allegro #(0 0 12 7 6 4 11 11 11 11)
+       #+clisp #(0 0 0 0 0 0 0 0 0 0)
+       #+clozure #(0 0 26 24 12 5 5 5 6 6)
+       #+cmu #(0 0 20 7 4 9 2 2 3 3)
+       #+ecl #(0 0 0 0 0 0 0 0 0 0)
+       #+lispworks #(0 0 2 2 0 0 2 2 4 4)
+       #+digitool-mcl #(0 0 12 7 6 4 11 11 11 11)
+       #+sbcl #(0 0 10 7 5 5 2 2 3 3)
+       #-(or allegro
+             digitool-mcl
+             clisp
+             clozure
+             cmu
+             ecl
+             lispworks 
+             sbcl) #(0 0 10 10 4 4 4 4 4 4))))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Test <--> index lookups
@@ -602,7 +624,7 @@
 #-slow-atable
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defparameter *atable-test-vector*
-      (vector nil nil 'eq 'eq 'eql 'eql 'equal 'equal 'equalp 'equalp)))
+      #(nil nil eq eq eql eql equal equal equalp equalp)))
 
 #-slow-atable
 (eval-when (:compile-toplevel :load-toplevel :execute)
@@ -637,16 +659,6 @@
           #-cmu (load-time-value *atable-test-vector*) (the fixnum ,index)))
 
 ;;; ---------------------------------------------------------------------------
-;;;  Transition values
-
-#-slow-atable
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (defvar *atable-transition-sizes* 
-      #+slow-atables #(nil nil 0 0 0 0 0 0 0 0)
-      #-(or slow-atables clozure)
-      #(nil nil 10 10 4 4 4 4 4 4)))
-
-;;; ---------------------------------------------------------------------------
 ;;;  Atable-data "structure"
 
 #-slow-atable
@@ -666,7 +678,7 @@
   (hash-table-count atable)
   #-slow-atable
   (let* ((index (atable-type-index atable))
-         (data (atable-data atable))
+         (data (atable-data (the cons atable)))
          (list? (>& index 1)))
     (if list?
         (%atable-data-count data)
@@ -679,7 +691,7 @@
   (hash-table-test atable)
   #-slow-atable
   (let* ((index (atable-type-index atable))
-         (data (atable-data atable))
+         (data (atable-data (the cons atable)))
          (list? (>& index 1)))
     (if list?
         (determine-atable-test index)
@@ -736,23 +748,23 @@
 (macrolet 
     ((make-reader ()
        (flet ((make-list-fn (test)
-                `(let* ((list (%atable-data-list data))
+                `(let* ((data-list (%atable-data-list (the cons data)))
                         (sublist
                          ,(ecase test
-                            (eq '(memq key list))
+                            (eq '(memq key data-list))
                             (eql #-(or cmu sbcl)
-                                 '(member key list)
+                                 '(member key data-list)
                                  ;; Tell CMUCL & SBCL we can't use float-eql
                                  #+(or cmu sbcl)
                                  '(locally (declare (notinline member))
-                                   (member key list)))
+                                   (member key data-list)))
                             ((equal equalp) 
-                             `(member key list :test #',test)))))
+                             `(member key data-list :test #',test)))))
                    (if sublist
                        (values (car (the cons sublist)) 't)
                        (values nil nil))))
               (make-assoc-fn (test)
-                `(let* ((alist (%atable-data-list data))
+                `(let* ((alist (%atable-data-list (the cons data)))
                         (acons 
                          ,(ecase test
                             (eq '(assq key alist))
@@ -769,19 +781,19 @@
                        (values default nil)))))
          `(defun get-entry (key atable &optional default)
             (with-full-optimization ()
-              (let ((index (atable-type-index atable))
-                    (data (atable-data atable)))
-                      (declare (fixnum index))
-                      (case index
-                       ((0 1) (gethash key data default))
-                       (2 ,(make-list-fn 'eq))
-                       (3 ,(make-assoc-fn 'eq))
-                       (4 ,(make-list-fn 'eql))
-                       (5 ,(make-assoc-fn 'eql))
-                       (6 ,(make-list-fn 'equal))
-                       (7 ,(make-assoc-fn 'equal))
-                       (8 ,(make-list-fn 'equalp))
-                       (9 ,(make-assoc-fn 'equalp)))))))))
+              (let* ((index (atable-type-index atable))
+                     (data (atable-data (the cons atable))))
+                (declare (fixnum index))
+                (case index
+                  ((0 1) (gethash key data default))
+                  (2 ,(make-list-fn 'eq))
+                  (3 ,(make-assoc-fn 'eq))
+                  (4 ,(make-list-fn 'eql))
+                  (5 ,(make-assoc-fn 'eql))
+                  (6 ,(make-list-fn 'equal))
+                  (7 ,(make-assoc-fn 'equal))
+                  (8 ,(make-list-fn 'equalp))
+                  (9 ,(make-assoc-fn 'equalp)))))))))
   (make-reader))
 
 #+slow-atable
@@ -866,8 +878,8 @@
                      nv))))
          `(defun (setf get-entry) (nv key atable)
             (with-full-optimization ()
-              (let ((index (atable-type-index atable))
-                    (data (atable-data atable)))
+              (let* ((index (atable-type-index atable))
+                     (data (atable-data (the cons atable))))
                 (declare (fixnum index))
                 (case index
                   ((0 1) (setf (gethash key data) nv))
@@ -932,8 +944,8 @@
                      't))))
          `(defun delete-entry (key atable)
             (with-full-optimization ()
-              (let ((index (atable-type-index atable))
-                    (data (atable-data atable)))
+              (let* ((index (atable-type-index atable))
+                     (data (atable-data (the cons atable))))
                 (declare (fixnum index))
                 (case index
                   ;; keys-only hash table:
@@ -1006,8 +1018,8 @@
 #-slow-atable
 (defun clear-atable (atable &key retain-as-hash-table)
   (with-full-optimization ()
-    (let ((index (atable-type-index atable))
-          (data (atable-data atable)))
+    (let* ((index (atable-type-index atable))
+           (data (atable-data (the cons atable))))
       (cond 
        ;; Hash-table implementation:
        ((<=& index 1)
@@ -1042,8 +1054,8 @@
   (let ((fn (coerce function 'function)))
     (declare (function fn))
     (with-full-optimization ()
-      (let ((index (atable-type-index atable))
-            (data (atable-data atable)))
+      (let* ((index (atable-type-index atable))
+             (data (atable-data (the cons atable))))
         (cond 
          ;; Hash-table implementation:
          ((<=& index 1)

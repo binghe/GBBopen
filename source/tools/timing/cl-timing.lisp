@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/timing/cl-timing.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Apr 19 13:59:36 2010 *-*
+;;;; *-* Last-Edit: Mon Apr 19 16:37:48 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -385,21 +385,21 @@
   (let ((list nil)
         (warning-time 0))
     (fformat t "~&;;   Make-instance timing (~:d instances)..." size)
-    (let ((start-time (get-internal-run-time)))
+    (let ((%start-time% (get-internal-run-time)))
       (with-full-optimization ()
         (dotimes (i size)
           (declare (fixnum i))
           (push (make-instance 'test-instance :common-slot i) list)))
-      (let ((time (- (get-internal-run-time) start-time)))
+      (let ((time (- (get-internal-run-time) %start-time%)))
         (setf warning-time (*& time 2))
         (format-ticks time)))
     (fformat t "~&;;   Change-class timing (~:d instances)..." size)
     (let* ((class (find-class 'test-instance-clone))
-           (start-time (get-internal-run-time)))
+           (%start-time% (get-internal-run-time)))
       (with-full-optimization ()
         (dolist (instance list)
           (change-class instance class)))
-      (let ((time (- (get-internal-run-time) start-time)))
+      (let ((time (- (get-internal-run-time) %start-time%)))
         (format-ticks time)
         (when (>& time warning-time)
           (format t " *****"))))))
@@ -531,9 +531,9 @@
                         `(,name (max-index at/ht)
                                 ;; Do one untimed trial to prepare everything:
                                 (setf *%timing-result%* 
-                                      (,reader (svref keys 1) at/ht))
+                                      (,reader (svref keys max-index) at/ht))
                                 (let ((test-index 1)
-                                      (start-time (get-internal-run-time)))
+                                      (%start-time% (get-internal-run-time)))
                                   (setf test-index 1)
                                   (dotimes (i iterations)
                                     (declare (fixnum i))
@@ -543,7 +543,7 @@
                                     (when (>& test-index max-index)
                                       (setf test-index 1)))
                                   (locally (declare (notinline -))
-                                    (- (get-internal-run-time) start-time))))))
+                                    (- (get-internal-run-time) %start-time%))))))
                  `(let ((atl (make-atable :test ',test
                                           :keys-only ,keys-only))
                         (ath (make-atable :test ',test
@@ -558,7 +558,8 @@
                                 for key = (funcall ,keygen-fn i)
                                 collect ,(if keys-only 'key '(cons key i))
                                 do (setf (get-entry key ath) i)
-                                   (setf (gethash key ht) i)))
+                                   (setf (gethash key ht) i)
+                                   (setf (svref keys i) key)))
                       (when verbose?
                         (format t "~&;; Timing ~s~@[ (keys only)~*~] "
                                 ',test 
