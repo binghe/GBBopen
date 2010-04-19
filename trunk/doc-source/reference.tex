@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Fri Apr  9 06:06:07 2010; Edited-By: cork *-*
+%% *-* Last-Edit: Mon Apr 19 11:44:06 2010; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2010, Dan Corkill <corkill@GBBopen.org>
@@ -2050,8 +2050,7 @@ GBBopen \nobr{\code{\var{<install-directory>\/}/startup.lisp}} file (via the
 \nobr{\code{module-manager}} subdirectory). If a
 \nobr{\code{gbbopen-init.lisp}} file (source or compiled) is present in the
 user's ``home'' directory, it is loaded immediately following the loading of
-the Module Manager Facility by the
-\nobr{\code{\var{<install-directory>\/}/startup.lisp}} file.  A personal
+the Module Manager Facility.  A personal
 \nobr{\code{\var{<homedir>\/}/gbbopen-init.lisp}} file is very useful for
 defining GBBopen parameters and other personalizations
 %
@@ -6172,8 +6171,6 @@ Extend the \nobr{\code{print-object}} printing for \code{hyp}
 information.
 
 \fnmethods
-\fnalternate{print-instance-slots}{\code{(}\var{instance\/}
-  \code{deleted-unit-instance)} stream\/}
 \fnalternate{print-instance-slots}{\code{(}\var{instance\/}
   \code{ksa)} stream\/}
 \fnalternate{print-instance-slots}{\code{(}\var{instance\/}
@@ -16178,6 +16175,67 @@ remaining \nobr{\code{:gbbopen-core}} entities is arranged into the following
 \T\clearpage
 \T\renewcommand{\headrulewidth}{0.01pt}
 
+\begin{functiondoc}[skip-deleted-unit-instance-class-change-var]%
+  {Variable}{*skip-deleted-unit-instance-class-change*}{}%
+
+\fnsyntax
+
+\fnpurpose Controls whether the class of a \glref{unit~instance} is changed to
+a \nobr{\textbf{\entlink{deleted-unit-instance}}} when it is deleted.
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:gbbopen-core}
+
+\fnvaluetype A \glref{generalized~boolean}
+
+\fninitialvalue \nil
+
+\fndescription 
+%
+When \nobr{\textbf{*skip-deleted-unit-instance-class-change*}} is \nil, the
+class of a \glref{unit~instance} is changed to
+a \nobr{\textbf{\entlink{deleted-unit-instance}}} when it is deleted.  This
+helps identify a deleted unit instance that is used inadvertently, at the
+minor additional cost of the class change when the instance is deleted.  In
+situations where unit instances are created and deleted at a high rate, the
+class change can be skipped by binding
+\nobr{\textbf{*skip-deleted-unit-instance-class-change*}} to a non-\nil{}
+value.  The predicate \nobr{\textbf{\entlink{instance-deleted-p}}} can be used
+to detect either form of a deleted unit instance.
+
+\begin{alsos}{deleted-unit-instance}
+\also[delete-instance]
+\also[deleted-instance-class]
+\also[deleted-unit-instance]
+\also[instance-deleted-p]
+\end{alsos}
+
+\fnexample 
+%
+\bfindexit{delete-instance}%
+\bfindexit{make-instance}%
+%
+Create and delete a \code{hyp} unit instance, first with the default
+changing-class behavior of \nobr{\textbf{\entlink{delete-instance}}} and then
+with the class-change skipped:
+%
+\W\supp
+\begin{example}
+  > (\entlink{delete-instance} (\entlink{make-instance} 'hyp))
+  #<deleted-unit-instance hyp 1>
+  > (\entlink{instance-deleted-p} *)
+  t
+  > (let ((*skip-deleted-unit-instance-class-change* 't))
+       (\entlink{delete-instance} (\entlink{make-instance} 'hyp)))
+  #<hyp [Deleted] 2>
+  > (\entlink{instance-deleted-p} *)
+  t
+  >
+\end{example}
+
+\end{functiondoc}
+
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Generic~Function}{change-class}%
@@ -16649,9 +16707,6 @@ word's individual characters in an \glref{enumerated~dimension} and the
 
 \fnmethods
 \fnalternate{delete-instance}%
-  {\code{(}\var{deleted-unit-instance\/} \code{deleted-unit-instance)}
-    \returns{} \var{deleted-unit-instance\/}}
-\fnalternate{delete-instance}%
   {\code{(}\var{unit-instance\/} \code{standard-unit-instance)}
     \returns{} \var{deleted-unit-instance\/}}
 \fnalternate{delete-instance}%
@@ -16667,7 +16722,9 @@ word's individual characters in an \glref{enumerated~dimension} and the
 \arg[unit-instance] The \glref{unit~instance} (or \glref{space~instance}) to
   be deleted
 \arg[deleted-unit-instance] The deleted \var{unit-instance\/} object, whose
-class has been changed to a \nobr{\textbf{\entlink{deleted-unit-instance}}}
+class has been changed to a \nobr{\textbf{\entlink{deleted-unit-instance}}} 
+unless \nobr{\textbf{\entlink{*skip-deleted-unit-instance-class-change*}}} 
+is true
 \end{args}
 
 \fnreturns The deleted instance \nobr{\var{deleted-unit-instance}}.
@@ -16694,15 +16751,15 @@ may also be signaled:
 \item \code{remove-instance-from-space-instance-event}
 \end{tightitemize}
 
-\fndescription The generic function
-\nobr{\textbf{\entlink{deleted-instance-class}}} is called by
-\nobr{\textbf{delete-oinstance}} to determine the \glref{class} to be used as
-the changed class for the \nobr{\var{deleted-unit-instance}}.
+\fndescription 
+%
+If \nobr{\textbf{\entlink{*skip-deleted-unit-instance-class-change*}}} is
+\nil, the generic function \nobr{\textbf{\entlink{deleted-instance-class}}} is
+called by \nobr{\textbf{delete-instance}} to determine the \glref{class} to be
+used as the changed class for the \nobr{\var{deleted-unit-instance}}.
 
-Deleting a \nobr{\textbf{\entlink{deleted-unit-instance}}} has
-no effect.
-
-\begin{alsos}{delete-blackboard-repository}
+\begin{alsos}{*skip-deleted-unit-instance-class-change*}
+\also[*skip-deleted-unit-instance-class-change*]
 \also[delete-all-space-instances]
 \also[delete-blackboard-repository]
 \also[delete-space-instance]
@@ -16715,13 +16772,11 @@ no effect.
 
 \fnexample
 \bfindexit{make-instance}%
-Create, then delete, then delete again, a \code{hyp} \glref{unit~instance}:
+Create, then delete, a \code{hyp} \glref{unit~instance}:
 %
 \W\supp
 \begin{example}
   > (delete-instance (\entlink{make-instance} 'hyp :location '(896 388) :belief .68))
-  #<deleted-unit-instance hyp 311>
-  > (delete-instance *)
   #<deleted-unit-instance hyp 311>
   >
 \end{example}
@@ -16817,6 +16872,7 @@ subclasses of \code{hyp}) \glref{unit~instances}:
 \nobr{\textbf{\glref{standard-gbbopen-instance}}}.
 
 \begin{alsos}{standard-space-instance}
+\also[delete-instance]
 \also[standard-gbbopen-instance]
 \also[standard-space-instance]
 \also[standard-unit-instance]
@@ -17436,7 +17492,8 @@ true for the unit class.
 
 \fnreturns True if the \glref{unit~instance} is deleted; \nil{} otherwise.
 
-\begin{alsos}{delete-instance}
+\begin{alsos}{*skip-deleted-unit-instance-class-change*}
+\also[*skip-deleted-unit-instance-class-change*]
 \also[delete-instance]
 \end{alsos}
 
@@ -17735,11 +17792,6 @@ Change the \glref{instance~name} of \code{hyp} \code{180} to
 
 \fnmethods
 \fnalternate{make-duplicate-instance}{%
-  \code{(}\var{instance\/} \code{deleted-unit-instance)}
-  \var{unduplicated-slot-names\/}
-  \code{\&rest} \var{initargs\/}
-  \nobr{\returns{} \vbar{}}}
-\fnalternate{make-duplicate-instance}{%
   \code{(}\var{instance\/} \code{standard-object)}
   \var{unduplicated-slot-names\/}
   \code{\&rest} \var{initargs\/}
@@ -17805,9 +17857,8 @@ following sequence:
 \item A \code{create-instance-event} is signaled.
 \end{tightenumerate}
 
-\fnerrors Attempting to duplicate a
-\nobr{\textbf{\entlink{deleted-unit-instance}}}.
-
+\fnerrors
+%
 Use of an initialization argument that has not been declared as valid.
 
 \codeindexit{:space-instances}%
@@ -17930,12 +17981,6 @@ Create a duplicate of the \code{hyp} \code{419} \glref{unit~instance}:
 
 \fnmethods
 \fnalternate{make-duplicate-instance-changing-class}{%
-  \code{(}\var{instance\/} \code{deleted-unit-instance)}
-  \var{new-class\/}
-  \var{unduplicated-slot-names\/}
-  \code{\&rest} \var{initargs\/}
-  \nobr{\returns{} \vbar{}}}
-\fnalternate{make-duplicate-instance-changing-class}{%
   \code{(}\var{instance\/} \code{standard-object)}
   \code{(}\var{new-class\/} \code{class)}
 \var{unduplicated-slot-names\/}
@@ -18012,9 +18057,8 @@ following sequence:
 \item A \code{create-instance-event} is signaled.
 \end{tightenumerate}
 
-\fnerrors Attempting to duplicate a
-\nobr{\textbf{\entlink{deleted-unit-instance}}}.
-
+\fnerrors
+%
 Use of an initialization argument that has not been declared as valid.
 
 \codeindexit{:space-instances}%
@@ -25014,10 +25058,6 @@ not saved or sent:
     \var{stream\/}
     \returns{} \var{object\/}}
 \fnalternate{print-object-for-saving/sending}%
-  {\code{(}\var{object\/} \code{deleted-unit-instance)}
-    \var{stream\/}
-    \returns{} \vbar{}}
-\fnalternate{print-object-for-saving/sending}%
   {\code{(}\var{object\/} \code{function)}
     \var{stream\/}
     \returns{} \var{object\/}}
@@ -25079,12 +25119,10 @@ not saved or sent:
 
 \fnreturns The \var{object}.
 
-\fnerrors A call to \nobr{\textbf{print-object-for-saving/sending}} was made
-outside the dynamic scope of a
-\nobr{\textbf{\entlink{with-saving/sending-block}}}.
-
-Calling \nobr{\textbf{print-object-for-saving/sending}} with a
-\nobr{\textbf{\entlink{deleted-unit-instance}}}.
+\fnerrors
+%
+A call to \nobr{\textbf{print-object-for-saving/sending}} was made outside the
+dynamic scope of a \nobr{\textbf{\entlink{with-saving/sending-block}}}.
 
 \begin{alsos}{omitted-slots-for-saving/sending}
 \also[*print-object-for-sending*]
@@ -25153,9 +25191,6 @@ in \nobr{\var{object\/}} to \nobr{\var{stream\/}} when saving or sending.
 
 \fnmethods
 \fnalternate{print-slot-for-saving/sending}%
-  {\code{(}\var{instance\/} \code{deleted-unit-instance)}
-    \var{slot-name stream\/}}
-\fnalternate{print-slot-for-saving/sending}%
   {\code{(}\var{instance\/} \code{standard-object)}
     \var{slot-name stream\/}}
 \fnalternate{print-slot-for-saving/sending}%
@@ -25175,12 +25210,10 @@ in \nobr{\var{object\/}} to \nobr{\var{stream\/}} when saving or sending.
 \arg[stream] A stream
 \end{args}
 
-\fnerrors A call to \nobr{\textbf{print-slot-for-saving/sending}} was made
-outside the dynamic scope of a
-\nobr{\textbf{\entlink{with-saving/sending-block}}}.
-
-Calling \nobr{\textbf{print-slot-for-saving/sending}} with a
-\nobr{\textbf{\entlink{deleted-unit-instance}}}.
+\fnerrors
+%
+A call to \nobr{\textbf{print-slot-for-saving/sending}} was made outside the
+dynamic scope of a \nobr{\textbf{\entlink{with-saving/sending-block}}}.
 
 \begin{alsos}{omitted-slots-for-saving/sending}
 \also[*print-object-for-sending*]
@@ -27907,6 +27940,7 @@ Agenda Shell to determine when to execute the \glref{KSA}.
 \end{alsos}
 
 \fnexamples
+%
 Return the rating of a \glref{KSA}:
 %
 \W\supp
@@ -27991,6 +28025,7 @@ A \nobr{\code{restart-control-shell-event}} is signaled.
 \end{alsos}
 
 \fnexample
+%
 Restart the Agenda Shell (in this case, without any \glref{KSs} defined):
 %
 \W\supp
@@ -28048,6 +28083,7 @@ Restart the Agenda Shell (in this case, without any \glref{KSs} defined):
 \end{alsos}
 
 \fnexample
+%
 Return the (sole) trigger \glref{event} of a \glref{KSA}:
 %
 \W\supp
@@ -28115,6 +28151,7 @@ signaled.
 \end{alsos}
 
 \fnexample
+%
 Return the (sole) trigger \glref{unit~instance} of a \glref{KSA}:
 %
 \W\supp
@@ -28346,6 +28383,7 @@ of a \glref{KS}
 \end{alsos}
 
 \fnexamples
+%
 Start the Agenda Shell (in this case, without any \glref{KSs} defined):
 %
 \W\supp
@@ -28438,6 +28476,7 @@ This \glref{generic~function} accesses the value stored in the
 \end{alsos}
 
 \fnexample
+%
 Return the events that triggered a \glref{KSA}:
 %
 \W\supp
@@ -28487,7 +28526,9 @@ editing the defining form (such as from within an editor buffer).
 \also[ks-enabled-p]
 \end{alsos}
 
-\fnexamples Undefine the \glref{KS} named \nobr{\code{initial}}. The following
+\fnexamples
+%
+Undefine the \glref{KS} named \nobr{\code{initial}}. The following
 forms are all equivalent:
 %
 \W\supp

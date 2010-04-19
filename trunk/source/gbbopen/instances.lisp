@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Apr 14 09:51:28 2010 *-*
+;;;; *-* Last-Edit: Sun Apr 18 22:19:09 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -42,6 +42,7 @@
 ;;;           (Corkill)
 ;;;  09-03-08 Added MAKE-INSTANCES-OF-CLASS-VECTOR (please don't abuse!). 
 ;;;           (Corkill)
+;;;  04-15-08 Added *SKIP-DELETED-UNIT-INSTANCE-CLASS-CHANGE* (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -56,7 +57,8 @@
             gbbopen-tools::set-flag)))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (export '(check-for-deleted-instance  ; not documented (yet...)
+  (export '(*skip-deleted-unit-instance-class-change*
+            check-for-deleted-instance  ; not yet documented
             delete-instance
             deleted-instance-class
             describe-instance
@@ -86,6 +88,13 @@
             unduplicated-slot-names     ; re-export
             with-changing-dimension-values)))
 
+;;; ---------------------------------------------------------------------------
+;;;  Bypasses the normal class change to DELETED-UNIT-INSTANCE by
+;;;  DELETE-INSTANCE.  Use only for very high volume deleting and at your own
+;;;  peril -- you've been warned!!
+
+(defvar *skip-deleted-unit-instance-class-change* nil)
+
 ;;; ===========================================================================
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
@@ -111,40 +120,11 @@
     (:export-class-name t)
     (:export-accessors t)))
 
-(defmethod delete-instance ((instance deleted-unit-instance))
-  #+ecl (declare (ignore instance))
-  ;; Deleting a deleted-unit-instance is a no-op:
-  instance)
-
 (defmethod print-instance-slots ((instance deleted-unit-instance) stream)
   (call-next-method)
   (format stream " ~s" (class-name (original-class-of instance)))
   (print-instance-slot-value instance 'instance-name stream))
 
-(defmethod make-duplicate-instance ((instance deleted-unit-instance)
-                                    unduplicated-slot-names
-                                    &rest initargs)
-  (declare (ignore unduplicated-slot-names initargs))
-  (operation-on-deleted-instance 'make-duplicate-instance instance))
-
-(defmethod make-duplicate-instance-changing-class ((instance deleted-unit-instance)
-                                                   new-class
-                                                   unduplicated-slot-names
-                                                   &rest initargs)
-  (declare (ignore new-class unduplicated-slot-names initargs))
-  (operation-on-deleted-instance 'make-duplicate-instance instance))
-
-(defmethod print-object-for-saving/sending ((instance deleted-unit-instance)
-                                            stream)
-  (declare (ignore stream))
-  (operation-on-deleted-instance 'print-object-for-saving/sending instance))
-
-(defmethod print-slot-for-saving/sending ((instance deleted-unit-instance)
-                                          slot-name 
-                                          stream)
-  (declare (ignore slot-name stream))
-  (operation-on-deleted-instance 'print-slot-for-saving/sending instance))
-  
 ;;; ===========================================================================
 ;;;   Unit Instances
 ;;;
@@ -471,10 +451,14 @@
 ;;;  Unit-instance utility funtions
 
 (defun instance-deleted-p (instance)
-  (typep instance 'deleted-unit-instance))
+  (or (typep instance 'deleted-unit-instance)
+      (eq (standard-unit-instance.%%space-instances%% instance) ':deleted)))
 
 (defcm instance-deleted-p (instance)
-  `(typep ,instance 'deleted-unit-instance))
+  (with-once-only-bindings (instance)
+    `(or (typep ,instance 'deleted-unit-instance)
+         (eq (standard-unit-instance.%%space-instances%% ,instance) 
+             ':deleted))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -495,13 +479,15 @@
   ;;; *not* copied, so the user must not modify!
   (let ((space-instances (standard-unit-instance.%%space-instances%% instance)))
     (if (eq space-instances ':deleted)
-        nil                         ; return nil if `instance' has been deleted
+        (operation-on-deleted-instance 'space-instances-of instance)
         space-instances)))
 
 ;;; ---------------------------------------------------------------------------
 
 (defmethod print-instance-slots ((instance standard-unit-instance) stream)
   (call-next-method)
+  (when (instance-deleted-p instance)
+    (format stream " [Deleted]"))
   (print-instance-slot-value instance 'instance-name stream))
 
 ;;; ---------------------------------------------------------------------------
@@ -910,28 +896,35 @@
 
 (defmethod delete-instance ((instance standard-unit-instance))
   (declare (inline class-of))
-  ;; unlink `instance' from other unit instances:
-  (delete-all-incoming-link-pointers instance)
-  (let ((unit-class (class-of instance)))
-    ;; remove from instance-hash-table:
-    (remove-instance-from-instance-hash-table 
-     unit-class (instance-name-of instance))
-    ;; remove from all space instances:
-    (dolist (space-instance 
-                (standard-unit-instance.%%space-instances%% instance))
-      (remove-instance-from-space-instance instance space-instance)))
-  (let ((deleted-instance-class (deleted-instance-class instance)))
-    (change-class instance (deleted-instance-class instance)
-                  :original-class (class-of instance))
-    (when 
-        ;; NOTE: CMUCL (at least up through 19f) gets the following TYPEP
-        ;; check on a changed-class instance wrong. We work around that by not
-        ;; inlining TYPEP:
-        (locally #+cmu (declare (notinline typep))
-                 (typep instance 'standard-unit-instance))
-      (error "The deleted-instance-class ~s is a subclass of ~s"
-             (class-name deleted-instance-class)
-             'standard-unit-instance)))
+  (let ((space-instances (standard-unit-instance.%%space-instances%% instance)))
+    (let ((unit-class (class-of instance)))
+      (cond 
+       ;; Really want speed over a safety net; really?
+       (*skip-deleted-unit-instance-class-change*
+        ;; remove from instance-hash-table:
+        (remove-instance-from-instance-hash-table 
+         unit-class (instance-name-of instance))
+        ;; remove from all space instances:
+        (dolist (space-instance space-instances)
+          (remove-instance-from-space-instance instance space-instance))
+        ;; unlink all link slots:
+        (delete-all-incoming-link-pointers instance)
+        ;; Mark the (unchanged class) instance as deleted:
+        (setf (standard-unit-instance.%%space-instances%% instance) ':deleted))
+       ;; Although the class change is a bit expensive, the extra safety in
+       ;; detecting stale references to deleted unit-instances is worth it...
+       (t (let ((deleted-instance-class (deleted-instance-class instance)))
+            (change-class instance deleted-instance-class 
+                          :original-class unit-class)
+            (when 
+                ;; NOTE: CMUCL (at least up through 19f) gets the following
+                ;; TYPEP check on a changed-class instance wrong. We work
+                ;; around that by not inlining TYPEP:
+                (locally #+cmu (declare (notinline typep))
+                         (typep instance 'standard-unit-instance))
+              (error "The deleted-instance-class ~s is a subclass of ~s"
+                     (class-name deleted-instance-class)
+                     'standard-unit-instance)))))))
   instance)
 
 ;;; ---------------------------------------------------------------------------
@@ -1160,7 +1153,7 @@
   (let ((unit-class (class-of instance))
         (non-unit-new-class (not (typep new-class 'standard-unit-class)))
         (new-class-slots (class-slots new-class)))
-    ;; Remove instance from its current-class instance HT:
+    ;; Remove instance from its current class-instance hash table:
     (remove-instance-from-instance-hash-table 
      unit-class (instance-name-of instance))
     ;; Also, remove instance from all space instances before changing its
@@ -1181,13 +1174,7 @@
                                       :test #'eq
                                       :key #'slot-definition-name))))
                     (not (typep new-class-slot 'effective-link-definition))))
-          (let ((current-value
-                 (slot-value-using-class unit-class instance slot)))
-            (when current-value
-              (delete-incoming-link-pointer instance slot)
-              (%signal-direct-unlink-event 
-               instance slot nil
-               (ensure-list current-value)))))))))
+          (delete-incoming-link-pointer instance slot))))))
 
 ;;; ---------------------------------------------------------------------------
 

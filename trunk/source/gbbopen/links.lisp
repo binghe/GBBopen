@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/links.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Apr  7 10:06:58 2010 *-*
+;;;; *-* Last-Edit: Sun Apr 18 07:16:50 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -590,7 +590,10 @@
     (when inverse-instances
       (if (direct-link-definition.singular dslotd)
           (%do-iunlink dslotd instance inverse-instances)
-          (%do-iunlinks dslotd instance inverse-instances)))))
+          (%do-iunlinks dslotd instance inverse-instances))
+      (%signal-direct-unlink-event 
+       instance link-slot nil
+       (ensure-list inverse-instances)))))
 
 ;;; ---------------------------------------------------------------------------
 

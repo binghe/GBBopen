@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/basic-tests.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Apr 14 09:12:24 2010 *-*
+;;;; *-* Last-Edit: Sun Apr 18 06:59:47 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -823,7 +823,7 @@
 
 (defun find-tests (space-1-storage)
   ;;; Find/Filter/Map Checks:
-  (format t "~2&;; Instance find/filter/map tests using ~s~%" space-1-storage)
+  (format t "~&;;     Instance find/filter/map tests using ~s~%" space-1-storage)
   (reset-gbbopen)
   (multiple-value-bind (incomposite-set composite-set)
       (make-test-sets space-1-storage)
@@ -1026,7 +1026,7 @@
 	(unless (set-equal (filter-instances (cons u3 test-set) p)
 			   (list u3 u3))
 	  (error "Wrong results from filter-instances ~s" p)))))
-  (format t "~&;; Done with ~s tests~%" space-1-storage))
+  (format t "~&;;     Done with ~s tests~%" space-1-storage))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -1039,7 +1039,7 @@
   (let ((signaled-events nil)
 	(u2 (make-instance 'uc-2))
 	(u3 (make-instance 'uc-2)))
-    (format t "~2&;; Running event-function tests...~%")
+    (format t "~&;; Running event-function tests...~%")
     (labels
 	((evfn-tester (&rest args)
 	   (push args signaled-events))
@@ -1070,7 +1070,7 @@
                                                 (rest candidate-event-args)))
                           (setq signaled-event-args candidate-event-args))))
                  (declare (dynamic-extent #'fn))
-                 (delete-if #'fn signaled-events)))
+                 (delete-if #'fn signaled-events :count 1)))
 	     (unless signaled-event-args
 	       (error "Event ~s~{ ~s~} was not signaled.
                       ~_Signaled events: ~s" 
@@ -1083,6 +1083,7 @@
       ;; events to check:
       (add-event-function  #'evfn-tester 'create-instance-event 'uc-1) 
       (add-event-function  #'evfn-tester 'delete-instance-event 'uc-1) 
+      (add-event-function  #'evfn-tester 'instance-deleted-event 'uc-1)
       (add-event-function  #'evfn-tester 'update-nonlink-slot-event 'uc-1 
 			   :slot-name 'x)
       (add-event-function  #'evfn-tester 'link-event 'uc-1 
@@ -1153,7 +1154,7 @@
 		     :directp nil)	
 	(check-for-unprocessed-events)
         (format t "~&;;   delete-instance events...~%")
-	(delete-instance u1)
+        (delete-instance u1)
 	(check-event 'delete-instance-event
 		     :instance u1)
         (check-event 'unlink-event 
@@ -1168,6 +1169,8 @@
 		     :current-value nil
 		     :removed-instances (list u1)
 		     :directp nil)
+	(check-event 'instance-deleted-event
+		     :instance u1)
         (check-for-unprocessed-events))))
   (remove-all-event-functions 't '(uc-1 :plus-subclasses))
   (values))
@@ -1178,8 +1181,10 @@
 (defun all-tests ()
   (clos/mop-tests)
   (basic-tests)
+  (format t "~&;;~%")
   (event-function-tests)
   ;; Finds:
+  (format t "~&;;~%")
   (find-tests '((uc-1 x unstructured)))
   (find-tests '((uc-1 amphibious boolean)))
   (find-tests '((uc-1 classification hashed :size 20)))

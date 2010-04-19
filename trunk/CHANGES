@@ -1,6 +1,7 @@
 Important changes since GBBopen 1.5:
-  None yet
 
+  * Changes to GBBopen
+     - Add *SKIP-DELETED-UNIT-INSTANCE-CLASS-CHANGE*
 
 Important changes in GBBopen 1.5:
 

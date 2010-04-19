@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/epilogue.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Apr  7 10:05:40 2010 *-*
+;;;; *-* Last-Edit: Tue Apr 13 14:28:27 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -108,10 +108,17 @@
                                   (not (or (standard-unit-class.retain unit-class))))))
                  ;; We must practice safe delete-instance:
                  (let ((instances nil))
-                   (flet ((do-instance (instance) (push instance instances)))
+                   (flet ((do-instance (instance)
+                            (push instance instances)))
                      (declare (dynamic-extent #'do-instance))
                      (map-instances-given-class #'do-instance unit-class))
-                   (mapc #'delete-instance instances)
+                   (dolist (instance instances)
+                     ;; Child space instances might already be deleted due to
+                     ;; parent space-instance deletion, so we check for
+                     ;; deleted-p status to avoid the
+                     ;; operation-on-deleted-instance error:
+                     (unless (instance-deleted-p instance)
+                       (delete-instance instance)))
                    (reset-unit-class unit-class)))))
         (declare (dynamic-extent #'fn))
         (map-extended-unit-classes #'fn 't)))
