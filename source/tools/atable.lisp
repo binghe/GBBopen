@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/atable.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Apr 19 11:22:42 2010 *-*
+;;;; *-* Last-Edit: Mon Apr 19 14:03:35 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -103,16 +103,18 @@
     (check-featured-value
      'eset-transition-size
      ;; Allegro
-     #+(and allegro macosx x86) 12
+     #+(and allegro macosx x86) 14
      #+(and allegro macosx powerpc) 34
-     #+(and allegro (not (and macosx (or x86 powerpc)))) 124
+     #+(and allegro (not (and macosx (or x86 powerpc)))) 128
      ;; CLISP
      #+clisp 0
      ;; Clozure
      #+(and clozure darwinx86-target) 28
-     #+(and clozure (not darwinx86-target)) 46
+     #+(and clozure darwinppc-target) 13
+     #+(and clozure (not (or darwinx86-target
+                             darwinppc-target))) 48
      ;; CMUCL
-     #+(and cmu darwin x86) 32
+     #+(and cmu darwin x86) 18
      #+(and cmu (not (and darwin x86))) 46
      ;; Digitool MCL
      #+digitool-mcl 7
@@ -121,11 +123,11 @@
      ;; Lispworks
      #+lispworks 14
      ;; SBCL
-     #+(and sbcl darwin (not ppc)) 14
+     #+(and sbcl darwin (not ppc)) 16
      #+(and sbcl darwin ppc) 80
      #+(and sbcl (not darwin)) 32
      ;; SCL
-     #+(and scl darwin x86) 32
+     #+(and scl darwin x86) 18
      #+(and scl (not (and darwin x86))) 46
      ;; New port (values needed)
      #-(or allegro 
@@ -345,14 +347,16 @@
      ;; Allegro
      #+(and allegro macosx x86) 6
      #+(and allegro macosx powerpc) 30
-     #+(and allegro (not (and macosx (or x86 powerpc)))) 40
+     #+(and allegro (not (and macosx (or x86 powerpc)))) 60
      ;; CLISP
      #+clisp 0
      ;; Clozure
      #+(and clozure darwinx86-target) 25
-     #+(and clozure (not darwinx86-target)) 34
+     #+(and clozure darwinppc-target) 9
+     #+(and clozure (not (or darwinx86-target
+                             darwinppc-target))) 34
      ;; CMUCL
-     #+(and cmu darwin x86) 16
+     #+(and cmu darwin x86) 14
      #+(and cmu (not (and darwin x86))) 78
      ;; Digitool MCL
      #+digitool-mcl 7
@@ -361,11 +365,11 @@
      ;; Lispworks
      #+lispworks 3
      ;; SBCL
-     #+(and sbcl darwin (not ppc)) 11
+     #+(and sbcl darwin (not ppc)) 12
      #+(and sbcl darwin ppc) 80
      #+(and sbcl (not darwin)) 20
      ;; SCL
-     #+(and scl darwin x86) 16
+     #+(and scl darwin x86) 14
      #+(and scl (not (and darwin x86))) 78
      ;; New port (values needed)
      #-(or allegro 
