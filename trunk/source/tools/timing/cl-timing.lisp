@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/timing/cl-timing.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Apr 19 10:12:05 2010 *-*
+;;;; *-* Last-Edit: Mon Apr 19 13:59:36 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -660,7 +660,7 @@
              ;; Compare the computed size with the predefined transition size:
              (let ((size-difference (-& computed-transition size)))
                (cond
-                ((>& (abs& size-difference) (max& 3 (truncate (* size 0.2))))
+                ((>& (abs& size-difference) (max& 4 (truncate (* size 0.3))))
                  (setf request-results? 't)
                  (format t "~&;; ***** The preset ~a transition size ~s is ~
                                  too ~:[low~;high~], the computed value is ~
