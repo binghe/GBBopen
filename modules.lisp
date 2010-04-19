@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/modules.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Apr  7 09:51:33 2010 *-*
+;;;; *-* Last-Edit: Mon Apr 19 10:24:19 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -150,8 +150,6 @@
             ("instances" :forces-recompile)
             "spaces"
             "storage"
-            #+developing
-            "new-storage"
             ("find" :forces-recompile)
             "unstructured-storage"
             "boolean-storage"

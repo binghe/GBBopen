@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/date-and-time.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Apr  7 09:54:57 2010 *-*
+;;;; *-* Last-Edit: Mon Apr 19 11:45:27 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -749,8 +749,7 @@
                (format stream "~s~:[~*~;.~2,'0d~]s" 
                        seconds
                        hundreds-p
-                       hundreds 
-                       seconds))
+                       hundreds))
               ;; Should only occur when duration-in-seconds is zero:
               ((not (or days-p hours-p minutes-p))
                (format stream "0s")))))

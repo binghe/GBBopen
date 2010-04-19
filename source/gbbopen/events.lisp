@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/events.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Apr 12 10:27:00 2010 *-*
+;;;; *-* Last-Edit: Sun Apr 18 06:13:56 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -544,6 +544,8 @@
     (setf additional-arg-values 
           (flet ((fn (arg-spec)
                    (let ((supplied-value-pair
+                          ;; (car (member ...)) with :test & :key often
+                          ;; optimizes better than (find ...):
                           (car (member (first arg-spec)
                                        supplied-additional-args
                                        :test #'eq :key #'car))))
@@ -1386,7 +1388,7 @@
   (declare (dynamic-extent args))
   (when *%%events-enabled%%*
     (let* ((unit-class 
-            (if (instance-deleted-p instance)
+            (if (typep instance 'deleted-unit-instance)
                 (original-class-of instance)
                 (class-of instance)))
 	   (evfn-blks (standard-unit-class.evfn-blks unit-class))

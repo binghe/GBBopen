@@ -27,15 +27,6 @@
 </p>
 <p><span class="fndoclabel">Method signatures</span><table class="tighttop" width="100%">
 <tr valign="top"><td valign="baseline" align="left"><nobr>make-duplicate-instance-changing-class</nobr></td><td valign="baseline">&nbsp; </td><td valign="baseline" align="left" width="99%">
-<code>(</code><var>instance</var> <code>deleted-unit-instance)</code>
-<var>new-class</var>
-<var>unduplicated-slot-names</var>
-<code>&#38;rest</code> <var>initargs</var>
-<nobr><span 
-    style="font-family: serif; font-style: normal">=&gt;</span> |</nobr>
-</td></tr></table>
-<table class="tight" width="100%">
-<tr valign="top"><td valign="baseline" align="left"><nobr>make-duplicate-instance-changing-class</nobr></td><td valign="baseline">&nbsp; </td><td valign="baseline" align="left" width="99%">
 <code>(</code><var>instance</var> <code>standard-object)</code>
 <code>(</code><var>new-class</var> <code>class)</code>
 <var>unduplicated-slot-names</var>
@@ -112,10 +103,7 @@ for each <a href="ref-glossary.html#id203">space&nbsp;instance</a> on which the 
 <li>A <code>create-instance-event</code> is signaled.
 </ol>
 </p>
-<p><span class="fndoclabel">Errors</span> <br />Attempting to duplicate a
-<nobr><b><a href="ref-deleted-unit-instance.html">deleted-unit-instance</a></b></nobr>.
-</p>
-<p>Use of an initialization argument that has not been declared as valid.
+<p><span class="fndoclabel">Errors</span> <br />Use of an initialization argument that has not been declared as valid.
 </p>
 <a name="id2"></a><p><span class="fndoclabel">Description</span> <br />Slot initialization during instance duplication behaves as follows, regardless
 of whether the slots are local or shared:
