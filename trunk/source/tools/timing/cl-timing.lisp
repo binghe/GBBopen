@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/timing/cl-timing.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Apr 15 10:28:51 2010 *-*
+;;;; *-* Last-Edit: Mon Apr 19 10:12:05 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -51,9 +51,13 @@
     #-(or clisp ecl) 
            10000000)
 
-(defparameter *timing-instances* 500000)
+(defparameter *timing-instances* 100000)
 
-(defparameter *max-list-test-size* 100)
+(defparameter *max-list-test-size* 140)
+
+(defparameter *required-contiguous-misses* 3)
+
+;;; ---------------------------------------------------------------------------
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defvar *%timing-result%*))
@@ -71,13 +75,14 @@
            (- (get-internal-run-time) %start-time%))))))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (defmacro table-timer (n max-index &body body)
+  (defmacro indexed-timer (n max-index &body body)
+    ;; Binds and increments `test-index' from 1 to `max-index' during timing:
     `(with-full-optimization ()
-       (let ((test-index 1))
-         ;; Do one untimed trial to prepare everything:
+       (let ((test-index ,max-index))
+         ;; Do one worst-case untimed trial to prepare everything:
          (setf *%timing-result%* ,@body)
          (setf test-index 1)
-         (let ((start-time (get-internal-run-time)))
+         (let ((%start-time% (get-internal-run-time)))
            (dotimes (i (& ,n))
              (declare (fixnum i))
              (setf *%timing-result%* ,@body)
@@ -85,7 +90,7 @@
              (when (>& test-index ,max-index)
                (setf test-index 1)))
            (locally (declare (notinline -))
-             (- (get-internal-run-time) start-time)))))))
+             (- (get-internal-run-time) %start-time%)))))))
              
 ;;; ---------------------------------------------------------------------------
 
@@ -230,12 +235,13 @@
     (macrolet
         ((time-it (form)
            `(progn
-              (setf time (table-timer iterations max-size ,form))
+              (setf time (indexed-timer iterations max-size ,form))
               (format-ticks time)
               (terpri))))
       ;; Hash table timings:
       #-has-keys-only-hash-tables
-      (format t "~&;; * Keys-only hash tables are plain hash tables:")
+      (format t "~&;; * Keys-only hash tables are standard key/value hash ~
+                        tables:")
       (fformat t "~&;;   Keys-only eq hash table timing (~:d iterations)..."
                iterations)
       (time-it (gethash 1 ht))
@@ -251,12 +257,12 @@
     (macrolet
         ((time-it (form)
            `(progn
-              (setf time (table-timer iterations transition ,form))
+              (setf time (indexed-timer iterations transition ,form))
               (format-ticks time)
               (terpri))))
       ;; ESET timings:
       #+slower-eset
-      (format t "~&;; * ESETs are plain hash tables:")
+      (format t "~&;; * ESETs are standard eq hash tables:")
       (let ((eset-list (make-eset))
             (eset-ht (make-eset))
             (ht (make-keys-only-hash-table-if-supported :test #'eq)))
@@ -270,20 +276,22 @@
         (fformat t "~&;;   Do nothing timing (~:d iterations)..."
                  iterations)
         (time-it nil)
-        (fformat t "~&;;   Fastest ESET (list) timing (~:d iterations)..."
-                 iterations)
-        (time-it (in-eset 1 eset-list))
-        (fformat t "~&;;   Slowest ESET (list @~d) timing (~:d iterations)..."
-                 transition
-                 iterations)
-        (time-it (in-eset transition eset-list))
-        (fformat t "~&;;   Average ESET (list @~d) timing (~:d iterations)..."
-                 transition
-                 iterations)
-        (time-it (in-eset test-index eset-list))
-        (fformat t "~&;;   ESET (transitioned) timing (~:d iterations)..."
-                 iterations)
-        (time-it (in-eset test-index eset-ht))
+        #-slower-eset
+        (progn
+          (fformat t "~&;;   Fastest ESET (list) timing (~:d iterations)..."
+                   iterations)
+          (time-it (in-eset 1 eset-list))
+          (fformat t "~&;;   Slowest ESET (list @~d) timing (~:d iterations)..."
+                   transition
+                   iterations)
+          (time-it (in-eset transition eset-list))
+          (fformat t "~&;;   Average ESET (list @~d) timing (~:d iterations)..."
+                   transition
+                   iterations)
+          (time-it (in-eset test-index eset-list))
+          (fformat t "~&;;   ESET (transitioned) timing (~:d iterations)..."
+                   iterations)
+          (time-it (in-eset test-index eset-ht)))
         (fformat t "~&;;   eq ~:[key/value~;keys-only~] hash table timing ~
                            (~:d iterations)..."
                  (memq ':has-keys-only-hash-tables *features*)
@@ -298,12 +306,12 @@
     (macrolet
         ((time-it (form)
            `(progn
-              (setf time (table-timer iterations transition ,form))
+              (setf time (indexed-timer iterations transition ,form))
               (format-ticks time)
               (terpri))))
       ;; ET timings:
       #+slower-et
-      (format t "~&;; * ETs are plain hash tables:")
+      (format t "~&;; * ETs are standard eq hash tables:")
       (let ((et-list (make-et))
             (et-ht (make-et))
             (ht (make-hash-table :test #'eq)))
@@ -317,20 +325,22 @@
         (fformat t "~&;;   Do nothing timing (~:d iterations)..."
                  iterations)
         (time-it nil)
-        (fformat t "~&;;   Fastest ET (list) timing (~:d iterations)..."
-                 iterations)
-        (time-it (get-et 1 et-list))
-        (fformat t "~&;;   Slowest ET (list @~d) timing (~:d iterations)..."
-                 transition
-                 iterations)
-        (time-it (get-et transition et-list))
-        (fformat t "~&;;   Average ET (list @~d) timing (~:d iterations)..."
-                 transition
-                 iterations)
-        (time-it (get-et test-index et-list))
-        (fformat t "~&;;   ET (transitioned) timing (~:d iterations)..."
-                 iterations)
-        (time-it (get-et test-index et-ht))
+        #-slower-et
+        (progn
+          (fformat t "~&;;   Fastest ET (list) timing (~:d iterations)..."
+                   iterations)
+          (time-it (get-et 1 et-list))
+          (fformat t "~&;;   Slowest ET (list @~d) timing (~:d iterations)..."
+                   transition
+                   iterations)
+          (time-it (get-et transition et-list))
+          (fformat t "~&;;   Average ET (list @~d) timing (~:d iterations)..."
+                   transition
+                   iterations)
+          (time-it (get-et test-index et-list))
+          (fformat t "~&;;   ET (transitioned) timing (~:d iterations)..."
+                   iterations)
+          (time-it (get-et test-index et-ht)))
         (fformat t "~&;;   eq key/value hash table timing (~:d iterations)..."
                  iterations)
         (time-it (gethash test-index ht))))))
@@ -361,11 +371,11 @@
 (eval-when (#+(or cmu scl) :compile-toplevel :load-toplevel :execute)
 
   (define-class test-instance ()
-    (slot
+    (common-slot
      (non-cloned-slot :initform 1)))
   
-  (define-class test-instance-clone (test-instance)
-    (slot 
+  (define-class test-instance-clone ()
+    (common-slot 
      (new-slot :initform -1))))
 
 ;;; ---------------------------------------------------------------------------
@@ -379,16 +389,16 @@
       (with-full-optimization ()
         (dotimes (i size)
           (declare (fixnum i))
-          (push (make-instance 'test-instance :slot i) list)))
+          (push (make-instance 'test-instance :common-slot i) list)))
       (let ((time (- (get-internal-run-time) start-time)))
         (setf warning-time (*& time 2))
         (format-ticks time)))
     (fformat t "~&;;   Change-class timing (~:d instances)..." size)
-    (let ((start-time (get-internal-run-time)))
+    (let* ((class (find-class 'test-instance-clone))
+           (start-time (get-internal-run-time)))
       (with-full-optimization ()
         (dolist (instance list)
-          (change-class instance
-                        (load-time-value (find-class 'test-instance-clone)))))
+          (change-class instance class)))
       (let ((time (- (get-internal-run-time) start-time)))
         (format-ticks time)
         (when (>& time warning-time)
@@ -398,7 +408,7 @@
 ;;;  Compute the size transition value for ESETs
 
 #-slower-eset
-(defun compute-eset-transition (&optional (verbose? 't))
+(defun compute-eset-transition (&optional (start-size 1) (verbose? 't))
   (let ((iterations 
          #+clisp
          100000
@@ -420,40 +430,27 @@
       ;; Time to time:
       (flet 
           ((time-eset (max-index)
-             (let ((start-time (get-internal-run-time))
-                   (test-index 1))
-               (dotimes (i iterations)
-                 (declare (fixnum i))
-                 (setf *%timing-result%* (in-eset test-index eset))
-                 (incf& test-index)
-                 (when (>& test-index max-index)
-                   (setf test-index 1)))
-               (locally (declare (notinline -))
-                 (- (get-internal-run-time) start-time))))
+             (indexed-timer iterations max-index (in-eset test-index eset)))
            (time-ht (max-index)
-             (let ((start-time (get-internal-run-time))
-                   (test-index 1))
-               (dotimes (i iterations)
-                 (declare (fixnum i))
-                 (setf *%timing-result%* (gethash test-index ht))
-                 (incf& test-index)
-                 (when (>& test-index max-index)
-                   (setf test-index 1)))
-               (locally (declare (notinline -))
-                 (- (get-internal-run-time) start-time)))))
-        (loop for i fixnum from 1 to max-size do
+             (indexed-timer iterations max-index (gethash test-index ht))))
+        (loop for i fixnum from start-size to max-size do
               (let ((time-eset (time-eset i))
                     (time-ht (time-ht i)))
                 (declare (fixnum time-eset time-ht))
                 (when verbose?
-                  (format t "~&;; i: ~d, eset: ~d, ht: ~d~%"
-                          i time-eset time-ht))
+                  (cond 
+                   ((eq verbose? ':dots)
+                    (write-char #\.)
+                    (force-output))
+                   (t (format t "~&;; i: ~d, eset: ~d, ht: ~d~%"
+                              i time-eset time-ht))))
                 (cond ((<=& time-eset time-ht)
                        (setf contiguous-misses 0)
                        (setf transition i))
-                      ((>=& (incf& contiguous-misses) 5)
+                      ((>=& (incf& contiguous-misses) 
+                            *required-contiguous-misses*)
                        (return)))))
-        (when verbose?
+        (when (and verbose? (not (eq verbose? ':dots)))
           (format t "~&;; ESET transition: ~d~%" transition))
         transition))))
         
@@ -461,7 +458,7 @@
 ;;;  Compute the size transition value for ETs
 
 #-slower-et
-(defun compute-et-transition (&optional (verbose? 't))
+(defun compute-et-transition (&optional (start-size 1) (verbose? 't))
   (let ((iterations 
          #+clisp
          100000
@@ -483,40 +480,26 @@
       ;; Time to time:
       (flet 
           ((time-et (max-index)
-             (let ((start-time (get-internal-run-time))
-                   (test-index 1))
-               (dotimes (i iterations)
-                 (declare (fixnum i))
-                 (setf *%timing-result%* (get-et test-index et))
-                 (incf& test-index)
-                 (when (>& test-index max-index)
-                   (setf test-index 1)))
-               (locally (declare (notinline -))
-                 (- (get-internal-run-time) start-time))))
+             (indexed-timer iterations max-index (get-et test-index et)))
            (time-ht (max-index)
-             (let ((start-time (get-internal-run-time))
-                   (test-index 1))
-               (dotimes (i iterations)
-                 (declare (fixnum i))
-                 (setf *%timing-result%* (gethash test-index ht))
-                 (incf& test-index)
-                 (when (>& test-index max-index)
-                   (setf test-index 1)))
-               (locally (declare (notinline -))
-                 (- (get-internal-run-time) start-time)))))
-        (loop for i fixnum from 1 to max-size do
+             (indexed-timer iterations max-index (gethash test-index ht))))
+        (loop for i fixnum from start-size to max-size do
               (let ((time-ht (time-ht i))
                     (time-et (time-et i)))
                 (declare (fixnum time-et time-ht))
                 (when verbose?
-                  (format t "~&;; i: ~d, et: ~d, ht: ~d~%"
-                          i time-et time-ht))
+                  (cond
+                   ((eq verbose? ':dots)
+                    (write-char #\.)
+                    (force-output))
+                   (t (format t "~&;; i: ~d, et: ~d, ht: ~d~%"
+                              i time-et time-ht))))
                 (cond ((<=& time-et time-ht)
                        (setf contiguous-misses 0)
                        (setf transition i))
-                      ((>=& (incf& contiguous-misses) 5)
+                      ((>=& (incf& contiguous-misses) 3)
                        (return)))))
-        (when verbose?
+        (when (and verbose? (not (eq verbose? ':dots)))
           (format t "~&;; ET transition: ~d~%" transition))
         transition))))
         
@@ -601,7 +584,8 @@
                                   (setf contiguous-misses 0)
                                   (setf (svref computed-sizes-vector ,atable-index)
                                         i))
-                                 ((>=& (incf& contiguous-misses) 5)
+                                 ((>=& (incf& contiguous-misses) 
+                                       *required-contiguous-misses*)
                                   (when verbose?
                                     (format t " transition: ~d~%"
                                             (svref computed-sizes-vector ,atable-index)))
@@ -643,6 +627,97 @@
 
 ;;; ---------------------------------------------------------------------------
 
+(defun request-results ()
+  (format t
+          "~&;; ~60,,,'*<*~>~%~
+             ;; **  Please help support GBBopen development by e-mailing  **~%~
+             ;; **  this entire timing output log to support@GBBopen.org  **~%~
+             ;; ~60,,,'*<*~>~%")
+  (let ((*print-length* nil)
+        (*print-right-margin* 70))
+    (printv *features*))
+  (values))
+
+;;; ---------------------------------------------------------------------------
+
+(defun check-transition-sizes (&optional (verbose? ':dots))
+  #+(and slower-eset slower-et)
+  (declare (ignore verbose?))
+  (let ((request-results? nil))
+    (flet 
+        (#-(and slower-eset slower-et)
+         (check-size (label compute-fn size)
+           (fformat t "~&;; Checking ~a transition size" label)
+           (let ((computed-transition
+                  (funcall compute-fn (-& size 3) verbose?)))
+             ;; Is the transition size set too high?  Then we need to recompute
+             ;; from size 1:
+             (when (zerop& computed-transition)
+               (fformat t "~&;; The preset ~a transition size ~s is too ~
+                                high, recomputing"
+                        label size)
+               (setf computed-transition (funcall compute-fn 1 verbose?)))
+             ;; Compare the computed size with the predefined transition size:
+             (let ((size-difference (-& computed-transition size)))
+               (cond
+                ((>& (abs& size-difference) (max& 3 (truncate (* size 0.2))))
+                 (setf request-results? 't)
+                 (format t "~&;; ***** The preset ~a transition size ~s is ~
+                                 too ~:[low~;high~], the computed value is ~
+                                 ~s~%"
+                         label size 
+                         (minusp& size-difference)
+                         computed-transition))
+                (t (format t "~&;; The computed ~a transition size is ~s ~
+                                   (the preset size is ~s)~%"
+                           label computed-transition size))))))
+         #+(or slower-eset slower-et)
+         (check-slow-time (eset? item/key ht list/alist)
+           (fformat t "~&;; Checking slow ~:[ET~;ESET~] setting..."
+                    eset?)
+           (setf (gethash item/key ht) 't)
+           (let ((ht-time 
+                  (brief-timer *timing-iterations* (gethash item/key ht)))
+                 (list-time
+                  (if eset?
+                      (brief-timer 
+                       *timing-iterations* 
+                       (gbbopen-tools::in-eset%timing item/key list/alist))
+                      (brief-timer 
+                       *timing-iterations* 
+                       (gbbopen-tools::get-et%timing item/key list/alist)))))
+             (cond 
+              ((>& list-time ht-time)
+               (format t "~&;; ~:[ET~;ESET~]s are correctly set as always ~
+                               slower than hash tables~%"
+                       eset?))
+              (t (setf request-results? 't)
+                 (format t "~&;; ***** The fastest ~:[ET~;ESET~] time is less ~
+                                 than hash table retrieval (~,2f seconds)~%"
+                         eset?
+                         (locally (declare (optimize (speed 0) (safety 3)))
+                           (/ (-& ht-time list-time)
+                              #.(float internal-time-units-per-second)))))))))
+      ;; Check ESET
+      #-slower-eset
+      (check-size "ESET" #'compute-eset-transition eset-transition-size)
+      #+slower-eset
+      (let ((keys-only-ht 
+             (make-keys-only-hash-table-if-supported :test #'eq))
+            (eset '(1 1)))
+        (check-slow-time 't 1 keys-only-ht eset))
+      ;; Check ET
+      #-slower-et
+      (check-size "ET" #'compute-et-transition et-transition-size)
+      #+slower-et
+      (let ((ht (make-hash-table :test #'eq))
+            (et '((1 . t))))
+        (check-slow-time nil 1 ht et)))
+    (when request-results? (request-results)))
+  (values))
+
+;;; ---------------------------------------------------------------------------
+
 (defun cl-timing ()
   (format t "~&;; ~50,,,'-<-~>~%")
   (format t "~&;; Characters are~@[ not~] eq.~%"
@@ -666,7 +741,10 @@
   (do-et-timing)
   (format t "~&;;~%")
   (do-instance-timing)
-  (format t "~&;; Timings completed.~%"))
+  (format t "~&;; Timings completed.~%")
+  ;; Check transition values:
+  (format t "~&;; ~50,,,'-<-~>~%")
+  (check-transition-sizes))
 
 ;;; ---------------------------------------------------------------------------
 

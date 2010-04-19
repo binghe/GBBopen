@@ -16,16 +16,19 @@ modifications to the GBBopen Project for inclusion in future releases.
 ../initiate.lisp
   - implementation-specific define-tll-command semantics (optional)
 ------------------------------------------------------------------------------
-mini-module/mini-module-loader.lisp
+module-manager/module-manager-loader.lisp
   - The parameters *COMPILED-DIRECTORY-NAME* and *COMPILED-FILE-TYPE* must be
     extended
   - Lisp-implementation-version may need to be augmented with something
     more appropriate for naming the compiled directory tree
 ------------------------------------------------------------------------------
-mini-module/mini-module.lisp
+module-manager/module-manager.lisp
   - PROBE-DIRECTORY must be defined
   - implementation-specific package/feature modifications, if appropriate
-  - top-level mini-module commands (optional)
+  - top-level module manager commands (optional)
+------------------------------------------------------------------------------
+tools/atable.lisp
+  - determine ATABLE, ESET, and ET transition sizes
 ------------------------------------------------------------------------------
 tools/declarations.lisp
   - implement ALLOW-REDEFINITION (optional)
@@ -33,22 +36,6 @@ tools/declarations.lisp
 tools/declared-numerics.lisp
   - implement FIXNUMP, SINGLE-FLOAT-P, and DOUBLE-FLOAT-P, where needed
   - infinity and negative-infinity values, reading, and printing
-------------------------------------------------------------------------------
-tools/preamble.lisp
-  - implement OBJECT-ADDRESS
-------------------------------------------------------------------------------
-tools/tools.lisp
-  - create CLOS package nickname, where needed
-  - import MOP finalization functions for ENSURE-FINALIZED-CLASS
-  - import MOP specialization extraction and eql handling for UNDEFMETHOD
-  - import specialized MEMQ, DELQ, UNTIL, and WHILE, where available
-  - import EXTRACT-DECLARATIONS, where available
-  - PRINT-PRETTY-FUNCTION-OBJECT can be customized for each CL implementation
-  - make CASE-USING-FAILURE a direct subclass of the condition used to signal
-    CCASE and ECASE failures
-  - implement SIMPLE-ARRAY-P, where needed
-  - implement SHRINK-VECTOR, where possible
-  - implement RESIZE-HASH-TABLE, where possible
 ------------------------------------------------------------------------------
 tools/mop-interface.lisp
   - import required MOP symbols
@@ -62,6 +49,9 @@ tools/portable-sockets.lisp
 tools/portable-threads.lisp
   - implementation-specific multiprocessing entities
 ------------------------------------------------------------------------------
+tools/preamble.lisp
+  - implement OBJECT-ADDRESS
+------------------------------------------------------------------------------
 tools/print-object-for.lisp
   - implementation-specific function saving/sending
 ------------------------------------------------------------------------------
@@ -71,6 +61,19 @@ tools/queue.lisp
 ------------------------------------------------------------------------------
 tools/system.lisp
   - implementation-specific OS-interface entities
+------------------------------------------------------------------------------
+tools/tools.lisp
+  - create CLOS package nickname, where needed
+  - import MOP finalization functions for ENSURE-FINALIZED-CLASS
+  - import MOP specialization extraction and eql handling for UNDEFMETHOD
+  - import specialized MEMQ, DELQ, UNTIL, and WHILE, where available
+  - import EXTRACT-DECLARATIONS, where available
+  - PRINT-PRETTY-FUNCTION-OBJECT can be customized for each CL implementation
+  - make CASE-USING-FAILURE a direct subclass of the condition used to signal
+    CCASE and ECASE failures
+  - implement SIMPLE-ARRAY-P, where needed
+  - implement SHRINK-VECTOR, where possible
+  - implement RESIZE-HASH-TABLE, where possible
 ------------------------------------------------------------------------------
 gbbopen/unit-metaclasses.lisp
   - Lispworks MOP deviations
