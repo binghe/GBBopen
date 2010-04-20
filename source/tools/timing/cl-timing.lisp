@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/timing/cl-timing.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Apr 19 16:37:48 2010 *-*
+;;;; *-* Last-Edit: Tue Apr 20 04:32:51 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -30,14 +30,11 @@
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   ;; Import symbols (defined in tools/atable.lisp):
-  (import '(gbbopen-tools::*atable-transition-sizes*
-            gbbopen-tools::%atable-data-list
+  (import '(gbbopen-tools::%atable-data-list
             gbbopen-tools::atable-data
             gbbopen-tools::auto-transition-margin
             gbbopen-tools::determine-key/value-atable-index
-            gbbopen-tools::determine-keys-only-atable-index
-            gbbopen-tools::eset-transition-size
-            gbbopen-tools::et-transition-size)))
+            gbbopen-tools::determine-keys-only-atable-index)))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(cl-timing)))
@@ -225,11 +222,13 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun do-ht-timing (&optional (iterations *timing-iterations*))
-  (let ((keys-only-ht (make-keys-only-hash-table-if-supported :test #'eq))
+  (let (#+has-keys-only-hash-tables
+        (keys-only-ht (make-keys-only-hash-table-if-supported :test #'eq))
         (ht (make-hash-table :test #'eq))
         (max-size *max-list-test-size*)
         time)
     (dotimes (i max-size)
+      #+has-keys-only-hash-tables
       (setf (gethash i keys-only-ht) 't)
       (setf (gethash i ht) 'i))
     (macrolet
@@ -242,9 +241,11 @@
       #-has-keys-only-hash-tables
       (format t "~&;; * Keys-only hash tables are standard key/value hash ~
                         tables:")
-      (fformat t "~&;;   Keys-only eq hash table timing (~:d iterations)..."
-               iterations)
-      (time-it (gethash 1 ht))
+      #+has-keys-only-hash-tables
+      (progn
+        (fformat t "~&;;   Keys-only eq hash table timing (~:d iterations)..."
+                 iterations)
+        (time-it (gethash 1 keys-only-ht)))
       (fformat t "~&;;   Normal eq hash table timing (~:d iterations)..."
                iterations)
       (time-it (gethash 1 ht)))))
@@ -252,7 +253,8 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun do-eset-timing (&optional (iterations *timing-iterations*))
-  (let ((transition #.(max 1 (+ eset-transition-size auto-transition-margin)))
+  (let ((transition
+         (max& 1 (+& *eset-transition-size* auto-transition-margin)))
         time)
     (macrolet
         ((time-it (form)
@@ -269,7 +271,7 @@
         ;; Fill them:
         (loop for i fixnum from transition downto 1 do
               (add-to-eset i eset-list))
-        (dotimes (i transition)
+        (dotimes (i (1+& transition))
           (add-to-eset i eset-ht)
           (setf (gethash i ht) 't))
         ;; Time them:
@@ -296,12 +298,27 @@
                            (~:d iterations)..."
                  (memq ':has-keys-only-hash-tables *features*)
                  iterations)
-        (time-it (gethash test-index ht))))))
+        (time-it (gethash test-index ht))
+        (clear-eset eset-list)
+        #-slower-eset
+        (progn
+          (fformat t "~&;;   Fastest add/delete ESET (list) timing ~
+                               (~:d iterations)..."
+                   iterations)
+          (time-it (progn (add-to-eset 1 eset-list)
+                          (delete-from-eset 1 eset-list))))
+        (fformat t "~&;;   eq ~:[key/value~;keys-only~] hash table ~
+                             add/delete timing (~:d iterations)..."
+                 (memq ':has-keys-only-hash-tables *features*)
+                 iterations)
+        (time-it (progn (setf (gethash 1 ht) 't)
+                        (remhash 1 ht)))))))
   
 ;;; ---------------------------------------------------------------------------
 
 (defun do-et-timing (&optional (iterations *timing-iterations*))
-  (let ((transition #.(max 1 (+ et-transition-size auto-transition-margin)))
+  (let ((transition
+         (max& 1 (+& *et-transition-size* auto-transition-margin)))
         time)
     (macrolet
         ((time-it (form)
@@ -318,9 +335,9 @@
         ;; Fill them:
         (loop for i fixnum from transition downto 1 do
               (setf (get-et i et-list) i))
-        (dotimes (i transition)
+        (dotimes (i (1+& transition))
           (setf (get-et i et-ht) i)
-          (setf (gethash i ht) 't))
+          (setf (gethash i ht) i))
         ;; Time them:
         (fformat t "~&;;   Do nothing timing (~:d iterations)..."
                  iterations)
@@ -343,7 +360,20 @@
           (time-it (get-et test-index et-ht)))
         (fformat t "~&;;   eq key/value hash table timing (~:d iterations)..."
                  iterations)
-        (time-it (gethash test-index ht))))))
+        (time-it (gethash test-index ht))
+        (clear-et et-list)
+        #-slower-eset
+        (progn
+          (fformat t "~&;;   Fastest add/delete ET (list) timing ~
+                               (~:d iterations)..."
+                   iterations)
+          (time-it (progn (setf (get-et 1 et-list) 1)
+                          (delete-et 1 et-list))))
+        (fformat t "~&;;   eq key/value hash table add/delete timing ~
+                             (~:d iterations)..."
+                 iterations)
+        (time-it (progn (setf (gethash 1 ht) 1)
+                        (remhash 1 ht)))))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -650,27 +680,28 @@
          (check-size (label compute-fn size)
            (fformat t "~&;; Checking ~a transition size" label)
            (let ((computed-transition
-                  (funcall compute-fn (-& size 3) verbose?)))
-             ;; Is the transition size set too high?  Then we need to recompute
-             ;; from size 1:
+                  (funcall compute-fn
+                           (-& size (max& 3 (round (* size 0.3))))
+                           verbose?)))
+             ;; Does the specified transition size appear too high?  Recompute
+             ;; it from size 1:
              (when (zerop& computed-transition)
-               (fformat t "~&;; The preset ~a transition size ~s is too ~
-                                high, recomputing"
-                        label size)
+               (fformat t "~&;; Recomputing the ~a transition size"
+                        label)
                (setf computed-transition (funcall compute-fn 1 verbose?)))
-             ;; Compare the computed size with the predefined transition size:
+             ;; Compare the computed size with the specified transition size:
              (let ((size-difference (-& computed-transition size)))
                (cond
                 ((>& (abs& size-difference) (max& 4 (truncate (* size 0.3))))
                  (setf request-results? 't)
-                 (format t "~&;; ***** The preset ~a transition size ~s is ~
+                 (format t "~&;; ***** The specified ~a transition size ~s is ~
                                  too ~:[low~;high~], the computed value is ~
                                  ~s~%"
                          label size 
                          (minusp& size-difference)
                          computed-transition))
                 (t (format t "~&;; The computed ~a transition size is ~s ~
-                                   (the preset size is ~s)~%"
+                                   (the specified size is ~s)~%"
                            label computed-transition size))))))
          #+(or slower-eset slower-et)
          (check-slow-time (eset? item/key ht list/alist)
@@ -701,7 +732,7 @@
                               #.(float internal-time-units-per-second)))))))))
       ;; Check ESET
       #-slower-eset
-      (check-size "ESET" #'compute-eset-transition eset-transition-size)
+      (check-size "ESET" #'compute-eset-transition *eset-transition-size*)
       #+slower-eset
       (let ((keys-only-ht 
              (make-keys-only-hash-table-if-supported :test #'eq))
@@ -709,7 +740,7 @@
         (check-slow-time 't 1 keys-only-ht eset))
       ;; Check ET
       #-slower-et
-      (check-size "ET" #'compute-et-transition et-transition-size)
+      (check-size "ET" #'compute-et-transition *et-transition-size*)
       #+slower-et
       (let ((ht (make-hash-table :test #'eq))
             (et '((1 . t))))

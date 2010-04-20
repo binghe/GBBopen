@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/atable.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Apr 19 18:02:52 2010 *-*
+;;;; *-* Last-Edit: Tue Apr 20 04:19:57 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -42,7 +42,10 @@
 (in-package :gbbopen-tools)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (export '(add-to-eset
+  (export '(*atable-transition-sizes*
+            *eset-transition-size*
+            *et-transition-size*
+            add-to-eset
             atable                      ; data type
             atable-count
             atable-test
@@ -99,9 +102,9 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (pushnew :slower-eset *features*))
 
-(defconstant eset-transition-size 
+(defvar *eset-transition-size* 
     (check-featured-value
-     'eset-transition-size
+     '*eset-transition-size*
      ;; Allegro
      #+(and allegro macosx x86) 14
      #+(and allegro macosx powerpc) 34
@@ -110,7 +113,7 @@
      #+clisp 0
      ;; Clozure
      #+(and clozure darwinx86-target) 28
-     #+(and clozure darwinppc-target) 13
+     #+(and clozure darwinppc-target) 18
      #+(and clozure (not (or darwinx86-target
                              darwinppc-target))) 48
      ;; CMUCL
@@ -124,7 +127,7 @@
      #+lispworks 14
      ;; SBCL
      #+(and sbcl darwin (not ppc)) 16
-     #+(and sbcl darwin ppc) 80
+     #+(and sbcl darwin ppc) 62
      #+(and sbcl (not darwin)) 32
      ;; SCL
      #+(and scl darwin x86) 26
@@ -142,7 +145,7 @@
      ;; Something reasonable, but need to determine for the port:
      (progn
        (warn "Need to compute ~s"
-             'eset-transition-size)
+             '*eset-transition-size*)
        10)))
 
 ;;; ---------------------------------------------------------------------------
@@ -156,7 +159,7 @@
 (defun make-eset (&key size)
   ;; Use the specified size if it is larger than the transition size:
   (if (and (fixnump size)
-           (>& size (+& eset-transition-size auto-transition-margin)))
+           (>& size (+& *eset-transition-size* auto-transition-margin)))
       (cons nil (make-keys-only-hash-table-if-supported :test #'eq :size size))
       (list 0)))
 #-slower-eset
@@ -210,7 +213,7 @@
           (let ((sublist (memq item data)))
             (unless sublist
               (let ((transition-size                    
-                     (+& eset-transition-size auto-transition-margin)))
+                     (+& *eset-transition-size* auto-transition-margin)))
                 (cond 
                  ((<=& (incf& (%eset-count et)) transition-size)
                   (push item (%eset-data et)))
@@ -272,7 +275,7 @@
             (when result
               (let ((count (hash-table-count data)))
                 (when (<& count
-                          (-& eset-transition-size auto-transition-margin))
+                          (-& *eset-transition-size* auto-transition-margin))
                   (setf (%eset-data et)
                         (loop for item being each hash-key in data
                             collect item))
@@ -341,9 +344,9 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (pushnew :slower-et *features*))
 
-(defconstant et-transition-size 
+(defvar *et-transition-size* 
     (check-featured-value
-     'et-transition-size
+     '*et-transition-size*
      ;; Allegro
      #+(and allegro macosx x86) 6
      #+(and allegro macosx powerpc) 30
@@ -352,7 +355,7 @@
      #+clisp 0
      ;; Clozure
      #+(and clozure darwinx86-target) 25
-     #+(and clozure darwinppc-target) 9
+     #+(and clozure darwinppc-target) 14
      #+(and clozure (not (or darwinx86-target
                              darwinppc-target))) 34
      ;; CMUCL
@@ -366,7 +369,7 @@
      #+lispworks 3
      ;; SBCL
      #+(and sbcl darwin (not ppc)) 12
-     #+(and sbcl darwin ppc) 80
+     #+(and sbcl darwin ppc) 42
      #+(and sbcl (not darwin)) 20
      ;; SCL
      #+(and scl darwin x86) 14
@@ -384,7 +387,7 @@
      ;; Something reasonable, but need to determine for the port:
      (progn
        (warn "Need to compute ~s"
-             'et-transition-size)
+             '*et-transition-size*)
        10)))
 
 ;;; ---------------------------------------------------------------------------
@@ -398,7 +401,7 @@
 (defun make-et (&key size)
   ;; Use the specified size if it is larger than the transition size:
   (if (and (fixnump size) 
-           (>& size (+& et-transition-size auto-transition-margin)))
+           (>& size (+& *et-transition-size* auto-transition-margin)))
       (cons nil (make-hash-table :test #'eq :size size))
       (list 0)))
 #-slower-et
@@ -456,7 +459,7 @@
                 ;; Just update the value:
                 (setf (cdr acons) nv)
                 (let ((transition-size 
-                       (+& et-transition-size auto-transition-margin)))
+                       (+& *et-transition-size* auto-transition-margin)))
                   (cond
                    ;; Push new pair onto the alist:
                    ((<=& (incf& (%et-count et)) transition-size)
@@ -523,7 +526,7 @@
             (when result
               (let ((count (hash-table-count data)))
                 (when (<& count
-                          (-& et-transition-size auto-transition-margin))
+                          (-& *et-transition-size* auto-transition-margin))
                   (setf (%et-data et)
                         (loop for key being each hash-key in data
                             using (hash-value value) 
@@ -599,22 +602,47 @@
   (defparameter *atable-transition-sizes* 
       (check-featured-value
        '*atable-transition-sizes*
-       #+allegro #(0 0 12 7 6 4 11 11 11 11)
+       ;; Allegro
+       #+(and allegro macosx x86) #(0 0 12 7 6 4 11 11 11 11)
+       #+(and allegro macosx powerpc) #(0 0 36 28 6 5 5 6 15 15)
+       #+(and allegro 
+              (not (and macosx (or x86 powerpc)))) #(0 0 103 108 15 11 12 13 12 12)
+       ;; CLISP
        #+clisp #(0 0 0 0 0 0 0 0 0 0)
-       #+clozure #(0 0 26 24 12 5 5 5 6 6)
+       ;; Clozure
+       #+(and clozure darwinx86-target) #(0 0 26 24 12 5 5 5 6 6)
+       #+(and clozure darwinppc-target) #(0 0 32 12 14 5 7 7 7 8)
+       #+(and clozure (not (or darwinx86-target
+                               darwinppc-target))) #(0 0 51 33 44 27 8 8 7 9)
+       ;; CMUCL
        #+cmu #(0 0 20 7 4 9 2 2 3 3)
+       ;; Digitool MCL
+       #+digitool-mcl #(0 0 26 24 12 5 5 5 6 6)
+       ;; ECL
        #+ecl #(0 0 0 0 0 0 0 0 0 0)
+       ;; Lispworks
        #+lispworks #(0 0 2 2 0 0 2 2 4 4)
-       #+digitool-mcl #(0 0 12 7 6 4 11 11 11 11)
-       #+sbcl #(0 0 10 7 5 5 2 2 3 3)
+       ;; SBCL
+       #+(and sbcl darwin (not ppc)) #(0 0 10 7 5 5 2 2 3 3)
+       #+(and sbcl darwin ppc) #(0 0 56 30 6 6 2 2 2 2)
+       #+(and sbcl (not darwin)) #(0 0 28 16 6 5 2 2 2 2)
+       ;; SCL
+       #+scl #(0 0 20 7 4 9 2 2 3 3)
+       ;; New port (values needed)
        #-(or allegro
-             digitool-mcl
              clisp
              clozure
              cmu
+             digitool-mcl
              ecl
              lispworks 
-             sbcl) #(0 0 10 10 4 4 4 4 4 4))))
+             sbcl
+             scl)
+       ;; Something reasonable, but need to determine for the port:
+       (progn
+         (warn "Need to compute ~s"
+               '*atable-transition-sizes*)
+         #(0 0 10 10 4 4 4 4 4 4)))))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Test <--> index lookups
