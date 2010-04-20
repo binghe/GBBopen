@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/timing/cl-timing.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Apr 20 04:32:51 2010 *-*
+;;;; *-* Last-Edit: Tue Apr 20 04:51:49 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -681,7 +681,8 @@
            (fformat t "~&;; Checking ~a transition size" label)
            (let ((computed-transition
                   (funcall compute-fn
-                           (-& size (max& 3 (round (* size 0.3))))
+                           ;; Start timing slightly below the specified size:
+                           (-& size (max& 3 (round (* size 0.1))))
                            verbose?)))
              ;; Does the specified transition size appear too high?  Recompute
              ;; it from size 1:
