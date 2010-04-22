@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/atable.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Apr 20 04:19:57 2010 *-*
+;;;; *-* Last-Edit: Thu Apr 22 08:41:56 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -106,16 +106,19 @@
     (check-featured-value
      '*eset-transition-size*
      ;; Allegro
-     #+(and allegro macosx x86) 14
+     #+(and allegro macosx x86) 12
      #+(and allegro macosx powerpc) 34
-     #+(and allegro (not (and macosx (or x86 powerpc)))) 128
+     #+(and allegro                     ; also applies to windows
+            (not (and macosx (or x86 powerpc)))) 108
      ;; CLISP
      #+clisp 0
      ;; Clozure
-     #+(and clozure darwinx86-target) 28
+     #+(and clozure darwinx8632-target) 8
+     #+(and clozure darwinx8664-target) 30
      #+(and clozure darwinppc-target) 18
-     #+(and clozure (not (or darwinx86-target
-                             darwinppc-target))) 48
+     #+(and clozure (not (or darwinx8632-target
+                             darwinx8664-target
+                             darwinppc-target))) 15
      ;; CMUCL
      #+(and cmu darwin x86) 26
      #+(and cmu (not (and darwin x86))) 46
@@ -350,14 +353,17 @@
      ;; Allegro
      #+(and allegro macosx x86) 6
      #+(and allegro macosx powerpc) 30
-     #+(and allegro (not (and macosx (or x86 powerpc)))) 60
+     #+(and allegro                     ; also applies to windows
+            (not (and macosx (or x86 powerpc)))) 60
      ;; CLISP
      #+clisp 0
      ;; Clozure
-     #+(and clozure darwinx86-target) 25
+     #+(and clozure darwinx8632-target) 5
+     #+(and clozure darwinx8664-target) 26
      #+(and clozure darwinppc-target) 14
-     #+(and clozure (not (or darwinx86-target
-                             darwinppc-target))) 34
+     #+(and clozure (not (or darwinx8632-target
+                             darwinx8664-target
+                             darwinppc-target))) 9
      ;; CMUCL
      #+(and cmu darwin x86) 14
      #+(and cmu (not (and darwin x86))) 78
@@ -605,15 +611,17 @@
        ;; Allegro
        #+(and allegro macosx x86) #(0 0 12 7 6 4 11 11 11 11)
        #+(and allegro macosx powerpc) #(0 0 36 28 6 5 5 6 15 15)
-       #+(and allegro 
-              (not (and macosx (or x86 powerpc)))) #(0 0 103 108 15 11 12 13 12 12)
+       #+(and allegro                   ; also applies to windows
+              (not (and macosx (or x86 powerpc)))) #(0 0 108 80 15 11 8 8 12 12)
        ;; CLISP
        #+clisp #(0 0 0 0 0 0 0 0 0 0)
        ;; Clozure
-       #+(and clozure darwinx86-target) #(0 0 26 24 12 5 5 5 6 6)
-       #+(and clozure darwinppc-target) #(0 0 32 12 14 5 7 7 7 8)
-       #+(and clozure (not (or darwinx86-target
-                               darwinppc-target))) #(0 0 51 33 44 27 8 8 7 9)
+       #+(and clozure darwinx8632-target) #(0 0 5 4 6 4 5 5 6 6)
+       #+(and clozure darwinx8664-target) #(0 0 26 24 12 5 5 5 6 6)
+       #+(and clozure darwinppc-target) #(0 0 32 12 14 7 7 7 7 7)
+       #+(and clozure (not (or darwinx8632-target
+                               darwinx8664-target
+                               darwinppc-target))) #(0 0 13 9 10 6 6 6 7 7)
        ;; CMUCL
        #+cmu #(0 0 20 7 4 9 2 2 3 3)
        ;; Digitool MCL
