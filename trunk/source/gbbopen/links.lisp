@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/links.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Apr 18 07:16:50 2010 *-*
+;;;; *-* Last-Edit: Sat Apr 24 11:52:39 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -367,7 +367,9 @@
   ;;; Return the new link value, list of added instances, an indicator of
   ;;; forced removal, and the list of forced unlinked instances.
   (let ((forced-unlinked-instances nil)
+        #+check-for-deleted-instances
         (operation (if force 'link-setf 'linkf)))
+    #+check-for-deleted-instances
     (check-for-deleted-instance instance operation)
     (cond
      ;; nothing new to add:
@@ -379,6 +381,7 @@
       (when (consp new-ptr-objs)
         (setf new-ptr-objs (sole-element new-ptr-objs)))
       (let ((new (link-instance-of-or-nil new-ptr-objs)))
+        #+check-for-deleted-instances
         (when new 
           (check-for-deleted-instance new operation))
         (cond
@@ -425,6 +428,7 @@
               (unless (member new existing-ptr-objs
                               :key #'link-instance-of
                               :test #'eq)
+                #+check-for-deleted-instances
                 (check-for-deleted-instance new operation)
                 (if sort-function
                     (setf existing-ptr-objs
@@ -457,6 +461,7 @@
   ;;; unlink the inverse pointers.
   ;;;
   ;;; Return the new link value and list of removed instances.
+  #+check-for-deleted-instances
   (check-for-deleted-instance instance 'unlinkf)
   (cond
    ;; nothing to remove
@@ -468,6 +473,7 @@
       (cond ((or (eq existing remove)
                  (and (consp remove)
                       (memq existing remove)))
+             #+check-for-deleted-instances
              (check-for-deleted-instance existing 'unlinkf)
              ;; unlink the inverse pointer
              (%do-iunlink dslotd instance existing)
@@ -485,6 +491,7 @@
           (declare (dynamic-extent #'when-eq-push))
           (dolist (remove-ptr-obj remove-ptr-objs)
             (let ((remove (link-instance-of remove-ptr-obj)))
+              #+check-for-deleted-instances
               (check-for-deleted-instance remove 'unlinkf)
               (setf existing-ptr-objs (delete remove existing-ptr-objs 
                                               :key #'link-instance-of
@@ -502,6 +509,7 @@
   ;;; pointers.
   ;;;
   ;;; Return the new link value (nil) and list of removed instances.
+  #+check-for-deleted-instances
   (check-for-deleted-instance instance 'unlinkf-all)
   (cond
    ;; singular link:

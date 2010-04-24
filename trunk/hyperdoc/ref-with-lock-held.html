@@ -16,12 +16,10 @@
 
 <p><table class="tight" width="100%">
 <tr valign="top"><td valign="baseline" align="left"%>
-<nobr><b><font color="#000000">with-lock-held</font></b></nobr></td><td valign="baseline"> &nbsp; </td><td valign="baseline" align="left" width="99%"><code>(</code><var>lock</var> 
-<code>&#38;key</code>
-<var>whostate</var><code>)</code>
-<var>form</var>* 
-<span 
-    style="font-family: serif; font-style: normal">=&gt;</span> <var>result</var>*</td><td valign="baseline" align="right">[<i>Macro</i>]
+<nobr><b><font color="#000000">with-lock-held</font></b></nobr></td><td valign="baseline"> &nbsp; </td><td valign="baseline" align="left" width="99%"><nobr><code>(</code><var>lock</var> <code>&#38;key</code> <var>whostate</var><code>)</code></nobr>
+<nobr><var>form</var>*</nobr>
+<nobr><span 
+    style="font-family: serif; font-style: normal">=&gt;</span> <var>result</var>*</nobr></td><td valign="baseline" align="right">[<i>Macro</i>]
 </td></tr></table></p>
 <p><span class="fndoclabel">Purpose</span> <br />After acquiring a <a href="ref-glossary.html#gl:lock">lock</a> or a <a href="ref-glossary.html#id175">recursive&nbsp;lock</a>,
 execute forms and then release the lock.

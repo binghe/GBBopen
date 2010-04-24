@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/atable.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Apr 22 08:41:56 2010 *-*
+;;;; *-* Last-Edit: Thu Apr 22 18:43:32 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -127,7 +127,7 @@
      ;; ECL
      #+ecl 0
      ;; Lispworks
-     #+lispworks 14
+     #+lispworks 18
      ;; SBCL
      #+(and sbcl darwin (not ppc)) 16
      #+(and sbcl darwin ppc) 62

@@ -2,6 +2,8 @@ Important changes since GBBopen 1.5:
 
   * Changes to GBBopen
      - Add *SKIP-DELETED-UNIT-INSTANCE-CLASS-CHANGE*
+     - Document *FIND-VERBOSE*, *USE-MARKING*, CHECK-FOR-DELETED-INSTANCE
+
 
 Important changes in GBBopen 1.5:
 

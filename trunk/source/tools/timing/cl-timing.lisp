@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/timing/cl-timing.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Apr 20 04:57:55 2010 *-*
+;;;; *-* Last-Edit: Sat Apr 24 08:56:29 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -143,6 +143,10 @@
                iterations)
       (time-it (car (memq 1 (the list list))))
       (setf warning-time (*& 2 time))
+      (fformat t "~&;;   Fastest member timing (~:d iterations)..."
+               iterations)
+      (time-it (car (member 1 (the list list))))
+      (setf warning-time (*& 2 time))
       (fformat t "~&;;   Fastest member eq timing (~:d iterations)..."
                iterations)
       (time-it (car (member 1 (the list list) :test #'eq)))
@@ -160,6 +164,9 @@
       (flet ((fn (item) (eq 1 (%hidden-identity item))))
         (declare (dynamic-extent #'fn))
         (time-it (car (member-if #'fn (the list list)))))
+      (fformat t "~&;;   Fastest find timing (~:d iterations)..."
+               iterations)
+      (time-it (find 1 (the list list)))
       (fformat t "~&;;   Fastest find eq timing (~:d iterations)..."
                iterations)
       (time-it (find 1 (the list list) :test #'eq))
@@ -219,6 +226,66 @@
                                           :test #'eq
                                           :count 1)))))))
 
+;;; ---------------------------------------------------------------------------
+
+(defun do-computed-case-timing (&optional (iterations *timing-iterations*))
+  (flet
+      ((time-case (n)
+         (declare (fixnum n))
+         (with-full-optimization ()
+           (case n
+             (0 (+& 10 n))
+             (1 (+&  9 n))
+             (2 (+& -8 n))
+             (3 (+&  7 n))
+             (4 (+& -6 n))
+             (5 (+&  5 n))
+             (6 (+& -4 n))
+             (7 (+&  3 n))
+             (8 (+& -2 n))
+             (9 (+&  1 n))
+             (10 (+& -1 n))
+             (11 (+&  2 n))
+             (12 (+& -3 n))
+             (13 (+&  4 n))
+             (14 (+& -5 n))
+             (15 (+&  6 n))
+             (16 (+& -7 n))
+             (17 (+&  8 n))
+             (18 (+& -9 n))
+             (19 (+& 10 n))
+             (20 (+& 10 n))
+             (21 (+&  9 n))
+             (22 (+& -8 n))
+             (23 (+&  7 n))
+             (24 (+& -6 n))
+             (25 (+&  5 n))
+             (26 (+& -4 n))
+             (27 (+&  3 n))
+             (28 (+& -2 n))
+             (29 (+&  1 n))
+             (30 (+& -1 n))
+             (31 (+&  2 n))
+             (32 (+& -3 n))
+             (33 (+&  4 n))
+             (34 (+& -5 n))
+             (35 (+&  6 n))
+             (36 (+& -7 n))
+             (37 (+&  8 n))
+             (38 (+& -9 n))
+             (39 (+& -10 n))))))
+    (fformat t "~&;;   Fastest computed case timing (~:d iterations)..."
+             iterations)
+    (let ((fast-time (brief-timer iterations (time-case 0))))
+      (format-ticks fast-time)
+      (fformat t "~&;;   Slower computed case timing (~:d iterations)..."
+               iterations)
+      (let ((slower-time (brief-timer iterations (time-case 39))))
+        (format-ticks slower-time)
+        (when (>& slower-time (*& 2 fast-time))
+          (format t " *****"))
+        (terpri)))))
+  
 ;;; ---------------------------------------------------------------------------
 
 (defun do-ht-timing (&optional (iterations *timing-iterations*))
@@ -768,6 +835,8 @@
   (do-ht-timing)
   (format t "~&;;~%")
   (do-division-timing)
+  (format t "~&;;~%")
+  (do-computed-case-timing)
   (format t "~&;;~%")
   (do-eset-timing)
   (format t "~&;;~%")
