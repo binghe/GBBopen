@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Mon Apr 19 11:44:06 2010; Edited-By: cork *-*
+%% *-* Last-Edit: Sat Apr 24 12:42:18 2010; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2010, Dan Corkill <corkill@GBBopen.org>
@@ -1750,9 +1750,11 @@ Show \code{*.sym} pseudo-symbolic-link file to target module-directory mapping
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Macro}{define-repl-command}{\var{command-name-spec 
-     lambda-list\/} [\var{declaration\/}\superstar{} \vbar{}
-     \var{documentation\/}] \var{form\/}\superstar}
+\begin{functiondoc}{Macro}{define-repl-command}{%
+    \var{\nobr{command-name-spec}
+      \nobr{lambda-list\/}}
+    \nobr{[\var{declaration\/}\superstar{} \vbar{} \var{documentation\/}]}
+    \nobr{\var{form\/}\superstar}}
 \index{startup!defining REPL commands}%
 \index{command, top-level loop, defining}%
 \index{defining!a REPL command}%
@@ -1844,7 +1846,7 @@ the \nobr{\code{:gbbopen-user}} package:
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{startup-module}%
-  {\var{module-name options\/} 
+  {\var{\nobr{module-name} options\/} 
     \nobr{\code{\&optional} \var{package-name\/}}}
 \index{compiling, a module, and also loading module}%
 \index{loading!a module}% 
@@ -1916,8 +1918,9 @@ the \nobr{\code{:gbbopen-user}} package:
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Macro}{with-system-name}{%
-    \code{(}\var{system-name\/}\code{)} \var{form\/}\superstar{}
-    \returns{} \var{result\/}\superstar}
+    \nobr{\code{(}\var{system-name\/}\code{)}}
+    \nobr{\var{form\/}\superstar{}}
+    \nobr{\returns{} \var{result\/}\superstar}}
 \index{compiling, a module, and also loading module}%
 \index{loading!a module}% 
 \index{module!compiling, recompiling, and loading}%
@@ -2309,8 +2312,9 @@ Compile, load, and freeze the GBBopen application defined by \glref{module}
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Function}{compile-module}{\var{module-name\/}
-    \code{\&rest} \var{options\/}} 
+\begin{functiondoc}{Function}{compile-module}{%
+    \nobr{\var{module-name\/}}
+    \nobr{\code{\&rest} \var{options\/}}}
 \index{compiling, a module, and also loading module}%
 \index{loading!a module}% 
 \index{module!compiling, recompiling, and loading}%
@@ -2476,8 +2480,9 @@ the module):
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Macro}{define-module}{\var{module-name
-      module-option\/}\superstar} 
+\begin{functiondoc}{Macro}{define-module}{%
+    \var{\nobr{module-name}
+      \nobr{module-option\/}\superstar}}
 \index{module!defining or redefining}%
 \index{defining!a module}%
 \index{redefining!a module}%
@@ -2655,7 +2660,7 @@ Add two \glref{patch} files to the \nobr{\code{:my-app}} \glref{module}:
 
 \begin{functiondoc}{Function}{define-relative-directory}%
   {\var{name directory\/} 
-    \code{\&rest} \var{subdirectories\/}} 
+    \nobr{\code{\&rest} \var{subdirectories\/}}}
 \index{directory!defining relative}%
 \index{relative directory!defining}%
 \index{defining!a relative directory}%
@@ -2727,8 +2732,8 @@ Define a data directory sibling to the \nobr{\code{source}} directory of
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{define-root-directory}%
-  {\var{name directory-specification\/} 
-    \code{\&rest} \var{subdirectories\/}} 
+  {\var{name \nobr{directory-specification\/}}
+    \nobr{\code{\&rest} \var{subdirectories\/}}}
 \index{directory!defining root}%
 \index{root directory!defining}%
 \index{defining!a directory}%
@@ -3048,8 +3053,8 @@ the module):
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{get-directory}{\var{name\/}
-    \code{\&rest} \var{subdirectories\/}
-    \returns{} \var{pathname\/}}
+    \nobr{\code{\&rest} \var{subdirectories\/}}
+    \nobr{\returns{} \var{pathname\/}}}
 \index{directory!getting pathname from name}%
 
 \fnsyntax 
@@ -3136,8 +3141,11 @@ Return the pathname of the \nobr{\code{:gbbopen-user}} \glref{module}:
 
 \begin{functiondoc}{Function}{get-patch-description}%
   {\var{id module-name\/}
-    \nobr{\returns{} \var{id, date, author, description, date-loaded,
-        file-name\/} or \nil}}
+    \nobr{\returns{} \var{id, date, author,}}
+    \var{description, 
+      \nobr{date-loaded,}
+      \nobr{file-name\/}}
+    or \nil}
 \index{patch!description, getting}%
 
 \fnsyntax 
@@ -3220,7 +3228,7 @@ that module has not been loaded):
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{get-root-directory}{\var{name\/}
-    \returns{} \var{pathname\/}}
+    \nobr{\returns{} \var{pathname\/}}}
 \index{directory!getting root-directory pathname from name}%
 
 \fnsyntax 
@@ -3289,8 +3297,9 @@ Return the \glref{root-directory} pathname of the \nobr{\code{:gbbopen-user}}
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Function}{load-module}{\var{module-name\/}
-    \code{\&rest} \var{options\/}}
+\begin{functiondoc}{Function}{load-module}{%
+    \nobr{\var{module-name\/}}
+    \nobr{\code{\&rest} \var{options\/}}}
 \index{module!loading}%
 \index{loading!a module}% 
 
@@ -3356,9 +3365,10 @@ which remembers the last specified \nobr{\var{module-name\/}} and
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{load-module-file}%
-  {\var{module-name file-name\/} 
-    \code{\&rest} \var{options\/} 
-    \returns{} \var{pathname\/}}
+  {\var{\nobr{module-name}
+      \nobr{file-name\/}}
+    \nobr{\code{\&rest} \var{options\/}}
+    \nobr{\returns{} \var{pathname\/}}}
 \index{module!loading a file of}%
 \index{loading!a module file}% 
 
@@ -3427,7 +3437,8 @@ command.
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Function}{module-directories}{\var{module-name\/}
+\begin{functiondoc}{Function}{module-directories}{%
+    \nobr{\var{module-name\/}}
     \nobr{\returns{} \var{source-directory, compiled-directory\/}}}
 \index{module!directories}%
 \index{directories, of a module}%
@@ -3475,8 +3486,9 @@ Return the source and compiled directories of the Agenda Shell \glref{module}:
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Function}{module-loaded-p}{\var{module-name\/}
-    \returns{} \var{boolean\/}}
+\begin{functiondoc}{Function}{module-loaded-p}{%
+    \nobr{\var{module-name\/}}
+    \nobr{\returns{} \var{boolean\/}}}
 \index{module!loaded, checking for}%
 \index{loaded module, checking for}%
 
@@ -3521,8 +3533,8 @@ Check if the Agenda Shell \glref{module} has been loaded:
 
 \begin{functiondoc}{Macro}{patch}%
   {\code{(}\var{id date\/}
-    \code{\&key} \var{author description\/}\code{)}
-    \var{form\/}\superstar} 
+    \nobr{\code{\&key} \var{author description\/}\code{)}}
+    \nobr{\var{form\/}\superstar}}
 \index{module!patching}%
 \index{patching!a module}%
 
@@ -3605,7 +3617,7 @@ and add the patch file to the \nobr{\code{:my-app}} \glref{module}:
 
 \begin{functiondoc}{Function}{patch-loaded-p}%
   {\var{id module-name\/}
-    \returns{} \var{boolean\/}}
+    \nobr{\returns{} \var{boolean\/}}}
 \index{patch!checking if loaded}%
 \index{loaded patch, checking for}%
 
@@ -3723,9 +3735,9 @@ List the currently defined \glref{root} and \glref{relative~directories}:
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Macro}{start-patch}%
-  {\code{(}\var{id date\/}
-    \code{\&key} \var{author description\/}\code{)}
-    \var{form\/}\superstar} 
+  {\nobr{\code{(}\var{id date\/}}
+    \nobr{\code{\&key} \var{author description\/}\code{)}}
+    \nobr{\var{form\/}\superstar}}
 \index{module!patching}%
 \index{patching!a module}%
 
@@ -4062,8 +4074,8 @@ Use \nobr{\textbf{*disable-with-error-handling*}} to debug a handled form:
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Macro}{allow-redefinition}{%
-    \var{form\/}\superstar{}
-    \returns{} \var{result\/}\superstar}
+    \nobr{\var{form\/}\superstar{}}
+    \nobr{\returns{} \var{result\/}\superstar}}
 \index{redefining!functions without warnings}%
 \index{redefining!classes without warnings}%
 
@@ -4125,7 +4137,7 @@ At present, redefinition warnings are not suppressed on
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{assq}{\var{item alist\/}
-    \returns{} \var{entry\/}}
+    \nobr{\returns{} \var{entry\/}}}
 \index{searching!for an entry in an association list}%
 \index{association list, searching for an entry in}%
   
@@ -4175,7 +4187,7 @@ comparison function.
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{bounded-value}{\var{min number max\/}
-  \returns{} \var{bounded-number\/}}
+    \nobr{\returns{} \var{bounded-number\/}}}
 \index{numeric value!bounding within a range}%
 
 \fnsyntax
@@ -4591,7 +4603,8 @@ once.
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{counted-delete}{\var{item sequence\/}
-    \code{\&key} \var{from-end test test-not start end count key\/}
+    \nobr{\code{\&key} \var{from-end}}
+    \var{test \nobr{test-not} start end count key\/}
     \nobr{\returns{} \var{result-sequence, count\/}}}
 
 \fnsyntax
@@ -4670,7 +4683,7 @@ Lisp Machines).
 
 \begin{functiondoc}{Macro}{decf-after}{\var{place\/}
     \nobr{\code{\&optional} \var{decrement\/}}
-    \returns{} \var{original-value\/}}
+    \nobr{\returns{} \var{original-value\/}}}
 \index{place!decrementing numeric value of}%
 
 \fnsyntax
@@ -4730,10 +4743,10 @@ provided: \nobr{\textbf{decf-after\&}}, \nobr{\textbf{decf-after\$\&}},
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}[decf-delete-acons]{Macro}{decf/delete-acons}{\var{item
-      decrement place\/}
-    \code{\&key} \var{key test test-not\/}
-    \returns{} \var{new-place-value\/}}
+\begin{functiondoc}[decf-delete-acons]{Macro}{decf/delete-acons}{%
+    \var{item decrement place\/}
+    \nobr{\code{\&key} \var{key test test-not\/}}
+    \nobr{\returns{} \var{new-place-value\/}}}
 \index{pushing!a new pair onto an association list}%
 \index{decrementing, the value of an association-list pair}%
 \index{association list!pushing a new pair onto}%
@@ -4812,7 +4825,7 @@ also provided: \nobr{\textbf{decf\&/delete-acons}},
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{delq}{\var{item list\/}
-    \returns{} \var{list\/}} 
+    \nobr{\returns{} \var{list\/}}}
 \index{deleting!an item from a list}%
   
 \fnsyntax
@@ -4864,7 +4877,7 @@ top-level structure of \var{list\/} in constructing the
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{delq-one}{\var{item list\/}
-    \returns{} \var{list\/}} 
+    \nobr{\returns{} \var{list\/}}}
 \index{deleting!an item from a list}%
   
 \fnsyntax
@@ -4915,10 +4928,10 @@ the top-level structure of \var{list\/} in constructing the
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Macro}{defcm}{\var{name lambda-list\/} 
+\begin{functiondoc}{Macro}{defcm}{\var{name \nobr{lambda-list\/}}
     \nobr{[[\var{declaration\/}\superstar{} \vbar{} \var{documentation\/}]]}
-    \var{form\/}\superstar
-    \returns{} \var{name\/}}
+    \nobr{\var{form\/}\superstar}
+    \nobr{\returns{} \var{name\/}}}
 \index{compiler macro!defining}%
 \index{defining!a compiler macro}%
 
@@ -4993,11 +5006,11 @@ Here is the compiler macro defined for \nobr{\textbf{\entlink{ensure-list}}}:
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Macro}{define-class}{\var{class-name\/} 
-   \code{(}\{\var{superclass-name\/}\}\superstar\code{)}
-   [\var{documentation\/}] \\
-   \code{(}\{\var{slot-specifier\/}\}\superstar\code{)}
-   \{\var{class-option\/}\}\superstar{} 
-   \returns{} \var{new-class\/}}
+    \nobr{\code{(}\{\var{superclass-name\/}\}\superstar\code{)}}
+    \nobr{[\var{documentation\/}]}
+    \nobr{\code{(}\{\var{slot-specifier\/}\}\superstar\code{)}}
+    \nobr{\{\var{class-option\/}\}\superstar{}}
+    \nobr{\returns{} \var{new-class\/}}}
 \index{class!defining/redefining}%
 \index{defining!a class}%
 \index{redefining!a class}%
@@ -5119,7 +5132,7 @@ Define a class, \code{foo}, generating
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Macro}{do-until}{\var{form test-form\/}} 
+\begin{functiondoc}{Macro}{do-until}{\var{form \nobr{test-form\/}}}
 \index{iteration!do-until@\textbf{do-until}}%
   
 \fnsyntax
@@ -5166,7 +5179,7 @@ repeatedly, as long as \nobr{\var{test-form\/}} evaluates to \nil.
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Macro}{do-while}{\var{form test-form\/}} 
+\begin{functiondoc}{Macro}{do-while}{\var{form \nobr{test-form\/}}}
 \index{iteration!do-while@\textbf{do-while}}%
   
 \fnsyntax
@@ -5213,10 +5226,11 @@ repeatedly, until \nobr{\var{test-form\/}} evaluates to \nil.
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Macro}{dosequence}{(\var{var sequence-form\/} 
-  [\var{result-form\/}]) \var{declaration\/}\superstar{} 
-  \nobr{\{\var{tag\/} \vbar{} \var{form\/}\}\superstar}
-  \returns{} \var{result\/}\superstar or \nil}
+\begin{functiondoc}{Macro}{dosequence}{%
+    \nobr{(\var{var sequence-form\/} [\var{result-form\/}])}
+    \nobr{\var{declaration\/}\superstar{}}
+    \nobr{\{\var{tag\/} \vbar{} \var{form\/}\}\superstar}
+    \nobr{\returns{} \var{result\/}\superstar or \nil}}
 \index{iteration!dosequence@\textbf{dosequence}}%
   
 \fnsyntax
@@ -5277,10 +5291,11 @@ The scope of the binding of \var{var\/} does not include the
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Macro}{dosublists}{(\var{var list-form\/} 
-  [\var{result-form\/}]) \var{declaration\/}\superstar{} 
-  \nobr{\{\var{tag\/} \vbar{} \var{form\/}\}\superstar}
-  \returns{} \var{result\/}\superstar or \nil}
+\begin{functiondoc}{Macro}{dosublists}{%
+    \nobr{(\var{var list-form\/} [\var{result-form\/}])}
+    \nobr{\var{declaration\/}\superstar{}}
+    \nobr{\{\var{tag\/} \vbar{} \var{form\/}\}\superstar}
+    \nobr{\returns{} \var{result\/}\superstar or \nil}}
 \index{iteration!dosublists@\textbf{dosublists}}%
   
 \fnsyntax
@@ -5342,7 +5357,7 @@ The scope of the binding of \var{var\/} does not include the
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{dotted-length}{\var{list\/}
-  \returns{} \var{n\/}}
+    \nobr{\returns{} \var{n\/}}}
 \index{length!of a dotted list}%
 \index{dotted list!obtaining the length of}%
 
@@ -5471,7 +5486,7 @@ macro.
       (("b" "c" "d") 2))
   Error: "C" fell through an ecase-using string= form; 
          the valid keys are "a", "b", "c", and "d".
-  >>\goodpagebreak
+  >>
 \end{example}
 
 \end{functiondoc}
@@ -5479,7 +5494,7 @@ macro.
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{ensure-finalized-class}{\var{class\/} 
-    \returns{} \var{finalized-class\/}}
+    \nobr{\returns{} \var{finalized-class\/}}}
 \index{class!finalization}%
 \index{finalizing, a class}%
 
@@ -5515,7 +5530,7 @@ macro.
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{ensure-list}{\var{object\/} 
-    \returns{} \var{list\/}}
+    \nobr{\returns{} \var{list\/}}}
 \index{list!assuring}%
 
 \fnsyntax
@@ -5557,7 +5572,7 @@ an atom, a newly consed list containing \var{object\/} as its sole element.
 
 \begin{functiondoc}{Macro}{incf-after}{\var{place\/}
     \nobr{\code{\&optional} \var{increment\/}}
-    \returns{} \var{original-value\/}}
+    \nobr{\returns{} \var{original-value\/}}}
 \index{place!incrementing numeric value of}%
 
 \fnsyntax
@@ -5617,9 +5632,9 @@ provided: \nobr{\textbf{incf-after\&}}, \nobr{\textbf{incf-after\$\&}},
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Function}{list-length-1-p}%
-  {\var{list\/} 
-    \returns{} \var{boolean\/}}
+\begin{functiondoc}{Function}{list-length-1-p}{%
+    \var{list\/} 
+    \nobr{\returns{} \var{boolean\/}}}
 \index{length!testing a list for length = 1}%
 \index{list!testing length = 1}%
 
@@ -5665,9 +5680,9 @@ provided: \nobr{\textbf{incf-after\&}}, \nobr{\textbf{incf-after\$\&}},
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Function}{list-length-2-p}%
-  {\var{list\/}
-    \returns{} \var{boolean\/}}
+\begin{functiondoc}{Function}{list-length-2-p}{%
+    \var{list\/}
+    \nobr{\returns{} \var{boolean\/}}}
 \index{length!testing a list for length = 2}%
 \index{list!testing length = 2}%
 
@@ -5713,9 +5728,9 @@ provided: \nobr{\textbf{incf-after\&}}, \nobr{\textbf{incf-after\$\&}},
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}[list-length-gt]{Function}{list-length>}%
-  {\var{n list\/}
-    \returns{} \var{boolean\/}}
+\begin{functiondoc}[list-length-gt]{Function}{list-length>}{%
+    \var{n list\/}
+    \nobr{\returns{} \var{boolean\/}}}
 \index{length!testing a list for length > $n$}%
 \index{list!testing length > $n$}%
 
@@ -5763,9 +5778,9 @@ provided: \nobr{\textbf{incf-after\&}}, \nobr{\textbf{incf-after\$\&}},
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}[list-length-gt-1]{Function}{list-length>1}%
-  {\var{list\/}
-    \returns{} \var{boolean\/}}
+\begin{functiondoc}[list-length-gt-1]{Function}{list-length>1}{%
+    \var{list\/}
+    \nobr{\returns{} \var{boolean\/}}}
 \index{length!testing a list for length > 1}%
 \index{list!testing length > 1}%
 
@@ -5810,9 +5825,9 @@ provided: \nobr{\textbf{incf-after\&}}, \nobr{\textbf{incf-after\$\&}},
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}[list-length-gt-2]{Function}{list-length>2}%
-  {\var{list\/}
-    \returns{} \var{boolean\/}}
+\begin{functiondoc}[list-length-gt-2]{Function}{list-length>2}{%
+    \var{list\/}
+    \nobr{\returns{} \var{boolean\/}}}
 \index{length!testing a list for length > 2}%
 \index{list!testing length > 2}%
 
@@ -5859,7 +5874,7 @@ provided: \nobr{\textbf{incf-after\&}}, \nobr{\textbf{incf-after\$\&}},
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{make-keyword}{\var{x\/}
-    \returns{} \var{keyword\/}} 
+    \nobr{\returns{} \var{keyword\/}}}
 \index{creating!a keyword symbol}%
 \index{making!a keyword symbol}%
   
@@ -5899,7 +5914,7 @@ provided: \nobr{\textbf{incf-after\&}}, \nobr{\textbf{incf-after\$\&}},
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{memq}{\var{item list\/}
-    \returns{} \var{tail\/}} 
+    \nobr{\returns{} \var{tail\/}}}
 \index{searching!for an item in a list}%
   
 \fnsyntax
@@ -5951,8 +5966,9 @@ comparison function.
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Macro}{multiple-value-setf}{%
- \code{(\var{place\/}\superstar)} \var{form\/}
- \returns{} \var{primary-value\/}} 
+ \nobr{\code{(\var{place\/}\superstar)}}
+ \var{form\/}
+ \nobr{\returns{} \var{primary-value\/}}}
   
 \fnsyntax
 
@@ -6012,7 +6028,7 @@ are more values than \var{places}, the extra values are discarded.
 
 \begin{functiondoc}{Function}{nsorted-insert}{\var{item list\/}
     \nobr{\code{\&optional} \var{predicate key\/}}
-    \returns{} \var{result-list\/}} 
+    \nobr{\returns{} \var{result-list\/}}}
 \index{inserting an item!into a sorted list}%
 \index{sorted list!inserting an item into}%
   
@@ -6056,7 +6072,7 @@ constructing the result; however, modification of the supplied
 
 \begin{functiondoc}{Function}{object-address}{\var{object\/}
     \nobr{\code{\&optional} \var{hex-string-p\/}}
-    \returns{} \var{address\/}} 
+    \nobr{\returns{} \var{address\/}}}
 \index{searching!for an item in a list}%
   
 \fnsyntax
@@ -6101,9 +6117,8 @@ containing the hexadecimal representation of the address if
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Generic~Function}{print-instance-slot-value}%
-  {\var{instance slot-name stream\/}
-    \code{\&key} \var{function no-space\/}}
-
+  {\var{instance \nobr{slot-name} stream\/}
+    \nobr{\code{\&key} \var{function no-space\/}}}
 
 \fnsyntax
 
@@ -6236,8 +6251,9 @@ or if displaying \code{[Unbound]} for unbound slots is desired:
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Macro}{printv}{\var{form\/}\superstar{} 
-    \returns{} \var{result\/}\superstar}
+\begin{functiondoc}{Macro}{printv}{%
+    \nobr{\var{form\/}\superstar{}}
+    \nobr{\returns{} \var{result\/}\superstar}}
 \index{debugging, using printv@using \textbf{printv}}% 
 
 \fnsyntax
@@ -6301,7 +6317,7 @@ in order to make it available as early as possible.
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Macro}{push-acons}{\var{item value place\/}
-    \returns{} \var{new-place-value\/}} 
+    \nobr{\returns{} \var{new-place-value\/}}}
 \index{pushing!a pair onto an association list}%
 \index{association list!pushing a pair onto}%
   
@@ -6351,8 +6367,8 @@ in order to make it available as early as possible.
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Macro}{pushnew-acons}{\var{item value place\/} 
-    \code{\&key} \var{key test test-not\/}
-    \returns{} \var{new-place-value\/}} 
+    \nobr{\code{\&key} \var{key test test-not\/}}
+    \nobr{\returns{} \var{new-place-value\/}}}
 \index{pushing!a new pair onto an association list}%
 \index{updating, the value of an association-list pair}%
 \index{association list!pushing a new pair onto}%
@@ -6413,8 +6429,8 @@ in order to make it available as early as possible.
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Macro}{pushnew-elements}{\var{list place\/}
-    \code{\&key} \var{key test test-not\/} 
-    \returns{} \var{new-place-value\/}} 
+    \nobr{\code{\&key} \var{key test test-not\/}}
+    \nobr{\returns{} \var{new-place-value\/}}}
 \index{pushing!new elements onto a list}%
 \index{list!pushing new elements onto}%
   
@@ -6464,10 +6480,10 @@ in \var{place}.
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}[pushnew-incf-acons]{Macro}{pushnew/incf-acons}{\var{item
-      increment place\/}
-    \code{\&key} \var{key test test-not\/}
-    \returns{} \var{new-place-value\/}}
+\begin{functiondoc}[pushnew-incf-acons]{Macro}{pushnew/incf-acons}{%
+    \var{item increment place\/}
+    \nobr{\code{\&key} \var{key test test-not\/}}
+    \nobr{\returns{} \var{new-place-value\/}}}
 \index{pushing!a new pair onto an association list}%
 \index{incrementing, the value of an association-list pair}%
 \index{association list!pushing a new pair onto}%
@@ -6547,7 +6563,7 @@ also provided: \nobr{\textbf{pushnew/incf\&-acons}},
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{remove-property}{\var{plist indicator\/} 
-  \returns{} \var{new-plist\/}} 
+    \nobr{\returns{} \var{new-plist\/}}}
 \index{property list!removing property from}%
 \index{removing property, from a property list}%
   
@@ -6590,9 +6606,10 @@ removed.
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Function}{set-equal}{\var{list-1 list-2\/}
-    \code{\&key} \var{test test-not key\/}
-    \returns{} \var{boolean\/}}
+\begin{functiondoc}{Function}{set-equal}{%
+    \nobr{\var{list-1 list-2\/}}
+    \nobr{\code{\&key} \var{test test-not key\/}}
+    \nobr{\returns{} \var{boolean\/}}}
 
 \fnsyntax
 
@@ -6642,9 +6659,10 @@ true.
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Function}{sets-overlap-p}{\var{list-1 list-2\/}
-    \code{\&key} \var{test test-not key\/}
-    \returns{} \var{boolean\/}}
+\begin{functiondoc}{Function}{sets-overlap-p}{%
+    \nobr{\var{list-1 list-2\/}}
+    \nobr{\code{\&key} \var{test test-not key\/}}
+    \nobr{\returns{} \var{boolean\/}}}
 
 \fnsyntax
 
@@ -6690,7 +6708,7 @@ true.
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{shuffle-list}{\var{list\/}
-  \returns{} \var{shuffled-list\/}}
+    \nobr{\returns{} \var{shuffled-list\/}}}
 \index{list!shuffling}%
 
 \fnsyntax
@@ -6725,7 +6743,7 @@ true.
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{shrink-vector}{\var{vector length\/}
-    \returns{} \var{vector\/}} 
+    \nobr{\returns{} \var{vector\/}}}
   
 \fnsyntax
 
@@ -6766,7 +6784,7 @@ implementation's low-level truncation operation.
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{sole-element}{\var{list\/}
-    \returns{} \var{element\/} or \nil} 
+    \nobr{\returns{} \var{element\/} or \nil}}
 \index{list!returning first element of}%
 \index{first element! of a list, returning}%
   
@@ -6905,9 +6923,9 @@ subclass of \nobr{\code{standard-object}}.  It is a superclass of
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{trimmed-substring}%
-  {\var{character-bag string\/} 
+  {\nobr{\var{character-bag string\/}}
     \nobr{\code{\&optional} \var{start end\/}}
-    \returns{} \var{trimmed-substring\/}}
+    \nobr{\returns{} \var{trimmed-substring\/}}}
 \index{date!formatted}% 
 
 \fnsyntax
@@ -6963,10 +6981,12 @@ but avoids allocating an intermediate substring.
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Macro}{undefmethod}{\var{function-name\/}
-    \{\var{method-qualifier\/}\}\superstar{} \var{specialized-lambda-list\/} 
+\begin{functiondoc}{Macro}{undefmethod}{%
+    \nobr{\var{function-name\/}}
+    \nobr{\{\var{method-qualifier\/}\}\superstar{}}
+    \nobr{\var{specialized-lambda-list\/}}
     \nobr{[[\var{declaration\/}\superstar{} \vbar{} \var{documentation\/}]]}
-    \var{form\/}\superstar}
+    \nobr{\var{form\/}\superstar}}
 \index{method!undefining}%
 \index{defmethod@\textbf{defmethod}!undoing}%
 \index{undefining!a method}%
@@ -7060,8 +7080,8 @@ is unbound:
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Macro}{until}{\var{test-form\/} 
-    \var{declaration\/}\superstar{}
-    \var{form\/}\superstar}
+    \nobr{\var{declaration\/}\superstar{}}
+    \nobr{\var{form\/}\superstar}}
 \index{iteration!until@\textbf{until}}%
   
 \fnsyntax
@@ -7107,8 +7127,8 @@ as long as \nobr{\var{test-form\/}} evaluates to \nil.
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Macro}{while}{\var{test-form\/} 
-    \var{declaration\/}\superstar{}
-    \var{form\/}\superstar}
+    \nobr{\var{declaration\/}\superstar{}}
+    \nobr{\var{form\/}\superstar}}
 \index{iteration!while@\textbf{while}}%
   
 \fnsyntax
@@ -7153,11 +7173,13 @@ repeatedly, until \nobr{\var{test-form\/}} evaluates to \nil.
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Macro}{with-error-handling}{[\var{form\/} \vbar{}
-    \code{(}\var{form\/} \nobr{[\code{(:conditions} \var{type\/}\code{)}]}
-       \var{handler-form\/}\superstar{}\code{)}
-    \var{error-form\/}\superstar{} 
-    \returns{} \var{result\/}\superstar} 
+\begin{functiondoc}{Macro}{with-error-handling}{%
+    \nobr{[\var{form\/} \vbar{}}
+    \nobr{\code{(}\var{form\/}}
+    \nobr{[\code{(:conditions} \var{type\/}\code{)}]}
+    \nobr{\var{handler-form\/}\superstar{}\code{)}}
+    \nobr{\var{error-form\/}\superstar{}}
+    \nobr{\returns{} \var{result\/}\superstar}}
 \index{ignoring errors}%
 \index{handling errors}%
 \index{error-condition@\textbf{error-condition}, in \textbf{with-error-handling}}%  
@@ -7293,10 +7315,10 @@ conditions.  Interrupt signals are excluded by default on Allegro CL.
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Macro}{with-full-optimization}%
-  {\code{(}\var{option\/}\superstar{}\code{)}
-    \var{declaration\/}\superstar{}
-    \var{form\/}\superstar{} 
-    \returns{} \var{result\/}\superstar}
+  {\nobr{\code{(}\var{option\/}\superstar{}\code{)}}
+    \nobr{\var{declaration\/}\superstar{}}
+    \nobr{\var{form\/}\superstar{}}
+    \nobr{\returns{} \var{result\/}\superstar}}
 \index{optimizations!declaring full}%
   
 \fnsyntax
@@ -7349,9 +7371,9 @@ invocation and argument-checking optimizations:
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Macro}{with-generate-accessors-format}%
-  {(\var{format\/} [\var{prefix/suffix-name\/}])
-    \var{form\/}\superstar{}
-    \returns{} \var{result\/}\superstar{}}
+  {\nobr{(\var{format\/} [\var{prefix/suffix-name\/}])}
+    \nobr{\var{form\/}\superstar{}}
+    \nobr{\returns{} \var{result\/}\superstar{}}}
 
 \fnsyntax
 
@@ -7466,10 +7488,11 @@ available at compile time):
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Macro}{with-gensyms}{(\var{symbol\/}\superstar{})
-    \var{declaration\/}\superstar{}
-    \var{form\/}\superstar{}
-    \returns{} \var{result\/}\superstar{}}
+\begin{functiondoc}{Macro}{with-gensyms}{%
+    \nobr{(\var{symbol\/}\superstar{})}
+    \nobr{\var{declaration\/}\superstar{}}
+    \nobr{\var{form\/}\superstar{}}
+    \nobr{\returns{} \var{result\/}\superstar{}}}
 \fnsyntax
 
 \fnpurpose Bind each \var{symbol\/} to a gensym symbol.
@@ -7503,10 +7526,11 @@ available at compile time):
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Macro}{with-once-only-bindings}{(\var{symbol\/}\superstar{})
-    \var{declaration\/}\superstar{}
-    \var{form\/}\superstar{} 
-    \returns{} \var{result\/}\superstar{}}
+\begin{functiondoc}{Macro}{with-once-only-bindings}{%
+    \nobr{(\var{symbol\/}\superstar{})}
+    \nobr{\var{declaration\/}\superstar{}}
+    \nobr{\var{form\/}\superstar{}}
+    \nobr{\returns{} \var{result\/}\superstar{}}}
 
 \fnsyntax
 
@@ -7546,8 +7570,8 @@ only evaluated once and in the specified order.
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Function}{xor}{\code{\&rest} \var{args\/} 
-   \returns{} \var{boolean\/}}
+\begin{functiondoc}{Function}{xor}{\nobr{\code{\&rest} \var{args\/}}
+    \nobr{\returns{} \var{boolean\/}}}
 
 \fnsyntax
 
@@ -8537,8 +8561,8 @@ The following \code{\glref{pseudo-probability}} operators are provided:
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}[multiply-pprob]{Function}{*\%}%
-  {\var{pseudo-probability\/}\superstar{}
-    \returns{} \var{pseudo-probability-product\/}}
+  {\nobr{\var{pseudo-probability\/}\superstar{}}
+    \nobr{\returns{} \var{pseudo-probability-product\/}}}
 \index{pseudo-probability!multiplication}%
 
 \fnsyntax
@@ -8588,9 +8612,9 @@ The following \code{\glref{pseudo-probability}} operators are provided:
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}[divide-pprob]{Function}{/\%}%
-  {\var{pseudo-probability-numerator 
-      pseudo-probability-denominator\/}\superstar{}
-    \returns{} \var{quotient\/}}
+  {\var{\nobr{pseudo-probability-numerator}
+      \nobr{pseudo-probability-denominator\/}\superstar{}}
+    \nobr{\returns{} \var{quotient\/}}}
 \index{pseudo-probability!division}%
 
 \fnsyntax
@@ -8671,8 +8695,8 @@ intermediate result that is larger than a \nobr{\code{\glref{fixnum}}}.
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}[ln-pprob]{Function}{ln\%}%
-  {\var{pseudo-probability\/}\superstar{}
-    \returns{} \var{pseudo-probability-ln\/}}
+  {\nobr{\var{pseudo-probability\/}\superstar{}}
+    \nobr{\returns{} \var{pseudo-probability-ln\/}}}
 \index{pseudo-probability!ln (natural log)}%
 
 \fnsyntax
@@ -8720,8 +8744,8 @@ intermediate result that is larger than a \nobr{\code{\glref{fixnum}}}.
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}[exp-pprob]{Function}{exp\%}%
-  {\var{pseudo-probability-ln\/}
-    \returns{} \var{pseudo-probability\/}}
+  {\nobr{\var{pseudo-probability-ln\/}}
+    \nobr{\returns{} \var{pseudo-probability\/}}}
 %\index{pseudo-probability!ln (natural log)}%
 
 \fnsyntax
@@ -8769,7 +8793,8 @@ intermediate result that is larger than a \nobr{\code{\glref{fixnum}}}.
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{pprob2prob}%
-  {\var{pseudo-probability\/} \returns{} \var{probability\/}}
+  {\nobr{\var{pseudo-probability\/}}
+    \nobr{\returns{} \var{probability\/}}}
 \index{pseudo-probability!converting to a probability}%
 \index{probability!converting from a pseudo-probability}%
 
@@ -8812,7 +8837,8 @@ probability.
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{prob2pprob}%
-  {\var{probability\/} \returns{} \var{pseudo-probability\/}}
+  {\var{probability\/}
+    \nobr{\returns{} \var{pseudo-probability\/}}}
 \index{pseudo-probability!converting from a probability}%
 \index{probability!converting to a pseudo-probability}%
 
@@ -9009,11 +9035,11 @@ in order to make it available as early as possible.
 
 \begin{functiondoc}{Function}{brief-date}{%
     \nobr{\code{\&optional} \var{universal-time\/}}
-    \code{\&key} \var{\nobr{time-zone} 
-      \nobr{month-precedes-date} 
+    \nobr{\code{\&key} \var{time-zone}}
+    \var{\nobr{month-precedes-date} 
       \nobr{year-first} 
       destination\/}
-    \returns{} \var{result\/}}
+    \nobr{\returns{} \var{result\/}}}
 \index{date!formatted}% 
 \index{time, formatted}% 
 
@@ -9109,12 +9135,12 @@ in order to to make it available as early as possible.
 
 \begin{functiondoc}{Function}{brief-date-and-time}{%
     \nobr{\code{\&optional} \var{universal-time\/}}
-    \code{\&key} \var{\nobr{time-zone} 
-      \nobr{month-precedes-date}
+    \nobr{\code{\&key} \var{time-zone}}
+    \var{\nobr{month-precedes-date}
       \nobr{year-first}
       \nobr{include-seconds}
       destination\/}
-    \returns{} \var{result\/}}
+    \nobr{\returns{} \var{result\/}}}
 \index{date!formatted}% 
 \index{time, formatted}% 
 
@@ -9259,7 +9285,7 @@ in order to to make it available as early as possible.
 \begin{functiondoc}{Function}{brief-duration}{%
     \var{seconds\/}
     \nobr{\code{\&optional} \var{maximum-fields destination\/}}
-    \returns{} \var{result\/}}
+    \nobr{\returns{} \var{result\/}}}
   \index{time!duration, formatting}% 
 \index{duration!formatting}% 
 
@@ -9329,9 +9355,9 @@ description.
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{brief-run-time-duration}{%
-    \var{internal-time-units\/}
+    \nobr{\var{internal-time-units\/}}
     \nobr{\code{\&optional} \var{maximum-fields destination\/}}
-    \returns{} \var{result\/}}
+    \nobr{\returns{} \var{result\/}}}
   \index{time!duration, formatting}% 
 \index{duration!formatting}% 
 \index{internal time units, formatting}% 
@@ -9395,9 +9421,8 @@ description.
 
 \begin{functiondoc}{Function}{encode-date-and-time}{%
     \var{string\/}
-    \code{\&key} \var{start 
-      end 
-      \nobr{junk-allowed}
+    \nobr{\code{\&key} \var{start end}}
+    \var{\nobr{junk-allowed}
       \nobr{date-separators}
       \nobr{time-separators} 
       \nobr{month-precedes-date}
@@ -9533,8 +9558,8 @@ parse ended.
 
 \begin{functiondoc}{Function}{encode-time-of-day}%
   {\var{second minute hour\/} 
-    \code{\&optional} \var{\nobr{universal-time}\/}
-    \returns{} \var{\nobr{universal-time}\/}}
+    \nobr{\code{\&optional} \var{universal-time}\/}
+    \nobr{\returns{} \var{\nobr{universal-time}\/}}}
 
 \fnsyntax
 
@@ -9602,8 +9627,8 @@ Verbosely change \nobr{\code{quitting-time}} to 5:30pm every day:
 
 \begin{functiondoc}{Function}{full-date-and-time}{%
     \code{\&optional} \var{universal-time\/}
-    \code{\&key} \var{\nobr{time-zone}
-      \nobr{daylight-savings-p}
+    \nobr{\code{\&key} \var{time-zone}}
+    \var{\nobr{daylight-savings-p}
       \nobr{all-numeric}
       \nobr{separator}
       \nobr{full-names}
@@ -9615,7 +9640,7 @@ Verbosely change \nobr{\code{quitting-time}} to 5:30pm every day:
       \nobr{utc-offset-only}
       \nobr{12-hour}
       destination\/}
-    \returns{} \var{result\/}}
+    \nobr{\returns{} \var{result\/}}}
 \index{date!formatted}%
 \index{time, formatted}%
 
@@ -9941,7 +9966,7 @@ can be invoked using the \glref{REPL~command} \nobr{\code{:ut} \var{arg\/}}.
 \begin{functiondoc}{Function}{http-date-and-time}{%
     \nobr{\code{\&optional} \var{universal-time\/}}
     \nobr{\code{\&key} \var{destination\/}}
-   \returns{} \var{result\/}}
+    \nobr{\returns{} \var{result\/}}}
 \index{time!formatting}% 
 
 \fnsyntax
@@ -9995,9 +10020,11 @@ If \nobr{\var{universal-time\/}} is not supplied or is \nil, the current time
 
 \begin{functiondoc}{Function}{internet-text-date-and-time}{%
     \nobr{\code{\&optional} \var{universal-time\/}}
-    \code{\&key} \var{time-zone daylight-savings-p 
-      utc-offset-only destination\/} 
-   \returns{} \var{result\/}}
+    \nobr{\code{\&key} \var{time-zone}}
+    \var{\nobr{daylight-savings-p}
+      \nobr{utc-offset-only}
+      destination\/}
+    \nobr{\returns{} \var{result\/}}}
 \index{time!formatting}% 
 
 \fnsyntax
@@ -10068,7 +10095,7 @@ determined by \code{decode-universal-time}) is used, and the
 \begin{functiondoc}{Function}{iso8661-date-and-time}{%
     \nobr{\code{\&optional} \var{universal-time\/}}
     \nobr{\code{\&key} \var{destination\/}}
-   \returns{} \var{result\/}}
+    \nobr{\returns{} \var{result\/}}}
 \index{time!formatting}% 
 
 \fnsyntax
@@ -10122,7 +10149,7 @@ If \nobr{\var{universal-time\/}} is not supplied or is \nil, the current time
 \begin{functiondoc}{Function}{message-log-date-and-time}{%
     \nobr{\code{\&optional} \var{universal-time\/}}
     \nobr{\code{\&key} \var{destination\/}}
-   \returns{} \var{result\/}}
+    \nobr{\returns{} \var{result\/}}}
 \index{time!formatting}% 
 
 \fnsyntax
@@ -10178,7 +10205,7 @@ If \nobr{\var{universal-time\/}} is not supplied or is \nil, the current time
     \var{string\/}
     \code{\&key} \var{start end \nobr{junk-allowed} \nobr{separators}
       \nobr{month-precedes-date}\/}
-    \nobr{\returns{} \var{date, month, year, \nobr{position}\/}}}
+    \nobr{\returns{} \var{date, month, year, position\/}}}
 \index{date!parsing}% 
 
 \fnsyntax
@@ -10305,8 +10332,9 @@ in order to to make it available as early as possible.
     \var{string\/}
     \code{\&key} \var{start end \nobr{junk-allowed} \nobr{date-separators}
       \nobr{time-separators} \nobr{month-precedes-date} \nobr{year-first}\/}
-    \nobr{\returns{} \var{second, minute, hour, date, month, year, 
-        \nobr{time-zone,} \nobr{daylight-savings-p,} pos\/}}}
+    \nobr{\returns{} \var{second, minute, hour,}}
+    \var{date, month, year, 
+      \nobr{time-zone,} \nobr{daylight-savings-p,} pos\/}}
 \index{date!parsing}% 
 
 \fnsyntax
@@ -10474,7 +10502,7 @@ parse ended.
 \begin{functiondoc}{Function}{parse-duration}{%
     \var{string\/}
     %% units keyword is not documented:
-    \code{\&key} \var{start end separators\/}
+    \nobr{\code{\&key} \var{start end separators\/}}
     \nobr{\returns{} \var{seconds\/}}}
 \index{duration!parsing}% 
 
@@ -10562,9 +10590,9 @@ A \code{"month"} is interpreted as exactly 30 days; a \nobr{\code{"year"}} as
 
 \begin{functiondoc}{Function}{parse-time}{%
     \var{string\/}
-    \code{\&key} \var{start end junk-allowed separators\/}
-    \nobr{\returns{} \var{second, minute, hour, 
-        \nobr{time-zone,} \nobr{daylight-savings-p,} pos\/}}}
+    \nobr{\code{\&key} \var{start end junk-allowed separators\/}}
+    \nobr{\returns{} \var{second, minute, hour,}}
+    \var{\nobr{time-zone,} \nobr{daylight-savings-p,} pos\/}}
 \index{date!parsing}% 
 
 \fnsyntax
@@ -10672,7 +10700,7 @@ parse ended.
 \begin{functiondoc}{Function}{pretty-duration}{%
     \var{seconds\/}
     \nobr{\code{\&optional} \var{maximum-fields destination\/}}
-    \returns{} \var{result\/}}
+    \nobr{\returns{} \var{result\/}}}
   \index{time!duration, formatting}% 
 \index{duration!formatting}% 
 
@@ -10742,9 +10770,9 @@ description.
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{pretty-run-time-duration}{%
-    \var{internal-time-units\/}
+    \nobr{\var{internal-time-units\/}}
     \nobr{\code{\&optional} \var{maximum-fields destination\/}}
-    \returns{} \var{result\/}}
+    \nobr{\returns{} \var{result\/}}}
   \index{time!duration, formatting}% 
 \index{duration!formatting}% 
 \index{internal time units, formatting}% 
@@ -10876,7 +10904,7 @@ value is changed.
 
 \begin{functiondoc}{Function}{check-ot-base}{%
     \nobr{\code{\&optional} \var{suppress-warning\/}}
-    \returns{} \var{boolean\/}}
+    \nobr{\returns{} \var{boolean\/}}}
 
 \index{universal time!setting the time base value}%
 
@@ -10939,7 +10967,7 @@ Set the time base for Offset Universal Time to January 1, 1900 and check:
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{ot2ut}{\var{offset-universal-time\/}
-  \returns{} \var{universal-time\/}}
+    \nobr{\returns{} \var{universal-time\/}}}
 \index{offset universal time!converting to universal time}%
 
 \fnsyntax
@@ -11000,7 +11028,7 @@ can be invoked using the \glref{REPL~command} \nobr{\code{:ot} \var{arg\/}}.
 
 \begin{functiondoc}{Function}{set-ot-base}{\code{\&optional} 
     \var{date month year time-zone\/}
-    \returns{} \var{ot-base\/}}
+    \nobr{\returns{} \var{ot-base\/}}}
 \index{universal time!setting the time base value}%
 
 \fnsyntax
@@ -11075,7 +11103,7 @@ Set the time base for Offset Universal Time to July 1, 2007:
 
 \begin{functiondoc}{Function}{ut2ot}{%
     \nobr{\code{\&optional} \var{universal-time\/}}
-  \returns{} \var{offset-universal-time\/}}
+    \nobr{\returns{} \var{offset-universal-time\/}}}
 \index{universal time!converting to offset universal time}%
 
 \fnsyntax
@@ -11160,7 +11188,7 @@ use.
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{llrb-tree-count}{\var{llrb-tree\/}
-  \returns{} \var{count\/}}
+    \nobr{\returns{} \var{count\/}}}
 \index{LLRB tree!entities count}%
 
 \fnsyntax
@@ -11201,8 +11229,9 @@ use.
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Function}{llrb-tree-delete}{\var{key llrb-tree\/}
-  \returns{} \var{deleted-p\/}}
+\begin{functiondoc}{Function}{llrb-tree-delete}{%
+    \var{key \nobr{llrb-tree\/}}
+    \nobr{\returns{} \var{deleted-p\/}}}
 \index{LLRB tree!deleting}%
 
 \fnsyntax
@@ -11248,7 +11277,7 @@ try deleting it a second time:
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{llrb-tree-p}{\var{object\/}
-    \returns{} \var{boolean\/}}
+    \nobr{\returns{} \var{boolean\/}}}
 \index{LLRB tree!predicate}%
 
 \fnsyntax
@@ -11290,7 +11319,7 @@ try deleting it a second time:
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{llrb-tree-test}{\var{llrb-tree\/}
-  \returns{} \var{comparison-test\/}}
+    \nobr{\returns{} \var{comparison-test\/}}}
 \index{LLRB tree!entities count}%
 
 \fnsyntax
@@ -11334,7 +11363,7 @@ try deleting it a second time:
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{llrb-tree-value}{\var{key llrb-tree\/}
-      \nobr{\code{\&optional} \var{default\/}}
+    \nobr{\code{\&optional} \var{default\/}}
     \nobr{\returns{} \var{value, present-p\/}}}
 \index{LLRB tree!retrieval}%
 \index{LLRB tree!inserting}%
@@ -11405,7 +11434,7 @@ value associated with the given \var{key}, or to add a new entry. When a
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{make-llrb-tree}{\var{comparison-test\/}
-  \returns{} \var{llrb-tree\/}}
+    \nobr{\returns{} \var{llrb-tree\/}}}
 \index{LLRB tree!creating}%
 
 \fnsyntax
@@ -11446,7 +11475,8 @@ value associated with the given \var{key}, or to add a new entry. When a
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Function}{map-llrb-tree}{\var{function llrb-tree\/}}
+\begin{functiondoc}{Function}{map-llrb-tree}{%
+    \var{function \nobr{llrb-tree\/}}}
 \index{LLRB tree!applying a function to entries of}%
 
 \fnsyntax
@@ -11617,7 +11647,7 @@ cover most of the typical uses of \nobr{\code{process-wait}}.
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{all-threads}{\noargs{} 
-    \returns{} \var{list-of-threads\/}}
+    \nobr{\returns{} \var{list-of-threads\/}}}
 \index{thread!obtaining all}%
 
 \fnsyntax
@@ -11667,8 +11697,8 @@ altered.
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Macro}{as-atomic-operation}%
-  {\var{form\/}\superstar{} 
-    \returns{} \var{primary-value\/}}
+  {\nobr{\var{form\/}\superstar{}}
+    \nobr{\returns{} \var{primary-value\/}}}
 
 \fnsyntax
 
@@ -11732,8 +11762,9 @@ Define an atomic \nobr{\textbf{\entlink{nsorted-insert}}}:
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Macro}{atomic-decf}{\var{place\/} [\var{delta-form\/}]
-      \returns{} \var{new-place-value\/}}
+\begin{functiondoc}{Macro}{atomic-decf}{\var{place\/}
+    \nobr{[\var{delta-form\/}]}
+    \nobr{\returns{} \var{new-place-value\/}}}
 \index{atomic operations!decf@\textbf{decf}}%
 
 \fnsyntax \fnpurpose Decrement the value stored in \nobr{\var{place\/}} as an
@@ -11783,8 +11814,8 @@ Define an atomic \nobr{\textbf{\entlink{nsorted-insert}}}:
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}[atomic-decf-amp]{Macro}{atomic-decf\&}{\var{place\/}
-    [\var{delta-form\/}]
-    \returns{} \var{new-place-value\/}}
+    \nobr{[\var{delta-form\/}]}
+    \nobr{\returns{} \var{new-place-value\/}}}
 \index{atomic operations!decf\&@\textbf{decf\&}}%
 
 \fnsyntax \fnpurpose Decrement the \glref{fixnum} value stored in
@@ -11834,8 +11865,8 @@ value (default is 1)
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Macro}{atomic-delete}{\var{item place\/}
-    \code{\&key} \var{from-end test test-not start end count key\/}
-    \returns{} \var{sequence\/}}
+    \nobr{\code{\&key} \var{from-end test test-not start end count key\/}}
+    \nobr{\returns{} \var{sequence\/}}}
 \index{atomic operations!delete@\textbf{delete}}%
 
 \fnsyntax
@@ -11907,8 +11938,8 @@ the \nobr{\var{count\/}} is provided, and in that case only the rightmost
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Macro}{atomic-flush}{\var{place\/} \returns{}
-    \var{old-place-value\/}}
+\begin{functiondoc}{Macro}{atomic-flush}{\var{place\/} 
+    \nobr{\returns{} \var{old-place-value\/}}}
 \index{atomic operations!flush}%
 
 \fnsyntax
@@ -11955,8 +11986,9 @@ prior to being set.
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Macro}{atomic-incf}{\var{place\/} [\var{delta-form\/}]
-      \returns{} \var{new-place-value\/}}
+\begin{functiondoc}{Macro}{atomic-incf}{\var{place\/}
+    \nobr{[\var{delta-form\/}]}
+    \nobr{\returns{} \var{new-place-value\/}}}
 \index{atomic operations!incf@\textbf{incf}}%
 
 \fnsyntax \fnpurpose Increment the value stored in \nobr{\var{place\/}} as an
@@ -12006,8 +12038,8 @@ prior to being set.
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}[atomic-incf-amp]{Macro}{atomic-incf\&}{\var{place\/} 
-    [\var{delta-form\/}]
-    \returns{} \var{new-place-value\/}}
+    \nobr{[\var{delta-form\/}]}
+    \nobr{\returns{} \var{new-place-value\/}}}
 \index{atomic operations!incf\&@\textbf{incf\&}}%
 
 \fnsyntax \fnpurpose Increment the \glref{fixnum} value stored in
@@ -12056,8 +12088,8 @@ value (default is 1)
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Macro}{atomic-pop}{\var{place\/} \returns{}
-    \var{element\/}}
+\begin{functiondoc}{Macro}{atomic-pop}{\var{place\/} 
+    \nobr{\returns{} \var{element\/}}}
 \index{atomic operations!pop@\textbf{pop}}%
 
 \fnsyntax
@@ -12106,8 +12138,8 @@ from the list stored in \nobr{\var{place}}, store the updated list in
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Macro}{atomic-push}{\var{item place\/} \returns{}
-    \var{new-place-value\/}}
+\begin{functiondoc}{Macro}{atomic-push}{\var{item place\/} 
+    \nobr{\returns{} \var{new-place-value\/}}}
 \index{atomic operations!push@\textbf{push}}%
 
 \fnsyntax
@@ -12154,8 +12186,8 @@ list stored in \nobr{\var{place\/}} and store the updated list in
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Macro}{atomic-pushnew}{\var{item place\/} 
-    \code{\&key} \var{key test test-not\/}
-    \returns{} \var{new-place-value\/}}
+    \nobr{\code{\&key} \var{key test test-not\/}}
+    \nobr{\returns{} \var{new-place-value\/}}}
 \index{atomic operations!pushnew@\textbf{pushnew}}%
 
 \fnsyntax
@@ -12415,7 +12447,7 @@ signaled by another \glref{thread}:
 
 \begin{functiondoc}{Function}{condition-variable-wait-with-timeout}%
   {\var{condition-variable seconds}
-    \returns{} \var{boolean\/}}
+    \nobr{\returns{} \var{boolean\/}}}
 
 \index{waiting, on condition variable, time limited}%
 
@@ -12468,7 +12500,7 @@ signaled by another \glref{thread} or until 5 seconds have elapsed:
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{current-thread}{\noargs{} 
-    \returns{} \var{thread\/}}
+    \nobr{\returns{} \var{thread\/}}}
 \index{thread!obtaining the current}%
 
 \fnsyntax
@@ -12576,9 +12608,9 @@ Hibernate the current \glref{thread}:
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{make-condition-variable}%
-  {\code{\&rest} \var{initargs\/} \\ 
-   \code{\&key} \var{class lock\/} \\
-   \returns{} \var{condition-variable\/}}
+  {\nobr{\code{\&rest} \var{initargs\/}}
+    \nobr{\code{\&key} \var{class lock\/}}
+    \nobr{\returns{} \var{condition-variable\/}}}
 \index{creating!a condition variable}%
 \index{making!a condition variable}%
 \index{condition variable!creating}%
@@ -12665,8 +12697,9 @@ the created \glref{condition-variable} instance.  However, using
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Function}{make-lock}{\code{\&key} \var{name\/}
-    \returns{} \var{lock\/}} 
+\begin{functiondoc}{Function}{make-lock}{%
+    \nobr{\code{\&key} \var{name\/}}
+    \nobr{\returns{} \var{lock\/}}}
 \index{lock!creating}%
 \index{creating!a lock}%
 \index{making!a lock}%
@@ -12711,8 +12744,9 @@ the created \glref{condition-variable} instance.  However, using
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Function}{make-recursive-lock}{\code{\&key} \var{name\/}
-    \returns{} \var{recursive-lock\/}} 
+\begin{functiondoc}{Function}{make-recursive-lock}{%
+    \nobr{\code{\&key} \var{name\/}}
+    \nobr{\returns{} \var{recursive-lock\/}}}
 \index{lock!creating}%
 \index{creating!a lock}%
 \index{making!a lock}%
@@ -12785,7 +12819,7 @@ the created \glref{condition-variable} instance.  However, using
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{run-in-thread}{\var{thread function\/}
-    \code{\&rest} \var{args\/}}
+    \nobr{\code{\&rest} \var{args\/}}}
 \index{thread!running a function in}%
 
 \fnsyntax
@@ -12824,8 +12858,8 @@ the created \glref{condition-variable} instance.  However, using
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Function}{sleep-nearly-forever}{\code{\&optional}
-    \var{seconds\/}}
+\begin{functiondoc}{Function}{sleep-nearly-forever}{%
+    \nobr{\code{\&optional} \var{seconds\/}}}
 
 \fnsyntax
 
@@ -12871,7 +12905,7 @@ Calls \code{sleep} with \var{seconds\/} or \nobr{\textbf{\entlink{nearly-forever
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Macro}{spawn-form}{\var{form\/}\superstar
-  \returns{} \var{thread\/}}
+    \nobr{\returns{} \var{thread\/}}}
 \index{thread!spawning}%
 \index{creating!a thread}%
 \index{making!a thread}%
@@ -12924,8 +12958,8 @@ Calls \code{sleep} with \var{seconds\/} or \nobr{\textbf{\entlink{nearly-forever
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{spawn-thread}{\var{name function\/}
-    \code{\&rest} \var{args\/} 
-    \returns{} \var{thread\/}}
+    \nobr{\code{\&rest} \var{args\/}}
+    \nobr{\returns{} \var{thread\/}}}
 \index{thread!spawning}%
 \index{creating!a thread}%
 \index{making!a thread}%
@@ -12979,9 +13013,9 @@ Calls \code{sleep} with \var{seconds\/} or \nobr{\textbf{\entlink{nearly-forever
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Function}{symbol-value-in-thread}{\var{symbol 
-    thread\/}
-    \returns{} \nobr{\var{object, boundp\/}}}
+\begin{functiondoc}{Function}{symbol-value-in-thread}{%
+    \var{symbol thread\/}
+    \nobr{\returns{} \nobr{\var{object, boundp\/}}}}
 \index{thread!symbol value in}%
 \index{value, of a symbol in a thread}%
 
@@ -13041,7 +13075,7 @@ the global symbol value.
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{thread-alive-p}{\var{thread\/} 
-    \returns{} \var{boolean\/}}
+    \nobr{\returns{} \var{boolean\/}}}
 
 \fnsyntax
 
@@ -13091,7 +13125,7 @@ the global symbol value.
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{thread-name}{\var{thread\/} 
-   \returns{} \var{name-string\/}} 
+    \nobr{\returns{} \var{name-string\/}}}
 
 \fnsyntax
 
@@ -13141,7 +13175,7 @@ does not support changing the thread name via \nobr{\textbf{setf}}.
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{thread-whostate}{\var{thread\/}
-   \returns{} \var{whostate\/}} 
+    \nobr{\returns{} \var{whostate\/}}}
 
 \fnsyntax
 
@@ -13225,7 +13259,7 @@ no-op on non-threaded implementations.
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{threadp}{\var{object\/} 
-    \returns{} \var{boolean\/}}
+    \nobr{\returns{} \var{boolean\/}}}
 \index{thread!checking state}%
 
 \fnsyntax
@@ -13268,7 +13302,7 @@ no-op on non-threaded implementations.
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{thread-holds-lock-p}{\var{lock\/}
-    \returns{} \var{boolean\/}}
+    \nobr{\returns{} \var{boolean\/}}}
 \index{lock, held by current thread}%
 
 \fnsyntax
@@ -13326,11 +13360,10 @@ Two more simple examples using a \glref{condition~variable}:
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Macro}{with-lock-held}{\code{(}\var{lock\/} 
-    \code{\&key}
-    \var{whostate\/}\code{)}
-    \var{form\/}\superstar{} 
-    \returns{} \var{result\/}\superstar}
+\begin{functiondoc}{Macro}{with-lock-held}{%
+    \nobr{\code{(}\var{lock\/} \code{\&key} \var{whostate\/}\code{)}}
+    \nobr{\var{form\/}\superstar{}}
+    \nobr{\returns{} \var{result\/}\superstar}}
 \index{lock!acquiring}%
 \index{acquiring!a lock}%
 \index{recursive lock!acquiring}%
@@ -13410,10 +13443,10 @@ then signal all blocked \glref{threads} that are waiting on it:
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Macro}{with-timeout}{\code{(}\var{seconds\/} 
-    \var{timeout-form\/}\superstar{}\code{)}
-    \var{form\/}\superstar{} 
-    \returns{} \var{result\/}\superstar}
+\begin{functiondoc}{Macro}{with-timeout}{%
+    \nobr{\code{(}\var{seconds\/} \var{timeout-form\/}\superstar{}\code{)}}
+    \nobr{\var{form\/}\superstar{}}
+    \nobr{\returns{} \var{result\/}\superstar}}
 \fnsyntax
 
 \fnpurpose Bound the time allowed to evaluate \nobr{\var{forms\/}} to
@@ -13712,7 +13745,7 @@ scheduler.
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{all-scheduled-functions}{\noargs{} 
-    \returns{} \var{list-of-scheduled-functions\/}}
+    \nobr{\returns{} \var{list-of-scheduled-functions\/}}}
 \index{scheduled functions!obtaining all}%
 \index{function!scheduled, obtaining all}%
 
@@ -13819,8 +13852,8 @@ as long as the control shell is running:
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{make-scheduled-function}{\var{function\/} 
-    \code{\&key} \var{name name-test marker marker-test\/}
-    \returns{} \var{scheduled-function\/}} 
+    \nobr{\code{\&key} \var{name name-test marker marker-test\/}}
+    \nobr{\returns{} \var{scheduled-function\/}}}
 \index{scheduled function!creating}%
 \index{function!scheduled, creating}%
 \index{creating!a scheduled function}%
@@ -13972,7 +14005,8 @@ Pause the \glref{scheduled-function} scheduler:
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{restart-scheduled-function-scheduler}%
-  {\noargs{} \returns{} \var{thread\/}}
+  {\noargs{} 
+    \nobr{\returns{} \var{thread\/}}}
 \index{scheduled function!scheduler, restarting}%
 
 \fnsyntax
@@ -14078,8 +14112,9 @@ Resume the \glref{scheduled-function} scheduler:
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{schedule-function}%
-  {\var{name-or-scheduled-function invocation-time\/} 
-    \code{\&key} \var{marker repeat-interval verbose\/}}
+  {\var{\nobr{name-or-scheduled-function}
+      \nobr{invocation-time\/}}
+    \nobr{\code{\&key} \var{marker repeat-interval verbose\/}}}
 \index{scheduled function!scheduling}%
 \index{function!scheduled, scheduling}%
 \index{scheduling!a scheduled function}%
@@ -14203,8 +14238,8 @@ Verbosely change \nobr{\code{quitting-time}} to 5:30pm every day:
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{schedule-function-relative}%
-  {\var{name-or-scheduled-function seconds\/} 
-    \code{\&key} \var{marker repeat-interval verbose\/}}
+  {\var{\nobr{name-or-scheduled-function} seconds\/} 
+    \nobr{\code{\&key} \var{marker repeat-interval verbose\/}}}
 \index{scheduled function!scheduling}%
 \index{function!scheduled, scheduling}%
 \index{scheduling!a scheduled function}%
@@ -14323,9 +14358,8 @@ Schedule a \glref{scheduled~function} that signals a GBBopen
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{scheduled-function-invocation-time}%
-  {\var{scheduled-function\/}
-    \returns{} \var{invocation-time\/}}
-
+  {\nobr{\var{scheduled-function\/}}
+    \nobr{\returns{} \var{invocation-time\/}}}
 \index{function!scheduled, invocation time}%
 
 \fnsyntax
@@ -14373,8 +14407,8 @@ Return the invocation-time of \glref{scheduled~function}
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{scheduled-function-marker}%
-  {\var{scheduled-function\/}
-    \returns{} \var{marker\/}}
+  {\nobr{\var{scheduled-function\/}}
+    \nobr{\returns{} \var{marker\/}}}
 \index{function!scheduled, marker}%
 
 \fnsyntax
@@ -14422,8 +14456,8 @@ Return a list of the markers of all currently scheduled
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{scheduled-function-marker-test}%
-  {\var{scheduled-function\/}
-    \returns{} \var{marker-predicate\/}}
+  {\nobr{\var{scheduled-function\/}}
+    \nobr{\returns{} \var{marker-predicate\/}}}
 \index{function!scheduled, test}%
 
 \fnsyntax
@@ -14473,8 +14507,8 @@ Return a list of the marker-comparison predicates of all currently scheduled
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{scheduled-function-name}%
-  {\var{scheduled-function\/}
-    \returns{} \var{name\/}}
+  {\nobr{\var{scheduled-function\/}}
+    \nobr{\returns{} \var{name\/}}}
 \index{function!scheduled, name}%
 
 \fnsyntax
@@ -14521,8 +14555,8 @@ Return the names of all currently scheduled \glref{scheduled~functions}:
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{scheduled-function-name-test}%
-  {\var{scheduled-function\/}
-    \returns{} \var{name-predicate\/}}
+  {\nobr{\var{scheduled-function\/}}
+    \nobr{\returns{} \var{name-predicate\/}}}
 \index{function!scheduled, test}%
 
 \fnsyntax
@@ -14572,8 +14606,8 @@ Return a list of the name-comparison predicates of all currently scheduled
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{scheduled-function-repeat-interval}%
-  {\var{scheduled-function\/}
-    \returns{} \var{repeat-interval\/}}
+  {\nobr{\var{scheduled-function\/}}
+    \nobr{\returns{} \var{repeat-interval\/}}}
 \index{function!scheduled, repeat-interval value}%
 \index{changing!repeat-interval, of a scheduled function}%
 
@@ -14646,7 +14680,8 @@ randomly sets whether to reschedule itself (and at what interval):
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{scheduled-function-scheduler-paused-p}%
-  {\noargs{} \returns{} \var{boolean\/}}
+  {\noargs{}
+    \nobr{\returns{} \var{boolean\/}}}
 \index{scheduled function!scheduler, checking paused status}%
 
 \fnsyntax
@@ -14694,7 +14729,8 @@ Pause the \glref{scheduled-function} scheduler:
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{scheduled-function-scheduler-running-p}%
-  {\noargs{} \returns{} \var{boolean\/}}
+  {\noargs{}
+    \nobr{\returns{} \var{boolean\/}}}
 \index{scheduled function!scheduler, checking running status}%
 
 \fnsyntax
@@ -14739,9 +14775,9 @@ Check that the \glref{scheduled-function} scheduler is running:
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{spawn-periodic-function}%
-  {\var{function repeat-interval\/} 
-    \code{\&key} \var{count name verbose\/}
-    \returns{} \var{thread\/}}
+  {\var{function \nobr{repeat-interval\/}}
+    \nobr{\code{\&key} \var{count name verbose\/}}
+    \nobr{\returns{} \var{thread\/}}}
 \index{periodic function!spawning}%
 \index{function!periodic, spawning}%
 
@@ -14863,9 +14899,9 @@ the control shell is running:
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{unschedule-function}%
-  {\var{name-or-scheduled-function\/}
-    \code{\&key} \var{marker warnp verbose\/}
-  \returns{} \var{boolean\/}} 
+  {\nobr{\var{name-or-scheduled-function\/}}
+    \nobr{\code{\&key} \var{marker warnp verbose\/}}
+    \nobr{\returns{} \var{boolean\/}}}
 \index{scheduled function!canceling scheduling}%
 \index{function!scheduled, canceling scheduling}%
 \index{scheduling!canceling a scheduled function}%
@@ -14992,7 +15028,7 @@ available for use with all Common Lisp implementations.
 
 \begin{functiondoc}{Function}{add-polling-function}%
   {\var{function\/} 
-    \code{\&key} \var{priority\/}}
+    \nobr{\code{\&key} \var{priority\/}}}
 \index{polling function!adding a}%
 
 \fnsyntax 
@@ -15196,8 +15232,8 @@ commonly used socket entities.
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{accept-connection}{\var{passive-socket\/}
-    \code{\&key} \var{wait\/}
-    \returns{} \var{socket-stream\/}} 
+    \nobr{\code{\&key} \var{wait\/}}
+    \nobr{\returns{} \var{socket-stream\/}}}
 \index{connection!accepting}%
 \index{socket stream!accept connection}%
 \index{accept a socket stream connection}%
@@ -15281,7 +15317,7 @@ Close a passive socket:
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{local-hostname-and-port}%
-  {\var{socket-stream\/}
+  {\nobr{\var{socket-stream\/}}
     \nobr{\code{\&optional} \var{do-not-resolve\/}}
     \nobr{\returns{} \var{hostname, port}}}
 \index{socket stream!local hostname}%
@@ -15347,8 +15383,8 @@ connection, but without hostname resolution:
 
 \begin{functiondoc}{Function}{make-passive-socket}%
   {\var{port\/} 
-    \code{\&key} \var{backlog interface reuse-address\/}
-    \returns{} \var{passive-socket\/}}
+    \nobr{\code{\&key} \var{backlog interface reuse-address\/}}
+    \nobr{\returns{} \var{passive-socket\/}}}
 \index{socket!passive, making}%
 \index{passive socket, making}%
 
@@ -15405,7 +15441,7 @@ needed in order to free up operating system resources.
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Generic~Function}{open-connection}{\var{host port\/}
-  \returns{} \var{socket-stream\/}}
+    \nobr{\returns{} \var{socket-stream\/}}}
 \index{connection!opening}%
 \index{socket stream connection!opening}%
 \index{opening!a socket stream connection}%
@@ -15575,8 +15611,8 @@ resources.
 
 \begin{functiondoc}{Function}{start-connection-server}%
   {\var{function port\/}
-    \code{\&key} \var{backlog interface name reuse-address\/}
-    \returns{} \var{thread\/}}
+    \nobr{\code{\&key} \var{backlog interface name reuse-address\/}}
+    \nobr{\returns{} \var{thread\/}}}
 \index{socket!accepting connections}%
 \index{socket!connection server}%
 \index{connection server!starting}%
@@ -15654,8 +15690,8 @@ connection-server thread.
 
 \begin{functiondoc}{Macro}{with-open-connection}%
   {\code{(}\var{var host port\/}\code{)}
-    \var{declaration\/}\superstar{}
-    \var{form\/}\superstar{}}
+    \nobr{\var{declaration\/}\superstar{}}
+    \nobr{\var{form\/}\superstar{}}}
 \index{connection!opening}%
 \index{socket stream!opening}%
 \index{opening!a socket stream connection}%
@@ -15785,7 +15821,7 @@ more natural and intuitive.
 
 \begin{functiondoc}{Function}{double-metaphone}{\var{string\/
       \nobr{\code{\&optional} \var{extended-p\/}}}
-      \returns{} \var{primary-index [, secondary-index]\/}} 
+    \nobr{\returns{} \var{primary-index [, secondary-index]\/}}}
 \index{string!double-metaphone indexes}%
 
 \fnsyntax
@@ -15871,7 +15907,7 @@ commonly used operating-system entities.
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{browse-hyperdoc}{\var{symbol\/}
-  \returns{} \var{boolean\/}} 
+    \nobr{\returns{} \var{boolean\/}}}
 \index{GBBopen!Hyperdoc!displaying an entity}%
 \index{Hyperdoc, on line!displaying an entity}%
 \index{documentation, GBBopen Hyperdoc access}%
@@ -16002,8 +16038,8 @@ This function is not supported on Windows platforms.
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{run-external-program}{\var{program args\/}
-  \&key \var{input output wait\/}
-  \nobr{\returns{} \var{bidirectional-stream, os-process}}}
+    \nobr{\&key \var{input output wait\/}}
+    \nobr{\returns{} \var{bidirectional-stream, os-process}}}
 \index{external-program!running}%
 \index{invoking an external program}%
 
@@ -16074,8 +16110,8 @@ string.
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{svn-version}{%
-    \code{\&key} \var{directory program\/}
-    \returns{} \var{version-string-or-nil}}
+    \nobr{\code{\&key} \var{directory program\/}}
+    \nobr{\returns{} \var{version-string-or-nil}}}
 \index{subversion!obtain working-copy version number}%
 
 \fnsyntax
@@ -16175,6 +16211,8 @@ remaining \nobr{\code{:gbbopen-core}} entities is arranged into the following
 \T\clearpage
 \T\renewcommand{\headrulewidth}{0.01pt}
 
+%% ------------------------------------------------------------------------
+
 \begin{functiondoc}[skip-deleted-unit-instance-class-change-var]%
   {Variable}{*skip-deleted-unit-instance-class-change*}{}%
 
@@ -16204,7 +16242,8 @@ class change can be skipped by binding
 value.  The predicate \nobr{\textbf{\entlink{instance-deleted-p}}} can be used
 to detect either form of a deleted unit instance.
 
-\begin{alsos}{deleted-unit-instance}
+\begin{alsos}{check-for-deleted-instance}
+\also[check-for-deleted-instance]
 \also[delete-instance]
 \also[deleted-instance-class]
 \also[deleted-unit-instance]
@@ -16239,9 +16278,9 @@ with the class-change skipped:
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Generic~Function}{change-class}%
-  {\var{instance new-class\/} 
+  {\var{instance \nobr{new-class\/}}
     \code{\&key} \nobr{\code{\&allow-other-keys}}
-    \returns{} \nobr{\var{changed-instance\/}}}
+    \nobr{\returns{} \nobr{\var{changed-instance\/}}}}
 \index{class!changing, of a unit instance}%
 \index{unit instance!changing class}%
 
@@ -16377,9 +16416,53 @@ counter.
 
 %% ------------------------------------------------------------------------
 
+\begin{functiondoc}{Function}{check-for-deleted-instance}{%
+    \nobr{\var{unit-instance\/}}
+    \nobr{\code{\&optional} \var{operation\/}}}
+
+\fnsyntax
+
+\fnpurpose Signal an error if the supplied \glref{unit~instance} has been
+deleted.
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:gbbopen-core}
+
+\fnargs
+\begin{args}{unit-instance}
+\arg[unit-instance] A \glref{unit~instance}
+\arg[operation] A symbol (default is \nil)
+\end{args}
+
+\begin{alsos}{instance-deleted-p}
+\also[delete-instance]
+\also[instance-deleted-p]
+\end{alsos}
+
+\fnexamples
+\bfindexit{delete-instance}%
+\bfindexit{make-instance}%
+Create, then delete, then check, a \code{hyp} \glref{unit~instance}:
+%
+\W\supp
+\begin{example}
+  > (check-for-deleted-instance (\entlink{delete-instance} (\entlink{make-instance} 'hyp)))
+  Error: Instance #<deleted-unit-instance hyp 7> has been deleted
+  >> :abort
+  > (check-for-deleted-instance (\entlink{delete-instance} (\entlink{make-instance} 'hyp))
+                                'my-operation)
+  Error: my-operation attempted with a deleted instance: #<deleted-unit-instance hyp 8>
+  >>
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
 \begin{functiondoc}{Generic~Function}{class-instances-count}%
-  {\var{unit-class-or-name\/} 
-    \returns{} \var{count\/}}
+  {\nobr{\var{unit-class-or-name\/}}
+    \nobr{\returns{} \var{count\/}}}
 \index{unit class!instance count}%
 \index{unit instance!counting}%
 
@@ -16452,12 +16535,13 @@ or simply:
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Macro}{define-unit-class}{\var{unit-class-name\/} 
-   \code{(}\{\var{superclass-name\/}\}\superstar\code{)}
-   [\var{documentation\/}] \\
-   \code{(}\{\var{slot-specifier\/}\}\superstar\code{)}
-   \{\var{class-option\/}\}\superstar{}
-   \returns{} \var{new-unit-class\/}}
+\begin{functiondoc}{Macro}{define-unit-class}{%
+    \nobr{\var{unit-class-name\/}}
+    \nobr{\code{(}\{\var{superclass-name\/}\}\superstar\code{)}}
+    \nobr{[\var{documentation\/}]}
+    \nobr{\code{(}\{\var{slot-specifier\/}\}\superstar\code{)}}
+    \nobr{\{\var{class-option\/}\}\superstar{}}
+    \nobr{\returns{} \var{new-unit-class\/}}}
 \index{unit class!defining/redefining}%
 \index{defining!a unit class}%
 \index{redefining!a unit class}%
@@ -16696,8 +16780,8 @@ word's individual characters in an \glref{enumerated~dimension} and the
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Generic~Function}{delete-instance}%
-  {\var{unit-instance\/}
-    \returns{} \nobr{\var{deleted-unit-instance\/}}}
+  {\nobr{\var{unit-instance\/}}
+    \nobr{\returns{} \var{deleted-unit-instance\/}}}
 \index{deleting!a unit instance}%
 \index{unit instance!deleting}%
 
@@ -16786,8 +16870,8 @@ Create, then delete, a \code{hyp} \glref{unit~instance}:
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Generic~Function}{deleted-instance-class}%
-  {\var{unit-instance\/}
-    \returns{} \var{class\/}}
+  {\nobr{\var{unit-instance\/}}
+    \nobr{\returns{} \var{class\/}}}
 \index{deleting!a unit instance, class of deleted instance}%
 \index{unit instance!class of deleted instance}%
 
@@ -16962,7 +17046,7 @@ Describe the \code{hyp} \glref{unit~instance}:
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Generic~Function}{describe-instance-slot-value}%
-  {\var{instance slot-name value\/}
+  {\var{instance \nobr{slot-name} value\/}
     \nobr{\code{\&optional} \var{stream\/}}}
 \index{unit instance!printing information about}%
 \index{printing!information about!unit instance}%
@@ -17027,7 +17111,7 @@ Describe the \code{observation-duration} slot of a \code{hyp}
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Generic~Function}{describe-unit-class}%
-{\var{unit-class-name\/}}
+  {\nobr{\var{unit-class-name\/}}}
 
 \fnsyntax
 
@@ -17176,8 +17260,8 @@ The description is printed to the {\bf *standard-output*} stream.
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Generic~Function}{dimensions-of}%
-  {\var{space-instance-or-unit-classes-specifier\/}
-    \returns{} \var{dimension-specifications-list\/}}
+  {\nobr{\var{space-instance-or-unit-classes-specifier\/}}
+    \nobr{\returns{} \var{dimension-specifications-list\/}}}
 \index{dimensions!inquiring, of a space instance}%
 \index{space instance!finding dimensions of}%
 \index{dimensions!inquiring, of a unit class}%
@@ -17380,7 +17464,7 @@ the parent \glref{class} of
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{gbbopen-implementation-version}{\noargs{}
-    \returns{} \var{string\/}}
+    \nobr{\returns{} \var{string\/}}}
 \index{GBBopen!version string}%
 \index{version!obtaining GBBopen version string}%
 
@@ -17414,8 +17498,8 @@ Return the GBBopen implementation-version string:
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Generic~Function}{initial-class-instance-number}%
-  {\var{unit-class-name-or-instance\/} 
-    \returns{} \var{integer\/}}
+  {\nobr{\var{unit-class-name-or-instance\/}}
+    \nobr{\returns{} \var{integer\/}}}
 \index{unit class!instance number, initial}%
 \index{unit instance!instance number}%
 
@@ -17474,7 +17558,7 @@ true for the unit class.
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{instance-deleted-p}{\var{unit-instance\/}
-    \returns{} \var{boolean\/}}
+    \nobr{\returns{} \var{boolean\/}}}
 
 \fnsyntax
 
@@ -17494,6 +17578,7 @@ true for the unit class.
 
 \begin{alsos}{*skip-deleted-unit-instance-class-change*}
 \also[*skip-deleted-unit-instance-class-change*]
+\also[check-for-deleted-instance]
 \also[delete-instance]
 \end{alsos}
 
@@ -17514,9 +17599,12 @@ Create, then delete, then check, a \code{hyp} \glref{unit~instance}:
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{instance-dimension-value}%
-  {\var{unit-instance dimension-name\/}
-    \nobr{\returns{} \var{dimension-value, dimension-value-type,
-        comparison-type, composite-type, ordering-dimension-name\/}}}
+  {\var{\nobr{unit-instance}
+      \nobr{dimension-name\/}}
+    \nobr{\returns{} \var{dimension-value, dimension-value-type,}
+      \nobr{comparison-type,}
+      \nobr{composite-type,|
+        \nobr{ordering-dimension-name\/}}}}
 \index{unit instance!obtaining a dimension value of}%
 \index{dimension value!of a unit instance}%
 
@@ -17634,9 +17722,9 @@ and its \nobr{\code{char-code}} \glref{dimension~value}:
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{instance-dimension-values}%
-  {\var{unit-instance\/}
+  {\nobr{\var{unit-instance\/}}
     \nobr{\code{\&optional} \var{dimension-names\/}}
-    \returns{} \var{dimension-values-alist\/}}
+    \nobr{\returns{} \var{dimension-values-alist\/}}}
 \index{unit instance!obtaining a dimension values of}%
 \index{dimension value!of a unit instance}%
 
@@ -17709,7 +17797,7 @@ to using \nobr{\textbf{instance-dimension-values}} when obtaining individual
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Generic~Function}{instance-name-of}{\var{instance\/}
-    \returns{} \var{instance-name\/}}
+    \nobr{\returns{} \var{instance-name\/}}}
 
 \fnsyntax
 
@@ -17779,9 +17867,9 @@ Change the \glref{instance~name} of \code{hyp} \code{180} to
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Generic~Function}{make-duplicate-instance}{%
-    \var{instance unduplicated-slot-names\/}
-    \code{\&rest} \var{initargs\/}
-    \code{\&key} \nobr{\code{\&allow-other-keys}}
+    \var{instance \nobr{unduplicated-slot-names\/}}
+    \nobr{\code{\&rest} \var{initargs\/}}
+    \nobr{\code{\&key} \code{\&allow-other-keys}}
     \nobr{\returns{} \var{new-instance, slots\/}}}
 \index{duplicating!an instance}%
 \index{unit instance!duplicating}%
@@ -17967,9 +18055,11 @@ Create a duplicate of the \code{hyp} \code{419} \glref{unit~instance}:
 
 \begin{functiondoc}{Generic~Function}%
   {make-duplicate-instance-changing-class}{%
-    \var{instance new-class unduplicated-slot-names\/}
-    \code{\&rest} \var{initargs\/}
-    \code{\&key} \nobr{\code{\&allow-other-keys}}
+    \var{instance 
+      \nobr{new-class}
+      \nobr{unduplicated-slot-names\/}}
+    \nobr{\code{\&rest} \var{initargs\/}}
+    \nobr{\code{\&key} \code{\&allow-other-keys}}
     \nobr{\returns{} \var{new-instance, slots\/}}}
 \index{duplicating!an instance}%
 \index{unit instance!duplicating}%
@@ -18180,9 +18270,9 @@ Create a duplicate of the \code{hyp} \code{419} \glref{unit~instance} as a
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Generic~Function}{make-instance}{\var{class\/}
-    \code{\&rest} \var{initargs\/}
+    \nobr{\code{\&rest} \var{initargs\/}}
     \code{\&key} \nobr{\code{\&allow-other-keys}}
-    \returns{} \var{instance\/}}
+    \nobr{\returns{} \var{instance\/}}}
 \index{creating!a unit instance}%
 \index{making!a unit instance}%
 \index{unit instance!creating}%
@@ -18307,8 +18397,8 @@ provides a clear and convenient shorthand for creating
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Generic~Function}{next-class-instance-number}%
-  {\var{unit-class-name-or-instance\/} 
-    \returns{} \var{integer\/}}
+  {\nobr{\var{unit-class-name-or-instance\/}}
+    \nobr{\returns{} \var{integer\/}}}
 \index{unit class!instance number, next}%
 \index{unit instance!instance number}%
 
@@ -18451,7 +18541,7 @@ instances of that class exist.
 
 \begin{functiondoc}{Function}{space-instances-of}%
   {\var{unit-instance\/}
-    \returns{} \var{space-instances\/}}
+    \nobr{\returns{} \var{space-instances\/}}}
 \index{space instance!on which a unit instance resides}%
 \index{unit instance!obtaining the space instances on which it resides}%
 
@@ -18553,7 +18643,7 @@ A \glref{space~instance} is also a \glref{unit~instance}, so
 
 \begin{functiondoc}{Generic~Function}{unduplicated-slot-names}{%
     \var{instance\/}
-    \returns{} \var{unduplicated-slot-names\/}}
+    \nobr{\returns{} \var{unduplicated-slot-names\/}}}
 \index{instance!duplicating!unduplicated slots}%
 \index{unit instance!duplicating!unduplicated slots}%
 \index{duplicating!unit instance!specifying unduplicated slots}%
@@ -18612,11 +18702,11 @@ not duplicated by \nobr{\textbf{\entlink{make-duplicate-instance}}} and
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Macro}{with-changing-dimension-values}%
-  {\code{(}\var{unit-instance\/} 
-         [\var{dimension-name\/}\superstar{}]\code{)}
-    \var{declaration\/}\superstar{}
-    \var{form\/}\superstar{}
-    \returns{} \var{result\/}\superstar}
+  {\nobr{\code{(}\var{unit-instance\/}}
+    \nobr{[\var{dimension-name\/}\superstar{}]\code{)}}
+    \nobr{\var{declaration\/}\superstar{}}
+    \nobr{\var{form\/}\superstar{}}
+    \nobr{\returns{} \var{result\/}\superstar}}
 \index{unit instance!storage repositioning}%
   
 \fnsyntax
@@ -18721,7 +18811,7 @@ end of the link that have consistent values.
 
 \begin{functiondoc}{Function}{check-link-definitions}{%
     \nobr{\code{\&optional} \var{silent errorp\/}}
-    \returns{} \var{boolean\/}}
+    \nobr{\returns{} \var{boolean\/}}}
 \index{link!definitions, checking consistency of}%
 
 \fnsyntax
@@ -18793,7 +18883,7 @@ Check again, generating an error on the inconsistency:
   > (check-link-definitions nil 't)
   Error: The inverse of link MISMATCHED-LINK in unit-class BAD refers
          to unit-class MISSING, which is not defined.
-  >>\goodpagebreak
+  >>
 \end{example}
 %
 Check again, silently:
@@ -18895,7 +18985,7 @@ default effective link-definition \glref{metaobject~class} of
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Generic~Function}{link-instance-of}{\var{object\/}
-    \returns{} \var{instance\/}}
+    \nobr{\returns{} \var{instance\/}}}
 
 \fnsyntax
 
@@ -18966,8 +19056,8 @@ and an informative \nobr{\textbf{\entlink{print-instance-slots}}} method:
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Macro}{linkf}%
- {\var{\glref{link-slot-place} unit-instance-or-instances\/}
-   \returns{} \var{unit-instance-or-instances\/}} 
+ {\var{\glref{link-slot-place} \nobr{unit-instance-or-instances\/}}
+   \nobr{\returns{} \var{unit-instance-or-instances\/}}}
 \index{unit instance!adding links between}%
 \index{link!adding}%
 
@@ -19072,8 +19162,8 @@ This time, add a \glref{link-pointer~object} as a new pointer:
 
 \nofndocindex
 \begin{functiondoc}{Macro}{link-setf}%
- {\var{\glref{link-slot-place} unit-instance-or-instances\/}
-   \returns{} \var{unit-instance-or-instances\/}} 
+ {\var{\glref{link-slot-place} \nobr{unit-instance-or-instances\/}}
+   \nobr{\returns{} \var{unit-instance-or-instances\/}}}
 \index{unit instance!adding links between}%
 \index{unit instance!adding links between after removing}%
 \index{link!adding}%
@@ -19231,7 +19321,7 @@ slightly faster.
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Generic~Function}{link-slot-p}{\var{slot\/}
-    \returns{} \var{slot-or-nil\/}}
+    \nobr{\returns{} \var{slot-or-nil\/}}}
 
 \fnsyntax
 
@@ -19333,8 +19423,9 @@ and an informative \nobr{\textbf{\entlink{print-instance-slots}}} method:
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Macro}{unlinkf}%
-  {\var{\glref{link-slot-place} unit-instance-or-instances\/}
-    \returns{} \var{unit-instance-or-instances\/}} 
+  {\var{\glref{link-slot-place}
+      \nobr{unit-instance-or-instances\/}}
+    \nobr{\returns{} \var{unit-instance-or-instances\/}}}
 \index{unit instance!removing links between}%
 \index{link!removing}%
 
@@ -19533,9 +19624,10 @@ abstract classes that cannot be signaled.
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{add-event-function}%
-  {\var{function\/} [\var{event-class-specifier\/} 
-    [\var{unit-class-or-instance-specifier\/}]] \\
-    \code{\&key} \var{slot-names paths permanent priority\/}}
+  {\var{function\/} 
+    \nobr{[\var{event-class-specifier\/}}
+    \nobr{[\var{unit-class-or-instance-specifier\/}]]}
+    \nobr{\code{\&key} \var{slot-names paths permanent priority\/}}}
 \index{event function!adding}%
 
 %% Although the [] syntax is normally used for macros to denote optional
@@ -19629,11 +19721,11 @@ or simply:
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Macro}{define-event-class}{\var{event-class-name\/} 
-   \code{(}\{\var{superclass-name\/}\}\superstar\code{)}
-   [\var{documentation\/}] \\
-   \code{(}\{\var{slot-specifier\/}\}\superstar\code{)}
-   \{\var{class-option\/}\}\superstar{} 
-   \returns{} \var{new-event-class\/}}
+    \nobr{\code{(}\{\var{superclass-name\/}\}\superstar\code{)}}
+    \nobr{[\var{documentation\/}]}
+    \nobr{\code{(}\{\var{slot-specifier\/}\}\superstar\code{)}}
+    \nobr{\{\var{class-option\/}\}\superstar{}}
+    \nobr{\returns{} \var{new-event-class\/}}}
 \index{event class!defining/redefining}%
 \index{defining!an event class}%
 \index{redefining!an event class}%
@@ -19786,9 +19878,9 @@ the \glref{event} that is being signaled.
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{describe-event-printing}%
-  {[\var{event-class-specifier\/} 
-    [\var{unit-class-or-instance-specifier\/}]] \\
-    \code{\&key} \var{slot-names paths\/}}
+  {\nobr{[\var{event-class-specifier\/}}
+    \nobr{[\var{unit-class-or-instance-specifier\/}]]}
+    \nobr{\code{\&key} \var{slot-names paths\/}}}
 \index{event printing!printing information about}%
 \index{printing!information about!event printing}%
 
@@ -19866,9 +19958,9 @@ Describe all event printing:
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{disable-event-printing}%
-  {[\var{event-class-specifier\/} 
-    [\var{unit-class-or-instance-specifier\/}]] \\
-    \code{\&key} \var{slot-names paths\/}}
+  {\nobr{[\var{event-class-specifier\/}}
+    \nobr{[\var{unit-class-or-instance-specifier\/}]]}
+    \nobr{\code{\&key} \var{slot-names paths\/}}}
 \index{event printing!disabling}%
 \index{disabling!event printing}%
 
@@ -19936,9 +20028,9 @@ Disable all event printing:
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{enable-event-printing}%
-{[\var{event-class-specifier\/} 
-[\var{unit-class-or-instance-specifier\/}]] \\
-\code{\&key} \var{slot-names paths\/}}
+  {\nobr{[\var{event-class-specifier\/}}
+    \nobr{[\var{unit-class-or-instance-specifier\/}]]}
+    \nobr{\code{\&key} \var{slot-names paths\/}}}
 \index{event printing!enabling}%
 
 %% Although the [] syntax is normally used for macros to denote optional
@@ -20013,7 +20105,7 @@ or simply:
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{evfn-printv}{\var{event-class\/} 
-    \&rest \var{args\/}}
+    \nobr{\&rest \var{args\/}}}
 \index{debugging, using evfn-printv@using \textbf{evfn-printv}}% 
 
 \fnsyntax
@@ -20054,9 +20146,9 @@ to be invoked when \nobr{\code{create-instance-event}} is signaled on a
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{remove-all-event-functions}%
-{[\var{event-class-specifier\/} 
-[\var{unit-class-or-instance-specifier\/}]] \\
-\code{\&key} \var{slot-names paths permanent\/}}
+  {\nobr{[\var{event-class-specifier\/}}
+    \nobr{[\var{unit-class-or-instance-specifier\/}]]}
+    \nobr{\code{\&key} \var{slot-names paths permanent\/}}}
 \index{event function!removing all}%
 
 %% Although the [] syntax is normally used for macros to denote optional
@@ -20132,9 +20224,10 @@ or simply:
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{remove-event-function}%
-{\var{function\/} [\var{event-class-specifier\/} 
-[\var{unit-class-or-instance-specifier\/}]] \\
-\code{\&key} \var{slot-names paths permanent\/}}
+  {\var{function\/}
+ \nobr{[\var{event-class-specifier\/}}
+ \nobr{[\var{unit-class-or-instance-specifier\/}]]}
+ \nobr{\code{\&key} \var{slot-names paths permanent\/}}}
 \index{event function!removing}%
 
 %% Although the [] syntax is normally used for macros to denote optional
@@ -20213,9 +20306,9 @@ or simply:
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{resume-event-printing}%
-{[\var{event-class-specifier\/} 
-[\var{unit-class-or-instance-specifier\/}]] \\
-\code{\&key} \var{slot-names paths\/}}
+  {[\var{event-class-specifier\/} 
+    \nobr{[\var{unit-class-or-instance-specifier\/}]]}
+    \nobr{\code{\&key} \var{slot-names paths\/}}}
 \index{event printing!resuming}%
 
 %% Although the [] syntax is normally used for macros to denote optional
@@ -20284,7 +20377,7 @@ Resuming event printing does not enable event printing that is disabled.
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{signal-event}{\var{event-class\/}
-  \code{\&rest} \var{initargs\/}}
+    \nobr{\code{\&rest} \var{initargs\/}}}
 \index{event!signaling}%
 \index{signaling!an event}%
 
@@ -20391,9 +20484,9 @@ subclass of \nobr{\textbf{\glref{standard-gbbopen-instance}}}.
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{suspend-event-printing}%
-{[\var{event-class-specifier\/} 
-[\var{unit-class-or-instance-specifier\/}]] \\
-\code{\&key} \var{slot-names paths\/}}
+  {[\var{event-class-specifier\/} 
+    \nobr{[\var{unit-class-or-instance-specifier\/}]]}
+    \nobr{\code{\&key} \var{slot-names paths\/}}}
 \index{event printing!suspending}%
 
 %% Although the [] syntax is normally used for macros to denote optional
@@ -20466,10 +20559,10 @@ Suspend all event printing associated with \nobr{\code{possible-hyp}}
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Macro}{with-events-disabled}%
-  {\code{(}\var{option\/}\superstar{}\code{)}
-    \var{declaration\/}\superstar{}
-    \var{form\/}\superstar{}
-    \returns{} \var{result\/}\superstar}
+  {\nobr{\code{(}\var{option\/}\superstar{}\code{)}}
+    \nobr{\var{declaration\/}\superstar{}}
+    \nobr{\var{form\/}\superstar{}}
+    \nobr{\returns{} \var{result\/}\superstar}}
 \index{disabling!event signaling}%
 \index{events!disabling signaling of}%
   
@@ -20519,10 +20612,10 @@ Create a \code{hyp} without signaling any events:
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Macro}{with-events-enabled}%
-  {\code{(}\var{option\/}\superstar{}\code{)}
-    \var{declaration\/}\superstar{}
-    \var{form\/}\superstar{}
-    \returns{} \var{result\/}\superstar}
+  {\nobr{\code{(}\var{option\/}\superstar{}\code{)}}
+    \nobr{\var{declaration\/}\superstar{}}
+    \nobr{\var{form\/}\superstar{}}
+    \nobr{\returns{} \var{result\/}\superstar}}
 \index{enabling event signaling}%
 \index{events!enabling signaling of}%
   
@@ -20668,7 +20761,7 @@ an interval is contracted into a non-integral point range by
 
 \begin{functiondoc}{Function}{copy-interval}%
   {\var{interval\/}
-    \returns{} \var{new-interval\/}}
+    \nobr{\returns{} \var{new-interval\/}}}
 \index{copy, an interval}%
 \index{interval!copying}%
 
@@ -20722,7 +20815,7 @@ two-element list, or two-element array) is maintained in the newly allocated
 
 \begin{functiondoc}{Function}{expand-interval}%
   {\var{interval amount\/}
-    \returns{} \var{new-interval\/}}
+    \nobr{\returns{} \var{new-interval\/}}}
 \index{expand, an interval}%
 \index{interval!expanding}%
 
@@ -20787,7 +20880,7 @@ center point of the original \var{interval}.
 \begin{functiondoc}{Function}{expand-point}%
   {\var{point amount\/}
     \nobr{\code{\&optional} \var{type-specifier\/}}
-    \returns{} \var{new-interval\/}}
+    \nobr{\returns{} \var{new-interval\/}}}
 \index{expand, a point into an interval}%
 \index{point!expanding into an interval}%
 
@@ -20911,7 +21004,7 @@ declaration:
 
 \begin{functiondoc}{Function}{interval-end}%
   {\var{interval\/}
-    \returns{} \var{end-value\/}}
+    \nobr{\returns{} \var{end-value\/}}}
 \index{end value, of an interval}%
 \index{interval!obtaining the end value}%
 
@@ -20966,7 +21059,7 @@ declaration:
 
 \begin{functiondoc}{Function}{interval-start}%
   {\var{interval\/} 
-    \returns{} \var{start-value\/}}
+    \nobr{\returns{} \var{start-value\/}}}
 \index{start value, of an interval}%
 \index{interval!obtaining the start value}%
 
@@ -21021,7 +21114,7 @@ declaration:
 
 \begin{functiondoc}{Function}{interval-values}%
   {\var{interval\/} 
-    \returns{} \var{start-value, end-value\/}}
+    \nobr{\returns{} \var{start-value, end-value\/}}}
 \index{start value, of an interval}%
 \index{end value, of an interval}%
 \index{values, start and end, of an interval}%
@@ -21086,7 +21179,7 @@ declaration:
 \begin{functiondoc}{Function}{make-interval}%
   {\var{start end\/} 
     \nobr{\code{\&optional} \var{type-specifier\/}}
-    \returns{} \var{new-interval\/}}
+    \nobr{\returns{} \var{new-interval\/}}}
 \index{make, an interval}%
 \index{interval!making}%
 
@@ -21142,7 +21235,7 @@ declaration:
 
 \begin{functiondoc}{Function}{nexpand-interval}%
   {\var{interval amount\/}
-    \returns{} \var{interval\/}}
+    \nobr{\returns{} \var{interval\/}}}
 \index{expand, an interval}%
 \index{interval!expanding}%
 
@@ -21201,7 +21294,7 @@ amount greater than one-half of its width will result in a zero-width
 
 \begin{functiondoc}{Function}{nshift-interval}%
   {\var{interval amount\/}
-    \returns{} \var{interval\/}}
+    \nobr{\returns{} \var{interval\/}}}
 \index{shift, an interval}%
 \index{interval!shifting}%
 
@@ -21253,7 +21346,7 @@ amount greater than one-half of its width will result in a zero-width
 
 \begin{functiondoc}{Function}{shift-interval}%
   {\var{interval amount\/}
-    \returns{} \var{new-interval\/}}
+    \nobr{\returns{} \var{new-interval\/}}}
 \index{shift, an interval}%
 \index{interval!shifting}%
 
@@ -21329,8 +21422,9 @@ This section contains \nobr{\code{:gbbopen-core}} entities that pertain to
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Generic~Function}{add-instance-to-space-instance}%
-  {\var{unit-instance space-instance-or-path\/}
-    \returns{} \var{unit-instance\/}}
+  {\var{\nobr{unit-instance}
+      \nobr{space-instance-or-path\/}}
+    \nobr{\returns{} \var{unit-instance\/}}}
 \index{unit instance!adding to a space instance}%
 \index{space instance!adding unit instance to}%
 
@@ -21405,7 +21499,7 @@ or
 
 \begin{functiondoc}{Generic~Function}{allowed-unit-classes-of}%
   {\var{space-instance\/}
-    \returns{} \var{extended-unit-classes-specification-list\/}}
+    \nobr{\returns{} \var{extended-unit-classes-specification-list\/}}}
 \index{space instance!allowed unit classes}%
 
 \fnsyntax
@@ -21456,8 +21550,9 @@ classes that can have their \glref{unit~instances} stored on the \nobr{\code{(bb
 
 \begin{functiondoc}{Function}{change-space-instance}{%
     \var{space-instance\/}
-    \code{\&key} \var{allowed-unit-classes dimensions storage\/}
-    \returns{} \var{space-instance\/}}
+    \code{\&key} 
+    \var{\nobr{allowed-unit-classes} dimensions storage\/}
+    \nobr{\returns{} \var{space-instance\/}}}
 \index{changing!a space instance characteristics}%
 \index{allowed unit classes!of a space instance!changing}%
 \index{dimensions!of a space instance!changing}%
@@ -21593,7 +21688,7 @@ allowed unit classes.
 
 \begin{functiondoc}{Generic~Function}{children-of}%
   {\var{space-instance\/}
-    \returns{} \var{space-instances\/}}
+    \nobr{\returns{} \var{space-instances\/}}}
 \index{space instance!finding children of}%
 
 \fnsyntax
@@ -21710,11 +21805,11 @@ or
 
 \begin{functiondoc}{Macro}{define-space-class}%
    {\var{space-class-name\/} 
-   \code{(}\{\var{superclass-name\/}\}\superstar\code{)}
-   [\var{documentation\/}] \\
-   \code{(}\{\var{slot-specifier\/}\}\superstar\code{)}
-   \{\var{class-option\/}\}\superstar{}
-   \returns{} \var{new-space-class\/}}
+     \nobr{\code{(}\{\var{superclass-name\/}\}\superstar\code{)}}
+     [\var{documentation\/}]
+     \nobr{\code{(}\{\var{slot-specifier\/}\}\superstar\code{)}}
+     \nobr{\{\var{class-option\/}\}\superstar{}}
+     \nobr{\returns{} \var{new-space-class\/}}}
 \index{space class!defining/redefining}%
 \index{defining!a space class}%
 \index{redefining!a space class}%
@@ -21905,9 +22000,10 @@ one \glref{instance} of the \nobr{\code{space-instance-with-lock}}
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{delete-blackboard-repository}%
-  {\code{\&key} \var{all-classes
-                     disable-events 
-                     retain-classes\/}}
+  {\code{\&key} 
+    \var{\nobr{all-classes}
+      \nobr{disable-events}
+      \nobr{retain-classes\/}}}
 \index{unit instance!deleting all}%
 \index{space instance!deleting all}%
 
@@ -22069,7 +22165,7 @@ Delete every space instance:
 
 \begin{functiondoc}{Generic~Function}{delete-space-instance}%
     {\var{space-instance-or-path\/}
-    \returns{} \var{deleted-space-instance\/}}
+      \nobr{\returns{} \var{deleted-space-instance\/}}}
 \index{deleting!a space instance}%
 \index{space instance!deleting}%
 
@@ -22351,7 +22447,7 @@ described \glref{space~instance}.
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Macro}{do-space-instances}%
-  {(\var{var space-instance-regexp\/})
+  {\nobr{(\var{var space-instance-regexp\/})}
     \nobr{\{\var{tag\/} \vbar{} \var{form\/}\}\superstar}}
 
 \fnsyntax
@@ -22407,7 +22503,7 @@ Remove all \code{hyp} \glref{unit~instances} from
 
 \begin{functiondoc}{Function}{find-space-instance-by-path}%
   {\var{space-instance-path\/}
-    \returns{} \var{space-instance\/} or \nil}
+    \nobr{\returns{} \var{space-instance\/} or \nil}}
 
 \fnsyntax
 
@@ -22448,7 +22544,7 @@ Find the \glref{space~instance} with path \nobr{\code{(bb hyps)}}:
 
 \begin{functiondoc}{Function}{find-space-instances}%
   {\var{space-instance-regexp\/}
-    \returns{} \var{space-instances\/}}
+    \nobr{\returns{} \var{space-instances\/}}}
 
 \fnsyntax
 
@@ -22515,10 +22611,14 @@ Return all the \glref{space~instances} \nobr{\code{(bb)}} and below:
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{make-space-instance}{\var{path\/}
-    \code{\&rest} \var{initargs\/} \\ 
-    \code{\&key} \var{allowed-unit-classes dimensions storage 
-      make-parents class\/} \\
-    \returns{} \var{space-instance\/}}
+    \nobr{\code{\&rest} \var{initargs\/}} 
+    \code{\&key} 
+    \var{\nobr{allowed-unit-classes}
+      dimensions 
+      storage 
+      \nobr{make-parents}
+      class\/} \\
+    \nobr{\returns{} \var{space-instance\/}}}
 \index{creating!a space instance}%
 \index{making!a space instance}%
 \index{space instance!creating}%
@@ -22707,7 +22807,8 @@ shorthand and is preferable stylistically.
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{map-space-instances}%
-  {\var{function space-instance-regexp\/}}
+  {\var{function
+      \nobr{space-instance-regexp\/}}}
 
 \fnsyntax
 
@@ -22765,7 +22866,7 @@ Remove all \code{hyp} \glref{unit~instances} from
 
 \begin{functiondoc}{Generic~Function}{parent-of}%
   {\var{space-instance\/}
-    \returns{} \var{space-instances\/}}
+    \nobr{\returns{} \var{space-instances\/}}}
 \index{space instance!finding parent of}%
 
 \fnsyntax
@@ -22822,7 +22923,8 @@ the \nobr{\code{(bb)}} \glref{space~instance}:
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Generic~Function}{remove-instance-from-space-instance}%
-  {\var{unit-instance space-instance\/}}
+  {\var{unit-instance
+      \nobr{space-instance\/}}}
 \index{unit instance!removing from a space instance}%
 \index{space instance!removing unit instance from}%
 
@@ -22890,7 +22992,7 @@ or
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{reset-gbbopen}%
-  {\code{\&key} \var{disable-events\/}}
+  {\nobr{\code{\&key} \var{disable-events\/}}}
 \index{unit instance!deleting all}%
 \index{space instance!deleting all}%
 
@@ -23058,15 +23160,76 @@ mapping.
 
 %% ------------------------------------------------------------------------
 
+\begin{functiondoc}[find-verbose-var]{Variable}{*find-verbose*}{}%
+
+\fnsyntax
+
+\fnpurpose Controls the printing of retrieval and matching information by
+\nobr{\textbf{\entlink{do-instances-on-space-instances}}},
+\nobr{\textbf{\entlink{filter-instances}}},
+\nobr{\textbf{\entlink{find-instances}}}, and
+\nobr{\textbf{\entlink{map-instances-on-space-instances}}} when
+the keyword argument \code{:verbose} has not been specified.
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:gbbopen-core}
+
+\fnvaluetype A \glref{generalized~boolean}
+
+\fninitialvalue \nil
+
+\begin{alsos}{do-instances-on-space-instances}
+\also[do-instances-on-space-instances]
+\also[filter-instances]
+\also[find-instances]
+\also[map-instances-on-space-instances]
+\end{alsos}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}[use-marking-var]{Variable}{*use-marking*}{}%
+
+\fnsyntax
+
+\fnpurpose Controls the use of instance marking versus eq sets (ESETs) for
+retrieval and matching by
+\nobr{\textbf{\entlink{do-instances-on-space-instances}}},
+\nobr{\textbf{\entlink{find-instances}}}, and
+\nobr{\textbf{\entlink{map-instances-on-space-instances}}} when the keyword
+argument \code{:use-marking} has not been specified.
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:gbbopen-core}
+
+\fnvaluetype A \glref{generalized~boolean}
+
+\fninitialvalue \code{t}
+
+\begin{alsos}{do-instances-on-space-instances}
+\also[do-instances-on-space-instances]
+\also[filter-instances]
+\also[find-instances]
+\also[map-instances-on-space-instances]
+\end{alsos}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
 \begin{functiondoc}[warn-about-unusual-requests-var]{Variable}%
 {*warn-about-unusual-requests*}{}%
 
 \fnsyntax
 
 \fnpurpose Control warning messages of ``unusual''
-\nobr{\textbf{\entlink{find-instances}}} and
-\nobr{\textbf{\entlink{filter-instances}}} requests that are likely to be
-mistakes.
+\nobr{\textbf{\entlink{do-instances-on-space-instances}}},
+\nobr{\textbf{\entlink{find-instances}}}, and
+\nobr{\textbf{\entlink{map-instances-on-space-instances}}} requests that are
+likely to be mistakes.
 
 \fnpackage \code{:gbbopen}
 
@@ -23076,9 +23239,11 @@ mistakes.
 
 \fninitialvalue True
 
-\begin{alsos}{filter-instances}
+\begin{alsos}{do-instances-on-space-instances}
+\also[do-instances-on-space-instances]
 \also[filter-instances]
 \also[find-instances]
+\also[map-instances-on-space-instances]
 \end{alsos}
 
 \fnexample
@@ -23100,9 +23265,10 @@ Suppress the warning message associated with an unachievable retrieval pattern:
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Macro}{do-instances-of-class}%
-{(\var{var unit-classes-specifier\/})   
-  \var{declaration\/}\superstar{} 
-  \nobr{\{\var{tag\/} \vbar{} \var{form\/}\}\superstar}}
+  {(\var{var 
+      \nobr{unit-classes-specifier\/})}
+    \var{declaration\/}\superstar{} 
+    \nobr{\{\var{tag\/} \vbar{} \var{form\/}\}\superstar}}
 \index{unit class!operating on all instances of}%
 \index{unit instance!operating on}%
 
@@ -23208,8 +23374,15 @@ If \var{arg\/} is omitted, \code{t} is assumed.
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Macro}{do-instances-on-space-instances}%
-  {(\var{var unit-classes-specifier space-instances\/} 
-    \code{\&key} \var{pattern filter-before filter-after\/})
+  {(\var{var
+      \nobr{unit-classes-specifier}
+      \nobr{space-instances\/}}
+    \code{\&key} 
+    \var{pattern
+      \nobr{filter-before}
+      \nobr{filter-after}
+      \nobr{use-marking}
+      verbose\/})
     \nobr{\{\var{tag\/} \vbar{} \var{form\/}\}\superstar}}
 \index{unit class!operating on instances of}%
 \index{unit instance!operating on}%
@@ -23239,6 +23412,10 @@ optionally selected by a \glref{retrieval~pattern}.
   pattern-matching tests occur
 \arg[filter-after] A single-argument predicate to be
   applied after pattern-matching tests occur
+\arg[use-marking] A \glref{generalized~boolean} 
+  (default is \nobr{\textbf{\entlink{*use-marking*}}})
+\arg[verbose] A \glref{generalized~boolean} 
+  (default is \nobr{\textbf{\entlink{*find-verbose*}}})
 \arg[declaration] A declare expression (not evaluated)
 \arg[tag] A \code{go} tag (not evaluated)
 \arg[form] A \glref{form}
@@ -23280,6 +23457,9 @@ one \glref{space~instance} in \var{space-instances}. The \var{pattern\/}
 and \nobr{\code{within\%}}.
 
 \begin{alsos}{map-instances-of-class}
+\also[*find-verbose*]
+\also[*use-marking*]
+\also[*warn-about-unusual-requests*]
 \also[do-instances-of-class]
 \also[find-instances]
 \also[find-instances-of-class]
@@ -23334,7 +23514,10 @@ than 0.5:
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Macro}{do-sorted-instances-of-class}%
-  {(\var{var unit-classes-specifier predicate\/} \&key \var{key\/})
+  {(\var{var 
+      \nobr{unit-classes-specifier}
+      predicate\/} 
+    \nobr{\&key \var{key\/})}
     \nobr{\{\var{tag\/} \vbar{} \var{form\/}\}\superstar}}
 \index{unit class!operating on instances of}%
 \index{unit instance!operating on}%
@@ -23394,8 +23577,11 @@ Print a list of all \code{hyp} \glref{instance~names}, in ascending order:
 
 \begin{functiondoc}{Function}{filter-instances}%
   {\var{unit-instances pattern\/}
-    \code{\&key} \var{filter-before filter-after\/}
-    \returns{} \var{matching-unit-instances\/}}
+    \code{\&key}
+    \var{\nobr{filter-before}
+      \nobr{filter-after}
+      verbose\/}
+    \nobr{\returns{} \var{matching-unit-instances\/}}}
 \index{unit instance!pattern-based filtering of}%
 \index{pattern-based!filtering}%
 \index{filtering, pattern-based, of unit instances}%
@@ -23417,6 +23603,8 @@ Print a list of all \code{hyp} \glref{instance~names}, in ascending order:
 pattern-matching tests occur
 \arg[filter-after] A single-argument predicate to be
 applied after pattern-matching tests occur
+\arg[verbose] A \glref{generalized~boolean} 
+  (default is \nobr{\textbf{\entlink{*find-verbose*}}})
 \arg[matching-unit-instances] A \glref{proper~list} of \glref{unit~instances}
 \end{args}
 
@@ -23445,6 +23633,7 @@ included in the result---multiple times.
 and \nobr{\code{within\%}}.
 
 \begin{alsos}{map-instances-on-space-instances}
+\also[*find-verbose*]
 \also[*warn-about-unusual-requests*]
 \also[find-all-instances-by-name]
 \also[find-instance-by-name]
@@ -23477,7 +23666,7 @@ and \nobr{\code{within\%}}.
 \begin{functiondoc}{Function}{find-all-instances-by-name}%
   {\var{instance-name\/}
     \nobr{\code{\&optional} \var{unit-class-specifier\/}}
-    \returns{} \var{unit-instances\/}} 
+    \nobr{\returns{} \var{unit-instances\/}}}
 \index{unit instance!retrieving by instance name}%
 \index{name-based retrieval}%
 \index{retrieval!name-based, of unit instances}%
@@ -23559,7 +23748,7 @@ or simply:
 
 \begin{functiondoc}{Function}{find-instance-by-name}{\var{instance-name\/}
     \nobr{\code{\&optional} \var{unit-class-specifier\/}}
-    \returns{} \var{unit-instance\/}} 
+    \nobr{\returns{} \var{unit-instance\/}}}
 \index{unit instance!retrieving by instance name}%
 \index{name-based retrieval}%
 \index{retrieval!name-based, of unit instances}%
@@ -23633,9 +23822,15 @@ which sets \code{=} to be the found \glref{unit~instance}.
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{find-instances}%
-  {\var{unit-classes-specifier space-instances pattern\/} \\ 
-    \code{\&key} \var{filter-before filter-after\/} 
-    \returns{} \var{unit-instances\/}}
+  {\var{\nobr{unit-classes-specifier}
+      \nobr{space-instances}
+      pattern\/} \\ 
+    \code{\&key}
+    \var{\nobr{filter-before}
+      \nobr{filter-after}
+      \nobr{use-marking}
+      verbose\/} 
+    \nobr{\returns{} \var{unit-instances\/}}}
 \index{unit instance!retrieving from space instances}%
 \index{space instance!retrieving unit instances on}%
 \index{pattern-based!retrieval}%
@@ -23662,6 +23857,10 @@ which sets \code{=} to be the found \glref{unit~instance}.
   pattern-matching tests occur
 \arg[filter-after] A single-argument predicate to be applied after
   pattern-matching tests occur
+\arg[use-marking] A \glref{generalized~boolean} 
+  (default is \nobr{\textbf{\entlink{*use-marking*}}})
+\arg[verbose] A \glref{generalized~boolean} 
+  (default is \nobr{\textbf{\entlink{*find-verbose*}}})
 \arg[unit-instances] A \glref{proper~list} of \glref{unit~instances}
 \end{args}
 
@@ -23701,6 +23900,8 @@ dimensional overlap.
 and \nobr{\code{within\%}}.
 
 \begin{alsos}{map-sorted-instances-of-class}
+\also[*find-verbose*]
+\also[*use-marking*]
 \also[*warn-about-unusual-requests*]
 \also[do-instances-of-class]
 \also[do-sorted-instances-of-class]
@@ -23824,7 +24025,7 @@ Find \code{word} \glref{unit~instances} with special characters in them:
 
 \begin{functiondoc}{Function}{find-instances-of-class}%
   {\var{unit-classes-specifier\/}
-    \returns{} \var{unit-instances\/}}
+    \nobr{\returns{} \var{unit-instances\/}}}
 \index{unit class!retrieving all instances of}%
 \index{unit instance!of a unit class, retrieving all}%
 \index{retrieval!all unit instances of a unit class}%
@@ -23894,8 +24095,8 @@ on the list created by \nobr{\textbf{find-instances-of-class}}.
 
 \begin{functiondoc}{Function}{make-instances-of-class-vector}%
   {\var{function unit-classes-specifier\/}
-    \code{\&key} \var{adjustable\/} 
-    \returns{} \var{vector\/}}
+    \nobr{\code{\&key} \var{adjustable\/}}
+    \nobr{\returns{} \var{vector\/}}}
 
 \index{unit class!applying a function to instances of}%
 \index{unit instance!applying a function to}%
@@ -23952,7 +24153,8 @@ or simply:
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{map-instances-of-class}%
-{\var{function unit-classes-specifier\/}}
+  {\var{function
+      \nobr{unit-classes-specifier\/}}}
 \index{unit class!applying a function to instances of}%
 \index{unit instance!applying a function to}%
 
@@ -24053,8 +24255,14 @@ If \var{arg\/} is omitted, \code{t} is assumed.
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{map-instances-on-space-instances}%
-{\var{function unit-classes-specifier space-instances\/} 
-\code{\&key} \var{pattern filter-before filter-after\/}}
+  {\var{function 
+      \nobr{unit-classes-specifier}
+      \nobr{space-instances\/}}
+    \code{\&key} \var{pattern
+      \nobr{filter-before}
+      \nobr{filter-after}
+      \nobr{use-marking}
+      verbose\/}}
 \index{unit class!applying a function to instances of}%
 \index{unit instance!applying a function to}%
 \index{space instance!applying a function to unit instances on}%
@@ -24085,6 +24293,10 @@ If \var{arg\/} is omitted, \code{t} is assumed.
   pattern-matching tests occur
 \arg[filter-after] A single-argument predicate to be
   applied after pattern-matching tests occur
+\arg[use-marking] A \glref{generalized~boolean} 
+  (default is \nobr{\textbf{\entlink{*use-marking*}}})
+\arg[verbose] A \glref{generalized~boolean} 
+  (default is \nobr{\textbf{\entlink{*find-verbose*}}})
 \end{args}
 
 \fndsyntax
@@ -24123,6 +24335,9 @@ dimensional overlap.
 and \nobr{\code{within\%}}.
 
 \begin{alsos}{map-sorted-instances-of-class}
+\also[*find-verbose*]
+\also[*use-marking*]
+\also[*warn-about-unusual-requests*]
 \also[do-instances-of-class]
 \also[do-instances-on-space-instances]
 \also[find-instances]
@@ -24180,7 +24395,10 @@ than 0.5:
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{map-sorted-instances-of-class}%
-{\var{function unit-classes-specifier predicate\/} \&key \var{key\/}}
+  {\var{function 
+      \nobr{unit-classes-specifier}
+      predicate\/}
+    \nobr{\&key \var{key\/}}}
 \index{unit class!applying a function to instances of}%
 \index{unit instance!applying a function to}%
 
@@ -24234,7 +24452,8 @@ Print a list of all \code{hyp} \glref{instance~names}, in ascending order:
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Function}{report-find-stats}{\code{\&key} \var{reset\/}}
+\begin{functiondoc}{Function}{report-find-stats}%
+  {\code{\&key} \var{reset\/}}
 \index{displaying retrieval statistics}%
 \index{find statistics!displaying}%
 \index{retrieval!statistics, displaying}%
@@ -24306,9 +24525,9 @@ report is displayed.
 
 \begin{functiondoc}{Macro}{with-find-stats}%
   {\code{(}\code{\&key} \var{initialize report\/}\code{)}
-    \var{declaration\/}\superstar{}
-    \var{form\/}\superstar{} 
-    \returns{} \var{result\/}\superstar}
+    \nobr{\var{declaration\/}\superstar{}}
+    \nobr{\var{form\/}\superstar{}}
+    \nobr{\returns{} \var{result\/}\superstar}}
 \index{enabling retrieval statistics gathering}%
 \index{displaying retrieval statistics}%
 \index{find statistics!collecting and displaying}%
@@ -24372,8 +24591,8 @@ running an application \glref{function} \nobr{\code{scanner}}:
 
 \begin{functiondoc}{Macro}{without-find-stats}%
   {\var{declaration\/}\superstar{}
-    \var{form\/}\superstar{}
-    \returns{} \var{result\/}\superstar} 
+    \nobr{\var{form\/}\superstar{}}
+    \nobr{\returns{} \var{result\/}\superstar}}
 \index{disabling!retrieval statistics gathering}%
 \index{find statistics!disabling collection of}%
 \index{retrieval!statistics, disabling collection of}%
@@ -24590,9 +24809,10 @@ Send some \code{hyp} \glref{unit~instances} to another agent:
 
 \begin{functiondoc}[initialize-saved-sent-instance]{Generic~Function}%
   {initialize-saved/sent-instance}%
-  {\var{instance slots slot-values 
-      missing-slot-names\/}
-    \returns{} \var{instance\/}}
+  {\var{instance slots 
+      \nobr{slot-values}
+      \nobr{missing-slot-names\/}}
+    \nobr{\returns{} \var{instance\/}}}
 
 \fnsyntax 
 
@@ -24676,8 +24896,10 @@ class definition of \code{hyp}:
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{confirm-if-blackboard-repository-not-empty-p}{%
-    \code{\&key} \var{describe-non-empty-repository pending-action\/} 
-    \returns{} \var{boolean}}
+    \code{\&key}
+    \var{\nobr{describe-non-empty-repository}
+      \nobr{pending-action\/}}
+    \nobr{\returns{} \var{boolean}}}
 \index{blackboard repository!checking if empty}%
 
 \fnsyntax 
@@ -24754,7 +24976,7 @@ is to happen if confirmed positively.
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{empty-blackboard-repository-p}{%
-    \returns{} \var{boolean}}
+    \nobr{\returns{} \var{boolean}}}
 \index{blackboard repository!checking if empty}%
 
 \fnsyntax 
@@ -24796,18 +25018,19 @@ is to happen if confirmed positively.
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{load-blackboard-repository}{\var{pathname\/}
-    \code{\&key} \var{class-name-translations
-                      coalesce-strings
-                      confirm-if-not-empty
-                      disable-events 
-                      estimated-peak-forward-references
-                      external-format
-                      readtable
-                      read-eval
-                      retain-classes 
-                      retain-event-functions
-                      retain-event-printing\/} 
-    \returns{} \var{pathname, saved-time, saved-value\/}}
+    \code{\&key} 
+    \var{\nobr{class-name-translations}
+      \nobr{coalesce-strings}
+      \nobr{confirm-if-not-empty}
+      \nobr{disable-events}
+      \nobr{estimated-peak-forward-references}
+      \nobr{external-format}
+      \nobr{readtable}
+      \nobr{read-eval}
+      \nobr{retain-classes}
+      \nobr{retain-event-functions}
+      \nobr{retain-event-printing\/}}
+    \nobr{\returns{} \var{pathname, saved-time, saved-value\/}}}
 \index{blackboard repository!loading from a file}%
 \index{loading!the blackboard repository from a file}% 
 \index{restoring!the blackboard repository from a file}% 
@@ -24969,7 +25192,7 @@ repository again, translating all \nobr{\code{location}}
 \begin{functiondoc}[omitted-slots-for-saving-sending]{Generic~Function}%
   {omitted-slots-for-saving/sending}{%
     \var{instance\/}
-    \returns{} \var{omitted-slot-names\/}}
+    \nobr{\returns{} \var{omitted-slot-names\/}}}
 \index{instance!saving and sending!specifying omitted slots}%
 \index{unit instance!saving and sending!specifying omitted slots}%
 \index{saving!instance!specifying omitted slots}%
@@ -25032,7 +25255,7 @@ not saved or sent:
 \begin{functiondoc}[print-object-for-saving-sending]{Generic~Function}%
   {print-object-for-saving/sending}%
   {\var{object stream\/}
-    \returns{} \var{object\/}}
+    \nobr{\returns{} \var{object\/}}}
 
 \index{saving!an object}%
 \index{sending!an object}%
@@ -25177,7 +25400,7 @@ many situations.
 
 \begin{functiondoc}[print-slot-for-saving-sending]{Generic~Function}%
   {print-slot-for-saving/sending}%
-  {\var{instance slot-name stream\/}}
+  {\var{instance \nobr{slot-name} stream\/}}
 
 \index{printing!a slot, for saving}%
 \index{printing!a slot, for sending}%
@@ -25244,9 +25467,12 @@ Write the binary value of slot \code{song} in \glref{unit~instances} of
 
 \begin{functiondoc}{Function}{save-blackboard-repository}%
   {\var{pathname\/}
-    \code{\&key} \var{external-format package read-default-float-format 
-                      value\/} 
-    \returns{} \var{saved-repository-pathname\/}}
+    \code{\&key} 
+    \var{\nobr{external-format}
+      package
+      \nobr{read-default-float-format}
+      value\/} 
+                    \nobr{\returns{} \var{saved-repository-pathname\/}}}
 \index{blackboard repository!saving to a file}%
 \index{saving!the blackboard repository to a file}% 
 
@@ -25335,13 +25561,14 @@ repository is loaded:
 \begin{functiondoc}[with-reading-saved-sent-objects-block]{Macro}%
   {with-reading-saved/sent-objects-block}%
   {\code{(}\var{stream\/} 
-    \code{\&key} \var{class-name-translations 
-                      coalesce-strings 
-                      estimated-peak-forward-references
-                      readtable 
-                      read-eval\/}\code{)}
-    \var{form\/}\superstar
-    \returns{} \var{result\/}\superstar}
+    \code{\&key}
+    \var{\nobr{class-name-translations}
+      \nobr{coalesce-strings}
+      \nobr{estimated-peak-forward-references}
+      \nobr{readtable}
+      \nobr{read-eval\/}\code{)}}
+    \nobr{\var{form\/}\superstar}
+    \nobr{\returns{} \var{result\/}\superstar}}
   
 \fnsyntax
 
@@ -25409,9 +25636,10 @@ providing an integer value for \nobr{\var{estimated-peak-forward-references}}.
 \begin{functiondoc}[with-saving-sending-block]{Macro}%
   {with-saving/sending-block}%
   {\code{(}\var{stream\/} 
-    \code{\&key} \var{package read-default-float-format value\/}\code{)}
-    \var{form\/}\superstar
-    \returns{} \var{result\/}\superstar}
+    \nobr{\code{\&key} 
+      \var{package read-default-float-format value\/}\code{)}}
+    \nobr{\var{form\/}\superstar}
+    \nobr{\returns{} \var{result\/}\superstar}}
   
 \fnsyntax
 
@@ -25483,7 +25711,7 @@ operators.
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Macro}{do-queue}{(\var{var queue\/})
-    \var{declaration\/}\superstar{} 
+    \nobr{\var{declaration\/}\superstar{}}
     \nobr{\{\var{tag\/} \vbar{} \var{form\/}\}\superstar}}
 \index{queue!operating on all elements elements of}%
 \index{queue!elements, operating on all elements of}%
@@ -25538,7 +25766,7 @@ Count the number of \glref{pending~KSAs} that were triggered by \code{hyp}:
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Generic~Function}{first-queue-element}{\var{queue\/}
-    \returns{} \var{queue-element\/}}
+    \nobr{\returns{} \var{queue-element\/}}}
 \index{queue!returning first element}%
 \index{first element! of a queue, returning}%
 
@@ -25582,7 +25810,7 @@ Count the number of \glref{pending~KSAs} that were triggered by \code{hyp}:
 
 \begin{functiondoc}{Generic~Function}{insert-on-queue}%
   {\var{queue-element queue\/}
-    \returns{} \var{queue-element\/}}
+    \nobr{\returns{} \var{queue-element\/}}}
 \index{queue!inserting an element on}%
 \index{inserting an item!onto a queue}%
 \index{inserting an item!into an ordered queue}%
@@ -25638,7 +25866,7 @@ end of the queue.
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Generic~Function}{last-queue-element}{\var{queue\/}
-    \returns{} \var{queue-element\/}}
+    \nobr{\returns{} \var{queue-element\/}}}
 \index{queue!returning last element}%
 
 \fnsyntax
@@ -25679,8 +25907,9 @@ end of the queue.
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Function}{make-queue}{\code{\&rest} \var{initargs\/}
-    \returns{} \var{queue\/}}
+\begin{functiondoc}{Function}{make-queue}{%
+    \nobr{\code{\&rest} \var{initargs\/}}
+    \nobr{\returns{} \var{queue\/}}}
 \index{creating!a queue}%
 \index{making!a queue}%
 \index{queue!making a}%
@@ -25787,7 +26016,7 @@ Count the number of \glref{pending~KSAs} that were triggered by
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Generic~Function}{next-queue-element}{\var{queue-element\/}
-   \returns{} \var{next-queue-element\/}}
+    \nobr{\returns{} \var{next-queue-element\/}}}
 \index{queue!returning next element}%
 
 \fnsyntax
@@ -25830,7 +26059,7 @@ Count the number of \glref{pending~KSAs} that were triggered by
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Generic~Function}{nth-queue-element}{\var{n queue\/} 
-    \returns{} \var{queue-element\/}}
+    \nobr{\returns{} \var{queue-element\/}}}
 \index{queue!returning nth element}%
 
 \fnsyntax
@@ -25893,7 +26122,7 @@ Return the last element on \nobr{\code{pending-ksas}} (equivalent to
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Generic~Function}{on-queue-p}{\var{queue-element\/} 
-    \returns{} \var{queue\/} or \nil}
+    \nobr{\returns{} \var{queue\/} or \nil}}
 \index{queue!determining membership on}%
 \index{queue element!determining queue membership of}%
 
@@ -25968,7 +26197,7 @@ as the header of ordered (sorted) GBBopen queues.
 
 \begin{functiondoc}{Generic~Function}{previous-queue-element}%
   {\var{queue-element\/}
-    \returns{} \var{previous-queue-element\/}}
+    \nobr{\returns{} \var{previous-queue-element\/}}}
 \index{queue!returning previous element}%
 
 \fnsyntax
@@ -26075,7 +26304,7 @@ queue of \glref{pending~KSAs}:
 
 \begin{functiondoc}{Generic~Function}{queue-length}{\var{queue\/}
     \nobr{\code{\&optional} \var{recount-p\/}}
-    \returns{} \var{integer\/}}
+    \nobr{\returns{} \var{integer\/}}}
 \index{length!of a queue}%
 \index{queue!obtaining the length of}%
 
@@ -26135,7 +26364,7 @@ queue \nobr{\code{pending-ksas}}:
 
 \begin{functiondoc}{Generic~Function}{remove-from-queue}%
   {\var{queue-element\/} 
-    \returns{} \var{queue-element\/}}
+    \nobr{\returns{} \var{queue-element\/}}}
 \index{queue!removing an element from}%
 
 \fnsyntax
@@ -26176,7 +26405,7 @@ queue \nobr{\code{pending-ksas}}:
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Generic~Function}{show-queue}{\var{queue\/}
-    \code{\&key} \var{start end show-element-function\/}}
+    \nobr{\code{\&key} \var{start end show-element-function\/}}}
 \index{queue!printing elements of}%
 \index{printing!queue, elements of}%
 \index{elements!on a queue, printing}%
@@ -26301,7 +26530,7 @@ Abort the currently executing KSA::
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Generic~Reader}{activation-cycle-of}{\var{ksa\/} 
-    \returns{} \var{cycle-number\/}}
+    \nobr{\returns{} \var{cycle-number\/}}}
 \index{activation cycle, of a KSA}%
 \index{KSA!activation cycle of}%
 
@@ -26349,7 +26578,7 @@ Return the activation cycle of \code{ksa}:
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Generic~Function}{collect-trigger-instances}{\var{source\/}
-    \returns{} \var{trigger-instances\/}} 
+    \nobr{\returns{} \var{trigger-instances\/}}}
 \index{trigger unit instance, of a KSA or event}%
 \index{KSA!collecting trigger unit instances of}%
 \index{event!collecting trigger unit instances of}%
@@ -26409,7 +26638,7 @@ Return the trigger \glref{unit~instances} of a KSA:
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{control-shell-running-p}{\noargs{}
-    \returns{} \var{boolean\/}}
+    \nobr{\returns{} \var{boolean\/}}}
 \index{control-shell!checking running status}%
 
 \fnsyntax
@@ -26447,7 +26676,7 @@ See if the control shell is running:
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{current-control-shell}{\noargs{} 
-    \returns{} \var{control-shell-or-nil\/}}
+    \nobr{\returns{} \var{control-shell-or-nil\/}}}
 \index{control shell!obtaining the current}%
 
 \fnsyntax
@@ -26485,13 +26714,20 @@ See if the control shell is running:
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Macro}{define-ks}{\var{ks-name\/} \code{\&key}
-  \var{activation-predicate enabled execution-function 
-       ks-class ksa-class
-       obviation-events obviation-predicate 
-       precondition-function rating
-       retrigger-events retrigger-function 
-       revalidation-predicate trigger-events\/} 
-   \returns{} \var{ks\/}}
+  \var{\nobr{activation-predicate}
+    \nobr{enabled}
+    \nobr{execution-function}
+    \nobr{ks-class}
+    \nobr{ksa-class}
+    \nobr{obviation-events}
+    \nobr{obviation-predicate}
+    \nobr{precondition-function}
+    \nobr{rating}
+    \nobr{retrigger-events}
+    \nobr{retrigger-function}
+    \nobr{revalidation-predicate}
+    \nobr{trigger-events\/}} 
+     \nobr{\returns{} \var{ks\/}}}
 \index{knowledge source!defining/redefining}%
 \index{defining!a knowledge source}%
 \index{redefining!a knowledge source}%
@@ -26723,11 +26959,11 @@ whenever a \code{hyp} \glref{unit~instance} is created:
 
 \begin{functiondoc}{Macro}{define-ks-class}%
    {\var{ks-class-name\/} 
-   \code{(}\{\var{superclass-name\/}\}\superstar\code{)}
-   [\var{documentation\/}] \\
-   \code{(}\{\var{slot-specifier\/}\}\superstar\code{)}
-   \{\var{class-option\/}\}\superstar{}
-   \returns{} \var{new-ks-class\/}}
+     \nobr{\code{(}\{\var{superclass-name\/}\}\superstar\code{)}}
+     [\var{documentation\/}] \\
+     \nobr{\code{(}\{\var{slot-specifier\/}\}\superstar\code{)}}
+     \nobr{\{\var{class-option\/}\}\superstar{}}
+     \nobr{\returns{} \var{new-ks-class\/}}}
 \index{ks class!defining/redefining}%
 \index{defining!a ks class}%
 \index{redefining!a ks class}%
@@ -26923,11 +27159,11 @@ Do the same, but with a mixin class:
 
 \begin{functiondoc}{Macro}{define-ksa-class}%
    {\var{ksa-class-name\/} 
-   \code{(}\{\var{superclass-name\/}\}\superstar\code{)}
-   [\var{documentation\/}] \\
-   \code{(}\{\var{slot-specifier\/}\}\superstar\code{)}
-   \{\var{class-option\/}\}\superstar{}
-   \returns{} \var{new-ksa-class\/}}
+     \nobr{\code{(}\{\var{superclass-name\/}\}\superstar\code{)}}
+     [\var{documentation\/}] \\
+     \nobr{\code{(}\{\var{slot-specifier\/}\}\superstar\code{)}}
+     \{\var{class-option\/}\}\superstar{}
+     \nobr{\returns{} \var{new-ksa-class\/}}}
 \index{ksa class!defining/redefining}%
 \index{defining!a ksa class}%
 \index{redefining!a ksa class}%
@@ -27172,14 +27408,22 @@ The description is printed to the {\bf *standard-output*} stream.
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Function}{ensure-ks}{\var{ks-name\/} \code{\&key}
-  \var{activation-predicate enabled execution-function 
-       ks-class ksa-class
-       obviation-events obviation-predicate 
-       precondition-function rating
-       retrigger-events retrigger-function 
-       revalidation-predicate trigger-events\/} 
-   \returns{} \var{ks\/}}
+\begin{functiondoc}{Function}{ensure-ks}{\var{ks-name\/} 
+    \code{\&key}
+    \var{\nobr{activation-predicate}
+      \nobr{enabled}
+      \nobr{execution-function}
+      \nobr{ks-class}
+      \nobr{ksa-class}
+      \nobr{obviation-events}
+      \nobr{obviation-predicate}
+      \nobr{precondition-function}
+      \nobr{rating}
+      \nobr{retrigger-events}
+      \nobr{retrigger-function}
+      \nobr{revalidation-predicate}
+      \nobr{trigger-events}\/} 
+    \nobr{\returns{} \var{ks\/}}}
 \index{knowledge source!defining/redefining}%
 \index{defining!a knowledge source}%
 \index{redefining!a knowledge source}%
@@ -27279,7 +27523,7 @@ started:
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Generic~Reader}{executed-ksas-of}{\var{control-shell\/} 
-    \returns{} \var{ksa-queue\/}}
+    \nobr{\returns{} \var{ksa-queue\/}}}
 \index{executed KSAs, of a control shell}%
 \index{control shell!executed KSAs of}%
 
@@ -27346,7 +27590,7 @@ Show the control shell's pending \glref{KSAs} queue (early in a
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Generic~Reader}{execution-cycle-of}{\var{ksa\/} 
-    \returns{} \var{cycle-number\/} or \nil}
+    \nobr{\returns{} \var{cycle-number\/} or \nil}}
 \index{execution cycle, of a KSA}%
 \index{KSA!execution cycle of}%
 
@@ -27395,7 +27639,7 @@ Return the execution cycle of \code{ksa}:
 %% ------------------------------------------------------------------------
  
 \begin{functiondoc}{Function}{exit-control-shell}%
-  {\code{\&rest} \var{result-form\/}\superstar}
+  {\nobr{\code{\&rest} \var{result-form\/}\superstar}}
 \index{agenda shell!exiting}%
 \index{control shell!exiting}%
 \index{exiting, agenda shell}%
@@ -27438,7 +27682,7 @@ executing control shell.
 %% ------------------------------------------------------------------------
  
 \begin{functiondoc}{Function}{find-ks-by-name}{\var{ks-name\/} 
-  \returns{} \var{ks\/} or \nil}
+    \nobr{\returns{} \var{ks\/} or \nil}}
 \index{KS!finding by name}%
 
 \fnsyntax
@@ -27501,7 +27745,7 @@ The class \textbf{ks} is the default \glref{class} of
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Generic~Function}{ks-enabled-p}{\var{ks\/} 
-    \returns{} \var{boolean\/}}
+    \nobr{\returns{} \var{boolean\/}}}
 \index{KS!enabled}%
 
 \fnsyntax
@@ -27571,7 +27815,7 @@ Check once again:
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Generic~Reader}{ks-of}{\var{ksa\/} 
-    \returns{} \var{ks\/}}
+    \nobr{\returns{} \var{ks\/}}}
 \index{knowledge source!of a KSA}%
 \index{KS!of a KSA}%
 \index{KSA!KS of}%
@@ -27674,7 +27918,7 @@ the header of \glref{KSA} queues.
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Generic~Reader}{obviated-ksas-of}{\var{control-shell\/} 
-    \returns{} \var{ksa-queue\/}}
+    \nobr{\returns{} \var{ksa-queue\/}}}
 \index{obviated KSAs, of a control shell}%
 \index{control shell!obviated KSAs of}%
 
@@ -27738,7 +27982,7 @@ Show the control shell's obviated \glref{KSAs} queue (early in a
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Generic~Reader}{obviation-cycle-of}{\var{ksa\/} 
-    \returns{} \var{cycle-number\/} or \nil}
+    \nobr{\returns{} \var{cycle-number\/} or \nil}}
 \index{KSA!obviation cycle of}%
 
 \fnsyntax
@@ -27815,7 +28059,7 @@ the header of ordered (sorted) \glref{KSA} queues.
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Generic~Reader}{pending-ksas-of}{\var{control-shell\/} 
-    \returns{} \var{ordered-ksa-queue\/}}
+    \nobr{\returns{} \var{ordered-ksa-queue\/}}}
 \index{pending KSAs, of a control shell}%
 \index{control shell!pending KSAs of}%
 
@@ -27899,7 +28143,7 @@ by the Agenda Shell to order \glref{pending~KSAs}.
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Generic~Accessor}{rating-of}{\var{ksa\/} 
-    \returns{} \var{rating\/}}
+    \nobr{\returns{} \var{rating\/}}}
 \index{KSA!rating of}%
 
 \fnsyntax
@@ -27963,8 +28207,8 @@ related macros with this accessor.
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{restart-control-shell}{%
-    \code{\&key} \var{instance-name\/}
-    \returns{} \var{result\/}\superstar}
+    \nobr{\code{\&key} \var{instance-name\/}}
+    \nobr{\returns{} \var{result\/}\superstar}}
 \index{agenda shell, restarting}%
 \index{control shell!restarting}%
 \index{restart, agenda shell}%
@@ -28048,7 +28292,7 @@ Restart the Agenda Shell (in this case, without any \glref{KSs} defined):
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Generic~Function}{sole-trigger-event-of}{\var{ksa\/} 
-    \returns{} \var{event\/} or \nil}
+    \nobr{\returns{} \var{event\/} or \nil}}
 \index{trigger event, of a KSA or event}%
 \index{KSA!trigger event of}%
 \index{event!trigger event of}%
@@ -28099,7 +28343,7 @@ Return the (sole) trigger \glref{event} of a \glref{KSA}:
 
 \begin{functiondoc}{Generic~Function}{sole-trigger-instance-of}%
   {\var{source\/} 
-    \returns{} \var{trigger-instance\/} or \nil}
+    \nobr{\returns{} \var{trigger-instance\/} or \nil}}
 \index{trigger unit instance, of a KSA or event}%
 \index{KSA!trigger unit instance of}%
 \index{event!trigger unit instance of}%
@@ -28193,8 +28437,8 @@ It is a subclass of \nobr{\textbf{\entlinknoex{standard-unit-class}}}.
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{start-control-shell}%
-  {\code{\&rest} \var{initargs\/}
-    \returns{} \var{result\/}\superstar}
+  {\nobr{\code{\&rest} \var{initargs\/}}
+    \nobr{\returns{} \var{result\/}\superstar}}
 \index{agenda shell!starting}%
 \index{control shell!starting}%
 \index{starting!agenda shell}%
@@ -28441,7 +28685,7 @@ stepping enabled):
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Generic~Function}{trigger-events-of}{\var{ksa\/} 
-    \returns{} \var{events\/}}
+    \nobr{\returns{} \var{events\/}}}
 \index{events!that triggered a KSA}%
 \index{KSA!triggering events of}%
 
@@ -28491,8 +28735,8 @@ Return the events that triggered a \glref{KSA}:
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Macro}{undefine-ks}{\var{ks-name\/}
-    \code{\&rest} \var{ignored-initargs\/} 
-    \returns{} \var{deleted-ks-unit-instance\/}}
+    \nobr{\code{\&rest} \var{ignored-initargs\/}}
+    \nobr{\returns{} \var{deleted-ks-unit-instance\/}}}
 \index{knowledge source!undefining}%
 \index{undefining!a knowledge source}%
 \index{deleting!a knowledge source}%

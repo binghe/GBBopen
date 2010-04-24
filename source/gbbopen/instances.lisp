@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Apr 18 22:19:09 2010 *-*
+;;;; *-* Last-Edit: Sat Apr 24 11:37:58 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -58,7 +58,7 @@
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(*skip-deleted-unit-instance-class-change*
-            check-for-deleted-instance  ; not yet documented
+            check-for-deleted-instance
             delete-instance
             deleted-instance-class
             describe-instance
@@ -107,10 +107,11 @@
 ;;; ===========================================================================
 ;;;   Deleted Unit Instances
 
-(defun operation-on-deleted-instance (operation instance)
-  (error "~s attempted with a deleted instance: ~s"
-         operation 
-         instance))
+(defun operation-on-deleted-instance (instance operation)
+  (if operation
+      (error "~s attempted with a deleted instance: ~s"
+             operation instance)
+      (error "Instance ~s has been deleted" instance)))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -462,15 +463,15 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun check-for-deleted-instance (instance operation)
+(defun check-for-deleted-instance (instance &optional operation)
   ;;; Generate an error if `instance' is a deleted unit instance
   (when (instance-deleted-p instance)
-    (operation-on-deleted-instance operation instance)))
+    (operation-on-deleted-instance instance operation)))
 
-(defcm check-for-deleted-instance (instance operation)
-  (with-once-only-bindings (instance operation)
+(defcm check-for-deleted-instance (instance &optional operation)
+  (with-once-only-bindings (instance)
     `(when (instance-deleted-p ,instance) 
-       (operation-on-deleted-instance ,operation ,instance))))
+       (operation-on-deleted-instance ,instance ,operation))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -479,7 +480,7 @@
   ;;; *not* copied, so the user must not modify!
   (let ((space-instances (standard-unit-instance.%%space-instances%% instance)))
     (if (eq space-instances ':deleted)
-        (operation-on-deleted-instance 'space-instances-of instance)
+        (operation-on-deleted-instance instance 'space-instances-of)
         space-instances)))
 
 ;;; ---------------------------------------------------------------------------
@@ -1437,6 +1438,7 @@
   ;;; Returns five values: the dimension value, the dimension-value type,
   ;;;                      the comparison-type, the composite type, and the 
   ;;;                      ordering-dimension-name (for a series composite)
+  #+check-for-deleted-instances
   (check-for-deleted-instance instance 'instance-dimension-value)
   (internal-instance-dimension-value instance dimension-name))
 

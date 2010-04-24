@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/find.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Apr  7 10:06:08 2010 *-*
+;;;; *-* Last-Edit: Sat Apr 24 11:57:27 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -50,8 +50,8 @@
             gbbopen-tools::set-flag)))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (export '(*find-verbose*              ; not documented, yet
-            *use-marking*               ; not documented, yet
+  (export '(*find-verbose*
+            *use-marking*
             abuts
             ;; --- declared-type operators:
             abuts&
@@ -1626,7 +1626,7 @@
         (set-all-mbr-instance-marks storage disjunctive-dimensional-extents))
       ;; filter-before & pattern & filter-after & funcall `fn':
       (macrolet
-          ((built-check-fn (filter-before? filter-after?)
+          ((generate-check-fn (filter-before? filter-after?)
              `(flet 
                   ((fn (instance)
                      (when find-stats 
@@ -1661,11 +1661,11 @@
                    #'fn storage disjunctive-dimensional-extents verbose)))))
         (if filter-before
             (if filter-after
-                (built-check-fn t t)
-                (built-check-fn t nil))
+                (generate-check-fn t t)
+                (generate-check-fn t nil))
             (if filter-after 
-                (built-check-fn nil t)
-                (built-check-fn nil nil))))
+                (generate-check-fn nil t)
+                (generate-check-fn nil nil))))
       (when find-stats
         (incf (find-stats.run-time find-stats) 
               (- (get-internal-run-time) run-time))))))
@@ -1712,7 +1712,7 @@
       (map-space-instances #'fn space-instances invoking-fn-name))
     ;; filter-before & pattern & filter-after & funcall `fn':
     (macrolet
-        ((built-check-fn (filter-before? filter-after?)
+        ((generate-check-fn (filter-before? filter-after?)
            `(flet 
                 ((fn (instance)
                    (unless (in-eset instance processed-instance-set)
@@ -1749,11 +1749,11 @@
                    #'fn storage disjunctive-dimensional-extents verbose))))))
       (if filter-before
           (if filter-after
-              (built-check-fn t t)
-              (built-check-fn t nil))
+              (generate-check-fn t t)
+              (generate-check-fn t nil))
           (if filter-after 
-              (built-check-fn nil t)
-              (built-check-fn nil nil))))
+              (generate-check-fn nil t)
+              (generate-check-fn nil nil))))
     (when find-stats
       (incf (find-stats.run-time find-stats) 
             (- (get-internal-run-time) run-time)))))
@@ -1784,7 +1784,7 @@
         (set-all-mbr-instance-marks storage 't))
       ;; sweep:
       (macrolet
-          ((built-check-fn (filter-before? filter-after?)
+          ((generate-check-fn (filter-before? filter-after?)
              `(flet 
                   ((fn (instance)
                      (clear-mbr-instance-mark instance)
@@ -1803,11 +1803,11 @@
                   (map-marked-instances-on-storage #'fn storage 't verbose)))))
         (if filter-before
             (if filter-after
-                (built-check-fn t t)
-                (built-check-fn t nil))
+                (generate-check-fn t t)
+                (generate-check-fn t nil))
             (if filter-after 
-                (built-check-fn nil t)
-                (built-check-fn nil nil)))))))
+                (generate-check-fn nil t)
+                (generate-check-fn nil nil)))))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -1821,14 +1821,13 @@
          (storage-objects-for-mapping unit-classes-spec space-instances
                                       invoking-fn-name))
         (unit-class-check-fn (determine-unit-class-check unit-classes-spec))
-        (processed-instance-set 
-         (make-keys-only-hash-table-if-supported :test #'eq)))
+        (processed-instance-set (make-eset)))
     (with-lock-held (*master-instance-lock*)
       (macrolet
-          ((built-check-fn (filter-before? filter-after?)
+          ((generate-check-fn (filter-before? filter-after?)
              `(flet
                   ((fn (instance)
-                     (unless (gethash instance processed-instance-set)
+                     (unless (in-eset instance processed-instance-set)
                        (when (and (funcall (the function unit-class-check-fn) 
                                            instance)
                                   ,@(when filter-before?
@@ -1840,17 +1839,17 @@
                                                  instance))))
                          (funcall (the function fn) instance))
                        ;; we have either accepted or rejected this instance:
-                       (setf (gethash instance processed-instance-set) 't))))
+                       (add-to-eset instance processed-instance-set))))
                 (declare (dynamic-extent #'fn))
                 (dolist (storage storage-objects)
                   (map-all-instances-on-storage #'fn storage 't verbose)))))
         (if filter-before
             (if filter-after
-                (built-check-fn t t)
-                (built-check-fn t nil))
+                (generate-check-fn t t)
+                (generate-check-fn t nil))
             (if filter-after 
-                (built-check-fn nil t)
-                (built-check-fn nil nil)))))))
+                (generate-check-fn nil t)
+                (generate-check-fn nil nil)))))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -1871,7 +1870,6 @@
 (defun map-instances-on-space-instances (fn unit-classes-spec space-instances 
                                          &key (pattern ':all)
                                               filter-before filter-after
-                                              ;; not documented, yet
                                               (use-marking *use-marking*)
                                               (verbose *find-verbose*))
   ;;; Note that checking for deleted instances is not done here, the
@@ -1905,7 +1903,6 @@
                                             space-instances 
                                             &key (pattern ':all)
                                                  filter-before filter-after
-                                                 ;; not documented, yet
                                                  (use-marking *use-marking*)
                                                  (verbose *find-verbose*))
                                            &body body)
@@ -1935,7 +1932,6 @@
 
 (defun find-instances (unit-classes-spec space-instances pattern
                        &key filter-before filter-after
-                            ;; not documented, yet:
                             (use-marking *use-marking*)
                             (verbose *find-verbose*))
   (when verbose (find-verbose-operation 'find-instances))
@@ -1943,7 +1939,6 @@
          (filter-before (when filter-before (coerce filter-before 'function)))
          (filter-after (when filter-after (coerce filter-after 'function))))
     (flet ((fn (instance) 
-             (check-for-deleted-instance instance 'find-instances)
              (push instance result)))
       (declare (dynamic-extent #'fn))
       (cond 
@@ -1997,7 +1992,6 @@
                     into-cons
                     verbose)
                ;; instance is accepted:
-               (check-for-deleted-instance instance 'filter-instances)
                (list instance)))
            (fn-before-only (instance)
              (when (and (funcall (the function filter-before) instance)
@@ -2007,7 +2001,6 @@
                          into-cons
                          verbose))
                ;; instance is accepted:
-               (check-for-deleted-instance instance 'filter-instances)
                (list instance)))
            (fn-after-only (instance)
              (when (and (match-instance-to-pattern 
@@ -2017,7 +2010,6 @@
                          verbose)
                         (funcall (the function filter-after) instance))
                ;; instance is accepted:
-               (check-for-deleted-instance instance 'filter-instances)
                (list instance)))
            (fn-both (instance)
              (when (and (funcall (the function filter-before) instance)
@@ -2028,7 +2020,6 @@
                          verbose)
                         (funcall (the function filter-after) instance))
                ;; instance is accepted:
-               (check-for-deleted-instance instance 'filter-instances)
                (list instance))))
       (declare (dynamic-extent #'fn-bare #'fn-before-only
                                #'fn-after-only #'fn-both))

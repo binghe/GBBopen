@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/basic-tests.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Apr 18 06:59:47 2010 *-*
+;;;; *-* Last-Edit: Sat Apr 24 12:10:20 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -225,18 +225,6 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun class-mapping-time-test (n)
-  (format t "~&;; Running class-based mapping timing test ~
-                  (~:d instance~:p)...~%"
-          n)
-  (flet ((class-mapping ()
-           (map-instances-of-class
-            #'identity 
-            '(abstract :plus-subclasses))))
-    (time (class-mapping))))
-
-;;; ---------------------------------------------------------------------------
-
 (defun change-class-time-test (n)
   (format t "~&;; Running change-class timing test ~
                   (~:d instance~:p)...~%"
@@ -248,18 +236,6 @@
                (declare (dynamic-extent #'change-it))
                (map-instances-of-class #'change-it 'uc-2))))
       (time (change-classes)))))
-
-;;; ---------------------------------------------------------------------------
-
-(defun space-instance-mapping-time-test (n)
-  (format t "~&;; Running space-instance-based mapping timing test ~
-                  (~:d instance~:p)...~%"
-          n)
-  (flet ((space-instance-mapping ()
-           (map-instances-on-space-instances 
-            #'identity
-            't '(bb sub-bb space-1))))
-    (time (space-instance-mapping))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -297,8 +273,6 @@
   (reset-unit-class 't)
   ;; Measure instance creation:
   (make-time-test n)
-  ;; Measure class-based mapping:
-  (class-mapping-time-test n)
   ;; Measure change-class:
   (change-class-time-test n)
   ;; Measure class-based deletion:
@@ -308,8 +282,6 @@
   ;; Measure  hashing & marking:
   (marking-find-time-test n)
   (hashing-find-time-test n)
-  ;; Measure space-instance-based mapping:
-  (space-instance-mapping-time-test n)
   ;; Measure space-instance-based deletion:
   (space-instance-based-delete-time-test n))
   
