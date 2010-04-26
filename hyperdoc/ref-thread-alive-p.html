@@ -44,7 +44,7 @@ Common Lisp implementation.
 </p>
 <a name="id1"></a><p><span class="fndoclabel">Examples</span> <br /><pre class="pretop">
   &gt; (defparameter *silly-thread* (<a href="ref-spawn-thread.html">spawn-thread</a> "Sleeper" 'sleep 10000))
-  #&lt;thread Sleeper&gt;
+  *silly-thread*
   &gt; (thread-alive-p *silly-thread*)
   t
   &gt; (<a href="ref-kill-thread.html">kill-thread</a> *silly-thread*)
