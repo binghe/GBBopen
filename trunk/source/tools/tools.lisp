@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Apr  7 10:01:21 2010 *-*
+;;;; *-* Last-Edit: Mon Apr 26 14:48:30 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -67,6 +67,7 @@
 ;;;  07-22-08 Added NICER-TIME.  (Corkill)
 ;;;  08-03-09 Added COMPARE and COMPARE-STRINGS.  (Corkill)
 ;;;  03-16-10 Added ASSQ.  (Corkill)
+;;;  04-26-10 Added SORTF & STABLE-SORTF.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -228,7 +229,9 @@
             shrink-vector
             simple-array-p              ; not yet documented
             sole-element
+            sortf
             splitting-butlast
+            stable-sortf
             trimmed-substring
             undefmethod
             until
@@ -493,6 +496,12 @@
               (setf (cdr ptr) (cdr next-ptr))
               (return-from delq-one list))
             (setf ptr next-ptr)))))))
+
+;;; ===========================================================================
+;;;  Sortf & stable-sortf
+
+(define-modify-macro sortf (place &rest args) sort args)
+(define-modify-macro stable-sortf (place &rest args) stable-sort args)
 
 ;;; ===========================================================================
 ;;;  Copy-file (for CLs that don't provide their own version)

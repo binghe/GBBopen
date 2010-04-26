@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Sat Apr 24 12:42:18 2010; Edited-By: cork *-*
+%% *-* Last-Edit: Mon Apr 26 16:05:57 2010; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2010, Dan Corkill <corkill@GBBopen.org>
@@ -4713,6 +4713,7 @@ Lisp Machines).
 %
 \W\supp
   > (defparameter *x* 4)
+  *x*
   > (decf-after *x*)
   4 
   > *x*
@@ -5602,6 +5603,7 @@ an atom, a newly consed list containing \var{object\/} as its sole element.
 %
 \W\supp
   > (defparameter *x* 0)
+  *x*
   > (incf-after *x*)
   0 
   > *x*
@@ -6886,6 +6888,117 @@ elements.
   > (splitting-butlast '(a b . c))
   (a)
   (b . c)
+  >
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Macro}{sortf}{\var{place predicate\/}
+    \nobr{\code{\&key} \var{key\/}}}
+\index{place!sorting sequence value of}%
+
+\fnsyntax
+
+\fnpurpose Sort the sequence value of \var{place}, and change the value of
+\var{place\/} to the sorted result.
+
+\fnpackage \code{:gbbopen-tools}
+
+\fnmodule \code{:gbbopen-tools}
+
+\fnargs
+\begin{args}{predicate}
+\arg[place] A \glref{form} which is suitable for use as a \glref{generalized~reference}
+\arg[predicate] A \glref{function} of two arguments that returns a
+\glref{generalized~boolean} 
+\arg[key] A \glref{function} of one argument, or \nil{} (default is \nil)
+\end{args}
+
+\fndescription
+%
+The first argument to the \var{predicate\/} function is one element of the
+sequence value in \var{place\/} (or part of that element extracted by the key
+function, if supplied); the second argument another element of the sequence
+(or part of that element extracted by the key function, if supplied). The
+\var{predicate\/} function should return true if and only if the first
+argument is strictly less than the second; otherwise the predicate should
+return false.
+
+The sorting operation can be destructive, and it is not guaranteed
+stable. Elements considered equal by \var{predicate\/} might not stay in their
+original order.
+
+\begin{alsos}{stable-sortf}
+\also[stable-sortf]
+\end{alsos}
+
+\fnexample
+\begin{example}
+%
+\W\supp
+  > (defparameter *x* '(1 5 3 2 4))
+  *x*
+  > (sortf *x* '<)
+  (1 2 3 4 5)
+  > *x*
+  (1 2 3 4 5)
+  >
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Macro}{stable-sortf}{\var{place predicate\/}
+    \nobr{\code{\&key} \var{key\/}}}
+\index{place!sorting sequence value of}%
+
+\fnsyntax
+
+\fnpurpose Stably sort the sequence value of \var{place}, and change the value of
+\var{place\/} to the sorted result.
+
+\fnpackage \code{:gbbopen-tools}
+
+\fnmodule \code{:gbbopen-tools}
+
+\fnargs
+\begin{args}{predicate}
+\arg[place] A \glref{form} which is suitable for use as a \glref{generalized~reference}
+\arg[predicate] A \glref{function} of two arguments that returns a
+\glref{generalized~boolean} 
+\arg[key] A \glref{function} of one argument, or \nil{} (default is \nil)
+\end{args}
+
+\fndescription
+%
+The first argument to the \var{predicate\/} function is one element of the
+sequence value in \var{place\/} (or part of that element extracted by the key
+function, if supplied); the second argument another element of the sequence
+(or part of that element extracted by the key function, if supplied). The
+\var{predicate\/} function should return true if and only if the first
+argument is strictly less than the second; otherwise the predicate should
+return false.
+
+The sorting operation can be destructive. Elements considered equal by
+\var{predicate\/} stay in their original order.
+
+\begin{alsos}{sortf}
+\also[sortf]
+\end{alsos}
+
+\fnexample
+\begin{example}
+%
+\W\supp
+  > (defparameter *x* '(1 2 3 6 5 4))
+  *x*
+  > (stable-sortf *x* #'(lambda (x y) (and (oddp x) (evenp y))))
+  (1 3 5 2 6 4)
+  > *x*
+  (1 3 5 2 6 4)
   >
 \end{example}
 
@@ -13110,7 +13223,7 @@ the global symbol value.
 \W\supp
 \begin{example}
   > (defparameter *silly-thread* (\entlink{spawn-thread} "Sleeper" 'sleep 10000))
-  #<thread Sleeper>
+  *silly-thread*
   > (thread-alive-p *silly-thread*)
   t
   > (\entlink{kill-thread} *silly-thread*)
@@ -21045,6 +21158,8 @@ declaration:
   > (interval-end #(1  2))
   2\goodpagebreak
   > (defparameter *x* (\entlink{make-interval} 1 2))
+  *x*
+  > *x*
   (1 . 2)
   > (setf (interval-end *x*) 4)
   4
@@ -21100,6 +21215,8 @@ declaration:
   > (interval-start #(1 2))
   1\goodpagebreak
   > (defparameter *x* (\entlink{make-interval} 1 2))
+  *x*
+  > *x*
   (1 . 2)
   > (setf (interval-start *x*) -1)
   -1
@@ -21164,6 +21281,8 @@ declaration:
   1
   2\goodpagebreak
   > (defparameter *x* (\entlink{make-interval} 1 2))
+  *x*
+  > *x*
   (1 . 2)
   > (setf (interval-values *x*) #(3 4))
   #(3 4)
