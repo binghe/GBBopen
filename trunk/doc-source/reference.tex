@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Mon Apr 26 16:05:57 2010; Edited-By: cork *-*
+%% *-* Last-Edit: Wed Apr 28 20:06:42 2010; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2010, Dan Corkill <corkill@GBBopen.org>
@@ -10316,8 +10316,11 @@ If \nobr{\var{universal-time\/}} is not supplied or is \nil, the current time
 
 \begin{functiondoc}{Function}{parse-date}{%
     \var{string\/}
-    \code{\&key} \var{start end \nobr{junk-allowed} \nobr{separators}
-      \nobr{month-precedes-date}\/}
+    \code{\&key} \var{start end 
+      \nobr{junk-allowed} 
+      \nobr{separators}
+      \nobr{month-precedes-date}
+      \nobr{year-first}\/}
     \nobr{\returns{} \var{date, month, year, position\/}}}
 \index{date!parsing}% 
 
@@ -10341,6 +10344,7 @@ end of \var{string\/})
  \nobr{\code{"-/ ,"}})
 \arg[month-precedes-date] A \glref{generalized~boolean} (default is 
 \nobr{\textbf{\entlink{*month-precedes-date*}}})
+\arg[year-first] A \glref{generalized~boolean} (default is \nil)
 \arg[date] An integer between 1 and up to 31, inclusive, depending
   on the month and year
 \arg[month] An integer between 1 and 12, inclusive
@@ -10359,13 +10363,13 @@ possibly surrounded on either side by characters in \nobr{\var{separators}}.
 
 \fndescription
 %
-Both the month and date must be specified in \var{string},
-optionally followed by the year. The month can be a numeric value (1--12), a
+Both the month and date must be specified in \var{string}, optionally followed
+by the year and the time of day. The month can be a numeric value (1--12), a
 three-letter abbreviation, or the full month name.  If the month is specified
 numerically, then the value of \nobr{\var{month-precedes-date\/}} is used to
-determine the month and date ordering. If no year is specified in
-\var{string}, the current year is assumed, unless the specified month and date
-have passed, in which case next year is assumed.
+determine the month and date ordering. If no year is specified in \var{string}
+(and \var{year-first\/} is \nil), the current year is assumed, unless the
+specified month and date have passed, in which case next year is assumed. 
 
 The returned \var{position\/} is the index within \var{string\/} where the
 parse ended.
