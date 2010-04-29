@@ -17,8 +17,11 @@
 <p><table class="tight" width="100%">
 <tr valign="top"><td valign="baseline" align="left"%>
 <nobr><b><font color="#000000">parse-date</font></b></nobr></td><td valign="baseline"> &nbsp; </td><td valign="baseline" align="left" width="99%"><var>string</var>
-<code>&#38;key</code> <var>start end <nobr>junk-allowed</nobr> <nobr>separators</nobr>
-<nobr>month-precedes-date</nobr></var>
+<code>&#38;key</code> <var>start end 
+<nobr>junk-allowed</nobr> 
+<nobr>separators</nobr>
+<nobr>month-precedes-date</nobr>
+<nobr>year-first</nobr></var>
 <nobr><span 
     style="font-family: serif; font-style: normal">=&gt;</span> <var>date, month, year, position</var></nobr></td><td valign="baseline" align="right">[<i>Function</i>]
 </td></tr></table></p>
@@ -39,6 +42,7 @@ date, month, and year fields in <var>string</var>, if needed (default is
 <nobr><code>"-/ ,"</code></nobr>)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>month-precedes-date</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> (default is 
 <nobr><b><a href="ref-month-precedes-date-var.html">*month-precedes-date*</a></b></nobr>)
+</td></tr><tr valign="top"><td valign="baseline" nowrap><i>year-first</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> (default is <code>nil</code>)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>date</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An integer between 1 and up to 31, inclusive, depending
 on the month and year
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>month</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An integer between 1 and 12, inclusive
@@ -53,13 +57,13 @@ on the month and year
 <var>string</var> does not consist entirely of the representation of a integer,
 possibly surrounded on either side by characters in <nobr><var>separators</var></nobr>.
 </p>
-<p><span class="fndoclabel">Description</span> <br />Both the month and date must be specified in <var>string</var>,
-optionally followed by the year. The month can be a numeric value (1&ndash;12), a
+<p><span class="fndoclabel">Description</span> <br />Both the month and date must be specified in <var>string</var>, optionally followed
+by the year and the time of day. The month can be a numeric value (1&ndash;12), a
 three-letter abbreviation, or the full month name.  If the month is specified
 numerically, then the value of <nobr><var>month-precedes-date</var></nobr> is used to
-determine the month and date ordering. If no year is specified in
-<var>string</var>, the current year is assumed, unless the specified month and date
-have passed, in which case next year is assumed.
+determine the month and date ordering. If no year is specified in <var>string</var>
+(and <var>year-first</var> is <code>nil</code>), the current year is assumed, unless the
+specified month and date have passed, in which case next year is assumed. 
 </p>
 <p>The returned <var>position</var> is the index within <var>string</var> where the
 parse ended.
