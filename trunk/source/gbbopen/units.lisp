@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/units.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu May  6 14:14:32 2010 *-*
+;;;; *-* Last-Edit: Thu May  6 17:03:20 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -555,9 +555,9 @@
       (flet ((fn (space-instance)
                (delete-space-instance-caches space-instance class-name)))
         (declare (dynamic-extent #'fn))
-        (map-space-instances #'fn '(*))))
-    ;; Clear memoized dlslotd caches:
-    (clear-memoized-dlslotd-caches class-name))
+        (map-space-instances #'fn '(*)))))
+  ;; Clear memoized dlslotd caches:
+  (clear-memoized-dlslotd-caches unit-class)
   (compute-inherited-unit-class-values unit-class))
 
 ;;; ---------------------------------------------------------------------------
@@ -600,9 +600,8 @@
              (cons '(:metaclass standard-unit-class) options))
          *standard-define-class-options*
          env)
-      ;; We must tell to use accessor methods that call slot-value-using-class
-      ;; (ECL 0.9i *must* optimize slot access, as non-optimized accessors
-      ;; always return nil):
+      ;; We must tell ECL and Lispworks to use accessor methods that call
+      ;; slot-value-using-class:
       #+(or ecl lispworks)
       (setf clos-class-options 
         (cons '(:optimize-slot-access nil) clos-class-options))

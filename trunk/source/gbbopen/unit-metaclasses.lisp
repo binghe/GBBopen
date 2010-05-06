@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/unit-metaclasses.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Apr  9 15:13:17 2010 *-*
+;;;; *-* Last-Edit: Thu May  6 17:00:49 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -101,6 +101,8 @@
     :reader dimensions-of
     :writer (setf standard-unit-class.unit-class-dimensions))
    (evfn-blks :initform nil)
+   (memoized-slot-value-dlslotds :initform (make-et))
+   (memoized-dlslotds-from-reader :initform (make-et))
    ;; Controls if instances are deleted by reset-gbbopen (unless overridden by
    ;; an :all-classes reset):
    (retain :initform nil))
