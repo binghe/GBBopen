@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/units.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Apr  9 10:26:25 2010 *-*
+;;;; *-* Last-Edit: Thu May  6 14:14:32 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -549,13 +549,15 @@
 
 (defun finish-unit-class-loading (unit-class fixup-symbols)
   (fixup-function-objects-part2 unit-class fixup-symbols)
-  ;; Clear space-instance storage caches (can't use do-space-instances yet):
-  (when (fboundp 'map-space-instances) ;; don't run when loading GBBopen!
-    (flet ((fn (space-instance)
-             (delete-space-instance-caches 
-              space-instance (class-name unit-class))))
-      (declare (dynamic-extent #'fn))
-      (map-space-instances #'fn '(*))))
+  (let ((class-name (class-name unit-class)))
+    ;; Clear space-instance storage caches (can't use do-space-instances yet):
+    (when (fboundp 'map-space-instances) ;; don't run when loading GBBopen!
+      (flet ((fn (space-instance)
+               (delete-space-instance-caches space-instance class-name)))
+        (declare (dynamic-extent #'fn))
+        (map-space-instances #'fn '(*))))
+    ;; Clear memoized dlslotd caches:
+    (clear-memoized-dlslotd-caches class-name))
   (compute-inherited-unit-class-values unit-class))
 
 ;;; ---------------------------------------------------------------------------
