@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/links.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Apr 24 11:52:39 2010 *-*
+;;;; *-* Last-Edit: Thu May  6 14:18:58 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -39,6 +39,7 @@
 ;;;  06-24-06 Finally rewrote get-dlslotd-from-reader to handle object-specific
 ;;;           lookups.  (Corkill)
 ;;;  06-19-09 Add link-pointer-object support.  (Corkill)
+;;;  05-06-10 Memoize dlslotd lookups.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -617,47 +618,92 @@
 ;;;   Direct-link definition lookups
 ;;;
 ;;; The following two function peform direct-link-definition lookups on every
-;;; link-slot operation, so they always reflect the latest definitions.
-;;; Performance is generally good, but they are candidates for hashing and/or
-;;; caching.
+;;; link-slot operation, so they always reflect the latest definitions.  For
+;;; performance, the lookups are memoized, with the caches reset by
+;;; FINISH-UNIT-CLASS-LOADING to reflect redefined direct-link-definitions.
+
+(defvar *memoized-slot-value-dlslotd*
+    (make-hash-table :test 'equal))
+
+(defvar *memoized-slot-value-dlslotd-lock*
+    (make-lock :name "Memoized slot-value dslotd"))
+
+(defvar *memoized-dlslotd-from-readers*
+    (make-hash-table :test 'equal))
+
+(defvar *memoized-dlslotd-from-readers-lock*
+    (make-lock :name "Memoized dslotd-from-readers"))
+
+;;; ---------------------------------------------------------------------------
+
+(defun clear-memoized-dlslotd-caches (class-name)
+  ;; Clear *MEMOIZED-SLOT-VALUE-DLSLOTD*:
+  (with-lock-held (*memoized-slot-value-dlslotd-lock*)
+    (flet ((maybe-clear (key value)
+             (declare (ignore value))
+             (when (eq (car key) class-name)
+               (remhash key *memoized-slot-value-dlslotd*))))
+      (maphash #'maybe-clear *memoized-slot-value-dlslotd*)))
+  ;; Clear *MEMOIZED-DLSLOTD-FROM-READERS*:
+  (with-lock-held (*memoized-dlslotd-from-readers-lock*)
+    (flet ((maybe-clear (key value)
+             (declare (ignore value))
+             (when (eq (car key) class-name)
+               (remhash key *memoized-dlslotd-from-readers*))))
+      (maphash #'maybe-clear *memoized-dlslotd-from-readers*))))
+
+;;; ---------------------------------------------------------------------------
 
 (defun get-slot-value-dlslotd (object slot-name)
   ;;; Return the direct-link definition for `slot-name' in `object' by looking
   ;;; for the closest (CPL) definition
   (declare (inline class-of))
-  (flet ((fn (class)
-           (flet ((slot-fn (dslotd)
-                    (when (and (eq slot-name 
-                                   (slot-definition-name dslotd))
-                               (typep dslotd 'direct-link-definition)) 
-                      dslotd)))
-             (declare (dynamic-extent #'slot-fn))
-             ;; (car (member-if ...)) often optimizes better than 
-             ;; (find-if ...):
-             (car (member-if #'slot-fn (class-direct-slots class))))))
-    (declare (dynamic-extent #'fn))
-    (some #'fn (class-precedence-list (class-of object)))))
+  (let ((signature (cons (type-of object) slot-name)))
+    (or (gethash signature *memoized-slot-value-dlslotd*)
+        ;; We lock only writes (at the slight risk of updating twice:
+        (with-lock-held (*memoized-slot-value-dlslotd-lock*)
+          (setf (gethash signature *memoized-slot-value-dlslotd*)
+                (flet
+                    ((fn (class)
+                       (flet
+                           ((slot-fn (dslotd)
+                              (when (and (eq slot-name 
+                                             (slot-definition-name dslotd))
+                                         (typep dslotd 'direct-link-definition)) 
+                                dslotd)))
+                         (declare (dynamic-extent #'slot-fn))
+                         ;; (car (member-if ...)) often optimizes better than
+                         ;; (find-if ...):
+                         (car (member-if #'slot-fn
+                                         (class-direct-slots class))))))
+                  (declare (dynamic-extent #'fn))
+                  (some #'fn (class-precedence-list (class-of object)))))))))
     
 ;;; ---------------------------------------------------------------------------
 
 (defun get-dlslotd-from-reader (reader-method-name object)
   ;;; Return the direct-link definition associated with `reader-method-name'
   ;;; and `object'
-    
-  (let* ((reader-methods
-          (compute-applicable-methods
-           (symbol-function reader-method-name) (list object)))
-         (reader-method
-          #+ecl (first (last reader-methods))
-          #-ecl (first reader-methods)))
-    (or (when (typep reader-method 'standard-reader-method)
-	  (let ((dslotd
-		 (accessor-method-slot-definition reader-method)))
-	    (when (typep dslotd 'direct-link-definition)
-	      dslotd)))
-	(error "Unable to determine the link slot of place ~s for ~s" 
-	       reader-method-name
-	       object))))
+  (let ((signature (cons (type-of object) reader-method-name)))
+    (or (gethash signature *memoized-dlslotd-from-readers*)
+        ;; We lock only writes (at the slight risk of updating twice:
+        (with-lock-held (*memoized-dlslotd-from-readers-lock*)
+          (setf (gethash signature *memoized-dlslotd-from-readers*)
+                (let* ((reader-methods
+                        (compute-applicable-methods
+                         (symbol-function reader-method-name) (list object)))
+                       (reader-method
+                        #+ecl (first (last reader-methods))
+                        #-ecl (first reader-methods)))
+                  (or (when (typep reader-method 'standard-reader-method)
+                        (let ((dslotd
+                               (accessor-method-slot-definition reader-method)))
+                          (when (typep dslotd 'direct-link-definition)
+                            dslotd)))
+                      (error "Unable to determine the link slot of place ~s ~
+                              for ~s" 
+                             reader-method-name
+                             object))))))))
   
 ;;; ===========================================================================
 ;;;   Linkf & friends
