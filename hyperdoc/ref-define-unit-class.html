@@ -129,7 +129,7 @@ available in a future release.]</font></font></span><table class="tighttop"><tbo
 <td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code>(:default-initargs .</code> <var>initarg-list</var><code>)</code> |</td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code>(:dimensional-values</code> 
-<var>dimensional-value-specifier</var>*<code>)</code> |</td></tr>
+<var>dimension-value-specifier</var>*<code>)</code> |</td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td><td valign="baseline" colspan="1" align="left"> <code>(:documentation</code> <var>string</var><code>)</code> |</td></tr>
 <tr>
@@ -177,7 +177,7 @@ available in a future release.]</font></font></span><table class="tighttop"><tbo
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
 <table class="tight"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
-<nobr><var>dimensional-value-specifier</var> ::=</nobr>
+<nobr><var>dimension-value-specifier</var> ::=</nobr>
 </td><td valign="baseline" colspan="1" align="left"> <var>incomposite-dv-specifier</var> | <var>composite-dv-specifier</var> </td></tr>
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
@@ -333,9 +333,9 @@ value is <nobr><b><a href="ref-standard-unit-class.html">standard-unit-class</a>
 <p><p><b>Inheritance of class options</b></p>
 <a name="id9">The</a> set of <nobr><var>dimensional-values</var></nobr> for a <a href="ref-glossary.html#id227">unit&nbsp;class</a> is the
 union of the sets specified in the <nobr><var>dimensional-values</var></nobr> options
-of the class and its superclasses.  When more than one dimensional index is
-supplied for a given dimension, the one supplied by the most specific class
-is used.
+of the class and its superclasses.  When more than one dimension-value
+specification is supplied for a given dimension, the one supplied by the
+most specific class is used.
 </p>
 <p>The effective <nobr><var>initial-space-instances</var></nobr> value for a
 <a href="ref-glossary.html#id227">unit&nbsp;class</a> is the value specified in the definition of the most

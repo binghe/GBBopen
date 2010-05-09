@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/preamble.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Apr  7 10:07:39 2010 *-*
+;;;; *-* Last-Edit: Sun May  9 01:43:58 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2002-2009, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2010, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project.
 ;;; Licensed under Apache License 2.0 (see LICENSE for license information).
 ;;;
@@ -115,6 +115,7 @@
                                     evfn-blk-fn evfn-blk-fn-args))
 (defgeneric add-instance-to-space-instance (instance space-instance))
 (defgeneric add-instance-to-storage (instance storage verbose))
+(defgeneric check-instance-storage-locators (instance storage))
 (defgeneric class-instances-count (unit-class-name-or-class))
 (defgeneric class-instances-summary (unit-class-name-or-class))
 (defgeneric delete-instance (instance))

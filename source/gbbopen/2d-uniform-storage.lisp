@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/2d-uniform-storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Apr  7 10:05:15 2010 *-*
+;;;; *-* Last-Edit: Sun May  9 01:43:02 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -213,6 +213,40 @@
            ;; add back in the non-excess count for this instance:
 	   (1+& excess-count))))
 
+;;; ---------------------------------------------------------------------------
+
+(defmethod check-instance-storage-locators ((instance standard-unit-instance)
+                                            (storage 2d-uniform-buckets))
+  (let ((remembered-buckets (make-et)))
+    (flet ((bucket-action (instance buckets 1st-d-bucket-index 2nd-d-bucket-index)
+             (declare (type (simple-array t (* *)) buckets))
+             (declare (type fixnum 1st-d-bucket-index 2nd-d-bucket-index))
+             (push (cons 1st-d-bucket-index 2nd-d-bucket-index)
+                   (get-et buckets remembered-buckets))
+             (unless (memq instance
+                           (aref buckets 1st-d-bucket-index 2nd-d-bucket-index))
+               (inconsistent-instance-locators-error 
+                instance storage
+                (format nil "missing (bucket [~s,~s])"
+                        1st-d-bucket-index
+                        2nd-d-bucket-index)))))
+      (declare (dynamic-extent #'bucket-action))
+      (do-2d-uniform-buckets-add/remove-action
+          instance storage nil nil nil #'bucket-action))
+    (flet ((check-them (buckets indexes)
+             (let ((cons (cons nil nil)))
+               (dotimes (i (array-dimension buckets 0))
+                 (dotimes (j (array-dimension buckets 1))
+                   (setf (car cons) i
+                         (cdr cons) j)
+                   (unless (member cons indexes :test #'equal)
+                     (when (memq instance (aref buckets i j))
+                       (inconsistent-instance-locators-error 
+                        instance storage
+                        (format nil "present (bucket [~s,~s])" i j)))))))))
+      (declare (dynamic-extent #'check-them))
+      (map-et #'check-them remembered-buckets))))
+ 
 ;;; ---------------------------------------------------------------------------
 
 (defun determine-2d-uniform-storage-extents (storage 

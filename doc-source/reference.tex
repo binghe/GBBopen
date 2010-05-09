@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Wed Apr 28 20:06:42 2010; Edited-By: cork *-*
+%% *-* Last-Edit: Sun May  9 11:23:33 2010; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2010, Dan Corkill <corkill@GBBopen.org>
@@ -1031,9 +1031,9 @@ The shorthand \code{+} subevents specifier is equivalent to
 
 %% ---------------------------------------------------------------------------
 
-\newcommand{\dimensionalvaluesspec}{%
+\newcommand{\dimensionvaluesspec}{%
 \begin{tabular}{@{~}l@{~}l}
-\nobr{\var{dimensional-value-specifier\/} ::=}
+\nobr{\var{dimension-value-specifier\/} ::=}
   & \var{incomposite-dv-specifier\/} \vbar{} \var{composite-dv-specifier\/} \\
 \end{tabular}
 \T\\
@@ -1103,13 +1103,13 @@ The shorthand \code{+} subevents specifier is equivalent to
 \end{tabular}
 }
 
-\newcommand{\dimensionalspecnote}{%
+\newcommand{\dimensionspecnote}{%
   A \var{dimension-value-place\/} with two \nobr{\var{slot-names\/}} is
   allowed only for an \nobr{\code{:interval}} dimension-value specification.}
 
 \newcommand{\classoptioninheritance}{%
   \index{inheritance!unit-class options}%
-  \index{dimensional values!inheritance}%
+  \index{dimension values!inheritance}%
   \index{initial space instances!inheritance}%
   \index{retention, of unit instances!inheritance}%
   \index{unit instance!retaining, by delete-blackboard-repository!inheritance}%
@@ -1118,9 +1118,9 @@ The shorthand \code{+} subevents specifier is equivalent to
   %
   The set of \nobr{\var{dimensional-values\/}} for a \glref{unit~class} is the
   union of the sets specified in the \nobr{\var{dimensional-values\/}} options
-  of the class and its superclasses.  When more than one dimensional index is
-  supplied for a given dimension, the one supplied by the most specific class
-  is used.
+  of the class and its superclasses.  When more than one dimension-value
+  specification is supplied for a given dimension, the one supplied by the
+  most specific class is used.
 
   The effective \nobr{\var{initial-space-instances\/}} value for a
   \glref{unit~class} is the value specified in the definition of the most
@@ -16577,6 +16577,81 @@ Create, then delete, then check, a \code{hyp} \glref{unit~instance}:
 
 %% ------------------------------------------------------------------------
 
+\begin{functiondoc}{Function}{check-instance-locators}{%
+    \nobr{\var{unit-instance\/}}}
+
+\fnsyntax
+
+\fnpurpose Signal an error if the locators on any \glref{space-instance} are
+inconsistent with the \glref{dimension~values} of the supplied
+\glref{unit~instance}.
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:gbbopen-core}
+
+\fnargs
+\begin{args}{unit-instance}
+\arg[unit-instance] A \glref{unit~instance}
+\end{args}
+
+\fndescription
+%
+Changes to slot values that affect a \glref{unit~instance}'s
+\glref{dimension~values} must be indicated to GBBopen using the
+\nobr{\textbf{\entlink{with-changing-dimension-values}}} macro.  Otherwise,
+locators for the unit instance will not be updated to reflect the new
+dimension values, resulting in the inability to retrieve the instance where it
+should be located on a \glref{space~instance} and removed or deleted instances
+incorrectly retained on a \glref{space~instance} due to the inconsistent
+locators.  \nobr{\textbf{Check-instance-locators}} can be used as a debugging
+aid during development to check for inconsistent locators.
+
+\begin{alsos}{with-changing-dimension-values}
+\also[with-changing-dimension-values]
+\end{alsos}
+
+\fnexamples
+%
+\bfindexit{map-instances-on-space-instances}
+% 
+Check the locators of all \glref{unit~instances} that are stored on any
+\glref{space~instance}:
+% 
+\W\supp
+\begin{example}
+  > (\entlink{map-instances-on-space-instances} #'check-instance-locators t t)
+  nil
+  >
+\end{example}
+%
+\bfindexit{find-instance-by-name}
+% 
+Intentionally create inconsistent locators for a \code{hyp}
+\glref{unit~instance} by changing its \code{location} without using
+\nobr{\textbf{\entlink{with-changing-dimension-values}}}.  Then check its
+locators:
+% 
+\W\supp
+\begin{example}
+  > (defparameter *hyp* (find-instance-by-name 419 'hyp))
+  *hyp*
+  > *hyp*
+  #<hyp 419 (1835 4791) 0.85 [5..35]>
+  >(check-instance-locators *hyp*)
+  nil
+  > (setf (location-of *hyp*) '(2000 2000))
+  (2000 2000)
+  > (check-instance-locators *hyp*)
+  Error: Instance #<hyp 419 (2000 2000) 0.85 [5..35]> is missing (bucket [21,21]) 
+         in #<2d-Uniform-Buckets (bb hyps) (hyp+) (x y) 8>
+  >>
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
 \begin{functiondoc}{Generic~Function}{class-instances-count}%
   {\nobr{\var{unit-class-or-name\/}}
     \nobr{\returns{} \var{count\/}}}
@@ -16744,7 +16819,7 @@ one \glref{unit~class} name.  This error is signaled on class finalization.
  & \code{(:abstract} \var{boolean\/}\code{)} \vbar \\
  & \code{(:default-initargs .} \var{initarg-list\/}\code{)} \vbar \\
  & \code{(:dimensional-values} 
-   \var{dimensional-value-specifier\/}\superstar\code{)} \vbar \\
+   \var{dimension-value-specifier\/}\superstar\code{)} \vbar \\
  & \code{(:documentation} \var{string\/}\code{)} \vbar \\
  & \code{(:estimated-instances} \var{size-form\/}\code{)} \vbar \\
  & \code{(:export-accessors} \var{boolean\/}\code{)} \vbar \\
@@ -16774,7 +16849,7 @@ one \glref{unit~class} name.  This error is signaled on class finalization.
   \var{function\/}\} \\ 
 \end{tabular}
 \T\\
-\dimensionalvaluesspec
+\dimensionvaluesspec
 \T\\
 \begin{tabular}{@{~}l@{~}l}
 \nobr{\var{direct-slots-specifier\/} ::=} & \nil{} \vbar{} \code{t} \vbar{}
@@ -16784,7 +16859,7 @@ one \glref{unit~class} name.  This error is signaled on class finalization.
 \T\\[4pt]
 \comparisontypenote
 \par % in both LaTeX and Hyperlatex
-\dimensionalspecnote
+\dimensionspecnote
 
 \fnterms
 \begin{args}{instance-name-comparison-test}
@@ -18828,8 +18903,8 @@ not duplicated by \nobr{\textbf{\entlink{make-duplicate-instance}}} and
   
 \fnsyntax
 
-\fnpurpose Inform GBBopen that the dimensional values of a
-\glref{unit~instance} will potentially be changed by the evaluation of
+\fnpurpose Inform GBBopen that the \glref{dimension~values} of a
+\glref{unit~instance} potentially will be changed by the evaluation of
 \var{forms}.
 
 \fnpackage \code{:gbbopen}
@@ -18848,19 +18923,24 @@ not duplicated by \nobr{\textbf{\entlink{make-duplicate-instance}}} and
 
 \fnreturns The values returned by evaluating the last \var{form}.
 
-\fndescription The indexing for \var{unit-instance\/} is updated following the
-evaluation of the last \var{form}.  Any retrieval operations performed during
-the evaluation of \var{forms\/} may operate with indexes as they existed
-before evaluation of the first \var{form}; therefore, retrievals should not be
-included within the scope of \nobr{\textbf{with-changing-dimension-values}}.
-Retrievals performed by separate threads also should be synchronized with
+\fndescription
+%
+The locators for \var{unit-instance\/} are updated following the evaluation of
+the last \var{form}.  Any retrieval operations performed during the evaluation
+of \var{forms\/} will use the \nobr{\var{unit-instance\/}} locators as they
+existed before evaluation of the first \var{form}.  Retrievals performed by
+separate threads also should be synchronized when using
 \nobr{\textbf{with-changing-dimension-values}}.
 
-If \var{dimension-names\/} are specified, only the indexes for those
-\glref{dimensions} of \var{unit-instance\/} will be updated. If no
-\var{dimension-names\/} are specified, the values of any or all
-\glref{dimensions} of \var{unit-instance\/} are assumed to have been
-potentially changed by \var{forms}.
+If \var{dimension-names\/} are specified, only the locators for those
+\glref{dimensions} of \var{unit-instance\/} will be checked and updated as
+needed. If no \nobr{\var{dimension-names\/}} are specified, the values of any
+or all \glref{dimensions} of \nobr{\var{unit-instance\/}} are assumed to have
+been potentially changed by \var{forms}.
+
+\begin{alsos}{check-instance-locators}
+\also[check-instance-locators]
+\end{alsos}
 
 \fnexamples Notify GBBopen that the \code{x}, \code{y}, and
 \nobr{\code{belief}} dimension values of \code{hyp} might be changed:
@@ -18875,7 +18955,8 @@ potentially changed by \var{forms}.
 \end{example}
 %
 Notify GBBopen that \textit{some\/} dimension values of \code{hyp} might be
-changed:
+changed (less efficient than the above, if \code{hyp} \glref{unit~instances}
+have many dimensions):
 %
 \W\supp\notpretop
 \begin{example}
@@ -22018,7 +22099,7 @@ one \glref{space~class} name.  This error is signaled on class finalization.
  & \code{(:abstract} \var{boolean\/}\code{)} \vbar \\
  & \code{(:default-initargs .} \var{initarg-list\/}\code{)} \vbar \\
  & \code{(:dimensional-values} 
-   \var{dimensional-value-specifier\/}\superstar\code{)} \vbar \\
+   \var{dimension-value-specifier\/}\superstar\code{)} \vbar \\
  & \code{(:documentation} \var{string\/}\code{)} \vbar \\
  & \code{(:estimated-instances} \var{integer\/}\code{)} \vbar \\
  & \code{(:export-accessors} \var{boolean\/}\code{)} \vbar \\
@@ -22048,7 +22129,7 @@ one \glref{space~class} name.  This error is signaled on class finalization.
   \var{function\/}\} \\ 
 \end{tabular}
 \T\\
-\dimensionalvaluesspec
+\dimensionvaluesspec
 \T\\
 \begin{tabular}{@{~}l@{~}l}
 \nobr{\var{direct-slots-specifier\/} ::=} & \nil{} \vbar{} \code{t} \vbar{}
@@ -22058,7 +22139,7 @@ one \glref{space~class} name.  This error is signaled on class finalization.
 \T\\[4pt]
 \comparisontypenote
 \par % in both LaTeX and Hyperlatex
-\dimensionalspecnote
+\dimensionspecnote
 
 \fnterms
 \begin{args}{instance-name-comparison-test}
@@ -22884,8 +22965,8 @@ that cannot store any \glref{unit~instances}:
 %
 Now create a \glref{space~instance} for \code{hyp} \glref{unit~instances},
 named \code{hyps}, as a child of \code{bb}, with uniform, 100-wide, bucket
-storage for indexing \glref{unit~instances} with dimensional values between 
-0--10,000 in the \code{x} and \code{y} dimensions:
+storage for indexing \glref{unit~instances} with \glref{dimension~values}
+between 0--10,000 in the \code{x} and \code{y} dimensions:
 %
 \W\supp\notpretop
 \begin{example}
@@ -22902,7 +22983,8 @@ storage for indexing \glref{unit~instances} with dimensional values between
 Here is an improved \glref{space~instance} for \code{hyp}
 \glref{unit~instances} named \code{hyps}, with both uniform-bucket storage for
 indexing in the \code{x} and \code{y} dimensions and hashed storage to
-retrieve match candidates via \nobr{\code{classification}} dimensional values:
+retrieve match candidates via \nobr{\code{classification}}
+\glref{dimension~values}:
 %
 \W\supp
 \begin{example}
@@ -27172,7 +27254,7 @@ one \glref{ks~class} name.  This error is signaled on class finalization.
  & \code{(:abstract} \var{boolean\/}\code{)} \vbar \\
  & \code{(:default-initargs .} \var{initarg-list\/}\code{)} \vbar \\
  & \code{(:dimensional-values} 
-   \var{dimensional-value-specifier\/}\superstar\code{)} \vbar \\
+   \var{dimension-value-specifier\/}\superstar\code{)} \vbar \\
  & \code{(:documentation} \var{string\/}\code{)} \vbar \\
  & \code{(:estimated-instances} \var{integer\/}\code{)} \vbar \\
  & \code{(:export-accessors} \var{boolean\/}\code{)} \vbar \\
@@ -27202,7 +27284,7 @@ one \glref{ks~class} name.  This error is signaled on class finalization.
   \var{function\/}\} \\ 
 \end{tabular}
 \T\\
-\dimensionalvaluesspec
+\dimensionvaluesspec
 \T\\
 \begin{tabular}{@{~}l@{~}l}
 \nobr{\var{direct-slots-specifier\/} ::=} & \nil{} \vbar{} \code{t} \vbar{}
@@ -27212,7 +27294,7 @@ one \glref{ks~class} name.  This error is signaled on class finalization.
 \T\\[4pt]
 \comparisontypenote
 \par % in both LaTeX and Hyperlatex
-\dimensionalspecnote
+\dimensionspecnote
 
 \fnterms
 \begin{args}{instance-name-comparison-test}
@@ -27373,7 +27455,7 @@ finalization.
  & \code{(:abstract} \var{boolean\/}\code{)} \vbar \\
  & \code{(:default-initargs .} \var{initarg-list\/}\code{)} \vbar \\
  & \code{(:dimensional-values} 
-   \var{dimensional-value-specifier\/}\superstar\code{)} \vbar \\
+   \var{dimension-value-specifier\/}\superstar\code{)} \vbar \\
  & \code{(:documentation} \var{string\/}\code{)} \vbar \\
  & \code{(:estimated-instances} \var{integer\/}\code{)} \vbar \\
  & \code{(:export-accessors} \var{boolean\/}\code{)} \vbar \\
@@ -27403,7 +27485,7 @@ finalization.
   \var{function\/}\} \\ 
 \end{tabular}
 \T\\
-\dimensionalvaluesspec
+\dimensionvaluesspec
 \T\\
 \begin{tabular}{@{~}l@{~}l}
 \nobr{\var{direct-slots-specifier\/} ::=} & \nil{} \vbar{} \code{t} \vbar{}
@@ -27413,7 +27495,7 @@ finalization.
 \T\\[4pt]
 \comparisontypenote
 \par % in both LaTeX and Hyperlatex
-\dimensionalspecnote
+\dimensionspecnote
 
 \fnterms
 \begin{args}{instance-name-comparison-test}
