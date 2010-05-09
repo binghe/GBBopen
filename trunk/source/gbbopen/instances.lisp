@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed May  5 15:04:22 2010 *-*
+;;;; *-* Last-Edit: Sun May  9 01:46:56 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -43,6 +43,7 @@
 ;;;  09-03-08 Added MAKE-INSTANCES-OF-CLASS-VECTOR (please don't abuse!). 
 ;;;           (Corkill)
 ;;;  04-15-08 Added *SKIP-DELETED-UNIT-INSTANCE-CLASS-CHANGE* (Corkill)
+;;;  05-08-10 Added CHECK-INSTANCE-LOCATORS (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -59,6 +60,7 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(*skip-deleted-unit-instance-class-change*
             check-for-deleted-instance
+            check-instance-locators
             delete-instance
             deleted-instance-class
             describe-instance
@@ -1520,6 +1522,23 @@
            (update-instance-locators
             ,instance ,current-dimension-values 
             ',(or dimensions-being-changed 't) nil))))))
+
+;;; ---------------------------------------------------------------------------
+
+(defun inconsistent-instance-locators-error (instance storage problem)
+  (error "Instance ~s is ~a in ~s" instance problem storage))
+
+;;; ---------------------------------------------------------------------------
+
+(defun check-instance-locators (instance)
+  (declare (inline class-of))
+  (let ((unit-class (class-of instance)))
+    ;; Check each storage on each space instance:
+    (dolist (space-instance 
+                (standard-unit-instance.%%space-instances%% instance))
+      (dolist (storage (storage-objects-for-add/move/remove
+                        unit-class space-instance))
+        (check-instance-storage-locators instance storage)))))
 
 ;;; ===========================================================================
 ;;;   Parser for unit-class/instance specifiers (placed here rather than next

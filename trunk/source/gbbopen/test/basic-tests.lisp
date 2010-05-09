@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/basic-tests.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Apr 24 12:10:20 2010 *-*
+;;;; *-* Last-Edit: Sun May  9 01:53:26 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -42,12 +42,58 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(declaim (special u1 u2 u3 u4 u5 u6 u7 u8 u9 u10 u11 u12 cu1))
-
 ;; CLISP unfortunately initializes CLOS classes at compile time, so we need the
 ;; test-size value in the compilation environment:
 (eval-when (#+clisp :compile-toplevel :load-toplevel :execute)
   (defparameter *timing-tests-size* 10000))
+
+;;; ---------------------------------------------------------------------------
+
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defvar *%timing-result%*))
+
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defmacro brief-timer (n &body body)
+    (cond 
+     ;; Iterating timer:
+     (n
+      `(with-full-optimization ()
+         ;; Do one untimed trial to prepare everything:
+         (let ((i 0))
+           (declare (ignorable i))
+           (setf *%timing-result%* ,@body))
+         (let ((%start-time% (get-internal-run-time)))
+           (dotimes (i (& ,n))
+             (declare (fixnum i))
+             (setf *%timing-result%* ,@body))
+           (locally (declare (notinline -))
+             (- (get-internal-run-time) %start-time%)))))
+     (t 
+      `(with-full-optimization ()
+         (let ((%start-time% (get-internal-run-time)))
+           (setf *%timing-result%* ,@body)
+           (locally (declare (notinline -))
+             (- (get-internal-run-time) %start-time%))))))))
+
+;;; ---------------------------------------------------------------------------
+
+(defun fformat (stream &rest args)
+  ;; Format followed by a force-output on the stream:
+  (declare (dynamic-extent args))
+  (apply #'format stream args)
+  (force-output (if (eq stream 't) *standard-output* stream)))
+
+;;; ---------------------------------------------------------------------------
+
+(defun format-ticks (ticks)
+  (format t "~6,2f seconds"
+          (locally (declare (optimize (speed 0) (safety 3)))
+            (/ ticks
+               #.(float internal-time-units-per-second)))))
+  
+;;; ---------------------------------------------------------------------------
+
+(declaim (special u1 u2 u3 u4 u5 u6 u7 u8 u9 u10 u11 u12 cu1))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -162,29 +208,52 @@
 
 (defun make-time-test (n)
   (declare (fixnum n))
-  (format t "~&;; Running make-instance timing test (~:d instance~:p)...~%" 
-          n)
-  (flet ((make-instances ()
-           (with-full-optimization ()
-             (make-instance 'uc-1 :x 0 :y 0)
-             (dotimes (i n)
-               (declare (fixnum i))
-               (make-instance 'uc-2 :x i :y i)))))
-    (time (make-instances))))
+  (fformat t "~&;; Running make-instance timing test (~:d instance~:p)..." 
+           n)
+  (make-instance 'uc-1 :x 0 :y 0)
+  (format-ticks (brief-timer n (make-instance 'uc-2 :x i :y i))))
+
+;;; ---------------------------------------------------------------------------
+
+(defun nonlink-slot-access-time-test (n)
+  (declare (fixnum n))
+  (setf n (min most-positive-fixnum (* n 100)))
+  (let ((unit-instance (make-instance 'uc-2 :y 0))
+        (clos-instance (make-instance 'not-a-unit :non-unit-slot 0)))
+    (fformat t "~&;; Running CLOS-slot-reading timing test (~:d read~:p)..."
+             n)
+    (let ((clos-time (brief-timer n (non-unit-slot-of clos-instance))))
+      (format-ticks clos-time))
+    (fformat t "~&;; Running nonlink-slot-reading timing test (~:d read~:p)..."
+             n)
+    (let ((ui-time (brief-timer n (x-of unit-instance))))
+      (format-ticks ui-time))
+    (fformat t "~&;; Running link-slot-reading timing test (~:d read~:p)..."
+             n)
+    (let ((ui-time (brief-timer n (link-2-of unit-instance))))
+      (format-ticks ui-time))
+    (fformat t "~&;; Running nonlink-slot-writing timing test ~
+                     (~:d write~:p)..."
+             n)
+    (let ((time (brief-timer n (setf (x-of unit-instance) i))))
+      (format-ticks time))
+
+    (fformat t "~&;; Running linkf timing test (~:d write~:p)..."
+             n)
+    (let ((time (brief-timer n (linkf (link-2-of unit-instance)
+                                      unit-instance))))
+      (format-ticks time))))
 
 ;;; ---------------------------------------------------------------------------
 
 (defun make-and-link-time-test (n)
   (declare (fixnum n))
-  (format t "~&;; Running make-instance & link timing test (~:d instance~:p)...~%" 
-          n)
-  (flet ((make-instances-with-links ()
-           (with-full-optimization ()
-             (let ((x (make-instance 'uc-1 :x 0 :y 0)))
-               (dotimes (i n)
-                 (declare (fixnum i))
-                 (setf x (make-instance 'uc-2 :x i :y i :backlink-2 x)))))))
-    (time (make-instances-with-links))))
+  (fformat t "~&;; Running make-instance & link timing test ~
+                   (~:d instance~:p)..." 
+           n)
+  (let ((x (make-instance 'uc-1 :x 0 :y 0)))
+    (format-ticks
+     (brief-timer n (setf x (make-instance 'uc-2 :x i :y i :backlink-2 x))))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -193,7 +262,7 @@
   (dotimes (i n)
     (declare (fixnum i))
     (find-instances 'uc-2 '(bb sub-bb space-1) 
-                    `(=& y ,(expand-point& n 3)))))
+                    `(=& y ,(expand-point& n 5)))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -212,67 +281,70 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun marking-find-time-test (n)
-  (format t "~&;; Running mark-based retrieval timing test ~
-                  (~:d instance~:p)...~%" n)
+  (fformat t "~&;; Running mark-based retrieval timing test ~
+                  (~:d instance~:p)..." n)
   (time (retrieval-time-test n 't)))
 
 ;;; ---------------------------------------------------------------------------
 
 (defun hashing-find-time-test (n)
-  (format t "~&;; Running hash-based retrieval timing test ~
-                  (~:d instance~:p)...~%" n)
+  (fformat t "~&;; Running hash-based retrieval timing test ~
+                  (~:d instance~:p)..." n)
   (time (retrieval-time-test n nil)))
 
 ;;; ---------------------------------------------------------------------------
 
 (defun change-class-time-test (n)
-  (format t "~&;; Running change-class timing test ~
-                  (~:d instance~:p)...~%"
-          n)
+  (fformat t "~&;; Running change-class timing test (~:d instance~:p)..."
+           n)
   (let ((uc-2-clone-class (find-class 'uc-2-clone)))
     (flet ((change-classes ()
              (flet ((change-it (instance)
                       (change-class instance uc-2-clone-class)))
                (declare (dynamic-extent #'change-it))
                (map-instances-of-class #'change-it 'uc-2))))
-      (time (change-classes)))))
+      (format-ticks (brief-timer nil (change-classes))))))
 
 ;;; ---------------------------------------------------------------------------
 
 (defun class-based-delete-time-test (n)
-  (format t "~&;; Running class-based deletion timing test ~
-                  (~:d instance~:p)...~%"
-          n)
+  (fformat t "~&;; Running class-based deletion timing test ~
+                   (~:d instance~:p)..."
+           n)
   (flet ((class-based-delete ()
            (map-instances-of-class
             #'delete-instance 
             '(abstract :plus-subclasses))))
-    (time (class-based-delete))))
+    (format-ticks (brief-timer nil (class-based-delete)))))
 
 ;;; ---------------------------------------------------------------------------
 
 (defun space-instance-based-delete-time-test (n)
-  (format t "~&;; Running space-instance-based deletion timing test ~
-                  (~:d instance~:p)...~%"
-          n)
+  (fformat t "~&;; Running space-instance-based deletion timing test ~
+                   (~:d instance~:p)..."
+           n)
   (flet ((space-instance-based-delete ()
            (map-instances-on-space-instances 
             #'delete-instance 
             't '(bb sub-bb space-1))))
-    (time (space-instance-based-delete))))
+    (format-ticks (brief-timer nil (space-instance-based-delete)))))
 
 ;;; ---------------------------------------------------------------------------
 
-(defun do-time-tests (n)
+(defun do-time-tests (&optional (n *timing-tests-size*))
+  (format t "~&;; ~50,,,'-<-~>~%")
+  (format t "~&;; Starting timings...~%")
+  (map-instances-of-class #'delete-instance '(abstract :plus-subclasses))
+  (reset-unit-class 't)
   (make-space-instance 
    '(bb sub-bb space-1) 
    :dimensions (dimensions-of 'uc-1)
-   :storage `(((uc-1 :plus-subclasses) y uniform-buckets :layout (0 ,n 25)))
+   :storage `(((uc-1 :plus-subclasses) y uniform-buckets :layout (0 ,n 10)))
    :make-parents t)
-  (map-instances-of-class #'delete-instance '(abstract :plus-subclasses))
-  (reset-unit-class 't)
   ;; Measure instance creation:
   (make-time-test n)
+  ;; Measure nonlink-slot access:
+  (nonlink-slot-access-time-test n)
   ;; Measure change-class:
   (change-class-time-test n)
   ;; Measure class-based deletion:
@@ -283,7 +355,8 @@
   (marking-find-time-test n)
   (hashing-find-time-test n)
   ;; Measure space-instance-based deletion:
-  (space-instance-based-delete-time-test n))
+  (space-instance-based-delete-time-test n)
+  (format t "~&;; ~50,,,'-<-~>~%"))
   
 ;;; ===========================================================================
 ;;;  Basic tests
@@ -803,6 +876,7 @@
 	   (u1-set (list u1 u2 u3 u5 u7 u8 u9 u10 u11 u12))
 	   (all-space-instances (find-space-instances '(*)))
 	   (space-1 (find-space-instance-by-path '(bb sub-bb space-1))))
+      (mapc #'check-instance-locators all-space-instances)
       (labels
 	  ((space-instance-names (space-instances)
 	     (if (listp space-instances)

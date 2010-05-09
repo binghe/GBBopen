@@ -209,8 +209,8 @@ that cannot store any <a href="ref-glossary.html#gl:instances">unit&nbsp;instanc
 </pre>
 <a name="id6">Now</a> create a <a href="ref-glossary.html#id203">space&nbsp;instance</a> for <code>hyp</code> <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a>,
 named <code>hyps</code>, as a child of <code>bb</code>, with uniform, 100-wide, bucket
-storage for indexing <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a> with dimensional values between 
-0&ndash;10,000 in the <code>x</code> and <code>y</code> dimensions:
+storage for indexing <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a> with <a href="ref-glossary.html#id36">dimension&nbsp;values</a>
+between 0&ndash;10,000 in the <code>x</code> and <code>y</code> dimensions:
 <pre>
   &gt; (make-space-instance '(bb hyps)
        :dimensions (<a href="ref-dimensions-of.html">dimensions-of</a> 'hyp)
@@ -225,7 +225,8 @@ storage for indexing <a href="ref-glossary.html#gl:instances">unit&nbsp;instance
 <p>Here is an improved <a href="ref-glossary.html#id203">space&nbsp;instance</a> for <code>hyp</code>
 <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a> named <code>hyps</code>, with both uniform-bucket storage for
 indexing in the <code>x</code> and <code>y</code> dimensions and hashed storage to
-retrieve match candidates via <nobr><code>classification</code></nobr> dimensional values:
+retrieve match candidates via <nobr><code>classification</code></nobr>
+<a href="ref-glossary.html#id36">dimension&nbsp;values</a>:
 <pre class="pretop">
   &gt; (make-space-instance '(bb hyps)
        :dimensions (<a href="ref-dimensions-of.html">dimensions-of</a> 'hyp)

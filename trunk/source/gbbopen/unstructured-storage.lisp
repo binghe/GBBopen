@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/unstructured-storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Apr  7 10:08:46 2010 *-*
+;;;; *-* Last-Edit: Sun May  9 01:43:23 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -64,6 +64,13 @@
   (declare (ignore old-dimension-values dimensions-being-changed))
   (when verbose (print-unstructured-storage-usage-message storage))
   (remhash instance (instances-of storage)))
+
+;;; ---------------------------------------------------------------------------
+
+(defmethod check-instance-storage-locators ((instance standard-unit-instance)
+                                            (storage unstructured-storage))
+  (unless (gethash instance (instances-of storage))
+    (inconsistent-instance-locators-error instance storage "missing")))
 
 ;;; ---------------------------------------------------------------------------
 

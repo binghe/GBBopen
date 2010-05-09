@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/hashed-storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Apr  7 10:06:26 2010 *-*
+;;;; *-* Last-Edit: Sun May  9 01:44:22 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -174,17 +174,16 @@
 (defmethod add-instance-to-storage ((instance standard-unit-instance)
                                     (storage hashed-storage)
                                     verbose)
-  (flet ((unbound-value-action (instance storage)
-           (setf (gethash instance (unbound-value-instances-of storage)) 't))
-         (bound-value-action (instance storage dimension-value)
-           (pushnew instance
-                    (gethash dimension-value (bound-instances-of storage))
-                    :test #'eq)))
+  (flet
+      ((unbound-value-action (instance storage)
+         (setf (gethash instance (unbound-value-instances-of storage)) 't))
+       (bound-value-action (instance storage dimension-value)
+         (pushnew instance
+                  (gethash dimension-value (bound-instances-of storage))
+                  :test #'eq)))
     (declare (dynamic-extent #'unbound-value-action #'bound-value-action))
     (do-hashed-add/remove-action 
-        instance storage verbose
-        #'unbound-value-action
-        #'bound-value-action)))
+        instance storage verbose #'unbound-value-action #'bound-value-action)))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -194,17 +193,58 @@
                                          dimensions-being-changed
                                          verbose)
   (declare (ignore old-dimension-values dimensions-being-changed))
-  (flet ((unbound-value-action (instance storage)
-           (remhash instance (unbound-value-instances-of storage)))
-         (bound-value-action (instance storage dimension-value)
-           (setf (gethash dimension-value (bound-instances-of storage))
-                 (delq-one instance
-                           (gethash dimension-value
-                                    (bound-instances-of storage))))))
+  (flet 
+      ((unbound-value-action (instance storage)
+         (remhash instance (unbound-value-instances-of storage)))
+       (bound-value-action (instance storage dimension-value)
+         (let ((storage (bound-instances-of storage)))
+           (setf (gethash dimension-value storage)
+                 (delq-one instance (gethash dimension-value storage))))))
     (declare (dynamic-extent #'unbound-value-action #'bound-value-action))    
+    (do-hashed-add/remove-action
+        instance storage verbose #'unbound-value-action #'bound-value-action)))
+
+;;; ---------------------------------------------------------------------------
+
+(defmethod check-instance-storage-locators ((instance standard-unit-instance)
+                                            (storage hashed-storage))
+  (flet 
+      ((unbound-value-action (instance storage)
+         (unless (gethash instance (unbound-value-instances-of storage))
+           (inconsistent-instance-locators-error 
+            instance storage "missing from unbound-value instances"))
+         ;; Check that it's not in any bound-value bucket:
+         (flet ((check-for-it (the-dimension-value instances)
+                  (when (memq instance instances)
+                    (inconsistent-instance-locators-error 
+                     instance storage 
+                     (format nil "present in ~s bound-value instances"
+                             the-dimension-value)))))
+           (declare (dynamic-extent #'check-for-it))
+           (maphash #'check-for-it (bound-instances-of storage))))
+       (bound-value-action (instance storage dimension-value)
+         (unless (memq instance
+                       (gethash dimension-value (bound-instances-of storage)))
+           (inconsistent-instance-locators-error
+            instance storage "missing from bound-value instances"))
+         ;; Check that it's not in any other bound-value bucket:
+         ;; NOTE: Support for composite extents will require changes here...
+         (flet ((check-for-it (the-dimension-value instances)
+                  (unless (eq dimension-value the-dimension-value)
+                    (when (memq instance instances)
+                      (inconsistent-instance-locators-error 
+                       instance storage 
+                       (format nil "present in ~s bound-value instances"
+                               the-dimension-value))))))
+           (declare (dynamic-extent #'check-for-it))
+           (maphash #'check-for-it (bound-instances-of storage)))
+         ;; Check that it's not in the unbound-value instances:
+         (when (gethash instance (unbound-value-instances-of storage))
+           (inconsistent-instance-locators-error 
+            instance storage "present in unbound-value instances"))))
+    (declare (dynamic-extent #'unbound-value-action #'bound-value-action))
     (do-hashed-add/remove-action 
-        instance storage verbose
-        #'unbound-value-action #'bound-value-action)))
+        instance storage nil #'unbound-value-action #'bound-value-action)))
 
 ;;; ---------------------------------------------------------------------------
 

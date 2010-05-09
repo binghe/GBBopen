@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/boolean-storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Apr  7 10:05:25 2010 *-*
+;;;; *-* Last-Edit: Sun May  9 01:43:36 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -134,6 +134,51 @@
               #'unbound-value-action #'true-value-action #'false-value-action))
     (do-boolean-add/remove-action 
         instance storage verbose
+        #'unbound-value-action
+        #'true-value-action
+        #'false-value-action)))
+
+;;; ---------------------------------------------------------------------------
+
+(defmethod check-instance-storage-locators ((instance standard-unit-instance)
+                                            (storage boolean-storage))
+  ;; Assumes that an instance can only have a dimension value that is one of
+  ;; true/false/unbound-value at a time:
+  (flet
+      ((unbound-value-action (instance storage)
+         (unless (gethash instance (unbound-value-instances-of storage))
+           (inconsistent-instance-locators-error
+            instance storage "missing from unbound-value instances"))
+         (when (gethash instance (true-instances-of storage))
+           (inconsistent-instance-locators-error 
+            instance storage "present in true instances"))
+         (when (gethash instance (false-instances-of storage))
+           (inconsistent-instance-locators-error
+            instance storage "present in false instances")))
+       (true-value-action (instance storage)
+         (unless (gethash instance (true-instances-of storage))
+           (inconsistent-instance-locators-error 
+            instance storage "missing from true instances"))
+         (when (gethash instance (unbound-value-instances-of storage))
+           (inconsistent-instance-locators-error
+            instance storage "present in unbound-value instances"))
+         (when (gethash instance (false-instances-of storage))
+           (inconsistent-instance-locators-error
+            instance storage "present in false instances")))
+       (false-value-action (instance storage)
+         (unless (gethash instance (false-instances-of storage))
+           (inconsistent-instance-locators-error 
+            instance storage "missing from false instances"))
+         (when (gethash instance (unbound-value-instances-of storage))
+           (inconsistent-instance-locators-error
+            instance storage "present in unbound-value instances"))
+         (when (gethash instance (true-instances-of storage))
+           (inconsistent-instance-locators-error 
+            instance storage "present in true instances"))))
+    (declare (dynamic-extent 
+              #'unbound-value-action #'true-value-action #'false-value-action))
+    (do-boolean-add/remove-action 
+        instance storage nil
         #'unbound-value-action
         #'true-value-action
         #'false-value-action)))
