@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:HTTP-SERVICES; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/http-services.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Apr  7 09:57:08 2010 *-*
+;;;; *-* Last-Edit: Sun May 16 11:55:38 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -39,7 +39,8 @@
 (in-package :http-services)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (export '(*log-http-connections*      ; not yet documented
+  (export '(*http-server-port*          ; not yet documented
+            *log-http-connections*      ; not yet documented
             *log-http-headers*          ; not yet documented
             *log-http-requests*         ; not yet documented
             close-http-connection       ; not yet documented
