@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/atable.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Apr 22 18:43:32 2010 *-*
+;;;; *-* Last-Edit: Mon May 17 07:13:20 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -42,10 +42,7 @@
 (in-package :gbbopen-tools)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (export '(*atable-transition-sizes*
-            *eset-transition-size*
-            *et-transition-size*
-            add-to-eset
+  (export '(add-to-eset
             atable                      ; data type
             atable-count
             atable-test
@@ -65,11 +62,13 @@
             make-eset
             map-atable
             map-eset
-            map-et)))
+            map-et
+            minimum-transition-size)))  ; not documented
 
 ;;; ---------------------------------------------------------------------------
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
+  (defconstant minimum-transition-size 8)
   (defconstant auto-transition-margin 2))
 
 ;;; ---------------------------------------------------------------------------
@@ -96,60 +95,58 @@
 ;;; ===========================================================================
 ;;;  EQ Sets (ESETs)
 ;;;
+;;; ESETs are slower in CLISP and ECL; we also don't bother when sizes are less
+;;; than MINIMUM-TRANSITION-SIZE:
 
-;; ESETs are slower in CLISP and ECL:
-#+(or clisp ecl)
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (pushnew :slower-eset *features*))
-
-(defvar *eset-transition-size* 
-    (check-featured-value
-     '*eset-transition-size*
-     ;; Allegro
-     #+(and allegro macosx x86) 12
-     #+(and allegro macosx powerpc) 34
-     #+(and allegro                     ; also applies to windows
-            (not (and macosx (or x86 powerpc)))) 108
-     ;; CLISP
-     #+clisp 0
-     ;; Clozure
-     #+(and clozure darwinx8632-target) 8
-     #+(and clozure darwinx8664-target) 30
-     #+(and clozure darwinppc-target) 18
-     #+(and clozure (not (or darwinx8632-target
-                             darwinx8664-target
-                             darwinppc-target))) 15
-     ;; CMUCL
-     #+(and cmu darwin x86) 26
-     #+(and cmu (not (and darwin x86))) 46
-     ;; Digitool MCL
-     #+digitool-mcl 7
-     ;; ECL
-     #+ecl 0
-     ;; Lispworks
-     #+lispworks 18
-     ;; SBCL
-     #+(and sbcl darwin (not ppc)) 16
-     #+(and sbcl darwin ppc) 62
-     #+(and sbcl (not darwin)) 32
-     ;; SCL
-     #+(and scl darwin x86) 26
-     #+(and scl (not (and darwin x86))) 46
-     ;; New port (values needed)
-     #-(or allegro 
-           clisp
-           clozure
-           cmu
-           digitool-mcl
-           ecl
-           lispworks
-           sbcl
-           scl)
-     ;; Something reasonable, but need to determine for the port:
-     (progn
-       (warn "Need to compute ~s"
-             '*eset-transition-size*)
-       10)))
+  (defconstant eset-transition-size 
+      (check-featured-value
+       'eset-transition-size
+       ;; Allegro
+       #+(and allegro macosx x86) 10
+       #+(and allegro macosx powerpc) 34
+       #+(and allegro                   ; also applies to windows
+              (not (and macosx (or x86 powerpc)))) 108
+       ;; CLISP
+       #+clisp 0
+       ;; Clozure
+       #+(and clozure darwinx8632-target) 5
+       #+(and clozure darwinx8664-target) 30
+       #+(and clozure darwinppc-target) 18
+       #+(and clozure (not (or darwinx8632-target
+                               darwinx8664-target
+                               darwinppc-target))) 15
+       ;; CMUCL
+       #+(and cmu darwin x86) 26
+       #+(and cmu (not (and darwin x86))) 46
+       ;; Digitool MCL
+       #+digitool-mcl 18
+       ;; ECL
+       #+ecl 0
+       ;; Lispworks
+       #+lispworks 18
+       ;; SBCL
+       #+(and sbcl darwin (not ppc)) 18
+       #+(and sbcl darwin ppc) 62
+       #+(and sbcl (not darwin)) 32
+       ;; SCL
+       #+(and scl darwin x86) 26
+       #+(and scl (not (and darwin x86))) 46
+       ;; New port (values needed)
+       #-(or allegro 
+             clisp
+             clozure
+             cmu
+             digitool-mcl
+             ecl
+             lispworks
+             sbcl
+             scl)
+       ;; Something reasonable, but need to determine for the port:
+       (progn
+         (warn "Need to compute ~s"
+               'eset-transition-size)
+         10))))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  ESET "structure"
@@ -158,14 +155,13 @@
 
 ;;; ---------------------------------------------------------------------------
 
-#-slower-eset
 (defun make-eset (&key size)
   ;; Use the specified size if it is larger than the transition size:
   (if (and (fixnump size)
-           (>& size (+& *eset-transition-size* auto-transition-margin)))
+           (>& size (+& eset-transition-size auto-transition-margin)))
       (cons nil (make-keys-only-hash-table-if-supported :test #'eq :size size))
       (list 0)))
-#-slower-eset
+
 (defcm make-eset (&whole whole &key size)
   (if size
       ;; if size is specified, compile the normal make-eset call:
@@ -173,21 +169,10 @@
       ;; otherwise, just make an empty eset:
       `(list 0)))
 
-#+slower-eset
-(defun make-eset (&key size)
-  (if size
-      (make-keys-only-hash-table-if-supported :test #'eq :size size)
-      (make-keys-only-hash-table-if-supported :test #'eq)))
-#+slower-eset
-(defcm make-eset (&key size)
-  (if size
-      `(make-keys-only-hash-table-if-supported :test #'eq :size ,size)
-      '(make-keys-only-hash-table-if-supported :test #'eq)))
-
 ;;; ---------------------------------------------------------------------------
 ;;;  ESET membership
 
-(defun #-slower-eset in-eset #+slower-eset in-eset%timing  (item et)
+(defun in-eset (item et)
   (with-full-optimization ()
     (let* ((count (%eset-count et))
            (data (%eset-data (the cons et))))
@@ -197,17 +182,9 @@
               (values nil nil))
           (gethash item data)))))
 
-#+slower-eset
-(defun in-eset (item et)
-  (gethash item et))
-#+slower-eset
-(defcm in-eset (item et)
-  `(gethash ,item ,et))
-
 ;;; ---------------------------------------------------------------------------
 ;;;  ESET insertion
 
-#-slower-eset
 (defun add-to-eset (item et)
   (with-full-optimization ()
     (let* ((count (%eset-count et))
@@ -216,7 +193,7 @@
           (let ((sublist (memq item data)))
             (unless sublist
               (let ((transition-size                    
-                     (+& *eset-transition-size* auto-transition-margin)))
+                     (+& eset-transition-size auto-transition-margin)))
                 (cond 
                  ((<=& (incf& (%eset-count et)) transition-size)
                   (push item (%eset-data et)))
@@ -236,17 +213,9 @@
           ;; Already a hash-table:
           (setf (gethash item data) 't)))))
   
-#+slower-eset
-(defun add-to-eset (item et)
-  (setf (gethash item et) 't))
-#+slower-eset
-(defcm add-to-eset (item et)
-  `(setf (gethash ,item ,et) t))
-
 ;;; ---------------------------------------------------------------------------
 ;;;  ESET removal
 
-#-slower-eset
 (defun delete-from-eset (item et)
   (with-full-optimization ()
     (let* ((count (%eset-count et))
@@ -278,7 +247,7 @@
             (when result
               (let ((count (hash-table-count data)))
                 (when (<& count
-                          (-& *eset-transition-size* auto-transition-margin))
+                          (-& eset-transition-size auto-transition-margin))
                   (setf (%eset-data et)
                         (loop for item being each hash-key in data
                             collect item))
@@ -287,17 +256,9 @@
               ;; Return success:
               't))))))
 
-#+slower-eset
-(defun delete-from-eset (item et)
-  (remhash item et))
-#+slower-eset
-(defcm delete-from-eset (item et)
-  `(remhash ,item ,et))
-
 ;;; ---------------------------------------------------------------------------
 ;;;  ESET clear
 
-#-slower-eset
 (defun clear-eset (et &key retain-as-hash-table)
   (with-full-optimization ()
     (let ((count (%eset-count et)))
@@ -307,19 +268,9 @@
         (setf (%eset-data et) nil))
        (t (clrhash (%eset-data et)))))))
 
-#+slower-eset
-(defun clear-eset (et &key retain-as-hash-table)
-  (declare (ignore retain-as-hash-table))
-  (clrhash et))
-#+slower-eset
-(defcm clear-eset (et &key retain-as-hash-table)
-  (declare (ignore retain-as-hash-table))
-  `(clrhash ,et))
-
 ;;; ---------------------------------------------------------------------------
 ;;;  ESET mapper
 
-#-slower-eset
 (defun map-eset (function et)
   #+cmu (declare (notinline coerce))
   (let ((fn (coerce function 'function)))
@@ -331,71 +282,62 @@
             (mapc fn data)
             (maphash fn data))))))
 
-#+slower-eset
-(defun map-eset (function et)
-  (maphash function et))
-#+slower-eset
-(defcm map-eset (function et)
-  `(maphash ,function ,et))
-
 ;;; ===========================================================================
 ;;;  EQ Tables (ETs)
 ;;;
+;;; ETs are slower in CLISP and ECL; we also don't bother when sizes are less
+;;; than MINIMUM-TRANSITION-SIZE:
 
-;; ETs are slower in CLISP and ECL (and barely win with Lispworks):
-#+(or clisp ecl)
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (pushnew :slower-et *features*))
-
-(defvar *et-transition-size* 
-    (check-featured-value
-     '*et-transition-size*
-     ;; Allegro
-     #+(and allegro macosx x86) 6
-     #+(and allegro macosx powerpc) 30
-     #+(and allegro                     ; also applies to windows
-            (not (and macosx (or x86 powerpc)))) 60
-     ;; CLISP
-     #+clisp 0
-     ;; Clozure
-     #+(and clozure darwinx8632-target) 5
-     #+(and clozure darwinx8664-target) 26
-     #+(and clozure darwinppc-target) 14
-     #+(and clozure (not (or darwinx8632-target
-                             darwinx8664-target
-                             darwinppc-target))) 9
-     ;; CMUCL
-     #+(and cmu darwin x86) 14
-     #+(and cmu (not (and darwin x86))) 78
-     ;; Digitool MCL
-     #+digitool-mcl 7
-     ;; ECL
-     #+ecl 0
-     ;; Lispworks
-     #+lispworks 3
-     ;; SBCL
-     #+(and sbcl darwin (not ppc)) 12
-     #+(and sbcl darwin ppc) 42
-     #+(and sbcl (not darwin)) 20
-     ;; SCL
-     #+(and scl darwin x86) 14
-     #+(and scl (not (and darwin x86))) 78
-     ;; New port (values needed)
-     #-(or allegro 
-           clisp
-           clozure
-           cmu
-           digitool-mcl
-           ecl
-           lispworks
-           sbcl
-           scl)
-     ;; Something reasonable, but need to determine for the port:
-     (progn
-       (warn "Need to compute ~s"
-             '*et-transition-size*)
-       10)))
-
+  (defconstant et-transition-size 
+      (check-featured-value
+       'et-transition-size
+       ;; Allegro
+       #+(and allegro macosx x86) 6
+       #+(and allegro macosx powerpc) 30
+       #+(and allegro                   ; also applies to windows
+              (not (and macosx (or x86 powerpc)))) 60
+       ;; CLISP
+       #+clisp 0
+       ;; Clozure
+       #+(and clozure darwinx8632-target) 4
+       #+(and clozure darwinx8664-target) 26
+       #+(and clozure darwinppc-target) 14
+       #+(and clozure (not (or darwinx8632-target
+                               darwinx8664-target
+                               darwinppc-target))) 9
+       ;; CMUCL
+       #+(and cmu darwin x86) 14
+       #+(and cmu (not (and darwin x86))) 78
+       ;; Digitool MCL
+       #+digitool-mcl 14
+       ;; ECL
+       #+ecl 0
+       ;; Lispworks
+       #+lispworks 3
+       ;; SBCL
+       #+(and sbcl darwin (not ppc)) 12
+       #+(and sbcl darwin ppc) 42
+       #+(and sbcl (not darwin)) 20
+       ;; SCL
+       #+(and scl darwin x86) 14
+       #+(and scl (not (and darwin x86))) 78
+       ;; New port (values needed)
+       #-(or allegro 
+             clisp
+             clozure
+             cmu
+             digitool-mcl
+             ecl
+             lispworks
+             sbcl
+             scl)
+       ;; Something reasonable, but need to determine for the port:
+       (progn
+         (warn "Need to compute ~s"
+               'et-transition-size)
+         10))))
+  
 ;;; ---------------------------------------------------------------------------
 ;;;  ET "structure"
 
@@ -403,14 +345,13 @@
 
 ;;; ---------------------------------------------------------------------------
 
-#-slower-et
 (defun make-et (&key size)
   ;; Use the specified size if it is larger than the transition size:
   (if (and (fixnump size) 
-           (>& size (+& *et-transition-size* auto-transition-margin)))
+           (>& size (+& et-transition-size auto-transition-margin)))
       (cons nil (make-hash-table :test #'eq :size size))
       (list 0)))
-#-slower-et
+
 (defcm make-et (&whole whole &key size)
     (if size
       ;; if size is specified, compile the normal make-et call:
@@ -418,21 +359,10 @@
       ;; otherwise, just make an empty et:
       `(list 0)))
 
-#+slower-et
-(defun make-et (&key size)
-  (if size
-      (make-hash-table :test #'eq :size size)
-      (make-hash-table :test #'eq)))
-#+slower-et
-(defcm make-et (&key size)
-  (if size
-      `(make-hash-table :test #'eq :size ,size)
-      '(make-hash-table :test #'eq)))
-
 ;;; ---------------------------------------------------------------------------
 ;;;  ET searcher
 
-(defun #-slower-et get-et #+slower-et get-et%timing (key et &optional default)       
+(defun get-et (key et &optional default)       
   (with-full-optimization ()
     (let* ((count (%et-count et))
            (data (%et-data (the cons et))))
@@ -443,17 +373,9 @@
                 (values default nil)))
           (gethash key data default)))))
 
-#+slower-et
-(defun get-et (key et &optional default)
-  (gethash key et default))
-#+slower-et
-(defcm get-et (key et &optional default)
-  `(gethash ,key ,et ,default))
-
 ;;; ---------------------------------------------------------------------------
 ;;;  ET adder
 
-#-slower-et
 (defun (setf get-et) (nv key et)
   (with-full-optimization ()
     (let* ((count (%et-count et))
@@ -465,7 +387,7 @@
                 ;; Just update the value:
                 (setf (cdr acons) nv)
                 (let ((transition-size 
-                       (+& *et-transition-size* auto-transition-margin)))
+                       (+& et-transition-size auto-transition-margin)))
                   (cond
                    ;; Push new pair onto the alist:
                    ((<=& (incf& (%et-count et)) transition-size)
@@ -486,21 +408,9 @@
           ;; Already a hash-table:
           (setf (gethash key data) nv)))))
   
-#+(and slower-et (or cmu scl))
-  (declaim (inline (setf get-et)))
-#+slower-et
-(defun (setf get-et) (nv key et)
-  (setf (gethash key et) nv))
-#+(and slower-et (not (or cmu scl)))
-(defcm (setf get-et) (nv key et)
-  (let ((nv-var '#:nv))
-    `(let ((,nv-var ,nv))
-       (setf (gethash ,key ,et) ,nv))))
-
 ;;; ---------------------------------------------------------------------------
 ;;;  ET remover
 
-#-slower-et
 (defun delete-et (key et)
   (with-full-optimization ()
     (let* ((count (%et-count et))
@@ -532,7 +442,7 @@
             (when result
               (let ((count (hash-table-count data)))
                 (when (<& count
-                          (-& *et-transition-size* auto-transition-margin))
+                          (-& et-transition-size auto-transition-margin))
                   (setf (%et-data et)
                         (loop for key being each hash-key in data
                             using (hash-value value) 
@@ -542,17 +452,9 @@
               ;; Return success:
               't))))))
 
-#+slower-et
-(defun delete-et (key et)
-  (remhash key et))
-#+slower-et
-(defcm delete-et (key et)
-  `(remhash ,key ,et))
-
 ;;; ---------------------------------------------------------------------------
 ;;;  ET clear
 
-#-slower-et
 (defun clear-et (et &key retain-as-hash-table)
   (with-full-optimization ()
     (let ((count (%et-count et)))
@@ -562,19 +464,9 @@
         (setf (%et-data et) nil))
        (t (clrhash (%et-data et)))))))
 
-#+slower-et
-(defun clear-et (et &key retain-as-hash-table)
-  (declare (ignore retain-as-hash-table))
-  (clrhash et))
-#+slower-et
-(defcm clear-et (et &key retain-as-hash-table)
-  (declare (ignore retain-as-hash-table))
-  `(clrhash ,et))
-
 ;;; ---------------------------------------------------------------------------
 ;;;  ET mapper
 
-#-slower-et
 (defun map-et (function et)
   #+cmu (declare (notinline coerce))
   (let ((fn (coerce function 'function)))
@@ -587,22 +479,10 @@
               (funcall fn (car (the cons acons)) (cdr (the cons acons))))
             (maphash fn data))))))
 
-#+slower-et
-(defun map-et (function et)
-  (maphash function et))
-#+slower-et
-(defcm map-et (function et)
-  `(maphash ,function ,et))
-
 ;;; ===========================================================================
 ;;;  General ATABLEs (not a huge speed win on many CLs these days)
-
-#+(or clisp ecl lispworks)
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (pushnew :slow-atable *features*))
-
-;;; ---------------------------------------------------------------------------
-;;;  Transition values
+;;;
+;;;  Transition values:
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defparameter *atable-transition-sizes* 
@@ -657,12 +537,10 @@
 ;;;    - keys-only tables are even indicies, key/value tables are odd indicies
 ;;;    - hash-tables are 0 & 1, lists are 2-9
 
-#-slow-atable
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defparameter *atable-test-vector*
       #(nil nil eq eq eql eql equal equal equalp equalp)))
 
-#-slow-atable
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (with-full-optimization ()
     (defun determine-keys-only-atable-index (test)
@@ -672,7 +550,6 @@
         (equal 6)
         (equalp 8)))))
 
-#-slow-atable
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (with-full-optimization ()
     (defun determine-key/value-atable-index (test)
@@ -682,37 +559,27 @@
         (equal 7)
         (equalp 9)))))
 
-#-slow-atable
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defun determine-atable-test (index)
     (declare (fixnum index))
     ;; CMUCL (20a) can't handle the load-time-value:
     (svref #+cmu #.*atable-test-vector*
            #-cmu (load-time-value *atable-test-vector*) index)))
-#-slow-atable
-(defcm determine-atable-test (index)
-  `(svref #+cmu #.*atable-test-vector*
-          #-cmu (load-time-value *atable-test-vector*) (the fixnum ,index)))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Atable-data "structure"
 
-#-slow-atable
 (defconstruct %atable-data (list count))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Atable "structure"
 
-#-slow-atable
 (defconstruct (atable :constructor %make-atable)
     (type-index data))
 
 ;;; ---------------------------------------------------------------------------
 
 (defun atable-count (atable)
-  #+slow-atable
-  (hash-table-count atable)
-  #-slow-atable
   (let* ((index (atable-type-index atable))
          (data (atable-data (the cons atable)))
          (list? (>& index 1)))
@@ -723,9 +590,6 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun atable-test (atable)
-  #+slow-atable
-  (hash-table-test atable)
-  #-slow-atable
   (let* ((index (atable-type-index atable))
          (data (atable-data (the cons atable)))
          (list? (>& index 1)))
@@ -736,7 +600,6 @@
 ;;; ---------------------------------------------------------------------------
 ;;;  Atable constructor
 
-#-slow-atable
 (defun make-atable (&key (test 'eql) (size 0)
                          keys-only
                          rehash-size rehash-threshold)
@@ -770,17 +633,9 @@
                   (t (make-%atable-data nil 0)))))
       (%make-atable index table-data))))
 
-#+slow-atable
-(defun make-atable (&rest args &key keys-only &allow-other-keys)
-  (apply (if keys-only
-             #'make-keys-only-hash-table-if-supported 
-             #'make-hash-table)
-         (remove-property args ':keys-only)))
-
 ;;; ---------------------------------------------------------------------------
 ;;;  Atable reader
 
-#-slow-atable
 (macrolet 
     ((make-reader ()
        (flet ((make-list-fn (test)
@@ -832,17 +687,9 @@
                   (9 ,(make-assoc-fn 'equalp)))))))))
   (make-reader))
 
-#+slow-atable
-(defun get-entry (key atable)
-  (gethash key atable))
-#+slow-atable
-(defcm get-entry (key atable)
-  `(gethash ,key ,atable))
-
 ;;; ---------------------------------------------------------------------------
 ;;;  Atable writer
 
-#-slow-atable
 (macrolet-debug
     ((make-writer ()
        (flet ((make-list-fn (index)
@@ -929,19 +776,9 @@
                   (9 ,(make-assoc-fn 9)))))))))
   (make-writer))
 
-#+(and slow-atable (or cmu scl))
-  (declaim (inline (setf get-entry)))
-#+slow-atable
-(defun (setf get-entry) (nv key atable)
-  (setf (gethash key atable) nv))
-#+(and slow-atable (not (or cmu scl)))
-(defcm (setf get-entry) (nv key atable)
-  `(setf (gethash ,key ,atable) ,nv))
-
 ;;; ---------------------------------------------------------------------------
 ;;;  Atable delete-entry
 
-#-slow-atable
 (macrolet
     ((make-deleter ()
        (flet ((make-list-fn (test)
@@ -1041,17 +878,9 @@
                   (9 ,(make-assoc-fn 'equalp)))))))))
   (make-deleter))
 
-#+slow-atable
-(defun delete-entry (key atable)
-  (remhash key atable))
-#+slow-atable
-(defcm delete-entry (key atable)
-  `(remhash ,key ,atable))
-
 ;;; ---------------------------------------------------------------------------
 ;;;  Atable clear
 
-#-slow-atable
 (defun clear-atable (atable &key retain-as-hash-table)
   (with-full-optimization ()
     (let* ((index (atable-type-index atable))
@@ -1074,17 +903,9 @@
        (t (setf (%atable-data-count data) 0)
           (setf (%atable-data-list data) nil))))))
   
-#+slow-atable
-(defun clear-atable (atable)
-  (clrhash atable))
-#+slow-atable
-(defcm clear-atable (atable)
-  `(clrhash ,atable))
-
 ;;; ---------------------------------------------------------------------------
 ;;;  Atable mapper
 
-#-slow-atable
 (defun map-atable (function atable)
   #+cmu (declare (notinline coerce))
   (let ((fn (coerce function 'function)))
@@ -1105,13 +926,6 @@
               (declare (type cons acons))
               (funcall fn (car acons) (cdr acons)))))))))
   
-#+slow-atable
-(defun map-atable (function atable)
-  (maphash function atable))
-#+slow-atable
-(defcm map-atable (function atable)
-  `(maphash ,function ,atable))
-
 ;;; ===========================================================================
 ;;;				  End of File
 ;;; ===========================================================================
