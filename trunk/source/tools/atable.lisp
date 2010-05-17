@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/atable.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon May 17 07:13:20 2010 *-*
+;;;; *-* Last-Edit: Mon May 17 15:37:34 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -224,6 +224,10 @@
           ;; List deletion (inlined DELQ-ONE with add'l ET actions for top
           ;; performance):
           (cond
+           ;; Empty table:
+           ((zerop& count)
+            ;; return failure:
+            nil)
            ;; Deleting the first element:
            ((eq item (first data))
             (setf (%eset-data et) (rest data))
@@ -419,6 +423,10 @@
           ;; List deletion (inlined DELQ-ONE with add'l ET actions for top
           ;; performance):
           (cond
+           ;; Empty table:
+           ((zerop& count)
+            ;; return failure:
+            nil)
            ;; Deleting the first element:
            ((eq key (caar data))
             (setf (%et-data et) (rest data))
