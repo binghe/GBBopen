@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/timing/cl-timing.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Apr 24 08:56:29 2010 *-*
+;;;; *-* Last-Edit: Mon May 17 07:21:22 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -31,10 +31,15 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   ;; Import symbols (defined in tools/atable.lisp):
   (import '(gbbopen-tools::%atable-data-list
+            gbbopen-tools::*atable-transition-sizes*
             gbbopen-tools::atable-data
             gbbopen-tools::auto-transition-margin
             gbbopen-tools::determine-key/value-atable-index
-            gbbopen-tools::determine-keys-only-atable-index)))
+            gbbopen-tools::determine-keys-only-atable-index
+            gbbopen-tools::eset-transition-size
+            gbbopen-tools::et-transition-size
+            gbbopen-tools::get-et%timing
+            gbbopen-tools::in-eset%timing)))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(cl-timing)))
@@ -42,13 +47,22 @@
 ;;; ---------------------------------------------------------------------------
 ;;;   Timing parameters
 
+;; Size for timing basic CL operations:
 (defparameter *timing-iterations*
     #+clisp 2000000                     ; CLISP is slow
     #+ecl   6000000                     ; ECL is a bit faster
     #-(or clisp ecl) 
-           10000000)
+    10000000)
 
-(defparameter *timing-instances* 100000)
+;; Size for timing atable transitions:
+(defparameter *transition-timing-iterations*
+    #+clisp 100000                      ; CLISP is slow
+    #+ecl 1000000                       ; ECL is a bit faster
+    #-(or clisp ecl)
+    10000000)
+
+;; Size for timing unit-instance operations:
+(defparameter *timing-instances* 100000) 
 
 (defparameter *max-list-test-size* 140)
 
@@ -63,7 +77,9 @@
   (defmacro brief-timer (n &body body)
     `(with-full-optimization ()
        ;; Do one untimed trial to prepare everything:
-       (setf *%timing-result%* ,@body)
+       (let ((i 0))
+         (declare (ignorable i))
+         (setf *%timing-result%* ,@body))
        (let ((%start-time% (get-internal-run-time)))
          (dotimes (i (& ,n))
            (declare (fixnum i))
@@ -113,7 +129,7 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun format-ticks (ticks)
-  (format t "~6,2f seconds"
+  (format t "~,2f seconds"
           (locally (declare (optimize (speed 0) (safety 3)))
             (/ ticks
                #.(float internal-time-units-per-second)))))
@@ -321,7 +337,7 @@
 
 (defun do-eset-timing (&optional (iterations *timing-iterations*))
   (let ((transition
-         (max& 1 (+& *eset-transition-size* auto-transition-margin)))
+         (max& 1 (+& eset-transition-size auto-transition-margin)))
         time)
     (macrolet
         ((time-it (form)
@@ -330,8 +346,6 @@
               (format-ticks time)
               (terpri))))
       ;; ESET timings:
-      #+slower-eset
-      (format t "~&;; * ESETs are standard eq hash tables:")
       (let ((eset-list (make-eset))
             (eset-ht (make-eset))
             (ht (make-keys-only-hash-table-if-supported :test #'eq)))
@@ -345,35 +359,31 @@
         (fformat t "~&;;   Do nothing timing (~:d iterations)..."
                  iterations)
         (time-it nil)
-        #-slower-eset
-        (progn
-          (fformat t "~&;;   Fastest ESET (list) timing (~:d iterations)..."
-                   iterations)
-          (time-it (in-eset 1 eset-list))
-          (fformat t "~&;;   Slowest ESET (list @~d) timing (~:d iterations)..."
-                   transition
-                   iterations)
-          (time-it (in-eset transition eset-list))
-          (fformat t "~&;;   Average ESET (list @~d) timing (~:d iterations)..."
-                   transition
-                   iterations)
-          (time-it (in-eset test-index eset-list))
-          (fformat t "~&;;   ESET (transitioned) timing (~:d iterations)..."
-                   iterations)
-          (time-it (in-eset test-index eset-ht)))
+        (fformat t "~&;;   Fastest ESET (list) timing (~:d iterations)..."
+                 iterations)
+        (time-it (in-eset 1 eset-list))
+        (fformat t "~&;;   Slowest ESET (list @~d) timing (~:d iterations)..."
+                 transition
+                 iterations)
+        (time-it (in-eset transition eset-list))
+        (fformat t "~&;;   Average ESET (list @~d) timing (~:d iterations)..."
+                 transition
+                 iterations)
+        (time-it (in-eset test-index eset-list))
+        (fformat t "~&;;   ESET (transitioned) timing (~:d iterations)..."
+                 iterations)
+        (time-it (in-eset test-index eset-ht))
         (fformat t "~&;;   eq ~:[key/value~;keys-only~] hash table timing ~
                            (~:d iterations)..."
                  (memq ':has-keys-only-hash-tables *features*)
                  iterations)
         (time-it (gethash test-index ht))
         (clear-eset eset-list)
-        #-slower-eset
-        (progn
-          (fformat t "~&;;   Fastest add/delete ESET (list) timing ~
-                               (~:d iterations)..."
-                   iterations)
-          (time-it (progn (add-to-eset 1 eset-list)
-                          (delete-from-eset 1 eset-list))))
+        (fformat t "~&;;   Fastest add/delete ESET (list) timing ~
+                           (~:d iterations)..."
+                 iterations)
+        (time-it (progn (add-to-eset 1 eset-list)
+                        (delete-from-eset 1 eset-list)))
         (fformat t "~&;;   eq ~:[key/value~;keys-only~] hash table ~
                              add/delete timing (~:d iterations)..."
                  (memq ':has-keys-only-hash-tables *features*)
@@ -385,7 +395,7 @@
 
 (defun do-et-timing (&optional (iterations *timing-iterations*))
   (let ((transition
-         (max& 1 (+& *et-transition-size* auto-transition-margin)))
+         (max& 1 (+& et-transition-size auto-transition-margin)))
         time)
     (macrolet
         ((time-it (form)
@@ -394,8 +404,6 @@
               (format-ticks time)
               (terpri))))
       ;; ET timings:
-      #+slower-et
-      (format t "~&;; * ETs are standard eq hash tables:")
       (let ((et-list (make-et))
             (et-ht (make-et))
             (ht (make-hash-table :test #'eq)))
@@ -409,33 +417,29 @@
         (fformat t "~&;;   Do nothing timing (~:d iterations)..."
                  iterations)
         (time-it nil)
-        #-slower-et
-        (progn
-          (fformat t "~&;;   Fastest ET (list) timing (~:d iterations)..."
-                   iterations)
-          (time-it (get-et 1 et-list))
-          (fformat t "~&;;   Slowest ET (list @~d) timing (~:d iterations)..."
-                   transition
-                   iterations)
-          (time-it (get-et transition et-list))
-          (fformat t "~&;;   Average ET (list @~d) timing (~:d iterations)..."
-                   transition
-                   iterations)
-          (time-it (get-et test-index et-list))
-          (fformat t "~&;;   ET (transitioned) timing (~:d iterations)..."
-                   iterations)
-          (time-it (get-et test-index et-ht)))
+        (fformat t "~&;;   Fastest ET (list) timing (~:d iterations)..."
+                 iterations)
+        (time-it (get-et 1 et-list))
+        (fformat t "~&;;   Slowest ET (list @~d) timing (~:d iterations)..."
+                 transition
+                 iterations)
+        (time-it (get-et transition et-list))
+        (fformat t "~&;;   Average ET (list @~d) timing (~:d iterations)..."
+                 transition
+                 iterations)
+        (time-it (get-et test-index et-list))
+        (fformat t "~&;;   ET (transitioned) timing (~:d iterations)..."
+                 iterations)
+        (time-it (get-et test-index et-ht))
         (fformat t "~&;;   eq key/value hash table timing (~:d iterations)..."
                  iterations)
         (time-it (gethash test-index ht))
         (clear-et et-list)
-        #-slower-eset
-        (progn
-          (fformat t "~&;;   Fastest add/delete ET (list) timing ~
+        (fformat t "~&;;   Fastest add/delete ET (list) timing ~
                                (~:d iterations)..."
-                   iterations)
-          (time-it (progn (setf (get-et 1 et-list) 1)
-                          (delete-et 1 et-list))))
+                 iterations)
+        (time-it (progn (setf (get-et 1 et-list) 1)
+                        (delete-et 1 et-list)))
         (fformat t "~&;;   eq key/value hash table add/delete timing ~
                              (~:d iterations)..."
                  iterations)
@@ -452,13 +456,13 @@
     (with-full-optimization ()
       (fformat t "~&;;   Division timing (~:d iterations)..."
                iterations)
-      (fformat t "~&;;     /&:       ")
+      (fformat t "~&;;     /&:        ")
       (format-ticks (brief-timer iterations
                                  (/& numerator denominator)))
-      (fformat t "~%;;     floor&:   ")
+      (fformat t "~%;;     floor&:    ")
       (format-ticks (brief-timer iterations
                                  (floor& numerator denominator)))
-      (fformat t "~%;;     truncate&:")
+      (fformat t "~%;;     truncate&: ")
       (format-ticks (brief-timer iterations
                                  (truncate& numerator denominator))))))
 
@@ -504,15 +508,8 @@
 ;;; ===========================================================================
 ;;;  Compute the size transition value for ESETs
 
-#-slower-eset
 (defun compute-eset-transition (&optional (start-size 1) (verbose? 't))
-  (let ((iterations 
-         #+clisp
-         100000
-         #+ecl
-         1000000
-         #-(or clisp ecl)
-         10000000)
+  (let ((iterations *transition-timing-iterations*)
         (max-size *max-list-test-size*)
         (transition 0)
         (contiguous-misses 0)
@@ -539,8 +536,9 @@
                    ((eq verbose? ':dots)
                     (write-char #\.)
                     (force-output))
-                   (t (format t "~&;; i: ~d, eset: ~d, ht: ~d~%"
-                              i time-eset time-ht))))
+                   (t (format t "~&;; i: ~d eset: ~d ht: ~d | eset: "
+                              i time-eset time-ht)
+                      (format-ticks time-eset))))
                 (cond ((<=& time-eset time-ht)
                        (setf contiguous-misses 0)
                        (setf transition i))
@@ -554,15 +552,8 @@
 ;;; ---------------------------------------------------------------------------
 ;;;  Compute the size transition value for ETs
 
-#-slower-et
 (defun compute-et-transition (&optional (start-size 1) (verbose? 't))
-  (let ((iterations 
-         #+clisp
-         100000
-         #+ecl
-         1000000
-         #-(or clisp ecl)
-         10000000)
+  (let ((iterations *transition-timing-iterations*)
         (max-size *max-list-test-size*)
         (transition 0)
         (contiguous-misses 0)
@@ -589,8 +580,9 @@
                    ((eq verbose? ':dots)
                     (write-char #\.)
                     (force-output))
-                   (t (format t "~&;; i: ~d, et: ~d, ht: ~d~%"
-                              i time-et time-ht))))
+                   (t (format t "~&;; i: ~d et: ~d ht: ~d | et: "
+                              i time-et time-ht)
+                      (format-ticks time-et))))
                 (cond ((<=& time-et time-ht)
                        (setf contiguous-misses 0)
                        (setf transition i))
@@ -606,11 +598,7 @@
 #-slow-atable
 (defun compute-atable-transitions (&optional (verbose? 't))
   ;; Optional `verbose?' value can be :very for detailed output...
-  (let ((iterations 
-         #+clisp
-         100000
-         #-clisp
-         1000000)
+  (let ((iterations *transition-timing-iterations*)
         (max-size *max-list-test-size*)
         (computed-sizes-vector
          (make-array '(10) :initial-element 0))
@@ -739,12 +727,9 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun check-transition-sizes (&optional (verbose? ':dots))
-  #+(and slower-eset slower-et)
-  (declare (ignore verbose?))
   (let ((request-results? nil))
     (flet 
-        (#-(and slower-eset slower-et)
-         (check-size (label compute-fn size)
+        ((check-size (label compute-fn size)
            (fformat t "~&;; Checking ~a transition size" label)
            (let ((computed-transition
                   (funcall compute-fn
@@ -770,49 +755,11 @@
                          computed-transition))
                 (t (format t "~&;; The computed ~a transition size is ~s ~
                                    (the specified size is ~s)~%"
-                           label computed-transition size))))))
-         #+(or slower-eset slower-et)
-         (check-slow-time (eset? item/key ht list/alist)
-           (fformat t "~&;; Checking slow ~:[ET~;ESET~] setting..."
-                    eset?)
-           (setf (gethash item/key ht) 't)
-           (let ((ht-time 
-                  (brief-timer *timing-iterations* (gethash item/key ht)))
-                 (list-time
-                  (if eset?
-                      (brief-timer 
-                       *timing-iterations* 
-                       (gbbopen-tools::in-eset%timing item/key list/alist))
-                      (brief-timer 
-                       *timing-iterations* 
-                       (gbbopen-tools::get-et%timing item/key list/alist)))))
-             (cond 
-              ((>& list-time ht-time)
-               (format t "~&;; ~:[ET~;ESET~]s are correctly set as always ~
-                               slower than hash tables~%"
-                       eset?))
-              (t (setf request-results? 't)
-                 (format t "~&;; ***** The fastest ~:[ET~;ESET~] time is less ~
-                                 than hash table retrieval (~,2f seconds)~%"
-                         eset?
-                         (locally (declare (optimize (speed 0) (safety 3)))
-                           (/ (-& ht-time list-time)
-                              #.(float internal-time-units-per-second)))))))))
+                           label computed-transition size)))))))
       ;; Check ESET
-      #-slower-eset
-      (check-size "ESET" #'compute-eset-transition *eset-transition-size*)
-      #+slower-eset
-      (let ((keys-only-ht 
-             (make-keys-only-hash-table-if-supported :test #'eq))
-            (eset '(1 1)))
-        (check-slow-time 't 1 keys-only-ht eset))
+      (check-size "ESET" #'compute-eset-transition eset-transition-size)
       ;; Check ET
-      #-slower-et
-      (check-size "ET" #'compute-et-transition *et-transition-size*)
-      #+slower-et
-      (let ((ht (make-hash-table :test #'eq))
-            (et '((1 . t))))
-        (check-slow-time nil 1 ht et)))
+      (check-size "ET" #'compute-et-transition et-transition-size))
     (when request-results? (request-results)))
   (values))
 
