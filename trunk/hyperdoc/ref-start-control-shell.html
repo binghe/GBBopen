@@ -27,15 +27,15 @@
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:agenda-shell</code>
 </p>
 <p><span class="fndoclabel">Arguments and values</span><table class="tighttop">
-<tr valign="top"><td valign="baseline" nowrap><i>initargs</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An <a href="ref-glossary.html#id89">initialization&nbsp;argument&nbsp;list</a> (see below)
+<tr valign="top"><td valign="baseline" nowrap><i>initargs</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An <a href="ref-glossary.html#id92">initialization&nbsp;argument&nbsp;list</a> (see below)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>results</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> (See below)
 </td></tr></table>
 </p>
 <p><span class="fndoclabel">Returns</span> <br />One of the following sets of multiple values: 
 </p>
 <p><ul class="tight"><li><code>:quiescence</code>&mdash;If the control-shell scheduling loop is terminated
-due to <a href="ref-glossary.html#gl:quiescence">quiescence</a> (that is, no more <a href="ref-glossary.html#id56">executable&nbsp;KSAs</a> remain
-in the queue of <a href="ref-glossary.html#id154">pending&nbsp;KSAs</a>)
+due to <a href="ref-glossary.html#gl:quiescence">quiescence</a> (that is, no more <a href="ref-glossary.html#id59">executable&nbsp;KSAs</a> remain
+in the queue of <a href="ref-glossary.html#id157">pending&nbsp;KSAs</a>)
 <li><code>:stop</code> and (optionally) associated reasons, as multiple
 values&mdash;If one of the following conditions occurs:
 </p>
@@ -56,22 +56,22 @@ started on <a target="_top" href="http://www.lispworks.com">LispWorks</a>.
 </p>
 <p><span class="fndoclabel">Detailed syntax</span><br />Available <var>initargs</var> are:
 <br />&nbsp;<br /><table class="tighttop">
-<a name="id2"></a><tr valign="top"><td valign="baseline" nowrap><i>awaken-on-event</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> (default is <code>t</code>) 
-</td></tr><tr valign="top"><td valign="baseline" nowrap><i>continue-past-quiescence</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> (default
+<a name="id2"></a><tr valign="top"><td valign="baseline" nowrap><i>awaken-on-event</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id84">generalized&nbsp;boolean</a> (default is <code>t</code>) 
+</td></tr><tr valign="top"><td valign="baseline" nowrap><i>continue-past-quiescence</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id84">generalized&nbsp;boolean</a> (default
 is <code>nil</code>) 
-</td></tr><tr valign="top"><td valign="baseline" nowrap><i>fifo-queue-ordering</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> (default is <code>t</code>) 
-</td></tr><tr valign="top"><td valign="baseline" nowrap><i>hibernate-on-quiescence</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> (default is <code>nil</code>) 
+</td></tr><tr valign="top"><td valign="baseline" nowrap><i>fifo-queue-ordering</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id84">generalized&nbsp;boolean</a> (default is <code>t</code>) 
+</td></tr><tr valign="top"><td valign="baseline" nowrap><i>hibernate-on-quiescence</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id84">generalized&nbsp;boolean</a> (default is <code>nil</code>) 
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>minimum-ksa-execution-rating</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#gl:rating">rating</a> (default is <code>1</code>) 
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>instance-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An object naming this control-shell instance (default is 
 <code>1</code>) 
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>output-stream</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> Control-shell output stream (default is
 <nobr><code>*trace-output*</code></nobr>) 
-</td></tr><tr valign="top"><td valign="baseline" nowrap><i>pause</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> (default is <code>nil</code>) 
-</td></tr><tr valign="top"><td valign="baseline" nowrap><i>print</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> (default is <code>t</code>) 
-</td></tr><tr valign="top"><td valign="baseline" nowrap><i>run-polling-functions</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> (default is 
+</td></tr><tr valign="top"><td valign="baseline" nowrap><i>pause</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id84">generalized&nbsp;boolean</a> (default is <code>nil</code>) 
+</td></tr><tr valign="top"><td valign="baseline" nowrap><i>print</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id84">generalized&nbsp;boolean</a> (default is <code>t</code>) 
+</td></tr><tr valign="top"><td valign="baseline" nowrap><i>run-polling-functions</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id84">generalized&nbsp;boolean</a> (default is 
 <code>t</code> on non-threaded Common Lisp implementations; <code>nil</code> otherwise) 
-</td></tr><tr valign="top"><td valign="baseline" nowrap><i>save-executed-ksas</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> (default is <code>nil</code>) 
-</td></tr><tr valign="top"><td valign="baseline" nowrap><i>save-obviated-ksas</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> (default is <code>nil</code>) 
+</td></tr><tr valign="top"><td valign="baseline" nowrap><i>save-executed-ksas</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id84">generalized&nbsp;boolean</a> (default is <code>nil</code>) 
+</td></tr><tr valign="top"><td valign="baseline" nowrap><i>save-obviated-ksas</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id84">generalized&nbsp;boolean</a> (default is <code>nil</code>) 
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>stepping</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> Control-shell stepping options (default is <code>nil</code>) 
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>stepping-stream</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> Control-shell stepping stream (default is
 <nobr><code>*query-io*</code></nobr>) 
@@ -81,49 +81,49 @@ is <code>nil</code>)
 non-default values for the following <nobr><var>initargs</var></nobr>:
 <table class="tight">
 </p>
-<tr valign="top"><td valign="baseline"><code><p>:awaken-on-event</code></td><td valign="baseline">&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> value indicating
+<tr valign="top"><td valign="baseline"><code><p>:awaken-on-event</code></td><td valign="baseline">&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id84">generalized&nbsp;boolean</a> value indicating
 whether the control shell is to be awakened from hibernation when any event
 is signaled
 </p>
-</td></tr><tr valign="top"><td valign="baseline"><code><p>:continue-past-quiescence</code></td><td valign="baseline">&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> value
+</td></tr><tr valign="top"><td valign="baseline"><code><p>:continue-past-quiescence</code></td><td valign="baseline">&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id84">generalized&nbsp;boolean</a> value
 indicating whether the control shell loop should continue even when
 quiescence-event processing has failed to produce any
-<a href="ref-glossary.html#id56">executable&nbsp;KSAs</a>; use with caution, as the control shell will only
+<a href="ref-glossary.html#id59">executable&nbsp;KSAs</a>; use with caution, as the control shell will only
 exit by an explicit call to <nobr><b><a href="ref-exit-control-shell.html">exit-control-shell</a></b></nobr>
 </p>
-</td></tr><tr valign="top"><td valign="baseline"><code><p>:fifo-queue-ordering</code></td><td valign="baseline">&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> value that
-indicates a newly rated <a href="ref-glossary.html#id154">pending&nbsp;KSA</a> is to be placed ahead of equally
+</td></tr><tr valign="top"><td valign="baseline"><code><p>:fifo-queue-ordering</code></td><td valign="baseline">&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id84">generalized&nbsp;boolean</a> value that
+indicates a newly rated <a href="ref-glossary.html#id157">pending&nbsp;KSA</a> is to be placed ahead of equally
 rated <a href="ref-glossary.html#gl:activations">KSAs</a> (first-in, first out) or after them (last-in, first out)
 </p>
-</td></tr><tr valign="top"><td valign="baseline"><code><p>:hibernate-on-quiescence</code></td><td valign="baseline">&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> value that
+</td></tr><tr valign="top"><td valign="baseline"><code><p>:hibernate-on-quiescence</code></td><td valign="baseline">&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id84">generalized&nbsp;boolean</a> value that
 determines whether the control-shell will hibernate rather than exit when no
 executable <a href="ref-glossary.html#gl:activations">KSA</a> exists; this decision point is never reached when
 <nobr><code>:continue-past-quiescence</code></nobr> is true
 </p>
 </td></tr><tr valign="top"><td valign="baseline"><code><p>:minimum-ksa-execution-rating</code></td><td valign="baseline">&nbsp;</td><td valign="baseline"> The minimum <a href="ref-glossary.html#gl:rating">rating</a> value
-that a <a href="ref-glossary.html#id154">pending&nbsp;KSA</a> must have to be executed
+that a <a href="ref-glossary.html#id157">pending&nbsp;KSA</a> must have to be executed
 </p>
 </td></tr><tr valign="top"><td valign="baseline"><code><p>:output-stream</code></td><td valign="baseline">&nbsp;</td><td valign="baseline"> The stream to be used for control shell 
 output
 </p>
-</td></tr><tr valign="top"><td valign="baseline"><code><p>:pause</code></td><td valign="baseline">&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> that determines
+</td></tr><tr valign="top"><td valign="baseline"><code><p>:pause</code></td><td valign="baseline">&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id84">generalized&nbsp;boolean</a> that determines
 whether the control shell should hibernate until awakened at the
 start of each cycle
 </p>
-</td></tr><tr valign="top"><td valign="baseline"><code><p>:print</code></td><td valign="baseline">&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> that determines
+</td></tr><tr valign="top"><td valign="baseline"><code><p>:print</code></td><td valign="baseline">&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id84">generalized&nbsp;boolean</a> that determines
 whether start, restart, and termination messages are printed by the
 control shell 
 </p>
-</td></tr><tr valign="top"><td valign="baseline"><code><p>:run-polling-functions</code></td><td valign="baseline">&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> that
+</td></tr><tr valign="top"><td valign="baseline"><code><p>:run-polling-functions</code></td><td valign="baseline">&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id84">generalized&nbsp;boolean</a> that
 determines whether polling functions (provided by the
 <a href="ref-polling-function-entities.html"><nobr><code>:polling-functions</code></nobr> module</a>)
 are to be run at the start of each control-shell cycle
 </p>
-</td></tr><tr valign="top"><td valign="baseline"><code><p>:save-executed-ksas</code></td><td valign="baseline">&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> that determines
-whether <a href="ref-glossary.html#id58">executed&nbsp;KSA</a> instances are to be saved on the executed-ksas
+</td></tr><tr valign="top"><td valign="baseline"><code><p>:save-executed-ksas</code></td><td valign="baseline">&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id84">generalized&nbsp;boolean</a> that determines
+whether <a href="ref-glossary.html#id61">executed&nbsp;KSA</a> instances are to be saved on the executed-ksas
 queue
 </p>
-</td></tr><tr valign="top"><td valign="baseline"><code><p>:save-obviated-ksas</code></td><td valign="baseline">&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> that determines
+</td></tr><tr valign="top"><td valign="baseline"><code><p>:save-obviated-ksas</code></td><td valign="baseline">&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id84">generalized&nbsp;boolean</a> that determines
 whether <a href="ref-glossary.html#gl:obviation">obviated&nbsp;KSA</a> instances are to be saved on the obviated-ksas
 queue
 </p>

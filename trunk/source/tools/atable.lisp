@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/atable.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon May 17 15:37:34 2010 *-*
+;;;; *-* Last-Edit: Tue May 18 15:46:49 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -380,7 +380,8 @@
 ;;; ---------------------------------------------------------------------------
 ;;;  ET adder
 
-(defun (setf get-et) (nv key et)
+(defun (setf get-et) (nv key et &optional default)
+  (declare (ignore default))
   (with-full-optimization ()
     (let* ((count (%et-count et))
            (data (%et-data (the cons et))))

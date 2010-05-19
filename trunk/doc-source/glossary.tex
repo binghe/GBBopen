@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/glossary.tex *-*
-%% *-* Last-Edit: Sun May  9 03:21:38 2010; Edited-By: cork *-*
+%% *-* Last-Edit: Tue May 18 15:55:03 2010; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2010, Dan Corkill <corkill@GBBopen.org>
@@ -255,6 +255,21 @@ A list that is terminated by a non-\nil{} atom rather than the empty list,
 A \glref{dimension} of \code{:enumerated} \glref{dimension~type} where
 \code{:element} \glref{dimension~values} are individual elements from an
 extensible set of discrete elements.
+
+%% ------------------------------------------------------------------------
+  
+\glent[ESET]
+\gllabel{ESETs}%
+%
+A keys-only table that automatically transitions between list and hash-table
+implementations.  The keys are compared using \code{eq}.
+
+%% ------------------------------------------------------------------------
+  
+\glent[ET]
+%
+A key-and-value table that automatically transitions between list and hash-table
+implementations.  The keys are compared using \code{eq}.
 
 %% ------------------------------------------------------------------------
 

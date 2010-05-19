@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Sun May  9 11:23:33 2010; Edited-By: cork *-*
+%% *-* Last-Edit: Tue May 18 17:24:10 2010; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2010, Dan Corkill <corkill@GBBopen.org>
@@ -11277,6 +11277,438 @@ codeindexit{encode-universal-time}%
 \T\markright{}%
 \T\pagestyle{plain}
 \T\clearpage
+\W\xname{ref-atable-entities}
+\T\pagestyle{fancy}
+\T\thispagestyle{fancybottom}
+\T\global\def\fnlastname{ }%
+
+\subsection{Transitioning Sets and Tables}
+\label{sec:atable}%
+
+\index{set, auto-transitioning}%
+\index{table, auto-transitioning}%
+\index{ESET}%
+\index{ET}%
+%
+Ideally, native Common Lisp hash tables operations should always be very fast.
+On some Common Lisp implementations, however, a small amount of time (and
+space) can be saved by using list-based representations for hash tables with
+small entry counts.  These list-based representations transition automatically
+to regular hash tables as the entry count grows beyond the
+performance-advantage threshold (and back to the list representation as the
+count shrinks).  These auto-transitioning representations add a small overhead
+to normal hash table operations, so their use should be considered very
+carefully (and restricted to situations where the counts tend to remain low).
+
+\psubpar{ESETs}
+\index{ESET}%
+%
+An ESET (short for \code{eq}-set) is a keys-only table that automatically
+transitions between list and hash-table implementations.  The keys are used to
+represent elements of the ESET and are compared using \code{eq}.
+
+\psubpar{ETs}
+\index{ET}%
+%
+An ET (short for \code{eq}-table) is a key-and-value table that automatically
+transitions between list and hash-table implementations.  The keys are
+compared using \code{eq}.
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{add-to-eset}{\var{item eset\/}
+    \nobr{\returns{} \var{item\/}}}
+  
+\fnsyntax
+
+\fnpurpose Add \var{item\/} to \var{eset\/} if it is not already present
+using \code{eq} as the comparison function.
+
+\fnpackage \code{:gbbopen-tools}
+
+\fnmodule \code{:gbbopen-tools}
+
+\fnargs
+\begin{args}{symbol}
+\arg[item] An object
+\arg[eset] An \glref{ESET}
+\end{args}
+
+\fnreturns The \var{item}
+
+\begin{alsos}{delete-from-eset}
+\also[in-eset]
+\also[make-eset]
+\also[delete-from-eset]
+\end{alsos}
+
+\fnexamples
+\bfindexit{make-eset}%
+\bfindexit{in-eset}%
+%
+\W\supp
+\begin{example}
+  > (defparameter *eset* (\entlink{make-eset}))
+  *eset
+  > (\entlink{in-eset} 'x *eset*)
+  nil
+  nil
+  > (add-to-eset 'x *eset*)
+  x
+  > (\entlink{in-eset} 'x *eset*)
+  x
+  t\goodpagebreak
+  > (\entlink{in-eset} nil *eset*)
+  nil
+  nil
+  > (add-to-eset nil *eset*)
+  nil
+  > (in-eset nil *eset*)
+  nil
+  t
+  > 
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{delete-from-eset}{\var{item eset\/}
+    \nobr{\returns{} \var{deleted-p\/}}}
+  
+\fnsyntax
+
+\fnpurpose Delete \var{item\/} from \var{eset\/} if it is present
+using \code{eq} as the comparison function.
+
+\fnpackage \code{:gbbopen-tools}
+
+\fnmodule \code{:gbbopen-tools}
+
+\fnargs
+\begin{args}{symbol}
+\arg[item] An object
+\arg[eset] An \glref{ESET}
+\arg[deleted-p] A \glref{generalized~boolean}
+\end{args}
+
+\fnreturns True, if \var{item\/} was deleted from \var{eset}; \nil{} otherwise
+
+\begin{alsos}{add-to-eset}
+\also[add-to-eset]
+\also[in-eset]
+\also[make-eset]
+\end{alsos}
+
+\fnexamples
+\bfindexit{add-to-eset}%
+\bfindexit{make-eset}%
+\bfindexit{in-eset}%
+%
+\W\supp
+\begin{example}
+  > (defparameter *eset* (\entlink{make-eset}))
+  *eset
+  > (\entlink{add-to-eset} 'x *eset*)
+  x
+  > (\entlink{in-eset} 'x *eset*)
+  x
+  t\goodpagebreak
+  > (delete-from-eset 'x *eset*)
+  t
+  > (\entlink{in-eset} 'x *eset*)
+  nil
+  nil
+  > (delete-from-eset 'x *eset*)
+  nil
+  > 
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{delete-et}{\var{item et\/}
+    \nobr{\returns{} \var{deleted-p\/}}}
+  
+\fnsyntax
+
+\fnpurpose Delete \var{item\/} from \var{et\/} if it is present
+using \code{eq} as the comparison function.
+
+\fnpackage \code{:gbbopen-tools}
+
+\fnmodule \code{:gbbopen-tools}
+
+\fnargs
+\begin{args}{symbol}
+\arg[item] An object
+\arg[et] An \glref{ET}
+\arg[deleted-p] A \glref{generalized~boolean}
+\end{args}
+
+\fnreturns True, if \var{item\/} was deleted from \var{et}; \nil{} otherwise
+
+\begin{alsos}{make-et}
+\also[get-et]
+\also[make-et]
+\end{alsos}
+
+\fnexamples
+\bfindexit{make-et}%
+\bfindexit{get-et}%
+%
+\W\supp
+\begin{example}
+  > (defparameter *et* (\entlink{make-et}))
+  *et
+  > (setf (\entlink{get-et} 'x *et*) 3)
+  3
+  > (\entlink{get-et} 'x *et*)
+  3
+  t\goodpagebreak
+  > (delete-et 'x *et*)
+  t
+  > (\entlink{get-et} 'x *et*)
+  nil
+  nil
+  > (delete-et 'x *et*)
+  nil
+  > 
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{get-et}{\var{key et\/}
+    \nobr{\code{\&optional} \var{default\/}}
+    \nobr{\returns{} \var{value, present-p\/}}}
+\index{searching!for an value in an et}%
+  
+\fnsyntax
+
+\fnpurpose Return the value associated with \var{key\/} in \var{et\/} using
+\code{eq} as the key-comparison function.
+
+\fnsetf
+\fnsetfsyntax{get-et}{\var{key et\/}
+  \nobr{\code{\&optional} \var{default\/}}}%
+  {\var{value\/}}
+
+\fnpackage \code{:gbbopen-tools}
+
+\fnmodule \code{:gbbopen-tools}
+
+\fnargs
+\begin{args}{symbol}
+\arg[key] An object
+\arg[et] An \glref{ET}
+\arg[value] An object
+\arg[present-p] A \glref{generalized~boolean}
+\end{args}
+
+\fnreturns Two values:
+\begin{tightitemize}
+\item The value associated with the given \var{key\/} or \var{default\/} if no
+  entry is associated with \var{key}
+\item True, if an entry was found; \nil{} if there is no such entry
+\end{tightitemize}
+%
+When \code{setf} is used with \nobr{\textbf{get-et}}, the supplied
+\var{value\/} is returned as a single value.
+
+\fndescription
+%
+\code{Setf} may be used with \nobr{\textbf{get-et}} to replace the
+value associated with the given \var{key}, or to add a new entry. When a
+\nobr{\textbf{get-et}} form is used as a setf place, any
+\var{default\/} which is supplied is evaluated, but its value is ignored.
+
+\begin{alsos}{delete-et}
+\also[make-et]
+\also[assq]
+\also[delete-et]
+\end{alsos}
+
+\fnexamples
+\bfindexit{make-et}%
+%
+\W\supp
+\begin{example}
+  > (defparameter *e* (\entlink{make-et}))
+  *et
+  > (get-et 'x *et*)
+  nil
+  nil
+  > (get-et 'x *et* ':missing)
+  :missing
+  nil
+  > (setf (get-et 'x *et*) 1)
+  1
+  > (get-et 'x *et*)
+  1
+  t\goodpagebreak
+  > (get-et nil *et*)
+  nil
+  nil
+  > (setf (get-et nil *et*) nil)
+  nil
+  > (get-et nil *et*)
+  nil
+  t
+  > 
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{in-eset}{\var{item eset\/}
+    \nobr{\returns{} \var{item-or-nil, present-p\/}}}
+\index{searching!for an item in an eset}%
+  
+\fnsyntax
+
+\fnpurpose Determine if \var{item\/} is in \var{eset\/} using \code{eq} as the
+comparison function.
+
+\fnpackage \code{:gbbopen-tools}
+
+\fnmodule \code{:gbbopen-tools}
+
+\fnargs
+\begin{args}{symbol}
+\arg[item] An object
+\arg[eset] An \glref{ESET}
+\arg[item-or-nil] An object or \nil{}
+\arg[present-p] A \glref{generalized~boolean}
+\end{args}
+
+\fnreturns Two values:
+\begin{tightitemize}
+\item \var{item}, if \var{item\/} is a member of \var{eset}; otherwise \nil{}
+\item True, if an entry was found; \nil{} if there is no such entry
+\end{tightitemize}
+
+\begin{alsos}{delete-from-eset}
+\also[add-to-eset]
+\also[make-eset]
+\also[memq]
+\also[delete-from-eset]
+\end{alsos}
+
+\fnexamples
+\bfindexit{add-to-eset}%
+\bfindexit{make-eset}%
+%
+\W\supp
+\begin{example}
+  > (defparameter *eset* (\entlink{make-eset}))
+  *eset
+  > (in-eset 'x *eset*)
+  nil
+  nil
+  > (\entlink{add-to-eset} 'x *eset*)
+  x
+  > (in-eset 'x *eset*)
+  x
+  t\goodpagebreak
+  > (in-eset nil *eset*)
+  nil
+  nil
+  > (\entlink{add-to-eset} nil *eset*)
+  nil
+  > (in-eset nil *eset*)
+  nil
+  t
+  > 
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{make-eset}{\noargs
+    \nobr{\returns{} \var{eset\/}}}
+\index{creating!an ESET}%
+\index{making!an ESET}%
+  
+\fnsyntax
+
+\fnpurpose Create an empty \glref{ESET}.
+
+\fnpackage \code{:gbbopen-tools}
+
+\fnmodule \code{:gbbopen-tools}
+
+\fnargs
+\begin{args}{symbol}
+\arg[eset] An \glref{ESET}
+\end{args}
+
+\fnreturns An empty ESET
+
+\begin{alsos}{delete-from-eset}
+\also[add-to-eset]
+\also[in-eset]
+\also[delete-from-eset]
+\end{alsos}
+
+\fnexamples
+%
+\W\supp
+\begin{example}
+  > (make-eset)
+  (0)
+  > 
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{make-et}{\noargs
+    \nobr{\returns{} \var{et\/}}}
+\index{creating!an ET}%
+\index{making!an ET}%
+  
+\fnsyntax
+
+\fnpurpose Create an empty \glref{ET}.
+
+\fnpackage \code{:gbbopen-tools}
+
+\fnmodule \code{:gbbopen-tools}
+
+\fnargs
+\begin{args}{symbol}
+\arg[et] An \glref{ET}
+\end{args}
+
+\fnreturns An empty ET
+
+\begin{alsos}{delete-et}
+\also[get-et]
+\also[delete-et]
+\end{alsos}
+
+\fnexamples
+%
+\W\supp
+\begin{example}
+  > (make-et)
+  (0)
+  > 
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\T\markright{}%
+\T\pagestyle{plain}
+\T\clearpage
 \W\xname{ref-search-tree-entities}
 \T\pagestyle{fancy}
 \T\thispagestyle{fancybottom}
@@ -11492,7 +11924,7 @@ try deleting it a second time:
 \fnsetf
 \fnsetfsyntax{llrb-tree-value}{\var{key llrb-tree\/}
       \nobr{\code{\&optional} \var{default\/}}}{\var{value\/}}%
-    {\returns{} \var{value\/}}
+    {\returns{} \var{value, present-p\/}}
 
 \fnpackage \code{:gbbopen-tools}
 
@@ -11513,6 +11945,8 @@ try deleting it a second time:
   entry is associated with \var{key}
 \item True, if an entry was found; \nil{} if there is no such entry
 \end{tightitemize}
+
+
 
 \fndescription
 %
@@ -11543,7 +11977,7 @@ value associated with the given \var{key}, or to add a new entry. When a
   > (llrb-tree-value 1 *tree*)
   a
   t
-  >
+  > 
 \end{example}
 
 \end{functiondoc}
@@ -17490,10 +17924,11 @@ The description is printed to the {\bf *standard-output*} stream.
 \fnreturns A list of \nobr{\code{(\glref{dimension-name} (\glref{dimension-type}
   \glref{comparison-type}))}} pairs.
 
-\begin{alsos}{make-space-instance}
+\begin{alsos}{instance-dimension-values}
 \also[define-unit-class]
 \also[make-space-instance]
-\also[dimensions-of]
+\also[instance-dimension-value]
+\also[instance-dimension-values]
 \end{alsos}
 
 \fnexamples
@@ -17849,6 +18284,7 @@ Create, then delete, then check, a \code{hyp} \glref{unit~instance}:
 
 \begin{alsos}{instance-dimension-values}
 \also[define-unit-class]
+\also[dimensions-of]
 \also[instance-dimension-values]
 \also[make-instance]
 \end{alsos}
@@ -17945,6 +18381,7 @@ defined for \var{unit-instance}.
 
 \begin{alsos}{instance-dimension-value}
 \also[define-unit-class]
+\also[dimensions-of]
 \also[instance-dimension-value]
 \also[make-instance]
 \end{alsos}
@@ -21856,7 +22293,7 @@ storage in the \nobr{\code{classification}} dimension:
 %
 \W\supp\notpretop
 \begin{example}
-  > (change-space-instance-storage '(bb hyps)
+  > (change-space-instance '(bb hyps)
        :storage '(((hyp :plus-subclasses) (x y) 
                     uniform-buckets :layout ((0 10000 100)
                                              (0 10000 100)))
@@ -21872,7 +22309,7 @@ dimensions and hashed storage in the \nobr{\code{classification}} dimension:
 %
 \W\supp\notpretop
 \begin{example}
-  > (change-space-instance-storage '(bb hyps)
+  > (change-space-instance '(bb hyps)
        :allowed-unit-classes 'hyp     
        :storage '((hyp (x y) 
                    uniform-buckets :layout ((0 10000 100)
@@ -23399,7 +23836,7 @@ the keyword argument \code{:verbose} has not been specified.
 
 \fnsyntax
 
-\fnpurpose Controls the use of instance marking versus eq sets (ESETs) for
+\fnpurpose Controls the use of instance marking versus \glref{ESETs} for
 retrieval and matching by
 \nobr{\textbf{\entlink{do-instances-on-space-instances}}},
 \nobr{\textbf{\entlink{find-instances}}}, and
