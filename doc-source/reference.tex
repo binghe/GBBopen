@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Tue May 18 17:24:10 2010; Edited-By: cork *-*
+%% *-* Last-Edit: Wed May 19 14:27:56 2010; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2010, Dan Corkill <corkill@GBBopen.org>
@@ -9119,6 +9119,7 @@ entities.
 \also[parse-date]
 \also[parse-date-and-time]
 \also[parse-time]
+\also[very-brief-date]
 \end{alsos}
 
 \fnexamples
@@ -9151,6 +9152,7 @@ in order to make it available as early as possible.
     \nobr{\code{\&key} \var{time-zone}}
     \var{\nobr{month-precedes-date} 
       \nobr{year-first} 
+      \nobr{include-year}
       destination\/}
     \nobr{\returns{} \var{result\/}}}
 \index{date!formatted}% 
@@ -9175,6 +9177,7 @@ in order to make it available as early as possible.
 \arg[month-precedes-date] A \glref{generalized~boolean} (default is 
 \nobr{\textbf{\entlink{*month-precedes-date*}}})
 \arg[year-first] A \glref{generalized~boolean} (default is \nil)
+\arg[include-year] A \glref{generalized~boolean} (default is \code{t})
 \arg[destination] Either \nil, \code{t}, a stream, or a string with a fill 
 pointer (default is \nil)
 \arg[result] A string or \nil{}
@@ -9182,8 +9185,10 @@ pointer (default is \nil)
 
 \fnreturns If \var{destination\/} is non-\nil, then \nil; otherwise, a string.
 
-\fndescription 
-A 12-character description is generated.
+\fndescription
+%
+A 12-character description is generated (6 characters, if
+\nobr{\var{include-year\/}} is non-\nil).
 
 \W\xml{p}
 \bfindexit{get-universal-time}%
@@ -9206,6 +9211,11 @@ date; otherwise the date precedes the month.
 If \var{year-first\/} is supplied and is non-\nil, the year is presented in
 front of the month and date; otherwise the year follows the month and date.
 
+\W\xml{p} 
+%
+If \var{include-year\/} is supplied and is non-\nil, the year is included in
+the presented time.
+
 \begin{alsos}{internet-text-date-and-time}
 \also[*month-precedes-date*]
 \also[brief-date-and-time]
@@ -9214,15 +9224,18 @@ front of the month and date; otherwise the year follows the month and date.
 \also[internet-text-date-and-time]
 \also[iso8661-date-and-time]
 \also[message-log-date-and-time]
+\also[very-brief-date]
 \end{alsos}
 
 \fnexamples
-Display the current date: 
+Display the current date (with and without the year):
 %
 \W\supp
 \begin{example}
   > (brief-date)
   "Feb 16, 2008"
+  > (brief-date (get-universal-time) :include-year nil)
+  "Feb 16"
   >
 \end{example}
 %
@@ -9284,7 +9297,7 @@ pointer (default is \nil)
 
 \fnreturns If \var{destination\/} is non-\nil, then \nil; otherwise, a string.
 
-\fndescription A 12-character description (15-characters if
+\fndescription A 12-character description (15 characters, if
 \nobr{\var{include-seconds\/}} is non-\nil{}) is generated.  If the
 \nobr{\var{universal-time\/}} value is within 120 days of the current time,
 the result \nobr{\var{string\/}} includes the time of day but not the year;
@@ -9326,6 +9339,7 @@ in the presented time.
 \also[internet-text-date-and-time]
 \also[iso8661-date-and-time]
 \also[message-log-date-and-time]
+\also[very-brief-date]
 \end{alsos}
 
 \fnexamples
@@ -9868,6 +9882,7 @@ in AM/PM format.
 \also[iso8661-date-and-time]
 \also[message-log-date-and-time]
 \also[parse-date-and-time]
+\also[very-brief-date]
 \end{alsos}
 
 \fnexamples
@@ -10116,6 +10131,7 @@ If \nobr{\var{universal-time\/}} is not supplied or is \nil, the current time
 \also[internet-text-date-and-time]
 \also[iso8661-date-and-time]
 \also[message-log-date-and-time]
+\also[very-brief-date]
 \end{alsos}
 
 \fnexample
@@ -10188,6 +10204,7 @@ determined by \code{decode-universal-time}) is used, and the
 \also[http-date-and-time]
 \also[iso8661-date-and-time]
 \also[message-log-date-and-time]
+\also[very-brief-date]
 \end{alsos}
 
 \fnexamples
@@ -10244,6 +10261,7 @@ If \nobr{\var{universal-time\/}} is not supplied or is \nil, the current time
 \also[http-date-and-time]
 \also[internet-text-date-and-time]
 \also[message-log-date-and-time]
+\also[very-brief-date]
 \end{alsos}
 
 \fnexample
@@ -10299,6 +10317,7 @@ If \nobr{\var{universal-time\/}} is not supplied or is \nil, the current time
 \also[http-date-and-time]
 \also[internet-text-date-and-time]
 \also[iso8661-date-and-time]
+\also[very-brief-date]
 \end{alsos}
 
 \fnexample
@@ -10944,6 +10963,99 @@ description.
   536870911
   > (pretty-run-time-duration most-positive-fixnum)
   "6 days, 5 hours, 7 minutes, 50.94 seconds"
+  >
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{very-brief-date}{%
+    \nobr{\code{\&optional} \var{universal-time\/}}
+    \nobr{\code{\&key} \var{time-zone}}
+    \var{\nobr{month-precedes-date} 
+      \nobr{year-first} 
+      \nobr{include-year}
+      \nobr{separator}
+      destination\/}
+    \nobr{\returns{} \var{result\/}}}
+\index{date!formatted}% 
+\index{time, formatted}% 
+
+\fnsyntax
+
+\fnpurpose Generate a very brief date description.
+
+\fnpackage \code{:gbbopen-tools}
+
+\fnmodule \code{:gbbopen-tools}
+
+\fnargs
+\begin{args}{universal-time}
+\arg[universal-time] A \glref{universal~time} (default is \nil,
+  which is equivalent to the value returned by
+  \nobr{\code{(get-universal-time)}})
+\arg[time-zone] A \glref{time~zone} (default is \nil,
+  which is equivalent to the current time zone adjusted for daylight
+  saving time)
+\arg[month-precedes-date] A \glref{generalized~boolean} (default is 
+\nobr{\textbf{\entlink{*month-precedes-date*}}})
+\arg[year-first] A \glref{generalized~boolean} (default is \nil)
+\arg[include-year] A \glref{generalized~boolean} (default is \code{t})
+\arg[separator] A character (default is \code{\#\bkslash/})
+\arg[destination] Either \nil, \code{t}, a stream, or a string with a fill 
+pointer (default is \nil)
+\arg[result] A string or \nil{}
+\end{args}
+
+\fnreturns If \var{destination\/} is non-\nil, then \nil; otherwise, a string.
+
+\fndescription
+%
+\bfindexit{get-universal-time}%
+If \var{universal-time\/} is not supplied or is \nil, the current time
+(as returned by \nobr{\code{get-universal-time}} is used.  
+
+\W\xml{p} 
+%
+If \var{time-zone\/} is not supplied or is \nil, it defaults to the current
+time zone adjusted for daylight saving time. If \nobr{\var{time-zone\/}} is
+supplied, it is assumed to include any adjustment for daylight saving time.
+
+\W\xml{p} 
+%
+If \var{month-precedes-date\/} is true, the month is presented in front of the
+date; otherwise the date precedes the month.
+
+\W\xml{p} 
+%
+If \var{year-first\/} is supplied and is non-\nil, the year is presented in
+front of the month and date; otherwise the year follows the month and date.
+
+\W\xml{p} 
+%
+If \var{include-year\/} is supplied and is non-\nil, the year is included in
+the presented time.
+
+\begin{alsos}{internet-text-date-and-time}
+\also[*month-precedes-date*]
+\also[brief-date-and-time]
+\also[full-date-and-time]
+\also[http-date-and-time]
+\also[internet-text-date-and-time]
+\also[iso8661-date-and-time]
+\also[message-log-date-and-time]
+\end{alsos}
+
+\fnexamples
+Display the current date (with and without the year):
+%
+\W\supp
+\begin{example}
+  > (very-brief-date)
+  "2/16/2008"
+  > (very-brief-date (get-universal-time) :include-year nil)
+  "2/16"
   >
 \end{example}
 

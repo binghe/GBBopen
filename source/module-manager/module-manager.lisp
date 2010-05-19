@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/module-manager/module-manager.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Apr  7 10:04:24 2010 *-*
+;;;; *-* Last-Edit: Wed May 19 13:47:59 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -445,16 +445,18 @@
   (defun brief-date (&optional universal-time
                      &key (month-precedes-date *month-precedes-date*)
                           year-first
+                          (include-year 't)
                           time-zone 
                           destination)
   ;;;  Returns formatted date string
     (multiple-value-bind (second minute hour date month year)
         (decode-supplied-universal-time universal-time time-zone)
       (declare (ignore second minute hour))
+      (unless include-year (setf year nil))
       (let ((month-name (svref (the (simple-array t (*))
                                  *month-name-vector*)
                                (& (1- (& month))))))
-        (if year-first
+        (if (and year-first year)
             (if month-precedes-date
                 (format destination "~s, ~a ~2d"
                         year
@@ -465,11 +467,11 @@
                         date
                         month-name))
             (if month-precedes-date
-                (format destination "~a ~2d, ~s"
+                (format destination "~a ~2d~@[, ~s~]"
                         month-name
                         date
                         year)
-                (format destination "~2d ~a, ~s"
+                (format destination "~2d ~a~@[, ~s~]"
                         date
                         month-name
                         year)))))))

@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/date-and-time.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Apr 19 11:45:27 2010 *-*
+;;;; *-* Last-Edit: Wed May 19 14:20:32 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -26,6 +26,7 @@
 ;;;  03-05-09 Added BRIEF-DURATION, BRIEF-RUN-TIME-DURATION, and
 ;;;           PARSE-TIME functions.  (Corkill)
 ;;;  04-30-09 Added :ot REPL command.  (Corkill)
+;;;  05-19-10 Added VERY-BRIEF-DATE.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -65,6 +66,7 @@
             pretty-duration
             pretty-run-time-duration
             time-zone-offset            ; not documented yet
+            very-brief-date
             )))
 
 ;;; ===========================================================================
@@ -237,6 +239,54 @@
                     (=& pos string-length))
           (junk-in-string-error string))
         (values result daylight-savings-p pos)))))
+
+;;; ---------------------------------------------------------------------------
+
+(locally 
+  ;; SBCL (rightly) complains about combining &optional and &key, but we
+  ;; ignore that here:
+  #+sbcl (declare (sb-ext:muffle-conditions style-warning))
+  (defun very-brief-date (&optional universal-time
+                          &key (month-precedes-date *month-precedes-date*)
+                               year-first
+                               (include-year 't)
+                               time-zone 
+                               (separator #\/)
+                               destination)
+  ;;;  Returns formatted date string
+    (multiple-value-bind (second minute hour date month year)
+        (decode-supplied-universal-time universal-time time-zone)
+      (declare (ignore second minute hour))
+      (unless include-year (setf year nil))
+      (if (and year-first year)
+          (if month-precedes-date
+              (format destination "~d~c~d~c~d"
+                      year
+                      separator
+                      month
+                      separator
+                      date)
+              (format destination "~d~c~d~c~d"
+                      year
+                      separator
+                      date
+                      separator
+                      month))
+          (if month-precedes-date
+              (format destination "~d~c~d~@[~*~c~d~]"
+                      month
+                      separator
+                      date
+                      year
+                      separator
+                      year)
+              (format destination "~d~c~d~@[~*~c~d~]"
+                      date
+                      separator
+                      month
+                      year
+                      separator
+                      year))))))
 
 ;;; ---------------------------------------------------------------------------
 
