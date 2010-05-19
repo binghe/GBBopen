@@ -27,28 +27,28 @@ verbose</var>
     style="font-family: serif; font-style: normal">=&gt;</span> <var>unit-instances</var></nobr></td><td valign="baseline" align="right">[<i>Function</i>]
 </td></tr></table></p>
 <p><span class="fndoclabel">Purpose</span> <br />Retrieve <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a> from
-<a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a> based on a <a href="ref-glossary.html#id181">retrieval&nbsp;pattern</a>.
+<a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a> based on a <a href="ref-glossary.html#id184">retrieval&nbsp;pattern</a>.
 </p>
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen</code>
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-core</code>
 </p>
 <p><span class="fndoclabel">Arguments and values</span><table class="tighttop">
-<tr valign="top"><td valign="baseline" nowrap><i>unit-classes-specifier</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An <a href="ref-glossary.html#id68">extended&nbsp;unit-classes&nbsp;specification</a>
+<tr valign="top"><td valign="baseline" nowrap><i>unit-classes-specifier</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An <a href="ref-glossary.html#id71">extended&nbsp;unit-classes&nbsp;specification</a>
 (see below)
-</td></tr><tr valign="top"><td valign="baseline" nowrap><i>space-instances</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id203">space&nbsp;instance</a>, a list of
-<a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a>, a <a href="ref-glossary.html#id205">space-instance&nbsp;path</a> regular expression,
+</td></tr><tr valign="top"><td valign="baseline" nowrap><i>space-instances</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id206">space&nbsp;instance</a>, a list of
+<a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a>, a <a href="ref-glossary.html#id208">space-instance&nbsp;path</a> regular expression,
 or <code>t</code> (indicating all <a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a>)
-</td></tr><tr valign="top"><td valign="baseline" nowrap><i>pattern</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id181">retrieval&nbsp;pattern</a> (see below)
+</td></tr><tr valign="top"><td valign="baseline" nowrap><i>pattern</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id184">retrieval&nbsp;pattern</a> (see below)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>filter-before</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A single-argument predicate to be applied before
 pattern-matching tests occur
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>filter-after</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A single-argument predicate to be applied after
 pattern-matching tests occur
-</td></tr><tr valign="top"><td valign="baseline" nowrap><i>use-marking</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> 
+</td></tr><tr valign="top"><td valign="baseline" nowrap><i>use-marking</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id84">generalized&nbsp;boolean</a> 
 (default is <nobr><b><a href="ref-use-marking-var.html">*use-marking*</a></b></nobr>)
-</td></tr><tr valign="top"><td valign="baseline" nowrap><i>verbose</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id81">generalized&nbsp;boolean</a> 
+</td></tr><tr valign="top"><td valign="baseline" nowrap><i>verbose</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id84">generalized&nbsp;boolean</a> 
 (default is <nobr><b><a href="ref-find-verbose-var.html">*find-verbose*</a></b></nobr>)
-</td></tr><tr valign="top"><td valign="baseline" nowrap><i>unit-instances</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id159">proper&nbsp;list</a> of <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a>
+</td></tr><tr valign="top"><td valign="baseline" nowrap><i>unit-instances</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id162">proper&nbsp;list</a> of <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a>
 </td></tr></table>
 </p>
 <p><span class="fndoclabel">Returns</span> <br /><a name="id1">A</a> newly consed list of <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a> specified by
@@ -317,9 +317,9 @@ and any predicate filters.
 </p>
 <p><span class="fndoclabel">Description</span> <br />The <var>pattern</var> <code>t</code> matches all <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a>
 whose <a href="ref-glossary.html#id36">dimension&nbsp;values</a> overlap the <a href="ref-glossary.html#id39">dimensional&nbsp;extent</a> of at
-least one <a href="ref-glossary.html#id203">space&nbsp;instance</a> in <nobr><var>space-instances</var></nobr>. The
-<nobr><var>pattern</var></nobr> <code>:all</code> matches every <a href="ref-glossary.html#id229">unit&nbsp;instance</a> on a
-<a href="ref-glossary.html#id203">space&nbsp;instance</a> in <nobr><var>space-instances</var></nobr>, regardless of
+least one <a href="ref-glossary.html#id206">space&nbsp;instance</a> in <nobr><var>space-instances</var></nobr>. The
+<nobr><var>pattern</var></nobr> <code>:all</code> matches every <a href="ref-glossary.html#id232">unit&nbsp;instance</a> on a
+<a href="ref-glossary.html#id206">space&nbsp;instance</a> in <nobr><var>space-instances</var></nobr>, regardless of
 dimensional overlap.
 </p>
 <p><a href="ref-declared-numerics.html">Declared numeric</a> and <a href="ref-pseudo-probability-entities.html">pseudo
@@ -420,7 +420,7 @@ and <nobr><code>within&#37;</code></nobr>.
   &gt;
 </pre>
 </p>
-<p>Some examples finding a <code>word</code> <a href="ref-glossary.html#id229">unit&nbsp;instance</a>:
+<p>Some examples finding a <code>word</code> <a href="ref-glossary.html#id232">unit&nbsp;instance</a>:
 <pre class="pretop">
 &gt; (find-instances 'word '(words) '(is character #\s))
 (#&lt;word 1&gt;)
@@ -435,7 +435,7 @@ Find <code>word</code> <a href="ref-glossary.html#gl:instances">unit&nbsp;instan
 </pre>
 </p>
 <p><span class="fndoclabel">Note</span> <br />Fixnum <code>overlaps</code> comparisons can result in bignum computations if the
-combined intervals of the pattern and a candidate <a href="ref-glossary.html#id229">unit&nbsp;instance</a>
+combined intervals of the pattern and a candidate <a href="ref-glossary.html#id232">unit&nbsp;instance</a>
 exceeds <code>most-positive-fixnum</code>.
 </p>
 <hr /><address><a target="_top" class="address"

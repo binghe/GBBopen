@@ -24,27 +24,27 @@
 <nobr><span 
     style="font-family: serif; font-style: normal">=&gt;</span> <var>new-unit-class</var></nobr></td><td valign="baseline" align="right">[<i>Macro</i>]
 </td></tr></table></p>
-<p><span class="fndoclabel">Purpose</span> <br />Define or redefine a <a href="ref-glossary.html#id227">unit&nbsp;class</a>.
+<p><span class="fndoclabel">Purpose</span> <br />Define or redefine a <a href="ref-glossary.html#id230">unit&nbsp;class</a>.
 </p>
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen</code>
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-core</code>
 </p>
 <p><span class="fndoclabel">Arguments and values</span><table class="tighttop">
-<tr valign="top"><td valign="baseline" nowrap><i>unit-class-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A non-<code>nil</code>, <a href="ref-glossary.html#id131">non-keyword&nbsp;symbol</a> that names the
-<a href="ref-glossary.html#id227">unit&nbsp;class</a> 
-</td></tr><tr valign="top"><td valign="baseline" nowrap><i>superclass-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A non-<code>nil</code>, <a href="ref-glossary.html#id131">non-keyword&nbsp;symbol</a> that specifies a
-direct superclass of the <a href="ref-glossary.html#id227">unit&nbsp;class</a> <var>unit-class-name</var>  
+<tr valign="top"><td valign="baseline" nowrap><i>unit-class-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A non-<code>nil</code>, <a href="ref-glossary.html#id134">non-keyword&nbsp;symbol</a> that names the
+<a href="ref-glossary.html#id230">unit&nbsp;class</a> 
+</td></tr><tr valign="top"><td valign="baseline" nowrap><i>superclass-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A non-<code>nil</code>, <a href="ref-glossary.html#id134">non-keyword&nbsp;symbol</a> that specifies a
+direct superclass of the <a href="ref-glossary.html#id230">unit&nbsp;class</a> <var>unit-class-name</var>  
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>documentation</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A documentation string (not evaluated)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>slot-specifiers</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> See below
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>class-options</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> See below
-</td></tr><tr valign="top"><td valign="baseline" nowrap><i>new-unit-class</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A new or modified <a href="ref-glossary.html#id227">unit&nbsp;class</a> object
+</td></tr><tr valign="top"><td valign="baseline" nowrap><i>new-unit-class</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A new or modified <a href="ref-glossary.html#id230">unit&nbsp;class</a> object
 </td></tr></table>
 </p>
-<p><span class="fndoclabel">Returns</span> <br />The newly defined or modified <a href="ref-glossary.html#id227">unit&nbsp;class</a> object.
+<p><span class="fndoclabel">Returns</span> <br />The newly defined or modified <a href="ref-glossary.html#id230">unit&nbsp;class</a> object.
 </p>
 <p><span class="fndoclabel">Errors</span> <br />The specified <var>superclass-names</var> do not include at least
-one <a href="ref-glossary.html#id227">unit&nbsp;class</a> name.  This error is signaled on class finalization.
+one <a href="ref-glossary.html#id230">unit&nbsp;class</a> name.  This error is signaled on class finalization.
 </p>
 <p><span class="fndoclabel">Detailed syntax</span><br /><img height=14 width=0 src="shim.gif">
 <span 
@@ -296,20 +296,20 @@ if unspecified, is <code>eql</code>.  The default
 allowed only for an <nobr><code>:interval</code></nobr> dimension-value specification.
 </p>
 <p><span class="fndoclabel">Terms</span><table class="tighttop">
-<tr valign="top"><td valign="baseline" nowrap><i>class-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A non-<code>nil</code>, <a href="ref-glossary.html#id131">non-keyword&nbsp;symbol</a> that names a
+<tr valign="top"><td valign="baseline" nowrap><i>class-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A non-<code>nil</code>, <a href="ref-glossary.html#id134">non-keyword&nbsp;symbol</a> that names a
 <a href="ref-glossary.html#gl:class">class</a> 
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>dimension-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A symbol specifying a <a href="ref-glossary.html#gl:dimension">dimension</a> 
-</td></tr><tr valign="top"><td valign="baseline" nowrap><i>initarg-list</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An <a href="ref-glossary.html#id89">initialization&nbsp;argument&nbsp;list</a>
+</td></tr><tr valign="top"><td valign="baseline" nowrap><i>initarg-list</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An <a href="ref-glossary.html#id92">initialization&nbsp;argument&nbsp;list</a>
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>instance-name-comparison-test</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> One of the four standardized hash
 table test function names: <code>eq</code>, <code>eql</code>, <nobr><code>equal</code></nobr>, or
 <nobr><code>equalp</code></nobr> (default for classes of
 metaclass <nobr><b><a href="ref-standard-unit-class.html">standard-unit-class</a></b></nobr> is <code>eql</code>)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i><font color="#667f66">ordering-dimension-name</font></i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> <font color="#667f66">A 
-symbol specifying the <a href="ref-glossary.html#id137">ordering&nbsp;dimension</a> used to order 
-<a href="ref-glossary.html#id190">series-composite&nbsp;dimension&nbsp;values</a></font>
+symbol specifying the <a href="ref-glossary.html#id140">ordering&nbsp;dimension</a> used to order 
+<a href="ref-glossary.html#id193">series-composite&nbsp;dimension&nbsp;values</a></font>
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>size-form</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An integer or an expression that evaluates to an integer
 (evaluation occurs whenever the unit class is initialized, reinitialized, or reset)
-</td></tr><tr valign="top"><td valign="baseline" nowrap><i>slot-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A non-<code>nil</code>, <a href="ref-glossary.html#id131">non-keyword&nbsp;symbol</a>
+</td></tr><tr valign="top"><td valign="baseline" nowrap><i>slot-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A non-<code>nil</code>, <a href="ref-glossary.html#id134">non-keyword&nbsp;symbol</a>
 </td></tr></table>
 </p>
 <p><span class="fndoclabel">Description</span> <br />A <var>dimension-value-place</var> with two
@@ -331,15 +331,15 @@ the single class <nobr><b><a href="ref-standard-unit-instance.html">standard-uni
 value is <nobr><b><a href="ref-standard-unit-class.html">standard-unit-class</a></b></nobr>.
 </p>
 <p><p><b>Inheritance of class options</b></p>
-<a name="id9">The</a> set of <nobr><var>dimensional-values</var></nobr> for a <a href="ref-glossary.html#id227">unit&nbsp;class</a> is the
+<a name="id9">The</a> set of <nobr><var>dimensional-values</var></nobr> for a <a href="ref-glossary.html#id230">unit&nbsp;class</a> is the
 union of the sets specified in the <nobr><var>dimensional-values</var></nobr> options
 of the class and its superclasses.  When more than one dimension-value
 specification is supplied for a given dimension, the one supplied by the
 most specific class is used.
 </p>
 <p>The effective <nobr><var>initial-space-instances</var></nobr> value for a
-<a href="ref-glossary.html#id227">unit&nbsp;class</a> is the value specified in the definition of the most
-specific <a href="ref-glossary.html#id227">unit&nbsp;class</a>. (No additive inheritance of
+<a href="ref-glossary.html#id230">unit&nbsp;class</a> is the value specified in the definition of the most
+specific <a href="ref-glossary.html#id230">unit&nbsp;class</a>. (No additive inheritance of
 <nobr><var>initial-space-instances</var></nobr> is performed.) If no definitions
 specify an <nobr><var>initial-space-instances</var></nobr> value, <code>nil</code> is used.
 </p>
@@ -398,7 +398,7 @@ the default initialization value associated with the metaclass is used.
 <p>Define a unit class, <code>word</code>, whose <a href="ref-glossary.html#gl:instances">instances</a> are indexed by the
 word's individual characters in an <a href="ref-glossary.html#id43">enumerated&nbsp;dimension</a> and the
 <nobr><b>code-char</b></nobr> values of the individual characters in an
-<a href="ref-glossary.html#id135">ordered&nbsp;dimension</a>:
+<a href="ref-glossary.html#id138">ordered&nbsp;dimension</a>:
 <pre class="pretop">
   &gt; (define-unit-class word ()
       ((string :initform "what's"))

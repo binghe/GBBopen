@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/common.tex *-*
-%% *-* Last-Edit: Sat Apr 10 10:17:11 2010; Edited-By: cork *-*
+%% *-* Last-Edit: Wed May 19 10:41:46 2010; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2010, Dan Corkill <corkill@GBBopen.org>
@@ -467,10 +467,11 @@
         \xml{/td}
         \xml{td}\xmlent{nbsp} \xml{/td}
         \xml{td align="left" width="99%"}
-          #2) #3)
-          \xml{/td}
-          \xml{/tr}
-          \xml{/table}}
+          #2) #3) 
+         \xml{nobr}\returns{} #3\xml{/nobr}
+         \xml{/td}
+         \xml{/tr}
+         \xml{/table}}
   \newcommand{\endfnsetfsyntax}{}
 
 \T\end{ifhtml}
@@ -544,7 +545,8 @@
   \addtolength{\tlengthc}{-\tlengtha}%           % subtract function-name length  
   \par
   \mbox{(setf (#1}~{\parbox[t]{\tlengthc}%
-    {\nohyphenation\raggedright\textrm{\frenchspacing #2) #3)\hfil}}}}%
+    {\nohyphenation\raggedright\textrm{\frenchspacing #2) #3)
+        \mbox{\returns{} #3}\hfil}}}}%
 
 \def\endfndoc{\nopagebreak\fndocrule\\\nopagebreak
   \ifnum\value{fnstartpage}=\c@page\else
@@ -1245,6 +1247,7 @@
             "Pseudo Probabilities"
             "Date and Time"
             "Offset Universal Time"
+            "Transitioning Sets and Tables"
             "Search Trees"
 	    "Portable Threads"
 	    "Scheduled and Periodic Functions"
