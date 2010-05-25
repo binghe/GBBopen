@@ -96,7 +96,7 @@ Important changes in GBBopen 1.3:
      - Optional arguments (other than the universal-time argument) have
        been changed to keyword arguments in BRIEF-DATE, 
        BRIEF-DATE-AND-TIME, INTERNET-TEXT-DATE-AND-TIME, 
-       ISO8661-DATE-AND-TIME, MESSAGE-LOG-DATE-AND-TIME
+       ISO8601-DATE-AND-TIME, MESSAGE-LOG-DATE-AND-TIME
 
   * Changes to Module Manager
      - More consistent OS/platform compile-directory naming

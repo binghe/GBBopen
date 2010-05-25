@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Wed May 19 14:27:56 2010; Edited-By: cork *-*
+%% *-* Last-Edit: Tue May 25 17:53:55 2010; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2010, Dan Corkill <corkill@GBBopen.org>
@@ -9222,7 +9222,7 @@ the presented time.
 \also[full-date-and-time]
 \also[http-date-and-time]
 \also[internet-text-date-and-time]
-\also[iso8661-date-and-time]
+\also[iso8601-date-and-time]
 \also[message-log-date-and-time]
 \also[very-brief-date]
 \end{alsos}
@@ -9337,7 +9337,7 @@ in the presented time.
 \also[full-date-and-time]
 \also[http-date-and-time]
 \also[internet-text-date-and-time]
-\also[iso8661-date-and-time]
+\also[iso8601-date-and-time]
 \also[message-log-date-and-time]
 \also[very-brief-date]
 \end{alsos}
@@ -9879,7 +9879,7 @@ in AM/PM format.
 \also[brief-date-and-time]
 \also[http-date-and-time]
 \also[internet-text-date-and-time]
-\also[iso8661-date-and-time]
+\also[iso8601-date-and-time]
 \also[message-log-date-and-time]
 \also[parse-date-and-time]
 \also[very-brief-date]
@@ -10129,7 +10129,7 @@ If \nobr{\var{universal-time\/}} is not supplied or is \nil, the current time
 \also[full-date-and-time]
 \also[http-date-and-time]
 \also[internet-text-date-and-time]
-\also[iso8661-date-and-time]
+\also[iso8601-date-and-time]
 \also[message-log-date-and-time]
 \also[very-brief-date]
 \end{alsos}
@@ -10197,12 +10197,12 @@ daylight-savings setting for the \nobr{\var{universal-time\/}} value (as
 determined by \code{decode-universal-time}) is used, and the
 \nobr{\var{daylight-savings-p\/}} argument is ignored.
 
-\begin{alsos}{iso8661-date-and-time}
+\begin{alsos}{iso8601-date-and-time}
 \also[brief-date]
 \also[brief-date-and-time]
 \also[full-date-and-time]
 \also[http-date-and-time]
-\also[iso8661-date-and-time]
+\also[iso8601-date-and-time]
 \also[message-log-date-and-time]
 \also[very-brief-date]
 \end{alsos}
@@ -10222,7 +10222,7 @@ determined by \code{decode-universal-time}) is used, and the
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Function}{iso8661-date-and-time}{%
+\begin{functiondoc}{Function}{iso8601-date-and-time}{%
     \nobr{\code{\&optional} \var{universal-time\/}}
     \nobr{\code{\&key} \var{destination\/}}
     \nobr{\returns{} \var{result\/}}}
@@ -10230,7 +10230,7 @@ determined by \code{decode-universal-time}) is used, and the
 
 \fnsyntax
 
-\fnpurpose Convert a universal time into ISO8661 (XML dateTime) format.
+\fnpurpose Convert a universal time into ISO8601 (XML dateTime) format.
 
 \fnpackage \code{:gbbopen-tools}
 
@@ -10268,7 +10268,7 @@ If \nobr{\var{universal-time\/}} is not supplied or is \nil, the current time
 %
 \W\supp
 \begin{example}
-  > (iso8661-date-and-time)
+  > (iso8601-date-and-time)
   "2008-05-17T08:02:49Z"
   >
 \end{example}
@@ -10316,7 +10316,7 @@ If \nobr{\var{universal-time\/}} is not supplied or is \nil, the current time
 \also[full-date-and-time]
 \also[http-date-and-time]
 \also[internet-text-date-and-time]
-\also[iso8661-date-and-time]
+\also[iso8601-date-and-time]
 \also[very-brief-date]
 \end{alsos}
 
@@ -11043,7 +11043,7 @@ the presented time.
 \also[full-date-and-time]
 \also[http-date-and-time]
 \also[internet-text-date-and-time]
-\also[iso8661-date-and-time]
+\also[iso8601-date-and-time]
 \also[message-log-date-and-time]
 \end{alsos}
 

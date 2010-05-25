@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/date-and-time.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed May 19 14:20:32 2010 *-*
+;;;; *-* Last-Edit: Tue May 25 18:09:27 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -55,7 +55,8 @@
             full-date-and-time
             http-date-and-time
             internet-text-date-and-time
-            iso8661-date-and-time
+            iso8601-date-and-time
+            iso8661-date-and-time       ; mis-named (remove soon!)
             message-log-date-and-time
             encode-date-and-time
             encode-time-of-day          ; duplicated in portable-threads.lisp
@@ -434,15 +435,15 @@
               second))))
   
 ;;; ---------------------------------------------------------------------------
-;;;  ISO8661-date-and-time
+;;;  ISO8601-date-and-time
 
 (locally
   ;; SBCL (rightly) complains about combining &optional and &key, but we
   ;; ignore that here:
   #+sbcl (declare (sb-ext:muffle-conditions style-warning))
-  (defun iso8661-date-and-time (&optional universal-time
+  (defun iso8601-date-and-time (&optional universal-time
                                 &key destination)
-    ;; Writes or returns a string representing time in ISO8661 (XML dateTime) 
+    ;; Writes or returns a string representing time in ISO8601 (XML dateTime) 
     ;; format
     (multiple-value-bind (second minute hour date month year)
         (decode-supplied-universal-time universal-time 0)
@@ -454,6 +455,11 @@
               hour
               minute
               second))))
+
+;; Remove this mis-named version soon!  (Thanks to Morgan Owens for reporting)
+(defun iso8661-date-and-time (&rest args)
+  (declare (dynamic-extent args))
+  (apply #'iso8601-date-and-time args))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  http-date-and-time
