@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/boolean-storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun May  9 01:43:36 2010 *-*
+;;;; *-* Last-Edit: Fri May 28 15:50:00 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -63,7 +63,10 @@
 (defun do-boolean-add/remove-action (instance storage verbose
 				     unbound-value-action
 				     true-value-action
-				     false-value-action)
+				     false-value-action
+                                     &optional 
+                                     old-dimension-values
+                                     dimensions-being-changed)
   (declare (type function unbound-value-action true-value-action
 		 false-value-action))
   (when verbose (print-boolean-storage-usage-message storage))
@@ -73,6 +76,13 @@
                           composite-type composite-dimension-name)
         (instance-dimension-value instance dimension-name)
       (declare (ignore dimension-type comparison-type composite-dimension-name))
+      (when dimensions-being-changed
+        (let ((old-dimension-value-acons 
+               (assq dimension-name old-dimension-values)))
+          ;; Updating a dimension value--process the old dimension value
+          ;; instead of the current one:
+          (when old-dimension-value-acons
+            (setf dimension-value (cdr old-dimension-value-acons)))))
       (flet ((do-a-value (dimension-value)
                (cond
                 ;; true value:
@@ -123,7 +133,6 @@
                                          old-dimension-values 
                                          dimensions-being-changed 
                                          verbose)
-  (declare (ignore old-dimension-values dimensions-being-changed))
   (flet ((unbound-value-action (instance storage)
            (remhash instance (unbound-value-instances-of storage)))
          (true-value-action  (instance storage)
@@ -136,7 +145,9 @@
         instance storage verbose
         #'unbound-value-action
         #'true-value-action
-        #'false-value-action)))
+        #'false-value-action
+        old-dimension-values
+        dimensions-being-changed)))
 
 ;;; ---------------------------------------------------------------------------
 

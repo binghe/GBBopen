@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/hashed-storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun May  9 01:44:22 2010 *-*
+;;;; *-* Last-Edit: Fri May 28 15:50:36 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -140,7 +140,10 @@
 
 (defun do-hashed-add/remove-action (instance storage verbose
 				    unbound-value-action
-				    bound-value-action)
+				    bound-value-action
+                                    &optional 
+                                    old-dimension-values
+                                    dimensions-being-changed)
   (declare (type function unbound-value-action bound-value-action))
   (when verbose (print-hashed-storage-usage-message storage))
   (dolist (dimension-name (dimension-names-of storage))
@@ -150,6 +153,13 @@
         (instance-dimension-value instance dimension-name)
       (declare (ignore dimension-type comparison-type 
                        composite-dimension-name))
+      (when dimensions-being-changed
+        (let ((old-dimension-value-acons 
+               (assq dimension-name old-dimension-values)))
+          ;; Updating a dimension value--process the old dimension value
+          ;; instead of the current one:
+          (when old-dimension-value-acons
+            (setf dimension-value (cdr old-dimension-value-acons)))))
       (flet ((do-a-value (dimension-value)
                (funcall bound-value-action instance storage dimension-value)))
         (declare (dynamic-extent #'do-a-value))
@@ -192,7 +202,6 @@
                                          old-dimension-values 
                                          dimensions-being-changed
                                          verbose)
-  (declare (ignore old-dimension-values dimensions-being-changed))
   (flet 
       ((unbound-value-action (instance storage)
          (remhash instance (unbound-value-instances-of storage)))
@@ -202,7 +211,8 @@
                  (delq-one instance (gethash dimension-value storage))))))
     (declare (dynamic-extent #'unbound-value-action #'bound-value-action))    
     (do-hashed-add/remove-action
-        instance storage verbose #'unbound-value-action #'bound-value-action)))
+        instance storage verbose #'unbound-value-action #'bound-value-action
+        old-dimension-values dimensions-being-changed)))
 
 ;;; ---------------------------------------------------------------------------
 
