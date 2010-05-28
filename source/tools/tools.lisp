@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri May 28 06:23:50 2010 *-*
+;;;; *-* Last-Edit: Fri May 28 12:37:57 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -906,14 +906,19 @@
     (when (> new-size (hash-table-size hash-table))
       (let ((old-rehash-size (hash-table-rehash-size hash-table))
             (old-size (length (sb-impl::hash-table-next-vector hash-table))))
-        (unwind-protect
-            (progn
-              (setf (slot-value hash-table 'sb-impl::rehash-size)
-                    ;; Compute the incremental value (to be added back to
-                    ;; old-size in REHASH):
-                    (-& new-size old-size))
-              (sb-impl::rehash hash-table))
-          (setf (slot-value hash-table 'sb-impl::rehash-size) old-rehash-size)))
+        ;; SBCL's compiler (starting ~10.0.35) has problems compiling the
+        ;; (setf slot-value) with the UNWIND-PROTECT.  This FLET addresses
+        ;; that:
+        (flet ((set-rehash-size (hash-table size)
+                 (setf (slot-value hash-table 'sb-impl::rehash-size) size)))
+          (unwind-protect
+              (progn (set-rehash-size
+                      hash-table 
+                      ;; Compute the incremental value (to be added back to
+                      ;; old-size in REHASH):
+                      (-& new-size old-size))
+                     (sb-impl::rehash hash-table))
+            (set-rehash-size hash-table old-rehash-size))))
       't))
   #+scl
   (flet ((%resize ()
