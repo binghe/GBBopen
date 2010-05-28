@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Apr 26 14:48:30 2010 *-*
+;;;; *-* Last-Edit: Fri May 28 06:23:50 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -847,15 +847,29 @@
   (ccl::with-lock-context
       (ccl::without-interrupts
         (when (> new-size (hash-table-size hash-table))
-          (ccl::write-lock-hash-table hash-table)
-          (let ((old-rehash-size (ccl::nhash.rehash-size hash-table)))
-            (unwind-protect
-                (progn
-                  (setf (ccl::nhash.rehash-size hash-table) new-size)
-                  (setf (ccl::nhash.grow-threshold hash-table) 0)
-                  (ccl::%grow-hash-table hash-table))
-              (setf (ccl::nhash.rehash-size hash-table) old-rehash-size)))
-          (ccl::unlock-hash-table hash-table nil)
+          (let ((lock-free-ht? (ccl::hash-lock-free-p hash-table)))
+            ;; CCL::WRITE-LOCK-HASH-TABLE doesn't work with lock-free HTs
+            ;; (even though they DO have a lock), so the locking has to be
+            ;; handled directly (thanks to Bill St.Clair for reporting):
+            (if lock-free-ht?
+                (ccl::%lock-recursive-lock-object 
+                 (ccl::nhash.exclusion-lock hash-table))
+                (ccl::write-lock-hash-table hash-table))
+            (let ((old-rehash-size (ccl::nhash.rehash-size hash-table)))
+              (unwind-protect
+                  (progn
+                    (setf (ccl::nhash.rehash-size hash-table) new-size)
+                    (setf (ccl::nhash.grow-threshold hash-table) 0)
+                    (ccl::%grow-hash-table hash-table))
+                (setf (ccl::nhash.rehash-size hash-table) old-rehash-size)))
+            (if lock-free-ht?
+                ;; CCL::UNLOCK-HASH-TABLE doesn't work with lock-free HTs
+                ;; (even though they DO have a lock), so the unlocking has to
+                ;; be handled directly (thanks to Bill St.Clair for
+                ;; reporting):
+                (ccl::%unlock-recursive-lock-object 
+                 (ccl::nhash.exclusion-lock hash-table))
+                (ccl::unlock-hash-table hash-table nil)))
           't)))
   #+lispworks
   (#-lispworks6
