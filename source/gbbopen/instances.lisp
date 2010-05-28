@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun May  9 01:46:56 2010 *-*
+;;;; *-* Last-Edit: Fri May 28 15:18:08 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -1513,7 +1513,7 @@
                                           &body body)
   (with-once-only-bindings (instance)
     (with-gensyms (current-dimension-values)
-      ;; we must remember all the dimension values, even if we are changing 
+      ;; We must remember all the dimension values, even if we are changing 
       ;; only a single/small number of them, as the other dimension values 
       ;; may also be needed to update the storage locators:
       `(let ((,current-dimension-values
