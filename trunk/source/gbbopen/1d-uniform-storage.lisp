@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/1d-uniform-storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun May  9 01:42:26 2010 *-*
+;;;; *-* Last-Edit: Fri May 28 16:30:06 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -77,8 +77,10 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun do-1d-uniform-buckets-add/remove-action (instance storage verbose
-						old-dimension-values
-						bucket-action)
+						bucket-action
+                                                &optional 
+                                                old-dimension-values
+                                                dimensions-being-changed)
   (declare (type function bucket-action))
   (when verbose (print-storage-usage-message storage))
   (let* ((buckets (buckets-of storage))
@@ -89,12 +91,16 @@
       (multiple-value-bind (dimension-value dimension-type 
                             comparison-type
                             composite-type composite-dimension-name)
-          (if old-dimension-values
-              ;; This isn't ready yet for composites!
-              (cdr (assq dimension-name old-dimension-values))
-              (instance-dimension-value instance dimension-name))
+          (instance-dimension-value instance dimension-name)
         (declare (ignore dimension-type comparison-type 
                          composite-dimension-name))
+        (when dimensions-being-changed
+          (let ((old-dimension-value-acons 
+                 (assq dimension-name old-dimension-values)))
+            ;; Updating a dimension value--process the old dimension value
+            ;; instead of the current one:
+            (when old-dimension-value-acons
+              (setf dimension-value (cdr old-dimension-value-acons)))))
         (flet ((do-a-value (dimension-value)
                  (cond
                   ;; scalar value:
@@ -149,8 +155,7 @@
              (incf& excess-count)))
       (declare (dynamic-extent #'bucket-action))
       (do-1d-uniform-buckets-add/remove-action 
-          instance storage verbose nil
-          #'bucket-action))
+          instance storage verbose #'bucket-action))
     ;; save the excess count:
     (incf& (excess-locators-of storage) 
            ;; remove the non-excess count for this instance:
@@ -163,7 +168,6 @@
 					 old-dimension-values
                                          dimensions-being-changed
 					 verbose)
-  (declare (ignore dimensions-being-changed))
   (let ((excess-count 0))
     (flet ((bucket-action (instance buckets bucket-index)
              (declare (type (simple-array t (*)) buckets))
@@ -173,8 +177,8 @@
              (decf& excess-count)))
       (declare (dynamic-extent #'bucket-action))
       (do-1d-uniform-buckets-add/remove-action 
-          instance storage verbose old-dimension-values
-          #'bucket-action))
+          instance storage verbose #'bucket-action          
+          old-dimension-values dimensions-being-changed))
     ;; save the excess count:
     (decf& (excess-locators-of storage) 
 	   ;; add back in the non-excess count for this instance:
@@ -196,7 +200,7 @@
                         bucket-index)))))
       (declare (dynamic-extent #'bucket-action))
       (do-1d-uniform-buckets-add/remove-action 
-          instance storage nil nil #'bucket-action))
+          instance storage nil #'bucket-action))
     (flet
         ((check-them (buckets indexes)
            (dotimes (i (length buckets))

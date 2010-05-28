@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/2d-uniform-storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun May  9 01:43:02 2010 *-*
+;;;; *-* Last-Edit: Fri May 28 16:32:51 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -88,10 +88,10 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun do-2d-uniform-buckets-add/remove-action (instance storage verbose
-						old-dimension-values
-                                                dimensions-being-changed
-						bucket-action)
-  (declare (ignore dimensions-being-changed))
+						bucket-action
+                                                &optional 
+                                                old-dimension-values
+                                                dimensions-being-changed)
   (declare (type function bucket-action))
   (when verbose (print-storage-usage-message storage))
   (let* ((buckets (buckets-of storage))
@@ -105,11 +105,11 @@
 	 (1st-d-dimension-name (first dimension-names))
 	 (2nd-d-dimension-name (second dimension-names))
 	 (1st-d-dimension-value
-	  (if old-dimension-values
+	  (if dimensions-being-changed
               (cdr (assq 1st-d-dimension-name old-dimension-values))
               (instance-dimension-value instance 1st-d-dimension-name)))
 	 (2nd-d-dimension-value
-	  (if old-dimension-values
+	  (if dimensions-being-changed
 	      (cdr (assq 2nd-d-dimension-name old-dimension-values))
               (instance-dimension-value instance 2nd-d-dimension-name))))
     (cond 
@@ -179,8 +179,7 @@
              (incf& excess-count)))
       (declare (dynamic-extent #'bucket-action))
       (do-2d-uniform-buckets-add/remove-action 
-          instance storage verbose nil nil
-          #'bucket-action))
+          instance storage verbose #'bucket-action))
     ;; save the excess count:
     (incf& (excess-locators-of storage) 
 	   ;; remove the non-excess count for this instance:
@@ -206,8 +205,8 @@
              (decf& excess-count)))
       (declare (dynamic-extent #'bucket-action))
       (do-2d-uniform-buckets-add/remove-action 
-          instance storage verbose old-dimension-values dimensions-being-changed
-          #'bucket-action))
+          instance storage verbose #'bucket-action
+          old-dimension-values dimensions-being-changed))
     ;; save the excess count:
     (decf& (excess-locators-of storage) 
            ;; add back in the non-excess count for this instance:
@@ -231,8 +230,8 @@
                         1st-d-bucket-index
                         2nd-d-bucket-index)))))
       (declare (dynamic-extent #'bucket-action))
-      (do-2d-uniform-buckets-add/remove-action
-          instance storage nil nil nil #'bucket-action))
+      (do-2d-uniform-buckets-add/remove-action 
+          instance storage nil #'bucket-action))
     (flet ((check-them (buckets indexes)
              (let ((cons (cons nil nil)))
                (dotimes (i (array-dimension buckets 0))
