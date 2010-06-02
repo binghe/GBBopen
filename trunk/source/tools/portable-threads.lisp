@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/portable-threads.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Mar 12 05:50:51 2010 *-*
+;;;; *-* Last-Edit: Wed Jun  2 14:01:21 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -1520,7 +1520,7 @@
                (sb-thread:release-mutex ,lock-sym)))
            (unwind-protect
                (progn ,@body)
-             (sb-thread:get-mutex ,lock-sym)))
+             (sb-thread:grab-mutex ,lock-sym)))
          #+scl
          (progn
            ;; Hoping that RELEASE-LOCK checks the owner...
