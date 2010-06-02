@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/timing/cl-timing.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon May 17 07:21:22 2010 *-*
+;;;; *-* Last-Edit: Wed Jun  2 16:48:34 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -240,7 +240,23 @@
         (setf (cdr cons) (rest list))
         (time-it (setf (cdr cons) (delete 1 (the list list)
                                           :test #'eq
-                                          :count 1)))))))
+                                          :count 1))))
+      (setf list (list 2))
+      (fformat t "~&;;   Fastest delq timing (~:d iterations, 2 elements)..."
+               iterations)
+      (let ((cons (list 1)))
+        (declare (dynamic-extent cons)
+                 (type cons cons))
+        (setf (cdr cons) (rest list))
+        (time-it (setf (cdr cons) (delq 1 list))))
+      (fformat t "~&;;   Fastest delete eq timing (~:d iterations, 2 elements)..."
+               iterations)
+      (let ((cons (list 1)))
+        (declare (dynamic-extent cons)
+                 (type cons cons))
+        (setf (cdr cons) (rest list))
+        (time-it (setf (cdr cons) (delete 1 (the list list)
+                                          :test #'eq)))))))
 
 ;;; ---------------------------------------------------------------------------
 
