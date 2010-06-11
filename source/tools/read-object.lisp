@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/read-object.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Apr  7 10:00:43 2010 *-*
+;;;; *-* Last-Edit: Fri Jun 11 16:36:05 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -288,7 +288,8 @@
 ;;;  Class (reference) reader
          
 (defmethod saved/sent-object-reader ((char (eql #\C)) stream)
-  (let ((class-name (read stream 't nil 't)))
+  (destructuring-bind (class-name)
+      (read stream 't nil 't)
     (find-class (possibly-translate-class-name class-name) 't)))
 
 ;;; ---------------------------------------------------------------------------
@@ -412,7 +413,8 @@
 ;;;  Package (reference) reader
          
 (defmethod saved/sent-object-reader ((char (eql #\P)) stream)
-  (let ((package-name (read stream 't nil 't)))
+  (destructuring-bind (package-name)
+      (read stream 't nil 't)
     (ensure-package package-name)))
 
 ;;; ===========================================================================
