@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/hashed-storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri May 28 15:50:36 2010 *-*
+;;;; *-* Last-Edit: Wed Jun 16 15:05:27 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -239,15 +239,19 @@
             instance storage "missing from bound-value instances"))
          ;; Check that it's not in any other bound-value bucket:
          ;; NOTE: Support for composite extents will require changes here...
-         (flet ((check-for-it (the-dimension-value instances)
-                  (unless (eq dimension-value the-dimension-value)
-                    (when (memq instance instances)
-                      (inconsistent-instance-locators-error 
-                       instance storage 
-                       (format nil "present in ~s bound-value instances"
-                               the-dimension-value))))))
-           (declare (dynamic-extent #'check-for-it))
-           (maphash #'check-for-it (bound-instances-of storage)))
+         (let* ((bound-instances-hash-table (bound-instances-of storage))
+                (hash-table-test (hash-table-test bound-instances-hash-table)))
+           (flet ((check-for-it (the-dimension-value instances)
+                    ;; skip the correct dimension-value entry:
+                    (unless (funcall hash-table-test 
+                                     dimension-value the-dimension-value)
+                      (when (memq instance instances)
+                        (inconsistent-instance-locators-error 
+                         instance storage 
+                         (format nil "present in ~s bound-value instances"
+                                 the-dimension-value))))))
+             (declare (dynamic-extent #'check-for-it))
+             (maphash #'check-for-it bound-instances-hash-table)))
          ;; Check that it's not in the unbound-value instances:
          (when (gethash instance (unbound-value-instances-of storage))
            (inconsistent-instance-locators-error 
