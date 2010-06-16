@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/print-object-for.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Apr  7 10:00:20 2010 *-*
+;;;; *-* Last-Edit: Wed Jun 16 10:24:06 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -134,10 +134,11 @@
 ;;; ===========================================================================
 ;;;  Slots-for-saving/sending methods
 
-(defun slots-for-saving/sending (instance stream)
-  ;; Caches the slots that should be saved/sent for `class', saving/sending
-  ;; the class description, if we've not done so in the save/send block.
-  ;; Always return the list of slots that should be saved/sent.
+(defun slots-for-saving/sending (instance stream perform-built-in-class-check?)
+  ;; Caches the slots that should be saved/sent for the class of `instance',
+  ;; saving/sending the class description, if we've not done so in the
+  ;; save/send block.  Always return the list of slots that should be
+  ;; saved/sent.
   (let* ((class (class-of instance))
          (class-name (class-name class)))
     ;; Check that we are in a with-saving/sending-block:
@@ -148,6 +149,16 @@
       ;; Determine the slots that should be saved/sent and save/send the class
       ;; description, if we've not done so already in this block:
       (unless present-p
+        ;; Clozure CL has some built-in-class objects that are also
+        ;; standard-objects (e.g., CCL::BASIC-TCP-STREAM). Check here (on all
+        ;; CLs, just to be paranoid) if instance is a built-in-class object:
+        (when (and perform-built-in-class-check?
+                   (typep class 'built-in-class))
+          (error "~s instance ~s does not have a specialized ~s and cannot be ~
+                  saved/sent" 
+                 'built-in-class
+                 instance
+                 'print-object-for-saving/sending))
         (let ((omitted-slot-names (omitted-slots-for-saving/sending instance)))
           (setf slots-for-saving/sending
                 (setf (gethash class-name *recorded-class-descriptions-ht*)
@@ -216,7 +227,7 @@
   cons)
 
 ;;; ---------------------------------------------------------------------------
-;;;  Strings
+;;;  Strings (coalescable)
 
 (defmethod print-object-for-saving/sending ((string string) stream)
   (princ "#G" stream)
@@ -316,7 +327,7 @@
   (let ((slots-for-saving/sending   
          ;; Cache/write the class description, if needed & always get the
          ;; slots to be written:
-         (slots-for-saving/sending structure stream)))
+         (slots-for-saving/sending structure stream nil)))
     (format stream "#S(~s" (type-of structure))
     (dolist (slot slots-for-saving/sending)
       (let ((slot-name (slot-definition-name slot)))
@@ -345,13 +356,17 @@
 
 (defmethod print-object-for-saving/sending ((instance standard-object) stream)
   (let ((slots-for-saving/sending   
-         ;; Cache/write the class description, if needed & always get the
-         ;; slots to be written:
-         (slots-for-saving/sending instance stream)))
+         ;; Cache/write the class description, if needed, always getting the
+         ;; slots that are to be written:
+         (slots-for-saving/sending 
+          instance stream 
+          ;; performing the check for built-in-class instances:
+          't))
+        (class (class-of instance)))
     (format stream "~&#GI(~s" (type-of instance))
     (dolist (slot slots-for-saving/sending)
       (write-char #\space stream)      
-      (if (slot-boundp-using-class (class-of instance) instance slot)
+      (if (slot-boundp-using-class class instance slot)
           (print-slot-for-saving/sending 
            instance (slot-definition-name slot) stream)
           ;; Unbound value indicator:
