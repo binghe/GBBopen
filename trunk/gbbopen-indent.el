@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Emacs-Lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/gbbopen-indent.el *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Apr  7 10:18:28 2010 *-*
+;;;; *-* Last-Edit: Tue Jun  1 21:08:41 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -42,6 +42,7 @@
   ;; GBBopen entity indentations:
   (set-indent-hook 'define-module 1)
   (set-indent-hook 'destructure-extent 2)
+  (set-indent-hook 'dosequence 1)
   (set-indent-hook 'dosublists 1)
   (set-indent-hook 'make-space-instance 2)
   (set-indent-hook 'patch 2)
