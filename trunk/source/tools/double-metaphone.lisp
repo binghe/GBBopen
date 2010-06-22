@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/double-metaphone.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Apr  7 09:56:06 2010 *-*
+;;;; *-* Last-Edit: Tue Jun 22 13:24:09 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -46,12 +46,12 @@
     (declare (simple-base-string string)
              (fixnum pos))
     (when (<=& 0 pos (length string))
-      ;; optimized (member (char string pos) '(#\A #\E #\I #\O #\U #\Y)):
+      ;; optimized (member (char string pos) '(#\E #\A #\O #\I #\U #\Y)):
       (let ((char (char string pos)))
-        (or (eql char #\A)
-            (eql char #\E)
-            (eql char #\I)
+        (or (eql char #\E)
+            (eql char #\A)
             (eql char #\O)
+            (eql char #\I)
             (eql char #\U)
             (eql char #\Y))))))
 
@@ -178,8 +178,13 @@
         (when (>=& current length)
           (return))
         
+        ;; Case clauses are ordered by approximate English occurance
+        ;; frequencies, although some CLs (Allegro, CMUCL, SBCL, and CLISP?)
+        ;; perform offset dispatch case optimizations that might make the
+        ;; integer difference of the char code from #\A's slightly faster.
         (case (char ustring current)
-          
+
+          ;; Approximate frequency ordering, handling all vowels first:
           ((#\A #\E #\I #\O #\U #\Y)
            ;; All initial vowels map to "A":
            (when (zerop& current)
@@ -187,22 +192,189 @@
            (incf& current))
 
           ;; ------------------------------------------------------------------
-          
-          (#\B
-           ;; "-mb", e.g., "dumb", already skipped over...
-           (if extended-p
-               (metaph-add #\B)
-               (metaph-add #\P))
-           (incf& current (if (char-at ustring (+& current 1) #\B) 2 1)))
-          
+
+          (#\T
+           (cond
+            ((string-at ustring current "TION" "TIA" "TCH")
+             (metaph-add #\X)
+             (incf& current 3))
+
+            ((string-at ustring current "TH" "TTH")
+             (cond
+              ;; special case "THOMAS", "THAMES" or Germanic:
+              ((or (string-at ustring (+& current 2) "OM" "AM")
+                   (string-at ustring 0 "VAN " "VON " "SCH"))
+               (metaph-add #\T))
+              (t (metaph-add #\0 #\T)))	; yes, primary is zero! Some
+					; implementations use asterisk in
+					; place of zero ...
+             (incf& current 2))
+
+            (t (metaph-add #\T)
+               (incf& current
+                      (if (char-member-at ustring (+& current 1) #\T #\D) 
+                          2 
+                          1)))))
+         
           ;; ------------------------------------------------------------------
-          ;; #\Ç is "converted" by Tortoise SVN on Windows, so we avoid that
-          ;; by specifying it via CODE-CHAR
+
+          (#\N
+           (metaph-add #\N)
+           (incf& current (if (char-at ustring (+& current 1) #\N) 2 1)))
+         
+          ;; ------------------------------------------------------------------
+
+          (#\S
+           (cond
+            ;; special cases: "ISLAND", "ISLE", "CARLISLE", "CARLYSLE":
+            ((string-at ustring (-& current 1) "ISL" "YSL")
+             (incf& current 1))
           
-          (#.(code-char 199) 
-           (metaph-add #\S)
-           (incf& current))
+            ;; special case: "SUGAR-":
+            ((and (zerop& current)
+                  (string-at ustring current "SUGAR"))
+             (metaph-add #\X #\S)
+             (incf& current 1))
           
+            ((string-at ustring current "SH")
+             (cond
+              ;; Germanic:
+              ((string-at ustring (+& current 1) "HEIM" "HOEK" "HOLM" "HOLZ")
+               (metaph-add #\S)
+               (incf& current 2))
+              (t (metaph-add #\X)
+                 (incf& current 2))))
+          
+            ;; Italian & Armenian:
+            ((string-at ustring current "SIO" "SIA") ; also covers "SIAN"
+             (cond
+              ((not (slavo-germanic-p))
+               (metaph-add #\S #\X))
+              (t (metaph-add #\S)))
+             (incf& current 3))
+          
+            ;; German & Anglicisations: e.g., "SMITH" match "SCHMIDT",
+            ;; "SNIDER" match "schneider"; also, "-SZ-" in Slavic language
+            ;; although in Hungarian it is pronounced "S":
+            ((or (and (zerop& current)
+                      (char-member-at ustring (+& current 1) #\M #\N #\L #\W))
+                 (char-at ustring (+& current 1) #\Z))
+             (metaph-add #\S #\X)
+             (incf& current (if (char-at ustring (+& current 1) #\Z) 2 1)))
+          
+            ((string-at ustring current "SC")
+             (cond
+              ;; Schlesinger's rule:
+              ((char-at ustring (+& current 2) #\H)
+               (cond
+                ;; Dutch origin: e.g., "SCHOOL", "SCHOONER":
+                ((string-at ustring (+& current 3) 
+                            "OO" "ER" "EN" "UY" "ED" "EM")
+                 (cond 
+                  ;; "SCHERMERHORN", "SCHENKER":
+                  ((string-at ustring (+& current 3) "ER" "EN")
+                   (metaph-add #\X "SK"))
+                  (t (metaph-add "SK")))
+                 (incf& current 3))
+
+                ((and (zerop& current)
+                      (not (vowelp ustring 3))
+                      (not (char-at ustring 3 #\W)))
+                 (metaph-add #\X #\S)
+                 (incf& current 3))
+              
+                (t (metaph-add #\X)
+                   (incf& current 3))))
+            
+              ((char-member-at ustring (+& current 2) #\I #\E #\Y)
+               (metaph-add #\S)
+               (incf& current 3))
+            
+              (t (metaph-add "SK")
+                 (incf& current 3))))
+          
+            ;; French: e.g., "RESNAIS", "ARTOIS":
+            ((and (=& current last)
+                  (string-at ustring (-& current 2) "AI" "OI"))
+             (metaph-add nil #\S)
+             (incf& current 
+                    (if (char-member-at ustring (+& current 1) #\S #\Z) 2 1)))
+          
+            (t (metaph-add #\S)
+               (incf& current 
+                      (if (char-member-at ustring (+& current 1) #\S #\Z)
+                          2 
+                          1)))))
+
+          ;; ------------------------------------------------------------------
+
+          (#\H
+           (cond
+            ;; only keep if first & before vowel or between 2 vowels:
+            ((and (or (zerop& current)
+		      (vowelp ustring (-& current 1)))
+		  (vowelp ustring (+& current 1)))
+	     (metaph-add #\H)
+             (incf& current 2))
+            ;; ...also takes care of "HH":
+            (t (incf& current 1))))
+
+          ;; ------------------------------------------------------------------
+
+          (#\R
+           (cond 
+            ;; French: e.g., "ROGIER", but exclude "HOCHMEIER":
+            ((and (=& current last)
+                  (not (slavo-germanic-p))
+                  (string-at ustring (-& current 2) "IE")
+                  (not (string-at ustring (-& current 4) "ME" "MA")))
+             (metaph-add nil #\R))
+            (t (metaph-add #\R)))
+           (incf& current (if (char-at ustring (+& current 1) #\R) 2 1)))
+
+          ;; ------------------------------------------------------------------
+
+          (#\D
+           (cond
+            ((string-at ustring current "DG")
+             (cond
+              ;; E.g., "EDGE":
+              ((char-member-at ustring (+& current 2) #\I #\E #\Y)
+               (metaph-add #\J)
+               (incf& current 3))
+              ;; E.g., "EDGAR":
+              (t (metaph-add "TK")
+                 (incf& current 2))))
+            ((string-at ustring current "DT" "DD")
+             (if extended-p 
+                 (metaph-add #\D)
+                 (metaph-add #\T))
+             (incf& current 2))          
+            (t (if extended-p 
+                   (metaph-add #\D)
+                   (metaph-add #\T))
+               (incf& current 1))))
+        
+          ;; ------------------------------------------------------------------
+
+          (#\L
+           (cond
+            ;; Spanish: e.g., "CABRILLO", "GALLEGOS":
+            ((char-at ustring (+& current 1) #\L)
+             (cond
+              ((or (and (=& current (-& length 3))
+                        (string-at ustring (-& current 1)
+                                   "ILLO" "ILLA" "ALLE"))
+                   (and (or (string-at ustring (-& last 1) "AS" "OS")
+                            (char-member-at ustring last #\A #\O))
+                        (string-at ustring (-& current 1) "ALLE")))
+               (metaph-add #\L nil)
+               (incf& current 2))
+              (t (metaph-add #\L)
+                 (incf& current 2))))
+            (t (metaph-add #\L)
+               (incf& current 1))))
+
           ;; ------------------------------------------------------------------
           
           (#\C
@@ -336,26 +508,54 @@
         
           ;; ------------------------------------------------------------------
 
-          (#\D
+          (#\M
+           (metaph-add #\M)
+           (incf& current
+                  (cond
+                   ;; "DUMB", "THUMB":
+                   ((or (and (string-at ustring (-& current 1) "UMB")
+                             (or (=& (+& current 1) last)
+                                 (string-at ustring (+& current 2) "ER")))
+                        (char-at ustring (+& current 1) #\M))
+                    2)
+                   (t 1))))
+
+          ;; ------------------------------------------------------------------
+        
+          (#\W
            (cond
-            ((string-at ustring current "DG")
+            ;; "W" can also be in the middle of a word:
+            ((string-at ustring current "WR")
+             (metaph-add #\R)
+             (incf& current 2))
+          
+            ((or (and (zerop& current)
+                      (vowelp ustring (+& current 1)))
+                 (string-at ustring current "WH"))
              (cond
-              ;; E.g., "EDGE":
-              ((char-member-at ustring (+& current 2) #\I #\E #\Y)
-               (metaph-add #\J)
-               (incf& current 3))
-              ;; E.g., "EDGAR":
-              (t (metaph-add "TK")
-                 (incf& current 2))))
-            ((string-at ustring current "DT" "DD")
-             (if extended-p 
-                 (metaph-add #\D)
-                 (metaph-add #\T))
-             (incf& current 2))          
-            (t (if extended-p 
-                   (metaph-add #\D)
-                   (metaph-add #\T))
-               (incf& current 1))))
+              ;; "WASSERMAN" should match "VASSERMAN":
+              ((vowelp ustring (+& current 1))
+               (metaph-add #\A #\F))
+              ;; need "UOMO" to match "WOMO":
+              (t (metaph-add #\A)))
+             (incf& current 1))
+          
+            ;; "ARNOW" should match "ARNOFF":
+            ((or (and (=& current last)
+                      (vowelp ustring (-& current 1)))
+                 (string-at ustring (-& current 1) 
+                            "EWSKI" "EWSKY" "OWSKI" "OWSKY")
+                 (string-at ustring 0 "SCH"))
+             (metaph-add nil #\F)
+             (incf& current 1))
+          
+            ;; Polish: e.g., "FILIPOWICZ":
+            ((string-at ustring current "WICZ" "WITZ")
+             (metaph-add "TS" "FX")
+             (incf& current 4))
+          
+            ;; Otherwise, just skip the "W":
+            ((incf& current 1))))
         
           ;; ------------------------------------------------------------------
         
@@ -473,16 +673,46 @@
          
           ;; ------------------------------------------------------------------
 
-          (#\H
+          (#\P
            (cond
-            ;; only keep if first & before vowel or between 2 vowels:
-            ((and (or (zerop& current)
-		      (vowelp ustring (-& current 1)))
-		  (vowelp ustring (+& current 1)))
-	     (metaph-add #\H)
+            ;; "-PH":
+            ((char-at ustring (+& current 1) #\H)
+             (metaph-add #\F)
              (incf& current 2))
-            ;; ...also takes care of "HH":
-            (t (incf& current 1))))
+          
+            ;; Also account for "CAMPBELL", "RASPBERRY":
+            ((char-member-at ustring (+& current 1) #\P #\B)
+             (metaph-add (if (and extended-p
+                                  (char-at ustring (+& current 1) #\B))
+                             #\B 
+                             #\P))
+             (incf& current 2))
+          
+            (t (metaph-add #\P)
+               (incf& current 1))))
+
+          ;; ------------------------------------------------------------------
+          
+          (#\B
+           ;; "-mb", e.g., "dumb", already skipped over...
+           (if extended-p
+               (metaph-add #\B)
+               (metaph-add #\P))
+           (incf& current (if (char-at ustring (+& current 1) #\B) 2 1)))
+          
+          ;; ------------------------------------------------------------------
+
+          (#\V
+           (if extended-p
+               (metaph-add #\V)
+               (metaph-add #\F))
+           (incf& current (if (char-at ustring (+& current 1) #\V) 2 1)))
+
+          ;; ------------------------------------------------------------------
+
+          (#\K
+           (metaph-add #\K)
+           (incf& current (if (char-at ustring (+& current 1) #\K) 2 1)))
 
           ;; ------------------------------------------------------------------
 
@@ -527,251 +757,6 @@
                       (if (char-at ustring (+& current 1) #\J) 2 1)))))
 
           ;; ------------------------------------------------------------------
-
-          (#\K
-           (metaph-add #\K)
-           (incf& current (if (char-at ustring (+& current 1) #\K) 2 1)))
-        
-          ;; ------------------------------------------------------------------
-
-          (#\L
-           (cond
-            ;; Spanish: e.g., "CABRILLO", "GALLEGOS":
-            ((char-at ustring (+& current 1) #\L)
-             (cond
-              ((or (and (=& current (-& length 3))
-                        (string-at ustring (-& current 1)
-                                   "ILLO" "ILLA" "ALLE"))
-                   (and (or (string-at ustring (-& last 1) "AS" "OS")
-                            (char-member-at ustring last #\A #\O))
-                        (string-at ustring (-& current 1) "ALLE")))
-               (metaph-add #\L nil)
-               (incf& current 2))
-              (t (metaph-add #\L)
-                 (incf& current 2))))
-            (t (metaph-add #\L)
-               (incf& current 1))))
-
-          ;; ------------------------------------------------------------------
-
-          (#\M
-           (metaph-add #\M)
-           (incf& current
-                  (cond
-                   ;; "DUMB", "THUMB":
-                   ((or (and (string-at ustring (-& current 1) "UMB")
-                             (or (=& (+& current 1) last)
-                                 (string-at ustring (+& current 2) "ER")))
-                        (char-at ustring (+& current 1) #\M))
-                    2)
-                   (t 1))))
-
-          ;; ------------------------------------------------------------------
-
-          (#\N
-           (metaph-add #\N)
-           (incf& current (if (char-at ustring (+& current 1) #\N) 2 1)))
-         
-          ;; ------------------------------------------------------------------
-
-          (#.(code-char 209) ;; #\Ñ is "converted" by Tortoise SVN on Windows
-           (metaph-add #\N)
-           (incf& current 1))
-         
-          ;; ------------------------------------------------------------------
-
-          (#\P
-           (cond
-            ;; "-PH":
-            ((char-at ustring (+& current 1) #\H)
-             (metaph-add #\F)
-             (incf& current 2))
-          
-            ;; Also account for "CAMPBELL", "RASPBERRY":
-            ((char-member-at ustring (+& current 1) #\P #\B)
-             (metaph-add (if (and extended-p
-                                  (char-at ustring (+& current 1) #\B))
-                             #\B 
-                             #\P))
-             (incf& current 2))
-          
-            (t (metaph-add #\P)
-               (incf& current 1))))
-
-          ;; ------------------------------------------------------------------
-
-          (#\Q
-           (metaph-add #\K)
-           (incf& current (if (char-at ustring (+& current 1) #\Q) 2 1)))
-
-          ;; ------------------------------------------------------------------
-
-          (#\R
-           (cond 
-            ;; French: e.g., "ROGIER", but exclude "HOCHMEIER":
-            ((and (=& current last)
-                  (not (slavo-germanic-p))
-                  (string-at ustring (-& current 2) "IE")
-                  (not (string-at ustring (-& current 4) "ME" "MA")))
-             (metaph-add nil #\R))
-            (t (metaph-add #\R)))
-           (incf& current (if (char-at ustring (+& current 1) #\R) 2 1)))
-
-          ;; ------------------------------------------------------------------
-
-          (#\S
-           (cond
-            ;; special cases: "ISLAND", "ISLE", "CARLISLE", "CARLYSLE":
-            ((string-at ustring (-& current 1) "ISL" "YSL")
-             (incf& current 1))
-          
-            ;; special case: "SUGAR-":
-            ((and (zerop& current)
-                  (string-at ustring current "SUGAR"))
-             (metaph-add #\X #\S)
-             (incf& current 1))
-          
-            ((string-at ustring current "SH")
-             (cond
-              ;; Germanic:
-              ((string-at ustring (+& current 1) "HEIM" "HOEK" "HOLM" "HOLZ")
-               (metaph-add #\S)
-               (incf& current 2))
-              (t (metaph-add #\X)
-                 (incf& current 2))))
-          
-            ;; Italian & Armenian:
-            ((string-at ustring current "SIO" "SIA") ; also covers "SIAN"
-             (cond
-              ((not (slavo-germanic-p))
-               (metaph-add #\S #\X))
-              (t (metaph-add #\S)))
-             (incf& current 3))
-          
-            ;; German & Anglicisations: e.g., "SMITH" match "SCHMIDT",
-            ;; "SNIDER" match "schneider"; also, "-SZ-" in Slavic language
-            ;; although in Hungarian it is pronounced "S":
-            ((or (and (zerop& current)
-                      (char-member-at ustring (+& current 1) #\M #\N #\L #\W))
-                 (char-at ustring (+& current 1) #\Z))
-             (metaph-add #\S #\X)
-             (incf& current (if (char-at ustring (+& current 1) #\Z) 2 1)))
-          
-            ((string-at ustring current "SC")
-             (cond
-              ;; Schlesinger's rule:
-              ((char-at ustring (+& current 2) #\H)
-               (cond
-                ;; Dutch origin: e.g., "SCHOOL", "SCHOONER":
-                ((string-at ustring (+& current 3) 
-                            "OO" "ER" "EN" "UY" "ED" "EM")
-                 (cond 
-                  ;; "SCHERMERHORN", "SCHENKER":
-                  ((string-at ustring (+& current 3) "ER" "EN")
-                   (metaph-add #\X "SK"))
-                  (t (metaph-add "SK")))
-                 (incf& current 3))
-
-                ((and (zerop& current)
-                      (not (vowelp ustring 3))
-                      (not (char-at ustring 3 #\W)))
-                 (metaph-add #\X #\S)
-                 (incf& current 3))
-              
-                (t (metaph-add #\X)
-                   (incf& current 3))))
-            
-              ((char-member-at ustring (+& current 2) #\I #\E #\Y)
-               (metaph-add #\S)
-               (incf& current 3))
-            
-              (t (metaph-add "SK")
-                 (incf& current 3))))
-          
-            ;; French: e.g., "RESNAIS", "ARTOIS":
-            ((and (=& current last)
-                  (string-at ustring (-& current 2) "AI" "OI"))
-             (metaph-add nil #\S)
-             (incf& current 
-                    (if (char-member-at ustring (+& current 1) #\S #\Z) 2 1)))
-          
-            (t (metaph-add #\S)
-               (incf& current 
-                      (if (char-member-at ustring (+& current 1) #\S #\Z)
-                          2 
-                          1)))))
-
-          ;; ------------------------------------------------------------------
-
-          (#\T
-           (cond
-            ((string-at ustring current "TION" "TIA" "TCH")
-             (metaph-add #\X)
-             (incf& current 3))
-
-            ((string-at ustring current "TH" "TTH")
-             (cond
-              ;; special case "THOMAS", "THAMES" or Germanic:
-              ((or (string-at ustring (+& current 2) "OM" "AM")
-                   (string-at ustring 0 "VAN " "VON " "SCH"))
-               (metaph-add #\T))
-              (t (metaph-add #\0 #\T)))	; yes, primary is zero! Some
-					; implementations use asterisk in
-					; place of zero ...
-             (incf& current 2))
-
-            (t (metaph-add #\T)
-               (incf& current
-                      (if (char-member-at ustring (+& current 1) #\T #\D) 
-                          2 
-                          1)))))
-         
-          ;; ------------------------------------------------------------------
-
-          (#\V
-           (if extended-p
-               (metaph-add #\V)
-               (metaph-add #\F))
-           (incf& current (if (char-at ustring (+& current 1) #\V) 2 1)))
-        
-          ;; ------------------------------------------------------------------
-        
-          (#\W
-           (cond
-            ;; "W" can also be in the middle of a word:
-            ((string-at ustring current "WR")
-             (metaph-add #\R)
-             (incf& current 2))
-          
-            ((or (and (zerop& current)
-                      (vowelp ustring (+& current 1)))
-                 (string-at ustring current "WH"))
-             (cond
-              ;; "WASSERMAN" should match "VASSERMAN":
-              ((vowelp ustring (+& current 1))
-               (metaph-add #\A #\F))
-              ;; need "UOMO" to match "WOMO":
-              (t (metaph-add #\A)))
-             (incf& current 1))
-          
-            ;; "ARNOW" should match "ARNOFF":
-            ((or (and (=& current last)
-                      (vowelp ustring (-& current 1)))
-                 (string-at ustring (-& current 1) 
-                            "EWSKI" "EWSKY" "OWSKI" "OWSKY")
-                 (string-at ustring 0 "SCH"))
-             (metaph-add nil #\F)
-             (incf& current 1))
-          
-            ;; Polish: e.g., "FILIPOWICZ":
-            ((string-at ustring current "WICZ" "WITZ")
-             (metaph-add "TS" "FX")
-             (incf& current 4))
-          
-            ;; Otherwise, just skip the "W":
-            ((incf& current 1))))
-        
-          ;; ------------------------------------------------------------------
         
           (#\X
            ;; French: e.g., "BREAUX":
@@ -782,6 +767,12 @@
              (metaph-add "KS"))
            (incf& current
                   (if (char-member-at ustring (+& current 1) #\C #\X) 2 1)))
+
+          ;; ------------------------------------------------------------------
+
+          (#\Q
+           (metaph-add #\K)
+           (incf& current (if (char-at ustring (+& current 1) #\Q) 2 1)))
 
           ;; ------------------------------------------------------------------
 
@@ -806,6 +797,20 @@
                (incf& current 
                       (if (char-at ustring (+& current 1) #\Z) 2 1)))))
         
+          ;; ------------------------------------------------------------------
+          ;; #\Ç is "converted" by Tortoise SVN on Windows, so we avoid that
+          ;; by specifying it via CODE-CHAR
+          
+          (#.(code-char 199) 
+           (metaph-add #\S)
+           (incf& current))
+
+          ;; ------------------------------------------------------------------
+
+          (#.(code-char 209) ;; #\Ñ is "converted" by Tortoise SVN on Windows
+           (metaph-add #\N)
+           (incf& current 1))
+         
           ;; ------------------------------------------------------------------
         
           (otherwise

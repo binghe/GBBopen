@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/modules.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Apr 19 10:24:19 2010 *-*
+;;;; *-* Last-Edit: Tue Jun 22 13:25:31 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -264,7 +264,7 @@
 ;;; ---------------------------------------------------------------------------
 
   (define-module :double-metaphone-test
-    (:requires :double-metaphone)
+    (:requires :double-metaphone :gbbopen-tools-user)
     (:directory :gbbopen-tools "test")
     (:files ("double-metaphone-test" :reload)))
   
