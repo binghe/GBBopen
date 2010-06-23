@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/timing/cl-timing.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jun  2 16:48:34 2010 *-*
+;;;; *-* Last-Edit: Tue Jun 22 20:42:25 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -787,6 +787,13 @@
           (not (eval '(eq (code-char 70) (code-char 70)))))
   (format t "~&;; Fixnums are~@[ not~] eq.~%"
           (not (eval '(eq most-positive-fixnum most-positive-fixnum))))
+  ;; Check fill-pointer removal:
+  (let ((fill-pointer-string 
+         (make-array '(2) :fill-pointer 0 :element-type 'base-char)))
+    (when (array-has-fill-pointer-p 
+           (coerce fill-pointer-string 'simple-base-string))
+      (format t "~&;; **** Coerce to ~s does not eliminate fill pointer ****~%"
+              'simple-base-string)))
   ;;; Check the threshold on Clozure CL:
   #+(and clozure ignore)
   (check-combined-method-hash-table-threshold)
