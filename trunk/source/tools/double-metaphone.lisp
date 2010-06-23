@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/double-metaphone.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Jun 22 13:24:09 2010 *-*
+;;;; *-* Last-Edit: Tue Jun 22 20:12:04 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -43,7 +43,7 @@
 
 (with-full-optimization ()
   (defun vowelp (string pos)
-    (declare (simple-base-string string)
+    (declare (type simple-base-string string)
              (fixnum pos))
     (when (<=& 0 pos (length string))
       ;; optimized (member (char string pos) '(#\E #\A #\O #\I #\U #\Y)):
@@ -58,7 +58,7 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun char-at (string index candidate-char)
-  (declare (simple-base-string string))
+  (declare (type simple-base-string string))
   (eql (char string index) candidate-char))
 
 (defcm char-at (string index candidate-char)
@@ -67,7 +67,7 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun char-member-at (string index &rest candidate-chars)
-  (declare (simple-base-string string)
+  (declare (type simple-base-string string)
            (dynamic-extent candidate-chars))
   (member (char string index) candidate-chars))
 
@@ -80,12 +80,12 @@
 
 (with-full-optimization ()
   (defun string-at (string start &rest candidate-strings)
-    (declare (simple-base-string string)
+    (declare (type simple-base-string string)
              (fixnum start)
              (dynamic-extent candidate-strings))
     (when (>=& start 0)
       (dolist (candidate candidate-strings)
-        (declare (simple-base-string candidate))
+        (declare (type simple-base-string candidate))
         (when (string= string candidate 
                        :start1 start
                        :end1 (min& (length string)
@@ -105,21 +105,37 @@
 ;;;     secondary-key1 = secondary-key2
 
 (defun double-metaphone (string &optional extended-p)
-  (let* ((current 0)
-         (length (length string))
+  (let* ((length (length string))
+         (ustring (make-string (+& length 2) ; include room for 2 pad spaces
+                               :element-type 'base-char))) 
+    ;; Stack-allocate ustring, where possible (avoid SBCL's warning about not
+    ;; being able to stack allocate):
+    #-sbcl
+    (declare (dynamic-extent ustring))
+    ;; Upcase `string' into USTRING and add two ending spaces:
+    (map-into ustring #'char-upcase string)
+    (setf (char ustring length) #\Space)
+    (setf (char ustring (1+& length)) #\Space)
+    ;; Do the real work:
+    (%double-metaphone ustring (length string) extended-p)))
+
+;;; ---------------------------------------------------------------------------
+
+(defun %double-metaphone (ustring length extended-p)
+  ;; Do the real work on the upcased & padded ustring:
+  (let ((current 0)
          (last (1-& length))
-         (ustring (concatenate 'simple-base-string (string-upcase string) "  "))
          (primary (make-array '(4) 
                               :fill-pointer 0 
-                              :element-type 'character))
+                              :element-type 'base-char))
          (secondary (make-array '(4) 
                                 :fill-pointer 0 
-                                :element-type 'character))
+                                :element-type 'base-char))
 	 (slavo-germanic-value ':needed))
-    (declare 
-     ;; Avoid SBCL's warning about not being able to stack allocate ustring:
-     #-sbcl
-     (dynamic-extent ustring))
+    ;; Stack-allocate primary & secondary, where possible (avoid SBCL's
+    ;; warning about not being able to stack allocate):
+    #-sbcl
+    (declare (dynamic-extent primary secondary))
     (labels ((add-to (array add)
                (etypecase add
                  (null)
@@ -178,14 +194,17 @@
         (when (>=& current length)
           (return))
         
-        ;; Case clauses are ordered by approximate English occurance
-        ;; frequencies, although some CLs (Allegro, CMUCL, SBCL, and CLISP?)
-        ;; perform offset dispatch case optimizations that might make the
-        ;; integer difference of the char code from #\A's slightly faster.
         (case (char ustring current)
 
+          ;; The following case clauses are ordered by approximate English occurance
+          ;; frequencies, although some CLs (Allegro, CMUCL, SBCL, and CLISP?)
+          ;; perform offset dispatch case optimizations that might make the
+          ;; integer difference of the char code from #\A's slightly faster.
+
+          ;; ------------------------------------------------------------------
           ;; Approximate frequency ordering, handling all vowels first:
-          ((#\A #\E #\I #\O #\U #\Y)
+
+          ((#\E #\A #\O #\I #\U #\Y)
            ;; All initial vowels map to "A":
            (when (zerop& current)
              (metaph-add #\A))
@@ -383,8 +402,7 @@
             ((or (and (>& current 1)
                       (not (vowelp ustring (-& current 2)))
                       (string-at ustring (-& current 1) "ACH")
-                      (not (char-at ustring (+& current 2) #\I))
-                      (not (char-at ustring (+& current 2) #\E)))
+                      (not (char-member-at ustring (+& current 2) #\I #\E)))
                  (string-at ustring (-& current 2) "BACHER" "MACHER"))
              (metaph-add #\K)
              (incf& current 2))
@@ -815,9 +833,10 @@
         
           (otherwise
            (incf& current 1))))
-
+      
+      (setf primary (coerce primary 'simple-base-string))
       (if (plusp& (fill-pointer secondary))
-          (values primary secondary)
+          (values primary (coerce secondary 'simple-base-string))
           primary))))
 
 ;;; ===========================================================================
