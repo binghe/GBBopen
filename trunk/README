@@ -10,12 +10,12 @@ Requirements:
 
        Allegro CL   Version 8.2
        CLISP        Version 2.48 (configure --with-threads if possible)
-       Clozure CL   Version 1.5 (r13776)
+       Clozure CL   Version 1.5 (r13905)
        CMUCL        Version 20a
        ECL          Version 10.4.2 (configure with --enable-threads if 
                                     possible)
        Lispworks    Version 6.0.1
-       SBCL         Version 1.0.39 (use sb-threads if possible)
+       SBCL         Version 1.0.40 (use sb-threads if possible)
        Scieneer CL  Version 1.3.8
 
    Support for Digitool MCL (Version 5.1) has been discontinued. However,
@@ -33,7 +33,7 @@ Requirements:
    See PORTING for information on porting GBBopen to other Common Lisp
    implementations.
 
-Current Status Notes (June 2, 2010)
+Current Status Notes (July 1, 2010)
 --------------------
 
 Implementation work is progressing on a regular basis.  See the list of
