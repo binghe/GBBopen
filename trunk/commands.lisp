@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/commands.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Apr  7 09:52:06 2010 *-*
+;;;; *-* Last-Edit: Sun Jul  4 11:13:26 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -227,8 +227,6 @@
       (&rest module-name-and-options)
     "Load module"
     (startup-gbbopen)
-    #+ignore
-    (startup-module :module-manager (rest module-name-and-options) nil 't)
     (funcall 
      (fdefinition (intern (symbol-name '#:do-module-manager-repl-command) 
                           ':module-manager))
@@ -238,8 +236,6 @@
       (&rest module-name-and-options)
     "Compile and load module"
     (startup-gbbopen)
-    #+ignore
-    (startup-module :module-manager (rest module-name-and-options) nil 't)
     (funcall
      (fdefinition (intern (symbol-name '#:do-module-manager-repl-command) 
                           ':module-manager))
@@ -249,8 +245,6 @@
       (&rest module-name-and-options)
     "Load module file"
     (startup-gbbopen)
-    #+ignore
-    (startup-module :module-manager (rest module-name-and-options) nil 't)
     (funcall 
      (fdefinition (intern (symbol-name '#:do-module-manager-repl-command) 
                           ':module-manager))

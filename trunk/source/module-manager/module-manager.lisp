@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/module-manager/module-manager.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed May 19 13:47:59 2010 *-*
+;;;; *-* Last-Edit: Sun Jul  4 11:19:25 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -2200,7 +2200,7 @@
 (defvar *last-lmf-options* nil)
 
 (defun do-module-manager-repl-command (cmd module-and-options 
-                                    &optional dont-remember)
+                                       &optional dont-remember)
   (let ((recalled-options nil))
     (destructuring-bind (&optional module-name &rest options)
         module-and-options
