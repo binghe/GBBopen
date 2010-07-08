@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/scheduled-periodic-functions.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Mar 12 06:06:43 2010 *-*
+;;;; *-* Last-Edit: Thu Jul  8 06:24:44 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -155,10 +155,10 @@
                                          (name-test #'eql)
                                          marker
                                          (marker-test #'eql))
+  #+threads-not-available
+  (declare (ignore name name-test marker marker-test))
   #-threads-not-available
   (%make-scheduled-function function name name-test marker marker-test)
-  #+threads-not-available
-  (declare (ignore name))
   #+threads-not-available
   (threads-not-available 'make-scheduled-function))
 
@@ -408,6 +408,9 @@
                           &key marker
                                repeat-interval
                                (verbose *schedule-function-verbose*))
+  #+threads-not-available
+  (declare (ignore name-or-scheduled-function invocation-time marker 
+                   repeat-interval verbose))
   #-threads-not-available
   (progn
     (check-type invocation-time integer)
@@ -419,9 +422,6 @@
                                 verbose)
     (values))
   #+threads-not-available
-  (declare (ignore name-or-scheduled-function invocation-time marker 
-                   repeat-interval verbose))
-  #+threads-not-available
   (threads-not-available 'schedule-function))
 
 ;;; ---------------------------------------------------------------------------
@@ -432,6 +432,9 @@
                                         (verbose *schedule-function-verbose*))
   ;;; Syntactic sugar that simply adds `interval' to the current time before
   ;;; scheduling the scheduled-function.
+  #+threads-not-available
+  (declare (ignore name-or-scheduled-function interval marker
+                   repeat-interval verbose))
   #-threads-not-available
   (progn
     (check-type interval integer)
@@ -443,9 +446,6 @@
                                 verbose)
     (values))
   #+threads-not-available
-  (declare (ignore name-or-scheduled-function interval marker
-                   repeat-interval verbose))
-  #+threads-not-available
   (threads-not-available 'schedule-function-relative))
 
 ;;; ---------------------------------------------------------------------------
@@ -454,6 +454,8 @@
                             &key marker
                                  (warnp 't)
                                  (verbose *schedule-function-verbose*))
+  #+threads-not-available
+  (declare (ignore name-or-scheduled-function marker warnp verbose))
   #-threads-not-available
   (or (with-lock-held (*scheduled-functions-cv*)
         (let* ((next-scheduled-function (first *scheduled-functions*))
@@ -476,8 +478,6 @@
               marker)
         ;; ensure nil is returned:
         nil))
-  #+threads-not-available
-  (declare (ignore name-or-scheduled-function verbose))
   #+threads-not-available
   (threads-not-available 'unschedule-function))
 
@@ -551,12 +551,15 @@
                                      (name (and (symbolp function)
                                                 function))
                                      (verbose *periodic-function-verbose*))
+  #+threads-not-available
+  (declare (ignore interval count name verbose))
   #-threads-not-available
   (when verbose
     (format *trace-output* 
             "~&;; Spawning periodic-function thread for~@[ ~s~]...~%"
             name)
     (force-output *trace-output*))
+  #-threads-not-available
   (spawn-thread 
    (format nil "Periodic Function~@[ ~a~]" name)
    #'(lambda ()
@@ -575,8 +578,6 @@
                    "~&;; Exiting periodic-function thread~@[ ~s~]~%"
                    name)
            (force-output *trace-output*)))))
-  #+threads-not-available
-  (declare (ignore interval count name verbose))
   #+threads-not-available
   (threads-not-available 'spawn-periodic-function))
 

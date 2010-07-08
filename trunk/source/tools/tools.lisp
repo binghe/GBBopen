@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri May 28 12:37:57 2010 *-*
+;;;; *-* Last-Edit: Thu Jul  8 06:22:05 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -311,12 +311,10 @@
                                           (error-message-string condition))
                                         (error-condition ()
                                           condition))
-                                   (declare #-clisp 
+                                   (declare (ignorable #'error-message
+                                                       #'error-condition)
                                             (dynamic-extent #'error-message
                                                             #'error-condition))
-                                   (declare #-clisp 
-                                            (ignorable #'error-message
-                                                       #'error-condition))
                                    ,@(if error-body
                                          `(,@handler-body
                                            (when *disable-with-error-handling*
@@ -344,12 +342,10 @@
                               (error-message-string ,condition/tag))
                             (error-condition ()
                               ,condition/tag))
-                       (declare #-clisp
+                       (declare (ignorable #'error-message 
+                                           #'error-condition)
                                 (dynamic-extent #'error-message 
                                                 #'error-condition))
-                       (declare #-clisp
-                                (ignorable #'error-message 
-                                           #'error-condition))
                        (return-from ,block (progn ,@error-body))))))))))))
   
 ;;; ===========================================================================
