@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:HTTP-SERVICES; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/http-services.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Jun 21 13:31:01 2010 *-*
+;;;; *-* Last-Edit: Sat Jun 26 13:52:03 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -21,8 +21,8 @@
 ;;; --------------------------------------------------------------------------
 ;;;
 ;;;  These basic service entities provide simple and easy-to-use HTTP and HTML
-;;;  services when a full-blown Common Lisp HTTP server (such as AllegroServe or
-;;;  Hunchentoot) is not required.
+;;;  services when a full-blown Common Lisp HTTP server (such as AllegroServe
+;;;  or Hunchentoot) is not required.
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
@@ -39,16 +39,27 @@
 (in-package :http-services)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (export '(*http-server*               ; not yet documented
+  (export '(*http-headers-of-interest*  ; not yet documented
+            *http-server*               ; not yet documented
             decode-uri-string           ; not yet documented
             encode-xml-string           ; not yet documented
             encode-xml-value            ; not yet documented
             handle-http-get             ; not yet documented
+            handle-http-post            ; not yet documented
             kill-http-server            ; not yet documented
             make-http-server            ; not yet documented
             send-http-response-headers  ; not yet documented
             start-http-server           ; not yet documented
             write-crlf)))               ; not yet documented
+
+;;; ---------------------------------------------------------------------------
+
+(defvar *http-headers-of-interest* 
+    ;; Controls what header messages are included in the returned alist of
+    ;; headers from READ-REMAINING-HTTP-REQUEST-HEADERS
+    '(:connection
+      :content-length
+      :user-agent))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -165,6 +176,7 @@
 (defun send-http-response-headers (connection status status-message
                                    &key (content-type "text/html")
                                         content-length
+                                        cache-control
                                         last-modified
                                         location
                                         (server
@@ -193,6 +205,10 @@
     (format connection "Last-Modified: ")
     (http-date-and-time last-modified :destination connection)
     (write-crlf connection))
+  (when cache-control
+    (format connection "Cache-Control: ~s"
+            cache-control)
+    (write-crlf connection))
   (write-crlf connection)
   (values))
 
@@ -210,21 +226,55 @@
 (defun read-remaining-http-request-headers (server connection)
   ;; Reads the HTTP request headers (after the inital request header),
   ;; returning user-agent and connection-type values, if found:
-  (let ((user-agent nil)
-        (connection-type nil))
-  (loop
-      for line = (read-http-line connection)
-      until (zerop (length line)) do
-        (when (http-server-log-headers server)
-          (add-to-http-log server "~s" line))
-        (cond
-         ;; User-Agent:
-         ((and (>& (length line) 12) (string= "User-Agent: " line :end2 12))
-          (setf user-agent (subseq line 12)))
-         ;; Connection-Type:
-         ((and (>& (length line) 12) (string= "Connection: " line :end2 12))
-          (setf connection-type (subseq line 12)))))
-  (values user-agent connection-type)))
+  (let ((values nil)
+        (previous-field-keyword nil))
+    (loop
+        for line = (read-http-line connection)
+        until (zerop& (length line)) do
+          (when (http-server-log-headers server)
+            (add-to-http-log server "~s" line))
+          (let ((initial-char (char line 0)))
+            (cond 
+             ;; Continued header?
+             ((or (eql initial-char #\Space)
+                  (eql initial-char #\Tab))
+              ;; Still to do!!!
+              previous-field-keyword)
+             ;; A new header:
+             (t (let ((pos (position #\: line)))
+                  (when pos
+                    (let ((field-keyword 
+                           (find-symbol
+                            ;; Watch out for "modern" mode!!!!
+                            (nstring-upcase (subseq line 0 pos))
+                            (load-time-value (find-package ':keyword)))))
+                      (cond
+                       ;; a field of interest
+                       ((and field-keyword
+                             (memq field-keyword *http-headers-of-interest*))
+                        (setf previous-field-keyword field-keyword)
+                        ;; skip LWS:
+                        (incf& pos)
+                        (while (and (<=& pos (length line))
+                                    (let ((char (char line pos)))
+                                      (or (eql char #\Space) (eql char #\Tab))))
+                          (incf& pos))
+                        ;; Stash value:
+                        (let ((value (subseq line pos))
+                              (acons (assq field-keyword values)))
+                          (if acons
+                              ;; Append to previous value:
+                              (setf (cdr acons)
+                                    (concatenate 'simple-base-string
+                                      (cdr acons)
+                                      ","
+                                      value))
+                              ;; New value
+                              (push (cons field-keyword value) values))))
+                       ;; not a field of interest:
+                       (t (setf previous-field-keyword nil))))))))))
+    ;; Maintain reception order:
+    (nreverse values)))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -236,6 +286,11 @@
         "Closing connection from ~a/~s"
         (remote-hostname-and-port connection)))
     (close connection)))
+
+;;; ---------------------------------------------------------------------------
+
+(defun keep-alive-p (values)
+  (string-equal (cdr (assq ':connection values)) "keep-alive"))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -254,41 +309,45 @@
        ;; The line is dead:
        ((not line) (return))
        ;; GET request:
-       ((and (>& (length line) 3) (string= "GET" line :end2 3))
-        (let ((path (subseq line 4 (position #\Space line :start 5 :test #'eq))))
-          (multiple-value-bind (user-agent connection-type)
-              (read-remaining-http-request-headers server connection)
-            (funcall 'handle-http-get connection path user-agent)
-            (unless (string= connection-type "keep-alive")
-              (return)))))
+       ((and (>& (length line) 3) (string-equal "GET" line :end2 3))
+        (let ((path (subseq line 4 (position #\Space line :start 5 :test #'eq)))
+              (values (read-remaining-http-request-headers server connection)))
+          (funcall 'handle-http-get connection path 
+                   (cdr (assq ':user-agent values)))
+          (unless (keep-alive-p values)
+            (return))))
+       ;; POST request:
+       ((and (>& (length line) 4) (string-equal "POST" line :end2 4))
+        (let ((path (subseq line 5 (position #\Space line :start 6 :test #'eq)))
+              (values (read-remaining-http-request-headers server connection)))
+          (funcall 'handle-http-post connection path
+                   (cdr (assq ':user-agent values)))
+          (unless (keep-alive-p values)
+            (return))))
        ;; Unhandled requests:
        (t (printv "Unhandled HTTP request:" line)
-          (multiple-value-bind (user-agent connection-type)
-              (read-remaining-http-request-headers connection)
-            (declare (ignore user-agent))
-            (unless (string= connection-type "keep-alive")
+          (let ((values (read-remaining-http-request-headers server connection)))
+            (unless (keep-alive-p values)
               (return))))))
     (force-output connection))
   (close-http-connection server connection))
 
 ;;; ---------------------------------------------------------------------------
 
-(defun http-connection-server (connection) 
-  (spawn-thread "HTTP Connection" 'http-connection-thread
-                ;; Grab the server from the global binding (typically bound in
-                ;; START-HTTP-SERVER):
-                *http-server*
-                connection))
-
-;;; ---------------------------------------------------------------------------
-
-(defun start-http-server (&optional (*http-server* *http-server*))
+(defun start-http-server (&optional (*http-server* *http-server*)
+                                    (connection-thread-fn 
+                                     'http-connection-thread))
   (let ((server *http-server*))
-    (setf (http-server-thread server)
-          (start-connection-server 'http-connection-server
-                                   (http-server-port server)
-                                   :name (http-server-name server)
-                                   :reuse-address 't))))
+    (flet ((spawn-connection-server (connection)
+             (spawn-thread "HTTP Connection" 
+                           connection-thread-fn
+                           server
+                           connection)))
+      (setf (http-server-thread server)
+            (start-connection-server #'spawn-connection-server
+                                     (http-server-port server)
+                                     :name (http-server-name server)
+                                     :reuse-address 't)))))
 
 ;;; ---------------------------------------------------------------------------
 
