@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/initiate.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Apr  7 09:53:03 2010 *-*
+;;;; *-* Last-Edit: Wed Jul 14 13:54:08 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -53,6 +53,7 @@
 ;;;  03-25-08 Renamed to more intuitive initiate.lisp.  (Corkill)
 ;;;  03-29-08 Add PROCESS-GBBOPEN-MODULES-DIRECTORY rescanning.  (Corkill)
 ;;;  04-27-08 Added shared-gbbopen-modules directory support.  (Corkill)
+;;;  07-14-10 Added FUNCALL-IN-PACKAGE.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -166,6 +167,23 @@
 (compile-if-advantageous 'startup-gbbopen)
 
 ;;; ---------------------------------------------------------------------------
+;;;  Funcall-in-package (for all except Allegro CL)
+
+#+allegro
+(import '(excl::funcall-in-package))
+#-allegro
+(defun funcall-in-package (symbol package &rest args)
+  (declare (dynamic-extent args))
+  (let ((fn-symbol (find-symbol (symbol-name symbol) package)))
+    (if fn-symbol
+        (apply fn-symbol args)
+        (error "Symbol ~s is not present in package ~s"
+               symbol
+               package))))
+#-allegro
+(compile-if-advantageous 'funcall-in-package)
+
+;;; ---------------------------------------------------------------------------
 
 (defun set-repl-package (package-specifier)
   ;; Sets *package* as well as updating LEP and SLIME Emacs interfaces:
@@ -179,10 +197,8 @@
      ;; If we are SLIME'ing:
      ((and swank-package 
            ;; Returns true if successful:
-           (funcall 
-            (fdefinition (intern (symbol-name '#:set-slime-repl-package)
-                                 swank-package))
-            (package-name requested-package)))
+           (funcall-in-package '#:set-slime-repl-package swank-package
+                               (package-name requested-package)))
       ;; in SLIME, we're done:
       't)
      ;; Not SLIME:
@@ -202,12 +218,10 @@
                                                      ;; not documented
                                                      dont-remember)
   (startup-gbbopen)
-  (funcall 
-   (fdefinition (intern (symbol-name '#:do-module-manager-repl-command)
-                        ':module-manager))
-   ':cm
-   (list* module-name ':propagate options)
-   dont-remember)
+  (funcall-in-package '#:do-module-manager-repl-command ':module-manager
+                      ':cm
+                      (list* module-name ':propagate options)
+                      dont-remember)
   (when package 
     (set-repl-package package)
     (import '(common-lisp-user::gbbopen-tools 
