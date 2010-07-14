@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Wed Jun 16 15:10:47 2010; Edited-By: cork *-*
+%% *-* Last-Edit: Wed Jul 14 14:32:39 2010; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2010, Dan Corkill <corkill@GBBopen.org>
@@ -1839,6 +1839,58 @@ the \nobr{\code{:gbbopen-user}} package:
   (define-repl-command :my-app (&rest options)
     "Compile and load my GBBopen application module"
     (\entlink{startup-module} :my-app options :gbbopen-user))
+\end{example} 
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{funcall-in-package}%
+  {\var{symbol package-name\/}
+    \nobr{\code{\&rest} \var{args\/}}}
+\index{calling a function in another package}%
+\index{startup!calling a function in another package}%
+
+\fnsyntax 
+
+\fnpurpose Apply a function to arguments when the package containing the
+function may not exist until execution time.
+
+\fnpackage \code{:common-lisp-user} (not exported)
+
+\fnmodule Defined in \nobr{\code{initiate.lisp}} (or in
+\nobr{\code{startup.lisp},} if \nobr{\code{initiate.lisp}} is not used to
+initiate GBBopen)
+
+\fnargs
+\begin{args}{package-name}
+\arg[symbol] A symbol
+\arg[package-name] A package name
+\arg[args] Arguments to the function
+\end{args}
+
+\fndescription This function provides a convenient means of applying a
+function to arguments, when the package containing the function may not exist
+until execution time. The function to be applied is determined at runtime by
+using the name of \var{symbol\/} to find the symbol with the same name in
+\var{package\/} and using it as the function designator.
+
+\fnexample
+\bfindexit{define-repl-command}%
+%
+Define a \glref{REPL~command} named \nobr{\code{:my-app}} that compiles and
+loads the \glref{module} \nobr{\code{:my-app}}, sets the current package to
+the \nobr{\code{:gbbopen-user}} package, and then calls the function
+\nobr{\code{startup}} in the package \nobr{\code{:my-app-package}} that is
+defined when the \nobr{\code{:my-app}} module is loaded:
+%
+\W\supp
+\begin{example}
+  (\entlink{define-repl-command} :my-app (&rest options)
+    "Compile and load my GBBopen application module"
+    (startup-module :my-app options :gbbopen-user)
+    ;; Call the startup function:
+    (funcall-in-package '#:startup :my-app-package))
 \end{example} 
 
 \end{functiondoc}

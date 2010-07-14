@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/commands.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Jul  4 11:13:26 2010 *-*
+;;;; *-* Last-Edit: Wed Jul 14 14:26:21 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -227,28 +227,22 @@
       (&rest module-name-and-options)
     "Load module"
     (startup-gbbopen)
-    (funcall 
-     (fdefinition (intern (symbol-name '#:do-module-manager-repl-command) 
-                          ':module-manager))
-     ':lm module-name-and-options))
+    (funcall-in-package '#:do-module-manager-repl-command ':module-manager
+                        ':lm module-name-and-options))
   
   (define-repl-command (:cm :add-to-native-help)
       (&rest module-name-and-options)
     "Compile and load module"
     (startup-gbbopen)
-    (funcall
-     (fdefinition (intern (symbol-name '#:do-module-manager-repl-command) 
-                          ':module-manager))
-     ':cm module-name-and-options))
+    (funcall-in-package '#:do-module-manager-repl-command ':module-manager
+                        ':cm module-name-and-options))
   
   (define-repl-command (:lmf :add-to-native-help)
       (&rest module-name-and-options)
     "Load module file"
     (startup-gbbopen)
-    (funcall 
-     (fdefinition (intern (symbol-name '#:do-module-manager-repl-command) 
-                          ':module-manager))
-     ':lmf module-name-and-options))
+    (funcall-in-package '#:do-module-manager-repl-command ':module-manager
+                        ':lmf module-name-and-options))
   
   ;; end with-system-name
   )

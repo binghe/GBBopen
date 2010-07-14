@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/startup.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Apr  7 09:53:39 2010 *-*
+;;;; *-* Last-Edit: Wed Jul 14 13:53:58 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2002-2009, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2010, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project.
 ;;; Licensed under Apache License 2.0 (see LICENSE for license information).
 ;;;
@@ -38,6 +38,7 @@
 ;;;  04-07-06 Added gbbopen-modules directory support.  (Corkill)
 ;;;  04-27-08 Added shared-gbbopen-modules directory support.  (Corkill)
 ;;;  10-15-09 Added XCL support.  (Corkill)
+;;;  07-14-10 Added FUNCALL-IN-PACKAGE.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -114,6 +115,25 @@
     #+ecl (declare (ignore fn-name))
     #-ecl (unless (or #+(or cmu scl xcl) (macro-function fn-name))
             (compile fn-name))))
+
+;;; ---------------------------------------------------------------------------
+;;;  Define FUNCALL-IN-PACKAGE if it is not already present (from loading
+;;;  extended-repl.lisp)
+
+(unless (fboundp 'funcall-in-package)
+  #+allegro
+  (import '(excl::funcall-in-package))
+  #-allegro
+  (defun funcall-in-package (symbol package &rest args)
+    (declare (dynamic-extent args))
+    (let ((fn-symbol (find-symbol (symbol-name symbol) package)))
+      (if fn-symbol
+          (apply fn-symbol args)
+          (error "Symbol ~s is not present in package ~s"
+                 symbol
+                 package))))
+  #-allegro
+  (compile-if-advantageous 'funcall-in-package))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Define EXTENDED-REPL-QUIT-LISP if it is not already present (from loading
