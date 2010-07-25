@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:HTTP-SERVICES; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/http-services.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Jun 26 13:52:03 2010 *-*
+;;;; *-* Last-Edit: Sun Jul 25 09:33:33 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -39,7 +39,8 @@
 (in-package :http-services)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (export '(*http-headers-of-interest*  ; not yet documented
+  (export '(*processing-head-request*   ; not yet documented
+            *http-headers-of-interest*  ; not yet documented
             *http-server*               ; not yet documented
             decode-uri-string           ; not yet documented
             encode-xml-string           ; not yet documented
@@ -60,6 +61,8 @@
     '(:connection
       :content-length
       :user-agent))
+
+(defvar *processing-head-request* nil)
 
 ;;; ---------------------------------------------------------------------------
 
@@ -177,6 +180,7 @@
                                    &key (content-type "text/html")
                                         content-length
                                         cache-control
+                                        expires
                                         last-modified
                                         location
                                         (server
@@ -208,6 +212,10 @@
   (when cache-control
     (format connection "Cache-Control: ~s"
             cache-control)
+    (write-crlf connection))
+  (when expires
+    (format connection "Expires: ~s"
+            expires)
     (write-crlf connection))
   (write-crlf connection)
   (values))
@@ -314,6 +322,15 @@
               (values (read-remaining-http-request-headers server connection)))
           (funcall 'handle-http-get connection path 
                    (cdr (assq ':user-agent values)))
+          (unless (keep-alive-p values)
+            (return))))
+       ;; HEAD request:
+       ((and (>& (length line) 4) (string-equal "HEAD" line :end2 4))
+        (let ((path (subseq line 5 (position #\Space line :start 6 :test #'eq)))
+              (values (read-remaining-http-request-headers server connection)))
+          (let ((*processing-head-request* 't))
+            (funcall 'handle-http-get connection path 
+                     (cdr (assq ':user-agent values))))
           (unless (keep-alive-p values)
             (return))))
        ;; POST request:
