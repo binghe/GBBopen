@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Jul  8 06:22:05 2010 *-*
+;;;; *-* Last-Edit: Thu Jul 29 17:47:26 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -78,6 +78,8 @@
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (import 
+   #+abcl
+   '(system::simple-array-p)
    #+allegro 
    '(excl::assq 
      excl:case-failure
@@ -148,7 +150,7 @@
      ext:memq
      ext:delq
      kernel:simple-array-p)
-   #-(or allegro clisp clozure cmu cormanlisp digitool-mcl ecl gcl 
+   #-(or abcl allegro clisp clozure cmu cormanlisp digitool-mcl ecl gcl 
          lispworks sbcl scl)
    '()))
 
@@ -939,7 +941,7 @@
   #-(or allegro clozure cmu lispworks sbcl scl)
   (declare (ignore hash-table new-size))
   #-(or allegro clozure cmu lispworks sbcl scl)
-  (need-to-port 'resize-hash-table t))
+  (need-to-port resize-hash-table t))
 
 ;;; ===========================================================================
 ;;;   Shrink-vector
@@ -1529,6 +1531,10 @@
 
 ;;; ===========================================================================
 ;;;   Add missing extract-specializer-names
+
+#+abcl
+(defun extract-specializer-names (arglist)
+  (mop::extract-specializers arglist))
 
 #+ecl
 (defun extract-specializer-names (arglist)

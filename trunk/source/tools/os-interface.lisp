@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/os-interface.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Jul 29 16:49:14 2010 *-*
+;;;; *-* Last-Edit: Thu Jul 29 17:48:38 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -109,7 +109,7 @@
 #-(or allegro clozure ecl digitool-mcl lispworks sbcl)
 (defun getenv (string)
   (declare (ignore string))
-  (need-to-port 'getenv))
+  (need-to-port getenv))
 
 #+lispworks
 (progn
@@ -150,7 +150,7 @@
 (defun (setf getenv) (nv string)
   (declare (ignore nv string))
   ;; SBCL doesn't provide an ENV setter
-  (need-to-port '(setf getenv)))
+  (need-to-port (setf getenv)))
 
 ;;; ===========================================================================
 ;;;  Run-external-program
