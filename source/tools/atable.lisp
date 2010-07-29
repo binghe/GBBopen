@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/atable.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Jul 29 16:56:56 2010 *-*
+;;;; *-* Last-Edit: Thu Jul 29 19:48:17 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -103,7 +103,7 @@
       (check-featured-value
        'eset-transition-size
        ;; Armed Bear Common Lisp
-       #+abcl 24
+       #+abcl 37
        ;; Allegro
        #+(and allegro macosx x86) 10
        #+(and allegro macosx powerpc) 34
@@ -504,7 +504,7 @@
       (check-featured-value
        '*atable-transition-sizes*
        ;; Armed Bear Common Lisp
-       #+abcl #(0 0 0 0 0 0 0 0 0 0)
+       #+abcl #(0 0 2 0 0 0 0 0 0 0)
        ;; Allegro
        #+(and allegro macosx x86) #(0 0 12 7 6 4 11 11 11 11)
        #+(and allegro macosx powerpc) #(0 0 36 28 6 5 5 6 15 15)
