@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/module-manager/module-manager-loader.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Apr  7 10:04:01 2010 *-*
+;;;; *-* Last-Edit: Thu Jul 29 14:34:57 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -175,6 +175,14 @@
               (machine-type)))
            ;; Return the sole-element string:
            (first args)))
+    ;; Armed Bear Common Lisp:
+    #+abcl
+    (values 
+     ;; Compiled files in ABCL are OS/platform independent
+     nil         
+     "abcl"
+     nil
+     (lisp-implementation-version))
     ;; Franz Allegro:
     #+allegro
     (values (check                      ; ensure one feature match
@@ -366,6 +374,9 @@
 
 (defparameter *compiled-file-type*
     (or
+     ;; Armed Bear Common Lisp:
+     #+abcl
+     system::*compile-file-type*
      ;; Franz Allegro:
      #+allegro
      excl:*fasl-default-type* 

@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/atable.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue May 18 15:46:49 2010 *-*
+;;;; *-* Last-Edit: Thu Jul 29 16:56:56 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -102,6 +102,8 @@
   (defconstant eset-transition-size 
       (check-featured-value
        'eset-transition-size
+       ;; Armed Bear Common Lisp
+       #+abcl 24
        ;; Allegro
        #+(and allegro macosx x86) 10
        #+(and allegro macosx powerpc) 34
@@ -110,7 +112,7 @@
        ;; CLISP
        #+clisp 0
        ;; Clozure
-       #+(and clozure darwinx8632-target) 5
+       #+(and clozure darwinx8632-target) 10
        #+(and clozure darwinx8664-target) 30
        #+(and clozure darwinppc-target) 18
        #+(and clozure (not (or darwinx8632-target
@@ -133,7 +135,8 @@
        #+(and scl darwin x86) 26
        #+(and scl (not (and darwin x86))) 46
        ;; New port (values needed)
-       #-(or allegro 
+       #-(or abcl
+             allegro 
              clisp
              clozure
              cmu
@@ -289,13 +292,15 @@
 ;;; ===========================================================================
 ;;;  EQ Tables (ETs)
 ;;;
-;;; ETs are slower in CLISP and ECL; we also don't bother when sizes are less
-;;; than MINIMUM-TRANSITION-SIZE:
+;;; ETs are slower in ABCL, CLISP, and ECL; we also don't bother when sizes
+;;; are less than MINIMUM-TRANSITION-SIZE:
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defconstant et-transition-size 
       (check-featured-value
        'et-transition-size
+       ;; Armed Bear Common Lisp
+       #+abcl 0
        ;; Allegro
        #+(and allegro macosx x86) 6
        #+(and allegro macosx powerpc) 30
@@ -327,7 +332,8 @@
        #+(and scl darwin x86) 14
        #+(and scl (not (and darwin x86))) 78
        ;; New port (values needed)
-       #-(or allegro 
+       #-(or abcl
+             allegro 
              clisp
              clozure
              cmu
@@ -497,6 +503,8 @@
   (defparameter *atable-transition-sizes* 
       (check-featured-value
        '*atable-transition-sizes*
+       ;; Armed Bear Common Lisp
+       #+abcl #(0 0 0 0 0 0 0 0 0 0)
        ;; Allegro
        #+(and allegro macosx x86) #(0 0 12 7 6 4 11 11 11 11)
        #+(and allegro macosx powerpc) #(0 0 36 28 6 5 5 6 15 15)
@@ -526,7 +534,8 @@
        ;; SCL
        #+scl #(0 0 20 7 4 9 2 2 3 3)
        ;; New port (values needed)
-       #-(or allegro
+       #-(or abcl
+             allegro
              clisp
              clozure
              cmu
