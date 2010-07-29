@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/declared-numerics.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Apr  7 09:55:17 2010 *-*
+;;;; *-* Last-Edit: Thu Jul 29 15:01:46 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -96,6 +96,8 @@
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (import 
+   #+abcl
+   '(ext:fixnump)
    #+allegro
    '(excl:fixnump excl:single-float-p excl:double-float-p)
    #+clisp
@@ -124,44 +126,44 @@
    #+scl
    '(ext:fixnump lisp::short-float-p kernel:single-float-p
      kernel:double-float-p kernel:long-float-p)
-   #-(or allegro clisp clozure cmu cormanlisp digitool-mcl ecl gcl 
+   #-(or abcl allegro clisp clozure cmu cormanlisp digitool-mcl ecl gcl 
          lispworks sbcl scl)
    (need-to-port (fixnump short-float-p single-float-p double-float-p
                           long-float-p))))
 
 ;;; CLs that don't have short-float-p predicates:
-#+(or allegro ecl gcl)
+#+(or abcl allegro ecl gcl)
 (defun short-float-p (obj)
   (typep obj 'short-float))
 
-#+(or allegro ecl gcl)
+#+(or abcl allegro ecl gcl)
 (defcm short-float-p (obj)
   `(typep ,obj 'short-float))
 
 ;;; CLs that don't have single-float-p predicates:
-#+(or clozure digitool-mcl ecl gcl)
+#+(or abcl clozure digitool-mcl ecl gcl)
 (defun single-float-p (obj)
   (typep obj 'single-float))
 
-#+(or clozure digitool-mcl ecl gcl)
+#+(or abcl clozure digitool-mcl ecl gcl)
 (defcm single-float-p (obj)
   `(typep ,obj 'single-float))
 
 ;;; CLs that don't have double-float-p predicates:
-#+(or ecl gcl)
+#+(or abcl ecl gcl)
 (defun double-float-p (obj)
   (typep obj 'double-float))
 
-#+(or ecl gcl)
+#+(or abcl ecl gcl)
 (defcm double-float-p (obj)
   `(typep ,obj 'double-float))
 
 ;;; CLs that don't have long-float-p predicates:
-#+(or allegro clozure ecl gcl)
+#+(or abcl allegro clozure ecl gcl)
 (defun long-float-p (obj)
   (typep obj 'long-float))
 
-#+(or allegro clozure ecl gcl)
+#+(or abcl allegro clozure ecl gcl)
 (defcm long-float-p (obj)
   `(typep ,obj 'long-float))
 
@@ -243,8 +245,9 @@
     ;; Care must be taken to use /& only where fixnum results will be created.
     ;; When timings are very close, truncate& is preferred.  Tested on x86 and
     ;; PPC architectures (could vary on others--reports welcomed!).
-    (or #+(and :allegro (not :64-bit)) '/&
-        #+(and :allegro :64-bit) 'truncate&
+    (or #+abcl 'truncate&
+        #+(and allegro (not 64-bit)) '/&
+        #+(and allegro 64-bit) 'truncate&
         #+clisp 'truncate&
         #+clozure 'truncate&
         #+cmu 'truncate&
@@ -253,15 +256,16 @@
         #+lispworks 'truncate&
         #+sbcl 'truncate&
         #+scl 'truncate&
-        #-(or :allegro
-              :clisp 
-              :clozure
-              :cmu
-              :digitool-mcl
-              :ecl
-              :lispworks
-              :sbcl
-              :scl)
+        #-(or abcl
+              allegro
+              clisp 
+              clozure
+              cmu
+              digitool-mcl
+              ecl
+              lispworks
+              sbcl
+              scl)
         (need-to-port fastest-fixnum-div-operator)))
 
 ;;; ---------------------------------------------------------------------------
@@ -764,6 +768,7 @@
   ;;                          defining other types, when needed)
   
   (defconstant infinity$$
+      #+abcl ext:double-float-positive-infinity
       #+allegro excl::*infinity-double*
       #+clozure #.(unwind-protect
                       (progn
@@ -782,12 +787,13 @@
       #+scl ext:double-float-positive-infinity
       ;; We have to fake infinity
       #+infinity-not-available most-positive-double-float
-      #-(or allegro clozure cmu digitool-mcl 
+      #-(or abcl allegro clozure cmu digitool-mcl 
             (and ecl (not infinity-not-available)) 
             lispworks sbcl scl infinity-not-available)
       (need-to-port infinity$$))
 
   (defconstant -infinity$$
+      #+abcl ext:double-float-negative-infinity
       #+allegro excl::*negative-infinity-double*
       #+clozure #.(unwind-protect
                       (progn
@@ -806,7 +812,7 @@
       #+scl ext:double-float-negative-infinity
       ;; We have to fake negative infinity
       #+infinity-not-available most-negative-double-float
-      #-(or allegro clozure cmu digitool-mcl 
+      #-(or abcl allegro clozure cmu digitool-mcl 
             (and ecl (not infinity-not-available)) 
             lispworks sbcl scl infinity-not-available)
       (need-to-port -infinity$$))
@@ -815,6 +821,7 @@
   ;; Single-float infinities:
   
   (defconstant infinity$
+      #+abcl ext:single-float-positive-infinity
       #+allegro excl::*infinity-single*
       #+clozure (coerce infinity$$ 'single-float)
       #+cmu ext:single-float-positive-infinity
@@ -825,12 +832,13 @@
       #+scl ext:single-float-positive-infinity
       ;; We have to fake infinity
       #+infinity-not-available most-positive-single-float
-      #-(or allegro clozure cmu digitool-mcl 
+      #-(or abcl allegro clozure cmu digitool-mcl 
             (and ecl (not infinity-not-available)) 
             lispworks sbcl scl infinity-not-available)
       (need-to-port infinity$))
   
   (defconstant -infinity$
+      #+abcl ext:single-float-negative-infinity
       #+allegro excl::*negative-infinity-single*
       #+clozure (coerce -infinity$$ 'single-float)
       #+cmu ext:single-float-negative-infinity
@@ -841,7 +849,7 @@
       #+scl ext:single-float-negative-infinity
       ;; We have to fake negative infinity
       #+infinity-not-available most-negative-single-float
-      #-(or allegro clozure cmu digitool-mcl 
+      #-(or abcl allegro clozure cmu digitool-mcl 
             (and ecl (not infinity-not-available)) 
             lispworks sbcl scl infinity-not-available)
       (need-to-port -infinity$))
@@ -850,6 +858,7 @@
   ;; Short-float infinities:
   
   (defconstant infinity$&
+      #+abcl infinity$
       #+allegro infinity$
       #+clozure (coerce infinity$$ 'short-float)
       #+cmu ext:short-float-positive-infinity
@@ -860,12 +869,13 @@
       #+scl ext:short-float-positive-infinity
       ;; We have to fake infinity
       #+infinity-not-available most-positive-short-float
-      #-(or allegro clozure cmu digitool-mcl 
+      #-(or abcl allegro clozure cmu digitool-mcl 
             (and ecl (not infinity-not-available)) 
             lispworks sbcl scl infinity-not-available)
       (need-to-port infinity$&))
   
   (defconstant -infinity$&
+      #+abcl -infinity$
       #+allegro -infinity$
       #+clozure (coerce -infinity$$ 'short-float)
       #+cmu ext:short-float-negative-infinity
@@ -876,7 +886,7 @@
       #+scl ext:short-float-negative-infinity
       ;; We have to fake negative infinity
       #+infinity-not-available most-negative-short-float
-      #-(or allegro clozure cmu digitool-mcl 
+      #-(or abcl allegro clozure cmu digitool-mcl 
             (and ecl (not infinity-not-available)) 
             lispworks sbcl scl infinity-not-available)
       (need-to-port -infinity$&))
@@ -885,6 +895,7 @@
   ;; Long-float infinities:
   
   (defconstant infinity$$$
+      #+abcl infinity$$
       #+allegro infinity$$
       #+clozure (coerce infinity$$ 'long-float)
       #+cmu ext:long-float-positive-infinity
@@ -895,12 +906,13 @@
       #+scl ext:long-float-positive-infinity
       ;; We have to fake infinity
       #+infinity-not-available most-positive-long-float
-      #-(or allegro clozure cmu digitool-mcl 
+      #-(or abcl allegro clozure cmu digitool-mcl 
             (and ecl (not infinity-not-available)) 
             lispworks sbcl scl infinity-not-available)
       (need-to-port infinity$$$))
   
   (defconstant -infinity$$$
+      #+abcl -infinity$$
       #+allegro -infinity$$
       #+clozure (coerce -infinity$$ 'long-float)
       #+cmu ext:long-float-negative-infinity
@@ -911,7 +923,7 @@
       #+scl ext:long-float-negative-infinity
       ;; We have to fake negative infinity
       #+infinity-not-available most-positive-long-float
-      #-(or allegro clozure cmu digitool-mcl 
+      #-(or abcl allegro clozure cmu digitool-mcl 
             (and ecl (not infinity-not-available)) 
             lispworks sbcl scl infinity-not-available)
       (need-to-port -infinity$$$))

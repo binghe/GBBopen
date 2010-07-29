@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/os-interface.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Apr  7 09:57:42 2010 *-*
+;;;; *-* Last-Edit: Thu Jul 29 16:49:14 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2005-2008, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2005-2010, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project.
 ;;; Licensed under Apache License 2.0 (see LICENSE for license information).
 ;;;
@@ -40,6 +40,8 @@
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (import
+   #+abcl
+   '()                                  ; nothing yet!
    #+allegro
    '(excl.osi:kill
      excl.osi:setenv

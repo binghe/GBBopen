@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/module-manager/module-manager.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Jul  4 11:19:25 2010 *-*
+;;;; *-* Last-Edit: Thu Jul 29 14:40:23 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -712,6 +712,8 @@
 ;;; It should return true for a symbolic link to a directory.
 
 (defun probe-directory (path)
+  #+abcl
+  (ext:file-directory-p path)
   #+allegro
   (excl:file-directory-p path)
   #+clisp
@@ -757,7 +759,8 @@
   #+(and scl unix)
   (ext:unix-namestring (make-pathname :name nil :type nil :version nil
                                       :defaults path))
-  #-(or allegro
+  #-(or abcl
+        allegro
         clisp
         clozure
         (and cmu unix)
