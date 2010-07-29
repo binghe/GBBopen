@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/timing/cl-timing.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Jul 29 16:55:27 2010 *-*
+;;;; *-* Last-Edit: Thu Jul 29 17:18:17 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -50,17 +50,17 @@
 ;; Size for timing basic CL operations:
 (defparameter *timing-iterations*
     #+clisp 2000000                     ; CLISP is slow
-    #+abcl  6000000                     ; ABCL is a bit faster
+    #+abcl  2000000                     ; as is ABCL
     #+ecl   6000000                     ; ECL is a bit faster
-    #-(or clisp ecl) 
+    #-(or abcl clisp ecl) 
     10000000)
 
 ;; Size for timing atable transitions:
 (defparameter *transition-timing-iterations*
     #+clisp 100000                      ; CLISP is slow
-    #+abcl 1000000                      ; ABCL is a bit faster
+    #+abcl 100000                       ; as is ABCL
     #+ecl 1000000                       ; ECL is a bit faster
-    #-(or clisp ecl)
+    #-(or abcl clisp ecl)
     10000000)
 
 ;; Size for timing unit-instance operations:
