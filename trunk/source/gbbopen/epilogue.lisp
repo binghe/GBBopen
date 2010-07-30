@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/epilogue.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Apr 13 14:28:27 2010 *-*
+;;;; *-* Last-Edit: Fri Jul 30 09:18:44 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -94,7 +94,7 @@
     (warn "~s is being overridden by ~s ~s."
           ':all-classes ':retain-classes retain-classes))
   ;;; Deletes all unit and space instances; resets instance counters to 1.
-  (with-lock-held (*master-instance-lock*)
+  (with-blackboard-repository-locked ()
     (let ((*%%events-enabled%%* (not disable-events)))
       (flet ((fn (unit-class plus-subclasses)
                (declare (ignore plus-subclasses))
@@ -131,7 +131,7 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun reset-gbbopen (&key (disable-events t))
-  (with-lock-held (*master-instance-lock*)
+  (with-blackboard-repository-locked ()
     (delete-blackboard-repository :all-classes 't
                                   :disable-events disable-events)
     (setf *top-level-space-instances* nil))
@@ -182,7 +182,7 @@
                                      :read-default-float-format 
                                      read-default-float-format
                                      :value value)
-      (with-lock-held (*master-instance-lock*)
+      (with-blackboard-repository-locked ()
         ;; Save repository-format version:
         (format file "~&;;; Saved repository format version:~%~s~%"
                 *save-blackboard-repository-format-version*)
@@ -256,7 +256,7 @@
   (with-open-file (file (make-bb-pathname pathname)
                    :direction ':input
                    :external-format external-format)
-    (with-lock-held (*master-instance-lock*)
+    (with-blackboard-repository-locked ()
       (apply 'delete-blackboard-repository
              :all-classes 't
              (remove-properties reset-gbbopen-args 

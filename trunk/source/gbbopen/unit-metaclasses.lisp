@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/unit-metaclasses.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu May  6 17:00:49 2010 *-*
+;;;; *-* Last-Edit: Fri Jul 30 09:23:33 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -238,7 +238,7 @@
      ((not (eq (standard-unit-class.instance-name-comparison-test class)
                (cannonical-hash-table-test
                 (standard-unit-class.instance-hash-table class))))
-      (with-lock-held (*master-instance-lock*)
+      (with-blackboard-repository-locked ()
         (let ((hash-table-count
                (hash-table-count
                 (standard-unit-class.instance-hash-table class))))

@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/find.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Apr 24 11:57:27 2010 *-*
+;;;; *-* Last-Edit: Fri Jul 30 09:23:07 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -1620,7 +1620,7 @@
               disjunctive-dimensional-extents space-instance)))
       (declare (dynamic-extent #'fn))
       (map-space-instances #'fn space-instances invoking-fn-name))
-    (with-lock-held (*master-instance-lock*)
+    (with-blackboard-repository-locked ()
       ;; set all flags:
       (dolist (storage storage-objects)
         (set-all-mbr-instance-marks storage disjunctive-dimensional-extents))
@@ -1743,7 +1743,7 @@
                      ;; we have either accepted or rejected this instance:
                      (add-to-eset instance processed-instance-set))))
               (declare (dynamic-extent #'fn))
-              (with-lock-held (*master-instance-lock*)
+              (with-blackboard-repository-locked ()
                 (dolist (storage storage-objects)
                   (map-all-instances-on-storage 
                    #'fn storage disjunctive-dimensional-extents verbose))))))
@@ -1778,7 +1778,7 @@
          (storage-objects-for-mapping unit-classes-spec space-instances
                                       invoking-fn-name))
         (unit-class-check-fn (determine-unit-class-check unit-classes-spec)))
-    (with-lock-held (*master-instance-lock*)
+    (with-blackboard-repository-locked ()
       ;; set all flags:
       (dolist (storage storage-objects)
         (set-all-mbr-instance-marks storage 't))
@@ -1822,7 +1822,7 @@
                                       invoking-fn-name))
         (unit-class-check-fn (determine-unit-class-check unit-classes-spec))
         (processed-instance-set (make-eset)))
-    (with-lock-held (*master-instance-lock*)
+    (with-blackboard-repository-locked ()
       (macrolet
           ((generate-check-fn (filter-before? filter-after?)
              `(flet

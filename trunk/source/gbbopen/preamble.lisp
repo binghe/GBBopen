@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/preamble.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun May  9 01:43:58 2010 *-*
+;;;; *-* Last-Edit: Fri Jul 30 09:24:22 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -21,9 +21,10 @@
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
 ;;;  07-17-02 File created.  (Corkill)
-;;;  09-26-04 Renamed instance-hash-table-test to more descriptive
-;;;           instance-name-comparison-test.  (Corkill)
-;;;  11-05-05 Added *coerce-interval-rationals-to-floats*.  (Corkill)
+;;;  09-26-04 Renamed INSTANCE-HASH-TABLE-TEST to more descriptive
+;;;           INSTANCE-NAME-COMPARISON-TEST.  (Corkill)
+;;;  11-05-05 Added *COERCE-INTERVAL-RATIONALS-TO-FLOATS*.  (Corkill)
+;;;  07-30-10 Added WITH-BLACKBOARD-REPOSITORY-LOCKED.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -38,7 +39,8 @@
      	    draw-instance-on-bb-widget  ; used for bb-widget drawing
 	    gbbopen-graphics-started-p
 	    gbbopen-implementation-version
-	    instance-name-comparison-test)))
+	    instance-name-comparison-test
+            with-blackboard-repository-locked)))
 
 (unless (boundp '*gbbopen-install-root*)
   (error "~s was not set." '*gbbopen-install-root*))
@@ -76,6 +78,12 @@
 
 (defvar *master-instance-lock* 
     (make-recursive-lock :name "Master instance lock"))
+
+(defmacro with-blackboard-repository-locked
+    ((&key (whostate "With Blackboard Repository Locked"))
+     &body body)
+  `(with-lock-held (*master-instance-lock* :whostate ,whostate)
+     ,@body))
 
 ;;; ---------------------------------------------------------------------------
 
