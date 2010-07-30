@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri May 28 15:18:08 2010 *-*
+;;;; *-* Last-Edit: Fri Jul 30 09:22:18 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -171,7 +171,7 @@
 ;;; ---------------------------------------------------------------------------
 
 (defmethod next-class-instance-number ((instance standard-unit-instance))
-  ;; The *master-instance-lock* is held whenever this is called:
+  ;; The blackboard repository is locked whenever this is called:
   (let ((unit-class (class-of instance)))
     (if (standard-unit-class.use-global-instance-name-counter unit-class)
         ;; Using global instance-name counter?
@@ -224,7 +224,7 @@
   ;;; Perform the completion work for MAKE-DUPLICATE-INSTANCE and
   ;;; MAKE-DUPLICATE-INSTANCE-CHANGING-CLASS that create new unit instances:
   (post-initialize-instance-slots new-instance nil slots)
-  (with-lock-held (*master-instance-lock*)
+  (with-blackboard-repository-locked ()
     (maybe-initialize-instance-name-slot
      (class-of new-instance) new-instance)
     (let ((original-space-instances
@@ -356,7 +356,7 @@
   (let ((*%%allow-setf-on-link%%* 't))
     (call-next-method))
   ;; Add it to space instances:
-  (with-lock-held (*master-instance-lock*)
+  (with-blackboard-repository-locked ()
     (let ((space-instance-paths
            (standard-unit-instance.%%space-instances%% instance)))
       (when space-instance-paths
@@ -388,7 +388,7 @@
   (unless (boundp '*forward-referenced-saved/sent-instances*)
     (outside-reading-saved/sent-objects-block-error 
      'allocate-saved/sent-instance))
-  (with-lock-held (*master-instance-lock*)
+  (with-blackboard-repository-locked ()
     (let* ((position 
             (flet ((fn (slot)
                      (eq 'instance-name (slot-definition-name slot))))
@@ -446,7 +446,7 @@
               (hash-table-count *forward-referenced-saved/sent-instances*)))
          (when (>& count *forward-referenced-peak-count*)
            (setf *forward-referenced-peak-count* count)))
-       (with-lock-held (*master-instance-lock*)
+       (with-blackboard-repository-locked ()
          (add-instance-to-instance-hash-table class instance instance-name))
        instance))))
         
@@ -669,7 +669,7 @@
             ;; shared-initialize :before and :after methods:
             (*%%existing-space-instances%%* nil))
         (declare (special *%%existing-space-instances%%*))
-        (with-lock-held (*master-instance-lock*)
+        (with-blackboard-repository-locked ()
           (call-next-method))))))
 
 ;;; ---------------------------------------------------------------------------
@@ -754,7 +754,7 @@
 (defmethod initialize-instance :around ((instance standard-unit-instance) 
                                         &key)
   (let ((*%%doing-initialize-instance%%* 't))
-    (with-lock-held (*master-instance-lock*)
+    (with-blackboard-repository-locked ()
       (call-next-method)))
   ;; signal the creation event:
   (signal-event-using-class
@@ -765,7 +765,7 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun add-instance-to-instance-hash-table (unit-class instance instance-name)
-  ;;; Note: the *master-instance-lock* is expected to be held whenever
+  ;;; Note: the blackboard repository is expected to be held whenever
   ;;; this function is called.
   (let* ((instance-hash-table 
           (standard-unit-class.instance-hash-table unit-class))
@@ -792,7 +792,7 @@
   (let ((test (hash-table-test 
                (standard-unit-class.instance-hash-table unit-class))))
     (unless (funcall test old-name new-name)
-      (with-lock-held (*master-instance-lock*)
+      (with-blackboard-repository-locked ()
         ;; Add new-name first, in case there is a conflict:
         (add-instance-to-instance-hash-table unit-class instance new-name)
         ;; If OK or continued, remove the old-name from instance-hash-table
@@ -935,7 +935,7 @@
 (defmethod delete-instance :around ((instance standard-unit-instance))
   ;;; Deletion-event signaling is done in this :around method to surround 
   ;;; activities performed by primary and :before/:after methods
-  (with-lock-held (*master-instance-lock*)
+  (with-blackboard-repository-locked ()
     ;; signal the delete-instance event:
     (signal-event-using-class
      (load-time-value (find-class 'delete-instance-event))
@@ -1242,7 +1242,7 @@
     ;; This portion of the :after method handles class changes from a non-unit
     ;; class to a unit class (so we must grab the master-instance lock here)
     (otherwise 
-     (with-lock-held (*master-instance-lock*)
+     (with-blackboard-repository-locked ()
        (let ((instance-name 
               (if (slot-boundp instance 'instance-name)
                   (instance-name-of instance)
@@ -1270,7 +1270,7 @@
      (load-time-value (find-class 'change-instance-class-event))
      :instance instance
      :new-class new-class)
-    (with-lock-held (*master-instance-lock*)
+    (with-blackboard-repository-locked ()
       ;; Remember the current space-instances of instance (for re-addition
       ;; later in the protocol):
       (let ((*%changing-class-space-instances%* (space-instances-of instance)))

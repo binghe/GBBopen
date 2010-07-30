@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/spaces.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Apr 12 10:25:56 2010 *-*
+;;;; *-* Last-Edit: Fri Jul 30 09:24:02 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -873,7 +873,7 @@
   ;;; space-instance the first time an instance of a unit class is
   ;;; added.  Must be cleared if unit-class is redefined, however.
   (declare (inline class-of))
-  (with-lock-held (*master-instance-lock*)
+  (with-blackboard-repository-locked ()
     (cond 
      ;; no-op if instance is already present on the space-instance:
      ((memq space-instance 
@@ -971,7 +971,7 @@
 
 (defun remove-instance-from-space-instance-internal (instance space-instance)
   (declare (inline class-of))
-  (with-lock-held (*master-instance-lock*)
+  (with-blackboard-repository-locked ()
     (let ((instance-found nil))
       (setf (standard-unit-instance.%%space-instances%% instance)
             (flet ((fn (a b) 

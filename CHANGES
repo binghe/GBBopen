@@ -9,9 +9,10 @@ Important changes since GBBopen 1.5:
      - Export SORTF and STABLE-SORTF macros
 
   * Changes to GBBopen
-     - New *SKIP-DELETED-UNIT-INSTANCE-CLASS-CHANGE* variable     
-     - Document *FIND-VERBOSE*, *USE-MARKING*, CHECK-FOR-DELETED-INSTANCE
+     - New *SKIP-DELETED-UNIT-INSTANCE-CLASS-CHANGE* variable
      - New CHECK-INSTANCE-LOCATORS function
+     - New WITH-BLACKBOARD-REPOSITORY-LOCKED macro
+     - Documented *FIND-VERBOSE*, *USE-MARKING*, CHECK-FOR-DELETED-INSTANCE
 
 
 Important changes in GBBopen 1.5:

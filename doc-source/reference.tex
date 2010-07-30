@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Wed Jul 14 14:32:39 2010; Edited-By: cork *-*
+%% *-* Last-Edit: Fri Jul 30 09:52:28 2010; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2010, Dan Corkill <corkill@GBBopen.org>
@@ -13916,9 +13916,11 @@ does not support changing the thread name via \nobr{\textbf{setf}}.
 \fnerrors
 \nothreads{}
 
-\begin{alsos}{spawn-thread}
+\begin{alsos}{without-lock-held}
 \also[spawn-form]
 \also[spawn-thread]
+\also[with-lock-held]
+\also[without-lock-held]
 \end{alsos}
 
 \fnexample
@@ -22608,6 +22610,86 @@ or
 
 %% ------------------------------------------------------------------------
 
+\begin{functiondoc}{Function}{confirm-if-blackboard-repository-not-empty-p}{%
+    \code{\&key}
+    \var{\nobr{describe-non-empty-repository}
+      \nobr{pending-action\/}}
+    \nobr{\returns{} \var{boolean}}}
+\index{blackboard repository!checking if empty}%
+
+\fnsyntax 
+
+\fnpurpose Obtain confirmation if the blackboard repository is not empty.
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:gbbopen-core}
+
+\fnargs
+\begin{args}{describe-non-empty-repository}
+\arg[describe-non-empty-repository] A \glref{generalized~boolean} (default is \nil)
+\arg[pending-action] A string (default is \nobr{\code{"deleted"}})
+\arg[boolean] A \glref{generalized~boolean}
+\end{args}
+
+\fnreturns True if the blackboard repository is empty or the user has
+confirmed positively; otherwise \nil.
+
+\fndescription
+%
+If the blackboard repository is not empty and
+\nobr{\var{describe-non-empty-repository\/}} is true, the blackboard
+repository is described (using
+\nobr{\textbf{\entlink{describe-blackboard-repository}}}) when asking for
+confirmation.
+
+The \nobr{\var{pending-action\/}} string is used to indicate to the user what
+is to happen if confirmed positively.
+
+\begin{alsos}{empty-blackboard-repository-p}
+\also[empty-blackboard-repository-p]
+\end{alsos}
+
+\fnexamples 
+%
+\W\supp
+\begin{example}
+  > (confirm-if-blackboard-repository-not-empty-p)
+  The blackboard repository is not empty.
+  Continue anyway (the current contents will be deleted) [y or n]? n
+  nil
+  > (confirm-if-blackboard-repository-not-empty-p 
+       describe-non-empty-repository 't)
+
+  Space Instance                        Contents
+  --------------                        --------
+  known-world                           53 instances (52 location; 1 path)
+
+  Unit Class                            Instances
+  ----------                            ---------
+  control-shell                                 1 *
+  ks                                            4 +
+  ksa-queue                                     2 +
+  location                                     52  
+  ordered-ksa-queue                             1 +
+  path                                          1  
+  standard-space-instance                       1  
+                                        ---------
+                                               62 instances
+  The above blackboard repository is not empty.
+  Continue anyway (the current contents will be deleted) [y or n]? n
+  nil
+  > (confirm-if-blackboard-repository-not-empty-p :pending-action "happy")
+  The blackboard repository is not empty.
+  Continue anyway (the current contents will be happy) [y or n]? y
+  t
+  >
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
 \begin{functiondoc}{Macro}{define-space-class}%
    {\var{space-class-name\/} 
      \nobr{\code{(}\{\var{superclass-name\/}\}\superstar\code{)}}
@@ -23306,6 +23388,48 @@ Remove all \code{hyp} \glref{unit~instances} from
 
 %% ------------------------------------------------------------------------
 
+\begin{functiondoc}{Function}{empty-blackboard-repository-p}{%
+    \nobr{\returns{} \var{boolean}}}
+\index{blackboard repository!checking if empty}%
+
+\fnsyntax 
+
+\fnpurpose Determine if the blackboard repository is empty.
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:gbbopen-core}
+
+\fnargs
+\begin{args}{boolean}
+\arg[boolean] A \glref{generalized~boolean}
+\end{args}
+
+\fnreturns True if the blackboard repository is empty; otherwise \nil.
+
+\begin{alsos}{confirm-if-blackboard-repository-not-empty-p}
+\also[confirm-if-blackboard-repository-not-empty-p]
+\end{alsos}
+
+\fnexamples 
+%
+\bfindexit{delete-blackboard-repository}%
+%
+\W\supp
+\begin{example}
+  > (empty-blackboard-repository-p)
+  nil
+  > (\entlink{delete-blackboard-repository} :all-classes 't)
+  t
+  > (empty-blackboard-repository-p)
+  t
+  >
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
 \begin{functiondoc}{Function}{find-space-instance-by-path}%
   {\var{space-instance-path\/}
     \nobr{\returns{} \var{space-instance\/} or \nil}}
@@ -23940,6 +24064,52 @@ a subclass of \nobr{\textbf{\entlinknoex{standard-unit-instance}}}.
 \also[standard-space-class]
 \also[standard-unit-instance]
 \end{alsos}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Macro}{with-blackboard-repository-locked}{%
+    \nobr{\code{(\&key} \var{whostate\/}\code{)}}
+    \nobr{\var{form\/}\superstar{}}
+    \nobr{\returns{} \var{result\/}\superstar}}
+\index{lock!blackboard repository}%
+\index{blackboard repository!locking}%
+
+\fnsyntax
+
+\fnpurpose After locking the blackboard repository,
+execute forms and then release the lock.
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:gbbopen-core}
+
+\fnargs
+\begin{args}{whostate}
+\arg[whostate] A string (default 
+\nobr{\code{"With Blackboard Repository Locked"}})
+\arg[forms] An implicit \nobr{\textbf{progn}} of \glref{forms} to be evaluated
+\arg[results] The values returned by evaluating the last \var{form}
+\end{args}
+
+\fnreturns The values returned by evaluating the last \var{form}.
+
+\begin{alsos}{thread-whostate}
+\also[thread-whostate]
+\end{alsos}
+
+\fnexample
+Lock the blackboard repository and do some stuff:
+%
+\W\supp
+\begin{example}
+  (with-blackboard-repository-locked ()
+    (do-some-stuff))
+\end{example}
+
+\fnnote The \var{whostate\/} value is ignored by
+\xsitelink{SBCL}{http://sbcl.sourceforge.net}.
 
 \end{functiondoc}
 
@@ -25695,128 +25865,6 @@ class definition of \code{hyp}:
                               :key #'slot-definition-name
                               :test #'eq)))
        (setf (new-slot-of hyp) (nth position slot-values))))
-\end{example}
-
-\end{functiondoc}
-
-%% ------------------------------------------------------------------------
-
-\begin{functiondoc}{Function}{confirm-if-blackboard-repository-not-empty-p}{%
-    \code{\&key}
-    \var{\nobr{describe-non-empty-repository}
-      \nobr{pending-action\/}}
-    \nobr{\returns{} \var{boolean}}}
-\index{blackboard repository!checking if empty}%
-
-\fnsyntax 
-
-\fnpurpose Obtain confirmation if the blackboard repository is not empty.
-
-\fnpackage \code{:gbbopen}
-
-\fnmodule \code{:gbbopen-core}
-
-\fnargs
-\begin{args}{describe-non-empty-repository}
-\arg[describe-non-empty-repository] A \glref{generalized~boolean} (default is \nil)
-\arg[pending-action] A string (default is \nobr{\code{"deleted"}})
-\arg[boolean] A \glref{generalized~boolean}
-\end{args}
-
-\fnreturns True if the blackboard repository is empty or the user has
-confirmed positively; otherwise \nil.
-
-\fndescription
-%
-If the blackboard repository is not empty and
-\nobr{\var{describe-non-empty-repository\/}} is true, the blackboard
-repository is described (using
-\nobr{\textbf{\entlink{describe-blackboard-repository}}}) when asking for
-confirmation.
-
-The \nobr{\var{pending-action\/}} string is used to indicate to the user what
-is to happen if confirmed positively.
-
-\begin{alsos}{empty-blackboard-repository-p}
-\also[empty-blackboard-repository-p]
-\end{alsos}
-
-\fnexamples 
-%
-\W\supp
-\begin{example}
-  > (confirm-if-blackboard-repository-not-empty-p)
-  The blackboard repository is not empty.
-  Continue anyway (the current contents will be deleted) [y or n]? n
-  nil
-  > (confirm-if-blackboard-repository-not-empty-p 
-       describe-non-empty-repository 't)
-
-  Space Instance                        Contents
-  --------------                        --------
-  known-world                           53 instances (52 location; 1 path)
-
-  Unit Class                            Instances
-  ----------                            ---------
-  control-shell                                 1 *
-  ks                                            4 +
-  ksa-queue                                     2 +
-  location                                     52  
-  ordered-ksa-queue                             1 +
-  path                                          1  
-  standard-space-instance                       1  
-                                        ---------
-                                               62 instances
-  The above blackboard repository is not empty.
-  Continue anyway (the current contents will be deleted) [y or n]? n
-  nil
-  > (confirm-if-blackboard-repository-not-empty-p :pending-action "happy")
-  The blackboard repository is not empty.
-  Continue anyway (the current contents will be happy) [y or n]? y
-  t
-  >
-\end{example}
-
-\end{functiondoc}
-
-%% ------------------------------------------------------------------------
-
-\begin{functiondoc}{Function}{empty-blackboard-repository-p}{%
-    \nobr{\returns{} \var{boolean}}}
-\index{blackboard repository!checking if empty}%
-
-\fnsyntax 
-
-\fnpurpose Determine if the blackboard repository is empty.
-
-\fnpackage \code{:gbbopen}
-
-\fnmodule \code{:gbbopen-core}
-
-\fnargs
-\begin{args}{boolean}
-\arg[boolean] A \glref{generalized~boolean}
-\end{args}
-
-\fnreturns True if the blackboard repository is empty; otherwise \nil.
-
-\begin{alsos}{confirm-if-blackboard-repository-not-empty-p}
-\also[confirm-if-blackboard-repository-not-empty-p]
-\end{alsos}
-
-\fnexamples 
-%
-\bfindexit{delete-blackboard-repository}%
-%
-\W\supp
-\begin{example}
-  > (empty-blackboard-repository-p)
-  nil
-  > (\entlink{delete-blackboard-repository} :all-classes 't)
-  t
-  > (empty-blackboard-repository-p)
-  t
-  >
 \end{example}
 
 \end{functiondoc}
