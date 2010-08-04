@@ -66,7 +66,9 @@ specified, should contain <a href="ref-glossary.html#gl:conses">conses</a> of th
 extent of the body of <nobr><var>forms</var></nobr> that are <nobr><code>equal</code></nobr> become
 shared (<code>eq</code>).  This coalescing is performed using a temporary hash-table
 whose initial size can be specified by providing an integer value for
-<nobr><var>coalesce-strings</var></nobr>.
+<nobr><var>coalesce-strings</var></nobr>. If a hash table is provided as the value for
+<nobr><var>coalesce-strings</var></nobr>, it is used in place of the temporary hash
+table.
 </p>
 <p><a href="ref-glossary.html#gl:instances">Unit&nbsp;instances</a> that are referenced before they are defined are
 recorded using a temporary hash table whose initial size can be specified by

@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Fri Jul 30 09:52:28 2010; Edited-By: cork *-*
+%% *-* Last-Edit: Wed Aug  4 11:59:08 2010; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2010, Dan Corkill <corkill@GBBopen.org>
@@ -25965,8 +25965,11 @@ loading.
 If \var{coalesce-strings\/} is true, loaded strings that are
 \nobr{\code{equal}} become shared (\code{eq}).  This coalescing is performed
 using a temporary hash table whose initial size can be specified by providing
-an integer value for \nobr{\var{coalesce-strings}}.  If
-\nobr{\var{confirm-if-not-empty\/}} is true, the user must confirm loading
+an integer value for \nobr{\var{coalesce-strings}}.  If a hash table is
+provided as the value for \nobr{\var{coalesce-strings}}, it is used in place
+of the temporary hash table.
+
+If \nobr{\var{confirm-if-not-empty\/}} is true, the user must confirm loading
 when the current blackboard repository contains \glref{unit~instances}.
 
 \glref{Unit~instances} that are referenced before they are defined are
@@ -26470,7 +26473,9 @@ If \nobr{\var{coalesce-strings\/}} is true, strings read within the dynamic
 extent of the body of \nobr{\var{forms\/}} that are \nobr{\code{equal}} become
 shared (\code{eq}).  This coalescing is performed using a temporary hash-table
 whose initial size can be specified by providing an integer value for
-\nobr{\var{coalesce-strings}}.
+\nobr{\var{coalesce-strings}}. If a hash table is provided as the value for
+\nobr{\var{coalesce-strings}}, it is used in place of the temporary hash
+table.
 
 \glref{Unit~instances} that are referenced before they are defined are
 recorded using a temporary hash table whose initial size can be specified by

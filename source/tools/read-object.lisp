@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/read-object.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Jun 11 16:36:05 2010 *-*
+;;;; *-* Last-Edit: Wed Aug  4 12:01:45 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -21,6 +21,8 @@
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
 ;;;  01-09-08 File created.  (Corkill)
+;;;  08-03-10 Allow user-provided string-coalescing hash table in 
+;;;           WITH-READING-SAVED/SENT-OBJECTS-BLOCK.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -85,8 +87,9 @@
 
 (defun show-coalescing (ht duplicate-string-count)
   (when *reading-saved/sent-statistics-verbose*
-    (format t "~&;; ~:d distinct equal strings read~
+    (format t "~&;; ~:d distinct ~@(~a~) strings read~
                ~%;; ~:d duplicate strings coalesced~%"
+            (hash-table-test ht)
             (hash-table-count ht)
             duplicate-string-count)))
 
@@ -163,13 +166,18 @@
            (*coalesce-save/sent-strings-ht* 
             (let ((.coalesce-strings. ,coalesce-strings))
               (when .coalesce-strings.
-                (if (integerp .coalesce-strings.) 
-                    ;; User specified the initial size:
-                    (make-keys-only-hash-table-if-supported 
-                     :test 'equal 
-                     :size .coalesce-strings.)
-                    ;; No size was specified:
-                    (make-keys-only-hash-table-if-supported :test 'equal)))))
+                (cond
+                 ;; User provided the hash-table--use it!
+                 ((hash-table-p .coalesce-strings.) 
+                  .coalesce-strings.)
+                 ;; User specified the initial size for the temporary hash
+                 ;; table:
+                 ((integerp .coalesce-strings.) 
+                  (make-keys-only-hash-table-if-supported 
+                   :test 'equal 
+                   :size .coalesce-strings.))
+                 ;; No size was specified:
+                 (t (make-keys-only-hash-table-if-supported :test 'equal))))))
            (*forward-referenced-saved/sent-instances* 
             (make-keys-only-hash-table-if-supported 
              :test 'eq
