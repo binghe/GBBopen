@@ -88,8 +88,11 @@ loading.
 <p>If <var>coalesce-strings</var> is true, loaded strings that are
 <nobr><code>equal</code></nobr> become shared (<code>eq</code>).  This coalescing is performed
 using a temporary hash table whose initial size can be specified by providing
-an integer value for <nobr><var>coalesce-strings</var></nobr>.  If
-<nobr><var>confirm-if-not-empty</var></nobr> is true, the user must confirm loading
+an integer value for <nobr><var>coalesce-strings</var></nobr>.  If a hash table is
+provided as the value for <nobr><var>coalesce-strings</var></nobr>, it is used in place
+of the temporary hash table.
+</p>
+<p>If <nobr><var>confirm-if-not-empty</var></nobr> is true, the user must confirm loading
 when the current blackboard repository contains <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a>.
 </p>
 <p><a href="ref-glossary.html#gl:instances">Unit&nbsp;instances</a> that are referenced before they are defined are
