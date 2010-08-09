@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Jul 29 17:47:26 2010 *-*
+;;;; *-* Last-Edit: Thu Aug  5 06:03:42 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -123,6 +123,7 @@
    ;; Note: ECL's si:while doesn't include a NIL block, so we can't use it
    #+ecl
    '(si::case-failure
+     si:copy-file
      si:memq
      si::simple-array-p)
    #+gcl
@@ -504,7 +505,7 @@
 ;;; ===========================================================================
 ;;;  Copy-file (for CLs that don't provide their own version)
 
-#-(or allegro clisp clozure digitool-mcl lispworks)
+#-(or allegro clisp clozure digitool-mcl ecl lispworks)
 (defun copy-file (from to)
   (with-open-file (output to
                    :element-type 'unsigned-byte

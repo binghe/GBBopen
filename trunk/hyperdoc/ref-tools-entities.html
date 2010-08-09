@@ -12,32 +12,19 @@
 </head>
 <body>
 <table width="100%" cellpadding="0" cellspacing="2"><tr>
-<td bgcolor="#99ccff"><a href="ref-module-manager-entities.html"><img border="0" alt="Module Manager Facility" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="reference_0.html"><img border="0" alt="Top" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-GBBopen-core-entities.html"><img border="0" alt="GBBopen Core" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b>GBBopen Tools</b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table>
+<td bgcolor="#99ccff"><a href="ref-module-manager-entities.html"><img border="0" alt="Module Manager Facility" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="reference_0.html"><img border="0" alt="Top" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-additional-tools-entities.html"><img border="0" alt="Additional GBBopen Tools" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b>GBBopen Tools</b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table>
 <h1>GBBopen Tools</h1>
 <p>The GBBopen Tools <a href="ref-glossary.html#gl:module">module</a>, <nobr><code>:gbbopen-tools</code></nobr>, contains
 useful Common Lisp additions and utilities.  Convenient (<a href="ref-declared-numerics.html">shorthand
-operators</a> for declared <nobr><code><a href="ref-glossary.html#gl:fixnum">fixnum</a></code></nobr>,
-<nobr><code>short-float</code></nobr>, <nobr><code>single-float</code></nobr>,
-<nobr><code>double-float</code></nobr>, and <nobr><code>long-float</code></nobr> numeric operators are
-provided by the <nobr><code>:gbbopen-tools</code></nobr> module, as are efficient
-<a href="ref-pseudo-probability-entities.html">pseudo probability</a> operators.  Date and time
-<a href="ref-date-and-time-entities.html">parsing and formatting entities</a>,
-<nobr><code><a href="ref-glossary.html#gl:fixnum">fixnum</a></code></nobr>-based <a href="ref-offset-universal-time-entities.html">offset-universal-time
+operators</a> for declared <nobr><code><a href="ref-glossary.html#gl:fixnum">fixnum</a></code></nobr>, <nobr><code>short-float</code></nobr>, <nobr><code>single-float</code></nobr>, <nobr><code>double-float</code></nobr>, and <nobr><code>long-float</code></nobr> numeric operators are provided, as are efficient <a href="ref-pseudo-probability-entities.html">pseudo probability</a> operators.  Uniform access to <a href="ref-clos-and-mop-entities.html">commonly used CLOS and MOP symbols</a> is
+provided by the module's <nobr><code>:gbbopen-tools</code></nobr> package.
+Date and time <a href="ref-date-and-time-entities.html">parsing and formatting entities</a>, <nobr><code><a href="ref-glossary.html#gl:fixnum">fixnum</a></code></nobr>-based <a href="ref-offset-universal-time-entities.html">offset-universal-time
 functions</a>, and <a href="ref-search-tree-entities.html">left-leaning red-black
 (<a href="ref-glossary.html#gl:LLRB">LLRB</a>) trees</a> are also included in GBBopen Tools.
 </p>
-<p>Uniform access to <a href="ref-clos-and-mop-entities.html">commonly used CLOS and MOP symbols</a> is
-provided by the <nobr><code>:gbbopen-tools</code></nobr> package.  Uniform interfaces to
-implementation-specific thread (multiprocessing) capabilities are provided by
-the <a href="ref-portable-thread-entities.html"><nobr><code>:portable-threads</code></nobr> module</a>,
-polling functions for Common Lisp implementations that do not provide thread
-capabilities are provided by the <a href="ref-polling-function-entities.html"><nobr><code>:polling-functions</code></nobr>
-module</a>, uniform socket interfaces are provided by the <a href="ref-portable-socket-entities.html"><nobr><code>:portable-sockets</code></nobr> module</a>, uniform interfaces to the operating system are provided by the <a href="ref-os-interface-entities.html"><nobr><code>:os-interface</code></nobr> module</a>, and Double Metaphone phonetic-code computation is provided by the <a href="ref-double-metaphone-entities.html"><nobr><code>:double-metaphone</code></nobr> module</a> module.
+<p>Additional GBBopen Tools entities that are not loaded as part of the <nobr><code>:gbbopen-tools</code></nobr> module are documented in the <a href="ref-additional-tools-entities.html">Additional GBBopen Tools section</a> of this Reference.  These additional-tool entities are grouped into separate modules that can be loaded as appropriate.
 </p>
-<p>Several entities in the <nobr><code>:gbbopen-tools</code></nobr> module that are extended
-by additional methods in the <nobr><code>:gbbopen-core</code></nobr> module are documented
-in the <a href="ref-GBBopen-core-entities.html">GBBopen Core section</a> of this Reference.
-These entities are:
+<p>Several entities in the <nobr><code>:gbbopen-tools</code></nobr> module that are extended by additional methods in the <nobr><code>:gbbopen-core</code></nobr> module are documented in the <a href="ref-GBBopen-core-entities.html">GBBopen Core section</a> of this Reference.  These entities are:
 <table class="tighttop"><tbody><tr>
 <td valign="baseline" colspan="1" align="left">
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
@@ -131,21 +118,8 @@ These entities are:
 <li><a href="ref-with-gensyms.html"><font color="#000000">with-gensyms</font></a></li>
 <li><a href="ref-with-once-only-bindings.html"><font color="#000000">with-once-only-bindings</font></a></li>
 <li><a href="ref-xor.html"><font color="#000000">xor</font></a></li>
-<li><a href="ref-clos-and-mop-entities.html">CLOS and MOP</a></li>
-<li><a href="ref-declared-numerics.html">Declared Numerics</a></li>
-<li><a href="ref-pseudo-probability-entities.html">Pseudo Probabilities</a></li>
-<li><a href="ref-date-and-time-entities.html">Date and Time</a></li>
-<li><a href="ref-offset-universal-time-entities.html">Offset Universal Time</a></li>
-<li><a href="ref-atable-entities.html">Transitioning Sets and Tables</a></li>
-<li><a href="ref-search-tree-entities.html">Search Trees</a></li>
-<li><a href="ref-portable-thread-entities.html">Portable Threads</a></li>
-<li><a href="ref-scheduled-function-entities.html">Scheduled and Periodic Functions</a></li>
-<li><a href="ref-polling-function-entities.html">Polling Functions</a></li>
-<li><a href="ref-portable-socket-entities.html">Portable Sockets</a></li>
-<li><a href="ref-double-metaphone-entities.html">Double Metaphone</a></li>
-<li><a href="ref-os-interface-entities.html">OS Interface</a></li>
 </ul>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
 <table width="100%" cellpadding="0" cellspacing="2"><tr>
-<td bgcolor="#99ccff"><a href="ref-module-manager-entities.html"><img border="0" alt="Module Manager Facility" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="reference_0.html"><img border="0" alt="Top" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-GBBopen-core-entities.html"><img border="0" alt="GBBopen Core" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b>GBBopen Tools</b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table></body></html>
+<td bgcolor="#99ccff"><a href="ref-module-manager-entities.html"><img border="0" alt="Module Manager Facility" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="reference_0.html"><img border="0" alt="Top" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-additional-tools-entities.html"><img border="0" alt="Additional GBBopen Tools" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b>GBBopen Tools</b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table></body></html>
