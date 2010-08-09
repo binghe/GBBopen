@@ -315,12 +315,7 @@ and any predicate filters.
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
 </p>
-<p><span class="fndoclabel">Description</span> <br />The <var>pattern</var> <code>t</code> matches all <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a>
-whose <a href="ref-glossary.html#id36">dimension&nbsp;values</a> overlap the <a href="ref-glossary.html#id39">dimensional&nbsp;extent</a> of at
-least one <a href="ref-glossary.html#id206">space&nbsp;instance</a> in <nobr><var>space-instances</var></nobr>. The
-<nobr><var>pattern</var></nobr> <code>:all</code> matches every <a href="ref-glossary.html#id232">unit&nbsp;instance</a> on a
-<a href="ref-glossary.html#id206">space&nbsp;instance</a> in <nobr><var>space-instances</var></nobr>, regardless of
-dimensional overlap.
+<p><span class="fndoclabel">Description</span> <br />The <var>pattern</var> <code>t</code> matches all <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a> whose <a href="ref-glossary.html#id36">dimension&nbsp;values</a> overlap the <a href="ref-glossary.html#id39">dimensional&nbsp;extent</a> of at least one <a href="ref-glossary.html#id206">space&nbsp;instance</a> in <nobr><var>space-instances</var></nobr>. The <nobr><var>pattern</var></nobr> <code>:all</code> matches every <a href="ref-glossary.html#id232">unit&nbsp;instance</a> on a <a href="ref-glossary.html#id206">space&nbsp;instance</a> in <nobr><var>space-instances</var></nobr>, regardless of dimensional overlap.  Use of <nobr><b>find-instances</b></nobr> with a <code>t</code> or <code>:all</code> <nobr><var>pattern</var></nobr> in production code often indicates a missed opportunity to use a more efficient <nobr><b><a href="ref-do-instances-of-class.html">do-instances-of-class</a></b></nobr>, <nobr><b><a href="ref-do-instances-on-space-instances.html">do-instances-on-space-instances</a></b></nobr>, or <nobr><b><a href="ref-do-sorted-instances-of-class.html">do-sorted-instances-of-class</a></b></nobr> approach (or their <code>map-</code> variants).
 </p>
 <p><a href="ref-declared-numerics.html">Declared numeric</a> and <a href="ref-pseudo-probability-entities.html">pseudo
 probability</a> pattern operators are also supported, for example:
@@ -334,6 +329,7 @@ and <nobr><code>within&#37;</code></nobr>.
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-use-marking-var.html"><b>*use-marking*</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-warn-about-unusual-requests-var.html"><b>*warn-about-unusual-requests*</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-do-instances-of-class.html"><b>do-instances-of-class</b></a>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-do-instances-on-space-instances.html"><b>do-instances-on-space-instances</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-do-sorted-instances-of-class.html"><b>do-sorted-instances-of-class</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-filter-instances.html"><b>filter-instances</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-find-all-instances-by-name.html"><b>find-all-instances-by-name</b></a>

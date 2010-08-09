@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Jul 30 09:22:18 2010 *-*
+;;;; *-* Last-Edit: Mon Aug  9 12:52:40 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -1356,8 +1356,8 @@
 
 (defun make-instances-of-class-vector (unit-class-name &key adjustable)
   ;; Returns a newly allocated vector (adjustable, if desired) with pointers
-  ;; to all unit instances of unit-class-name.  Note that this vector is not
-  ;; maintained with newly created/deleted unit instances.
+  ;; to all unit instances of unit-class-name.  Note that, once created, this
+  ;; vector is not maintained with newly created/deleted unit instances.
   (let* ((size (class-instances-count unit-class-name))
          (vector (make-array  (list size) 
                               :fill-pointer 0 
