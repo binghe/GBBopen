@@ -61,6 +61,25 @@ include these &#8220;type-indicator&#8221; characters:
 <tr>
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
 </p>
+<p><a name="id1">Most</a> Common Lisp implementations map double-float numbers to the 64-bit
+<a target="_top" href="http://www.psc.edu/general/software/packages/ieee/ieee.html">IEEE
+754</a> double
+format and single-float numbers to the 32-bit <a target="_top" href="http://www.psc.edu/general/software/packages/ieee/ieee.html">IEEE
+754</a> single
+format.  The four types of floating-point declared numeric operators
+(<nobr><code>short-float</code></nobr>, <nobr><code>single-float</code></nobr>,
+<nobr><code>double-float</code></nobr>, and <nobr><code>long-float</code></nobr>) are always defined,
+even if the Common Lisp implementation provides fewer distinct internal
+<code>float</code> representations.  The features <nobr><code>:has-short-float</code></nobr>,
+<nobr><code>:has-single-float</code></nobr>, <nobr><code>:has-double-float</code></nobr>, and
+<nobr><code>:has-long-float</code></nobr> are added when the implementation provides that
+distinct internal <code>float</code> representation.  (The feature
+<nobr><code>:has-single-float</code></nobr> is always defined.)
+</p>
+<p><a name="id2">The</a> following two features related to <code>fixnum</code> capabilities are defined
+when appropriate: <nobr><code>:fixnum-size-below-29</code></nobr> and
+<nobr><code>:fixnum-size-supports-unsigned-byte-32</code></nobr>. 
+</p>
 <p>Some examples of declared-numeric operators include:
 <pre class="pretop">
   (&#38; x) <span 
@@ -75,14 +94,8 @@ include these &#8220;type-indicator&#8221; characters:
     style="font-family: serif; font-style: normal">==&gt;</span> (the (values fixnum fixnum) (truncate (&#38; x) (&#38; y)))
 </pre>
 The complete set of operators for each declared numeric type are listed in the
-following sections.
-</p>
-<p><span class="fndoclabel">Notes</span> <br /><a name="id1">Most</a> Common Lisp implementations map double-float numbers to the
-64-bit <a target="_top" href="http://www.psc.edu/general/software/packages/ieee/ieee.html">IEEE
-754</a>
-double format and single-float numbers to the 32-bit <a target="_top" href="http://www.psc.edu/general/software/packages/ieee/ieee.html">IEEE
-754</a>
-single format.  
+following sections. (Pseudo probability operators are listed in the
+<a href="ref-pseudo-probability-entities.html">Pseudo Probabilities section</a> of the manual.)
 </p>
 <ul>
 <li><a href="ref-fixnum-operators.html">Fixnum  operators</a></li>
