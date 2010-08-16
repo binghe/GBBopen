@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Mon Aug  9 15:30:25 2010; Edited-By: cork *-*
+%% *-* Last-Edit: Mon Aug 16 05:48:13 2010; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2010, Dan Corkill <corkill@GBBopen.org>
@@ -8025,6 +8025,37 @@ Thus, the declared-numeric \code{+} operators are:
   & \code{+\%}     & & \code{pseudo-probability} addition \\
 \end{tabular}
 
+\index{floating-point type declarations!Common Lisp implementation notes}%
+\index{floating-point formats!IEEE 754}%
+\index{single format!IEEE 754}%
+\index{double format!IEEE 754}%
+\index{IEEE 754 floating-point formats}%
+\index{Macintosh Common Lisp!floating-point type declarations}%
+\codeindexqual{:has-short-float}{feature}%
+\codeindexqual{:has-single-float}{feature}%
+\codeindexqual{:has-double-float}{feature}%
+\codeindexqual{:has-long-float}{feature}%
+Most Common Lisp implementations map double-float numbers to the 64-bit
+\xsitelink{IEEE
+  754}{http://www.psc.edu/general/software/packages/ieee/ieee.html} double
+format and single-float numbers to the 32-bit \xsitelink{IEEE
+  754}{http://www.psc.edu/general/software/packages/ieee/ieee.html} single
+format.  The four types of floating-point declared numeric operators
+(\nobr{\code{short-float}}, \nobr{\code{single-float}},
+\nobr{\code{double-float}}, and \nobr{\code{long-float}}) are always defined,
+even if the Common Lisp implementation provides fewer distinct internal
+\code{float} representations.  The features \nobr{\code{:has-short-float}},
+\nobr{\code{:has-single-float}}, \nobr{\code{:has-double-float}}, and
+\nobr{\code{:has-long-float}} are added when the implementation provides that
+distinct internal \code{float} representation.  (The feature
+\nobr{\code{:has-single-float}} is always defined.)
+
+\codeindexqual{:fixnum-size-below-29}{feature}%
+\codeindexqual{:fixnum-size-supports-unsigned-byte-32}{feature}%
+The following two features related to \code{fixnum} capabilities are defined
+when appropriate: \nobr{\code{:fixnum-size-below-29}} and
+\nobr{\code{:fixnum-size-supports-unsigned-byte-32}}. 
+
 Some examples of declared-numeric operators include:
 %
 \W\supp
@@ -8037,21 +8068,8 @@ Some examples of declared-numeric operators include:
 \end{example}
 %
 The complete set of operators for each declared numeric type are listed in the
-following sections.
-
-\fnnotes 
-\index{floating-point type declarations!Common Lisp implementation notes}%
-\index{floating-point formats!IEEE 754}%
-\index{single format!IEEE 754}%
-\index{double format!IEEE 754}%
-\index{IEEE 754 floating-point formats}%
-\index{Macintosh Common Lisp!floating-point type declarations}%
-Most Common Lisp implementations map double-float numbers to the
-64-bit \xsitelink{IEEE
-  754}{http://www.psc.edu/general/software/packages/ieee/ieee.html}
-double format and single-float numbers to the 32-bit \xsitelink{IEEE
-  754}{http://www.psc.edu/general/software/packages/ieee/ieee.html}
-single format.  
+following sections. (Pseudo probability operators are listed in the
+\reflink{Pseudo Probabilities section}{sec:pprob} of the manual.)
 
 \T\clearpage
 \W\xname{ref-fixnum-operators}

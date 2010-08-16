@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/declared-numerics.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Jul 29 15:01:46 2010 *-*
+;;;; *-* Last-Edit: Mon Aug 16 05:34:15 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -221,23 +221,6 @@
             set-inf-reader-dispatch-macro-character)))
 
 ;;; ---------------------------------------------------------------------------
-;;; Warn if the CL implementation doesn't have at least 29-bit fixnums:
-
-(defun small-fixnum-warning ()
-  (let ((fixnum-size #.(1+ (integer-length most-positive-fixnum))))
-    (warn "Fixnums on ~a (~a) are only ~s bits long."
-          fixnum-size
-          (lisp-implementation-type) 
-          (machine-type))))
-
-(let ((fixnum-size (1+ (integer-length most-positive-fixnum))))
-  ;; Suppress unreachable code warning in CMUCL and SCL:
-  #+(or cmu scl)
-  (declare (optimize (extensions:inhibit-warnings 3)))
-  (when (< fixnum-size 29)
-    (small-fixnum-warning)))
-
-;;; ---------------------------------------------------------------------------
 ;;;  The fastest (/ fixnum fixnum)=>fixnum (full-fixnum division) operator for
 ;;;  each CL (determined by :cl-timing tests).
 
@@ -267,6 +250,30 @@
               sbcl
               scl)
         (need-to-port fastest-fixnum-div-operator)))
+
+;;; ---------------------------------------------------------------------------
+;;; Warn if the CL implementation doesn't have at least 29-bit fixnums and
+;;; note if the fixnum size supports unsigned-byte 32 values, pushing
+;;; features accordingly:
+
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (let ((fixnum-size (1+ (integer-length most-positive-fixnum))))
+    (cond 
+     ((> fixnum-size 32)
+      (pushnew :fixnum-size-supports-unsigned-byte-32 *features*))
+     ((< fixnum-size 29)
+      (pushnew :fixnum-size-below-29 *features*)))))
+
+#+fixnum-size-below-29
+(defun small-fixnum-warning ()
+  (let ((fixnum-size #.(1+ (integer-length most-positive-fixnum))))
+    (warn "Fixnums on ~a (~a) are only ~s bits long."
+          fixnum-size
+          (lisp-implementation-type) 
+          (machine-type))))
+
+#+fixnum-size-below-29
+(small-fixnum-warning)
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Check if various floats are not implemented distinctly (also run at
