@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:SWANK; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/slime-extended-repl.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Apr  7 09:53:27 2010 *-*
+;;;; *-* Last-Edit: Thu Aug 19 12:49:42 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill 
 ;;;
-;;; Copyright (C) 2005-2008, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2005-2010, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project.
 ;;; Licensed under Apache License 2.0 (see LICENSE for license information).
 ;;;
@@ -125,6 +125,8 @@
 (compile-if-advantageous 'set-slime-repl-package)
 
 ;;; ---------------------------------------------------------------------------
+
+(set-slime-repl-package *package*)      ; initialize to the current package
 
 (format t "~&;; Finished loading extended REPL command processing for SLIME.~%")
 
