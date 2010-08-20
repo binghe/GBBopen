@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Mon Aug 16 05:48:13 2010; Edited-By: cork *-*
+%% *-* Last-Edit: Fri Aug 20 15:35:15 2010; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2010, Dan Corkill <corkill@GBBopen.org>
@@ -10137,12 +10137,12 @@ The equivalent of:
 %
 \W\supp
 \begin{example}
-  (\entlink{full-date-and-time} \var{arg\/} 
+  (\entlink{full-date-and-time} \var{universal-time\/} 
      :include-seconds 't
      :destination *standard-output*)
 \end{example} 
 %
-can be invoked using the \glref{REPL~command} \nobr{\code{:ut} \var{arg\/}}.
+can be invoked using the \glref{REPL~command} \nobr{\code{:ut} \var{universal-time\/}}.
 
 \end{functiondoc}
 
@@ -11301,12 +11301,13 @@ The equivalent of:
 %
 \W\supp
 \begin{example}
-  (\entlink{full-date-and-time} (ot2ut \var{arg\/}) 
+  (\entlink{full-date-and-time} (ot2ut \var{offset-universal-time\/}) 
      :include-seconds 't
      :destination *standard-output*)
 \end{example} 
 %
-can be invoked using the \glref{REPL~command} \nobr{\code{:ot} \var{arg\/}}.
+can be invoked using the \glref{REPL~command} \nobr{\code{:ot}
+  \var{offset-universal-time\/}}.
 
 \end{functiondoc}
 
@@ -17870,8 +17871,14 @@ Describe the \code{hyp} \glref{unit~instance}:
 %
 \REPLindex{:di}%
 %
-\textbf{Describe-instance} can be invoked using the \glref{REPL~command}
-\code{:di}, which also sets \code{=} to the described \glref{unit~instance}.
+\textbf{Describe-instance} can be invoked using the \glref{REPL~command}:
+%
+\W\supp
+\begin{example}
+  :di \var{instance\/} \vbar \{\var{instance-name\/} \textrm{[}\var{unit-classes-specifier\/}\textrm{]}\}
+\end{example}
+%
+which also sets \code{=} to the described \glref{unit~instance}.
 
 \end{functiondoc}
 
@@ -23305,8 +23312,14 @@ Describe the \code{hyps} \glref{space~instance}:
 %
 \REPLindex{:dsi}%
 %
-\textbf{Describe-space-instance} can be invoked using the \glref{REPL~command}
-\code{:dsi}, which also sets \code{=} to the described \glref{space~instance}.
+\textbf{Describe-space-instance} can be invoked using the \glref{REPL~command}:
+%
+\W\supp
+\begin{example}
+  :dsi \var{instance\/} \vbar \{\var{instance-name\/} \textrm{[}\var{unit-classes-specifier\/}\textrm{]}\}
+\end{example}
+%
+which also sets \code{=} to the described \glref{unit~instance}.
 
 \end{functiondoc}
 
@@ -23366,8 +23379,15 @@ Describe the storage structure of the \code{hyps} \glref{space~instance}:
 \REPLindex{:dsis}%
 %
 \textbf{Describe-space-instance-storage} can be invoked using the
-\glref{REPL~command} \nobr{\code{:dsis}}, which also sets \code{=} to the
-described \glref{space~instance}.
+\glref{REPL~command}:
+
+%
+\W\supp
+\begin{example}
+  :dsis \var{instance\/} \vbar \{\var{instance-name\/} \textrm{[}\var{unit-classes-specifier\/}\textrm{]}\}
+\end{example}
+%
+which also sets \code{=} to the described \glref{unit~instance}.
 
 \end{functiondoc}
 
@@ -24380,10 +24400,10 @@ means of deleting all \glref{space~instances} without violating this rule.
 %
 \REPLindex{:pic}%
 %
-The equivalent of 
-\nobr{\code{(do-instances-of-class (instance \var{arg\/}) (print instance))}}
-can be invoked using the \glref{REPL~command} \nobr{\code{:pic \var{arg\/}}}.
-If \var{arg\/} is omitted, \code{t} is assumed.
+The equivalent of \nobr{\code{(do-instances-of-class (instance \var{arg\/})
+    (print instance))}} can be invoked using the \glref{REPL~command}
+\nobr{\code{:pic \textrm{[}\var{arg\/}\textrm{]}}}.  If \var{arg\/} is
+omitted, \code{t} is assumed.
 
 \end{functiondoc}
 
@@ -24828,7 +24848,7 @@ Find the \code{hyp} \glref{unit~instance} 419:
 %
 \W\supp
 \begin{example}
-  :fi \textrm{[}\var{instance-name\/} \textrm{[}\var{class-name\/}\textrm{]]}
+  :fi \var{instance-name\/} \textrm{[}\var{unit-classes-specifier\/}\textrm{]}
 \end{example}
 %
 which sets \code{=} to be the found \glref{unit~instance}.
@@ -25256,8 +25276,14 @@ means of deleting all \glref{space~instances} without violating this rule.
 \REPLindex{:pic}%
 %
 The equivalent of \nobr{\code{(map-instances-of-class 'print \var{arg\/})}}
-can be invoked using the \glref{REPL~command} \nobr{\code{:pic \var{arg\/}}}.
-If \var{arg\/} is omitted, \code{t} is assumed.
+can be invoked using the \glref{REPL~command}
+%
+\W\supp
+\begin{example}
+  :pic \textrm{[}\var{unit-classes-specifier\/}\textrm{]}
+\end{example}
+%
+If \var{arg\/} is omitted, \code{t} is used as the default.
 
 
 \end{functiondoc}
