@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/extended-repl.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Apr 10 10:21:04 2010 *-*
+;;;; *-* Last-Edit: Fri Aug 20 13:02:44 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -114,6 +114,15 @@
                                    :key #'car))))
 
 (compile-if-advantageous 'add-repl-command-spec)
+
+;;; ---------------------------------------------------------------------------
+
+(defun eval-special-repl-variable (var)
+  (if (member var '(* ** *** =) :test #'eq)
+      (eval var)
+      var))
+
+(compile-if-advantageous 'eval-special-repl-variable)
 
 ;;; ---------------------------------------------------------------------------
 

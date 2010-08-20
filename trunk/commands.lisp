@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/commands.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jul 14 14:26:21 2010 *-*
+;;;; *-* Last-Edit: Fri Aug 20 14:21:01 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -178,6 +178,10 @@
     "Compile and load Double-MetaPhone-Test module"
     (startup-module :double-metaphone-test options :gbbopen-tools-user))
   
+  (define-repl-command :aes-test (&rest options)
+    "Compile and load AES-Test module"
+    (startup-module :aes-test options :gbbopen-tools-user))
+  
   (define-repl-command :agenda-shell-test (&rest options)
     "Compile and load Agenda-Shell-Test module"
     (startup-module :agenda-shell-test options :gbbopen-user))
@@ -287,12 +291,14 @@
   ;;  Allegro CL provides :pa, but we repeat for SLIME interface:
   (define-repl-command (:pa :add-to-native-help) (&optional package)
     "Set/show current package"
-  (cond
-   ;; Package change:
-   (package (set-repl-package package))
-   ;; Package show:
-   (t (format t "~&;; The ~s package is current.~%" 
-              (package-name *package*)))))
+    ;; Eval specials, on REPLs that don't normally do evaluation:
+    (setf package (eval-special-repl-variable package))
+    (when package
+      ;; Package change:
+      (set-repl-package package))
+    ;; Package show:
+    (format t "~&;; The ~s package is current.~%" 
+            (package-name *package*)))
   
 ;;; ---------------------------------------------------------------------------
   
