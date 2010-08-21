@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/gbbopen.asd *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Apr  7 10:19:43 2010 *-*
+;;;; *-* Last-Edit: Sat Aug 21 10:31:16 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -20,6 +20,11 @@
 ;;;
 ;;;  Interfaces GBBopen's Module Manager facility, a lightweight and easy to use
 ;;;  mechanism for maintaining (compiling and loading) modules, with ASDF.
+;;;
+;;;  After ASDF loading, via (asdf:operate 'asdf:load-op :gbbbopen) or
+;;;  (require :gbbopen), GBBopen REPL commands, such as :gbbopen-user,
+;;;  :gbbopen-test, :agenda-shell-test, :tutorial-example, ... and their
+;;;  COMMON-LISP-USER functional equivalents, are available.
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
@@ -48,7 +53,7 @@
 ;;; ===========================================================================
 ;;;  Compile/load GBBopen's Module Manager
 
-(module-manager-user :propagate)
+(module-manager-user :propagate :create-dirs)
 
 (in-package :module-manager)
 
