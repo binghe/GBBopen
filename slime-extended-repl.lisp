@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:SWANK; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/slime-extended-repl.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Aug 19 12:49:42 2010 *-*
+;;;; *-* Last-Edit: Tue Aug 24 11:05:22 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -22,6 +22,8 @@
 ;;;
 ;;;  04-17-08 Separated out from extended-repl.lisp and rewritten for
 ;;;           the latest Swank mechanisms.  (Corkill)
+;;;  08-24-10 Redefine Swank's SIMPLE-REPL to provide command processing for
+;;;           nil communication style.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 	 
@@ -52,6 +54,40 @@
   (warn "Swank's ~s is not ~s." '*listener-eval-function* 'repl-eval))
 
 (setf *listener-eval-function* 'extended-repl-eval)
+
+;;; ---------------------------------------------------------------------------
+;;;  Extended redefinition of SWANK's SIMPLE-REPL that adds command processsing 
+;;;  for nil communiation style (the default style with ECL & CLISP):
+
+(defun simple-repl (&aux (buffer ""))
+  (loop
+    (format t "~a> " (package-string-for-prompt *package*))
+    (force-output)
+    (let ((line (handler-case (read-line)
+                  (end-of-repl-input () (return)))))
+      (when (plusp (length line))
+        (unless (repl-command-form line)
+          (setf buffer (concatenate 'simple-string
+                         buffer #.(string #\newline) line))
+          (let* ((eof '#:eof))
+            (loop
+              (multiple-value-bind (form pos)
+                  (handler-case (read-from-string buffer nil eof)
+                    (error () eof))
+                (when (eq form eof) (return))
+                (setf buffer (subseq buffer pos))
+                (let ((- form)
+                      (values (multiple-value-list (eval form))))
+                  (setf *** **  ** *  * (car values)
+                        /// //  // /  / values
+                        +++ ++  ++ +  + form)
+                  (cond ((null values) (format t "; No values~&"))
+                        (t (flet ((print-it (v)
+                                    (format t "~s~&" v)))
+                             (declare (dynamic-extent #'print-it))
+                             (mapc #'print-it values)))))))))))))
+
+(compile-if-advantageous 'simple-repl)
 
 ;;; ---------------------------------------------------------------------------
 
@@ -115,7 +151,9 @@
                package-specifier))
           ;; Don't return the results:
           (*send-repl-results-function* #'identity))
-      (repl-eval (format nil "(in-package ~s)" package-name))
+      (when *communication-style*       ; skip emacs-side setting in nil
+                                        ; communication style
+        (repl-eval (format nil "(in-package ~s)" package-name)))
       (let ((package (find-package package-name)))
         (when package
           (setf *package* package)))
