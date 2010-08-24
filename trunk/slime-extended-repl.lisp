@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:SWANK; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/slime-extended-repl.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Aug 24 11:05:22 2010 *-*
+;;;; *-* Last-Edit: Tue Aug 24 13:08:59 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -56,40 +56,6 @@
 (setf *listener-eval-function* 'extended-repl-eval)
 
 ;;; ---------------------------------------------------------------------------
-;;;  Extended redefinition of SWANK's SIMPLE-REPL that adds command processsing 
-;;;  for nil communiation style (the default style with ECL & CLISP):
-
-(defun simple-repl (&aux (buffer ""))
-  (loop
-    (format t "~a> " (package-string-for-prompt *package*))
-    (force-output)
-    (let ((line (handler-case (read-line)
-                  (end-of-repl-input () (return)))))
-      (when (plusp (length line))
-        (unless (repl-command-form line)
-          (setf buffer (concatenate 'simple-string
-                         buffer #.(string #\newline) line))
-          (let* ((eof '#:eof))
-            (loop
-              (multiple-value-bind (form pos)
-                  (handler-case (read-from-string buffer nil eof)
-                    (error () eof))
-                (when (eq form eof) (return))
-                (setf buffer (subseq buffer pos))
-                (let ((- form)
-                      (values (multiple-value-list (eval form))))
-                  (setf *** **  ** *  * (car values)
-                        /// //  // /  / values
-                        +++ ++  ++ +  + form)
-                  (cond ((null values) (format t "; No values~&"))
-                        (t (flet ((print-it (v)
-                                    (format t "~s~&" v)))
-                             (declare (dynamic-extent #'print-it))
-                             (mapc #'print-it values)))))))))))))
-
-(compile-if-advantageous 'simple-repl)
-
-;;; ---------------------------------------------------------------------------
 
 (defun repl-command-form (string)
   (setf string (string-left-trim '(#\space #\tab) string))
@@ -140,6 +106,46 @@
     (repl-eval string)))
 
 (compile-if-advantageous 'extended-repl-eval)
+
+;;; ---------------------------------------------------------------------------
+;;;  Extended redefinition of SWANK's SIMPLE-REPL that adds command processsing 
+;;;  for nil communiation style (the default style with ECL & CLISP):
+
+(defun simple-repl (&aux (buffer "") prompt-issued?)
+  (flet ((issue-prompt () 
+           (format t "~a> " (package-string-for-prompt *package*))
+           (setf prompt-issued? 't)
+           (force-output)))
+    (loop
+      (issue-prompt)
+      (let ((line (handler-case (read-line)
+                    (end-of-repl-input () (return)))))
+        (when (plusp (length line))
+          (unless (repl-command-form line)
+            (setf buffer (concatenate 'simple-string
+                           buffer #.(string #\newline) line))
+            (let* ((eof '#:eof))
+              (loop
+                (multiple-value-bind (form pos)
+                    (handler-case (read-from-string buffer nil eof)
+                      (error () eof))
+                  (when (eq form eof) (return))
+                  (setf buffer (subseq buffer pos))
+                  (unless prompt-issued?
+                    (issue-prompt))
+                  (let ((- form)
+                        (values (multiple-value-list (eval form))))
+                    (setf *** **  ** *  * (car values)
+                          /// //  // /  / values
+                          +++ ++  ++ +  + form)
+                    (cond ((null values) (format t "; No values~&"))
+                          (t (flet ((print-it (v)
+                                      (format t "~s~&" v)))
+                               (declare (dynamic-extent #'print-it))
+                               (mapc #'print-it values))))
+                    (setf prompt-issued? nil)))))))))))
+
+(compile-if-advantageous 'simple-repl)
 
 ;;; ---------------------------------------------------------------------------
 
