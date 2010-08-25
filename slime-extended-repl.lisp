@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:SWANK; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/slime-extended-repl.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Aug 24 13:08:59 2010 *-*
+;;;; *-* Last-Edit: Tue Aug 24 15:06:33 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -58,6 +58,9 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun repl-command-form (string)
+  ;; Performs REPL command processing, if `string' contains a command.
+  ;; Returns true, if a command was executed and normal REPL processing should
+  ;; be skipped; nil if normal REPL evaluation should be performed on `string'.
   (setf string (string-left-trim '(#\space #\tab) string))
   (when (or 
          ;; Check for 'spread' command syntax:

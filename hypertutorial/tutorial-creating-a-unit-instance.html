@@ -54,14 +54,20 @@ This exercise shows you how to:
 If you ended the Common Lisp session used in the last exercise, begin a new
 session and evaluate the following forms:
 <pre class="pretop">
-<font color="#667f66">  cl-user&gt; <font color="#000000">(load "<var>&lt;install-dir&gt;</var>/startup.lisp")</font>
+<font color="#667f66">  cl-user&gt; <font color="#000000">(load "<var>&lt;install-dir&gt;</var>/initiate.lisp")</font>
      ...
-  cl-user&gt; <font color="#000000">(module-manager:compile-module :gbbopen-user :propagate :create-dirs)</font>
+  cl-user&gt; <font color="#000000">:gbbopen-user</font>
      ...
-  cl-user&gt; <font color="#000000">(in-package :gbbopen-user)</font>
-  #&lt;package GBBOPEN-USER&gt;
   gbbopen-user&gt;</font>
 </pre>
+</p>
+<p><table width="90%" align="center" border="1" cellpadding="12"
+      bgcolor="#FFFFEA"><tr><td valign="baseline"><table border="0">
+<tr><td valign="baseline"><b>ASDF and clbuild users</b></td></tr><tr><td valign="baseline">
+Remember to <nobr><code>(asdf:operate 'asdf:load-op :gbbbopen)</code></nobr> or
+<nobr><code>(require :gbbopen)</code></nobr> in place of loading
+<nobr><code><var>&lt;install-dir&gt;</var>/initiate.lisp</code></nobr>.
+</td></tr></table></table>
 </p>
 <h2><a name="id2">Step 1: Define the <code>location</code> unit class</a></h2><p>
 We begin by defining a unit class <nobr><code>location</code></nobr> that has two slots,

@@ -33,7 +33,7 @@ Requirements:
    See PORTING for information on porting GBBopen to other Common Lisp
    implementations.
 
-Current Status Notes (August 18, 2010)
+Current Status Notes (August 22, 2010)
 --------------------
 
 Implementation work is progressing on a regular basis.  See the list of
@@ -80,6 +80,26 @@ are strongly encouraged to install a Subversion client and use it perform
 frequent updates.
 
 
+Using clbuild
+-------------
+
+If you use clbuild, you can get the latest GBBopen sources by issuing the
+following command:
+
+  $ clbuild install gbbopen
+
+At any later time, you can issue the command:
+
+  $ clbuild update gbbopen
+
+to obtain the latest sources from the GBBopen repository.
+
+If your clbuild doesn't know about GBBopen, add the following line to clbuild's
+wnpp-projects file:
+
+gbbopen get_svn http://gbbopen.org/svn/GBBopen/trunk/ #blackboard-system framework, tools, & utilities
+
+
 Browsing the GBBopen Repository
 -------------------------------
 
@@ -87,69 +107,103 @@ The GBBopen repository can also be browsed directly at
 http://GBBopen.org/svn/GBBopen/trunk/.
 
 
-STEP 2: Compiling/Loading GBBopen Modules
-=========================================
+STEP 2: Compiling All GBBopen Modules
+=====================================
 
-GBBopen includes a Module Manager Facility that supports compiling and
-loading GBBopen components.  To compile all core GBBopen modules and a
-simple trip-tests file, evaluate the following within your Common Lisp
+If others will be using the GBBopen installation and they do not have write
+permission to the compiled GBBopen directories, you should compile all of the
+GBBopen modules whenever you install or update GBBopen.  
+
+
+Compiling without ASDF or clbuild
+---------------------------------
+
+To compile all GBBopen modules, perform the following in a fresh Common Lisp
 environment:
 
-   > (load "<install-dir>/startup.lisp")
-   ;; Loading <install-dir>/startup.lisp
-   ;;  Loading <install-dir>/source/module-manager/module-manager-loader.lisp
-   ;;   Loading <install-dir>/source/module-manager/module-manager.lisp
-   ;;  Loading <install-dir>/source/modules.lisp
-   t
-   > (module-manager:compile-module :gbbopen-test :propagate :create-dirs)
-        ...
-   ;; Running basic GBBopen tests...
-        ...
-   ;; Performing Common Lisp capability checks...
-        ...
-   >
+  > (load "<install-dir>/initiate.lisp")
+  ;; Loading <install-dir>/initiate.lisp
+  ;;  Loading <install-dir>/extended-repl.lisp
+  ;;  Loading <install-dir>/gbbopen-toplevel-commands.lisp
+  t
+  > :compile-gbbopen     ; or (compile-gbbopen), if REPL commands don't work
+  ;; Loading <install-dir>/startup.lisp
+     ...
+  ;;; GBBopen modules compilation completed.
+  [Common Lisp will exit]
 
-That's it.  GBBopen should compile, load, and run the basic trip tests
-without error.
 
-If you want to test GBBopen's Agenda Shell, evaluate:
+Compiling using ASDF or clbuild
+-------------------------------
 
-   > (module-manager:compile-module :agenda-shell-test :propagate :create-dirs)
-        ...
-   ;; Control shell exited: 10 cycles completed
-   ;; Run time: 0.04 seconds
-   ;; Elapsed time: 0 seconds
-   ;;; Agenda Shell Test Completed
-   :quiescence
-   >
+GBBopen includes a Module Manager Facility that supports compiling and loading
+GBBopen components.  The Module Manager provides an interface that allows ASDF
+(and clbuild) to play nicely with the Module Manager.  If you installed
+GBBopen using clbuild, ASDF has been informed of GBBopen's gbbopen.asd
+system-definition file.  Otherwise, to use ASDF to set up GBBopen, you must
+add gbbopen.asd to ASDF manually.  Then, the Module Manager and GBBopen module
+definitions can be loaded using ASDF by issuing:
 
-Again, the test should run without errors.
+  > (asdf:operate 'asdf:load-op :gbbbopen)
+
+or when ASDF is integrated with Common Lisp's REQUIRE:
+
+  > (require :gbbopen)
+
+ASDF users can compile all GBBopen modules, by evaluating the following in a
+fresh Common Lisp environment with ASDF installed:
+
+  > (require :gbbopen)
+      ...
+  > :compile-gbbopen     ; or (compile-gbbopen), if REPL commands don't work
+      ...
+  ;;; GBBopen modules compilation completed.
+  [Common Lisp will exit]
+
+
+STEP 3: Running GBBopen Modules
+===============================
+
+To run a simple trip-tests file, evaluate the following in a fresh Common Lisp
+environment:
+
+  > (load "<install-dir>/initiate.lisp")
+  ;; Loading <install-dir>/initiate.lisp
+  ;;  Loading <install-dir>/extended-repl.lisp
+  ;;  Loading <install-dir>/gbbopen-toplevel-commands.lisp
+  t
+  > :gbbopen-test
+      ...
+  ;; Running basic GBBopen tests...
+      ...
+  ;; Performing Common Lisp capability checks...
+      ...
+  >
+
+Or with ASDF or clbuild:
+
+  > (require :gbbopen)
+      ...
+  > :gbbopen-test
+      ...
+  ;; Running basic GBBopen tests...
+      ...
+  ;; Performing Common Lisp capability checks...
+      ...
+  >
+
+That's it.  GBBopen should load and run the basic trip tests without error.
+
+Other GBBopen test and example modules can be run similarly, by replacing the
+:gbbopen-test command with :agenda-shell-test (for a simple trip-test of
+GBBopen's Agenda Shell), :tutorial-example (to run the example developed in
+the GBBopen Tutorial), :cl-timing (to perform some timings of Common Lisp
+operations), etc.  Each of these should be loaded and run in a fresh
+environment.
 
 Note that the Agenda Shell requires that the idle-loop process has been
 started on CMUCL and that multiprocessing has been started on LispWorks.  
 (An error message will instruct you on what to do if this is not the case.)
-
-
-STEP 3: Compiling All GBBopen Modules
-=====================================
-
-If others will be using the GBBopen installation and they do not have write
-permission to the compiled GBBopen directories, you should compile all of
-the GBBopen modules whenever you install or update GBBopen.  To compile all
-GBBopen modules, perform the following in a fresh Common Lisp environment:
-
-   > (load "<install-dir>/initiate.lisp")
-   ;; Loading <install-dir>/initiate.lisp
-   ;;  Loading <install-dir>/extended-repl.lisp
-   ;;  Loading <install-dir>/gbbopen-toplevel-commands.lisp
-   t
-   > (compile-gbbopen)
-   ;; Loading <install-dir>/startup.lisp
-      ...
-   ;;; GBBopen module compilation completed.
-   [Common Lisp will exit]
-
-All GBBopen modules should compile without error.
 
 
 GBBopen Tutorial
@@ -182,24 +236,14 @@ Some Useful Things
 
 (You did work through the GBBopen Tutorial, didn't you?)
 
-The file <install-directory>/initiate.lisp is a highly recommended alternative
-for <install-directory>startup.lisp that adds some handy GBBopen keyword
-commands to the top-level listener for Allegro CL, CLISP, Clozure CL, CMUCL,
-SCL, ECL, Lispworks, SLIME, and SBCL users and defines equivalent functions
-(in the :common-lisp-user package) on all Common Lisp implementations.  Simply
-load initiate.lisp from your personal Common Lisp initialization file.  (You
-do not need to explicitly load the startup.lisp file when using
-initiate.lisp--it will handle the loading of startup.lisp for you.)
-
-
 Personal gbbopen-init.lisp file
 -------------------------------
 
 If a gbbopen-init.lisp file (source or compiled) is present in the user's
-"home" directory (as defined by user-homedir-pathname), it is loaded at the
-end of loading the <install-directory>startup.lisp file.  A personal
-gbbopen-init file is useful for specifying GBBopen parameters and other
-personalizations.
+"home" directory (as defined by user-homedir-pathname), it is loaded
+immediately after the <install-directory>startup.lisp file is loaded.  A
+personal gbbopen-init file is useful for specifying GBBopen parameters and
+other personalizations.
 
 
 Personal gbbopen-commands.lisp file
