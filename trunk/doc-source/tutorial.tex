@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/tutorial.tex *-*
-%% *-* Last-Edit: Wed Apr  7 10:13:07 2010; Edited-By: cork *-*
+%% *-* Last-Edit: Wed Aug 25 17:54:44 2010; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2005-2010, Dan Corkill <corkill@GBBopen.org>
@@ -322,8 +322,7 @@ This initial exercise requires that you:
 \item Interact with Common Lisp's read-eval-print loop (REPL)
 \item Recover from errors
 \item Prepare to use GBBopen in the next exercises by loading the
-  \nobr{\code{:gbbopen-user}} module and changing to the
-  \nobr{\code{:gbbopen-user}} package
+  \nobr{\code{:gbbopen-user}} module
 \end{tightitemize}
 
 \fndocrule
@@ -364,7 +363,7 @@ our code on any Common Lisp implementation that provides similar capabilities
 If you would rather not explore the space of Common Lisp implementations for
 your platform, Peter Seibel (the author of \xsitelink{\textit{Practical Common
     Lisp\/}}{http://www.gigamonkeys.com/book/}) provides
-\xsitelink{Lispbox}{http://www.gigamonkeys.com/book/lispbox/}.  Lispbox
+\xsitelink{Lispbox}{http://www.gigamonkeys.com/lispbox/}.  Lispbox
 (``Lisp in a Box'') offers an easy to install, no-cost, Common Lisp
 environment for Linux/86, Macintosh OS X, and Windows.  Lispbox packages
 together a Common Lisp implementation,
@@ -380,13 +379,23 @@ operating implementation for your system before proceeding to the next step.
 
 \index{installing GBBopen}%
 \index{GBBopen!installing}%
-GBBopen is available in source form from
-\xsitelink{\nobr{\code{http://GBBopen.org/}}}{http://GBBopen.org/}.  A
-snapshot archive of the GBBopen source-code repository can be downloaded from
+Unless someone has already installed GBBopen on your machine, you will need to
+obtain and install it.  GBBopen is available in source form from
+\xsitelink{\nobr{\code{http://GBBopen.org/}}}{http://GBBopen.org/}. In this
+step I discuss three different approaches for downloading GBBopen, and you can
+follow whichever approach is most familiar for you.  (In the absence of any
+preference, I recommend the Subversion client approach.)
+
+\subsubsection*{Downloading the snapshot archive}
+
+A snapshot archive of the GBBopen source-code repository can be downloaded
+from
 \xsitelink{\nobr{\code{http://gbbopen.org/downloads/GBBopen.tar.gz}}}{http://gbbopen.org/downloads/GBBopen.tar.gz}.
 Extract the archive into a directory of your choosing, and follow the
-``Compiling/Loading GBBopen'' instructions that are contained in the
+``Compiling All GBBopen Modules'' instructions that are contained in the
 \code{README} file of the installation.
+
+\subsubsection*{Downloading with Subversion}
 
 \codeindexit{values}%
 \index{Subversion client}%
@@ -403,7 +412,7 @@ from the GBBopen repository.  For example, the shell command:
 %
 will create a GBBopen repository tree rooted at the directory named
 \code{gbbopen} in your current working directory.  As above, follow the
-``Compiling/Loading GBBopen'' instructions that are contained in the
+``Compiling All GBBopen Modules'' instructions that are contained in the
 \code{README} file of the installation.
 
 \index{updating GBBopen}%
@@ -413,14 +422,14 @@ will create a GBBopen repository tree rooted at the directory named
 \index{TortoiseCVS}%
 GBBopen development is ongoing, and you should update your GBBopen
 installation regularly in order to obtain the latest capabilities and
-enhancements.  Using Subversion is the easiest way to keep current, and you
-are strongly encouraged to install a Subversion client and use it perform
-frequent updates.  Simply issue the command:
+enhancements.  Subversion provides an easy way to keep current, and you are
+strongly encouraged to install a Subversion client and use it perform frequent
+updates.  Simply issue the command:
 %
 \W\supp
 \begin{example}
 \textcolor{darkergray}{%
-  [~]\$ \textcolor{black}{svn update}}
+  [~/gbbopen]\$ \textcolor{black}{svn update}}
 \end{example}
 %
 from the root directory of your GBBopen repository tree.  
@@ -431,10 +440,47 @@ to use as \xsitelink{TortoiseCVS}{http://www.tortoisecvs.org/} (also
 highly recommended if aren't already using it as your CVS client on
 Windows).
 
-Subversion \code{.svn} administrative directories are included in the
-GBBopen snapshot archive, so a Subversion \code{update} command can be
-used to freshen a GBBopen installation that was originally installed
-from a snapshot archive.
+Subversion \code{.svn} administrative directories are included in the GBBopen
+snapshot archive, so a Subversion \code{update} command can be used to freshen
+a GBBopen installation that was originally installed using the snapshot
+archive download-and-extraction approach described previously.
+
+\subsubsection*{Downloading with clbuild}
+
+\index{clbuild}%
+%
+If you use \xsitelink{clbuild}{http://common-lisp.net/project/clbuild/}, you
+can use it to download the latest GBBopen sources by issuing the following
+command:
+%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
+  [~]\$ \textcolor{black}{clbuild install gbbopen}}
+\end{example}
+
+At any later time, you can issue the command:
+%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
+  [~]\$ \textcolor{black}{clbuild update gbbopen}}
+\end{example}
+%
+to obtain the latest sources from the GBBopen repository.
+
+If your clbuild doesn't know about GBBopen, add the following line to the
+clbuild wnpp-projects file:
+%
+\W\supp
+\begin{example}
+  gbbopen get_svn http://gbbopen.org/svn/GBBopen/trunk/ #blackboard-system framework, tools, \& utilities
+\end{example}
+
+As was the case with the other two download methods, follow the ``Compiling
+All GBBopen Modules'' instructions that are contained in the GBBopen
+\code{README} file to complete the installation.
+
 
 \subsection*{Step 3: Subscribe to the GBBopen mailing lists}
 
@@ -608,12 +654,12 @@ or ``backtrace,'' of function calls that led to the error, view and edit local
 variable bindings, and so forth, and you can often correct the cause of the
 error and resume the broken evaluation directly from the debugger.
 
-For tutorial purposes, you only need to know how to abort out of the
-evaluation and return back to the REPL if you trigger an error.  The details
-for aborting the computation and exiting the debugger are implementation
-dependent, so you may need to investigate how to abort out of an error on your
-Common Lisp implementation.  For example, it might be as easy as entering an
-abort debugger command:
+For this tutorial, you only need to know how to abort out of the evaluation
+and return back to the REPL if you trigger an error.  The details for aborting
+the computation and exiting the debugger are implementation dependent, so you
+may need to investigate how to abort out of an error on your Common Lisp
+implementation.  For example, it might be as easy as entering an abort
+debugger command:
 %
 \W\supp
 \begin{example}
@@ -773,60 +819,9 @@ that supports compiling and loading GBBopen components.
 
 To compile and load the \nobr{\code{:gbbopen-user}} module and all the GBBopen
 modules it requires, you need to evaluate the following forms within your
-Common Lisp environment.  First, load GBBopen's
-\nobr{\code{\var{<install-dir>\/}/startup.lisp}} file from wherever GBBopen
-has been installed:
-%
-\W\supp
-\begin{smallexample}
-\textcolor{darkergray}{%
-  cl-user> \textcolor{black}{(load "\var{<install-dir>\/}/startup.lisp")}
-  ;; Loading \var{<install-dir>\/}/startup.lisp
-  ;; GBBopen is installed in \var{<install-dir>\/}
-  ;; Your "home" directory is \var{<homedir>\/}
-  ;;  Loading \var{<install-dir>\/}/source/module-manager/module-manager-loader.lisp
-  ;;   Loading \var{<install-dir>\/}/source/module-manager/module-manager.lisp
-  ;;     Loading \var{<install-dir>\/}/source/module-manager/module-manager-user.lisp
-  ;;  Loading \var{<install-dir>\/}/source/modules.lisp
-  ;; No shared module definitions were found in \var{<install-dir>\/}/shared-gbbopen-modules/.
-  ;; No personal module definitions were found in \var{<homedir>\/}/gbbopen-modules/.
-  t
-  cl-user>}
-\end{smallexample}
-%
-\bfindex{compile-module}%
-Then compile and load the \nobr{\code{:gbbopen-user}} module and all the
-GBBopen modules it requires by evaluating:
-%
-\W\supp\notpretop
-\begin{smallexample}
-\textcolor{darkergray}{%
-  cl-user> \textcolor{black}{(module-manager:compile-module :gbbopen-user :propagate :create-dirs)}
-  ;; Compiling \var{<install-dir>\/}/source/module-manager/module-manager.lisp
-  ;; Loading \var{<install-dir>\/}/\var{<platform-dir>\/}/module-manager/module-manager.fasl
-       ...
-  ;; Compiling \var{<install-dir>\/}/source/gbbopen/gbbopen-user.lisp
-  ;; Loading \var{<install-dir>\/}/\var{<platform-dir>\/}/gbbopen/gbbopen-user.fasl
-  cl-user>}
-\end{smallexample}
-
-GBBopen should compile (if necessary) and load all the files needed for the
-next exercise without error.  The output on your Common Lisp implementation
-may vary somewhat from that shown above.  For example, the file extension for
-compiled files, shown as \code{.fasl} throughout this tutorial, is dependent on
-your Common Lisp implementation and platform.
-
-\subsubsection*{File protection problems?}
-
-\index{errors!file protection}%
-\index{compiling!all of GBBopen}%
-\codeindex{compile-gbbopen}%
-%
-If one or more GBBopen files needs to be compiled, you must have write
-permission for those files and directories on your file system.  If you do not
-have write permission and someone else is maintaining your GBBopen
-installation, they must start up Common Lisp and then evaluate the following
-two expressions:
+Common Lisp environment.  Unless you are using GBBopen with ASDF or clbuild
+(see below), load GBBopen's \nobr{\code{\var{<install-dir>\/}/initiate.lisp}}
+file from wherever GBBopen was installed:
 %
 \W\supp
 \begin{smallexample}
@@ -840,38 +835,112 @@ two expressions:
   ;;     Loading \var{<install-dir>\/}/gbbopen-modules-directory.lisp
   ;; No shared module command definitions were found in \var{<install-dir>\/}/gbbopen-modules/.
   ;; No personal module command definitions were found in \var{<homedir>\/}/gbbopen-modules/.
-  t
-  cl-user> \textcolor{black}{(compile-gbbopen)}
+  #P"\var{<install-dir>\/}/initiate.lisp"
+  cl-user> \textcolor{black}{:gbbopen-user}
   ;; Loading \var{<install-dir>\/}/startup.lisp
-     ...
-  ;;; GBBopen module compilation completed.
-  [~]\$}
+  ;; GBBopen is installed in \var{<install-dir>\/}
+  ;; Your "home" directory is \var{<homedir>\/}
+  ;;  Loading \var{<install-dir>\/}/source/module-manager/module-manager-loader.lisp
+  ;; Loading \var{<install-dir>\/}/\var{<platform-dir>\/}/module-manager/module-manager.fasl
+       ...
+  ;; Loading \var{<install-dir>\/}/modules.lisp
+  ;; No shared module definitions were found in \var{<install-dir>\/}/gbbopen-modules/.
+  ;; No personal module definitions were found in \var{<homedir>\/}/gbbopen-modules/.
+       ...
+  ;; Compiling \var{<install-dir>\/}/source/gbbopen/gbbopen-user.lisp
+  ;; Loading \var{<install-dir>\/}/\var{<platform-dir>\/}/gbbopen/gbbopen-user.fasl
+  t
+  gbbopen-user>}
+\end{smallexample}
+
+GBBopen should compile (if necessary) and load all the files needed for the
+next exercise without error.  The output on your Common Lisp implementation
+may vary somewhat from that shown above.  For example, the file extension for
+compiled files, shown as \code{.fasl} throughout this tutorial, is dependent on
+your Common Lisp implementation and platform.
+
+\begin{notebox}{ASDF and clbuild users}
+  GBBopen's Module Manager Facility provides an interface that allows
+  \xsitelink{ASDF}{http://common-lisp.net/project/asdf/} (and therefore
+  \xsitelink{clbuild}{http://common-lisp.net/project/clbuild/}) to play nicely
+  with the Module Manager.  If you installed GBBopen using clbuild, ASDF has
+  been informed of GBBopen's \nobr{\code{\var{<install-dir>\/}/gbbopen.asd}}
+  system-definition file.  Otherwise, to use ASDF to set up GBBopen, you must
+  add the \nobr{\code{gbbopen.asd}} file to ASDF's Registry manually.  Then,
+  instead of loading the \nobr{\code{\var{<install-dir>\/}/initiate.lisp}}
+  file, the Module Manager and GBBopen module definitions can be loaded using
+  ASDF by entering:
+%
+\T\smallskip
+\W\supp\notpretop
+\begin{smallexample}
+\textcolor{darkergray}{%
+  cl-user> \textcolor{black}{(asdf:operate 'asdf:load-op :gbbbopen)}
+  ;; Loading \var{<install-dir>\/}/initiate.lisp
+  ;; GBBopen is installed in \var{<install-dir>\/}
+  ;; Your "home" directory is \var{<homedir>\/}
+       ...
+  ;; Loading \var{<install-dir>\/}/startup.lisp
+  ;; GBBopen is installed in \var{<install-dir>\/}
+  ;; Your "home" directory is \var{<homedir>\/}
+  ;;  Loading \var{<install-dir>\/}/source/module-manager/module-manager-loader.lisp
+  ;; Loading \var{<install-dir>\/}/\var{<platform-dir>\/}/module-manager/module-manager.fasl
+       ...
+  ;; Loading \var{<install-dir>\/}/modules.lisp
+  ;; No shared module definitions were found in \var{<install-dir>\/}/gbbopen-modules/.
+  ;; No personal module definitions were found in \var{<homedir>\/}/gbbopen-modules/.
+       ...
+  ;; Defining an ASDF defsystem for each Module Manager module...
+  cl-user>}
 \end{smallexample}
 %
-every time they update GBBopen to ensure that all GBBopen modules have
-been compiled.
+or when ASDF is integrated with Common Lisp's \textbf{require}:
+%
+\T\smallskip
+\W\supp\notpretop
+\begin{smallexample}
+\textcolor{darkergray}{%
+  cl-user> \textcolor{black}{(require :gbbopen)}
+  ;; Loading \var{<install-dir>\/}/initiate.lisp
+  ;; GBBopen is installed in \var{<install-dir>\/}
+  ;; Your "home" directory is \var{<homedir>\/}
+       ...
+  ;; Loading \var{<install-dir>\/}/startup.lisp
+  ;; GBBopen is installed in \var{<install-dir>\/}
+  ;; Your "home" directory is \var{<homedir>\/}
+  ;;  Loading \var{<install-dir>\/}/source/module-manager/module-manager-loader.lisp
+  ;; Loading \var{<install-dir>\/}/\var{<platform-dir>\/}/module-manager/module-manager.fasl
+       ...
+  ;; Loading \var{<install-dir>\/}/modules.lisp
+  ;; No shared module definitions were found in \var{<install-dir>\/}/gbbopen-modules/.
+  ;; No personal module definitions were found in \var{<homedir>\/}/gbbopen-modules/.
+       ...
+  ;; Defining an ASDF defsystem for each Module Manager module...
+  cl-user>}
+\end{smallexample}
 
-\subsubsection*{Beyond \code{\var{<install-dir>\/}/startup.lisp}}
+Notice that loading the \nobr{\code{\var{<install-dir>\/}/initiate.lisp}} file
+loaded only GBBopen's REPL command processing extensions, global REPL command
+definitions, and module-directory processing into Common Lisp--the Module
+Manager is not loaded until it is needed (such as when we performed the
+\nobr{\code{:gbbopen-user}} REPL command).  The ASDF \code{:gbbopen}
+``system'' start up, on the other hand, must also load the Module Manager and
+module definitions, as they are required in order to define an ASDF system for
+each Module Manager module.
+\end{notebox}
 
-Although loading GBBopen's \nobr{\code{\var{<install-dir>\/}/startup.lisp}}
-file is a very easy way to get started with GBBopen, setting up your computing
-environment for serious GBBopen development requires only a few moments that
-will be recouped almost immediately.  The steps needed to set everything up
-will be detailed soon in the \reflink{Enhancing Your Development Environment
-  exercise}{sec:environment}.
-
-\subsection*{Step 7: Change to the \code{:gbbopen-user} package}
+\subsubsection*{Packages}
 
 \index{package}%
 \codeindex{in-package}%
 %
-Now that the \code{:gbbopen-user} module is loaded, change the current package
-to the \nobr{\code{:gbbopen-user}} package:
+Note that when the \code{:gbbopen-user} module was loaded, the Module Manager
+changed the current package to the \nobr{\code{:gbbopen-user}} package.  In the Common Lisp implementation above, this is shown by the new package name in the REPL prompt.  The current package can also be seen by evaluating:
 %
 \W\supp
 \begin{example}
 \textcolor{darkergray}{%
-  cl-user> \textcolor{black}{(in-package :gbbopen-user)}
+  cl-user> \textcolor{black}{*package*}
   #<package GBBOPEN-USER>
   gbbopen-user>}
 \end{example}
@@ -883,9 +952,115 @@ their names.  Initially, the current package is set to the
 \nobr{\code{:common-lisp-user}} package.  The \nobr{\code{:gbbopen-user}}
 module creates a new package, named \nobr{\code{:gbbopen-user}}, that includes
 GBBopen Tools and GBBopen Core symbols in addition to the standard Common Lisp
-symbols.  If you do not set the current package to the
-\nobr{\code{:gbbopen-user}} package, references to GBBopen functions and
+symbols.  If the current package is not set to the \nobr{\code{:gbbopen-user}}
+package in the exercises to follow, references to GBBopen functions and
 variables will not map to the proper symbols.
+
+\subsubsection*{If it didn't work$\ldots$}
+
+If you are running GBBopen in a Common Lisp environment that doesn't support
+REPL commands and the \nobr{\code{:gbbopen-user}} REPL command didn't work,
+all is not lost.  Loading \nobr{\code{\var{<install-dir>\/}/initiate.lisp}}
+also defines functions in the \nobr{\code{:common-lisp-user}} package with the
+same name as the REPL command:
+%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
+  cl-user> \textcolor{black}{(load "\var{<install-dir>\/}/initiate.lisp")}
+  ;; Loading \var{<install-dir>\/}/initiate.lisp
+  ;; GBBopen is installed in \var{<install-dir>\/}
+  ;; Your "home" directory is \var{<homedir>\/}
+  ;;     Loading \var{<install-dir>\/}/extended-repl.lisp
+  ;;     Loading \var{<install-dir>\/}/commands.lisp
+  ;;     Loading \var{<install-dir>\/}/gbbopen-modules-directory.lisp
+  ;; No shared module command definitions were found in \var{<install-dir>\/}/gbbopen-modules/.
+  ;; No personal module command definitions were found in \var{<homedir>\/}/gbbopen-modules/.
+  #P"\var{<install-dir>\/}/initiate.lisp"
+  cl-user> \textcolor{black}{(gbbopen-user)}
+  ;; Loading \var{<install-dir>\/}/startup.lisp
+     ...
+  ;; Loading \var{<install-dir>\/}/\var{<platform-dir>\/}/gbbopen/gbbopen-user.fasl
+  gbbopen-user>}
+\end{example}
+
+\subsubsection*{File protection problems?}
+
+\index{errors!file protection}%
+\index{compiling!all of GBBopen}%
+\codeindex{:compile-gbbopen}%
+\codeindex{compile-gbbopen}%
+%
+If one or more GBBopen files needs to be compiled, you must have write
+permission for those files and directories on your file system.  If you do not
+have write permission and someone else is maintaining your GBBopen
+installation, you must remind them that they should perform the ``Compiling
+All GBBopen Modules'' operations (described in the GBBopen installation
+\code{README} file) every time they update GBBopen to ensure that all the
+latest GBBopen files have been compiled.
+
+\subsubsection*{REPL command syntax}
+\label{sec:REPL-command-syntax}
+
+GBBopen's REPL commands are defined to mimic the syntax of existing REPL
+commands in your Common Lisp environment.  REPL commands, including those that
+have arguments, are normally specified using a non-list (``spread'')
+representation. For example:
+%
+\W\supp
+\begin{example}
+  cl-user> :gbbopen-user :create-dirs
+  ;; Loading \var{<install-dir>\/}/startup.lisp
+     ...
+  ;; Loading \var{<install-dir>\/}/\var{<platform-dir>\/}/gbbopen/gbbopen-user.fasl
+  gbbopen-user>
+\end{example}
+%
+Some Common Lisp implementations (\xsitelink{Clozure
+  CL}{http://trac.clozure.com/ccl},
+\xsitelink{LispWorks}{http://www.lispworks.com}, and
+\xsitelink{SBCL}{http://sbcl.sourceforge.net}) and the
+\xsitelink{SLIME}{http://common-lisp.net/project/slime/} REPL interface, also
+support REPL commands in non-spread (list) form in addition to the
+spread notation.  For example:
+%
+\W\supp\notpretop
+\begin{example}
+  cl-user> (:gbbopen-user :create-dirs)
+  ;; Loading \var{<install-dir>\/}/startup.lisp
+     ...
+  ;; Loading \var{<install-dir>\/}/\var{<platform-dir>\/}/gbbopen/gbbopen-user.fasl
+  gbbopen-user>
+\end{example}
+
+As noted above, equivalent functions in the \nobr{\code{:common-lisp-user}}
+package are always defined for each REPL command, and these functions can be
+used in place of the keyword REPL command processing:
+%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
+  cl-user> \textcolor{black}{(cl-user:gbbopen-user :create-dirs)}
+  ;; Loading \var{<install-dir>\/}/startup.lisp
+     ...
+  ;; Loading \var{<install-dir>\/}/\var{<platform-dir>\/}/gbbopen/gbbopen-user.fasl
+  gbbopen-user>}
+\end{example}
+
+We will show the \reflink{spread command syntax}{sec:REPL-command-syntax}
+throughout the rest of the Tutorial.  (GBBopen's REPL commands are summarized
+in the \xsitelink{GBBopen REPL Commands Quick Reference
+  Card}{http://GBBopen.org/downloads/command-refcard.pdf}, available on the
+GBBopen web site.)
+
+\subsubsection*{Beyond \code{\var{<install-dir>\/}/initiate.lisp}}
+
+Although loading GBBopen's \nobr{\code{\var{<install-dir>\/}/initiate.lisp}}
+file is a very easy way to get started with GBBopen, setting up your computing
+environment for serious GBBopen development requires only a few moments that
+will be recouped almost immediately.  The steps needed to set everything up
+will be detailed soon in the \reflink{Enhancing Your Development Environment
+  exercise}{sec:environment}.
 
 %% ========================================================================
 %%  Creating a Unit Instance
@@ -948,14 +1123,18 @@ session and evaluate the following forms:
 \W\supp
 \begin{example}
 \textcolor{darkergray}{%
-  cl-user> \textcolor{black}{(load "\var{<install-dir>\/}/startup.lisp")}
+  cl-user> \textcolor{black}{(load "\var{<install-dir>\/}/initiate.lisp")}
      ...
-  cl-user> \textcolor{black}{(module-manager:compile-module :gbbopen-user :propagate :create-dirs)}
+  cl-user> \textcolor{black}{:gbbopen-user}
      ...
-  cl-user> \textcolor{black}{(in-package :gbbopen-user)}
-  #<package GBBOPEN-USER>
   gbbopen-user>}
 \end{example}
+
+\begin{notebox}{ASDF and clbuild users}
+  Remember to \nobr{\code{(asdf:operate 'asdf:load-op :gbbbopen)}} or
+  \nobr{\code{(require :gbbopen)}} in place of loading
+  \nobr{\code{\var{<install-dir>\/}/initiate.lisp}}.
+\end{notebox}
 
 \subsection*{Step 1: Define the \code{location} unit class}
 
@@ -1205,12 +1384,10 @@ session and evaluate the following forms:
 \W\supp
 \begin{example}
 \textcolor{darkergray}{%
-  cl-user> \textcolor{black}{(load "\var{<install-dir>\/}/startup.lisp")}
+  cl-user> \textcolor{black}{(load "\var{<install-dir>\/}/initiate.lisp")}
      ...
-  cl-user> \textcolor{black}{(module-manager:compile-module :gbbopen-user :propagate :create-dirs)}
+  cl-user> \textcolor{black}{:gbbopen-user}
      ...
-  cl-user> \textcolor{black}{(in-package :gbbopen-user)}
-  #<package GBBOPEN-USER>
   gbbopen-user> \textcolor{black}{(define-unit-class location ()
                   (x y))}
   #<location>
@@ -1218,6 +1395,12 @@ session and evaluate the following forms:
   ui
   gbbopen-user>}
 \end{example}
+
+\begin{notebox}{ASDF and clbuild users}
+  Remember to \nobr{\code{(asdf:operate 'asdf:load-op :gbbbopen)}} or
+  \nobr{\code{(require :gbbopen)}} in place of loading
+  \nobr{\code{\var{<install-dir>\/}/initiate.lisp}}.
+\end{notebox}
 
 \subsection*{Step 1: Create a space instance}
 
@@ -1562,12 +1745,10 @@ session and evaluate the following forms:
 \W\supp
 \begin{example}
 \textcolor{darkergray}{%
-  cl-user> \textcolor{black}{(load "\var{<install-dir>\/}/startup.lisp")}
+  cl-user> \textcolor{black}{(load "\var{<install-dir>\/}/initiate.lisp")}
      ...
-  cl-user> \textcolor{black}{(module-manager:compile-module :gbbopen-user :propagate :create-dirs)}
+  cl-user> \textcolor{black}{:gbbopen-user}
      ...
-  cl-user> \textcolor{black}{(in-package :gbbopen-user)}
-  #<package GBBOPEN-USER>
   gbbopen-user> \textcolor{black}{(define-unit-class location ()
                    (x y))}
   #<standard-unit-class location>
@@ -1581,6 +1762,12 @@ session and evaluate the following forms:
   #<location 2>
   gbbopen-user>}
 \end{example}
+
+\begin{notebox}{ASDF and clbuild users}
+  Remember to \nobr{\code{(asdf:operate 'asdf:load-op :gbbbopen)}} or
+  \nobr{\code{(require :gbbopen)}} in place of loading
+  \nobr{\code{\var{<install-dir>\/}/initiate.lisp}}.
+\end{notebox}
 
 \subsection*{Step 1: Create a few more unit instances}
 
@@ -2194,177 +2381,26 @@ This exercise shows you how to:
 
 \fndocrule
 
-\subsection*{Step 1: Autoloading GBBopen}
+\subsection*{Step 1: Autoloading GBBopen's \code{initiate.lisp} file}
 
 Thus far, we have entered the forms:
 %
 \W\supp
 \begin{example}
 \textcolor{darkergray}{%
-  cl-user> \textcolor{black}{(load "\var{<install-dir>\/}/startup.lisp")}
+  cl-user> \textcolor{black}{(load "\var{<install-dir>\/}/initiate.lisp")}
      ...
-  cl-user> \textcolor{black}{(module-manager:compile-module :gbbopen-user :propagate :create-dirs)}
+  cl-user> \textcolor{black}{:gbbopen-user}
      ...
-  cl-user> \textcolor{black}{(in-package :gbbopen-user)}
-  #<package GBBOPEN-USER>
   gbbopen-user>}
 \end{example}
 %
 to compile and load needed GBBopen components and to set the current package
 to \nobr{\code{:gbbopen-user}}.  We can set up our Common Lisp environment so
 that we can do this (and eventually compile and load our random-walk
-application) by issuing only a single command.
+application) by issuing only a single REPL command.
 
-The file \nobr{\code{\var{<install-dir>\/}/initiate.lisp}} is an alternative
-for \nobr{\code{\var{<install-dir>\/}/startup.lisp}} that adds handy GBBopen
-keyword commands to the top-level REPL listener for \xsitelink{Allegro
-  CL}{http://franz.com/products/allegrocl/}, \xsitelink{CLISP}{http://clisp.cons.org/},
-\xsitelink{Clozure CL}{http://trac.clozure.com/ccl},
-\xsitelink{CMUCL}{http://www.cons.org/cmucl/},
-\xsitelink{ECL}{http://common-lisp.net/project/ecl/},
-\xsitelink{LispWorks}{http://www.lispworks.com},
-\xsitelink{SBCL}{http://sbcl.sourceforge.net} and \xsitelink{Scieneer
-  CL}{http://www.scieneer.com/scl/} users.  GBBopen keyword commands are also
-supported in \xsitelink{SLIME}{http://common-lisp.net/project/slime/}'s
-Emacs-based REPL.  Other interaction interfaces that use their own REPL,
-rather than the one provided by Common Lisp, may not support keyword REPL
-command processing (see below).
-
-To make these GBBopen keyword commands available, simply load the file
-\nobr{\code{\var{<install-dir>\/}/initiate.lisp}} rather than
-\nobr{\code{\var{<install-dir>\/}/startup.lisp}}.  Let's try it.  Start up a
-fresh Common Lisp session and enter the following form in the REPL:
-%
-\W\supp\notpretop
-\begin{smallexample}
-\textcolor{darkergray}{%
-  cl-user> \textcolor{black}{(load "\var{<install-dir>\/}/initiate.lisp")}
-  ;; Loading \var{<install-dir>\/}/initiate.lisp
-  ;; GBBopen is installed in \var{<install-dir>\/}
-  ;; Your "home" directory is \var{<homedir>\/}
-  ;;     Loading \var{<install-dir>\/}/extended-repl.lisp
-  ;;     Loading \var{<install-dir>\/}/commands.lisp
-  ;;     Loading \var{<install-dir>\/}/gbbopen-modules-directory.lisp
-  ;; No shared module command definitions were found in \var{<install-dir>\/}/gbbopen-modules/.
-  ;; No personal module command definitions were found in \var{<homedir>\/}/gbbopen-modules/.
-  t
-  cl-user>}
-\end{smallexample}
-
-\REPLindex{:gbbopen-user}%
-%
-Note that the \xreflink{Module Manager Facility}{sec:module-manager} and GBBopen
-module definitions have not been loaded.  Now enter the REPL
-command, \nobr{\code{:gbbopen-user}}:
-%
-\W\supp
-\begin{smallexample}
-\textcolor{darkergray}{%
-  cl-user> \textcolor{black}{:gbbopen-user}
-  ;; Loading \var{<install-dir>\/}/startup.lisp
-     ...
-  ;; Loading \var{<install-dir>\/}/\var{<platform-dir>\/}/gbbopen/gbbopen-user.fasl
-  gbbopen-user>}
-\end{smallexample}
-%
-The \code{:gbbopen-user} module (and supporting modules) are loaded,
-and the current package is set to \nobr{\code{:gbbopen-user}}:
-%
-\W\supp\notpretop
-\begin{example}
-\textcolor{darkergray}{%
-  gbbopen-user> \textcolor{black}{*package*}
-  #<package GBBOPEN-USER>
-  gbbopen-user>}
-\end{example}
-
-Module-compilation REPL commands, such as \nobr{\code{:gbbopen-user}}, always
-include the \nobr{\code{:propagate}} option when they call the Module
-Manager's \nobr{\textbf{compile-module}} function.  We don't need to specify
-it as a command option.
-
-\subsubsection*{If it didn't work$\ldots$}
-
-If you are running GBBopen in a Common Lisp environment that doesn't support
-REPL commands and the \nobr{\code{:gbbopen-user}} REPL command didn't work,
-all is not lost.  Loading \nobr{\code{\var{<install-dir>\/}/initiate.lisp}}
-also defines functions in the \nobr{\code{:common-lisp-user}} package with the
-same name as the REPL command:
-%
-\W\supp
-\begin{smallexample}
-\textcolor{darkergray}{%
-  cl-user> \textcolor{black}{(gbbopen-user)}
-  ;; Loading \var{<install-dir>\/}/startup.lisp
-     ...
-  ;; Loading \var{<install-dir>\/}/\var{<platform-dir>\/}/gbbopen/gbbopen-user.fasl
-  gbbopen-user>}
-\end{smallexample}
-
-\subsubsection*{REPL command syntax}
-\label{sec:REPL-command-syntax}
-
-GBBopen's REPL commands are defined to mimic the syntax of existing REPL
-commands in your Common Lisp environment.  On many Common Lisp
-implementations, or if you are using the
-\xsitelink{SLIME}{http://common-lisp.net/project/slime/} interface, REPL
-commands with arguments can be specified in either list or ``spread''
-notation.  For example:
-%
-\W\supp
-\begin{smallexample}
-\textcolor{darkergray}{%
-  cl-user> \textcolor{black}{(:gbbopen-user :create-dirs)}
-  ;; Loading \var{<install-dir>\/}/startup.lisp
-     ...
-  ;; Loading \var{<install-dir>\/}/\var{<platform-dir>\/}/gbbopen/gbbopen-user.fasl
-  gbbopen-user>}
-\end{smallexample}
-%
-or
-%
-\W\supp\notpretop
-\begin{smallexample}
-\textcolor{darkergray}{%
-  cl-user> \textcolor{black}{:gbbopen-user :create-dirs}
-  ;; Loading \var{<install-dir>\/}/startup.lisp
-     ...
-  ;; Loading \var{<install-dir>\/}/\var{<platform-dir>\/}/gbbopen/gbbopen-user.fasl
-  gbbopen-user>}
-\end{smallexample}
-
-However, \xsitelink{Allegro CL}{http://franz.com/products/allegrocl/},
-\xsitelink{CLISP}{http://clisp.cons.org/}, and
-\xsitelink{LispWorks}{http://www.lispworks.com} do not support the list
-notation.  CLISP versions prior to 2.45 and
-\xsitelink{ECL}{http://common-lisp.net/project/ecl/} only support the spread
-notation---but without arguments.  So, a user running on these Common Lisp
-implementations must use the \nobr{\code{:common-lisp-user}} functions rather
-than a REPL command when the command requires arguments:
-%
-\W\supp
-\begin{smallexample}
-\textcolor{darkergray}{%
-  cl-user> \textcolor{black}{(cl-user:gbbopen-user :create-dirs)}
-  ;; Loading \var{<install-dir>\/}/startup.lisp
-     ...
-  ;; Loading \var{<install-dir>\/}/\var{<platform-dir>\/}/gbbopen/gbbopen-user.fasl
-  gbbopen-user>}
-\end{smallexample}
-%
-or use the \xsitelink{SLIME}{http://common-lisp.net/project/slime/} REPL
-interface.
-
-We will show the \reflink{spread command syntax}{sec:REPL-command-syntax}
-throughout the rest of the Tutorial.  If you are running a
-\xsitelink{CLISP}{http://clisp.cons.org/} version prior to 2.45, remember to
-use the \nobr{\code{:common-lisp-user}} function rather than the REPL command when
-the command requires arguments.  (Equivalent functions in the
-\code{:common-lisp-user} package are always defined for each REPL
-keyword command, and these functions can be used when REPL keyword
-processing is not fully supported.)
-
-\subsection*{Step 2: Customizing your Common Lisp initialization file}
+\subsubsection*{Customizing your Common Lisp initialization file}
 
 I'm lazy and would rather not have to explicitly load the
 \nobr{\code{\var{<install-dir>\/}/initiate.lisp}} file each time I start a new
@@ -2522,10 +2558,9 @@ directory is located:
   cl-user>}
 \end{example}
 %
-Alternatively, loading either GBBopen's
-\nobr{\code{\var{<install-dir>\/}/startup.lisp}} file or
-\nobr{\code{\var{<install-dir>\/}/initiate.lisp}} will display the ``home''
-directory.
+Alternatively, loading GBBopen's
+\nobr{\code{\var{<install-dir>\/}/initiate.lisp}} file will display the
+``home'' directory.
 
 We will refer to this directory from now on as your ``homedir'' directory.
 
@@ -2537,7 +2572,7 @@ We will refer to this directory from now on as your ``homedir'' directory.
 
 \end{enumerate}
 
-\subsection*{Step 3: Set up  HyperDoc and HyperSpec access}
+\subsection*{Step 2: Set up  HyperDoc and HyperSpec access}
 
 \codeindex{browse-hyperdoc.el}%
 If you are using
@@ -5630,8 +5665,8 @@ Unless you are running Windows, add the random-walk application to your
 \begin{example}
 \textcolor{darkergray}{%
   [~]\$ \textcolor{black}{cd ~/gbbopen-modules/}
-  [~]\$ \textcolor{black}{ln -s ~/tutorial .}
-  [~]\$}
+  [~/gbbopen-modules]\$ \textcolor{black}{ln -s ~/tutorial .}
+  [~/gbbopen-modules]\$}
 \end{example}
 
 \subsubsection*{Windows users}

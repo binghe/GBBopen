@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/common.tex *-*
-%% *-* Last-Edit: Mon Aug  9 14:34:08 2010; Edited-By: cork *-*
+%% *-* Last-Edit: Wed Aug 25 17:48:51 2010; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2010, Dan Corkill <corkill@GBBopen.org>
@@ -879,6 +879,40 @@
 \newenvironment{tightenumerate}{\endpar\HlxBlk\xml{ol class="tight"}\begingroup
   \newcommand{\item}{\HlxBlk\xml{li}}\ignorespaces}{\endgroup
   \HlxBlk\xml{/ol}}
+\T\end{ifhtml}
+
+%% ----------------------------------------------------------------------------
+%%  notebox environment
+
+
+%\begin{center}
+%   \fcolorbox{black}{red}{
+%         \begin{minipage}[t]{1.0\textwidth}
+%            text
+%         \end{minipage}
+%      }
+%\end{center}
+
+\W\begin{iftex}
+  \makeatletter
+  \definecolor{noteboxbg}{rgb}{1.0,0.99,0.98}
+  \newenvironment{notebox}[1]{%
+    \begin{lrbox}{\@tempboxa}
+      \begin{minipage}{0.9\linewidth}
+        \raggedright\sloppy
+        {\large\textbf{#1}}\\[10pt]}%
+    {\end{minipage}\end{lrbox}%
+    \fboxsep=10pt
+    \hfil\fcolorbox{black}{noteboxbg}{\usebox{\@tempboxa}}}
+  \makeatother
+\W\end{iftex}
+
+\T\begin{ifhtml}
+  \newenvironment{notebox}[1]{%
+    \xml{table width="90%" align="center" border="1" cellpadding="12"
+      bgcolor="##FFFFEA"}\xml{tr}\xml{td}\xml{table border="0"}
+    \xml{tr}\xml{td}\textbf{#1}\xml{/td}\xml{/tr}\xml{tr}\xml{td}}%
+    {\xml{/td}\xml{/tr}\xml{/table}\xml{/table}}
 \T\end{ifhtml}
 
 %% ----------------------------------------------------------------------------

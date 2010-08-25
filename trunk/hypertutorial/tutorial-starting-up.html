@@ -22,8 +22,7 @@
 <li>Interact with Common Lisp's read-eval-print loop (REPL)
 <li>Recover from errors
 <li>Prepare to use GBBopen in the next exercises by loading the
-<nobr><code>:gbbopen-user</code></nobr> module and changing to the
-<nobr><code>:gbbopen-user</code></nobr> package
+<nobr><code>:gbbopen-user</code></nobr> module
 </ul>
 </p>
 <hr color="99CCCC">
@@ -61,7 +60,7 @@ our code on any Common Lisp implementation that provides similar capabilities
 <p>If you would rather not explore the space of Common Lisp implementations for
 your platform, Peter Seibel (the author of <a target="_top" href="http://www.gigamonkeys.com/book/"><i>Practical Common
 Lisp</i></a>) provides
-<a target="_top" href="http://www.gigamonkeys.com/book/lispbox/">Lispbox</a>.  Lispbox
+<a target="_top" href="http://www.gigamonkeys.com/lispbox/">Lispbox</a>.  Lispbox
 (&#8220;Lisp in a Box&#8221;) offers an easy to install, no-cost, Common Lisp
 environment for Linux/86, Macintosh OS X, and Windows.  Lispbox packages
 together a Common Lisp implementation,
@@ -74,15 +73,23 @@ Lispbox can be an appealing way to get started.
 operating implementation for your system before proceeding to the next step.
 </p>
 <h2><a name="id2">Step 2: Obtain and install GBBopen</a></h2><p>
-GBBopen is available in source form from
-<a target="_top" href="http://GBBopen.org/"><nobr><code>http://GBBopen.org/</code></nobr></a>.  A
-snapshot archive of the GBBopen source-code repository can be downloaded from
+Unless someone has already installed GBBopen on your machine, you will need to
+obtain and install it.  GBBopen is available in source form from
+<a target="_top" href="http://GBBopen.org/"><nobr><code>http://GBBopen.org/</code></nobr></a>. In this
+step I discuss three different approaches for downloading GBBopen, and you can
+follow whichever approach is most familiar for you.  (In the absence of any
+preference, I recommend the Subversion client approach.)
+</p>
+<h3><a name="id3">Downloading the snapshot archive</a></h3><p>
+A snapshot archive of the GBBopen source-code repository can be downloaded
+from
 <a target="_top" href="http://gbbopen.org/downloads/GBBopen.tar.gz"><nobr><code>http://gbbopen.org/downloads/GBBopen.tar.gz</code></nobr></a>.
 Extract the archive into a directory of your choosing, and follow the
-&#8220;Compiling/Loading GBBopen&#8221; instructions that are contained in the
+&#8220;Compiling All GBBopen Modules&#8221; instructions that are contained in the
 <code>README</code> file of the installation.
 </p>
-<p><a name="id3">Alternatively,</a> if you are familiar with
+<h3><a name="id4">Downloading with Subversion</a></h3><p>
+Alternatively, if you are familiar with
 <a target="_top" href="http://subversion.tigris.org">Subversion</a> and have a Subversion
 client installed on your computer, you can checkout the latest files directly
 from the GBBopen repository.  For example, the shell command:
@@ -91,16 +98,16 @@ from the GBBopen repository.  For example, the shell command:
 </pre>
 will create a GBBopen repository tree rooted at the directory named
 <code>gbbopen</code> in your current working directory.  As above, follow the
-&#8220;Compiling/Loading GBBopen&#8221; instructions that are contained in the
+&#8220;Compiling All GBBopen Modules&#8221; instructions that are contained in the
 <code>README</code> file of the installation.
 </p>
-<p><a name="id4">GBBopen</a> development is ongoing, and you should update your GBBopen
+<p><a name="id5">GBBopen</a> development is ongoing, and you should update your GBBopen
 installation regularly in order to obtain the latest capabilities and
-enhancements.  Using Subversion is the easiest way to keep current, and you
-are strongly encouraged to install a Subversion client and use it perform
-frequent updates.  Simply issue the command:
+enhancements.  Subversion provides an easy way to keep current, and you are
+strongly encouraged to install a Subversion client and use it perform frequent
+updates.  Simply issue the command:
 <pre class="pretop">
-<font color="#667f66">  [~]&#36; <font color="#000000">svn update</font></font>
+<font color="#667f66">  [~/gbbopen]&#36; <font color="#000000">svn update</font></font>
 </pre>
 from the root directory of your GBBopen repository tree.  
 The <a target="_top" href="http://tortoisesvn.tigris.org/">TortoiseSVN</a> Subversion
@@ -110,12 +117,36 @@ to use as <a target="_top" href="http://www.tortoisecvs.org/">TortoiseCVS</a> (a
 highly recommended if aren't already using it as your CVS client on
 Windows).
 </p>
-<p>Subversion <code>.svn</code> administrative directories are included in the
-GBBopen snapshot archive, so a Subversion <code>update</code> command can be
-used to freshen a GBBopen installation that was originally installed
-from a snapshot archive.
+<p>Subversion <code>.svn</code> administrative directories are included in the GBBopen
+snapshot archive, so a Subversion <code>update</code> command can be used to freshen
+a GBBopen installation that was originally installed using the snapshot
+archive download-and-extraction approach described previously.
 </p>
-<h2><a name="id5">Step 3: Subscribe to the GBBopen mailing lists</a></h2><p>
+<h3><a name="id6">Downloading with clbuild</a></h3><p>
+If you use <a target="_top" href="http://common-lisp.net/project/clbuild/">clbuild</a>, you
+can use it to download the latest GBBopen sources by issuing the following
+command:
+<pre class="pretop">
+<font color="#667f66">  [~]&#36; <font color="#000000">clbuild install gbbopen</font></font>
+</pre>
+</p>
+<p>At any later time, you can issue the command:
+<pre class="pretop">
+<font color="#667f66">  [~]&#36; <font color="#000000">clbuild update gbbopen</font></font>
+</pre>
+to obtain the latest sources from the GBBopen repository.
+</p>
+<p>If your clbuild doesn't know about GBBopen, add the following line to the
+clbuild wnpp-projects file:
+<pre class="pretop">
+  gbbopen get_svn http://gbbopen.org/svn/GBBopen/trunk/ #blackboard-system framework, tools, &#38; utilities
+</pre>
+</p>
+<p>As was the case with the other two download methods, follow the &#8220;Compiling
+All GBBopen Modules&#8221; instructions that are contained in the GBBopen
+<code>README</code> file to complete the installation.
+</p>
+<h2><a name="id7">Step 3: Subscribe to the GBBopen mailing lists</a></h2><p>
 I strongly recommend that you subscribe to the GBBopen Announcements
 (<nobr><code>gbbopen-announce</code></nobr>) and the GBBopen Users
 (<nobr><code>gbbopen-list</code></nobr>) mailing lists.  To subscribe, go to the &#8220;Mailing
@@ -130,7 +161,7 @@ page.)
 this tutorial and archived messages from the GBBopen Users list come up
 short).
 </p>
-<h2><a name="id6">Step 4: Interact with the REPL</a></h2><p>
+<h2><a name="id8">Step 4: Interact with the REPL</a></h2><p>
 This tutorial assumes that you have a basic understanding of Common Lisp and,
 in particular, how to interact with the Common Lisp implementation that you
 are using.  Thus, you should be able to start up your Common Lisp system and
@@ -178,7 +209,7 @@ other hand, some feel that they learn faster (and improve retention) through
 the action of typing.  Either text-entry approach, however, is preferable to
 simply reading through the exercises.  This tutorial is about <i>learning by doing!</i>
 </p>
-<p><a name="id7">While</a> we are on the subject of what is displayed, enter the following
+<p><a name="id9">While</a> we are on the subject of what is displayed, enter the following
 expression:
 <pre class="pretop">
 <font color="#667f66">  cl-user&gt; <font color="#000000">'symbol</font>
@@ -196,7 +227,7 @@ entering the following form:
   cl-user&gt;</font>
 </pre>
 </p>
-<p><a name="id8">Your</a> Common Lisp implementation may also differ slightly on how it displays
+<p><a name="id10">Your</a> Common Lisp implementation may also differ slightly on how it displays
 multiple returned values.  For example:
 <pre class="pretop">
 <font color="#667f66">  cl-user&gt; <font color="#000000">(values 1 2 3)</font>
@@ -217,7 +248,7 @@ with semicolon value-separator characters:
   cl-user&gt;</font>
 </pre>
 </p>
-<h2><a name="id9">Step 5: Recover from an error</a></h2><p>
+<h2><a name="id11">Step 5: Recover from an error</a></h2><p>
 Even you are a very careful typist, sooner or later you will enter a Common
 Lisp expression that signals an error.  Therefore, it is important that you
 know how to get back on track when the inevitable occurs.  Let's intentionally
@@ -241,12 +272,12 @@ or &#8220;backtrace,&#8221; of function calls that led to the error, view and ed
 variable bindings, and so forth, and you can often correct the cause of the
 error and resume the broken evaluation directly from the debugger.
 </p>
-<p>For tutorial purposes, you only need to know how to abort out of the
-evaluation and return back to the REPL if you trigger an error.  The details
-for aborting the computation and exiting the debugger are implementation
-dependent, so you may need to investigate how to abort out of an error on your
-Common Lisp implementation.  For example, it might be as easy as entering an
-abort debugger command:
+<p>For this tutorial, you only need to know how to abort out of the evaluation
+and return back to the REPL if you trigger an error.  The details for aborting
+the computation and exiting the debugger are implementation dependent, so you
+may need to investigate how to abort out of an error on your Common Lisp
+implementation.  For example, it might be as easy as entering an abort
+debugger command:
 <pre class="pretop">
 <font color="#667f66">  cl-user&gt; (/ 1 0)
   Error: Attempt to divide 1 by zero.
@@ -257,7 +288,7 @@ Consult your Common Lisp documentation or a knowledgeable friend if
 you need assistance with the debugger in your Common Lisp
 implementation (<code>:a</code> or <code>q</code> are typical abort commands).
 </p>
-<h3><a name="id10">Breaking a computation</a></h3><p>
+<h3><a name="id12">Breaking a computation</a></h3><p>
 There are other mistakes that don't signal an error.  Suppose I
 foolishly evaluate this expression:
 <pre class="pretop">
@@ -302,7 +333,7 @@ can be resumed or aborted:
   cl-user&gt;</font>
 </pre>
 </p>
-<h3><a name="id11">Help! My REPL is broken!</a></h3><p>
+<h3><a name="id13">Help! My REPL is broken!</a></h3><p>
 Here is one last difficulty.  Suppose I enter:
 <pre class="pretop">
 <font color="#667f66">  cl-user&gt; <font color="#000000">(list "This" "is "also" "a" "problem!")</font>
@@ -367,53 +398,15 @@ again:
 example situations should give you enough experience to get through the rest
 of the tutorial.
 </p>
-<h2><a name="id12">Step 6: Load the <code>:gbbopen-user</code> module</a></h2><p>
+<h2><a name="id14">Step 6: Load the <code>:gbbopen-user</code> module</a></h2><p>
 GBBopen is packaged with its own module system
 that supports compiling and loading GBBopen components.
 </p>
 <p>To compile and load the <nobr><code>:gbbopen-user</code></nobr> module and all the GBBopen
 modules it requires, you need to evaluate the following forms within your
-Common Lisp environment.  First, load GBBopen's
-<nobr><code><var>&lt;install-dir&gt;</var>/startup.lisp</code></nobr> file from wherever GBBopen
-has been installed:
-<small><pre class="pretop">
-<font color="#667f66">  cl-user&gt; <font color="#000000">(load "<var>&lt;install-dir&gt;</var>/startup.lisp")</font>
-  ;; Loading <var>&lt;install-dir&gt;</var>/startup.lisp
-  ;; GBBopen is installed in <var>&lt;install-dir&gt;</var>
-  ;; Your "home" directory is <var>&lt;homedir&gt;</var>
-  ;;  Loading <var>&lt;install-dir&gt;</var>/source/module-manager/module-manager-loader.lisp
-  ;;   Loading <var>&lt;install-dir&gt;</var>/source/module-manager/module-manager.lisp
-  ;;     Loading <var>&lt;install-dir&gt;</var>/source/module-manager/module-manager-user.lisp
-  ;;  Loading <var>&lt;install-dir&gt;</var>/source/modules.lisp
-  ;; No shared module definitions were found in <var>&lt;install-dir&gt;</var>/shared-gbbopen-modules/.
-  ;; No personal module definitions were found in <var>&lt;homedir&gt;</var>/gbbopen-modules/.
-  t
-  cl-user&gt;</font>
-</pre></small>
-<a name="id13">Then</a> compile and load the <nobr><code>:gbbopen-user</code></nobr> module and all the
-GBBopen modules it requires by evaluating:
-<small><pre>
-<font color="#667f66">  cl-user&gt; <font color="#000000">(module-manager:compile-module :gbbopen-user :propagate :create-dirs)</font>
-  ;; Compiling <var>&lt;install-dir&gt;</var>/source/module-manager/module-manager.lisp
-  ;; Loading <var>&lt;install-dir&gt;</var>/<var>&lt;platform-dir&gt;</var>/module-manager/module-manager.fasl
-       ...
-  ;; Compiling <var>&lt;install-dir&gt;</var>/source/gbbopen/gbbopen-user.lisp
-  ;; Loading <var>&lt;install-dir&gt;</var>/<var>&lt;platform-dir&gt;</var>/gbbopen/gbbopen-user.fasl
-  cl-user&gt;</font>
-</pre></small>
-</p>
-<p>GBBopen should compile (if necessary) and load all the files needed for the
-next exercise without error.  The output on your Common Lisp implementation
-may vary somewhat from that shown above.  For example, the file extension for
-compiled files, shown as <code>.fasl</code> throughout this tutorial, is dependent on
-your Common Lisp implementation and platform.
-</p>
-<h3><a name="id14">File protection problems?</a></h3><p>
-If one or more GBBopen files needs to be compiled, you must have write
-permission for those files and directories on your file system.  If you do not
-have write permission and someone else is maintaining your GBBopen
-installation, they must start up Common Lisp and then evaluate the following
-two expressions:
+Common Lisp environment.  Unless you are using GBBopen with ASDF or clbuild
+(see below), load GBBopen's <nobr><code><var>&lt;install-dir&gt;</var>/initiate.lisp</code></nobr>
+file from wherever GBBopen was installed:
 <small><pre class="pretop">
 <font color="#667f66">  cl-user&gt; <font color="#000000">(load "<var>&lt;install-dir&gt;</var>/initiate.lisp")</font>
   ;; Loading <var>&lt;install-dir&gt;</var>/initiate.lisp
@@ -424,29 +417,98 @@ two expressions:
   ;;     Loading <var>&lt;install-dir&gt;</var>/gbbopen-modules-directory.lisp
   ;; No shared module command definitions were found in <var>&lt;install-dir&gt;</var>/gbbopen-modules/.
   ;; No personal module command definitions were found in <var>&lt;homedir&gt;</var>/gbbopen-modules/.
-  t
-  cl-user&gt; <font color="#000000">(compile-gbbopen)</font>
+  #P"<var>&lt;install-dir&gt;</var>/initiate.lisp"
+  cl-user&gt; <font color="#000000">:gbbopen-user</font>
   ;; Loading <var>&lt;install-dir&gt;</var>/startup.lisp
-     ...
-  ;;; GBBopen module compilation completed.
-  [~]&#36;</font>
+  ;; GBBopen is installed in <var>&lt;install-dir&gt;</var>
+  ;; Your "home" directory is <var>&lt;homedir&gt;</var>
+  ;;  Loading <var>&lt;install-dir&gt;</var>/source/module-manager/module-manager-loader.lisp
+  ;; Loading <var>&lt;install-dir&gt;</var>/<var>&lt;platform-dir&gt;</var>/module-manager/module-manager.fasl
+       ...
+  ;; Loading <var>&lt;install-dir&gt;</var>/modules.lisp
+  ;; No shared module definitions were found in <var>&lt;install-dir&gt;</var>/gbbopen-modules/.
+  ;; No personal module definitions were found in <var>&lt;homedir&gt;</var>/gbbopen-modules/.
+       ...
+  ;; Compiling <var>&lt;install-dir&gt;</var>/source/gbbopen/gbbopen-user.lisp
+  ;; Loading <var>&lt;install-dir&gt;</var>/<var>&lt;platform-dir&gt;</var>/gbbopen/gbbopen-user.fasl
+  t
+  gbbopen-user&gt;</font>
 </pre></small>
-every time they update GBBopen to ensure that all GBBopen modules have
-been compiled.
 </p>
-<h3><a name="id15">Beyond <code><var>&lt;install-dir&gt;</var>/startup.lisp</code></a></h3><p>
-Although loading GBBopen's <nobr><code><var>&lt;install-dir&gt;</var>/startup.lisp</code></nobr>
-file is a very easy way to get started with GBBopen, setting up your computing
-environment for serious GBBopen development requires only a few moments that
-will be recouped almost immediately.  The steps needed to set everything up
-will be detailed soon in the <a href="tutorial-development-environment.html">Enhancing Your Development Environment
-exercise</a>.
+<p>GBBopen should compile (if necessary) and load all the files needed for the
+next exercise without error.  The output on your Common Lisp implementation
+may vary somewhat from that shown above.  For example, the file extension for
+compiled files, shown as <code>.fasl</code> throughout this tutorial, is dependent on
+your Common Lisp implementation and platform.
 </p>
-<h2><a name="id16">Step 7: Change to the <code>:gbbopen-user</code> package</a></h2><p>
-Now that the <code>:gbbopen-user</code> module is loaded, change the current package
-to the <nobr><code>:gbbopen-user</code></nobr> package:
+<p><table width="90%" align="center" border="1" cellpadding="12"
+      bgcolor="#FFFFEA"><tr><td valign="baseline"><table border="0">
+<tr><td valign="baseline"><b>ASDF and clbuild users</b></td></tr><tr><td valign="baseline">
+GBBopen's Module Manager Facility provides an interface that allows
+<a target="_top" href="http://common-lisp.net/project/asdf/">ASDF</a> (and therefore
+<a target="_top" href="http://common-lisp.net/project/clbuild/">clbuild</a>) to play nicely
+with the Module Manager.  If you installed GBBopen using clbuild, ASDF has
+been informed of GBBopen's <nobr><code><var>&lt;install-dir&gt;</var>/gbbopen.asd</code></nobr>
+system-definition file.  Otherwise, to use ASDF to set up GBBopen, you must
+add the <nobr><code>gbbopen.asd</code></nobr> file to ASDF's Registry manually.  Then,
+instead of loading the <nobr><code><var>&lt;install-dir&gt;</var>/initiate.lisp</code></nobr>
+file, the Module Manager and GBBopen module definitions can be loaded using
+ASDF by entering:
+<small><pre>
+<font color="#667f66">  cl-user&gt; <font color="#000000">(asdf:operate 'asdf:load-op :gbbbopen)</font>
+  ;; Loading <var>&lt;install-dir&gt;</var>/initiate.lisp
+  ;; GBBopen is installed in <var>&lt;install-dir&gt;</var>
+  ;; Your "home" directory is <var>&lt;homedir&gt;</var>
+       ...
+  ;; Loading <var>&lt;install-dir&gt;</var>/startup.lisp
+  ;; GBBopen is installed in <var>&lt;install-dir&gt;</var>
+  ;; Your "home" directory is <var>&lt;homedir&gt;</var>
+  ;;  Loading <var>&lt;install-dir&gt;</var>/source/module-manager/module-manager-loader.lisp
+  ;; Loading <var>&lt;install-dir&gt;</var>/<var>&lt;platform-dir&gt;</var>/module-manager/module-manager.fasl
+       ...
+  ;; Loading <var>&lt;install-dir&gt;</var>/modules.lisp
+  ;; No shared module definitions were found in <var>&lt;install-dir&gt;</var>/gbbopen-modules/.
+  ;; No personal module definitions were found in <var>&lt;homedir&gt;</var>/gbbopen-modules/.
+       ...
+  ;; Defining an ASDF defsystem for each Module Manager module...
+  cl-user&gt;</font>
+</pre></small>
+or when ASDF is integrated with Common Lisp's <b>require</b>:
+<small><pre>
+<font color="#667f66">  cl-user&gt; <font color="#000000">(require :gbbopen)</font>
+  ;; Loading <var>&lt;install-dir&gt;</var>/initiate.lisp
+  ;; GBBopen is installed in <var>&lt;install-dir&gt;</var>
+  ;; Your "home" directory is <var>&lt;homedir&gt;</var>
+       ...
+  ;; Loading <var>&lt;install-dir&gt;</var>/startup.lisp
+  ;; GBBopen is installed in <var>&lt;install-dir&gt;</var>
+  ;; Your "home" directory is <var>&lt;homedir&gt;</var>
+  ;;  Loading <var>&lt;install-dir&gt;</var>/source/module-manager/module-manager-loader.lisp
+  ;; Loading <var>&lt;install-dir&gt;</var>/<var>&lt;platform-dir&gt;</var>/module-manager/module-manager.fasl
+       ...
+  ;; Loading <var>&lt;install-dir&gt;</var>/modules.lisp
+  ;; No shared module definitions were found in <var>&lt;install-dir&gt;</var>/gbbopen-modules/.
+  ;; No personal module definitions were found in <var>&lt;homedir&gt;</var>/gbbopen-modules/.
+       ...
+  ;; Defining an ASDF defsystem for each Module Manager module...
+  cl-user&gt;</font>
+</pre></small>
+</p>
+<p>Notice that loading the <nobr><code><var>&lt;install-dir&gt;</var>/initiate.lisp</code></nobr> file
+loaded only GBBopen's REPL command processing extensions, global REPL command
+definitions, and module-directory processing into Common Lisp&ndash;the Module
+Manager is not loaded until it is needed (such as when we performed the
+<nobr><code>:gbbopen-user</code></nobr> REPL command).  The ASDF <code>:gbbopen</code>
+&#8220;system&#8221; start up, on the other hand, must also load the Module Manager and
+module definitions, as they are required in order to define an ASDF system for
+each Module Manager module.
+</td></tr></table></table>
+</p>
+<h3><a name="id15">Packages</a></h3><p>
+Note that when the <code>:gbbopen-user</code> module was loaded, the Module Manager
+changed the current package to the <nobr><code>:gbbopen-user</code></nobr> package.  In the Common Lisp implementation above, this is shown by the new package name in the REPL prompt.  The current package can also be seen by evaluating:
 <pre class="pretop">
-<font color="#667f66">  cl-user&gt; <font color="#000000">(in-package :gbbopen-user)</font>
+<font color="#667f66">  cl-user&gt; <font color="#000000">*package*</font>
   #&lt;package GBBOPEN-USER&gt;
   gbbopen-user&gt;</font>
 </pre>
@@ -458,9 +520,95 @@ their names.  Initially, the current package is set to the
 <nobr><code>:common-lisp-user</code></nobr> package.  The <nobr><code>:gbbopen-user</code></nobr>
 module creates a new package, named <nobr><code>:gbbopen-user</code></nobr>, that includes
 GBBopen Tools and GBBopen Core symbols in addition to the standard Common Lisp
-symbols.  If you do not set the current package to the
-<nobr><code>:gbbopen-user</code></nobr> package, references to GBBopen functions and
+symbols.  If the current package is not set to the <nobr><code>:gbbopen-user</code></nobr>
+package in the exercises to follow, references to GBBopen functions and
 variables will not map to the proper symbols.
+</p>
+</p>
+<h3><a name="id16">If it didn't work<i>...</i></a></h3><p>
+If you are running GBBopen in a Common Lisp environment that doesn't support
+REPL commands and the <nobr><code>:gbbopen-user</code></nobr> REPL command didn't work,
+all is not lost.  Loading <nobr><code><var>&lt;install-dir&gt;</var>/initiate.lisp</code></nobr>
+also defines functions in the <nobr><code>:common-lisp-user</code></nobr> package with the
+same name as the REPL command:
+<pre class="pretop">
+<font color="#667f66">  cl-user&gt; <font color="#000000">(load "<var>&lt;install-dir&gt;</var>/initiate.lisp")</font>
+  ;; Loading <var>&lt;install-dir&gt;</var>/initiate.lisp
+  ;; GBBopen is installed in <var>&lt;install-dir&gt;</var>
+  ;; Your "home" directory is <var>&lt;homedir&gt;</var>
+  ;;     Loading <var>&lt;install-dir&gt;</var>/extended-repl.lisp
+  ;;     Loading <var>&lt;install-dir&gt;</var>/commands.lisp
+  ;;     Loading <var>&lt;install-dir&gt;</var>/gbbopen-modules-directory.lisp
+  ;; No shared module command definitions were found in <var>&lt;install-dir&gt;</var>/gbbopen-modules/.
+  ;; No personal module command definitions were found in <var>&lt;homedir&gt;</var>/gbbopen-modules/.
+  #P"<var>&lt;install-dir&gt;</var>/initiate.lisp"
+  cl-user&gt; <font color="#000000">(gbbopen-user)</font>
+  ;; Loading <var>&lt;install-dir&gt;</var>/startup.lisp
+     ...
+  ;; Loading <var>&lt;install-dir&gt;</var>/<var>&lt;platform-dir&gt;</var>/gbbopen/gbbopen-user.fasl
+  gbbopen-user&gt;</font>
+</pre>
+</p>
+<h3><a name="id17">File protection problems?</a></h3><p>
+If one or more GBBopen files needs to be compiled, you must have write
+permission for those files and directories on your file system.  If you do not
+have write permission and someone else is maintaining your GBBopen
+installation, you must remind them that they should perform the &#8220;Compiling
+All GBBopen Modules&#8221; operations (described in the GBBopen installation
+<code>README</code> file) every time they update GBBopen to ensure that all the
+latest GBBopen files have been compiled.
+</p>
+<h3><a name="sec:REPL-command-syntax">REPL command syntax</a></h3>
+<p>GBBopen's REPL commands are defined to mimic the syntax of existing REPL
+commands in your Common Lisp environment.  REPL commands, including those that
+have arguments, are normally specified using a non-list (&#8220;spread&#8221;)
+representation. For example:
+<pre class="pretop">
+  cl-user&gt; :gbbopen-user :create-dirs
+  ;; Loading <var>&lt;install-dir&gt;</var>/startup.lisp
+     ...
+  ;; Loading <var>&lt;install-dir&gt;</var>/<var>&lt;platform-dir&gt;</var>/gbbopen/gbbopen-user.fasl
+  gbbopen-user&gt;
+</pre>
+Some Common Lisp implementations (<a target="_top" href="http://trac.clozure.com/ccl">Clozure
+CL</a>,
+<a target="_top" href="http://www.lispworks.com">LispWorks</a>, and
+<a target="_top" href="http://sbcl.sourceforge.net">SBCL</a>) and the
+<a target="_top" href="http://common-lisp.net/project/slime/">SLIME</a> REPL interface, also
+support REPL commands in non-spread (list) form in addition to the
+spread notation.  For example:
+<pre>
+  cl-user&gt; (:gbbopen-user :create-dirs)
+  ;; Loading <var>&lt;install-dir&gt;</var>/startup.lisp
+     ...
+  ;; Loading <var>&lt;install-dir&gt;</var>/<var>&lt;platform-dir&gt;</var>/gbbopen/gbbopen-user.fasl
+  gbbopen-user&gt;
+</pre>
+</p>
+<p>As noted above, equivalent functions in the <nobr><code>:common-lisp-user</code></nobr>
+package are always defined for each REPL command, and these functions can be
+used in place of the keyword REPL command processing:
+<pre class="pretop">
+<font color="#667f66">  cl-user&gt; <font color="#000000">(cl-user:gbbopen-user :create-dirs)</font>
+  ;; Loading <var>&lt;install-dir&gt;</var>/startup.lisp
+     ...
+  ;; Loading <var>&lt;install-dir&gt;</var>/<var>&lt;platform-dir&gt;</var>/gbbopen/gbbopen-user.fasl
+  gbbopen-user&gt;</font>
+</pre>
+</p>
+<p>We will show the <a href="#sec:REPL-command-syntax">spread command syntax</a>
+throughout the rest of the Tutorial.  (GBBopen's REPL commands are summarized
+in the <a target="_top" href="http://GBBopen.org/downloads/command-refcard.pdf">GBBopen REPL Commands Quick Reference
+Card</a>, available on the
+GBBopen web site.)
+</p>
+<h3><a name="id19">Beyond <code><var>&lt;install-dir&gt;</var>/initiate.lisp</code></a></h3><p>
+Although loading GBBopen's <nobr><code><var>&lt;install-dir&gt;</var>/initiate.lisp</code></nobr>
+file is a very easy way to get started with GBBopen, setting up your computing
+environment for serious GBBopen development requires only a few moments that
+will be recouped almost immediately.  The steps needed to set everything up
+will be detailed soon in the <a href="tutorial-development-environment.html">Enhancing Your Development Environment
+exercise</a>.
 </p>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
