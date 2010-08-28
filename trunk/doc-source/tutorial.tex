@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/tutorial.tex *-*
-%% *-* Last-Edit: Wed Aug 25 17:54:44 2010; Edited-By: cork *-*
+%% *-* Last-Edit: Sat Aug 28 13:06:15 2010; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2005-2010, Dan Corkill <corkill@GBBopen.org>
@@ -841,7 +841,7 @@ file from wherever GBBopen was installed:
   ;; GBBopen is installed in \var{<install-dir>\/}
   ;; Your "home" directory is \var{<homedir>\/}
   ;;  Loading \var{<install-dir>\/}/source/module-manager/module-manager-loader.lisp
-  ;; Loading \var{<install-dir>\/}/\var{<platform-dir>\/}/module-manager/module-manager.fasl
+  ;; Loading \var{<install-dir>\/}/\var{<platform-dir>\/}/module-manager/module-manager.lisp
        ...
   ;; Loading \var{<install-dir>\/}/modules.lisp
   ;; No shared module definitions were found in \var{<install-dir>\/}/gbbopen-modules/.
@@ -884,7 +884,7 @@ your Common Lisp implementation and platform.
   ;; GBBopen is installed in \var{<install-dir>\/}
   ;; Your "home" directory is \var{<homedir>\/}
   ;;  Loading \var{<install-dir>\/}/source/module-manager/module-manager-loader.lisp
-  ;; Loading \var{<install-dir>\/}/\var{<platform-dir>\/}/module-manager/module-manager.fasl
+  ;; Loading \var{<install-dir>\/}/\var{<platform-dir>\/}/module-manager/module-manager.lisp
        ...
   ;; Loading \var{<install-dir>\/}/modules.lisp
   ;; No shared module definitions were found in \var{<install-dir>\/}/gbbopen-modules/.
@@ -909,7 +909,7 @@ or when ASDF is integrated with Common Lisp's \textbf{require}:
   ;; GBBopen is installed in \var{<install-dir>\/}
   ;; Your "home" directory is \var{<homedir>\/}
   ;;  Loading \var{<install-dir>\/}/source/module-manager/module-manager-loader.lisp
-  ;; Loading \var{<install-dir>\/}/\var{<platform-dir>\/}/module-manager/module-manager.fasl
+  ;; Loading \var{<install-dir>\/}/\var{<platform-dir>\/}/module-manager/module-manager.lisp
        ...
   ;; Loading \var{<install-dir>\/}/modules.lisp
   ;; No shared module definitions were found in \var{<install-dir>\/}/gbbopen-modules/.
@@ -2606,6 +2606,7 @@ command to load GBBopen's Emacs indentation customizations:
   (load "\var{<install-dir>\/}/gbbopen-indent")
 \end{example}
 
+\begin{notebox}{Lispbox users}
 If you are using
 \xsitelink{\textit{Lispbox}}{http://www.gigamonkeys.com/book/lispbox/}, you
 will have to enable loading of the \code{.emacs} initialization file, as it is
@@ -2614,6 +2615,7 @@ disabled in the Lispbox startup file.  Edit the Lispbox startup file
 \nobr{\code{/Applications/Lispbox/Emacs.app/Contents/MacOS/lispbox.sh}} on Mac
 OS) and remove the \nobr{\code{-{}-no-init-file}} option from the Emacs
 invocation line.
+\end{notebox}
 
 \subsubsection*{Adding the Common Lisp HyperSpec}
 
@@ -5603,6 +5605,7 @@ Each GBBopen application is packaged in a directory that contains:
   commands for the module (loaded after the personal
   \nobr{\code{gbbopen-commands.lisp}} file if there is one in the user's
   ``homedir'')
+\item any additional directories or files useful to the application
 \end{tightitemize}
 %
 You already have the \code{source} directory and the

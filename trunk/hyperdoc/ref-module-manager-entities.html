@@ -1,10 +1,9 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-   "DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang=en>
 <!-- XML file produced from file: reference.tex
      using Hyperlatex v 2.9-in-waiting-rk (c) Otfried Cheong -->
 <head>
+<meta charset=utf-8>
 <title>GBBopen 1.5 Reference -- Module Manager Facility</title>
 </p>
 <link rel="SHORTCUT ICON" href="favicon.ico"><link rel=stylesheet
@@ -20,12 +19,13 @@ the dependencies between modules and the modules that have been compiled and
 loaded. The Module Manager Facility was designed to be easy to use, yet it is
 powerful enough to manage substantial software projects, each operating on
 multiple hardware platforms and Common Lisp implementations.  Other, more
-complex, <nobr><b>defsystem</b></nobr> packages, such as ASDF
-(<a target="_top" href="http://constantly.at/lisp/asdf/"><nobr><code>http://constantly.at/lisp/asdf/</code></nobr></a>), are available, but their complexity makes
-defining and maintaining correct system definitions difficult.
+complex, <nobr><b>defsystem</b></nobr> packages, such as
+(<a target="_top" href="http://common-lisp.net/project/asdf/">ASDF</a>), are available,
+but their complexity makes defining and maintaining correct system
+definitions difficult.
 </p>
 <p><a name="id1">The</a> <code>:module-manager</code> <a href="ref-glossary.html#gl:module">module</a> is automatically loaded by the
-GBBopen <nobr><code><var>&lt;install-directory&gt;</var>/startup.lisp</code></nobr> file (via the
+GBBopen <nobr><code><var>&lt;install-directory&gt;</var>/startup.lisp</code></nobr> file (by the
 <nobr><code>module-manager-loader.lisp</code></nobr> file located in the
 <nobr><code>module-manager</code></nobr> subdirectory). If a
 <nobr><code>gbbopen-init.lisp</code></nobr> file (source or compiled) is present in the

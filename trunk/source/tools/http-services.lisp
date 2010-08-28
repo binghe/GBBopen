@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:HTTP-SERVICES; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/http-services.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Jul 25 09:33:33 2010 *-*
+;;;; *-* Last-Edit: Fri Aug 27 16:14:43 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -194,7 +194,7 @@
   (format connection "Date: ")
   (http-date-and-time nil :destination connection)
   (write-crlf connection)
-  (format connection "Content-Type: ~a; charset=~a"
+  (format connection "Content-Type: ~a~@[; charset=~a~]"
           content-type charset)
   (write-crlf connection)
   (when location

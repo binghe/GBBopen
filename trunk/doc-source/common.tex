@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/common.tex *-*
-%% *-* Last-Edit: Wed Aug 25 17:48:51 2010; Edited-By: cork *-*
+%% *-* Last-Edit: Fri Aug 27 05:01:38 2010; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2010, Dan Corkill <corkill@GBBopen.org>
@@ -982,20 +982,14 @@
 	(concat hyperlatex-html-directory "/"
 		(hyperlatex-fullname hyperlatex-node-number)))
   (setq hyperlatex-made-panel hyperlatex-make-panel)
-;; RK's change (replace UTF-8 with hyperlatex-xml-charset)
-;;  (hyperlatex-gen "?xml version=\"1.0\" encoding=\"UTF-8\"?" "\n")
-  (hyperlatex-gen 
-    (concat "?xml version=\"1.0\" encoding=\"" hyperlatex-xml-charset "\"?") 
-    "\n")
   ;; XML intro is user defined
   (if hyperlatex-xml
       ()
     (hyperlatex-gen
      (concat
-      "!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"\n"
-      "   \"DTD/xhtml1-transitional.dtd\"")
+      "!DOCTYPE html")
      "\n")
-    (hyperlatex-gen "html xmlns=\"http://www.w3.org/1999/xhtml\"" "\n"))
+    (hyperlatex-gen "html lang=en" "\n"))
   (hyperlatex-gen
    (concat "!-- XML file produced from " hyperlatex-produced-from
 	   "\n     using Hyperlatex v "
@@ -1009,6 +1003,7 @@
 	(insert "\\HlxXmlIntro{}\n")
 	(hyperlatex-format-region start (point)))
     (hyperlatex-gen (hyperlatex-get-attributes "head") "\n")
+    (hyperlatex-gen "meta charset=utf-8" "\n")
     (hyperlatex-gen (hyperlatex-get-attributes "title"))
     (insert hyperlatex-title 
 	    (hyperlatex-purify (if head (concat " -- " head) "")))
@@ -1038,16 +1033,10 @@
   "Creates frameset file."
   ;; first we make the frameset
   (delete-region (point-min) (point))
-;; RK's change
-  (hyperlatex-gen "?xml version=\"1.0\" encoding=\"UTF-8\"?" "\n")
-;;  (hyperlatex-gen 
-;;    (concat "?xml version=\"1.0\" encoding=\"" hyperlatex-xml-charset "\"?") 
-;;    "\n")
   (hyperlatex-gen
-   (concat "!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Frameset//EN\"\n"
-           "   \"DTD/xhtml1-frameset.dtd\"")
+   (concat "!DOCTYPE html")
    "\n")
-  (hyperlatex-gen "html xmlns=\"http://www.w3.org/1999/xhtml\"" "\n")
+  (hyperlatex-gen "html lang=en" "\n")
   (hyperlatex-gen
    (concat "!-- XML file produced from " hyperlatex-produced-from
 	   "\n     using Hyperlatex v "
@@ -1057,6 +1046,7 @@
            " --")
    "\n")
   (hyperlatex-gen (hyperlatex-get-attributes "head") "\n")
+  (hyperlatex-gen "meta charset=utf-8" "\n")
   (hyperlatex-gen (hyperlatex-get-attributes "title"))
   (insert hyperlatex-title)
   (hyperlatex-gen "/title" "\n")
