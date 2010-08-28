@@ -1,10 +1,9 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-   "DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang=en>
 <!-- XML file produced from file: reference.tex
      using Hyperlatex v 2.9-in-waiting-rk (c) Otfried Cheong -->
 <head>
+<meta charset=utf-8>
 <title>GBBopen 1.5 Reference -- Starting Up</title>
 </p>
 <link rel="SHORTCUT ICON" href="favicon.ico"><link rel=stylesheet
@@ -14,61 +13,191 @@
 <table width="100%" cellpadding="0" cellspacing="2"><tr>
 <td bgcolor="#99ccff"><a href="ref-acknowledgments.html"><img border="0" alt="Acknowledgments" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="reference_0.html"><img border="0" alt="Top" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-module-manager-entities.html"><img border="0" alt="Module Manager Facility" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b>Starting Up</b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table>
 <h1>Starting Up</h1>
-<p>GBBopen is packaged with its own <a href="ref-module-manager-entities.html">module system</a> that
-supports compiling and loading GBBopen components.  The Module Manager Facility
-is designed for ease of use and for simplicity in porting to Common Lisp
-implementations.  For example, to compile all core GBBopen <a href="ref-glossary.html#gl:modules">modules</a> and
-execute a basic trip-tests file, you only need to evaluate the following forms
-within your Common Lisp environment:
+<p>GBBopen is packaged with its own <a href="ref-module-manager-entities.html">module system</a>
+that supports compiling and loading GBBopen components.  The Module Manager
+Facility is designed for ease of use and for simplicity in porting to Common
+Lisp implementations.  For example, to compile all GBBopen <a href="ref-glossary.html#gl:modules">modules</a>,
+you only need to evaluate the following forms within your Common Lisp
+environment.  First load GBBopen's
+<nobr><code><var>&lt;install-directory&gt;</var>/initiate.lisp</code></nobr> file:
 <small><pre class="pretop">
-  &gt; (load "<var>&lt;install-dir&gt;</var>/startup.lisp")
+<font color="#667f66">  cl-user&gt; <font color="#000000">(load "<var>&lt;install-dir&gt;</var>/initiate.lisp")</font>
+  ;; Loading <var>&lt;install-dir&gt;</var>/initiate.lisp
+  ;; GBBopen is installed in <var>&lt;install-dir&gt;</var>
+  ;; Your "home" directory is <var>&lt;homedir&gt;</var>
+  ;;     Loading <var>&lt;install-dir&gt;</var>/extended-repl.lisp
+  ;;     Loading <var>&lt;install-dir&gt;</var>/commands.lisp
+  ;;     Loading <var>&lt;install-dir&gt;</var>/gbbopen-modules-directory.lisp
+  ;; No shared module command definitions were found in <var>&lt;install-dir&gt;</var>/gbbopen-modules/.
+  ;; No personal module command definitions were found in <var>&lt;homedir&gt;</var>/gbbopen-modules/.
+  #P"<var>&lt;install-dir&gt;</var>/initiate.lisp"
+  cl-user&gt;</font>
+</pre></small>
+Notice that some additional GBBopen initialization files have been loaded by
+this file as well as GBBopen's top level read-eval-print loop (REPL)
+<a href="ref-glossary.html#gl:keyword-command">command</a> definitions.
+</p>
+<p><table width="90%" align="center" border="1" cellpadding="12"
+      bgcolor="#FFFFEA"><tr><td valign="baseline"><table border="0">
+<tr><td valign="baseline"><b>Windows users</b></td></tr><tr><td valign="baseline">
+<a name="id1">If</a> you are running GBBopen on Windows, note that backslash is the
+escape character in the standard Common Lisp reader; it causes the
+next character to treated as a normal character rather than as having
+any special syntactic characteristics. So, each backslash in a
+file-name string must be entered as two backslash characters.
+For example:
+<pre>
+  &gt; (load "c:\\GBBopen\\initiate.lisp")
+</pre>
+</p>
+<p>Many Common Lisp implementations also support Unix-style regular slashes in
+Windows file names (e.g., <nobr><code>"c:/GBBopen/initiate.lisp"</code></nobr>), which can
+be particularly convenient when typing file names in the REPL.
+</td></tr></table></table>
+</p>
+<p><h4>Top-level REPL commands</h4>
+<a name="id2">The</a> files loaded by <nobr><code><var>&lt;install-directory&gt;</var>/initiate.lisp</code></nobr>
+add some handy REPL <a href="ref-glossary.html#gl:keyword-command">keyword&nbsp;commands</a> when running
+<a target="_top" href="http://franz.com/products/allegrocl/">Allegro CL</a>,
+<a target="_top" href="http://trac.clozure.com/ccl">Clozure CL</a>,
+<a target="_top" href="http://www.cons.org/cmucl/">CMUCL</a>,
+<a target="_top" href="http://common-lisp.net/project/ecl/">ECL</a>,
+<a target="_top" href="http://www.lispworks.com">LispWorks</a>,
+<a target="_top" href="http://sbcl.sourceforge.net">SBCL</a>, and
+<a target="_top" href="http://www.scieneer.com/scl/">Scieneer CL</a>
+users.  Some interaction interfaces, such as
+<a target="_top" href="http://common-lisp.net/project/slime/">SLIME</a>, use their own REPL
+rather than the top-level listener provided by the Common Lisp implementation
+and, therefore, may not support <a href="ref-glossary.html#gl:keywords">keyword</a> <a href="ref-glossary.html#id182">REPL&nbsp;command</a>
+processing.  GBBopen provides a Swank extension to the
+<a target="_top" href="http://common-lisp.net/project/slime/">SLIME</a> REPL that supports
+REPL <a href="ref-glossary.html#gl:keyword-command">keyword&nbsp;commands</a>.
+</p>
+<p>Built-in and GBBopen <a href="ref-glossary.html#gl:keyword-command">REPL&nbsp;commands</a> are defined in the file
+<nobr><code><var>&lt;install-directory&gt;</var>/commands.lisp</code></nobr>.
+<a href="ref-glossary.html#gl:keyword-command">REPL&nbsp;commands</a>, including those that have arguments, are specified
+using a non-list (&#8220;spread&#8221;) representation.  For example:
+<pre class="pretop">
+  &gt; :gbbopen-test :propagate :create-dirs
+       ...
+  &gt;
+</pre>
+</p>
+<p>Some Common Lisp implementations (<a target="_top" href="http://trac.clozure.com/ccl">Clozure
+CL</a>,
+<a target="_top" href="http://www.lispworks.com">LispWorks</a>, and
+<a target="_top" href="http://sbcl.sourceforge.net">SBCL</a>) and the
+<a target="_top" href="http://common-lisp.net/project/slime/">SLIME</a> REPL interface, also
+support REPL commands in non-spread (list) form in addition to the
+spread notation.  For example:
+<pre>
+  &gt; (:gbbopen-test :propagate :create-dirs)
+       ...
+  &gt;
+</pre>
+Equivalent functions in the <nobr><code>:common-lisp-user</code></nobr> package are always
+defined for each <a href="ref-glossary.html#id182">REPL&nbsp;command</a>, and these functions can be used in
+place of REPL <a href="ref-glossary.html#gl:keyword-command">keyword-command</a> processing.
+</p>
+<p><h4>Compiling all GBBopen modules</h4>
+<a name="id3">Once</a> <nobr><code><var>&lt;install-dir&gt;</var>/initiate.lisp</code></nobr>, all GBBopen
+modules can be compiled by entering the following REPL command:
+<small><pre>
+<font color="#667f66">  cl-user&gt; <font color="#000000">:compile-gbbopen</font>
   ;; Loading <var>&lt;install-dir&gt;</var>/startup.lisp
   ;; GBBopen is installed in <var>&lt;install-dir&gt;</var>
   ;; Your "home" directory is <var>&lt;homedir&gt;</var>
   ;;  Loading <var>&lt;install-dir&gt;</var>/source/module-manager/module-manager-loader.lisp
-  ;;   Loading <var>&lt;install-dir&gt;</var>/source/module-manager/module-manager.lisp
-  ;;     Loading <var>&lt;install-dir&gt;</var>/source/module-manager/module-manager-user.lisp
-  ;;  Loading <var>&lt;install-dir&gt;</var>/source/modules.lisp
-  ;; No shared module definitions were found in <var>&lt;install-dir&gt;</var>/shared-gbbopen-modules/.
+  ;; Loading <var>&lt;install-dir&gt;</var>/<var>&lt;platform-dir&gt;</var>/module-manager/module-manager.lisp
+       ...
+  ;; Loading <var>&lt;install-dir&gt;</var>/modules.lisp
+  ;; No shared module definitions were found in <var>&lt;install-dir&gt;</var>/gbbopen-modules/.
   ;; No personal module definitions were found in <var>&lt;homedir&gt;</var>/gbbopen-modules/.
-  T
-  &gt; (module-manager:<a href="ref-compile-module.html">compile-module</a> :gbbopen-test :propagate :create-dirs)
-  ;; Compiling <var>&lt;install-dir&gt;</var>/source/module-manager/module-manager.lisp
        ...
-  ;; Running basic GBBopen tests...
-       ...
-  &gt;
+  ;;; GBBopen modules compilation completed.
+  <span 
+    style="font-family: serif; font-style: normal">[Common Lisp will exit]</span></font>
 </pre></small>
-GBBopen should compile, load, and run the basic tests file without error.
+GBBopen should compile all GBBopen modules and then exit Common Lisp without
+error.
 </p>
-<p><a name="id1">If</a> you are running GBBopen on Windows, note that backslash is the
-escape character in the standard Common Lisp reader; it causes the
-next character to treated as a normal character rather than as having
-any special syntactic characteristics. So, each backslash in a
-file-specification string must be entered as two backslash characters.
-For example:
-<pre class="pretop">
-  &gt; (load "c:\\GBBopen\\startup.lisp")
-</pre>
-As can be seen from the file-loading messages, the <nobr><code>startup.lisp</code></nobr>
-file loads a bootstrap loader file for the <a href="ref-module-manager-entities.html">Module Manager
-Facility</a> (the file
-<nobr><code>source/module-manager/module-manager-loader.lisp</code></nobr>).  This
+<p>As can be seen from the file-loading messages, the <nobr><code>startup.lisp</code></nobr>
+file that is loaded by the <code>:compile-gbbopen</code> command loads a bootstrap
+loader file for the <a href="ref-module-manager-entities.html">Module Manager Facility</a> (the
+file <nobr><code>source/module-manager/module-manager-loader.lisp</code></nobr>).  This
 bootstrap file then loads the Module Manager files
 (<nobr><code>source/module-manager/module-manager.lisp</code></nobr> and
 <nobr><code>source/module-manager/module-manager-user.lisp</code></nobr>) followed by the
 module definitions for all GBBopen <a href="ref-glossary.html#gl:modules">modules</a> (contained in the file
-<nobr><code>source/modules.lisp</code></nobr>).
+<nobr><code>source/modules.lisp</code></nobr>).  Then the Module Manager is used to
+compile all GBBopen modules.
 </p>
-<p><a name="id2">The</a> <code>:propagate</code> option to <nobr><b><a href="ref-compile-module.html">compile-module</a></b></nobr>
-causes any file in the <a href="ref-glossary.html#gl:required-module">required&nbsp;modules</a> to be compiled if its binary
-file does not exist or is not up to date.  The <nobr><code>:create-dirs</code></nobr>
-option automatically creates any directories that are missing in the
-compiled-file directory tree.
+<p><table width="90%" align="center" border="1" cellpadding="12"
+      bgcolor="#FFFFEA"><tr><td valign="baseline"><table border="0">
+<tr><td valign="baseline"><b>ASDF and clbuild users</b></td></tr><tr><td valign="baseline">
+GBBopen's Module Manager Facility provides an interface that allows
+<a target="_top" href="http://common-lisp.net/project/asdf/">ASDF</a> (and therefore
+<a target="_top" href="http://common-lisp.net/project/clbuild/">clbuild</a>) to play nicely
+with the Module Manager.  If you installed GBBopen using clbuild, ASDF has
+been informed of GBBopen's <nobr><code><var>&lt;install-dir&gt;</var>/gbbopen.asd</code></nobr>
+system-definition file.  Otherwise, to use ASDF to set up GBBopen, you must
+add the <nobr><code>gbbopen.asd</code></nobr> file to ASDF's Registry manually.  Then,
+instead of loading the <nobr><code><var>&lt;install-dir&gt;</var>/initiate.lisp</code></nobr>
+file, the Module Manager and GBBopen module definitions can be loaded using
+ASDF by entering:
+<small><pre>
+<font color="#667f66">  cl-user&gt; <font color="#000000">(asdf:operate 'asdf:load-op :gbbbopen)</font>
+  ;; Loading <var>&lt;install-dir&gt;</var>/initiate.lisp
+  ;; GBBopen is installed in <var>&lt;install-dir&gt;</var>
+  ;; Your "home" directory is <var>&lt;homedir&gt;</var>
+       ...
+  ;; Loading <var>&lt;install-dir&gt;</var>/startup.lisp
+  ;; GBBopen is installed in <var>&lt;install-dir&gt;</var>
+  ;; Your "home" directory is <var>&lt;homedir&gt;</var>
+  ;;  Loading <var>&lt;install-dir&gt;</var>/source/module-manager/module-manager-loader.lisp
+  ;; Loading <var>&lt;install-dir&gt;</var>/<var>&lt;platform-dir&gt;</var>/module-manager/module-manager.lisp
+       ...
+  ;; Loading <var>&lt;install-dir&gt;</var>/modules.lisp
+  ;; No shared module definitions were found in <var>&lt;install-dir&gt;</var>/gbbopen-modules/.
+  ;; No personal module definitions were found in <var>&lt;homedir&gt;</var>/gbbopen-modules/.
+       ...
+  ;; Defining an ASDF defsystem for each Module Manager module...
+  cl-user&gt;</font>
+</pre></small>
+or when ASDF is integrated with Common Lisp's <b>require</b>:
+<small><pre>
+<font color="#667f66">  cl-user&gt; <font color="#000000">(require :gbbopen)</font>
+  ;; Loading <var>&lt;install-dir&gt;</var>/initiate.lisp
+  ;; GBBopen is installed in <var>&lt;install-dir&gt;</var>
+  ;; Your "home" directory is <var>&lt;homedir&gt;</var>
+       ...
+  ;; Loading <var>&lt;install-dir&gt;</var>/startup.lisp
+  ;; GBBopen is installed in <var>&lt;install-dir&gt;</var>
+  ;; Your "home" directory is <var>&lt;homedir&gt;</var>
+  ;;  Loading <var>&lt;install-dir&gt;</var>/source/module-manager/module-manager-loader.lisp
+  ;; Loading <var>&lt;install-dir&gt;</var>/<var>&lt;platform-dir&gt;</var>/module-manager/module-manager.lisp
+       ...
+  ;; Loading <var>&lt;install-dir&gt;</var>/modules.lisp
+  ;; No shared module definitions were found in <var>&lt;install-dir&gt;</var>/gbbopen-modules/.
+  ;; No personal module definitions were found in <var>&lt;homedir&gt;</var>/gbbopen-modules/.
+       ...
+  ;; Defining an ASDF defsystem for each Module Manager module...
+  cl-user&gt;</font>
+</pre></small>
+</p>
+<p>Notice that loading the <nobr><code><var>&lt;install-dir&gt;</var>/initiate.lisp</code></nobr> file
+loaded only GBBopen's REPL command processing extensions, global REPL command
+definitions, and module-directory processing into Common Lisp&ndash;the Module
+Manager is not loaded until it is needed (such as when we performed the
+<nobr><code>:gbbopen-user</code></nobr> REPL command).  The ASDF <code>:gbbopen</code>
+&#8220;system&#8221; start up, on the other hand, must also load the Module Manager and
+module definitions, as they are required in order to define an ASDF system for
+each Module Manager module.
+</td></tr></table></table>
 </p>
 <p><h4>Personal <tt>gbbopen-init.lisp</tt> file</h4>
 </p>
-<p><a name="id3">If</a> a <nobr><code>gbbopen-init.lisp</code></nobr> file (source or compiled) is present in
+<p><a name="id4">If</a> a <nobr><code>gbbopen-init.lisp</code></nobr> file (source or compiled) is present in
 the user's &#8220;home&#8221; directory (as defined by
 <nobr><b>user-homedir-pathname</b></nobr>), it is loaded by the
 <nobr><code><var>&lt;install-directory&gt;</var>/startup.lisp</code></nobr> file after the
@@ -105,68 +234,6 @@ shortly in conjunction with using a <a href="#sec:personal-gbbopen-modules-direc
 <nobr><code>gbbopen-modules</code></nobr>
 directory</a>.
 </p>
-<p>Next, we show how to add convenient GBBopen <a href="ref-glossary.html#gl:keyword-command">keyword&nbsp;commands</a> to the
-top level read-eval-print loop (REPL) in your Common Lisp environment and how
-to define a personal REPL <a href="ref-glossary.html#gl:keyword-command">command</a> that makes it easy to compile and
-load the <nobr><code>:my-app</code></nobr> module&mdash;even if GBBopen has not yet been
-loaded into your Common Lisp image.
-</p>
-<p><h4>Top-level REPL commands</h4>
-<a name="id4">The</a> file <nobr><code><var>&lt;install-directory&gt;</var>/initiate.lisp</code></nobr> is a highly
-recommended alternative for
-<nobr><code><var>&lt;install-directory&gt;</var>/startup.lisp</code></nobr> that adds some handy
-<a href="ref-glossary.html#gl:keyword-command">keyword&nbsp;commands</a> to the top-level REPL listener for
-<a target="_top" href="http://franz.com/products/allegrocl/">Allegro CL</a>,
-<a target="_top" href="http://trac.clozure.com/ccl">Clozure CL</a>,
-<a target="_top" href="http://www.cons.org/cmucl/">CMUCL</a>,
-<a target="_top" href="http://common-lisp.net/project/ecl/">ECL</a>,
-<a target="_top" href="http://www.lispworks.com">LispWorks</a>,
-<a target="_top" href="http://sbcl.sourceforge.net">SBCL</a>, and
-<a target="_top" href="http://www.scieneer.com/scl/">Scieneer CL</a>
-users.  Some interaction interfaces, such as
-<a target="_top" href="http://common-lisp.net/project/slime/">SLIME</a>, use their own REPL
-rather than the top-level listener provided by the Common Lisp implementation
-and, therefore, may not support <a href="ref-glossary.html#gl:keywords">keyword</a> <a href="ref-glossary.html#id182">REPL&nbsp;command</a>
-processing.  GBBopen does provide a Swank extension to the
-<a target="_top" href="http://common-lisp.net/project/slime/">SLIME</a> REPL that supports
-REPL <a href="ref-glossary.html#gl:keyword-command">keyword&nbsp;commands</a>.
-</p>
-<p>To make GBBopen's <a href="ref-glossary.html#gl:keyword-command">REPL&nbsp;commands</a> available, simply load
-<nobr><code><var>&lt;install-directory&gt;</var>/initiate.lisp</code></nobr> from your personal
-Common Lisp initialization file.  (You should not explicitly load the
-<nobr><code><var>&lt;install-directory&gt;</var>/startup.lisp</code></nobr> file when using
-<nobr><code><var>&lt;install-directory&gt;</var>/initiate.lisp</code></nobr>&mdash;it will handle the
-<nobr><code><var>&lt;install-directory&gt;</var>/startup.lisp</code></nobr> file loading for you at
-the appropriate time.)
-</p>
-<p>Built-in and GBBopen <a href="ref-glossary.html#gl:keyword-command">REPL&nbsp;commands</a> are defined in the file
-<nobr><code><var>&lt;install-directory&gt;</var>/commands.lisp</code></nobr>.  In many Common Lisp
-implementations and in the
-<a target="_top" href="http://common-lisp.net/project/slime/">SLIME</a> REPL interface,
-<a href="ref-glossary.html#gl:keyword-command">REPL&nbsp;commands</a> that have arguments can be specified using either a list
-or a spread representation.  For example:
-<pre class="pretop">
-  &gt; (:gbbopen-test :create-dirs)
-       ...
-  &gt;
-</pre>
-or
-<pre>
-  &gt; :gbbopen-test :create-dirs
-       ...
-  &gt;
-</pre>
-However, <a target="_top" href="http://franz.com/products/allegrocl/">Allegro CL</a>,
-<a target="_top" href="http://clisp.cons.org/">CLISP</a>, and
-<a target="_top" href="http://www.lispworks.com">LispWorks</a> do not support the list
-notation.  CLISP versions prior to 2.45 and
-<a target="_top" href="http://common-lisp.net/project/ecl/">ECL</a> only support the spread
-notation&mdash;but without arguments.
-</p>
-<p>Equivalent functions in the <nobr><code>:common-lisp-user</code></nobr> package are always
-defined for each <a href="ref-glossary.html#id182">REPL&nbsp;command</a>, and these functions can be used when
-REPL <a href="ref-glossary.html#gl:keyword-command">keyword-command</a> processing is not fully supported.
-</p>
 <p><h4>Personal <tt>gbbopen-commands.lisp</tt> file</h4>
 <a name="id5">You</a> can create your own <a href="ref-glossary.html#gl:keyword-command">REPL&nbsp;commands</a> by defining them in a personal
 <nobr><code>gbbopen-commands.lisp</code></nobr> file.  If a <nobr><code>gbbopen-commands</code></nobr>
@@ -191,36 +258,26 @@ following personal <nobr><code>gbbopen-commands.lisp</code></nobr> file defines 
   ;;; ===============================================
 </pre>
 </p>
-<p>The macro <nobr><b>define-repl-command</b></nobr> and the <a href="ref-glossary.html#gl:function">function</a>
-<nobr><b>startup-module</b></nobr> that are used in this example are both defined
-in the file <nobr><code><var>&lt;install-directory&gt;</var>/initiate.lisp</code></nobr>.
-Experienced GBBopen users prefer to have their Common Lisp initialization file
-load <nobr><code><var>&lt;install-directory&gt;</var>/initiate.lisp</code></nobr> rather than
-<nobr><code><var>&lt;install-directory&gt;</var>/startup.lisp</code></nobr> in order to use the
-standard <a href="ref-glossary.html#gl:keyword-command">REPL&nbsp;commands</a> for GBBopen&mdash;as well as their own,
-personalized extensions&mdash;in the Lisp listener.  See the &#8220;Enhancing Your
-Development Environment&#8221; exercise in the GBBopen Tutorial for details.
-</p>
 <p><h4>Personal <tt>gbbopen-modules</tt> directory</h4>
 <a name="sec:personal-gbbopen-modules-directory"></a>
 </p>
-<p><a name="id7">Previously,</a> we showed a simple example of using a personal
-<nobr><code>gbbopen-init.lisp</code></nobr> file to define the <a href="ref-glossary.html#gl:module">module</a>
-<nobr><code>:my-app</code></nobr>.  If you develop or use a number of <a href="ref-glossary.html#gl:modules">modules</a> or
-applications, GBBopen provides an alternative mechanism that is even more
-convenient.
+<p><a name="id7">Although</a> a personal <nobr><code>gbbopen-init.lisp</code></nobr> file can be used to define
+the <a href="ref-glossary.html#gl:module">module</a> <nobr><code>:my-app</code></nobr>, GBBopen provides an alternative
+mechanism that is even more convenient if you develop, share, or use a number
+of <a href="ref-glossary.html#gl:modules">modules</a> or applications.
 </p>
 <p>If a <nobr><code>gbbopen-modules</code></nobr> directory is present in the user's home
-directory (as defined by <nobr><code>user-homedir-pathname</code></nobr>), it is expected to
-consist of directories each containing an individual GBBopen application.
-Although the application directories can be placed directly in the
+directory (as defined by <nobr><code>user-homedir-pathname</code></nobr>), it is expected
+to consist of directories each containing an individual GBBopen application or
+library.  Although these application directories can be placed directly in the
 <nobr><code>gbbopen-modules</code></nobr> directory, it is generally more convenient to
 use a symbolic link (or a &#8220;pseudo symbolic-link file&#8221; on Windows) to point
-to the actual application directory.  For example, an application can be
-provided to a number of users by creating a symbolic link to the application
-directory in each user's <nobr><code>gbbopen-modules</code></nobr> directory.
+to the actual application directory, where ever it is located.  For example,
+an application can be provided to a number of users by creating a symbolic
+link to the actual application directory in each user's
+<nobr><code>gbbopen-modules</code></nobr> directory.
 </p>
-<p>Each application directory can contain:
+<p>Each application directory contains:
 </p>
 <p><ul class="tight"><li>a <code>modules.lisp</code> file that contains <a href="ref-glossary.html#gl:module">module</a> definitions
 (loaded after the personal <nobr><code>gbbopen-init.lisp</code></nobr> file if there is
@@ -231,6 +288,7 @@ one in the user's &#8220;homedir&#8221;)
 <a href="ref-glossary.html#gl:keyword-command">REPL&nbsp;commands</a> for the <a href="ref-glossary.html#gl:module">module</a> (loaded after the personal
 <nobr><code>gbbopen-commands.lisp</code></nobr> file if there is one in the user's
 &#8220;homedir&#8221;)
+<li>any additional directories or files useful to the application
 </ul>
 </p>
 <p>We highly recommend following this packaging convention, which mirrors that of
@@ -264,7 +322,8 @@ function; part of the <a href="ref-os-interface-entities.html"><nobr><code>:os-i
 is specified by the value of <nobr><code><a href="ref-preferred-browser-var.html">*preferred-browser*</a></code></nobr>.  A
 different value can be specified in either your Common Lisp initialization
 file or, preferably, in your personal <nobr><code>gbbopen-init.lisp</code></nobr> file.
-Changing the default setting in <nobr><code>startup.lisp</code></nobr> is not recommended.
+Changing the default setting in GBBopen's <nobr><code>startup.lisp</code></nobr> is not
+recommended.
 </p>
 <p><a target="_top" href="http://www.gnu.org/software/emacs/emacs.html">Emacs</a> access to the
 GBBopen Hyperdoc is provided by
