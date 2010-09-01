@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/preamble.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Apr  7 10:00:08 2010 *-*
+;;;; *-* Last-Edit: Tue Aug 31 22:47:03 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2004-2009, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2004-2010, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project.
 ;;; Licensed under Apache License 2.0 (see LICENSE for license information).
 ;;;
@@ -269,6 +269,16 @@
                   sub-char
                   (lisp-implementation-type)
                   existing-dispatch))))
+    ;; Check & warn if Allegro's read-only readtable is in play:
+    #+allegro
+    (if (eq *readtable* excl::std-lisp-readtable)
+        (warn "Allegro's read-only restriction on the system readtable (~s) ~
+               prevents setting dispatch-macro for ~c~c" 
+              *readtable*
+              disp-char
+              sub-char)
+        (set-dispatch-macro-character disp-char sub-char function readtable))
+    #-allegro
     (set-dispatch-macro-character disp-char sub-char function readtable)))
 
 ;;; ===========================================================================
