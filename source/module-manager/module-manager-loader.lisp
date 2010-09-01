@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/module-manager/module-manager-loader.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Jul 29 14:34:57 2010 *-*
+;;;; *-* Last-Edit: Tue Aug 31 20:34:13 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -15,7 +15,7 @@
 ;;; Written by: Dan Corkill (incorporating some original ideas by 
 ;;;                          Kevin Gallagher and Zack Rubinstein)
 ;;;
-;;; Copyright (C) 2002-2009, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2010, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project.
 ;;; Licensed under Apache License 2.0 (see LICENSE for license information).
 ;;;
@@ -192,13 +192,13 @@
              #+prism-64 "hpux-64"       ; just a guess
              #+sparc "sparc"
              #+sparc-64 "sparc-64"      ; just a guess
-             #+(and x86 freebsd) "freebsd" ; just a guess
-             #+(and x86 linux86) "linux86"
-             #+(and x86-64 linux) "linux86-64" ; Thanks to Raymond de Lacaze
+             #+freebsd "freebsd"        ; just a guess
+             #+linux86 "linux86"
+             #+linux86-64 "linux86-64" 
              #+(and x86 macosx) "mac86"
              #+(and x86-64 macosx) "mac86-64" ; just a guess
-             #+(and x86 (not macosx) (not linux86) (not freebsd)) "windows"
-             #+(and x86-64 (not macosx) (not linux86) (not freebsd)) "windows-64"
+             #+(and x86 (not macosx) (not linux) (not freebsd)) "windows"
+             #+(and x86-64 (not macosx) (not linux) (not freebsd)) "windows-64"
              #+powerpc "macppc"
              #+powerpc-64 "macppc-64")  ; just a guess
             "allegro"
