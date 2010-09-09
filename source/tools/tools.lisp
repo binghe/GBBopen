@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Aug  5 06:03:42 2010 *-*
+;;;; *-* Last-Edit: Thu Sep  9 11:56:51 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -68,6 +68,7 @@
 ;;;  08-03-09 Added COMPARE and COMPARE-STRINGS.  (Corkill)
 ;;;  03-16-10 Added ASSQ.  (Corkill)
 ;;;  04-26-10 Added SORTF & STABLE-SORTF.  (Corkill)
+;;;  09-09-10 Added WHITESPACE-CHAR-P.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -89,6 +90,7 @@
      excl::simple-array-p
      excl:until
      excl:while
+     excl::whitespace-char-p
      excl::xor
      sys:copy-file)
    #+clisp
@@ -110,7 +112,8 @@
      ext:assq
      ext:delq
      ext:memq
-     kernel:simple-array-p)
+     kernel:simple-array-p
+     lisp::whitespace-char-p)
    #+cormanlisp
    '()
    #+digitool-mcl
@@ -133,6 +136,7 @@
      harlequin-common-lisp:compiler-macroexpand
      harlequin-common-lisp:compiler-macroexpand-1
      harlequin-common-lisp:simple-array-p
+     lispworks:whitespace-char-p
      system::copy-file
      system:assq
      system:memq
@@ -150,7 +154,8 @@
      ext:assq
      ext:memq
      ext:delq
-     kernel:simple-array-p)
+     kernel:simple-array-p
+     lisp::whitespace-char-p)
    #-(or abcl allegro clisp clozure cmu cormanlisp digitool-mcl ecl gcl 
          lispworks sbcl scl)
    '()))
@@ -239,6 +244,7 @@
             undefmethod
             until
             while
+            whitespace-char-p           ; not yet documented
             with-error-handling
             with-opened-file            ; not yet documented
             xor)))
@@ -1512,6 +1518,16 @@
         (print-unreadable-object (fn stream)
           (format stream "~s ~s" 'function name))
         (prin1 name stream))))
+
+;;; ===========================================================================
+;;;   Whitespace-char-p (based on standard readtable semantics)
+
+#-(or allegro
+      cmucl
+      lispworks
+      scl)
+(defun whitespace-char-p (char)
+  (member char '(#\Space #\Tab #\LineFeed #\Return #\Page)))
 
 ;;; ===========================================================================
 ;;;   Read-char immediately
