@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Sep  9 11:56:51 2010 *-*
+;;;; *-* Last-Edit: Thu Sep  9 11:59:18 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -1523,7 +1523,7 @@
 ;;;   Whitespace-char-p (based on standard readtable semantics)
 
 #-(or allegro
-      cmucl
+      cmu
       lispworks
       scl)
 (defun whitespace-char-p (char)

@@ -6,6 +6,7 @@ Important changes since GBBopen 1.5:
   * Changes to GBBopen Tools
      - New VERY-BRIEF-DATE function
      - New :include-year keyword argument to BRIEF-DATE
+     - New WHITESPACE-CHAR-P function
      - Export SORTF and STABLE-SORTF macros
      - Allow provided string-coalescing hash table in 
        WITH-READING-SAVED/SENT-OBJECTS-BLOCK
