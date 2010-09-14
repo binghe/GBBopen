@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Sep  9 11:59:18 2010 *-*
+;;;; *-* Last-Edit: Tue Sep 14 05:37:01 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -69,6 +69,7 @@
 ;;;  03-16-10 Added ASSQ.  (Corkill)
 ;;;  04-26-10 Added SORTF & STABLE-SORTF.  (Corkill)
 ;;;  09-09-10 Added WHITESPACE-CHAR-P.  (Corkill)
+;;;  09-13-10 Added SORTED-MAPHASH.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -237,6 +238,7 @@
             shrink-vector
             simple-array-p              ; not yet documented
             sole-element
+            sorted-maphash
             sortf
             splitting-butlast
             stable-sortf
@@ -507,6 +509,36 @@
 
 (define-modify-macro sortf (place &rest args) sort args)
 (define-modify-macro stable-sortf (place &rest args) stable-sort args)
+
+;;; ===========================================================================
+;;;  Sorted-maphash
+
+(defun sorted-maphash (function hash-table predicate &key key)
+  (let ((function (coerce function 'function))
+        (vector (make-array (hash-table-count hash-table)
+                            :fill-pointer 0)))
+    (declare (dynamic-extent vector))
+    (flet ((push-entry (key value)
+             (vector-push (cons key value) vector)))
+      (declare (dynamic-extent #'push-entry))
+      (maphash #'push-entry hash-table)
+      (flet ((do-fn (cons)
+               (funcall function (car cons) (cdr cons))))
+        (declare (dynamic-extent #'do-fn))
+        (map nil #'do-fn
+             (if key 
+                 (let ((key (coerce key 'function)))
+                   (declare (function key))
+                   (flet ((pred (a b)
+                            (funcall (the function predicate) 
+                                     (funcall key (car a))
+                                     (funcall key (car b)))))
+                     (declare (dynamic-extent #'pred))
+                     (sort vector #'pred)))
+                 (flet ((pred (a b)
+                          (funcall (the function predicate) (car a) (car b))))
+                   (declare (dynamic-extent #'pred))
+                   (sort vector #'pred))))))))
 
 ;;; ===========================================================================
 ;;;  Copy-file (for CLs that don't provide their own version)
