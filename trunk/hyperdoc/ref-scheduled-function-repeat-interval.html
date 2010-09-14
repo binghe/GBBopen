@@ -59,7 +59,8 @@
 for each currently scheduled <a href="ref-glossary.html#id190">scheduled&nbsp;function</a>:
 <pre class="pretop">
   &gt; (dolist (scheduled-function (<a href="ref-all-scheduled-functions.html">all-scheduled-functions</a>))
-     (format t "~&amp;;; ~s ~s~             scheduled-function
+     (format t "~&amp;;; ~s ~s~&#37;"
+             scheduled-function
              (scheduled-function-repeat-interval scheduled-function)))
   ;; #&lt;scheduled-function quitting-time [17:00:00]&gt; 86400
   nil

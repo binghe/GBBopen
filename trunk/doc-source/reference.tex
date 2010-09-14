@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Sat Aug 28 13:07:11 2010; Edited-By: cork *-*
+%% *-* Last-Edit: Tue Sep 14 06:28:35 2010; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2010, Dan Corkill <corkill@GBBopen.org>
@@ -4727,16 +4727,19 @@ that were deleted as a second value.
 \begin{args}{from-end}
 \arg[item] An object
 \arg[sequence] A proper sequence
-\arg[from-end] A \glref{generalized~boolean} (default is \nil)
-\arg[test] A \glref{function} of two arguments that returns a
-\glref{generalized~boolean} (default is \nobr{\code{\#'eql}}) 
-\arg[test-not] A \glref{function} of two arguments that returns a
+\arg[from-end] A \glref{generalized~boolean} (default is \nil) \arg[test] A
+\glref{function~designator} specifying a \glref{function~object} of two
+arguments that returns a \glref{generalized~boolean} (default is
+\nobr{\code{\#'eql}})
+\arg[test-not] A \glref{function~designator} specifying a
+\glref{function~object} of two arguments that returns a
 \glref{generalized~boolean} (use of \nobr{\code{:test-not}} is deprecated)
 \arg[start] Starting index into \nobr{\var{sequence\/}} (default is \code{0})
 \arg[end] Ending index into \nobr{\var{sequence\/}} (default is \nil, meaning
 end of \nobr{\var{sequence\/}})
 \arg[count] An integer or \nil{} (default is \nil)
-\arg[key] A \glref{function} of one argument, or \nil{} (default is \nil)
+\arg[key] A \glref{function~designator} specifying a \glref{function~object}
+of one argument, or \nil{} (default is \nil)
 \arg[result-sequence] A sequence
 \end{args}
 
@@ -4876,10 +4879,13 @@ the \glref{cons} associated with \var{item\/} if the value becomes zero.
 \arg[decrement] A number
 \arg[place] A \glref{form} which is suitable for use as a
 \glref{generalized~reference} 
-\arg[key] A \glref{function} of one argument, or \nil{} (default is \nil)
-\arg[test] A \glref{function} of two arguments that returns a
-\glref{generalized~boolean} (default is \nobr{\code{\#'eql}}) 
-\arg[test-not] A \glref{function} of two arguments that returns a
+\arg[key] A \glref{function~designator} specifying a \glref{function~object}
+of one argument, or \nil{} (default is \nil)
+\arg[test] A \glref{function~designator} specifying a \glref{function~object}
+of two arguments that returns a \glref{generalized~boolean} (default is
+\nobr{\code{\#'eql}})
+\arg[test-not] A \glref{function~designator} specifying a
+\glref{function~object} of two arguments that returns a
 \glref{generalized~boolean} (use of \nobr{\code{:test-not}} is deprecated)
 \arg[new-place-value] An \glref{association~list} 
 \end{args}
@@ -6154,9 +6160,11 @@ are more values than \var{places}, the extra values are discarded.
 \begin{args}{result-list}
 \arg[item] An object
 \arg[list] A \glref{proper~list}
-\arg[predicate] A \glref{function} of two arguments that returns a
+\arg[predicate] A \glref{function~designator} specifying a
+\glref{function~object} of two arguments that returns a
 \glref{generalized~boolean} (default is \nobr{\code{\#'$<$}})
-\arg[key] A \glref{function} of one argument, or \nil{} (default is \nil)
+\arg[key] A \glref{function~designator} specifying a \glref{function~object}
+of one argument, or \nil{} (default is \nil)
 \arg[result-list] A \glref{proper~list}
 \end{args}
 
@@ -6500,10 +6508,13 @@ in order to make it available as early as possible.
 \arg[value] An object
 \arg[place] A \glref{form} which is suitable for use as a
 \glref{generalized~reference} 
-\arg[key] A \glref{function} of one argument, or \nil{} (default is \nil)
-\arg[test] A \glref{function} of two arguments that returns a
-\glref{generalized~boolean} (default is \nobr{\code{\#'eql}}) 
-\arg[test-not] A \glref{function} of two arguments that returns a
+\arg[key] A \glref{function~designator} specifying a \glref{function~object}
+of one argument, or \nil{} (default is \nil)
+\arg[test] A \glref{function~designator} specifying a \glref{function~object}
+of two arguments that returns a \glref{generalized~boolean} (default is
+\nobr{\code{\#'eql}})
+\arg[test-not] A \glref{function~designator} specifying a
+\glref{function~object} of two arguments that returns a
 \glref{generalized~boolean} (use of \code{:test-not} is deprecated)
 \arg[new-place-value] An \glref{association~list}
 \end{args}
@@ -6557,10 +6568,13 @@ in order to make it available as early as possible.
 \arg[list] A \glref{proper~list}
 \arg[place] A \glref{form} which is suitable for use as a
 \glref{generalized~reference} 
-\arg[key] A \glref{function} of one argument, or \nil{} (default is \nil)
-\arg[test] A \glref{function} of two arguments that returns a
-\glref{generalized~boolean} (default is \nobr{\code{\#'eql}}) 
-\arg[test-not] A \glref{function} of two arguments that returns a
+\arg[key] A \glref{function~designator} specifying a \glref{function~object}
+of one argument, or \nil{} (default is \nil)
+\arg[test] A \glref{function~designator} specifying a \glref{function~object}
+of two arguments that returns a \glref{generalized~boolean} (default is
+\nobr{\code{\#'eql}})
+\arg[test-not] A \glref{function~designator} specifying a
+\glref{function~object} of two arguments that returns a
 \glref{generalized~boolean} (use of \nobr{\code{:test-not}} is deprecated)
 \arg[new-place-value] An \glref{association~list}
 \end{args}
@@ -6615,10 +6629,13 @@ new \nobr{\code{(\var{item\/} . \var{increment\/})}} \glref{cons} to the
 \arg[increment] A number
 \arg[place] A \glref{form} which is suitable for use as a
 \glref{generalized~reference} 
-\arg[key] A \glref{function} of one argument, or \nil{} (default is \nil)
-\arg[test] A \glref{function} of two arguments that returns a
-\glref{generalized~boolean} (default is \nobr{\code{\#'eql}}) 
-\arg[test-not] A \glref{function} of two arguments that returns a
+\arg[key] A \glref{function~designator} specifying a \glref{function~object}
+of one argument, or \nil{} (default is \nil)
+\arg[test] A \glref{function~designator} specifying a \glref{function~object}
+of two arguments that returns a \glref{generalized~boolean} (default is
+\nobr{\code{\#'eql}})
+\arg[test-not] A \glref{function~designator} specifying a
+\glref{function~object} of two arguments that returns a
 \glref{generalized~boolean} (use of \nobr{\code{:test-not}} is deprecated)
 \arg[new-place-value] An \glref{association~list}
 \end{args}
@@ -6732,11 +6749,14 @@ removed.
 \begin{args}{test-not}
 \arg[list-1] A \glref{proper~list}
 \arg[list-2] A \glref{proper~list}
-\arg[test] A \glref{function} of two arguments that returns a
-\glref{generalized~boolean} (default is \nobr{\code{\#'eql}}) 
-\arg[test-not] A \glref{function} of two arguments that returns a
+\arg[test] A \glref{function~designator} specifying a \glref{function~object}
+of two arguments that returns a \glref{generalized~boolean} (default is
+\nobr{\code{\#'eql}})
+\arg[test-not] A \glref{function~designator} specifying a
+\glref{function~object} of two arguments that returns a
 \glref{generalized~boolean} (use of \nobr{\code{:test-not}} is deprecated)
-\arg[key] A \glref{function} of one argument, or \nil{} (default is \nil)
+\arg[key] A \glref{function~designator} specifying a \glref{function~object}
+of one argument, or \nil{} (default is \nil)
 \arg[boolean] A \glref{generalized~boolean}
 \end{args}
 
@@ -6786,11 +6806,14 @@ true.
 \begin{args}{test-not}
 \arg[list-1] A \glref{proper~list}
 \arg[list-2] A \glref{proper~list}
-\arg[test] A \glref{function} of two arguments that returns a
-\glref{generalized~boolean} (default is \nobr{\code{\#'eql}}) 
-\arg[test-not] A \glref{function} of two arguments that returns a
+\arg[test] A \glref{function~designator} specifying a \glref{function~object}
+of two arguments that returns a \glref{generalized~boolean} (default is
+\nobr{\code{\#'eql}})
+\arg[test-not] A \glref{function~designator} specifying a
+\glref{function~object} of two arguments that returns a
 \glref{generalized~boolean} (use of \nobr{\code{:test-not}} is deprecated)
-\arg[key] A \glref{function} of one argument, or \nil{} (default is \nil)
+\arg[key] A \glref{function~designator} specifying a \glref{function~object}
+of one argument, or \nil{} (default is \nil)
 \arg[boolean] A \glref{generalized~boolean}
 \end{args}
 
@@ -7002,6 +7025,66 @@ elements.
 
 %% ------------------------------------------------------------------------
 
+\begin{functiondoc}{Function}{sorted-maphash}%
+  {\var{function 
+      \nobr{hash-table}
+      predicate\/}
+    \nobr{\&key \var{key\/}}}
+\index{maphash!sorted}%
+
+\fnsyntax
+
+\fnpurpose Apply a \glref{function} once to each of the entries in a hash
+table according to the entry-key order determined by the \var{predicate\/}
+function
+
+\fnpackage \code{:gbbopen-tools}
+
+\fnmodule \code{:gbbopen-tools}
+
+\fnargs
+\begin{args}{hash-table}
+\arg[function] A \glref{function~designator} specifying a
+ \glref{function~object} of two arguments, the key and value of the 
+hash-table entry
+\arg[hash-table] A hash table
+\arg[predicate] A \glref{function~designator} specifying a
+\glref{function~object} of two arguments that returns a
+\glref{generalized~boolean}
+\arg[key] A \glref{function~designator} specifying a \glref{function~object}
+of one argument, or \nil{} (default is \nil)
+\end{args}
+
+\fndescription
+%
+For each entry in the hash table, the \var{function\/} is called with two
+arguments--the key and the value of that entry.
+
+The first argument to the \var{predicate\/} function is the key of
+one entry in the hash table (or part of that key extracted by the
+\var{key\/} function, if supplied); the second argument is the key of another
+entry in the hash table (or part of that key extracted by the
+\var{key\/} function, if supplied). The \var{predicate\/} function should
+return true if and only if the first argument is strictly less than the
+second; otherwise the predicate should return false.
+
+\fnexample
+Print a list of entries in \code{hash-table}, in ascending order of their keys 
+(which are strings):
+%
+\W\supp
+\begin{example}
+  (sorted-maphash
+     #'(lambda (key value)
+         (format t "~&;; key: ~s value: ~s~\%" key value)
+     hash-table
+     #'string<)
+\end{example} 
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
 \begin{functiondoc}{Macro}{sortf}{\var{place predicate\/}
     \nobr{\code{\&key} \var{key\/}}}
 \index{place!sorting sequence value of}%
@@ -7017,10 +7100,13 @@ elements.
 
 \fnargs
 \begin{args}{predicate}
-\arg[place] A \glref{form} which is suitable for use as a \glref{generalized~reference}
-\arg[predicate] A \glref{function} of two arguments that returns a
-\glref{generalized~boolean} 
-\arg[key] A \glref{function} of one argument, or \nil{} (default is \nil)
+\arg[place] A \glref{form} which is suitable for use as a
+  \glref{generalized~reference}
+\arg[predicate] A \glref{function~designator} specifying a
+  \glref{function~object} of two arguments that returns a
+  \glref{generalized~boolean}
+\arg[key] A \glref{function~designator} specifying a \glref{function~object}
+  of one argument, or \nil{} (default is \nil)
 \end{args}
 
 \fndescription
@@ -7028,10 +7114,10 @@ elements.
 The first argument to the \var{predicate\/} function is one element of the
 sequence value in \var{place\/} (or part of that element extracted by the key
 function, if supplied); the second argument another element of the sequence
-(or part of that element extracted by the key function, if supplied). The
-\var{predicate\/} function should return true if and only if the first
-argument is strictly less than the second; otherwise the predicate should
-return false.
+(or part of that element extracted by the \var{key\/} function, if
+supplied). The \var{predicate\/} function should return true if and only if
+the first argument is strictly less than the second; otherwise the predicate
+should return false.
 
 The sorting operation can be destructive, and it is not guaranteed
 stable. Elements considered equal by \var{predicate\/} might not stay in their
@@ -7073,10 +7159,13 @@ original order.
 
 \fnargs
 \begin{args}{predicate}
-\arg[place] A \glref{form} which is suitable for use as a \glref{generalized~reference}
-\arg[predicate] A \glref{function} of two arguments that returns a
-\glref{generalized~boolean} 
-\arg[key] A \glref{function} of one argument, or \nil{} (default is \nil)
+\arg[place] A \glref{form} which is suitable for use as a
+  \glref{generalized~reference}
+\arg[predicate] A \glref{function~designator} specifying a
+  \glref{function~object} of two arguments that returns a
+  \glref{generalized~boolean}
+\arg[key] A \glref{function~designator} specifying a \glref{function~object}
+  of one argument, or \nil{} (default is \nil)
 \end{args}
 
 \fndescription
@@ -7084,10 +7173,10 @@ original order.
 The first argument to the \var{predicate\/} function is one element of the
 sequence value in \var{place\/} (or part of that element extracted by the key
 function, if supplied); the second argument another element of the sequence
-(or part of that element extracted by the key function, if supplied). The
-\var{predicate\/} function should return true if and only if the first
-argument is strictly less than the second; otherwise the predicate should
-return false.
+(or part of that element extracted by the \var{key\/} function, if
+supplied). The \var{predicate\/} function should return true if and only if
+the first argument is strictly less than the second; otherwise the predicate
+should return false.
 
 The sorting operation can be destructive. Elements considered equal by
 \var{predicate\/} stay in their original order.
@@ -7616,8 +7705,9 @@ invocation and argument-checking optimizations:
 \begin{tightitemize}
 \item A string 
 \item A symbol
-\item A \glref{function~object} accepting two arguments, class-name and
-  slot-name, that returns the complete string to be used for the accessor name
+\item A \glref{function~designator} specifying a \glref{function~object}
+  accepting two arguments, class-name and slot-name, that returns the complete
+  string to be used for the accessor name
 \end{tightitemize}
 \arg[forms] An implicit \textbf{progn} of \glref{forms}
 \arg[results] The values returned by evaluating the last \var{form}
@@ -12122,7 +12212,8 @@ try deleting it a second time:
 \begin{args}{comparison-test}
 \arg[llrb-tree] An \glref{LLRB~tree}
 \arg[comparison-test] A \glref{function~designator} specifying the
-\glref{three-way~comparison~test} used in \var{llrb-tree}
+\glref{three-way~comparison~test} \glref{function~object} used in
+\var{llrb-tree}
 \end{args}
 
 \fnreturns The comparison test used in \var{llrb-tree}
@@ -12709,15 +12800,18 @@ sequence in \nobr{\var{place\/}} from which the elements that satisfy the
 \arg[place] A \glref{form} which is suitable for use as a
 \glref{generalized~reference} that contains a proper sequence
 \arg[from-end] A \glref{generalized~boolean} (default is \nil)
-\arg[test] A \glref{function} of two arguments that returns a
-\glref{generalized~boolean} (default is \nobr{\code{\#'eql}}) 
-\arg[test-not] A \glref{function} of two arguments that returns a
+\arg[test] A \glref{function~designator} specifying a \glref{function~object}
+of two arguments that returns a \glref{generalized~boolean} (default is
+\nobr{\code{\#'eql}})
+\arg[test-not] A \glref{function~designator} specifying a
+\glref{function~object} of two arguments that returns a
 \glref{generalized~boolean} (use of \nobr{\code{:test-not}} is deprecated)
 \arg[start] Starting index into \nobr{\var{sequence\/}} (default is \code{0})
 \arg[end] Ending index into \nobr{\var{sequence\/}} (default is \nil, meaning
 end of \nobr{\var{sequence\/}})
 \arg[count] An integer or \nil{} (default is \nil)
-\arg[key] A \glref{function} of one argument, or \nil{} (default is \nil)
+\arg[key] A \glref{function~designator} specifying a \glref{function~object}
+of one argument, or \nil{} (default is \nil)
 \arg[sequence] A sequence
 \end{args}
 
@@ -13029,10 +13123,13 @@ the same as any element in the list stored in \nobr{\var{place}}, prepend
 \arg[item] An object
 \arg[place] A \glref{form} which is suitable for use as a
 \glref{generalized~reference} that contains a \glref{proper~list} 
-\arg[key] A \glref{function} of one argument, or \nil{} (default is \nil)
-\arg[test] A \glref{function} of two arguments that returns a
-\glref{generalized~boolean} (default is \nobr{\code{\#'eql}}) 
-\arg[test-not] A \glref{function} of two arguments that returns a
+\arg[key] A \glref{function~designator} specifying a \glref{function~object}
+of one argument, or \nil{} (default is \nil)
+\arg[test] A \glref{function~designator} specifying a \glref{function~object}
+of two arguments that returns a \glref{generalized~boolean} (default is
+\nobr{\code{\#'eql}})
+\arg[test-not] A \glref{function~designator} specifying a
+\glref{function~object} of two arguments that returns a
 \glref{generalized~boolean} (use of \nobr{\code{:test-not}} is deprecated)
 \arg[new-place-value] A proper list
 \end{args}
@@ -14700,10 +14797,12 @@ as long as the control shell is running:
 \arg[name] An object (typically a
   string or a symbol; default is \nobr{\var{function}}, if
   \nobr{\var{function\/}} is a symbol, otherwise \nil)
-\arg[name-test] A \glref{function} of two arguments that returns a
-\glref{generalized~boolean} (default is \nobr{\code{\#'eql}})
+\arg[name-test] A \glref{function~designator} specifying a
+  \glref{function~object} of two arguments that returns a
+  \glref{generalized~boolean} (default is \nobr{\code{\#'eql}})
 \arg[marker] An object (default is \nil)
-\arg[marker-test] A \glref{function} of two arguments that returns a
+\arg[marker-test] A \glref{function~designator} specifying a
+\glref{function~object} of two arguments that returns a
 \glref{generalized~boolean} (default is \nobr{\code{\#'eql}})
 \arg[scheduled-function] A \glref{scheduled~function}
 \end{args}
@@ -15298,7 +15397,8 @@ Return a list of the markers of all currently scheduled
 \fnargs
 \begin{args}{scheduled-function}
 \arg[scheduled-function] A \glref{scheduled~function}
-\arg[marker-predicate] A \glref{function} of two arguments that returns a
+\arg[marker-predicate] A \glref{function~designator} specifying a
+\glref{function~object} of two arguments that returns a
 \glref{generalized~boolean}
 \end{args}
 
@@ -15397,7 +15497,8 @@ Return the names of all currently scheduled \glref{scheduled~functions}:
 \fnargs
 \begin{args}{scheduled-function}
 \arg[scheduled-function] A \glref{scheduled~function}
-\arg[name-predicate] A \glref{function} of two arguments that returns a
+\arg[name-predicate] A \glref{function~designator} specifying a
+\glref{function~object} of two arguments that returns a 
 \glref{generalized~boolean}
 \end{args}
 
@@ -15477,7 +15578,7 @@ for each currently scheduled \glref{scheduled~function}:
 \W\supp
 \begin{example}
   > (dolist (scheduled-function (\entlink{all-scheduled-functions}))
-     (format t "~&;; ~s ~s~%"
+     (format t "~&;; ~s ~s~\%"
              scheduled-function
              (scheduled-function-repeat-interval scheduled-function)))
   ;; #<scheduled-function quitting-time [17:00:00]> 86400
@@ -24640,9 +24741,11 @@ than 0.5:
 \arg[var] A \glref{variable~symbol}
 \arg[unit-classes-specifier] An \glref{extended~unit-classes~specification}
 (see below)
-\arg[predicate] A \glref{function} of two arguments that returns a
+\arg[predicate] A \glref{function~designator} specifying a
+\glref{function~object} of two arguments that returns a
 \glref{generalized~boolean}
-\arg[key] A \glref{function} of one argument, or \nil{} (default is \nil)
+\arg[key] A \glref{function~designator} specifying a \glref{function~object}
+of one argument, or \nil{} (default is \nil)
 \arg[declaration] A declare expression (not evaluated)
 \arg[tag] A \code{go} tag (not evaluated)
 \arg[form] A \glref{form}
@@ -25521,9 +25624,12 @@ of the specified \glref{unit~classes}, in sorted order.
  \glref{function~object} of one argument
 \arg[unit-classes-specifier] An \glref{extended~unit-classes~specification}
 (see below)
-\arg[predicate] A \glref{function} of two arguments that returns a
+\arg[predicate] A \glref{function~designator} specifying a
+\glref{function~object} of two arguments that returns a
 \glref{generalized~boolean}
-\arg[key] A \glref{function} of one argument, or \nil{} (default is \nil)
+\arg[key] A \glref{function~designator} specifying a \glref{function~object}
+of one argument, or \nil{} (default is \nil)
+
 \end{args}
 
 \fndsyntax
@@ -27417,7 +27523,8 @@ be shown (default is \code{0})
 \arg[end] An integer specifying the last \glref{queue~element} to
 be shown or \nil{} indicating that the last \glref{queue~element} is
 to be shown (default is \nil) 
-\arg[show-element-function] A two-argument \glref{function} used to print each
+\arg[show-element-function] A \glref{function~designator} specifying a
+\glref{function~object} of two arguments used to print each
 \glref{queue~element} line (default is
 \nobr{\code{\#'standard-show-queue-element}})
 \end{args}
@@ -27730,33 +27837,36 @@ See if the control shell is running:
 \fnargs
 \begin{args}{revalidation-predicate}
 \arg[ks-name] A symbol naming the \glref{KS} (not evaluated)
-\arg[activation-predicate] A \glref{function} of two arguments (the
-\glref{KS} \glref{unit~instance} and the \glref{event} object) that returns a
-\glref{generalized~boolean} or \nil{}
-(default is \nil) 
+\arg[activation-predicate] A \glref{function~designator} specifying a
+\glref{function~object} of two arguments (the \glref{KS} \glref{unit~instance}
+and the \glref{event} object) that returns a \glref{generalized~boolean} or
+\nil{} (default is \nil)
 \arg[enabled] A \glref{generalized~boolean} (default is \code{t})
-\arg[execution-function]  A \glref{function} of one argument (the
-\glref{KSA} \glref{unit~instance}) or \nil{} (default is \nil)
+\arg[execution-function] A \glref{function~designator} specifying a
+\glref{function~object} of one argument (the \glref{KSA}
+\glref{unit~instance}) or \nil{} (default is \nil)
 \arg[ks-class] A class or a symbol specifying a class (not evaluated)
 \arg[ksa-class] A class or a symbol specifying a class (not evaluated)
 \arg[obviation-events] An \nobr{\var{event-specification\/}} (see below, 
 not evaluated)
-\arg[obviation-predicate]  A \glref{function} of two arguments (the
-\glref{KSA} \glref{unit~instance} and the \glref{event} object) that returns a
-\glref{generalized~boolean} or \nil{}
-(default is \nil) 
-\arg[precondition-function] A \glref{function} of two arguments (the
-\glref{KS} \glref{unit~instance} and the \glref{event} object) or \nil{}
-(default is \nil) 
+\arg[obviation-predicate] A \glref{function~designator} specifying a
+\glref{function~object} of two arguments (the \glref{KSA}
+\glref{unit~instance} and the \glref{event} object) that returns a
+\glref{generalized~boolean} or \nil{} (default is \nil)
+\arg[precondition-function] A \glref{function~designator} specifying a
+\glref{function~object} of two arguments (the \glref{KS} \glref{unit~instance}
+and the \glref{event} object) or \nil{} (default is \nil)
 \arg[rating] A \glref{rating} (default is \code{1})
 \arg[retrigger-events] An \nobr{\var{event-specification\/}} (see below, 
 not evaluated)
-\arg[retrigger-function] A \glref{function} of two arguments (the
-\glref{KSA} \glref{unit~instance} and the \glref{event} object) or \nil{}
-(default is \nil) 
-\arg[revalidation-predicate] A \glref{function} of one argument (the
-\glref{KSA} \glref{unit~instance}) that returns a
-\glref{generalized~boolean} or \nil{} (default is \nil)
+\arg[retrigger-function] A \glref{function~designator} specifying a
+\glref{function~object} of two arguments (the \glref{KSA}
+\glref{unit~instance} and the \glref{event} object) or \nil{} (default is
+\nil)
+\arg[revalidation-predicate] A \glref{function~designator} specifying a
+\glref{function~object} of one argument (the \glref{KSA}
+\glref{unit~instance}) that returns a \glref{generalized~boolean} or \nil{}
+(default is \nil)
 \arg[trigger-events] An \nobr{\var{event-specification\/}} (see below, not 
 evaluated)
 \arg[ks] A \glref{KS}
@@ -28426,30 +28536,33 @@ The description is printed to the {\bf *standard-output*} stream.
 \fnargs
 \begin{args}{revalidation-predicate}
 \arg[ks-name] A symbol naming the \glref{KS}
-\arg[activation-predicate] A \glref{function} of two arguments (the
-\glref{KS} \glref{unit~instance} and the \glref{event} object) that returns a
-\glref{generalized~boolean} or \nil{}
-(default is \nil) 
+\arg[activation-predicate] A \glref{function~designator} specifying a
+\glref{function~object} of two arguments (the \glref{KS} \glref{unit~instance}
+and the \glref{event} object) that returns a \glref{generalized~boolean} or
+\nil{} (default is \nil)
 \arg[enabled] A \glref{generalized~boolean} (default is \code{t})
-\arg[execution-function]  A \glref{function} of one argument (the
-\glref{KSA} \glref{unit~instance}) or \nil{} (default is \nil)
+\arg[execution-function] A \glref{function~designator} specifying a
+\glref{function~object} of one argument (the \glref{KSA}
+\glref{unit~instance}) or \nil{} (default is \nil)
 \arg[ks-class] A class or a symbol specifying a class
 \arg[ksa-class] A class or a symbol specifying a class
 \arg[obviation-events] An \nobr{\var{event-specification\/}} (see below)
-\arg[obviation-predicate]  A \glref{function} of two arguments (the
-\glref{KSA} \glref{unit~instance} and the \glref{event} object) that returns a
-\glref{generalized~boolean} or \nil{}
-(default is \nil) 
-\arg[precondition-function] A \glref{function} of two arguments (the
-\glref{KS} \glref{unit~instance} and the \glref{event} object) or \nil{}
-(default is \nil) 
+\arg[obviation-predicate] A \glref{function~designator} specifying a
+\glref{function~object} of two arguments (the \glref{KSA}
+\glref{unit~instance} and the \glref{event} object) that returns a
+\glref{generalized~boolean} or \nil{} (default is \nil)
+\arg[precondition-function] A \glref{function~designator} specifying a
+\glref{function~object} of two arguments (the \glref{KS} \glref{unit~instance}
+and the \glref{event} object) or \nil{} (default is \nil)
 \arg[rating] A \glref{rating} (default is \code{1})
 \arg[retrigger-events] An \nobr{\var{event-specification\/}} (see below)
-\arg[retrigger-function] A \glref{function} of two arguments (the
-\glref{KSA} \glref{unit~instance} and the \glref{event} object) or \nil{}
-(default is \nil) 
-\arg[revalidation-predicate] A \glref{function} of one argument (the
-\glref{KSA} \glref{unit~instance}) that returns a
+\arg[retrigger-function] A \glref{function~designator} specifying a
+\glref{function~object} of two arguments (the \glref{KSA}
+\glref{unit~instance} and the \glref{event} object) or \nil{} (default is
+\nil)
+\arg[revalidation-predicate] A \glref{function~designator} specifying a
+\glref{function~object} of one argument (the \glref{KSA}
+\glref{unit~instance}) that returns a
 \glref{generalized~boolean} or \nil{} (default is \nil)
 \arg[trigger-events] An \nobr{\var{event-specification\/}} (see below)
 \arg[ks] A \glref{KS}
