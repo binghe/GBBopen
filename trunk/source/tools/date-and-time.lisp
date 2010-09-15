@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/date-and-time.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Sep  9 12:39:14 2010 *-*
+;;;; *-* Last-Edit: Wed Sep 15 11:05:50 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -598,7 +598,7 @@
                             :separators separators)
         (values (or second 0)
                 (or minute 0)
-                hour 
+                (or hour 0)
                 time-zone-offset
                 daylight-savings-p
                 (if time-zone-offset
