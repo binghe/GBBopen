@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/test/llrb-tree-test.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Apr  7 10:02:24 2010 *-*
+;;;; *-* Last-Edit: Thu Sep 16 15:50:35 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -89,7 +89,7 @@
 ;;;   Timing
 
 (defun random-size-llrb-tree-test (n)
-  (format t "~&;; Starting random-size LLRB-tree tests...~%")
+  (format t "~&;;   Starting random-size LLRB-tree tests...~%")
   ;; Build the test-data hash table:
   (let ((numbers (make-hash-table :size n))
         tree
@@ -101,7 +101,7 @@
       (let ((key (random n)))
         (setf (gethash key numbers) key)))
     ;; Build the LLRH tree:
-    (format t "~&;;  Building ~s-node LLRH tree:~%" 
+    (format t "~&;;     Building ~s-node LLRH tree:~%" 
             (hash-table-count numbers))
     (nicer-time
      (with-hash-table-iterator (next numbers)
@@ -113,7 +113,7 @@
       (error "Wrong node count"))
     (llrb-check-traversal tree)
     ;; Now build the hash table:
-    (format t "~&;;  Building ~s-entry hash table:~%" 
+    (format t "~&;;     Building ~s-entry hash table:~%" 
             (hash-table-count numbers))
     (nicer-time
      (with-hash-table-iterator (next numbers)
@@ -121,7 +121,7 @@
        (while (multiple-value-setq (continuep key) (next))
          (setf (gethash key ht) (-& key)))))
     ;; LLRH retrievals:
-    (format t "~&;;  Performing ~s LLRB-tree retrievals:~%"
+    (format t "~&;;     Performing ~s LLRB-tree retrievals:~%"
             (hash-table-count numbers))
     (nicer-time
      (with-hash-table-iterator (next numbers)
@@ -130,7 +130,7 @@
            (unless (and value (=& value (-& key)))
              (error "LLRB did not retrieve ~s" key))))))
     ;; Hash-table retrievals:
-    (format t "~&;;  Performing ~s hash-table retrievals:~%"
+    (format t "~&;;     Performing ~s hash-table retrievals:~%"
             (hash-table-count numbers))
     (nicer-time
      (with-hash-table-iterator (next numbers)
@@ -145,14 +145,14 @@
     (let ((remaining-numbers (-& (hash-table-count ht)
                                  (hash-table-count numbers))))
       ;; LLRH deletes:
-      (format t "~&;;  Performing ~s LLRB-tree deletes:~%"
+      (format t "~&;;     Performing ~s LLRB-tree deletes:~%"
               (hash-table-count numbers))
       (nicer-time
        (with-hash-table-iterator (next numbers)
          (while (multiple-value-setq (continuep key) (next))
            (llrb-tree-delete key tree))))
       ;; Hash-table deletes:
-    (format t "~&;;  Performing ~s hash-table deletes:~%"
+    (format t "~&;;     Performing ~s hash-table deletes:~%"
             (hash-table-count numbers))
       (nicer-time
        (with-hash-table-iterator (next numbers)
@@ -164,13 +164,13 @@
         (unless (= hash-table-count count node-count)
           (error "Wrong LLRB-TREE-COUNT after deletes: ~s ~s ~s ~s" 
                  count node-count hash-table-count remaining-numbers)))))
-  (format t "~&;; Completed random-size LLRB-tree tests.~%"))
+  (format t "~&;;   Random-size LLRB-tree tests completed.~%"))
 
 ;;; ===========================================================================
 ;;;  Basic LLRB-tree trip test
 
 (defun basic-llrb-tree-test (&optional verbose)
-  (format t "~&;; Starting basic LLRB-tree tests...~%")
+  (format t "~&;;   Starting basic LLRB-tree tests...~%")
   (let (llrb-tree)
     (macrolet
         ((logger ((s &body setup) &body body)
@@ -242,7 +242,7 @@
                         (unless (and value (eql value (code-char i)))
                           (error "Incorrect character value ~s for ~s."
                                  value i))))))))
-    (format t "~&;; Completed basic LLRB-tree tests.~%"))
+    (format t "~&;;   Basic LLRB-tree tests completed.~%"))
   
 ;;; ---------------------------------------------------------------------------
 

@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/module-manager/module-manager.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Jul 29 14:40:23 2010 *-*
+;;;; *-* Last-Edit: Wed Sep 22 09:12:02 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -549,22 +549,37 @@
                                (junk-allowed nil)
                                (separators "-/ ,")
                                (month-precedes-date *month-precedes-date*)
-                               year-first)
+                               year-first
+                               default-to-current-year)
   ;;; Parses many intuitive date formats (sensitive to month-precedes-date,
   ;;; if needed):
   (declare (simple-string string))
   (let ((ptr start)
-        date month year month-preceded-date name-equal-string)
+        date month year month-preceded-date name-equal-string 
+        year-increment-check-needed?
+        ;; used to cache GET-DECODED-TIME values, should they be needed:
+        current-date current-month current-year)
     (labels ((name-equal (name)
                (when (string-equal 
                       string name
                       :start1 ptr
-                      :end1 (& (min (& end)
-                                    (& (+ (& ptr) (& (length name)))))))
+                      :end1 (& (min (& end) (+& ptr (length name)))))
                  (setf name-equal-string name)))
+             (get-decoded-time-unless-cached () 
+               ;; check current-date to see if we've cached already:
+               (unless current-date
+                 (multiple-value-bind (seconds minutes hours date month year)
+                     (get-decoded-time)
+                   (declare (ignore seconds minutes hours))
+                   (setf current-date date
+                         current-month month
+                         current-year year))))
              (process-date ()
                (multiple-value-setq (date ptr)
-                 (parse-integer string :start ptr :end end :junk-allowed t)))
+                 (parse-integer string :start ptr :end end :junk-allowed t))
+               ;; Check if we got the year (due to missing date):
+               (when (and date (>= date 1899) (not year))
+                 (setf year date date nil)))
              (process-possible-day ()
                (setf name-equal-string nil)
                (when (or (position-if #'name-equal
@@ -576,62 +591,67 @@
                  (incf& ptr (& (length name-equal-string)))
                  (skip-separators)))
              (process-month ()
-               (cond
-                ;; Numeric month:
-                ((digit-char-p (schar string ptr))
-                 (multiple-value-setq (month ptr)
-                   (parse-integer string :start ptr :end end :junk-allowed t)))
-                ;; Month name:
-                (t (setf name-equal-string nil)
-                   (setf month (or (position-if #'name-equal
-                                                *month-full-name-vector*)
-                                   (position-if #'name-equal
-                                                *month-name-vector*)))
-                   (unless month
-                     (error "Unable to determine the month in ~s" string))
-                   (incf& month)
-                   (incf& ptr (& (length name-equal-string))))))
+               (when (< (& ptr) (& end))
+                 (cond
+                  ;; Numeric month:
+                  ((digit-char-p (schar string ptr))
+                   (multiple-value-setq (month ptr)
+                     (parse-integer string :start ptr :end end :junk-allowed t))
+                   (when (and (not year) (> (& month) 12))
+                     (setf year month month 1)
+                     (maybe-upgrade-year)))
+                  ;; Month name:
+                  (t (setf name-equal-string nil)
+                     (setf month (or (position-if #'name-equal
+                                                  *month-full-name-vector*)
+                                     (position-if #'name-equal
+                                                  *month-name-vector*)))
+                     (unless month
+                       (error "Unable to determine the month in ~s" string))
+                     (incf& month)
+                     (incf& ptr (& (length name-equal-string)))))))
+             (maybe-upgrade-year ()
+               ;; Upgrade year YY to YYYY -- YY assumed within +/- 50 years
+               ;; from current time (if year < 100):
+               (unless (>= (& year) 100) 
+                 (get-decoded-time-unless-cached)
+                 (let ((current-century
+                        (& (* 100 (& (truncate (& current-year) 100))))))
+                   (setf year (if (>= (& year) 50) 
+                                  (+& year current-century -100)
+                                  (+& year current-century))))))
              (process-year ()
                (cond 
                 ;; Assumed year, if omitted:
                 ((= (& ptr) (& end))
+                 (setf year-increment-check-needed? 't)
                  (setf year (default-year)))
                 ;; Otherwise, process the specified year:
                 (t (multiple-value-setq (year ptr)
-                     (parse-integer string :start ptr :end end 
-                                    :junk-allowed (if year-first 
-                                                      't
-                                                      junk-allowed)))
-                   (if year
-                       ;; a year was specified:
-                       (check-type year (integer 0 #.most-positive-fixnum))
-                       ;; use assumed year:
-                       (setf year (default-year)))))
-               ;; Upgrade YY to YYYY -- YY assumed within +/- 50 years from
-               ;; current time (if year < 100):
-               (setf year (cond 
-                           ;; No year upgrade needed:
-                           ((>= (& year) 100) year)
-                           ;; Do the upgrade:
-                           (t (let ((current-century
-                                     (& (* 100 
-                                           (& (truncate (& (nth-value 5 (get-decoded-time)))
-                                                        100))))))
-                                (if (>= (& year) 50) 
-                                    (& (+ (& year) (& current-century) -100))
-                                    (& (+ (& year) (& current-century)))))))))
-             (default-year ()
-               ;;; return the default year; used when a year is not specified:
-                 (multiple-value-bind (seconds minutes hours 
-                                       current-date current-month current-year)
-                     (get-decoded-time)
-                   (declare (ignore seconds minutes hours))
-                   ;; Assume next year, if the date is past in the current year:
-                   (if (or (< (& month) (& current-month))
+                     (parse-integer 
+                      string 
+                      :start ptr :end end 
+                      :junk-allowed (if year-first 't junk-allowed)))
+                   (cond 
+                    ;; a year was specified:
+                    (year
+                     (check-type year (integer 0 #.most-positive-fixnum))
+                     (maybe-upgrade-year))
+                    ;; use assumed year:
+                    (t (setf year-increment-check-needed? 't)
+                       (setf year (default-year)))))))
+             (maybe-increment-year ()
+               (unless default-to-current-year
+                 (get-decoded-time-unless-cached)
+                 ;; Assume next year, if the date is past in the current year:
+                 (when (or (< (& month) (& current-month))
                            (and (= (& month) (& current-month))
                                 (< (& date) (& current-date))))
-                       (+ (& current-year) 1)
-                       current-year)))
+                   (incf& year))))
+             (default-year ()
+               ;; return the default year; used when a year is not specified:
+                 (get-decoded-time-unless-cached)
+               current-year)
              (skip-separators ()
                (loop 
                    while (and (< (& ptr) (& end))
@@ -644,7 +664,7 @@
       (when year-first
         (process-year)
         (skip-separators))
-      (when (< (the fixnum ptr) (the fixnum end))
+      (when (< (& ptr) (& end))
         ;; If we have a month name, then we know the month-date order; otherwise
         ;; we'll assume month-first for now, until we process the second field:
         (when (alpha-char-p (schar string ptr))
@@ -654,26 +674,38 @@
         (cond
          ((and (not month-preceded-date)
                (or
-                ;; We have a month name in the second field:
-                (alpha-char-p (schar string ptr))
-                ;; Use the month-precedes-date value to decide the order:
-                (not month-precedes-date)))
+                 ;; We have a month name in the second field:
+                 (and (< (& ptr) (& end))
+                      (alpha-char-p (schar string ptr)))
+                 ;; Use the month-precedes-date value to decide the order:
+                 (not month-precedes-date)))
           ;; We actually have the date value from the first field (rather than
           ;; the month), so set the date from the assumed month value and then
           ;; proceed with month processing:
-          (setf date month)
+          (setf date month 
+                month nil)
           (process-month))
          ;; Simply continue, as we have month then date order:
          (t (process-date)))
-        (skip-separators))
-      (check-type month (integer 1 12))
-      (check-type date (integer 1 31))
-      (unless year-first (process-year))
-      ;; We might-have a day of week, which we skip:
+        (skip-separators))      
+      (unless (or year-first 
+                  ;; If expected month turned out to be a year:
+                  year)
+        (process-year))
+      ;; A month wasn't provided:
+      (unless month (setf month 1))
+      ;; A date wasn't provided:
+      (unless date (setf date 1))
+      ;; Increment year, if needed:
+      (when year-increment-check-needed?
+        (maybe-increment-year))
+      ;; Finally, skip a day of week, if one was specified:
       (when year-first (process-possible-day)
             (unless (or junk-allowed
                         (= (& ptr) (& end)))
               (junk-in-string-error (subseq string start end)))))
+    (check-type month (integer 1 12))
+    (check-type date (integer 1 31))
     (values date month year ptr)))
 
 ;;; ===========================================================================
@@ -976,7 +1008,7 @@
 
 (defun show-defined-directories ()
   (cond
-   ((zerop (the fixnum (hash-table-count *mm-directories*)))
+   ((zerop (& (hash-table-count *mm-directories*)))
     (format t "~& No directories are defined.~%"))
    (t (let ((directories nil))
         (maphash #'(lambda (key directory)
@@ -1977,7 +2009,7 @@
 
 (defun show-modules (&optional all-modules?)
   (cond 
-   ((zerop (the fixnum (hash-table-count *mm-modules*)))
+   ((zerop (& (hash-table-count *mm-modules*)))
     (format t "~& No modules are defined.~%"))
    (t (let ((modules nil))
         (maphash #'(lambda (key module)

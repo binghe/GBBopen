@@ -6,6 +6,10 @@ Important changes since GBBopen 1.5:
   * Changes to GBBopen Tools
      - New VERY-BRIEF-DATE function
      - New :include-year keyword argument to BRIEF-DATE
+     - New :default-to-current-year keyword argument to ENCODE-DATE-AND-TIME,
+       PARSE-DATE, and PARSE-DATE-AND-TIME
+     - New :time-first keyword argument to ENCODE-DATE-AND-TIME and 
+       PARSE-DATE-AND-TIME
      - New WHITESPACE-CHAR-P function
      - Export SORTF and STABLE-SORTF macros
      - New SORTED-MAPHASH function
