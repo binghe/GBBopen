@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Tue Sep 14 06:28:35 2010; Edited-By: cork *-*
+%% *-* Last-Edit: Wed Sep 29 14:00:59 2010; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2010, Dan Corkill <corkill@GBBopen.org>
@@ -9769,6 +9769,8 @@ description.
       \nobr{time-separators} 
       \nobr{month-precedes-date}
       \nobr{year-first}
+      \nobr{default-to-current-year}
+      \nobr{time-first}
       \nobr{time-zone}\/}
     \nobr{\returns{} \nobr{\var{universal-time,} pos\/}}}
 \index{date!parsing}% 
@@ -9783,7 +9785,7 @@ description.
 \fnmodule \code{:gbbopen-tools}
 
 \fnargs
-\begin{args}{month-precedes-date}
+\begin{args}{default-to-current-year}
 \arg[string] A string
 \arg[start] Starting index into \var{string\/} (default is \code{0})
 \arg[end] Ending index into \var{string\/} (default is \nil, meaning
@@ -9798,6 +9800,8 @@ end of \var{string\/})
 \arg[month-precedes-date] A \glref{generalized~boolean} (default is 
 \nobr{\textbf{\entlink{*month-precedes-date*}}})
 \arg[year-first] A \glref{generalized~boolean} (default is \nil)
+\arg[default-to-current-year] A \glref{generalized~boolean} (default is \nil)
+\arg[time-first] A \glref{generalized~boolean} (default is \nil)
 \arg[time-zone] A \glref{time~zone} (default is \nil,
   which is equivalent to the current time zone adjusted for daylight
   saving time)
@@ -9820,9 +9824,12 @@ by the year and the time of day. The month can be a numeric value (1--12), a
 three-letter abbreviation, or the full month name.  If the month is specified
 numerically, then the value of \nobr{\var{month-precedes-date\/}} is used to
 determine the month and date ordering. If no year is specified in \var{string}
-(and \var{year-first\/} is \nil), the current year is assumed, unless the
-specified month and date have passed, in which case next year is assumed.  If
-no hour, minute, or second values are specified, they default to zero.
+and \nobr{\var{default-to-current-year\/}} is \nil, the current calendar year
+is assumed, unless the specified month and date have passed, in which case the
+next year is assumed. If no year is specified in \var{string} and
+\nobr{\var{default-to-current-year\/}} is true, the current calendar year is
+always assumed.  If no hour, minute, or second values are specified, they
+default to zero.
 
 \W\xml{p} 
 %
@@ -9842,6 +9849,13 @@ If a time-zone is specified in \var{string}, it is used when encoding the
 \nobr{\var{time-zone\/}} argument was supplied, it used for the encoding.
 Otherwise, the current time zone adjusted for daylight saving time is used.
 
+\W\xml{p} 
+%
+If \var{time-first\/} is true, the time-of-day is expected before the date;
+otherwise the time-of-day is expected to follow the date.
+
+\W\xml{p} 
+%
 The returned \var{position\/} is the index within \var{string\/} where the
 parse ended.
 
@@ -9871,6 +9885,9 @@ parse ended.
   3479121000
   29\goodpagebreak
   > (encode-date-and-time "4/1/10 10:30pm")
+  3479164200
+  14
+  > (encode-date-and-time "10:30pm 4/1/10" :time-first 't)
   3479164200
   14\goodpagebreak
   > (encode-date-and-time "Apr 1 2010 10:30 EDT")
@@ -10554,7 +10571,8 @@ If \nobr{\var{universal-time\/}} is not supplied or is \nil, the current time
       \nobr{junk-allowed} 
       \nobr{separators}
       \nobr{month-precedes-date}
-      \nobr{year-first}\/}
+      \nobr{year-first}
+      \nobr{default-to-current-year}\/}
     \nobr{\returns{} \var{date, month, year, position\/}}}
 \index{date!parsing}% 
 
@@ -10567,7 +10585,7 @@ If \nobr{\var{universal-time\/}} is not supplied or is \nil, the current time
 \fnmodule \code{:module-manager}
 
 \fnargs
-\begin{args}{month-precedes-date}
+\begin{args}{default-to-current-year}
 \arg[string] A simple string
 \arg[start] Starting index into \var{string\/} (default is \code{0})
 \arg[end] Ending index into \var{string\/} (default is \nil, meaning
@@ -10579,6 +10597,7 @@ end of \var{string\/})
 \arg[month-precedes-date] A \glref{generalized~boolean} (default is 
 \nobr{\textbf{\entlink{*month-precedes-date*}}})
 \arg[year-first] A \glref{generalized~boolean} (default is \nil)
+\arg[default-to-current-year] A \glref{generalized~boolean} (default is \nil)
 \arg[date] An integer between 1 and up to 31, inclusive, depending
   on the month and year
 \arg[month] An integer between 1 and 12, inclusive
@@ -10602,8 +10621,11 @@ by the year and the time of day. The month can be a numeric value (1--12), a
 three-letter abbreviation, or the full month name.  If the month is specified
 numerically, then the value of \nobr{\var{month-precedes-date\/}} is used to
 determine the month and date ordering. If no year is specified in \var{string}
-(and \var{year-first\/} is \nil), the current year is assumed, unless the
-specified month and date have passed, in which case next year is assumed. 
+and \nobr{\var{default-to-current-year\/}} is \nil, the current calendar year
+is assumed, unless the specified month and date have passed, in which case the
+next year is assumed. If no year is specified in \var{string} and
+\nobr{\var{default-to-current-year\/}} is true, the current calendar year is
+always assumed.
 
 The returned \var{position\/} is the index within \var{string\/} where the
 parse ended.
@@ -10651,7 +10673,18 @@ parse ended.
   4
   2010
   6\goodpagebreak
-  > (parse-date "4 Jul") \textcolor{darkergray}{;; entered before July 4, 2008}
+  > (parse-date "4 Jul") \textcolor{darkergray}{;; entered May 1, 2008}
+  4
+  7
+  2008
+  5
+  > (parse-date "4 Jul") \textcolor{darkergray}{;; entered August 1, 2008}
+  4
+  7
+  2009
+  5
+  > (parse-date "4 Jul"  \textcolor{darkergray}{;; entered August 1, 2008}
+      :default-to-current-year 't)
   4
   7
   2008
@@ -10681,8 +10714,14 @@ in order to to make it available as early as possible.
 
 \begin{functiondoc}{Function}{parse-date-and-time}{%
     \var{string\/}
-    \code{\&key} \var{start end \nobr{junk-allowed} \nobr{date-separators}
-      \nobr{time-separators} \nobr{month-precedes-date} \nobr{year-first}\/}
+    \code{\&key} \var{start end 
+      \nobr{junk-allowed} 
+      \nobr{date-separators}
+      \nobr{time-separators} 
+      \nobr{month-precedes-date} 
+      \nobr{year-first}
+      \nobr{default-to-current-year}
+      \nobr{time-first}\/}
     \nobr{\returns{} \var{second, minute, hour,}}
     \var{date, month, year, 
       \nobr{time-zone,} \nobr{daylight-savings-p,} pos\/}}
@@ -10697,7 +10736,7 @@ in order to to make it available as early as possible.
 \fnmodule \code{:gbbopen-tools}
 
 \fnargs
-\begin{args}{month-precedes-date}
+\begin{args}{default-to-current-year}
 \arg[string] A simple string
 \arg[start] Starting index into \var{string\/} (default is \code{0})
 \arg[end] Ending index into \var{string\/} (default is \nil, meaning
@@ -10712,6 +10751,8 @@ end of \var{string\/})
 \arg[month-precedes-date] A \glref{generalized~boolean} (default is 
 \nobr{\textbf{\entlink{*month-precedes-date*}}})
 \arg[year-first] A \glref{generalized~boolean} (default is \nil)
+\arg[default-to-current-year] A \glref{generalized~boolean} (default is \nil)
+\arg[time-first] A \glref{generalized~boolean} (default is \nil)
 \arg[second] An integer between 0 and up to 59, inclusive
 \arg[minute] An integer between 0 and up to 59, inclusive
 \arg[hour] An integer between 0 and up to 23, inclusive
@@ -10741,12 +10782,15 @@ Both the month and date must be specified in \var{string}, optionally followed
 by the year and the time of day. The month can be a numeric value (1--12), a
 three-letter abbreviation, or the full month name.  If the month is specified
 numerically, then the value of \nobr{\var{month-precedes-date\/}} is used to
-determine the month and date ordering. If no year is specified in \var{string}
-(and \var{year-first\/} is \nil), the current year is assumed, unless the
-specified month and date have passed, in which case next year is assumed.  If
-no hour, minute, or second values are specified, they default to zero.  The
-values returned for \nobr{\var{time-zone}} and \nobr{\var{daylight-savings-p}}
-will be \nil{} unless a time-zone is specified in \var{string}.
+determine the month and date ordering.  If no year is specified in
+\var{string} and \nobr{\var{default-to-current-year\/}} is \nil, the current
+calendar year is assumed, unless the specified month and date have passed, in
+which case the next year is assumed. If no year is specified in \var{string}
+and \nobr{\var{default-to-current-year\/}} is true, the current calendar year
+is always assumed. If no hour, minute, or second values are specified, they
+default to zero.  The values returned for \nobr{\var{time-zone}} and
+\nobr{\var{daylight-savings-p}} will be \nil{} unless a time-zone is specified
+in \var{string}.
 
 \W\xml{p} 
 %
@@ -10766,6 +10810,13 @@ If a time-zone is specified in \var{string}, it is used when encoding the
 \nobr{\var{time-zone\/}} argument was supplied, it used for the encoding.
 Otherwise, the current time zone adjusted for daylight saving time is used.
 
+\W\xml{p} 
+%
+If \var{time-first\/} is true, the time-of-day is expected before the date;
+otherwise the time-of-day is expected to follow the date.
+
+\W\xml{p} 
+%
 The returned \var{position\/} is the index within \var{string\/} where the
 parse ended.
 
@@ -10804,6 +10855,16 @@ parse ended.
   nil
   19\goodpagebreak
   > (parse-date-and-time "4/1/10 10:30pm")
+  0
+  30
+  22
+  1
+  4
+  2010
+  nil
+  nil
+  14
+  > (parse-date-and-time "10:30pm 4/1/10" :time-first 't)
   0
   30
   22

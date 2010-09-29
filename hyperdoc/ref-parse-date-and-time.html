@@ -16,8 +16,14 @@
 <p><table class="tight" width="100%">
 <tr valign="top"><td valign="baseline" align="left"%>
 <nobr><b><font color="#000000">parse-date-and-time</font></b></nobr></td><td valign="baseline"> &nbsp; </td><td valign="baseline" align="left" width="99%"><var>string</var>
-<code>&#38;key</code> <var>start end <nobr>junk-allowed</nobr> <nobr>date-separators</nobr>
-<nobr>time-separators</nobr> <nobr>month-precedes-date</nobr> <nobr>year-first</nobr></var>
+<code>&#38;key</code> <var>start end 
+<nobr>junk-allowed</nobr> 
+<nobr>date-separators</nobr>
+<nobr>time-separators</nobr> 
+<nobr>month-precedes-date</nobr> 
+<nobr>year-first</nobr>
+<nobr>default-to-current-year</nobr>
+<nobr>time-first</nobr></var>
 <nobr><span 
     style="font-family: serif; font-style: normal">=&gt;</span> <var>second, minute, hour,</var></nobr>
 <var>date, month, year, 
@@ -44,6 +50,8 @@ hour, minute, and second fields in <var>string</var>, if needed (default is
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>month-precedes-date</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id84">generalized&nbsp;boolean</a> (default is 
 <nobr><b><a href="ref-month-precedes-date-var.html">*month-precedes-date*</a></b></nobr>)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>year-first</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id84">generalized&nbsp;boolean</a> (default is <code>nil</code>)
+</td></tr><tr valign="top"><td valign="baseline" nowrap><i>default-to-current-year</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id84">generalized&nbsp;boolean</a> (default is <code>nil</code>)
+</td></tr><tr valign="top"><td valign="baseline" nowrap><i>time-first</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id84">generalized&nbsp;boolean</a> (default is <code>nil</code>)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>second</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An integer between 0 and up to 59, inclusive
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>minute</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An integer between 0 and up to 59, inclusive
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>hour</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An integer between 0 and up to 23, inclusive
@@ -69,12 +77,15 @@ possibly surrounded on either side by characters in <nobr><var>separators</var><
 by the year and the time of day. The month can be a numeric value (1&ndash;12), a
 three-letter abbreviation, or the full month name.  If the month is specified
 numerically, then the value of <nobr><var>month-precedes-date</var></nobr> is used to
-determine the month and date ordering. If no year is specified in <var>string</var>
-(and <var>year-first</var> is <code>nil</code>), the current year is assumed, unless the
-specified month and date have passed, in which case next year is assumed.  If
-no hour, minute, or second values are specified, they default to zero.  The
-values returned for <nobr><var>time-zone</var></nobr> and <nobr><var>daylight-savings-p</var></nobr>
-will be <code>nil</code> unless a time-zone is specified in <var>string</var>.
+determine the month and date ordering.  If no year is specified in
+<var>string</var> and <nobr><var>default-to-current-year</var></nobr> is <code>nil</code>, the current
+calendar year is assumed, unless the specified month and date have passed, in
+which case the next year is assumed. If no year is specified in <var>string</var>
+and <nobr><var>default-to-current-year</var></nobr> is true, the current calendar year
+is always assumed. If no hour, minute, or second values are specified, they
+default to zero.  The values returned for <nobr><var>time-zone</var></nobr> and
+<nobr><var>daylight-savings-p</var></nobr> will be <code>nil</code> unless a time-zone is specified
+in <var>string</var>.
 </p>
 <p><p> 
 If <var>month-precedes-date</var> is true, the month is expected before the date;
@@ -91,7 +102,12 @@ If a time-zone is specified in <var>string</var>, it is used when encoding the
 <nobr><var>time-zone</var></nobr> argument was supplied, it used for the encoding.
 Otherwise, the current time zone adjusted for daylight saving time is used.
 </p>
-<p>The returned <var>position</var> is the index within <var>string</var> where the
+<p><p> 
+If <var>time-first</var> is true, the time-of-day is expected before the date;
+otherwise the time-of-day is expected to follow the date.
+</p>
+<p><p> 
+The returned <var>position</var> is the index within <var>string</var> where the
 parse ended.
 </p>
 <p><span class="fndoclabel">See also</span>
@@ -125,6 +141,16 @@ parse ended.
   nil
   19
   &gt; (parse-date-and-time "4/1/10 10:30pm")
+  0
+  30
+  22
+  1
+  4
+  2010
+  nil
+  nil
+  14
+  &gt; (parse-date-and-time "10:30pm 4/1/10" :time-first 't)
   0
   30
   22

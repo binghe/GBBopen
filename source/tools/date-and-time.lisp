@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/date-and-time.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Sep 15 11:05:50 2010 *-*
+;;;; *-* Last-Edit: Wed Sep 29 11:27:42 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -616,35 +616,45 @@
                                  (date-separators "-/ ,")
                                  (time-separators " :")
                                  (month-precedes-date *month-precedes-date*)
-                                 year-first)
-  (let ((time-only nil))
-    (multiple-value-bind (date month year start)
-        (with-error-handling
-            (parse-date string 
-                        :start start :end end 
-                        :junk-allowed 't
-                        :separators date-separators
-                        :month-precedes-date month-precedes-date
-                        :year-first year-first)
-          ;; If date parsing failed, try as just a time:
-          (setf time-only 't)
-          (values nil nil nil start))
-      (multiple-value-bind (second minute hour 
-                            time-zone daylight-savings-p start)
-          (parse-time string 
-                      :start start :end end 
-                      :junk-allowed junk-allowed
-                      :separators time-separators)
-        (if time-only
-            (multiple-value-bind (s m h date month year)
-                (if time-zone
-                    (decode-universal-time (get-universal-time) time-zone)
-                    (get-decoded-time))
-              (declare (ignore s m h))
-              (values second minute hour date month year 
-                      time-zone daylight-savings-p start))
+                                 year-first
+                                 time-first
+                                 default-to-current-year)
+  (let ((time-only nil)
+        second minute hour date month year time-zone daylight-savings-p)
+    (flet 
+        ((do-date ()
+           (multiple-value-setq (date month year start)
+             (with-error-handling
+                 (parse-date string 
+                             :start start :end end 
+                             :junk-allowed 't
+                             :separators date-separators
+                             :month-precedes-date month-precedes-date
+                             :year-first year-first
+                             :default-to-current-year default-to-current-year)
+               ;; If date parsing failed, try as just a time:
+               (setf time-only 't)
+               (values nil nil nil start))))
+         (do-time ()
+           (multiple-value-setq (second minute hour 
+                                 time-zone daylight-savings-p start)
+             (parse-time string 
+                         :start start :end end 
+                         :junk-allowed junk-allowed
+                         :separators time-separators))))
+      (cond (time-first
+             (do-time) (do-date))
+            (t (do-date) (do-time)))
+      (if time-only
+          (multiple-value-bind (s m h date month year)
+              (if time-zone
+                  (decode-universal-time (get-universal-time) time-zone)
+                  (get-decoded-time))
+            (declare (ignore s m h))
             (values second minute hour date month year 
-                    time-zone daylight-savings-p start))))))
+                    time-zone daylight-savings-p start))
+          (values second minute hour date month year 
+                  time-zone daylight-savings-p start)))))
 
 ;;; ---------------------------------------------------------------------------
 
