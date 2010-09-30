@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/test/gbbopen-tools-test.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Sep 30 03:24:58 2010 *-*
+;;;; *-* Last-Edit: Thu Sep 30 04:49:24 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -30,6 +30,7 @@
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defmacro with-assumed-date/time-values (args &body body)
+    ;; Assumes DAY, MONTH, and YEAR are bound to DECODED-TIME values, that the
     (declare (ignore args))
     `(let ((assumed-july-4th-year
             (if (or (<& month 7)
@@ -53,8 +54,9 @@
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defmacro inserted-date-tests ()
-    ;; Assumes DAY, MONTH, and YEAR are bound to DECODED-TIME values, and that
-    ;; the lexical function TEST-IT is defined:
+    ;; Assumes DAY, MONTH, and YEAR are bound to DECODED-TIME values, that the
+    ;; inserted tests are within WITH-ASSUMED-DATE/TIME-VALUES, and that the
+    ;; lexical function TEST-IT is defined:
     '(with-assumed-date/time-values ()
       (test-it '(0 0 0 1 4 2010 nil nil 10)
        "1 Apr 2010")
@@ -130,17 +132,19 @@
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defmacro inserted-time-tests ()
-    ;; Assumes the lexical function TEST-IT is defined:
+    ;; Assumes that the inserted tests are within
+    ;; WITH-ASSUMED-DATE/TIME-VALUES and that the lexical function TEST-IT is
+    ;; defined:
     '(progn
-      (test-it '(0 30 10 :ignored :ignored :ignored nil nil 5)
+      (test-it `(0 30 10 ,date ,month ,year nil nil 5)
        "10:30")
-      (test-it '(0 30 22 :ignored :ignored :ignored nil nil 7)
+      (test-it `(0 30 22 ,date ,month ,year nil nil 7)
        "10:30pm")
-      (test-it '(0 30 10 :ignored :ignored :ignored 4 t 9)
+      (test-it `(0 30 10 ,date ,month ,year 4 t 9)
        "10:30 EDT")
-      (test-it '(0 30 10 :ignored :ignored :ignored -11/2 nil 9)
+      (test-it `(0 30 10 ,date ,month ,year -11/2 nil 9)
        "10:30 IST")
-      (test-it '(0 30 10 :ignored :ignored :ignored 7 nil 11)
+      (test-it `(0 30 10 ,date ,month ,year 7 nil 11)
        "10:30 UTC-7"))))
 
 ;;; ---------------------------------------------------------------------------
@@ -195,8 +199,9 @@
 
 (defun parse-time-test ()
   (format t "~&;;   Starting parse-time test...~%")
-  (multiple-value-bind (second minute hour)
+  (multiple-value-bind (second minute hour date month year)
       (get-decoded-time)
+    (declare (ignore second minute hour))
     (flet ((test-it (expected-result string &rest args)
              (format t "~&;;     ~s~{ ~s~} => "
                      string args)
@@ -234,9 +239,10 @@
                                    returned-daylight-savings-p))
                      (unless (=& expected-position returned-position)
                        (bad-result 'position expected-position returned-position)))
-                 #+IGNORE
-                 (very-brief-date
-                  (encode-universal-time 0 0 0 date month year)
+                 (brief-date-and-time
+                  (encode-universal-time 
+                   returned-second returned-minute returned-hour
+                   date month year)
                   :destination *standard-output*)))))
       (inserted-time-tests)))
   (format t "~&;;   Parse-time test completed.~%"))
@@ -245,7 +251,7 @@
 
 (defun parse-date-and-time-test ()
   (format t "~&;;   Starting parse-date-and-time test...~%")
-  (multiple-value-bind (second minute hour day month year)
+  (multiple-value-bind (second minute hour date month year)
       (get-decoded-time)
     (declare (ignore second minute hour))
     (let ((*month-precedes-date* 't)    ; normal default value
@@ -288,8 +294,8 @@
                             string
                             result)))))
         (inserted-date-tests)
-        #+soon
-        (inserted-time-tests)
+        (let ((*time-first* 't))
+          (inserted-time-tests))
         (test-it '(0 30 10 1 4 2010 nil nil 19)
                  "April 1, 2010 10:30")
         (test-it '(0 30 10 1 4 2010 nil nil 19)

@@ -42,7 +42,8 @@ date, month, and year fields in <var>string</var>, if needed (default is
 <nobr><code>"-/ ,"</code></nobr>)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>month-precedes-date</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id84">generalized&nbsp;boolean</a> (default is 
 <nobr><b><a href="ref-month-precedes-date-var.html">*month-precedes-date*</a></b></nobr>)
-</td></tr><tr valign="top"><td valign="baseline" nowrap><i>year-first</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id84">generalized&nbsp;boolean</a> (default is <code>nil</code>)
+</td></tr><tr valign="top"><td valign="baseline" nowrap><i>year-first</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id84">generalized&nbsp;boolean</a> (default is
+<nobr><b><a href="ref-year-first-var.html">*year-first*</a></b></nobr>)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>default-to-current-year</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id84">generalized&nbsp;boolean</a> (default is <code>nil</code>)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>date</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An integer between 1 and up to 31, inclusive, depending
 on the month and year
@@ -110,6 +111,16 @@ parse ended.
   1
   4
   2010
+  6
+  &gt; (parse-date "1-4-10" :month-precedes-date 't :year-first 't)
+  10
+  4
+  2001
+  6
+  &gt; (parse-date "1-4-10" :month-precedes-date nil :year-first 't)
+  4
+  10
+  2001
   6
   &gt; (parse-date "4 Jul") <font color="#667f66">;; entered May 1, 2008</font>
   4

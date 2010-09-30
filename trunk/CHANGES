@@ -10,6 +10,7 @@ Important changes since GBBopen 1.5:
        PARSE-DATE, and PARSE-DATE-AND-TIME
      - New :time-first keyword argument to ENCODE-DATE-AND-TIME and 
        PARSE-DATE-AND-TIME
+     - New *TIME-FIRST* and *YEAR-FIRST* variables
      - New WHITESPACE-CHAR-P function
      - Export SORTF and STABLE-SORTF macros
      - New SORTED-MAPHASH function
