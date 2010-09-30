@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/module-manager/module-manager.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Sep 22 09:12:02 2010 *-*
+;;;; *-* Last-Edit: Wed Sep 29 17:36:43 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -543,6 +543,15 @@
                               include-seconds)))))))))
   
 ;;; ---------------------------------------------------------------------------
+;;;  Helper functions for PARSE-DATE
+
+(defun 1st-day-of-month (month year)
+  ;; Returns the day of the week (0: Monday ... 6: Sunday) of the 1st of
+  ;; `month' in `year':
+  (nth-value 6 (decode-universal-time 
+                (encode-universal-time 0 0 0 1 month year))))
+
+;;; ---------------------------------------------------------------------------
 
 (defun parse-date (string &key (start 0) 
                                (end (length string))
@@ -555,7 +564,7 @@
   ;;; if needed):
   (declare (simple-string string))
   (let ((ptr start)
-        date month year month-preceded-date name-equal-string 
+        date month year month-preceded-date name-equal-string descriptive-date
         year-increment-check-needed?
         ;; used to cache GET-DECODED-TIME values, should they be needed:
         current-date current-month current-year)
@@ -575,11 +584,21 @@
                          current-month month
                          current-year year))))
              (process-date ()
-               (multiple-value-setq (date ptr)
-                 (parse-integer string :start ptr :end end :junk-allowed t))
-               ;; Check if we got the year (due to missing date):
-               (when (and date (>= date 1899) (not year))
-                 (setf year date date nil)))
+               (setf name-equal-string nil)
+               (cond 
+                ;; Non-numeric (descriptive) date:
+                ((or (name-equal "LastSat")
+                     (name-equal "LastSun")
+                     (name-equal "Sun>=1"))
+                 (setf descriptive-date name-equal-string)
+                 (incf& ptr (& (length name-equal-string)))
+                 (skip-separators))
+                ;; Numeric date:
+                (t (multiple-value-setq (date ptr)
+                     (parse-integer string :start ptr :end end :junk-allowed t))
+                   ;; Check if we got the year (due to missing date):
+                   (when (and date (>= date 1899) (not year))
+                     (setf year date date nil)))))
              (process-possible-day ()
                (setf name-equal-string nil)
                (when (or (position-if #'name-equal
@@ -696,6 +715,15 @@
       (unless month (setf month 1))
       ;; A date wasn't provided:
       (unless date (setf date 1))
+      ;; Process descriptive date:
+      (when descriptive-date
+        (cond 
+         ((string= descriptive-date "Sun>=1")
+          (let ((1st-day-of-month (1st-day-of-month month year)))
+            (setf date (& (- 7 (& 1st-day-of-month))))
+            (printv date)))
+         ;; Unknown descriptive date:
+         (t (printv descriptive-date))))
       ;; Increment year, if needed:
       (when year-increment-check-needed?
         (maybe-increment-year))
