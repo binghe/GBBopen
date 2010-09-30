@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Wed Sep 29 14:00:59 2010; Edited-By: cork *-*
+%% *-* Last-Edit: Thu Sep 30 05:08:42 2010; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2010, Dan Corkill <corkill@GBBopen.org>
@@ -9316,8 +9316,8 @@ day.
 
 \fnsyntax
 
-\fnpurpose Control month and date ordering for GBBopen Tools date and time
-entities.
+\fnpurpose Control the default month and date ordering for GBBopen Tools date
+and time entities.
 
 \fnpackage \code{:gbbopen-tools} (home package is \nobr{\code{:module-manager}})
 
@@ -9327,9 +9327,10 @@ entities.
 
 \fninitialvalue True
 
-\begin{alsos}{brief-date-and-time}
+\begin{alsos}{encode-date-and-time}
 \also[brief-date]
 \also[brief-date-and-time]
+\also[encode-date-and-time]
 \also[full-date-and-time]
 \also[parse-date]
 \also[parse-date-and-time]
@@ -9342,7 +9343,7 @@ Toggle between date formatting options:
 %
 \W\supp
 \begin{example}
-  > (let ((*month-precedes-date* t))
+  > (let ((*month-precedes-date* 't))
       (brief-date-and-time))
   "Feb 16 13:11"
   > (let ((*month-precedes-date* nil))
@@ -9357,6 +9358,97 @@ Toggle between date formatting options:
 %
 This variable is defined in the \nobr{\code{:module-manager}} \glref{module}
 in order to make it available as early as possible.
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}[time-first-var]{Variable}%
+{*time-first*}{}%
+
+\fnsyntax
+
+\fnpurpose Control the default date and time ordering for GBBopen Tools date
+and time entities.
+
+\fnpackage \code{:gbbopen-tools}
+
+\fnmodule \code{:gbbopen-tools}
+
+\fnvaluetype A \glref{generalized~boolean}
+
+\fninitialvalue \nil
+
+\begin{alsos}{encode-date-and-time}
+\also[encode-date-and-time]
+\also[parse-date-and-time]
+\end{alsos}
+
+\fnexample
+Change the default date and time ordering to have the time precede the date:
+%
+\W\supp
+\begin{example}
+  > (let ((*time-first* 't))
+      (parse-date-and-time "10:30pm 4/1/10"))
+  0
+  30
+  22
+  1
+  4
+  2010
+  nil
+  nil
+  14
+  >
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}[year-first-var]{Variable}%
+{*year-first*}{}%
+
+\fnsyntax
+
+\fnpurpose Control the default year positioning for GBBopen Tools date
+ entities.
+
+\fnpackage \code{:gbbopen-tools}
+
+\fnmodule \code{:gbbopen-tools}
+
+\fnvaluetype A \glref{generalized~boolean}
+
+\fninitialvalue \nil
+
+\begin{alsos}{encode-date-and-time}
+\also[brief-date]
+\also[brief-date-and-time]
+\also[encode-date-and-time]
+\also[full-date-and-time]
+\also[parse-date]
+\also[parse-date-and-time]
+\also[very-brief-date]
+\end{alsos}
+
+\fnexample
+Change the default year positioning to have the year first:
+%
+\W\supp
+\begin{example}
+  > (let ((*year-first* 't))
+      (full-date-and-time nil :all-numeric 't :year-first 't))
+  "2009/02/16 13:11"
+  > (let ((*year-first* 't))
+      (parse-date "1-4-10" :year-first 't))
+  10
+  4
+  2001
+  6
+  >
+\end{example}
 
 \end{functiondoc}
 
@@ -9391,7 +9483,8 @@ in order to make it available as early as possible.
   saving time)
 \arg[month-precedes-date] A \glref{generalized~boolean} (default is 
 \nobr{\textbf{\entlink{*month-precedes-date*}}})
-\arg[year-first] A \glref{generalized~boolean} (default is \nil)
+\arg[year-first] A \glref{generalized~boolean} (default is 
+\nobr{\textbf{\entlink{*year-first*}}})
 \arg[include-year] A \glref{generalized~boolean} (default is \code{t})
 \arg[destination] Either \nil, \code{t}, a stream, or a string with a fill 
 pointer (default is \nil)
@@ -9503,7 +9596,8 @@ in order to to make it available as early as possible.
   saving time)
 \arg[month-precedes-date] A \glref{generalized~boolean} (default is 
   \nobr{\textbf{\entlink{*month-precedes-date*}}})
-\arg[year-first] A \glref{generalized~boolean} (default is \nil)
+\arg[year-first] A \glref{generalized~boolean} (default is
+\nobr{\textbf{\entlink{*year-first*}}})
 \arg[include-seconds] A \glref{generalized~boolean} (default is \nil)
 \arg[destination] Either \nil, \code{t}, a stream, or a string with a fill 
 pointer (default is \nil)
@@ -9799,9 +9893,11 @@ end of \var{string\/})
  \nobr{\code{" :"}})
 \arg[month-precedes-date] A \glref{generalized~boolean} (default is 
 \nobr{\textbf{\entlink{*month-precedes-date*}}})
-\arg[year-first] A \glref{generalized~boolean} (default is \nil)
+\arg[year-first] A \glref{generalized~boolean} (default is
+\nobr{\textbf{\entlink{*year-first*}}})
 \arg[default-to-current-year] A \glref{generalized~boolean} (default is \nil)
-\arg[time-first] A \glref{generalized~boolean} (default is \nil)
+\arg[time-first] A \glref{generalized~boolean} (default is 
+\nobr{\textbf{\entlink{*time-first*}}})
 \arg[time-zone] A \glref{time~zone} (default is \nil,
   which is equivalent to the current time zone adjusted for daylight
   saving time)
@@ -9861,6 +9957,7 @@ parse ended.
 
 \begin{alsos}{*month-precedes-date*}
 \also[*month-precedes-date*]
+\also[encode-date-and-time]
 \also[encode-time-of-day]
 \also[parse-date]
 \also[parse-date-and-time]
@@ -10025,7 +10122,8 @@ Verbosely change \nobr{\code{quitting-time}} to 5:30pm every day:
 \arg[full-names] A \glref{generalized~boolean} (default is \nil)
 \arg[month-precedes-date] A \glref{generalized~boolean} (default is 
   \nobr{\textbf{\entlink{*month-precedes-date*}}})
-\arg[year-first] A \glref{generalized~boolean} (default is \nil)
+\arg[year-first] A \glref{generalized~boolean} (default is
+\nobr{\textbf{\entlink{*year-first*}}})
 \arg[include-day] A \glref{generalized~boolean} (default is \nil)
 \arg[include-time-zone] A \glref{generalized~boolean} (default is \nil)
 \arg[utc-offset-only] A \glref{generalized~boolean} (default is \nil)
@@ -10109,6 +10207,7 @@ in AM/PM format.
 \also[*month-precedes-date*]
 \also[brief-date]
 \also[brief-date-and-time]
+\also[encode-date-and-time]
 \also[http-date-and-time]
 \also[internet-text-date-and-time]
 \also[iso8601-date-and-time]
@@ -10596,7 +10695,8 @@ end of \var{string\/})
  \nobr{\code{"-/ ,"}})
 \arg[month-precedes-date] A \glref{generalized~boolean} (default is 
 \nobr{\textbf{\entlink{*month-precedes-date*}}})
-\arg[year-first] A \glref{generalized~boolean} (default is \nil)
+\arg[year-first] A \glref{generalized~boolean} (default is
+\nobr{\textbf{\entlink{*year-first*}}})
 \arg[default-to-current-year] A \glref{generalized~boolean} (default is \nil)
 \arg[date] An integer between 1 and up to 31, inclusive, depending
   on the month and year
@@ -10672,6 +10772,16 @@ parse ended.
   1
   4
   2010
+  6\goodpagebreak
+  > (parse-date "1-4-10" :month-precedes-date 't :year-first 't)
+  10
+  4
+  2001
+  6
+  > (parse-date "1-4-10" :month-precedes-date nil :year-first 't)
+  4
+  10
+  2001
   6\goodpagebreak
   > (parse-date "4 Jul") \textcolor{darkergray}{;; entered May 1, 2008}
   4
@@ -10750,9 +10860,11 @@ end of \var{string\/})
  \nobr{\code{" :"}})
 \arg[month-precedes-date] A \glref{generalized~boolean} (default is 
 \nobr{\textbf{\entlink{*month-precedes-date*}}})
-\arg[year-first] A \glref{generalized~boolean} (default is \nil)
+\arg[year-first] A \glref{generalized~boolean} (default is
+\nobr{\textbf{\entlink{*year-first*}}})
 \arg[default-to-current-year] A \glref{generalized~boolean} (default is \nil)
-\arg[time-first] A \glref{generalized~boolean} (default is \nil)
+\arg[time-first] A \glref{generalized~boolean} (default is
+\nobr{\textbf{\entlink{*time-first*}}})
 \arg[second] An integer between 0 and up to 59, inclusive
 \arg[minute] An integer between 0 and up to 59, inclusive
 \arg[hour] An integer between 0 and up to 23, inclusive
@@ -10956,7 +11068,7 @@ plural):
 A \code{"month"} is interpreted as exactly 30 days; a \nobr{\code{"year"}} as
 365 days.
 
-\begin{alsos}{pretty-duration}
+\begin{alsos}{encode-date-and-time}
 \also[brief-duration]
 \also[encode-date-and-time]
 \also[encode-time-of-day]
@@ -11054,7 +11166,7 @@ in \var{string}.
 The returned \var{position\/} is the index within \var{string\/} where the
 parse ended.
 
-\begin{alsos}{parse-date-and-time}
+\begin{alsos}{encode-date-and-time}
 \also[encode-date-and-time]
 \also[encode-time-of-day]
 \also[parse-date]
@@ -11276,7 +11388,8 @@ description.
   saving time)
 \arg[month-precedes-date] A \glref{generalized~boolean} (default is 
 \nobr{\textbf{\entlink{*month-precedes-date*}}})
-\arg[year-first] A \glref{generalized~boolean} (default is \nil)
+\arg[year-first] A \glref{generalized~boolean} (default is
+\nobr{\textbf{\entlink{*year-first*}}})
 \arg[include-year] A \glref{generalized~boolean} (default is \code{t})
 \arg[separator] A character (default is \code{\#\bkslash/})
 \arg[destination] Either \nil, \code{t}, a stream, or a string with a fill 
@@ -23250,7 +23363,7 @@ that have been defined to be retained by default:
 %
 \W\supp\notpretop
 \begin{example}
-  (delete-blackboard-repository :all-classes t)
+  (delete-blackboard-repository :all-classes 't)
 \end{example}
 
 \fnnote 

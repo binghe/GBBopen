@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/date-and-time.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Sep 30 03:23:06 2010 *-*
+;;;; *-* Last-Edit: Thu Sep 30 04:55:27 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -50,6 +50,7 @@
   (export '(*month-precedes-date*       ; these three entities are defined in 
             brief-date                  ; ../module-manager/module-manager.lisp, 
             brief-date-and-time         ; but are part of :gbbopen-tools
+            *time-first*
             brief-duration
             brief-run-time-duration
             full-date-and-time
@@ -79,6 +80,10 @@
 ;;;    (defparameter *month-full-name-vector* ...)
 ;;;    (defparameter *weekday-name-vector* ...)
 ;;;    (defparameter *weekday-full-name-vector* ...)
+
+(defvar *time-first* nil)
+
+;;; ---------------------------------------------------------------------------
 
 (defparameter *standard-time-zone-abbreviations*
     ;; Time-zone abbreviations are not unique or universal, and the same hour
@@ -628,7 +633,7 @@
                                  (time-separators " :")
                                  (month-precedes-date *month-precedes-date*)
                                  year-first
-                                 time-first
+                                 (time-first *time-first*)
                                  default-to-current-year)
   (let ((time-only nil)
         second minute hour date month year time-zone daylight-savings-p)
@@ -656,16 +661,19 @@
       (cond (time-first
              (do-time 't) (do-date junk-allowed))
             (t (do-date 't) (do-time junk-allowed)))
-      (if time-only
-          (multiple-value-bind (s m h date month year)
-              (if time-zone
-                  (decode-universal-time (get-universal-time) time-zone)
-                  (get-decoded-time))
-            (declare (ignore s m h))
-            (values second minute hour date month year 
-                    time-zone daylight-savings-p start))
+      (cond 
+       (time-only
+        ;; Still TODO: Deal with date change due to time-zone rollover and
+        ;; unspecfied date:
+        (multiple-value-bind (s m h date month year)
+            (if time-zone
+                (decode-universal-time (get-universal-time) time-zone)
+                (get-decoded-time))
+          (declare (ignore s m h))
           (values second minute hour date month year 
-                  time-zone daylight-savings-p start)))))
+                  time-zone daylight-savings-p start)))
+       (t (values second minute hour date month year 
+                  time-zone daylight-savings-p start))))))
 
 ;;; ---------------------------------------------------------------------------
 

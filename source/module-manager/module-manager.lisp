@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/module-manager/module-manager.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Sep 29 17:36:43 2010 *-*
+;;;; *-* Last-Edit: Thu Sep 30 04:33:05 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -643,8 +643,7 @@
                (cond 
                 ;; Assumed year, if omitted:
                 ((= (& ptr) (& end))
-                 (setf year-increment-check-needed? 't)
-                 (setf year (default-year)))
+                 (setf year-increment-check-needed? 't))
                 ;; Otherwise, process the specified year:
                 (t (multiple-value-setq (year ptr)
                      (parse-integer 
@@ -712,18 +711,29 @@
                   year)
         (process-year))
       ;; A month wasn't provided:
-      (unless month (setf month 1))
-      ;; A date wasn't provided:
-      (unless date (setf date 1))
-      ;; Process descriptive date:
+      (unless month 
+        (cond 
+         ;; assume today, if nothing was specified:
+         ((and (not date) (not year))          
+          (get-decoded-time-unless-cached)          
+          (setf date current-date
+                month current-month
+                year current-year))
+         ;; otherwise, assume January:
+         (t (setf month 1))))
+      ;; A date wasn't provided (or assumed thus far):
+      (unless date 
+        ;; Assume the 1st of the month:
+        (setf date 1))
+      ;; A year wasn't provided, use the default year:
+      (unless year
+        (setf year (default-year)))
+      ;; Process TZ descriptive date:
       (when descriptive-date
         (cond 
          ((string= descriptive-date "Sun>=1")
           (let ((1st-day-of-month (1st-day-of-month month year)))
-            (setf date (& (- 7 (& 1st-day-of-month))))
-            (printv date)))
-         ;; Unknown descriptive date:
-         (t (printv descriptive-date))))
+            (setf date (& (- 7 (& 1st-day-of-month))))))))
       ;; Increment year, if needed:
       (when year-increment-check-needed?
         (maybe-increment-year))
