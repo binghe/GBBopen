@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/date-and-time.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Sep 29 11:27:42 2010 *-*
+;;;; *-* Last-Edit: Thu Sep 30 03:23:06 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -571,6 +571,17 @@
               (parse-integer string :start start :end end :junk-allowed 't))
             (when second (setf maybe-pos start)))))
       (skip-separators)
+      ;; Check for w (wall clock), s (standard local), or u/g/z (universal)
+      ;; indicators:
+      (when (>=& (-& end start) 1)
+        (let ((char (schar string start)))
+          (cond
+           ((char= char #\z)
+            (incf& start))
+           ((char= char #\s)
+            (incf& start))
+           ((member char '(#\u #\z #\g))
+            (incf& start)))))
       ;; Check for am/pm:
       (when (>=& (-& end start) 2)
         (let ((end2 (+& start 2))) 
@@ -622,12 +633,12 @@
   (let ((time-only nil)
         second minute hour date month year time-zone daylight-savings-p)
     (flet 
-        ((do-date ()
+        ((do-date (junk-allowed?)
            (multiple-value-setq (date month year start)
              (with-error-handling
                  (parse-date string 
                              :start start :end end 
-                             :junk-allowed 't
+                             :junk-allowed junk-allowed?
                              :separators date-separators
                              :month-precedes-date month-precedes-date
                              :year-first year-first
@@ -635,16 +646,16 @@
                ;; If date parsing failed, try as just a time:
                (setf time-only 't)
                (values nil nil nil start))))
-         (do-time ()
+         (do-time (junk-allowed?)
            (multiple-value-setq (second minute hour 
                                  time-zone daylight-savings-p start)
              (parse-time string 
                          :start start :end end 
-                         :junk-allowed junk-allowed
+                         :junk-allowed junk-allowed?
                          :separators time-separators))))
       (cond (time-first
-             (do-time) (do-date))
-            (t (do-date) (do-time)))
+             (do-time 't) (do-date junk-allowed))
+            (t (do-date 't) (do-time junk-allowed)))
       (if time-only
           (multiple-value-bind (s m h date month year)
               (if time-zone
@@ -658,15 +669,19 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun encode-date-and-time (string &rest args &key time-zone
+(defun encode-date-and-time (string &rest args &key time-zone allow-pre-1900
                              &allow-other-keys)
   (declare (dynamic-extent args))
   (multiple-value-bind (second minute hour date month year 
                         specified-time-zone daylight-savings-p start)
-      (apply #'parse-date-and-time string (remove-property args ':time-zone))
+      (apply #'parse-date-and-time 
+             string 
+             (remove-properties args '(:time-zone :allow-pre-1900)))
     (declare (ignore daylight-savings-p))
     (values
      (cond 
+      ;; Pre-1900:
+      ((<& year 1990) -1)
       ;; A time zone was specified in the string:
       (specified-time-zone
        (encode-universal-time second minute hour date month year 

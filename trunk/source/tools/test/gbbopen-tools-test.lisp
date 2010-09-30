@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/test/gbbopen-tools-test.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Sep 29 11:29:15 2010 *-*
+;;;; *-* Last-Edit: Thu Sep 30 03:24:58 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -288,11 +288,12 @@
                             string
                             result)))))
         (inserted-date-tests)
+        #+soon
         (inserted-time-tests)
         (test-it '(0 30 10 1 4 2010 nil nil 19)
                  "April 1, 2010 10:30")
         (test-it '(0 30 10 1 4 2010 nil nil 19)
-                 " 10:30 April 1, 2010" :time-first 't)
+                 "10:30 April 1, 2010" :time-first 't)
         (test-it '(0 30 22 1 4 2010 nil nil 14)
                  "4/1/10 10:30pm")
         (test-it '(0 30 10 1 4 2010 4 t 20)
@@ -454,7 +455,6 @@
   (full-date-and-time-test)
   (parse-date-test)
   (parse-time-test)
-  #+SOON
   (parse-date-and-time-test)
   (hash-table-extensions-test)
   ;; LLRB tests (from llrb-test.lisp):
