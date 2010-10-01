@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/test/gbbopen-tools-test.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Sep 30 04:49:24 2010 *-*
+;;;; *-* Last-Edit: Fri Oct  1 05:27:17 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -30,12 +30,12 @@
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defmacro with-assumed-date/time-values (args &body body)
-    ;; Assumes DAY, MONTH, and YEAR are bound to DECODED-TIME values, that the
+    ;; Assumes DATE, MONTH, and YEAR are bound to DECODED-TIME values, that the
     (declare (ignore args))
     `(let ((assumed-july-4th-year
             (if (or (<& month 7)
                     (and (=& month 7)
-                         (<& day 4)))
+                         (<& date 4)))
                 year
                 (1+& year)))
            (assumed-july-1st-year
@@ -45,7 +45,7 @@
            (assumed-april-7th-year
             (if (or (<& month 4)
                     (and (=& month 4)
-                         (<& day 7)))
+                         (<& date 7)))
                 year
                 (1+& year))))
       ,@body)))
@@ -151,7 +151,7 @@
 
 (defun parse-date-test ()
   (format t "~&;;   Starting parse-date test...~%")
-  (multiple-value-bind (second minute hour day month year)
+  (multiple-value-bind (second minute hour date month year)
       (get-decoded-time)
     (declare (ignore second minute hour))
     (let ((*month-precedes-date* 't))   ; normal default value
@@ -254,66 +254,49 @@
   (multiple-value-bind (second minute hour date month year)
       (get-decoded-time)
     (declare (ignore second minute hour))
-    (let ((*month-precedes-date* 't)    ; normal default value
-          (assumed-july-4th-year
-           (if (or (<& month 7)
-                   (and (=& month 7)
-                        (<& day 4)))
-               year
-               (1+& year)))
-          (assumed-july-1st-year
-           (if (<& month 7)
-               year
-               (1+& year)))
-          (assumed-april-7th-year
-           (if (or (<& month 4)
-                   (and (=& month 4)
-                        (<& day 7)))
-               year
-               (1+& year))))
-      (flet ((test-it (expected-result string &rest args)
-               (format t "~&;;     ~s~{ ~s~} => "
-                       string args)
-               (let ((result (multiple-value-list
-                              (apply #'parse-date-and-time string args))))
-                 (if (equalp result expected-result)
-                     (destructuring-bind (second hour minute date month year 
-                                          time-zone daylight-savings-p position)
-                         result
-                       (declare (ignore daylight-savings-p position))
-                       (full-date-and-time
-                        (if time-zone
-                            (encode-universal-time 
-                             second hour minute date month year time-zone)
-                            (encode-universal-time 
-                             second hour minute date month year))
-                        :destination *standard-output*))
-                     (error "Incorrect ~s~{ ~s~} result for ~s: ~s"
-                            'parse-date-and-time
-                            args
-                            string
-                            result)))))
-        (inserted-date-tests)
-        (let ((*time-first* 't))
-          (inserted-time-tests))
-        (test-it '(0 30 10 1 4 2010 nil nil 19)
-                 "April 1, 2010 10:30")
-        (test-it '(0 30 10 1 4 2010 nil nil 19)
-                 "10:30 April 1, 2010" :time-first 't)
-        (test-it '(0 30 22 1 4 2010 nil nil 14)
-                 "4/1/10 10:30pm")
-        (test-it '(0 30 10 1 4 2010 4 t 20)
-                 "Apr 1 2010 10:30 EDT")
-        (test-it '(0 30 10 1 4 2010 -11/2 nil 20)
-                 "1 Apr 2010 10:30 IST")
-        (test-it '(0 30 10 1 4 2010 7 nil 25)
-                 "April 1, 2010 10:30 UTC-7")
-        (test-it '(0 30 10 1 4 2010 nil nil 29)
-                 "Thursday, April 1, 2010 10:30")
-        (test-it '(46 30 10 1 4 2010 nil nil 32)
-                 "Thursday, April 1, 2010 10:30:46")
-        (test-it '(46 30 10 1 4 2010 nil nil 32)
-                 "10:30:46 Thursday, April 1, 2010" :time-first 't))))
+    (flet ((test-it (expected-result string &rest args)
+             (format t "~&;;     ~s~{ ~s~} => "
+                     string args)
+             (let ((result (multiple-value-list
+                            (apply #'parse-date-and-time string args))))
+               (if (equalp result expected-result)
+                   (destructuring-bind (second hour minute date month year 
+                                        time-zone daylight-savings-p position)
+                       result
+                     (declare (ignore daylight-savings-p position))
+                     (full-date-and-time
+                      (if time-zone
+                          (encode-universal-time 
+                           second hour minute date month year time-zone)
+                          (encode-universal-time 
+                           second hour minute date month year))
+                      :destination *standard-output*))
+                   (error "Incorrect ~s~{ ~s~} result for ~s: ~s"
+                          'parse-date-and-time
+                          args
+                          string
+                          result)))))
+      (inserted-date-tests)
+      (let ((*time-first* 't))
+        (inserted-time-tests))
+      (test-it '(0 30 10 1 4 2010 nil nil 19)
+               "April 1, 2010 10:30")
+      (test-it '(0 30 10 1 4 2010 nil nil 19)
+               "10:30 April 1, 2010" :time-first 't)
+      (test-it '(0 30 22 1 4 2010 nil nil 14)
+               "4/1/10 10:30pm")
+      (test-it '(0 30 10 1 4 2010 4 t 20)
+               "Apr 1 2010 10:30 EDT")
+      (test-it '(0 30 10 1 4 2010 -11/2 nil 20)
+               "1 Apr 2010 10:30 IST")
+      (test-it '(0 30 10 1 4 2010 7 nil 25)
+               "April 1, 2010 10:30 UTC-7")
+      (test-it '(0 30 10 1 4 2010 nil nil 29)
+               "Thursday, April 1, 2010 10:30")
+      (test-it '(46 30 10 1 4 2010 nil nil 32)
+               "Thursday, April 1, 2010 10:30:46")
+      (test-it '(46 30 10 1 4 2010 nil nil 32)
+               "10:30:46 Thursday, April 1, 2010" :time-first 't)))
   (format t "~&;;   Parse-date-and-time test completed.~%"))
   
 ;;; ---------------------------------------------------------------------------

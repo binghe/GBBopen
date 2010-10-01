@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/declarations.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Apr 19 11:10:23 2010 *-*
+;;;; *-* Last-Edit: Fri Oct  1 04:45:47 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -44,6 +44,9 @@
             with-full-optimization)))
 
 ;;; ---------------------------------------------------------------------------
+;;;  NOTE: Copy any changes to WITH-FULL-OPTIMIZATION to the copy in
+;;;  ../module-manager/module-manager.lisp 
+;;;  ---------------------------------------------------------------------------
 
 (defmacro with-full-optimization ((&key) &body body)
   ;;  The feature :full-safety disables with-full-optimization optimizations:
