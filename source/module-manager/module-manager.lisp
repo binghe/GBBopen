@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/module-manager/module-manager.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Oct  1 05:19:57 2010 *-*
+;;;; *-* Last-Edit: Sat Oct  2 05:22:18 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -642,6 +642,17 @@
                     :start1 ptr
                     :end1 (& (min (& end) (+& ptr (length name)))))
                (setf name-equal-string name)))
+           (is-a-month-name? ()
+             (or (position-if
+                  #'name-equal
+                  (the simple-vector *month-full-name-vector*))
+                 (position-if
+                  #'name-equal
+                  (the simple-vector *month-name-vector*))))
+           (is-a-descriptive-date? ()
+             (or (name-equal "lastSat")
+                 (name-equal "lastSun")
+                 (name-equal "Sun>=1")))
            (get-decoded-time-unless-cached () 
              ;; check current-date to see if we've cached already:
              (unless current-date
@@ -655,10 +666,7 @@
              (setf name-equal-string nil)
              (cond 
               ;; Non-numeric (descriptive) date:
-              ((or (name-equal "lastSat")
-                   (name-equal "lastSun")
-                   (name-equal "Sun>=1"))
-               (setf descriptive-date name-equal-string)
+              ((setf descriptive-date (is-a-descriptive-date?))
                (incf& ptr (& (length (the simple-string name-equal-string))))
                (skip-separators))
               ;; Numeric date:
@@ -668,40 +676,40 @@
                  (when (and date (>= (& date) 1899) (not year))
                    (setf year date date nil)))))
            (process-possible-day ()
-             (setf name-equal-string nil)
-             (when (or (position-if
-                        #'name-equal
-                        (the simple-vector *weekday-full-name-vector*))
-                       (position-if 
-                        #'name-equal
-                        (the simple-vector *weekday-name-vector*))
-                       (position-if 
-                        #'name-equal
-                        (the simple-vector *weekday-abbreviation-vector*)))
-               (incf& ptr (& (length (the simple-string 
-                                       name-equal-string))))
-               (skip-separators)))
+             (unless (name-equal "Sun>=1") ; This TZ descriptive date is not a
+                                           ; day of the week!
+               (setf name-equal-string nil)
+               (when (or (position-if
+                          #'name-equal
+                          (the simple-vector *weekday-full-name-vector*))
+                         (position-if 
+                          #'name-equal
+                          (the simple-vector *weekday-name-vector*))
+                         (position-if 
+                          #'name-equal
+                          (the simple-vector *weekday-abbreviation-vector*)))
+                 (incf& ptr (& (length (the simple-string 
+                                         name-equal-string))))
+                 (skip-separators))))
            (process-month ()
              (when (< (& ptr) (& end))
                (cond
                 ;; Numeric month:
-                ((digit-char-p (schar string ptr))
+                ((not (alpha-char-p (schar string ptr)))
                  (multiple-value-setq (month ptr)
                    (parse-integer string :start ptr :end end :junk-allowed t))
                  (when (and (not year) (> (& month) 12))
                    (setf year month month 1)
                    (maybe-upgrade-year)))
+                ;; Check for a descriptive date:
+                ((is-a-descriptive-date?)
+                 (process-date))
                 ;; Month name:
                 (t (setf name-equal-string nil)
-                   (setf month
-                         (or (position-if
-                              #'name-equal
-                              (the simple-vector *month-full-name-vector*))
-                             (position-if
-                              #'name-equal
-                              (the simple-vector *month-name-vector*))))
+                   (setf month (is-a-month-name?))
                    (unless month
                      (error "Unable to determine the month in ~s" string))
+                   (unless date (setf month-preceded-date 't))
                    (incf& month)
                    (incf& ptr (& (length (the simple-string 
                                            name-equal-string))))))))
@@ -754,6 +762,7 @@
                             (locally (declare (optimize (speed 1)))
                               (find (schar string ptr) separators)))
                  do (incf& ptr))))
+        (declare (dynamic-extent #'name-equal))
         (skip-separators)
         ;; We might-have a day of week, which we skip:
         (unless year-first (process-possible-day))
@@ -765,29 +774,33 @@
           ;; If we have a month name, then we know the month-date order;
           ;; otherwise we'll assume month-first for now, until we process the
           ;; second field:
-          (when (alpha-char-p (schar string ptr))
-            (setf month-preceded-date 't))
           (process-month)
           (skip-separators)
+          ;; Check if date precedes month or vice versa:
           (cond
-           ((and (not month-preceded-date)
-                 (or
-                   ;; We have a month name in the second field:
-                   (and (< (& ptr) (& end))
-                        (alpha-char-p (schar string ptr)))
-                   ;; Use the month-precedes-date value to decide the order:
-                   (not month-precedes-date)))
+           ((and 
+              ;; A month name was not in the first field:
+              (not month-preceded-date) 
+              (or
+                ;; There is a month name in the second field:
+                (and (< (& ptr) (& end))
+                     (alpha-char-p (schar string ptr)))
+                ;; Use the user-specified :month-precedes-date value to
+                ;; decide the order:
+                (not month-precedes-date)))
             ;; We actually have the date value from the first field (rather
             ;; than the month), so set the date from the assumed month value
             ;; and then proceed with month processing:
             (setf date month 
                   month nil)
             (process-month))
-           ;; Simply continue, as we have month then date order:
+           ;; Otherwise continue processing the date, as we have month then
+           ;; date order:
            (t (process-date)))
-          (skip-separators))      
+          (skip-separators))    
+        ;; Process the year, unless we have it already:
         (unless (or year-first 
-                    ;; If expected month turned out to be a year:
+                    ;; If the expected month field turned out to be a year:
                     year)
           (process-year))
         ;; A month wasn't provided:
