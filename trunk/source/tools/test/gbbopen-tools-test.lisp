@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/test/gbbopen-tools-test.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Oct  1 05:27:17 2010 *-*
+;;;; *-* Last-Edit: Sat Oct  2 05:00:52 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -82,7 +82,7 @@
        "4 Jul" :month-precedes-date 't)
       (test-it `(0 0 0 4 7 ,assumed-july-4th-year nil nil 5)
        "4 Jul" :month-precedes-date nil)
-      (test-it `(0 0 0 1 7 2004 nil nil 5)
+      (test-it '(0 0 0 1 7 2004 nil nil 5)
        "4 Jul" :year-first 't)
       (test-it `(0 0 0 4 7 ,assumed-july-4th-year nil nil 5)
        "Jul 4" :year-first 't)
@@ -98,12 +98,12 @@
        "4/7  " :month-precedes-date nil :default-to-current-year 't) 
       (test-it `(0 0 0 7 4 ,year nil nil 3)
        "4/7" :month-precedes-date 't :default-to-current-year 't) 
-      (test-it `(0 0 0 1 7 2004 nil nil 3)
+      (test-it '(0 0 0 1 7 2004 nil nil 3)
        "4/7" :year-first 't) 
       #+FIX-MONTH-DAY-CONFUSION
-      (test-it `(0 0 0 7 1 2004 nil nil 3)
+      (test-it '(0 0 0 7 1 2004 nil nil 3)
        "4/7" :month-precedes-date nil :year-first 't) 
-      (test-it `(0 0 0 1 7 2004 nil nil 3)
+      (test-it '(0 0 0 1 7 2004 nil nil 3)
        "4/7" :month-precedes-date 't :year-first 't) 
       (test-it `(0 0 0 7 4 ,assumed-april-7th-year nil nil 5)
        "4/7  junk" :junk-allowed 't)
@@ -117,16 +117,27 @@
        "Jul  " :month-precedes-date 't :year-first 't)
       (test-it `(0 0 0 1 7 ,assumed-july-1st-year nil nil 5)
        "Jul  " :month-precedes-date nil :year-first 't)
-      (test-it `(0 0 0 1 1 2001 nil nil 6)
+      (test-it '(0 0 0 1 1 2001 nil nil 6)
        "2001  ")
-      (test-it `(0 0 0 1 1 2001 nil nil 4)
+      (test-it '(0 0 0 1 1 2001 nil nil 4)
        "2001" :month-precedes-date 't)
-      (test-it `(0 0 0 1 1 2001 nil nil 4)
+      (test-it '(0 0 0 1 1 2001 nil nil 4)
        "2001" :month-precedes-date nil)
-      (test-it `(0 0 0 1 1 2001 nil nil 4)
+      (test-it '(0 0 0 1 1 2001 nil nil 4)
        "2001" :month-precedes-date 't :year-first 't)
-      (test-it `(0 0 0 1 1 2001 nil nil 4)
-       "2001" :month-precedes-date nil :year-first 't))))
+      (test-it '(0 0 0 1 1 2001 nil nil 4)
+       "2001" :month-precedes-date nil :year-first 't)
+      (test-it '(0 0 0 26 10 1996 nil nil 16)
+       "Oct LastSat 1996")
+      (test-it '(0 0 0 29 2 2004 nil nil 16)
+       "2004 Feb LastSun" :year-first 't)
+      (test-it '(0 0 0 4 12 1910 nil nil 15)
+       "Dec Sun>=1 1910")
+      (test-it '(0 0 0 4 12 1910 nil nil 15)
+       "Sun>=1 Dec 1910" :month-precedes-date nil)
+      (test-it '(0 0 0 5 1 2003 nil nil 15)
+       "2003 Sun>=1 Jan" :month-precedes-date nil :year-first 't)
+      )))
 
 ;;; ---------------------------------------------------------------------------
 
