@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/date-and-time.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Oct  1 04:57:42 2010 *-*
+;;;; *-* Last-Edit: Thu Oct 14 10:30:57 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -576,6 +576,12 @@
               (parse-integer string :start start :end end :junk-allowed 't))
             (when second (setf maybe-pos start)))))
       (skip-separators)
+      ;; Check for 24:00:
+      (when (and hour 
+                 (=& hour 24)
+                 (or (not minute) (zerop& minute))
+                 (or (not second) (zerop& second)))
+        (setf hour 0))
       ;; Check for w (wall clock), s (standard local), or u/g/z (universal)
       ;; indicators:
       (when (>=& (-& end start) 1)
