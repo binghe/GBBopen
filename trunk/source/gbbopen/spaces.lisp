@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/spaces.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Jul 30 09:24:02 2010 *-*
+;;;; *-* Last-Edit: Tue Nov  2 22:13:24 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -1068,7 +1068,7 @@
           (let ((first-time-p t))
             (dolist (count-acons 
                         (sort (copy-list instance-counts) #'string< :key #'car)) 
-              (if first-time-p (setf first-time-p nil) (format t "; "))
+              (if first-time-p (setf first-time-p nil) (format t ", "))
               (format t "~s ~s"
                       (cdr count-acons) 
                       (car count-acons))))
