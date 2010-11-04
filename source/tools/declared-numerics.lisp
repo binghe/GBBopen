@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/declared-numerics.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Aug 16 05:34:15 2010 *-*
+;;;; *-* Last-Edit: Thu Nov  4 13:56:19 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -955,6 +955,11 @@
 ;;;   function which is applicable when all of the arguments are direct
 ;;;   instances of standardized classes.  We've yet to figure out a work
 ;;;   around.
+;;;
+;;;   Loading Clozure's COCOA-bridge after loading GBBopen Tools, will
+;;;   overwrite the #@ inf-reader, requiring a call to
+;;;   SET-INF-READER-DISPATCH-MACRO-CHARACTER to restore infinite-value
+;;;   reading.
 
 (defun inf-reader (stream sub-char infix-parameter)
   (declare (ignore sub-char infix-parameter))
@@ -963,9 +968,6 @@
     (flet ((illegal-value-error (what)
              (error "Illegal infinite-value specifier: #@~s" what)))     
       (typecase what
-        ;; Maintain Digitool MCL's #@(<big point>) extension:      
-        #+digitool-mcl
-        (cons (apply #'ccl::make-big-point what))     
         (symbol 
          (flet ((symbol-equal (a b)
                   (string-equal (symbol-name a) (symbol-name b))))
@@ -981,6 +983,17 @@
             (*inf-reader-escape-hook*
              (funcall *inf-reader-escape-hook* what))
             (t (illegal-value-error what)))))
+        ;; Maintain COCOA-bridge #@string extension:
+        #+clozure
+        (string
+         (if (fboundp (find-symbol "objc-#@-reader" 
+                                   (load-time-value (find-package :ccl))))
+             (funcall (macro-function 'ccl:@) what)
+             (illegal-value-error what)))        
+        ;; Maintain Digitool MCL's #@(<big point>) extension:      
+        #+digitool-mcl
+        (cons (apply #'ccl::make-big-point what))
+        ;; 
         (otherwise
          (if *inf-reader-escape-hook*
              (funcall *inf-reader-escape-hook* what)
@@ -1055,7 +1068,7 @@
 ;; ECL allows redefinition of its EXT:OUTPUT-FLOAT-INFINITY function, but its
 ;; compiler/loader uses different readtables so we can't use #@ format unless
 ;; the INF-READER dispatch is in place:
-#+ecl
+#+old-ecl
 (progn
   (defvar *%saved-ecl-output-float-infinity-function%*
       (symbol-function 'ext:output-float-infinity))
