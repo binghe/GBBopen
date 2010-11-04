@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/preamble.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Aug 31 22:47:03 2010 *-*
+;;;; *-* Last-Edit: Thu Nov  4 11:02:48 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -231,12 +231,14 @@
                     (symbol-function 'lisp::dispatch-char-error))
                 ;; On CCL, look if the dispatch function is the same as the
                 ;; default (by checking against another unlikely macro
-                ;; character):
+                ;; character) or the COCOA bridge Objective-C #@ reader:
                 #+(or clozure digitool-mcl)
                 (and (functionp existing-dispatch)
-                     (eq (nth-value 
-                          2 (function-lambda-expression existing-dispatch))
-                         'ccl::|#@-reader|))
+                     (member (nth-value 
+                              2 (function-lambda-expression existing-dispatch))
+                             '(ccl::|#@-reader|
+                               ccl::|objc-#@-reader|)
+                             :test #'eq))
                 ;; On ECL, look if the dispatch function is the same as the
                 ;; default (by checking against another unlikely macro
                 ;; character):
