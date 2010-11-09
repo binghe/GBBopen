@@ -10,7 +10,7 @@ Requirements:
 
        Allegro CL   Version 8.2
        CLISP        Version 2.49 (configure --with-threads if possible)
-       Clozure CL   Version 1.6 (r14397)
+       Clozure CL   Version 1.6 (r14)
        CMUCL        Version 20b
        ECL          Version 10.7.1 (configure with --enable-threads if 
                                     possible)
@@ -33,7 +33,8 @@ Requirements:
    See PORTING for information on porting GBBopen to other Common Lisp
    implementations.
 
-Current Status Notes (November 1, 2010)
+
+Current Status Notes (November 9, 2010)
 --------------------
 
 Implementation work is progressing on a regular basis.  See the list of
@@ -80,6 +81,13 @@ are strongly encouraged to install a Subversion client and use it perform
 frequent updates.
 
 
+Browsing the GBBopen Repository
+-------------------------------
+
+The GBBopen repository can be browsed directly at
+http://GBBopen.org/svn/GBBopen/trunk/.
+
+
 Using clbuild
 -------------
 
@@ -100,11 +108,15 @@ wnpp-projects file:
 gbbopen get_svn http://gbbopen.org/svn/GBBopen/trunk/ #blackboard-system framework, tools, & utilities
 
 
-Browsing the GBBopen Repository
--------------------------------
+Using Quicklisp
+---------------
 
-The GBBopen repository can also be browsed directly at
-http://GBBopen.org/svn/GBBopen/trunk/.
+If you use Quicklisp, you can obtain GBBopen by evaluating:
+
+  > (ql:quickload "gbbopen")
+
+which will install the GBBopen sources (if necessary) and set up GBBopen's
+extended REPL command definitions and ASDF module definitions.
 
 
 STEP 2: Compiling All GBBopen Modules
