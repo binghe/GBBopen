@@ -132,14 +132,15 @@ module definitions for all GBBopen <a href="ref-glossary.html#gl:modules">module
 <nobr><code>source/modules.lisp</code></nobr>).  Then the Module Manager is used to
 compile all GBBopen modules.
 </p>
-<p><table width="90%" align="center" border="1" cellpadding="12"
+<p><a name="id4"></a><table width="90%" align="center" border="1" cellpadding="12"
       bgcolor="#FFFFEA"><tr><td valign="baseline"><table border="0">
-<tr><td valign="baseline"><b>ASDF and clbuild users</b></td></tr><tr><td valign="baseline">
+<tr><td valign="baseline"><b>ASDF, clbuild, and Quicklisp users</b></td></tr><tr><td valign="baseline">
 GBBopen's Module Manager Facility provides an interface that allows
 <a target="_top" href="http://common-lisp.net/project/asdf/">ASDF</a> (and therefore
-<a target="_top" href="http://common-lisp.net/project/clbuild/">clbuild</a>) to play nicely
-with the Module Manager.  If you installed GBBopen using clbuild, ASDF has
-been informed of GBBopen's <nobr><code><var>&lt;install-dir&gt;</var>/gbbopen.asd</code></nobr>
+<a target="_top" href="http://common-lisp.net/project/clbuild/">clbuild</a> and
+<a target="_top" href="http://quicklisp.org/beta/">Quicklisp</a>) to play nice with Module
+Manager.  If you installed GBBopen using clbuild or Quicklisp, ASDF has been
+informed of GBBopen's <nobr><code><var>&lt;install-dir&gt;</var>/gbbopen.asd</code></nobr>
 system-definition file.  Otherwise, to use ASDF to set up GBBopen, you must
 add the <nobr><code>gbbopen.asd</code></nobr> file to ASDF's Registry manually.  Then,
 instead of loading the <nobr><code><var>&lt;install-dir&gt;</var>/initiate.lisp</code></nobr>
@@ -197,7 +198,7 @@ each Module Manager module.
 </p>
 <p><h4>Personal <tt>gbbopen-init.lisp</tt> file</h4>
 </p>
-<p><a name="id4">If</a> a <nobr><code>gbbopen-init.lisp</code></nobr> file (source or compiled) is present in
+<p><a name="id5">If</a> a <nobr><code>gbbopen-init.lisp</code></nobr> file (source or compiled) is present in
 the user's &#8220;home&#8221; directory (as defined by
 <nobr><b>user-homedir-pathname</b></nobr>), it is loaded by the
 <nobr><code><var>&lt;install-directory&gt;</var>/startup.lisp</code></nobr> file after the
@@ -235,7 +236,7 @@ shortly in conjunction with using a <a href="#sec:personal-gbbopen-modules-direc
 directory</a>.
 </p>
 <p><h4>Personal <tt>gbbopen-commands.lisp</tt> file</h4>
-<a name="id5">You</a> can create your own <a href="ref-glossary.html#gl:keyword-command">REPL&nbsp;commands</a> by defining them in a personal
+<a name="id6">You</a> can create your own <a href="ref-glossary.html#gl:keyword-command">REPL&nbsp;commands</a> by defining them in a personal
 <nobr><code>gbbopen-commands.lisp</code></nobr> file.  If a <nobr><code>gbbopen-commands</code></nobr>
 file (source or compiled) is present in the user's &#8220;homedir&#8221; home directory
 (as defined by <nobr><b>user-homedir-pathname</b></nobr>), it is loaded
@@ -261,7 +262,7 @@ following personal <nobr><code>gbbopen-commands.lisp</code></nobr> file defines 
 <p><h4>Personal <tt>gbbopen-modules</tt> directory</h4>
 <a name="sec:personal-gbbopen-modules-directory"></a>
 </p>
-<p><a name="id7">Although</a> a personal <nobr><code>gbbopen-init.lisp</code></nobr> file can be used to define
+<p><a name="id8">Although</a> a personal <nobr><code>gbbopen-init.lisp</code></nobr> file can be used to define
 the <a href="ref-glossary.html#gl:module">module</a> <nobr><code>:my-app</code></nobr>, GBBopen provides an alternative
 mechanism that is even more convenient if you develop, share, or use a number
 of <a href="ref-glossary.html#gl:modules">modules</a> or applications.
@@ -303,7 +304,7 @@ stand-in for the symbolic link.
 <p><h4>Installation-wide <tt>shared-gbbopen-modules</tt> directory</h4>
 <a name="sec:shared-gbbopen-modules-directory"></a>
 </p>
-<p><a name="id9">There</a> is also an
+<p><a name="id10">There</a> is also an
 <nobr><code><var>&lt;install-directory&gt;</var>/shared-gbbopen-modules</code></nobr> directory.
 As with a user's <nobr><code>gbbopen-modules</code></nobr> directory (discussed above),
 the <nobr><code>shared-gbbopen-modules</code></nobr> directory is assumed to contain
