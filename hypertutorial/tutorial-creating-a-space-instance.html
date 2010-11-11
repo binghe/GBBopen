@@ -66,15 +66,15 @@ session and evaluate the following forms:
   gbbopen-user&gt;</font>
 </pre>
 </p>
-<p><table width="90%" align="center" border="1" cellpadding="12"
+<p><a name="id2"></a><table width="90%" align="center" border="1" cellpadding="12"
       bgcolor="#FFFFEA"><tr><td valign="baseline"><table border="0">
-<tr><td valign="baseline"><b>ASDF and clbuild users</b></td></tr><tr><td valign="baseline">
+<tr><td valign="baseline"><b>ASDF, clbuild, and Quicklisp users</b></td></tr><tr><td valign="baseline">
 Remember to <nobr><code>(asdf:operate 'asdf:load-op :gbbbopen)</code></nobr> or
 <nobr><code>(require :gbbopen)</code></nobr> in place of loading
 <nobr><code><var>&lt;install-dir&gt;</var>/initiate.lisp</code></nobr>.
 </td></tr></table></table>
 </p>
-<h2><a name="id2">Step 1: Create a space instance</a></h2><p>
+<h2><a name="id3">Step 1: Create a space instance</a></h2><p>
 Create a <i>space instance</i> named <nobr><code>known-world</code></nobr>.  To
 simplify access to the space instance during subsequent activities, first
 define a global variable called <code>si</code> by entering the following form:
@@ -84,7 +84,7 @@ define a global variable called <code>si</code> by entering the following form:
   gbbopen-user&gt;</font>
 </pre>
 </p>
-<p><a name="id3">Now,</a> create the space instance and assign it to the variable <code>si</code> by
+<p><a name="id4">Now,</a> create the space instance and assign it to the variable <code>si</code> by
 entering the form:
 <pre class="pretop">
 <font color="#667f66">  gbbopen-user&gt; <font color="#000000">(setf si (make-space-instance '(known-world)))</font>
@@ -99,7 +99,7 @@ distant indirect parent, that uniquely identifies a space instance in the
 blackboard repository.  Our <nobr><code>known-world</code></nobr> space instance does not
 have a parent, so its path is simply <nobr><code>(known-world)</code></nobr>.
 </p>
-<h2><a name="id4">Step 2: Display a description of the blackboard repository</a></h2><p>
+<h2><a name="id5">Step 2: Display a description of the blackboard repository</a></h2><p>
 Display a description of the blackboard repository, which now contains the
 <nobr><code>known-world</code></nobr> space instance:
 <pre class="pretop">
@@ -130,7 +130,7 @@ on any space instance
 space instance
 </ul>
 </p>
-<h2><a name="id5">Step 3: Find a space instance by its path</a></h2><p>
+<h2><a name="id6">Step 3: Find a space instance by its path</a></h2><p>
 You can look up a particular space instance by its space-instance path:
 <pre class="pretop">
 <font color="#667f66">  gbbopen-user&gt; <font color="#000000">(find-space-instance-by-path '(known-world))</font>
@@ -142,7 +142,7 @@ You can look up a particular space instance by its space-instance path:
 <code>si</code>, but it is nice to know that we can always find it again using its
 path.
 </p>
-<h2><a name="id6">Step 4: Add the unit instance to the space instance</a></h2><p>
+<h2><a name="id7">Step 4: Add the unit instance to the space instance</a></h2><p>
 Now, add the <nobr><code>location</code></nobr> unit instance to the space instance.
 Enter the following form:
 <pre class="pretop">
@@ -151,7 +151,7 @@ Enter the following form:
   gbbopen-user&gt;</font>
 </pre>
 </p>
-<h2><a name="id7">Step 5: Again, display the blackboard-repository description</a></h2><p>
+<h2><a name="id8">Step 5: Again, display the blackboard-repository description</a></h2><p>
 Display the description of the blackboard repository again:
 <pre class="pretop">
 <font color="#667f66">  gbbopen-user&gt; <font color="#000000">(describe-blackboard-repository)</font>
@@ -173,7 +173,7 @@ Display the description of the blackboard repository again:
 instance has one instance of the <nobr><code>location</code></nobr> unit class stored on
 it.
 </p>
-<h2><a name="id8">Step 6: Display the description of the unit instance</a></h2><p>
+<h2><a name="id9">Step 6: Display the description of the unit instance</a></h2><p>
 Display the description of the <nobr><code>location</code></nobr> unit instance once
 again, observing the change in the space instances from the last exercise:
 <pre class="pretop">
@@ -189,7 +189,7 @@ again, observing the change in the space instances from the last exercise:
   gbbopen-user&gt;</font>
 </pre>
 </p>
-<h2><a name="id9">Step 7: Find the unit instance on the space instance</a></h2><p>
+<h2><a name="id10">Step 7: Find the unit instance on the space instance</a></h2><p>
 Now that the <nobr><code>location</code></nobr> unit instance is on the
 <nobr><code>known-world</code></nobr> space instance, we can find it on the space
 instance. The form is as follows, where <code>:all</code> is a very basic retrieval
@@ -207,7 +207,7 @@ in the list.)
 complex searches as well.  We will use more complex retrieval patterns in
 upcoming exercises.
 </p>
-<h2><a name="id10">Step 8: Add another unit instance to the space instance</a></h2><p>
+<h2><a name="id11">Step 8: Add another unit instance to the space instance</a></h2><p>
 Create a second instance of the <nobr><code>location</code></nobr> unit class, with
 <code>x</code> and <code>y</code> slot values 80 and 90, respectively, and add it to the
 <nobr><code>known-world</code></nobr> space instance:
@@ -219,7 +219,7 @@ Create a second instance of the <nobr><code>location</code></nobr> unit class, w
   gbbopen-user&gt;</font>
 </pre>
 </p>
-<p><a name="id11">This</a> time we did not assign the new <nobr><nobr><code>location</code></nobr></nobr> unit
+<p><a name="id12">This</a> time we did not assign the new <nobr><nobr><code>location</code></nobr></nobr> unit
 instance to a global variable but, as before, we can find the unit instance by
 its name:
 <pre class="pretop">
@@ -228,7 +228,7 @@ its name:
   gbbopen-user&gt;</font>
 </pre>
 </p>
-<p><a name="id12">As</a> you would expect, we can retrieve both <nobr><code>location</code></nobr> unit
+<p><a name="id13">As</a> you would expect, we can retrieve both <nobr><code>location</code></nobr> unit
 instances from the <nobr><code>known-world</code></nobr> space instance using
 <nobr><b>find-instances</b></nobr>:
 <pre class="pretop">
@@ -237,7 +237,7 @@ instances from the <nobr><code>known-world</code></nobr> space instance using
   gbbopen-user&gt;</font>
 </pre>
 </p>
-<h2><a name="id13">Step 9: Again, display the blackboard-repository description</a></h2><p>
+<h2><a name="id14">Step 9: Again, display the blackboard-repository description</a></h2><p>
 Display the description of the blackboard repository again:
 <pre class="pretop">
 <font color="#667f66">  gbbopen-user&gt; <font color="#000000">(describe-blackboard-repository)</font>
@@ -259,7 +259,7 @@ Display the description of the blackboard repository again:
 instance has both instances of the <nobr><code>location</code></nobr> unit class stored on
 it.
 </p>
-<h2><a name="id14">Step 10:  Remove a unit instance from the space instance</a></h2><p>
+<h2><a name="id15">Step 10:  Remove a unit instance from the space instance</a></h2><p>
 Now, remove the first <nobr><code>location</code></nobr> unit instance from the
 <nobr><code>known-world</code></nobr> space instance.  Enter the following form:
 <pre class="pretop">
@@ -267,7 +267,7 @@ Now, remove the first <nobr><code>location</code></nobr> unit instance from the
   #&lt;location 1&gt;
   gbbopen-user&gt;</font>
 </pre>
-<a name="id15">As</a> you would expect, only the second <nobr><code>location</code></nobr> unit instance
+<a name="id16">As</a> you would expect, only the second <nobr><code>location</code></nobr> unit instance
 remains on the <nobr><code>known-world</code></nobr> space instance:
 <pre>
 <font color="#667f66">  gbbopen-user&gt; <font color="#000000">(find-instances 'location '(known-world) :all)</font>

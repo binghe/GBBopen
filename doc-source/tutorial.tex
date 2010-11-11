@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/tutorial.tex *-*
-%% *-* Last-Edit: Sat Aug 28 13:06:15 2010; Edited-By: cork *-*
+%% *-* Last-Edit: Thu Nov 11 03:11:28 2010; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2005-2010, Dan Corkill <corkill@GBBopen.org>
@@ -482,6 +482,45 @@ All GBBopen Modules'' instructions that are contained in the GBBopen
 \code{README} file to complete the installation.
 
 
+\subsubsection*{Downloading with Quicklisp}
+
+\index{Quicklisp}%
+%
+If you use \xsitelink{Quicklisp}{http://www.quicklisp.org/beta/}, you can use
+it to download and install GBBopen by evaluating the following form once
+Quicklisp is set up:
+%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
+  > \textcolor{black}{(ql:quickload "gbbopen")}
+  ;; GBBopen is installed in \var{<install-dir>\/}
+  ;; Your "home" directory is \var{<homedir>\/}
+  ;; Predefining :SWANK-BACKEND package for SLIME...
+  ;; No shared module command definitions were found in \var{<install-dir>\/}/gbbopen-modules/.
+  ;; No personal module command definitions were found in \var{<homedir>\/}/gbbopen-modules/.
+  ;; GBBopen is installed in \var{<install-dir>\/}
+  ;; Your "home" directory is \var{<homedir>\/}
+  ;;     Loading \var{<install-dir>\/}/extended-repl.lisp
+  ;;     Loading \var{<install-dir>\/}/commands.lisp
+  ;;     Loading \var{<install-dir>\/}/gbbopen-modules-directory.lisp
+  ;; No shared module command definitions were found in \var{<install-dir>\/}/gbbopen-modules/.
+  ;; No personal module command definitions were found in \var{<homedir>\/}/gbbopen-modules/.
+  ;; Defining an ASDF defsystem for each Module Manager module...
+  To load "gbbopen":
+    Load 1 ASDF system:
+      gbbopen
+  ; Loading "gbbopen"
+
+  ("gbbopen")
+  >}
+\end{example}
+
+As was the case with the other download methods, follow the ``Compiling
+All GBBopen Modules'' instructions that are contained in the GBBopen
+\code{README} file to complete the installation.
+
+
 \subsection*{Step 3: Subscribe to the GBBopen mailing lists}
 
 \index{GBBopen!mailing lists}%
@@ -538,7 +577,7 @@ being used by the REPL:
   cl-user(1)>}
 \end{example}
 
-Throughout this tutorial, we will include the package name in our
+For the remainder of this tutorial, we will include the package name in our
 example prompts to make it clear what package should be current:
 %
 \W\supp
@@ -817,11 +856,14 @@ of the tutorial.
 GBBopen is packaged with its own \xreflink{module system}{sec:module-manager}
 that supports compiling and loading GBBopen components.
 
+\indexit{clbuild}%
+\indexit{Quicklisp}%
 To compile and load the \nobr{\code{:gbbopen-user}} module and all the GBBopen
 modules it requires, you need to evaluate the following forms within your
-Common Lisp environment.  Unless you are using GBBopen with ASDF or clbuild
-(see below), load GBBopen's \nobr{\code{\var{<install-dir>\/}/initiate.lisp}}
-file from wherever GBBopen was installed:
+Common Lisp environment.  Unless you are using GBBopen with ASDF, clbuild, or
+Quicklisp (see below), load GBBopen's
+\nobr{\code{\var{<install-dir>\/}/initiate.lisp}} file from wherever GBBopen
+was installed:
 %
 \W\supp
 \begin{smallexample}
@@ -859,12 +901,15 @@ may vary somewhat from that shown above.  For example, the file extension for
 compiled files, shown as \code{.fasl} throughout this tutorial, is dependent on
 your Common Lisp implementation and platform.
 
-\begin{notebox}{ASDF and clbuild users}
+\indexit{clbuild}%
+\indexit{Quicklisp}%
+\begin{notebox}{ASDF, clbuild, and Quicklisp users}
   GBBopen's Module Manager Facility provides an interface that allows
   \xsitelink{ASDF}{http://common-lisp.net/project/asdf/} (and therefore
-  \xsitelink{clbuild}{http://common-lisp.net/project/clbuild/}) to play nicely
-  with the Module Manager.  If you installed GBBopen using clbuild, ASDF has
-  been informed of GBBopen's \nobr{\code{\var{<install-dir>\/}/gbbopen.asd}}
+  \xsitelink{clbuild}{http://common-lisp.net/project/clbuild/} and
+  \xsitelink{Quicklisp}{http://quicklisp.org/beta/}) to play nice with Module
+  Manager.  If you installed GBBopen using clbuild or Quicklisp, ASDF has been
+  informed of GBBopen's \nobr{\code{\var{<install-dir>\/}/gbbopen.asd}}
   system-definition file.  Otherwise, to use ASDF to set up GBBopen, you must
   add the \nobr{\code{gbbopen.asd}} file to ASDF's Registry manually.  Then,
   instead of loading the \nobr{\code{\var{<install-dir>\/}/initiate.lisp}}
@@ -1130,7 +1175,9 @@ session and evaluate the following forms:
   gbbopen-user>}
 \end{example}
 
-\begin{notebox}{ASDF and clbuild users}
+\indexit{clbuild}%
+\indexit{Quicklisp}%
+\begin{notebox}{ASDF, clbuild, and Quicklisp users}
   Remember to \nobr{\code{(asdf:operate 'asdf:load-op :gbbbopen)}} or
   \nobr{\code{(require :gbbopen)}} in place of loading
   \nobr{\code{\var{<install-dir>\/}/initiate.lisp}}.
@@ -1396,7 +1443,9 @@ session and evaluate the following forms:
   gbbopen-user>}
 \end{example}
 
-\begin{notebox}{ASDF and clbuild users}
+\indexit{clbuild}%
+\indexit{Quicklisp}%
+\begin{notebox}{ASDF, clbuild, and Quicklisp users}
   Remember to \nobr{\code{(asdf:operate 'asdf:load-op :gbbbopen)}} or
   \nobr{\code{(require :gbbopen)}} in place of loading
   \nobr{\code{\var{<install-dir>\/}/initiate.lisp}}.
@@ -1763,7 +1812,9 @@ session and evaluate the following forms:
   gbbopen-user>}
 \end{example}
 
-\begin{notebox}{ASDF and clbuild users}
+\indexit{clbuild}%
+\indexit{Quicklisp}%
+\begin{notebox}{ASDF, clbuild, and Quicklisp users}
   Remember to \nobr{\code{(asdf:operate 'asdf:load-op :gbbbopen)}} or
   \nobr{\code{(require :gbbopen)}} in place of loading
   \nobr{\code{\var{<install-dir>\/}/initiate.lisp}}.

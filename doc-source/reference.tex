@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Thu Sep 30 05:08:42 2010; Edited-By: cork *-*
+%% *-* Last-Edit: Thu Nov 11 03:12:11 2010; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2010, Dan Corkill <corkill@GBBopen.org>
@@ -1367,12 +1367,15 @@ module definitions for all GBBopen \glref{modules} (contained in the file
 \nobr{\code{source/modules.lisp}}).  Then the Module Manager is used to
 compile all GBBopen modules.
 
-\begin{notebox}{ASDF and clbuild users}
+\indexit{clbuild}%
+\indexit{Quicklisp}%
+\begin{notebox}{ASDF, clbuild, and Quicklisp users}
   GBBopen's Module Manager Facility provides an interface that allows
   \xsitelink{ASDF}{http://common-lisp.net/project/asdf/} (and therefore
-  \xsitelink{clbuild}{http://common-lisp.net/project/clbuild/}) to play nicely
-  with the Module Manager.  If you installed GBBopen using clbuild, ASDF has
-  been informed of GBBopen's \nobr{\code{\var{<install-dir>\/}/gbbopen.asd}}
+  \xsitelink{clbuild}{http://common-lisp.net/project/clbuild/} and
+  \xsitelink{Quicklisp}{http://quicklisp.org/beta/}) to play nice with Module
+  Manager.  If you installed GBBopen using clbuild or Quicklisp, ASDF has been
+  informed of GBBopen's \nobr{\code{\var{<install-dir>\/}/gbbopen.asd}}
   system-definition file.  Otherwise, to use ASDF to set up GBBopen, you must
   add the \nobr{\code{gbbopen.asd}} file to ASDF's Registry manually.  Then,
   instead of loading the \nobr{\code{\var{<install-dir>\/}/initiate.lisp}}
