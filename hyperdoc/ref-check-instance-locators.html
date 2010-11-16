@@ -19,23 +19,23 @@
 </td></tr></table></p>
 <p><span class="fndoclabel">Purpose</span> <br />Signal an error if the locators on any <a href="ref-glossary.html#gl:space-instance">space-instance</a> are
 inconsistent with the <a href="ref-glossary.html#id36">dimension&nbsp;values</a> of the supplied
-<a href="ref-glossary.html#id232">unit&nbsp;instance</a>.
+<a href="ref-glossary.html#id234">unit&nbsp;instance</a>.
 </p>
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen</code>
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-core</code>
 </p>
 <p><span class="fndoclabel">Arguments and values</span><table class="tighttop">
-<tr valign="top"><td valign="baseline" nowrap><i>unit-instance</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id232">unit&nbsp;instance</a>
+<tr valign="top"><td valign="baseline" nowrap><i>unit-instance</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id234">unit&nbsp;instance</a>
 </td></tr></table>
 </p>
-<p><span class="fndoclabel">Description</span> <br />Changes to slot values that affect a <a href="ref-glossary.html#id232">unit&nbsp;instance</a>'s
+<p><span class="fndoclabel">Description</span> <br />Changes to slot values that affect a <a href="ref-glossary.html#id234">unit&nbsp;instance</a>'s
 <a href="ref-glossary.html#id36">dimension&nbsp;values</a> must be indicated to GBBopen using the
 <nobr><b><a href="ref-with-changing-dimension-values.html">with-changing-dimension-values</a></b></nobr> macro.  Otherwise,
 locators for the unit instance will not be updated to reflect the new
 dimension values, resulting in the inability to retrieve the instance where it
-should be located on a <a href="ref-glossary.html#id206">space&nbsp;instance</a> and removed or deleted instances
-incorrectly retained on a <a href="ref-glossary.html#id206">space&nbsp;instance</a> due to the inconsistent
+should be located on a <a href="ref-glossary.html#id208">space&nbsp;instance</a> and removed or deleted instances
+incorrectly retained on a <a href="ref-glossary.html#id208">space&nbsp;instance</a> due to the inconsistent
 locators.  <nobr><b>Check-instance-locators</b></nobr> can be used as a debugging
 aid during development to check for inconsistent locators.
 </p>
@@ -44,7 +44,7 @@ aid during development to check for inconsistent locators.
 </p>
 <p><span class="fndoclabel">Examples</span> <br /><a name="id1">
 Check</a> the locators of all <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a> that are stored on any
-<a href="ref-glossary.html#id206">space&nbsp;instance</a>:
+<a href="ref-glossary.html#id208">space&nbsp;instance</a>:
 <pre class="pretop">
   &gt; (<a href="ref-map-instances-on-space-instances.html">map-instances-on-space-instances</a> #'check-instance-locators t t)
   nil
@@ -52,7 +52,7 @@ Check</a> the locators of all <a href="ref-glossary.html#gl:instances">unit&nbsp
 </pre>
 <a name="id2">
 Intentionally</a> create inconsistent locators for a <code>hyp</code>
-<a href="ref-glossary.html#id232">unit&nbsp;instance</a> by changing its <code>location</code> without using
+<a href="ref-glossary.html#id234">unit&nbsp;instance</a> by changing its <code>location</code> without using
 <nobr><b><a href="ref-with-changing-dimension-values.html">with-changing-dimension-values</a></b></nobr>.  Then check its
 locators:
 <pre>

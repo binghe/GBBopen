@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/module-manager/module-manager.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Oct  2 05:22:18 2010 *-*
+;;;; *-* Last-Edit: Tue Nov 16 14:10:37 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -272,8 +272,8 @@
             patch
             patch-loaded-p
             printv                      ; part of tools, but placed here
-            printv-printer              ; part of tools, but placed here (not
-                                        ; yet documented)
+            printv-expander             ; part of tools, but placed here (not
+                                        ; documented)
             show-defined-directories
             show-modules                ; not yet documented
             start-patch
@@ -330,39 +330,71 @@
 ;;; Placed here to make this macro available ASAP
 ;;;
 ;;; ---------------------------------------------------------------------------
-;;;  NOTE: Copy any changes to PRINTV & PRINTV-PRINTER definitions to the
-;;;  stand-alone ../../printv.lisp file
+;;;  NOTE: Copy any changes to these PRINTV definitions to the stand-alone
+;;;  ../../printv.lisp file
 ;;;  ---------------------------------------------------------------------------
 
-(defun printv-printer (forms forms-values-lists
-                       ;; Allow for customized printv-style printv'ers:
-                       &optional values-trans-fn)
-  (let ((*print-readably* nil))
-    (loop
-        for form in forms
-        and form-values-list in forms-values-lists
-        do (typecase form
-             (keyword (format *trace-output* "~&;; ~s~%" form))
-             (string (format *trace-output* "~&;; ~a~%" form))
-             (t (format *trace-output* 
-                        "~&;;  ~w =>~{ ~w~^;~}~%" 
-                        form 
-                        (if values-trans-fn
-                            (funcall values-trans-fn form-values-list)
-                            form-values-list))))))
-  (force-output *trace-output*)
-  (values-list (first (last forms-values-lists))))
+(defun printv-separator ()
+  (format *trace-output* "~&;; ~60,,,'-<-~>~%")
+  (force-output *trace-output*))
+
+;;; ---------------------------------------------------------------------------
+
+(defun printv-form-printer (form)
+  (typecase form
+    ;; String (label):
+    (string (format *trace-output* "~&;; ~a~%" form))
+    ;; Evaluated form:
+    ((or cons
+         (and symbol (not keyword)))
+     (format *trace-output* "~&;;   ~w =>" form))
+    ;; Self-evaluating form:
+    (t (format *trace-output* "~&;;  ~s~%" form)))
+  (force-output *trace-output*))
+
+;;; ---------------------------------------------------------------------------
+
+(defun printv-values-printer (values-list)
+  (format *trace-output* 
+          "~:[ [returned 0 values]~;~:*~{ ~w~^;~}~]~%" 
+          values-list)
+  (force-output *trace-output*))
+
+;;; ---------------------------------------------------------------------------
+
+(defun printv-expander (forms  
+                        ;; Allow for customized printv-style printv'ers:
+                        &optional values-trans-fn)
+  (let ((result-sym (gensym)))
+    `(let ((*print-readably* nil)
+           ,result-sym)
+       ,@(loop for form in forms 
+             nconcing
+               (cond
+                ;; Separator requested?
+                ((eq form ':hr)
+                 ;; list used for splicing protection...
+                 (list '(printv-separator)))
+                ;; Evaluated form:
+                ((or (consp form)
+                     (and (symbolp form)
+                          (not (keywordp form))))
+                 `((printv-form-printer ',form)
+                   (printv-values-printer
+                    ,(if values-trans-fn
+                         `(funcall ,values-trans-fn
+                                   (setf ,result-sym
+                                         (multiple-value-list ,form)))
+                         `(setf ,result-sym (multiple-value-list ,form))))))
+                ;; Self-evaluating form:
+                (t `((printv-form-printer 
+                      (car (setf ,result-sym (list ,form))))))))
+       (values-list ,result-sym))))
 
 ;;; ---------------------------------------------------------------------------
 
 (defmacro printv (&rest forms)
-  (let ((forms-values-lists (gensym)))
-    `(let ((,forms-values-lists
-            (list ,.(mapcar #'(lambda (form)
-                                `(multiple-value-list ,form))
-                            forms))))
-       (declare (dynamic-extent ,forms-values-lists))
-       (printv-printer ',forms ,forms-values-lists))))
+  (printv-expander forms))
 
 ;;; ===========================================================================
 ;;;  Feature-present-p and dotted-conc-name
@@ -435,6 +467,13 @@
 (defparameter *weekday-full-name-vector*
     #("Monday" "Tuesday" "Wednesday" "Thursday" "Friday" "Saturday" "Sunday"))
 
+(declaim (type simple-vector 
+               *month-name-vector*
+               *month-full-name-vector*
+               *weekday-abbreviation-vector*
+               *weekday-name-vector*
+               *weekday-full-name-vector*))
+
 ;;; ---------------------------------------------------------------------------
 
 (defun junk-in-string-error (string)
@@ -469,13 +508,14 @@
   ;;;  Returns formatted date string
     (multiple-value-bind (second minute hour date month year)
         (decode-supplied-universal-time universal-time time-zone)
-      (declare (ignore second minute hour))
+      (declare (ignore second minute hour)
+               (fixnum month))
       (unless include-year (setf year nil))
       (let ((month-name
              (with-full-optimization ()
                (svref (the (simple-array t (*))
                         *month-name-vector*)
-                      (& (1- (& month)))))))
+                      (& (1- month))))))
         (if (and year-first year)
             (if month-precedes-date
                 (format destination "~s, ~a ~2d"
@@ -517,11 +557,12 @@
                 time-difference 0))
       (multiple-value-bind (second minute hour date month year)
           (decode-supplied-universal-time universal-time time-zone)
+        (declare (fixnum month))
         (let ((month-name
                (with-full-optimization ()
                  (svref (the (simple-array t (*))
                           *month-name-vector*)
-                        (& (1- (& month)))))))
+                        (& (1- month))))))
           (if (with-full-optimization ()
                 (< (& time-difference)
                    ;; 120 days:
@@ -579,6 +620,10 @@
   ;; `month' in `year':
   (day-of-week 1 month year))
 
+#-full-safety
+(define-compiler-macro 1st-day-of-month (month year)
+  `(day-of-week 1 ,month ,year))
+
 ;;; ---------------------------------------------------------------------------
 
 (with-full-optimization ()
@@ -592,11 +637,13 @@
 
 (with-full-optimization ()
   (defun last-date-of-month (month year)
+    ;; Returns the date of the last day in `month' of `year'
     (declare (fixnum month))
-    (let ((last-day (svref 
-                     ;; worry about leap year, below:
-                     #(31 28 31 30 31 30 31 31 30 31 30 31)
-                     (& (1- month)))))
+    (let ((last-day 
+           ;; non-leap-year month lengths:
+           (svref #(31 28 31 30 31 30 31 31 30 31 30 31)
+                  (& (1- month)))))
+      ;; Adjust February, if `year' is a leap year:
       (if (and (= month 2) (leap-year-p year) )
           (& (1+ (& last-day)))
           last-day))))
@@ -604,7 +651,8 @@
 ;;; ---------------------------------------------------------------------------
 
 (with-full-optimization ()
-  (defun last-day-date-of-month (day month year)
+  (defun last-date-of-day-in-month (day month year)
+    ;; Returns the date of the last weekday `day' in `month' of `year'
     (declare (fixnum day))
     (let* ((last-date-of-month
             (last-date-of-month month year))
@@ -618,6 +666,59 @@
 
 ;;; ---------------------------------------------------------------------------
 
+(defun convert-descriptive-date (descriptive-date month year)
+  (cond 
+   ((string-equal descriptive-date "Sun>=10") 1) ;; need to code all these 1's
+   ((string-equal descriptive-date "Sun>=11") 1)
+   ((string-equal descriptive-date "Sun>=14") 1)
+   ((string-equal descriptive-date "Sun>=15") 1)
+   ((string-equal descriptive-date "Sun>=16") 1)
+   ((string-equal descriptive-date "Sun>=18") 1)
+   ((string-equal descriptive-date "Sun>=19") 1)
+   ((string-equal descriptive-date "Sun>=1")
+    (let ((1st-day-of-month (1st-day-of-month month year)))
+      (& (- 7 (& 1st-day-of-month)))))
+   ((string-equal descriptive-date "Sun>=21") 1)
+   ((string-equal descriptive-date "Sun>=22") 1)
+   ((string-equal descriptive-date "Sun>=23") 1)
+   ((string-equal descriptive-date "Sun>=2") 1)
+   ((string-equal descriptive-date "Sun>=4") 1)
+   ((string-equal descriptive-date "Sun>=7") 1)
+   ((string-equal descriptive-date "Sun>=8") 1)
+   ((string-equal descriptive-date "Sun>=9") 1)
+   ((string-equal descriptive-date "Mon>=15") 1)
+   ((string-equal descriptive-date "Mon>=1")
+    (let ((1st-day-of-month (1st-day-of-month month year)))
+      (let ((result (+& 1 (- 7 (& 1st-day-of-month)))))
+        (if (> result 7) (- result 7) result))))
+   ((string-equal descriptive-date "Mon>=2") 1)
+   ((string-equal descriptive-date "Thu>=1")
+    (let ((1st-day-of-month (1st-day-of-month month year)))
+      (let ((result (+& 4 (- 7 (& 1st-day-of-month)))))
+        (if (> result 7) (- result 7) result))))
+   ((string-equal descriptive-date "Thu>=8") 1)
+   ((string-equal descriptive-date "Fri>=15") 1)
+    ((string-equal descriptive-date "Fri>=1")
+    (let ((1st-day-of-month (1st-day-of-month month year)))
+      (let ((result (+& 5 (- 7 (& 1st-day-of-month)))))
+        (if (> result 7) (- result 7) result))))
+   ((string-equal descriptive-date "Fri>=26") 1)
+   ((string-equal descriptive-date "Sat>=1") 1)
+   ((string-equal descriptive-date "Sat>=8") 1)
+   ((string-equal descriptive-date "lastMon")
+    (last-date-of-day-in-month 0 month year))
+   ((string-equal descriptive-date "lastThu")
+    (last-date-of-day-in-month 4 month year))
+   ((string-equal descriptive-date "lastFri")
+    (last-date-of-day-in-month 4 month year))
+   ((string-equal descriptive-date "lastSat")
+    (last-date-of-day-in-month 5 month year))
+   ((string-equal descriptive-date "lastSun")
+    (last-date-of-day-in-month 6 month year))
+   (t (error "Unknown descriptive date: ~s" descriptive-date))))
+
+;;; ---------------------------------------------------------------------------
+
 (defun parse-date (string &key (start 0) 
                                (end (length string))
                                (junk-allowed nil)
@@ -627,32 +728,65 @@
                                default-to-current-year)
   ;;; Parses many intuitive date formats (sensitive to month-precedes-date,
   ;;; if needed):
-  (declare (simple-string string))
+  (declare (simple-string string) (fixnum end))
   (with-full-optimization ()
     (let ((ptr start)
           date month year month-preceded-date name-equal-string 
           descriptive-date year-increment-check-needed?
           ;; used to cache GET-DECODED-TIME values, should they be needed:
           current-date current-month current-year)
+      (declare (fixnum ptr))
       (labels 
-          ((name-equal (name)
+          ((safe-string-equal (name)
+             (let ((end2 (+& ptr (length name))))
+               (declare (fixnum end2))
+               (when (>= end end2)
+                 (string-equal name string :start2 ptr :end2 end2))))
+           (saving-name-equal (name)
              (declare (simple-string name))
-             (when (string-equal 
-                    string name
-                    :start1 ptr
-                    :end1 (& (min (& end) (+& ptr (length name)))))
+             (when (safe-string-equal name)
                (setf name-equal-string name)))
            (is-a-month-name? ()
-             (or (position-if
-                  #'name-equal
-                  (the simple-vector *month-full-name-vector*))
-                 (position-if
-                  #'name-equal
-                  (the simple-vector *month-name-vector*))))
+             (or (position-if #'saving-name-equal *month-full-name-vector*)
+                 (position-if #'saving-name-equal *month-name-vector*)))
            (is-a-descriptive-date? ()
-             (or (name-equal "lastSat")
-                 (name-equal "lastSun")
-                 (name-equal "Sun>=1")))
+             (let ((end-ptr (+ ptr 6)))
+               (declare (fixnum end-ptr))
+               (when (and (<= end-ptr end)
+                          (or
+                            ;; DAY>=N (or DAY>=NN):
+                            (let ((end2 (+ ptr 3)))
+                              (declare (fixnum end2))
+                              (and (flet ((test-it (name)
+                                            (string-equal name string 
+                                                          :start2 ptr 
+                                                          :end2 end2)))
+                                     (declare (dynamic-extent #'test-it))
+                                     (find-if #'test-it *weekday-name-vector*))
+                                   (string-equal ">=" string 
+                                                 :start2 end2 
+                                                 :end2 (incf end2 2))
+                                   (digit-char-p (schar string end2))
+                                   ;; check for DAY>=NN:
+                                   (if (and (<= (incf end2) end)
+                                            (digit-char-p (schar string end2)))
+                                       (setf end-ptr (1+ end2))
+                                       't)))
+                            ;; LastDAY (where DAY is a weekday name):
+                            (and (<= (& (1+ end-ptr)) end)
+                                 (string-equal "last" string 
+                                               :start2 ptr :end2 (+ ptr 4))
+                                 (incf& end-ptr)
+                                 (let* ((start2 (+ ptr 4))
+                                        (end2 (+ start2 3)))
+                                   (flet ((test-it (name)
+                                            (string-equal name string 
+                                                          :start2 start2
+                                                          :end2 end2)))
+                                     (declare (dynamic-extent #'test-it))
+                                     (find-if #'test-it
+                                              *weekday-name-vector*))))))
+                 (subseq string ptr end-ptr))))
            (get-decoded-time-unless-cached () 
              ;; check current-date to see if we've cached already:
              (unless current-date
@@ -666,8 +800,8 @@
              (setf name-equal-string nil)
              (cond 
               ;; Non-numeric (descriptive) date:
-              ((setf descriptive-date (is-a-descriptive-date?))
-               (incf& ptr (& (length (the simple-string name-equal-string))))
+              ((setf descriptive-date (printv :trace (is-a-descriptive-date?)))
+               (incf& ptr (length (the simple-string descriptive-date)))
                (skip-separators))
               ;; Numeric date:
               (t (multiple-value-setq (date ptr)
@@ -676,23 +810,26 @@
                  (when (and date (>= (& date) 1899) (not year))
                    (setf year date date nil)))))
            (process-possible-day ()
-             (unless (name-equal "Sun>=1") ; This TZ descriptive date is not a
-                                           ; day of the week!
-               (setf name-equal-string nil)
-               (when (or (position-if
-                          #'name-equal
-                          (the simple-vector *weekday-full-name-vector*))
-                         (position-if 
-                          #'name-equal
-                          (the simple-vector *weekday-name-vector*))
-                         (position-if 
-                          #'name-equal
-                          (the simple-vector *weekday-abbreviation-vector*)))
-                 (incf& ptr (& (length (the simple-string 
-                                         name-equal-string))))
-                 (skip-separators))))
+             (setf name-equal-string nil)
+             (when (or (position-if #'saving-name-equal 
+                                    *weekday-full-name-vector*)
+                       (let ((pos (position-if 
+                                   #'saving-name-equal
+                                   *weekday-name-vector*)))
+                         (when (and pos
+                                    ;; A TZ descriptive date is not a day of
+                                    ;; the week!
+                                    (not (> (+& ptr 5) end))
+                                    (not (string= ">=" string
+                                                  :start2 (+& ptr 3)
+                                                  :end2 (+& ptr 5))))
+                           pos))
+                       (position-if #'saving-name-equal
+                                    *weekday-abbreviation-vector*))
+               (incf& ptr (length (the simple-string name-equal-string)))
+               (skip-separators)))
            (process-month ()
-             (when (< (& ptr) (& end))
+             (when (< ptr end)
                (cond
                 ;; Numeric month:
                 ((not (alpha-char-p (schar string ptr)))
@@ -707,12 +844,14 @@
                 ;; Month name:
                 (t (setf name-equal-string nil)
                    (setf month (is-a-month-name?))
+                   #+OLD
                    (unless month
                      (error "Unable to determine the month in ~s" string))
-                   (unless date (setf month-preceded-date 't))
-                   (incf& month)
-                   (incf& ptr (& (length (the simple-string 
-                                           name-equal-string))))))))
+                   (when month
+                     (unless date (setf month-preceded-date 't))
+                     (incf& month)
+                     (incf& ptr (length (the simple-string 
+                                          name-equal-string))))))))
            (maybe-upgrade-year ()
              ;; Upgrade year YY to YYYY -- YY assumed within +/- 50 years
              ;; from current time (if year < 100):
@@ -726,7 +865,7 @@
            (process-year ()
              (cond 
               ;; Assumed year, if omitted:
-              ((= (& ptr) (& end))
+              ((= ptr end)
                (setf year-increment-check-needed? 't))
               ;; Otherwise, process the specified year:
               (t (multiple-value-setq (year ptr)
@@ -756,13 +895,13 @@
              current-year)
            (skip-separators ()
              (loop 
-                 while (and (< (& ptr) (& end))
+                 while (and (< ptr end)
                             ;; can't optimize the find, as separators can be
                             ;; any sequence of chars:
                             (locally (declare (optimize (speed 1)))
                               (find (schar string ptr) separators)))
                  do (incf& ptr))))
-        (declare (dynamic-extent #'name-equal))
+        (declare (dynamic-extent #'saving-name-equal))
         (skip-separators)
         ;; We might-have a day of week, which we skip:
         (unless year-first (process-possible-day))
@@ -770,12 +909,12 @@
         (when year-first
           (process-year)
           (skip-separators))
-        (when (< (& ptr) (& end))
+        (when (< ptr end)
           ;; If we have a month name, then we know the month-date order;
           ;; otherwise we'll assume month-first for now, until we process the
           ;; second field:
-          (process-month)
-          (skip-separators)
+          (when (process-month)
+            (skip-separators))
           ;; Check if date precedes month or vice versa:
           (cond
            ((and 
@@ -783,7 +922,7 @@
               (not month-preceded-date) 
               (or
                 ;; There is a month name in the second field:
-                (and (< (& ptr) (& end))
+                (and (< ptr end)
                      (alpha-char-p (schar string ptr)))
                 ;; Use the user-specified :month-precedes-date value to
                 ;; decide the order:
@@ -825,21 +964,14 @@
         (check-type date (integer 1 31))
         ;; Process a TZ descriptive date:
         (when descriptive-date
-          (cond 
-           ((string-equal descriptive-date "Sun>=1")
-            (let ((1st-day-of-month (1st-day-of-month month year)))
-              (setf date (& (- 7 (& 1st-day-of-month))))))
-           ((string-equal descriptive-date "lastSat")
-            (setf date (last-day-date-of-month 5 month year)))
-           ((string-equal descriptive-date "lastSun")
-            (setf date (last-day-date-of-month 6 month year)))))
+          (setf date (convert-descriptive-date descriptive-date month year)))
         ;; Increment year, if needed:
         (when year-increment-check-needed?
           (maybe-increment-year))
         ;; Finally, skip a day of week, if one was specified:
         (when year-first (process-possible-day)
               (unless (or junk-allowed
-                          (= (& ptr) (& end)))
+                          (= ptr end))
                 (junk-in-string-error (subseq string start end)))))
       (values date month year ptr))))
   

@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Thu Nov 11 03:12:11 2010; Edited-By: cork *-*
+%% *-* Last-Edit: Tue Nov 16 16:39:41 2010; Edited-By: cork *-*
 %% *-* Machine: cyclone.cs.umass.edu *-*
 
 %% Copyright (C) 2003-2010, Dan Corkill <corkill@GBBopen.org>
@@ -3284,10 +3284,10 @@ Return the pathname of the \nobr{\code{:gbbopen-user}} \glref{module}:
 \begin{args}{module-name}
 \arg[id] An object
 \arg[module-name] A \glref{keyword~symbol} naming a \glref{module}
-\arg[date] A \glref{universal~time}
+\arg[date] A \glref{Universal~Time}
 \arg[author] A string
 \arg[description] A string or a \glref{proper~list} of strings or \nil
-\arg[date-loaded] A \glref{universal~time}
+\arg[date-loaded] A \glref{Universal~Time}
 \arg[file-name] A string
 \end{args}
 
@@ -4233,7 +4233,7 @@ Use \nobr{\textbf{*disable-with-error-handling*}} to debug a handled form:
 \indexit{module!:module-manager@\code{:module-manager}}%
 \indexit{:module-manager@\code{:module-manager} module}%
 %
-This variable is defined in the \nobr{\code{:module-manager}} \glref{module}
+This macro is defined in the \nobr{\code{:module-manager}} \glref{module}
 in order to make it available as early as possible.
 
 At present, redefinition warnings are not suppressed on
@@ -6391,17 +6391,28 @@ evaluating them to \nobr{\code{*trace-output*}}.
 \arg[forms] An implicit \nobr{\code{progn}} of \glref{forms} to be
 evaluated and printed  
 \arg[results] The values returned by evaluating the last \var{form}
+that is not the keyword symbol \code{:hr}
 \end{args}
 
-\fnreturns The values returned by evaluating the last \var{form}.
+\fnreturns The values returned by evaluating the last \var{form} that is not
+the keyword symbol \code{:hr}
 
-\fndescription Evaluates \var{forms}, printing the \var{form\/} and the
-result values of each evaluation to \nobr{\code{*trace-output*}}.  Any
-\var{form\/} that is a string (before evaluation) is simply printed without
-enclosing double-quote characters.
+\fndescription The following is performed for each form in \var{forms}:
+\begin{tightitemize}
+\item if the form is the keyword symbol \code{:hr}, a dashed separator line
+  printed to \nobr{\code{*trace-output*}}
+\item if the form is a string (before evaluation), it is treated as a label
+  and printed to \nobr{\code{*trace-output*}} without enclosing double-quote
+  characters
+\item if the form is a self-evaluating object, it is printed to
+  \nobr{\code{*trace-output*}}
+\item otherwise, the form is printed to \nobr{\code{*trace-output*}}, then the
+  form is evaluated and the result values are printed to
+  \nobr{\code{*trace-output*}}.
+\end{tightitemize}
 
-\begin{alsos}{object-address}
-\also[object-address]
+\begin{alsos}{printvot}
+\also[printvot]
 \end{alsos}
 
 \bfindexit{object-address}%
@@ -6409,13 +6420,19 @@ enclosing double-quote characters.
 %
 \W\supp
 \begin{example}
-  > (printv (list 1 2) (list 3 4) '"A string" 
-            "Return multiple values:" (values 5 6))
-  ;;  (list 1 2) => (1 2)
-  ;;  (list 3 4) => (3 4)
-  ;;  '"A string" => "A string"
+  > (printv :hr "PRINTV example" (list 1 2) (list 3 4) '"A quoted string" 
+            "Return no values:" (values)
+            "Return multiple values:" (values 5 6) :hr)
+  ;; ------------------------------------------------------------
+  ;; PRINTV example
+  ;;   (list 1 2) => (1 2)
+  ;;   (list 3 4) => (3 4)
+  ;; Return no values:
+  ;;   (values) => [returned 0 values]
+  ;;   '"A quoted string" => "A quoted string"
   ;; Return multiple values:
-  ;;  (values 5 6) => 5; 6
+  ;;   (values 5 6) => 5; 6
+  ;; ------------------------------------------------------------
   5
   6\goodpagebreak
   > (printv *package* (\entlink{object-address} *package* 't))
@@ -6429,7 +6446,7 @@ enclosing double-quote characters.
 \indexit{module!:module-manager@\code{:module-manager}}%
 \indexit{:module-manager@\code{:module-manager} module}%
 %
-This variable is defined in the \nobr{\code{:module-manager}} \glref{module}
+This macro is defined in the \nobr{\code{:module-manager}} \glref{module}
 in order to make it available as early as possible.
 
 \end{functiondoc}
@@ -9478,7 +9495,7 @@ Change the default year positioning to have the year first:
 
 \fnargs
 \begin{args}{universal-time}
-\arg[universal-time] A \glref{universal~time} (default is \nil,
+\arg[universal-time] A \glref{Universal~Time} (default is \nil,
   which is equivalent to the value returned by
   \nobr{\code{(get-universal-time)}})
 \arg[time-zone] A \glref{time~zone} (default is \nil,
@@ -9591,7 +9608,7 @@ in order to to make it available as early as possible.
 
 \fnargs
 \begin{args}{universal-time}
-\arg[universal-time] A \glref{universal~time} (default is \nil,
+\arg[universal-time] A \glref{Universal~Time} (default is \nil,
   which is equivalent to the value returned by
   \nobr{\code{(get-universal-time)}})
 \arg[time-zone] A \glref{time~zone} (default is \nil,
@@ -9875,7 +9892,7 @@ description.
 \fnsyntax
 
 \fnpurpose Parse and then encode a date-and-time specification string to a
-\glref{universal~time}
+\glref{Universal~Time}
 
 \fnpackage \code{:gbbopen-tools} 
 
@@ -9904,7 +9921,7 @@ end of \var{string\/})
 \arg[time-zone] A \glref{time~zone} (default is \nil,
   which is equivalent to the current time zone adjusted for daylight
   saving time)
-\arg[universal-time] A \glref{universal~time} 
+\arg[universal-time] A \glref{Universal~Time} 
 \arg[position] A index in \var{string\/}
 \end{args}
 
@@ -10022,7 +10039,7 @@ parse ended.
 
 \fnsyntax
 
-\fnpurpose Return a \glref{universal~time} representing a specified
+\fnpurpose Return a \glref{Universal~Time} representing a specified
 time-of-day.
 
 \fnpackage \code{:gbbopen-tools} (or \code{:portable-threads} if Portable
@@ -10036,7 +10053,7 @@ Threads is used without GBBopen Tools)
 \arg[second] An integer between 0 and 59, inclusive
 \arg[minute] An integer between 0 and 59, inclusive
 \arg[hour] An integer between 0 and 23, inclusive
-\arg[universal-time] A \glref{universal~time} (default is \nil,
+\arg[universal-time] A \glref{Universal~Time} (default is \nil,
   which is equivalent to the value returned by
   \nobr{\code{(get-universal-time)}})
 \end{args}
@@ -10113,7 +10130,7 @@ Verbosely change \nobr{\code{quitting-time}} to 5:30pm every day:
 
 \fnargs
 \begin{args}{daylight-savings-p}
-\arg[universal-time] A \glref{universal~time} (default is \nil,
+\arg[universal-time] A \glref{Universal~Time} (default is \nil,
   which is equivalent to the value returned by
   \nobr{\code{(get-universal-time)}})
 \arg[time-zone] A \glref{time~zone} (default is \nil,
@@ -10433,7 +10450,7 @@ can be invoked using the \glref{REPL~command} \nobr{\code{:ut} \var{universal-ti
 
 \fnsyntax
 
-\fnpurpose Convert a universal time into HTTP/1.1 time-stamp format.
+\fnpurpose Convert a \glref{Universal~Time} value into HTTP/1.1 time-stamp format.
 
 \fnpackage \code{:gbbopen-tools}
 
@@ -10441,7 +10458,7 @@ can be invoked using the \glref{REPL~command} \nobr{\code{:ut} \var{universal-ti
 
 \fnargs
 \begin{args}{universal-time}
-\arg[universal-time] A \glref{universal~time} (default is \nil,
+\arg[universal-time] A \glref{Universal~Time} (default is \nil,
   which is equivalent to the value returned by
   \nobr{\code{(get-universal-time)}})
 \arg[destination] Either \nil, \code{t}, a stream, or a string with a fill 
@@ -10492,7 +10509,7 @@ If \nobr{\var{universal-time\/}} is not supplied or is \nil, the current time
 
 \fnsyntax
 
-\fnpurpose Convert a universal time into Internet Text Message format.
+\fnpurpose Convert a \glref{Universal~Time} value into Internet Text Message format.
 
 \fnpackage \code{:gbbopen-tools}
 
@@ -10500,7 +10517,7 @@ If \nobr{\var{universal-time\/}} is not supplied or is \nil, the current time
 
 \fnargs
 \begin{args}{daylight-savings-p}
-\arg[universal-time] A \glref{universal~time} (default is \nil,
+\arg[universal-time] A \glref{Universal~Time} (default is \nil,
   which is equivalent to the value returned by
   \nobr{\code{(get-universal-time)}})
 \arg[time-zone] A \glref{time~zone} (default is \nil,
@@ -10564,7 +10581,7 @@ determined by \code{decode-universal-time}) is used, and the
 
 \fnsyntax
 
-\fnpurpose Convert a universal time into ISO8601 (XML dateTime) format.
+\fnpurpose Convert a \glref{Universal~Time} value into ISO8601 (XML dateTime) format.
 
 \fnpackage \code{:gbbopen-tools}
 
@@ -10572,7 +10589,7 @@ determined by \code{decode-universal-time}) is used, and the
 
 \fnargs
 \begin{args}{universal-time}
-\arg[universal-time] A \glref{universal~time} (default is \nil,
+\arg[universal-time] A \glref{Universal~Time} (default is \nil,
   which is equivalent to the value returned by
   \nobr{\code{(get-universal-time)}})
 \arg[destination] Either \nil, \code{t}, a stream, or a string with a fill 
@@ -10619,7 +10636,7 @@ If \nobr{\var{universal-time\/}} is not supplied or is \nil, the current time
 
 \fnsyntax
 
-\fnpurpose Convert a universal time into ``message log''
+\fnpurpose Convert a \glref{Universal~Time} value into ``message log''
 \nobr{(\code{MMM DD HH:MM:SS})} format.
 
 \fnpackage \code{:gbbopen-tools}
@@ -10628,7 +10645,7 @@ If \nobr{\var{universal-time\/}} is not supplied or is \nil, the current time
 
 \fnargs
 \begin{args}{universal-time}
-\arg[universal-time] A \glref{universal~time} (default is \nil,
+\arg[universal-time] A \glref{Universal~Time} (default is \nil,
   which is equivalent to the value returned by
   \nobr{\code{(get-universal-time)}}
 \arg[destination] Either \nil, \code{t}, a stream, or a string with a fill 
@@ -11383,7 +11400,7 @@ description.
 
 \fnargs
 \begin{args}{universal-time}
-\arg[universal-time] A \glref{universal~time} (default is \nil,
+\arg[universal-time] A \glref{Universal~Time} (default is \nil,
   which is equivalent to the value returned by
   \nobr{\code{(get-universal-time)}})
 \arg[time-zone] A \glref{time~zone} (default is \nil,
@@ -11468,14 +11485,14 @@ Display the current date (with and without the year):
 
 \index{offset universal time}%
 Common Lisp has three time representations: Decoded Time, Universal
-Time, and Internal Time.  Universal Time (UT) allows specific points
+Time, and Internal Time.  \glref{Universal~Time} (UT) allows specific points
 in time from the beginning of 1900 to be represented with one-second
 resolution (ignoring leap seconds).  The disadvantage of absolute
 Universal Time values is that they are bignums in most Common Lisp
 implementations.
 
 To reduce computation and storage requirements, a fourth time
-representation, Offset Universal Time (OT), can be used.  Offset
+representation, \glref{Offset~Universal~Time} (OT), can be used.  Offset
 Universal Time is Universal Time that is offset by an integer
 time-base value so that the most often used Offset Universal Time
 values in an application are \glref{fixnums}.
@@ -11502,13 +11519,13 @@ value is changed.
 
 \fnsyntax
 
-\fnpurpose Holds the Offset Universal Time time-base value.
+\fnpurpose Holds the \glref{Offset~Universal~Time} time-base value.
 
 \fnpackage \code{:gbbopen-tools} 
 
 \fnmodule \code{:gbbopen-tools}
 
-\fnvaluetype An Offset Universal Time time-base value
+\fnvaluetype An \glref{Offset~Universal~Time} time-base value
 
 \fninitialvalue Must be set by using \nobr{\textbf{\entlink{set-ot-base}}}
 
@@ -11532,7 +11549,7 @@ value is changed.
 \fnsyntax
 
 \fnpurpose Check if the current time can be represented as a
-\nobr{\code{\glref{fixnum}}} given the current Offset Universal Time time-base
+\nobr{\code{\glref{fixnum}}} given the current \glref{Offset~Universal~Time} time-base
 value.
 
 \fnpackage \code{:gbbopen-tools}
@@ -11546,9 +11563,9 @@ value.
 \end{args}
 
 \fnreturns True if the current time can be represented as a
-\nobr{\code{\glref{fixnum}}} Offset Universal Time value; nil otherwise.
+\nobr{\code{\glref{fixnum}}} \glref{Offset~Universal~Time} value; nil otherwise.
 
-\fnerrors The Offset Universal Time time-base value has not been set.
+\fnerrors The \glref{Offset~Universal~Time} time-base value has not been set.
 
 \begin{alsos}{set-ot-base}
 \also[*ot-base*]
@@ -11558,7 +11575,7 @@ value.
 \end{alsos}
 
 \fnexamples
-Set the time base for Offset Universal Time to today and check:
+Set the time base for \glref{Offset~Universal~Time} to today and check:
 %
 \W\supp
 \begin{example}
@@ -11569,14 +11586,14 @@ Set the time base for Offset Universal Time to today and check:
   >
 \end{example}
 %
-Set the time base for Offset Universal Time to January 1, 1900 and check:
+Set the time base for \glref{Offset~Universal~Time} to January 1, 1900 and check:
 %
 \W\supp\notpretop
 \begin{example}
   > (\entlink{set-ot-base} 1 1 1900)
   16777216
   > (check-ot-base)
-  ;; Warning: The current time represented as an Offset Universal Time is not a fixnum.
+  ;; Warning: The current time represented as an \glref{Offset~Universal~Time} is not a fixnum.
   nil
   > (check-ot-base 't)
   nil
@@ -11593,8 +11610,7 @@ Set the time base for Offset Universal Time to January 1, 1900 and check:
 
 \fnsyntax
 
-\fnpurpose Convert an Offset Universal Time value to a Universal Time 
-value.
+\fnpurpose Convert an \glref{Offset~Universal~Time} value to a \glref{Universal~Time} value.
 
 \fnpackage \code{:gbbopen-tools}
 
@@ -11602,13 +11618,13 @@ value.
 
 \fnargs
 \begin{args}{offset-universal-time}
-\arg[offset-universal-time] An Offset Universal Time value
-\arg[universal-time] A \glref{universal~time}
+\arg[offset-universal-time] An \glref{Offset~Universal~Time} value
+\arg[universal-time] A \glref{Universal~Time}
 \end{args}
 
-\fnreturns The equivalent Universal Time value
+\fnreturns The equivalent \glref{Universal~Time} value
 
-\fnerrors The Offset Universal Time time-base value has not been set.
+\fnerrors The \glref{Offset~Universal~Time} time-base value has not been set.
 
 \begin{alsos}{check-ot-base}
 \also[*ot-base*]
@@ -11648,6 +11664,71 @@ can be invoked using the \glref{REPL~command} \nobr{\code{:ot}
 
 %% ------------------------------------------------------------------------
 
+\begin{functiondoc}{Macro}{printvot}{%
+    \nobr{\var{form\/}\superstar{}}
+    \nobr{\returns{} \var{result\/}\superstar}}
+\index{debugging, using printvot@using \textbf{printvot}}% 
+
+\fnsyntax
+
+\fnpurpose Assist debugging involving \nobr{\glref{Offset~Universal~Time}} values by printing forms and the results of evaluating them to \nobr{\code{*trace-output*}}. Any form producing a single-valued integer result is assumed to be an \nobr{\glref{Offset~Universal~Time}} value and a convenient \nobr{\textbf{\entlink{full-date-and-time}}} format (including seconds) is printed as the result value.
+
+\fnpackage \code{:gbbopen-tools}
+
+\fnmodule \code{:gbbopen-tools}
+
+\fnargs
+\begin{args}{results}
+\arg[forms] An implicit \nobr{\code{progn}} of \glref{forms} to be
+evaluated and printed  
+\arg[results] The values returned by evaluating the last \var{form}
+that is not the keyword symbol \code{:hr}
+\end{args}
+
+\fnreturns The values returned by evaluating the last \var{form} that is not
+the keyword symbol \code{:hr}
+
+\fndescription The following is performed for each form in \var{forms}:
+\begin{tightitemize}
+\item if the form is the keyword symbol \code{:hr}, a dashed separator line
+  printed to \nobr{\code{*trace-output*}}
+\item if the form is a string (before evaluation), it is treated as a label
+  and printed to \nobr{\code{*trace-output*}} without enclosing double-quote
+  characters
+\item if the form is a self-evaluating object, it is printed to
+  \nobr{\code{*trace-output*}}
+\item otherwise, the form is printed to \nobr{\code{*trace-output*}}, then the
+  form is evaluated and the result values are printed to
+  \nobr{\code{*trace-output*}}.  Unlike \textbf{\entlink{printv}}, a
+  single-valued integer result is assumed to be an \nobr{\glref{Offset~Universal~Time}} value and when
+  that result is printed by \textbf{printvot}, it is first converted to
+  \glref{Universal~Time} and then to
+  \nobr{\textbf{\entlink{full-date-and-time}}} format (including seconds).
+\end{tightitemize}
+
+\begin{alsos}{full-date-and-time}
+\also[full-date-and-time]
+\also[printv]
+\end{alsos}
+
+\bfindexit{ut2ot}%
+\fnexamples
+%
+\W\supp
+\begin{example}
+  > (printvot "PRINTVOV example" *ot-base* (ut2ot) :hr)
+  ;; PRINTVOV example
+  ;;   *ot-base* => "Oct 22 2117 04:40:32"
+  ;;   (ut2ot) => "Jun  4 2008 13:51:08"
+  ;; ------------------------------------------------------------
+  -15071348
+  >
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
 \begin{functiondoc}{Function}{set-ot-base}{\code{\&optional} 
     \var{date month year time-zone\/}
     \nobr{\returns{} \var{ot-base\/}}}
@@ -11655,7 +11736,7 @@ can be invoked using the \glref{REPL~command} \nobr{\code{:ot}
 
 \fnsyntax
 
-\fnpurpose Set the Offset Universal Time time-base value.
+\fnpurpose Set the \glref{Offset~Universal~Time} time-base value.
 
 \fnpackage \code{:gbbopen-tools}
 
@@ -11675,12 +11756,12 @@ can be invoked using the \glref{REPL~command} \nobr{\code{:ot}
   (default is zero)
 \end{args}
 
-\fnreturns The Offset Universal Time time-base value
+\fnreturns The \glref{Offset~Universal~Time} time-base value
 
 \fndescription Without any arguments, \nobr{\textbf{set-ot-base}} sets the
 time-base value to the current date.  Setting the time base to the current
 date can be used in applications that do not need to represent historical
-dates and that do not save or communicate Offset Universal Time values.
+dates and that do not save or communicate \glref{Offset~Universal~Time} values.
 However, setting the time base to a specific date is recommended for most
 applications.
 
@@ -11692,7 +11773,7 @@ applications.
 \end{alsos}
 
 \fnexamples
-Set the time base for Offset Universal Time to today:
+Set the time base for \glref{Offset~Universal~Time} to today:
 %
 \W\supp
 \begin{example}
@@ -11700,8 +11781,7 @@ Set the time base for Offset Universal Time to today:
   3436662016
   >
 \end{example}
-Note that the returned Offset Universal Time time-base value (above) is not
-the current Universal Time value:
+Note that the returned \glref{Offset~Universal~Time} time-base value (above) is not the current \glref{Universal~Time} value:
 %
 \W\supp\notpretop
 \begin{example}
@@ -11710,7 +11790,7 @@ the current Universal Time value:
   >
 \end{example}
 
-Set the time base for Offset Universal Time to July 1, 2007:
+Set the time base for \glref{Offset~Universal~Time} to July 1, 2007:
 %
 \W\supp
 \begin{example}
@@ -11730,8 +11810,7 @@ Set the time base for Offset Universal Time to July 1, 2007:
 
 \fnsyntax
 
-\fnpurpose Convert a Universal Time value to an Offset Universal Time 
-value.
+\fnpurpose Convert a \glref{Universal~Time} value to an \glref{Offset~Universal~Time} value.
 
 \fnpackage \code{:gbbopen-tools}
 
@@ -11739,14 +11818,14 @@ value.
 
 \fnargs
 \begin{args}{offset-universal-time}
-\arg[universal-time] A Universal Time value (default is the current
-   Universal Time)
-\arg[offset-universal-time] An Offset Universal Time value
+\arg[universal-time] A \glref{Universal~Time} value (default is the current
+   \glref{Universal~Time})
+\arg[offset-universal-time] An \glref{Offset~Universal~Time} value
 \end{args}
 
-\fnreturns The equivalent Offset Universal Time value
+\fnreturns The equivalent \glref{Offset~Universal~Time} value
 
-\fnerrors The Offset Universal Time time-base value has not been set.
+\fnerrors The \glref{Offset~Universal~Time} time-base value has not been set.
 
 \begin{alsos}{check-ot-base}
 \also[*ot-base*]
@@ -15234,7 +15313,7 @@ Resume the \glref{scheduled-function} scheduler:
 \arg[name-or-scheduled-function] An object (typically a string or a
   symbol) naming a currently scheduled \glref{scheduled~function} or a
   \nobr{\code{scheduled-function}} object
-\arg[invocation-time] A \glref{universal~time}
+\arg[invocation-time] A \glref{Universal~Time}
 \arg[marker] An object (default is \nil)
 \arg[repeat-interval] A positive integer (representing seconds) or
   \nil{} (default is \nil)
@@ -15475,7 +15554,7 @@ Schedule a \glref{scheduled~function} that signals a GBBopen
 \fnargs
 \begin{args}{scheduled-function}
 \arg[scheduled-function] A \glref{scheduled~function}
-\arg[invocation-time] A \glref{universal~time}
+\arg[invocation-time] A \glref{Universal~Time}
 \end{args}
 
 \fnreturns The invocation time of \var{scheduled-function}. 
@@ -26062,7 +26141,7 @@ saving/sending and loading/reading objects.
 
 \fnpurpose Dynamically bound in
 \nobr{\textbf{\entlink{with-reading-saved/sent-objects-block}}} to the
-universal time when the block was saved/sent.
+\glref{Universal~Time} when the block was saved/sent.
 
 \fnpackage \code{:gbbopen-tools}
 
@@ -26329,7 +26408,7 @@ class definition of \code{hyp}:
 \arg[retain-event-functions] A \glref{generalized~boolean} (default is \nil)
 \arg[retain-event-printing] A \glref{generalized~boolean} (default is \nil)
 \arg[pathname] A \glref{pathname}
-\arg[saved-time] A \glref{universal~time}
+\arg[saved-time] A \glref{Universal~Time}
 \arg[saved-value] An object
 \end{args}
 

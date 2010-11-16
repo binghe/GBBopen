@@ -30,7 +30,7 @@
 <tr valign="top"><td valign="baseline" nowrap><i>instance-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> The <a href="ref-glossary.html#id96">instance&nbsp;name</a> for the retrieval
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>unit-class-specifier</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An <a href="ref-glossary.html#id65">extended&nbsp;unit-class&nbsp;specification</a>
 (see below; default is <code>t</code>)
-</td></tr><tr valign="top"><td valign="baseline" nowrap><i>unit-instances</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id162">proper&nbsp;list</a> of <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a>
+</td></tr><tr valign="top"><td valign="baseline" nowrap><i>unit-instances</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id164">proper&nbsp;list</a> of <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a>
 </td></tr></table>
 </p>
 <p><span class="fndoclabel">Returns</span> <br />A list of the <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a> with the specified
@@ -76,14 +76,14 @@ those unit instances.
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-find-instance-by-name.html"><b>find-instance-by-name</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-find-instances.html"><b>find-instances</b></a>
 </p>
-<p><span class="fndoclabel">Examples</span> <br />Find all <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a> (of any <a href="ref-glossary.html#id230">unit&nbsp;class</a>) that are named
+<p><span class="fndoclabel">Examples</span> <br />Find all <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a> (of any <a href="ref-glossary.html#id232">unit&nbsp;class</a>) that are named
 419:
 <pre class="pretop">
   &gt; (find-instances-by-name 419 't)
   (#&lt;hyp 419 (1835 4791) 0.85 [5..35]&gt;)
   &gt;
 </pre>
-Find all <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a> (of any <a href="ref-glossary.html#id230">unit&nbsp;class</a>) that are named
+Find all <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a> (of any <a href="ref-glossary.html#id232">unit&nbsp;class</a>) that are named
 419:
 <pre>
   &gt; (find-instances-by-name 419 '(hyp :plus-subclasses))

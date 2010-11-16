@@ -11,7 +11,7 @@
 </head>
 <body>
 <table width="100%" cellpadding="0" cellspacing="2"><tr>
-<td bgcolor="#99ccff"><a href="ref-ot2ut.html"><img border="0" alt="ot2ut" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="ref-offset-universal-time-entities.html"><img border="0" alt="Offset Universal Time" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-ut2ot.html"><img border="0" alt="ut2ot" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">set-ot-base</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table>
+<td bgcolor="#99ccff"><a href="ref-printvot.html"><img border="0" alt="printvot" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="ref-offset-universal-time-entities.html"><img border="0" alt="Offset Universal Time" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-ut2ot.html"><img border="0" alt="ut2ot" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">set-ot-base</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table>
 
 <p><table class="tight" width="100%">
 <tr valign="top"><td valign="baseline" align="left"%>
@@ -20,7 +20,7 @@
 <nobr><span 
     style="font-family: serif; font-style: normal">=&gt;</span> <var>ot-base</var></nobr></td><td valign="baseline" align="right">[<i>Function</i>]
 </td></tr></table></p>
-<p><span class="fndoclabel">Purpose</span> <br />Set the Offset Universal Time time-base value.
+<p><span class="fndoclabel">Purpose</span> <br />Set the <a href="ref-glossary.html#id138">Offset&nbsp;Universal&nbsp;Time</a> time-base value.
 </p>
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-tools</code>
 </p>
@@ -39,12 +39,12 @@ integer is between 0 and 99, the &#8220;obvious&#8221; year is assumed.
 (default is zero)
 </td></tr></table>
 </p>
-<p><span class="fndoclabel">Returns</span> <br />The Offset Universal Time time-base value
+<p><span class="fndoclabel">Returns</span> <br />The <a href="ref-glossary.html#id138">Offset&nbsp;Universal&nbsp;Time</a> time-base value
 </p>
 <p><span class="fndoclabel">Description</span> <br />Without any arguments, <nobr><b>set-ot-base</b></nobr> sets the
 time-base value to the current date.  Setting the time base to the current
 date can be used in applications that do not need to represent historical
-dates and that do not save or communicate Offset Universal Time values.
+dates and that do not save or communicate <a href="ref-glossary.html#id138">Offset&nbsp;Universal&nbsp;Time</a> values.
 However, setting the time base to a specific date is recommended for most
 applications.
 </p>
@@ -54,21 +54,20 @@ applications.
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-ot2ut.html"><b>ot2ut</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-ut2ot.html"><b>ut2ot</b></a>
 </p>
-<p><span class="fndoclabel">Examples</span> <br />Set the time base for Offset Universal Time to today:
+<p><span class="fndoclabel">Examples</span> <br />Set the time base for <a href="ref-glossary.html#id138">Offset&nbsp;Universal&nbsp;Time</a> to today:
 <pre class="pretop">
   &gt; (set-ot-base)
   3436662016
   &gt;
 </pre>
-Note that the returned Offset Universal Time time-base value (above) is not
-the current Universal Time value:
+Note that the returned <a href="ref-glossary.html#id138">Offset&nbsp;Universal&nbsp;Time</a> time-base value (above) is not the current <a href="ref-glossary.html#id236">Universal&nbsp;Time</a> value:
 <pre>
   &gt; (get-universal-time)
   3419947437
   &gt;
 </pre>
 </p>
-<p>Set the time base for Offset Universal Time to July 1, 2007:
+<p>Set the time base for <a href="ref-glossary.html#id138">Offset&nbsp;Universal&nbsp;Time</a> to July 1, 2007:
 <pre class="pretop">
   &gt; (set-ot-base 1 7 2007)
   3409014016
@@ -78,4 +77,4 @@ the current Universal Time value:
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />
 <table width="100%" cellpadding="0" cellspacing="2"><tr>
-<td bgcolor="#99ccff"><a href="ref-ot2ut.html"><img border="0" alt="ot2ut" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="ref-offset-universal-time-entities.html"><img border="0" alt="Offset Universal Time" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-ut2ot.html"><img border="0" alt="ut2ot" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">set-ot-base</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table></body></html>
+<td bgcolor="#99ccff"><a href="ref-printvot.html"><img border="0" alt="printvot" src="previous.png"/></a></td><td bgcolor="#99ccff"><a href="ref-offset-universal-time-entities.html"><img border="0" alt="Offset Universal Time" src="up.png"/></a></td><td bgcolor="#99ccff"><a href="ref-ut2ot.html"><img border="0" alt="ut2ot" src="next.png"/></a></td><td align="center" bgcolor="#99ccff" width="100%"><b><font color="#000000">set-ot-base</font></b></td><td bgcolor="#99ccff"><a target="_top" href="reference.html"><img border="0" alt="GoTo Top" src="top.png"/></a></td></tr></table></body></html>
