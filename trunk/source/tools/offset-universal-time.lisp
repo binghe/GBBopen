@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/offset-universal-time.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Apr  7 09:57:32 2010 *-*
+;;;; *-* Last-Edit: Tue Nov 16 14:15:02 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -43,7 +43,7 @@
   (export '(*ot-base*
             check-ot-base
             ot2ut
-            printvot                    ; not yet documented
+            printvot
             set-ot-base
             ut2ot)))
 
@@ -107,25 +107,20 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun printvot-trans-fn (values)
-  (when (and (list-length-1-p values)
-             (integerp (first values)))
-    (setf (first values)
-          (full-date-and-time (ot2ut (first values))
-                              :include-seconds 't)))
-  values)
+  (if (and (list-length-1-p values)
+           (integerp (first values)))
+      (cons
+       (full-date-and-time (ot2ut (first values)) :include-seconds 't)
+       (rest values))
+      values))
+
+;;; ---------------------------------------------------------------------------
 
 (defmacro printvot (&rest forms)
   ;;; Like printv, except that any form producing a single-valued integer
   ;;; result is assumed to be an offset-time value and is printed in
   ;;; FULL-DATE-AND-TIME format (including seconds).
-  (let ((forms-values-lists (gensym)))
-    `(let ((,forms-values-lists
-            (list ,.(flet ((fn (form)
-                             `(multiple-value-list ,form)))
-                      (declare (dynamic-extent #'fn))
-                      (mapcar #'fn forms)))))
-       (declare (dynamic-extent ,forms-values-lists))
-       (printv-printer ',forms ,forms-values-lists #'printvot-trans-fn))))
+  (printv-expander forms #'printvot-trans-fn))
 
 ;;; ---------------------------------------------------------------------------
 

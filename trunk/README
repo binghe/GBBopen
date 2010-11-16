@@ -10,7 +10,7 @@ Requirements:
 
        Allegro CL   Version 8.2
        CLISP        Version 2.49 (configure --with-threads if possible)
-       Clozure CL   Version 1.6 (r14)
+       Clozure CL   Version 1.6 (r14434)
        CMUCL        Version 20b
        ECL          Version 10.7.1 (configure with --enable-threads if 
                                     possible)
@@ -34,7 +34,7 @@ Requirements:
    implementations.
 
 
-Current Status Notes (November 9, 2010)
+Current Status Notes (November 16, 2010)
 --------------------
 
 Implementation work is progressing on a regular basis.  See the list of
@@ -127,8 +127,8 @@ permission to the compiled GBBopen directories, you should compile all of the
 GBBopen modules whenever you install or update GBBopen.  
 
 
-Compiling without ASDF or clbuild
----------------------------------
+Compiling without ASDF, clbuild, or Quicklisp
+---------------------------------------------
 
 To compile all GBBopen modules, perform the following in a fresh Common Lisp
 environment:
@@ -145,16 +145,16 @@ environment:
   [Common Lisp will exit]
 
 
-Compiling using ASDF or clbuild
--------------------------------
+Compiling using ASDF, clbuild, or Quicklisp
+-------------------------------------------
 
 GBBopen includes a Module Manager Facility that supports compiling and loading
 GBBopen components.  The Module Manager provides an interface that allows ASDF
-(and clbuild) to play nicely with the Module Manager.  If you installed
-GBBopen using clbuild, ASDF has been informed of GBBopen's gbbopen.asd
-system-definition file.  Otherwise, to use ASDF to set up GBBopen, you must
-add gbbopen.asd to ASDF manually.  Then, the Module Manager and GBBopen module
-definitions can be loaded using ASDF by issuing:
+(and clbuild or Quicklisp) to play nicely with the Module Manager.  If you
+installed GBBopen using clbuild or Quicklisp, ASDF has been informed of
+GBBopen's gbbopen.asd system-definition file.  Otherwise, to use ASDF to set
+up GBBopen, you must add gbbopen.asd to ASDF manually.  Then, the Module
+Manager and GBBopen module definitions can be loaded using ASDF by issuing:
 
   > (asdf:operate 'asdf:load-op :gbbbopen)
 
@@ -163,7 +163,7 @@ or when ASDF is integrated with Common Lisp's REQUIRE:
   > (require :gbbopen)
 
 ASDF users can compile all GBBopen modules, by evaluating the following in a
-fresh Common Lisp environment with ASDF installed:
+fresh Common Lisp environment with ASDF installed.  For example:
 
   > (require :gbbopen)
       ...

@@ -12,6 +12,7 @@ Important changes since GBBopen 1.5:
        PARSE-DATE-AND-TIME
      - New *TIME-FIRST* and *YEAR-FIRST* variables
      - New WHITESPACE-CHAR-P function
+     - Document PRINTVOT macro
      - Export SORTF and STABLE-SORTF macros
      - New SORTED-MAPHASH function
      - Allow provided string-coalescing hash table in 

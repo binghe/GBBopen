@@ -20,7 +20,7 @@
 <nobr><span 
     style="font-family: serif; font-style: normal">=&gt;</span> <var>scheduled-function</var></nobr></td><td valign="baseline" align="right">[<i>Function</i>]
 </td></tr></table></p>
-<p><span class="fndoclabel">Purpose</span> <br />Create a <a href="ref-glossary.html#id190">scheduled&nbsp;function</a>.
+<p><span class="fndoclabel">Purpose</span> <br />Create a <a href="ref-glossary.html#id192">scheduled&nbsp;function</a>.
 </p>
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:portable-threads</code>
 </p>
@@ -39,10 +39,10 @@ string or a symbol; default is <nobr><var>function</var></nobr>, if
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>marker-test</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id78">function&nbsp;designator</a> specifying a
 <a href="ref-glossary.html#id80">function&nbsp;object</a> of two arguments that returns a
 <a href="ref-glossary.html#id84">generalized&nbsp;boolean</a> (default is <nobr><code>&#35;'eql</code></nobr>)
-</td></tr><tr valign="top"><td valign="baseline" nowrap><i>scheduled-function</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id190">scheduled&nbsp;function</a>
+</td></tr><tr valign="top"><td valign="baseline" nowrap><i>scheduled-function</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id192">scheduled&nbsp;function</a>
 </td></tr></table>
 </p>
-<p><span class="fndoclabel">Returns</span> <br />The newly created <a href="ref-glossary.html#id190">scheduled&nbsp;function</a>. 
+<p><span class="fndoclabel">Returns</span> <br />The newly created <a href="ref-glossary.html#id192">scheduled&nbsp;function</a>. 
 </p>
 <p><span class="fndoclabel">Errors</span> <br />Threads (multiprocessing) is not supported on the
 Common Lisp implementation.
@@ -50,7 +50,7 @@ Common Lisp implementation.
 <p><span class="fndoclabel">Description</span> <br />Unless the run time to perform <nobr><var>function</var></nobr> is
 brief, it should spawn a new <a href="ref-glossary.html#gl:thread">thread</a> in which to perform its activities
 so as to avoid delaying the invocation of a subsequent
-<a href="ref-glossary.html#id190">scheduled&nbsp;function</a>.
+<a href="ref-glossary.html#id192">scheduled&nbsp;function</a>.
 </p>
 <p>The optional <var>marker</var> and associated comparison <var>marker-test</var> can
 be specified to distinguish <a href="ref-glossary.html#gl:scheduled">scheduled&nbsp;functions</a> with the same
@@ -76,7 +76,7 @@ be specified to distinguish <a href="ref-glossary.html#gl:scheduled">scheduled&n
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-spawn-periodic-function.html"><b>spawn-periodic-function</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-unschedule-function.html"><b>unschedule-function</b></a>
 </p>
-<p><span class="fndoclabel">Examples</span> <br />Create a <a href="ref-glossary.html#id190">scheduled&nbsp;function</a> that simply prints <nobr><code>"Hello"</code></nobr>
+<p><span class="fndoclabel">Examples</span> <br />Create a <a href="ref-glossary.html#id192">scheduled&nbsp;function</a> that simply prints <nobr><code>"Hello"</code></nobr>
 when invoked:
 <pre class="pretop">
   &gt; (make-scheduled-function 
@@ -88,7 +88,7 @@ when invoked:
   &gt;
 </pre>
 </p>
-<p><a name="id1">A</a> more complex <a href="ref-glossary.html#id190">scheduled&nbsp;function</a> that spawns a new <a href="ref-glossary.html#gl:thread">thread</a> to
+<p><a name="id1">A</a> more complex <a href="ref-glossary.html#id192">scheduled&nbsp;function</a> that spawns a new <a href="ref-glossary.html#gl:thread">thread</a> to
 do its work and randomly sets whether to reschedule itself (and at what
 interval):
 <pre class="pretop">
