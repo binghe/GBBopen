@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/test/gbbopen-tools-test.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Oct  2 05:00:52 2010 *-*
+;;;; *-* Last-Edit: Fri Dec 10 15:41:46 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -58,6 +58,54 @@
     ;; inserted tests are within WITH-ASSUMED-DATE/TIME-VALUES, and that the
     ;; lexical function TEST-IT is defined:
     '(with-assumed-date/time-values ()
+      (test-it '(0 0 0 13 4 2010 nil nil 9)
+       "4 13 2010")
+      (test-it '(0 0 0 13 4 2010 nil nil 9)
+       "13 4 2010")                     ; context override of :month-precedes-date
+      (test-it '(0 0 0 13 4 2010 nil nil 9)
+       "13 4 2010" :month-precedes-date nil)
+      (test-it '(0 0 0 13 4 2010 nil nil 9)
+       "4 13 2010"                      ; context override of :month-precedes-date
+       :month-precedes-date nil) 
+      (test-it '(0 0 0 13 4 2010 nil nil 9)
+       "2010 4 13" :year-first t)
+      (test-it '(0 0 0 13 4 2010 nil nil 9)
+       "2010 4 13" :year-first nil)     ; context override of :year-first
+      (test-it '(0 0 0 13 4 2010 nil nil 9)
+       "4 13 2010" :year-first t)       ; context override of :year-first
+      (test-it '(0 0 0 13 4 2010 nil nil 9)
+       "2010 13 4" :year-first nil)     ; context override of :year-first
+                                        ; & :month-precedes-date
+      (test-it '(0 0 0 13 4 2010 nil nil 9)
+       "13 4 2010" :year-first t)       ; context override of :year-first
+                                        ; & :month-precedes-date
+      (test-it '(0 0 0 13 4 2010 nil nil 9)
+       "2010 13 4" :year-first t :month-precedes-date nil)
+      (test-it '(0 0 0 13 4 2010 nil nil 9)
+       "2010 13 4" :year-first nil      ; context override of :year-first
+                   :month-precedes-date nil) 
+      (test-it '(0 0 0 13 4 2010 nil nil 9)
+       "2010 4 13" :year-first nil      ; context override of :year-first
+                   :month-precedes-date nil)  ; & :month-precedes-date 
+      (test-it '(0 0 0 13 4 2010 nil nil 7)
+       "4 13 10")
+      (test-it '(0 0 0 13 4 2010 nil nil 7)
+       "13 4 10")                       ; context override of :month-precedes-date
+      (test-it '(0 0 0 13 4 2010 nil nil 7)
+       "13 4 10" :month-precedes-date nil)
+      (test-it '(0 0 0 13 4 2010 nil nil 7)
+       "4 13 10" 
+       :month-precedes-date nil)        ; context override of :month-precedes-date
+      (test-it '(0 0 0 13 4 2010 nil nil 7)
+       "10 4 13" :year-first t)
+      (test-it '(0 0 0 13 4 2010 nil nil 7)
+       "10 13 4" :year-first t)         ; context override of :month-precedes-date
+      (test-it '(0 0 0 13 4 2010 nil nil 7)
+       "10 13 4" :year-first t :month-precedes-date nil)
+      (test-it '(0 0 0 13 4 2010 nil nil 7)
+       "10 4 13"
+       :year-first t 
+       :month-precedes-date nil)        ; context override of :month-precedes-date
       (test-it '(0 0 0 1 4 2010 nil nil 10)
        "1 Apr 2010")
       (test-it '(0 0 0 1 4 2010 nil nil 13)
@@ -100,8 +148,7 @@
        "4/7" :month-precedes-date 't :default-to-current-year 't) 
       (test-it '(0 0 0 1 7 2004 nil nil 3)
        "4/7" :year-first 't) 
-      #+FIX-MONTH-DAY-CONFUSION
-      (test-it '(0 0 0 7 1 2004 nil nil 3)
+      (test-it '(0 0 0 1 7 2004 nil nil 3)
        "4/7" :month-precedes-date nil :year-first 't) 
       (test-it '(0 0 0 1 7 2004 nil nil 3)
        "4/7" :month-precedes-date 't :year-first 't) 
@@ -131,12 +178,18 @@
        "Oct LastSat 1996")
       (test-it '(0 0 0 29 2 2004 nil nil 16)
        "2004 Feb LastSun" :year-first 't)
-      (test-it '(0 0 0 4 12 1910 nil nil 15)
-       "Dec Sun>=1 1910")
+      (test-it '(0 0 0 7 2 2010 nil nil 15)
+       "Feb Sun>=1 2010")
+      (test-it '(0 0 0 7 11 2010 nil nil 15)
+       "Nov Sun>=1 2010")
+      (test-it '(0 0 0 1 8 2010 nil nil 15)
+       "Aug Sun>=1 2010")
+      (test-it '(0 0 0 1 11 2010 nil nil 15)
+       "Nov Mon>=1 2010")
       (test-it '(0 0 0 4 12 1910 nil nil 15)
        "Sun>=1 Dec 1910" :month-precedes-date nil)
       (test-it '(0 0 0 5 1 2003 nil nil 15)
-       "2003 Sun>=1 Jan" :month-precedes-date nil :year-first 't)
+      "2003 Sun>=1 Jan" :month-precedes-date nil :year-first 't)
       )))
 
 ;;; ---------------------------------------------------------------------------
@@ -378,6 +431,21 @@
 
 ;;; ---------------------------------------------------------------------------
 
+(defun infinite-values-test ()
+  (format t "~&;;   Starting infinite-values test...~%")
+  (with-output-to-string (buffer)
+    (prin1 infinity$ buffer)
+    (let ((string (get-output-stream-string buffer)))
+      (unless (string-equal string 
+                            #-lispworks "#@single-float-infinity"
+                            #+lispworks "#@double-float-infinity")
+        (error "Incorrect portable printing of INFINITY$: ~s" string))
+      (unless (= infinity$ (read-from-string string))
+        (error "Unable to read infinite value"))))
+  (format t "~&;;   Infinite-values test completed.~%"))
+
+;;; ---------------------------------------------------------------------------
+
 (defun hash-table-extensions-test (&optional (max-size 100000))
   (format t "~&;;   Starting hash-table extensions test...~%")
   (let* ((ht (make-hash-table :size 0))
@@ -452,6 +520,7 @@
 
 (defun gbbopen-tools-tests (&optional verbose)
   (format t "~&;;; Starting GBBopen-Tools tests...~%")
+  (infinite-values-test)
   (full-date-and-time-test)
   (parse-date-test)
   (parse-time-test)

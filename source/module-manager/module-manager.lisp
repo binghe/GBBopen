@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/module-manager/module-manager.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Nov 16 18:13:15 2010 *-*
+;;;; *-* Last-Edit: Tue Dec 14 06:58:28 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -440,13 +440,21 @@
         `,arg
         `(the fixnum ,arg)))
   (defmacro +& (&rest args)
-    `(the fixnum (+ ,.(mapcar #'(lambda (x) `(the fixnum ,x)) args))))
+    `(& (+ ,.(mapcar #'(lambda (x) `(& ,x)) args))))
+  (defmacro -& (&rest args)
+    `(& (- ,.(mapcar #'(lambda (x) `(& ,x)) args))))
+  (defmacro <=& (&rest args)
+    `(<= ,.(mapcar #'(lambda (x) `(& ,x)) args)))
+  (defmacro >& (&rest args)
+    `(> ,.(mapcar #'(lambda (x) `(& ,x)) args)))
   (define-modify-macro incf& (&optional (increment 1)) +&))
 
 ;;; ===========================================================================
-;;;  BRIEF-DATE, BRIEF-DATE-AND-TIME, and PARSE-DATE--part of the
-;;;  GBBopen-tools module.  They are placed here to use with the
-;;;  :module-manager package.
+;;;  BRIEF-DATE, BRIEF-DATE-AND-TIME, and PARSE-DATE.  These entities are
+;;;  really part of the GBBopen-tools module, but they are placed here to
+;;;  allow stand-alone use with the :module-manager package.  PARSE-DATE is
+;;;  particularly complex, but date parsing is used in conjunction with
+;;;  patches.
 
 (defvar *month-precedes-date* 't)
 
@@ -613,6 +621,11 @@
   (nth-value 6 (decode-universal-time
                 (encode-universal-time 0 0 0 date month year))))
 
+#-full-safety
+(define-compiler-macro day-of-week (date month year)
+  `(nth-value 6 (decode-universal-time
+                 (encode-universal-time 0 0 0 ,date ,month ,year))))
+
 ;;; ---------------------------------------------------------------------------
 
 (defun 1st-day-of-month (month year)
@@ -666,304 +679,40 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun convert-descriptive-date (descriptive-date month year)
-  (cond 
-   ((string-equal descriptive-date "Sun>=10") 1) ;; need to code all these 1's
-   ((string-equal descriptive-date "Sun>=11") 1)
-   ((string-equal descriptive-date "Sun>=14") 1)
-   ((string-equal descriptive-date "Sun>=15") 1)
-   ((string-equal descriptive-date "Sun>=16") 1)
-   ((string-equal descriptive-date "Sun>=18") 1)
-   ((string-equal descriptive-date "Sun>=19") 1)
-   ((string-equal descriptive-date "Sun>=1")
-    (let ((1st-day-of-month (1st-day-of-month month year)))
-      (& (- 7 (& 1st-day-of-month)))))
-   ((string-equal descriptive-date "Sun>=21") 1)
-   ((string-equal descriptive-date "Sun>=22") 1)
-   ((string-equal descriptive-date "Sun>=23") 1)
-   ((string-equal descriptive-date "Sun>=2") 1)
-   ((string-equal descriptive-date "Sun>=4") 1)
-   ((string-equal descriptive-date "Sun>=7") 1)
-   ((string-equal descriptive-date "Sun>=8") 1)
-   ((string-equal descriptive-date "Sun>=9") 1)
-   ((string-equal descriptive-date "Mon>=15") 1)
-   ((string-equal descriptive-date "Mon>=1")
-    (let ((1st-day-of-month (1st-day-of-month month year)))
-      (let ((result (+& 1 (- 7 (& 1st-day-of-month)))))
-        (if (> result 7) (- result 7) result))))
-   ((string-equal descriptive-date "Mon>=2") 1)
-   ((string-equal descriptive-date "Thu>=1")
-    (let ((1st-day-of-month (1st-day-of-month month year)))
-      (let ((result (+& 4 (- 7 (& 1st-day-of-month)))))
-        (if (> result 7) (- result 7) result))))
-   ((string-equal descriptive-date "Thu>=8") 1)
-   ((string-equal descriptive-date "Fri>=15") 1)
-    ((string-equal descriptive-date "Fri>=1")
-    (let ((1st-day-of-month (1st-day-of-month month year)))
-      (let ((result (+& 5 (- 7 (& 1st-day-of-month)))))
-        (if (> result 7) (- result 7) result))))
-   ((string-equal descriptive-date "Fri>=26") 1)
-   ((string-equal descriptive-date "Sat>=1") 1)
-   ((string-equal descriptive-date "Sat>=8") 1)
-   ((string-equal descriptive-date "lastMon")
-    (last-date-of-day-in-month 0 month year))
-   ((string-equal descriptive-date "lastThu")
-    (last-date-of-day-in-month 4 month year))
-   ((string-equal descriptive-date "lastFri")
-    (last-date-of-day-in-month 4 month year))
-   ((string-equal descriptive-date "lastSat")
-    (last-date-of-day-in-month 5 month year))
-   ((string-equal descriptive-date "lastSun")
-    (last-date-of-day-in-month 6 month year))
-   (t (error "Unknown descriptive date: ~s" descriptive-date))))
-
-;;; ---------------------------------------------------------------------------
-
-#-IN-PROGRESS
 (with-full-optimization ()
-  (defun last-day-date-of-month (day month year)
-    (declare (fixnum day))
-    (let* ((last-date-of-month
-            (last-date-of-month month year))
-           (last-day-of-month
-            (day-of-week last-date-of-month month year)))
-      (declare (fixnum last-date-of-month last-day-of-month))
-      (let ((result (& (+ last-date-of-month (& (- day last-day-of-month))))))
-        (if (< last-day-of-month day)
-            (& (- result 7))
-            result)))))
+  (defun convert-descriptive-date (descriptive-date month year)
+    (declare (simple-string descriptive-date))
+    (cond 
+     ;; lastDAY:
+     ((and (= (& (length descriptive-date)) 7)
+           (string-equal descriptive-date "last" :end1 4))
+      (flet ((day-equal (day)
+               (string-equal descriptive-date day :start1 4)))
+        (declare (dynamic-extent #'day-equal))
+        (let ((pos (position-if #'day-equal *weekday-name-vector*)))
+          (when pos
+            (last-date-of-day-in-month pos month year)))))
+     ;; DAY>=N (or DAY>=NN):
+     ((string-equal descriptive-date ">=" :start1 3 :end1 5)
+      (flet ((day-equal (day)
+               (string-equal descriptive-date day :end1 3)))
+        (declare (dynamic-extent #'day-equal))
+        (let ((pos (position-if #'day-equal *weekday-name-vector*)))
+          (when pos
+            (let* ((specified-date (parse-integer descriptive-date :start 5))
+                   (day-of-specified-date 
+                    (day-of-week specified-date month year))
+                   (date-increment (-& pos day-of-specified-date)))
+              (+& specified-date (if (minusp (& date-increment))
+                                    (+& 7 date-increment)
+                                    date-increment)))))))
+     
+     ;; Shouldn't happen (as the descriptive-date parser should catch
+     ;; problems):
+     (t (error "Unknown descriptive date: ~s" descriptive-date)))))
 
 ;;; ---------------------------------------------------------------------------
 
-#-IN-PROGRESS
-(defun parse-date (string &key (start 0) 
-                               (end (length string))
-                               (junk-allowed nil)
-                               (separators "-/ ,")
-                               (month-precedes-date *month-precedes-date*)
-                               year-first
-                               default-to-current-year)
-  ;;; Parses many intuitive date formats (sensitive to month-precedes-date,
-  ;;; if needed):
-  (declare (simple-string string))
-  (with-full-optimization ()
-    (let ((ptr start)
-          date month year month-preceded-date name-equal-string 
-          descriptive-date year-increment-check-needed?
-          ;; used to cache GET-DECODED-TIME values, should they be needed:
-          current-date current-month current-year)
-      (labels 
-          ((name-equal (name)
-             (declare (simple-string name))
-             (when (string-equal 
-                    string name
-                    :start1 ptr
-                    :end1 (& (min (& end) (+& ptr (length name)))))
-               (setf name-equal-string name)))
-           (is-a-month-name? ()
-             (or (position-if
-                  #'name-equal
-                  (the simple-vector *month-full-name-vector*))
-                 (position-if
-                  #'name-equal
-                  (the simple-vector *month-name-vector*))))
-           (is-a-descriptive-date? ()
-             (or (name-equal "lastSat")
-                 (name-equal "lastSun")
-                 (name-equal "Sun>=1")))
-           (get-decoded-time-unless-cached () 
-             ;; check current-date to see if we've cached already:
-             (unless current-date
-               (multiple-value-bind (seconds minutes hours date month year)
-                   (get-decoded-time)
-                 (declare (ignore seconds minutes hours))
-                 (setf current-date date
-                       current-month month
-                       current-year year))))
-           (process-date ()
-             (setf name-equal-string nil)
-             (cond 
-              ;; Non-numeric (descriptive) date:
-              ((setf descriptive-date (is-a-descriptive-date?))
-               (incf& ptr (& (length (the simple-string name-equal-string))))
-               (skip-separators))
-              ;; Numeric date:
-              (t (multiple-value-setq (date ptr)
-                   (parse-integer string :start ptr :end end :junk-allowed t))
-                 ;; Check if we got the year (due to missing date):
-                 (when (and date (>= (& date) 1899) (not year))
-                   (setf year date date nil)))))
-           (process-possible-day ()
-             (unless (name-equal "Sun>=1") ; This TZ descriptive date is not a
-                                           ; day of the week!
-               (setf name-equal-string nil)
-               (when (or (position-if
-                          #'name-equal
-                          (the simple-vector *weekday-full-name-vector*))
-                         (position-if 
-                          #'name-equal
-                          (the simple-vector *weekday-name-vector*))
-                         (position-if 
-                          #'name-equal
-                          (the simple-vector *weekday-abbreviation-vector*)))
-                 (incf& ptr (& (length (the simple-string 
-                                         name-equal-string))))
-                 (skip-separators))))
-           (process-month ()
-             (when (< (& ptr) (& end))
-               (cond
-                ;; Numeric month:
-                ((not (alpha-char-p (schar string ptr)))
-                 (multiple-value-setq (month ptr)
-                   (parse-integer string :start ptr :end end :junk-allowed t))
-                 (when (and (not year) (> (& month) 12))
-                   (setf year month month 1)
-                   (maybe-upgrade-year)))
-                ;; Check for a descriptive date:
-                ((is-a-descriptive-date?)
-                 (process-date))
-                ;; Month name:
-                (t (setf name-equal-string nil)
-                   (setf month (is-a-month-name?))
-                   (unless month
-                     (error "Unable to determine the month in ~s" string))
-                   (unless date (setf month-preceded-date 't))
-                   (incf& month)
-                   (incf& ptr (& (length (the simple-string 
-                                           name-equal-string))))))))
-           (maybe-upgrade-year ()
-             ;; Upgrade year YY to YYYY -- YY assumed within +/- 50 years
-             ;; from current time (if year < 100):
-             (unless (>= (& year) 100) 
-               (get-decoded-time-unless-cached)
-               (let ((current-century
-                      (& (* 100 (& (truncate (& current-year) 100))))))
-                 (setf year (if (>= (& year) 50) 
-                                (+& year current-century -100)
-                                (+& year current-century))))))
-           (process-year ()
-             (cond 
-              ;; Assumed year, if omitted:
-              ((= (& ptr) (& end))
-               (setf year-increment-check-needed? 't))
-              ;; Otherwise, process the specified year:
-              (t (multiple-value-setq (year ptr)
-                   (parse-integer 
-                    string 
-                    :start ptr :end end 
-                    :junk-allowed (if year-first 't junk-allowed)))
-                 (cond 
-                  ;; a year was specified:
-                  (year
-                   (check-type year (integer 0 #.most-positive-fixnum))
-                   (maybe-upgrade-year))
-                  ;; use assumed year:
-                  (t (setf year-increment-check-needed? 't)
-                     (setf year (default-year)))))))
-           (maybe-increment-year ()
-             (unless default-to-current-year
-               (get-decoded-time-unless-cached)
-               ;; Assume next year, if the date is past in the current year:
-               (when (or (< (& month) (& current-month))
-                         (and (= (& month) (& current-month))
-                              (< (& date) (& current-date))))
-                 (incf& year))))
-           (default-year ()
-               ;; return the default year; used when a year is not specified:
-               (get-decoded-time-unless-cached)
-             current-year)
-           (skip-separators ()
-             (loop 
-                 while (and (< (& ptr) (& end))
-                            ;; can't optimize the find, as separators can be
-                            ;; any sequence of chars:
-                            (locally (declare (optimize (speed 1)))
-                              (find (schar string ptr) separators)))
-                 do (incf& ptr))))
-        (declare (dynamic-extent #'name-equal))
-        (skip-separators)
-        ;; We might-have a day of week, which we skip:
-        (unless year-first (process-possible-day))
-        ;; Process the required year, if year-first:
-        (when year-first
-          (process-year)
-          (skip-separators))
-        (when (< (& ptr) (& end))
-          ;; If we have a month name, then we know the month-date order;
-          ;; otherwise we'll assume month-first for now, until we process the
-          ;; second field:
-          (process-month)
-          (skip-separators)
-          ;; Check if date precedes month or vice versa:
-          (cond
-           ((and 
-              ;; A month name was not in the first field:
-              (not month-preceded-date) 
-              (or
-                ;; There is a month name in the second field:
-                (and (< (& ptr) (& end))
-                     (alpha-char-p (schar string ptr)))
-                ;; Use the user-specified :month-precedes-date value to
-                ;; decide the order:
-                (not month-precedes-date)))
-            ;; We actually have the date value from the first field (rather
-            ;; than the month), so set the date from the assumed month value
-            ;; and then proceed with month processing:
-            (setf date month 
-                  month nil)
-            (process-month))
-           ;; Otherwise continue processing the date, as we have month then
-           ;; date order:
-           (t (process-date)))
-          (skip-separators))    
-        ;; Process the year, unless we have it already:
-        (unless (or year-first 
-                    ;; If the expected month field turned out to be a year:
-                    year)
-          (process-year))
-        ;; A month wasn't provided:
-        (unless month 
-          (cond 
-           ;; assume today, if nothing was specified:
-           ((and (not date) (not year))          
-            (get-decoded-time-unless-cached)          
-            (setf date current-date
-                  month current-month
-                  year current-year))
-           ;; otherwise, assume January:
-           (t (setf month 1))))
-        ;; A date wasn't provided (or assumed thus far):
-        (unless date 
-          ;; Assume the 1st of the month:
-          (setf date 1))
-        ;; A year wasn't provided, use the default year:
-        (unless year
-          (setf year (default-year)))
-        (check-type month (integer 1 12))
-        (check-type date (integer 1 31))
-        ;; Process a TZ descriptive date:
-        (when descriptive-date
-          (cond 
-           ((string-equal descriptive-date "Sun>=1")
-            (let ((1st-day-of-month (1st-day-of-month month year)))
-              (setf date (& (- 7 (& 1st-day-of-month))))))
-           ((string-equal descriptive-date "lastSat")
-            (setf date (last-day-date-of-month 5 month year)))
-           ((string-equal descriptive-date "lastSun")
-            (setf date (last-day-date-of-month 6 month year)))))
-        ;; Increment year, if needed:
-        (when year-increment-check-needed?
-          (maybe-increment-year))
-        ;; Finally, skip a day of week, if one was specified:
-        (when year-first (process-possible-day)
-              (unless (or junk-allowed
-                          (= (& ptr) (& end)))
-                (junk-in-string-error (subseq string start end)))))
-      (values date month year ptr))))
-  
-;;; ---------------------------------------------------------------------------
-
-#+IN-PROGRESS
 (defun parse-date (string &key (start 0) 
                                (end (length string))
                                (junk-allowed nil)
@@ -974,27 +723,122 @@
   ;;; Parses many intuitive date formats (sensitive to month-precedes-date,
   ;;; if needed):
   (declare (simple-string string) (fixnum end))
+  ;; Ensure that `separators' is a simple string:
+  (unless (typep separators 'simple-string)
+    (setf separators (coerce separators 'simple-string)))
   (with-full-optimization ()
     (let ((ptr start)
-          date month year month-preceded-date name-equal-string 
-          descriptive-date year-increment-check-needed?
-          ;; used to cache GET-DECODED-TIME values, should they be needed:
-          current-date current-month current-year)
+          ;; result values
+          year month date
+          ;; holds undecided numeric fields:
+          1st-numeric 2nd-numeric 3rd-numeric
+          ;; holds descriptive-date string until month and year can be
+          ;; determined: 
+          descriptive-date
+          ;; for ugly internal result assignments:
+          name-equal-string result
+          ;; holds cached GET-DECODED-TIME values, should they be needed
+          ;; again:
+          current-date current-month current-year
+          ;; additional state holders:
+          1st-field-is-month?)
       (declare (fixnum ptr))
       (labels 
-          ((safe-string-equal (name)
+          ((at-separator-char-p (&optional (ptr ptr))
+             (declare (fixnum ptr))
+             (find (schar string ptr) (the simple-string separators)))
+           (skip-separators ()
+             (loop 
+                 while (and (< ptr end)
+                            (at-separator-char-p))
+                 do (incf& ptr)))
+           
+           (safe-string-equal (name)
              (let ((end2 (+& ptr (length name))))
                (declare (fixnum end2))
                (when (>= end end2)
                  (string-equal name string :start2 ptr :end2 end2))))
+           
            (saving-name-equal (name)
              (declare (simple-string name))
              (when (safe-string-equal name)
                (setf name-equal-string name)))
-           (is-a-month-name? ()
-             (or (position-if #'saving-name-equal *month-full-name-vector*)
-                 (position-if #'saving-name-equal *month-name-vector*)))
-           (is-a-descriptive-date? ()
+           
+           ;; Skips full or abbreviated weekday names:
+           (process-possible-day ()
+             (setf name-equal-string nil)
+             (when (or (position-if #'saving-name-equal 
+                                    *weekday-full-name-vector*)
+                       (position-if #'saving-name-equal
+                                    *weekday-name-vector*)
+                       (position-if #'saving-name-equal
+                                    *weekday-abbreviation-vector*))
+               (let ((new-ptr (+& ptr (length (the simple-string 
+                                                name-equal-string)))))
+                 (when (at-separator-char-p new-ptr)
+                   (setf ptr new-ptr)
+                   (skip-separators)))))
+           
+           ;; Process numeric field:
+           (process-field-if-numeric ()
+             (when (< ptr end)
+               (unless (alpha-char-p (schar string ptr)))
+               (multiple-value-setq (result ptr)
+                 (parse-integer string :start ptr :end end :junk-allowed t))
+               (when result 
+                 (skip-separators)
+                 result)))
+           
+           ;; Sets the current decoded time values, but only once:
+           (get-decoded-time-unless-cached () 
+             ;; check current-date to see if we've cached already:
+             (unless current-date
+               (multiple-value-bind (seconds minutes hours date month year)
+                   (get-decoded-time)
+                 (declare (ignore seconds minutes hours))
+                 (setf current-date date
+                       current-month month
+                       current-year year))))
+           
+           ;; Used when a year is not specified:
+           (use-assumed-year ()
+             (get-decoded-time-unless-cached)
+             (setf year current-year)
+             (unless default-to-current-year
+               ;; Assume next year, if the date is past in the current year:
+               (when (or (< (& month) (& current-month))
+                         (and (= (& month) (& current-month))
+                              (< (& date) (& current-date))))
+                 (incf& year))))
+           
+           ;; Upgrade year YY to YYYY -- YY assumed within +/- 50 years from
+           ;; current time (if year < 100):
+           (maybe-upgrade-year ()
+             (unless (>= (& year) 100) 
+               (get-decoded-time-unless-cached)
+               (let ((current-century
+                      (& (* 100 (& (truncate (& current-year) 100))))))
+                 (setf year (if (>= (& year) 50) 
+                                (+& year current-century -100)
+                                (+& year current-century))))))
+           
+           (process-month-if-alpha ()
+             (setf name-equal-string nil)                   
+             (let ((pos (or (position-if #'saving-name-equal
+                                         *month-full-name-vector*)
+                            (position-if #'saving-name-equal
+                                         *month-name-vector*))))
+               (when pos
+                 (let ((maybe-new-ptr
+                        (+ ptr (length (the simple-string name-equal-string)))))
+                   (when 
+                       (or (= maybe-new-ptr end)
+                           (at-separator-char-p maybe-new-ptr))
+                     (setf ptr maybe-new-ptr)
+                     (skip-separators)
+                     (setf month (1+ (& pos))))))))
+
+           (process-date-if-alpha ()
              (let ((end-ptr (+ ptr 6)))
                (declare (fixnum end-ptr))
                (when (and (<= end-ptr end)
@@ -1031,193 +875,178 @@
                                      (declare (dynamic-extent #'test-it))
                                      (find-if #'test-it
                                               *weekday-name-vector*))))))
-                 (subseq string ptr end-ptr))))
-           (get-decoded-time-unless-cached () 
-             ;; check current-date to see if we've cached already:
-             (unless current-date
-               (multiple-value-bind (seconds minutes hours date month year)
-                   (get-decoded-time)
-                 (declare (ignore seconds minutes hours))
-                 (setf current-date date
-                       current-month month
-                       current-year year))))
-           (process-date ()
-             (setf name-equal-string nil)
-             (cond 
-              ;; Non-numeric (descriptive) date:
-              ((setf descriptive-date (is-a-descriptive-date?))
-               (incf& ptr (length (the simple-string descriptive-date)))
-               (skip-separators))
-              ;; Numeric date:
-              (t (multiple-value-setq (date ptr)
-                   (parse-integer string :start ptr :end end :junk-allowed t))
-                 ;; Check if we got the year (due to missing date):
-                 (when (and date (>= (& date) 1899) (not year))
-                   (setf year date date nil)))))
-           (process-possible-day ()
-             (setf name-equal-string nil)
-             (when (or (position-if #'saving-name-equal 
-                                    *weekday-full-name-vector*)
-                       (let ((pos (position-if 
-                                   #'saving-name-equal
-                                   *weekday-name-vector*)))
-                         (when (and pos
-                                    ;; A TZ descriptive date is not a day of
-                                    ;; the week!
-                                    (not (> (+& ptr 5) end))
-                                    (not (string= ">=" string
-                                                  :start2 (+& ptr 3)
-                                                  :end2 (+& ptr 5))))
-                           pos))
-                       (position-if #'saving-name-equal
-                                    *weekday-abbreviation-vector*))
-               (incf& ptr (length (the simple-string name-equal-string)))
-               (skip-separators)))
-           (process-month ()
-             (when (< ptr end)
-               (cond
-                ;; Numeric month:
-                ((not (alpha-char-p (schar string ptr)))
-                 (multiple-value-setq (month ptr)
-                   (parse-integer string :start ptr :end end :junk-allowed t))
-                 (when (and (not year) (> (& month) 12))
-                   (setf year month month 1)
-                   (maybe-upgrade-year)))
-                ;; Check for a descriptive date:
-                ((is-a-descriptive-date?)
-                 (process-date))
-                ;; Month name:
-                (t (setf name-equal-string nil)
-                   (setf month (is-a-month-name?))
-                   #+OLD
-                   (unless month
-                     (error "Unable to determine the month in ~s" string))
-                   (when month
-                     (unless date (setf month-preceded-date 't))
-                     (incf& month)
-                     (incf& ptr (length (the simple-string 
-                                          name-equal-string))))))))
-           (maybe-upgrade-year ()
-             ;; Upgrade year YY to YYYY -- YY assumed within +/- 50 years
-             ;; from current time (if year < 100):
-             (unless (>= (& year) 100) 
-               (get-decoded-time-unless-cached)
-               (let ((current-century
-                      (& (* 100 (& (truncate (& current-year) 100))))))
-                 (setf year (if (>= (& year) 50) 
-                                (+& year current-century -100)
-                                (+& year current-century))))))
-           (process-year ()
-             (cond 
-              ;; Assumed year, if omitted:
-              ((= ptr end)
-               (setf year-increment-check-needed? 't))
-              ;; Otherwise, process the specified year:
-              (t (multiple-value-setq (year ptr)
-                   (parse-integer 
-                    string 
-                    :start ptr :end end 
-                    :junk-allowed (if year-first 't junk-allowed)))
-                 (cond 
-                  ;; a year was specified:
-                  (year
-                   (check-type year (integer 0 #.most-positive-fixnum))
-                   (maybe-upgrade-year))
-                  ;; use assumed year:
-                  (t (setf year-increment-check-needed? 't)
-                     (setf year (default-year)))))))
-           (maybe-increment-year ()
-             (unless default-to-current-year
-               (get-decoded-time-unless-cached)
-               ;; Assume next year, if the date is past in the current year:
-               (when (or (< (& month) (& current-month))
-                         (and (= (& month) (& current-month))
-                              (< (& date) (& current-date))))
-                 (incf& year))))
-           (default-year ()
-               ;; return the default year; used when a year is not specified:
-               (get-decoded-time-unless-cached)
-             current-year)
-           (skip-separators ()
-             (loop 
-                 while (and (< ptr end)
-                            ;; can't optimize the find, as separators can be
-                            ;; any sequence of chars:
-                            (locally (declare (optimize (speed 1)))
-                              (find (schar string ptr) separators)))
-                 do (incf& ptr))))
-        (declare (dynamic-extent #'saving-name-equal))
+                 (setf descriptive-date (subseq string ptr end-ptr))
+                 (setf ptr end-ptr)
+                 (skip-separators))))
+           
+           (process-field ()
+             (setf result nil)
+             (cond
+              ;; field is numeric:
+              ((process-field-if-numeric)
+               (if (typep result 'fixnum)
+                   (if (>& result 31)   ; must be a year
+                       (if year
+                           (not-a-date)
+                           (setf year result result nil)))
+                   (not-a-date)))
+              ;; field is not numeric:
+              ((and (not month) (process-month-if-alpha)))
+              ((and (not descriptive-date) (process-date-if-alpha)))))
+           
+           (not-a-date ()
+             (error "Not a date: ~s" (subseq string start end))))
+        
+        ;; ---------------
+        ;; DO THE PARSING!
         (skip-separators)
         ;; We might-have a day of week, which we skip:
-        (unless year-first (process-possible-day))
-        ;; Process the required year, if year-first:
-        (when year-first
-          (process-year)
-          (skip-separators))
-        (when (< ptr end)
-          ;; If we have a month name, then we know the month-date order;
-          ;; otherwise we'll assume month-first for now, until we process the
-          ;; second field:
-          (when (process-month)
-            (skip-separators))
-          ;; Check if date precedes month or vice versa:
-          (cond
-           ((and 
-              ;; A month name was not in the first field:
-              (not month-preceded-date) 
-              (or
-                ;; There is a month name in the second field:
-                (and (< ptr end)
-                     (alpha-char-p (schar string ptr)))
-                ;; Use the user-specified :month-precedes-date value to
-                ;; decide the order:
-                (not month-precedes-date)))
-            ;; We actually have the date value from the first field (rather
-            ;; than the month), so set the date from the assumed month value
-            ;; and then proceed with month processing:
-            (setf date month 
-                  month nil)
-            (process-month))
-           ;; Otherwise continue processing the date, as we have month then
-           ;; date order:
-           (t (process-date)))
-          (skip-separators))    
-        ;; Process the year, unless we have it already:
-        (unless (or year-first 
-                    ;; If the expected month field turned out to be a year:
-                    year)
-          (process-year))
-        ;; A month wasn't provided:
-        (unless month 
+        (process-possible-day)
+        ;; Process the 1st (required) field:
+        (process-field)
+        (cond
+         (month
+          (setf 1st-field-is-month? 't))
+         (result
+          (setf 1st-numeric result)))
+        ;; Process the 2nd field:
+        (process-field)
+        (when result 
+          (if 1st-numeric
+              (setf 2nd-numeric result)
+              (setf 1st-numeric result)))
+        ;; Process the 3rd field:
+        (process-field)
+        (when result 
+          (if 2nd-numeric 
+              (setf 3rd-numeric result)
+              (if 1st-numeric
+                  (setf 2nd-numeric result)
+                  (setf 1st-numeric result))))
+        
+        ;; Check that all the numerics are fixnums:
+        (when 1st-numeric
+          (unless (typep 1st-numeric 'fixnum)
+            (not-a-date))
+          (when 2nd-numeric
+            (unless (typep 2nd-numeric 'fixnum)
+              (not-a-date))
+            (when 3rd-numeric
+              (unless (typep 3rd-numeric 'fixnum)
+                (not-a-date)))))
+        
+        ;; Next, determine what fields (and order) we have!
+        (cond
+         ;; We know the year:
+         (year
           (cond 
-           ;; assume today, if nothing was specified:
-           ((and (not date) (not year))          
-            (get-decoded-time-unless-cached)          
-            (setf date current-date
-                  month current-month
-                  year current-year))
-           ;; otherwise, assume January:
-           (t (setf month 1))))
-        ;; A date wasn't provided (or assumed thus far):
+           ;; We know the year and the month:
+           (month
+            (setf date 1st-numeric))
+           ;; If `month-precedes-date':
+           ((or (and month-precedes-date (<=& 1st-numeric 12))
+                (>& 2nd-numeric 12))
+            (setf month 1st-numeric
+                  date 2nd-numeric))
+           ;; Otherwise, date precedes month:
+           (t (setf date 1st-numeric
+                    month 2nd-numeric))))
+         ;; We know only the month:
+         (month
+          (cond
+           ;; We have the month & 2 numerics:
+           (2nd-numeric
+            (if year-first 
+                ;; If `year-first':
+                (setf year 1st-numeric
+                      date 2nd-numeric)
+                ;; Otherwise, the date is first:
+                (setf date 1st-numeric
+                      year 2nd-numeric)))
+              ;; We have the month & only 1 numeric:
+           (t (cond 
+               ;; `year-first' forces the numeric to be the year, unless the
+               ;; month was the 1st field `month-precedes-date':
+               ((and year-first month-precedes-date (not 1st-field-is-month?))
+                (setf year 1st-numeric))
+               ;; Assume numeric is the date (in the assumed year):
+               (t (setf date 1st-numeric)
+                  (use-assumed-year))))))
+         
+         ;; We don't know anything yet:
+         (t (cond
+             ;; We have all three fields:
+             (3rd-numeric
+              (if year-first
+                  (if (or (and month-precedes-date (<=& 2nd-numeric 12))
+                          (>& 3rd-numeric 12))
+                      (setf year 1st-numeric
+                            month 2nd-numeric
+                            date 3rd-numeric)
+                      (setf year 1st-numeric
+                            date 2nd-numeric
+                            month 3rd-numeric))
+                  (if (or (and month-precedes-date (<=& 1st-numeric 12))
+                          (>& 2nd-numeric 12))
+                      (setf month 1st-numeric
+                            date 2nd-numeric
+                            year 3rd-numeric)
+                      (setf date 1st-numeric
+                            month 2nd-numeric
+                            year 3rd-numeric))))
+             ;; We have only two fields:
+             (2nd-numeric              
+              (cond
+               ;; The first numeric is a year:
+               ((and (not 1st-field-is-month?) year-first (<=& 2nd-numeric 12))
+                (setf year 1st-numeric
+                      month 2nd-numeric))
+               ;; Use assumed year:
+               (t (if (or (and month-precedes-date (<=& 1st-numeric 12))
+                          (>& 2nd-numeric 12))
+                      (setf month 1st-numeric
+                            date 2nd-numeric)
+                      (setf date 1st-numeric
+                            month 2nd-numeric))
+                  (use-assumed-year))))
+             ;; We don't know the month or the year, and only have 1 numeric:
+             (1st-numeric
+              (cond
+               ;; Assume it is the month, if feasible:
+               ((<=& 1st-numeric 12)
+                (setf month 1st-numeric))
+               ;; Otherwise, assume it is the date, in the current month:
+               (t (get-decoded-time-unless-cached)
+                  (setf date 1st-numeric
+                        month current-month)))
+              (use-assumed-year))
+
+             ;; We don't have any fields, use the current date:
+             ((not descriptive-date)
+              (get-decoded-time-unless-cached)
+              (setf date current-date
+                    month current-month
+                    year current-year)))))
+      
+        ;; A month wasn't provided, use January:
+        (unless month
+          (setf month 1))
+        (if year
+            (maybe-upgrade-year)
+            ;; A year wasn't provided, use the default year:
+            (setf year (use-assumed-year))))
         (unless date 
-          ;; Assume the 1st of the month:
-          (setf date 1))
-        ;; A year wasn't provided, use the default year:
-        (unless year
-          (setf year (default-year)))
-        (check-type month (integer 1 12))
-        (check-type date (integer 1 31))
-        ;; Process a TZ descriptive date:
-        (when descriptive-date
-          (setf date (convert-descriptive-date descriptive-date month year)))
-        ;; Increment year, if needed:
-        (when year-increment-check-needed?
-          (maybe-increment-year))
-        ;; Finally, skip a day of week, if one was specified:
-        (when year-first (process-possible-day)
-              (unless (or junk-allowed
-                          (= ptr end))
-                (junk-in-string-error (subseq string start end)))))
+          (cond 
+           ;; We were given a descriptive date:
+           (descriptive-date
+            (setf date (convert-descriptive-date descriptive-date month year)))
+           ;; A date wasn't provided, use the 1st of the month:
+           (t (setf date 1))))
+      
+      (check-type month (integer 1 12))
+      (check-type date (integer 1 31))       
+      (unless (or junk-allowed (= ptr end))
+        (junk-in-string-error (subseq string start end)))
       (values date month year ptr))))
   
 ;;; ===========================================================================
