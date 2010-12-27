@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/declared-numerics.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Nov  4 13:56:19 2010 *-*
+;;;; *-* Last-Edit: Mon Dec 27 10:53:35 2010 *-*
 ;;;; *-* Machine: cyclone.cs.umass.edu *-*
 
 ;;;; **************************************************************************
@@ -1065,11 +1065,21 @@
  (defun lisp::output-float-infinity (x stream)
    (print-object x stream)))
 
-;; ECL allows redefinition of its EXT:OUTPUT-FLOAT-INFINITY function, but its
-;; compiler/loader uses different readtables so we can't use #@ format unless
-;; the INF-READER dispatch is in place:
-#+old-ecl
+;; Check and record if running an older ECL:
+#+ecl
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (let ((old-ecl-out-float-infinity-symbol
+         (find-symbol "OUTPUT-FLOAT-INFINITY" :ext)))
+    (when (and old-ecl-out-float-infinity-symbol
+               (fboundp old-ecl-out-float-infinity-symbol))
+      (pushnew ':old-ecl-with-output-float-infinity *features*))))
+
+;; Older ECL verison:
+#+(and ecl old-ecl-with-output-float-infinity)
 (progn
+  ;; Old ECL allows redefinition of its EXT:OUTPUT-FLOAT-INFINITY function, but its
+  ;; compiler/loader uses different readtables so we can't use #@ format unless
+  ;; the INF-READER dispatch is in place:
   (defvar *%saved-ecl-output-float-infinity-function%*
       (symbol-function 'ext:output-float-infinity))
   (defun ext:output-float-infinity (x stream)
@@ -1078,6 +1088,42 @@
     (if (eq 'inf-reader (get-dispatch-macro-character #\# #\@))
         (print-object x stream)
         (funcall *%saved-ecl-output-float-infinity-function%* x stream))))
+
+;; Later ECL versions (not as nice an interface):
+#+(and ecl (not old-ecl-with-output-float-infinity))
+(progn
+  (defvar *%saved-ecl-float-infinity-string-function%*
+      (symbol-function 'ext::float-infinity-string))
+  ;; Redefine ECL's EXT::FLOAT-INFINITY-STRING to use #@format:
+  (defun modified-ecl-float-infinity-string (x)
+    (when (and *print-readably* (null *read-eval*))
+      (error 'ext::print-not-readable :object x))
+    (let* ((negative-infinities 
+            '((single-float . "#@single-float-negative-infinity") 
+              (double-float . "#@double-float-negative-infinity")
+              (long-float . "#@long-float-negative-infinity")
+              (short-float . "#@short-float-negative-infinity")))
+           (positive-infinities 
+            '((single-float . "#@single-float-infinity") 
+              (double-float . "#@double-float-infinity")
+              (long-float . "#@long-float-infinity")
+              (short-float . "#@short-float-infinity")))
+           (record (assoc (type-of x)
+                          (if (plusp x) 
+                              positive-infinities 
+                              negative-infinities))))
+      (unless record
+        (error "Not an infinity"))
+      (cdr record)))
+  
+  (defun ext::float-infinity-string (x)
+    ;; Redefine ECL's EXT::FLOAT-INFINITY-STRING to use #@format unless
+    ;; INF-READER isn't established:
+    (funcall 
+     (if (eq 'inf-reader (get-dispatch-macro-character #\# #\@))
+         'modified-ecl-float-infinity-string
+         *%saved-ecl-float-infinity-string-function%*)
+     x)))
 
 ;; From SBCL's print.lisp:
 #+sbcl
