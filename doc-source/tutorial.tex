@@ -1,9 +1,9 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/tutorial.tex *-*
-%% *-* Last-Edit: Thu Nov 11 03:11:28 2010; Edited-By: cork *-*
-%% *-* Machine: cyclone.cs.umass.edu *-*
+%% *-* Last-Edit: Fri Dec 31 11:22:36 2010; Edited-By: cork *-*
+%% *-* Machine: twister.local *-*
 
-%% Copyright (C) 2005-2010, Dan Corkill <corkill@GBBopen.org>
+%% Copyright (C) 2005-2011, Dan Corkill <corkill@GBBopen.org>
 %% Part of the GBBopen Project.
 %% Licensed under Apache License 2.0 (see LICENSE for license information).
 %%
@@ -44,8 +44,8 @@
 \W\usepackage{frames}
 %% Req'd for pdflatex -- note use epstopdf to convert eps figures;
 %%                       ps2pdf won't create correct bounding boxes
-\T\newif\ifpdf\ifx\pdfoutput\undefined\pdffalse\else\pdfoutput=1\pdftrue\fi
-\T\newcommand{\pdfgraphics}{\ifpdf\DeclareGraphicsExtensions{.pdf,.jpg}\else\fi}
+%\T\newif\ifpdfg\ifx\pdfoutput\undefined\pdffalse\else\pdfoutput=1\pdftrue\fi
+%\T\newcommand{\pdfgraphics}{\ifpdf\DeclareGraphicsExtensions{.pdf,.jpg}\else\fi}
 \T\usepackage{graphicx}
 
 \newcommand{\docname}{Tutorial}
@@ -190,7 +190,7 @@
 \W\xname{tutorial-copyright}
 \W\section*{Copyright}
 
-Copyright \copyright{} 2005--2010 by Daniel D. Corkill for the
+Copyright \copyright{} 2005--2011 by Daniel D. Corkill for the
 GBBopen Project.
 
 This tutorial may be reproduced and distributed in whole or in
