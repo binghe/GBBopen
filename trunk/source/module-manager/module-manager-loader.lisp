@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/module-manager/module-manager-loader.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Aug 31 20:34:13 2010 *-*
-;;;; *-* Machine: cyclone.cs.umass.edu *-*
+;;;; *-* Last-Edit: Fri Jan 14 13:14:59 2011 *-*
+;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -15,7 +15,7 @@
 ;;; Written by: Dan Corkill (incorporating some original ideas by 
 ;;;                          Kevin Gallagher and Zack Rubinstein)
 ;;;
-;;; Copyright (C) 2002-2010, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2011, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project.
 ;;; Licensed under Apache License 2.0 (see LICENSE for license information).
 ;;;
@@ -431,15 +431,10 @@
 ;;;  Load the module-manager system (source or compiled file)
 
 (let* ((this-file-truename *load-truename*)
-       (root-pathname
-        ;; CLISP, CormanLisp, and ECL don't handle :unspecific (support is not
-        ;; required by the ANSI standard, but it does provide desirable
-        ;; "filled" pathname merging behavior)
+       (root-pathname 
         (make-pathname
-         :name #-(or clisp cormanlisp ecl) :unspecific 
-               #+(or clisp cormanlisp ecl) nil
-         :type #-(or clisp cormanlisp ecl) :unspecific 
-               #+(or clisp cormanlisp ecl) nil
+         :name nil
+         :type  nil
          :version :newest
          :directory (butlast (pathname-directory this-file-truename) 2)
          :defaults this-file-truename)))
