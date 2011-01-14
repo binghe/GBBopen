@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/initiate.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jul 14 13:54:08 2010 *-*
-;;;; *-* Machine: cyclone.cs.umass.edu *-*
+;;;; *-* Last-Edit: Fri Jan 14 12:56:46 2011 *-*
+;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2002-2010, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2011, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project.
 ;;; Licensed under Apache License 2.0 (see LICENSE for license information).
 ;;;
@@ -245,15 +245,13 @@
 ;;;  If there is a gbbopen-commands.lisp file (or compiled version) in the
 ;;;  users "home" directory, load it now. 
 
-(load (namestring 
-       (make-pathname :name "gbbopen-commands"
-                      ;; CLISP, Cormanlisp, and ECL don't handle :unspecific
-                      ;; file types:
-                      :type #-(or clisp cormanlisp ecl) ':unspecific 
-                            #+(or clisp cormanlisp ecl) nil
-                      :version ':newest
-                      :defaults (user-homedir-pathname)))
-      :if-does-not-exist nil)
+(let ((gbbopen-commands-namestring
+       (namestring
+        (make-pathname :name "gbbopen-commands"
+                       :type nil
+                       :version ':newest
+                       :defaults (user-homedir-pathname)))))
+  (load gbbopen-commands-namestring :if-does-not-exist nil))
 
 ;;; ===========================================================================
 ;;;  Load gbbopen-modules-directory processing, if needed:

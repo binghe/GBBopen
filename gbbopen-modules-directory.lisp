@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/gbbopen-modules-directory.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Jul 29 14:24:33 2010 *-*
-;;;; *-* Machine: cyclone.cs.umass.edu *-*
+;;;; *-* Last-Edit: Fri Jan 14 12:53:14 2011 *-*
+;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2006-2010, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2006-2011, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project.
 ;;; Licensed under Apache License 2.0 (see LICENSE for license information).
 ;;;
@@ -145,7 +145,7 @@
              #+xcl (probe-directory modules-dir)
              (directory subdirs-pathname))
            ;; Add in any *.sym file "pseudo" symbolic links:
-	   (mapcan 'read-target-directory-specification
+	   (mapcan #'read-target-directory-specification
                    pseudo-sym-link-paths)))
          (now (get-universal-time)))
     (let ((any-found? nil)
