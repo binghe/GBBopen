@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/control-shells/test/agenda-shell-test.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Apr  7 10:11:56 2010 *-*
-;;;; *-* Machine: cyclone.cs.umass.edu *-*
+;;;; *-* Last-Edit: Sun Jan 16 05:40:48 2011 *-*
+;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2004-2010, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2004-2011, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project.
 ;;; Licensed under Apache License 2.0 (see LICENSE for license information).
 ;;;
@@ -164,6 +164,10 @@
   :execution-function 
   #'(lambda (ksa)
       (format t "~&;; Create-uc-one-instance-event ks executed~%")
+      (unless (find-space-instance-by-path '(space-3))
+        (error "KS ~s was not triggered by ~s"
+               'update-uc-one-value-slot-event-ks
+               '(update-nonlink-slot-event uc-one :slot-name value)))
       (let ((trigger-instance (sole-trigger-instance-of ksa)))
 	(make-instance 'uc-two :uc-one trigger-instance))
       (values)))
@@ -236,7 +240,7 @@
 		       :dimensions '((value :ordered)))
   (make-space-instance '(space-2)
 		       :dimensions '((value :ordered)))
-  #+when-desired
+  #+if-desired
   (enable-event-printing '(ksa-event :plus-subevents) 'ksa))
 
 (add-event-function 'initializations 'start-control-shell-event
