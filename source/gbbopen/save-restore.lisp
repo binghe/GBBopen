@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/save-restore.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jan 19 12:56:35 2011 *-*
+;;;; *-* Last-Edit: Wed Jan 19 13:59:26 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -144,52 +144,52 @@
                                          'single-float)
                                         (external-format ':default)
                                         (value))
-  (with-open-file (file (make-bb-pathname pathname)
+  (with-open-file (stream (make-bb-pathname pathname)
                    :direction ':output
                    :if-exists ':supersede
                    :external-format external-format)
-    (format file ";;; GBBopen Blackboard Repository (saved ~a)~%"
+    (format stream ";;; GBBopen Blackboard Repository (saved ~a)~%"
             (internet-text-date-and-time))
-    (with-saving/sending-block (file :package package
-                                     :read-default-float-format 
-                                     read-default-float-format
-                                     :value value)
+    (with-saving/sending-block (stream :package package
+                                       :read-default-float-format 
+                                       read-default-float-format
+                                       :value value)
       (with-blackboard-repository-locked ()
         ;; Save repository-format version:
-        (format file "~&;;; Saved repository format version:~%~s~%"
+        (format stream "~&;;; Saved repository format version:~%~s~%"
                 *save-blackboard-repository-format-version*)
         ;; Save important values:
-        (format file "~&;;; Important values:~%~s~%"
+        (format stream "~&;;; Important values:~%~s~%"
                 (list *global-instance-name-counter* (make-unit-instance-count-alist)))
         ;; Save space instances:
         (let ((top-level-space-instances *top-level-space-instances*))
-          (format file "~&;;; Space instances:~%")
+          (format stream "~&;;; Space instances:~%")
           ;; Save top-level (root children) space-instance references:
           (let ((*save/send-references-only* 't))
-            (print-object-for-saving/sending top-level-space-instances file))
+            (print-object-for-saving/sending top-level-space-instances stream))
           ;; Now save the space-instances in the repository forest:
           (let ((*save/send-references-only* nil))
             (dolist (child top-level-space-instances)
               (flet ((do-si (space-instance)
-                       (print-object-for-saving/sending space-instance file)))
+                       (print-object-for-saving/sending space-instance stream)))
                 (declare (dynamic-extent #'do-si))
                 (traverse-space-instance-tree #'do-si child)))
             ;; Save non-space unit instances:
-            (format file "~&;;; Other unit instances:~%")
+            (format stream "~&;;; Other unit instances:~%")
             (do-instances-of-class (instance t)
               ;; Skip space instances (standard-space-instance :plus-subclasses):
               (unless (typep instance 'standard-space-instance)
-                (print-object-for-saving/sending instance file)))
+                (print-object-for-saving/sending instance stream)))
             ;; Save unit-class states:
-            (format file "~&;;; Unit-class states:~%")
+            (format stream "~&;;; Unit-class states:~%")
             (loop for class-name being the hash-keys
                 of *recorded-class-descriptions-ht* do
                   (let ((class (find-class class-name)))
                     (when (typep class 'standard-unit-class)
                       (print-unit-class-state-for-saving/sending
                        class stream))))))))
-    (format file "~&;;; End of file~%")
-    (pathname file)))
+    (format stream "~&;;; End of file~%")
+    (pathname stream)))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -217,7 +217,7 @@
           (coalesce-strings nil)
           (confirm-if-not-empty 't)
           (estimated-peak-forward-references 
-            *default-estimated-peak-forward-references*)
+           *default-estimated-peak-forward-references*)
           (external-format ':default)
           (readtable *reading-saved/sent-objects-readtable*)
           (read-eval nil))
@@ -225,7 +225,7 @@
   (when confirm-if-not-empty
     (unless (confirm-if-blackboard-repository-not-empty-p)
       (return-from load-blackboard-repository nil)))
-  (with-open-file (file (make-bb-pathname pathname)
+  (with-open-file (stream (make-bb-pathname pathname)
                    :direction ':input
                    :external-format external-format)
     (with-blackboard-repository-locked ()
@@ -240,13 +240,13 @@
                                   :readtable
                                   :read-eval)))
       (with-reading-saved/sent-objects-block 
-          (file :class-name-translations class-name-translations
-                :coalesce-strings coalesce-strings
-                :estimated-peak-forward-references 
-                   estimated-peak-forward-references
-                :readtable readtable
-                :read-eval read-eval)
-        (let ((format-version (read file)))
+          (stream :class-name-translations class-name-translations
+                  :coalesce-strings coalesce-strings
+                  :estimated-peak-forward-references 
+                  estimated-peak-forward-references
+                  :readtable readtable
+                  :read-eval read-eval)
+        (let ((format-version (read stream)))
           (when (>& format-version *save-blackboard-repository-format-version*)
             (error "Incompatible ~s format version ~a ~
                     (the current version is ~a, generated by a newer version ~
@@ -263,7 +263,7 @@
             (destructuring-bind (global-instance-name-counter 
                                  &optional unit-instance-count-alist)
                 ;; Read important values:
-                (read file)
+                (read stream)
               (setf *global-instance-name-counter* global-instance-name-counter)
               ;; Resize instance hash-tables:
               (dolist (acons unit-instance-count-alist)
@@ -276,20 +276,20 @@
                       (resize-instance-hash-table unit-class count)))))))
           ;; Skip after-loading-function, if an old format version:
           (when (<& format-version 4)
-            (read file)))
+            (read stream)))
         ;; Read top-level (root children) space-instance references:
-        (let ((root-children (read file))
+        (let ((root-children (read stream))
               (*%%allow-setf-on-link%%* 't))
           (setf *top-level-space-instances* root-children)
           ;; Now read everything else:
           (let ((eof-marker '#:eof))
-            (until (eq eof-marker (read file nil eof-marker))))
+            (until (eq eof-marker (read stream nil eof-marker))))
           ;; Process all unit instances, in case any link-slot arity or sorting
           ;; has changed (FUTURE ENHANCEMENT: It would be nice to skip this
           ;; unless such has truly happened):
           (map-instances-of-class #'reconcile-direct-link-values 't))
         ;; Return the pathname, saved/sent-time, and saved/sent-value:
-        (values (pathname file)
+        (values (pathname stream)
                 *block-saved/sent-time* 
                 *block-saved/sent-value*)))))
 
