@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Aug  9 12:52:40 2010 *-*
-;;;; *-* Machine: cyclone.cs.umass.edu *-*
+;;;; *-* Last-Edit: Thu Jan 20 04:41:53 2011 *-*
+;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2002-2010, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2011, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project.
 ;;; Licensed under Apache License 2.0 (see LICENSE for license information).
 ;;;
@@ -42,8 +42,10 @@
 ;;;           (Corkill)
 ;;;  09-03-08 Added MAKE-INSTANCES-OF-CLASS-VECTOR (please don't abuse!). 
 ;;;           (Corkill)
-;;;  04-15-08 Added *SKIP-DELETED-UNIT-INSTANCE-CLASS-CHANGE* (Corkill)
-;;;  05-08-10 Added CHECK-INSTANCE-LOCATORS (Corkill)
+;;;  04-15-08 Added *SKIP-DELETED-UNIT-INSTANCE-CLASS-CHANGE*.  (Corkill)
+;;;  05-08-10 Added CHECK-INSTANCE-LOCATORS.  (Corkill)
+;;;  01-20-11 Check for bound %%space-instances%% slot in INSTANCE-DELETED-P.
+;;;           (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -455,13 +457,16 @@
 
 (defun instance-deleted-p (instance)
   (or (typep instance 'deleted-unit-instance)
-      (eq (standard-unit-instance.%%space-instances%% instance) ':deleted)))
+      (and (slot-boundp instance '%%space-instances%%)
+           (eq (standard-unit-instance.%%space-instances%% instance) 
+               ':deleted))))
 
 (defcm instance-deleted-p (instance)
   (with-once-only-bindings (instance)
     `(or (typep ,instance 'deleted-unit-instance)
-         (eq (standard-unit-instance.%%space-instances%% ,instance) 
-             ':deleted))))
+         (and (slot-boundp ,instance '%%space-instances%%)
+              (eq (standard-unit-instance.%%space-instances%% ,instance) 
+                  ':deleted)))))
 
 ;;; ---------------------------------------------------------------------------
 
