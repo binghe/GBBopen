@@ -1,0 +1,14 @@
+
+          Known Common Lisp Implementation Issues when using GBBopen
+
+ECL 11.1.1 (all platforms)
+ - :gbbopen-tools-test encounters an incorrect ratio comparison result:
+      Incorrect GBBOPEN-TOOLS:PARSE-TIME GBBOPEN-TOOLS-USER::ZONE result for 
+      "10:30 IST": -11/2 expected; -11/2 returned
+
+SBCL 1.0.44-45 (all platforms)
+ - :agenda-shell-test fails to trigger all KSAs when started by load/autorun, 
+   works correctly when invoked after file loading
+
+==============================================================================
+File updated: January 20, 2010
