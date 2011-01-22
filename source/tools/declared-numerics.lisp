@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/declared-numerics.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Dec 27 10:53:35 2010 *-*
-;;;; *-* Machine: cyclone.cs.umass.edu *-*
+;;;; *-* Last-Edit: Sat Jan 22 05:46:39 2011 *-*
+;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2002-2010, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2011, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project.
 ;;; Licensed under Apache License 2.0 (see LICENSE for license information).
 ;;;
@@ -231,11 +231,11 @@
     (or #+abcl 'truncate&
         #+(and allegro (not 64-bit)) '/&
         #+(and allegro 64-bit) 'truncate&
-        #+clisp 'truncate&
+        #+clisp 'floor&
         #+clozure 'truncate&
         #+cmu 'truncate&
         #+digitool-mcl 'truncate&
-        #+ecl '/&                       ; last checked with 10.2.1 (Feb 2010)
+        #+ecl 'floor&
         #+lispworks 'truncate&
         #+sbcl 'truncate&
         #+scl 'truncate&

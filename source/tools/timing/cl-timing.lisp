@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/timing/cl-timing.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Jul 29 17:18:17 2010 *-*
-;;;; *-* Machine: cyclone.cs.umass.edu *-*
+;;;; *-* Last-Edit: Sat Jan 22 05:36:55 2011 *-*
+;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2008-2010, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2008-2011, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project.
 ;;; Licensed under Apache License 2.0 (see LICENSE for license information).
 ;;;
@@ -38,6 +38,7 @@
             gbbopen-tools::determine-keys-only-atable-index
             gbbopen-tools::eset-transition-size
             gbbopen-tools::et-transition-size
+            gbbopen-tools::fastest-fixnum-div-operator
             gbbopen-tools::get-et%timing
             gbbopen-tools::in-eset%timing)))
 
@@ -470,19 +471,42 @@
                            (numerator 6)
                            (denominator 3))
   (declare (fixnum numerator denominator))
-  (let ((iterations (truncate& *timing-iterations* 2)))
+  (let ((iterations (truncate& *timing-iterations* 2))
+        fastest-time
+        timed-fastest-fixnum-div-operator)
     (with-full-optimization ()
       (fformat t "~&;;   Division timing (~:d iterations)..."
                iterations)
-      (fformat t "~&;;     /&:        ")
-      (format-ticks (brief-timer iterations
-                                 (/& numerator denominator)))
-      (fformat t "~%;;     floor&:    ")
-      (format-ticks (brief-timer iterations
-                                 (floor& numerator denominator)))
-      (fformat t "~%;;     truncate&: ")
-      (format-ticks (brief-timer iterations
-                                 (truncate& numerator denominator))))))
+      (fformat t "~&;; ~:[   ~;-->~] /&:        "
+               (eq fastest-fixnum-div-operator '/&))
+      (let ((time (brief-timer iterations
+                               (/& numerator denominator))))
+        (setf fastest-time time
+              timed-fastest-fixnum-div-operator '/&)
+        (format-ticks time))
+      (fformat t "~%;; ~:[   ~;-->~] floor&:    "
+               (eq fastest-fixnum-div-operator 'floor&))
+      (let ((time (brief-timer iterations
+                               (floor& numerator denominator))))
+        (when (< time fastest-time)
+          (setf fastest-time time
+                timed-fastest-fixnum-div-operator 'floor&))
+        (format-ticks time))
+      (fformat t "~%;; ~:[   ~;-->~] truncate&: "
+               (eq fastest-fixnum-div-operator 'truncate&))
+      (let ((time (brief-timer iterations
+                               (truncate& numerator denominator))))
+        (when (< time fastest-time)
+          (setf fastest-time time
+                timed-fastest-fixnum-div-operator 'truncate&))
+        (format-ticks time))
+      (unless (eq timed-fastest-fixnum-div-operator
+                  fastest-fixnum-div-operator)
+        (format t "~&;;   The computed fastest fixnum division operator is ~s~
+                   ~%;;   (the specified fastest operator is ~s) ***~%"
+                timed-fastest-fixnum-div-operator
+                fastest-fixnum-div-operator)))))
+        
 
 ;;; ---------------------------------------------------------------------------
 
