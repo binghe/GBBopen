@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Fri Dec 31 11:24:41 2010; Edited-By: cork *-*
+%% *-* Last-Edit: Fri Jan 28 04:54:59 2011; Edited-By: cork *-*
 %% *-* Machine: twister.local *-*
 
 %% Copyright (C) 2003-2011, Dan Corkill <corkill@GBBopen.org>
@@ -9042,55 +9042,6 @@ intermediate result that is larger than a \nobr{\code{\glref{fixnum}}}.
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}[ln-pprob]{Function}{ln\%}%
-  {\nobr{\var{pseudo-probability\/}\superstar{}}
-    \nobr{\returns{} \var{pseudo-probability-ln\/}}}
-\index{pseudo-probability!ln (natural log)}%
-
-\fnsyntax
-
-\fnpurpose Return the ``pseudo natural logarithm''
-(\glref{pseudo-probability-ln}) of a \glref{pseudo-probability} value.
-
-\fnpackage \code{:gbbopen-tools}
-
-\fnmodule \code{:gbbopen-tools}
-
-\fnargs
-\begin{args}{pseudo-probability-ln}
-\arg[pseudo-probability] A \code{\glref{fixnum}} \glref{pseudo-probability}
-\arg[pseudo-probability-ln] A \code{\glref{fixnum}} 
-  \glref{pseudo-probability-ln}
-\end{args}
-
-\fnreturns The \code{\glref{fixnum}} \glref{pseudo-probability-ln} of
-\nobr{\var{pseudo-probability}}.
-
-\begin{alsos}{pprob2prob}
-\also[exp\%]
-\also[pprob2prob]
-\also[prob2pprob]
-\end{alsos}
-
-\fnexamples
-\begin{example}
-%
-\W\supp
-  > (log 1.0)
-  0.0
-  > (ln\% 1000)
-  0
-  > (log 0.001)
-  -6.9077554
-  > (ln\% 1)
-  -6907756
-  >
-\end{example}
-
-\end{functiondoc}
-
-%% ------------------------------------------------------------------------
-
 \begin{functiondoc}[exp-pprob]{Function}{exp\%}%
   {\nobr{\var{pseudo-probability-ln\/}}
     \nobr{\returns{} \var{pseudo-probability\/}}}
@@ -9133,6 +9084,55 @@ intermediate result that is larger than a \nobr{\code{\glref{fixnum}}}.
   9.999995e-4
   > (exp\% -6907756)
   1
+  >
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}[ln-pprob]{Function}{ln\%}%
+  {\nobr{\var{pseudo-probability\/}\superstar{}}
+    \nobr{\returns{} \var{pseudo-probability-ln\/}}}
+\index{pseudo-probability!ln (natural log)}%
+
+\fnsyntax
+
+\fnpurpose Return the ``pseudo natural logarithm''
+(\glref{pseudo-probability-ln}) of a \glref{pseudo-probability} value.
+
+\fnpackage \code{:gbbopen-tools}
+
+\fnmodule \code{:gbbopen-tools}
+
+\fnargs
+\begin{args}{pseudo-probability-ln}
+\arg[pseudo-probability] A \code{\glref{fixnum}} \glref{pseudo-probability}
+\arg[pseudo-probability-ln] A \code{\glref{fixnum}} 
+  \glref{pseudo-probability-ln}
+\end{args}
+
+\fnreturns The \code{\glref{fixnum}} \glref{pseudo-probability-ln} of
+\nobr{\var{pseudo-probability}}.
+
+\begin{alsos}{pprob2prob}
+\also[exp\%]
+\also[pprob2prob]
+\also[prob2pprob]
+\end{alsos}
+
+\fnexamples
+\begin{example}
+%
+\W\supp
+  > (log 1.0)
+  0.0
+  > (ln\% 1000)
+  0
+  > (log 0.001)
+  -6.9077554
+  > (ln\% 1)
+  -6907756
   >
 \end{example}
 
@@ -13968,8 +13968,7 @@ the created \glref{condition-variable} instance.  However, using
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}[nearly-forever-seconds]{Constant}%
-  {nearly-forever-seconds}{}%
+\begin{functiondoc}{Constant}{nearly-forever-seconds}{}%
 
 \codeindexit{sleep}%
 
