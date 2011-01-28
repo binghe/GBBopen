@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Emacs-Lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/browse-hyperdoc.el *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Apr  7 10:16:04 2010 *-*
-;;;; *-* Machine: cyclone.cs.umass.edu *-*
+;;;; *-* Last-Edit: Fri Jan 28 05:24:48 2011 *-*
+;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2005-2009, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2005-2011, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project.
 ;;; Licensed under Apache License 2.0 (see LICENSE for license information).
 ;;;
@@ -65,26 +65,53 @@
        (list (read-string "Entity: " default))))
     ;; Just prompt:
     (t (list (read-string "Entity: ")))))
-  (let ((filename
-	 (format "%s/ref-%s.html"
-		 hyperdoc-directory
-		 (let ((basename (downcase string)))
-		   (cond 
-		    ;; Special entity names:
-		    ((string= basename "list-length=1")
-		     "list-length-equalsign-1")
-		    ;; Global variables:
-		    ((char-equal ?* (elt basename 0))
-		     (format "%s-var" 
-			     (substring basename 1 (1- (length basename)))))
-		    (t basename))))))
-    (cond ((file-exists-p filename)
-	   (let ((browse-url-new-window-flag t))
-	     (browse-url (concat "file\:" filename))))
-	  ;; Defer to the Common Lisp Hyperspec, if available:
-	  ((fboundp 'common-lisp-hyperspec)
-	   (common-lisp-hyperspec string))
-	  (t (message "No hyperdoc found for %s" string)))))
+  ;; Handle GBBopen hyperdoc filename adjustments:
+  (let ((basename (downcase string)))
+    (setq basename
+          (cond 
+           ;; Special entity names:
+           ((string= basename "*%")
+            "multiply-pprob")
+           ((string= basename "/%")
+            "divide-pprob")
+           ((string= basename "ln%")
+            "ln-pprob")
+           ((string= basename "exp%")
+            "exp-pprob")
+           ;; Global variables:
+           ((char-equal ?* (elt basename 0))
+            (format "%s-var" 
+                    (substring basename 1 (1- (length basename)))))
+           ;; Keyword variables:
+           ((char-equal ?: (elt basename 0))
+            (substring basename 1))
+           ;; Prepare for REPLACE-REGEXP-IN-STRING:
+           (t (copy-sequence basename))))
+    ;; Convert basename for GBBopen entities with slash characters:
+    (setq basename (replace-regexp-in-string "/" "-" basename t t))
+    ;; and with > characters:
+    (setq basename (replace-regexp-in-string ">" "-gt-" basename t t))
+    ;; and with = characters:
+    (setq basename (replace-regexp-in-string "=" "-eq-" basename t t))
+    ;; and with & characters:
+    (setq basename (replace-regexp-in-string "&" "-amp-" basename t t))
+    ;; Fixup any trailing hyphen introduced above:
+    (let ((last-pos (1- (length basename))))
+      (when (char-equal ?- (elt basename last-pos))
+        (setf basename (substring basename 0 last-pos))))
+    ;; Construct GBBopen hyperdoc filename:
+    (let ((filename
+           (format "%s/ref-%s.html" hyperdoc-directory basename)))
+      (cond
+       ;; GBBopen entity:
+       ((file-exists-p filename)
+        (let ((browse-url-new-window-flag t))
+          (browse-url (concat "file\:" filename))))
+       ;; Defer to the Common Lisp Hyperspec, if available:
+       ((fboundp 'common-lisp-hyperspec)
+        (common-lisp-hyperspec string))
+       ;; Failed to find either GBBopen or CL entity:
+       (t (message "No hyperdoc found for %s" string))))))
 
 ;;; ---------------------------------------------------------------------------
 
