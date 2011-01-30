@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/preamble.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Nov 16 13:48:21 2010 *-*
-;;;; *-* Machine: cyclone.cs.umass.edu *-*
+;;;; *-* Last-Edit: Sun Jan 30 12:13:15 2011 *-*
+;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -14,19 +14,20 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2004-2010, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2004-2011, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project.
 ;;; Licensed under Apache License 2.0 (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
 ;;;  03-15-04 File created.  (Corkill)
-;;;  06-15-05 Added add-package-nickname.  (Corkill)
-;;;  09-13-05 Added hyperdoc-filename.  (Corkill)
-;;;  09-28-05 Added import of *preferred-browser* setting.  (Corkill)
-;;;  01-09-08 Added safely-set-dispatch-macro-character.  (Corkill)
-;;;  01-26-08 Added ensure-package.  (Corkill)
-;;;  02-24-08 Added object-address.  (Corkill)
+;;;  06-15-05 Added ADD-PACKAGE-NICKNAME.  (Corkill)
+;;;  09-13-05 Added HYPERDOC-FILENAME.  (Corkill)
+;;;  09-28-05 Added import of *PREFERRED-BROWSER* setting.  (Corkill)
+;;;  01-09-08 Added SAFELY-SET-DISPATCH-MACRO-CHARACTER.  (Corkill)
+;;;  01-26-08 Added ENSURE-PACKAGE.  (Corkill)
+;;;  02-24-08 Added OBJECT-ADDRESS.  (Corkill)
+;;;  01-30-11 Export ENSURE-PACKAGE.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -65,6 +66,7 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(*gbbopen-install-root*      ; re-export, not documented
             add-package-nickname        ; not documented
+            ensure-package              ; not documented
             gbbopen-tools-implementation-version
             hyperdoc-filename           ; not yet documented
             hyperdoc-url                ; not yet documented
