@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/epilogue.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jan 19 12:59:11 2011 *-*
+;;;; *-* Last-Edit: Mon Jan 31 05:13:14 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -82,11 +82,11 @@
                (t (case type
                     (standard-unit-instance
                      (format t "~&No unit instance named ~s~@[ of class ~s~] ~
-                             was found~%"
+                             was found.~%"
                              (first args)
                              (second args)))
                     (standard-space-instance
-                     (format t "~&No space instance named ~s was found~%"
+                     (format t "~&No space instance named ~s was found.~%"
                              (first args))))
                   (force-output))))))))
 
@@ -100,7 +100,7 @@
       (format t "~&Found ~s (assigned to =)~%" instance)
       (force-output)
       instance)
-     (t (format t "~&No unit instance named ~s~@[ of class ~s~] was found~%"
+     (t (format t "~&No unit instance named ~s~@[ of class ~s~] was found.~%"
                 (first args)
                 (second args))
         (force-output)))))

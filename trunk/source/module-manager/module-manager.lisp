@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/module-manager/module-manager.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Dec 14 06:58:28 2010 *-*
-;;;; *-* Machine: cyclone.cs.umass.edu *-*
+;;;; *-* Last-Edit: Mon Jan 31 05:16:07 2011 *-*
+;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -15,7 +15,7 @@
 ;;; Written by: Dan Corkill (incorporating some original ideas by 
 ;;;                          Kevin Gallagher and Zachary Rubinstein)
 ;;;
-;;; Copyright (C) 2002-2010, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2011, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project.
 ;;; Licensed under Apache License 2.0 (see LICENSE for license information).
 ;;;
@@ -1716,7 +1716,7 @@
   (cond
    (*compiling-file*)
    (t (when (%find-patch-desc id)
-        (format t "~&;; Reloading previously loaded patch ~s to module ~s~%"
+        (format t "~&;; Reloading previously loaded patch ~s to module ~s...~%"
                 id
                 (mm-module.name *current-module*)))
       (setf *loading-patch* (make-patch-description
@@ -1747,7 +1747,7 @@
             (setf (mm-module.patch-descriptions module)
                   (nconc (mm-module.patch-descriptions module)
                          (list *loading-patch*))))
-        (format t "~&;; Applied patch ~s to module ~s~%"
+        (format t "~&;; Applied patch ~s to module ~s.~%"
                 id
                 (mm-module.name module))))
     (setf *loading-patch* nil)))
@@ -1937,7 +1937,7 @@
                          ;; Warn that we are skipping this patch:
                          (when (and date (> date (cdr file-loaded-acons)))
                            (format t "~&;; Not ~:[reloading~;recompiling~] ~
-                                             patch file ~s in module ~s~%"
+                                             patch file ~s in module ~s.~%"
                                    compile?
                                    file-name
                                    (mm-module.name *current-module*))

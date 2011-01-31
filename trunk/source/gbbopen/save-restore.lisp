@@ -1,13 +1,13 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/save-restore.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jan 19 13:59:26 2011 *-*
+;;;; *-* Last-Edit: Fri Jan 21 10:14:15 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
 ;;;; *
-;;;; *                GBBopen Miscellaneous Entities & Epilogue
+;;;; *             GBBopen Repository Save/Restore/Reset Entities
 ;;;; *
 ;;;; **************************************************************************
 ;;;; **************************************************************************
