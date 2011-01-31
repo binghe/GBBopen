@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Jan 20 04:41:53 2011 *-*
+;;;; *-* Last-Edit: Mon Jan 31 05:05:45 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -45,6 +45,8 @@
 ;;;  04-15-08 Added *SKIP-DELETED-UNIT-INSTANCE-CLASS-CHANGE*.  (Corkill)
 ;;;  05-08-10 Added CHECK-INSTANCE-LOCATORS.  (Corkill)
 ;;;  01-20-11 Check for bound %%space-instances%% slot in INSTANCE-DELETED-P.
+;;;           (Corkill)
+;;;  01-31-11 Added optional errorp argument to FIND-INSTANCE-BY-NAME.  
 ;;;           (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -1076,7 +1078,8 @@
 ;;; ===========================================================================
 ;;;   Find instance by name
 
-(defun find-instance-by-name (instance-name &optional (unit-class-name 't))
+(defun find-instance-by-name (instance-name &optional (unit-class-name 't)
+                                                      errorp)
   ;;; Retrieves a unit-instance by its name.
   (flet ((find-it (unit-class)
            (let ((instance-hash-table
@@ -1087,7 +1090,11 @@
              (let ((result (find-it unit-class)))
                (when result (return-from find-instance-by-name result)))))
       (declare (dynamic-extent #'fn))
-      (map-extended-unit-classes #'fn unit-class-name))))
+      (map-extended-unit-classes #'fn unit-class-name)))
+  (when errorp 
+    (error "No instance named ~s of class ~s was found."
+           instance-name
+           unit-class-name)))
 
 ;;; ---------------------------------------------------------------------------
 

@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Fri Jan 28 04:54:59 2011; Edited-By: cork *-*
+%% *-* Last-Edit: Mon Jan 31 05:23:17 2011; Edited-By: cork *-*
 %% *-* Machine: twister.local *-*
 
 %% Copyright (C) 2003-2011, Dan Corkill <corkill@GBBopen.org>
@@ -25209,7 +25209,7 @@ or simply:
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{find-instance-by-name}{\var{instance-name\/}
-    \nobr{\code{\&optional} \var{unit-class-specifier\/}}
+    \nobr{\code{\&optional} \var{unit-class-specifier errorp\/}}
     \nobr{\returns{} \var{unit-instance\/}}}
 \index{unit instance!retrieving by instance name}%
 \index{name-based retrieval}%
@@ -25228,12 +25228,16 @@ or simply:
 \arg[instance-name] The \glref{instance~name} for the retrieval
 \arg[unit-class-specifier] An \glref{extended~unit-class~specification}
 (see below; default is \code{t})
+\arg[errorp] A \glref{generalized~boolean} (default is \nil) 
 \arg[unit-instance] A \glref{unit~instance} or \nil{}
 \end{args}
 
 \fnreturns The first \glref{unit~instance} found of the specified
 \nobr{\var{class(es)\/}} that has the specified \nobr{\var{instance-name\/}}
 if one exists; \nil{} otherwise.
+
+\fnerrors
+If \var{errorp\/} is true, an error is signaled if no unit instance is found.
 
 \fndsyntax
 \W\supp\tabletop
@@ -25244,9 +25248,9 @@ if one exists; \nil{} otherwise.
 (\code{eq}, \code{eql}, \nobr{\code{equal}}, or \nobr{\code{equalp}})
 specified in \nobr{\textbf{\entlink{define-unit-class}}} is used to match
 \nobr{\var{instance-name\/}} with the \glref{unit-instance}'s instance name.
-If you are using strings as the names of unit instances, you should specify
-\nobr{\code{equal}} (case sensitive) or \nobr{\code{equalp}} (case
-insensitive) as the comparison \glref{function} in the \glref{unit~classes} of
+When strings are used as the names of unit instances, \nobr{\code{equal}}
+(case sensitive) or \nobr{\code{equalp}} (case insensitive) should be
+specified as the comparison \glref{function} in the \glref{unit~classes} of
 those unit instances.
 
 \begin{alsos}{find-all-instances-by-name}
@@ -25263,6 +25267,10 @@ Find the \code{hyp} \glref{unit~instance} 419:
 \begin{example}
   > (find-instance-by-name 419 'hyp)
   #<hyp 419 (1835 4791) 0.85 [5..35]>
+  > (find-instance-by-name 0 'hyp)
+  nil
+  > (find-instance-by-name 0 'hyp 't)
+  No unit instance named 0 of class hyp was found.
   >
 \end{example}
 
@@ -25274,7 +25282,7 @@ Find the \code{hyp} \glref{unit~instance} 419:
 %
 \W\supp
 \begin{example}
-  :fi \var{instance-name\/} \textrm{[}\var{unit-classes-specifier\/}\textrm{]}
+  :fi \var{instance-name\/} \textrm{[}\var{unit-classes-specifier\/} \textrm{[}\var{errorp\/}\textrm{]]}
 \end{example}
 %
 which sets \code{=} to be the found \glref{unit~instance}.
