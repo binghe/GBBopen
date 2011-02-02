@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/network-streaming-master.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Feb  2 11:33:51 2011 *-*
+;;;; *-* Last-Edit: Wed Feb  2 13:04:49 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -52,8 +52,10 @@
 (stream-instances (find-instances 't 't 't) *streamer*)
 (end-queued-streaming *streamer*)
 
-;; Delete an instance on the slave (but not here):
-(stream-delete-instance (find-instance-by-name 10 'location) *streamer*)
+;; Delete an instance on the slave (but not here), testing
+;; WITH-QUEUED-STREAMING:
+(with-queued-streaming (*streamer* ':with-queued)
+  (stream-delete-instance (find-instance-by-name 10 'location) *streamer*))
 
 ;; Change a nonlink-slot value on the slave (but not here):
 (stream-slot-update (find-instance-by-name 11 'location) 'time 9 *streamer*)

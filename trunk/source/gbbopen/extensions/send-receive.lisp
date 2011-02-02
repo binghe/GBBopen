@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/send-receive.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Feb  2 11:22:15 2011 *-*
+;;;; *-* Last-Edit: Wed Feb  2 13:00:57 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -50,6 +50,7 @@
             stream-instance
             stream-instances
             stream-slot-update
+            with-queued-streaming
             with-streamer)))
 
 ;;; ---------------------------------------------------------------------------
@@ -132,6 +133,15 @@
     (when (and not-queuing? errorp)
       (error "Streamer ~s is not queuing." streamer))))
       
+;;; ---------------------------------------------------------------------------
+
+(defmacro with-queued-streaming ((streamer &optional tag (errorp t)) 
+                                 &body body)
+  (with-once-only-bindings (streamer tag errorp)
+    `(progn (begin-queued-streaming ,streamer ,tag ,errorp)
+            (unwind-protect (progn ,@body)
+              (end-queued-streaming ,streamer ,errorp)))))
+
 ;;; ---------------------------------------------------------------------------
 ;;;  Delete unit instance reader
 
