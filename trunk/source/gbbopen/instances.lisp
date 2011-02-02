@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Jan 31 05:05:45 2011 *-*
+;;;; *-* Last-Edit: Wed Feb  2 02:20:25 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -48,6 +48,8 @@
 ;;;           (Corkill)
 ;;;  01-31-11 Added optional errorp argument to FIND-INSTANCE-BY-NAME.  
 ;;;           (Corkill)
+;;;  02-02-11 Signal CREATE-INSTANCE-EVENT in INITIALIZE-SAVED/SENT-INSTANCE 
+;;;           (standard-unit-instance) method. (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -353,10 +355,10 @@
 (defmethod initialize-saved/sent-instance ((instance standard-unit-instance)
                                            slots slot-values missing-slot-names)
   (declare (ignore slots slot-values missing-slot-names))
-  ;; Allow setf setting of link-slot pointers (Note: additional fixing of
+  ;; Allow setf setting of link-slot pointers. Note: additional fixing of
   ;; direct link-slot values is done at the end of load-blackboard-repository
   ;; to update values to reflect changed link-slot options (arity & sorting);
-  ;; the same is not done automatically for sent instances):
+  ;; the same is not done automatically for sent instances.
   (let ((*%%allow-setf-on-link%%* 't))
     (call-next-method))
   ;; Add it to space instances:
@@ -367,6 +369,10 @@
         (setf (standard-unit-instance.%%space-instances%% instance) nil)
         (add-instance-to-space-instance-paths
          instance space-instance-paths))))
+  ;; signal the creation event:
+  (signal-event-using-class
+   (load-time-value (find-class 'create-instance-event))
+   :instance instance)
   instance)
 
 ;;; ---------------------------------------------------------------------------
