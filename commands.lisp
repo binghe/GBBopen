@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/commands.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Aug 20 14:21:01 2010 *-*
-;;;; *-* Machine: cyclone.cs.umass.edu *-*
+;;;; *-* Last-Edit: Wed Feb  2 11:14:27 2011 *-*
+;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2004-2010, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2004-2011, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project.
 ;;; Licensed under Apache License 2.0 (see LICENSE for license information).
 ;;;
@@ -55,6 +55,7 @@
 ;;;  11-13-06 Added :abort-ks-execution-example command.  (Corkill)
 ;;;  02-15-10 Added :double-metaphone command.  (Corkill)
 ;;;  03-09-10 Added :gbbopen-tools-user command.  (Corkill)
+;;;  02-02-11 Added :network-streaming command. (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -197,6 +198,10 @@
   (define-repl-command :multinode (&rest options)
     "Compile and load GBBopen multi-node support (under construction)"
     (startup-module :multinode options nil))
+
+  (define-repl-command :network-streaming (&rest options)
+    "Compile and load GBBopen network streaming support [Experimental]"
+    (startup-module :network-streaming options nil))
 
   #+not-yet
   (define-repl-command :restricted-eval (&rest options)

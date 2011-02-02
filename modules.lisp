@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/modules.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jan 19 13:00:00 2011 *-*
+;;;; *-* Last-Edit: Wed Feb  2 11:15:54 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -36,6 +36,7 @@
 ;;;  06-28-07 Renamed :gbbopen module to more accurate :gbbopen-core. (Corkill)
 ;;;  02-15-10 Added :double-metaphone module. (Corkill)
 ;;;  03-07-10 Added auto-transitioning sets, tables. (Corkill)
+;;;  02-02-11 Added :network-streaming module. (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -300,6 +301,11 @@
     (:directory :gbbopen "extensions")
     (:files "multinode"))
   
+  (define-module :network-streaming
+    (:requires :gbbopen-core :portable-sockets)
+    (:directory :gbbopen "extensions")
+    (:files ("send-receive")))
+
   (define-module :web-inspector 
     (:requires :http-services)
     (:directory :gbbopen "extensions")
