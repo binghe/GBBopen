@@ -1,8 +1,8 @@
 ;;;; -*- Mode:COMMON-LISP; Package:TUTORIAL; Base:10 -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/examples/tutorial.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Apr  7 10:10:32 2010 *-*
-;;;; *-* Machine: cyclone.cs.umass.edu *-*
+;;;; *-* Last-Edit: Wed Feb  2 02:14:53 2011 *-*
+;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -12,6 +12,9 @@
 ;;;; **************************************************************************
 ;;;; **************************************************************************
 ;;;
+;;; Written by: Dan Corkill
+;;;
+;;; Copyright (C) 2004-2011, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project.
 ;;; Licensed under Apache License 2.0 (see LICENSE for license information).
 ;;;
@@ -240,7 +243,8 @@
 
 (defun load-tutorial-repository (&optional (pathname "tutorial"))
   (multiple-value-bind (loaded-pathname saved-time saved-value)
-      (load-blackboard-repository pathname)
+      (with-events-disabled ()
+        (load-blackboard-repository pathname))
     (setf *the-random-walk* saved-value)
     (values loaded-pathname saved-time)))
 
