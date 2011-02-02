@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/network-streaming-master.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Feb  2 13:04:49 2011 *-*
+;;;; *-* Last-Edit: Wed Feb  2 17:30:10 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -31,7 +31,7 @@
 (network-streaming :create-dirs)
 
 ;; Load up the :tutorial (without running it):
-(cl-user::tutorial-example :noautorun)
+(cl-user::tutorial-example :create-dirs :noautorun)
 
 ;; The slave host:
 (defparameter *slave-host* "127.0.0.1")

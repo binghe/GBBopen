@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/network-streaming-slave.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Feb  2 13:04:21 2011 *-*
+;;;; *-* Last-Edit: Wed Feb  2 17:29:43 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -33,7 +33,7 @@
 (setf *break-on-receive-errors* 't)
 
 ;; Load up the :tutorial (without running it):
-(cl-user::tutorial-example :noautorun)
+(cl-user::tutorial-example :create-dirs :noautorun)
 
 ;; Silly queued-reception methods:
 (defmethod beginning-queued-receive ((tag (eql ':tutorial)))
