@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/network-streaming-master.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Feb  2 17:30:10 2011 *-*
+;;;; *-* Last-Edit: Mon Feb  7 15:21:32 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -59,6 +59,18 @@
 
 ;; Change a nonlink-slot value on the slave (but not here):
 (stream-slot-update (find-instance-by-name 11 'location) 'time 9 *streamer*)
+
+;; Perform an unlink on the slave (but not here):
+(stream-unlink (find-instance-by-name 9 'location) 
+               'previous-location
+               (find-instance-by-name 8 'location) 
+               *streamer*)
+
+;; Perform a link on the slave (but not here):
+(stream-link (find-instance-by-name 8 'location) 
+             'next-location
+             (find-instance-by-name 9 'location) 
+             *streamer*)
 
 ;;; ===========================================================================
 ;;;				  End of File

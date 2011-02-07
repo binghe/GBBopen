@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/send-receive.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Feb  2 13:00:57 2011 *-*
+;;;; *-* Last-Edit: Mon Feb  7 15:17:39 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -49,7 +49,9 @@
             stream-delete-instance
             stream-instance
             stream-instances
+            stream-link
             stream-slot-update
+            stream-unlink
             with-queued-streaming
             with-streamer)))
 
@@ -161,8 +163,29 @@
     (setf class-name (possibly-translate-class-name class-name))
     (let ((instance (find-instance-by-name instance-name class-name 't)))
       ;; TODO: LINK SLOTS, MISSING SLOTS
-      (setf (slot-value instance slot-name) new-value)
-    new-value)))
+      (setf (slot-value instance slot-name) new-value))))
+        
+;;; ---------------------------------------------------------------------------
+;;;  Unit-instance link reader
+
+(defmethod saved/sent-object-reader ((char (eql #\L)) stream)
+  (destructuring-bind (class-name instance-name slot-name other-instances)
+      (read stream t nil 't)
+    (setf class-name (possibly-translate-class-name class-name))
+    (let ((instance (find-instance-by-name instance-name class-name 't)))
+      ;; TODO: MISSING SLOTS
+      (linkf (slot-value instance slot-name) other-instances))))
+        
+;;; ---------------------------------------------------------------------------
+;;;  Unit-instance unlink reader
+
+(defmethod saved/sent-object-reader ((char (eql #\U)) stream)
+  (destructuring-bind (class-name instance-name slot-name other-instances)
+      (read stream t nil 't)
+    (setf class-name (possibly-translate-class-name class-name))
+    (let ((instance (find-instance-by-name instance-name class-name 't)))
+      ;; TODO: MISSING SLOTS
+      (unlinkf (slot-value instance slot-name) other-instances))))
         
 ;;; ===========================================================================
 ;;;   Network Updates Server
@@ -347,6 +370,26 @@
     (print-object-for-saving/sending (instance-name-of instance) stream)
     (format stream " ~s " slot-name)
     (print-object-for-saving/sending new-value stream)
+    (princ ")" stream)))
+
+;;; ---------------------------------------------------------------------------
+
+(defun stream-link (instance slot-name other-instances streamer)
+  (with-streamer (stream streamer)
+    (format stream "#GL(~s " (type-of instance))
+    (print-object-for-saving/sending (instance-name-of instance) stream)
+    (format stream " ~s " slot-name)
+    (print-object-for-saving/sending other-instances stream)
+    (princ ")" stream)))
+
+;;; ---------------------------------------------------------------------------
+
+(defun stream-unlink (instance slot-name other-instances streamer)
+  (with-streamer (stream streamer)
+    (format stream "#GU(~s " (type-of instance))
+    (print-object-for-saving/sending (instance-name-of instance) stream)
+    (format stream " ~s " slot-name)
+    (print-object-for-saving/sending other-instances stream)
     (princ ")" stream)))
 
 ;;; ===========================================================================
