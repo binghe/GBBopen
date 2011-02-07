@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/network-streaming-slave.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Feb  2 17:29:43 2011 *-*
+;;;; *-* Last-Edit: Mon Feb  7 15:20:49 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -53,7 +53,9 @@
  ;; has been received:
  #'(lambda (&rest args)
      (declare (ignore args))
-     (enable-event-printing 'update-nonlink-slot-event 'location :slot-name 'time))
+     (enable-event-printing 'update-nonlink-slot-event 'location :slot-name 'time)
+     (enable-event-printing '(link-slot-event +) 'location :slot-name 'previous-location)
+     (enable-event-printing '(link-slot-event +) 'location :slot-name 'next-location))
  'delete-instance-event 'location)
 
 ;; Don't warn that the Agenda Shell isn't running to process trigger events on
