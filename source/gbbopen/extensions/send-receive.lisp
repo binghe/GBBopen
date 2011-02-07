@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/send-receive.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Feb  7 15:17:39 2011 *-*
+;;;; *-* Last-Edit: Mon Feb  7 15:48:59 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -168,7 +168,7 @@
 ;;; ---------------------------------------------------------------------------
 ;;;  Unit-instance link reader
 
-(defmethod saved/sent-object-reader ((char (eql #\L)) stream)
+(defmethod saved/sent-object-reader ((char (eql #\+)) stream)
   (destructuring-bind (class-name instance-name slot-name other-instances)
       (read stream t nil 't)
     (setf class-name (possibly-translate-class-name class-name))
@@ -179,7 +179,7 @@
 ;;; ---------------------------------------------------------------------------
 ;;;  Unit-instance unlink reader
 
-(defmethod saved/sent-object-reader ((char (eql #\U)) stream)
+(defmethod saved/sent-object-reader ((char (eql #\-)) stream)
   (destructuring-bind (class-name instance-name slot-name other-instances)
       (read stream t nil 't)
     (setf class-name (possibly-translate-class-name class-name))
@@ -376,7 +376,7 @@
 
 (defun stream-link (instance slot-name other-instances streamer)
   (with-streamer (stream streamer)
-    (format stream "#GL(~s " (type-of instance))
+    (format stream "#G+(~s " (type-of instance))
     (print-object-for-saving/sending (instance-name-of instance) stream)
     (format stream " ~s " slot-name)
     (print-object-for-saving/sending other-instances stream)
@@ -386,7 +386,7 @@
 
 (defun stream-unlink (instance slot-name other-instances streamer)
   (with-streamer (stream streamer)
-    (format stream "#GU(~s " (type-of instance))
+    (format stream "#G-(~s " (type-of instance))
     (print-object-for-saving/sending (instance-name-of instance) stream)
     (format stream " ~s " slot-name)
     (print-object-for-saving/sending other-instances stream)
