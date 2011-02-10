@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
-;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/network-streaming-master.lisp *-*
+;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/network-mirroring-master.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Feb 10 02:48:59 2011 *-*
+;;;; *-* Last-Edit: Thu Feb 10 03:55:10 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -40,37 +40,32 @@
 (defparameter *streamer*
     (make-gbbopen-network-streamer *slave-host*))
 
+(add-mirroring *streamer* 'path)
+(add-mirroring *streamer* 'location)
+
 ;; Generate some data (locally):
+(begin-queued-streaming *streamer* ':tutorial)
 (take-a-walk)
+(end-queued-streaming *streamer*)
 
 ;; Mirror the space instances (once sending space-instances is supported):
 #+FIX-THIS-AND-THEN-CHANGE-SLAVE-FILE
 (stream-instances (find-space-instances 't) *streamer*)
 
-;; Send everything else (as a single queued block):
-(begin-queued-streaming *streamer* ':tutorial)
-(stream-instances (find-instances 't 't 't) *streamer*)
-(end-queued-streaming *streamer*)
-
-;; Delete an instance on the slave (but not here), also testing
-;; WITH-QUEUED-STREAMING:
+;; Delete an instance, also testing WITH-QUEUED-STREAMING:
 (with-queued-streaming (*streamer* ':with-queued)
-  (stream-delete-instance (find-instance-by-name 10 'location) *streamer*))
+  (delete-instance (find-instance-by-name 10 'location)))
 
-;; Change a nonlink-slot value on the slave (but not here):
-(stream-slot-update (find-instance-by-name 11 'location) 'time 9 *streamer*)
+;; Change a nonlink-slot value:
+(setf (time-of (find-instance-by-name 11 'location)) 9)
 
-;; Perform an unlink on the slave (but not here):
-(stream-unlink (find-instance-by-name 9 'location) 
-               'previous-location
-               (find-instance-by-name 8 'location) 
-               *streamer*)
+;; Perform an unlink:
+(unlinkf (previous-location-of (find-instance-by-name 9 'location))
+         (find-instance-by-name 8 'location))
 
-;; Perform a link on the slave (but not here):
-(stream-link (find-instance-by-name 8 'location) 
-             'next-location
-             (find-instance-by-name 9 'location) 
-             *streamer*)
+;; Perform a link:
+(linkf (next-location-of (find-instance-by-name 8 'location))
+       (find-instance-by-name 9 'location))
 
 ;;; ===========================================================================
 ;;;				  End of File
