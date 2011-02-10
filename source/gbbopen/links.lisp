@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/links.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu May  6 17:05:34 2010 *-*
-;;;; *-* Machine: cyclone.cs.umass.edu *-*
+;;;; *-* Last-Edit: Thu Feb 10 15:28:16 2011 *-*
+;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -14,9 +14,16 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2002-2010, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2011, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project.
 ;;; Licensed under Apache License 2.0 (see LICENSE for license information).
+;;;
+;;; ===========================================================================
+;;;  Important Note:
+;;;
+;;;  In GBBopen, link-slot pointer lists are destructively modified by
+;;;  linkf/unlinkf operations for top performance.
+;;; ===========================================================================
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
@@ -53,13 +60,6 @@
             standard-link-pointer
 	    unlinkf
 	    unlinkf-all)))
-
-;;; ===========================================================================
-;;;  Important Note:
-;;;
-;;;  In GBBopen, link-slot pointer lists are destructively modified by
-;;;  linkf/unlinkf operations for top performance.
-;;; ===========================================================================
 
 ;;; ===========================================================================
 ;;;  Standard-link-pointer (base class for link-pointer object customization)
@@ -470,7 +470,9 @@
    ;; singular link
    ((direct-link-definition.singular dslotd)
     (let ((existing (link-instance-of-or-nil existing-ptr-objs))
-          (remove (link-instance-of remove-ptr-objs)))
+          (remove (link-instance-of (if (consp remove-ptr-objs)
+                                        (sole-element remove-ptr-objs)
+                                        remove-ptr-objs))))
       (cond ((or (eq existing remove)
                  (and (consp remove)
                       (memq existing remove)))

@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/network-streaming-slave.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Feb  7 15:20:49 2011 *-*
+;;;; *-* Last-Edit: Thu Feb 10 14:12:58 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -30,7 +30,7 @@
 (in-package :cl-user)
 (network-streaming :create-dirs)
 ;; Help 
-(setf *break-on-receive-errors* 't)
+(setf gbbopen:*break-on-receive-errors* 't)
 
 ;; Load up the :tutorial (without running it):
 (cl-user::tutorial-example :create-dirs :noautorun)
