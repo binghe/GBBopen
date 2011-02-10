@@ -1,7 +1,7 @@
 ;;;; -*- Mode:COMMON-LISP; Package:TUTORIAL; Base:10 -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/examples/tutorial.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Feb  2 02:14:53 2011 *-*
+;;;; *-* Last-Edit: Thu Feb 10 16:01:37 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -81,13 +81,22 @@
             (x-of location)
             (y-of location))))
 
+;;; ---------------------------------------------------------------------------
+
+(defun safe-time-of (location)
+  ;; Allow sorting of incomplete LOCATION unit instances (needed only for
+  ;; network mirroring):
+  (if (slot-boundp location 'time)
+      (time-of location)
+      infinity$))
+
 ;;; ------------------------------------------------------------------------
 
 (define-unit-class path ()
   ((locations
     :link (location path :singular t)
     :sort-function #'<
-    :sort-key #'time-of))
+    :sort-key #'safe-time-of))
   (:initial-space-instances (known-world)))
 
 ;;; ===========================================================================
