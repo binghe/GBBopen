@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Feb  2 02:20:25 2011 *-*
+;;;; *-* Last-Edit: Thu Feb 10 16:06:20 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -50,6 +50,8 @@
 ;;;           (Corkill)
 ;;;  02-02-11 Signal CREATE-INSTANCE-EVENT in INITIALIZE-SAVED/SENT-INSTANCE 
 ;;;           (standard-unit-instance) method. (Corkill)
+;;;  02-10-11 Added support for incomplete instances and internal 
+;;;           *%%LOADING-COMPLETE-REPOSITORY%%* special variable.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -76,6 +78,7 @@
             find-instance-by-name
             find-all-instances-by-name
             find-instances-of-class
+            incomplete-instance-p       ; not yet documented
             initial-class-instance-number
             instance-dimension-value
             instance-dimension-values
@@ -103,6 +106,9 @@
 
 (defvar *skip-deleted-unit-instance-class-change* nil)
 
+;; Indicates if a complete LOAD-BLACKBOARD-REPOSITORY is underway:
+(defvar *%%loading-complete-repository%%* nil)
+
 ;;; ===========================================================================
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
@@ -115,14 +121,6 @@
 ;;; ===========================================================================
 ;;;   Deleted Unit Instances
 
-(defun operation-on-deleted-instance (instance operation)
-  (if operation
-      (error "~s attempted with a deleted instance: ~s"
-             operation instance)
-      (error "Instance ~s has been deleted" instance)))
-
-;;; ---------------------------------------------------------------------------
-
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (define-class deleted-unit-instance (%%deleted/non-deleted-unit-instance%%)
     (original-class)
@@ -133,6 +131,75 @@
   (call-next-method)
   (format stream " ~s" (class-name (original-class-of instance)))
   (print-instance-slot-value instance 'instance-name stream))
+
+;;; ---------------------------------------------------------------------------
+
+(defun instance-deleted-p (instance)
+  (or (typep instance 'deleted-unit-instance)
+      (and (slot-boundp instance '%%space-instances%%)
+           (eq (standard-unit-instance.%%space-instances%% instance) 
+               ':deleted))))
+
+(defcm instance-deleted-p (instance)
+  (with-once-only-bindings (instance)
+    `(or (typep ,instance 'deleted-unit-instance)
+         (and (slot-boundp ,instance '%%space-instances%%)
+              (eq (standard-unit-instance.%%space-instances%% ,instance) 
+                  ':deleted)))))
+
+;;; ---------------------------------------------------------------------------
+
+(defun operation-on-deleted-instance (instance operation)
+  (if operation
+      (error "~s attempted with a deleted instance: ~s"
+             operation instance)
+      (error "Instance ~s has been deleted" instance)))
+
+;;; ---------------------------------------------------------------------------
+
+(defun check-for-deleted-instance (instance &optional operation)
+  ;;; Generate an error if `instance' is a deleted unit instance
+  (when (instance-deleted-p instance)
+    (operation-on-deleted-instance instance operation)))
+
+(defcm check-for-deleted-instance (instance &optional operation)
+  (with-once-only-bindings (instance)
+    `(when (instance-deleted-p ,instance) 
+       (operation-on-deleted-instance ,instance ,operation))))
+
+;;; ===========================================================================
+;;;   Incomplete (Forward Referenced) Unit Instances
+
+(defun incomplete-instance-p (instance)
+  (and (slot-boundp instance '%%space-instances%%)
+       (eq (standard-unit-instance.%%space-instances%% instance) 
+           ':incomplete)))
+
+(defcm incomplete-instance-p (instance)
+  (with-once-only-bindings (instance)
+    `(and (slot-boundp ,instance '%%space-instances%%)
+          (eq (standard-unit-instance.%%space-instances%% ,instance) 
+              ':incomplete))))
+
+;;; ---------------------------------------------------------------------------
+
+(defun operation-on-incomplete-instance (instance operation)
+  (if operation
+      (error "~s attempted with an incomplete instance: ~s"
+             operation instance)
+      (error "Instance ~s is an incomplete instance" instance)))
+
+;;; ---------------------------------------------------------------------------
+
+(defun check-for-incomplete-instance (instance &optional operation)
+  ;;; Generate an error if `instance' is an incomplete unit instance
+  (when (incomplete-instance-p instance)
+    (operation-on-incomplete-instance instance operation)))
+
+(defcm check-for-incomplete-instance (instance &optional operation)
+  (with-once-only-bindings (instance)
+    `(when (incomplete-instance-p ,instance) 
+       (operation-on-incomplete-instance ,instance ,operation))))
 
 ;;; ===========================================================================
 ;;;   Unit Instances
@@ -151,8 +218,8 @@
       (%%deleted/non-deleted-unit-instance%%)
     ((instance-name :accessor instance-name-of)
      (%%marks%% :initform 0 :type fixnum)
-     ;; %%space-instances%% slot also indicates deleted unit instances
-     ;; (via :deleted value):
+     ;; %%space-instances%% slot also indicates deleted unit instances (via
+     ;; :deleted value) and forward references (via :incomplete value):
      (%%space-instances%% :initarg :space-instances :initform nil))
     (:abstract t)
     (:generate-accessors-format :prefix)
@@ -369,6 +436,17 @@
         (setf (standard-unit-instance.%%space-instances%% instance) nil)
         (add-instance-to-space-instance-paths
          instance space-instance-paths))))
+  (unless *%%loading-complete-repository%%*
+    (reconcile-direct-link-values instance)
+    ;; do the inverse pointers all link slots:
+    (let ((class (class-of instance)))
+      (dolist (eslotd (class-slots class))
+        (when (typep eslotd 'effective-link-definition)
+          (%do-ilinks 
+           (effective-link-definition.direct-slot-definition eslotd)
+           instance 
+           (ensure-list (slot-value-using-class class instance eslotd))
+           't)))))
   ;; signal the creation event:
   (signal-event-using-class
    (load-time-value (find-class 'create-instance-event))
@@ -387,7 +465,7 @@
     (dolist (eslotd (class-slots unit-class))
       (when (typep eslotd 'effective-link-definition)
         (post-initialize-direct-link-slot 
-         unit-class instance eslotd 
+         unit-class instance eslotd
          (slot-value-using-class unit-class instance eslotd))))))
 
 ;;; ---------------------------------------------------------------------------
@@ -443,6 +521,11 @@
      (let* ((class (find-class class-name 't))
             (instance (allocate-instance class)))
        (setf (instance-name-of instance) instance-name)
+       (setf (standard-unit-instance.%%space-instances%% instance) ':incomplete)
+       (dolist (slot (class-slots class))
+         (when (typep slot 'effective-link-definition)
+           (let ((*%%allow-setf-on-link%%* 't))
+             (setf (slot-value instance (slot-definition-name slot)) nil))))
        ;; Check that we are in a with-saving/sending-block:
        (unless (boundp '*forward-referenced-saved/sent-instances*)
          (outside-reading-saved/sent-objects-block-error
@@ -463,47 +546,23 @@
 ;;; ===========================================================================
 ;;;  Unit-instance utility funtions
 
-(defun instance-deleted-p (instance)
-  (or (typep instance 'deleted-unit-instance)
-      (and (slot-boundp instance '%%space-instances%%)
-           (eq (standard-unit-instance.%%space-instances%% instance) 
-               ':deleted))))
-
-(defcm instance-deleted-p (instance)
-  (with-once-only-bindings (instance)
-    `(or (typep ,instance 'deleted-unit-instance)
-         (and (slot-boundp ,instance '%%space-instances%%)
-              (eq (standard-unit-instance.%%space-instances%% ,instance) 
-                  ':deleted)))))
-
-;;; ---------------------------------------------------------------------------
-
-(defun check-for-deleted-instance (instance &optional operation)
-  ;;; Generate an error if `instance' is a deleted unit instance
-  (when (instance-deleted-p instance)
-    (operation-on-deleted-instance instance operation)))
-
-(defcm check-for-deleted-instance (instance &optional operation)
-  (with-once-only-bindings (instance)
-    `(when (instance-deleted-p ,instance) 
-       (operation-on-deleted-instance ,instance ,operation))))
-
-;;; ---------------------------------------------------------------------------
-
 (defun space-instances-of (instance)
   ;;; Returns the space-instances on which `instance' resides.  The result is
   ;;; *not* copied, so the user must not modify!
   (let ((space-instances (standard-unit-instance.%%space-instances%% instance)))
-    (if (eq space-instances ':deleted)
-        (operation-on-deleted-instance instance 'space-instances-of)
-        space-instances)))
+    (case space-instances
+      (:deleted 
+       (operation-on-deleted-instance instance 'space-instances-of))
+      (:incomplete 
+       (operation-on-incomplete-instance instance 'space-instances-of))
+      (otherwise space-instances))))
 
 ;;; ---------------------------------------------------------------------------
 
 (defmethod print-instance-slots ((instance standard-unit-instance) stream)
   (call-next-method)
-  (when (instance-deleted-p instance)
-    (format stream " [Deleted]"))
+  (cond ((instance-deleted-p instance) (format stream " [Deleted]"))
+        ((incomplete-instance-p instance) (format stream " [Incomplete]")))
   (print-instance-slot-value instance 'instance-name stream))
 
 ;;; ---------------------------------------------------------------------------
@@ -517,7 +576,7 @@
   (when (and (not *%%skip-gbbopen-shared-initialize-method-processing%%*)
              (slot-boundp instance '%%space-instances%%)
              (or (eq slot-names 't)
-                 (memq '%%space-instances%% slot-names)))
+                 (memq '%%space-instances%% slot-names)))    
     (dolist (space-instance
                 (standard-unit-instance.%%space-instances%% instance))
       (unless (memq space-instance space-instances)
@@ -862,10 +921,12 @@
                      (princ "<unbound>" stream))
                  (terpri stream))))
         (format stream "~2tInstance name: ~s~%" (instance-name-of instance))
-        (let ((space-instances
-               (mapcar #'instance-name-of (space-instances-of instance))))
+        (let* ((space-instances (standard-unit-instance.%%space-instances%% instance))
+               (space-instance-names 
+                (when (consp space-instances)
+                  (mapcar #'instance-name-of space-instances))))
           (format stream "~2tSpace instances: ~:[None~;~:*~s~]~%"
-                  space-instances))
+                  space-instance-names))
         (format stream "~2tDimensional values:")
         (let ((dimension-specs 
                (sort (copy-list (dimensions-of (class-of instance)))
@@ -915,14 +976,15 @@
   (let ((space-instances (standard-unit-instance.%%space-instances%% instance)))
     (let ((unit-class (class-of instance)))
       (cond 
-       ;; Really want speed over a safety net; really?
+       ;; Really want speed over a safety net? Really?
        (*skip-deleted-unit-instance-class-change*
         ;; remove from instance-hash-table:
         (remove-instance-from-instance-hash-table 
          unit-class (instance-name-of instance))
         ;; remove from all space instances:
-        (dolist (space-instance space-instances)
-          (remove-instance-from-space-instance instance space-instance))
+        (when (consp space-instances)
+          (dolist (space-instance space-instances)
+            (remove-instance-from-space-instance instance space-instance)))
         ;; unlink all link slots:
         (delete-all-incoming-link-pointers instance)
         ;; Mark the (unchanged class) instance as deleted:
@@ -1179,9 +1241,10 @@
      unit-class (instance-name-of instance))
     ;; Also, remove instance from all space instances before changing its
     ;; class:
-    (dolist (space-instance
-                (standard-unit-instance.%%space-instances%% instance))
-      (remove-instance-from-space-instance instance space-instance))
+    (let ((space-instances (standard-unit-instance.%%space-instances%% instance)))
+      (when (consp space-instances)
+        (dolist (space-instance space-instances)
+          (remove-instance-from-space-instance instance space-instance))))
     ;; Unlink instances in any link slots that aren't link slots in the new
     ;; class:
     (dolist (slot (class-slots unit-class))
@@ -1460,6 +1523,8 @@
   ;;;                      ordering-dimension-name (for a series composite)
   #+check-for-deleted-instances
   (check-for-deleted-instance instance 'instance-dimension-value)
+  #+check-for-incomplete-instances
+  (check-for-incomplete-instance instance 'instance-dimension-value)
   (internal-instance-dimension-value instance dimension-name))
 
 ;;; ---------------------------------------------------------------------------
