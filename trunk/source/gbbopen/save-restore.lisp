@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/save-restore.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Jan 21 10:14:15 2011 *-*
+;;;; *-* Last-Edit: Thu Feb 10 14:53:51 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -279,6 +279,7 @@
             (read stream)))
         ;; Read top-level (root children) space-instance references:
         (let ((root-children (read stream))
+              (*%%loading-complete-repository%%* 't)
               (*%%allow-setf-on-link%%* 't))
           (setf *top-level-space-instances* root-children)
           ;; Now read everything else:

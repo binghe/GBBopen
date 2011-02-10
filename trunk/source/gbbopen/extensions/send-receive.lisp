@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/send-receive.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Feb  7 15:48:59 2011 *-*
+;;;; *-* Last-Edit: Thu Feb 10 15:56:23 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -37,6 +37,7 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(*break-on-receive-errors*
             *gbbopen-network-server-port*
+            add-mirroring
             begin-queued-streaming
             beginning-queued-receive
             end-queued-streaming
@@ -52,6 +53,8 @@
             stream-link
             stream-slot-update
             stream-unlink
+	    with-mirroring-disabled
+	    with-mirroring-enabled
             with-queued-streaming
             with-streamer)))
 
@@ -238,15 +241,16 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun client-loop (connection)
-  (let ((maximum-contiguous-errors 2)
+  (let ((maximum-contiguous-errors 4)
         (contiguous-errors 0)
         *queued-receive-tag*
         form)
     (loop
       (setf form 
             (if *break-on-receive-errors*
-                (read connection)
-                (safe-read connection)))
+                #+I (with-error-handling ((read connection) (break (error-message))))
+              (read connection)
+              (safe-read connection)))
       (case form
         (:eof (return))
         (:error
@@ -257,7 +261,8 @@
                                         closing connection ~s.~%"
                    connection)
            (force-output *trace-output*)
-           (return)))))))
+           (return)))
+        (t (setf contiguous-errors 0))))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -358,39 +363,122 @@
 
 (defun stream-delete-instance (instance streamer)
   (with-streamer (stream streamer)
-    (format stream "#GX(~s " (type-of instance))
+    (format stream "#GX(~s "
+            (if (typep instance 'deleted-unit-instance)
+                (class-name (original-class-of instance))
+                (type-of instance)))
     (print-object-for-saving/sending (instance-name-of instance) stream)
     (princ ")" stream)))
 
 ;;; ---------------------------------------------------------------------------
 
-(defun stream-slot-update (instance slot-name new-value streamer)
+(defun stream-slot-update (instance slot/slot-name new-value streamer)
   (with-streamer (stream streamer)
     (format stream "#GS(~s " (type-of instance))
     (print-object-for-saving/sending (instance-name-of instance) stream)
-    (format stream " ~s " slot-name)
+    (format stream " ~s " (if (symbolp slot/slot-name)
+                              slot/slot-name
+                              (slot-definition-name slot/slot-name)))
     (print-object-for-saving/sending new-value stream)
     (princ ")" stream)))
 
 ;;; ---------------------------------------------------------------------------
 
-(defun stream-link (instance slot-name other-instances streamer)
+(defun stream-link (instance slot/slot-name other-instances streamer)
   (with-streamer (stream streamer)
     (format stream "#G+(~s " (type-of instance))
     (print-object-for-saving/sending (instance-name-of instance) stream)
-    (format stream " ~s " slot-name)
+    (format stream " ~s " (if (symbolp slot/slot-name)
+                              slot/slot-name
+                              (slot-definition-name slot/slot-name)))
     (print-object-for-saving/sending other-instances stream)
     (princ ")" stream)))
 
 ;;; ---------------------------------------------------------------------------
 
-(defun stream-unlink (instance slot-name other-instances streamer)
+(defun stream-unlink (instance slot/slot-name other-instances streamer)
   (with-streamer (stream streamer)
     (format stream "#G-(~s " (type-of instance))
     (print-object-for-saving/sending (instance-name-of instance) stream)
-    (format stream " ~s " slot-name)
+    (format stream " ~s " (if (symbolp slot/slot-name)
+                              slot/slot-name
+                              (slot-definition-name slot/slot-name)))
     (print-object-for-saving/sending other-instances stream)
     (princ ")" stream)))
+
+;;; ===========================================================================
+;;;   Mirroring
+
+(defvar *%%mirroring-enabled%%* 't)
+
+;;; ---------------------------------------------------------------------------
+;;;   Mirroring disable/enable macros
+
+(defmacro with-mirroring-disabled ((&key) &body body)
+  ;;; Disables mirroring during execution of `body'
+  `(let ((*%%mirroring-enabled%%* nil))
+     ,@body))
+
+;;; ---------------------------------------------------------------------------
+
+(defmacro with-mirroring-enabled ((&key) &body body)
+  ;;; Enables mirroring during execution of `body'
+  `(let ((*%%mirroring-enabled%%* 't))
+     ,@body))
+
+;;; ---------------------------------------------------------------------------
+;;;   Mirroing setup
+
+(defun add-mirroring (streamer unit-class-spec &optional (slots 't))
+  ;; Instance creation:
+  (add-event-function
+   #'(lambda (event-name &key instance &allow-other-keys)
+       (declare (ignore event-name))
+       (when *%%mirroring-enabled%%*
+         (stream-instance instance streamer)))
+   'create-instance-event
+   unit-class-spec)
+  ;; Instance deletion:
+  (add-event-function
+   #'(lambda (event-name &key instance &allow-other-keys)
+       (declare (ignore event-name))
+       (when *%%mirroring-enabled%%*
+         (stream-delete-instance instance streamer)))
+   'instance-deleted-event
+   unit-class-spec)
+  ;; Add/remove-instance-to/from-space [NEEDED]:  
+  ;; Slots:
+  (cond
+   ((eq slots 't)
+    ;; Nonlink-slot-updates
+    (add-event-function
+     #'(lambda (event-name &key instance slot current-value initialization
+                &allow-other-keys)
+         (declare (ignore event-name))
+         (when (and (not initialization) *%%mirroring-enabled%%*)
+           (stream-slot-update instance slot current-value streamer)))
+     'update-nonlink-slot-event
+     unit-class-spec)
+    ;; added-links
+    (add-event-function
+     #'(lambda (event-name &key instance slot added-instances initialization
+                &allow-other-keys)
+         (declare (ignore event-name))
+         (when (and (not initialization) *%%mirroring-enabled%%*)
+           (stream-link instance slot added-instances streamer)))
+     'link-event
+     unit-class-spec)
+    ;; removed-links
+    (add-event-function
+     #'(lambda (event-name &key instance slot removed-instances initialization
+                &allow-other-keys)
+         (declare (ignore event-name))
+         (when (and (not initialization) *%%mirroring-enabled%%*)
+           (stream-unlink instance slot removed-instances streamer)))
+     'unlink-event
+     unit-class-spec))
+   ;; STILL TO DO: specified slots/excluded slots
+   (t (nyi))))
 
 ;;; ===========================================================================
 ;;;				  End of File
