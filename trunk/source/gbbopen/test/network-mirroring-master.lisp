@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/network-mirroring-master.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Feb 10 15:33:56 2011 *-*
+;;;; *-* Last-Edit: Fri Feb 11 09:47:15 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -40,6 +40,7 @@
 (defparameter *streamer*
     (make-gbbopen-network-streamer *slave-host*))
 
+(add-mirroring *streamer* 'standard-space-instance)
 (add-mirroring *streamer* 'path)
 (add-mirroring *streamer* 'location)
 
@@ -47,10 +48,6 @@
 (begin-queued-streaming *streamer* ':tutorial)
 (take-a-walk)
 (end-queued-streaming *streamer*)
-
-;; Mirror the space instances (once sending space-instances is supported):
-#+FIX-THIS-AND-THEN-CHANGE-SLAVE-FILE
-(stream-instances (find-space-instances 't) *streamer*)
 
 ;; Delete an instance, also testing WITH-QUEUED-STREAMING:
 (with-queued-streaming (*streamer* ':with-queued)

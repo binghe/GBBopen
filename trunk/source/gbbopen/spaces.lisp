@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/spaces.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Nov  2 22:13:24 2010 *-*
-;;;; *-* Machine: cyclone.cs.umass.edu *-*
+;;;; *-* Last-Edit: Fri Feb 11 09:57:55 2011 *-*
+;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2003-2010, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2003-2011, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project.
 ;;; Licensed under Apache License 2.0 (see LICENSE for license information).
 ;;;
@@ -674,9 +674,9 @@
 (defmethod initialize-saved/sent-instance ((instance standard-space-instance) 
                                            slots slot-values missing-slot-names)
   (declare (ignore slots slot-values missing-slot-names))
+  (call-next-method)
   (setf (standard-space-instance.space-name instance)
         (car (last (instance-name-of instance))))
-  (call-next-method)
   ;; Translate allowed-unit-classes:
   (let ((allowed-unit-classes (allowed-unit-classes-of instance)))
     (when (consp allowed-unit-classes)
@@ -689,6 +689,9 @@
                          (possibly-translate-class-name unit-class-spec))))
               (declare (dynamic-extent #'fn))
               (mapcar #'fn allowed-unit-classes)))))
+  (unless (slot-value instance 'parent)
+    ;; Add to the top-level space-instances list:
+    (push instance *top-level-space-instances*))
   (setup-instance-storage
    instance (standard-space-instance.%%storage-spec%% instance)))
 

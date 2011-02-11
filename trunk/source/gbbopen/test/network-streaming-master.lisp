@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/network-streaming-master.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Feb 10 02:48:59 2011 *-*
+;;;; *-* Last-Edit: Fri Feb 11 09:48:15 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -43,8 +43,7 @@
 ;; Generate some data (locally):
 (take-a-walk)
 
-;; Mirror the space instances (once sending space-instances is supported):
-#+FIX-THIS-AND-THEN-CHANGE-SLAVE-FILE
+;; Mirror the space instances:
 (stream-instances (find-space-instances 't) *streamer*)
 
 ;; Send everything else (as a single queued block):
