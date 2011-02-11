@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Feb 10 16:06:20 2011 *-*
+;;;; *-* Last-Edit: Fri Feb 11 09:33:35 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -437,7 +437,8 @@
         (add-instance-to-space-instance-paths
          instance space-instance-paths))))
   (unless *%%loading-complete-repository%%*
-    (reconcile-direct-link-values instance)
+    (let ((*%%allow-setf-on-link%%* 't))
+      (reconcile-direct-link-values instance))
     ;; do the inverse pointers all link slots:
     (let ((class (class-of instance)))
       (dolist (eslotd (class-slots class))

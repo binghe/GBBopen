@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/network-streaming-slave.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Feb 11 09:48:43 2011 *-*
+;;;; *-* Last-Edit: Fri Feb 11 10:46:14 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -40,10 +40,14 @@
   (format t "~&;; Beginning ~s queued receive...~%" tag))
 (defmethod ending-queued-receive ((tag (eql ':tutorial)))
   (format t "~&;; Ending ~s queued receive.~%" tag))
-(defmethod beginning-queued-receive ((tag (eql ':with-queued)))
+(defmethod beginning-queued-receive ((tag t))
   (format t "~&;; Beginning ~a receive...~%" tag))
-(defmethod ending-queued-receive ((tag (eql ':with-queued)))
+(defmethod ending-queued-receive ((tag t))
   (format t "~&;; Ending ~a receive.~%" tag))
+
+;; Silly command form method:
+(defmethod handle-streamed-command-form ((command (eql ':print)) &rest args)
+  (format t "~&;; Print:~{ ~s~}~%" args))
 
 ;; Show what is happening once streaming begins!
 (enable-event-printing 'create-instance-event 'location)
