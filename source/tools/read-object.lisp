@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/read-object.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Aug  4 12:01:45 2010 *-*
-;;;; *-* Machine: cyclone.cs.umass.edu *-*
+;;;; *-* Last-Edit: Fri Feb 11 13:53:06 2011 *-*
+;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2008-2010, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2008-2011, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project.
 ;;; Licensed under Apache License 2.0 (see LICENSE for license information).
 ;;;
@@ -153,7 +153,9 @@
             *default-estimated-peak-forward-references*)
            (readtable
             '*reading-saved/sent-objects-readtable*)
-           (read-eval nil))
+           (read-eval nil)
+           ;; internal use
+           (%%skip-block-info-reading%% nil))
      &body body)
   `(with-standard-io-syntax 
      (setf *print-readably* nil)        ; We don't need readably-printing
@@ -186,7 +188,9 @@
            ;; Note that read-saving/sending-block-info also sets *package*,
            ;; *read-default-float-format*, and
            ;; *reading-saved/sent-class-name-translations* :
-           (read-saving/sending-block-info ,stream ,class-name-translations)
+           (if ,%%skip-block-info-reading%%
+               (get-universal-time)
+               (read-saving/sending-block-info ,stream ,class-name-translations))
          (multiple-value-prog1
              (progn ,@body)
            (when *coalesce-save/sent-strings-ht*

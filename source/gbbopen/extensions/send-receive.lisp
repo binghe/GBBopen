@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/send-receive.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Feb 11 13:08:48 2011 *-*
+;;;; *-* Last-Edit: Fri Feb 11 13:59:47 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -74,7 +74,8 @@
   (recorded-class-descriptions-ht
    (make-hash-table :test 'eq))
   stream
-  queue-stream)
+  queue-stream
+  connection-thread)
 
 ;;; ---------------------------------------------------------------------------
 
@@ -106,7 +107,11 @@
                        package
                        (ensure-package package))
           :read-default-float-format read-default-float-format 
-          :stream stream)))
+          :stream stream
+          :connection-thread (spawn-thread "Network streamer connection endpoint"
+                                           #'start-streaming-connection-endpoint
+                                           stream
+                                           't))))
     streamer))
 
 ;;; ---------------------------------------------------------------------------
@@ -279,12 +284,12 @@
 
 ;; Default handler method:
 (defmethod handle-stream-connection-exiting (connection exit-status)
-  (format t "~&;; Network stream connection ~s closing~@[: (~s)~]"
+  (format t "~&;; Network stream connection ~s closing~@[: (~s)~]~%"
           connection exit-status))
 
 ;;; ---------------------------------------------------------------------------
 
-(defun client-loop (connection)
+(defun network-streamer-loop (connection)
   (let ((maximum-contiguous-errors 4)
         (contiguous-errors 0)
         *queued-receive-tag*
@@ -309,6 +314,18 @@
 
 ;;; ---------------------------------------------------------------------------
 
+(defun start-streaming-connection-endpoint (connection 
+                                            &optional skip-block-info-reading)
+  (with-reading-saved/sent-objects-block (connection :%%skip-block-info-reading%%
+                                                     skip-block-info-reading)
+    (let ((exit-status ':error))
+      (unwind-protect 
+          (setf exit-status (network-streamer-loop connection))
+        (handle-stream-connection-exiting connection exit-status)
+        (close connection)))))
+
+;;; ---------------------------------------------------------------------------
+
 (defun validate-passcode (passcode connection)
   (declare (ignore connection))
   ;; Good enough for now!
@@ -326,12 +343,7 @@
         (when (and (eq client ':gbbopen)
                    (eql version 1)
                    (validate-passcode passcode connection))
-          (with-reading-saved/sent-objects-block (connection)
-            (let ((exit-status ':error))
-              (unwind-protect 
-                  (setf exit-status (client-loop connection))
-                (handle-stream-connection-exiting connection exit-status)
-                (close connection)))))))))
+          (start-streaming-connection-endpoint connection))))))
 
 ;;; ---------------------------------------------------------------------------
 
