@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/network-streaming-slave.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Feb 11 13:11:39 2011 *-*
+;;;; *-* Last-Edit: Fri Feb 11 14:00:47 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -52,7 +52,7 @@
 
 ;; Silly connection-exiting method:
 (defmethod handle-stream-connection-exiting ((connection stream) exit-status)
-  (format t "~&;; Connection ~s closing~@[: (~s)~]"
+  (format t "~&;; Connection ~s closing~@[: (~s)~]~%"
           connection exit-status))
 
 ;; Show what is happening once streaming begins!
