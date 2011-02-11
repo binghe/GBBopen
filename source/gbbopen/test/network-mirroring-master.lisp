@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/network-mirroring-master.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Feb 11 09:47:15 2011 *-*
+;;;; *-* Last-Edit: Fri Feb 11 10:48:04 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -63,6 +63,9 @@
 ;; Perform a link:
 (linkf (next-location-of (find-instance-by-name 8 'location))
        (find-instance-by-name 9 'location))
+
+;; Send a silly command:
+(stream-command-form '(:print "All done!") *streamer*)
 
 ;;; ===========================================================================
 ;;;				  End of File

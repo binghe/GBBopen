@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/send-receive.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Feb 10 15:56:23 2011 *-*
+;;;; *-* Last-Edit: Fri Feb 11 10:46:48 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -43,10 +43,13 @@
             end-queued-streaming
             ending-queued-receive
             gbbopen-network-server-running-p
+            handle-streamed-command-atom
+            handle-streamed-command-form
             kill-gbbopen-network-server
             make-gbbopen-network-streamer
             make-streamer
             start-gbbopen-network-server
+            stream-command-form
             stream-delete-instance
             stream-instance
             stream-instances
@@ -112,11 +115,18 @@
     (with-lock-held ((streamer-lock streamer))
       (force-output (streamer-stream streamer))
       (setf already-queuing? (streamer-queue-stream streamer))
-      (let ((queue-stream (make-string-output-stream)))
-        (setf (streamer-queue-stream streamer) queue-stream)
-        (princ "#G!(:BB " queue-stream)
-        (print-object-for-saving/sending tag queue-stream)
-        (princ ") " queue-stream)))
+      (unless already-queuing?
+        (let ((queue-stream (make-string-output-stream)))
+          (setf (streamer-queue-stream streamer) queue-stream)
+          (with-standard-io-syntax 
+            (let ((*recorded-class-descriptions-ht* 
+                   (streamer-recorded-class-descriptions-ht streamer)))
+              (setf *package* (streamer-package streamer))
+              (setf *read-default-float-format* 
+                    (streamer-read-default-float-format streamer))
+              (princ "#G!(:BB " queue-stream)
+              (print-object-for-saving/sending tag queue-stream)
+              (princ ") " queue-stream))))))
     (when (and already-queuing? errorp)
       (error "Streamer ~s is already queuing." streamer))))
 
@@ -190,8 +200,31 @@
       ;; TODO: MISSING SLOTS
       (unlinkf (slot-value instance slot-name) other-instances))))
         
+;;; ---------------------------------------------------------------------------
+;;;  Command form reader
+
+(defmethod saved/sent-object-reader ((char (eql #\.)) stream)
+  (destructuring-bind (form)
+      (read stream t nil 't)
+    (if (consp form)
+        (apply #'handle-streamed-command-form form)
+        (handle-streamed-command-atom form))))
+        
+;;; ---------------------------------------------------------------------------
+;;;  Command form methods
+
+(defgeneric handle-streamed-command-form (command &rest args))
+(defgeneric handle-streamed-command-atom (command))
+
+;; Default error methods:
+(defmethod handle-streamed-command-form (command &rest args)
+  (error "Unhandled streamed command: ~s" (cons command args)))
+
+(defmethod handle-streamed-command-atom (command)
+  (error "Unhandled streamed command: ~s" command))
+         
 ;;; ===========================================================================
-;;;   Network Updates Server
+;;;   Network Streamin Server
 
 (defvar *gbbopen-network-server-port* 1968)
 (defparameter *gbbopen-network-format-version* 1)
@@ -248,9 +281,8 @@
     (loop
       (setf form 
             (if *break-on-receive-errors*
-                #+I (with-error-handling ((read connection) (break (error-message))))
-              (read connection)
-              (safe-read connection)))
+                (read connection)
+                (safe-read connection)))
       (case form
         (:eof (return))
         (:error
@@ -404,6 +436,14 @@
                               slot/slot-name
                               (slot-definition-name slot/slot-name)))
     (print-object-for-saving/sending other-instances stream)
+    (princ ")" stream)))
+
+;;; ---------------------------------------------------------------------------
+
+(defun stream-command-form (form streamer)
+  (with-streamer (stream streamer)
+    (format stream "#G.(")
+    (print-object-for-saving/sending form stream)
     (princ ")" stream)))
 
 ;;; ===========================================================================
