@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/network-streaming-slave.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Feb 10 14:12:58 2011 *-*
+;;;; *-* Last-Edit: Fri Feb 11 09:48:43 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -62,15 +62,6 @@
 ;; received goodies:
 (setf *warn-about-unusual-requests* nil)
 
-;; Create the known-world space instance (until sending space-instances is
-;; supported):
-#-REMOVE-WHEN-SPACE-INSTANCE-SENDING-IS-FIXED
-(make-space-instance 
-    '(known-world)
-    :allowed-unit-classes '(location path)
-    :dimensions (dimensions-of 'location)
-    :storage '((location (x y) uniform-buckets :layout ((0 100 5)
-                                                        (0 100 5)))))
 ;; Prepare to receive from the master:
 (defparameter *gbbopen-network-server*
     (start-gbbopen-network-server))
