@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/send-receive.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Feb 11 10:46:48 2011 *-*
+;;;; *-* Last-Edit: Fri Feb 11 13:08:48 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -43,6 +43,7 @@
             end-queued-streaming
             ending-queued-receive
             gbbopen-network-server-running-p
+            handle-stream-connection-exiting
             handle-streamed-command-atom
             handle-streamed-command-form
             kill-gbbopen-network-server
@@ -272,6 +273,16 @@
        :read-default-float-format read-default-float-format))))
           
 ;;; ---------------------------------------------------------------------------
+;;;  Connection exiting methods
+
+(defgeneric handle-stream-connection-exiting (connection exit-status))
+
+;; Default handler method:
+(defmethod handle-stream-connection-exiting (connection exit-status)
+  (format t "~&;; Network stream connection ~s closing~@[: (~s)~]"
+          connection exit-status))
+
+;;; ---------------------------------------------------------------------------
 
 (defun client-loop (connection)
   (let ((maximum-contiguous-errors 4)
@@ -293,7 +304,7 @@
                                         closing connection ~s.~%"
                    connection)
            (force-output *trace-output*)
-           (return)))
+           (return ':error)))
         (t (setf contiguous-errors 0))))))
 
 ;;; ---------------------------------------------------------------------------
@@ -316,9 +327,11 @@
                    (eql version 1)
                    (validate-passcode passcode connection))
           (with-reading-saved/sent-objects-block (connection)
-            (unwind-protect (client-loop connection)
-              (close connection)))))))
-  (printv "Connection closed"))
+            (let ((exit-status ':error))
+              (unwind-protect 
+                  (setf exit-status (client-loop connection))
+                (handle-stream-connection-exiting connection exit-status)
+                (close connection)))))))))
 
 ;;; ---------------------------------------------------------------------------
 
