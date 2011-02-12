@@ -6,6 +6,9 @@
 
 body     {background-color: #FFFFFF}
 h1       {color: #000066}
+h1.navname {
+         margin: 0;
+         padding: 0}
 h2       {color: #000066}
 h4       {font-family: "sans-serif"; 
           color: #333366}
