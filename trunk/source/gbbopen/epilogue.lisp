@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/epilogue.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Jan 31 05:13:14 2011 *-*
+;;;; *-* Last-Edit: Sat Feb 12 02:44:11 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -57,54 +57,43 @@
    (defvar = nil)))
 
 ;;; ---------------------------------------------------------------------------
-;;;  Add :di, :dsbb, :dsi, :dsis, :fi, and :pic REPL commands (available if
-;;;  using GBBopen's initiate.lisp)
+;;;  Add :di, :dsbb, :dsi, :dsis, :fi, :fsi, and :pic REPL commands (available
+;;;  if using GBBopen's initiate.lisp)
 
-(defun do-di/dsi-repl-command (type find-fn describe-fn args)
-      (let ((maybe-instance 
-             ;; Handle evaluating REPLs:
-             (if (typep (first args) type)
-                 ;; Already evaluated:
-                 (first args)
-                 ;; Try evaluating:
-                 (ignore-errors (eval (first args))))))
-        (cond 
-         ;; We're given a unit instance:
-         ((typep maybe-instance type)
-          (setf = maybe-instance)
-          (funcall describe-fn maybe-instance))
-         ;; Look it up
-         (t (let ((instance (apply find-fn args)))
-              (cond
-               (instance 
-                (setf = instance)
-                (funcall describe-fn instance))
-               (t (case type
-                    (standard-unit-instance
-                     (format t "~&No unit instance named ~s~@[ of class ~s~] ~
-                             was found.~%"
-                             (first args)
-                             (second args)))
-                    (standard-space-instance
-                     (format t "~&No space instance named ~s was found.~%"
-                             (first args))))
-                  (force-output))))))))
-
-;;; ---------------------------------------------------------------------------
-
-(defun do-fi-repl-command (args)
-  (let ((instance (apply 'find-instance-by-name args)))
+(defun do-di/dsi/dsis/fi/fsi-repl-command (type find-fn describe-fn args)
+  (let ((maybe-instance 
+         ;; Handle evaluating REPLs:
+         (if (typep (first args) type)
+             ;; Already evaluated:
+             (first args)
+             ;; Try evaluating:
+             (ignore-errors (eval (first args))))))
     (cond 
-     (instance
-      (setf = instance)
-      (format t "~&Found ~s (assigned to =)~%" instance)
-      (force-output)
-      instance)
-     (t (format t "~&No unit instance named ~s~@[ of class ~s~] was found.~%"
-                (first args)
-                (second args))
-        (force-output)))))
-  
+     ;; We're given a unit instance:
+     ((typep maybe-instance type)
+      (setf = maybe-instance)
+      (funcall describe-fn maybe-instance))
+     ;; Look it up
+     (t (let ((instance (apply find-fn args)))
+          (cond
+           (instance 
+            (setf = instance)
+            (cond
+             (describe-fn (funcall describe-fn instance))
+             (t (format t "~&Found ~s (assigned to =)~%" instance)
+                (force-output)
+                instance)))
+           (t (case type
+                (standard-unit-instance
+                 (format t "~&No unit instance named ~s~@[ of class ~s~] ~
+                             was found.~%"
+                         (first args)
+                         (second args)))
+                (standard-space-instance
+                 (format t "~&No space instance named ~s was found.~%"
+                         (first args))))
+              (force-output))))))))
+
 ;;; ===========================================================================
 ;;;  If DEFINE-REPL-COMMAND is available, define these GBBopen commands:
 
@@ -114,7 +103,7 @@
            
            (define-repl-command :di (&rest args)
              "Describe instance"
-             (do-di/dsi-repl-command 'standard-unit-instance 
+             (do-di/dsi/dsis/fi/fsi-repl-command 'standard-unit-instance 
                'find-instance-by-name
                'describe-instance args))
            
@@ -124,20 +113,26 @@
            
            (define-repl-command :dsi (&rest args)
              "Describe space instance"
-             (do-di/dsi-repl-command 'standard-space-instance 
+             (do-di/dsi/dsis/fi/fsi-repl-command 'standard-space-instance 
                'find-space-instance-by-path
                'describe-space-instance args))
            
            (define-repl-command :dsis (&rest args)
              "Describe space instance storage"
-             (do-di/dsi-repl-command 'standard-space-instance 
-               'find-space-instance-by-path
+             (do-di/dsi/dsis/fi/fsi-repl-command 'standard-space-instance 
+               'find-space-instance-by-path 
                'describe-space-instance-storage args))
            
            (define-repl-command :fi (&rest args)
              "Find instance by name"
-             (do-fi-repl-command args))
-
+             (do-di/dsi/dsis/fi/fsi-repl-command 'standard-unit-instance
+               'find-instance-by-name nil args))
+           
+           (define-repl-command :fsi (&rest args)
+             "Find space instance by name"
+             (do-di/dsi/dsis/fi/fsi-repl-command 'standard-unit-instance
+               'find-space-instance-by-path nil args))
+           
            (define-repl-command :pic (&rest args)
              "Print instances of class"
              (apply 'map-instances-of-class 'print (or args '(t)))))))
