@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Mon Jan 31 05:23:17 2011; Edited-By: cork *-*
+%% *-* Last-Edit: Sat Feb 12 02:52:23 2011; Edited-By: cork *-*
 %% *-* Machine: twister.local *-*
 
 %% Copyright (C) 2003-2011, Dan Corkill <corkill@GBBopen.org>
@@ -23740,10 +23740,10 @@ Describe the \code{hyps} \glref{space~instance}:
 %
 \W\supp
 \begin{example}
-  :dsi \var{instance\/} \vbar \{\var{instance-name\/} \textrm{[}\var{unit-classes-specifier\/}\textrm{]}\}
+  :dsi \var{space-instance\/} \vbar \var{space-instance-path\/}
 \end{example}
 %
-which also sets \code{=} to the described \glref{unit~instance}.
+which also sets \code{=} to the described \glref{space~instance}.
 
 \end{functiondoc}
 
@@ -23808,10 +23808,10 @@ Describe the storage structure of the \code{hyps} \glref{space~instance}:
 %
 \W\supp
 \begin{example}
-  :dsis \var{instance\/} \vbar \{\var{instance-name\/} \textrm{[}\var{unit-classes-specifier\/}\textrm{]}\}
+  :dsis \var{space-instance\/} \vbar \var{space-instance-path\/}
 \end{example}
 %
-which also sets \code{=} to the described \glref{unit~instance}.
+which also sets \code{=} to the described \glref{space~instance}.
 
 \end{functiondoc}
 
@@ -23950,6 +23950,19 @@ Find the \glref{space~instance} with path \nobr{\code{(bb hyps)}}:
   #<standard-space-instance (bb hyps)>
   >
 \end{example}
+
+\replnote 
+%
+\REPLindex{:fsi}%
+%
+\textbf{Find-space-instance-by-path} can be invoked using the \glref{REPL~command}:
+%
+\W\supp
+\begin{example}
+  :fsi \var{space-instance\/} \vbar \var{space-instance-path\/} 
+\end{example}
+%
+which sets \code{=} to be the found \glref{space~instance}.
 
 \end{functiondoc}
 
