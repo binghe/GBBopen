@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/send-receive.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Feb 11 13:59:47 2011 *-*
+;;;; *-* Last-Edit: Mon Feb 14 05:51:50 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -78,21 +78,63 @@
   connection-thread)
 
 ;;; ---------------------------------------------------------------------------
+;;; The WITH-STREAMER stream (used by nested WITH-STREAMERs)
 
-(defmacro with-streamer ((var streamer) &body body)
-  (with-once-only-bindings (streamer)
-    `(with-standard-io-syntax 
-       (let ((*recorded-class-descriptions-ht* 
-              (streamer-recorded-class-descriptions-ht ,streamer)))
-         (setf *package* (streamer-package ,streamer))
-         (setf *read-default-float-format* 
-               (streamer-read-default-float-format ,streamer))
-         (with-lock-held ((streamer-lock ,streamer))
-           (let* ((.streamer-queue-stream. (streamer-queue-stream ,streamer))
-                  (,var (or .streamer-queue-stream. (streamer-stream ,streamer))))
-             ,@body
-             (unless .streamer-queue-stream.
-               (force-output ,var))))))))
+(defvar *%%streamer-stream%%* nil)      
+
+;;; ---------------------------------------------------------------------------
+
+(defun %do-with-streamer (streamer body-form-fn)
+  (if *%%streamer-stream%%*
+      (funcall body-form-fn *%%streamer-stream%%*)
+      (let ((*recorded-class-descriptions-ht* 
+             (streamer-recorded-class-descriptions-ht streamer)))
+        (with-lock-held ((streamer-lock streamer))
+          (let* ((streamer-queue-stream (streamer-queue-stream streamer))
+                 (streamer-stream
+                  (or streamer-queue-stream (streamer-stream streamer)))
+                 (*%%streamer-stream%%* streamer-stream))
+            (funcall body-form-fn streamer-stream))))))
+
+;;; ---------------------------------------------------------------------------
+
+(defun %do-with-streamer-stream (streamer body-form-fn)
+  (with-standard-io-syntax 
+    (setf *package* (streamer-package streamer))
+    (setf *read-default-float-format* 
+          (streamer-read-default-float-format streamer))
+    (if *%%streamer-stream%%*
+        (funcall body-form-fn *%%streamer-stream%%*)
+        (let ((*recorded-class-descriptions-ht* 
+               (streamer-recorded-class-descriptions-ht streamer)))
+          (with-lock-held ((streamer-lock streamer))
+            (let* ((streamer-queue-stream (streamer-queue-stream streamer))
+                   (streamer-stream
+                    (or streamer-queue-stream (streamer-stream streamer)))
+                   (*%%streamer-stream%%* streamer-stream))
+              (funcall body-form-fn streamer-stream)
+              (unless streamer-queue-stream
+                (force-output streamer-stream))))))))
+
+;;; ---------------------------------------------------------------------------
+
+(defmacro with-streamer ((streamer) &body body)
+  `(flet ((body-form (.stream.) 
+            (declare (ignore .stream.))
+            ,@body))
+     (declare (dynamic-extent #'body-form))
+     (%do-with-streamer ,streamer #'body-form)))
+
+;;; ---------------------------------------------------------------------------
+
+(defmacro with-streamer-stream ((var streamer) &body body)
+  ;; Internal-use macro establishing standard-streaming-synatx & lock
+  ;; grabbing, if needed:
+  `(flet ((body-form (.stream.)
+            (let ((,var .stream.))
+              ,@body)))
+     (declare (dynamic-extent #'body-form))
+     (%do-with-streamer-stream ,streamer #'body-form)))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -102,7 +144,8 @@
   (let ((streamer
          (%make-streamer
           :name name
-          :lock (make-lock :name (concatenate 'simple-string name " lock"))
+          :lock (make-recursive-lock 
+                 :name (concatenate 'simple-string name " lock"))
           :package (if (packagep package)
                        package
                        (ensure-package package))
@@ -116,23 +159,38 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun begin-queued-streaming (streamer &optional tag (errorp t))
+(defun begin-queued-streaming (streamer &optional tag (errorp t))  
   (let ((already-queuing? nil))
-    (with-lock-held ((streamer-lock streamer))
-      (force-output (streamer-stream streamer))
-      (setf already-queuing? (streamer-queue-stream streamer))
-      (unless already-queuing?
-        (let ((queue-stream (make-string-output-stream)))
-          (setf (streamer-queue-stream streamer) queue-stream)
-          (with-standard-io-syntax 
-            (let ((*recorded-class-descriptions-ht* 
-                   (streamer-recorded-class-descriptions-ht streamer)))
-              (setf *package* (streamer-package streamer))
-              (setf *read-default-float-format* 
-                    (streamer-read-default-float-format streamer))
-              (princ "#G!(:BB " queue-stream)
-              (print-object-for-saving/sending tag queue-stream)
-              (princ ") " queue-stream))))))
+    (flet ((begin-it (queue-stream)
+             (force-output (streamer-stream streamer))
+             (with-standard-io-syntax 
+               (setf *package* (streamer-package streamer))
+               (setf *read-default-float-format* 
+                     (streamer-read-default-float-format streamer))
+               (princ "#G!(:BB " queue-stream)
+               (print-object-for-saving/sending tag queue-stream)
+               (princ ") " queue-stream))))
+      (cond
+       ;; We're inside a WITH-STREAMER:
+       (*%%streamer-stream%%*
+        (setf already-queuing? (streamer-queue-stream streamer))
+        (unless already-queuing?
+          ;; New queuing inside a WITH-STREAMER:
+          (let ((queue-stream (make-string-output-stream)))
+            (setf (streamer-queue-stream streamer) queue-stream)
+            ;; Switch the WITH-STREAMER stream to the queue stream:
+            (setf *%%streamer-stream%%* queue-stream)
+            (begin-it queue-stream))))
+       ;; Not inside WITH-STREAMER:
+       (t (with-lock-held ((streamer-lock streamer))
+            (setf already-queuing? (streamer-queue-stream streamer))
+            (unless already-queuing?
+              ;; New queuing outside a WITH-STREAMER:
+              (let ((queue-stream (make-string-output-stream)))
+                (setf (streamer-queue-stream streamer) queue-stream)
+                (let ((*recorded-class-descriptions-ht* 
+                       (streamer-recorded-class-descriptions-ht streamer)))
+                  (begin-it queue-stream))))))))
     (when (and already-queuing? errorp)
       (error "Streamer ~s is already queuing." streamer))))
 
@@ -140,17 +198,29 @@
 
 (defun end-queued-streaming (streamer &optional (errorp t))
   (let ((not-queuing? nil))
-    (with-lock-held ((streamer-lock streamer))
-      (let ((queue-stream (streamer-queue-stream streamer)))
-        (cond
-         (queue-stream
-          (setf (streamer-queue-stream streamer) nil)
-          (princ "#G!(:EB) " queue-stream)
-          (let ((string (get-output-stream-string queue-stream))
-                (stream (streamer-stream streamer)))
-            (write-sequence string stream)
-            (force-output stream)))
-         (t (setf not-queuing? (not queue-stream))))))
+    (flet ((end-it (queue-stream)
+             (setf (streamer-queue-stream streamer) nil)
+             (princ "#G!(:EB) " queue-stream)
+             (let ((string (get-output-stream-string queue-stream))
+                   (stream (streamer-stream streamer)))
+               (write-sequence string stream)
+               (force-output stream))))
+      (cond
+       ;; We're inside a WITH-STREAMER:
+       (*%%streamer-stream%%*
+        (let ((queue-stream (streamer-queue-stream streamer)))
+          (cond
+           (queue-stream 
+            (end-it queue-stream)
+            ;; Restore the WITH-STREAMER stream to the regular stream:
+            (setf *%%streamer-stream%%* (streamer-stream streamer)))
+           (t (setf not-queuing? (not queue-stream))))))     
+       ;; Not inside WITH-STREAMER:
+       (t (with-lock-held ((streamer-lock streamer))
+            (let ((queue-stream (streamer-queue-stream streamer)))
+              (cond
+               (queue-stream (end-it queue-stream))
+               (t (setf not-queuing? (not queue-stream)))))))))
     (when (and not-queuing? errorp)
       (error "Streamer ~s is not queuing." streamer))))
       
@@ -404,14 +474,14 @@
 ;;;   Senders
 
 (defun stream-instance (instance streamer)
-  (with-streamer (stream streamer)
+  (with-streamer-stream (stream streamer)
     (let ((*save/send-references-only* nil)) 
       (print-object-for-saving/sending instance stream))))
 
 ;;; ---------------------------------------------------------------------------
 
 (defun stream-instances (instances streamer)
-  (with-streamer (stream streamer)
+  (with-streamer-stream (stream streamer)
     (let ((*save/send-references-only* nil)) 
       (dolist (instance instances)
         (print-object-for-saving/sending instance stream)))))
@@ -419,7 +489,7 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun stream-delete-instance (instance streamer)
-  (with-streamer (stream streamer)
+  (with-streamer-stream (stream streamer)
     (format stream "#GX(~s "
             (if (typep instance 'deleted-unit-instance)
                 (class-name (original-class-of instance))
@@ -430,7 +500,7 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun stream-slot-update (instance slot/slot-name new-value streamer)
-  (with-streamer (stream streamer)
+  (with-streamer-stream (stream streamer)
     (format stream "#GS(~s " (type-of instance))
     (print-object-for-saving/sending (instance-name-of instance) stream)
     (format stream " ~s " (if (symbolp slot/slot-name)
@@ -442,7 +512,7 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun stream-link (instance slot/slot-name other-instances streamer)
-  (with-streamer (stream streamer)
+  (with-streamer-stream (stream streamer)
     (format stream "#G+(~s " (type-of instance))
     (print-object-for-saving/sending (instance-name-of instance) stream)
     (format stream " ~s " (if (symbolp slot/slot-name)
@@ -454,7 +524,7 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun stream-unlink (instance slot/slot-name other-instances streamer)
-  (with-streamer (stream streamer)
+  (with-streamer-stream (stream streamer)
     (format stream "#G-(~s " (type-of instance))
     (print-object-for-saving/sending (instance-name-of instance) stream)
     (format stream " ~s " (if (symbolp slot/slot-name)
@@ -466,7 +536,7 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun stream-command-form (form streamer)
-  (with-streamer (stream streamer)
+  (with-streamer-stream (stream streamer)
     (format stream "#G.(")
     (print-object-for-saving/sending form stream)
     (princ ")" stream)))
@@ -492,7 +562,23 @@
      ,@body))
 
 ;;; ---------------------------------------------------------------------------
-;;;   Mirroing setup
+;;;   Mirroring setup
+
+(defvar *mirroring-evfns-ht* (make-hash-table :test 'eq))
+
+;;; ---------------------------------------------------------------------------
+
+(defstruct (mirroring-evfns
+            (:copier nil))
+  create-instance
+  deleted-instance
+  nonlink-slot-update
+  added-links
+  removed-links
+  add-to-space
+  remove-from-space)
+
+;;; ---------------------------------------------------------------------------
 
 (defun add-mirroring (streamer unit-class-spec &optional (slots 't))
   ;; Instance creation:
