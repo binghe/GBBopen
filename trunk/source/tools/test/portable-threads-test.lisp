@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/test/portable-threads-test.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Apr  7 10:02:56 2010 *-*
-;;;; *-* Machine: cyclone.cs.umass.edu *-*
+;;;; *-* Last-Edit: Mon Feb 14 03:47:59 2011 *-*
+;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2005-2010, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2005-2011, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project.
 ;;; Licensed under Apache License 2.0 (see LICENSE for license information).
 ;;;
@@ -34,7 +34,7 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (import '(common-lisp-user::*autorun-modules*)))
 
-;; (Re-)define *autorun-modules* here, in case we are using this file
+;; Define/redefine *autorun-modules* here, in case we are using this file
 ;; stand-alone...
 (defvar *autorun-modules* nil)
 
@@ -125,6 +125,7 @@
 (defun basic-lock-tests ()
   (forced-format "~&;; Performing basic lock tests...")
   (let ((nonrecursive-lock (make-lock :name "Nonrecursive"))
+        (nonrecursive-lock2 (make-lock :name "Nonrecursive 2"))
         (recursive-lock (make-recursive-lock :name "Recursive"))
         (cv (make-condition-variable))
         (not-a-lock (make-not-a-lock))
@@ -190,6 +191,26 @@
        (declare (fixnum i))
        (with-lock-held (cv :whostate "Waiting on Condition Variable")
          nil)))
+    (forced-format "~&;;   Timing ~:d nested nonrecursive-lock acquisitions..."
+                   iterations)
+    (time-it 
+     (dotimes (i iterations)
+       (declare (fixnum i))
+       (with-lock-held (nonrecursive-lock
+                        :whostate "Waiting on nonrecursive lock")
+         (with-lock-held (nonrecursive-lock2
+                          :whostate "Waiting on nonrecursive lock 2")
+           nil))))
+    (forced-format "~&;;   Timing ~:d nested recursive-lock acquisitions..."
+                   iterations)
+    (time-it 
+     (dotimes (i iterations)
+       (declare (fixnum i))
+       (with-lock-held (recursive-lock
+                        :whostate "Waiting on recursive lock")
+         (with-lock-held (recursive-lock
+                          :whostate "Waiting on recursive lock")
+           nil))))
     (forced-format "~&;;   Checking with a non-lock object...")
     ;; Incorrect lock type:
     (check-error-checking
