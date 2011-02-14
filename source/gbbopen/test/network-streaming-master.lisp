@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/network-streaming-master.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Feb 11 10:40:05 2011 *-*
+;;;; *-* Last-Edit: Mon Feb 14 05:16:57 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -46,10 +46,12 @@
 ;; Mirror the space instances:
 (stream-instances (find-space-instances 't) *streamer*)
 
-;; Send everything else (as a single queued block):
-(begin-queued-streaming *streamer* ':tutorial)
-(stream-instances (find-instances 't 't 't) *streamer*)
-(end-queued-streaming *streamer*)
+;; Send everything else (as a single queued block, trivially showing
+;; WITH-STREAMER use):
+(with-streamer (*streamer*)
+  (begin-queued-streaming *streamer* ':tutorial)
+  (stream-instances (find-instances 't 't 't) *streamer*)
+  (end-queued-streaming *streamer*))
 
 ;; Delete an instance on the slave (but not here), also testing
 ;; WITH-QUEUED-STREAMING:
