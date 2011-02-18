@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/network-mirroring-master.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Feb 18 15:49:51 2011 *-*
+;;;; *-* Last-Edit: Fri Feb 18 18:08:50 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -55,18 +55,10 @@
 (add-mirroring *streamer* 'location)
 
 ;; Generate some data (locally), with BEGIN/END-QUEUED-STREAMING:
-#-SOON
 (let ((queued-streamer
        (begin-queued-streaming *streamer* ':tutorial)))
   (take-a-walk)
   (end-queued-streaming queued-streamer))
-
-;; Generate some data (locally), showing WITH-STREAMER optimization:
-#+SOON
-(with-streamer (*streamer*)
-  (begin-queued-streaming *streamer* ':tutorial)
-  (take-a-walk)
-  (end-queued-streaming *streamer*))
   
 ;; Delete an instance, also testing WITH-QUEUED-STREAMING:
 (with-queued-streaming (*streamer* ':with-queued)

@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/journal-writer.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Feb 18 15:13:08 2011 *-*
+;;;; *-* Last-Edit: Fri Feb 18 18:09:55 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -41,18 +41,10 @@
 (add-mirroring *streamer* 'location)
 
 ;; Generate some data, with BEGIN/END-QUEUED-STREAMING:
-#-SOON
 (let ((queued-streamer
        (begin-queued-streaming *streamer* ':tutorial)))
   (take-a-walk)
   (end-queued-streaming queued-streamer))
-
-;; Generate some data, showing WITH-STREAMER optimization:
-#+SOON
-(with-streamer (*streamer*)
-  (begin-queued-streaming *streamer* ':tutorial)
-  (take-a-walk)
-  (end-queued-streaming *streamer*))
   
 ;; Delete an instance, also testing WITH-QUEUED-STREAMING:
 (with-queued-streaming (*streamer* ':with-queued)
