@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/network-streaming-master.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Feb 18 11:35:28 2011 *-*
+;;;; *-* Last-Edit: Fri Feb 18 15:02:37 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -58,6 +58,13 @@
 
 ;; Send everything else (as a single queued block, trivially showing
 ;; WITH-STREAMER use):
+#-SOON
+(let ((queued-streamer
+       (begin-queued-streaming *streamer* ':tutorial)))
+  (stream-instances (find-instances 't 't 't) *streamer*)
+  (end-queued-streaming queued-streamer))
+
+#+SOON
 (with-streamer (*streamer*)
   (begin-queued-streaming *streamer* ':tutorial)
   (stream-instances (find-instances 't 't 't) *streamer*)

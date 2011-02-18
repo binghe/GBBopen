@@ -1,16 +1,13 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
-;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/network-mirroring-master.lisp *-*
+;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/journal-writer.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Feb 18 15:49:51 2011 *-*
+;;;; *-* Last-Edit: Fri Feb 18 15:13:08 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
 ;;;; *
-;;;; *                     GBBopen Network Streaming Master
-;;;; *                  (start the slave before this master!)
-;;;; *
-;;;; *                   [Experimental! Subject to change]
+;;;; *                        Journal Writer Example
 ;;;; *
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -23,7 +20,7 @@
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
-;;;  02-01-11 File created.  (Corkill)
+;;;  02-16-11 File created.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -35,33 +32,22 @@
 ;; Compile/load the :tutorial module (without running it):
 (cl-user::tutorial-example :create-dirs :noautorun)
 
-;; The slave host:
-(define-streamer-node "slave"
-    :host "127.0.0.1"
-    :package ':tutorial)
-
-;; The master host (me!):
-(define-streamer-node "master"
-    :localnodep 't
-    :host "127.0.0.1"
-    :port (1+ (port-of (find-streamer-node "slave")))
-    :package ':tutorial)
-
-;; Connect to slave image:
-(defparameter *streamer* (find-or-make-network-streamer "slave"))
+;; Create the journal streamer:
+(defparameter *streamer*
+    (make-journal-streamer "~/tutorial.jnl" :package ':tutorial))
 
 (add-mirroring *streamer* 'standard-space-instance)
 (add-mirroring *streamer* 'path)
 (add-mirroring *streamer* 'location)
 
-;; Generate some data (locally), with BEGIN/END-QUEUED-STREAMING:
+;; Generate some data, with BEGIN/END-QUEUED-STREAMING:
 #-SOON
 (let ((queued-streamer
        (begin-queued-streaming *streamer* ':tutorial)))
   (take-a-walk)
   (end-queued-streaming queued-streamer))
 
-;; Generate some data (locally), showing WITH-STREAMER optimization:
+;; Generate some data, showing WITH-STREAMER optimization:
 #+SOON
 (with-streamer (*streamer*)
   (begin-queued-streaming *streamer* ':tutorial)
@@ -83,7 +69,7 @@
 (linkf (next-location-of (find-instance-by-name 8 'location))
        (find-instance-by-name 9 'location))
 
-;; Send a silly command:
+;; Journal a silly command:
 (stream-command-form '(:print "All done!") *streamer*)
 
 ;;; ===========================================================================
