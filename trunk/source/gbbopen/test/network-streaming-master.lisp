@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/network-streaming-master.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Feb 18 15:02:37 2011 *-*
+;;;; *-* Last-Edit: Fri Feb 18 18:08:10 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -56,26 +56,19 @@
 ;; Mirror the space instances:
 (stream-instances (find-space-instances 't) *streamer*)
 
-;; Send everything else (as a single queued block, trivially showing
-;; WITH-STREAMER use):
-#-SOON
+;; Send everything else (as a single queued block):
 (let ((queued-streamer
        (begin-queued-streaming *streamer* ':tutorial)))
   (stream-instances (find-instances 't 't 't) *streamer*)
   (end-queued-streaming queued-streamer))
 
-#+SOON
-(with-streamer (*streamer*)
-  (begin-queued-streaming *streamer* ':tutorial)
-  (stream-instances (find-instances 't 't 't) *streamer*)
-  (end-queued-streaming *streamer*))
-
 ;; Delete an instance on the slave (but not here), also testing
-;; WITH-QUEUED-STREAMING:
+;; WITH-QUEUED-STREAMING macro:
 (with-queued-streaming (*streamer* ':with-queued)
   (stream-delete-instance (find-instance-by-name 10 'location) *streamer*))
 
-;; Change a nonlink-slot value on the slave (but not here):
+;; Change a nonlink-slot value on the slave (but not here), also testing a
+;; unit-instance tag:
 (with-queued-streaming (*streamer* (find-instance-by-name 3 'location))
   (stream-slot-update (find-instance-by-name 11 'location) 'time 9 *streamer*))
 
