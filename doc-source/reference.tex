@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Sat Feb 12 03:49:16 2011; Edited-By: cork *-*
+%% *-* Last-Edit: Fri Feb 18 09:57:11 2011; Edited-By: cork *-*
 %% *-* Machine: twister.local *-*
 
 %% Copyright (C) 2003-2011, Dan Corkill <corkill@GBBopen.org>
@@ -6708,6 +6708,53 @@ also provided: \nobr{\textbf{pushnew/incf\&-acons}},
 
 %% ------------------------------------------------------------------------
 
+\begin{functiondoc}{Function}{remove-properties}{\var{plist indicators\/} 
+    \nobr{\returns{} \var{new-plist\/}}}
+\index{property list!removing property from}%
+\index{removing property, from a property list}%
+  
+\fnsyntax
+
+\fnpurpose Non-destructively removes \glref{properties} from a
+\glref{property~list}. 
+
+\fnpackage \code{:gbbopen-tools}
+
+\fnmodule \code{:gbbopen-tools}
+
+\fnargs
+\begin{args}{indicator}
+\arg[plist] A \glref{property~list}
+\arg[indicators] A list of objects
+\arg[new-plist] A \glref{property~list}
+\end{args}
+
+\fnreturns The new \glref{property~list}. 
+
+\fndescription All instances of each specified \glref{property} in the
+\glref{property~list} are removed.
+
+\begin{alsos}{remove-property}
+\also[remove-property]
+\end{alsos}
+
+\fnexamples
+%
+\W\supp
+\begin{example}
+  > (remove-properties '(:x 1 :y 2 :z 3) '(:y))
+  (:x 1 :z 3)
+  > (remove-properties '(:x 1 :y 2 :x 11 :y 12 :z -1) '(:z :y))
+  (:x 1 :x 11)
+  > (remove-properties '(:x 1 :y 2 :z 3) '(:missing))
+  (:x 1 :y 2 :z 3)
+  >
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
 \begin{functiondoc}{Function}{remove-property}{\var{plist indicator\/} 
     \nobr{\returns{} \var{new-plist\/}}}
 \index{property list!removing property from}%
@@ -6731,9 +6778,12 @@ also provided: \nobr{\textbf{pushnew/incf\&-acons}},
 
 \fnreturns The new \glref{property~list}. 
 
-\fndescription If there is more than one \glref{instance} of
-\glref{property} in the \glref{property~list} only the first one is
-removed.
+\fndescription If there is more than one instance of \glref{property} in the
+\glref{property~list}, only the first one is removed.
+
+\begin{alsos}{remove-properties}
+\also[remove-properties]
+\end{alsos}
 
 \fnexamples
 %
