@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/commands.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Feb  2 11:14:27 2011 *-*
+;;;; *-* Last-Edit: Thu Feb 17 09:17:50 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -199,9 +199,9 @@
     "Compile and load GBBopen multi-node support (under construction)"
     (startup-module :multinode options nil))
 
-  (define-repl-command :network-streaming (&rest options)
-    "Compile and load GBBopen network streaming support [Experimental]"
-    (startup-module :network-streaming options nil))
+  (define-repl-command :streaming (&rest options)
+    "Compile and load GBBopen network streaming and journaling support [Experimental]"
+    (startup-module :streaming options nil))
 
   #+not-yet
   (define-repl-command :restricted-eval (&rest options)

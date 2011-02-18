@@ -1,0 +1,25 @@
+
+                Incompatible & Important Changes in Experimental
+                   Network Streaming and Journaling Entities
+
+2/17/11 -- Renamed :network-streaming module to :streaming (now network & 
+           journaling)
+        -- New MAKE-JOURNAL-STREAMER and LOAD-JOURNAL functions
+
+2/16/11 -- New DEFINE-STREAMER-NODE macro, NETWORK-STREAM-RECEIVER generic
+           function
+        -- Renamed MAKE-GBBOPEN-NETWORK-STREAMER to 
+           FIND-OR-MAKE-NETWORK-STREAMER; former host argument is now 
+           streamer-node
+        -- Renamed START-GBBOPEN-NETWORK-SERVER to 
+           START-NETWORK-STREAM-SERVER
+        -- Renamed KILL-GBBOPEN-NETWORK-SERVER to 
+           KILL-NETWORK-STREAM-SERVER
+        -- Renamed GBBOPEN-NETWORK-SERVER-RUNNING-P to 
+           NETWORK-STREAM-SERVER-RUNNING-P
+        -- Renamed BEGINNING-QUEUED-RECEIVE to BEGINNING-QUEUED-READ;
+           ENDING-QUEUED-RECEIVE to ENDING-QUEUED-READ
+        -- Renamed *GBBOPEN-NETWORK-SERVER-PORT* to 
+           *DEFAULT-NETWORK-STREAM-SERVER-PORT*
+
+;;; ---------------------------------------------------------------------------

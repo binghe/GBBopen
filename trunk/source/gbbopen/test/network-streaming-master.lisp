@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/network-streaming-master.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Feb 14 05:16:57 2011 *-*
+;;;; *-* Last-Edit: Fri Feb 18 11:35:28 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -28,17 +28,27 @@
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 (in-package :cl-user)
-(network-streaming :create-dirs)
 
-;; Load up the :tutorial (without running it):
+;; Compile/load GBBopen's :streaming module:
+(streaming :create-dirs)
+
+;; Compile/load the :tutorial module (without running it):
 (cl-user::tutorial-example :create-dirs :noautorun)
 
 ;; The slave host:
-(defparameter *slave-host* "127.0.0.1")
+(define-streamer-node "slave"
+    :host "127.0.0.1"
+    :package ':tutorial)
+
+;; The master host (me!):
+(define-streamer-node "master"
+    :localnodep 't
+    :host "127.0.0.1"
+    :port (1+ (port-of (find-streamer-node "slave")))
+    :package ':tutorial)
 
 ;; Connect to slave image:
-(defparameter *streamer*
-    (make-gbbopen-network-streamer *slave-host*))
+(defparameter *streamer* (find-or-make-network-streamer "slave"))
 
 ;; Generate some data (locally):
 (take-a-walk)
