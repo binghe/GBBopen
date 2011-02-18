@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/modules.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Feb  2 11:15:54 2011 *-*
+;;;; *-* Last-Edit: Thu Feb 17 09:14:56 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -301,10 +301,10 @@
     (:directory :gbbopen "extensions")
     (:files "multinode"))
   
-  (define-module :network-streaming
+  (define-module :streaming
     (:requires :gbbopen-core :portable-sockets)
     (:directory :gbbopen "extensions")
-    (:files ("send-receive")))
+    (:files ("streaming")))
 
   (define-module :web-inspector 
     (:requires :http-services)

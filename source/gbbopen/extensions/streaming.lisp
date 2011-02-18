@@ -1,13 +1,13 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
-;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/send-receive.lisp *-*
+;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/streaming.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Feb 14 05:51:50 2011 *-*
+;;;; *-* Last-Edit: Fri Feb 18 12:18:55 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
 ;;;; *
-;;;; *               GBBopen Send/Receive & Journaling Entities
+;;;; *              GBBopen Network Streaming & Journaling Entities
 ;;;; *                   [Experimental! Subject to change]
 ;;;; *
 ;;;; **************************************************************************
@@ -36,20 +36,29 @@
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(*break-on-receive-errors*
-            *gbbopen-network-server-port*
+            *default-network-stream-server-port*
             add-mirroring
             begin-queued-streaming
-            beginning-queued-receive
+            beginning-queued-read
+            define-streamer-node
             end-queued-streaming
-            ending-queued-receive
-            gbbopen-network-server-running-p
+            ending-queued-read
+            find-or-make-network-streamer
+            find-streamer-node
             handle-stream-connection-exiting
             handle-streamed-command-atom
             handle-streamed-command-form
-            kill-gbbopen-network-server
-            make-gbbopen-network-streamer
-            make-streamer
-            start-gbbopen-network-server
+            host-of
+            journal-streamer            ; class-name
+            kill-network-stream-server
+            load-journal
+            make-journal-streamer
+            name-of
+            network-stream-receiver
+            network-stream-server-running-p
+            network-streamer            ; class-name
+            port-of
+            start-network-stream-server
             stream-command-form
             stream-delete-instance
             stream-instance
@@ -57,6 +66,8 @@
             stream-link
             stream-slot-update
             stream-unlink
+            streamer                    ; class-name
+            streamer-node               ; class-name
 	    with-mirroring-disabled
 	    with-mirroring-enabled
             with-queued-streaming
@@ -64,19 +75,113 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defstruct (streamer
-            (:copier nil)
-            (:constructor %make-streamer))
-  lock
-  name
-  package
-  read-default-float-format 
-  (recorded-class-descriptions-ht
-   (make-hash-table :test 'eq))
-  stream
-  queue-stream
-  connection-thread)
+(defvar *default-network-stream-server-port* 1968)
 
+;;; ===========================================================================
+;;;   Streamer Node
+
+(defvar *local-streamer-node* nil)
+(defvar *streamer-nodes-ht* (make-hash-table :test 'equal))
+
+;;; ---------------------------------------------------------------------------
+
+(define-class streamer-node (standard-gbbopen-instance)
+  (name
+   localnodep
+   host
+   port
+   passphrase
+   package
+   external-format
+   read-default-float-format 
+   authorized-nodes
+   (streamer-class :initform 'network-streamer)
+   (streamer :initform nil)))
+
+;;; ---------------------------------------------------------------------------
+
+(defmethod print-instance-slots ((streamer-node streamer-node) stream)
+  (call-next-method)
+  (when (slot-boundp streamer-node 'name)
+    (format stream " ~s" (name-of streamer-node))))
+
+;;; ---------------------------------------------------------------------------
+
+(defun define-streamer-node (name &key
+                                  (host "localhost")
+                                  (port *default-network-stream-server-port*)
+                                  (localnodep nil)
+                                  (passphrase nil)
+                                  (package ':cl-user)
+                                  (external-format ':default)                                  
+                                  (read-default-float-format 
+                                   *read-default-float-format*)
+                                  (authorized-nodes ':all))
+  (let ((streamer-node
+         (make-instance 'streamer-node
+           :name name
+           :localnodep localnodep
+           :host host
+           :port port
+           :passphrase passphrase
+           :package package
+           :external-format external-format
+           :read-default-float-format read-default-float-format 
+           :authorized-nodes authorized-nodes)))
+    (setf (gethash name *streamer-nodes-ht*) streamer-node)
+    (if localnodep (setf *local-streamer-node* streamer-node))))
+
+;;; ---------------------------------------------------------------------------
+
+(defun find-streamer-node (name &optional errorp)
+  (or (gethash name *streamer-nodes-ht*)
+      (when errorp
+        (error "No streamer node named  ~s" name))))
+
+;;; ===========================================================================
+;;;   Streamer queues (coming soon!)
+
+(defstruct (streamer-queue
+            (:copier nil)
+            (:constructor %make-streamer-queue))
+  lock
+  streamer
+  string-stream)
+
+;;; ===========================================================================
+;;;   Streamers
+
+(define-class streamer (standard-gbbopen-instance)
+  (streamer-lock
+   (streamer-stream :initform nil)
+   streamer-package
+   external-format
+   read-default-float-format 
+   (recorded-class-descriptions-ht
+    :initform (make-hash-table :test 'eq))
+   (queue-stream :initform nil)))
+
+;;; ---------------------------------------------------------------------------
+
+(define-class network-streamer (streamer)
+  (streamer-node 
+   (connection-thread :initform nil)))
+   
+;;; ---------------------------------------------------------------------------
+
+(defmethod print-instance-slots ((streamer network-streamer) stream)
+  (call-next-method)
+  (when (slot-boundp streamer 'streamer-node)
+    (let ((streamer-node (streamer-node-of streamer)))
+      (format stream " ~a:~a"
+              (host-of streamer-node)
+              (port-of streamer-node)))))
+
+;;; ---------------------------------------------------------------------------
+
+(define-class journal-streamer (streamer)
+  ())
+   
 ;;; ---------------------------------------------------------------------------
 ;;; The WITH-STREAMER stream (used by nested WITH-STREAMERs)
 
@@ -88,11 +193,11 @@
   (if *%%streamer-stream%%*
       (funcall body-form-fn *%%streamer-stream%%*)
       (let ((*recorded-class-descriptions-ht* 
-             (streamer-recorded-class-descriptions-ht streamer)))
-        (with-lock-held ((streamer-lock streamer))
-          (let* ((streamer-queue-stream (streamer-queue-stream streamer))
+             (recorded-class-descriptions-ht-of streamer)))
+        (with-lock-held ((streamer-lock-of streamer))
+          (let* ((streamer-queue-stream (queue-stream-of streamer))
                  (streamer-stream
-                  (or streamer-queue-stream (streamer-stream streamer)))
+                  (or streamer-queue-stream (streamer-stream-of streamer)))
                  (*%%streamer-stream%%* streamer-stream))
             (funcall body-form-fn streamer-stream))))))
 
@@ -100,17 +205,17 @@
 
 (defun %do-with-streamer-stream (streamer body-form-fn)
   (with-standard-io-syntax 
-    (setf *package* (streamer-package streamer))
+    (setf *package* (streamer-package-of streamer))
     (setf *read-default-float-format* 
-          (streamer-read-default-float-format streamer))
+          (read-default-float-format-of streamer))
     (if *%%streamer-stream%%*
         (funcall body-form-fn *%%streamer-stream%%*)
         (let ((*recorded-class-descriptions-ht* 
-               (streamer-recorded-class-descriptions-ht streamer)))
-          (with-lock-held ((streamer-lock streamer))
-            (let* ((streamer-queue-stream (streamer-queue-stream streamer))
+               (recorded-class-descriptions-ht-of streamer)))
+          (with-lock-held ((streamer-lock-of streamer))
+            (let* ((streamer-queue-stream (queue-stream-of streamer))
                    (streamer-stream
-                    (or streamer-queue-stream (streamer-stream streamer)))
+                    (or streamer-queue-stream (streamer-stream-of streamer)))
                    (*%%streamer-stream%%* streamer-stream))
               (funcall body-form-fn streamer-stream)
               (unless streamer-queue-stream
@@ -138,58 +243,37 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun make-streamer (stream &key (name "Streamer")
-                                  (package ':cl-user)
-                                  (read-default-float-format 'single-float))
-  (let ((streamer
-         (%make-streamer
-          :name name
-          :lock (make-recursive-lock 
-                 :name (concatenate 'simple-string name " lock"))
-          :package (if (packagep package)
-                       package
-                       (ensure-package package))
-          :read-default-float-format read-default-float-format 
-          :stream stream
-          :connection-thread (spawn-thread "Network streamer connection endpoint"
-                                           #'start-streaming-connection-endpoint
-                                           stream
-                                           't))))
-    streamer))
-
-;;; ---------------------------------------------------------------------------
-
 (defun begin-queued-streaming (streamer &optional tag (errorp t))  
   (let ((already-queuing? nil))
     (flet ((begin-it (queue-stream)
-             (force-output (streamer-stream streamer))
+             (force-output (streamer-stream-of streamer))
              (with-standard-io-syntax 
-               (setf *package* (streamer-package streamer))
+               (setf *package* (streamer-package-of streamer))
                (setf *read-default-float-format* 
-                     (streamer-read-default-float-format streamer))
+                     (read-default-float-format-of streamer))
                (princ "#G!(:BB " queue-stream)
                (print-object-for-saving/sending tag queue-stream)
                (princ ") " queue-stream))))
       (cond
        ;; We're inside a WITH-STREAMER:
        (*%%streamer-stream%%*
-        (setf already-queuing? (streamer-queue-stream streamer))
+        (setf already-queuing? (queue-stream-of streamer))
         (unless already-queuing?
           ;; New queuing inside a WITH-STREAMER:
           (let ((queue-stream (make-string-output-stream)))
-            (setf (streamer-queue-stream streamer) queue-stream)
+            (setf (queue-stream-of streamer) queue-stream)
             ;; Switch the WITH-STREAMER stream to the queue stream:
             (setf *%%streamer-stream%%* queue-stream)
             (begin-it queue-stream))))
        ;; Not inside WITH-STREAMER:
-       (t (with-lock-held ((streamer-lock streamer))
-            (setf already-queuing? (streamer-queue-stream streamer))
+       (t (with-lock-held ((streamer-lock-of streamer))
+            (setf already-queuing? (queue-stream-of streamer))
             (unless already-queuing?
               ;; New queuing outside a WITH-STREAMER:
               (let ((queue-stream (make-string-output-stream)))
-                (setf (streamer-queue-stream streamer) queue-stream)
+                (setf (queue-stream-of streamer) queue-stream)
                 (let ((*recorded-class-descriptions-ht* 
-                       (streamer-recorded-class-descriptions-ht streamer)))
+                       (recorded-class-descriptions-ht-of streamer)))
                   (begin-it queue-stream))))))))
     (when (and already-queuing? errorp)
       (error "Streamer ~s is already queuing." streamer))))
@@ -199,25 +283,25 @@
 (defun end-queued-streaming (streamer &optional (errorp t))
   (let ((not-queuing? nil))
     (flet ((end-it (queue-stream)
-             (setf (streamer-queue-stream streamer) nil)
+             (setf (queue-stream-of streamer) nil)
              (princ "#G!(:EB) " queue-stream)
              (let ((string (get-output-stream-string queue-stream))
-                   (stream (streamer-stream streamer)))
+                   (stream (streamer-stream-of streamer)))
                (write-sequence string stream)
                (force-output stream))))
       (cond
        ;; We're inside a WITH-STREAMER:
        (*%%streamer-stream%%*
-        (let ((queue-stream (streamer-queue-stream streamer)))
+        (let ((queue-stream (queue-stream-of streamer)))
           (cond
            (queue-stream 
             (end-it queue-stream)
             ;; Restore the WITH-STREAMER stream to the regular stream:
-            (setf *%%streamer-stream%%* (streamer-stream streamer)))
+            (setf *%%streamer-stream%%* (streamer-stream-of streamer)))
            (t (setf not-queuing? (not queue-stream))))))     
        ;; Not inside WITH-STREAMER:
-       (t (with-lock-held ((streamer-lock streamer))
-            (let ((queue-stream (streamer-queue-stream streamer)))
+       (t (with-lock-held ((streamer-lock-of streamer))
+            (let ((queue-stream (queue-stream-of streamer)))
               (cond
                (queue-stream (end-it queue-stream))
                (t (setf not-queuing? (not queue-stream)))))))))
@@ -300,13 +384,12 @@
   (error "Unhandled streamed command: ~s" command))
          
 ;;; ===========================================================================
-;;;   Network Streamin Server
+;;;   Network Streaming Server
 
-(defvar *gbbopen-network-server-port* 1968)
-(defparameter *gbbopen-network-format-version* 1)
-(defvar *gbbopen-network-connection-server-thread* nil)
+(defparameter *network-stream-format-version* 1)
+(defvar *network-stream-connection-server-thread* nil)
 (defvar *break-on-receive-errors* nil)
-(defvar *queued-receive-tag*)
+(defvar *queued-read-tag*)
 
 ;;; ---------------------------------------------------------------------------
 
@@ -317,52 +400,77 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun make-gbbopen-network-streamer
-    (host &key (port *gbbopen-network-server-port*)
-               passphrase
-               ;; For the created streamer:
-               (name "GBBopen Network Streamer")
-               (package ':cl-user)
-               (read-default-float-format 'single-float))
-  ;; Convert package to package name, if needed:
-  (when (packagep package)
-    (setf package (package-name package)))
-  ;; Try to connect to GBBopen Network Server:
-  (let ((connection (open-connection host port)))
-    (format connection "(:gbbopen ~s ~s ~s)"
-            *gbbopen-network-format-version*
-            passphrase
-            name)
-    (let ((*package* (ensure-package package))
-          (*read-default-float-format* read-default-float-format))
-      (write-saving/sending-block-info connection))
-    ;; Why is this needed to prevent reading problems...?
-    (princ " " connection)
-    (force-output connection)
-    ;; If connection is established, make and return the streamer:
-    (when connection
-      (make-streamer 
-       connection
-       :name name
-       :package package
-       :read-default-float-format read-default-float-format))))
+(defun find-or-make-network-streamer (streamer-node &rest initargs)
+  (unless *local-streamer-node*
+    (error "No local streamer node has been defined."))
+  ;; Lookup streamer node, if needed:
+  (unless (typep streamer-node 'streamer-node)
+    (setf streamer-node (find-streamer-node streamer-node 't)))
+  (let ((streamer (streamer-of streamer-node)))
+    (or 
+      ;; A streamer already exists, return it:
+     streamer
+     ;; A new streamer is needed; try to connect to GBBopen Network Server:
+     (let ((connection 
+            ;; TODO: ** Extend open-connection to accept external-format **
+            (open-connection (host-of streamer-node) (port-of streamer-node)))
+           (package (ensure-package (package-of streamer-node)))
+           (external-format (external-format-of streamer-node))
+           (read-default-float-format 
+            (read-default-float-format-of streamer-node)))
+       (format connection "(:gbbopen ~s ~s ~s)"
+               *network-stream-format-version*
+               (passphrase-of streamer-node)
+               (name-of *local-streamer-node*))
+       (let ((*package* package)
+             (*read-default-float-format* read-default-float-format))
+         (write-saving/sending-block-info connection))
+       ;; Why is this needed to prevent reading problems...?
+       (princ " " connection)
+       (force-output connection)
+       ;; If connection is established, make and return the streamer:
+       (when connection
+         (setf (streamer-of streamer-node)
+               (apply #'make-instance
+                      (streamer-class-of streamer-node)
+                      :streamer-node streamer-node
+                      :streamer-lock (make-recursive-lock 
+                                      :name (concatenate 'simple-string 
+                                              (name-of streamer-node) 
+                                              " lock"))
+                      :streamer-package package
+                      :external-format external-format
+                      :read-default-float-format read-default-float-format 
+                      :streamer-stream connection
+                      :connection-thread (spawn-thread
+                                          "Network streamer connection endpoint"
+                                          #'start-streaming-connection-endpoint
+                                          streamer-node 
+                                          connection
+                                          't)
+                      initargs)))))))
           
 ;;; ---------------------------------------------------------------------------
 ;;;  Connection exiting methods
 
-(defgeneric handle-stream-connection-exiting (connection exit-status))
+(defgeneric handle-stream-connection-exiting (network-streamer exit-status))
 
 ;; Default handler method:
-(defmethod handle-stream-connection-exiting (connection exit-status)
+(defmethod handle-stream-connection-exiting ((network-streamer network-streamer)
+                                             exit-status)
   (format t "~&;; Network stream connection ~s closing~@[: (~s)~]~%"
-          connection exit-status))
+          (name-of (streamer-node-of network-streamer)) exit-status))
 
 ;;; ---------------------------------------------------------------------------
 
-(defun network-streamer-loop (connection)
+(defgeneric network-stream-receiver (network-streamer connection))
+
+(defmethod network-stream-receiver ((network-streamer network-streamer) 
+                                    connection)
+  (declare (ignorable network-streamer))
   (let ((maximum-contiguous-errors 4)
         (contiguous-errors 0)
-        *queued-receive-tag*
+        *queued-read-tag*
         form)
     (loop
       (setf form 
@@ -384,14 +492,17 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun start-streaming-connection-endpoint (connection 
-                                            &optional skip-block-info-reading)
-  (with-reading-saved/sent-objects-block (connection :%%skip-block-info-reading%%
-                                                     skip-block-info-reading)
-    (let ((exit-status ':error))
+(defun start-streaming-connection-endpoint (streamer-node connection 
+                                            skip-block-info-reading)
+  (with-reading-saved/sent-objects-block 
+      (connection :%%skip-block-info-reading%% skip-block-info-reading)
+    (let ((exit-status ':error)
+          (network-streamer (streamer-of streamer-node)))
       (unwind-protect 
-          (setf exit-status (network-streamer-loop connection))
-        (handle-stream-connection-exiting connection exit-status)
+          (setf exit-status
+                (network-stream-receiver network-streamer connection))
+        (setf (streamer-of streamer-node) nil)
+        (handle-stream-connection-exiting network-streamer exit-status)
         (close connection)))))
 
 ;;; ---------------------------------------------------------------------------
@@ -403,61 +514,86 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun gbbopen-client-connection (connection)
+(defun network-streaming-client-connection (connection)
   (let ((authentication-form (safe-read connection)))
     (when (and (consp authentication-form)
                (=& (length authentication-form) 4))
-      (destructuring-bind (client version passcode name)
+      (destructuring-bind (client version passcode streamer-node-name)
           authentication-form
-        (declare (ignore name))
         (when (and (eq client ':gbbopen)
                    (eql version 1)
                    (validate-passcode passcode connection))
-          (start-streaming-connection-endpoint connection))))))
+          (let ((streamer-node (find-streamer-node streamer-node-name)))
+            (if streamer-node
+                (let ((streamer (streamer-of streamer-node)))
+                  (when streamer
+                    (error "Unexpected connection request from node ~s"
+                           streamer-node-name))
+                  ;; Create the streamer:
+                  (setf (streamer-of streamer-node)
+                        (apply 
+                         #'make-instance
+                         (streamer-class-of streamer-node)
+                         :streamer-node streamer-node
+                         :streamer-lock (make-recursive-lock 
+                                         :name (concatenate 'simple-string 
+                                                 (name-of streamer-node) 
+                                                 " lock"))
+                         :streamer-package (package-of streamer-node)
+                         :external-format (external-format-of streamer-node)
+                         :read-default-float-format (read-default-float-format-of 
+                                                     streamer-node)
+                         :streamer-stream connection
+                         :connection-thread (current-thread)
+                         nil))
+                  (start-streaming-connection-endpoint 
+                   streamer-node connection nil))
+                (warn "Connection request from unknown node ~s"
+                      streamer-node-name))))))))
 
 ;;; ---------------------------------------------------------------------------
 
-(defun gbbopen-network-connection-server (connection) 
+(defun network-stream-connection-server (connection) 
   (flet ((connect-it (connection)
-           (unwind-protect (gbbopen-client-connection connection)
+           (unwind-protect (network-streaming-client-connection connection)
              (close connection))))
-    (declare (dynamic-extent #'connect-it))
     (spawn-thread "Client GBBopen Connection" #'connect-it connection)))
 
 ;;; ---------------------------------------------------------------------------
 
-(defun gbbopen-network-server-running-p ()
-  (and *gbbopen-network-connection-server-thread*
-       (thread-alive-p *gbbopen-network-connection-server-thread*)))
+(defun network-stream-server-running-p ()
+  (and *network-stream-connection-server-thread*
+       (thread-alive-p *network-stream-connection-server-thread*)))
 
 ;;; ---------------------------------------------------------------------------
 
-(defun start-gbbopen-network-server (&optional
-                                     (port *gbbopen-network-server-port*))
-  (setf *gbbopen-network-connection-server-thread*
-        (start-connection-server 'gbbopen-network-connection-server
-                                 port
+(defun start-network-stream-server ()
+  (unless *local-streamer-node*
+    (error "No local streamer node has been defined."))
+  (setf *network-stream-connection-server-thread*
+        (start-connection-server 'network-stream-connection-server
+                                 (port-of *local-streamer-node*)
                                  :name "GBBopen Network Connection Server"
                                  :reuse-address 't)))
 
 ;;; ---------------------------------------------------------------------------
 
-(defun kill-gbbopen-network-server ()
-  (when *gbbopen-network-connection-server-thread*
-    (kill-thread *gbbopen-network-connection-server-thread*)
+(defun kill-network-stream-server ()
+  (when *network-stream-connection-server-thread*
+    (kill-thread *network-stream-connection-server-thread*)
     ;; indicate success:
     't))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Queued block methods
 
-(defgeneric beginning-queued-receive (tag))
-(defgeneric ending-queued-receive (tag))
+(defgeneric beginning-queued-read (tag))
+(defgeneric ending-queued-read (tag))
 
 ;; Default do-nothing methods:
-(defmethod beginning-queued-receive (tag)
+(defmethod beginning-queued-read (tag)
   tag)
-(defmethod ending-queued-receive (tag)
+(defmethod ending-queued-read (tag)
   tag)
          
 ;;; ---------------------------------------------------------------------------
@@ -466,8 +602,8 @@
 (defmethod saved/sent-object-reader ((char (eql #\!)) stream)
   (let ((form (read stream 't nil 't)))
     (case (first form)
-      (:bb (beginning-queued-receive (setf *queued-receive-tag* (second form))))
-      (:eb (ending-queued-receive *queued-receive-tag*))
+      (:bb (beginning-queued-read (setf *queued-read-tag* (second form))))
+      (:eb (ending-queued-read *queued-read-tag*))
       (otherwise (printv form)))))
 
 ;;; ===========================================================================
@@ -630,6 +766,80 @@
      unit-class-spec))
    ;; STILL TO DO: specified slots/excluded slots
    (t (nyi))))
+
+;;; ---------------------------------------------------------------------------
+
+(defun make-jnl-pathname (pathname) 
+  ;; Adds type "jnl", if not supplied ; then adds defaults from
+  ;; (user-homedir-pathname), as needed:
+  (merge-pathnames 
+   pathname
+   (make-pathname :type "jnl"
+                  :defaults (user-homedir-pathname))))
+
+;;; ---------------------------------------------------------------------------
+
+(defun make-journal-streamer (pathname
+                              &rest initargs
+                              &key (if-exists ':supersede)                   
+                                   (package ':cl-user)
+                                   (external-format ':default)
+                                   (read-default-float-format 
+                                    *read-default-float-format*)
+                                   (streamer-class 'journal-streamer))
+  (let ((stream (open (make-bb-pathname pathname)
+                      ;; TODO: ** Deal with appended journaling **
+                      :direction ':output
+                      :if-exists if-exists
+                      :external-format external-format))
+        (*package* (ensure-package package))
+        (*read-default-float-format* read-default-float-format))
+    (write-saving/sending-block-info stream)
+    ;; Why is this needed to prevent reading problems...?
+    (princ " " stream)
+    (force-output stream)
+    ;; Make and return the streamer:
+    (apply #'make-instance
+           streamer-class
+           :streamer-lock (make-recursive-lock 
+                           :name (concatenate 'simple-string 
+                                   (enough-namestring pathname)
+                                   " lock"))
+           :streamer-package *package*
+           :external-format external-format
+           :read-default-float-format read-default-float-format 
+           :streamer-stream stream
+           (remove-properties initargs
+                              '(:if-exists :package :streamer-class)))))
+
+;;; ---------------------------------------------------------------------------
+
+(defun load-journal (pathname
+                     &key (class-name-translations nil)
+                          (coalesce-strings nil)
+                          (estimated-peak-forward-references 
+                           *default-estimated-peak-forward-references*)
+                          (external-format ':default)
+                          (readtable *reading-saved/sent-objects-readtable*)
+                          (read-eval nil))
+  (with-open-file (stream (make-jnl-pathname pathname)
+                   :direction ':input
+                   :external-format external-format)
+    (with-reading-saved/sent-objects-block 
+        (stream :class-name-translations class-name-translations
+                :coalesce-strings coalesce-strings
+                :estimated-peak-forward-references 
+                  estimated-peak-forward-references
+                :readtable readtable
+                :read-eval read-eval)
+    (with-blackboard-repository-locked ()
+      ;; Read everything:
+      (let ((eof-marker '#:eof))
+        (until (eq eof-marker (read stream nil eof-marker)))))
+      ;; Return the pathname, saved/sent-time, and saved/sent-value:
+      (values (pathname stream)
+              *block-saved/sent-time* 
+              *block-saved/sent-value*))))
 
 ;;; ===========================================================================
 ;;;				  End of File

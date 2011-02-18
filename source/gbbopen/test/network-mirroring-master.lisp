@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/network-mirroring-master.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Feb 14 05:52:51 2011 *-*
+;;;; *-* Last-Edit: Fri Feb 18 11:35:35 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -28,23 +28,34 @@
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 (in-package :cl-user)
-(network-streaming :create-dirs)
 
-;; Load up the :tutorial (without running it):
+;; Compile/load GBBopen's :streaming module:
+(streaming :create-dirs)
+
+;; Compile/load the :tutorial module (without running it):
 (cl-user::tutorial-example :create-dirs :noautorun)
 
 ;; The slave host:
-(defparameter *slave-host* "127.0.0.1")
+(define-streamer-node "slave"
+    :host "127.0.0.1"
+    :package ':tutorial)
+
+;; The master host (me!):
+(define-streamer-node "master"
+    :localnodep 't
+    :host "127.0.0.1"
+    :port (1+ (port-of (find-streamer-node "slave")))
+    :package ':tutorial)
 
 ;; Connect to slave image:
-(defparameter *streamer*
-    (make-gbbopen-network-streamer *slave-host*))
+(defparameter *streamer* (find-or-make-network-streamer "slave"))
 
 (add-mirroring *streamer* 'standard-space-instance)
 (add-mirroring *streamer* 'path)
 (add-mirroring *streamer* 'location)
 
 ;; Generate some data (locally), with BEGIN/END-QUEUED-STREAMING:
+#+ONCE-DELETE-INSTANCE-MIRRORING-IS-WORKING
 (progn
   (begin-queued-streaming *streamer* ':tutorial)
   (take-a-walk)
