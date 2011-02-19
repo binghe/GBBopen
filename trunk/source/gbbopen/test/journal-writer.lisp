@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/journal-writer.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Feb 18 18:09:55 2011 *-*
+;;;; *-* Last-Edit: Sat Feb 19 10:43:20 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -47,7 +47,7 @@
   (end-queued-streaming queued-streamer))
   
 ;; Delete an instance, also testing WITH-QUEUED-STREAMING:
-(with-queued-streaming (*streamer* ':with-queued)
+(with-queued-streaming (streamer-queue *streamer* ':with-queued)
   (delete-instance (find-instance-by-name 10 'location)))
 
 ;; Change a nonlink-slot value:
