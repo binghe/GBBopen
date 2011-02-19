@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/network-streaming-master.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Feb 18 18:08:10 2011 *-*
+;;;; *-* Last-Edit: Sat Feb 19 10:49:51 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -64,13 +64,21 @@
 
 ;; Delete an instance on the slave (but not here), also testing
 ;; WITH-QUEUED-STREAMING macro:
-(with-queued-streaming (*streamer* ':with-queued)
-  (stream-delete-instance (find-instance-by-name 10 'location) *streamer*))
+(with-queued-streaming (streamer-queue *streamer* ':with-queued)
+  (stream-delete-instance (find-instance-by-name 10 'location) streamer-queue))
 
 ;; Change a nonlink-slot value on the slave (but not here), also testing a
 ;; unit-instance tag:
-(with-queued-streaming (*streamer* (find-instance-by-name 3 'location))
-  (stream-slot-update (find-instance-by-name 11 'location) 'time 9 *streamer*))
+(with-queued-streaming (streamer-queue *streamer*
+                                       (find-instance-by-name 11 'location))
+  (stream-slot-update 
+   (find-instance-by-name 11 'location) 'time 9 streamer-queue)
+  ;; Change a nonlink-slot value on another instance on the slave (but not
+  ;; here), also testing WRITE-STREAMER-QUEUE:
+  (write-streamer-queue streamer-queue
+                        (find-instance-by-name 12 'location))
+  (stream-slot-update 
+   (find-instance-by-name 12 'location) 'time 11 streamer-queue))
 
 ;; Perform an unlink on the slave (but not here):
 (stream-unlink (find-instance-by-name 9 'location) 

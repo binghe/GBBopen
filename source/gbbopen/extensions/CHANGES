@@ -2,6 +2,9 @@
                 Incompatible & Important Changes in Experimental
                    Network Streaming and Journaling Entities
 
+2/19/11 -- Added var argument to WITH-QUEUED-STREAMING macro
+        -- New WRITE-STREAMER-QUEUE function
+
 2/17/11 -- Renamed :network-streaming module to :streaming (now network & 
            journaling)
         -- New MAKE-JOURNAL-STREAMER and LOAD-JOURNAL functions

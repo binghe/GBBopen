@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/streaming.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Feb 18 18:06:27 2011 *-*
+;;;; *-* Last-Edit: Sat Feb 19 10:43:49 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -71,7 +71,7 @@
 	    with-mirroring-disabled
 	    with-mirroring-enabled
             with-queued-streaming
-            with-streamer)))
+            write-streamer-queue)))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -183,17 +183,21 @@
 ;;; ---------------------------------------------------------------------------
 ;;;   Streamer entities
 
-(defun %do-with-streamer-stream (streamer body-form-fn)
-  (with-standard-io-syntax 
-    (setf *package* (streamer-package-of streamer))
-    (setf *read-default-float-format* 
-          (read-default-float-format-of streamer))
-    (let ((*recorded-class-descriptions-ht* 
-           (recorded-class-descriptions-ht-of streamer)))
-      (with-lock-held ((streamer-lock-of streamer))
-        (let ((stream (streamer-stream-of streamer)))
-          (funcall body-form-fn stream)
-          (force-output stream))))))
+(defun %do-with-streamer-stream (streamer-or-streamer-queue body-form-fn)
+  (let ((streamer
+         (if (typep streamer-or-streamer-queue 'streamer-queue)
+             (streamer-of streamer-or-streamer-queue)
+             streamer-or-streamer-queue)))
+    (with-standard-io-syntax 
+      (setf *package* (streamer-package-of streamer))
+      (setf *read-default-float-format* 
+            (read-default-float-format-of streamer))
+      (let ((*recorded-class-descriptions-ht* 
+             (recorded-class-descriptions-ht-of streamer)))
+        (with-lock-held ((streamer-lock-of streamer-or-streamer-queue))
+          (let ((stream (streamer-stream-of streamer-or-streamer-queue)))
+            (funcall body-form-fn stream)
+            (force-output stream)))))))
     
 ;;; ---------------------------------------------------------------------------
 
@@ -209,29 +213,50 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun begin-queued-streaming (streamer &optional tag)
-  (flet ((begin-it (queue-stream)
-           (force-output (streamer-stream-of streamer))
-           (with-standard-io-syntax 
-             (setf *package* (streamer-package-of streamer))
-             (setf *read-default-float-format* 
-                   (read-default-float-format-of streamer))
-             (princ "#G!(:BB " queue-stream)
-             (print-object-for-saving/sending tag queue-stream)
-             (princ ") " queue-stream))))
-    (with-lock-held ((streamer-lock-of streamer))
-      (let* ((queue-stream (make-string-output-stream))
-             (streamer-queue
-              (make-instance 'streamer-queue
-                :streamer streamer
-                :streamer-lock (make-recursive-lock 
-                                :name "Streamer-queue lock")
-                :streamer-stream queue-stream)))
-        (push streamer-queue (streamer-queues-of streamer))
+  (with-lock-held ((streamer-lock-of streamer))
+    (force-output (streamer-stream-of streamer))
+    (let* ((queue-stream (make-string-output-stream))
+           (streamer-queue
+            (make-instance 'streamer-queue
+              :streamer streamer
+              :streamer-lock (make-recursive-lock 
+                              :name "Streamer-queue lock")
+              :streamer-stream queue-stream)))
+      (push streamer-queue (streamer-queues-of streamer))
+      (let ((*recorded-class-descriptions-ht* 
+             (recorded-class-descriptions-ht-of streamer)))
+        (with-standard-io-syntax 
+          (setf *package* (streamer-package-of streamer))
+          (setf *read-default-float-format* 
+                (read-default-float-format-of streamer))
+          (princ "#G!(:BB " queue-stream)
+          (print-object-for-saving/sending tag queue-stream)
+          (princ ") " queue-stream)))
+      ;; Return the new streamer-queue:
+      streamer-queue)))
+
+;;; ---------------------------------------------------------------------------
+
+(defun write-streamer-queue (streamer-queue &optional tag)
+  (let* ((queue-stream (streamer-stream-of streamer-queue))
+         (streamer (streamer-of streamer-queue))
+         (stream (streamer-stream-of streamer)))
+    (with-lock-held ((streamer-lock-of streamer-queue))
+      (princ "#G!(:EB) " queue-stream)
+      (let ((string (get-output-stream-string queue-stream)))
+        (with-lock-held ((streamer-lock-of streamer))
+          (write-sequence string stream)
+          (force-output stream))
         (let ((*recorded-class-descriptions-ht* 
                (recorded-class-descriptions-ht-of streamer)))
-          (begin-it queue-stream))
-        ;; Return the new streamer-queue:
-        streamer-queue))))
+          (with-standard-io-syntax 
+            (setf *package* (streamer-package-of streamer))
+            (setf *read-default-float-format* 
+                  (read-default-float-format-of streamer))
+            (princ "#G!(:BB " queue-stream)
+            (print-object-for-saving/sending tag queue-stream)
+            (princ ") " queue-stream))))))
+  streamer-queue)
 
 ;;; ---------------------------------------------------------------------------
 
@@ -254,11 +279,11 @@
       
 ;;; ---------------------------------------------------------------------------
 
-(defmacro with-queued-streaming ((streamer &optional tag)
+(defmacro with-queued-streaming ((var streamer &optional tag)
                                  &body body)
-  `(let ((.streaming-queue. (begin-queued-streaming ,streamer ,tag)))
+  `(let ((,var (begin-queued-streaming ,streamer ,tag)))
      (unwind-protect (progn ,@body)
-       (end-queued-streaming .streaming-queue.))))
+       (end-queued-streaming ,var))))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Delete unit instance reader
