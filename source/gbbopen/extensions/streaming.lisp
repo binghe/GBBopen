@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/streaming.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Feb 19 10:43:49 2011 *-*
+;;;; *-* Last-Edit: Sat Feb 19 11:17:06 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -144,7 +144,8 @@
 (define-class streamer-queue (standard-gbbopen-instance)
   (streamer-lock
    (streamer :initform nil)
-   (streamer-stream :initform nil)))
+   (streamer-stream :initform nil)
+   tag))
 
 ;;; ===========================================================================
 ;;;   Streamers
@@ -221,7 +222,8 @@
               :streamer streamer
               :streamer-lock (make-recursive-lock 
                               :name "Streamer-queue lock")
-              :streamer-stream queue-stream)))
+              :streamer-stream queue-stream
+              :tag tag)))
       (push streamer-queue (streamer-queues-of streamer))
       (let ((*recorded-class-descriptions-ht* 
              (recorded-class-descriptions-ht-of streamer)))
@@ -237,7 +239,13 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun write-streamer-queue (streamer-queue &optional tag)
+(defun write-streamer-queue (streamer-queue 
+                             ;; Default tag is the last one supplied 
+                             &optional (tag (tag-of streamer-queue) 
+                                            tag-supplied-p))
+  ;; Update the remembered tag, if a new one was supplied:
+  (when tag-supplied-p
+    (setf (tag-of streamer-queue) tag))
   (let* ((queue-stream (streamer-stream-of streamer-queue))
          (streamer (streamer-of streamer-queue))
          (stream (streamer-stream-of streamer)))
@@ -466,12 +474,14 @@
       (connection :%%skip-block-info-reading%% skip-block-info-reading)
     (let ((exit-status ':error)
           (network-streamer (streamer-of streamer-node)))
-      (unwind-protect 
-          (setf exit-status
-                (network-stream-receiver network-streamer connection))
-        (setf (streamer-of streamer-node) nil)
-        (handle-stream-connection-exiting network-streamer exit-status)
-        (close connection)))))
+      (if network-streamer
+          (unwind-protect 
+              (setf exit-status
+                    (network-stream-receiver network-streamer connection))
+            (setf (streamer-of streamer-node) nil)
+            (handle-stream-connection-exiting network-streamer exit-status))
+          (error "Missing network-streamer at ~s" streamer-node)))
+    (close connection)))
 
 ;;; ---------------------------------------------------------------------------
 
