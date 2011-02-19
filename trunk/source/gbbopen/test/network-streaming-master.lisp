@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/network-streaming-master.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Feb 19 10:49:51 2011 *-*
+;;;; *-* Last-Edit: Sat Feb 19 17:22:15 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -57,28 +57,28 @@
 (stream-instances (find-space-instances 't) *streamer*)
 
 ;; Send everything else (as a single queued block):
-(let ((queued-streamer
-       (begin-queued-streaming *streamer* ':tutorial)))
-  (stream-instances (find-instances 't 't 't) *streamer*)
-  (end-queued-streaming queued-streamer))
+(with-queued-streaming (*streamer* ':tutorial)
+  (stream-instances (find-instances 't 't 't) *streamer*))
+
+;; Test empty queue writing:
+(with-queued-streaming (*streamer* ':empty-queue-that-should-not-be-written)
+  nil)
+(with-queued-streaming (*streamer* ':empty-queue-that-should-be-written 't)
+  nil)
 
 ;; Delete an instance on the slave (but not here), also testing
-;; WITH-QUEUED-STREAMING macro:
-(with-queued-streaming (streamer-queue *streamer* ':with-queued)
-  (stream-delete-instance (find-instance-by-name 10 'location) streamer-queue))
+;; some nested WITH-QUEUED-STREAMING macros:
+(with-queued-streaming (*streamer* ':another-empty-queue-that-should-be-written 't)
+  (with-queued-streaming (*streamer* ':empty-queue-that-should-not-be-written)
+    (with-queued-streaming (*streamer* ':empty-queue-that-should-be-written 't)
+      (with-queued-streaming (*streamer* ':with-queued)
+        (stream-delete-instance (find-instance-by-name 10 'location) *streamer*)))))
 
 ;; Change a nonlink-slot value on the slave (but not here), also testing a
 ;; unit-instance tag:
-(with-queued-streaming (streamer-queue *streamer*
-                                       (find-instance-by-name 11 'location))
+(with-queued-streaming (*streamer* (find-instance-by-name 11 'location))
   (stream-slot-update 
-   (find-instance-by-name 11 'location) 'time 9 streamer-queue)
-  ;; Change a nonlink-slot value on another instance on the slave (but not
-  ;; here), also testing WRITE-STREAMER-QUEUE:
-  (write-streamer-queue streamer-queue
-                        (find-instance-by-name 12 'location))
-  (stream-slot-update 
-   (find-instance-by-name 12 'location) 'time 11 streamer-queue))
+   (find-instance-by-name 11 'location) 'time 9 *streamer*))
 
 ;; Perform an unlink on the slave (but not here):
 (stream-unlink (find-instance-by-name 9 'location) 

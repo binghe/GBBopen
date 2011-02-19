@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/journal-writer.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Feb 19 10:43:20 2011 *-*
+;;;; *-* Last-Edit: Sat Feb 19 17:23:46 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -40,14 +40,12 @@
 (add-mirroring *streamer* 'path)
 (add-mirroring *streamer* 'location)
 
-;; Generate some data, with BEGIN/END-QUEUED-STREAMING:
-(let ((queued-streamer
-       (begin-queued-streaming *streamer* ':tutorial)))
-  (take-a-walk)
-  (end-queued-streaming queued-streamer))
-  
-;; Delete an instance, also testing WITH-QUEUED-STREAMING:
-(with-queued-streaming (streamer-queue *streamer* ':with-queued)
+;; Generate some data, writing everything as a single queued block:
+(with-queued-streaming (*streamer* ':tutorial)
+  (take-a-walk))
+
+;; Delete an instance, also using WITH-QUEUED-STREAMING:
+(with-queued-streaming (*streamer* ':with-queued)
   (delete-instance (find-instance-by-name 10 'location)))
 
 ;; Change a nonlink-slot value:
