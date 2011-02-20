@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/streaming.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Feb 20 12:36:37 2011 *-*
+;;;; *-* Last-Edit: Sun Feb 20 12:55:36 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -642,6 +642,13 @@
           (unwind-protect 
               (setf exit-status
                     (network-stream-receiver network-streamer connection))
+            ;; TODO: Remove streamer mirrors:
+            nil
+            ;; Remove from broadcast-streamer:
+            (let* ((streamer (streamer-of streamer-node))
+                   (broadcast-streamer (broadcast-streamer-of streamer)))
+              (when broadcast-streamer
+                (remove-from-broadcast-streamer streamer broadcast-streamer)))
             (setf (streamer-of streamer-node) nil)
             (handle-stream-connection-exiting network-streamer exit-status))
           (error "Missing network-streamer at ~s" streamer-node)))
