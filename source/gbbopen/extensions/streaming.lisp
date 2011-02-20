@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/streaming.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Feb 20 05:33:25 2011 *-*
+;;;; *-* Last-Edit: Sun Feb 20 12:36:37 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -202,7 +202,31 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun make-broadcast-streamer (&rest streamers)
+(defun make-broadcast-streamer-given-initargs 
+    (&key (package ':cl-user)
+          (read-default-float-format *read-default-float-format*))
+  (make-instance 'broadcast-streamer
+    :streamer-lock (make-recursive-lock 
+                    :name "Broadcast streamer lock")
+    :streamer-package (ensure-package package)
+    :read-default-float-format read-default-float-format))
+
+;;; ---------------------------------------------------------------------------
+
+(defun set-broadcast-streamers (broadcast-streamer streamers)
+  (setf (streamer-stream-of broadcast-streamer)
+        (apply #'make-broadcast-stream 
+               (flet ((add-it (streamer)
+                        (setf (broadcast-streamer-of streamer)
+                              broadcast-streamer)
+                        (streamer-stream-of streamer)))
+                 (declare (dynamic-extent #'add-it))
+                 (mapcar #'add-it streamers))))
+  (setf (streamers-of broadcast-streamer) streamers))
+
+;;; ---------------------------------------------------------------------------
+
+(defun make-broadcast-streamer-given-streamers (streamers)
   ;; Check if any of the streamers are queued (at least in this thread); TODO:
   ;; deal with queueing better than this!
   (dolist (streamer streamers)
@@ -212,35 +236,73 @@
   ;; TODO: Check that all streamers have the same package/default-float, no
   ;; duplicates, creating without any streamers, etc.
   (let ((broadcast-streamer
-         (make-instance 'broadcast-streamer
-           :streamers streamers
-           :streamer-lock (make-recursive-lock 
-                           :name "Broadcast streamer lock")
-           ;; For now, use the attributes of the 1st streamer:
-           :streamer-package (streamer-package-of (car streamers))
-           :read-default-float-format (read-default-float-format-of (car streamers)))))
-    (setf (streamer-stream-of broadcast-streamer)
-          (apply #'make-broadcast-stream 
-                 (flet ((add-it (streamer)
-                          (setf (broadcast-streamer-of streamer)
-                                broadcast-streamer)
-                          (streamer-stream-of streamer)))
-                   (declare (dynamic-extent #'add-it))
-                   (mapcar #'add-it streamers))))
+         (make-broadcast-streamer-given-initargs
+          ;; For now, use the attributes of the 1st streamer:
+          :package (streamer-package-of (car streamers))
+          :read-default-float-format (read-default-float-format-of (car streamers)))))
+    (set-broadcast-streamers broadcast-streamer streamers)
     ;; Return the broadcast streamer:
     broadcast-streamer))
 
 ;;; ---------------------------------------------------------------------------
 
+(defun make-broadcast-streamer (&rest streamers-or-initargs)
+  (if (and (consp streamers-or-initargs)
+           (typep (car streamers-or-initargs) 'streamer))
+      (make-broadcast-streamer-given-streamers streamers-or-initargs)
+      (apply #'make-broadcast-streamer-given-initargs streamers-or-initargs)))
+
+;;; ---------------------------------------------------------------------------
+
+(defun check-broadcast-streamer-compatibility (streamer broadcast-streamer)
+  ;; Check :streamer-package:
+  (let ((streamer-package (streamer-package-of streamer))
+        (broadcast-package (streamer-package-of broadcast-streamer)))
+    (unless (eq streamer-package broadcast-package)
+    (error "The ~s ~s of ~s does not match ~s of ~s"
+           ':package 
+           streamer-package
+           streamer
+           broadcast-package
+           broadcast-streamer)))
+  ;; Check :read-default-float-format:
+  (let ((streamer-rdff (read-default-float-format-of streamer))
+        (broadcast-rdff (read-default-float-format-of broadcast-streamer)))
+    (unless (eq streamer-rdff broadcast-rdff)
+    (error "The ~s ~s of ~s does not match ~s of ~s"
+           ':read-default-float-format
+           streamer-rdff
+           streamer
+           broadcast-rdff
+           broadcast-streamer))))
+
+;;; ---------------------------------------------------------------------------
+
 (defun add-to-broadcast-streamer (streamer broadcast-streamer)
-  (declare (ignore streamer broadcast-streamer))
-  (nyi))
+  (cond 
+   ((broadcast-streamer-of streamer)
+    (error "Streamer ~s is a member of broadcast streamer ~s"
+           streamer broadcast-streamer))
+   (t (with-lock-held ((streamer-lock-of broadcast-streamer))
+        (let ((streamers (cons streamer (streamers-of broadcast-streamer))))
+          (check-broadcast-streamer-compatibility streamer broadcast-streamer)
+          (setf (broadcast-streamer-of streamer) broadcast-streamer)
+          (set-broadcast-streamers broadcast-streamer streamers)))
+      ;; Return streamer:
+      streamer)))
 
 ;;; ---------------------------------------------------------------------------
 
 (defun remove-from-broadcast-streamer (streamer broadcast-streamer)
-  (declare (ignore streamer broadcast-streamer))
-  (nyi))
+  (with-lock-held ((streamer-lock-of broadcast-streamer))
+    (let ((streamers (streamers-of broadcast-streamer)))
+      (when (memq streamer streamers)
+        (setf (broadcast-streamer-of streamer) nil)
+        (set-broadcast-streamers 
+         broadcast-streamer
+         (remove streamer streamers :test #'eq))
+        ;; Return streamer on success:
+        streamer))))
 
 ;;; ---------------------------------------------------------------------------
 ;;;   Streamer entities
