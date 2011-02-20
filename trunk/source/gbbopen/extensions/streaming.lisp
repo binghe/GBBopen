@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/streaming.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Feb 19 17:17:40 2011 *-*
+;;;; *-* Last-Edit: Sun Feb 20 05:33:25 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -38,8 +38,12 @@
   (export '(*break-on-receive-errors*
             *default-network-stream-server-port*
             add-mirroring
+            add-to-broadcast-streamer
+            begin-queued-streaming
+            broadcast-streamer          ; class-name
             beginning-queued-read
             define-streamer-node
+            end-queued-streaming
             ending-queued-read
             find-or-make-network-streamer
             find-streamer-node
@@ -50,12 +54,14 @@
             journal-streamer            ; class-name
             kill-network-stream-server
             load-journal
+            make-broadcast-streamer
             make-journal-streamer
             name-of
             network-stream-receiver
             network-stream-server-running-p
             network-streamer            ; class-name
             port-of
+            remove-from-broadcast-streamer
             start-network-stream-server
             stream-command-form
             stream-delete-instance
@@ -68,7 +74,8 @@
             streamer-node               ; class-name
 	    with-mirroring-disabled
 	    with-mirroring-enabled
-            with-queued-streaming)))
+            with-queued-streaming
+            write-streamer-queue)))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -138,23 +145,33 @@
 ;;; ===========================================================================
 ;;;   Streamer queues
 
-(define-class streamer-queue (standard-gbbopen-instance)
-  (streamer-lock
-   (streamer :initform nil)
-   (queue-stream :initform nil)
-   tag))
+(defvar *%%streamer-queues%%* nil)      ; records thread-local streamer queues
+
+;;; ---------------------------------------------------------------------------
+
+(defstruct (streamer-queue 
+            (:copier nil))
+  stream
+  tag
+  write-empty-queue-p
+  tag-string)
 
 ;;; ===========================================================================
 ;;;   Streamers
 
-(define-class streamer (standard-gbbopen-instance)
+(define-class basic-streamer (standard-gbbopen-instance)
   (streamer-lock
    (streamer-stream :initform nil)
    streamer-package
-   external-format
    read-default-float-format 
    (recorded-class-descriptions-ht
     :initform (make-hash-table :test 'eq))))
+
+;;; ---------------------------------------------------------------------------
+
+(define-class streamer (basic-streamer)
+  (external-format
+   (broadcast-streamer :initform nil)))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -177,14 +194,63 @@
 (define-class journal-streamer (streamer)
   ())
    
+;;; ===========================================================================
+;;;   Broadcast streamers
+
+(define-class broadcast-streamer (basic-streamer)
+  ((streamers :initform nil)))
+
+;;; ---------------------------------------------------------------------------
+
+(defun make-broadcast-streamer (&rest streamers)
+  ;; Check if any of the streamers are queued (at least in this thread); TODO:
+  ;; deal with queueing better than this!
+  (dolist (streamer streamers)
+    (when (assq streamer *%%streamer-queues%%*)
+      (error "A queued streamer cannot be added to a broadcast streamer: ~s"
+             streamer)))
+  ;; TODO: Check that all streamers have the same package/default-float, no
+  ;; duplicates, creating without any streamers, etc.
+  (let ((broadcast-streamer
+         (make-instance 'broadcast-streamer
+           :streamers streamers
+           :streamer-lock (make-recursive-lock 
+                           :name "Broadcast streamer lock")
+           ;; For now, use the attributes of the 1st streamer:
+           :streamer-package (streamer-package-of (car streamers))
+           :read-default-float-format (read-default-float-format-of (car streamers)))))
+    (setf (streamer-stream-of broadcast-streamer)
+          (apply #'make-broadcast-stream 
+                 (flet ((add-it (streamer)
+                          (setf (broadcast-streamer-of streamer)
+                                broadcast-streamer)
+                          (streamer-stream-of streamer)))
+                   (declare (dynamic-extent #'add-it))
+                   (mapcar #'add-it streamers))))
+    ;; Return the broadcast streamer:
+    broadcast-streamer))
+
+;;; ---------------------------------------------------------------------------
+
+(defun add-to-broadcast-streamer (streamer broadcast-streamer)
+  (declare (ignore streamer broadcast-streamer))
+  (nyi))
+
+;;; ---------------------------------------------------------------------------
+
+(defun remove-from-broadcast-streamer (streamer broadcast-streamer)
+  (declare (ignore streamer broadcast-streamer))
+  (nyi))
+
 ;;; ---------------------------------------------------------------------------
 ;;;   Streamer entities
 
-(defvar *%%streamer-queues%%* nil)      ; records thread-local streamer queues
-
-;;; ---------------------------------------------------------------------------
-
 (defun %do-with-streamer-stream (streamer body-form-fn)
+  ;; Handle broadcast streamer indirection:
+  (when (typep streamer 'streamer)
+    (let ((broadcast-streamer (broadcast-streamer-of streamer)))
+      (when broadcast-streamer
+        (setf streamer broadcast-streamer))))
   (let ((streamer-queue (cdr (assq streamer *%%streamer-queues%%*))))
     (with-standard-io-syntax 
       (setf *package* (streamer-package-of streamer))
@@ -194,7 +260,7 @@
              (recorded-class-descriptions-ht-of streamer)))
         (if streamer-queue
             ;; queued streaming:
-            (funcall body-form-fn (queue-stream-of streamer-queue))
+            (funcall body-form-fn (streamer-queue-stream streamer-queue))
             ;; regular streaming:
             (with-lock-held ((streamer-lock-of streamer))
               (let ((stream (streamer-stream-of streamer)))
@@ -214,15 +280,15 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun %begin-queued-streaming (streamer tag)
+(defun begin-queued-streaming (streamer tag write-empty-queue-p)
   (with-lock-held ((streamer-lock-of streamer))
     (force-output (streamer-stream-of streamer))
     (let* ((queue-stream (make-string-output-stream))
            (streamer-queue
-            (make-instance 'streamer-queue
-              :streamer streamer
-              :queue-stream queue-stream
-              :tag tag)))
+            (make-streamer-queue
+             :stream queue-stream
+             :tag tag
+             :write-empty-queue-p write-empty-queue-p)))
       (let ((*recorded-class-descriptions-ht* 
              (recorded-class-descriptions-ht-of streamer)))
         (with-standard-io-syntax 
@@ -234,47 +300,100 @@
           (princ ") " queue-stream)))
       ;; Push the new streamer-queue for this streamer:
       (push-acons streamer streamer-queue *%%streamer-queues%%*)
-      ;; Return the tag-string:
-      (get-output-stream-string queue-stream))))
+      ;; Stash the tag-string:
+      (setf (streamer-queue-tag-string streamer-queue)
+            (get-output-stream-string queue-stream)))))
 
 ;;; ---------------------------------------------------------------------------
 
-(defun %end-queued-streaming (streamer tag-string write-empty-queue-p)
-  (let* ((streamer-queue (cdr (assq streamer *%%streamer-queues%%*)))
-         (queue-stream (queue-stream-of streamer-queue))
+(defun no-streamer-queue-error (streamer)
+  (error "Streamer ~s is not being queued." streamer))
+
+;;; ---------------------------------------------------------------------------
+
+(defun end-queued-streaming (streamer)
+  (let* ((streamer-queue 
+          (or (cdr (assq streamer *%%streamer-queues%%*))
+              (no-streamer-queue-error streamer)))
+         (queue-stream (streamer-queue-stream streamer-queue))
          (stream (streamer-stream-of streamer)))
     (let ((string (get-output-stream-string queue-stream)))
       ;; Leave evidence that this queue has ended:
-      (setf (queue-stream-of streamer-queue) ':ended)
+      (setf (streamer-queue-stream streamer-queue) ':ended)
       (cond
        ;; Empty queue:
        ((zerop& (length string))
-        (when write-empty-queue-p
+        (when (streamer-queue-write-empty-queue-p streamer-queue)
           (with-lock-held ((streamer-lock-of streamer))
-            (write-sequence tag-string stream)
+            (write-sequence (streamer-queue-tag-string streamer-queue) stream)
             (princ "#G!(:EB) " stream)
             (force-output stream))))
        ;; Non-empty queue:
        (t (with-lock-held ((streamer-lock-of streamer))
-            (write-sequence tag-string stream)
+            (write-sequence (streamer-queue-tag-string streamer-queue) stream)
             (write-sequence string stream)
             (princ "#G!(:EB) " stream)
-            (force-output stream)))))
-    ;; Leave more evidence that this queue has ended:
-    (setf (streamer-of streamer-queue) ':ended)))
+            (force-output stream)))))))
       
 ;;; ---------------------------------------------------------------------------
 
 (defmacro with-queued-streaming ((streamer &optional tag write-empty-queue-p)
                                  &body body)
-  (with-gensyms (tag-string)
-    (with-once-only-bindings (streamer tag write-empty-queue-p)
-      `(let* ((*%%streamer-queues%%* *%%streamer-queues%%*)
-              (,tag-string 
-               (%begin-queued-streaming ,streamer ,tag)))
-         (unwind-protect (progn ,@body)
-           (%end-queued-streaming
-            ,streamer ,tag-string ,write-empty-queue-p))))))
+  (with-once-only-bindings (streamer)
+    `(let ((*%%streamer-queues%%* *%%streamer-queues%%*))
+       (begin-queued-streaming ,streamer ,tag ,write-empty-queue-p)
+       (unwind-protect (progn ,@body)
+         (end-queued-streaming ,streamer)))))
+
+;;; ---------------------------------------------------------------------------
+
+(defun write-streamer-queue (streamer 
+                             &key (tag nil tag-supplied-p)
+                                  (write-empty-queue-p nil weqp-supplied-p))
+  (let* ((streamer-queue 
+          (or (cdr (assq streamer *%%streamer-queues%%*))
+              (no-streamer-queue-error streamer)))
+         (queue-stream (streamer-queue-stream streamer-queue))
+         (stream (streamer-stream-of streamer)))
+    ;; End the current queuing block:
+    (let ((string (get-output-stream-string queue-stream)))
+      (cond
+       ;; Empty queue:
+       ((zerop& (length string))
+        (when (streamer-queue-write-empty-queue-p streamer-queue)
+          (with-lock-held ((streamer-lock-of streamer))
+            (write-sequence (streamer-queue-tag-string streamer-queue) stream)
+            (princ "#G!(:EB) " stream)
+            (force-output stream))))
+       ;; Non-empty queue:
+       (t (with-lock-held ((streamer-lock-of streamer))
+            (write-sequence (streamer-queue-tag-string streamer-queue) stream)
+            (write-sequence string stream)
+            (princ "#G!(:EB) " stream)
+            (force-output stream)))))
+    ;; Setup tag & write-empty-queue-p values, using the previous tag and
+    ;; write-empty-queue-p values if they weren't supplied:
+    (if tag-supplied-p
+        (setf (streamer-queue-tag streamer-queue) tag)
+        (setf tag (streamer-queue-tag streamer-queue)))
+    (if weqp-supplied-p
+        (setf (streamer-queue-write-empty-queue-p streamer-queue) 
+              write-empty-queue-p)
+        (setf write-empty-queue-p 
+              (streamer-queue-write-empty-queue-p streamer-queue)))
+    ;; Begin a new queuing block:    
+    (let ((*recorded-class-descriptions-ht* 
+           (recorded-class-descriptions-ht-of streamer)))
+      (with-standard-io-syntax 
+        (setf *package* (streamer-package-of streamer))
+        (setf *read-default-float-format* 
+              (read-default-float-format-of streamer))
+        (princ "#G!(:BB " queue-stream)
+        (print-object-for-saving/sending tag queue-stream)
+        (princ ") " queue-stream)))
+      ;; Stash the tag-string:
+      (setf (streamer-queue-tag-string streamer-queue)
+            (get-output-stream-string queue-stream))))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Delete unit instance reader
