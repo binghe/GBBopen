@@ -2,8 +2,11 @@
                 Incompatible & Important Changes in Experimental
                    Network Streaming and Journaling Entities
 
-2/19/11 -- Added var argument to WITH-QUEUED-STREAMING macro
-        -- New WRITE-STREAMER-QUEUE function
+2/19/11 -- Preliminary broadcast-streamer capabilities; naive 
+           MAKE-BROADCAST-STREAMER (ADD-TO-BROADCAST-STREAMER and 
+           REMOVE-FROM-BROADCAST-STREAMER to follow)
+
+2/19/11 -- New WRITE-STREAMER-QUEUE function
 
 2/17/11 -- Renamed :network-streaming module to :streaming (now network & 
            journaling)

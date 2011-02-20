@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/network-streaming-master.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Feb 19 17:22:15 2011 *-*
+;;;; *-* Last-Edit: Sun Feb 20 05:23:45 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -50,6 +50,9 @@
 ;; Connect to slave image:
 (defparameter *streamer* (find-or-make-network-streamer "slave"))
 
+;; Make a (trivial) broadcast streamer:
+(defparameter *broadcast-streamer* (make-broadcast-streamer *streamer*))
+
 ;; Generate some data (locally):
 (take-a-walk)
 
@@ -58,7 +61,7 @@
 
 ;; Send everything else (as a single queued block):
 (with-queued-streaming (*streamer* ':tutorial)
-  (stream-instances (find-instances 't 't 't) *streamer*))
+  (stream-instances (find-instances 't 't 't) *broadcast-streamer*))
 
 ;; Test empty queue writing:
 (with-queued-streaming (*streamer* ':empty-queue-that-should-not-be-written)
@@ -74,11 +77,17 @@
       (with-queued-streaming (*streamer* ':with-queued)
         (stream-delete-instance (find-instance-by-name 10 'location) *streamer*)))))
 
-;; Change a nonlink-slot value on the slave (but not here), also testing a
-;; unit-instance tag:
+;; Change some nonlink-slot values on the slave (but not here), also testing a
+;; unit-instance tag and WRITE-STREAMER-QUEUE:
 (with-queued-streaming (*streamer* (find-instance-by-name 11 'location))
   (stream-slot-update 
-   (find-instance-by-name 11 'location) 'time 9 *streamer*))
+   (find-instance-by-name 11 'location) 'time 9 *streamer*)
+  (write-streamer-queue *streamer*)
+  (stream-slot-update 
+   (find-instance-by-name 12 'location) 'time 10 *streamer*)
+  (write-streamer-queue *streamer* :tag (find-instance-by-name 13 'location))
+  (stream-slot-update 
+   (find-instance-by-name 13 'location) 'time 10 *streamer*))
 
 ;; Perform an unlink on the slave (but not here):
 (stream-unlink (find-instance-by-name 9 'location) 
