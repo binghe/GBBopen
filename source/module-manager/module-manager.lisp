@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/module-manager/module-manager.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Jan 31 05:16:07 2011 *-*
+;;;; *-* Last-Edit: Mon Feb 21 16:12:46 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -96,6 +96,7 @@
 ;;;  06-23-08 Added BRIEF-DATE.  (Corkill)
 ;;;  03-06-09 Added ending bounding-index second return value to PARSE-DATE.
 ;;;           (Corkill)
+;;;  02-21-11 Added FUNCALL-WHEN-FBOUNDP.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -259,6 +260,7 @@
             feature-present-p           ; part of tools, but placed here; not
                                         ; documented
             freeze-module               ; not yet documented
+            funcall-when-fboundp        ; not yet documented
             get-directory
             get-patch-description
             get-root-directory          ; not yet documented
@@ -397,7 +399,7 @@
   (printv-expander forms))
 
 ;;; ===========================================================================
-;;;  Feature-present-p and dotted-conc-name
+;;;  Feature-present-p, funcall-when-fboundp, and dotted-conc-name
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defun feature-present-p (feature-symbol)
@@ -405,6 +407,13 @@
     ;; time to conditionalize generated code, in place of read-time
     ;; conditionals)
     (member (symbol-name feature-symbol) *features* :test #'string=)))
+
+;;; ---------------------------------------------------------------------------
+
+(defun funcall-when-fboundp (symbol &rest args)
+  (declare (dynamic-extent args))
+  (when (fboundp symbol)
+    (apply symbol args)))
 
 ;;; ---------------------------------------------------------------------------
 

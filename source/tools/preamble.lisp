@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/preamble.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Jan 30 12:13:15 2011 *-*
+;;;; *-* Last-Edit: Mon Feb 21 16:10:28 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -67,6 +67,7 @@
   (export '(*gbbopen-install-root*      ; re-export, not documented
             add-package-nickname        ; not documented
             ensure-package              ; not documented
+            funcall-when-fboundp        ; in module-manager, but part of tools
             gbbopen-tools-implementation-version
             hyperdoc-filename           ; not yet documented
             hyperdoc-url                ; not yet documented
