@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/events.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Feb 21 17:32:03 2011 *-*
+;;;; *-* Last-Edit: Tue Feb 22 04:52:55 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2003-2010, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2003-2011, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project.
 ;;; Licensed under Apache License 2.0 (see LICENSE for license information).
 ;;;
@@ -29,6 +29,8 @@
 ;;;  07-23-04 Event printing.  (Corkill)
 ;;;  06-13-05 Moved GBBopen event metaclass definitions to 
 ;;;           event-metaclasses.lisp. (Corkill)
+;;;  02-22-11 Added INSTANCE-ADDED-TO-SPACE-INSTANCE-EVENT and
+;;;           INSTANCE-REMOVED-FROM-SPACE-INSTANCE-EVENT.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
